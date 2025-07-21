@@ -1,0 +1,22 @@
+[
+  {
+    "id": 1,
+    "page": "home",
+    "url_slug_en": "/",
+    "url_slug_fr": "/fr",
+    "meta_title_en": "MEMOPYK - Transform Your Memories Into Cinematic Films",
+    "meta_title_fr": "MEMOPYK - Transformez vos souvenirs en films cinématographiques",
+    "meta_description_en": "Professional video creation service that transforms your photos and videos into beautiful cinematic memory films. Preserve your precious moments forever.",
+    "meta_description_fr": "Service professionnel de création vidéo qui transforme vos photos et vidéos en magnifiques films de souvenirs cinématographiques. Préservez vos moments précieux pour toujours.",
+    "og_title_en": "MEMOPYK - Professional Memory Films",
+    "og_title_fr": "MEMOPYK - Films de souvenirs professionnels",
+    "og_description_en": "Create stunning cinematic films from your memories with our professional video production service.",
+    "og_description_fr": "Créez de magnifiques films cinématographiques à partir de vos souvenirs avec notre service de production vidéo professionnel.",
+    "og_image_url": "https://memopyk.com/og-image.jpg",
+    "canonical_url": "https://memopyk.com",
+    "robots_index": true,
+    "robots_follow": true,
+    "created_at": "2024-01-01T00:00:00.000Z",
+    "updated_at": "2024-01-01T00:00:00.000Z"
+  }
+]

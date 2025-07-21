@@ -1,0 +1,22 @@
+[
+  {
+    "id": 1,
+    "type": "privacy",
+    "title_en": "Privacy Policy",
+    "title_fr": "Politique de confidentialité",
+    "content_en": "This privacy policy explains how MEMOPYK collects, uses, and protects your personal information when you use our video creation services.",
+    "content_fr": "Cette politique de confidentialité explique comment MEMOPYK collecte, utilise et protège vos informations personnelles lorsque vous utilisez nos services de création vidéo.",
+    "is_active": true,
+    "updated_at": "2024-01-01T00:00:00.000Z"
+  },
+  {
+    "id": 2,
+    "type": "terms",
+    "title_en": "Terms of Service",
+    "title_fr": "Conditions de service",
+    "content_en": "These terms govern your use of MEMOPYK services. By using our platform, you agree to these terms and conditions.",
+    "content_fr": "Ces conditions régissent votre utilisation des services MEMOPYK. En utilisant notre plateforme, vous acceptez ces termes et conditions.",
+    "is_active": true,
+    "updated_at": "2024-01-01T00:00:00.000Z"
+  }
+]

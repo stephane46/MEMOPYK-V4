@@ -1,0 +1,13 @@
+[
+  {
+    "id": 1,
+    "title_en": "MEMOPYK Sample Video",
+    "title_fr": "Vidéo d'exemple MEMOPYK",
+    "url_en": "https://memopyk-hero.s3.amazonaws.com/sample_en.mp4",
+    "url_fr": "https://memopyk-hero.s3.amazonaws.com/sample_fr.mp4",
+    "order_index": 1,
+    "is_active": true,
+    "created_at": "2024-01-01T00:00:00.000Z",
+    "updated_at": "2024-01-01T00:00:00.000Z"
+  }
+]

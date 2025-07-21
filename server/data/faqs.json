@@ -1,0 +1,32 @@
+[
+  {
+    "id": 1,
+    "section_id": "pricing",
+    "section_name_en": "Pricing & Packages",
+    "section_name_fr": "Tarifs et forfaits",
+    "section_order": 1,
+    "order_index": 1,
+    "question_en": "What are your pricing packages?",
+    "question_fr": "Quels sont vos forfaits tarifaires?",
+    "answer_en": "We offer three main packages: Basic ($199), Premium ($299), and Deluxe ($399). Each package includes different features and video lengths.",
+    "answer_fr": "Nous offrons trois forfaits principaux : Basique (199€), Premium (299€) et Deluxe (399€). Chaque forfait comprend différentes fonctionnalités et durées de vidéo.",
+    "is_active": true,
+    "created_at": "2024-01-01T00:00:00.000Z",
+    "updated_at": "2024-01-01T00:00:00.000Z"
+  },
+  {
+    "id": 2,
+    "section_id": "process",
+    "section_name_en": "Our Process",
+    "section_name_fr": "Notre processus",
+    "section_order": 2,
+    "order_index": 1,
+    "question_en": "How long does it take to create a video?",
+    "question_fr": "Combien de temps faut-il pour créer une vidéo?",
+    "answer_en": "Our typical turnaround time is 5-7 business days after we receive all your materials. Rush orders can be accommodated for an additional fee.",
+    "answer_fr": "Notre délai habituel est de 5 à 7 jours ouvrables après réception de tous vos matériaux. Les commandes urgentes peuvent être accommodées moyennant des frais supplémentaires.",
+    "is_active": true,
+    "created_at": "2024-01-01T00:00:00.000Z",
+    "updated_at": "2024-01-01T00:00:00.000Z"
+  }
+]

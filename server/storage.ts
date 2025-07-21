@@ -12,6 +12,8 @@ import {
   type SeoSettings, type InsertSeoSettings,
   type DeploymentHistory, type InsertDeploymentHistory
 } from "@shared/schema";
+import { readFileSync, writeFileSync } from "fs";
+import { join } from "path";
 
 export interface IStorage {
   // User operations
@@ -77,15 +79,15 @@ export interface IStorage {
 
 export class MemStorage implements IStorage {
   private users: Map<number, User>;
-  private heroVideos: Map<number, HeroVideo>;
-  private heroTextSettings: Map<number, HeroTextSettings>;
-  private galleryItems: Map<number, GalleryItem>;
-  private faqSections: Map<number, FaqSection>;
-  private faqs: Map<number, Faq>;
+  private heroVideos: Map<number, any>;
+  private heroTextSettings: Map<number, any>;
+  private galleryItems: Map<number, any>;
+  private faqSections: Map<number, any>;
+  private faqs: Map<number, any>;
   private contacts: Map<number, Contact>;
-  private legalDocuments: Map<number, LegalDocument>;
-  private ctaSettings: Map<number, CtaSettings>;
-  private seoSettings: Map<number, SeoSettings>;
+  private legalDocuments: Map<number, any>;
+  private ctaSettings: Map<number, any>;
+  private seoSettings: Map<number, any>;
   private deploymentHistory: Map<number, DeploymentHistory>;
   private currentIds: {
     users: number;
@@ -126,6 +128,53 @@ export class MemStorage implements IStorage {
       seoSettings: 1,
       deploymentHistory: 1
     };
+    
+    // Load data from JSON files with fallback
+    this.loadDataFromFiles();
+  }
+
+  private loadDataFromFiles() {
+    try {
+      // Load hero videos
+      const heroVideosData = JSON.parse(readFileSync(join(process.cwd(), 'server/data/hero-videos.json'), 'utf-8'));
+      heroVideosData.forEach((video: any) => this.heroVideos.set(video.id, video));
+
+      // Load hero text settings
+      const heroTextData = JSON.parse(readFileSync(join(process.cwd(), 'server/data/hero-text.json'), 'utf-8'));
+      heroTextData.forEach((text: any) => this.heroTextSettings.set(text.id, text));
+
+      // Load gallery items
+      const galleryData = JSON.parse(readFileSync(join(process.cwd(), 'server/data/gallery-items.json'), 'utf-8'));
+      galleryData.forEach((item: any) => this.galleryItems.set(item.id, item));
+
+      // Load FAQ sections
+      const faqSectionsData = JSON.parse(readFileSync(join(process.cwd(), 'server/data/faq-sections.json'), 'utf-8'));
+      faqSectionsData.forEach((section: any) => this.faqSections.set(section.id, section));
+
+      // Load FAQs
+      const faqsData = JSON.parse(readFileSync(join(process.cwd(), 'server/data/faqs.json'), 'utf-8'));
+      faqsData.forEach((faq: any) => this.faqs.set(faq.id, faq));
+
+      // Load contacts
+      const contactsData = JSON.parse(readFileSync(join(process.cwd(), 'server/data/contacts.json'), 'utf-8'));
+      contactsData.forEach((contact: Contact) => this.contacts.set(contact.id, contact));
+
+      // Load legal documents
+      const legalData = JSON.parse(readFileSync(join(process.cwd(), 'server/data/legal-documents.json'), 'utf-8'));
+      legalData.forEach((doc: any) => this.legalDocuments.set(doc.id, doc));
+
+      // Load CTA settings
+      const ctaData = JSON.parse(readFileSync(join(process.cwd(), 'server/data/cta-settings.json'), 'utf-8'));
+      ctaData.forEach((cta: any) => this.ctaSettings.set(cta.id, cta));
+
+      // Load SEO settings
+      const seoData = JSON.parse(readFileSync(join(process.cwd(), 'server/data/seo-settings.json'), 'utf-8'));
+      seoData.forEach((seo: any) => this.seoSettings.set(seo.id, seo));
+
+      console.log("✅ JSON data loaded successfully from fallback files");
+    } catch (error) {
+      console.log("⚠️ Could not load JSON files, using empty data:", error);
+    }
   }
 
   // User operations
@@ -171,7 +220,7 @@ export class MemStorage implements IStorage {
 
   // Hero videos operations
   async getHeroVideos(): Promise<HeroVideo[]> {
-    return Array.from(this.heroVideos.values()).sort((a, b) => a.order - b.order);
+    return Array.from(this.heroVideos.values()).sort((a, b) => (a.order_index || 0) - (b.order_index || 0));
   }
 
   async getHeroVideo(id: number): Promise<HeroVideo | undefined> {
@@ -180,11 +229,11 @@ export class MemStorage implements IStorage {
 
   async createHeroVideo(video: InsertHeroVideo): Promise<HeroVideo> {
     const id = this.currentIds.heroVideos++;
-    const newVideo: HeroVideo = {
+    const newVideo: any = {
       id,
       ...video,
-      createdAt: new Date(),
-      updatedAt: new Date()
+      created_at: new Date(),
+      updated_at: new Date()
     };
     this.heroVideos.set(id, newVideo);
     return newVideo;
@@ -194,10 +243,10 @@ export class MemStorage implements IStorage {
     const video = this.heroVideos.get(id);
     if (!video) return undefined;
 
-    const updatedVideo: HeroVideo = {
+    const updatedVideo: any = {
       ...video,
       ...updates,
-      updatedAt: new Date()
+      updated_at: new Date()
     };
     this.heroVideos.set(id, updatedVideo);
     return updatedVideo;
@@ -473,3 +522,6 @@ export class MemStorage implements IStorage {
 
 // Create a singleton instance
 export const storage = new MemStorage();
+
+// Export hybrid storage for platform content
+export { hybridStorage } from './hybrid-storage';
