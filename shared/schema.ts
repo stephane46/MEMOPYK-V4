@@ -2,67 +2,139 @@ import { pgTable, text, serial, integer, boolean, timestamp, varchar, decimal, j
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod";
 
-// Users table
+// Users table (admin authentication)
 export const users = pgTable("users", {
   id: serial("id").primaryKey(),
   email: text("email").notNull().unique(),
   password: text("password").notNull(),
-  firstName: text("first_name").notNull(),
-  lastName: text("last_name").notNull(),
-  role: text("role").notNull().default("user"), // user, admin
+  firstName: text("first_name"),
+  lastName: text("last_name"),
+  role: text("role").notNull().default("admin"),
   isActive: boolean("is_active").notNull().default(true),
   createdAt: timestamp("created_at").notNull().defaultNow(),
   updatedAt: timestamp("updated_at").notNull().defaultNow()
 });
 
-// Memories table (main content)
-export const memories = pgTable("memories", {
+// Hero videos table
+export const heroVideos = pgTable("hero_videos", {
   id: serial("id").primaryKey(),
-  userId: integer("user_id").notNull().references(() => users.id),
   title: text("title").notNull(),
-  description: text("description"),
-  category: text("category").notNull(), // family, travel, milestone, etc.
-  tags: text("tags").array(), // array of tag strings
-  location: text("location"),
-  date: timestamp("date"),
-  isPublic: boolean("is_public").notNull().default(false),
-  status: text("status").notNull().default("active"), // active, archived, deleted
+  filename: text("filename").notNull(),
+  url: text("url").notNull(),
+  thumbnailUrl: text("thumbnail_url"),
+  duration: integer("duration"),
+  isActive: boolean("is_active").notNull().default(true),
+  order: integer("order").notNull().default(0),
   createdAt: timestamp("created_at").notNull().defaultNow(),
   updatedAt: timestamp("updated_at").notNull().defaultNow()
 });
 
-// Media files table
-export const mediaFiles = pgTable("media_files", {
+// Hero text settings table  
+export const heroTextSettings = pgTable("hero_text_settings", {
   id: serial("id").primaryKey(),
-  memoryId: integer("memory_id").notNull().references(() => memories.id),
-  filename: text("filename").notNull(),
-  originalName: text("original_name").notNull(),
-  mimeType: text("mime_type").notNull(),
-  fileSize: integer("file_size").notNull(),
-  url: text("url").notNull(),
-  thumbnailUrl: text("thumbnail_url"),
-  duration: integer("duration"), // for videos in seconds
-  dimensions: jsonb("dimensions"), // {width: number, height: number}
-  uploadedAt: timestamp("uploaded_at").notNull().defaultNow()
+  language: text("language").notNull(), // 'fr' or 'en'
+  mainHeading: text("main_heading").notNull(),
+  subHeading: text("sub_heading"),
+  ctaText: text("cta_text").notNull(),
+  isActive: boolean("is_active").notNull().default(true),
+  updatedAt: timestamp("updated_at").notNull().defaultNow()
 });
 
-// Comments table
-export const comments = pgTable("comments", {
+// Gallery items table
+export const galleryItems = pgTable("gallery_items", {
   id: serial("id").primaryKey(),
-  memoryId: integer("memory_id").notNull().references(() => memories.id),
-  userId: integer("user_id").notNull().references(() => users.id),
-  content: text("content").notNull(),
+  title: text("title").notNull(),
+  description: text("description"),
+  imageUrl: text("image_url").notNull(),
+  videoUrl: text("video_url"),
+  thumbnailUrl: text("thumbnail_url"),
+  order: integer("order").notNull().default(0),
+  isVisible: boolean("is_visible").notNull().default(true),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+  updatedAt: timestamp("updated_at").notNull().defaultNow()
+});
+
+// FAQ sections table
+export const faqSections = pgTable("faq_sections", {
+  id: serial("id").primaryKey(),
+  title: text("title").notNull(),
+  language: text("language").notNull(), // 'fr' or 'en'
+  order: integer("order").notNull().default(0),
+  isVisible: boolean("is_visible").notNull().default(true),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+  updatedAt: timestamp("updated_at").notNull().defaultNow()
+});
+
+// FAQs table
+export const faqs = pgTable("faqs", {
+  id: serial("id").primaryKey(),
+  sectionId: integer("section_id").notNull().references(() => faqSections.id),
+  question: text("question").notNull(),
+  answer: text("answer").notNull(),
+  order: integer("order").notNull().default(0),
+  isVisible: boolean("is_visible").notNull().default(true),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+  updatedAt: timestamp("updated_at").notNull().defaultNow()
+});
+
+// Contacts table
+export const contacts = pgTable("contacts", {
+  id: serial("id").primaryKey(),
+  name: text("name").notNull(),
+  email: text("email").notNull(),
+  phone: text("phone"),
+  message: text("message").notNull(),
+  status: text("status").notNull().default("new"), // new, read, replied
   createdAt: timestamp("created_at").notNull().defaultNow()
 });
 
-// Analytics table
-export const analytics = pgTable("analytics", {
+// Legal documents table
+export const legalDocuments = pgTable("legal_documents", {
   id: serial("id").primaryKey(),
-  memoryId: integer("memory_id").references(() => memories.id),
-  userId: integer("user_id").references(() => users.id),
-  action: text("action").notNull(), // view, like, share, download
-  metadata: jsonb("metadata"), // additional data
-  timestamp: timestamp("timestamp").notNull().defaultNow()
+  type: text("type").notNull(), // privacy, terms, cookies
+  language: text("language").notNull(), // 'fr' or 'en'
+  title: text("title").notNull(),
+  content: text("content").notNull(),
+  version: text("version").notNull().default("1.0"),
+  isActive: boolean("is_active").notNull().default(true),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+  updatedAt: timestamp("updated_at").notNull().defaultNow()
+});
+
+// CTA settings table
+export const ctaSettings = pgTable("cta_settings", {
+  id: serial("id").primaryKey(),
+  language: text("language").notNull(), // 'fr' or 'en'
+  title: text("title").notNull(),
+  description: text("description"),
+  buttonText: text("button_text").notNull(),
+  buttonUrl: text("button_url").notNull(),
+  isActive: boolean("is_active").notNull().default(true),
+  updatedAt: timestamp("updated_at").notNull().defaultNow()
+});
+
+// SEO settings table
+export const seoSettings = pgTable("seo_settings", {
+  id: serial("id").primaryKey(),
+  page: text("page").notNull(), // home, gallery, contact, etc.
+  language: text("language").notNull(), // 'fr' or 'en'
+  title: text("title").notNull(),
+  description: text("description").notNull(),
+  keywords: text("keywords"),
+  ogTitle: text("og_title"),
+  ogDescription: text("og_description"),
+  ogImage: text("og_image"),
+  updatedAt: timestamp("updated_at").notNull().defaultNow()
+});
+
+// Deployment history table
+export const deploymentHistory = pgTable("deployment_history", {
+  id: serial("id").primaryKey(),
+  version: text("version").notNull(),
+  description: text("description"),
+  deployedBy: text("deployed_by").notNull(),
+  status: text("status").notNull(), // success, failed, rollback
+  deployedAt: timestamp("deployed_at").notNull().defaultNow()
 });
 
 // Insert schemas and types
@@ -72,35 +144,91 @@ export const insertUserSchema = createInsertSchema(users).omit({
   updatedAt: true
 });
 
-export const insertMemorySchema = createInsertSchema(memories).omit({
+export const insertHeroVideoSchema = createInsertSchema(heroVideos).omit({
   id: true,
   createdAt: true,
   updatedAt: true
 });
 
-export const insertMediaFileSchema = createInsertSchema(mediaFiles).omit({
+export const insertHeroTextSettingsSchema = createInsertSchema(heroTextSettings).omit({
   id: true,
-  uploadedAt: true
+  updatedAt: true
 });
 
-export const insertCommentSchema = createInsertSchema(comments).omit({
+export const insertGalleryItemSchema = createInsertSchema(galleryItems).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true
+});
+
+export const insertFaqSectionSchema = createInsertSchema(faqSections).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true
+});
+
+export const insertFaqSchema = createInsertSchema(faqs).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true
+});
+
+export const insertContactSchema = createInsertSchema(contacts).omit({
   id: true,
   createdAt: true
 });
 
-export const insertAnalyticsSchema = createInsertSchema(analytics).omit({
+export const insertLegalDocumentSchema = createInsertSchema(legalDocuments).omit({
   id: true,
-  timestamp: true
+  createdAt: true,
+  updatedAt: true
+});
+
+export const insertCtaSettingsSchema = createInsertSchema(ctaSettings).omit({
+  id: true,
+  updatedAt: true
+});
+
+export const insertSeoSettingsSchema = createInsertSchema(seoSettings).omit({
+  id: true,
+  updatedAt: true
+});
+
+export const insertDeploymentHistorySchema = createInsertSchema(deploymentHistory).omit({
+  id: true,
+  deployedAt: true
 });
 
 // Export types
 export type User = typeof users.$inferSelect;
 export type InsertUser = z.infer<typeof insertUserSchema>;
-export type Memory = typeof memories.$inferSelect;
-export type InsertMemory = z.infer<typeof insertMemorySchema>;
-export type MediaFile = typeof mediaFiles.$inferSelect;
-export type InsertMediaFile = z.infer<typeof insertMediaFileSchema>;
-export type Comment = typeof comments.$inferSelect;
-export type InsertComment = z.infer<typeof insertCommentSchema>;
-export type Analytics = typeof analytics.$inferSelect;
-export type InsertAnalytics = z.infer<typeof insertAnalyticsSchema>;
+
+export type HeroVideo = typeof heroVideos.$inferSelect;
+export type InsertHeroVideo = z.infer<typeof insertHeroVideoSchema>;
+
+export type HeroTextSettings = typeof heroTextSettings.$inferSelect;
+export type InsertHeroTextSettings = z.infer<typeof insertHeroTextSettingsSchema>;
+
+export type GalleryItem = typeof galleryItems.$inferSelect;
+export type InsertGalleryItem = z.infer<typeof insertGalleryItemSchema>;
+
+export type FaqSection = typeof faqSections.$inferSelect;
+export type InsertFaqSection = z.infer<typeof insertFaqSectionSchema>;
+
+export type Faq = typeof faqs.$inferSelect;
+export type InsertFaq = z.infer<typeof insertFaqSchema>;
+
+export type Contact = typeof contacts.$inferSelect;
+export type InsertContact = z.infer<typeof insertContactSchema>;
+
+export type LegalDocument = typeof legalDocuments.$inferSelect;
+export type InsertLegalDocument = z.infer<typeof insertLegalDocumentSchema>;
+
+export type CtaSettings = typeof ctaSettings.$inferSelect;
+export type InsertCtaSettings = z.infer<typeof insertCtaSettingsSchema>;
+
+export type SeoSettings = typeof seoSettings.$inferSelect;
+export type InsertSeoSettings = z.infer<typeof insertSeoSettingsSchema>;
+
+export type DeploymentHistory = typeof deploymentHistory.$inferSelect;
+export type InsertDeploymentHistory = z.infer<typeof insertDeploymentHistorySchema>;

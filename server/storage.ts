@@ -1,10 +1,16 @@
 import { 
-  users, memories, mediaFiles, comments, analytics,
+  users, heroVideos, heroTextSettings, galleryItems, faqSections, faqs, contacts, legalDocuments, ctaSettings, seoSettings, deploymentHistory,
   type User, type InsertUser,
-  type Memory, type InsertMemory,
-  type MediaFile, type InsertMediaFile,
-  type Comment, type InsertComment,
-  type Analytics, type InsertAnalytics
+  type HeroVideo, type InsertHeroVideo,
+  type HeroTextSettings, type InsertHeroTextSettings,
+  type GalleryItem, type InsertGalleryItem,
+  type FaqSection, type InsertFaqSection,
+  type Faq, type InsertFaq,
+  type Contact, type InsertContact,
+  type LegalDocument, type InsertLegalDocument,
+  type CtaSettings, type InsertCtaSettings,
+  type SeoSettings, type InsertSeoSettings,
+  type DeploymentHistory, type InsertDeploymentHistory
 } from "@shared/schema";
 
 export interface IStorage {
@@ -14,56 +20,111 @@ export interface IStorage {
   createUser(user: InsertUser): Promise<User>;
   updateUser(id: number, updates: Partial<InsertUser>): Promise<User | undefined>;
   
-  // Memory operations
-  getMemory(id: number): Promise<Memory | undefined>;
-  getMemoriesByUser(userId: number): Promise<Memory[]>;
-  getMemories(limit?: number, offset?: number): Promise<Memory[]>;
-  createMemory(memory: InsertMemory): Promise<Memory>;
-  updateMemory(id: number, updates: Partial<InsertMemory>): Promise<Memory | undefined>;
-  deleteMemory(id: number): Promise<boolean>;
+  // Hero videos operations
+  getHeroVideos(): Promise<HeroVideo[]>;
+  getHeroVideo(id: number): Promise<HeroVideo | undefined>;
+  createHeroVideo(video: InsertHeroVideo): Promise<HeroVideo>;
+  updateHeroVideo(id: number, updates: Partial<InsertHeroVideo>): Promise<HeroVideo | undefined>;
+  deleteHeroVideo(id: number): Promise<boolean>;
   
-  // Media file operations
-  getMediaFile(id: number): Promise<MediaFile | undefined>;
-  getMediaFilesByMemory(memoryId: number): Promise<MediaFile[]>;
-  createMediaFile(mediaFile: InsertMediaFile): Promise<MediaFile>;
-  deleteMediaFile(id: number): Promise<boolean>;
+  // Hero text settings operations
+  getHeroTextSettings(language?: string): Promise<HeroTextSettings[]>;
+  updateHeroTextSettings(id: number, updates: Partial<InsertHeroTextSettings>): Promise<HeroTextSettings | undefined>;
   
-  // Comment operations
-  getCommentsByMemory(memoryId: number): Promise<Comment[]>;
-  createComment(comment: InsertComment): Promise<Comment>;
-  deleteComment(id: number): Promise<boolean>;
+  // Gallery operations
+  getGalleryItems(): Promise<GalleryItem[]>;
+  getGalleryItem(id: number): Promise<GalleryItem | undefined>;
+  createGalleryItem(item: InsertGalleryItem): Promise<GalleryItem>;
+  updateGalleryItem(id: number, updates: Partial<InsertGalleryItem>): Promise<GalleryItem | undefined>;
+  deleteGalleryItem(id: number): Promise<boolean>;
   
-  // Analytics operations
-  createAnalytics(analytics: InsertAnalytics): Promise<Analytics>;
-  getAnalytics(memoryId?: number, userId?: number, limit?: number): Promise<Analytics[]>;
+  // FAQ operations
+  getFaqSections(language?: string): Promise<FaqSection[]>;
+  getFaqs(sectionId?: number): Promise<Faq[]>;
+  createFaqSection(section: InsertFaqSection): Promise<FaqSection>;
+  createFaq(faq: InsertFaq): Promise<Faq>;
+  updateFaqSection(id: number, updates: Partial<InsertFaqSection>): Promise<FaqSection | undefined>;
+  updateFaq(id: number, updates: Partial<InsertFaq>): Promise<Faq | undefined>;
+  deleteFaqSection(id: number): Promise<boolean>;
+  deleteFaq(id: number): Promise<boolean>;
+  
+  // Contact operations
+  getContacts(): Promise<Contact[]>;
+  getContact(id: number): Promise<Contact | undefined>;
+  createContact(contact: InsertContact): Promise<Contact>;
+  updateContact(id: number, updates: Partial<InsertContact>): Promise<Contact | undefined>;
+  deleteContact(id: number): Promise<boolean>;
+  
+  // Legal documents operations
+  getLegalDocuments(language?: string): Promise<LegalDocument[]>;
+  getLegalDocument(id: number): Promise<LegalDocument | undefined>;
+  createLegalDocument(doc: InsertLegalDocument): Promise<LegalDocument>;
+  updateLegalDocument(id: number, updates: Partial<InsertLegalDocument>): Promise<LegalDocument | undefined>;
+  deleteLegalDocument(id: number): Promise<boolean>;
+  
+  // CTA settings operations
+  getCtaSettings(language?: string): Promise<CtaSettings[]>;
+  updateCtaSettings(id: number, updates: Partial<InsertCtaSettings>): Promise<CtaSettings | undefined>;
+  
+  // SEO settings operations
+  getSeoSettings(page?: string, language?: string): Promise<SeoSettings[]>;
+  updateSeoSettings(id: number, updates: Partial<InsertSeoSettings>): Promise<SeoSettings | undefined>;
+  
+  // Deployment history operations
+  getDeploymentHistory(): Promise<DeploymentHistory[]>;
+  createDeploymentHistory(deployment: InsertDeploymentHistory): Promise<DeploymentHistory>;
 }
 
 export class MemStorage implements IStorage {
   private users: Map<number, User>;
-  private memories: Map<number, Memory>;
-  private mediaFiles: Map<number, MediaFile>;
-  private comments: Map<number, Comment>;
-  private analytics: Map<number, Analytics>;
+  private heroVideos: Map<number, HeroVideo>;
+  private heroTextSettings: Map<number, HeroTextSettings>;
+  private galleryItems: Map<number, GalleryItem>;
+  private faqSections: Map<number, FaqSection>;
+  private faqs: Map<number, Faq>;
+  private contacts: Map<number, Contact>;
+  private legalDocuments: Map<number, LegalDocument>;
+  private ctaSettings: Map<number, CtaSettings>;
+  private seoSettings: Map<number, SeoSettings>;
+  private deploymentHistory: Map<number, DeploymentHistory>;
   private currentIds: {
     users: number;
-    memories: number;
-    mediaFiles: number;
-    comments: number;
-    analytics: number;
+    heroVideos: number;
+    heroTextSettings: number;
+    galleryItems: number;
+    faqSections: number;
+    faqs: number;
+    contacts: number;
+    legalDocuments: number;
+    ctaSettings: number;
+    seoSettings: number;
+    deploymentHistory: number;
   };
 
   constructor() {
     this.users = new Map();
-    this.memories = new Map();
-    this.mediaFiles = new Map();
-    this.comments = new Map();
-    this.analytics = new Map();
+    this.heroVideos = new Map();
+    this.heroTextSettings = new Map();
+    this.galleryItems = new Map();
+    this.faqSections = new Map();
+    this.faqs = new Map();
+    this.contacts = new Map();
+    this.legalDocuments = new Map();
+    this.ctaSettings = new Map();
+    this.seoSettings = new Map();
+    this.deploymentHistory = new Map();
     this.currentIds = {
       users: 1,
-      memories: 1,
-      mediaFiles: 1,
-      comments: 1,
-      analytics: 1
+      heroVideos: 1,
+      heroTextSettings: 1,
+      galleryItems: 1,
+      faqSections: 1,
+      faqs: 1,
+      contacts: 1,
+      legalDocuments: 1,
+      ctaSettings: 1,
+      seoSettings: 1,
+      deploymentHistory: 1
     };
   }
 
@@ -73,153 +134,342 @@ export class MemStorage implements IStorage {
   }
 
   async getUserByEmail(email: string): Promise<User | undefined> {
-    return Array.from(this.users.values()).find(user => user.email === email);
+    for (const user of this.users.values()) {
+      if (user.email === email) {
+        return user;
+      }
+    }
+    return undefined;
   }
 
-  async createUser(insertUser: InsertUser): Promise<User> {
+  async createUser(user: InsertUser): Promise<User> {
     const id = this.currentIds.users++;
-    const now = new Date();
-    const user: User = { 
-      ...insertUser,
-      role: insertUser.role || "user",
-      isActive: insertUser.isActive ?? true,
-      id, 
-      createdAt: now,
-      updatedAt: now
+    const newUser: User = {
+      id,
+      ...user,
+      firstName: user.firstName || null,
+      lastName: user.lastName || null,
+      createdAt: new Date(),
+      updatedAt: new Date()
     };
-    this.users.set(id, user);
-    return user;
+    this.users.set(id, newUser);
+    return newUser;
   }
 
   async updateUser(id: number, updates: Partial<InsertUser>): Promise<User | undefined> {
     const user = this.users.get(id);
     if (!user) return undefined;
-    
-    const updatedUser = { ...user, ...updates, updatedAt: new Date() };
+
+    const updatedUser: User = {
+      ...user,
+      ...updates,
+      updatedAt: new Date()
+    };
     this.users.set(id, updatedUser);
     return updatedUser;
   }
 
-  // Memory operations
-  async getMemory(id: number): Promise<Memory | undefined> {
-    return this.memories.get(id);
+  // Hero videos operations
+  async getHeroVideos(): Promise<HeroVideo[]> {
+    return Array.from(this.heroVideos.values()).sort((a, b) => a.order - b.order);
   }
 
-  async getMemoriesByUser(userId: number): Promise<Memory[]> {
-    return Array.from(this.memories.values()).filter(memory => memory.userId === userId);
+  async getHeroVideo(id: number): Promise<HeroVideo | undefined> {
+    return this.heroVideos.get(id);
   }
 
-  async getMemories(limit: number = 50, offset: number = 0): Promise<Memory[]> {
-    const allMemories = Array.from(this.memories.values());
-    return allMemories.slice(offset, offset + limit);
-  }
-
-  async createMemory(insertMemory: InsertMemory): Promise<Memory> {
-    const id = this.currentIds.memories++;
-    const now = new Date();
-    const memory: Memory = { 
-      ...insertMemory,
-      description: insertMemory.description || null,
-      tags: insertMemory.tags || null,
-      location: insertMemory.location || null,
-      date: insertMemory.date || null,
-      status: insertMemory.status || "active",
-      isPublic: insertMemory.isPublic ?? false,
-      id, 
-      createdAt: now,
-      updatedAt: now
+  async createHeroVideo(video: InsertHeroVideo): Promise<HeroVideo> {
+    const id = this.currentIds.heroVideos++;
+    const newVideo: HeroVideo = {
+      id,
+      ...video,
+      createdAt: new Date(),
+      updatedAt: new Date()
     };
-    this.memories.set(id, memory);
-    return memory;
+    this.heroVideos.set(id, newVideo);
+    return newVideo;
   }
 
-  async updateMemory(id: number, updates: Partial<InsertMemory>): Promise<Memory | undefined> {
-    const memory = this.memories.get(id);
-    if (!memory) return undefined;
-    
-    const updatedMemory = { ...memory, ...updates, updatedAt: new Date() };
-    this.memories.set(id, updatedMemory);
-    return updatedMemory;
-  }
+  async updateHeroVideo(id: number, updates: Partial<InsertHeroVideo>): Promise<HeroVideo | undefined> {
+    const video = this.heroVideos.get(id);
+    if (!video) return undefined;
 
-  async deleteMemory(id: number): Promise<boolean> {
-    return this.memories.delete(id);
-  }
-
-  // Media file operations
-  async getMediaFile(id: number): Promise<MediaFile | undefined> {
-    return this.mediaFiles.get(id);
-  }
-
-  async getMediaFilesByMemory(memoryId: number): Promise<MediaFile[]> {
-    return Array.from(this.mediaFiles.values()).filter(file => file.memoryId === memoryId);
-  }
-
-  async createMediaFile(insertMediaFile: InsertMediaFile): Promise<MediaFile> {
-    const id = this.currentIds.mediaFiles++;
-    const mediaFile: MediaFile = { 
-      ...insertMediaFile,
-      thumbnailUrl: insertMediaFile.thumbnailUrl || null,
-      duration: insertMediaFile.duration || null,
-      dimensions: insertMediaFile.dimensions || null,
-      id, 
-      uploadedAt: new Date()
+    const updatedVideo: HeroVideo = {
+      ...video,
+      ...updates,
+      updatedAt: new Date()
     };
-    this.mediaFiles.set(id, mediaFile);
-    return mediaFile;
+    this.heroVideos.set(id, updatedVideo);
+    return updatedVideo;
   }
 
-  async deleteMediaFile(id: number): Promise<boolean> {
-    return this.mediaFiles.delete(id);
+  async deleteHeroVideo(id: number): Promise<boolean> {
+    return this.heroVideos.delete(id);
   }
 
-  // Comment operations
-  async getCommentsByMemory(memoryId: number): Promise<Comment[]> {
-    return Array.from(this.comments.values()).filter(comment => comment.memoryId === memoryId);
+  // Hero text settings operations
+  async getHeroTextSettings(language?: string): Promise<HeroTextSettings[]> {
+    const settings = Array.from(this.heroTextSettings.values());
+    return language ? settings.filter(s => s.language === language) : settings;
   }
 
-  async createComment(insertComment: InsertComment): Promise<Comment> {
-    const id = this.currentIds.comments++;
-    const comment: Comment = { 
-      ...insertComment, 
-      id, 
+  async updateHeroTextSettings(id: number, updates: Partial<InsertHeroTextSettings>): Promise<HeroTextSettings | undefined> {
+    const settings = this.heroTextSettings.get(id);
+    if (!settings) return undefined;
+
+    const updatedSettings: HeroTextSettings = {
+      ...settings,
+      ...updates,
+      updatedAt: new Date()
+    };
+    this.heroTextSettings.set(id, updatedSettings);
+    return updatedSettings;
+  }
+
+  // Gallery operations
+  async getGalleryItems(): Promise<GalleryItem[]> {
+    return Array.from(this.galleryItems.values())
+      .filter(item => item.isVisible)
+      .sort((a, b) => a.order - b.order);
+  }
+
+  async getGalleryItem(id: number): Promise<GalleryItem | undefined> {
+    return this.galleryItems.get(id);
+  }
+
+  async createGalleryItem(item: InsertGalleryItem): Promise<GalleryItem> {
+    const id = this.currentIds.galleryItems++;
+    const newItem: GalleryItem = {
+      id,
+      ...item,
+      createdAt: new Date(),
+      updatedAt: new Date()
+    };
+    this.galleryItems.set(id, newItem);
+    return newItem;
+  }
+
+  async updateGalleryItem(id: number, updates: Partial<InsertGalleryItem>): Promise<GalleryItem | undefined> {
+    const item = this.galleryItems.get(id);
+    if (!item) return undefined;
+
+    const updatedItem: GalleryItem = {
+      ...item,
+      ...updates,
+      updatedAt: new Date()
+    };
+    this.galleryItems.set(id, updatedItem);
+    return updatedItem;
+  }
+
+  async deleteGalleryItem(id: number): Promise<boolean> {
+    return this.galleryItems.delete(id);
+  }
+
+  // FAQ operations
+  async getFaqSections(language?: string): Promise<FaqSection[]> {
+    const sections = Array.from(this.faqSections.values())
+      .filter(section => section.isVisible);
+    return language ? sections.filter(s => s.language === language) : sections;
+  }
+
+  async getFaqs(sectionId?: number): Promise<Faq[]> {
+    const faqs = Array.from(this.faqs.values())
+      .filter(faq => faq.isVisible);
+    return sectionId ? faqs.filter(f => f.sectionId === sectionId) : faqs;
+  }
+
+  async createFaqSection(section: InsertFaqSection): Promise<FaqSection> {
+    const id = this.currentIds.faqSections++;
+    const newSection: FaqSection = {
+      id,
+      ...section,
+      createdAt: new Date(),
+      updatedAt: new Date()
+    };
+    this.faqSections.set(id, newSection);
+    return newSection;
+  }
+
+  async createFaq(faq: InsertFaq): Promise<Faq> {
+    const id = this.currentIds.faqs++;
+    const newFaq: Faq = {
+      id,
+      ...faq,
+      createdAt: new Date(),
+      updatedAt: new Date()
+    };
+    this.faqs.set(id, newFaq);
+    return newFaq;
+  }
+
+  async updateFaqSection(id: number, updates: Partial<InsertFaqSection>): Promise<FaqSection | undefined> {
+    const section = this.faqSections.get(id);
+    if (!section) return undefined;
+
+    const updatedSection: FaqSection = {
+      ...section,
+      ...updates,
+      updatedAt: new Date()
+    };
+    this.faqSections.set(id, updatedSection);
+    return updatedSection;
+  }
+
+  async updateFaq(id: number, updates: Partial<InsertFaq>): Promise<Faq | undefined> {
+    const faq = this.faqs.get(id);
+    if (!faq) return undefined;
+
+    const updatedFaq: Faq = {
+      ...faq,
+      ...updates,
+      updatedAt: new Date()
+    };
+    this.faqs.set(id, updatedFaq);
+    return updatedFaq;
+  }
+
+  async deleteFaqSection(id: number): Promise<boolean> {
+    return this.faqSections.delete(id);
+  }
+
+  async deleteFaq(id: number): Promise<boolean> {
+    return this.faqs.delete(id);
+  }
+
+  // Contact operations
+  async getContacts(): Promise<Contact[]> {
+    return Array.from(this.contacts.values());
+  }
+
+  async getContact(id: number): Promise<Contact | undefined> {
+    return this.contacts.get(id);
+  }
+
+  async createContact(contact: InsertContact): Promise<Contact> {
+    const id = this.currentIds.contacts++;
+    const newContact: Contact = {
+      id,
+      ...contact,
       createdAt: new Date()
     };
-    this.comments.set(id, comment);
-    return comment;
+    this.contacts.set(id, newContact);
+    return newContact;
   }
 
-  async deleteComment(id: number): Promise<boolean> {
-    return this.comments.delete(id);
-  }
+  async updateContact(id: number, updates: Partial<InsertContact>): Promise<Contact | undefined> {
+    const contact = this.contacts.get(id);
+    if (!contact) return undefined;
 
-  // Analytics operations
-  async createAnalytics(insertAnalytics: InsertAnalytics): Promise<Analytics> {
-    const id = this.currentIds.analytics++;
-    const analytics: Analytics = { 
-      ...insertAnalytics,
-      userId: insertAnalytics.userId || null,
-      memoryId: insertAnalytics.memoryId || null,
-      metadata: insertAnalytics.metadata || null,
-      id, 
-      timestamp: new Date()
+    const updatedContact: Contact = {
+      ...contact,
+      ...updates
     };
-    this.analytics.set(id, analytics);
-    return analytics;
+    this.contacts.set(id, updatedContact);
+    return updatedContact;
   }
 
-  async getAnalytics(memoryId?: number, userId?: number, limit: number = 100): Promise<Analytics[]> {
-    let filtered = Array.from(this.analytics.values());
-    
-    if (memoryId) {
-      filtered = filtered.filter(a => a.memoryId === memoryId);
-    }
-    if (userId) {
-      filtered = filtered.filter(a => a.userId === userId);
-    }
-    
-    return filtered.slice(0, limit);
+  async deleteContact(id: number): Promise<boolean> {
+    return this.contacts.delete(id);
+  }
+
+  // Legal documents operations
+  async getLegalDocuments(language?: string): Promise<LegalDocument[]> {
+    const docs = Array.from(this.legalDocuments.values())
+      .filter(doc => doc.isActive);
+    return language ? docs.filter(d => d.language === language) : docs;
+  }
+
+  async getLegalDocument(id: number): Promise<LegalDocument | undefined> {
+    return this.legalDocuments.get(id);
+  }
+
+  async createLegalDocument(doc: InsertLegalDocument): Promise<LegalDocument> {
+    const id = this.currentIds.legalDocuments++;
+    const newDoc: LegalDocument = {
+      id,
+      ...doc,
+      createdAt: new Date(),
+      updatedAt: new Date()
+    };
+    this.legalDocuments.set(id, newDoc);
+    return newDoc;
+  }
+
+  async updateLegalDocument(id: number, updates: Partial<InsertLegalDocument>): Promise<LegalDocument | undefined> {
+    const doc = this.legalDocuments.get(id);
+    if (!doc) return undefined;
+
+    const updatedDoc: LegalDocument = {
+      ...doc,
+      ...updates,
+      updatedAt: new Date()
+    };
+    this.legalDocuments.set(id, updatedDoc);
+    return updatedDoc;
+  }
+
+  async deleteLegalDocument(id: number): Promise<boolean> {
+    return this.legalDocuments.delete(id);
+  }
+
+  // CTA settings operations
+  async getCtaSettings(language?: string): Promise<CtaSettings[]> {
+    const settings = Array.from(this.ctaSettings.values())
+      .filter(setting => setting.isActive);
+    return language ? settings.filter(s => s.language === language) : settings;
+  }
+
+  async updateCtaSettings(id: number, updates: Partial<InsertCtaSettings>): Promise<CtaSettings | undefined> {
+    const settings = this.ctaSettings.get(id);
+    if (!settings) return undefined;
+
+    const updatedSettings: CtaSettings = {
+      ...settings,
+      ...updates,
+      updatedAt: new Date()
+    };
+    this.ctaSettings.set(id, updatedSettings);
+    return updatedSettings;
+  }
+
+  // SEO settings operations
+  async getSeoSettings(page?: string, language?: string): Promise<SeoSettings[]> {
+    let settings = Array.from(this.seoSettings.values());
+    if (page) settings = settings.filter(s => s.page === page);
+    if (language) settings = settings.filter(s => s.language === language);
+    return settings;
+  }
+
+  async updateSeoSettings(id: number, updates: Partial<InsertSeoSettings>): Promise<SeoSettings | undefined> {
+    const settings = this.seoSettings.get(id);
+    if (!settings) return undefined;
+
+    const updatedSettings: SeoSettings = {
+      ...settings,
+      ...updates,
+      updatedAt: new Date()
+    };
+    this.seoSettings.set(id, updatedSettings);
+    return updatedSettings;
+  }
+
+  // Deployment history operations
+  async getDeploymentHistory(): Promise<DeploymentHistory[]> {
+    return Array.from(this.deploymentHistory.values());
+  }
+
+  async createDeploymentHistory(deployment: InsertDeploymentHistory): Promise<DeploymentHistory> {
+    const id = this.currentIds.deploymentHistory++;
+    const newDeployment: DeploymentHistory = {
+      id,
+      ...deployment,
+      deployedAt: new Date()
+    };
+    this.deploymentHistory.set(id, newDeployment);
+    return newDeployment;
   }
 }
 
+// Create a singleton instance
 export const storage = new MemStorage();
