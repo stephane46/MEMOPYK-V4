@@ -2,11 +2,19 @@
 
 ## Overview
 
-MEMOPYK is a full-stack web application built with a modern TypeScript stack featuring React frontend and Express backend. The application uses Drizzle ORM for database operations and shadcn/ui for the component library. The project is structured as a monorepo with shared types and schemas between frontend and backend.
+MEMOPYK is a full-stack memory film platform being rebuilt from scratch. Currently in Phase 1 - minimal React + TypeScript + Vite setup with uploaded MEMOPYK visual assets. The rebuild follows systematic documentation to avoid previous technical failures and implement the complete platform incrementally.
 
 ## User Preferences
 
 Preferred communication style: Simple, everyday language.
+
+## Recent Changes (July 21, 2025)
+
+✓ Created minimal React + TypeScript + Vite foundation
+✓ Integrated all MEMOPYK visual assets (logos, icons, process images)
+✓ Set up favicon and proper HTML structure
+✓ Removed complex styling systems for clean rebuild
+✓ Ready to follow systematic rebuild plan from uploaded documentation
 
 ## System Architecture
 
