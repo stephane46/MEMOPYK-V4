@@ -2,6 +2,25 @@ import express, { type Request, Response, NextFunction } from "express";
 import { registerRoutes } from "./routes";
 import { setupVite, serveStatic, log } from "./vite";
 
+// Database connection test as per Phase 2.2 of rebuild plan
+import { testDatabaseConnection } from "./database";
+
+console.log("=== MEMOPYK Server Starting ===");
+console.log("NODE_ENV:", process.env.NODE_ENV);
+console.log("DATABASE_URL:", process.env.DATABASE_URL ? "✅ Available" : "❌ Missing");
+console.log("SUPABASE_URL:", process.env.SUPABASE_URL ? "✅ Available" : "❌ Missing");
+
+// Test database connection
+testDatabaseConnection().then(success => {
+  if (success) {
+    console.log("✅ Database connectivity confirmed - Phase 2.2 complete");
+  } else {
+    console.log("❌ Database connection test failed");
+  }
+}).catch(err => {
+  console.error("❌ Database test error:", err);
+});
+
 const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
