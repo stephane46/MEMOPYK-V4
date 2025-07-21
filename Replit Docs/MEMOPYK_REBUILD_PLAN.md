@@ -90,7 +90,7 @@
 - [ ] Verify Supabase storage API accessibility - PENDING
 - [x] Create database connection success/failure logging
 
-**Checkpoint 2.2**: ❌ Database connectivity FAILED - authentication issues
+**Checkpoint 2.2**: ❌ Database connectivity FAILED - ISSUE: SUPABASE_URL is PostgreSQL connection string, should be HTTPS URL format
 **Test**: Server logs show "Database connected successfully"
 
 ### **Phase 3: Database Schema & Storage (45-60 minutes)**
