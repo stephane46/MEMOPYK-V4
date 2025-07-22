@@ -63,25 +63,8 @@ app.use((req, res, next) => {
   // Register API routes first (before Vite middleware)
   registerRoutes(app);
 
-  // Debug path resolution before Vite setup
-  console.log("DEBUG: import.meta.dirname =", import.meta.dirname);
-  console.log("DEBUG: process.cwd() =", process.cwd());
-  console.log("DEBUG: __dirname exists?", typeof __dirname !== 'undefined' ? __dirname : 'undefined');
-  
   // Setup Vite for React frontend (this must come after API routes)
-  try {
-    await setupVite(app, server);
-  } catch (error) {
-    console.error("Vite setup failed:", error);
-    // Fallback: serve static files directly
-    const path = await import("path");
-    const clientPath = path.resolve(process.cwd(), "client");
-    console.log("Fallback: serving client from", clientPath);
-    app.use(express.static(clientPath));
-    app.get("*", (_req: Request, res: Response) => {
-      res.sendFile(path.resolve(clientPath, "index.html"));
-    });
-  }
+  await setupVite(app, server);
 
   // Error handling middleware
   app.use((err: any, _req: Request, res: Response, _next: NextFunction) => {
