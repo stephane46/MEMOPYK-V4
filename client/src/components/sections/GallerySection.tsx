@@ -165,7 +165,7 @@ export default function GallerySection() {
                       ) : hasImage ? (
                         <img
                           src={hasImage}
-                          alt={language === 'fr' ? item.alt_text_fr : item.alt_text_en}
+                          alt={language === 'fr-FR' ? item.alt_text_fr : item.alt_text_en}
                           className="w-full h-full object-cover"
                         />
                       ) : null}

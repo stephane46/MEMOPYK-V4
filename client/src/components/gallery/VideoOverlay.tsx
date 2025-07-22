@@ -204,7 +204,7 @@ export function VideoOverlay({ videoUrl, title, width, height, orientation, onCl
         {/* Video Element */}
         <video
           ref={videoRef}
-          src={`/api/video-proxy?filename=${videoUrl.split('/').pop()}`}
+          src={videoUrl}
           className="w-full h-full object-contain"
           onClick={handleVideoClick}
           onPlay={handlePlay}
