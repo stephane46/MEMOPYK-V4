@@ -324,12 +324,53 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Gallery Items - Portfolio gallery content  
+  // Gallery management endpoints
   app.get("/api/gallery", async (req, res) => {
     try {
       const galleryItems = await hybridStorage.getGalleryItems();
       res.json(galleryItems);
     } catch (error) {
       res.status(500).json({ error: "Failed to get gallery items" });
+    }
+  });
+
+  app.post("/api/gallery", async (req, res) => {
+    try {
+      const newItem = await hybridStorage.createGalleryItem(req.body);
+      res.status(201).json({ success: true, item: newItem });
+    } catch (error) {
+      res.status(500).json({ error: "Failed to create gallery item" });
+    }
+  });
+
+  app.patch("/api/gallery/:id", async (req, res) => {
+    try {
+      const itemId = parseInt(req.params.id);
+      const updatedItem = await hybridStorage.updateGalleryItem(itemId, req.body);
+      res.json({ success: true, item: updatedItem });
+    } catch (error) {
+      res.status(500).json({ error: "Failed to update gallery item" });
+    }
+  });
+
+  app.patch("/api/gallery/:id/reorder", async (req, res) => {
+    try {
+      const itemId = parseInt(req.params.id);
+      const { order_index } = req.body;
+      const updatedItem = await hybridStorage.updateGalleryItemOrder(itemId, order_index);
+      res.json({ success: true, item: updatedItem });
+    } catch (error) {
+      res.status(500).json({ error: "Failed to reorder gallery item" });
+    }
+  });
+
+  app.delete("/api/gallery/:id", async (req, res) => {
+    try {
+      const itemId = parseInt(req.params.id);
+      const deletedItem = await hybridStorage.deleteGalleryItem(itemId);
+      res.json({ success: true, item: deletedItem });
+    } catch (error) {
+      res.status(500).json({ error: "Failed to delete gallery item" });
     }
   });
 

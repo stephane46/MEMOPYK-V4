@@ -13,10 +13,10 @@
     "price_fr": "299€",
     "alt_text_en": "Wedding memory film thumbnail",
     "alt_text_fr": "Miniature du film de souvenirs de mariage",
-    "order_index": 1,
+    "order_index": 3,
     "is_active": true,
     "created_at": "2024-01-01T00:00:00.000Z",
-    "updated_at": "2024-01-01T00:00:00.000Z"
+    "updated_at": "2025-07-22T12:42:56.462Z"
   },
   {
     "id": 2,
@@ -32,9 +32,26 @@
     "price_fr": "199€",
     "alt_text_en": "Family vacation film thumbnail",
     "alt_text_fr": "Miniature du film de vacances familiales",
+    "order_index": 1,
+    "is_active": false,
+    "created_at": "2024-01-01T00:00:00.000Z",
+    "updated_at": "2025-07-22T12:42:55.674Z"
+  },
+  {
+    "id": 1753188175343,
+    "title_en": "Test Gallery Item",
+    "title_fr": "Élément de Galerie Test",
+    "description_en": "Test description for gallery item",
+    "description_fr": "Description test pour élément de galerie",
+    "image_url_en": "https://picsum.photos/800/600?random=1",
+    "image_url_fr": "https://picsum.photos/800/600?random=2",
+    "price_en": "$150",
+    "price_fr": "150€",
+    "alt_text_en": "Test image alt text",
+    "alt_text_fr": "Texte alternatif test",
     "order_index": 2,
     "is_active": true,
-    "created_at": "2024-01-01T00:00:00.000Z",
-    "updated_at": "2024-01-01T00:00:00.000Z"
+    "created_at": "2025-07-22T12:42:55.343Z",
+    "updated_at": "2025-07-22T12:42:55.343Z"
   }
 ]

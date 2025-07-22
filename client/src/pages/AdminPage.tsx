@@ -10,6 +10,7 @@ import { Badge } from '@/components/ui/badge';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { ArrowUp, ArrowDown, Play, RefreshCw, BarChart3, Video, HardDrive, Users, MessageSquare, FileText, LogOut, TestTube, Rocket, X, Type, Save, Palette, ChevronUp, ChevronDown, Trash2, Eye, EyeOff } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import GalleryManagement from '@/components/admin/GalleryManagement';
 
 interface HeroVideo {
   id: number;
@@ -1112,10 +1113,9 @@ export default function AdminPage() {
                 <p className="text-gray-600 dark:text-gray-400">Gestion des éléments de galerie portfolio</p>
               </div>
               <Card>
-                <CardHeader>
-                  <CardTitle>Gestion de Galerie</CardTitle>
-                  <CardDescription>Prochainement - Interface de gestion de galerie</CardDescription>
-                </CardHeader>
+                <CardContent className="p-6">
+                  <GalleryManagement />
+                </CardContent>
               </Card>
             </div>
           )}

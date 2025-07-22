@@ -215,9 +215,90 @@ export class HybridStorage implements HybridStorageInterface {
   // Gallery operations
   async getGalleryItems(): Promise<any[]> {
     const data = this.loadJsonFile('gallery-items.json');
-    return data
-      .filter(item => item.is_active)
-      .sort((a, b) => (a.order_index || 0) - (b.order_index || 0));
+    return data; // Return all items for admin management
+  }
+
+  async createGalleryItem(item: any): Promise<any> {
+    const items = this.loadJsonFile('gallery-items.json');
+    const newItem = {
+      id: Date.now(),
+      ...item,
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString()
+    };
+    items.push(newItem);
+    this.saveJsonFile('gallery-items.json', items);
+    return newItem;
+  }
+
+  async updateGalleryItem(itemId: number, updateData: any): Promise<any> {
+    const items = this.loadJsonFile('gallery-items.json');
+    const itemIndex = items.findIndex((item: any) => item.id === itemId);
+    
+    if (itemIndex === -1) {
+      throw new Error('Gallery item not found');
+    }
+    
+    const updatedItem = { 
+      ...items[itemIndex], 
+      ...updateData, 
+      updated_at: new Date().toISOString() 
+    };
+    items[itemIndex] = updatedItem;
+    this.saveJsonFile('gallery-items.json', items);
+    
+    return updatedItem;
+  }
+
+  async updateGalleryItemOrder(itemId: number, newOrder: number): Promise<any> {
+    const items = this.loadJsonFile('gallery-items.json');
+    const itemIndex = items.findIndex((item: any) => item.id === itemId);
+    
+    if (itemIndex === -1) {
+      throw new Error('Gallery item not found');
+    }
+    
+    const item = items[itemIndex];
+    const oldOrder = item.order_index;
+    
+    // Update order indexes for other items
+    items.forEach((otherItem: any) => {
+      if (otherItem.id !== itemId) {
+        if (newOrder > oldOrder) {
+          // Moving down - shift others up
+          if (otherItem.order_index > oldOrder && otherItem.order_index <= newOrder) {
+            otherItem.order_index--;
+          }
+        } else {
+          // Moving up - shift others down  
+          if (otherItem.order_index >= newOrder && otherItem.order_index < oldOrder) {
+            otherItem.order_index++;
+          }
+        }
+      }
+    });
+    
+    // Update the target item's order
+    item.order_index = newOrder;
+    item.updated_at = new Date().toISOString();
+    
+    this.saveJsonFile('gallery-items.json', items);
+    return item;
+  }
+
+  async deleteGalleryItem(itemId: number): Promise<any> {
+    const items = this.loadJsonFile('gallery-items.json');
+    const itemIndex = items.findIndex((item: any) => item.id === itemId);
+    
+    if (itemIndex === -1) {
+      throw new Error('Gallery item not found');
+    }
+    
+    const deletedItem = items[itemIndex];
+    items.splice(itemIndex, 1);
+    this.saveJsonFile('gallery-items.json', items);
+    
+    return deletedItem;
   }
 
   // FAQ operations
