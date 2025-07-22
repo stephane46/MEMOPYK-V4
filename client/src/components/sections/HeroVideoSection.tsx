@@ -143,7 +143,7 @@ export function HeroVideoSection() {
     );
   }
 
-  const videoUrl = language === 'fr' ? currentVideo.url_fr : currentVideo.url_en;
+  const videoUrl = language === 'fr-FR' ? currentVideo.url_fr : currentVideo.url_en;
   const fontSize = activeHeroText?.font_size || 60;
 
   return (
@@ -203,7 +203,7 @@ export function HeroVideoSection() {
               textShadow: '2px 2px 4px rgba(0,0,0,0.8)'
             }}
           >
-            {language === 'fr' 
+            {language === 'fr-FR' 
               ? (activeHeroText?.title_fr || "Transformez vos souvenirs en films cinématographiques")
               : (activeHeroText?.title_en || "Transform your memories into cinematic films")
             }
@@ -216,7 +216,7 @@ export function HeroVideoSection() {
               textShadow: '1px 1px 2px rgba(0,0,0,0.8)' 
             }}
           >
-            {language === 'fr' 
+            {language === 'fr-FR' 
               ? (activeHeroText?.subtitle_fr || "Redonnez vie à vos moments précieux avec notre expertise cinématographique")
               : (activeHeroText?.subtitle_en || "Bring your precious moments to life with our cinematic expertise")
             }
@@ -227,14 +227,14 @@ export function HeroVideoSection() {
               size="lg" 
               className="bg-memopyk-orange hover:bg-memopyk-orange/90 text-white font-semibold px-6 sm:px-8 py-3 text-base sm:text-lg w-full sm:w-auto min-w-[200px]"
             >
-              {language === 'fr' ? 'Découvrir nos films' : 'Discover our films'}
+              {language === 'fr-FR' ? 'Découvrir nos films' : 'Discover our films'}
             </Button>
             <Button 
               variant="outline" 
               size="lg"
               className="border-2 border-white text-white hover:bg-white hover:text-memopyk-navy font-semibold px-6 sm:px-8 py-3 text-base sm:text-lg w-full sm:w-auto min-w-[200px]"
             >
-              {language === 'fr' ? 'Commencer mon projet' : 'Start my project'}
+              {language === 'fr-FR' ? 'Commencer mon projet' : 'Start my project'}
             </Button>
           </div>
         </div>
@@ -292,7 +292,7 @@ export function HeroVideoSection() {
       {/* Video Title Overlay */}
       <div className="absolute top-4 sm:top-8 left-4 sm:left-8 text-white z-10">
         <p className="text-xs sm:text-sm font-poppins opacity-80">
-          {language === 'fr' ? currentVideo.title_fr : currentVideo.title_en}
+          {language === 'fr-FR' ? currentVideo.title_fr : currentVideo.title_en}
         </p>
         <p className="text-xs opacity-60">
           {currentVideoIndex + 1} / {activeVideos.length}

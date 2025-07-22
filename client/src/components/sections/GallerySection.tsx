@@ -78,22 +78,22 @@ export default function GallerySection() {
 
   const getItemUrl = (item: GalleryItem, type: 'video' | 'image') => {
     if (type === 'video') {
-      return language === 'fr' ? item.video_url_fr : item.video_url_en;
+      return language === 'fr-FR' ? item.video_url_fr : item.video_url_en;
     } else {
-      return language === 'fr' ? item.image_url_fr : item.image_url_en;
+      return language === 'fr-FR' ? item.image_url_fr : item.image_url_en;
     }
   };
 
   const getItemTitle = (item: GalleryItem) => {
-    return language === 'fr' ? item.title_fr : item.title_en;
+    return language === 'fr-FR' ? item.title_fr : item.title_en;
   };
 
   const getItemDescription = (item: GalleryItem) => {
-    return language === 'fr' ? item.description_fr : item.description_en;
+    return language === 'fr-FR' ? item.description_fr : item.description_en;
   };
 
   const getItemPrice = (item: GalleryItem) => {
-    return language === 'fr' ? item.price_fr : item.price_en;
+    return language === 'fr-FR' ? item.price_fr : item.price_en;
   };
 
   if (isLoading) {

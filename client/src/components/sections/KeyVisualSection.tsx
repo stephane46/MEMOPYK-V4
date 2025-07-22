@@ -11,14 +11,14 @@ export function KeyVisualSection() {
           {/* Left: Problem Statement */}
           <div className="space-y-6">
             <h2 className="text-4xl md:text-5xl font-playfair font-bold text-memopyk-navy leading-tight">
-              {language === 'fr' 
+              {language === 'fr-FR' 
                 ? "Vos souvenirs dorment-ils dans vos téléphones ?"
                 : "Are your memories sleeping in your phones?"
               }
             </h2>
             
             <p className="text-lg text-memopyk-dark-blue leading-relaxed">
-              {language === 'fr' 
+              {language === 'fr-FR' 
                 ? "Photos dispersées, vidéos perdues dans les dossiers, disques durs qui s'accumulent... Vos moments précieux méritent mieux qu'un stockage numérique anonyme."
                 : "Scattered photos, videos lost in folders, accumulating hard drives... Your precious moments deserve better than anonymous digital storage."
               }
@@ -28,7 +28,7 @@ export function KeyVisualSection() {
               <div className="flex items-start space-x-3">
                 <div className="w-2 h-2 rounded-full bg-memopyk-orange mt-3 flex-shrink-0"></div>
                 <p className="text-memopyk-dark-blue">
-                  {language === 'fr' 
+                  {language === 'fr-FR' 
                     ? "Milliers de photos et vidéos non organisées"
                     : "Thousands of unorganized photos and videos"
                   }
@@ -37,7 +37,7 @@ export function KeyVisualSection() {
               <div className="flex items-start space-x-3">
                 <div className="w-2 h-2 rounded-full bg-memopyk-orange mt-3 flex-shrink-0"></div>
                 <p className="text-memopyk-dark-blue">
-                  {language === 'fr' 
+                  {language === 'fr-FR' 
                     ? "Souvenirs inaccessibles aux proches"
                     : "Memories inaccessible to loved ones"
                   }
@@ -46,7 +46,7 @@ export function KeyVisualSection() {
               <div className="flex items-start space-x-3">
                 <div className="w-2 h-2 rounded-full bg-memopyk-orange mt-3 flex-shrink-0"></div>
                 <p className="text-memopyk-dark-blue">
-                  {language === 'fr' 
+                  {language === 'fr-FR' 
                     ? "Pas de narration cohérente de votre histoire"
                     : "No coherent storytelling of your history"
                   }
@@ -57,13 +57,13 @@ export function KeyVisualSection() {
             {/* Solution Promise */}
             <div className="bg-white/80 backdrop-blur-sm p-6 rounded-xl border border-memopyk-sky-blue/30">
               <h3 className="text-xl font-semibold text-memopyk-navy mb-3">
-                {language === 'fr' 
+                {language === 'fr-FR' 
                   ? "Notre Solution MEMOPYK"
                   : "Our MEMOPYK Solution"
                 }
               </h3>
               <p className="text-memopyk-dark-blue">
-                {language === 'fr' 
+                {language === 'fr-FR' 
                   ? "Transformez le chaos numérique en films cinématographiques personnalisés. Nos artistes créent des narrations visuelles qui révèlent la beauté de votre histoire familiale."
                   : "Transform digital chaos into personalized cinematic films. Our artists create visual narratives that reveal the beauty of your family story."
                 }
