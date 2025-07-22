@@ -74,10 +74,33 @@ export class HybridStorage implements HybridStorageInterface {
       throw new Error('Video not found');
     }
     
-    videos[videoIndex].order_index = newOrder;
+    const targetVideo = videos[videoIndex];
+    const oldOrder = targetVideo.order_index;
+    
+    // Update other videos' order indices to make room
+    videos.forEach((video: any) => {
+      if (video.id === videoId) return; // Skip the target video
+      
+      if (newOrder < oldOrder) {
+        // Moving up: increment order of videos in between
+        if (video.order_index >= newOrder && video.order_index < oldOrder) {
+          video.order_index += 1;
+        }
+      } else if (newOrder > oldOrder) {
+        // Moving down: decrement order of videos in between
+        if (video.order_index > oldOrder && video.order_index <= newOrder) {
+          video.order_index -= 1;
+        }
+      }
+    });
+    
+    // Update target video's order
+    targetVideo.order_index = newOrder;
+    targetVideo.updated_at = new Date().toISOString();
+    
     this.saveJsonFile('hero-videos.json', videos);
     
-    return videos[videoIndex];
+    return targetVideo;
   }
 
   async updateHeroVideoStatus(videoId: number, isActive: boolean): Promise<any> {
