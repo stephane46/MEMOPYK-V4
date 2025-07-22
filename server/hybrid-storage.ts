@@ -5,6 +5,7 @@ import { createClient } from '@supabase/supabase-js';
 export interface HybridStorageInterface {
   // Hero videos
   getHeroVideos(): Promise<any[]>;
+  createHeroVideo(videoData: any): Promise<any>;
   
   // Hero text settings  
   getHeroTextSettings(language?: string): Promise<any[]>;
@@ -70,6 +71,31 @@ export class HybridStorage implements HybridStorageInterface {
   async getHeroVideos(): Promise<any[]> {
     const data = this.loadJsonFile('hero-videos.json');
     return data; // Return all videos for admin management
+  }
+
+  async createHeroVideo(videoData: any): Promise<any> {
+    const videos = this.loadJsonFile('hero-videos.json');
+    
+    // Get next ID
+    const nextId = videos.length > 0 ? Math.max(...videos.map(v => v.id)) + 1 : 1;
+    
+    const newVideo = {
+      id: nextId,
+      title_en: videoData.title_en,
+      title_fr: videoData.title_fr,
+      url_en: videoData.url_en,
+      url_fr: videoData.url_fr || videoData.url_en,
+      use_same_video: videoData.use_same_video || true,
+      is_active: videoData.is_active || false,
+      order_index: videoData.order_index || videos.length + 1,
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString()
+    };
+    
+    videos.push(newVideo);
+    this.saveJsonFile('hero-videos.json', videos);
+    
+    return newVideo;
   }
 
   async updateHeroVideoOrder(videoId: number, newOrder: number): Promise<any> {

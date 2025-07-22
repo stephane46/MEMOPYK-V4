@@ -63,6 +63,34 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Create new hero video entry
+  app.post("/api/hero-videos", async (req, res) => {
+    try {
+      const { title_en, title_fr, url_en, url_fr, use_same_video, is_active, order_index } = req.body;
+      
+      // Validate required fields
+      if (!title_en || !title_fr || !url_en) {
+        return res.status(400).json({ error: "Missing required fields: title_en, title_fr, url_en" });
+      }
+
+      // Create new hero video
+      const newVideo = await hybridStorage.createHeroVideo({
+        title_en,
+        title_fr,
+        url_en,
+        url_fr: url_fr || url_en,
+        use_same_video: use_same_video || true,
+        is_active: is_active || false,
+        order_index: order_index || 1
+      });
+
+      res.json(newVideo);
+    } catch (error) {
+      console.error('Create hero video error:', error);
+      res.status(500).json({ error: "Failed to create hero video" });
+    }
+  });
+
   // Update hero video order
   app.patch("/api/hero-videos/:id/reorder", async (req, res) => {
     try {
