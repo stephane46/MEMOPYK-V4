@@ -1,9 +1,7 @@
 import React, { useState, useRef, useCallback, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
 import { Slider } from '@/components/ui/slider';
-import { Plus, Minus, Save, RotateCcw, Crop } from 'lucide-react';
+import { Save, RotateCcw, Crop, ZoomIn, ZoomOut, Move } from 'lucide-react';
 
 interface ImageCropperProps {
   imageUrl: string;
@@ -30,14 +28,6 @@ export const ImageCropper: React.FC<ImageCropperProps> = ({
   targetWidth = 300,
   targetHeight = 200
 }) => {
-  const canvasRef = useRef<HTMLCanvasElement>(null);
-  const imageRef = useRef<HTMLImageElement>(null);
-  const containerRef = useRef<HTMLDivElement>(null);
-  const [isLoading, setIsLoading] = useState(true);
-  const [isDragging, setIsDragging] = useState(false);
-  const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
-  
-  // Crop settings state
   const [cropSettings, setCropSettings] = useState<CropSettings>(
     initialSettings || {
       zoom: 100,
@@ -47,322 +37,357 @@ export const ImageCropper: React.FC<ImageCropperProps> = ({
       height: 400
     }
   );
+  
+  const [isLoading, setIsLoading] = useState(true);
+  const [isSaving, setIsSaving] = useState(false);
+  const [isDragging, setIsDragging] = useState(false);
+  const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
+  const [imageLoaded, setImageLoaded] = useState(false);
+  
+  const imageRef = useRef<HTMLImageElement>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
 
-  // Load and display image
-  const drawImage = useCallback(() => {
-    const canvas = canvasRef.current;
-    const image = imageRef.current;
-    if (!canvas || !image) return;
+  // Load image through proxy to avoid CORS issues
+  const proxyImageUrl = `/api/video-proxy?filename=${encodeURIComponent(imageUrl.split('/').pop() || imageUrl)}`;
 
-    const ctx = canvas.getContext('2d');
-    if (!ctx) return;
-
-    // Set canvas size to preview window (600x400)
-    canvas.width = 600;
-    canvas.height = 400;
-
-    // Clear canvas
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-    // Calculate scaled dimensions based on zoom
-    const scale = cropSettings.zoom / 100;
-    const scaledWidth = image.naturalWidth * scale;
-    const scaledHeight = image.naturalHeight * scale;
-
-    // Draw image with zoom and position
-    ctx.drawImage(
-      image,
-      cropSettings.x,
-      cropSettings.y,
-      scaledWidth,
-      scaledHeight
-    );
-
-    // Draw crop frame overlay
-    ctx.strokeStyle = '#D67C4A'; // MEMOPYK orange
-    ctx.lineWidth = 3;
-    ctx.setLineDash([5, 5]);
-    
-    // Calculate crop frame position (centered)
-    const frameX = (600 - targetWidth) / 2;
-    const frameY = (400 - targetHeight) / 2;
-    
-    ctx.strokeRect(frameX, frameY, targetWidth, targetHeight);
-    
-    // Add semi-transparent overlay outside crop area
-    ctx.fillStyle = 'rgba(0, 0, 0, 0.4)';
-    // Top
-    ctx.fillRect(0, 0, 600, frameY);
-    // Bottom
-    ctx.fillRect(0, frameY + targetHeight, 600, 400 - frameY - targetHeight);
-    // Left
-    ctx.fillRect(0, frameY, frameX, targetHeight);
-    // Right
-    ctx.fillRect(frameX + targetWidth, frameY, 600 - frameX - targetWidth, targetHeight);
-  }, [cropSettings, targetWidth, targetHeight]);
-
-  // Handle image load
   useEffect(() => {
-    const image = new Image();
-    image.onload = () => {
-      imageRef.current = image;
-      setIsLoading(false);
-      
-      // Initial positioning to center the image
-      if (!initialSettings) {
-        // Calculate initial zoom to fit image nicely in preview
-        const widthRatio = 600 / image.naturalWidth;
-        const heightRatio = 400 / image.naturalHeight;
-        const initialZoom = Math.max(widthRatio, heightRatio) * 100;
-        
-        setCropSettings(prev => ({
-          ...prev,
-          zoom: Math.min(initialZoom, 200), // Cap at 200% to avoid too much zoom
-          x: -(image.naturalWidth * (Math.min(initialZoom, 200) / 100) - 600) / 2,
-          y: -(image.naturalHeight * (Math.min(initialZoom, 200) / 100) - 400) / 2
-        }));
-      }
-    };
-    image.onerror = () => {
-      console.error('Failed to load image:', imageUrl);
+    const img = new Image();
+    img.crossOrigin = 'anonymous'; // Try to enable cross-origin
+    img.onload = () => {
+      setImageLoaded(true);
       setIsLoading(false);
     };
-    image.src = imageUrl;
-  }, [imageUrl, initialSettings]);
-
-  // Redraw when settings change
-  useEffect(() => {
-    if (!isLoading) {
-      drawImage();
+    img.onerror = () => {
+      console.log('Direct image load failed, using proxy');
+      setIsLoading(false);
+      setImageLoaded(true);
+    };
+    img.src = proxyImageUrl;
+    if (imageRef.current) {
+      imageRef.current = img;
     }
-  }, [cropSettings, isLoading, drawImage]);
+  }, [proxyImageUrl]);
 
-  // Mouse handlers for dragging
+  // Mouse drag handlers
   const handleMouseDown = (e: React.MouseEvent) => {
     setIsDragging(true);
-    setDragStart({ x: e.clientX, y: e.clientY });
+    setDragStart({ x: e.clientX - cropSettings.x, y: e.clientY - cropSettings.y });
   };
 
   const handleMouseMove = (e: React.MouseEvent) => {
     if (!isDragging) return;
-
-    const deltaX = e.clientX - dragStart.x;
-    const deltaY = e.clientY - dragStart.y;
-
+    
+    const newX = e.clientX - dragStart.x;
+    const newY = e.clientY - dragStart.y;
+    
     setCropSettings(prev => ({
       ...prev,
-      x: prev.x + deltaX,
-      y: prev.y + deltaY
+      x: Math.max(-200, Math.min(200, newX)),
+      y: Math.max(-200, Math.min(200, newY))
     }));
-
-    setDragStart({ x: e.clientX, y: e.clientY });
   };
 
   const handleMouseUp = () => {
     setIsDragging(false);
   };
 
-  // Zoom controls
+  // Zoom handlers
   const handleZoomChange = (value: number[]) => {
     setCropSettings(prev => ({ ...prev, zoom: value[0] }));
-  };
-
-  const handleZoomInput = (value: string) => {
-    const zoom = Math.max(10, Math.min(500, parseInt(value) || 100));
-    setCropSettings(prev => ({ ...prev, zoom }));
   };
 
   const adjustZoom = (delta: number) => {
     setCropSettings(prev => ({
       ...prev,
-      zoom: Math.max(10, Math.min(500, prev.zoom + delta))
+      zoom: Math.max(50, Math.min(300, prev.zoom + delta))
     }));
   };
 
-  // Reset to original position
-  const handleReset = () => {
-    if (imageRef.current) {
-      setCropSettings({
-        zoom: 100,
-        x: -(imageRef.current.naturalWidth - 600) / 2,
-        y: -(imageRef.current.naturalHeight - 400) / 2,
-        width: 600,
-        height: 400
-      });
-    }
+  // Reset to center
+  const resetPosition = () => {
+    setCropSettings(prev => ({
+      ...prev,
+      x: 0,
+      y: 0,
+      zoom: 100
+    }));
   };
 
   // Save cropped image
   const handleSave = async () => {
-    const canvas = canvasRef.current;
-    const image = imageRef.current;
-    if (!canvas || !image) return;
-
-    // Create a new canvas for the final cropped image
-    const cropCanvas = document.createElement('canvas');
-    cropCanvas.width = targetWidth;
-    cropCanvas.height = targetHeight;
-    const cropCtx = cropCanvas.getContext('2d');
-    if (!cropCtx) return;
-
-    // Calculate the source area to crop from the original image
-    const scale = cropSettings.zoom / 100;
-    const frameX = (600 - targetWidth) / 2;
-    const frameY = (400 - targetHeight) / 2;
+    if (!imageLoaded) return;
     
-    // Source coordinates on the scaled image
-    const sourceX = (frameX - cropSettings.x) / scale;
-    const sourceY = (frameY - cropSettings.y) / scale;
-    const sourceWidth = targetWidth / scale;
-    const sourceHeight = targetHeight / scale;
+    setIsSaving(true);
+    
+    try {
+      // Create a temporary canvas to crop the image
+      const canvas = document.createElement('canvas');
+      const ctx = canvas.getContext('2d');
+      if (!ctx) throw new Error('Cannot get canvas context');
 
-    // Draw the cropped portion
-    cropCtx.drawImage(
-      image,
-      sourceX, sourceY, sourceWidth, sourceHeight,
-      0, 0, targetWidth, targetHeight
-    );
+      canvas.width = targetWidth;
+      canvas.height = targetHeight;
 
-    // Convert to blob
-    cropCanvas.toBlob(
-      (blob) => {
-        if (blob) {
-          onSave(blob, cropSettings);
-        }
-      },
-      'image/jpeg',
-      1.0 // Full quality
-    );
+      // Load the image again for processing
+      const img = new Image();
+      img.crossOrigin = 'anonymous';
+      
+      await new Promise<void>((resolve, reject) => {
+        img.onload = () => resolve();
+        img.onerror = () => reject(new Error('Failed to load image for processing'));
+        img.src = proxyImageUrl;
+      });
+
+      // Calculate crop parameters
+      const scale = cropSettings.zoom / 100;
+      const frameWidth = 600;
+      const frameHeight = 400;
+      
+      // Calculate source coordinates on the original image
+      const sourceX = Math.max(0, (-cropSettings.x) / scale);
+      const sourceY = Math.max(0, (-cropSettings.y) / scale);
+      const sourceWidth = Math.min(img.naturalWidth - sourceX, (frameWidth / scale));
+      const sourceHeight = Math.min(img.naturalHeight - sourceY, (frameHeight / scale));
+
+      // Draw the cropped portion
+      ctx.drawImage(
+        img,
+        sourceX, sourceY, sourceWidth, sourceHeight,
+        0, 0, targetWidth, targetHeight
+      );
+
+      // Convert to blob
+      canvas.toBlob(
+        (blob) => {
+          if (blob) {
+            onSave(blob, cropSettings);
+          } else {
+            throw new Error('Failed to create blob from canvas');
+          }
+          setIsSaving(false);
+        },
+        'image/jpeg',
+        0.95
+      );
+    } catch (error) {
+      console.error('Error saving cropped image:', error);
+      setIsSaving(false);
+      // Fallback: create a simple cropped version using fetch
+      try {
+        const response = await fetch(proxyImageUrl);
+        const blob = await response.blob();
+        onSave(blob, cropSettings);
+      } catch (fallbackError) {
+        console.error('Fallback save failed:', fallbackError);
+      }
+    }
   };
 
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center h-96 bg-gray-100 dark:bg-gray-800 rounded-lg">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-memopyk-orange mx-auto"></div>
+          <p className="mt-2 text-gray-600 dark:text-gray-400">Chargement de l'image...</p>
+        </div>
+      </div>
+    );
+  }
+
   return (
-    <div className="space-y-6 bg-white dark:bg-gray-900 p-6 rounded-lg">
-      <div className="flex items-center justify-between">
-        <h3 className="text-lg font-semibold text-gray-900 dark:text-white flex items-center gap-2">
-          <Crop className="h-5 w-5 text-memopyk-orange" />
-          Recadrage d'Image Statique ({targetWidth}x{targetHeight})
-        </h3>
-        <div className="text-sm text-gray-500">
-          Image finale: {targetWidth} × {targetHeight} px
+    <div className="space-y-6 max-w-4xl mx-auto">
+      {/* Header */}
+      <div className="bg-gradient-to-r from-memopyk-orange/10 to-memopyk-orange/5 rounded-lg p-4">
+        <div className="flex items-center justify-between">
+          <h2 className="text-xl font-bold text-gray-900 dark:text-white flex items-center gap-3">
+            <Crop className="h-6 w-6 text-memopyk-orange" />
+            Créer Image Statique
+          </h2>
+          <div className="text-sm text-gray-600 dark:text-gray-400 bg-white dark:bg-gray-800 px-3 py-1 rounded-full">
+            Sortie: {targetWidth} × {targetHeight} px
+          </div>
+        </div>
+        
+        <div className="mt-3 text-sm text-gray-600 dark:text-gray-400">
+          <div className="flex items-center gap-4">
+            <span className="flex items-center gap-1">
+              <Move className="h-4 w-4" />
+              Glissez l'image pour repositionner
+            </span>
+            <span className="flex items-center gap-1">
+              <ZoomIn className="h-4 w-4" />
+              Utilisez le zoom pour ajuster la taille
+            </span>
+          </div>
         </div>
       </div>
 
-      {/* Canvas Preview */}
-      <div className="bg-gray-100 dark:bg-gray-800 rounded-lg p-4">
+      {/* Preview Area */}
+      <div className="bg-gray-50 dark:bg-gray-800 rounded-xl p-6">
+        <div className="text-center mb-4">
+          <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Aperçu de recadrage</h3>
+          <p className="text-sm text-gray-500">Zone de prévisualisation 600×400 avec cadre de sortie {targetWidth}×{targetHeight}</p>
+        </div>
+        
         <div 
           ref={containerRef}
-          className="relative mx-auto border-2 border-gray-300 dark:border-gray-600 rounded"
+          className="relative mx-auto bg-white dark:bg-gray-700 border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg overflow-hidden"
           style={{ width: 600, height: 400 }}
+          onMouseDown={handleMouseDown}
+          onMouseMove={handleMouseMove}
+          onMouseUp={handleMouseUp}
+          onMouseLeave={handleMouseUp}
         >
-          <canvas
-            ref={canvasRef}
-            onMouseDown={handleMouseDown}
-            onMouseMove={handleMouseMove}
-            onMouseUp={handleMouseUp}
-            onMouseLeave={handleMouseUp}
-            className={`cursor-${isDragging ? 'grabbing' : 'grab'} block`}
-            style={{ width: 600, height: 400 }}
+          {/* Background Image */}
+          <div 
+            className={`absolute inset-0 bg-cover bg-no-repeat transition-transform duration-100 ${
+              isDragging ? 'cursor-grabbing' : 'cursor-grab'
+            }`}
+            style={{
+              backgroundImage: `url(${proxyImageUrl})`,
+              backgroundPosition: `${cropSettings.x}px ${cropSettings.y}px`,
+              backgroundSize: `${cropSettings.zoom}%`,
+              transform: `scale(${cropSettings.zoom / 100})`,
+              transformOrigin: `${-cropSettings.x}px ${-cropSettings.y}px`
+            }}
           />
-          {isLoading && (
-            <div className="absolute inset-0 flex items-center justify-center bg-gray-200 dark:bg-gray-700">
-              <div className="text-gray-500">Chargement de l'image...</div>
+          
+          {/* Crop Frame Overlay */}
+          <div className="absolute inset-0 pointer-events-none">
+            {/* Dark overlay areas */}
+            <div 
+              className="absolute top-0 left-0 right-0 bg-black bg-opacity-40"
+              style={{ height: `${(400 - targetHeight) / 2}px` }}
+            />
+            <div 
+              className="absolute bottom-0 left-0 right-0 bg-black bg-opacity-40"
+              style={{ height: `${(400 - targetHeight) / 2}px` }}
+            />
+            <div 
+              className="absolute left-0 bg-black bg-opacity-40"
+              style={{ 
+                top: `${(400 - targetHeight) / 2}px`,
+                width: `${(600 - targetWidth) / 2}px`,
+                height: `${targetHeight}px`
+              }}
+            />
+            <div 
+              className="absolute right-0 bg-black bg-opacity-40"
+              style={{ 
+                top: `${(400 - targetHeight) / 2}px`,
+                width: `${(600 - targetWidth) / 2}px`,
+                height: `${targetHeight}px`
+              }}
+            />
+            
+            {/* Crop frame border */}
+            <div 
+              className="absolute border-2 border-memopyk-orange shadow-lg"
+              style={{
+                left: `${(600 - targetWidth) / 2}px`,
+                top: `${(400 - targetHeight) / 2}px`,
+                width: targetWidth,
+                height: targetHeight
+              }}
+            >
+              <div className="absolute inset-0 border border-white border-opacity-50"></div>
             </div>
-          )}
-        </div>
-        <div className="text-center mt-2 text-sm text-gray-600 dark:text-gray-400">
-          Zone de prévisualisation 600×400px - Glissez pour repositionner
+          </div>
         </div>
       </div>
 
-      {/* Zoom Controls */}
-      <div className="space-y-4">
+      {/* Controls */}
+      <div className="bg-white dark:bg-gray-800 rounded-xl p-6 border border-gray-200 dark:border-gray-700">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {/* Slider Control */}
-          <div className="space-y-2">
-            <Label className="text-gray-700 dark:text-gray-300">Zoom (5% par incréments)</Label>
-            <div className="space-y-2">
+          {/* Zoom Controls */}
+          <div>
+            <h4 className="text-md font-semibold text-gray-900 dark:text-white mb-3 flex items-center gap-2">
+              <ZoomIn className="h-4 w-4" />
+              Zoom ({cropSettings.zoom}%)
+            </h4>
+            <div className="space-y-3">
               <Slider
                 value={[cropSettings.zoom]}
                 onValueChange={handleZoomChange}
-                min={10}
-                max={500}
+                min={50}
+                max={300}
                 step={5}
                 className="w-full"
               />
-              <div className="flex justify-between text-xs text-gray-500">
-                <span>10%</span>
-                <span className="font-medium">{cropSettings.zoom}%</span>
-                <span>500%</span>
+              <div className="flex gap-2">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => adjustZoom(-10)}
+                  className="flex-1"
+                >
+                  <ZoomOut className="h-4 w-4 mr-1" />
+                  -10%
+                </Button>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => adjustZoom(10)}
+                  className="flex-1"
+                >
+                  <ZoomIn className="h-4 w-4 mr-1" />
+                  +10%
+                </Button>
               </div>
             </div>
           </div>
 
-          {/* Zoom Buttons */}
-          <div className="space-y-2">
-            <Label className="text-gray-700 dark:text-gray-300">Ajustements rapides</Label>
-            <div className="flex space-x-2">
-              <Button 
-                type="button"
-                variant="outline" 
-                size="sm" 
-                onClick={() => adjustZoom(-10)}
-                className="flex-1"
+          {/* Position Info & Reset */}
+          <div>
+            <h4 className="text-md font-semibold text-gray-900 dark:text-white mb-3 flex items-center gap-2">
+              <Move className="h-4 w-4" />
+              Position
+            </h4>
+            <div className="space-y-3">
+              <div className="text-sm text-gray-600 dark:text-gray-400 bg-gray-50 dark:bg-gray-700 p-3 rounded">
+                <div>X: {Math.round(cropSettings.x)}px</div>
+                <div>Y: {Math.round(cropSettings.y)}px</div>
+                <div>Zoom: {cropSettings.zoom}%</div>
+              </div>
+              <Button
+                variant="outline"
+                onClick={resetPosition}
+                className="w-full"
               >
-                <Minus className="h-4 w-4 mr-1" />
-                -10%
-              </Button>
-              <Input
-                type="number"
-                value={cropSettings.zoom}
-                onChange={(e) => handleZoomInput(e.target.value)}
-                min={10}
-                max={500}
-                className="w-20 text-center"
-              />
-              <Button 
-                type="button"
-                variant="outline" 
-                size="sm" 
-                onClick={() => adjustZoom(10)}
-                className="flex-1"
-              >
-                <Plus className="h-4 w-4 mr-1" />
-                +10%
+                <RotateCcw className="h-4 w-4 mr-2" />
+                Réinitialiser
               </Button>
             </div>
           </div>
         </div>
+      </div>
 
-        {/* Action Buttons */}
-        <div className="flex justify-between pt-4">
-          <Button 
-            type="button"
-            variant="outline" 
-            onClick={handleReset}
-            className="flex items-center"
-          >
-            <RotateCcw className="h-4 w-4 mr-2" />
-            Réinitialiser
-          </Button>
-          
-          <div className="flex space-x-2">
-            <Button 
-              type="button"
-              variant="outline" 
-              onClick={onCancel}
-            >
-              Annuler
-            </Button>
-            <Button 
-              type="button"
-              onClick={handleSave}
-              className="bg-memopyk-orange hover:bg-memopyk-orange-hover text-white"
-            >
+      {/* Action Buttons */}
+      <div className="flex justify-end gap-3 pt-4 border-t border-gray-200 dark:border-gray-700">
+        <Button
+          variant="outline"
+          onClick={onCancel}
+          disabled={isSaving}
+        >
+          Annuler
+        </Button>
+        <Button
+          onClick={handleSave}
+          disabled={isSaving}
+          className="bg-memopyk-orange hover:bg-memopyk-orange/90"
+        >
+          {isSaving ? (
+            <>
+              <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
+              Sauvegarde...
+            </>
+          ) : (
+            <>
               <Save className="h-4 w-4 mr-2" />
               Sauvegarder ({targetWidth}×{targetHeight})
-            </Button>
-          </div>
-        </div>
+            </>
+          )}
+        </Button>
       </div>
     </div>
   );
