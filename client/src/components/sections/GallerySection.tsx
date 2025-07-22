@@ -3,7 +3,7 @@ import { useState } from "react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useVideoAnalytics } from "@/hooks/useVideoAnalytics";
 import { Button } from "@/components/ui/button";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { VideoOverlay } from "@/components/gallery/VideoOverlay";
 import { Badge } from "@/components/ui/badge";
 import { Play, Eye, Star, ArrowRight, Image as ImageIcon } from "lucide-react";
 
@@ -15,6 +15,9 @@ interface GalleryItem {
   description_fr: string;
   video_url_en?: string;
   video_url_fr?: string;
+  video_width?: number;
+  video_height?: number;
+  video_orientation?: 'landscape' | 'portrait';
   image_url_en?: string;
   image_url_fr?: string;
   price_en: string;
@@ -28,7 +31,15 @@ interface GalleryItem {
 export default function GallerySection() {
   const { language } = useLanguage();
   const { trackVideoView } = useVideoAnalytics();
-  const [previewItem, setPreviewItem] = useState<{ type: 'video' | 'image'; url: string; title: string; itemId: number } | null>(null);
+  const [previewItem, setPreviewItem] = useState<{ 
+    type: 'video' | 'image'; 
+    url: string; 
+    title: string; 
+    itemId: number;
+    width?: number;
+    height?: number;
+    orientation?: 'landscape' | 'portrait';
+  } | null>(null);
   
   // Fetch active gallery items
   const { data: galleryItems = [], isLoading } = useQuery<GalleryItem[]>({
@@ -162,7 +173,10 @@ export default function GallerySection() {
                                   type: mediaType, 
                                   url: displayUrl, 
                                   title: getItemTitle(item),
-                                  itemId: item.id
+                                  itemId: item.id,
+                                  width: item.video_width,
+                                  height: item.video_height,
+                                  orientation: item.video_orientation
                                 });
                                 // Track gallery video preview clicks for analytics
                                 if (mediaType === 'video') {
@@ -235,7 +249,10 @@ export default function GallerySection() {
                             type: mediaType, 
                             url: displayUrl, 
                             title: getItemTitle(item),
-                            itemId: item.id
+                            itemId: item.id,
+                            width: item.video_width,
+                            height: item.video_height,
+                            orientation: item.video_orientation
                           });
                           // Track gallery video preview clicks for analytics
                           if (mediaType === 'video') {
@@ -270,33 +287,16 @@ export default function GallerySection() {
           </div>
         )}
 
-        {/* Preview Modal */}
-        {previewItem && (
-          <Dialog open={!!previewItem} onOpenChange={() => setPreviewItem(null)}>
-            <DialogContent className="max-w-5xl max-h-[90vh] bg-white dark:bg-gray-900 p-0 overflow-hidden">
-              <DialogHeader className="p-6 pb-2">
-                <DialogTitle className="text-gray-900 dark:text-white text-xl">
-                  {previewItem.title}
-                </DialogTitle>
-              </DialogHeader>
-              <div className="aspect-video w-full bg-black">
-                {previewItem.type === 'video' ? (
-                  <video
-                    src={previewItem.url}
-                    controls
-                    autoPlay
-                    className="w-full h-full"
-                  />
-                ) : (
-                  <img
-                    src={previewItem.url}
-                    alt={previewItem.title}
-                    className="w-full h-full object-contain"
-                  />
-                )}
-              </div>
-            </DialogContent>
-          </Dialog>
+        {/* Inline Video Overlay */}
+        {previewItem && previewItem.type === 'video' && previewItem.width && previewItem.height && previewItem.orientation && (
+          <VideoOverlay
+            videoUrl={previewItem.url}
+            title={previewItem.title}
+            width={previewItem.width}
+            height={previewItem.height}
+            orientation={previewItem.orientation}
+            onClose={() => setPreviewItem(null)}
+          />
         )}
       </div>
     </section>

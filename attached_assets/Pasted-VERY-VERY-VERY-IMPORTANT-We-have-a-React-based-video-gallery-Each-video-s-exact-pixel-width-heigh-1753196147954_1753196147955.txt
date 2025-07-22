@@ -1,0 +1,24 @@
+VERY VERY VERY IMPORTANT: We have a React based video gallery. Each video’s exact pixel width, height, and orientation (portrait vs. landscape) are already available in a local JSON file from the admin panel.
+When the user clicks “Play” on a thumbnail:
+1.	Insert the video into an absolutely positioned overlay that floats above the gallery—no full screen API, no modal component, and no letterboxing/pillarboxing.
+2.	Blur the entire gallery behind the video using CSS-only (backdrop-filter: blur(...)), with a semi opaque color fallback for older browsers.
+3.	Size the video container so that its longest side occupies two thirds of the viewport:
+o	Portrait videos: height = 66.66% of viewport height; width = auto to preserve ratio.
+o	Landscape videos: width = 66.66% of viewport width; height = auto to preserve ratio.
+4.	Maintain the video’s exact aspect ratio based on the pixel dimensions from the admin file—no cropping or black bars.
+Controls & Interaction:
+•	Close: click anywhere outside the video container to remove the overlay and return to the gallery.
+•	Playback toggle: clicking the video area or pressing Space pauses/resumes playback.
+•	Control bar: appears at the bottom of the video when paused or for the first 3 seconds after play begins, then fades out. Re appears on video click or pause.
+o	Buttons (with appropriate aria-labels):
+• Restart (seek to 0)
+• Play/Pause toggle
+• Mute/Unmute toggle
+•	Initial state: video starts playing with sound unmuted, control bar visible for 3 seconds.
+Technical & UX Notes:
+•	Implement in React (functional components/hooks).
+•	Debounce any resize handling when recalculating two thirds dimensions.
+•	Support mobile breakpoints: overlay and sizing logic identical on touch devices.
+•	Use CSS variables for the two thirds ratio to keep styling DRY.
+•	Ensure all controls are keyboard navigable and screen reader friendly.
+•	Animate the overlay’s fade in/out and gallery blur with a smooth transition (no specific style mandated).
