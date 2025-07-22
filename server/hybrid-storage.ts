@@ -1,5 +1,6 @@
-import { readFileSync, writeFileSync, existsSync } from "fs";
+import { readFileSync, writeFileSync, existsSync, unlinkSync } from "fs";
 import { join } from "path";
+import { createClient } from '@supabase/supabase-js';
 
 export interface HybridStorageInterface {
   // Hero videos
@@ -31,10 +32,15 @@ export interface HybridStorageInterface {
 
 export class HybridStorage implements HybridStorageInterface {
   private dataPath: string;
+  private supabase: any;
 
   constructor() {
     this.dataPath = join(process.cwd(), 'server/data');
-    console.log("✅ Hybrid storage initialized with JSON fallback system");
+    this.supabase = createClient(
+      process.env.SUPABASE_URL!,
+      process.env.SUPABASE_SERVICE_KEY!
+    );
+    console.log("✅ Hybrid storage initialized with JSON fallback system and Supabase integration");
   }
 
   private loadJsonFile(filename: string): any[] {
@@ -152,6 +158,10 @@ export class HybridStorage implements HybridStorageInterface {
     }
     
     const deletedVideo = videos[videoIndex];
+    
+    // Clean up video files before removing from JSON
+    await this.cleanupVideoFiles(deletedVideo, 'hero');
+    
     videos.splice(videoIndex, 1);
     this.saveJsonFile('hero-videos.json', videos);
     
@@ -295,6 +305,10 @@ export class HybridStorage implements HybridStorageInterface {
     }
     
     const deletedItem = items[itemIndex];
+    
+    // Clean up media files before removing from JSON
+    await this.cleanupVideoFiles(deletedItem, 'gallery');
+    
     items.splice(itemIndex, 1);
     this.saveJsonFile('gallery-items.json', items);
     
@@ -347,6 +361,90 @@ export class HybridStorage implements HybridStorageInterface {
   async getSeoSettings(page?: string, language?: string): Promise<any[]> {
     const data = this.loadJsonFile('seo-settings.json');
     return page ? data.filter(s => s.page === page) : data;
+  }
+
+  /**
+   * Clean up video files from Supabase storage and local cache
+   * Works for both hero videos and gallery items
+   */
+  private async cleanupVideoFiles(item: any, type: 'hero' | 'gallery'): Promise<void> {
+    try {
+      console.log(`🗑️ Starting file cleanup for ${type} item:`, item.id);
+      
+      const filesToDelete: string[] = [];
+      
+      if (type === 'hero') {
+        // Hero videos can have separate English/French files
+        if (item.url_en) filesToDelete.push(item.url_en);
+        if (item.url_fr && item.url_fr !== item.url_en) {
+          filesToDelete.push(item.url_fr);
+        }
+      } else if (type === 'gallery') {
+        // Gallery items can have video and/or image
+        if (item.video_url) filesToDelete.push(item.video_url);
+        if (item.image_url) filesToDelete.push(item.image_url);
+      }
+
+      // Remove files from Supabase storage
+      for (const filename of filesToDelete) {
+        if (filename) {
+          await this.deleteFromSupabaseStorage(filename, type);
+          await this.deleteFromLocalCache(filename);
+        }
+      }
+
+      console.log(`✅ File cleanup completed for ${type} item ${item.id}`);
+    } catch (error) {
+      console.error(`❌ Error during file cleanup for ${type} item ${item.id}:`, error);
+      // Don't throw here - we still want to delete the metadata even if file cleanup fails
+    }
+  }
+
+  /**
+   * Delete file from Supabase storage bucket
+   */
+  private async deleteFromSupabaseStorage(filename: string, type: 'hero' | 'gallery'): Promise<void> {
+    try {
+      const bucketName = type === 'hero' ? 'memopyk-hero' : 'memopyk-gallery';
+      
+      console.log(`🗑️ Deleting ${filename} from Supabase bucket: ${bucketName}`);
+      
+      const { error } = await this.supabase.storage
+        .from(bucketName)
+        .remove([filename]);
+
+      if (error) {
+        console.error(`❌ Supabase deletion error for ${filename}:`, error);
+      } else {
+        console.log(`✅ Successfully deleted ${filename} from Supabase storage`);
+      }
+    } catch (error) {
+      console.error(`❌ Exception during Supabase deletion of ${filename}:`, error);
+    }
+  }
+
+  /**
+   * Delete file from local video cache
+   */
+  private async deleteFromLocalCache(filename: string): Promise<void> {
+    try {
+      const cacheDir = join(process.cwd(), 'server/cache/videos');
+      
+      // Generate the same hash-based filename used by video-cache.ts
+      const { createHash } = require('crypto');
+      const hash = createHash('md5').update(filename).digest('hex');
+      const extension = filename.split('.').pop() || 'mp4';
+      const cacheFilePath = join(cacheDir, `${hash}.${extension}`);
+
+      if (existsSync(cacheFilePath)) {
+        unlinkSync(cacheFilePath);
+        console.log(`✅ Successfully deleted cached file: ${filename}`);
+      } else {
+        console.log(`ℹ️ Cache file not found (already cleaned): ${filename}`);
+      }
+    } catch (error) {
+      console.error(`❌ Error deleting cached file ${filename}:`, error);
+    }
   }
 }
 
