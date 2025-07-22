@@ -2,6 +2,8 @@ import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { hybridStorage } from "./hybrid-storage";
 import { z } from "zod";
+import { videoCache } from "./video-cache";
+import { createReadStream, existsSync, statSync } from 'fs';
 
 // Contact form validation schema
 const contactFormSchema = z.object({
@@ -444,7 +446,38 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const encodedUrl = encodeURI(fullVideoUrl);
       console.log(`Video proxy: Final encoded URL: ${encodedUrl}`);
       
-      // Fetch video from Supabase CDN
+      // HYBRID CACHING SYSTEM: Check local cache first
+      const cachedVideoPath = videoCache.getCachedVideoPath(videoUrl);
+      
+      if (cachedVideoPath && existsSync(cachedVideoPath)) {
+        console.log(`📦 Serving from cache: ${videoUrl}`);
+        
+        // Serve from local cache (much faster)
+        const stats = statSync(cachedVideoPath);
+        const fileSize = stats.size;
+        
+        // Handle range requests for cached file
+        if (range) {
+          const end = rangeEnd || fileSize - 1;
+          const chunkSize = (end - rangeStart) + 1;
+          
+          res.status(206);
+          res.setHeader('Content-Range', `bytes ${rangeStart}-${end}/${fileSize}`);
+          res.setHeader('Content-Length', chunkSize.toString());
+          
+          const stream = createReadStream(cachedVideoPath, { start: rangeStart, end });
+          stream.pipe(res);
+          return;
+        } else {
+          res.setHeader('Content-Length', fileSize.toString());
+          const stream = createReadStream(cachedVideoPath);
+          stream.pipe(res);
+          return;
+        }
+      }
+      
+      // Not in cache - fetch from Supabase CDN and cache it
+      console.log(`🌐 Fetching from Supabase and caching: ${videoUrl}`);
       const fetch = (await import('node-fetch')).default;
       const headers: any = {
         'User-Agent': 'MEMOPYK-VideoProxy/1.0'
@@ -490,8 +523,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
         res.setHeader('Content-Length', contentLength);
       }
       
-      // Stream the video content
+      // Stream the video content AND cache it for future requests
       if (response.body) {
+        // Try to cache the video for future requests (background operation)
+        videoCache.cacheVideo(videoUrl, response).catch(error => {
+          console.warn(`⚠️ Failed to cache video ${videoUrl}:`, error);
+        });
+        
         response.body.pipe(res);
       } else {
         res.status(500).json({ error: "No video content received" });
@@ -506,8 +544,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Video proxy health check
+  // Video proxy health check with cache stats
   app.get("/api/video-proxy/health", (req, res) => {
+    const cacheStats = videoCache.getCacheStats();
     res.json({
       status: "operational",
       service: "MEMOPYK Video Proxy",
@@ -516,8 +555,33 @@ export async function registerRoutes(app: Express): Promise<Server> {
         cors: "enabled",
         rangeRequests: "supported", 
         urlEncoding: "enabled",
-        supabaseCDN: "ready"
+        supabaseCDN: "ready",
+        hybridCache: "enabled"
+      },
+      cache: {
+        cachedFiles: cacheStats.fileCount,
+        totalSizeMB: cacheStats.sizeMB,
+        maxSizeMB: 500,
+        maxAgeHours: 24
       }
+    });
+  });
+
+  // Cache management endpoints for admin
+  app.get("/api/video-cache/stats", (req, res) => {
+    const stats = videoCache.getCacheStats();
+    res.json({
+      ...stats,
+      maxCacheSizeMB: 500,
+      maxCacheAgeHours: 24
+    });
+  });
+
+  app.delete("/api/video-cache/clear", (req, res) => {
+    videoCache.clearCache();
+    res.json({
+      success: true,
+      message: "Video cache cleared successfully"
     });
   });
 
@@ -555,8 +619,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
           "POST /api/analytics/session": "Track user session"
         },
         video: {
-          "GET /api/video-proxy?url=&filename=": "Proxy video streaming from Supabase CDN with range support",
-          "GET /api/video-proxy/health": "Video proxy service health check"
+          "GET /api/video-proxy?url=&filename=": "Hybrid video streaming: Cache-first with Supabase CDN fallback",
+          "GET /api/video-proxy/health": "Video proxy health check with cache statistics",
+          "GET /api/video-cache/stats": "Video cache statistics and configuration",
+          "DELETE /api/video-cache/clear": "Clear video cache (admin only)"
         },
         system: {
           "GET /api/health": "API health check",
