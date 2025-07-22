@@ -419,12 +419,12 @@ export default function AdminPage() {
                                   <div 
                                     className="aspect-video bg-gray-100 dark:bg-gray-800 rounded-lg relative overflow-hidden cursor-pointer group border-2 border-gray-200 dark:border-gray-700"
                                     onClick={() => {
-                                      const videoUrl = `/api/video-proxy?url=${encodeURIComponent('https://supabase.memopyk.org/storage/v1/object/public/memopyk-hero/' + video.url_en)}`;
+                                      const videoUrl = `/api/video-proxy?filename=${encodeURIComponent(video.url_en)}`;
                                       setPreviewVideo({ url: videoUrl, title: video.title_en });
                                     }}
                                   >
                                     <video
-                                      src={`/api/video-proxy?url=${encodeURIComponent('https://supabase.memopyk.org/storage/v1/object/public/memopyk-hero/' + video.url_en)}`}
+                                      src={`/api/video-proxy?filename=${encodeURIComponent(video.url_en)}`}
                                       className="w-full h-full object-cover"
                                       muted
                                       preload="metadata"

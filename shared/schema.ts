@@ -16,6 +16,7 @@ export const heroVideos = pgTable("hero_videos", {
   titleFr: text("title_fr").notNull(),
   urlEn: text("url_en").notNull(),
   urlFr: text("url_fr").notNull(),
+  useSameVideo: boolean("use_same_video").default(true), // When true, use urlEn for both languages
   orderIndex: integer("order_index").default(0),
   isActive: boolean("is_active").default(true),
   createdAt: timestamp("created_at").defaultNow(),
@@ -47,6 +48,7 @@ export const galleryItems = pgTable("gallery_items", {
   videoUrl: text("video_url"),
   videoUrlEn: text("video_url_en"),
   videoUrlFr: text("video_url_fr"),
+  useSameVideo: boolean("use_same_video").default(true), // When true, use videoUrlEn for both languages
   videoWidth: integer("video_width"),
   videoHeight: integer("video_height"),
   videoOrientation: text("video_orientation"), // "portrait" or "landscape"

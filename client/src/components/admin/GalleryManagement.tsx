@@ -213,8 +213,25 @@ export default function GalleryManagement() {
       alt_text_en: item?.alt_text_en || '',
       alt_text_fr: item?.alt_text_fr || '',
       order_index: item?.order_index || galleryItems.length + 1,
-      is_active: item?.is_active ?? true
+      is_active: item?.is_active ?? true,
+      use_same_video: item?.use_same_video ?? true
     });
+
+    // When use_same_video changes, sync the video URLs
+    const handleSameVideoToggle = (useSame: boolean) => {
+      if (useSame && formData.video_url_en) {
+        setFormData(prev => ({ 
+          ...prev, 
+          use_same_video: useSame,
+          video_url_fr: prev.video_url_en
+        }));
+      } else {
+        setFormData(prev => ({ 
+          ...prev, 
+          use_same_video: useSame
+        }));
+      }
+    };
 
     return (
       <div className="space-y-4 max-h-96 overflow-y-auto bg-white dark:bg-gray-900 text-gray-900 dark:text-white">
@@ -237,7 +254,11 @@ export default function GalleryManagement() {
                 onChange={async (e) => {
                   const url = await handleVideoUpload(e.target.files?.[0]);
                   if (url) {
-                    setFormData({ ...formData, video_url_en: url, video_url_fr: url });
+                    if (formData.use_same_video) {
+                      setFormData({ ...formData, video_url_en: url, video_url_fr: url });
+                    } else {
+                      setFormData({ ...formData, video_url_en: url });
+                    }
                   }
                 }}
                 disabled={uploading}
@@ -265,6 +286,22 @@ export default function GalleryManagement() {
               <p className="text-xs text-gray-500 mt-1">JPG, PNG, WebP (max 50MB)</p>
             </div>
           </div>
+        </div>
+
+        {/* Same Video Switch */}
+        <div className="bg-blue-50 dark:bg-blue-900/20 p-4 rounded-lg border border-blue-200 dark:border-blue-800">
+          <div className="flex items-center space-x-2">
+            <Switch
+              checked={formData.use_same_video}
+              onCheckedChange={handleSameVideoToggle}
+            />
+            <Label className="text-blue-900 dark:text-blue-100 font-medium">
+              Utiliser la même vidéo pour FR et EN
+            </Label>
+          </div>
+          <p className="text-xs text-blue-700 dark:text-blue-300 mt-1">
+            Activé par défaut - La vidéo sera utilisée dans les deux langues
+          </p>
         </div>
 
         <div className="grid grid-cols-2 gap-4">
@@ -313,6 +350,49 @@ export default function GalleryManagement() {
               className="bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
             />
           </div>
+        </div>
+
+        {/* Video URL Inputs */}
+        <div className="space-y-4">
+          <h4 className="font-semibold text-gray-900 dark:text-white">URLs des Vidéos</h4>
+          {formData.use_same_video ? (
+            <div>
+              <Label htmlFor="video_url_en" className="text-gray-700 dark:text-gray-300">URL Vidéo (utilisée pour FR et EN)</Label>
+              <Input
+                id="video_url_en"
+                value={formData.video_url_en}
+                onChange={(e) => {
+                  const url = e.target.value;
+                  setFormData({ ...formData, video_url_en: url, video_url_fr: url });
+                }}
+                placeholder="https://supabase.memopyk.org/storage/v1/object/public/memopyk-gallery/video.mp4"
+                className="bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
+              />
+            </div>
+          ) : (
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <Label htmlFor="video_url_en" className="text-gray-700 dark:text-gray-300">URL Vidéo (English)</Label>
+                <Input
+                  id="video_url_en"
+                  value={formData.video_url_en}
+                  onChange={(e) => setFormData({ ...formData, video_url_en: e.target.value })}
+                  placeholder="URL for English version"
+                  className="bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
+                />
+              </div>
+              <div>
+                <Label htmlFor="video_url_fr" className="text-gray-700 dark:text-gray-300">URL Vidéo (Français)</Label>
+                <Input
+                  id="video_url_fr"
+                  value={formData.video_url_fr}
+                  onChange={(e) => setFormData({ ...formData, video_url_fr: e.target.value })}
+                  placeholder="URL pour version française"
+                  className="bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
+                />
+              </div>
+            </div>
+          )}
         </div>
 
         <div className="grid grid-cols-2 gap-4">
@@ -419,10 +499,14 @@ export default function GalleryManagement() {
                     {item.video_url_en ? (
                       <div 
                         className="w-full h-full cursor-pointer group"
-                        onClick={() => setShowPreview({ type: 'video', url: item.video_url_en!, title: item.title_en })}
+                        onClick={() => {
+                          const filename = item.video_url_en!.split('/').pop()!;
+                          const proxyUrl = `/api/video-proxy?filename=${encodeURIComponent(filename)}`;
+                          setShowPreview({ type: 'video', url: proxyUrl, title: item.title_en });
+                        }}
                       >
                         <video
-                          src={item.video_url_en}
+                          src={`/api/video-proxy?filename=${encodeURIComponent(item.video_url_en!.split('/').pop()!)}`}
                           className="w-full h-full object-cover"
                           muted
                           preload="metadata"
