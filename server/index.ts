@@ -1,20 +1,7 @@
 import express, { type Request, Response, NextFunction } from "express";
+import { createServer } from "http";
 import { registerRoutes } from "./routes";
-// Standalone server for testing - avoiding vite.ts import issue
-function log(message: string, source = "express") {
-  const formattedTime = new Date().toLocaleTimeString("en-US", {
-    hour: "numeric",
-    minute: "2-digit", 
-    second: "2-digit",
-    hour12: true,
-  });
-  console.log(`${formattedTime} [${source}] ${message}`);
-}
-
-// Simple static file serving for testing
-function serveStatic(app: express.Application) {
-  // Minimal static serving for testing
-}
+import { setupVite, log } from "./vite";
 
 // Database connection test as per Phase 2.2 of rebuild plan
 import { testDatabaseConnection } from "./database";
@@ -36,9 +23,12 @@ testDatabaseConnection().then(success => {
 });
 
 const app = express();
+const server = createServer(app);
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
+// Request logging middleware  
 app.use((req, res, next) => {
   const start = Date.now();
   const path = req.path;
@@ -70,21 +60,25 @@ app.use((req, res, next) => {
 });
 
 (async () => {
+  // Register API routes first (before Vite middleware)
   registerRoutes(app);
 
+  // Setup Vite for React frontend (this must come after API routes)
+  await setupVite(app, server);
+
+  // Error handling middleware
   app.use((err: any, _req: Request, res: Response, _next: NextFunction) => {
     const status = err.status || err.statusCode || 500;
     const message = err.message || "Internal Server Error";
     
     console.error("Server error:", message);
     res.status(status).json({ message });
-    // Don't re-throw the error to prevent crashes
   });
 
-  // Simple server for testing API endpoints
   const port = parseInt(process.env.PORT || '5000', 10);
-  app.listen(port, '0.0.0.0', () => {
-    console.log(`MEMOPYK API Server running on port ${port}`);
-    console.log(`Test endpoints at: http://localhost:${port}/api`);
+  server.listen(port, '0.0.0.0', () => {
+    log(`MEMOPYK Server (React + API) running on port ${port}`);
+    log(`React app: http://localhost:${port}`);
+    log(`API endpoints: http://localhost:${port}/api`);
   });
 })();

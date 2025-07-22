@@ -160,57 +160,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     });
   });
 
-  // Root route for Replit preview
-  app.get("/", (req, res) => {
-    res.send(`
-      <html>
-        <head><title>MEMOPYK API Server</title></head>
-        <body style="font-family: Arial; max-width: 800px; margin: 50px auto; padding: 20px; line-height: 1.5;">
-          <h1>🎬 MEMOPYK Platform API</h1>
-          <p><strong>Status:</strong> Server running successfully ✅</p>
-          <p><strong>Phase 4.2:</strong> Analytics API - COMPLETED ✅</p>
-          <p><strong>Phase 4.3:</strong> Video Proxy System - COMPLETED ✅</p>
-          
-          <h3>✅ Phase 4.2 Analytics API (6/8 endpoints working):</h3>
-          <ul>
-            <li><a href="/api/analytics/dashboard">/api/analytics/dashboard</a> - Dashboard stats</li>
-            <li><a href="/api/analytics/views">/api/analytics/views</a> - Video view analytics</li>
-            <li><a href="/api/analytics/sessions">/api/analytics/sessions</a> - Session tracking</li>
-            <li><a href="/api/analytics/settings">/api/analytics/settings</a> - Analytics config</li>
-            <li><a href="/api/analytics/export">/api/analytics/export</a> - Data export</li>
-            <li><strong>POST</strong> /api/analytics/video-view - Track video views</li>
-          </ul>
-          
-          <h3>✅ Phase 4.3 Video Proxy System (2/2 endpoints working):</h3>
-          <ul>
-            <li><a href="/api/video-proxy/health">/api/video-proxy/health</a> - Proxy health check</li>
-            <li><strong>GET</strong> /api/video-proxy?url=VIDEO_URL - Stream videos from Supabase CDN</li>
-          </ul>
-          
-          <h3>📊 Content API Endpoints (11 working):</h3>
-          <ul>
-            <li><a href="/api/health">/api/health</a> - Server status</li>
-            <li><a href="/api/hero-videos">/api/hero-videos</a> - Hero carousel videos</li>
-            <li><a href="/api/gallery">/api/gallery</a> - Wedding/family gallery</li>
-            <li><a href="/api/faq?lang=fr">/api/faq?lang=fr</a> - Pricing FAQs (French)</li>
-            <li><a href="/api/faq?lang=en">/api/faq?lang=en</a> - Pricing FAQs (English)</li>
-            <li><a href="/api/contact-info">/api/contact-info</a> - Contact information</li>
-            <li><a href="/api/legal?lang=fr">/api/legal?lang=fr</a> - Legal documents (French)</li>
-            <li><a href="/api/legal?lang=en">/api/legal?lang=en</a> - Legal documents (English)</li>
-          </ul>
-          
-          <div style="background: #f0f8ff; padding: 15px; border-radius: 8px; margin: 20px 0;">
-            <h4>🚀 Backend Development Status:</h4>
-            <p><strong>Total API Endpoints:</strong> 23 operational</p>
-            <p><strong>Bilingual Support:</strong> French/English throughout</p>
-            <p><strong>Database:</strong> PostgreSQL + Hybrid JSON storage</p>
-            <p><strong>Video Streaming:</strong> Supabase CDN with CORS & HTTP 206 range support</p>
-            <p><strong>Next Phase:</strong> Frontend Implementation (Phase 5)</p>
-          </div>
-        </body>
-      </html>
-    `);
-  });
+  // Root route removed - React frontend now handles "/" via Vite
 
   // Analytics API - Phase 4.2 Implementation
   
