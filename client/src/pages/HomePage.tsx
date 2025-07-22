@@ -1,5 +1,6 @@
 import { HeroVideoSection } from '../components/sections/HeroVideoSection';
 import { KeyVisualSection } from '../components/sections/KeyVisualSection';
+import GallerySection from '../components/sections/GallerySection';
 
 export function HomePage() {
   return (
@@ -10,7 +11,10 @@ export function HomePage() {
       {/* Key Visual Problem/Solution Section */}
       <KeyVisualSection />
 
-      {/* More sections will be added in Phase 6.2 */}
+      {/* Gallery Section */}
+      <GallerySection />
+
+      {/* More sections will be added in upcoming phases */}
     </div>
   );
 }
