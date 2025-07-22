@@ -1280,34 +1280,75 @@ export default function AdminPage() {
             </DialogHeader>
             
             <div className="space-y-6">
-              {/* Same Video Switch - More prominent */}
-              <div className="bg-blue-100 dark:bg-blue-900/30 p-5 rounded-xl border-2 border-blue-200 dark:border-blue-700">
-                <div className="flex items-center space-x-3 mb-2">
-                  <Switch
-                    checked={editVideoData.use_same_video}
-                    onCheckedChange={(checked) => {
-                      if (checked && editVideoData.url_en) {
-                        setEditVideoData(prev => ({ 
-                          ...prev, 
-                          use_same_video: checked,
-                          url_fr: prev.url_en
-                        }));
-                      } else {
-                        setEditVideoData(prev => ({ 
-                          ...prev, 
-                          use_same_video: checked
-                        }));
+              {/* Same Video Switch - More prominent and clickable */}
+              <div 
+                className={`p-5 rounded-xl border-2 cursor-pointer transition-all duration-200 ${
+                  editVideoData.use_same_video 
+                    ? 'bg-green-100 dark:bg-green-900/30 border-green-300 dark:border-green-600' 
+                    : 'bg-orange-100 dark:bg-orange-900/30 border-orange-300 dark:border-orange-600'
+                }`}
+                onClick={() => {
+                  const newValue = !editVideoData.use_same_video;
+                  if (newValue && editVideoData.url_en) {
+                    setEditVideoData(prev => ({ 
+                      ...prev, 
+                      use_same_video: newValue,
+                      url_fr: prev.url_en
+                    }));
+                  } else {
+                    setEditVideoData(prev => ({ 
+                      ...prev, 
+                      use_same_video: newValue
+                    }));
+                  }
+                }}
+              >
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center space-x-3">
+                    <Switch
+                      checked={editVideoData.use_same_video}
+                      onCheckedChange={(checked) => {
+                        if (checked && editVideoData.url_en) {
+                          setEditVideoData(prev => ({ 
+                            ...prev, 
+                            use_same_video: checked,
+                            url_fr: prev.url_en
+                          }));
+                        } else {
+                          setEditVideoData(prev => ({ 
+                            ...prev, 
+                            use_same_video: checked
+                          }));
+                        }
+                      }}
+                    />
+                    <Label className={`font-semibold text-lg cursor-pointer ${
+                      editVideoData.use_same_video 
+                        ? 'text-green-900 dark:text-green-100' 
+                        : 'text-orange-900 dark:text-orange-100'
+                    }`}>
+                      {editVideoData.use_same_video 
+                        ? "Same Video for Both Languages" 
+                        : "Different Video for Each Language"
                       }
-                    }}
-                  />
-                  <Label className="text-blue-900 dark:text-blue-100 font-semibold text-base">
-                    Same Video for French & English
-                  </Label>
+                    </Label>
+                  </div>
+                  <div className={`px-3 py-1 rounded-full text-sm font-medium ${
+                    editVideoData.use_same_video 
+                      ? 'bg-green-200 dark:bg-green-800 text-green-800 dark:text-green-200' 
+                      : 'bg-orange-200 dark:bg-orange-800 text-orange-800 dark:text-orange-200'
+                  }`}>
+                    {editVideoData.use_same_video ? "ON" : "OFF"}
+                  </div>
                 </div>
-                <p className="text-blue-800 dark:text-blue-200 text-sm ml-12">
+                <p className={`text-sm mt-2 ${
+                  editVideoData.use_same_video 
+                    ? 'text-green-800 dark:text-green-200' 
+                    : 'text-orange-800 dark:text-orange-200'
+                }`}>
                   {editVideoData.use_same_video 
-                    ? "✓ One video will be used for both languages" 
-                    : "Different videos for each language"
+                    ? "✓ One video file will be used for both French and English versions" 
+                    : "⚠ You can specify different video files for French and English"
                   }
                 </p>
               </div>
