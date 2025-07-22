@@ -38,6 +38,10 @@ export default function AdminPage() {
   const [selectedTextId, setSelectedTextId] = useState<number | null>(null);
   const [previewFontSize, setPreviewFontSize] = useState(48);
   const [textPreview, setTextPreview] = useState('');
+  const [editingTextId, setEditingTextId] = useState<number | null>(null);
+  const [editFormData, setEditFormData] = useState({ title_fr: '', subtitle_fr: '', title_en: '', subtitle_en: '' });
+  const [showNewTextForm, setShowNewTextForm] = useState(false);
+  const [newTextData, setNewTextData] = useState({ title_fr: '', subtitle_fr: '', title_en: '', subtitle_en: '', font_size: 48 });
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
@@ -176,6 +180,40 @@ export default function AdminPage() {
     },
     onError: () => {
       toast({ title: "Erreur", description: "Échec de l'application du texte", variant: "destructive" });
+    }
+  });
+
+  // Create new text mutation
+  const createTextMutation = useMutation({
+    mutationFn: async (data: any) => {
+      const response = await apiRequest('POST', '/api/hero-text', data);
+      return await response.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['/api/hero-text'] });
+      setShowNewTextForm(false);
+      setNewTextData({ title_fr: '', subtitle_fr: '', title_en: '', subtitle_en: '', font_size: 48 });
+      toast({ title: "Succès", description: "Nouveau texte créé avec succès" });
+    },
+    onError: () => {
+      toast({ title: "Erreur", description: "Échec de la création du texte", variant: "destructive" });
+    }
+  });
+
+  // Delete text mutation
+  const deleteTextMutation = useMutation({
+    mutationFn: async (textId: number) => {
+      const response = await apiRequest('DELETE', `/api/hero-text/${textId}`);
+      return await response.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['/api/hero-text'] });
+      setSelectedTextId(null);
+      setEditingTextId(null);
+      toast({ title: "Succès", description: "Texte supprimé avec succès" });
+    },
+    onError: () => {
+      toast({ title: "Erreur", description: "Échec de la suppression du texte", variant: "destructive" });
     }
   });
 
@@ -608,56 +646,236 @@ export default function AdminPage() {
                         <div className="space-y-6">
                           {/* Text Library */}
                           <div>
-                            <h3 className="text-lg font-semibold mb-4">Bibliothèque de Textes</h3>
+                            <div className="flex items-center justify-between mb-4">
+                              <h3 className="text-lg font-semibold">Bibliothèque de Textes</h3>
+                              <Button
+                                onClick={() => setShowNewTextForm(true)}
+                                className="bg-orange-500 hover:bg-orange-600"
+                              >
+                                + Nouveau Texte
+                              </Button>
+                            </div>
+
+                            {/* New Text Form */}
+                            {showNewTextForm && (
+                              <Card className="mb-4 border-orange-200">
+                                <CardHeader>
+                                  <CardTitle>Créer un Nouveau Texte</CardTitle>
+                                </CardHeader>
+                                <CardContent className="space-y-4">
+                                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    <div>
+                                      <Label>Titre (Français)</Label>
+                                      <Input
+                                        value={newTextData.title_fr}
+                                        onChange={(e) => setNewTextData({ ...newTextData, title_fr: e.target.value })}
+                                        placeholder="Ex: Transformez vos souvenirs..."
+                                      />
+                                    </div>
+                                    <div>
+                                      <Label>Titre (Anglais)</Label>
+                                      <Input
+                                        value={newTextData.title_en}
+                                        onChange={(e) => setNewTextData({ ...newTextData, title_en: e.target.value })}
+                                        placeholder="Ex: Transform your memories..."
+                                      />
+                                    </div>
+                                    <div>
+                                      <Label>Sous-titre (Français)</Label>
+                                      <Input
+                                        value={newTextData.subtitle_fr}
+                                        onChange={(e) => setNewTextData({ ...newTextData, subtitle_fr: e.target.value })}
+                                        placeholder="Ex: Créez des vidéos professionnelles..."
+                                      />
+                                    </div>
+                                    <div>
+                                      <Label>Sous-titre (Anglais)</Label>
+                                      <Input
+                                        value={newTextData.subtitle_en}
+                                        onChange={(e) => setNewTextData({ ...newTextData, subtitle_en: e.target.value })}
+                                        placeholder="Ex: Create professional videos..."
+                                      />
+                                    </div>
+                                  </div>
+                                  <div>
+                                    <Label>Taille de Police par Défaut: {newTextData.font_size}px</Label>
+                                    <input
+                                      type="range"
+                                      min="20"
+                                      max="120"
+                                      value={newTextData.font_size}
+                                      onChange={(e) => setNewTextData({ ...newTextData, font_size: Number(e.target.value) })}
+                                      className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer"
+                                    />
+                                  </div>
+                                  <div className="flex gap-3">
+                                    <Button
+                                      onClick={() => createTextMutation.mutate(newTextData)}
+                                      disabled={createTextMutation.isPending || !newTextData.title_fr || !newTextData.title_en}
+                                      className="bg-green-600 hover:bg-green-700"
+                                    >
+                                      Créer le Texte
+                                    </Button>
+                                    <Button
+                                      variant="outline"
+                                      onClick={() => {
+                                        setShowNewTextForm(false);
+                                        setNewTextData({ title_fr: '', subtitle_fr: '', title_en: '', subtitle_en: '', font_size: 48 });
+                                      }}
+                                    >
+                                      Annuler
+                                    </Button>
+                                  </div>
+                                </CardContent>
+                              </Card>
+                            )}
+
                             <div className="grid gap-4">
                               {heroTexts.map((text: any) => (
-                                <Card key={text.id} className={`cursor-pointer transition-all ${
+                                <Card key={text.id} className={`transition-all ${
                                   selectedTextId === text.id ? 'ring-2 ring-orange-500' : ''
                                 } ${text.is_active ? 'border-green-500 bg-green-50' : ''}`}>
                                   <CardContent className="p-4">
-                                    <div className="flex items-start justify-between">
-                                      <div className="space-y-2 flex-1" onClick={() => setSelectedTextId(text.id)}>
-                                        <div className="flex items-center gap-2">
-                                          <h4 className="font-medium">{text.title_fr}</h4>
-                                          {text.is_active && (
-                                            <Badge className="bg-green-500">Actif sur le site</Badge>
-                                          )}
+                                    {editingTextId === text.id ? (
+                                      // Edit Mode
+                                      <div className="space-y-4">
+                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                          <div>
+                                            <Label className="text-xs">Titre (Français)</Label>
+                                            <Input
+                                              value={editFormData.title_fr}
+                                              onChange={(e) => setEditFormData({ ...editFormData, title_fr: e.target.value })}
+                                              className="text-sm"
+                                            />
+                                          </div>
+                                          <div>
+                                            <Label className="text-xs">Titre (Anglais)</Label>
+                                            <Input
+                                              value={editFormData.title_en}
+                                              onChange={(e) => setEditFormData({ ...editFormData, title_en: e.target.value })}
+                                              className="text-sm"
+                                            />
+                                          </div>
+                                          <div>
+                                            <Label className="text-xs">Sous-titre (Français)</Label>
+                                            <Input
+                                              value={editFormData.subtitle_fr}
+                                              onChange={(e) => setEditFormData({ ...editFormData, subtitle_fr: e.target.value })}
+                                              className="text-sm"
+                                            />
+                                          </div>
+                                          <div>
+                                            <Label className="text-xs">Sous-titre (Anglais)</Label>
+                                            <Input
+                                              value={editFormData.subtitle_en}
+                                              onChange={(e) => setEditFormData({ ...editFormData, subtitle_en: e.target.value })}
+                                              className="text-sm"
+                                            />
+                                          </div>
                                         </div>
-                                        <p className="text-sm text-gray-600">{text.subtitle_fr}</p>
-                                        <div className="text-xs text-gray-500">
-                                          Taille: {text.font_size}px | Créé: {new Date(text.created_at).toLocaleDateString()}
+                                        <div className="flex gap-2">
+                                          <Button
+                                            size="sm"
+                                            onClick={() => {
+                                              updateTextMutation.mutate({
+                                                textId: text.id,
+                                                data: editFormData
+                                              });
+                                              setEditingTextId(null);
+                                            }}
+                                            disabled={updateTextMutation.isPending}
+                                            className="bg-green-600 hover:bg-green-700"
+                                          >
+                                            <Save className="h-3 w-3 mr-1" />
+                                            Sauvegarder
+                                          </Button>
+                                          <Button
+                                            size="sm"
+                                            variant="outline"
+                                            onClick={() => setEditingTextId(null)}
+                                          >
+                                            Annuler
+                                          </Button>
                                         </div>
                                       </div>
-                                      <div className="flex items-center gap-2">
-                                        <Button
-                                          size="sm"
-                                          variant="outline"
-                                          onClick={(e) => {
-                                            e.stopPropagation();
-                                            setSelectedTextId(text.id);
-                                            setPreviewFontSize(text.font_size);
-                                            setTextPreview(`${text.title_fr}\n${text.subtitle_fr}`);
-                                          }}
-                                        >
-                                          <Eye className="h-4 w-4" />
-                                        </Button>
-                                        <Button
-                                          size="sm"
-                                          variant="default"
-                                          className="bg-orange-500 hover:bg-orange-600"
-                                          onClick={(e) => {
-                                            e.stopPropagation();
-                                            applyTextMutation.mutate({ 
-                                              textId: text.id, 
-                                              fontSize: text.font_size 
-                                            });
-                                          }}
-                                          disabled={applyTextMutation.isPending}
-                                        >
-                                          Appliquer au Site
-                                        </Button>
+                                    ) : (
+                                      // View Mode
+                                      <div className="space-y-3">
+                                        <div className="flex items-start justify-between">
+                                          <div 
+                                            className="space-y-2 flex-1 cursor-pointer" 
+                                            onClick={() => setSelectedTextId(text.id)}
+                                          >
+                                            <div className="flex items-center gap-2">
+                                              <h4 className="font-medium">{text.title_fr}</h4>
+                                              {text.is_active && (
+                                                <Badge className="bg-green-500">Actif sur le site</Badge>
+                                              )}
+                                            </div>
+                                            <p className="text-sm text-gray-600">{text.subtitle_fr}</p>
+                                            <div className="text-xs text-gray-500">
+                                              Taille: {text.font_size}px | Créé: {new Date(text.created_at).toLocaleDateString()}
+                                            </div>
+                                          </div>
+                                        </div>
+                                        <div className="flex items-center gap-2 pt-2 border-t">
+                                          <Button
+                                            size="sm"
+                                            variant="outline"
+                                            onClick={() => {
+                                              setSelectedTextId(text.id);
+                                              setPreviewFontSize(text.font_size);
+                                              setTextPreview(`${text.title_fr}\n${text.subtitle_fr}`);
+                                            }}
+                                          >
+                                            <Eye className="h-3 w-3 mr-1" />
+                                            Prévisualiser
+                                          </Button>
+                                          <Button
+                                            size="sm"
+                                            variant="outline"
+                                            onClick={() => {
+                                              setEditingTextId(text.id);
+                                              setEditFormData({
+                                                title_fr: text.title_fr,
+                                                title_en: text.title_en,
+                                                subtitle_fr: text.subtitle_fr,
+                                                subtitle_en: text.subtitle_en
+                                              });
+                                            }}
+                                          >
+                                            <Type className="h-3 w-3 mr-1" />
+                                            Modifier
+                                          </Button>
+                                          <Button
+                                            size="sm"
+                                            variant="default"
+                                            className="bg-orange-500 hover:bg-orange-600"
+                                            onClick={() => {
+                                              applyTextMutation.mutate({ 
+                                                textId: text.id, 
+                                                fontSize: text.font_size 
+                                              });
+                                            }}
+                                            disabled={applyTextMutation.isPending}
+                                          >
+                                            Appliquer au Site
+                                          </Button>
+                                          <Button
+                                            size="sm"
+                                            variant="destructive"
+                                            onClick={() => {
+                                              if (confirm(`Êtes-vous sûr de vouloir supprimer "${text.title_fr}" ?`)) {
+                                                deleteTextMutation.mutate(text.id);
+                                              }
+                                            }}
+                                            disabled={deleteTextMutation.isPending}
+                                          >
+                                            <Trash2 className="h-3 w-3" />
+                                          </Button>
+                                        </div>
                                       </div>
-                                    </div>
+                                    )}
                                   </CardContent>
                                 </Card>
                               ))}
