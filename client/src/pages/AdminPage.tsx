@@ -7,7 +7,8 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
 import { Badge } from '@/components/ui/badge';
-import { ArrowUp, ArrowDown, Play, RefreshCw, BarChart3, Video, HardDrive, Users, MessageSquare, FileText, LogOut, TestTube, Rocket } from 'lucide-react';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { ArrowUp, ArrowDown, Play, RefreshCw, BarChart3, Video, HardDrive, Users, MessageSquare, FileText, LogOut, TestTube, Rocket, X } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 
 interface HeroVideo {
@@ -32,6 +33,7 @@ interface CacheStats {
 
 export default function AdminPage() {
   const [activeSection, setActiveSection] = useState('hero-management');
+  const [previewVideo, setPreviewVideo] = useState<{ url: string; title: string } | null>(null);
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
@@ -307,7 +309,7 @@ export default function AdminPage() {
                                     className="w-full"
                                     onClick={() => {
                                       const videoUrl = `/api/video-proxy?url=${encodeURIComponent('https://supabase.memopyk.org/storage/v1/object/public/memopyk-hero/' + video.url_en)}`;
-                                      window.open(videoUrl, '_blank');
+                                      setPreviewVideo({ url: videoUrl, title: video.title_en });
                                     }}
                                   >
                                     <Play className="h-4 w-4 mr-2" />
@@ -527,6 +529,45 @@ export default function AdminPage() {
 
         </div>
       </div>
+
+      {/* Video Preview Modal */}
+      <Dialog open={!!previewVideo} onOpenChange={() => setPreviewVideo(null)}>
+        <DialogContent className="max-w-4xl w-full">
+          <DialogHeader>
+            <DialogTitle className="flex items-center justify-between">
+              <span>Video Preview: {previewVideo?.title}</span>
+              <Button 
+                variant="ghost" 
+                size="sm" 
+                onClick={() => setPreviewVideo(null)}
+                className="h-6 w-6 p-0"
+              >
+                <X className="h-4 w-4" />
+              </Button>
+            </DialogTitle>
+          </DialogHeader>
+          {previewVideo && (
+            <div className="aspect-video">
+              <video
+                src={previewVideo.url}
+                controls
+                autoPlay
+                className="w-full h-full rounded-lg"
+                onError={(e) => {
+                  console.error('Video playback error:', e);
+                  toast({ 
+                    title: "Video Error", 
+                    description: "Unable to load video preview", 
+                    variant: "destructive" 
+                  });
+                }}
+              >
+                Your browser does not support the video tag.
+              </video>
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
