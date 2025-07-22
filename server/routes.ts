@@ -112,11 +112,20 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.delete("/api/gallery/:id", async (req, res) => {
     try {
-      const itemId = req.params.id;
-      await hybridStorage.deleteGalleryItem(itemId);
-      res.json({ success: true });
+      const itemId = parseInt(req.params.id);
+      console.log(`🗑️ Deleting gallery item with ID: ${itemId}`);
+      
+      if (isNaN(itemId)) {
+        return res.status(400).json({ error: "Invalid gallery item ID" });
+      }
+      
+      const deletedItem = await hybridStorage.deleteGalleryItem(itemId);
+      console.log(`✅ Successfully deleted gallery item: ${deletedItem.title_en || 'Untitled'}`);
+      
+      res.json({ success: true, deleted: deletedItem });
     } catch (error) {
-      res.status(500).json({ error: "Failed to delete gallery item" });
+      console.error('Gallery deletion error:', error);
+      res.status(500).json({ error: `Failed to delete gallery item: ${error.message}` });
     }
   });
 

@@ -20,7 +20,7 @@ function App() {
             
             <Layout>
               <Route path="/" component={HomePage} />
-              <Route path="/admin" component={AdminRoute} />
+              <Route path="/admin/*" component={AdminRoute} />
               <Route path="/gallery" component={() => <div className="min-h-screen flex items-center justify-center"><div className="text-2xl text-gray-500">Gallery Coming Soon</div></div>} />
               <Route path="/contact" component={() => <div className="min-h-screen flex items-center justify-center"><div className="text-2xl text-gray-500">Contact Coming Soon</div></div>} />
               <Route path="/:rest*" component={NotFoundPage} />
