@@ -8,7 +8,7 @@ import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
 import { Badge } from '@/components/ui/badge';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
-import { ArrowUp, ArrowDown, Play, RefreshCw, BarChart3, Video, HardDrive, Users, MessageSquare, FileText, LogOut, TestTube, Rocket, X } from 'lucide-react';
+import { ArrowUp, ArrowDown, Play, RefreshCw, BarChart3, Video, HardDrive, Users, MessageSquare, FileText, LogOut, TestTube, Rocket, X, Type, Save, Palette, ChevronUp, ChevronDown, Trash2, Eye, EyeOff } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 
 interface HeroVideo {
@@ -33,7 +33,11 @@ interface CacheStats {
 
 export default function AdminPage() {
   const [activeSection, setActiveSection] = useState('hero-management');
+  const [heroTab, setHeroTab] = useState('videos');
   const [previewVideo, setPreviewVideo] = useState<{ url: string; title: string } | null>(null);
+  const [selectedTextId, setSelectedTextId] = useState<number | null>(null);
+  const [previewFontSize, setPreviewFontSize] = useState(48);
+  const [textPreview, setTextPreview] = useState('');
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
@@ -59,6 +63,11 @@ export default function AdminPage() {
   // Fetch hero videos
   const { data: heroVideos = [], isLoading: videosLoading } = useQuery<HeroVideo[]>({
     queryKey: ['/api/hero-videos'],
+  });
+
+  // Fetch hero text overlays
+  const { data: heroTexts = [], isLoading: textsLoading } = useQuery({
+    queryKey: ['/api/hero-text'],
   });
 
   // Fetch cache statistics
@@ -134,6 +143,39 @@ export default function AdminPage() {
     },
     onError: () => {
       toast({ title: "Error", description: "Failed to clear video cache", variant: "destructive" });
+    }
+  });
+
+  // Hero text update mutation
+  const updateTextMutation = useMutation({
+    mutationFn: async ({ textId, data }: { textId: number; data: any }) => {
+      const response = await apiRequest('PATCH', `/api/hero-text/${textId}`, data);
+      return await response.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['/api/hero-text'] });
+      toast({ title: "Succès", description: "Texte hero mis à jour avec succès" });
+    },
+    onError: () => {
+      toast({ title: "Erreur", description: "Échec de la mise à jour du texte", variant: "destructive" });
+    }
+  });
+
+  // Apply text to site mutation
+  const applyTextMutation = useMutation({
+    mutationFn: async ({ textId, fontSize }: { textId: number; fontSize: number }) => {
+      const response = await apiRequest('PATCH', `/api/hero-text/${textId}/apply`, { 
+        font_size: fontSize,
+        is_active: true 
+      });
+      return await response.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['/api/hero-text'] });
+      toast({ title: "Succès", description: "Texte appliqué au site avec succès" });
+    },
+    onError: () => {
+      toast({ title: "Erreur", description: "Échec de l'application du texte", variant: "destructive" });
     }
   });
 
@@ -216,6 +258,36 @@ export default function AdminPage() {
                 <p className="text-gray-600 dark:text-gray-400">Gérer les vidéos du carrousel héros avec support bilingue</p>
               </div>
               
+              {/* Hero Tabs */}
+              <div className="mb-6">
+                <nav className="flex space-x-8" aria-label="Tabs">
+                  <button
+                    onClick={() => setHeroTab('videos')}
+                    className={`py-2 px-1 border-b-2 font-medium text-sm ${
+                      heroTab === 'videos'
+                        ? 'border-orange-500 text-orange-600'
+                        : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                    }`}
+                  >
+                    <Video className="inline-block h-4 w-4 mr-2" />
+                    Gestion Vidéos
+                  </button>
+                  <button
+                    onClick={() => setHeroTab('text')}
+                    className={`py-2 px-1 border-b-2 font-medium text-sm ${
+                      heroTab === 'text'
+                        ? 'border-orange-500 text-orange-600'
+                        : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                    }`}
+                  >
+                    <Type className="inline-block h-4 w-4 mr-2" />
+                    Textes & Superpositions
+                  </button>
+                </nav>
+              </div>
+
+              {/* Videos Tab */}
+              {heroTab === 'videos' && (
               <Card>
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
@@ -514,6 +586,199 @@ export default function AdminPage() {
                   )}
                 </CardContent>
               </Card>
+              )}
+
+              {/* Text Overlay Tab */}
+              {heroTab === 'text' && (
+                <div className="space-y-6">
+                  <Card>
+                    <CardHeader>
+                      <CardTitle className="flex items-center gap-2">
+                        <Type className="h-5 w-5" />
+                        Gestion des Textes Hero
+                      </CardTitle>
+                      <CardDescription>
+                        Créer et gérer les superpositions de texte avec contrôles de police
+                      </CardDescription>
+                    </CardHeader>
+                    <CardContent className="space-y-6">
+                      {textsLoading ? (
+                        <div className="text-center py-8">Chargement des textes...</div>
+                      ) : (
+                        <div className="space-y-6">
+                          {/* Text Library */}
+                          <div>
+                            <h3 className="text-lg font-semibold mb-4">Bibliothèque de Textes</h3>
+                            <div className="grid gap-4">
+                              {heroTexts.map((text: any) => (
+                                <Card key={text.id} className={`cursor-pointer transition-all ${
+                                  selectedTextId === text.id ? 'ring-2 ring-orange-500' : ''
+                                } ${text.is_active ? 'border-green-500 bg-green-50' : ''}`}>
+                                  <CardContent className="p-4">
+                                    <div className="flex items-start justify-between">
+                                      <div className="space-y-2 flex-1" onClick={() => setSelectedTextId(text.id)}>
+                                        <div className="flex items-center gap-2">
+                                          <h4 className="font-medium">{text.title_fr}</h4>
+                                          {text.is_active && (
+                                            <Badge className="bg-green-500">Actif sur le site</Badge>
+                                          )}
+                                        </div>
+                                        <p className="text-sm text-gray-600">{text.subtitle_fr}</p>
+                                        <div className="text-xs text-gray-500">
+                                          Taille: {text.font_size}px | Créé: {new Date(text.created_at).toLocaleDateString()}
+                                        </div>
+                                      </div>
+                                      <div className="flex items-center gap-2">
+                                        <Button
+                                          size="sm"
+                                          variant="outline"
+                                          onClick={(e) => {
+                                            e.stopPropagation();
+                                            setSelectedTextId(text.id);
+                                            setPreviewFontSize(text.font_size);
+                                            setTextPreview(`${text.title_fr}\n${text.subtitle_fr}`);
+                                          }}
+                                        >
+                                          <Eye className="h-4 w-4" />
+                                        </Button>
+                                        <Button
+                                          size="sm"
+                                          variant="default"
+                                          className="bg-orange-500 hover:bg-orange-600"
+                                          onClick={(e) => {
+                                            e.stopPropagation();
+                                            applyTextMutation.mutate({ 
+                                              textId: text.id, 
+                                              fontSize: text.font_size 
+                                            });
+                                          }}
+                                          disabled={applyTextMutation.isPending}
+                                        >
+                                          Appliquer au Site
+                                        </Button>
+                                      </div>
+                                    </div>
+                                  </CardContent>
+                                </Card>
+                              ))}
+                            </div>
+                          </div>
+
+                          {/* Font Size Control & Preview */}
+                          {selectedTextId && (
+                            <Card className="border-orange-200">
+                              <CardHeader>
+                                <CardTitle className="flex items-center gap-2">
+                                  <Palette className="h-5 w-5" />
+                                  Prévisualisation & Contrôles
+                                </CardTitle>
+                              </CardHeader>
+                              <CardContent className="space-y-6">
+                                {/* Font Size Slider */}
+                                <div className="space-y-4">
+                                  <Label>Taille de Police: {previewFontSize}px</Label>
+                                  <input
+                                    type="range"
+                                    min="20"
+                                    max="120"
+                                    value={previewFontSize}
+                                    onChange={(e) => setPreviewFontSize(Number(e.target.value))}
+                                    className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer slider"
+                                    style={{
+                                      background: `linear-gradient(to right, #D67C4A 0%, #D67C4A ${((previewFontSize - 20) / 100) * 100}%, #e5e7eb ${((previewFontSize - 20) / 100) * 100}%, #e5e7eb 100%)`
+                                    }}
+                                  />
+                                  <div className="flex justify-between text-xs text-gray-500">
+                                    <span>20px</span>
+                                    <span>70px</span>
+                                    <span>120px</span>
+                                  </div>
+                                </div>
+
+                                {/* Live Preview */}
+                                <div 
+                                  className="bg-black rounded-lg p-8 min-h-[200px] flex items-center justify-center relative overflow-hidden"
+                                  style={{
+                                    backgroundImage: 'linear-gradient(45deg, #1a1a1a 25%, transparent 25%), linear-gradient(-45deg, #1a1a1a 25%, transparent 25%), linear-gradient(45deg, transparent 75%, #1a1a1a 75%), linear-gradient(-45deg, transparent 75%, #1a1a1a 75%)',
+                                    backgroundSize: '20px 20px',
+                                    backgroundPosition: '0 0, 0 10px, 10px -10px, -10px 0px'
+                                  }}
+                                >
+                                  <div className="text-center text-white">
+                                    {selectedTextId && (() => {
+                                      const selectedText = heroTexts.find((t: any) => t.id === selectedTextId);
+                                      return selectedText ? (
+                                        <div>
+                                          <h1 
+                                            className="font-bold mb-4"
+                                            style={{ 
+                                              fontSize: `${previewFontSize}px`,
+                                              lineHeight: '1.2',
+                                              textShadow: '2px 2px 4px rgba(0,0,0,0.8)'
+                                            }}
+                                          >
+                                            {selectedText.title_fr}
+                                          </h1>
+                                          <p 
+                                            className="opacity-90"
+                                            style={{ 
+                                              fontSize: `${previewFontSize * 0.6}px`,
+                                              textShadow: '1px 1px 2px rgba(0,0,0,0.8)'
+                                            }}
+                                          >
+                                            {selectedText.subtitle_fr}
+                                          </p>
+                                        </div>
+                                      ) : null;
+                                    })()}
+                                  </div>
+                                </div>
+
+                                {/* Quick Actions */}
+                                <div className="flex gap-3">
+                                  <Button
+                                    variant="outline"
+                                    onClick={() => {
+                                      if (selectedTextId) {
+                                        const selectedText = heroTexts.find((t: any) => t.id === selectedTextId);
+                                        if (selectedText) {
+                                          updateTextMutation.mutate({
+                                            textId: selectedTextId,
+                                            data: { font_size: previewFontSize }
+                                          });
+                                        }
+                                      }
+                                    }}
+                                    disabled={updateTextMutation.isPending}
+                                  >
+                                    <Save className="h-4 w-4 mr-2" />
+                                    Sauvegarder Taille
+                                  </Button>
+                                  <Button
+                                    className="bg-orange-500 hover:bg-orange-600"
+                                    onClick={() => {
+                                      if (selectedTextId) {
+                                        applyTextMutation.mutate({ 
+                                          textId: selectedTextId, 
+                                          fontSize: previewFontSize 
+                                        });
+                                      }
+                                    }}
+                                    disabled={applyTextMutation.isPending}
+                                  >
+                                    <Palette className="h-4 w-4 mr-2" />
+                                    Appliquer avec cette Taille
+                                  </Button>
+                                </div>
+                              </CardContent>
+                            </Card>
+                          )}
+                        </div>
+                      )}
+                    </CardContent>
+                  </Card>
+                </div>
+              )}
             </div>
           )}
 
