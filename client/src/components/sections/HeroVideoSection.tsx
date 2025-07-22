@@ -54,20 +54,12 @@ export function HeroVideoSection() {
   const activeHeroText = heroTextData.find(text => text.is_active);
   const currentVideo = activeVideos[currentVideoIndex];
 
-  // Auto-advance carousel every 10 seconds
-  useEffect(() => {
-    if (activeVideos.length > 1 && isPlaying) {
-      intervalRef.current = setInterval(() => {
-        setCurrentVideoIndex(prev => (prev + 1) % activeVideos.length);
-      }, 10000);
+  // Auto-advance to next video when current video ends
+  const handleVideoEnded = () => {
+    if (activeVideos.length > 1) {
+      setCurrentVideoIndex(prev => (prev + 1) % activeVideos.length);
     }
-
-    return () => {
-      if (intervalRef.current) {
-        clearInterval(intervalRef.current);
-      }
-    };
-  }, [activeVideos.length, isPlaying]);
+  };
 
   // Hero videos auto-play, so no need to track them - analytics should focus on user-initiated gallery video views
 
@@ -169,12 +161,13 @@ export function HeroVideoSection() {
           className="w-full h-full object-cover"
           autoPlay
           muted
-          loop
+          loop={activeVideos.length === 1}
           playsInline
           preload="metadata" // Smart Preloading: loads video info without downloading entire file
           crossOrigin="anonymous"
           onLoadedData={handleVideoLoad}
           onError={() => setIsLoading(false)}
+          onEnded={handleVideoEnded}
           onCanPlay={() => {
             // Ensure video starts playing for external preview
             const video = videoRef.current;
