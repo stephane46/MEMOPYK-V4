@@ -1269,14 +1269,20 @@ export default function AdminPage() {
       {/* Edit Video Modal */}
       {editingVideo && (
         <Dialog open={!!editingVideo} onOpenChange={() => setEditingVideo(null)}>
-          <DialogContent className="max-w-2xl">
-            <DialogHeader>
-              <DialogTitle>Edit Hero Video</DialogTitle>
+          <DialogContent className="max-w-3xl bg-white dark:bg-gray-900 border-2 border-gray-200 dark:border-gray-700">
+            <DialogHeader className="bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-gray-800 dark:to-gray-700 -m-6 mb-6 p-6 rounded-t-lg">
+              <DialogTitle className="text-xl font-bold text-gray-900 dark:text-white">
+                Edit Hero Video: {editingVideo.title_en || editingVideo.title_fr}
+              </DialogTitle>
+              <p className="text-gray-600 dark:text-gray-300 text-sm mt-1">
+                Update video information and settings
+              </p>
             </DialogHeader>
-            <div className="space-y-4">
-              {/* Same Video Switch */}
-              <div className="bg-blue-50 dark:bg-blue-900/20 p-4 rounded-lg border border-blue-200 dark:border-blue-800">
-                <div className="flex items-center space-x-2">
+            
+            <div className="space-y-6">
+              {/* Same Video Switch - More prominent */}
+              <div className="bg-blue-100 dark:bg-blue-900/30 p-5 rounded-xl border-2 border-blue-200 dark:border-blue-700">
+                <div className="flex items-center space-x-3 mb-2">
                   <Switch
                     checked={editVideoData.use_same_video}
                     onCheckedChange={(checked) => {
@@ -1294,40 +1300,55 @@ export default function AdminPage() {
                       }
                     }}
                   />
-                  <Label className="text-blue-900 dark:text-blue-100 font-medium">
-                    Use same video for FR and EN
+                  <Label className="text-blue-900 dark:text-blue-100 font-semibold text-base">
+                    Same Video for French & English
                   </Label>
                 </div>
-                <p className="text-xs text-blue-700 dark:text-blue-300 mt-1">
-                  Enabled by default - Video will be used in both languages
+                <p className="text-blue-800 dark:text-blue-200 text-sm ml-12">
+                  {editVideoData.use_same_video 
+                    ? "✓ One video will be used for both languages" 
+                    : "Different videos for each language"
+                  }
                 </p>
               </div>
 
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <Label>English Title</Label>
-                  <Input
-                    value={editVideoData.title_en}
-                    onChange={(e) => setEditVideoData({ ...editVideoData, title_en: e.target.value })}
-                    placeholder="Hero video title in English"
-                  />
-                </div>
-                <div>
-                  <Label>French Title</Label>
-                  <Input
-                    value={editVideoData.title_fr}
-                    onChange={(e) => setEditVideoData({ ...editVideoData, title_fr: e.target.value })}
-                    placeholder="Titre de la vidéo héro en français"
-                  />
+              {/* Video Titles */}
+              <div className="space-y-4">
+                <h4 className="font-semibold text-gray-900 dark:text-white text-lg border-b border-gray-200 dark:border-gray-700 pb-2">
+                  Video Titles
+                </h4>
+                <div className="grid grid-cols-2 gap-6">
+                  <div className="space-y-2">
+                    <Label className="text-gray-700 dark:text-gray-300 font-medium">English Title</Label>
+                    <Input
+                      value={editVideoData.title_en}
+                      onChange={(e) => setEditVideoData({ ...editVideoData, title_en: e.target.value })}
+                      placeholder="Hero video title in English"
+                      className="bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-600"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label className="text-gray-700 dark:text-gray-300 font-medium">French Title</Label>
+                    <Input
+                      value={editVideoData.title_fr}
+                      onChange={(e) => setEditVideoData({ ...editVideoData, title_fr: e.target.value })}
+                      placeholder="Titre de la vidéo héro en français"
+                      className="bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-600"
+                    />
+                  </div>
                 </div>
               </div>
 
-              {/* Video URL Inputs */}
+              {/* Video URLs */}
               <div className="space-y-4">
-                <h4 className="font-semibold">Video URLs</h4>
+                <h4 className="font-semibold text-gray-900 dark:text-white text-lg border-b border-gray-200 dark:border-gray-700 pb-2">
+                  Video Files
+                </h4>
                 {editVideoData.use_same_video ? (
-                  <div>
-                    <Label>Video URL (used for FR and EN)</Label>
+                  <div className="space-y-2">
+                    <Label className="text-gray-700 dark:text-gray-300 font-medium">
+                      Video Filename (applies to both languages)
+                    </Label>
                     <Input
                       value={editVideoData.url_en}
                       onChange={(e) => {
@@ -1335,31 +1356,38 @@ export default function AdminPage() {
                         setEditVideoData({ ...editVideoData, url_en: url, url_fr: url });
                       }}
                       placeholder="VideoHero1.mp4"
+                      className="bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-600 font-mono"
                     />
+                    <p className="text-sm text-gray-500 dark:text-gray-400">
+                      This filename will be used for both French and English versions
+                    </p>
                   </div>
                 ) : (
-                  <div className="grid grid-cols-2 gap-4">
-                    <div>
-                      <Label>English Video URL</Label>
+                  <div className="grid grid-cols-2 gap-6">
+                    <div className="space-y-2">
+                      <Label className="text-gray-700 dark:text-gray-300 font-medium">English Video</Label>
                       <Input
                         value={editVideoData.url_en}
                         onChange={(e) => setEditVideoData({ ...editVideoData, url_en: e.target.value })}
                         placeholder="VideoHeroEN.mp4"
+                        className="bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-600 font-mono"
                       />
                     </div>
-                    <div>
-                      <Label>French Video URL</Label>
+                    <div className="space-y-2">
+                      <Label className="text-gray-700 dark:text-gray-300 font-medium">French Video</Label>
                       <Input
                         value={editVideoData.url_fr}
                         onChange={(e) => setEditVideoData({ ...editVideoData, url_fr: e.target.value })}
                         placeholder="VideoHeroFR.mp4"
+                        className="bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-600 font-mono"
                       />
                     </div>
                   </div>
                 )}
               </div>
 
-              <div className="flex gap-3 pt-4">
+              {/* Action Buttons */}
+              <div className="flex gap-4 pt-6 border-t border-gray-200 dark:border-gray-700">
                 <Button
                   onClick={async () => {
                     try {
@@ -1371,7 +1399,7 @@ export default function AdminPage() {
                       
                       if (response.ok) {
                         queryClient.invalidateQueries({ queryKey: ['/api/hero-videos'] });
-                        toast({ title: "Updated", description: "Video updated successfully!" });
+                        toast({ title: "Success!", description: "Video updated successfully" });
                         setEditingVideo(null);
                       } else {
                         toast({ title: "Error", description: "Failed to update video", variant: "destructive" });
@@ -1380,13 +1408,14 @@ export default function AdminPage() {
                       toast({ title: "Error", description: "Network error", variant: "destructive" });
                     }
                   }}
-                  className="bg-green-600 hover:bg-green-700"
+                  className="bg-green-600 hover:bg-green-700 text-white font-semibold px-6 py-2 flex-1"
                 >
                   Save Changes
                 </Button>
                 <Button
                   variant="outline"
                   onClick={() => setEditingVideo(null)}
+                  className="border-gray-300 dark:border-gray-600 hover:bg-gray-100 dark:hover:bg-gray-800 font-semibold px-6 py-2 flex-1"
                 >
                   Cancel
                 </Button>
