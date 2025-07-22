@@ -120,6 +120,21 @@ export class HybridStorage implements HybridStorageInterface {
     return newVideo;
   }
 
+  async deleteHeroVideo(videoId: number): Promise<any> {
+    const videos = this.loadJsonFile('hero-videos.json');
+    const videoIndex = videos.findIndex((v: any) => v.id === videoId);
+    
+    if (videoIndex === -1) {
+      throw new Error('Video not found');
+    }
+    
+    const deletedVideo = videos[videoIndex];
+    videos.splice(videoIndex, 1);
+    this.saveJsonFile('hero-videos.json', videos);
+    
+    return deletedVideo;
+  }
+
   // Hero text settings operations
   async getHeroTextSettings(language?: string): Promise<any[]> {
     const data = this.loadJsonFile('hero-text.json');

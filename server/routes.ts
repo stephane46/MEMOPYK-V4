@@ -164,6 +164,53 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Delete hero video (removes from Supabase storage, database, and cache)
+  app.delete("/api/hero-videos/:id", async (req, res) => {
+    try {
+      const videoId = parseInt(req.params.id);
+      
+      // Get video info before deletion
+      const videos = await hybridStorage.getHeroVideos();
+      const video = videos.find((v: any) => v.id === videoId);
+      
+      if (!video) {
+        return res.status(404).json({ error: "Video not found" });
+      }
+
+      console.log(`🗑️ Deleting video: ${video.title_en} (${video.url_en})`);
+
+      // Remove from Supabase storage
+      const { error: storageError } = await supabase.storage
+        .from('memopyk-hero')
+        .remove([video.url_en]);
+
+      if (storageError) {
+        console.error('Supabase storage deletion error:', storageError);
+        // Continue with database deletion even if storage fails
+      } else {
+        console.log('✅ Video removed from Supabase storage');
+      }
+
+      // Remove from local cache
+      videoCache.removeCachedVideo(video.url_en);
+      console.log('✅ Video removed from local cache');
+
+      // Remove from database
+      const result = await hybridStorage.deleteHeroVideo(videoId);
+      console.log('✅ Video removed from database');
+
+      res.json({ 
+        success: true, 
+        message: `Video "${video.title_en}" deleted successfully`,
+        deletedVideo: video
+      });
+
+    } catch (error) {
+      console.error('Video deletion error:', error);
+      res.status(500).json({ error: "Failed to delete video" });
+    }
+  });
+
   
   // Hero Text Settings - Hero section text content
   app.get("/api/hero-text", async (req, res) => {

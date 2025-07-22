@@ -409,7 +409,7 @@ export default function AdminPage() {
                                     </div>
                                   </div>
 
-                                  <div className="grid grid-cols-2 gap-2">
+                                  <div className="grid grid-cols-3 gap-2">
                                     <Button
                                       size="sm"
                                       variant="outline"
@@ -434,6 +434,31 @@ export default function AdminPage() {
                                       }}
                                     >
                                       Cache Video
+                                    </Button>
+                                    <Button
+                                      size="sm"
+                                      variant="destructive"
+                                      onClick={() => {
+                                        if (confirm(`Are you sure you want to delete "${video.title_en}"? This will permanently remove the video from Supabase storage, database, and cache.`)) {
+                                          fetch(`/api/hero-videos/${video.id}`, { method: 'DELETE' })
+                                            .then(async (response) => {
+                                              if (response.ok) {
+                                                const result = await response.json();
+                                                toast({ title: "Deleted", description: result.message });
+                                                queryClient.invalidateQueries({ queryKey: ['/api/hero-videos'] });
+                                                queryClient.invalidateQueries({ queryKey: ['/api/video-cache/stats'] });
+                                              } else {
+                                                const error = await response.text();
+                                                toast({ title: "Delete Failed", description: error, variant: "destructive" });
+                                              }
+                                            })
+                                            .catch((error) => {
+                                              toast({ title: "Delete Failed", description: "Network error", variant: "destructive" });
+                                            });
+                                        }
+                                      }}
+                                    >
+                                      Delete
                                     </Button>
                                   </div>
                                 </div>
