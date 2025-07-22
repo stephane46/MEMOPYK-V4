@@ -78,8 +78,15 @@ export default function GallerySection() {
 
   const getItemUrl = (item: GalleryItem, type: 'video' | 'image') => {
     if (type === 'video') {
-      return language === 'fr-FR' ? item.video_url_fr : item.video_url_en;
+      const videoUrl = language === 'fr-FR' ? item.video_url_fr : item.video_url_en;
+      if (videoUrl) {
+        // Extract filename from Supabase URL and use video proxy
+        const filename = videoUrl.split('/').pop();
+        return filename ? `/api/video-proxy?filename=${encodeURIComponent(filename)}` : null;
+      }
+      return null;
     } else {
+      // Images can be displayed directly from Supabase
       return language === 'fr-FR' ? item.image_url_fr : item.image_url_en;
     }
   };
@@ -169,9 +176,11 @@ export default function GallerySection() {
                           <Button
                             onClick={() => {
                               if (displayUrl) {
+                                // For images, use direct URL. For videos, already proxied in getItemUrl
+                                const previewUrl = mediaType === 'video' ? displayUrl : displayUrl;
                                 setPreviewItem({ 
                                   type: mediaType, 
-                                  url: displayUrl, 
+                                  url: previewUrl, 
                                   title: getItemTitle(item),
                                   itemId: item.id,
                                   width: item.video_width,
