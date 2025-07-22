@@ -518,11 +518,14 @@ export default function AdminPage() {
                                     {/* Clear Position Indicator */}
                                     <div className="flex items-center justify-center">
                                       <div className="bg-blue-600 text-white px-4 py-2 rounded-full font-bold text-lg">
-                                        Position #{video.order_index}
+                                        Plays {video.order_index === 1 ? '1st' : video.order_index === 2 ? '2nd' : video.order_index === 3 ? '3rd' : `${video.order_index}th`}
                                       </div>
                                     </div>
+                                    <p className="text-center text-sm text-gray-600 dark:text-gray-400">
+                                      Order videos appear on your website
+                                    </p>
                                     
-                                    {/* Clear Status Indicator */}
+                                    {/* Clear Status Indicator with Toggle */}
                                     <div className="flex items-center justify-center">
                                       <div className={`px-6 py-3 rounded-lg font-bold text-lg border-2 ${
                                         video.is_active 
@@ -531,6 +534,20 @@ export default function AdminPage() {
                                       }`}>
                                         {video.is_active ? '🟢 VISIBLE ON WEBSITE' : '🔴 HIDDEN FROM WEBSITE'}
                                       </div>
+                                    </div>
+                                    
+                                    {/* Toggle Switch */}
+                                    <div className="flex items-center justify-center space-x-3">
+                                      <span className="text-sm font-medium text-gray-700 dark:text-gray-300">Hidden</span>
+                                      <Switch
+                                        checked={video.is_active}
+                                        onCheckedChange={(checked) => 
+                                          toggleMutation.mutate({ videoId: video.id, isActive: checked })
+                                        }
+                                        disabled={toggleMutation.isPending}
+                                        className="scale-150"
+                                      />
+                                      <span className="text-sm font-medium text-gray-700 dark:text-gray-300">Visible</span>
                                     </div>
                                   </div>
                                 </div>
@@ -557,25 +574,7 @@ export default function AdminPage() {
 
                                 {/* Actions */}
                                 <div className="space-y-6">
-                                  {/* Visibility Toggle */}
-                                  <div className="bg-white dark:bg-gray-900 p-4 rounded-lg border-2">
-                                    <div className="flex items-center justify-between">
-                                      <div>
-                                        <h4 className="font-bold text-gray-900 dark:text-white">Website Visibility</h4>
-                                        <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
-                                          {video.is_active ? 'Visitors can see this video' : 'Video is hidden from visitors'}
-                                        </p>
-                                      </div>
-                                      <Switch
-                                        checked={video.is_active}
-                                        onCheckedChange={(checked) => 
-                                          toggleMutation.mutate({ videoId: video.id, isActive: checked })
-                                        }
-                                        disabled={toggleMutation.isPending}
-                                        className="scale-150"
-                                      />
-                                    </div>
-                                  </div>
+                                  {/* Video Order Controls */}
 
                                   {/* Position Controls */}
                                   <div className="bg-white dark:bg-gray-900 p-4 rounded-lg border-2">
