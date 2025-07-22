@@ -1,7 +1,5 @@
 import { useLanguage } from '../../contexts/LanguageContext';
-// For now, we'll use a placeholder URL since the asset path needs configuration
-// import keyVisualImage from '@assets/images/KeyVisualS.png';
-const keyVisualImage = 'https://via.placeholder.com/800x600/F2EBDC/011526?text=MEMOPYK+Key+Visual';
+import keyVisualImage from '@assets/KeyVisual_Hero.png';
 
 export function KeyVisualSection() {
   const { language } = useLanguage();

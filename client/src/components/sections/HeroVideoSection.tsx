@@ -32,7 +32,7 @@ export function HeroVideoSection() {
   const [isPlaying, setIsPlaying] = useState(true);
   const [isLoading, setIsLoading] = useState(true);
   const videoRef = useRef<HTMLVideoElement>(null);
-  const intervalRef = useRef<NodeJS.Timeout>();
+  const intervalRef = useRef<NodeJS.Timeout | null>(null);
 
   // Fetch hero videos
   const { data: heroVideos = [] } = useQuery<HeroVideo[]>({
@@ -42,7 +42,7 @@ export function HeroVideoSection() {
 
   // Fetch hero text settings
   const { data: heroTextData = [] } = useQuery<HeroText[]>({
-    queryKey: ['/api/hero-text'],
+    queryKey: ['/api/hero-text', language],
     staleTime: 5 * 60 * 1000,
   });
 
