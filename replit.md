@@ -8,6 +8,11 @@ MEMOPYK is a full-stack memory film platform being rebuilt from scratch. Current
 
 Preferred communication style: Simple, everyday language.
 
+**Analytics Strategy Decision (Jan 22, 2025):**
+- Remove hero video tracking (auto-play videos don't provide meaningful analytics)
+- Focus analytics on gallery video previews and user engagement  
+- Track which gallery items are most popular to inform business decisions
+
 ## Recent Changes (July 22, 2025)
 
 ### Phase 8.1 Gallery Management Interface - COMPLETED (July 22, 2025)

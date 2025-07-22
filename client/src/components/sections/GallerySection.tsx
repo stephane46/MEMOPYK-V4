@@ -1,6 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { useVideoAnalytics } from "@/hooks/useVideoAnalytics";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Badge } from "@/components/ui/badge";
@@ -26,7 +27,8 @@ interface GalleryItem {
 
 export default function GallerySection() {
   const { language } = useLanguage();
-  const [previewItem, setPreviewItem] = useState<{ type: 'video' | 'image'; url: string; title: string } | null>(null);
+  const { trackVideoView } = useVideoAnalytics();
+  const [previewItem, setPreviewItem] = useState<{ type: 'video' | 'image'; url: string; title: string; itemId: number } | null>(null);
   
   // Fetch active gallery items
   const { data: galleryItems = [], isLoading } = useQuery<GalleryItem[]>({
@@ -154,11 +156,20 @@ export default function GallerySection() {
                       <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/0 to-black/20 opacity-0 group-hover:opacity-100 transition-all duration-300">
                         <div className="absolute inset-0 flex items-center justify-center">
                           <Button
-                            onClick={() => displayUrl && setPreviewItem({ 
-                              type: mediaType, 
-                              url: displayUrl, 
-                              title: getItemTitle(item) 
-                            })}
+                            onClick={() => {
+                              if (displayUrl) {
+                                setPreviewItem({ 
+                                  type: mediaType, 
+                                  url: displayUrl, 
+                                  title: getItemTitle(item),
+                                  itemId: item.id
+                                });
+                                // Track gallery video preview clicks for analytics
+                                if (mediaType === 'video') {
+                                  trackVideoView(`gallery-${item.id}`, 0, false);
+                                }
+                              }
+                            }}
                             className="bg-orange-500 hover:bg-orange-600 text-white rounded-full p-4 transform scale-90 group-hover:scale-100 transition-all duration-300"
                           >
                             {hasVideo ? <Play className="h-6 w-6" /> : <Eye className="h-6 w-6" />}
@@ -218,11 +229,20 @@ export default function GallerySection() {
                       {getItemPrice(item)}
                     </div>
                     <Button
-                      onClick={() => displayUrl && setPreviewItem({ 
-                        type: mediaType, 
-                        url: displayUrl, 
-                        title: getItemTitle(item) 
-                      })}
+                      onClick={() => {
+                        if (displayUrl) {
+                          setPreviewItem({ 
+                            type: mediaType, 
+                            url: displayUrl, 
+                            title: getItemTitle(item),
+                            itemId: item.id
+                          });
+                          // Track gallery video preview clicks for analytics
+                          if (mediaType === 'video') {
+                            trackVideoView(`gallery-${item.id}`, 0, false);
+                          }
+                        }
+                      }}
                       variant="outline"
                       size="sm"
                       className="group-hover:bg-orange-500 group-hover:text-white group-hover:border-orange-500 transition-all"

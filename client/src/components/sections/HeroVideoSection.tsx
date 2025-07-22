@@ -69,17 +69,7 @@ export function HeroVideoSection() {
     };
   }, [activeVideos.length, isPlaying]);
 
-  // Track video views only when video ID changes, with debouncing
-  useEffect(() => {
-    if (currentVideo?.id) {
-      // Use a timeout to debounce the tracking call
-      const timeoutId = setTimeout(() => {
-        trackVideoView(`hero-${currentVideo.id}`, 0, false);
-      }, 100);
-      
-      return () => clearTimeout(timeoutId);
-    }
-  }, [currentVideo?.id]); // Only track when video ID actually changes
+  // Hero videos auto-play, so no need to track them - analytics should focus on user-initiated gallery video views
 
   // Handle video navigation
   const goToVideo = (index: number) => {
