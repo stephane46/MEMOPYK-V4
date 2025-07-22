@@ -264,6 +264,31 @@ export class VideoCache {
   }
 
   /**
+   * Preload a specific video by URL
+   */
+  async preloadVideo(videoUrl: string): Promise<void> {
+    try {
+      const filename = this.extractFilenameFromUrl(videoUrl);
+      if (!this.isVideoCached(filename)) {
+        console.log(`📥 Preloading video: ${filename}`);
+        await this.downloadAndCacheVideo(filename);
+      } else {
+        console.log(`✅ Video already cached: ${filename}`);
+      }
+    } catch (error) {
+      console.error('❌ Failed to preload video:', error);
+    }
+  }
+
+  /**
+   * Extract filename from Supabase URL
+   */
+  private extractFilenameFromUrl(url: string): string {
+    const parts = url.split('/');
+    return parts[parts.length - 1];
+  }
+
+  /**
    * Force refresh cache for all critical videos (admin tool)
    */
   async refreshCriticalVideos(): Promise<{ success: boolean; cached: string[]; errors: string[] }> {

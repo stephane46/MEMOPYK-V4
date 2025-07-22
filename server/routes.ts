@@ -4,6 +4,8 @@ import { hybridStorage } from "./hybrid-storage";
 import { z } from "zod";
 import { videoCache } from "./video-cache";
 import { createReadStream, existsSync, statSync } from 'fs';
+import multer from 'multer';
+import { createClient } from '@supabase/supabase-js';
 
 // Contact form validation schema
 const contactFormSchema = z.object({
@@ -11,6 +13,27 @@ const contactFormSchema = z.object({
   email: z.string().email("Invalid email address"),
   phone: z.string().optional(),
   message: z.string().min(10, "Message must be at least 10 characters")
+});
+
+// Initialize Supabase client
+const supabase = createClient(
+  process.env.SUPABASE_URL!,
+  process.env.SUPABASE_SERVICE_KEY!
+);
+
+// Configure multer for file uploads
+const upload = multer({
+  storage: multer.memoryStorage(),
+  limits: {
+    fileSize: 500 * 1024 * 1024, // 500MB limit
+  },
+  fileFilter: (req, file, cb) => {
+    if (file.mimetype.startsWith('video/')) {
+      cb(null, true);
+    } else {
+      cb(new Error('Only video files are allowed'));
+    }
+  }
 });
 
 export async function registerRoutes(app: Express): Promise<Server> {
@@ -70,6 +93,74 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.json({ success: true, video: result });
     } catch (error) {
       res.status(500).json({ error: "Failed to update video" });
+    }
+  });
+
+  // Upload new video to Supabase and add to hero videos
+  app.post("/api/upload-video", upload.single('video'), async (req, res) => {
+    try {
+      if (!req.file) {
+        return res.status(400).json({ error: "No video file provided" });
+      }
+
+      const { title_en, title_fr } = req.body;
+      if (!title_en || !title_fr) {
+        return res.status(400).json({ error: "Both English and French titles are required" });
+      }
+
+      // Generate unique filename
+      const timestamp = Date.now();
+      const originalName = req.file.originalname.replace(/[^a-zA-Z0-9.-]/g, '_');
+      const filename = `${timestamp}_${originalName}`;
+
+      console.log(`📤 Uploading video: ${filename} (${(req.file.size / 1024 / 1024).toFixed(2)}MB)`);
+
+      // Upload to Supabase storage
+      const { data: uploadData, error: uploadError } = await supabase.storage
+        .from('memopyk-hero')
+        .upload(filename, req.file.buffer, {
+          contentType: req.file.mimetype,
+          cacheControl: '3600'
+        });
+
+      if (uploadError) {
+        console.error('Supabase upload error:', uploadError);
+        return res.status(500).json({ error: `Upload failed: ${uploadError.message}` });
+      }
+
+      console.log('✅ Video uploaded to Supabase:', uploadData.path);
+
+      // Get next order index
+      const existingVideos = await hybridStorage.getHeroVideos();
+      const nextOrder = Math.max(...existingVideos.map(v => v.order_index), 0) + 1;
+
+      // Add video record to database
+      const newVideo = {
+        title_en,
+        title_fr,
+        url_en: filename,
+        url_fr: filename, // Same file for both languages
+        order_index: nextOrder,
+        is_active: false // Start as inactive for review
+      };
+
+      const result = await hybridStorage.addHeroVideo(newVideo);
+      
+      // Trigger cache preload for the new video
+      const videoUrl = `https://supabase.memopyk.org/storage/v1/object/public/memopyk-hero/${filename}`;
+      videoCache.preloadVideo(videoUrl).catch(console.error);
+
+      console.log('✅ Video added to database with ID:', result.id);
+
+      res.json({ 
+        success: true, 
+        video: result,
+        message: "Video uploaded successfully. Activate it to include in carousel." 
+      });
+
+    } catch (error) {
+      console.error('Video upload error:', error);
+      res.status(500).json({ error: "Failed to upload video" });
     }
   });
 

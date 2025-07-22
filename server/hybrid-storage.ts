@@ -108,6 +108,18 @@ export class HybridStorage implements HybridStorageInterface {
     return videos[videoIndex];
   }
 
+  async addHeroVideo(video: any): Promise<any> {
+    const videos = this.loadJsonFile('hero-videos.json');
+    const newVideo = {
+      id: Date.now(), // Simple ID generation
+      ...video,
+      created_at: new Date().toISOString()
+    };
+    videos.push(newVideo);
+    this.saveJsonFile('hero-videos.json', videos);
+    return newVideo;
+  }
+
   // Hero text settings operations
   async getHeroTextSettings(language?: string): Promise<any[]> {
     const data = this.loadJsonFile('hero-text.json');

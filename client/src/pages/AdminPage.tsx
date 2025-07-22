@@ -234,21 +234,48 @@ export default function AdminPage() {
                                 accept="video/*"
                                 className="hidden"
                                 id="video-upload"
-                                onChange={(e) => {
+                                onChange={async (e) => {
                                   const file = e.target.files?.[0];
                                   if (file) {
                                     toast({ title: "Upload Started", description: `Uploading ${file.name}...` });
-                                    // TODO: Implement actual file upload to Supabase
-                                    toast({ title: "Coming Soon", description: "Video upload will be implemented next" });
+                                    
+                                    try {
+                                      // Create FormData for file upload
+                                      const formData = new FormData();
+                                      formData.append('video', file);
+                                      formData.append('title_en', `New Video - ${file.name}`);
+                                      formData.append('title_fr', `Nouvelle Vidéo - ${file.name}`);
+                                      
+                                      // Upload to backend API
+                                      const response = await fetch('/api/upload-video', {
+                                        method: 'POST',
+                                        body: formData
+                                      });
+                                      
+                                      if (response.ok) {
+                                        const result = await response.json();
+                                        toast({ title: "Success", description: "Video uploaded successfully!" });
+                                        
+                                        // Refresh the video list
+                                        queryClient.invalidateQueries({ queryKey: ['/api/hero-videos'] });
+                                      } else {
+                                        const error = await response.text();
+                                        toast({ title: "Upload Failed", description: error, variant: "destructive" });
+                                      }
+                                    } catch (error) {
+                                      console.error('Upload error:', error);
+                                      toast({ title: "Upload Failed", description: "An error occurred during upload", variant: "destructive" });
+                                    }
+                                    
+                                    // Reset the input
+                                    e.target.value = '';
                                   }
                                 }}
                               />
                               <label
                                 htmlFor="video-upload"
-                                className="inline-flex items-center px-6 py-3 border border-transparent shadow-lg text-sm font-semibold rounded-lg text-white cursor-pointer transition-all hover:scale-105"
+                                className="inline-flex items-center px-6 py-3 border border-transparent shadow-lg text-sm font-semibold rounded-lg text-white cursor-pointer transition-all hover:scale-105 hover:opacity-90"
                                 style={{ backgroundColor: '#D67C4A' }}
-                                onMouseEnter={(e) => e.target.style.backgroundColor = '#C5663A'}
-                                onMouseLeave={(e) => e.target.style.backgroundColor = '#D67C4A'}
                               >
                                 Upload Video
                               </label>
