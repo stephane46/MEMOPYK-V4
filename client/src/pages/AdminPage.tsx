@@ -38,8 +38,6 @@ export default function AdminPage() {
   const [previewVideo, setPreviewVideo] = useState<{ url: string; title: string } | null>(null);
   const [editingVideo, setEditingVideo] = useState<any | null>(null);
   const [editVideoData, setEditVideoData] = useState({
-    title_en: '',
-    title_fr: '',
     url_en: '',
     url_fr: '',
     use_same_video: true
@@ -579,8 +577,6 @@ export default function AdminPage() {
                                       onClick={() => {
                                         setEditingVideo(video);
                                         setEditVideoData({
-                                          title_en: video.title_en,
-                                          title_fr: video.title_fr,
                                           url_en: video.url_en,
                                           url_fr: video.url_fr,
                                           use_same_video: video.use_same_video ?? true
@@ -1272,10 +1268,10 @@ export default function AdminPage() {
           <DialogContent className="max-w-3xl bg-white dark:bg-gray-900 border-2 border-gray-200 dark:border-gray-700">
             <DialogHeader className="bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-gray-800 dark:to-gray-700 -m-6 mb-6 p-6 rounded-t-lg">
               <DialogTitle className="text-xl font-bold text-gray-900 dark:text-white">
-                Edit Hero Video: {editingVideo.title_en || editingVideo.title_fr}
+                Edit Hero Video
               </DialogTitle>
               <p className="text-gray-600 dark:text-gray-300 text-sm mt-1">
-                Update video information and settings
+                Manage video file settings
               </p>
             </DialogHeader>
             
@@ -1353,32 +1349,7 @@ export default function AdminPage() {
                 </p>
               </div>
 
-              {/* Video Titles */}
-              <div className="space-y-4">
-                <h4 className="font-semibold text-gray-900 dark:text-white text-lg border-b border-gray-200 dark:border-gray-700 pb-2">
-                  Video Titles
-                </h4>
-                <div className="grid grid-cols-2 gap-6">
-                  <div className="space-y-2">
-                    <Label className="text-gray-700 dark:text-gray-300 font-medium">English Title</Label>
-                    <Input
-                      value={editVideoData.title_en}
-                      onChange={(e) => setEditVideoData({ ...editVideoData, title_en: e.target.value })}
-                      placeholder="Hero video title in English"
-                      className="bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-600"
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <Label className="text-gray-700 dark:text-gray-300 font-medium">French Title</Label>
-                    <Input
-                      value={editVideoData.title_fr}
-                      onChange={(e) => setEditVideoData({ ...editVideoData, title_fr: e.target.value })}
-                      placeholder="Titre de la vidéo héro en français"
-                      className="bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-600"
-                    />
-                  </div>
-                </div>
-              </div>
+
 
               {/* Video URLs */}
               <div className="space-y-4">
@@ -1435,7 +1406,11 @@ export default function AdminPage() {
                       const response = await fetch(`/api/hero-videos/${editingVideo.id}`, {
                         method: 'PATCH',
                         headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify(editVideoData)
+                        body: JSON.stringify({
+                          url_en: editVideoData.url_en,
+                          url_fr: editVideoData.url_fr,
+                          use_same_video: editVideoData.use_same_video
+                        })
                       });
                       
                       if (response.ok) {
