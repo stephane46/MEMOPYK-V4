@@ -22,8 +22,8 @@ function App() {
               {/* Localized Routes */}
               <Route path="/fr-FR" component={HomePage} />
               <Route path="/en-US" component={HomePage} />
-              <Route path="/fr-FR/admin/*" component={AdminRoute} />
-              <Route path="/en-US/admin/*" component={AdminRoute} />
+              <Route path="/fr-FR/admin*" component={AdminRoute} />
+              <Route path="/en-US/admin*" component={AdminRoute} />
               <Route path="/fr-FR/gallery" component={() => <div className="min-h-screen flex items-center justify-center"><div className="text-2xl text-gray-500">Galerie Bientôt Disponible</div></div>} />
               <Route path="/en-US/gallery" component={() => <div className="min-h-screen flex items-center justify-center"><div className="text-2xl text-gray-500">Gallery Coming Soon</div></div>} />
               <Route path="/fr-FR/contact" component={() => <div className="min-h-screen flex items-center justify-center"><div className="text-2xl text-gray-500">Contact Bientôt Disponible</div></div>} />
