@@ -420,12 +420,26 @@ export default function AdminPage() {
                                       <Button
                                         size="sm"
                                         variant="outline"
-                                        onClick={() => {
-                                          console.log('Move Down clicked for video:', video.id, 'current order:', video.order_index);
+                                        onClick={(e) => {
+                                          e.preventDefault();
+                                          e.stopPropagation();
+                                          console.log('=== MOVE DOWN BUTTON CLICKED ===');
+                                          console.log('Video ID:', video.id);
+                                          console.log('Current order:', video.order_index);
+                                          
                                           const maxOrder = Math.max(...heroVideos.map(v => v.order_index));
+                                          console.log('Max order:', maxOrder);
+                                          console.log('Button disabled?', video.order_index >= maxOrder || reorderMutation.isPending);
+                                          console.log('Mutation pending?', reorderMutation.isPending);
+                                          
                                           const newOrder = video.order_index + 1;
+                                          console.log('New order would be:', newOrder);
+                                          
                                           if (newOrder <= maxOrder) {
+                                            console.log('Calling reorderMutation.mutate...');
                                             reorderMutation.mutate({ videoId: video.id, newOrder });
+                                          } else {
+                                            console.log('Cannot move down - already at bottom');
                                           }
                                         }}
                                         disabled={video.order_index >= Math.max(...heroVideos.map(v => v.order_index)) || reorderMutation.isPending}
