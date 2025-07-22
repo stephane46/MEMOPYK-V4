@@ -514,13 +514,24 @@ export default function AdminPage() {
                                       </div>
                                     </div>
                                   </div>
-                                  <div className="flex flex-wrap gap-2">
-                                    <Badge variant={video.is_active ? "default" : "secondary"}>
-                                      {video.is_active ? "Active" : "Inactive"}
-                                    </Badge>
-                                    <Badge variant="outline">
-                                      Order: {video.order_index}
-                                    </Badge>
+                                  <div className="space-y-3">
+                                    {/* Clear Position Indicator */}
+                                    <div className="flex items-center justify-center">
+                                      <div className="bg-blue-600 text-white px-4 py-2 rounded-full font-bold text-lg">
+                                        Position #{video.order_index}
+                                      </div>
+                                    </div>
+                                    
+                                    {/* Clear Status Indicator */}
+                                    <div className="flex items-center justify-center">
+                                      <div className={`px-6 py-3 rounded-lg font-bold text-lg border-2 ${
+                                        video.is_active 
+                                          ? 'bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200 border-green-500' 
+                                          : 'bg-red-100 dark:bg-red-900 text-red-800 dark:text-red-200 border-red-500'
+                                      }`}>
+                                        {video.is_active ? '🟢 VISIBLE ON WEBSITE' : '🔴 HIDDEN FROM WEBSITE'}
+                                      </div>
+                                    </div>
                                   </div>
                                 </div>
 
@@ -545,77 +556,65 @@ export default function AdminPage() {
                                 </div>
 
                                 {/* Actions */}
-                                <div className="space-y-4">
-                                  <div className="flex items-center space-x-2">
-                                    <Switch
-                                      checked={video.is_active}
-                                      onCheckedChange={(checked) => 
-                                        toggleMutation.mutate({ videoId: video.id, isActive: checked })
-                                      }
-                                      disabled={toggleMutation.isPending}
-                                    />
-                                    <Label className="text-sm font-medium">
-                                      {video.is_active ? 'Active' : 'Inactive'}
-                                    </Label>
+                                <div className="space-y-6">
+                                  {/* Visibility Toggle */}
+                                  <div className="bg-white dark:bg-gray-900 p-4 rounded-lg border-2">
+                                    <div className="flex items-center justify-between">
+                                      <div>
+                                        <h4 className="font-bold text-gray-900 dark:text-white">Website Visibility</h4>
+                                        <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
+                                          {video.is_active ? 'Visitors can see this video' : 'Video is hidden from visitors'}
+                                        </p>
+                                      </div>
+                                      <Switch
+                                        checked={video.is_active}
+                                        onCheckedChange={(checked) => 
+                                          toggleMutation.mutate({ videoId: video.id, isActive: checked })
+                                        }
+                                        disabled={toggleMutation.isPending}
+                                        className="scale-150"
+                                      />
+                                    </div>
                                   </div>
 
-                                  <div className="flex flex-col space-y-2">
-                                    <Label className="text-sm font-medium">Reorder Video</Label>
-                                    <div className="flex space-x-2">
+                                  {/* Position Controls */}
+                                  <div className="bg-white dark:bg-gray-900 p-4 rounded-lg border-2">
+                                    <h4 className="font-bold text-gray-900 dark:text-white mb-3">Change Display Order</h4>
+                                    <div className="flex space-x-2 justify-center">
                                       <Button
-                                        size="sm"
+                                        size="lg"
                                         variant="outline"
                                         onClick={(e) => {
                                           e.preventDefault();
                                           e.stopPropagation();
-                                          console.log('=== MOVE UP BUTTON CLICKED ===');
-                                          console.log('Video ID:', video.id);
-                                          console.log('Current order:', video.order_index);
-                                          console.log('Button disabled?', video.order_index <= 1 || reorderMutation.isPending);
-                                          console.log('Mutation pending?', reorderMutation.isPending);
-                                          
                                           const newOrder = video.order_index - 1;
-                                          console.log('New order would be:', newOrder);
-                                          
                                           if (newOrder >= 1) {
-                                            console.log('Calling reorderMutation.mutate...');
                                             reorderMutation.mutate({ videoId: video.id, newOrder });
-                                          } else {
-                                            console.log('Cannot move up - already at top');
                                           }
                                         }}
                                         disabled={video.order_index <= 1 || reorderMutation.isPending}
+                                        className="px-6 py-3"
                                       >
-                                        <ArrowUp className="h-4 w-4" />
+                                        <ArrowUp className="h-5 w-5 mr-2" />
+                                        Move Earlier
                                       </Button>
                                       <Button
-                                        size="sm"
+                                        size="lg"
                                         variant="outline"
                                         onClick={(e) => {
                                           e.preventDefault();
                                           e.stopPropagation();
-                                          console.log('=== MOVE DOWN BUTTON CLICKED ===');
-                                          console.log('Video ID:', video.id);
-                                          console.log('Current order:', video.order_index);
-                                          
                                           const maxOrder = Math.max(...heroVideos.map(v => v.order_index));
-                                          console.log('Max order:', maxOrder);
-                                          console.log('Button disabled?', video.order_index >= maxOrder || reorderMutation.isPending);
-                                          console.log('Mutation pending?', reorderMutation.isPending);
-                                          
                                           const newOrder = video.order_index + 1;
-                                          console.log('New order would be:', newOrder);
-                                          
                                           if (newOrder <= maxOrder) {
-                                            console.log('Calling reorderMutation.mutate...');
                                             reorderMutation.mutate({ videoId: video.id, newOrder });
-                                          } else {
-                                            console.log('Cannot move down - already at bottom');
                                           }
                                         }}
                                         disabled={video.order_index >= Math.max(...heroVideos.map(v => v.order_index)) || reorderMutation.isPending}
+                                        className="px-6 py-3"
                                       >
-                                        <ArrowDown className="h-4 w-4" />
+                                        <ArrowDown className="h-5 w-5 mr-2" />
+                                        Move Later
                                       </Button>
                                     </div>
                                   </div>
