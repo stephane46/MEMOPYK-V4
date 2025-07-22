@@ -627,9 +627,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // Clear cache if file exists (for overwrite scenario)
       videoCache.clearSpecificFile(filename);
 
-      // Upload to Supabase storage (memopyk-videos bucket) with overwrite enabled
+      // Upload to Supabase storage (memopyk-gallery bucket) with overwrite enabled
       const { data: uploadData, error: uploadError } = await supabase.storage
-        .from('memopyk-videos')
+        .from('memopyk-gallery')
         .upload(filename, req.file.buffer, {
           contentType: req.file.mimetype,
           cacheControl: '3600',
@@ -641,7 +641,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(500).json({ error: `Upload failed: ${uploadError.message}` });
       }
 
-      const videoUrl = `https://supabase.memopyk.org/storage/v1/object/public/memopyk-videos/${filename}`;
+      const videoUrl = `https://supabase.memopyk.org/storage/v1/object/public/memopyk-gallery/${filename}`;
       
       res.json({ 
         success: true, 
