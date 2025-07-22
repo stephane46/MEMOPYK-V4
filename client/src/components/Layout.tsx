@@ -7,18 +7,18 @@ interface LayoutProps {
 }
 
 export function Layout({ children }: LayoutProps) {
-  const { t, language, setLanguage } = useLanguage();
+  const { t, language, setLanguage, getLocalizedPath } = useLanguage();
   const [location] = useLocation();
-
+  
   const navigation = [
-    { name: t('nav.home'), href: '/' },
-    { name: t('nav.gallery'), href: '/gallery' },
-    { name: t('nav.contact'), href: '/contact' },
-    { name: t('nav.admin'), href: '/admin' },
+    { name: t('nav.home'), href: getLocalizedPath('/') },
+    { name: t('nav.gallery'), href: getLocalizedPath('/gallery') },
+    { name: t('nav.contact'), href: getLocalizedPath('/contact') },
+    { name: t('nav.admin'), href: getLocalizedPath('/admin') },
   ];
 
   const toggleLanguage = () => {
-    setLanguage(language === 'fr' ? 'en' : 'fr');
+    setLanguage(language === 'fr-FR' ? 'en-US' : 'fr-FR');
   };
 
   return (
@@ -56,9 +56,9 @@ export function Layout({ children }: LayoutProps) {
                 className="flex items-center space-x-2 px-3 py-2 rounded-md text-sm font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-100 transition-colors"
               >
                 <span className="text-lg">
-                  {language === 'fr' ? '🇫🇷' : '🇺🇸'}
+                  {language === 'fr-FR' ? '🇫🇷' : '🇺🇸'}
                 </span>
-                <span>{language.toUpperCase()}</span>
+                <span>{language === 'fr-FR' ? 'FR' : 'EN'}</span>
               </button>
 
               {/* Mobile menu button */}
@@ -101,7 +101,7 @@ export function Layout({ children }: LayoutProps) {
             <div className="col-span-1 md:col-span-2">
               <h3 className="text-2xl font-bold mb-4">MEMOPYK</h3>
               <p className="text-gray-400 mb-4">
-                {language === 'fr' 
+                {language === 'fr-FR' 
                   ? 'Créateur de films mémoire pour immortaliser vos moments précieux.'
                   : 'Memory film creator to immortalize your precious moments.'
                 }
@@ -110,7 +110,7 @@ export function Layout({ children }: LayoutProps) {
             
             <div>
               <h4 className="font-semibold mb-4">
-                {language === 'fr' ? 'Liens Rapides' : 'Quick Links'}
+                {language === 'fr-FR' ? 'Liens Rapides' : 'Quick Links'}
               </h4>
               <ul className="space-y-2 text-gray-400">
                 <li><Link href="/"><a className="hover:text-white">{t('nav.home')}</a></Link></li>
@@ -129,9 +129,9 @@ export function Layout({ children }: LayoutProps) {
           </div>
           
           <div className="border-t border-gray-800 mt-8 pt-8 text-center text-gray-400">
-            <p>&copy; 2025 MEMOPYK. {language === 'fr' ? 'Tous droits réservés.' : 'All rights reserved.'}</p>
+            <p>&copy; 2025 MEMOPYK. {language === 'fr-FR' ? 'Tous droits réservés.' : 'All rights reserved.'}</p>
             <div className="mt-2">
-              <Link href="/admin">
+              <Link href={getLocalizedPath('/admin')}>
                 <a className="text-xs text-gray-600 hover:text-gray-400 transition-colors">admin</a>
               </Link>
             </div>

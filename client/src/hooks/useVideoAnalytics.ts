@@ -6,13 +6,13 @@ interface VideoViewData {
   video_id: string;
   duration_watched?: number;
   completed?: boolean;
-  language: 'en' | 'fr';
+  language: 'en-US' | 'fr-FR';
   page_url?: string;
   referrer?: string;
 }
 
 interface SessionData {
-  language: 'en' | 'fr';
+  language: 'en-US' | 'fr-FR';
   page_url: string;
   user_agent?: string;
   screen_resolution?: string;

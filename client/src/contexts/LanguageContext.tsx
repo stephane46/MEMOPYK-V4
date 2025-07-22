@@ -1,18 +1,21 @@
 import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import { useLocation } from 'wouter';
 
-type Language = 'fr' | 'en';
+type Language = 'fr-FR' | 'en-US';
 
 interface LanguageContextType {
   language: Language;
   setLanguage: (lang: Language) => void;
   t: (key: string, fallback?: string) => string;
+  getLocalizedPath: (path: string) => string;
+  removeLanguageFromPath: (path: string) => string;
 }
 
 export const LanguageContext = createContext<LanguageContextType | undefined>(undefined);
 
 // Basic translations for the app
 const translations: Record<Language, Record<string, string>> = {
-  fr: {
+  'fr-FR': {
     'site.title': 'MEMOPYK - Films Mémoire',
     'nav.home': 'Accueil',
     'nav.gallery': 'Galerie',
@@ -25,7 +28,7 @@ const translations: Record<Language, Record<string, string>> = {
     'error': 'Erreur',
     'welcome': 'Bienvenue sur MEMOPYK'
   },
-  en: {
+  'en-US': {
     'site.title': 'MEMOPYK - Memory Films',
     'nav.home': 'Home',
     'nav.gallery': 'Gallery',
@@ -41,17 +44,46 @@ const translations: Record<Language, Record<string, string>> = {
 };
 
 export function LanguageProvider({ children }: { children: ReactNode }) {
-  const [language, setLanguageState] = useState<Language>('fr');
+  const [location] = useLocation();
+  const [language, setLanguageState] = useState<Language>('fr-FR');
+
+  // Extract language from URL path
+  const getLanguageFromPath = (path: string): Language => {
+    if (path.startsWith('/en-US')) return 'en-US';
+    if (path.startsWith('/fr-FR')) return 'fr-FR';
+    return 'fr-FR'; // Default to French
+  };
+
+  const removeLanguageFromPath = (path: string): string => {
+    return path.replace(/^\/(fr-FR|en-US)/, '') || '/';
+  };
+
+  const getLocalizedPath = (path: string): string => {
+    const cleanPath = removeLanguageFromPath(path);
+    return `/${language}${cleanPath === '/' ? '' : cleanPath}`;
+  };
 
   useEffect(() => {
-    const savedLanguage = localStorage.getItem('memopyk-language') as Language;
-    if (savedLanguage && (savedLanguage === 'fr' || savedLanguage === 'en')) {
-      setLanguageState(savedLanguage);
-    }
-  }, []);
+    const currentLanguage = getLanguageFromPath(location);
+    setLanguageState(currentLanguage);
+    
+    // Set HTML lang attribute and meta tags for SEO
+    document.documentElement.lang = currentLanguage;
+    document.querySelector('meta[name="Content-Language"]')?.setAttribute('content', currentLanguage);
+    
+    // Store in localStorage for persistence
+    localStorage.setItem('memopyk-language', currentLanguage);
+  }, [location]);
 
   const setLanguage = (lang: Language) => {
+    const currentPath = removeLanguageFromPath(location);
+    const newPath = `/${lang}${currentPath === '/' ? '' : currentPath}`;
+    window.history.pushState({}, '', newPath);
     setLanguageState(lang);
+    
+    // Update HTML attributes
+    document.documentElement.lang = lang;
+    document.querySelector('meta[name="Content-Language"]')?.setAttribute('content', lang);
     localStorage.setItem('memopyk-language', lang);
   };
 
@@ -60,7 +92,7 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
   };
 
   return (
-    <LanguageContext.Provider value={{ language, setLanguage, t }}>
+    <LanguageContext.Provider value={{ language, setLanguage, t, getLocalizedPath, removeLanguageFromPath }}>
       {children}
     </LanguageContext.Provider>
   );

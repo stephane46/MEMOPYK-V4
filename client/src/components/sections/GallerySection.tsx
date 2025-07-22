@@ -48,7 +48,7 @@ export default function GallerySection() {
   });
 
   const content = {
-    fr: {
+    'fr-FR': {
       title: "Notre Galerie",
       subtitle: "Découvrez nos créations de films souvenirs",
       description: "Chaque film raconte une histoire unique. Explorez notre collection de créations personnalisées pour mariages, familles et événements spéciaux.",
@@ -60,7 +60,7 @@ export default function GallerySection() {
       video: "Vidéo",
       image: "Image"
     },
-    en: {
+    'en-US': {
       title: "Our Gallery",
       subtitle: "Discover our memory film creations",
       description: "Every film tells a unique story. Explore our collection of personalized creations for weddings, families and special events.",
