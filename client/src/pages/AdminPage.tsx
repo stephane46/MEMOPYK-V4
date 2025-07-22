@@ -69,13 +69,21 @@ export default function AdminPage() {
   // Video reordering mutation
   const reorderMutation = useMutation({
     mutationFn: async ({ videoId, newOrder }: { videoId: number; newOrder: number }) => {
-      return apiRequest(`/api/hero-videos/${videoId}/order`, 'PATCH', { newOrder });
+      console.log('=== MUTATION STARTED ===');
+      console.log('Sending PATCH to:', `/api/hero-videos/${videoId}/order`);
+      console.log('Payload:', { newOrder });
+      
+      const result = await apiRequest(`/api/hero-videos/${videoId}/order`, 'PATCH', { newOrder });
+      console.log('=== MUTATION RESPONSE ===', result);
+      return result;
     },
-    onSuccess: () => {
+    onSuccess: (data) => {
+      console.log('=== MUTATION SUCCESS ===', data);
       queryClient.invalidateQueries({ queryKey: ['/api/hero-videos'] });
       toast({ title: "Success", description: "Video order updated successfully" });
     },
-    onError: () => {
+    onError: (error) => {
+      console.log('=== MUTATION ERROR ===', error);
       toast({ title: "Error", description: "Failed to update video order", variant: "destructive" });
     }
   });
