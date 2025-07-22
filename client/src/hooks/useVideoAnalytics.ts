@@ -1,4 +1,5 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useCallback } from 'react';
 import { apiRequest } from '../lib/queryClient';
 
 interface VideoViewData {
@@ -36,6 +37,9 @@ export const useVideoAnalytics = () => {
       // Invalidate analytics queries to refresh data
       queryClient.invalidateQueries({ queryKey: ['/api/analytics'] });
     },
+    onError: (error) => {
+      console.warn('Video view tracking failed:', error);
+    },
   });
 
   const trackSession = useMutation({
@@ -53,9 +57,20 @@ export const useVideoAnalytics = () => {
     },
   });
 
-  // Helper function to track video view with automatic data collection
-  const trackVideoViewWithDefaults = (videoId: string, durationWatched?: number, completed?: boolean) => {
+  // Helper function to track video view with aggressive duplicate prevention
+  const trackVideoViewWithDefaults = useCallback((videoId: string, durationWatched?: number, completed?: boolean) => {
     const language = localStorage.getItem('memopyk-language') as 'en' | 'fr' || 'fr';
+    
+    // Very aggressive duplicate prevention - 30 second window
+    const lastTracked = localStorage.getItem(`last-tracked-${videoId}`);
+    const now = Date.now();
+    if (lastTracked && now - parseInt(lastTracked) < 30000) {
+      console.log(`Skipping duplicate video tracking for ${videoId} - last tracked ${Math.round((now - parseInt(lastTracked)) / 1000)}s ago`);
+      return; // Skip if tracked within last 30 seconds
+    }
+    
+    console.log(`Tracking video view for ${videoId}`);
+    localStorage.setItem(`last-tracked-${videoId}`, now.toString());
     
     trackVideoView.mutate({
       video_id: videoId,
@@ -65,7 +80,7 @@ export const useVideoAnalytics = () => {
       page_url: window.location.href,
       referrer: document.referrer || undefined,
     });
-  };
+  }, [trackVideoView]);
 
   // Helper function to track session with automatic data collection
   const trackSessionWithDefaults = () => {

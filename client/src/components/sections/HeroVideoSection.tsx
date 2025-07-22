@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { ChevronLeft, ChevronRight, Play, Pause } from 'lucide-react';
 import { useLanguage } from '../../contexts/LanguageContext';
@@ -67,12 +67,17 @@ export function HeroVideoSection() {
     };
   }, [activeVideos.length, isPlaying]);
 
-  // Track video views
+  // Track video views only when video ID changes, with debouncing
   useEffect(() => {
-    if (currentVideo) {
-      trackVideoView(`hero-${currentVideo.id}`, 0, false);
+    if (currentVideo?.id) {
+      // Use a timeout to debounce the tracking call
+      const timeoutId = setTimeout(() => {
+        trackVideoView(`hero-${currentVideo.id}`, 0, false);
+      }, 100);
+      
+      return () => clearTimeout(timeoutId);
     }
-  }, [currentVideo, trackVideoView]);
+  }, [currentVideo?.id]); // Only track when video ID actually changes
 
   // Handle video navigation
   const goToVideo = (index: number) => {
@@ -130,7 +135,7 @@ export function HeroVideoSection() {
     );
   }
 
-  const videoUrl = language === 'fr' ? currentVideo.video_url_fr : currentVideo.video_url_en;
+  const videoUrl = language === 'fr' ? currentVideo.url_fr : currentVideo.url_en;
   const fontSize = activeHeroText?.font_size || 60;
 
   return (
