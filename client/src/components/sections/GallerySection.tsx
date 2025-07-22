@@ -170,17 +170,15 @@ export default function GallerySection() {
                         />
                       ) : null}
                       
-                      {/* Overlay */}
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/0 to-black/20 opacity-0 group-hover:opacity-100 transition-all duration-300">
+                      {/* Orange Pulsing Play Button - Always Visible for Videos */}
+                      {hasVideo && (
                         <div className="absolute inset-0 flex items-center justify-center">
-                          <Button
+                          <button
                             onClick={() => {
                               if (displayUrl) {
-                                // For images, use direct URL. For videos, already proxied in getItemUrl
-                                const previewUrl = mediaType === 'video' ? displayUrl : displayUrl;
                                 setPreviewItem({ 
                                   type: mediaType, 
-                                  url: previewUrl, 
+                                  url: displayUrl, 
                                   title: getItemTitle(item),
                                   itemId: item.id,
                                   width: item.video_width,
@@ -188,17 +186,41 @@ export default function GallerySection() {
                                   orientation: item.video_orientation
                                 });
                                 // Track gallery video preview clicks for analytics
-                                if (mediaType === 'video') {
-                                  trackVideoView(`gallery-${item.id}`, 0, false);
-                                }
+                                trackVideoView(`gallery-${item.id}`, 0, false);
                               }
                             }}
-                            className="bg-orange-500 hover:bg-orange-600 text-white rounded-full p-4 transform scale-90 group-hover:scale-100 transition-all duration-300"
+                            className="bg-memopyk-orange hover:bg-memopyk-orange/80 text-white rounded-full p-6 shadow-2xl animate-pulse-elegant transform hover:scale-110 transition-all duration-300 border-4 border-white/20 backdrop-blur-sm"
                           >
-                            {hasVideo ? <Play className="h-6 w-6" /> : <Eye className="h-6 w-6" />}
-                          </Button>
+                            <Play className="h-8 w-8 ml-1" />
+                          </button>
                         </div>
-                      </div>
+                      )}
+                      
+                      {/* Hover Overlay for Images */}
+                      {hasImage && !hasVideo && (
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/0 to-black/20 opacity-0 group-hover:opacity-100 transition-all duration-300">
+                          <div className="absolute inset-0 flex items-center justify-center">
+                            <Button
+                              onClick={() => {
+                                if (displayUrl) {
+                                  setPreviewItem({ 
+                                    type: mediaType, 
+                                    url: displayUrl, 
+                                    title: getItemTitle(item),
+                                    itemId: item.id,
+                                    width: item.video_width,
+                                    height: item.video_height,
+                                    orientation: item.video_orientation
+                                  });
+                                }
+                              }}
+                              className="bg-white/90 hover:bg-white text-gray-900 rounded-full p-4 transform scale-90 group-hover:scale-100 transition-all duration-300"
+                            >
+                              <Eye className="h-6 w-6" />
+                            </Button>
+                          </div>
+                        </div>
+                      )}
                       
                       {/* Media Type Badge */}
                       <div className="absolute top-4 left-4">
