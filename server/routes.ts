@@ -104,6 +104,24 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Hero video DELETE endpoint
+  app.delete("/api/hero-videos/:id", async (req, res) => {
+    try {
+      const videoId = parseInt(req.params.id);
+      console.log(`🗑️ Deleting hero video with ID: ${videoId}`);
+      
+      const result = await hybridStorage.deleteHeroVideo(videoId);
+      res.json({ success: true, deletedVideo: result });
+    } catch (error) {
+      console.error('Hero video delete error:', error);
+      if (error.message === 'Video not found') {
+        res.status(404).json({ error: "Video not found" });
+      } else {
+        res.status(500).json({ error: "Failed to delete hero video" });
+      }
+    }
+  });
+
   // Gallery Items - CRUD operations with file upload support
   app.get("/api/gallery", async (req, res) => {
     try {
