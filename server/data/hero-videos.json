@@ -1,13 +1,10 @@
 [
   {
     "id": 2,
-    "title_en": "MEMOPYK Hero Video 2",
-    "title_fr": "Vidéo Héros MEMOPYK 2",
     "url_en": "1752156356886_VideoHero2.mp4",
     "url_fr": "1752156356886_VideoHero2.mp4",
-    "order_index": 2,
-    "is_active": true,
     "created_at": "2024-01-01T00:00:00.000Z",
-    "updated_at": "2024-01-01T00:00:00.000Z"
+    "updated_at": "2025-07-22T16:38:33.164Z",
+    "use_same_video": true
   }
 ]

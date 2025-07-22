@@ -18,6 +18,7 @@ interface HeroVideo {
   title_fr: string;
   url_en: string;
   url_fr: string;
+  useSameVideo: boolean;
   order_index: number;
   is_active: boolean;
   created_at: string;
@@ -40,7 +41,7 @@ export default function AdminPage() {
   const [editVideoData, setEditVideoData] = useState({
     url_en: '',
     url_fr: '',
-    use_same_video: true
+    useSameVideo: true
   });
   const [selectedTextId, setSelectedTextId] = useState<number | null>(null);
   const [previewFontSize, setPreviewFontSize] = useState(48);
@@ -457,13 +458,19 @@ export default function AdminPage() {
                                 {/* Video Files */}
                                 <div className="space-y-4">
                                   <div>
-                                    <Label className="text-sm font-semibold" style={{ color: '#011526' }}>Video Files</Label>
+                                    <Label className="text-sm font-semibold" style={{ color: '#011526' }}>Video File</Label>
                                     <div 
-                                      className="mt-1 text-xs font-mono p-3 rounded-md space-y-2"
+                                      className="mt-1 text-xs font-mono p-3 rounded-md"
                                       style={{ backgroundColor: '#F2EBDC', color: '#2A4759' }}
                                     >
-                                      <div className="font-medium">EN: {video.url_en}</div>
-                                      <div className="font-medium">FR: {video.url_fr}</div>
+                                      {video.useSameVideo || video.url_en === video.url_fr ? (
+                                        <div className="font-medium">{video.url_en}</div>
+                                      ) : (
+                                        <div className="space-y-1">
+                                          <div className="font-medium">EN: {video.url_en}</div>
+                                          <div className="font-medium">FR: {video.url_fr}</div>
+                                        </div>
+                                      )}
                                     </div>
                                   </div>
                                 </div>
@@ -553,7 +560,7 @@ export default function AdminPage() {
                                         setEditVideoData({
                                           url_en: video.url_en,
                                           url_fr: video.url_fr,
-                                          use_same_video: video.use_same_video ?? true
+                                          useSameVideo: video.useSameVideo ?? true
                                         });
                                       }}
                                     >
@@ -1253,22 +1260,22 @@ export default function AdminPage() {
               {/* Same Video Switch - More prominent and clickable */}
               <div 
                 className={`p-5 rounded-xl border-2 cursor-pointer transition-all duration-200 ${
-                  editVideoData.use_same_video 
+                  editVideoData.useSameVideo 
                     ? 'bg-green-100 dark:bg-green-900/30 border-green-300 dark:border-green-600' 
                     : 'bg-orange-100 dark:bg-orange-900/30 border-orange-300 dark:border-orange-600'
                 }`}
                 onClick={() => {
-                  const newValue = !editVideoData.use_same_video;
+                  const newValue = !editVideoData.useSameVideo;
                   if (newValue && editVideoData.url_en) {
                     setEditVideoData(prev => ({ 
                       ...prev, 
-                      use_same_video: newValue,
+                      useSameVideo: newValue,
                       url_fr: prev.url_en
                     }));
                   } else {
                     setEditVideoData(prev => ({ 
                       ...prev, 
-                      use_same_video: newValue
+                      useSameVideo: newValue
                     }));
                   }
                 }}
@@ -1276,47 +1283,47 @@ export default function AdminPage() {
                 <div className="flex items-center justify-between">
                   <div className="flex items-center space-x-3">
                     <Switch
-                      checked={editVideoData.use_same_video}
+                      checked={editVideoData.useSameVideo}
                       onCheckedChange={(checked) => {
                         if (checked && editVideoData.url_en) {
                           setEditVideoData(prev => ({ 
                             ...prev, 
-                            use_same_video: checked,
+                            useSameVideo: checked,
                             url_fr: prev.url_en
                           }));
                         } else {
                           setEditVideoData(prev => ({ 
                             ...prev, 
-                            use_same_video: checked
+                            useSameVideo: checked
                           }));
                         }
                       }}
                     />
                     <Label className={`font-semibold text-lg cursor-pointer ${
-                      editVideoData.use_same_video 
+                      editVideoData.useSameVideo 
                         ? 'text-green-900 dark:text-green-100' 
                         : 'text-orange-900 dark:text-orange-100'
                     }`}>
-                      {editVideoData.use_same_video 
+                      {editVideoData.useSameVideo 
                         ? "Same Video for Both Languages" 
                         : "Different Video for Each Language"
                       }
                     </Label>
                   </div>
                   <div className={`px-3 py-1 rounded-full text-sm font-medium ${
-                    editVideoData.use_same_video 
+                    editVideoData.useSameVideo 
                       ? 'bg-green-200 dark:bg-green-800 text-green-800 dark:text-green-200' 
                       : 'bg-orange-200 dark:bg-orange-800 text-orange-800 dark:text-orange-200'
                   }`}>
-                    {editVideoData.use_same_video ? "ON" : "OFF"}
+                    {editVideoData.useSameVideo ? "ON" : "OFF"}
                   </div>
                 </div>
                 <p className={`text-sm mt-2 ${
-                  editVideoData.use_same_video 
+                  editVideoData.useSameVideo 
                     ? 'text-green-800 dark:text-green-200' 
                     : 'text-orange-800 dark:text-orange-200'
                 }`}>
-                  {editVideoData.use_same_video 
+                  {editVideoData.useSameVideo 
                     ? "✓ One video file will be used for both French and English versions" 
                     : "⚠ You can specify different video files for French and English"
                   }
@@ -1330,7 +1337,7 @@ export default function AdminPage() {
                 <h4 className="font-semibold text-gray-900 dark:text-white text-lg border-b border-gray-200 dark:border-gray-700 pb-2">
                   Video Files
                 </h4>
-                {editVideoData.use_same_video ? (
+                {editVideoData.useSameVideo ? (
                   <div className="space-y-2">
                     <Label className="text-gray-700 dark:text-gray-300 font-medium">
                       Video Filename (applies to both languages)
@@ -1383,7 +1390,7 @@ export default function AdminPage() {
                         body: JSON.stringify({
                           url_en: editVideoData.url_en,
                           url_fr: editVideoData.url_fr,
-                          use_same_video: editVideoData.use_same_video
+                          use_same_video: editVideoData.useSameVideo
                         })
                       });
                       
