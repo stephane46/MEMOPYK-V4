@@ -39,6 +39,13 @@ export default function AdminPage() {
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
+  // Add logout functionality
+  const handleLogout = () => {
+    localStorage.removeItem('memopyk_admin_authenticated');
+    window.dispatchEvent(new CustomEvent('authStateChange'));
+    window.location.reload();
+  };
+
   // Fetch hero videos
   const { data: heroVideos = [], isLoading: videosLoading } = useQuery<HeroVideo[]>({
     queryKey: ['/api/hero-videos'],
@@ -143,12 +150,19 @@ export default function AdminPage() {
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
       <div className="container mx-auto px-4 py-8">
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">
-            MEMOPYK Admin Panel
-          </h1>
-          <p className="text-gray-600 dark:text-gray-400">
-            Manage content, analytics, and system settings
-          </p>
+          <div className="flex items-center justify-between">
+            <div>
+              <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">
+                MEMOPYK Admin Panel
+              </h1>
+              <p className="text-gray-600 dark:text-gray-400">
+                Manage content, analytics, and system settings
+              </p>
+            </div>
+            <Button variant="outline" onClick={handleLogout}>
+              Logout
+            </Button>
+          </div>
         </div>
 
         <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
