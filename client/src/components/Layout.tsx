@@ -130,6 +130,11 @@ export function Layout({ children }: LayoutProps) {
           
           <div className="border-t border-gray-800 mt-8 pt-8 text-center text-gray-400">
             <p>&copy; 2025 MEMOPYK. {language === 'fr' ? 'Tous droits réservés.' : 'All rights reserved.'}</p>
+            <div className="mt-2">
+              <Link href="/admin">
+                <a className="text-xs text-gray-600 hover:text-gray-400 transition-colors">admin</a>
+              </Link>
+            </div>
           </div>
         </div>
       </footer>

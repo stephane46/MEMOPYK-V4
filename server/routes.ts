@@ -26,6 +26,53 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Update hero video order
+  app.patch("/api/hero-videos/:id/reorder", async (req, res) => {
+    try {
+      const videoId = parseInt(req.params.id);
+      const { order_index } = req.body;
+      
+      if (!order_index || order_index < 1) {
+        return res.status(400).json({ error: "Valid order_index is required" });
+      }
+      
+      const result = await hybridStorage.updateHeroVideoOrder(videoId, order_index);
+      res.json({ success: true, video: result });
+    } catch (error) {
+      res.status(500).json({ error: "Failed to update video order" });
+    }
+  });
+
+  // Toggle hero video active status
+  app.patch("/api/hero-videos/:id/toggle", async (req, res) => {
+    try {
+      const videoId = parseInt(req.params.id);
+      const { is_active } = req.body;
+      
+      if (typeof is_active !== 'boolean') {
+        return res.status(400).json({ error: "is_active must be a boolean" });
+      }
+      
+      const result = await hybridStorage.updateHeroVideoStatus(videoId, is_active);
+      res.json({ success: true, video: result });
+    } catch (error) {
+      res.status(500).json({ error: "Failed to update video status" });
+    }
+  });
+
+  // Update hero video metadata
+  app.patch("/api/hero-videos/:id", async (req, res) => {
+    try {
+      const videoId = parseInt(req.params.id);
+      const updates = req.body;
+      
+      const result = await hybridStorage.updateHeroVideo(videoId, updates);
+      res.json({ success: true, video: result });
+    } catch (error) {
+      res.status(500).json({ error: "Failed to update video" });
+    }
+  });
+
   
   // Hero Text Settings - Hero section text content
   app.get("/api/hero-text", async (req, res) => {

@@ -63,7 +63,49 @@ export class HybridStorage implements HybridStorageInterface {
   // Hero videos operations
   async getHeroVideos(): Promise<any[]> {
     const data = this.loadJsonFile('hero-videos.json');
-    return data.filter(video => video.is_active);
+    return data; // Return all videos for admin management
+  }
+
+  async updateHeroVideoOrder(videoId: number, newOrder: number): Promise<any> {
+    const videos = this.loadJsonFile('hero-videos.json');
+    const videoIndex = videos.findIndex((v: any) => v.id === videoId);
+    
+    if (videoIndex === -1) {
+      throw new Error('Video not found');
+    }
+    
+    videos[videoIndex].order_index = newOrder;
+    this.saveJsonFile('hero-videos.json', videos);
+    
+    return videos[videoIndex];
+  }
+
+  async updateHeroVideoStatus(videoId: number, isActive: boolean): Promise<any> {
+    const videos = this.loadJsonFile('hero-videos.json');
+    const videoIndex = videos.findIndex((v: any) => v.id === videoId);
+    
+    if (videoIndex === -1) {
+      throw new Error('Video not found');
+    }
+    
+    videos[videoIndex].is_active = isActive;
+    this.saveJsonFile('hero-videos.json', videos);
+    
+    return videos[videoIndex];
+  }
+
+  async updateHeroVideo(videoId: number, updates: any): Promise<any> {
+    const videos = this.loadJsonFile('hero-videos.json');
+    const videoIndex = videos.findIndex((v: any) => v.id === videoId);
+    
+    if (videoIndex === -1) {
+      throw new Error('Video not found');
+    }
+    
+    videos[videoIndex] = { ...videos[videoIndex], ...updates };
+    this.saveJsonFile('hero-videos.json', videos);
+    
+    return videos[videoIndex];
   }
 
   // Hero text settings operations
