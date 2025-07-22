@@ -1,248 +1,193 @@
 import type { Express } from "express";
 import { createServer, type Server } from "http";
-import { storage } from "./storage";
-import { insertUserSchema, insertMemorySchema, insertMediaFileSchema, insertCommentSchema, insertAnalyticsSchema } from "@shared/schema";
+import { hybridStorage } from "./hybrid-storage";
+import { z } from "zod";
+
+// Contact form validation schema
+const contactFormSchema = z.object({
+  name: z.string().min(2, "Name must be at least 2 characters"),
+  email: z.string().email("Invalid email address"),
+  phone: z.string().optional(),
+  message: z.string().min(10, "Message must be at least 10 characters")
+});
 
 export async function registerRoutes(app: Express): Promise<Server> {
-  // Authentication Routes
-  app.post("/api/auth/register", async (req, res) => {
+  // MEMOPYK Platform Content API Routes
+  
+  // Hero Videos - Video carousel content
+  app.get("/api/hero-videos", async (req, res) => {
     try {
-      const userData = insertUserSchema.parse(req.body);
-      const user = await storage.createUser(userData);
-      const { password, ...userWithoutPassword } = user;
-      res.json({ user: userWithoutPassword });
+      const videos = await hybridStorage.getHeroVideos();
+      res.json(videos);
     } catch (error) {
-      res.status(400).json({ error: "Invalid user data" });
+      res.status(500).json({ error: "Failed to get hero videos" });
     }
   });
 
-  app.post("/api/auth/login", async (req, res) => {
+  
+  // Hero Text Settings - Hero section text content
+  app.get("/api/hero-text", async (req, res) => {
     try {
-      const { email, password } = req.body;
-      const user = await storage.getUserByEmail(email);
+      const language = req.query.lang as string;
+      const heroText = await hybridStorage.getHeroTextSettings(language);
+      res.json(heroText);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to get hero text" });
+    }
+  });
+
+  // Gallery Items - Portfolio gallery content  
+  app.get("/api/gallery", async (req, res) => {
+    try {
+      const galleryItems = await hybridStorage.getGalleryItems();
+      res.json(galleryItems);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to get gallery items" });
+    }
+  });
+
+  // FAQ Sections - Frequently asked questions sections
+  app.get("/api/faq-sections", async (req, res) => {
+    try {
+      const language = req.query.lang as string;
+      const sections = await hybridStorage.getFaqSections(language);
+      res.json(sections);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to get FAQ sections" });
+    }
+  });
+
+  // FAQs - Individual FAQ items
+  app.get("/api/faqs", async (req, res) => {
+    try {
+      const sectionId = req.query.sectionId as string;
+      const faqs = await hybridStorage.getFaqs(sectionId);
+      res.json(faqs);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to get FAQs" });
+    }
+  });
+
+  // Contact Form - Handle contact form submissions
+  app.post("/api/contact", async (req, res) => {
+    try {
+      const contactData = contactFormSchema.parse(req.body);
+      const contact = await hybridStorage.createContact(contactData);
+      res.status(201).json({ 
+        success: true, 
+        message: "Contact form submitted successfully",
+        id: contact.id 
+      });
+    } catch (error: any) {
+      if (error.errors) {
+        return res.status(400).json({ 
+          error: "Validation failed", 
+          details: error.errors 
+        });
+      }
+      res.status(500).json({ error: "Failed to submit contact form" });
+    }
+  });
+
+  // Get all contacts (admin only)
+  app.get("/api/contacts", async (req, res) => {
+    try {
+      const contacts = await hybridStorage.getContacts();
+      res.json(contacts);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to get contacts" });
+    }
+  });
+
+  // Legal Documents - Privacy policy, terms of service, etc.
+  app.get("/api/legal", async (req, res) => {
+    try {
+      const language = req.query.lang as string;
+      const documents = await hybridStorage.getLegalDocuments(language);
+      res.json(documents);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to get legal documents" });
+    }
+  });
+
+  // Get specific legal document by type
+  app.get("/api/legal/:type", async (req, res) => {
+    try {
+      const type = req.params.type;
+      const language = req.query.lang as string;
+      const documents = await hybridStorage.getLegalDocuments(language);
+      const document = documents.find(doc => doc.type === type);
       
-      if (!user || user.password !== password) {
-        return res.status(401).json({ error: "Invalid credentials" });
+      if (!document) {
+        return res.status(404).json({ error: "Legal document not found" });
       }
       
-      const { password: _, ...userWithoutPassword } = user;
-      res.json({ user: userWithoutPassword });
+      res.json(document);
     } catch (error) {
-      res.status(500).json({ error: "Login failed" });
+      res.status(500).json({ error: "Failed to get legal document" });
     }
   });
 
-  // User Routes
-  app.get("/api/users/:id", async (req, res) => {
+  // CTA Settings - Call-to-action buttons and content
+  app.get("/api/cta-settings", async (req, res) => {
     try {
-      const id = parseInt(req.params.id);
-      const user = await storage.getUser(id);
-      
-      if (!user) {
-        return res.status(404).json({ error: "User not found" });
-      }
-      
-      const { password, ...userWithoutPassword } = user;
-      res.json(userWithoutPassword);
+      const language = req.query.lang as string;
+      const ctaSettings = await hybridStorage.getCtaSettings(language);
+      res.json(ctaSettings);
     } catch (error) {
-      res.status(500).json({ error: "Failed to get user" });
+      res.status(500).json({ error: "Failed to get CTA settings" });
     }
   });
 
-  app.put("/api/users/:id", async (req, res) => {
+  // SEO Settings - Meta tags, titles, descriptions for pages
+  app.get("/api/seo-settings", async (req, res) => {
     try {
-      const id = parseInt(req.params.id);
-      const updates = insertUserSchema.partial().parse(req.body);
-      const user = await storage.updateUser(id, updates);
-      
-      if (!user) {
-        return res.status(404).json({ error: "User not found" });
-      }
-      
-      const { password, ...userWithoutPassword } = user;
-      res.json(userWithoutPassword);
+      const page = req.query.page as string;
+      const language = req.query.lang as string;
+      const seoSettings = await hybridStorage.getSeoSettings(page, language);
+      res.json(seoSettings);
     } catch (error) {
-      res.status(400).json({ error: "Invalid update data" });
+      res.status(500).json({ error: "Failed to get SEO settings" });
     }
   });
 
-  // Memory Routes
-  app.get("/api/memories", async (req, res) => {
-    try {
-      const limit = parseInt(req.query.limit as string) || 50;
-      const offset = parseInt(req.query.offset as string) || 0;
-      const memories = await storage.getMemories(limit, offset);
-      res.json(memories);
-    } catch (error) {
-      res.status(500).json({ error: "Failed to get memories" });
-    }
-  });
-
-  app.get("/api/memories/:id", async (req, res) => {
-    try {
-      const id = parseInt(req.params.id);
-      const memory = await storage.getMemory(id);
-      
-      if (!memory) {
-        return res.status(404).json({ error: "Memory not found" });
-      }
-      
-      res.json(memory);
-    } catch (error) {
-      res.status(500).json({ error: "Failed to get memory" });
-    }
-  });
-
-  app.post("/api/memories", async (req, res) => {
-    try {
-      const memoryData = insertMemorySchema.parse(req.body);
-      const memory = await storage.createMemory(memoryData);
-      res.status(201).json(memory);
-    } catch (error) {
-      res.status(400).json({ error: "Invalid memory data" });
-    }
-  });
-
-  app.put("/api/memories/:id", async (req, res) => {
-    try {
-      const id = parseInt(req.params.id);
-      const updates = insertMemorySchema.partial().parse(req.body);
-      const memory = await storage.updateMemory(id, updates);
-      
-      if (!memory) {
-        return res.status(404).json({ error: "Memory not found" });
-      }
-      
-      res.json(memory);
-    } catch (error) {
-      res.status(400).json({ error: "Invalid update data" });
-    }
-  });
-
-  app.delete("/api/memories/:id", async (req, res) => {
-    try {
-      const id = parseInt(req.params.id);
-      const deleted = await storage.deleteMemory(id);
-      
-      if (!deleted) {
-        return res.status(404).json({ error: "Memory not found" });
-      }
-      
-      res.json({ success: true });
-    } catch (error) {
-      res.status(500).json({ error: "Failed to delete memory" });
-    }
-  });
-
-  app.get("/api/users/:userId/memories", async (req, res) => {
-    try {
-      const userId = parseInt(req.params.userId);
-      const memories = await storage.getMemoriesByUser(userId);
-      res.json(memories);
-    } catch (error) {
-      res.status(500).json({ error: "Failed to get user memories" });
-    }
-  });
-
-  // Media File Routes
-  app.get("/api/memories/:memoryId/media", async (req, res) => {
-    try {
-      const memoryId = parseInt(req.params.memoryId);
-      const mediaFiles = await storage.getMediaFilesByMemory(memoryId);
-      res.json(mediaFiles);
-    } catch (error) {
-      res.status(500).json({ error: "Failed to get media files" });
-    }
-  });
-
-  app.post("/api/media", async (req, res) => {
-    try {
-      const mediaData = insertMediaFileSchema.parse(req.body);
-      const mediaFile = await storage.createMediaFile(mediaData);
-      res.status(201).json(mediaFile);
-    } catch (error) {
-      res.status(400).json({ error: "Invalid media file data" });
-    }
-  });
-
-  app.delete("/api/media/:id", async (req, res) => {
-    try {
-      const id = parseInt(req.params.id);
-      const deleted = await storage.deleteMediaFile(id);
-      
-      if (!deleted) {
-        return res.status(404).json({ error: "Media file not found" });
-      }
-      
-      res.json({ success: true });
-    } catch (error) {
-      res.status(500).json({ error: "Failed to delete media file" });
-    }
-  });
-
-  // Comment Routes
-  app.get("/api/memories/:memoryId/comments", async (req, res) => {
-    try {
-      const memoryId = parseInt(req.params.memoryId);
-      const comments = await storage.getCommentsByMemory(memoryId);
-      res.json(comments);
-    } catch (error) {
-      res.status(500).json({ error: "Failed to get comments" });
-    }
-  });
-
-  app.post("/api/comments", async (req, res) => {
-    try {
-      const commentData = insertCommentSchema.parse(req.body);
-      const comment = await storage.createComment(commentData);
-      res.status(201).json(comment);
-    } catch (error) {
-      res.status(400).json({ error: "Invalid comment data" });
-    }
-  });
-
-  app.delete("/api/comments/:id", async (req, res) => {
-    try {
-      const id = parseInt(req.params.id);
-      const deleted = await storage.deleteComment(id);
-      
-      if (!deleted) {
-        return res.status(404).json({ error: "Comment not found" });
-      }
-      
-      res.json({ success: true });
-    } catch (error) {
-      res.status(500).json({ error: "Failed to delete comment" });
-    }
-  });
-
-  // Analytics Routes
-  app.post("/api/analytics", async (req, res) => {
-    try {
-      const analyticsData = insertAnalyticsSchema.parse(req.body);
-      const analytics = await storage.createAnalytics(analyticsData);
-      res.status(201).json(analytics);
-    } catch (error) {
-      res.status(400).json({ error: "Invalid analytics data" });
-    }
-  });
-
-  app.get("/api/analytics", async (req, res) => {
-    try {
-      const memoryId = req.query.memoryId ? parseInt(req.query.memoryId as string) : undefined;
-      const userId = req.query.userId ? parseInt(req.query.userId as string) : undefined;
-      const limit = parseInt(req.query.limit as string) || 100;
-      
-      const analytics = await storage.getAnalytics(memoryId, userId, limit);
-      res.json(analytics);
-    } catch (error) {
-      res.status(500).json({ error: "Failed to get analytics" });
-    }
-  });
-
-  // Health check route
+  // Health check route  
   app.get("/api/health", (req, res) => {
-    res.json({ status: "ok", timestamp: new Date().toISOString() });
+    res.json({ 
+      status: "MEMOPYK API operational", 
+      timestamp: new Date().toISOString(),
+      version: "1.0.0"
+    });
+  });
+
+  // API Documentation route
+  app.get("/api", (req, res) => {
+    res.json({
+      name: "MEMOPYK Platform API",
+      version: "1.0.0",
+      description: "Bilingual content management API for MEMOPYK memory film platform",
+      endpoints: {
+        content: {
+          "GET /api/hero-videos": "Get hero carousel videos",
+          "GET /api/hero-text?lang=": "Get hero section text (fr/en)",
+          "GET /api/gallery": "Get portfolio gallery items",
+          "GET /api/faq-sections?lang=": "Get FAQ sections (fr/en)",
+          "GET /api/faqs?sectionId=": "Get FAQs by section",
+          "GET /api/legal?lang=": "Get legal documents (fr/en)",
+          "GET /api/legal/:type?lang=": "Get specific legal document",
+          "GET /api/cta-settings?lang=": "Get call-to-action settings",
+          "GET /api/seo-settings?page=&lang=": "Get SEO settings for page"
+        },
+        forms: {
+          "POST /api/contact": "Submit contact form",
+          "GET /api/contacts": "Get all contact submissions (admin)"
+        },
+        system: {
+          "GET /api/health": "API health check",
+          "GET /api": "API documentation"
+        }
+      }
+    });
   });
 
   const httpServer = createServer(app);
