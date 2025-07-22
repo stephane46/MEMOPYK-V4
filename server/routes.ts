@@ -80,6 +80,30 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Hero video PATCH endpoint - update video metadata
+  app.patch("/api/hero-videos/:id", async (req, res) => {
+    try {
+      const videoId = parseInt(req.params.id);
+      const { title_en, title_fr, is_active, order_index, url_en, url_fr, use_same_video } = req.body;
+      
+      const result = await hybridStorage.updateHeroVideo(videoId, {
+        title_en,
+        title_fr,
+        is_active,
+        order_index,
+        url_en,
+        url_fr,
+        use_same_video,
+        updated_at: new Date().toISOString()
+      });
+      
+      res.json(result);
+    } catch (error) {
+      console.error('Hero video update error:', error);
+      res.status(500).json({ error: "Failed to update hero video" });
+    }
+  });
+
   // Gallery Items - CRUD operations with file upload support
   app.get("/api/gallery", async (req, res) => {
     try {
@@ -620,6 +644,41 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.json(stats);
     } catch (error) {
       res.status(500).json({ error: "Failed to get cache stats" });
+    }
+  });
+
+  // Force cache specific video endpoint
+  app.post("/api/video-cache/cache-video", async (req, res) => {
+    try {
+      const { filename } = req.body;
+      
+      if (!filename) {
+        return res.status(400).json({ error: "filename is required" });
+      }
+
+      // Construct Supabase CDN URL from filename
+      let videoUrl: string;
+      
+      if (filename.startsWith('gallery_')) {
+        videoUrl = `https://supabase.memopyk.org/storage/v1/object/public/memopyk-gallery/${filename}`;
+      } else {
+        videoUrl = `https://supabase.memopyk.org/storage/v1/object/public/memopyk-hero/${filename}`;
+      }
+
+      console.log(`🔄 Force caching video: ${filename} from ${videoUrl}`);
+
+      // Download and cache the video
+      await videoCache.downloadAndCacheVideo(filename, videoUrl);
+      
+      const stats = await videoCache.getCacheStats();
+      res.json({ 
+        success: true, 
+        message: `Video ${filename} cached successfully`,
+        stats 
+      });
+    } catch (error) {
+      console.error('Force cache error:', error);
+      res.status(500).json({ error: "Failed to cache video" });
     }
   });
 

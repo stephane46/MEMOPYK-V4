@@ -36,6 +36,14 @@ export default function AdminPage() {
   const [activeSection, setActiveSection] = useState('hero-management');
   const [heroTab, setHeroTab] = useState('videos');
   const [previewVideo, setPreviewVideo] = useState<{ url: string; title: string } | null>(null);
+  const [editingVideo, setEditingVideo] = useState<any | null>(null);
+  const [editVideoData, setEditVideoData] = useState({
+    title_en: '',
+    title_fr: '',
+    url_en: '',
+    url_fr: '',
+    use_same_video: true
+  });
   const [selectedTextId, setSelectedTextId] = useState<number | null>(null);
   const [previewFontSize, setPreviewFontSize] = useState(48);
   const [textPreview, setTextPreview] = useState('');
@@ -569,8 +577,14 @@ export default function AdminPage() {
                                       size="sm"
                                       variant="outline"
                                       onClick={() => {
-                                        // This will be the edit video functionality
-                                        toast({ title: "Coming Soon", description: "Video editing functionality will be added next" });
+                                        setEditingVideo(video);
+                                        setEditVideoData({
+                                          title_en: video.title_en,
+                                          title_fr: video.title_fr,
+                                          url_en: video.url_en,
+                                          url_fr: video.url_fr,
+                                          use_same_video: video.use_same_video ?? true
+                                        });
                                       }}
                                     >
                                       Edit Video
@@ -578,14 +592,24 @@ export default function AdminPage() {
                                     <Button
                                       size="sm"
                                       variant="outline"
-                                      onClick={() => {
-                                        // Force cache refresh for this video
-                                        const videoUrl = `https://supabase.memopyk.org/storage/v1/object/public/memopyk-hero/${video.url_en}`;
-                                        fetch(`/api/video-cache/refresh?url=${encodeURIComponent(videoUrl)}`, { method: 'POST' })
-                                          .then(() => {
-                                            queryClient.invalidateQueries({ queryKey: ['/api/video-cache/stats'] });
-                                            toast({ title: "Cached", description: "Video cached successfully" });
+                                      onClick={async () => {
+                                        try {
+                                          // Force cache this specific video file
+                                          const response = await fetch(`/api/video-cache/cache-video`, {
+                                            method: 'POST',
+                                            headers: { 'Content-Type': 'application/json' },
+                                            body: JSON.stringify({ filename: video.url_en })
                                           });
+                                          
+                                          if (response.ok) {
+                                            queryClient.invalidateQueries({ queryKey: ['/api/video-cache/stats'] });
+                                            toast({ title: "Cached", description: "Video cached successfully!" });
+                                          } else {
+                                            toast({ title: "Error", description: "Failed to cache video", variant: "destructive" });
+                                          }
+                                        } catch (error) {
+                                          toast({ title: "Error", description: "Network error", variant: "destructive" });
+                                        }
                                       }}
                                     >
                                       Cache Video
@@ -1241,6 +1265,136 @@ export default function AdminPage() {
           )}
         </DialogContent>
       </Dialog>
+
+      {/* Edit Video Modal */}
+      {editingVideo && (
+        <Dialog open={!!editingVideo} onOpenChange={() => setEditingVideo(null)}>
+          <DialogContent className="max-w-2xl">
+            <DialogHeader>
+              <DialogTitle>Edit Hero Video</DialogTitle>
+            </DialogHeader>
+            <div className="space-y-4">
+              {/* Same Video Switch */}
+              <div className="bg-blue-50 dark:bg-blue-900/20 p-4 rounded-lg border border-blue-200 dark:border-blue-800">
+                <div className="flex items-center space-x-2">
+                  <Switch
+                    checked={editVideoData.use_same_video}
+                    onCheckedChange={(checked) => {
+                      if (checked && editVideoData.url_en) {
+                        setEditVideoData(prev => ({ 
+                          ...prev, 
+                          use_same_video: checked,
+                          url_fr: prev.url_en
+                        }));
+                      } else {
+                        setEditVideoData(prev => ({ 
+                          ...prev, 
+                          use_same_video: checked
+                        }));
+                      }
+                    }}
+                  />
+                  <Label className="text-blue-900 dark:text-blue-100 font-medium">
+                    Use same video for FR and EN
+                  </Label>
+                </div>
+                <p className="text-xs text-blue-700 dark:text-blue-300 mt-1">
+                  Enabled by default - Video will be used in both languages
+                </p>
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <Label>English Title</Label>
+                  <Input
+                    value={editVideoData.title_en}
+                    onChange={(e) => setEditVideoData({ ...editVideoData, title_en: e.target.value })}
+                    placeholder="Hero video title in English"
+                  />
+                </div>
+                <div>
+                  <Label>French Title</Label>
+                  <Input
+                    value={editVideoData.title_fr}
+                    onChange={(e) => setEditVideoData({ ...editVideoData, title_fr: e.target.value })}
+                    placeholder="Titre de la vidéo héro en français"
+                  />
+                </div>
+              </div>
+
+              {/* Video URL Inputs */}
+              <div className="space-y-4">
+                <h4 className="font-semibold">Video URLs</h4>
+                {editVideoData.use_same_video ? (
+                  <div>
+                    <Label>Video URL (used for FR and EN)</Label>
+                    <Input
+                      value={editVideoData.url_en}
+                      onChange={(e) => {
+                        const url = e.target.value;
+                        setEditVideoData({ ...editVideoData, url_en: url, url_fr: url });
+                      }}
+                      placeholder="VideoHero1.mp4"
+                    />
+                  </div>
+                ) : (
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <Label>English Video URL</Label>
+                      <Input
+                        value={editVideoData.url_en}
+                        onChange={(e) => setEditVideoData({ ...editVideoData, url_en: e.target.value })}
+                        placeholder="VideoHeroEN.mp4"
+                      />
+                    </div>
+                    <div>
+                      <Label>French Video URL</Label>
+                      <Input
+                        value={editVideoData.url_fr}
+                        onChange={(e) => setEditVideoData({ ...editVideoData, url_fr: e.target.value })}
+                        placeholder="VideoHeroFR.mp4"
+                      />
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              <div className="flex gap-3 pt-4">
+                <Button
+                  onClick={async () => {
+                    try {
+                      const response = await fetch(`/api/hero-videos/${editingVideo.id}`, {
+                        method: 'PATCH',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(editVideoData)
+                      });
+                      
+                      if (response.ok) {
+                        queryClient.invalidateQueries({ queryKey: ['/api/hero-videos'] });
+                        toast({ title: "Updated", description: "Video updated successfully!" });
+                        setEditingVideo(null);
+                      } else {
+                        toast({ title: "Error", description: "Failed to update video", variant: "destructive" });
+                      }
+                    } catch (error) {
+                      toast({ title: "Error", description: "Network error", variant: "destructive" });
+                    }
+                  }}
+                  className="bg-green-600 hover:bg-green-700"
+                >
+                  Save Changes
+                </Button>
+                <Button
+                  variant="outline"
+                  onClick={() => setEditingVideo(null)}
+                >
+                  Cancel
+                </Button>
+              </div>
+            </div>
+          </DialogContent>
+        </Dialog>
+      )}
     </div>
   );
 }
