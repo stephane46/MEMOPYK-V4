@@ -8,7 +8,7 @@ interface LanguageContextType {
   t: (key: string, fallback?: string) => string;
 }
 
-const LanguageContext = createContext<LanguageContextType | undefined>(undefined);
+export const LanguageContext = createContext<LanguageContextType | undefined>(undefined);
 
 // Basic translations for the app
 const translations: Record<Language, Record<string, string>> = {
@@ -66,10 +66,10 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
   );
 }
 
-export function useLanguage() {
+export const useLanguage = () => {
   const context = useContext(LanguageContext);
   if (!context) {
     throw new Error('useLanguage must be used within a LanguageProvider');
   }
   return context;
-}
+};
