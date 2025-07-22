@@ -151,144 +151,157 @@ export default function GalleryManagement() {
     });
 
     return (
-      <div className="space-y-4 max-h-96 overflow-y-auto">
+      <div className="space-y-4 max-h-96 overflow-y-auto bg-white dark:bg-gray-900 text-gray-900 dark:text-white">
         <div className="grid grid-cols-2 gap-4">
           <div>
-            <Label htmlFor="title_en">Titre (English)</Label>
+            <Label htmlFor="title_en" className="text-gray-700 dark:text-gray-300">Titre (English)</Label>
             <Input
               id="title_en"
               value={formData.title_en}
               onChange={(e) => setFormData({ ...formData, title_en: e.target.value })}
               placeholder="Title in English"
+              className="bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
             />
           </div>
           <div>
-            <Label htmlFor="title_fr">Titre (Français)</Label>
+            <Label htmlFor="title_fr" className="text-gray-700 dark:text-gray-300">Titre (Français)</Label>
             <Input
               id="title_fr"
               value={formData.title_fr}
               onChange={(e) => setFormData({ ...formData, title_fr: e.target.value })}
               placeholder="Titre en français"
+              className="bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
             />
           </div>
         </div>
 
         <div className="grid grid-cols-2 gap-4">
           <div>
-            <Label htmlFor="description_en">Description (English)</Label>
+            <Label htmlFor="description_en" className="text-gray-700 dark:text-gray-300">Description (English)</Label>
             <Textarea
               id="description_en"
               value={formData.description_en}
               onChange={(e) => setFormData({ ...formData, description_en: e.target.value })}
               placeholder="Description in English"
               rows={3}
+              className="bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
             />
           </div>
           <div>
-            <Label htmlFor="description_fr">Description (Français)</Label>
+            <Label htmlFor="description_fr" className="text-gray-700 dark:text-gray-300">Description (Français)</Label>
             <Textarea
               id="description_fr"
               value={formData.description_fr}
               onChange={(e) => setFormData({ ...formData, description_fr: e.target.value })}
               placeholder="Description en français"
               rows={3}
+              className="bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
             />
           </div>
         </div>
 
         <div className="grid grid-cols-2 gap-4">
           <div>
-            <Label htmlFor="video_url_en">URL Vidéo (English)</Label>
+            <Label htmlFor="video_url_en" className="text-gray-700 dark:text-gray-300">URL Vidéo (English)</Label>
             <Input
               id="video_url_en"
               value={formData.video_url_en}
               onChange={(e) => setFormData({ ...formData, video_url_en: e.target.value })}
               placeholder="https://..."
+              className="bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
             />
           </div>
           <div>
-            <Label htmlFor="video_url_fr">URL Vidéo (Français)</Label>
+            <Label htmlFor="video_url_fr" className="text-gray-700 dark:text-gray-300">URL Vidéo (Français)</Label>
             <Input
               id="video_url_fr"
               value={formData.video_url_fr}
               onChange={(e) => setFormData({ ...formData, video_url_fr: e.target.value })}
               placeholder="https://..."
+              className="bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
             />
           </div>
         </div>
 
         <div className="grid grid-cols-2 gap-4">
           <div>
-            <Label htmlFor="image_url_en">URL Image (English)</Label>
+            <Label htmlFor="image_url_en" className="text-gray-700 dark:text-gray-300">URL Image (English)</Label>
             <Input
               id="image_url_en"
               value={formData.image_url_en}
               onChange={(e) => setFormData({ ...formData, image_url_en: e.target.value })}
               placeholder="https://..."
+              className="bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
             />
           </div>
           <div>
-            <Label htmlFor="image_url_fr">URL Image (Français)</Label>
+            <Label htmlFor="image_url_fr" className="text-gray-700 dark:text-gray-300">URL Image (Français)</Label>
             <Input
               id="image_url_fr"
               value={formData.image_url_fr}
               onChange={(e) => setFormData({ ...formData, image_url_fr: e.target.value })}
               placeholder="https://..."
+              className="bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
             />
           </div>
         </div>
 
         <div className="grid grid-cols-2 gap-4">
           <div>
-            <Label htmlFor="price_en">Prix (English)</Label>
+            <Label htmlFor="price_en" className="text-gray-700 dark:text-gray-300">Prix (English)</Label>
             <Input
               id="price_en"
               value={formData.price_en}
               onChange={(e) => setFormData({ ...formData, price_en: e.target.value })}
               placeholder="$299"
+              className="bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
             />
           </div>
           <div>
-            <Label htmlFor="price_fr">Prix (Français)</Label>
+            <Label htmlFor="price_fr" className="text-gray-700 dark:text-gray-300">Prix (Français)</Label>
             <Input
               id="price_fr"
               value={formData.price_fr}
               onChange={(e) => setFormData({ ...formData, price_fr: e.target.value })}
               placeholder="299€"
+              className="bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
             />
           </div>
         </div>
 
         <div className="grid grid-cols-2 gap-4">
           <div>
-            <Label htmlFor="alt_text_en">Texte Alt (English)</Label>
+            <Label htmlFor="alt_text_en" className="text-gray-700 dark:text-gray-300">Texte Alt (English)</Label>
             <Input
               id="alt_text_en"
               value={formData.alt_text_en}
               onChange={(e) => setFormData({ ...formData, alt_text_en: e.target.value })}
               placeholder="Alt text for accessibility"
+              className="bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
             />
           </div>
           <div>
-            <Label htmlFor="alt_text_fr">Texte Alt (Français)</Label>
+            <Label htmlFor="alt_text_fr" className="text-gray-700 dark:text-gray-300">Texte Alt (Français)</Label>
             <Input
               id="alt_text_fr"
               value={formData.alt_text_fr}
               onChange={(e) => setFormData({ ...formData, alt_text_fr: e.target.value })}
               placeholder="Texte alternatif pour accessibilité"
+              className="bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
             />
           </div>
         </div>
 
         <div className="grid grid-cols-2 gap-4 items-center">
           <div>
-            <Label htmlFor="order_index">Ordre d'affichage</Label>
+            <Label htmlFor="order_index" className="text-gray-700 dark:text-gray-300">Ordre d'affichage</Label>
             <Input
               id="order_index"
               type="number"
               value={formData.order_index}
               onChange={(e) => setFormData({ ...formData, order_index: parseInt(e.target.value) })}
               min={1}
+              className="bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
             />
           </div>
           <div className="flex items-center space-x-2">
@@ -297,7 +310,7 @@ export default function GalleryManagement() {
               checked={formData.is_active}
               onCheckedChange={(checked) => setFormData({ ...formData, is_active: checked })}
             />
-            <Label htmlFor="is_active">Actif</Label>
+            <Label htmlFor="is_active" className="text-gray-700 dark:text-gray-300">Actif</Label>
           </div>
         </div>
 
@@ -337,9 +350,9 @@ export default function GalleryManagement() {
               Nouvel Élément
             </Button>
           </DialogTrigger>
-          <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
+          <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto bg-white dark:bg-gray-900">
             <DialogHeader>
-              <DialogTitle>Créer un Nouvel Élément de Galerie</DialogTitle>
+              <DialogTitle className="text-gray-900 dark:text-white">Créer un Nouvel Élément de Galerie</DialogTitle>
             </DialogHeader>
             <GalleryItemForm
               onSave={(data) => createItemMutation.mutate(data)}
