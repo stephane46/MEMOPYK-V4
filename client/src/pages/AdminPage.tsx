@@ -8,7 +8,7 @@ import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
 import { Badge } from '@/components/ui/badge';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
-import { ArrowUp, ArrowDown, Play, RefreshCw, BarChart3, Video, HardDrive, Users, MessageSquare, FileText, LogOut, TestTube, Rocket, X, Type, Save, Palette, ChevronUp, ChevronDown, Trash2, Eye, EyeOff } from 'lucide-react';
+import { ArrowUp, ArrowDown, Play, RefreshCw, BarChart3, Video, HardDrive, Users, MessageSquare, FileText, LogOut, TestTube, Rocket, X, Type, Save, Palette, ChevronUp, ChevronDown, Trash2, Eye, EyeOff, Upload, FileVideo } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import GalleryManagement from '@/components/admin/GalleryManagement';
 
@@ -43,7 +43,76 @@ export default function AdminPage() {
     url_fr: '',
     useSameVideo: true
   });
+  const [uploadingFile, setUploadingFile] = useState(false);
+  const [dragActive, setDragActive] = useState(false);
   const [selectedTextId, setSelectedTextId] = useState<number | null>(null);
+  
+  // File upload handler
+  const handleFileUpload = async (file: File, isEnglish: boolean = true) => {
+    if (!file.type.includes('video')) {
+      toast({ title: "Error", description: "Please select a video file", variant: "destructive" });
+      return;
+    }
+    
+    setUploadingFile(true);
+    const formData = new FormData();
+    formData.append('video', file);
+    formData.append('bucket', 'memopyk-hero'); // Hero videos go to hero bucket
+    
+    try {
+      const response = await fetch('/api/upload', {
+        method: 'POST',
+        body: formData
+      });
+      
+      if (response.ok) {
+        const result = await response.json();
+        const filename = result.filename;
+        
+        if (editVideoData.useSameVideo) {
+          // Same video for both languages
+          setEditVideoData(prev => ({ ...prev, url_en: filename, url_fr: filename }));
+        } else {
+          // Different videos for each language
+          if (isEnglish) {
+            setEditVideoData(prev => ({ ...prev, url_en: filename }));
+          } else {
+            setEditVideoData(prev => ({ ...prev, url_fr: filename }));
+          }
+        }
+        
+        toast({ title: "Success!", description: `Video uploaded: ${filename}` });
+      } else {
+        toast({ title: "Error", description: "Failed to upload video", variant: "destructive" });
+      }
+    } catch (error) {
+      toast({ title: "Error", description: "Upload failed", variant: "destructive" });
+    } finally {
+      setUploadingFile(false);
+    }
+  };
+  
+  // Drag and drop handlers
+  const handleDrag = (e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (e.type === "dragenter" || e.type === "dragover") {
+      setDragActive(true);
+    } else if (e.type === "dragleave") {
+      setDragActive(false);
+    }
+  };
+  
+  const handleDrop = (e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setDragActive(false);
+    
+    const files = Array.from(e.dataTransfer.files);
+    if (files.length > 0) {
+      handleFileUpload(files[0]);
+    }
+  };
   const [previewFontSize, setPreviewFontSize] = useState(48);
   const [textPreview, setTextPreview] = useState('');
   const [editingTextId, setEditingTextId] = useState<number | null>(null);
@@ -1338,41 +1407,167 @@ export default function AdminPage() {
                   Video Files
                 </h4>
                 {editVideoData.useSameVideo ? (
-                  <div className="space-y-2">
+                  <div className="space-y-4">
                     <Label className="text-gray-700 dark:text-gray-300 font-medium">
-                      Video Filename (applies to both languages)
+                      Video File (applies to both languages)
                     </Label>
-                    <Input
-                      value={editVideoData.url_en}
-                      onChange={(e) => {
-                        const url = e.target.value;
-                        setEditVideoData({ ...editVideoData, url_en: url, url_fr: url });
-                      }}
-                      placeholder="VideoHero1.mp4"
-                      className="bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-600 font-mono"
-                    />
-                    <p className="text-sm text-gray-500 dark:text-gray-400">
-                      This filename will be used for both French and English versions
-                    </p>
+                    
+                    {/* File Upload Area */}
+                    <div 
+                      className={`border-2 border-dashed rounded-lg p-6 text-center transition-colors ${
+                        dragActive 
+                          ? 'border-blue-400 bg-blue-50 dark:bg-blue-900/20' 
+                          : 'border-gray-300 dark:border-gray-600 hover:border-gray-400 dark:hover:border-gray-500'
+                      }`}
+                      onDragEnter={handleDrag}
+                      onDragLeave={handleDrag}
+                      onDragOver={handleDrag}
+                      onDrop={handleDrop}
+                    >
+                      <FileVideo className="mx-auto h-12 w-12 text-gray-400 mb-4" />
+                      <div className="space-y-2">
+                        <p className="text-lg font-medium text-gray-900 dark:text-white">
+                          Drop your video here
+                        </p>
+                        <p className="text-sm text-gray-500 dark:text-gray-400">
+                          or click to browse files
+                        </p>
+                        <input
+                          type="file"
+                          accept="video/*"
+                          onChange={(e) => e.target.files?.[0] && handleFileUpload(e.target.files[0])}
+                          className="hidden"
+                          id="video-upload-same"
+                        />
+                        <label
+                          htmlFor="video-upload-same"
+                          className="inline-flex items-center px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm text-sm font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 cursor-pointer"
+                        >
+                          <Upload className="mr-2 h-4 w-4" />
+                          {uploadingFile ? 'Uploading...' : 'Browse Files'}
+                        </label>
+                      </div>
+                    </div>
+                    
+                    {/* Current filename display */}
+                    {editVideoData.url_en && (
+                      <div className="p-3 bg-gray-50 dark:bg-gray-800 rounded-md border">
+                        <Label className="text-xs text-gray-600 dark:text-gray-400">Current file:</Label>
+                        <p className="font-mono text-sm text-gray-900 dark:text-white break-all">
+                          {editVideoData.url_en}
+                        </p>
+                      </div>
+                    )}
+                    
+                    {/* Manual filename input */}
+                    <div className="space-y-2">
+                      <Label className="text-xs text-gray-600 dark:text-gray-400">
+                        Or enter filename manually:
+                      </Label>
+                      <Input
+                        value={editVideoData.url_en}
+                        onChange={(e) => {
+                          const url = e.target.value;
+                          setEditVideoData({ ...editVideoData, url_en: url, url_fr: url });
+                        }}
+                        placeholder="VideoHero1.mp4"
+                        className="bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-600 font-mono text-sm"
+                      />
+                    </div>
                   </div>
                 ) : (
                   <div className="grid grid-cols-2 gap-6">
-                    <div className="space-y-2">
+                    {/* English Video Upload */}
+                    <div className="space-y-3">
                       <Label className="text-gray-700 dark:text-gray-300 font-medium">English Video</Label>
+                      <div 
+                        className="border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg p-4 text-center hover:border-gray-400 dark:hover:border-gray-500"
+                        onDragEnter={handleDrag}
+                        onDragLeave={handleDrag}
+                        onDragOver={handleDrag}
+                        onDrop={(e) => {
+                          handleDrop(e);
+                          // Override to set English specifically
+                          e.preventDefault();
+                          e.stopPropagation();
+                          setDragActive(false);
+                          const files = Array.from(e.dataTransfer.files);
+                          if (files.length > 0) {
+                            handleFileUpload(files[0], true);
+                          }
+                        }}
+                      >
+                        <FileVideo className="mx-auto h-8 w-8 text-gray-400 mb-2" />
+                        <input
+                          type="file"
+                          accept="video/*"
+                          onChange={(e) => e.target.files?.[0] && handleFileUpload(e.target.files[0], true)}
+                          className="hidden"
+                          id="video-upload-en"
+                        />
+                        <label
+                          htmlFor="video-upload-en"
+                          className="text-sm text-blue-600 hover:text-blue-800 cursor-pointer font-medium"
+                        >
+                          Upload EN Video
+                        </label>
+                      </div>
+                      {editVideoData.url_en && (
+                        <p className="text-xs font-mono text-gray-600 dark:text-gray-400 break-all bg-gray-50 dark:bg-gray-800 p-2 rounded">
+                          {editVideoData.url_en}
+                        </p>
+                      )}
                       <Input
                         value={editVideoData.url_en}
                         onChange={(e) => setEditVideoData({ ...editVideoData, url_en: e.target.value })}
                         placeholder="VideoHeroEN.mp4"
-                        className="bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-600 font-mono"
+                        className="bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-600 font-mono text-sm"
                       />
                     </div>
-                    <div className="space-y-2">
+                    
+                    {/* French Video Upload */}
+                    <div className="space-y-3">
                       <Label className="text-gray-700 dark:text-gray-300 font-medium">French Video</Label>
+                      <div 
+                        className="border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg p-4 text-center hover:border-gray-400 dark:hover:border-gray-500"
+                        onDragEnter={handleDrag}
+                        onDragLeave={handleDrag}
+                        onDragOver={handleDrag}
+                        onDrop={(e) => {
+                          e.preventDefault();
+                          e.stopPropagation();
+                          setDragActive(false);
+                          const files = Array.from(e.dataTransfer.files);
+                          if (files.length > 0) {
+                            handleFileUpload(files[0], false);
+                          }
+                        }}
+                      >
+                        <FileVideo className="mx-auto h-8 w-8 text-gray-400 mb-2" />
+                        <input
+                          type="file"
+                          accept="video/*"
+                          onChange={(e) => e.target.files?.[0] && handleFileUpload(e.target.files[0], false)}
+                          className="hidden"
+                          id="video-upload-fr"
+                        />
+                        <label
+                          htmlFor="video-upload-fr"
+                          className="text-sm text-blue-600 hover:text-blue-800 cursor-pointer font-medium"
+                        >
+                          Upload FR Video
+                        </label>
+                      </div>
+                      {editVideoData.url_fr && (
+                        <p className="text-xs font-mono text-gray-600 dark:text-gray-400 break-all bg-gray-50 dark:bg-gray-800 p-2 rounded">
+                          {editVideoData.url_fr}
+                        </p>
+                      )}
                       <Input
                         value={editVideoData.url_fr}
                         onChange={(e) => setEditVideoData({ ...editVideoData, url_fr: e.target.value })}
                         placeholder="VideoHeroFR.mp4"
-                        className="bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-600 font-mono"
+                        className="bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-600 font-mono text-sm"
                       />
                     </div>
                   </div>

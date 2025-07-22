@@ -81,6 +81,24 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Hero video PATCH endpoint - update video metadata
+  // Add toggle endpoint for active/inactive status
+  app.patch("/api/hero-videos/:id/toggle", async (req, res) => {
+    try {
+      const videoId = parseInt(req.params.id);
+      const { is_active } = req.body;
+      
+      const result = await hybridStorage.updateHeroVideo(videoId, {
+        is_active,
+        updated_at: new Date().toISOString()
+      });
+      
+      res.json(result);
+    } catch (error) {
+      console.error('Hero video toggle error:', error);
+      res.status(500).json({ error: "Failed to toggle hero video status" });
+    }
+  });
+
   app.patch("/api/hero-videos/:id", async (req, res) => {
     try {
       const videoId = parseInt(req.params.id);
