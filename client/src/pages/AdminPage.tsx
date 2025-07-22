@@ -1430,7 +1430,7 @@ export default function AdminPage() {
               {/* Video URLs */}
               <div className="space-y-4">
                 <h4 className="font-semibold text-gray-900 dark:text-white text-lg border-b border-gray-200 dark:border-gray-700 pb-2">
-                  Video Files
+                  {editingVideo ? 'Modifier vos fichiers vidéo (optionnel)' : 'Video Files'}
                 </h4>
                 {editVideoData.useSameVideo ? (
                   <div className="space-y-4">
@@ -1453,10 +1453,10 @@ export default function AdminPage() {
                       <FileVideo className="mx-auto h-12 w-12 text-gray-400 mb-4" />
                       <div className="space-y-2">
                         <p className="text-lg font-medium text-gray-900 dark:text-white">
-                          Drop your video here
+                          {editVideoData.url_en ? 'Remplacer la vidéo' : 'Drop your video here'}
                         </p>
                         <p className="text-sm text-gray-500 dark:text-gray-400">
-                          or click to browse files
+                          {editVideoData.url_en ? 'ou cliquez pour parcourir les fichiers' : 'or click to browse files'}
                         </p>
                         <input
                           type="file"
@@ -1475,13 +1475,27 @@ export default function AdminPage() {
                       </div>
                     </div>
                     
-                    {/* Current filename display */}
+                    {/* Current video display with preview */}
                     {editVideoData.url_en && (
-                      <div className="p-3 bg-gray-50 dark:bg-gray-800 rounded-md border">
-                        <Label className="text-xs text-gray-600 dark:text-gray-400">Current file:</Label>
-                        <p className="font-mono text-sm text-gray-900 dark:text-white break-all">
+                      <div className="p-4 bg-gradient-to-r from-green-50 to-emerald-50 dark:from-green-900/20 dark:to-emerald-900/20 rounded-lg border border-green-200 dark:border-green-800">
+                        <div className="flex items-center gap-2 mb-2">
+                          <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                          <Label className="text-sm font-medium text-green-800 dark:text-green-200">Vidéo actuelle téléchargée ✓</Label>
+                        </div>
+                        <p className="text-xs font-mono text-green-700 dark:text-green-300 break-all mb-3">
                           {editVideoData.url_en}
                         </p>
+                        <div className="flex items-center gap-3">
+                          <video 
+                            src={`/api/video-proxy?filename=${encodeURIComponent(editVideoData.url_en)}`}
+                            className="w-20 h-12 object-cover rounded border"
+                            muted
+                          />
+                          <div className="text-xs text-green-600 dark:text-green-400">
+                            <p className="font-medium">Remplacer la vidéo</p>
+                            <p>Téléchargez une nouvelle vidéo ci-dessus</p>
+                          </div>
+                        </div>
                       </div>
                     )}
                     
@@ -1535,13 +1549,27 @@ export default function AdminPage() {
                           htmlFor="video-upload-en"
                           className="text-sm text-blue-600 hover:text-blue-800 cursor-pointer font-medium"
                         >
-                          Upload EN Video
+                          {editVideoData.url_en ? 'Remplacer vidéo EN' : 'Upload EN Video'}
                         </label>
                       </div>
                       {editVideoData.url_en && (
-                        <p className="text-xs font-mono text-gray-600 dark:text-gray-400 break-all bg-gray-50 dark:bg-gray-800 p-2 rounded">
-                          {editVideoData.url_en}
-                        </p>
+                        <div className="p-3 bg-gradient-to-r from-green-50 to-emerald-50 dark:from-green-900/20 dark:to-emerald-900/20 rounded-lg border border-green-200 dark:border-green-800">
+                          <div className="flex items-center gap-2 mb-2">
+                            <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                            <Label className="text-xs font-medium text-green-800 dark:text-green-200">Vidéo EN téléchargée ✓</Label>
+                          </div>
+                          <p className="text-xs font-mono text-green-700 dark:text-green-300 break-all mb-2">
+                            {editVideoData.url_en}
+                          </p>
+                          <div className="flex items-center gap-2">
+                            <video 
+                              src={`/api/video-proxy?filename=${encodeURIComponent(editVideoData.url_en)}`}
+                              className="w-16 h-10 object-cover rounded border"
+                              muted
+                            />
+                            <span className="text-xs text-green-600 dark:text-green-400">Remplacer ci-dessus</span>
+                          </div>
+                        </div>
                       )}
                       <Input
                         value={editVideoData.url_en}
@@ -1581,13 +1609,27 @@ export default function AdminPage() {
                           htmlFor="video-upload-fr"
                           className="text-sm text-blue-600 hover:text-blue-800 cursor-pointer font-medium"
                         >
-                          Upload FR Video
+                          {editVideoData.url_fr ? 'Remplacer vidéo FR' : 'Upload FR Video'}
                         </label>
                       </div>
                       {editVideoData.url_fr && (
-                        <p className="text-xs font-mono text-gray-600 dark:text-gray-400 break-all bg-gray-50 dark:bg-gray-800 p-2 rounded">
-                          {editVideoData.url_fr}
-                        </p>
+                        <div className="p-3 bg-gradient-to-r from-green-50 to-emerald-50 dark:from-green-900/20 dark:to-emerald-900/20 rounded-lg border border-green-200 dark:border-green-800">
+                          <div className="flex items-center gap-2 mb-2">
+                            <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                            <Label className="text-xs font-medium text-green-800 dark:text-green-200">Vidéo FR téléchargée ✓</Label>
+                          </div>
+                          <p className="text-xs font-mono text-green-700 dark:text-green-300 break-all mb-2">
+                            {editVideoData.url_fr}
+                          </p>
+                          <div className="flex items-center gap-2">
+                            <video 
+                              src={`/api/video-proxy?filename=${encodeURIComponent(editVideoData.url_fr)}`}
+                              className="w-16 h-10 object-cover rounded border"
+                              muted
+                            />
+                            <span className="text-xs text-green-600 dark:text-green-400">Remplacer ci-dessus</span>
+                          </div>
+                        </div>
                       )}
                       <Input
                         value={editVideoData.url_fr}
