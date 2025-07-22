@@ -193,7 +193,7 @@ export function HeroVideoSection() {
             }
           }}
         >
-          <source src={`/api/video-proxy?url=${encodeURIComponent(videoUrl)}`} type="video/mp4" />
+          <source src={`/api/video-proxy?filename=${videoUrl.split('/').pop()}`} type="video/mp4" />
         </video>
         
         {/* Video Overlay */}
