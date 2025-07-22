@@ -92,7 +92,8 @@ export default function AdminPage() {
   // Video toggle mutation
   const toggleMutation = useMutation({
     mutationFn: async ({ videoId, isActive }: { videoId: number; isActive: boolean }) => {
-      return apiRequest(`/api/hero-videos/${videoId}/toggle`, 'PATCH', { is_active: isActive });
+      const response = await apiRequest('PATCH', `/api/hero-videos/${videoId}/toggle`, { is_active: isActive });
+      return await response.json();
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['/api/hero-videos'] });
@@ -106,7 +107,8 @@ export default function AdminPage() {
   // Cache refresh mutation
   const refreshCacheMutation = useMutation({
     mutationFn: async () => {
-      return apiRequest('/api/video-cache/refresh', 'POST');
+      const response = await apiRequest('POST', '/api/video-cache/refresh');
+      return await response.json();
     },
     onSuccess: (data: any) => {
       queryClient.invalidateQueries({ queryKey: ['/api/video-cache/stats'] });
@@ -123,7 +125,8 @@ export default function AdminPage() {
   // Clear cache mutation
   const clearCacheMutation = useMutation({
     mutationFn: async () => {
-      return apiRequest('/api/video-cache/clear', 'DELETE');
+      const response = await apiRequest('DELETE', '/api/video-cache/clear');
+      return await response.json();
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['/api/video-cache/stats'] });
