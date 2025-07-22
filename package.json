@@ -390,11 +390,17 @@
     "zod-validation-error": "^3.4.0"
   },
   "scripts": {
-    "dev": "tsx server/index.ts",
+    "dev": "NODE_ENV=development nodemon --exec ts-node server/index.ts",
+    "start": "node server/index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "description": ""
+  "description": "",
+  "devDependencies": {
+    "http-proxy-middleware": "^3.0.5",
+    "nodemon": "^3.1.10",
+    "ts-node": "^10.9.2"
+  }
 }
