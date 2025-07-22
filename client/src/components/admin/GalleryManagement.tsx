@@ -333,13 +333,10 @@ export default function GalleryManagement() {
                           target.style.display = 'none';
                         }}
                       />
-                      <button
-                        type="button"
-                        onClick={() => setShowImageCropper(formData.image_url_en)}
-                        className="text-xs text-memopyk-orange hover:underline"
-                      >
-                        Recadrer Image (300×200)
-                      </button>
+                      <div className="text-xs text-green-600 dark:text-green-400">
+                        <p className="font-medium">Remplacer l'image</p>
+                        <p>Téléchargez une nouvelle image ci-dessous</p>
+                      </div>
                     </div>
                   </div>
                 )}
