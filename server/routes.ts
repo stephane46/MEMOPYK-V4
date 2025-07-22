@@ -502,11 +502,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // Construct Supabase CDN URL from filename
       let videoUrl: string;
       
-      if (videoFilename.startsWith('gallery_')) {
-        videoUrl = `https://supabase.memopyk.org/storage/v1/object/public/memopyk-gallery/${videoFilename}`;
-      } else {
-        videoUrl = `https://supabase.memopyk.org/storage/v1/object/public/memopyk-hero/${videoFilename}`;
-      }
+      // All videos are now stored in memopyk-gallery bucket
+      videoUrl = `https://supabase.memopyk.org/storage/v1/object/public/memopyk-gallery/${videoFilename}`;
 
       console.log(`Video proxy: Constructed URL from filename '${videoFilename}' -> '${videoUrl}'`);
       console.log(`Video proxy: Final encoded URL: ${videoUrl}`);

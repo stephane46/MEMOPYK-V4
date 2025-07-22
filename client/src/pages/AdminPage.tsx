@@ -562,26 +562,13 @@ export default function AdminPage() {
                                       style={{ backgroundColor: '#F2EBDC', color: '#2A4759' }}
                                     >
                                       {video.useSameVideo || video.url_en === video.url_fr ? (
-                                        <div className="space-y-2">
-                                          <div className="font-medium text-sm">
-                                            {/* Clean display name - remove timestamp prefix if exists */}
-                                            {video.url_en.includes('_') ? video.url_en.split('_').slice(1).join('_') : video.url_en}
-                                          </div>
-                                          <div className="text-xs text-gray-500">
-                                            Technical name: {video.url_en}
-                                          </div>
+                                        <div className="font-medium text-sm">
+                                          {video.url_en}
                                         </div>
                                       ) : (
                                         <div className="space-y-1">
-                                          <div className="font-medium">
-                                            EN: {video.url_en.includes('_') ? video.url_en.split('_').slice(1).join('_') : video.url_en}
-                                          </div>
-                                          <div className="font-medium">
-                                            FR: {video.url_fr.includes('_') ? video.url_fr.split('_').slice(1).join('_') : video.url_fr}
-                                          </div>
-                                          <div className="text-xs text-gray-500 mt-2">
-                                            Technical names: {video.url_en} | {video.url_fr}
-                                          </div>
+                                          <div className="font-medium">EN: {video.url_en}</div>
+                                          <div className="font-medium">FR: {video.url_fr}</div>
                                         </div>
                                       )}
                                     </div>

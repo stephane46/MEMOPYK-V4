@@ -1,11 +1,15 @@
 [
   {
     "id": 2,
-    "url_en": "VideoHero1.mp4",
-    "url_fr": "VideoHero1.mp4",
+    "url_en": "VideoHero2.mp4",
+    "url_fr": "VideoHero2.mp4",
     "created_at": "2024-01-01T00:00:00.000Z",
-    "updated_at": "2025-07-22T17:18:11.944Z",
+    "updated_at": "2025-07-22T17:20:41.141Z",
     "use_same_video": true,
-    "useSameVideo": true
+    "useSameVideo": true,
+    "is_active": false,
+    "order_index": 1,
+    "title_en": "Hero Video 2",
+    "title_fr": "Vidéo Héros 2"
   }
 ]
