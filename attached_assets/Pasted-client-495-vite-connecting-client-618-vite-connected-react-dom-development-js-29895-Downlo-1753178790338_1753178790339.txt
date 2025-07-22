@@ -1,0 +1,28 @@
+client:495 [vite] connecting...
+client:618 [vite] connected.
+react-dom.development.js:29895 Download the React DevTools for a better development experience: https://reactjs.org/link/react-devtools
+react-dom.development.js:86  Warning: validateDOMNesting(...): <a> cannot appear as a descendant of <a>.
+    at a
+    at a
+    at https://365df2cf-1884-444c-a9e8-235602456363-00-37q39xpqlgvdy.janeway.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/wouter.js?v=8a71b197:294:18
+    at div
+    at div
+    at nav
+    at div
+    at Layout (https://365df2cf-1884-444c-a9e8-235602456363-00-37q39xpqlgvdy.janeway.replit.dev/src/components/Layout.tsx:20:26)
+    at Router (https://365df2cf-1884-444c-a9e8-235602456363-00-37q39xpqlgvdy.janeway.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/wouter.js?v=8a71b197:235:17)
+    at LanguageProvider (https://365df2cf-1884-444c-a9e8-235602456363-00-37q39xpqlgvdy.janeway.replit.dev/src/contexts/LanguageContext.tsx:48:36)
+    at AuthProvider (https://365df2cf-1884-444c-a9e8-235602456363-00-37q39xpqlgvdy.janeway.replit.dev/src/contexts/AuthContext.tsx:20:32)
+    at QueryClientProvider (https://365df2cf-1884-444c-a9e8-235602456363-00-37q39xpqlgvdy.janeway.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@tanstack_react-query.js?v=8a71b197:2934:3)
+    at App
+printWarning @ react-dom.development.js:86
+utils.js:232  Uncaught TypeError: Cannot read properties of undefined (reading 'onChanged')
+    at utils.js:232:16
+tabutils.js:2  Uncaught TypeError: Cannot read properties of undefined (reading 'onUpdated')
+    at tabutils.js:2:13
+contextmenu.js:124  Uncaught TypeError: Cannot read properties of undefined (reading 'onClicked')
+    at contextmenu.js:124:21
+download.js:9  Uncaught TypeError: Cannot read properties of undefined (reading 'onCreated')
+    at download.js:9:18
+useVideoAnalytics.ts:72 Tracking video view for hero-1
+useVideoAnalytics.ts:68 Skipping duplicate video tracking for hero-2 - last tracked 18s ago

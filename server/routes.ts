@@ -406,11 +406,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(400).json({ error: "Video URL is required" });
       }
       
-      // Add CORS headers for cross-origin video streaming
+      // Enhanced CORS headers for external Replit preview access
       res.setHeader('Access-Control-Allow-Origin', '*');
       res.setHeader('Access-Control-Allow-Methods', 'GET, HEAD, OPTIONS');
-      res.setHeader('Access-Control-Allow-Headers', 'Range, Content-Range, Accept');
-      res.setHeader('Access-Control-Expose-Headers', 'Accept-Ranges, Content-Range, Content-Length');
+      res.setHeader('Access-Control-Allow-Headers', 'Range, Content-Range, Accept, Origin, X-Requested-With, Content-Type');
+      res.setHeader('Access-Control-Expose-Headers', 'Accept-Ranges, Content-Range, Content-Length, Content-Type');
+      res.setHeader('Cross-Origin-Resource-Policy', 'cross-origin');
+      res.setHeader('Cross-Origin-Embedder-Policy', 'unsafe-none');
       
       // Handle OPTIONS preflight request
       if (req.method === 'OPTIONS') {

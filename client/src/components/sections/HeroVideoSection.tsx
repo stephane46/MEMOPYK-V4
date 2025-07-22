@@ -150,8 +150,17 @@ export function HeroVideoSection() {
           muted
           loop
           playsInline
+          preload="metadata"
+          crossOrigin="anonymous"
           onLoadedData={handleVideoLoad}
           onError={() => setIsLoading(false)}
+          onCanPlay={() => {
+            // Ensure video starts playing for external preview
+            const video = videoRef.current;
+            if (video && isPlaying) {
+              video.play().catch(console.warn);
+            }
+          }}
         >
           <source src={`/api/video-proxy?url=${encodeURIComponent(videoUrl)}`} type="video/mp4" />
         </video>
