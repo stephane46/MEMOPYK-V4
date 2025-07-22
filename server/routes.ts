@@ -249,6 +249,80 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Create new hero text
+  app.post("/api/hero-text", async (req, res) => {
+    try {
+      const { title_fr, title_en, subtitle_fr, subtitle_en, font_size } = req.body;
+      
+      if (!title_fr || !title_en) {
+        return res.status(400).json({ error: "French and English titles are required" });
+      }
+      
+      const newText = await hybridStorage.createHeroText({
+        title_fr,
+        title_en,
+        subtitle_fr: subtitle_fr || '',
+        subtitle_en: subtitle_en || '',
+        font_size: font_size || 48,
+        is_active: false
+      });
+      
+      res.status(201).json({ success: true, text: newText });
+    } catch (error) {
+      console.error('Create hero text error:', error);
+      res.status(500).json({ error: "Failed to create hero text" });
+    }
+  });
+
+  // Update hero text
+  app.patch("/api/hero-text/:id", async (req, res) => {
+    try {
+      const textId = parseInt(req.params.id);
+      const updateData = req.body;
+      
+      const updatedText = await hybridStorage.updateHeroText(textId, updateData);
+      res.json({ success: true, text: updatedText });
+    } catch (error) {
+      console.error('Update hero text error:', error);
+      res.status(500).json({ error: "Failed to update hero text" });
+    }
+  });
+
+  // Apply hero text to site (set as active)
+  app.patch("/api/hero-text/:id/apply", async (req, res) => {
+    try {
+      const textId = parseInt(req.params.id);
+      const { font_size } = req.body;
+      
+      // First, deactivate all other hero texts
+      await hybridStorage.deactivateAllHeroTexts();
+      
+      // Then activate this text with the specified font size
+      const appliedText = await hybridStorage.updateHeroText(textId, {
+        is_active: true,
+        font_size: font_size || 48
+      });
+      
+      res.json({ success: true, text: appliedText });
+    } catch (error) {
+      console.error('Apply hero text error:', error);
+      res.status(500).json({ error: "Failed to apply hero text" });
+    }
+  });
+
+  // Delete hero text
+  app.delete("/api/hero-text/:id", async (req, res) => {
+    try {
+      const textId = parseInt(req.params.id);
+      
+      await hybridStorage.deleteHeroText(textId);
+      res.json({ success: true, message: "Hero text deleted successfully" });
+    } catch (error) {
+      console.error('Delete hero text error:', error);
+      res.status(500).json({ error: "Failed to delete hero text" });
+    }
+  });
+
   // Gallery Items - Portfolio gallery content  
   app.get("/api/gallery", async (req, res) => {
     try {

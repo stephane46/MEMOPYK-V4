@@ -161,7 +161,55 @@ export class HybridStorage implements HybridStorageInterface {
   // Hero text settings operations
   async getHeroTextSettings(language?: string): Promise<any[]> {
     const data = this.loadJsonFile('hero-text.json');
-    return data.filter(setting => setting.is_active);
+    return data; // Return all texts for admin management
+  }
+
+  async createHeroText(text: any): Promise<any> {
+    const texts = this.loadJsonFile('hero-text.json');
+    const newText = {
+      id: Date.now(), // Simple ID generation
+      ...text,
+      created_at: new Date().toISOString()
+    };
+    texts.push(newText);
+    this.saveJsonFile('hero-text.json', texts);
+    return newText;
+  }
+
+  async updateHeroText(textId: number, updateData: any): Promise<any> {
+    const texts = this.loadJsonFile('hero-text.json');
+    const textIndex = texts.findIndex((t: any) => t.id === textId);
+    
+    if (textIndex === -1) {
+      throw new Error('Hero text not found');
+    }
+    
+    const updatedText = { ...texts[textIndex], ...updateData };
+    texts[textIndex] = updatedText;
+    this.saveJsonFile('hero-text.json', texts);
+    
+    return updatedText;
+  }
+
+  async deactivateAllHeroTexts(): Promise<void> {
+    const texts = this.loadJsonFile('hero-text.json');
+    const updatedTexts = texts.map((text: any) => ({ ...text, is_active: false }));
+    this.saveJsonFile('hero-text.json', updatedTexts);
+  }
+
+  async deleteHeroText(textId: number): Promise<any> {
+    const texts = this.loadJsonFile('hero-text.json');
+    const textIndex = texts.findIndex((t: any) => t.id === textId);
+    
+    if (textIndex === -1) {
+      throw new Error('Hero text not found');
+    }
+    
+    const deletedText = texts[textIndex];
+    texts.splice(textIndex, 1);
+    this.saveJsonFile('hero-text.json', texts);
+    
+    return deletedText;
   }
 
   // Gallery operations
