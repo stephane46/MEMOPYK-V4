@@ -466,7 +466,7 @@ export default function AdminPage() {
                                             url_en: filename,
                                             url_fr: filename,
                                             use_same_video: true,
-                                            is_active: false,
+                                            is_active: true,
                                             order_index: heroVideos.length + 1
                                           })
                                         });
