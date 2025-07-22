@@ -447,20 +447,39 @@ export default function AdminPage() {
                                       formData.append('title_fr', `Nouvelle Vidéo - ${file.name}`);
                                       
                                       // Upload to backend API
-                                      const response = await fetch('/api/upload-video', {
+                                      const response = await fetch('/api/hero-videos/upload', {
                                         method: 'POST',
                                         body: formData
                                       });
                                       
                                       if (response.ok) {
                                         const result = await response.json();
-                                        toast({ title: "Success", description: "Video uploaded successfully!" });
+                                        const filename = result.filename;
                                         
-                                        // Refresh the video list
-                                        queryClient.invalidateQueries({ queryKey: ['/api/hero-videos'] });
+                                        // Now create a new hero video entry with the uploaded file
+                                        const createResponse = await fetch('/api/hero-videos', {
+                                          method: 'POST',
+                                          headers: { 'Content-Type': 'application/json' },
+                                          body: JSON.stringify({
+                                            title_en: `New Video - ${file.name}`,
+                                            title_fr: `Nouvelle Vidéo - ${file.name}`,
+                                            url_en: filename,
+                                            url_fr: filename,
+                                            use_same_video: true,
+                                            is_active: false,
+                                            order_index: heroVideos.length + 1
+                                          })
+                                        });
+                                        
+                                        if (createResponse.ok) {
+                                          toast({ title: "Success", description: "Video uploaded and added successfully!" });
+                                          queryClient.invalidateQueries({ queryKey: ['/api/hero-videos'] });
+                                        } else {
+                                          toast({ title: "Upload Failed", description: "Video uploaded but failed to create entry", variant: "destructive" });
+                                        }
                                       } else {
-                                        const error = await response.text();
-                                        toast({ title: "Upload Failed", description: error, variant: "destructive" });
+                                        const errorData = await response.json();
+                                        toast({ title: "Upload Failed", description: errorData.error || "Upload failed", variant: "destructive" });
                                       }
                                     } catch (error) {
                                       console.error('Upload error:', error);
