@@ -19,8 +19,8 @@ export function VideoOverlay({ videoUrl, title, width, height, orientation, onCl
   
   const videoRef = useRef<HTMLVideoElement>(null);
   const overlayRef = useRef<HTMLDivElement>(null);
-  const controlsTimeoutRef = useRef<NodeJS.Timeout>();
-  const progressUpdateRef = useRef<number>();
+  const controlsTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const progressUpdateRef = useRef<number | null>(null);
 
   // CSS variables for 2/3 viewport sizing
   const twoThirdsRatio = 66.66;
