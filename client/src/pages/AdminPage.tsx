@@ -57,10 +57,9 @@ export default function AdminPage() {
     setUploadingFile(true);
     const formData = new FormData();
     formData.append('video', file);
-    formData.append('bucket', 'memopyk-hero'); // Hero videos go to hero bucket
     
     try {
-      const response = await fetch('/api/upload', {
+      const response = await fetch('/api/hero-videos/upload', {
         method: 'POST',
         body: formData
       });
@@ -83,9 +82,11 @@ export default function AdminPage() {
         
         toast({ title: "Success!", description: `Video uploaded: ${filename}` });
       } else {
-        toast({ title: "Error", description: "Failed to upload video", variant: "destructive" });
+        const errorData = await response.json();
+        toast({ title: "Error", description: errorData.error || "Failed to upload video", variant: "destructive" });
       }
     } catch (error) {
+      console.error('Upload error:', error);
       toast({ title: "Error", description: "Upload failed", variant: "destructive" });
     } finally {
       setUploadingFile(false);
