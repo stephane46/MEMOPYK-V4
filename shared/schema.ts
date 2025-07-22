@@ -1,4 +1,4 @@
-import { pgTable, text, serial, integer, boolean, timestamp, varchar, decimal, jsonb, uuid } from "drizzle-orm/pg-core";
+import { pgTable, text, serial, integer, boolean, timestamp, varchar, decimal, numeric, jsonb, uuid } from "drizzle-orm/pg-core";
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod";
 
@@ -42,9 +42,26 @@ export const galleryItems = pgTable("gallery_items", {
   titleFr: text("title_fr").notNull(),
   descriptionEn: text("description_en"),
   descriptionFr: text("description_fr"),
+  
+  // Video fields - support both upload and URL input
   videoUrl: text("video_url"),
   videoUrlEn: text("video_url_en"),
   videoUrlFr: text("video_url_fr"),
+  videoWidth: integer("video_width"),
+  videoHeight: integer("video_height"),
+  videoOrientation: text("video_orientation"), // "portrait" or "landscape"
+  
+  // Thumbnail image fields - uploaded separately
+  thumbnailUrl: text("thumbnail_url"),
+  thumbnailWidth: integer("thumbnail_width"),
+  thumbnailHeight: integer("thumbnail_height"),
+  
+  // Image positioning for 600x400 display window
+  imagePositionX: integer("image_position_x").default(0), // X offset for positioning
+  imagePositionY: integer("image_position_y").default(0), // Y offset for positioning
+  imageScale: numeric("image_scale").default("1.0"), // Scale factor for zoom
+  
+  // Bilingual content
   imageUrlEn: text("image_url_en"),
   imageUrlFr: text("image_url_fr"),
   priceEn: text("price_en"),
@@ -53,6 +70,7 @@ export const galleryItems = pgTable("gallery_items", {
   altTextFr: text("alt_text_fr"),
   additionalInfoEn: text("additional_info_en"),
   additionalInfoFr: text("additional_info_fr"),
+  
   orderIndex: integer("order_index").default(0),
   isActive: boolean("is_active").default(true),
   createdAt: timestamp("created_at").defaultNow(),

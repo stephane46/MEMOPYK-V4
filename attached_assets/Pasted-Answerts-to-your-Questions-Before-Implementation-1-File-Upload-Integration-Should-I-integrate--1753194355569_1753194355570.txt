@@ -1,0 +1,43 @@
+Answerts to your Questions Before Implementation:
+1.	« File Upload Integration: Should I integrate with the existing Supabase storage system and create proper upload endpoints for both videos and images? »
+ Yes same as for the hero bannerm the user has a dialogue box to open locally stored videos which then are stored in the correct Supabase bucket and referenced in the Supabase table, and we have a system for cache management to cache video to the local file system of the site
+2.	« Static Image Generation: The docs mention "Static image generation with positioning controls" - do you want users to be able to crop/position images within a specific aspect ratio (like 600x400 as mentioned in the docs)? »
+ The user uploads an image same as he does for the video. This video of course will be stored in the correct Supabase bucket and referenced in the right Supabase table and the cache management will cache it to the local file system. Now comes the special part: the image could be any size and that image will be shown in the gallery before the user hits the play button to play the related video. It being that image of any size will be presented in a 600 by 400 window. The user will then be able to zoom in and out of it and move it around with a mouse to select the right zoom and crop area. Once done the user will click on the button and it is that zoomed in and cropped image that will be saved as the static image for the video gallery presented at a 300 by 200 video gallery static image frame. It will be saved as a JPEG in full quality. To be able to zoom in and out, there will be a slider in 5% increment and a linked system with plus / minus system to zoom in and out in 1% increment or to type in the value. The system will say the original image plus the zoomed in and cropped static image and will remember all the settings in case user wants to make changes later. Each time the image is saved it will be under the same name and replacing previous ones there so there will not be accumulating static images for the same video.
+
+3.	« Video Upload vs URL: For gallery items, should users be able to:
+•	Upload video files directly (which then get stored in Supabase)
+•	OR provide URLs to existing videos
+•	OR both options? » Both options
+
+4.	« Inline Interface Design: Instead of the modal dialog, should I create an expandable inline form that appears directly in the gallery list when you click "Add New Item"? » YES
+
+5.	« Video Dimensions: Should users manually input video dimensions, or should the system automatically detect them when a video is uploaded/linked? » Use inputs with and height and orientation. It is very important no it is most important that you understand that when the user will click on the video it will not play in the model.
+
+
+6.	« Thumbnail Generation: Should the system automatically generate thumbnails from uploaded videos, or should users upload separate thumbnail images? » See question 2 there is no thumbnail generatio, n there is an upload of an image.
+
+VERY VERY VERY IMPORTANT: We have a React based video gallery. Each video’s exact pixel width, height, and orientation (portrait vs. landscape) are already available in a local JSON file from the admin panel.
+When the user clicks “Play” on a thumbnail:
+1.	Insert the video into an absolutely positioned overlay that floats above the gallery—no full screen API, no modal component, and no letterboxing/pillarboxing.
+2.	Blur the entire gallery behind the video using CSS-only (backdrop-filter: blur(...)), with a semi opaque color fallback for older browsers.
+3.	Size the video container so that its longest side occupies two thirds of the viewport:
+o	Portrait videos: height = 66.66% of viewport height; width = auto to preserve ratio.
+o	Landscape videos: width = 66.66% of viewport width; height = auto to preserve ratio.
+4.	Maintain the video’s exact aspect ratio based on the pixel dimensions from the admin file—no cropping or black bars.
+Controls & Interaction:
+•	Close: click anywhere outside the video container to remove the overlay and return to the gallery.
+•	Playback toggle: clicking the video area or pressing Space pauses/resumes playback.
+•	Control bar: appears at the bottom of the video when paused or for the first 3 seconds after play begins, then fades out. Re appears on video click or pause.
+o	Buttons (with appropriate aria-labels):
+• Restart (seek to 0)
+• Play/Pause toggle
+• Mute/Unmute toggle
+•	Initial state: video starts playing with sound unmuted, control bar visible for 3 seconds.
+Technical & UX Notes:
+•	Implement in React (functional components/hooks).
+•	Debounce any resize handling when recalculating two thirds dimensions.
+•	Support mobile breakpoints: overlay and sizing logic identical on touch devices.
+•	Use CSS variables for the two thirds ratio to keep styling DRY.
+•	Ensure all controls are keyboard navigable and screen reader friendly.
+•	Animate the overlay’s fade in/out and gallery blur with a smooth transition (no specific style mandated).
+

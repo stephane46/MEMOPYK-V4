@@ -1,29 +1,28 @@
-import { useState } from 'react';
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { apiRequest } from '@/lib/queryClient';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Switch } from '@/components/ui/switch';
-import { Badge } from '@/components/ui/badge';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-import { Textarea } from '@/components/ui/textarea';
+import { useState } from "react";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { apiRequest } from "@/lib/queryClient";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import { Card, CardContent } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Switch } from "@/components/ui/switch";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { useToast } from "@/hooks/use-toast";
 import { 
-  ArrowUp, 
-  ArrowDown, 
-  Play, 
   Plus, 
   Edit, 
   Trash2, 
+  ArrowUp, 
+  ArrowDown, 
   Eye, 
-  EyeOff,
-  Image,
+  EyeOff, 
   Video,
-  Save,
-  X
-} from 'lucide-react';
-import { useToast } from '@/hooks/use-toast';
+  Image,
+  Play,
+  Save 
+} from "lucide-react";
 
 interface GalleryItem {
   id: number;
@@ -41,6 +40,15 @@ interface GalleryItem {
   alt_text_fr: string;
   order_index: number;
   is_active: boolean;
+  position_x?: number;
+  position_y?: number;
+  dimensions_width?: number;
+  dimensions_height?: number;
+  overlay_position?: string;
+  overlay_styles?: string;
+  video_format?: string;
+  thumbnail_position?: string;
+  aspect_ratio?: string;
   created_at: string;
   updated_at: string;
 }
@@ -49,8 +57,66 @@ export default function GalleryManagement() {
   const [editingItem, setEditingItem] = useState<GalleryItem | null>(null);
   const [showCreateDialog, setShowCreateDialog] = useState(false);
   const [showPreview, setShowPreview] = useState<{ type: 'video' | 'image'; url: string; title: string } | null>(null);
+  const [uploading, setUploading] = useState(false);
   const { toast } = useToast();
   const queryClient = useQueryClient();
+
+  // File upload handlers
+  const handleVideoUpload = async (file: File | undefined) => {
+    if (!file) return;
+    
+    setUploading(true);
+    try {
+      const formData = new FormData();
+      formData.append('video', file);
+      
+      const response = await fetch('/api/gallery/upload-video', {
+        method: 'POST',
+        body: formData,
+      });
+      
+      const result = await response.json();
+      if (result.success) {
+        toast({ title: "Succès", description: "Vidéo téléchargée avec succès!" });
+        return result.url;
+      } else {
+        throw new Error(result.error);
+      }
+    } catch (error) {
+      console.error('Video upload error:', error);
+      toast({ title: "Erreur", description: "Échec du téléchargement de la vidéo", variant: "destructive" });
+    } finally {
+      setUploading(false);
+    }
+  };
+
+  const handleImageUpload = async (file: File | undefined) => {
+    if (!file) return;
+    
+    setUploading(true);
+    try {
+      const formData = new FormData();
+      formData.append('image', file);
+      
+      const response = await fetch('/api/gallery/upload-image', {
+        method: 'POST',
+        body: formData,
+      });
+      
+      const result = await response.json();
+      if (result.success) {
+        toast({ title: "Succès", description: "Image téléchargée avec succès!" });
+        return result.url;
+      } else {
+        throw new Error(result.error);
+      }
+    } catch (error) {
+      console.error('Image upload error:', error);
+      toast({ title: "Erreur", description: "Échec du téléchargement de l'image", variant: "destructive" });
+    } finally {
+      setUploading(false);
+    }
+  };
 
   // Fetch gallery items
   const { data: galleryItems = [], isLoading } = useQuery<GalleryItem[]>({
@@ -152,6 +218,55 @@ export default function GalleryManagement() {
 
     return (
       <div className="space-y-4 max-h-96 overflow-y-auto bg-white dark:bg-gray-900 text-gray-900 dark:text-white">
+        {/* File Upload Section */}
+        <div className="bg-gray-50 dark:bg-gray-800 p-4 rounded-lg border">
+          <h4 className="font-semibold mb-3 text-gray-900 dark:text-white flex items-center gap-2">
+            <Video className="h-4 w-4" />
+            Upload de Fichiers
+            {uploading && <span className="text-sm text-orange-500">Téléchargement en cours...</span>}
+          </h4>
+          <div className="grid grid-cols-2 gap-4 mb-4">
+            <div>
+              <Label className="text-gray-700 dark:text-gray-300 flex items-center gap-1">
+                <Video className="h-3 w-3" />
+                Vidéo Upload
+              </Label>
+              <input
+                type="file"
+                accept="video/*"
+                onChange={async (e) => {
+                  const url = await handleVideoUpload(e.target.files?.[0]);
+                  if (url) {
+                    setFormData({ ...formData, video_url_en: url, video_url_fr: url });
+                  }
+                }}
+                disabled={uploading}
+                className="w-full p-2 border rounded bg-white dark:bg-gray-700 text-gray-900 dark:text-white disabled:opacity-50"
+              />
+              <p className="text-xs text-gray-500 mt-1">MP4, WebM, MOV (max 500MB)</p>
+            </div>
+            <div>
+              <Label className="text-gray-700 dark:text-gray-300 flex items-center gap-1">
+                <Image className="h-3 w-3" />
+                Thumbnail Upload
+              </Label>
+              <input
+                type="file"
+                accept="image/*"
+                onChange={async (e) => {
+                  const url = await handleImageUpload(e.target.files?.[0]);
+                  if (url) {
+                    setFormData({ ...formData, image_url_en: url, image_url_fr: url });
+                  }
+                }}
+                disabled={uploading}
+                className="w-full p-2 border rounded bg-white dark:bg-gray-700 text-gray-900 dark:text-white disabled:opacity-50"
+              />
+              <p className="text-xs text-gray-500 mt-1">JPG, PNG, WebP (max 50MB)</p>
+            </div>
+          </div>
+        </div>
+
         <div className="grid grid-cols-2 gap-4">
           <div>
             <Label htmlFor="title_en" className="text-gray-700 dark:text-gray-300">Titre (English)</Label>
@@ -202,52 +317,6 @@ export default function GalleryManagement() {
 
         <div className="grid grid-cols-2 gap-4">
           <div>
-            <Label htmlFor="video_url_en" className="text-gray-700 dark:text-gray-300">URL Vidéo (English)</Label>
-            <Input
-              id="video_url_en"
-              value={formData.video_url_en}
-              onChange={(e) => setFormData({ ...formData, video_url_en: e.target.value })}
-              placeholder="https://..."
-              className="bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
-            />
-          </div>
-          <div>
-            <Label htmlFor="video_url_fr" className="text-gray-700 dark:text-gray-300">URL Vidéo (Français)</Label>
-            <Input
-              id="video_url_fr"
-              value={formData.video_url_fr}
-              onChange={(e) => setFormData({ ...formData, video_url_fr: e.target.value })}
-              placeholder="https://..."
-              className="bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
-            />
-          </div>
-        </div>
-
-        <div className="grid grid-cols-2 gap-4">
-          <div>
-            <Label htmlFor="image_url_en" className="text-gray-700 dark:text-gray-300">URL Image (English)</Label>
-            <Input
-              id="image_url_en"
-              value={formData.image_url_en}
-              onChange={(e) => setFormData({ ...formData, image_url_en: e.target.value })}
-              placeholder="https://..."
-              className="bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
-            />
-          </div>
-          <div>
-            <Label htmlFor="image_url_fr" className="text-gray-700 dark:text-gray-300">URL Image (Français)</Label>
-            <Input
-              id="image_url_fr"
-              value={formData.image_url_fr}
-              onChange={(e) => setFormData({ ...formData, image_url_fr: e.target.value })}
-              placeholder="https://..."
-              className="bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
-            />
-          </div>
-        </div>
-
-        <div className="grid grid-cols-2 gap-4">
-          <div>
             <Label htmlFor="price_en" className="text-gray-700 dark:text-gray-300">Prix (English)</Label>
             <Input
               id="price_en"
@@ -264,29 +333,6 @@ export default function GalleryManagement() {
               value={formData.price_fr}
               onChange={(e) => setFormData({ ...formData, price_fr: e.target.value })}
               placeholder="299€"
-              className="bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
-            />
-          </div>
-        </div>
-
-        <div className="grid grid-cols-2 gap-4">
-          <div>
-            <Label htmlFor="alt_text_en" className="text-gray-700 dark:text-gray-300">Texte Alt (English)</Label>
-            <Input
-              id="alt_text_en"
-              value={formData.alt_text_en}
-              onChange={(e) => setFormData({ ...formData, alt_text_en: e.target.value })}
-              placeholder="Alt text for accessibility"
-              className="bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
-            />
-          </div>
-          <div>
-            <Label htmlFor="alt_text_fr" className="text-gray-700 dark:text-gray-300">Texte Alt (Français)</Label>
-            <Input
-              id="alt_text_fr"
-              value={formData.alt_text_fr}
-              onChange={(e) => setFormData({ ...formData, alt_text_fr: e.target.value })}
-              placeholder="Texte alternatif pour accessibilité"
               className="bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
             />
           </div>
@@ -381,105 +427,124 @@ export default function GalleryManagement() {
                           muted
                           preload="metadata"
                         />
-                        <div className="absolute inset-0 bg-black bg-opacity-40 group-hover:bg-opacity-20 transition-all flex items-center justify-center">
-                          <Play className="h-8 w-8 text-white" />
+                        <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-30 transition-all flex items-center justify-center">
+                          <Play className="h-8 w-8 text-white opacity-0 group-hover:opacity-100 transition-all" />
                         </div>
                       </div>
                     ) : item.image_url_en ? (
-                      <img
-                        src={item.image_url_en}
-                        alt={item.alt_text_en}
-                        className="w-full h-full object-cover cursor-pointer"
+                      <div 
+                        className="w-full h-full cursor-pointer group"
                         onClick={() => setShowPreview({ type: 'image', url: item.image_url_en!, title: item.title_en })}
-                      />
+                      >
+                        <img
+                          src={item.image_url_en}
+                          alt={item.alt_text_en}
+                          className="w-full h-full object-cover"
+                        />
+                        <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-30 transition-all flex items-center justify-center">
+                          <Eye className="h-8 w-8 text-white opacity-0 group-hover:opacity-100 transition-all" />
+                        </div>
+                      </div>
                     ) : (
                       <div className="w-full h-full flex items-center justify-center text-gray-400">
                         <Image className="h-12 w-12" />
                       </div>
                     )}
                   </div>
-                  <div className="flex flex-wrap gap-1">
-                    <Badge variant={item.is_active ? "default" : "secondary"}>
+                  
+                  <div className="flex items-center justify-between">
+                    <Badge variant={item.is_active ? "default" : "secondary"} className="text-xs">
                       {item.is_active ? "Actif" : "Inactif"}
                     </Badge>
-                    <Badge variant="outline">#{item.order_index}</Badge>
+                    <span className="text-xs text-gray-500">#{item.order_index}</span>
                   </div>
                 </div>
 
-                {/* Content */}
-                <div className="lg:col-span-2 space-y-3">
-                  <div>
-                    <h4 className="font-semibold text-memopyk-navy">{item.title_fr}</h4>
-                    <p className="text-sm text-gray-600">{item.description_fr}</p>
-                  </div>
-                  <div className="grid grid-cols-2 gap-4 text-sm">
-                    <div>
-                      <strong>Prix FR:</strong> {item.price_fr}
+                {/* Content Details */}
+                <div className="lg:col-span-2 space-y-4">
+                  {editingItem?.id === item.id ? (
+                    <GalleryItemForm
+                      item={item}
+                      onSave={(data) => updateItemMutation.mutate({ id: item.id, data })}
+                      onCancel={() => setEditingItem(null)}
+                    />
+                  ) : (
+                    <div className="space-y-3">
+                      <div>
+                        <h4 className="font-semibold text-gray-900 dark:text-white">{item.title_en}</h4>
+                        <p className="text-sm text-gray-500 dark:text-gray-400">{item.title_fr}</p>
+                      </div>
+                      
+                      <div className="text-sm text-gray-600 dark:text-gray-400">
+                        <p className="mb-1">{item.description_en}</p>
+                        <p className="italic">{item.description_fr}</p>
+                      </div>
+                      
+                      <div className="flex items-center gap-4 text-sm">
+                        <span className="font-medium text-green-600 dark:text-green-400">{item.price_en}</span>
+                        <span className="font-medium text-green-600 dark:text-green-400">{item.price_fr}</span>
+                      </div>
                     </div>
-                    <div>
-                      <strong>Prix EN:</strong> {item.price_en}
-                    </div>
-                  </div>
-                  <div className="text-xs text-gray-500">
-                    Créé: {new Date(item.created_at).toLocaleDateString('fr-FR')}
-                  </div>
+                  )}
                 </div>
 
                 {/* Actions */}
-                <div className="space-y-2">
-                  <div className="flex gap-2">
+                <div className="lg:col-span-1 space-y-2">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => setEditingItem(editingItem?.id === item.id ? null : item)}
+                    className="w-full justify-start"
+                  >
+                    <Edit className="h-3 w-3 mr-1" />
+                    {editingItem?.id === item.id ? "Annuler" : "Modifier"}
+                  </Button>
+                  
+                  <div className="flex space-x-1">
                     <Button
                       variant="outline"
                       size="sm"
                       onClick={() => handleReorder(item, 'up')}
-                      disabled={index === 0 || reorderItemMutation.isPending}
+                      disabled={index === 0}
+                      className="flex-1"
                     >
-                      <ArrowUp className="h-4 w-4" />
+                      <ArrowUp className="h-3 w-3" />
                     </Button>
                     <Button
                       variant="outline"
                       size="sm"
                       onClick={() => handleReorder(item, 'down')}
-                      disabled={index === sortedItems.length - 1 || reorderItemMutation.isPending}
+                      disabled={index === sortedItems.length - 1}
+                      className="flex-1"
                     >
-                      <ArrowDown className="h-4 w-4" />
+                      <ArrowDown className="h-3 w-3" />
                     </Button>
                   </div>
                   
                   <Button
                     variant="outline"
                     size="sm"
-                    className="w-full"
-                    onClick={() => setEditingItem(item)}
+                    onClick={() => updateItemMutation.mutate({ 
+                      id: item.id, 
+                      data: { is_active: !item.is_active }
+                    })}
+                    className="w-full justify-start"
                   >
-                    <Edit className="h-4 w-4 mr-2" />
-                    Modifier
+                    {item.is_active ? <EyeOff className="h-3 w-3 mr-1" /> : <Eye className="h-3 w-3 mr-1" />}
+                    {item.is_active ? "Masquer" : "Afficher"}
                   </Button>
                   
                   <Button
                     variant="outline"
                     size="sm"
-                    className="w-full"
-                    onClick={() => updateItemMutation.mutate({ 
-                      id: item.id, 
-                      data: { is_active: !item.is_active } 
-                    })}
-                  >
-                    {item.is_active ? <EyeOff className="h-4 w-4 mr-2" /> : <Eye className="h-4 w-4 mr-2" />}
-                    {item.is_active ? 'Désactiver' : 'Activer'}
-                  </Button>
-                  
-                  <Button
-                    variant="destructive"
-                    size="sm"
-                    className="w-full"
                     onClick={() => {
-                      if (confirm('Êtes-vous sûr de vouloir supprimer cet élément?')) {
+                      if (confirm('Êtes-vous sûr de vouloir supprimer cet élément ?')) {
                         deleteItemMutation.mutate(item.id);
                       }
                     }}
+                    className="w-full text-red-600 hover:text-red-700 justify-start"
                   >
-                    <Trash2 className="h-4 w-4 mr-2" />
+                    <Trash2 className="h-3 w-3 mr-1" />
                     Supprimer
                   </Button>
                 </div>
@@ -489,46 +554,41 @@ export default function GalleryManagement() {
         ))}
       </div>
 
-      {/* Edit Dialog */}
-      {editingItem && (
-        <Dialog open={true} onOpenChange={() => setEditingItem(null)}>
-          <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
-            <DialogHeader>
-              <DialogTitle>Modifier l'Élément de Galerie</DialogTitle>
-            </DialogHeader>
-            <GalleryItemForm
-              item={editingItem}
-              onSave={(data) => updateItemMutation.mutate({ id: editingItem.id, data })}
-              onCancel={() => setEditingItem(null)}
-            />
-          </DialogContent>
-        </Dialog>
+      {galleryItems.length === 0 && (
+        <div className="text-center py-12 bg-gray-50 dark:bg-gray-800 rounded-lg">
+          <Image className="h-12 w-12 mx-auto text-gray-400 mb-4" />
+          <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-2">Aucun élément de galerie</h3>
+          <p className="text-gray-500 dark:text-gray-400 mb-4">Commencez par créer votre premier élément de galerie.</p>
+          <Button 
+            onClick={() => setShowCreateDialog(true)}
+            className="bg-orange-500 hover:bg-orange-600"
+          >
+            <Plus className="h-4 w-4 mr-2" />
+            Créer le premier élément
+          </Button>
+        </div>
       )}
 
-      {/* Preview Dialog */}
+      {/* Preview Modal */}
       {showPreview && (
-        <Dialog open={true} onOpenChange={() => setShowPreview(null)}>
-          <DialogContent className="max-w-4xl">
+        <Dialog open={!!showPreview} onOpenChange={() => setShowPreview(null)}>
+          <DialogContent className="max-w-4xl max-h-[90vh] bg-white dark:bg-gray-900">
             <DialogHeader>
-              <DialogTitle className="flex justify-between items-center">
-                {showPreview.title}
-                <Button variant="ghost" size="sm" onClick={() => setShowPreview(null)}>
-                  <X className="h-4 w-4" />
-                </Button>
-              </DialogTitle>
+              <DialogTitle className="text-gray-900 dark:text-white">{showPreview.title}</DialogTitle>
             </DialogHeader>
-            <div className="aspect-video">
+            <div className="aspect-video w-full">
               {showPreview.type === 'video' ? (
                 <video
                   src={showPreview.url}
                   controls
-                  className="w-full h-full object-cover rounded-lg"
+                  className="w-full h-full object-cover rounded"
+                  autoPlay
                 />
               ) : (
                 <img
                   src={showPreview.url}
                   alt={showPreview.title}
-                  className="w-full h-full object-cover rounded-lg"
+                  className="w-full h-full object-cover rounded"
                 />
               )}
             </div>
