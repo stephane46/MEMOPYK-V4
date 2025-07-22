@@ -1,3 +1,5 @@
+// 🔧 TEST WRITE ACCESS: this comment proves I can edit the file!
+
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
 import path from "path";
