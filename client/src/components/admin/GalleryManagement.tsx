@@ -251,7 +251,7 @@ export default function GalleryManagement() {
         <div className="bg-gradient-to-r from-orange-50 to-orange-100 dark:from-orange-900/20 dark:to-orange-800/20 p-6 rounded-lg border border-orange-200 dark:border-orange-800">
           <h4 className="font-semibold mb-3 text-orange-900 dark:text-orange-100 flex items-center gap-2">
             <Video className="h-5 w-5" />
-            1. Télécharger vos fichiers média
+            {item ? '1. Modifier vos fichiers média (optionnel)' : '1. Télécharger vos fichiers média'}
             {uploading && <span className="text-sm text-orange-600 dark:text-orange-300">Téléchargement en cours...</span>}
           </h4>
           <div className="bg-white dark:bg-gray-800/50 p-4 rounded-lg mb-4">
@@ -264,6 +264,30 @@ export default function GalleryManagement() {
                   <Video className="h-3 w-3" />
                   Vidéo de galerie
                 </Label>
+                
+                {/* Current Video Display */}
+                {formData.video_url_en && (
+                  <div className="mb-3 p-3 bg-green-50 dark:bg-green-900/20 rounded border border-green-200 dark:border-green-800">
+                    <p className="text-sm font-medium text-green-800 dark:text-green-200 mb-1">
+                      ✅ Vidéo actuelle:
+                    </p>
+                    <p className="text-xs font-mono text-green-700 dark:text-green-300 break-all">
+                      {formData.video_url_en}
+                    </p>
+                    <div className="mt-2 flex items-center gap-2">
+                      <video 
+                        src={`/api/video-proxy?filename=${encodeURIComponent(formData.video_url_en.split('/').pop() || formData.video_url_en)}`}
+                        className="w-20 h-12 object-cover rounded border"
+                        muted
+                      />
+                      <div className="text-xs text-green-600 dark:text-green-400">
+                        Dimensions: {formData.video_width} × {formData.video_height}px<br/>
+                        Orientation: {formData.video_orientation}
+                      </div>
+                    </div>
+                  </div>
+                )}
+                
                 <input
                   type="file"
                   accept="video/*"
@@ -280,13 +304,46 @@ export default function GalleryManagement() {
                   disabled={uploading}
                   className="w-full p-2 border rounded bg-white dark:bg-gray-700 text-gray-900 dark:text-white disabled:opacity-50"
                 />
-                <p className="text-xs text-gray-500 mt-1">MP4, WebM, MOV (max 500MB)</p>
+                <p className="text-xs text-gray-500 mt-1">
+                  {formData.video_url_en ? 'Remplacer la vidéo (MP4, WebM, MOV - max 500MB)' : 'MP4, WebM, MOV (max 500MB)'}
+                </p>
               </div>
               <div>
                 <Label className="text-gray-700 dark:text-gray-300 flex items-center gap-1">
                   <Image className="h-3 w-3" />
                   Image de couverture
                 </Label>
+                
+                {/* Current Image Display */}
+                {formData.image_url_en && (
+                  <div className="mb-3 p-3 bg-green-50 dark:bg-green-900/20 rounded border border-green-200 dark:border-green-800">
+                    <p className="text-sm font-medium text-green-800 dark:text-green-200 mb-1">
+                      ✅ Image actuelle:
+                    </p>
+                    <p className="text-xs font-mono text-green-700 dark:text-green-300 break-all mb-2">
+                      {formData.image_url_en}
+                    </p>
+                    <div className="flex items-center gap-2">
+                      <img 
+                        src={`/api/video-proxy?filename=${encodeURIComponent(formData.image_url_en.split('/').pop() || formData.image_url_en)}`}
+                        alt="Current preview"
+                        className="w-20 h-12 object-cover rounded border"
+                        onError={(e) => {
+                          const target = e.target as HTMLImageElement;
+                          target.style.display = 'none';
+                        }}
+                      />
+                      <button
+                        type="button"
+                        onClick={() => setShowImageCropper(formData.image_url_en)}
+                        className="text-xs text-memopyk-orange hover:underline"
+                      >
+                        Recadrer Image (300×200)
+                      </button>
+                    </div>
+                  </div>
+                )}
+                
                 <input
                   type="file"
                   accept="image/*"
@@ -299,7 +356,9 @@ export default function GalleryManagement() {
                   disabled={uploading}
                   className="w-full p-2 border rounded bg-white dark:bg-gray-700 text-gray-900 dark:text-white disabled:opacity-50"
                 />
-                <p className="text-xs text-gray-500 mt-1">JPG, PNG, WebP (max 50MB)</p>
+                <p className="text-xs text-gray-500 mt-1">
+                  {formData.image_url_en ? 'Remplacer l\'image (JPG, PNG, WebP - max 50MB)' : 'JPG, PNG, WebP (max 50MB)'}
+                </p>
               </div>
             </div>
           </div>
