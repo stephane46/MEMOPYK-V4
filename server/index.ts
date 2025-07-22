@@ -1,8 +1,6 @@
 import express, { type Request, Response, NextFunction } from "express";
 import { registerRoutes } from "./routes";
-// Temporarily skip vite import to avoid config issue
-// import { setupVite, serveStatic, log } from "./vite";
-
+// Standalone server for testing - avoiding vite.ts import issue
 function log(message: string, source = "express") {
   const formattedTime = new Date().toLocaleTimeString("en-US", {
     hour: "numeric",
@@ -11,6 +9,11 @@ function log(message: string, source = "express") {
     hour12: true,
   });
   console.log(`${formattedTime} [${source}] ${message}`);
+}
+
+// Simple static file serving for testing
+function serveStatic(app: express.Application) {
+  // Minimal static serving for testing
 }
 
 // Database connection test as per Phase 2.2 of rebuild plan
