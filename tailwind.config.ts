@@ -5,12 +5,32 @@ export default {
   content: ["./client/index.html", "./client/src/**/*.{js,jsx,ts,tsx}"],
   theme: {
     extend: {
+      fontFamily: {
+        sans: ['Poppins', 'sans-serif'],
+        poppins: ['Poppins', 'sans-serif'],
+        playfair: ['Playfair Display', 'serif']
+      },
       borderRadius: {
         lg: "var(--radius)",
         md: "calc(var(--radius) - 2px)",
         sm: "calc(var(--radius) - 4px)",
       },
       colors: {
+        // MEMOPYK Official Brand Colors
+        "memopyk-navy": "#011526",
+        "memopyk-dark-blue": "#2A4759", 
+        "memopyk-sky-blue": "#89BAD9",
+        "memopyk-blue-gray": "#8D9FA6",
+        "memopyk-cream": "#F2EBDC",
+        "memopyk-orange": "#D67C4A",
+        
+        // Tailwind compatible HSL versions
+        navy: "hsl(var(--navy))",
+        "dark-blue": "hsl(var(--dark-blue))",
+        "sky-blue": "hsl(var(--sky-blue))",
+        "blue-gray": "hsl(var(--blue-gray))",
+        cream: "hsl(var(--cream))",
+        orange: "hsl(var(--orange))",
         background: "var(--background)",
         foreground: "var(--foreground)",
         card: {

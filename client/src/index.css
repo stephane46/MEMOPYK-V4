@@ -1,25 +1,65 @@
-@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Poppins:wght@300;400;500;600;700&display=swap');
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-/* MEMOPYK Brand Colors */
+/* MEMOPYK Official Brand Colors */
 :root {
-  --memopyk-blue: 219 34% 47%;
-  --memopyk-blue-light: 219 34% 57%;
-  --memopyk-blue-dark: 219 34% 37%;
-  --memopyk-gold: 45 93% 47%;
-  --memopyk-gold-light: 45 93% 57%;
-  --memopyk-cream: 44 56% 94%;
-  --memopyk-charcoal: 210 11% 15%;
+  --memopyk-navy: #011526;        /* Navy - Primary brand color (RGB 1,21,38) */
+  --memopyk-dark-blue: #2A4759;   /* Dark Blue - Secondary brand (RGB 42,71,89) */
+  --memopyk-sky-blue: #89BAD9;    /* Sky Blue - Light accent (RGB 137,186,217) */
+  --memopyk-blue-gray: #8D9FA6;   /* Blue Gray - Subtle accent (RGB 141,159,166) */
+  --memopyk-cream: #F2EBDC;       /* Cream - Background warmth (RGB 242,235,220) */
+  --memopyk-orange: #D67C4A;      /* Orange - Action/highlight color (RGB 214,124,74) */
+
+  /* HSL versions for Tailwind compatibility */
+  --navy: 202 97% 9%;          /* #011526 */
+  --dark-blue: 202 37% 26%;    /* #2A4759 */
+  --sky-blue: 201 56% 60%;     /* #89BAD9 */
+  --blue-gray: 195 27% 60%;    /* #8D9FA6 */
+  --cream: 39 35% 91%;         /* #F2EBDC */
+  --orange: 22 59% 57%;        /* #D67C4A */
 }
 
-/* Base Styles */
+/* Base Styles with Poppins as primary font */
 body {
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+  font-family: 'Poppins', sans-serif;
+  background-color: #FFFFFF;
+  color: var(--memopyk-navy);
 }
 
+/* Typography Classes */
 .font-playfair {
   font-family: 'Playfair Display', serif;
+}
+
+.font-poppins {
+  font-family: 'Poppins', sans-serif;
+}
+
+/* MEMOPYK Animation */
+@keyframes pulse-elegant {
+  0%, 100% { opacity: 0.9; }
+  50% { opacity: 1; }
+}
+
+.animate-pulse-elegant {
+  animation: pulse-elegant 2s ease-in-out infinite;
+}
+
+/* Custom Gradient Backgrounds */
+.bg-gradient-memopyk {
+  background: linear-gradient(135deg, var(--memopyk-navy) 0%, var(--memopyk-dark-blue) 100%);
+}
+
+.bg-gradient-cream {
+  background: linear-gradient(135deg, var(--memopyk-cream) 0%, #FFFFFF 100%);
+}
+
+/* Glass Morphism Card Effects */
+.glass-card {
+  background: rgba(255, 255, 255, 0.25);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
 }
