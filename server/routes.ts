@@ -585,6 +585,25 @@ export async function registerRoutes(app: Express): Promise<Server> {
     });
   });
 
+  // Admin endpoint to refresh critical videos (force re-download)
+  app.post("/api/video-cache/refresh", async (req, res) => {
+    try {
+      const result = await videoCache.refreshCriticalVideos();
+      res.json({
+        ...result,
+        message: result.success 
+          ? "All critical videos refreshed successfully" 
+          : "Some videos failed to refresh"
+      });
+    } catch (error: any) {
+      res.status(500).json({
+        success: false,
+        error: "Failed to refresh critical videos",
+        message: error.message
+      });
+    }
+  });
+
   // API Documentation route
   app.get("/api", (req, res) => {
     res.json({
@@ -622,7 +641,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
           "GET /api/video-proxy?url=&filename=": "Hybrid video streaming: Cache-first with Supabase CDN fallback",
           "GET /api/video-proxy/health": "Video proxy health check with cache statistics",
           "GET /api/video-cache/stats": "Video cache statistics and configuration",
-          "DELETE /api/video-cache/clear": "Clear video cache (admin only)"
+          "DELETE /api/video-cache/clear": "Clear video cache (admin only)",
+          "POST /api/video-cache/refresh": "Force refresh critical videos (hero videos - admin only)"
         },
         system: {
           "GET /api/health": "API health check",

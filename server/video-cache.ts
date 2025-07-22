@@ -18,6 +18,9 @@ export class VideoCache {
     }
     
     console.log(`✅ Video cache initialized: ${this.cacheDir}`);
+    
+    // Proactively preload critical videos on startup
+    this.preloadCriticalVideos();
   }
 
   /**
@@ -187,6 +190,115 @@ export class VideoCache {
     } catch (error) {
       console.error('❌ Failed to clear cache:', error);
     }
+  }
+
+  /**
+   * Proactively preload critical videos (hero videos that auto-play)
+   */
+  private async preloadCriticalVideos(): Promise<void> {
+    // Critical videos that should ALWAYS be cached (hero videos auto-play)
+    const criticalVideos = [
+      'VideoHero1.mp4',
+      '1752156356886_VideoHero2.mp4', 
+      '1752159228374_VideoHero3.mp4'
+    ];
+
+    console.log('🚀 Starting proactive cache preloading for critical videos...');
+    
+    for (const filename of criticalVideos) {
+      try {
+        if (!this.isVideoCached(filename)) {
+          console.log(`⬇️ Preloading critical video: ${filename}`);
+          await this.downloadAndCacheVideo(filename);
+        } else {
+          console.log(`✅ Critical video already cached: ${filename}`);
+        }
+      } catch (error) {
+        console.error(`❌ Failed to preload ${filename}:`, error);
+      }
+    }
+    
+    const stats = this.getCacheStats();
+    console.log(`🎯 Critical video preloading complete! Cache: ${stats.fileCount} files, ${stats.sizeMB}MB`);
+  }
+
+  /**
+   * Download and cache a video from Supabase
+   */
+  private async downloadAndCacheVideo(filename: string): Promise<void> {
+    const supabaseUrl = process.env.SUPABASE_URL;
+    if (!supabaseUrl) {
+      throw new Error('SUPABASE_URL not configured');
+    }
+
+    const fullVideoUrl = `${supabaseUrl}/storage/v1/object/public/memopyk-hero/${filename}`;
+    const cacheFile = this.getCacheFilePath(filename);
+    
+    console.log(`📥 Downloading ${filename} from Supabase...`);
+    
+    const fetch = (await import('node-fetch')).default;
+    const response = await fetch(fullVideoUrl, {
+      headers: { 'User-Agent': 'MEMOPYK-CachePreloader/1.0' }
+    });
+    
+    if (!response.ok) {
+      throw new Error(`Failed to download ${filename}: ${response.status} ${response.statusText}`);
+    }
+    
+    return new Promise((resolve, reject) => {
+      const writeStream = createWriteStream(cacheFile);
+      
+      writeStream.on('error', reject);
+      writeStream.on('finish', () => {
+        console.log(`💾 Successfully cached critical video: ${filename}`);
+        resolve();
+      });
+      
+      if (response.body) {
+        response.body.pipe(writeStream);
+      } else {
+        writeStream.end();
+        reject(new Error('No response body'));
+      }
+    });
+  }
+
+  /**
+   * Force refresh cache for all critical videos (admin tool)
+   */
+  async refreshCriticalVideos(): Promise<{ success: boolean; cached: string[]; errors: string[] }> {
+    const criticalVideos = [
+      'VideoHero1.mp4',
+      '1752156356886_VideoHero2.mp4', 
+      '1752159228374_VideoHero3.mp4'
+    ];
+
+    const cached: string[] = [];
+    const errors: string[] = [];
+
+    console.log('🔄 Admin-triggered critical video cache refresh...');
+
+    for (const filename of criticalVideos) {
+      try {
+        // Remove from cache if exists
+        this.removeCachedVideo(filename);
+        // Download fresh copy
+        await this.downloadAndCacheVideo(filename);
+        cached.push(filename);
+      } catch (error: any) {
+        console.error(`❌ Failed to refresh ${filename}:`, error);
+        errors.push(`${filename}: ${error.message}`);
+      }
+    }
+
+    const stats = this.getCacheStats();
+    console.log(`✅ Cache refresh complete! Success: ${cached.length}, Errors: ${errors.length}`);
+    
+    return {
+      success: errors.length === 0,
+      cached,
+      errors
+    };
   }
 }
 
