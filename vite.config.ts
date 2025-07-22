@@ -10,7 +10,7 @@ export default defineConfig(async () => {
   // Add runtime error overlay plugin dynamically
   try {
     const runtimeErrorOverlay = await import("@replit/vite-plugin-runtime-error-modal");
-    plugins.push(runtimeErrorOverlay.default());
+    plugins.push(runtimeErrorOverlay.default);
   } catch (err: any) {
     console.warn("Could not load @replit/vite-plugin-runtime-error-modal:", err?.message);
   }
