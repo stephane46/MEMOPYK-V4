@@ -518,7 +518,7 @@ export default function AdminPage() {
                                     {/* Clear Position Indicator */}
                                     <div className="flex items-center justify-center">
                                       <div className="bg-blue-600 text-white px-4 py-2 rounded-full font-bold text-lg">
-                                        Plays {video.order_index === 1 ? '1st' : video.order_index === 2 ? '2nd' : video.order_index === 3 ? '3rd' : `${video.order_index}th`}
+                                        Plays {!video.order_index ? '1st' : video.order_index === 1 ? '1st' : video.order_index === 2 ? '2nd' : video.order_index === 3 ? '3rd' : `${video.order_index}th`}
                                       </div>
                                     </div>
                                     <p className="text-center text-sm text-gray-600 dark:text-gray-400">
