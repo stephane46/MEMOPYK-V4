@@ -63,6 +63,10 @@ export const galleryItems = pgTable("gallery_items", {
   imagePositionY: integer("image_position_y").default(0), // Y offset for positioning
   imageScale: numeric("image_scale").default("1.0"), // Scale factor for zoom
   
+  // Static Image Generation fields (300x200 JPEG output)
+  staticImageUrl: text("static_image_url"), // 300x200 cropped JPEG
+  cropSettings: jsonb("crop_settings"), // Stores zoom, position settings for re-editing
+  
   // Bilingual content
   imageUrlEn: text("image_url_en"),
   imageUrlFr: text("image_url_fr"),

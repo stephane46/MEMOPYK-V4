@@ -331,6 +331,58 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Upload static cropped image endpoint (300x200 JPEG)
+  app.post("/api/gallery/upload-static-image", uploadImage.single('image'), async (req, res) => {
+    try {
+      if (!req.file) {
+        return res.status(400).json({ error: "No static image file provided" });
+      }
+
+      const itemId = req.body.item_id;
+      const cropSettings = req.body.crop_settings ? JSON.parse(req.body.crop_settings) : null;
+      
+      if (!itemId) {
+        return res.status(400).json({ error: "Gallery item ID required" });
+      }
+
+      // Use consistent naming for static images
+      const filename = `static_${itemId}.jpg`;
+
+      console.log(`📤 Uploading static image: ${filename} (300x200 JPEG) - Overwrite mode`);
+
+      // Upload to Supabase storage (gallery bucket) with overwrite enabled
+      const { data: uploadData, error: uploadError } = await supabase.storage
+        .from('memopyk-gallery')
+        .upload(filename, req.file.buffer, {
+          contentType: 'image/jpeg',
+          cacheControl: '3600',
+          upsert: true  // Enable overwrite if file exists (same filename each time)
+        });
+
+      if (uploadError) {
+        console.error('Supabase static image upload error:', uploadError);
+        return res.status(500).json({ error: `Static image upload failed: ${uploadError.message}` });
+      }
+
+      const staticImageUrl = `https://supabase.memopyk.org/storage/v1/object/public/memopyk-gallery/${filename}`;
+      
+      console.log(`✅ Static image uploaded successfully: ${staticImageUrl}`);
+      
+      res.json({ 
+        success: true, 
+        url: staticImageUrl,
+        filename: filename,
+        crop_settings: cropSettings,
+        width: 300,
+        height: 200
+      });
+
+    } catch (error) {
+      console.error('Static image upload error:', error);
+      res.status(500).json({ error: "Failed to upload static image" });
+    }
+  });
+
   // Hero Text Settings
   app.get("/api/hero-text", async (req, res) => {
     try {

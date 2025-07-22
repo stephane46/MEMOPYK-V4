@@ -21,8 +21,10 @@ import {
   Video,
   Image,
   Play,
-  Save 
+  Save,
+  Crop
 } from "lucide-react";
+import { ImageCropper } from './ImageCropper';
 
 interface GalleryItem {
   id: number;
@@ -49,6 +51,8 @@ interface GalleryItem {
   video_format?: string;
   thumbnail_position?: string;
   aspect_ratio?: string;
+  static_image_url?: string;
+  crop_settings?: any;
   created_at: string;
   updated_at: string;
 }
@@ -57,6 +61,7 @@ export default function GalleryManagement() {
   const [editingItem, setEditingItem] = useState<GalleryItem | null>(null);
   const [showCreateDialog, setShowCreateDialog] = useState(false);
   const [showPreview, setShowPreview] = useState<{ type: 'video' | 'image'; url: string; title: string } | null>(null);
+  const [showImageCropper, setShowImageCropper] = useState<{ imageUrl: string; item: GalleryItem } | null>(null);
   const [uploading, setUploading] = useState(false);
   const { toast } = useToast();
   const queryClient = useQueryClient();
@@ -634,6 +639,19 @@ export default function GalleryManagement() {
                     </Button>
                   </div>
                   
+                  {/* Static Image Cropper Button */}
+                  {item.image_url_en && (
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => setShowImageCropper({ imageUrl: item.image_url_en!, item })}
+                      className="w-full justify-start text-memopyk-orange hover:text-memopyk-orange"
+                    >
+                      <Crop className="h-3 w-3 mr-1" />
+                      Recadrer Image (300×200)
+                    </Button>
+                  )}
+                  
                   <Button
                     variant="outline"
                     size="sm"
@@ -705,6 +723,69 @@ export default function GalleryManagement() {
                 />
               )}
             </div>
+          </DialogContent>
+        </Dialog>
+      )}
+
+      {/* Image Cropper Modal */}
+      {showImageCropper && (
+        <Dialog open={!!showImageCropper} onOpenChange={() => setShowImageCropper(null)}>
+          <DialogContent className="max-w-6xl max-h-[95vh] overflow-y-auto bg-white dark:bg-gray-900">
+            <DialogHeader>
+              <DialogTitle className="text-gray-900 dark:text-white">
+                Génération d'Image Statique - {showImageCropper.item.title_en}
+              </DialogTitle>
+            </DialogHeader>
+            <ImageCropper
+              imageUrl={showImageCropper.imageUrl}
+              onSave={async (croppedBlob, cropSettings) => {
+                try {
+                  // Create form data for upload
+                  const formData = new FormData();
+                  formData.append('image', croppedBlob, `static_${showImageCropper.item.id}.jpg`);
+                  formData.append('crop_settings', JSON.stringify(cropSettings));
+                  formData.append('item_id', showImageCropper.item.id.toString());
+                  
+                  // Upload cropped image
+                  const response = await fetch('/api/gallery/upload-static-image', {
+                    method: 'POST',
+                    body: formData,
+                  });
+                  
+                  const result = await response.json();
+                  if (result.success) {
+                    toast({ 
+                      title: "Succès", 
+                      description: "Image statique générée et sauvegardée avec succès!" 
+                    });
+                    
+                    // Update the item with the static image URL and settings
+                    updateItemMutation.mutate({
+                      id: showImageCropper.item.id,
+                      data: {
+                        static_image_url: result.url,
+                        crop_settings: cropSettings
+                      }
+                    });
+                    
+                    setShowImageCropper(null);
+                  } else {
+                    throw new Error(result.error);
+                  }
+                } catch (error) {
+                  console.error('Static image generation error:', error);
+                  toast({ 
+                    title: "Erreur", 
+                    description: "Échec de la génération d'image statique", 
+                    variant: "destructive" 
+                  });
+                }
+              }}
+              onCancel={() => setShowImageCropper(null)}
+              initialSettings={showImageCropper.item.crop_settings}
+              targetWidth={300}
+              targetHeight={200}
+            />
           </DialogContent>
         </Dialog>
       )}
