@@ -34,6 +34,10 @@ interface GalleryItem {
   description_fr: string;
   video_url_en?: string;
   video_url_fr?: string;
+  video_width?: number;
+  video_height?: number;
+  video_orientation?: string;
+  use_same_video?: boolean;
   image_url_en?: string;
   image_url_fr?: string;
   price_en: string;
@@ -211,6 +215,9 @@ export default function GalleryManagement() {
       description_fr: item?.description_fr || '',
       video_url_en: item?.video_url_en || '',
       video_url_fr: item?.video_url_fr || '',
+      video_width: item?.video_width || '',
+      video_height: item?.video_height || '',
+      video_orientation: item?.video_orientation || 'landscape',
       image_url_en: item?.image_url_en || '',
       image_url_fr: item?.image_url_fr || '',
       price_en: item?.price_en || '',
@@ -418,6 +425,60 @@ export default function GalleryManagement() {
           )}
         </div>
 
+        {/* Video Dimensions Section - CRITICAL for video overlay sizing */}
+        <div className="bg-red-50 dark:bg-red-900/20 p-4 rounded-lg border border-red-200 dark:border-red-800">
+          <h4 className="font-semibold mb-3 text-red-900 dark:text-red-100 flex items-center gap-2">
+            📐 3. Dimensions Vidéo (OBLIGATOIRE pour l'affichage)
+          </h4>
+          <p className="text-sm text-red-800 dark:text-red-200 mb-4">
+            ⚠️ Ces dimensions sont critiques pour l'affichage correct dans l'overlay vidéo. Vérifiez les propriétés de votre fichier vidéo.
+          </p>
+          <div className="grid grid-cols-3 gap-4">
+            <div>
+              <Label htmlFor="video_width" className="text-gray-700 dark:text-gray-300">Largeur (pixels) *</Label>
+              <Input
+                id="video_width"
+                type="number"
+                value={formData.video_width}
+                onChange={(e) => setFormData({ ...formData, video_width: parseInt(e.target.value) || '' })}
+                placeholder="Ex: 1920"
+                min={1}
+                className="bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
+                required
+              />
+            </div>
+            <div>
+              <Label htmlFor="video_height" className="text-gray-700 dark:text-gray-300">Hauteur (pixels) *</Label>
+              <Input
+                id="video_height"
+                type="number"
+                value={formData.video_height}
+                onChange={(e) => setFormData({ ...formData, video_height: parseInt(e.target.value) || '' })}
+                placeholder="Ex: 1080"
+                min={1}
+                className="bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
+                required
+              />
+            </div>
+            <div>
+              <Label htmlFor="video_orientation" className="text-gray-700 dark:text-gray-300">Orientation *</Label>
+              <select
+                id="video_orientation"
+                value={formData.video_orientation}
+                onChange={(e) => setFormData({ ...formData, video_orientation: e.target.value })}
+                className="w-full p-2 border rounded bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
+                required
+              >
+                <option value="landscape">Paysage (Landscape)</option>
+                <option value="portrait">Portrait</option>
+              </select>
+            </div>
+          </div>
+          <p className="text-xs text-red-700 dark:text-red-300 mt-2">
+            💡 Astuce: Clic droit sur votre fichier vidéo → Propriétés → Détails pour voir les dimensions exactes
+          </p>
+        </div>
+
         <div className="grid grid-cols-2 gap-4">
           <div>
             <Label htmlFor="price_en" className="text-gray-700 dark:text-gray-300">Prix (English)</Label>
@@ -436,6 +497,29 @@ export default function GalleryManagement() {
               value={formData.price_fr}
               onChange={(e) => setFormData({ ...formData, price_fr: e.target.value })}
               placeholder="299€"
+              className="bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
+            />
+          </div>
+        </div>
+
+        <div className="grid grid-cols-2 gap-4">
+          <div>
+            <Label htmlFor="alt_text_en" className="text-gray-700 dark:text-gray-300">Texte Alt (English)</Label>
+            <Input
+              id="alt_text_en"
+              value={formData.alt_text_en}
+              onChange={(e) => setFormData({ ...formData, alt_text_en: e.target.value })}
+              placeholder="Alternative text for accessibility"
+              className="bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
+            />
+          </div>
+          <div>
+            <Label htmlFor="alt_text_fr" className="text-gray-700 dark:text-gray-300">Texte Alt (Français)</Label>
+            <Input
+              id="alt_text_fr"
+              value={formData.alt_text_fr}
+              onChange={(e) => setFormData({ ...formData, alt_text_fr: e.target.value })}
+              placeholder="Texte alternatif pour l'accessibilité"
               className="bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
             />
           </div>
@@ -478,6 +562,17 @@ export default function GalleryManagement() {
                 });
                 return;
               }
+              
+              // Validate video dimensions if video URL is provided
+              if ((formData.video_url_en || formData.video_url_fr) && (!formData.video_width || !formData.video_height || !formData.video_orientation)) {
+                toast({ 
+                  title: "Erreur", 
+                  description: "Les dimensions vidéo (largeur, hauteur, orientation) sont obligatoires quand une vidéo est fournie", 
+                  variant: "destructive" 
+                });
+                return;
+              }
+              
               onSave(formData);
             }}
             className="bg-orange-500 hover:bg-orange-600"
