@@ -222,35 +222,7 @@ export default function GallerySection() {
                         </div>
                       )}
                       
-                      {/* Media Type Badge */}
-                      <div className="absolute top-4 left-4">
-                        <Badge 
-                          variant="secondary" 
-                          className="bg-black/70 text-white border-0 backdrop-blur-sm"
-                        >
-                          {hasVideo ? (
-                            <>
-                              <Play className="h-3 w-3 mr-1" />
-                              {t.video}
-                            </>
-                          ) : (
-                            <>
-                              <ImageIcon className="h-3 w-3 mr-1" />
-                              {t.image}
-                            </>
-                          )}
-                        </Badge>
-                      </div>
 
-                      {/* Featured Badge */}
-                      {index < 3 && (
-                        <div className="absolute top-4 right-4">
-                          <Badge className="bg-orange-500 text-white border-0">
-                            <Star className="h-3 w-3 mr-1" />
-                            {t.featured}
-                          </Badge>
-                        </div>
-                      )}
                     </div>
                   ) : (
                     <div className="w-full h-full flex items-center justify-center text-gray-400">
