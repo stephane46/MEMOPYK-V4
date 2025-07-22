@@ -160,6 +160,30 @@ export async function registerRoutes(app: Express): Promise<Server> {
     });
   });
 
+  // Root route for Replit preview
+  app.get("/", (req, res) => {
+    res.send(`
+      <html>
+        <head><title>MEMOPYK API Server</title></head>
+        <body style="font-family: Arial; max-width: 800px; margin: 50px auto; padding: 20px;">
+          <h1>🎬 MEMOPYK Platform API</h1>
+          <p><strong>Status:</strong> Server running successfully</p>
+          <p><strong>Backend Phase:</strong> 4.2 Analytics API - Completed ✅</p>
+          
+          <h3>Available API Endpoints:</h3>
+          <ul>
+            <li><a href="/api/health">/api/health</a> - Server status</li>
+            <li><a href="/api/analytics/dashboard">/api/analytics/dashboard</a> - Analytics dashboard</li>
+            <li><a href="/api/hero-videos">/api/hero-videos</a> - Video content</li>
+            <li><a href="/api/gallery">/api/gallery</a> - Gallery items</li>
+          </ul>
+          
+          <p><em>Frontend implementation coming in Phase 5</em></p>
+        </body>
+      </html>
+    `);
+  });
+
   // Analytics API - Phase 4.2 Implementation
   
   // Analytics Dashboard - Overview stats
