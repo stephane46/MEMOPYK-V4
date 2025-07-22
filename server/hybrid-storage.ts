@@ -6,6 +6,8 @@ export interface HybridStorageInterface {
   // Hero videos
   getHeroVideos(): Promise<any[]>;
   createHeroVideo(videoData: any): Promise<any>;
+  updateHeroVideo(videoId: number, updates: any): Promise<any>;
+  deleteHeroVideo(videoId: number): Promise<any>;
   
   // Hero text settings  
   getHeroTextSettings(language?: string): Promise<any[]>;

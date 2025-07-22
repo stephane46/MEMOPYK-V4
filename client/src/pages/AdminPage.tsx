@@ -161,10 +161,10 @@ export default function AdminPage() {
   const reorderMutation = useMutation({
     mutationFn: async ({ videoId, newOrder }: { videoId: number; newOrder: number }) => {
       console.log('=== MUTATION STARTED ===');
-      console.log('Sending PATCH to:', `/api/hero-videos/${videoId}/order`);
-      console.log('Payload:', { newOrder });
+      console.log('Sending PATCH to:', `/api/hero-videos/${videoId}/reorder`);
+      console.log('Payload:', { order_index: newOrder });
       
-      const response = await apiRequest('PATCH', `/api/hero-videos/${videoId}/order`, { newOrder });
+      const response = await apiRequest('PATCH', `/api/hero-videos/${videoId}/reorder`, { order_index: newOrder });
       const result = await response.json();
       console.log('=== MUTATION RESPONSE ===', result);
       return result;
