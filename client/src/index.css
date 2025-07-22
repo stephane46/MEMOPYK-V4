@@ -1,1 +1,25 @@
-/* Minimal CSS - no styling, no features, blank canvas */
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* MEMOPYK Brand Colors */
+:root {
+  --memopyk-blue: 219 34% 47%;
+  --memopyk-blue-light: 219 34% 57%;
+  --memopyk-blue-dark: 219 34% 37%;
+  --memopyk-gold: 45 93% 47%;
+  --memopyk-gold-light: 45 93% 57%;
+  --memopyk-cream: 44 56% 94%;
+  --memopyk-charcoal: 210 11% 15%;
+}
+
+/* Base Styles */
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+}
+
+.font-playfair {
+  font-family: 'Playfair Display', serif;
+}
