@@ -11,7 +11,7 @@ export function HomePage() {
   });
 
   // Fetch hero text content
-  const { data: heroText, isLoading: textLoading } = useQuery<{title?: string; subtitle?: string}>({
+  const { data: heroText, isLoading: textLoading } = useQuery<any[]>({
     queryKey: ['/api/hero-text', language],
     staleTime: 5 * 60 * 1000,
   });
@@ -32,10 +32,10 @@ export function HomePage() {
       <section className="relative h-screen bg-gradient-to-br from-slate-900 to-slate-800 flex items-center justify-center">
         <div className="text-center text-white px-4">
           <h1 className="text-4xl md:text-6xl font-bold mb-6" style={{ fontFamily: 'Playfair Display, serif' }}>
-            {heroText?.title || t('hero.title')}
+            {heroText?.[0]?.[`title_${language}`] || t('hero.title')}
           </h1>
           <p className="text-xl md:text-2xl mb-8 text-gray-200">
-            {heroText?.subtitle || t('hero.subtitle')}
+            {heroText?.[0]?.[`subtitle_${language}`] || t('hero.subtitle')}
           </p>
           <div className="space-x-4">
             <button className="bg-blue-600 hover:bg-blue-700 px-8 py-3 rounded-lg font-semibold transition-colors">

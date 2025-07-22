@@ -77,19 +77,37 @@ app.use((req, res, next) => {
       env: process.env,
     });
 
-    // Create simple proxy for Vite dev server
+    // Wait a bit for Vite to start before setting up proxy
+    await new Promise(resolve => setTimeout(resolve, 2000));
+
+    // Create proxy for Vite dev server
     const proxy = createProxyMiddleware({
       target: "http://localhost:5173",
       ws: true,
       changeOrigin: true,
+      timeout: 10000,
     });
 
-    // Proxy non-API requests to Vite dev server
+    // Proxy non-API requests to Vite dev server with error handling
     app.use((req, res, next) => {
       if (req.path.startsWith("/api")) {
         return next(); // Skip proxy for API routes
       }
-      return proxy(req, res, next);
+      
+      // Handle proxy with try-catch
+      try {
+        return proxy(req, res, (error: any) => {
+          if (error) {
+            console.error("❌ Proxy error:", error.message);
+            res.status(503).send('Vite dev server not ready. Please wait and refresh.');
+          } else {
+            next();
+          }
+        });
+      } catch (error: any) {
+        console.error("❌ Proxy setup error:", error.message);
+        res.status(503).send('Proxy configuration error. Please restart the server.');
+      }
     });
 
     console.log("🔄 Proxying frontend requests to Vite on port 5173");

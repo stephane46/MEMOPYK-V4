@@ -69,8 +69,7 @@ export class HybridStorage implements HybridStorageInterface {
   // Hero text settings operations
   async getHeroTextSettings(language?: string): Promise<any[]> {
     const data = this.loadJsonFile('hero-text.json');
-    const activeSettings = data.filter(setting => setting.is_active);
-    return language ? activeSettings.filter(s => s.language === language) : activeSettings;
+    return data.filter(setting => setting.is_active);
   }
 
   // Gallery operations
@@ -84,8 +83,7 @@ export class HybridStorage implements HybridStorageInterface {
   // FAQ operations
   async getFaqSections(language?: string): Promise<any[]> {
     const data = this.loadJsonFile('faq-sections.json');
-    const activeSections = data.filter(section => section.is_active);
-    return language ? activeSections.filter(s => s.language === language) : activeSections;
+    return data.filter(section => section.is_active);
   }
 
   async getFaqs(sectionId?: string): Promise<any[]> {
@@ -115,23 +113,19 @@ export class HybridStorage implements HybridStorageInterface {
   // Legal documents operations
   async getLegalDocuments(language?: string): Promise<any[]> {
     const data = this.loadJsonFile('legal-documents.json');
-    const activeDocuments = data.filter(doc => doc.is_active);
-    return language ? activeDocuments.filter(d => d.language === language) : activeDocuments;
+    return data.filter(doc => doc.is_active);
   }
 
   // CTA settings operations
   async getCtaSettings(language?: string): Promise<any[]> {
     const data = this.loadJsonFile('cta-settings.json');
-    const activeSettings = data.filter(setting => setting.is_active);
-    return language ? activeSettings.filter(s => s.language === language) : activeSettings;
+    return data.filter(setting => setting.is_active);
   }
 
   // SEO settings operations
   async getSeoSettings(page?: string, language?: string): Promise<any[]> {
-    let data = this.loadJsonFile('seo-settings.json');
-    if (page) data = data.filter(s => s.page === page);
-    if (language) data = data.filter(s => s.language === language);
-    return data;
+    const data = this.loadJsonFile('seo-settings.json');
+    return page ? data.filter(s => s.page === page) : data;
   }
 }
 
