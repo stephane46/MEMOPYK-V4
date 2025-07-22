@@ -189,12 +189,18 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.patch("/api/gallery/:id", async (req, res) => {
     try {
-      const itemId = req.params.id;
+      const itemId = parseInt(req.params.id);
       const updates = req.body;
+      
+      if (isNaN(itemId)) {
+        return res.status(400).json({ error: "Invalid gallery item ID" });
+      }
+      
       const item = await hybridStorage.updateGalleryItem(itemId, updates);
       res.json(item);
-    } catch (error) {
-      res.status(500).json({ error: "Failed to update gallery item" });
+    } catch (error: any) {
+      console.error('Gallery update error:', error);
+      res.status(500).json({ error: `Failed to update gallery item: ${error.message}` });
     }
   });
 
@@ -211,7 +217,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       console.log(`✅ Successfully deleted gallery item: ${deletedItem.title_en || 'Untitled'}`);
       
       res.json({ success: true, deleted: deletedItem });
-    } catch (error) {
+    } catch (error: any) {
       console.error('Gallery deletion error:', error);
       res.status(500).json({ error: `Failed to delete gallery item: ${error.message}` });
     }
@@ -219,12 +225,22 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.patch("/api/gallery/:id/reorder", async (req, res) => {
     try {
-      const itemId = req.params.id;
-      const { orderIndex } = req.body;
-      const item = await hybridStorage.updateGalleryItemOrder(itemId, orderIndex);
+      const itemId = parseInt(req.params.id);
+      const { order_index } = req.body;
+      
+      console.log(`🔄 Reordering gallery item ${itemId} to position ${order_index}`);
+      
+      if (isNaN(itemId)) {
+        return res.status(400).json({ error: "Invalid gallery item ID" });
+      }
+      
+      const item = await hybridStorage.updateGalleryItemOrder(itemId, order_index);
+      console.log(`✅ Successfully reordered gallery item ${itemId}`);
+      
       res.json(item);
-    } catch (error) {
-      res.status(500).json({ error: "Failed to reorder gallery item" });
+    } catch (error: any) {
+      console.error('Gallery reorder error:', error);
+      res.status(500).json({ error: `Failed to reorder gallery item: ${error.message}` });
     }
   });
 
