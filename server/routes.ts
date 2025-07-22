@@ -428,8 +428,19 @@ export async function registerRoutes(app: Express): Promise<Server> {
         rangeEnd = parts[1] ? parseInt(parts[1], 10) : undefined;
       }
       
+      // Construct full Supabase storage URL if videoUrl is just a filename
+      let fullVideoUrl = videoUrl;
+      if (!videoUrl.startsWith('http')) {
+        // If it's just a filename, construct the full Supabase URL
+        fullVideoUrl = `${process.env.SUPABASE_URL}/storage/v1/object/public/memopyk-hero/${videoUrl}`;
+        console.log(`Video proxy: Constructed URL from filename '${videoUrl}' -> '${fullVideoUrl}'`);
+      } else {
+        console.log(`Video proxy: Using provided URL: ${videoUrl}`);
+      }
+      
       // URL encode filename for spaces and special characters
-      const encodedUrl = encodeURI(videoUrl);
+      const encodedUrl = encodeURI(fullVideoUrl);
+      console.log(`Video proxy: Final encoded URL: ${encodedUrl}`);
       
       // Fetch video from Supabase CDN
       const fetch = (await import('node-fetch')).default;
