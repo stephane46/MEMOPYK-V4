@@ -218,7 +218,43 @@ export default function AdminPage() {
                   {videosLoading ? (
                     <div className="text-center py-8">Loading videos...</div>
                   ) : (
-                    <div className="space-y-4">
+                    <div className="space-y-6">
+                      {/* Add New Video Button */}
+                      <Card className="border-dashed border-2 border-gray-300 dark:border-gray-600">
+                        <CardContent className="p-6">
+                          <div className="text-center">
+                            <div className="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-gray-100 dark:bg-gray-800">
+                              <Video className="h-6 w-6 text-gray-400" />
+                            </div>
+                            <h3 className="mt-2 text-sm font-medium text-gray-900 dark:text-white">Add New Hero Video</h3>
+                            <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">Upload a new video to the hero carousel</p>
+                            <div className="mt-6">
+                              <input
+                                type="file"
+                                accept="video/*"
+                                className="hidden"
+                                id="video-upload"
+                                onChange={(e) => {
+                                  const file = e.target.files?.[0];
+                                  if (file) {
+                                    toast({ title: "Upload Started", description: `Uploading ${file.name}...` });
+                                    // TODO: Implement actual file upload to Supabase
+                                    toast({ title: "Coming Soon", description: "Video upload will be implemented next" });
+                                  }
+                                }}
+                              />
+                              <label
+                                htmlFor="video-upload"
+                                className="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-orange-500 hover:bg-orange-600 cursor-pointer"
+                              >
+                                Upload Video
+                              </label>
+                            </div>
+                          </div>
+                        </CardContent>
+                      </Card>
+
+                      {/* Existing Videos */}
                       {heroVideos
                         .sort((a, b) => a.order_index - b.order_index)
                         .map((video) => (
@@ -227,8 +263,24 @@ export default function AdminPage() {
                               <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
                                 {/* Video Preview */}
                                 <div className="space-y-4">
-                                  <div className="aspect-video bg-gray-100 dark:bg-gray-800 rounded-lg flex items-center justify-center">
-                                    <Play className="h-12 w-12 text-gray-400" />
+                                  <div 
+                                    className="aspect-video bg-gray-100 dark:bg-gray-800 rounded-lg relative overflow-hidden cursor-pointer group"
+                                    onClick={() => {
+                                      const videoUrl = `/api/video-proxy?url=${encodeURIComponent('https://supabase.memopyk.org/storage/v1/object/public/memopyk-hero/' + video.url_en)}`;
+                                      setPreviewVideo({ url: videoUrl, title: video.title_en });
+                                    }}
+                                  >
+                                    <video
+                                      src={`/api/video-proxy?url=${encodeURIComponent('https://supabase.memopyk.org/storage/v1/object/public/memopyk-hero/' + video.url_en)}`}
+                                      className="w-full h-full object-cover"
+                                      muted
+                                      preload="metadata"
+                                    />
+                                    <div className="absolute inset-0 bg-black bg-opacity-20 group-hover:bg-opacity-10 transition-all flex items-center justify-center">
+                                      <div className="bg-white bg-opacity-90 rounded-full p-3 group-hover:scale-110 transition-transform">
+                                        <Play className="h-8 w-8 text-gray-800" />
+                                      </div>
+                                    </div>
                                   </div>
                                   <div className="flex flex-wrap gap-2">
                                     <Badge variant={video.is_active ? "default" : "secondary"}>
@@ -303,18 +355,33 @@ export default function AdminPage() {
                                     </div>
                                   </div>
 
-                                  <Button
-                                    size="sm"
-                                    variant="outline"
-                                    className="w-full"
-                                    onClick={() => {
-                                      const videoUrl = `/api/video-proxy?url=${encodeURIComponent('https://supabase.memopyk.org/storage/v1/object/public/memopyk-hero/' + video.url_en)}`;
-                                      setPreviewVideo({ url: videoUrl, title: video.title_en });
-                                    }}
-                                  >
-                                    <Play className="h-4 w-4 mr-2" />
-                                    Preview Video
-                                  </Button>
+                                  <div className="grid grid-cols-2 gap-2">
+                                    <Button
+                                      size="sm"
+                                      variant="outline"
+                                      onClick={() => {
+                                        // This will be the edit video functionality
+                                        toast({ title: "Coming Soon", description: "Video editing functionality will be added next" });
+                                      }}
+                                    >
+                                      Edit Video
+                                    </Button>
+                                    <Button
+                                      size="sm"
+                                      variant="outline"
+                                      onClick={() => {
+                                        // Force cache refresh for this video
+                                        const videoUrl = `https://supabase.memopyk.org/storage/v1/object/public/memopyk-hero/${video.url_en}`;
+                                        fetch(`/api/video-cache/refresh?url=${encodeURIComponent(videoUrl)}`, { method: 'POST' })
+                                          .then(() => {
+                                            queryClient.invalidateQueries({ queryKey: ['/api/video-cache/stats'] });
+                                            toast({ title: "Cached", description: "Video cached successfully" });
+                                          });
+                                      }}
+                                    >
+                                      Cache Video
+                                    </Button>
+                                  </div>
                                 </div>
                               </div>
                             </CardContent>
