@@ -104,20 +104,28 @@ export const ImageCropper: React.FC<ImageCropperProps> = ({
   // Handle image load
   useEffect(() => {
     const image = new Image();
-    image.crossOrigin = 'anonymous';
     image.onload = () => {
-      if (imageRef.current) {
-        imageRef.current.src = image.src;
-        setIsLoading(false);
-        // Initial positioning to center the image
-        if (!initialSettings) {
-          setCropSettings(prev => ({
-            ...prev,
-            x: -(image.naturalWidth - 600) / 2,
-            y: -(image.naturalHeight - 400) / 2
-          }));
-        }
+      imageRef.current = image;
+      setIsLoading(false);
+      
+      // Initial positioning to center the image
+      if (!initialSettings) {
+        // Calculate initial zoom to fit image nicely in preview
+        const widthRatio = 600 / image.naturalWidth;
+        const heightRatio = 400 / image.naturalHeight;
+        const initialZoom = Math.max(widthRatio, heightRatio) * 100;
+        
+        setCropSettings(prev => ({
+          ...prev,
+          zoom: Math.min(initialZoom, 200), // Cap at 200% to avoid too much zoom
+          x: -(image.naturalWidth * (Math.min(initialZoom, 200) / 100) - 600) / 2,
+          y: -(image.naturalHeight * (Math.min(initialZoom, 200) / 100) - 400) / 2
+        }));
       }
+    };
+    image.onerror = () => {
+      console.error('Failed to load image:', imageUrl);
+      setIsLoading(false);
     };
     image.src = imageUrl;
   }, [imageUrl, initialSettings]);
@@ -289,18 +297,19 @@ export const ImageCropper: React.FC<ImageCropperProps> = ({
             </div>
           </div>
 
-          {/* Precise Controls */}
+          {/* Zoom Buttons */}
           <div className="space-y-2">
-            <Label className="text-gray-700 dark:text-gray-300">Contrôles Précis</Label>
-            <div className="flex items-center space-x-2">
-              <Button
+            <Label className="text-gray-700 dark:text-gray-300">Ajustements rapides</Label>
+            <div className="flex space-x-2">
+              <Button 
                 type="button"
-                size="sm"
-                variant="outline"
-                onClick={() => adjustZoom(-1)}
-                className="px-2"
+                variant="outline" 
+                size="sm" 
+                onClick={() => adjustZoom(-10)}
+                className="flex-1"
               >
-                <Minus className="h-3 w-3" />
+                <Minus className="h-4 w-4 mr-1" />
+                -10%
               </Button>
               <Input
                 type="number"
@@ -310,54 +319,51 @@ export const ImageCropper: React.FC<ImageCropperProps> = ({
                 max={500}
                 className="w-20 text-center"
               />
-              <span className="text-sm text-gray-500">%</span>
-              <Button
+              <Button 
                 type="button"
-                size="sm"
-                variant="outline"
-                onClick={() => adjustZoom(1)}
-                className="px-2"
+                variant="outline" 
+                size="sm" 
+                onClick={() => adjustZoom(10)}
+                className="flex-1"
               >
-                <Plus className="h-3 w-3" />
+                <Plus className="h-4 w-4 mr-1" />
+                +10%
               </Button>
             </div>
           </div>
         </div>
-      </div>
 
-      {/* Action Buttons */}
-      <div className="flex justify-between items-center pt-4 border-t border-gray-200 dark:border-gray-700">
-        <Button
-          type="button"
-          variant="outline"
-          onClick={handleReset}
-          className="flex items-center gap-2"
-        >
-          <RotateCcw className="h-4 w-4" />
-          Réinitialiser
-        </Button>
-        
-        <div className="flex space-x-3">
-          <Button variant="outline" onClick={onCancel}>
-            Annuler
-          </Button>
+        {/* Action Buttons */}
+        <div className="flex justify-between pt-4">
           <Button 
-            onClick={handleSave}
-            className="bg-memopyk-orange hover:bg-memopyk-orange/80 text-white"
-            disabled={isLoading}
+            type="button"
+            variant="outline" 
+            onClick={handleReset}
+            className="flex items-center"
           >
-            <Save className="h-4 w-4 mr-2" />
-            Sauvegarder Image (JPEG)
+            <RotateCcw className="h-4 w-4 mr-2" />
+            Réinitialiser
           </Button>
+          
+          <div className="flex space-x-2">
+            <Button 
+              type="button"
+              variant="outline" 
+              onClick={onCancel}
+            >
+              Annuler
+            </Button>
+            <Button 
+              type="button"
+              onClick={handleSave}
+              className="bg-memopyk-orange hover:bg-memopyk-orange-hover text-white"
+            >
+              <Save className="h-4 w-4 mr-2" />
+              Sauvegarder ({targetWidth}×{targetHeight})
+            </Button>
+          </div>
         </div>
       </div>
-
-      {/* Hidden image for reference */}
-      <img
-        ref={imageRef}
-        className="hidden"
-        alt="Source"
-      />
     </div>
   );
 };

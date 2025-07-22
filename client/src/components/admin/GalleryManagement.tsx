@@ -215,8 +215,8 @@ export default function GalleryManagement() {
       description_fr: item?.description_fr || '',
       video_url_en: item?.video_url_en || '',
       video_url_fr: item?.video_url_fr || '',
-      video_width: item?.video_width || '',
-      video_height: item?.video_height || '',
+      video_width: item?.video_width || 0,
+      video_height: item?.video_height || 0,
       video_orientation: item?.video_orientation || 'landscape',
       image_url_en: item?.image_url_en || '',
       image_url_fr: item?.image_url_fr || '',
@@ -440,7 +440,7 @@ export default function GalleryManagement() {
                 id="video_width"
                 type="number"
                 value={formData.video_width}
-                onChange={(e) => setFormData({ ...formData, video_width: parseInt(e.target.value) || '' })}
+                onChange={(e) => setFormData({ ...formData, video_width: parseInt(e.target.value) || 0 })}
                 placeholder="Ex: 1920"
                 min={1}
                 className="bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
@@ -453,7 +453,7 @@ export default function GalleryManagement() {
                 id="video_height"
                 type="number"
                 value={formData.video_height}
-                onChange={(e) => setFormData({ ...formData, video_height: parseInt(e.target.value) || '' })}
+                onChange={(e) => setFormData({ ...formData, video_height: parseInt(e.target.value) || 0 })}
                 placeholder="Ex: 1080"
                 min={1}
                 className="bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
