@@ -9,9 +9,9 @@ interface HeroVideo {
   id: number;
   title_fr: string;
   title_en: string;
-  video_url_fr: string;
-  video_url_en: string;
-  order_position: number;
+  url_en: string;
+  url_fr: string;
+  order_index: number;
   is_active: boolean;
 }
 
@@ -47,7 +47,7 @@ export function HeroVideoSection() {
   });
 
   const activeVideos = heroVideos.filter(video => video.is_active)
-    .sort((a, b) => a.order_position - b.order_position);
+    .sort((a, b) => a.order_index - b.order_index);
   
   const activeHeroText = heroTextData.find(text => text.is_active);
   const currentVideo = activeVideos[currentVideoIndex];
@@ -150,7 +150,7 @@ export function HeroVideoSection() {
           muted
           loop
           playsInline
-          preload="metadata"
+          preload="metadata" // Smart Preloading: loads video info without downloading entire file
           crossOrigin="anonymous"
           onLoadedData={handleVideoLoad}
           onError={() => setIsLoading(false)}
