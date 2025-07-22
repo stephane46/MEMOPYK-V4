@@ -387,18 +387,13 @@ export default function AdminPage() {
                                         size="sm"
                                         variant="outline"
                                         onClick={() => {
-                                          const sortedVideos = [...heroVideos].sort((a, b) => a.order_index - b.order_index);
-                                          const currentIndex = sortedVideos.findIndex(v => v.id === video.id);
-                                          if (currentIndex > 0) {
-                                            const targetVideo = sortedVideos[currentIndex - 1];
-                                            reorderMutation.mutate({ videoId: video.id, newOrder: targetVideo.order_index });
+                                          console.log('Move Up clicked for video:', video.id, 'current order:', video.order_index);
+                                          const newOrder = video.order_index - 1;
+                                          if (newOrder >= 1) {
+                                            reorderMutation.mutate({ videoId: video.id, newOrder });
                                           }
                                         }}
-                                        disabled={(() => {
-                                          const sortedVideos = [...heroVideos].sort((a, b) => a.order_index - b.order_index);
-                                          const currentIndex = sortedVideos.findIndex(v => v.id === video.id);
-                                          return currentIndex <= 0 || reorderMutation.isPending;
-                                        })()}
+                                        disabled={video.order_index <= 1 || reorderMutation.isPending}
                                       >
                                         <ArrowUp className="h-4 w-4" />
                                       </Button>
@@ -406,18 +401,14 @@ export default function AdminPage() {
                                         size="sm"
                                         variant="outline"
                                         onClick={() => {
-                                          const sortedVideos = [...heroVideos].sort((a, b) => a.order_index - b.order_index);
-                                          const currentIndex = sortedVideos.findIndex(v => v.id === video.id);
-                                          if (currentIndex < sortedVideos.length - 1) {
-                                            const targetVideo = sortedVideos[currentIndex + 1];
-                                            reorderMutation.mutate({ videoId: video.id, newOrder: targetVideo.order_index });
+                                          console.log('Move Down clicked for video:', video.id, 'current order:', video.order_index);
+                                          const maxOrder = Math.max(...heroVideos.map(v => v.order_index));
+                                          const newOrder = video.order_index + 1;
+                                          if (newOrder <= maxOrder) {
+                                            reorderMutation.mutate({ videoId: video.id, newOrder });
                                           }
                                         }}
-                                        disabled={(() => {
-                                          const sortedVideos = [...heroVideos].sort((a, b) => a.order_index - b.order_index);
-                                          const currentIndex = sortedVideos.findIndex(v => v.id === video.id);
-                                          return currentIndex >= sortedVideos.length - 1 || reorderMutation.isPending;
-                                        })()}
+                                        disabled={video.order_index >= Math.max(...heroVideos.map(v => v.order_index)) || reorderMutation.isPending}
                                       >
                                         <ArrowDown className="h-4 w-4" />
                                       </Button>
