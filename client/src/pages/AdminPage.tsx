@@ -386,11 +386,23 @@ export default function AdminPage() {
                                       <Button
                                         size="sm"
                                         variant="outline"
-                                        onClick={() => {
-                                          console.log('Move Up clicked for video:', video.id, 'current order:', video.order_index);
+                                        onClick={(e) => {
+                                          e.preventDefault();
+                                          e.stopPropagation();
+                                          console.log('=== MOVE UP BUTTON CLICKED ===');
+                                          console.log('Video ID:', video.id);
+                                          console.log('Current order:', video.order_index);
+                                          console.log('Button disabled?', video.order_index <= 1 || reorderMutation.isPending);
+                                          console.log('Mutation pending?', reorderMutation.isPending);
+                                          
                                           const newOrder = video.order_index - 1;
+                                          console.log('New order would be:', newOrder);
+                                          
                                           if (newOrder >= 1) {
+                                            console.log('Calling reorderMutation.mutate...');
                                             reorderMutation.mutate({ videoId: video.id, newOrder });
+                                          } else {
+                                            console.log('Cannot move up - already at top');
                                           }
                                         }}
                                         disabled={video.order_index <= 1 || reorderMutation.isPending}
