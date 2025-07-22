@@ -15,6 +15,24 @@ Preferred communication style: Simple, everyday language.
 
 ## Recent Changes (July 22, 2025)
 
+### Phase 8.2 File Management System Overhaul - COMPLETED (July 22, 2025)
+**Complete File Upload System Redesign:**
+- Removed timestamp prefix system entirely - now uses original filenames (e.g., VideoHero2.mp4 instead of 1752156356886_VideoHero2.mp4)
+- Enabled overwrite capability in both Supabase storage and local cache with `upsert: true`
+- Added automatic cache clearing when files are overwritten for instant updates
+- Created dedicated hero video upload endpoint `/api/hero-videos/upload` with clean filename handling
+- Enhanced admin interface to display clean filenames prominently with technical names as reference
+- Fixed toggle switch visibility with proper green/gray color scheme and clear "Plays 1st" indicators
+
+**Technical Implementation:**
+- Modified upload endpoints to use original filenames without timestamp prefixes
+- Added `videoCache.clearSpecificFile()` method for targeted cache invalidation
+- Enabled Supabase storage overwrite with `upsert: true` parameter
+- Enhanced filename display logic to show clean names (VideoHero2.mp4) with technical references
+- Improved admin interface usability with clear position indicators and status visibility
+
+## Recent Changes (July 22, 2025)
+
 ### Phase 8.1 Gallery Management Interface - COMPLETED (July 22, 2025)
 **Complete Gallery CRUD System Implementation:**
 - Built comprehensive gallery management API endpoints: POST, PATCH, DELETE, reorder operations

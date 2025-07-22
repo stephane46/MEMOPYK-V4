@@ -34,6 +34,13 @@ export class VideoCache {
   }
 
   /**
+   * Public method to get cache file path (for external use)
+   */
+  getCachedFilePath(filename: string): string {
+    return this.getCacheFilePath(filename);
+  }
+
+  /**
    * Check if video exists in local cache and is fresh
    */
   isVideoCached(filename: string): boolean {
@@ -189,6 +196,21 @@ export class VideoCache {
       console.log(`🗑️ Cleared video cache (${files.length} files removed)`);
     } catch (error) {
       console.error('❌ Failed to clear cache:', error);
+    }
+  }
+
+  /**
+   * Clear a specific cached file
+   */
+  clearSpecificFile(filename: string): void {
+    try {
+      const cacheFile = this.getCacheFilePath(filename);
+      if (existsSync(cacheFile)) {
+        unlinkSync(cacheFile);
+        console.log(`🗑️ Cleared cached file: ${filename}`);
+      }
+    } catch (error) {
+      console.error(`❌ Failed to clear cached file ${filename}:`, error);
     }
   }
 

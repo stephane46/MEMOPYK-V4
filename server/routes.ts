@@ -207,19 +207,22 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(400).json({ error: "No video file provided" });
       }
 
-      // Generate unique filename
-      const timestamp = Date.now();
+      // Use original filename - clean but preserve structure
       const originalName = req.file.originalname.replace(/[^a-zA-Z0-9.-]/g, '_');
-      const filename = `gallery_${timestamp}_${originalName}`;
+      const filename = `gallery_${originalName}`;
 
-      console.log(`📤 Uploading gallery video: ${filename} (${(req.file.size / 1024 / 1024).toFixed(2)}MB)`);
+      console.log(`📤 Uploading gallery video: ${filename} (${(req.file.size / 1024 / 1024).toFixed(2)}MB) - Overwrite mode`);
 
-      // Upload to Supabase storage (gallery bucket)
+      // Clear cache if file exists (for overwrite scenario)
+      videoCache.clearSpecificFile(filename);
+
+      // Upload to Supabase storage (gallery bucket) with overwrite enabled
       const { data: uploadData, error: uploadError } = await supabase.storage
         .from('memopyk-gallery')
         .upload(filename, req.file.buffer, {
           contentType: req.file.mimetype,
-          cacheControl: '3600'
+          cacheControl: '3600',
+          upsert: true  // Enable overwrite if file exists
         });
 
       if (uploadError) {
@@ -248,19 +251,19 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(400).json({ error: "No image file provided" });
       }
 
-      // Generate unique filename
-      const timestamp = Date.now();
+      // Use original filename - clean but preserve structure
       const originalName = req.file.originalname.replace(/[^a-zA-Z0-9.-]/g, '_');
-      const filename = `gallery_thumb_${timestamp}_${originalName}`;
+      const filename = `gallery_thumb_${originalName}`;
 
-      console.log(`📤 Uploading gallery image: ${filename} (${(req.file.size / 1024 / 1024).toFixed(2)}MB)`);
+      console.log(`📤 Uploading gallery image: ${filename} (${(req.file.size / 1024 / 1024).toFixed(2)}MB) - Overwrite mode`);
 
-      // Upload to Supabase storage (gallery bucket)
+      // Upload to Supabase storage (gallery bucket) with overwrite enabled
       const { data: uploadData, error: uploadError } = await supabase.storage
         .from('memopyk-gallery')
         .upload(filename, req.file.buffer, {
           contentType: req.file.mimetype,
-          cacheControl: '3600'
+          cacheControl: '3600',
+          upsert: true  // Enable overwrite if file exists
         });
 
       if (uploadError) {
@@ -608,68 +611,47 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Gallery file upload endpoints
-  app.post("/api/gallery/upload-video", uploadVideo.single('video'), async (req, res) => {
+  // Hero video upload endpoint
+  app.post("/api/hero-videos/upload", uploadVideo.single('video'), async (req, res) => {
     try {
-      const file = req.file;
-      if (!file) {
+      if (!req.file) {
         return res.status(400).json({ error: "No video file provided" });
       }
 
-      // Upload to Supabase storage
-      const filename = `gallery_video_${Date.now()}_${file.originalname}`;
-      const { data, error } = await supabase.storage
-        .from('memopyk-gallery')
-        .upload(filename, file.buffer, {
-          contentType: file.mimetype,
-          upsert: false
+      // Use original filename - clean but preserve structure  
+      const originalName = req.file.originalname.replace(/[^a-zA-Z0-9.-]/g, '_');
+      const filename = originalName; // No prefix for hero videos - use exact name
+
+      console.log(`📤 Uploading hero video: ${filename} (${(req.file.size / 1024 / 1024).toFixed(2)}MB) - Overwrite mode`);
+
+      // Clear cache if file exists (for overwrite scenario)
+      videoCache.clearSpecificFile(filename);
+
+      // Upload to Supabase storage (memopyk-videos bucket) with overwrite enabled
+      const { data: uploadData, error: uploadError } = await supabase.storage
+        .from('memopyk-videos')
+        .upload(filename, req.file.buffer, {
+          contentType: req.file.mimetype,
+          cacheControl: '3600',
+          upsert: true  // Enable overwrite if file exists
         });
 
-      if (error) {
-        console.error('Supabase upload error:', error);
-        return res.status(500).json({ error: "Failed to upload video to storage" });
+      if (uploadError) {
+        console.error('Supabase upload error:', uploadError);
+        return res.status(500).json({ error: `Upload failed: ${uploadError.message}` });
       }
 
-      const publicUrl = supabase.storage
-        .from('memopyk-gallery')
-        .getPublicUrl(filename).data.publicUrl;
+      const videoUrl = `https://supabase.memopyk.org/storage/v1/object/public/memopyk-videos/${filename}`;
       
-      res.json({ success: true, url: publicUrl });
+      res.json({ 
+        success: true, 
+        url: videoUrl,
+        filename: filename 
+      });
+
     } catch (error) {
-      console.error('Video upload error:', error);
-      res.status(500).json({ error: "Failed to upload video" });
-    }
-  });
-
-  app.post("/api/gallery/upload-image", uploadImage.single('image'), async (req, res) => {
-    try {
-      const file = req.file;
-      if (!file) {
-        return res.status(400).json({ error: "No image file provided" });
-      }
-
-      // Upload to Supabase storage
-      const filename = `gallery_image_${Date.now()}_${file.originalname}`;
-      const { data, error } = await supabase.storage
-        .from('memopyk-gallery')
-        .upload(filename, file.buffer, {
-          contentType: file.mimetype,
-          upsert: false
-        });
-
-      if (error) {
-        console.error('Supabase upload error:', error);
-        return res.status(500).json({ error: "Failed to upload image to storage" });
-      }
-
-      const publicUrl = supabase.storage
-        .from('memopyk-gallery')
-        .getPublicUrl(filename).data.publicUrl;
-      
-      res.json({ success: true, url: publicUrl });
-    } catch (error) {
-      console.error('Image upload error:', error);
-      res.status(500).json({ error: "Failed to upload image" });
+      console.error('Hero video upload error:', error);
+      res.status(500).json({ error: "Failed to upload hero video" });
     }
   });
 
