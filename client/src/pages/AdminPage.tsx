@@ -665,10 +665,19 @@ export default function AdminPage() {
                                           });
                                           
                                           if (response.ok) {
+                                            const result = await response.json();
                                             queryClient.invalidateQueries({ queryKey: ['/api/video-cache/stats'] });
-                                            toast({ title: "Cached", description: "Video cached successfully!" });
+                                            toast({ 
+                                              title: "Video Cached Successfully!", 
+                                              description: result.message || "Video is now cached for faster loading"
+                                            });
                                           } else {
-                                            toast({ title: "Error", description: "Failed to cache video", variant: "destructive" });
+                                            const error = await response.json();
+                                            toast({ 
+                                              title: "Cache Failed", 
+                                              description: error.error || "Failed to cache video", 
+                                              variant: "destructive" 
+                                            });
                                           }
                                         } catch (error) {
                                           toast({ title: "Error", description: "Network error", variant: "destructive" });
