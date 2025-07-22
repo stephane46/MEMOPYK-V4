@@ -228,7 +228,7 @@ export function VideoOverlay({ videoUrl, title, width, height, orientation, onCl
             />
           </div>
 
-          {/* Control Buttons */}
+          {/* Control Buttons - Simplified without play/pause */}
           <div className="flex items-center justify-center space-x-4">
             <button
               onClick={handleRestart}
@@ -236,14 +236,6 @@ export function VideoOverlay({ videoUrl, title, width, height, orientation, onCl
               aria-label="Restart video"
             >
               <RotateCcw size={20} />
-            </button>
-
-            <button
-              onClick={togglePlayPause}
-              className="text-white hover:text-orange-400 transition-colors p-3 rounded-full hover:bg-white/10"
-              aria-label={isPlaying ? 'Pause video' : 'Play video'}
-            >
-              {isPlaying ? <Pause size={24} /> : <Play size={24} />}
             </button>
 
             <button
