@@ -276,9 +276,9 @@ export default function AdminPage() {
                                       muted
                                       preload="metadata"
                                     />
-                                    <div className="absolute inset-0 bg-black bg-opacity-20 group-hover:bg-opacity-10 transition-all flex items-center justify-center">
-                                      <div className="bg-white bg-opacity-90 rounded-full p-3 group-hover:scale-110 transition-transform">
-                                        <Play className="h-8 w-8 text-gray-800" />
+                                    <div className="absolute inset-0 bg-black bg-opacity-40 group-hover:bg-opacity-20 transition-all flex items-center justify-center">
+                                      <div className="bg-orange-500 bg-opacity-95 rounded-full p-3 group-hover:scale-110 transition-transform shadow-lg">
+                                        <Play className="h-8 w-8 text-white" />
                                       </div>
                                     </div>
                                   </div>
@@ -295,18 +295,18 @@ export default function AdminPage() {
                                 {/* Video Metadata */}
                                 <div className="space-y-4">
                                   <div>
-                                    <Label className="text-sm font-medium">English Title</Label>
-                                    <div className="mt-1 text-sm text-gray-600 dark:text-gray-400">{video.title_en}</div>
+                                    <Label className="text-sm font-medium text-gray-900 dark:text-white">English Title</Label>
+                                    <div className="mt-1 text-sm font-medium text-gray-800 dark:text-gray-200 bg-gray-50 dark:bg-gray-800 p-2 rounded">{video.title_en}</div>
                                   </div>
                                   <div>
-                                    <Label className="text-sm font-medium">French Title</Label>
-                                    <div className="mt-1 text-sm text-gray-600 dark:text-gray-400">{video.title_fr}</div>
+                                    <Label className="text-sm font-medium text-gray-900 dark:text-white">French Title</Label>
+                                    <div className="mt-1 text-sm font-medium text-gray-800 dark:text-gray-200 bg-gray-50 dark:bg-gray-800 p-2 rounded">{video.title_fr}</div>
                                   </div>
                                   <div>
-                                    <Label className="text-sm font-medium">Video URLs</Label>
-                                    <div className="mt-1 text-xs text-gray-500 dark:text-gray-500 space-y-1">
-                                      <div>EN: {video.url_en}</div>
-                                      <div>FR: {video.url_fr}</div>
+                                    <Label className="text-sm font-medium text-gray-900 dark:text-white">Video URLs</Label>
+                                    <div className="mt-1 text-xs font-mono text-gray-700 dark:text-gray-300 bg-gray-50 dark:bg-gray-800 p-2 rounded space-y-1">
+                                      <div className="font-medium">EN: {video.url_en}</div>
+                                      <div className="font-medium">FR: {video.url_fr}</div>
                                     </div>
                                   </div>
                                 </div>
