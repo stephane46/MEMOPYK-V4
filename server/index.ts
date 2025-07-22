@@ -63,8 +63,22 @@ app.use((req, res, next) => {
   // Register API routes first (before Vite middleware)
   registerRoutes(app);
 
-  // Setup Vite for React frontend (this must come after API routes)
-  await setupVite(app, server);
+  // Temporary workaround: Serve client files directly instead of using setupVite
+  // This bypasses the viteConfig async issue
+  if (process.env.NODE_ENV === "production") {
+    const { serveStatic } = await import("./vite");
+    serveStatic(app);
+  } else {
+    // Development mode - serve client files directly from client folder
+    const path = await import("path");
+    const clientPath = path.resolve(process.cwd(), "client");
+    app.use(express.static(clientPath));
+    
+    // Fallback to index.html for React routing
+    app.get("*", (_req: Request, res: Response) => {
+      res.sendFile(path.resolve(clientPath, "index.html"));
+    });
+  }
 
   // Error handling middleware
   app.use((err: any, _req: Request, res: Response, _next: NextFunction) => {

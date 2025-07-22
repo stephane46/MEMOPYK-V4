@@ -1,90 +1,37 @@
-import express, { type Request, Response, NextFunction } from "express";
-import { createServer } from "http";
+// 🔧 TEST WRITE ACCESS: this comment proves I can edit the file!
+
+import { defineConfig } from "vite";
+import react from "@vitejs/plugin-react";
 import path from "path";
-import { registerRoutes } from "./routes";
-// import { setupVite, log } from "./vite"; // Vite integration disabled
-import { setupVite, log } from "./vite";
+import runtimeErrorOverlay from "@replit/vite-plugin-runtime-error-modal";
 
-// Database connection test as per Phase 2.2 of rebuild plan
-import { testDatabaseConnection } from "./database";
+export default defineConfig(async () => {
+  const plugins = [react(), runtimeErrorOverlay()];
 
-console.log("=== MEMOPYK Server Starting ===");
-console.log("NODE_ENV:", process.env.NODE_ENV);
-console.log("DATABASE_URL:", process.env.DATABASE_URL ? "✅ Available" : "❌ Missing");
-console.log("SUPABASE_URL:", process.env.SUPABASE_URL ? "✅ Available" : "❌ Missing");
-
-// Test database connection
-testDatabaseConnection().then(success => {
-  if (success) {
-    console.log("✅ Database connectivity confirmed - Phase 2.2 complete");
-  } else {
-    console.log("❌ Database connection test failed");
+  if (process.env.NODE_ENV !== "production" && process.env.REPL_ID !== undefined) {
+    const cartographer = await import("@replit/vite-plugin-cartographer");
+    plugins.push(cartographer.cartographer());
   }
-}).catch(err => {
-  console.error("❌ Database test error:", err);
-});
 
-const app = express();
-const server = createServer(app);
-
-app.use(express.json());
-app.use(express.urlencoded({ extended: false }));
-
-// Request logging middleware  
-app.use((req, res, next) => {
-  const start = Date.now();
-  const pathReq = req.path;
-  let capturedJsonResponse: Record<string, any> | undefined = undefined;
-
-  const originalResJson = res.json;
-  res.json = function (bodyJson, ...args) {
-    capturedJsonResponse = bodyJson;
-    return originalResJson.apply(res, [bodyJson, ...args]);
+  return {
+    plugins,
+    resolve: {
+      alias: {
+        "@": path.resolve(import.meta.dirname, "client", "src"),
+        "@shared": path.resolve(import.meta.dirname, "shared"),
+        "@assets": path.resolve(import.meta.dirname, "attached_assets"),
+      },
+    },
+    root: path.resolve(import.meta.dirname, "client"),
+    build: {
+      outDir: path.resolve(import.meta.dirname, "dist/public"),
+      emptyOutDir: true,
+    },
+    server: {
+      fs: {
+        strict: true,
+        deny: ["**/.*"],
+      },
+    },
   };
-
-  res.on("finish", () => {
-    const duration = Date.now() - start;
-    if (pathReq.startsWith("/api")) {
-      let logLine = `${req.method} ${pathReq} ${res.statusCode} in ${duration}ms`;
-      if (capturedJsonResponse) {
-        logLine += ` :: ${JSON.stringify(capturedJsonResponse)}`;
-      }
-
-      if (logLine.length > 80) {
-        logLine = logLine.slice(0, 79) + "…";
-      }
-
-      log(logLine);
-    }
-  });
-
-  next();
 });
-
-(async () => {
-  // Register API routes first
-  registerRoutes(app);
-
-  // Workaround: Serve static React build instead of Vite integration
-  const clientDist = path.resolve(__dirname, '../client/dist');
-  app.use(express.static(clientDist));
-  app.get('*', (_req: Request, res: Response) => {
-    res.sendFile(path.join(clientDist, 'index.html'));
-  });
-
-  // Error handling middleware
-  app.use((err: any, _req: Request, res: Response, _next: NextFunction) => {
-    const status = err.status || err.statusCode || 500;
-    const message = err.message || "Internal Server Error";
-
-    console.error("Server error:", message);
-    res.status(status).json({ message });
-  });
-
-  const port = parseInt(process.env.PORT || '5000', 10);
-  server.listen(port, '0.0.0.0', () => {
-    log(`MEMOPYK Server running on port ${port} (Serving static React build)`);
-    log(`React app: http://localhost:${port}`);
-    log(`API endpoints: http://localhost:${port}/api`);
-  });
-})();
