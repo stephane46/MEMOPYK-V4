@@ -306,7 +306,7 @@ export default function AdminPage() {
                                     variant="outline"
                                     className="w-full"
                                     onClick={() => {
-                                      const videoUrl = `/api/video-proxy?filename=${encodeURIComponent(video.url_en)}&bucket=memopyk-hero`;
+                                      const videoUrl = `/api/video-proxy?url=${encodeURIComponent('https://supabase.memopyk.org/storage/v1/object/public/memopyk-hero/' + video.url_en)}`;
                                       window.open(videoUrl, '_blank');
                                     }}
                                   >
