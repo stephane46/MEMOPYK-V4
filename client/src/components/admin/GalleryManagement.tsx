@@ -236,54 +236,59 @@ export default function GalleryManagement() {
     return (
       <div className="space-y-4 max-h-96 overflow-y-auto bg-white dark:bg-gray-900 text-gray-900 dark:text-white">
         {/* File Upload Section */}
-        <div className="bg-gray-50 dark:bg-gray-800 p-4 rounded-lg border">
-          <h4 className="font-semibold mb-3 text-gray-900 dark:text-white flex items-center gap-2">
-            <Video className="h-4 w-4" />
-            Upload de Fichiers
-            {uploading && <span className="text-sm text-orange-500">Téléchargement en cours...</span>}
+        <div className="bg-gradient-to-r from-orange-50 to-orange-100 dark:from-orange-900/20 dark:to-orange-800/20 p-6 rounded-lg border border-orange-200 dark:border-orange-800">
+          <h4 className="font-semibold mb-3 text-orange-900 dark:text-orange-100 flex items-center gap-2">
+            <Video className="h-5 w-5" />
+            1. Télécharger vos fichiers média
+            {uploading && <span className="text-sm text-orange-600 dark:text-orange-300">Téléchargement en cours...</span>}
           </h4>
-          <div className="grid grid-cols-2 gap-4 mb-4">
-            <div>
-              <Label className="text-gray-700 dark:text-gray-300 flex items-center gap-1">
-                <Video className="h-3 w-3" />
-                Vidéo Upload
-              </Label>
-              <input
-                type="file"
-                accept="video/*"
-                onChange={async (e) => {
-                  const url = await handleVideoUpload(e.target.files?.[0]);
-                  if (url) {
-                    if (formData.use_same_video) {
-                      setFormData({ ...formData, video_url_en: url, video_url_fr: url });
-                    } else {
-                      setFormData({ ...formData, video_url_en: url });
+          <div className="bg-white dark:bg-gray-800/50 p-4 rounded-lg mb-4">
+            <p className="text-sm text-orange-800 dark:text-orange-200 mb-3">
+              📤 Téléchargez vos fichiers ici - les URLs seront automatiquement générées et remplies ci-dessous
+            </p>
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <Label className="text-gray-700 dark:text-gray-300 flex items-center gap-1">
+                  <Video className="h-3 w-3" />
+                  Vidéo de galerie
+                </Label>
+                <input
+                  type="file"
+                  accept="video/*"
+                  onChange={async (e) => {
+                    const url = await handleVideoUpload(e.target.files?.[0]);
+                    if (url) {
+                      if (formData.use_same_video) {
+                        setFormData({ ...formData, video_url_en: url, video_url_fr: url });
+                      } else {
+                        setFormData({ ...formData, video_url_en: url });
+                      }
                     }
-                  }
-                }}
-                disabled={uploading}
-                className="w-full p-2 border rounded bg-white dark:bg-gray-700 text-gray-900 dark:text-white disabled:opacity-50"
-              />
-              <p className="text-xs text-gray-500 mt-1">MP4, WebM, MOV (max 500MB)</p>
-            </div>
-            <div>
-              <Label className="text-gray-700 dark:text-gray-300 flex items-center gap-1">
-                <Image className="h-3 w-3" />
-                Thumbnail Upload
-              </Label>
-              <input
-                type="file"
-                accept="image/*"
-                onChange={async (e) => {
-                  const url = await handleImageUpload(e.target.files?.[0]);
-                  if (url) {
-                    setFormData({ ...formData, image_url_en: url, image_url_fr: url });
-                  }
-                }}
-                disabled={uploading}
-                className="w-full p-2 border rounded bg-white dark:bg-gray-700 text-gray-900 dark:text-white disabled:opacity-50"
-              />
-              <p className="text-xs text-gray-500 mt-1">JPG, PNG, WebP (max 50MB)</p>
+                  }}
+                  disabled={uploading}
+                  className="w-full p-2 border rounded bg-white dark:bg-gray-700 text-gray-900 dark:text-white disabled:opacity-50"
+                />
+                <p className="text-xs text-gray-500 mt-1">MP4, WebM, MOV (max 500MB)</p>
+              </div>
+              <div>
+                <Label className="text-gray-700 dark:text-gray-300 flex items-center gap-1">
+                  <Image className="h-3 w-3" />
+                  Image de couverture
+                </Label>
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={async (e) => {
+                    const url = await handleImageUpload(e.target.files?.[0]);
+                    if (url) {
+                      setFormData({ ...formData, image_url_en: url, image_url_fr: url });
+                    }
+                  }}
+                  disabled={uploading}
+                  className="w-full p-2 border rounded bg-white dark:bg-gray-700 text-gray-900 dark:text-white disabled:opacity-50"
+                />
+                <p className="text-xs text-gray-500 mt-1">JPG, PNG, WebP (max 50MB)</p>
+              </div>
             </div>
           </div>
         </div>
@@ -304,26 +309,34 @@ export default function GalleryManagement() {
           </p>
         </div>
 
-        <div className="grid grid-cols-2 gap-4">
-          <div>
-            <Label htmlFor="title_en" className="text-gray-700 dark:text-gray-300">Titre (English)</Label>
-            <Input
-              id="title_en"
-              value={formData.title_en}
-              onChange={(e) => setFormData({ ...formData, title_en: e.target.value })}
-              placeholder="Title in English"
-              className="bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
-            />
-          </div>
-          <div>
-            <Label htmlFor="title_fr" className="text-gray-700 dark:text-gray-300">Titre (Français)</Label>
-            <Input
-              id="title_fr"
-              value={formData.title_fr}
-              onChange={(e) => setFormData({ ...formData, title_fr: e.target.value })}
-              placeholder="Titre en français"
-              className="bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
-            />
+        {/* Title Section */}
+        <div className="bg-blue-50 dark:bg-blue-900/20 p-4 rounded-lg border border-blue-200 dark:border-blue-800">
+          <h4 className="font-semibold mb-3 text-blue-900 dark:text-blue-100 flex items-center gap-2">
+            ✍️ 2. Informations de base (obligatoire)
+          </h4>
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <Label htmlFor="title_en" className="text-gray-700 dark:text-gray-300">Titre (English) *</Label>
+              <Input
+                id="title_en"
+                value={formData.title_en}
+                onChange={(e) => setFormData({ ...formData, title_en: e.target.value })}
+                placeholder="Ex: Wedding Memory Film"
+                className="bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
+                required
+              />
+            </div>
+            <div>
+              <Label htmlFor="title_fr" className="text-gray-700 dark:text-gray-300">Titre (Français) *</Label>
+              <Input
+                id="title_fr"
+                value={formData.title_fr}
+                onChange={(e) => setFormData({ ...formData, title_fr: e.target.value })}
+                placeholder="Ex: Film Souvenir de Mariage"
+                className="bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
+                required
+              />
+            </div>
           </div>
         </div>
 
@@ -352,9 +365,14 @@ export default function GalleryManagement() {
           </div>
         </div>
 
-        {/* Video URL Inputs */}
-        <div className="space-y-4">
-          <h4 className="font-semibold text-gray-900 dark:text-white">URLs des Vidéos</h4>
+        {/* Video URL Display */}
+        <div className="bg-gray-50 dark:bg-gray-800/50 p-4 rounded-lg border">
+          <h4 className="font-semibold mb-3 text-gray-900 dark:text-white flex items-center gap-2">
+            🔗 URLs générées automatiquement
+          </h4>
+          <p className="text-sm text-gray-600 dark:text-gray-400 mb-3">
+            Ces URLs sont remplies automatiquement quand vous téléchargez des fichiers ci-dessus
+          </p>
           {formData.use_same_video ? (
             <div>
               <Label htmlFor="video_url_en" className="text-gray-700 dark:text-gray-300">URL Vidéo (utilisée pour FR et EN)</Label>
@@ -365,8 +383,8 @@ export default function GalleryManagement() {
                   const url = e.target.value;
                   setFormData({ ...formData, video_url_en: url, video_url_fr: url });
                 }}
-                placeholder="https://supabase.memopyk.org/storage/v1/object/public/memopyk-gallery/video.mp4"
-                className="bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
+                placeholder="Sera rempli après upload de vidéo..."
+                className="bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-white font-mono text-sm"
               />
             </div>
           ) : (
@@ -377,8 +395,8 @@ export default function GalleryManagement() {
                   id="video_url_en"
                   value={formData.video_url_en}
                   onChange={(e) => setFormData({ ...formData, video_url_en: e.target.value })}
-                  placeholder="URL for English version"
-                  className="bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
+                  placeholder="Sera rempli après upload..."
+                  className="bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-white font-mono text-sm"
                 />
               </div>
               <div>
@@ -387,8 +405,8 @@ export default function GalleryManagement() {
                   id="video_url_fr"
                   value={formData.video_url_fr}
                   onChange={(e) => setFormData({ ...formData, video_url_fr: e.target.value })}
-                  placeholder="URL pour version française"
-                  className="bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
+                  placeholder="Sera rempli après upload..."
+                  className="bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-white font-mono text-sm"
                 />
               </div>
             </div>
@@ -445,7 +463,18 @@ export default function GalleryManagement() {
             Annuler
           </Button>
           <Button 
-            onClick={() => onSave(formData)}
+            onClick={() => {
+              // Validate required fields
+              if (!formData.title_en || !formData.title_fr) {
+                toast({ 
+                  title: "Erreur", 
+                  description: "Les titres en français et anglais sont obligatoires", 
+                  variant: "destructive" 
+                });
+                return;
+              }
+              onSave(formData);
+            }}
             className="bg-orange-500 hover:bg-orange-600"
           >
             <Save className="h-4 w-4 mr-2" />
