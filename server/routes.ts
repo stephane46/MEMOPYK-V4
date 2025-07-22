@@ -547,14 +547,28 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // Set appropriate status code
       res.status(range && response.status === 206 ? 206 : 200);
 
-      // Stream response to client and cache if it's a full video request (no range)
-      if (!range && response.body) {
-        // Cache the video for future requests
-        videoCache.cacheVideoStream(videoFilename, response.body as any).catch(console.error);
+      // Handle response body streaming
+      if (response.body) {
+        const reader = response.body.getReader();
+        
+        const pump = async () => {
+          try {
+            while (true) {
+              const { done, value } = await reader.read();
+              if (done) break;
+              res.write(Buffer.from(value));
+            }
+            res.end();
+          } catch (error) {
+            console.error('Stream error:', error);
+            res.end();
+          }
+        };
+        
+        await pump();
+      } else {
+        res.end();
       }
-
-      // @ts-ignore - Node.js streams compatibility
-      response.body?.pipe(res);
 
     } catch (error) {
       console.error('Video proxy error:', error);

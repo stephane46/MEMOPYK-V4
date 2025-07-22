@@ -493,27 +493,24 @@ export default function AdminPage() {
                               <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
                                 {/* Video Preview */}
                                 <div className="space-y-4">
-                                  <div 
-                                    className="aspect-video bg-gray-100 dark:bg-gray-800 rounded-lg relative overflow-hidden cursor-pointer group border-2 border-gray-200 dark:border-gray-700"
-                                    onClick={() => {
-                                      const videoUrl = `/api/video-proxy?filename=${encodeURIComponent(video.url_en)}`;
-                                      setPreviewVideo({ url: videoUrl, title: video.title_en });
-                                    }}
-                                  >
+                                  <div className="aspect-video bg-gray-100 dark:bg-gray-800 rounded-lg relative overflow-hidden border-2 border-gray-200 dark:border-gray-700">
                                     <video
                                       src={`/api/video-proxy?filename=${encodeURIComponent(video.url_en)}`}
-                                      className="w-full h-full object-cover"
+                                      className="w-full h-full object-cover cursor-pointer"
                                       muted
                                       preload="metadata"
+                                      controls
+                                      playsInline
+                                      onClick={(e) => {
+                                        e.stopPropagation();
+                                        const videoElement = e.target as HTMLVideoElement;
+                                        if (videoElement.paused) {
+                                          videoElement.play();
+                                        } else {
+                                          videoElement.pause();
+                                        }
+                                      }}
                                     />
-                                    <div className="absolute inset-0 bg-black bg-opacity-40 group-hover:bg-opacity-20 transition-all flex items-center justify-center">
-                                      <div 
-                                        className="rounded-full p-4 group-hover:scale-110 transition-transform shadow-xl"
-                                        style={{ backgroundColor: '#D67C4A' }}
-                                      >
-                                        <Play className="h-10 w-10 text-white fill-white" />
-                                      </div>
-                                    </div>
                                   </div>
                                   <div className="space-y-3">
                                     {/* Clear Position Indicator */}
