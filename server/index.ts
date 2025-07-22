@@ -5,7 +5,7 @@ import { spawn } from "child_process";
 import { createProxyMiddleware } from "http-proxy-middleware";
 
 import { registerRoutes } from "./routes";
-import { log } from "./vite";           // your existing log helper
+import { log } from "./vite";           
 import { testDatabaseConnection } from "./database";
 
 console.log("=== MEMOPYK Server Starting ===");
@@ -77,29 +77,11 @@ app.use((req, res, next) => {
       env: process.env,
     });
 
-    // Create proxy with better error handling and retry logic
+    // Create simple proxy for Vite dev server
     const proxy = createProxyMiddleware({
       target: "http://localhost:5173",
       ws: true,
       changeOrigin: true,
-      timeout: 30000,
-      proxyTimeout: 30000,
-      onError: (err, req, res) => {
-        console.log("Proxy error:", err.message);
-        if (!res.headersSent) {
-          res.writeHead(503, { 'Content-Type': 'text/html' });
-          res.end(`
-            <html>
-              <head><title>Starting...</title></head>
-              <body>
-                <h2>MEMOPYK is starting up...</h2>
-                <p>Vite dev server is initializing. Please refresh in a moment.</p>
-                <script>setTimeout(() => window.location.reload(), 2000);</script>
-              </body>
-            </html>
-          `);
-        }
-      },
     });
 
     // Proxy non-API requests to Vite dev server
@@ -109,7 +91,7 @@ app.use((req, res, next) => {
       }
       return proxy(req, res, next);
     });
-    
+
     console.log("🔄 Proxying frontend requests to Vite on port 5173");
   } else {
     // — Prod mode: serve static build
