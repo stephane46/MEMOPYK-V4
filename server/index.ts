@@ -63,8 +63,20 @@ app.use((req, res, next) => {
   // Register API routes first (before Vite middleware)
   registerRoutes(app);
 
-  // Setup Vite for React frontend (this must come after API routes)
-  await setupVite(app, server);
+  // Try Vite setup with error handling fallback
+  try {
+    await setupVite(app, server);
+    console.log("✅ Vite integration active");
+  } catch (error) {
+    console.error("❌ Vite setup failed, using static fallback:", error);
+    // Fallback to static file serving
+    const path = await import("path");
+    const clientPath = path.resolve(process.cwd(), "client");
+    app.use(express.static(clientPath));
+    app.get("*", (_req: Request, res: Response) => {
+      res.sendFile(path.resolve(clientPath, "index.html"));
+    });
+  }
 
   // Error handling middleware
   app.use((err: any, _req: Request, res: Response, _next: NextFunction) => {
