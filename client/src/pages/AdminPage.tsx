@@ -3,13 +3,12 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { apiRequest } from '@/lib/queryClient';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Switch } from '@/components/ui/switch';
 import { Badge } from '@/components/ui/badge';
-import { ArrowUp, ArrowDown, Play, Upload, Trash2, RefreshCw, BarChart3 } from 'lucide-react';
+import { ArrowUp, ArrowDown, Play, Upload, Trash2, RefreshCw, BarChart3, Users, MessageSquare, FileText, LogOut, Video, HardDrive, BarChart, TestTube, Rocket } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 
 interface HeroVideo {
@@ -35,7 +34,7 @@ interface CacheStats {
 }
 
 export default function AdminPage() {
-  const [activeTab, setActiveTab] = useState('hero-videos');
+  const [activeSection, setActiveSection] = useState('hero-management');
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
@@ -45,6 +44,18 @@ export default function AdminPage() {
     window.dispatchEvent(new CustomEvent('authStateChange'));
     window.location.reload();
   };
+
+  const sidebarItems = [
+    { id: 'hero-management', label: 'Gestion Hero', icon: Video },
+    { id: 'gallery', label: 'Galerie', icon: Play },
+    { id: 'faq', label: 'FAQ', icon: MessageSquare },
+    { id: 'contacts', label: 'Contacts', icon: Users },
+    { id: 'legal-docs', label: 'Documents Légaux', icon: FileText },
+    { id: 'analytics', label: 'Analytiques', icon: BarChart },
+    { id: 'video-cache', label: 'Cache Vidéo', icon: HardDrive },
+    { id: 'tests', label: 'Tests', icon: TestTube },
+    { id: 'deployment', label: 'Déploiement', icon: Rocket },
+  ];
 
   // Fetch hero videos
   const { data: heroVideos = [], isLoading: videosLoading } = useQuery<HeroVideo[]>({
@@ -147,34 +158,65 @@ export default function AdminPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
-      <div className="container mx-auto px-4 py-8">
-        <div className="mb-8">
-          <div className="flex items-center justify-between">
-            <div>
-              <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">
-                MEMOPYK Admin Panel
-              </h1>
-              <p className="text-gray-600 dark:text-gray-400">
-                Manage content, analytics, and system settings
-              </p>
+    <div className="min-h-screen bg-gray-100 dark:bg-gray-900 flex">
+      {/* Sidebar */}
+      <div className="w-64 bg-gray-900 text-white flex-shrink-0">
+        {/* Header */}
+        <div className="p-6 border-b border-gray-700">
+          <div className="flex items-center space-x-3">
+            <div className="w-8 h-8 bg-orange-500 rounded-lg flex items-center justify-center">
+              <span className="text-sm font-bold text-white">M</span>
             </div>
-            <Button variant="outline" onClick={handleLogout}>
-              Logout
-            </Button>
+            <div>
+              <h1 className="text-lg font-bold">MEMOPYK</h1>
+              <p className="text-xs text-gray-400">Panel d'administration</p>
+            </div>
           </div>
         </div>
 
-        <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-          <TabsList className="grid w-full grid-cols-4">
-            <TabsTrigger value="hero-videos">Hero Videos</TabsTrigger>
-            <TabsTrigger value="hero-text">Hero Text</TabsTrigger>
-            <TabsTrigger value="cache-management">Cache Management</TabsTrigger>
-            <TabsTrigger value="analytics">Analytics</TabsTrigger>
-          </TabsList>
+        {/* Navigation */}
+        <nav className="flex-1 p-4">
+          <div className="space-y-2">
+            {sidebarItems.map((item) => {
+              const Icon = item.icon;
+              const isActive = activeSection === item.id;
+              return (
+                <button
+                  key={item.id}
+                  onClick={() => setActiveSection(item.id)}
+                  className={`w-full flex items-center space-x-3 px-3 py-2 rounded-lg text-left transition-colors ${
+                    isActive 
+                      ? 'bg-orange-500 text-white' 
+                      : 'text-gray-300 hover:bg-gray-800 hover:text-white'
+                  }`}
+                >
+                  <Icon className="h-5 w-5" />
+                  <span className="text-sm font-medium">{item.label}</span>
+                </button>
+              );
+            })}
+          </div>
+        </nav>
 
-          {/* Hero Videos Management */}
-          <TabsContent value="hero-videos" className="space-y-6">
+        {/* Logout */}
+        <div className="p-4 border-t border-gray-700">
+          <button
+            onClick={handleLogout}
+            className="w-full flex items-center space-x-3 px-3 py-2 rounded-lg text-gray-300 hover:bg-gray-800 hover:text-white transition-colors"
+          >
+            <LogOut className="h-5 w-5" />
+            <span className="text-sm font-medium">Déconnexion</span>
+          </button>
+        </div>
+      </div>
+
+      {/* Main Content */}
+      <div className="flex-1 overflow-auto">
+        <div className="p-8">
+
+          {/* Hero Management */}
+          {activeSection === 'hero-management' && (
+            <div className="space-y-6">
             <Card>
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
@@ -299,10 +341,16 @@ export default function AdminPage() {
                 )}
               </CardContent>
             </Card>
-          </TabsContent>
+            </div>
+          )}
 
-          {/* Cache Management */}
-          <TabsContent value="cache-management" className="space-y-6">
+          {/* Video Cache Management */}
+          {activeSection === 'video-cache' && (
+            <div className="space-y-6">
+              <div className="mb-6">
+                <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Cache Vidéo</h2>
+                <p className="text-gray-600 dark:text-gray-400">Gestion du cache vidéo local pour une performance optimale</p>
+              </div>
             <Card>
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
@@ -377,30 +425,125 @@ export default function AdminPage() {
                 )}
               </CardContent>
             </Card>
-          </TabsContent>
+            </div>
+          )}
 
-          {/* Placeholder tabs */}
-          <TabsContent value="hero-text">
-            <Card>
-              <CardHeader>
-                <CardTitle>Hero Text Management</CardTitle>
-                <CardDescription>Coming soon - Text editor with font size controls</CardDescription>
-              </CardHeader>
-            </Card>
-          </TabsContent>
+          {/* Analytics */}
+          {activeSection === 'analytics' && (
+            <div className="space-y-6">
+              <div className="mb-6">
+                <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Analytiques</h2>
+                <p className="text-gray-600 dark:text-gray-400">Métriques de performance et analyses vidéo</p>
+              </div>
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <BarChart3 className="h-5 w-5" />
+                    Tableau de Bord Analytique
+                  </CardTitle>
+                  <CardDescription>Prochainement - Métriques vidéo et de performance</CardDescription>
+                </CardHeader>
+              </Card>
+            </div>
+          )}
 
-          <TabsContent value="analytics">
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <BarChart3 className="h-5 w-5" />
-                  Analytics Dashboard
-                </CardTitle>
-                <CardDescription>Coming soon - Video analytics and performance metrics</CardDescription>
-              </CardHeader>
-            </Card>
-          </TabsContent>
-        </Tabs>
+          {/* Gallery */}
+          {activeSection === 'gallery' && (
+            <div className="space-y-6">
+              <div className="mb-6">
+                <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Galerie</h2>
+                <p className="text-gray-600 dark:text-gray-400">Gestion des éléments de galerie portfolio</p>
+              </div>
+              <Card>
+                <CardHeader>
+                  <CardTitle>Gestion de Galerie</CardTitle>
+                  <CardDescription>Prochainement - Interface de gestion de galerie</CardDescription>
+                </CardHeader>
+              </Card>
+            </div>
+          )}
+
+          {/* FAQ */}
+          {activeSection === 'faq' && (
+            <div className="space-y-6">
+              <div className="mb-6">
+                <h2 className="text-2xl font-bold text-gray-900 dark:text-white">FAQ</h2>
+                <p className="text-gray-600 dark:text-gray-400">Gestion des questions fréquemment posées</p>
+              </div>
+              <Card>
+                <CardHeader>
+                  <CardTitle>Gestion FAQ</CardTitle>
+                  <CardDescription>Prochainement - Éditeur de texte enrichi intégré</CardDescription>
+                </CardHeader>
+              </Card>
+            </div>
+          )}
+
+          {/* Contacts */}
+          {activeSection === 'contacts' && (
+            <div className="space-y-6">
+              <div className="mb-6">
+                <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Contacts</h2>
+                <p className="text-gray-600 dark:text-gray-400">Gestion des contacts et suivi des prospects</p>
+              </div>
+              <Card>
+                <CardHeader>
+                  <CardTitle>Gestion des Contacts</CardTitle>
+                  <CardDescription>Prochainement - Liste de contacts avec suivi de statut</CardDescription>
+                </CardHeader>
+              </Card>
+            </div>
+          )}
+
+          {/* Legal Documents */}
+          {activeSection === 'legal-docs' && (
+            <div className="space-y-6">
+              <div className="mb-6">
+                <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Documents Légaux</h2>
+                <p className="text-gray-600 dark:text-gray-400">Gestion des documents juridiques</p>
+              </div>
+              <Card>
+                <CardHeader>
+                  <CardTitle>Gestion des Documents Légaux</CardTitle>
+                  <CardDescription>Prochainement - Édition de texte enrichi pour le contenu juridique</CardDescription>
+                </CardHeader>
+              </Card>
+            </div>
+          )}
+
+          {/* Tests */}
+          {activeSection === 'tests' && (
+            <div className="space-y-6">
+              <div className="mb-6">
+                <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Tests</h2>
+                <p className="text-gray-600 dark:text-gray-400">Tests système et validation</p>
+              </div>
+              <Card>
+                <CardHeader>
+                  <CardTitle>Tests Système</CardTitle>
+                  <CardDescription>Prochainement - Interface de test et validation</CardDescription>
+                </CardHeader>
+              </Card>
+            </div>
+          )}
+
+          {/* Deployment */}
+          {activeSection === 'deployment' && (
+            <div className="space-y-6">
+              <div className="mb-6">
+                <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Déploiement</h2>
+                <p className="text-gray-600 dark:text-gray-400">Gestion du déploiement et de la production</p>
+              </div>
+              <Card>
+                <CardHeader>
+                  <CardTitle>Gestion du Déploiement</CardTitle>
+                  <CardDescription>Prochainement - Interface de déploiement en un clic</CardDescription>
+                </CardHeader>
+              </Card>
+            </div>
+          )}
+
+        </div>
       </div>
     </div>
   );
