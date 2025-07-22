@@ -245,7 +245,10 @@ export default function AdminPage() {
                               />
                               <label
                                 htmlFor="video-upload"
-                                className="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-orange-500 hover:bg-orange-600 cursor-pointer"
+                                className="inline-flex items-center px-6 py-3 border border-transparent shadow-lg text-sm font-semibold rounded-lg text-white cursor-pointer transition-all hover:scale-105"
+                                style={{ backgroundColor: '#D67C4A' }}
+                                onMouseEnter={(e) => e.target.style.backgroundColor = '#C5663A'}
+                                onMouseLeave={(e) => e.target.style.backgroundColor = '#D67C4A'}
                               >
                                 Upload Video
                               </label>
@@ -264,7 +267,7 @@ export default function AdminPage() {
                                 {/* Video Preview */}
                                 <div className="space-y-4">
                                   <div 
-                                    className="aspect-video bg-gray-100 dark:bg-gray-800 rounded-lg relative overflow-hidden cursor-pointer group"
+                                    className="aspect-video bg-gray-100 dark:bg-gray-800 rounded-lg relative overflow-hidden cursor-pointer group border-2 border-gray-200 dark:border-gray-700"
                                     onClick={() => {
                                       const videoUrl = `/api/video-proxy?url=${encodeURIComponent('https://supabase.memopyk.org/storage/v1/object/public/memopyk-hero/' + video.url_en)}`;
                                       setPreviewVideo({ url: videoUrl, title: video.title_en });
@@ -277,8 +280,11 @@ export default function AdminPage() {
                                       preload="metadata"
                                     />
                                     <div className="absolute inset-0 bg-black bg-opacity-40 group-hover:bg-opacity-20 transition-all flex items-center justify-center">
-                                      <div className="bg-orange-500 bg-opacity-95 rounded-full p-3 group-hover:scale-110 transition-transform shadow-lg">
-                                        <Play className="h-8 w-8 text-white" />
+                                      <div 
+                                        className="rounded-full p-4 group-hover:scale-110 transition-transform shadow-xl"
+                                        style={{ backgroundColor: '#D67C4A' }}
+                                      >
+                                        <Play className="h-10 w-10 text-white fill-white" />
                                       </div>
                                     </div>
                                   </div>
@@ -295,16 +301,37 @@ export default function AdminPage() {
                                 {/* Video Metadata */}
                                 <div className="space-y-4">
                                   <div>
-                                    <Label className="text-sm font-medium text-gray-900 dark:text-white">English Title</Label>
-                                    <div className="mt-1 text-sm font-medium text-gray-800 dark:text-gray-200 bg-gray-50 dark:bg-gray-800 p-2 rounded">{video.title_en}</div>
+                                    <Label className="text-sm font-semibold" style={{ color: '#011526' }}>English Title</Label>
+                                    <div 
+                                      className="mt-1 text-sm font-medium p-3 rounded-md border-l-4"
+                                      style={{ 
+                                        backgroundColor: '#F2EBDC', 
+                                        color: '#011526',
+                                        borderLeftColor: '#D67C4A'
+                                      }}
+                                    >
+                                      {video.title_en}
+                                    </div>
                                   </div>
                                   <div>
-                                    <Label className="text-sm font-medium text-gray-900 dark:text-white">French Title</Label>
-                                    <div className="mt-1 text-sm font-medium text-gray-800 dark:text-gray-200 bg-gray-50 dark:bg-gray-800 p-2 rounded">{video.title_fr}</div>
+                                    <Label className="text-sm font-semibold" style={{ color: '#011526' }}>French Title</Label>
+                                    <div 
+                                      className="mt-1 text-sm font-medium p-3 rounded-md border-l-4"
+                                      style={{ 
+                                        backgroundColor: '#F2EBDC', 
+                                        color: '#011526',
+                                        borderLeftColor: '#D67C4A'
+                                      }}
+                                    >
+                                      {video.title_fr}
+                                    </div>
                                   </div>
                                   <div>
-                                    <Label className="text-sm font-medium text-gray-900 dark:text-white">Video URLs</Label>
-                                    <div className="mt-1 text-xs font-mono text-gray-700 dark:text-gray-300 bg-gray-50 dark:bg-gray-800 p-2 rounded space-y-1">
+                                    <Label className="text-sm font-semibold" style={{ color: '#011526' }}>Video URLs</Label>
+                                    <div 
+                                      className="mt-1 text-xs font-mono p-3 rounded-md space-y-2"
+                                      style={{ backgroundColor: '#F2EBDC', color: '#2A4759' }}
+                                    >
                                       <div className="font-medium">EN: {video.url_en}</div>
                                       <div className="font-medium">FR: {video.url_fr}</div>
                                     </div>
