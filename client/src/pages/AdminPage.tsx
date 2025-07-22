@@ -69,7 +69,7 @@ export default function AdminPage() {
   // Video reordering mutation
   const reorderMutation = useMutation({
     mutationFn: async ({ videoId, newOrder }: { videoId: number; newOrder: number }) => {
-      return apiRequest(`/api/hero-videos/${videoId}/reorder`, 'PATCH', { order_index: newOrder });
+      return apiRequest(`/api/hero-videos/${videoId}/order`, 'PATCH', { newOrder });
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['/api/hero-videos'] });

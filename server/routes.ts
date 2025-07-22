@@ -164,6 +164,32 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Update hero video order
+  app.patch("/api/hero-videos/:id/order", async (req, res) => {
+    try {
+      const videoId = parseInt(req.params.id);
+      const { newOrder } = req.body;
+      
+      if (!newOrder || newOrder < 1) {
+        return res.status(400).json({ error: "Invalid order value" });
+      }
+
+      console.log(`🔄 Reordering video ${videoId} to position ${newOrder}`);
+
+      const result = await hybridStorage.updateHeroVideoOrder(videoId, newOrder);
+      
+      res.json({ 
+        success: true, 
+        video: result,
+        message: `Video reordered successfully` 
+      });
+
+    } catch (error) {
+      console.error('Video reorder error:', error);
+      res.status(500).json({ error: "Failed to reorder video" });
+    }
+  });
+
   // Delete hero video (removes from Supabase storage, database, and cache)
   app.delete("/api/hero-videos/:id", async (req, res) => {
     try {
