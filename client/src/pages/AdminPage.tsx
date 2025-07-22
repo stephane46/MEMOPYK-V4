@@ -73,7 +73,8 @@ export default function AdminPage() {
       console.log('Sending PATCH to:', `/api/hero-videos/${videoId}/order`);
       console.log('Payload:', { newOrder });
       
-      const result = await apiRequest(`/api/hero-videos/${videoId}/order`, 'PATCH', { newOrder });
+      const response = await apiRequest('PATCH', `/api/hero-videos/${videoId}/order`, { newOrder });
+      const result = await response.json();
       console.log('=== MUTATION RESPONSE ===', result);
       return result;
     },

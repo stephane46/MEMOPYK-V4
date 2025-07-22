@@ -1,0 +1,44 @@
+client:495 [vite] connecting...
+client:618 [vite] connected.
+react-dom.development.js:29895 Download the React DevTools for a better development experience: https://reactjs.org/link/react-devtools
+react-dom.development.js:86  Warning: validateDOMNesting(...): <a> cannot appear as a descendant of <a>.
+    at a
+    at a
+    at https://365df2cf-1884-444c-a9e8-235602456363-00-37q39xpqlgvdy.janeway.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/wouter.js?v=1178ad50:294:18
+    at div
+    at div
+    at nav
+    at div
+    at Layout (https://365df2cf-1884-444c-a9e8-235602456363-00-37q39xpqlgvdy.janeway.replit.dev/src/components/Layout.tsx:20:26)
+    at Router (https://365df2cf-1884-444c-a9e8-235602456363-00-37q39xpqlgvdy.janeway.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/wouter.js?v=1178ad50:235:17)
+    at LanguageProvider (https://365df2cf-1884-444c-a9e8-235602456363-00-37q39xpqlgvdy.janeway.replit.dev/src/contexts/LanguageContext.tsx:48:36)
+    at AuthProvider (https://365df2cf-1884-444c-a9e8-235602456363-00-37q39xpqlgvdy.janeway.replit.dev/src/contexts/AuthContext.tsx:20:32)
+    at QueryClientProvider (https://365df2cf-1884-444c-a9e8-235602456363-00-37q39xpqlgvdy.janeway.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@tanstack_react-query.js?v=1178ad50:2934:3)
+    at App
+printWarning @ react-dom.development.js:86
+utils.js:232  Uncaught TypeError: Cannot read properties of undefined (reading 'onChanged')
+    at utils.js:232:16
+tabutils.js:2  Uncaught TypeError: Cannot read properties of undefined (reading 'onUpdated')
+    at tabutils.js:2:13
+contextmenu.js:124  Uncaught TypeError: Cannot read properties of undefined (reading 'onClicked')
+    at contextmenu.js:124:21
+download.js:9  Uncaught TypeError: Cannot read properties of undefined (reading 'onCreated')
+    at download.js:9:18
+AdminPage.tsx:426 === MOVE DOWN BUTTON CLICKED ===
+AdminPage.tsx:427 Video ID: 1753182392627
+AdminPage.tsx:428 Current order: 1
+AdminPage.tsx:431 Max order: 3
+AdminPage.tsx:432 Button disabled? false
+AdminPage.tsx:433 Mutation pending? false
+AdminPage.tsx:436 New order would be: 2
+AdminPage.tsx:439 Calling reorderMutation.mutate...
+AdminPage.tsx:72 === MUTATION STARTED ===
+AdminPage.tsx:73 Sending PATCH to: /api/hero-videos/1753182392627/order
+AdminPage.tsx:74 Payload: {newOrder: 2}
+AdminPage.tsx:86 === MUTATION ERROR === TypeError: Failed to execute 'fetch' on 'Window': '/api/hero-videos/1753182392627/order' is not a valid HTTP method.
+    at apiRequest (queryClient.ts:15:21)
+    at Object.mutationFn (AdminPage.tsx:76:28)
+    at Object.fn (mutation.ts:174:29)
+    at run (retryer.ts:153:49)
+    at Object.start (retryer.ts:218:9)
+    at _a6.execute (mutation.ts:213:40)
