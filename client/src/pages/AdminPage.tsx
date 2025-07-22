@@ -454,36 +454,10 @@ export default function AdminPage() {
                                   </div>
                                 </div>
 
-                                {/* Video Metadata */}
+                                {/* Video Files */}
                                 <div className="space-y-4">
                                   <div>
-                                    <Label className="text-sm font-semibold" style={{ color: '#011526' }}>English Title</Label>
-                                    <div 
-                                      className="mt-1 text-sm font-medium p-3 rounded-md border-l-4"
-                                      style={{ 
-                                        backgroundColor: '#F2EBDC', 
-                                        color: '#011526',
-                                        borderLeftColor: '#D67C4A'
-                                      }}
-                                    >
-                                      {video.title_en}
-                                    </div>
-                                  </div>
-                                  <div>
-                                    <Label className="text-sm font-semibold" style={{ color: '#011526' }}>French Title</Label>
-                                    <div 
-                                      className="mt-1 text-sm font-medium p-3 rounded-md border-l-4"
-                                      style={{ 
-                                        backgroundColor: '#F2EBDC', 
-                                        color: '#011526',
-                                        borderLeftColor: '#D67C4A'
-                                      }}
-                                    >
-                                      {video.title_fr}
-                                    </div>
-                                  </div>
-                                  <div>
-                                    <Label className="text-sm font-semibold" style={{ color: '#011526' }}>Video URLs</Label>
+                                    <Label className="text-sm font-semibold" style={{ color: '#011526' }}>Video Files</Label>
                                     <div 
                                       className="mt-1 text-xs font-mono p-3 rounded-md space-y-2"
                                       style={{ backgroundColor: '#F2EBDC', color: '#2A4759' }}
