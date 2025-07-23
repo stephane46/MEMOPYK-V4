@@ -39,13 +39,24 @@ export const heroTextSettings = pgTable("hero_text_settings", {
 // Gallery items table - bilingual structure
 export const galleryItems = pgTable("gallery_items", {
   id: uuid("id").primaryKey().defaultRandom(),
+  
+  // Core display fields
   titleEn: text("title_en").notNull(),
   titleFr: text("title_fr").notNull(),
-  descriptionEn: text("description_en"),
-  descriptionFr: text("description_fr"),
+  priceEn: text("price_en"), // Text field for prices like "USD 145"
+  priceFr: text("price_fr"), // Text field for prices like "145 USD"
   
-  // Video fields - support both upload and URL input
-  videoUrl: text("video_url"),
+  // Gallery card content fields
+  sourceEn: text("source_en"), // "80 photos & 10 videos" - top overlay text
+  sourceFr: text("source_fr"), // "80 photos et 10 vidéos" - top overlay text
+  durationEn: text("duration_en"), // "2 minutes" - duration with film icon
+  durationFr: text("duration_fr"), // "2 minutes" - duration with film icon
+  situationEn: text("situation_en"), // "The Client is a wife..." - client description
+  situationFr: text("situation_fr"), // "Le client est une épouse..." - client description
+  storyEn: text("story_en"), // "This film shows..." - story description
+  storyFr: text("story_fr"), // "Ce film montre..." - story description
+  
+  // Media fields
   videoUrlEn: text("video_url_en"),
   videoUrlFr: text("video_url_fr"),
   useSameVideo: boolean("use_same_video").default(true), // When true, use videoUrlEn for both languages
@@ -53,30 +64,13 @@ export const galleryItems = pgTable("gallery_items", {
   videoHeight: integer("video_height"),
   videoOrientation: text("video_orientation"), // "portrait" or "landscape"
   
-  // Thumbnail image fields - uploaded separately
-  thumbnailUrl: text("thumbnail_url"),
-  thumbnailWidth: integer("thumbnail_width"),
-  thumbnailHeight: integer("thumbnail_height"),
-  
-  // Image positioning for 600x400 display window
-  imagePositionX: integer("image_position_x").default(0), // X offset for positioning
-  imagePositionY: integer("image_position_y").default(0), // Y offset for positioning
-  imageScale: numeric("image_scale").default("1.0"), // Scale factor for zoom
-  
-  // Static Image Generation fields (300x200 JPEG output)
-  staticImageUrl: text("static_image_url"), // 300x200 cropped JPEG
-  cropSettings: jsonb("crop_settings"), // Stores zoom, position settings for re-editing
-  
-  // Bilingual content
+  // Image fields
   imageUrlEn: text("image_url_en"),
   imageUrlFr: text("image_url_fr"),
-  priceEn: text("price_en"),
-  priceFr: text("price_fr"),
-  altTextEn: text("alt_text_en"),
-  altTextFr: text("alt_text_fr"),
-  additionalInfoEn: text("additional_info_en"),
-  additionalInfoFr: text("additional_info_fr"),
+  staticImageUrl: text("static_image_url"), // 300x200 cropped JPEG for thumbnails
+  cropSettings: jsonb("crop_settings"), // Stores crop position settings for re-editing
   
+  // System fields
   orderIndex: integer("order_index").default(0),
   isActive: boolean("is_active").default(true),
   createdAt: timestamp("created_at").defaultNow(),

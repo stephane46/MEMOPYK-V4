@@ -1,27 +1,27 @@
 [
   {
-    "id": 1753217242005,
-    "title_en": "Vitamin Sea - Family Beach Memories",
-    "title_fr": "Vitamine Mer - Souvenirs de Plage en Famille",
-    "description_en": "Capture the joy and connection of family beach time with our cinematic memory film featuring natural moments, laughter, and the magic of seaside adventures.",
-    "description_fr": "Capturez la joie et la complicité du temps en famille à la plage avec notre film souvenir cinématographique mettant en vedette des moments naturels, des rires et la magie des aventures balnéaires.",
-    "video_url_en": "https://supabase.memopyk.org/storage/v1/object/public/memopyk-gallery/gallery_Our_vitamin_sea_rework_2_compressed.mp4",
-    "video_url_fr": "https://supabase.memopyk.org/storage/v1/object/public/memopyk-gallery/gallery_Our_vitamin_sea_rework_2_compressed.mp4",
+    "id": "1753217242005",
+    "title_en": "Our Vitamin Sea",
+    "title_fr": "Notre Vitamine Mer",
+    "price_en": "USD 145",
+    "price_fr": "145 EUR",
+    "source_en": "80 photos & 10 videos",
+    "source_fr": "80 photos et 10 vidéos",
+    "duration_en": "2 minutes",
+    "duration_fr": "2 minutes",
+    "situation_en": "The Client is a wife in a couple, who looks for a special gift for her husband, in the occasion of their wedding anniversary. Again, in the occasion of their anniversary.",
+    "situation_fr": "Le client est une épouse dans un couple, qui cherche un cadeau spécial pour son mari, à l'occasion de leur anniversaire de mariage. Encore une fois, à l'occasion de leur anniversaire.",
+    "story_en": "This film shows a couple's simple trip to the sea in the south of France. This film shows a couple's simple trip to the sea in the south of France.",
+    "story_fr": "Ce film montre un voyage simple d'un couple vers la mer dans le sud de la France. Ce film montre un voyage simple d'un couple vers la mer dans le sud de la France.",
+    "video_url_en": "gallery_Our_vitamin_sea_rework_2_compressed.mp4",
+    "video_url_fr": "gallery_Our_vitamin_sea_rework_2_compressed.mp4",
+    "use_same_video": true,
     "video_width": 1080,
     "video_height": 1918,
     "video_orientation": "portrait",
-    "image_url_en": "https://supabase.memopyk.org/storage/v1/object/public/memopyk-gallery/gallery_thumb_Media_0000103__2_.JPG",
-    "image_url_fr": "https://supabase.memopyk.org/storage/v1/object/public/memopyk-gallery/gallery_thumb_Media_0000103__2_.JPG",
-    "price_en": "$1,299",
-    "price_fr": "1,299€",
-    "alt_text_en": "Family enjoying beach time - vitamin sea memory film",
-    "alt_text_fr": "Famille profitant du temps à la plage - film souvenir vitamine mer",
-    "order_index": 1,
-    "is_active": true,
-    "use_same_video": true,
-    "created_at": "2025-07-22T20:47:22.005Z",
-    "updated_at": "2025-07-23T16:30:33.503Z",
-    "static_image_url": "https://supabase.memopyk.org/storage/v1/object/public/memopyk-gallery/static_1753217242005.png",
+    "image_url_en": "gallery_thumb_Media_0000103__2_.JPG",
+    "image_url_fr": "gallery_thumb_Media_0000103__2_.JPG",
+    "static_image_url": "static_1753217242005.png",
     "crop_settings": {
       "method": "draggable-cover-hd",
       "position": {
@@ -38,6 +38,10 @@
         "height": 200
       },
       "format": "PNG"
-    }
+    },
+    "order_index": 1,
+    "is_active": true,
+    "created_at": "2025-07-22T20:47:22.005Z",
+    "updated_at": "2025-07-23T16:30:33.503Z"
   }
 ]
