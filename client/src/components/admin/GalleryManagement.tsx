@@ -895,7 +895,7 @@ export default function GalleryManagement() {
                   const formData = new FormData();
                   formData.append('image', croppedBlob, `static_${showImageCropper.item?.id || 'temp'}.jpg`);
                   formData.append('crop_settings', JSON.stringify(cropSettings));
-                  formData.append('item_id', (showImageCropper.item?.id || 0).toString());
+                  formData.append('item_id', showImageCropper.item?.id?.toString() || '');
                   
                   // Upload cropped image
                   const response = await fetch('/api/gallery/upload-static-image', {
@@ -912,7 +912,7 @@ export default function GalleryManagement() {
                     
                     // Update the item with the static image URL and settings
                     updateItemMutation.mutate({
-                      id: showImageCropper.item?.id || 0,
+                      id: showImageCropper.item?.id || '',
                       data: {
                         static_image_url: result.url,
                         crop_settings: cropSettings
