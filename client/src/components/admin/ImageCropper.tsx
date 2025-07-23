@@ -293,7 +293,7 @@ export const ImageCropper: React.FC<ImageCropperProps> = ({
           setIsSaving(false);
         },
         'image/jpeg',
-        0.95
+        1.0
       );
     } catch (error) {
       console.error('Cropping failed:', error);
