@@ -88,11 +88,12 @@ export default function ImageCropperEasyCrop({ imageUrl, onSave, onCancel }: Ima
         </p>
         
         {/* 300×200 Full Viewport - Zero padding/border for pixel-perfect mapping */}
-        <div className="mx-auto rounded-lg overflow-hidden crop-container" 
+        <div className="mx-auto rounded-lg crop-container" 
              style={{ 
                width: 300, 
                height: 200, 
                position: 'relative', 
+               overflow: 'hidden',       // 👈 clip the image
                background: '#222',
                padding: 0,
                border: 'none',
@@ -108,7 +109,8 @@ export default function ImageCropperEasyCrop({ imageUrl, onSave, onCancel }: Ima
             onCropComplete={onCropCompleteCallback}
             cropShape="rect"
             showGrid={false}
-            restrictPosition={false}
+            restrictPosition={true}    // 👈 never let the image leave the box
+            objectFit="contain"        // 👈 match the library's default math
             cropSize={{ width: 300, height: 200 }}
             style={{
               containerStyle: {
@@ -117,8 +119,8 @@ export default function ImageCropperEasyCrop({ imageUrl, onSave, onCancel }: Ima
                 backgroundColor: 'transparent'
               },
               cropAreaStyle: {
-                border: 'none', // Remove inner crop frame
-                boxShadow: 'none' // Remove any shadow/outline
+                border: 'none',        // OK to remove border
+                boxShadow: 'none'      // OK to remove shadow
               }
             }}
             onMediaLoaded={(mediaSize) => {
