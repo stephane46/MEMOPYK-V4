@@ -191,14 +191,16 @@ export default function GallerySection() {
         {/* Gallery Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
           {galleryItems.map((item, index) => {
-            const hasVideo = getItemUrl(item, 'video');
-            const hasImage = getItemUrl(item, 'image');
+            const videoUrl = getItemUrl(item, 'video');
+            const imageUrl = getItemUrl(item, 'image');
             
             // For thumbnail display: prioritize static image, then regular image, then video thumbnail
-            const thumbnailUrl = hasImage; // getItemUrl('image') already prioritizes static images
+            const thumbnailUrl = imageUrl; // getItemUrl('image') already prioritizes static images
             
             // For preview modals: use video if available, otherwise image
-            const previewUrl = hasVideo || hasImage;
+            const hasVideo = Boolean(videoUrl);
+            const hasImage = Boolean(imageUrl);
+            const previewUrl = hasVideo ? videoUrl : imageUrl;
             const mediaType = hasVideo ? 'video' : 'image';
             
             return (
