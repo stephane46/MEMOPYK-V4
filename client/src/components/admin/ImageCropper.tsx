@@ -265,6 +265,16 @@ export const ImageCropper: React.FC<ImageCropperProps> = ({
       const clampedEndY = Math.max(0, Math.min(1, relativeEndY));
       
       // Map to original image coordinates
+      // VERIFICATION: Check if we're using correct image dimensions
+      console.log({
+        naturalWidth: img.naturalWidth,
+        naturalHeight: img.naturalHeight,
+        displayWidth: img.width,
+        displayHeight: img.height,
+        previewSize: { width: previewWidth, height: previewHeight },
+        cropFrame: { x: cropFrameX, y: cropFrameY, w: targetWidth, h: targetHeight }
+      });
+      
       const finalSourceX = clampedStartX * img.naturalWidth;
       const finalSourceY = clampedStartY * img.naturalHeight;
       const finalSourceW = (clampedEndX - clampedStartX) * img.naturalWidth;
