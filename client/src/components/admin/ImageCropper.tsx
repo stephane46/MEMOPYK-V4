@@ -193,16 +193,36 @@ export const ImageCropper: React.FC<ImageCropperProps> = ({
       canvas.width = targetWidth;
       canvas.height = targetHeight;
 
-      // EXTREMELY SIMPLE APPROACH: Just take center portion of image
-      // This should at least give us SOME part of the image instead of solid blue
+      // CORRECT COORDINATE TRANSFORMATION BASED ON USER'S CROP SELECTION
+      // The preview shows a 600x400 container with the image positioned at cropSettings.x, cropSettings.y
+      // and scaled to cropSettings.zoom%. We need to calculate what part of the original image
+      // corresponds to the center rectangle (targetWidth x targetHeight)
       
-      const sourceX = Math.max(0, (img.naturalWidth - targetWidth) / 2);
-      const sourceY = Math.max(0, (img.naturalHeight - targetHeight) / 2);
-      const sourceW = Math.min(targetWidth, img.naturalWidth);
-      const sourceH = Math.min(targetHeight, img.naturalHeight);
+      // Preview container dimensions
+      const previewWidth = 600;
+      const previewHeight = 400;
       
-      const simpleDebug = {
-        simple: true,
+      // Calculate the scale factor between original image and preview display
+      const scaleX = img.naturalWidth / (img.naturalWidth * cropSettings.zoom / 100);
+      const scaleY = img.naturalHeight / (img.naturalHeight * cropSettings.zoom / 100);
+      
+      // Calculate the center crop area in the preview container (where the orange frame is)
+      const cropFrameX = (previewWidth - targetWidth) / 2;
+      const cropFrameY = (previewHeight - targetHeight) / 2;
+      
+      // Transform preview coordinates to original image coordinates
+      // Account for the image position (cropSettings.x, cropSettings.y) and zoom
+      const sourceX = Math.max(0, (cropFrameX - cropSettings.x) * (100 / cropSettings.zoom));
+      const sourceY = Math.max(0, (cropFrameY - cropSettings.y) * (100 / cropSettings.zoom));
+      const sourceW = Math.min(img.naturalWidth - sourceX, targetWidth * (100 / cropSettings.zoom));
+      const sourceH = Math.min(img.naturalHeight - sourceY, targetHeight * (100 / cropSettings.zoom));
+      
+      const correctDebug = {
+        transform: 'correct',
+        preview: { w: previewWidth, h: previewHeight },
+        cropFrame: { x: cropFrameX, y: cropFrameY, w: targetWidth, h: targetHeight },
+        cropSettings: cropSettings,
+        original: { w: img.naturalWidth, h: img.naturalHeight },
         source: { x: sourceX, y: sourceY, w: sourceW, h: sourceH },
         destination: { x: 0, y: 0, w: targetWidth, h: targetHeight }
       };
@@ -211,14 +231,14 @@ export const ImageCropper: React.FC<ImageCropperProps> = ({
       fetch('/api/debug-log', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ type: 'crop-coordinates', data: simpleDebug })
+        body: JSON.stringify({ type: 'crop-coordinates', data: correctDebug })
       }).catch(() => {}); // Ignore errors
 
       // White background
       ctx.fillStyle = '#FFFFFF';
       ctx.fillRect(0, 0, targetWidth, targetHeight);
 
-      // Draw simple center crop
+      // Draw the correctly calculated crop area
       ctx.drawImage(
         img,
         sourceX, sourceY, sourceW, sourceH,
