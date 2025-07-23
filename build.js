@@ -11,12 +11,13 @@ try {
   console.log('📦 Building frontend with Vite...');
   execSync('npx vite build', { stdio: 'inherit' });
   
-  // Step 2: Move files from dist/public to dist for Replit Deploy
+  // Step 2: Move files from dist/public to dist/ for Replit Deploy
   console.log('📁 Moving files to Replit Deploy structure...');
   if (fs.existsSync('dist/public')) {
-    // Move all files from dist/public to dist
-    execSync('mv dist/public/* dist/ 2>/dev/null || true', { stdio: 'inherit' });
-    execSync('rmdir dist/public 2>/dev/null || true', { stdio: 'inherit' });
+    // Copy all files from dist/public to dist
+    execSync('cp -r dist/public/* dist/', { stdio: 'inherit' });
+    // Remove the public directory
+    execSync('rm -rf dist/public', { stdio: 'inherit' });
   }
   
   // Step 3: Use tsx for production TypeScript execution (no compilation needed)

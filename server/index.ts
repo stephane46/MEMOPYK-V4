@@ -66,10 +66,7 @@ app.use((req, res, next) => {
 });
 
 (async () => {
-  // 1) Register API routes
-  registerRoutes(app);
-
-  // 2) Frontend handling
+  // 1) Frontend handling
   if (process.env.NODE_ENV !== "production") {
     // — Dev mode: spawn Vite and proxy to it
     const viteProc = spawn("npx", ["vite"], {
@@ -114,12 +111,29 @@ app.use((req, res, next) => {
   } else {
     // — Prod mode: serve static build
     const clientDist = path.resolve(process.cwd(), "dist");
-    app.use(express.static(clientDist));
-    app.get("*", (_req: Request, res: Response) =>
-      res.sendFile(path.join(clientDist, "index.html"))
-    );
-    console.log("📦 Serving static files from", clientDist);
+    console.log("📦 Production mode - serving from:", clientDist);
+    
+    // Use standard Express static serving - let Express handle MIME types
+    app.use(express.static(clientDist, {
+      index: false,
+      maxAge: '1d', // Add caching for production
+    }));
+    
+    // SPA fallback - only for non-file requests
+    app.get("*", (req: Request, res: Response) => {
+      // Only serve index.html for navigation routes (no file extension)
+      if (!req.path.includes('.')) {
+        res.sendFile(path.join(clientDist, "index.html"));
+      } else {
+        res.status(404).send('File not found');
+      }
+    });
+    
+    console.log("📦 Static files configured with Express defaults");
   }
+
+  // 2) Register API routes AFTER static file handling
+  registerRoutes(app);
 
   // 3) Error handler
   app.use(
