@@ -20,38 +20,15 @@ function rotateSize(width: number, height: number, rotation: number) {
   };
 }
 
-// Simplified approach: Direct viewport capture
+// Official react-easy-crop getCroppedImg utility with enhanced quality
 export default async function getCroppedImg(
   imageSrc: string,
   pixelCrop: { x: number; y: number; width: number; height: number },
   targetWidth: number = 300,
-  targetHeight: number = 200
+  targetHeight: number = 200,
+  rotation: number = 0,
+  flip = { horizontal: false, vertical: false }
 ): Promise<Blob | null> {
-  // Alternative approach: Use HTML2Canvas to capture exactly what's visible
-  const cropperContainer = document.querySelector('.reactEasyCrop_Container');
-  
-  if (cropperContainer && (window as any).html2canvas) {
-    try {
-      const canvas = await (window as any).html2canvas(cropperContainer, {
-        width: targetWidth,
-        height: targetHeight,
-        scale: 1,
-        useCORS: true,
-        allowTaint: true,
-        backgroundColor: null
-      });
-      
-      return new Promise((resolve) => {
-        canvas.toBlob((blob: Blob | null) => {
-          resolve(blob);
-        }, 'image/jpeg', 1.0);
-      });
-    } catch (error) {
-      console.log('HTML2Canvas failed, using manual approach');
-    }
-  }
-
-  // Fallback: Manual cropping with coordinate correction
   const image = await createImage(imageSrc);
   const canvas = document.createElement('canvas');
   const ctx = canvas.getContext('2d');
@@ -60,62 +37,59 @@ export default async function getCroppedImg(
     return null;
   }
 
-  // High-DPI support for crisp output
+  const rotRad = getRadianAngle(rotation);
+  const { width: bBoxWidth, height: bBoxHeight } = rotateSize(
+    image.width,
+    image.height,
+    rotation
+  );
+
+  // Set canvas size to match the bounding box
+  canvas.width = bBoxWidth;
+  canvas.height = bBoxHeight;
+
+  // Translate canvas context to center point
+  ctx.translate(bBoxWidth / 2, bBoxHeight / 2);
+  ctx.rotate(rotRad);
+  ctx.scale(flip.horizontal ? -1 : 1, flip.vertical ? -1 : 1);
+  ctx.translate(-image.width / 2, -image.height / 2);
+
+  // Draw rotated image
+  ctx.drawImage(image, 0, 0);
+
+  // Extract the cropped area
+  const data = ctx.getImageData(
+    pixelCrop.x,
+    pixelCrop.y,
+    pixelCrop.width,
+    pixelCrop.height
+  );
+
+  // Resize canvas to target dimensions with high-DPI support
   const dpr = window.devicePixelRatio || 1;
-  
-  // Set canvas to high resolution
   canvas.width = targetWidth * dpr;
   canvas.height = targetHeight * dpr;
-  
-  // Enable high-quality image smoothing
+
+  // Reset transforms and apply high-quality settings
+  ctx.setTransform(1, 0, 0, 1, 0, 0);
   ctx.imageSmoothingEnabled = true;
   ctx.imageSmoothingQuality = 'high';
-  
-  // Scale context for high-DPI
   ctx.scale(dpr, dpr);
 
-  // Get the actual cropper element to understand the scaling
-  const imageElement = cropperContainer?.querySelector('img') as HTMLImageElement;
-  
-  if (imageElement) {
-    // Calculate the scale factor between natural and displayed image
-    const scaleX = image.naturalWidth / imageElement.clientWidth;
-    const scaleY = image.naturalHeight / imageElement.clientHeight;
-    
-    // Apply scale to crop coordinates
-    const sourceX = pixelCrop.x * scaleX;
-    const sourceY = pixelCrop.y * scaleY;
-    const sourceWidth = pixelCrop.width * scaleX;
-    const sourceHeight = pixelCrop.height * scaleY;
-    
-    console.log('Crop debug:', {
-      natural: { w: image.naturalWidth, h: image.naturalHeight },
-      displayed: { w: imageElement.clientWidth, h: imageElement.clientHeight },
-      scale: { x: scaleX, y: scaleY },
-      crop: { x: pixelCrop.x, y: pixelCrop.y, w: pixelCrop.width, h: pixelCrop.height },
-      source: { x: sourceX, y: sourceY, w: sourceWidth, h: sourceHeight }
-    });
+  // Create temporary canvas for the cropped area
+  const tempCanvas = document.createElement('canvas');
+  tempCanvas.width = pixelCrop.width;
+  tempCanvas.height = pixelCrop.height;
+  const tempCtx = tempCanvas.getContext('2d')!;
+  tempCtx.putImageData(data, 0, 0);
 
-    ctx.drawImage(
-      image,
-      sourceX,
-      sourceY,
-      sourceWidth,
-      sourceHeight,
-      0,
-      0,
-      targetWidth,
-      targetHeight
-    );
-  } else {
-    // Ultimate fallback
-    ctx.drawImage(image, 0, 0, targetWidth, targetHeight);
-  }
+  // Draw scaled version to final canvas with high quality
+  ctx.drawImage(tempCanvas, 0, 0, targetWidth, targetHeight);
 
-  // Return as blob
+  // Return as high-quality JPEG blob
   return new Promise((resolve) => {
     canvas.toBlob((blob) => {
       resolve(blob);
-    }, 'image/jpeg', 1.0);
+    }, 'image/jpeg', 1.0); // Maximum quality
   });
 }
