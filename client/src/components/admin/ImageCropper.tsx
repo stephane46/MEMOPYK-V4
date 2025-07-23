@@ -215,52 +215,45 @@ export const ImageCropper: React.FC<ImageCropperProps> = ({
       // Calculate the displayed image dimensions in the preview at current zoom
       const displayScale = cropSettings.zoom / 100;
       
-      // FIXED SIZE EXTRACTION: Use reasonable extraction dimensions for quality
-      // Problem: Previous scale calculations resulted in extracting areas larger than the original image
-      // Solution: Use fixed, sensible extraction dimensions that provide good quality
+      // SIMPLE APPROACH: Create a high-resolution preview and crop from it
+      // Instead of complex coordinate calculations, draw the image as it appears 
+      // in the preview at a much higher resolution, then crop directly
       
-      // For a 300×200 output, extract a proportionally larger area for good quality
-      // Extract about 3x the output size to maintain detail during downsampling
-      const extractionMultiplier = 3;
-      const fixedExtractW = targetWidth * extractionMultiplier;   // 300 * 3 = 900 pixels
-      const fixedExtractH = targetHeight * extractionMultiplier;  // 200 * 3 = 600 pixels
+      // Create a high-resolution version of what's shown in the preview
+      const hiResScale = 4; // 4x resolution for quality
+      const hiResPreviewW = previewWidth * hiResScale;   // 600 * 4 = 2400
+      const hiResPreviewH = previewHeight * hiResScale;  // 400 * 4 = 1600
       
-      // Calculate the position mapping based on crop frame center
-      const cropCenterX = cropFrameX + targetWidth / 2;   // 150 + 150 = 300
-      const cropCenterY = cropFrameY + targetHeight / 2;  // 100 + 100 = 200
+      // Create temporary high-res canvas 
+      const hiResCanvas = document.createElement('canvas');
+      hiResCanvas.width = hiResPreviewW;
+      hiResCanvas.height = hiResPreviewH;
+      const hiResCtx = hiResCanvas.getContext('2d');
       
-      // Map crop center to original image coordinates
-      // Account for zoom and positioning
-      const imageAspect = img.naturalWidth / img.naturalHeight;
-      const containerAspect = previewWidth / previewHeight;
+      if (!hiResCtx) throw new Error('Could not get hi-res canvas context');
       
-      // Calculate displayed image dimensions  
-      let displayedImageW, displayedImageH;
-      if (imageAspect > containerAspect) {
-        displayedImageH = previewHeight;
-        displayedImageW = displayedImageH * imageAspect;
-      } else {
-        displayedImageW = previewWidth;
-        displayedImageH = displayedImageW / imageAspect;
-      }
+      // Draw the image exactly as it appears in the preview, but at high resolution
+      const hiResImageX = cropSettings.x * hiResScale;
+      const hiResImageY = cropSettings.y * hiResScale;
+      const hiResImageW = (previewWidth * displayScale) * hiResScale;
+      const hiResImageH = (previewHeight * displayScale) * hiResScale;
       
-      // Apply zoom
-      const zoomedImageW = displayedImageW * displayScale;
-      const zoomedImageH = displayedImageH * displayScale;
+      hiResCtx.drawImage(
+        img,
+        0, 0, img.naturalWidth, img.naturalHeight,  // source: full original image
+        hiResImageX, hiResImageY, hiResImageW, hiResImageH  // destination: scaled preview position
+      );
       
-      // Map crop center relative to zoomed image
-      const relativeX = (cropCenterX - cropSettings.x) / zoomedImageW;
-      const relativeY = (cropCenterY - cropSettings.y) / zoomedImageH;
+      // Now crop from the high-res preview at the exact crop frame location
+      const hiResCropX = cropFrameX * hiResScale;
+      const hiResCropY = cropFrameY * hiResScale;
+      const hiResCropW = targetWidth * hiResScale;
+      const hiResCropH = targetHeight * hiResScale;
       
-      // Map to original image coordinates
-      const originalCenterX = relativeX * img.naturalWidth;
-      const originalCenterY = relativeY * img.naturalHeight;
-      
-      // Center the fixed extraction area around this point
-      const clampedStartX = Math.max(0, Math.min(originalCenterX - fixedExtractW/2, img.naturalWidth - fixedExtractW));
-      const clampedStartY = Math.max(0, Math.min(originalCenterY - fixedExtractH/2, img.naturalHeight - fixedExtractH));
-      const clampedEndX = clampedStartX + fixedExtractW;
-      const clampedEndY = clampedStartY + fixedExtractH;
+      const finalSourceX = hiResCropX;
+      const finalSourceY = hiResCropY;
+      const finalSourceW = hiResCropW;
+      const finalSourceH = hiResCropH;
       
       // Map to original image coordinates
       // VERIFICATION: Check if we're using correct image dimensions
@@ -273,23 +266,18 @@ export const ImageCropper: React.FC<ImageCropperProps> = ({
         cropFrame: { x: cropFrameX, y: cropFrameY, w: targetWidth, h: targetHeight }
       });
       
-      const finalSourceX = clampedStartX;
-      const finalSourceY = clampedStartY;
-      const finalSourceW = fixedExtractW;
-      const finalSourceH = fixedExtractH;
+      // Source is now the high-res preview canvas, not the original image
       
       const correctDebug = {
-        transform: 'fixed-size-extraction-v9',
+        transform: 'high-res-preview-v10',
         preview: { w: previewWidth, h: previewHeight },
         cropFrame: { x: cropFrameX, y: cropFrameY, w: targetWidth, h: targetHeight },
-        cropCenter: { x: cropCenterX, y: cropCenterY },
         cropSettings: cropSettings,
         original: { w: img.naturalWidth, h: img.naturalHeight },
-        extraction: { multiplier: extractionMultiplier, w: fixedExtractW, h: fixedExtractH },
-        displayed: { w: displayedImageW, h: displayedImageH },
-        zoomed: { w: zoomedImageW, h: zoomedImageH },
-        relative: { x: relativeX, y: relativeY },
-        originalCenter: { x: originalCenterX, y: originalCenterY },
+        hiResScale: hiResScale,
+        hiResPreview: { w: hiResPreviewW, h: hiResPreviewH },
+        hiResImage: { x: hiResImageX, y: hiResImageY, w: hiResImageW, h: hiResImageH },
+        hiResCrop: { x: hiResCropX, y: hiResCropY, w: hiResCropW, h: hiResCropH },
         source: { x: finalSourceX, y: finalSourceY, w: finalSourceW, h: finalSourceH },
         destination: { x: 0, y: 0, w: targetWidth, h: targetHeight }
       };
@@ -305,9 +293,9 @@ export const ImageCropper: React.FC<ImageCropperProps> = ({
       ctx.fillStyle = '#FFFFFF';
       ctx.fillRect(0, 0, targetWidth, targetHeight);
 
-      // Draw from original high-resolution image
+      // Draw from the high-resolution preview canvas
       ctx.drawImage(
-        img,
+        hiResCanvas,
         finalSourceX, finalSourceY, finalSourceW, finalSourceH,
         0, 0, targetWidth, targetHeight
       );
