@@ -210,6 +210,22 @@ export function VideoOverlay({ videoUrl, title, width, height, orientation, onCl
           onPlay={handlePlay}
           onPause={handlePause}
           onLoadedMetadata={handleLoadedMetadata}
+          onError={(e) => {
+            console.error(`❌ VIDEO OVERLAY ERROR:`);
+            console.error(`   - Video URL: "${videoUrl}"`);
+            console.error(`   - Error event:`, e);
+            console.error(`   - Error details:`, e.currentTarget.error);
+            console.error(`   - Network state:`, e.currentTarget.networkState);
+            console.error(`   - Ready state:`, e.currentTarget.readyState);
+          }}
+          onLoadStart={() => {
+            console.log(`🎬 VIDEO OVERLAY LOAD START:`);
+            console.log(`   - Video URL: "${videoUrl}"`);
+            console.log(`   - Title: "${title}"`);
+          }}
+          onCanPlay={() => {
+            console.log(`✅ VIDEO OVERLAY CAN PLAY: ${videoUrl}`);
+          }}
           preload="metadata"
           playsInline
         />

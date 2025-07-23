@@ -232,7 +232,18 @@ export default function GallerySection() {
                         <div className="absolute inset-0 flex items-center justify-center">
                           <button
                             onClick={() => {
+                              console.log(`🎬 GALLERY VIDEO CLICK DEBUG:`);
+                              console.log(`   - Item ID: ${item.id}`);
+                              console.log(`   - Has Video: ${hasVideo}`);
+                              console.log(`   - Preview URL: "${previewUrl}"`);
+                              console.log(`   - Media Type: ${mediaType}`);
+                              console.log(`   - Video Width: ${item.videoWidth}`);
+                              console.log(`   - Video Height: ${item.videoHeight}`);
+                              console.log(`   - Video Orientation: ${item.videoOrientation}`);
+                              console.log(`   - Full item data:`, item);
+                              
                               if (previewUrl) {
+                                console.log(`✅ Setting preview item with URL: ${previewUrl}`);
                                 setPreviewItem({ 
                                   type: mediaType, 
                                   url: previewUrl, 
@@ -243,6 +254,8 @@ export default function GallerySection() {
                                   orientation: item.videoOrientation
                                 });
                                 trackVideoView(`gallery-${item.id}`, 0, false);
+                              } else {
+                                console.error(`❌ No preview URL available for item ${item.id}`);
                               }
                             }}
                             className="bg-orange-500 hover:bg-orange-600 text-white rounded-full p-4 shadow-2xl transform hover:scale-110 transition-all duration-300"
