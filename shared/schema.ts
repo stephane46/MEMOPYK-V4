@@ -49,12 +49,12 @@ export const galleryItems = pgTable("gallery_items", {
   // Gallery card content fields
   sourceEn: text("source_en"), // "80 photos & 10 videos" - top overlay text
   sourceFr: text("source_fr"), // "80 photos et 10 vidéos" - top overlay text
-  durationEn: text("duration_en"), // "2 minutes" - duration with film icon
-  durationFr: text("duration_fr"), // "2 minutes" - duration with film icon
-  situationEn: text("situation_en"), // "The Client is a wife..." - client description
-  situationFr: text("situation_fr"), // "Le client est une épouse..." - client description
-  storyEn: text("story_en"), // "This film shows..." - story description
-  storyFr: text("story_fr"), // "Ce film montre..." - story description
+  durationEn: text("duration_en"), // "2 minutes" - duration with film icon (up to 5 lines)
+  durationFr: text("duration_fr"), // "2 minutes" - duration with film icon (up to 5 lines)
+  situationEn: text("situation_en"), // "The Client is a wife..." - client description (up to 5 lines)
+  situationFr: text("situation_fr"), // "Le client est une épouse..." - client description (up to 5 lines)
+  storyEn: text("story_en"), // "This film shows..." - story description (up to 5 lines)
+  storyFr: text("story_fr"), // "Ce film montre..." - story description (up to 5 lines)
   
   // Media fields
   videoUrlEn: text("video_url_en"),

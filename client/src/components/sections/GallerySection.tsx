@@ -6,13 +6,21 @@ import { Button } from "@/components/ui/button";
 import { VideoOverlay } from "@/components/gallery/VideoOverlay";
 import { Badge } from "@/components/ui/badge";
 import { Play, Eye, Star, ArrowRight, Image as ImageIcon } from "lucide-react";
-// We transform the API data ourselves, so we'll define the type locally
+// Gallery item interface matching the new schema
 interface GalleryItem {
   id: string | number;
   titleEn: string;
   titleFr: string;
-  descriptionEn: string;
-  descriptionFr: string;
+  priceEn: string;
+  priceFr: string;
+  sourceEn: string; // "80 photos & 10 videos" - top overlay
+  sourceFr: string; // "80 photos et 10 vidéos" - top overlay
+  durationEn: string; // "2 minutes" - duration with film icon (up to 5 lines)
+  durationFr: string; // "2 minutes" - duration with film icon (up to 5 lines)
+  situationEn: string; // "The Client is a wife..." - client description (up to 5 lines)
+  situationFr: string; // "Le client est une épouse..." - client description (up to 5 lines)
+  storyEn: string; // "This film shows..." - story description (up to 5 lines)
+  storyFr: string; // "Ce film montre..." - story description (up to 5 lines)
   videoUrlEn: string;
   videoUrlFr: string;
   videoWidth: number;
@@ -20,11 +28,7 @@ interface GalleryItem {
   videoOrientation: string;
   imageUrlEn: string;
   imageUrlFr: string;
-  staticImageUrl: string | null; // This is the key field for static images
-  altTextEn: string;
-  altTextFr: string;
-  priceEn: string;
-  priceFr: string;
+  staticImageUrl: string | null; // 300x200 cropped thumbnail
   orderIndex: number;
   isActive: boolean;
 }
@@ -55,8 +59,16 @@ export default function GallerySection() {
         id: item.id,
         titleEn: item.title_en,
         titleFr: item.title_fr,
-        descriptionEn: item.description_en,
-        descriptionFr: item.description_fr,
+        priceEn: item.price_en,
+        priceFr: item.price_fr,
+        sourceEn: item.source_en,
+        sourceFr: item.source_fr,
+        durationEn: item.duration_en,
+        durationFr: item.duration_fr,
+        situationEn: item.situation_en,
+        situationFr: item.situation_fr,
+        storyEn: item.story_en,
+        storyFr: item.story_fr,
         videoUrlEn: item.video_url_en,
         videoUrlFr: item.video_url_fr,
         videoWidth: item.video_width,
@@ -64,11 +76,7 @@ export default function GallerySection() {
         videoOrientation: item.video_orientation,
         imageUrlEn: item.image_url_en,
         imageUrlFr: item.image_url_fr,
-        staticImageUrl: item.static_image_url, // This is the key field for static images
-        altTextEn: item.alt_text_en,
-        altTextFr: item.alt_text_fr,
-        priceEn: item.price_en,
-        priceFr: item.price_fr,
+        staticImageUrl: item.static_image_url,
         orderIndex: item.order_index,
         isActive: item.is_active
       }))
@@ -125,12 +133,24 @@ export default function GallerySection() {
     return language === 'fr-FR' ? item.titleFr : item.titleEn;
   };
 
-  const getItemDescription = (item: GalleryItem) => {
-    return language === 'fr-FR' ? item.descriptionFr : item.descriptionEn;
-  };
-
   const getItemPrice = (item: GalleryItem) => {
     return language === 'fr-FR' ? item.priceFr : item.priceEn;
+  };
+
+  const getItemSource = (item: GalleryItem) => {
+    return language === 'fr-FR' ? item.sourceFr : item.sourceEn;
+  };
+
+  const getItemDuration = (item: GalleryItem) => {
+    return language === 'fr-FR' ? item.durationFr : item.durationEn;
+  };
+
+  const getItemSituation = (item: GalleryItem) => {
+    return language === 'fr-FR' ? item.situationFr : item.situationEn;
+  };
+
+  const getItemStory = (item: GalleryItem) => {
+    return language === 'fr-FR' ? item.storyFr : item.storyEn;
   };
 
   if (isLoading) {
@@ -184,20 +204,28 @@ export default function GallerySection() {
             return (
               <div 
                 key={item.id} 
-                className="group bg-white dark:bg-gray-800 rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 overflow-hidden transform hover:-translate-y-2"
+                className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 overflow-hidden"
               >
-                {/* Media Preview - Use correct aspect ratio for static images */}
-                <div className={`${item.staticImageUrl ? 'aspect-[3/2]' : 'aspect-video'} bg-gray-100 dark:bg-gray-700 relative overflow-hidden`}>
+                {/* Image with Overlays - Always 3:2 aspect ratio */}
+                <div className="aspect-[3/2] bg-gray-100 dark:bg-gray-700 relative overflow-hidden">
                   {thumbnailUrl ? (
                     <div className="w-full h-full relative">
-                      {/* Always show image thumbnail (static or regular) */}
+                      {/* Main Image */}
                       <img
                         src={thumbnailUrl}
-                        alt={language === 'fr-FR' ? item.altTextFr : item.altTextEn}
+                        alt={getItemTitle(item)}
                         className="w-full h-full object-cover"
                       />
                       
-                      {/* Orange Pulsing Play Button - Always Visible for Videos */}
+                      {/* Top-left Source Overlay (1) */}
+                      {getItemSource(item) && (
+                        <div className="absolute top-4 left-4 bg-black/80 text-white px-3 py-2 rounded-lg text-sm">
+                          <div className="font-medium">{getItemSource(item)}</div>
+                          <div className="text-xs opacity-90">provided by Client</div>
+                        </div>
+                      )}
+                      
+                      {/* Orange Play Button - Center (for videos only) */}
                       {hasVideo && (
                         <div className="absolute inset-0 flex items-center justify-center">
                           <button
@@ -212,44 +240,22 @@ export default function GallerySection() {
                                   height: item.videoHeight,
                                   orientation: item.videoOrientation
                                 });
-                                // Track gallery video preview clicks for analytics
                                 trackVideoView(`gallery-${item.id}`, 0, false);
                               }
                             }}
-                            className="bg-memopyk-orange hover:bg-memopyk-orange/80 text-white rounded-full p-6 shadow-2xl animate-pulse-elegant transform hover:scale-110 transition-all duration-300 border-4 border-white/20 backdrop-blur-sm"
+                            className="bg-orange-500 hover:bg-orange-600 text-white rounded-full p-4 shadow-2xl transform hover:scale-110 transition-all duration-300"
                           >
-                            <Play className="h-8 w-8 ml-1" />
+                            <Play className="h-6 w-6 ml-1" />
                           </button>
                         </div>
                       )}
                       
-                      {/* Hover Overlay for Images (when no video available) */}
-                      {!hasVideo && (
-                        <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/0 to-black/20 opacity-0 group-hover:opacity-100 transition-all duration-300">
-                          <div className="absolute inset-0 flex items-center justify-center">
-                            <Button
-                              onClick={() => {
-                                if (previewUrl) {
-                                  setPreviewItem({ 
-                                    type: mediaType, 
-                                    url: previewUrl, 
-                                    title: getItemTitle(item),
-                                    itemId: parseInt(item.id),
-                                    width: item.videoWidth,
-                                    height: item.videoHeight,
-                                    orientation: item.videoOrientation
-                                  });
-                                }
-                              }}
-                              className="bg-white/90 hover:bg-white text-gray-900 rounded-full p-4 transform scale-90 group-hover:scale-100 transition-all duration-300"
-                            >
-                              <Eye className="h-6 w-6" />
-                            </Button>
-                          </div>
+                      {/* Bottom-right Price Tag (2) */}
+                      {getItemPrice(item) && (
+                        <div className="absolute bottom-4 right-4 bg-orange-500 text-white px-3 py-1 rounded-full text-sm font-medium">
+                          {getItemPrice(item)}
                         </div>
                       )}
-                      
-
                     </div>
                   ) : (
                     <div className="w-full h-full flex items-center justify-center text-gray-400">
@@ -258,48 +264,48 @@ export default function GallerySection() {
                   )}
                 </div>
 
-
-
-                {/* Content */}
-                <div className="p-6">
-                  <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-2 group-hover:text-orange-500 transition-colors">
+                {/* Content Below Image */}
+                <div className="p-6 space-y-4">
+                  {/* Title (3) */}
+                  <h3 className="text-xl font-semibold text-gray-900 dark:text-white">
                     {getItemTitle(item)}
                   </h3>
-                  <p className="text-gray-600 dark:text-gray-300 text-sm mb-4 line-clamp-2">
-                    {getItemDescription(item)}
-                  </p>
                   
-                  <div className="flex items-center justify-between">
-                    <div className="text-lg font-bold text-orange-500">
-                      <span className="text-sm text-gray-500 font-normal">{t.startingFrom}</span><br/>
-                      {getItemPrice(item)}
+                  {/* Duration with Film Icon (4) */}
+                  {getItemDuration(item) && (
+                    <div className="flex items-start gap-2 text-gray-600 dark:text-gray-300">
+                      <div className="w-5 h-5 bg-orange-500 rounded flex items-center justify-center flex-shrink-0 mt-0.5">
+                        <div className="w-2 h-2 bg-white rounded-sm"></div>
+                      </div>
+                      <p className="text-sm leading-relaxed max-h-20 overflow-hidden">
+                        {getItemDuration(item)}
+                      </p>
                     </div>
-                    <Button
-                      onClick={() => {
-                        if (previewUrl) {
-                          setPreviewItem({ 
-                            type: mediaType, 
-                            url: previewUrl, 
-                            title: getItemTitle(item),
-                            itemId: parseInt(item.id),
-                            width: item.videoWidth,
-                            height: item.videoHeight,
-                            orientation: item.videoOrientation
-                          });
-                          // Track gallery video preview clicks for analytics
-                          if (mediaType === 'video') {
-                            trackVideoView(`gallery-${item.id}`, 0, false);
-                          }
-                        }
-                      }}
-                      variant="outline"
-                      size="sm"
-                      className="group-hover:bg-orange-500 group-hover:text-white group-hover:border-orange-500 transition-all"
-                    >
-                      {t.preview}
-                      <ArrowRight className="h-4 w-4 ml-1 group-hover:translate-x-1 transition-transform" />
-                    </Button>
-                  </div>
+                  )}
+                  
+                  {/* Situation with Client Icon (5) */}
+                  {getItemSituation(item) && (
+                    <div className="flex items-start gap-2 text-gray-600 dark:text-gray-300">
+                      <div className="w-5 h-5 bg-orange-500 rounded flex items-center justify-center flex-shrink-0 mt-0.5">
+                        <div className="w-2.5 h-2.5 bg-white rounded-full"></div>
+                      </div>
+                      <p className="text-sm leading-relaxed max-h-20 overflow-hidden">
+                        {getItemSituation(item)}
+                      </p>
+                    </div>
+                  )}
+                  
+                  {/* Story with Film Icon (6) */}
+                  {getItemStory(item) && (
+                    <div className="flex items-start gap-2 text-gray-600 dark:text-gray-300">
+                      <div className="w-5 h-5 bg-orange-500 rounded flex items-center justify-center flex-shrink-0 mt-0.5">
+                        <div className="w-2 h-2 bg-white rounded-sm"></div>
+                      </div>
+                      <p className="text-sm leading-relaxed max-h-20 overflow-hidden">
+                        {getItemStory(item)}
+                      </p>
+                    </div>
+                  )}
                 </div>
               </div>
             );
