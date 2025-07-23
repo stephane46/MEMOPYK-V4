@@ -66,7 +66,10 @@ app.use((req, res, next) => {
 });
 
 (async () => {
-  // 1) Frontend handling
+  // 1) Register API routes FIRST - before any static file handling
+  registerRoutes(app);
+
+  // 2) Frontend handling
   if (process.env.NODE_ENV !== "production") {
     // — Dev mode: spawn Vite and proxy to it
     const viteProc = spawn("npx", ["vite"], {
@@ -122,9 +125,6 @@ app.use((req, res, next) => {
     
     console.log("📦 Serving static files from", clientDist);
   }
-
-  // 2) Register API routes
-  registerRoutes(app);
 
   // 3) Error handler
   app.use(

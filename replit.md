@@ -507,7 +507,16 @@ The application follows a modern full-stack architecture with clear separation o
 - [ ] **Phase 10.3**: Performance monitoring and error tracking
 - [ ] **Phase 10.4**: User acceptance testing and launch
 
-## Current Status: Phase 8.2.8 - Gallery Video Auto-Caching COMPLETED
+## Current Status: Phase 8.2.8 - DEPLOYMENT ROUTE ISSUE FIXED
+
+**CRITICAL FIX APPLIED (July 23, 2025):**
+✅ **Root Cause Identified**: API routes were being registered AFTER static file serving in production
+✅ **Issue**: All `/api/*` requests caught by SPA fallback route, returning HTML instead of JSON  
+✅ **Solution**: Moved `registerRoutes(app)` BEFORE static file handling in server/index.ts
+✅ **Impact**: Hero videos and gallery will now work correctly in deployed version
+✅ **Build Ready**: Production build completed successfully with route fix
+
+## Previous Status: Phase 8.2.8 - Gallery Video Auto-Caching COMPLETED
 
 **Phase 8.2.8 Automatic Gallery Video Caching System - COMPLETED (July 23, 2025):**
 ✅ **Gallery Video Auto-Preloading**: Server automatically downloads gallery videos during startup
