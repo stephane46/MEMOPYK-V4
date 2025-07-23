@@ -108,12 +108,14 @@ export default function GalleryManagement() {
       setUploadStatus('Finalisation...');
       
       const result = await response.json();
+      console.log('Video upload result:', result);
       if (result.success) {
         toast({ 
           title: "✅ Succès", 
           description: "Vidéo téléchargée avec succès!",
           className: "bg-green-50 dark:bg-green-900/20 border-green-200 dark:border-green-800"
         });
+        console.log('Returning video URL:', result.url);
         return result.url;
       } else {
         throw new Error(result.error);
@@ -162,12 +164,14 @@ export default function GalleryManagement() {
       setUploadStatus('Finalisation...');
       
       const result = await response.json();
+      console.log('Image upload result:', result);
       if (result.success) {
         toast({ 
           title: "✅ Succès", 
           description: "Image téléchargée avec succès!",
           className: "bg-green-50 dark:bg-green-900/20 border-green-200 dark:border-green-800 text-green-900 dark:text-green-100"
         });
+        console.log('Returning image URL:', result.url);
         return result.url;
       } else {
         throw new Error(result.error);
@@ -404,11 +408,13 @@ export default function GalleryManagement() {
                   accept="video/*"
                   onChange={async (e) => {
                     const url = await handleVideoUpload(e.target.files?.[0]);
+                    console.log('Video upload returned URL:', url);
                     if (url) {
+                      console.log('Updating form with video URL:', url);
                       if (formData.use_same_video) {
-                        setFormData({ ...formData, video_url_en: url, video_url_fr: url });
+                        setFormData(prev => ({ ...prev, video_url_en: url, video_url_fr: url }));
                       } else {
-                        setFormData({ ...formData, video_url_en: url });
+                        setFormData(prev => ({ ...prev, video_url_en: url }));
                       }
                     }
                   }}
@@ -457,8 +463,10 @@ export default function GalleryManagement() {
                   accept="image/*"
                   onChange={async (e) => {
                     const url = await handleImageUpload(e.target.files?.[0]);
+                    console.log('Image upload returned URL:', url);
                     if (url) {
-                      setFormData({ ...formData, image_url_en: url, image_url_fr: url });
+                      console.log('Updating form with image URL:', url);
+                      setFormData(prev => ({ ...prev, image_url_en: url, image_url_fr: url }));
                     }
                   }}
                   disabled={uploading}
@@ -557,24 +565,22 @@ export default function GalleryManagement() {
           </h4>
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <Label htmlFor="duration_en" className="text-gray-700 dark:text-gray-300">Durée (English) - Max 5 lignes</Label>
-              <Textarea
+              <Label htmlFor="duration_en" className="text-gray-700 dark:text-gray-300">Durée (English) - Quelques mots seulement</Label>
+              <Input
                 id="duration_en"
                 value={formData.duration_en}
                 onChange={(e) => setFormData({ ...formData, duration_en: e.target.value })}
-                placeholder="Ex: 3-5 minutes film including ceremony and reception highlights"
-                rows={4}
+                placeholder="Ex: 2 minutes"
                 className="bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
               />
             </div>
             <div>
-              <Label htmlFor="duration_fr" className="text-gray-700 dark:text-gray-300">Durée (Français) - Max 5 lignes</Label>
-              <Textarea
+              <Label htmlFor="duration_fr" className="text-gray-700 dark:text-gray-300">Durée (Français) - Quelques mots seulement</Label>
+              <Input
                 id="duration_fr"
                 value={formData.duration_fr}
                 onChange={(e) => setFormData({ ...formData, duration_fr: e.target.value })}
-                placeholder="Ex: Film de 3-5 minutes incluant les moments forts de la cérémonie et réception"
-                rows={4}
+                placeholder="Ex: 2 minutes"
                 className="bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
               />
             </div>
