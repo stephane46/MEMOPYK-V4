@@ -173,7 +173,12 @@ export default function GallerySection() {
           {galleryItems.map((item, index) => {
             const hasVideo = getItemUrl(item, 'video');
             const hasImage = getItemUrl(item, 'image');
-            const displayUrl = hasVideo || hasImage;
+            
+            // For thumbnail display: prioritize static image, then regular image, then video thumbnail
+            const thumbnailUrl = hasImage; // getItemUrl('image') already prioritizes static images
+            
+            // For preview modals: use video if available, otherwise image
+            const previewUrl = hasVideo || hasImage;
             const mediaType = hasVideo ? 'video' : 'image';
             
             return (
@@ -183,32 +188,24 @@ export default function GallerySection() {
               >
                 {/* Media Preview */}
                 <div className="aspect-video bg-gray-100 dark:bg-gray-700 relative overflow-hidden">
-                  {displayUrl ? (
+                  {thumbnailUrl ? (
                     <div className="w-full h-full relative">
-                      {hasVideo ? (
-                        <video
-                          src={hasVideo}
-                          className="w-full h-full object-cover"
-                          muted
-                          preload="metadata"
-                        />
-                      ) : hasImage ? (
-                        <img
-                          src={hasImage}
-                          alt={language === 'fr-FR' ? item.altTextFr : item.altTextEn}
-                          className="w-full h-full object-cover"
-                        />
-                      ) : null}
+                      {/* Always show image thumbnail (static or regular) */}
+                      <img
+                        src={thumbnailUrl}
+                        alt={language === 'fr-FR' ? item.altTextFr : item.altTextEn}
+                        className="w-full h-full object-cover"
+                      />
                       
                       {/* Orange Pulsing Play Button - Always Visible for Videos */}
                       {hasVideo && (
                         <div className="absolute inset-0 flex items-center justify-center">
                           <button
                             onClick={() => {
-                              if (displayUrl) {
+                              if (previewUrl) {
                                 setPreviewItem({ 
                                   type: mediaType, 
-                                  url: displayUrl, 
+                                  url: previewUrl, 
                                   title: getItemTitle(item),
                                   itemId: parseInt(item.id),
                                   width: item.videoWidth,
@@ -226,16 +223,16 @@ export default function GallerySection() {
                         </div>
                       )}
                       
-                      {/* Hover Overlay for Images */}
-                      {hasImage && !hasVideo && (
+                      {/* Hover Overlay for Images (when no video available) */}
+                      {!hasVideo && (
                         <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/0 to-black/20 opacity-0 group-hover:opacity-100 transition-all duration-300">
                           <div className="absolute inset-0 flex items-center justify-center">
                             <Button
                               onClick={() => {
-                                if (displayUrl) {
+                                if (previewUrl) {
                                   setPreviewItem({ 
                                     type: mediaType, 
-                                    url: displayUrl, 
+                                    url: previewUrl, 
                                     title: getItemTitle(item),
                                     itemId: parseInt(item.id),
                                     width: item.videoWidth,
@@ -277,10 +274,10 @@ export default function GallerySection() {
                     </div>
                     <Button
                       onClick={() => {
-                        if (displayUrl) {
+                        if (previewUrl) {
                           setPreviewItem({ 
                             type: mediaType, 
-                            url: displayUrl, 
+                            url: previewUrl, 
                             title: getItemTitle(item),
                             itemId: parseInt(item.id),
                             width: item.videoWidth,
