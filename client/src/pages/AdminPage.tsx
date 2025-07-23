@@ -137,7 +137,6 @@ export default function AdminPage() {
     { id: 'contacts', label: 'Contacts', icon: Users },
     { id: 'legal-docs', label: 'Documents Légaux', icon: FileText },
     { id: 'analytics', label: 'Analytiques', icon: BarChart3 },
-    { id: 'video-cache', label: 'Cache Vidéo', icon: HardDrive },
     { id: 'tests', label: 'Tests', icon: TestTube },
     { id: 'deployment', label: 'Déploiement', icon: Rocket },
   ];
@@ -416,6 +415,67 @@ export default function AdminPage() {
                   </button>
                 </nav>
               </div>
+
+              {/* Integrated Cache Dashboard for Hero Videos */}
+              {heroTab === 'videos' && (
+                <Card className="mb-6 bg-gray-50 dark:bg-gray-800 border-gray-200 dark:border-gray-700">
+                  <CardContent className="p-4">
+                    <div className="flex items-center justify-between mb-3">
+                      <h4 className="font-semibold text-gray-900 dark:text-white flex items-center">
+                        <HardDrive className="h-4 w-4 mr-2" />
+                        Cache Performance Hero Videos
+                      </h4>
+                      <div className="flex space-x-2">
+                        <Button
+                          size="sm"
+                          onClick={() => refreshCacheMutation.mutate()}
+                          disabled={refreshCacheMutation.isPending}
+                          className="bg-blue-500 hover:bg-blue-600"
+                        >
+                          <RefreshCw className="h-3 w-3 mr-1" />
+                          Cache All
+                        </Button>
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          onClick={() => clearCacheMutation.mutate()}
+                          disabled={clearCacheMutation.isPending}
+                        >
+                          Clear Cache
+                        </Button>
+                      </div>
+                    </div>
+                    
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-3 text-sm">
+                      {/* Hero Videos Cache Status */}
+                      {['VideoHero1.mp4', 'VideoHero2.mp4', 'VideoHero3.mp4'].map(filename => {
+                        const isCached = cacheStatus[filename];
+                        return (
+                          <div key={filename} className={`flex items-center justify-between p-2 rounded border ${
+                            isCached ? 'bg-green-50 border-green-200 dark:bg-green-900/20 dark:border-green-800' : 'bg-orange-50 border-orange-200 dark:bg-orange-900/20 dark:border-orange-800'
+                          }`}>
+                            <span className="font-mono text-xs truncate mr-2">{filename.replace('.mp4', '')}</span>
+                            <span className={`px-2 py-1 rounded text-xs font-medium ${
+                              isCached ? 'bg-green-100 text-green-800 dark:bg-green-800 dark:text-green-100' : 'bg-orange-100 text-orange-800 dark:bg-orange-800 dark:text-orange-100'
+                            }`}>
+                              {isCached ? '✅ Cached (~50ms)' : '⏳ Not Cached (~1500ms)'}
+                            </span>
+                          </div>
+                        );
+                      })}
+                    </div>
+                    
+                    <div className="mt-3 text-xs text-gray-500 flex justify-between">
+                      <span>
+                        {cacheStats && 'fileCount' in cacheStats && 'totalSize' in cacheStats 
+                          ? `${cacheStats.fileCount || 0} files • ${(((cacheStats.totalSize as number) || 0) / 1024 / 1024).toFixed(1)}MB` 
+                          : 'Loading stats...'}
+                      </span>
+                      <span>Cache auto-expires after 24h</span>
+                    </div>
+                  </CardContent>
+                </Card>
+              )}
 
               {/* Videos Tab */}
               {heroTab === 'videos' && (
@@ -1139,90 +1199,7 @@ export default function AdminPage() {
             </div>
           )}
 
-          {/* Video Cache Management */}
-          {activeSection === 'video-cache' && (
-            <div className="space-y-6">
-              <div className="mb-6">
-                <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Cache Vidéo</h2>
-                <p className="text-gray-600 dark:text-gray-400">Gestion du cache vidéo local pour une performance optimale</p>
-              </div>
-              
-              <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <HardDrive className="h-5 w-5" />
-                    Video Cache Status
-                  </CardTitle>
-                  <CardDescription>
-                    Manage local video cache for optimal performance
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  {cacheLoading ? (
-                    <div className="text-center py-8">Loading cache stats...</div>
-                  ) : (
-                    <div className="space-y-6">
-                      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-                        <Card>
-                          <CardContent className="p-4">
-                            <div className="text-2xl font-bold">{cacheStats?.fileCount || 0}</div>
-                            <div className="text-sm text-gray-600 dark:text-gray-400">Cached Files</div>
-                          </CardContent>
-                        </Card>
-                        <Card>
-                          <CardContent className="p-4">
-                            <div className="text-2xl font-bold">{cacheStats?.sizeMB?.toFixed(1) || 0}MB</div>
-                            <div className="text-sm text-gray-600 dark:text-gray-400">Cache Size</div>
-                          </CardContent>
-                        </Card>
-                        <Card>
-                          <CardContent className="p-4">
-                            <div className="text-2xl font-bold">0/12</div>
-                            <div className="text-sm text-gray-600 dark:text-gray-400">Videos Cached</div>
-                          </CardContent>
-                        </Card>
-                        <Card>
-                          <CardContent className="p-4">
-                            <div className="text-2xl font-bold">
-                              {cacheStats?.sizeMB && cacheStats?.maxCacheSizeMB 
-                                ? Math.round((cacheStats.sizeMB / cacheStats.maxCacheSizeMB) * 100)
-                                : 0}%
-                            </div>
-                            <div className="text-sm text-gray-600 dark:text-gray-400">Cache Coverage</div>
-                          </CardContent>
-                        </Card>
-                      </div>
 
-                      <div className="flex space-x-4">
-                        <Button
-                          onClick={() => refreshCacheMutation.mutate()}
-                          disabled={refreshCacheMutation.isPending}
-                          className="bg-blue-500 hover:bg-blue-600"
-                        >
-                          <RefreshCw className="h-4 w-4 mr-2" />
-                          Cache All Videos
-                        </Button>
-                        <Button
-                          variant="outline"
-                          onClick={() => clearCacheMutation.mutate()}
-                          disabled={clearCacheMutation.isPending}
-                        >
-                          Clear Cache
-                        </Button>
-                      </div>
-
-                      {cacheStats && (
-                        <div className="text-sm text-gray-600 dark:text-gray-400 space-y-1">
-                          <div>• Cache limit: {cacheStats.maxCacheSizeMB}MB</div>
-                          <div>• Cache automatically cleans up expired files after {cacheStats.maxCacheAgeHours} hours</div>
-                        </div>
-                      )}
-                    </div>
-                  )}
-                </CardContent>
-              </Card>
-            </div>
-          )}
 
           {/* Other sections - placeholder */}
           {activeSection === 'analytics' && (
