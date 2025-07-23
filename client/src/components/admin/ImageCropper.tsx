@@ -215,48 +215,49 @@ export const ImageCropper: React.FC<ImageCropperProps> = ({
       // Calculate the displayed image dimensions in the preview at current zoom
       const displayScale = cropSettings.zoom / 100;
       
-      // The image is scaled to fit the preview container, then zoomed
+      // Calculate how the image appears in the CSS background
+      // CSS background-size: cover behavior - image covers entire container
       const imageAspect = img.naturalWidth / img.naturalHeight;
       const containerAspect = previewWidth / previewHeight;
       
-      let displayWidth, displayHeight;
+      let cssDisplayWidth, cssDisplayHeight;
       if (imageAspect > containerAspect) {
-        // Image is wider - fit by height
-        displayHeight = previewHeight * displayScale;
-        displayWidth = displayHeight * imageAspect;
+        // Image is wider - fit by height, crop sides
+        cssDisplayHeight = previewHeight;
+        cssDisplayWidth = cssDisplayHeight * imageAspect;
       } else {
-        // Image is taller - fit by width  
-        displayWidth = previewWidth * displayScale;
-        displayHeight = displayWidth / imageAspect;
+        // Image is taller - fit by width, crop top/bottom
+        cssDisplayWidth = previewWidth;
+        cssDisplayHeight = cssDisplayWidth / imageAspect;
       }
       
-      // Calculate where the crop frame intersects with the displayed image
-      // Account for the image position offset (cropSettings.x, cropSettings.y)
-      const imageLeft = cropSettings.x;
-      const imageTop = cropSettings.y;
+      // Apply zoom scaling
+      const actualDisplayWidth = cssDisplayWidth * displayScale;
+      const actualDisplayHeight = cssDisplayHeight * displayScale;
       
-      // Calculate crop frame position relative to the displayed image
-      const relativeX = cropFrameX - imageLeft;
-      const relativeY = cropFrameY - imageTop;
+      // Calculate crop frame position relative to the zoomed/positioned image
+      const relativeX = cropFrameX - cropSettings.x;
+      const relativeY = cropFrameY - cropSettings.y;
       
       // Convert from display coordinates to original image coordinates
-      const scaleToOriginal = img.naturalWidth / displayWidth;
+      const scaleFactorX = img.naturalWidth / actualDisplayWidth;
+      const scaleFactorY = img.naturalHeight / actualDisplayHeight;
       
-      const sourceX = Math.max(0, Math.min(img.naturalWidth - 1, relativeX * scaleToOriginal));
-      const sourceY = Math.max(0, Math.min(img.naturalHeight - 1, relativeY * scaleToOriginal));
-      const sourceW = Math.min(img.naturalWidth - sourceX, targetWidth * scaleToOriginal);
-      const sourceH = Math.min(img.naturalHeight - sourceY, targetHeight * scaleToOriginal);
+      const sourceX = Math.max(0, Math.min(img.naturalWidth - targetWidth * scaleFactorX, relativeX * scaleFactorX));
+      const sourceY = Math.max(0, Math.min(img.naturalHeight - targetHeight * scaleFactorY, relativeY * scaleFactorY));
+      const sourceW = targetWidth * scaleFactorX;
+      const sourceH = targetHeight * scaleFactorY;
       
       const correctDebug = {
-        transform: 'fixed-v2',
+        transform: 'optimized-v3',
         preview: { w: previewWidth, h: previewHeight },
         cropFrame: { x: cropFrameX, y: cropFrameY, w: targetWidth, h: targetHeight },
         cropSettings: cropSettings,
         original: { w: img.naturalWidth, h: img.naturalHeight },
         imageAspect: imageAspect,
-        displayDimensions: { w: displayWidth, h: displayHeight, scale: displayScale },
+        displayDimensions: { w: actualDisplayWidth, h: actualDisplayHeight, scale: displayScale },
         relativePosition: { x: relativeX, y: relativeY },
-        scaleToOriginal: scaleToOriginal,
+        scaleFactors: { x: scaleFactorX, y: scaleFactorY },
         source: { x: sourceX, y: sourceY, w: sourceW, h: sourceH },
         destination: { x: 0, y: 0, w: targetWidth, h: targetHeight }
       };
