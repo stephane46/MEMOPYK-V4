@@ -264,48 +264,62 @@ export default function GallerySection() {
                   )}
                 </div>
 
-                {/* Content Below Image */}
-                <div className="p-6 space-y-4">
-                  {/* Title (3) */}
-                  <h3 className="text-xl font-semibold text-gray-900 dark:text-white">
-                    {getItemTitle(item)}
-                  </h3>
+                {/* Content Below Image - Fixed Height Sections for Alignment */}
+                <div className="p-6">
+                  {/* Title (3) - Fixed height */}
+                  <div className="h-8 mb-4">
+                    <h3 className="text-xl font-semibold text-gray-900 dark:text-white line-clamp-1">
+                      {getItemTitle(item)}
+                    </h3>
+                  </div>
                   
-                  {/* Duration with Film Icon (4) */}
-                  {getItemDuration(item) && (
-                    <div className="flex items-start gap-2 text-gray-600 dark:text-gray-300">
-                      <div className="w-5 h-5 bg-orange-500 rounded flex items-center justify-center flex-shrink-0 mt-0.5">
-                        <div className="w-2 h-2 bg-white rounded-sm"></div>
+                  {/* Duration with Film Icon (4) - Fixed height for 5 lines */}
+                  <div className="h-20 mb-4">
+                    {getItemDuration(item) ? (
+                      <div className="flex items-start gap-2 text-gray-600 dark:text-gray-300">
+                        <div className="w-5 h-5 bg-orange-500 rounded flex items-center justify-center flex-shrink-0 mt-0.5">
+                          <div className="w-2 h-2 bg-white rounded-sm"></div>
+                        </div>
+                        <p className="text-sm leading-relaxed line-clamp-5">
+                          {getItemDuration(item)}
+                        </p>
                       </div>
-                      <p className="text-sm leading-relaxed max-h-20 overflow-hidden">
-                        {getItemDuration(item)}
-                      </p>
-                    </div>
-                  )}
+                    ) : (
+                      <div></div>
+                    )}
+                  </div>
                   
-                  {/* Situation with Client Icon (5) */}
-                  {getItemSituation(item) && (
-                    <div className="flex items-start gap-2 text-gray-600 dark:text-gray-300">
-                      <div className="w-5 h-5 bg-orange-500 rounded flex items-center justify-center flex-shrink-0 mt-0.5">
-                        <div className="w-2.5 h-2.5 bg-white rounded-full"></div>
+                  {/* Situation with Client Icon (5) - Fixed height for 5 lines */}
+                  <div className="h-20 mb-4">
+                    {getItemSituation(item) ? (
+                      <div className="flex items-start gap-2 text-gray-600 dark:text-gray-300">
+                        <div className="w-5 h-5 bg-orange-500 rounded flex items-center justify-center flex-shrink-0 mt-0.5">
+                          <div className="w-2.5 h-2.5 bg-white rounded-full"></div>
+                        </div>
+                        <p className="text-sm leading-relaxed line-clamp-5">
+                          {getItemSituation(item)}
+                        </p>
                       </div>
-                      <p className="text-sm leading-relaxed max-h-20 overflow-hidden">
-                        {getItemSituation(item)}
-                      </p>
-                    </div>
-                  )}
+                    ) : (
+                      <div></div>
+                    )}
+                  </div>
                   
-                  {/* Story with Film Icon (6) */}
-                  {getItemStory(item) && (
-                    <div className="flex items-start gap-2 text-gray-600 dark:text-gray-300">
-                      <div className="w-5 h-5 bg-orange-500 rounded flex items-center justify-center flex-shrink-0 mt-0.5">
-                        <div className="w-2 h-2 bg-white rounded-sm"></div>
+                  {/* Story with Film Icon (6) - Fixed height for 5 lines */}
+                  <div className="h-20">
+                    {getItemStory(item) ? (
+                      <div className="flex items-start gap-2 text-gray-600 dark:text-gray-300">
+                        <div className="w-5 h-5 bg-orange-500 rounded flex items-center justify-center flex-shrink-0 mt-0.5">
+                          <div className="w-2 h-2 bg-white rounded-sm"></div>
+                        </div>
+                        <p className="text-sm leading-relaxed line-clamp-5">
+                          {getItemStory(item)}
+                        </p>
                       </div>
-                      <p className="text-sm leading-relaxed max-h-20 overflow-hidden">
-                        {getItemStory(item)}
-                      </p>
-                    </div>
-                  )}
+                    ) : (
+                      <div></div>
+                    )}
+                  </div>
                 </div>
               </div>
             );
