@@ -186,20 +186,16 @@ export default function GallerySection() {
                 key={item.id} 
                 className="group bg-white dark:bg-gray-800 rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 overflow-hidden transform hover:-translate-y-2"
               >
-                {/* Cropped Thumbnail */}
+                {/* Media Preview - Use correct aspect ratio for static images */}
                 <div className={`${item.staticImageUrl ? 'aspect-[3/2]' : 'aspect-video'} bg-gray-100 dark:bg-gray-700 relative overflow-hidden`}>
                   {thumbnailUrl ? (
                     <div className="w-full h-full relative">
+                      {/* Always show image thumbnail (static or regular) */}
                       <img
                         src={thumbnailUrl}
                         alt={language === 'fr-FR' ? item.altTextFr : item.altTextEn}
                         className="w-full h-full object-cover"
                       />
-                      {item.staticImageUrl && (
-                        <div className="absolute top-2 left-2 bg-black/70 text-white text-xs px-2 py-1 rounded">
-                          Cropped
-                        </div>
-                      )}
                       
                       {/* Orange Pulsing Play Button - Always Visible for Videos */}
                       {hasVideo && (
@@ -262,20 +258,7 @@ export default function GallerySection() {
                   )}
                 </div>
 
-                {/* Original Image - Only show if we have a static image for comparison */}
-                {item.staticImageUrl && (
-                  <div className="w-full h-[200px] bg-gray-100 dark:bg-gray-700 relative overflow-hidden border-t-2 border-gray-200">
-                    <img
-                      src={language === 'fr-FR' ? item.imageUrlFr : item.imageUrlEn}
-                      alt={`${language === 'fr-FR' ? item.altTextFr : item.altTextEn} (Original)`}
-                      className="w-full h-full object-contain bg-gray-200"
-                      style={{ maxWidth: '300px', maxHeight: '200px' }}
-                    />
-                    <div className="absolute top-2 left-2 bg-black/70 text-white text-xs px-2 py-1 rounded">
-                      Original - 300x200 Container
-                    </div>
-                  </div>
-                )}
+
 
                 {/* Content */}
                 <div className="p-6">
