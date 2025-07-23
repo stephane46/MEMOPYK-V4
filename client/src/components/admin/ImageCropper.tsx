@@ -190,8 +190,8 @@ export const ImageCropper: React.FC<ImageCropperProps> = ({
       const ctx = canvas.getContext('2d');
       if (!ctx) throw new Error('Cannot get canvas context');
 
-      canvas.width = targetWidth;
-      canvas.height = targetHeight;
+      canvas.width = 600;   // High quality 2x resolution
+      canvas.height = 400;
 
       // FIXED COORDINATE TRANSFORMATION BASED ON USER'S CROP SELECTION
       // The preview shows a 600x400 container with the image positioned/scaled via CSS
@@ -238,11 +238,15 @@ export const ImageCropper: React.FC<ImageCropperProps> = ({
       const zoomedImageW = displayedImageW / displayScale;          // At 70% zoom: 600/0.7 = 857
       const zoomedImageH = displayedImageH / displayScale;          // At 70% zoom: 450/0.7 = 643
       
-      // Calculate crop position relative to the zoomed image
-      const relativeX = (cropFrameX - cropSettings.x) / zoomedImageW;  // Crop position within image
-      const relativeY = (cropFrameY - cropSettings.y) / zoomedImageH;
-      const relativeW = targetWidth / zoomedImageW;                    // Crop size relative to image  
-      const relativeH = targetHeight / zoomedImageH;
+      // Calculate crop position relative to the zoomed image in the preview container
+      // The crop frame position is absolute in preview, need to convert to relative within the image
+      const imageStartX = cropSettings.x;  // Where image starts in preview
+      const imageStartY = cropSettings.y;
+      
+      const relativeX = Math.max(0, (cropFrameX - imageStartX) / zoomedImageW);  // Crop position within image
+      const relativeY = Math.max(0, (cropFrameY - imageStartY) / zoomedImageH);
+      const relativeW = 300 / zoomedImageW;                                      // Crop size relative to image (300px target)
+      const relativeH = 200 / zoomedImageH;                                      // Crop size relative to image (200px target)
       
       // Map to original image coordinates (THIS IS THE KEY!)
       const originalCropX = relativeX * img.naturalWidth;             // Direct mapping to 4032px width
@@ -270,7 +274,7 @@ export const ImageCropper: React.FC<ImageCropperProps> = ({
       // Now cropping directly from original image - no intermediate canvas
       
       const correctDebug = {
-        transform: 'direct-original-mapping-v12',
+        transform: 'direct-original-mapping-v13-quality-fix',
         preview: { w: previewWidth, h: previewHeight },
         cropFrame: { x: cropFrameX, y: cropFrameY, w: targetWidth, h: targetHeight },
         cropSettings: cropSettings,
@@ -280,7 +284,7 @@ export const ImageCropper: React.FC<ImageCropperProps> = ({
         relative: { x: relativeX, y: relativeY, w: relativeW, h: relativeH },
         originalCrop: { x: originalCropX, y: originalCropY, w: originalCropW, h: originalCropH },
         source: { x: finalSourceX, y: finalSourceY, w: finalSourceW, h: finalSourceH },
-        destination: { x: 0, y: 0, w: targetWidth, h: targetHeight }
+        destination: { x: 0, y: 0, w: 600, h: 400 }
       };
       
       // Log to server for debugging (fire and forget)
@@ -292,19 +296,29 @@ export const ImageCropper: React.FC<ImageCropperProps> = ({
 
       // White background
       ctx.fillStyle = '#FFFFFF';
-      ctx.fillRect(0, 0, targetWidth, targetHeight);
+      ctx.fillRect(0, 0, 600, 400);
 
-      // Draw directly from the original high-resolution image
+      // Draw directly from the original high-resolution image at 2x resolution
       ctx.drawImage(
         img,
         finalSourceX, finalSourceY, finalSourceW, finalSourceH,  // Source: exact area from original
-        0, 0, targetWidth, targetHeight                          // Destination: 300x200 output
+        0, 0, 600, 400                                           // Destination: 600x400 high-quality output
       );
 
       console.log('Canvas drawn successfully');
 
+      // Create final 300x200 canvas for output (scale down from high-quality 600x400)
+      const finalCanvas = document.createElement('canvas');
+      finalCanvas.width = 300;
+      finalCanvas.height = 200;
+      const finalCtx = finalCanvas.getContext('2d');
+      if (!finalCtx) throw new Error('Cannot get final canvas context');
+      
+      // Scale down the high-quality image to final output size
+      finalCtx.drawImage(canvas, 0, 0, 600, 400, 0, 0, 300, 200);
+
       // Convert to blob
-      canvas.toBlob(
+      finalCanvas.toBlob(
         (blob) => {
           if (blob) {
             console.log('Blob created, size:', blob.size);
