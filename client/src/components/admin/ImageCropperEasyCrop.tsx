@@ -102,9 +102,13 @@ export default function ImageCropperEasyCrop({ imageUrl, onSave, onCancel }: Ima
       const ctx = canvas.getContext('2d');
       if (!ctx) throw new Error('Canvas context not available');
 
-      // Set canvas to exact output dimensions
-      canvas.width = 300;
-      canvas.height = 200;
+      // Set canvas to high-DPI dimensions for maximum sharpness
+      const dpr = window.devicePixelRatio || 1;
+      canvas.width = 300 * dpr;
+      canvas.height = 200 * dpr;
+
+      // Scale context back to CSS pixels while maintaining high-DPI backing store
+      ctx.scale(dpr, dpr);
 
       // Load the image
       const img = new Image();
@@ -135,26 +139,28 @@ export default function ImageCropperEasyCrop({ imageUrl, onSave, onCancel }: Ima
       const offsetX = (position.x / 100) * (300 - scaledWidth);
       const offsetY = (position.y / 100) * (200 - scaledHeight);
 
-      // High quality settings
+      // Maximum quality settings for sharpest results
       ctx.imageSmoothingEnabled = true;
       ctx.imageSmoothingQuality = 'high';
 
       // Draw the image with position offset
       ctx.drawImage(img, offsetX, offsetY, scaledWidth, scaledHeight);
 
-      // Convert to blob
+      // Convert to PNG blob for lossless quality and maximum sharpness
       const blob = await new Promise<Blob>((resolve) => {
         canvas.toBlob((blob) => {
           resolve(blob!);
-        }, 'image/jpeg', 1.0);
+        }, 'image/png');
       });
 
-      // Save with position data
+      // Save with position data and high-DPI info
       const cropSettings = {
-        method: 'draggable-cover',
+        method: 'draggable-cover-hd',
         position: position,
+        devicePixelRatio: dpr,
         originalDimensions: { width: img.naturalWidth, height: img.naturalHeight },
-        outputDimensions: { width: 300, height: 200 }
+        outputDimensions: { width: 300, height: 200 },
+        format: 'PNG'
       };
       
       onSave(blob, cropSettings);

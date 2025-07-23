@@ -345,16 +345,16 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(400).json({ error: "Gallery item ID required" });
       }
 
-      // Use consistent naming for static images
-      const filename = `static_${itemId}.jpg`;
+      // Use consistent naming for static images - PNG for lossless quality
+      const filename = `static_${itemId}.png`;
 
-      console.log(`📤 Uploading static image: ${filename} (300x200 JPEG) - Overwrite mode`);
+      console.log(`📤 Uploading static image: ${filename} (300x200 PNG) - Overwrite mode`);
 
       // Upload to Supabase storage (gallery bucket) with overwrite enabled
       const { data: uploadData, error: uploadError } = await supabase.storage
         .from('memopyk-gallery')
         .upload(filename, req.file.buffer, {
-          contentType: 'image/jpeg',
+          contentType: 'image/png',
           cacheControl: '3600',
           upsert: true  // Enable overwrite if file exists (same filename each time)
         });
