@@ -21,10 +21,34 @@ export default function GallerySection() {
     orientation?: 'landscape' | 'portrait';
   } | null>(null);
   
-  // Fetch active gallery items
-  const { data: galleryItems = [], isLoading } = useQuery<GalleryItem[]>({
+  // Fetch active gallery items with type conversion from snake_case API
+  const { data: galleryItems = [], isLoading } = useQuery<any[]>({
     queryKey: ['/api/gallery'],
-    select: (data) => data.filter(item => item.isActive).sort((a, b) => a.orderIndex - b.orderIndex)
+    select: (data) => data
+      .filter(item => item.is_active)
+      .sort((a, b) => a.order_index - b.order_index)
+      .map(item => ({
+        // Convert snake_case API response to camelCase for TypeScript compatibility
+        id: item.id,
+        titleEn: item.title_en,
+        titleFr: item.title_fr,
+        descriptionEn: item.description_en,
+        descriptionFr: item.description_fr,
+        videoUrlEn: item.video_url_en,
+        videoUrlFr: item.video_url_fr,
+        videoWidth: item.video_width,
+        videoHeight: item.video_height,
+        videoOrientation: item.video_orientation,
+        imageUrlEn: item.image_url_en,
+        imageUrlFr: item.image_url_fr,
+        staticImageUrl: item.static_image_url, // This is the key field for static images
+        altTextEn: item.alt_text_en,
+        altTextFr: item.alt_text_fr,
+        priceEn: item.price_en,
+        priceFr: item.price_fr,
+        orderIndex: item.order_index,
+        isActive: item.is_active
+      }))
   });
 
   const content = {
