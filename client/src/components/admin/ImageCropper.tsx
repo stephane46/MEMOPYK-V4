@@ -234,7 +234,7 @@ export const ImageCropper: React.FC<ImageCropperProps> = ({
       );
     } catch (error) {
       console.error('Cropping failed:', error);
-      alert('Error: ' + error.message);
+      alert('Error: ' + (error instanceof Error ? error.message : String(error)));
       setIsSaving(false);
     }
   };
