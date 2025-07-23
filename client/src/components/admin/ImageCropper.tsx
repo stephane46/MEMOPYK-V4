@@ -235,26 +235,32 @@ export const ImageCropper: React.FC<ImageCropperProps> = ({
       const actualDisplayWidth = cssDisplayWidth * displayScale;
       const actualDisplayHeight = cssDisplayHeight * displayScale;
       
-      // Calculate crop frame position relative to the zoomed/positioned image
-      const relativeX = cropFrameX - cropSettings.x;
-      const relativeY = cropFrameY - cropSettings.y;
+      // Calculate the visible image boundaries in the preview container
+      const imageLeft = cropSettings.x;
+      const imageTop = cropSettings.y;
+      const imageRight = imageLeft + actualDisplayWidth;
+      const imageBottom = imageTop + actualDisplayHeight;
       
-      // Direct coordinate mapping - crop exactly what's in the orange frame
-      // Convert preview coordinates to original image coordinates
+      // Find intersection of crop frame with visible image
+      const intersectLeft = Math.max(cropFrameX, imageLeft);
+      const intersectTop = Math.max(cropFrameY, imageTop);
+      const intersectRight = Math.min(cropFrameX + targetWidth, imageRight);
+      const intersectBottom = Math.min(cropFrameY + targetHeight, imageBottom);
+      
+      // Calculate relative position within the displayed image
+      const relativeX = intersectLeft - imageLeft;
+      const relativeY = intersectTop - imageTop;
+      const relativeW = intersectRight - intersectLeft;
+      const relativeH = intersectBottom - intersectTop;
+      
+      // Convert to original image coordinates
       const scaleX = img.naturalWidth / actualDisplayWidth;
       const scaleY = img.naturalHeight / actualDisplayHeight;
       
-      // Map the crop frame (300×200) to the original image coordinates
-      const sourceX = Math.max(0, relativeX * scaleX);
-      const sourceY = Math.max(0, relativeY * scaleY);
-      const sourceW = targetWidth * scaleX;
-      const sourceH = targetHeight * scaleY;
-      
-      // Ensure we don't exceed image boundaries
-      const clampedSourceX = Math.min(sourceX, img.naturalWidth - sourceW);
-      const clampedSourceY = Math.min(sourceY, img.naturalHeight - sourceH);
-      const clampedSourceW = Math.min(sourceW, img.naturalWidth - clampedSourceX);
-      const clampedSourceH = Math.min(sourceH, img.naturalHeight - clampedSourceY);
+      const sourceX = relativeX * scaleX;
+      const sourceY = relativeY * scaleY;
+      const sourceW = relativeW * scaleX;
+      const sourceH = relativeH * scaleY;
       
       const correctDebug = {
         transform: 'direct-crop-v4',
@@ -266,7 +272,8 @@ export const ImageCropper: React.FC<ImageCropperProps> = ({
         displayDimensions: { w: actualDisplayWidth, h: actualDisplayHeight, scale: displayScale },
         relativePosition: { x: relativeX, y: relativeY },
         scaleFactors: { x: scaleX, y: scaleY },
-        source: { x: clampedSourceX, y: clampedSourceY, w: clampedSourceW, h: clampedSourceH },
+        intersections: { left: intersectLeft, top: intersectTop, right: intersectRight, bottom: intersectBottom },
+        source: { x: sourceX, y: sourceY, w: sourceW, h: sourceH },
         destination: { x: 0, y: 0, w: targetWidth, h: targetHeight }
       };
       
@@ -281,12 +288,14 @@ export const ImageCropper: React.FC<ImageCropperProps> = ({
       ctx.fillStyle = '#FFFFFF';
       ctx.fillRect(0, 0, targetWidth, targetHeight);
 
-      // Draw the correctly calculated crop area
-      ctx.drawImage(
-        img,
-        clampedSourceX, clampedSourceY, clampedSourceW, clampedSourceH,
-        0, 0, targetWidth, targetHeight
-      );
+      // Only draw if we have a valid intersection
+      if (relativeW > 0 && relativeH > 0) {
+        ctx.drawImage(
+          img,
+          sourceX, sourceY, sourceW, sourceH,
+          0, 0, targetWidth, targetHeight
+        );
+      }
 
       console.log('Canvas drawn successfully');
 
