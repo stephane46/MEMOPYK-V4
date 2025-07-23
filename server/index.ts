@@ -113,7 +113,7 @@ app.use((req, res, next) => {
     console.log("🔄 Proxying frontend requests to Vite on port 5173");
   } else {
     // — Prod mode: serve static build
-    const clientDist = path.resolve(process.cwd(), "client/dist");
+    const clientDist = path.resolve(process.cwd(), "dist/public");
     app.use(express.static(clientDist));
     app.get("*", (_req: Request, res: Response) =>
       res.sendFile(path.join(clientDist, "index.html"))
