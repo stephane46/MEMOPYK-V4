@@ -247,13 +247,8 @@ export class VideoCache {
   /**
    * Download and cache a video from Supabase
    */
-  private async downloadAndCacheVideo(filename: string): Promise<void> {
-    const supabaseUrl = process.env.SUPABASE_URL;
-    if (!supabaseUrl) {
-      throw new Error('SUPABASE_URL not configured');
-    }
-
-    const fullVideoUrl = `${supabaseUrl}/storage/v1/object/public/memopyk-hero/${filename}`;
+  async downloadAndCacheVideo(filename: string, customUrl?: string): Promise<void> {
+    const fullVideoUrl = customUrl || `https://supabase.memopyk.org/storage/v1/object/public/memopyk-gallery/${filename}`;
     const cacheFile = this.getCacheFilePath(filename);
     
     console.log(`📥 Downloading ${filename} from Supabase...`);

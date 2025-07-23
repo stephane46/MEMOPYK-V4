@@ -812,7 +812,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       if (filename.startsWith('gallery_')) {
         videoUrl = `https://supabase.memopyk.org/storage/v1/object/public/memopyk-gallery/${filename}`;
       } else {
-        videoUrl = `https://supabase.memopyk.org/storage/v1/object/public/memopyk-hero/${filename}`;
+        videoUrl = `https://supabase.memopyk.org/storage/v1/object/public/memopyk-gallery/${filename}`;
       }
 
       console.log(`🔄 Force caching video: ${filename} from ${videoUrl}`);
@@ -829,6 +829,63 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error) {
       console.error('Force cache error:', error);
       res.status(500).json({ error: "Failed to cache video" });
+    }
+  });
+
+  // Cache refresh endpoint - cache all hero videos
+  app.post("/api/video-cache/refresh", async (req, res) => {
+    try {
+      console.log('🔄 Admin-triggered cache refresh for all hero videos...');
+      
+      const heroVideos = ['VideoHero1.mp4', 'VideoHero2.mp4', 'VideoHero3.mp4'];
+      const cached: string[] = [];
+      const errors: string[] = [];
+
+      for (const filename of heroVideos) {
+        try {
+          const videoUrl = `https://supabase.memopyk.org/storage/v1/object/public/memopyk-gallery/${filename}`;
+          console.log(`🔄 Caching hero video: ${filename} from ${videoUrl}`);
+          
+          // Download and cache the video
+          await videoCache.downloadAndCacheVideo(filename, videoUrl);
+          cached.push(filename);
+        } catch (error: any) {
+          console.error(`❌ Failed to cache ${filename}:`, error);
+          errors.push(`${filename}: ${error.message}`);
+        }
+      }
+
+      const stats = await videoCache.getCacheStats();
+      
+      res.json({ 
+        success: errors.length === 0,
+        message: `Cached ${cached.length} of ${heroVideos.length} hero videos`,
+        cached,
+        errors,
+        stats 
+      });
+    } catch (error) {
+      console.error('Cache refresh error:', error);
+      res.status(500).json({ error: "Failed to refresh video cache" });
+    }
+  });
+
+  // Clear cache endpoint
+  app.post("/api/video-cache/clear", async (req, res) => {
+    try {
+      console.log('🗑️ Admin-triggered cache clear...');
+      
+      videoCache.clearCache();
+      const stats = await videoCache.getCacheStats();
+      
+      res.json({ 
+        success: true,
+        message: "Video cache cleared successfully",
+        stats 
+      });
+    } catch (error) {
+      console.error('Cache clear error:', error);
+      res.status(500).json({ error: "Failed to clear video cache" });
     }
   });
 
