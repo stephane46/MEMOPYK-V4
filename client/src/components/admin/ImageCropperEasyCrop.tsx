@@ -19,9 +19,14 @@ export default function ImageCropperEasyCrop({ imageUrl, onSave, onCancel }: Ima
   const croppedAreaPixelsRef = useRef<any>(null);
   const imageRef = useRef<HTMLImageElement | null>(null);
 
-  const onCropCompleteCallback = useCallback((_: any, pixelCrop: any) => {
-    // Use the actual crop coordinates from react-easy-crop
-    croppedAreaPixelsRef.current = pixelCrop;
+  const onCropCompleteCallback = useCallback((croppedArea: any, croppedAreaPixels: any) => {
+    // CRITICAL: Use croppedAreaPixels (natural image pixels), NOT croppedArea (percentages)
+    croppedAreaPixelsRef.current = croppedAreaPixels;
+    
+    console.log('onCropComplete - both params:', {
+      croppedArea: croppedArea,
+      croppedAreaPixels: croppedAreaPixels
+    });
     
     // Reset preview when crop changes
     setPreviewUrl(null);
@@ -82,9 +87,17 @@ export default function ImageCropperEasyCrop({ imageUrl, onSave, onCancel }: Ima
           Glissez pour repositionner, utilisez le zoom pour ajuster la taille
         </p>
         
-        {/* 300×200 Full Viewport - No Inner Crop Frame */}
-        <div className="mx-auto border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg overflow-hidden" 
-             style={{ width: 300, height: 200, position: 'relative', background: '#222' }}>
+        {/* 300×200 Full Viewport - Zero padding/border for pixel-perfect mapping */}
+        <div className="mx-auto rounded-lg overflow-hidden crop-container" 
+             style={{ 
+               width: 300, 
+               height: 200, 
+               position: 'relative', 
+               background: '#222',
+               padding: 0,
+               border: 'none',
+               boxSizing: 'content-box'
+             }}>
           <Cropper
             image={imageUrl}
             crop={crop}

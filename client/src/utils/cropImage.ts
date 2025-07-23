@@ -53,13 +53,23 @@ export default async function getCroppedImg(
   const finalSourceW = Math.round(pixelCrop.width);
   const finalSourceH = Math.round(pixelCrop.height);
 
-  // Debug logging to verify coordinates
-  console.log('CROP DEBUG - Direct Mapping', {
+  // Container dimension check
+  const container = document.querySelector('.crop-container');
+  const containerRect = container?.getBoundingClientRect();
+  
+  // Debug logging to verify coordinates AND container mapping
+  console.log('CROP DEBUG - Container vs PixelCrop Mapping', {
+    'UI container': containerRect ? { w: containerRect.width, h: containerRect.height } : 'not found',
     'pixelCrop from react-easy-crop': pixelCrop,
     'rounded source coords': { x: finalSourceX, y: finalSourceY, w: finalSourceW, h: finalSourceH },
     'natural image': { w: img.naturalWidth, h: img.naturalHeight },
     'target output': { w: targetWidth, h: targetHeight },
     'crop vs target ratio': { crop: finalSourceW / finalSourceH, target: targetWidth / targetHeight },
+    'scale check': containerRect ? {
+      expectedScale: img.naturalWidth / containerRect.width,
+      actualCropW: finalSourceW,
+      actualCropH: finalSourceH
+    } : 'no container',
     'coords within bounds': {
       xOk: finalSourceX >= 0 && finalSourceX < img.naturalWidth,
       yOk: finalSourceY >= 0 && finalSourceY < img.naturalHeight,
