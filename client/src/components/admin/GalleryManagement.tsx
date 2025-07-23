@@ -288,6 +288,9 @@ export default function GalleryManagement() {
     onSave: (data: Partial<GalleryItem>) => void; 
     onCancel: () => void; 
   }) => {
+    console.log('🔄 GalleryItemForm component render/re-render detected');
+    console.log('🔄 Item prop:', item);
+    
     const [formData, setFormData] = useState({
       title_en: item?.title_en || '',
       title_fr: item?.title_fr || '',
@@ -314,6 +317,15 @@ export default function GalleryManagement() {
       is_active: item?.is_active ?? true,
       use_same_video: item?.use_same_video ?? true
     });
+
+    // Debug: Track formData changes
+    React.useEffect(() => {
+      console.log('📊 FormData state changed:', {
+        video_url_en: formData.video_url_en,
+        image_url_en: formData.image_url_en,
+        use_same_video: formData.use_same_video
+      });
+    }, [formData.video_url_en, formData.image_url_en, formData.use_same_video]);
 
     // When use_same_video changes, sync the video URLs
     const handleSameVideoToggle = (useSame: boolean) => {
