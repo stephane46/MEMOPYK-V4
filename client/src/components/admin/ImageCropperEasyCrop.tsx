@@ -117,7 +117,7 @@ export default function ImageCropperEasyCrop({ imageUrl, onSave, onCancel }: Ima
           Glissez pour repositionner, utilisez le zoom pour ajuster la taille
         </p>
         
-        {/* 300×200 Cropper Viewport */}
+        {/* 300×200 Full Viewport - No Inner Crop Frame */}
         <div className="mx-auto border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg overflow-hidden" 
              style={{ width: 300, height: 200, position: 'relative', background: '#222' }}>
           <Cropper
@@ -130,6 +130,19 @@ export default function ImageCropperEasyCrop({ imageUrl, onSave, onCancel }: Ima
             onCropComplete={onCropCompleteCallback}
             cropShape="rect"
             showGrid={false}
+            restrictPosition={false}
+            cropSize={{ width: 300, height: 200 }}
+            style={{
+              containerStyle: {
+                width: '100%',
+                height: '100%',
+                backgroundColor: 'transparent'
+              },
+              cropAreaStyle: {
+                border: 'none', // Remove inner crop frame
+                boxShadow: 'none' // Remove any shadow/outline
+              }
+            }}
             onMediaLoaded={(mediaSize) => {
               // react-easy-crop provides mediaSize object, not HTMLImageElement
               // We'll get the image reference differently
