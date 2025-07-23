@@ -1,7 +1,5 @@
-import React, { useState, useCallback, useRef } from 'react';
-import Cropper from 'react-easy-crop';
+import React, { useState } from 'react';
 import { Button } from '../ui/button';
-import getCroppedImg from '@/utils/cropImage';
 
 interface ImageCropperEasyCropProps {
   imageUrl: string;
@@ -9,194 +7,128 @@ interface ImageCropperEasyCropProps {
   onCancel: () => void;
 }
 
+// Simple preview box component for 300×200 display
+const PreviewBox: React.FC<{ imageUrl: string }> = ({ imageUrl }) => (
+  <div
+    style={{
+      width: 300,
+      height: 200,
+      overflow: 'hidden',
+      borderRadius: 8,
+      background: '#222',
+    }}
+  >
+    <img
+      src={imageUrl}
+      alt="Preview"
+      style={{
+        width: '100%',
+        height: '100%',
+        objectFit: 'cover',      // fills 300×200 by cropping the overflow
+        objectPosition: 'center' // centers the focal point
+      }}
+    />
+  </div>
+);
+
 export default function ImageCropperEasyCrop({ imageUrl, onSave, onCancel }: ImageCropperEasyCropProps) {
-  const [crop, setCrop] = useState({ x: 0, y: 0 });
-  const [zoom, setZoom] = useState(1);
   const [loading, setLoading] = useState(false);
-  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
-  const [previewBlob, setPreviewBlob] = useState<Blob | null>(null);
-  const [showPreview, setShowPreview] = useState(false);
-  const croppedAreaPixelsRef = useRef<any>(null);
-  const imageRef = useRef<HTMLImageElement | null>(null);
 
-  const onCropCompleteCallback = useCallback((croppedArea: any, croppedAreaPixels: any) => {
-    // CRITICAL: Use croppedAreaPixels (natural image pixels), NOT croppedArea (percentages)
-    croppedAreaPixelsRef.current = croppedAreaPixels;
-    
-    console.log('onCropComplete - both params:', {
-      croppedArea: croppedArea,
-      croppedAreaPixels: croppedAreaPixels
-    });
-    
-    // Reset preview when crop changes
-    setPreviewUrl(null);
-    setPreviewBlob(null);
-    setShowPreview(false);
-  }, []);
-
-  const generatePreview = useCallback(async () => {
-    if (!croppedAreaPixelsRef.current) {
-      console.error('Missing crop data');
-      return;
-    }
-
+  const generateStaticImage = async () => {
     setLoading(true);
     try {
-      // Use the official react-easy-crop utility function
-      const blob = await getCroppedImg(
-        imageUrl,
-        croppedAreaPixelsRef.current,
-        300,
-        200
-      );
+      // Create a canvas to generate the 300×200 static image
+      const canvas = document.createElement('canvas');
+      const ctx = canvas.getContext('2d');
+      if (!ctx) throw new Error('Canvas context not available');
 
-      if (!blob) {
-        throw new Error('Failed to generate cropped image');
+      // Set canvas to exact output dimensions
+      canvas.width = 300;
+      canvas.height = 200;
+
+      // Load the image
+      const img = new Image();
+      img.crossOrigin = 'anonymous';
+      
+      await new Promise((resolve, reject) => {
+        img.onload = resolve;
+        img.onerror = reject;
+        img.src = imageUrl;
+      });
+
+      // Draw image to fill 300×200 with object-fit: cover behavior
+      const imgAspect = img.naturalWidth / img.naturalHeight;
+      const canvasAspect = 300 / 200;
+
+      let drawWidth, drawHeight, offsetX = 0, offsetY = 0;
+
+      if (imgAspect > canvasAspect) {
+        // Image is wider - fit to height, crop width
+        drawHeight = 200;
+        drawWidth = drawHeight * imgAspect;
+        offsetX = (300 - drawWidth) / 2;
+      } else {
+        // Image is taller - fit to width, crop height
+        drawWidth = 300;
+        drawHeight = drawWidth / imgAspect;
+        offsetY = (200 - drawHeight) / 2;
       }
 
-      const previewObjectUrl = URL.createObjectURL(blob);
-      setPreviewUrl(previewObjectUrl);
-      setPreviewBlob(blob);
-      setShowPreview(true);
+      // High quality settings
+      ctx.imageSmoothingEnabled = true;
+      ctx.imageSmoothingQuality = 'high';
+
+      // Draw the image
+      ctx.drawImage(img, offsetX, offsetY, drawWidth, drawHeight);
+
+      // Convert to blob
+      const blob = await new Promise<Blob>((resolve) => {
+        canvas.toBlob((blob) => {
+          resolve(blob!);
+        }, 'image/jpeg', 1.0);
+      });
+
+      // Automatically save since there's no manual cropping
+      const cropSettings = {
+        method: 'auto-fit-cover',
+        originalDimensions: { width: img.naturalWidth, height: img.naturalHeight },
+        outputDimensions: { width: 300, height: 200 }
+      };
+      
+      onSave(blob, cropSettings);
+      
     } catch (error) {
-      console.error('Error generating cropped image:', error);
+      console.error('Error generating static image:', error);
     } finally {
       setLoading(false);
     }
-  }, [imageUrl]);
-
-  const handleConfirmSave = useCallback(() => {
-    if (!previewBlob || !croppedAreaPixelsRef.current) return;
-    
-    const cropSettings = {
-      crop,
-      zoom,
-      pixelCrop: croppedAreaPixelsRef.current,
-      targetWidth: 300,
-      targetHeight: 200,
-      timestamp: new Date().toISOString()
-    };
-    
-    onSave(previewBlob, cropSettings);
-  }, [previewBlob, crop, zoom, onSave]);
+  };
 
   return (
     <div className="space-y-4">
       <div className="text-center">
         <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">
-          Glissez pour repositionner, utilisez le zoom pour ajuster la taille
+          L'image sera automatiquement ajustée pour remplir le cadre 300×200
         </p>
         
-        {/* 300×200 Full Viewport - Zero padding/border for pixel-perfect mapping */}
-        <div className="mx-auto rounded-lg crop-container" 
-             style={{ 
-               width: 300, 
-               height: 200, 
-               position: 'relative', 
-               overflow: 'hidden',       // 👈 clip the image
-               background: '#222',
-               padding: 0,
-               border: 'none',
-               boxSizing: 'content-box'
-             }}>
-          <Cropper
-            image={imageUrl}
-            crop={crop}
-            zoom={zoom}
-            aspect={3 / 2}
-            onCropChange={setCrop}
-            onZoomChange={setZoom}
-            onCropComplete={onCropCompleteCallback}
-            cropShape="rect"
-            showGrid={false}
-            restrictPosition={true}    // 👈 never let the image leave the box
-            objectFit="contain"        // 👈 match the library's default math
-            cropSize={{ width: 300, height: 200 }}
-            style={{
-              containerStyle: {
-                width: '100%',
-                height: '100%',
-                backgroundColor: 'transparent'
-              },
-              cropAreaStyle: {
-                border: 'none',        // OK to remove border
-                boxShadow: 'none'      // OK to remove shadow
-              }
-            }}
-            onMediaLoaded={(mediaSize) => {
-              // react-easy-crop provides mediaSize object, not HTMLImageElement
-              // We'll get the image reference differently
-            }}
-          />
-        </div>
-
-        {/* Zoom Control */}
-        <div className="mt-4 flex items-center justify-center gap-4">
-          <label className="flex items-center gap-2 text-sm">
-            Zoom:
-            <input
-              type="range"
-              min={1}
-              max={3}
-              step={0.05}
-              value={zoom}
-              onChange={e => setZoom(Number(e.target.value))}
-              className="w-32"
-            />
-            <span className="text-xs text-gray-500">{zoom.toFixed(2)}x</span>
-          </label>
+        {/* 300×200 Preview Box */}
+        <div className="mx-auto">
+          <PreviewBox imageUrl={imageUrl} />
         </div>
       </div>
 
-      {/* Preview Section */}
-      {showPreview && previewUrl && (
-        <div className="text-center bg-green-50 dark:bg-green-900/20 p-4 rounded-lg border border-green-200 dark:border-green-800">
-          <p className="text-sm font-medium mb-3 text-green-800 dark:text-green-200">
-            ✓ Aperçu du résultat final (300×200 pixels):
-          </p>
-          <img 
-            src={previewUrl} 
-            width={300} 
-            height={200} 
-            alt="Aperçu recadré" 
-            className="mx-auto border-2 border-green-300 dark:border-green-600 rounded shadow-lg"
-          />
-          <p className="text-xs text-green-600 dark:text-green-400 mt-2">
-            Confirmez pour sauvegarder cette image dans la galerie
-          </p>
-        </div>
-      )}
-
       {/* Action Buttons */}
-      <div className="flex gap-4 justify-center">
-        <Button onClick={onCancel} variant="outline">
+      <div className="flex justify-center gap-3">
+        <Button variant="outline" onClick={onCancel}>
           Annuler
         </Button>
-        
-        {!showPreview ? (
-          <Button 
-            onClick={generatePreview}
-            disabled={loading}
-            className="min-w-[150px]"
-          >
-            {loading ? 'Génération...' : 'Aperçu (300×200)'}
-          </Button>
-        ) : (
-          <div className="flex gap-2">
-            <Button 
-              onClick={() => setShowPreview(false)}
-              variant="outline"
-            >
-              Modifier
-            </Button>
-            <Button 
-              onClick={handleConfirmSave}
-              className="min-w-[150px] bg-green-600 hover:bg-green-700"
-            >
-              ✓ Confirmer & Sauvegarder
-            </Button>
-          </div>
-        )}
+        <Button 
+          onClick={generateStaticImage}
+          disabled={loading}
+          className="bg-green-600 hover:bg-green-700 text-white"
+        >
+          {loading ? 'Génération...' : 'Générer Image Statique (300×200)'}
+        </Button>
       </div>
     </div>
   );
