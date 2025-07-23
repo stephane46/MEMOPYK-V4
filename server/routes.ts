@@ -348,15 +348,26 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // Use consistent naming for static images - PNG for lossless quality
       const filename = `static_${itemId}.png`;
 
-      console.log(`📤 Uploading static image: ${filename} (300x200 PNG) - Overwrite mode`);
+      // First, delete the old file to ensure clean CDN cache invalidation
+      const { error: deleteError } = await supabase.storage
+        .from('memopyk-gallery')
+        .remove([filename]);
+      
+      if (deleteError && deleteError.message !== 'The resource was not found') {
+        console.log(`⚠️ Could not delete old thumbnail: ${deleteError.message}`);
+      } else {
+        console.log(`🗑️ Deleted old thumbnail: ${filename}`);
+      }
 
-      // Upload to Supabase storage (gallery bucket) with overwrite enabled
+      console.log(`📤 Uploading static image: ${filename} (300x200 PNG) - Fresh upload`);
+
+      // Upload to Supabase storage (gallery bucket) 
       const { data: uploadData, error: uploadError } = await supabase.storage
         .from('memopyk-gallery')
         .upload(filename, req.file.buffer, {
           contentType: 'image/png',
-          cacheControl: '3600',
-          upsert: true  // Enable overwrite if file exists (same filename each time)
+          cacheControl: '300', // Shorter cache for thumbnails (5 minutes)
+          upsert: false  // Use explicit delete+upload for better cache invalidation
         });
 
       if (uploadError) {
@@ -364,7 +375,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(500).json({ error: `Static image upload failed: ${uploadError.message}` });
       }
 
-      const staticImageUrl = `https://supabase.memopyk.org/storage/v1/object/public/memopyk-gallery/${filename}`;
+      // Add cache-busting timestamp to force fresh loads
+      const timestamp = Date.now();
+      const staticImageUrl = `https://supabase.memopyk.org/storage/v1/object/public/memopyk-gallery/${filename}?v=${timestamp}`;
       
       console.log(`✅ Static image uploaded successfully: ${staticImageUrl}`);
       

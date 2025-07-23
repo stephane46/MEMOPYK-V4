@@ -32,9 +32,11 @@ Preferred communication style: Simple, everyday language.
 - `background-position` percentages (0-100%) for precise positioning control
 - Canvas generation uses exact same scaling math as CSS background properties
 - Position state synchronization between preview and final output generation
-- **High-DPI Rendering**: Canvas sized at `devicePixelRatio` scale for Retina sharpness
+- **High-DPI Rendering**: Canvas sized at `devicePixelRatio` scale for Retina sharpness (675×450px on 2.25 DPR displays)
 - **Lossless PNG Output**: Zero compression artifacts for maximum image quality
 - **Premium Quality Settings**: `imageSmoothingQuality: 'high'` with anti-aliasing
+- **Advanced Caching**: Delete-then-upload for CDN cache invalidation + timestamp cache-busting URLs
+- **Debug Logging**: Comprehensive canvas dimension and scaling verification system
 
 ### Phase 8.2.3 Static Image Generation System - COMPLETED (July 23, 2025)
 **Complete Static Image Generation Workflow - MAJOR SUCCESS:**
