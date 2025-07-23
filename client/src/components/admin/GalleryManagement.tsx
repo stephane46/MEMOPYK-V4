@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { apiRequest } from "@/lib/queryClient";
 import { Button } from "@/components/ui/button";
@@ -289,8 +289,21 @@ export default function GalleryManagement() {
     onCancel: () => void; 
   }) => {
     
+    // Use useRef to persist state across component re-creations
+    const persistentState = useRef({
+      video_url_en: '',
+      image_url_en: '',
+      video_url_fr: '',
+      image_url_fr: '',
+      initialized: false
+    });
+    
     const [formData, setFormData] = useState(() => {
       console.log('🔄 INITIALIZING formData state with item:', item);
+      
+      // If we have persistent state from previous uploads, use it
+      const hasPersistedUrls = persistentState.current.video_url_en || persistentState.current.image_url_en;
+      
       return {
         title_en: item?.title_en || '',
         title_fr: item?.title_fr || '',
@@ -302,18 +315,18 @@ export default function GalleryManagement() {
         situation_fr: item?.situation_fr || '',
         story_en: item?.story_en || '',
         story_fr: item?.story_fr || '',
-        video_url_en: item?.video_url_en || '',
-        video_url_fr: item?.video_url_fr || '',
+        video_url_en: item?.video_url_en || persistentState.current.video_url_en || '',
+        video_url_fr: item?.video_url_fr || persistentState.current.video_url_fr || '',
         video_width: item?.video_width || 0,
         video_height: item?.video_height || 0,
         video_orientation: item?.video_orientation || 'landscape',
-        image_url_en: item?.image_url_en || '',
-        image_url_fr: item?.image_url_fr || '',
+        image_url_en: item?.image_url_en || persistentState.current.image_url_en || '',
+        image_url_fr: item?.image_url_fr || persistentState.current.image_url_fr || '',
         price_en: item?.price_en || '',
         price_fr: item?.price_fr || '',
         alt_text_en: item?.alt_text_en || '',
         alt_text_fr: item?.alt_text_fr || '',
-        order_index: item?.order_index || galleryItems.length + 1,
+        order_index: item?.order_index || 999,
         is_active: item?.is_active ?? true,
         use_same_video: item?.use_same_video ?? true
       };
@@ -430,6 +443,14 @@ export default function GalleryManagement() {
                     console.log('Video upload returned URL:', url);
                     if (url) {
                       console.log('Updating form with video URL:', url);
+                      
+                      // Save to persistent state first
+                      persistentState.current.video_url_en = url;
+                      if (formData.use_same_video) {
+                        persistentState.current.video_url_fr = url;
+                      }
+                      console.log('💾 Saved to persistent state:', persistentState.current);
+                      
                       setFormData(prev => {
                         console.log('Current formData before video update:', prev);
                         console.log('Video upload - prev.video_url_en:', prev.video_url_en);
@@ -439,11 +460,6 @@ export default function GalleryManagement() {
                           : { ...prev, video_url_en: url };
                         console.log('New formData after video update:', newData);
                         console.log('Video update - newData.video_url_en:', newData.video_url_en);
-                        
-                        // Add a timeout to check if state persists
-                        setTimeout(() => {
-                          console.log('Video URL state check after 1 second - should still be:', newData.video_url_en);
-                        }, 1000);
                         
                         return newData;
                       });
@@ -497,11 +513,25 @@ export default function GalleryManagement() {
                     console.log('Image upload returned URL:', url);
                     if (url) {
                       console.log('Updating form with image URL:', url);
+                      
+                      // Save to persistent state first
+                      persistentState.current.image_url_en = url;
+                      persistentState.current.image_url_fr = url;
+                      console.log('💾 Saved to persistent state:', persistentState.current);
+                      
                       setFormData(prev => {
                         console.log('Current formData before image update:', prev);
                         console.log('Image upload - prev.video_url_en:', prev.video_url_en);
                         console.log('Image upload - prev.image_url_en:', prev.image_url_en);
-                        const newData = { ...prev, image_url_en: url, image_url_fr: url };
+                        
+                        // Always preserve URLs from persistent state
+                        const newData = { 
+                          ...prev, 
+                          video_url_en: persistentState.current.video_url_en || prev.video_url_en,
+                          video_url_fr: persistentState.current.video_url_fr || prev.video_url_fr,
+                          image_url_en: url, 
+                          image_url_fr: url 
+                        };
                         console.log('New formData after image update:', newData);
                         console.log('Image update - newData.video_url_en (should be preserved):', newData.video_url_en);
                         console.log('Image update - newData.image_url_en:', newData.image_url_en);
