@@ -819,5 +819,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Debug logging endpoint
+  app.post('/api/debug-log', (req, res) => {
+    const { type, data } = req.body;
+    console.log(`🐛 DEBUG [${type}]:`, JSON.stringify(data, null, 2));
+    res.json({ logged: true });
+  });
+
   return createServer(app);
 }

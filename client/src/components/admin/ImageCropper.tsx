@@ -170,15 +170,20 @@ export const ImageCropper: React.FC<ImageCropperProps> = ({
         img.src = proxyImageUrl;
       });
 
-      // Debug info
+      // Debug info - send to server for persistent logging
       const debugInfo = {
         imageSize: { w: img.naturalWidth, h: img.naturalHeight },
         cropSettings: cropSettings,
-        targetSize: { w: targetWidth, h: targetHeight }
+        targetSize: { w: targetWidth, h: targetHeight },
+        proxyUrl: proxyImageUrl
       };
       
-      console.log('DEBUG INFO:', JSON.stringify(debugInfo, null, 2));
-      alert('Debug Info (check console): ' + JSON.stringify(debugInfo, null, 2));
+      // Log to server for debugging (fire and forget)
+      fetch('/api/debug-log', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ type: 'crop-debug', data: debugInfo })
+      }).catch(() => {}); // Ignore errors
 
       // Create canvas
       const canvas = document.createElement('canvas');
@@ -202,8 +207,12 @@ export const ImageCropper: React.FC<ImageCropperProps> = ({
         destination: { x: 0, y: 0, w: targetWidth, h: targetHeight }
       };
       
-      console.log('SIMPLE CROP:', JSON.stringify(simpleDebug, null, 2));
-      alert('Simple Crop: ' + JSON.stringify(simpleDebug, null, 2));
+      // Log to server for debugging (fire and forget)
+      fetch('/api/debug-log', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ type: 'crop-coordinates', data: simpleDebug })
+      }).catch(() => {}); // Ignore errors
 
       // White background
       ctx.fillStyle = '#FFFFFF';
