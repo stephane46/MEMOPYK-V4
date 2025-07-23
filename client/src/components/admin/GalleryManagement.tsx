@@ -417,20 +417,14 @@ export default function GalleryManagement() {
                     console.log('Video upload returned URL:', url);
                     if (url) {
                       console.log('Updating form with video URL:', url);
-                      console.log('Current formData before update:', formData);
-                      if (formData.use_same_video) {
-                        setFormData(prev => {
-                          const newData = { ...prev, video_url_en: url, video_url_fr: url };
-                          console.log('New formData after video update:', newData);
-                          return newData;
-                        });
-                      } else {
-                        setFormData(prev => {
-                          const newData = { ...prev, video_url_en: url };
-                          console.log('New formData after video update:', newData);
-                          return newData;
-                        });
-                      }
+                      setFormData(prev => {
+                        console.log('Current formData before video update:', prev);
+                        const newData = prev.use_same_video 
+                          ? { ...prev, video_url_en: url, video_url_fr: url }
+                          : { ...prev, video_url_en: url };
+                        console.log('New formData after video update:', newData);
+                        return newData;
+                      });
                     }
                   }}
                   disabled={uploading}
@@ -481,8 +475,8 @@ export default function GalleryManagement() {
                     console.log('Image upload returned URL:', url);
                     if (url) {
                       console.log('Updating form with image URL:', url);
-                      console.log('Current formData before image update:', formData);
                       setFormData(prev => {
+                        console.log('Current formData before image update:', prev);
                         const newData = { ...prev, image_url_en: url, image_url_fr: url };
                         console.log('New formData after image update:', newData);
                         return newData;
