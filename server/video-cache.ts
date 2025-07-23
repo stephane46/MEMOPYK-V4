@@ -166,7 +166,7 @@ export class VideoCache {
   /**
    * Get cache statistics
    */
-  getCacheStats(): { fileCount: number; totalSize: number; sizeMB: string } {
+  getCacheStats(): { fileCount: number; totalSize: number; sizeMB: string; files: string[] } {
     try {
       const files = readdirSync(this.cacheDir);
       const totalSize = files.reduce((sum, file) => {
@@ -177,10 +177,11 @@ export class VideoCache {
       return {
         fileCount: files.length,
         totalSize,
-        sizeMB: (totalSize / 1024 / 1024).toFixed(1)
+        sizeMB: (totalSize / 1024 / 1024).toFixed(1),
+        files: files // Include list of cached filenames
       };
     } catch (error) {
-      return { fileCount: 0, totalSize: 0, sizeMB: '0.0' };
+      return { fileCount: 0, totalSize: 0, sizeMB: '0.0', files: [] };
     }
   }
 

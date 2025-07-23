@@ -11,6 +11,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/u
 import { ArrowUp, ArrowDown, Play, RefreshCw, BarChart3, Video, HardDrive, Users, MessageSquare, FileText, LogOut, TestTube, Rocket, X, Type, Save, Palette, ChevronUp, ChevronDown, Trash2, Eye, EyeOff, Upload, FileVideo, Database, Check, Zap } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import GalleryManagement from '@/components/admin/GalleryManagement';
+import CryptoJS from 'crypto-js';
 
 interface HeroVideo {
   id: number;
@@ -160,13 +161,27 @@ export default function AdminPage() {
   // Cache status tracking
   const [cacheStatus, setCacheStatus] = useState<{[key: string]: boolean}>({});
 
+  // Helper function to create MD5 hash (same as server-side)
+  const createMD5Hash = (filename: string): string => {
+    return CryptoJS.MD5(filename).toString();
+  };
+
   // Update cache status when stats change
   React.useEffect(() => {
     if (cacheStats && 'files' in cacheStats && Array.isArray((cacheStats as any).files)) {
       const statusMap: {[key: string]: boolean} = {};
-      ((cacheStats as any).files).forEach((file: any) => {
-        statusMap[file.filename] = true;
+      const cachedFiles = ((cacheStats as any).files) as string[];
+      
+      // Extract hashes from cached filenames (remove .mp4 extension)
+      const cachedHashes = cachedFiles.map(file => file.replace('.mp4', ''));
+      
+      // Check each hero video file
+      const heroVideoFiles = ['VideoHero1.mp4', 'VideoHero2.mp4', 'VideoHero3.mp4'];
+      heroVideoFiles.forEach(filename => {
+        const expectedHash = createMD5Hash(filename);
+        statusMap[filename] = cachedHashes.includes(expectedHash);
       });
+      
       setCacheStatus(statusMap);
     }
   }, [cacheStats]);
@@ -230,7 +245,7 @@ export default function AdminPage() {
   // Clear cache mutation
   const clearCacheMutation = useMutation({
     mutationFn: async () => {
-      const response = await apiRequest('DELETE', '/api/video-cache/clear');
+      const response = await apiRequest('POST', '/api/video-cache/clear');
       return await response.json();
     },
     onSuccess: () => {
@@ -471,7 +486,7 @@ export default function AdminPage() {
                           ? `${cacheStats.fileCount || 0} files • ${(((cacheStats.totalSize as number) || 0) / 1024 / 1024).toFixed(1)}MB` 
                           : 'Loading stats...'}
                       </span>
-                      <span>Cache auto-expires after 24h</span>
+                      <span title="Videos older than 24 hours are automatically removed to save disk space">Cache auto-expires after 24h</span>
                     </div>
                   </CardContent>
                 </Card>
