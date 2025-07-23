@@ -6,27 +6,7 @@ import { Button } from "@/components/ui/button";
 import { VideoOverlay } from "@/components/gallery/VideoOverlay";
 import { Badge } from "@/components/ui/badge";
 import { Play, Eye, Star, ArrowRight, Image as ImageIcon } from "lucide-react";
-
-interface GalleryItem {
-  id: number;
-  title_en: string;
-  title_fr: string;
-  description_en: string;
-  description_fr: string;
-  video_url_en?: string;
-  video_url_fr?: string;
-  video_width?: number;
-  video_height?: number;
-  video_orientation?: 'landscape' | 'portrait';
-  image_url_en?: string;
-  image_url_fr?: string;
-  price_en: string;
-  price_fr: string;
-  alt_text_en: string;
-  alt_text_fr: string;
-  order_index: number;
-  is_active: boolean;
-}
+import type { GalleryItem } from "@shared/schema";
 
 export default function GallerySection() {
   const { language } = useLanguage();
@@ -44,7 +24,7 @@ export default function GallerySection() {
   // Fetch active gallery items
   const { data: galleryItems = [], isLoading } = useQuery<GalleryItem[]>({
     queryKey: ['/api/gallery'],
-    select: (data) => data.filter(item => item.is_active).sort((a, b) => a.order_index - b.order_index)
+    select: (data) => data.filter(item => item.isActive).sort((a, b) => a.orderIndex - b.orderIndex)
   });
 
   const content = {
@@ -78,7 +58,7 @@ export default function GallerySection() {
 
   const getItemUrl = (item: GalleryItem, type: 'video' | 'image') => {
     if (type === 'video') {
-      const videoUrl = language === 'fr-FR' ? item.video_url_fr : item.video_url_en;
+      const videoUrl = language === 'fr-FR' ? item.videoUrlFr : item.videoUrlEn;
       if (videoUrl) {
         // Extract filename from Supabase URL and use video proxy
         const filename = videoUrl.split('/').pop();
@@ -87,23 +67,23 @@ export default function GallerySection() {
       return null;
     } else {
       // Prioritize static image (300x200 cropped) if available, otherwise use regular image
-      if (item.static_image_url) {
-        return item.static_image_url;
+      if (item.staticImageUrl) {
+        return item.staticImageUrl;
       }
-      return language === 'fr-FR' ? item.image_url_fr : item.image_url_en;
+      return language === 'fr-FR' ? item.imageUrlFr : item.imageUrlEn;
     }
   };
 
   const getItemTitle = (item: GalleryItem) => {
-    return language === 'fr-FR' ? item.title_fr : item.title_en;
+    return language === 'fr-FR' ? item.titleFr : item.titleEn;
   };
 
   const getItemDescription = (item: GalleryItem) => {
-    return language === 'fr-FR' ? item.description_fr : item.description_en;
+    return language === 'fr-FR' ? item.descriptionFr : item.descriptionEn;
   };
 
   const getItemPrice = (item: GalleryItem) => {
-    return language === 'fr-FR' ? item.price_fr : item.price_en;
+    return language === 'fr-FR' ? item.priceFr : item.priceEn;
   };
 
   if (isLoading) {
@@ -168,7 +148,7 @@ export default function GallerySection() {
                       ) : hasImage ? (
                         <img
                           src={hasImage}
-                          alt={language === 'fr-FR' ? item.alt_text_fr : item.alt_text_en}
+                          alt={language === 'fr-FR' ? item.altTextFr : item.altTextEn}
                           className="w-full h-full object-cover"
                         />
                       ) : null}
@@ -183,10 +163,10 @@ export default function GallerySection() {
                                   type: mediaType, 
                                   url: displayUrl, 
                                   title: getItemTitle(item),
-                                  itemId: item.id,
-                                  width: item.video_width,
-                                  height: item.video_height,
-                                  orientation: item.video_orientation
+                                  itemId: parseInt(item.id),
+                                  width: item.videoWidth,
+                                  height: item.videoHeight,
+                                  orientation: item.videoOrientation
                                 });
                                 // Track gallery video preview clicks for analytics
                                 trackVideoView(`gallery-${item.id}`, 0, false);
@@ -210,10 +190,10 @@ export default function GallerySection() {
                                     type: mediaType, 
                                     url: displayUrl, 
                                     title: getItemTitle(item),
-                                    itemId: item.id,
-                                    width: item.video_width,
-                                    height: item.video_height,
-                                    orientation: item.video_orientation
+                                    itemId: parseInt(item.id),
+                                    width: item.videoWidth,
+                                    height: item.videoHeight,
+                                    orientation: item.videoOrientation
                                   });
                                 }
                               }}
@@ -255,10 +235,10 @@ export default function GallerySection() {
                             type: mediaType, 
                             url: displayUrl, 
                             title: getItemTitle(item),
-                            itemId: item.id,
-                            width: item.video_width,
-                            height: item.video_height,
-                            orientation: item.video_orientation
+                            itemId: parseInt(item.id),
+                            width: item.videoWidth,
+                            height: item.videoHeight,
+                            orientation: item.videoOrientation
                           });
                           // Track gallery video preview clicks for analytics
                           if (mediaType === 'video') {
