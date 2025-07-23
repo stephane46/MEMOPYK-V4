@@ -30,8 +30,14 @@ interface GalleryItem {
   id: number;
   title_en: string;
   title_fr: string;
-  description_en: string;
-  description_fr: string;
+  source_en: string;
+  source_fr: string;
+  duration_en: string;
+  duration_fr: string;
+  situation_en: string;
+  situation_fr: string;
+  story_en: string;
+  story_fr: string;
   video_url_en?: string;
   video_url_fr?: string;
   video_width?: number;
@@ -211,8 +217,14 @@ export default function GalleryManagement() {
     const [formData, setFormData] = useState({
       title_en: item?.title_en || '',
       title_fr: item?.title_fr || '',
-      description_en: item?.description_en || '',
-      description_fr: item?.description_fr || '',
+      source_en: item?.source_en || '',
+      source_fr: item?.source_fr || '',
+      duration_en: item?.duration_en || '',
+      duration_fr: item?.duration_fr || '',
+      situation_en: item?.situation_en || '',
+      situation_fr: item?.situation_fr || '',
+      story_en: item?.story_en || '',
+      story_fr: item?.story_fr || '',
       video_url_en: item?.video_url_en || '',
       video_url_fr: item?.video_url_fr || '',
       video_width: item?.video_width || 0,
@@ -408,28 +420,127 @@ export default function GalleryManagement() {
           </div>
         </div>
 
-        <div className="grid grid-cols-2 gap-4">
-          <div>
-            <Label htmlFor="description_en" className="text-gray-700 dark:text-gray-300">Description (English)</Label>
-            <Textarea
-              id="description_en"
-              value={formData.description_en}
-              onChange={(e) => setFormData({ ...formData, description_en: e.target.value })}
-              placeholder="Description in English"
-              rows={3}
-              className="bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
-            />
+        {/* Source Section */}
+        <div className="bg-purple-50 dark:bg-purple-900/20 p-4 rounded-lg border border-purple-200 dark:border-purple-800">
+          <h4 className="font-semibold mb-3 text-purple-900 dark:text-purple-100 flex items-center gap-2">
+            📷 3. Source (affiché en overlay sur l'image)
+          </h4>
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <Label htmlFor="source_en" className="text-gray-700 dark:text-gray-300">Source (English)</Label>
+              <Textarea
+                id="source_en"
+                value={formData.source_en}
+                onChange={(e) => setFormData({ ...formData, source_en: e.target.value })}
+                placeholder="Ex: 80 photos & 10 videos"
+                rows={2}
+                className="bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
+              />
+            </div>
+            <div>
+              <Label htmlFor="source_fr" className="text-gray-700 dark:text-gray-300">Source (Français)</Label>
+              <Textarea
+                id="source_fr"
+                value={formData.source_fr}
+                onChange={(e) => setFormData({ ...formData, source_fr: e.target.value })}
+                placeholder="Ex: 80 photos et 10 vidéos"
+                rows={2}
+                className="bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
+              />
+            </div>
           </div>
-          <div>
-            <Label htmlFor="description_fr" className="text-gray-700 dark:text-gray-300">Description (Français)</Label>
-            <Textarea
-              id="description_fr"
-              value={formData.description_fr}
-              onChange={(e) => setFormData({ ...formData, description_fr: e.target.value })}
-              placeholder="Description en français"
-              rows={3}
-              className="bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
-            />
+        </div>
+
+        {/* Duration Section */}
+        <div className="bg-green-50 dark:bg-green-900/20 p-4 rounded-lg border border-green-200 dark:border-green-800">
+          <h4 className="font-semibold mb-3 text-green-900 dark:text-green-100 flex items-center gap-2">
+            🎬 4. Durée (avec icône film)
+          </h4>
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <Label htmlFor="duration_en" className="text-gray-700 dark:text-gray-300">Durée (English) - Max 5 lignes</Label>
+              <Textarea
+                id="duration_en"
+                value={formData.duration_en}
+                onChange={(e) => setFormData({ ...formData, duration_en: e.target.value })}
+                placeholder="Ex: 3-5 minutes film including ceremony and reception highlights"
+                rows={4}
+                className="bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
+              />
+            </div>
+            <div>
+              <Label htmlFor="duration_fr" className="text-gray-700 dark:text-gray-300">Durée (Français) - Max 5 lignes</Label>
+              <Textarea
+                id="duration_fr"
+                value={formData.duration_fr}
+                onChange={(e) => setFormData({ ...formData, duration_fr: e.target.value })}
+                placeholder="Ex: Film de 3-5 minutes incluant les moments forts de la cérémonie et réception"
+                rows={4}
+                className="bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
+              />
+            </div>
+          </div>
+        </div>
+
+        {/* Situation Section */}
+        <div className="bg-yellow-50 dark:bg-yellow-900/20 p-4 rounded-lg border border-yellow-200 dark:border-yellow-800">
+          <h4 className="font-semibold mb-3 text-yellow-900 dark:text-yellow-100 flex items-center gap-2">
+            👥 5. Situation (avec icône client)
+          </h4>
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <Label htmlFor="situation_en" className="text-gray-700 dark:text-gray-300">Situation (English) - Max 5 lignes</Label>
+              <Textarea
+                id="situation_en"
+                value={formData.situation_en}
+                onChange={(e) => setFormData({ ...formData, situation_en: e.target.value })}
+                placeholder="Ex: Intimate wedding ceremony in a beautiful garden setting"
+                rows={4}
+                className="bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
+              />
+            </div>
+            <div>
+              <Label htmlFor="situation_fr" className="text-gray-700 dark:text-gray-300">Situation (Français) - Max 5 lignes</Label>
+              <Textarea
+                id="situation_fr"
+                value={formData.situation_fr}
+                onChange={(e) => setFormData({ ...formData, situation_fr: e.target.value })}
+                placeholder="Ex: Cérémonie de mariage intime dans un magnifique cadre de jardin"
+                rows={4}
+                className="bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
+              />
+            </div>
+          </div>
+        </div>
+
+        {/* Story Section */}
+        <div className="bg-indigo-50 dark:bg-indigo-900/20 p-4 rounded-lg border border-indigo-200 dark:border-indigo-800">
+          <h4 className="font-semibold mb-3 text-indigo-900 dark:text-indigo-100 flex items-center gap-2">
+            📖 6. Histoire (avec icône film)
+          </h4>
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <Label htmlFor="story_en" className="text-gray-700 dark:text-gray-300">Histoire (English) - Max 5 lignes</Label>
+              <Textarea
+                id="story_en"
+                value={formData.story_en}
+                onChange={(e) => setFormData({ ...formData, story_en: e.target.value })}
+                placeholder="Ex: A heartwarming tale of two souls united in love and commitment"
+                rows={4}
+                className="bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
+              />
+            </div>
+            <div>
+              <Label htmlFor="story_fr" className="text-gray-700 dark:text-gray-300">Histoire (Français) - Max 5 lignes</Label>
+              <Textarea
+                id="story_fr"
+                value={formData.story_fr}
+                onChange={(e) => setFormData({ ...formData, story_fr: e.target.value })}
+                placeholder="Ex: Une histoire touchante de deux âmes unies par l'amour et l'engagement"
+                rows={4}
+                className="bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
+              />
+            </div>
           </div>
         </div>
 
@@ -744,9 +855,17 @@ export default function GalleryManagement() {
                         <p className="text-sm text-gray-500 dark:text-gray-400">{item.title_fr}</p>
                       </div>
                       
-                      <div className="text-sm text-gray-600 dark:text-gray-400">
-                        <p className="mb-1">{item.description_en}</p>
-                        <p className="italic">{item.description_fr}</p>
+                      <div className="text-sm text-gray-600 dark:text-gray-400 space-y-2">
+                        <div>
+                          <p className="text-xs text-gray-500">Source:</p>
+                          <p className="mb-1">{item.source_en}</p>
+                          <p className="italic">{item.source_fr}</p>
+                        </div>
+                        <div>
+                          <p className="text-xs text-gray-500">Duration:</p>
+                          <p className="mb-1">{item.duration_en}</p>
+                          <p className="italic">{item.duration_fr}</p>
+                        </div>
                       </div>
                       
                       <div className="flex items-center gap-4 text-sm">
