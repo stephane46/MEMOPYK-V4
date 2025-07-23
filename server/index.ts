@@ -66,7 +66,10 @@ app.use((req, res, next) => {
 });
 
 (async () => {
-  // 1) Frontend handling
+  // 1) Register API routes FIRST (before static file serving)
+  registerRoutes(app);
+
+  // 2) Frontend handling
   if (process.env.NODE_ENV !== "production") {
     // — Dev mode: spawn Vite and proxy to it
     const viteProc = spawn("npx", ["vite"], {
@@ -109,31 +112,20 @@ app.use((req, res, next) => {
 
     console.log("🔄 Proxying frontend requests to Vite on port 5173");
   } else {
-    // — Prod mode: serve static build
+    // — Prod mode: serve static build files
     const clientDist = path.resolve(process.cwd(), "dist");
     console.log("📦 Production mode - serving from:", clientDist);
     
-    // Use standard Express static serving - let Express handle MIME types
-    app.use(express.static(clientDist, {
-      index: false,
-      maxAge: '1d', // Add caching for production
-    }));
+    // Serve static files first - Express will automatically set correct MIME types
+    app.use(express.static(clientDist));
     
-    // SPA fallback - only for non-file requests
-    app.get("*", (req: Request, res: Response) => {
-      // Only serve index.html for navigation routes (no file extension)
-      if (!req.path.includes('.')) {
-        res.sendFile(path.join(clientDist, "index.html"));
-      } else {
-        res.status(404).send('File not found');
-      }
+    // Catch-all for SPA routing - MUST be after static files and API routes
+    app.get("*", (_req: Request, res: Response) => {
+      res.sendFile(path.join(clientDist, "index.html"));
     });
     
-    console.log("📦 Static files configured with Express defaults");
+    console.log("📦 Static files served with standard Express configuration");
   }
-
-  // 2) Register API routes AFTER static file handling
-  registerRoutes(app);
 
   // 3) Error handler
   app.use(
