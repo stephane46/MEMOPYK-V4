@@ -1,6 +1,7 @@
 import React, { useState, useCallback, useRef } from 'react';
 import Cropper from 'react-easy-crop';
 import { Button } from '../ui/button';
+import getCroppedImg from '@/utils/cropImage';
 
 interface ImageCropperEasyCropProps {
   imageUrl: string;
@@ -19,15 +20,8 @@ export default function ImageCropperEasyCrop({ imageUrl, onSave, onCancel }: Ima
   const imageRef = useRef<HTMLImageElement | null>(null);
 
   const onCropCompleteCallback = useCallback((_: any, pixelCrop: any) => {
-    // Instead of using library's crop area, use the full 300x200 viewport
-    // Calculate what portion of the image is visible in the 300x200 container
-    const viewportCrop = {
-      x: 0,
-      y: 0, 
-      width: 300,
-      height: 200
-    };
-    croppedAreaPixelsRef.current = viewportCrop;
+    // Use the actual crop coordinates from react-easy-crop
+    croppedAreaPixelsRef.current = pixelCrop;
     
     // Reset preview when crop changes
     setPreviewUrl(null);
@@ -36,107 +30,35 @@ export default function ImageCropperEasyCrop({ imageUrl, onSave, onCancel }: Ima
   }, []);
 
   const generatePreview = useCallback(async () => {
-    const pixelCrop = croppedAreaPixelsRef.current;
-    if (!pixelCrop) {
+    if (!croppedAreaPixelsRef.current) {
       console.error('Missing crop data');
       return;
     }
 
-    // Create image element to load the source
-    const img = new Image();
-    img.crossOrigin = 'anonymous';
-    
-    return new Promise<void>((resolve, reject) => {
-      img.onload = () => {
+    setLoading(true);
+    try {
+      // Use the official react-easy-crop utility function
+      const blob = await getCroppedImg(
+        imageUrl,
+        croppedAreaPixelsRef.current,
+        300,
+        200
+      );
 
-        setLoading(true);
-        try {
-          // Create 300×200 canvas
-          const canvas = document.createElement('canvas');
-          canvas.width = 300;
-          canvas.height = 200;
-          const ctx = canvas.getContext('2d')!;
-          
-          // DIRECT APPROACH: Use react-easy-crop's own crop data but apply it correctly
-          // The library provides the exact pixel coordinates - we just need to use them properly
-          const cropperContainer = document.querySelector('.reactEasyCrop_Container');
-          const imageElement = cropperContainer?.querySelector('img') as HTMLImageElement;
-          
-          if (imageElement && croppedAreaPixelsRef.current) {
-            // Use the crop coordinates from react-easy-crop, but relative to the actual image
-            const pixelCrop = croppedAreaPixelsRef.current;
-            
-            // Get the displayed image dimensions
-            const displayedRect = imageElement.getBoundingClientRect();
-            const containerRect = cropperContainer!.getBoundingClientRect();
-            
-            // Calculate the scale between displayed image and natural image
-            const scaleX = img.naturalWidth / displayedRect.width;
-            const scaleY = img.naturalHeight / displayedRect.height;
-            
-            // Apply the scale to the crop coordinates
-            const sourceX = pixelCrop.x * scaleX;
-            const sourceY = pixelCrop.y * scaleY;
-            const sourceWidth = pixelCrop.width * scaleX;
-            const sourceHeight = pixelCrop.height * scaleY;
-            
-            console.log('Using react-easy-crop coordinates:', {
-              pixelCrop,
-              scale: { x: scaleX, y: scaleY },
-              source: { x: sourceX, y: sourceY, width: sourceWidth, height: sourceHeight }
-            });
-            
-            // Draw the cropped area
-            ctx.drawImage(
-              img,
-              sourceX,
-              sourceY,
-              sourceWidth,
-              sourceHeight,
-              0,
-              0,
-              300,
-              200
-            );
-          } else {
-            // Fallback: scale entire image
-            console.log('Fallback: using entire image');
-            ctx.drawImage(img, 0, 0, 300, 200);
-          }
+      if (!blob) {
+        throw new Error('Failed to generate cropped image');
+      }
 
-          // Generate preview and store blob
-          canvas.toBlob(
-            (blob) => {
-              if (blob) {
-                const previewObjectUrl = URL.createObjectURL(blob);
-                setPreviewUrl(previewObjectUrl);
-                setPreviewBlob(blob);
-                setShowPreview(true);
-                resolve();
-              } else {
-                console.error('Canvas toBlob returned null');
-                reject(new Error('Canvas toBlob returned null'));
-              }
-              setLoading(false);
-            },
-            'image/jpeg',
-            1.0 // Maximum quality
-          );
-        } catch (error) {
-          console.error('Error generating cropped image:', error);
-          setLoading(false);
-          reject(error);
-        }
-      };
-      
-      img.onerror = () => {
-        setLoading(false);
-        reject(new Error('Failed to load image'));
-      };
-      
-      img.src = imageUrl;
-    });
-  }, [crop, zoom, imageUrl]);
+      const previewObjectUrl = URL.createObjectURL(blob);
+      setPreviewUrl(previewObjectUrl);
+      setPreviewBlob(blob);
+      setShowPreview(true);
+    } catch (error) {
+      console.error('Error generating cropped image:', error);
+    } finally {
+      setLoading(false);
+    }
+  }, [imageUrl]);
 
   const handleConfirmSave = useCallback(() => {
     if (!previewBlob || !croppedAreaPixelsRef.current) return;
