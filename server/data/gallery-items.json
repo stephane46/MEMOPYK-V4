@@ -20,14 +20,15 @@
     "is_active": true,
     "use_same_video": true,
     "created_at": "2025-07-22T20:47:22.005Z",
-    "updated_at": "2025-07-23T16:17:20.170Z",
+    "updated_at": "2025-07-23T16:23:44.831Z",
     "static_image_url": "https://supabase.memopyk.org/storage/v1/object/public/memopyk-gallery/static_1753217242005.jpg",
     "crop_settings": {
-      "method": "draggable-cover",
+      "method": "draggable-cover-hd",
       "position": {
-        "x": 44.000000000000014,
+        "x": 54.666666666666664,
         "y": 100
       },
+      "devicePixelRatio": 2.25,
       "originalDimensions": {
         "width": 4032,
         "height": 3024
@@ -35,7 +36,8 @@
       "outputDimensions": {
         "width": 300,
         "height": 200
-      }
+      },
+      "format": "PNG"
     }
   }
 ]
