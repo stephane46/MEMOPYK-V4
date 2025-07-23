@@ -216,7 +216,7 @@ export class VideoCache {
   }
 
   /**
-   * Proactively preload critical videos (hero videos that auto-play)
+   * Proactively preload critical videos (hero videos that auto-play) and gallery videos
    */
   private async preloadCriticalVideos(): Promise<void> {
     // Critical videos that should ALWAYS be cached (hero videos auto-play)
@@ -241,8 +241,48 @@ export class VideoCache {
       }
     }
     
+    // Now preload gallery videos
+    await this.preloadGalleryVideos();
+    
     const stats = this.getCacheStats();
     console.log(`🎯 Critical video preloading complete! Cache: ${stats.fileCount} files, ${stats.sizeMB}MB`);
+  }
+
+  /**
+   * Preload all gallery videos for instant deployment availability
+   */
+  private async preloadGalleryVideos(): Promise<void> {
+    console.log('📸 Starting gallery video preloading...');
+    
+    try {
+      // Import hybrid storage to get gallery items
+      const { hybridStorage } = await import('./hybrid-storage');
+      const galleryItems = await hybridStorage.getGalleryItems();
+      
+      const galleryVideos = galleryItems
+        .filter(item => item.video_url_en)
+        .map(item => item.video_url_en!.split('/').pop()!)
+        .filter(filename => filename);
+
+      console.log(`📋 Found ${galleryVideos.length} gallery videos to preload`);
+      
+      for (const filename of galleryVideos) {
+        try {
+          if (!this.isVideoCached(filename)) {
+            console.log(`⬇️ Preloading gallery video: ${filename}`);
+            await this.downloadAndCacheVideo(filename);
+          } else {
+            console.log(`✅ Gallery video already cached: ${filename}`);
+          }
+        } catch (error) {
+          console.error(`❌ Failed to preload gallery video ${filename}:`, error);
+        }
+      }
+      
+      console.log(`🎬 Gallery video preloading complete! ${galleryVideos.length} videos processed`);
+    } catch (error) {
+      console.error('❌ Failed to preload gallery videos:', error);
+    }
   }
 
   /**
