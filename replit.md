@@ -15,17 +15,15 @@ Preferred communication style: Simple, everyday language.
 
 ## Recent Changes (July 22, 2025)
 
-### Phase 8.2.3 Static Image Generation System - COMPLETED (July 23, 2025)
-**Complete Static Image Generation Workflow:**
-- Fixed database schema by adding missing static_image_url and crop_settings columns to gallery_items table
-- Enhanced ImageCropper component with proper UUID handling for gallery item IDs
-- Implemented complete 300×200 JPEG static image generation and upload workflow
-- Fixed image upload API endpoint to properly handle cropped image data and settings storage
-- Successfully tested end-to-end: crop selection → JPEG generation → Supabase upload → database storage
-- Static images now generated with original filename prefix (static_[item_id].jpg) for clean organization
-- **FINAL FIX**: Modified gallery display logic to prioritize static images over video thumbnails
-- Gallery now correctly shows cropped static images (300×200) instead of black video frames
-- System fully operational: crop tool → static image generation → gallery thumbnail display
+### Phase 8.2.3 Static Image Generation System - DEBUGGING (July 23, 2025)
+**Current Status - Cropping Logic Issue:**
+- Database schema and upload workflow working correctly (300×200 JPEG generation)
+- ImageCropper component enhanced with comprehensive debugging system
+- **CRITICAL ISSUE**: Cropping coordinates calculation producing incorrect results
+- System generates blue images instead of actual cropped content from orange selection frame
+- **DEBUGGING APPROACH**: Added server-side logging and removed page reload to capture debug data
+- **NEXT STEP**: Analyze debugging output to fix coordinate transformation logic
+- Upload and storage systems fully operational, only cropping calculation needs correction
 
 ### Phase 8.2.2 Gallery UI Improvements - COMPLETED (July 22, 2025)
 **Enhanced Gallery Visual Design:**
