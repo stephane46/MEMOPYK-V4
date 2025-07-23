@@ -186,8 +186,8 @@ export default function GallerySection() {
                 key={item.id} 
                 className="group bg-white dark:bg-gray-800 rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 overflow-hidden transform hover:-translate-y-2"
               >
-                {/* Media Preview */}
-                <div className="aspect-video bg-gray-100 dark:bg-gray-700 relative overflow-hidden">
+                {/* Media Preview - Use correct aspect ratio for static images */}
+                <div className={`${item.staticImageUrl ? 'aspect-[3/2]' : 'aspect-video'} bg-gray-100 dark:bg-gray-700 relative overflow-hidden`}>
                   {thumbnailUrl ? (
                     <div className="w-full h-full relative">
                       {/* Always show image thumbnail (static or regular) */}

@@ -233,10 +233,31 @@ export const ImageCropper: React.FC<ImageCropperProps> = ({
       if (!hiResCtx) throw new Error('Could not get hi-res canvas context');
       
       // Draw the image exactly as it appears in the preview, but at high resolution
+      // CRITICAL FIX: At higher zoom (60%), image should be LARGER, not smaller
+      // displayScale should make image bigger when zoom > 100%, smaller when zoom < 100%
+      const actualDisplayScale = displayScale; // Keep as is - this represents how much of the image is visible
+      
+      // Calculate how the image actually fits in the preview container
+      const imageAspect = img.naturalWidth / img.naturalHeight;
+      const containerAspect = previewWidth / previewHeight;
+      
+      let baseImageW, baseImageH;
+      if (imageAspect > containerAspect) {
+        baseImageH = previewHeight;
+        baseImageW = baseImageH * imageAspect;
+      } else {
+        baseImageW = previewWidth;
+        baseImageH = baseImageW / imageAspect;
+      }
+      
+      // Apply zoom: lower zoom means image appears smaller (showing more of the image)
+      const zoomedImageW = baseImageW / actualDisplayScale;  // At 60% zoom, image is 1.67x larger
+      const zoomedImageH = baseImageH / actualDisplayScale;
+      
       const hiResImageX = cropSettings.x * hiResScale;
       const hiResImageY = cropSettings.y * hiResScale;
-      const hiResImageW = (previewWidth * displayScale) * hiResScale;
-      const hiResImageH = (previewHeight * displayScale) * hiResScale;
+      const hiResImageW = zoomedImageW * hiResScale;
+      const hiResImageH = zoomedImageH * hiResScale;
       
       hiResCtx.drawImage(
         img,
@@ -269,13 +290,15 @@ export const ImageCropper: React.FC<ImageCropperProps> = ({
       // Source is now the high-res preview canvas, not the original image
       
       const correctDebug = {
-        transform: 'high-res-preview-v10',
+        transform: 'high-res-preview-v11-zoom-fix',
         preview: { w: previewWidth, h: previewHeight },
         cropFrame: { x: cropFrameX, y: cropFrameY, w: targetWidth, h: targetHeight },
         cropSettings: cropSettings,
         original: { w: img.naturalWidth, h: img.naturalHeight },
         hiResScale: hiResScale,
         hiResPreview: { w: hiResPreviewW, h: hiResPreviewH },
+        baseImage: { w: baseImageW, h: baseImageH },
+        zoomedImage: { w: zoomedImageW, h: zoomedImageH },
         hiResImage: { x: hiResImageX, y: hiResImageY, w: hiResImageW, h: hiResImageH },
         hiResCrop: { x: hiResCropX, y: hiResCropY, w: hiResCropW, h: hiResCropH },
         source: { x: finalSourceX, y: finalSourceY, w: finalSourceW, h: finalSourceH },
