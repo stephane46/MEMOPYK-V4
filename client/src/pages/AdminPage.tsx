@@ -486,7 +486,23 @@ export default function AdminPage() {
                           ? `${cacheStats.fileCount || 0} files • ${(((cacheStats.totalSize as number) || 0) / 1024 / 1024).toFixed(1)}MB` 
                           : 'Loading stats...'}
                       </span>
-                      <span title="Videos older than 24 hours are automatically removed to save disk space">Cache auto-expires after 24h</span>
+                      <span>Auto-cleanup: 24 hours</span>
+                    </div>
+                    
+                    <div className="mt-3 p-3 bg-blue-50 border border-blue-200 rounded-lg">
+                      <div className="flex items-start space-x-2">
+                        <div className="flex-shrink-0 w-4 h-4 bg-blue-100 rounded-full flex items-center justify-center mt-0.5">
+                          <span className="text-blue-600 text-xs font-bold">?</span>
+                        </div>
+                        <div>
+                          <h5 className="font-medium text-blue-900 text-sm mb-1">What does "Auto-cleanup: 24 hours" mean?</h5>
+                          <p className="text-xs text-blue-800 leading-relaxed">
+                            To prevent your server from running out of storage space, cached videos are automatically deleted after 24 hours. 
+                            When this happens, videos will be re-downloaded from Supabase the next time someone visits your site - 
+                            this keeps your website running smoothly without manual maintenance.
+                          </p>
+                        </div>
+                      </div>
                     </div>
                   </CardContent>
                 </Card>
