@@ -239,14 +239,22 @@ export const ImageCropper: React.FC<ImageCropperProps> = ({
       const relativeX = cropFrameX - cropSettings.x;
       const relativeY = cropFrameY - cropSettings.y;
       
-      // Convert from display coordinates to original image coordinates
-      const scaleFactorX = img.naturalWidth / actualDisplayWidth;
-      const scaleFactorY = img.naturalHeight / actualDisplayHeight;
+      // For maximum quality, we want to extract a region that's LARGER than 300×200
+      // from the high-resolution source, then let the browser do high-quality downsampling
       
-      const sourceX = Math.max(0, Math.min(img.naturalWidth - targetWidth * scaleFactorX, relativeX * scaleFactorX));
-      const sourceY = Math.max(0, Math.min(img.naturalHeight - targetHeight * scaleFactorY, relativeY * scaleFactorY));
-      const sourceW = targetWidth * scaleFactorX;
-      const sourceH = targetHeight * scaleFactorY;
+      // Calculate how much of the original image corresponds to our crop selection
+      const scaleToOriginal = Math.max(img.naturalWidth / actualDisplayWidth, img.naturalHeight / actualDisplayHeight);
+      
+      // For optimal quality, extract at least 600×400 (2x target) or larger from source
+      const qualityMultiplier = Math.max(2.0, scaleToOriginal);
+      const optimalSourceW = targetWidth * qualityMultiplier;
+      const optimalSourceH = targetHeight * qualityMultiplier;
+      
+      // Convert crop frame position to source coordinates
+      const sourceX = Math.max(0, Math.min(img.naturalWidth - optimalSourceW, relativeX * scaleToOriginal));
+      const sourceY = Math.max(0, Math.min(img.naturalHeight - optimalSourceH, relativeY * scaleToOriginal));
+      const sourceW = Math.min(optimalSourceW, img.naturalWidth - sourceX);
+      const sourceH = Math.min(optimalSourceH, img.naturalHeight - sourceY);
       
       const correctDebug = {
         transform: 'optimized-v3',
