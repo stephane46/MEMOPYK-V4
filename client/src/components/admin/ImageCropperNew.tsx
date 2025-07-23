@@ -74,10 +74,11 @@ export default function ImageCropperNew({
       setIsLoading(false);
     };
     img.onerror = () => {
-      console.error('Failed to load image');
+      console.error('Failed to load image. URL:', imageUrl);
       setIsLoading(false);
     };
-    img.src = `/api/video-proxy?filename=${encodeURIComponent(imageUrl)}`;
+    // Use the imageUrl directly - it's already a full Supabase URL
+    img.src = imageUrl;
   }, [imageUrl, previewWidth, previewHeight]);
 
   const handleMouseDown = (e: React.MouseEvent) => {
@@ -310,7 +311,7 @@ export default function ImageCropperNew({
           {/* Image */}
           <img
             ref={imageRef}
-            src={`/api/video-proxy?filename=${encodeURIComponent(imageUrl)}`}
+            src={imageUrl}
             alt="Source"
             className="absolute select-none"
             style={{
