@@ -904,10 +904,8 @@ export default function GalleryManagement() {
                   });
                   
                   const result = await response.json();
-                  console.log('🎯 Upload result:', result);
                   
                   if (result.success) {
-                    console.log('🎉 Success! Showing toast...');
                     toast({ 
                       title: "Succès", 
                       description: "Image statique générée et sauvegardée avec succès!" 

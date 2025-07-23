@@ -9,6 +9,7 @@ import { AdminRoute } from './components/AdminRoute';
 import { LanguageSelectionPage } from './pages/LanguageSelectionPage';
 import NotFoundPage from './pages/not-found';
 import { queryClient } from './lib/queryClient';
+import { Toaster } from '@/components/ui/toaster';
 
 function App() {
   return (
@@ -44,6 +45,7 @@ function App() {
           </Router>
         </LanguageProvider>
       </AuthProvider>
+      <Toaster />
     </QueryClientProvider>
   );
 }

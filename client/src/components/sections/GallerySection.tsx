@@ -111,22 +111,11 @@ export default function GallerySection() {
       }
       return null;
     } else {
-      // Debug: Check what we have for images
-      console.log('🖼️ Gallery Item Image URLs:', {
-        id: item.id,
-        staticImageUrl: item.staticImageUrl,
-        imageUrlEn: item.imageUrlEn,
-        imageUrlFr: item.imageUrlFr
-      });
-      
       // Prioritize static image (300x200 cropped) if available, otherwise use regular image
       if (item.staticImageUrl) {
-        console.log('✅ Using static image:', item.staticImageUrl);
         return item.staticImageUrl;
       }
-      const fallbackUrl = language === 'fr-FR' ? item.imageUrlFr : item.imageUrlEn;
-      console.log('📸 Using fallback image:', fallbackUrl);
-      return fallbackUrl;
+      return language === 'fr-FR' ? item.imageUrlFr : item.imageUrlEn;
     }
   };
 
