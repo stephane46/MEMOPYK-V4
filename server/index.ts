@@ -66,10 +66,7 @@ app.use((req, res, next) => {
 });
 
 (async () => {
-  // 1) Register API routes FIRST (before static file serving)
-  registerRoutes(app);
-
-  // 2) Frontend handling
+  // 1) Frontend handling
   if (process.env.NODE_ENV !== "production") {
     // — Dev mode: spawn Vite and proxy to it
     const viteProc = spawn("npx", ["vite"], {
@@ -112,20 +109,22 @@ app.use((req, res, next) => {
 
     console.log("🔄 Proxying frontend requests to Vite on port 5173");
   } else {
-    // — Prod mode: serve static build files
+    // — Prod mode: serve static build
     const clientDist = path.resolve(process.cwd(), "dist");
-    console.log("📦 Production mode - serving from:", clientDist);
     
-    // Serve static files first - Express will automatically set correct MIME types
-    app.use(express.static(clientDist));
+    app.use(express.static(clientDist, {
+      index: false
+    }));
     
-    // Catch-all for SPA routing - MUST be after static files and API routes
     app.get("*", (_req: Request, res: Response) => {
       res.sendFile(path.join(clientDist, "index.html"));
     });
     
-    console.log("📦 Static files served with standard Express configuration");
+    console.log("📦 Serving static files from", clientDist);
   }
+
+  // 2) Register API routes
+  registerRoutes(app);
 
   // 3) Error handler
   app.use(
