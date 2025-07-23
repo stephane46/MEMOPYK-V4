@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { apiRequest } from '@/lib/queryClient';
 import { Button } from '@/components/ui/button';
@@ -8,7 +8,7 @@ import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
 import { Badge } from '@/components/ui/badge';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
-import { ArrowUp, ArrowDown, Play, RefreshCw, BarChart3, Video, HardDrive, Users, MessageSquare, FileText, LogOut, TestTube, Rocket, X, Type, Save, Palette, ChevronUp, ChevronDown, Trash2, Eye, EyeOff, Upload, FileVideo } from 'lucide-react';
+import { ArrowUp, ArrowDown, Play, RefreshCw, BarChart3, Video, HardDrive, Users, MessageSquare, FileText, LogOut, TestTube, Rocket, X, Type, Save, Palette, ChevronUp, ChevronDown, Trash2, Eye, EyeOff, Upload, FileVideo, Database, Check, Zap } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import GalleryManagement from '@/components/admin/GalleryManagement';
 
@@ -148,14 +148,29 @@ export default function AdminPage() {
   });
 
   // Fetch hero text overlays
-  const { data: heroTexts = [], isLoading: textsLoading } = useQuery({
+  const { data: heroTexts = [], isLoading: textsLoading } = useQuery<any[]>({
     queryKey: ['/api/hero-text'],
   });
 
   // Fetch cache statistics
   const { data: cacheStats, isLoading: cacheLoading } = useQuery<CacheStats>({
     queryKey: ['/api/video-cache/stats'],
+    refetchInterval: 5000, // Refresh every 5 seconds
   });
+
+  // Cache status tracking
+  const [cacheStatus, setCacheStatus] = useState<{[key: string]: boolean}>({});
+
+  // Update cache status when stats change
+  React.useEffect(() => {
+    if (cacheStats && 'files' in cacheStats && Array.isArray((cacheStats as any).files)) {
+      const statusMap: {[key: string]: boolean} = {};
+      ((cacheStats as any).files).forEach((file: any) => {
+        statusMap[file.filename] = true;
+      });
+      setCacheStatus(statusMap);
+    }
+  }, [cacheStats]);
 
   // Video reordering mutation
   const reorderMutation = useMutation({
@@ -551,6 +566,33 @@ export default function AdminPage() {
                                       }`}>
                                         {video.is_active ? '🟢 VISIBLE ON WEBSITE' : '🔴 HIDDEN FROM WEBSITE'}
                                       </div>
+                                    </div>
+                                    
+                                    {/* Cache Status */}
+                                    <div className="flex items-center justify-center">
+                                      {(() => {
+                                        const filename = video.url_en;
+                                        const isCached = cacheStatus[filename];
+                                        return (
+                                          <div className={`px-4 py-2 rounded-lg font-medium text-sm border-2 ${
+                                            isCached 
+                                              ? 'bg-green-50 dark:bg-green-900/20 text-green-700 dark:text-green-300 border-green-200 dark:border-green-800' 
+                                              : 'bg-orange-50 dark:bg-orange-900/20 text-orange-700 dark:text-orange-300 border-orange-200 dark:border-orange-800'
+                                          }`}>
+                                            {isCached ? (
+                                              <>
+                                                <Check className="inline h-4 w-4 mr-1" />
+                                                ✅ Cached (~50ms load)
+                                              </>
+                                            ) : (
+                                              <>
+                                                <Zap className="inline h-4 w-4 mr-1" />
+                                                ⏳ Not Cached (~1500ms load)
+                                              </>
+                                            )}
+                                          </div>
+                                        );
+                                      })()}
                                     </div>
                                     
                                     {/* Toggle Switch */}

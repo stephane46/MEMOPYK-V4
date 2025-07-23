@@ -24,7 +24,9 @@ import {
   Save,
   Crop,
   Download,
-  Zap
+  Zap,
+  Check,
+  Database
 } from "lucide-react";
 import ImageCropperEasyCrop from './ImageCropperEasyCrop';
 
@@ -92,8 +94,26 @@ export default function GalleryManagement() {
   const [uploadProgress, setUploadProgress] = useState(0);
   const [uploadStatus, setUploadStatus] = useState('');
   const [cachingVideos, setCachingVideos] = useState<Set<string>>(new Set());
+  const [cacheStatus, setCacheStatus] = useState<{[key: string]: boolean}>({});
   const { toast } = useToast();
   const queryClient = useQueryClient();
+
+  // Fetch cache status
+  const { data: cacheStats } = useQuery({
+    queryKey: ['/api/video-cache/stats'],
+    refetchInterval: 5000, // Refresh every 5 seconds
+  });
+
+  // Update cache status when stats change
+  React.useEffect(() => {
+    if (cacheStats && 'files' in cacheStats && Array.isArray(cacheStats.files)) {
+      const statusMap: {[key: string]: boolean} = {};
+      cacheStats.files.forEach((file: any) => {
+        statusMap[file.filename] = true;
+      });
+      setCacheStatus(statusMap);
+    }
+  }, [cacheStats]);
 
   // Cache video function
   const cacheVideo = async (videoUrl: string) => {
@@ -111,11 +131,17 @@ export default function GalleryManagement() {
       const response = await fetch(`/api/video-proxy?filename=${encodeURIComponent(filename)}`);
       
       if (response.ok) {
+        // Update cache status immediately
+        setCacheStatus(prev => ({ ...prev, [filename]: true }));
+        
         toast({ 
           title: "✅ Vidéo mise en cache", 
           description: `${filename} est maintenant disponible en cache local`,
           className: "bg-green-50 dark:bg-green-900/20 border-green-200 dark:border-green-800 text-green-900 dark:text-green-100"
         });
+        
+        // Refresh cache stats
+        queryClient.invalidateQueries({ queryKey: ['/api/video-cache/stats'] });
       } else {
         throw new Error('Cache failed');
       }
@@ -992,6 +1018,56 @@ export default function GalleryManagement() {
 
   return (
     <div className="space-y-6">
+      {/* Cache Status Dashboard */}
+      <Card className="bg-gray-50 dark:bg-gray-800 border-gray-200 dark:border-gray-700">
+        <CardContent className="p-4">
+          <div className="flex items-center justify-between mb-3">
+            <h4 className="font-semibold text-gray-900 dark:text-white flex items-center">
+              <Database className="h-4 w-4 mr-2" />
+              État du Cache Vidéo
+            </h4>
+            <span className="text-xs text-gray-500">
+              {cacheStats && 'fileCount' in cacheStats && 'totalSize' in cacheStats 
+                ? `${cacheStats.fileCount || 0} vidéos • ${(((cacheStats.totalSize as number) || 0) / 1024 / 1024).toFixed(1)}MB` 
+                : 'Chargement...'}
+            </span>
+          </div>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 text-sm">
+            {/* Hero Videos Cache Status */}
+            {['VideoHero1.mp4', 'VideoHero2.mp4', 'VideoHero3.mp4'].map(filename => {
+              const isCached = cacheStatus[filename];
+              return (
+                <div key={filename} className={`flex items-center justify-between p-2 rounded border ${
+                  isCached ? 'bg-green-50 border-green-200 dark:bg-green-900/20 dark:border-green-800' : 'bg-red-50 border-red-200 dark:bg-red-900/20 dark:border-red-800'
+                }`}>
+                  <span className="text-xs font-mono">{filename}</span>
+                  <span className={`text-xs ${isCached ? 'text-green-700 dark:text-green-300' : 'text-red-700 dark:text-red-300'}`}>
+                    {isCached ? '✅ Cached' : '❌ Not Cached'}
+                  </span>
+                </div>
+              );
+            })}
+            
+            {/* Gallery Videos Cache Status */}
+            {galleryItems.filter(item => item.video_url_en).map(item => {
+              const filename = item.video_url_en!.split('/').pop()!;
+              const isCached = cacheStatus[filename];
+              return (
+                <div key={filename} className={`flex items-center justify-between p-2 rounded border ${
+                  isCached ? 'bg-green-50 border-green-200 dark:bg-green-900/20 dark:border-green-800' : 'bg-orange-50 border-orange-200 dark:bg-orange-900/20 dark:border-orange-800'
+                }`}>
+                  <span className="text-xs font-mono truncate" title={filename}>{filename.length > 20 ? filename.substring(0, 20) + '...' : filename}</span>
+                  <span className={`text-xs ${isCached ? 'text-green-700 dark:text-green-300' : 'text-orange-700 dark:text-orange-300'}`}>
+                    {isCached ? '✅ Cached' : '⏳ Gallery'}
+                  </span>
+                </div>
+              );
+            })}
+          </div>
+        </CardContent>
+      </Card>
+
       <div className="flex justify-between items-center">
         <div>
           <h3 className="text-lg font-semibold">Éléments de Galerie</h3>
@@ -1142,27 +1218,44 @@ export default function GalleryManagement() {
                   </div>
                   
                   {/* Cache Video Button */}
-                  {item.video_url_en && (
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => cacheVideo(item.video_url_en!)}
-                      disabled={cachingVideos.has(item.video_url_en!.split('/').pop()!)}
-                      className="w-full justify-start bg-blue-50 hover:bg-blue-100 dark:bg-blue-900/20 dark:hover:bg-blue-900/40 border-blue-200 dark:border-blue-800"
-                    >
-                      {cachingVideos.has(item.video_url_en!.split('/').pop()!) ? (
-                        <>
-                          <Download className="h-3 w-3 mr-1 animate-pulse" />
-                          Cache en cours...
-                        </>
-                      ) : (
-                        <>
-                          <Zap className="h-3 w-3 mr-1" />
-                          Mettre en cache
-                        </>
-                      )}
-                    </Button>
-                  )}
+                  {item.video_url_en && (() => {
+                    const filename = item.video_url_en!.split('/').pop()!;
+                    const isCached = cacheStatus[filename];
+                    const isCaching = cachingVideos.has(filename);
+                    
+                    return (
+                      <Button
+                        variant="outline" 
+                        size="sm"
+                        onClick={() => cacheVideo(item.video_url_en!)}
+                        disabled={isCaching || isCached}
+                        className={`w-full justify-start ${
+                          isCached 
+                            ? 'bg-green-50 hover:bg-green-100 dark:bg-green-900/20 border-green-200 dark:border-green-800 text-green-700 dark:text-green-300'
+                            : isCaching
+                            ? 'bg-blue-50 hover:bg-blue-100 dark:bg-blue-900/20 border-blue-200 dark:border-blue-800'
+                            : 'bg-orange-50 hover:bg-orange-100 dark:bg-orange-900/20 border-orange-200 dark:border-orange-800'
+                        }`}
+                      >
+                        {isCaching ? (
+                          <>
+                            <Download className="h-3 w-3 mr-1 animate-pulse" />
+                            Cache en cours...
+                          </>
+                        ) : isCached ? (
+                          <>
+                            <Check className="h-3 w-3 mr-1" />
+                            ✅ En cache
+                          </>
+                        ) : (
+                          <>
+                            <Zap className="h-3 w-3 mr-1" />
+                            Mettre en cache
+                          </>
+                        )}
+                      </Button>
+                    );
+                  })()}
                   
                   {/* Static Image Cropper Button */}
                   {item.image_url_en && (
