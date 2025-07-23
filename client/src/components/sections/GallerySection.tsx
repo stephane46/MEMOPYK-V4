@@ -6,7 +6,28 @@ import { Button } from "@/components/ui/button";
 import { VideoOverlay } from "@/components/gallery/VideoOverlay";
 import { Badge } from "@/components/ui/badge";
 import { Play, Eye, Star, ArrowRight, Image as ImageIcon } from "lucide-react";
-import type { GalleryItem } from "@shared/schema";
+// We transform the API data ourselves, so we'll define the type locally
+interface GalleryItem {
+  id: string | number;
+  titleEn: string;
+  titleFr: string;
+  descriptionEn: string;
+  descriptionFr: string;
+  videoUrlEn: string;
+  videoUrlFr: string;
+  videoWidth: number;
+  videoHeight: number;
+  videoOrientation: string;
+  imageUrlEn: string;
+  imageUrlFr: string;
+  staticImageUrl: string | null; // This is the key field for static images
+  altTextEn: string;
+  altTextFr: string;
+  priceEn: string;
+  priceFr: string;
+  orderIndex: number;
+  isActive: boolean;
+}
 
 export default function GallerySection() {
   const { language } = useLanguage();
