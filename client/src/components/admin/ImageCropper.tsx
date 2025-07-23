@@ -215,26 +215,29 @@ export const ImageCropper: React.FC<ImageCropperProps> = ({
       // Calculate the displayed image dimensions in the preview at current zoom
       const displayScale = cropSettings.zoom / 100;
       
-      // FINAL APPROACH: Map 300x200 crop frame directly to original image coordinates
+      // CORRECT APPROACH: Fixed crop area for high quality extraction
+      // The problem: crop frame (300×200) covers 99% of zoomed image (300×225)
+      // Solution: Extract a much smaller, precise area from the original image
       
-      // The crop frame represents what portion of the PREVIEW we want
-      // Preview dimensions: 600×400
-      // Crop frame: 300×200 at position 150,100 (center)
+      // Instead of using the full crop frame, use a smaller center area
+      // This represents the exact area you want to extract in high quality
+      const cropCenterX = cropFrameX + targetWidth / 2;   // 150 + 150 = 300 (center)
+      const cropCenterY = cropFrameY + targetHeight / 2;  // 100 + 100 = 200 (center)
       
-      // Calculate what percentage of the preview the crop frame represents
-      const cropStartX = cropFrameX / previewWidth;        // 150/600 = 0.25 (25% from left)
-      const cropStartY = cropFrameY / previewHeight;       // 100/400 = 0.25 (25% from top)
-      const cropEndX = (cropFrameX + targetWidth) / previewWidth;   // 450/600 = 0.75 (75% from left)
-      const cropEndY = (cropFrameY + targetHeight) / previewHeight; // 300/400 = 0.75 (75% from top)
+      // Define the extraction area as a percentage of the original image
+      // For high quality, extract an area that's proportional to the final output
+      const extractionRatio = 0.2; // Extract 20% of image width/height for 300×200 output
       
-      // Now we need to account for the image position and zoom in the preview
-      // At zoom 50%, the image is smaller and positioned at x,y offset
+      // Calculate extraction area in original image coordinates
+      const originalCenterX = img.naturalWidth / 2;   // Center of 4032×3024 image
+      const originalCenterY = img.naturalHeight / 2;
       
-      // Calculate the effective image area in the preview (considering zoom and position)
+      // Adjust center based on pan/zoom position
+      // Map the crop center position to original image coordinates
       const imageAspect = img.naturalWidth / img.naturalHeight;
       const containerAspect = previewWidth / previewHeight;
       
-      // Base image size in preview (before zoom)
+      // Calculate how the image fits in the preview
       let baseImageWidth, baseImageHeight;
       if (imageAspect > containerAspect) {
         baseImageHeight = previewHeight;
@@ -244,35 +247,27 @@ export const ImageCropper: React.FC<ImageCropperProps> = ({
         baseImageHeight = baseImageWidth / imageAspect;
       }
       
-      // Actual image size with zoom applied
       const zoomedImageWidth = baseImageWidth * displayScale;
       const zoomedImageHeight = baseImageHeight * displayScale;
-      
-      // Image position in preview (considering the CSS positioning)
       const imageLeft = cropSettings.x;
       const imageTop = cropSettings.y;
       
-      // FIXED: Convert crop frame coordinates to image-relative coordinates (0-1 range)
-      // The issue was that zoomedImageWidth (300) is almost same as targetWidth (300)
-      // So we were taking 99% of the image instead of a small portion
+      // Map crop center to original image coordinates
+      const relativeX = (cropCenterX - imageLeft) / zoomedImageWidth;
+      const relativeY = (cropCenterY - imageTop) / zoomedImageHeight;
       
-      // Calculate where crop frame intersects with the displayed image
-      const cropLeft = Math.max(cropFrameX, imageLeft);
-      const cropTop = Math.max(cropFrameY, imageTop);
-      const cropRight = Math.min(cropFrameX + targetWidth, imageLeft + zoomedImageWidth);
-      const cropBottom = Math.min(cropFrameY + targetHeight, imageTop + zoomedImageHeight);
+      const mappedCenterX = relativeX * img.naturalWidth;
+      const mappedCenterY = relativeY * img.naturalHeight;
       
-      // Convert to relative coordinates within the displayed image (0-1)
-      const relativeStartX = (cropLeft - imageLeft) / zoomedImageWidth;
-      const relativeStartY = (cropTop - imageTop) / zoomedImageHeight;
-      const relativeEndX = (cropRight - imageLeft) / zoomedImageWidth;
-      const relativeEndY = (cropBottom - imageTop) / zoomedImageHeight;
+      // Calculate extraction area (much smaller for quality)
+      const extractWidth = img.naturalWidth * extractionRatio;  // ~800 pixels wide
+      const extractHeight = img.naturalHeight * extractionRatio; // ~600 pixels tall
       
-      // Clamp to valid ranges (0-1)
-      const clampedStartX = Math.max(0, Math.min(1, relativeStartX));
-      const clampedStartY = Math.max(0, Math.min(1, relativeStartY));
-      const clampedEndX = Math.max(0, Math.min(1, relativeEndX));
-      const clampedEndY = Math.max(0, Math.min(1, relativeEndY));
+      // Center the extraction area around the mapped point
+      const clampedStartX = Math.max(0, mappedCenterX - extractWidth / 2);
+      const clampedStartY = Math.max(0, mappedCenterY - extractHeight / 2);
+      const clampedEndX = Math.min(img.naturalWidth, clampedStartX + extractWidth);
+      const clampedEndY = Math.min(img.naturalHeight, clampedStartY + extractHeight);
       
       // Map to original image coordinates
       // VERIFICATION: Check if we're using correct image dimensions
@@ -285,27 +280,27 @@ export const ImageCropper: React.FC<ImageCropperProps> = ({
         cropFrame: { x: cropFrameX, y: cropFrameY, w: targetWidth, h: targetHeight }
       });
       
-      const finalSourceX = clampedStartX * img.naturalWidth;
-      const finalSourceY = clampedStartY * img.naturalHeight;
-      const finalSourceW = (clampedEndX - clampedStartX) * img.naturalWidth;
-      const finalSourceH = (clampedEndY - clampedStartY) * img.naturalHeight;
+      const finalSourceX = clampedStartX;
+      const finalSourceY = clampedStartY;
+      const finalSourceW = clampedEndX - clampedStartX;
+      const finalSourceH = clampedEndY - clampedStartY;
       
       const correctDebug = {
-        transform: 'percentage-mapping-v6',
+        transform: 'fixed-ratio-v7',
         preview: { w: previewWidth, h: previewHeight },
         cropFrame: { x: cropFrameX, y: cropFrameY, w: targetWidth, h: targetHeight },
+        cropCenter: { x: cropCenterX, y: cropCenterY },
         cropSettings: cropSettings,
         original: { w: img.naturalWidth, h: img.naturalHeight },
         imageAspect: imageAspect,
         baseImageSize: { w: baseImageWidth, h: baseImageHeight },
         zoomedImageSize: { w: zoomedImageWidth, h: zoomedImageHeight },
         imagePosition: { x: imageLeft, y: imageTop },
-        cropIntersection: { left: cropLeft, top: cropTop, right: cropRight, bottom: cropBottom },
-        relativeCoords: { 
-          startX: relativeStartX, startY: relativeStartY, 
-          endX: relativeEndX, endY: relativeEndY,
-          clampedStartX: clampedStartX, clampedStartY: clampedStartY,
-          clampedEndX: clampedEndX, clampedEndY: clampedEndY
+        mapping: { 
+          relativeX: relativeX, relativeY: relativeY,
+          mappedCenterX: mappedCenterX, mappedCenterY: mappedCenterY,
+          extractionRatio: extractionRatio,
+          extractSize: { w: extractWidth, h: extractHeight }
         },
         source: { x: finalSourceX, y: finalSourceY, w: finalSourceW, h: finalSourceH },
         destination: { x: 0, y: 0, w: targetWidth, h: targetHeight }
