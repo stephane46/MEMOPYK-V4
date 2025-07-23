@@ -22,7 +22,9 @@ import {
   Image,
   Play,
   Save,
-  Crop
+  Crop,
+  Download,
+  Zap
 } from "lucide-react";
 import ImageCropperEasyCrop from './ImageCropperEasyCrop';
 
@@ -89,8 +91,48 @@ export default function GalleryManagement() {
   const [uploading, setUploading] = useState(false);
   const [uploadProgress, setUploadProgress] = useState(0);
   const [uploadStatus, setUploadStatus] = useState('');
+  const [cachingVideos, setCachingVideos] = useState<Set<string>>(new Set());
   const { toast } = useToast();
   const queryClient = useQueryClient();
+
+  // Cache video function
+  const cacheVideo = async (videoUrl: string) => {
+    const filename = videoUrl.split('/').pop()!;
+    setCachingVideos(prev => new Set(prev).add(filename));
+    
+    try {
+      toast({ 
+        title: "🚀 Cache en cours", 
+        description: `Mise en cache de ${filename}...`,
+        className: "bg-blue-50 dark:bg-blue-900/20 border-blue-200 dark:border-blue-800"
+      });
+
+      // Trigger cache by making a request to the video proxy
+      const response = await fetch(`/api/video-proxy?filename=${encodeURIComponent(filename)}`);
+      
+      if (response.ok) {
+        toast({ 
+          title: "✅ Vidéo mise en cache", 
+          description: `${filename} est maintenant disponible en cache local`,
+          className: "bg-green-50 dark:bg-green-900/20 border-green-200 dark:border-green-800 text-green-900 dark:text-green-100"
+        });
+      } else {
+        throw new Error('Cache failed');
+      }
+    } catch (error) {
+      toast({ 
+        title: "❌ Erreur de cache", 
+        description: `Impossible de mettre ${filename} en cache`, 
+        variant: "destructive" 
+      });
+    } finally {
+      setCachingVideos(prev => {
+        const newSet = new Set(prev);
+        newSet.delete(filename);
+        return newSet;
+      });
+    }
+  };
 
   // File upload handlers
   const handleVideoUpload = async (file: File | undefined) => {
@@ -1098,6 +1140,29 @@ export default function GalleryManagement() {
                       <ArrowDown className="h-3 w-3" />
                     </Button>
                   </div>
+                  
+                  {/* Cache Video Button */}
+                  {item.video_url_en && (
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => cacheVideo(item.video_url_en!)}
+                      disabled={cachingVideos.has(item.video_url_en!.split('/').pop()!)}
+                      className="w-full justify-start bg-blue-50 hover:bg-blue-100 dark:bg-blue-900/20 dark:hover:bg-blue-900/40 border-blue-200 dark:border-blue-800"
+                    >
+                      {cachingVideos.has(item.video_url_en!.split('/').pop()!) ? (
+                        <>
+                          <Download className="h-3 w-3 mr-1 animate-pulse" />
+                          Cache en cours...
+                        </>
+                      ) : (
+                        <>
+                          <Zap className="h-3 w-3 mr-1" />
+                          Mettre en cache
+                        </>
+                      )}
+                    </Button>
+                  )}
                   
                   {/* Static Image Cropper Button */}
                   {item.image_url_en && (
