@@ -20,16 +20,14 @@ function rotateSize(width: number, height: number, rotation: number) {
   };
 }
 
-// Official react-easy-crop getCroppedImg utility with enhanced quality
+// SIMPLE CROP: Direct pixel extraction with debug logging
 export default async function getCroppedImg(
   imageSrc: string,
   pixelCrop: { x: number; y: number; width: number; height: number },
   targetWidth: number = 300,
-  targetHeight: number = 200,
-  rotation: number = 0,
-  flip = { horizontal: false, vertical: false }
+  targetHeight: number = 200
 ): Promise<Blob | null> {
-  const image = await createImage(imageSrc);
+  const img = await createImage(imageSrc);
   const canvas = document.createElement('canvas');
   const ctx = canvas.getContext('2d');
 
@@ -37,59 +35,52 @@ export default async function getCroppedImg(
     return null;
   }
 
-  const rotRad = getRadianAngle(rotation);
-  const { width: bBoxWidth, height: bBoxHeight } = rotateSize(
-    image.width,
-    image.height,
-    rotation
-  );
-
-  // Set canvas size to match the bounding box
-  canvas.width = bBoxWidth;
-  canvas.height = bBoxHeight;
-
-  // Translate canvas context to center point
-  ctx.translate(bBoxWidth / 2, bBoxHeight / 2);
-  ctx.rotate(rotRad);
-  ctx.scale(flip.horizontal ? -1 : 1, flip.vertical ? -1 : 1);
-  ctx.translate(-image.width / 2, -image.height / 2);
-
-  // Draw rotated image
-  ctx.drawImage(image, 0, 0);
-
-  // Extract the cropped area
-  const data = ctx.getImageData(
-    pixelCrop.x,
-    pixelCrop.y,
-    pixelCrop.width,
-    pixelCrop.height
-  );
-
-  // Resize canvas to target dimensions with high-DPI support
+  // High-DPI support for sharp output
   const dpr = window.devicePixelRatio || 1;
   canvas.width = targetWidth * dpr;
   canvas.height = targetHeight * dpr;
-
-  // Reset transforms and apply high-quality settings
-  ctx.setTransform(1, 0, 0, 1, 0, 0);
+  
+  // High-quality canvas settings
   ctx.imageSmoothingEnabled = true;
   ctx.imageSmoothingQuality = 'high';
   ctx.scale(dpr, dpr);
 
-  // Create temporary canvas for the cropped area
-  const tempCanvas = document.createElement('canvas');
-  tempCanvas.width = pixelCrop.width;
-  tempCanvas.height = pixelCrop.height;
-  const tempCtx = tempCanvas.getContext('2d')!;
-  tempCtx.putImageData(data, 0, 0);
+  // Use the pixelCrop coordinates directly - they're already in natural image pixels
+  const finalSourceX = pixelCrop.x;
+  const finalSourceY = pixelCrop.y;
+  const finalSourceW = pixelCrop.width;
+  const finalSourceH = pixelCrop.height;
 
-  // Draw scaled version to final canvas with high quality
-  ctx.drawImage(tempCanvas, 0, 0, targetWidth, targetHeight);
+  // Debug logging to verify coordinates
+  console.log('CROP DEBUG', {
+    finalSourceX, finalSourceY, finalSourceW, finalSourceH,
+    naturalW: img.naturalWidth, naturalH: img.naturalHeight,
+    targetW: targetWidth, targetH: targetHeight,
+    cropRatio: finalSourceW / finalSourceH,
+    targetRatio: targetWidth / targetHeight
+  });
 
-  // Return as high-quality JPEG blob
+  // Validate coordinates are within bounds
+  if (finalSourceX < 0 || finalSourceY < 0 || 
+      finalSourceX + finalSourceW > img.naturalWidth ||
+      finalSourceY + finalSourceH > img.naturalHeight) {
+    console.error('Crop coordinates out of bounds:', {
+      source: { x: finalSourceX, y: finalSourceY, w: finalSourceW, h: finalSourceH },
+      image: { w: img.naturalWidth, h: img.naturalHeight }
+    });
+  }
+
+  // Direct crop extraction from natural image
+  ctx.drawImage(
+    img,
+    finalSourceX, finalSourceY, finalSourceW, finalSourceH,
+    0, 0, targetWidth, targetHeight
+  );
+
+  // Return as high-quality JPEG
   return new Promise((resolve) => {
     canvas.toBlob((blob) => {
       resolve(blob);
-    }, 'image/jpeg', 1.0); // Maximum quality
+    }, 'image/jpeg', 1.0);
   });
 }
