@@ -45,6 +45,8 @@ export default function GallerySection() {
   // Fetch active gallery items with type conversion from snake_case API
   const { data: galleryItems = [], isLoading } = useQuery<any[]>({
     queryKey: ['/api/gallery'],
+    staleTime: 0, // Always refetch to get latest static images
+    gcTime: 0, // Don't cache to ensure fresh data
     select: (data) => data
       .filter(item => item.is_active)
       .sort((a, b) => a.order_index - b.order_index)
@@ -112,7 +114,7 @@ export default function GallerySection() {
       return null;
     } else {
       // Prioritize static image (300x200 cropped) if available, otherwise use regular image
-      if (item.staticImageUrl) {
+      if (item.staticImageUrl && item.staticImageUrl.trim() !== '') {
         return item.staticImageUrl;
       }
       return language === 'fr-FR' ? item.imageUrlFr : item.imageUrlEn;

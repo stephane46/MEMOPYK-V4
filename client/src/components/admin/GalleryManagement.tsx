@@ -914,8 +914,14 @@ export default function GalleryManagement() {
                     // Close the modal and refresh the data
                     setShowImageCropper(null);
                     
-                    // Invalidate queries to refresh the gallery data
-                    queryClient.invalidateQueries({ queryKey: ['/api/gallery'] });
+                    // Invalidate all gallery-related queries to refresh the data everywhere
+                    await queryClient.invalidateQueries({ queryKey: ['/api/gallery'] });
+                    await queryClient.refetchQueries({ queryKey: ['/api/gallery'] });
+                    
+                    // Small delay to ensure backend processing is complete
+                    setTimeout(() => {
+                      window.location.reload();
+                    }, 500);
                   } else {
                     throw new Error(result.error);
                   }
