@@ -190,12 +190,41 @@ export default function GallerySection() {
                 <div className={`${item.staticImageUrl ? 'aspect-[3/2]' : 'aspect-video'} bg-gray-100 dark:bg-gray-700 relative overflow-hidden`}>
                   {thumbnailUrl ? (
                     <div className="w-full h-full relative">
-                      {/* Always show image thumbnail (static or regular) */}
-                      <img
-                        src={thumbnailUrl}
-                        alt={language === 'fr-FR' ? item.altTextFr : item.altTextEn}
-                        className="w-full h-full object-cover"
-                      />
+                      {/* Show both cropped thumbnail and original image side by side for comparison */}
+                      {item.staticImageUrl ? (
+                        <div className="w-full h-full flex">
+                          {/* Left half: Cropped thumbnail */}
+                          <div className="w-1/2 h-full border-r-2 border-white relative">
+                            <img
+                              src={item.staticImageUrl}
+                              alt={`${language === 'fr-FR' ? item.altTextFr : item.altTextEn} (Cropped)`}
+                              className="w-full h-full object-cover"
+                            />
+                            <div className="absolute top-2 left-2 bg-black/70 text-white text-xs px-2 py-1 rounded">
+                              Cropped
+                            </div>
+                          </div>
+                          {/* Right half: Original image constrained to 300x200 */}
+                          <div className="w-1/2 h-full relative">
+                            <img
+                              src={language === 'fr-FR' ? item.imageUrlFr : item.imageUrlEn}
+                              alt={`${language === 'fr-FR' ? item.altTextFr : item.altTextEn} (Original)`}
+                              className="w-full h-full object-contain bg-gray-200"
+                              style={{ maxWidth: '150px', maxHeight: '100px' }}
+                            />
+                            <div className="absolute top-2 left-2 bg-black/70 text-white text-xs px-2 py-1 rounded">
+                              Original
+                            </div>
+                          </div>
+                        </div>
+                      ) : (
+                        /* Always show image thumbnail (static or regular) */
+                        <img
+                          src={thumbnailUrl}
+                          alt={language === 'fr-FR' ? item.altTextFr : item.altTextEn}
+                          className="w-full h-full object-cover"
+                        />
+                      )}
                       
                       {/* Orange Pulsing Play Button - Always Visible for Videos */}
                       {hasVideo && (
