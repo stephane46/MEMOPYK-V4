@@ -910,16 +910,11 @@ export default function GalleryManagement() {
                       description: "Image statique générée et sauvegardée avec succès!" 
                     });
                     
-                    // Update the item with the static image URL and settings
-                    updateItemMutation.mutate({
-                      id: showImageCropper.item?.id || '',
-                      data: {
-                        static_image_url: result.url,
-                        crop_settings: cropSettings
-                      }
-                    });
-                    
+                    // Close the modal and refresh the data
                     setShowImageCropper(null);
+                    
+                    // Invalidate queries to refresh the gallery data
+                    queryClient.invalidateQueries({ queryKey: ['/api/gallery'] });
                   } else {
                     throw new Error(result.error);
                   }

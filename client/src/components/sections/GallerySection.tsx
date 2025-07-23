@@ -86,7 +86,10 @@ export default function GallerySection() {
       }
       return null;
     } else {
-      // Images can be displayed directly from Supabase
+      // Prioritize static image (300x200 cropped) if available, otherwise use regular image
+      if (item.static_image_url) {
+        return item.static_image_url;
+      }
       return language === 'fr-FR' ? item.image_url_fr : item.image_url_en;
     }
   };
