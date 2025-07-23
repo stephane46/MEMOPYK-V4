@@ -215,51 +215,77 @@ export const ImageCropper: React.FC<ImageCropperProps> = ({
       // Calculate the displayed image dimensions in the preview at current zoom
       const displayScale = cropSettings.zoom / 100;
       
-      // SIMPLIFIED: Direct mapping from crop frame to original image
-      // The crop frame is ALWAYS 300×200 at position 150,100 in the 600×400 preview
-      // We need to map this to the original 4032×3024 image considering zoom and position
+      // FINAL APPROACH: Map 300x200 crop frame directly to original image coordinates
       
-      // Calculate base scale (how the original image fits in the preview at 100% zoom)
+      // The crop frame represents what portion of the PREVIEW we want
+      // Preview dimensions: 600×400
+      // Crop frame: 300×200 at position 150,100 (center)
+      
+      // Calculate what percentage of the preview the crop frame represents
+      const cropStartX = cropFrameX / previewWidth;        // 150/600 = 0.25 (25% from left)
+      const cropStartY = cropFrameY / previewHeight;       // 100/400 = 0.25 (25% from top)
+      const cropEndX = (cropFrameX + targetWidth) / previewWidth;   // 450/600 = 0.75 (75% from left)
+      const cropEndY = (cropFrameY + targetHeight) / previewHeight; // 300/400 = 0.75 (75% from top)
+      
+      // Now we need to account for the image position and zoom in the preview
+      // At zoom 50%, the image is smaller and positioned at x,y offset
+      
+      // Calculate the effective image area in the preview (considering zoom and position)
       const imageAspect = img.naturalWidth / img.naturalHeight;
       const containerAspect = previewWidth / previewHeight;
       
-      let baseScale;
+      // Base image size in preview (before zoom)
+      let baseImageWidth, baseImageHeight;
       if (imageAspect > containerAspect) {
-        // Image is wider - scale by height
-        baseScale = img.naturalHeight / previewHeight;
+        baseImageHeight = previewHeight;
+        baseImageWidth = baseImageHeight * imageAspect;
       } else {
-        // Image is taller - scale by width  
-        baseScale = img.naturalWidth / previewWidth;
+        baseImageWidth = previewWidth;
+        baseImageHeight = baseImageWidth / imageAspect;
       }
       
-      // Apply current zoom level to the base scale
-      const currentScale = baseScale / displayScale;
+      // Actual image size with zoom applied
+      const zoomedImageWidth = baseImageWidth * displayScale;
+      const zoomedImageHeight = baseImageHeight * displayScale;
       
-      // Calculate crop frame position relative to image position
-      const relativeX = cropFrameX - cropSettings.x;
-      const relativeY = cropFrameY - cropSettings.y;
+      // Image position in preview (considering the CSS positioning)
+      const imageLeft = cropSettings.x;
+      const imageTop = cropSettings.y;
+      
+      // Convert crop frame coordinates to image-relative coordinates (0-1 range)
+      const relativeStartX = (cropFrameX - imageLeft) / zoomedImageWidth;
+      const relativeStartY = (cropFrameY - imageTop) / zoomedImageHeight;
+      const relativeEndX = (cropFrameX + targetWidth - imageLeft) / zoomedImageWidth;
+      const relativeEndY = (cropFrameY + targetHeight - imageTop) / zoomedImageHeight;
+      
+      // Clamp to valid ranges (0-1)
+      const clampedStartX = Math.max(0, Math.min(1, relativeStartX));
+      const clampedStartY = Math.max(0, Math.min(1, relativeStartY));
+      const clampedEndX = Math.max(0, Math.min(1, relativeEndX));
+      const clampedEndY = Math.max(0, Math.min(1, relativeEndY));
       
       // Map to original image coordinates
-      const sourceX = Math.max(0, relativeX * currentScale);
-      const sourceY = Math.max(0, relativeY * currentScale);
-      const sourceW = targetWidth * currentScale;
-      const sourceH = targetHeight * currentScale;
-      
-      // Ensure we don't exceed original image boundaries
-      const finalSourceX = Math.min(sourceX, img.naturalWidth - sourceW);
-      const finalSourceY = Math.min(sourceY, img.naturalHeight - sourceH);
-      const finalSourceW = Math.min(sourceW, img.naturalWidth - finalSourceX);
-      const finalSourceH = Math.min(sourceH, img.naturalHeight - finalSourceY);
+      const finalSourceX = clampedStartX * img.naturalWidth;
+      const finalSourceY = clampedStartY * img.naturalHeight;
+      const finalSourceW = (clampedEndX - clampedStartX) * img.naturalWidth;
+      const finalSourceH = (clampedEndY - clampedStartY) * img.naturalHeight;
       
       const correctDebug = {
-        transform: 'original-quality-v5',
+        transform: 'percentage-mapping-v6',
         preview: { w: previewWidth, h: previewHeight },
         cropFrame: { x: cropFrameX, y: cropFrameY, w: targetWidth, h: targetHeight },
         cropSettings: cropSettings,
         original: { w: img.naturalWidth, h: img.naturalHeight },
         imageAspect: imageAspect,
-        scaling: { baseScale: baseScale, currentScale: currentScale, displayScale: displayScale },
-        relativePosition: { x: relativeX, y: relativeY },
+        baseImageSize: { w: baseImageWidth, h: baseImageHeight },
+        zoomedImageSize: { w: zoomedImageWidth, h: zoomedImageHeight },
+        imagePosition: { x: imageLeft, y: imageTop },
+        relativeCoords: { 
+          startX: relativeStartX, startY: relativeStartY, 
+          endX: relativeEndX, endY: relativeEndY,
+          clampedStartX: clampedStartX, clampedStartY: clampedStartY,
+          clampedEndX: clampedEndX, clampedEndY: clampedEndY
+        },
         source: { x: finalSourceX, y: finalSourceY, w: finalSourceW, h: finalSourceH },
         destination: { x: 0, y: 0, w: targetWidth, h: targetHeight }
       };
