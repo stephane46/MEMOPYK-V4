@@ -24,7 +24,7 @@ import {
   Save,
   Crop
 } from "lucide-react";
-import ImageCropperLibrary from './ImageCropperLibrary';
+import ImageCropperEasyCrop from './ImageCropperEasyCrop';
 
 interface GalleryItem {
   id: number;
@@ -887,7 +887,7 @@ export default function GalleryManagement() {
                 Génération d'Image Statique - {showImageCropper.item?.title_en || 'Article de galerie'}
               </DialogTitle>
             </DialogHeader>
-            <ImageCropperLibrary
+            <ImageCropperEasyCrop
               imageUrl={showImageCropper.imageUrl}
               onSave={async (croppedBlob: Blob, cropSettings: any) => {
                 try {
