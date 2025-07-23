@@ -70,26 +70,66 @@ export const ImageCropper: React.FC<ImageCropperProps> = ({
 
   // Mouse drag handlers
   const handleMouseDown = (e: React.MouseEvent) => {
+    e.preventDefault();
     setIsDragging(true);
-    setDragStart({ x: e.clientX - cropSettings.x, y: e.clientY - cropSettings.y });
+    const rect = containerRef.current?.getBoundingClientRect();
+    if (rect) {
+      setDragStart({ 
+        x: e.clientX - rect.left - cropSettings.x, 
+        y: e.clientY - rect.top - cropSettings.y 
+      });
+    }
   };
 
   const handleMouseMove = (e: React.MouseEvent) => {
-    if (!isDragging) return;
+    if (!isDragging || !containerRef.current) return;
     
-    const newX = e.clientX - dragStart.x;
-    const newY = e.clientY - dragStart.y;
+    const rect = containerRef.current.getBoundingClientRect();
+    const newX = e.clientX - rect.left - dragStart.x;
+    const newY = e.clientY - rect.top - dragStart.y;
     
+    // Allow more generous movement range
     setCropSettings(prev => ({
       ...prev,
-      x: Math.max(-200, Math.min(200, newX)),
-      y: Math.max(-200, Math.min(200, newY))
+      x: Math.max(-400, Math.min(400, newX)),
+      y: Math.max(-300, Math.min(300, newY))
     }));
   };
 
   const handleMouseUp = () => {
     setIsDragging(false);
   };
+
+  // Add global mouse event listeners for better drag experience
+  useEffect(() => {
+    const handleGlobalMouseMove = (e: MouseEvent) => {
+      if (!isDragging || !containerRef.current) return;
+      
+      const rect = containerRef.current.getBoundingClientRect();
+      const newX = e.clientX - rect.left - dragStart.x;
+      const newY = e.clientY - rect.top - dragStart.y;
+      
+      setCropSettings(prev => ({
+        ...prev,
+        x: Math.max(-400, Math.min(400, newX)),
+        y: Math.max(-300, Math.min(300, newY))
+      }));
+    };
+
+    const handleGlobalMouseUp = () => {
+      setIsDragging(false);
+    };
+
+    if (isDragging) {
+      document.addEventListener('mousemove', handleGlobalMouseMove);
+      document.addEventListener('mouseup', handleGlobalMouseUp);
+    }
+
+    return () => {
+      document.removeEventListener('mousemove', handleGlobalMouseMove);
+      document.removeEventListener('mouseup', handleGlobalMouseUp);
+    };
+  }, [isDragging, dragStart]);
 
   // Zoom handlers
   const handleZoomChange = (value: number[]) => {
@@ -138,16 +178,20 @@ export const ImageCropper: React.FC<ImageCropperProps> = ({
         img.src = proxyImageUrl;
       });
 
-      // Calculate crop parameters
+      // Calculate crop parameters based on the crop frame position
       const scale = cropSettings.zoom / 100;
       const frameWidth = 600;
       const frameHeight = 400;
       
-      // Calculate source coordinates on the original image
-      const sourceX = Math.max(0, (-cropSettings.x) / scale);
-      const sourceY = Math.max(0, (-cropSettings.y) / scale);
-      const sourceWidth = Math.min(img.naturalWidth - sourceX, (frameWidth / scale));
-      const sourceHeight = Math.min(img.naturalHeight - sourceY, (frameHeight / scale));
+      // Calculate which part of the image is visible in the crop frame
+      const cropFrameX = (frameWidth - targetWidth) / 2;
+      const cropFrameY = (frameHeight - targetHeight) / 2;
+      
+      // Calculate source coordinates relative to the background image position
+      const sourceX = Math.max(0, (cropFrameX - cropSettings.x) / scale);
+      const sourceY = Math.max(0, (cropFrameY - cropSettings.y) / scale);
+      const sourceWidth = Math.min(img.naturalWidth - sourceX, targetWidth / scale);
+      const sourceHeight = Math.min(img.naturalHeight - sourceY, targetHeight / scale);
 
       // Draw the cropped portion
       ctx.drawImage(
@@ -240,15 +284,13 @@ export const ImageCropper: React.FC<ImageCropperProps> = ({
         >
           {/* Background Image */}
           <div 
-            className={`absolute inset-0 bg-cover bg-no-repeat transition-transform duration-100 ${
+            className={`absolute inset-0 bg-cover bg-no-repeat ${
               isDragging ? 'cursor-grabbing' : 'cursor-grab'
             }`}
             style={{
               backgroundImage: `url(${proxyImageUrl})`,
               backgroundPosition: `${cropSettings.x}px ${cropSettings.y}px`,
-              backgroundSize: `${cropSettings.zoom}%`,
-              transform: `scale(${cropSettings.zoom / 100})`,
-              transformOrigin: `${-cropSettings.x}px ${-cropSettings.y}px`
+              backgroundSize: `${cropSettings.zoom}%`
             }}
           />
           
