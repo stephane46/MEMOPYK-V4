@@ -269,9 +269,9 @@ export class HybridStorage implements HybridStorageInterface {
     return newItem;
   }
 
-  async updateGalleryItem(itemId: number, updateData: any): Promise<any> {
+  async updateGalleryItem(itemId: string | number, updateData: any): Promise<any> {
     const items = this.loadJsonFile('gallery-items.json');
-    const itemIndex = items.findIndex((item: any) => item.id === itemId);
+    const itemIndex = items.findIndex((item: any) => item.id.toString() === itemId.toString());
     
     if (itemIndex === -1) {
       throw new Error('Gallery item not found');
@@ -288,9 +288,9 @@ export class HybridStorage implements HybridStorageInterface {
     return updatedItem;
   }
 
-  async updateGalleryItemOrder(itemId: number, newOrder: number): Promise<any> {
+  async updateGalleryItemOrder(itemId: string | number, newOrder: number): Promise<any> {
     const items = this.loadJsonFile('gallery-items.json');
-    const itemIndex = items.findIndex((item: any) => item.id === itemId);
+    const itemIndex = items.findIndex((item: any) => item.id.toString() === itemId.toString());
     
     if (itemIndex === -1) {
       throw new Error('Gallery item not found');
@@ -301,7 +301,7 @@ export class HybridStorage implements HybridStorageInterface {
     
     // Update order indexes for other items
     items.forEach((otherItem: any) => {
-      if (otherItem.id !== itemId) {
+      if (otherItem.id.toString() !== itemId.toString()) {
         if (newOrder > oldOrder) {
           // Moving down - shift others up
           if (otherItem.order_index > oldOrder && otherItem.order_index <= newOrder) {
@@ -324,9 +324,9 @@ export class HybridStorage implements HybridStorageInterface {
     return item;
   }
 
-  async deleteGalleryItem(itemId: number): Promise<any> {
+  async deleteGalleryItem(itemId: string | number): Promise<any> {
     const items = this.loadJsonFile('gallery-items.json');
-    const itemIndex = items.findIndex((item: any) => item.id === itemId);
+    const itemIndex = items.findIndex((item: any) => item.id.toString() === itemId.toString());
     
     if (itemIndex === -1) {
       throw new Error('Gallery item not found');

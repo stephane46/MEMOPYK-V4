@@ -189,11 +189,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.patch("/api/gallery/:id", async (req, res) => {
     try {
-      const itemId = parseInt(req.params.id);
+      const itemId = req.params.id;
       const updates = req.body;
       
-      if (isNaN(itemId)) {
-        return res.status(400).json({ error: "Invalid gallery item ID" });
+      if (!itemId) {
+        return res.status(400).json({ error: "Gallery item ID is required" });
       }
       
       const item = await hybridStorage.updateGalleryItem(itemId, updates);
