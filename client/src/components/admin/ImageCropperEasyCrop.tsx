@@ -57,47 +57,55 @@ export default function ImageCropperEasyCrop({ imageUrl, onSave, onCancel }: Ima
           canvas.height = 200;
           const ctx = canvas.getContext('2d')!;
           
-          // Calculate the actual viewport area based on crop and zoom
-          // react-easy-crop centers the image and applies zoom/crop transforms
-          const imageAspect = img.naturalWidth / img.naturalHeight;
-          const viewportAspect = 300 / 200; // 1.5
+          // Alternative approach: Use HTML2Canvas-like technique to capture what's actually visible
+          // Find the cropper container and get its rendered state
+          const cropperContainer = document.querySelector('.reactEasyCrop_Container');
+          const imageElement = cropperContainer?.querySelector('img');
           
-          // Determine how the image fits in the viewport
-          let displayWidth, displayHeight;
-          if (imageAspect > viewportAspect) {
-            // Image is wider - fit by height
-            displayHeight = 200 * zoom;
-            displayWidth = displayHeight * imageAspect;
+          if (imageElement) {
+            // Get the actual rendered dimensions and position of the image
+            const containerRect = cropperContainer.getBoundingClientRect();
+            const imageRect = imageElement.getBoundingClientRect();
+            
+            // Calculate the offset of the image within the 300x200 container
+            const offsetX = imageRect.left - containerRect.left;
+            const offsetY = imageRect.top - containerRect.top;
+            
+            // Get the scale factor between natural image and displayed image
+            const scaleX = img.naturalWidth / imageElement.naturalWidth;
+            const scaleY = img.naturalHeight / imageElement.naturalHeight;
+            
+            // Calculate which part of the natural image is visible in the 300x200 viewport
+            const sourceX = Math.max(0, -offsetX * scaleX);
+            const sourceY = Math.max(0, -offsetY * scaleY);
+            const sourceWidth = Math.min(300 * scaleX, img.naturalWidth - sourceX);
+            const sourceHeight = Math.min(200 * scaleY, img.naturalHeight - sourceY);
+            
+            console.log('Debug crop calculation:', {
+              naturalSize: { width: img.naturalWidth, height: img.naturalHeight },
+              displayedSize: { width: imageElement.naturalWidth, height: imageElement.naturalHeight },
+              scale: { x: scaleX, y: scaleY },
+              offset: { x: offsetX, y: offsetY },
+              source: { x: sourceX, y: sourceY, width: sourceWidth, height: sourceHeight }
+            });
+            
+            // Draw the calculated portion
+            ctx.drawImage(
+              img,
+              sourceX,
+              sourceY,
+              sourceWidth,
+              sourceHeight,
+              0,
+              0,
+              300,
+              200
+            );
           } else {
-            // Image is taller - fit by width  
-            displayWidth = 300 * zoom;
-            displayHeight = displayWidth / imageAspect;
+            // Fallback: scale entire image to 300x200
+            console.log('Fallback: no cropper element found');
+            ctx.drawImage(img, 0, 0, 300, 200);
           }
-          
-          // Calculate the source rectangle based on crop position
-          const sourceX = (displayWidth - 300) * (crop.x / 100) * (img.naturalWidth / displayWidth);
-          const sourceY = (displayHeight - 200) * (crop.y / 100) * (img.naturalHeight / displayHeight);
-          const sourceWidth = 300 * (img.naturalWidth / displayWidth);
-          const sourceHeight = 200 * (img.naturalHeight / displayHeight);
-          
-          // Ensure we don't go outside image bounds
-          const clampedSourceX = Math.max(0, Math.min(sourceX, img.naturalWidth - sourceWidth));
-          const clampedSourceY = Math.max(0, Math.min(sourceY, img.naturalHeight - sourceHeight));
-          const clampedSourceWidth = Math.min(sourceWidth, img.naturalWidth - clampedSourceX);
-          const clampedSourceHeight = Math.min(sourceHeight, img.naturalHeight - clampedSourceY);
-          
-          // Draw the exact viewport area to canvas
-          ctx.drawImage(
-            img,
-            clampedSourceX,
-            clampedSourceY,
-            clampedSourceWidth,
-            clampedSourceHeight,
-            0,
-            0,
-            300,
-            200
-          );
 
           // Generate preview and store blob
           canvas.toBlob(
