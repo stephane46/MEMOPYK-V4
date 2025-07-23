@@ -507,14 +507,15 @@ The application follows a modern full-stack architecture with clear separation o
 - [ ] **Phase 10.3**: Performance monitoring and error tracking
 - [ ] **Phase 10.4**: User acceptance testing and launch
 
-## Current Status: Phase 8.2.8 - DEPLOYMENT ROUTE ISSUE FIXED
+## Current Status: Phase 8.2.8 - DEPLOYMENT ISSUE PERSISTS
 
-**CRITICAL FIX APPLIED (July 23, 2025):**
-✅ **Root Cause Identified**: API routes were being registered AFTER static file serving in production
-✅ **Issue**: All `/api/*` requests caught by SPA fallback route, returning HTML instead of JSON  
-✅ **Solution**: Moved `registerRoutes(app)` BEFORE static file handling in server/index.ts
-✅ **Impact**: Hero videos and gallery will now work correctly in deployed version
-✅ **Build Ready**: Production build completed successfully with route fix
+**CRITICAL DEPLOYMENT PROBLEM (July 23, 2025):**
+❌ **Deployed Version Status**: Still returns 500 errors for video proxy endpoints
+❌ **Root Cause**: Deployed version running old code despite fresh builds
+❌ **Test Results**: `/api/video-proxy` returns text/html instead of video/mp4 content
+❌ **Gallery Impact**: Gallery videos fail with "Failed to load resource: 500" errors
+✅ **Local Fix Confirmed**: Development version works perfectly with correct middleware order
+⚠️ **Action Required**: Force deployment refresh to pick up middleware fix
 
 ## Previous Status: Phase 8.2.8 - Gallery Video Auto-Caching COMPLETED
 
