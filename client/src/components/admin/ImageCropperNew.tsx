@@ -110,11 +110,7 @@ export default function ImageCropperNew({
   const handleZoomChange = (value: number[]) => {
     const newZoom = value[0];
     
-    // Calculate the center point of the current crop area
-    const cropCenterX = cropFrameX + cropFrameWidth / 2;
-    const cropCenterY = cropFrameY + cropFrameHeight / 2;
-    
-    // Calculate current image dimensions at current zoom
+    // Simple approach: keep the image centered during zoom
     const currentImageW = imageRef.current?.naturalWidth || 0;
     const currentImageH = imageRef.current?.naturalHeight || 0;
     
@@ -130,23 +126,14 @@ export default function ImageCropperNew({
       baseHeight = baseWidth / imageAspect;
     }
     
-    // Calculate old and new dimensions
-    const oldWidth = (baseWidth * cropSettings.zoom) / 100;
-    const oldHeight = (baseHeight * cropSettings.zoom) / 100;
+    // Calculate new dimensions
     const newWidth = (baseWidth * newZoom) / 100;
     const newHeight = (baseHeight * newZoom) / 100;
     
-    // Find the current center point in image coordinates
-    const oldCenterInImageX = (cropCenterX - cropSettings.x) / oldWidth;
-    const oldCenterInImageY = (cropCenterY - cropSettings.y) / oldHeight;
-    
-    // Position the new image so the same point is at the crop center
-    const newX = cropCenterX - (oldCenterInImageX * newWidth);
-    const newY = cropCenterY - (oldCenterInImageY * newHeight);
-    
+    // Center the image in the container (simple and predictable)
     setCropSettings({
-      x: newX,
-      y: newY,
+      x: (previewWidth - newWidth) / 2,
+      y: (previewHeight - newHeight) / 2,
       zoom: newZoom
     });
   };
@@ -203,40 +190,26 @@ export default function ImageCropperNew({
       const ctx = canvas.getContext('2d');
       if (!ctx) throw new Error('Cannot get canvas context');
       
-      // Calculate output size maintaining aspect ratio
-      const outputAspect = targetWidth / targetHeight; // 1.5
-      const sourceAspect = finalSourceW / finalSourceH;
-      
-      let outputWidth, outputHeight;
-      if (sourceAspect > outputAspect) {
-        // Source is wider - fit by width
-        outputWidth = Math.round(finalSourceW);
-        outputHeight = Math.round(outputWidth / outputAspect);
-      } else {
-        // Source is taller - fit by height  
-        outputHeight = Math.round(finalSourceH);
-        outputWidth = Math.round(outputHeight * outputAspect);
-      }
-      
-      canvas.width = outputWidth;
-      canvas.height = outputHeight;
+      // Fixed output size - exactly 300x200
+      canvas.width = targetWidth;  // 300
+      canvas.height = targetHeight; // 200
       
       // White background
       ctx.fillStyle = '#FFFFFF';
-      ctx.fillRect(0, 0, outputWidth, outputHeight);
+      ctx.fillRect(0, 0, targetWidth, targetHeight);
       
-      // Draw the cropped area at full resolution
+      // Draw the cropped area scaled to exact target size
       ctx.drawImage(
         img,
         finalSourceX, finalSourceY, finalSourceW, finalSourceH,
-        0, 0, outputWidth, outputHeight
+        0, 0, targetWidth, targetHeight
       );
       
       // Convert to blob (image loaded via proxy so no CORS issues)
       canvas.toBlob(
         (blob) => {
           if (blob) {
-            console.log('HIGH-RES blob created, size:', blob.size, 'dimensions:', outputWidth, 'x', outputHeight);
+            console.log('FIXED-SIZE blob created, size:', blob.size, 'dimensions:', targetWidth, 'x', targetHeight);
             onSave(blob, cropSettings);
           } else {
             throw new Error('Failed to create blob from canvas');

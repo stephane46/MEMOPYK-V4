@@ -20,14 +20,12 @@
     "is_active": true,
     "use_same_video": true,
     "created_at": "2025-07-22T20:47:22.005Z",
-    "updated_at": "2025-07-23T11:19:03.704Z",
+    "updated_at": "2025-07-23T13:38:30.109Z",
     "static_image_url": "https://supabase.memopyk.org/storage/v1/object/public/memopyk-gallery/static_1753217242005.jpg",
     "crop_settings": {
-      "zoom": 60,
-      "x": 143,
-      "y": 55,
-      "width": 600,
-      "height": 400
+      "x": -149.50000000000006,
+      "y": -125.92499999999995,
+      "zoom": 105
     }
   }
 ]
