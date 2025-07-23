@@ -93,7 +93,7 @@ export default function GalleryManagement() {
       // Simulate progress for user feedback
       const progressInterval = setInterval(() => {
         setUploadProgress(prev => {
-          if (prev < 90) return prev + Math.random() * 15;
+          if (prev < 85) return prev + Math.random() * 10;
           return prev;
         });
       }, 500);
@@ -149,7 +149,7 @@ export default function GalleryManagement() {
       // Simulate progress for user feedback
       const progressInterval = setInterval(() => {
         setUploadProgress(prev => {
-          if (prev < 90) return prev + Math.random() * 20;
+          if (prev < 85) return prev + Math.random() * 10;
           return prev;
         });
       }, 300);
@@ -419,10 +419,19 @@ export default function GalleryManagement() {
                       console.log('Updating form with video URL:', url);
                       setFormData(prev => {
                         console.log('Current formData before video update:', prev);
+                        console.log('Video upload - prev.video_url_en:', prev.video_url_en);
+                        console.log('Video upload - prev.use_same_video:', prev.use_same_video);
                         const newData = prev.use_same_video 
                           ? { ...prev, video_url_en: url, video_url_fr: url }
                           : { ...prev, video_url_en: url };
                         console.log('New formData after video update:', newData);
+                        console.log('Video update - newData.video_url_en:', newData.video_url_en);
+                        
+                        // Add a timeout to check if state persists
+                        setTimeout(() => {
+                          console.log('Video URL state check after 1 second - should still be:', newData.video_url_en);
+                        }, 1000);
+                        
                         return newData;
                       });
                     }
@@ -477,8 +486,12 @@ export default function GalleryManagement() {
                       console.log('Updating form with image URL:', url);
                       setFormData(prev => {
                         console.log('Current formData before image update:', prev);
+                        console.log('Image upload - prev.video_url_en:', prev.video_url_en);
+                        console.log('Image upload - prev.image_url_en:', prev.image_url_en);
                         const newData = { ...prev, image_url_en: url, image_url_fr: url };
                         console.log('New formData after image update:', newData);
+                        console.log('Image update - newData.video_url_en (should be preserved):', newData.video_url_en);
+                        console.log('Image update - newData.image_url_en:', newData.image_url_en);
                         return newData;
                       });
                     }
