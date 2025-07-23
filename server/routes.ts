@@ -572,7 +572,15 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       const { url, filename } = req.query;
       
+      console.log(`🎬 VIDEO PROXY REQUEST DEBUG:`);
+      console.log(`   - Filename: "${filename}"`);
+      console.log(`   - URL param: "${url}"`);
+      console.log(`   - Range header: "${req.headers.range}"`);
+      console.log(`   - User-Agent: "${req.headers['user-agent']}"`);
+      console.log(`   - Accept: "${req.headers.accept}"`);
+      
       if (!filename) {
+        console.log(`❌ Missing filename parameter`);
         return res.status(400).json({ error: "filename parameter is required" });
       }
 
@@ -581,18 +589,23 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       // Check if video exists in cache
       const cachedVideo = videoCache.getCachedVideoPath(videoFilename);
+      console.log(`   - Cache path: "${cachedVideo}"`);
+      console.log(`   - Cache exists: ${cachedVideo && existsSync(cachedVideo)}`);
       
       if (cachedVideo && existsSync(cachedVideo)) {
         console.log(`📦 Serving from cache: ${videoFilename}`);
         
         const stat = statSync(cachedVideo);
         const fileSize = stat.size;
+        console.log(`   - File size: ${fileSize} bytes`);
 
         if (range) {
+          console.log(`   - Processing range request: ${range}`);
           const parts = range.replace(/bytes=/, "").split("-");
           const start = parseInt(parts[0], 10);
           const end = parts[1] ? parseInt(parts[1], 10) : fileSize - 1;
           const chunksize = (end - start) + 1;
+          console.log(`   - Range: ${start}-${end}, chunk size: ${chunksize}`);
 
           const stream = createReadStream(cachedVideo, { start, end });
           
@@ -606,8 +619,16 @@ export async function registerRoutes(app: Express): Promise<Server> {
             'Cache-Control': 'public, max-age=86400'
           });
           
+          stream.on('error', (error) => {
+            console.error(`❌ Stream error for ${videoFilename}:`, error);
+            if (!res.headersSent) {
+              res.status(500).json({ error: 'Stream error' });
+            }
+          });
+          
           stream.pipe(res);
         } else {
+          console.log(`   - Serving full file (no range)`);
           res.writeHead(200, {
             'Content-Length': fileSize,
             'Content-Type': 'video/mp4',
@@ -615,7 +636,15 @@ export async function registerRoutes(app: Express): Promise<Server> {
             'Cache-Control': 'public, max-age=86400'
           });
           
-          createReadStream(cachedVideo).pipe(res);
+          const stream = createReadStream(cachedVideo);
+          stream.on('error', (error) => {
+            console.error(`❌ Stream error for ${videoFilename}:`, error);
+            if (!res.headersSent) {
+              res.status(500).json({ error: 'Stream error' });
+            }
+          });
+          
+          stream.pipe(res);
         }
         return;
       }
@@ -692,8 +721,18 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
 
     } catch (error) {
-      console.error('Video proxy error:', error);
-      res.status(500).json({ error: "Video streaming failed" });
+      console.error(`❌ VIDEO PROXY FATAL ERROR for ${req.query.filename}:`, error);
+      console.error(`   - Error type: ${error.constructor.name}`);
+      console.error(`   - Error message: ${error.message}`);
+      console.error(`   - Stack trace:`, error.stack);
+      
+      if (!res.headersSent) {
+        res.status(500).json({ 
+          error: "Video streaming failed",
+          filename: req.query.filename,
+          details: error.message 
+        });
+      }
     }
   });
 
