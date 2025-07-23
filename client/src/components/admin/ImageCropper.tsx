@@ -215,65 +215,52 @@ export const ImageCropper: React.FC<ImageCropperProps> = ({
       // Calculate the displayed image dimensions in the preview at current zoom
       const displayScale = cropSettings.zoom / 100;
       
-      // Calculate how the image appears in the CSS background
-      // CSS background-size: cover behavior - image covers entire container
+      // SIMPLIFIED: Direct mapping from crop frame to original image
+      // The crop frame is ALWAYS 300×200 at position 150,100 in the 600×400 preview
+      // We need to map this to the original 4032×3024 image considering zoom and position
+      
+      // Calculate base scale (how the original image fits in the preview at 100% zoom)
       const imageAspect = img.naturalWidth / img.naturalHeight;
       const containerAspect = previewWidth / previewHeight;
       
-      let cssDisplayWidth, cssDisplayHeight;
+      let baseScale;
       if (imageAspect > containerAspect) {
-        // Image is wider - fit by height, crop sides
-        cssDisplayHeight = previewHeight;
-        cssDisplayWidth = cssDisplayHeight * imageAspect;
+        // Image is wider - scale by height
+        baseScale = img.naturalHeight / previewHeight;
       } else {
-        // Image is taller - fit by width, crop top/bottom
-        cssDisplayWidth = previewWidth;
-        cssDisplayHeight = cssDisplayWidth / imageAspect;
+        // Image is taller - scale by width  
+        baseScale = img.naturalWidth / previewWidth;
       }
       
-      // Apply zoom scaling
-      const actualDisplayWidth = cssDisplayWidth * displayScale;
-      const actualDisplayHeight = cssDisplayHeight * displayScale;
+      // Apply current zoom level to the base scale
+      const currentScale = baseScale / displayScale;
       
-      // Calculate the visible image boundaries in the preview container
-      const imageLeft = cropSettings.x;
-      const imageTop = cropSettings.y;
-      const imageRight = imageLeft + actualDisplayWidth;
-      const imageBottom = imageTop + actualDisplayHeight;
+      // Calculate crop frame position relative to image position
+      const relativeX = cropFrameX - cropSettings.x;
+      const relativeY = cropFrameY - cropSettings.y;
       
-      // Find intersection of crop frame with visible image
-      const intersectLeft = Math.max(cropFrameX, imageLeft);
-      const intersectTop = Math.max(cropFrameY, imageTop);
-      const intersectRight = Math.min(cropFrameX + targetWidth, imageRight);
-      const intersectBottom = Math.min(cropFrameY + targetHeight, imageBottom);
+      // Map to original image coordinates
+      const sourceX = Math.max(0, relativeX * currentScale);
+      const sourceY = Math.max(0, relativeY * currentScale);
+      const sourceW = targetWidth * currentScale;
+      const sourceH = targetHeight * currentScale;
       
-      // Calculate relative position within the displayed image
-      const relativeX = intersectLeft - imageLeft;
-      const relativeY = intersectTop - imageTop;
-      const relativeW = intersectRight - intersectLeft;
-      const relativeH = intersectBottom - intersectTop;
-      
-      // Convert to original image coordinates
-      const scaleX = img.naturalWidth / actualDisplayWidth;
-      const scaleY = img.naturalHeight / actualDisplayHeight;
-      
-      const sourceX = relativeX * scaleX;
-      const sourceY = relativeY * scaleY;
-      const sourceW = relativeW * scaleX;
-      const sourceH = relativeH * scaleY;
+      // Ensure we don't exceed original image boundaries
+      const finalSourceX = Math.min(sourceX, img.naturalWidth - sourceW);
+      const finalSourceY = Math.min(sourceY, img.naturalHeight - sourceH);
+      const finalSourceW = Math.min(sourceW, img.naturalWidth - finalSourceX);
+      const finalSourceH = Math.min(sourceH, img.naturalHeight - finalSourceY);
       
       const correctDebug = {
-        transform: 'direct-crop-v4',
+        transform: 'original-quality-v5',
         preview: { w: previewWidth, h: previewHeight },
         cropFrame: { x: cropFrameX, y: cropFrameY, w: targetWidth, h: targetHeight },
         cropSettings: cropSettings,
         original: { w: img.naturalWidth, h: img.naturalHeight },
         imageAspect: imageAspect,
-        displayDimensions: { w: actualDisplayWidth, h: actualDisplayHeight, scale: displayScale },
+        scaling: { baseScale: baseScale, currentScale: currentScale, displayScale: displayScale },
         relativePosition: { x: relativeX, y: relativeY },
-        scaleFactors: { x: scaleX, y: scaleY },
-        intersections: { left: intersectLeft, top: intersectTop, right: intersectRight, bottom: intersectBottom },
-        source: { x: sourceX, y: sourceY, w: sourceW, h: sourceH },
+        source: { x: finalSourceX, y: finalSourceY, w: finalSourceW, h: finalSourceH },
         destination: { x: 0, y: 0, w: targetWidth, h: targetHeight }
       };
       
@@ -288,14 +275,12 @@ export const ImageCropper: React.FC<ImageCropperProps> = ({
       ctx.fillStyle = '#FFFFFF';
       ctx.fillRect(0, 0, targetWidth, targetHeight);
 
-      // Only draw if we have a valid intersection
-      if (relativeW > 0 && relativeH > 0) {
-        ctx.drawImage(
-          img,
-          sourceX, sourceY, sourceW, sourceH,
-          0, 0, targetWidth, targetHeight
-        );
-      }
+      // Draw from original high-resolution image
+      ctx.drawImage(
+        img,
+        finalSourceX, finalSourceY, finalSourceW, finalSourceH,
+        0, 0, targetWidth, targetHeight
+      );
 
       console.log('Canvas drawn successfully');
 
