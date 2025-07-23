@@ -193,36 +193,70 @@ export const ImageCropper: React.FC<ImageCropperProps> = ({
       canvas.width = targetWidth;
       canvas.height = targetHeight;
 
-      // CORRECT COORDINATE TRANSFORMATION BASED ON USER'S CROP SELECTION
-      // The preview shows a 600x400 container with the image positioned at cropSettings.x, cropSettings.y
-      // and scaled to cropSettings.zoom%. We need to calculate what part of the original image
-      // corresponds to the center rectangle (targetWidth x targetHeight)
+      // FIXED COORDINATE TRANSFORMATION BASED ON USER'S CROP SELECTION
+      // The preview shows a 600x400 container with the image positioned/scaled via CSS
+      // We need to calculate what part of the original image corresponds to the crop frame
       
       // Preview container dimensions
       const previewWidth = 600;
       const previewHeight = 400;
       
-      // Calculate the scale factor between original image and preview display
-      const scaleX = img.naturalWidth / (img.naturalWidth * cropSettings.zoom / 100);
-      const scaleY = img.naturalHeight / (img.naturalHeight * cropSettings.zoom / 100);
+      // Calculate the crop frame position (center of preview container)
+      const cropFrameX = (previewWidth - targetWidth) / 2;   // 150px
+      const cropFrameY = (previewHeight - targetHeight) / 2; // 100px
       
-      // Calculate the center crop area in the preview container (where the orange frame is)
-      const cropFrameX = (previewWidth - targetWidth) / 2;
-      const cropFrameY = (previewHeight - targetHeight) / 2;
+      // The CSS shows the image at cropSettings.x, cropSettings.y position
+      // and scaled to cropSettings.zoom%. We need to reverse this transformation.
       
-      // Transform preview coordinates to original image coordinates
-      // Account for the image position (cropSettings.x, cropSettings.y) and zoom
-      const sourceX = Math.max(0, (cropFrameX - cropSettings.x) * (100 / cropSettings.zoom));
-      const sourceY = Math.max(0, (cropFrameY - cropSettings.y) * (100 / cropSettings.zoom));
-      const sourceW = Math.min(img.naturalWidth - sourceX, targetWidth * (100 / cropSettings.zoom));
-      const sourceH = Math.min(img.naturalHeight - sourceY, targetHeight * (100 / cropSettings.zoom));
+      // First, calculate how the original image appears in the preview
+      // When zoom = 100%, the image fills based on aspect ratio
+      // When zoom > 100%, the image is larger and positioned with x,y offsets
+      
+      // Calculate the displayed image dimensions in the preview at current zoom
+      const displayScale = cropSettings.zoom / 100;
+      
+      // The image is scaled to fit the preview container, then zoomed
+      const imageAspect = img.naturalWidth / img.naturalHeight;
+      const containerAspect = previewWidth / previewHeight;
+      
+      let displayWidth, displayHeight;
+      if (imageAspect > containerAspect) {
+        // Image is wider - fit by height
+        displayHeight = previewHeight * displayScale;
+        displayWidth = displayHeight * imageAspect;
+      } else {
+        // Image is taller - fit by width  
+        displayWidth = previewWidth * displayScale;
+        displayHeight = displayWidth / imageAspect;
+      }
+      
+      // Calculate where the crop frame intersects with the displayed image
+      // Account for the image position offset (cropSettings.x, cropSettings.y)
+      const imageLeft = cropSettings.x;
+      const imageTop = cropSettings.y;
+      
+      // Calculate crop frame position relative to the displayed image
+      const relativeX = cropFrameX - imageLeft;
+      const relativeY = cropFrameY - imageTop;
+      
+      // Convert from display coordinates to original image coordinates
+      const scaleToOriginal = img.naturalWidth / displayWidth;
+      
+      const sourceX = Math.max(0, Math.min(img.naturalWidth - 1, relativeX * scaleToOriginal));
+      const sourceY = Math.max(0, Math.min(img.naturalHeight - 1, relativeY * scaleToOriginal));
+      const sourceW = Math.min(img.naturalWidth - sourceX, targetWidth * scaleToOriginal);
+      const sourceH = Math.min(img.naturalHeight - sourceY, targetHeight * scaleToOriginal);
       
       const correctDebug = {
-        transform: 'correct',
+        transform: 'fixed-v2',
         preview: { w: previewWidth, h: previewHeight },
         cropFrame: { x: cropFrameX, y: cropFrameY, w: targetWidth, h: targetHeight },
         cropSettings: cropSettings,
         original: { w: img.naturalWidth, h: img.naturalHeight },
+        imageAspect: imageAspect,
+        displayDimensions: { w: displayWidth, h: displayHeight, scale: displayScale },
+        relativePosition: { x: relativeX, y: relativeY },
+        scaleToOriginal: scaleToOriginal,
         source: { x: sourceX, y: sourceY, w: sourceW, h: sourceH },
         destination: { x: 0, y: 0, w: targetWidth, h: targetHeight }
       };
