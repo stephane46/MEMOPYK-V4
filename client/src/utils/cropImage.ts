@@ -36,50 +36,35 @@ export default async function getCroppedImg(
     return null;
   }
 
-  const rotRad = getRadianAngle(rotation);
-  const { width: bBoxWidth, height: bBoxHeight } = rotateSize(
-    image.width,
-    image.height,
-    rotation
+  // High-DPI support for crisp output
+  const dpr = window.devicePixelRatio || 1;
+  const outputWidth = targetWidth * dpr;
+  const outputHeight = targetHeight * dpr;
+
+  // Set canvas to high resolution
+  canvas.width = outputWidth;
+  canvas.height = outputHeight;
+  
+  // Enable high-quality image smoothing
+  ctx.imageSmoothingEnabled = true;
+  ctx.imageSmoothingQuality = 'high';
+  
+  // Scale context for high-DPI
+  ctx.scale(dpr, dpr);
+
+  // Directly crop and draw from source image at full resolution
+  // This avoids double-downsampling by working directly with original pixels
+  ctx.drawImage(
+    image,
+    pixelCrop.x,        // Source X in original image
+    pixelCrop.y,        // Source Y in original image  
+    pixelCrop.width,    // Source width in original image
+    pixelCrop.height,   // Source height in original image
+    0,                  // Destination X (top-left of canvas)
+    0,                  // Destination Y (top-left of canvas)
+    targetWidth,        // Destination width (300)
+    targetHeight        // Destination height (200)
   );
-
-  // Set canvas size to match the bounding box
-  canvas.width = bBoxWidth;
-  canvas.height = bBoxHeight;
-
-  // Translate canvas context to center point
-  ctx.translate(bBoxWidth / 2, bBoxHeight / 2);
-  ctx.rotate(rotRad);
-  ctx.scale(flip.horizontal ? -1 : 1, flip.vertical ? -1 : 1);
-  ctx.translate(-image.width / 2, -image.height / 2);
-
-  // Draw rotated image
-  ctx.drawImage(image, 0, 0);
-
-  // Extract the cropped area
-  const data = ctx.getImageData(
-    pixelCrop.x,
-    pixelCrop.y,
-    pixelCrop.width,
-    pixelCrop.height
-  );
-
-  // Resize canvas to target dimensions  
-  canvas.width = targetWidth;
-  canvas.height = targetHeight;
-
-  // Reset transforms
-  ctx.setTransform(1, 0, 0, 1, 0, 0);
-
-  // Create temporary canvas for the cropped area
-  const tempCanvas = document.createElement('canvas');
-  tempCanvas.width = pixelCrop.width;
-  tempCanvas.height = pixelCrop.height;
-  const tempCtx = tempCanvas.getContext('2d')!;
-  tempCtx.putImageData(data, 0, 0);
-
-  // Draw scaled version to final canvas
-  ctx.drawImage(tempCanvas, 0, 0, targetWidth, targetHeight);
 
   // Return as blob
   return new Promise((resolve) => {
