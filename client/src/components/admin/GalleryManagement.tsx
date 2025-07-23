@@ -373,6 +373,12 @@ export default function GalleryManagement() {
             <p className="text-sm text-orange-800 dark:text-orange-200 mb-3">
               📤 Téléchargez vos fichiers ici - les URLs seront automatiquement générées et remplies ci-dessous
             </p>
+            {/* DEBUG: Current form state */}
+            <div className="text-xs font-mono p-2 bg-gray-100 dark:bg-gray-800 rounded mb-3">
+              <strong>DEBUG - Current URLs:</strong><br/>
+              Video: {formData.video_url_en || 'None'}<br/>
+              Image: {formData.image_url_en || 'None'}
+            </div>
             <div className="grid grid-cols-2 gap-4">
               <div>
                 <Label className="text-gray-700 dark:text-gray-300 flex items-center gap-1">
@@ -411,10 +417,19 @@ export default function GalleryManagement() {
                     console.log('Video upload returned URL:', url);
                     if (url) {
                       console.log('Updating form with video URL:', url);
+                      console.log('Current formData before update:', formData);
                       if (formData.use_same_video) {
-                        setFormData(prev => ({ ...prev, video_url_en: url, video_url_fr: url }));
+                        setFormData(prev => {
+                          const newData = { ...prev, video_url_en: url, video_url_fr: url };
+                          console.log('New formData after video update:', newData);
+                          return newData;
+                        });
                       } else {
-                        setFormData(prev => ({ ...prev, video_url_en: url }));
+                        setFormData(prev => {
+                          const newData = { ...prev, video_url_en: url };
+                          console.log('New formData after video update:', newData);
+                          return newData;
+                        });
                       }
                     }
                   }}
@@ -466,7 +481,12 @@ export default function GalleryManagement() {
                     console.log('Image upload returned URL:', url);
                     if (url) {
                       console.log('Updating form with image URL:', url);
-                      setFormData(prev => ({ ...prev, image_url_en: url, image_url_fr: url }));
+                      console.log('Current formData before image update:', formData);
+                      setFormData(prev => {
+                        const newData = { ...prev, image_url_en: url, image_url_fr: url };
+                        console.log('New formData after image update:', newData);
+                        return newData;
+                      });
                     }
                   }}
                   disabled={uploading}
