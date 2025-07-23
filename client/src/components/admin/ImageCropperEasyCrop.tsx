@@ -107,6 +107,8 @@ export default function ImageCropperEasyCrop({ imageUrl, onSave, onCancel }: Ima
       canvas.width = 300 * dpr;
       canvas.height = 200 * dpr;
 
+      console.log(`🎨 Canvas generation: DPR=${dpr}, Canvas backing store: ${canvas.width}×${canvas.height}px`);
+
       // Scale context back to CSS pixels while maintaining high-DPI backing store
       ctx.scale(dpr, dpr);
 
@@ -135,9 +137,14 @@ export default function ImageCropperEasyCrop({ imageUrl, onSave, onCancel }: Ima
         scaledHeight = scaledWidth / imgAspect;
       }
 
+      console.log(`📐 Original: ${img.naturalWidth}×${img.naturalHeight} (${imgAspect.toFixed(2)})`);
+      console.log(`📐 Scaled: ${scaledWidth}×${scaledHeight} covering 300×200`);
+
       // Calculate position offset based on background-position percentages
       const offsetX = (position.x / 100) * (300 - scaledWidth);
       const offsetY = (position.y / 100) * (200 - scaledHeight);
+      
+      console.log(`📍 Position: ${position.x}%,${position.y}% → Offset: ${offsetX.toFixed(1)},${offsetY.toFixed(1)}`);
 
       // Maximum quality settings for sharpest results
       ctx.imageSmoothingEnabled = true;
