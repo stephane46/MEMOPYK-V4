@@ -252,11 +252,21 @@ export const ImageCropper: React.FC<ImageCropperProps> = ({
       const imageLeft = cropSettings.x;
       const imageTop = cropSettings.y;
       
-      // Convert crop frame coordinates to image-relative coordinates (0-1 range)
-      const relativeStartX = (cropFrameX - imageLeft) / zoomedImageWidth;
-      const relativeStartY = (cropFrameY - imageTop) / zoomedImageHeight;
-      const relativeEndX = (cropFrameX + targetWidth - imageLeft) / zoomedImageWidth;
-      const relativeEndY = (cropFrameY + targetHeight - imageTop) / zoomedImageHeight;
+      // FIXED: Convert crop frame coordinates to image-relative coordinates (0-1 range)
+      // The issue was that zoomedImageWidth (300) is almost same as targetWidth (300)
+      // So we were taking 99% of the image instead of a small portion
+      
+      // Calculate where crop frame intersects with the displayed image
+      const cropLeft = Math.max(cropFrameX, imageLeft);
+      const cropTop = Math.max(cropFrameY, imageTop);
+      const cropRight = Math.min(cropFrameX + targetWidth, imageLeft + zoomedImageWidth);
+      const cropBottom = Math.min(cropFrameY + targetHeight, imageTop + zoomedImageHeight);
+      
+      // Convert to relative coordinates within the displayed image (0-1)
+      const relativeStartX = (cropLeft - imageLeft) / zoomedImageWidth;
+      const relativeStartY = (cropTop - imageTop) / zoomedImageHeight;
+      const relativeEndX = (cropRight - imageLeft) / zoomedImageWidth;
+      const relativeEndY = (cropBottom - imageTop) / zoomedImageHeight;
       
       // Clamp to valid ranges (0-1)
       const clampedStartX = Math.max(0, Math.min(1, relativeStartX));
@@ -290,6 +300,7 @@ export const ImageCropper: React.FC<ImageCropperProps> = ({
         baseImageSize: { w: baseImageWidth, h: baseImageHeight },
         zoomedImageSize: { w: zoomedImageWidth, h: zoomedImageHeight },
         imagePosition: { x: imageLeft, y: imageTop },
+        cropIntersection: { left: cropLeft, top: cropTop, right: cropRight, bottom: cropBottom },
         relativeCoords: { 
           startX: relativeStartX, startY: relativeStartY, 
           endX: relativeEndX, endY: relativeEndY,
