@@ -239,25 +239,25 @@ export const ImageCropper: React.FC<ImageCropperProps> = ({
       const relativeX = cropFrameX - cropSettings.x;
       const relativeY = cropFrameY - cropSettings.y;
       
-      // For maximum quality, we want to extract a region that's LARGER than 300×200
-      // from the high-resolution source, then let the browser do high-quality downsampling
+      // Direct coordinate mapping - crop exactly what's in the orange frame
+      // Convert preview coordinates to original image coordinates
+      const scaleX = img.naturalWidth / actualDisplayWidth;
+      const scaleY = img.naturalHeight / actualDisplayHeight;
       
-      // Calculate how much of the original image corresponds to our crop selection
-      const scaleToOriginal = Math.max(img.naturalWidth / actualDisplayWidth, img.naturalHeight / actualDisplayHeight);
+      // Map the crop frame (300×200) to the original image coordinates
+      const sourceX = Math.max(0, relativeX * scaleX);
+      const sourceY = Math.max(0, relativeY * scaleY);
+      const sourceW = targetWidth * scaleX;
+      const sourceH = targetHeight * scaleY;
       
-      // For optimal quality, extract at least 600×400 (2x target) or larger from source
-      const qualityMultiplier = Math.max(2.0, scaleToOriginal);
-      const optimalSourceW = targetWidth * qualityMultiplier;
-      const optimalSourceH = targetHeight * qualityMultiplier;
-      
-      // Convert crop frame position to source coordinates
-      const sourceX = Math.max(0, Math.min(img.naturalWidth - optimalSourceW, relativeX * scaleToOriginal));
-      const sourceY = Math.max(0, Math.min(img.naturalHeight - optimalSourceH, relativeY * scaleToOriginal));
-      const sourceW = Math.min(optimalSourceW, img.naturalWidth - sourceX);
-      const sourceH = Math.min(optimalSourceH, img.naturalHeight - sourceY);
+      // Ensure we don't exceed image boundaries
+      const clampedSourceX = Math.min(sourceX, img.naturalWidth - sourceW);
+      const clampedSourceY = Math.min(sourceY, img.naturalHeight - sourceH);
+      const clampedSourceW = Math.min(sourceW, img.naturalWidth - clampedSourceX);
+      const clampedSourceH = Math.min(sourceH, img.naturalHeight - clampedSourceY);
       
       const correctDebug = {
-        transform: 'optimized-v3',
+        transform: 'direct-crop-v4',
         preview: { w: previewWidth, h: previewHeight },
         cropFrame: { x: cropFrameX, y: cropFrameY, w: targetWidth, h: targetHeight },
         cropSettings: cropSettings,
@@ -265,8 +265,8 @@ export const ImageCropper: React.FC<ImageCropperProps> = ({
         imageAspect: imageAspect,
         displayDimensions: { w: actualDisplayWidth, h: actualDisplayHeight, scale: displayScale },
         relativePosition: { x: relativeX, y: relativeY },
-        scaleFactors: { x: scaleFactorX, y: scaleFactorY },
-        source: { x: sourceX, y: sourceY, w: sourceW, h: sourceH },
+        scaleFactors: { x: scaleX, y: scaleY },
+        source: { x: clampedSourceX, y: clampedSourceY, w: clampedSourceW, h: clampedSourceH },
         destination: { x: 0, y: 0, w: targetWidth, h: targetHeight }
       };
       
@@ -284,7 +284,7 @@ export const ImageCropper: React.FC<ImageCropperProps> = ({
       // Draw the correctly calculated crop area
       ctx.drawImage(
         img,
-        sourceX, sourceY, sourceW, sourceH,
+        clampedSourceX, clampedSourceY, clampedSourceW, clampedSourceH,
         0, 0, targetWidth, targetHeight
       );
 
