@@ -46,9 +46,11 @@ export default function ImageCropperNew({
   const cropFrameY = (previewHeight - cropFrameHeight) / 2;
 
   useEffect(() => {
+    // Load image via proxy to avoid CORS issues completely
+    const filename = imageUrl.split('/').pop() || 'image.jpg';
+    const proxyUrl = `/api/video-proxy?filename=${encodeURIComponent(filename)}`;
+    
     const img = new Image();
-    // Try to enable CORS for canvas export
-    img.crossOrigin = 'anonymous';
     img.onload = () => {
       // Center the image initially
       const imageAspect = img.naturalWidth / img.naturalHeight;
@@ -75,11 +77,10 @@ export default function ImageCropperNew({
       setIsLoading(false);
     };
     img.onerror = () => {
-      console.error('Failed to load image. URL:', imageUrl);
+      console.error('Failed to load image via proxy. URL:', proxyUrl);
       setIsLoading(false);
     };
-    // Use the imageUrl directly - it's already a full Supabase URL
-    img.src = imageUrl;
+    img.src = proxyUrl;
   }, [imageUrl, previewWidth, previewHeight]);
 
   const handleMouseDown = (e: React.MouseEvent) => {
@@ -109,7 +110,11 @@ export default function ImageCropperNew({
   const handleZoomChange = (value: number[]) => {
     const newZoom = value[0];
     
-    // Keep image centered during zoom - simpler approach
+    // Calculate the center point of the current crop area
+    const cropCenterX = cropFrameX + cropFrameWidth / 2;
+    const cropCenterY = cropFrameY + cropFrameHeight / 2;
+    
+    // Calculate current image dimensions at current zoom
     const currentImageW = imageRef.current?.naturalWidth || 0;
     const currentImageH = imageRef.current?.naturalHeight || 0;
     
@@ -125,14 +130,23 @@ export default function ImageCropperNew({
       baseHeight = baseWidth / imageAspect;
     }
     
-    // Calculate new dimensions
+    // Calculate old and new dimensions
+    const oldWidth = (baseWidth * cropSettings.zoom) / 100;
+    const oldHeight = (baseHeight * cropSettings.zoom) / 100;
     const newWidth = (baseWidth * newZoom) / 100;
     const newHeight = (baseHeight * newZoom) / 100;
     
-    // Center the image in the container
+    // Find the current center point in image coordinates
+    const oldCenterInImageX = (cropCenterX - cropSettings.x) / oldWidth;
+    const oldCenterInImageY = (cropCenterY - cropSettings.y) / oldHeight;
+    
+    // Position the new image so the same point is at the crop center
+    const newX = cropCenterX - (oldCenterInImageX * newWidth);
+    const newY = cropCenterY - (oldCenterInImageY * newHeight);
+    
     setCropSettings({
-      x: (previewWidth - newWidth) / 2,
-      y: (previewHeight - newHeight) / 2,
+      x: newX,
+      y: newY,
       zoom: newZoom
     });
   };
@@ -218,58 +232,20 @@ export default function ImageCropperNew({
         0, 0, outputWidth, outputHeight
       );
       
-      // Convert to blob - handle CORS issues
-      try {
-        canvas.toBlob(
-          (blob) => {
-            if (blob) {
-              console.log('HIGH-RES blob created, size:', blob.size, 'dimensions:', outputWidth, 'x', outputHeight);
-              onSave(blob, cropSettings);
-            } else {
-              throw new Error('Failed to create blob from canvas');
-            }
-            setIsSaving(false);
-          },
-          'image/jpeg',
-          1.0
-        );
-      } catch (corsError) {
-        // Fallback: Use proxy to load image without CORS issues
-        console.warn('CORS issue detected, using proxy fallback');
-        const proxyImg = new Image();
-        proxyImg.onload = () => {
-          // Clear and redraw with proxy image
-          ctx.clearRect(0, 0, outputWidth, outputHeight);
-          ctx.fillStyle = '#FFFFFF';
-          ctx.fillRect(0, 0, outputWidth, outputHeight);
-          
-          ctx.drawImage(
-            proxyImg,
-            finalSourceX, finalSourceY, finalSourceW, finalSourceH,
-            0, 0, outputWidth, outputHeight
-          );
-          
-          canvas.toBlob(
-            (blob) => {
-              if (blob) {
-                console.log('PROXY HIGH-RES blob created, size:', blob.size);
-                onSave(blob, cropSettings);
-              } else {
-                throw new Error('Failed to create blob from proxy canvas');
-              }
-              setIsSaving(false);
-            },
-            'image/jpeg',
-            1.0
-          );
-        };
-        proxyImg.onerror = () => {
-          throw new Error('Failed to load image via proxy');
-        };
-        // Use video proxy for CORS-free loading
-        const filename = imageUrl.split('/').pop() || 'image.jpg';
-        proxyImg.src = `/api/video-proxy?filename=${encodeURIComponent(filename)}`;
-      }
+      // Convert to blob (image loaded via proxy so no CORS issues)
+      canvas.toBlob(
+        (blob) => {
+          if (blob) {
+            console.log('HIGH-RES blob created, size:', blob.size, 'dimensions:', outputWidth, 'x', outputHeight);
+            onSave(blob, cropSettings);
+          } else {
+            throw new Error('Failed to create blob from canvas');
+          }
+          setIsSaving(false);
+        },
+        'image/jpeg',
+        1.0
+      );
       
     } catch (error) {
       console.error('Cropping failed:', error);
@@ -347,7 +323,7 @@ export default function ImageCropperNew({
           {/* Image */}
           <img
             ref={imageRef}
-            src={imageUrl}
+            src={`/api/video-proxy?filename=${encodeURIComponent(imageUrl.split('/').pop() || 'image.jpg')}`}
             alt="Source"
             className="absolute select-none"
             style={{
