@@ -26,6 +26,20 @@ import {
 } from "lucide-react";
 import ImageCropperEasyCrop from './ImageCropperEasyCrop';
 
+// Module-level persistent state that survives component re-creations
+const persistentUploadState = {
+  video_url_en: '',
+  image_url_en: '',
+  video_url_fr: '',
+  image_url_fr: '',
+  reset: () => {
+    persistentUploadState.video_url_en = '';
+    persistentUploadState.image_url_en = '';
+    persistentUploadState.video_url_fr = '';
+    persistentUploadState.image_url_fr = '';
+  }
+};
+
 interface GalleryItem {
   id: number;
   title_en: string;
@@ -289,20 +303,15 @@ export default function GalleryManagement() {
     onCancel: () => void; 
   }) => {
     
-    // Use useRef to persist state across component re-creations
-    const persistentState = useRef({
-      video_url_en: '',
-      image_url_en: '',
-      video_url_fr: '',
-      image_url_fr: '',
-      initialized: false
-    });
+    // Use module-level persistent state that survives component re-creations
     
     const [formData, setFormData] = useState(() => {
       console.log('🔄 INITIALIZING formData state with item:', item);
+      console.log('🔄 Module persistent state during init:', persistentUploadState);
       
       // If we have persistent state from previous uploads, use it
-      const hasPersistedUrls = persistentState.current.video_url_en || persistentState.current.image_url_en;
+      const hasPersistedUrls = persistentUploadState.video_url_en || persistentUploadState.image_url_en;
+      console.log('🔄 Has persisted URLs:', hasPersistedUrls);
       
       return {
         title_en: item?.title_en || '',
@@ -315,13 +324,13 @@ export default function GalleryManagement() {
         situation_fr: item?.situation_fr || '',
         story_en: item?.story_en || '',
         story_fr: item?.story_fr || '',
-        video_url_en: item?.video_url_en || persistentState.current.video_url_en || '',
-        video_url_fr: item?.video_url_fr || persistentState.current.video_url_fr || '',
+        video_url_en: item?.video_url_en || persistentUploadState.video_url_en || '',
+        video_url_fr: item?.video_url_fr || persistentUploadState.video_url_fr || '',
         video_width: item?.video_width || 0,
         video_height: item?.video_height || 0,
         video_orientation: item?.video_orientation || 'landscape',
-        image_url_en: item?.image_url_en || persistentState.current.image_url_en || '',
-        image_url_fr: item?.image_url_fr || persistentState.current.image_url_fr || '',
+        image_url_en: item?.image_url_en || persistentUploadState.image_url_en || '',
+        image_url_fr: item?.image_url_fr || persistentUploadState.image_url_fr || '',
         price_en: item?.price_en || '',
         price_fr: item?.price_fr || '',
         alt_text_en: item?.alt_text_en || '',
@@ -444,12 +453,12 @@ export default function GalleryManagement() {
                     if (url) {
                       console.log('Updating form with video URL:', url);
                       
-                      // Save to persistent state first
-                      persistentState.current.video_url_en = url;
+                      // Save to module-level persistent state
+                      persistentUploadState.video_url_en = url;
                       if (formData.use_same_video) {
-                        persistentState.current.video_url_fr = url;
+                        persistentUploadState.video_url_fr = url;
                       }
-                      console.log('💾 Saved to persistent state:', persistentState.current);
+                      console.log('💾 Saved to module persistent state:', persistentUploadState);
                       
                       setFormData(prev => {
                         console.log('Current formData before video update:', prev);
@@ -514,21 +523,21 @@ export default function GalleryManagement() {
                     if (url) {
                       console.log('Updating form with image URL:', url);
                       
-                      // Save to persistent state first
-                      persistentState.current.image_url_en = url;
-                      persistentState.current.image_url_fr = url;
-                      console.log('💾 Saved to persistent state:', persistentState.current);
+                      // Save to module-level persistent state
+                      persistentUploadState.image_url_en = url;
+                      persistentUploadState.image_url_fr = url;
+                      console.log('💾 Saved to module persistent state:', persistentUploadState);
                       
                       setFormData(prev => {
                         console.log('Current formData before image update:', prev);
                         console.log('Image upload - prev.video_url_en:', prev.video_url_en);
                         console.log('Image upload - prev.image_url_en:', prev.image_url_en);
                         
-                        // Always preserve URLs from persistent state
+                        // Always preserve URLs from module persistent state
                         const newData = { 
                           ...prev, 
-                          video_url_en: persistentState.current.video_url_en || prev.video_url_en,
-                          video_url_fr: persistentState.current.video_url_fr || prev.video_url_fr,
+                          video_url_en: persistentUploadState.video_url_en || prev.video_url_en,
+                          video_url_fr: persistentUploadState.video_url_fr || prev.video_url_fr,
                           image_url_en: url, 
                           image_url_fr: url 
                         };
@@ -890,7 +899,11 @@ export default function GalleryManagement() {
         </div>
 
         <div className="flex justify-end space-x-2 pt-4">
-          <Button variant="outline" onClick={onCancel}>
+          <Button variant="outline" onClick={() => {
+            persistentUploadState.reset();
+            console.log('🧹 Cleared module persistent state on cancel');
+            onCancel();
+          }}>
             Annuler
           </Button>
           <Button 
@@ -916,6 +929,8 @@ export default function GalleryManagement() {
               }
               
               onSave(formData);
+              persistentUploadState.reset();
+              console.log('🧹 Cleared module persistent state after save');
             }}
             className="bg-orange-500 hover:bg-orange-600"
           >
