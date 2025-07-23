@@ -160,14 +160,6 @@ export const ImageCropper: React.FC<ImageCropperProps> = ({
     setIsSaving(true);
     
     try {
-      // Create a canvas to capture what's shown in the orange frame
-      const canvas = document.createElement('canvas');
-      const ctx = canvas.getContext('2d');
-      if (!ctx) throw new Error('Cannot get canvas context');
-
-      canvas.width = targetWidth;
-      canvas.height = targetHeight;
-
       // Load the original image
       const img = new Image();
       img.crossOrigin = 'anonymous';
@@ -178,87 +170,59 @@ export const ImageCropper: React.FC<ImageCropperProps> = ({
         img.src = proxyImageUrl;
       });
 
-      console.log('🖼️ Original image loaded:', { 
-        width: img.naturalWidth, 
-        height: img.naturalHeight 
-      });
+      // Debug info
+      const debugInfo = {
+        imageSize: { w: img.naturalWidth, h: img.naturalHeight },
+        cropSettings: cropSettings,
+        targetSize: { w: targetWidth, h: targetHeight }
+      };
+      
+      console.log('DEBUG INFO:', JSON.stringify(debugInfo, null, 2));
+      alert('Debug Info (check console): ' + JSON.stringify(debugInfo, null, 2));
 
-      // Frame and crop area dimensions
-      const frameWidth = 600;
-      const frameHeight = 400;
-      
-      // Orange frame is centered in the 600x400 preview area
-      const orangeFrameLeft = (frameWidth - targetWidth) / 2;   // 150px from left (for 300px width)
-      const orangeFrameTop = (frameHeight - targetHeight) / 2;  // 100px from top (for 200px height)
-      
-      console.log('🟠 Orange frame position:', { 
-        left: orangeFrameLeft, 
-        top: orangeFrameTop, 
-        width: targetWidth, 
-        height: targetHeight 
-      });
+      // Create canvas
+      const canvas = document.createElement('canvas');
+      const ctx = canvas.getContext('2d');
+      if (!ctx) throw new Error('Cannot get canvas context');
 
-      // Calculate how the image is displayed in the preview
-      const scale = cropSettings.zoom / 100;
-      const displayWidth = img.naturalWidth * scale;
-      const displayHeight = img.naturalHeight * scale;
-      
-      // Image position in the preview frame (centered + user pan offset)
-      const imageCenterX = frameWidth / 2 + cropSettings.x;
-      const imageCenterY = frameHeight / 2 + cropSettings.y;
-      const imageLeft = imageCenterX - displayWidth / 2;
-      const imageTop = imageCenterY - displayHeight / 2;
-      
-      console.log('📐 Image display info:', {
-        scale,
-        displaySize: { width: displayWidth, height: displayHeight },
-        position: { centerX: imageCenterX, centerY: imageCenterY, left: imageLeft, top: imageTop }
-      });
+      canvas.width = targetWidth;
+      canvas.height = targetHeight;
 
-      // Calculate what part of the source image corresponds to the orange frame area
-      const sourceLeft = (orangeFrameLeft - imageLeft) / scale;
-      const sourceTop = (orangeFrameTop - imageTop) / scale;
-      const sourceWidth = targetWidth / scale;
-      const sourceHeight = targetHeight / scale;
+      // EXTREMELY SIMPLE APPROACH: Just take center portion of image
+      // This should at least give us SOME part of the image instead of solid blue
       
-      console.log('🎯 Source coordinates:', { 
-        left: sourceLeft, 
-        top: sourceTop, 
-        width: sourceWidth, 
-        height: sourceHeight 
-      });
-
-      // Ensure coordinates are within image bounds
-      const clampedSourceLeft = Math.max(0, Math.min(sourceLeft, img.naturalWidth - sourceWidth));
-      const clampedSourceTop = Math.max(0, Math.min(sourceTop, img.naturalHeight - sourceHeight));
-      const clampedSourceWidth = Math.min(sourceWidth, img.naturalWidth - clampedSourceLeft);
-      const clampedSourceHeight = Math.min(sourceHeight, img.naturalHeight - clampedSourceTop);
+      const sourceX = Math.max(0, (img.naturalWidth - targetWidth) / 2);
+      const sourceY = Math.max(0, (img.naturalHeight - targetHeight) / 2);
+      const sourceW = Math.min(targetWidth, img.naturalWidth);
+      const sourceH = Math.min(targetHeight, img.naturalHeight);
       
-      console.log('✂️ Final crop coordinates:', { 
-        x: clampedSourceLeft, 
-        y: clampedSourceTop, 
-        width: clampedSourceWidth, 
-        height: clampedSourceHeight 
-      });
+      const simpleDebug = {
+        simple: true,
+        source: { x: sourceX, y: sourceY, w: sourceW, h: sourceH },
+        destination: { x: 0, y: 0, w: targetWidth, h: targetHeight }
+      };
+      
+      console.log('SIMPLE CROP:', JSON.stringify(simpleDebug, null, 2));
+      alert('Simple Crop: ' + JSON.stringify(simpleDebug, null, 2));
 
-      // Draw white background
+      // White background
       ctx.fillStyle = '#FFFFFF';
       ctx.fillRect(0, 0, targetWidth, targetHeight);
 
-      // Draw the cropped portion
+      // Draw simple center crop
       ctx.drawImage(
         img,
-        clampedSourceLeft, clampedSourceTop, clampedSourceWidth, clampedSourceHeight,
+        sourceX, sourceY, sourceW, sourceH,
         0, 0, targetWidth, targetHeight
       );
 
-      console.log('✅ Image drawn to canvas successfully');
+      console.log('Canvas drawn successfully');
 
       // Convert to blob
       canvas.toBlob(
         (blob) => {
           if (blob) {
-            console.log('✅ Generated blob, size:', blob.size, 'bytes');
+            console.log('Blob created, size:', blob.size);
             onSave(blob, cropSettings);
           } else {
             throw new Error('Failed to create blob from canvas');
@@ -269,7 +233,8 @@ export const ImageCropper: React.FC<ImageCropperProps> = ({
         0.95
       );
     } catch (error) {
-      console.error('❌ Cropping failed:', error);
+      console.error('Cropping failed:', error);
+      alert('Error: ' + error.message);
       setIsSaving(false);
     }
   };
