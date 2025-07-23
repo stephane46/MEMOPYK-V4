@@ -13,14 +13,20 @@ export default function ImageCropperEasyCrop({ imageUrl, onSave, onCancel }: Ima
   const [zoom, setZoom] = useState(1);
   const [loading, setLoading] = useState(false);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+  const [previewBlob, setPreviewBlob] = useState<Blob | null>(null);
+  const [showPreview, setShowPreview] = useState(false);
   const croppedAreaPixelsRef = useRef<any>(null);
   const imageRef = useRef<HTMLImageElement | null>(null);
 
   const onCropCompleteCallback = useCallback((_: any, pixelCrop: any) => {
     croppedAreaPixelsRef.current = pixelCrop;
+    // Reset preview when crop changes
+    setPreviewUrl(null);
+    setPreviewBlob(null);
+    setShowPreview(false);
   }, []);
 
-  const handleCropAndSave = useCallback(async () => {
+  const generatePreview = useCallback(async () => {
     const pixelCrop = croppedAreaPixelsRef.current;
     if (!pixelCrop) {
       console.error('Missing crop data');
@@ -55,27 +61,14 @@ export default function ImageCropperEasyCrop({ imageUrl, onSave, onCancel }: Ima
             200
           );
 
-          // Show preview
-          canvas.toBlob((previewBlob) => {
-            if (previewBlob) {
-              const previewObjectUrl = URL.createObjectURL(previewBlob);
-              setPreviewUrl(previewObjectUrl);
-            }
-          }, 'image/jpeg', 1.0);
-
-          // Convert to blob and pass to parent
+          // Generate preview and store blob
           canvas.toBlob(
             (blob) => {
               if (blob) {
-                const cropSettings = {
-                  crop,
-                  zoom,
-                  pixelCrop,
-                  targetWidth: 300,
-                  targetHeight: 200,
-                  timestamp: new Date().toISOString()
-                };
-                onSave(blob, cropSettings);
+                const previewObjectUrl = URL.createObjectURL(blob);
+                setPreviewUrl(previewObjectUrl);
+                setPreviewBlob(blob);
+                setShowPreview(true);
                 resolve();
               } else {
                 console.error('Canvas toBlob returned null');
@@ -100,7 +93,22 @@ export default function ImageCropperEasyCrop({ imageUrl, onSave, onCancel }: Ima
       
       img.src = imageUrl;
     });
-  }, [crop, zoom, onSave]);
+  }, [crop, zoom, imageUrl]);
+
+  const handleConfirmSave = useCallback(() => {
+    if (!previewBlob || !croppedAreaPixelsRef.current) return;
+    
+    const cropSettings = {
+      crop,
+      zoom,
+      pixelCrop: croppedAreaPixelsRef.current,
+      targetWidth: 300,
+      targetHeight: 200,
+      timestamp: new Date().toISOString()
+    };
+    
+    onSave(previewBlob, cropSettings);
+  }, [previewBlob, crop, zoom, onSave]);
 
   return (
     <div className="space-y-4">
@@ -147,17 +155,22 @@ export default function ImageCropperEasyCrop({ imageUrl, onSave, onCancel }: Ima
         </div>
       </div>
 
-      {/* Preview */}
-      {previewUrl && (
-        <div className="text-center">
-          <p className="text-sm font-medium mb-2">Aperçu (300×200):</p>
+      {/* Preview Section */}
+      {showPreview && previewUrl && (
+        <div className="text-center bg-green-50 dark:bg-green-900/20 p-4 rounded-lg border border-green-200 dark:border-green-800">
+          <p className="text-sm font-medium mb-3 text-green-800 dark:text-green-200">
+            ✓ Aperçu du résultat final (300×200 pixels):
+          </p>
           <img 
             src={previewUrl} 
             width={300} 
             height={200} 
             alt="Aperçu recadré" 
-            className="mx-auto border rounded shadow-sm"
+            className="mx-auto border-2 border-green-300 dark:border-green-600 rounded shadow-lg"
           />
+          <p className="text-xs text-green-600 dark:text-green-400 mt-2">
+            Confirmez pour sauvegarder cette image dans la galerie
+          </p>
         </div>
       )}
 
@@ -166,13 +179,31 @@ export default function ImageCropperEasyCrop({ imageUrl, onSave, onCancel }: Ima
         <Button onClick={onCancel} variant="outline">
           Annuler
         </Button>
-        <Button 
-          onClick={handleCropAndSave}
-          disabled={loading}
-          className="min-w-[150px]"
-        >
-          {loading ? 'Génération...' : 'Recadrer & Sauvegarder'}
-        </Button>
+        
+        {!showPreview ? (
+          <Button 
+            onClick={generatePreview}
+            disabled={loading}
+            className="min-w-[150px]"
+          >
+            {loading ? 'Génération...' : 'Aperçu (300×200)'}
+          </Button>
+        ) : (
+          <div className="flex gap-2">
+            <Button 
+              onClick={() => setShowPreview(false)}
+              variant="outline"
+            >
+              Modifier
+            </Button>
+            <Button 
+              onClick={handleConfirmSave}
+              className="min-w-[150px] bg-green-600 hover:bg-green-700"
+            >
+              ✓ Confirmer & Sauvegarder
+            </Button>
+          </div>
+        )}
       </div>
     </div>
   );
