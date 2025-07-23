@@ -183,15 +183,36 @@ export const ImageCropper: React.FC<ImageCropperProps> = ({
       const frameWidth = 600;
       const frameHeight = 400;
       
-      // Calculate which part of the image is visible in the crop frame
-      const cropFrameX = (frameWidth - targetWidth) / 2;
-      const cropFrameY = (frameHeight - targetHeight) / 2;
+      // Calculate the center position of the target area within the 600x400 frame
+      const cropFrameCenterX = frameWidth / 2;
+      const cropFrameCenterY = frameHeight / 2;
       
-      // Calculate source coordinates relative to the background image position
-      const sourceX = Math.max(0, (cropFrameX - cropSettings.x) / scale);
-      const sourceY = Math.max(0, (cropFrameY - cropSettings.y) / scale);
+      // Calculate the actual image display size after scaling
+      const displayWidth = img.naturalWidth * scale;
+      const displayHeight = img.naturalHeight * scale;
+      
+      // Calculate the top-left corner of the displayed image within the frame
+      const imageLeft = cropFrameCenterX - displayWidth / 2 + cropSettings.x;
+      const imageTop = cropFrameCenterY - displayHeight / 2 + cropSettings.y;
+      
+      // Calculate which part of the original image corresponds to the target crop area
+      const targetLeft = (frameWidth - targetWidth) / 2;  // 100px from left
+      const targetTop = (frameHeight - targetHeight) / 2; // 100px from top
+      
+      // Convert target area coordinates back to source image coordinates
+      const sourceX = Math.max(0, (targetLeft - imageLeft) / scale);
+      const sourceY = Math.max(0, (targetTop - imageTop) / scale);
       const sourceWidth = Math.min(img.naturalWidth - sourceX, targetWidth / scale);
       const sourceHeight = Math.min(img.naturalHeight - sourceY, targetHeight / scale);
+      
+      console.log('🎯 Crop Debug:', {
+        scale,
+        imageSize: { w: img.naturalWidth, h: img.naturalHeight },
+        displaySize: { w: displayWidth, h: displayHeight },
+        imagePosition: { left: imageLeft, top: imageTop },
+        targetArea: { left: targetLeft, top: targetTop, w: targetWidth, h: targetHeight },
+        sourceArea: { x: sourceX, y: sourceY, w: sourceWidth, h: sourceHeight }
+      });
 
       // Draw the cropped portion
       ctx.drawImage(
