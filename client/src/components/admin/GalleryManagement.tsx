@@ -73,6 +73,8 @@ export default function GalleryManagement() {
   const [showPreview, setShowPreview] = useState<{ type: 'video' | 'image'; url: string; title: string } | null>(null);
   const [showImageCropper, setShowImageCropper] = useState<{ imageUrl: string; item: GalleryItem } | null>(null);
   const [uploading, setUploading] = useState(false);
+  const [uploadProgress, setUploadProgress] = useState(0);
+  const [uploadStatus, setUploadStatus] = useState('');
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
@@ -81,27 +83,53 @@ export default function GalleryManagement() {
     if (!file) return;
     
     setUploading(true);
+    setUploadProgress(0);
+    setUploadStatus(`Téléchargement de ${file.name} (${(file.size / 1024 / 1024).toFixed(1)}MB)...`);
+    
     try {
       const formData = new FormData();
       formData.append('video', file);
+      
+      // Simulate progress for user feedback
+      const progressInterval = setInterval(() => {
+        setUploadProgress(prev => {
+          if (prev < 90) return prev + Math.random() * 15;
+          return prev;
+        });
+      }, 500);
       
       const response = await fetch('/api/gallery/upload-video', {
         method: 'POST',
         body: formData,
       });
       
+      clearInterval(progressInterval);
+      setUploadProgress(100);
+      setUploadStatus('Finalisation...');
+      
       const result = await response.json();
       if (result.success) {
-        toast({ title: "Succès", description: "Vidéo téléchargée avec succès!" });
+        toast({ 
+          title: "✅ Succès", 
+          description: "Vidéo téléchargée avec succès!",
+          className: "bg-green-50 dark:bg-green-900/20 border-green-200 dark:border-green-800"
+        });
         return result.url;
       } else {
         throw new Error(result.error);
       }
     } catch (error) {
       console.error('Video upload error:', error);
-      toast({ title: "Erreur", description: "Échec du téléchargement de la vidéo", variant: "destructive" });
+      toast({ 
+        title: "❌ Erreur", 
+        description: "Échec du téléchargement de la vidéo", 
+        variant: "destructive",
+        className: "bg-red-50 dark:bg-red-900/20 border-red-200 dark:border-red-800"
+      });
     } finally {
       setUploading(false);
+      setUploadProgress(0);
+      setUploadStatus('');
     }
   };
 
@@ -109,27 +137,53 @@ export default function GalleryManagement() {
     if (!file) return;
     
     setUploading(true);
+    setUploadProgress(0);
+    setUploadStatus(`Téléchargement de ${file.name} (${(file.size / 1024 / 1024).toFixed(1)}MB)...`);
+    
     try {
       const formData = new FormData();
       formData.append('image', file);
+      
+      // Simulate progress for user feedback
+      const progressInterval = setInterval(() => {
+        setUploadProgress(prev => {
+          if (prev < 90) return prev + Math.random() * 20;
+          return prev;
+        });
+      }, 300);
       
       const response = await fetch('/api/gallery/upload-image', {
         method: 'POST',
         body: formData,
       });
       
+      clearInterval(progressInterval);
+      setUploadProgress(100);
+      setUploadStatus('Finalisation...');
+      
       const result = await response.json();
       if (result.success) {
-        toast({ title: "Succès", description: "Image téléchargée avec succès!" });
+        toast({ 
+          title: "✅ Succès", 
+          description: "Image téléchargée avec succès!",
+          className: "bg-green-50 dark:bg-green-900/20 border-green-200 dark:border-green-800 text-green-900 dark:text-green-100"
+        });
         return result.url;
       } else {
         throw new Error(result.error);
       }
     } catch (error) {
       console.error('Image upload error:', error);
-      toast({ title: "Erreur", description: "Échec du téléchargement de l'image", variant: "destructive" });
+      toast({ 
+        title: "❌ Erreur", 
+        description: "Échec du téléchargement de l'image", 
+        variant: "destructive",
+        className: "bg-red-50 dark:bg-red-900/20 border-red-200 dark:border-red-800"
+      });
     } finally {
       setUploading(false);
+      setUploadProgress(0);
+      setUploadStatus('');
     }
   };
 
@@ -146,7 +200,11 @@ export default function GalleryManagement() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['/api/gallery'] });
       setShowCreateDialog(false);
-      toast({ title: "Succès", description: "Élément de galerie créé avec succès!" });
+      toast({ 
+        title: "✅ Succès", 
+        description: "Élément de galerie créé avec succès!",
+        className: "bg-green-50 dark:bg-green-900/20 border-green-200 dark:border-green-800 text-green-900 dark:text-green-100"
+      });
     },
     onError: () => {
       toast({ title: "Erreur", description: "Échec de la création de l'élément", variant: "destructive" });
@@ -161,7 +219,11 @@ export default function GalleryManagement() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['/api/gallery'] });
       setEditingItem(null);
-      toast({ title: "Succès", description: "Élément mis à jour avec succès!" });
+      toast({ 
+        title: "✅ Succès", 
+        description: "Élément mis à jour avec succès!",
+        className: "bg-green-50 dark:bg-green-900/20 border-green-200 dark:border-green-800 text-green-900 dark:text-green-100"
+      });
     },
     onError: () => {
       toast({ title: "Erreur", description: "Échec de la mise à jour", variant: "destructive" });
@@ -175,7 +237,11 @@ export default function GalleryManagement() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['/api/gallery'] });
-      toast({ title: "Succès", description: "Ordre mis à jour!" });
+      toast({ 
+        title: "✅ Succès", 
+        description: "Ordre mis à jour!",
+        className: "bg-green-50 dark:bg-green-900/20 border-green-200 dark:border-green-800 text-green-900 dark:text-green-100"
+      });
     },
     onError: () => {
       toast({ title: "Erreur", description: "Échec du réordonnancement", variant: "destructive" });
@@ -189,7 +255,11 @@ export default function GalleryManagement() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['/api/gallery'] });
-      toast({ title: "Succès", description: "Élément supprimé avec succès!" });
+      toast({ 
+        title: "✅ Succès", 
+        description: "Élément supprimé avec succès!",
+        className: "bg-green-50 dark:bg-green-900/20 border-green-200 dark:border-green-800 text-green-900 dark:text-green-100"
+      });
     },
     onError: () => {
       toast({ title: "Erreur", description: "Échec de la suppression", variant: "destructive" });
@@ -264,8 +334,37 @@ export default function GalleryManagement() {
           <h4 className="font-semibold mb-3 text-orange-900 dark:text-orange-100 flex items-center gap-2">
             <Video className="h-5 w-5" />
             {item ? '1. Modifier vos fichiers média (optionnel)' : '1. Télécharger vos fichiers média'}
-            {uploading && <span className="text-sm text-orange-600 dark:text-orange-300">Téléchargement en cours...</span>}
           </h4>
+          
+          {/* Upload Progress Indicator */}
+          {uploading && (
+            <div className="mb-4 p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-200 dark:border-blue-800">
+              <div className="flex items-center gap-3 mb-2">
+                <div className="animate-spin h-5 w-5 border-2 border-blue-500 border-t-transparent rounded-full"></div>
+                <span className="font-medium text-blue-900 dark:text-blue-100">Téléchargement en cours...</span>
+              </div>
+              
+              {uploadStatus && (
+                <p className="text-sm text-blue-800 dark:text-blue-200 mb-2">{uploadStatus}</p>
+              )}
+              
+              <div className="w-full bg-blue-200 dark:bg-blue-800 rounded-full h-2">
+                <div 
+                  className="bg-blue-500 h-2 rounded-full transition-all duration-300 ease-out"
+                  style={{ width: `${uploadProgress}%` }}
+                ></div>
+              </div>
+              
+              <div className="flex justify-between items-center mt-1">
+                <span className="text-xs text-blue-700 dark:text-blue-300">
+                  Progression: {Math.round(uploadProgress)}%
+                </span>
+                <span className="text-xs text-blue-600 dark:text-blue-400">
+                  Ne fermez pas cette fenêtre
+                </span>
+              </div>
+            </div>
+          )}
           <div className="bg-white dark:bg-gray-800/50 p-4 rounded-lg mb-4">
             <p className="text-sm text-orange-800 dark:text-orange-200 mb-3">
               📤 Téléchargez vos fichiers ici - les URLs seront automatiquement générées et remplies ci-dessous
