@@ -289,31 +289,34 @@ export default function GalleryManagement() {
     onCancel: () => void; 
   }) => {
     
-    const [formData, setFormData] = useState({
-      title_en: item?.title_en || '',
-      title_fr: item?.title_fr || '',
-      source_en: item?.source_en || '',
-      source_fr: item?.source_fr || '',
-      duration_en: item?.duration_en || '',
-      duration_fr: item?.duration_fr || '',
-      situation_en: item?.situation_en || '',
-      situation_fr: item?.situation_fr || '',
-      story_en: item?.story_en || '',
-      story_fr: item?.story_fr || '',
-      video_url_en: item?.video_url_en || '',
-      video_url_fr: item?.video_url_fr || '',
-      video_width: item?.video_width || 0,
-      video_height: item?.video_height || 0,
-      video_orientation: item?.video_orientation || 'landscape',
-      image_url_en: item?.image_url_en || '',
-      image_url_fr: item?.image_url_fr || '',
-      price_en: item?.price_en || '',
-      price_fr: item?.price_fr || '',
-      alt_text_en: item?.alt_text_en || '',
-      alt_text_fr: item?.alt_text_fr || '',
-      order_index: item?.order_index || galleryItems.length + 1,
-      is_active: item?.is_active ?? true,
-      use_same_video: item?.use_same_video ?? true
+    const [formData, setFormData] = useState(() => {
+      console.log('🔄 INITIALIZING formData state with item:', item);
+      return {
+        title_en: item?.title_en || '',
+        title_fr: item?.title_fr || '',
+        source_en: item?.source_en || '',
+        source_fr: item?.source_fr || '',
+        duration_en: item?.duration_en || '',
+        duration_fr: item?.duration_fr || '',
+        situation_en: item?.situation_en || '',
+        situation_fr: item?.situation_fr || '',
+        story_en: item?.story_en || '',
+        story_fr: item?.story_fr || '',
+        video_url_en: item?.video_url_en || '',
+        video_url_fr: item?.video_url_fr || '',
+        video_width: item?.video_width || 0,
+        video_height: item?.video_height || 0,
+        video_orientation: item?.video_orientation || 'landscape',
+        image_url_en: item?.image_url_en || '',
+        image_url_fr: item?.image_url_fr || '',
+        price_en: item?.price_en || '',
+        price_fr: item?.price_fr || '',
+        alt_text_en: item?.alt_text_en || '',
+        alt_text_fr: item?.alt_text_fr || '',
+        order_index: item?.order_index || galleryItems.length + 1,
+        is_active: item?.is_active ?? true,
+        use_same_video: item?.use_same_video ?? true
+      };
     });
 
     // Debug: Track formData changes (removed to fix infinite loop)
