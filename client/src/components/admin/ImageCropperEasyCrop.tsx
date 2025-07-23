@@ -57,39 +57,36 @@ export default function ImageCropperEasyCrop({ imageUrl, onSave, onCancel }: Ima
           canvas.height = 200;
           const ctx = canvas.getContext('2d')!;
           
-          // Alternative approach: Use HTML2Canvas-like technique to capture what's actually visible
-          // Find the cropper container and get its rendered state
+          // DIRECT APPROACH: Use react-easy-crop's own crop data but apply it correctly
+          // The library provides the exact pixel coordinates - we just need to use them properly
           const cropperContainer = document.querySelector('.reactEasyCrop_Container');
-          const imageElement = cropperContainer?.querySelector('img');
+          const imageElement = cropperContainer?.querySelector('img') as HTMLImageElement;
           
-          if (imageElement) {
-            // Get the actual rendered dimensions and position of the image
-            const containerRect = cropperContainer.getBoundingClientRect();
-            const imageRect = imageElement.getBoundingClientRect();
+          if (imageElement && croppedAreaPixelsRef.current) {
+            // Use the crop coordinates from react-easy-crop, but relative to the actual image
+            const pixelCrop = croppedAreaPixelsRef.current;
             
-            // Calculate the offset of the image within the 300x200 container
-            const offsetX = imageRect.left - containerRect.left;
-            const offsetY = imageRect.top - containerRect.top;
+            // Get the displayed image dimensions
+            const displayedRect = imageElement.getBoundingClientRect();
+            const containerRect = cropperContainer!.getBoundingClientRect();
             
-            // Get the scale factor between natural image and displayed image
-            const scaleX = img.naturalWidth / imageElement.naturalWidth;
-            const scaleY = img.naturalHeight / imageElement.naturalHeight;
+            // Calculate the scale between displayed image and natural image
+            const scaleX = img.naturalWidth / displayedRect.width;
+            const scaleY = img.naturalHeight / displayedRect.height;
             
-            // Calculate which part of the natural image is visible in the 300x200 viewport
-            const sourceX = Math.max(0, -offsetX * scaleX);
-            const sourceY = Math.max(0, -offsetY * scaleY);
-            const sourceWidth = Math.min(300 * scaleX, img.naturalWidth - sourceX);
-            const sourceHeight = Math.min(200 * scaleY, img.naturalHeight - sourceY);
+            // Apply the scale to the crop coordinates
+            const sourceX = pixelCrop.x * scaleX;
+            const sourceY = pixelCrop.y * scaleY;
+            const sourceWidth = pixelCrop.width * scaleX;
+            const sourceHeight = pixelCrop.height * scaleY;
             
-            console.log('Debug crop calculation:', {
-              naturalSize: { width: img.naturalWidth, height: img.naturalHeight },
-              displayedSize: { width: imageElement.naturalWidth, height: imageElement.naturalHeight },
+            console.log('Using react-easy-crop coordinates:', {
+              pixelCrop,
               scale: { x: scaleX, y: scaleY },
-              offset: { x: offsetX, y: offsetY },
               source: { x: sourceX, y: sourceY, width: sourceWidth, height: sourceHeight }
             });
             
-            // Draw the calculated portion
+            // Draw the cropped area
             ctx.drawImage(
               img,
               sourceX,
@@ -102,8 +99,8 @@ export default function ImageCropperEasyCrop({ imageUrl, onSave, onCancel }: Ima
               200
             );
           } else {
-            // Fallback: scale entire image to 300x200
-            console.log('Fallback: no cropper element found');
+            // Fallback: scale entire image
+            console.log('Fallback: using entire image');
             ctx.drawImage(img, 0, 0, 300, 200);
           }
 
