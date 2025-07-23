@@ -368,6 +368,18 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       console.log(`✅ Static image uploaded successfully: ${staticImageUrl}`);
       
+      // Update the gallery item with the static image URL and crop settings
+      try {
+        await hybridStorage.updateGalleryItem(parseInt(itemId), {
+          static_image_url: staticImageUrl,
+          crop_settings: cropSettings
+        });
+        console.log(`✅ Gallery item ${itemId} updated with static image URL`);
+      } catch (updateError) {
+        console.error('Failed to update gallery item with static image URL:', updateError);
+        // Continue anyway since the upload succeeded
+      }
+      
       res.json({ 
         success: true, 
         url: staticImageUrl,
