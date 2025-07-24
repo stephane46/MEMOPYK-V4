@@ -92,9 +92,7 @@ export default function GalleryManagement() {
   const [showCreateDialog, setShowCreateDialog] = useState(false);
   const [showPreview, setShowPreview] = useState<{ type: 'video' | 'image'; url: string; title: string } | null>(null);
   const [showImageCropper, setShowImageCropper] = useState<{ imageUrl: string; item: GalleryItem } | null>(null);
-  const [uploading, setUploading] = useState(false);
-  const [uploadProgress, setUploadProgress] = useState(0);
-  const [uploadStatus, setUploadStatus] = useState('');
+  // Upload state removed - using DirectUpload components only
 
   const { toast } = useToast();
   const queryClient = useQueryClient();
@@ -135,185 +133,7 @@ export default function GalleryManagement() {
 
 
 
-  // File upload handlers
-  const handleVideoUpload = async (file: File | undefined) => {
-    if (!file) return;
-    
-    // COMPREHENSIVE DEBUG LOGGING FOR PRODUCTION DEBUGGING
-    console.log('🚀 VIDEO UPLOAD DEBUG - Starting upload process');
-    console.log(`📁 File details:`, {
-      name: file.name,
-      size: file.size,
-      sizeMB: (file.size / 1024 / 1024).toFixed(2),
-      type: file.type,
-      lastModified: new Date(file.lastModified).toISOString()
-    });
-    
-    setUploading(true);
-    setUploadProgress(0);
-    setUploadStatus(`Téléchargement de ${file.name} (${(file.size / 1024 / 1024).toFixed(1)}MB)...`);
-    
-    try {
-      const formData = new FormData();
-      formData.append('video', file);
-      
-      console.log('📦 FormData prepared, making fetch request to /api/gallery/upload-video');
-      
-      // Simulate progress for user feedback
-      const progressInterval = setInterval(() => {
-        setUploadProgress(prev => {
-          if (prev < 85) return prev + Math.random() * 10;
-          return prev;
-        });
-      }, 500);
-      
-      console.log('🌐 Sending POST request...');
-      const response = await fetch('/api/gallery/upload-video', {
-        method: 'POST',
-        body: formData,
-      });
-      
-      console.log('📨 Response received:', {
-        status: response.status,
-        statusText: response.statusText,
-        ok: response.ok,
-        headers: Object.fromEntries(response.headers.entries())
-      });
-      
-      clearInterval(progressInterval);
-      setUploadProgress(100);
-      setUploadStatus('Finalisation...');
-      
-      if (!response.ok) {
-        console.log('❌ Upload failed - response not OK');
-        
-        // Handle HTTP errors
-        let errorMessage = "Échec du téléchargement de la vidéo";
-        
-        if (response.status === 413) {
-          console.log('🚫 413 Error: File too large');
-          errorMessage = "Fichier trop volumineux. Taille maximale: 5000MB";
-        } else if (response.status === 400) {
-          console.log('🚫 400 Error: Bad request');
-          errorMessage = "Format de fichier invalide ou données manquantes";
-        } else if (response.status === 500) {
-          console.log('🚫 500 Error: Server error');
-          errorMessage = "Erreur serveur. Réessayez dans quelques minutes";
-        }
-        
-        // Try to get error details from response
-        try {
-          const errorData = await response.json();
-          console.log('📋 Server error response:', errorData);
-          if (errorData.error) {
-            errorMessage = errorData.error;
-          }
-        } catch (parseError) {
-          console.log('⚠️ Failed to parse error response:', parseError);
-          // If JSON parsing fails, use default error message
-        }
-        
-        console.log('🔥 Final error message:', errorMessage);
-        throw new Error(errorMessage);
-      }
-      
-      console.log('✅ Response OK - parsing JSON...');
-      const result = await response.json();
-      console.log('📊 Video upload result:', result);
-      
-      if (result.success) {
-        console.log('🎉 Upload SUCCESS!');
-        toast({ 
-          title: "✅ Succès", 
-          description: "Vidéo téléchargée avec succès!",
-          className: "bg-green-50 dark:bg-green-900/20 border-green-200 dark:border-green-800"
-        });
-        console.log('🔗 Returning video URL:', result.url);
-        return result.url;
-      } else {
-        console.log('❌ Upload failed despite 200 response:', result);
-        throw new Error(result.error || "Échec du téléchargement");
-      }
-    } catch (error: any) {
-      console.log('💥 UPLOAD ERROR CAUGHT:');
-      console.log('Error object:', error);
-      console.log('Error message:', error.message);
-      console.log('Error name:', error.name);
-      console.log('Error stack:', error.stack);
-      
-      // Show specific error message to user
-      const errorMessage = error.message || "Échec du téléchargement de la vidéo";
-      console.log('🔥 Showing error to user:', errorMessage);
-      
-      toast({ 
-        title: "❌ Erreur de téléchargement", 
-        description: errorMessage, 
-        variant: "destructive",
-        className: "bg-red-50 dark:bg-red-900/20 border-red-200 dark:border-red-800"
-      });
-    } finally {
-      console.log('🏁 Upload process finished - cleaning up');
-      setUploading(false);
-      setUploadProgress(0);
-      setUploadStatus('');
-    }
-  };
-
-  const handleImageUpload = async (file: File | undefined) => {
-    if (!file) return;
-    
-    setUploading(true);
-    setUploadProgress(0);
-    setUploadStatus(`Téléchargement de ${file.name} (${(file.size / 1024 / 1024).toFixed(1)}MB)...`);
-    
-    try {
-      const formData = new FormData();
-      formData.append('image', file);
-      
-      // Simulate progress for user feedback
-      const progressInterval = setInterval(() => {
-        setUploadProgress(prev => {
-          if (prev < 85) return prev + Math.random() * 10;
-          return prev;
-        });
-      }, 300);
-      
-      const response = await fetch('/api/gallery/upload-image', {
-        method: 'POST',
-        body: formData,
-      });
-      
-      clearInterval(progressInterval);
-      setUploadProgress(100);
-      setUploadStatus('Finalisation...');
-      
-      const result = await response.json();
-      console.log('Image upload result:', result);
-      if (result.success) {
-        toast({ 
-          title: "✅ Succès", 
-          description: "Image téléchargée avec succès!",
-          className: "bg-green-50 dark:bg-green-900/20 border-green-200 dark:border-green-800 text-green-900 dark:text-green-100"
-        });
-        console.log('Returning image URL:', result.url);
-        return result.url;
-      } else {
-        throw new Error(result.error);
-      }
-    } catch (error) {
-      console.error('Image upload error:', error);
-      toast({ 
-        title: "❌ Erreur", 
-        description: "Échec du téléchargement de l'image", 
-        variant: "destructive",
-        className: "bg-red-50 dark:bg-red-900/20 border-red-200 dark:border-red-800"
-      });
-    } finally {
-      setUploading(false);
-      setUploadProgress(0);
-      setUploadStatus('');
-    }
-  };
+  // Traditional upload handlers removed - using only DirectUpload system
 
   // Fetch gallery items
   const { data: galleryItems = [], isLoading } = useQuery<GalleryItem[]>({
@@ -487,307 +307,178 @@ export default function GalleryManagement() {
             {item ? '1. Modifier vos fichiers média (optionnel)' : '1. Télécharger vos fichiers média'}
           </h4>
           
-          {/* Upload Progress Indicator */}
-          {uploading && (
-            <div className="mb-4 p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-200 dark:border-blue-800">
-              <div className="flex items-center gap-3 mb-2">
-                <div className="animate-spin h-5 w-5 border-2 border-blue-500 border-t-transparent rounded-full"></div>
-                <span className="font-medium text-blue-900 dark:text-blue-100">Téléchargement en cours...</span>
-              </div>
-              
-              {uploadStatus && (
-                <p className="text-sm text-blue-800 dark:text-blue-200 mb-2">{uploadStatus}</p>
-              )}
-              
-              <div className="w-full bg-blue-200 dark:bg-blue-800 rounded-full h-2">
-                <div 
-                  className="bg-blue-500 h-2 rounded-full transition-all duration-300 ease-out"
-                  style={{ width: `${uploadProgress}%` }}
-                ></div>
-              </div>
-              
-              <div className="flex justify-between items-center mt-1">
-                <span className="text-xs text-blue-700 dark:text-blue-300">
-                  Progression: {Math.round(uploadProgress)}%
-                </span>
-                <span className="text-xs text-blue-600 dark:text-blue-400">
-                  Ne fermez pas cette fenêtre
-                </span>
-              </div>
-            </div>
-          )}
+          {/* Upload progress removed - DirectUpload components handle their own progress */}
+          {/* Current media display section */}
           <div className="bg-white dark:bg-gray-800/50 p-4 rounded-lg mb-4">
             <p className="text-sm text-orange-800 dark:text-orange-200 mb-3">
-              📤 Téléchargez vos fichiers ici - les URLs seront automatiquement générées et remplies ci-dessous
+              📤 Téléchargement uniquement via le système Direct Upload ci-dessous
             </p>
-            {/* DEBUG: Current form state */}
-            <div className="text-xs font-mono p-2 bg-gray-100 dark:bg-gray-800 rounded mb-3">
-              <strong>DEBUG - Current URLs:</strong><br/>
-              Video: {formData.video_url_en || 'None'}<br/>
-              Image: {formData.image_url_en || 'None'}
-            </div>
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <Label className="text-gray-700 dark:text-gray-300 flex items-center gap-1">
-                  <Video className="h-3 w-3" />
-                  Vidéo de galerie
-                </Label>
-                
-                {/* Current Video Display */}
-                {formData.video_url_en && (
-                  <div className="mb-3 p-3 bg-green-50 dark:bg-green-900/20 rounded border border-green-200 dark:border-green-800">
-                    <p className="text-sm font-medium text-green-800 dark:text-green-200 mb-1">
-                      ✅ Vidéo actuelle:
-                    </p>
-                    <p className="text-xs font-mono text-green-700 dark:text-green-300 break-all">
-                      {formData.video_url_en}
-                    </p>
-                    <div className="mt-2 flex items-center gap-2">
-                      <video 
-                        src={`/api/video-proxy?filename=${encodeURIComponent(formData.video_url_en.split('/').pop() || formData.video_url_en)}`}
-                        className="w-20 h-12 object-cover rounded border"
-                        muted
-                      />
-                      <div className="text-xs text-green-600 dark:text-green-400">
-                        Dimensions: {formData.video_width} × {formData.video_height}px<br/>
-                        Orientation: {formData.video_orientation}
-                      </div>
-                    </div>
+            
+            {/* Current Video Display */}
+            {formData.video_url_en && (
+              <div className="mb-3 p-3 bg-green-50 dark:bg-green-900/20 rounded border border-green-200 dark:border-green-800">
+                <p className="text-sm font-medium text-green-800 dark:text-green-200 mb-1">
+                  ✅ Vidéo actuelle:
+                </p>
+                <p className="text-xs font-mono text-green-700 dark:text-green-300 break-all">
+                  {formData.video_url_en}
+                </p>
+                <div className="mt-2 flex items-center gap-2">
+                  <video 
+                    src={`/api/video-proxy?filename=${encodeURIComponent(formData.video_url_en.split('/').pop() || formData.video_url_en)}`}
+                    className="w-20 h-12 object-cover rounded border"
+                    muted
+                  />
+                  <div className="text-xs text-green-600 dark:text-green-400">
+                    Dimensions: {formData.video_width} × {formData.video_height}px<br/>
+                    Orientation: {formData.video_orientation}
                   </div>
-                )}
-                
+                </div>
+              </div>
+            )}
+
+            {/* Current Image Display */}
+            {formData.image_url_en && (
+              <div className="mb-3 p-3 bg-green-50 dark:bg-green-900/20 rounded border border-green-200 dark:border-green-800">
+                <p className="text-sm font-medium text-green-800 dark:text-green-200 mb-1">
+                  ✅ Image actuelle:
+                </p>
+                <p className="text-xs font-mono text-green-700 dark:text-green-300 break-all mb-2">
+                  {formData.image_url_en}
+                </p>
+                <div className="flex items-center gap-2">
+                  <img 
+                    src={`/api/video-proxy?filename=${encodeURIComponent(formData.image_url_en.split('/').pop() || formData.image_url_en)}`}
+                    alt="Current preview"
+                    className="w-20 h-12 object-cover rounded border"
+                    onError={(e) => {
+                      const target = e.target as HTMLImageElement;
+                      target.style.display = 'none';
+                    }}
+                  />
+                  <div className="text-xs text-green-600 dark:text-green-400">
+                    <p className="font-medium">Image de couverture</p>
+                    <p>Remplacer via Direct Upload ci-dessous</p>
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
+
+          {/* Direct Upload for Large Files */}
+          <div className="mt-6 p-4 bg-gradient-to-r from-purple-50 to-blue-50 dark:from-purple-900/20 dark:to-blue-900/20 rounded-lg border border-purple-200 dark:border-purple-800">
+            <div className="flex items-center gap-2 mb-3">
+              <div className="bg-purple-500 rounded-full p-1">
+                <Upload className="h-4 w-4 text-white" />
+              </div>
+              <h4 className="font-semibold text-purple-900 dark:text-purple-100">
+                Téléchargement Direct (Fichiers Volumineux)
+              </h4>
+            </div>
+            <p className="text-sm text-purple-800 dark:text-purple-200 mb-4">
+              Pour les fichiers de plus de 10MB, utilisez le téléchargement direct qui contourne les limites du serveur. 
+              Idéal pour les vidéos de haute qualité (jusqu'à 5GB).
+            </p>
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <Label className="text-purple-900 dark:text-purple-100 mb-2 block">
+                  <Video className="h-4 w-4 inline mr-1" />
+                  Vidéo (Téléchargement Direct)
+                </Label>
                 <DirectUpload
                   bucket="memopyk-gallery"
                   acceptedTypes="video/*"
                   maxSizeMB={5000}
-                  onUploadComplete={(result: any) => {
+                  onUploadComplete={(result) => {
                     console.log('Direct video upload completed:', result);
-                    const videoUrl = result.url;
+                    const url = result.url;
                     
-                    // Save to persistent state
-                    persistentUploadState.video_url_en = videoUrl;
+                    // Save to module-level persistent state
+                    persistentUploadState.video_url_en = url;
                     if (formData.use_same_video) {
-                      persistentUploadState.video_url_fr = videoUrl;
+                      persistentUploadState.video_url_fr = url;
                     }
                     console.log('💾 Saved direct upload to persistent state:', persistentUploadState);
                     
-                    // Update form data
-                    setFormData(prev => ({ 
-                      ...prev, 
-                      video_url_en: videoUrl,
-                      video_url_fr: prev.use_same_video ? videoUrl : prev.video_url_fr
-                    }));
+                    setFormData(prev => {
+                      const newData = prev.use_same_video 
+                        ? { ...prev, video_url_en: url, video_url_fr: url }
+                        : { ...prev, video_url_en: url };
+                      console.log('Updated formData with direct upload:', newData);
+                      return newData;
+                    });
                     
                     toast({
                       title: "✅ Succès",
-                      description: "Vidéo téléchargée directement vers Supabase!",
-                      className: "bg-green-50 dark:bg-green-900/20 border-green-200 dark:border-green-800 text-green-900 dark:text-green-100"
+                      description: "Vidéo téléchargée directement avec succès!",
+                      className: "bg-green-50 dark:bg-green-900/20 border-green-200 dark:border-green-800"
                     });
                   }}
-                  onUploadError={(error: any) => {
+                  onUploadError={(error) => {
                     console.error('Direct video upload failed:', error);
                     toast({
                       title: "❌ Erreur",
-                      description: `Échec du téléchargement: ${error}`,
+                      description: `Échec du téléchargement direct: ${error}`,
                       variant: "destructive"
                     });
                   }}
                 />
-                <p className="text-xs text-gray-500 mt-1">
-                  Téléchargement direct - Formats: MP4, WebM, MOV (max 5GB)
-                </p>
               </div>
+              
               <div>
-                <Label className="text-gray-700 dark:text-gray-300 flex items-center gap-1">
-                  <Image className="h-3 w-3" />
-                  Image de couverture
+                <Label className="text-purple-900 dark:text-purple-100 mb-2 block">
+                  <Image className="h-4 w-4 inline mr-1" />
+                  Image (Téléchargement Direct)
                 </Label>
-                
-                {/* Current Image Display */}
-                {formData.image_url_en && (
-                  <div className="mb-3 p-3 bg-green-50 dark:bg-green-900/20 rounded border border-green-200 dark:border-green-800">
-                    <p className="text-sm font-medium text-green-800 dark:text-green-200 mb-1">
-                      ✅ Image actuelle:
-                    </p>
-                    <p className="text-xs font-mono text-green-700 dark:text-green-300 break-all mb-2">
-                      {formData.image_url_en}
-                    </p>
-                    <div className="flex items-center gap-2">
-                      <img 
-                        src={`/api/video-proxy?filename=${encodeURIComponent(formData.image_url_en.split('/').pop() || formData.image_url_en)}`}
-                        alt="Current preview"
-                        className="w-20 h-12 object-cover rounded border"
-                        onError={(e) => {
-                          const target = e.target as HTMLImageElement;
-                          target.style.display = 'none';
-                        }}
-                      />
-                      <div className="text-xs text-green-600 dark:text-green-400">
-                        <p className="font-medium">Remplacer l'image</p>
-                        <p>Téléchargez une nouvelle image ci-dessous</p>
-                      </div>
-                    </div>
-                  </div>
-                )}
-                
                 <DirectUpload
                   bucket="memopyk-gallery"
                   acceptedTypes="image/*"
                   maxSizeMB={5000}
-                  onUploadComplete={(result: any) => {
+                  onUploadComplete={(result) => {
                     console.log('Direct image upload completed:', result);
-                    const imageUrl = result.url;
+                    const url = result.url;
                     
-                    // Save to persistent state
-                    persistentUploadState.image_url_en = imageUrl;
-                    persistentUploadState.image_url_fr = imageUrl;
+                    // Save to module-level persistent state
+                    persistentUploadState.image_url_en = url;
+                    persistentUploadState.image_url_fr = url;
                     console.log('💾 Saved direct image upload to persistent state:', persistentUploadState);
                     
-                    // Update form data while preserving video URLs
-                    setFormData(prev => ({ 
-                      ...prev, 
-                      video_url_en: persistentUploadState.video_url_en || prev.video_url_en,
-                      video_url_fr: persistentUploadState.video_url_fr || prev.video_url_fr,
-                      image_url_en: imageUrl,
-                      image_url_fr: imageUrl
-                    }));
+                    setFormData(prev => {
+                      const newData = { 
+                        ...prev, 
+                        video_url_en: persistentUploadState.video_url_en || prev.video_url_en,
+                        video_url_fr: persistentUploadState.video_url_fr || prev.video_url_fr,
+                        image_url_en: url, 
+                        image_url_fr: url 
+                      };
+                      console.log('Updated formData with direct image upload:', newData);
+                      return newData;
+                    });
                     
                     toast({
                       title: "✅ Succès",
-                      description: "Image téléchargée directement vers Supabase!",
-                      className: "bg-green-50 dark:bg-green-900/20 border-green-200 dark:border-green-800 text-green-900 dark:text-green-100"
+                      description: "Image téléchargée directement avec succès!",
+                      className: "bg-green-50 dark:bg-green-900/20 border-green-200 dark:border-green-800"
                     });
                   }}
-                  onUploadError={(error: any) => {
+                  onUploadError={(error) => {
                     console.error('Direct image upload failed:', error);
                     toast({
                       title: "❌ Erreur",
-                      description: `Échec du téléchargement: ${error}`,
+                      description: `Échec du téléchargement direct: ${error}`,
                       variant: "destructive"
                     });
                   }}
                 />
-                <p className="text-xs text-gray-500 mt-1">
-                  Téléchargement direct - Formats: JPG, PNG, WebP (max 5GB)
-                </p>
               </div>
             </div>
-
-            {/* Direct Upload for Large Files */}
-            <div className="mt-6 p-4 bg-gradient-to-r from-purple-50 to-blue-50 dark:from-purple-900/20 dark:to-blue-900/20 rounded-lg border border-purple-200 dark:border-purple-800">
-              <div className="flex items-center gap-2 mb-3">
-                <div className="bg-purple-500 rounded-full p-1">
-                  <Upload className="h-4 w-4 text-white" />
-                </div>
-                <h4 className="font-semibold text-purple-900 dark:text-purple-100">
-                  Téléchargement Direct (Fichiers Volumineux)
-                </h4>
-              </div>
-              <p className="text-sm text-purple-800 dark:text-purple-200 mb-4">
-                Pour les fichiers de plus de 10MB, utilisez le téléchargement direct qui contourne les limites du serveur. 
-                Idéal pour les vidéos de haute qualité (jusqu'à 5GB).
+            
+            <div className="mt-4 p-3 bg-blue-50 dark:bg-blue-900/30 rounded border border-blue-200 dark:border-blue-700">
+              <p className="text-xs text-blue-800 dark:text-blue-200 flex items-center gap-1">
+                <CheckCircle className="h-3 w-3" />
+                Le téléchargement direct contourne les limites de Replit et permet des fichiers jusqu'à 5GB
               </p>
-              
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <Label className="text-purple-900 dark:text-purple-100 mb-2 block">
-                    <Video className="h-4 w-4 inline mr-1" />
-                    Vidéo (Téléchargement Direct)
-                  </Label>
-                  <DirectUpload
-                    bucket="memopyk-gallery"
-                    acceptedTypes="video/*"
-                    maxSizeMB={5000}
-                    onUploadComplete={(result) => {
-                      console.log('Direct video upload completed:', result);
-                      const url = result.url;
-                      
-                      // Save to module-level persistent state
-                      persistentUploadState.video_url_en = url;
-                      if (formData.use_same_video) {
-                        persistentUploadState.video_url_fr = url;
-                      }
-                      console.log('💾 Saved direct upload to persistent state:', persistentUploadState);
-                      
-                      setFormData(prev => {
-                        const newData = prev.use_same_video 
-                          ? { ...prev, video_url_en: url, video_url_fr: url }
-                          : { ...prev, video_url_en: url };
-                        console.log('Updated formData with direct upload:', newData);
-                        return newData;
-                      });
-                      
-                      toast({
-                        title: "✅ Succès",
-                        description: "Vidéo téléchargée directement avec succès!",
-                        className: "bg-green-50 dark:bg-green-900/20 border-green-200 dark:border-green-800"
-                      });
-                    }}
-                    onUploadError={(error) => {
-                      console.error('Direct video upload failed:', error);
-                      toast({
-                        title: "❌ Erreur",
-                        description: `Échec du téléchargement direct: ${error}`,
-                        variant: "destructive"
-                      });
-                    }}
-                  />
-                </div>
-                
-                <div>
-                  <Label className="text-purple-900 dark:text-purple-100 mb-2 block">
-                    <Image className="h-4 w-4 inline mr-1" />
-                    Image (Téléchargement Direct)
-                  </Label>
-                  <DirectUpload
-                    bucket="memopyk-gallery"
-                    acceptedTypes="image/*"
-                    maxSizeMB={5000}
-                    onUploadComplete={(result) => {
-                      console.log('Direct image upload completed:', result);
-                      const url = result.url;
-                      
-                      // Save to module-level persistent state
-                      persistentUploadState.image_url_en = url;
-                      persistentUploadState.image_url_fr = url;
-                      console.log('💾 Saved direct image upload to persistent state:', persistentUploadState);
-                      
-                      setFormData(prev => {
-                        const newData = { 
-                          ...prev, 
-                          video_url_en: persistentUploadState.video_url_en || prev.video_url_en,
-                          video_url_fr: persistentUploadState.video_url_fr || prev.video_url_fr,
-                          image_url_en: url, 
-                          image_url_fr: url 
-                        };
-                        console.log('Updated formData with direct image upload:', newData);
-                        return newData;
-                      });
-                      
-                      toast({
-                        title: "✅ Succès",
-                        description: "Image téléchargée directement avec succès!",
-                        className: "bg-green-50 dark:bg-green-900/20 border-green-200 dark:border-green-800"
-                      });
-                    }}
-                    onUploadError={(error) => {
-                      console.error('Direct image upload failed:', error);
-                      toast({
-                        title: "❌ Erreur",
-                        description: `Échec du téléchargement direct: ${error}`,
-                        variant: "destructive"
-                      });
-                    }}
-                  />
-                </div>
-              </div>
-              
-              <div className="mt-4 p-3 bg-blue-50 dark:bg-blue-900/30 rounded border border-blue-200 dark:border-blue-700">
-                <p className="text-xs text-blue-800 dark:text-blue-200 flex items-center gap-1">
-                  <CheckCircle className="h-3 w-3" />
-                  Le téléchargement direct contourne les limites de Replit et permet des fichiers jusqu'à 5GB
-                </p>
-              </div>
             </div>
           </div>
         </div>
