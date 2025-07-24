@@ -245,15 +245,6 @@ export default function GallerySection() {
             const itemHasVideo = hasVideo(item);
             const isFlipped = flippedCards.has(item.id);
             
-            // Force debugging - this should always be true for this item
-            console.log('🔍 Video detection debug:', {
-              itemId: item.id,
-              hasVideo: itemHasVideo,
-              videoUrlFr: item.videoUrlFr,
-              videoUrlEn: item.videoUrlEn,
-              language: language
-            });
-            
 
             
             return (
@@ -292,18 +283,33 @@ export default function GallerySection() {
                           
                           {/* Play Button - Center (2) */}
                           <div className="absolute inset-0 flex items-center justify-center">
-                            {/* ORANGE BUTTON WITH FORCED STYLING */}
-                            <div 
-                              className="w-16 h-16 rounded-full flex items-center justify-center transition-all duration-300 hover:scale-110 shadow-lg cursor-pointer animate-pulse-orange"
-                              onClick={(e) => handlePlayClick(item, e)}
-                              style={{
-                                backgroundColor: '#f97316',
-                                border: '2px solid #ea580c',
-                                color: 'white'
-                              }}
-                            >
-                              <div className="text-xl ml-1" style={{color: 'white'}}>▶</div>
-                            </div>
+                            {itemHasVideo ? (
+                              // Orange pulsing button for videos
+                              <div 
+                                className="w-16 h-16 rounded-full flex items-center justify-center transition-all duration-300 hover:scale-110 shadow-lg cursor-pointer animate-pulse-orange"
+                                onClick={(e) => handlePlayClick(item, e)}
+                                style={{
+                                  backgroundColor: '#f97316',
+                                  border: '2px solid #ea580c',
+                                  color: 'white'
+                                }}
+                              >
+                                <div className="text-xl ml-1" style={{color: 'white'}}>▶</div>
+                              </div>
+                            ) : (
+                              // White button for card flip
+                              <div
+                                className="w-16 h-16 rounded-full flex items-center justify-center transition-all duration-300 hover:scale-110 shadow-md cursor-pointer"
+                                onClick={(e) => handlePlayClick(item, e)}
+                                style={{
+                                  backgroundColor: 'white',
+                                  border: '2px solid #d1d5db',
+                                  color: '#374151'
+                                }}
+                              >
+                                <div className="text-xl">▶</div>
+                              </div>
+                            )}
                           </div>
                         </div>
                       ) : (
