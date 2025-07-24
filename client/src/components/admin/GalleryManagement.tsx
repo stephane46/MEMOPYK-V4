@@ -999,10 +999,51 @@ export default function GalleryManagement() {
           <Card key={item.id} className="border-l-4 border-l-orange-500">
             <CardContent className="p-6">
               <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
-                {/* Preview */}
+                {/* Preview - Show image thumbnail with video overlay icon */}
                 <div className="space-y-3">
                   <div className="aspect-video bg-gray-100 dark:bg-gray-800 rounded-lg relative overflow-hidden">
-                    {item.video_url_en ? (
+                    {item.image_url_en ? (
+                      <div 
+                        className="w-full h-full cursor-pointer group relative"
+                        onClick={() => {
+                          // If has video, show video preview; otherwise show image
+                          if (item.video_url_en) {
+                            const filename = item.video_url_en!.split('/').pop()!;
+                            const proxyUrl = `/api/video-proxy?filename=${encodeURIComponent(filename)}`;
+                            setShowPreview({ type: 'video', url: proxyUrl, title: item.title_en });
+                          } else {
+                            setShowPreview({ type: 'image', url: item.image_url_en!, title: item.title_en });
+                          }
+                        }}
+                      >
+                        <img
+                          src={item.image_url_en}
+                          alt={item.alt_text_en}
+                          className="w-full h-full object-cover"
+                          onError={(e) => {
+                            console.warn('Image failed to load:', item.image_url_en);
+                            e.currentTarget.style.display = 'none';
+                          }}
+                        />
+                        
+                        {/* Video indicator overlay */}
+                        {item.video_url_en && (
+                          <div className="absolute top-2 left-2 bg-black/70 text-white px-2 py-1 rounded text-xs flex items-center gap-1">
+                            <Play className="h-3 w-3" />
+                            Video
+                          </div>
+                        )}
+                        
+                        {/* Hover overlay */}
+                        <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-30 transition-all flex items-center justify-center">
+                          {item.video_url_en ? (
+                            <Play className="h-8 w-8 text-white opacity-0 group-hover:opacity-100 transition-all" />
+                          ) : (
+                            <Eye className="h-8 w-8 text-white opacity-0 group-hover:opacity-100 transition-all" />
+                          )}
+                        </div>
+                      </div>
+                    ) : item.video_url_en ? (
                       <div 
                         className="w-full h-full cursor-pointer group"
                         onClick={() => {
@@ -1019,20 +1060,6 @@ export default function GalleryManagement() {
                         />
                         <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-30 transition-all flex items-center justify-center">
                           <Play className="h-8 w-8 text-white opacity-0 group-hover:opacity-100 transition-all" />
-                        </div>
-                      </div>
-                    ) : item.image_url_en ? (
-                      <div 
-                        className="w-full h-full cursor-pointer group"
-                        onClick={() => setShowPreview({ type: 'image', url: item.image_url_en!, title: item.title_en })}
-                      >
-                        <img
-                          src={item.image_url_en}
-                          alt={item.alt_text_en}
-                          className="w-full h-full object-cover"
-                        />
-                        <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-30 transition-all flex items-center justify-center">
-                          <Eye className="h-8 w-8 text-white opacity-0 group-hover:opacity-100 transition-all" />
                         </div>
                       </div>
                     ) : (
