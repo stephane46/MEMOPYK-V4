@@ -29,7 +29,7 @@ const uploadVideo = multer({
     fileSize: 5000 * 1024 * 1024, // 5000MB limit for videos
   },
   fileFilter: (req, file, cb) => {
-    console.log(`📁 File upload attempt: ${file.originalname}, MIME type: ${file.mimetype}`);
+    console.log(`📁 File upload attempt: ${file.originalname}, MIME type: ${file.mimetype}, Size: ${(file.size || 0)}bytes`);
     
     // Check both MIME type and file extension for better compatibility
     const isVideoMimeType = file.mimetype.startsWith('video/');
@@ -38,8 +38,10 @@ const uploadVideo = multer({
       file.originalname.toLowerCase().endsWith(ext)
     );
     
+    console.log(`🔍 File validation: MIME check: ${isVideoMimeType}, Extension check: ${hasVideoExtension}`);
+    
     if (isVideoMimeType || hasVideoExtension) {
-      console.log(`✅ Video file accepted: ${file.originalname}`);
+      console.log(`✅ Video file accepted: ${file.originalname} (Enhanced detection v2.0)`);
       cb(null, true);
     } else {
       console.log(`❌ File rejected - not a video: ${file.originalname} (MIME: ${file.mimetype})`);
@@ -1075,7 +1077,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.json({
         status: "healthy",
         cache: stats,
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
+        deployment: {
+          version: "enhanced-file-detection-v2.0",
+          fileFilters: "MIME+Extension checking active",
+          limits: "5000MB video, 5000MB image"
+        }
       });
     } catch (error) {
       res.status(500).json({ error: "Health check failed" });
