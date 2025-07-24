@@ -276,6 +276,19 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       const videoUrl = `https://supabase.memopyk.org/storage/v1/object/public/memopyk-gallery/${filename}`;
       
+      // Immediately cache the newly uploaded gallery video
+      try {
+        console.log(`🎬 Auto-caching uploaded gallery video: ${filename}`);
+        const response = await fetch(videoUrl);
+        if (response.ok) {
+          await videoCache.cacheVideo(filename, response);
+          console.log(`✅ Gallery video cached successfully: ${filename}`);
+        }
+      } catch (cacheError) {
+        console.error(`⚠️ Failed to cache gallery video ${filename}:`, cacheError);
+        // Don't fail the upload if caching fails
+      }
+      
       res.json({ 
         success: true, 
         url: videoUrl,
