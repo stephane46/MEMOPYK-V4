@@ -390,6 +390,7 @@ export default function GalleryManagement() {
                   bucket="memopyk-gallery"
                   acceptedTypes="video/*"
                   maxSizeMB={5000}
+                  uploadId="gallery-video-upload"
                   onUploadComplete={(result) => {
                     console.log('Direct video upload completed:', result);
                     const url = result.url;
@@ -435,6 +436,7 @@ export default function GalleryManagement() {
                   bucket="memopyk-gallery"
                   acceptedTypes="image/*"
                   maxSizeMB={5000}
+                  uploadId="gallery-image-upload"
                   onUploadComplete={(result) => {
                     console.log('Direct image upload completed:', result);
                     const url = result.url;

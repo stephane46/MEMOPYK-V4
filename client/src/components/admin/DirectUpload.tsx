@@ -10,6 +10,7 @@ interface DirectUploadProps {
   acceptedTypes?: string;
   maxSizeMB?: number;
   children?: React.ReactNode;
+  uploadId?: string;
 }
 
 interface UploadState {
@@ -25,7 +26,8 @@ export default function DirectUpload({
   bucket, 
   acceptedTypes = "video/*",
   maxSizeMB = 5000,
-  children 
+  children,
+  uploadId = 'direct-upload'
 }: DirectUploadProps) {
   const [uploadState, setUploadState] = useState<UploadState>({
     status: 'idle',
@@ -129,11 +131,11 @@ export default function DirectUpload({
         file
       });
 
-      // Reset file input after successful upload
-      const fileInputs = document.querySelectorAll('input[type="file"]');
-      fileInputs.forEach(input => {
-        (input as HTMLInputElement).value = '';
-      });
+      // Reset only this component's file input after successful upload
+      const fileInput = document.getElementById(`${uploadId}-input`) as HTMLInputElement;
+      if (fileInput) {
+        fileInput.value = '';
+      }
 
       onUploadComplete({
         url: publicUrl,
@@ -166,11 +168,11 @@ export default function DirectUpload({
       progress: 0
     });
     
-    // Clear file input
-    const fileInputs = document.querySelectorAll('input[type="file"]');
-    fileInputs.forEach(input => {
-      (input as HTMLInputElement).value = '';
-    });
+    // Clear only this component's file input
+    const fileInput = document.getElementById(`${uploadId}-input`) as HTMLInputElement;
+    if (fileInput) {
+      fileInput.value = '';
+    }
   };
 
   const getStatusMessage = () => {
@@ -224,10 +226,10 @@ export default function DirectUpload({
             onChange={handleFileSelect}
             disabled={isUploading}
             className="hidden"
-            id="direct-upload-input"
+            id={`${uploadId}-input`}
           />
           <label 
-            htmlFor="direct-upload-input" 
+            htmlFor={`${uploadId}-input`} 
             className={`cursor-pointer flex flex-col items-center space-y-2 ${isUploading ? 'opacity-50 cursor-not-allowed' : ''}`}
           >
             {getStatusIcon()}
