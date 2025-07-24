@@ -29,9 +29,20 @@ const uploadVideo = multer({
     fileSize: 5000 * 1024 * 1024, // 5000MB limit for videos
   },
   fileFilter: (req, file, cb) => {
-    if (file.mimetype.startsWith('video/')) {
+    console.log(`📁 File upload attempt: ${file.originalname}, MIME type: ${file.mimetype}`);
+    
+    // Check both MIME type and file extension for better compatibility
+    const isVideoMimeType = file.mimetype.startsWith('video/');
+    const videoExtensions = ['.mp4', '.mov', '.avi', '.mkv', '.webm', '.m4v', '.3gp', '.flv', '.wmv'];
+    const hasVideoExtension = videoExtensions.some(ext => 
+      file.originalname.toLowerCase().endsWith(ext)
+    );
+    
+    if (isVideoMimeType || hasVideoExtension) {
+      console.log(`✅ Video file accepted: ${file.originalname}`);
       cb(null, true);
     } else {
+      console.log(`❌ File rejected - not a video: ${file.originalname} (MIME: ${file.mimetype})`);
       cb(new Error('Only video files are allowed'));
     }
   }
