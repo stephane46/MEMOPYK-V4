@@ -245,8 +245,30 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Upload gallery video endpoint
-  app.post("/api/gallery/upload-video", uploadVideo.single('video'), async (req, res) => {
+  // Upload gallery video endpoint with enhanced error handling
+  app.post("/api/gallery/upload-video", (req, res, next) => {
+    uploadVideo.single('video')(req, res, (err) => {
+      if (err) {
+        console.error('Multer error:', err);
+        if (err.code === 'LIMIT_FILE_SIZE') {
+          return res.status(413).json({ 
+            error: "File too large. Maximum size is 500MB",
+            code: "FILE_TOO_LARGE" 
+          });
+        } else if (err.code === 'LIMIT_UNEXPECTED_FILE') {
+          return res.status(400).json({ 
+            error: "Unexpected file field. Use 'video' field",
+            code: "INVALID_FIELD" 
+          });
+        }
+        return res.status(400).json({ 
+          error: err.message || "Upload failed",
+          code: "UPLOAD_ERROR" 
+        });
+      }
+      next();
+    });
+  }, async (req, res) => {
     try {
       if (!req.file) {
         return res.status(400).json({ error: "No video file provided" });

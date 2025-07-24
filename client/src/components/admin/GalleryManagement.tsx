@@ -163,6 +163,31 @@ export default function GalleryManagement() {
       setUploadProgress(100);
       setUploadStatus('Finalisation...');
       
+      if (!response.ok) {
+        // Handle HTTP errors
+        let errorMessage = "Échec du téléchargement de la vidéo";
+        
+        if (response.status === 413) {
+          errorMessage = "Fichier trop volumineux. Taille maximale: 500MB";
+        } else if (response.status === 400) {
+          errorMessage = "Format de fichier invalide ou données manquantes";
+        } else if (response.status === 500) {
+          errorMessage = "Erreur serveur. Réessayez dans quelques minutes";
+        }
+        
+        // Try to get error details from response
+        try {
+          const errorData = await response.json();
+          if (errorData.error) {
+            errorMessage = errorData.error;
+          }
+        } catch {
+          // If JSON parsing fails, use default error message
+        }
+        
+        throw new Error(errorMessage);
+      }
+      
       const result = await response.json();
       console.log('Video upload result:', result);
       if (result.success) {
@@ -174,13 +199,17 @@ export default function GalleryManagement() {
         console.log('Returning video URL:', result.url);
         return result.url;
       } else {
-        throw new Error(result.error);
+        throw new Error(result.error || "Échec du téléchargement");
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error('Video upload error:', error);
+      
+      // Show specific error message to user
+      const errorMessage = error.message || "Échec du téléchargement de la vidéo";
+      
       toast({ 
-        title: "❌ Erreur", 
-        description: "Échec du téléchargement de la vidéo", 
+        title: "❌ Erreur de téléchargement", 
+        description: errorMessage, 
         variant: "destructive",
         className: "bg-red-50 dark:bg-red-900/20 border-red-200 dark:border-red-800"
       });
