@@ -116,10 +116,7 @@ export const FAQManagement: React.FC = () => {
 
   // Create FAQ mutation
   const createFaqMutation = useMutation({
-    mutationFn: (data: FAQFormData) => apiRequest('/api/faqs', {
-      method: 'POST',
-      body: JSON.stringify(data)
-    }),
+    mutationFn: (data: FAQFormData) => apiRequest('/api/faqs', 'POST', data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['/api/faqs'] });
       setShowCreateDialog(false);
@@ -142,10 +139,7 @@ export const FAQManagement: React.FC = () => {
   // Update FAQ mutation
   const updateFaqMutation = useMutation({
     mutationFn: ({ id, data }: { id: string; data: Partial<FAQFormData> }) => 
-      apiRequest(`/api/faqs/${id}`, {
-        method: 'PATCH',
-        body: JSON.stringify(data)
-      }),
+      apiRequest(`/api/faqs/${id}`, 'PATCH', data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['/api/faqs'] });
       setEditingFaq(null);
@@ -166,7 +160,7 @@ export const FAQManagement: React.FC = () => {
 
   // Delete FAQ mutation
   const deleteFaqMutation = useMutation({
-    mutationFn: (id: string) => apiRequest(`/api/faqs/${id}`, { method: 'DELETE' }),
+    mutationFn: (id: string) => apiRequest(`/api/faqs/${id}`, 'DELETE'),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['/api/faqs'] });
       toast({
@@ -186,10 +180,7 @@ export const FAQManagement: React.FC = () => {
 
   // Create section mutation
   const createSectionMutation = useMutation({
-    mutationFn: (data: SectionFormData) => apiRequest('/api/faq-sections', {
-      method: 'POST',
-      body: JSON.stringify(data)
-    }),
+    mutationFn: (data: SectionFormData) => apiRequest('/api/faq-sections', 'POST', data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['/api/faq-sections'] });
       setShowSectionDialog(false);
@@ -212,10 +203,7 @@ export const FAQManagement: React.FC = () => {
   // Update section mutation
   const updateSectionMutation = useMutation({
     mutationFn: ({ id, data }: { id: string; data: Partial<SectionFormData> }) => 
-      apiRequest(`/api/faq-sections/${id}`, {
-        method: 'PATCH',
-        body: JSON.stringify(data)
-      }),
+      apiRequest(`/api/faq-sections/${id}`, 'PATCH', data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['/api/faq-sections'] });
       setEditingSection(null);
@@ -236,7 +224,7 @@ export const FAQManagement: React.FC = () => {
 
   // Delete section mutation
   const deleteSectionMutation = useMutation({
-    mutationFn: (id: string) => apiRequest(`/api/faq-sections/${id}`, { method: 'DELETE' }),
+    mutationFn: (id: string) => apiRequest(`/api/faq-sections/${id}`, 'DELETE'),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['/api/faq-sections'] });
       toast({

@@ -12,6 +12,7 @@ import { ArrowUp, ArrowDown, Play, RefreshCw, BarChart3, Video, HardDrive, Users
 import { useToast } from '@/hooks/use-toast';
 import GalleryManagement from '@/components/admin/GalleryManagement';
 import { ContactManagement } from '@/components/admin/ContactManagement';
+import FAQManagement from '@/components/admin/FAQManagement';
 import CryptoJS from 'crypto-js';
 
 interface HeroVideo {
@@ -1276,34 +1277,11 @@ export default function AdminPage() {
           {/* FAQ */}
           {activeSection === 'faq' && (
             <div className="space-y-6">
-              <div className="mb-6">
-                <h2 className="text-2xl font-bold text-gray-900 dark:text-white">FAQ</h2>
-                <p className="text-gray-600 dark:text-gray-400">Gestion des questions fréquemment posées</p>
-              </div>
-              <Card>
-                <CardHeader>
-                  <CardTitle>Gestion FAQ</CardTitle>
-                  <CardDescription>Prochainement - Éditeur de texte enrichi intégré</CardDescription>
-                </CardHeader>
-              </Card>
+              <FAQManagement />
             </div>
           )}
 
-          {/* Contacts */}
-          {activeSection === 'contacts' && (
-            <div className="space-y-6">
-              <div className="mb-6">
-                <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Contacts</h2>
-                <p className="text-gray-600 dark:text-gray-400">Gestion des contacts et suivi des prospects</p>
-              </div>
-              <Card>
-                <CardHeader>
-                  <CardTitle>Gestion des Contacts</CardTitle>
-                  <CardDescription>Prochainement - Liste de contacts avec suivi de statut</CardDescription>
-                </CardHeader>
-              </Card>
-            </div>
-          )}
+
 
           {/* Legal Documents */}
           {activeSection === 'legal-docs' && (
