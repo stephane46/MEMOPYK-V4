@@ -772,6 +772,40 @@ export default function GalleryManagement() {
           </div>
         </div>
 
+        {/* Sorry Message Section - When no video is available */}
+        <div className="bg-red-50 dark:bg-red-900/20 p-4 rounded-lg border border-red-200 dark:border-red-800">
+          <h4 className="font-semibold mb-3 text-red-900 dark:text-red-100 flex items-center gap-2">
+            ⚠️ Message d'excuse (quand pas de vidéo)
+          </h4>
+          <p className="text-sm text-red-700 dark:text-red-300 mb-3">
+            Ce message s'affiche quand l'utilisateur clique sur le bouton blanc (pas de vidéo disponible)
+          </p>
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <Label htmlFor="sorry_message_en" className="text-gray-700 dark:text-gray-300">Message d'excuse (English)</Label>
+              <Textarea
+                id="sorry_message_en"
+                value={formData.sorry_message_en}
+                onChange={(e) => setFormData({ ...formData, sorry_message_en: e.target.value })}
+                placeholder="Ex: Sorry, we cannot show you the video at this stage"
+                rows={3}
+                className="bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
+              />
+            </div>
+            <div>
+              <Label htmlFor="sorry_message_fr" className="text-gray-700 dark:text-gray-300">Message d'excuse (Français)</Label>
+              <Textarea
+                id="sorry_message_fr"
+                value={formData.sorry_message_fr}
+                onChange={(e) => setFormData({ ...formData, sorry_message_fr: e.target.value })}
+                placeholder="Ex: Désolé, nous ne pouvons pas vous montrer la vidéo à ce stade"
+                rows={3}
+                className="bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
+              />
+            </div>
+          </div>
+        </div>
+
         {/* Video URL Display */}
         <div className="bg-gray-50 dark:bg-gray-800/50 p-4 rounded-lg border">
           <h4 className="font-semibold mb-3 text-gray-900 dark:text-white flex items-center gap-2">
