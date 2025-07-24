@@ -316,9 +316,9 @@ export default function GalleryManagement() {
   };
 
   // Fetch gallery items
-  const { data: galleryItems = [], isLoading } = useQuery({
+  const { data: galleryItems = [], isLoading } = useQuery<GalleryItem[]>({
     queryKey: ['/api/gallery'],
-  }) as { data: GalleryItem[]; isLoading: boolean };
+  });
 
   // Create gallery item mutation
   const createItemMutation = useMutation({
