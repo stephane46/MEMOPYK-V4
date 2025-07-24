@@ -66,7 +66,7 @@
     "video_url_fr": "https://supabase.memopyk.org/storage/v1/object/public/memopyk-gallery/1753390495474-Pom%20Gallery%20(RAV%20AAA_001)%20compressed.mp4",
     "video_width": 1080,
     "video_height": 1350,
-    "video_orientation": "landscape",
+    "video_orientation": "portrait",
     "image_url_en": "https://supabase.memopyk.org/storage/v1/object/public/memopyk-gallery/1753390526482-AAA_002_0000014%20(3).jpg",
     "image_url_fr": "https://supabase.memopyk.org/storage/v1/object/public/memopyk-gallery/1753390526482-AAA_002_0000014%20(3).jpg",
     "price_en": "USD 225",

@@ -778,17 +778,16 @@ export default function GalleryManagement() {
               />
             </div>
             <div>
-              <Label htmlFor="video_orientation" className="text-gray-700 dark:text-gray-300">Orientation *</Label>
-              <select
-                id="video_orientation"
-                value={formData.video_orientation}
-                onChange={(e) => setFormData({ ...formData, video_orientation: e.target.value })}
-                className="w-full p-2 border rounded bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
-                required
-              >
-                <option value="landscape">Paysage (Landscape)</option>
-                <option value="portrait">Portrait</option>
-              </select>
+              <Label htmlFor="video_orientation" className="text-gray-700 dark:text-gray-300">Orientation (Auto-détectée)</Label>
+              <div className="w-full p-2 border rounded bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300">
+                {formData.video_width && formData.video_height 
+                  ? (formData.video_width > formData.video_height ? 'Paysage (Landscape)' : 'Portrait')
+                  : 'Entrez les dimensions pour voir l\'orientation'
+                }
+              </div>
+              <div className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                L'orientation est calculée automatiquement: largeur &gt; hauteur = paysage, sinon portrait
+              </div>
             </div>
           </div>
           <p className="text-xs text-red-700 dark:text-red-300 mt-2">
@@ -885,16 +884,28 @@ export default function GalleryManagement() {
               }
               
               // Validate video dimensions if video URL is provided
-              if ((formData.video_url_en || formData.video_url_fr) && (!formData.video_width || !formData.video_height || !formData.video_orientation)) {
+              if ((formData.video_url_en || formData.video_url_fr) && (!formData.video_width || !formData.video_height)) {
                 toast({ 
                   title: "Erreur", 
-                  description: "Les dimensions vidéo (largeur, hauteur, orientation) sont obligatoires quand une vidéo est fournie", 
+                  description: "Les dimensions vidéo (largeur, hauteur) sont obligatoires quand une vidéo est fournie", 
                   variant: "destructive" 
                 });
                 return;
               }
               
-              onSave(formData);
+              // Auto-calculate orientation based on dimensions
+              const finalData = {
+                ...formData,
+                video_orientation: formData.video_width > formData.video_height ? 'landscape' : 'portrait'
+              };
+              
+              console.log('📐 AUTO-ORIENTATION CALCULATION:', {
+                width: formData.video_width,
+                height: formData.video_height,
+                calculatedOrientation: finalData.video_orientation
+              });
+              
+              onSave(finalData);
               persistentUploadState.reset();
               console.log('🧹 Cleared module persistent state after save');
             }}
