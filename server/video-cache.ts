@@ -242,8 +242,8 @@ export class VideoCache {
     // Critical videos that should ALWAYS be cached (hero videos auto-play)
     const criticalVideos = [
       'VideoHero1.mp4',
-      '1752156356886_VideoHero2.mp4', 
-      '1752159228374_VideoHero3.mp4'
+      'VideoHero2.mp4', 
+      'VideoHero3.mp4'
     ];
 
     console.log('🚀 Starting proactive cache preloading for critical videos...');
