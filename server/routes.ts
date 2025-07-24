@@ -785,6 +785,97 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // FAQ Sections - GET all sections
+  app.get("/api/faq-sections", async (req, res) => {
+    try {
+      const sections = await hybridStorage.getFAQSections();
+      res.json(sections);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to get FAQ sections" });
+    }
+  });
+
+  // FAQ Sections - POST create new section
+  app.post("/api/faq-sections", async (req, res) => {
+    try {
+      const section = await hybridStorage.createFAQSection(req.body);
+      res.json(section);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to create FAQ section" });
+    }
+  });
+
+  // FAQ Sections - PATCH update section
+  app.patch("/api/faq-sections/:id", async (req, res) => {
+    try {
+      const section = await hybridStorage.updateFAQSection(Number(req.params.id), req.body);
+      res.json(section);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to update FAQ section" });
+    }
+  });
+
+  // FAQ Sections - DELETE remove section
+  app.delete("/api/faq-sections/:id", async (req, res) => {
+    try {
+      await hybridStorage.deleteFAQSection(Number(req.params.id));
+      res.json({ success: true });
+    } catch (error) {
+      res.status(500).json({ error: "Failed to delete FAQ section" });
+    }
+  });
+
+  // FAQs - GET all FAQs
+  app.get("/api/faqs", async (req, res) => {
+    try {
+      const faqs = await hybridStorage.getFAQs();
+      res.json(faqs);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to get FAQs" });
+    }
+  });
+
+  // FAQs - POST create new FAQ
+  app.post("/api/faqs", async (req, res) => {
+    try {
+      const faq = await hybridStorage.createFAQ(req.body);
+      res.json(faq);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to create FAQ" });
+    }
+  });
+
+  // FAQs - PATCH update FAQ
+  app.patch("/api/faqs/:id", async (req, res) => {
+    try {
+      const faq = await hybridStorage.updateFAQ(Number(req.params.id), req.body);
+      res.json(faq);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to update FAQ" });
+    }
+  });
+
+  // FAQs - DELETE remove FAQ
+  app.delete("/api/faqs/:id", async (req, res) => {
+    try {
+      await hybridStorage.deleteFAQ(Number(req.params.id));
+      res.json({ success: true });
+    } catch (error) {
+      res.status(500).json({ error: "Failed to delete FAQ" });
+    }
+  });
+
+  // FAQs - POST reorder FAQs
+  app.post("/api/faqs/:id/reorder", async (req, res) => {
+    try {
+      const { order_index } = req.body;
+      const faq = await hybridStorage.updateFAQ(Number(req.params.id), { order_index });
+      res.json(faq);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to reorder FAQ" });
+    }
+  });
+
   // Video streaming proxy with caching system
   app.get("/api/video-proxy", async (req, res) => {
     try {

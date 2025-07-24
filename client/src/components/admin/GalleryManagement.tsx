@@ -108,9 +108,7 @@ export default function GalleryManagement() {
   // Cache all gallery videos mutation
   const cacheGalleryVideosMutation = useMutation({
     mutationFn: async () => {
-      const response = await apiRequest('/api/video-cache/cache-gallery-videos', {
-        method: 'POST'
-      });
+      const response = await apiRequest('/api/video-cache/cache-gallery-videos', 'POST');
       return response;
     },
     onSuccess: () => {
@@ -1113,7 +1111,7 @@ export default function GalleryManagement() {
                   Cache Intelligent des Vidéos
                 </h4>
                 <p className="text-sm text-green-800 dark:text-green-200">
-                  {cacheStats.fileCount} vidéos en cache • {cacheStats.sizeMB}MB • Chargement ultra-rapide (~50ms)
+                  {(cacheStats as any)?.fileCount || 0} vidéos en cache • {(cacheStats as any)?.sizeMB || 0}MB • Chargement ultra-rapide (~50ms)
                 </p>
               </div>
             </div>
