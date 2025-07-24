@@ -80,7 +80,7 @@ const DraggableCover: React.FC<DraggableCoverProps> = ({
         height: 200,
         overflow: 'hidden',
         cursor: dragging ? 'grabbing' : 'grab',
-        backgroundImage: `url(${imageUrl})`,
+        backgroundImage: `url(/api/image-proxy?url=${encodeURIComponent(imageUrl)})`,
         backgroundSize: 'cover',
         backgroundPosition: `${pos.x}% ${pos.y}%`,
         borderRadius: 8,

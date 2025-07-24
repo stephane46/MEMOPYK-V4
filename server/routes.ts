@@ -1287,6 +1287,44 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Image proxy endpoint to solve CORS issues for cropping
+  app.get("/api/image-proxy", async (req, res) => {
+    try {
+      const imageUrl = req.query.url as string;
+      if (!imageUrl) {
+        return res.status(400).json({ error: "Missing image URL parameter" });
+      }
+
+      console.log(`🖼️  IMAGE PROXY REQUEST: ${imageUrl}`);
+
+      // Set CORS headers
+      res.setHeader('Access-Control-Allow-Origin', '*');
+      res.setHeader('Access-Control-Allow-Methods', 'GET');
+      res.setHeader('Access-Control-Allow-Headers', 'Range');
+
+      // Fetch image from Supabase
+      const response = await fetch(imageUrl);
+      if (!response.ok) {
+        throw new Error(`Failed to fetch image: ${response.status} ${response.statusText}`);
+      }
+
+      // Set proper headers
+      res.setHeader('Content-Type', response.headers.get('content-type') || 'image/jpeg');
+      res.setHeader('Content-Length', response.headers.get('content-length') || '0');
+
+      // Stream the image
+      const buffer = await response.arrayBuffer();
+      res.send(Buffer.from(buffer));
+
+    } catch (error: any) {
+      console.error(`❌ IMAGE PROXY ERROR:`, error);
+      res.status(500).json({ 
+        error: "Image proxy failed",
+        details: error.message 
+      });
+    }
+  });
+
   // Video cache health endpoint
   app.get("/api/video-proxy/health", async (req, res) => {
     try {

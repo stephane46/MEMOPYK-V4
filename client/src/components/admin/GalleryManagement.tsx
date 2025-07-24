@@ -999,10 +999,10 @@ export default function GalleryManagement() {
           <Card key={item.id} className="border-l-4 border-l-orange-500">
             <CardContent className="p-6">
               <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
-                {/* Preview - Show image thumbnail with video overlay icon */}
+                {/* Preview - Show static cropped image or original image thumbnail with video overlay icon */}
                 <div className="space-y-3">
                   <div className="aspect-video bg-gray-100 dark:bg-gray-800 rounded-lg relative overflow-hidden">
-                    {item.image_url_en ? (
+                    {(item.static_image_url || item.image_url_en) ? (
                       <div 
                         className="w-full h-full cursor-pointer group relative"
                         onClick={() => {
@@ -1012,17 +1012,22 @@ export default function GalleryManagement() {
                             const proxyUrl = `/api/video-proxy?filename=${encodeURIComponent(filename)}`;
                             setShowPreview({ type: 'video', url: proxyUrl, title: item.title_en });
                           } else {
-                            setShowPreview({ type: 'image', url: item.image_url_en!, title: item.title_en });
+                            setShowPreview({ type: 'image', url: item.static_image_url || item.image_url_en!, title: item.title_en });
                           }
                         }}
                       >
                         <img
-                          src={item.image_url_en}
+                          src={item.static_image_url || item.image_url_en!}
                           alt={item.alt_text_en}
                           className="w-full h-full object-cover"
                           onError={(e) => {
-                            console.warn('Image failed to load:', item.image_url_en);
-                            e.currentTarget.style.display = 'none';
+                            console.warn('Image failed to load:', item.static_image_url || item.image_url_en);
+                            // If static image fails, try original image
+                            if (item.static_image_url && item.image_url_en) {
+                              e.currentTarget.src = item.image_url_en;
+                            } else {
+                              e.currentTarget.style.display = 'none';
+                            }
                           }}
                         />
                         
