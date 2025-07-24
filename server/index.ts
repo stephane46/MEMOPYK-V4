@@ -35,15 +35,11 @@ testDatabaseConnection()
 const app = express();
 const server = createServer(app);
 
-// Configure Express with production-compatible upload limits
-// Replit deployment environment limits uploads, so we use 50MB as maximum safe limit
-const uploadLimit = process.env.NODE_ENV === 'production' ? '50mb' : '5000mb';
-console.log(`📁 Setting upload limits to: ${uploadLimit} (Environment: ${process.env.NODE_ENV})`);
-
-app.use(express.json({ limit: uploadLimit }));
+// Configure Express with realistic upload limits (nginx default is 1MB)
+app.use(express.json({ limit: '25mb' }));
 app.use(express.urlencoded({ 
   extended: false, 
-  limit: uploadLimit,
+  limit: '25mb',
   parameterLimit: 50000
 }));
 
