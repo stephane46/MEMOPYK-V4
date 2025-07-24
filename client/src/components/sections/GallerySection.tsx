@@ -336,7 +336,7 @@ export default function GallerySection() {
                       {/* Situation (6) - Users icon, fixed height: 80px (5 lines max) */}
                       <div className="mb-3 h-20 overflow-hidden">
                         <div className="flex items-start gap-2">
-                          <Users className="w-4 h-4 mt-1 flex-shrink-0" style={{ color: '#D67C4A' }} />
+                          <Users className="w-4 h-4 flex-shrink-0" style={{ color: '#D67C4A' }} />
                           <div className="text-sm leading-4" style={{ color: '#4B5563' }}>
                             {getItemSituation(item) || <div className="h-4"></div>}
                           </div>
@@ -346,7 +346,7 @@ export default function GallerySection() {
                       {/* Story (7) - Film icon, fixed height: 80px (5 lines max) */}
                       <div className="h-20 overflow-hidden">
                         <div className="flex items-start gap-2">
-                          <Film className="w-4 h-4 mt-1 flex-shrink-0" style={{ color: '#D67C4A' }} />
+                          <Film className="w-4 h-4 flex-shrink-0" style={{ color: '#D67C4A' }} />
                           <div className="text-sm leading-4" style={{ color: '#4B5563' }}>
                             {getItemStory(item) || <div className="h-4"></div>}
                           </div>
