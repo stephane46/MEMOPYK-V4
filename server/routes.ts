@@ -26,7 +26,7 @@ const supabase = createClient(
 const uploadVideo = multer({
   storage: multer.memoryStorage(),
   limits: {
-    fileSize: 25 * 1024 * 1024, // 25MB limit for videos (infrastructure constraint)
+    fileSize: 5000 * 1024 * 1024, // 5000MB limit for videos
   },
   fileFilter: (req, file, cb) => {
     console.log(`📁 ENHANCED FILE DETECTION v2.0 - File upload attempt:`);
@@ -44,7 +44,7 @@ const uploadVideo = multer({
     console.log(`🔍 VALIDATION CHECKS:`);
     console.log(`   - MIME type check (${file.mimetype}): ${isVideoMimeType}`);
     console.log(`   - Extension check (${file.originalname}): ${hasVideoExtension}`);
-    console.log(`   - File size under 25MB: ${((file.size || 0) / 1024 / 1024) < 25}`);
+    console.log(`   - File size under 5000MB: ${((file.size || 0) / 1024 / 1024) < 5000}`);
     
     if (isVideoMimeType || hasVideoExtension) {
       console.log(`✅ VIDEO FILE ACCEPTED: ${file.originalname} (Enhanced detection v2.0 - ${isVideoMimeType ? 'MIME' : 'EXTENSION'} match)`);
@@ -61,7 +61,7 @@ const uploadVideo = multer({
 const uploadImage = multer({
   storage: multer.memoryStorage(),
   limits: {
-    fileSize: 25 * 1024 * 1024, // 25MB limit for images (infrastructure constraint)
+    fileSize: 5000 * 1024 * 1024, // 5000MB limit for images
   },
   fileFilter: (req, file, cb) => {
     if (file.mimetype.startsWith('image/')) {
@@ -273,7 +273,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         console.error('Multer error:', err);
         if (err.code === 'LIMIT_FILE_SIZE') {
           return res.status(413).json({ 
-            error: "File too large. Maximum size is 25MB",
+            error: "File too large. Maximum size is 5000MB",
             code: "FILE_TOO_LARGE" 
           });
         } else if (err.code === 'LIMIT_UNEXPECTED_FILE') {
@@ -1089,7 +1089,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         deployment: {
           version: "enhanced-file-detection-v2.0",
           fileFilters: "MIME+Extension checking active",
-          limits: "25MB video, 25MB image"
+          limits: "5000MB video, 5000MB image"
         }
       });
     } catch (error) {

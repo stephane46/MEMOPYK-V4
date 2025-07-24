@@ -189,7 +189,7 @@ export default function GalleryManagement() {
         
         if (response.status === 413) {
           console.log('🚫 413 Error: File too large');
-          errorMessage = "Fichier trop volumineux. Taille maximale: 25MB (limitation infrastructure)";
+          errorMessage = "Fichier trop volumineux. Taille maximale: 5000MB";
         } else if (response.status === 400) {
           console.log('🚫 400 Error: Bad request');
           errorMessage = "Format de fichier invalide ou données manquantes";
@@ -587,7 +587,7 @@ export default function GalleryManagement() {
                   className="w-full p-2 border rounded bg-white dark:bg-gray-700 text-gray-900 dark:text-white disabled:opacity-50"
                 />
                 <p className="text-xs text-gray-500 mt-1">
-                  {formData.video_url_en ? 'Remplacer la vidéo (MP4, WebM, MOV - max 25MB)' : 'MP4, WebM, MOV (max 25MB)'}
+                  {formData.video_url_en ? 'Remplacer la vidéo (MP4, WebM, MOV - max 5000MB)' : 'MP4, WebM, MOV (max 5000MB)'}
                 </p>
               </div>
               <div>
@@ -661,7 +661,7 @@ export default function GalleryManagement() {
                   className="w-full p-2 border rounded bg-white dark:bg-gray-700 text-gray-900 dark:text-white disabled:opacity-50"
                 />
                 <p className="text-xs text-gray-500 mt-1">
-                  {formData.image_url_en ? 'Remplacer l\'image (JPG, PNG, WebP - max 25MB)' : 'JPG, PNG, WebP (max 25MB)'}
+                  {formData.image_url_en ? 'Remplacer l\'image (JPG, PNG, WebP - max 5000MB)' : 'JPG, PNG, WebP (max 5000MB)'}
                 </p>
               </div>
             </div>

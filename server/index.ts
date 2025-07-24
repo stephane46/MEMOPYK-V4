@@ -35,11 +35,11 @@ testDatabaseConnection()
 const app = express();
 const server = createServer(app);
 
-// Configure Express with realistic upload limits (nginx default is 1MB)
-app.use(express.json({ limit: '25mb' }));
+// Configure Express with large body limits for file uploads
+app.use(express.json({ limit: '5000mb' }));
 app.use(express.urlencoded({ 
   extended: false, 
-  limit: '25mb',
+  limit: '5000mb',
   parameterLimit: 50000
 }));
 
