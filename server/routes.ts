@@ -762,6 +762,22 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Production deployment test endpoint
+  app.get("/api/deployment-test", (req, res) => {
+    const fs = require('fs');
+    const path = require('path');
+    
+    res.json({
+      status: "Production deployment test",
+      timestamp: new Date().toISOString(),
+      environment: process.env.NODE_ENV || 'development',
+      galleryCodeDeployed: fs.existsSync(path.join(__dirname, '../client/src/components/sections/GallerySection.tsx')),
+      routesFileDeployed: fs.existsSync(__filename),
+      cacheDirectoryExists: fs.existsSync(path.join(__dirname, 'cache/videos')),
+      message: "If you see this in production with updated timestamp, latest code is deployed"
+    });
+  });
+
   // Analytics endpoints
   app.get("/api/analytics/dashboard", async (req, res) => {
     try {
