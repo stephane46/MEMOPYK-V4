@@ -1111,7 +1111,7 @@ export default function GalleryManagement() {
                   Cache Intelligent des Vidéos
                 </h4>
                 <p className="text-sm text-green-800 dark:text-green-200">
-                  {(cacheStats as any)?.fileCount || 0} vidéos en cache • {(cacheStats as any)?.sizeMB || 0}MB • Chargement ultra-rapide (~50ms)
+                  {(cacheStats as { fileCount?: number; sizeMB?: number })?.fileCount || 0} vidéos en cache • {(cacheStats as { fileCount?: number; sizeMB?: number })?.sizeMB || 0}MB • Chargement ultra-rapide (~50ms)
                 </p>
               </div>
             </div>
