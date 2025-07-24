@@ -292,14 +292,18 @@ export default function GallerySection() {
                           
                           {/* Play Button - Center (2) */}
                           <div className="absolute inset-0 flex items-center justify-center">
-                            {/* FORCED ORANGE BUTTON FOR TESTING */}
-                            <button
+                            {/* ORANGE BUTTON WITH FORCED STYLING */}
+                            <div 
+                              className="w-16 h-16 rounded-full flex items-center justify-center transition-all duration-300 hover:scale-110 shadow-lg cursor-pointer animate-pulse-orange"
                               onClick={(e) => handlePlayClick(item, e)}
-                              className="w-16 h-16 rounded-full flex items-center justify-center transition-all duration-300 hover:scale-110 bg-orange-500 text-white animate-pulse-orange shadow-lg border-2 border-orange-400"
-                              style={{backgroundColor: '#f97316 !important', color: 'white !important'}}
+                              style={{
+                                backgroundColor: '#f97316',
+                                border: '2px solid #ea580c',
+                                color: 'white'
+                              }}
                             >
-                              <div className="text-xl ml-1" style={{color: 'white !important'}}>▶</div>
-                            </button>
+                              <div className="text-xl ml-1" style={{color: 'white'}}>▶</div>
+                            </div>
                           </div>
                         </div>
                       ) : (
