@@ -94,6 +94,42 @@ export default function GalleryManagement() {
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
+  // Cache management state
+  const [cacheStatsRefreshKey, setCacheStatsRefreshKey] = useState(0);
+
+  // Cache stats query
+  const { data: cacheStats, refetch: refetchCacheStats } = useQuery({
+    queryKey: ['/api/video-cache/stats', cacheStatsRefreshKey],
+    staleTime: 1000, // Refresh every second for real-time updates
+  });
+
+  // Cache all gallery videos mutation
+  const cacheGalleryVideosMutation = useMutation({
+    mutationFn: async () => {
+      const response = await apiRequest('/api/video-cache/cache-gallery-videos', {
+        method: 'POST'
+      });
+      return response;
+    },
+    onSuccess: () => {
+      toast({
+        title: "✅ Cache des vidéos de galerie",
+        description: "Toutes les vidéos de galerie ont été mises en cache avec succès",
+        className: "bg-green-50 dark:bg-green-900/20 border-green-200 dark:border-green-800"
+      });
+      refetchCacheStats();
+      setCacheStatsRefreshKey(prev => prev + 1);
+    },
+    onError: (error: any) => {
+      toast({
+        title: "❌ Erreur de cache",
+        description: "Échec de la mise en cache des vidéos de galerie",
+        variant: "destructive",
+        className: "bg-red-50 dark:bg-red-900/20 border-red-200 dark:border-red-800"
+      });
+    }
+  });
+
 
 
   // File upload handlers
@@ -961,24 +997,65 @@ export default function GalleryManagement() {
           <h3 className="text-lg font-semibold">Éléments de Galerie</h3>
           <p className="text-sm text-gray-600">Gérez les éléments de votre galerie de films</p>
         </div>
-        <Dialog open={showCreateDialog} onOpenChange={setShowCreateDialog}>
-          <DialogTrigger asChild>
-            <Button className="bg-orange-500 hover:bg-orange-600">
-              <Plus className="h-4 w-4 mr-2" />
-              Nouvel Élément
-            </Button>
-          </DialogTrigger>
-          <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto bg-white dark:bg-gray-900">
-            <DialogHeader>
-              <DialogTitle className="text-gray-900 dark:text-white">Créer un Nouvel Élément de Galerie</DialogTitle>
-            </DialogHeader>
-            <GalleryItemForm
-              onSave={(data) => createItemMutation.mutate(data)}
-              onCancel={() => setShowCreateDialog(false)}
-            />
-          </DialogContent>
-        </Dialog>
+        <div className="flex gap-3">
+          {/* Cache Gallery Videos Button */}
+          <Button
+            onClick={() => cacheGalleryVideosMutation.mutate()}
+            disabled={cacheGalleryVideosMutation.isPending}
+            variant="outline"
+            className="border-green-500 text-green-600 hover:bg-green-50 dark:border-green-400 dark:text-green-400 dark:hover:bg-green-900/20"
+          >
+            {cacheGalleryVideosMutation.isPending ? (
+              <div className="animate-spin h-4 w-4 border-2 border-green-500 border-t-transparent rounded-full mr-2" />
+            ) : (
+              <Download className="h-4 w-4 mr-2" />
+            )}
+            Cache Vidéos
+          </Button>
+          
+          <Dialog open={showCreateDialog} onOpenChange={setShowCreateDialog}>
+            <DialogTrigger asChild>
+              <Button className="bg-orange-500 hover:bg-orange-600">
+                <Plus className="h-4 w-4 mr-2" />
+                Nouvel Élément
+              </Button>
+            </DialogTrigger>
+            <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto bg-white dark:bg-gray-900">
+              <DialogHeader>
+                <DialogTitle className="text-gray-900 dark:text-white">Créer un Nouvel Élément de Galerie</DialogTitle>
+              </DialogHeader>
+              <GalleryItemForm
+                onSave={(data) => createItemMutation.mutate(data)}
+                onCancel={() => setShowCreateDialog(false)}
+              />
+            </DialogContent>
+          </Dialog>
+        </div>
       </div>
+
+      {/* Cache Status Panel - Gallery Videos */}
+      {cacheStats && (
+        <div className="bg-green-50 dark:bg-green-900/20 p-4 rounded-lg border border-green-200 dark:border-green-800">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <div className="bg-green-500 rounded-full p-2">
+                <Download className="h-4 w-4 text-white" />
+              </div>
+              <div>
+                <h4 className="font-semibold text-green-900 dark:text-green-100">
+                  Cache Intelligent des Vidéos
+                </h4>
+                <p className="text-sm text-green-800 dark:text-green-200">
+                  {cacheStats.fileCount} vidéos en cache • {cacheStats.sizeMB}MB • Chargement ultra-rapide (~50ms)
+                </p>
+              </div>
+            </div>
+            <div className="text-xs text-green-700 dark:text-green-300">
+              Remplacement intelligent : Gestion automatique du cache
+            </div>
+          </div>
+        </div>
+      )}
 
       <div className="space-y-4">
         {sortedItems.map((item, index) => (

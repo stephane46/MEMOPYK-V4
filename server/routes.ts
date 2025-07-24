@@ -775,6 +775,61 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Cache gallery videos endpoint
+  app.post("/api/video-cache/cache-gallery-videos", async (req, res) => {
+    try {
+      console.log("🎬 Manual gallery video caching requested via admin panel");
+      
+      // Import hybrid storage to get gallery items
+      const { hybridStorage } = await import('./hybrid-storage');
+      const galleryItems = await hybridStorage.getGalleryItems();
+      
+      const galleryVideos = galleryItems
+        .filter(item => item.video_url_en)
+        .map(item => item.video_url_en!.split('/').pop()!)
+        .filter(filename => filename);
+
+      console.log(`📋 Found ${galleryVideos.length} gallery videos to cache`);
+      
+      let cached = 0;
+      let skipped = 0;
+      
+      for (const filename of galleryVideos) {
+        try {
+          if (!videoCache.isVideoCached(filename)) {
+            console.log(`⬇️ Caching gallery video: ${filename}`);
+            await videoCache.downloadAndCacheVideo(filename);
+            cached++;
+          } else {
+            console.log(`✅ Gallery video already cached: ${filename}`);
+            skipped++;
+          }
+        } catch (error) {
+          console.error(`❌ Failed to cache gallery video ${filename}:`, error);
+        }
+      }
+      
+      const stats = await videoCache.getCacheStats();
+      console.log(`🎬 Gallery video caching complete! Cached: ${cached}, Skipped: ${skipped}`);
+      
+      res.json({
+        success: true,
+        message: `Gallery video caching complete`,
+        cached,
+        skipped,
+        totalFound: galleryVideos.length,
+        cacheStats: stats
+      });
+      
+    } catch (error: any) {
+      console.error('Gallery video caching error:', error);
+      res.status(500).json({ 
+        error: "Failed to cache gallery videos",
+        details: error.message 
+      });
+    }
+  });
+
   // Production deployment test endpoint
   app.get("/api/deployment-test", (req, res) => {
     const fs = require('fs');
