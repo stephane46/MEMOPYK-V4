@@ -539,7 +539,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // CTA Content - Call-to-action content
   app.get("/api/cta", async (req, res) => {
     try {
-      const cta = await hybridStorage.getCtaContent();
+      const cta = await hybridStorage.getCtaSettings();
       res.json(cta);
     } catch (error) {
       res.status(500).json({ error: "Failed to get CTA content" });
