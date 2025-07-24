@@ -5,7 +5,7 @@ import { useVideoAnalytics } from "@/hooks/useVideoAnalytics";
 import { Button } from "@/components/ui/button";
 import { VideoOverlay } from "@/components/gallery/VideoOverlay";
 import { Badge } from "@/components/ui/badge";
-import { Play, Eye, Star, ArrowRight, Image as ImageIcon } from "lucide-react";
+import { Play, Eye, Star, ArrowRight, Image as ImageIcon, Film, User } from "lucide-react";
 // Gallery item interface matching the new schema
 interface GalleryItem {
   id: string | number;
@@ -226,7 +226,7 @@ export default function GallerySection() {
                         </div>
                       )}
                       
-                      {/* Orange Play Button - Center (for videos only) */}
+                      {/* Large White Play Button - Center (for videos only) */}
                       {hasVideo && (
                         <div className="absolute inset-0 flex items-center justify-center">
                           <button
@@ -257,16 +257,16 @@ export default function GallerySection() {
                                 console.error(`❌ No preview URL available for item ${item.id}`);
                               }
                             }}
-                            className="bg-orange-500 hover:bg-orange-600 text-white rounded-full p-4 shadow-2xl transform hover:scale-110 transition-all duration-300"
+                            className="bg-white/90 hover:bg-white text-gray-800 rounded-full p-5 shadow-2xl transform hover:scale-110 transition-all duration-300"
                           >
-                            <Play className="h-6 w-6 ml-1" />
+                            <Play className="h-8 w-8 ml-1" />
                           </button>
                         </div>
                       )}
                       
                       {/* Bottom-right Price Tag (2) */}
                       {getItemPrice(item) && (
-                        <div className="absolute bottom-4 right-4 bg-orange-500 text-white px-3 py-1 rounded-full text-sm font-medium">
+                        <div className="absolute bottom-4 right-4 bg-orange-500 text-white px-4 py-2 rounded-lg text-base font-bold shadow-lg">
                           {getItemPrice(item)}
                         </div>
                       )}
