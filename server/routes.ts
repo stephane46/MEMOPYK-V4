@@ -23,10 +23,17 @@ const supabase = createClient(
 );
 
 // Configure multer for file uploads
+// Production-compatible file size limits
+const videoSizeLimit = process.env.NODE_ENV === 'production' 
+  ? 50 * 1024 * 1024   // 50MB for production (Replit deployment limit)
+  : 5000 * 1024 * 1024; // 5000MB for development
+
+console.log(`📁 Video upload limit: ${(videoSizeLimit / 1024 / 1024).toFixed(0)}MB (${process.env.NODE_ENV})`);
+
 const uploadVideo = multer({
   storage: multer.memoryStorage(),
   limits: {
-    fileSize: 5000 * 1024 * 1024, // 5000MB limit for videos
+    fileSize: videoSizeLimit,
   },
   fileFilter: (req, file, cb) => {
     console.log(`📁 ENHANCED FILE DETECTION v2.0 - File upload attempt:`);
@@ -61,7 +68,7 @@ const uploadVideo = multer({
 const uploadImage = multer({
   storage: multer.memoryStorage(),
   limits: {
-    fileSize: 5000 * 1024 * 1024, // 5000MB limit for images
+    fileSize: videoSizeLimit, // Use same limit as videos
   },
   fileFilter: (req, file, cb) => {
     if (file.mimetype.startsWith('image/')) {
