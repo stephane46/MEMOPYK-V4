@@ -12,6 +12,7 @@ const contactFormSchema = z.object({
   name: z.string().min(2, "Name must be at least 2 characters"),
   email: z.string().email("Invalid email address"),
   phone: z.string().optional(),
+  subject: z.string().min(3, "Subject must be at least 3 characters"),
   message: z.string().min(10, "Message must be at least 10 characters")
 });
 
@@ -535,17 +536,62 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Contact form submission
-  app.post("/api/contact", async (req, res) => {
+  app.post("/api/contacts", async (req, res) => {
     try {
       const result = contactFormSchema.parse(req.body);
-      // In a real implementation, this would send email or store in database
       console.log("📧 Contact form submission:", result);
-      res.json({ success: true, message: "Message sent successfully" });
+      
+      // Store contact in hybrid storage
+      const contact = await hybridStorage.createContact(result);
+      
+      res.json({ success: true, message: "Message sent successfully", contact });
     } catch (error) {
       if (error instanceof z.ZodError) {
         return res.status(400).json({ error: error.errors[0]?.message || "Invalid form data" });
       }
+      console.error('Contact form error:', error);
       res.status(500).json({ error: "Failed to send message" });
+    }
+  });
+
+  // Get all contacts (admin only)
+  app.get("/api/contacts", async (req, res) => {
+    try {
+      const contacts = await hybridStorage.getContacts();
+      res.json(contacts);
+    } catch (error) {
+      console.error('Get contacts error:', error);
+      res.status(500).json({ error: "Failed to get contacts" });
+    }
+  });
+
+  // Update contact status (admin only)
+  app.patch("/api/contacts/:id", async (req, res) => {
+    try {
+      const contactId = req.params.id;
+      const { status } = req.body;
+      
+      if (!['new', 'responded', 'closed'].includes(status)) {
+        return res.status(400).json({ error: "Invalid status. Use: new, responded, or closed" });
+      }
+      
+      const contact = await hybridStorage.updateContactStatus(contactId, status);
+      res.json({ success: true, contact });
+    } catch (error) {
+      console.error('Update contact status error:', error);
+      res.status(500).json({ error: "Failed to update contact status" });
+    }
+  });
+
+  // Delete contact (admin only)
+  app.delete("/api/contacts/:id", async (req, res) => {
+    try {
+      const contactId = req.params.id;
+      const deletedContact = await hybridStorage.deleteContact(contactId);
+      res.json({ success: true, deleted: deletedContact });
+    } catch (error) {
+      console.error('Delete contact error:', error);
+      res.status(500).json({ error: "Failed to delete contact" });
     }
   });
 

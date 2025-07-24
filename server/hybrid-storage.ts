@@ -373,6 +373,34 @@ export class HybridStorage implements HybridStorageInterface {
     return newContact;
   }
 
+  async updateContactStatus(contactId: string, status: string): Promise<any> {
+    const contacts = this.loadJsonFile('contacts.json');
+    const contactIndex = contacts.findIndex((c: any) => c.id.toString() === contactId);
+    
+    if (contactIndex === -1) {
+      throw new Error('Contact not found');
+    }
+    
+    contacts[contactIndex].status = status;
+    contacts[contactIndex].updated_at = new Date().toISOString();
+    
+    this.saveJsonFile('contacts.json', contacts);
+    return contacts[contactIndex];
+  }
+
+  async deleteContact(contactId: string): Promise<any> {
+    const contacts = this.loadJsonFile('contacts.json');
+    const contactIndex = contacts.findIndex((c: any) => c.id.toString() === contactId);
+    
+    if (contactIndex === -1) {
+      throw new Error('Contact not found');
+    }
+    
+    const deletedContact = contacts.splice(contactIndex, 1)[0];
+    this.saveJsonFile('contacts.json', contacts);
+    return deletedContact;
+  }
+
   // Legal documents operations
   async getLegalDocuments(language?: string): Promise<any[]> {
     const data = this.loadJsonFile('legal-documents.json');
