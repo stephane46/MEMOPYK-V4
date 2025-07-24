@@ -274,40 +274,37 @@ export default function GallerySection() {
                             </div>
                           )}
 
-                          {/* Price Tag - Bottom Right (2) */}
+                          {/* Price Tag - Bottom Right (3) */}
                           {getItemPrice(item) && (
-                            <div className="absolute bottom-4 right-4 bg-gradient-to-r from-orange-500 to-orange-600 text-white px-5 py-2.5 rounded-full text-sm font-bold shadow-xl border-2 border-white/20 backdrop-blur-sm">
+                            <div 
+                              className="absolute bottom-4 right-4 text-white px-4 py-2 rounded-full text-sm font-bold shadow-lg"
+                              style={{ backgroundColor: '#D67C4A' }} // MEMOPYK orange from brand palette
+                            >
                               {getItemPrice(item)}
                             </div>
                           )}
                           
-                          {/* Play Button - Center (2) */}
+                          {/* Play Button - Center (3) */}
                           <div className="absolute inset-0 flex items-center justify-center">
                             {itemHasVideo ? (
-                              // Orange pulsing button for videos
+                              // Orange filled circle button for videos - matching your design
                               <div 
-                                className="w-16 h-16 rounded-full flex items-center justify-center transition-all duration-300 hover:scale-110 shadow-lg cursor-pointer animate-pulse-orange"
+                                className="w-16 h-16 rounded-full flex items-center justify-center transition-all duration-300 hover:scale-110 shadow-lg cursor-pointer"
                                 onClick={(e) => handlePlayClick(item, e)}
                                 style={{
-                                  backgroundColor: '#f97316',
-                                  border: '2px solid #ea580c',
-                                  color: 'white'
+                                  backgroundColor: '#D67C4A', // MEMOPYK orange from brand palette
+                                  border: 'none'
                                 }}
                               >
-                                <div className="text-xl ml-1" style={{color: 'white'}}>▶</div>
+                                <div className="text-white text-xl ml-1">▶</div>
                               </div>
                             ) : (
-                              // White button for card flip
+                              // White circle button with border for card flip - matching your design
                               <div
-                                className="w-16 h-16 rounded-full flex items-center justify-center transition-all duration-300 hover:scale-110 shadow-md cursor-pointer"
+                                className="w-16 h-16 rounded-full flex items-center justify-center transition-all duration-300 hover:scale-110 shadow-md cursor-pointer bg-white border-2 border-gray-300"
                                 onClick={(e) => handlePlayClick(item, e)}
-                                style={{
-                                  backgroundColor: 'white',
-                                  border: '2px solid #d1d5db',
-                                  color: '#374151'
-                                }}
                               >
-                                <div className="text-xl">▶</div>
+                                <div className="text-gray-600 text-xl ml-1">▶</div>
                               </div>
                             )}
                           </div>
@@ -321,37 +318,37 @@ export default function GallerySection() {
 
                     {/* Card Content */}
                     <div className="p-6">
-                      {/* Title (3) - Fixed height: 32px */}
+                      {/* Title (4) - Fixed height: 32px */}
                       <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-4 h-8 overflow-hidden">
                         {getItemTitle(item)}
                       </h3>
                           
-                      {/* Duration (4) - Film icon, fixed height: 80px (5 lines max) */}
-                      <div className="mb-4 h-20 overflow-hidden">
+                      {/* Duration (5) - Film icon, fixed height */}
+                      <div className="mb-3">
                         <div className="flex items-start gap-2 text-gray-600 dark:text-gray-300">
                           <Film className="w-4 h-4 mt-1 flex-shrink-0 text-orange-500" />
-                          <div className="text-sm leading-4">
-                            {getItemDuration(item) || <div className="h-4"></div>}
+                          <div className="text-sm leading-relaxed">
+                            {getItemDuration(item) || <div className="h-4 text-gray-400">No duration specified</div>}
                           </div>
                         </div>
                       </div>
                       
-                      {/* Situation (5) - Client icon, fixed height: 80px (5 lines max) */}
-                      <div className="mb-4 h-20 overflow-hidden">
+                      {/* Situation (6) - Users icon, fixed height */}
+                      <div className="mb-3">
                         <div className="flex items-start gap-2 text-gray-600 dark:text-gray-300">
                           <Users className="w-4 h-4 mt-1 flex-shrink-0 text-orange-500" />
-                          <div className="text-sm leading-4">
-                            {getItemSituation(item) || <div className="h-4"></div>}
+                          <div className="text-sm leading-relaxed">
+                            {getItemSituation(item) || <div className="h-4 text-gray-400">No client situation specified</div>}
                           </div>
                         </div>
                       </div>
                       
-                      {/* Story (6) - Film icon, fixed height: 80px (5 lines max) */}
-                      <div className="h-20 overflow-hidden">
+                      {/* Story (7) - Film icon, fixed height */}
+                      <div>
                         <div className="flex items-start gap-2 text-gray-600 dark:text-gray-300">
                           <Film className="w-4 h-4 mt-1 flex-shrink-0 text-orange-500" />
-                          <div className="text-sm leading-4">
-                            {getItemStory(item) || <div className="h-4"></div>}
+                          <div className="text-sm leading-relaxed">
+                            {getItemStory(item) || <div className="h-4 text-gray-400">No story specified</div>}
                           </div>
                         </div>
                       </div>
