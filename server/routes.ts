@@ -29,7 +29,10 @@ const uploadVideo = multer({
     fileSize: 5000 * 1024 * 1024, // 5000MB limit for videos
   },
   fileFilter: (req, file, cb) => {
-    console.log(`📁 File upload attempt: ${file.originalname}, MIME type: ${file.mimetype}, Size: ${(file.size || 0)}bytes`);
+    console.log(`📁 ENHANCED FILE DETECTION v2.0 - File upload attempt:`);
+    console.log(`   - Filename: ${file.originalname}`);
+    console.log(`   - MIME type: ${file.mimetype}`);
+    console.log(`   - Size: ${(file.size || 0)} bytes (${((file.size || 0) / 1024 / 1024).toFixed(2)}MB)`);
     
     // Check both MIME type and file extension for better compatibility
     const isVideoMimeType = file.mimetype.startsWith('video/');
@@ -38,13 +41,18 @@ const uploadVideo = multer({
       file.originalname.toLowerCase().endsWith(ext)
     );
     
-    console.log(`🔍 File validation: MIME check: ${isVideoMimeType}, Extension check: ${hasVideoExtension}`);
+    console.log(`🔍 VALIDATION CHECKS:`);
+    console.log(`   - MIME type check (${file.mimetype}): ${isVideoMimeType}`);
+    console.log(`   - Extension check (${file.originalname}): ${hasVideoExtension}`);
+    console.log(`   - File size under 5000MB: ${((file.size || 0) / 1024 / 1024) < 5000}`);
     
     if (isVideoMimeType || hasVideoExtension) {
-      console.log(`✅ Video file accepted: ${file.originalname} (Enhanced detection v2.0)`);
+      console.log(`✅ VIDEO FILE ACCEPTED: ${file.originalname} (Enhanced detection v2.0 - ${isVideoMimeType ? 'MIME' : 'EXTENSION'} match)`);
       cb(null, true);
     } else {
-      console.log(`❌ File rejected - not a video: ${file.originalname} (MIME: ${file.mimetype})`);
+      console.log(`❌ FILE REJECTED - NOT A VIDEO: ${file.originalname}`);
+      console.log(`   - MIME type: ${file.mimetype} (expected: video/*)`);
+      console.log(`   - Extension: ${file.originalname.split('.').pop()} (expected: ${videoExtensions.join(', ')})`);
       cb(new Error('Only video files are allowed'));
     }
   }
