@@ -354,6 +354,34 @@ export default function GallerySection() {
           </div>
         )}
 
+        {/* Simple Test Video Player - bypassing complex system */}
+        <div className="mt-12 p-8 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
+          <h3 className="text-xl font-bold mb-4">🧪 Simple Video Test (Direct CDN)</h3>
+          <p className="mb-4 text-sm text-gray-600">Playing gallery video directly from Supabase CDN without proxy system:</p>
+          
+          <video 
+            controls 
+            preload="metadata"
+            className="w-full max-w-2xl mx-auto rounded-lg shadow-lg"
+            onLoadStart={() => console.log('🎬 SIMPLE VIDEO: Load started')}
+            onLoadedMetadata={() => console.log('🎬 SIMPLE VIDEO: Metadata loaded')}
+            onCanPlay={() => console.log('🎬 SIMPLE VIDEO: Can play - SUCCESS!')}
+            onError={(e) => console.error('❌ SIMPLE VIDEO ERROR:', e)}
+            onPlay={() => console.log('🎬 SIMPLE VIDEO: Playing started')}
+          >
+            <source 
+              src="https://supabase.memopyk.org/storage/v1/object/public/memopyk-gallery/gallery_Our_vitamin_sea_rework_2_compressed.mp4" 
+              type="video/mp4" 
+            />
+            Your browser does not support the video tag.
+          </video>
+          
+          <div className="mt-4 text-xs text-gray-500">
+            <p>Direct URL: https://supabase.memopyk.org/storage/v1/object/public/memopyk-gallery/gallery_Our_vitamin_sea_rework_2_compressed.mp4</p>
+            <p>Check browser console for debug logs</p>
+          </div>
+        </div>
+
         {/* Inline Video Overlay */}
         {previewItem && previewItem.type === 'video' && previewItem.width && previewItem.height && previewItem.orientation && (
           <VideoOverlay
