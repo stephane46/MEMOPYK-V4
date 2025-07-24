@@ -283,18 +283,23 @@ export default function GallerySection() {
                           
                           {/* Play Button - Center (2) */}
                           <div className="absolute inset-0 flex items-center justify-center">
-                            <button
-                              onClick={(e) => handlePlayClick(item, e)}
-                              className={`w-16 h-16 rounded-full flex items-center justify-center transition-all duration-300 hover:scale-110 ${
-                                itemHasVideo 
-                                  ? 'bg-orange-500 text-white animate-pulse-orange shadow-lg border-2 border-orange-400' 
-                                  : 'bg-white text-gray-800 hover:bg-gray-100 shadow-md border-2 border-gray-300'
-                              }`}
-                            >
-                              <div className={`text-xl ${itemHasVideo ? 'ml-1' : 'ml-0'}`}>
-                                ▶
-                              </div>
-                            </button>
+                            {itemHasVideo ? (
+                              // Orange pulsing button for videos
+                              <button
+                                onClick={(e) => handlePlayClick(item, e)}
+                                className="w-16 h-16 rounded-full flex items-center justify-center transition-all duration-300 hover:scale-110 bg-orange-500 text-white animate-pulse-orange shadow-lg border-2 border-orange-400"
+                              >
+                                <div className="text-xl ml-1">▶</div>
+                              </button>
+                            ) : (
+                              // White button for card flip
+                              <button
+                                onClick={(e) => handlePlayClick(item, e)}
+                                className="w-16 h-16 rounded-full flex items-center justify-center transition-all duration-300 hover:scale-110 bg-white text-gray-800 hover:bg-gray-100 shadow-md border-2 border-gray-300"
+                              >
+                                <div className="text-xl">▶</div>
+                              </button>
+                            )}
                           </div>
                         </div>
                       ) : (
