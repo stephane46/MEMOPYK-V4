@@ -1364,27 +1364,43 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   // Admin authentication endpoint
   app.post("/api/auth/login", (req, res) => {
+    console.log("🔐 AUTH LOGIN REQUEST RECEIVED:", req.body);
     try {
       const { username, password } = req.body;
       
+      console.log(`🔐 Login attempt - Username: "${username}", Password: "${password ? '[PROVIDED]' : '[MISSING]'}"`);
+      
       if (username === "admin" && password === "memopyk2025admin") {
+        console.log("✅ Authentication successful");
         res.json({ 
           success: true, 
           message: "Authentication successful",
           token: "memopyk-admin-token-" + Date.now()
         });
       } else {
+        console.log("❌ Authentication failed - Invalid credentials");
         res.status(401).json({ 
           success: false, 
           message: "Invalid credentials" 
         });
       }
     } catch (error) {
+      console.error("❌ Authentication error:", error);
       res.status(500).json({ 
         success: false, 
         message: "Authentication error" 
       });
     }
+  });
+
+  // Debug endpoint to verify auth route is registered
+  app.get("/api/auth/test", (req, res) => {
+    console.log("🔐 Auth test endpoint hit");
+    res.json({
+      message: "Auth routes are properly registered",
+      timestamp: new Date().toISOString(),
+      available_endpoints: ["/api/auth/login", "/api/auth/test"]
+    });
   });
 
   // Production deployment test endpoint
