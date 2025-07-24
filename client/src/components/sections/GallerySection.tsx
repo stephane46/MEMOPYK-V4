@@ -325,9 +325,9 @@ export default function GallerySection() {
                           
                       {/* Duration (5) - Film icon, fixed height: 80px (5 lines max) */}
                       <div className="mb-3 h-20 overflow-hidden">
-                        <div className="flex items-start gap-2 text-gray-600 dark:text-gray-300">
+                        <div className="flex items-start gap-2">
                           <Film className="w-4 h-4 mt-1 flex-shrink-0" style={{ color: '#D67C4A' }} />
-                          <div className="text-sm leading-4">
+                          <div className="text-sm leading-4 text-gray-600 dark:text-gray-300">
                             {getItemDuration(item) || <div className="h-4"></div>}
                           </div>
                         </div>
@@ -335,9 +335,9 @@ export default function GallerySection() {
                       
                       {/* Situation (6) - Users icon, fixed height: 80px (5 lines max) */}
                       <div className="mb-3 h-20 overflow-hidden">
-                        <div className="flex items-start gap-2 text-gray-600 dark:text-gray-300">
+                        <div className="flex items-start gap-2">
                           <Users className="w-4 h-4 mt-1 flex-shrink-0" style={{ color: '#D67C4A' }} />
-                          <div className="text-sm leading-4">
+                          <div className="text-sm leading-4 text-gray-600 dark:text-gray-300">
                             {getItemSituation(item) || <div className="h-4"></div>}
                           </div>
                         </div>
@@ -345,9 +345,9 @@ export default function GallerySection() {
                       
                       {/* Story (7) - Film icon, fixed height: 80px (5 lines max) */}
                       <div className="h-20 overflow-hidden">
-                        <div className="flex items-start gap-2 text-gray-600 dark:text-gray-300">
+                        <div className="flex items-start gap-2">
                           <Film className="w-4 h-4 mt-1 flex-shrink-0" style={{ color: '#D67C4A' }} />
-                          <div className="text-sm leading-4">
+                          <div className="text-sm leading-4 text-gray-600 dark:text-gray-300">
                             {getItemStory(item) || <div className="h-4"></div>}
                           </div>
                         </div>
