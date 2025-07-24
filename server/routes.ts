@@ -527,6 +527,143 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // FAQ Sections endpoints
+  app.get("/api/faq-sections", async (req, res) => {
+    try {
+      const language = req.query.lang as string;
+      const sections = await hybridStorage.getFAQSections(language);
+      res.json(sections);
+    } catch (error) {
+      console.error('Get FAQ sections error:', error);
+      res.status(500).json({ error: "Failed to get FAQ sections" });
+    }
+  });
+
+  app.post("/api/faq-sections", async (req, res) => {
+    try {
+      const { title_fr, title_en, order_index } = req.body;
+      
+      if (!title_fr || !title_en) {
+        return res.status(400).json({ error: "French and English titles are required" });
+      }
+      
+      const newSection = await hybridStorage.createFAQSection({
+        title_fr,
+        title_en,
+        order_index: order_index || 0
+      });
+      
+      res.status(201).json({ success: true, section: newSection });
+    } catch (error) {
+      console.error('Create FAQ section error:', error);
+      res.status(500).json({ error: "Failed to create FAQ section" });
+    }
+  });
+
+  app.patch("/api/faq-sections/:id", async (req, res) => {
+    try {
+      const sectionId = parseInt(req.params.id);
+      const updateData = req.body;
+      
+      const updatedSection = await hybridStorage.updateFAQSection(sectionId, updateData);
+      res.json({ success: true, section: updatedSection });
+    } catch (error) {
+      console.error('Update FAQ section error:', error);
+      res.status(500).json({ error: "Failed to update FAQ section" });
+    }
+  });
+
+  app.delete("/api/faq-sections/:id", async (req, res) => {
+    try {
+      const sectionId = parseInt(req.params.id);
+      
+      await hybridStorage.deleteFAQSection(sectionId);
+      res.json({ success: true, message: "FAQ section deleted successfully" });
+    } catch (error) {
+      console.error('Delete FAQ section error:', error);
+      res.status(500).json({ error: "Failed to delete FAQ section" });
+    }
+  });
+
+  // FAQ endpoints
+  app.get("/api/faqs", async (req, res) => {
+    try {
+      const language = req.query.lang as string;
+      const faqs = await hybridStorage.getFAQs(language);
+      res.json(faqs);
+    } catch (error) {
+      console.error('Get FAQs error:', error);
+      res.status(500).json({ error: "Failed to get FAQs" });
+    }
+  });
+
+  app.post("/api/faqs", async (req, res) => {
+    try {
+      const { section_id, question_fr, question_en, answer_fr, answer_en, order_index, is_active } = req.body;
+      
+      if (!question_fr || !question_en || !answer_fr || !answer_en) {
+        return res.status(400).json({ error: "All bilingual content is required" });
+      }
+      
+      const newFAQ = await hybridStorage.createFAQ({
+        section_id: section_id || null,
+        question_fr,
+        question_en,
+        answer_fr,
+        answer_en,
+        order_index: order_index || 0,
+        is_active: is_active !== false
+      });
+      
+      res.status(201).json({ success: true, faq: newFAQ });
+    } catch (error) {
+      console.error('Create FAQ error:', error);
+      res.status(500).json({ error: "Failed to create FAQ" });
+    }
+  });
+
+  app.patch("/api/faqs/:id", async (req, res) => {
+    try {
+      const faqId = parseInt(req.params.id);
+      const updateData = req.body;
+      
+      const updatedFAQ = await hybridStorage.updateFAQ(faqId, updateData);
+      res.json({ success: true, faq: updatedFAQ });
+    } catch (error) {
+      console.error('Update FAQ error:', error);
+      res.status(500).json({ error: "Failed to update FAQ" });
+    }
+  });
+
+  app.delete("/api/faqs/:id", async (req, res) => {
+    try {
+      const faqId = parseInt(req.params.id);
+      
+      await hybridStorage.deleteFAQ(faqId);
+      res.json({ success: true, message: "FAQ deleted successfully" });
+    } catch (error) {
+      console.error('Delete FAQ error:', error);
+      res.status(500).json({ error: "Failed to delete FAQ" });
+    }
+  });
+
+  app.patch("/api/faqs/:id/reorder", async (req, res) => {
+    try {
+      const faqId = parseInt(req.params.id);
+      const { order_index } = req.body;
+      
+      if (typeof order_index !== 'number') {
+        return res.status(400).json({ error: "order_index must be a number" });
+      }
+      
+      const updatedFAQ = await hybridStorage.updateFAQ(faqId, { order_index });
+      res.json({ success: true, faq: updatedFAQ });
+    } catch (error) {
+      console.error('Reorder FAQ error:', error);
+      res.status(500).json({ error: "Failed to reorder FAQ" });
+    }
+  });
+
   // Gallery Items - Gallery content  
   app.get("/api/gallery", async (req, res) => {
     try {

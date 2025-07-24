@@ -502,6 +502,74 @@ export class HybridStorage implements HybridStorageInterface {
       console.error(`❌ Error deleting cached file ${filename}:`, error);
     }
   }
+
+  // FAQ Sections operations
+  async getFAQSections(language?: string): Promise<any[]> {
+    const data = this.loadJsonFile('faq-sections.json');
+    return data.sort((a: any, b: any) => (a.order_index || 0) - (b.order_index || 0));
+  }
+
+  async createFAQSection(sectionData: any): Promise<any> {
+    const sections = this.loadJsonFile('faq-sections.json');
+    const newSection = {
+      id: Date.now(),
+      ...sectionData
+    };
+    sections.push(newSection);
+    this.saveJsonFile('faq-sections.json', sections);
+    return newSection;
+  }
+
+  async updateFAQSection(sectionId: number, updates: any): Promise<any> {
+    const sections = this.loadJsonFile('faq-sections.json');
+    const index = sections.findIndex((section: any) => section.id === sectionId);
+    if (index === -1) throw new Error('FAQ section not found');
+    
+    sections[index] = { ...sections[index], ...updates };
+    this.saveJsonFile('faq-sections.json', sections);
+    return sections[index];
+  }
+
+  async deleteFAQSection(sectionId: number): Promise<void> {
+    const sections = this.loadJsonFile('faq-sections.json');
+    const filtered = sections.filter((section: any) => section.id !== sectionId);
+    this.saveJsonFile('faq-sections.json', filtered);
+  }
+
+  // FAQ operations
+  async getFAQs(language?: string): Promise<any[]> {
+    const data = this.loadJsonFile('faqs.json');
+    return data
+      .filter((faq: any) => faq.is_active !== false)
+      .sort((a: any, b: any) => (a.order_index || 0) - (b.order_index || 0));
+  }
+
+  async createFAQ(faqData: any): Promise<any> {
+    const faqs = this.loadJsonFile('faqs.json');
+    const newFAQ = {
+      id: Date.now(),
+      ...faqData
+    };
+    faqs.push(newFAQ);
+    this.saveJsonFile('faqs.json', faqs);
+    return newFAQ;
+  }
+
+  async updateFAQ(faqId: number, updates: any): Promise<any> {
+    const faqs = this.loadJsonFile('faqs.json');
+    const index = faqs.findIndex((faq: any) => faq.id === faqId);
+    if (index === -1) throw new Error('FAQ not found');
+    
+    faqs[index] = { ...faqs[index], ...updates };
+    this.saveJsonFile('faqs.json', faqs);
+    return faqs[index];
+  }
+
+  async deleteFAQ(faqId: number): Promise<void> {
+    const faqs = this.loadJsonFile('faqs.json');
+    const filtered = faqs.filter((faq: any) => faq.id !== faqId);
+    this.saveJsonFile('faqs.json', filtered);
+  }
 }
 
 // Create singleton instance
