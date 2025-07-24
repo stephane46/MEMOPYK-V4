@@ -245,13 +245,7 @@ export default function GallerySection() {
             const itemHasVideo = hasVideo(item);
             const isFlipped = flippedCards.has(item.id);
             
-            // Debug logging
-            console.log(`🎬 Gallery item ${item.id}:`, {
-              hasVideo: itemHasVideo,
-              videoUrlFr: item.videoUrlFr,
-              videoUrlEn: item.videoUrlEn,
-              currentLanguage: language
-            });
+
             
             return (
               <div 
@@ -291,13 +285,15 @@ export default function GallerySection() {
                           <div className="absolute inset-0 flex items-center justify-center">
                             <button
                               onClick={(e) => handlePlayClick(item, e)}
-                              className={`w-16 h-16 rounded-full flex items-center justify-center font-bold transition-all duration-300 hover:scale-110 ${
+                              className={`w-16 h-16 rounded-full flex items-center justify-center transition-all duration-300 hover:scale-110 ${
                                 itemHasVideo 
-                                  ? 'bg-orange-500 text-white animate-pulse-orange shadow-lg' 
-                                  : 'bg-white text-gray-800 hover:bg-gray-100 shadow-md'
+                                  ? 'bg-orange-500 text-white animate-pulse-orange shadow-lg border-2 border-orange-400' 
+                                  : 'bg-white text-gray-800 hover:bg-gray-100 shadow-md border-2 border-gray-300'
                               }`}
                             >
-                              ▶
+                              <div className={`text-xl ${itemHasVideo ? 'ml-1' : 'ml-0'}`}>
+                                ▶
+                              </div>
                             </button>
                           </div>
                         </div>
