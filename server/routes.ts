@@ -1362,6 +1362,31 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Admin authentication endpoint
+  app.post("/api/auth/login", (req, res) => {
+    try {
+      const { username, password } = req.body;
+      
+      if (username === "admin" && password === "memopyk2025admin") {
+        res.json({ 
+          success: true, 
+          message: "Authentication successful",
+          token: "memopyk-admin-token-" + Date.now()
+        });
+      } else {
+        res.status(401).json({ 
+          success: false, 
+          message: "Invalid credentials" 
+        });
+      }
+    } catch (error) {
+      res.status(500).json({ 
+        success: false, 
+        message: "Authentication error" 
+      });
+    }
+  });
+
   // Production deployment test endpoint
   app.get("/api/deployment-test", (req, res) => {
     const fs = require('fs');
