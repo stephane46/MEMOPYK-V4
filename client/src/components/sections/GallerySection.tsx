@@ -245,6 +245,14 @@ export default function GallerySection() {
             const itemHasVideo = hasVideo(item);
             const isFlipped = flippedCards.has(item.id);
             
+            // Debug logging
+            console.log(`🎬 Gallery item ${item.id}:`, {
+              hasVideo: itemHasVideo,
+              videoUrlFr: item.videoUrlFr,
+              videoUrlEn: item.videoUrlEn,
+              currentLanguage: language
+            });
+            
             return (
               <div 
                 key={item.id} 
