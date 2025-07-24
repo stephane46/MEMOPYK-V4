@@ -11,6 +11,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/u
 import { ArrowUp, ArrowDown, Play, RefreshCw, BarChart3, Video, HardDrive, Users, MessageSquare, FileText, LogOut, TestTube, Rocket, X, Type, Save, Palette, ChevronUp, ChevronDown, Trash2, Eye, EyeOff, Upload, FileVideo, Database, Check, Zap } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import GalleryManagement from '@/components/admin/GalleryManagement';
+import { ContactManagement } from '@/components/admin/ContactManagement';
 import CryptoJS from 'crypto-js';
 
 interface HeroVideo {
@@ -1262,6 +1263,13 @@ export default function AdminPage() {
                   <GalleryManagement />
                 </CardContent>
               </Card>
+            </div>
+          )}
+
+          {/* Contacts */}
+          {activeSection === 'contacts' && (
+            <div className="space-y-6">
+              <ContactManagement />
             </div>
           )}
 
