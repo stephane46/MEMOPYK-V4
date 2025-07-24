@@ -507,7 +507,31 @@ The application follows a modern full-stack architecture with clear separation o
 - [ ] **Phase 10.3**: Performance monitoring and error tracking
 - [ ] **Phase 10.4**: User acceptance testing and launch
 
-## Current Status: Phase 8.4.2 - GALLERY DATA PERSISTENCE SYSTEM COMPLETED (July 24, 2025)
+## Current Status: Phase 8.4.3 - AUTOMATIC ORIENTATION DETECTION COMPLETED (July 24, 2025)
+
+### AUTOMATIC ORIENTATION DETECTION SYSTEM - COMPLETED (July 24, 2025)
+**Complete Video Sizing Bug Resolution:**
+✅ **Fixed "The summer of Pom" Orientation**: Corrected from incorrect "landscape" to proper "portrait" (1080×1350 dimensions)
+✅ **Automatic Orientation Calculation**: Admin interface now calculates orientation from width vs height dimensions  
+✅ **Eliminated Human Error**: Removed manual orientation selection dropdown to prevent incorrect entries
+✅ **Smart Form Validation**: System automatically determines width > height = landscape, otherwise portrait
+✅ **Enhanced User Interface**: Admin shows calculated orientation with explanatory text
+✅ **Production Ready**: Video display system now uses correct aspect ratios for all videos
+
+**Technical Implementation:**
+- Gallery data corrected: "The summer of Pom" now has correct "portrait" orientation
+- Admin interface: Orientation field replaced with auto-calculated display showing current orientation
+- Form submission: Automatic orientation calculation using `width > height` logic
+- Validation updated: Only requires width/height dimensions, orientation calculated automatically
+- Console logging: Added debugging for orientation calculations
+
+**User Experience Improvements:**
+- Admin interface shows: "Orientation (Auto-détectée)" with calculated result
+- Explanatory text: "L'orientation est calculée automatiquement: largeur > hauteur = paysage, sinon portrait"
+- No more manual orientation selection preventing human error
+- Videos now display with proper aspect ratios in both admin and public views
+
+## Previous Status: Phase 8.4.2 - GALLERY DATA PERSISTENCE SYSTEM COMPLETED (July 24, 2025)
 
 ### CRITICAL DATA PERSISTENCE BUG RESOLUTION - COMPLETED (July 24, 2025)
 **Complete Gallery System Stability Achievement:**
