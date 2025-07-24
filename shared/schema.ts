@@ -56,6 +56,10 @@ export const galleryItems = pgTable("gallery_items", {
   storyEn: text("story_en"), // "This film shows..." - story description (up to 5 lines)
   storyFr: text("story_fr"), // "Ce film montre..." - story description (up to 5 lines)
   
+  // Sorry message for when no video is available
+  sorryMessageEn: text("sorry_message_en"), // "Sorry, we cannot show you the video at this stage"
+  sorryMessageFr: text("sorry_message_fr"), // "Désolé, nous ne pouvons pas vous montrer la vidéo à ce stade"
+  
   // Media fields
   videoUrlEn: text("video_url_en"),
   videoUrlFr: text("video_url_fr"),

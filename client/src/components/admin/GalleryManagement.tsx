@@ -53,6 +53,8 @@ interface GalleryItem {
   situation_fr: string;
   story_en: string;
   story_fr: string;
+  sorry_message_en: string;
+  sorry_message_fr: string;
   video_url_en?: string;
   video_url_fr?: string;
   video_width?: number;
@@ -364,6 +366,8 @@ export default function GalleryManagement() {
         situation_fr: item?.situation_fr || '',
         story_en: item?.story_en || '',
         story_fr: item?.story_fr || '',
+        sorry_message_en: item?.sorry_message_en || 'Sorry, we cannot show you the video at this stage',
+        sorry_message_fr: item?.sorry_message_fr || 'Désolé, nous ne pouvons pas vous montrer la vidéo à ce stade',
         video_url_en: item?.video_url_en || persistentUploadState.video_url_en || '',
         video_url_fr: item?.video_url_fr || persistentUploadState.video_url_fr || '',
         video_width: item?.video_width || 0,
