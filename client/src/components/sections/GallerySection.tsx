@@ -323,8 +323,8 @@ export default function GallerySection() {
                         {getItemTitle(item)}
                       </h3>
                           
-                      {/* Duration (5) - Film icon, fixed height: 80px (5 lines max) */}
-                      <div className="mb-3 h-20 overflow-hidden">
+                      {/* Duration (5) - Film icon, single line height */}
+                      <div className="mb-3 h-6 overflow-hidden">
                         <div className="flex items-start gap-2">
                           <Film className="w-4 h-4 mt-1 flex-shrink-0" style={{ color: '#D67C4A' }} />
                           <div className="text-sm leading-4" style={{ color: '#4B5563' }}>
