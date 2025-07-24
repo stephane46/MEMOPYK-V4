@@ -268,17 +268,17 @@ export default function GallerySection() {
                           
                           {/* Top-left Source Overlay (1) */}
                           {getItemSource(item) && (
-                            <div className="absolute top-4 left-4 bg-black/80 text-white px-3 py-2 rounded-lg text-sm">
+                            <div className="absolute top-4 left-4 bg-black/70 text-white px-3 py-2 rounded-full text-sm backdrop-blur-sm">
                               <div className="font-medium">{getItemSource(item)}</div>
-                              <div className="text-xs opacity-90">provided by Client</div>
+                              <div className="text-xs text-gray-300">provided by Client</div>
                             </div>
                           )}
 
                           {/* Price Tag - Bottom Right (3) */}
                           {getItemPrice(item) && (
                             <div 
-                              className="absolute bottom-4 right-4 text-white px-4 py-2 rounded-full text-sm font-bold shadow-lg"
-                              style={{ backgroundColor: '#D67C4A' }} // MEMOPYK orange from brand palette
+                              className="absolute bottom-4 right-4 text-white px-4 py-2 rounded-full text-sm font-bold shadow-lg backdrop-blur-sm"
+                              style={{ backgroundColor: 'rgba(214, 124, 74, 0.9)' }} // MEMOPYK orange with transparency
                             >
                               {getItemPrice(item)}
                             </div>
@@ -323,32 +323,32 @@ export default function GallerySection() {
                         {getItemTitle(item)}
                       </h3>
                           
-                      {/* Duration (5) - Film icon, fixed height */}
-                      <div className="mb-3">
+                      {/* Duration (5) - Film icon, fixed height: 80px (5 lines max) */}
+                      <div className="mb-3 h-20 overflow-hidden">
                         <div className="flex items-start gap-2 text-gray-600 dark:text-gray-300">
-                          <Film className="w-4 h-4 mt-1 flex-shrink-0 text-orange-500" />
-                          <div className="text-sm leading-relaxed">
-                            {getItemDuration(item) || <div className="h-4 text-gray-400">No duration specified</div>}
+                          <Film className="w-4 h-4 mt-1 flex-shrink-0" style={{ color: '#D67C4A' }} />
+                          <div className="text-sm leading-4">
+                            {getItemDuration(item) || <div className="h-4"></div>}
                           </div>
                         </div>
                       </div>
                       
-                      {/* Situation (6) - Users icon, fixed height */}
-                      <div className="mb-3">
+                      {/* Situation (6) - Users icon, fixed height: 80px (5 lines max) */}
+                      <div className="mb-3 h-20 overflow-hidden">
                         <div className="flex items-start gap-2 text-gray-600 dark:text-gray-300">
-                          <Users className="w-4 h-4 mt-1 flex-shrink-0 text-orange-500" />
-                          <div className="text-sm leading-relaxed">
-                            {getItemSituation(item) || <div className="h-4 text-gray-400">No client situation specified</div>}
+                          <Users className="w-4 h-4 mt-1 flex-shrink-0" style={{ color: '#D67C4A' }} />
+                          <div className="text-sm leading-4">
+                            {getItemSituation(item) || <div className="h-4"></div>}
                           </div>
                         </div>
                       </div>
                       
-                      {/* Story (7) - Film icon, fixed height */}
-                      <div>
+                      {/* Story (7) - Film icon, fixed height: 80px (5 lines max) */}
+                      <div className="h-20 overflow-hidden">
                         <div className="flex items-start gap-2 text-gray-600 dark:text-gray-300">
-                          <Film className="w-4 h-4 mt-1 flex-shrink-0 text-orange-500" />
-                          <div className="text-sm leading-relaxed">
-                            {getItemStory(item) || <div className="h-4 text-gray-400">No story specified</div>}
+                          <Film className="w-4 h-4 mt-1 flex-shrink-0" style={{ color: '#D67C4A' }} />
+                          <div className="text-sm leading-4">
+                            {getItemStory(item) || <div className="h-4"></div>}
                           </div>
                         </div>
                       </div>
