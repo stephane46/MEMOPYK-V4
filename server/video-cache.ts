@@ -9,8 +9,8 @@ export class VideoCache {
 
   constructor() {
     this.cacheDir = join(process.cwd(), 'server/cache/videos');
-    this.maxCacheSize = 500 * 1024 * 1024; // 500MB cache limit
-    this.maxCacheAge = 24 * 60 * 60 * 1000; // 24 hours
+    this.maxCacheSize = 500 * 1024 * 1024; // 500MB cache limit  
+    this.maxCacheAge = 7 * 24 * 60 * 60 * 1000; // 7 days (extended since we use smart replacement)
     
     // Ensure cache directory exists
     try {
@@ -51,27 +51,12 @@ export class VideoCache {
   }
 
   /**
-   * Check if video exists in local cache and is fresh
+   * Check if video exists in local cache
    */
   isVideoCached(filename: string): boolean {
     try {
       const cacheFile = this.getCacheFilePath(filename);
-      
-      if (!existsSync(cacheFile)) {
-        return false;
-      }
-
-    // Check if cache file is too old
-    const stats = statSync(cacheFile);
-    const age = Date.now() - stats.mtime.getTime();
-    
-    if (age > this.maxCacheAge) {
-      console.log(`🗑️ Cache expired for ${filename}, removing...`);
-      this.removeCachedVideo(filename);
-      return false;
-    }
-
-    return true;
+      return existsSync(cacheFile);
     } catch (error: any) {
       console.error(`❌ Cache check failed for ${filename}: ${error.message}`);
       return false;
@@ -99,6 +84,15 @@ export class VideoCache {
   async cacheVideo(filename: string, videoResponse: any): Promise<string> {
     const cacheFile = this.getCacheFilePath(filename);
     
+    // Smart replacement: Remove old video if it exists
+    if (existsSync(cacheFile)) {
+      console.log(`🔄 Replacing existing cached video: ${filename}`);
+      unlinkSync(cacheFile);
+    }
+    
+    // Smart cleanup: Remove old videos before caching new one
+    this.smartCleanupBeforeCache();
+    
     return new Promise((resolve, reject) => {
       const writeStream = createWriteStream(cacheFile);
       
@@ -109,7 +103,6 @@ export class VideoCache {
       
       writeStream.on('finish', () => {
         console.log(`💾 Cached video: ${filename} -> ${cacheFile}`);
-        this.cleanupCache(); // Cleanup old files if needed
         resolve(cacheFile);
       });
       
@@ -131,6 +124,37 @@ export class VideoCache {
     if (existsSync(cacheFile)) {
       unlinkSync(cacheFile);
       console.log(`🗑️ Removed cached video: ${filename}`);
+    }
+  }
+
+  /**
+   * Smart cleanup before caching - removes oldest videos if cache is getting full
+   */
+  private smartCleanupBeforeCache(): void {
+    try {
+      const files = readdirSync(this.cacheDir);
+      
+      // If we have more than 8 videos (keeping some buffer below max 10), remove oldest
+      if (files.length >= 8) {
+        const fileStats = files.map(file => {
+          const filePath = join(this.cacheDir, file);
+          const stats = statSync(filePath);
+          return {
+            path: filePath,
+            file: file,
+            mtime: stats.mtime.getTime()
+          };
+        }).sort((a, b) => a.mtime - b.mtime); // Sort by oldest first
+        
+        // Remove oldest files to make room
+        const toRemove = fileStats.slice(0, files.length - 6); // Keep max 6, remove rest
+        toRemove.forEach(file => {
+          unlinkSync(file.path);
+          console.log(`🗑️ Smart cleanup removed: ${file.file}`);
+        });
+      }
+    } catch (error: any) {
+      console.error('❌ Smart cleanup failed:', error.message);
     }
   }
 
