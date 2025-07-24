@@ -178,13 +178,13 @@ export default function GallerySection() {
         type: 'video',
         url: videoUrl,
         title: getItemTitle(item),
-        itemId: item.id,
+        itemId: String(item.id),
         width: item.videoWidth,
         height: item.videoHeight,
         orientation: item.videoOrientation as 'landscape' | 'portrait'
       });
       
-      trackVideoView(videoUrl, getItemTitle(item), 'gallery');
+      trackVideoView(String(item.id), getItemTitle(item), 'gallery');
     } else {
       // New behavior: flip card to show sorry message
       setFlippedCards(prev => {
