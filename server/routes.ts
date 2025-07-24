@@ -23,6 +23,41 @@ const supabase = createClient(
   process.env.SUPABASE_SERVICE_KEY!
 );
 
+// Generate signed upload URL for direct Supabase uploads
+async function generateSignedUploadUrl(filename: string, bucket: string): Promise<{ signedUrl: string; publicUrl: string }> {
+  try {
+    // Generate unique filename with timestamp
+    const uniqueFilename = `${Date.now()}-${filename}`;
+    
+    // Create signed URL for upload (expires in 1 hour)
+    const { data: signedUrlData, error: signedError } = await supabase.storage
+      .from(bucket)
+      .createSignedUploadUrl(uniqueFilename, {
+        upsert: true // Allow overwriting existing files
+      });
+
+    if (signedError) {
+      console.error('❌ Failed to generate signed URL:', signedError);
+      throw new Error(`Failed to generate signed URL: ${signedError.message}`);
+    }
+
+    // Get public URL for the file
+    const { data: publicUrlData } = supabase.storage
+      .from(bucket)
+      .getPublicUrl(uniqueFilename);
+
+    console.log(`✅ Generated signed upload URL for: ${uniqueFilename}`);
+    
+    return {
+      signedUrl: signedUrlData.signedUrl,
+      publicUrl: publicUrlData.publicUrl
+    };
+  } catch (error) {
+    console.error('❌ Error generating signed upload URL:', error);
+    throw error;
+  }
+}
+
 // Ensure uploads directory exists
 const uploadsDir = path.join(__dirname, '../uploads');
 try {
@@ -300,7 +335,87 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Upload gallery video endpoint with enhanced error handling
+  // Generate signed upload URL for direct Supabase uploads (bypasses Replit infrastructure limit)
+  app.post("/api/upload/generate-signed-url", async (req, res) => {
+    try {
+      const { filename, fileType, bucket } = req.body;
+      
+      if (!filename || !bucket) {
+        return res.status(400).json({ error: "Filename and bucket are required" });
+      }
+
+      // Validate bucket name
+      const allowedBuckets = ['memopyk-gallery', 'memopyk-hero-videos'];
+      if (!allowedBuckets.includes(bucket)) {
+        return res.status(400).json({ error: "Invalid bucket name" });
+      }
+
+      console.log(`🎬 GENERATING SIGNED URL for direct upload:`);
+      console.log(`   - Original filename: ${filename}`);
+      console.log(`   - File type: ${fileType}`);
+      console.log(`   - Target bucket: ${bucket}`);
+
+      const { signedUrl, publicUrl } = await generateSignedUploadUrl(filename, bucket);
+      
+      // Extract the actual filename from the public URL
+      const actualFilename = publicUrl.split('/').pop();
+      
+      res.json({
+        success: true,
+        signedUrl,
+        publicUrl,
+        filename: actualFilename
+      });
+
+    } catch (error) {
+      console.error('❌ Failed to generate signed upload URL:', error);
+      res.status(500).json({ error: "Failed to generate upload URL" });
+    }
+  });
+
+  // Handle completion of direct upload (for caching and database updates)
+  app.post("/api/upload/complete-direct-upload", async (req, res) => {
+    try {
+      const { publicUrl, filename, bucket, fileType } = req.body;
+      
+      if (!publicUrl || !filename) {
+        return res.status(400).json({ error: "Public URL and filename are required" });
+      }
+
+      console.log(`✅ COMPLETING DIRECT UPLOAD:`);
+      console.log(`   - Public URL: ${publicUrl}`);
+      console.log(`   - Filename: ${filename}`);
+      console.log(`   - Bucket: ${bucket}`);
+
+      // If it's a video, cache it immediately for better performance
+      if (fileType?.startsWith('video/') || filename.toLowerCase().match(/\.(mp4|mov|avi|mkv|webm|m4v)$/)) {
+        try {
+          console.log(`🎬 Auto-caching directly uploaded video: ${filename}`);
+          const response = await fetch(publicUrl);
+          if (response.ok) {
+            await videoCache.cacheVideo(filename, response);
+            console.log(`✅ Direct upload video cached successfully: ${filename}`);
+          }
+        } catch (cacheError) {
+          console.error(`⚠️ Failed to cache direct upload video ${filename}:`, cacheError);
+          // Don't fail the completion if caching fails
+        }
+      }
+
+      res.json({ 
+        success: true,
+        message: "Upload completed successfully",
+        url: publicUrl,
+        filename: filename
+      });
+
+    } catch (error) {
+      console.error('❌ Failed to complete direct upload:', error);
+      res.status(500).json({ error: "Failed to complete upload" });
+    }
+  });
+
+  // Upload gallery video endpoint with enhanced error handling (LEGACY - for files under 10MB)
   app.post("/api/gallery/upload-video", (req, res, next) => {
     uploadVideo.single('video')(req, res, (err) => {
       if (err) {

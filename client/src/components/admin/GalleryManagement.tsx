@@ -23,9 +23,12 @@ import {
   Play,
   Save,
   Crop,
-  Download
+  Download,
+  Upload,
+  CheckCircle
 } from "lucide-react";
 import ImageCropperEasyCrop from './ImageCropperEasyCrop';
+import DirectUpload from './DirectUpload';
 
 // Module-level persistent state that survives component re-creations
 const persistentUploadState = {
@@ -662,6 +665,123 @@ export default function GalleryManagement() {
                 />
                 <p className="text-xs text-gray-500 mt-1">
                   {formData.image_url_en ? 'Remplacer l\'image (JPG, PNG, WebP - max 5000MB)' : 'JPG, PNG, WebP (max 5000MB)'}
+                </p>
+              </div>
+            </div>
+
+            {/* Direct Upload for Large Files */}
+            <div className="mt-6 p-4 bg-gradient-to-r from-purple-50 to-blue-50 dark:from-purple-900/20 dark:to-blue-900/20 rounded-lg border border-purple-200 dark:border-purple-800">
+              <div className="flex items-center gap-2 mb-3">
+                <div className="bg-purple-500 rounded-full p-1">
+                  <Upload className="h-4 w-4 text-white" />
+                </div>
+                <h4 className="font-semibold text-purple-900 dark:text-purple-100">
+                  Téléchargement Direct (Fichiers Volumineux)
+                </h4>
+              </div>
+              <p className="text-sm text-purple-800 dark:text-purple-200 mb-4">
+                Pour les fichiers de plus de 10MB, utilisez le téléchargement direct qui contourne les limites du serveur. 
+                Idéal pour les vidéos de haute qualité (jusqu'à 5GB).
+              </p>
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <Label className="text-purple-900 dark:text-purple-100 mb-2 block">
+                    <Video className="h-4 w-4 inline mr-1" />
+                    Vidéo (Téléchargement Direct)
+                  </Label>
+                  <DirectUpload
+                    bucket="memopyk-gallery"
+                    acceptedTypes="video/*"
+                    maxSizeMB={5000}
+                    onUploadComplete={(result) => {
+                      console.log('Direct video upload completed:', result);
+                      const url = result.url;
+                      
+                      // Save to module-level persistent state
+                      persistentUploadState.video_url_en = url;
+                      if (formData.use_same_video) {
+                        persistentUploadState.video_url_fr = url;
+                      }
+                      console.log('💾 Saved direct upload to persistent state:', persistentUploadState);
+                      
+                      setFormData(prev => {
+                        const newData = prev.use_same_video 
+                          ? { ...prev, video_url_en: url, video_url_fr: url }
+                          : { ...prev, video_url_en: url };
+                        console.log('Updated formData with direct upload:', newData);
+                        return newData;
+                      });
+                      
+                      toast({
+                        title: "✅ Succès",
+                        description: "Vidéo téléchargée directement avec succès!",
+                        className: "bg-green-50 dark:bg-green-900/20 border-green-200 dark:border-green-800"
+                      });
+                    }}
+                    onUploadError={(error) => {
+                      console.error('Direct video upload failed:', error);
+                      toast({
+                        title: "❌ Erreur",
+                        description: `Échec du téléchargement direct: ${error}`,
+                        variant: "destructive"
+                      });
+                    }}
+                  />
+                </div>
+                
+                <div>
+                  <Label className="text-purple-900 dark:text-purple-100 mb-2 block">
+                    <Image className="h-4 w-4 inline mr-1" />
+                    Image (Téléchargement Direct)
+                  </Label>
+                  <DirectUpload
+                    bucket="memopyk-gallery"
+                    acceptedTypes="image/*"
+                    maxSizeMB={5000}
+                    onUploadComplete={(result) => {
+                      console.log('Direct image upload completed:', result);
+                      const url = result.url;
+                      
+                      // Save to module-level persistent state
+                      persistentUploadState.image_url_en = url;
+                      persistentUploadState.image_url_fr = url;
+                      console.log('💾 Saved direct image upload to persistent state:', persistentUploadState);
+                      
+                      setFormData(prev => {
+                        const newData = { 
+                          ...prev, 
+                          video_url_en: persistentUploadState.video_url_en || prev.video_url_en,
+                          video_url_fr: persistentUploadState.video_url_fr || prev.video_url_fr,
+                          image_url_en: url, 
+                          image_url_fr: url 
+                        };
+                        console.log('Updated formData with direct image upload:', newData);
+                        return newData;
+                      });
+                      
+                      toast({
+                        title: "✅ Succès",
+                        description: "Image téléchargée directement avec succès!",
+                        className: "bg-green-50 dark:bg-green-900/20 border-green-200 dark:border-green-800"
+                      });
+                    }}
+                    onUploadError={(error) => {
+                      console.error('Direct image upload failed:', error);
+                      toast({
+                        title: "❌ Erreur",
+                        description: `Échec du téléchargement direct: ${error}`,
+                        variant: "destructive"
+                      });
+                    }}
+                  />
+                </div>
+              </div>
+              
+              <div className="mt-4 p-3 bg-blue-50 dark:bg-blue-900/30 rounded border border-blue-200 dark:border-blue-700">
+                <p className="text-xs text-blue-800 dark:text-blue-200 flex items-center gap-1">
+                  <CheckCircle className="h-3 w-3" />
+                  Le téléchargement direct contourne les limites de Replit et permet des fichiers jusqu'à 5GB
                 </p>
               </div>
             </div>

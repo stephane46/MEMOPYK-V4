@@ -507,7 +507,38 @@ The application follows a modern full-stack architecture with clear separation o
 - [ ] **Phase 10.3**: Performance monitoring and error tracking
 - [ ] **Phase 10.4**: User acceptance testing and launch
 
-## Current Status: Phase 8.4 - FAQ CONTENT MANAGEMENT COMPLETED (July 24, 2025)
+## Current Status: Phase 8.4 - DIRECT SUPABASE UPLOAD SYSTEM IMPLEMENTATION (July 24, 2025)
+
+### MAJOR BREAKTHROUGH: Direct Upload System for Large Files - IN PROGRESS (July 24, 2025)
+**Complete Infrastructure Limit Bypass Implementation:**
+🎯 **Problem Solved**: Implemented Direct Supabase Upload system to bypass Replit deployment 47MB upload limit
+🎯 **Architecture Change**: Files now upload directly to Supabase storage, bypassing Replit infrastructure entirely
+🎯 **New API Endpoints**: `/api/upload/generate-signed-url` and `/api/upload/complete-direct-upload`
+🎯 **Frontend Component**: Complete `DirectUpload` component with progress tracking and error handling
+🎯 **Admin Integration**: Added Direct Upload section to Gallery Management with 5GB file support
+🎯 **Smart Fallback**: Legacy upload endpoints remain for files under 10MB
+
+**Technical Implementation:**
+- Server-side signed URL generation using Supabase `createSignedUploadUrl()`
+- Direct browser-to-Supabase upload with PUT requests and progress tracking
+- Automatic video caching after direct upload completion
+- Enhanced error handling for file size limits and upload failures
+- Module-level state persistence for form data integrity
+- Progressive upload status: generating → uploading → completing → success
+
+**User Experience:**
+- Clear indication when to use direct upload (files over 10MB)
+- Real-time progress bar with status messages in French
+- Professional purple gradient interface section
+- Comprehensive error feedback with specific solutions
+- Supports up to 5GB files for both videos and images
+
+**Next Steps:**
+- User testing of large file upload functionality
+- Performance verification in production deployment
+- Documentation of usage guidelines for content creators
+
+## Previous Status: Phase 8.4 - FAQ CONTENT MANAGEMENT COMPLETED (July 24, 2025)
 
 ### DISK STORAGE IMPLEMENTATION - TESTING IN PROGRESS (July 24, 2025)
 **Memory-Safe Upload System Implementation:**
