@@ -556,41 +556,45 @@ export default function GalleryManagement() {
                   </div>
                 )}
                 
-                <input
-                  type="file"
-                  accept="video/*"
-                  onChange={async (e) => {
-                    const url = await handleVideoUpload(e.target.files?.[0]);
-                    console.log('Video upload returned URL:', url);
-                    if (url) {
-                      console.log('Updating form with video URL:', url);
-                      
-                      // Save to module-level persistent state
-                      persistentUploadState.video_url_en = url;
-                      if (formData.use_same_video) {
-                        persistentUploadState.video_url_fr = url;
-                      }
-                      console.log('💾 Saved to module persistent state:', persistentUploadState);
-                      
-                      setFormData(prev => {
-                        console.log('Current formData before video update:', prev);
-                        console.log('Video upload - prev.video_url_en:', prev.video_url_en);
-                        console.log('Video upload - prev.use_same_video:', prev.use_same_video);
-                        const newData = prev.use_same_video 
-                          ? { ...prev, video_url_en: url, video_url_fr: url }
-                          : { ...prev, video_url_en: url };
-                        console.log('New formData after video update:', newData);
-                        console.log('Video update - newData.video_url_en:', newData.video_url_en);
-                        
-                        return newData;
-                      });
+                <DirectUpload
+                  bucket="memopyk-gallery"
+                  acceptedTypes="video/*"
+                  maxSizeMB={5000}
+                  onUploadComplete={(result: any) => {
+                    console.log('Direct video upload completed:', result);
+                    const videoUrl = result.url;
+                    
+                    // Save to persistent state
+                    persistentUploadState.video_url_en = videoUrl;
+                    if (formData.use_same_video) {
+                      persistentUploadState.video_url_fr = videoUrl;
                     }
+                    console.log('💾 Saved direct upload to persistent state:', persistentUploadState);
+                    
+                    // Update form data
+                    setFormData(prev => ({ 
+                      ...prev, 
+                      video_url_en: videoUrl,
+                      video_url_fr: prev.use_same_video ? videoUrl : prev.video_url_fr
+                    }));
+                    
+                    toast({
+                      title: "✅ Succès",
+                      description: "Vidéo téléchargée directement vers Supabase!",
+                      className: "bg-green-50 dark:bg-green-900/20 border-green-200 dark:border-green-800 text-green-900 dark:text-green-100"
+                    });
                   }}
-                  disabled={uploading}
-                  className="w-full p-2 border rounded bg-white dark:bg-gray-700 text-gray-900 dark:text-white disabled:opacity-50"
+                  onUploadError={(error: any) => {
+                    console.error('Direct video upload failed:', error);
+                    toast({
+                      title: "❌ Erreur",
+                      description: `Échec du téléchargement: ${error}`,
+                      variant: "destructive"
+                    });
+                  }}
                 />
                 <p className="text-xs text-gray-500 mt-1">
-                  {formData.video_url_en ? 'Remplacer la vidéo (MP4, WebM, MOV - max 5000MB)' : 'MP4, WebM, MOV (max 5000MB)'}
+                  Téléchargement direct - Formats: MP4, WebM, MOV (max 5GB)
                 </p>
               </div>
               <div>
@@ -626,45 +630,45 @@ export default function GalleryManagement() {
                   </div>
                 )}
                 
-                <input
-                  type="file"
-                  accept="image/*"
-                  onChange={async (e) => {
-                    const url = await handleImageUpload(e.target.files?.[0]);
-                    console.log('Image upload returned URL:', url);
-                    if (url) {
-                      console.log('Updating form with image URL:', url);
-                      
-                      // Save to module-level persistent state
-                      persistentUploadState.image_url_en = url;
-                      persistentUploadState.image_url_fr = url;
-                      console.log('💾 Saved to module persistent state:', persistentUploadState);
-                      
-                      setFormData(prev => {
-                        console.log('Current formData before image update:', prev);
-                        console.log('Image upload - prev.video_url_en:', prev.video_url_en);
-                        console.log('Image upload - prev.image_url_en:', prev.image_url_en);
-                        
-                        // Always preserve URLs from module persistent state
-                        const newData = { 
-                          ...prev, 
-                          video_url_en: persistentUploadState.video_url_en || prev.video_url_en,
-                          video_url_fr: persistentUploadState.video_url_fr || prev.video_url_fr,
-                          image_url_en: url, 
-                          image_url_fr: url 
-                        };
-                        console.log('New formData after image update:', newData);
-                        console.log('Image update - newData.video_url_en (should be preserved):', newData.video_url_en);
-                        console.log('Image update - newData.image_url_en:', newData.image_url_en);
-                        return newData;
-                      });
-                    }
+                <DirectUpload
+                  bucket="memopyk-gallery"
+                  acceptedTypes="image/*"
+                  maxSizeMB={5000}
+                  onUploadComplete={(result: any) => {
+                    console.log('Direct image upload completed:', result);
+                    const imageUrl = result.url;
+                    
+                    // Save to persistent state
+                    persistentUploadState.image_url_en = imageUrl;
+                    persistentUploadState.image_url_fr = imageUrl;
+                    console.log('💾 Saved direct image upload to persistent state:', persistentUploadState);
+                    
+                    // Update form data while preserving video URLs
+                    setFormData(prev => ({ 
+                      ...prev, 
+                      video_url_en: persistentUploadState.video_url_en || prev.video_url_en,
+                      video_url_fr: persistentUploadState.video_url_fr || prev.video_url_fr,
+                      image_url_en: imageUrl,
+                      image_url_fr: imageUrl
+                    }));
+                    
+                    toast({
+                      title: "✅ Succès",
+                      description: "Image téléchargée directement vers Supabase!",
+                      className: "bg-green-50 dark:bg-green-900/20 border-green-200 dark:border-green-800 text-green-900 dark:text-green-100"
+                    });
                   }}
-                  disabled={uploading}
-                  className="w-full p-2 border rounded bg-white dark:bg-gray-700 text-gray-900 dark:text-white disabled:opacity-50"
+                  onUploadError={(error: any) => {
+                    console.error('Direct image upload failed:', error);
+                    toast({
+                      title: "❌ Erreur",
+                      description: `Échec du téléchargement: ${error}`,
+                      variant: "destructive"
+                    });
+                  }}
                 />
                 <p className="text-xs text-gray-500 mt-1">
-                  {formData.image_url_en ? 'Remplacer l\'image (JPG, PNG, WebP - max 5000MB)' : 'JPG, PNG, WebP (max 5000MB)'}
+                  Téléchargement direct - Formats: JPG, PNG, WebP (max 5GB)
                 </p>
               </div>
             </div>
