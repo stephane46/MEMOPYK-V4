@@ -319,7 +319,7 @@ export default function GallerySection() {
                     {/* Card Content */}
                     <div className="p-6">
                       {/* Title (4) - Fixed height: 32px */}
-                      <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-4 h-8 overflow-hidden">
+                      <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-1 h-8 overflow-hidden">
                         {getItemTitle(item)}
                       </h3>
                           
