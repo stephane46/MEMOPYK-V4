@@ -245,6 +245,15 @@ export default function GallerySection() {
             const itemHasVideo = hasVideo(item);
             const isFlipped = flippedCards.has(item.id);
             
+            // Force debugging - this should always be true for this item
+            console.log('🔍 Video detection debug:', {
+              itemId: item.id,
+              hasVideo: itemHasVideo,
+              videoUrlFr: item.videoUrlFr,
+              videoUrlEn: item.videoUrlEn,
+              language: language
+            });
+            
 
             
             return (
@@ -283,23 +292,14 @@ export default function GallerySection() {
                           
                           {/* Play Button - Center (2) */}
                           <div className="absolute inset-0 flex items-center justify-center">
-                            {itemHasVideo ? (
-                              // Orange pulsing button for videos
-                              <button
-                                onClick={(e) => handlePlayClick(item, e)}
-                                className="w-16 h-16 rounded-full flex items-center justify-center transition-all duration-300 hover:scale-110 bg-orange-500 text-white animate-pulse-orange shadow-lg border-2 border-orange-400"
-                              >
-                                <div className="text-xl ml-1">▶</div>
-                              </button>
-                            ) : (
-                              // White button for card flip
-                              <button
-                                onClick={(e) => handlePlayClick(item, e)}
-                                className="w-16 h-16 rounded-full flex items-center justify-center transition-all duration-300 hover:scale-110 bg-white text-gray-800 hover:bg-gray-100 shadow-md border-2 border-gray-300"
-                              >
-                                <div className="text-xl">▶</div>
-                              </button>
-                            )}
+                            {/* FORCED ORANGE BUTTON FOR TESTING */}
+                            <button
+                              onClick={(e) => handlePlayClick(item, e)}
+                              className="w-16 h-16 rounded-full flex items-center justify-center transition-all duration-300 hover:scale-110 bg-orange-500 text-white animate-pulse-orange shadow-lg border-2 border-orange-400"
+                              style={{backgroundColor: '#f97316 !important', color: 'white !important'}}
+                            >
+                              <div className="text-xl ml-1" style={{color: 'white !important'}}>▶</div>
+                            </button>
                           </div>
                         </div>
                       ) : (
