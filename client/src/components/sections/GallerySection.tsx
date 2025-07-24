@@ -252,7 +252,7 @@ export default function GallerySection() {
               >
                 <div className="card-flip-inner">
                   {/* FRONT SIDE - Normal Gallery Card */}
-                  <div className="card-front bg-white dark:bg-gray-800 shadow-lg hover:shadow-2xl transition-all duration-300">
+                  <div className="card-front bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 shadow-lg hover:shadow-2xl transition-all duration-300 rounded-2xl overflow-hidden">
                     {/* Image with Overlays - Always 3:2 aspect ratio */}
                     <div className="aspect-[3/2] bg-gray-100 dark:bg-gray-700 relative overflow-hidden rounded-t-2xl">
                       {thumbnailUrl ? (
@@ -272,9 +272,9 @@ export default function GallerySection() {
                             </div>
                           )}
 
-                          {/* Price Tag - Top Right (2) */}
+                          {/* Price Tag - Bottom Right (2) */}
                           {getItemPrice(item) && (
-                            <div className="absolute top-4 right-4 bg-orange-500 text-white px-3 py-2 rounded-lg text-sm font-bold">
+                            <div className="absolute bottom-4 right-4 bg-orange-500 text-white px-3 py-2 rounded-full text-sm font-bold">
                               {getItemPrice(item)}
                             </div>
                           )}
@@ -283,10 +283,10 @@ export default function GallerySection() {
                           <div className="absolute inset-0 flex items-center justify-center">
                             <button
                               onClick={(e) => handlePlayClick(item, e)}
-                              className={`w-16 h-16 rounded-full flex items-center justify-center text-white text-xl font-bold transition-all duration-300 hover:scale-110 ${
+                              className={`w-16 h-16 rounded-full flex items-center justify-center font-bold transition-all duration-300 hover:scale-110 ${
                                 itemHasVideo 
-                                  ? 'bg-orange-500 animate-pulse-elegant' 
-                                  : 'bg-white text-gray-800 hover:bg-gray-100'
+                                  ? 'bg-orange-500 text-white animate-pulse-orange shadow-lg' 
+                                  : 'bg-white text-gray-800 hover:bg-gray-100 shadow-md'
                               }`}
                             >
                               ▶
