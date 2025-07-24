@@ -798,7 +798,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
         try {
           if (!videoCache.isVideoCached(filename)) {
             console.log(`⬇️ Caching gallery video: ${filename}`);
-            await videoCache.downloadAndCacheVideo(filename);
+            const videoUrl = `https://supabase.memopyk.org/storage/v1/object/public/memopyk-gallery/${filename}`;
+            await videoCache.downloadAndCacheVideo(filename, videoUrl);
             cached++;
           } else {
             console.log(`✅ Gallery video already cached: ${filename}`);

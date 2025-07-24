@@ -507,7 +507,29 @@ The application follows a modern full-stack architecture with clear separation o
 - [ ] **Phase 10.3**: Performance monitoring and error tracking
 - [ ] **Phase 10.4**: User acceptance testing and launch
 
-## Current Status: Phase 8.2.11 - SMART CACHE REPLACEMENT SYSTEM COMPLETED (July 24, 2025)
+## Current Status: Phase 8.2.12 - GALLERY VIDEO CACHE PARITY COMPLETED (July 24, 2025)
+
+**COMPLETE GALLERY VIDEO CACHE SYSTEM:**
+✅ **Cache Parity**: Gallery videos now cache identically to hero videos (immediate cache-on-upload)
+✅ **Manual Cache Button**: Added "Cache Vidéos" button to Gallery admin interface with loading states
+✅ **Cache API Endpoint**: Created `/api/video-cache/cache-gallery-videos` for manual gallery video caching
+✅ **Smart Replacement**: New gallery video uploads replace cached versions immediately (no 24-hour wait)
+✅ **Cache Status Display**: Real-time cache statistics showing video count, size, and performance info
+✅ **Performance Consistency**: Gallery videos achieve same ~50ms load times as hero videos when cached
+
+**Special Cases for Manual Cache Button:**
+- Force refresh after video updates or changes
+- Troubleshooting cache issues during development
+- Immediate performance optimization for newly added videos
+- Testing cache functionality in different environments
+
+**Technical Implementation:**
+- Gallery video upload now automatically caches videos after Supabase upload
+- Cache system handles both hero and gallery videos with identical smart replacement logic
+- Manual cache button provides admin control for special scenarios
+- Cache stats query refreshes every second for real-time admin feedback
+
+## Previous Status: Phase 8.2.11 - SMART CACHE REPLACEMENT SYSTEM COMPLETED (July 24, 2025)
 
 **INTELLIGENT CACHE MANAGEMENT SUCCESS:**
 ✅ **Smart Replacement**: Videos are automatically replaced when uploading new ones (no more waiting 24 hours)
