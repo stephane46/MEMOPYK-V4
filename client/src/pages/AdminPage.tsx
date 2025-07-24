@@ -13,6 +13,7 @@ import { useToast } from '@/hooks/use-toast';
 import GalleryManagement from '@/components/admin/GalleryManagement';
 import { ContactManagement } from '@/components/admin/ContactManagement';
 import FAQManagement from '@/components/admin/FAQManagement';
+import DirectUpload from '@/components/admin/DirectUpload';
 import CryptoJS from 'crypto-js';
 
 interface HeroVideo {
@@ -46,8 +47,7 @@ export default function AdminPage() {
     url_fr: '',
     useSameVideo: true
   });
-  const [uploadingFile, setUploadingFile] = useState(false);
-  const [dragActive, setDragActive] = useState(false);
+
   const [selectedTextId, setSelectedTextId] = useState<number | null>(null);
   
   // File upload handler
@@ -536,75 +536,66 @@ export default function AdminPage() {
                             <h3 className="mt-2 text-sm font-medium text-gray-900 dark:text-white">Add New Hero Video</h3>
                             <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">Upload a new video to the hero carousel</p>
                             <div className="mt-6">
-                              <input
-                                type="file"
-                                accept="video/*"
-                                className="hidden"
-                                id="video-upload"
-                                onChange={async (e) => {
-                                  const file = e.target.files?.[0];
-                                  if (file) {
-                                    toast({ title: "Upload Started", description: `Uploading ${file.name}...` });
+                              <DirectUpload
+                                bucket="videos"
+                                acceptedTypes="video/*"
+                                maxSizeMB={5000}
+                                onUploadComplete={async (result) => {
+                                  console.log('🎬 New hero video uploaded successfully:', result);
+                                  
+                                  try {
+                                    // Create a new hero video entry with the uploaded file
+                                    const createResponse = await fetch('/api/hero-videos', {
+                                      method: 'POST',
+                                      headers: { 'Content-Type': 'application/json' },
+                                      body: JSON.stringify({
+                                        title_en: `New Video - ${result.filename}`,
+                                        title_fr: `Nouvelle Vidéo - ${result.filename}`,
+                                        url_en: result.filename,
+                                        url_fr: result.filename,
+                                        use_same_video: true,
+                                        is_active: true,
+                                        order_index: heroVideos.length + 1
+                                      })
+                                    });
                                     
-                                    try {
-                                      // Create FormData for file upload
-                                      const formData = new FormData();
-                                      formData.append('video', file);
-                                      formData.append('title_en', `New Video - ${file.name}`);
-                                      formData.append('title_fr', `Nouvelle Vidéo - ${file.name}`);
-                                      
-                                      // Upload to backend API
-                                      const response = await fetch('/api/hero-videos/upload', {
-                                        method: 'POST',
-                                        body: formData
+                                    if (createResponse.ok) {
+                                      toast({ 
+                                        title: "✅ Succès", 
+                                        description: "Vidéo téléchargée et ajoutée avec succès!",
+                                        className: "bg-green-50 dark:bg-green-900/20 border-green-200 dark:border-green-800 text-green-900 dark:text-green-100"
                                       });
-                                      
-                                      if (response.ok) {
-                                        const result = await response.json();
-                                        const filename = result.filename;
-                                        
-                                        // Now create a new hero video entry with the uploaded file
-                                        const createResponse = await fetch('/api/hero-videos', {
-                                          method: 'POST',
-                                          headers: { 'Content-Type': 'application/json' },
-                                          body: JSON.stringify({
-                                            title_en: `New Video - ${file.name}`,
-                                            title_fr: `Nouvelle Vidéo - ${file.name}`,
-                                            url_en: filename,
-                                            url_fr: filename,
-                                            use_same_video: true,
-                                            is_active: true,
-                                            order_index: heroVideos.length + 1
-                                          })
-                                        });
-                                        
-                                        if (createResponse.ok) {
-                                          toast({ title: "Success", description: "Video uploaded and added successfully!" });
-                                          queryClient.invalidateQueries({ queryKey: ['/api/hero-videos'] });
-                                        } else {
-                                          toast({ title: "Upload Failed", description: "Video uploaded but failed to create entry", variant: "destructive" });
-                                        }
-                                      } else {
-                                        const errorData = await response.json();
-                                        toast({ title: "Upload Failed", description: errorData.error || "Upload failed", variant: "destructive" });
-                                      }
-                                    } catch (error) {
-                                      console.error('Upload error:', error);
-                                      toast({ title: "Upload Failed", description: "An error occurred during upload", variant: "destructive" });
+                                      queryClient.invalidateQueries({ queryKey: ['/api/hero-videos'] });
+                                    } else {
+                                      toast({ 
+                                        title: "❌ Erreur", 
+                                        description: "Vidéo téléchargée mais échec de création d'entrée", 
+                                        variant: "destructive" 
+                                      });
                                     }
-                                    
-                                    // Reset the input
-                                    e.target.value = '';
+                                  } catch (error) {
+                                    console.error('Database creation error:', error);
+                                    toast({ 
+                                      title: "❌ Erreur", 
+                                      description: "Erreur lors de la création de l'entrée", 
+                                      variant: "destructive" 
+                                    });
                                   }
                                 }}
-                              />
-                              <label
-                                htmlFor="video-upload"
-                                className="inline-flex items-center px-6 py-3 border border-transparent shadow-lg text-sm font-semibold rounded-lg text-white cursor-pointer transition-all hover:scale-105 hover:opacity-90"
-                                style={{ backgroundColor: '#D67C4A' }}
+                                onUploadError={(error: any) => {
+                                  console.error('Direct hero video upload failed:', error);
+                                  toast({
+                                    title: "❌ Erreur",
+                                    description: `Échec du téléchargement: ${error}`,
+                                    variant: "destructive"
+                                  });
+                                }}
                               >
-                                Upload Video
-                              </label>
+                                <div className="inline-flex items-center px-6 py-3 border border-transparent shadow-lg text-sm font-semibold rounded-lg text-white cursor-pointer transition-all hover:scale-105 hover:opacity-90"
+                                  style={{ backgroundColor: '#D67C4A' }}>
+                                  Téléchargement Direct - Cliquez ici
+                                </div>
+                              </DirectUpload>
                             </div>
                           </div>
                         </CardContent>
@@ -1473,42 +1464,46 @@ export default function AdminPage() {
                       Video File (applies to both languages)
                     </Label>
                     
-                    {/* File Upload Area */}
-                    <div 
-                      className={`border-2 border-dashed rounded-lg p-6 text-center transition-colors ${
-                        dragActive 
-                          ? 'border-blue-400 bg-blue-50 dark:bg-blue-900/20' 
-                          : 'border-gray-300 dark:border-gray-600 hover:border-gray-400 dark:hover:border-gray-500'
-                      }`}
-                      onDragEnter={handleDrag}
-                      onDragLeave={handleDrag}
-                      onDragOver={handleDrag}
-                      onDrop={handleDrop}
+                    {/* Direct Upload Component */}
+                    <DirectUpload
+                      bucket="videos"
+                      acceptedTypes="video/*"
+                      maxSizeMB={5000}
+                      onUploadComplete={(result) => {
+                        console.log('🎬 Hero video uploaded successfully:', result);
+                        
+                        // Update form data for same video
+                        setEditVideoData(prev => ({
+                          ...prev,
+                          url_en: result.filename,
+                          url_fr: result.filename
+                        }));
+                        
+                        toast({
+                          title: "✅ Succès",
+                          description: "Vidéo téléchargée directement vers Supabase!",
+                          className: "bg-green-50 dark:bg-green-900/20 border-green-200 dark:border-green-800 text-green-900 dark:text-green-100"
+                        });
+                      }}
+                      onUploadError={(error: any) => {
+                        console.error('Direct hero video upload failed:', error);
+                        toast({
+                          title: "❌ Erreur",
+                          description: `Échec du téléchargement: ${error}`,
+                          variant: "destructive"
+                        });
+                      }}
                     >
-                      <FileVideo className="mx-auto h-12 w-12 text-gray-400 mb-4" />
-                      <div className="space-y-2">
+                      <div className="p-6 text-center">
+                        <FileVideo className="mx-auto h-12 w-12 text-gray-400 mb-4" />
                         <p className="text-lg font-medium text-gray-900 dark:text-white">
-                          {editVideoData.url_en ? 'Remplacer la vidéo' : 'Drop your video here'}
+                          {editVideoData.url_en ? 'Remplacer la vidéo' : 'Téléchargement Direct - Cliquez pour parcourir'}
                         </p>
-                        <p className="text-sm text-gray-500 dark:text-gray-400">
-                          {editVideoData.url_en ? 'ou cliquez pour parcourir les fichiers' : 'or click to browse files'}
+                        <p className="text-sm text-gray-500 dark:text-gray-400 mt-2">
+                          Formats: MP4, MOV, AVI (max 5GB)
                         </p>
-                        <input
-                          type="file"
-                          accept="video/*"
-                          onChange={(e) => e.target.files?.[0] && handleFileUpload(e.target.files[0])}
-                          className="hidden"
-                          id="video-upload-same"
-                        />
-                        <label
-                          htmlFor="video-upload-same"
-                          className="inline-flex items-center px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm text-sm font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 cursor-pointer"
-                        >
-                          <Upload className="mr-2 h-4 w-4" />
-                          {uploadingFile ? 'Uploading...' : 'Browse Files'}
-                        </label>
                       </div>
-                    </div>
+                    </DirectUpload>
                     
                     {/* Current video display with preview */}
                     {editVideoData.url_en && (
@@ -1555,38 +1550,41 @@ export default function AdminPage() {
                     {/* English Video Upload */}
                     <div className="space-y-3">
                       <Label className="text-gray-700 dark:text-gray-300 font-medium">English Video</Label>
-                      <div 
-                        className="border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg p-4 text-center hover:border-gray-400 dark:hover:border-gray-500"
-                        onDragEnter={handleDrag}
-                        onDragLeave={handleDrag}
-                        onDragOver={handleDrag}
-                        onDrop={(e) => {
-                          handleDrop(e);
-                          // Override to set English specifically
-                          e.preventDefault();
-                          e.stopPropagation();
-                          setDragActive(false);
-                          const files = Array.from(e.dataTransfer.files);
-                          if (files.length > 0) {
-                            handleFileUpload(files[0], true);
-                          }
+                      <DirectUpload
+                        bucket="videos"
+                        acceptedTypes="video/*"
+                        maxSizeMB={5000}
+                        onUploadComplete={(result) => {
+                          console.log('🎬 English hero video uploaded successfully:', result);
+                          
+                          // Update English form data
+                          setEditVideoData(prev => ({
+                            ...prev,
+                            url_en: result.filename
+                          }));
+                          
+                          toast({
+                            title: "✅ Succès",
+                            description: "Vidéo EN téléchargée directement vers Supabase!",
+                            className: "bg-green-50 dark:bg-green-900/20 border-green-200 dark:border-green-800 text-green-900 dark:text-green-100"
+                          });
+                        }}
+                        onUploadError={(error: any) => {
+                          console.error('Direct English video upload failed:', error);
+                          toast({
+                            title: "❌ Erreur",
+                            description: `Échec du téléchargement: ${error}`,
+                            variant: "destructive"
+                          });
                         }}
                       >
-                        <FileVideo className="mx-auto h-8 w-8 text-gray-400 mb-2" />
-                        <input
-                          type="file"
-                          accept="video/*"
-                          onChange={(e) => e.target.files?.[0] && handleFileUpload(e.target.files[0], true)}
-                          className="hidden"
-                          id="video-upload-en"
-                        />
-                        <label
-                          htmlFor="video-upload-en"
-                          className="text-sm text-blue-600 hover:text-blue-800 cursor-pointer font-medium"
-                        >
-                          {editVideoData.url_en ? 'Remplacer vidéo EN' : 'Upload EN Video'}
-                        </label>
-                      </div>
+                        <div className="p-4 text-center">
+                          <FileVideo className="mx-auto h-8 w-8 text-gray-400 mb-2" />
+                          <p className="text-sm text-blue-600 font-medium">
+                            {editVideoData.url_en ? 'Remplacer vidéo EN' : 'Téléchargement Direct EN'}
+                          </p>
+                        </div>
+                      </DirectUpload>
                       {editVideoData.url_en && (
                         <div className="p-3 bg-gradient-to-r from-green-50 to-emerald-50 dark:from-green-900/20 dark:to-emerald-900/20 rounded-lg border border-green-200 dark:border-green-800">
                           <div className="flex items-center gap-2 mb-2">
@@ -1617,36 +1615,41 @@ export default function AdminPage() {
                     {/* French Video Upload */}
                     <div className="space-y-3">
                       <Label className="text-gray-700 dark:text-gray-300 font-medium">French Video</Label>
-                      <div 
-                        className="border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg p-4 text-center hover:border-gray-400 dark:hover:border-gray-500"
-                        onDragEnter={handleDrag}
-                        onDragLeave={handleDrag}
-                        onDragOver={handleDrag}
-                        onDrop={(e) => {
-                          e.preventDefault();
-                          e.stopPropagation();
-                          setDragActive(false);
-                          const files = Array.from(e.dataTransfer.files);
-                          if (files.length > 0) {
-                            handleFileUpload(files[0], false);
-                          }
+                      <DirectUpload
+                        bucket="videos"
+                        acceptedTypes="video/*"
+                        maxSizeMB={5000}
+                        onUploadComplete={(result) => {
+                          console.log('🎬 French hero video uploaded successfully:', result);
+                          
+                          // Update French form data
+                          setEditVideoData(prev => ({
+                            ...prev,
+                            url_fr: result.filename
+                          }));
+                          
+                          toast({
+                            title: "✅ Succès",
+                            description: "Vidéo FR téléchargée directement vers Supabase!",
+                            className: "bg-green-50 dark:bg-green-900/20 border-green-200 dark:border-green-800 text-green-900 dark:text-green-100"
+                          });
+                        }}
+                        onUploadError={(error: any) => {
+                          console.error('Direct French video upload failed:', error);
+                          toast({
+                            title: "❌ Erreur",
+                            description: `Échec du téléchargement: ${error}`,
+                            variant: "destructive"
+                          });
                         }}
                       >
-                        <FileVideo className="mx-auto h-8 w-8 text-gray-400 mb-2" />
-                        <input
-                          type="file"
-                          accept="video/*"
-                          onChange={(e) => e.target.files?.[0] && handleFileUpload(e.target.files[0], false)}
-                          className="hidden"
-                          id="video-upload-fr"
-                        />
-                        <label
-                          htmlFor="video-upload-fr"
-                          className="text-sm text-blue-600 hover:text-blue-800 cursor-pointer font-medium"
-                        >
-                          {editVideoData.url_fr ? 'Remplacer vidéo FR' : 'Upload FR Video'}
-                        </label>
-                      </div>
+                        <div className="p-4 text-center">
+                          <FileVideo className="mx-auto h-8 w-8 text-gray-400 mb-2" />
+                          <p className="text-sm text-blue-600 font-medium">
+                            {editVideoData.url_fr ? 'Remplacer vidéo FR' : 'Téléchargement Direct FR'}
+                          </p>
+                        </div>
+                      </DirectUpload>
                       {editVideoData.url_fr && (
                         <div className="p-3 bg-gradient-to-r from-green-50 to-emerald-50 dark:from-green-900/20 dark:to-emerald-900/20 rounded-lg border border-green-200 dark:border-green-800">
                           <div className="flex items-center gap-2 mb-2">
