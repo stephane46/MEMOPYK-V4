@@ -26,7 +26,7 @@ const supabase = createClient(
 const uploadVideo = multer({
   storage: multer.memoryStorage(),
   limits: {
-    fileSize: 500 * 1024 * 1024, // 500MB limit for videos
+    fileSize: 5000 * 1024 * 1024, // 5000MB limit for videos
   },
   fileFilter: (req, file, cb) => {
     if (file.mimetype.startsWith('video/')) {
@@ -40,7 +40,7 @@ const uploadVideo = multer({
 const uploadImage = multer({
   storage: multer.memoryStorage(),
   limits: {
-    fileSize: 50 * 1024 * 1024, // 50MB limit for images
+    fileSize: 5000 * 1024 * 1024, // 5000MB limit for images
   },
   fileFilter: (req, file, cb) => {
     if (file.mimetype.startsWith('image/')) {
@@ -252,7 +252,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         console.error('Multer error:', err);
         if (err.code === 'LIMIT_FILE_SIZE') {
           return res.status(413).json({ 
-            error: "File too large. Maximum size is 500MB",
+            error: "File too large. Maximum size is 5000MB",
             code: "FILE_TOO_LARGE" 
           });
         } else if (err.code === 'LIMIT_UNEXPECTED_FILE') {

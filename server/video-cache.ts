@@ -9,7 +9,7 @@ export class VideoCache {
 
   constructor() {
     this.cacheDir = join(process.cwd(), 'server/cache/videos');
-    this.maxCacheSize = 500 * 1024 * 1024; // 500MB cache limit  
+    this.maxCacheSize = 5000 * 1024 * 1024; // 5000MB cache limit  
     this.maxCacheAge = 7 * 24 * 60 * 60 * 1000; // 7 days (extended since we use smart replacement)
     
     // Ensure cache directory exists
