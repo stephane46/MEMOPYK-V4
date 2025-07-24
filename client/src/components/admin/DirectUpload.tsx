@@ -129,10 +129,21 @@ export default function DirectUpload({
         file
       });
 
+      // Reset file input after successful upload
+      const fileInputs = document.querySelectorAll('input[type="file"]');
+      fileInputs.forEach(input => {
+        (input as HTMLInputElement).value = '';
+      });
+
       onUploadComplete({
         url: publicUrl,
         filename
       });
+
+      // Auto-reset after 2 seconds to prepare for next upload
+      setTimeout(() => {
+        resetUpload();
+      }, 2000);
 
     } catch (error) {
       console.error('❌ Direct upload failed:', error);
@@ -154,20 +165,26 @@ export default function DirectUpload({
       status: 'idle',
       progress: 0
     });
+    
+    // Clear file input
+    const fileInputs = document.querySelectorAll('input[type="file"]');
+    fileInputs.forEach(input => {
+      (input as HTMLInputElement).value = '';
+    });
   };
 
   const getStatusMessage = () => {
     switch (uploadState.status) {
       case 'generating':
-        return 'Preparing upload...';
+        return 'Génération de l\'URL signée...';
       case 'uploading':
-        return 'Uploading to cloud storage...';
+        return 'Téléchargement vers le stockage cloud...';
       case 'completing':
-        return 'Finalizing upload...';
+        return 'Finalisation du téléchargement...';
       case 'success':
-        return 'Upload completed successfully!';
+        return '✅ Téléchargement réussi! Prêt pour le suivant...';
       case 'error':
-        return uploadState.error || 'Upload failed';
+        return uploadState.error || 'Échec du téléchargement';
       default:
         return '';
     }
@@ -215,10 +232,10 @@ export default function DirectUpload({
           >
             {getStatusIcon()}
             <span className="text-sm font-medium">
-              {isUploading ? 'Uploading...' : 'Choose file to upload'}
+              {isUploading ? 'Téléchargement en cours...' : 'Cliquez pour choisir un fichier'}
             </span>
             <span className="text-xs text-gray-500">
-              {acceptedTypes} • Max {maxSizeMB}MB • Direct upload bypasses server limits
+              {acceptedTypes} • Max {maxSizeMB}MB • Contourne les limites serveur
             </span>
           </label>
         </div>

@@ -372,19 +372,19 @@ export default function GalleryManagement() {
                 <Upload className="h-4 w-4 text-white" />
               </div>
               <h4 className="font-semibold text-purple-900 dark:text-purple-100">
-                Téléchargement Direct (Fichiers Volumineux)
+                Téléchargement de Fichiers
               </h4>
             </div>
             <p className="text-sm text-purple-800 dark:text-purple-200 mb-4">
-              Pour les fichiers de plus de 10MB, utilisez le téléchargement direct qui contourne les limites du serveur. 
-              Idéal pour les vidéos de haute qualité (jusqu'à 5GB).
+              Téléchargez vos vidéos et images directement. Supporte tous les formats et tailles jusqu'à 5GB.
+              Le système contourne automatiquement les limites du serveur.
             </p>
             
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
                 <Label className="text-purple-900 dark:text-purple-100 mb-2 block">
                   <Video className="h-4 w-4 inline mr-1" />
-                  Vidéo (Téléchargement Direct)
+                  Vidéo (.mp4, .mov, .avi...)
                 </Label>
                 <DirectUpload
                   bucket="memopyk-gallery"
@@ -429,7 +429,7 @@ export default function GalleryManagement() {
               <div>
                 <Label className="text-purple-900 dark:text-purple-100 mb-2 block">
                   <Image className="h-4 w-4 inline mr-1" />
-                  Image (Téléchargement Direct)
+                  Image (.jpg, .png, .gif...)
                 </Label>
                 <DirectUpload
                   bucket="memopyk-gallery"
@@ -475,10 +475,16 @@ export default function GalleryManagement() {
             </div>
             
             <div className="mt-4 p-3 bg-blue-50 dark:bg-blue-900/30 rounded border border-blue-200 dark:border-blue-700">
-              <p className="text-xs text-blue-800 dark:text-blue-200 flex items-center gap-1">
-                <CheckCircle className="h-3 w-3" />
-                Le téléchargement direct contourne les limites de Replit et permet des fichiers jusqu'à 5GB
-              </p>
+              <div className="flex items-start gap-2">
+                <CheckCircle className="h-4 w-4 text-blue-600 mt-0.5 flex-shrink-0" />
+                <div className="text-xs text-blue-800 dark:text-blue-200">
+                  <p className="font-medium mb-1">Guide d'utilisation :</p>
+                  <p>1. Téléchargez d'abord votre vidéo (.mp4, .mov, .avi...)</p>
+                  <p>2. Puis téléchargez votre image de couverture (.jpg, .png...)</p>
+                  <p>3. Chaque fichier se reset automatiquement après téléchargement</p>
+                  <p className="mt-1 font-medium">✨ Supporte jusqu'à 5GB • Contourne les limites serveur</p>
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -952,7 +958,7 @@ export default function GalleryManagement() {
       </div>
 
       {/* Cache Status Panel - Gallery Videos */}
-      {cacheStats && (
+      {cacheStats && typeof cacheStats === 'object' && (
         <div className="bg-green-50 dark:bg-green-900/20 p-4 rounded-lg border border-green-200 dark:border-green-800">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
@@ -964,7 +970,7 @@ export default function GalleryManagement() {
                   Cache Intelligent des Vidéos
                 </h4>
                 <p className="text-sm text-green-800 dark:text-green-200">
-                  {(cacheStats as { fileCount?: number; sizeMB?: number })?.fileCount || 0} vidéos en cache • {(cacheStats as { fileCount?: number; sizeMB?: number })?.sizeMB || 0}MB • Chargement ultra-rapide (~50ms)
+                  {typeof cacheStats === 'object' && cacheStats && 'fileCount' in cacheStats ? Number(cacheStats.fileCount) : 0} vidéos en cache • {typeof cacheStats === 'object' && cacheStats && 'sizeMB' in cacheStats ? Number(cacheStats.sizeMB) : 0}MB • Chargement ultra-rapide (~50ms)
                 </p>
               </div>
             </div>

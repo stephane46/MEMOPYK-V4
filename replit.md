@@ -507,7 +507,32 @@ The application follows a modern full-stack architecture with clear separation o
 - [ ] **Phase 10.3**: Performance monitoring and error tracking
 - [ ] **Phase 10.4**: User acceptance testing and launch
 
-## Current Status: Phase 8.4 - DIRECT SUPABASE UPLOAD SYSTEM COMPLETED (July 24, 2025)
+## Current Status: Phase 8.4.1 - UX/UI IMPROVEMENTS & BUG FIXES COMPLETED (July 24, 2025)
+
+### CRITICAL UX/UI BUG FIXES - COMPLETED (July 24, 2025)
+**User-Reported Issues Resolved:**
+✅ **Misleading File Size Messaging**: Changed confusing "Fichiers Volumineux" (Large Files) text to clear "Téléchargement de Fichiers" (File Upload)
+✅ **File Type Handling Bug**: Fixed critical issue where image upload expected video after video upload completion  
+✅ **Poor User Guidance**: Added comprehensive step-by-step usage guide with clear file format indicators
+✅ **No Auto-Reset**: Implemented automatic file input reset after successful uploads with 2-second delay
+✅ **Confusing Interface**: Enhanced labels with specific file format examples (.mp4, .mov, .avi... and .jpg, .png, .gif...)
+
+**Technical Improvements:**
+- DirectUpload component now resets file inputs automatically after successful upload
+- Clear French status messages throughout upload process
+- Auto-reset with 2-second delay prepares interface for next file
+- Enhanced usage guide explains sequential upload workflow (video first, then image)
+- File format indicators prevent user confusion about expected file types
+- Input validation and error handling improved with clearer messaging
+
+**User Experience Enhancements:**
+- Clear workflow: "1. Téléchargez d'abord votre vidéo → 2. Puis téléchargez votre image de couverture"
+- Auto-reset messaging: "✅ Téléchargement réussi! Prêt pour le suivant..."
+- Professional status indicators with French localization
+- Eliminated confusion about when to use direct upload (now works for all files)
+- Enhanced visual feedback during upload process
+
+## Previous Status: Phase 8.4 - DIRECT SUPABASE UPLOAD SYSTEM COMPLETED (July 24, 2025)
 
 ### BREAKTHROUGH: Direct Upload System for Large Files - COMPLETED (July 24, 2025)
 **Complete Infrastructure Limit Bypass Implementation:**
