@@ -276,7 +276,7 @@ export default function GallerySection() {
 
                           {/* Price Tag - Bottom Right (2) */}
                           {getItemPrice(item) && (
-                            <div className="absolute bottom-4 right-4 bg-orange-500 text-white px-4 py-2 rounded-full text-sm font-bold shadow-lg border-2 border-orange-400">
+                            <div className="absolute bottom-4 right-4 bg-gradient-to-r from-orange-500 to-orange-600 text-white px-5 py-2.5 rounded-full text-sm font-bold shadow-xl border-2 border-white/20 backdrop-blur-sm">
                               {getItemPrice(item)}
                             </div>
                           )}
