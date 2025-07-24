@@ -3,7 +3,8 @@ import { createServer, type Server } from "http";
 import { hybridStorage } from "./hybrid-storage";
 import { z } from "zod";
 import { videoCache } from "./video-cache";
-import { createReadStream, existsSync, statSync } from 'fs';
+import { createReadStream, existsSync, statSync, mkdirSync } from 'fs';
+import path from 'path';
 import multer from 'multer';
 import { createClient } from '@supabase/supabase-js';
 
@@ -22,9 +23,30 @@ const supabase = createClient(
   process.env.SUPABASE_SERVICE_KEY!
 );
 
+// Ensure uploads directory exists
+const uploadsDir = path.join(__dirname, '../uploads');
+try {
+  mkdirSync(uploadsDir, { recursive: true });
+  console.log(`📁 Upload directory ready: ${uploadsDir}`);
+} catch (error) {
+  console.error('Failed to create uploads directory:', error);
+}
+
+// Configure disk storage for videos (safer for large files)
+const videoStorage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, uploadsDir);
+  },
+  filename: (req, file, cb) => {
+    // Prepend timestamp to avoid name collisions
+    const uniqueName = `${Date.now()}-${file.originalname}`;
+    cb(null, uniqueName);
+  }
+});
+
 // Configure multer for file uploads
 const uploadVideo = multer({
-  storage: multer.memoryStorage(),
+  storage: videoStorage,
   limits: {
     fileSize: 5000 * 1024 * 1024, // 5000MB limit for videos
   },
@@ -58,8 +80,20 @@ const uploadVideo = multer({
   }
 });
 
+// Configure disk storage for images  
+const imageStorage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, uploadsDir);
+  },
+  filename: (req, file, cb) => {
+    // Prepend timestamp to avoid name collisions
+    const uniqueName = `${Date.now()}-${file.originalname}`;
+    cb(null, uniqueName);
+  }
+});
+
 const uploadImage = multer({
-  storage: multer.memoryStorage(),
+  storage: imageStorage,
   limits: {
     fileSize: 5000 * 1024 * 1024, // 5000MB limit for images
   },
@@ -304,10 +338,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // Clear cache if file exists (for overwrite scenario)
       videoCache.clearSpecificFile(filename);
 
-      // Upload to Supabase storage (gallery bucket) with overwrite enabled
+      // Read file from disk and upload to Supabase storage (gallery bucket) with overwrite enabled
+      const fileBuffer = require('fs').readFileSync(req.file.path);
       const { data: uploadData, error: uploadError } = await supabase.storage
         .from('memopyk-gallery')
-        .upload(filename, req.file.buffer, {
+        .upload(filename, fileBuffer, {
           contentType: req.file.mimetype,
           cacheControl: '3600',
           upsert: true  // Enable overwrite if file exists
@@ -333,6 +368,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
         // Don't fail the upload if caching fails
       }
       
+      // Clean up temporary file
+      try {
+        require('fs').unlinkSync(req.file.path);
+        console.log(`🧹 Cleaned up temporary file: ${req.file.path}`);
+      } catch (cleanupError) {
+        console.warn(`⚠️ Failed to cleanup temp file: ${(cleanupError as any).message}`);
+      }
+
       res.json({ 
         success: true, 
         url: videoUrl,
@@ -341,6 +384,17 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
     } catch (error) {
       console.error('Gallery video upload error:', error);
+      
+      // Clean up temporary file on error
+      if (req.file && req.file.path) {
+        try {
+          require('fs').unlinkSync(req.file.path);
+          console.log(`🧹 Cleaned up temporary file after error: ${req.file.path}`);
+        } catch (cleanupError) {
+          console.warn(`⚠️ Failed to cleanup temp file: ${(cleanupError as any).message}`);
+        }
+      }
+      
       res.status(500).json({ error: "Failed to upload gallery video" });
     }
   });
@@ -358,10 +412,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       console.log(`📤 Uploading gallery image: ${filename} (${(req.file.size / 1024 / 1024).toFixed(2)}MB) - Overwrite mode`);
 
-      // Upload to Supabase storage (gallery bucket) with overwrite enabled
+      // Read file from disk and upload to Supabase storage (gallery bucket) with overwrite enabled
+      const fileBuffer = require('fs').readFileSync(req.file.path);
       const { data: uploadData, error: uploadError } = await supabase.storage
         .from('memopyk-gallery')
-        .upload(filename, req.file.buffer, {
+        .upload(filename, fileBuffer, {
           contentType: req.file.mimetype,
           cacheControl: '3600',
           upsert: true  // Enable overwrite if file exists
@@ -374,6 +429,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       const imageUrl = `https://supabase.memopyk.org/storage/v1/object/public/memopyk-gallery/${filename}`;
       
+      // Clean up temporary file
+      try {
+        require('fs').unlinkSync(req.file.path);
+        console.log(`🧹 Cleaned up temporary file: ${req.file.path}`);
+      } catch (cleanupError) {
+        console.warn(`⚠️ Failed to cleanup temp file: ${(cleanupError as any).message}`);
+      }
+      
       res.json({ 
         success: true, 
         url: imageUrl,
@@ -384,6 +447,17 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
     } catch (error) {
       console.error('Gallery image upload error:', error);
+      
+      // Clean up temporary file on error
+      if (req.file && req.file.path) {
+        try {
+          require('fs').unlinkSync(req.file.path);
+          console.log(`🧹 Cleaned up temporary file after error: ${req.file.path}`);
+        } catch (cleanupError) {
+          console.warn(`⚠️ Failed to cleanup temp file: ${(cleanupError as any).message}`);
+        }
+      }
+      
       res.status(500).json({ error: "Failed to upload gallery image" });
     }
   });
@@ -418,10 +492,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       console.log(`📤 Uploading static image: ${filename} (300x200 PNG) - Fresh upload`);
 
-      // Upload to Supabase storage (gallery bucket) 
+      // Read file from disk and upload to Supabase storage (gallery bucket) 
+      const fileBuffer = require('fs').readFileSync(req.file.path);
       const { data: uploadData, error: uploadError } = await supabase.storage
         .from('memopyk-gallery')
-        .upload(filename, req.file.buffer, {
+        .upload(filename, fileBuffer, {
           contentType: 'image/png',
           cacheControl: '300', // Shorter cache for thumbnails (5 minutes)
           upsert: false  // Use explicit delete+upload for better cache invalidation
@@ -450,6 +525,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
         // Continue anyway since the upload succeeded
       }
       
+      // Clean up temporary file
+      try {
+        require('fs').unlinkSync(req.file.path);
+        console.log(`🧹 Cleaned up temporary file: ${req.file.path}`);
+      } catch (cleanupError) {
+        console.warn(`⚠️ Failed to cleanup temp file: ${(cleanupError as any).message}`);
+      }
+
       res.json({ 
         success: true, 
         url: staticImageUrl,
@@ -461,6 +544,17 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
     } catch (error) {
       console.error('Static image upload error:', error);
+      
+      // Clean up temporary file on error
+      if (req.file && req.file.path) {
+        try {
+          require('fs').unlinkSync(req.file.path);
+          console.log(`🧹 Cleaned up temporary file after error: ${req.file.path}`);
+        } catch (cleanupError) {
+          console.warn(`⚠️ Failed to cleanup temp file: ${(cleanupError as any).message}`);
+        }
+      }
+      
       res.status(500).json({ error: "Failed to upload static image" });
     }
   });
