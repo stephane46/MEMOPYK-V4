@@ -289,11 +289,8 @@ export function HeroVideoSection() {
         {isPlaying ? <Pause className="h-5 w-5 sm:h-6 sm:w-6" /> : <Play className="h-5 w-5 sm:h-6 sm:w-6" />}
       </Button>
 
-      {/* Video Title Overlay */}
+      {/* Video Counter Overlay */}
       <div className="absolute top-4 sm:top-8 left-4 sm:left-8 text-white z-10">
-        <p className="text-xs sm:text-sm font-poppins opacity-80">
-          {language === 'fr-FR' ? currentVideo.title_fr : currentVideo.title_en}
-        </p>
         <p className="text-xs opacity-60">
           {currentVideoIndex + 1} / {activeVideos.length}
         </p>
