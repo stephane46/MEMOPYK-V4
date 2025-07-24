@@ -28,6 +28,8 @@ export class VideoCache {
       console.error(`❌ Cache directory creation failed: ${error.message}`);
       console.error(`❌ Cache dir path: ${this.cacheDir}`);
       console.error(`❌ Process CWD: ${process.cwd()}`);
+      // Don't throw - allow server to continue without cache
+      console.log(`⚠️ Server will continue without video cache - videos will stream directly from CDN`);
     }
   }
 
@@ -52,11 +54,12 @@ export class VideoCache {
    * Check if video exists in local cache and is fresh
    */
   isVideoCached(filename: string): boolean {
-    const cacheFile = this.getCacheFilePath(filename);
-    
-    if (!existsSync(cacheFile)) {
-      return false;
-    }
+    try {
+      const cacheFile = this.getCacheFilePath(filename);
+      
+      if (!existsSync(cacheFile)) {
+        return false;
+      }
 
     // Check if cache file is too old
     const stats = statSync(cacheFile);
@@ -69,16 +72,25 @@ export class VideoCache {
     }
 
     return true;
+    } catch (error: any) {
+      console.error(`❌ Cache check failed for ${filename}: ${error.message}`);
+      return false;
+    }
   }
 
   /**
    * Get cached video file path
    */
   getCachedVideoPath(filename: string): string | null {
-    if (this.isVideoCached(filename)) {
-      return this.getCacheFilePath(filename);
+    try {
+      if (this.isVideoCached(filename)) {
+        return this.getCacheFilePath(filename);
+      }
+      return null;
+    } catch (error: any) {
+      console.error(`❌ Failed to get cached video path for ${filename}: ${error.message}`);
+      return null;
     }
-    return null;
   }
 
   /**
@@ -297,19 +309,26 @@ export class VideoCache {
    * Download and cache a video from Supabase
    */
   async downloadAndCacheVideo(filename: string, customUrl?: string): Promise<void> {
-    const fullVideoUrl = customUrl || `https://supabase.memopyk.org/storage/v1/object/public/memopyk-gallery/${filename}`;
-    const cacheFile = this.getCacheFilePath(filename);
-    
-    console.log(`📥 Downloading ${filename} from Supabase...`);
-    
-    const fetch = (await import('node-fetch')).default;
-    const response = await fetch(fullVideoUrl, {
-      headers: { 'User-Agent': 'MEMOPYK-CachePreloader/1.0' }
-    });
-    
-    if (!response.ok) {
-      throw new Error(`Failed to download ${filename}: ${response.status} ${response.statusText}`);
-    }
+    try {
+      // Ensure cache directory exists before downloading
+      if (!existsSync(this.cacheDir)) {
+        require('fs').mkdirSync(this.cacheDir, { recursive: true });
+        console.log(`📁 Created cache directory for download: ${this.cacheDir}`);
+      }
+      
+      const fullVideoUrl = customUrl || `https://supabase.memopyk.org/storage/v1/object/public/memopyk-gallery/${filename}`;
+      const cacheFile = this.getCacheFilePath(filename);
+      
+      console.log(`📥 Downloading ${filename} from Supabase...`);
+      
+      const fetch = (await import('node-fetch')).default;
+      const response = await fetch(fullVideoUrl, {
+        headers: { 'User-Agent': 'MEMOPYK-CachePreloader/1.0' }
+      });
+      
+      if (!response.ok) {
+        throw new Error(`Failed to download ${filename}: ${response.status} ${response.statusText}`);
+      }
     
     return new Promise((resolve, reject) => {
       const writeStream = createWriteStream(cacheFile);
@@ -327,6 +346,10 @@ export class VideoCache {
         reject(new Error('No response body'));
       }
     });
+    } catch (error: any) {
+      console.error(`❌ Failed to download and cache ${filename}: ${error.message}`);
+      throw error;
+    }
   }
 
   /**
