@@ -318,8 +318,13 @@ export default function GallerySection() {
 
                     {/* Card Content */}
                     <div className="px-6 pt-1 pb-6">
+                      {/* Title (4) - Fixed height: 32px */}
+                      <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-1 h-8 overflow-hidden">
+                        {getItemTitle(item)}
+                      </h3>
+                          
                       {/* Duration (5) - Clock icon, single line height */}
-                      <div className="mb-2 h-6 overflow-hidden">
+                      <div className="mb-3 h-6 overflow-hidden">
                         <div className="flex items-center gap-2">
                           <Clock className="w-4 h-4 flex-shrink-0" style={{ color: '#D67C4A' }} />
                           <div className="text-sm leading-4" style={{ color: '#4B5563' }}>
@@ -327,11 +332,6 @@ export default function GallerySection() {
                           </div>
                         </div>
                       </div>
-
-                      {/* Title (4) - Fixed height: 32px */}
-                      <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-3 h-8 overflow-hidden">
-                        {getItemTitle(item)}
-                      </h3>
                       
                       {/* Situation (6) - Users icon, fixed height: 80px (5 lines max) */}
                       <div className="mb-3 h-20 overflow-hidden">
