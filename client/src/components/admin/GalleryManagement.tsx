@@ -136,6 +136,16 @@ export default function GalleryManagement() {
   const handleVideoUpload = async (file: File | undefined) => {
     if (!file) return;
     
+    // COMPREHENSIVE DEBUG LOGGING FOR PRODUCTION DEBUGGING
+    console.log('🚀 VIDEO UPLOAD DEBUG - Starting upload process');
+    console.log(`📁 File details:`, {
+      name: file.name,
+      size: file.size,
+      sizeMB: (file.size / 1024 / 1024).toFixed(2),
+      type: file.type,
+      lastModified: new Date(file.lastModified).toISOString()
+    });
+    
     setUploading(true);
     setUploadProgress(0);
     setUploadStatus(`Téléchargement de ${file.name} (${(file.size / 1024 / 1024).toFixed(1)}MB)...`);
@@ -143,6 +153,8 @@ export default function GalleryManagement() {
     try {
       const formData = new FormData();
       formData.append('video', file);
+      
+      console.log('📦 FormData prepared, making fetch request to /api/gallery/upload-video');
       
       // Simulate progress for user feedback
       const progressInterval = setInterval(() => {
@@ -152,9 +164,17 @@ export default function GalleryManagement() {
         });
       }, 500);
       
+      console.log('🌐 Sending POST request...');
       const response = await fetch('/api/gallery/upload-video', {
         method: 'POST',
         body: formData,
+      });
+      
+      console.log('📨 Response received:', {
+        status: response.status,
+        statusText: response.statusText,
+        ok: response.ok,
+        headers: Object.fromEntries(response.headers.entries())
       });
       
       clearInterval(progressInterval);
@@ -162,48 +182,65 @@ export default function GalleryManagement() {
       setUploadStatus('Finalisation...');
       
       if (!response.ok) {
+        console.log('❌ Upload failed - response not OK');
+        
         // Handle HTTP errors
         let errorMessage = "Échec du téléchargement de la vidéo";
         
         if (response.status === 413) {
+          console.log('🚫 413 Error: File too large');
           errorMessage = "Fichier trop volumineux. Taille maximale: 5000MB";
         } else if (response.status === 400) {
+          console.log('🚫 400 Error: Bad request');
           errorMessage = "Format de fichier invalide ou données manquantes";
         } else if (response.status === 500) {
+          console.log('🚫 500 Error: Server error');
           errorMessage = "Erreur serveur. Réessayez dans quelques minutes";
         }
         
         // Try to get error details from response
         try {
           const errorData = await response.json();
+          console.log('📋 Server error response:', errorData);
           if (errorData.error) {
             errorMessage = errorData.error;
           }
-        } catch {
+        } catch (parseError) {
+          console.log('⚠️ Failed to parse error response:', parseError);
           // If JSON parsing fails, use default error message
         }
         
+        console.log('🔥 Final error message:', errorMessage);
         throw new Error(errorMessage);
       }
       
+      console.log('✅ Response OK - parsing JSON...');
       const result = await response.json();
-      console.log('Video upload result:', result);
+      console.log('📊 Video upload result:', result);
+      
       if (result.success) {
+        console.log('🎉 Upload SUCCESS!');
         toast({ 
           title: "✅ Succès", 
           description: "Vidéo téléchargée avec succès!",
           className: "bg-green-50 dark:bg-green-900/20 border-green-200 dark:border-green-800"
         });
-        console.log('Returning video URL:', result.url);
+        console.log('🔗 Returning video URL:', result.url);
         return result.url;
       } else {
+        console.log('❌ Upload failed despite 200 response:', result);
         throw new Error(result.error || "Échec du téléchargement");
       }
     } catch (error: any) {
-      console.error('Video upload error:', error);
+      console.log('💥 UPLOAD ERROR CAUGHT:');
+      console.log('Error object:', error);
+      console.log('Error message:', error.message);
+      console.log('Error name:', error.name);
+      console.log('Error stack:', error.stack);
       
       // Show specific error message to user
       const errorMessage = error.message || "Échec du téléchargement de la vidéo";
+      console.log('🔥 Showing error to user:', errorMessage);
       
       toast({ 
         title: "❌ Erreur de téléchargement", 
@@ -212,6 +249,7 @@ export default function GalleryManagement() {
         className: "bg-red-50 dark:bg-red-900/20 border-red-200 dark:border-red-800"
       });
     } finally {
+      console.log('🏁 Upload process finished - cleaning up');
       setUploading(false);
       setUploadProgress(0);
       setUploadStatus('');
