@@ -185,6 +185,45 @@ export default function GallerySection() {
           </p>
         </div>
 
+        {/* Featured Video Preview */}
+        {galleryItems.length > 0 && (
+          <div className="mb-16">
+            <div className="max-w-4xl mx-auto">
+              <video 
+                controls 
+                preload="metadata"
+                className="w-full rounded-2xl shadow-2xl"
+                poster={galleryItems[0].staticImageUrl || (language === 'fr-FR' ? galleryItems[0].imageUrlFr : galleryItems[0].imageUrlEn)}
+                onLoadStart={() => console.log('🎬 FEATURED VIDEO: Load started')}
+                onLoadedMetadata={() => console.log('🎬 FEATURED VIDEO: Metadata loaded')}
+                onCanPlay={() => console.log('🎬 FEATURED VIDEO: Can play - SUCCESS!')}
+                onError={(e) => console.error('❌ FEATURED VIDEO ERROR:', e)}
+                onPlay={() => {
+                  console.log('🎬 FEATURED VIDEO: Playing started');
+                  trackVideoView(`featured-gallery-${galleryItems[0].id}`, 0, false);
+                }}
+              >
+                <source 
+                  src={language === 'fr-FR' ? galleryItems[0].videoUrlFr : galleryItems[0].videoUrlEn} 
+                  type="video/mp4" 
+                />
+                Your browser does not support the video tag.
+              </video>
+              
+              <div className="mt-6 text-center">
+                <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">
+                  {language === 'fr-FR' ? galleryItems[0].titleFr : galleryItems[0].titleEn}
+                </h3>
+                {(language === 'fr-FR' ? galleryItems[0].storyFr : galleryItems[0].storyEn) && (
+                  <p className="text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
+                    {language === 'fr-FR' ? galleryItems[0].storyFr : galleryItems[0].storyEn}
+                  </p>
+                )}
+              </div>
+            </div>
+          </div>
+        )}
+
         {/* Gallery Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
           {galleryItems.map((item, index) => {
