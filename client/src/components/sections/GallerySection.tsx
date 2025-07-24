@@ -5,7 +5,7 @@ import { useVideoAnalytics } from "@/hooks/useVideoAnalytics";
 import { Button } from "@/components/ui/button";
 import { VideoOverlay } from "@/components/gallery/VideoOverlay";
 import { Badge } from "@/components/ui/badge";
-import { Play, Eye, Star, ArrowRight, Image as ImageIcon, Film, Users } from "lucide-react";
+import { Play, Eye, Star, ArrowRight, Image as ImageIcon, Film, Users, Clock } from "lucide-react";
 // Gallery item interface matching the new schema
 interface GalleryItem {
   id: string | number;
@@ -323,10 +323,10 @@ export default function GallerySection() {
                         {getItemTitle(item)}
                       </h3>
                           
-                      {/* Duration (5) - Film icon, single line height */}
+                      {/* Duration (5) - Clock icon, single line height */}
                       <div className="mb-3 h-6 overflow-hidden">
-                        <div className="flex items-start gap-2">
-                          <Film className="w-4 h-4 mt-1 flex-shrink-0" style={{ color: '#D67C4A' }} />
+                        <div className="flex items-center gap-2">
+                          <Clock className="w-4 h-4 flex-shrink-0" style={{ color: '#D67C4A' }} />
                           <div className="text-sm leading-4" style={{ color: '#4B5563' }}>
                             {getItemDuration(item) || <div className="h-4"></div>}
                           </div>
