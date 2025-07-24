@@ -13,14 +13,22 @@ export class VideoCache {
     this.maxCacheAge = 24 * 60 * 60 * 1000; // 24 hours
     
     // Ensure cache directory exists
-    if (!existsSync(this.cacheDir)) {
-      require('fs').mkdirSync(this.cacheDir, { recursive: true });
+    try {
+      if (!existsSync(this.cacheDir)) {
+        require('fs').mkdirSync(this.cacheDir, { recursive: true });
+        console.log(`📁 Created cache directory: ${this.cacheDir}`);
+      }
+      
+      console.log(`✅ Video cache initialized: ${this.cacheDir}`);
+      console.log(`📊 NODE_ENV: ${process.env.NODE_ENV || 'undefined'}`);
+      
+      // Proactively preload critical videos on startup
+      this.preloadCriticalVideos();
+    } catch (error: any) {
+      console.error(`❌ Cache directory creation failed: ${error.message}`);
+      console.error(`❌ Cache dir path: ${this.cacheDir}`);
+      console.error(`❌ Process CWD: ${process.cwd()}`);
     }
-    
-    console.log(`✅ Video cache initialized: ${this.cacheDir}`);
-    
-    // Proactively preload critical videos on startup
-    this.preloadCriticalVideos();
   }
 
   /**

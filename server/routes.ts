@@ -588,9 +588,21 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const range = req.headers.range;
 
       // Check if video exists in cache
-      const cachedVideo = videoCache.getCachedVideoPath(videoFilename);
+      let cachedVideo = videoCache.getCachedVideoPath(videoFilename);
       console.log(`   - Cache path: "${cachedVideo}"`);
       console.log(`   - Cache exists: ${cachedVideo && existsSync(cachedVideo)}`);
+      
+      // If not cached, try to download it now (production failsafe)
+      if (!cachedVideo) {
+        console.log(`⚡ Video not cached: ${videoFilename} - attempting on-demand download...`);
+        try {
+          await videoCache.downloadAndCacheVideo(videoFilename);
+          cachedVideo = videoCache.getCachedVideoPath(videoFilename);
+          console.log(`✅ On-demand download successful for ${videoFilename}`);
+        } catch (downloadError: any) {
+          console.log(`❌ On-demand download failed: ${downloadError.message} - will try direct CDN`);
+        }
+      }
       
       if (cachedVideo && existsSync(cachedVideo)) {
         console.log(`📦 Serving from cache: ${videoFilename}`);
