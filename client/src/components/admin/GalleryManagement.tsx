@@ -1016,7 +1016,7 @@ export default function GalleryManagement() {
               <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
                 {/* Preview - Show static cropped image or original image thumbnail with video overlay icon */}
                 <div className="space-y-3">
-                  <div className="aspect-video bg-gray-100 dark:bg-gray-800 rounded-lg relative overflow-hidden">
+                  <div className="aspect-[3/2] bg-gray-100 dark:bg-gray-800 rounded-lg relative overflow-hidden">
                     {(item.static_image_url || item.image_url_en) ? (
                       <div 
                         className="w-full h-full cursor-pointer group relative"
