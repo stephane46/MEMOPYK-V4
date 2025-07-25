@@ -13,8 +13,8 @@ interface RichTextEditorProps {
 export function RichTextEditor({ value, onChange, placeholder, className }: RichTextEditorProps) {
   const quillRef = useRef<ReactQuill>(null);
 
-  // Custom URL link handler
-  const urlHandler = () => {
+  // Custom link handler that works for both URLs and emails
+  const linkHandler = () => {
     const quill = quillRef.current?.getEditor();
     if (!quill) return;
 
@@ -22,42 +22,27 @@ export function RichTextEditor({ value, onChange, placeholder, className }: Rich
     if (!range) return;
 
     const currentLink = quill.getFormat(range.index, range.length).link;
-    const url = prompt('Enter URL:', currentLink || 'https://');
+    const input = prompt('Enter URL or email address:', currentLink || '');
     
-    if (url === null) return; // User cancelled
+    if (input === null) return; // User cancelled
     
-    if (url === '') {
+    if (input === '') {
       // Remove link
       quill.format('link', false);
     } else {
-      // Add proper protocol if missing
-      let formattedUrl = url;
-      if (!/^https?:\/\//i.test(url)) {
-        formattedUrl = `https://${url}`;
+      // Smart link formatting
+      let formattedLink = input;
+      
+      // Check if it's an email (contains @ and no protocol)
+      if (input.includes('@') && !/^https?:\/\//i.test(input) && !/^mailto:/i.test(input)) {
+        formattedLink = `mailto:${input}`;
       }
-      quill.format('link', formattedUrl);
-    }
-  };
-
-  // Custom email link handler
-  const emailHandler = () => {
-    const quill = quillRef.current?.getEditor();
-    if (!quill) return;
-
-    const range = quill.getSelection();
-    if (!range) return;
-
-    const currentLink = quill.getFormat(range.index, range.length).link;
-    const currentEmail = currentLink?.startsWith('mailto:') ? currentLink.replace('mailto:', '') : '';
-    const email = prompt('Enter email address:', currentEmail);
-    
-    if (email === null) return; // User cancelled
-    
-    if (email === '') {
-      // Remove link
-      quill.format('link', false);
-    } else {
-      quill.format('link', `mailto:${email}`);
+      // Check if it's a URL that needs protocol
+      else if (!input.includes('@') && !/^https?:\/\//i.test(input) && !/^mailto:/i.test(input)) {
+        formattedLink = `https://${input}`;
+      }
+      
+      quill.format('link', formattedLink);
     }
   };
 
