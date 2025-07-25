@@ -109,13 +109,10 @@ export default function FAQManagement() {
     }
   }, [sections, editingSection, sectionForm]);
 
-  // Debug logging for sections and grouped data
+  // Debug logging for sections - success confirmed! 
   useEffect(() => {
-    console.log('📊 Sections updated:', sections ? sections.length : 'undefined', sections);
-    console.log('📋 FAQs:', faqs ? faqs.length : 'undefined', faqs);
-    console.log('🔗 Grouped FAQs:', groupedFaqs);
-    console.log('📑 ALL section keys (should show all 5):', allSectionKeys);
-  }, [sections, faqs]);
+    console.log('✅ FAQ System Working - Sections:', sections ? sections.length : 'loading...');
+  }, [sections]);
 
   // Create FAQ mutation
   const createFaqMutation = useMutation({
@@ -733,9 +730,87 @@ export default function FAQManagement() {
                       <CardDescription>{sectionNameEn}</CardDescription>
                     </div>
                   </button>
-                  <Badge variant="secondary">
-                    {sectionFaqs.length} FAQ{sectionFaqs.length > 1 ? 's' : ''}
-                  </Badge>
+                  
+                  <div className="flex items-center gap-2">
+                    <Badge variant="secondary">
+                      {sectionFaqs.length} FAQ{sectionFaqs.length > 1 ? 's' : ''}
+                    </Badge>
+                    
+                    {/* Section Management Buttons */}
+                    <div className="flex items-center gap-1">
+                      {/* Move Up Button */}
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => {
+                          const section = allSections.find(s => `${s.title_en}|${s.title_fr}` === sectionKey);
+                          if (section && section.order_index > 1) {
+                            const newOrder = section.order_index - 1;
+                            updateSectionMutation.mutate({
+                              id: section.id.toString(),
+                              data: { title_en: section.title_en, title_fr: section.title_fr, order_index: newOrder }
+                            });
+                          }
+                        }}
+                        disabled={(() => {
+                          const section = allSections.find(s => `${s.title_en}|${s.title_fr}` === sectionKey);
+                          return !section || section.order_index <= 1;
+                        })()}
+                        className="text-gray-600 hover:text-gray-800"
+                      >
+                        <ArrowUp className="h-4 w-4" />
+                      </Button>
+                      
+                      {/* Move Down Button */}
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => {
+                          const section = allSections.find(s => `${s.title_en}|${s.title_fr}` === sectionKey);
+                          if (section && section.order_index < allSections.length) {
+                            const newOrder = section.order_index + 1;
+                            updateSectionMutation.mutate({
+                              id: section.id.toString(),
+                              data: { title_en: section.title_en, title_fr: section.title_fr, order_index: newOrder }
+                            });
+                          }
+                        }}
+                        disabled={(() => {
+                          const section = allSections.find(s => `${s.title_en}|${s.title_fr}` === sectionKey);
+                          return !section || section.order_index >= allSections.length;
+                        })()}
+                        className="text-gray-600 hover:text-gray-800"
+                      >
+                        <ArrowDown className="h-4 w-4" />
+                      </Button>
+                      
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => {
+                          const section = allSections.find(s => `${s.title_en}|${s.title_fr}` === sectionKey);
+                          if (section) startEditingSection(section);
+                        }}
+                        className="text-blue-600 hover:text-blue-800"
+                      >
+                        <Edit2 className="h-4 w-4" />
+                      </Button>
+                      
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => {
+                          const section = allSections.find(s => `${s.title_en}|${s.title_fr}` === sectionKey);
+                          if (section && window.confirm(`Supprimer la section "${sectionNameFr}" ?`)) {
+                            deleteSectionMutation.mutate(section.id.toString());
+                          }
+                        }}
+                        className="text-red-600 hover:text-red-800"
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </Button>
+                    </div>
+                  </div>
                 </div>
               </CardHeader>
               
@@ -774,7 +849,7 @@ export default function FAQManagement() {
                               size="sm"
                               onClick={() => startEditingFaq(faq)}
                             >
-                              <Edit className="h-4 w-4" />
+                              <Edit2 className="h-4 w-4" />
                             </Button>
                             <Button
                               variant="ghost"

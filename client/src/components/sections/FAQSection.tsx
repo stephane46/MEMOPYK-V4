@@ -54,6 +54,15 @@ export default function FAQSection() {
 
   // Sort sections by order
   const sortedSections = [...sections].sort((a, b) => a.order_index - b.order_index);
+  
+  // Debug logging to see what's happening
+  React.useEffect(() => {
+    console.log('🔍 FAQ Public Display Debug:');
+    console.log('- Sections:', sections.length);
+    console.log('- Active FAQs:', activeFAQs.length);
+    console.log('- FAQs by section:', faqsBySection);
+    console.log('- Sorted sections:', sortedSections);
+  }, [sections, activeFAQs]);
 
   const toggleFAQ = (faqId: number) => {
     setOpenFAQ(openFAQ === faqId ? null : faqId);
