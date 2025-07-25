@@ -639,6 +639,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const staticImageUrl = `https://supabase.memopyk.org/storage/v1/object/public/memopyk-gallery/${filename}?v=${timestamp}`;
       
       console.log(`✅ Static image uploaded successfully: ${staticImageUrl}`);
+      console.log(`🔄 ABOUT TO UPDATE DATABASE - Current time: ${new Date().toISOString()}`);
       
       // Update the gallery item with the static image URL and crop settings
       try {
