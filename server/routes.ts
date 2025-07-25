@@ -640,29 +640,57 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       console.log(`✅ Static image uploaded successfully: ${staticImageUrl}`);
       
-      // DIRECT JSON FILE UPDATE - bypass hybrid storage
-      const fs = require('fs');
-      const path = require('path');
+      // FORCE DATABASE UPDATE - multiple approaches
+      console.log(`🔄 FORCING DATABASE UPDATE for item ${itemId}`);
+      
       try {
+        // Method 1: Direct file system update
+        console.log(`📝 Method 1: Direct JSON file update`);
+        const fs = require('fs');
+        const path = require('path');
         const jsonPath = path.join(__dirname, 'data', 'gallery-items.json');
+        
+        console.log(`📂 Reading file: ${jsonPath}`);
         const rawData = fs.readFileSync(jsonPath, 'utf8');
         const items = JSON.parse(rawData);
+        console.log(`📊 Found ${items.length} items in database`);
         
-        // Find and update the item directly
         const itemIndex = items.findIndex((item: any) => item.id.toString() === itemId.toString());
+        console.log(`🔍 Item ${itemId} found at index: ${itemIndex}`);
+        
         if (itemIndex !== -1) {
+          console.log(`📝 Before update: ${items[itemIndex].static_image_url}`);
           items[itemIndex].static_image_url = staticImageUrl;
           items[itemIndex].crop_settings = cropSettings;
           items[itemIndex].updated_at = new Date().toISOString();
+          console.log(`📝 After update: ${items[itemIndex].static_image_url}`);
           
-          // Write back to file immediately
           fs.writeFileSync(jsonPath, JSON.stringify(items, null, 2));
-          console.log(`✅ DIRECT UPDATE: Gallery item ${itemId} updated in JSON file`);
+          console.log(`✅ File written successfully`);
+          
+          // Verify the write
+          const verifyData = fs.readFileSync(jsonPath, 'utf8');
+          const verifyItems = JSON.parse(verifyData);
+          const verifyItem = verifyItems.find((item: any) => item.id.toString() === itemId.toString());
+          console.log(`🔍 Verification - Updated URL: ${verifyItem?.static_image_url}`);
         } else {
-          console.error(`❌ DIRECT UPDATE: Item ${itemId} not found in JSON file`);
+          console.error(`❌ Item ${itemId} not found in ${items.length} items`);
+          console.error(`❌ Available IDs:`, items.map((i: any) => i.id));
         }
-      } catch (directError) {
-        console.error('❌ DIRECT UPDATE FAILED:', directError);
+      } catch (error) {
+        console.error('❌ DIRECT UPDATE ERROR:', error);
+      }
+      
+      // Method 2: Try hybrid storage as backup
+      try {
+        console.log(`🔄 Method 2: Hybrid storage backup`);
+        await hybridStorage.updateGalleryItem(itemId, {
+          static_image_url: staticImageUrl,
+          crop_settings: cropSettings
+        });
+        console.log(`✅ Hybrid storage update completed`);
+      } catch (hybridError) {
+        console.error('❌ Hybrid storage failed:', hybridError);
       }
       
       // Clean up temporary file
