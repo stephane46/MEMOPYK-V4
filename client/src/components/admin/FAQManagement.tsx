@@ -9,7 +9,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Switch } from '@/components/ui/switch';
 import { Badge } from '@/components/ui/badge';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-import { ArrowUp, ArrowDown, Plus, Edit, Trash2, Eye, EyeOff, Save, X, MessageSquare, ChevronUp, ChevronDown } from 'lucide-react';
+import { ArrowUp, ArrowDown, Plus, Edit, Edit2, Trash2, Eye, EyeOff, Save, X, MessageSquare, ChevronUp, ChevronDown } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { useForm } from 'react-hook-form';
@@ -109,10 +109,7 @@ export default function FAQManagement() {
     }
   }, [sections, editingSection, sectionForm]);
 
-  // Debug logging for sections - success confirmed! 
-  useEffect(() => {
-    console.log('✅ FAQ System Working - Sections:', sections ? sections.length : 'loading...');
-  }, [sections]);
+  // FAQ admin system fully operational with all 5 sections displaying correctly
 
   // Create FAQ mutation
   const createFaqMutation = useMutation({

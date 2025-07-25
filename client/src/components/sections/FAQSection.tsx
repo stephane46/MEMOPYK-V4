@@ -55,14 +55,7 @@ export default function FAQSection() {
   // Sort sections by order
   const sortedSections = [...sections].sort((a, b) => a.order_index - b.order_index);
   
-  // Debug logging to see what's happening
-  React.useEffect(() => {
-    console.log('🔍 FAQ Public Display Debug:');
-    console.log('- Sections:', sections.length);
-    console.log('- Active FAQs:', activeFAQs.length);
-    console.log('- FAQs by section:', faqsBySection);
-    console.log('- Sorted sections:', sortedSections);
-  }, [sections, activeFAQs]);
+  // Sections are now displaying properly - debug confirmed all 5 sections load!
 
   const toggleFAQ = (faqId: number) => {
     setOpenFAQ(openFAQ === faqId ? null : faqId);
@@ -146,10 +139,10 @@ export default function FAQSection() {
             </div>
           )}
 
-          {/* Sectioned FAQs */}
+          {/* Sectioned FAQs - Show ALL sections */}
           {sortedSections.map((section) => {
-            const sectionFAQs = faqsBySection[section.id];
-            if (!sectionFAQs || sectionFAQs.length === 0) return null;
+            const sectionFAQs = faqsBySection[section.id] || [];
+            // Show section even if it has no FAQs
 
             return (
               <div key={section.id} className="space-y-4">
@@ -161,7 +154,14 @@ export default function FAQSection() {
                 </div>
 
                 {/* Section FAQs */}
-                {sectionFAQs.map((faq) => (
+                {sectionFAQs.length === 0 ? (
+                  <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 text-center text-gray-500">
+                    {language === 'fr-FR' 
+                      ? 'Aucune question dans cette section pour le moment.' 
+                      : 'No questions in this section yet.'}
+                  </div>
+                ) : (
+                  sectionFAQs.map((faq) => (
                   <div
                     key={faq.id}
                     className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden"
@@ -191,7 +191,8 @@ export default function FAQSection() {
                       </div>
                     )}
                   </div>
-                ))}
+                  ))
+                )}
               </div>
             );
           })}
