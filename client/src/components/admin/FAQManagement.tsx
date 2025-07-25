@@ -436,7 +436,8 @@ export const FAQManagement: React.FC = () => {
       </div>
 
       {/* Create/Edit FAQ Dialog */}
-      <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
+      <Dialog open={showCreateDialog} onOpenChange={setShowCreateDialog}>
+        <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle>
             {editingFaq ? 'Modifier la FAQ' : 'Nouvelle FAQ'}
@@ -445,42 +446,36 @@ export const FAQManagement: React.FC = () => {
         
         <Form {...faqForm}>
           <form onSubmit={faqForm.handleSubmit(editingFaq ? handleUpdateFaq : handleCreateFaq)} className="space-y-6">
-            {/* Section Information */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <FormField
-                control={faqForm.control}
-                name="sectionNameFr"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Section (Français)</FormLabel>
-                    <FormControl>
-                      <Input {...field} placeholder="Ex: Créer votre film souvenir" />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              
-              <FormField
-                control={faqForm.control}
-                name="sectionNameEn"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Section (English)</FormLabel>
-                    <FormControl>
-                      <Input {...field} placeholder="Ex: Create your memory film" />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </div>
+            {/* Section Selection */}
+            <FormField
+              control={faqForm.control}
+              name="section_id"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Section</FormLabel>
+                  <FormControl>
+                    <select 
+                      {...field} 
+                      className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                      onChange={(e) => field.onChange(parseInt(e.target.value))}
+                    >
+                      {sections.map(section => (
+                        <option key={section.id} value={section.id}>
+                          {section.title_fr} / {section.title_en}
+                        </option>
+                      ))}
+                    </select>
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
 
             {/* Question */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <FormField
                 control={faqForm.control}
-                name="questionFr"
+                name="question_fr"
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Question (Français)</FormLabel>
@@ -494,7 +489,7 @@ export const FAQManagement: React.FC = () => {
               
               <FormField
                 control={faqForm.control}
-                name="questionEn"
+                name="question_en"
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Question (English)</FormLabel>
@@ -511,7 +506,7 @@ export const FAQManagement: React.FC = () => {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <FormField
                 control={faqForm.control}
-                name="answerFr"
+                name="answer_fr"
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Réponse (Français)</FormLabel>
@@ -525,7 +520,7 @@ export const FAQManagement: React.FC = () => {
               
               <FormField
                 control={faqForm.control}
-                name="answerEn"
+                name="answer_en"
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Réponse (English)</FormLabel>
@@ -539,28 +534,10 @@ export const FAQManagement: React.FC = () => {
             </div>
 
             {/* Order and Status */}
-            <div className="grid grid-cols-3 gap-4">
+            <div className="grid grid-cols-2 gap-4">
               <FormField
                 control={faqForm.control}
-                name="sectionOrder"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Ordre de section</FormLabel>
-                    <FormControl>
-                      <Input 
-                        type="number" 
-                        {...field} 
-                        onChange={(e) => field.onChange(parseInt(e.target.value))}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              
-              <FormField
-                control={faqForm.control}
-                name="orderIndex"
+                name="order_index"
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Ordre dans section</FormLabel>
@@ -578,7 +555,7 @@ export const FAQManagement: React.FC = () => {
               
               <FormField
                 control={faqForm.control}
-                name="isActive"
+                name="is_active"
                 render={({ field }) => (
                   <FormItem className="flex flex-col">
                     <FormLabel>Visible</FormLabel>
@@ -619,7 +596,8 @@ export const FAQManagement: React.FC = () => {
             </div>
           </form>
         </Form>
-      </DialogContent>
+        </DialogContent>
+      </Dialog>
 
       {/* Create/Edit Section Dialog */}
       <Dialog open={showSectionDialog} onOpenChange={setShowSectionDialog}>
@@ -632,24 +610,10 @@ export const FAQManagement: React.FC = () => {
           
           <Form {...sectionForm}>
             <form onSubmit={sectionForm.handleSubmit(editingSection ? handleUpdateSection : handleCreateSection)} className="space-y-4">
-              <FormField
-                control={sectionForm.control}
-                name="key"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Clé de section</FormLabel>
-                    <FormControl>
-                      <Input {...field} placeholder="create-your-film" />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
               <div className="grid grid-cols-2 gap-4">
                 <FormField
                   control={sectionForm.control}
-                  name="nameFr"
+                  name="title_fr"
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>Nom (Français)</FormLabel>
@@ -663,7 +627,7 @@ export const FAQManagement: React.FC = () => {
                 
                 <FormField
                   control={sectionForm.control}
-                  name="nameEn"
+                  name="title_en"
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>Nom (English)</FormLabel>
@@ -676,42 +640,23 @@ export const FAQManagement: React.FC = () => {
                 />
               </div>
 
-              <div className="grid grid-cols-2 gap-4">
-                <FormField
-                  control={sectionForm.control}
-                  name="orderIndex"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Ordre</FormLabel>
-                      <FormControl>
-                        <Input 
-                          type="number" 
-                          {...field} 
-                          onChange={(e) => field.onChange(parseInt(e.target.value))}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                
-                <FormField
-                  control={sectionForm.control}
-                  name="isActive"
-                  render={({ field }) => (
-                    <FormItem className="flex flex-col">
-                      <FormLabel>Visible</FormLabel>
-                      <FormControl>
-                        <Switch
-                          checked={field.value}
-                          onCheckedChange={field.onChange}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </div>
+              <FormField
+                control={sectionForm.control}
+                name="order_index"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Ordre</FormLabel>
+                    <FormControl>
+                      <Input 
+                        type="number" 
+                        {...field} 
+                        onChange={(e) => field.onChange(parseInt(e.target.value))}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
 
               <div className="flex justify-end gap-3">
                 <Button
