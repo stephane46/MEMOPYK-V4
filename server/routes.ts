@@ -1064,6 +1064,24 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // FAQ Sections - PATCH reorder section
+  app.patch("/api/faq-sections/:id/reorder", async (req, res) => {
+    try {
+      const sectionId = parseInt(req.params.id);
+      const { order_index } = req.body;
+      
+      if (typeof order_index !== 'number') {
+        return res.status(400).json({ error: "order_index must be a number" });
+      }
+      
+      const updatedSection = await hybridStorage.updateFAQSection(sectionId, { order_index });
+      res.json({ success: true, section: updatedSection });
+    } catch (error) {
+      console.error('Reorder FAQ section error:', error);
+      res.status(500).json({ error: "Failed to reorder FAQ section" });
+    }
+  });
+
   // DUPLICATE FAQ ROUTES REMOVED - Using detailed routes above
 
   // Video streaming proxy with caching system

@@ -552,7 +552,30 @@ export class HybridStorage implements HybridStorageInterface {
     const index = sections.findIndex((section: any) => section.id === sectionId);
     if (index === -1) throw new Error('FAQ section not found');
     
-    sections[index] = { ...sections[index], ...updates };
+    // If order_index is being updated, implement proper swapping
+    if (updates.order_index !== undefined) {
+      const currentSection = sections[index];
+      const targetOrderIndex = updates.order_index;
+      const currentOrderIndex = currentSection.order_index;
+      
+      // Find the section with the target order index
+      const targetSection = sections.find((section: any) => section.order_index === targetOrderIndex);
+      
+      if (targetSection && targetSection.id !== sectionId) {
+        // Swap order indices
+        console.log(`🔄 Swapping FAQ section orders: ${sectionId} (${currentOrderIndex}) ↔ ${targetSection.id} (${targetOrderIndex})`);
+        targetSection.order_index = currentOrderIndex;
+      }
+      
+      currentSection.order_index = targetOrderIndex;
+      
+      // Apply other updates
+      Object.assign(currentSection, updates);
+    } else {
+      // Regular update without order change
+      sections[index] = { ...sections[index], ...updates };
+    }
+    
     this.saveJsonFile('faq-sections.json', sections);
     return sections[index];
   }
@@ -590,7 +613,35 @@ export class HybridStorage implements HybridStorageInterface {
     const index = faqs.findIndex((faq: any) => faq.id === faqId);
     if (index === -1) throw new Error('FAQ not found');
     
-    faqs[index] = { ...faqs[index], ...updates };
+    // If order_index is being updated, implement proper swapping within the same section
+    if (updates.order_index !== undefined) {
+      const currentFaq = faqs[index];
+      const targetOrderIndex = updates.order_index;
+      const currentOrderIndex = currentFaq.order_index;
+      const sectionId = currentFaq.section_id;
+      
+      // Find the FAQ with the target order index in the same section
+      const targetFaq = faqs.find((faq: any) => 
+        faq.section_id === sectionId && 
+        faq.order_index === targetOrderIndex &&
+        faq.id !== faqId
+      );
+      
+      if (targetFaq) {
+        // Swap order indices within the same section
+        console.log(`🔄 Swapping FAQ orders in section ${sectionId}: ${faqId} (${currentOrderIndex}) ↔ ${targetFaq.id} (${targetOrderIndex})`);
+        targetFaq.order_index = currentOrderIndex;
+      }
+      
+      currentFaq.order_index = targetOrderIndex;
+      
+      // Apply other updates
+      Object.assign(currentFaq, updates);
+    } else {
+      // Regular update without order change
+      faqs[index] = { ...faqs[index], ...updates };
+    }
+    
     this.saveJsonFile('faqs.json', faqs);
     return faqs[index];
   }
