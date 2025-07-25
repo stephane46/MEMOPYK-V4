@@ -47,13 +47,19 @@ export default function FAQSection() {
 
   // Group FAQs by section with safety checks
   const faqsBySection = activeFAQs.reduce((groups, faq) => {
-    if (!faq || !faq.section_id) return groups;
+    if (!faq) return groups;
     
-    const sectionId = String(faq.section_id); // Ensure string type
-    if (!groups[sectionId]) {
-      groups[sectionId] = [];
+    // Handle FAQs with no section or section_id of "0" - assign to "general"
+    let sectionId = faq.section_id;
+    if (!sectionId || String(sectionId) === "0") {
+      sectionId = "general";
     }
-    groups[sectionId].push(faq);
+    
+    const sectionKey = String(sectionId); // Ensure string type
+    if (!groups[sectionKey]) {
+      groups[sectionKey] = [];
+    }
+    groups[sectionKey].push(faq);
     return groups;
   }, {} as Record<string, FAQ[]>);
 
@@ -150,56 +156,7 @@ export default function FAQSection() {
 
         {/* FAQ Content */}
         <div className="space-y-8">
-          {/* General FAQs (without section) */}
-          {faqsBySection['general'] && (
-            <div className="space-y-4">
-              {/* General Section Header */}
-              <div 
-                ref={(el) => { sectionRefs.current['general'] = el; }}
-                className="border-l-4 border-orange-500 pl-4 mb-6"
-              >
-                <button
-                  onClick={() => toggleSection('general')}
-                  className="w-full text-left flex items-center justify-between hover:bg-gray-50 transition-colors p-2 rounded"
-                >
-                  <h3 className="text-2xl font-bold text-gray-900">
-                    {language === 'fr-FR' ? 'Questions Générales' : 'General Questions'}
-                  </h3>
-                  {openSection === 'general' ? (
-                    <ChevronUp className="h-6 w-6 text-gray-500 flex-shrink-0" />
-                  ) : (
-                    <ChevronDown className="h-6 w-6 text-gray-500 flex-shrink-0" />
-                  )}
-                </button>
-              </div>
-
-              {/* General Section Content */}
-              {openSection === 'general' && (
-                <div className="space-y-4 animate-in slide-in-from-top-2 duration-300">
-                  {faqsBySection['general'].map((faq) => (
-                    <div
-                      key={faq.id}
-                      className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden"
-                    >
-                      <div className="px-6 py-4">
-                        <h4 className="text-lg font-semibold text-gray-900 mb-3">
-                          {language === 'fr-FR' ? faq.question_fr : faq.question_en}
-                        </h4>
-                        <div 
-                          className="text-gray-700 leading-relaxed prose prose-sm max-w-none"
-                          dangerouslySetInnerHTML={{
-                            __html: language === 'fr-FR' ? faq.answer_fr : faq.answer_en
-                          }}
-                        />
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
-          )}
-
-          {/* Sectioned FAQs - Accordion Style */}
+          {/* All FAQ Sections - Accordion Style */}
           {sortedSections.map((section) => {
             if (!section || !section.id) return null;
             
