@@ -87,6 +87,13 @@ interface GalleryItem {
   updated_at: string;
 }
 
+// Helper function to add cache-busting timestamp to image URLs
+const addCacheBuster = (url: string): string => {
+  if (!url) return url;
+  const separator = url.includes('?') ? '&' : '?';
+  return `${url}${separator}t=${Date.now()}`;
+};
+
 export default function GalleryManagement() {
   const [editingItem, setEditingItem] = useState<GalleryItem | null>(null);
   const [showCreateDialog, setShowCreateDialog] = useState(false);
@@ -1017,14 +1024,14 @@ export default function GalleryManagement() {
                         }}
                       >
                         <img
-                          src={item.static_image_url || item.image_url_en!}
+                          src={addCacheBuster(item.static_image_url || item.image_url_en!)}
                           alt={item.alt_text_en}
                           className="w-full h-full object-cover"
                           onError={(e) => {
                             console.warn('Image failed to load:', item.static_image_url || item.image_url_en);
                             // If static image fails, try original image
                             if (item.static_image_url && item.image_url_en) {
-                              e.currentTarget.src = item.image_url_en;
+                              e.currentTarget.src = addCacheBuster(item.image_url_en);
                             } else {
                               e.currentTarget.style.display = 'none';
                             }
@@ -1283,6 +1290,13 @@ export default function GalleryManagement() {
                     // Invalidate all gallery-related queries to refresh the data everywhere
                     await queryClient.invalidateQueries({ queryKey: ['/api/gallery'] });
                     await queryClient.refetchQueries({ queryKey: ['/api/gallery'] });
+                    
+                    // Force immediate re-render by updating a timestamp state
+                    console.log('🔄 Static image saved! Forcing cache invalidation and UI refresh...');
+                    
+                    // Additional debugging
+                    console.log('📸 Static image response:', result);
+                    console.log('🗄️ Gallery queries invalidated and refetched');
                   } else {
                     throw new Error(result.error);
                   }

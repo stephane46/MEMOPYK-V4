@@ -125,10 +125,16 @@ export default function GallerySection() {
       return videoUrl;
     } else {
       // Prioritize static image (300x200 cropped) if available, otherwise use regular image
+      let imageUrl = '';
       if (item.staticImageUrl && item.staticImageUrl.trim() !== '') {
-        return item.staticImageUrl;
+        imageUrl = item.staticImageUrl;
+      } else {
+        imageUrl = language === 'fr-FR' ? item.imageUrlFr : item.imageUrlEn;
       }
-      return language === 'fr-FR' ? item.imageUrlFr : item.imageUrlEn;
+      
+      // Add cache-busting timestamp to ensure fresh images
+      const separator = imageUrl.includes('?') ? '&' : '?';
+      return `${imageUrl}${separator}t=${Date.now()}`;
     }
   };
 
