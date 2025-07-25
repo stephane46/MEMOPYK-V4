@@ -53,7 +53,7 @@ const sectionSchema = z.object({
 type FAQFormData = z.infer<typeof faqSchema>;
 type SectionFormData = z.infer<typeof sectionSchema>;
 
-export const FAQManagement: React.FC = () => {
+export default function FAQManagement() {
   const [showCreateDialog, setShowCreateDialog] = useState(false);
   const [showSectionDialog, setShowSectionDialog] = useState(false);
   const [editingFaq, setEditingFaq] = useState<FAQ | null>(null);
@@ -241,7 +241,7 @@ export const FAQManagement: React.FC = () => {
 
   const handleUpdateSection = (data: SectionFormData) => {
     if (editingSection) {
-      updateSectionMutation.mutate({ id: editingSection.id, data });
+      updateSectionMutation.mutate({ id: editingSection.id.toString(), data });
     }
   };
 
@@ -524,6 +524,4 @@ export const FAQManagement: React.FC = () => {
 
     </div>
   );
-};
-
-export default FAQManagement;
+}
