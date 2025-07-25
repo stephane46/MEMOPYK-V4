@@ -431,7 +431,8 @@ export default function FAQManagementWorking() {
   console.log('🔍 Admin FAQ Debug:');
   console.log('📊 Total FAQs loaded:', faqs.length);
   console.log('📊 FAQs by section:', Object.keys(groupedFaqs).map(key => `${key}: ${groupedFaqs[key].length}`));
-  console.log('💰 Pricing FAQs:', groupedFaqs['ORDER & PAYMENTS|COMMANDES ET PAIEMENT']?.map(f => ({id: f.id, question: f.question_fr, active: f.is_active})));
+  console.log('💰 Pricing FAQs:', groupedFaqs['ORDERS AND PAYMENT|COMMANDES ET PAIEMENT']?.map(f => ({id: f.id, question: f.question_fr, active: f.is_active})));
+  console.log('🔑 All section keys:', Object.keys(groupedFaqs));
 
   // Create complete section list
   const allSections = sections.sort((a, b) => a.order_index - b.order_index);

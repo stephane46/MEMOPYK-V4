@@ -40,16 +40,6 @@
     "is_active": true
   },
   {
-    "id": "a044d159-bf12-4a45-a558-6506d66436cc",
-    "section_id": "general",
-    "question_en": "What is a MEMOPYK souvenir film?",
-    "question_fr": "Qu est-ce qu un film souvenir MEMOPYK ?",
-    "answer_en": "A personalized video created specially for you by MEMOPYK using your photos and videos.",
-    "answer_fr": "C est une vidéo personnalisée créée spécialement pour vous par MEMOPYK, à partir de vos propres photos et vidéos.",
-    "order_index": 1,
-    "is_active": true
-  },
-  {
     "id": "8312c30c-4de4-4863-b9fd-20481231fbae",
     "section_id": "general",
     "question_en": "What theme can my souvenir film be about?",
@@ -96,16 +86,6 @@
     "question_fr": "Comment se déroule le paiement ?",
     "answer_en": "<ul><li>50% deposit on quotation approval (to start production)</li><li>Remaining 50% on final approval (to receive the watermark-free film)</li></ul>",
     "answer_fr": "<ul><li>50 % d’acompte à la validation du devis (lancement de la production)</li><li>50 % restants à la validation finale (livraison sans filigrane)</li></ul>",
-    "order_index": 5,
-    "is_active": true
-  },
-  {
-    "id": "f7eb528b-b3da-4260-82cb-57a6aaa1e51c",
-    "section_id": "general",
-    "question_en": "Some clips or moments are extra important. Can I flag them?",
-    "question_fr": "Certains moments sont particulièrement importants. Je peux les signaler ?",
-    "answer_en": "<p>Yes! Just highlight those in the questionnaire (for example, baby’s first steps, a funny travel moment, etc.), and we’ll treat them accordingly.</p>",
-    "answer_fr": "<p>Oui ! Indiquez-les dans le questionnaire (ex. : les premiers pas de bébé, un moment drôle en voyage, etc.), et nous leur accorderons une attention spéciale.</p>",
     "order_index": 5,
     "is_active": true
   },
