@@ -11,7 +11,7 @@ import { Badge } from '@/components/ui/badge';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { useToast } from '@/hooks/use-toast';
 import { apiRequest } from '@/lib/queryClient';
-import { Plus, Edit2, Trash2, Eye, EyeOff, ChevronDown, ChevronUp, Save, X } from 'lucide-react';
+import { Plus, Edit2, Trash2, Eye, EyeOff, ChevronDown, ChevronUp, Save, X, ArrowUp, ArrowDown } from 'lucide-react';
 
 // Types
 interface FAQ {
@@ -192,6 +192,36 @@ export default function FAQManagementWorking() {
     },
   });
 
+  // Section ordering mutations
+  const reorderSectionMutation = useMutation({
+    mutationFn: async ({ sectionId, newOrder }: { sectionId: number; newOrder: number }) => {
+      const result = await apiRequest(`/api/faq-sections/${sectionId}/reorder`, 'PATCH', { order_index: newOrder });
+      return await result.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['/api/faq-sections'] });
+      toast({
+        title: "Section déplacée",
+        description: "L'ordre des sections a été mis à jour.",
+      });
+    },
+  });
+
+  // FAQ ordering mutations
+  const reorderFaqMutation = useMutation({
+    mutationFn: async ({ faqId, newOrder }: { faqId: number; newOrder: number }) => {
+      const result = await apiRequest(`/api/faqs/${faqId}/reorder`, 'PATCH', { order_index: newOrder });
+      return await result.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['/api/faqs'] });
+      toast({
+        title: "FAQ déplacée",
+        description: "L'ordre des FAQs a été mis à jour.",
+      });
+    },
+  });
+
   // Helper functions
   const toggleSection = (sectionKey: string) => {
     setExpandedSections(prev => {
@@ -265,6 +295,56 @@ export default function FAQManagementWorking() {
       id: faq.id.toString(),
       data: { is_active: !faq.is_active }
     });
+  };
+
+  // Section ordering helpers
+  const moveSectionUp = (section: FAQSection) => {
+    const sortedSections = allSections;
+    const currentIndex = sortedSections.findIndex(s => s.id === section.id);
+    if (currentIndex > 0) {
+      const targetSection = sortedSections[currentIndex - 1];
+      reorderSectionMutation.mutate({
+        sectionId: section.id,
+        newOrder: targetSection.order_index
+      });
+    }
+  };
+
+  const moveSectionDown = (section: FAQSection) => {
+    const sortedSections = allSections;
+    const currentIndex = sortedSections.findIndex(s => s.id === section.id);
+    if (currentIndex < sortedSections.length - 1) {
+      const targetSection = sortedSections[currentIndex + 1];
+      reorderSectionMutation.mutate({
+        sectionId: section.id,
+        newOrder: targetSection.order_index
+      });
+    }
+  };
+
+  // FAQ ordering helpers
+  const moveFaqUp = (faq: FAQ) => {
+    const sectionFaqs = faqs.filter(f => f.section_id === faq.section_id).sort((a, b) => a.order_index - b.order_index);
+    const currentIndex = sectionFaqs.findIndex(f => f.id === faq.id);
+    if (currentIndex > 0) {
+      const targetFaq = sectionFaqs[currentIndex - 1];
+      reorderFaqMutation.mutate({
+        faqId: faq.id,
+        newOrder: targetFaq.order_index
+      });
+    }
+  };
+
+  const moveFaqDown = (faq: FAQ) => {
+    const sectionFaqs = faqs.filter(f => f.section_id === faq.section_id).sort((a, b) => a.order_index - b.order_index);
+    const currentIndex = sectionFaqs.findIndex(f => f.id === faq.id);
+    if (currentIndex < sectionFaqs.length - 1) {
+      const targetFaq = sectionFaqs[currentIndex + 1];
+      reorderFaqMutation.mutate({
+        faqId: faq.id,
+        newOrder: targetFaq.order_index
+      });
+    }
   };
 
   // Group FAQs by section
@@ -571,6 +651,26 @@ export default function FAQManagementWorking() {
                         <Button
                           variant="ghost"
                           size="sm"
+                          onClick={() => moveSectionUp(section)}
+                          disabled={allSections.findIndex(s => s.id === section.id) === 0}
+                          className="text-gray-600 hover:text-gray-800 disabled:opacity-30"
+                        >
+                          <ArrowUp className="h-4 w-4" />
+                        </Button>
+                        
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => moveSectionDown(section)}
+                          disabled={allSections.findIndex(s => s.id === section.id) === allSections.length - 1}
+                          className="text-gray-600 hover:text-gray-800 disabled:opacity-30"
+                        >
+                          <ArrowDown className="h-4 w-4" />
+                        </Button>
+                        
+                        <Button
+                          variant="ghost"
+                          size="sm"
                           onClick={() => startEditingSection(section)}
                           className="text-gray-600 hover:text-gray-800"
                         >
@@ -617,6 +717,26 @@ export default function FAQManagementWorking() {
                           </div>
                           
                           <div className="flex items-center gap-2">
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => moveFaqUp(faq)}
+                              disabled={sectionFaqs.findIndex(f => f.id === faq.id) === 0}
+                              className="text-gray-600 hover:text-gray-800 disabled:opacity-30"
+                            >
+                              <ArrowUp className="h-4 w-4" />
+                            </Button>
+                            
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => moveFaqDown(faq)}
+                              disabled={sectionFaqs.findIndex(f => f.id === faq.id) === sectionFaqs.length - 1}
+                              className="text-gray-600 hover:text-gray-800 disabled:opacity-30"
+                            >
+                              <ArrowDown className="h-4 w-4" />
+                            </Button>
+                            
                             <Button
                               variant="ghost"
                               size="sm"
