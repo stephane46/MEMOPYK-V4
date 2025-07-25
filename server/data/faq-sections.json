@@ -7,23 +7,23 @@
     "is_active": true
   },
   {
-    "id": "general",
-    "title_en": "CREATE YOUR SOUVENIR FILM",
-    "title_fr": "CRÉEZ VOTRE FILM SOUVENIR",
-    "order_index": 1,
-    "is_active": true
-  },
-  {
     "id": "getting-started",
     "title_en": "OTHERS",
     "title_fr": "AUTRES",
-    "order_index": 3,
+    "order_index": 1,
     "is_active": true
   },
   {
     "id": "section_1753456415369",
     "title_en": "Test Section",
     "title_fr": "Section de Test",
+    "order_index": 3,
+    "is_active": true
+  },
+  {
+    "id": "general",
+    "title_en": "CREATE YOUR SOUVENIR FILM",
+    "title_fr": "CRÉEZ VOTRE FILM SOUVENIR",
     "order_index": 4,
     "is_active": true
   }

@@ -24,7 +24,9 @@ interface FAQSection {
 export default function FAQSection() {
   const { language } = useLanguage();
   const [openSection, setOpenSection] = useState<string | null>(null);
+  const [openQuestions, setOpenQuestions] = useState<Set<string>>(new Set());
   const sectionRefs = useRef<Record<string, HTMLDivElement | null>>({});
+  const questionRefs = useRef<Record<string, HTMLDivElement | null>>({});
 
   // Fetch FAQs
   const { data: faqs = [], isLoading: faqsLoading, error: faqsError } = useQuery<FAQ[]>({
@@ -75,7 +77,7 @@ export default function FAQSection() {
     const newOpenSection = openSection === sectionId ? null : sectionId;
     setOpenSection(newOpenSection);
     
-    // Scroll to section title if opening
+    // Scroll to section title if opening and stay at the top
     if (newOpenSection !== null) {
       setTimeout(() => {
         const element = sectionRefs.current[sectionId];
@@ -91,6 +93,33 @@ export default function FAQSection() {
         }
       }, 100); // Small delay to allow the DOM to update
     }
+  };
+
+  const toggleQuestion = (questionId: string) => {
+    const newOpenQuestions = new Set(openQuestions);
+    
+    if (newOpenQuestions.has(questionId)) {
+      newOpenQuestions.delete(questionId);
+    } else {
+      newOpenQuestions.add(questionId);
+      
+      // Scroll to question when opening
+      setTimeout(() => {
+        const element = questionRefs.current[questionId];
+        if (element) {
+          // Scroll to show the question with some padding above
+          const rect = element.getBoundingClientRect();
+          const offset = window.pageYOffset + rect.top - 80; // 80px padding above question
+          
+          window.scrollTo({
+            top: offset,
+            behavior: 'smooth'
+          });
+        }
+      }, 100); // Small delay to allow the DOM to update
+    }
+    
+    setOpenQuestions(newOpenQuestions);
   };
 
   // Error handling
@@ -198,19 +227,35 @@ export default function FAQSection() {
                       sectionFAQs.map((faq) => (
                         <div
                           key={faq.id}
+                          ref={(el) => { questionRefs.current[faq.id] = el; }}
                           className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden"
                         >
-                          <div className="px-6 py-4">
-                            <h4 className="text-lg font-semibold text-gray-900 mb-3">
+                          {/* Question Header - Clickable */}
+                          <button
+                            onClick={() => toggleQuestion(faq.id)}
+                            className="w-full text-left px-6 py-4 hover:bg-gray-50 transition-colors flex items-center justify-between"
+                          >
+                            <h4 className="text-lg font-semibold text-gray-900 pr-4">
                               {language === 'fr-FR' ? faq.question_fr : faq.question_en}
                             </h4>
-                            <div 
-                              className="text-gray-700 leading-relaxed prose prose-sm max-w-none"
-                              dangerouslySetInnerHTML={{
-                                __html: language === 'fr-FR' ? faq.answer_fr : faq.answer_en
-                              }}
-                            />
-                          </div>
+                            {openQuestions.has(faq.id) ? (
+                              <ChevronUp className="h-5 w-5 text-gray-500 flex-shrink-0" />
+                            ) : (
+                              <ChevronDown className="h-5 w-5 text-gray-500 flex-shrink-0" />
+                            )}
+                          </button>
+
+                          {/* Answer Content - Only show when open */}
+                          {openQuestions.has(faq.id) && (
+                            <div className="px-6 pb-4 pt-2 border-t border-gray-100 animate-in slide-in-from-top-2 duration-200">
+                              <div 
+                                className="text-gray-700 leading-relaxed prose prose-sm max-w-none"
+                                dangerouslySetInnerHTML={{
+                                  __html: language === 'fr-FR' ? faq.answer_fr : faq.answer_en
+                                }}
+                              />
+                            </div>
+                          )}
                         </div>
                       ))
                     )}

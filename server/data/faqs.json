@@ -1,5 +1,15 @@
 [
   {
+    "id": "4e3cf86e-bb7b-4955-81a7-a9e65300948b",
+    "section_id": "pricing",
+    "question_en": "Why is your service by quotation only? What am I paying for?",
+    "question_fr": "Pourquoi un devis personnalisé ? Que paye-t-on exactement ?",
+    "answer_en": "<p>Each project is unique, so we quote individually to simplify things for you. To gauge your budget, please review our sample films (with pricing details) for reference.</p>",
+    "answer_fr": "<p>Chaque projet étant unique, nous établissons des devis individuels pour vous simplifier la tâche. Pour évaluer votre budget, veuillez consulter nos exemples de films (avec les détails des prix) à titre de référence.</p>",
+    "order_index": 0,
+    "is_active": true
+  },
+  {
     "id": "abaca85f-518d-4f46-994c-ecc13ab940f3",
     "section_id": "pricing",
     "question_en": "How much does it cost?",
@@ -20,13 +30,13 @@
     "is_active": true
   },
   {
-    "id": "4e3cf86e-bb7b-4955-81a7-a9e65300948b",
-    "section_id": "pricing",
-    "question_en": "Why is your service by quotation only? What am I paying for?",
-    "question_fr": "Pourquoi un devis personnalisé ? Que paye-t-on exactement ?",
-    "answer_en": "<p>Each project is unique, so we quote individually to simplify things for you. To gauge your budget, please review our sample films (with pricing details) for reference.</p>",
-    "answer_fr": "<p>Chaque projet étant unique, nous établissons des devis individuels pour vous simplifier la tâche. Pour évaluer votre budget, veuillez consulter nos exemples de films (avec les détails des prix) à titre de référence.</p>",
-    "order_index": 0,
+    "id": "a0cc7a21-f987-4e04-9791-72a2a87d6372",
+    "section_id": "general",
+    "question_en": "Can I give you specific requirements (music, titles, effects, ...)?",
+    "question_fr": "Puis-je donner des consignes (musique, titres, effets…) ?",
+    "answer_en": "<p>Of course! Our detailed questionnaire has a dedicated section for all your creative notes. We respect every request and advise where needed to ensure the best possible film.</p>",
+    "answer_fr": "<p>Bien sûr ! Le questionnaire détaillé vous permet d’ajouter toutes vos préférences créatives. Nous respectons chaque demande et vous conseillons si besoin pour obtenir le meilleur rendu.</p>",
+    "order_index": 1,
     "is_active": true
   },
   {
@@ -36,16 +46,6 @@
     "question_fr": "Je n’ai pas d’idée précise, est-ce un problème ?",
     "answer_en": "Not at all. We will make recommendations, create the story arc that is best adapted to your photos and videos, and take care of every detail to avoid decision fatigue while delivering the most exciting result possible. We also recommend you book a session with one of our experts to guide you through the next steps.",
     "answer_fr": "Aucun souci. Nous vous ferons des propositions adaptées, construirons une narration cohérente à partir de vos fichiers et prendrons en charge tous les détails pour éviter la fatigue décisionnelle. Nous vous recommandons aussi de prendre rendez-vous avec un expert MEMOPYK pour vous guider.",
-    "order_index": 1,
-    "is_active": true
-  },
-  {
-    "id": "a0cc7a21-f987-4e04-9791-72a2a87d6372",
-    "section_id": "general",
-    "question_en": "Can I give you specific requirements (music, titles, effects, ...)?",
-    "question_fr": "Puis-je donner des consignes (musique, titres, effets…) ?",
-    "answer_en": "<p>Of course! Our detailed questionnaire has a dedicated section for all your creative notes. We respect every request and advise where needed to ensure the best possible film.</p>",
-    "answer_fr": "<p>Bien sûr ! Le questionnaire détaillé vous permet d’ajouter toutes vos préférences créatives. Nous respectons chaque demande et vous conseillons si besoin pour obtenir le meilleur rendu.</p>",
     "order_index": 1,
     "is_active": true
   },
@@ -140,22 +140,22 @@
     "is_active": true
   },
   {
-    "id": "4be3a162-1172-4baa-be46-6be86528ed90",
-    "section_id": "pricing",
-    "question_en": "What payment methods do you accept?",
-    "question_fr": "Quels moyens de paiement acceptez-vous ?",
-    "answer_en": "<ul><li>Bank transfer</li><li>Stripe (credit card)</li><li>PayPal</li></ul>",
-    "answer_fr": "<ul><li>Virement bancaire</li><li>Carte bancaire (via Stripe)</li><li>PayPal</li></ul>",
-    "order_index": 6,
-    "is_active": true
-  },
-  {
     "id": "af9e6454-fe0c-4370-8963-548ef56fec1b",
     "section_id": "general",
     "question_en": "Je crains que mes vidéos/photos ne soient pas de bonne qualité. Pouvez-vous encore réaliser un bon film ?",
     "question_fr": "Mes vidéos/photos sont de mauvaise qualitést-ce un problème ?",
     "answer_en": "<p>Fear not. We specialize in enhancing low-quality sources and using editing techniques to preserve the emotion, even if the files aren’t perfect.</p>",
     "answer_fr": "<p>Ne craignez rien. Nous sommes spécialisés dans l'amélioration des sources de faible qualité et dans l'utilisation de techniques d'édition pour préserver l'émotion, même si les fichiers ne sont pas parfaits.</p>",
+    "order_index": 6,
+    "is_active": true
+  },
+  {
+    "id": "4be3a162-1172-4baa-be46-6be86528ed90",
+    "section_id": "pricing",
+    "question_en": "What payment methods do you accept?",
+    "question_fr": "Quels moyens de paiement acceptez-vous ?",
+    "answer_en": "<ul><li>Bank transfer</li><li>Stripe (credit card)</li><li>PayPal</li></ul>",
+    "answer_fr": "<ul><li>Virement bancaire</li><li>Carte bancaire (via Stripe)</li><li>PayPal</li></ul>",
     "order_index": 6,
     "is_active": true
   },

@@ -507,15 +507,23 @@ The application follows a modern full-stack architecture with clear separation o
 - [ ] **Phase 10.3**: Performance monitoring and error tracking
 - [ ] **Phase 10.4**: User acceptance testing and launch
 
-## Current Status: Phase 8.4.14 - FAQ REORDERING SYSTEM COMPLETED (July 25, 2025)
+## Current Status: Phase 8.4.15 - COMPLETE FAQ SCROLL BEHAVIOR SYSTEM (July 25, 2025)
 
-### COMPLETE FAQ REORDERING SUCCESS - VERIFIED (July 25, 2025)
-**Root Cause Resolution - Frontend Logic Fixed:**
-✅ **Problem Identified**: Frontend move up/down functions only updated one item's order_index, causing conflicts when target had same value
-✅ **Solution Implemented**: Modified reordering logic to swap order_index values between items using sequential mutations
-✅ **DOM Warning Fixed**: Corrected Wouter Link component usage to eliminate nested anchor tag warnings
-✅ **User Confirmed**: "It works, finally, I can reorder Sections and FAQs" - system fully operational
-✅ **Production Ready**: Clean deployment build (648KB) with all warnings resolved
+### DUAL FAQ SCROLL FUNCTIONALITY IMPLEMENTED - COMPLETED (July 25, 2025)
+**Enhanced User Experience with Comprehensive Scroll Behaviors:**
+✅ **Section-Level Scrolling**: Click section header → scrolls to section top with 80px padding, opens all questions in section
+✅ **Individual Question Scrolling**: Click any FAQ question → scrolls that specific question to viewport top, expands answer
+✅ **Dual State Management**: Independent section open/close state and individual question expand/collapse state
+✅ **Compatible Behaviors**: Both scroll types work together seamlessly for optimal navigation experience
+✅ **Production Build**: 649.54KB optimized frontend ready for deployment with enhanced FAQ interaction
+✅ **User Verified**: FAQ reordering system working correctly with improved scroll-to-top functionality
+
+**Technical Implementation:**
+- Added `openQuestions` Set state for individual question management alongside existing `openSection` state
+- Created `toggleQuestion()` function with scroll-to-top behavior for individual FAQ questions
+- Enhanced `toggleSection()` to maintain section-level scrolling behavior
+- Added `questionRefs` to track individual question DOM elements for precise scrolling
+- Smooth scroll animation with 80px top padding for both section and question interactions
 
 ### COMPLETE PRODUCTION FAQ FIX - COMPLETED (July 25, 2025)
 **Production FAQ System Now Fully Functional:**
