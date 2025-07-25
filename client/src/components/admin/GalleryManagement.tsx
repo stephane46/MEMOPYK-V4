@@ -1281,20 +1281,46 @@ export default function GalleryManagement() {
             <ImageCropperEasyCrop
               imageUrl={showImageCropper.imageUrl}
               onSave={async (croppedBlob: Blob, cropSettings: any) => {
+                console.log('🚀 FRONTEND: Starting static image upload process...');
+                console.log('   - Blob size:', croppedBlob.size, 'bytes');
+                console.log('   - Item ID:', showImageCropper.item?.id);
+                console.log('   - Crop settings:', cropSettings);
+                
                 try {
                   // Create form data for upload
                   const formData = new FormData();
-                  formData.append('image', croppedBlob, `static_${showImageCropper.item?.id || 'temp'}.jpg`);
+                  formData.append('image', croppedBlob, `static_${showImageCropper.item?.id || 'temp'}.png`);
                   formData.append('crop_settings', JSON.stringify(cropSettings));
                   formData.append('item_id', showImageCropper.item?.id?.toString() || '');
                   
-                  // Upload cropped image
+                  console.log('📋 FRONTEND: FormData prepared');
+                  console.log('   - File name:', `static_${showImageCropper.item?.id || 'temp'}.png`);
+                  console.log('   - Item ID:', showImageCropper.item?.id?.toString() || ''); 
+                  console.log('   - FormData entries:', Array.from(formData.entries()).map(([k,v]) => [k, v instanceof Blob ? `${v.size}B blob` : v]));
+                  
+                  // Upload cropped image with detailed error handling
+                  console.log('🌐 FRONTEND: Making fetch request to /api/gallery/upload-static-image...');
                   const response = await fetch('/api/gallery/upload-static-image', {
                     method: 'POST',
                     body: formData,
                   });
                   
+                  console.log('📡 FRONTEND: Response received:', {
+                    status: response.status,
+                    statusText: response.statusText,
+                    ok: response.ok,
+                    headers: Object.fromEntries(response.headers.entries())
+                  });
+                  
+                  if (!response.ok) {
+                    console.error('❌ FRONTEND: HTTP Error:', response.status, response.statusText);
+                    const errorText = await response.text();
+                    console.error('❌ FRONTEND: Error response body:', errorText);
+                    throw new Error(`HTTP ${response.status}: ${response.statusText} - ${errorText}`);
+                  }
+                  
                   const result = await response.json();
+                  console.log('📨 FRONTEND: Parsed JSON response:', result);
                   
                   if (result.success) {
                     toast({ 
@@ -1326,14 +1352,20 @@ export default function GalleryManagement() {
                     queryClient.removeQueries({ queryKey: ['/api/gallery'] });
                     await queryClient.refetchQueries({ queryKey: ['/api/gallery'] });
                   } else {
-                    throw new Error(result.error);
+                    console.error('❌ FRONTEND: Server returned success=false:', result);
+                    throw new Error(result.error || 'Unknown server error');
                   }
                 } catch (error) {
-                  console.error('Static image generation error:', error);
+                  console.error('💥 FRONTEND: Static image generation error:', error);
+                  console.error('💥 FRONTEND: Error details:', {
+                    name: error instanceof Error ? error.name : 'Unknown',
+                    message: error instanceof Error ? error.message : String(error),
+                    stack: error instanceof Error ? error.stack : 'No stack trace'
+                  });
                   toast({ 
                     title: "Erreur", 
-                    description: "Échec de la génération d'image statique", 
-                    variant: "destructive" 
+                    description: `Échec de la génération de l'image statique: ${error instanceof Error ? error.message : String(error)}`,
+                    variant: "destructive"
                   });
                 }
               }}
