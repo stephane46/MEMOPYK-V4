@@ -810,63 +810,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // FAQ Sections endpoints
-  app.get("/api/faq-sections", async (req, res) => {
-    try {
-      const language = req.query.lang as string;
-      const sections = await hybridStorage.getFAQSections(language);
-      res.json(sections);
-    } catch (error) {
-      console.error('Get FAQ sections error:', error);
-      res.status(500).json({ error: "Failed to get FAQ sections" });
-    }
-  });
-
-  app.post("/api/faq-sections", async (req, res) => {
-    try {
-      const { title_fr, title_en, order_index } = req.body;
-      
-      if (!title_fr || !title_en) {
-        return res.status(400).json({ error: "French and English titles are required" });
-      }
-      
-      const newSection = await hybridStorage.createFAQSection({
-        title_fr,
-        title_en,
-        order_index: order_index || 0
-      });
-      
-      res.status(201).json({ success: true, section: newSection });
-    } catch (error) {
-      console.error('Create FAQ section error:', error);
-      res.status(500).json({ error: "Failed to create FAQ section" });
-    }
-  });
-
-  app.patch("/api/faq-sections/:id", async (req, res) => {
-    try {
-      const sectionId = parseInt(req.params.id);
-      const updateData = req.body;
-      
-      const updatedSection = await hybridStorage.updateFAQSection(sectionId, updateData);
-      res.json({ success: true, section: updatedSection });
-    } catch (error) {
-      console.error('Update FAQ section error:', error);
-      res.status(500).json({ error: "Failed to update FAQ section" });
-    }
-  });
-
-  app.delete("/api/faq-sections/:id", async (req, res) => {
-    try {
-      const sectionId = parseInt(req.params.id);
-      
-      await hybridStorage.deleteFAQSection(sectionId);
-      res.json({ success: true, message: "FAQ section deleted successfully" });
-    } catch (error) {
-      console.error('Delete FAQ section error:', error);
-      res.status(500).json({ error: "Failed to delete FAQ section" });
-    }
-  });
+  // DUPLICATE ROUTES REMOVED - Using only the ones above
 
   // FAQ endpoints
   app.get("/api/faqs", async (req, res) => {
@@ -1068,7 +1012,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // FAQ Sections - GET all sections
+  // FAQ Sections - GET all sections (KEEP ONLY THIS ONE)
   app.get("/api/faq-sections", async (req, res) => {
     try {
       const sections = await hybridStorage.getFAQSections();
@@ -1078,9 +1022,29 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // FAQ Sections - POST create section (KEEP ONLY THIS ONE)
+  app.post("/api/faq-sections", async (req, res) => {
+    try {
+      const { title_fr, title_en, order_index } = req.body;
+      
+      if (!title_fr || !title_en) {
+        return res.status(400).json({ error: "French and English titles are required" });
+      }
+      
+      const newSection = await hybridStorage.createFAQSection({
+        title_fr,
+        title_en,
+        order_index: order_index || 0
+      });
+      
+      res.status(201).json({ success: true, section: newSection });
+    } catch (error) {
+      console.error('Create FAQ section error:', error);
+      res.status(500).json({ error: "Failed to create FAQ section" });
+    }
+  });
 
-
-  // FAQ Sections - PATCH update section
+  // FAQ Sections - PATCH update section (KEEP ONLY THIS ONE)
   app.patch("/api/faq-sections/:id", async (req, res) => {
     try {
       const section = await hybridStorage.updateFAQSection(Number(req.params.id), req.body);
@@ -1090,7 +1054,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // FAQ Sections - DELETE remove section
+  // FAQ Sections - DELETE remove section (KEEP ONLY THIS ONE)
   app.delete("/api/faq-sections/:id", async (req, res) => {
     try {
       await hybridStorage.deleteFAQSection(Number(req.params.id));
@@ -1100,56 +1064,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // FAQs - GET all FAQs
-  app.get("/api/faqs", async (req, res) => {
-    try {
-      const faqs = await hybridStorage.getFAQs();
-      res.json(faqs);
-    } catch (error) {
-      res.status(500).json({ error: "Failed to get FAQs" });
-    }
-  });
-
-  // FAQs - POST create new FAQ
-  app.post("/api/faqs", async (req, res) => {
-    try {
-      const faq = await hybridStorage.createFAQ(req.body);
-      res.json(faq);
-    } catch (error) {
-      res.status(500).json({ error: "Failed to create FAQ" });
-    }
-  });
-
-  // FAQs - PATCH update FAQ
-  app.patch("/api/faqs/:id", async (req, res) => {
-    try {
-      const faq = await hybridStorage.updateFAQ(Number(req.params.id), req.body);
-      res.json(faq);
-    } catch (error) {
-      res.status(500).json({ error: "Failed to update FAQ" });
-    }
-  });
-
-  // FAQs - DELETE remove FAQ
-  app.delete("/api/faqs/:id", async (req, res) => {
-    try {
-      await hybridStorage.deleteFAQ(Number(req.params.id));
-      res.json({ success: true });
-    } catch (error) {
-      res.status(500).json({ error: "Failed to delete FAQ" });
-    }
-  });
-
-  // FAQs - POST reorder FAQs
-  app.post("/api/faqs/:id/reorder", async (req, res) => {
-    try {
-      const { order_index } = req.body;
-      const faq = await hybridStorage.updateFAQ(Number(req.params.id), { order_index });
-      res.json(faq);
-    } catch (error) {
-      res.status(500).json({ error: "Failed to reorder FAQ" });
-    }
-  });
+  // DUPLICATE FAQ ROUTES REMOVED - Using detailed routes above
 
   // Video streaming proxy with caching system
   app.get("/api/video-proxy", async (req, res) => {

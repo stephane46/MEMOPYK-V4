@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { apiRequest } from '@/lib/queryClient';
 import { Button } from '@/components/ui/button';
@@ -93,9 +93,17 @@ export default function FAQManagement() {
     defaultValues: {
       title_en: '',
       title_fr: '',
-      order_index: sections.length > 0 ? Math.max(...sections.map(s => s.order_index)) + 1 : 1
+      order_index: 1
     }
   });
+
+  // Update section form default order when sections load
+  useEffect(() => {
+    if (sections.length > 0 && !editingSection) {
+      const nextOrder = Math.max(...sections.map(s => s.order_index)) + 1;
+      sectionForm.setValue('order_index', nextOrder);
+    }
+  }, [sections, editingSection, sectionForm]);
 
   // Create FAQ mutation
   const createFaqMutation = useMutation({
