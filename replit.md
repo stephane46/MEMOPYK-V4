@@ -507,7 +507,14 @@ The application follows a modern full-stack architecture with clear separation o
 - [ ] **Phase 10.3**: Performance monitoring and error tracking
 - [ ] **Phase 10.4**: User acceptance testing and launch
 
-## Current Status: Phase 8.4.12 - PRODUCTION FAQ SYSTEM FULLY OPERATIONAL (July 25, 2025)
+## Current Status: Phase 8.4.13 - FAQ REORDERING LOGIC FIX (July 25, 2025)
+
+### CRITICAL FAQ REORDERING LOGIC FIX - IN PROGRESS (July 25, 2025)
+**Root Cause Identified - Frontend Reordering Logic Issue:**
+⚠️ **Problem**: Frontend move up/down functions only updated one item's order_index, causing conflicts when target had same value
+⚠️ **Solution**: Modified reordering logic to swap order_index values between items using sequential mutations
+⚠️ **Implementation**: Added console logging and sequential order swapping with 100ms delay between mutations
+⚠️ **Testing**: Now rebuilding system with improved reordering logic for both FAQ sections and questions
 
 ### COMPLETE PRODUCTION FAQ FIX - COMPLETED (July 25, 2025)
 **Production FAQ System Now Fully Functional:**

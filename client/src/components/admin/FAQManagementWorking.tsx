@@ -299,26 +299,48 @@ export default function FAQManagementWorking() {
 
   // Section ordering helpers
   const moveSectionUp = (section: FAQSection) => {
-    const sortedSections = allSections;
+    const sortedSections = sections.sort((a, b) => a.order_index - b.order_index);
     const currentIndex = sortedSections.findIndex(s => s.id === section.id);
     if (currentIndex > 0) {
       const targetSection = sortedSections[currentIndex - 1];
+      console.log(`🔄 Moving section ${section.id} UP: current order ${section.order_index} → target order ${targetSection.order_index}`);
+      
+      // Swap the order_index values
       reorderSectionMutation.mutate({
         sectionId: section.id,
         newOrder: targetSection.order_index
       });
+      
+      // Also move the target section down
+      setTimeout(() => {
+        reorderSectionMutation.mutate({
+          sectionId: targetSection.id,
+          newOrder: section.order_index
+        });
+      }, 100);
     }
   };
 
   const moveSectionDown = (section: FAQSection) => {
-    const sortedSections = allSections;
+    const sortedSections = sections.sort((a, b) => a.order_index - b.order_index);
     const currentIndex = sortedSections.findIndex(s => s.id === section.id);
     if (currentIndex < sortedSections.length - 1) {
       const targetSection = sortedSections[currentIndex + 1];
+      console.log(`🔄 Moving section ${section.id} DOWN: current order ${section.order_index} → target order ${targetSection.order_index}`);
+      
+      // Swap the order_index values
       reorderSectionMutation.mutate({
         sectionId: section.id,
         newOrder: targetSection.order_index
       });
+      
+      // Also move the target section up
+      setTimeout(() => {
+        reorderSectionMutation.mutate({
+          sectionId: targetSection.id,
+          newOrder: section.order_index
+        });
+      }, 100);
     }
   };
 
@@ -328,10 +350,21 @@ export default function FAQManagementWorking() {
     const currentIndex = sectionFaqs.findIndex(f => f.id === faq.id);
     if (currentIndex > 0) {
       const targetFaq = sectionFaqs[currentIndex - 1];
+      console.log(`🔄 Moving FAQ ${faq.id} UP: current order ${faq.order_index} → target order ${targetFaq.order_index}`);
+      
+      // Swap the order_index values
       reorderFaqMutation.mutate({
         faqId: faq.id,
         newOrder: targetFaq.order_index
       });
+      
+      // Also move the target FAQ down
+      setTimeout(() => {
+        reorderFaqMutation.mutate({
+          faqId: targetFaq.id,
+          newOrder: faq.order_index
+        });
+      }, 100);
     }
   };
 
@@ -340,10 +373,21 @@ export default function FAQManagementWorking() {
     const currentIndex = sectionFaqs.findIndex(f => f.id === faq.id);
     if (currentIndex < sectionFaqs.length - 1) {
       const targetFaq = sectionFaqs[currentIndex + 1];
+      console.log(`🔄 Moving FAQ ${faq.id} DOWN: current order ${faq.order_index} → target order ${targetFaq.order_index}`);
+      
+      // Swap the order_index values
       reorderFaqMutation.mutate({
         faqId: faq.id,
         newOrder: targetFaq.order_index
       });
+      
+      // Also move the target FAQ up
+      setTimeout(() => {
+        reorderFaqMutation.mutate({
+          faqId: targetFaq.id,
+          newOrder: faq.order_index
+        });
+      }, 100);
     }
   };
 
