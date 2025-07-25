@@ -107,7 +107,10 @@ export default function FAQManagement() {
 
   // Create FAQ mutation
   const createFaqMutation = useMutation({
-    mutationFn: (data: FAQFormData) => apiRequest('/api/faqs', 'POST', data),
+    mutationFn: async (data: FAQFormData) => {
+      const result = await apiRequest('/api/faqs', 'POST', data);
+      return await result.json();
+    },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['/api/faqs'] });
       setShowCreateDialog(false);
@@ -129,8 +132,10 @@ export default function FAQManagement() {
 
   // Update FAQ mutation
   const updateFaqMutation = useMutation({
-    mutationFn: ({ id, data }: { id: string; data: Partial<FAQFormData> }) => 
-      apiRequest(`/api/faqs/${id}`, 'PATCH', data),
+    mutationFn: async ({ id, data }: { id: string; data: Partial<FAQFormData> }) => {
+      const result = await apiRequest(`/api/faqs/${id}`, 'PATCH', data);
+      return await result.json();
+    },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['/api/faqs'] });
       setEditingFaq(null);
@@ -151,7 +156,10 @@ export default function FAQManagement() {
 
   // Delete FAQ mutation
   const deleteFaqMutation = useMutation({
-    mutationFn: (id: string) => apiRequest(`/api/faqs/${id}`, 'DELETE'),
+    mutationFn: async (id: string) => {
+      const result = await apiRequest(`/api/faqs/${id}`, 'DELETE');
+      return await result.json();
+    },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['/api/faqs'] });
       toast({
@@ -180,8 +188,10 @@ export default function FAQManagement() {
       
       try {
         const result = await apiRequest('/api/faq-sections', 'POST', data);
-        console.log('✅ API REQUEST SUCCESS:', result);
-        return result;
+        // Parse the JSON response
+        const responseData = await result.json();
+        console.log('✅ API REQUEST SUCCESS:', responseData);
+        return responseData;
       } catch (error) {
         console.error('❌ API REQUEST FAILED:', error);
         throw error;
@@ -197,12 +207,13 @@ export default function FAQManagement() {
         description: "La section FAQ a été créée avec succès.",
       });
     },
-    onError: (error) => {
+    onError: (error: any) => {
       console.error('💥 MUTATION ERROR DETAILS:', {
         error,
         message: error.message,
         stack: error.stack,
-        response: error.response
+        name: error.name,
+        cause: error.cause
       });
       toast({
         title: "Erreur",
@@ -214,8 +225,10 @@ export default function FAQManagement() {
 
   // Update section mutation
   const updateSectionMutation = useMutation({
-    mutationFn: ({ id, data }: { id: string; data: Partial<SectionFormData> }) => 
-      apiRequest(`/api/faq-sections/${id}`, 'PATCH', data),
+    mutationFn: async ({ id, data }: { id: string; data: Partial<SectionFormData> }) => {
+      const result = await apiRequest(`/api/faq-sections/${id}`, 'PATCH', data);
+      return await result.json();
+    },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['/api/faq-sections'] });
       setEditingSection(null);
@@ -236,7 +249,10 @@ export default function FAQManagement() {
 
   // Delete section mutation
   const deleteSectionMutation = useMutation({
-    mutationFn: (id: string) => apiRequest(`/api/faq-sections/${id}`, 'DELETE'),
+    mutationFn: async (id: string) => {
+      const result = await apiRequest(`/api/faq-sections/${id}`, 'DELETE');
+      return await result.json();
+    },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['/api/faq-sections'] });
       toast({
