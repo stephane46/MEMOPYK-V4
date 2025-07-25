@@ -171,8 +171,24 @@ export default function FAQManagement() {
 
   // Create section mutation
   const createSectionMutation = useMutation({
-    mutationFn: (data: SectionFormData) => apiRequest('/api/faq-sections', 'POST', data),
-    onSuccess: () => {
+    mutationFn: async (data: SectionFormData) => {
+      console.log('🔥 API REQUEST STARTING:', {
+        url: '/api/faq-sections',
+        method: 'POST',
+        payload: data
+      });
+      
+      try {
+        const result = await apiRequest('/api/faq-sections', 'POST', data);
+        console.log('✅ API REQUEST SUCCESS:', result);
+        return result;
+      } catch (error) {
+        console.error('❌ API REQUEST FAILED:', error);
+        throw error;
+      }
+    },
+    onSuccess: (data) => {
+      console.log('🎉 MUTATION SUCCESS:', data);
       queryClient.invalidateQueries({ queryKey: ['/api/faq-sections'] });
       setShowSectionDialog(false);
       sectionForm.reset();
@@ -182,10 +198,15 @@ export default function FAQManagement() {
       });
     },
     onError: (error) => {
-      console.error('Error creating section:', error);
+      console.error('💥 MUTATION ERROR DETAILS:', {
+        error,
+        message: error.message,
+        stack: error.stack,
+        response: error.response
+      });
       toast({
         title: "Erreur",
-        description: "Erreur lors de la création de la section.",
+        description: `Erreur lors de la création de la section: ${error.message}`,
         variant: "destructive",
       });
     },
