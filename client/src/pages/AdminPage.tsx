@@ -12,7 +12,7 @@ import { ArrowUp, ArrowDown, Play, RefreshCw, BarChart3, Video, HardDrive, Users
 import { useToast } from '@/hooks/use-toast';
 import GalleryManagement from '@/components/admin/GalleryManagement';
 import { ContactManagement } from '@/components/admin/ContactManagement';
-import FAQManagementTest from '@/components/admin/FAQManagementTest';
+import FAQManagementWorking from '@/components/admin/FAQManagementWorking';
 import CryptoJS from 'crypto-js';
 
 interface HeroVideo {
@@ -1277,7 +1277,7 @@ export default function AdminPage() {
           {/* FAQ */}
           {activeSection === 'faq' && (
             <div className="space-y-6">
-              <FAQManagementTest />
+              <FAQManagementWorking />
             </div>
           )}
 
