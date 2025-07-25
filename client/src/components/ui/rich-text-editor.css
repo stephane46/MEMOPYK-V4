@@ -31,24 +31,25 @@
 
 /* Enhanced tooltip for link button */
 .rich-text-editor .ql-toolbar button.ql-link::after {
-  content: "Add Link - URLs: www.example.com → https://www.example.com | Emails: contact@example.com → mailto:contact@example.com";
+  content: "Smart Link - URLs: www.example.com | Emails: contact@example.com";
   position: absolute;
-  bottom: -45px;
+  bottom: -35px;
   left: 50%;
   transform: translateX(-50%);
   background: #1f2937;
   color: white;
-  padding: 8px 12px;
-  border-radius: 6px;
-  font-size: 12px;
+  padding: 6px 10px;
+  border-radius: 4px;
+  font-size: 11px;
   white-space: nowrap;
   opacity: 0;
   visibility: hidden;
-  transition: opacity 0.2s ease, visibility 0.2s ease;
+  transition: opacity 0.15s ease, visibility 0.15s ease;
   z-index: 1000;
   pointer-events: none;
-  max-width: 300px;
+  max-width: 280px;
   text-align: center;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
 }
 
 .rich-text-editor .ql-toolbar button.ql-link:hover::after {
