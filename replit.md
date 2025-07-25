@@ -507,7 +507,31 @@ The application follows a modern full-stack architecture with clear separation o
 - [ ] **Phase 10.3**: Performance monitoring and error tracking
 - [ ] **Phase 10.4**: User acceptance testing and launch
 
-## Current Status: Phase 8.4.10 - FAQ PRODUCTION BUG RESOLVED (July 25, 2025)
+## Current Status: Phase 8.4.11 - FAQ REORDERING BUG RESOLVED (July 25, 2025)
+
+### COMPLETE FAQ REORDERING FIX - COMPLETED (July 25, 2025)
+**Critical FAQ Move Up/Down Functionality Restored:**
+✅ **Root Cause Identified**: Multiple FAQs within same sections had duplicate order_index values preventing proper reordering 
+✅ **Duplicate Order Fix**: Fixed general section (two FAQs with order_index: 1) and pricing section (two FAQs with order_index: 0)
+✅ **Move Functionality Working**: FAQ reordering API endpoints now successfully swap order_index values between questions
+✅ **Database Synchronization**: Supabase and JSON backup both updated with correct unique order_index values
+✅ **User Testing Ready**: FAQ move up/down buttons in admin panel now functional for all sections
+✅ **Production Ready**: Same fix applies to both development and production environments
+
+**Technical Resolution:**
+- Fixed duplicate order_index in general section: moved conflicting FAQ from order 1 to order 3
+- Fixed duplicate order_index in pricing section: moved conflicting FAQ from order 0 to order 1  
+- Verified reorder API endpoint `/api/faqs/:id/reorder` working properly with order swapping logic
+- Database updates confirmed with proper order_index value swapping between FAQs
+- Hybrid storage system maintains consistency between Supabase database and JSON fallback
+
+**User Experience Achievement:**
+- FAQ sections now properly support move up/down functionality in admin interface
+- Each FAQ within a section has unique order_index preventing reorder conflicts
+- Admin panel FAQ management buttons (↑ ↓) work correctly for all questions
+- Public FAQ display maintains proper question ordering based on admin changes
+
+## Previous Status: Phase 8.4.10 - FAQ PRODUCTION BUG RESOLVED (July 25, 2025)
 
 ### CRITICAL FAQ PRODUCTION BUG RESOLUTION - COMPLETED (July 25, 2025)
 **Root Cause Production/Development Inconsistency Fixed:**
