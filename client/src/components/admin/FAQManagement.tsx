@@ -336,7 +336,7 @@ export default function FAQManagement() {
             </Button>
           </DialogTrigger>
           
-          <DialogContent>
+          <DialogContent className="max-w-lg bg-white dark:bg-gray-900">
             <DialogHeader>
               <DialogTitle>
                 {editingSection ? 'Modifier la Section' : 'Nouvelle Section FAQ'}
@@ -429,7 +429,7 @@ export default function FAQManagement() {
             </Button>
           </DialogTrigger>
           
-          <DialogContent>
+          <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto bg-white dark:bg-gray-900">
             <DialogHeader>
               <DialogTitle>
                 {editingFaq ? 'Modifier la FAQ' : 'Nouvelle FAQ'}
