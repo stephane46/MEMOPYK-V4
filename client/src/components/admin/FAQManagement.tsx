@@ -335,6 +335,90 @@ export const FAQManagement: React.FC = () => {
               Nouvelle Section
             </Button>
           </DialogTrigger>
+          
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>
+                {editingSection ? 'Modifier la Section' : 'Nouvelle Section FAQ'}
+              </DialogTitle>
+            </DialogHeader>
+            
+            <Form {...sectionForm}>
+              <form onSubmit={sectionForm.handleSubmit(editingSection ? handleUpdateSection : handleCreateSection)} className="space-y-4">
+                <div className="grid grid-cols-2 gap-4">
+                  <FormField
+                    control={sectionForm.control}
+                    name="title_fr"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Nom (Français)</FormLabel>
+                        <FormControl>
+                          <Input {...field} placeholder="Créer votre film" />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  
+                  <FormField
+                    control={sectionForm.control}
+                    name="title_en"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Nom (English)</FormLabel>
+                        <FormControl>
+                          <Input {...field} placeholder="Create your film" />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+
+                <FormField
+                  control={sectionForm.control}
+                  name="order_index"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Ordre</FormLabel>
+                      <FormControl>
+                        <Input 
+                          type="number" 
+                          {...field} 
+                          onChange={(e) => field.onChange(parseInt(e.target.value))}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <div className="flex justify-end gap-3">
+                  <Button
+                    type="button"
+                    variant="outline"
+                    onClick={() => {
+                      setShowSectionDialog(false);
+                      setEditingSection(null);
+                      sectionForm.reset();
+                    }}
+                  >
+                    Annuler
+                  </Button>
+                  <Button
+                    type="submit"
+                    disabled={createSectionMutation.isPending || updateSectionMutation.isPending}
+                    className="bg-blue-500 hover:bg-blue-600"
+                  >
+                    {createSectionMutation.isPending || updateSectionMutation.isPending ? (
+                      <div className="animate-spin h-4 w-4 border-2 border-white border-t-transparent rounded-full mr-2" />
+                    ) : null}
+                    {editingSection ? 'Mettre à jour' : 'Créer'}
+                  </Button>
+                </div>
+              </form>
+            </Form>
+          </DialogContent>
         </Dialog>
 
         <Dialog open={showCreateDialog} onOpenChange={setShowCreateDialog}>
@@ -435,256 +519,9 @@ export const FAQManagement: React.FC = () => {
         })}
       </div>
 
-      {/* Create/Edit FAQ Dialog */}
-      <Dialog open={showCreateDialog} onOpenChange={setShowCreateDialog}>
-        <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
-        <DialogHeader>
-          <DialogTitle>
-            {editingFaq ? 'Modifier la FAQ' : 'Nouvelle FAQ'}
-          </DialogTitle>
-        </DialogHeader>
-        
-        <Form {...faqForm}>
-          <form onSubmit={faqForm.handleSubmit(editingFaq ? handleUpdateFaq : handleCreateFaq)} className="space-y-6">
-            {/* Section Selection */}
-            <FormField
-              control={faqForm.control}
-              name="section_id"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Section</FormLabel>
-                  <FormControl>
-                    <select 
-                      {...field} 
-                      className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-                      onChange={(e) => field.onChange(parseInt(e.target.value))}
-                    >
-                      {sections.map(section => (
-                        <option key={section.id} value={section.id}>
-                          {section.title_fr} / {section.title_en}
-                        </option>
-                      ))}
-                    </select>
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
 
-            {/* Question */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <FormField
-                control={faqForm.control}
-                name="question_fr"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Question (Français)</FormLabel>
-                    <FormControl>
-                      <Textarea {...field} placeholder="Votre question en français" rows={3} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              
-              <FormField
-                control={faqForm.control}
-                name="question_en"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Question (English)</FormLabel>
-                    <FormControl>
-                      <Textarea {...field} placeholder="Your question in English" rows={3} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </div>
 
-            {/* Answer */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <FormField
-                control={faqForm.control}
-                name="answer_fr"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Réponse (Français)</FormLabel>
-                    <FormControl>
-                      <Textarea {...field} placeholder="Votre réponse détaillée en français" rows={6} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              
-              <FormField
-                control={faqForm.control}
-                name="answer_en"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Réponse (English)</FormLabel>
-                    <FormControl>
-                      <Textarea {...field} placeholder="Your detailed answer in English" rows={6} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </div>
 
-            {/* Order and Status */}
-            <div className="grid grid-cols-2 gap-4">
-              <FormField
-                control={faqForm.control}
-                name="order_index"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Ordre dans section</FormLabel>
-                    <FormControl>
-                      <Input 
-                        type="number" 
-                        {...field} 
-                        onChange={(e) => field.onChange(parseInt(e.target.value))}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              
-              <FormField
-                control={faqForm.control}
-                name="is_active"
-                render={({ field }) => (
-                  <FormItem className="flex flex-col">
-                    <FormLabel>Visible</FormLabel>
-                    <FormControl>
-                      <Switch
-                        checked={field.value}
-                        onCheckedChange={field.onChange}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </div>
-
-            <div className="flex justify-end gap-3">
-              <Button
-                type="button"
-                variant="outline"
-                onClick={() => {
-                  setShowCreateDialog(false);
-                  setEditingFaq(null);
-                  faqForm.reset();
-                }}
-              >
-                Annuler
-              </Button>
-              <Button
-                type="submit"
-                disabled={createFaqMutation.isPending || updateFaqMutation.isPending}
-                className="bg-orange-500 hover:bg-orange-600"
-              >
-                {createFaqMutation.isPending || updateFaqMutation.isPending ? (
-                  <div className="animate-spin h-4 w-4 border-2 border-white border-t-transparent rounded-full mr-2" />
-                ) : null}
-                {editingFaq ? 'Mettre à jour' : 'Créer'}
-              </Button>
-            </div>
-          </form>
-        </Form>
-        </DialogContent>
-      </Dialog>
-
-      {/* Create/Edit Section Dialog */}
-      <Dialog open={showSectionDialog} onOpenChange={setShowSectionDialog}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>
-              {editingSection ? 'Modifier la Section' : 'Nouvelle Section FAQ'}
-            </DialogTitle>
-          </DialogHeader>
-          
-          <Form {...sectionForm}>
-            <form onSubmit={sectionForm.handleSubmit(editingSection ? handleUpdateSection : handleCreateSection)} className="space-y-4">
-              <div className="grid grid-cols-2 gap-4">
-                <FormField
-                  control={sectionForm.control}
-                  name="title_fr"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Nom (Français)</FormLabel>
-                      <FormControl>
-                        <Input {...field} placeholder="Créer votre film" />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                
-                <FormField
-                  control={sectionForm.control}
-                  name="title_en"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Nom (English)</FormLabel>
-                      <FormControl>
-                        <Input {...field} placeholder="Create your film" />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </div>
-
-              <FormField
-                control={sectionForm.control}
-                name="order_index"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Ordre</FormLabel>
-                    <FormControl>
-                      <Input 
-                        type="number" 
-                        {...field} 
-                        onChange={(e) => field.onChange(parseInt(e.target.value))}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <div className="flex justify-end gap-3">
-                <Button
-                  type="button"
-                  variant="outline"
-                  onClick={() => {
-                    setShowSectionDialog(false);
-                    setEditingSection(null);
-                    sectionForm.reset();
-                  }}
-                >
-                  Annuler
-                </Button>
-                <Button
-                  type="submit"
-                  disabled={createSectionMutation.isPending || updateSectionMutation.isPending}
-                  className="bg-blue-500 hover:bg-blue-600"
-                >
-                  {createSectionMutation.isPending || updateSectionMutation.isPending ? (
-                    <div className="animate-spin h-4 w-4 border-2 border-white border-t-transparent rounded-full mr-2" />
-                  ) : null}
-                  {editingSection ? 'Mettre à jour' : 'Créer'}
-                </Button>
-              </div>
-            </form>
-          </Form>
-        </DialogContent>
-      </Dialog>
     </div>
   );
 };
