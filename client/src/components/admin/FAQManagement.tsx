@@ -93,7 +93,7 @@ export default function FAQManagement() {
     defaultValues: {
       title_en: '',
       title_fr: '',
-      order_index: 0
+      order_index: sections.length > 0 ? Math.max(...sections.map(s => s.order_index)) + 1 : 1
     }
   });
 
@@ -226,7 +226,14 @@ export default function FAQManagement() {
   });
 
   const handleCreateFaq = (data: FAQFormData) => {
-    createFaqMutation.mutate(data);
+    // Calculate next available order_index for the selected section
+    const sectionFaqs = faqs.filter(faq => faq.section_id === data.section_id);
+    const maxOrder = sectionFaqs.length > 0 ? Math.max(...sectionFaqs.map(f => f.order_index)) : 0;
+    const faqData = {
+      ...data,
+      order_index: maxOrder + 1
+    };
+    createFaqMutation.mutate(faqData);
   };
 
   const handleUpdateFaq = (data: FAQFormData) => {
@@ -236,7 +243,13 @@ export default function FAQManagement() {
   };
 
   const handleCreateSection = (data: SectionFormData) => {
-    createSectionMutation.mutate(data);
+    // Calculate next available order_index
+    const maxOrder = sections.length > 0 ? Math.max(...sections.map(s => s.order_index)) : 0;
+    const sectionData = {
+      ...data,
+      order_index: maxOrder + 1
+    };
+    createSectionMutation.mutate(sectionData);
   };
 
   const handleUpdateSection = (data: SectionFormData) => {
