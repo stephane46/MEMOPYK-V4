@@ -3,19 +3,19 @@
     "id": 1,
     "title_en": "Pricing & Packages",
     "title_fr": "Tarifs et forfaits",
-    "order_index": 1
+    "order_index": 2
   },
   {
     "id": 2,
     "title_en": "Our Process",
     "title_fr": "Notre processus",
-    "order_index": 2
+    "order_index": 3
   },
   {
     "id": 3,
     "title_fr": " CRÉEZ VOTRE FILM SOUVENIR ",
     "title_en": "CREATE",
-    "order_index": 3
+    "order_index": 1
   },
   {
     "id": 4,

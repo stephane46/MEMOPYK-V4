@@ -2,7 +2,7 @@
   {
     "id": 1,
     "section_id": 1,
-    "order_index": 1,
+    "order_index": 3,
     "question_en": "What are your pricing packages?",
     "question_fr": "Quels sont vos forfaits tarifaires?",
     "answer_en": "We offer three main packages: Basic ($199), Premium ($299), and Deluxe ($399). Each package includes different features and video lengths.",
@@ -37,6 +37,16 @@
     "question_fr": "De quels matériaux avez-vous besoin de notre part?",
     "answer_en": "We need your photos, videos, music preferences, and any specific requests. We'll guide you through the entire process and provide a detailed checklist.",
     "answer_fr": "Nous avons besoin de vos photos, vidéos, préférences musicales et toute demande spécifique. Nous vous guiderons tout au long du processus et fournirons une liste de contrôle détaillée.",
+    "is_active": true
+  },
+  {
+    "id": 5,
+    "section_id": 1,
+    "question_fr": "Quoi ?",
+    "question_en": "What ?",
+    "answer_fr": "Ceci",
+    "answer_en": "Cela",
+    "order_index": 1,
     "is_active": true
   }
 ]
