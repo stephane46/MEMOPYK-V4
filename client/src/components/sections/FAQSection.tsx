@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { ChevronDown, ChevronUp } from 'lucide-react';
@@ -23,7 +23,8 @@ interface FAQSection {
 
 export default function FAQSection() {
   const { language } = useLanguage();
-  const [openFAQ, setOpenFAQ] = useState<number | null>(null);
+  const [openSection, setOpenSection] = useState<string | number | null>(null);
+  const sectionRefs = useRef<Record<string | number, HTMLDivElement | null>>({});
 
   // Fetch FAQs
   const { data: faqs = [], isLoading: faqsLoading } = useQuery<FAQ[]>({
@@ -57,8 +58,23 @@ export default function FAQSection() {
   
   // Sections are now displaying properly - debug confirmed all 5 sections load!
 
-  const toggleFAQ = (faqId: number) => {
-    setOpenFAQ(openFAQ === faqId ? null : faqId);
+  const toggleSection = (sectionId: string | number) => {
+    const newOpenSection = openSection === sectionId ? null : sectionId;
+    setOpenSection(newOpenSection);
+    
+    // Scroll to section if opening
+    if (newOpenSection !== null) {
+      setTimeout(() => {
+        const element = sectionRefs.current[sectionId];
+        if (element) {
+          element.scrollIntoView({ 
+            behavior: 'smooth', 
+            block: 'start',
+            inline: 'nearest'
+          });
+        }
+      }, 100); // Small delay to allow the DOM to update
+    }
   };
 
   if (isLoading) {
@@ -104,84 +120,39 @@ export default function FAQSection() {
         <div className="space-y-8">
           {/* General FAQs (without section) */}
           {faqsBySection[0] && (
-            <div className="space-y-4">
-              {faqsBySection[0].map((faq) => (
-                <div
-                  key={faq.id}
-                  className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden"
+            <div 
+              ref={(el) => { sectionRefs.current[0] = el; }}
+              className="space-y-4"
+            >
+              {/* General Section Header */}
+              <div className="border-l-4 border-orange-500 pl-4 mb-6">
+                <button
+                  onClick={() => toggleSection(0)}
+                  className="w-full text-left flex items-center justify-between hover:bg-gray-50 transition-colors p-2 rounded"
                 >
-                  <button
-                    onClick={() => toggleFAQ(faq.id)}
-                    className="w-full px-6 py-4 text-left flex items-center justify-between hover:bg-gray-50 transition-colors"
-                  >
-                    <h3 className="text-lg font-semibold text-gray-900 pr-4">
-                      {language === 'fr-FR' ? faq.question_fr : faq.question_en}
-                    </h3>
-                    {openFAQ === faq.id ? (
-                      <ChevronUp className="h-5 w-5 text-gray-500 flex-shrink-0" />
-                    ) : (
-                      <ChevronDown className="h-5 w-5 text-gray-500 flex-shrink-0" />
-                    )}
-                  </button>
-                  
-                  {openFAQ === faq.id && (
-                    <div className="px-6 pb-4">
-                      <div 
-                        className="text-gray-700 leading-relaxed prose prose-sm max-w-none"
-                        dangerouslySetInnerHTML={{
-                          __html: language === 'fr-FR' ? faq.answer_fr : faq.answer_en
-                        }}
-                      />
-                    </div>
-                  )}
-                </div>
-              ))}
-            </div>
-          )}
-
-          {/* Sectioned FAQs - Show ALL sections */}
-          {sortedSections.map((section) => {
-            const sectionFAQs = faqsBySection[section.id] || [];
-            // Show section even if it has no FAQs
-
-            return (
-              <div key={section.id} className="space-y-4">
-                {/* Section Title */}
-                <div className="border-l-4 border-orange-500 pl-4 mb-6">
                   <h3 className="text-2xl font-bold text-gray-900">
-                    {language === 'fr-FR' ? section.title_fr : section.title_en}
+                    {language === 'fr-FR' ? 'Questions Générales' : 'General Questions'}
                   </h3>
-                </div>
+                  {openSection === 0 ? (
+                    <ChevronUp className="h-6 w-6 text-gray-500 flex-shrink-0" />
+                  ) : (
+                    <ChevronDown className="h-6 w-6 text-gray-500 flex-shrink-0" />
+                  )}
+                </button>
+              </div>
 
-                {/* Section FAQs */}
-                {sectionFAQs.length === 0 ? (
-                  <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 text-center text-gray-500">
-                    {language === 'fr-FR' 
-                      ? 'Aucune question dans cette section pour le moment.' 
-                      : 'No questions in this section yet.'}
-                  </div>
-                ) : (
-                  sectionFAQs.map((faq) => (
-                  <div
-                    key={faq.id}
-                    className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden"
-                  >
-                    <button
-                      onClick={() => toggleFAQ(faq.id)}
-                      className="w-full px-6 py-4 text-left flex items-center justify-between hover:bg-gray-50 transition-colors"
+              {/* General Section Content */}
+              {openSection === 0 && (
+                <div className="space-y-4 animate-in slide-in-from-top-2 duration-300">
+                  {faqsBySection[0].map((faq) => (
+                    <div
+                      key={faq.id}
+                      className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden"
                     >
-                      <h4 className="text-lg font-semibold text-gray-900 pr-4">
-                        {language === 'fr-FR' ? faq.question_fr : faq.question_en}
-                      </h4>
-                      {openFAQ === faq.id ? (
-                        <ChevronUp className="h-5 w-5 text-gray-500 flex-shrink-0" />
-                      ) : (
-                        <ChevronDown className="h-5 w-5 text-gray-500 flex-shrink-0" />
-                      )}
-                    </button>
-                    
-                    {openFAQ === faq.id && (
-                      <div className="px-6 pb-4">
+                      <div className="px-6 py-4">
+                        <h4 className="text-lg font-semibold text-gray-900 mb-3">
+                          {language === 'fr-FR' ? faq.question_fr : faq.question_en}
+                        </h4>
                         <div 
                           className="text-gray-700 leading-relaxed prose prose-sm max-w-none"
                           dangerouslySetInnerHTML={{
@@ -189,9 +160,71 @@ export default function FAQSection() {
                           }}
                         />
                       </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* Sectioned FAQs - Accordion Style */}
+          {sortedSections.map((section) => {
+            const sectionFAQs = faqsBySection[section.id] || [];
+            const sectionKey = section.id;
+
+            return (
+              <div 
+                key={section.id} 
+                ref={(el) => { sectionRefs.current[sectionKey] = el; }}
+                className="space-y-4"
+              >
+                {/* Section Header - Clickable Accordion */}
+                <div className="border-l-4 border-orange-500 pl-4 mb-6">
+                  <button
+                    onClick={() => toggleSection(sectionKey)}
+                    className="w-full text-left flex items-center justify-between hover:bg-gray-50 transition-colors p-2 rounded"
+                  >
+                    <h3 className="text-2xl font-bold text-gray-900">
+                      {language === 'fr-FR' ? section.title_fr : section.title_en}
+                    </h3>
+                    {openSection === sectionKey ? (
+                      <ChevronUp className="h-6 w-6 text-gray-500 flex-shrink-0" />
+                    ) : (
+                      <ChevronDown className="h-6 w-6 text-gray-500 flex-shrink-0" />
+                    )}
+                  </button>
+                </div>
+
+                {/* Section Content - Only show when open */}
+                {openSection === sectionKey && (
+                  <div className="space-y-4 animate-in slide-in-from-top-2 duration-300">
+                    {sectionFAQs.length === 0 ? (
+                      <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 text-center text-gray-500">
+                        {language === 'fr-FR' 
+                          ? 'Aucune question dans cette section pour le moment.' 
+                          : 'No questions in this section yet.'}
+                      </div>
+                    ) : (
+                      sectionFAQs.map((faq) => (
+                        <div
+                          key={faq.id}
+                          className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden"
+                        >
+                          <div className="px-6 py-4">
+                            <h4 className="text-lg font-semibold text-gray-900 mb-3">
+                              {language === 'fr-FR' ? faq.question_fr : faq.question_en}
+                            </h4>
+                            <div 
+                              className="text-gray-700 leading-relaxed prose prose-sm max-w-none"
+                              dangerouslySetInnerHTML={{
+                                __html: language === 'fr-FR' ? faq.answer_fr : faq.answer_en
+                              }}
+                            />
+                          </div>
+                        </div>
+                      ))
                     )}
                   </div>
-                  ))
                 )}
               </div>
             );
