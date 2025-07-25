@@ -983,7 +983,7 @@ export default function GalleryManagement() {
                   Cache Intelligent des Vidéos
                 </h4>
                 <p className="text-sm text-green-800 dark:text-green-200">
-                  {typeof cacheStats === 'object' && cacheStats && 'fileCount' in cacheStats ? Number(cacheStats.fileCount) : 0} vidéos en cache • {typeof cacheStats === 'object' && cacheStats && 'sizeMB' in cacheStats ? Number(cacheStats.sizeMB) : 0}MB • Chargement ultra-rapide (~50ms)
+                  {typeof cacheStats === 'object' && cacheStats && 'fileCount' in cacheStats ? Number((cacheStats as any).fileCount) : 0} vidéos en cache • {typeof cacheStats === 'object' && cacheStats && 'sizeMB' in cacheStats ? Number((cacheStats as any).sizeMB) : 0}MB • Chargement ultra-rapide (~50ms)
                 </p>
               </div>
             </div>
