@@ -69,8 +69,12 @@ export default function FAQManagement() {
   });
 
   // Fetch FAQ sections
-  const { data: sections = [], isLoading: sectionsLoading } = useQuery<FAQSection[]>({
+  const { data: sections = [], isLoading: sectionsLoading, refetch: refetchSections } = useQuery<FAQSection[]>({
     queryKey: ['/api/faq-sections'],
+    staleTime: 0, // Always fetch fresh data
+    cacheTime: 0, // Don't cache the response
+    refetchOnWindowFocus: true, // Refetch when window regains focus
+    refetchOnMount: true, // Always refetch on component mount
   });
 
   // FAQ form
@@ -104,6 +108,18 @@ export default function FAQManagement() {
       sectionForm.setValue('order_index', nextOrder);
     }
   }, [sections, editingSection, sectionForm]);
+
+  // Force refresh function
+  const forceRefreshSections = async () => {
+    console.log('🔄 FORCE REFRESHING SECTIONS...');
+    console.log('📊 Current sections in state:', sections);
+    
+    // Remove all cached data and force fresh fetch
+    queryClient.removeQueries({ queryKey: ['/api/faq-sections'] });
+    const result = await refetchSections();
+    
+    console.log('🔄 FORCE REFRESH COMPLETE, New data:', result.data);
+  };
 
   // Create FAQ mutation
   const createFaqMutation = useMutation({
@@ -197,9 +213,12 @@ export default function FAQManagement() {
         throw error;
       }
     },
-    onSuccess: (data) => {
+    onSuccess: async (data) => {
       console.log('🎉 MUTATION SUCCESS:', data);
-      queryClient.invalidateQueries({ queryKey: ['/api/faq-sections'] });
+      // Invalidate and refetch the sections data
+      await queryClient.invalidateQueries({ queryKey: ['/api/faq-sections'] });
+      await queryClient.refetchQueries({ queryKey: ['/api/faq-sections'] });
+      
       setShowSectionDialog(false);
       sectionForm.reset();
       toast({
@@ -420,6 +439,14 @@ export default function FAQManagement() {
         >
           <Plus className="h-4 w-4 mr-2" />
           Nouvelle Section
+        </Button>
+
+        <Button 
+          variant="outline" 
+          className="border-green-500 text-green-600 hover:bg-green-50 dark:border-green-400 dark:text-green-400 dark:hover:bg-green-900/20"
+          onClick={forceRefreshSections}
+        >
+          🔄 Actualiser
         </Button>
 
         <Dialog open={showSectionDialog} onOpenChange={setShowSectionDialog}>
