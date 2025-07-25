@@ -302,6 +302,7 @@ export default function FAQManagementWorking() {
   };
 
   const toggleFaqVisibility = (faq: FAQ) => {
+    console.log('👁️ Toggling FAQ visibility:', faq.id, 'from', faq.is_active, 'to', !faq.is_active);
     updateFaqMutation.mutate({
       id: faq.id,
       data: { is_active: !faq.is_active }
