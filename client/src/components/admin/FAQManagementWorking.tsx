@@ -15,7 +15,7 @@ import { Plus, Edit2, Trash2, Eye, EyeOff, ChevronDown, ChevronUp, Save, X, Arro
 
 // Types
 interface FAQ {
-  id: number;
+  id: string;
   section_id: string;
   question_en: string;
   question_fr: string;
@@ -194,7 +194,7 @@ export default function FAQManagementWorking() {
 
   // Section ordering mutations
   const reorderSectionMutation = useMutation({
-    mutationFn: async ({ sectionId, newOrder }: { sectionId: number; newOrder: number }) => {
+    mutationFn: async ({ sectionId, newOrder }: { sectionId: string; newOrder: number }) => {
       const result = await apiRequest(`/api/faq-sections/${sectionId}/reorder`, 'PATCH', { order_index: newOrder });
       return await result.json();
     },
@@ -209,7 +209,7 @@ export default function FAQManagementWorking() {
 
   // FAQ ordering mutations
   const reorderFaqMutation = useMutation({
-    mutationFn: async ({ faqId, newOrder }: { faqId: number; newOrder: number }) => {
+    mutationFn: async ({ faqId, newOrder }: { faqId: string; newOrder: number }) => {
       const result = await apiRequest(`/api/faqs/${faqId}/reorder`, 'PATCH', { order_index: newOrder });
       return await result.json();
     },
@@ -271,7 +271,7 @@ export default function FAQManagementWorking() {
 
   const handleUpdateFaq = (data: FAQFormData) => {
     if (editingFaq) {
-      updateFaqMutation.mutate({ id: editingFaq.id.toString(), data });
+      updateFaqMutation.mutate({ id: editingFaq.id, data });
     }
   };
 
@@ -286,13 +286,13 @@ export default function FAQManagementWorking() {
 
   const handleUpdateSection = (data: SectionFormData) => {
     if (editingSection) {
-      updateSectionMutation.mutate({ id: editingSection.id.toString(), data });
+      updateSectionMutation.mutate({ id: editingSection.id, data });
     }
   };
 
   const toggleFaqVisibility = (faq: FAQ) => {
     updateFaqMutation.mutate({
-      id: faq.id.toString(),
+      id: faq.id,
       data: { is_active: !faq.is_active }
     });
   };
@@ -757,7 +757,7 @@ export default function FAQManagementWorking() {
                               size="sm"
                               onClick={() => {
                                 if (window.confirm(`Supprimer la FAQ "${faq.question_fr}" ?`)) {
-                                  deleteFaqMutation.mutate(faq.id.toString());
+                                  deleteFaqMutation.mutate(faq.id);
                                 }
                               }}
                               className="text-red-600 hover:text-red-700"

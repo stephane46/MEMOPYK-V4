@@ -507,7 +507,32 @@ The application follows a modern full-stack architecture with clear separation o
 - [ ] **Phase 10.3**: Performance monitoring and error tracking
 - [ ] **Phase 10.4**: User acceptance testing and launch
 
-## Current Status: Phase 8.4.8 - FAQ PUBLIC/ADMIN SYNCHRONIZATION COMPLETED (July 25, 2025)
+## Current Status: Phase 8.4.9 - FAQ DROPDOWN FUNCTIONALITY COMPLETED (July 25, 2025)
+
+### COMPLETE FAQ SECTION DROPDOWN FIX - COMPLETED (July 25, 2025)
+**FAQ Section Movement Dropdown Fully Operational:**
+✅ **Section Dropdown Working**: FAQ editing form now includes functional dropdown to move FAQs between sections
+✅ **TypeScript Types Fixed**: Updated FAQ and FAQSection interfaces to use proper string IDs consistently
+✅ **String ID Support**: Fixed all mutations and handlers to work with UUID string IDs instead of numeric IDs
+✅ **Form Integration**: Section dropdown displays all available sections in "French Title - English Title" format
+✅ **Database Compatibility**: All CRUD operations now work correctly with Supabase UUID-based FAQ system
+✅ **Production Ready**: Build system verified with zero TypeScript errors, ready for Replit deployment
+
+**Technical Implementation:**
+- Updated FAQ.id and FAQSection.id types from number to string for UUID compatibility
+- Fixed Zod schema to accept string section_id values instead of numeric
+- Removed all .toString() calls that were causing type mismatches
+- Section dropdown uses direct string value assignment without parseInt conversion
+- All mutations (create, update, delete, reorder) now handle string IDs correctly
+
+**User Experience Achievement:**
+- Edit any FAQ and see section dropdown populated with all available sections
+- Select different section to move FAQ to that section instantly
+- Section names displayed clearly in bilingual format for easy identification
+- Save changes to complete FAQ section movement with proper database persistence
+- Both public FAQ display and admin management show identical synchronized content
+
+## Previous Status: Phase 8.4.8 - FAQ PUBLIC/ADMIN SYNCHRONIZATION COMPLETED (July 25, 2025)
 
 ### COMPLETE FAQ SYNCHRONIZATION FIX - COMPLETED (July 25, 2025)
 **Critical Public/Admin Interface Matching Issue Resolved:**
