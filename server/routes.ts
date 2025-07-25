@@ -816,7 +816,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.get("/api/faqs", async (req, res) => {
     try {
       const language = req.query.lang as string;
-      const faqs = await hybridStorage.getFAQs(language);
+      const faqs = await hybridStorage.getFaqs(language);
       res.json(faqs);
     } catch (error) {
       console.error('Get FAQs error:', error);
@@ -1015,7 +1015,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // FAQ Sections - GET all sections (KEEP ONLY THIS ONE)
   app.get("/api/faq-sections", async (req, res) => {
     try {
-      const sections = await hybridStorage.getFAQSections();
+      const sections = await hybridStorage.getFaqSections();
       res.json(sections);
     } catch (error) {
       res.status(500).json({ error: "Failed to get FAQ sections" });

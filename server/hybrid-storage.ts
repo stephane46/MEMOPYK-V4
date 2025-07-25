@@ -19,6 +19,16 @@ export interface HybridStorageInterface {
   getFaqSections(language?: string): Promise<any[]>;
   getFaqs(sectionId?: string): Promise<any[]>;
   
+  // FAQ section CRUD operations
+  createFAQSection(sectionData: any): Promise<any>;
+  updateFAQSection(sectionId: number, updates: any): Promise<any>;
+  deleteFAQSection(sectionId: number): Promise<void>;
+  
+  // FAQ CRUD operations  
+  createFAQ(faqData: any): Promise<any>;
+  updateFAQ(faqId: number, updates: any): Promise<any>;
+  deleteFAQ(faqId: number): Promise<void>;
+  
   // Contacts
   getContacts(): Promise<any[]>;
   createContact(contact: any): Promise<any>;
@@ -367,16 +377,85 @@ export class HybridStorage implements HybridStorageInterface {
     return deletedItem;
   }
 
-  // FAQ operations
+  // FAQ operations - TRUE HYBRID STORAGE
   async getFaqSections(language?: string): Promise<any[]> {
+    try {
+      console.log('🔍 FAQ Sections: Fetching from Supabase database...');
+      const { data, error } = await this.supabase
+        .from('faq_sections')
+        .select('*')
+        .eq('is_active', true)
+        .order('order_index');
+      
+      if (!error && data) {
+        console.log(`✅ FAQ Sections: Found ${data.length} sections in Supabase`);
+        // Convert database format to JSON format for compatibility
+        const converted = data.map((section: any) => ({
+          id: parseInt(section.id) || section.id,
+          title_en: section.name_en,
+          title_fr: section.name_fr,
+          order_index: section.order_index,
+          is_active: section.is_active
+        }));
+        
+        // Save to JSON as backup
+        this.saveJsonFile('faq-sections.json', converted);
+        return converted;
+      } else {
+        console.warn('⚠️ FAQ Sections: Supabase error, falling back to JSON:', error);
+      }
+    } catch (error) {
+      console.warn('⚠️ FAQ Sections: Database connection failed, using JSON fallback:', error);
+    }
+    
+    // Fallback to JSON
     const data = this.loadJsonFile('faq-sections.json');
     return data.filter(section => section.is_active);
   }
 
   async getFaqs(sectionId?: string): Promise<any[]> {
+    try {
+      console.log('🔍 FAQs: Fetching from Supabase database...');
+      let query = this.supabase
+        .from('faqs')
+        .select('*')
+        .eq('is_active', true)
+        .order('order_index');
+      
+      if (sectionId) {
+        query = query.eq('section_id', sectionId);
+      }
+      
+      const { data, error } = await query;
+      
+      if (!error && data) {
+        console.log(`✅ FAQs: Found ${data.length} FAQs in Supabase`);
+        // Convert database format to JSON format for compatibility
+        const converted = data.map((faq: any) => ({
+          id: faq.id,
+          section_id: parseInt(faq.section_id) || 0,
+          question_en: faq.question_en,
+          question_fr: faq.question_fr,
+          answer_en: faq.answer_en,
+          answer_fr: faq.answer_fr,
+          order_index: faq.order_index,
+          is_active: faq.is_active
+        }));
+        
+        // Save to JSON as backup
+        this.saveJsonFile('faqs.json', converted);
+        return converted;
+      } else {
+        console.warn('⚠️ FAQs: Supabase error, falling back to JSON:', error);
+      }
+    } catch (error) {
+      console.warn('⚠️ FAQs: Database connection failed, using JSON fallback:', error);
+    }
+    
+    // Fallback to JSON
     const data = this.loadJsonFile('faqs.json');
     const activeFaqs = data.filter(faq => faq.is_active);
-    return sectionId ? activeFaqs.filter(f => f.section_id === sectionId) : activeFaqs;
+    return sectionId ? activeFaqs.filter(f => f.section_id === parseInt(sectionId)) : activeFaqs;
   }
 
   // Contact operations
@@ -527,16 +606,51 @@ export class HybridStorage implements HybridStorageInterface {
     }
   }
 
-  // FAQ Sections operations
-  async getFAQSections(language?: string): Promise<any[]> {
-    const data = this.loadJsonFile('faq-sections.json');
-    return data.sort((a: any, b: any) => (a.order_index || 0) - (b.order_index || 0));
-  }
+
 
   async createFAQSection(sectionData: any): Promise<any> {
-    const sections = this.loadJsonFile('faq-sections.json');
+    try {
+      console.log('🆕 Creating FAQ Section in Supabase:', sectionData);
+      const { data, error } = await this.supabase
+        .from('faq_sections')
+        .insert({
+          id: `section_${Date.now()}`, // Generate unique string ID
+          key: `section_${Date.now()}`,
+          name_en: sectionData.title_en,
+          name_fr: sectionData.title_fr,
+          order_index: sectionData.order_index || 0,
+          is_active: true
+        })
+        .select()
+        .single();
+      
+      if (!error && data) {
+        console.log('✅ FAQ Section created in Supabase:', data);
+        
+        // Convert for JSON compatibility and save backup
+        const converted = {
+          id: parseInt(data.id.replace('section_', '')) || data.id,
+          title_en: data.name_en,
+          title_fr: data.name_fr,
+          order_index: data.order_index,
+          is_active: data.is_active
+        };
+        
+        // Update JSON backup
+        const sections = this.loadJsonFile('faq-sections.json');
+        sections.push(converted);
+        this.saveJsonFile('faq-sections.json', sections);
+        
+        return converted;
+      } else {
+        console.warn('⚠️ FAQ Section: Supabase create error, using JSON fallback:', error);
+      }
+    } catch (error) {
+      console.warn('⚠️ FAQ Section: Database create failed, using JSON fallback:', error);
+    }
     
-    // Find the highest existing ID and increment by 1
+    // Fallback to JSON only
+    const sections = this.loadJsonFile('faq-sections.json');
     const maxId = sections.length > 0 ? Math.max(...sections.map((s: any) => s.id)) : 0;
     const newSection = {
       id: maxId + 1,
@@ -548,31 +662,89 @@ export class HybridStorage implements HybridStorageInterface {
   }
 
   async updateFAQSection(sectionId: number, updates: any): Promise<any> {
+    try {
+      console.log('🔄 Updating FAQ Section in Supabase:', sectionId, updates);
+      
+      // Convert JSON format to database format
+      const dbUpdates: any = {};
+      if (updates.title_en) dbUpdates.name_en = updates.title_en;
+      if (updates.title_fr) dbUpdates.name_fr = updates.title_fr;
+      if (updates.order_index !== undefined) dbUpdates.order_index = updates.order_index;
+      if (updates.is_active !== undefined) dbUpdates.is_active = updates.is_active;
+      
+      const { data, error } = await this.supabase
+        .from('faq_sections')
+        .update(dbUpdates)
+        .eq('id', `section_${sectionId}`)
+        .select()
+        .single();
+      
+      if (!error && data) {
+        console.log('✅ FAQ Section updated in Supabase:', data);
+        
+        // Convert back and update JSON backup
+        const converted = {
+          id: parseInt(data.id.replace('section_', '')) || data.id,
+          title_en: data.name_en,
+          title_fr: data.name_fr,
+          order_index: data.order_index,
+          is_active: data.is_active
+        };
+        
+        // Update JSON backup with the same order swapping logic
+        const sections = this.loadJsonFile('faq-sections.json');
+        const index = sections.findIndex((section: any) => section.id === sectionId);
+        if (index !== -1) {
+          if (updates.order_index !== undefined) {
+            const currentSection = sections[index];
+            const targetOrderIndex = updates.order_index;
+            const currentOrderIndex = currentSection.order_index;
+            
+            const targetSection = sections.find((section: any) => section.order_index === targetOrderIndex);
+            
+            if (targetSection && targetSection.id !== sectionId) {
+              console.log(`🔄 Swapping FAQ section orders: ${sectionId} (${currentOrderIndex}) ↔ ${targetSection.id} (${targetOrderIndex})`);
+              targetSection.order_index = currentOrderIndex;
+            }
+            
+            currentSection.order_index = targetOrderIndex;
+            Object.assign(currentSection, updates);
+          } else {
+            sections[index] = { ...sections[index], ...updates };
+          }
+          
+          this.saveJsonFile('faq-sections.json', sections);
+        }
+        
+        return converted;
+      } else {
+        console.warn('⚠️ FAQ Section: Supabase update error, using JSON fallback:', error);
+      }
+    } catch (error) {
+      console.warn('⚠️ FAQ Section: Database update failed, using JSON fallback:', error);
+    }
+    
+    // Fallback to JSON only
     const sections = this.loadJsonFile('faq-sections.json');
     const index = sections.findIndex((section: any) => section.id === sectionId);
     if (index === -1) throw new Error('FAQ section not found');
     
-    // If order_index is being updated, implement proper swapping
+    // Implement same order swapping logic for fallback
     if (updates.order_index !== undefined) {
       const currentSection = sections[index];
       const targetOrderIndex = updates.order_index;
       const currentOrderIndex = currentSection.order_index;
       
-      // Find the section with the target order index
       const targetSection = sections.find((section: any) => section.order_index === targetOrderIndex);
       
       if (targetSection && targetSection.id !== sectionId) {
-        // Swap order indices
         console.log(`🔄 Swapping FAQ section orders: ${sectionId} (${currentOrderIndex}) ↔ ${targetSection.id} (${targetOrderIndex})`);
         targetSection.order_index = currentOrderIndex;
       }
       
       currentSection.order_index = targetOrderIndex;
-      
-      // Apply other updates
       Object.assign(currentSection, updates);
     } else {
-      // Regular update without order change
       sections[index] = { ...sections[index], ...updates };
     }
     
@@ -581,23 +753,80 @@ export class HybridStorage implements HybridStorageInterface {
   }
 
   async deleteFAQSection(sectionId: number): Promise<void> {
+    try {
+      console.log('🗑️ Deleting FAQ Section from Supabase:', sectionId);
+      const { error } = await this.supabase
+        .from('faq_sections')
+        .delete()
+        .eq('id', `section_${sectionId}`);
+      
+      if (!error) {
+        console.log('✅ FAQ Section deleted from Supabase');
+      } else {
+        console.warn('⚠️ FAQ Section: Supabase delete error, continuing with JSON cleanup:', error);
+      }
+    } catch (error) {
+      console.warn('⚠️ FAQ Section: Database delete failed, continuing with JSON cleanup:', error);
+    }
+    
+    // Update JSON backup regardless
     const sections = this.loadJsonFile('faq-sections.json');
     const filtered = sections.filter((section: any) => section.id !== sectionId);
     this.saveJsonFile('faq-sections.json', filtered);
   }
 
-  // FAQ operations
-  async getFAQs(language?: string): Promise<any[]> {
-    const data = this.loadJsonFile('faqs.json');
-    return data
-      .filter((faq: any) => faq.is_active !== false)
-      .sort((a: any, b: any) => (a.order_index || 0) - (b.order_index || 0));
-  }
+
 
   async createFAQ(faqData: any): Promise<any> {
-    const faqs = this.loadJsonFile('faqs.json');
+    try {
+      console.log('🆕 Creating FAQ in Supabase:', faqData);
+      const { data, error } = await this.supabase
+        .from('faqs')
+        .insert({
+          section_name_en: '', // Not used in current interface but required by schema
+          section_name_fr: '', // Not used in current interface but required by schema
+          section_order: 0,
+          section_id: faqData.section_id?.toString() || '0',
+          question_en: faqData.question_en,
+          question_fr: faqData.question_fr,
+          answer_en: faqData.answer_en,
+          answer_fr: faqData.answer_fr,
+          order_index: faqData.order_index || 0,
+          is_active: faqData.is_active !== false
+        })
+        .select()
+        .single();
+      
+      if (!error && data) {
+        console.log('✅ FAQ created in Supabase:', data);
+        
+        // Convert for JSON compatibility and save backup
+        const converted = {
+          id: data.id,
+          section_id: parseInt(data.section_id) || 0,
+          question_en: data.question_en,
+          question_fr: data.question_fr,
+          answer_en: data.answer_en,
+          answer_fr: data.answer_fr,
+          order_index: data.order_index,
+          is_active: data.is_active
+        };
+        
+        // Update JSON backup
+        const faqs = this.loadJsonFile('faqs.json');
+        faqs.push(converted);
+        this.saveJsonFile('faqs.json', faqs);
+        
+        return converted;
+      } else {
+        console.warn('⚠️ FAQ: Supabase create error, using JSON fallback:', error);
+      }
+    } catch (error) {
+      console.warn('⚠️ FAQ: Database create failed, using JSON fallback:', error);
+    }
     
-    // Find the highest existing ID and increment by 1
+    // Fallback to JSON only
+    const faqs = this.loadJsonFile('faqs.json');
     const maxId = faqs.length > 0 ? Math.max(...faqs.map((f: any) => f.id)) : 0;
     const newFAQ = {
       id: maxId + 1,
@@ -609,18 +838,91 @@ export class HybridStorage implements HybridStorageInterface {
   }
 
   async updateFAQ(faqId: number, updates: any): Promise<any> {
+    try {
+      console.log('🔄 Updating FAQ in Supabase:', faqId, updates);
+      
+      // Convert JSON format to database format if needed
+      const dbUpdates: any = {};
+      if (updates.question_en) dbUpdates.question_en = updates.question_en;
+      if (updates.question_fr) dbUpdates.question_fr = updates.question_fr;
+      if (updates.answer_en) dbUpdates.answer_en = updates.answer_en;
+      if (updates.answer_fr) dbUpdates.answer_fr = updates.answer_fr;
+      if (updates.order_index !== undefined) dbUpdates.order_index = updates.order_index;
+      if (updates.is_active !== undefined) dbUpdates.is_active = updates.is_active;
+      if (updates.section_id !== undefined) dbUpdates.section_id = updates.section_id.toString();
+      
+      const { data, error } = await this.supabase
+        .from('faqs')
+        .update(dbUpdates)
+        .eq('id', faqId)
+        .select()
+        .single();
+      
+      if (!error && data) {
+        console.log('✅ FAQ updated in Supabase:', data);
+        
+        // Convert back for JSON format
+        const converted = {
+          id: data.id,
+          section_id: parseInt(data.section_id) || 0,
+          question_en: data.question_en,
+          question_fr: data.question_fr,
+          answer_en: data.answer_en,
+          answer_fr: data.answer_fr,
+          order_index: data.order_index,
+          is_active: data.is_active
+        };
+        
+        // Update JSON backup with same order swapping logic
+        const faqs = this.loadJsonFile('faqs.json');
+        const index = faqs.findIndex((faq: any) => faq.id === faqId);
+        if (index !== -1) {
+          if (updates.order_index !== undefined) {
+            const currentFaq = faqs[index];
+            const targetOrderIndex = updates.order_index;
+            const currentOrderIndex = currentFaq.order_index;
+            const sectionId = currentFaq.section_id;
+            
+            const targetFaq = faqs.find((faq: any) => 
+              faq.section_id === sectionId && 
+              faq.order_index === targetOrderIndex &&
+              faq.id !== faqId
+            );
+            
+            if (targetFaq) {
+              console.log(`🔄 Swapping FAQ orders in section ${sectionId}: ${faqId} (${currentOrderIndex}) ↔ ${targetFaq.id} (${targetOrderIndex})`);
+              targetFaq.order_index = currentOrderIndex;
+            }
+            
+            currentFaq.order_index = targetOrderIndex;
+            Object.assign(currentFaq, updates);
+          } else {
+            faqs[index] = { ...faqs[index], ...updates };
+          }
+          
+          this.saveJsonFile('faqs.json', faqs);
+        }
+        
+        return converted;
+      } else {
+        console.warn('⚠️ FAQ: Supabase update error, using JSON fallback:', error);
+      }
+    } catch (error) {
+      console.warn('⚠️ FAQ: Database update failed, using JSON fallback:', error);
+    }
+    
+    // Fallback to JSON only
     const faqs = this.loadJsonFile('faqs.json');
     const index = faqs.findIndex((faq: any) => faq.id === faqId);
     if (index === -1) throw new Error('FAQ not found');
     
-    // If order_index is being updated, implement proper swapping within the same section
+    // Same order swapping logic for fallback
     if (updates.order_index !== undefined) {
       const currentFaq = faqs[index];
       const targetOrderIndex = updates.order_index;
       const currentOrderIndex = currentFaq.order_index;
       const sectionId = currentFaq.section_id;
       
-      // Find the FAQ with the target order index in the same section
       const targetFaq = faqs.find((faq: any) => 
         faq.section_id === sectionId && 
         faq.order_index === targetOrderIndex &&
@@ -628,17 +930,13 @@ export class HybridStorage implements HybridStorageInterface {
       );
       
       if (targetFaq) {
-        // Swap order indices within the same section
         console.log(`🔄 Swapping FAQ orders in section ${sectionId}: ${faqId} (${currentOrderIndex}) ↔ ${targetFaq.id} (${targetOrderIndex})`);
         targetFaq.order_index = currentOrderIndex;
       }
       
       currentFaq.order_index = targetOrderIndex;
-      
-      // Apply other updates
       Object.assign(currentFaq, updates);
     } else {
-      // Regular update without order change
       faqs[index] = { ...faqs[index], ...updates };
     }
     
@@ -647,6 +945,23 @@ export class HybridStorage implements HybridStorageInterface {
   }
 
   async deleteFAQ(faqId: number): Promise<void> {
+    try {
+      console.log('🗑️ Deleting FAQ from Supabase:', faqId);
+      const { error } = await this.supabase
+        .from('faqs')
+        .delete()
+        .eq('id', faqId);
+      
+      if (!error) {
+        console.log('✅ FAQ deleted from Supabase');
+      } else {
+        console.warn('⚠️ FAQ: Supabase delete error, continuing with JSON cleanup:', error);
+      }
+    } catch (error) {
+      console.warn('⚠️ FAQ: Database delete failed, continuing with JSON cleanup:', error);
+    }
+    
+    // Update JSON backup regardless
     const faqs = this.loadJsonFile('faqs.json');
     const filtered = faqs.filter((faq: any) => faq.id !== faqId);
     this.saveJsonFile('faqs.json', filtered);
