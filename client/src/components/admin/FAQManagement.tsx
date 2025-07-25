@@ -72,7 +72,7 @@ export default function FAQManagement() {
   const { data: sections = [], isLoading: sectionsLoading, refetch: refetchSections } = useQuery<FAQSection[]>({
     queryKey: ['/api/faq-sections'],
     staleTime: 0, // Always fetch fresh data
-    cacheTime: 0, // Don't cache the response
+    gcTime: 0, // Don't cache the response (renamed from cacheTime in v5)
     refetchOnWindowFocus: true, // Refetch when window regains focus
     refetchOnMount: true, // Always refetch on component mount
   });
@@ -103,23 +103,16 @@ export default function FAQManagement() {
 
   // Update section form default order when sections load
   useEffect(() => {
-    if (sections.length > 0 && !editingSection) {
-      const nextOrder = Math.max(...sections.map(s => s.order_index)) + 1;
+    if (sections && sections.length > 0 && !editingSection) {
+      const nextOrder = Math.max(...sections.map((s: FAQSection) => s.order_index)) + 1;
       sectionForm.setValue('order_index', nextOrder);
     }
   }, [sections, editingSection, sectionForm]);
 
-  // Force refresh function
-  const forceRefreshSections = async () => {
-    console.log('🔄 FORCE REFRESHING SECTIONS...');
-    console.log('📊 Current sections in state:', sections);
-    
-    // Remove all cached data and force fresh fetch
-    queryClient.removeQueries({ queryKey: ['/api/faq-sections'] });
-    const result = await refetchSections();
-    
-    console.log('🔄 FORCE REFRESH COMPLETE, New data:', result.data);
-  };
+  // Debug logging for sections
+  useEffect(() => {
+    console.log('📊 Sections updated:', sections ? sections.length : 'undefined', sections);
+  }, [sections]);
 
   // Create FAQ mutation
   const createFaqMutation = useMutation({
@@ -310,11 +303,11 @@ export default function FAQManagement() {
     console.log('🚀 SECTION SUBMIT DEBUG:', {
       formData: data,
       sections: sections,
-      sectionsOrderIndexes: sections.map(s => s.order_index)
+      sectionsOrderIndexes: sections ? sections.map((s: FAQSection) => s.order_index) : []
     });
     
     // Calculate next available order_index
-    const maxOrder = sections.length > 0 ? Math.max(...sections.map(s => s.order_index)) : 0;
+    const maxOrder = sections && sections.length > 0 ? Math.max(...sections.map((s: FAQSection) => s.order_index)) : 0;
     const sectionData = {
       ...data,
       order_index: maxOrder + 1
@@ -380,7 +373,7 @@ export default function FAQManagement() {
 
   // Group FAQs by section using section data
   const groupedFaqs = faqs.reduce((acc, faq) => {
-    const section = sections.find(s => s.id === faq.section_id);
+    const section = sections ? sections.find((s: FAQSection) => s.id === faq.section_id) : undefined;
     if (section) {
       const sectionKey = `${section.title_en}|${section.title_fr}`;
       if (!acc[sectionKey]) {
@@ -395,8 +388,8 @@ export default function FAQManagement() {
   const sortedSectionKeys = Object.keys(groupedFaqs).sort((a, b) => {
     const [titleEnA] = a.split('|');
     const [titleEnB] = b.split('|');
-    const sectionA = sections.find(s => s.title_en === titleEnA);
-    const sectionB = sections.find(s => s.title_en === titleEnB);
+    const sectionA = sections ? sections.find((s: FAQSection) => s.title_en === titleEnA) : undefined;
+    const sectionB = sections ? sections.find((s: FAQSection) => s.title_en === titleEnB) : undefined;
     return (sectionA?.order_index || 0) - (sectionB?.order_index || 0);
   });
 
@@ -418,12 +411,12 @@ export default function FAQManagement() {
           className="border-blue-500 text-blue-600 hover:bg-blue-50 dark:border-blue-400 dark:text-blue-400 dark:hover:bg-blue-900/20"
           onClick={() => {
             // Reset form with correct next order position
-            const maxOrder = sections.length > 0 ? Math.max(...sections.map(s => s.order_index)) : 0;
+            const maxOrder = sections && sections.length > 0 ? Math.max(...sections.map((s: FAQSection) => s.order_index)) : 0;
             const nextOrder = maxOrder + 1;
             console.log('🔧 SECTION CREATION DEBUG:', {
               sections: sections,
-              sectionsLength: sections.length,
-              sectionsOrderIndexes: sections.map(s => s.order_index),
+              sectionsLength: sections ? sections.length : 0,
+              sectionsOrderIndexes: sections ? sections.map((s: FAQSection) => s.order_index) : [],
               maxOrder,
               nextOrder
             });
@@ -441,13 +434,7 @@ export default function FAQManagement() {
           Nouvelle Section
         </Button>
 
-        <Button 
-          variant="outline" 
-          className="border-green-500 text-green-600 hover:bg-green-50 dark:border-green-400 dark:text-green-400 dark:hover:bg-green-900/20"
-          onClick={forceRefreshSections}
-        >
-          🔄 Actualiser
-        </Button>
+
 
         <Dialog open={showSectionDialog} onOpenChange={setShowSectionDialog}>
           
@@ -580,11 +567,11 @@ export default function FAQManagement() {
                           onChange={(e) => field.onChange(parseInt(e.target.value))}
                           className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent"
                         >
-                          {sections.map((section) => (
+                          {sections ? sections.map((section: FAQSection) => (
                             <option key={section.id} value={section.id}>
                               {section.title_fr} / {section.title_en}
                             </option>
-                          ))}
+                          )) : null}
                         </select>
                       </FormControl>
                       <FormMessage />
