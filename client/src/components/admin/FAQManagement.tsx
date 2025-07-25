@@ -428,6 +428,160 @@ export default function FAQManagement() {
               Nouvelle FAQ
             </Button>
           </DialogTrigger>
+          
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>
+                {editingFaq ? 'Modifier la FAQ' : 'Nouvelle FAQ'}
+              </DialogTitle>
+            </DialogHeader>
+            
+            <Form {...faqForm}>
+              <form onSubmit={faqForm.handleSubmit(editingFaq ? handleUpdateFaq : handleCreateFaq)} className="space-y-4">
+                <FormField
+                  control={faqForm.control}
+                  name="section_id"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Section</FormLabel>
+                      <FormControl>
+                        <select
+                          {...field}
+                          value={field.value}
+                          onChange={(e) => field.onChange(parseInt(e.target.value))}
+                          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                        >
+                          {sections.map((section) => (
+                            <option key={section.id} value={section.id}>
+                              {section.title_fr} / {section.title_en}
+                            </option>
+                          ))}
+                        </select>
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={faqForm.control}
+                  name="question_fr"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Question (Français)</FormLabel>
+                      <FormControl>
+                        <Input {...field} placeholder="Entrez la question en français" />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={faqForm.control}
+                  name="question_en"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Question (English)</FormLabel>
+                      <FormControl>
+                        <Input {...field} placeholder="Enter the question in English" />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={faqForm.control}
+                  name="answer_fr"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Réponse (Français)</FormLabel>
+                      <FormControl>
+                        <Textarea {...field} placeholder="Entrez la réponse en français" rows={4} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={faqForm.control}
+                  name="answer_en"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Réponse (English)</FormLabel>
+                      <FormControl>
+                        <Textarea {...field} placeholder="Enter the answer in English" rows={4} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={faqForm.control}
+                  name="order_index"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Ordre</FormLabel>
+                      <FormControl>
+                        <Input
+                          {...field}
+                          type="number"
+                          value={field.value}
+                          onChange={(e) => field.onChange(parseInt(e.target.value) || 0)}
+                          min="0"
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={faqForm.control}
+                  name="is_active"
+                  render={({ field }) => (
+                    <FormItem className="flex items-center space-x-2">
+                      <FormControl>
+                        <Switch
+                          checked={field.value}
+                          onCheckedChange={field.onChange}
+                        />
+                      </FormControl>
+                      <FormLabel>Actif</FormLabel>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <div className="flex justify-end gap-3">
+                  <Button
+                    type="button"
+                    variant="outline"
+                    onClick={() => {
+                      setShowCreateDialog(false);
+                      setEditingFaq(null);
+                      faqForm.reset();
+                    }}
+                  >
+                    Annuler
+                  </Button>
+                  <Button
+                    type="submit"
+                    disabled={createFaqMutation.isPending || updateFaqMutation.isPending}
+                    className="bg-orange-500 hover:bg-orange-600"
+                  >
+                    {createFaqMutation.isPending || updateFaqMutation.isPending ? (
+                      <div className="animate-spin h-4 w-4 border-2 border-white border-t-transparent rounded-full mr-2" />
+                    ) : null}
+                    {editingFaq ? 'Mettre à jour' : 'Créer'}
+                  </Button>
+                </div>
+              </form>
+            </Form>
+          </DialogContent>
         </Dialog>
       </div>
 
