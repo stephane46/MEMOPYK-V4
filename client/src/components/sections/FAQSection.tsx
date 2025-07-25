@@ -45,13 +45,13 @@ export default function FAQSection() {
 
   // Group FAQs by section
   const faqsBySection = activeFAQs.reduce((groups, faq) => {
-    const sectionId = faq.section_id || 0; // 0 for general FAQs without section
+    const sectionId = faq.section_id || 'general'; // 'general' for FAQs without section
     if (!groups[sectionId]) {
       groups[sectionId] = [];
     }
     groups[sectionId].push(faq);
     return groups;
-  }, {} as Record<number, FAQ[]>);
+  }, {} as Record<string, FAQ[]>);
 
   // Sort sections by order
   const sortedSections = [...sections].sort((a, b) => a.order_index - b.order_index);
@@ -122,21 +122,21 @@ export default function FAQSection() {
         {/* FAQ Content */}
         <div className="space-y-8">
           {/* General FAQs (without section) */}
-          {faqsBySection[0] && (
+          {faqsBySection['general'] && (
             <div className="space-y-4">
               {/* General Section Header */}
               <div 
-                ref={(el) => { sectionRefs.current[0] = el; }}
+                ref={(el) => { sectionRefs.current['general'] = el; }}
                 className="border-l-4 border-orange-500 pl-4 mb-6"
               >
                 <button
-                  onClick={() => toggleSection(0)}
+                  onClick={() => toggleSection('general')}
                   className="w-full text-left flex items-center justify-between hover:bg-gray-50 transition-colors p-2 rounded"
                 >
                   <h3 className="text-2xl font-bold text-gray-900">
                     {language === 'fr-FR' ? 'Questions Générales' : 'General Questions'}
                   </h3>
-                  {openSection === 0 ? (
+                  {openSection === 'general' ? (
                     <ChevronUp className="h-6 w-6 text-gray-500 flex-shrink-0" />
                   ) : (
                     <ChevronDown className="h-6 w-6 text-gray-500 flex-shrink-0" />
@@ -145,9 +145,9 @@ export default function FAQSection() {
               </div>
 
               {/* General Section Content */}
-              {openSection === 0 && (
+              {openSection === 'general' && (
                 <div className="space-y-4 animate-in slide-in-from-top-2 duration-300">
-                  {faqsBySection[0].map((faq) => (
+                  {faqsBySection['general'].map((faq) => (
                     <div
                       key={faq.id}
                       className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden"
