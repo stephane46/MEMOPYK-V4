@@ -32,7 +32,7 @@ export function HeroVideoSection() {
   const [isPlaying, setIsPlaying] = useState(true);
   const [isLoading, setIsLoading] = useState(true);
   const videoRef = useRef<HTMLVideoElement>(null);
-  const intervalRef = useRef<NodeJS.Timeout | null>(null);
+
   const touchStartX = useRef<number>(0);
   const touchEndX = useRef<number>(0);
 
@@ -61,26 +61,7 @@ export function HeroVideoSection() {
     }
   };
 
-  // Auto-cycling timer - advance video every 8 seconds when multiple videos are available
-  useEffect(() => {
-    if (activeVideos.length > 1 && isPlaying) {
-      intervalRef.current = setInterval(() => {
-        console.log('🎬 Auto-advancing to next hero video');
-        setCurrentVideoIndex(prev => (prev + 1) % activeVideos.length);
-      }, 8000); // 8 seconds
-      
-      return () => {
-        if (intervalRef.current) {
-          clearInterval(intervalRef.current);
-        }
-      };
-    } else {
-      // Clear interval if only one video or paused
-      if (intervalRef.current) {
-        clearInterval(intervalRef.current);
-      }
-    }
-  }, [activeVideos.length, isPlaying]);
+
 
   // Reset video index when videos change
   useEffect(() => {
@@ -88,12 +69,7 @@ export function HeroVideoSection() {
     setCurrentVideoIndex(0);
   }, [activeVideos.length]);
 
-  // Debug current video info
-  useEffect(() => {
-    if (currentVideo) {
-      console.log(`🎬 Current hero video: ${currentVideoIndex + 1}/${activeVideos.length} - ${currentVideo.url_en}`);
-    }
-  }, [currentVideoIndex, currentVideo?.url_en]);
+
 
   // Hero videos auto-play, so no need to track them - analytics should focus on user-initiated gallery video views
 
