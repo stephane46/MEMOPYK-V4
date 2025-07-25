@@ -1078,15 +1078,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // FAQ Sections - POST create new section
-  app.post("/api/faq-sections", async (req, res) => {
-    try {
-      const section = await hybridStorage.createFAQSection(req.body);
-      res.json(section);
-    } catch (error) {
-      res.status(500).json({ error: "Failed to create FAQ section" });
-    }
-  });
+
 
   // FAQ Sections - PATCH update section
   app.patch("/api/faq-sections/:id", async (req, res) => {

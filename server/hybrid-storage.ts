@@ -535,8 +535,11 @@ export class HybridStorage implements HybridStorageInterface {
 
   async createFAQSection(sectionData: any): Promise<any> {
     const sections = this.loadJsonFile('faq-sections.json');
+    
+    // Find the highest existing ID and increment by 1
+    const maxId = sections.length > 0 ? Math.max(...sections.map((s: any) => s.id)) : 0;
     const newSection = {
-      id: Date.now(),
+      id: maxId + 1,
       ...sectionData
     };
     sections.push(newSection);
@@ -570,8 +573,11 @@ export class HybridStorage implements HybridStorageInterface {
 
   async createFAQ(faqData: any): Promise<any> {
     const faqs = this.loadJsonFile('faqs.json');
+    
+    // Find the highest existing ID and increment by 1
+    const maxId = faqs.length > 0 ? Math.max(...faqs.map((f: any) => f.id)) : 0;
     const newFAQ = {
-      id: Date.now(),
+      id: maxId + 1,
       ...faqData
     };
     faqs.push(newFAQ);
