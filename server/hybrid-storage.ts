@@ -837,7 +837,7 @@ export class HybridStorage implements HybridStorageInterface {
     return newFAQ;
   }
 
-  async updateFAQ(faqId: number, updates: any): Promise<any> {
+  async updateFAQ(faqId: string | number, updates: any): Promise<any> {
     try {
       console.log('🔄 Updating FAQ in Supabase:', faqId, updates);
       
@@ -944,7 +944,7 @@ export class HybridStorage implements HybridStorageInterface {
     return faqs[index];
   }
 
-  async deleteFAQ(faqId: number): Promise<void> {
+  async deleteFAQ(faqId: string | number): Promise<void> {
     try {
       console.log('🗑️ Deleting FAQ from Supabase:', faqId);
       const { error } = await this.supabase

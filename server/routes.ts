@@ -1083,6 +1083,83 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // FAQs - GET all FAQs
+  app.get("/api/faqs", async (req, res) => {
+    try {
+      const faqs = await hybridStorage.getFaqs();
+      res.json(faqs);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to get FAQs" });
+    }
+  });
+
+  // FAQs - POST create FAQ
+  app.post("/api/faqs", async (req, res) => {
+    try {
+      const { section_id, question_en, question_fr, answer_en, answer_fr, order_index, is_active } = req.body;
+      
+      if (!section_id || !question_en || !question_fr || !answer_en || !answer_fr) {
+        return res.status(400).json({ error: "All fields are required" });
+      }
+      
+      const newFaq = await hybridStorage.createFAQ({
+        section_id,
+        question_en,
+        question_fr,
+        answer_en,
+        answer_fr,
+        order_index: order_index || 0,
+        is_active: is_active !== undefined ? is_active : true
+      });
+      
+      res.status(201).json({ success: true, faq: newFaq });
+    } catch (error) {
+      console.error('Create FAQ error:', error);
+      res.status(500).json({ error: "Failed to create FAQ" });
+    }
+  });
+
+  // FAQs - PATCH update FAQ
+  app.patch("/api/faqs/:id", async (req, res) => {
+    try {
+      const faq = await hybridStorage.updateFAQ(req.params.id, req.body);
+      res.json(faq);
+    } catch (error) {
+      console.error('Update FAQ error:', error);
+      res.status(500).json({ error: "Failed to update FAQ" });
+    }
+  });
+
+  // FAQs - DELETE remove FAQ
+  app.delete("/api/faqs/:id", async (req, res) => {
+    try {
+      await hybridStorage.deleteFAQ(req.params.id);
+      res.json({ success: true });
+    } catch (error) {
+      console.error('Delete FAQ error:', error);
+      res.status(500).json({ error: "Failed to delete FAQ" });
+    }
+  });
+
+  // FAQs - PATCH reorder FAQ
+  app.patch("/api/faqs/:id/reorder", async (req, res) => {
+    try {
+      const faqId = req.params.id;
+      const { order_index } = req.body;
+      
+      if (typeof order_index !== 'number') {
+        return res.status(400).json({ error: "order_index must be a number" });
+      }
+      
+      console.log(`🔄 Reordering FAQ: ${faqId} to order ${order_index}`);
+      const updatedFaq = await hybridStorage.updateFAQ(faqId, { order_index });
+      res.json({ success: true, faq: updatedFaq });
+    } catch (error) {
+      console.error('Reorder FAQ error:', error);
+      res.status(500).json({ error: "Failed to reorder FAQ" });
+    }
+  });
+
   // DUPLICATE FAQ ROUTES REMOVED - Using detailed routes above
 
   // Video streaming proxy with caching system
