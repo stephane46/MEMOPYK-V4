@@ -109,10 +109,13 @@ export default function FAQManagement() {
     }
   }, [sections, editingSection, sectionForm]);
 
-  // Debug logging for sections
+  // Debug logging for sections and grouped data
   useEffect(() => {
     console.log('📊 Sections updated:', sections ? sections.length : 'undefined', sections);
-  }, [sections]);
+    console.log('📋 FAQs:', faqs ? faqs.length : 'undefined', faqs);
+    console.log('🔗 Grouped FAQs:', groupedFaqs);
+    console.log('📑 ALL section keys (should show all 5):', allSectionKeys);
+  }, [sections, faqs]);
 
   // Create FAQ mutation
   const createFaqMutation = useMutation({
@@ -384,13 +387,17 @@ export default function FAQManagement() {
     return acc;
   }, {} as Record<string, FAQ[]>);
 
-  // Sort sections by order_index
-  const sortedSectionKeys = Object.keys(groupedFaqs).sort((a, b) => {
-    const [titleEnA] = a.split('|');
-    const [titleEnB] = b.split('|');
-    const sectionA = sections ? sections.find((s: FAQSection) => s.title_en === titleEnA) : undefined;
-    const sectionB = sections ? sections.find((s: FAQSection) => s.title_en === titleEnB) : undefined;
-    return (sectionA?.order_index || 0) - (sectionB?.order_index || 0);
+  // Create complete section list (including sections without FAQs)
+  const allSections = sections ? sections.sort((a, b) => a.order_index - b.order_index) : [];
+  
+  // Create section keys for ALL sections, not just ones with FAQs
+  const allSectionKeys = allSections.map(section => `${section.title_en}|${section.title_fr}`);
+  
+  // Ensure all sections have an entry in groupedFaqs (even if empty)
+  allSectionKeys.forEach(sectionKey => {
+    if (!groupedFaqs[sectionKey]) {
+      groupedFaqs[sectionKey] = [];
+    }
   });
 
   if (faqsLoading || sectionsLoading) {
@@ -703,9 +710,9 @@ export default function FAQManagement() {
 
       {/* FAQ sections and items */}
       <div className="space-y-4">
-        {sortedSectionKeys.map((sectionKey) => {
+        {allSectionKeys.map((sectionKey) => {
           const [sectionNameEn, sectionNameFr] = sectionKey.split('|');
-          const sectionFaqs = groupedFaqs[sectionKey].sort((a, b) => a.order_index - b.order_index);
+          const sectionFaqs = (groupedFaqs[sectionKey] || []).sort((a, b) => a.order_index - b.order_index);
           const isExpanded = expandedSections.has(sectionKey);
 
           return (
