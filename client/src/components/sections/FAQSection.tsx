@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { ChevronDown, ChevronUp } from 'lucide-react';
+import { htmlSanitizer } from '@/lib/sanitize-html';
 
 interface FAQ {
   id: string;
@@ -253,7 +254,7 @@ export default function FAQSection() {
                               <div 
                                 className="text-gray-700 leading-relaxed prose prose-sm max-w-none"
                                 dangerouslySetInnerHTML={{
-                                  __html: language === 'fr-FR' ? faq.answer_fr : faq.answer_en
+                                  __html: htmlSanitizer.sanitize(language === 'fr-FR' ? faq.answer_fr : faq.answer_en)
                                 }}
                               />
                             </div>

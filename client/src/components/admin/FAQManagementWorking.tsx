@@ -12,6 +12,8 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '
 import { useToast } from '@/hooks/use-toast';
 import { apiRequest } from '@/lib/queryClient';
 import { Plus, Edit2, Trash2, Eye, EyeOff, ChevronDown, ChevronUp, Save, X, ArrowUp, ArrowDown } from 'lucide-react';
+import { RichTextEditor } from "@/components/ui/rich-text-editor";
+import { htmlSanitizer } from "@/lib/sanitize-html";
 
 // Types
 interface FAQ {
@@ -237,12 +239,21 @@ export default function FAQManagementWorking() {
 
   const startEditingFaq = (faq: FAQ) => {
     setEditingFaq(faq);
+    
+    // Convert plain text answers to HTML if needed (for backward compatibility)
+    const answer_en = htmlSanitizer.isHTML(faq.answer_en) 
+      ? faq.answer_en 
+      : htmlSanitizer.textToHTML(faq.answer_en);
+    const answer_fr = htmlSanitizer.isHTML(faq.answer_fr) 
+      ? faq.answer_fr 
+      : htmlSanitizer.textToHTML(faq.answer_fr);
+    
     faqForm.reset({
       section_id: faq.section_id,
       question_en: faq.question_en,
       question_fr: faq.question_fr,
-      answer_en: faq.answer_en,
-      answer_fr: faq.answer_fr,
+      answer_en,
+      answer_fr,
       order_index: faq.order_index,
       is_active: faq.is_active
     });
@@ -541,7 +552,11 @@ export default function FAQManagementWorking() {
                       <FormItem>
                         <FormLabel>Réponse (Français)</FormLabel>
                         <FormControl>
-                          <Textarea {...field} placeholder="Votre réponse en français" rows={4} />
+                          <RichTextEditor
+                            value={field.value || ''}
+                            onChange={field.onChange}
+                            placeholder="Votre réponse en français avec mise en forme..."
+                          />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -555,7 +570,11 @@ export default function FAQManagementWorking() {
                       <FormItem>
                         <FormLabel>Réponse (Anglais)</FormLabel>
                         <FormControl>
-                          <Textarea {...field} placeholder="Your answer in English" rows={4} />
+                          <RichTextEditor
+                            value={field.value || ''}
+                            onChange={field.onChange}
+                            placeholder="Your answer in English with formatting..."
+                          />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
