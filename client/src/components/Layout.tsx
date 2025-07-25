@@ -28,23 +28,23 @@ export function Layout({ children }: LayoutProps) {
         <div className="container mx-auto px-4">
           <div className="flex justify-between items-center h-16">
             {/* Logo */}
-            <Link href="/">
-              <a className="text-2xl font-bold text-gray-800">
-                MEMOPYK
-              </a>
+            <Link href="/" className="text-2xl font-bold text-gray-800">
+              MEMOPYK
             </Link>
 
             {/* Navigation Links */}
             <div className="hidden md:flex space-x-8">
               {navigation.map((item) => (
-                <Link key={item.href} href={item.href}>
-                  <a className={`text-sm font-medium transition-colors ${
+                <Link 
+                  key={item.href} 
+                  href={item.href}
+                  className={`text-sm font-medium transition-colors ${
                     location === item.href
                       ? 'text-blue-600 border-b-2 border-blue-600 pb-1'
                       : 'text-gray-600 hover:text-gray-900'
-                  }`}>
-                    {item.name}
-                  </a>
+                  }`}
+                >
+                  {item.name}
                 </Link>
               ))}
             </div>
@@ -74,14 +74,16 @@ export function Layout({ children }: LayoutProps) {
           <div className="md:hidden border-t border-gray-200 py-4">
             <div className="space-y-2">
               {navigation.map((item) => (
-                <Link key={item.href} href={item.href}>
-                  <a className={`block px-3 py-2 rounded-md text-base font-medium transition-colors ${
+                <Link 
+                  key={item.href} 
+                  href={item.href}
+                  className={`block px-3 py-2 rounded-md text-base font-medium transition-colors ${
                     location === item.href
                       ? 'text-blue-600 bg-blue-50'
                       : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
-                  }`}>
-                    {item.name}
-                  </a>
+                  }`}
+                >
+                  {item.name}
                 </Link>
               ))}
             </div>
@@ -113,9 +115,9 @@ export function Layout({ children }: LayoutProps) {
                 {language === 'fr-FR' ? 'Liens Rapides' : 'Quick Links'}
               </h4>
               <ul className="space-y-2 text-gray-400">
-                <li><Link href="/"><a className="hover:text-white">{t('nav.home')}</a></Link></li>
-                <li><Link href="/gallery"><a className="hover:text-white">{t('nav.gallery')}</a></Link></li>
-                <li><Link href="/contact"><a className="hover:text-white">{t('nav.contact')}</a></Link></li>
+                <li><Link href="/" className="hover:text-white">{t('nav.home')}</Link></li>
+                <li><Link href="/gallery" className="hover:text-white">{t('nav.gallery')}</Link></li>
+                <li><Link href="/contact" className="hover:text-white">{t('nav.contact')}</Link></li>
               </ul>
             </div>
             
