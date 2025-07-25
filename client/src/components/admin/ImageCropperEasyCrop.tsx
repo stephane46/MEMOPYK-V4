@@ -20,7 +20,26 @@ const DraggableCover: React.FC<DraggableCoverProps> = ({
   const containerRef = useRef<HTMLDivElement>(null);
   const [pos, setPos] = useState({ x: 50, y: 50 }); // start centered
   const [dragging, setDragging] = useState(false);
+  const [imageLoaded, setImageLoaded] = useState(false);
   const dragStart = useRef<{ mouseX: number; mouseY: number; posX: number; posY: number } | null>(null);
+
+  // Test image loading
+  useEffect(() => {
+    const proxyUrl = `/api/image-proxy?url=${encodeURIComponent(imageUrl)}`;
+    console.log('🖼️ DraggableCover attempting to load:', proxyUrl);
+    
+    const testImg = new Image();
+    testImg.onload = () => {
+      console.log('✅ DraggableCover image loaded successfully');
+      setImageLoaded(true);
+    };
+    testImg.onerror = (error) => {
+      console.error('❌ DraggableCover image failed to load:', error);
+      console.error('❌ Original URL:', imageUrl);
+      console.error('❌ Proxy URL:', proxyUrl);
+    };
+    testImg.src = proxyUrl;
+  }, [imageUrl]);
 
   // Mouse down: record start positions
   const handleMouseDown = (e: React.MouseEvent) => {
@@ -71,6 +90,8 @@ const DraggableCover: React.FC<DraggableCoverProps> = ({
     };
   }, [dragging, handleMouseMove, handleMouseUp]);
 
+  const proxyUrl = `/api/image-proxy?url=${encodeURIComponent(imageUrl)}`;
+
   return (
     <div
       ref={containerRef}
@@ -80,19 +101,34 @@ const DraggableCover: React.FC<DraggableCoverProps> = ({
         height: 200,
         overflow: 'hidden',
         cursor: dragging ? 'grabbing' : 'grab',
-        backgroundImage: `url(/api/image-proxy?url=${encodeURIComponent(imageUrl)})`,
+        backgroundImage: imageLoaded ? `url("${proxyUrl}")` : 'none',
+        backgroundColor: imageLoaded ? 'transparent' : '#f3f4f6',
         backgroundSize: 'cover',
         backgroundPosition: `${pos.x}% ${pos.y}%`,
         borderRadius: 8,
         userSelect: 'none',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
       }}
-    />
+    >
+      {!imageLoaded && (
+        <div className="text-gray-500 text-sm">
+          Chargement de l'image...
+        </div>
+      )}
+    </div>
   );
 };
 
 export default function ImageCropperEasyCrop({ imageUrl, onSave, onCancel }: ImageCropperEasyCropProps) {
   const [loading, setLoading] = useState(false);
   const [position, setPosition] = useState({ x: 50, y: 50 }); // track position for canvas generation
+
+  // Debug log the received image URL
+  useEffect(() => {
+    console.log('🎨 ImageCropperEasyCrop received imageUrl:', imageUrl);
+  }, [imageUrl]);
 
   const generateStaticImage = async () => {
     setLoading(true);
