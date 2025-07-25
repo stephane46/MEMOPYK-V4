@@ -741,17 +741,27 @@ export default function FAQManagement() {
                         size="sm"
                         onClick={() => {
                           const section = allSections.find(s => `${s.title_en}|${s.title_fr}` === sectionKey);
-                          if (section && section.order_index > 1) {
-                            const newOrder = section.order_index - 1;
-                            updateSectionMutation.mutate({
-                              id: section.id.toString(),
-                              data: { title_en: section.title_en, title_fr: section.title_fr, order_index: newOrder }
-                            });
+                          if (section) {
+                            // Find the section that's immediately above this one to swap with
+                            const sortedSections = [...allSections].sort((a, b) => a.order_index - b.order_index);
+                            const currentIndex = sortedSections.findIndex(s => s.id === section.id);
+                            if (currentIndex > 0) {
+                              const targetSection = sortedSections[currentIndex - 1];
+                              const newOrder = targetSection.order_index;
+                              updateSectionMutation.mutate({
+                                id: section.id.toString(),
+                                data: { title_en: section.title_en, title_fr: section.title_fr, order_index: newOrder }
+                              });
+                            }
                           }
                         }}
                         disabled={(() => {
                           const section = allSections.find(s => `${s.title_en}|${s.title_fr}` === sectionKey);
-                          return !section || section.order_index <= 1;
+                          if (!section) return true;
+                          // Check if this is actually the first section
+                          const sortedSections = [...allSections].sort((a, b) => a.order_index - b.order_index);
+                          const currentIndex = sortedSections.findIndex(s => s.id === section.id);
+                          return currentIndex <= 0;
                         })()}
                         className="text-gray-600 hover:text-gray-800"
                       >
@@ -764,17 +774,27 @@ export default function FAQManagement() {
                         size="sm"
                         onClick={() => {
                           const section = allSections.find(s => `${s.title_en}|${s.title_fr}` === sectionKey);
-                          if (section && section.order_index < allSections.length) {
-                            const newOrder = section.order_index + 1;
-                            updateSectionMutation.mutate({
-                              id: section.id.toString(),
-                              data: { title_en: section.title_en, title_fr: section.title_fr, order_index: newOrder }
-                            });
+                          if (section) {
+                            // Find the section that's immediately below this one to swap with
+                            const sortedSections = [...allSections].sort((a, b) => a.order_index - b.order_index);
+                            const currentIndex = sortedSections.findIndex(s => s.id === section.id);
+                            if (currentIndex < sortedSections.length - 1) {
+                              const targetSection = sortedSections[currentIndex + 1];
+                              const newOrder = targetSection.order_index;
+                              updateSectionMutation.mutate({
+                                id: section.id.toString(),
+                                data: { title_en: section.title_en, title_fr: section.title_fr, order_index: newOrder }
+                              });
+                            }
                           }
                         }}
                         disabled={(() => {
                           const section = allSections.find(s => `${s.title_en}|${s.title_fr}` === sectionKey);
-                          return !section || section.order_index >= allSections.length;
+                          if (!section) return true;
+                          // Check if this is actually the last section
+                          const sortedSections = [...allSections].sort((a, b) => a.order_index - b.order_index);
+                          const currentIndex = sortedSections.findIndex(s => s.id === section.id);
+                          return currentIndex >= sortedSections.length - 1;
                         })()}
                         className="text-gray-600 hover:text-gray-800"
                       >
