@@ -90,6 +90,14 @@ interface GalleryItem {
 // Helper function to add cache-busting timestamp to image URLs
 const addCacheBuster = (url: string): string => {
   if (!url) return url;
+  
+  // If URL already has a version parameter (from Supabase), use it as-is
+  // This prevents double timestamps like ?v=123&t=456
+  if (url.includes('?v=')) {
+    return url;
+  }
+  
+  // Only add timestamp for URLs without existing version parameters
   const separator = url.includes('?') ? '&' : '?';
   return `${url}${separator}t=${Date.now()}`;
 };
@@ -1024,14 +1032,24 @@ export default function GalleryManagement() {
                         }}
                       >
                         <img
-                          src={addCacheBuster(item.static_image_url || item.image_url_en!)}
+                          src={(() => {
+                            const finalUrl = addCacheBuster(item.static_image_url || item.image_url_en!);
+                            console.log(`🖼️ Admin list image for ${item.title_en}:`, {
+                              static_image_url: item.static_image_url,
+                              image_url_en: item.image_url_en,
+                              final_url: finalUrl
+                            });
+                            return finalUrl;
+                          })()}
                           alt={item.alt_text_en}
                           className="w-full h-full object-cover"
                           onError={(e) => {
-                            console.warn('Image failed to load:', item.static_image_url || item.image_url_en);
+                            console.warn('❌ Image failed to load:', item.static_image_url || item.image_url_en);
                             // If static image fails, try original image
                             if (item.static_image_url && item.image_url_en) {
-                              e.currentTarget.src = addCacheBuster(item.image_url_en);
+                              const fallbackUrl = addCacheBuster(item.image_url_en);
+                              console.log(`🔄 Trying fallback image:`, fallbackUrl);
+                              e.currentTarget.src = fallbackUrl;
                             } else {
                               e.currentTarget.style.display = 'none';
                             }
