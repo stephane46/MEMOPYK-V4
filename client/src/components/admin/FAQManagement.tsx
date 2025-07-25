@@ -18,49 +18,36 @@ import { z } from 'zod';
 
 interface FAQ {
   id: string;
-  sectionNameEn: string;
-  sectionNameFr: string;
-  sectionOrder: number;
-  orderIndex: number;
-  questionEn: string;
-  questionFr: string;
-  answerEn: string;
-  answerFr: string;
-  isActive: boolean;
-  sectionId?: string;
-  createdAt: string;
-  updatedAt: string;
+  section_id: number;
+  order_index: number;
+  question_en: string;
+  question_fr: string;
+  answer_en: string;
+  answer_fr: string;
+  is_active: boolean;
 }
 
 interface FAQSection {
-  id: string;
-  key: string;
-  nameEn: string;
-  nameFr: string;
-  orderIndex: number;
-  isActive: boolean;
-  createdAt: string;
-  updatedAt: string;
+  id: number;
+  title_en: string;
+  title_fr: string;
+  order_index: number;
 }
 
 const faqSchema = z.object({
-  sectionNameEn: z.string().min(1, 'Section name (English) is required'),
-  sectionNameFr: z.string().min(1, 'Section name (French) is required'),
-  questionEn: z.string().min(1, 'Question (English) is required'),
-  questionFr: z.string().min(1, 'Question (French) is required'),
-  answerEn: z.string().min(1, 'Answer (English) is required'),
-  answerFr: z.string().min(1, 'Answer (French) is required'),
-  sectionOrder: z.number().min(0),
-  orderIndex: z.number().min(0),
-  isActive: z.boolean()
+  section_id: z.number().min(1, 'Section is required'),
+  question_en: z.string().min(1, 'Question (English) is required'),
+  question_fr: z.string().min(1, 'Question (French) is required'),
+  answer_en: z.string().min(1, 'Answer (English) is required'),
+  answer_fr: z.string().min(1, 'Answer (French) is required'),
+  order_index: z.number().min(0),
+  is_active: z.boolean()
 });
 
 const sectionSchema = z.object({
-  key: z.string().min(1, 'Section key is required'),
-  nameEn: z.string().min(1, 'Section name (English) is required'),
-  nameFr: z.string().min(1, 'Section name (French) is required'),
-  orderIndex: z.number().min(0),
-  isActive: z.boolean()
+  title_en: z.string().min(1, 'Section name (English) is required'),
+  title_fr: z.string().min(1, 'Section name (French) is required'),
+  order_index: z.number().min(0)
 });
 
 type FAQFormData = z.infer<typeof faqSchema>;
@@ -90,15 +77,13 @@ export const FAQManagement: React.FC = () => {
   const faqForm = useForm<FAQFormData>({
     resolver: zodResolver(faqSchema),
     defaultValues: {
-      sectionNameEn: '',
-      sectionNameFr: '',
-      questionEn: '',
-      questionFr: '',
-      answerEn: '',
-      answerFr: '',
-      sectionOrder: 0,
-      orderIndex: 0,
-      isActive: true
+      section_id: 1,
+      question_en: '',
+      question_fr: '',
+      answer_en: '',
+      answer_fr: '',
+      order_index: 0,
+      is_active: true
     }
   });
 
@@ -106,11 +91,9 @@ export const FAQManagement: React.FC = () => {
   const sectionForm = useForm<SectionFormData>({
     resolver: zodResolver(sectionSchema),
     defaultValues: {
-      key: '',
-      nameEn: '',
-      nameFr: '',
-      orderIndex: 0,
-      isActive: true
+      title_en: '',
+      title_fr: '',
+      order_index: 0
     }
   });
 
@@ -264,15 +247,15 @@ export const FAQManagement: React.FC = () => {
 
   const toggleFaqVisibility = (faq: FAQ) => {
     updateFaqMutation.mutate({
-      id: faq.id,
-      data: { isActive: !faq.isActive }
+      id: faq.id.toString(),
+      data: { is_active: !faq.is_active }
     });
   };
 
   const toggleSectionVisibility = (section: FAQSection) => {
     updateSectionMutation.mutate({
-      id: section.id,
-      data: { isActive: !section.isActive }
+      id: section.id.toString(),
+      data: { title_en: section.title_en, title_fr: section.title_fr }
     });
   };
 
@@ -289,15 +272,13 @@ export const FAQManagement: React.FC = () => {
   const startEditingFaq = (faq: FAQ) => {
     setEditingFaq(faq);
     faqForm.reset({
-      sectionNameEn: faq.sectionNameEn,
-      sectionNameFr: faq.sectionNameFr,
-      questionEn: faq.questionEn,
-      questionFr: faq.questionFr,
-      answerEn: faq.answerEn,
-      answerFr: faq.answerFr,
-      sectionOrder: faq.sectionOrder,
-      orderIndex: faq.orderIndex,
-      isActive: faq.isActive
+      section_id: faq.section_id,
+      question_en: faq.question_en,
+      question_fr: faq.question_fr,
+      answer_en: faq.answer_en,
+      answer_fr: faq.answer_fr,
+      order_index: faq.order_index,
+      is_active: faq.is_active
     });
     setShowCreateDialog(true);
   };
@@ -305,30 +286,33 @@ export const FAQManagement: React.FC = () => {
   const startEditingSection = (section: FAQSection) => {
     setEditingSection(section);
     sectionForm.reset({
-      key: section.key,
-      nameEn: section.nameEn,
-      nameFr: section.nameFr,
-      orderIndex: section.orderIndex,
-      isActive: section.isActive
+      title_en: section.title_en,
+      title_fr: section.title_fr,
+      order_index: section.order_index
     });
     setShowSectionDialog(true);
   };
 
-  // Group FAQs by section
+  // Group FAQs by section using section data
   const groupedFaqs = faqs.reduce((acc, faq) => {
-    const sectionKey = `${faq.sectionNameEn}|${faq.sectionNameFr}`;
-    if (!acc[sectionKey]) {
-      acc[sectionKey] = [];
+    const section = sections.find(s => s.id === faq.section_id);
+    if (section) {
+      const sectionKey = `${section.title_en}|${section.title_fr}`;
+      if (!acc[sectionKey]) {
+        acc[sectionKey] = [];
+      }
+      acc[sectionKey].push(faq);
     }
-    acc[sectionKey].push(faq);
     return acc;
   }, {} as Record<string, FAQ[]>);
 
-  // Sort sections by sectionOrder
+  // Sort sections by order_index
   const sortedSectionKeys = Object.keys(groupedFaqs).sort((a, b) => {
-    const sectionA = groupedFaqs[a][0];
-    const sectionB = groupedFaqs[b][0];
-    return sectionA.sectionOrder - sectionB.sectionOrder;
+    const [titleEnA] = a.split('|');
+    const [titleEnB] = b.split('|');
+    const sectionA = sections.find(s => s.title_en === titleEnA);
+    const sectionB = sections.find(s => s.title_en === titleEnB);
+    return (sectionA?.order_index || 0) - (sectionB?.order_index || 0);
   });
 
   if (faqsLoading || sectionsLoading) {
@@ -367,7 +351,7 @@ export const FAQManagement: React.FC = () => {
       <div className="space-y-4">
         {sortedSectionKeys.map((sectionKey) => {
           const [sectionNameEn, sectionNameFr] = sectionKey.split('|');
-          const sectionFaqs = groupedFaqs[sectionKey].sort((a, b) => a.orderIndex - b.orderIndex);
+          const sectionFaqs = groupedFaqs[sectionKey].sort((a, b) => a.order_index - b.order_index);
           const isExpanded = expandedSections.has(sectionKey);
 
           return (
@@ -402,16 +386,16 @@ export const FAQManagement: React.FC = () => {
                         <div className="flex items-start justify-between gap-4">
                           <div className="flex-1 space-y-2">
                             <h4 className="font-medium text-gray-900 dark:text-white">
-                              {faq.questionFr}
+                              {faq.question_fr}
                             </h4>
                             <p className="text-sm text-gray-600 dark:text-gray-400">
-                              {faq.questionEn}
+                              {faq.question_en}
                             </p>
                             <div className="text-xs text-gray-500 dark:text-gray-500">
-                              Réponse (FR): {faq.answerFr.substring(0, 100)}...
+                              Réponse (FR): {faq.answer_fr.substring(0, 100)}...
                             </div>
                             <div className="text-xs text-gray-500 dark:text-gray-500">
-                              Réponse (EN): {faq.answerEn.substring(0, 100)}...
+                              Réponse (EN): {faq.answer_en.substring(0, 100)}...
                             </div>
                           </div>
                           
@@ -420,9 +404,9 @@ export const FAQManagement: React.FC = () => {
                               variant="ghost"
                               size="sm"
                               onClick={() => toggleFaqVisibility(faq)}
-                              className={faq.isActive ? "text-green-600" : "text-gray-400"}
+                              className={faq.is_active ? "text-green-600" : "text-gray-400"}
                             >
-                              {faq.isActive ? <Eye className="h-4 w-4" /> : <EyeOff className="h-4 w-4" />}
+                              {faq.is_active ? <Eye className="h-4 w-4" /> : <EyeOff className="h-4 w-4" />}
                             </Button>
                             <Button
                               variant="ghost"
@@ -434,7 +418,7 @@ export const FAQManagement: React.FC = () => {
                             <Button
                               variant="ghost"
                               size="sm"
-                              onClick={() => deleteFaqMutation.mutate(faq.id)}
+                              onClick={() => deleteFaqMutation.mutate(faq.id.toString())}
                               className="text-red-600 hover:text-red-700"
                             >
                               <Trash2 className="h-4 w-4" />
