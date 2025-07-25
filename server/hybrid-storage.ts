@@ -433,7 +433,7 @@ export class HybridStorage implements HybridStorageInterface {
         // Convert database format to JSON format for compatibility
         const converted = data.map((faq: any) => ({
           id: faq.id,
-          section_id: parseInt(faq.section_id) || 0,
+          section_id: faq.section_id,
           question_en: faq.question_en,
           question_fr: faq.question_fr,
           answer_en: faq.answer_en,
@@ -455,7 +455,7 @@ export class HybridStorage implements HybridStorageInterface {
     // Fallback to JSON
     const data = this.loadJsonFile('faqs.json');
     const activeFaqs = data.filter(faq => faq.is_active);
-    return sectionId ? activeFaqs.filter(f => f.section_id === parseInt(sectionId)) : activeFaqs;
+    return sectionId ? activeFaqs.filter(f => f.section_id === sectionId) : activeFaqs;
   }
 
   // Contact operations
@@ -803,7 +803,7 @@ export class HybridStorage implements HybridStorageInterface {
         // Convert for JSON compatibility and save backup
         const converted = {
           id: data.id,
-          section_id: parseInt(data.section_id) || 0,
+          section_id: data.section_id,
           question_en: data.question_en,
           question_fr: data.question_fr,
           answer_en: data.answer_en,
@@ -864,7 +864,7 @@ export class HybridStorage implements HybridStorageInterface {
         // Convert back for JSON format
         const converted = {
           id: data.id,
-          section_id: parseInt(data.section_id) || 0,
+          section_id: data.section_id,
           question_en: data.question_en,
           question_fr: data.question_fr,
           answer_en: data.answer_en,
