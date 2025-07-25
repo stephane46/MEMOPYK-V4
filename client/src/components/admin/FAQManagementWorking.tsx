@@ -119,15 +119,26 @@ export default function FAQManagementWorking() {
       const result = await apiRequest(`/api/faqs/${id}`, 'PATCH', data);
       return await result.json();
     },
-    onSuccess: () => {
+    onSuccess: (data, variables) => {
       queryClient.invalidateQueries({ queryKey: ['/api/faqs'] });
-      setShowFaqForm(false);
-      setEditingFaq(null);
-      faqForm.reset();
-      toast({
-        title: "FAQ mise à jour",
-        description: "La FAQ a été mise à jour avec succès.",
-      });
+      
+      // Only reset form and close dialog if this was a form edit, not a visibility toggle
+      if (Object.keys(variables.data).length > 1 || !('is_active' in variables.data)) {
+        setShowFaqForm(false);
+        setEditingFaq(null);
+        faqForm.reset();
+        toast({
+          title: "FAQ mise à jour",
+          description: "La FAQ a été mise à jour avec succès.",
+        });
+      } else {
+        // This was just a visibility toggle - show appropriate message
+        const isActive = variables.data.is_active;
+        toast({
+          title: isActive ? "FAQ activée" : "FAQ désactivée",
+          description: isActive ? "La FAQ est maintenant visible sur le site." : "La FAQ est maintenant cachée du site.",
+        });
+      }
     },
   });
 
