@@ -4,18 +4,18 @@ import { useLanguage } from '@/contexts/LanguageContext';
 import { ChevronDown, ChevronUp } from 'lucide-react';
 
 interface FAQ {
-  id: number;
+  id: string;
   question_en: string;
   question_fr: string;
   answer_en: string;
   answer_fr: string;
   order_index: number;
   is_active: boolean;
-  section_id?: number;
+  section_id?: string;
 }
 
 interface FAQSection {
-  id: number;
+  id: string;
   title_en: string;
   title_fr: string;
   order_index: number;
