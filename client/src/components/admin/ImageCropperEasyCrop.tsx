@@ -112,14 +112,26 @@ export default function ImageCropperEasyCrop({ imageUrl, onSave, onCancel }: Ima
       // Scale context back to CSS pixels while maintaining high-DPI backing store
       ctx.scale(dpr, dpr);
 
-      // Load the image
+      // Load the image using proxy to solve CORS issues
       const img = new Image();
       img.crossOrigin = 'anonymous';
       
+      // Use image proxy for canvas generation too
+      const proxyUrl = `/api/image-proxy?url=${encodeURIComponent(imageUrl)}`;
+      console.log(`🖼️ Canvas loading image via proxy: ${proxyUrl}`);
+      
       await new Promise<void>((resolve, reject) => {
-        img.onload = () => resolve();
-        img.onerror = reject;
-        img.src = imageUrl;
+        img.onload = () => {
+          console.log(`✅ Canvas image loaded successfully: ${img.naturalWidth}×${img.naturalHeight}`);
+          resolve();
+        };
+        img.onerror = (error) => {
+          console.error(`❌ Canvas image failed to load:`, error);
+          console.error(`❌ Original URL:`, imageUrl);
+          console.error(`❌ Proxy URL:`, proxyUrl);
+          reject(new Error(`Failed to load image: ${imageUrl}`));
+        };
+        img.src = proxyUrl;
       });
 
       // Calculate background-size: cover dimensions

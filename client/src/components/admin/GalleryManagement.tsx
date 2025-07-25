@@ -8,7 +8,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Switch } from "@/components/ui/switch";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogTrigger } from "@/components/ui/dialog";
 import { useToast } from "@/hooks/use-toast";
 import { 
   Plus, 
@@ -1249,6 +1249,9 @@ export default function GalleryManagement() {
               <DialogTitle className="text-gray-900 dark:text-white">
                 Génération d'Image Statique - {showImageCropper.item?.title_en || 'Article de galerie'}
               </DialogTitle>
+              <DialogDescription>
+                Glissez pour repositionner l'image et générez une image statique 300×200 pour la galerie.
+              </DialogDescription>
             </DialogHeader>
             <ImageCropperEasyCrop
               imageUrl={showImageCropper.imageUrl}
