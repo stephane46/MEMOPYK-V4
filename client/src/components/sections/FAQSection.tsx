@@ -62,15 +62,18 @@ export default function FAQSection() {
     const newOpenSection = openSection === sectionId ? null : sectionId;
     setOpenSection(newOpenSection);
     
-    // Scroll to section if opening
+    // Scroll to section title if opening
     if (newOpenSection !== null) {
       setTimeout(() => {
         const element = sectionRefs.current[sectionId];
         if (element) {
-          element.scrollIntoView({ 
-            behavior: 'smooth', 
-            block: 'start',
-            inline: 'nearest'
+          // Scroll to show the section title with some padding above
+          const rect = element.getBoundingClientRect();
+          const offset = window.pageYOffset + rect.top - 80; // 80px padding above title
+          
+          window.scrollTo({
+            top: offset,
+            behavior: 'smooth'
           });
         }
       }, 100); // Small delay to allow the DOM to update
@@ -120,12 +123,12 @@ export default function FAQSection() {
         <div className="space-y-8">
           {/* General FAQs (without section) */}
           {faqsBySection[0] && (
-            <div 
-              ref={(el) => { sectionRefs.current[0] = el; }}
-              className="space-y-4"
-            >
+            <div className="space-y-4">
               {/* General Section Header */}
-              <div className="border-l-4 border-orange-500 pl-4 mb-6">
+              <div 
+                ref={(el) => { sectionRefs.current[0] = el; }}
+                className="border-l-4 border-orange-500 pl-4 mb-6"
+              >
                 <button
                   onClick={() => toggleSection(0)}
                   className="w-full text-left flex items-center justify-between hover:bg-gray-50 transition-colors p-2 rounded"
@@ -173,13 +176,12 @@ export default function FAQSection() {
             const sectionKey = section.id;
 
             return (
-              <div 
-                key={section.id} 
-                ref={(el) => { sectionRefs.current[sectionKey] = el; }}
-                className="space-y-4"
-              >
+              <div key={section.id} className="space-y-4">
                 {/* Section Header - Clickable Accordion */}
-                <div className="border-l-4 border-orange-500 pl-4 mb-6">
+                <div 
+                  ref={(el) => { sectionRefs.current[sectionKey] = el; }}
+                  className="border-l-4 border-orange-500 pl-4 mb-6"
+                >
                   <button
                     onClick={() => toggleSection(sectionKey)}
                     className="w-full text-left flex items-center justify-between hover:bg-gray-50 transition-colors p-2 rounded"
