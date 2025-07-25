@@ -243,12 +243,20 @@ export default function FAQManagement() {
   };
 
   const handleCreateSection = (data: SectionFormData) => {
+    console.log('🚀 SECTION SUBMIT DEBUG:', {
+      formData: data,
+      sections: sections,
+      sectionsOrderIndexes: sections.map(s => s.order_index)
+    });
+    
     // Calculate next available order_index
     const maxOrder = sections.length > 0 ? Math.max(...sections.map(s => s.order_index)) : 0;
     const sectionData = {
       ...data,
       order_index: maxOrder + 1
     };
+    
+    console.log('🎯 FINAL SECTION DATA:', sectionData);
     createSectionMutation.mutate(sectionData);
   };
 
@@ -341,26 +349,35 @@ export default function FAQManagement() {
 
       {/* Action buttons */}
       <div className="flex gap-3">
+        <Button 
+          variant="outline" 
+          className="border-blue-500 text-blue-600 hover:bg-blue-50 dark:border-blue-400 dark:text-blue-400 dark:hover:bg-blue-900/20"
+          onClick={() => {
+            // Reset form with correct next order position
+            const maxOrder = sections.length > 0 ? Math.max(...sections.map(s => s.order_index)) : 0;
+            const nextOrder = maxOrder + 1;
+            console.log('🔧 SECTION CREATION DEBUG:', {
+              sections: sections,
+              sectionsLength: sections.length,
+              sectionsOrderIndexes: sections.map(s => s.order_index),
+              maxOrder,
+              nextOrder
+            });
+            
+            sectionForm.reset({
+              title_en: '',
+              title_fr: '',
+              order_index: nextOrder
+            });
+            setEditingSection(null); // Clear any editing state
+            setShowSectionDialog(true);
+          }}
+        >
+          <Plus className="h-4 w-4 mr-2" />
+          Nouvelle Section
+        </Button>
+
         <Dialog open={showSectionDialog} onOpenChange={setShowSectionDialog}>
-          <DialogTrigger asChild>
-            <Button 
-              variant="outline" 
-              className="border-blue-500 text-blue-600 hover:bg-blue-50 dark:border-blue-400 dark:text-blue-400 dark:hover:bg-blue-900/20"
-              onClick={() => {
-                // Reset form with correct next order position
-                const maxOrder = sections.length > 0 ? Math.max(...sections.map(s => s.order_index)) : 0;
-                sectionForm.reset({
-                  title_en: '',
-                  title_fr: '',
-                  order_index: maxOrder + 1
-                });
-                setShowSectionDialog(true);
-              }}
-            >
-              <Plus className="h-4 w-4 mr-2" />
-              Nouvelle Section
-            </Button>
-          </DialogTrigger>
           
           <DialogContent className="max-w-lg bg-white dark:bg-gray-900">
             <DialogHeader>
@@ -379,7 +396,14 @@ export default function FAQManagement() {
                       <FormItem>
                         <FormLabel>Nom (Français)</FormLabel>
                         <FormControl>
-                          <Input {...field} placeholder="Créer votre film" />
+                          <Input 
+                            {...field} 
+                            placeholder="Créer votre film"
+                            onPaste={(e) => {
+                              // Ensure paste is allowed
+                              e.stopPropagation();
+                            }}
+                          />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -393,7 +417,14 @@ export default function FAQManagement() {
                       <FormItem>
                         <FormLabel>Nom (English)</FormLabel>
                         <FormControl>
-                          <Input {...field} placeholder="Create your film" />
+                          <Input 
+                            {...field} 
+                            placeholder="Create your film"
+                            onPaste={(e) => {
+                              // Ensure paste is allowed
+                              e.stopPropagation();
+                            }}
+                          />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
