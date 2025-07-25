@@ -23,29 +23,33 @@ interface FAQSection {
 
 export default function FAQSection() {
   const { language } = useLanguage();
-  const [openSection, setOpenSection] = useState<string | number | null>(null);
-  const sectionRefs = useRef<Record<string | number, HTMLDivElement | null>>({});
+  const [openSection, setOpenSection] = useState<string | null>(null);
+  const sectionRefs = useRef<Record<string, HTMLDivElement | null>>({});
 
   // Fetch FAQs
-  const { data: faqs = [], isLoading: faqsLoading } = useQuery<FAQ[]>({
+  const { data: faqs = [], isLoading: faqsLoading, error: faqsError } = useQuery<FAQ[]>({
     queryKey: ['/api/faqs']
   });
 
   // Fetch FAQ Sections
-  const { data: sections = [], isLoading: sectionsLoading } = useQuery<FAQSection[]>({
+  const { data: sections = [], isLoading: sectionsLoading, error: sectionsError } = useQuery<FAQSection[]>({
     queryKey: ['/api/faq-sections']
   });
 
   const isLoading = faqsLoading || sectionsLoading;
+  const hasError = faqsError || sectionsError;
 
-  // Filter active FAQs and sort by order
-  const activeFAQs = faqs
-    .filter(faq => faq.is_active)
-    .sort((a, b) => a.order_index - b.order_index);
+  // Filter active FAQs and sort by order - with safety checks
+  const activeFAQs = Array.isArray(faqs) 
+    ? faqs.filter(faq => faq && faq.is_active)
+           .sort((a, b) => (a.order_index || 0) - (b.order_index || 0))
+    : [];
 
-  // Group FAQs by section
+  // Group FAQs by section with safety checks
   const faqsBySection = activeFAQs.reduce((groups, faq) => {
-    const sectionId = faq.section_id || 'general'; // 'general' for FAQs without section
+    if (!faq || !faq.section_id) return groups;
+    
+    const sectionId = String(faq.section_id); // Ensure string type
     if (!groups[sectionId]) {
       groups[sectionId] = [];
     }
@@ -53,12 +57,15 @@ export default function FAQSection() {
     return groups;
   }, {} as Record<string, FAQ[]>);
 
-  // Sort sections by order
-  const sortedSections = [...sections].sort((a, b) => a.order_index - b.order_index);
+  // Sort sections by order with safety checks
+  const sortedSections = Array.isArray(sections) 
+    ? [...sections].filter(section => section && section.id)
+                   .sort((a, b) => (a.order_index || 0) - (b.order_index || 0))
+    : [];
   
   // Sections are now displaying properly - debug confirmed all 5 sections load!
 
-  const toggleSection = (sectionId: string | number) => {
+  const toggleSection = (sectionId: string) => {
     const newOpenSection = openSection === sectionId ? null : sectionId;
     setOpenSection(newOpenSection);
     
@@ -79,6 +86,28 @@ export default function FAQSection() {
       }, 100); // Small delay to allow the DOM to update
     }
   };
+
+  // Error handling
+  if (hasError) {
+    return (
+      <section className="py-16 bg-gray-50">
+        <div className="max-w-4xl mx-auto px-4">
+          <div className="text-center">
+            <div className="bg-red-50 border border-red-200 rounded-lg p-6">
+              <h3 className="text-lg font-semibold text-red-800 mb-2">
+                {language === 'fr-FR' ? 'Erreur de chargement' : 'Loading Error'}
+              </h3>
+              <p className="text-red-600">
+                {language === 'fr-FR' 
+                  ? 'Impossible de charger les questions fréquentes. Veuillez rafraîchir la page.'
+                  : 'Unable to load frequently asked questions. Please refresh the page.'}
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+    );
+  }
 
   if (isLoading) {
     return (
@@ -172,8 +201,10 @@ export default function FAQSection() {
 
           {/* Sectioned FAQs - Accordion Style */}
           {sortedSections.map((section) => {
-            const sectionFAQs = faqsBySection[section.id] || [];
-            const sectionKey = section.id;
+            if (!section || !section.id) return null;
+            
+            const sectionKey = String(section.id); // Ensure string type
+            const sectionFAQs = faqsBySection[sectionKey] || [];
 
             return (
               <div key={section.id} className="space-y-4">
