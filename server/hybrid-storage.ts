@@ -277,10 +277,22 @@ export class HybridStorage implements HybridStorageInterface {
 
   async updateGalleryItem(itemId: string | number, updateData: any): Promise<any> {
     const items = this.loadJsonFile('gallery-items.json');
-    const itemIndex = items.findIndex((item: any) => item.id.toString() === itemId.toString());
+    
+    console.log(`🔍 HYBRID STORAGE DEBUG - updateGalleryItem:`);
+    console.log(`   - Looking for item ID: ${itemId} (type: ${typeof itemId})`);
+    console.log(`   - Items in database: ${items.length}`);
+    console.log(`   - All item IDs:`, items.map((item: any) => ({ id: item.id, type: typeof item.id })));
+    
+    const itemIndex = items.findIndex((item: any) => {
+      const match = item.id.toString() === itemId.toString();
+      console.log(`   - Comparing ${item.id} (${typeof item.id}) === ${itemId} (${typeof itemId}) → ${match}`);
+      return match;
+    });
+    
+    console.log(`   - Item index found: ${itemIndex}`);
     
     if (itemIndex === -1) {
-      throw new Error('Gallery item not found');
+      throw new Error(`Gallery item not found: ${itemId}`);
     }
     
     const updatedItem = { 
@@ -289,7 +301,13 @@ export class HybridStorage implements HybridStorageInterface {
       updated_at: new Date().toISOString() 
     };
     items[itemIndex] = updatedItem;
+    
+    console.log(`   - Updated item:`, updatedItem);
+    console.log(`   - Saving to JSON file...`);
+    
     this.saveJsonFile('gallery-items.json', items);
+    
+    console.log(`   - JSON file saved successfully`);
     
     return updatedItem;
   }
