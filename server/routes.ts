@@ -849,47 +849,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.patch("/api/faqs/:id", async (req, res) => {
-    try {
-      const faqId = parseInt(req.params.id);
-      const updateData = req.body;
-      
-      const updatedFAQ = await hybridStorage.updateFAQ(faqId, updateData);
-      res.json({ success: true, faq: updatedFAQ });
-    } catch (error) {
-      console.error('Update FAQ error:', error);
-      res.status(500).json({ error: "Failed to update FAQ" });
-    }
-  });
-
-  app.delete("/api/faqs/:id", async (req, res) => {
-    try {
-      const faqId = parseInt(req.params.id);
-      
-      await hybridStorage.deleteFAQ(faqId);
-      res.json({ success: true, message: "FAQ deleted successfully" });
-    } catch (error) {
-      console.error('Delete FAQ error:', error);
-      res.status(500).json({ error: "Failed to delete FAQ" });
-    }
-  });
-
-  app.patch("/api/faqs/:id/reorder", async (req, res) => {
-    try {
-      const faqId = parseInt(req.params.id);
-      const { order_index } = req.body;
-      
-      if (typeof order_index !== 'number') {
-        return res.status(400).json({ error: "order_index must be a number" });
-      }
-      
-      const updatedFAQ = await hybridStorage.updateFAQ(faqId, { order_index });
-      res.json({ success: true, faq: updatedFAQ });
-    } catch (error) {
-      console.error('Reorder FAQ error:', error);
-      res.status(500).json({ error: "Failed to reorder FAQ" });
-    }
-  });
+  // DUPLICATE FAQ ROUTES REMOVED - These conflicted with the correct string ID routes above
 
   // Gallery Items - Gallery content  
   app.get("/api/gallery", async (req, res) => {

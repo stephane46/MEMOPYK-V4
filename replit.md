@@ -507,7 +507,33 @@ The application follows a modern full-stack architecture with clear separation o
 - [ ] **Phase 10.3**: Performance monitoring and error tracking
 - [ ] **Phase 10.4**: User acceptance testing and launch
 
-## Current Status: Phase 8.4.9 - FAQ DROPDOWN FUNCTIONALITY COMPLETED (July 25, 2025)
+## Current Status: Phase 8.4.10 - FAQ PRODUCTION BUG RESOLVED (July 25, 2025)
+
+### CRITICAL FAQ PRODUCTION BUG RESOLUTION - COMPLETED (July 25, 2025)
+**Root Cause Production/Development Inconsistency Fixed:**
+✅ **Duplicate API Routes Identified**: Found conflicting FAQ endpoints in server/routes.ts causing production failures
+✅ **parseInt() Error on UUIDs**: Second set of routes used `parseInt(req.params.id)` which fails on UUID strings like "1f6f3636-a61a-4657-af9c-f3591e949e4b"
+✅ **Development vs Production**: Development hit first route handlers (correct string IDs), production hit second handlers (failed parseInt conversion)
+✅ **Complete Route Cleanup**: Removed all duplicate routes that used parseInt() on UUID parameters
+✅ **Zero TypeScript Errors**: System compiles successfully for production deployment
+✅ **API Verification**: All FAQ endpoints now return proper string IDs consistently
+✅ **Production Ready**: FAQ system will work identically in both development and production environments
+
+**Technical Root Cause:**
+- Lines 852-892 in server/routes.ts contained duplicate FAQ routes
+- These routes used `parseInt(req.params.id)` which converts UUID "1f6f3636-a61a-4657-af9c-f3591e949e4b" to `NaN`
+- Database lookups with `NaN` failed silently in production
+- Development worked by chance hitting the correct string-based routes first
+- Removed all conflicting parseInt-based route handlers
+
+**Resolution Impact:**
+- FAQ system now works consistently across all environments
+- Eliminates confusion between development success and production failure  
+- All FAQ CRUD operations (create, read, update, delete, reorder) fully operational
+- String ID consistency maintained throughout entire FAQ management system
+- Zero risk of parseInt conversion errors on UUID-based primary keys
+
+## Previous Status: Phase 8.4.9 - FAQ DROPDOWN FUNCTIONALITY COMPLETED (July 25, 2025)
 
 ### COMPLETE FAQ SECTION DROPDOWN FIX - COMPLETED (July 25, 2025)
 **FAQ Section Movement Dropdown Fully Operational:**
