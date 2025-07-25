@@ -16,7 +16,7 @@ import { Plus, Edit2, Trash2, Eye, EyeOff, ChevronDown, ChevronUp, Save, X, Arro
 // Types
 interface FAQ {
   id: number;
-  section_id: number;
+  section_id: string;
   question_en: string;
   question_fr: string;
   answer_en: string;
@@ -26,7 +26,7 @@ interface FAQ {
 }
 
 interface FAQSection {
-  id: number;
+  id: string;
   title_en: string;
   title_fr: string;
   order_index: number;
@@ -34,7 +34,7 @@ interface FAQSection {
 
 // Schemas
 const faqSchema = z.object({
-  section_id: z.number(),
+  section_id: z.string(),
   question_en: z.string().min(1, 'Question en anglais requise'),
   question_fr: z.string().min(1, 'Question en français requise'),
   answer_en: z.string().min(1, 'Réponse en anglais requise'),
@@ -75,7 +75,7 @@ export default function FAQManagementWorking() {
   const faqForm = useForm<FAQFormData>({
     resolver: zodResolver(faqSchema),
     defaultValues: {
-      section_id: 1,
+      section_id: 'general',
       question_en: '',
       question_fr: '',
       answer_en: '',
@@ -405,10 +405,10 @@ export default function FAQManagementWorking() {
         <Button 
           className="bg-orange-500 hover:bg-orange-600"
           onClick={() => {
-            const sectionFaqs = faqs.filter(faq => faq.section_id === (sections[0]?.id || 1));
+            const sectionFaqs = faqs.filter(faq => faq.section_id === (sections[0]?.id || 'general'));
             const maxOrder = sectionFaqs.length > 0 ? Math.max(...sectionFaqs.map(f => f.order_index)) : 0;
             faqForm.reset({
-              section_id: sections[0]?.id || 1,
+              section_id: sections[0]?.id || 'general',
               question_en: '',
               question_fr: '',
               answer_en: '',
@@ -444,7 +444,7 @@ export default function FAQManagementWorking() {
                         <select
                           {...field}
                           value={field.value}
-                          onChange={(e) => field.onChange(parseInt(e.target.value))}
+                          onChange={(e) => field.onChange(e.target.value)}
                           className="w-full px-3 py-2 border rounded-md"
                         >
                           {sections.map((section) => (
