@@ -772,10 +772,18 @@ export default function FAQManagementWorking() {
                               {faq.question_en}
                             </p>
                             <div className="text-xs text-gray-500">
-                              Réponse (FR): {faq.answer_fr.substring(0, 100)}...
+                              <strong>Réponse (FR):</strong>
+                              <div 
+                                className="mt-1 prose prose-sm max-w-none"
+                                dangerouslySetInnerHTML={{ __html: htmlSanitizer.sanitize(faq.answer_fr) }}
+                              />
                             </div>
                             <div className="text-xs text-gray-500">
-                              Réponse (EN): {faq.answer_en.substring(0, 100)}...
+                              <strong>Réponse (EN):</strong>
+                              <div 
+                                className="mt-1 prose prose-sm max-w-none"
+                                dangerouslySetInnerHTML={{ __html: htmlSanitizer.sanitize(faq.answer_en) }}
+                              />
                             </div>
                           </div>
                           
