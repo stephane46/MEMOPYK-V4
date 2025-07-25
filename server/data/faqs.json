@@ -40,16 +40,6 @@
     "is_active": true
   },
   {
-    "id": "b545faa3-f14f-4a02-a03c-81b97530ac84",
-    "section_id": "pricing",
-    "question_en": "How much does it cost?",
-    "question_fr": "Combien ça coûte ?",
-    "answer_en": "Our pricing varies by package. Contact us for a personalized quote.",
-    "answer_fr": "Nos tarifs varient selon le package choisi. Contactez-nous pour un devis personnalisé.",
-    "order_index": 1,
-    "is_active": true
-  },
-  {
     "id": "8312c30c-4de4-4863-b9fd-20481231fbae",
     "section_id": "general",
     "question_en": "What theme can my souvenir film be about?",
@@ -90,16 +80,6 @@
     "is_active": true
   },
   {
-    "id": "6ec860ea-1eec-40a3-9be3-3553a0c6c9c6",
-    "section_id": "pricing",
-    "question_en": "What is your payment process?",
-    "question_fr": "Comment se déroule le paiement ?",
-    "answer_en": "<ul><li>50% deposit on quotation approval (to start production)</li><li>Remaining 50% on final approval (to receive the watermark-free film)</li></ul>",
-    "answer_fr": "<ul><li>50 % d’acompte à la validation du devis (lancement de la production)</li><li>50 % restants à la validation finale (livraison sans filigrane)</li></ul>",
-    "order_index": 5,
-    "is_active": true
-  },
-  {
     "id": "f7eb528b-b3da-4260-82cb-57a6aaa1e51c",
     "section_id": "general",
     "question_en": "Some clips or moments are extra important. Can I flag them?",
@@ -110,13 +90,13 @@
     "is_active": true
   },
   {
-    "id": "4be3a162-1172-4baa-be46-6be86528ed90",
+    "id": "6ec860ea-1eec-40a3-9be3-3553a0c6c9c6",
     "section_id": "pricing",
-    "question_en": "What payment methods do you accept?",
-    "question_fr": "Quels moyens de paiement acceptez-vous ?",
-    "answer_en": "<ul><li>Bank transfer</li><li>Stripe (credit card)</li><li>PayPal</li></ul>",
-    "answer_fr": "<ul><li>Virement bancaire</li><li>Carte bancaire (via Stripe)</li><li>PayPal</li></ul>",
-    "order_index": 6,
+    "question_en": "What is your payment process?",
+    "question_fr": "Comment se déroule le paiement ?",
+    "answer_en": "<ul><li>50% deposit on quotation approval (to start production)</li><li>Remaining 50% on final approval (to receive the watermark-free film)</li></ul>",
+    "answer_fr": "<ul><li>50 % d’acompte à la validation du devis (lancement de la production)</li><li>50 % restants à la validation finale (livraison sans filigrane)</li></ul>",
+    "order_index": 5,
     "is_active": true
   },
   {
@@ -126,6 +106,16 @@
     "question_fr": "Mes vidéos/photos sont de mauvaise qualitést-ce un problème ?",
     "answer_en": "<p>Fear not. We specialize in enhancing low-quality sources and using editing techniques to preserve the emotion, even if the files aren’t perfect.</p>",
     "answer_fr": "<p>Ne craignez rien. Nous sommes spécialisés dans l'amélioration des sources de faible qualité et dans l'utilisation de techniques d'édition pour préserver l'émotion, même si les fichiers ne sont pas parfaits.</p>",
+    "order_index": 6,
+    "is_active": true
+  },
+  {
+    "id": "4be3a162-1172-4baa-be46-6be86528ed90",
+    "section_id": "pricing",
+    "question_en": "What payment methods do you accept?",
+    "question_fr": "Quels moyens de paiement acceptez-vous ?",
+    "answer_en": "<ul><li>Bank transfer</li><li>Stripe (credit card)</li><li>PayPal</li></ul>",
+    "answer_fr": "<ul><li>Virement bancaire</li><li>Carte bancaire (via Stripe)</li><li>PayPal</li></ul>",
     "order_index": 6,
     "is_active": true
   },
@@ -140,22 +130,22 @@
     "is_active": true
   },
   {
-    "id": "a52dabf5-5ee7-44d6-a0ab-b134b0ed2c12",
-    "section_id": "general",
-    "question_en": "My photos and videos are a mess. Must I sort them before sending?",
-    "question_fr": "Mes photos et vidéos sont en désordre. Dois-je trier ?",
-    "answer_en": "<p>Absolutely not! Messy libraries are normal, and time-consuming to sort. We’re here to help. Feel free to remove any truly private or off-topic items, then send the rest our way.</p>",
-    "answer_fr": "<p>Absolument pas ! Les bibliothèques désorganisées sont courantes, et fastidieuses à classer. Nous nous en occupons. Supprimez juste les éléments trop privés ou hors sujet, et envoyez-nous le reste.</p>",
-    "order_index": 8,
-    "is_active": true
-  },
-  {
     "id": "1f6f3636-a61a-4657-af9c-f3591e949e4b",
     "section_id": "general",
     "question_en": "You wonder if we use Artificial Intelligence?",
     "question_fr": "Vous vous demandez si nous utilisons l Intelligence Artificielle ?",
     "answer_en": "Each image is created by hand by our teams: no robots or AI.",
     "answer_fr": "Chaque image est réalisée à la main par nos équipes : pas de robots ni d IA.",
+    "order_index": 8,
+    "is_active": true
+  },
+  {
+    "id": "a52dabf5-5ee7-44d6-a0ab-b134b0ed2c12",
+    "section_id": "general",
+    "question_en": "My photos and videos are a mess. Must I sort them before sending?",
+    "question_fr": "Mes photos et vidéos sont en désordre. Dois-je trier ?",
+    "answer_en": "<p>Absolutely not! Messy libraries are normal, and time-consuming to sort. We’re here to help. Feel free to remove any truly private or off-topic items, then send the rest our way.</p>",
+    "answer_fr": "<p>Absolument pas ! Les bibliothèques désorganisées sont courantes, et fastidieuses à classer. Nous nous en occupons. Supprimez juste les éléments trop privés ou hors sujet, et envoyez-nous le reste.</p>",
     "order_index": 8,
     "is_active": true
   },

@@ -303,6 +303,7 @@ export default function FAQManagementWorking() {
 
   const toggleFaqVisibility = (faq: FAQ) => {
     console.log('👁️ Toggling FAQ visibility:', faq.id, 'from', faq.is_active, 'to', !faq.is_active);
+    console.log('👁️ IMPORTANT: This should ONLY change is_active, NOT delete the FAQ!');
     updateFaqMutation.mutate({
       id: faq.id,
       data: { is_active: !faq.is_active }
@@ -415,6 +416,11 @@ export default function FAQManagementWorking() {
     }
     return acc;
   }, {} as Record<string, FAQ[]>);
+  
+  console.log('🔍 Admin FAQ Debug:');
+  console.log('📊 Total FAQs loaded:', faqs.length);
+  console.log('📊 FAQs by section:', Object.keys(groupedFaqs).map(key => `${key}: ${groupedFaqs[key].length}`));
+  console.log('💰 Pricing FAQs:', groupedFaqs['ORDER & PAYMENTS|COMMANDES ET PAIEMENT']?.map(f => ({id: f.id, question: f.question_fr, active: f.is_active})));
 
   // Create complete section list
   const allSections = sections.sort((a, b) => a.order_index - b.order_index);
