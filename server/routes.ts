@@ -579,13 +579,25 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   // Upload static cropped image endpoint (300x200 JPEG)
   app.post("/api/gallery/upload-static-image", uploadImage.single('image'), async (req, res) => {
+    console.log(`🚀 STATIC IMAGE UPLOAD ROUTE HIT!`);
+    console.log(`   - Request method: ${req.method}`);
+    console.log(`   - Request path: ${req.path}`);
+    console.log(`   - File received: ${req.file ? 'YES' : 'NO'}`);
+    console.log(`   - Request body:`, req.body);
+    
     try {
       if (!req.file) {
+        console.log(`❌ No file provided in request`);
         return res.status(400).json({ error: "No static image file provided" });
       }
 
       const itemId = req.body.item_id;
       const cropSettings = req.body.crop_settings ? JSON.parse(req.body.crop_settings) : null;
+      
+      console.log(`📋 Processing static image upload:`);
+      console.log(`   - Item ID: ${itemId} (type: ${typeof itemId})`);
+      console.log(`   - Crop settings: ${cropSettings ? 'Provided' : 'None'}`);
+      console.log(`   - File info: ${req.file.originalname}, ${req.file.size} bytes`);
       
       if (!itemId) {
         return res.status(400).json({ error: "Gallery item ID required" });
