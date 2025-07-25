@@ -256,6 +256,12 @@ export class HybridStorage implements HybridStorageInterface {
     return data; // Return all items for admin management
   }
 
+  async getGalleryItemById(itemId: string | number): Promise<any> {
+    const items = this.loadJsonFile('gallery-items.json');
+    const item = items.find((item: any) => item.id.toString() === itemId.toString());
+    return item;
+  }
+
   async createGalleryItem(item: any): Promise<any> {
     const items = this.loadJsonFile('gallery-items.json');
     const newItem = {

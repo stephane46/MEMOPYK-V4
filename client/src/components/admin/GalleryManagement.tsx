@@ -1287,16 +1287,26 @@ export default function GalleryManagement() {
                     // Close the modal and refresh the data
                     setShowImageCropper(null);
                     
-                    // Invalidate all gallery-related queries to refresh the data everywhere
+                    // Force complete cache invalidation and fresh fetch
                     await queryClient.invalidateQueries({ queryKey: ['/api/gallery'] });
-                    await queryClient.refetchQueries({ queryKey: ['/api/gallery'] });
                     
-                    // Force immediate re-render by updating a timestamp state
-                    console.log('🔄 Static image saved! Forcing cache invalidation and UI refresh...');
+                    // Wait a moment to ensure database is updated
+                    await new Promise(resolve => setTimeout(resolve, 200));
                     
-                    // Additional debugging
+                    // Force fresh fetch with explicit cache bypass
+                    await queryClient.refetchQueries({ 
+                      queryKey: ['/api/gallery'],
+                      type: 'active'
+                    });
+                    
+                    // Force re-render with updated data
+                    console.log('🔄 Static image saved! Forcing complete UI refresh...');
                     console.log('📸 Static image response:', result);
-                    console.log('🗄️ Gallery queries invalidated and refetched');
+                    console.log('🆕 New static image URL:', result.url);
+                    
+                    // Additional aggressive cache clearing
+                    queryClient.removeQueries({ queryKey: ['/api/gallery'] });
+                    await queryClient.refetchQueries({ queryKey: ['/api/gallery'] });
                   } else {
                     throw new Error(result.error);
                   }
