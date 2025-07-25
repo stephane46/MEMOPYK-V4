@@ -642,23 +642,46 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       // Update the gallery item with the static image URL and crop settings
       try {
-        console.log(`🔄 Updating gallery item ${itemId} (type: ${typeof itemId}) with static image URL: ${staticImageUrl}`);
-        console.log(`🔄 Converting to: ${parseInt(itemId)} (type: ${typeof parseInt(itemId)})`);
+        console.log(`🔄 SERVER: Starting database update for gallery item`);
+        console.log(`   - Raw item ID from form: "${itemId}" (type: ${typeof itemId})`);
+        console.log(`   - ParseInt result: ${parseInt(itemId)} (type: ${typeof parseInt(itemId)})`);
+        console.log(`   - Static image URL: ${staticImageUrl}`);
+        console.log(`   - Crop settings: ${JSON.stringify(cropSettings)}`);
         
-        const updatedItem = await hybridStorage.updateGalleryItem(parseInt(itemId), {
+        // Check if item exists first
+        console.log(`🔍 SERVER: Checking if item exists...`);
+        const existingItem = await hybridStorage.getGalleryItemById(itemId);
+        console.log(`🔍 SERVER: Existing item found:`, existingItem ? 'YES' : 'NO');
+        if (existingItem) {
+          console.log(`🔍 SERVER: Existing item details:`, {
+            id: existingItem.id,
+            title_en: existingItem.title_en,
+            current_static_url: existingItem.static_image_url
+          });
+        }
+        
+        console.log(`🔄 SERVER: Calling updateGalleryItem with string ID...`);
+        const updatedItem = await hybridStorage.updateGalleryItem(itemId, {
           static_image_url: staticImageUrl,
           crop_settings: cropSettings
         });
-        console.log(`✅ Gallery item ${itemId} updated with static image URL successfully`);
-        console.log(`✅ Updated item result:`, updatedItem);
+        console.log(`✅ SERVER: Gallery item updated successfully!`);
+        console.log(`✅ SERVER: Updated item result:`, updatedItem);
         
         // Verify the update worked by reading back the item
-        const verifyItem = await hybridStorage.getGalleryItemById(parseInt(itemId));
-        console.log(`🔍 Verification - Updated item static_image_url: ${verifyItem?.static_image_url}`);
-        console.log(`🔍 Verification - Full item:`, verifyItem);
+        console.log(`🔍 SERVER: Verifying update by re-reading item...`);
+        const verifyItem = await hybridStorage.getGalleryItemById(itemId);
+        console.log(`🔍 SERVER: Verification - Item found: ${verifyItem ? 'YES' : 'NO'}`);
+        if (verifyItem) {
+          console.log(`🔍 SERVER: Verification - Updated static_image_url: ${verifyItem.static_image_url}`);
+          console.log(`🔍 SERVER: Verification - Updated crop_settings: ${JSON.stringify(verifyItem.crop_settings)}`);
+        } else {
+          console.log(`❌ SERVER: CRITICAL - Item not found during verification!`);
+        }
       } catch (updateError) {
-        console.error('❌ Failed to update gallery item with static image URL:', updateError);
-        console.error('❌ Update error stack:', updateError.stack);
+        console.error('❌ SERVER: Failed to update gallery item with static image URL:', updateError);
+        console.error('❌ SERVER: Update error message:', updateError.message);
+        console.error('❌ SERVER: Update error stack:', updateError.stack);
         // Continue anyway since the upload succeeded
       }
       
