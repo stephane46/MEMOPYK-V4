@@ -29,6 +29,38 @@
   height: 16px;
 }
 
+/* Enhanced tooltip for link button */
+.rich-text-editor .ql-toolbar button.ql-link::after {
+  content: "Add Link - URLs: www.example.com → https://www.example.com | Emails: contact@example.com → mailto:contact@example.com";
+  position: absolute;
+  bottom: -45px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #1f2937;
+  color: white;
+  padding: 8px 12px;
+  border-radius: 6px;
+  font-size: 12px;
+  white-space: nowrap;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.2s ease, visibility 0.2s ease;
+  z-index: 1000;
+  pointer-events: none;
+  max-width: 300px;
+  text-align: center;
+}
+
+.rich-text-editor .ql-toolbar button.ql-link:hover::after {
+  opacity: 1;
+  visibility: visible;
+}
+
+.rich-text-editor .ql-toolbar button.ql-link:hover::after {
+  opacity: 1;
+  visibility: visible;
+}
+
 /* Toolbar styling - MEMOPYK orange theme */
 .rich-text-editor .ql-toolbar {
   border: 1px solid #e2e8f0;
