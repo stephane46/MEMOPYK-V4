@@ -74,52 +74,54 @@ export default function FAQSection() {
   // Sections are now displaying properly - debug confirmed all 5 sections load!
 
   const toggleSection = (sectionId: string) => {
-    const newOpenSection = openSection === sectionId ? null : sectionId;
-    setOpenSection(newOpenSection);
+    const isOpening = openSection !== sectionId;
+    setOpenSection(isOpening ? sectionId : null);
     
-    // Scroll to section title if opening and stay at the top
-    if (newOpenSection !== null) {
-      setTimeout(() => {
-        const element = sectionRefs.current[sectionId];
-        if (element) {
-          // Scroll to show the section title with some padding above
-          const rect = element.getBoundingClientRect();
-          const offset = window.pageYOffset + rect.top - 80; // 80px padding above title
-          
+    // Scroll to section title if opening
+    if (isOpening) {
+      // Get the element position BEFORE the content expands
+      const element = sectionRefs.current[sectionId];
+      if (element) {
+        const rect = element.getBoundingClientRect();
+        const targetOffset = window.pageYOffset + rect.top - 80; // 80px padding above title
+        
+        // Small delay to allow DOM update, then scroll to the pre-calculated position
+        setTimeout(() => {
           window.scrollTo({
-            top: offset,
+            top: targetOffset,
             behavior: 'smooth'
           });
-        }
-      }, 100); // Small delay to allow the DOM to update
+        }, 50);
+      }
     }
   };
 
   const toggleQuestion = (questionId: string) => {
     const newOpenQuestions = new Set(openQuestions);
+    const isOpening = !newOpenQuestions.has(questionId);
     
-    if (newOpenQuestions.has(questionId)) {
-      newOpenQuestions.delete(questionId);
-    } else {
-      newOpenQuestions.add(questionId);
-      
-      // Scroll to question when opening
-      setTimeout(() => {
-        const element = questionRefs.current[questionId];
-        if (element) {
-          // Scroll to show the question with some padding above
-          const rect = element.getBoundingClientRect();
-          const offset = window.pageYOffset + rect.top - 80; // 80px padding above question
-          
+    if (isOpening) {
+      // Get the element position BEFORE the answer expands
+      const element = questionRefs.current[questionId];
+      if (element) {
+        const rect = element.getBoundingClientRect();
+        const targetOffset = window.pageYOffset + rect.top - 80; // 80px padding above question
+        
+        newOpenQuestions.add(questionId);
+        setOpenQuestions(newOpenQuestions);
+        
+        // Small delay to allow DOM update, then scroll to the pre-calculated position
+        setTimeout(() => {
           window.scrollTo({
-            top: offset,
+            top: targetOffset,
             behavior: 'smooth'
           });
-        }
-      }, 100); // Small delay to allow the DOM to update
+        }, 50);
+      }
+    } else {
+      newOpenQuestions.delete(questionId);
+      setOpenQuestions(newOpenQuestions);
     }
-    
-    setOpenQuestions(newOpenQuestions);
   };
 
   // Error handling
