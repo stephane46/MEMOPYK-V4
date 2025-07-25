@@ -343,7 +343,20 @@ export default function FAQManagement() {
       <div className="flex gap-3">
         <Dialog open={showSectionDialog} onOpenChange={setShowSectionDialog}>
           <DialogTrigger asChild>
-            <Button variant="outline" className="border-blue-500 text-blue-600 hover:bg-blue-50 dark:border-blue-400 dark:text-blue-400 dark:hover:bg-blue-900/20">
+            <Button 
+              variant="outline" 
+              className="border-blue-500 text-blue-600 hover:bg-blue-50 dark:border-blue-400 dark:text-blue-400 dark:hover:bg-blue-900/20"
+              onClick={() => {
+                // Reset form with correct next order position
+                const maxOrder = sections.length > 0 ? Math.max(...sections.map(s => s.order_index)) : 0;
+                sectionForm.reset({
+                  title_en: '',
+                  title_fr: '',
+                  order_index: maxOrder + 1
+                });
+                setShowSectionDialog(true);
+              }}
+            >
               <Plus className="h-4 w-4 mr-2" />
               Nouvelle Section
             </Button>
