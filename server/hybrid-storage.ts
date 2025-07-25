@@ -21,8 +21,8 @@ export interface HybridStorageInterface {
   
   // FAQ section CRUD operations
   createFAQSection(sectionData: any): Promise<any>;
-  updateFAQSection(sectionId: number, updates: any): Promise<any>;
-  deleteFAQSection(sectionId: number): Promise<void>;
+  updateFAQSection(sectionId: string | number, updates: any): Promise<any>;
+  deleteFAQSection(sectionId: string | number): Promise<void>;
   
   // FAQ CRUD operations  
   createFAQ(faqData: any): Promise<any>;
@@ -661,7 +661,7 @@ export class HybridStorage implements HybridStorageInterface {
     return newSection;
   }
 
-  async updateFAQSection(sectionId: number, updates: any): Promise<any> {
+  async updateFAQSection(sectionId: string | number, updates: any): Promise<any> {
     try {
       console.log('🔄 Updating FAQ Section in Supabase:', sectionId, updates);
       
@@ -675,7 +675,7 @@ export class HybridStorage implements HybridStorageInterface {
       const { data, error } = await this.supabase
         .from('faq_sections')
         .update(dbUpdates)
-        .eq('id', `section_${sectionId}`)
+        .eq('id', typeof sectionId === 'string' ? sectionId : `section_${sectionId}`)
         .select()
         .single();
       
@@ -752,13 +752,13 @@ export class HybridStorage implements HybridStorageInterface {
     return sections[index];
   }
 
-  async deleteFAQSection(sectionId: number): Promise<void> {
+  async deleteFAQSection(sectionId: string | number): Promise<void> {
     try {
       console.log('🗑️ Deleting FAQ Section from Supabase:', sectionId);
       const { error } = await this.supabase
         .from('faq_sections')
         .delete()
-        .eq('id', `section_${sectionId}`);
+        .eq('id', typeof sectionId === 'string' ? sectionId : `section_${sectionId}`);
       
       if (!error) {
         console.log('✅ FAQ Section deleted from Supabase');

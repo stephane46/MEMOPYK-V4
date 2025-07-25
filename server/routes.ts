@@ -1047,7 +1047,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // FAQ Sections - PATCH update section (KEEP ONLY THIS ONE)
   app.patch("/api/faq-sections/:id", async (req, res) => {
     try {
-      const section = await hybridStorage.updateFAQSection(Number(req.params.id), req.body);
+      const section = await hybridStorage.updateFAQSection(req.params.id, req.body); // Keep as string
       res.json(section);
     } catch (error) {
       res.status(500).json({ error: "Failed to update FAQ section" });
@@ -1057,7 +1057,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // FAQ Sections - DELETE remove section (KEEP ONLY THIS ONE)
   app.delete("/api/faq-sections/:id", async (req, res) => {
     try {
-      await hybridStorage.deleteFAQSection(Number(req.params.id));
+      await hybridStorage.deleteFAQSection(req.params.id); // Keep as string
       res.json({ success: true });
     } catch (error) {
       res.status(500).json({ error: "Failed to delete FAQ section" });
@@ -1067,13 +1067,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // FAQ Sections - PATCH reorder section
   app.patch("/api/faq-sections/:id/reorder", async (req, res) => {
     try {
-      const sectionId = parseInt(req.params.id);
+      const sectionId = req.params.id; // Keep as string since FAQ sections use string IDs
       const { order_index } = req.body;
       
       if (typeof order_index !== 'number') {
         return res.status(400).json({ error: "order_index must be a number" });
       }
       
+      console.log(`🔄 Reordering FAQ section: ${sectionId} to order ${order_index}`);
       const updatedSection = await hybridStorage.updateFAQSection(sectionId, { order_index });
       res.json({ success: true, section: updatedSection });
     } catch (error) {
