@@ -1,15 +1,15 @@
 [
   {
-    "id": "general",
-    "title_en": "CREATE YOUR SOUVENIR FILM",
-    "title_fr": "CRÉEZ VOTRE FILM SOUVENIR",
+    "id": "pricing",
+    "title_en": "ORDERS AND PAYMENT",
+    "title_fr": "COMMANDES ET PAIEMENT",
     "order_index": 0,
     "is_active": true
   },
   {
-    "id": "pricing",
-    "title_en": "ORDERS AND PAYMENT",
-    "title_fr": "COMMANDES ET PAIEMENT",
+    "id": "general",
+    "title_en": "CREATE YOUR SOUVENIR FILM",
+    "title_fr": "CRÉEZ VOTRE FILM SOUVENIR",
     "order_index": 1,
     "is_active": true
   },
