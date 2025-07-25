@@ -3,6 +3,32 @@
   font-family: inherit;
 }
 
+/* Fix React Quill icons display - prevent icon mess */
+.rich-text-editor .ql-toolbar button svg {
+  width: 18px;
+  height: 18px;
+  display: block;
+}
+
+/* Ensure proper icon spacing and display */
+.rich-text-editor .ql-toolbar button {
+  width: 28px;
+  height: 28px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Fix link icon specifically */
+.rich-text-editor .ql-toolbar button.ql-link {
+  position: relative;
+}
+
+.rich-text-editor .ql-toolbar button.ql-link svg {
+  width: 16px;
+  height: 16px;
+}
+
 /* Toolbar styling - MEMOPYK orange theme */
 .rich-text-editor .ql-toolbar {
   border: 1px solid #e2e8f0;

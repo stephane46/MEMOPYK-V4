@@ -25,7 +25,7 @@
     "question_en": "You wonder if we use Artificial Intelligence?",
     "question_fr": "Vous vous demandez si nous utilisons l'Intelligence Artificielle ?",
     "answer_en": "<p>Each image is created by hand by our teams: no robots or AI.</p>",
-    "answer_fr": "<p>Chaque image est réalisée à la main par nos équipes : pas de robots ni d'IA.</p>",
+    "answer_fr": "<p>Chaque image est <u>réalisée </u>à la <em>main</em> par nos <strong>équipes </strong>: pas de robots ni d'IA.</p><p><br></p><h3>Chaque image est réalisée à la main par nos équipes : pas de robots ni d'IA.</h3><p><br></p><p>Chaque <a href=\"www.cnn.com\" rel=\"noopener noreferrer\" target=\"_blank\">image</a> est réalisée à la main par nos équipes : pas de robots ni d'IA.</p><p><br></p><p class=\"ql-indent-1\">Chaque image est réalisée à la main par nos équipes : pas de robots ni d'IA.</p><p class=\"ql-indent-1\"><br></p><ul><li>aa</li><li>bb</li><li>cc</li></ul><p><br></p><ol><li>dd</li><li>ee</li><li>ff</li></ol><p><br></p>",
     "order_index": 0,
     "is_active": true
   },
@@ -120,22 +120,22 @@
     "is_active": true
   },
   {
-    "id": "6ec860ea-1eec-40a3-9be3-3553a0c6c9c6",
-    "section_id": "pricing",
-    "question_en": "What is your payment process?",
-    "question_fr": "Comment se déroule le paiement ?",
-    "answer_en": "<ul><li>50% deposit on quotation approval (to start production)</li><li>Remaining 50% on final approval (to receive the watermark-free film)</li></ul>",
-    "answer_fr": "<ul><li>50 % d’acompte à la validation du devis (lancement de la production)</li><li>50 % restants à la validation finale (livraison sans filigrane)</li></ul>",
-    "order_index": 5,
-    "is_active": true
-  },
-  {
     "id": "f7eb528b-b3da-4260-82cb-57a6aaa1e51c",
     "section_id": "general",
     "question_en": "Some clips or moments are extra important. Can I flag them?",
     "question_fr": "Certains moments sont particulièrement importants. Je peux les signaler ?",
     "answer_en": "<p>Yes! Just highlight those in the questionnaire (for example, baby’s first steps, a funny travel moment, etc.), and we’ll treat them accordingly.</p>",
     "answer_fr": "<p>Oui ! Indiquez-les dans le questionnaire (ex. : les premiers pas de bébé, un moment drôle en voyage, etc.), et nous leur accorderons une attention spéciale.</p>",
+    "order_index": 5,
+    "is_active": true
+  },
+  {
+    "id": "6ec860ea-1eec-40a3-9be3-3553a0c6c9c6",
+    "section_id": "pricing",
+    "question_en": "What is your payment process?",
+    "question_fr": "Comment se déroule le paiement ?",
+    "answer_en": "<ul><li>50% deposit on quotation approval (to start production)</li><li>Remaining 50% on final approval (to receive the watermark-free film)</li></ul>",
+    "answer_fr": "<ul><li>50 % d’acompte à la validation du devis (lancement de la production)</li><li>50 % restants à la validation finale (livraison sans filigrane)</li></ul>",
     "order_index": 5,
     "is_active": true
   },
