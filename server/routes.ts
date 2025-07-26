@@ -1082,10 +1082,16 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // FAQs - PATCH update FAQ
   app.patch("/api/faqs/:id", async (req, res) => {
     try {
+      console.log('🔧 PATCH /api/faqs/:id - ID:', req.params.id);
+      console.log('🔧 PATCH /api/faqs/:id - Body:', req.body);
+      console.log('🔧 CRITICAL: This should UPDATE the FAQ, NOT delete it!');
+      
       const faq = await hybridStorage.updateFAQ(req.params.id, req.body);
+      
+      console.log('✅ FAQ update completed successfully:', faq);
       res.json(faq);
     } catch (error) {
-      console.error('Update FAQ error:', error);
+      console.error('❌ Update FAQ error:', error);
       res.status(500).json({ error: "Failed to update FAQ" });
     }
   });
@@ -1093,6 +1099,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // FAQs - DELETE remove FAQ
   app.delete("/api/faqs/:id", async (req, res) => {
     try {
+      console.log('🗑️ DELETE /api/faqs/:id - ID:', req.params.id);
+      console.log('🗑️ WARNING: This DELETES the FAQ permanently!');
+      
       await hybridStorage.deleteFAQ(req.params.id);
       res.json({ success: true });
     } catch (error) {

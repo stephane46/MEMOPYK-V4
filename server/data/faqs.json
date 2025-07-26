@@ -1,12 +1,12 @@
 [
   {
-    "id": "17863d31-857a-4729-a62a-12a865ef3427",
-    "section_id": "pricing",
-    "question_en": "HOW MUCH DOES IT COST?",
-    "question_fr": "COMBIEN ÇA COÛTE ?",
-    "answer_en": "<p>Our prices are customized according to your specific needs. Contact us for a free quote adapted to your project.</p>",
-    "answer_fr": "<p>Nos tarifs sont personnalisés selon vos besoins spécifiques. Contactez-nous pour un devis gratuit adapté à votre projet.</p>",
-    "order_index": 0,
+    "id": "a0cc7a21-f987-4e04-9791-72a2a87d6372",
+    "section_id": "general",
+    "question_en": "Can I give you specific requirements (music, titles, effects, ...)?",
+    "question_fr": "Puis-je donner des consignes (musique, titres, effets…) ?",
+    "answer_en": "<p>Of course! Our detailed questionnaire has a dedicated section for all your creative notes. We respect every request and advise where needed to ensure the best possible film.</p>",
+    "answer_fr": "<p>Bien sûr ! Le questionnaire détaillé vous permet d’ajouter toutes vos préférences créatives. Nous respectons chaque demande et vous conseillons si besoin pour obtenir le meilleur rendu.</p>",
+    "order_index": 1,
     "is_active": true
   },
   {
@@ -16,16 +16,6 @@
     "question_fr": "Je n’ai pas d’idée précise, est-ce un problème ?",
     "answer_en": "Not at all. We will make recommendations, create the story arc that is best adapted to your photos and videos, and take care of every detail to avoid decision fatigue while delivering the most exciting result possible. We also recommend you book a session with one of our experts to guide you through the next steps.",
     "answer_fr": "Aucun souci. Nous vous ferons des propositions adaptées, construirons une narration cohérente à partir de vos fichiers et prendrons en charge tous les détails pour éviter la fatigue décisionnelle. Nous vous recommandons aussi de prendre rendez-vous avec un expert MEMOPYK pour vous guider.",
-    "order_index": 1,
-    "is_active": true
-  },
-  {
-    "id": "a0cc7a21-f987-4e04-9791-72a2a87d6372",
-    "section_id": "general",
-    "question_en": "Can I give you specific requirements (music, titles, effects, ...)?",
-    "question_fr": "Puis-je donner des consignes (musique, titres, effets…) ?",
-    "answer_en": "<p>Of course! Our detailed questionnaire has a dedicated section for all your creative notes. We respect every request and advise where needed to ensure the best possible film.</p>",
-    "answer_fr": "<p>Bien sûr ! Le questionnaire détaillé vous permet d’ajouter toutes vos préférences créatives. Nous respectons chaque demande et vous conseillons si besoin pour obtenir le meilleur rendu.</p>",
     "order_index": 1,
     "is_active": true
   },
@@ -90,22 +80,22 @@
     "is_active": true
   },
   {
-    "id": "4be3a162-1172-4baa-be46-6be86528ed90",
-    "section_id": "pricing",
-    "question_en": "What payment methods do you accept?",
-    "question_fr": "Quels moyens de paiement acceptez-vous ?",
-    "answer_en": "<ul><li>Bank transfer</li><li>Stripe (credit card)</li><li>PayPal</li></ul>",
-    "answer_fr": "<ul><li>Virement bancaire</li><li>Carte bancaire (via Stripe)</li><li>PayPal</li></ul>",
-    "order_index": 6,
-    "is_active": true
-  },
-  {
     "id": "af9e6454-fe0c-4370-8963-548ef56fec1b",
     "section_id": "general",
     "question_en": "Je crains que mes vidéos/photos ne soient pas de bonne qualité. Pouvez-vous encore réaliser un bon film ?",
     "question_fr": "Mes vidéos/photos sont de mauvaise qualitést-ce un problème ?",
     "answer_en": "<p>Fear not. We specialize in enhancing low-quality sources and using editing techniques to preserve the emotion, even if the files aren’t perfect.</p>",
     "answer_fr": "<p>Ne craignez rien. Nous sommes spécialisés dans l'amélioration des sources de faible qualité et dans l'utilisation de techniques d'édition pour préserver l'émotion, même si les fichiers ne sont pas parfaits.</p>",
+    "order_index": 6,
+    "is_active": true
+  },
+  {
+    "id": "4be3a162-1172-4baa-be46-6be86528ed90",
+    "section_id": "pricing",
+    "question_en": "What payment methods do you accept?",
+    "question_fr": "Quels moyens de paiement acceptez-vous ?",
+    "answer_en": "<ul><li>Bank transfer</li><li>Stripe (credit card)</li><li>PayPal</li></ul>",
+    "answer_fr": "<ul><li>Virement bancaire</li><li>Carte bancaire (via Stripe)</li><li>PayPal</li></ul>",
     "order_index": 6,
     "is_active": true
   },
@@ -120,22 +110,22 @@
     "is_active": true
   },
   {
-    "id": "a52dabf5-5ee7-44d6-a0ab-b134b0ed2c12",
-    "section_id": "general",
-    "question_en": "My photos and videos are a mess. Must I sort them before sending?",
-    "question_fr": "Mes photos et vidéos sont en désordre. Dois-je trier ?",
-    "answer_en": "<p>Absolutely not! Messy libraries are normal, and time-consuming to sort. We’re here to help. Feel free to remove any truly private or off-topic items, then send the rest our way.</p>",
-    "answer_fr": "<p>Absolument pas ! Les bibliothèques désorganisées sont courantes, et fastidieuses à classer. Nous nous en occupons. Supprimez juste les éléments trop privés ou hors sujet, et envoyez-nous le reste.</p>",
-    "order_index": 8,
-    "is_active": true
-  },
-  {
     "id": "1f6f3636-a61a-4657-af9c-f3591e949e4b",
     "section_id": "general",
     "question_en": "You wonder if we use Artificial Intelligence?",
     "question_fr": "Vous vous demandez si nous utilisons l Intelligence Artificielle ?",
     "answer_en": "Each image is created by hand by our teams: no robots or AI.",
     "answer_fr": "Chaque image est réalisée à la main par nos équipes : pas de robots ni d IA.",
+    "order_index": 8,
+    "is_active": true
+  },
+  {
+    "id": "a52dabf5-5ee7-44d6-a0ab-b134b0ed2c12",
+    "section_id": "general",
+    "question_en": "My photos and videos are a mess. Must I sort them before sending?",
+    "question_fr": "Mes photos et vidéos sont en désordre. Dois-je trier ?",
+    "answer_en": "<p>Absolutely not! Messy libraries are normal, and time-consuming to sort. We’re here to help. Feel free to remove any truly private or off-topic items, then send the rest our way.</p>",
+    "answer_fr": "<p>Absolument pas ! Les bibliothèques désorganisées sont courantes, et fastidieuses à classer. Nous nous en occupons. Supprimez juste les éléments trop privés ou hors sujet, et envoyez-nous le reste.</p>",
     "order_index": 8,
     "is_active": true
   },
