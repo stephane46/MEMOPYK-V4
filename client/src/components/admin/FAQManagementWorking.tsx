@@ -424,24 +424,42 @@ export default function FAQManagementWorking() {
     }
   };
 
-  // Group FAQs by section
+  // Group FAQs by section (including orphaned FAQs)
   const groupedFaqs = faqs.reduce((acc, faq) => {
-    const section = sections.find(s => s.id === faq.section_id);
-    if (section) {
-      const sectionKey = `${section.title_en}|${section.title_fr}`;
-      if (!acc[sectionKey]) {
-        acc[sectionKey] = [];
+    let section = sections.find(s => s.id === faq.section_id);
+    
+    // Handle orphaned FAQs (section_id doesn't match any existing section)
+    if (!section) {
+      // Check if section_id is "0" or similar - assign to general
+      if (!faq.section_id || faq.section_id === "0") {
+        section = sections.find(s => s.id === "general");
       }
-      acc[sectionKey].push(faq);
+      
+      // If still no section found, create a temporary "orphaned" section
+      if (!section) {
+        section = {
+          id: faq.section_id || "orphaned",
+          title_en: `Orphaned Section (${faq.section_id})`,
+          title_fr: `Section Orpheline (${faq.section_id})`,
+          order_index: 999
+        };
+      }
     }
+    
+    const sectionKey = `${section.title_en}|${section.title_fr}`;
+    if (!acc[sectionKey]) {
+      acc[sectionKey] = [];
+    }
+    acc[sectionKey].push(faq);
     return acc;
   }, {} as Record<string, FAQ[]>);
   
   console.log('🔍 Admin FAQ Debug:');
   console.log('📊 Total FAQs loaded:', faqs.length);
   console.log('📊 FAQs by section:', Object.keys(groupedFaqs).map(key => `${key}: ${groupedFaqs[key].length}`));
-  console.log('💰 Pricing FAQs:', groupedFaqs['ORDERS AND PAYMENT|COMMANDES ET PAIEMENT']?.map(f => ({id: f.id, question: f.question_fr, active: f.is_active})));
+  console.log('💰 Pricing FAQs:', groupedFaqs['ORDERS AND PAYMENT|COMMANDES ET PAIEMENT']?.map(f => ({id: f.id, question: f.question_fr.substring(0,30), active: f.is_active})));
   console.log('🔑 All section keys:', Object.keys(groupedFaqs));
+  console.log('🚨 Orphaned FAQs check:', faqs.filter(faq => !sections.find(s => s.id === faq.section_id)).map(f => ({id: f.id, section_id: f.section_id, question: f.question_fr.substring(0,30)})));
 
   // Create complete section list
   const allSections = sections.sort((a, b) => a.order_index - b.order_index);

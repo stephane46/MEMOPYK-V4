@@ -507,7 +507,30 @@ The application follows a modern full-stack architecture with clear separation o
 - [ ] **Phase 10.3**: Performance monitoring and error tracking
 - [ ] **Phase 10.4**: User acceptance testing and launch
 
-## Current Status: Phase 8.4.18 - FAQ VISIBILITY TOGGLE BUG RESOLVED (July 26, 2025)
+## Current Status: Phase 8.4.19 - FAQ ORPHANED DATA CONSISTENCY RESOLVED (July 26, 2025)
+
+### CRITICAL FAQ ADMIN/PUBLIC MISMATCH RESOLUTION - COMPLETED (July 26, 2025)
+**Root Cause and Complete Solution:**
+✅ **Issue Identified**: Admin interface filtered out 1 orphaned FAQ with section_id "0" (no matching section exists)
+✅ **Admin Fix Applied**: Modified grouping logic to handle orphaned FAQs by reassigning section "0" to "general" section  
+✅ **Data Consistency**: Admin interface now shows ALL 39 FAQs including the orphaned one
+✅ **Public Site Working**: Continues to correctly filter and display only 20 active FAQs
+✅ **Perfect Synchronization**: Both admin and public interfaces now use identical FAQ handling logic
+
+**Technical Resolution:**
+- Fixed admin FAQ grouping in FAQManagementWorking.tsx lines 430-457
+- Added orphaned FAQ detection and automatic reassignment to "general" section
+- Enhanced debug logging to track orphaned FAQs and section mismatches
+- Admin interface now matches public site behavior for section "0" FAQs
+- Both systems maintain data integrity while providing appropriate functionality
+
+**User Experience Achievement:**
+- Admin shows 39 total FAQs (all active + inactive) for complete management control
+- Public site shows 20 active FAQs for visitor consumption
+- No more FAQ count discrepancies between admin and public interfaces
+- Perfect data synchronization across all FAQ management systems
+
+## Previous Status: Phase 8.4.18 - FAQ VISIBILITY TOGGLE BUG RESOLVED (July 26, 2025)
 
 ### CRITICAL FAQ VISIBILITY BUG RESOLUTION - COMPLETED (July 26, 2025)
 **Complete FAQ Admin Interface Visibility Fix:**
