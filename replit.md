@@ -20,6 +20,26 @@ Preferred communication style: Simple, everyday language.
 
 ## Recent Changes (July 26, 2025)
 
+### Phase 8.4.4 Legal Document URL Naming Fix - COMPLETED (July 26, 2025)
+**Fixed Confusing URL Mapping to Use Proper English Names:**
+✅ **URL Clarity**: Fixed misleading URLs like `/legal/refund` for "Terms of Sale" - now uses proper English names
+✅ **Consistent Naming**: All legal document URLs now reflect their actual English document names
+✅ **Better UX**: URLs are now self-explanatory and professional for public-facing legal documents
+✅ **Documentation Updated**: Updated routing documentation to reflect proper URL structure
+
+**URL Changes Applied:**
+- `/legal/privacy` → `/legal/privacy-policy` (Privacy Policy)
+- `/legal/terms` → `/legal/terms-of-service` (Terms of Service) 
+- `/legal/cookies` → `/legal/cookie-policy` (Cookie Policy)
+- `/legal/refund` → `/legal/terms-of-sale` (Terms of Sale) ← **Fixed confusing naming**
+- `/legal/disclaimer` → `/legal/legal-notice` (Legal Notice)
+
+**Technical Implementation:**
+- Updated Layout.tsx footer links to use descriptive English-based URLs
+- Updated LegalDocumentPage.tsx documentTypeMap with proper URL-to-type mapping
+- Fixed TypeScript property access compatibility issues
+- Maintained bilingual display labels while fixing URL structure
+
 ### Phase 8.4.3 Admin Update System & React 18 Compatibility - COMPLETED (July 26, 2025)
 **Critical Admin Update Bug Resolution:**
 ✅ **Root Cause Fixed**: apiRequest function parameter order was incorrect (method, url) instead of (url, method)
@@ -69,7 +89,7 @@ Preferred communication style: Simple, everyday language.
 ✅ **Production Ready**: Complete legal document system ready for deployment with footer navigation
 
 **Technical Implementation:**
-- Added all 5 legal document routes: /legal/privacy, /legal/terms, /legal/cookies, /legal/refund, /legal/disclaimer
+- Added all 5 legal document routes: /legal/privacy-policy, /legal/terms-of-service, /legal/cookie-policy, /legal/terms-of-sale, /legal/legal-notice
 - Fixed footer grid layout from spanning columns to proper 4-column display
 - Enhanced LegalDocumentPage component with proper property mapping for database fields
 - Integrated with existing legal document management system for seamless content updates

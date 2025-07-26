@@ -6,11 +6,11 @@ import { htmlSanitizer } from '../lib/sanitize-html';
 import type { LegalDocument } from '@shared/schema';
 
 const documentTypeMap: Record<string, string> = {
-  'privacy': 'politique-confidentialite',
-  'terms': 'cgu', 
-  'cookies': 'politique-cookies',
-  'refund': 'cgv',
-  'disclaimer': 'mentions-legales'
+  'privacy-policy': 'politique-confidentialite',
+  'terms-of-service': 'cgu', 
+  'cookie-policy': 'politique-cookies',
+  'terms-of-sale': 'cgv',
+  'legal-notice': 'mentions-legales'
 };
 
 export function LegalDocumentPage() {
@@ -76,7 +76,7 @@ export function LegalDocumentPage() {
     if (exactMatch) {
       console.log('  - Exact match isActive:', exactMatch.isActive);
       console.log('  - Exact match type:', exactMatch.type);
-      console.log('  - Exact match title:', exactMatch.title_fr);
+      console.log('  - Exact match title:', exactMatch.titleFr || (exactMatch as any).title_fr);
     }
     console.log('  - Looking for document type:', documentType);
     console.log('  - All document types available:', documents.map(d => d.type));

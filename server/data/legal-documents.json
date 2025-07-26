@@ -14,10 +14,10 @@
     "type": "cgv",
     "title_en": "Terms of Sale",
     "title_fr": "Conditions Générales de Vente",
-    "content_en": "<h1>Terms of Sale</h1><p>This is the terms of sale content.</p>",
-    "content_fr": "<h1>Conditions Générales de Vente</h1><p>Ceci est le contenu des conditions générales de vente.</p>",
+    "content_en": "<p>This is the terms of sale content.</p>",
+    "content_fr": "<p>Ceci est le contenu des conditions générales de vente.</p>",
     "is_active": true,
-    "updated_at": "2025-07-15T21:18:09.687067"
+    "updated_at": "2025-07-26T10:45:02.412"
   },
   {
     "id": "a58efa76-2009-4487-9166-ee49034ac4e5",

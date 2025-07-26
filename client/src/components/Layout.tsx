@@ -126,19 +126,19 @@ export function Layout({ children }: LayoutProps) {
                 {language === 'fr-FR' ? 'Légal' : 'Legal'}
               </h4>
               <ul className="space-y-2 text-gray-400">
-                <li><Link href={getLocalizedPath('/legal/privacy')} className="hover:text-white">
+                <li><Link href={getLocalizedPath('/legal/privacy-policy')} className="hover:text-white">
                   {language === 'fr-FR' ? 'Politique de confidentialité' : 'Privacy Policy'}
                 </Link></li>
-                <li><Link href={getLocalizedPath('/legal/terms')} className="hover:text-white">
-                  {language === 'fr-FR' ? 'Conditions générales d\'utilisation' : 'Terms of Use'}
+                <li><Link href={getLocalizedPath('/legal/terms-of-service')} className="hover:text-white">
+                  {language === 'fr-FR' ? 'Conditions générales d\'utilisation' : 'Terms of Service'}
                 </Link></li>
-                <li><Link href={getLocalizedPath('/legal/cookies')} className="hover:text-white">
+                <li><Link href={getLocalizedPath('/legal/cookie-policy')} className="hover:text-white">
                   {language === 'fr-FR' ? 'Politique des cookies' : 'Cookie Policy'}
                 </Link></li>
-                <li><Link href={getLocalizedPath('/legal/refund')} className="hover:text-white">
+                <li><Link href={getLocalizedPath('/legal/terms-of-sale')} className="hover:text-white">
                   {language === 'fr-FR' ? 'Conditions générales de vente' : 'Terms of Sale'}
                 </Link></li>
-                <li><Link href={getLocalizedPath('/legal/disclaimer')} className="hover:text-white">
+                <li><Link href={getLocalizedPath('/legal/legal-notice')} className="hover:text-white">
                   {language === 'fr-FR' ? 'Mentions légales' : 'Legal Notice'}
                 </Link></li>
               </ul>
