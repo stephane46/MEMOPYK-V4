@@ -1200,7 +1200,16 @@ export function AnalyticsDashboard() {
               </div>
 
               {/* Video Engagement Metrics */}
-              {videoEngagementData && (videoEngagementData as any)?.success && (videoEngagementData as any)?.metrics && (
+              {(() => {
+                const hasData = videoEngagementData && (videoEngagementData as any)?.success && (videoEngagementData as any)?.metrics;
+                console.log('🧪 Video Engagement Render Check:', {
+                  videoEngagementData: !!videoEngagementData,
+                  success: (videoEngagementData as any)?.success,
+                  metrics: !!(videoEngagementData as any)?.metrics,
+                  hasData
+                });
+                return hasData;
+              })() && (
                 <Card>
                   <CardHeader>
                     <CardTitle className="flex items-center gap-2">
