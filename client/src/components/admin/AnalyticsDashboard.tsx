@@ -88,7 +88,7 @@ export function AnalyticsDashboard() {
   // Fetch settings
   const { data: settings, isLoading: settingsLoading } = useQuery<AnalyticsSettings>({
     queryKey: ['/api/analytics/settings'],
-    enabled: showSettings
+    enabled: showSettings || showIpManagement
   });
 
   // Fetch active viewer IPs
