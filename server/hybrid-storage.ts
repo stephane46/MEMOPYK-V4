@@ -839,7 +839,10 @@ export class HybridStorage implements HybridStorageInterface {
 
   async updateFAQ(faqId: string | number, updates: any): Promise<any> {
     try {
+      console.log('🔄 ===== FAQ UPDATE START =====');
       console.log('🔄 Updating FAQ in Supabase:', faqId, updates);
+      console.log('🔄 FAQ ID type:', typeof faqId);
+      console.log('🔄 Updates object:', JSON.stringify(updates, null, 2));
       
       // Convert JSON format to database format if needed
       const dbUpdates: any = {};
@@ -851,6 +854,8 @@ export class HybridStorage implements HybridStorageInterface {
       if (updates.is_active !== undefined) dbUpdates.is_active = updates.is_active;
       if (updates.section_id !== undefined) dbUpdates.section_id = updates.section_id.toString();
       
+      console.log('🔄 Database updates to apply:', JSON.stringify(dbUpdates, null, 2));
+      
       const { data, error } = await this.supabase
         .from('faqs')
         .update(dbUpdates)
@@ -858,8 +863,12 @@ export class HybridStorage implements HybridStorageInterface {
         .select()
         .single();
       
+      console.log('🔄 Supabase response - Data:', data);
+      console.log('🔄 Supabase response - Error:', error);
+      
       if (!error && data) {
-        console.log('✅ FAQ updated in Supabase:', data);
+        console.log('✅ FAQ updated in Supabase successfully!');
+        console.log('✅ Updated FAQ data:', JSON.stringify(data, null, 2));
         
         // Convert back for JSON format
         const converted = {
@@ -873,9 +882,13 @@ export class HybridStorage implements HybridStorageInterface {
           is_active: data.is_active
         };
         
+        console.log('✅ Converted FAQ for return:', JSON.stringify(converted, null, 2));
+        
         // Update JSON backup with same order swapping logic
         const faqs = this.loadJsonFile('faqs.json');
         const index = faqs.findIndex((faq: any) => faq.id === faqId);
+        console.log('✅ JSON backup - FAQ index found:', index, 'out of', faqs.length, 'FAQs');
+        
         if (index !== -1) {
           if (updates.order_index !== undefined) {
             const currentFaq = faqs[index];
@@ -897,12 +910,17 @@ export class HybridStorage implements HybridStorageInterface {
             currentFaq.order_index = targetOrderIndex;
             Object.assign(currentFaq, updates);
           } else {
+            console.log('✅ Updating FAQ in JSON backup - simple update');
             faqs[index] = { ...faqs[index], ...updates };
           }
           
           this.saveJsonFile('faqs.json', faqs);
+          console.log('✅ JSON backup updated successfully');
+        } else {
+          console.log('⚠️ FAQ not found in JSON backup for ID:', faqId);
         }
         
+        console.log('✅ ===== FAQ UPDATE COMPLETE - SUCCESS =====');
         return converted;
       } else {
         console.warn('⚠️ FAQ: Supabase update error, using JSON fallback:', error);
