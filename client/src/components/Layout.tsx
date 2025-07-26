@@ -135,6 +135,12 @@ export function Layout({ children }: LayoutProps) {
                 <li><Link href={getLocalizedPath('/legal/cookies')} className="hover:text-white">
                   {language === 'fr-FR' ? 'Politique des cookies' : 'Cookie Policy'}
                 </Link></li>
+                <li><Link href={getLocalizedPath('/legal/refund')} className="hover:text-white">
+                  {language === 'fr-FR' ? 'Politique de remboursement' : 'Refund Policy'}
+                </Link></li>
+                <li><Link href={getLocalizedPath('/legal/disclaimer')} className="hover:text-white">
+                  {language === 'fr-FR' ? 'Avis de non-responsabilité' : 'Disclaimer'}
+                </Link></li>
               </ul>
             </div>
             
