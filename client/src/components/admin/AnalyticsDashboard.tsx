@@ -1,0 +1,510 @@
+import React, { useState, useEffect } from 'react';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
+import { Separator } from '@/components/ui/separator';
+import { Progress } from '@/components/ui/progress';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Switch } from '@/components/ui/switch';
+import { useToast } from '@/hooks/use-toast';
+import { apiRequest } from '@/lib/queryClient';
+import { 
+  BarChart3, 
+  Users, 
+  Eye, 
+  Clock, 
+  Globe, 
+  Video, 
+  TrendingUp, 
+  Download,
+  RefreshCw,
+  Settings,
+  Activity
+} from 'lucide-react';
+
+interface AnalyticsDashboard {
+  overview: {
+    totalViews: number;
+    uniqueVisitors: number;
+    totalWatchTime: number;
+    averageSessionDuration: number;
+  };
+  topCountries: Array<{ country: string; views: number }>;
+  languageBreakdown: Array<{ language: string; views: number }>;
+  videoPerformance: Array<{
+    video_id: string;
+    video_title: string;
+    views: number;
+    total_watch_time: number;
+    average_completion_rate: number;
+  }>;
+  dateRange: {
+    from: string;
+    to: string;
+  };
+}
+
+interface AnalyticsSettings {
+  excludedIps: string[];
+  completionThreshold: number;
+  trackingEnabled: boolean;
+  dataRetentionDays: number;
+}
+
+export function AnalyticsDashboard() {
+  const [dateFrom, setDateFrom] = useState('');
+  const [dateTo, setDateTo] = useState('');
+  const [showSettings, setShowSettings] = useState(false);
+  const { toast } = useToast();
+  const queryClient = useQueryClient();
+
+  // Fetch dashboard data
+  const { data: dashboardData, isLoading: dashboardLoading, error: dashboardError } = useQuery<AnalyticsDashboard>({
+    queryKey: ['/api/analytics/dashboard', dateFrom, dateTo],
+    enabled: true
+  });
+
+  // Fetch settings
+  const { data: settings, isLoading: settingsLoading } = useQuery<AnalyticsSettings>({
+    queryKey: ['/api/analytics/settings'],
+    enabled: showSettings
+  });
+
+  // Update settings mutation
+  const updateSettingsMutation = useMutation({
+    mutationFn: (newSettings: Partial<AnalyticsSettings>) => 
+      apiRequest('/api/analytics/settings', 'PATCH', newSettings),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['/api/analytics/settings'] });
+      toast({
+        title: "Settings Updated",
+        description: "Analytics settings have been updated successfully.",
+      });
+    },
+    onError: (error) => {
+      console.error('Settings update error:', error);
+      toast({
+        title: "Update Failed",
+        description: "Failed to update analytics settings.",
+        variant: "destructive",
+      });
+    }
+  });
+
+  // Reset data mutation
+  const resetDataMutation = useMutation({
+    mutationFn: () => apiRequest('/api/analytics/reset', 'POST'),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['/api/analytics/dashboard'] });
+      toast({
+        title: "Data Reset",
+        description: "All analytics data has been reset successfully.",
+      });
+    },
+    onError: (error) => {
+      console.error('Reset error:', error);
+      toast({
+        title: "Reset Failed",
+        description: "Failed to reset analytics data.",
+        variant: "destructive",
+      });
+    }
+  });
+
+  // Export data
+  const handleExport = (format: 'json' | 'csv') => {
+    const params = new URLSearchParams();
+    if (dateFrom) params.append('dateFrom', dateFrom);
+    if (dateTo) params.append('dateTo', dateTo);
+    params.append('format', format);
+    
+    const url = `/api/analytics/export?${params.toString()}`;
+    window.open(url, '_blank');
+  };
+
+  // Refresh data
+  const handleRefresh = () => {
+    queryClient.invalidateQueries({ queryKey: ['/api/analytics/dashboard'] });
+    toast({
+      title: "Data Refreshed",
+      description: "Analytics data has been refreshed.",
+    });
+  };
+
+  // Format time duration
+  const formatDuration = (seconds: number): string => {
+    if (seconds < 60) return `${Math.round(seconds)}s`;
+    if (seconds < 3600) return `${Math.round(seconds / 60)}m`;
+    return `${Math.round(seconds / 3600)}h`;
+  };
+
+  // Format numbers with proper locale
+  const formatNumber = (num: number): string => {
+    return new Intl.NumberFormat('fr-FR').format(num);
+  };
+
+  if (dashboardError) {
+    return (
+      <div className="p-6">
+        <Card>
+          <CardContent className="pt-6">
+            <div className="text-center text-red-600">
+              <Activity className="h-12 w-12 mx-auto mb-4 opacity-50" />
+              <p>Failed to load analytics data</p>
+              <Button onClick={handleRefresh} variant="outline" className="mt-4">
+                <RefreshCw className="h-4 w-4 mr-2" />
+                Retry
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
+
+  return (
+    <div className="space-y-6 p-6">
+      {/* Header */}
+      <div className="flex justify-between items-center">
+        <div>
+          <h2 className="text-3xl font-bold tracking-tight">Analytics Dashboard</h2>
+          <p className="text-muted-foreground">
+            Track gallery video performance and visitor engagement
+          </p>
+        </div>
+        <div className="flex items-center gap-2">
+          <Button onClick={() => setShowSettings(!showSettings)} variant="outline">
+            <Settings className="h-4 w-4 mr-2" />
+            Settings
+          </Button>
+          <Button onClick={handleRefresh} variant="outline">
+            <RefreshCw className="h-4 w-4 mr-2" />
+            Refresh
+          </Button>
+        </div>
+      </div>
+
+      {/* Date Range Filters */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <BarChart3 className="h-5 w-5" />
+            Date Range Filter
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="flex items-center gap-4">
+          <div className="flex items-center gap-2">
+            <Label htmlFor="dateFrom">From:</Label>
+            <Input
+              id="dateFrom"
+              type="date"
+              value={dateFrom}
+              onChange={(e) => setDateFrom(e.target.value)}
+              className="w-auto"
+            />
+          </div>
+          <div className="flex items-center gap-2">
+            <Label htmlFor="dateTo">To:</Label>
+            <Input
+              id="dateTo"
+              type="date"
+              value={dateTo}
+              onChange={(e) => setDateTo(e.target.value)}
+              className="w-auto"
+            />
+          </div>
+          <Button 
+            onClick={() => {
+              setDateFrom('');
+              setDateTo('');
+            }}
+            variant="outline"
+          >
+            Clear Filters
+          </Button>
+          <div className="flex gap-2 ml-auto">
+            <Button onClick={() => handleExport('json')} variant="outline" size="sm">
+              <Download className="h-4 w-4 mr-2" />
+              Export JSON
+            </Button>
+            <Button onClick={() => handleExport('csv')} variant="outline" size="sm">
+              <Download className="h-4 w-4 mr-2" />
+              Export CSV
+            </Button>
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Settings Panel */}
+      {showSettings && (
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Settings className="h-5 w-5" />
+              Analytics Settings
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            {settingsLoading ? (
+              <div className="text-center py-4">Loading settings...</div>
+            ) : (
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="flex items-center justify-between">
+                  <Label htmlFor="tracking-enabled">Tracking Enabled</Label>
+                  <Switch
+                    id="tracking-enabled"
+                    checked={settings?.trackingEnabled || false}
+                    onCheckedChange={(checked) => 
+                      updateSettingsMutation.mutate({ trackingEnabled: checked })
+                    }
+                  />
+                </div>
+                <div className="flex items-center gap-2">
+                  <Label htmlFor="completion-threshold">Completion Threshold:</Label>
+                  <Input
+                    id="completion-threshold"
+                    type="number"
+                    min="0"
+                    max="100"
+                    value={settings?.completionThreshold || 80}
+                    onChange={(e) => 
+                      updateSettingsMutation.mutate({ 
+                        completionThreshold: parseInt(e.target.value) 
+                      })
+                    }
+                    className="w-20"
+                  />
+                  <span>%</span>
+                </div>
+              </div>
+            )}
+            <Separator />
+            <div className="flex justify-between items-center">
+              <div>
+                <h4 className="font-medium">Reset Analytics Data</h4>
+                <p className="text-sm text-muted-foreground">
+                  This will permanently delete all analytics data
+                </p>
+              </div>
+              <Button 
+                onClick={() => resetDataMutation.mutate()}
+                variant="destructive"
+                disabled={resetDataMutation.isPending}
+              >
+                {resetDataMutation.isPending ? 'Resetting...' : 'Reset Data'}
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
+      {dashboardLoading ? (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          {[...Array(4)].map((_, i) => (
+            <Card key={i}>
+              <CardContent className="pt-6">
+                <div className="animate-pulse">
+                  <div className="h-8 bg-gray-200 rounded mb-2"></div>
+                  <div className="h-4 bg-gray-100 rounded"></div>
+                </div>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+      ) : (
+        <>
+          {/* Overview Cards */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            <Card>
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                <CardTitle className="text-sm font-medium">Total Views</CardTitle>
+                <Eye className="h-4 w-4 text-muted-foreground" />
+              </CardHeader>
+              <CardContent>
+                <div className="text-2xl font-bold">
+                  {formatNumber(dashboardData?.overview.totalViews || 0)}
+                </div>
+                <p className="text-xs text-muted-foreground">
+                  Gallery video views
+                </p>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                <CardTitle className="text-sm font-medium">Unique Visitors</CardTitle>
+                <Users className="h-4 w-4 text-muted-foreground" />
+              </CardHeader>
+              <CardContent>
+                <div className="text-2xl font-bold">
+                  {formatNumber(dashboardData?.overview.uniqueVisitors || 0)}
+                </div>
+                <p className="text-xs text-muted-foreground">
+                  Distinct IP addresses
+                </p>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                <CardTitle className="text-sm font-medium">Total Watch Time</CardTitle>
+                <Clock className="h-4 w-4 text-muted-foreground" />
+              </CardHeader>
+              <CardContent>
+                <div className="text-2xl font-bold">
+                  {formatDuration(dashboardData?.overview.totalWatchTime || 0)}
+                </div>
+                <p className="text-xs text-muted-foreground">
+                  Total engagement time
+                </p>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                <CardTitle className="text-sm font-medium">Avg Session</CardTitle>
+                <TrendingUp className="h-4 w-4 text-muted-foreground" />
+              </CardHeader>
+              <CardContent>
+                <div className="text-2xl font-bold">
+                  {formatDuration(dashboardData?.overview.averageSessionDuration || 0)}
+                </div>
+                <p className="text-xs text-muted-foreground">
+                  Per visitor session
+                </p>
+              </CardContent>
+            </Card>
+          </div>
+
+          {/* Video Performance */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Video className="h-5 w-5" />
+                Gallery Video Performance
+              </CardTitle>
+              <CardDescription>
+                Performance metrics for gallery videos only
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              {dashboardData?.videoPerformance?.length ? (
+                <div className="space-y-4">
+                  {dashboardData.videoPerformance.map((video, index) => (
+                    <div key={video.video_id} className="flex items-center justify-between p-4 border rounded-lg">
+                      <div className="flex-1">
+                        <h4 className="font-medium">
+                          {video.video_title || `Video ${video.video_id}`}
+                        </h4>
+                        <div className="flex items-center gap-4 mt-2 text-sm text-muted-foreground">
+                          <span>{formatNumber(video.views)} views</span>
+                          <span>{formatDuration(video.total_watch_time)} total time</span>
+                          <div className="flex items-center gap-2">
+                            <span>Completion:</span>
+                            <Progress 
+                              value={video.average_completion_rate} 
+                              className="w-20 h-2"
+                            />
+                            <span>{Math.round(video.average_completion_rate)}%</span>
+                          </div>
+                        </div>
+                      </div>
+                      <Badge variant={index < 3 ? "default" : "secondary"}>
+                        #{index + 1}
+                      </Badge>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <div className="text-center py-8 text-muted-foreground">
+                  <Video className="h-12 w-12 mx-auto mb-4 opacity-50" />
+                  <p>No video performance data available</p>
+                  <p className="text-sm">Gallery video views will appear here</p>
+                </div>
+              )}
+            </CardContent>
+          </Card>
+
+          {/* Geographic and Language Data */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Globe className="h-5 w-5" />
+                  Top Countries
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                {dashboardData?.topCountries?.length ? (
+                  <div className="space-y-3">
+                    {dashboardData.topCountries.map((country, index) => (
+                      <div key={country.country} className="flex items-center justify-between">
+                        <span className="font-medium">{country.country}</span>
+                        <Badge variant="outline">
+                          {formatNumber(country.views)} visits
+                        </Badge>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <div className="text-center py-4 text-muted-foreground">
+                    No geographic data available
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Activity className="h-5 w-5" />
+                  Language Breakdown
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                {dashboardData?.languageBreakdown?.length ? (
+                  <div className="space-y-3">
+                    {dashboardData.languageBreakdown.map((lang) => (
+                      <div key={lang.language} className="flex items-center justify-between">
+                        <span className="font-medium">
+                          {lang.language === 'fr-FR' ? 'French' : 
+                           lang.language === 'en-US' ? 'English' : 
+                           lang.language}
+                        </span>
+                        <Badge variant="outline">
+                          {formatNumber(lang.views)} sessions
+                        </Badge>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <div className="text-center py-4 text-muted-foreground">
+                    No language data available
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+          </div>
+
+          {/* Data Range Info */}
+          {dashboardData?.dateRange && (
+            <Card>
+              <CardContent className="pt-6">
+                <div className="text-center text-sm text-muted-foreground">
+                  Data range: {dashboardData.dateRange.from} to {dashboardData.dateRange.to}
+                  {!dateFrom && !dateTo && (
+                    <span className="ml-2 text-orange-600 font-medium">
+                      (Showing all time data)
+                    </span>
+                  )}
+                </div>
+              </CardContent>
+            </Card>
+          )}
+        </>
+      )}
+    </div>
+  );
+}

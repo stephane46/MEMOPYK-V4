@@ -14,6 +14,7 @@ import GalleryManagement from '@/components/admin/GalleryManagement';
 import { ContactManagement } from '@/components/admin/ContactManagement';
 import FAQManagementWorking from '@/components/admin/FAQManagementWorking';
 import { LegalDocumentManagement } from '@/components/admin/LegalDocumentManagement';
+import { AnalyticsDashboard } from '@/components/admin/AnalyticsDashboard';
 import CryptoJS from 'crypto-js';
 
 interface HeroVideo {
@@ -1234,23 +1235,9 @@ export default function AdminPage() {
 
 
 
-          {/* Other sections - placeholder */}
+          {/* Analytics Dashboard */}
           {activeSection === 'analytics' && (
-            <div className="space-y-6">
-              <div className="mb-6">
-                <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Analytiques</h2>
-                <p className="text-gray-600 dark:text-gray-400">Métriques de performance et analyses vidéo</p>
-              </div>
-              <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <BarChart3 className="h-5 w-5" />
-                    Tableau de Bord Analytique
-                  </CardTitle>
-                  <CardDescription>Prochainement - Métriques vidéo et de performance</CardDescription>
-                </CardHeader>
-              </Card>
-            </div>
+            <AnalyticsDashboard />
           )}
 
           {/* Gallery */}
