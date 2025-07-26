@@ -31,7 +31,8 @@ import {
   UserX,
   RotateCcw,
   MessageSquare,
-  X
+  X,
+  TestTube
 } from 'lucide-react';
 
 interface AnalyticsDashboard {
@@ -80,6 +81,12 @@ export function AnalyticsDashboard() {
   const [showAdvancedAnalytics, setShowAdvancedAnalytics] = useState(false);
   const [newExcludedIp, setNewExcludedIp] = useState('');
   const [newIpComment, setNewIpComment] = useState('');
+
+  // Query for test data status
+  const { data: testDataStatus } = useQuery({
+    queryKey: ['/api/analytics/test-data/status'],
+    staleTime: 10000, // Refresh every 10 seconds
+  });
   const [editingComment, setEditingComment] = useState<string | null>(null);
   const [tempComment, setTempComment] = useState('');
   const [currentAdminIp, setCurrentAdminIp] = useState<string | null>(null);
@@ -241,6 +248,7 @@ export function AnalyticsDashboard() {
     },
     onSuccess: (data: any) => {
       queryClient.invalidateQueries({ queryKey: ['/api/analytics/dashboard'] });
+      queryClient.invalidateQueries({ queryKey: ['/api/analytics/test-data/status'] });
       const result = data.result || data;
       toast({
         title: "Test Data Generated",
@@ -265,6 +273,7 @@ export function AnalyticsDashboard() {
     onSuccess: (data: any) => {
       console.log('Clear test data response:', data);
       queryClient.invalidateQueries({ queryKey: ['/api/analytics/dashboard'] });
+      queryClient.invalidateQueries({ queryKey: ['/api/analytics/test-data/status'] });
       
       const result = data.result || data;
       const totalRemoved = (result.sessionsRemoved || 0) + (result.viewsRemoved || 0) + (result.metricsRemoved || 0) + (result.visitorsRemoved || 0);
@@ -483,6 +492,38 @@ export function AnalyticsDashboard() {
         </div>
       </div>
 
+      {/* Test Data Status Banner */}
+      {testDataStatus?.status?.hasTestData && (
+        <Card className="border-blue-200 bg-gradient-to-r from-blue-50 to-indigo-50">
+          <CardContent className="pt-4">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
+                  <TestTube className="h-5 w-5 text-blue-600" />
+                </div>
+                <div>
+                  <h3 className="font-semibold text-blue-900">Test Data Active</h3>
+                  <p className="text-sm text-blue-700">
+                    Dashboard includes {testDataStatus.status.counts.total} test records: {' '}
+                    {testDataStatus.status.counts.sessions} sessions, {testDataStatus.status.counts.views} views, {' '}
+                    {testDataStatus.status.counts.visitors} visitors, {testDataStatus.status.counts.metrics} metrics
+                  </p>
+                </div>
+              </div>
+              <Button
+                onClick={() => setShowSettings(true)}
+                variant="outline"
+                size="sm"
+                className="text-blue-600 border-blue-300 hover:bg-blue-50"
+              >
+                <Settings className="h-4 w-4 mr-2" />
+                Manage Test Data
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
       {/* Date Range Filters */}
       <Card>
         <CardHeader>
@@ -620,17 +661,47 @@ export function AnalyticsDashboard() {
                 </Button>
               </div>
               
-              <div className="bg-blue-50 p-4 rounded-lg text-sm space-y-2">
-                <div className="font-medium text-blue-800">Test Data Features:</div>
-                <ul className="text-blue-700 space-y-1 ml-4">
-                  <li>• 75 test sessions with realistic country/city data</li>
-                  <li>• 120 video views with completion metrics</li>
-                  <li>• 200 performance metrics (page load, API response times)</li>
-                  <li>• 25 active visitors for real-time dashboard</li>
-                  <li>• All test data marked with TEST_ prefixes and test_data flags</li>
-                  <li>• Safe removal preserves all real analytics data</li>
-                </ul>
-              </div>
+              {/* Dynamic Test Data Status */}
+              {testDataStatus?.status?.hasTestData ? (
+                <div className="bg-blue-50 p-4 rounded-lg text-sm space-y-2">
+                  <div className="font-medium text-blue-800 flex items-center gap-2">
+                    <TestTube className="h-4 w-4" />
+                    Current Test Data Status
+                  </div>
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <div className="text-blue-700">
+                        <div className="font-medium">Active Test Records:</div>
+                        <ul className="ml-4 space-y-1">
+                          <li>• {testDataStatus.status.counts.sessions} test sessions</li>
+                          <li>• {testDataStatus.status.counts.views} video views</li>
+                          <li>• {testDataStatus.status.counts.metrics} performance metrics</li>
+                          <li>• {testDataStatus.status.counts.visitors} realtime visitors</li>
+                        </ul>
+                      </div>
+                    </div>
+                    <div className="text-blue-700">
+                      <div className="font-medium">Total: {testDataStatus.status.counts.total} records</div>
+                      <div className="text-xs mt-2">
+                        Generated: {testDataStatus.status.lastGenerated ? 
+                          new Date(testDataStatus.status.lastGenerated).toLocaleString() : 'Unknown'}
+                      </div>
+                      <div className="text-xs">All marked with TEST_ prefixes and test_data flags</div>
+                    </div>
+                  </div>
+                </div>
+              ) : (
+                <div className="bg-gray-50 p-4 rounded-lg text-sm">
+                  <div className="font-medium text-gray-700 flex items-center gap-2">
+                    <TestTube className="h-4 w-4" />
+                    No Test Data Present
+                  </div>
+                  <p className="text-gray-600 mt-2">
+                    Generate test data to populate the analytics dashboard with realistic demo data including 
+                    sessions, video views, performance metrics, and realtime visitors.
+                  </p>
+                </div>
+              )}
             </div>
 
             <Separator className="my-6" />

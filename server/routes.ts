@@ -1736,6 +1736,16 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  app.get('/api/analytics/test-data/status', async (req, res) => {
+    try {
+      const status = await hybridStorage.getTestDataStatus();
+      res.json({ success: true, status });
+    } catch (error) {
+      console.error('Test data status error:', error);
+      res.status(500).json({ error: 'Failed to get test data status' });
+    }
+  });
+
   // Historical threshold recalculation endpoint
   app.post('/api/analytics/recalculate-completions', async (req, res) => {
     try {

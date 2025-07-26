@@ -1875,6 +1875,46 @@ export class HybridStorage implements HybridStorageInterface {
     }
   }
 
+  async getTestDataStatus(): Promise<any> {
+    try {
+      // Count test data across all files
+      const sessions = this.loadJsonFile('analytics-sessions.json');
+      const testSessions = sessions.filter((session: any) => session.test_data);
+      
+      const views = this.loadJsonFile('analytics-views.json');
+      const testViews = views.filter((view: any) => view.test_data);
+      
+      const metrics = this.loadJsonFile('performance-metrics.json');
+      const testMetrics = metrics.filter((metric: any) => metric.test_data);
+      
+      const visitors = this.loadJsonFile('realtime-visitors.json');
+      const testVisitors = visitors.filter((visitor: any) => visitor.test_data);
+      
+      const hasTestData = testSessions.length > 0 || testViews.length > 0 || 
+                         testMetrics.length > 0 || testVisitors.length > 0;
+      
+      return {
+        hasTestData,
+        counts: {
+          sessions: testSessions.length,
+          views: testViews.length,
+          metrics: testMetrics.length,
+          visitors: testVisitors.length,
+          total: testSessions.length + testViews.length + testMetrics.length + testVisitors.length
+        },
+        lastGenerated: testSessions.length > 0 ? testSessions[0].test_generated_at : null
+      };
+      
+    } catch (error) {
+      console.error('Error getting test data status:', error);
+      return {
+        hasTestData: false,
+        counts: { sessions: 0, views: 0, metrics: 0, visitors: 0, total: 0 },
+        lastGenerated: null
+      };
+    }
+  }
+
   // Real-time Analytics Methods
   async getRealtimeVisitors(): Promise<any[]> {
     try {
