@@ -1,0 +1,6 @@
+{
+  "excludedIps": ["127.0.0.1", "::1"],
+  "completionThreshold": 80,
+  "trackingEnabled": true,
+  "dataRetentionDays": 90
+}

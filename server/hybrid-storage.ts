@@ -41,6 +41,16 @@ export interface HybridStorageInterface {
   
   // SEO settings
   getSeoSettings(page?: string, language?: string): Promise<any[]>;
+  
+  // Analytics methods
+  getAnalyticsSessions(dateFrom?: string, dateTo?: string, language?: string): Promise<any[]>;
+  getAnalyticsViews(dateFrom?: string, dateTo?: string, videoId?: string): Promise<any[]>;
+  getAnalyticsSettings(): Promise<any>;
+  createAnalyticsSession(sessionData: any): Promise<any>;
+  createAnalyticsView(viewData: any): Promise<any>;
+  updateAnalyticsSettings(settings: any): Promise<any>;
+  resetAnalyticsData(): Promise<void>;
+  getAnalyticsDashboard(dateFrom?: string, dateTo?: string): Promise<any>;
 }
 
 export class HybridStorage implements HybridStorageInterface {
@@ -1164,6 +1174,233 @@ export class HybridStorage implements HybridStorageInterface {
     const faqs = this.loadJsonFile('faqs.json');
     const filtered = faqs.filter((faq: any) => faq.id !== faqId);
     this.saveJsonFile('faqs.json', filtered);
+  }
+
+  // Analytics methods implementation
+  async getAnalyticsSessions(dateFrom?: string, dateTo?: string, language?: string): Promise<any[]> {
+    try {
+      // Try database first (not implemented yet), fallback to JSON
+      const sessions = this.loadJsonFile('analytics-sessions.json');
+      let filtered = sessions;
+
+      if (dateFrom) {
+        filtered = filtered.filter((session: any) => session.created_at >= dateFrom);
+      }
+      if (dateTo) {
+        filtered = filtered.filter((session: any) => session.created_at <= dateTo);
+      }
+      if (language) {
+        filtered = filtered.filter((session: any) => session.language === language);
+      }
+
+      return filtered;
+    } catch (error) {
+      console.error('Error getting analytics sessions:', error);
+      return [];
+    }
+  }
+
+  async getAnalyticsViews(dateFrom?: string, dateTo?: string, videoId?: string): Promise<any[]> {
+    try {
+      // Try database first (not implemented yet), fallback to JSON
+      const views = this.loadJsonFile('analytics-views.json');
+      let filtered = views;
+
+      if (dateFrom) {
+        filtered = filtered.filter((view: any) => view.created_at >= dateFrom);
+      }
+      if (dateTo) {
+        filtered = filtered.filter((view: any) => view.created_at <= dateTo);
+      }
+      if (videoId) {
+        filtered = filtered.filter((view: any) => view.video_id === videoId);
+      }
+
+      return filtered;
+    } catch (error) {
+      console.error('Error getting analytics views:', error);
+      return [];
+    }
+  }
+
+  async getAnalyticsSettings(): Promise<any> {
+    try {
+      const settings = this.loadJsonFile('analytics-settings.json');
+      return Array.isArray(settings) ? settings[0] || {} : settings;
+    } catch (error) {
+      console.error('Error getting analytics settings:', error);
+      return {
+        excludedIps: ["127.0.0.1", "::1"],
+        completionThreshold: 80,
+        trackingEnabled: true,
+        dataRetentionDays: 90
+      };
+    }
+  }
+
+  async createAnalyticsSession(sessionData: any): Promise<any> {
+    try {
+      const sessions = this.loadJsonFile('analytics-sessions.json');
+      
+      // Generate IP location data (simplified)
+      const sessionWithId = {
+        id: `session_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+        session_id: sessionData.session_id || `session_${Date.now()}`,
+        country: sessionData.country || 'Unknown',
+        region: sessionData.region || 'Unknown', 
+        city: sessionData.city || 'Unknown',
+        language: sessionData.language || 'en-US',
+        user_agent: sessionData.user_agent || '',
+        screen_resolution: sessionData.screen_resolution || '',
+        page_url: sessionData.page_url || '',
+        referrer: sessionData.referrer || '',
+        ip_address: sessionData.ip_address || '0.0.0.0',
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString()
+      };
+
+      sessions.push(sessionWithId);
+      this.saveJsonFile('analytics-sessions.json', sessions);
+      
+      return sessionWithId;
+    } catch (error) {
+      console.error('Error creating analytics session:', error);
+      throw error;
+    }
+  }
+
+  async createAnalyticsView(viewData: any): Promise<any> {
+    try {
+      const views = this.loadJsonFile('analytics-views.json');
+      
+      const viewWithId = {
+        id: `view_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+        video_id: viewData.video_id,
+        video_type: viewData.video_type || 'gallery', // Focus on gallery videos
+        video_title: viewData.video_title || '',
+        session_id: viewData.session_id,
+        language: viewData.language || 'en-US',
+        watch_time: viewData.watch_time || 0,
+        completion_rate: viewData.completion_rate || 0,
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString()
+      };
+
+      views.push(viewWithId);
+      this.saveJsonFile('analytics-views.json', views);
+      
+      return viewWithId;
+    } catch (error) {
+      console.error('Error creating analytics view:', error);
+      throw error;
+    }
+  }
+
+  async updateAnalyticsSettings(settings: any): Promise<any> {
+    try {
+      const updatedSettings = {
+        excludedIps: settings.excludedIps || ["127.0.0.1", "::1"],
+        completionThreshold: settings.completionThreshold || 80,
+        trackingEnabled: settings.trackingEnabled !== undefined ? settings.trackingEnabled : true,
+        dataRetentionDays: settings.dataRetentionDays || 90,
+        updated_at: new Date().toISOString()
+      };
+
+      this.saveJsonFile('analytics-settings.json', updatedSettings);
+      return updatedSettings;
+    } catch (error) {
+      console.error('Error updating analytics settings:', error);
+      throw error;
+    }
+  }
+
+  async resetAnalyticsData(): Promise<void> {
+    try {
+      this.saveJsonFile('analytics-sessions.json', []);
+      this.saveJsonFile('analytics-views.json', []);
+      console.log('✅ Analytics data reset successfully');
+    } catch (error) {
+      console.error('Error resetting analytics data:', error);
+      throw error;
+    }
+  }
+
+  async getAnalyticsDashboard(dateFrom?: string, dateTo?: string): Promise<any> {
+    try {
+      const sessions = await this.getAnalyticsSessions(dateFrom, dateTo);
+      const views = await this.getAnalyticsViews(dateFrom, dateTo);
+      
+      // Calculate overview metrics
+      const totalViews = views.length;
+      const uniqueVisitors = new Set(sessions.map((s: any) => s.ip_address)).size;
+      const totalWatchTime = views.reduce((sum: number, view: any) => sum + (view.watch_time || 0), 0);
+      const averageSessionDuration = sessions.length > 0 
+        ? sessions.reduce((sum: number, session: any) => sum + (session.duration || 0), 0) / sessions.length
+        : 0;
+
+      // Top countries
+      const countryMap = new Map();
+      sessions.forEach((session: any) => {
+        const country = session.country || 'Unknown';
+        countryMap.set(country, (countryMap.get(country) || 0) + 1);
+      });
+      const topCountries = Array.from(countryMap.entries())
+        .map(([country, views]) => ({ country, views }))
+        .sort((a, b) => b.views - a.views)
+        .slice(0, 5);
+
+      // Language breakdown
+      const languageMap = new Map();
+      sessions.forEach((session: any) => {
+        const language = session.language || 'Unknown';
+        languageMap.set(language, (languageMap.get(language) || 0) + 1);
+      });
+      const languageBreakdown = Array.from(languageMap.entries())
+        .map(([language, views]) => ({ language, views }))
+        .sort((a, b) => b.views - a.views);
+
+      // Video performance (Gallery videos only)
+      const galleryViews = views.filter((view: any) => view.video_type === 'gallery');
+      const videoMap = new Map();
+      galleryViews.forEach((view: any) => {
+        const videoId = view.video_id;
+        if (!videoMap.has(videoId)) {
+          videoMap.set(videoId, {
+            video_id: videoId,
+            video_title: view.video_title,
+            views: 0,
+            total_watch_time: 0,
+            average_completion_rate: 0
+          });
+        }
+        const video = videoMap.get(videoId);
+        video.views += 1;
+        video.total_watch_time += view.watch_time || 0;
+        video.average_completion_rate = ((video.average_completion_rate * (video.views - 1)) + (view.completion_rate || 0)) / video.views;
+      });
+      
+      const videoPerformance = Array.from(videoMap.values())
+        .sort((a, b) => b.views - a.views);
+
+      return {
+        overview: {
+          totalViews,
+          uniqueVisitors,
+          totalWatchTime,
+          averageSessionDuration
+        },
+        topCountries,
+        languageBreakdown,
+        videoPerformance,
+        dateRange: {
+          from: dateFrom || 'all time',
+          to: dateTo || 'now'
+        }
+      };
+    } catch (error) {
+      console.error('Error getting analytics dashboard:', error);
+      throw error;
+    }
   }
 }
 

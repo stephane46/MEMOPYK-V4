@@ -1504,22 +1504,76 @@ export async function registerRoutes(app: Express): Promise<Server> {
     });
   });
 
-  // Analytics endpoints
+  // Analytics endpoints - Complete implementation
   app.get("/api/analytics/dashboard", async (req, res) => {
     try {
-      // Simplified analytics dashboard - hybrid storage method not implemented
-      const dashboard = { message: "Analytics dashboard not implemented yet" };
+      const { dateFrom, dateTo } = req.query;
+      const dashboard = await hybridStorage.getAnalyticsDashboard(
+        dateFrom as string, 
+        dateTo as string
+      );
       res.json(dashboard);
     } catch (error) {
+      console.error('Analytics dashboard error:', error);
       res.status(500).json({ error: "Failed to get analytics dashboard" });
+    }
+  });
+
+  app.get("/api/analytics/views", async (req, res) => {
+    try {
+      const { dateFrom, dateTo, videoId } = req.query;
+      const views = await hybridStorage.getAnalyticsViews(
+        dateFrom as string,
+        dateTo as string,
+        videoId as string
+      );
+      res.json(views);
+    } catch (error) {
+      console.error('Analytics views error:', error);
+      res.status(500).json({ error: "Failed to get analytics views" });
+    }
+  });
+
+  app.get("/api/analytics/sessions", async (req, res) => {
+    try {
+      const { dateFrom, dateTo, language } = req.query;
+      const sessions = await hybridStorage.getAnalyticsSessions(
+        dateFrom as string,
+        dateTo as string,
+        language as string
+      );
+      res.json(sessions);
+    } catch (error) {
+      console.error('Analytics sessions error:', error);
+      res.status(500).json({ error: "Failed to get analytics sessions" });
+    }
+  });
+
+  app.get("/api/analytics/settings", async (req, res) => {
+    try {
+      const settings = await hybridStorage.getAnalyticsSettings();
+      res.json(settings);
+    } catch (error) {
+      console.error('Analytics settings error:', error);
+      res.status(500).json({ error: "Failed to get analytics settings" });
+    }
+  });
+
+  app.patch("/api/analytics/settings", async (req, res) => {
+    try {
+      const updatedSettings = await hybridStorage.updateAnalyticsSettings(req.body);
+      res.json({ success: true, settings: updatedSettings });
+    } catch (error) {
+      console.error('Analytics settings update error:', error);
+      res.status(500).json({ error: "Failed to update analytics settings" });
     }
   });
 
   app.post("/api/analytics/video-view", async (req, res) => {
     try {
-      // Simple tracking acknowledgment - analytics is optional for now
-      console.log('Video view tracked:', req.body);
-      res.json({ success: true, message: "Video view logged" });
+      const viewData = await hybridStorage.createAnalyticsView(req.body);
+      console.log('📊 Video view tracked:', req.body.video_id, req.body.video_type);
+      res.json({ success: true, view: viewData });
     } catch (error) {
       console.error('Video view tracking error:', error);
       res.status(500).json({ error: "Failed to track video view" });
@@ -1528,13 +1582,53 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.post("/api/analytics/session", async (req, res) => {
     try {
-      const { session_id, language, user_agent, screen_resolution } = req.body;
-      // Simplified session tracking - hybrid storage method not implemented
-      const result = { id: Date.now(), message: "Session tracked (simplified)" };
-      res.json({ success: true, sessionId: result.id });
+      const sessionData = await hybridStorage.createAnalyticsSession(req.body);
+      console.log('📊 Session tracked:', sessionData.session_id);
+      res.json({ success: true, session: sessionData });
     } catch (error) {
       console.error('Session tracking error:', error);
       res.status(500).json({ error: "Failed to track session" });
+    }
+  });
+
+  app.post("/api/analytics/reset", async (req, res) => {
+    try {
+      await hybridStorage.resetAnalyticsData();
+      res.json({ success: true, message: "Analytics data reset successfully" });
+    } catch (error) {
+      console.error('Analytics reset error:', error);
+      res.status(500).json({ error: "Failed to reset analytics data" });
+    }
+  });
+
+  app.get("/api/analytics/export", async (req, res) => {
+    try {
+      const { format = 'json', dateFrom, dateTo } = req.query;
+      const dashboard = await hybridStorage.getAnalyticsDashboard(
+        dateFrom as string,
+        dateTo as string
+      );
+      
+      if (format === 'csv') {
+        // Simple CSV export
+        const sessions = await hybridStorage.getAnalyticsSessions(dateFrom as string, dateTo as string);
+        const views = await hybridStorage.getAnalyticsViews(dateFrom as string, dateTo as string);
+        
+        const csvData = [
+          'Type,Date,Country,Language,VideoID,WatchTime,CompletionRate',
+          ...sessions.map((s: any) => `Session,${s.created_at},${s.country},${s.language},,,`),
+          ...views.map((v: any) => `View,${v.created_at},,${v.language},${v.video_id},${v.watch_time},${v.completion_rate}`)
+        ].join('\n');
+        
+        res.setHeader('Content-Type', 'text/csv');
+        res.setHeader('Content-Disposition', 'attachment; filename=analytics_export.csv');
+        res.send(csvData);
+      } else {
+        res.json(dashboard);
+      }
+    } catch (error) {
+      console.error('Analytics export error:', error);
+      res.status(500).json({ error: "Failed to export analytics data" });
     }
   });
 
