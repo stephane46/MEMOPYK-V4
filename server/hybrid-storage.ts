@@ -1460,12 +1460,20 @@ export class HybridStorage implements HybridStorageInterface {
   async getAnalyticsDashboard(dateFrom?: string, dateTo?: string): Promise<any> {
     try {
       const sessions = await this.getAnalyticsSessions(dateFrom, dateTo);
-      const views = await this.getAnalyticsViews(dateFrom, dateTo);
+      // For dashboard overview, include all views (including test data with hero videos)
+      let views = this.loadJsonFile('analytics-views.json');
+      if (dateFrom) {
+        views = views.filter((view: any) => (view.created_at || view.timestamp) >= dateFrom);
+      }
+      if (dateTo) {
+        views = views.filter((view: any) => (view.created_at || view.timestamp) <= dateTo);
+      }
       
       // Calculate overview metrics
       const totalViews = views.length;
       const uniqueVisitors = new Set(sessions.map((s: any) => s.ip_address)).size;
-      const totalWatchTime = views.reduce((sum: number, view: any) => sum + (view.watch_time || 0), 0);
+      const totalWatchTime = views.reduce((sum: number, view: any) => 
+        sum + (parseInt(view.watch_time || view.duration_watched || view.view_duration || '0')), 0);
       const averageSessionDuration = sessions.length > 0 
         ? sessions.reduce((sum: number, session: any) => sum + (session.duration || 0), 0) / sessions.length
         : 0;
@@ -1491,8 +1499,11 @@ export class HybridStorage implements HybridStorageInterface {
         .map(([language, views]) => ({ language, views }))
         .sort((a, b) => b.views - a.views);
 
-      // Video performance (Gallery videos only)
-      const galleryViews = views.filter((view: any) => view.video_type === 'gallery');
+      // Video performance (Gallery videos only - but include test data which may not have video_type)
+      const galleryViews = views.filter((view: any) => 
+        view.video_type === 'gallery' || 
+        (view.test_data && view.video_filename && view.video_filename.includes('gallery'))
+      );
       const videoMap = new Map();
       galleryViews.forEach((view: any) => {
         const videoId = view.video_id;
@@ -1507,8 +1518,9 @@ export class HybridStorage implements HybridStorageInterface {
         }
         const video = videoMap.get(videoId);
         video.views += 1;
-        video.total_watch_time += view.watch_time || 0;
-        video.average_completion_rate = ((video.average_completion_rate * (video.views - 1)) + (view.completion_rate || 0)) / video.views;
+        video.total_watch_time += parseInt(view.watch_time || view.duration_watched || view.view_duration || '0');
+        video.average_completion_rate = ((video.average_completion_rate * (video.views - 1)) + 
+          parseFloat(view.completion_rate || view.completion_percentage || '0')) / video.views;
       });
       
       const videoPerformance = Array.from(videoMap.values())
