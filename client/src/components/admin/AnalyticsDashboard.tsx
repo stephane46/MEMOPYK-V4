@@ -1212,14 +1212,14 @@ export function AnalyticsDashboard() {
               </div>
 
               {console.log('🎯 RENDERING PANELS - Data Check:', {
-                videoEngagementData: !!videoEngagementData,
-                uniqueViewsData: !!uniqueViewsData, 
-                reEngagementData: !!reEngagementData,
+                videoEngagementData: !!(videoEngagementData as any)?.metrics,
+                uniqueViewsData: !!(uniqueViewsData as any)?.uniqueViews, 
+                reEngagementData: !!(reEngagementData as any)?.reEngagement,
                 showAdvancedAnalytics
               })}
 
               {/* Video Engagement Metrics */}
-              {videoEngagementData && (
+              {(videoEngagementData as any)?.metrics && (
                 <Card>
                   <CardHeader>
                     <CardTitle className="flex items-center gap-2">
@@ -1286,7 +1286,7 @@ export function AnalyticsDashboard() {
               )}
 
               {/* Unique Video Views */}
-              {uniqueViewsData && (
+              {(uniqueViewsData as any)?.uniqueViews && (
                 <Card>
                   <CardHeader>
                     <CardTitle className="flex items-center gap-2">
@@ -1334,7 +1334,7 @@ export function AnalyticsDashboard() {
               )}
 
               {/* Re-Engagement Analytics */}
-              {reEngagementData && (
+              {(reEngagementData as any)?.reEngagement && (
                 <Card>
                   <CardHeader>
                     <CardTitle className="flex items-center gap-2">
