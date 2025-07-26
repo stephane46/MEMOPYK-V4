@@ -364,20 +364,35 @@ export function AnalyticsDashboard() {
   });
 
   // Enhanced video analytics queries
-  const { data: videoEngagementData } = useQuery({
+  const { data: videoEngagementData, isLoading: engagementLoading } = useQuery({
     queryKey: ['/api/analytics/video-engagement'],
     enabled: showAdvancedAnalytics
   });
 
-  const { data: uniqueViewsData } = useQuery({
+  const { data: uniqueViewsData, isLoading: uniqueViewsLoading } = useQuery({
     queryKey: ['/api/analytics/unique-views'],
     enabled: showAdvancedAnalytics
   });
 
-  const { data: reEngagementData } = useQuery({
+  const { data: reEngagementData, isLoading: reEngagementLoading } = useQuery({
     queryKey: ['/api/analytics/re-engagement'],
     enabled: showAdvancedAnalytics
   });
+
+  // Debug Advanced Analytics data
+  useEffect(() => {
+    if (showAdvancedAnalytics) {
+      console.log('🔍 Advanced Analytics Debug:', {
+        showAdvancedAnalytics,
+        videoEngagementData,
+        uniqueViewsData,
+        reEngagementData,
+        engagementLoading,
+        uniqueViewsLoading,
+        reEngagementLoading
+      });
+    }
+  }, [showAdvancedAnalytics, videoEngagementData, uniqueViewsData, reEngagementData, engagementLoading, uniqueViewsLoading, reEngagementLoading]);
 
   // Fetch admin's current IP when IP management panel is opened
   useEffect(() => {
