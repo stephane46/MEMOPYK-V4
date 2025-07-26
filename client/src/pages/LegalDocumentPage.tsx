@@ -47,7 +47,12 @@ export function LegalDocumentPage() {
   }
 
   const document = documents?.find(doc => 
-    doc.type === documentType && doc.isActive
+    doc.type === documentType && (doc.isActive || doc.is_active)
+  );
+  
+  // Test: Try finding document without isActive check
+  const documentAnyStatus = documents?.find(doc => 
+    doc.type === documentType
   );
 
   // Debug logging for Replit Preview
@@ -64,8 +69,15 @@ export function LegalDocumentPage() {
     console.log('  - Exact type match found:', exactMatch ? 'YES' : 'NO');
     if (exactMatch) {
       console.log('  - Exact match isActive:', exactMatch.isActive);
+      console.log('  - Exact match type:', exactMatch.type);
+      console.log('  - Exact match title:', exactMatch.title_fr);
     }
+    console.log('  - Looking for document type:', documentType);
+    console.log('  - All document types available:', documents.map(d => d.type));
   }
+  
+  console.log('🔍 FINAL RESULT - Document found with isActive check:', document ? 'YES' : 'NO');
+  console.log('🔍 FINAL RESULT - Document found ignoring isActive:', documentAnyStatus ? 'YES' : 'NO');
 
   if (!document) {
     return (
@@ -85,8 +97,8 @@ export function LegalDocumentPage() {
     );
   }
 
-  const title = language === 'fr-FR' ? document.titleFr : document.titleEn;
-  const content = language === 'fr-FR' ? document.contentFr : document.contentEn;
+  const title = language === 'fr-FR' ? (document.titleFr || document.title_fr) : (document.titleEn || document.title_en);
+  const content = language === 'fr-FR' ? (document.contentFr || document.content_fr) : (document.contentEn || document.content_en);
 
   return (
     <div className="min-h-screen bg-gray-50">
