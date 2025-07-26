@@ -40,16 +40,6 @@
     "is_active": true
   },
   {
-    "id": "d70378b5-d49b-4d3a-82ff-32c3cf30db2d",
-    "section_id": "pricing",
-    "question_en": "How do I send you my photos and videos?",
-    "question_fr": "Comment vous envoyer mes photos et vidéos ?",
-    "answer_en": "<p><a href=\"https://memopyk.zohobookings.eu/#/memopyk1\" rel=\"noopener noreferrer\" target=\"_blank\">Book a session</a>&nbsp;or&nbsp;<a href=\"https://forms.zoho.eu/memopyk1/form/MemoryfilmQuestionnaire\" rel=\"noopener noreferrer\" target=\"_blank\">fill the questionnaire</a>; our system will then email you secure upload instructions immediately.</p>",
-    "answer_fr": "<p><a href=\"https://memopyk.zohobookings.eu/#/memopykfr\" rel=\"noopener noreferrer\" target=\"_blank\">Prenez rendez-vous</a>&nbsp;ou&nbsp;<a href=\"https://forms.zoho.eu/memopyk1/form/FicheClientBriefMEMOPYK\" rel=\"noopener noreferrer\" target=\"_blank\">complétez le questionnaire</a>&nbsp;; notre système vous enverra immédiatement les instructions de téléversement sécurisé par email.</p>",
-    "order_index": 2,
-    "is_active": true
-  },
-  {
     "id": "05b73a14-57dd-4ab0-b036-300da03696a3",
     "section_id": "pricing",
     "question_en": "I received my film but want changes. What’s your revision policy?",
