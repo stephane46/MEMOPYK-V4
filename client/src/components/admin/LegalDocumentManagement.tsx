@@ -54,7 +54,7 @@ export function LegalDocumentManagement() {
   // Create document mutation
   const createMutation = useMutation({
     mutationFn: async (data: typeof formData) => {
-      const response = await apiRequest('POST', '/api/legal', data);
+      const response = await apiRequest('/api/legal', 'POST', data);
       return await response.json();
     },
     onSuccess: () => {
@@ -71,7 +71,7 @@ export function LegalDocumentManagement() {
   const updateMutation = useMutation({
     mutationFn: async ({ id, data }: { id: string; data: any }) => {
       console.log('🔄 Updating legal document with data:', data);
-      const response = await apiRequest('PATCH', `/api/legal/${id}`, data);
+      const response = await apiRequest(`/api/legal/${id}`, 'PATCH', data);
       return await response.json();
     },
     onSuccess: () => {
@@ -88,7 +88,7 @@ export function LegalDocumentManagement() {
   // Delete document mutation
   const deleteMutation = useMutation({
     mutationFn: async (id: string) => {
-      const response = await apiRequest('DELETE', `/api/legal/${id}`);
+      const response = await apiRequest(`/api/legal/${id}`, 'DELETE');
       return await response.json();
     },
     onSuccess: () => {
@@ -103,7 +103,7 @@ export function LegalDocumentManagement() {
   // Toggle document visibility
   const toggleVisibilityMutation = useMutation({
     mutationFn: async ({ id, is_active }: { id: string; is_active: boolean }) => {
-      const response = await apiRequest('PATCH', `/api/legal/${id}`, { is_active });
+      const response = await apiRequest(`/api/legal/${id}`, 'PATCH', { is_active });
       return await response.json();
     },
     onSuccess: () => {
