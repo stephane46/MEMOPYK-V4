@@ -529,6 +529,8 @@ The application follows a modern full-stack architecture with clear separation o
 - Public site shows 20 active FAQs for visitor consumption
 - No more FAQ count discrepancies between admin and public interfaces
 - Perfect data synchronization across all FAQ management systems
+- Enhanced section headers show detailed counts: "26 FAQs" with "10 actives" and "16 inactives" badges
+- Color-coded badges: green for active FAQs, gray for inactive FAQs
 
 ## Previous Status: Phase 8.4.18 - FAQ VISIBILITY TOGGLE BUG RESOLVED (July 26, 2025)
 

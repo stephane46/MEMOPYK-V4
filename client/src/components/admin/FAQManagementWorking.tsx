@@ -751,9 +751,17 @@ export default function FAQManagementWorking() {
                   </button>
                   
                   <div className="flex items-center gap-2">
-                    <Badge variant="secondary">
-                      {sectionFaqs.length} FAQ{sectionFaqs.length > 1 ? 's' : ''}
-                    </Badge>
+                    <div className="flex items-center gap-2">
+                      <Badge variant="secondary">
+                        {sectionFaqs.length} FAQ{sectionFaqs.length > 1 ? 's' : ''}
+                      </Badge>
+                      <Badge variant="outline" className="text-green-600 border-green-600">
+                        {sectionFaqs.filter(f => f.is_active).length} actives
+                      </Badge>
+                      <Badge variant="outline" className="text-gray-600 border-gray-600">
+                        {sectionFaqs.filter(f => !f.is_active).length} inactives
+                      </Badge>
+                    </div>
                     
                     {section && (
                       <div className="flex items-center gap-1">
