@@ -28,7 +28,10 @@ import {
   Ban,
   Plus,
   Trash2,
-  UserX
+  UserX,
+  RotateCcw,
+  MessageSquare,
+  X
 } from 'lucide-react';
 
 interface AnalyticsDashboard {
@@ -337,6 +340,28 @@ export function AnalyticsDashboard() {
     }
   });
 
+  // Recalculate historical completions mutation
+  const recalculateHistoricalMutation = useMutation({
+    mutationFn: (threshold: number) => 
+      apiRequest('/api/analytics/recalculate-completions', 'POST', { threshold }),
+    onSuccess: (result) => {
+      queryClient.invalidateQueries({ queryKey: ['/api/analytics/dashboard'] });
+      queryClient.invalidateQueries({ queryKey: ['/api/analytics/views'] });
+      toast({
+        title: "Historical Data Updated",
+        description: `Updated ${result.result.updated} out of ${result.result.total} historical video views.`,
+      });
+    },
+    onError: (error) => {
+      console.error('Recalculate historical error:', error);
+      toast({
+        title: "Recalculation Failed",
+        description: "Failed to recalculate historical completion data.",
+        variant: "destructive",
+      });
+    }
+  });
+
   // Fetch admin's current IP when IP management panel is opened
   useEffect(() => {
     if (showIpManagement && !currentAdminIp) {
@@ -499,22 +524,34 @@ export function AnalyticsDashboard() {
                     }
                   />
                 </div>
-                <div className="flex items-center gap-2">
-                  <Label htmlFor="completion-threshold">Completion Threshold:</Label>
-                  <Input
-                    id="completion-threshold"
-                    type="number"
-                    min="0"
-                    max="100"
-                    value={settings?.completionThreshold || 80}
-                    onChange={(e) => 
-                      updateSettingsMutation.mutate({ 
-                        completionThreshold: parseInt(e.target.value) 
-                      })
-                    }
-                    className="w-20"
-                  />
-                  <span>%</span>
+                <div className="space-y-2">
+                  <div className="flex items-center gap-2">
+                    <Label htmlFor="completion-threshold">Completion Threshold:</Label>
+                    <Input
+                      id="completion-threshold"
+                      type="number"
+                      min="0"
+                      max="100"
+                      value={settings?.completionThreshold || 80}
+                      onChange={(e) => 
+                        updateSettingsMutation.mutate({ 
+                          completionThreshold: parseInt(e.target.value) 
+                        })
+                      }
+                      className="w-20"
+                    />
+                    <span>%</span>
+                  </div>
+                  <Button
+                    onClick={() => recalculateHistoricalMutation.mutate(settings?.completionThreshold || 80)}
+                    variant="outline"
+                    size="sm"
+                    disabled={recalculateHistoricalMutation.isPending}
+                    className="text-purple-600 border-purple-300 hover:bg-purple-50"
+                  >
+                    <RotateCcw className="h-3 w-3 mr-1" />
+                    {recalculateHistoricalMutation.isPending ? 'Recalculating...' : 'Apply to Historical Data'}
+                  </Button>
                 </div>
               </div>
             )}

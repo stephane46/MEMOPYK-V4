@@ -1736,6 +1736,23 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Historical threshold recalculation endpoint
+  app.post('/api/analytics/recalculate-completions', async (req, res) => {
+    try {
+      const { threshold } = req.body;
+      
+      if (!threshold || threshold < 0 || threshold > 100) {
+        return res.status(400).json({ error: 'Invalid threshold. Must be between 0 and 100.' });
+      }
+      
+      const result = await hybridStorage.recalculateHistoricalCompletions(threshold);
+      res.json({ success: true, result });
+    } catch (error) {
+      console.error('Error recalculating historical completions:', error);
+      res.status(500).json({ error: 'Failed to recalculate historical completions' });
+    }
+  });
+
   app.delete('/api/analytics/exclude-ip/:ipAddress', async (req, res) => {
     try {
       const { ipAddress } = req.params;

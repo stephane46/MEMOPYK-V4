@@ -64,6 +64,9 @@ export interface HybridStorageInterface {
   addExcludedIp(ipAddress: string): Promise<any>;
   removeExcludedIp(ipAddress: string): Promise<any>;
 
+  // Historical Threshold Recalculation
+  recalculateHistoricalCompletions(newThreshold: number): Promise<{ updated: number; total: number }>;
+
   // Real-time Analytics methods
   getRealtimeVisitors(): Promise<any[]>;
   updateVisitorActivity(sessionId: string, currentPage: string): Promise<any>;
@@ -2391,6 +2394,78 @@ export class HybridStorage implements HybridStorageInterface {
       max: conversionTimes[conversionTimes.length - 1],
       median: conversionTimes[Math.floor(conversionTimes.length / 2)]
     };
+  }
+
+  // Historical Threshold Recalculation Implementation
+  async recalculateHistoricalCompletions(newThreshold: number): Promise<{ updated: number; total: number }> {
+    try {
+      console.log(`🔄 Recalculating historical completions with ${newThreshold}% threshold...`);
+      
+      if (this.supabase) {
+        // Database implementation
+        const { data: views, error } = await this.supabase
+          .from('analytics_views')
+          .select('id, completion_percentage, watched_to_end');
+        
+        if (error) throw error;
+        
+        let updated = 0;
+        const total = views?.length || 0;
+        
+        if (views) {
+          for (const view of views) {
+            const completionPercentage = parseFloat(view.completion_percentage || '0');
+            const newWatchedToEnd = completionPercentage >= newThreshold;
+            
+            // Only update if the completion status would change
+            if (view.watched_to_end !== newWatchedToEnd) {
+              const { error: updateError } = await this.supabase
+                .from('analytics_views')
+                .update({ watched_to_end: newWatchedToEnd })
+                .eq('id', view.id);
+              
+              if (!updateError) {
+                updated++;
+              }
+            }
+          }
+        }
+        
+        console.log(`✅ Updated ${updated} out of ${total} historical video views`);
+        return { updated, total };
+      } else {
+        // JSON fallback implementation
+        const filePath = join(process.cwd(), 'server/data/analytics-views.json');
+        let views = [];
+        let updated = 0;
+        
+        if (existsSync(filePath)) {
+          const data = readFileSync(filePath, 'utf8');
+          views = JSON.parse(data);
+          
+          for (const view of views) {
+            const completionPercentage = parseFloat(view.completion_percentage || '0');
+            const newWatchedToEnd = completionPercentage >= newThreshold;
+            
+            // Only update if the completion status would change
+            if (view.watched_to_end !== newWatchedToEnd) {
+              view.watched_to_end = newWatchedToEnd;
+              updated++;
+            }
+          }
+          
+          // Write updated data back to file
+          writeFileSync(filePath, JSON.stringify(views, null, 2));
+        }
+        
+        const total = views.length;
+        console.log(`✅ Updated ${updated} out of ${total} historical video views`);
+        return { updated, total };
+      }
+    } catch (error) {
+      console.error('❌ Error recalculating historical completions:', error);
+      throw error;
+    }
   }
 }
 
