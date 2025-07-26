@@ -1715,6 +1715,27 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Test Data Management Endpoints
+  app.post('/api/analytics/test-data/generate', async (req, res) => {
+    try {
+      const result = await hybridStorage.generateTestAnalyticsData();
+      res.json({ success: true, result });
+    } catch (error) {
+      console.error('Generate test data error:', error);
+      res.status(500).json({ error: 'Failed to generate test data' });
+    }
+  });
+
+  app.post('/api/analytics/test-data/clear', async (req, res) => {
+    try {
+      const result = await hybridStorage.clearTestDataOnly();
+      res.json({ success: true, result });
+    } catch (error) {
+      console.error('Clear test data error:', error);
+      res.status(500).json({ error: 'Failed to clear test data' });
+    }
+  });
+
   app.delete('/api/analytics/exclude-ip/:ipAddress', async (req, res) => {
     try {
       const { ipAddress } = req.params;

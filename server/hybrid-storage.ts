@@ -1651,6 +1651,220 @@ export class HybridStorage implements HybridStorageInterface {
     }
   }
 
+  // Test Data Generation Methods
+  async generateTestAnalyticsData(): Promise<any> {
+    try {
+      console.log('🧪 Generating test analytics data...');
+      
+      // Generate test sessions data
+      const testSessions = this.generateTestSessions(75);
+      const existingSessions = this.loadJsonFile('analytics-sessions.json');
+      
+      // Filter out existing test data first
+      const realSessions = existingSessions.filter((session: any) => !session.test_data);
+      const combinedSessions = [...realSessions, ...testSessions];
+      
+      // Save updated sessions
+      this.saveJsonFile('analytics-sessions.json', combinedSessions);
+      
+      // Generate test views data
+      const testViews = this.generateTestViews(120);
+      const existingViews = this.loadJsonFile('analytics-views.json');
+      const realViews = existingViews.filter((view: any) => !view.test_data);
+      const combinedViews = [...realViews, ...testViews];
+      
+      this.saveJsonFile('analytics-views.json', combinedViews);
+      
+      // Generate test performance metrics
+      const testMetrics = this.generateTestPerformanceMetrics(200);
+      const existingMetrics = this.loadJsonFile('performance-metrics.json');
+      const realMetrics = existingMetrics.filter((metric: any) => !metric.test_data);
+      const combinedMetrics = [...realMetrics, ...testMetrics];
+      
+      this.saveJsonFile('performance-metrics.json', combinedMetrics);
+      
+      // Generate test realtime visitors
+      const testVisitors = this.generateTestRealtimeVisitors(25);
+      const existingVisitors = this.loadJsonFile('realtime-visitors.json');
+      const realVisitors = existingVisitors.filter((visitor: any) => !visitor.test_data);
+      const combinedVisitors = [...realVisitors, ...testVisitors];
+      
+      this.saveJsonFile('realtime-visitors.json', combinedVisitors);
+      
+      console.log('✅ Test analytics data generated successfully');
+      return {
+        sessions: testSessions.length,
+        views: testViews.length,
+        metrics: testMetrics.length,
+        visitors: testVisitors.length,
+        message: 'Test data generated with TEST_ prefixes and test_data flags'
+      };
+      
+    } catch (error) {
+      console.error('Error generating test data:', error);
+      throw error;
+    }
+  }
+
+  private generateTestSessions(count: number): any[] {
+    const sessions = [];
+    const countries = ['France', 'Canada', 'Belgium', 'Switzerland', 'Germany', 'Spain', 'Italy'];
+    const cities = ['Paris', 'Montreal', 'Brussels', 'Geneva', 'Berlin', 'Madrid', 'Rome'];
+    const languages = ['fr', 'en'];
+    
+    for (let i = 0; i < count; i++) {
+      const countryIndex = Math.floor(Math.random() * countries.length);
+      const sessionDate = new Date(Date.now() - Math.random() * 7 * 24 * 60 * 60 * 1000);
+      
+      sessions.push({
+        id: `TEST_session_${i.toString().padStart(3, '0')}`,
+        ip_address: `192.168.${Math.floor(Math.random() * 255)}.${Math.floor(Math.random() * 255)}`,
+        user_agent: 'TEST_Mozilla/5.0 (Test Browser) TEST_DATA',
+        country: countries[countryIndex],
+        city: cities[countryIndex],
+        language: languages[Math.floor(Math.random() * languages.length)],
+        timestamp: sessionDate.toISOString(),
+        duration: Math.floor(Math.random() * 300) + 30, // 30-330 seconds
+        pages_visited: Math.floor(Math.random() * 8) + 1,
+        test_data: true,
+        test_generated_at: new Date().toISOString()
+      });
+    }
+    
+    return sessions;
+  }
+
+  private generateTestViews(count: number): any[] {
+    const views = [];
+    const videoFiles = ['VideoHero1.mp4', 'VideoHero2.mp4', 'VideoHero3.mp4', 'gallery_test_video.mp4'];
+    
+    for (let i = 0; i < count; i++) {
+      const viewDate = new Date(Date.now() - Math.random() * 7 * 24 * 60 * 60 * 1000);
+      
+      views.push({
+        id: `TEST_view_${i.toString().padStart(3, '0')}`,
+        session_id: `TEST_session_${Math.floor(Math.random() * 75).toString().padStart(3, '0')}`,
+        video_filename: videoFiles[Math.floor(Math.random() * videoFiles.length)],
+        video_url: `test_video_${Math.floor(Math.random() * 10)}.mp4`,
+        timestamp: viewDate.toISOString(),
+        duration_watched: Math.floor(Math.random() * 180) + 5, // 5-185 seconds
+        completion_percentage: Math.floor(Math.random() * 100),
+        user_agent: 'TEST_Mozilla/5.0 (Test Browser) TEST_DATA',
+        test_data: true,
+        test_generated_at: new Date().toISOString()
+      });
+    }
+    
+    return views;
+  }
+
+  private generateTestPerformanceMetrics(count: number): any[] {
+    const metrics = [];
+    const metricTypes = ['page_load', 'api_response', 'video_load', 'server_health'];
+    
+    for (let i = 0; i < count; i++) {
+      const metricDate = new Date(Date.now() - Math.random() * 7 * 24 * 60 * 60 * 1000);
+      const metricType = metricTypes[Math.floor(Math.random() * metricTypes.length)];
+      
+      let value;
+      switch (metricType) {
+        case 'page_load':
+          value = (Math.random() * 3000 + 500).toFixed(0); // 500-3500ms
+          break;
+        case 'api_response':
+          value = (Math.random() * 1000 + 50).toFixed(0); // 50-1050ms
+          break;
+        case 'video_load':
+          value = (Math.random() * 2000 + 100).toFixed(0); // 100-2100ms
+          break;
+        case 'server_health':
+          value = (Math.random() * 100).toFixed(1); // 0-100%
+          break;
+        default:
+          value = (Math.random() * 1000).toFixed(0);
+      }
+      
+      metrics.push({
+        id: `TEST_metric_${i.toString().padStart(3, '0')}`,
+        sessionId: `TEST_session_${Math.floor(Math.random() * 75).toString().padStart(3, '0')}`,
+        metricType,
+        value: value,
+        unit: metricType === 'server_health' ? '%' : 'ms',
+        createdAt: metricDate.toISOString(),
+        test_data: true,
+        test_generated_at: new Date().toISOString()
+      });
+    }
+    
+    return metrics;
+  }
+
+  private generateTestRealtimeVisitors(count: number): any[] {
+    const visitors = [];
+    const countries = ['France', 'Canada', 'Belgium', 'Switzerland'];
+    const cities = ['Paris', 'Montreal', 'Brussels', 'Geneva'];
+    const pages = ['/', '/gallery', '/contact', '/legal/privacy'];
+    
+    for (let i = 0; i < count; i++) {
+      const countryIndex = Math.floor(Math.random() * countries.length);
+      const lastActivity = new Date(Date.now() - Math.random() * 60 * 60 * 1000); // Within last hour
+      
+      visitors.push({
+        id: `TEST_visitor_${i.toString().padStart(3, '0')}`,
+        sessionId: `TEST_session_${Math.floor(Math.random() * 75).toString().padStart(3, '0')}`,
+        ipAddress: `192.168.${Math.floor(Math.random() * 255)}.${Math.floor(Math.random() * 255)}`,
+        country: countries[countryIndex],
+        city: cities[countryIndex],
+        currentPage: pages[Math.floor(Math.random() * pages.length)],
+        lastActivity: lastActivity.toISOString(),
+        isActive: Math.random() > 0.3, // 70% active
+        test_data: true,
+        test_generated_at: new Date().toISOString()
+      });
+    }
+    
+    return visitors;
+  }
+
+  async clearTestDataOnly(): Promise<any> {
+    try {
+      console.log('🧹 Clearing test data only (preserving real data)...');
+      
+      // Clear test sessions
+      const sessions = this.loadJsonFile('analytics-sessions.json');
+      const realSessions = sessions.filter((session: any) => !session.test_data);
+      this.saveJsonFile('analytics-sessions.json', realSessions);
+      
+      // Clear test views
+      const views = this.loadJsonFile('analytics-views.json');
+      const realViews = views.filter((view: any) => !view.test_data);
+      this.saveJsonFile('analytics-views.json', realViews);
+      
+      // Clear test metrics
+      const metrics = this.loadJsonFile('performance-metrics.json');
+      const realMetrics = metrics.filter((metric: any) => !metric.test_data);
+      this.saveJsonFile('performance-metrics.json', realMetrics);
+      
+      // Clear test visitors
+      const visitors = this.loadJsonFile('realtime-visitors.json');
+      const realVisitors = visitors.filter((visitor: any) => !visitor.test_data);
+      this.saveJsonFile('realtime-visitors.json', realVisitors);
+      
+      console.log('✅ Test data cleared successfully, real data preserved');
+      return {
+        sessionsRemoved: sessions.length - realSessions.length,
+        viewsRemoved: views.length - realViews.length,
+        metricsRemoved: metrics.length - realMetrics.length,
+        visitorsRemoved: visitors.length - realVisitors.length,
+        message: 'Only test data removed, real analytics data preserved'
+      };
+      
+    } catch (error) {
+      console.error('Error clearing test data:', error);
+      throw error;
+    }
+  }
+
   // Real-time Analytics Methods
   async getRealtimeVisitors(): Promise<any[]> {
     try {
