@@ -77,6 +77,7 @@ export function AnalyticsDashboard() {
   const [dateTo, setDateTo] = useState('');
   const [showSettings, setShowSettings] = useState(false);
   const [showIpManagement, setShowIpManagement] = useState(false);
+  const [showAdvancedAnalytics, setShowAdvancedAnalytics] = useState(false);
   const [newExcludedIp, setNewExcludedIp] = useState('');
   const [newIpComment, setNewIpComment] = useState('');
   const [editingComment, setEditingComment] = useState<string | null>(null);
@@ -362,6 +363,22 @@ export function AnalyticsDashboard() {
     }
   });
 
+  // Enhanced video analytics queries
+  const { data: videoEngagementData } = useQuery({
+    queryKey: ['/api/analytics/video-engagement/all'],
+    enabled: showAdvancedAnalytics
+  });
+
+  const { data: uniqueViewsData } = useQuery({
+    queryKey: ['/api/analytics/unique-views'],
+    enabled: showAdvancedAnalytics
+  });
+
+  const { data: reEngagementData } = useQuery({
+    queryKey: ['/api/analytics/re-engagement'],
+    enabled: showAdvancedAnalytics
+  });
+
   // Fetch admin's current IP when IP management panel is opened
   useEffect(() => {
     if (showIpManagement && !currentAdminIp) {
@@ -434,6 +451,10 @@ export function AnalyticsDashboard() {
           </p>
         </div>
         <div className="flex items-center gap-2">
+          <Button onClick={() => setShowAdvancedAnalytics(!showAdvancedAnalytics)} variant="outline">
+            <TrendingUp className="h-4 w-4 mr-2" />
+            Advanced Analytics
+          </Button>
           <Button onClick={() => setShowIpManagement(!showIpManagement)} variant="outline">
             <Shield className="h-4 w-4 mr-2" />
             IP Management
@@ -1141,6 +1162,218 @@ export function AnalyticsDashboard() {
                 </div>
               </CardContent>
             </Card>
+          )}
+
+          {/* Advanced Analytics Panel */}
+          {showAdvancedAnalytics && (
+            <div className="space-y-6 border-t pt-6">
+              <div className="flex items-center gap-2 mb-4">
+                <TrendingUp className="h-5 w-5 text-blue-600" />
+                <h3 className="text-lg font-semibold">Enhanced Multi-View Analytics</h3>
+                <Badge variant="outline" className="text-blue-600 border-blue-600">Advanced</Badge>
+              </div>
+
+              {/* Video Engagement Metrics */}
+              {videoEngagementData?.metrics && (
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="flex items-center gap-2">
+                      <Activity className="h-5 w-5 text-green-600" />
+                      Video Engagement Metrics
+                    </CardTitle>
+                    <CardDescription>
+                      Comprehensive engagement analysis with total views, unique views, and re-watch behavior
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                      <div className="text-center">
+                        <div className="text-2xl font-bold text-blue-600">
+                          {formatNumber(videoEngagementData.metrics.totalViews)}
+                        </div>
+                        <p className="text-sm text-muted-foreground">Total Views</p>
+                        <p className="text-xs text-muted-foreground">Raw engagement count</p>
+                      </div>
+                      <div className="text-center">
+                        <div className="text-2xl font-bold text-green-600">
+                          {formatNumber(videoEngagementData.metrics.uniqueViews)}
+                        </div>
+                        <p className="text-sm text-muted-foreground">Unique Views</p>
+                        <p className="text-xs text-muted-foreground">True audience reach</p>
+                      </div>
+                      <div className="text-center">
+                        <div className="text-2xl font-bold text-orange-600">
+                          {formatNumber(videoEngagementData.metrics.reWatchViews)}
+                        </div>
+                        <p className="text-sm text-muted-foreground">Re-Watch Views</p>
+                        <p className="text-xs text-muted-foreground">Additional engagement</p>
+                      </div>
+                      <div className="text-center">
+                        <div className="text-2xl font-bold text-purple-600">
+                          {videoEngagementData.metrics.engagementScore}/100
+                        </div>
+                        <p className="text-sm text-muted-foreground">Engagement Score</p>
+                        <p className="text-xs text-muted-foreground">Composite score</p>
+                      </div>
+                    </div>
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-6 pt-6 border-t">
+                      <div className="text-center">
+                        <div className="text-lg font-semibold">
+                          {videoEngagementData.metrics.avgCompletionRate.toFixed(1)}%
+                        </div>
+                        <p className="text-sm text-muted-foreground">Avg Completion Rate</p>
+                      </div>
+                      <div className="text-center">
+                        <div className="text-lg font-semibold">
+                          {videoEngagementData.metrics.bestCompletionRate.toFixed(1)}%
+                        </div>
+                        <p className="text-sm text-muted-foreground">Best Completion Rate</p>
+                      </div>
+                      <div className="text-center">
+                        <div className="text-lg font-semibold">
+                          {formatDuration(videoEngagementData.metrics.avgWatchTime)}
+                        </div>
+                        <p className="text-sm text-muted-foreground">Avg Watch Time</p>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              )}
+
+              {/* Unique Video Views */}
+              {uniqueViewsData?.uniqueViews && (
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="flex items-center gap-2">
+                      <Users className="h-5 w-5 text-blue-600" />
+                      Unique Video Views Analytics
+                    </CardTitle>
+                    <CardDescription>
+                      Session-based grouping distinguishing new viewers vs returning viewers
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="space-y-4 max-h-96 overflow-y-auto">
+                      {uniqueViewsData.uniqueViews.slice(0, 10).map((view, index) => (
+                        <div key={`${view.sessionId}-${view.videoId}`} className="flex items-center justify-between p-3 border rounded-lg">
+                          <div className="flex-1">
+                            <div className="flex items-center gap-2">
+                              <span className="font-medium">{view.videoId}</span>
+                              <Badge variant={view.isReWatch ? "default" : "secondary"}>
+                                {view.isReWatch ? `${view.reWatchCount} re-watches` : 'Single view'}
+                              </Badge>
+                              <Badge variant="outline" className={
+                                view.engagementLevel === 'high' ? 'text-green-600 border-green-600' :
+                                view.engagementLevel === 'medium' ? 'text-yellow-600 border-yellow-600' :
+                                'text-gray-600 border-gray-600'
+                              }>
+                                {view.engagementLevel}
+                              </Badge>
+                            </div>
+                            <div className="flex items-center gap-4 mt-1 text-sm text-muted-foreground">
+                              <span>Best: {view.bestCompletionRate.toFixed(1)}%</span>
+                              <span>Watch: {formatDuration(view.totalWatchTime)}</span>
+                              <span className="text-xs">Session: {view.sessionId.slice(-8)}</span>
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                      {uniqueViewsData.uniqueViews.length > 10 && (
+                        <div className="text-center text-sm text-muted-foreground py-2">
+                          Showing top 10 of {uniqueViewsData.uniqueViews.length} unique views
+                        </div>
+                      )}
+                    </div>
+                  </CardContent>
+                </Card>
+              )}
+
+              {/* Re-Engagement Analytics */}
+              {reEngagementData?.reEngagement && (
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="flex items-center gap-2">
+                      <RefreshCw className="h-5 w-5 text-purple-600" />
+                      Re-Engagement Analytics
+                    </CardTitle>
+                    <CardDescription>
+                      Advanced analysis of viewer re-watching patterns with business recommendations
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="space-y-4">
+                      {reEngagementData.reEngagement.map((video, index) => (
+                        <div key={video.videoId} className="p-4 border rounded-lg">
+                          <div className="flex items-center justify-between mb-3">
+                            <h4 className="font-medium">{video.videoId}</h4>
+                            <Badge variant="outline" className={
+                              video.engagementLevel === 'high' ? 'text-green-600 border-green-600' :
+                              video.engagementLevel === 'medium' ? 'text-yellow-600 border-yellow-600' :
+                              'text-gray-600 border-gray-600'
+                            }>
+                              {video.engagementLevel} engagement
+                            </Badge>
+                          </div>
+                          
+                          <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-3">
+                            <div className="text-center">
+                              <div className="text-lg font-semibold">{formatNumber(video.totalViews)}</div>
+                              <p className="text-xs text-muted-foreground">Total Views</p>
+                            </div>
+                            <div className="text-center">
+                              <div className="text-lg font-semibold">{formatNumber(video.uniqueViewers)}</div>
+                              <p className="text-xs text-muted-foreground">Unique Viewers</p>
+                            </div>
+                            <div className="text-center">
+                              <div className="text-lg font-semibold">{video.reWatchRate.toFixed(1)}%</div>
+                              <p className="text-xs text-muted-foreground">Re-Watch Rate</p>
+                            </div>
+                            <div className="text-center">
+                              <div className="text-lg font-semibold">{video.avgViewsPerReWatcher.toFixed(1)}</div>
+                              <p className="text-xs text-muted-foreground">Avg Views/Re-Watcher</p>
+                            </div>
+                          </div>
+                          
+                          <div className="bg-gray-50 dark:bg-gray-800 p-3 rounded text-sm">
+                            <strong>Business Insight:</strong> {video.businessInsight}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </CardContent>
+                </Card>
+              )}
+
+              {/* Business Intelligence Guide */}
+              <Card className="bg-blue-50 dark:bg-blue-950 border-blue-200 dark:border-blue-800">
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2 text-blue-800 dark:text-blue-200">
+                    <Activity className="h-5 w-5" />
+                    Business Intelligence Guide
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="text-blue-700 dark:text-blue-300">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+                    <div>
+                      <h4 className="font-semibold mb-2">Marketing Teams:</h4>
+                      <p>Use <strong>Total Views</strong> for reach metrics and campaign effectiveness measurement</p>
+                    </div>
+                    <div>
+                      <h4 className="font-semibold mb-2">Content Teams:</h4>
+                      <p>Use <strong>Unique Views + Completion</strong> for content effectiveness and viewer satisfaction</p>
+                    </div>
+                    <div>
+                      <h4 className="font-semibold mb-2">Strategy Teams:</h4>
+                      <p>Use <strong>Re-Watch Rates</strong> for content portfolio optimization and engagement analysis</p>
+                    </div>
+                    <div>
+                      <h4 className="font-semibold mb-2">Business Teams:</h4>
+                      <p>Use <strong>Engagement Scores</strong> for resource allocation and performance-based decisions</p>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
           )}
         </>
       )}
