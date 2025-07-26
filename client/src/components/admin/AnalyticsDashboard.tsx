@@ -1215,7 +1215,10 @@ export function AnalyticsDashboard() {
                 videoEngagementData: !!(videoEngagementData as any)?.metrics,
                 uniqueViewsData: !!(uniqueViewsData as any)?.uniqueViews, 
                 reEngagementData: !!(reEngagementData as any)?.reEngagement,
-                showAdvancedAnalytics
+                showAdvancedAnalytics,
+                actualVideoData: (videoEngagementData as any)?.metrics,
+                actualUniqueData: (uniqueViewsData as any)?.uniqueViews,
+                actualReEngageData: (reEngagementData as any)?.reEngagement
               })}
 
               {/* Video Engagement Metrics */}
