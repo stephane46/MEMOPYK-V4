@@ -85,7 +85,8 @@ export function AnalyticsDashboard() {
   // Query for test data status
   const { data: testDataStatus } = useQuery({
     queryKey: ['/api/analytics/test-data/status'],
-    staleTime: 10000, // Refresh every 10 seconds
+    staleTime: 0, // Always fetch fresh data
+    refetchInterval: 5000, // Auto-refresh every 5 seconds
   });
   const [editingComment, setEditingComment] = useState<string | null>(null);
   const [tempComment, setTempComment] = useState('');
@@ -493,7 +494,7 @@ export function AnalyticsDashboard() {
       </div>
 
       {/* Test Data Status Banner */}
-      {testDataStatus?.status?.hasTestData && (
+      {(testDataStatus as any)?.status?.hasTestData && (
         <Card className="border-blue-200 bg-gradient-to-r from-blue-50 to-indigo-50">
           <CardContent className="pt-4">
             <div className="flex items-center justify-between">
@@ -504,9 +505,9 @@ export function AnalyticsDashboard() {
                 <div>
                   <h3 className="font-semibold text-blue-900">Test Data Active</h3>
                   <p className="text-sm text-blue-700">
-                    Dashboard includes {testDataStatus.status.counts.total} test records: {' '}
-                    {testDataStatus.status.counts.sessions} sessions, {testDataStatus.status.counts.views} views, {' '}
-                    {testDataStatus.status.counts.visitors} visitors, {testDataStatus.status.counts.metrics} metrics
+                    Dashboard includes {(testDataStatus as any)?.status?.counts?.total || 0} test records: {' '}
+                    {(testDataStatus as any)?.status?.counts?.sessions || 0} sessions, {(testDataStatus as any)?.status?.counts?.views || 0} views, {' '}
+                    {(testDataStatus as any)?.status?.counts?.visitors || 0} visitors, {(testDataStatus as any)?.status?.counts?.metrics || 0} metrics
                   </p>
                 </div>
               </div>
@@ -662,7 +663,7 @@ export function AnalyticsDashboard() {
               </div>
               
               {/* Dynamic Test Data Status */}
-              {testDataStatus?.status?.hasTestData ? (
+              {(testDataStatus as any)?.status?.hasTestData ? (
                 <div className="bg-blue-50 p-4 rounded-lg text-sm space-y-2">
                   <div className="font-medium text-blue-800 flex items-center gap-2">
                     <TestTube className="h-4 w-4" />
@@ -673,18 +674,18 @@ export function AnalyticsDashboard() {
                       <div className="text-blue-700">
                         <div className="font-medium">Active Test Records:</div>
                         <ul className="ml-4 space-y-1">
-                          <li>• {testDataStatus.status.counts.sessions} test sessions</li>
-                          <li>• {testDataStatus.status.counts.views} video views</li>
-                          <li>• {testDataStatus.status.counts.metrics} performance metrics</li>
-                          <li>• {testDataStatus.status.counts.visitors} realtime visitors</li>
+                          <li>• {(testDataStatus as any)?.status?.counts?.sessions || 0} test sessions</li>
+                          <li>• {(testDataStatus as any)?.status?.counts?.views || 0} video views</li>
+                          <li>• {(testDataStatus as any)?.status?.counts?.metrics || 0} performance metrics</li>
+                          <li>• {(testDataStatus as any)?.status?.counts?.visitors || 0} realtime visitors</li>
                         </ul>
                       </div>
                     </div>
                     <div className="text-blue-700">
-                      <div className="font-medium">Total: {testDataStatus.status.counts.total} records</div>
+                      <div className="font-medium">Total: {(testDataStatus as any)?.status?.counts?.total || 0} records</div>
                       <div className="text-xs mt-2">
-                        Generated: {testDataStatus.status.lastGenerated ? 
-                          new Date(testDataStatus.status.lastGenerated).toLocaleString() : 'Unknown'}
+                        Generated: {(testDataStatus as any)?.status?.lastGenerated ? 
+                          new Date((testDataStatus as any).status.lastGenerated).toLocaleString() : 'Unknown'}
                       </div>
                       <div className="text-xs">All marked with TEST_ prefixes and test_data flags</div>
                     </div>
