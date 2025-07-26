@@ -1045,13 +1045,16 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // FAQs - PATCH update FAQ
   app.patch("/api/faqs/:id", async (req, res) => {
     try {
+      console.log('🔧 ===== FAQ PATCH ENDPOINT HIT =====');
       console.log('🔧 PATCH /api/faqs/:id - ID:', req.params.id);
       console.log('🔧 PATCH /api/faqs/:id - Body:', req.body);
       console.log('🔧 CRITICAL: This should UPDATE the FAQ, NOT delete it!');
+      console.log('🔧 SERVER FIX ACTIVE: Duplicate routes removed!');
       
       const faq = await hybridStorage.updateFAQ(req.params.id, req.body);
       
       console.log('✅ FAQ update completed successfully:', faq);
+      console.log('✅ ===== FAQ PATCH ENDPOINT COMPLETE =====');
       res.json(faq);
     } catch (error) {
       console.error('❌ Update FAQ error:', error);
