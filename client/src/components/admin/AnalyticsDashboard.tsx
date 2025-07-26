@@ -366,56 +366,50 @@ export function AnalyticsDashboard() {
   // Enhanced video analytics queries
   const { data: videoEngagementData, isLoading: engagementLoading } = useQuery({
     queryKey: ['/api/analytics/video-engagement'],
-    enabled: showAdvancedAnalytics
+    enabled: true
   });
 
   const { data: uniqueViewsData, isLoading: uniqueViewsLoading } = useQuery({
     queryKey: ['/api/analytics/unique-views'],
-    enabled: showAdvancedAnalytics
+    enabled: true
   });
 
   const { data: reEngagementData, isLoading: reEngagementLoading, error: reEngagementError } = useQuery({
     queryKey: ['/api/analytics/re-engagement'],
-    enabled: showAdvancedAnalytics
+    enabled: true
   });
 
   // Debug re-engagement response specifically
   useEffect(() => {
-    if (showAdvancedAnalytics) {
-      console.log('🔍 RE-ENGAGEMENT DEBUG:', {
-        reEngagementData: reEngagementData,
-        reEngagementLoading: reEngagementLoading,
-        reEngagementError: reEngagementError,
-        enabled: showAdvancedAnalytics
-      });
-    }
-  }, [showAdvancedAnalytics, reEngagementData, reEngagementLoading, reEngagementError]);
+    console.log('🔍 RE-ENGAGEMENT DEBUG:', {
+      reEngagementData: reEngagementData,
+      reEngagementLoading: reEngagementLoading,
+      reEngagementError: reEngagementError
+    });
+  }, [reEngagementData, reEngagementLoading, reEngagementError]);
 
   // Debug Advanced Analytics data
   useEffect(() => {
-    if (showAdvancedAnalytics) {
-      console.log('🔍 Advanced Analytics Debug:', {
-        showAdvancedAnalytics,
-        videoEngagementData: videoEngagementData,
-        uniqueViewsData: uniqueViewsData,
-        reEngagementData: reEngagementData,
-        engagementLoading,
-        uniqueViewsLoading,
-        reEngagementLoading
-      });
-      
-      // More detailed logging
-      if (videoEngagementData) {
-        console.log('📊 Video Engagement Data:', JSON.stringify(videoEngagementData, null, 2));
-      }
-      if (uniqueViewsData) {
-        console.log('👥 Unique Views Data:', JSON.stringify(uniqueViewsData, null, 2));
-      }
-      if (reEngagementData) {
-        console.log('🔄 Re-engagement Data:', JSON.stringify(reEngagementData, null, 2));
-      }
+    console.log('🔍 Advanced Analytics Debug:', {
+      videoEngagementData: videoEngagementData,
+      uniqueViewsData: uniqueViewsData,
+      reEngagementData: reEngagementData,
+      engagementLoading,
+      uniqueViewsLoading,
+      reEngagementLoading
+    });
+    
+    // More detailed logging
+    if (videoEngagementData) {
+      console.log('📊 Video Engagement Data:', JSON.stringify(videoEngagementData, null, 2));
     }
-  }, [showAdvancedAnalytics, videoEngagementData, uniqueViewsData, reEngagementData, engagementLoading, uniqueViewsLoading, reEngagementLoading]);
+    if (uniqueViewsData) {
+      console.log('👥 Unique Views Data:', JSON.stringify(uniqueViewsData, null, 2));
+    }
+    if (reEngagementData) {
+      console.log('🔄 Re-engagement Data:', JSON.stringify(reEngagementData, null, 2));
+    }
+  }, [videoEngagementData, uniqueViewsData, reEngagementData, engagementLoading, uniqueViewsLoading, reEngagementLoading]);
 
   // Fetch admin's current IP when IP management panel is opened
   useEffect(() => {
