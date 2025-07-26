@@ -50,6 +50,14 @@ export function LegalDocumentPage() {
     doc.type === documentType && doc.isActive
   );
 
+  // Debug logging for Replit Preview
+  console.log('Legal Document Debug:', {
+    requestedType: params?.docType,
+    mappedType: documentType,
+    availableDocuments: documents?.map(d => ({ type: d.type, isActive: d.isActive })),
+    foundDocument: document ? 'YES' : 'NO'
+  });
+
   if (!document) {
     return (
       <div className="min-h-screen flex items-center justify-center">
