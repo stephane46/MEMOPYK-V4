@@ -127,7 +127,7 @@
     "answer_en": "<p>We include two free revision rounds. After that, or for entirely new requests, a fee applies. If feedback comes more than two months after delivery, some files may be archived. Contact us to work out the details.</p>",
     "answer_fr": "<p>Deux séries de modifications sont incluses. Ensuite, ou pour toute demande nouvelle, un supplément est appliqué. Si vos retours interviennent plus de deux mois après la livraison, certains fichiers peuvent avoir été archivés. Contactez-nous pour en discuter.</p>",
     "order_index": 3,
-    "is_active": true
+    "is_active": false
   },
   {
     "id": "385b9f02-6115-4f1b-a869-0f16288e5031",
