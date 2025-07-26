@@ -56,6 +56,26 @@ export interface HybridStorageInterface {
   getActiveViewerIps(): Promise<any[]>;
   addExcludedIp(ipAddress: string): Promise<any>;
   removeExcludedIp(ipAddress: string): Promise<any>;
+
+  // Real-time Analytics methods
+  getRealtimeVisitors(): Promise<any[]>;
+  updateVisitorActivity(sessionId: string, currentPage: string): Promise<any>;
+  deactivateVisitor(sessionId: string): Promise<void>;
+  createRealtimeVisitor(visitorData: any): Promise<any>;
+
+  // Performance Monitoring methods
+  recordPerformanceMetric(metricData: any): Promise<any>;
+  getPerformanceMetrics(metricType?: string, timeRange?: { from: string; to: string }): Promise<any[]>;
+  getSystemHealth(): Promise<any>;
+
+  // Engagement Heatmap methods
+  recordEngagementEvent(eventData: any): Promise<any>;
+  getEngagementHeatmap(pageUrl: string, timeRange?: { from: string; to: string }): Promise<any[]>;
+
+  // Conversion Funnel methods
+  recordConversionStep(stepData: any): Promise<any>;
+  getConversionFunnel(timeRange?: { from: string; to: string }): Promise<any>;
+  getFunnelAnalytics(timeRange?: { from: string; to: string }): Promise<any>;
 }
 
 export class HybridStorage implements HybridStorageInterface {
@@ -1318,74 +1338,7 @@ export class HybridStorage implements HybridStorageInterface {
     }
   }
 
-  // IP Management methods
-  async getActiveViewerIps(): Promise<any[]> {
-    try {
-      const sessions = this.loadJsonFile('analytics-sessions.json');
-      const settings = await this.getAnalyticsSettings();
-      
-      // Get unique IPs from last 24 hours, excluding blacklisted ones
-      const oneDayAgo = new Date(Date.now() - 24 * 60 * 60 * 1000);
-      const activeIps = new Map();
-      
-      sessions.forEach((session: any) => {
-        if (new Date(session.created_at) > oneDayAgo && 
-            !settings.excludedIps?.includes(session.ip_address)) {
-          const ip = session.ip_address;
-          if (!activeIps.has(ip)) {
-            activeIps.set(ip, {
-              ip_address: ip,
-              country: session.country,
-              city: session.city,
-              first_seen: session.created_at,
-              session_count: 0,
-              last_activity: session.created_at
-            });
-          }
-          const entry = activeIps.get(ip);
-          entry.session_count++;
-          if (new Date(session.created_at) > new Date(entry.last_activity)) {
-            entry.last_activity = session.created_at;
-          }
-        }
-      });
-      
-      return Array.from(activeIps.values()).sort((a, b) => 
-        new Date(b.last_activity).getTime() - new Date(a.last_activity).getTime()
-      );
-    } catch (error) {
-      console.error('Active viewer IPs fetch error:', error);
-      return [];
-    }
-  }
 
-  async addExcludedIp(ipAddress: string): Promise<any> {
-    try {
-      const settings = await this.getAnalyticsSettings();
-      if (!settings.excludedIps) settings.excludedIps = [];
-      if (!settings.excludedIps.includes(ipAddress)) {
-        settings.excludedIps.push(ipAddress);
-        await this.updateAnalyticsSettings(settings);
-      }
-      return settings;
-    } catch (error) {
-      console.error('Add excluded IP error:', error);
-      throw error;
-    }
-  }
-
-  async removeExcludedIp(ipAddress: string): Promise<any> {
-    try {
-      const settings = await this.getAnalyticsSettings();
-      if (!settings.excludedIps) settings.excludedIps = [];
-      settings.excludedIps = settings.excludedIps.filter((ip: string) => ip !== ipAddress);
-      await this.updateAnalyticsSettings(settings);
-      return settings;
-    } catch (error) {
-      console.error('Remove excluded IP error:', error);
-      throw error;
-    }
-  }
 
   async resetAnalyticsData(): Promise<void> {
     try {
@@ -1536,7 +1489,7 @@ export class HybridStorage implements HybridStorageInterface {
       const settings = await this.getAnalyticsSettings();
       
       // Remove IP from excluded list
-      settings.excludedIps = settings.excludedIps.filter(ip => ip !== ipAddress);
+      settings.excludedIps = settings.excludedIps.filter((ip: string) => ip !== ipAddress);
       await this.updateAnalyticsSettings(settings);
 
       return settings;
@@ -1544,6 +1497,534 @@ export class HybridStorage implements HybridStorageInterface {
       console.error('Error removing excluded IP:', error);
       throw error;
     }
+  }
+
+  // Real-time Analytics Methods
+  async getRealtimeVisitors(): Promise<any[]> {
+    try {
+      // Try database first
+      const { data: visitors } = await this.supabase
+        .from('realtime_visitors')
+        .select('*')
+        .eq('isActive', true)
+        .order('lastSeen', { ascending: false });
+
+      if (visitors && visitors.length > 0) {
+        return visitors;
+      }
+
+      // Fallback to JSON file
+      const visitorData = this.loadJsonFile('realtime-visitors.json');
+      return visitorData.filter((v: any) => v.isActive);
+    } catch (error) {
+      console.warn('Database error, using JSON fallback for realtime visitors:', error);
+      const visitorData = this.loadJsonFile('realtime-visitors.json');
+      return visitorData.filter((v: any) => v.isActive);
+    }
+  }
+
+  async updateVisitorActivity(sessionId: string, currentPage: string): Promise<any> {
+    try {
+      const updateData = {
+        currentPage,
+        lastSeen: new Date().toISOString(),
+        isActive: true
+      };
+
+      // Update in database
+      const { data: updatedVisitor } = await this.supabase
+        .from('realtime_visitors')
+        .update(updateData)
+        .eq('sessionId', sessionId)
+        .select()
+        .single();
+
+      if (updatedVisitor) {
+        return updatedVisitor;
+      }
+
+      // Fallback to JSON update
+      const visitors = this.loadJsonFile('realtime-visitors.json');
+      const visitorIndex = visitors.findIndex((v: any) => v.sessionId === sessionId);
+      
+      if (visitorIndex >= 0) {
+        visitors[visitorIndex] = { ...visitors[visitorIndex], ...updateData };
+        this.saveJsonFile('realtime-visitors.json', visitors);
+        return visitors[visitorIndex];
+      }
+
+      return null;
+    } catch (error) {
+      console.error('Error updating visitor activity:', error);
+      throw error;
+    }
+  }
+
+  async deactivateVisitor(sessionId: string): Promise<void> {
+    try {
+      // Update in database
+      await this.supabase
+        .from('realtime_visitors')
+        .update({ isActive: false })
+        .eq('sessionId', sessionId);
+
+      // Update JSON fallback
+      const visitors = this.loadJsonFile('realtime-visitors.json');
+      const visitorIndex = visitors.findIndex((v: any) => v.sessionId === sessionId);
+      
+      if (visitorIndex >= 0) {
+        visitors[visitorIndex].isActive = false;
+        this.saveJsonFile('realtime-visitors.json', visitors);
+      }
+    } catch (error) {
+      console.error('Error deactivating visitor:', error);
+    }
+  }
+
+  async createRealtimeVisitor(visitorData: any): Promise<any> {
+    try {
+      const newVisitor = {
+        sessionId: visitorData.sessionId,
+        ipAddress: visitorData.ipAddress,
+        currentPage: visitorData.currentPage,
+        userAgent: visitorData.userAgent,
+        country: visitorData.country || null,
+        city: visitorData.city || null,
+        isActive: true,
+        lastSeen: new Date().toISOString(),
+        createdAt: new Date().toISOString()
+      };
+
+      // Try database first
+      const { data: createdVisitor } = await this.supabase
+        .from('realtime_visitors')
+        .insert(newVisitor)
+        .select()
+        .single();
+
+      if (createdVisitor) {
+        return createdVisitor;
+      }
+
+      // Fallback to JSON
+      const visitors = this.loadJsonFile('realtime-visitors.json');
+      visitors.push(newVisitor);
+      this.saveJsonFile('realtime-visitors.json', visitors);
+      
+      return newVisitor;
+    } catch (error) {
+      console.error('Error creating realtime visitor:', error);
+      throw error;
+    }
+  }
+
+  // Performance Monitoring Methods
+  async recordPerformanceMetric(metricData: any): Promise<any> {
+    try {
+      const newMetric = {
+        metricType: metricData.metricType,
+        metricName: metricData.metricName,
+        value: metricData.value,
+        unit: metricData.unit || 'ms',
+        sessionId: metricData.sessionId || null,
+        ipAddress: metricData.ipAddress || null,
+        userAgent: metricData.userAgent || null,
+        metadata: metricData.metadata || {},
+        createdAt: new Date().toISOString()
+      };
+
+      // Try database first
+      const { data: createdMetric } = await this.supabase
+        .from('performance_metrics')
+        .insert(newMetric)
+        .select()
+        .single();
+
+      if (createdMetric) {
+        return createdMetric;
+      }
+
+      // Fallback to JSON
+      const metrics = this.loadJsonFile('performance-metrics.json');
+      metrics.push(newMetric);
+      this.saveJsonFile('performance-metrics.json', metrics);
+      
+      return newMetric;
+    } catch (error) {
+      console.error('Error recording performance metric:', error);
+      throw error;
+    }
+  }
+
+  async getPerformanceMetrics(metricType?: string, timeRange?: { from: string; to: string }): Promise<any[]> {
+    try {
+      let query = this.supabase
+        .from('performance_metrics')
+        .select('*')
+        .order('createdAt', { ascending: false });
+
+      if (metricType) {
+        query = query.eq('metricType', metricType);
+      }
+
+      if (timeRange) {
+        query = query.gte('createdAt', timeRange.from).lte('createdAt', timeRange.to);
+      }
+
+      const { data: metrics } = await query;
+
+      if (metrics && metrics.length > 0) {
+        return metrics;
+      }
+
+      // Fallback to JSON
+      const metricsData = this.loadJsonFile('performance-metrics.json');
+      let filteredMetrics = metricsData;
+
+      if (metricType) {
+        filteredMetrics = filteredMetrics.filter((m: any) => m.metricType === metricType);
+      }
+
+      if (timeRange) {
+        filteredMetrics = filteredMetrics.filter((m: any) => 
+          new Date(m.createdAt) >= new Date(timeRange.from) && 
+          new Date(m.createdAt) <= new Date(timeRange.to)
+        );
+      }
+
+      return filteredMetrics;
+    } catch (error) {
+      console.warn('Database error, using JSON fallback for performance metrics:', error);
+      const metricsData = this.loadJsonFile('performance-metrics.json');
+      return metricsData;
+    }
+  }
+
+  async getSystemHealth(): Promise<any> {
+    try {
+      const now = new Date();
+      const oneHourAgo = new Date(now.getTime() - 60 * 60 * 1000);
+
+      // Get recent performance metrics
+      const metrics = await this.getPerformanceMetrics(undefined, {
+        from: oneHourAgo.toISOString(),
+        to: now.toISOString()
+      });
+
+      // Calculate system health statistics
+      const serverHealthMetrics = metrics.filter(m => m.metricType === 'server_health');
+      const pageLoadMetrics = metrics.filter(m => m.metricType === 'page_load');
+      const videoLoadMetrics = metrics.filter(m => m.metricType === 'video_load');
+      const apiResponseMetrics = metrics.filter(m => m.metricType === 'api_response');
+
+      const calculateStats = (metricArray: any[]) => {
+        if (metricArray.length === 0) return { avg: 0, min: 0, max: 0, count: 0 };
+        
+        const values = metricArray.map(m => parseFloat(m.value));
+        return {
+          avg: values.reduce((a, b) => a + b, 0) / values.length,
+          min: Math.min(...values),
+          max: Math.max(...values),
+          count: values.length
+        };
+      };
+
+      return {
+        serverHealth: calculateStats(serverHealthMetrics),
+        pageLoad: calculateStats(pageLoadMetrics),
+        videoLoad: calculateStats(videoLoadMetrics),
+        apiResponse: calculateStats(apiResponseMetrics),
+        totalMetrics: metrics.length,
+        timeRange: {
+          from: oneHourAgo.toISOString(),
+          to: now.toISOString()
+        }
+      };
+    } catch (error) {
+      console.error('Error getting system health:', error);
+      return {
+        serverHealth: { avg: 0, min: 0, max: 0, count: 0 },
+        pageLoad: { avg: 0, min: 0, max: 0, count: 0 },
+        videoLoad: { avg: 0, min: 0, max: 0, count: 0 },
+        apiResponse: { avg: 0, min: 0, max: 0, count: 0 },
+        totalMetrics: 0,
+        error: 'Unable to retrieve system health data'
+      };
+    }
+  }
+
+  // Engagement Heatmap Methods
+  async recordEngagementEvent(eventData: any): Promise<any> {
+    try {
+      const newEvent = {
+        sessionId: eventData.sessionId,
+        pageUrl: eventData.pageUrl,
+        elementId: eventData.elementId || null,
+        eventType: eventData.eventType,
+        xPosition: eventData.xPosition || null,
+        yPosition: eventData.yPosition || null,
+        viewportWidth: eventData.viewportWidth || null,
+        viewportHeight: eventData.viewportHeight || null,
+        duration: eventData.duration || null,
+        timestamp: new Date().toISOString()
+      };
+
+      // Try database first
+      const { data: createdEvent } = await this.supabase
+        .from('engagement_heatmap')
+        .insert(newEvent)
+        .select()
+        .single();
+
+      if (createdEvent) {
+        return createdEvent;
+      }
+
+      // Fallback to JSON
+      const events = this.loadJsonFile('engagement-heatmap.json');
+      events.push(newEvent);
+      this.saveJsonFile('engagement-heatmap.json', events);
+      
+      return newEvent;
+    } catch (error) {
+      console.error('Error recording engagement event:', error);
+      throw error;
+    }
+  }
+
+  async getEngagementHeatmap(pageUrl: string, timeRange?: { from: string; to: string }): Promise<any[]> {
+    try {
+      let query = this.supabase
+        .from('engagement_heatmap')
+        .select('*')
+        .eq('pageUrl', pageUrl)
+        .order('timestamp', { ascending: false });
+
+      if (timeRange) {
+        query = query.gte('timestamp', timeRange.from).lte('timestamp', timeRange.to);
+      }
+
+      const { data: events } = await query;
+
+      if (events && events.length > 0) {
+        return events;
+      }
+
+      // Fallback to JSON
+      const heatmapData = this.loadJsonFile('engagement-heatmap.json');
+      let filteredEvents = heatmapData.filter((e: any) => e.pageUrl === pageUrl);
+
+      if (timeRange) {
+        filteredEvents = filteredEvents.filter((e: any) => 
+          new Date(e.timestamp) >= new Date(timeRange.from) && 
+          new Date(e.timestamp) <= new Date(timeRange.to)
+        );
+      }
+
+      return filteredEvents;
+    } catch (error) {
+      console.warn('Database error, using JSON fallback for engagement heatmap:', error);
+      const heatmapData = this.loadJsonFile('engagement-heatmap.json');
+      return heatmapData.filter((e: any) => e.pageUrl === pageUrl);
+    }
+  }
+
+  // Conversion Funnel Methods
+  async recordConversionStep(stepData: any): Promise<any> {
+    try {
+      const newStep = {
+        sessionId: stepData.sessionId,
+        funnelStep: stepData.funnelStep,
+        stepOrder: stepData.stepOrder,
+        metadata: stepData.metadata || {},
+        completedAt: new Date().toISOString()
+      };
+
+      // Try database first
+      const { data: createdStep } = await this.supabase
+        .from('conversion_funnel')
+        .insert(newStep)
+        .select()
+        .single();
+
+      if (createdStep) {
+        return createdStep;
+      }
+
+      // Fallback to JSON
+      const steps = this.loadJsonFile('conversion-funnel.json');
+      steps.push(newStep);
+      this.saveJsonFile('conversion-funnel.json', steps);
+      
+      return newStep;
+    } catch (error) {
+      console.error('Error recording conversion step:', error);
+      throw error;
+    }
+  }
+
+  async getConversionFunnel(timeRange?: { from: string; to: string }): Promise<any> {
+    try {
+      let query = this.supabase
+        .from('conversion_funnel')
+        .select('*')
+        .order('completedAt', { ascending: false });
+
+      if (timeRange) {
+        query = query.gte('completedAt', timeRange.from).lte('completedAt', timeRange.to);
+      }
+
+      const { data: steps } = await query;
+
+      if (steps && steps.length > 0) {
+        return this.processFunnelData(steps);
+      }
+
+      // Fallback to JSON
+      const funnelData = this.loadJsonFile('conversion-funnel.json');
+      let filteredSteps = funnelData;
+
+      if (timeRange) {
+        filteredSteps = filteredSteps.filter((s: any) => 
+          new Date(s.completedAt) >= new Date(timeRange.from) && 
+          new Date(s.completedAt) <= new Date(timeRange.to)
+        );
+      }
+
+      return this.processFunnelData(filteredSteps);
+    } catch (error) {
+      console.warn('Database error, using JSON fallback for conversion funnel:', error);
+      const funnelData = this.loadJsonFile('conversion-funnel.json');
+      return this.processFunnelData(funnelData);
+    }
+  }
+
+  async getFunnelAnalytics(timeRange?: { from: string; to: string }): Promise<any> {
+    try {
+      const funnelData = await this.getConversionFunnel(timeRange);
+      
+      return {
+        totalSessions: funnelData.uniqueSessions,
+        conversionRates: funnelData.conversionRates,
+        dropOffPoints: funnelData.dropOffAnalysis,
+        timeToConvert: funnelData.timeAnalysis,
+        funnelSteps: funnelData.stepDetails
+      };
+    } catch (error) {
+      console.error('Error getting funnel analytics:', error);
+      return {
+        totalSessions: 0,
+        conversionRates: {},
+        dropOffPoints: [],
+        timeToConvert: {},
+        funnelSteps: []
+      };
+    }
+  }
+
+  private processFunnelData(steps: any[]): any {
+    // Group by session
+    const sessionGroups = steps.reduce((acc: any, step: any) => {
+      if (!acc[step.sessionId]) {
+        acc[step.sessionId] = [];
+      }
+      acc[step.sessionId].push(step);
+      return acc;
+    }, {});
+
+    // Analyze conversion paths
+    const stepCounts: { [key: string]: number } = {};
+    const conversionRates: { [key: string]: number } = {};
+    
+    const funnelSteps = ['visit_home', 'view_gallery', 'view_video', 'contact_form', 'form_submit'];
+    
+    funnelSteps.forEach(step => {
+      stepCounts[step] = 0;
+    });
+
+    Object.values(sessionGroups).forEach((sessionSteps: any) => {
+      const completedSteps = new Set(sessionSteps.map((s: any) => s.funnelStep));
+      
+      funnelSteps.forEach(step => {
+        if (completedSteps.has(step)) {
+          stepCounts[step]++;
+        }
+      });
+    });
+
+    // Calculate conversion rates
+    const totalSessions = Object.keys(sessionGroups).length;
+    funnelSteps.forEach(step => {
+      conversionRates[step] = totalSessions > 0 ? (stepCounts[step] / totalSessions) * 100 : 0;
+    });
+
+    return {
+      uniqueSessions: totalSessions,
+      stepCounts,
+      conversionRates,
+      stepDetails: funnelSteps.map(step => ({
+        step,
+        count: stepCounts[step],
+        conversionRate: conversionRates[step]
+      })),
+      dropOffAnalysis: this.calculateDropOff(stepCounts, funnelSteps),
+      timeAnalysis: this.calculateTimeToConvert(sessionGroups)
+    };
+  }
+
+  private calculateDropOff(stepCounts: { [key: string]: number }, funnelSteps: string[]): any[] {
+    const dropOff = [];
+    
+    for (let i = 1; i < funnelSteps.length; i++) {
+      const currentStep = funnelSteps[i];
+      const previousStep = funnelSteps[i - 1];
+      
+      const currentCount = stepCounts[currentStep];
+      const previousCount = stepCounts[previousStep];
+      
+      if (previousCount > 0) {
+        const dropOffRate = ((previousCount - currentCount) / previousCount) * 100;
+        dropOff.push({
+          fromStep: previousStep,
+          toStep: currentStep,
+          dropOffCount: previousCount - currentCount,
+          dropOffRate: dropOffRate
+        });
+      }
+    }
+    
+    return dropOff;
+  }
+
+  private calculateTimeToConvert(sessionGroups: any): any {
+    const conversionTimes: number[] = [];
+    
+    Object.values(sessionGroups).forEach((sessionSteps: any) => {
+      if (sessionSteps.length > 1) {
+        const sortedSteps = sessionSteps.sort((a: any, b: any) => 
+          new Date(a.completedAt).getTime() - new Date(b.completedAt).getTime()
+        );
+        
+        const firstStep = new Date(sortedSteps[0].completedAt);
+        const lastStep = new Date(sortedSteps[sortedSteps.length - 1].completedAt);
+        const timeDiff = (lastStep.getTime() - firstStep.getTime()) / 1000; // in seconds
+        
+        conversionTimes.push(timeDiff);
+      }
+    });
+    
+    if (conversionTimes.length === 0) {
+      return { avg: 0, min: 0, max: 0, median: 0 };
+    }
+    
+    conversionTimes.sort((a, b) => a - b);
+    
+    return {
+      avg: conversionTimes.reduce((a, b) => a + b, 0) / conversionTimes.length,
+      min: conversionTimes[0],
+      max: conversionTimes[conversionTimes.length - 1],
+      median: conversionTimes[Math.floor(conversionTimes.length / 2)]
+    };
   }
 }
 

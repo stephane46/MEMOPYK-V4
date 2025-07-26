@@ -1669,6 +1669,145 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Real-time Analytics Endpoints
+  app.get("/api/analytics/realtime-visitors", async (req, res) => {
+    try {
+      const visitors = await hybridStorage.getRealtimeVisitors();
+      res.json(visitors);
+    } catch (error) {
+      console.error('Get realtime visitors error:', error);
+      res.status(500).json({ error: "Failed to get realtime visitors" });
+    }
+  });
+
+  app.post("/api/analytics/realtime-visitors", async (req, res) => {
+    try {
+      const visitor = await hybridStorage.createRealtimeVisitor(req.body);
+      res.json({ success: true, visitor });
+    } catch (error) {
+      console.error('Create realtime visitor error:', error);
+      res.status(500).json({ error: "Failed to create realtime visitor" });
+    }
+  });
+
+  app.patch("/api/analytics/realtime-visitors/:sessionId", async (req, res) => {
+    try {
+      const { sessionId } = req.params;
+      const { currentPage } = req.body;
+      const visitor = await hybridStorage.updateVisitorActivity(sessionId, currentPage);
+      res.json({ success: true, visitor });
+    } catch (error) {
+      console.error('Update visitor activity error:', error);
+      res.status(500).json({ error: "Failed to update visitor activity" });
+    }
+  });
+
+  app.delete("/api/analytics/realtime-visitors/:sessionId", async (req, res) => {
+    try {
+      const { sessionId } = req.params;
+      await hybridStorage.deactivateVisitor(sessionId);
+      res.json({ success: true, message: "Visitor deactivated" });
+    } catch (error) {
+      console.error('Deactivate visitor error:', error);
+      res.status(500).json({ error: "Failed to deactivate visitor" });
+    }
+  });
+
+  // Performance Monitoring Endpoints
+  app.get("/api/analytics/performance-metrics", async (req, res) => {
+    try {
+      const { metricType, from, to } = req.query;
+      const timeRange = from && to ? { from: from as string, to: to as string } : undefined;
+      const metrics = await hybridStorage.getPerformanceMetrics(metricType as string, timeRange);
+      res.json(metrics);
+    } catch (error) {
+      console.error('Get performance metrics error:', error);
+      res.status(500).json({ error: "Failed to get performance metrics" });
+    }
+  });
+
+  app.post("/api/analytics/performance-metrics", async (req, res) => {
+    try {
+      const metric = await hybridStorage.recordPerformanceMetric(req.body);
+      res.json({ success: true, metric });
+    } catch (error) {
+      console.error('Record performance metric error:', error);
+      res.status(500).json({ error: "Failed to record performance metric" });
+    }
+  });
+
+  app.get("/api/analytics/system-health", async (req, res) => {
+    try {
+      const health = await hybridStorage.getSystemHealth();
+      res.json(health);
+    } catch (error) {
+      console.error('Get system health error:', error);
+      res.status(500).json({ error: "Failed to get system health" });
+    }
+  });
+
+  // Engagement Heatmap Endpoints
+  app.get("/api/analytics/engagement-heatmap", async (req, res) => {
+    try {
+      const { pageUrl, from, to } = req.query;
+      if (!pageUrl) {
+        return res.status(400).json({ error: "pageUrl parameter is required" });
+      }
+      
+      const timeRange = from && to ? { from: from as string, to: to as string } : undefined;
+      const events = await hybridStorage.getEngagementHeatmap(pageUrl as string, timeRange);
+      res.json(events);
+    } catch (error) {
+      console.error('Get engagement heatmap error:', error);
+      res.status(500).json({ error: "Failed to get engagement heatmap" });
+    }
+  });
+
+  app.post("/api/analytics/engagement-heatmap", async (req, res) => {
+    try {
+      const event = await hybridStorage.recordEngagementEvent(req.body);
+      res.json({ success: true, event });
+    } catch (error) {
+      console.error('Record engagement event error:', error);
+      res.status(500).json({ error: "Failed to record engagement event" });
+    }
+  });
+
+  // Conversion Funnel Endpoints
+  app.get("/api/analytics/conversion-funnel", async (req, res) => {
+    try {
+      const { from, to } = req.query;
+      const timeRange = from && to ? { from: from as string, to: to as string } : undefined;
+      const funnel = await hybridStorage.getConversionFunnel(timeRange);
+      res.json(funnel);
+    } catch (error) {
+      console.error('Get conversion funnel error:', error);
+      res.status(500).json({ error: "Failed to get conversion funnel" });
+    }
+  });
+
+  app.post("/api/analytics/conversion-funnel", async (req, res) => {
+    try {
+      const step = await hybridStorage.recordConversionStep(req.body);
+      res.json({ success: true, step });
+    } catch (error) {
+      console.error('Record conversion step error:', error);
+      res.status(500).json({ error: "Failed to record conversion step" });
+    }
+  });
+
+  app.get("/api/analytics/funnel-analytics", async (req, res) => {
+    try {
+      const { from, to } = req.query;
+      const timeRange = from && to ? { from: from as string, to: to as string } : undefined;
+      const analytics = await hybridStorage.getFunnelAnalytics(timeRange);
+      res.json(analytics);
+    } catch (error) {
+      console.error('Get funnel analytics error:', error);
+      res.status(500).json({ error: "Failed to get funnel analytics" });
+    }
+  });
+
   // Hero video upload endpoint
   app.post("/api/hero-videos/upload", uploadVideo.single('video'), async (req, res) => {
     try {

@@ -178,6 +178,91 @@ export const seoSettings = pgTable("seo_settings", {
   updatedAt: timestamp("updated_at").defaultNow()
 });
 
+// Analytics session tracking table
+export const analyticsSessions = pgTable("analytics_sessions", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  sessionId: text("session_id").notNull(),
+  userId: text("user_id"),
+  ipAddress: text("ip_address"),
+  userAgent: text("user_agent"),
+  referrer: text("referrer"),
+  language: text("language"),
+  country: text("country"),
+  city: text("city"),
+  createdAt: timestamp("created_at").defaultNow(),
+  endedAt: timestamp("ended_at"),
+  duration: integer("duration"), // in seconds
+  pageViews: integer("page_views").default(0),
+  isBot: boolean("is_bot").default(false)
+});
+
+// Analytics video views table
+export const analyticsViews = pgTable("analytics_views", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  sessionId: text("session_id").notNull(),
+  videoId: text("video_id").notNull(),
+  videoTitle: text("video_title"),
+  viewDuration: integer("view_duration"), // in seconds
+  completionPercentage: numeric("completion_percentage"),
+  watchedToEnd: boolean("watched_to_end").default(false),
+  createdAt: timestamp("created_at").defaultNow(),
+  ipAddress: text("ip_address"),
+  userAgent: text("user_agent")
+});
+
+// Real-time visitor tracking table
+export const realtimeVisitors = pgTable("realtime_visitors", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  sessionId: text("session_id").notNull(),
+  ipAddress: text("ip_address"),
+  currentPage: text("current_page"),
+  userAgent: text("user_agent"),
+  country: text("country"),
+  city: text("city"),
+  isActive: boolean("is_active").default(true),
+  lastSeen: timestamp("last_seen").defaultNow(),
+  createdAt: timestamp("created_at").defaultNow()
+});
+
+// Performance metrics table
+export const performanceMetrics = pgTable("performance_metrics", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  metricType: text("metric_type").notNull(), // 'page_load', 'video_load', 'api_response', 'server_health'
+  metricName: text("metric_name").notNull(),
+  value: numeric("value").notNull(),
+  unit: text("unit"), // 'ms', 'mb', 'percent', 'count'
+  sessionId: text("session_id"),
+  ipAddress: text("ip_address"),
+  userAgent: text("user_agent"),
+  metadata: jsonb("metadata"), // Additional context like video_id, page_url, error_details
+  createdAt: timestamp("created_at").defaultNow()
+});
+
+// User engagement heatmap data table
+export const engagementHeatmap = pgTable("engagement_heatmap", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  sessionId: text("session_id").notNull(),
+  pageUrl: text("page_url").notNull(),
+  elementId: text("element_id"), // CSS selector or element ID
+  eventType: text("event_type").notNull(), // 'click', 'hover', 'scroll', 'focus'
+  xPosition: integer("x_position"),
+  yPosition: integer("y_position"),
+  viewportWidth: integer("viewport_width"),
+  viewportHeight: integer("viewport_height"),
+  timestamp: timestamp("timestamp").defaultNow(),
+  duration: integer("duration") // for hover/focus events
+});
+
+// Conversion funnel tracking table
+export const conversionFunnel = pgTable("conversion_funnel", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  sessionId: text("session_id").notNull(),
+  funnelStep: text("funnel_step").notNull(), // 'visit_home', 'view_gallery', 'view_video', 'contact_form', 'form_submit'
+  stepOrder: integer("step_order").notNull(),
+  completedAt: timestamp("completed_at").defaultNow(),
+  metadata: jsonb("metadata") // Additional context like video_id, form_fields, etc.
+});
+
 // Deployment history table
 export const deploymentHistory = pgTable("deployment_history", {
   id: uuid("id").primaryKey().defaultRandom(),
@@ -204,6 +289,12 @@ export const insertLegalDocumentSchema = createInsertSchema(legalDocuments).omit
 export const insertCtaSettingsSchema = createInsertSchema(ctaSettings).omit({ createdAt: true, updatedAt: true });
 export const insertSeoSettingsSchema = createInsertSchema(seoSettings).omit({ id: true, createdAt: true, updatedAt: true });
 export const insertDeploymentHistorySchema = createInsertSchema(deploymentHistory).omit({ id: true, createdAt: true });
+export const insertAnalyticsSessionSchema = createInsertSchema(analyticsSessions).omit({ id: true, createdAt: true });
+export const insertAnalyticsViewSchema = createInsertSchema(analyticsViews).omit({ id: true, createdAt: true });
+export const insertRealtimeVisitorSchema = createInsertSchema(realtimeVisitors).omit({ id: true, createdAt: true, lastSeen: true });
+export const insertPerformanceMetricSchema = createInsertSchema(performanceMetrics).omit({ id: true, createdAt: true });
+export const insertEngagementHeatmapSchema = createInsertSchema(engagementHeatmap).omit({ id: true, timestamp: true });
+export const insertConversionFunnelSchema = createInsertSchema(conversionFunnel).omit({ id: true, completedAt: true });
 
 // Select types for all tables
 export type User = typeof users.$inferSelect;
@@ -217,6 +308,12 @@ export type LegalDocument = typeof legalDocuments.$inferSelect;
 export type CtaSettings = typeof ctaSettings.$inferSelect;
 export type SeoSettings = typeof seoSettings.$inferSelect;
 export type DeploymentHistory = typeof deploymentHistory.$inferSelect;
+export type AnalyticsSession = typeof analyticsSessions.$inferSelect;
+export type AnalyticsView = typeof analyticsViews.$inferSelect;
+export type RealtimeVisitor = typeof realtimeVisitors.$inferSelect;
+export type PerformanceMetric = typeof performanceMetrics.$inferSelect;
+export type EngagementHeatmap = typeof engagementHeatmap.$inferSelect;
+export type ConversionFunnel = typeof conversionFunnel.$inferSelect;
 
 // Insert types for all tables
 export type InsertUser = z.infer<typeof insertUserSchema>;
@@ -230,3 +327,9 @@ export type InsertLegalDocument = z.infer<typeof insertLegalDocumentSchema>;
 export type InsertCtaSettings = z.infer<typeof insertCtaSettingsSchema>;
 export type InsertSeoSettings = z.infer<typeof insertSeoSettingsSchema>;
 export type InsertDeploymentHistory = z.infer<typeof insertDeploymentHistorySchema>;
+export type InsertAnalyticsSession = z.infer<typeof insertAnalyticsSessionSchema>;
+export type InsertAnalyticsView = z.infer<typeof insertAnalyticsViewSchema>;
+export type InsertRealtimeVisitor = z.infer<typeof insertRealtimeVisitorSchema>;
+export type InsertPerformanceMetric = z.infer<typeof insertPerformanceMetricSchema>;
+export type InsertEngagementHeatmap = z.infer<typeof insertEngagementHeatmapSchema>;
+export type InsertConversionFunnel = z.infer<typeof insertConversionFunnelSchema>;
