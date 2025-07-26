@@ -1,4 +1,4 @@
-import React, { useMemo, useRef, useEffect } from 'react';
+import React, { useMemo, useRef, useEffect, forwardRef } from 'react';
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
 import './rich-text-editor.css';
@@ -10,8 +10,9 @@ interface RichTextEditorProps {
   className?: string;
 }
 
-export function RichTextEditor({ value, onChange, placeholder, className }: RichTextEditorProps) {
-  const quillRef = useRef<ReactQuill>(null);
+export const RichTextEditor = forwardRef<HTMLDivElement, RichTextEditorProps>(
+  ({ value, onChange, placeholder, className }, ref) => {
+    const quillRef = useRef<ReactQuill>(null);
 
   // Custom link handler that works for both URLs and emails
   const linkHandler = () => {
@@ -76,17 +77,20 @@ export function RichTextEditor({ value, onChange, placeholder, className }: Rich
 
 
 
-  return (
-    <div className={`rich-text-editor ${className || ''}`}>
-      <ReactQuill
-        ref={quillRef}
-        theme="snow"
-        value={value}
-        onChange={onChange}
-        modules={modules}
-        formats={formats}
-        placeholder={placeholder}
-      />
-    </div>
-  );
-}
+    return (
+      <div ref={ref} className={`rich-text-editor ${className || ''}`}>
+        <ReactQuill
+          ref={quillRef}
+          theme="snow"
+          value={value}
+          onChange={onChange}
+          modules={modules}
+          formats={formats}
+          placeholder={placeholder}
+        />
+      </div>
+    );
+  }
+);
+
+RichTextEditor.displayName = 'RichTextEditor';

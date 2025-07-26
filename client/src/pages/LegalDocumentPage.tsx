@@ -53,7 +53,7 @@ export function LegalDocumentPage() {
   }
 
   const document = documents?.find(doc => 
-    doc.type === documentType && (doc.isActive || doc.is_active)
+    doc.type === documentType && (doc.isActive || (doc as any).is_active)
   );
   
   // Test: Try finding document without isActive check
@@ -103,8 +103,8 @@ export function LegalDocumentPage() {
     );
   }
 
-  const title = language === 'fr-FR' ? (document.titleFr || document.title_fr) : (document.titleEn || document.title_en);
-  const content = language === 'fr-FR' ? (document.contentFr || document.content_fr) : (document.contentEn || document.content_en);
+  const title = language === 'fr-FR' ? (document.titleFr || (document as any).title_fr) : (document.titleEn || (document as any).title_en);
+  const content = language === 'fr-FR' ? (document.contentFr || (document as any).content_fr) : (document.contentEn || (document as any).content_en);
 
   return (
     <div className="min-h-screen bg-gray-50">

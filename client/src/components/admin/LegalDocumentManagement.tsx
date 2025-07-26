@@ -69,7 +69,8 @@ export function LegalDocumentManagement() {
 
   // Update document mutation
   const updateMutation = useMutation({
-    mutationFn: async ({ id, data }: { id: string; data: Partial<LegalDocument> }) => {
+    mutationFn: async ({ id, data }: { id: string; data: any }) => {
+      console.log('🔄 Updating legal document with data:', data);
       const response = await apiRequest('PATCH', `/api/legal/${id}`, data);
       return await response.json();
     },
@@ -78,7 +79,8 @@ export function LegalDocumentManagement() {
       toast({ title: "Succès", description: "Document juridique mis à jour avec succès" });
       resetForm();
     },
-    onError: () => {
+    onError: (error: any) => {
+      console.error('❌ Update mutation error:', error);
       toast({ title: "Erreur", description: "Impossible de mettre à jour le document", variant: "destructive" });
     }
   });
@@ -174,6 +176,9 @@ export function LegalDocumentManagement() {
       toast({ title: "Erreur", description: "Tous les champs sont requis", variant: "destructive" });
       return;
     }
+
+    console.log('🚀 Submitting form data:', formData);
+    console.log('📝 Editing document:', editingDocument);
 
     if (editingDocument) {
       updateMutation.mutate({ id: editingDocument.id, data: formData });
