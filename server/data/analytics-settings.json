@@ -1,8 +1,9 @@
-[
-  {
-    "excludedIps": [],
-    "completionThreshold": 75,
-    "trackingEnabled": true,
-    "dataRetentionDays": 90
-  }
-]
+{
+  "excludedIps": [
+    "35.231.246.38"
+  ],
+  "completionThreshold": 75,
+  "trackingEnabled": true,
+  "dataRetentionDays": 90,
+  "updated_at": "2025-07-26T13:47:37.294Z"
+}

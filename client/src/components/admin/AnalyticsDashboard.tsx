@@ -27,7 +27,8 @@ import {
   MapPin,
   Ban,
   Plus,
-  Trash2
+  Trash2,
+  UserX
 } from 'lucide-react';
 
 interface AnalyticsDashboard {
@@ -582,6 +583,42 @@ export function AnalyticsDashboard() {
                   No active viewer IPs found
                 </div>
               )}
+            </div>
+
+            <Separator />
+
+            {/* Admin IP Exclusion Section */}
+            <div>
+              <h4 className="font-medium mb-4">Admin IP Exclusion</h4>
+              <div className="flex items-center justify-between p-3 border rounded-lg bg-blue-50">
+                <div>
+                  <p className="text-sm font-medium">Exclude Your IP Address</p>
+                  <p className="text-xs text-muted-foreground">
+                    Stop tracking your admin activity in analytics
+                  </p>
+                </div>
+                <Button
+                  onClick={async () => {
+                    try {
+                      // Get current IP from a service
+                      const response = await fetch('https://httpbin.org/ip');
+                      const data = await response.json();
+                      const currentIp = data.origin;
+                      addExcludedIpMutation.mutate(currentIp);
+                    } catch (error) {
+                      console.error('Failed to get current IP:', error);
+                      // Fallback: use manual input
+                      setNewExcludedIp('');
+                    }
+                  }}
+                  variant="outline"
+                  size="sm"
+                  disabled={addExcludedIpMutation.isPending}
+                >
+                  <UserX className="h-4 w-4 mr-2" />
+                  {addExcludedIpMutation.isPending ? 'Excluding...' : 'Exclude My IP'}
+                </Button>
+              </div>
             </div>
 
             <Separator />
