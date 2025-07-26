@@ -1267,7 +1267,7 @@ export function AnalyticsDashboard() {
               )}
 
               {/* Unique Video Views */}
-              {uniqueViewsData && (uniqueViewsData as any)?.uniqueViews && (
+              {uniqueViewsData && (uniqueViewsData as any)?.success && (uniqueViewsData as any)?.uniqueViews && (
                 <Card>
                   <CardHeader>
                     <CardTitle className="flex items-center gap-2">
@@ -1315,7 +1315,7 @@ export function AnalyticsDashboard() {
               )}
 
               {/* Re-Engagement Analytics */}
-              {reEngagementData && (reEngagementData as any)?.reEngagement && (
+              {reEngagementData && (reEngagementData as any)?.success && (reEngagementData as any)?.reEngagement && (
                 <Card>
                   <CardHeader>
                     <CardTitle className="flex items-center gap-2">
