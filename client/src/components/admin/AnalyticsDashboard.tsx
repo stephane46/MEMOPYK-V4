@@ -236,11 +236,12 @@ export function AnalyticsDashboard() {
   // Test Data Management Mutations
   const generateTestDataMutation = useMutation({
     mutationFn: () => apiRequest('/api/analytics/test-data/generate', 'POST'),
-    onSuccess: (result) => {
+    onSuccess: (response: any) => {
       queryClient.invalidateQueries({ queryKey: ['/api/analytics/dashboard'] });
+      const result = response.result || response;
       toast({
         title: "Test Data Generated",
-        description: `Added ${result.result.sessions} sessions, ${result.result.views} views, ${result.result.metrics} metrics, ${result.result.visitors} visitors`,
+        description: `Added ${result.sessions} sessions, ${result.views} views, ${result.metrics} metrics, ${result.visitors} visitors`,
       });
     },
     onError: (error) => {
@@ -255,11 +256,13 @@ export function AnalyticsDashboard() {
 
   const clearTestDataMutation = useMutation({
     mutationFn: () => apiRequest('/api/analytics/test-data/clear', 'POST'),
-    onSuccess: (result) => {
+    onSuccess: (response: any) => {
       queryClient.invalidateQueries({ queryKey: ['/api/analytics/dashboard'] });
+      const result = response.result || response;
+      const totalRemoved = (result.sessionsRemoved || 0) + (result.viewsRemoved || 0) + (result.metricsRemoved || 0) + (result.visitorsRemoved || 0);
       toast({
         title: "Test Data Cleared",
-        description: `Removed ${result.result.sessionsRemoved + result.result.viewsRemoved + result.result.metricsRemoved + result.result.visitorsRemoved} test records. Real data preserved.`,
+        description: `Removed ${totalRemoved} test records. Real data preserved.`,
       });
     },
     onError: (error) => {
