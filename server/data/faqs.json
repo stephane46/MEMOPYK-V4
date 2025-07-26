@@ -1,11 +1,11 @@
 [
   {
-    "id": "abaca85f-518d-4f46-994c-ecc13ab940f3",
+    "id": "608c8004-bcbc-486d-9378-50774477a003",
     "section_id": "pricing",
-    "question_en": "How much does it cost?",
-    "question_fr": "Combien ça coûte ?",
-    "answer_en": "Our pricing varies by package. Contact us for a personalized quote.",
-    "answer_fr": "Nos tarifs varient selon le package choisi. Contactez-nous pour un devis personnalisé.",
+    "question_en": "HOW MUCH DOES IT COST?",
+    "question_fr": "COMBIEN ÇA COÛTE ?",
+    "answer_en": "<p>Our prices are customized according to your specific needs. Contact us for a free quote adapted to your project.</p>",
+    "answer_fr": "<p>Nos tarifs sont personnalisés selon vos besoins spécifiques. Contactez-nous pour un devis gratuit adapté à votre projet.</p>",
     "order_index": 0,
     "is_active": false
   },
@@ -20,12 +20,22 @@
     "is_active": false
   },
   {
-    "id": "4e3cf86e-bb7b-4955-81a7-a9e65300948b",
+    "id": "abaca85f-518d-4f46-994c-ecc13ab940f3",
     "section_id": "pricing",
-    "question_en": "Why is your service by quotation only? What am I paying for?",
-    "question_fr": "Pourquoi un devis personnalisé ? Que paye-t-on exactement ?",
-    "answer_en": "<p>Each project is unique, so we quote individually to simplify things for you. To gauge your budget, please review our sample films (with pricing details) for reference.</p>",
-    "answer_fr": "<p>Chaque projet étant unique, nous établissons des devis individuels pour vous simplifier la tâche. Pour évaluer votre budget, veuillez consulter nos exemples de films (avec les détails des prix) à titre de référence.</p>",
+    "question_en": "How much does it cost?",
+    "question_fr": "Combien ça coûte ?",
+    "answer_en": "Our pricing varies by package. Contact us for a personalized quote.",
+    "answer_fr": "Nos tarifs varient selon le package choisi. Contactez-nous pour un devis personnalisé.",
+    "order_index": 0,
+    "is_active": false
+  },
+  {
+    "id": "f8347815-46a1-4423-a31f-2aeed9fe309a",
+    "section_id": "pricing",
+    "question_en": "How much does it cost?",
+    "question_fr": "Combien ça coûte ?",
+    "answer_en": "Our pricing varies by package. Contact us for a personalized quote.",
+    "answer_fr": "Nos tarifs varient selon le package choisi. Contactez-nous pour un devis personnalisé.",
     "order_index": 0,
     "is_active": false
   },
@@ -40,14 +50,34 @@
     "is_active": false
   },
   {
-    "id": "3f73b621-b2a6-4e20-91f9-95c060200e06",
-    "section_id": "getting-started",
-    "question_en": "How secure are my files and personal data?",
-    "question_fr": "Mes fichiers et données sont-ils en sécurité ?",
-    "answer_en": "<p>We fully comply with GDPR:</p><ul><li>No publishing without your written consent</li><li>Editors don’t retain your personal info</li><li>All files live in encrypted, password-protected folders</li><li>Data are purged two months after your final sign-off</li></ul><p><br></p>",
-    "answer_fr": "<p>Nous respectons scrupuleusement le RGPD :</p><ul><li>Jamais de diffusion sans votre accord écrit</li><li>Aucune conservation de vos informations personnelles par nos monteurs</li><li>Tous les fichiers sont protégés par mot de passe et chiffrés</li><li>Les données sont supprimées deux mois après votre validation finale</li></ul><p><br></p>",
+    "id": "385867da-9006-4190-9c7c-043bf8741b26",
+    "section_id": "pricing",
+    "question_en": "Why is your service by quotation only? What am I paying for?",
+    "question_fr": "Pourquoi un devis personnalisé ? Que paye-t-on exactement ?",
+    "answer_en": "<p>Each project is unique, so we quote individually to simplify things for you. To gauge your budget, please review our sample films (with pricing details) for reference.</p>",
+    "answer_fr": "<p>Chaque projet étant unique, nous établissons des devis individuels pour vous simplifier la tâche. Pour évaluer votre budget, veuillez consulter nos exemples de films (avec les détails des prix) à titre de référence.</p>",
+    "order_index": 0,
+    "is_active": false
+  },
+  {
+    "id": "4e3cf86e-bb7b-4955-81a7-a9e65300948b",
+    "section_id": "pricing",
+    "question_en": "Why is your service by quotation only? What am I paying for?",
+    "question_fr": "Pourquoi un devis personnalisé ? Que paye-t-on exactement ?",
+    "answer_en": "<p>Each project is unique, so we quote individually to simplify things for you. To gauge your budget, please review our sample films (with pricing details) for reference.</p>",
+    "answer_fr": "<p>Chaque projet étant unique, nous établissons des devis individuels pour vous simplifier la tâche. Pour évaluer votre budget, veuillez consulter nos exemples de films (avec les détails des prix) à titre de référence.</p>",
+    "order_index": 0,
+    "is_active": false
+  },
+  {
+    "id": "a044d159-bf12-4a45-a558-6506d66436cc",
+    "section_id": "general",
+    "question_en": "What is a MEMOPYK souvenir film?",
+    "question_fr": "Qu est-ce qu un film souvenir MEMOPYK ?",
+    "answer_en": "A personalized video created specially for you by MEMOPYK using your photos and videos.",
+    "answer_fr": "C est une vidéo personnalisée créée spécialement pour vous par MEMOPYK, à partir de vos propres photos et vidéos.",
     "order_index": 1,
-    "is_active": true
+    "is_active": false
   },
   {
     "id": "1c146cf9-52e0-4861-a4dc-5fa4650bb4ee",
@@ -60,22 +90,22 @@
     "is_active": true
   },
   {
-    "id": "8312c30c-4de4-4863-b9fd-20481231fbae",
-    "section_id": "general",
-    "question_en": "What theme can my souvenir film be about?",
-    "question_fr": "Quels thèmes sont possibles pour mon film souvenir ?",
-    "answer_en": "Our service adapts to any theme you choose. Think about all the photos and videos that you accumulate, and really feel what topics excite (or frustrate because it’s been so long that you wanted to do something about it!) you the most:\n\n+ a travel trip with your family or your friends\n+ the first year of your baby, or of your pet\n+ a special event such as a marriage, an anniversary celebration\n+ the recap of someone’s life\n+ the recap of a personal project such as a house renovation",
-    "answer_fr": "Notre service s’adapte à tous les thèmes qui vous tiennent à cœur. Pensez à toutes les photos et vidéos que vous avez accumulées, et identifiez les sujets qui vous touchent (ou vous frustrent car vous rêvez de les valoriser depuis longtemps) :\n\n+ un voyage en famille ou entre amis\n+ la première année de votre bébé ou de votre animal\n+ un événement spécial comme un mariage ou un anniversaire\n+ la rétrospective d’une vie\n+ le suivi d’un projet personnel (ex. : rénovation de maison)",
+    "id": "3f73b621-b2a6-4e20-91f9-95c060200e06",
+    "section_id": "getting-started",
+    "question_en": "How secure are my files and personal data?",
+    "question_fr": "Mes fichiers et données sont-ils en sécurité ?",
+    "answer_en": "<p>We fully comply with GDPR:</p><ul><li>No publishing without your written consent</li><li>Editors don’t retain your personal info</li><li>All files live in encrypted, password-protected folders</li><li>Data are purged two months after your final sign-off</li></ul><p><br></p>",
+    "answer_fr": "<p>Nous respectons scrupuleusement le RGPD :</p><ul><li>Jamais de diffusion sans votre accord écrit</li><li>Aucune conservation de vos informations personnelles par nos monteurs</li><li>Tous les fichiers sont protégés par mot de passe et chiffrés</li><li>Les données sont supprimées deux mois après votre validation finale</li></ul><p><br></p>",
     "order_index": 1,
     "is_active": true
   },
   {
-    "id": "a044d159-bf12-4a45-a558-6506d66436cc",
-    "section_id": "general",
-    "question_en": "What is a MEMOPYK souvenir film?",
-    "question_fr": "Qu est-ce qu un film souvenir MEMOPYK ?",
-    "answer_en": "A personalized video created specially for you by MEMOPYK using your photos and videos.",
-    "answer_fr": "C est une vidéo personnalisée créée spécialement pour vous par MEMOPYK, à partir de vos propres photos et vidéos.",
+    "id": "b545faa3-f14f-4a02-a03c-81b97530ac84",
+    "section_id": "pricing",
+    "question_en": "How much does it cost?",
+    "question_fr": "Combien ça coûte ?",
+    "answer_en": "Our pricing varies by package. Contact us for a personalized quote.",
+    "answer_fr": "Nos tarifs varient selon le package choisi. Contactez-nous pour un devis personnalisé.",
     "order_index": 1,
     "is_active": false
   },
@@ -90,7 +120,17 @@
     "is_active": true
   },
   {
-    "id": "b545faa3-f14f-4a02-a03c-81b97530ac84",
+    "id": "8312c30c-4de4-4863-b9fd-20481231fbae",
+    "section_id": "general",
+    "question_en": "What theme can my souvenir film be about?",
+    "question_fr": "Quels thèmes sont possibles pour mon film souvenir ?",
+    "answer_en": "Our service adapts to any theme you choose. Think about all the photos and videos that you accumulate, and really feel what topics excite (or frustrate because it’s been so long that you wanted to do something about it!) you the most:\n\n+ a travel trip with your family or your friends\n+ the first year of your baby, or of your pet\n+ a special event such as a marriage, an anniversary celebration\n+ the recap of someone’s life\n+ the recap of a personal project such as a house renovation",
+    "answer_fr": "Notre service s’adapte à tous les thèmes qui vous tiennent à cœur. Pensez à toutes les photos et vidéos que vous avez accumulées, et identifiez les sujets qui vous touchent (ou vous frustrent car vous rêvez de les valoriser depuis longtemps) :\n\n+ un voyage en famille ou entre amis\n+ la première année de votre bébé ou de votre animal\n+ un événement spécial comme un mariage ou un anniversaire\n+ la rétrospective d’une vie\n+ le suivi d’un projet personnel (ex. : rénovation de maison)",
+    "order_index": 1,
+    "is_active": true
+  },
+  {
+    "id": "2c479640-a1be-427e-9700-cd51a3b840e2",
     "section_id": "pricing",
     "question_en": "How much does it cost?",
     "question_fr": "Combien ça coûte ?",
@@ -110,7 +150,17 @@
     "is_active": false
   },
   {
-    "id": "05b73a14-57dd-4ab0-b036-300da03696a3",
+    "id": "167929a0-1168-4739-b0e9-4abe65a5c249",
+    "section_id": "pricing",
+    "question_en": "How do I send you my photos and videos?",
+    "question_fr": "Comment vous envoyer mes photos et vidéos ?",
+    "answer_en": "<p><a href=\"https://memopyk.zohobookings.eu/#/memopyk1\" rel=\"noopener noreferrer\" target=\"_blank\">Book a session</a>&nbsp;or&nbsp;<a href=\"https://forms.zoho.eu/memopyk1/form/MemoryfilmQuestionnaire\" rel=\"noopener noreferrer\" target=\"_blank\">fill the questionnaire</a>; our system will then email you secure upload instructions immediately.</p>",
+    "answer_fr": "<p><a href=\"https://memopyk.zohobookings.eu/#/memopykfr\" rel=\"noopener noreferrer\" target=\"_blank\">Prenez rendez-vous</a>&nbsp;ou&nbsp;<a href=\"https://forms.zoho.eu/memopyk1/form/FicheClientBriefMEMOPYK\" rel=\"noopener noreferrer\" target=\"_blank\">complétez le questionnaire</a>&nbsp;; notre système vous enverra immédiatement les instructions de téléversement sécurisé par email.</p>",
+    "order_index": 2,
+    "is_active": false
+  },
+  {
+    "id": "5abec84a-13b7-4972-8ade-2be1eb8802c4",
     "section_id": "pricing",
     "question_en": "I received my film but want changes. What’s your revision policy?",
     "question_fr": "J’ai reçu mon film mais souhaite des modifications. Comment ça marche ?",
@@ -130,7 +180,27 @@
     "is_active": false
   },
   {
-    "id": "385b9f02-6115-4f1b-a869-0f16288e5031",
+    "id": "b1e74c60-cb89-4700-b5f6-75f0d556b7c2",
+    "section_id": "pricing",
+    "question_en": "I received my film but want changes. What’s your revision policy?",
+    "question_fr": "J’ai reçu mon film mais souhaite des modifications. Comment ça marche ?",
+    "answer_en": "<p>We include two free revision rounds. After that, or for entirely new requests, a fee applies. If feedback comes more than two months after delivery, some files may be archived. Contact us to work out the details.</p>",
+    "answer_fr": "<p>Deux séries de modifications sont incluses. Ensuite, ou pour toute demande nouvelle, un supplément est appliqué. Si vos retours interviennent plus de deux mois après la livraison, certains fichiers peuvent avoir été archivés. Contactez-nous pour en discuter.</p>",
+    "order_index": 3,
+    "is_active": false
+  },
+  {
+    "id": "05b73a14-57dd-4ab0-b036-300da03696a3",
+    "section_id": "pricing",
+    "question_en": "I received my film but want changes. What’s your revision policy?",
+    "question_fr": "J’ai reçu mon film mais souhaite des modifications. Comment ça marche ?",
+    "answer_en": "<p>We include two free revision rounds. After that, or for entirely new requests, a fee applies. If feedback comes more than two months after delivery, some files may be archived. Contact us to work out the details.</p>",
+    "answer_fr": "<p>Deux séries de modifications sont incluses. Ensuite, ou pour toute demande nouvelle, un supplément est appliqué. Si vos retours interviennent plus de deux mois après la livraison, certains fichiers peuvent avoir été archivés. Contactez-nous pour en discuter.</p>",
+    "order_index": 3,
+    "is_active": false
+  },
+  {
+    "id": "0e866853-d4a4-44f8-ae6c-005223e7538d",
     "section_id": "pricing",
     "question_en": "How long do I have to review my film?",
     "question_fr": "Combien de temps ai-je pour visionner et donner mon retour ?",
@@ -150,7 +220,27 @@
     "is_active": false
   },
   {
-    "id": "acfefc4e-76a6-480a-a44f-9ca7bd06c385",
+    "id": "0afd8019-2267-44c0-b0b5-e936242aa0bd",
+    "section_id": "pricing",
+    "question_en": "How long do I have to review my film?",
+    "question_fr": "Combien de temps ai-je pour visionner et donner mon retour ?",
+    "answer_en": "<p>You have a two-week window from delivery to send feedback. Beyond that, a nominal weekly fee applies to cover storage and access.</p>",
+    "answer_fr": "<p>Vous disposez d'un délai de deux semaines à compter de la livraison pour envoyer vos commentaires. Au-delà, des frais hebdomadaires minimes s'appliquent pour couvrir les frais de stockage et d'accès.</p>",
+    "order_index": 4,
+    "is_active": false
+  },
+  {
+    "id": "385b9f02-6115-4f1b-a869-0f16288e5031",
+    "section_id": "pricing",
+    "question_en": "How long do I have to review my film?",
+    "question_fr": "Combien de temps ai-je pour visionner et donner mon retour ?",
+    "answer_en": "<p>You have a two-week window from delivery to send feedback. Beyond that, a nominal weekly fee applies to cover storage and access.</p>",
+    "answer_fr": "<p>Vous disposez d'un délai de deux semaines à compter de la livraison pour envoyer vos commentaires. Au-delà, des frais hebdomadaires minimes s'appliquent pour couvrir les frais de stockage et d'accès.</p>",
+    "order_index": 4,
+    "is_active": true
+  },
+  {
+    "id": "d10193c4-623d-4e00-93cf-ca76f4ca0100",
     "section_id": "pricing",
     "question_en": "What is your payment process?",
     "question_fr": "Comment se déroule le paiement ?",
@@ -160,7 +250,7 @@
     "is_active": true
   },
   {
-    "id": "6ec860ea-1eec-40a3-9be3-3553a0c6c9c6",
+    "id": "acfefc4e-76a6-480a-a44f-9ca7bd06c385",
     "section_id": "pricing",
     "question_en": "What is your payment process?",
     "question_fr": "Comment se déroule le paiement ?",
@@ -180,6 +270,56 @@
     "is_active": false
   },
   {
+    "id": "44222579-7acb-464a-82d5-a2124eede1de",
+    "section_id": "pricing",
+    "question_en": "What is your payment process?",
+    "question_fr": "Comment se déroule le paiement ?",
+    "answer_en": "<ul><li>50% deposit on quotation approval (to start production)</li><li>Remaining 50% on final approval (to receive the watermark-free film)</li></ul>",
+    "answer_fr": "<ul><li>50 % d’acompte à la validation du devis (lancement de la production)</li><li>50 % restants à la validation finale (livraison sans filigrane)</li></ul>",
+    "order_index": 5,
+    "is_active": true
+  },
+  {
+    "id": "6ec860ea-1eec-40a3-9be3-3553a0c6c9c6",
+    "section_id": "pricing",
+    "question_en": "What is your payment process?",
+    "question_fr": "Comment se déroule le paiement ?",
+    "answer_en": "<ul><li>50% deposit on quotation approval (to start production)</li><li>Remaining 50% on final approval (to receive the watermark-free film)</li></ul>",
+    "answer_fr": "<ul><li>50 % d’acompte à la validation du devis (lancement de la production)</li><li>50 % restants à la validation finale (livraison sans filigrane)</li></ul>",
+    "order_index": 5,
+    "is_active": true
+  },
+  {
+    "id": "22ef2578-bd00-4ece-ac51-3fc9e0452b1d",
+    "section_id": "pricing",
+    "question_en": "What payment methods do you accept?",
+    "question_fr": "Quels moyens de paiement acceptez-vous ?",
+    "answer_en": "<ul><li>Bank transfer</li><li>Stripe (credit card)</li><li>PayPal</li></ul>",
+    "answer_fr": "<ul><li>Virement bancaire</li><li>Carte bancaire (via Stripe)</li><li>PayPal</li></ul>",
+    "order_index": 6,
+    "is_active": true
+  },
+  {
+    "id": "1860e5cf-6f62-4bca-9f40-0b37656a182e",
+    "section_id": "pricing",
+    "question_en": "What payment methods do you accept?",
+    "question_fr": "Quels moyens de paiement acceptez-vous ?",
+    "answer_en": "<ul><li>Bank transfer</li><li>Stripe (credit card)</li><li>PayPal</li></ul>",
+    "answer_fr": "<ul><li>Virement bancaire</li><li>Carte bancaire (via Stripe)</li><li>PayPal</li></ul>",
+    "order_index": 6,
+    "is_active": true
+  },
+  {
+    "id": "bcb47ac6-b96d-4c08-8dac-97354a429266",
+    "section_id": "pricing",
+    "question_en": "What payment methods do you accept?",
+    "question_fr": "Quels moyens de paiement acceptez-vous ?",
+    "answer_en": "<ul><li>Bank transfer</li><li>Stripe (credit card)</li><li>PayPal</li></ul>",
+    "answer_fr": "<ul><li>Virement bancaire</li><li>Carte bancaire (via Stripe)</li><li>PayPal</li></ul>",
+    "order_index": 6,
+    "is_active": true
+  },
+  {
     "id": "af9e6454-fe0c-4370-8963-548ef56fec1b",
     "section_id": "general",
     "question_en": "Je crains que mes vidéos/photos ne soient pas de bonne qualité. Pouvez-vous encore réaliser un bon film ?",
@@ -191,16 +331,6 @@
   },
   {
     "id": "4be3a162-1172-4baa-be46-6be86528ed90",
-    "section_id": "pricing",
-    "question_en": "What payment methods do you accept?",
-    "question_fr": "Quels moyens de paiement acceptez-vous ?",
-    "answer_en": "<ul><li>Bank transfer</li><li>Stripe (credit card)</li><li>PayPal</li></ul>",
-    "answer_fr": "<ul><li>Virement bancaire</li><li>Carte bancaire (via Stripe)</li><li>PayPal</li></ul>",
-    "order_index": 6,
-    "is_active": true
-  },
-  {
-    "id": "bcb47ac6-b96d-4c08-8dac-97354a429266",
     "section_id": "pricing",
     "question_en": "What payment methods do you accept?",
     "question_fr": "Quels moyens de paiement acceptez-vous ?",
