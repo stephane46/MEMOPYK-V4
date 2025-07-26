@@ -235,10 +235,13 @@ export function AnalyticsDashboard() {
 
   // Test Data Management Mutations
   const generateTestDataMutation = useMutation({
-    mutationFn: () => apiRequest('/api/analytics/test-data/generate', 'POST'),
-    onSuccess: (response: any) => {
+    mutationFn: async () => {
+      const response = await apiRequest('/api/analytics/test-data/generate', 'POST');
+      return await response.json();
+    },
+    onSuccess: (data: any) => {
       queryClient.invalidateQueries({ queryKey: ['/api/analytics/dashboard'] });
-      const result = response.result || response;
+      const result = data.result || data;
       toast({
         title: "Test Data Generated",
         description: `Added ${result.sessions} sessions, ${result.views} views, ${result.metrics} metrics, ${result.visitors} visitors`,
@@ -255,21 +258,15 @@ export function AnalyticsDashboard() {
   });
 
   const clearTestDataMutation = useMutation({
-    mutationFn: () => apiRequest('/api/analytics/test-data/clear', 'POST'),
-    onSuccess: (response: any) => {
-      console.log('Clear test data response:', response);
+    mutationFn: async () => {
+      const response = await apiRequest('/api/analytics/test-data/clear', 'POST');
+      return await response.json();
+    },
+    onSuccess: (data: any) => {
+      console.log('Clear test data response:', data);
       queryClient.invalidateQueries({ queryKey: ['/api/analytics/dashboard'] });
       
-      // Handle different response structures
-      let result;
-      if (response && response.result) {
-        result = response.result;
-      } else if (response && typeof response === 'object') {
-        result = response;
-      } else {
-        result = { sessionsRemoved: 0, viewsRemoved: 0, metricsRemoved: 0, visitorsRemoved: 0 };
-      }
-      
+      const result = data.result || data;
       const totalRemoved = (result.sessionsRemoved || 0) + (result.viewsRemoved || 0) + (result.metricsRemoved || 0) + (result.visitorsRemoved || 0);
       toast({
         title: "Test Data Cleared",
