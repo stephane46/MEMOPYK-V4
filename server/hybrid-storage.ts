@@ -2479,54 +2479,59 @@ export class HybridStorage implements HybridStorageInterface {
       console.log(`📊 Getting video engagement metrics for ${videoId || 'all videos'}`);
       
       if (this.supabase) {
-        // Database implementation
-        let query = this.supabase
-          .from('analytics_views')
-          .select('*');
-        
-        if (videoId) {
-          query = query.eq('video_id', videoId);
-        }
-        if (dateFrom) {
-          query = query.gte('created_at', dateFrom);
-        }
-        if (dateTo) {
-          query = query.lte('created_at', dateTo);
-        }
-        
-        const { data: views, error } = await query;
-        if (error) throw error;
-        
-        return this.calculateEngagementMetrics(views || []);
-      } else {
-        // JSON fallback implementation
-        const filePath = join(process.cwd(), 'server/data/analytics-views.json');
-        let views = [];
-        
-        if (existsSync(filePath)) {
-          const data = readFileSync(filePath, 'utf8');
-          views = JSON.parse(data);
+        try {
+          // Database implementation
+          let query = this.supabase
+            .from('analytics_views')
+            .select('*');
           
-          // Apply filters
           if (videoId) {
-            views = views.filter((view: any) => 
-              view.video_id === videoId || view.video_filename === videoId
-            );
+            query = query.eq('video_id', videoId);
           }
           if (dateFrom) {
-            views = views.filter((view: any) => 
-              (view.created_at || view.timestamp) >= dateFrom
-            );
+            query = query.gte('created_at', dateFrom);
           }
           if (dateTo) {
-            views = views.filter((view: any) => 
-              (view.created_at || view.timestamp) <= dateTo
-            );
+            query = query.lte('created_at', dateTo);
           }
+          
+          const { data: views, error } = await query;
+          if (error) throw error;
+          
+          return this.calculateEngagementMetrics(views || []);
+        } catch (dbError) {
+          console.log('📊 Database error, falling back to JSON:', dbError);
+          // Fall through to JSON implementation
         }
-        
-        return this.calculateEngagementMetrics(views);
       }
+      
+      // JSON fallback implementation
+      const filePath = join(process.cwd(), 'server/data/analytics-views.json');
+      let views = [];
+      
+      if (existsSync(filePath)) {
+        const data = readFileSync(filePath, 'utf8');
+        views = JSON.parse(data);
+        
+        // Apply filters
+        if (videoId) {
+          views = views.filter((view: any) => 
+            view.video_id === videoId || view.video_filename === videoId
+          );
+        }
+        if (dateFrom) {
+          views = views.filter((view: any) => 
+            (view.created_at || view.timestamp) >= dateFrom
+          );
+        }
+        if (dateTo) {
+          views = views.filter((view: any) => 
+            (view.created_at || view.timestamp) <= dateTo
+          );
+        }
+      }
+      
+      return this.calculateEngagementMetrics(views);
     } catch (error) {
       console.error('❌ Error getting video engagement metrics:', error);
       return {
@@ -2547,46 +2552,51 @@ export class HybridStorage implements HybridStorageInterface {
       console.log('📊 Getting unique video views analytics');
       
       if (this.supabase) {
-        // Database implementation
-        let query = this.supabase
-          .from('analytics_views')
-          .select('*');
-        
-        if (dateFrom) {
-          query = query.gte('created_at', dateFrom);
-        }
-        if (dateTo) {
-          query = query.lte('created_at', dateTo);
-        }
-        
-        const { data: views, error } = await query;
-        if (error) throw error;
-        
-        return this.groupUniqueViews(views || []);
-      } else {
-        // JSON fallback implementation
-        const filePath = join(process.cwd(), 'server/data/analytics-views.json');
-        let views = [];
-        
-        if (existsSync(filePath)) {
-          const data = readFileSync(filePath, 'utf8');
-          views = JSON.parse(data);
+        try {
+          // Database implementation
+          let query = this.supabase
+            .from('analytics_views')
+            .select('*');
           
-          // Apply filters
           if (dateFrom) {
-            views = views.filter((view: any) => 
-              (view.created_at || view.timestamp) >= dateFrom
-            );
+            query = query.gte('created_at', dateFrom);
           }
           if (dateTo) {
-            views = views.filter((view: any) => 
-              (view.created_at || view.timestamp) <= dateTo
-            );
+            query = query.lte('created_at', dateTo);
           }
+          
+          const { data: views, error } = await query;
+          if (error) throw error;
+          
+          return this.groupUniqueViews(views || []);
+        } catch (dbError) {
+          console.log('📊 Database error, falling back to JSON:', dbError);
+          // Fall through to JSON implementation
         }
-        
-        return this.groupUniqueViews(views);
       }
+      
+      // JSON fallback implementation
+      const filePath = join(process.cwd(), 'server/data/analytics-views.json');
+      let views = [];
+      
+      if (existsSync(filePath)) {
+        const data = readFileSync(filePath, 'utf8');
+        views = JSON.parse(data);
+        
+        // Apply filters
+        if (dateFrom) {
+          views = views.filter((view: any) => 
+            (view.created_at || view.timestamp) >= dateFrom
+          );
+        }
+        if (dateTo) {
+          views = views.filter((view: any) => 
+            (view.created_at || view.timestamp) <= dateTo
+          );
+        }
+      }
+      
+      return this.groupUniqueViews(views);
     } catch (error) {
       console.error('❌ Error getting unique video views:', error);
       return [];
@@ -2598,46 +2608,51 @@ export class HybridStorage implements HybridStorageInterface {
       console.log('📊 Getting video re-engagement analytics');
       
       if (this.supabase) {
-        // Database implementation
-        let query = this.supabase
-          .from('analytics_views')
-          .select('*');
-        
-        if (dateFrom) {
-          query = query.gte('created_at', dateFrom);
-        }
-        if (dateTo) {
-          query = query.lte('created_at', dateTo);
-        }
-        
-        const { data: views, error } = await query;
-        if (error) throw error;
-        
-        return this.analyzeReEngagement(views || []);
-      } else {
-        // JSON fallback implementation
-        const filePath = join(process.cwd(), 'server/data/analytics-views.json');
-        let views = [];
-        
-        if (existsSync(filePath)) {
-          const data = readFileSync(filePath, 'utf8');
-          views = JSON.parse(data);
+        try {
+          // Database implementation
+          let query = this.supabase
+            .from('analytics_views')
+            .select('*');
           
-          // Apply filters
           if (dateFrom) {
-            views = views.filter((view: any) => 
-              (view.created_at || view.timestamp) >= dateFrom
-            );
+            query = query.gte('created_at', dateFrom);
           }
           if (dateTo) {
-            views = views.filter((view: any) => 
-              (view.created_at || view.timestamp) <= dateTo
-            );
+            query = query.lte('created_at', dateTo);
           }
+          
+          const { data: views, error } = await query;
+          if (error) throw error;
+          
+          return this.analyzeReEngagement(views || []);
+        } catch (dbError) {
+          console.log('📊 Database error, falling back to JSON:', dbError);
+          // Fall through to JSON implementation
         }
-        
-        return this.analyzeReEngagement(views);
       }
+      
+      // JSON fallback implementation
+      const filePath = join(process.cwd(), 'server/data/analytics-views.json');
+      let views = [];
+      
+      if (existsSync(filePath)) {
+        const data = readFileSync(filePath, 'utf8');
+        views = JSON.parse(data);
+        
+        // Apply filters
+        if (dateFrom) {
+          views = views.filter((view: any) => 
+            (view.created_at || view.timestamp) >= dateFrom
+          );
+        }
+        if (dateTo) {
+          views = views.filter((view: any) => 
+            (view.created_at || view.timestamp) <= dateTo
+          );
+        }
+      }
+      
+      return this.analyzeReEngagement(views);
     } catch (error) {
       console.error('❌ Error getting re-engagement analytics:', error);
       return [];
