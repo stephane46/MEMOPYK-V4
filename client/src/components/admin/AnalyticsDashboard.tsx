@@ -1211,15 +1211,18 @@ export function AnalyticsDashboard() {
                 <Badge variant="outline" className="text-blue-600 border-blue-600">Advanced</Badge>
               </div>
 
-              {console.log('🎯 RENDERING PANELS - Data Check:', {
-                videoEngagementData: !!(videoEngagementData as any)?.metrics,
-                uniqueViewsData: !!(uniqueViewsData as any)?.uniqueViews, 
-                reEngagementData: !!(reEngagementData as any)?.reEngagement,
-                showAdvancedAnalytics,
-                actualVideoData: (videoEngagementData as any)?.metrics,
-                actualUniqueData: (uniqueViewsData as any)?.uniqueViews,
-                actualReEngageData: (reEngagementData as any)?.reEngagement
-              })}
+              {/* DEBUG: Show data availability */}
+              <div className="mb-4 p-3 bg-red-100 text-sm">
+                <strong>Debug Info:</strong>
+                <br />
+                Video Data Available: {String(!!(videoEngagementData as any)?.metrics)}
+                <br />
+                Unique Data Available: {String(!!(uniqueViewsData as any)?.uniqueViews)}
+                <br />
+                ReEngagement Data Available: {String(!!(reEngagementData as any)?.reEngagement)}
+                <br />
+                Show Advanced: {String(showAdvancedAnalytics)}
+              </div>
 
               {/* Video Engagement Metrics */}
               {(videoEngagementData as any)?.metrics && (
