@@ -57,6 +57,15 @@ export function LegalDocumentPage() {
   console.log('  - Available documents:', documents?.map(d => ({ type: d.type, isActive: d.isActive })));
   console.log('  - Found matching document:', document ? 'YES' : 'NO');
   console.log('  - Documents loaded:', documents ? documents.length : 'NONE');
+  
+  // Enhanced debug - show the exact match attempt
+  if (documents && documentType) {
+    const exactMatch = documents.find(doc => doc.type === documentType);
+    console.log('  - Exact type match found:', exactMatch ? 'YES' : 'NO');
+    if (exactMatch) {
+      console.log('  - Exact match isActive:', exactMatch.isActive);
+    }
+  }
 
   if (!document) {
     return (
