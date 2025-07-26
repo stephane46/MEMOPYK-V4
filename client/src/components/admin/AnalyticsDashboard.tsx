@@ -374,10 +374,22 @@ export function AnalyticsDashboard() {
     enabled: showAdvancedAnalytics
   });
 
-  const { data: reEngagementData, isLoading: reEngagementLoading } = useQuery({
+  const { data: reEngagementData, isLoading: reEngagementLoading, error: reEngagementError } = useQuery({
     queryKey: ['/api/analytics/re-engagement'],
     enabled: showAdvancedAnalytics
   });
+
+  // Debug re-engagement response specifically
+  useEffect(() => {
+    if (showAdvancedAnalytics) {
+      console.log('🔍 RE-ENGAGEMENT DEBUG:', {
+        reEngagementData: reEngagementData,
+        reEngagementLoading: reEngagementLoading,
+        reEngagementError: reEngagementError,
+        enabled: showAdvancedAnalytics
+      });
+    }
+  }, [showAdvancedAnalytics, reEngagementData, reEngagementLoading, reEngagementError]);
 
   // Debug Advanced Analytics data
   useEffect(() => {
