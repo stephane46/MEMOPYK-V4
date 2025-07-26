@@ -59,6 +59,12 @@ export const useVideoAnalytics = () => {
 
   // Helper function to track video view with aggressive duplicate prevention
   const trackVideoViewWithDefaults = useCallback((videoId: string, durationWatched?: number, completed?: boolean) => {
+    // Skip tracking for hero videos (auto-play videos don't provide meaningful engagement data)
+    if (['VideoHero1.mp4', 'VideoHero2.mp4', 'VideoHero3.mp4'].includes(videoId)) {
+      console.log(`Skipping analytics tracking for hero video: ${videoId} (auto-play videos excluded from analytics)`);
+      return;
+    }
+    
     const language = localStorage.getItem('memopyk-language') as 'en' | 'fr' || 'fr';
     
     // Very aggressive duplicate prevention - 30 second window
@@ -69,7 +75,7 @@ export const useVideoAnalytics = () => {
       return; // Skip if tracked within last 30 seconds
     }
     
-    console.log(`Tracking video view for ${videoId}`);
+    console.log(`Tracking gallery video view for ${videoId}`);
     localStorage.setItem(`last-tracked-${videoId}`, now.toString());
     
     trackVideoView.mutate({
