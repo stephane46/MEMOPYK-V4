@@ -379,37 +379,7 @@ export function AnalyticsDashboard() {
     enabled: true
   });
 
-  // Debug re-engagement response specifically
-  useEffect(() => {
-    console.log('🔍 RE-ENGAGEMENT DEBUG:', {
-      reEngagementData: reEngagementData,
-      reEngagementLoading: reEngagementLoading,
-      reEngagementError: reEngagementError
-    });
-  }, [reEngagementData, reEngagementLoading, reEngagementError]);
 
-  // Debug Advanced Analytics data
-  useEffect(() => {
-    console.log('🔍 Advanced Analytics Debug:', {
-      videoEngagementData: videoEngagementData,
-      uniqueViewsData: uniqueViewsData,
-      reEngagementData: reEngagementData,
-      engagementLoading,
-      uniqueViewsLoading,
-      reEngagementLoading
-    });
-    
-    // More detailed logging
-    if (videoEngagementData) {
-      console.log('📊 Video Engagement Data:', JSON.stringify(videoEngagementData, null, 2));
-    }
-    if (uniqueViewsData) {
-      console.log('👥 Unique Views Data:', JSON.stringify(uniqueViewsData, null, 2));
-    }
-    if (reEngagementData) {
-      console.log('🔄 Re-engagement Data:', JSON.stringify(reEngagementData, null, 2));
-    }
-  }, [videoEngagementData, uniqueViewsData, reEngagementData, engagementLoading, uniqueViewsLoading, reEngagementLoading]);
 
   // Fetch admin's current IP when IP management panel is opened
   useEffect(() => {
@@ -1197,25 +1167,12 @@ export function AnalyticsDashboard() {
           )}
 
           {/* Advanced Analytics Panel */}
-          {true && (
+          {showAdvancedAnalytics && (
             <div className="space-y-6 border-t pt-6">
               <div className="flex items-center gap-2 mb-4">
                 <TrendingUp className="h-5 w-5 text-blue-600" />
                 <h3 className="text-lg font-semibold">Enhanced Multi-View Analytics</h3>
                 <Badge variant="outline" className="text-blue-600 border-blue-600">Advanced</Badge>
-              </div>
-
-              {/* DEBUG: Show data availability */}
-              <div className="mb-4 p-3 bg-red-100 text-sm">
-                <strong>Debug Info:</strong>
-                <br />
-                Video Data Available: {String(!!(videoEngagementData as any)?.metrics)}
-                <br />
-                Unique Data Available: {String(!!(uniqueViewsData as any)?.uniqueViews)}
-                <br />
-                ReEngagement Data Available: {String(!!(reEngagementData as any)?.reEngagement)}
-                <br />
-                Show Advanced: {String(showAdvancedAnalytics)}
               </div>
 
               {/* Video Engagement Metrics */}
