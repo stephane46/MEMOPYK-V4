@@ -75,6 +75,7 @@ export function AnalyticsDashboard() {
   const [showSettings, setShowSettings] = useState(false);
   const [showIpManagement, setShowIpManagement] = useState(false);
   const [newExcludedIp, setNewExcludedIp] = useState('');
+  const [currentAdminIp, setCurrentAdminIp] = useState<string | null>(null);
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
@@ -269,6 +270,16 @@ export function AnalyticsDashboard() {
       });
     }
   });
+
+  // Fetch admin's current IP when IP management panel is opened
+  useEffect(() => {
+    if (showIpManagement && !currentAdminIp) {
+      fetch('https://httpbin.org/ip')
+        .then(response => response.json())
+        .then(data => setCurrentAdminIp(data.origin))
+        .catch(error => console.error('Failed to get current IP:', error));
+    }
+  }, [showIpManagement, currentAdminIp]);
 
   // Export data
   const handleExport = (format: 'json' | 'csv') => {
@@ -587,38 +598,57 @@ export function AnalyticsDashboard() {
 
             <Separator />
 
-            {/* Admin IP Exclusion Section */}
+            {/* Admin IP Management Section */}
             <div>
-              <h4 className="font-medium mb-4">Admin IP Exclusion</h4>
-              <div className="flex items-center justify-between p-3 border rounded-lg bg-blue-50">
-                <div>
-                  <p className="text-sm font-medium">Exclude Your IP Address</p>
+              <h4 className="font-medium mb-4">Admin IP Management</h4>
+              {currentAdminIp ? (
+                <div className="p-4 border rounded-lg bg-blue-50">
+                  <div className="flex items-center justify-between mb-3">
+                    <div>
+                      <p className="text-sm font-medium">Your Current IP Address</p>
+                      <p className="font-mono text-lg text-blue-700">{currentAdminIp}</p>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      {settings?.excludedIps?.includes(currentAdminIp) ? (
+                        <div className="flex items-center gap-2">
+                          <Badge variant="secondary" className="bg-green-100 text-green-800">
+                            Excluded
+                          </Badge>
+                          <Button
+                            onClick={() => removeExcludedIpMutation.mutate(currentAdminIp)}
+                            variant="outline"
+                            size="sm"
+                            disabled={removeExcludedIpMutation.isPending}
+                          >
+                            <Ban className="h-4 w-4 mr-2" />
+                            {removeExcludedIpMutation.isPending ? 'Restoring...' : 'Remove Exclusion'}
+                          </Button>
+                        </div>
+                      ) : (
+                        <Button
+                          onClick={() => addExcludedIpMutation.mutate(currentAdminIp)}
+                          variant="outline"
+                          size="sm"
+                          disabled={addExcludedIpMutation.isPending}
+                        >
+                          <UserX className="h-4 w-4 mr-2" />
+                          {addExcludedIpMutation.isPending ? 'Excluding...' : 'Exclude from Analytics'}
+                        </Button>
+                      )}
+                    </div>
+                  </div>
                   <p className="text-xs text-muted-foreground">
-                    Stop tracking your admin activity in analytics
+                    {settings?.excludedIps?.includes(currentAdminIp) 
+                      ? "Your IP is currently excluded from analytics tracking"
+                      : "Your admin activity is currently being tracked in analytics"
+                    }
                   </p>
                 </div>
-                <Button
-                  onClick={async () => {
-                    try {
-                      // Get current IP from a service
-                      const response = await fetch('https://httpbin.org/ip');
-                      const data = await response.json();
-                      const currentIp = data.origin;
-                      addExcludedIpMutation.mutate(currentIp);
-                    } catch (error) {
-                      console.error('Failed to get current IP:', error);
-                      // Fallback: use manual input
-                      setNewExcludedIp('');
-                    }
-                  }}
-                  variant="outline"
-                  size="sm"
-                  disabled={addExcludedIpMutation.isPending}
-                >
-                  <UserX className="h-4 w-4 mr-2" />
-                  {addExcludedIpMutation.isPending ? 'Excluding...' : 'Exclude My IP'}
-                </Button>
-              </div>
+              ) : (
+                <div className="p-4 border rounded-lg bg-gray-50">
+                  <p className="text-sm text-muted-foreground">Loading your IP address...</p>
+                </div>
+              )}
             </div>
 
             <Separator />
