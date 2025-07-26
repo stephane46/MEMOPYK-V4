@@ -507,7 +507,32 @@ The application follows a modern full-stack architecture with clear separation o
 - [ ] **Phase 10.3**: Performance monitoring and error tracking
 - [ ] **Phase 10.4**: User acceptance testing and launch
 
-## Current Status: Phase 8.4.20 - FAQ EDIT UX ENHANCEMENT COMPLETED (July 26, 2025)
+## Current Status: Phase 8.4.21 - FAQ REORDERING FUNCTIONALITY FULLY RESTORED (July 26, 2025)
+
+### FAQ REORDERING BUG RESOLUTION - COMPLETED (July 26, 2025)
+**Critical FAQ Move Up/Down Functionality Restored:**
+✅ **Root Cause Identified**: Multiple FAQs within the general section had duplicate order_index values preventing proper reordering
+✅ **Duplicate Detection**: Found 4 FAQs with order_index: 1 and 2 FAQs with order_index: 8 in general section
+✅ **Automated Fix Applied**: Created and executed fix script that assigned unique sequential order_index values (0-9) to all FAQs in general section
+✅ **8 FAQs Updated**: Successfully updated all conflicting FAQs with proper unique order values
+✅ **API Verification**: Tested reorder endpoint `/api/faqs/:id/reorder` - confirmed working with proper order swapping
+✅ **Order Swapping Functional**: Logs show proper FAQ order swapping between FAQs with different order_index values
+✅ **Production Ready**: FAQ reordering move up/down buttons now functional for all sections
+
+**Technical Resolution:**
+- Fixed duplicate order_index in general section: 4 FAQs had order_index: 1, 2 FAQs had order_index: 8
+- Applied sequential ordering (0, 1, 2, 3, 4, 5, 6, 7, 8, 9) maintaining relative FAQ positions where possible
+- Verified reorder API endpoint working with proper JSON response: `{"success": true, "faq": {...}}`
+- Database and JSON backup synchronization confirmed working
+- Order swapping logic operational: FAQ positions can now be exchanged between adjacent items
+
+**User Experience Achievement:**
+- FAQ admin interface move up/down arrows now functional for all questions
+- Each FAQ within sections has unique order_index preventing reorder conflicts
+- Admin panel FAQ management buttons (↑ ↓) work correctly for repositioning questions
+- Public FAQ display maintains proper question ordering based on admin changes
+
+## Previous Status: Phase 8.4.20 - FAQ EDIT UX ENHANCEMENT COMPLETED (July 26, 2025)
 
 ### FAQ EDIT UX IMPROVEMENT - COMPLETED (July 26, 2025)
 **Enhanced Scroll Positioning for Perfect User Experience:**

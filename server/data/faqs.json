@@ -1,15 +1,5 @@
 [
   {
-    "id": "4e3cf86e-bb7b-4955-81a7-a9e65300948b",
-    "section_id": "pricing",
-    "question_en": "Why is your service by quotation only? What am I paying for?",
-    "question_fr": "Pourquoi un devis personnalisé ? Que paye-t-on exactement ?",
-    "answer_en": "<p>Each project is unique, so we quote individually to simplify things for you. To gauge your budget, please review our sample films (with pricing details) for reference.</p>",
-    "answer_fr": "<p>Chaque projet étant unique, nous établissons des devis individuels pour vous simplifier la tâche. Pour évaluer votre budget, veuillez consulter nos exemples de films (avec les détails des prix) à titre de référence.</p>",
-    "order_index": 0,
-    "is_active": true
-  },
-  {
     "id": "1d0d60e4-1359-4c5a-b064-14a70357ac2c",
     "section_id": "getting-started",
     "question_en": "You wonder if we use Artificial Intelligence?",
@@ -20,13 +10,23 @@
     "is_active": false
   },
   {
+    "id": "4e3cf86e-bb7b-4955-81a7-a9e65300948b",
+    "section_id": "pricing",
+    "question_en": "Why is your service by quotation only? What am I paying for?",
+    "question_fr": "Pourquoi un devis personnalisé ? Que paye-t-on exactement ?",
+    "answer_en": "<p>Each project is unique, so we quote individually to simplify things for you. To gauge your budget, please review our sample films (with pricing details) for reference.</p>",
+    "answer_fr": "<p>Chaque projet étant unique, nous établissons des devis individuels pour vous simplifier la tâche. Pour évaluer votre budget, veuillez consulter nos exemples de films (avec les détails des prix) à titre de référence.</p>",
+    "order_index": 0,
+    "is_active": true
+  },
+  {
     "id": "a0cc7a21-f987-4e04-9791-72a2a87d6372",
     "section_id": "general",
     "question_en": "Can I give you specific requirements (music, titles, effects, ...)?",
     "question_fr": "Puis-je donner des consignes (musique, titres, effets…) ?",
     "answer_en": "<p>Of course! Our detailed questionnaire has a dedicated section for all your creative notes. We respect every request and advise where needed to ensure the best possible film.</p>",
     "answer_fr": "<p>Bien sûr ! Le questionnaire détaillé vous permet d’ajouter toutes vos préférences créatives. Nous respectons chaque demande et vous conseillons si besoin pour obtenir le meilleur rendu. OUI</p>",
-    "order_index": 1,
+    "order_index": 0,
     "is_active": true
   },
   {
@@ -36,7 +36,7 @@
     "question_fr": "Je n’ai pas d’idée précise, est-ce un problème ?",
     "answer_en": "Not at all. We will make recommendations, create the story arc that is best adapted to your photos and videos, and take care of every detail to avoid decision fatigue while delivering the most exciting result possible. We also recommend you book a session with one of our experts to guide you through the next steps.",
     "answer_fr": "Aucun souci. Nous vous ferons des propositions adaptées, construirons une narration cohérente à partir de vos fichiers et prendrons en charge tous les détails pour éviter la fatigue décisionnelle. Nous vous recommandons aussi de prendre rendez-vous avec un expert MEMOPYK pour vous guider.",
-    "order_index": 1,
+    "order_index": 0,
     "is_active": true
   },
   {
@@ -46,26 +46,6 @@
     "question_fr": "Mes fichiers et données sont-ils en sécurité ?",
     "answer_en": "<p>We fully comply with GDPR:</p><ul><li>No publishing without your written consent</li><li>Editors don’t retain your personal info</li><li>All files live in encrypted, password-protected folders</li><li>Data are purged two months after your final sign-off</li></ul><p><br></p>",
     "answer_fr": "<p>Nous respectons scrupuleusement le RGPD :</p><ul><li>Jamais de diffusion sans votre accord écrit</li><li>Aucune conservation de vos informations personnelles par nos monteurs</li><li>Tous les fichiers sont protégés par mot de passe et chiffrés</li><li>Les données sont supprimées deux mois après votre validation finale</li></ul><p><br></p>",
-    "order_index": 1,
-    "is_active": true
-  },
-  {
-    "id": "a044d159-bf12-4a45-a558-6506d66436cc",
-    "section_id": "general",
-    "question_en": "What is a MEMOPYK souvenir film?",
-    "question_fr": "Qu est-ce qu un film souvenir MEMOPYK ?",
-    "answer_en": "A personalized video created specially for you by MEMOPYK using your photos and videos.",
-    "answer_fr": "C est une vidéo personnalisée créée spécialement pour vous par MEMOPYK, à partir de vos propres photos et vidéos.",
-    "order_index": 1,
-    "is_active": false
-  },
-  {
-    "id": "8312c30c-4de4-4863-b9fd-20481231fbae",
-    "section_id": "general",
-    "question_en": "What theme can my souvenir film be about?",
-    "question_fr": "Quels thèmes sont possibles pour mon film souvenir ?",
-    "answer_en": "Our service adapts to any theme you choose. Think about all the photos and videos that you accumulate, and really feel what topics excite (or frustrate because it’s been so long that you wanted to do something about it!) you the most:\n\n+ a travel trip with your family or your friends\n+ the first year of your baby, or of your pet\n+ a special event such as a marriage, an anniversary celebration\n+ the recap of someone’s life\n+ the recap of a personal project such as a house renovation",
-    "answer_fr": "Notre service s’adapte à tous les thèmes qui vous tiennent à cœur. Pensez à toutes les photos et vidéos que vous avez accumulées, et identifiez les sujets qui vous touchent (ou vous frustrent car vous rêvez de les valoriser depuis longtemps) :\n\n+ un voyage en famille ou entre amis\n+ la première année de votre bébé ou de votre animal\n+ un événement spécial comme un mariage ou un anniversaire\n+ la rétrospective d’une vie\n+ le suivi d’un projet personnel (ex. : rénovation de maison)",
     "order_index": 1,
     "is_active": true
   },
@@ -80,6 +60,26 @@
     "is_active": true
   },
   {
+    "id": "a044d159-bf12-4a45-a558-6506d66436cc",
+    "section_id": "general",
+    "question_en": "What is a MEMOPYK souvenir film?",
+    "question_fr": "Qu est-ce qu un film souvenir MEMOPYK ?",
+    "answer_en": "A personalized video created specially for you by MEMOPYK using your photos and videos.",
+    "answer_fr": "C est une vidéo personnalisée créée spécialement pour vous par MEMOPYK, à partir de vos propres photos et vidéos.",
+    "order_index": 2,
+    "is_active": false
+  },
+  {
+    "id": "8312c30c-4de4-4863-b9fd-20481231fbae",
+    "section_id": "general",
+    "question_en": "What theme can my souvenir film be about?",
+    "question_fr": "Quels thèmes sont possibles pour mon film souvenir ?",
+    "answer_en": "Our service adapts to any theme you choose. Think about all the photos and videos that you accumulate, and really feel what topics excite (or frustrate because it’s been so long that you wanted to do something about it!) you the most:\n\n+ a travel trip with your family or your friends\n+ the first year of your baby, or of your pet\n+ a special event such as a marriage, an anniversary celebration\n+ the recap of someone’s life\n+ the recap of a personal project such as a house renovation",
+    "answer_fr": "Notre service s’adapte à tous les thèmes qui vous tiennent à cœur. Pensez à toutes les photos et vidéos que vous avez accumulées, et identifiez les sujets qui vous touchent (ou vous frustrent car vous rêvez de les valoriser depuis longtemps) :\n\n+ un voyage en famille ou entre amis\n+ la première année de votre bébé ou de votre animal\n+ un événement spécial comme un mariage ou un anniversaire\n+ la rétrospective d’une vie\n+ le suivi d’un projet personnel (ex. : rénovation de maison)",
+    "order_index": 3,
+    "is_active": true
+  },
+  {
     "id": "05b73a14-57dd-4ab0-b036-300da03696a3",
     "section_id": "pricing",
     "question_en": "I received my film but want changes. What’s your revision policy?",
@@ -88,6 +88,16 @@
     "answer_fr": "<p>Deux séries de modifications sont incluses. Ensuite, ou pour toute demande nouvelle, un supplément est appliqué. Si vos retours interviennent plus de deux mois après la livraison, certains fichiers peuvent avoir été archivés. Contactez-nous pour en discuter.</p>",
     "order_index": 3,
     "is_active": true
+  },
+  {
+    "id": "f7eb528b-b3da-4260-82cb-57a6aaa1e51c",
+    "section_id": "general",
+    "question_en": "Some clips or moments are extra important. Can I flag them?",
+    "question_fr": "Certains moments sont particulièrement importants. Je peux les signaler ?",
+    "answer_en": "<p>Yes! Just highlight those in the questionnaire (for example, baby’s first steps, a funny travel moment, etc.), and we’ll treat them accordingly.</p>",
+    "answer_fr": "<p>Oui ! Indiquez-les dans le questionnaire (ex. : les premiers pas de bébé, un moment drôle en voyage, etc.), et nous leur accorderons une attention spéciale.</p>",
+    "order_index": 4,
+    "is_active": false
   },
   {
     "id": "0e866853-d4a4-44f8-ae6c-005223e7538d",
@@ -100,14 +110,14 @@
     "is_active": true
   },
   {
-    "id": "f7eb528b-b3da-4260-82cb-57a6aaa1e51c",
+    "id": "af9e6454-fe0c-4370-8963-548ef56fec1b",
     "section_id": "general",
-    "question_en": "Some clips or moments are extra important. Can I flag them?",
-    "question_fr": "Certains moments sont particulièrement importants. Je peux les signaler ?",
-    "answer_en": "<p>Yes! Just highlight those in the questionnaire (for example, baby’s first steps, a funny travel moment, etc.), and we’ll treat them accordingly.</p>",
-    "answer_fr": "<p>Oui ! Indiquez-les dans le questionnaire (ex. : les premiers pas de bébé, un moment drôle en voyage, etc.), et nous leur accorderons une attention spéciale.</p>",
+    "question_en": "Je crains que mes vidéos/photos ne soient pas de bonne qualité. Pouvez-vous encore réaliser un bon film ?",
+    "question_fr": "Mes vidéos/photos sont de mauvaise qualitést-ce un problème ?",
+    "answer_en": "<p>Fear not. We specialize in enhancing low-quality sources and using editing techniques to preserve the emotion, even if the files aren’t perfect.</p>",
+    "answer_fr": "<p>Ne craignez rien. Nous sommes spécialisés dans l'amélioration des sources de faible qualité et dans l'utilisation de techniques d'édition pour préserver l'émotion, même si les fichiers ne sont pas parfaits.</p>",
     "order_index": 5,
-    "is_active": false
+    "is_active": true
   },
   {
     "id": "bcb47ac6-b96d-4c08-8dac-97354a429266",
@@ -117,6 +127,16 @@
     "answer_en": "<ul><li>Bank transfer</li><li>Stripe (credit card)</li><li>PayPal</li></ul>",
     "answer_fr": "<ul><li>Virement bancaire</li><li>Carte bancaire (via Stripe)</li><li>PayPal</li></ul>",
     "order_index": 5,
+    "is_active": true
+  },
+  {
+    "id": "ef290e36-4f62-4fb2-b780-221e6d3db1f0",
+    "section_id": "general",
+    "question_en": "I have physical media (prints, DVD, VHS, etc.). Do you offer digitization?",
+    "question_fr": "J’ai des supports physiques (tirages, DVD, VHS, ...). Proposez-vous la numérisation ?",
+    "answer_en": "<p>We partner with expert digitization services.&nbsp;<a href=\"mailto:info@memopyk.com\" rel=\"noopener noreferrer\" target=\"_blank\">Contact us</a>&nbsp;so we can recommend the right provider and workflow for your needs.</p>",
+    "answer_fr": "<p>Nous collaborons avec des prestataires de confiance pour la numérisation.&nbsp;<a href=\"mailto:info@memopyk.com\" rel=\"noopener noreferrer\" target=\"_blank\">Contactez-nous</a>&nbsp;pour recevoir une recommandation adaptée.</p>",
+    "order_index": 6,
     "is_active": true
   },
   {
@@ -130,22 +150,12 @@
     "is_active": true
   },
   {
-    "id": "af9e6454-fe0c-4370-8963-548ef56fec1b",
+    "id": "a52dabf5-5ee7-44d6-a0ab-b134b0ed2c12",
     "section_id": "general",
-    "question_en": "Je crains que mes vidéos/photos ne soient pas de bonne qualité. Pouvez-vous encore réaliser un bon film ?",
-    "question_fr": "Mes vidéos/photos sont de mauvaise qualitést-ce un problème ?",
-    "answer_en": "<p>Fear not. We specialize in enhancing low-quality sources and using editing techniques to preserve the emotion, even if the files aren’t perfect.</p>",
-    "answer_fr": "<p>Ne craignez rien. Nous sommes spécialisés dans l'amélioration des sources de faible qualité et dans l'utilisation de techniques d'édition pour préserver l'émotion, même si les fichiers ne sont pas parfaits.</p>",
-    "order_index": 6,
-    "is_active": true
-  },
-  {
-    "id": "ef290e36-4f62-4fb2-b780-221e6d3db1f0",
-    "section_id": "general",
-    "question_en": "I have physical media (prints, DVD, VHS, etc.). Do you offer digitization?",
-    "question_fr": "J’ai des supports physiques (tirages, DVD, VHS, ...). Proposez-vous la numérisation ?",
-    "answer_en": "<p>We partner with expert digitization services.&nbsp;<a href=\"mailto:info@memopyk.com\" rel=\"noopener noreferrer\" target=\"_blank\">Contact us</a>&nbsp;so we can recommend the right provider and workflow for your needs.</p>",
-    "answer_fr": "<p>Nous collaborons avec des prestataires de confiance pour la numérisation.&nbsp;<a href=\"mailto:info@memopyk.com\" rel=\"noopener noreferrer\" target=\"_blank\">Contactez-nous</a>&nbsp;pour recevoir une recommandation adaptée.</p>",
+    "question_en": "My photos and videos are a mess. Must I sort them before sending?",
+    "question_fr": "Mes photos et vidéos sont en désordre. Dois-je trier ?",
+    "answer_en": "<p>Absolutely not! Messy libraries are normal, and time-consuming to sort. We’re here to help. Feel free to remove any truly private or off-topic items, then send the rest our way.</p>",
+    "answer_fr": "<p>Absolument pas ! Les bibliothèques désorganisées sont courantes, et fastidieuses à classer. Nous nous en occupons. Supprimez juste les éléments trop privés ou hors sujet, et envoyez-nous le reste.</p>",
     "order_index": 7,
     "is_active": true
   },
@@ -160,23 +170,13 @@
     "is_active": true
   },
   {
-    "id": "a52dabf5-5ee7-44d6-a0ab-b134b0ed2c12",
-    "section_id": "general",
-    "question_en": "My photos and videos are a mess. Must I sort them before sending?",
-    "question_fr": "Mes photos et vidéos sont en désordre. Dois-je trier ?",
-    "answer_en": "<p>Absolutely not! Messy libraries are normal, and time-consuming to sort. We’re here to help. Feel free to remove any truly private or off-topic items, then send the rest our way.</p>",
-    "answer_fr": "<p>Absolument pas ! Les bibliothèques désorganisées sont courantes, et fastidieuses à classer. Nous nous en occupons. Supprimez juste les éléments trop privés ou hors sujet, et envoyez-nous le reste.</p>",
-    "order_index": 8,
-    "is_active": true
-  },
-  {
     "id": "1993f317-0b46-436e-8462-d6c6871dc6c7",
     "section_id": "general",
     "question_en": "First, what is a MEMOPYK souvenir film?",
     "question_fr": "Qu’est-ce qu’un film souvenir MEMOPYK ?",
     "answer_en": "It is a customized video that MEMOPYK creates uniquely for you, by using your own personal photos and videos as “source materials.” Through professional editing techniques, the film tells a story of your choice and allows you to relive your cherished memories of your life or your loved one’s.",
     "answer_fr": "C’est une vidéo personnalisée créée spécialement pour vous par MEMOPYK, à partir de vos propres photos et vidéos. Grâce au montage, le film raconte une histoire autour d’un thème de votre choix et vous permet de revivre les souvenirs précieux de votre vie ou de celle d’un proche.",
-    "order_index": 10,
+    "order_index": 9,
     "is_active": true
   },
   {
