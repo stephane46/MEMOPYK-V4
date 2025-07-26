@@ -72,6 +72,9 @@ export interface HybridStorageInterface {
   getUniqueVideoViews(dateFrom?: string, dateTo?: string): Promise<any[]>;
   getVideoReEngagementAnalytics(dateFrom?: string, dateTo?: string): Promise<any[]>;
 
+  // Time-series Analytics
+  getTimeSeriesData(dateFrom?: string, dateTo?: string): Promise<any[]>;
+
   // Real-time Analytics methods
   getRealtimeVisitors(): Promise<any[]>;
   updateVisitorActivity(sessionId: string, currentPage: string): Promise<any>;
@@ -2904,6 +2907,191 @@ export class HybridStorage implements HybridStorageInterface {
           'Low re-engagement - review content effectiveness'
       };
     });
+  }
+
+  // Time-series Analytics Implementation
+  async getTimeSeriesData(dateFrom?: string, dateTo?: string): Promise<any[]> {
+    try {
+      console.log(`📈 Getting time-series analytics data from ${dateFrom || 'beginning'} to ${dateTo || 'now'}`);
+      
+      if (this.supabase) {
+        console.log('📊 Using Supabase database for time-series data...');
+        // Database implementation - get daily aggregated data
+        let sessionQuery = this.supabase
+          .from('analytics_sessions')  
+          .select('created_at, country, language, session_id');
+        
+        let viewQuery = this.supabase
+          .from('analytics_views')
+          .select('created_at, session_id, video_id');
+
+        // Apply date filters if provided
+        if (dateFrom) {
+          sessionQuery = sessionQuery.gte('created_at', dateFrom);
+          viewQuery = viewQuery.gte('created_at', dateFrom);
+        }
+        if (dateTo) {
+          sessionQuery = sessionQuery.lte('created_at', dateTo);
+          viewQuery = viewQuery.lte('created_at', dateTo);
+        }
+
+        const [{ data: sessions }, { data: views }] = await Promise.all([
+          sessionQuery,
+          viewQuery
+        ]);
+
+        console.log(`📊 Database query results: sessions=${sessions?.length || 0}, views=${views?.length || 0}`);
+
+        // If no database data, fall back to JSON files (for test data)
+        if ((!sessions || sessions.length === 0) || (!views || views.length === 0)) {
+          console.log('📊 No database data found, falling back to JSON files...');
+          const sessionsPath = join(process.cwd(), 'server/data/analytics-sessions.json');
+          const viewsPath = join(process.cwd(), 'server/data/analytics-views.json');
+          
+          let jsonSessions = [];
+          let jsonViews = [];
+          
+          if (existsSync(sessionsPath)) {
+            jsonSessions = JSON.parse(readFileSync(sessionsPath, 'utf8'));
+          }
+          
+          if (existsSync(viewsPath)) {
+            jsonViews = JSON.parse(readFileSync(viewsPath, 'utf8'));
+          }
+
+          // Apply date filters for JSON data
+          if (dateFrom || dateTo) {
+            const fromDate = dateFrom ? new Date(dateFrom) : new Date('2000-01-01');
+            const toDate = dateTo ? new Date(dateTo) : new Date();
+            
+            jsonSessions = jsonSessions.filter((s: any) => {
+              const date = new Date(s.created_at || s.timestamp);
+              return date >= fromDate && date <= toDate;
+            });
+            
+            jsonViews = jsonViews.filter((v: any) => {
+              const date = new Date(v.created_at || v.timestamp);
+              return date >= fromDate && date <= toDate;
+            });
+          }
+
+          console.log(`📊 JSON fallback loaded: ${jsonSessions.length} sessions, ${jsonViews.length} views`);
+          return this.aggregateTimeSeriesData(jsonSessions, jsonViews);
+        }
+
+        return this.aggregateTimeSeriesData(sessions || [], views || []);
+      } else {
+        // JSON fallback implementation
+        const sessionsPath = join(process.cwd(), 'server/data/analytics-sessions.json');
+        const viewsPath = join(process.cwd(), 'server/data/analytics-views.json');
+        
+        let sessions = [];
+        let views = [];
+        
+        if (existsSync(sessionsPath)) {
+          sessions = JSON.parse(readFileSync(sessionsPath, 'utf8'));
+        }
+        
+        if (existsSync(viewsPath)) {
+          views = JSON.parse(readFileSync(viewsPath, 'utf8'));
+        }
+
+        // Apply date filters for JSON data
+        if (dateFrom || dateTo) {
+          const fromDate = dateFrom ? new Date(dateFrom) : new Date('2000-01-01');
+          const toDate = dateTo ? new Date(dateTo) : new Date();
+          
+          sessions = sessions.filter((s: any) => {
+            const date = new Date(s.created_at || s.timestamp);
+            return date >= fromDate && date <= toDate;
+          });
+          
+          views = views.filter((v: any) => {
+            const date = new Date(v.created_at || v.timestamp);
+            return date >= fromDate && date <= toDate;
+          });
+        }
+
+        console.log(`📊 JSON Data loaded: ${sessions.length} sessions, ${views.length} views`);
+        return this.aggregateTimeSeriesData(sessions, views);
+      }
+    } catch (error) {
+      console.error('❌ Error fetching time-series data:', error);
+      return [];
+    }
+  }
+
+  private aggregateTimeSeriesData(sessions: any[], views: any[]): any[] {
+    const dailyData = new Map();
+    console.log(`🔍 Aggregating: ${sessions.length} sessions, ${views.length} views`);
+
+    // Process sessions for daily visitor counts
+    sessions.forEach((session: any) => {
+      const date = new Date(session.created_at || session.timestamp);
+      const dayKey = date.toISOString().split('T')[0]; // YYYY-MM-DD format
+      
+      if (!dailyData.has(dayKey)) {
+        dailyData.set(dayKey, {
+          date: dayKey,
+          visitors: new Set(),
+          totalViews: 0,
+          uniqueViews: new Set(),
+          countries: new Set(),
+          avgSessionDuration: 0,
+          sessionsCount: 0
+        });
+      }
+      
+      const dayStats = dailyData.get(dayKey);
+      dayStats.visitors.add(session.session_id || session.sessionId);
+      dayStats.sessionsCount++;
+      
+      if (session.country) {
+        dayStats.countries.add(session.country);
+      }
+    });
+
+    // Process views for daily view counts
+    views.forEach((view: any) => {
+      const date = new Date(view.created_at || view.timestamp);
+      const dayKey = date.toISOString().split('T')[0];
+      
+      if (!dailyData.has(dayKey)) {
+        dailyData.set(dayKey, {
+          date: dayKey,
+          visitors: new Set(),
+          totalViews: 0,
+          uniqueViews: new Set(),
+          countries: new Set(),
+          avgSessionDuration: 0,
+          sessionsCount: 0
+        });
+      }
+      
+      const dayStats = dailyData.get(dayKey);
+      dayStats.totalViews++;
+      
+      const uniqueKey = `${view.session_id || view.sessionId}_${view.video_id || view.video_filename}`;
+      dayStats.uniqueViews.add(uniqueKey);
+    });
+
+    // Convert to array and calculate final metrics
+    const timeSeriesData = Array.from(dailyData.entries())
+      .map(([date, stats]: [string, any]) => ({
+        date,
+        visitors: stats.visitors.size,
+        totalViews: stats.totalViews,
+        uniqueViews: stats.uniqueViews.size,
+        countries: stats.countries.size,
+        sessions: stats.sessionsCount,
+        // Calculate average views per visitor
+        viewsPerVisitor: stats.visitors.size > 0 ? 
+          Math.round((stats.totalViews / stats.visitors.size) * 100) / 100 : 0
+      }))
+      .sort((a, b) => a.date.localeCompare(b.date));
+
+    console.log(`📊 Generated time-series data for ${timeSeriesData.length} days`);
+    return timeSeriesData;
   }
 }
 

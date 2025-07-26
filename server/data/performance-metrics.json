@@ -1,2682 +1,1742 @@
 [
   {
     "id": "TEST_metric_000",
-    "sessionId": "TEST_session_027",
-    "metricType": "server_health",
-    "value": "91.7",
-    "unit": "%",
-    "createdAt": "2025-07-20T23:05:29.453Z",
+    "sessionId": "TEST_session_011",
+    "metricType": "video_load",
+    "value": "961",
+    "unit": "ms",
+    "createdAt": "2025-07-24T00:24:08.586Z",
     "test_data": true,
-    "test_generated_at": "2025-07-26T16:51:28.621Z"
+    "test_generated_at": "2025-07-26T16:57:47.880Z"
   },
   {
     "id": "TEST_metric_001",
-    "sessionId": "TEST_session_070",
-    "metricType": "video_load",
-    "value": "221",
-    "unit": "ms",
-    "createdAt": "2025-07-21T09:04:06.867Z",
+    "sessionId": "TEST_session_007",
+    "metricType": "server_health",
+    "value": "18.8",
+    "unit": "%",
+    "createdAt": "2025-07-24T06:05:35.085Z",
     "test_data": true,
-    "test_generated_at": "2025-07-26T16:51:28.621Z"
+    "test_generated_at": "2025-07-26T16:57:47.880Z"
   },
   {
     "id": "TEST_metric_002",
-    "sessionId": "TEST_session_026",
-    "metricType": "page_load",
-    "value": "3281",
-    "unit": "ms",
-    "createdAt": "2025-07-21T21:12:03.064Z",
+    "sessionId": "TEST_session_046",
+    "metricType": "server_health",
+    "value": "20.0",
+    "unit": "%",
+    "createdAt": "2025-07-20T05:53:16.557Z",
     "test_data": true,
-    "test_generated_at": "2025-07-26T16:51:28.621Z"
+    "test_generated_at": "2025-07-26T16:57:47.880Z"
   },
   {
     "id": "TEST_metric_003",
-    "sessionId": "TEST_session_020",
-    "metricType": "page_load",
-    "value": "749",
+    "sessionId": "TEST_session_019",
+    "metricType": "api_response",
+    "value": "779",
     "unit": "ms",
-    "createdAt": "2025-07-24T01:28:39.928Z",
+    "createdAt": "2025-07-23T11:48:16.851Z",
     "test_data": true,
-    "test_generated_at": "2025-07-26T16:51:28.621Z"
+    "test_generated_at": "2025-07-26T16:57:47.880Z"
   },
   {
     "id": "TEST_metric_004",
-    "sessionId": "TEST_session_013",
+    "sessionId": "TEST_session_002",
     "metricType": "server_health",
-    "value": "27.1",
+    "value": "51.4",
     "unit": "%",
-    "createdAt": "2025-07-22T06:46:58.127Z",
+    "createdAt": "2025-07-21T15:55:28.932Z",
     "test_data": true,
-    "test_generated_at": "2025-07-26T16:51:28.621Z"
+    "test_generated_at": "2025-07-26T16:57:47.880Z"
   },
   {
     "id": "TEST_metric_005",
-    "sessionId": "TEST_session_002",
-    "metricType": "server_health",
-    "value": "3.5",
-    "unit": "%",
-    "createdAt": "2025-07-24T00:39:48.346Z",
+    "sessionId": "TEST_session_007",
+    "metricType": "video_load",
+    "value": "1541",
+    "unit": "ms",
+    "createdAt": "2025-07-25T15:23:58.697Z",
     "test_data": true,
-    "test_generated_at": "2025-07-26T16:51:28.621Z"
+    "test_generated_at": "2025-07-26T16:57:47.880Z"
   },
   {
     "id": "TEST_metric_006",
-    "sessionId": "TEST_session_030",
-    "metricType": "page_load",
-    "value": "859",
+    "sessionId": "TEST_session_044",
+    "metricType": "video_load",
+    "value": "1279",
     "unit": "ms",
-    "createdAt": "2025-07-26T09:03:41.529Z",
+    "createdAt": "2025-07-20T21:33:14.995Z",
     "test_data": true,
-    "test_generated_at": "2025-07-26T16:51:28.621Z"
+    "test_generated_at": "2025-07-26T16:57:47.880Z"
   },
   {
     "id": "TEST_metric_007",
-    "sessionId": "TEST_session_044",
+    "sessionId": "TEST_session_058",
     "metricType": "page_load",
-    "value": "3358",
+    "value": "1196",
     "unit": "ms",
-    "createdAt": "2025-07-20T03:24:13.465Z",
+    "createdAt": "2025-07-22T22:15:29.203Z",
     "test_data": true,
-    "test_generated_at": "2025-07-26T16:51:28.621Z"
+    "test_generated_at": "2025-07-26T16:57:47.880Z"
   },
   {
     "id": "TEST_metric_008",
-    "sessionId": "TEST_session_037",
-    "metricType": "api_response",
-    "value": "832",
-    "unit": "ms",
-    "createdAt": "2025-07-20T20:02:35.245Z",
+    "sessionId": "TEST_session_060",
+    "metricType": "server_health",
+    "value": "96.7",
+    "unit": "%",
+    "createdAt": "2025-07-21T00:16:05.926Z",
     "test_data": true,
-    "test_generated_at": "2025-07-26T16:51:28.621Z"
+    "test_generated_at": "2025-07-26T16:57:47.880Z"
   },
   {
     "id": "TEST_metric_009",
-    "sessionId": "TEST_session_073",
-    "metricType": "server_health",
-    "value": "21.7",
-    "unit": "%",
-    "createdAt": "2025-07-24T21:14:03.945Z",
+    "sessionId": "TEST_session_038",
+    "metricType": "video_load",
+    "value": "504",
+    "unit": "ms",
+    "createdAt": "2025-07-26T00:52:58.689Z",
     "test_data": true,
-    "test_generated_at": "2025-07-26T16:51:28.621Z"
+    "test_generated_at": "2025-07-26T16:57:47.880Z"
   },
   {
     "id": "TEST_metric_010",
-    "sessionId": "TEST_session_031",
+    "sessionId": "TEST_session_038",
     "metricType": "page_load",
-    "value": "2460",
+    "value": "1326",
     "unit": "ms",
-    "createdAt": "2025-07-21T08:15:56.424Z",
+    "createdAt": "2025-07-24T02:28:08.067Z",
     "test_data": true,
-    "test_generated_at": "2025-07-26T16:51:28.621Z"
+    "test_generated_at": "2025-07-26T16:57:47.880Z"
   },
   {
     "id": "TEST_metric_011",
-    "sessionId": "TEST_session_042",
-    "metricType": "server_health",
-    "value": "70.5",
-    "unit": "%",
-    "createdAt": "2025-07-20T16:55:48.269Z",
+    "sessionId": "TEST_session_072",
+    "metricType": "api_response",
+    "value": "919",
+    "unit": "ms",
+    "createdAt": "2025-07-25T01:12:25.355Z",
     "test_data": true,
-    "test_generated_at": "2025-07-26T16:51:28.621Z"
+    "test_generated_at": "2025-07-26T16:57:47.880Z"
   },
   {
     "id": "TEST_metric_012",
-    "sessionId": "TEST_session_053",
-    "metricType": "server_health",
-    "value": "90.1",
-    "unit": "%",
-    "createdAt": "2025-07-22T17:29:39.137Z",
+    "sessionId": "TEST_session_051",
+    "metricType": "api_response",
+    "value": "753",
+    "unit": "ms",
+    "createdAt": "2025-07-26T08:19:25.680Z",
     "test_data": true,
-    "test_generated_at": "2025-07-26T16:51:28.621Z"
+    "test_generated_at": "2025-07-26T16:57:47.880Z"
   },
   {
     "id": "TEST_metric_013",
-    "sessionId": "TEST_session_013",
-    "metricType": "page_load",
-    "value": "2988",
-    "unit": "ms",
-    "createdAt": "2025-07-21T19:41:49.128Z",
-    "test_data": true,
-    "test_generated_at": "2025-07-26T16:51:28.621Z"
-  },
-  {
-    "id": "TEST_metric_014",
-    "sessionId": "TEST_session_070",
-    "metricType": "api_response",
-    "value": "468",
-    "unit": "ms",
-    "createdAt": "2025-07-21T05:53:57.698Z",
-    "test_data": true,
-    "test_generated_at": "2025-07-26T16:51:28.621Z"
-  },
-  {
-    "id": "TEST_metric_015",
-    "sessionId": "TEST_session_004",
-    "metricType": "page_load",
-    "value": "724",
-    "unit": "ms",
-    "createdAt": "2025-07-24T21:01:43.076Z",
-    "test_data": true,
-    "test_generated_at": "2025-07-26T16:51:28.621Z"
-  },
-  {
-    "id": "TEST_metric_016",
-    "sessionId": "TEST_session_047",
-    "metricType": "api_response",
-    "value": "821",
-    "unit": "ms",
-    "createdAt": "2025-07-24T10:06:59.487Z",
-    "test_data": true,
-    "test_generated_at": "2025-07-26T16:51:28.621Z"
-  },
-  {
-    "id": "TEST_metric_017",
-    "sessionId": "TEST_session_008",
-    "metricType": "server_health",
-    "value": "2.1",
-    "unit": "%",
-    "createdAt": "2025-07-26T05:35:37.624Z",
-    "test_data": true,
-    "test_generated_at": "2025-07-26T16:51:28.621Z"
-  },
-  {
-    "id": "TEST_metric_018",
-    "sessionId": "TEST_session_065",
-    "metricType": "server_health",
-    "value": "5.6",
-    "unit": "%",
-    "createdAt": "2025-07-21T18:57:35.800Z",
-    "test_data": true,
-    "test_generated_at": "2025-07-26T16:51:28.621Z"
-  },
-  {
-    "id": "TEST_metric_019",
-    "sessionId": "TEST_session_072",
-    "metricType": "video_load",
-    "value": "1343",
-    "unit": "ms",
-    "createdAt": "2025-07-23T05:21:38.730Z",
-    "test_data": true,
-    "test_generated_at": "2025-07-26T16:51:28.621Z"
-  },
-  {
-    "id": "TEST_metric_020",
-    "sessionId": "TEST_session_063",
-    "metricType": "video_load",
-    "value": "1038",
-    "unit": "ms",
-    "createdAt": "2025-07-21T03:17:01.336Z",
-    "test_data": true,
-    "test_generated_at": "2025-07-26T16:51:28.621Z"
-  },
-  {
-    "id": "TEST_metric_021",
-    "sessionId": "TEST_session_035",
-    "metricType": "server_health",
-    "value": "80.2",
-    "unit": "%",
-    "createdAt": "2025-07-21T00:59:27.528Z",
-    "test_data": true,
-    "test_generated_at": "2025-07-26T16:51:28.621Z"
-  },
-  {
-    "id": "TEST_metric_022",
-    "sessionId": "TEST_session_033",
-    "metricType": "api_response",
-    "value": "482",
-    "unit": "ms",
-    "createdAt": "2025-07-26T05:31:31.541Z",
-    "test_data": true,
-    "test_generated_at": "2025-07-26T16:51:28.621Z"
-  },
-  {
-    "id": "TEST_metric_023",
-    "sessionId": "TEST_session_038",
-    "metricType": "video_load",
-    "value": "1661",
-    "unit": "ms",
-    "createdAt": "2025-07-21T21:00:29.528Z",
-    "test_data": true,
-    "test_generated_at": "2025-07-26T16:51:28.621Z"
-  },
-  {
-    "id": "TEST_metric_024",
-    "sessionId": "TEST_session_021",
-    "metricType": "server_health",
-    "value": "38.9",
-    "unit": "%",
-    "createdAt": "2025-07-24T04:43:29.481Z",
-    "test_data": true,
-    "test_generated_at": "2025-07-26T16:51:28.621Z"
-  },
-  {
-    "id": "TEST_metric_025",
-    "sessionId": "TEST_session_043",
-    "metricType": "server_health",
-    "value": "41.5",
-    "unit": "%",
-    "createdAt": "2025-07-22T03:24:54.193Z",
-    "test_data": true,
-    "test_generated_at": "2025-07-26T16:51:28.621Z"
-  },
-  {
-    "id": "TEST_metric_026",
-    "sessionId": "TEST_session_059",
-    "metricType": "api_response",
-    "value": "841",
-    "unit": "ms",
-    "createdAt": "2025-07-25T16:34:19.476Z",
-    "test_data": true,
-    "test_generated_at": "2025-07-26T16:51:28.621Z"
-  },
-  {
-    "id": "TEST_metric_027",
-    "sessionId": "TEST_session_046",
-    "metricType": "page_load",
-    "value": "2589",
-    "unit": "ms",
-    "createdAt": "2025-07-26T16:20:39.673Z",
-    "test_data": true,
-    "test_generated_at": "2025-07-26T16:51:28.621Z"
-  },
-  {
-    "id": "TEST_metric_028",
-    "sessionId": "TEST_session_018",
-    "metricType": "video_load",
-    "value": "2038",
-    "unit": "ms",
-    "createdAt": "2025-07-24T21:48:37.523Z",
-    "test_data": true,
-    "test_generated_at": "2025-07-26T16:51:28.621Z"
-  },
-  {
-    "id": "TEST_metric_029",
-    "sessionId": "TEST_session_051",
-    "metricType": "server_health",
-    "value": "1.0",
-    "unit": "%",
-    "createdAt": "2025-07-21T09:45:45.847Z",
-    "test_data": true,
-    "test_generated_at": "2025-07-26T16:51:28.621Z"
-  },
-  {
-    "id": "TEST_metric_030",
-    "sessionId": "TEST_session_039",
-    "metricType": "page_load",
-    "value": "1943",
-    "unit": "ms",
-    "createdAt": "2025-07-21T02:15:51.284Z",
-    "test_data": true,
-    "test_generated_at": "2025-07-26T16:51:28.621Z"
-  },
-  {
-    "id": "TEST_metric_031",
-    "sessionId": "TEST_session_001",
-    "metricType": "video_load",
-    "value": "1818",
-    "unit": "ms",
-    "createdAt": "2025-07-25T03:25:24.117Z",
-    "test_data": true,
-    "test_generated_at": "2025-07-26T16:51:28.621Z"
-  },
-  {
-    "id": "TEST_metric_032",
-    "sessionId": "TEST_session_033",
-    "metricType": "video_load",
-    "value": "1820",
-    "unit": "ms",
-    "createdAt": "2025-07-23T18:35:34.812Z",
-    "test_data": true,
-    "test_generated_at": "2025-07-26T16:51:28.621Z"
-  },
-  {
-    "id": "TEST_metric_033",
-    "sessionId": "TEST_session_027",
-    "metricType": "page_load",
-    "value": "2272",
-    "unit": "ms",
-    "createdAt": "2025-07-26T01:28:52.759Z",
-    "test_data": true,
-    "test_generated_at": "2025-07-26T16:51:28.621Z"
-  },
-  {
-    "id": "TEST_metric_034",
-    "sessionId": "TEST_session_024",
-    "metricType": "page_load",
-    "value": "3376",
-    "unit": "ms",
-    "createdAt": "2025-07-26T13:50:42.678Z",
-    "test_data": true,
-    "test_generated_at": "2025-07-26T16:51:28.621Z"
-  },
-  {
-    "id": "TEST_metric_035",
-    "sessionId": "TEST_session_027",
-    "metricType": "server_health",
-    "value": "16.9",
-    "unit": "%",
-    "createdAt": "2025-07-22T11:00:21.654Z",
-    "test_data": true,
-    "test_generated_at": "2025-07-26T16:51:28.621Z"
-  },
-  {
-    "id": "TEST_metric_036",
-    "sessionId": "TEST_session_022",
-    "metricType": "api_response",
-    "value": "1039",
-    "unit": "ms",
-    "createdAt": "2025-07-23T16:30:05.108Z",
-    "test_data": true,
-    "test_generated_at": "2025-07-26T16:51:28.621Z"
-  },
-  {
-    "id": "TEST_metric_037",
-    "sessionId": "TEST_session_048",
-    "metricType": "video_load",
-    "value": "523",
-    "unit": "ms",
-    "createdAt": "2025-07-24T18:22:28.961Z",
-    "test_data": true,
-    "test_generated_at": "2025-07-26T16:51:28.621Z"
-  },
-  {
-    "id": "TEST_metric_038",
-    "sessionId": "TEST_session_065",
-    "metricType": "page_load",
-    "value": "2034",
-    "unit": "ms",
-    "createdAt": "2025-07-26T11:04:28.397Z",
-    "test_data": true,
-    "test_generated_at": "2025-07-26T16:51:28.621Z"
-  },
-  {
-    "id": "TEST_metric_039",
-    "sessionId": "TEST_session_034",
-    "metricType": "api_response",
-    "value": "270",
-    "unit": "ms",
-    "createdAt": "2025-07-23T01:29:37.210Z",
-    "test_data": true,
-    "test_generated_at": "2025-07-26T16:51:28.621Z"
-  },
-  {
-    "id": "TEST_metric_040",
-    "sessionId": "TEST_session_044",
-    "metricType": "video_load",
-    "value": "1182",
-    "unit": "ms",
-    "createdAt": "2025-07-23T03:50:10.639Z",
-    "test_data": true,
-    "test_generated_at": "2025-07-26T16:51:28.621Z"
-  },
-  {
-    "id": "TEST_metric_041",
-    "sessionId": "TEST_session_062",
-    "metricType": "server_health",
-    "value": "4.1",
-    "unit": "%",
-    "createdAt": "2025-07-20T20:02:53.484Z",
-    "test_data": true,
-    "test_generated_at": "2025-07-26T16:51:28.621Z"
-  },
-  {
-    "id": "TEST_metric_042",
-    "sessionId": "TEST_session_010",
-    "metricType": "api_response",
-    "value": "539",
-    "unit": "ms",
-    "createdAt": "2025-07-23T01:16:47.101Z",
-    "test_data": true,
-    "test_generated_at": "2025-07-26T16:51:28.621Z"
-  },
-  {
-    "id": "TEST_metric_043",
-    "sessionId": "TEST_session_053",
-    "metricType": "api_response",
-    "value": "192",
-    "unit": "ms",
-    "createdAt": "2025-07-26T12:37:18.978Z",
-    "test_data": true,
-    "test_generated_at": "2025-07-26T16:51:28.621Z"
-  },
-  {
-    "id": "TEST_metric_044",
-    "sessionId": "TEST_session_056",
-    "metricType": "server_health",
-    "value": "7.6",
-    "unit": "%",
-    "createdAt": "2025-07-23T15:13:22.113Z",
-    "test_data": true,
-    "test_generated_at": "2025-07-26T16:51:28.621Z"
-  },
-  {
-    "id": "TEST_metric_045",
-    "sessionId": "TEST_session_025",
-    "metricType": "server_health",
-    "value": "55.5",
-    "unit": "%",
-    "createdAt": "2025-07-21T04:07:57.293Z",
-    "test_data": true,
-    "test_generated_at": "2025-07-26T16:51:28.621Z"
-  },
-  {
-    "id": "TEST_metric_046",
-    "sessionId": "TEST_session_025",
-    "metricType": "api_response",
-    "value": "710",
-    "unit": "ms",
-    "createdAt": "2025-07-24T04:16:03.748Z",
-    "test_data": true,
-    "test_generated_at": "2025-07-26T16:51:28.621Z"
-  },
-  {
-    "id": "TEST_metric_047",
-    "sessionId": "TEST_session_057",
-    "metricType": "video_load",
-    "value": "365",
-    "unit": "ms",
-    "createdAt": "2025-07-21T02:01:01.691Z",
-    "test_data": true,
-    "test_generated_at": "2025-07-26T16:51:28.621Z"
-  },
-  {
-    "id": "TEST_metric_048",
-    "sessionId": "TEST_session_043",
-    "metricType": "video_load",
-    "value": "1768",
-    "unit": "ms",
-    "createdAt": "2025-07-24T11:15:28.455Z",
-    "test_data": true,
-    "test_generated_at": "2025-07-26T16:51:28.621Z"
-  },
-  {
-    "id": "TEST_metric_049",
-    "sessionId": "TEST_session_023",
-    "metricType": "api_response",
-    "value": "409",
-    "unit": "ms",
-    "createdAt": "2025-07-26T10:12:40.861Z",
-    "test_data": true,
-    "test_generated_at": "2025-07-26T16:51:28.621Z"
-  },
-  {
-    "id": "TEST_metric_050",
-    "sessionId": "TEST_session_008",
-    "metricType": "api_response",
-    "value": "201",
-    "unit": "ms",
-    "createdAt": "2025-07-21T08:56:47.840Z",
-    "test_data": true,
-    "test_generated_at": "2025-07-26T16:51:28.621Z"
-  },
-  {
-    "id": "TEST_metric_051",
-    "sessionId": "TEST_session_068",
-    "metricType": "video_load",
-    "value": "1440",
-    "unit": "ms",
-    "createdAt": "2025-07-20T01:35:23.195Z",
-    "test_data": true,
-    "test_generated_at": "2025-07-26T16:51:28.621Z"
-  },
-  {
-    "id": "TEST_metric_052",
-    "sessionId": "TEST_session_034",
-    "metricType": "api_response",
-    "value": "669",
-    "unit": "ms",
-    "createdAt": "2025-07-25T22:30:45.805Z",
-    "test_data": true,
-    "test_generated_at": "2025-07-26T16:51:28.621Z"
-  },
-  {
-    "id": "TEST_metric_053",
-    "sessionId": "TEST_session_006",
-    "metricType": "api_response",
-    "value": "843",
-    "unit": "ms",
-    "createdAt": "2025-07-25T07:57:41.974Z",
-    "test_data": true,
-    "test_generated_at": "2025-07-26T16:51:28.621Z"
-  },
-  {
-    "id": "TEST_metric_054",
-    "sessionId": "TEST_session_043",
-    "metricType": "video_load",
-    "value": "1044",
-    "unit": "ms",
-    "createdAt": "2025-07-21T17:32:50.114Z",
-    "test_data": true,
-    "test_generated_at": "2025-07-26T16:51:28.621Z"
-  },
-  {
-    "id": "TEST_metric_055",
-    "sessionId": "TEST_session_046",
-    "metricType": "server_health",
-    "value": "14.8",
-    "unit": "%",
-    "createdAt": "2025-07-20T03:54:23.161Z",
-    "test_data": true,
-    "test_generated_at": "2025-07-26T16:51:28.621Z"
-  },
-  {
-    "id": "TEST_metric_056",
-    "sessionId": "TEST_session_042",
-    "metricType": "video_load",
-    "value": "1999",
-    "unit": "ms",
-    "createdAt": "2025-07-25T10:00:32.333Z",
-    "test_data": true,
-    "test_generated_at": "2025-07-26T16:51:28.621Z"
-  },
-  {
-    "id": "TEST_metric_057",
-    "sessionId": "TEST_session_031",
-    "metricType": "api_response",
-    "value": "467",
-    "unit": "ms",
-    "createdAt": "2025-07-21T03:51:31.409Z",
-    "test_data": true,
-    "test_generated_at": "2025-07-26T16:51:28.621Z"
-  },
-  {
-    "id": "TEST_metric_058",
-    "sessionId": "TEST_session_033",
-    "metricType": "video_load",
-    "value": "1264",
-    "unit": "ms",
-    "createdAt": "2025-07-20T07:42:56.743Z",
-    "test_data": true,
-    "test_generated_at": "2025-07-26T16:51:28.621Z"
-  },
-  {
-    "id": "TEST_metric_059",
-    "sessionId": "TEST_session_035",
-    "metricType": "api_response",
-    "value": "335",
-    "unit": "ms",
-    "createdAt": "2025-07-25T05:19:50.780Z",
-    "test_data": true,
-    "test_generated_at": "2025-07-26T16:51:28.621Z"
-  },
-  {
-    "id": "TEST_metric_060",
-    "sessionId": "TEST_session_032",
-    "metricType": "api_response",
-    "value": "162",
-    "unit": "ms",
-    "createdAt": "2025-07-20T18:02:42.181Z",
-    "test_data": true,
-    "test_generated_at": "2025-07-26T16:51:28.621Z"
-  },
-  {
-    "id": "TEST_metric_061",
-    "sessionId": "TEST_session_044",
-    "metricType": "page_load",
-    "value": "3309",
-    "unit": "ms",
-    "createdAt": "2025-07-21T11:08:07.333Z",
-    "test_data": true,
-    "test_generated_at": "2025-07-26T16:51:28.621Z"
-  },
-  {
-    "id": "TEST_metric_062",
-    "sessionId": "TEST_session_036",
-    "metricType": "api_response",
-    "value": "485",
-    "unit": "ms",
-    "createdAt": "2025-07-20T22:05:08.071Z",
-    "test_data": true,
-    "test_generated_at": "2025-07-26T16:51:28.621Z"
-  },
-  {
-    "id": "TEST_metric_063",
-    "sessionId": "TEST_session_006",
-    "metricType": "page_load",
-    "value": "761",
-    "unit": "ms",
-    "createdAt": "2025-07-21T12:14:46.894Z",
-    "test_data": true,
-    "test_generated_at": "2025-07-26T16:51:28.621Z"
-  },
-  {
-    "id": "TEST_metric_064",
-    "sessionId": "TEST_session_073",
-    "metricType": "page_load",
-    "value": "3438",
-    "unit": "ms",
-    "createdAt": "2025-07-25T16:27:05.138Z",
-    "test_data": true,
-    "test_generated_at": "2025-07-26T16:51:28.621Z"
-  },
-  {
-    "id": "TEST_metric_065",
-    "sessionId": "TEST_session_013",
-    "metricType": "api_response",
-    "value": "519",
-    "unit": "ms",
-    "createdAt": "2025-07-24T22:47:08.762Z",
-    "test_data": true,
-    "test_generated_at": "2025-07-26T16:51:28.621Z"
-  },
-  {
-    "id": "TEST_metric_066",
-    "sessionId": "TEST_session_006",
-    "metricType": "video_load",
-    "value": "1340",
-    "unit": "ms",
-    "createdAt": "2025-07-23T00:14:09.692Z",
-    "test_data": true,
-    "test_generated_at": "2025-07-26T16:51:28.621Z"
-  },
-  {
-    "id": "TEST_metric_067",
-    "sessionId": "TEST_session_070",
-    "metricType": "api_response",
-    "value": "250",
-    "unit": "ms",
-    "createdAt": "2025-07-24T10:01:31.186Z",
-    "test_data": true,
-    "test_generated_at": "2025-07-26T16:51:28.621Z"
-  },
-  {
-    "id": "TEST_metric_068",
-    "sessionId": "TEST_session_025",
-    "metricType": "page_load",
-    "value": "1409",
-    "unit": "ms",
-    "createdAt": "2025-07-23T00:36:27.938Z",
-    "test_data": true,
-    "test_generated_at": "2025-07-26T16:51:28.621Z"
-  },
-  {
-    "id": "TEST_metric_069",
-    "sessionId": "TEST_session_020",
-    "metricType": "server_health",
-    "value": "73.7",
-    "unit": "%",
-    "createdAt": "2025-07-21T06:01:18.242Z",
-    "test_data": true,
-    "test_generated_at": "2025-07-26T16:51:28.621Z"
-  },
-  {
-    "id": "TEST_metric_070",
-    "sessionId": "TEST_session_059",
-    "metricType": "api_response",
-    "value": "125",
-    "unit": "ms",
-    "createdAt": "2025-07-24T22:07:07.151Z",
-    "test_data": true,
-    "test_generated_at": "2025-07-26T16:51:28.621Z"
-  },
-  {
-    "id": "TEST_metric_071",
-    "sessionId": "TEST_session_009",
-    "metricType": "video_load",
-    "value": "1414",
-    "unit": "ms",
-    "createdAt": "2025-07-20T12:33:13.092Z",
-    "test_data": true,
-    "test_generated_at": "2025-07-26T16:51:28.621Z"
-  },
-  {
-    "id": "TEST_metric_072",
-    "sessionId": "TEST_session_055",
-    "metricType": "api_response",
-    "value": "731",
-    "unit": "ms",
-    "createdAt": "2025-07-23T19:15:36.160Z",
-    "test_data": true,
-    "test_generated_at": "2025-07-26T16:51:28.621Z"
-  },
-  {
-    "id": "TEST_metric_073",
-    "sessionId": "TEST_session_039",
-    "metricType": "api_response",
-    "value": "738",
-    "unit": "ms",
-    "createdAt": "2025-07-22T08:22:57.687Z",
-    "test_data": true,
-    "test_generated_at": "2025-07-26T16:51:28.621Z"
-  },
-  {
-    "id": "TEST_metric_074",
-    "sessionId": "TEST_session_064",
-    "metricType": "api_response",
-    "value": "562",
-    "unit": "ms",
-    "createdAt": "2025-07-22T09:52:44.897Z",
-    "test_data": true,
-    "test_generated_at": "2025-07-26T16:51:28.621Z"
-  },
-  {
-    "id": "TEST_metric_075",
-    "sessionId": "TEST_session_045",
-    "metricType": "page_load",
-    "value": "1167",
-    "unit": "ms",
-    "createdAt": "2025-07-25T18:26:03.587Z",
-    "test_data": true,
-    "test_generated_at": "2025-07-26T16:51:28.621Z"
-  },
-  {
-    "id": "TEST_metric_076",
-    "sessionId": "TEST_session_045",
-    "metricType": "api_response",
-    "value": "393",
-    "unit": "ms",
-    "createdAt": "2025-07-21T12:53:40.812Z",
-    "test_data": true,
-    "test_generated_at": "2025-07-26T16:51:28.621Z"
-  },
-  {
-    "id": "TEST_metric_077",
-    "sessionId": "TEST_session_038",
-    "metricType": "page_load",
-    "value": "2160",
-    "unit": "ms",
-    "createdAt": "2025-07-26T03:00:56.666Z",
-    "test_data": true,
-    "test_generated_at": "2025-07-26T16:51:28.621Z"
-  },
-  {
-    "id": "TEST_metric_078",
-    "sessionId": "TEST_session_062",
-    "metricType": "api_response",
-    "value": "1048",
-    "unit": "ms",
-    "createdAt": "2025-07-23T18:19:16.684Z",
-    "test_data": true,
-    "test_generated_at": "2025-07-26T16:51:28.622Z"
-  },
-  {
-    "id": "TEST_metric_079",
-    "sessionId": "TEST_session_018",
-    "metricType": "server_health",
-    "value": "43.7",
-    "unit": "%",
-    "createdAt": "2025-07-25T03:54:47.465Z",
-    "test_data": true,
-    "test_generated_at": "2025-07-26T16:51:28.622Z"
-  },
-  {
-    "id": "TEST_metric_080",
-    "sessionId": "TEST_session_002",
-    "metricType": "page_load",
-    "value": "2927",
-    "unit": "ms",
-    "createdAt": "2025-07-24T06:54:57.418Z",
-    "test_data": true,
-    "test_generated_at": "2025-07-26T16:51:28.622Z"
-  },
-  {
-    "id": "TEST_metric_081",
-    "sessionId": "TEST_session_049",
-    "metricType": "server_health",
-    "value": "13.1",
-    "unit": "%",
-    "createdAt": "2025-07-25T03:43:46.983Z",
-    "test_data": true,
-    "test_generated_at": "2025-07-26T16:51:28.622Z"
-  },
-  {
-    "id": "TEST_metric_082",
-    "sessionId": "TEST_session_034",
-    "metricType": "page_load",
-    "value": "814",
-    "unit": "ms",
-    "createdAt": "2025-07-24T16:11:17.985Z",
-    "test_data": true,
-    "test_generated_at": "2025-07-26T16:51:28.622Z"
-  },
-  {
-    "id": "TEST_metric_083",
-    "sessionId": "TEST_session_066",
-    "metricType": "page_load",
-    "value": "535",
-    "unit": "ms",
-    "createdAt": "2025-07-24T02:12:51.226Z",
-    "test_data": true,
-    "test_generated_at": "2025-07-26T16:51:28.622Z"
-  },
-  {
-    "id": "TEST_metric_084",
-    "sessionId": "TEST_session_068",
-    "metricType": "page_load",
-    "value": "3491",
-    "unit": "ms",
-    "createdAt": "2025-07-19T19:58:50.893Z",
-    "test_data": true,
-    "test_generated_at": "2025-07-26T16:51:28.622Z"
-  },
-  {
-    "id": "TEST_metric_085",
-    "sessionId": "TEST_session_040",
-    "metricType": "server_health",
-    "value": "19.7",
-    "unit": "%",
-    "createdAt": "2025-07-25T05:52:15.523Z",
-    "test_data": true,
-    "test_generated_at": "2025-07-26T16:51:28.622Z"
-  },
-  {
-    "id": "TEST_metric_086",
-    "sessionId": "TEST_session_070",
-    "metricType": "server_health",
-    "value": "82.8",
-    "unit": "%",
-    "createdAt": "2025-07-26T06:39:56.424Z",
-    "test_data": true,
-    "test_generated_at": "2025-07-26T16:51:28.622Z"
-  },
-  {
-    "id": "TEST_metric_087",
-    "sessionId": "TEST_session_036",
-    "metricType": "server_health",
-    "value": "87.8",
-    "unit": "%",
-    "createdAt": "2025-07-19T20:43:39.654Z",
-    "test_data": true,
-    "test_generated_at": "2025-07-26T16:51:28.622Z"
-  },
-  {
-    "id": "TEST_metric_088",
-    "sessionId": "TEST_session_019",
-    "metricType": "video_load",
-    "value": "1061",
-    "unit": "ms",
-    "createdAt": "2025-07-24T10:28:28.922Z",
-    "test_data": true,
-    "test_generated_at": "2025-07-26T16:51:28.622Z"
-  },
-  {
-    "id": "TEST_metric_089",
-    "sessionId": "TEST_session_007",
-    "metricType": "page_load",
-    "value": "1151",
-    "unit": "ms",
-    "createdAt": "2025-07-25T16:59:25.221Z",
-    "test_data": true,
-    "test_generated_at": "2025-07-26T16:51:28.622Z"
-  },
-  {
-    "id": "TEST_metric_090",
-    "sessionId": "TEST_session_069",
-    "metricType": "server_health",
-    "value": "64.5",
-    "unit": "%",
-    "createdAt": "2025-07-23T14:53:59.214Z",
-    "test_data": true,
-    "test_generated_at": "2025-07-26T16:51:28.622Z"
-  },
-  {
-    "id": "TEST_metric_091",
-    "sessionId": "TEST_session_029",
-    "metricType": "video_load",
-    "value": "979",
-    "unit": "ms",
-    "createdAt": "2025-07-25T00:50:53.882Z",
-    "test_data": true,
-    "test_generated_at": "2025-07-26T16:51:28.622Z"
-  },
-  {
-    "id": "TEST_metric_092",
-    "sessionId": "TEST_session_052",
-    "metricType": "page_load",
-    "value": "1017",
-    "unit": "ms",
-    "createdAt": "2025-07-21T18:54:41.470Z",
-    "test_data": true,
-    "test_generated_at": "2025-07-26T16:51:28.622Z"
-  },
-  {
-    "id": "TEST_metric_093",
-    "sessionId": "TEST_session_038",
-    "metricType": "video_load",
-    "value": "2014",
-    "unit": "ms",
-    "createdAt": "2025-07-20T15:34:46.056Z",
-    "test_data": true,
-    "test_generated_at": "2025-07-26T16:51:28.622Z"
-  },
-  {
-    "id": "TEST_metric_094",
-    "sessionId": "TEST_session_011",
-    "metricType": "page_load",
-    "value": "2277",
-    "unit": "ms",
-    "createdAt": "2025-07-21T05:17:44.780Z",
-    "test_data": true,
-    "test_generated_at": "2025-07-26T16:51:28.622Z"
-  },
-  {
-    "id": "TEST_metric_095",
-    "sessionId": "TEST_session_032",
-    "metricType": "server_health",
-    "value": "7.1",
-    "unit": "%",
-    "createdAt": "2025-07-24T02:33:49.208Z",
-    "test_data": true,
-    "test_generated_at": "2025-07-26T16:51:28.622Z"
-  },
-  {
-    "id": "TEST_metric_096",
-    "sessionId": "TEST_session_044",
-    "metricType": "video_load",
-    "value": "1498",
-    "unit": "ms",
-    "createdAt": "2025-07-25T14:26:13.892Z",
-    "test_data": true,
-    "test_generated_at": "2025-07-26T16:51:28.622Z"
-  },
-  {
-    "id": "TEST_metric_097",
-    "sessionId": "TEST_session_019",
-    "metricType": "server_health",
-    "value": "78.3",
-    "unit": "%",
-    "createdAt": "2025-07-26T15:07:09.081Z",
-    "test_data": true,
-    "test_generated_at": "2025-07-26T16:51:28.622Z"
-  },
-  {
-    "id": "TEST_metric_098",
-    "sessionId": "TEST_session_017",
-    "metricType": "api_response",
-    "value": "805",
-    "unit": "ms",
-    "createdAt": "2025-07-22T17:44:05.003Z",
-    "test_data": true,
-    "test_generated_at": "2025-07-26T16:51:28.622Z"
-  },
-  {
-    "id": "TEST_metric_099",
     "sessionId": "TEST_session_067",
     "metricType": "server_health",
-    "value": "28.8",
+    "value": "97.6",
     "unit": "%",
-    "createdAt": "2025-07-20T05:49:54.279Z",
+    "createdAt": "2025-07-22T00:51:12.540Z",
     "test_data": true,
-    "test_generated_at": "2025-07-26T16:51:28.622Z"
-  },
-  {
-    "id": "TEST_metric_100",
-    "sessionId": "TEST_session_024",
-    "metricType": "api_response",
-    "value": "269",
-    "unit": "ms",
-    "createdAt": "2025-07-23T07:29:22.210Z",
-    "test_data": true,
-    "test_generated_at": "2025-07-26T16:51:28.622Z"
-  },
-  {
-    "id": "TEST_metric_101",
-    "sessionId": "TEST_session_045",
-    "metricType": "api_response",
-    "value": "739",
-    "unit": "ms",
-    "createdAt": "2025-07-26T13:47:08.214Z",
-    "test_data": true,
-    "test_generated_at": "2025-07-26T16:51:28.622Z"
-  },
-  {
-    "id": "TEST_metric_102",
-    "sessionId": "TEST_session_045",
-    "metricType": "page_load",
-    "value": "3448",
-    "unit": "ms",
-    "createdAt": "2025-07-21T14:37:07.173Z",
-    "test_data": true,
-    "test_generated_at": "2025-07-26T16:51:28.622Z"
-  },
-  {
-    "id": "TEST_metric_103",
-    "sessionId": "TEST_session_060",
-    "metricType": "video_load",
-    "value": "738",
-    "unit": "ms",
-    "createdAt": "2025-07-23T19:21:10.971Z",
-    "test_data": true,
-    "test_generated_at": "2025-07-26T16:51:28.622Z"
-  },
-  {
-    "id": "TEST_metric_104",
-    "sessionId": "TEST_session_043",
-    "metricType": "server_health",
-    "value": "9.7",
-    "unit": "%",
-    "createdAt": "2025-07-23T09:10:40.769Z",
-    "test_data": true,
-    "test_generated_at": "2025-07-26T16:51:28.622Z"
-  },
-  {
-    "id": "TEST_metric_105",
-    "sessionId": "TEST_session_044",
-    "metricType": "server_health",
-    "value": "85.8",
-    "unit": "%",
-    "createdAt": "2025-07-24T23:45:03.194Z",
-    "test_data": true,
-    "test_generated_at": "2025-07-26T16:51:28.622Z"
-  },
-  {
-    "id": "TEST_metric_106",
-    "sessionId": "TEST_session_002",
-    "metricType": "page_load",
-    "value": "1495",
-    "unit": "ms",
-    "createdAt": "2025-07-20T06:53:12.491Z",
-    "test_data": true,
-    "test_generated_at": "2025-07-26T16:51:28.622Z"
-  },
-  {
-    "id": "TEST_metric_107",
-    "sessionId": "TEST_session_072",
-    "metricType": "video_load",
-    "value": "2084",
-    "unit": "ms",
-    "createdAt": "2025-07-22T11:55:02.928Z",
-    "test_data": true,
-    "test_generated_at": "2025-07-26T16:51:28.622Z"
-  },
-  {
-    "id": "TEST_metric_108",
-    "sessionId": "TEST_session_009",
-    "metricType": "page_load",
-    "value": "2033",
-    "unit": "ms",
-    "createdAt": "2025-07-24T14:24:28.530Z",
-    "test_data": true,
-    "test_generated_at": "2025-07-26T16:51:28.622Z"
-  },
-  {
-    "id": "TEST_metric_109",
-    "sessionId": "TEST_session_001",
-    "metricType": "page_load",
-    "value": "3392",
-    "unit": "ms",
-    "createdAt": "2025-07-24T15:55:30.329Z",
-    "test_data": true,
-    "test_generated_at": "2025-07-26T16:51:28.622Z"
-  },
-  {
-    "id": "TEST_metric_110",
-    "sessionId": "TEST_session_069",
-    "metricType": "page_load",
-    "value": "970",
-    "unit": "ms",
-    "createdAt": "2025-07-21T07:48:09.081Z",
-    "test_data": true,
-    "test_generated_at": "2025-07-26T16:51:28.622Z"
-  },
-  {
-    "id": "TEST_metric_111",
-    "sessionId": "TEST_session_045",
-    "metricType": "server_health",
-    "value": "22.5",
-    "unit": "%",
-    "createdAt": "2025-07-25T19:58:43.886Z",
-    "test_data": true,
-    "test_generated_at": "2025-07-26T16:51:28.622Z"
-  },
-  {
-    "id": "TEST_metric_112",
-    "sessionId": "TEST_session_072",
-    "metricType": "video_load",
-    "value": "1212",
-    "unit": "ms",
-    "createdAt": "2025-07-25T17:34:25.041Z",
-    "test_data": true,
-    "test_generated_at": "2025-07-26T16:51:28.622Z"
-  },
-  {
-    "id": "TEST_metric_113",
-    "sessionId": "TEST_session_039",
-    "metricType": "video_load",
-    "value": "1660",
-    "unit": "ms",
-    "createdAt": "2025-07-21T16:34:18.131Z",
-    "test_data": true,
-    "test_generated_at": "2025-07-26T16:51:28.622Z"
-  },
-  {
-    "id": "TEST_metric_114",
-    "sessionId": "TEST_session_058",
-    "metricType": "page_load",
-    "value": "1580",
-    "unit": "ms",
-    "createdAt": "2025-07-26T09:38:19.730Z",
-    "test_data": true,
-    "test_generated_at": "2025-07-26T16:51:28.622Z"
-  },
-  {
-    "id": "TEST_metric_115",
-    "sessionId": "TEST_session_072",
-    "metricType": "api_response",
-    "value": "642",
-    "unit": "ms",
-    "createdAt": "2025-07-25T12:44:39.004Z",
-    "test_data": true,
-    "test_generated_at": "2025-07-26T16:51:28.622Z"
-  },
-  {
-    "id": "TEST_metric_116",
-    "sessionId": "TEST_session_065",
-    "metricType": "page_load",
-    "value": "2936",
-    "unit": "ms",
-    "createdAt": "2025-07-21T18:34:34.108Z",
-    "test_data": true,
-    "test_generated_at": "2025-07-26T16:51:28.622Z"
-  },
-  {
-    "id": "TEST_metric_117",
-    "sessionId": "TEST_session_055",
-    "metricType": "server_health",
-    "value": "42.0",
-    "unit": "%",
-    "createdAt": "2025-07-25T12:33:26.586Z",
-    "test_data": true,
-    "test_generated_at": "2025-07-26T16:51:28.622Z"
-  },
-  {
-    "id": "TEST_metric_118",
-    "sessionId": "TEST_session_063",
-    "metricType": "page_load",
-    "value": "1814",
-    "unit": "ms",
-    "createdAt": "2025-07-19T20:06:07.367Z",
-    "test_data": true,
-    "test_generated_at": "2025-07-26T16:51:28.622Z"
-  },
-  {
-    "id": "TEST_metric_119",
-    "sessionId": "TEST_session_063",
-    "metricType": "api_response",
-    "value": "812",
-    "unit": "ms",
-    "createdAt": "2025-07-21T06:17:42.266Z",
-    "test_data": true,
-    "test_generated_at": "2025-07-26T16:51:28.622Z"
-  },
-  {
-    "id": "TEST_metric_120",
-    "sessionId": "TEST_session_057",
-    "metricType": "page_load",
-    "value": "2414",
-    "unit": "ms",
-    "createdAt": "2025-07-23T07:00:28.794Z",
-    "test_data": true,
-    "test_generated_at": "2025-07-26T16:51:28.622Z"
-  },
-  {
-    "id": "TEST_metric_121",
-    "sessionId": "TEST_session_025",
-    "metricType": "api_response",
-    "value": "399",
-    "unit": "ms",
-    "createdAt": "2025-07-25T13:19:53.809Z",
-    "test_data": true,
-    "test_generated_at": "2025-07-26T16:51:28.622Z"
-  },
-  {
-    "id": "TEST_metric_122",
-    "sessionId": "TEST_session_042",
-    "metricType": "video_load",
-    "value": "1042",
-    "unit": "ms",
-    "createdAt": "2025-07-24T19:08:10.310Z",
-    "test_data": true,
-    "test_generated_at": "2025-07-26T16:51:28.622Z"
-  },
-  {
-    "id": "TEST_metric_123",
-    "sessionId": "TEST_session_068",
-    "metricType": "video_load",
-    "value": "1337",
-    "unit": "ms",
-    "createdAt": "2025-07-20T19:57:18.051Z",
-    "test_data": true,
-    "test_generated_at": "2025-07-26T16:51:28.622Z"
-  },
-  {
-    "id": "TEST_metric_124",
-    "sessionId": "TEST_session_016",
-    "metricType": "server_health",
-    "value": "26.6",
-    "unit": "%",
-    "createdAt": "2025-07-20T15:41:13.696Z",
-    "test_data": true,
-    "test_generated_at": "2025-07-26T16:51:28.622Z"
-  },
-  {
-    "id": "TEST_metric_125",
-    "sessionId": "TEST_session_023",
-    "metricType": "api_response",
-    "value": "718",
-    "unit": "ms",
-    "createdAt": "2025-07-22T00:27:37.011Z",
-    "test_data": true,
-    "test_generated_at": "2025-07-26T16:51:28.622Z"
-  },
-  {
-    "id": "TEST_metric_126",
-    "sessionId": "TEST_session_007",
-    "metricType": "video_load",
-    "value": "1928",
-    "unit": "ms",
-    "createdAt": "2025-07-25T13:49:02.502Z",
-    "test_data": true,
-    "test_generated_at": "2025-07-26T16:51:28.622Z"
-  },
-  {
-    "id": "TEST_metric_127",
-    "sessionId": "TEST_session_029",
-    "metricType": "page_load",
-    "value": "2209",
-    "unit": "ms",
-    "createdAt": "2025-07-24T14:20:13.126Z",
-    "test_data": true,
-    "test_generated_at": "2025-07-26T16:51:28.622Z"
-  },
-  {
-    "id": "TEST_metric_128",
-    "sessionId": "TEST_session_061",
-    "metricType": "video_load",
-    "value": "254",
-    "unit": "ms",
-    "createdAt": "2025-07-20T03:04:36.873Z",
-    "test_data": true,
-    "test_generated_at": "2025-07-26T16:51:28.622Z"
-  },
-  {
-    "id": "TEST_metric_129",
-    "sessionId": "TEST_session_066",
-    "metricType": "video_load",
-    "value": "563",
-    "unit": "ms",
-    "createdAt": "2025-07-23T09:42:37.212Z",
-    "test_data": true,
-    "test_generated_at": "2025-07-26T16:51:28.622Z"
-  },
-  {
-    "id": "TEST_metric_130",
-    "sessionId": "TEST_session_066",
-    "metricType": "server_health",
-    "value": "61.8",
-    "unit": "%",
-    "createdAt": "2025-07-19T18:02:30.384Z",
-    "test_data": true,
-    "test_generated_at": "2025-07-26T16:51:28.622Z"
-  },
-  {
-    "id": "TEST_metric_131",
-    "sessionId": "TEST_session_008",
-    "metricType": "video_load",
-    "value": "760",
-    "unit": "ms",
-    "createdAt": "2025-07-21T10:02:42.047Z",
-    "test_data": true,
-    "test_generated_at": "2025-07-26T16:51:28.622Z"
-  },
-  {
-    "id": "TEST_metric_132",
-    "sessionId": "TEST_session_034",
-    "metricType": "page_load",
-    "value": "650",
-    "unit": "ms",
-    "createdAt": "2025-07-23T11:57:19.986Z",
-    "test_data": true,
-    "test_generated_at": "2025-07-26T16:51:28.622Z"
-  },
-  {
-    "id": "TEST_metric_133",
-    "sessionId": "TEST_session_024",
-    "metricType": "video_load",
-    "value": "1964",
-    "unit": "ms",
-    "createdAt": "2025-07-25T04:14:00.292Z",
-    "test_data": true,
-    "test_generated_at": "2025-07-26T16:51:28.622Z"
-  },
-  {
-    "id": "TEST_metric_134",
-    "sessionId": "TEST_session_016",
-    "metricType": "api_response",
-    "value": "962",
-    "unit": "ms",
-    "createdAt": "2025-07-26T04:07:47.045Z",
-    "test_data": true,
-    "test_generated_at": "2025-07-26T16:51:28.622Z"
-  },
-  {
-    "id": "TEST_metric_135",
-    "sessionId": "TEST_session_069",
-    "metricType": "video_load",
-    "value": "2011",
-    "unit": "ms",
-    "createdAt": "2025-07-24T10:26:47.137Z",
-    "test_data": true,
-    "test_generated_at": "2025-07-26T16:51:28.622Z"
-  },
-  {
-    "id": "TEST_metric_136",
-    "sessionId": "TEST_session_039",
-    "metricType": "video_load",
-    "value": "1256",
-    "unit": "ms",
-    "createdAt": "2025-07-25T02:51:21.634Z",
-    "test_data": true,
-    "test_generated_at": "2025-07-26T16:51:28.622Z"
-  },
-  {
-    "id": "TEST_metric_137",
-    "sessionId": "TEST_session_050",
-    "metricType": "api_response",
-    "value": "906",
-    "unit": "ms",
-    "createdAt": "2025-07-20T17:24:29.770Z",
-    "test_data": true,
-    "test_generated_at": "2025-07-26T16:51:28.622Z"
-  },
-  {
-    "id": "TEST_metric_138",
-    "sessionId": "TEST_session_056",
-    "metricType": "video_load",
-    "value": "582",
-    "unit": "ms",
-    "createdAt": "2025-07-25T00:29:53.913Z",
-    "test_data": true,
-    "test_generated_at": "2025-07-26T16:51:28.622Z"
-  },
-  {
-    "id": "TEST_metric_139",
-    "sessionId": "TEST_session_018",
-    "metricType": "api_response",
-    "value": "816",
-    "unit": "ms",
-    "createdAt": "2025-07-26T05:20:59.224Z",
-    "test_data": true,
-    "test_generated_at": "2025-07-26T16:51:28.622Z"
-  },
-  {
-    "id": "TEST_metric_140",
-    "sessionId": "TEST_session_026",
-    "metricType": "video_load",
-    "value": "1578",
-    "unit": "ms",
-    "createdAt": "2025-07-23T15:27:28.323Z",
-    "test_data": true,
-    "test_generated_at": "2025-07-26T16:51:28.622Z"
-  },
-  {
-    "id": "TEST_metric_141",
-    "sessionId": "TEST_session_006",
-    "metricType": "video_load",
-    "value": "1917",
-    "unit": "ms",
-    "createdAt": "2025-07-24T15:21:30.622Z",
-    "test_data": true,
-    "test_generated_at": "2025-07-26T16:51:28.622Z"
-  },
-  {
-    "id": "TEST_metric_142",
-    "sessionId": "TEST_session_073",
-    "metricType": "api_response",
-    "value": "634",
-    "unit": "ms",
-    "createdAt": "2025-07-23T12:13:52.028Z",
-    "test_data": true,
-    "test_generated_at": "2025-07-26T16:51:28.622Z"
-  },
-  {
-    "id": "TEST_metric_143",
-    "sessionId": "TEST_session_071",
-    "metricType": "api_response",
-    "value": "146",
-    "unit": "ms",
-    "createdAt": "2025-07-22T03:05:20.570Z",
-    "test_data": true,
-    "test_generated_at": "2025-07-26T16:51:28.622Z"
-  },
-  {
-    "id": "TEST_metric_144",
-    "sessionId": "TEST_session_037",
-    "metricType": "server_health",
-    "value": "78.3",
-    "unit": "%",
-    "createdAt": "2025-07-25T19:31:06.578Z",
-    "test_data": true,
-    "test_generated_at": "2025-07-26T16:51:28.622Z"
-  },
-  {
-    "id": "TEST_metric_145",
-    "sessionId": "TEST_session_056",
-    "metricType": "api_response",
-    "value": "1008",
-    "unit": "ms",
-    "createdAt": "2025-07-26T07:26:56.096Z",
-    "test_data": true,
-    "test_generated_at": "2025-07-26T16:51:28.622Z"
-  },
-  {
-    "id": "TEST_metric_146",
-    "sessionId": "TEST_session_004",
-    "metricType": "video_load",
-    "value": "724",
-    "unit": "ms",
-    "createdAt": "2025-07-21T10:12:21.656Z",
-    "test_data": true,
-    "test_generated_at": "2025-07-26T16:51:28.622Z"
-  },
-  {
-    "id": "TEST_metric_147",
-    "sessionId": "TEST_session_046",
-    "metricType": "api_response",
-    "value": "439",
-    "unit": "ms",
-    "createdAt": "2025-07-25T13:16:28.898Z",
-    "test_data": true,
-    "test_generated_at": "2025-07-26T16:51:28.622Z"
-  },
-  {
-    "id": "TEST_metric_148",
-    "sessionId": "TEST_session_035",
-    "metricType": "server_health",
-    "value": "15.1",
-    "unit": "%",
-    "createdAt": "2025-07-21T17:28:06.419Z",
-    "test_data": true,
-    "test_generated_at": "2025-07-26T16:51:28.622Z"
-  },
-  {
-    "id": "TEST_metric_149",
-    "sessionId": "TEST_session_030",
-    "metricType": "server_health",
-    "value": "5.0",
-    "unit": "%",
-    "createdAt": "2025-07-25T18:55:23.638Z",
-    "test_data": true,
-    "test_generated_at": "2025-07-26T16:51:28.622Z"
-  },
-  {
-    "id": "TEST_metric_150",
-    "sessionId": "TEST_session_019",
-    "metricType": "video_load",
-    "value": "1745",
-    "unit": "ms",
-    "createdAt": "2025-07-21T05:05:20.955Z",
-    "test_data": true,
-    "test_generated_at": "2025-07-26T16:51:28.622Z"
-  },
-  {
-    "id": "TEST_metric_151",
-    "sessionId": "TEST_session_052",
-    "metricType": "page_load",
-    "value": "1919",
-    "unit": "ms",
-    "createdAt": "2025-07-20T17:38:27.366Z",
-    "test_data": true,
-    "test_generated_at": "2025-07-26T16:51:28.622Z"
-  },
-  {
-    "id": "TEST_metric_152",
-    "sessionId": "TEST_session_064",
-    "metricType": "page_load",
-    "value": "3416",
-    "unit": "ms",
-    "createdAt": "2025-07-24T10:08:16.107Z",
-    "test_data": true,
-    "test_generated_at": "2025-07-26T16:51:28.622Z"
-  },
-  {
-    "id": "TEST_metric_153",
-    "sessionId": "TEST_session_005",
-    "metricType": "video_load",
-    "value": "843",
-    "unit": "ms",
-    "createdAt": "2025-07-23T04:51:00.962Z",
-    "test_data": true,
-    "test_generated_at": "2025-07-26T16:51:28.622Z"
-  },
-  {
-    "id": "TEST_metric_154",
-    "sessionId": "TEST_session_002",
-    "metricType": "api_response",
-    "value": "915",
-    "unit": "ms",
-    "createdAt": "2025-07-25T05:43:35.601Z",
-    "test_data": true,
-    "test_generated_at": "2025-07-26T16:51:28.622Z"
-  },
-  {
-    "id": "TEST_metric_155",
-    "sessionId": "TEST_session_017",
-    "metricType": "api_response",
-    "value": "937",
-    "unit": "ms",
-    "createdAt": "2025-07-19T21:49:56.760Z",
-    "test_data": true,
-    "test_generated_at": "2025-07-26T16:51:28.622Z"
-  },
-  {
-    "id": "TEST_metric_156",
-    "sessionId": "TEST_session_008",
-    "metricType": "api_response",
-    "value": "288",
-    "unit": "ms",
-    "createdAt": "2025-07-26T11:21:13.135Z",
-    "test_data": true,
-    "test_generated_at": "2025-07-26T16:51:28.622Z"
-  },
-  {
-    "id": "TEST_metric_157",
-    "sessionId": "TEST_session_001",
-    "metricType": "page_load",
-    "value": "2310",
-    "unit": "ms",
-    "createdAt": "2025-07-19T17:55:51.703Z",
-    "test_data": true,
-    "test_generated_at": "2025-07-26T16:51:28.622Z"
-  },
-  {
-    "id": "TEST_metric_158",
-    "sessionId": "TEST_session_037",
-    "metricType": "api_response",
-    "value": "745",
-    "unit": "ms",
-    "createdAt": "2025-07-22T23:24:42.851Z",
-    "test_data": true,
-    "test_generated_at": "2025-07-26T16:51:28.622Z"
-  },
-  {
-    "id": "TEST_metric_159",
-    "sessionId": "TEST_session_003",
-    "metricType": "video_load",
-    "value": "951",
-    "unit": "ms",
-    "createdAt": "2025-07-22T00:37:52.326Z",
-    "test_data": true,
-    "test_generated_at": "2025-07-26T16:51:28.622Z"
-  },
-  {
-    "id": "TEST_metric_160",
-    "sessionId": "TEST_session_011",
-    "metricType": "page_load",
-    "value": "1221",
-    "unit": "ms",
-    "createdAt": "2025-07-19T20:53:27.411Z",
-    "test_data": true,
-    "test_generated_at": "2025-07-26T16:51:28.622Z"
-  },
-  {
-    "id": "TEST_metric_161",
-    "sessionId": "TEST_session_040",
-    "metricType": "api_response",
-    "value": "417",
-    "unit": "ms",
-    "createdAt": "2025-07-24T18:34:40.507Z",
-    "test_data": true,
-    "test_generated_at": "2025-07-26T16:51:28.622Z"
-  },
-  {
-    "id": "TEST_metric_162",
-    "sessionId": "TEST_session_046",
-    "metricType": "server_health",
-    "value": "5.3",
-    "unit": "%",
-    "createdAt": "2025-07-22T22:42:38.903Z",
-    "test_data": true,
-    "test_generated_at": "2025-07-26T16:51:28.622Z"
-  },
-  {
-    "id": "TEST_metric_163",
-    "sessionId": "TEST_session_071",
-    "metricType": "api_response",
-    "value": "84",
-    "unit": "ms",
-    "createdAt": "2025-07-23T17:27:26.920Z",
-    "test_data": true,
-    "test_generated_at": "2025-07-26T16:51:28.622Z"
-  },
-  {
-    "id": "TEST_metric_164",
-    "sessionId": "TEST_session_058",
-    "metricType": "video_load",
-    "value": "855",
-    "unit": "ms",
-    "createdAt": "2025-07-24T01:55:54.256Z",
-    "test_data": true,
-    "test_generated_at": "2025-07-26T16:51:28.622Z"
-  },
-  {
-    "id": "TEST_metric_165",
-    "sessionId": "TEST_session_044",
-    "metricType": "video_load",
-    "value": "1324",
-    "unit": "ms",
-    "createdAt": "2025-07-21T11:07:24.415Z",
-    "test_data": true,
-    "test_generated_at": "2025-07-26T16:51:28.622Z"
-  },
-  {
-    "id": "TEST_metric_166",
-    "sessionId": "TEST_session_012",
-    "metricType": "page_load",
-    "value": "1889",
-    "unit": "ms",
-    "createdAt": "2025-07-23T15:11:29.670Z",
-    "test_data": true,
-    "test_generated_at": "2025-07-26T16:51:28.622Z"
-  },
-  {
-    "id": "TEST_metric_167",
-    "sessionId": "TEST_session_069",
-    "metricType": "api_response",
-    "value": "843",
-    "unit": "ms",
-    "createdAt": "2025-07-20T09:01:35.773Z",
-    "test_data": true,
-    "test_generated_at": "2025-07-26T16:51:28.622Z"
-  },
-  {
-    "id": "TEST_metric_168",
-    "sessionId": "TEST_session_015",
-    "metricType": "api_response",
-    "value": "644",
-    "unit": "ms",
-    "createdAt": "2025-07-26T06:32:08.262Z",
-    "test_data": true,
-    "test_generated_at": "2025-07-26T16:51:28.622Z"
-  },
-  {
-    "id": "TEST_metric_169",
-    "sessionId": "TEST_session_072",
-    "metricType": "server_health",
-    "value": "93.2",
-    "unit": "%",
-    "createdAt": "2025-07-26T04:42:30.162Z",
-    "test_data": true,
-    "test_generated_at": "2025-07-26T16:51:28.622Z"
-  },
-  {
-    "id": "TEST_metric_170",
-    "sessionId": "TEST_session_060",
-    "metricType": "video_load",
-    "value": "867",
-    "unit": "ms",
-    "createdAt": "2025-07-24T19:21:56.545Z",
-    "test_data": true,
-    "test_generated_at": "2025-07-26T16:51:28.622Z"
-  },
-  {
-    "id": "TEST_metric_171",
-    "sessionId": "TEST_session_049",
-    "metricType": "video_load",
-    "value": "1961",
-    "unit": "ms",
-    "createdAt": "2025-07-20T17:06:41.017Z",
-    "test_data": true,
-    "test_generated_at": "2025-07-26T16:51:28.622Z"
-  },
-  {
-    "id": "TEST_metric_172",
-    "sessionId": "TEST_session_069",
-    "metricType": "api_response",
-    "value": "405",
-    "unit": "ms",
-    "createdAt": "2025-07-21T02:45:06.862Z",
-    "test_data": true,
-    "test_generated_at": "2025-07-26T16:51:28.622Z"
-  },
-  {
-    "id": "TEST_metric_173",
-    "sessionId": "TEST_session_056",
-    "metricType": "server_health",
-    "value": "62.0",
-    "unit": "%",
-    "createdAt": "2025-07-24T06:43:46.483Z",
-    "test_data": true,
-    "test_generated_at": "2025-07-26T16:51:28.622Z"
-  },
-  {
-    "id": "TEST_metric_174",
-    "sessionId": "TEST_session_064",
-    "metricType": "server_health",
-    "value": "2.5",
-    "unit": "%",
-    "createdAt": "2025-07-23T08:02:58.401Z",
-    "test_data": true,
-    "test_generated_at": "2025-07-26T16:51:28.622Z"
-  },
-  {
-    "id": "TEST_metric_175",
-    "sessionId": "TEST_session_027",
-    "metricType": "api_response",
-    "value": "452",
-    "unit": "ms",
-    "createdAt": "2025-07-23T11:36:20.550Z",
-    "test_data": true,
-    "test_generated_at": "2025-07-26T16:51:28.622Z"
-  },
-  {
-    "id": "TEST_metric_176",
-    "sessionId": "TEST_session_029",
-    "metricType": "server_health",
-    "value": "90.4",
-    "unit": "%",
-    "createdAt": "2025-07-25T09:31:12.318Z",
-    "test_data": true,
-    "test_generated_at": "2025-07-26T16:51:28.622Z"
-  },
-  {
-    "id": "TEST_metric_177",
-    "sessionId": "TEST_session_047",
-    "metricType": "page_load",
-    "value": "2031",
-    "unit": "ms",
-    "createdAt": "2025-07-21T18:41:05.427Z",
-    "test_data": true,
-    "test_generated_at": "2025-07-26T16:51:28.622Z"
-  },
-  {
-    "id": "TEST_metric_178",
-    "sessionId": "TEST_session_031",
-    "metricType": "video_load",
-    "value": "666",
-    "unit": "ms",
-    "createdAt": "2025-07-21T20:57:52.508Z",
-    "test_data": true,
-    "test_generated_at": "2025-07-26T16:51:28.622Z"
-  },
-  {
-    "id": "TEST_metric_179",
-    "sessionId": "TEST_session_009",
-    "metricType": "video_load",
-    "value": "460",
-    "unit": "ms",
-    "createdAt": "2025-07-25T11:45:36.746Z",
-    "test_data": true,
-    "test_generated_at": "2025-07-26T16:51:28.622Z"
-  },
-  {
-    "id": "TEST_metric_180",
-    "sessionId": "TEST_session_008",
-    "metricType": "server_health",
-    "value": "97.4",
-    "unit": "%",
-    "createdAt": "2025-07-21T00:15:44.940Z",
-    "test_data": true,
-    "test_generated_at": "2025-07-26T16:51:28.622Z"
-  },
-  {
-    "id": "TEST_metric_181",
-    "sessionId": "TEST_session_011",
-    "metricType": "api_response",
-    "value": "476",
-    "unit": "ms",
-    "createdAt": "2025-07-25T20:20:07.795Z",
-    "test_data": true,
-    "test_generated_at": "2025-07-26T16:51:28.622Z"
-  },
-  {
-    "id": "TEST_metric_182",
-    "sessionId": "TEST_session_017",
-    "metricType": "page_load",
-    "value": "1013",
-    "unit": "ms",
-    "createdAt": "2025-07-24T20:17:22.511Z",
-    "test_data": true,
-    "test_generated_at": "2025-07-26T16:51:28.622Z"
-  },
-  {
-    "id": "TEST_metric_183",
-    "sessionId": "TEST_session_038",
-    "metricType": "api_response",
-    "value": "920",
-    "unit": "ms",
-    "createdAt": "2025-07-22T00:35:24.284Z",
-    "test_data": true,
-    "test_generated_at": "2025-07-26T16:51:28.622Z"
-  },
-  {
-    "id": "TEST_metric_184",
-    "sessionId": "TEST_session_005",
-    "metricType": "video_load",
-    "value": "294",
-    "unit": "ms",
-    "createdAt": "2025-07-20T07:15:42.880Z",
-    "test_data": true,
-    "test_generated_at": "2025-07-26T16:51:28.622Z"
-  },
-  {
-    "id": "TEST_metric_185",
-    "sessionId": "TEST_session_063",
-    "metricType": "api_response",
-    "value": "925",
-    "unit": "ms",
-    "createdAt": "2025-07-25T18:32:24.143Z",
-    "test_data": true,
-    "test_generated_at": "2025-07-26T16:51:28.622Z"
-  },
-  {
-    "id": "TEST_metric_186",
-    "sessionId": "TEST_session_029",
-    "metricType": "page_load",
-    "value": "2630",
-    "unit": "ms",
-    "createdAt": "2025-07-23T05:52:59.417Z",
-    "test_data": true,
-    "test_generated_at": "2025-07-26T16:51:28.622Z"
-  },
-  {
-    "id": "TEST_metric_187",
-    "sessionId": "TEST_session_057",
-    "metricType": "api_response",
-    "value": "1036",
-    "unit": "ms",
-    "createdAt": "2025-07-23T08:22:30.241Z",
-    "test_data": true,
-    "test_generated_at": "2025-07-26T16:51:28.622Z"
-  },
-  {
-    "id": "TEST_metric_188",
-    "sessionId": "TEST_session_027",
-    "metricType": "api_response",
-    "value": "284",
-    "unit": "ms",
-    "createdAt": "2025-07-26T13:00:18.579Z",
-    "test_data": true,
-    "test_generated_at": "2025-07-26T16:51:28.622Z"
-  },
-  {
-    "id": "TEST_metric_189",
-    "sessionId": "TEST_session_068",
-    "metricType": "page_load",
-    "value": "1122",
-    "unit": "ms",
-    "createdAt": "2025-07-22T00:08:00.234Z",
-    "test_data": true,
-    "test_generated_at": "2025-07-26T16:51:28.622Z"
-  },
-  {
-    "id": "TEST_metric_190",
-    "sessionId": "TEST_session_061",
-    "metricType": "api_response",
-    "value": "189",
-    "unit": "ms",
-    "createdAt": "2025-07-24T00:49:36.614Z",
-    "test_data": true,
-    "test_generated_at": "2025-07-26T16:51:28.622Z"
-  },
-  {
-    "id": "TEST_metric_191",
-    "sessionId": "TEST_session_015",
-    "metricType": "video_load",
-    "value": "1710",
-    "unit": "ms",
-    "createdAt": "2025-07-21T02:20:18.137Z",
-    "test_data": true,
-    "test_generated_at": "2025-07-26T16:51:28.622Z"
-  },
-  {
-    "id": "TEST_metric_192",
-    "sessionId": "TEST_session_017",
-    "metricType": "api_response",
-    "value": "319",
-    "unit": "ms",
-    "createdAt": "2025-07-25T22:43:55.526Z",
-    "test_data": true,
-    "test_generated_at": "2025-07-26T16:51:28.622Z"
-  },
-  {
-    "id": "TEST_metric_193",
-    "sessionId": "TEST_session_033",
-    "metricType": "video_load",
-    "value": "2045",
-    "unit": "ms",
-    "createdAt": "2025-07-20T19:32:53.932Z",
-    "test_data": true,
-    "test_generated_at": "2025-07-26T16:51:28.622Z"
-  },
-  {
-    "id": "TEST_metric_194",
-    "sessionId": "TEST_session_059",
-    "metricType": "video_load",
-    "value": "436",
-    "unit": "ms",
-    "createdAt": "2025-07-23T01:17:59.943Z",
-    "test_data": true,
-    "test_generated_at": "2025-07-26T16:51:28.622Z"
-  },
-  {
-    "id": "TEST_metric_195",
-    "sessionId": "TEST_session_062",
-    "metricType": "api_response",
-    "value": "433",
-    "unit": "ms",
-    "createdAt": "2025-07-26T02:39:35.914Z",
-    "test_data": true,
-    "test_generated_at": "2025-07-26T16:51:28.622Z"
-  },
-  {
-    "id": "TEST_metric_196",
-    "sessionId": "TEST_session_007",
-    "metricType": "server_health",
-    "value": "85.4",
-    "unit": "%",
-    "createdAt": "2025-07-25T07:02:27.160Z",
-    "test_data": true,
-    "test_generated_at": "2025-07-26T16:51:28.622Z"
-  },
-  {
-    "id": "TEST_metric_197",
-    "sessionId": "TEST_session_031",
-    "metricType": "api_response",
-    "value": "110",
-    "unit": "ms",
-    "createdAt": "2025-07-25T11:50:27.742Z",
-    "test_data": true,
-    "test_generated_at": "2025-07-26T16:51:28.622Z"
-  },
-  {
-    "id": "TEST_metric_198",
-    "sessionId": "TEST_session_070",
-    "metricType": "page_load",
-    "value": "3281",
-    "unit": "ms",
-    "createdAt": "2025-07-21T13:01:46.339Z",
-    "test_data": true,
-    "test_generated_at": "2025-07-26T16:51:28.622Z"
-  },
-  {
-    "id": "TEST_metric_199",
-    "sessionId": "TEST_session_016",
-    "metricType": "page_load",
-    "value": "1274",
-    "unit": "ms",
-    "createdAt": "2025-07-20T02:56:12.627Z",
-    "test_data": true,
-    "test_generated_at": "2025-07-26T16:51:28.622Z"
-  },
-  {
-    "id": "TEST_metric_000",
-    "sessionId": "TEST_session_063",
-    "metricType": "api_response",
-    "value": "376",
-    "unit": "ms",
-    "createdAt": "2025-07-25T11:48:27.725Z",
-    "test_data": true,
-    "test_generated_at": "2025-07-26T16:53:59.381Z"
-  },
-  {
-    "id": "TEST_metric_001",
-    "sessionId": "TEST_session_066",
-    "metricType": "video_load",
-    "value": "1168",
-    "unit": "ms",
-    "createdAt": "2025-07-24T17:13:03.381Z",
-    "test_data": true,
-    "test_generated_at": "2025-07-26T16:53:59.381Z"
-  },
-  {
-    "id": "TEST_metric_002",
-    "sessionId": "TEST_session_013",
-    "metricType": "server_health",
-    "value": "13.2",
-    "unit": "%",
-    "createdAt": "2025-07-25T20:41:42.351Z",
-    "test_data": true,
-    "test_generated_at": "2025-07-26T16:53:59.381Z"
-  },
-  {
-    "id": "TEST_metric_003",
-    "sessionId": "TEST_session_023",
-    "metricType": "api_response",
-    "value": "688",
-    "unit": "ms",
-    "createdAt": "2025-07-19T18:57:17.566Z",
-    "test_data": true,
-    "test_generated_at": "2025-07-26T16:53:59.381Z"
-  },
-  {
-    "id": "TEST_metric_004",
-    "sessionId": "TEST_session_025",
-    "metricType": "api_response",
-    "value": "841",
-    "unit": "ms",
-    "createdAt": "2025-07-24T09:34:47.029Z",
-    "test_data": true,
-    "test_generated_at": "2025-07-26T16:53:59.381Z"
-  },
-  {
-    "id": "TEST_metric_005",
-    "sessionId": "TEST_session_036",
-    "metricType": "video_load",
-    "value": "1176",
-    "unit": "ms",
-    "createdAt": "2025-07-22T11:06:55.758Z",
-    "test_data": true,
-    "test_generated_at": "2025-07-26T16:53:59.381Z"
-  },
-  {
-    "id": "TEST_metric_006",
-    "sessionId": "TEST_session_043",
-    "metricType": "page_load",
-    "value": "1052",
-    "unit": "ms",
-    "createdAt": "2025-07-23T04:13:58.420Z",
-    "test_data": true,
-    "test_generated_at": "2025-07-26T16:53:59.381Z"
-  },
-  {
-    "id": "TEST_metric_007",
-    "sessionId": "TEST_session_070",
-    "metricType": "page_load",
-    "value": "1280",
-    "unit": "ms",
-    "createdAt": "2025-07-23T13:20:43.173Z",
-    "test_data": true,
-    "test_generated_at": "2025-07-26T16:53:59.381Z"
-  },
-  {
-    "id": "TEST_metric_008",
-    "sessionId": "TEST_session_007",
-    "metricType": "video_load",
-    "value": "2034",
-    "unit": "ms",
-    "createdAt": "2025-07-21T22:15:16.073Z",
-    "test_data": true,
-    "test_generated_at": "2025-07-26T16:53:59.381Z"
-  },
-  {
-    "id": "TEST_metric_009",
-    "sessionId": "TEST_session_003",
-    "metricType": "video_load",
-    "value": "1096",
-    "unit": "ms",
-    "createdAt": "2025-07-26T14:46:19.285Z",
-    "test_data": true,
-    "test_generated_at": "2025-07-26T16:53:59.381Z"
-  },
-  {
-    "id": "TEST_metric_010",
-    "sessionId": "TEST_session_065",
-    "metricType": "video_load",
-    "value": "518",
-    "unit": "ms",
-    "createdAt": "2025-07-22T13:29:24.473Z",
-    "test_data": true,
-    "test_generated_at": "2025-07-26T16:53:59.381Z"
-  },
-  {
-    "id": "TEST_metric_011",
-    "sessionId": "TEST_session_060",
-    "metricType": "api_response",
-    "value": "179",
-    "unit": "ms",
-    "createdAt": "2025-07-23T16:55:10.194Z",
-    "test_data": true,
-    "test_generated_at": "2025-07-26T16:53:59.381Z"
-  },
-  {
-    "id": "TEST_metric_012",
-    "sessionId": "TEST_session_040",
-    "metricType": "page_load",
-    "value": "808",
-    "unit": "ms",
-    "createdAt": "2025-07-21T03:12:30.939Z",
-    "test_data": true,
-    "test_generated_at": "2025-07-26T16:53:59.381Z"
-  },
-  {
-    "id": "TEST_metric_013",
-    "sessionId": "TEST_session_017",
-    "metricType": "server_health",
-    "value": "33.5",
-    "unit": "%",
-    "createdAt": "2025-07-22T11:07:18.036Z",
-    "test_data": true,
-    "test_generated_at": "2025-07-26T16:53:59.381Z"
+    "test_generated_at": "2025-07-26T16:57:47.880Z"
   },
   {
     "id": "TEST_metric_014",
-    "sessionId": "TEST_session_021",
-    "metricType": "api_response",
-    "value": "170",
+    "sessionId": "TEST_session_031",
+    "metricType": "page_load",
+    "value": "1992",
     "unit": "ms",
-    "createdAt": "2025-07-25T09:35:00.138Z",
+    "createdAt": "2025-07-23T05:23:38.458Z",
     "test_data": true,
-    "test_generated_at": "2025-07-26T16:53:59.381Z"
+    "test_generated_at": "2025-07-26T16:57:47.880Z"
   },
   {
     "id": "TEST_metric_015",
-    "sessionId": "TEST_session_071",
+    "sessionId": "TEST_session_050",
     "metricType": "server_health",
-    "value": "98.4",
+    "value": "58.7",
     "unit": "%",
-    "createdAt": "2025-07-20T01:57:19.714Z",
+    "createdAt": "2025-07-26T13:39:08.021Z",
     "test_data": true,
-    "test_generated_at": "2025-07-26T16:53:59.381Z"
+    "test_generated_at": "2025-07-26T16:57:47.880Z"
   },
   {
     "id": "TEST_metric_016",
-    "sessionId": "TEST_session_012",
-    "metricType": "server_health",
-    "value": "17.5",
-    "unit": "%",
-    "createdAt": "2025-07-22T07:22:21.792Z",
-    "test_data": true,
-    "test_generated_at": "2025-07-26T16:53:59.381Z"
-  },
-  {
-    "id": "TEST_metric_017",
-    "sessionId": "TEST_session_058",
-    "metricType": "video_load",
-    "value": "1230",
-    "unit": "ms",
-    "createdAt": "2025-07-25T15:45:32.794Z",
-    "test_data": true,
-    "test_generated_at": "2025-07-26T16:53:59.381Z"
-  },
-  {
-    "id": "TEST_metric_018",
-    "sessionId": "TEST_session_072",
-    "metricType": "page_load",
-    "value": "1995",
-    "unit": "ms",
-    "createdAt": "2025-07-25T01:57:24.427Z",
-    "test_data": true,
-    "test_generated_at": "2025-07-26T16:53:59.381Z"
-  },
-  {
-    "id": "TEST_metric_019",
-    "sessionId": "TEST_session_043",
-    "metricType": "server_health",
-    "value": "46.3",
-    "unit": "%",
-    "createdAt": "2025-07-24T14:15:08.578Z",
-    "test_data": true,
-    "test_generated_at": "2025-07-26T16:53:59.381Z"
-  },
-  {
-    "id": "TEST_metric_020",
-    "sessionId": "TEST_session_040",
-    "metricType": "video_load",
-    "value": "371",
-    "unit": "ms",
-    "createdAt": "2025-07-21T09:17:46.068Z",
-    "test_data": true,
-    "test_generated_at": "2025-07-26T16:53:59.381Z"
-  },
-  {
-    "id": "TEST_metric_021",
-    "sessionId": "TEST_session_024",
-    "metricType": "server_health",
-    "value": "51.2",
-    "unit": "%",
-    "createdAt": "2025-07-23T20:32:29.710Z",
-    "test_data": true,
-    "test_generated_at": "2025-07-26T16:53:59.381Z"
-  },
-  {
-    "id": "TEST_metric_022",
-    "sessionId": "TEST_session_047",
-    "metricType": "server_health",
-    "value": "88.5",
-    "unit": "%",
-    "createdAt": "2025-07-23T12:30:49.972Z",
-    "test_data": true,
-    "test_generated_at": "2025-07-26T16:53:59.381Z"
-  },
-  {
-    "id": "TEST_metric_023",
-    "sessionId": "TEST_session_001",
-    "metricType": "video_load",
-    "value": "1761",
-    "unit": "ms",
-    "createdAt": "2025-07-25T08:50:44.763Z",
-    "test_data": true,
-    "test_generated_at": "2025-07-26T16:53:59.381Z"
-  },
-  {
-    "id": "TEST_metric_024",
-    "sessionId": "TEST_session_058",
-    "metricType": "page_load",
-    "value": "664",
-    "unit": "ms",
-    "createdAt": "2025-07-22T20:15:12.941Z",
-    "test_data": true,
-    "test_generated_at": "2025-07-26T16:53:59.381Z"
-  },
-  {
-    "id": "TEST_metric_025",
-    "sessionId": "TEST_session_016",
-    "metricType": "video_load",
-    "value": "1810",
-    "unit": "ms",
-    "createdAt": "2025-07-22T23:23:17.044Z",
-    "test_data": true,
-    "test_generated_at": "2025-07-26T16:53:59.381Z"
-  },
-  {
-    "id": "TEST_metric_026",
-    "sessionId": "TEST_session_026",
-    "metricType": "page_load",
-    "value": "1989",
-    "unit": "ms",
-    "createdAt": "2025-07-25T17:02:33.855Z",
-    "test_data": true,
-    "test_generated_at": "2025-07-26T16:53:59.381Z"
-  },
-  {
-    "id": "TEST_metric_027",
-    "sessionId": "TEST_session_063",
-    "metricType": "page_load",
-    "value": "2394",
-    "unit": "ms",
-    "createdAt": "2025-07-23T02:49:02.030Z",
-    "test_data": true,
-    "test_generated_at": "2025-07-26T16:53:59.381Z"
-  },
-  {
-    "id": "TEST_metric_028",
-    "sessionId": "TEST_session_048",
-    "metricType": "page_load",
-    "value": "2183",
-    "unit": "ms",
-    "createdAt": "2025-07-26T13:26:22.580Z",
-    "test_data": true,
-    "test_generated_at": "2025-07-26T16:53:59.381Z"
-  },
-  {
-    "id": "TEST_metric_029",
-    "sessionId": "TEST_session_031",
-    "metricType": "api_response",
-    "value": "350",
-    "unit": "ms",
-    "createdAt": "2025-07-22T00:22:25.071Z",
-    "test_data": true,
-    "test_generated_at": "2025-07-26T16:53:59.381Z"
-  },
-  {
-    "id": "TEST_metric_000",
-    "sessionId": "TEST_session_020",
-    "metricType": "api_response",
-    "value": "521",
-    "unit": "ms",
-    "createdAt": "2025-07-22T03:33:10.852Z",
-    "test_data": true,
-    "test_generated_at": "2025-07-26T16:54:09.356Z"
-  },
-  {
-    "id": "TEST_metric_001",
-    "sessionId": "TEST_session_070",
-    "metricType": "page_load",
-    "value": "2902",
-    "unit": "ms",
-    "createdAt": "2025-07-24T19:12:08.823Z",
-    "test_data": true,
-    "test_generated_at": "2025-07-26T16:54:09.356Z"
-  },
-  {
-    "id": "TEST_metric_002",
-    "sessionId": "TEST_session_029",
+    "sessionId": "TEST_session_015",
     "metricType": "api_response",
     "value": "822",
     "unit": "ms",
-    "createdAt": "2025-07-21T08:56:59.254Z",
+    "createdAt": "2025-07-21T22:33:44.564Z",
     "test_data": true,
-    "test_generated_at": "2025-07-26T16:54:09.356Z"
-  },
-  {
-    "id": "TEST_metric_003",
-    "sessionId": "TEST_session_054",
-    "metricType": "page_load",
-    "value": "2119",
-    "unit": "ms",
-    "createdAt": "2025-07-25T22:26:29.499Z",
-    "test_data": true,
-    "test_generated_at": "2025-07-26T16:54:09.356Z"
-  },
-  {
-    "id": "TEST_metric_004",
-    "sessionId": "TEST_session_046",
-    "metricType": "server_health",
-    "value": "32.0",
-    "unit": "%",
-    "createdAt": "2025-07-24T16:09:17.057Z",
-    "test_data": true,
-    "test_generated_at": "2025-07-26T16:54:09.356Z"
-  },
-  {
-    "id": "TEST_metric_005",
-    "sessionId": "TEST_session_012",
-    "metricType": "video_load",
-    "value": "874",
-    "unit": "ms",
-    "createdAt": "2025-07-23T01:29:27.262Z",
-    "test_data": true,
-    "test_generated_at": "2025-07-26T16:54:09.356Z"
-  },
-  {
-    "id": "TEST_metric_006",
-    "sessionId": "TEST_session_065",
-    "metricType": "api_response",
-    "value": "171",
-    "unit": "ms",
-    "createdAt": "2025-07-25T16:38:33.825Z",
-    "test_data": true,
-    "test_generated_at": "2025-07-26T16:54:09.356Z"
-  },
-  {
-    "id": "TEST_metric_007",
-    "sessionId": "TEST_session_028",
-    "metricType": "page_load",
-    "value": "2129",
-    "unit": "ms",
-    "createdAt": "2025-07-23T01:40:44.030Z",
-    "test_data": true,
-    "test_generated_at": "2025-07-26T16:54:09.356Z"
-  },
-  {
-    "id": "TEST_metric_008",
-    "sessionId": "TEST_session_020",
-    "metricType": "api_response",
-    "value": "100",
-    "unit": "ms",
-    "createdAt": "2025-07-25T05:26:14.366Z",
-    "test_data": true,
-    "test_generated_at": "2025-07-26T16:54:09.356Z"
-  },
-  {
-    "id": "TEST_metric_009",
-    "sessionId": "TEST_session_074",
-    "metricType": "video_load",
-    "value": "390",
-    "unit": "ms",
-    "createdAt": "2025-07-25T18:18:09.578Z",
-    "test_data": true,
-    "test_generated_at": "2025-07-26T16:54:09.356Z"
-  },
-  {
-    "id": "TEST_metric_010",
-    "sessionId": "TEST_session_033",
-    "metricType": "page_load",
-    "value": "2452",
-    "unit": "ms",
-    "createdAt": "2025-07-26T09:23:02.060Z",
-    "test_data": true,
-    "test_generated_at": "2025-07-26T16:54:09.356Z"
-  },
-  {
-    "id": "TEST_metric_011",
-    "sessionId": "TEST_session_036",
-    "metricType": "api_response",
-    "value": "727",
-    "unit": "ms",
-    "createdAt": "2025-07-24T13:52:37.656Z",
-    "test_data": true,
-    "test_generated_at": "2025-07-26T16:54:09.356Z"
-  },
-  {
-    "id": "TEST_metric_012",
-    "sessionId": "TEST_session_063",
-    "metricType": "page_load",
-    "value": "2641",
-    "unit": "ms",
-    "createdAt": "2025-07-25T06:10:49.623Z",
-    "test_data": true,
-    "test_generated_at": "2025-07-26T16:54:09.356Z"
-  },
-  {
-    "id": "TEST_metric_013",
-    "sessionId": "TEST_session_014",
-    "metricType": "video_load",
-    "value": "323",
-    "unit": "ms",
-    "createdAt": "2025-07-25T14:08:38.917Z",
-    "test_data": true,
-    "test_generated_at": "2025-07-26T16:54:09.356Z"
-  },
-  {
-    "id": "TEST_metric_014",
-    "sessionId": "TEST_session_029",
-    "metricType": "api_response",
-    "value": "104",
-    "unit": "ms",
-    "createdAt": "2025-07-26T11:43:29.385Z",
-    "test_data": true,
-    "test_generated_at": "2025-07-26T16:54:09.356Z"
-  },
-  {
-    "id": "TEST_metric_015",
-    "sessionId": "TEST_session_073",
-    "metricType": "api_response",
-    "value": "382",
-    "unit": "ms",
-    "createdAt": "2025-07-22T06:11:59.545Z",
-    "test_data": true,
-    "test_generated_at": "2025-07-26T16:54:09.356Z"
-  },
-  {
-    "id": "TEST_metric_016",
-    "sessionId": "TEST_session_059",
-    "metricType": "video_load",
-    "value": "1221",
-    "unit": "ms",
-    "createdAt": "2025-07-23T06:24:59.527Z",
-    "test_data": true,
-    "test_generated_at": "2025-07-26T16:54:09.356Z"
+    "test_generated_at": "2025-07-26T16:57:47.880Z"
   },
   {
     "id": "TEST_metric_017",
-    "sessionId": "TEST_session_044",
+    "sessionId": "TEST_session_073",
     "metricType": "page_load",
-    "value": "1558",
+    "value": "1624",
     "unit": "ms",
-    "createdAt": "2025-07-21T01:08:07.374Z",
+    "createdAt": "2025-07-23T07:15:54.398Z",
     "test_data": true,
-    "test_generated_at": "2025-07-26T16:54:09.356Z"
+    "test_generated_at": "2025-07-26T16:57:47.880Z"
   },
   {
     "id": "TEST_metric_018",
-    "sessionId": "TEST_session_035",
-    "metricType": "page_load",
-    "value": "1410",
-    "unit": "ms",
-    "createdAt": "2025-07-26T07:24:49.659Z",
+    "sessionId": "TEST_session_043",
+    "metricType": "server_health",
+    "value": "10.4",
+    "unit": "%",
+    "createdAt": "2025-07-21T06:55:27.100Z",
     "test_data": true,
-    "test_generated_at": "2025-07-26T16:54:09.356Z"
+    "test_generated_at": "2025-07-26T16:57:47.880Z"
   },
   {
     "id": "TEST_metric_019",
-    "sessionId": "TEST_session_059",
-    "metricType": "server_health",
-    "value": "36.2",
-    "unit": "%",
-    "createdAt": "2025-07-24T23:30:46.894Z",
+    "sessionId": "TEST_session_000",
+    "metricType": "api_response",
+    "value": "119",
+    "unit": "ms",
+    "createdAt": "2025-07-24T20:43:00.109Z",
     "test_data": true,
-    "test_generated_at": "2025-07-26T16:54:09.356Z"
+    "test_generated_at": "2025-07-26T16:57:47.880Z"
   },
   {
     "id": "TEST_metric_020",
-    "sessionId": "TEST_session_005",
-    "metricType": "page_load",
-    "value": "2472",
-    "unit": "ms",
-    "createdAt": "2025-07-26T15:15:32.320Z",
+    "sessionId": "TEST_session_036",
+    "metricType": "server_health",
+    "value": "55.6",
+    "unit": "%",
+    "createdAt": "2025-07-25T00:43:32.399Z",
     "test_data": true,
-    "test_generated_at": "2025-07-26T16:54:09.356Z"
+    "test_generated_at": "2025-07-26T16:57:47.880Z"
   },
   {
     "id": "TEST_metric_021",
-    "sessionId": "TEST_session_042",
+    "sessionId": "TEST_session_008",
     "metricType": "api_response",
-    "value": "655",
+    "value": "161",
     "unit": "ms",
-    "createdAt": "2025-07-23T08:01:44.629Z",
+    "createdAt": "2025-07-24T10:09:30.461Z",
     "test_data": true,
-    "test_generated_at": "2025-07-26T16:54:09.356Z"
+    "test_generated_at": "2025-07-26T16:57:47.880Z"
   },
   {
     "id": "TEST_metric_022",
-    "sessionId": "TEST_session_061",
-    "metricType": "api_response",
-    "value": "69",
+    "sessionId": "TEST_session_033",
+    "metricType": "video_load",
+    "value": "185",
     "unit": "ms",
-    "createdAt": "2025-07-26T02:01:08.514Z",
+    "createdAt": "2025-07-24T23:32:25.720Z",
     "test_data": true,
-    "test_generated_at": "2025-07-26T16:54:09.356Z"
+    "test_generated_at": "2025-07-26T16:57:47.880Z"
   },
   {
     "id": "TEST_metric_023",
-    "sessionId": "TEST_session_042",
+    "sessionId": "TEST_session_063",
     "metricType": "video_load",
-    "value": "1099",
+    "value": "868",
     "unit": "ms",
-    "createdAt": "2025-07-26T02:38:55.654Z",
+    "createdAt": "2025-07-23T21:47:13.525Z",
     "test_data": true,
-    "test_generated_at": "2025-07-26T16:54:09.356Z"
+    "test_generated_at": "2025-07-26T16:57:47.880Z"
   },
   {
     "id": "TEST_metric_024",
-    "sessionId": "TEST_session_043",
-    "metricType": "api_response",
-    "value": "895",
-    "unit": "ms",
-    "createdAt": "2025-07-20T19:41:57.542Z",
+    "sessionId": "TEST_session_048",
+    "metricType": "server_health",
+    "value": "44.0",
+    "unit": "%",
+    "createdAt": "2025-07-23T17:37:36.758Z",
     "test_data": true,
-    "test_generated_at": "2025-07-26T16:54:09.356Z"
+    "test_generated_at": "2025-07-26T16:57:47.880Z"
   },
   {
     "id": "TEST_metric_025",
-    "sessionId": "TEST_session_023",
-    "metricType": "page_load",
-    "value": "1313",
+    "sessionId": "TEST_session_025",
+    "metricType": "video_load",
+    "value": "247",
     "unit": "ms",
-    "createdAt": "2025-07-22T05:08:46.689Z",
+    "createdAt": "2025-07-24T23:55:45.306Z",
     "test_data": true,
-    "test_generated_at": "2025-07-26T16:54:09.356Z"
+    "test_generated_at": "2025-07-26T16:57:47.880Z"
   },
   {
     "id": "TEST_metric_026",
-    "sessionId": "TEST_session_023",
-    "metricType": "video_load",
-    "value": "827",
-    "unit": "ms",
-    "createdAt": "2025-07-21T22:21:20.731Z",
+    "sessionId": "TEST_session_039",
+    "metricType": "server_health",
+    "value": "84.5",
+    "unit": "%",
+    "createdAt": "2025-07-20T05:28:27.099Z",
     "test_data": true,
-    "test_generated_at": "2025-07-26T16:54:09.356Z"
+    "test_generated_at": "2025-07-26T16:57:47.880Z"
   },
   {
     "id": "TEST_metric_027",
-    "sessionId": "TEST_session_069",
-    "metricType": "page_load",
-    "value": "2831",
+    "sessionId": "TEST_session_045",
+    "metricType": "api_response",
+    "value": "98",
     "unit": "ms",
-    "createdAt": "2025-07-26T04:11:07.906Z",
+    "createdAt": "2025-07-23T16:57:28.307Z",
     "test_data": true,
-    "test_generated_at": "2025-07-26T16:54:09.356Z"
+    "test_generated_at": "2025-07-26T16:57:47.880Z"
   },
   {
     "id": "TEST_metric_028",
-    "sessionId": "TEST_session_011",
-    "metricType": "api_response",
-    "value": "180",
+    "sessionId": "TEST_session_069",
+    "metricType": "video_load",
+    "value": "229",
     "unit": "ms",
-    "createdAt": "2025-07-26T00:30:56.199Z",
+    "createdAt": "2025-07-24T19:38:38.046Z",
     "test_data": true,
-    "test_generated_at": "2025-07-26T16:54:09.356Z"
+    "test_generated_at": "2025-07-26T16:57:47.880Z"
+  },
+  {
+    "id": "TEST_metric_029",
+    "sessionId": "TEST_session_073",
+    "metricType": "video_load",
+    "value": "1779",
+    "unit": "ms",
+    "createdAt": "2025-07-22T12:08:28.096Z",
+    "test_data": true,
+    "test_generated_at": "2025-07-26T16:57:47.880Z"
+  },
+  {
+    "id": "TEST_metric_030",
+    "sessionId": "TEST_session_020",
+    "metricType": "video_load",
+    "value": "1285",
+    "unit": "ms",
+    "createdAt": "2025-07-21T07:59:23.096Z",
+    "test_data": true,
+    "test_generated_at": "2025-07-26T16:57:47.880Z"
+  },
+  {
+    "id": "TEST_metric_031",
+    "sessionId": "TEST_session_050",
+    "metricType": "server_health",
+    "value": "90.3",
+    "unit": "%",
+    "createdAt": "2025-07-20T09:26:13.190Z",
+    "test_data": true,
+    "test_generated_at": "2025-07-26T16:57:47.880Z"
+  },
+  {
+    "id": "TEST_metric_032",
+    "sessionId": "TEST_session_049",
+    "metricType": "server_health",
+    "value": "93.1",
+    "unit": "%",
+    "createdAt": "2025-07-25T19:35:12.051Z",
+    "test_data": true,
+    "test_generated_at": "2025-07-26T16:57:47.880Z"
+  },
+  {
+    "id": "TEST_metric_033",
+    "sessionId": "TEST_session_004",
+    "metricType": "api_response",
+    "value": "1004",
+    "unit": "ms",
+    "createdAt": "2025-07-24T18:21:28.991Z",
+    "test_data": true,
+    "test_generated_at": "2025-07-26T16:57:47.880Z"
+  },
+  {
+    "id": "TEST_metric_034",
+    "sessionId": "TEST_session_033",
+    "metricType": "server_health",
+    "value": "84.7",
+    "unit": "%",
+    "createdAt": "2025-07-25T23:30:57.016Z",
+    "test_data": true,
+    "test_generated_at": "2025-07-26T16:57:47.880Z"
+  },
+  {
+    "id": "TEST_metric_035",
+    "sessionId": "TEST_session_051",
+    "metricType": "page_load",
+    "value": "2923",
+    "unit": "ms",
+    "createdAt": "2025-07-22T10:09:32.737Z",
+    "test_data": true,
+    "test_generated_at": "2025-07-26T16:57:47.880Z"
+  },
+  {
+    "id": "TEST_metric_036",
+    "sessionId": "TEST_session_015",
+    "metricType": "page_load",
+    "value": "1026",
+    "unit": "ms",
+    "createdAt": "2025-07-24T11:36:39.456Z",
+    "test_data": true,
+    "test_generated_at": "2025-07-26T16:57:47.880Z"
+  },
+  {
+    "id": "TEST_metric_037",
+    "sessionId": "TEST_session_002",
+    "metricType": "page_load",
+    "value": "1547",
+    "unit": "ms",
+    "createdAt": "2025-07-20T15:20:47.762Z",
+    "test_data": true,
+    "test_generated_at": "2025-07-26T16:57:47.880Z"
+  },
+  {
+    "id": "TEST_metric_038",
+    "sessionId": "TEST_session_007",
+    "metricType": "api_response",
+    "value": "718",
+    "unit": "ms",
+    "createdAt": "2025-07-22T11:47:16.047Z",
+    "test_data": true,
+    "test_generated_at": "2025-07-26T16:57:47.880Z"
+  },
+  {
+    "id": "TEST_metric_039",
+    "sessionId": "TEST_session_006",
+    "metricType": "api_response",
+    "value": "606",
+    "unit": "ms",
+    "createdAt": "2025-07-20T03:32:12.777Z",
+    "test_data": true,
+    "test_generated_at": "2025-07-26T16:57:47.880Z"
+  },
+  {
+    "id": "TEST_metric_040",
+    "sessionId": "TEST_session_052",
+    "metricType": "video_load",
+    "value": "1317",
+    "unit": "ms",
+    "createdAt": "2025-07-25T23:06:34.548Z",
+    "test_data": true,
+    "test_generated_at": "2025-07-26T16:57:47.880Z"
+  },
+  {
+    "id": "TEST_metric_041",
+    "sessionId": "TEST_session_017",
+    "metricType": "server_health",
+    "value": "72.0",
+    "unit": "%",
+    "createdAt": "2025-07-22T18:30:27.818Z",
+    "test_data": true,
+    "test_generated_at": "2025-07-26T16:57:47.880Z"
+  },
+  {
+    "id": "TEST_metric_042",
+    "sessionId": "TEST_session_032",
+    "metricType": "api_response",
+    "value": "674",
+    "unit": "ms",
+    "createdAt": "2025-07-20T14:45:11.534Z",
+    "test_data": true,
+    "test_generated_at": "2025-07-26T16:57:47.880Z"
+  },
+  {
+    "id": "TEST_metric_043",
+    "sessionId": "TEST_session_066",
+    "metricType": "server_health",
+    "value": "91.0",
+    "unit": "%",
+    "createdAt": "2025-07-21T01:43:13.151Z",
+    "test_data": true,
+    "test_generated_at": "2025-07-26T16:57:47.880Z"
+  },
+  {
+    "id": "TEST_metric_044",
+    "sessionId": "TEST_session_063",
+    "metricType": "video_load",
+    "value": "1778",
+    "unit": "ms",
+    "createdAt": "2025-07-25T02:28:58.834Z",
+    "test_data": true,
+    "test_generated_at": "2025-07-26T16:57:47.880Z"
+  },
+  {
+    "id": "TEST_metric_045",
+    "sessionId": "TEST_session_062",
+    "metricType": "api_response",
+    "value": "1043",
+    "unit": "ms",
+    "createdAt": "2025-07-22T15:31:20.710Z",
+    "test_data": true,
+    "test_generated_at": "2025-07-26T16:57:47.880Z"
+  },
+  {
+    "id": "TEST_metric_046",
+    "sessionId": "TEST_session_033",
+    "metricType": "page_load",
+    "value": "3398",
+    "unit": "ms",
+    "createdAt": "2025-07-23T06:50:23.849Z",
+    "test_data": true,
+    "test_generated_at": "2025-07-26T16:57:47.880Z"
+  },
+  {
+    "id": "TEST_metric_047",
+    "sessionId": "TEST_session_018",
+    "metricType": "server_health",
+    "value": "0.2",
+    "unit": "%",
+    "createdAt": "2025-07-19T21:54:07.300Z",
+    "test_data": true,
+    "test_generated_at": "2025-07-26T16:57:47.880Z"
+  },
+  {
+    "id": "TEST_metric_048",
+    "sessionId": "TEST_session_020",
+    "metricType": "video_load",
+    "value": "623",
+    "unit": "ms",
+    "createdAt": "2025-07-20T08:11:02.563Z",
+    "test_data": true,
+    "test_generated_at": "2025-07-26T16:57:47.880Z"
+  },
+  {
+    "id": "TEST_metric_049",
+    "sessionId": "TEST_session_025",
+    "metricType": "api_response",
+    "value": "695",
+    "unit": "ms",
+    "createdAt": "2025-07-20T14:38:42.099Z",
+    "test_data": true,
+    "test_generated_at": "2025-07-26T16:57:47.880Z"
+  },
+  {
+    "id": "TEST_metric_050",
+    "sessionId": "TEST_session_072",
+    "metricType": "api_response",
+    "value": "909",
+    "unit": "ms",
+    "createdAt": "2025-07-21T09:37:34.762Z",
+    "test_data": true,
+    "test_generated_at": "2025-07-26T16:57:47.880Z"
+  },
+  {
+    "id": "TEST_metric_051",
+    "sessionId": "TEST_session_037",
+    "metricType": "server_health",
+    "value": "59.4",
+    "unit": "%",
+    "createdAt": "2025-07-23T16:35:45.855Z",
+    "test_data": true,
+    "test_generated_at": "2025-07-26T16:57:47.880Z"
+  },
+  {
+    "id": "TEST_metric_052",
+    "sessionId": "TEST_session_012",
+    "metricType": "video_load",
+    "value": "427",
+    "unit": "ms",
+    "createdAt": "2025-07-25T03:30:14.978Z",
+    "test_data": true,
+    "test_generated_at": "2025-07-26T16:57:47.880Z"
+  },
+  {
+    "id": "TEST_metric_053",
+    "sessionId": "TEST_session_046",
+    "metricType": "video_load",
+    "value": "1738",
+    "unit": "ms",
+    "createdAt": "2025-07-24T15:05:56.792Z",
+    "test_data": true,
+    "test_generated_at": "2025-07-26T16:57:47.880Z"
+  },
+  {
+    "id": "TEST_metric_054",
+    "sessionId": "TEST_session_039",
+    "metricType": "video_load",
+    "value": "830",
+    "unit": "ms",
+    "createdAt": "2025-07-20T12:30:33.821Z",
+    "test_data": true,
+    "test_generated_at": "2025-07-26T16:57:47.880Z"
+  },
+  {
+    "id": "TEST_metric_000",
+    "sessionId": "TEST_session_027",
+    "metricType": "page_load",
+    "value": "2401",
+    "unit": "ms",
+    "createdAt": "2025-07-20T18:41:14.424Z",
+    "test_data": true,
+    "test_generated_at": "2025-07-26T16:57:52.993Z"
+  },
+  {
+    "id": "TEST_metric_001",
+    "sessionId": "TEST_session_016",
+    "metricType": "video_load",
+    "value": "717",
+    "unit": "ms",
+    "createdAt": "2025-07-23T10:15:36.904Z",
+    "test_data": true,
+    "test_generated_at": "2025-07-26T16:57:52.993Z"
+  },
+  {
+    "id": "TEST_metric_002",
+    "sessionId": "TEST_session_040",
+    "metricType": "api_response",
+    "value": "714",
+    "unit": "ms",
+    "createdAt": "2025-07-23T10:47:44.260Z",
+    "test_data": true,
+    "test_generated_at": "2025-07-26T16:57:52.993Z"
+  },
+  {
+    "id": "TEST_metric_003",
+    "sessionId": "TEST_session_039",
+    "metricType": "server_health",
+    "value": "73.1",
+    "unit": "%",
+    "createdAt": "2025-07-22T17:15:59.765Z",
+    "test_data": true,
+    "test_generated_at": "2025-07-26T16:57:52.993Z"
+  },
+  {
+    "id": "TEST_metric_004",
+    "sessionId": "TEST_session_001",
+    "metricType": "video_load",
+    "value": "1381",
+    "unit": "ms",
+    "createdAt": "2025-07-23T20:14:01.757Z",
+    "test_data": true,
+    "test_generated_at": "2025-07-26T16:57:52.993Z"
+  },
+  {
+    "id": "TEST_metric_005",
+    "sessionId": "TEST_session_067",
+    "metricType": "api_response",
+    "value": "787",
+    "unit": "ms",
+    "createdAt": "2025-07-24T02:04:46.908Z",
+    "test_data": true,
+    "test_generated_at": "2025-07-26T16:57:52.993Z"
+  },
+  {
+    "id": "TEST_metric_006",
+    "sessionId": "TEST_session_001",
+    "metricType": "video_load",
+    "value": "2059",
+    "unit": "ms",
+    "createdAt": "2025-07-24T18:21:59.911Z",
+    "test_data": true,
+    "test_generated_at": "2025-07-26T16:57:52.993Z"
+  },
+  {
+    "id": "TEST_metric_007",
+    "sessionId": "TEST_session_063",
+    "metricType": "video_load",
+    "value": "310",
+    "unit": "ms",
+    "createdAt": "2025-07-21T09:58:59.463Z",
+    "test_data": true,
+    "test_generated_at": "2025-07-26T16:57:52.993Z"
+  },
+  {
+    "id": "TEST_metric_008",
+    "sessionId": "TEST_session_069",
+    "metricType": "page_load",
+    "value": "1026",
+    "unit": "ms",
+    "createdAt": "2025-07-26T14:05:35.052Z",
+    "test_data": true,
+    "test_generated_at": "2025-07-26T16:57:52.993Z"
+  },
+  {
+    "id": "TEST_metric_009",
+    "sessionId": "TEST_session_011",
+    "metricType": "page_load",
+    "value": "1215",
+    "unit": "ms",
+    "createdAt": "2025-07-21T12:28:21.055Z",
+    "test_data": true,
+    "test_generated_at": "2025-07-26T16:57:52.993Z"
+  },
+  {
+    "id": "TEST_metric_010",
+    "sessionId": "TEST_session_019",
+    "metricType": "video_load",
+    "value": "1090",
+    "unit": "ms",
+    "createdAt": "2025-07-24T08:40:29.984Z",
+    "test_data": true,
+    "test_generated_at": "2025-07-26T16:57:52.993Z"
+  },
+  {
+    "id": "TEST_metric_011",
+    "sessionId": "TEST_session_019",
+    "metricType": "server_health",
+    "value": "15.7",
+    "unit": "%",
+    "createdAt": "2025-07-20T20:32:08.929Z",
+    "test_data": true,
+    "test_generated_at": "2025-07-26T16:57:52.993Z"
+  },
+  {
+    "id": "TEST_metric_012",
+    "sessionId": "TEST_session_033",
+    "metricType": "page_load",
+    "value": "1470",
+    "unit": "ms",
+    "createdAt": "2025-07-26T15:01:12.629Z",
+    "test_data": true,
+    "test_generated_at": "2025-07-26T16:57:52.993Z"
+  },
+  {
+    "id": "TEST_metric_013",
+    "sessionId": "TEST_session_002",
+    "metricType": "api_response",
+    "value": "573",
+    "unit": "ms",
+    "createdAt": "2025-07-24T01:35:48.754Z",
+    "test_data": true,
+    "test_generated_at": "2025-07-26T16:57:52.993Z"
+  },
+  {
+    "id": "TEST_metric_014",
+    "sessionId": "TEST_session_070",
+    "metricType": "api_response",
+    "value": "274",
+    "unit": "ms",
+    "createdAt": "2025-07-24T03:35:29.504Z",
+    "test_data": true,
+    "test_generated_at": "2025-07-26T16:57:52.993Z"
+  },
+  {
+    "id": "TEST_metric_015",
+    "sessionId": "TEST_session_005",
+    "metricType": "page_load",
+    "value": "898",
+    "unit": "ms",
+    "createdAt": "2025-07-22T19:48:01.318Z",
+    "test_data": true,
+    "test_generated_at": "2025-07-26T16:57:52.993Z"
+  },
+  {
+    "id": "TEST_metric_016",
+    "sessionId": "TEST_session_053",
+    "metricType": "page_load",
+    "value": "2107",
+    "unit": "ms",
+    "createdAt": "2025-07-26T00:25:10.771Z",
+    "test_data": true,
+    "test_generated_at": "2025-07-26T16:57:52.993Z"
+  },
+  {
+    "id": "TEST_metric_017",
+    "sessionId": "TEST_session_051",
+    "metricType": "api_response",
+    "value": "471",
+    "unit": "ms",
+    "createdAt": "2025-07-23T08:53:20.028Z",
+    "test_data": true,
+    "test_generated_at": "2025-07-26T16:57:52.993Z"
+  },
+  {
+    "id": "TEST_metric_018",
+    "sessionId": "TEST_session_070",
+    "metricType": "server_health",
+    "value": "47.3",
+    "unit": "%",
+    "createdAt": "2025-07-22T21:47:43.263Z",
+    "test_data": true,
+    "test_generated_at": "2025-07-26T16:57:52.993Z"
+  },
+  {
+    "id": "TEST_metric_019",
+    "sessionId": "TEST_session_028",
+    "metricType": "video_load",
+    "value": "1339",
+    "unit": "ms",
+    "createdAt": "2025-07-20T23:10:17.614Z",
+    "test_data": true,
+    "test_generated_at": "2025-07-26T16:57:52.993Z"
+  },
+  {
+    "id": "TEST_metric_020",
+    "sessionId": "TEST_session_038",
+    "metricType": "page_load",
+    "value": "1832",
+    "unit": "ms",
+    "createdAt": "2025-07-21T14:31:27.921Z",
+    "test_data": true,
+    "test_generated_at": "2025-07-26T16:57:52.993Z"
+  },
+  {
+    "id": "TEST_metric_021",
+    "sessionId": "TEST_session_068",
+    "metricType": "api_response",
+    "value": "71",
+    "unit": "ms",
+    "createdAt": "2025-07-20T16:44:20.325Z",
+    "test_data": true,
+    "test_generated_at": "2025-07-26T16:57:52.993Z"
+  },
+  {
+    "id": "TEST_metric_022",
+    "sessionId": "TEST_session_032",
+    "metricType": "api_response",
+    "value": "798",
+    "unit": "ms",
+    "createdAt": "2025-07-23T12:25:28.434Z",
+    "test_data": true,
+    "test_generated_at": "2025-07-26T16:57:52.993Z"
+  },
+  {
+    "id": "TEST_metric_023",
+    "sessionId": "TEST_session_033",
+    "metricType": "page_load",
+    "value": "1254",
+    "unit": "ms",
+    "createdAt": "2025-07-22T14:24:46.582Z",
+    "test_data": true,
+    "test_generated_at": "2025-07-26T16:57:52.993Z"
+  },
+  {
+    "id": "TEST_metric_024",
+    "sessionId": "TEST_session_051",
+    "metricType": "server_health",
+    "value": "32.4",
+    "unit": "%",
+    "createdAt": "2025-07-25T17:44:36.767Z",
+    "test_data": true,
+    "test_generated_at": "2025-07-26T16:57:52.993Z"
+  },
+  {
+    "id": "TEST_metric_025",
+    "sessionId": "TEST_session_007",
+    "metricType": "page_load",
+    "value": "3045",
+    "unit": "ms",
+    "createdAt": "2025-07-21T21:17:21.321Z",
+    "test_data": true,
+    "test_generated_at": "2025-07-26T16:57:52.993Z"
+  },
+  {
+    "id": "TEST_metric_026",
+    "sessionId": "TEST_session_002",
+    "metricType": "video_load",
+    "value": "133",
+    "unit": "ms",
+    "createdAt": "2025-07-22T06:51:16.296Z",
+    "test_data": true,
+    "test_generated_at": "2025-07-26T16:57:52.993Z"
+  },
+  {
+    "id": "TEST_metric_027",
+    "sessionId": "TEST_session_072",
+    "metricType": "video_load",
+    "value": "1243",
+    "unit": "ms",
+    "createdAt": "2025-07-22T14:42:30.795Z",
+    "test_data": true,
+    "test_generated_at": "2025-07-26T16:57:52.993Z"
+  },
+  {
+    "id": "TEST_metric_028",
+    "sessionId": "TEST_session_074",
+    "metricType": "api_response",
+    "value": "261",
+    "unit": "ms",
+    "createdAt": "2025-07-23T17:47:40.702Z",
+    "test_data": true,
+    "test_generated_at": "2025-07-26T16:57:52.993Z"
   },
   {
     "id": "TEST_metric_029",
     "sessionId": "TEST_session_005",
-    "metricType": "api_response",
-    "value": "170",
-    "unit": "ms",
-    "createdAt": "2025-07-22T16:36:14.931Z",
+    "metricType": "server_health",
+    "value": "55.4",
+    "unit": "%",
+    "createdAt": "2025-07-21T11:59:27.177Z",
     "test_data": true,
-    "test_generated_at": "2025-07-26T16:54:09.356Z"
+    "test_generated_at": "2025-07-26T16:57:52.993Z"
   },
   {
     "id": "TEST_metric_030",
-    "sessionId": "TEST_session_041",
-    "metricType": "api_response",
-    "value": "1000",
-    "unit": "ms",
-    "createdAt": "2025-07-24T18:19:33.696Z",
+    "sessionId": "TEST_session_038",
+    "metricType": "server_health",
+    "value": "39.4",
+    "unit": "%",
+    "createdAt": "2025-07-21T08:12:13.711Z",
     "test_data": true,
-    "test_generated_at": "2025-07-26T16:54:09.356Z"
+    "test_generated_at": "2025-07-26T16:57:52.993Z"
   },
   {
     "id": "TEST_metric_031",
-    "sessionId": "TEST_session_017",
+    "sessionId": "TEST_session_025",
     "metricType": "video_load",
-    "value": "1614",
+    "value": "735",
     "unit": "ms",
-    "createdAt": "2025-07-20T21:33:56.225Z",
+    "createdAt": "2025-07-21T12:05:41.661Z",
     "test_data": true,
-    "test_generated_at": "2025-07-26T16:54:09.356Z"
+    "test_generated_at": "2025-07-26T16:57:52.993Z"
   },
   {
     "id": "TEST_metric_032",
-    "sessionId": "TEST_session_063",
-    "metricType": "page_load",
-    "value": "3248",
-    "unit": "ms",
-    "createdAt": "2025-07-22T23:13:14.318Z",
+    "sessionId": "TEST_session_046",
+    "metricType": "server_health",
+    "value": "35.3",
+    "unit": "%",
+    "createdAt": "2025-07-24T22:11:30.142Z",
     "test_data": true,
-    "test_generated_at": "2025-07-26T16:54:09.356Z"
+    "test_generated_at": "2025-07-26T16:57:52.993Z"
   },
   {
     "id": "TEST_metric_033",
-    "sessionId": "TEST_session_028",
-    "metricType": "api_response",
-    "value": "141",
+    "sessionId": "TEST_session_064",
+    "metricType": "page_load",
+    "value": "3464",
     "unit": "ms",
-    "createdAt": "2025-07-19T20:51:04.961Z",
+    "createdAt": "2025-07-20T20:15:07.868Z",
     "test_data": true,
-    "test_generated_at": "2025-07-26T16:54:09.356Z"
+    "test_generated_at": "2025-07-26T16:57:52.993Z"
   },
   {
     "id": "TEST_metric_034",
-    "sessionId": "TEST_session_012",
-    "metricType": "api_response",
-    "value": "135",
-    "unit": "ms",
-    "createdAt": "2025-07-22T00:26:15.856Z",
+    "sessionId": "TEST_session_026",
+    "metricType": "server_health",
+    "value": "57.1",
+    "unit": "%",
+    "createdAt": "2025-07-25T19:52:37.709Z",
     "test_data": true,
-    "test_generated_at": "2025-07-26T16:54:09.356Z"
+    "test_generated_at": "2025-07-26T16:57:52.993Z"
   },
   {
     "id": "TEST_metric_035",
-    "sessionId": "TEST_session_004",
-    "metricType": "server_health",
-    "value": "9.3",
-    "unit": "%",
-    "createdAt": "2025-07-24T18:24:42.474Z",
+    "sessionId": "TEST_session_060",
+    "metricType": "video_load",
+    "value": "2017",
+    "unit": "ms",
+    "createdAt": "2025-07-22T03:21:26.579Z",
     "test_data": true,
-    "test_generated_at": "2025-07-26T16:54:09.356Z"
+    "test_generated_at": "2025-07-26T16:57:52.993Z"
   },
   {
     "id": "TEST_metric_036",
-    "sessionId": "TEST_session_046",
-    "metricType": "server_health",
-    "value": "98.1",
-    "unit": "%",
-    "createdAt": "2025-07-20T01:10:50.834Z",
+    "sessionId": "TEST_session_060",
+    "metricType": "page_load",
+    "value": "1520",
+    "unit": "ms",
+    "createdAt": "2025-07-26T13:10:25.875Z",
     "test_data": true,
-    "test_generated_at": "2025-07-26T16:54:09.356Z"
+    "test_generated_at": "2025-07-26T16:57:52.993Z"
   },
   {
     "id": "TEST_metric_037",
-    "sessionId": "TEST_session_046",
-    "metricType": "api_response",
-    "value": "617",
+    "sessionId": "TEST_session_060",
+    "metricType": "page_load",
+    "value": "2800",
     "unit": "ms",
-    "createdAt": "2025-07-20T08:58:56.697Z",
+    "createdAt": "2025-07-25T03:13:21.439Z",
     "test_data": true,
-    "test_generated_at": "2025-07-26T16:54:09.356Z"
+    "test_generated_at": "2025-07-26T16:57:52.993Z"
+  },
+  {
+    "id": "TEST_metric_038",
+    "sessionId": "TEST_session_006",
+    "metricType": "page_load",
+    "value": "2043",
+    "unit": "ms",
+    "createdAt": "2025-07-23T23:25:59.299Z",
+    "test_data": true,
+    "test_generated_at": "2025-07-26T16:57:52.993Z"
+  },
+  {
+    "id": "TEST_metric_039",
+    "sessionId": "TEST_session_000",
+    "metricType": "server_health",
+    "value": "37.3",
+    "unit": "%",
+    "createdAt": "2025-07-25T05:38:11.312Z",
+    "test_data": true,
+    "test_generated_at": "2025-07-26T16:57:52.993Z"
+  },
+  {
+    "id": "TEST_metric_040",
+    "sessionId": "TEST_session_040",
+    "metricType": "video_load",
+    "value": "243",
+    "unit": "ms",
+    "createdAt": "2025-07-24T10:13:14.000Z",
+    "test_data": true,
+    "test_generated_at": "2025-07-26T16:57:52.993Z"
+  },
+  {
+    "id": "TEST_metric_041",
+    "sessionId": "TEST_session_074",
+    "metricType": "page_load",
+    "value": "2530",
+    "unit": "ms",
+    "createdAt": "2025-07-22T23:47:38.707Z",
+    "test_data": true,
+    "test_generated_at": "2025-07-26T16:57:52.993Z"
+  },
+  {
+    "id": "TEST_metric_042",
+    "sessionId": "TEST_session_003",
+    "metricType": "api_response",
+    "value": "317",
+    "unit": "ms",
+    "createdAt": "2025-07-24T12:16:23.665Z",
+    "test_data": true,
+    "test_generated_at": "2025-07-26T16:57:52.993Z"
+  },
+  {
+    "id": "TEST_metric_000",
+    "sessionId": "TEST_session_004",
+    "metricType": "server_health",
+    "value": "41.0",
+    "unit": "%",
+    "createdAt": "2025-07-25T00:09:39.549Z",
+    "test_data": true,
+    "test_generated_at": "2025-07-26T16:57:57.497Z"
+  },
+  {
+    "id": "TEST_metric_001",
+    "sessionId": "TEST_session_024",
+    "metricType": "page_load",
+    "value": "3437",
+    "unit": "ms",
+    "createdAt": "2025-07-23T05:36:41.561Z",
+    "test_data": true,
+    "test_generated_at": "2025-07-26T16:57:57.497Z"
+  },
+  {
+    "id": "TEST_metric_002",
+    "sessionId": "TEST_session_012",
+    "metricType": "page_load",
+    "value": "1946",
+    "unit": "ms",
+    "createdAt": "2025-07-20T22:43:50.262Z",
+    "test_data": true,
+    "test_generated_at": "2025-07-26T16:57:57.497Z"
+  },
+  {
+    "id": "TEST_metric_003",
+    "sessionId": "TEST_session_008",
+    "metricType": "server_health",
+    "value": "79.5",
+    "unit": "%",
+    "createdAt": "2025-07-25T23:38:17.613Z",
+    "test_data": true,
+    "test_generated_at": "2025-07-26T16:57:57.497Z"
+  },
+  {
+    "id": "TEST_metric_004",
+    "sessionId": "TEST_session_051",
+    "metricType": "api_response",
+    "value": "963",
+    "unit": "ms",
+    "createdAt": "2025-07-24T17:53:59.962Z",
+    "test_data": true,
+    "test_generated_at": "2025-07-26T16:57:57.497Z"
+  },
+  {
+    "id": "TEST_metric_005",
+    "sessionId": "TEST_session_003",
+    "metricType": "api_response",
+    "value": "200",
+    "unit": "ms",
+    "createdAt": "2025-07-26T06:38:30.278Z",
+    "test_data": true,
+    "test_generated_at": "2025-07-26T16:57:57.497Z"
+  },
+  {
+    "id": "TEST_metric_006",
+    "sessionId": "TEST_session_007",
+    "metricType": "page_load",
+    "value": "647",
+    "unit": "ms",
+    "createdAt": "2025-07-22T12:09:41.065Z",
+    "test_data": true,
+    "test_generated_at": "2025-07-26T16:57:57.497Z"
+  },
+  {
+    "id": "TEST_metric_007",
+    "sessionId": "TEST_session_007",
+    "metricType": "video_load",
+    "value": "787",
+    "unit": "ms",
+    "createdAt": "2025-07-21T15:43:12.307Z",
+    "test_data": true,
+    "test_generated_at": "2025-07-26T16:57:57.497Z"
+  },
+  {
+    "id": "TEST_metric_008",
+    "sessionId": "TEST_session_038",
+    "metricType": "page_load",
+    "value": "1721",
+    "unit": "ms",
+    "createdAt": "2025-07-21T01:17:22.193Z",
+    "test_data": true,
+    "test_generated_at": "2025-07-26T16:57:57.497Z"
+  },
+  {
+    "id": "TEST_metric_009",
+    "sessionId": "TEST_session_019",
+    "metricType": "server_health",
+    "value": "80.2",
+    "unit": "%",
+    "createdAt": "2025-07-22T11:39:12.683Z",
+    "test_data": true,
+    "test_generated_at": "2025-07-26T16:57:57.497Z"
+  },
+  {
+    "id": "TEST_metric_010",
+    "sessionId": "TEST_session_032",
+    "metricType": "page_load",
+    "value": "3106",
+    "unit": "ms",
+    "createdAt": "2025-07-19T22:15:25.479Z",
+    "test_data": true,
+    "test_generated_at": "2025-07-26T16:57:57.497Z"
+  },
+  {
+    "id": "TEST_metric_011",
+    "sessionId": "TEST_session_026",
+    "metricType": "server_health",
+    "value": "71.6",
+    "unit": "%",
+    "createdAt": "2025-07-20T23:55:56.352Z",
+    "test_data": true,
+    "test_generated_at": "2025-07-26T16:57:57.497Z"
+  },
+  {
+    "id": "TEST_metric_012",
+    "sessionId": "TEST_session_013",
+    "metricType": "page_load",
+    "value": "1115",
+    "unit": "ms",
+    "createdAt": "2025-07-20T20:58:00.556Z",
+    "test_data": true,
+    "test_generated_at": "2025-07-26T16:57:57.497Z"
+  },
+  {
+    "id": "TEST_metric_013",
+    "sessionId": "TEST_session_037",
+    "metricType": "api_response",
+    "value": "470",
+    "unit": "ms",
+    "createdAt": "2025-07-25T09:46:42.134Z",
+    "test_data": true,
+    "test_generated_at": "2025-07-26T16:57:57.497Z"
+  },
+  {
+    "id": "TEST_metric_014",
+    "sessionId": "TEST_session_055",
+    "metricType": "page_load",
+    "value": "513",
+    "unit": "ms",
+    "createdAt": "2025-07-23T13:17:56.258Z",
+    "test_data": true,
+    "test_generated_at": "2025-07-26T16:57:57.497Z"
+  },
+  {
+    "id": "TEST_metric_015",
+    "sessionId": "TEST_session_023",
+    "metricType": "server_health",
+    "value": "14.5",
+    "unit": "%",
+    "createdAt": "2025-07-21T08:36:35.678Z",
+    "test_data": true,
+    "test_generated_at": "2025-07-26T16:57:57.497Z"
+  },
+  {
+    "id": "TEST_metric_016",
+    "sessionId": "TEST_session_063",
+    "metricType": "page_load",
+    "value": "671",
+    "unit": "ms",
+    "createdAt": "2025-07-26T16:27:17.168Z",
+    "test_data": true,
+    "test_generated_at": "2025-07-26T16:57:57.497Z"
+  },
+  {
+    "id": "TEST_metric_017",
+    "sessionId": "TEST_session_065",
+    "metricType": "server_health",
+    "value": "52.6",
+    "unit": "%",
+    "createdAt": "2025-07-24T09:26:18.150Z",
+    "test_data": true,
+    "test_generated_at": "2025-07-26T16:57:57.497Z"
+  },
+  {
+    "id": "TEST_metric_018",
+    "sessionId": "TEST_session_003",
+    "metricType": "page_load",
+    "value": "2782",
+    "unit": "ms",
+    "createdAt": "2025-07-22T18:30:03.463Z",
+    "test_data": true,
+    "test_generated_at": "2025-07-26T16:57:57.497Z"
+  },
+  {
+    "id": "TEST_metric_019",
+    "sessionId": "TEST_session_016",
+    "metricType": "video_load",
+    "value": "424",
+    "unit": "ms",
+    "createdAt": "2025-07-21T20:28:38.933Z",
+    "test_data": true,
+    "test_generated_at": "2025-07-26T16:57:57.497Z"
+  },
+  {
+    "id": "TEST_metric_020",
+    "sessionId": "TEST_session_007",
+    "metricType": "video_load",
+    "value": "2051",
+    "unit": "ms",
+    "createdAt": "2025-07-22T03:11:42.817Z",
+    "test_data": true,
+    "test_generated_at": "2025-07-26T16:57:57.497Z"
+  },
+  {
+    "id": "TEST_metric_021",
+    "sessionId": "TEST_session_023",
+    "metricType": "video_load",
+    "value": "2030",
+    "unit": "ms",
+    "createdAt": "2025-07-22T07:09:21.772Z",
+    "test_data": true,
+    "test_generated_at": "2025-07-26T16:57:57.497Z"
+  },
+  {
+    "id": "TEST_metric_000",
+    "sessionId": "TEST_session_056",
+    "metricType": "video_load",
+    "value": "793",
+    "unit": "ms",
+    "createdAt": "2025-07-26T14:33:33.948Z",
+    "test_data": true,
+    "test_generated_at": "2025-07-26T16:57:59.786Z"
+  },
+  {
+    "id": "TEST_metric_001",
+    "sessionId": "TEST_session_040",
+    "metricType": "page_load",
+    "value": "3112",
+    "unit": "ms",
+    "createdAt": "2025-07-20T14:22:09.584Z",
+    "test_data": true,
+    "test_generated_at": "2025-07-26T16:57:59.786Z"
+  },
+  {
+    "id": "TEST_metric_002",
+    "sessionId": "TEST_session_069",
+    "metricType": "page_load",
+    "value": "3431",
+    "unit": "ms",
+    "createdAt": "2025-07-20T05:54:39.771Z",
+    "test_data": true,
+    "test_generated_at": "2025-07-26T16:57:59.786Z"
+  },
+  {
+    "id": "TEST_metric_003",
+    "sessionId": "TEST_session_062",
+    "metricType": "server_health",
+    "value": "92.6",
+    "unit": "%",
+    "createdAt": "2025-07-24T06:19:52.897Z",
+    "test_data": true,
+    "test_generated_at": "2025-07-26T16:57:59.786Z"
+  },
+  {
+    "id": "TEST_metric_004",
+    "sessionId": "TEST_session_009",
+    "metricType": "server_health",
+    "value": "26.4",
+    "unit": "%",
+    "createdAt": "2025-07-21T12:47:25.477Z",
+    "test_data": true,
+    "test_generated_at": "2025-07-26T16:57:59.786Z"
+  },
+  {
+    "id": "TEST_metric_005",
+    "sessionId": "TEST_session_004",
+    "metricType": "api_response",
+    "value": "150",
+    "unit": "ms",
+    "createdAt": "2025-07-21T02:08:20.630Z",
+    "test_data": true,
+    "test_generated_at": "2025-07-26T16:57:59.786Z"
+  },
+  {
+    "id": "TEST_metric_006",
+    "sessionId": "TEST_session_066",
+    "metricType": "api_response",
+    "value": "938",
+    "unit": "ms",
+    "createdAt": "2025-07-24T15:55:26.503Z",
+    "test_data": true,
+    "test_generated_at": "2025-07-26T16:57:59.786Z"
+  },
+  {
+    "id": "TEST_metric_007",
+    "sessionId": "TEST_session_014",
+    "metricType": "server_health",
+    "value": "33.3",
+    "unit": "%",
+    "createdAt": "2025-07-22T20:03:24.525Z",
+    "test_data": true,
+    "test_generated_at": "2025-07-26T16:57:59.786Z"
+  },
+  {
+    "id": "TEST_metric_008",
+    "sessionId": "TEST_session_013",
+    "metricType": "video_load",
+    "value": "1611",
+    "unit": "ms",
+    "createdAt": "2025-07-23T08:45:01.355Z",
+    "test_data": true,
+    "test_generated_at": "2025-07-26T16:57:59.786Z"
+  },
+  {
+    "id": "TEST_metric_009",
+    "sessionId": "TEST_session_038",
+    "metricType": "video_load",
+    "value": "485",
+    "unit": "ms",
+    "createdAt": "2025-07-23T08:37:30.060Z",
+    "test_data": true,
+    "test_generated_at": "2025-07-26T16:57:59.786Z"
+  },
+  {
+    "id": "TEST_metric_010",
+    "sessionId": "TEST_session_000",
+    "metricType": "video_load",
+    "value": "1297",
+    "unit": "ms",
+    "createdAt": "2025-07-20T18:47:25.082Z",
+    "test_data": true,
+    "test_generated_at": "2025-07-26T16:57:59.786Z"
+  },
+  {
+    "id": "TEST_metric_011",
+    "sessionId": "TEST_session_024",
+    "metricType": "server_health",
+    "value": "59.2",
+    "unit": "%",
+    "createdAt": "2025-07-20T14:22:10.950Z",
+    "test_data": true,
+    "test_generated_at": "2025-07-26T16:57:59.786Z"
+  },
+  {
+    "id": "TEST_metric_012",
+    "sessionId": "TEST_session_026",
+    "metricType": "server_health",
+    "value": "81.0",
+    "unit": "%",
+    "createdAt": "2025-07-22T19:20:48.895Z",
+    "test_data": true,
+    "test_generated_at": "2025-07-26T16:57:59.786Z"
+  },
+  {
+    "id": "TEST_metric_013",
+    "sessionId": "TEST_session_053",
+    "metricType": "server_health",
+    "value": "44.3",
+    "unit": "%",
+    "createdAt": "2025-07-19T16:59:50.570Z",
+    "test_data": true,
+    "test_generated_at": "2025-07-26T16:57:59.786Z"
+  },
+  {
+    "id": "TEST_metric_014",
+    "sessionId": "TEST_session_060",
+    "metricType": "server_health",
+    "value": "10.6",
+    "unit": "%",
+    "createdAt": "2025-07-19T20:10:41.800Z",
+    "test_data": true,
+    "test_generated_at": "2025-07-26T16:57:59.786Z"
+  },
+  {
+    "id": "TEST_metric_015",
+    "sessionId": "TEST_session_066",
+    "metricType": "server_health",
+    "value": "98.4",
+    "unit": "%",
+    "createdAt": "2025-07-20T07:59:42.446Z",
+    "test_data": true,
+    "test_generated_at": "2025-07-26T16:57:59.786Z"
+  },
+  {
+    "id": "TEST_metric_016",
+    "sessionId": "TEST_session_020",
+    "metricType": "video_load",
+    "value": "205",
+    "unit": "ms",
+    "createdAt": "2025-07-24T01:23:15.044Z",
+    "test_data": true,
+    "test_generated_at": "2025-07-26T16:57:59.786Z"
+  },
+  {
+    "id": "TEST_metric_017",
+    "sessionId": "TEST_session_006",
+    "metricType": "server_health",
+    "value": "87.2",
+    "unit": "%",
+    "createdAt": "2025-07-21T13:53:04.796Z",
+    "test_data": true,
+    "test_generated_at": "2025-07-26T16:57:59.786Z"
+  },
+  {
+    "id": "TEST_metric_018",
+    "sessionId": "TEST_session_055",
+    "metricType": "page_load",
+    "value": "1850",
+    "unit": "ms",
+    "createdAt": "2025-07-22T13:05:07.522Z",
+    "test_data": true,
+    "test_generated_at": "2025-07-26T16:57:59.786Z"
+  },
+  {
+    "id": "TEST_metric_019",
+    "sessionId": "TEST_session_043",
+    "metricType": "page_load",
+    "value": "768",
+    "unit": "ms",
+    "createdAt": "2025-07-21T22:27:37.466Z",
+    "test_data": true,
+    "test_generated_at": "2025-07-26T16:57:59.786Z"
+  },
+  {
+    "id": "TEST_metric_020",
+    "sessionId": "TEST_session_024",
+    "metricType": "video_load",
+    "value": "244",
+    "unit": "ms",
+    "createdAt": "2025-07-25T02:51:58.178Z",
+    "test_data": true,
+    "test_generated_at": "2025-07-26T16:57:59.786Z"
+  },
+  {
+    "id": "TEST_metric_141",
+    "sessionId": "TEST_session_051",
+    "metricType": "server_health",
+    "value": "25.9",
+    "unit": "%",
+    "createdAt": "2025-07-22T12:57:51.327Z",
+    "test_data": true,
+    "test_generated_at": "2025-07-26T17:02:02.980Z"
+  },
+  {
+    "id": "TEST_metric_142",
+    "sessionId": "TEST_session_009",
+    "metricType": "page_load",
+    "value": "1093",
+    "unit": "ms",
+    "createdAt": "2025-07-20T13:24:20.836Z",
+    "test_data": true,
+    "test_generated_at": "2025-07-26T17:02:02.980Z"
+  },
+  {
+    "id": "TEST_metric_143",
+    "sessionId": "TEST_session_048",
+    "metricType": "video_load",
+    "value": "192",
+    "unit": "ms",
+    "createdAt": "2025-07-21T08:38:09.428Z",
+    "test_data": true,
+    "test_generated_at": "2025-07-26T17:02:02.980Z"
+  },
+  {
+    "id": "TEST_metric_144",
+    "sessionId": "TEST_session_067",
+    "metricType": "api_response",
+    "value": "144",
+    "unit": "ms",
+    "createdAt": "2025-07-25T22:22:56.249Z",
+    "test_data": true,
+    "test_generated_at": "2025-07-26T17:02:02.980Z"
+  },
+  {
+    "id": "TEST_metric_145",
+    "sessionId": "TEST_session_004",
+    "metricType": "api_response",
+    "value": "974",
+    "unit": "ms",
+    "createdAt": "2025-07-20T09:59:32.056Z",
+    "test_data": true,
+    "test_generated_at": "2025-07-26T17:02:02.980Z"
+  },
+  {
+    "id": "TEST_metric_146",
+    "sessionId": "TEST_session_030",
+    "metricType": "page_load",
+    "value": "2314",
+    "unit": "ms",
+    "createdAt": "2025-07-20T05:54:54.536Z",
+    "test_data": true,
+    "test_generated_at": "2025-07-26T17:02:02.980Z"
+  },
+  {
+    "id": "TEST_metric_147",
+    "sessionId": "TEST_session_022",
+    "metricType": "video_load",
+    "value": "1243",
+    "unit": "ms",
+    "createdAt": "2025-07-20T08:43:08.656Z",
+    "test_data": true,
+    "test_generated_at": "2025-07-26T17:02:02.980Z"
+  },
+  {
+    "id": "TEST_metric_148",
+    "sessionId": "TEST_session_043",
+    "metricType": "video_load",
+    "value": "1427",
+    "unit": "ms",
+    "createdAt": "2025-07-20T10:38:17.992Z",
+    "test_data": true,
+    "test_generated_at": "2025-07-26T17:02:02.980Z"
+  },
+  {
+    "id": "TEST_metric_149",
+    "sessionId": "TEST_session_028",
+    "metricType": "video_load",
+    "value": "906",
+    "unit": "ms",
+    "createdAt": "2025-07-23T18:14:43.480Z",
+    "test_data": true,
+    "test_generated_at": "2025-07-26T17:02:02.980Z"
+  },
+  {
+    "id": "TEST_metric_150",
+    "sessionId": "TEST_session_047",
+    "metricType": "api_response",
+    "value": "966",
+    "unit": "ms",
+    "createdAt": "2025-07-23T19:59:42.584Z",
+    "test_data": true,
+    "test_generated_at": "2025-07-26T17:02:02.980Z"
+  },
+  {
+    "id": "TEST_metric_151",
+    "sessionId": "TEST_session_003",
+    "metricType": "page_load",
+    "value": "502",
+    "unit": "ms",
+    "createdAt": "2025-07-22T11:14:49.783Z",
+    "test_data": true,
+    "test_generated_at": "2025-07-26T17:02:02.980Z"
+  },
+  {
+    "id": "TEST_metric_152",
+    "sessionId": "TEST_session_056",
+    "metricType": "page_load",
+    "value": "1903",
+    "unit": "ms",
+    "createdAt": "2025-07-19T21:15:35.903Z",
+    "test_data": true,
+    "test_generated_at": "2025-07-26T17:02:02.980Z"
+  },
+  {
+    "id": "TEST_metric_153",
+    "sessionId": "TEST_session_017",
+    "metricType": "page_load",
+    "value": "3161",
+    "unit": "ms",
+    "createdAt": "2025-07-24T11:06:15.061Z",
+    "test_data": true,
+    "test_generated_at": "2025-07-26T17:02:02.980Z"
+  },
+  {
+    "id": "TEST_metric_154",
+    "sessionId": "TEST_session_073",
+    "metricType": "server_health",
+    "value": "18.3",
+    "unit": "%",
+    "createdAt": "2025-07-20T07:14:36.843Z",
+    "test_data": true,
+    "test_generated_at": "2025-07-26T17:02:02.980Z"
+  },
+  {
+    "id": "TEST_metric_155",
+    "sessionId": "TEST_session_021",
+    "metricType": "page_load",
+    "value": "1776",
+    "unit": "ms",
+    "createdAt": "2025-07-20T22:10:19.335Z",
+    "test_data": true,
+    "test_generated_at": "2025-07-26T17:02:02.980Z"
+  },
+  {
+    "id": "TEST_metric_156",
+    "sessionId": "TEST_session_065",
+    "metricType": "server_health",
+    "value": "34.8",
+    "unit": "%",
+    "createdAt": "2025-07-23T12:19:22.439Z",
+    "test_data": true,
+    "test_generated_at": "2025-07-26T17:02:02.980Z"
+  },
+  {
+    "id": "TEST_metric_157",
+    "sessionId": "TEST_session_052",
+    "metricType": "api_response",
+    "value": "185",
+    "unit": "ms",
+    "createdAt": "2025-07-21T01:35:30.875Z",
+    "test_data": true,
+    "test_generated_at": "2025-07-26T17:02:02.980Z"
+  },
+  {
+    "id": "TEST_metric_158",
+    "sessionId": "TEST_session_020",
+    "metricType": "page_load",
+    "value": "3101",
+    "unit": "ms",
+    "createdAt": "2025-07-26T04:59:01.566Z",
+    "test_data": true,
+    "test_generated_at": "2025-07-26T17:02:02.980Z"
+  },
+  {
+    "id": "TEST_metric_159",
+    "sessionId": "TEST_session_060",
+    "metricType": "server_health",
+    "value": "37.2",
+    "unit": "%",
+    "createdAt": "2025-07-25T01:24:05.683Z",
+    "test_data": true,
+    "test_generated_at": "2025-07-26T17:02:02.980Z"
+  },
+  {
+    "id": "TEST_metric_160",
+    "sessionId": "TEST_session_040",
+    "metricType": "page_load",
+    "value": "1599",
+    "unit": "ms",
+    "createdAt": "2025-07-21T02:38:26.991Z",
+    "test_data": true,
+    "test_generated_at": "2025-07-26T17:02:02.980Z"
+  },
+  {
+    "id": "TEST_metric_161",
+    "sessionId": "TEST_session_069",
+    "metricType": "server_health",
+    "value": "56.0",
+    "unit": "%",
+    "createdAt": "2025-07-26T04:23:38.267Z",
+    "test_data": true,
+    "test_generated_at": "2025-07-26T17:02:02.980Z"
+  },
+  {
+    "id": "TEST_metric_162",
+    "sessionId": "TEST_session_022",
+    "metricType": "api_response",
+    "value": "899",
+    "unit": "ms",
+    "createdAt": "2025-07-22T07:33:14.741Z",
+    "test_data": true,
+    "test_generated_at": "2025-07-26T17:02:02.980Z"
+  },
+  {
+    "id": "TEST_metric_163",
+    "sessionId": "TEST_session_045",
+    "metricType": "api_response",
+    "value": "619",
+    "unit": "ms",
+    "createdAt": "2025-07-23T10:06:01.490Z",
+    "test_data": true,
+    "test_generated_at": "2025-07-26T17:02:02.981Z"
+  },
+  {
+    "id": "TEST_metric_164",
+    "sessionId": "TEST_session_006",
+    "metricType": "page_load",
+    "value": "2714",
+    "unit": "ms",
+    "createdAt": "2025-07-20T08:39:42.615Z",
+    "test_data": true,
+    "test_generated_at": "2025-07-26T17:02:02.981Z"
+  },
+  {
+    "id": "TEST_metric_165",
+    "sessionId": "TEST_session_011",
+    "metricType": "video_load",
+    "value": "1851",
+    "unit": "ms",
+    "createdAt": "2025-07-22T07:30:09.647Z",
+    "test_data": true,
+    "test_generated_at": "2025-07-26T17:02:02.981Z"
+  },
+  {
+    "id": "TEST_metric_166",
+    "sessionId": "TEST_session_052",
+    "metricType": "video_load",
+    "value": "1763",
+    "unit": "ms",
+    "createdAt": "2025-07-25T01:51:30.790Z",
+    "test_data": true,
+    "test_generated_at": "2025-07-26T17:02:02.981Z"
+  },
+  {
+    "id": "TEST_metric_167",
+    "sessionId": "TEST_session_028",
+    "metricType": "api_response",
+    "value": "918",
+    "unit": "ms",
+    "createdAt": "2025-07-20T01:34:30.621Z",
+    "test_data": true,
+    "test_generated_at": "2025-07-26T17:02:02.981Z"
+  },
+  {
+    "id": "TEST_metric_168",
+    "sessionId": "TEST_session_051",
+    "metricType": "page_load",
+    "value": "3395",
+    "unit": "ms",
+    "createdAt": "2025-07-24T03:28:01.080Z",
+    "test_data": true,
+    "test_generated_at": "2025-07-26T17:02:02.981Z"
+  },
+  {
+    "id": "TEST_metric_169",
+    "sessionId": "TEST_session_012",
+    "metricType": "page_load",
+    "value": "3478",
+    "unit": "ms",
+    "createdAt": "2025-07-25T15:34:21.146Z",
+    "test_data": true,
+    "test_generated_at": "2025-07-26T17:02:02.981Z"
+  },
+  {
+    "id": "TEST_metric_170",
+    "sessionId": "TEST_session_022",
+    "metricType": "page_load",
+    "value": "3252",
+    "unit": "ms",
+    "createdAt": "2025-07-20T12:04:12.626Z",
+    "test_data": true,
+    "test_generated_at": "2025-07-26T17:02:02.981Z"
+  },
+  {
+    "id": "TEST_metric_171",
+    "sessionId": "TEST_session_056",
+    "metricType": "video_load",
+    "value": "303",
+    "unit": "ms",
+    "createdAt": "2025-07-22T07:16:39.198Z",
+    "test_data": true,
+    "test_generated_at": "2025-07-26T17:02:02.981Z"
+  },
+  {
+    "id": "TEST_metric_172",
+    "sessionId": "TEST_session_024",
+    "metricType": "page_load",
+    "value": "2739",
+    "unit": "ms",
+    "createdAt": "2025-07-26T13:06:23.823Z",
+    "test_data": true,
+    "test_generated_at": "2025-07-26T17:02:02.981Z"
+  },
+  {
+    "id": "TEST_metric_173",
+    "sessionId": "TEST_session_057",
+    "metricType": "page_load",
+    "value": "1066",
+    "unit": "ms",
+    "createdAt": "2025-07-21T08:26:27.891Z",
+    "test_data": true,
+    "test_generated_at": "2025-07-26T17:02:02.981Z"
   }
 ]

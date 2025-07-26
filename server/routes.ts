@@ -1763,6 +1763,21 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Time-series Analytics Endpoint
+  app.get('/api/analytics/time-series', async (req, res) => {
+    try {
+      const { dateFrom, dateTo } = req.query;
+      const timeSeriesData = await hybridStorage.getTimeSeriesData(
+        dateFrom as string,
+        dateTo as string
+      );
+      res.json(timeSeriesData);
+    } catch (error) {
+      console.error('Time-series analytics error:', error);
+      res.status(500).json({ error: 'Failed to get time-series analytics data' });
+    }
+  });
+
   // Enhanced Video Analytics Endpoints
   app.get('/api/analytics/video-engagement/:videoId?', async (req, res) => {
     try {

@@ -11,6 +11,17 @@ import { Switch } from '@/components/ui/switch';
 import { useToast } from '@/hooks/use-toast';
 import { apiRequest } from '@/lib/queryClient';
 import { 
+  LineChart, 
+  Line, 
+  AreaChart, 
+  Area, 
+  XAxis, 
+  YAxis, 
+  CartesianGrid, 
+  Tooltip, 
+  ResponsiveContainer 
+} from 'recharts';
+import { 
   BarChart3, 
   Users, 
   Eye, 
@@ -73,6 +84,16 @@ interface ActiveViewerIp {
   session_count: number;
 }
 
+interface TimeSeriesData {
+  date: string;
+  visitors: number;
+  totalViews: number;
+  uniqueViews: number;
+  countries: number;
+  sessions: number;
+  viewsPerVisitor: number;
+}
+
 export function AnalyticsDashboard() {
   const [dateFrom, setDateFrom] = useState('');
   const [dateTo, setDateTo] = useState('');
@@ -110,6 +131,12 @@ export function AnalyticsDashboard() {
   const { data: activeIps, isLoading: activeIpsLoading } = useQuery<ActiveViewerIp[]>({
     queryKey: ['/api/analytics/active-ips'],
     enabled: showIpManagement
+  });
+
+  // Fetch time-series data for charts
+  const { data: timeSeriesData, isLoading: timeSeriesLoading } = useQuery<TimeSeriesData[]>({
+    queryKey: ['/api/analytics/time-series', dateFrom, dateTo],
+    staleTime: 1000 * 60 * 5, // Cache for 5 minutes
   });
 
   // Update settings mutation
@@ -1122,6 +1149,136 @@ export function AnalyticsDashboard() {
               </CardContent>
             </Card>
           </div>
+
+          {/* Time Series Trends */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <TrendingUp className="h-5 w-5" />
+                Visitor & View Trends
+              </CardTitle>
+              <CardDescription>
+                Daily visitor and view analytics over time
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              {timeSeriesLoading ? (
+                <div className="h-80 flex items-center justify-center">
+                  <div className="text-center">
+                    <RefreshCw className="h-8 w-8 animate-spin mx-auto mb-2 text-muted-foreground" />
+                    <p className="text-muted-foreground">Loading chart data...</p>
+                  </div>
+                </div>
+              ) : timeSeriesData?.length ? (
+                <div className="space-y-6">
+                  {/* Visitors Trend Chart */}
+                  <div>
+                    <h4 className="text-sm font-medium mb-3 flex items-center gap-2">
+                      <Users className="h-4 w-4" />
+                      Daily Visitors & Sessions
+                    </h4>
+                    <div className="h-64">
+                      <ResponsiveContainer width="100%" height="100%">
+                        <AreaChart data={timeSeriesData}>
+                          <CartesianGrid strokeDasharray="3 3" className="opacity-30" />
+                          <XAxis 
+                            dataKey="date" 
+                            fontSize={12}
+                            tickFormatter={(value) => new Date(value).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
+                          />
+                          <YAxis fontSize={12} />
+                          <Tooltip 
+                            labelFormatter={(value) => new Date(value).toLocaleDateString('en-US', { 
+                              weekday: 'long', 
+                              year: 'numeric', 
+                              month: 'long', 
+                              day: 'numeric' 
+                            })}
+                            formatter={(value: number, name: string) => [
+                              value,
+                              name === 'visitors' ? 'Visitors' : 'Sessions'
+                            ]}
+                          />
+                          <Area 
+                            type="monotone" 
+                            dataKey="visitors" 
+                            stackId="1"
+                            stroke="#ea580c" 
+                            fill="#ea580c" 
+                            fillOpacity={0.6}
+                          />
+                          <Area 
+                            type="monotone" 
+                            dataKey="sessions" 
+                            stackId="1"
+                            stroke="#f97316" 
+                            fill="#f97316" 
+                            fillOpacity={0.4}
+                          />
+                        </AreaChart>
+                      </ResponsiveContainer>
+                    </div>
+                  </div>
+
+                  {/* Views Trend Chart */}
+                  <div>
+                    <h4 className="text-sm font-medium mb-3 flex items-center gap-2">
+                      <Eye className="h-4 w-4" />
+                      Daily Video Views
+                    </h4>
+                    <div className="h-64">
+                      <ResponsiveContainer width="100%" height="100%">
+                        <LineChart data={timeSeriesData}>
+                          <CartesianGrid strokeDasharray="3 3" className="opacity-30" />
+                          <XAxis 
+                            dataKey="date" 
+                            fontSize={12}
+                            tickFormatter={(value) => new Date(value).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
+                          />
+                          <YAxis fontSize={12} />
+                          <Tooltip 
+                            labelFormatter={(value) => new Date(value).toLocaleDateString('en-US', { 
+                              weekday: 'long', 
+                              year: 'numeric', 
+                              month: 'long', 
+                              day: 'numeric' 
+                            })}
+                            formatter={(value: number, name: string) => [
+                              value,
+                              name === 'totalViews' ? 'Total Views' : 'Unique Views'
+                            ]}
+                          />
+                          <Line 
+                            type="monotone" 
+                            dataKey="totalViews" 
+                            stroke="#ea580c" 
+                            strokeWidth={2}
+                            dot={{ fill: '#ea580c', strokeWidth: 2, r: 4 }}
+                          />
+                          <Line 
+                            type="monotone" 
+                            dataKey="uniqueViews" 
+                            stroke="#f97316" 
+                            strokeWidth={2}
+                            strokeDasharray="5 5"
+                            dot={{ fill: '#f97316', strokeWidth: 2, r: 3 }}
+                          />
+                        </LineChart>
+                      </ResponsiveContainer>
+                    </div>
+                  </div>
+                </div>
+              ) : (
+                <div className="h-80 flex items-center justify-center">
+                  <div className="text-center">
+                    <BarChart3 className="h-12 w-12 mx-auto mb-4 opacity-50 text-muted-foreground" />
+                    <p className="text-muted-foreground">No time-series data available</p>
+                    <p className="text-sm text-muted-foreground">Visitor trends will appear here as data is collected</p>
+                  </div>
+                </div>
+              )}
+            </CardContent>
+          </Card>
 
           {/* Video Performance */}
           <Card>
