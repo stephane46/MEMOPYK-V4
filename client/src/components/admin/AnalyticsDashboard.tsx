@@ -384,13 +384,24 @@ export function AnalyticsDashboard() {
     if (showAdvancedAnalytics) {
       console.log('🔍 Advanced Analytics Debug:', {
         showAdvancedAnalytics,
-        videoEngagementData,
-        uniqueViewsData,
-        reEngagementData,
+        videoEngagementData: videoEngagementData,
+        uniqueViewsData: uniqueViewsData,
+        reEngagementData: reEngagementData,
         engagementLoading,
         uniqueViewsLoading,
         reEngagementLoading
       });
+      
+      // More detailed logging
+      if (videoEngagementData) {
+        console.log('📊 Video Engagement Data:', JSON.stringify(videoEngagementData, null, 2));
+      }
+      if (uniqueViewsData) {
+        console.log('👥 Unique Views Data:', JSON.stringify(uniqueViewsData, null, 2));
+      }
+      if (reEngagementData) {
+        console.log('🔄 Re-engagement Data:', JSON.stringify(reEngagementData, null, 2));
+      }
     }
   }, [showAdvancedAnalytics, videoEngagementData, uniqueViewsData, reEngagementData, engagementLoading, uniqueViewsLoading, reEngagementLoading]);
 
@@ -1189,7 +1200,7 @@ export function AnalyticsDashboard() {
               </div>
 
               {/* Video Engagement Metrics */}
-              {videoEngagementData && (videoEngagementData as any)?.metrics && (
+              {videoEngagementData && (videoEngagementData as any)?.success && (videoEngagementData as any)?.metrics && (
                 <Card>
                   <CardHeader>
                     <CardTitle className="flex items-center gap-2">
