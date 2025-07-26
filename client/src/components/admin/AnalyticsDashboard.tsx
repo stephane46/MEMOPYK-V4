@@ -229,6 +229,45 @@ export function AnalyticsDashboard() {
     }
   });
 
+  // Test Data Management Mutations
+  const generateTestDataMutation = useMutation({
+    mutationFn: () => apiRequest('/api/analytics/test-data/generate', 'POST'),
+    onSuccess: (result) => {
+      queryClient.invalidateQueries({ queryKey: ['/api/analytics/dashboard'] });
+      toast({
+        title: "Test Data Generated",
+        description: `Added ${result.result.sessions} sessions, ${result.result.views} views, ${result.result.metrics} metrics, ${result.result.visitors} visitors`,
+      });
+    },
+    onError: (error) => {
+      console.error('Generate test data error:', error);
+      toast({
+        title: "Generation Failed",
+        description: "Failed to generate test analytics data.",
+        variant: "destructive",
+      });
+    }
+  });
+
+  const clearTestDataMutation = useMutation({
+    mutationFn: () => apiRequest('/api/analytics/test-data/clear', 'POST'),
+    onSuccess: (result) => {
+      queryClient.invalidateQueries({ queryKey: ['/api/analytics/dashboard'] });
+      toast({
+        title: "Test Data Cleared",
+        description: `Removed ${result.result.sessionsRemoved + result.result.viewsRemoved + result.result.metricsRemoved + result.result.visitorsRemoved} test records. Real data preserved.`,
+      });
+    },
+    onError: (error) => {
+      console.error('Clear test data error:', error);
+      toast({
+        title: "Clear Failed",
+        description: "Failed to clear test data.",
+        variant: "destructive",
+      });
+    }
+  });
+
   // Add excluded IP mutation
   const addExcludedIpMutation = useMutation({
     mutationFn: ({ ipAddress, comment }: { ipAddress: string; comment?: string }) => 
@@ -481,11 +520,55 @@ export function AnalyticsDashboard() {
             )}
             <Separator />
             
-            {/* Data Management Section */}
+            {/* Test Data Management Section */}
+            <div className="mb-8">
+              <h4 className="font-medium mb-4">Test Data Management</h4>
+              <p className="text-sm text-muted-foreground mb-4">
+                Generate realistic test data for demos or clear test data while preserving real analytics
+              </p>
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                <Button
+                  onClick={() => generateTestDataMutation.mutate()}
+                  variant="outline"
+                  disabled={generateTestDataMutation.isPending}
+                  className="text-blue-600 border-blue-300 hover:bg-blue-50 justify-start"
+                >
+                  <Plus className="h-4 w-4 mr-2" />
+                  {generateTestDataMutation.isPending ? 'Generating...' : 'Generate Test Data'}
+                </Button>
+                
+                <Button
+                  onClick={() => clearTestDataMutation.mutate()}
+                  variant="outline"
+                  disabled={clearTestDataMutation.isPending}
+                  className="text-orange-600 border-orange-300 hover:bg-orange-50 justify-start"
+                >
+                  <Trash2 className="h-4 w-4 mr-2" />
+                  {clearTestDataMutation.isPending ? 'Clearing...' : 'Clear Test Data Only'}
+                </Button>
+              </div>
+              
+              <div className="bg-blue-50 p-4 rounded-lg text-sm space-y-2">
+                <div className="font-medium text-blue-800">Test Data Features:</div>
+                <ul className="text-blue-700 space-y-1 ml-4">
+                  <li>• 75 test sessions with realistic country/city data</li>
+                  <li>• 120 video views with completion metrics</li>
+                  <li>• 200 performance metrics (page load, API response times)</li>
+                  <li>• 25 active visitors for real-time dashboard</li>
+                  <li>• All test data marked with TEST_ prefixes and test_data flags</li>
+                  <li>• Safe removal preserves all real analytics data</li>
+                </ul>
+              </div>
+            </div>
+
+            <Separator className="my-6" />
+
+            {/* Production Data Management Section */}
             <div>
-              <h4 className="font-medium mb-4">Data Management</h4>
+              <h4 className="font-medium mb-4">Production Data Management</h4>
               <p className="text-sm text-muted-foreground mb-6">
-                Clear specific types of analytics data or reset everything
+                Clear specific types of real analytics data or reset everything
               </p>
               
               {/* Granular Clearing Options */}
