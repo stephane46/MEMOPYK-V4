@@ -507,7 +507,30 @@ The application follows a modern full-stack architecture with clear separation o
 - [ ] **Phase 10.3**: Performance monitoring and error tracking
 - [ ] **Phase 10.4**: User acceptance testing and launch
 
-## Current Status: Phase 8.4.17 - COMPLETE FAQ ADMIN DISPLAY ENHANCEMENT (July 25, 2025)
+## Current Status: Phase 8.4.18 - FAQ VISIBILITY TOGGLE BUG RESOLVED (July 26, 2025)
+
+### CRITICAL FAQ VISIBILITY BUG RESOLUTION - COMPLETED (July 26, 2025)
+**Complete FAQ Admin Interface Visibility Fix:**
+✅ **Root Cause Fixed**: Admin FAQ retrieval was filtering out inactive FAQs with `.eq('is_active', true)`
+✅ **Admin Interface Corrected**: Removed active-only filter from getFaqs() method in hybrid storage
+✅ **Visibility Toggle Working**: FAQs now stay visible in admin when toggled inactive/active
+✅ **Public Site Filtering**: Public FAQ section continues to show only active FAQs to visitors
+✅ **Data Recovery Confirmed**: All 4 pricing FAQs restored from JSON backup with complete content
+✅ **Toggle Functionality Verified**: FAQ visibility toggle confirmed working without apparent deletion
+✅ **Database Operations**: Update operations confirmed successful with proper is_active flag changes
+
+**Technical Resolution:**
+- Removed `.eq('is_active', true)` filter from admin getFaqs() method
+- Admin interface now shows ALL FAQs (both active and inactive) for management
+- Public FAQSection.tsx maintains `.filter(faq => faq.is_active)` for visitor-facing content
+- FAQ toggle operations update database correctly without removing FAQs from admin view
+- JSON backup system maintains data integrity across all visibility state changes
+
+**User Experience Achievement:**
+- Admin can see all FAQs regardless of active/inactive status for complete management control
+- Eye icon toggle changes visibility without making FAQs disappear from admin interface
+- Public site respects is_active filtering to show only intended FAQs to visitors
+- No more confusion between FAQ deletion and visibility toggle functionality
 
 ### FINAL FAQ SYSTEM PERFECTION - COMPLETED (July 25, 2025)
 **Complete Admin/Public FAQ Display Parity Achievement:**
