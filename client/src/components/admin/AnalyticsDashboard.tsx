@@ -453,13 +453,9 @@ export function AnalyticsDashboard() {
           </p>
         </div>
         <div className="flex items-center gap-2">
-          <Button onClick={() => {
-            console.log('🔘 Advanced Analytics button clicked! Current state:', showAdvancedAnalytics);
-            setShowAdvancedAnalytics(!showAdvancedAnalytics);
-            console.log('🔘 New state will be:', !showAdvancedAnalytics);
-          }} variant={showAdvancedAnalytics ? "default" : "outline"}>
+          <Button onClick={() => setShowAdvancedAnalytics(!showAdvancedAnalytics)} variant={showAdvancedAnalytics ? "default" : "outline"}>
             <TrendingUp className="h-4 w-4 mr-2" />
-            Advanced Analytics {showAdvancedAnalytics ? "(ON)" : "(OFF)"}
+            Advanced Analytics
           </Button>
           <Button onClick={() => setShowIpManagement(!showIpManagement)} variant="outline">
             <Shield className="h-4 w-4 mr-2" />
