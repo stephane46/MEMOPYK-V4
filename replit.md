@@ -516,14 +516,17 @@ The application follows a modern full-stack architecture with clear separation o
 ✅ **User Feedback Incorporated**: Clicking edit button now takes user directly to editing form
 ✅ **Scroll Positioning Fixed**: Changed from scrolling to top to scrolling to specific form element
 ✅ **Precise Targeting**: Uses `scrollIntoView` with element ID for accurate positioning
-✅ **Build Verified**: Production build completed successfully
+✅ **Build Verified**: Production build completed successfully (914.08 kB)
+✅ **Public Site Fixed**: FAQ scroll positioning now works perfectly on public website
+✅ **Ready for Git Commit**: "FAQ perfect" - Enhanced scroll positioning for both admin and public FAQ sections
 
 **Technical Implementation:**
-- Added form IDs: `faq-edit-form` and `section-edit-form` for precise targeting
-- Updated scroll behavior: `formElement.scrollIntoView({ behavior: 'smooth', block: 'start' })`
+- Added form IDs: `faq-edit-form` and `section-edit-form` for precise targeting in admin
+- Updated scroll behavior: `formElement.scrollIntoView({ behavior: 'smooth', block: 'start' })` for both admin and public
+- Fixed public FAQ section scroll positioning from manual offset calculation to precise element targeting
 - 100ms delay ensures state update completes before scroll triggers
 - Smooth scroll animation provides professional user experience
-- Applied consistently to both FAQ and section editing workflows
+- Applied consistently to both FAQ and section editing workflows across admin and public interfaces
 
 ## Previous Status: Phase 8.4.19 - FAQ ORPHANED DATA CONSISTENCY RESOLVED (July 26, 2025)
 
