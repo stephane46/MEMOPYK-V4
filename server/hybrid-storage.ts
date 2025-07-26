@@ -67,6 +67,11 @@ export interface HybridStorageInterface {
   // Historical Threshold Recalculation
   recalculateHistoricalCompletions(newThreshold: number): Promise<{ updated: number; total: number }>;
 
+  // Enhanced Video Analytics
+  getVideoEngagementMetrics(videoId?: string, dateFrom?: string, dateTo?: string): Promise<any>;
+  getUniqueVideoViews(dateFrom?: string, dateTo?: string): Promise<any[]>;
+  getVideoReEngagementAnalytics(dateFrom?: string, dateTo?: string): Promise<any[]>;
+
   // Real-time Analytics methods
   getRealtimeVisitors(): Promise<any[]>;
   updateVisitorActivity(sessionId: string, currentPage: string): Promise<any>;
@@ -2466,6 +2471,370 @@ export class HybridStorage implements HybridStorageInterface {
       console.error('❌ Error recalculating historical completions:', error);
       throw error;
     }
+  }
+
+  // Enhanced Video Analytics Implementation
+  async getVideoEngagementMetrics(videoId?: string, dateFrom?: string, dateTo?: string): Promise<any> {
+    try {
+      console.log(`📊 Getting video engagement metrics for ${videoId || 'all videos'}`);
+      
+      if (this.supabase) {
+        // Database implementation
+        let query = this.supabase
+          .from('analytics_views')
+          .select('*');
+        
+        if (videoId) {
+          query = query.eq('video_id', videoId);
+        }
+        if (dateFrom) {
+          query = query.gte('created_at', dateFrom);
+        }
+        if (dateTo) {
+          query = query.lte('created_at', dateTo);
+        }
+        
+        const { data: views, error } = await query;
+        if (error) throw error;
+        
+        return this.calculateEngagementMetrics(views || []);
+      } else {
+        // JSON fallback implementation
+        const filePath = join(process.cwd(), 'server/data/analytics-views.json');
+        let views = [];
+        
+        if (existsSync(filePath)) {
+          const data = readFileSync(filePath, 'utf8');
+          views = JSON.parse(data);
+          
+          // Apply filters
+          if (videoId) {
+            views = views.filter((view: any) => 
+              view.video_id === videoId || view.video_filename === videoId
+            );
+          }
+          if (dateFrom) {
+            views = views.filter((view: any) => 
+              (view.created_at || view.timestamp) >= dateFrom
+            );
+          }
+          if (dateTo) {
+            views = views.filter((view: any) => 
+              (view.created_at || view.timestamp) <= dateTo
+            );
+          }
+        }
+        
+        return this.calculateEngagementMetrics(views);
+      }
+    } catch (error) {
+      console.error('❌ Error getting video engagement metrics:', error);
+      return {
+        totalViews: 0,
+        uniqueViews: 0,
+        reWatchViews: 0,
+        avgCompletionRate: 0,
+        bestCompletionRate: 0,
+        totalWatchTime: 0,
+        avgWatchTime: 0,
+        engagementScore: 0
+      };
+    }
+  }
+
+  async getUniqueVideoViews(dateFrom?: string, dateTo?: string): Promise<any[]> {
+    try {
+      console.log('📊 Getting unique video views analytics');
+      
+      if (this.supabase) {
+        // Database implementation
+        let query = this.supabase
+          .from('analytics_views')
+          .select('*');
+        
+        if (dateFrom) {
+          query = query.gte('created_at', dateFrom);
+        }
+        if (dateTo) {
+          query = query.lte('created_at', dateTo);
+        }
+        
+        const { data: views, error } = await query;
+        if (error) throw error;
+        
+        return this.groupUniqueViews(views || []);
+      } else {
+        // JSON fallback implementation
+        const filePath = join(process.cwd(), 'server/data/analytics-views.json');
+        let views = [];
+        
+        if (existsSync(filePath)) {
+          const data = readFileSync(filePath, 'utf8');
+          views = JSON.parse(data);
+          
+          // Apply filters
+          if (dateFrom) {
+            views = views.filter((view: any) => 
+              (view.created_at || view.timestamp) >= dateFrom
+            );
+          }
+          if (dateTo) {
+            views = views.filter((view: any) => 
+              (view.created_at || view.timestamp) <= dateTo
+            );
+          }
+        }
+        
+        return this.groupUniqueViews(views);
+      }
+    } catch (error) {
+      console.error('❌ Error getting unique video views:', error);
+      return [];
+    }
+  }
+
+  async getVideoReEngagementAnalytics(dateFrom?: string, dateTo?: string): Promise<any[]> {
+    try {
+      console.log('📊 Getting video re-engagement analytics');
+      
+      if (this.supabase) {
+        // Database implementation
+        let query = this.supabase
+          .from('analytics_views')
+          .select('*');
+        
+        if (dateFrom) {
+          query = query.gte('created_at', dateFrom);
+        }
+        if (dateTo) {
+          query = query.lte('created_at', dateTo);
+        }
+        
+        const { data: views, error } = await query;
+        if (error) throw error;
+        
+        return this.analyzeReEngagement(views || []);
+      } else {
+        // JSON fallback implementation
+        const filePath = join(process.cwd(), 'server/data/analytics-views.json');
+        let views = [];
+        
+        if (existsSync(filePath)) {
+          const data = readFileSync(filePath, 'utf8');
+          views = JSON.parse(data);
+          
+          // Apply filters
+          if (dateFrom) {
+            views = views.filter((view: any) => 
+              (view.created_at || view.timestamp) >= dateFrom
+            );
+          }
+          if (dateTo) {
+            views = views.filter((view: any) => 
+              (view.created_at || view.timestamp) <= dateTo
+            );
+          }
+        }
+        
+        return this.analyzeReEngagement(views);
+      }
+    } catch (error) {
+      console.error('❌ Error getting re-engagement analytics:', error);
+      return [];
+    }
+  }
+
+  private calculateEngagementMetrics(views: any[]): any {
+    if (views.length === 0) {
+      return {
+        totalViews: 0,
+        uniqueViews: 0,
+        reWatchViews: 0,
+        avgCompletionRate: 0,
+        bestCompletionRate: 0,
+        totalWatchTime: 0,
+        avgWatchTime: 0,
+        engagementScore: 0
+      };
+    }
+
+    // Group by session + video to identify unique views vs re-watches
+    const sessionVideoGroups = new Map();
+    
+    views.forEach((view: any) => {
+      const key = `${view.session_id || view.sessionId}_${view.video_id || view.video_filename}`;
+      
+      if (!sessionVideoGroups.has(key)) {
+        sessionVideoGroups.set(key, []);
+      }
+      sessionVideoGroups.get(key).push(view);
+    });
+
+    const uniqueViews = sessionVideoGroups.size;
+    const reWatchViews = views.length - uniqueViews;
+    
+    // Calculate best completion rate per unique view
+    const completionRates: number[] = [];
+    const watchTimes: number[] = [];
+    
+    sessionVideoGroups.forEach((viewGroup: any[]) => {
+      // Find highest completion percentage for this session+video combination
+      const bestCompletion = Math.max(
+        ...viewGroup.map(v => parseFloat(v.completion_percentage || v.completionRate || '0'))
+      );
+      
+      // Sum total watch time for this session+video combination
+      const totalWatchTime = viewGroup.reduce((sum, v) => 
+        sum + (parseInt(v.view_duration || v.duration_watched || v.watch_time || '0')), 0
+      );
+      
+      completionRates.push(bestCompletion);
+      watchTimes.push(totalWatchTime);
+    });
+
+    const avgCompletionRate = completionRates.reduce((a, b) => a + b, 0) / completionRates.length;
+    const bestCompletionRate = Math.max(...completionRates);
+    const totalWatchTime = watchTimes.reduce((a, b) => a + b, 0);
+    const avgWatchTime = totalWatchTime / uniqueViews;
+    
+    // Calculate engagement score (0-100) based on completion rate and re-watch behavior
+    const reWatchRatio = reWatchViews / views.length;
+    const engagementScore = Math.round(
+      (avgCompletionRate * 0.7) + (reWatchRatio * 100 * 0.3)
+    );
+
+    return {
+      totalViews: views.length,
+      uniqueViews,
+      reWatchViews,
+      avgCompletionRate: Math.round(avgCompletionRate * 100) / 100,
+      bestCompletionRate: Math.round(bestCompletionRate * 100) / 100,
+      totalWatchTime,
+      avgWatchTime: Math.round(avgWatchTime),
+      engagementScore: Math.min(100, engagementScore)
+    };
+  }
+
+  private groupUniqueViews(views: any[]): any[] {
+    const sessionVideoGroups = new Map();
+    
+    views.forEach((view: any) => {
+      const videoId = view.video_id || view.video_filename;
+      const sessionId = view.session_id || view.sessionId;
+      const key = `${sessionId}_${videoId}`;
+      
+      if (!sessionVideoGroups.has(key)) {
+        sessionVideoGroups.set(key, {
+          videoId,
+          sessionId,
+          views: [],
+          bestCompletion: 0,
+          totalWatchTime: 0,
+          viewCount: 0,
+          firstViewAt: null,
+          lastViewAt: null
+        });
+      }
+      
+      const group = sessionVideoGroups.get(key);
+      group.views.push(view);
+      group.viewCount++;
+      
+      const completion = parseFloat(view.completion_percentage || view.completionRate || '0');
+      const watchTime = parseInt(view.view_duration || view.duration_watched || view.watch_time || '0');
+      const viewTime = view.created_at || view.timestamp;
+      
+      group.bestCompletion = Math.max(group.bestCompletion, completion);
+      group.totalWatchTime += watchTime;
+      
+      if (!group.firstViewAt || viewTime < group.firstViewAt) {
+        group.firstViewAt = viewTime;
+      }
+      if (!group.lastViewAt || viewTime > group.lastViewAt) {
+        group.lastViewAt = viewTime;
+      }
+    });
+
+    return Array.from(sessionVideoGroups.values()).map(group => ({
+      videoId: group.videoId,
+      sessionId: group.sessionId,
+      isUniqueView: group.viewCount === 1,
+      isReWatch: group.viewCount > 1,
+      reWatchCount: group.viewCount - 1,
+      bestCompletionRate: group.bestCompletion,
+      totalWatchTime: group.totalWatchTime,
+      avgWatchTime: group.totalWatchTime / group.viewCount,
+      firstViewAt: group.firstViewAt,
+      lastViewAt: group.lastViewAt,
+      engagementLevel: group.viewCount > 1 ? 'high' : 
+                      group.bestCompletion >= 80 ? 'medium' : 'low'
+    }));
+  }
+
+  private analyzeReEngagement(views: any[]): any[] {
+    const videoAnalytics = new Map();
+    
+    // Group all views by video
+    views.forEach((view: any) => {
+      const videoId = view.video_id || view.video_filename;
+      
+      if (!videoAnalytics.has(videoId)) {
+        videoAnalytics.set(videoId, {
+          videoId,
+          totalViews: 0,
+          uniqueViewers: new Set(),
+          reWatchingSessions: new Set(),
+          sessionViews: new Map()
+        });
+      }
+      
+      const analytics = videoAnalytics.get(videoId);
+      const sessionId = view.session_id || view.sessionId;
+      
+      analytics.totalViews++;
+      analytics.uniqueViewers.add(sessionId);
+      
+      if (!analytics.sessionViews.has(sessionId)) {
+        analytics.sessionViews.set(sessionId, []);
+      }
+      analytics.sessionViews.get(sessionId).push(view);
+      
+      // Mark as re-watching session if more than 1 view
+      if (analytics.sessionViews.get(sessionId).length > 1) {
+        analytics.reWatchingSessions.add(sessionId);
+      }
+    });
+
+    return Array.from(videoAnalytics.values()).map(analytics => {
+      const uniqueViewers = analytics.uniqueViewers.size;
+      const reWatchingSessions = analytics.reWatchingSessions.size;
+      const reWatchRate = (reWatchingSessions / uniqueViewers) * 100;
+      
+      // Calculate average views per session for re-watchers
+      let totalReWatchViews = 0;
+      analytics.reWatchingSessions.forEach(sessionId => {
+        totalReWatchViews += analytics.sessionViews.get(sessionId).length;
+      });
+      
+      const avgViewsPerReWatcher = reWatchingSessions > 0 ? 
+        totalReWatchViews / reWatchingSessions : 0;
+
+      return {
+        videoId: analytics.videoId,
+        totalViews: analytics.totalViews,
+        uniqueViewers,
+        reWatchingSessions,
+        reWatchRate: Math.round(reWatchRate * 100) / 100,
+        avgViewsPerReWatcher: Math.round(avgViewsPerReWatcher * 100) / 100,
+        engagementLevel: reWatchRate >= 30 ? 'high' : 
+                        reWatchRate >= 15 ? 'medium' : 'low',
+        businessInsight: reWatchRate >= 25 ? 
+          'Highly engaging content - consider promoting' :
+          reWatchRate >= 10 ? 
+          'Moderately engaging - test with different audiences' :
+          'Low re-engagement - review content effectiveness'
+      };
+    });
   }
 }
 

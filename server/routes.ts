@@ -1753,6 +1753,57 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Enhanced Video Analytics Endpoints
+  app.get('/api/analytics/video-engagement/:videoId?', async (req, res) => {
+    try {
+      const { videoId } = req.params;
+      const { dateFrom, dateTo } = req.query;
+      
+      const metrics = await hybridStorage.getVideoEngagementMetrics(
+        videoId === 'all' ? undefined : videoId,
+        dateFrom as string,
+        dateTo as string
+      );
+      
+      res.json({ success: true, metrics });
+    } catch (error) {
+      console.error('Video engagement metrics error:', error);
+      res.status(500).json({ error: 'Failed to get video engagement metrics' });
+    }
+  });
+
+  app.get('/api/analytics/unique-views', async (req, res) => {
+    try {
+      const { dateFrom, dateTo } = req.query;
+      
+      const uniqueViews = await hybridStorage.getUniqueVideoViews(
+        dateFrom as string,
+        dateTo as string
+      );
+      
+      res.json({ success: true, uniqueViews });
+    } catch (error) {
+      console.error('Unique views analytics error:', error);
+      res.status(500).json({ error: 'Failed to get unique views analytics' });
+    }
+  });
+
+  app.get('/api/analytics/re-engagement', async (req, res) => {
+    try {
+      const { dateFrom, dateTo } = req.query;
+      
+      const reEngagement = await hybridStorage.getVideoReEngagementAnalytics(
+        dateFrom as string,
+        dateTo as string
+      );
+      
+      res.json({ success: true, reEngagement });
+    } catch (error) {
+      console.error('Re-engagement analytics error:', error);
+      res.status(500).json({ error: 'Failed to get re-engagement analytics' });
+    }
+  });
+
   app.delete('/api/analytics/exclude-ip/:ipAddress', async (req, res) => {
     try {
       const { ipAddress } = req.params;
