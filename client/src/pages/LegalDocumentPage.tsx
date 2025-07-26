@@ -1,5 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import { useRoute } from 'wouter';
+import { useEffect } from 'react';
 import { useLanguage } from '../contexts/LanguageContext';
 import { htmlSanitizer } from '../lib/sanitize-html';
 import type { LegalDocument } from '@shared/schema';
@@ -21,6 +22,11 @@ export function LegalDocumentPage() {
   const { data: documents, isLoading } = useQuery<LegalDocument[]>({
     queryKey: ['/api/legal'],
   });
+
+  // Scroll to top when document loads or changes
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }, [documentType, documents]);
 
   if (isLoading) {
     return (
