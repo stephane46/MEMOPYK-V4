@@ -915,13 +915,69 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Legal Documents - Terms, privacy policy, etc.
+  app.get("/api/legal", async (req, res) => {
+    try {
+      const legal = await hybridStorage.getLegalDocuments();
+      res.json(legal);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to get legal documents" });
+    }
+  });
+
   app.get("/api/legal/:type", async (req, res) => {
     try {
       const type = req.params.type;
       const legal = await hybridStorage.getLegalDocuments();
-      res.json(legal);
+      const document = legal.find(doc => doc.type === type);
+      if (!document) {
+        return res.status(404).json({ error: "Legal document not found" });
+      }
+      res.json(document);
     } catch (error) {
       res.status(500).json({ error: "Failed to get legal document" });
+    }
+  });
+
+  // Create legal document (admin only)
+  app.post("/api/legal", async (req, res) => {
+    try {
+      const document = req.body;
+      
+      if (!document.type || !document.title_en || !document.title_fr || !document.content_en || !document.content_fr) {
+        return res.status(400).json({ error: "Type, title, and content in both languages are required" });
+      }
+      
+      const newDocument = await hybridStorage.createLegalDocument(document);
+      res.json({ success: true, document: newDocument });
+    } catch (error) {
+      console.error('Create legal document error:', error);
+      res.status(500).json({ error: "Failed to create legal document" });
+    }
+  });
+
+  // Update legal document (admin only)
+  app.patch("/api/legal/:id", async (req, res) => {
+    try {
+      const docId = req.params.id;
+      const updates = req.body;
+      
+      const updatedDocument = await hybridStorage.updateLegalDocument(docId, updates);
+      res.json({ success: true, document: updatedDocument });
+    } catch (error) {
+      console.error('Update legal document error:', error);
+      res.status(500).json({ error: "Failed to update legal document" });
+    }
+  });
+
+  // Delete legal document (admin only)
+  app.delete("/api/legal/:id", async (req, res) => {
+    try {
+      const docId = req.params.id;
+      const deletedDocument = await hybridStorage.deleteLegalDocument(docId);
+      res.json({ success: true, deleted: deletedDocument });
+    } catch (error) {
+      console.error('Delete legal document error:', error);
+      res.status(500).json({ error: "Failed to delete legal document" });
     }
   });
 

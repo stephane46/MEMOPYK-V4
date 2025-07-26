@@ -504,8 +504,191 @@ export class HybridStorage implements HybridStorageInterface {
 
   // Legal documents operations
   async getLegalDocuments(language?: string): Promise<any[]> {
+    // Try Supabase first
+    try {
+      const { data, error } = await this.supabase
+        .from('legal_documents')
+        .select('*')
+        .eq('is_active', true)
+        .order('type');
+      
+      if (!error && data) {
+        console.log(`✅ Legal Documents: Found ${data.length} documents in Supabase`);
+        // Convert database format to JSON format for compatibility
+        const converted = data.map((doc: any) => ({
+          id: doc.id,
+          type: doc.type,
+          title_en: doc.title_en,
+          title_fr: doc.title_fr,
+          content_en: doc.content_en,
+          content_fr: doc.content_fr,
+          is_active: doc.is_active,
+          updated_at: doc.updated_at
+        }));
+        
+        // Save to JSON as backup
+        this.saveJsonFile('legal-documents.json', converted);
+        return converted;
+      } else {
+        console.warn('⚠️ Legal Documents: Supabase error, falling back to JSON:', error);
+      }
+    } catch (error) {
+      console.warn('⚠️ Legal Documents: Database connection failed, using JSON fallback:', error);
+    }
+    
+    // Fallback to JSON
     const data = this.loadJsonFile('legal-documents.json');
     return data.filter(doc => doc.is_active);
+  }
+
+  async createLegalDocument(document: any): Promise<any> {
+    // Try Supabase first
+    try {
+      const docData = {
+        type: document.type,
+        title_en: document.title_en,
+        title_fr: document.title_fr,
+        content_en: document.content_en,
+        content_fr: document.content_fr,
+        is_active: document.is_active ?? true
+      };
+
+      const { data, error } = await this.supabase
+        .from('legal_documents')
+        .insert([docData])
+        .select()
+        .single();
+
+      if (!error && data) {
+        console.log(`✅ Legal Document created in Supabase:`, data.type);
+        
+        // Update JSON backup
+        const docs = this.loadJsonFile('legal-documents.json');
+        const newDoc = {
+          id: data.id,
+          type: data.type,
+          title_en: data.title_en,
+          title_fr: data.title_fr,
+          content_en: data.content_en,
+          content_fr: data.content_fr,
+          is_active: data.is_active,
+          updated_at: data.updated_at
+        };
+        docs.push(newDoc);
+        this.saveJsonFile('legal-documents.json', docs);
+        
+        return newDoc;
+      } else {
+        console.warn('⚠️ Legal Document: Supabase create error, falling back to JSON:', error);
+      }
+    } catch (error) {
+      console.warn('⚠️ Legal Document: Database connection failed, using JSON fallback:', error);
+    }
+
+    // Fallback to JSON
+    const docs = this.loadJsonFile('legal-documents.json');
+    const newDoc = {
+      id: crypto.randomUUID(),
+      ...document,
+      updated_at: new Date().toISOString(),
+      is_active: document.is_active ?? true
+    };
+    docs.push(newDoc);
+    this.saveJsonFile('legal-documents.json', docs);
+    return newDoc;
+  }
+
+  async updateLegalDocument(docId: string, updates: any): Promise<any> {
+    // Try Supabase first
+    try {
+      const { data, error } = await this.supabase
+        .from('legal_documents')
+        .update({
+          ...updates,
+          updated_at: new Date().toISOString()
+        })
+        .eq('id', docId)
+        .select()
+        .single();
+
+      if (!error && data) {
+        console.log(`✅ Legal Document updated in Supabase:`, docId);
+        
+        // Update JSON backup
+        const docs = this.loadJsonFile('legal-documents.json');
+        const docIndex = docs.findIndex((d: any) => d.id === docId);
+        if (docIndex !== -1) {
+          docs[docIndex] = {
+            ...docs[docIndex],
+            ...updates,
+            updated_at: data.updated_at
+          };
+          this.saveJsonFile('legal-documents.json', docs);
+        }
+        
+        return data;
+      } else {
+        console.warn('⚠️ Legal Document: Supabase update error, falling back to JSON:', error);
+      }
+    } catch (error) {
+      console.warn('⚠️ Legal Document: Database connection failed, using JSON fallback:', error);
+    }
+
+    // Fallback to JSON
+    const docs = this.loadJsonFile('legal-documents.json');
+    const docIndex = docs.findIndex((d: any) => d.id === docId);
+    
+    if (docIndex === -1) {
+      throw new Error('Legal document not found');
+    }
+    
+    docs[docIndex] = {
+      ...docs[docIndex],
+      ...updates,
+      updated_at: new Date().toISOString()
+    };
+    
+    this.saveJsonFile('legal-documents.json', docs);
+    return docs[docIndex];
+  }
+
+  async deleteLegalDocument(docId: string): Promise<any> {
+    // Try Supabase first
+    try {
+      const { data, error } = await this.supabase
+        .from('legal_documents')
+        .delete()
+        .eq('id', docId)
+        .select()
+        .single();
+
+      if (!error && data) {
+        console.log(`✅ Legal Document deleted from Supabase:`, docId);
+        
+        // Update JSON backup
+        const docs = this.loadJsonFile('legal-documents.json');
+        const filteredDocs = docs.filter((d: any) => d.id !== docId);
+        this.saveJsonFile('legal-documents.json', filteredDocs);
+        
+        return data;
+      } else {
+        console.warn('⚠️ Legal Document: Supabase delete error, falling back to JSON:', error);
+      }
+    } catch (error) {
+      console.warn('⚠️ Legal Document: Database connection failed, using JSON fallback:', error);
+    }
+
+    // Fallback to JSON
+    const docs = this.loadJsonFile('legal-documents.json');
+    const docIndex = docs.findIndex((d: any) => d.id === docId);
+    
+    if (docIndex === -1) {
+      throw new Error('Legal document not found');
+    }
+    
+    const deletedDoc = docs.splice(docIndex, 1)[0];
+    this.saveJsonFile('legal-documents.json', docs);
+    return deletedDoc;
   }
 
   // CTA settings operations
