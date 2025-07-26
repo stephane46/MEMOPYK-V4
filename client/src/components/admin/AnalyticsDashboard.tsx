@@ -1199,6 +1199,13 @@ export function AnalyticsDashboard() {
                 <Badge variant="outline" className="text-blue-600 border-blue-600">Advanced</Badge>
               </div>
 
+              {console.log('🎯 RENDERING PANELS - Data Check:', {
+                videoEngagementData: !!videoEngagementData,
+                uniqueViewsData: !!uniqueViewsData, 
+                reEngagementData: !!reEngagementData,
+                showAdvancedAnalytics
+              })}
+
               {/* Video Engagement Metrics */}
               {videoEngagementData && (
                 <Card>
