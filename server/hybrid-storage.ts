@@ -1558,14 +1558,31 @@ export class HybridStorage implements HybridStorageInterface {
     }
   }
 
-  async addExcludedIp(ipAddress: string): Promise<any> {
+  async addExcludedIp(ipAddress: string, comment: string = ''): Promise<any> {
     try {
       // Get current settings
       const settings = await this.getAnalyticsSettings();
       
-      // Add IP to excluded list if not already there
-      if (!settings.excludedIps.includes(ipAddress)) {
-        settings.excludedIps.push(ipAddress);
+      // Ensure excludedIps is an array of objects
+      if (!Array.isArray(settings.excludedIps)) {
+        settings.excludedIps = [];
+      }
+
+      // Check if IP is already excluded (handle both string and object formats)
+      const existingIp = settings.excludedIps.find((item: any) => {
+        if (typeof item === 'string') {
+          return item === ipAddress;
+        }
+        return item.ip === ipAddress;
+      });
+
+      if (!existingIp) {
+        const newExcludedIp = {
+          ip: ipAddress,
+          comment: comment || 'No comment',
+          added_at: new Date().toISOString()
+        };
+        settings.excludedIps.push(newExcludedIp);
         await this.updateAnalyticsSettings(settings);
       }
 
@@ -1581,13 +1598,55 @@ export class HybridStorage implements HybridStorageInterface {
       // Get current settings
       const settings = await this.getAnalyticsSettings();
       
-      // Remove IP from excluded list
-      settings.excludedIps = settings.excludedIps.filter((ip: string) => ip !== ipAddress);
+      // Remove IP from excluded list (handle both string and object formats)
+      settings.excludedIps = settings.excludedIps.filter((item: any) => {
+        if (typeof item === 'string') {
+          return item !== ipAddress;
+        }
+        return item.ip !== ipAddress;
+      });
+      
       await this.updateAnalyticsSettings(settings);
 
       return settings;
     } catch (error) {
       console.error('Error removing excluded IP:', error);
+      throw error;
+    }
+  }
+
+  async updateExcludedIpComment(ipAddress: string, comment: string): Promise<any> {
+    try {
+      // Get current settings
+      const settings = await this.getAnalyticsSettings();
+      
+      // Find and update the IP comment
+      const ipIndex = settings.excludedIps.findIndex((item: any) => {
+        if (typeof item === 'string') {
+          return item === ipAddress;
+        }
+        return item.ip === ipAddress;
+      });
+
+      if (ipIndex !== -1) {
+        if (typeof settings.excludedIps[ipIndex] === 'string') {
+          // Convert string to object format
+          settings.excludedIps[ipIndex] = {
+            ip: settings.excludedIps[ipIndex],
+            comment: comment,
+            added_at: new Date().toISOString()
+          };
+        } else {
+          // Update existing object
+          settings.excludedIps[ipIndex].comment = comment;
+        }
+        
+        await this.updateAnalyticsSettings(settings);
+      }
+
+      return settings;
+    } catch (error) {
+      console.error('Error updating excluded IP comment:', error);
       throw error;
     }
   }

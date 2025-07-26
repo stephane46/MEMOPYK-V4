@@ -75,6 +75,9 @@ export function AnalyticsDashboard() {
   const [showSettings, setShowSettings] = useState(false);
   const [showIpManagement, setShowIpManagement] = useState(false);
   const [newExcludedIp, setNewExcludedIp] = useState('');
+  const [newIpComment, setNewIpComment] = useState('');
+  const [editingComment, setEditingComment] = useState<string | null>(null);
+  const [tempComment, setTempComment] = useState('');
   const [currentAdminIp, setCurrentAdminIp] = useState<string | null>(null);
   const { toast } = useToast();
   const queryClient = useQueryClient();
@@ -228,12 +231,13 @@ export function AnalyticsDashboard() {
 
   // Add excluded IP mutation
   const addExcludedIpMutation = useMutation({
-    mutationFn: (ipAddress: string) => 
-      apiRequest('/api/analytics/exclude-ip', 'POST', { ipAddress }),
+    mutationFn: ({ ipAddress, comment }: { ipAddress: string; comment?: string }) => 
+      apiRequest('/api/analytics/exclude-ip', 'POST', { ipAddress, comment }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['/api/analytics/settings'] });
       queryClient.invalidateQueries({ queryKey: ['/api/analytics/active-ips'] });
       setNewExcludedIp('');
+      setNewIpComment('');
       toast({
         title: "IP Excluded",
         description: "IP address has been excluded from tracking.",
@@ -244,6 +248,29 @@ export function AnalyticsDashboard() {
       toast({
         title: "Exclusion Failed",
         description: "Failed to exclude IP address.",
+        variant: "destructive",
+      });
+    }
+  });
+
+  // Update IP comment mutation
+  const updateIpCommentMutation = useMutation({
+    mutationFn: ({ ipAddress, comment }: { ipAddress: string; comment: string }) => 
+      apiRequest(`/api/analytics/exclude-ip/${encodeURIComponent(ipAddress)}/comment`, 'PATCH', { comment }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['/api/analytics/settings'] });
+      setEditingComment(null);
+      setTempComment('');
+      toast({
+        title: "Comment Updated",
+        description: "IP comment has been updated successfully.",
+      });
+    },
+    onError: (error) => {
+      console.error('Update comment error:', error);
+      toast({
+        title: "Update Failed",
+        description: "Failed to update IP comment.",
         variant: "destructive",
       });
     }
@@ -579,7 +606,7 @@ export function AnalyticsDashboard() {
                         </div>
                       </div>
                       <Button
-                        onClick={() => addExcludedIpMutation.mutate(ip.ip_address)}
+                        onClick={() => addExcludedIpMutation.mutate({ ipAddress: ip.ip_address })}
                         variant="outline"
                         size="sm"
                         disabled={addExcludedIpMutation.isPending}
@@ -609,7 +636,9 @@ export function AnalyticsDashboard() {
                       <p className="font-mono text-lg text-blue-700">{currentAdminIp}</p>
                     </div>
                     <div className="flex items-center gap-2">
-                      {settings?.excludedIps?.includes(currentAdminIp) ? (
+                      {settings?.excludedIps?.some((item: any) => 
+                        typeof item === 'string' ? item === currentAdminIp : item.ip === currentAdminIp
+                      ) ? (
                         <div className="flex items-center gap-2">
                           <Badge variant="secondary" className="bg-green-100 text-green-800">
                             Excluded
@@ -626,7 +655,7 @@ export function AnalyticsDashboard() {
                         </div>
                       ) : (
                         <Button
-                          onClick={() => addExcludedIpMutation.mutate(currentAdminIp)}
+                          onClick={() => addExcludedIpMutation.mutate({ ipAddress: currentAdminIp })}
                           variant="outline"
                           size="sm"
                           disabled={addExcludedIpMutation.isPending}
@@ -638,7 +667,9 @@ export function AnalyticsDashboard() {
                     </div>
                   </div>
                   <p className="text-xs text-muted-foreground">
-                    {settings?.excludedIps?.includes(currentAdminIp) 
+                    {settings?.excludedIps?.some((item: any) => 
+                      typeof item === 'string' ? item === currentAdminIp : item.ip === currentAdminIp
+                    ) 
                       ? "Your IP is currently excluded from analytics tracking"
                       : "Your admin activity is currently being tracked in analytics"
                     }
@@ -656,20 +687,32 @@ export function AnalyticsDashboard() {
             {/* Add Excluded IP Section */}
             <div>
               <h4 className="font-medium mb-4">Add Excluded IP</h4>
-              <div className="flex items-center gap-2">
+              <div className="space-y-2">
+                <div className="flex items-center gap-2">
+                  <Input
+                    type="text"
+                    placeholder="192.168.1.1"
+                    value={newExcludedIp}
+                    onChange={(e) => setNewExcludedIp(e.target.value)}
+                    className="flex-1"
+                  />
+                  <Button
+                    onClick={() => addExcludedIpMutation.mutate({ 
+                      ipAddress: newExcludedIp, 
+                      comment: newIpComment 
+                    })}
+                    disabled={!newExcludedIp || addExcludedIpMutation.isPending}
+                  >
+                    {addExcludedIpMutation.isPending ? 'Adding...' : 'Add'}
+                  </Button>
+                </div>
                 <Input
                   type="text"
-                  placeholder="192.168.1.1"
-                  value={newExcludedIp}
-                  onChange={(e) => setNewExcludedIp(e.target.value)}
-                  className="flex-1"
+                  placeholder="Comment (e.g., 'my PC at home', 'Internet cafe')"
+                  value={newIpComment}
+                  onChange={(e) => setNewIpComment(e.target.value)}
+                  className="w-full"
                 />
-                <Button
-                  onClick={() => addExcludedIpMutation.mutate(newExcludedIp)}
-                  disabled={!newExcludedIp || addExcludedIpMutation.isPending}
-                >
-                  {addExcludedIpMutation.isPending ? 'Adding...' : 'Add'}
-                </Button>
               </div>
             </div>
 
@@ -681,20 +724,90 @@ export function AnalyticsDashboard() {
               {settingsLoading ? (
                 <div className="text-center py-4">Loading excluded IPs...</div>
               ) : settings?.excludedIps?.length ? (
-                <div className="space-y-2">
-                  {settings.excludedIps.map((ip) => (
-                    <div key={ip} className="flex items-center justify-between p-3 border rounded-lg">
-                      <span className="font-mono text-sm">{ip}</span>
-                      <Button
-                        onClick={() => removeExcludedIpMutation.mutate(ip)}
-                        variant="outline"
-                        size="sm"
-                        disabled={removeExcludedIpMutation.isPending}
-                      >
-                        Remove
-                      </Button>
-                    </div>
-                  ))}
+                <div className="space-y-3">
+                  {settings.excludedIps.map((item: any, index: number) => {
+                    const ipAddress = typeof item === 'string' ? item : item.ip;
+                    const comment = typeof item === 'string' ? '' : (item.comment || '');
+                    const isEditing = editingComment === ipAddress;
+                    
+                    return (
+                      <div key={ipAddress} className="p-4 border rounded-lg space-y-3">
+                        <div className="flex items-center justify-between">
+                          <span className="font-mono text-sm font-medium">{ipAddress}</span>
+                          <Button
+                            onClick={() => removeExcludedIpMutation.mutate(ipAddress)}
+                            variant="outline"
+                            size="sm"
+                            disabled={removeExcludedIpMutation.isPending}
+                          >
+                            Remove
+                          </Button>
+                        </div>
+                        
+                        {/* Comment Section */}
+                        <div className="space-y-2">
+                          {isEditing ? (
+                            <div className="flex items-center gap-2">
+                              <Input
+                                type="text"
+                                placeholder="Enter comment (e.g., 'my PC at home')"
+                                value={tempComment}
+                                onChange={(e) => setTempComment(e.target.value)}
+                                className="flex-1"
+                                onKeyPress={(e) => {
+                                  if (e.key === 'Enter') {
+                                    updateIpCommentMutation.mutate({ 
+                                      ipAddress, 
+                                      comment: tempComment 
+                                    });
+                                  }
+                                }}
+                              />
+                              <Button
+                                onClick={() => updateIpCommentMutation.mutate({ 
+                                  ipAddress, 
+                                  comment: tempComment 
+                                })}
+                                size="sm"
+                                disabled={updateIpCommentMutation.isPending}
+                              >
+                                Save
+                              </Button>
+                              <Button
+                                onClick={() => {
+                                  setEditingComment(null);
+                                  setTempComment('');
+                                }}
+                                variant="outline"
+                                size="sm"
+                              >
+                                Cancel
+                              </Button>
+                            </div>
+                          ) : (
+                            <div className="flex items-center justify-between">
+                              <div className="flex-1">
+                                <p className="text-xs text-muted-foreground">Comment:</p>
+                                <p className="text-sm text-gray-700">
+                                  {comment || <span className="italic text-gray-400">No comment</span>}
+                                </p>
+                              </div>
+                              <Button
+                                onClick={() => {
+                                  setEditingComment(ipAddress);
+                                  setTempComment(comment);
+                                }}
+                                variant="ghost"
+                                size="sm"
+                              >
+                                Edit
+                              </Button>
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    );
+                  })}
                 </div>
               ) : (
                 <div className="text-center py-4 text-muted-foreground">

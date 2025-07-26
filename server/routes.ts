@@ -1685,15 +1685,33 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.post('/api/analytics/exclude-ip', async (req, res) => {
     try {
-      const { ipAddress } = req.body;
+      const { ipAddress, comment } = req.body;
       if (!ipAddress) {
         return res.status(400).json({ error: 'IP address is required' });
       }
-      const settings = await hybridStorage.addExcludedIp(ipAddress);
+      const settings = await hybridStorage.addExcludedIp(ipAddress, comment || '');
       res.json({ success: true, settings });
     } catch (error) {
       console.error('Exclude IP error:', error);
       res.status(500).json({ error: 'Failed to exclude IP address' });
+    }
+  });
+
+  app.patch('/api/analytics/exclude-ip/:ipAddress/comment', async (req, res) => {
+    try {
+      const { ipAddress } = req.params;
+      const { comment } = req.body;
+      const decodedIp = decodeURIComponent(ipAddress);
+      
+      if (!comment && comment !== '') {
+        return res.status(400).json({ error: 'Comment is required' });
+      }
+      
+      const settings = await hybridStorage.updateExcludedIpComment(decodedIp, comment);
+      res.json({ success: true, settings });
+    } catch (error) {
+      console.error('Update IP comment error:', error);
+      res.status(500).json({ error: 'Failed to update IP comment' });
     }
   });
 

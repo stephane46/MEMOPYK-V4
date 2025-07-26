@@ -1,6 +1,10 @@
 {
   "excludedIps": [
-    "109.17.150.48"
+    {
+      "ip": "109.17.150.48",
+      "comment": "Admin computer",
+      "added_at": "2025-07-26T14:05:27.788Z"
+    }
   ],
   "completionThreshold": 75,
   "trackingEnabled": true,
