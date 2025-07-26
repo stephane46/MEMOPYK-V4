@@ -8,6 +8,11 @@ MEMOPYK is a full-stack memory film platform being rebuilt from scratch. Current
 
 Preferred communication style: Simple, everyday language.
 
+**Technical Decisions:**
+- React Editor Future-Proofing: Consider TipTap as React 19 alternative to ReactQuill when needed
+- Track ReactQuill updates for React 19 compatibility improvements
+- Prioritize stable, tested solutions over bleeding-edge dependencies
+
 **Analytics Strategy Decision (Jan 22, 2025):**
 - Remove hero video tracking (auto-play videos don't provide meaningful analytics)
 - Focus analytics on gallery video previews and user engagement  
@@ -33,6 +38,12 @@ Preferred communication style: Simple, everyday language.
 - Error: `'/api/legal/8c12d38c-b3f0-49c4-b3d4-1a23293dc211' is not a valid HTTP method` → Fixed parameter order
 - All legal document admin operations now functional
 - findDOMNode warnings minimized through react-quill 2.0.0 upgrade and modern ref patterns
+
+**Dependency Status:**
+- react-quill: 2.0.0 (retained - latest stable version)
+- quill-delta: 5.1.0 (upgraded for compatibility)
+- react-quill-new: Attempted but rolled back due to dependency conflicts
+- Future consideration: TipTap as React 19 alternative when needed
 
 ### Phase 8.4.2 Legal Document UX Enhancement - COMPLETED (July 26, 2025)
 **Auto-Scroll to Top Implementation:**
