@@ -812,44 +812,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   // DUPLICATE ROUTES REMOVED - Using only the ones above
 
-  // FAQ endpoints
-  app.get("/api/faqs", async (req, res) => {
-    try {
-      const language = req.query.lang as string;
-      const faqs = await hybridStorage.getFaqs(language);
-      res.json(faqs);
-    } catch (error) {
-      console.error('Get FAQs error:', error);
-      res.status(500).json({ error: "Failed to get FAQs" });
-    }
-  });
-
-  app.post("/api/faqs", async (req, res) => {
-    try {
-      const { section_id, question_fr, question_en, answer_fr, answer_en, order_index, is_active } = req.body;
-      
-      if (!question_fr || !question_en || !answer_fr || !answer_en) {
-        return res.status(400).json({ error: "All bilingual content is required" });
-      }
-      
-      const newFAQ = await hybridStorage.createFAQ({
-        section_id: section_id || null,
-        question_fr,
-        question_en,
-        answer_fr,
-        answer_en,
-        order_index: order_index || 0,
-        is_active: is_active !== false
-      });
-      
-      res.status(201).json({ success: true, faq: newFAQ });
-    } catch (error) {
-      console.error('Create FAQ error:', error);
-      res.status(500).json({ error: "Failed to create FAQ" });
-    }
-  });
-
-  // DUPLICATE FAQ ROUTES REMOVED - These conflicted with the correct string ID routes above
+  // DUPLICATE FAQ ROUTES REMOVED - Using complete FAQ routes further down in file
 
   // Gallery Items - Gallery content  
   app.get("/api/gallery", async (req, res) => {
