@@ -1244,7 +1244,9 @@ export class HybridStorage implements HybridStorageInterface {
     try {
       // Try database first (not implemented yet), fallback to JSON
       const views = this.loadJsonFile('analytics-views.json');
-      let filtered = views;
+      let filtered = views
+        // Exclude hero videos from analytics (auto-play videos don't provide meaningful engagement data)
+        .filter((view: any) => !['VideoHero1.mp4', 'VideoHero2.mp4', 'VideoHero3.mp4'].includes(view.video_filename));
 
       if (dateFrom) {
         filtered = filtered.filter((view: any) => view.created_at >= dateFrom);
@@ -2476,14 +2478,16 @@ export class HybridStorage implements HybridStorageInterface {
   // Enhanced Video Analytics Implementation
   async getVideoEngagementMetrics(videoId?: string, dateFrom?: string, dateTo?: string): Promise<any> {
     try {
-      console.log(`📊 Getting video engagement metrics for ${videoId || 'all videos'}`);
+      console.log(`📊 Getting video engagement metrics for ${videoId || 'gallery videos only'}`);
       
       if (this.supabase) {
         try {
           // Database implementation
           let query = this.supabase
             .from('analytics_views')
-            .select('*');
+            .select('*')
+            // Exclude hero videos from analytics (auto-play videos don't provide meaningful engagement data)
+            .not('video_filename', 'in', '("VideoHero1.mp4","VideoHero2.mp4","VideoHero3.mp4")');
           
           if (videoId) {
             query = query.eq('video_id', videoId);
@@ -2511,7 +2515,9 @@ export class HybridStorage implements HybridStorageInterface {
       
       if (existsSync(filePath)) {
         const data = readFileSync(filePath, 'utf8');
-        views = JSON.parse(data);
+        views = JSON.parse(data)
+          // Exclude hero videos from analytics (auto-play videos don't provide meaningful engagement data)
+          .filter((view: any) => !['VideoHero1.mp4', 'VideoHero2.mp4', 'VideoHero3.mp4'].includes(view.video_filename));
         
         // Apply filters
         if (videoId) {
@@ -2549,14 +2555,16 @@ export class HybridStorage implements HybridStorageInterface {
 
   async getUniqueVideoViews(dateFrom?: string, dateTo?: string): Promise<any[]> {
     try {
-      console.log('📊 Getting unique video views analytics');
+      console.log('📊 Getting unique gallery video views analytics');
       
       if (this.supabase) {
         try {
           // Database implementation
           let query = this.supabase
             .from('analytics_views')
-            .select('*');
+            .select('*')
+            // Exclude hero videos from analytics (auto-play videos don't provide meaningful engagement data)
+            .not('video_filename', 'in', '("VideoHero1.mp4","VideoHero2.mp4","VideoHero3.mp4")');
           
           if (dateFrom) {
             query = query.gte('created_at', dateFrom);
@@ -2581,7 +2589,9 @@ export class HybridStorage implements HybridStorageInterface {
       
       if (existsSync(filePath)) {
         const data = readFileSync(filePath, 'utf8');
-        views = JSON.parse(data);
+        views = JSON.parse(data)
+          // Exclude hero videos from analytics (auto-play videos don't provide meaningful engagement data)
+          .filter((view: any) => !['VideoHero1.mp4', 'VideoHero2.mp4', 'VideoHero3.mp4'].includes(view.video_filename));
         
         // Apply filters
         if (dateFrom) {
@@ -2605,14 +2615,16 @@ export class HybridStorage implements HybridStorageInterface {
 
   async getVideoReEngagementAnalytics(dateFrom?: string, dateTo?: string): Promise<any[]> {
     try {
-      console.log('📊 Getting video re-engagement analytics');
+      console.log('📊 Getting gallery video re-engagement analytics');
       
       if (this.supabase) {
         try {
           // Database implementation
           let query = this.supabase
             .from('analytics_views')
-            .select('*');
+            .select('*')
+            // Exclude hero videos from analytics (auto-play videos don't provide meaningful engagement data)
+            .not('video_filename', 'in', '("VideoHero1.mp4","VideoHero2.mp4","VideoHero3.mp4")');
           
           if (dateFrom) {
             query = query.gte('created_at', dateFrom);
@@ -2637,7 +2649,9 @@ export class HybridStorage implements HybridStorageInterface {
       
       if (existsSync(filePath)) {
         const data = readFileSync(filePath, 'utf8');
-        views = JSON.parse(data);
+        views = JSON.parse(data)
+          // Exclude hero videos from analytics (auto-play videos don't provide meaningful engagement data)
+          .filter((view: any) => !['VideoHero1.mp4', 'VideoHero2.mp4', 'VideoHero3.mp4'].includes(view.video_filename));
         
         // Apply filters
         if (dateFrom) {
@@ -2827,7 +2841,7 @@ export class HybridStorage implements HybridStorageInterface {
       
       // Calculate average views per session for re-watchers
       let totalReWatchViews = 0;
-      analytics.reWatchingSessions.forEach(sessionId => {
+      analytics.reWatchingSessions.forEach((sessionId: string) => {
         totalReWatchViews += analytics.sessionViews.get(sessionId).length;
       });
       
