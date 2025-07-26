@@ -419,7 +419,6 @@ export class HybridStorage implements HybridStorageInterface {
       let query = this.supabase
         .from('faqs')
         .select('*')
-        .eq('is_active', true)
         .order('order_index');
       
       if (sectionId) {
@@ -454,8 +453,7 @@ export class HybridStorage implements HybridStorageInterface {
     
     // Fallback to JSON
     const data = this.loadJsonFile('faqs.json');
-    const activeFaqs = data.filter(faq => faq.is_active);
-    return sectionId ? activeFaqs.filter(f => f.section_id === sectionId) : activeFaqs;
+    return sectionId ? data.filter(f => f.section_id === sectionId) : data;
   }
 
   // Contact operations
