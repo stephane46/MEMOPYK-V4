@@ -1203,7 +1203,7 @@ export function AnalyticsDashboard() {
           )}
 
           {/* Advanced Analytics Panel */}
-          {showAdvancedAnalytics && (
+          {true && (
             <div className="space-y-6 border-t pt-6">
               <div className="flex items-center gap-2 mb-4">
                 <TrendingUp className="h-5 w-5 text-blue-600" />
