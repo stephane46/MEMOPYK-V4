@@ -120,6 +120,10 @@ export default function FAQManagementWorking() {
       return await result.json();
     },
     onSuccess: (data, variables) => {
+      console.log('✅ UPDATE SUCCESS - Response data:', data);
+      console.log('✅ UPDATE SUCCESS - Variables:', variables);
+      console.log('✅ About to invalidate cache and refresh FAQ list...');
+      
       queryClient.invalidateQueries({ queryKey: ['/api/faqs'] });
       
       // Only reset form and close dialog if this was a form edit, not a visibility toggle
@@ -134,6 +138,7 @@ export default function FAQManagementWorking() {
       } else {
         // This was just a visibility toggle - show appropriate message
         const isActive = variables.data.is_active;
+        console.log('✅ VISIBILITY TOGGLE SUCCESS - FAQ is now:', isActive ? 'ACTIVE' : 'INACTIVE');
         toast({
           title: isActive ? "FAQ activée" : "FAQ désactivée",
           description: isActive ? "La FAQ est maintenant visible sur le site." : "La FAQ est maintenant cachée du site.",
@@ -313,12 +318,16 @@ export default function FAQManagementWorking() {
   };
 
   const toggleFaqVisibility = (faq: FAQ) => {
-    console.log('👁️ Toggling FAQ visibility:', faq.id, 'from', faq.is_active, 'to', !faq.is_active);
-    console.log('👁️ IMPORTANT: This should ONLY change is_active, NOT delete the FAQ!');
+    console.log('👁️ TOGGLE START - FAQ:', faq.id, 'Question:', faq.question_fr);
+    console.log('👁️ Current state:', faq.is_active, '→ New state:', !faq.is_active);
+    console.log('👁️ CRITICAL: This should ONLY update is_active field, NOT delete FAQ!');
+    
     updateFaqMutation.mutate({
       id: faq.id,
       data: { is_active: !faq.is_active }
     });
+    
+    console.log('👁️ TOGGLE END - Mutation sent for FAQ:', faq.id);
   };
 
   // Section ordering helpers
