@@ -1,5 +1,6 @@
 import { useLanguage } from '../../contexts/LanguageContext';
-import keyVisualImage from '@assets/KeyVisual_Hero.png';
+// Using direct path to public asset
+const keyVisualImage = '/KeyVisualS.png';
 
 export function KeyVisualSection() {
   const { language } = useLanguage();
@@ -76,7 +77,7 @@ export function KeyVisualSection() {
             <div className="relative group">
               <img 
                 src={keyVisualImage}
-                alt={language === 'fr' 
+                alt={language === 'fr-FR' 
                   ? "Illustration MEMOPYK - Transformation des souvenirs"
                   : "MEMOPYK Illustration - Memory transformation"
                 }
@@ -85,11 +86,11 @@ export function KeyVisualSection() {
               
               {/* Floating Elements */}
               <div className="absolute -top-4 -right-4 bg-memopyk-orange text-white px-4 py-2 rounded-full font-semibold shadow-lg animate-pulse-elegant">
-                {language === 'fr' ? '100+ Films créés' : '100+ Films created'}
+                {language === 'fr-FR' ? '100+ Films créés' : '100+ Films created'}
               </div>
               
               <div className="absolute -bottom-4 -left-4 bg-white text-memopyk-navy px-4 py-2 rounded-full font-semibold shadow-lg border-2 border-memopyk-sky-blue">
-                {language === 'fr' ? 'Artistes experts' : 'Expert artists'}
+                {language === 'fr-FR' ? 'Artistes experts' : 'Expert artists'}
               </div>
             </div>
 

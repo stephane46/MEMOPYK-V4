@@ -1,5 +1,7 @@
 import { HeroVideoSection } from '../components/sections/HeroVideoSection';
 import { KeyVisualSection } from '../components/sections/KeyVisualSection';
+import { HowItWorksSection } from '../components/sections/HowItWorksSection';
+import { WhyMemopykSection } from '../components/sections/WhyMemopykSection';
 import GallerySection from '../components/sections/GallerySection';
 import FAQSection from '../components/sections/FAQSection';
 import { ContactSection } from '../components/sections/ContactSection';
@@ -14,6 +16,12 @@ export function HomePage() {
       {/* Key Visual Problem/Solution Section */}
       <KeyVisualSection />
 
+      {/* How It Works 3-Step Process */}
+      <HowItWorksSection />
+
+      {/* Why MEMOPYK Benefits Section */}
+      <WhyMemopykSection />
+
       {/* Gallery Section */}
       <GallerySection />
 
@@ -23,7 +31,7 @@ export function HomePage() {
       {/* Contact Section */}
       <ContactSection />
 
-      {/* More sections will be added in upcoming phases */}
+      {/* All Phase 6.2 Content Sections Complete */}
     </div>
   );
 }

@@ -6,6 +6,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { useToast } from '@/hooks/use-toast';
 import { useLanguage } from '@/contexts/LanguageContext';
@@ -16,7 +17,7 @@ const contactFormSchema = z.object({
   name: z.string().min(2, "Name must be at least 2 characters"),
   email: z.string().email("Invalid email address"),
   phone: z.string().optional(),
-  subject: z.string().min(3, "Subject must be at least 3 characters"),
+  package: z.string().min(1, "Please select a package"),
   message: z.string().min(10, "Message must be at least 10 characters")
 });
 
@@ -38,7 +39,7 @@ export const ContactForm: React.FC<ContactFormProps> = ({ onSuccess, className =
       name: '',
       email: '',
       phone: '',
-      subject: '',
+      package: '',
       message: ''
     }
   });
@@ -160,19 +161,33 @@ export const ContactForm: React.FC<ContactFormProps> = ({ onSuccess, className =
 
             <FormField
               control={form.control}
-              name="subject"
+              name="package"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel className="flex items-center gap-2">
                     <MessageSquare className="w-4 h-4 text-orange-500" />
-                    {getText('Sujet', 'Subject')} *
+                    {getText('Forfait souhaité', 'Package Selection')} *
                   </FormLabel>
                   <FormControl>
-                    <Input 
-                      placeholder={getText('Sujet de votre message', 'Subject of your message')}
-                      {...field} 
-                      className="border-gray-300 dark:border-gray-600"
-                    />
+                    <Select onValueChange={field.onChange} value={field.value}>
+                      <SelectTrigger className="border-gray-300 dark:border-gray-600">
+                        <SelectValue placeholder={getText('Sélectionnez un forfait', 'Select a package')} />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="essential">
+                          {getText('Essential - €299', 'Essential - €299')}
+                        </SelectItem>
+                        <SelectItem value="premium">
+                          {getText('Premium - €499', 'Premium - €499')}  
+                        </SelectItem>
+                        <SelectItem value="luxe">
+                          {getText('Luxe - €799', 'Luxe - €799')}
+                        </SelectItem>
+                        <SelectItem value="personnalise">
+                          {getText('Personnalisé - Devis sur mesure', 'Custom - Tailored quote')}
+                        </SelectItem>
+                      </SelectContent>
+                    </Select>
                   </FormControl>
                   <FormMessage />
                 </FormItem>
