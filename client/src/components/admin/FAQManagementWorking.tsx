@@ -274,6 +274,11 @@ export default function FAQManagementWorking() {
       is_active: faq.is_active
     });
     setShowFaqForm(true);
+    
+    // Auto-scroll to form after state update
+    setTimeout(() => {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }, 100);
   };
 
   const startEditingSection = (section: FAQSection) => {
@@ -284,6 +289,11 @@ export default function FAQManagementWorking() {
       order_index: section.order_index
     });
     setShowSectionForm(true);
+    
+    // Auto-scroll to form after state update
+    setTimeout(() => {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }, 100);
   };
 
   const handleCreateFaq = (data: FAQFormData) => {
