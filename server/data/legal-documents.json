@@ -24,10 +24,10 @@
     "type": "mentions-legales",
     "title_en": "Legal Notice",
     "title_fr": "Mentions Légales",
-    "content_en": "<h1>Legal Notice</h1><p>This is the legal notice content.</p>",
-    "content_fr": "<h1>Mentions Légales</h1><p>Ceci est le contenu des mentions légales.</p>",
+    "content_en": "<p>testEN</p><p>This is the legal notice content.</p>",
+    "content_fr": "<p>testFR</p><p>Ceci est le contenu des mentions légales.</p>",
     "is_active": true,
-    "updated_at": "2025-07-15T21:18:09.687067"
+    "updated_at": "2025-07-26T11:29:57.021"
   },
   {
     "id": "b9f5f3e2-c076-40d5-b9da-0ffab2789299",

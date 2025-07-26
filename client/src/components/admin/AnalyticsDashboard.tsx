@@ -21,7 +21,13 @@ import {
   Download,
   RefreshCw,
   Settings,
-  Activity
+  Activity,
+  Shield,
+  ShieldX,
+  MapPin,
+  Ban,
+  Plus,
+  Trash2
 } from 'lucide-react';
 
 interface AnalyticsDashboard {
@@ -53,10 +59,21 @@ interface AnalyticsSettings {
   dataRetentionDays: number;
 }
 
+interface ActiveViewerIp {
+  ip_address: string;
+  country: string;
+  city: string;
+  first_seen: string;
+  last_activity: string;
+  session_count: number;
+}
+
 export function AnalyticsDashboard() {
   const [dateFrom, setDateFrom] = useState('');
   const [dateTo, setDateTo] = useState('');
   const [showSettings, setShowSettings] = useState(false);
+  const [showIpManagement, setShowIpManagement] = useState(false);
+  const [newExcludedIp, setNewExcludedIp] = useState('');
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
@@ -70,6 +87,12 @@ export function AnalyticsDashboard() {
   const { data: settings, isLoading: settingsLoading } = useQuery<AnalyticsSettings>({
     queryKey: ['/api/analytics/settings'],
     enabled: showSettings
+  });
+
+  // Fetch active viewer IPs
+  const { data: activeIps, isLoading: activeIpsLoading } = useQuery<ActiveViewerIp[]>({
+    queryKey: ['/api/analytics/active-ips'],
+    enabled: showIpManagement
   });
 
   // Update settings mutation
@@ -108,6 +131,51 @@ export function AnalyticsDashboard() {
       toast({
         title: "Reset Failed",
         description: "Failed to reset analytics data.",
+        variant: "destructive",
+      });
+    }
+  });
+
+  // Add excluded IP mutation
+  const addExcludedIpMutation = useMutation({
+    mutationFn: (ipAddress: string) => 
+      apiRequest('/api/analytics/exclude-ip', 'POST', { ipAddress }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['/api/analytics/settings'] });
+      queryClient.invalidateQueries({ queryKey: ['/api/analytics/active-ips'] });
+      setNewExcludedIp('');
+      toast({
+        title: "IP Excluded",
+        description: "IP address has been excluded from tracking.",
+      });
+    },
+    onError: (error) => {
+      console.error('Exclude IP error:', error);
+      toast({
+        title: "Exclusion Failed",
+        description: "Failed to exclude IP address.",
+        variant: "destructive",
+      });
+    }
+  });
+
+  // Remove excluded IP mutation
+  const removeExcludedIpMutation = useMutation({
+    mutationFn: (ipAddress: string) => 
+      apiRequest(`/api/analytics/exclude-ip/${encodeURIComponent(ipAddress)}`, 'DELETE'),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['/api/analytics/settings'] });
+      queryClient.invalidateQueries({ queryKey: ['/api/analytics/active-ips'] });
+      toast({
+        title: "IP Restored",
+        description: "IP address has been restored to tracking.",
+      });
+    },
+    onError: (error) => {
+      console.error('Remove excluded IP error:', error);
+      toast({
+        title: "Restore Failed",
+        description: "Failed to restore IP address.",
         variant: "destructive",
       });
     }
@@ -175,6 +243,10 @@ export function AnalyticsDashboard() {
           </p>
         </div>
         <div className="flex items-center gap-2">
+          <Button onClick={() => setShowIpManagement(!showIpManagement)} variant="outline">
+            <Shield className="h-4 w-4 mr-2" />
+            IP Management
+          </Button>
           <Button onClick={() => setShowSettings(!showSettings)} variant="outline">
             <Settings className="h-4 w-4 mr-2" />
             Settings
@@ -295,6 +367,110 @@ export function AnalyticsDashboard() {
               >
                 {resetDataMutation.isPending ? 'Resetting...' : 'Reset Data'}
               </Button>
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
+      {/* IP Management Panel */}
+      {showIpManagement && (
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Shield className="h-5 w-5" />
+              IP Address Management
+            </CardTitle>
+            <CardDescription>
+              Manage viewer IP addresses and tracking exclusions
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-6">
+            {/* Active IPs Section */}
+            <div>
+              <h4 className="font-medium mb-4">Active Viewer IPs</h4>
+              {activeIpsLoading ? (
+                <div className="text-center py-4">Loading active IPs...</div>
+              ) : activeIps?.length ? (
+                <div className="space-y-2 max-h-60 overflow-y-auto">
+                  {activeIps.map((ip) => (
+                    <div key={ip.ip_address} className="flex items-center justify-between p-3 border rounded-lg">
+                      <div className="flex-1">
+                        <div className="font-mono text-sm">{ip.ip_address}</div>
+                        <div className="text-xs text-muted-foreground">
+                          {ip.country}, {ip.city} • {ip.session_count} sessions
+                        </div>
+                        <div className="text-xs text-muted-foreground">
+                          Last activity: {new Date(ip.last_activity).toLocaleDateString()}
+                        </div>
+                      </div>
+                      <Button
+                        onClick={() => addExcludedIpMutation.mutate(ip.ip_address)}
+                        variant="outline"
+                        size="sm"
+                        disabled={addExcludedIpMutation.isPending}
+                      >
+                        Exclude
+                      </Button>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <div className="text-center py-4 text-muted-foreground">
+                  No active viewer IPs found
+                </div>
+              )}
+            </div>
+
+            <Separator />
+
+            {/* Add Excluded IP Section */}
+            <div>
+              <h4 className="font-medium mb-4">Add Excluded IP</h4>
+              <div className="flex items-center gap-2">
+                <Input
+                  type="text"
+                  placeholder="192.168.1.1"
+                  value={newExcludedIp}
+                  onChange={(e) => setNewExcludedIp(e.target.value)}
+                  className="flex-1"
+                />
+                <Button
+                  onClick={() => addExcludedIpMutation.mutate(newExcludedIp)}
+                  disabled={!newExcludedIp || addExcludedIpMutation.isPending}
+                >
+                  {addExcludedIpMutation.isPending ? 'Adding...' : 'Add'}
+                </Button>
+              </div>
+            </div>
+
+            <Separator />
+
+            {/* Excluded IPs Section */}
+            <div>
+              <h4 className="font-medium mb-4">Excluded IPs</h4>
+              {settingsLoading ? (
+                <div className="text-center py-4">Loading excluded IPs...</div>
+              ) : settings?.excludedIps?.length ? (
+                <div className="space-y-2">
+                  {settings.excludedIps.map((ip) => (
+                    <div key={ip} className="flex items-center justify-between p-3 border rounded-lg">
+                      <span className="font-mono text-sm">{ip}</span>
+                      <Button
+                        onClick={() => removeExcludedIpMutation.mutate(ip)}
+                        variant="outline"
+                        size="sm"
+                        disabled={removeExcludedIpMutation.isPending}
+                      >
+                        Remove
+                      </Button>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <div className="text-center py-4 text-muted-foreground">
+                  No IPs are currently excluded from tracking
+                </div>
+              )}
             </div>
           </CardContent>
         </Card>

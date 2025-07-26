@@ -1601,6 +1601,43 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // IP Management endpoints
+  app.get('/api/analytics/active-ips', async (req, res) => {
+    try {
+      const activeIps = await hybridStorage.getActiveViewerIps();
+      res.json(activeIps);
+    } catch (error) {
+      console.error('Active IPs fetch error:', error);
+      res.status(500).json({ error: 'Failed to fetch active IPs' });
+    }
+  });
+
+  app.post('/api/analytics/exclude-ip', async (req, res) => {
+    try {
+      const { ipAddress } = req.body;
+      if (!ipAddress) {
+        return res.status(400).json({ error: 'IP address is required' });
+      }
+      const settings = await hybridStorage.addExcludedIp(ipAddress);
+      res.json({ success: true, settings });
+    } catch (error) {
+      console.error('Exclude IP error:', error);
+      res.status(500).json({ error: 'Failed to exclude IP address' });
+    }
+  });
+
+  app.delete('/api/analytics/exclude-ip/:ipAddress', async (req, res) => {
+    try {
+      const { ipAddress } = req.params;
+      const decodedIp = decodeURIComponent(ipAddress);
+      const settings = await hybridStorage.removeExcludedIp(decodedIp);
+      res.json({ success: true, settings });
+    } catch (error) {
+      console.error('Remove excluded IP error:', error);
+      res.status(500).json({ error: 'Failed to remove excluded IP address' });
+    }
+  });
+
   app.get("/api/analytics/export", async (req, res) => {
     try {
       const { format = 'json', dateFrom, dateTo } = req.query;

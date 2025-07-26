@@ -51,6 +51,11 @@ export interface HybridStorageInterface {
   updateAnalyticsSettings(settings: any): Promise<any>;
   resetAnalyticsData(): Promise<void>;
   getAnalyticsDashboard(dateFrom?: string, dateTo?: string): Promise<any>;
+  
+  // IP Management methods
+  getActiveViewerIps(): Promise<any[]>;
+  addExcludedIp(ipAddress: string): Promise<any>;
+  removeExcludedIp(ipAddress: string): Promise<any>;
 }
 
 export class HybridStorage implements HybridStorageInterface {
@@ -1298,11 +1303,10 @@ export class HybridStorage implements HybridStorageInterface {
 
   async updateAnalyticsSettings(settings: any): Promise<any> {
     try {
+      const currentSettings = await this.getAnalyticsSettings();
       const updatedSettings = {
-        excludedIps: settings.excludedIps || ["127.0.0.1", "::1"],
-        completionThreshold: settings.completionThreshold || 80,
-        trackingEnabled: settings.trackingEnabled !== undefined ? settings.trackingEnabled : true,
-        dataRetentionDays: settings.dataRetentionDays || 90,
+        ...currentSettings,
+        ...settings,
         updated_at: new Date().toISOString()
       };
 
@@ -1310,6 +1314,75 @@ export class HybridStorage implements HybridStorageInterface {
       return updatedSettings;
     } catch (error) {
       console.error('Error updating analytics settings:', error);
+      throw error;
+    }
+  }
+
+  // IP Management methods
+  async getActiveViewerIps(): Promise<any[]> {
+    try {
+      const sessions = this.loadJsonFile('analytics-sessions.json');
+      const settings = await this.getAnalyticsSettings();
+      
+      // Get unique IPs from last 24 hours, excluding blacklisted ones
+      const oneDayAgo = new Date(Date.now() - 24 * 60 * 60 * 1000);
+      const activeIps = new Map();
+      
+      sessions.forEach((session: any) => {
+        if (new Date(session.created_at) > oneDayAgo && 
+            !settings.excludedIps?.includes(session.ip_address)) {
+          const ip = session.ip_address;
+          if (!activeIps.has(ip)) {
+            activeIps.set(ip, {
+              ip_address: ip,
+              country: session.country,
+              city: session.city,
+              first_seen: session.created_at,
+              session_count: 0,
+              last_activity: session.created_at
+            });
+          }
+          const entry = activeIps.get(ip);
+          entry.session_count++;
+          if (new Date(session.created_at) > new Date(entry.last_activity)) {
+            entry.last_activity = session.created_at;
+          }
+        }
+      });
+      
+      return Array.from(activeIps.values()).sort((a, b) => 
+        new Date(b.last_activity).getTime() - new Date(a.last_activity).getTime()
+      );
+    } catch (error) {
+      console.error('Active viewer IPs fetch error:', error);
+      return [];
+    }
+  }
+
+  async addExcludedIp(ipAddress: string): Promise<any> {
+    try {
+      const settings = await this.getAnalyticsSettings();
+      if (!settings.excludedIps) settings.excludedIps = [];
+      if (!settings.excludedIps.includes(ipAddress)) {
+        settings.excludedIps.push(ipAddress);
+        await this.updateAnalyticsSettings(settings);
+      }
+      return settings;
+    } catch (error) {
+      console.error('Add excluded IP error:', error);
+      throw error;
+    }
+  }
+
+  async removeExcludedIp(ipAddress: string): Promise<any> {
+    try {
+      const settings = await this.getAnalyticsSettings();
+      if (!settings.excludedIps) settings.excludedIps = [];
+      settings.excludedIps = settings.excludedIps.filter((ip: string) => ip !== ipAddress);
+      await this.updateAnalyticsSettings(settings);
+      return settings;
+    } catch (error) {
+      console.error('Remove excluded IP error:', error);
       throw error;
     }
   }
@@ -1399,6 +1472,76 @@ export class HybridStorage implements HybridStorageInterface {
       };
     } catch (error) {
       console.error('Error getting analytics dashboard:', error);
+      throw error;
+    }
+  }
+
+  // IP Management Methods
+  async getActiveViewerIps(): Promise<any[]> {
+    try {
+      // Get session data to analyze IP addresses
+      const sessions = this.loadJsonFile('analytics-sessions.json');
+      const ipMap = new Map();
+
+      sessions.forEach((session: any) => {
+        const ip = session.ip_address;
+        if (!ip) return;
+
+        if (ipMap.has(ip)) {
+          const existing = ipMap.get(ip);
+          existing.session_count++;
+          existing.last_activity = session.timestamp > existing.last_activity ? session.timestamp : existing.last_activity;
+        } else {
+          ipMap.set(ip, {
+            ip_address: ip,
+            country: session.country || 'Unknown',
+            city: session.city || 'Unknown',
+            first_seen: session.timestamp,
+            last_activity: session.timestamp,
+            session_count: 1
+          });
+        }
+      });
+
+      return Array.from(ipMap.values()).sort((a, b) => 
+        new Date(b.last_activity).getTime() - new Date(a.last_activity).getTime()
+      );
+    } catch (error) {
+      console.error('Error getting active viewer IPs:', error);
+      return [];
+    }
+  }
+
+  async addExcludedIp(ipAddress: string): Promise<any> {
+    try {
+      // Get current settings
+      const settings = await this.getAnalyticsSettings();
+      
+      // Add IP to excluded list if not already there
+      if (!settings.excludedIps.includes(ipAddress)) {
+        settings.excludedIps.push(ipAddress);
+        await this.updateAnalyticsSettings(settings);
+      }
+
+      return settings;
+    } catch (error) {
+      console.error('Error adding excluded IP:', error);
+      throw error;
+    }
+  }
+
+  async removeExcludedIp(ipAddress: string): Promise<any> {
+    try {
+      // Get current settings
+      const settings = await this.getAnalyticsSettings();
+      
+      // Remove IP from excluded list
+      settings.excludedIps = settings.excludedIps.filter(ip => ip !== ipAddress);
+      await this.updateAnalyticsSettings(settings);
+
+      return settings;
+    } catch (error) {
+      console.error('Error removing excluded IP:', error);
       throw error;
     }
   }
