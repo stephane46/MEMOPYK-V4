@@ -277,7 +277,10 @@ export default function FAQManagementWorking() {
     
     // Auto-scroll to form after state update
     setTimeout(() => {
-      window.scrollTo({ top: 0, behavior: 'smooth' });
+      const formElement = document.getElementById('faq-edit-form');
+      if (formElement) {
+        formElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
     }, 100);
   };
 
@@ -292,7 +295,10 @@ export default function FAQManagementWorking() {
     
     // Auto-scroll to form after state update
     setTimeout(() => {
-      window.scrollTo({ top: 0, behavior: 'smooth' });
+      const formElement = document.getElementById('section-edit-form');
+      if (formElement) {
+        formElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
     }, 100);
   };
 
@@ -538,7 +544,7 @@ export default function FAQManagementWorking() {
 
       {/* FAQ Form */}
       {showFaqForm && (
-        <Card className="mb-6">
+        <Card className="mb-6" id="faq-edit-form">
           <CardHeader>
             <CardTitle>{editingFaq ? 'Modifier la FAQ' : 'Nouvelle FAQ'}</CardTitle>
           </CardHeader>
@@ -668,7 +674,7 @@ export default function FAQManagementWorking() {
 
       {/* Section Form */}
       {showSectionForm && (
-        <Card className="mb-6">
+        <Card className="mb-6" id="section-edit-form">
           <CardHeader>
             <CardTitle>{editingSection ? 'Modifier la Section' : 'Nouvelle Section FAQ'}</CardTitle>
           </CardHeader>

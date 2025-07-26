@@ -510,15 +510,17 @@ The application follows a modern full-stack architecture with clear separation o
 ## Current Status: Phase 8.4.20 - FAQ EDIT UX ENHANCEMENT COMPLETED (July 26, 2025)
 
 ### FAQ EDIT UX IMPROVEMENT - COMPLETED (July 26, 2025)
-**Auto-Scroll Enhancement for Better User Experience:**
+**Enhanced Scroll Positioning for Perfect User Experience:**
 ✅ **Issue Identified**: FAQ editing form appeared at top but users weren't automatically scrolled there
 ✅ **Auto-Scroll Added**: Both FAQ and section editing now auto-scroll to form with smooth animation
 ✅ **User Feedback Incorporated**: Clicking edit button now takes user directly to editing form
-✅ **Consistent UX**: Applied auto-scroll to both `startEditingFaq()` and `startEditingSection()` functions
-✅ **Build Verified**: Production build completed successfully (914.04 kB)
+✅ **Scroll Positioning Fixed**: Changed from scrolling to top to scrolling to specific form element
+✅ **Precise Targeting**: Uses `scrollIntoView` with element ID for accurate positioning
+✅ **Build Verified**: Production build completed successfully
 
 **Technical Implementation:**
-- Added `setTimeout(() => window.scrollTo({ top: 0, behavior: 'smooth' }), 100)` to editing functions
+- Added form IDs: `faq-edit-form` and `section-edit-form` for precise targeting
+- Updated scroll behavior: `formElement.scrollIntoView({ behavior: 'smooth', block: 'start' })`
 - 100ms delay ensures state update completes before scroll triggers
 - Smooth scroll animation provides professional user experience
 - Applied consistently to both FAQ and section editing workflows
