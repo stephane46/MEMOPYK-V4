@@ -1200,16 +1200,7 @@ export function AnalyticsDashboard() {
               </div>
 
               {/* Video Engagement Metrics */}
-              {(() => {
-                const hasData = videoEngagementData && (videoEngagementData as any)?.success && (videoEngagementData as any)?.metrics;
-                console.log('🧪 Video Engagement Render Check:', {
-                  videoEngagementData: !!videoEngagementData,
-                  success: (videoEngagementData as any)?.success,
-                  metrics: !!(videoEngagementData as any)?.metrics,
-                  hasData
-                });
-                return hasData;
-              })() && (
+              {videoEngagementData && (
                 <Card>
                   <CardHeader>
                     <CardTitle className="flex items-center gap-2">
@@ -1276,7 +1267,7 @@ export function AnalyticsDashboard() {
               )}
 
               {/* Unique Video Views */}
-              {uniqueViewsData && (uniqueViewsData as any)?.success && (uniqueViewsData as any)?.uniqueViews && (
+              {uniqueViewsData && (
                 <Card>
                   <CardHeader>
                     <CardTitle className="flex items-center gap-2">
@@ -1324,7 +1315,7 @@ export function AnalyticsDashboard() {
               )}
 
               {/* Re-Engagement Analytics */}
-              {reEngagementData && (reEngagementData as any)?.success && (reEngagementData as any)?.reEngagement && (
+              {reEngagementData && (
                 <Card>
                   <CardHeader>
                     <CardTitle className="flex items-center gap-2">
