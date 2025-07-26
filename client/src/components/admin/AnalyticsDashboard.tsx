@@ -581,15 +581,40 @@ export function AnalyticsDashboard() {
               className="w-auto"
             />
           </div>
-          <Button 
-            onClick={() => {
-              setDateFrom('');
-              setDateTo('');
-            }}
-            variant="outline"
-          >
-            Clear Filters
-          </Button>
+          <div className="flex gap-2">
+            <Button 
+              onClick={() => {
+                const today = new Date().toISOString().split('T')[0];
+                const lastWeek = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
+                setDateFrom(lastWeek);
+                setDateTo(today);
+              }}
+              variant="outline"
+              size="sm"
+            >
+              Last 7 Days
+            </Button>
+            <Button 
+              onClick={() => {
+                setDateFrom('2025-07-19');
+                setDateTo('2025-07-22');
+              }}
+              variant="outline"
+              size="sm"
+            >
+              July 19-22
+            </Button>
+            <Button 
+              onClick={() => {
+                setDateFrom('');
+                setDateTo('');
+              }}
+              variant="outline"
+              size="sm"
+            >
+              Clear Filters
+            </Button>
+          </div>
           <div className="flex gap-2 ml-auto">
             <Button onClick={() => handleExport('json')} variant="outline" size="sm">
               <Download className="h-4 w-4 mr-2" />
@@ -1159,6 +1184,13 @@ export function AnalyticsDashboard() {
               </CardTitle>
               <CardDescription>
                 Daily visitor and view analytics over time
+                {dateFrom || dateTo ? (
+                  <span className="ml-2 text-sm font-medium text-orange-600">
+                    • Filtered: {dateFrom || 'All time'} to {dateTo || 'Now'}
+                  </span>
+                ) : (
+                  <span className="ml-2 text-sm text-muted-foreground">• Showing all available data</span>
+                )}
               </CardDescription>
             </CardHeader>
             <CardContent>
