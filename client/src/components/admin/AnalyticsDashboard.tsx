@@ -136,6 +136,94 @@ export function AnalyticsDashboard() {
     }
   });
 
+  // Data clearing mutations with granular control
+  const clearSessionsMutation = useMutation({
+    mutationFn: () => apiRequest('/api/analytics/clear/sessions', 'POST'),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['/api/analytics/dashboard'] });
+      toast({
+        title: "Sessions Cleared",
+        description: "Analytics sessions data cleared successfully.",
+      });
+    }
+  });
+
+  const clearViewsMutation = useMutation({
+    mutationFn: () => apiRequest('/api/analytics/clear/views', 'POST'),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['/api/analytics/dashboard'] });
+      toast({
+        title: "Views Cleared",
+        description: "Analytics views data cleared successfully.",
+      });
+    }
+  });
+
+  const clearRealtimeVisitorsMutation = useMutation({
+    mutationFn: () => apiRequest('/api/analytics/clear/realtime-visitors', 'POST'),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['/api/analytics/dashboard'] });
+      toast({
+        title: "Visitors Cleared",
+        description: "Real-time visitors data cleared successfully.",
+      });
+    }
+  });
+
+  const clearPerformanceMetricsMutation = useMutation({
+    mutationFn: () => apiRequest('/api/analytics/clear/performance-metrics', 'POST'),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['/api/analytics/dashboard'] });
+      toast({
+        title: "Performance Data Cleared",
+        description: "Performance metrics cleared successfully.",
+      });
+    }
+  });
+
+  const clearEngagementHeatmapMutation = useMutation({
+    mutationFn: () => apiRequest('/api/analytics/clear/engagement-heatmap', 'POST'),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['/api/analytics/dashboard'] });
+      toast({
+        title: "Heatmap Cleared",
+        description: "Engagement heatmap data cleared successfully.",
+      });
+    }
+  });
+
+  const clearConversionFunnelMutation = useMutation({
+    mutationFn: () => apiRequest('/api/analytics/clear/conversion-funnel', 'POST'),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['/api/analytics/dashboard'] });
+      toast({
+        title: "Funnel Data Cleared",
+        description: "Conversion funnel data cleared successfully.",
+      });
+    }
+  });
+
+  const clearAllDataMutation = useMutation({
+    mutationFn: () => apiRequest('/api/analytics/clear/all', 'POST'),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['/api/analytics/dashboard'] });
+      queryClient.invalidateQueries({ queryKey: ['/api/analytics/settings'] });
+      queryClient.invalidateQueries({ queryKey: ['/api/analytics/active-ips'] });
+      toast({
+        title: "All Data Cleared",
+        description: "All analytics data and settings cleared successfully.",
+      });
+    },
+    onError: (error) => {
+      console.error('Clear all data error:', error);
+      toast({
+        title: "Clear Failed",
+        description: "Failed to clear all analytics data.",
+        variant: "destructive",
+      });
+    }
+  });
+
   // Add excluded IP mutation
   const addExcludedIpMutation = useMutation({
     mutationFn: (ipAddress: string) => 
@@ -353,20 +441,95 @@ export function AnalyticsDashboard() {
               </div>
             )}
             <Separator />
-            <div className="flex justify-between items-center">
-              <div>
-                <h4 className="font-medium">Reset Analytics Data</h4>
-                <p className="text-sm text-muted-foreground">
-                  This will permanently delete all analytics data
-                </p>
+            
+            {/* Data Management Section */}
+            <div>
+              <h4 className="font-medium mb-4">Data Management</h4>
+              <p className="text-sm text-muted-foreground mb-6">
+                Clear specific types of analytics data or reset everything
+              </p>
+              
+              {/* Granular Clearing Options */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+                <Button 
+                  onClick={() => clearSessionsMutation.mutate()}
+                  variant="outline"
+                  className="justify-start"
+                  disabled={clearSessionsMutation.isPending}
+                >
+                  <Users className="h-4 w-4 mr-2" />
+                  {clearSessionsMutation.isPending ? 'Clearing...' : 'Clear Sessions'}
+                </Button>
+                
+                <Button 
+                  onClick={() => clearViewsMutation.mutate()}
+                  variant="outline"
+                  className="justify-start"
+                  disabled={clearViewsMutation.isPending}
+                >
+                  <Eye className="h-4 w-4 mr-2" />
+                  {clearViewsMutation.isPending ? 'Clearing...' : 'Clear Video Views'}
+                </Button>
+                
+                <Button 
+                  onClick={() => clearRealtimeVisitorsMutation.mutate()}
+                  variant="outline"
+                  className="justify-start"
+                  disabled={clearRealtimeVisitorsMutation.isPending}
+                >
+                  <Activity className="h-4 w-4 mr-2" />
+                  {clearRealtimeVisitorsMutation.isPending ? 'Clearing...' : 'Clear Real-time Visitors'}
+                </Button>
+                
+                <Button 
+                  onClick={() => clearPerformanceMetricsMutation.mutate()}
+                  variant="outline"
+                  className="justify-start"
+                  disabled={clearPerformanceMetricsMutation.isPending}
+                >
+                  <TrendingUp className="h-4 w-4 mr-2" />
+                  {clearPerformanceMetricsMutation.isPending ? 'Clearing...' : 'Clear Performance Data'}
+                </Button>
+                
+                <Button 
+                  onClick={() => clearEngagementHeatmapMutation.mutate()}
+                  variant="outline"
+                  className="justify-start"
+                  disabled={clearEngagementHeatmapMutation.isPending}
+                >
+                  <MapPin className="h-4 w-4 mr-2" />
+                  {clearEngagementHeatmapMutation.isPending ? 'Clearing...' : 'Clear Heatmap Data'}
+                </Button>
+                
+                <Button 
+                  onClick={() => clearConversionFunnelMutation.mutate()}
+                  variant="outline"
+                  className="justify-start"
+                  disabled={clearConversionFunnelMutation.isPending}
+                >
+                  <BarChart3 className="h-4 w-4 mr-2" />
+                  {clearConversionFunnelMutation.isPending ? 'Clearing...' : 'Clear Funnel Data'}
+                </Button>
               </div>
-              <Button 
-                onClick={() => resetDataMutation.mutate()}
-                variant="destructive"
-                disabled={resetDataMutation.isPending}
-              >
-                {resetDataMutation.isPending ? 'Resetting...' : 'Reset Data'}
-              </Button>
+              
+              {/* Clear All Data */}
+              <Separator className="my-4" />
+              <div className="flex justify-between items-center p-4 border border-red-200 rounded-lg bg-red-50">
+                <div>
+                  <h5 className="font-medium text-red-900">Clear All Analytics Data</h5>
+                  <p className="text-sm text-red-700">
+                    This will permanently delete ALL analytics data and reset settings
+                  </p>
+                </div>
+                <Button 
+                  onClick={() => clearAllDataMutation.mutate()}
+                  variant="destructive"
+                  disabled={clearAllDataMutation.isPending}
+                >
+                  <Trash2 className="h-4 w-4 mr-2" />
+                  {clearAllDataMutation.isPending ? 'Clearing All...' : 'Clear All Data'}
+                </Button>
+              </div>
             </div>
           </CardContent>
         </Card>

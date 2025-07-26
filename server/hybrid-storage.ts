@@ -50,6 +50,13 @@ export interface HybridStorageInterface {
   createAnalyticsView(viewData: any): Promise<any>;
   updateAnalyticsSettings(settings: any): Promise<any>;
   resetAnalyticsData(): Promise<void>;
+  clearAnalyticsSessions(): Promise<void>;
+  clearAnalyticsViews(): Promise<void>;
+  clearRealtimeVisitors(): Promise<void>;
+  clearPerformanceMetrics(): Promise<void>;
+  clearEngagementHeatmap(): Promise<void>;
+  clearConversionFunnel(): Promise<void>;
+  clearAllAnalyticsData(): Promise<void>;
   getAnalyticsDashboard(dateFrom?: string, dateTo?: string): Promise<any>;
   
   // IP Management methods
@@ -1347,6 +1354,92 @@ export class HybridStorage implements HybridStorageInterface {
       console.log('✅ Analytics data reset successfully');
     } catch (error) {
       console.error('Error resetting analytics data:', error);
+      throw error;
+    }
+  }
+
+  async clearAnalyticsSessions(): Promise<void> {
+    try {
+      this.saveJsonFile('analytics-sessions.json', []);
+      console.log('✅ Analytics sessions cleared successfully');
+    } catch (error) {
+      console.error('Error clearing analytics sessions:', error);
+      throw error;
+    }
+  }
+
+  async clearAnalyticsViews(): Promise<void> {
+    try {
+      this.saveJsonFile('analytics-views.json', []);
+      console.log('✅ Analytics views cleared successfully');
+    } catch (error) {
+      console.error('Error clearing analytics views:', error);
+      throw error;
+    }
+  }
+
+  async clearRealtimeVisitors(): Promise<void> {
+    try {
+      this.saveJsonFile('realtime-visitors.json', []);
+      console.log('✅ Real-time visitors cleared successfully');
+    } catch (error) {
+      console.error('Error clearing real-time visitors:', error);
+      throw error;
+    }
+  }
+
+  async clearPerformanceMetrics(): Promise<void> {
+    try {
+      this.saveJsonFile('performance-metrics.json', []);
+      console.log('✅ Performance metrics cleared successfully');
+    } catch (error) {
+      console.error('Error clearing performance metrics:', error);
+      throw error;
+    }
+  }
+
+  async clearEngagementHeatmap(): Promise<void> {
+    try {
+      this.saveJsonFile('engagement-heatmap.json', []);
+      console.log('✅ Engagement heatmap cleared successfully');
+    } catch (error) {
+      console.error('Error clearing engagement heatmap:', error);
+      throw error;
+    }
+  }
+
+  async clearConversionFunnel(): Promise<void> {
+    try {
+      this.saveJsonFile('conversion-funnel.json', []);
+      console.log('✅ Conversion funnel data cleared successfully');
+    } catch (error) {
+      console.error('Error clearing conversion funnel:', error);
+      throw error;
+    }
+  }
+
+  async clearAllAnalyticsData(): Promise<void> {
+    try {
+      // Clear all analytics-related JSON files
+      this.saveJsonFile('analytics-sessions.json', []);
+      this.saveJsonFile('analytics-views.json', []);
+      this.saveJsonFile('realtime-visitors.json', []);
+      this.saveJsonFile('performance-metrics.json', []);
+      this.saveJsonFile('engagement-heatmap.json', []);
+      this.saveJsonFile('conversion-funnel.json', []);
+      
+      // Reset analytics settings to defaults
+      const defaultSettings = {
+        excludedIps: [],
+        completionThreshold: 75,
+        trackingEnabled: true,
+        dataRetentionDays: 90
+      };
+      this.saveJsonFile('analytics-settings.json', [defaultSettings]);
+      
+      console.log('✅ All analytics data cleared successfully');
+    } catch (error) {
+      console.error('Error clearing all analytics data:', error);
       throw error;
     }
   }

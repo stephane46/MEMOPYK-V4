@@ -1,10 +1,8 @@
-{
-  "excludedIps": [
-    "127.0.0.1",
-    "::1"
-  ],
-  "completionThreshold": 80,
-  "trackingEnabled": true,
-  "dataRetentionDays": 90,
-  "updated_at": "2025-07-26T12:34:13.706Z"
-}
+[
+  {
+    "excludedIps": [],
+    "completionThreshold": 75,
+    "trackingEnabled": true,
+    "dataRetentionDays": 90
+  }
+]

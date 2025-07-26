@@ -1601,6 +1601,77 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Data clearing endpoints for granular control
+  app.post("/api/analytics/clear/sessions", async (req, res) => {
+    try {
+      await hybridStorage.clearAnalyticsSessions();
+      res.json({ success: true, message: "Analytics sessions cleared successfully" });
+    } catch (error) {
+      console.error('Clear sessions error:', error);
+      res.status(500).json({ error: "Failed to clear analytics sessions" });
+    }
+  });
+
+  app.post("/api/analytics/clear/views", async (req, res) => {
+    try {
+      await hybridStorage.clearAnalyticsViews();
+      res.json({ success: true, message: "Analytics views cleared successfully" });
+    } catch (error) {
+      console.error('Clear views error:', error);
+      res.status(500).json({ error: "Failed to clear analytics views" });
+    }
+  });
+
+  app.post("/api/analytics/clear/realtime-visitors", async (req, res) => {
+    try {
+      await hybridStorage.clearRealtimeVisitors();
+      res.json({ success: true, message: "Real-time visitors cleared successfully" });
+    } catch (error) {
+      console.error('Clear real-time visitors error:', error);
+      res.status(500).json({ error: "Failed to clear real-time visitors" });
+    }
+  });
+
+  app.post("/api/analytics/clear/performance-metrics", async (req, res) => {
+    try {
+      await hybridStorage.clearPerformanceMetrics();
+      res.json({ success: true, message: "Performance metrics cleared successfully" });
+    } catch (error) {
+      console.error('Clear performance metrics error:', error);
+      res.status(500).json({ error: "Failed to clear performance metrics" });
+    }
+  });
+
+  app.post("/api/analytics/clear/engagement-heatmap", async (req, res) => {
+    try {
+      await hybridStorage.clearEngagementHeatmap();
+      res.json({ success: true, message: "Engagement heatmap cleared successfully" });
+    } catch (error) {
+      console.error('Clear engagement heatmap error:', error);
+      res.status(500).json({ error: "Failed to clear engagement heatmap" });
+    }
+  });
+
+  app.post("/api/analytics/clear/conversion-funnel", async (req, res) => {
+    try {
+      await hybridStorage.clearConversionFunnel();
+      res.json({ success: true, message: "Conversion funnel data cleared successfully" });
+    } catch (error) {
+      console.error('Clear conversion funnel error:', error);
+      res.status(500).json({ error: "Failed to clear conversion funnel data" });
+    }
+  });
+
+  app.post("/api/analytics/clear/all", async (req, res) => {
+    try {
+      await hybridStorage.clearAllAnalyticsData();
+      res.json({ success: true, message: "All analytics data cleared successfully" });
+    } catch (error) {
+      console.error('Clear all analytics data error:', error);
+      res.status(500).json({ error: "Failed to clear all analytics data" });
+    }
+  });
+
   // IP Management endpoints
   app.get('/api/analytics/active-ips', async (req, res) => {
     try {
