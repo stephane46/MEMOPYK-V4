@@ -130,16 +130,16 @@ export function Layout({ children }: LayoutProps) {
                   {language === 'fr-FR' ? 'Politique de confidentialité' : 'Privacy Policy'}
                 </Link></li>
                 <li><Link href={getLocalizedPath('/legal/terms')} className="hover:text-white">
-                  {language === 'fr-FR' ? 'Conditions de service' : 'Terms of Service'}
+                  {language === 'fr-FR' ? 'Conditions générales d\'utilisation' : 'Terms of Use'}
                 </Link></li>
                 <li><Link href={getLocalizedPath('/legal/cookies')} className="hover:text-white">
                   {language === 'fr-FR' ? 'Politique des cookies' : 'Cookie Policy'}
                 </Link></li>
                 <li><Link href={getLocalizedPath('/legal/refund')} className="hover:text-white">
-                  {language === 'fr-FR' ? 'Politique de remboursement' : 'Refund Policy'}
+                  {language === 'fr-FR' ? 'Conditions générales de vente' : 'Terms of Sale'}
                 </Link></li>
                 <li><Link href={getLocalizedPath('/legal/disclaimer')} className="hover:text-white">
-                  {language === 'fr-FR' ? 'Avis de non-responsabilité' : 'Disclaimer'}
+                  {language === 'fr-FR' ? 'Mentions légales' : 'Legal Notice'}
                 </Link></li>
               </ul>
             </div>

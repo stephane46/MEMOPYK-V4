@@ -5,11 +5,11 @@ import { htmlSanitizer } from '../lib/sanitize-html';
 import type { LegalDocument } from '@shared/schema';
 
 const documentTypeMap: Record<string, string> = {
-  'privacy': 'privacy_policy',
-  'terms': 'terms_of_service', 
-  'cookies': 'cookie_policy',
-  'refund': 'refund_policy',
-  'disclaimer': 'disclaimer'
+  'privacy': 'politique-confidentialite',
+  'terms': 'cgu', 
+  'cookies': 'politique-cookies',
+  'refund': 'cgv',
+  'disclaimer': 'mentions-legales'
 };
 
 export function LegalDocumentPage() {
