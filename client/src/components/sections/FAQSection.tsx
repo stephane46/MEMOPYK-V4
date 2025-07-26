@@ -80,20 +80,16 @@ export default function FAQSection() {
     
     // Scroll to section title if opening
     if (isOpening) {
-      // Get the element position BEFORE the content expands
-      const element = sectionRefs.current[sectionId];
-      if (element) {
-        const rect = element.getBoundingClientRect();
-        const targetOffset = window.pageYOffset + rect.top - 80; // 80px padding above title
-        
-        // Small delay to allow DOM update, then scroll to the pre-calculated position
-        setTimeout(() => {
-          window.scrollTo({
-            top: targetOffset,
-            behavior: 'smooth'
+      // Wait for state update and DOM to render, then scroll to element
+      setTimeout(() => {
+        const element = sectionRefs.current[sectionId];
+        if (element) {
+          element.scrollIntoView({ 
+            behavior: 'smooth', 
+            block: 'start' 
           });
-        }, 50);
-      }
+        }
+      }, 100);
     }
   };
 
@@ -102,23 +98,19 @@ export default function FAQSection() {
     const isOpening = !newOpenQuestions.has(questionId);
     
     if (isOpening) {
-      // Get the element position BEFORE the answer expands
-      const element = questionRefs.current[questionId];
-      if (element) {
-        const rect = element.getBoundingClientRect();
-        const targetOffset = window.pageYOffset + rect.top - 80; // 80px padding above question
-        
-        newOpenQuestions.add(questionId);
-        setOpenQuestions(newOpenQuestions);
-        
-        // Small delay to allow DOM update, then scroll to the pre-calculated position
-        setTimeout(() => {
-          window.scrollTo({
-            top: targetOffset,
-            behavior: 'smooth'
+      newOpenQuestions.add(questionId);
+      setOpenQuestions(newOpenQuestions);
+      
+      // Wait for state update and DOM to render, then scroll to element
+      setTimeout(() => {
+        const element = questionRefs.current[questionId];
+        if (element) {
+          element.scrollIntoView({ 
+            behavior: 'smooth', 
+            block: 'start' 
           });
-        }, 50);
-      }
+        }
+      }, 100);
     } else {
       newOpenQuestions.delete(questionId);
       setOpenQuestions(newOpenQuestions);
