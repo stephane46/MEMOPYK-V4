@@ -122,6 +122,23 @@ export function Layout({ children }: LayoutProps) {
             </div>
             
             <div>
+              <h4 className="font-semibold mb-4">
+                {language === 'fr-FR' ? 'Légal' : 'Legal'}
+              </h4>
+              <ul className="space-y-2 text-gray-400">
+                <li><Link href={getLocalizedPath('/legal/privacy')} className="hover:text-white">
+                  {language === 'fr-FR' ? 'Politique de confidentialité' : 'Privacy Policy'}
+                </Link></li>
+                <li><Link href={getLocalizedPath('/legal/terms')} className="hover:text-white">
+                  {language === 'fr-FR' ? 'Conditions de service' : 'Terms of Service'}
+                </Link></li>
+                <li><Link href={getLocalizedPath('/legal/cookies')} className="hover:text-white">
+                  {language === 'fr-FR' ? 'Politique des cookies' : 'Cookie Policy'}
+                </Link></li>
+              </ul>
+            </div>
+            
+            <div>
               <h4 className="font-semibold mb-4">Contact</h4>
               <ul className="space-y-2 text-gray-400">
                 <li>contact@memopyk.com</li>
@@ -133,8 +150,8 @@ export function Layout({ children }: LayoutProps) {
           <div className="border-t border-gray-800 mt-8 pt-8 text-center text-gray-400">
             <p>&copy; 2025 MEMOPYK. {language === 'fr-FR' ? 'Tous droits réservés.' : 'All rights reserved.'}</p>
             <div className="mt-2">
-              <Link href={getLocalizedPath('/admin')}>
-                <a className="text-xs text-gray-600 hover:text-gray-400 transition-colors">admin</a>
+              <Link href={getLocalizedPath('/admin')} className="text-xs text-gray-600 hover:text-gray-400 transition-colors">
+                admin
               </Link>
             </div>
           </div>
