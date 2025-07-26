@@ -345,12 +345,12 @@ export function AnalyticsDashboard() {
   const recalculateHistoricalMutation = useMutation({
     mutationFn: (threshold: number) => 
       apiRequest('/api/analytics/recalculate-completions', 'POST', { threshold }),
-    onSuccess: (result) => {
+    onSuccess: (result: any) => {
       queryClient.invalidateQueries({ queryKey: ['/api/analytics/dashboard'] });
       queryClient.invalidateQueries({ queryKey: ['/api/analytics/views'] });
       toast({
         title: "Historical Data Updated",
-        description: `Updated ${result.result.updated} out of ${result.result.total} historical video views.`,
+        description: `Updated ${result.result?.updated || 0} out of ${result.result?.total || 0} historical video views.`,
       });
     },
     onError: (error) => {
@@ -365,7 +365,7 @@ export function AnalyticsDashboard() {
 
   // Enhanced video analytics queries
   const { data: videoEngagementData } = useQuery({
-    queryKey: ['/api/analytics/video-engagement/all'],
+    queryKey: ['/api/analytics/video-engagement'],
     enabled: showAdvancedAnalytics
   });
 
@@ -1174,7 +1174,7 @@ export function AnalyticsDashboard() {
               </div>
 
               {/* Video Engagement Metrics */}
-              {videoEngagementData?.metrics && (
+              {videoEngagementData && (videoEngagementData as any)?.metrics && (
                 <Card>
                   <CardHeader>
                     <CardTitle className="flex items-center gap-2">
@@ -1189,28 +1189,28 @@ export function AnalyticsDashboard() {
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                       <div className="text-center">
                         <div className="text-2xl font-bold text-blue-600">
-                          {formatNumber(videoEngagementData.metrics.totalViews)}
+                          {formatNumber((videoEngagementData as any).metrics.totalViews)}
                         </div>
                         <p className="text-sm text-muted-foreground">Total Views</p>
                         <p className="text-xs text-muted-foreground">Raw engagement count</p>
                       </div>
                       <div className="text-center">
                         <div className="text-2xl font-bold text-green-600">
-                          {formatNumber(videoEngagementData.metrics.uniqueViews)}
+                          {formatNumber((videoEngagementData as any).metrics.uniqueViews)}
                         </div>
                         <p className="text-sm text-muted-foreground">Unique Views</p>
                         <p className="text-xs text-muted-foreground">True audience reach</p>
                       </div>
                       <div className="text-center">
                         <div className="text-2xl font-bold text-orange-600">
-                          {formatNumber(videoEngagementData.metrics.reWatchViews)}
+                          {formatNumber((videoEngagementData as any).metrics.reWatchViews)}
                         </div>
                         <p className="text-sm text-muted-foreground">Re-Watch Views</p>
                         <p className="text-xs text-muted-foreground">Additional engagement</p>
                       </div>
                       <div className="text-center">
                         <div className="text-2xl font-bold text-purple-600">
-                          {videoEngagementData.metrics.engagementScore}/100
+                          {(videoEngagementData as any).metrics.engagementScore}/100
                         </div>
                         <p className="text-sm text-muted-foreground">Engagement Score</p>
                         <p className="text-xs text-muted-foreground">Composite score</p>
@@ -1219,19 +1219,19 @@ export function AnalyticsDashboard() {
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-6 pt-6 border-t">
                       <div className="text-center">
                         <div className="text-lg font-semibold">
-                          {videoEngagementData.metrics.avgCompletionRate.toFixed(1)}%
+                          {((videoEngagementData as any).metrics.avgCompletionRate || 0).toFixed(1)}%
                         </div>
                         <p className="text-sm text-muted-foreground">Avg Completion Rate</p>
                       </div>
                       <div className="text-center">
                         <div className="text-lg font-semibold">
-                          {videoEngagementData.metrics.bestCompletionRate.toFixed(1)}%
+                          {((videoEngagementData as any).metrics.bestCompletionRate || 0).toFixed(1)}%
                         </div>
                         <p className="text-sm text-muted-foreground">Best Completion Rate</p>
                       </div>
                       <div className="text-center">
                         <div className="text-lg font-semibold">
-                          {formatDuration(videoEngagementData.metrics.avgWatchTime)}
+                          {formatDuration((videoEngagementData as any).metrics.avgWatchTime || 0)}
                         </div>
                         <p className="text-sm text-muted-foreground">Avg Watch Time</p>
                       </div>
@@ -1241,7 +1241,7 @@ export function AnalyticsDashboard() {
               )}
 
               {/* Unique Video Views */}
-              {uniqueViewsData?.uniqueViews && (
+              {uniqueViewsData && (uniqueViewsData as any)?.uniqueViews && (
                 <Card>
                   <CardHeader>
                     <CardTitle className="flex items-center gap-2">
@@ -1254,7 +1254,7 @@ export function AnalyticsDashboard() {
                   </CardHeader>
                   <CardContent>
                     <div className="space-y-4 max-h-96 overflow-y-auto">
-                      {uniqueViewsData.uniqueViews.slice(0, 10).map((view, index) => (
+                      {((uniqueViewsData as any).uniqueViews || []).slice(0, 10).map((view: any, index: number) => (
                         <div key={`${view.sessionId}-${view.videoId}`} className="flex items-center justify-between p-3 border rounded-lg">
                           <div className="flex-1">
                             <div className="flex items-center gap-2">
@@ -1271,16 +1271,16 @@ export function AnalyticsDashboard() {
                               </Badge>
                             </div>
                             <div className="flex items-center gap-4 mt-1 text-sm text-muted-foreground">
-                              <span>Best: {view.bestCompletionRate.toFixed(1)}%</span>
-                              <span>Watch: {formatDuration(view.totalWatchTime)}</span>
-                              <span className="text-xs">Session: {view.sessionId.slice(-8)}</span>
+                              <span>Best: {(view.bestCompletionRate || 0).toFixed(1)}%</span>
+                              <span>Watch: {formatDuration(view.totalWatchTime || 0)}</span>
+                              <span className="text-xs">Session: {(view.sessionId || '').slice(-8)}</span>
                             </div>
                           </div>
                         </div>
                       ))}
-                      {uniqueViewsData.uniqueViews.length > 10 && (
+                      {((uniqueViewsData as any).uniqueViews || []).length > 10 && (
                         <div className="text-center text-sm text-muted-foreground py-2">
-                          Showing top 10 of {uniqueViewsData.uniqueViews.length} unique views
+                          Showing top 10 of {((uniqueViewsData as any).uniqueViews || []).length} unique views
                         </div>
                       )}
                     </div>
@@ -1289,7 +1289,7 @@ export function AnalyticsDashboard() {
               )}
 
               {/* Re-Engagement Analytics */}
-              {reEngagementData?.reEngagement && (
+              {reEngagementData && (reEngagementData as any)?.reEngagement && (
                 <Card>
                   <CardHeader>
                     <CardTitle className="flex items-center gap-2">
@@ -1302,7 +1302,7 @@ export function AnalyticsDashboard() {
                   </CardHeader>
                   <CardContent>
                     <div className="space-y-4">
-                      {reEngagementData.reEngagement.map((video, index) => (
+                      {((reEngagementData as any).reEngagement || []).map((video: any, index: number) => (
                         <div key={video.videoId} className="p-4 border rounded-lg">
                           <div className="flex items-center justify-between mb-3">
                             <h4 className="font-medium">{video.videoId}</h4>
@@ -1325,11 +1325,11 @@ export function AnalyticsDashboard() {
                               <p className="text-xs text-muted-foreground">Unique Viewers</p>
                             </div>
                             <div className="text-center">
-                              <div className="text-lg font-semibold">{video.reWatchRate.toFixed(1)}%</div>
+                              <div className="text-lg font-semibold">{(video.reWatchRate || 0).toFixed(1)}%</div>
                               <p className="text-xs text-muted-foreground">Re-Watch Rate</p>
                             </div>
                             <div className="text-center">
-                              <div className="text-lg font-semibold">{video.avgViewsPerReWatcher.toFixed(1)}</div>
+                              <div className="text-lg font-semibold">{(video.avgViewsPerReWatcher || 0).toFixed(1)}</div>
                               <p className="text-xs text-muted-foreground">Avg Views/Re-Watcher</p>
                             </div>
                           </div>
