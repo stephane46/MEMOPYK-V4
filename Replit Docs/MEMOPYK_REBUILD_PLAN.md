@@ -1,4 +1,4 @@
-# MEMOPYK Complete Reconstruction Plan
+# MEMOPYK V4 Complete Reconstruction Plan
 
 ## 🎯 Project Rebuild Overview
 
