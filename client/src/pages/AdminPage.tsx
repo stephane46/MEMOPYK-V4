@@ -13,6 +13,7 @@ import { useToast } from '@/hooks/use-toast';
 import GalleryManagement from '@/components/admin/GalleryManagement';
 import { ContactManagement } from '@/components/admin/ContactManagement';
 import FAQManagementWorking from '@/components/admin/FAQManagementWorking';
+import { LegalDocumentManagement } from '@/components/admin/LegalDocumentManagement';
 import CryptoJS from 'crypto-js';
 
 interface HeroVideo {
@@ -1286,16 +1287,7 @@ export default function AdminPage() {
           {/* Legal Documents */}
           {activeSection === 'legal-docs' && (
             <div className="space-y-6">
-              <div className="mb-6">
-                <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Documents Légaux</h2>
-                <p className="text-gray-600 dark:text-gray-400">Gestion des documents juridiques</p>
-              </div>
-              <Card>
-                <CardHeader>
-                  <CardTitle>Gestion des Documents Légaux</CardTitle>
-                  <CardDescription>Prochainement - Édition de texte enrichi pour le contenu juridique</CardDescription>
-                </CardHeader>
-              </Card>
+              <LegalDocumentManagement />
             </div>
           )}
 

@@ -9,7 +9,7 @@ import { Switch } from '@/components/ui/switch';
 import { useToast } from '@/hooks/use-toast';
 import { apiRequest } from '@/lib/queryClient';
 import { RichTextEditor } from '@/components/ui/rich-text-editor';
-import { sanitizeHtml } from '@/lib/sanitize-html';
+import { htmlSanitizer } from '@/lib/sanitize-html';
 import { FileText, Edit, Trash2, Plus, Eye, EyeOff, Save, X } from 'lucide-react';
 
 interface LegalDocument {
@@ -404,7 +404,7 @@ export function LegalDocumentManagement() {
                     <div 
                       className="text-sm text-gray-600 max-h-32 overflow-y-auto prose prose-sm"
                       dangerouslySetInnerHTML={{ 
-                        __html: sanitizeHtml(doc.content_fr.substring(0, 200) + (doc.content_fr.length > 200 ? '...' : ''))
+                        __html: htmlSanitizer.sanitize(doc.content_fr.substring(0, 200) + (doc.content_fr.length > 200 ? '...' : ''))
                       }}
                     />
                   </div>
@@ -413,7 +413,7 @@ export function LegalDocumentManagement() {
                     <div 
                       className="text-sm text-gray-600 max-h-32 overflow-y-auto prose prose-sm"
                       dangerouslySetInnerHTML={{ 
-                        __html: sanitizeHtml(doc.content_en.substring(0, 200) + (doc.content_en.length > 200 ? '...' : ''))
+                        __html: htmlSanitizer.sanitize(doc.content_en.substring(0, 200) + (doc.content_en.length > 200 ? '...' : ''))
                       }}
                     />
                   </div>
