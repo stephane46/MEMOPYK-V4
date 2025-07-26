@@ -51,12 +51,12 @@ export function LegalDocumentPage() {
   );
 
   // Debug logging for Replit Preview
-  console.log('Legal Document Debug:', {
-    requestedType: params?.docType,
-    mappedType: documentType,
-    availableDocuments: documents?.map(d => ({ type: d.type, isActive: d.isActive })),
-    foundDocument: document ? 'YES' : 'NO'
-  });
+  console.log('🔍 LEGAL DOCUMENT DEBUG:');
+  console.log('  - Requested URL param:', params?.docType);
+  console.log('  - Mapped document type:', documentType);
+  console.log('  - Available documents:', documents?.map(d => ({ type: d.type, isActive: d.isActive })));
+  console.log('  - Found matching document:', document ? 'YES' : 'NO');
+  console.log('  - Documents loaded:', documents ? documents.length : 'NONE');
 
   if (!document) {
     return (
