@@ -998,7 +998,7 @@ export default function GalleryManagement() {
         }
         title="Gallery Videos Cache Status"
         showForceAllButton={true}
-        description="Manage caching for gallery videos only. Use Force Cache All to cache all videos (hero + gallery)"
+        description="Gallery videos shown below. Total Cache includes all videos (hero + gallery). Force Cache All downloads any missing videos."
       />
 
       <div className="space-y-4">
