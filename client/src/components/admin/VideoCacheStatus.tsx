@@ -61,7 +61,7 @@ export const VideoCacheStatus: React.FC<VideoCacheStatusProps> = ({
   const forceCacheMutation = useMutation({
     mutationFn: async (filename: string) => {
       const response = await apiRequest('/api/video-cache/force', 'POST', { filename });
-      return response as {filename: string};
+      return response as unknown as {filename: string};
     },
     onSuccess: (data: {filename: string}) => {
       toast({
@@ -105,7 +105,31 @@ export const VideoCacheStatus: React.FC<VideoCacheStatusProps> = ({
     }
   });
 
-  const cacheStatus: Record<string, CacheStatus> = (cacheStatusData as {status?: Record<string, CacheStatus>})?.status || {};
+  // Clear cache mutation
+  const clearCacheMutation = useMutation({
+    mutationFn: async () => {
+      const response = await apiRequest('/api/video-cache/clear', 'DELETE');
+      return response as unknown as {status?: string};
+    },
+    onSuccess: () => {
+      toast({
+        title: "Cache Cleared",
+        description: "All cached videos have been removed",
+      });
+      refetchStatus();
+      refetchStats();
+      queryClient.invalidateQueries({ queryKey: ['/api/video-cache/stats'] });
+    },
+    onError: (error: Error & {response?: {data?: {details?: string}}}) => {
+      toast({
+        title: "Clear Failed",
+        description: `Failed to clear cache: ${error.response?.data?.details || error.message}`,
+        variant: "destructive",
+      });
+    }
+  });
+
+  const cacheStatus: Record<string, CacheStatus> = (cacheStatusData as unknown as {status?: Record<string, CacheStatus>})?.status || {};
 
   const formatFileSize = (bytes: number): string => {
     const mb = bytes / (1024 * 1024);
@@ -265,6 +289,26 @@ export const VideoCacheStatus: React.FC<VideoCacheStatusProps> = ({
           <div className="text-center py-8 text-muted-foreground">
             <HardDrive className="h-12 w-12 mx-auto mb-4 opacity-50" />
             <p>No videos to display cache status for</p>
+          </div>
+        )}
+
+        {/* Clear Cache Button */}
+        {totalCount > 0 && (
+          <div className="mt-6 pt-4 border-t">
+            <Button
+              size="sm"
+              variant="destructive"
+              onClick={() => clearCacheMutation.mutate()}
+              disabled={clearCacheMutation.isPending}
+              className="w-full"
+            >
+              {clearCacheMutation.isPending ? (
+                <RefreshCw className="h-4 w-4 animate-spin mr-2" />
+              ) : (
+                <HardDrive className="h-4 w-4 mr-2" />
+              )}
+              Clear All Cache
+            </Button>
           </div>
         )}
       </CardContent>
