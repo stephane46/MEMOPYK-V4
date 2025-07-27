@@ -1310,13 +1310,25 @@ export async function registerRoutes(app: Express): Promise<Server> {
         if (range) {
           console.log(`   - Processing range request: ${range}`);
           const parts = range.replace(/bytes=/, "").split("-");
+          // CRITICAL FIX: Handle empty end range properly (e.g., "bytes=0-")
           const start = parseInt(parts[0], 10) || 0;
-          const end = (parts[1] && parts[1].trim()) ? parseInt(parts[1], 10) : fileSize - 1;
+          let end = fileSize - 1;
           
-          // Validate range values to prevent NaN errors
+          if (parts[1] && parts[1].trim()) {
+            const parsedEnd = parseInt(parts[1], 10);
+            if (!isNaN(parsedEnd)) {
+              end = parsedEnd;
+            }
+          }
+          
+          // PRODUCTION BUG FIX: Validate that we don't have NaN values or invalid ranges
           if (isNaN(start) || isNaN(end) || start < 0 || end >= fileSize || start > end) {
-            console.error(`❌ Invalid range: ${range} (start: ${start}, end: ${end}, fileSize: ${fileSize})`);
-            return res.status(416).json({ error: 'Invalid range request' });
+            console.error(`🚨 INVALID RANGE: start=${start}, end=${end}, range=${range}, fileSize=${fileSize}`);
+            return res.status(416).json({ 
+              error: "Invalid range request",
+              debug: { start, end, range, fileSize },
+              version: "v1.0.5-emergency"
+            });
           }
           
           const chunksize = (end - start) + 1;
@@ -1405,7 +1417,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         cache: stats,
         timestamp: new Date().toISOString(),
         deployment: {
-          version: "Gallery Video Fix v1.0.5 - Emergency Override",
+          version: "Gallery Video Fix v1.0.6 - Range Parsing Fix",
           fileFilters: "MIME+Extension checking active",
           limits: "5000MB video, 5000MB image"
         }
