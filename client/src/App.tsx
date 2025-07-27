@@ -12,8 +12,8 @@ import NotFoundPage from './pages/not-found';
 import { queryClient } from './lib/queryClient';
 import { Toaster } from '@/components/ui/toaster';
 
-// Gallery Video Fix v1.0.2 - Force new deployment hash  
-console.log("🚀 MEMOPYK Gallery Video Fix v1.0.7 - SUPABASE URL ENCODING FIX - " + Date.now());
+// Gallery Video Fix v1.0.8 - COMPLETE AUTO-DOWNLOAD FIX - Force deployment cache break  
+console.log("🚀 MEMOPYK Gallery Video Fix v1.0.8 - COMPLETE AUTO-DOWNLOAD FIX - " + Date.now());
 
 function App() {
   return (
