@@ -914,6 +914,69 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Create new CTA setting
+  app.post("/api/cta", async (req, res) => {
+    try {
+      const { id, titleFr, titleEn, buttonTextFr, buttonTextEn, buttonUrl, isActive } = req.body;
+      
+      if (!id || !titleFr || !titleEn || !buttonTextFr || !buttonTextEn || !buttonUrl) {
+        return res.status(400).json({ error: "All fields required" });
+      }
+
+      const newCta = await hybridStorage.createCtaSettings({
+        id,
+        titleFr,
+        titleEn,
+        buttonTextFr,
+        buttonTextEn,
+        buttonUrl,
+        isActive: isActive || false
+      });
+      
+      res.json(newCta);
+    } catch (error) {
+      console.error('Create CTA error:', error);
+      res.status(500).json({ error: "Failed to create CTA setting" });
+    }
+  });
+
+  // Update CTA setting
+  app.patch("/api/cta/:id", async (req, res) => {
+    try {
+      const ctaId = req.params.id;
+      const updates = req.body;
+      
+      const updatedCta = await hybridStorage.updateCtaSettings(ctaId, updates);
+      
+      if (!updatedCta) {
+        return res.status(404).json({ error: "CTA setting not found" });
+      }
+      
+      res.json(updatedCta);
+    } catch (error) {
+      console.error('Update CTA error:', error);
+      res.status(500).json({ error: "Failed to update CTA setting" });
+    }
+  });
+
+  // Delete CTA setting
+  app.delete("/api/cta/:id", async (req, res) => {
+    try {
+      const ctaId = req.params.id;
+      
+      const deleted = await hybridStorage.deleteCtaSettings(ctaId);
+      
+      if (!deleted) {
+        return res.status(404).json({ error: "CTA setting not found" });
+      }
+      
+      res.json({ success: true });
+    } catch (error) {
+      console.error('Delete CTA error:', error);
+      res.status(500).json({ error: "Failed to delete CTA setting" });
+    }
+  });
+
   // Legal Documents - Terms, privacy policy, etc.
   app.get("/api/legal", async (req, res) => {
     try {

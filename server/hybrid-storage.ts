@@ -38,6 +38,9 @@ export interface HybridStorageInterface {
   
   // CTA settings
   getCtaSettings(language?: string): Promise<any[]>;
+  createCtaSettings(ctaData: any): Promise<any>;
+  updateCtaSettings(ctaId: string, updates: any): Promise<any>;
+  deleteCtaSettings(ctaId: string): Promise<any>;
   
   // SEO settings
   getSeoSettings(page?: string, language?: string): Promise<any[]>;
@@ -748,6 +751,169 @@ export class HybridStorage implements HybridStorageInterface {
   async getCtaSettings(language?: string): Promise<any[]> {
     const data = this.loadJsonFile('cta-settings.json');
     return data.filter(setting => setting.is_active);
+  }
+
+  async createCtaSettings(ctaData: any): Promise<any> {
+    try {
+      console.log('🆕 Creating CTA setting:', ctaData);
+      
+      // Try database first
+      if (this.supabase) {
+        const { data, error } = await this.supabase
+          .from('cta_settings')
+          .insert({
+            id: ctaData.id,
+            title_fr: ctaData.titleFr,
+            title_en: ctaData.titleEn,
+            button_text_fr: ctaData.buttonTextFr,
+            button_text_en: ctaData.buttonTextEn,
+            button_url: ctaData.buttonUrl,
+            is_active: ctaData.isActive
+          })
+          .select()
+          .single();
+        
+        if (!error && data) {
+          console.log('✅ CTA setting created in Supabase:', data);
+          
+          // Convert back and update JSON backup
+          const converted = {
+            id: data.id,
+            title_fr: data.title_fr,
+            title_en: data.title_en,
+            button_text_fr: data.button_text_fr,
+            button_text_en: data.button_text_en,
+            button_url: data.button_url,
+            is_active: data.is_active,
+            created_at: data.created_at,
+            updated_at: data.updated_at
+          };
+          
+          // Update JSON backup
+          const settings = this.loadJsonFile('cta-settings.json');
+          settings.push(converted);
+          this.saveJsonFile('cta-settings.json', settings);
+          
+          return converted;
+        }
+      }
+    } catch (error) {
+      console.warn('⚠️ Database create failed, using JSON fallback:', error);
+    }
+    
+    // Fallback to JSON only
+    const settings = this.loadJsonFile('cta-settings.json');
+    const newSetting = {
+      id: ctaData.id,
+      title_fr: ctaData.titleFr,
+      title_en: ctaData.titleEn,
+      button_text_fr: ctaData.buttonTextFr,
+      button_text_en: ctaData.buttonTextEn,
+      button_url: ctaData.buttonUrl,
+      is_active: ctaData.isActive,
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString()
+    };
+    settings.push(newSetting);
+    this.saveJsonFile('cta-settings.json', settings);
+    return newSetting;
+  }
+
+  async updateCtaSettings(ctaId: string, updates: any): Promise<any> {
+    try {
+      console.log('🔄 Updating CTA setting:', ctaId, updates);
+      
+      // Try database first
+      if (this.supabase) {
+        const dbUpdates: any = {};
+        if (updates.titleFr) dbUpdates.title_fr = updates.titleFr;
+        if (updates.titleEn) dbUpdates.title_en = updates.titleEn;
+        if (updates.buttonTextFr) dbUpdates.button_text_fr = updates.buttonTextFr;
+        if (updates.buttonTextEn) dbUpdates.button_text_en = updates.buttonTextEn;
+        if (updates.buttonUrl) dbUpdates.button_url = updates.buttonUrl;
+        if (updates.isActive !== undefined) dbUpdates.is_active = updates.isActive;
+        
+        const { data, error } = await this.supabase
+          .from('cta_settings')
+          .update(dbUpdates)
+          .eq('id', ctaId)
+          .select()
+          .single();
+        
+        if (!error && data) {
+          console.log('✅ CTA setting updated in Supabase:', data);
+          
+          // Convert back and update JSON backup
+          const converted = {
+            id: data.id,
+            title_fr: data.title_fr,
+            title_en: data.title_en,
+            button_text_fr: data.button_text_fr,
+            button_text_en: data.button_text_en,
+            button_url: data.button_url,
+            is_active: data.is_active,
+            created_at: data.created_at,
+            updated_at: data.updated_at
+          };
+          
+          // Update JSON backup
+          const settings = this.loadJsonFile('cta-settings.json');
+          const index = settings.findIndex((setting: any) => setting.id === ctaId);
+          if (index !== -1) {
+            settings[index] = { ...settings[index], ...converted };
+            this.saveJsonFile('cta-settings.json', settings);
+          }
+          
+          return converted;
+        }
+      }
+    } catch (error) {
+      console.warn('⚠️ Database update failed, using JSON fallback:', error);
+    }
+    
+    // Fallback to JSON only
+    const settings = this.loadJsonFile('cta-settings.json');
+    const index = settings.findIndex((setting: any) => setting.id === ctaId);
+    if (index === -1) return null;
+    
+    settings[index] = { 
+      ...settings[index], 
+      ...updates,
+      updated_at: new Date().toISOString()
+    };
+    this.saveJsonFile('cta-settings.json', settings);
+    return settings[index];
+  }
+
+  async deleteCtaSettings(ctaId: string): Promise<any> {
+    try {
+      console.log('🗑️ Deleting CTA setting:', ctaId);
+      
+      // Try database first
+      if (this.supabase) {
+        const { error } = await this.supabase
+          .from('cta_settings')
+          .delete()
+          .eq('id', ctaId);
+        
+        if (!error) {
+          console.log('✅ CTA setting deleted from Supabase');
+        } else {
+          console.warn('⚠️ Database delete error, continuing with JSON cleanup:', error);
+        }
+      }
+    } catch (error) {
+      console.warn('⚠️ Database delete failed, continuing with JSON cleanup:', error);
+    }
+    
+    // Update JSON backup regardless
+    const settings = this.loadJsonFile('cta-settings.json');
+    const index = settings.findIndex((setting: any) => setting.id === ctaId);
+    if (index === -1) return false;
+    
+    settings.splice(index, 1);
+    this.saveJsonFile('cta-settings.json', settings);
+    return true;
   }
 
   // SEO settings operations

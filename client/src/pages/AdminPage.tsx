@@ -14,6 +14,7 @@ import GalleryManagement from '@/components/admin/GalleryManagement';
 import { ContactManagement } from '@/components/admin/ContactManagement';
 import FAQManagementWorking from '@/components/admin/FAQManagementWorking';
 import { LegalDocumentManagement } from '@/components/admin/LegalDocumentManagement';
+import { CtaManagement } from '@/components/admin/CtaManagement';
 import { AnalyticsDashboard } from '@/components/admin/AnalyticsDashboard';
 import CryptoJS from 'crypto-js';
 
@@ -140,6 +141,7 @@ export default function AdminPage() {
     { id: 'gallery', label: 'Galerie', icon: Play },
     { id: 'faq', label: 'FAQ', icon: MessageSquare },
     { id: 'contacts', label: 'Contacts', icon: Users },
+    { id: 'cta', label: 'CTA Buttons', icon: Zap },
     { id: 'legal-docs', label: 'Documents Légaux', icon: FileText },
     { id: 'analytics', label: 'Analytiques', icon: BarChart3 },
     { id: 'tests', label: 'Tests', icon: TestTube },
@@ -1270,6 +1272,13 @@ export default function AdminPage() {
           )}
 
 
+
+          {/* CTA Management */}
+          {activeSection === 'cta' && (
+            <div className="space-y-6">
+              <CtaManagement />
+            </div>
+          )}
 
           {/* Legal Documents */}
           {activeSection === 'legal-docs' && (
