@@ -146,9 +146,9 @@ export function Layout({ children }: LayoutProps) {
                 {language === 'fr-FR' ? 'Liens Rapides' : 'Quick Links'}
               </h4>
               <ul className="space-y-2 text-gray-400">
-                <li><Link href="/" className="hover:text-white">{t('nav.home')}</Link></li>
-                <li><Link href="/gallery" className="hover:text-white">{t('nav.gallery')}</Link></li>
-                <li><Link href="/contact" className="hover:text-white">{t('nav.contact')}</Link></li>
+                <li><Link href={getLocalizedPath('/')} className="hover:text-white">{t('nav.home')}</Link></li>
+                <li><Link href={getLocalizedPath('/gallery')} className="hover:text-white">{t('nav.gallery')}</Link></li>
+                <li><Link href={getLocalizedPath('/contact')} className="hover:text-white">{t('nav.contact')}</Link></li>
               </ul>
             </div>
             
