@@ -1259,7 +1259,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       console.log(`   - Original filename: "${decodedFilename}"`);
       console.log(`   - Encoded filename: "${encodedFilename}"`);
       console.log(`   - Sanitized filename: "${sanitizedFilename}"`);
-      console.log(`   - PRODUCTION BULLETPROOF v1.0.10`);
+      console.log(`   - PRODUCTION BULLETPROOF v1.0.11`);
       
       // Try multiple filename variations to find cached video
       let videoFilename = decodedFilename;
@@ -1285,7 +1285,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // FORCE LOCAL CACHING - Videos MUST be served from local storage only
       if (!cachedVideo) {
         console.log(`🚨 VIDEO NOT CACHED: ${videoFilename} - FORCING download and cache before serving`);
-        console.log(`🔍 PRODUCTION DEBUG v1.0.10 - MAXIMUM DEBUGGING ENABLED:`);
+        console.log(`🔍 PRODUCTION DEBUG v1.0.11 - MAXIMUM DEBUGGING ENABLED:`);
         console.log(`   - Request method: ${req.method}`);
         console.log(`   - Request URL: ${req.url}`);
         console.log(`   - Original filename param: "${filename}"`);
