@@ -128,10 +128,9 @@ export function CtaManagement() {
     <div className="space-y-6">
       <div className="flex justify-between items-center">
         <h2 className="text-2xl font-bold">CTA Button Management</h2>
-        <Button onClick={handleCreate} className="flex items-center gap-2">
-          <Plus className="h-4 w-4" />
-          Add CTA Button
-        </Button>
+        <div className="text-sm text-gray-600">
+          Edit the existing CTA buttons below
+        </div>
       </div>
 
       {/* Existing CTA Buttons */}
@@ -148,11 +147,13 @@ export function CtaManagement() {
                 <Switch
                   checked={cta.isActive}
                   onCheckedChange={(checked) => {
+                    console.log('🔄 Updating CTA setting:', cta.id, { isActive: checked });
                     updateCtaMutation.mutate({
                       id: cta.id,
                       data: { isActive: checked }
                     });
                   }}
+                  disabled={updateCtaMutation.isPending}
                 />
                 <Button
                   size="sm"

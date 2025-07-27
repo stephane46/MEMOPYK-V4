@@ -1,6 +1,9 @@
 import { readFileSync, writeFileSync, existsSync, unlinkSync } from "fs";
 import { join } from "path";
 import { createClient } from '@supabase/supabase-js';
+import { db } from './db';
+import { eq, and, desc, asc, sql } from 'drizzle-orm';
+import { ctaSettings } from '../shared/schema';
 
 export interface HybridStorageInterface {
   // Hero videos
@@ -102,6 +105,7 @@ export interface HybridStorageInterface {
 export class HybridStorage implements HybridStorageInterface {
   private dataPath: string;
   private supabase: any;
+  private db: any;
 
   constructor() {
     this.dataPath = join(process.cwd(), 'server/data');
@@ -109,6 +113,7 @@ export class HybridStorage implements HybridStorageInterface {
       process.env.SUPABASE_URL!,
       process.env.SUPABASE_SERVICE_KEY!
     );
+    this.db = db;
     console.log("✅ Hybrid storage initialized with JSON fallback system and Supabase integration");
   }
 
@@ -749,8 +754,48 @@ export class HybridStorage implements HybridStorageInterface {
 
   // CTA settings operations
   async getCtaSettings(language?: string): Promise<any[]> {
+    try {
+      // Use direct database connection for CTA settings (Supabase API access issue)
+      if (this.db) {
+        console.log('🔍 CTA Settings: Querying database directly for cta_settings...');
+        
+        const data = await this.db
+          .select()
+          .from(ctaSettings)
+          .orderBy(ctaSettings.createdAt);
+        
+        console.log('🔍 CTA Settings direct query result:', { count: data.length });
+        
+        if (data && data.length > 0) {
+          console.log('✅ CTA Settings retrieved from database:', data.length, 'items');
+          
+          // Convert database fields to frontend format
+          const converted = data.map((item: any) => ({
+            id: item.id,
+            titleFr: item.titleFr,
+            titleEn: item.titleEn,
+            buttonTextFr: item.buttonTextFr,
+            buttonTextEn: item.buttonTextEn,
+            buttonUrl: item.buttonUrl,
+            isActive: item.isActive,
+            createdAt: item.createdAt,
+            updatedAt: item.updatedAt
+          }));
+          
+          return converted;
+        } else {
+          console.warn('⚠️ Database CTA query returned no data');
+        }
+      } else {
+        console.warn('⚠️ No database connection available');
+      }
+    } catch (error) {
+      console.warn('⚠️ Database get failed, using JSON fallback:', error);
+    }
+    
+    // Fallback to JSON - return ALL settings for admin
     const data = this.loadJsonFile('cta-settings.json');
-    return data.filter(setting => setting.is_active);
+    return data; // Return all, not just active ones
   }
 
   async createCtaSettings(ctaData: any): Promise<any> {
@@ -821,50 +866,44 @@ export class HybridStorage implements HybridStorageInterface {
 
   async updateCtaSettings(ctaId: string, updates: any): Promise<any> {
     try {
-      console.log('🔄 Updating CTA setting:', ctaId, updates);
+      console.log('🔄 Updating CTA setting in database:', ctaId, updates);
       
-      // Try database first
-      if (this.supabase) {
+      // Use direct database connection
+      if (this.db) {
         const dbUpdates: any = {};
-        if (updates.titleFr) dbUpdates.title_fr = updates.titleFr;
-        if (updates.titleEn) dbUpdates.title_en = updates.titleEn;
-        if (updates.buttonTextFr) dbUpdates.button_text_fr = updates.buttonTextFr;
-        if (updates.buttonTextEn) dbUpdates.button_text_en = updates.buttonTextEn;
-        if (updates.buttonUrl) dbUpdates.button_url = updates.buttonUrl;
-        if (updates.isActive !== undefined) dbUpdates.is_active = updates.isActive;
+        if (updates.titleFr !== undefined) dbUpdates.titleFr = updates.titleFr;
+        if (updates.titleEn !== undefined) dbUpdates.titleEn = updates.titleEn;
+        if (updates.buttonTextFr !== undefined) dbUpdates.buttonTextFr = updates.buttonTextFr;
+        if (updates.buttonTextEn !== undefined) dbUpdates.buttonTextEn = updates.buttonTextEn;
+        if (updates.buttonUrl !== undefined) dbUpdates.buttonUrl = updates.buttonUrl;
+        if (updates.isActive !== undefined) dbUpdates.isActive = updates.isActive;
+        dbUpdates.updatedAt = new Date();
         
-        const { data, error } = await this.supabase
-          .from('cta_settings')
-          .update(dbUpdates)
-          .eq('id', ctaId)
-          .select()
-          .single();
+        const [updatedRecord] = await this.db
+          .update(ctaSettings)
+          .set(dbUpdates)
+          .where(eq(ctaSettings.id, ctaId))
+          .returning();
         
-        if (!error && data) {
-          console.log('✅ CTA setting updated in Supabase:', data);
+        if (updatedRecord) {
+          console.log('✅ CTA setting updated in database:', updatedRecord);
           
-          // Convert back and update JSON backup
+          // Convert to frontend format
           const converted = {
-            id: data.id,
-            title_fr: data.title_fr,
-            title_en: data.title_en,
-            button_text_fr: data.button_text_fr,
-            button_text_en: data.button_text_en,
-            button_url: data.button_url,
-            is_active: data.is_active,
-            created_at: data.created_at,
-            updated_at: data.updated_at
+            id: updatedRecord.id,
+            titleFr: updatedRecord.titleFr,
+            titleEn: updatedRecord.titleEn,
+            buttonTextFr: updatedRecord.buttonTextFr,
+            buttonTextEn: updatedRecord.buttonTextEn,
+            buttonUrl: updatedRecord.buttonUrl,
+            isActive: updatedRecord.isActive,
+            createdAt: updatedRecord.createdAt,
+            updatedAt: updatedRecord.updatedAt
           };
           
-          // Update JSON backup
-          const settings = this.loadJsonFile('cta-settings.json');
-          const index = settings.findIndex((setting: any) => setting.id === ctaId);
-          if (index !== -1) {
-            settings[index] = { ...settings[index], ...converted };
-            this.saveJsonFile('cta-settings.json', settings);
-          }
-          
           return converted;
+        } else {
+          console.warn('⚠️ Database update returned no record');
         }
       }
     } catch (error) {
