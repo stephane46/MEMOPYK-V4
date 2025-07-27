@@ -8,28 +8,34 @@ export function HowItWorksSection() {
     {
       number: 1,
       icon: Upload,
-      titleFr: "Vous Partagez",
+      titleFr: "Téléversement",
       titleEn: "You Upload",
-      descriptionFr: "Envoyez-nous toutes vos photos et vidéos, peu importe le désordre. Tous les formats acceptés, de n'importe quel appareil.",
-      descriptionEn: "Send us all your photos and videos, no matter the mess. All formats accepted, from any device.",
+      descriptionFr: "Envoyez-nous vos photos et vidéos telles qu'elles sont — inutile de trier, renommer ou organiser. Nous acceptons tous les formats, et proposons même des envois collaboratifs pour que toute la famille puisse contribuer.",
+      descriptionEn: "Send us your photos and videos exactly as they are — no need to sort, rename, or organize. We accept all formats and even support collaborative uploads, so your whole family can contribute.",
+      subDescriptionFr: "Vous recevrez également un court questionnaire pour nous en dire plus sur votre histoire — qu'elle soit encore floue ou déjà bien construite.",
+      subDescriptionEn: "You'll also receive a short questionnaire to tell us more about your story — whether it's a vague idea or a detailed vision.",
       image: "/images/How_we_work_Step1.png"
     },
     {
       number: 2,
       icon: Edit,
-      titleFr: "Nous Créons", 
-      titleEn: "We Create",
-      descriptionFr: "Nos artistes organisent et transforment vos souvenirs en un film cinématographique personnel avec narration professionnelle.",
-      descriptionEn: "Our artists organize and transform your memories into a personal cinematic film with professional storytelling.",
+      titleFr: "Sélection & Montage", 
+      titleEn: "We Curate & Edit",
+      descriptionFr: "Nous passons en revue chaque fichier pour repérer les moments les plus marquants. Puis, nous vous proposons un scénario personnalisé, avec des suggestions de musique, de durée et de format — tout est pensé pour sublimer vos souvenirs.",
+      descriptionEn: "We go through every file to identify the most meaningful moments. Then we propose a personalized storyline, suggest music, duration, and format — everything tailored to your memories.",
+      subDescriptionFr: "Besoin d'en discuter ? Une consultation est toujours possible, gratuitement.",
+      subDescriptionEn: "Need to talk it through? A consultation is always available, free of charge.",
       image: "/images/How_we_work_Step2.png"
     },
     {
       number: 3,
       icon: Heart,
-      titleFr: "Vous Profitez & Partagez",
+      titleFr: "C'est prêt !",
       titleEn: "You Enjoy & Share", 
-      descriptionFr: "Recevez votre film en HD prêt à partager avec famille et amis, sur tous supports digitaux et physiques.",
-      descriptionEn: "Receive your HD film ready to share with family and friends, on all digital and physical media.",
+      descriptionFr: "Une fois le plan validé, nous donnons vie à votre film de souvenirs. Vous recevez un résultat soigné en 1 à 3 semaines, avec deux séries de retours incluses.",
+      descriptionEn: "Once you approve the plan, we bring your memory film to life. Expect a beautifully crafted result within 1-3 weeks, with two revision rounds included.",
+      subDescriptionFr: "Vous obtenez une création prête à être partagée — idéale à offrir ou à conserver précieusement.",
+      subDescriptionEn: "You'll receive a high-quality, ready-to-share masterpiece — perfect for gifting or keeping.",
       image: "/images/How_we_work_Step3.png"
     }
   ];
@@ -54,94 +60,53 @@ export function HowItWorksSection() {
         </div>
 
         {/* Steps */}
-        <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {steps.map((step, index) => {
             const Icon = step.icon;
-            const isMemopykCard = step.number === 2;
             return (
-              <div key={step.number} className={`relative h-full ${isMemopykCard ? 'lg:col-span-2' : 'lg:col-span-1'}`}>
+              <div key={step.number} className="relative h-full">
                 {/* Connection Line (except for last step) */}
                 {index < steps.length - 1 && (
                   <div className="hidden lg:block absolute top-24 left-full w-full h-0.5 bg-gradient-to-r from-memopyk-sky-blue to-memopyk-blue-gray/30 transform -translate-x-1/2 z-0"></div>
                 )}
                 
                 {/* Step Card */}
-                <div className={`relative bg-white rounded-2xl shadow-2xl text-center group hover:shadow-3xl transition-all duration-500 transform hover:-translate-y-2 z-10 h-full flex flex-col ${
-                  isMemopykCard ? 'p-12 border-4 border-memopyk-orange/20' : 'p-8'
-                }`}>
+                <div className="relative bg-memopyk-dark-blue rounded-3xl shadow-2xl text-center group hover:shadow-3xl transition-all duration-500 transform hover:-translate-y-2 z-10 h-full flex flex-col p-8">
                   
-                  {/* Step Number */}
-                  <div className="absolute -top-6 left-1/2 transform -translate-x-1/2">
-                    <div className="w-12 h-12 bg-memopyk-orange text-white rounded-full flex items-center justify-center font-bold text-xl shadow-lg">
-                      {step.number}
-                    </div>
-                  </div>
-
                   {/* Step Image */}
-                  <div className={`${isMemopykCard ? 'mb-8 mt-6' : 'mb-6 mt-4'}`}>
-                    <div className="w-48 h-48 mx-auto">
+                  <div className="mb-6 mt-4">
+                    <div className="w-32 h-32 mx-auto bg-memopyk-cream rounded-2xl p-4 shadow-lg">
                       <img 
                         src={step.image}
                         alt={language === 'fr-FR' ? step.titleFr : step.titleEn}
-                        className="w-full h-full object-contain rounded-xl shadow-lg"
+                        className="w-full h-full object-contain"
                       />
                     </div>
                   </div>
 
-                  {/* Step Icon */}
-                  <div className={`${isMemopykCard ? 'mb-6' : 'mb-4'}`}>
-                    <div className={`${isMemopykCard ? 'w-20 h-20' : 'w-16 h-16'} bg-gradient-to-br from-memopyk-sky-blue/20 to-memopyk-blue-gray/20 rounded-full flex items-center justify-center mx-auto group-hover:scale-110 transition-transform duration-300`}>
-                      <Icon className={`${isMemopykCard ? 'w-10 h-10' : 'w-8 h-8'} text-memopyk-dark-blue`} />
-                    </div>
-                  </div>
-
                   {/* Step Title */}
-                  <h3 className={`${isMemopykCard ? 'text-3xl' : 'text-2xl'} font-bold text-memopyk-navy mb-4`}>
-                    {language === 'fr-FR' ? step.titleFr : step.titleEn}
+                  <h3 className="text-xl font-bold text-white mb-4">
+                    {step.number}. {language === 'fr-FR' ? step.titleFr : step.titleEn}
                   </h3>
 
                   {/* Step Description */}
-                  <p className={`text-memopyk-dark-blue leading-relaxed flex-grow ${isMemopykCard ? 'text-lg' : ''}`}>
+                  <p className="text-white/90 leading-relaxed text-sm mb-4 flex-grow">
                     {language === 'fr-FR' ? step.descriptionFr : step.descriptionEn}
                   </p>
 
-                  {/* Enhanced MEMOPYK Features */}
-                  {isMemopykCard && (
-                    <div className="mt-6 space-y-3">
-                      <div className="flex items-center justify-center space-x-2 text-memopyk-dark-blue">
-                        <div className="w-2 h-2 rounded-full bg-memopyk-orange"></div>
-                        <span className="text-sm">
-                          {language === 'fr-FR' ? 'Organisation professionnelle' : 'Professional organization'}
-                        </span>
+                  {/* Sub Description */}
+                  <div className="mt-4 pt-4 border-t border-white/20">
+                    <div className="flex items-start space-x-2">
+                      <div className="w-4 h-4 rounded-full bg-memopyk-cream mt-1 flex-shrink-0 flex items-center justify-center">
+                        <Icon className="w-2 h-2 text-memopyk-dark-blue" />
                       </div>
-                      <div className="flex items-center justify-center space-x-2 text-memopyk-dark-blue">
-                        <div className="w-2 h-2 rounded-full bg-memopyk-orange"></div>
-                        <span className="text-sm">
-                          {language === 'fr-FR' ? 'Narration cinématographique' : 'Cinematic storytelling'}
-                        </span>
-                      </div>
-                      <div className="flex items-center justify-center space-x-2 text-memopyk-dark-blue">
-                        <div className="w-2 h-2 rounded-full bg-memopyk-orange"></div>
-                        <span className="text-sm">
-                          {language === 'fr-FR' ? 'Montage artistique expert' : 'Expert artistic editing'}
-                        </span>
-                      </div>
+                      <p className="text-white/80 text-xs leading-relaxed">
+                        {language === 'fr-FR' ? step.subDescriptionFr : step.subDescriptionEn}
+                      </p>
                     </div>
-                  )}
-
-                  {/* Responsibility Badge */}
-                  <div className="mt-6">
-                    <span className={`inline-block px-4 py-2 rounded-full text-sm font-semibold ${
-                      step.number === 2 
-                        ? 'bg-memopyk-orange text-white' 
-                        : 'bg-memopyk-sky-blue/20 text-memopyk-dark-blue'
-                    }`}>
-                      {step.number === 2 
-                        ? 'MEMOPYK'
-                        : language === 'fr-FR' ? 'Vous' : 'You'
-                      }
-                    </span>
                   </div>
+
+
                 </div>
               </div>
             );
