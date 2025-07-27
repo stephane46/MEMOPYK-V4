@@ -986,10 +986,21 @@ export default function GalleryManagement() {
         </div>
       </div>
 
-      {/* Gallery Video Cache Status */}
+      {/* Unified Video Cache Status - All Videos (Hero + Gallery) */}
       <VideoCacheStatus 
-        videoFilenames={sortedItems.map(item => item.video_url_en || item.video_url_fr || '').filter(url => url !== '')}
-        title="Gallery Video Cache Status"
+        videoFilenames={[
+          // Hero videos (assume these are available from query)
+          'VideoHero1.mp4', 'VideoHero2.mp4', 'VideoHero3.mp4',
+          // Gallery videos
+          ...sortedItems
+            .filter(item => item.video_url_en || item.video_url_fr)
+            .map(item => {
+              const url = item.video_url_en || item.video_url_fr || '';
+              return url.includes('/') ? url.split('/').pop()! : url;
+            })
+            .filter(filename => filename)
+        ]}
+        title="All Videos Cache Status (Hero + Gallery)"
         showForceAllButton={true}
       />
 

@@ -2215,20 +2215,37 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       // Get all hero videos
       const heroVideos = await hybridStorage.getHeroVideos();
-      const heroFilenames = heroVideos.map(v => v.filename);
+      const heroFilenames = heroVideos
+        .map(v => v.url_en)
+        .filter(url => url && url.trim() !== ''); // Filter out undefined and empty strings
       
       // Get all gallery videos  
       const galleryItems = await hybridStorage.getGalleryItems();
       const galleryFilenames = galleryItems
         .filter(item => item.video_url_en)
-        .map(item => item.video_url_en!.split('/').pop()!)
-        .filter(filename => filename);
+        .map(item => {
+          const url = item.video_url_en!;
+          // Extract filename from URL or use as-is if it's already a filename
+          return url.includes('/') ? url.split('/').pop()! : url;
+        })
+        .filter(filename => filename && filename.trim() !== ''); // Filter out undefined and empty strings
       
       const allVideos = [...heroFilenames, ...galleryFilenames];
+      console.log(`📊 Found videos to cache:`, {
+        heroFilenames,
+        galleryFilenames,
+        totalVideos: allVideos.length
+      });
+      
       const cached: string[] = [];
       const errors: string[] = [];
       
       for (const filename of allVideos) {
+        if (!filename || filename.trim() === '') {
+          console.log(`⚠️ Skipping invalid filename: ${filename}`);
+          continue;
+        }
+        
         try {
           // Force refresh: remove old cache and download fresh
           videoCache.clearSpecificFile(filename);

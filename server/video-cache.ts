@@ -37,8 +37,11 @@ export class VideoCache {
    * Get cache file path for a video filename
    */
   private getCacheFilePath(filename: string): string {
+    if (!filename || filename.trim() === '') {
+      throw new Error(`Invalid filename provided: ${filename}`);
+    }
     // Create hash of filename for safe filesystem storage
-    const hash = createHash('md5').update(filename).digest('hex');
+    const hash = createHash('md5').update(filename.trim()).digest('hex');
     const extension = filename.split('.').pop() || 'mp4';
     return join(this.cacheDir, `${hash}.${extension}`);
   }

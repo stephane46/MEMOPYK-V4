@@ -438,80 +438,13 @@ export default function AdminPage() {
                 </nav>
               </div>
 
-              {/* Integrated Cache Dashboard for Hero Videos */}
+              {/* Hero Video Cache Status - Unified Interface */}
               {heroTab === 'videos' && (
-                <Card className="mb-6 bg-gray-50 dark:bg-gray-800 border-gray-200 dark:border-gray-700">
-                  <CardContent className="p-4">
-                    <div className="flex items-center justify-between mb-3">
-                      <h4 className="font-semibold text-gray-900 dark:text-white flex items-center">
-                        <HardDrive className="h-4 w-4 mr-2" />
-                        Cache Performance Hero Videos
-                      </h4>
-                      <div className="flex space-x-2">
-                        <Button
-                          size="sm"
-                          onClick={() => refreshCacheMutation.mutate()}
-                          disabled={refreshCacheMutation.isPending}
-                          className="bg-blue-500 hover:bg-blue-600"
-                        >
-                          <RefreshCw className="h-3 w-3 mr-1" />
-                          Cache All
-                        </Button>
-                        <Button
-                          size="sm"
-                          variant="outline"
-                          onClick={() => clearCacheMutation.mutate()}
-                          disabled={clearCacheMutation.isPending}
-                        >
-                          Clear Cache
-                        </Button>
-                      </div>
-                    </div>
-                    
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-3 text-sm">
-                      {/* Hero Videos Cache Status */}
-                      {['VideoHero1.mp4', 'VideoHero2.mp4', 'VideoHero3.mp4'].map(filename => {
-                        const isCached = cacheStatus[filename];
-                        return (
-                          <div key={filename} className={`flex items-center justify-between p-2 rounded border ${
-                            isCached ? 'bg-green-50 border-green-200 dark:bg-green-900/20 dark:border-green-800' : 'bg-orange-50 border-orange-200 dark:bg-orange-900/20 dark:border-orange-800'
-                          }`}>
-                            <span className="font-mono text-xs truncate mr-2">{filename.replace('.mp4', '')}</span>
-                            <span className={`px-2 py-1 rounded text-xs font-medium ${
-                              isCached ? 'bg-green-100 text-green-800 dark:bg-green-800 dark:text-green-100' : 'bg-orange-100 text-orange-800 dark:bg-orange-800 dark:text-orange-100'
-                            }`}>
-                              {isCached ? '✅ Cached (~50ms)' : '⏳ Not Cached (~1500ms)'}
-                            </span>
-                          </div>
-                        );
-                      })}
-                    </div>
-                    
-                    <div className="mt-3 text-xs text-gray-500 flex justify-between">
-                      <span>
-                        {cacheStats && 'fileCount' in cacheStats && 'totalSize' in cacheStats 
-                          ? `${cacheStats.fileCount || 0} files • ${(((cacheStats.totalSize as number) || 0) / 1024 / 1024).toFixed(1)}MB` 
-                          : 'Loading stats...'}
-                      </span>
-                      <span>Smart replacement: Intelligent cache management</span>
-                    </div>
-                    
-                    <div className="mt-3 p-3 bg-green-50 border border-green-200 rounded-lg dark:bg-green-900/20 dark:border-green-800">
-                      <div className="flex items-start space-x-2">
-                        <div className="flex-shrink-0 w-4 h-4 bg-green-100 rounded-full flex items-center justify-center mt-0.5">
-                          <span className="text-green-600 text-xs font-bold">✓</span>
-                        </div>
-                        <div>
-                          <h5 className="font-medium text-green-900 dark:text-green-100 text-sm mb-1">Smart Video Cache Management</h5>
-                          <p className="text-xs text-green-800 dark:text-green-300 leading-relaxed">
-                            Videos are automatically replaced when you upload new ones, and oldest videos are removed if cache reaches 8+ files. 
-                            This ensures fresh content with optimal performance (~50ms load times) without manual maintenance.
-                          </p>
-                        </div>
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
+                <VideoCacheStatus 
+                  videoFilenames={heroVideos.map(video => video.url_en).filter(url => url !== '')}
+                  title="Hero Video Cache Status"
+                  showForceAllButton={true}
+                />
               )}
 
               {/* Videos Tab */}
