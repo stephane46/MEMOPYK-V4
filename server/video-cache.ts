@@ -650,14 +650,26 @@ export class VideoCache {
         console.log(`📁 Created cache directory for download: ${this.videoCacheDir}`);
       }
       
+      // CRITICAL FIX v1.0.11: Convert underscores to spaces for gallery videos before encoding
+      // Gallery videos in JSON have underscores but Supabase has spaces in actual filenames
+      let supabaseFilename = filename;
+      if (filename.startsWith('gallery_')) {
+        // Convert underscores to spaces for gallery videos
+        supabaseFilename = filename.replace(/_/g, ' ');
+        console.log(`🔄 GALLERY VIDEO FIX v1.0.11: Converting underscores to spaces`);
+        console.log(`   - JSON filename: ${filename}`);
+        console.log(`   - Supabase filename: ${supabaseFilename}`);
+      }
+      
       // CRITICAL FIX v1.0.7: Properly encode filename for Supabase URL while preserving original for cache
       // Gallery videos like "1753390495474-Pom Gallery (RAV AAA_001) compressed.mp4" need URL encoding
-      const encodedFilename = encodeURIComponent(filename);
+      const encodedFilename = encodeURIComponent(supabaseFilename);
       const fullVideoUrl = customUrl || `https://supabase.memopyk.org/storage/v1/object/public/memopyk-gallery/${encodedFilename}`;
       const cacheFile = this.getVideoCacheFilePath(filename); // Keep original filename for cache lookup
       
-      console.log(`📥 PRODUCTION URL ENCODING v1.0.7: Downloading ${filename} from Supabase...`);
+      console.log(`📥 PRODUCTION URL ENCODING v1.0.11: Downloading ${filename} from Supabase...`);
       console.log(`   - Original filename: ${filename}`);
+      console.log(`   - Supabase filename: ${supabaseFilename}`);
       console.log(`   - URL encoded filename: ${encodedFilename}`);
       console.log(`   - Final Supabase URL: ${fullVideoUrl}`);
       

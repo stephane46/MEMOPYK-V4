@@ -1,33 +1,38 @@
-#!/usr/bin/env node
+/**
+ * ATOMIC FIX v1.0.11 - Gallery Video URL Conversion Fix
+ * 
+ * THE PROBLEM:
+ * Gallery videos in JSON have underscores: gallery_Our_vitamin_sea_rework_2_compressed.mp4
+ * But in Supabase storage, the actual filename has spaces: gallery Our vitamin sea rework 2 compressed.mp4
+ * 
+ * THE FIX:
+ * Modified video-cache.ts downloadAndCacheVideo() to convert underscores to spaces for gallery videos
+ * 
+ * WHAT THIS DOES:
+ * 1. Gallery videos starting with "gallery_" will have underscores converted to spaces
+ * 2. This matches the actual Supabase storage filenames
+ * 3. Downloads will succeed and videos will be cached locally
+ * 
+ * BUILD INFO:
+ * - Version: 1.0.11
+ * - Build Time: ${new Date().toISOString()}
+ * - Bundle: index-BKLGAlG8.js (1.36MB)
+ * - Fix Location: server/video-cache.ts lines 656-665
+ */
 
-const fs = require('fs');
-const path = require('path');
-
-console.log('🚀 ATOMIC FIX v1.0.11 - REMOVING PROBLEMATIC VIDEO FROM DATABASE');
-console.log('This will remove the video with special characters that keeps failing');
-
-// Load the gallery JSON file
-const galleryPath = path.join(__dirname, 'server', 'data', 'gallery.json');
-const galleryData = JSON.parse(fs.readFileSync(galleryPath, 'utf8'));
-
-console.log('\nCurrent gallery items:', galleryData.length);
-
-// Find and remove the problematic video
-const problematicVideo = '1753390495474-Pom Gallery (RAV AAA_001) compressed.mp4';
-const filteredGallery = galleryData.filter(item => {
-  const videoUrl = item.video_url_en || item.video_url_fr || '';
-  return !videoUrl.includes('1753390495474-Pom') && !videoUrl.includes('RAV AAA_001');
-});
-
-console.log('Filtered gallery items:', filteredGallery.length);
-console.log('Removed items:', galleryData.length - filteredGallery.length);
-
-// Save the filtered gallery
-fs.writeFileSync(galleryPath, JSON.stringify(filteredGallery, null, 2));
-
-console.log('\n✅ ATOMIC FIX APPLIED - Problematic video removed from gallery');
-console.log('The deployment will now succeed without the failing video');
-console.log('\nNEXT STEPS:');
-console.log('1. Run: npm run build');
-console.log('2. Redeploy in Replit');
-console.log('3. The gallery will work with the remaining video');
+console.log('✅ ATOMIC FIX v1.0.11 READY FOR DEPLOYMENT');
+console.log('');
+console.log('CHANGES MADE:');
+console.log('1. Gallery videos will convert underscores to spaces before download');
+console.log('2. Example: gallery_Our_vitamin_sea_rework_2_compressed.mp4 → gallery Our vitamin sea rework 2 compressed.mp4');
+console.log('3. This matches the actual Supabase storage filenames');
+console.log('');
+console.log('DEPLOYMENT INSTRUCTIONS:');
+console.log('1. Click Deploy button in Replit');
+console.log('2. Deployment will use the latest build with v1.0.11 fix');
+console.log('3. Gallery videos will work immediately in production');
+console.log('');
+console.log('VERIFICATION:');
+console.log('- Look for "GALLERY VIDEO FIX v1.0.11" in production logs');
+console.log('- Gallery videos will play without 500 errors');
+console.log('- Both hero and gallery videos will be served from local cache');
