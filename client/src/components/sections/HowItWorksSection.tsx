@@ -63,6 +63,7 @@ export function HowItWorksSection() {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
           {steps.map((step, index) => {
             const Icon = step.icon;
+            const isMiddleCard = step.number === 2;
             return (
               <div key={step.number} className="relative h-full">
                 {/* Connection Line (except for last step) */}
@@ -71,7 +72,9 @@ export function HowItWorksSection() {
                 )}
                 
                 {/* Step Card */}
-                <div className="relative bg-memopyk-dark-blue rounded-3xl shadow-2xl text-center group hover:shadow-3xl transition-all duration-500 transform hover:-translate-y-2 z-10 h-full flex flex-col p-12">
+                <div className={`relative bg-memopyk-dark-blue rounded-3xl shadow-2xl text-center group hover:shadow-3xl transition-all duration-500 transform hover:-translate-y-2 z-10 h-full flex flex-col p-12 ${
+                  isMiddleCard ? 'border-4 border-memopyk-orange' : ''
+                }`}>
                   
                   {/* Step Image */}
                   <div className="mb-8">
@@ -90,12 +93,12 @@ export function HowItWorksSection() {
                   </h3>
 
                   {/* Step Description */}
-                  <p className="text-memopyk-cream/90 leading-relaxed text-base mb-6 flex-grow">
+                  <p className="text-memopyk-cream/90 leading-relaxed text-base mb-4 flex-grow">
                     {language === 'fr-FR' ? step.descriptionFr : step.descriptionEn}
                   </p>
 
                   {/* Sub Description */}
-                  <div className="mt-6 pt-6 border-t border-memopyk-cream/20">
+                  <div className="mt-4 pt-4 border-t border-memopyk-cream/20">
                     <div className="flex items-start space-x-3">
                       <div className="w-6 h-6 rounded-full bg-memopyk-cream mt-1 flex-shrink-0 flex items-center justify-center">
                         <Icon className="w-3 h-3 text-memopyk-dark-blue" />
