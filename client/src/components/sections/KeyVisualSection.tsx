@@ -9,7 +9,35 @@ export function KeyVisualSection() {
     <section className="py-20 bg-gradient-cream">
       <div className="container mx-auto px-4">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-          {/* Left: Problem Statement */}
+          {/* Left: Key Visual Illustration */}
+          <div className="relative">
+            <div className="relative group">
+              <img 
+                src={keyVisualImage}
+                alt={language === 'fr-FR' 
+                  ? "Illustration MEMOPYK - Transformation des souvenirs"
+                  : "MEMOPYK Illustration - Memory transformation"
+                }
+                className="w-full h-auto rounded-2xl shadow-2xl transition-transform duration-500 group-hover:scale-105"
+              />
+              
+              {/* Floating Elements */}
+              <div className="absolute -top-4 -right-4 bg-memopyk-orange text-white px-4 py-2 rounded-full font-semibold shadow-lg animate-pulse-elegant">
+                {language === 'fr-FR' ? '100+ Films créés' : '100+ Films created'}
+              </div>
+              
+              <div className="absolute -bottom-4 -left-4 bg-white text-memopyk-navy px-4 py-2 rounded-full font-semibold shadow-lg border-2 border-memopyk-sky-blue">
+                {language === 'fr-FR' ? 'Artistes experts' : 'Expert artists'}
+              </div>
+            </div>
+
+            {/* Background Pattern */}
+            <div className="absolute inset-0 -z-10 transform translate-x-8 translate-y-8">
+              <div className="w-full h-full bg-gradient-to-br from-memopyk-sky-blue/20 to-memopyk-blue-gray/20 rounded-2xl"></div>
+            </div>
+          </div>
+
+          {/* Right: Problem Statement */}
           <div className="space-y-6">
             <h2 className="text-4xl md:text-5xl font-poppins font-bold text-memopyk-navy leading-tight">
               {language === 'fr-FR' 
@@ -72,33 +100,7 @@ export function KeyVisualSection() {
             </div>
           </div>
 
-          {/* Right: Key Visual Illustration */}
-          <div className="relative">
-            <div className="relative group">
-              <img 
-                src={keyVisualImage}
-                alt={language === 'fr-FR' 
-                  ? "Illustration MEMOPYK - Transformation des souvenirs"
-                  : "MEMOPYK Illustration - Memory transformation"
-                }
-                className="w-full h-auto rounded-2xl shadow-2xl transition-transform duration-500 group-hover:scale-105"
-              />
-              
-              {/* Floating Elements */}
-              <div className="absolute -top-4 -right-4 bg-memopyk-orange text-white px-4 py-2 rounded-full font-semibold shadow-lg animate-pulse-elegant">
-                {language === 'fr-FR' ? '100+ Films créés' : '100+ Films created'}
-              </div>
-              
-              <div className="absolute -bottom-4 -left-4 bg-white text-memopyk-navy px-4 py-2 rounded-full font-semibold shadow-lg border-2 border-memopyk-sky-blue">
-                {language === 'fr-FR' ? 'Artistes experts' : 'Expert artists'}
-              </div>
-            </div>
 
-            {/* Background Pattern */}
-            <div className="absolute inset-0 -z-10 transform translate-x-8 translate-y-8">
-              <div className="w-full h-full bg-gradient-to-br from-memopyk-sky-blue/20 to-memopyk-blue-gray/20 rounded-2xl"></div>
-            </div>
-          </div>
         </div>
       </div>
     </section>

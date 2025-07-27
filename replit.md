@@ -27,6 +27,9 @@ Preferred communication style: Simple, everyday language.
 ✅ **Dual-Flag Language Switcher**: Both language options visible with MEMOPYK navy border around active language button
 ✅ **Cream Header Background**: Navigation header uses MEMOPYK cream background color
 
+**Phase 8 Brand Assets & Visual Polish - Layout Update (July 27, 2025):**
+✅ **KeyVisualSection Layout**: Image moved to left side, text content moved to right side for improved visual flow
+
 **Analytics Implementation Status (July 26, 2025):**
 - ✅ **Hero Video Exclusion Applied**: All analytics methods now filter out VideoHero1.mp4, VideoHero2.mp4, VideoHero3.mp4
 - ✅ **Gallery-Only Analytics**: Enhanced Analytics system focuses exclusively on user-initiated gallery video views
