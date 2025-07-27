@@ -26,11 +26,11 @@ export function HomePage() {
       {/* Why MEMOPYK Benefits Section */}
       <WhyMemopykSection />
 
-      {/* FAQ Section */}
-      <FAQSection />
-
       {/* Call to Action Section */}
       <CtaSection />
+
+      {/* FAQ Section */}
+      <FAQSection />
 
       {/* Contact Section */}
       <ContactSection />
