@@ -23,13 +23,17 @@ export function Layout({ children }: LayoutProps) {
 
   return (
     <div className="min-h-screen bg-white">
-      {/* Navigation */}
-      <nav className="bg-white shadow-sm border-b">
+      {/* Fixed Navigation */}
+      <nav className="fixed top-0 left-0 right-0 z-50 bg-white shadow-sm border-b">
         <div className="container mx-auto px-4">
           <div className="flex justify-between items-center h-16">
             {/* Logo */}
-            <Link href="/" className="text-2xl font-bold text-gray-800">
-              MEMOPYK
+            <Link href="/" className="flex items-center">
+              <img 
+                src="/logo.svg" 
+                alt="MEMOPYK" 
+                className="h-10 w-auto"
+              />
             </Link>
 
             {/* Navigation Links */}
@@ -55,10 +59,9 @@ export function Layout({ children }: LayoutProps) {
                 onClick={toggleLanguage}
                 className="flex items-center space-x-2 px-3 py-2 rounded-md text-sm font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-100 transition-colors"
               >
-                <span className="text-lg">
+                <span className="text-2xl">
                   {language === 'fr-FR' ? '🇫🇷' : '🇺🇸'}
                 </span>
-                <span>{language === 'fr-FR' ? 'FR' : 'EN'}</span>
               </button>
 
               {/* Mobile menu button */}
@@ -91,8 +94,8 @@ export function Layout({ children }: LayoutProps) {
         </div>
       </nav>
 
-      {/* Main Content */}
-      <main>
+      {/* Main Content - Add padding for fixed nav */}
+      <main className="pt-16">
         {children}
       </main>
 
@@ -101,7 +104,11 @@ export function Layout({ children }: LayoutProps) {
         <div className="container mx-auto px-4 py-12">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
             <div className="col-span-1 lg:col-span-1">
-              <h3 className="text-2xl font-bold mb-4">MEMOPYK</h3>
+              <img 
+                src="/logo.svg" 
+                alt="MEMOPYK" 
+                className="h-12 w-auto mb-4"
+              />
               <p className="text-gray-400 mb-4">
                 {language === 'fr-FR' 
                   ? 'Créateur de films mémoire pour immortaliser vos moments précieux.'

@@ -19,11 +19,11 @@ export function HomePage() {
       {/* How It Works 3-Step Process */}
       <HowItWorksSection />
 
+      {/* Gallery Section - Moved above Why MEMOPYK */}
+      <GallerySection />
+
       {/* Why MEMOPYK Benefits Section */}
       <WhyMemopykSection />
-
-      {/* Gallery Section */}
-      <GallerySection />
 
       {/* FAQ Section */}
       <FAQSection />
