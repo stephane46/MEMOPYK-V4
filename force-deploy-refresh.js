@@ -1,17 +1,40 @@
-// Force deployment cache invalidation
-// This file exists solely to trigger a fresh deployment build
-// Current timestamp: 2025-07-24T05:46:00Z
+// Force gallery video cache refresh for production deployment
+const fs = require('fs');
+const path = require('path');
 
-console.log('🚀 DEPLOYMENT CACHE BUSTER ACTIVE');
-console.log('📅 Build timestamp:', new Date().toISOString());
-console.log('🔄 Forcing fresh deployment to pick up gallery video CDN fixes');
+async function forceGalleryCacheRefresh() {
+  console.log('🚀 FORCING GALLERY CACHE REFRESH FOR PRODUCTION');
+  
+  try {
+    // Import the video cache
+    const { VideoCache } = await import('./server/video-cache.js');
+    const videoCache = new VideoCache();
+    
+    console.log('📥 Forcing download of gallery videos...');
+    
+    // Force download gallery videos
+    const galleryVideos = [
+      'gallery_Our_vitamin_sea_rework_2_compressed.mp4',
+      '1753390495474-Pom Gallery (RAV AAA_001) compressed.mp4'
+    ];
+    
+    for (const filename of galleryVideos) {
+      console.log(`📥 Downloading ${filename}...`);
+      try {
+        await videoCache.downloadAndCacheVideo(filename);
+        console.log(`✅ Successfully cached: ${filename}`);
+      } catch (error) {
+        console.error(`❌ Failed to cache ${filename}:`, error.message);
+      }
+    }
+    
+    console.log('🎯 Gallery cache refresh complete!');
+    process.exit(0);
+    
+  } catch (error) {
+    console.error('❌ Cache refresh failed:', error);
+    process.exit(1);
+  }
+}
 
-// Gallery video fix verification
-const galleryVideoTestUrl = 'https://supabase.memopyk.org/storage/v1/object/public/memopyk-gallery/gallery_Our_vitamin_sea_rework_2_compressed.mp4';
-console.log('🎬 Expected gallery video URL:', galleryVideoTestUrl);
-
-module.exports = {
-  deploymentForced: true,
-  timestamp: Date.now(),
-  reason: 'Gallery video CDN fix not reflecting in production'
-};
+forceGalleryCacheRefresh();

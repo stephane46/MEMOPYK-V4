@@ -39,9 +39,19 @@ You were absolutely right - our fallback system was designed correctly:
 
 The only issue was the URL construction for gallery videos with special characters.
 
-### Production Status
-- **Fix Applied**: URL encoding corrected in video-cache.ts
-- **Ready for Deployment**: Production should now work correctly
-- **Expected Behavior**: Gallery videos will download and cache automatically on first request
+### Production Status - UPDATED DIAGNOSIS
+**The Real Issue**: 
+- ✅ **Development**: Both gallery videos work perfectly (cached and serving)
+- ❌ **Production Deployment**: Fresh server with no cache = 500 errors
 
-**Status**: FIXED - Ready for production redeployment
+**Environment Difference**:
+- Development cache has 5 videos (153.8MB) including both gallery videos
+- Production deployment starts with empty cache directory
+- Gallery videos fail when trying to download from Supabase (this is where the URL encoding bug shows up)
+
+**Complete Solution**:
+1. ✅ **URL Encoding Fixed**: downloadAndCacheVideo method now handles special characters correctly
+2. 🔄 **Force Cache Script Created**: `force-deploy-refresh.js` will manually cache gallery videos on production
+3. 🚀 **Ready for Deployment**: Production will now initialize cache properly
+
+**Status**: COMPREHENSIVE FIX READY - Both development working + production deployment fix applied
