@@ -45,6 +45,16 @@ app.use(express.urlencoded({
   parameterLimit: 50000
 }));
 
+// EMERGENCY: Log ALL requests to diagnose production routing
+app.use((req, res, next) => {
+  if (req.path.includes('/api/video-proxy') || req.path.includes('/api/debug-gallery-video')) {
+    console.log(`🚨 EMERGENCY REQUEST LOG: ${req.method} ${req.path} from ${req.headers['user-agent']?.slice(0, 50)}`);
+    console.log(`   - Query params:`, req.query);
+    console.log(`   - Headers:`, { range: req.headers.range, accept: req.headers.accept });
+  }
+  next();
+});
+
 // Request logging middleware
 app.use((req, res, next) => {
   const start = Date.now();

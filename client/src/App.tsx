@@ -12,8 +12,8 @@ import NotFoundPage from './pages/not-found';
 import { queryClient } from './lib/queryClient';
 import { Toaster } from '@/components/ui/toaster';
 
-// Gallery Video Fix v1.0.11 - Fixed double encoding bug and force cache endpoint
-console.log("🚀 MEMOPYK Gallery Video Fix v1.0.11 - " + Date.now());
+// Gallery Video Fix v1.0.13 - Production deployment with debug route and enhanced logging
+console.log("🚀 MEMOPYK Gallery Video Fix v1.0.13 - " + Date.now());
 
 function App() {
   return (

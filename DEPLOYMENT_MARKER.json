@@ -1,5 +1,5 @@
 {
-  "timestamp": "2025-07-27T23:09:24.522Z",
+  "timestamp": "2025-07-27T23:53:03.617Z",
   "fix": "Gallery video range request parsing fix",
   "commit": "Range parsing bug fixed - production ready"
 }
