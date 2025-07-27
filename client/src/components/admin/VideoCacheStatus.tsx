@@ -47,7 +47,10 @@ export const VideoCacheStatus: React.FC<VideoCacheStatusProps> = ({
   // Query cache status for specific videos
   const { data: cacheStatusData, isLoading: statusLoading, refetch: refetchStatus } = useQuery({
     queryKey: ['/api/video-cache/status', videoFilenames],
-    queryFn: () => apiRequest('/api/video-cache/status', 'POST', { filenames: videoFilenames }),
+    queryFn: async () => {
+      const response = await apiRequest('/api/video-cache/status', 'POST', { filenames: videoFilenames });
+      return await response.json();
+    },
     enabled: videoFilenames.length > 0,
     refetchInterval: 30000 // Refresh every 30 seconds
   });
@@ -63,7 +66,8 @@ export const VideoCacheStatus: React.FC<VideoCacheStatusProps> = ({
     mutationFn: async (filename: string) => {
       setPendingVideos(prev => new Set(Array.from(prev).concat([filename])));
       const response = await apiRequest('/api/video-cache/force', 'POST', { filename });
-      return { response: response as unknown as {message?: string}, filename };
+      const data = await response.json();
+      return { response: data as {message?: string}, filename };
     },
     onSuccess: (data: {response: {message?: string}, filename: string}) => {
       const { response, filename } = data;
@@ -98,7 +102,7 @@ export const VideoCacheStatus: React.FC<VideoCacheStatusProps> = ({
   const forceAllMutation = useMutation({
     mutationFn: async () => {
       const response = await apiRequest('/api/video-cache/force-all', 'POST');
-      return response as {cached?: string[]};
+      return await response.json() as {cached?: string[]};
     },
     onSuccess: (data: {cached?: string[]}) => {
       toast({
@@ -122,7 +126,7 @@ export const VideoCacheStatus: React.FC<VideoCacheStatusProps> = ({
   const clearCacheMutation = useMutation({
     mutationFn: async () => {
       const response = await apiRequest('/api/video-cache/clear', 'DELETE');
-      return response as unknown as {status?: string};
+      return await response.json() as {status?: string};
     },
     onSuccess: () => {
       toast({
@@ -142,15 +146,7 @@ export const VideoCacheStatus: React.FC<VideoCacheStatusProps> = ({
     }
   });
 
-  const cacheStatus: Record<string, CacheStatus> = (cacheStatusData as unknown as {status?: Record<string, CacheStatus>})?.status || {};
-
-  // Debug cache status data
-  console.log('🔍 Cache Status Debug:', {
-    cacheStatusData,
-    cacheStatus,
-    videoFilenames,
-    cachedVideos: Object.entries(cacheStatus).filter(([_, status]) => status.cached)
-  });
+  const cacheStatus: Record<string, CacheStatus> = (cacheStatusData as {status?: Record<string, CacheStatus>})?.status || {};
 
   const formatFileSize = (bytes: number): string => {
     const mb = bytes / (1024 * 1024);
