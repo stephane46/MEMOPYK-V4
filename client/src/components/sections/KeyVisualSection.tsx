@@ -20,15 +20,6 @@ export function KeyVisualSection() {
                 }
                 className="w-full h-auto rounded-2xl shadow-2xl transition-transform duration-500 group-hover:scale-105"
               />
-              
-              {/* Floating Elements */}
-              <div className="absolute -top-4 -right-4 bg-memopyk-orange text-white px-4 py-2 rounded-full font-semibold shadow-lg animate-pulse-elegant">
-                {language === 'fr-FR' ? '100+ Films créés' : '100+ Films created'}
-              </div>
-              
-              <div className="absolute -bottom-4 -left-4 bg-white text-memopyk-navy px-4 py-2 rounded-full font-semibold shadow-lg border-2 border-memopyk-sky-blue">
-                {language === 'fr-FR' ? 'Artistes experts' : 'Expert artists'}
-              </div>
             </div>
 
             {/* Background Pattern */}
