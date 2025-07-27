@@ -17,6 +17,7 @@ import { LegalDocumentManagement } from '@/components/admin/LegalDocumentManagem
 import { CtaManagement } from '@/components/admin/CtaManagement';
 import { AnalyticsDashboard } from '@/components/admin/AnalyticsDashboard';
 import CryptoJS from 'crypto-js';
+import VideoCacheStatus from '@/components/admin/VideoCacheStatus';
 
 interface HeroVideo {
   id: number;

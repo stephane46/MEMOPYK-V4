@@ -29,6 +29,7 @@ import {
 } from "lucide-react";
 import ImageCropperEasyCrop from './ImageCropperEasyCrop';
 import DirectUpload from './DirectUpload';
+import VideoCacheStatus from './VideoCacheStatus';
 
 // Module-level persistent state that survives component re-creations
 const persistentUploadState = {
@@ -985,29 +986,12 @@ export default function GalleryManagement() {
         </div>
       </div>
 
-      {/* Cache Status Panel - Gallery Videos */}
-      {cacheStats && typeof cacheStats === 'object' && (
-        <div className="bg-green-50 dark:bg-green-900/20 p-4 rounded-lg border border-green-200 dark:border-green-800">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <div className="bg-green-500 rounded-full p-2">
-                <Download className="h-4 w-4 text-white" />
-              </div>
-              <div>
-                <h4 className="font-semibold text-green-900 dark:text-green-100">
-                  Cache Intelligent des Vidéos
-                </h4>
-                <p className="text-sm text-green-800 dark:text-green-200">
-                  {typeof cacheStats === 'object' && cacheStats && 'fileCount' in cacheStats ? Number((cacheStats as any).fileCount) : 0} vidéos en cache • {typeof cacheStats === 'object' && cacheStats && 'sizeMB' in cacheStats ? Number((cacheStats as any).sizeMB) : 0}MB • Chargement ultra-rapide (~50ms)
-                </p>
-              </div>
-            </div>
-            <div className="text-xs text-green-700 dark:text-green-300">
-              Remplacement intelligent : Gestion automatique du cache
-            </div>
-          </div>
-        </div>
-      )}
+      {/* Gallery Video Cache Status */}
+      <VideoCacheStatus 
+        videoFilenames={sortedItems.map(item => item.video_url_en || item.video_url_fr || '').filter(url => url !== '')}
+        title="Gallery Video Cache Status"
+        showForceAllButton={true}
+      />
 
       <div className="space-y-4">
         {sortedItems.map((item, index) => (

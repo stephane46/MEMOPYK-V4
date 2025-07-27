@@ -1,0 +1,264 @@
+import React from 'react';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { apiRequest } from '@/lib/queryClient';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import { useToast } from '@/hooks/use-toast';
+import { 
+  HardDrive, 
+  RefreshCw, 
+  CheckCircle, 
+  AlertCircle, 
+  Download,
+  Zap,
+  Clock
+} from 'lucide-react';
+
+interface VideoCacheStatusProps {
+  videoFilenames: string[];
+  title?: string;
+  showForceAllButton?: boolean;
+}
+
+interface CacheStatsResponse {
+  fileCount: number;
+  sizeMB: string;
+  [key: string]: unknown;
+}
+
+interface CacheStatus {
+  cached: boolean;
+  size?: number;
+  lastModified?: string;
+}
+
+export const VideoCacheStatus: React.FC<VideoCacheStatusProps> = ({ 
+  videoFilenames, 
+  title = "Video Cache Status",
+  showForceAllButton = false 
+}) => {
+  const { toast } = useToast();
+  const queryClient = useQueryClient();
+
+  // Query cache status for specific videos
+  const { data: cacheStatusData, isLoading: statusLoading, refetch: refetchStatus } = useQuery({
+    queryKey: ['/api/video-cache/status', videoFilenames],
+    queryFn: () => apiRequest('/api/video-cache/status', 'POST', { filenames: videoFilenames }),
+    enabled: videoFilenames.length > 0,
+    refetchInterval: 30000 // Refresh every 30 seconds
+  });
+
+  // Query overall cache stats
+  const { data: cacheStats, refetch: refetchStats } = useQuery<CacheStatsResponse>({
+    queryKey: ['/api/video-cache/stats'],
+    refetchInterval: 30000
+  });
+
+  // Force cache single video mutation
+  const forceCacheMutation = useMutation({
+    mutationFn: (filename: string) => apiRequest('/api/video-cache/force', 'POST', { filename }),
+    onSuccess: (data: {filename: string}) => {
+      toast({
+        title: "Video Cached",
+        description: `${data.filename} has been cached successfully`,
+      });
+      refetchStatus();
+      refetchStats();
+      queryClient.invalidateQueries({ queryKey: ['/api/video-cache/stats'] });
+    },
+    onError: (error: Error & {response?: {data?: {details?: string}}}) => {
+      toast({
+        title: "Cache Failed",
+        description: `Failed to cache video: ${error.response?.data?.details || error.message}`,
+        variant: "destructive",
+      });
+    }
+  });
+
+  // Force cache all videos mutation  
+  const forceAllMutation = useMutation({
+    mutationFn: () => apiRequest('/api/video-cache/force-all', 'POST'),
+    onSuccess: (data: {cached?: string[]}) => {
+      toast({
+        title: "All Videos Cached",
+        description: `Successfully cached ${data.cached?.length || 0} videos`,
+      });
+      refetchStatus();
+      refetchStats();
+      queryClient.invalidateQueries({ queryKey: ['/api/video-cache/stats'] });
+    },
+    onError: (error: Error & {response?: {data?: {details?: string}}}) => {
+      toast({
+        title: "Bulk Cache Failed", 
+        description: `Failed to cache all videos: ${error.response?.data?.details || error.message}`,
+        variant: "destructive",
+      });
+    }
+  });
+
+  const cacheStatus: Record<string, CacheStatus> = (cacheStatusData as {status?: Record<string, CacheStatus>})?.status || {};
+
+  const formatFileSize = (bytes: number): string => {
+    const mb = bytes / (1024 * 1024);
+    return `${mb.toFixed(1)}MB`;
+  };
+
+  const formatLastModified = (dateString: string): string => {
+    const date = new Date(dateString);
+    const now = new Date();
+    const diffHours = (now.getTime() - date.getTime()) / (1000 * 60 * 60);
+    
+    if (diffHours < 1) return 'Just cached';
+    if (diffHours < 24) return `${Math.floor(diffHours)}h ago`;
+    return `${Math.floor(diffHours / 24)}d ago`;
+  };
+
+  if (statusLoading) {
+    return (
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <HardDrive className="h-5 w-5" />
+            {title}
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="flex items-center justify-center py-8">
+            <RefreshCw className="h-6 w-6 animate-spin text-muted-foreground" />
+            <span className="ml-2 text-muted-foreground">Checking cache status...</span>
+          </div>
+        </CardContent>
+      </Card>
+    );
+  }
+
+  const cachedCount = Object.values(cacheStatus).filter(status => status.cached).length;
+  const totalCount = videoFilenames.length;
+
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle className="flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <HardDrive className="h-5 w-5" />
+            {title}
+          </div>
+          <div className="flex items-center gap-2">
+            <Badge variant={cachedCount === totalCount ? "default" : "secondary"}>
+              {cachedCount}/{totalCount} Cached
+            </Badge>
+            {showForceAllButton && (
+              <Button 
+                size="sm" 
+                variant="outline"
+                onClick={() => forceAllMutation.mutate()}
+                disabled={forceAllMutation.isPending}
+              >
+                {forceAllMutation.isPending ? (
+                  <RefreshCw className="h-4 w-4 animate-spin mr-2" />
+                ) : (
+                  <Zap className="h-4 w-4 mr-2" />
+                )}
+                Force Cache All
+              </Button>
+            )}
+          </div>
+        </CardTitle>
+      </CardHeader>
+      <CardContent>
+        {/* Overall cache stats */}
+        {cacheStats && (
+          <div className="mb-4 p-3 bg-muted rounded-lg">
+            <div className="flex items-center justify-between text-sm">
+              <span>Total Cache: {cacheStats.fileCount} files ({cacheStats.sizeMB}MB)</span>
+              <span className="text-muted-foreground">
+                Performance: ~50ms cached vs ~1500ms uncached
+              </span>
+            </div>
+          </div>
+        )}
+
+        {/* Individual video status */}
+        <div className="space-y-3">
+          {videoFilenames.map((filename) => {
+            const status = cacheStatus[filename];
+            const isCached = status?.cached || false;
+            
+            return (
+              <div key={filename} className="flex items-center justify-between p-3 border rounded-lg">
+                <div className="flex items-center gap-3">
+                  {isCached ? (
+                    <CheckCircle className="h-5 w-5 text-green-500" />
+                  ) : (
+                    <AlertCircle className="h-5 w-5 text-orange-500" />
+                  )}
+                  <div>
+                    <div className="font-medium text-sm">{filename}</div>
+                    <div className="text-xs text-muted-foreground">
+                      {isCached ? (
+                        <div className="flex items-center gap-2">
+                          <span className="text-green-600">✅ Cached (~50ms)</span>
+                          {status.size && <span>• {formatFileSize(status.size)}</span>}
+                          {status.lastModified && (
+                            <span className="flex items-center gap-1">
+                              • <Clock className="h-3 w-3" /> {formatLastModified(status.lastModified)}
+                            </span>
+                          )}
+                        </div>
+                      ) : (
+                        <span className="text-orange-600">⏳ Not Cached (~1500ms)</span>
+                      )}
+                    </div>
+                  </div>
+                </div>
+                
+                {!isCached && (
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    onClick={() => forceCacheMutation.mutate(filename)}
+                    disabled={forceCacheMutation.isPending}
+                  >
+                    {forceCacheMutation.isPending ? (
+                      <RefreshCw className="h-4 w-4 animate-spin mr-1" />
+                    ) : (
+                      <Download className="h-4 w-4 mr-1" />
+                    )}
+                    Cache Now
+                  </Button>
+                )}
+                
+                {isCached && (
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    onClick={() => forceCacheMutation.mutate(filename)}
+                    disabled={forceCacheMutation.isPending}
+                    className="text-orange-600 hover:text-orange-700"
+                  >
+                    {forceCacheMutation.isPending ? (
+                      <RefreshCw className="h-4 w-4 animate-spin mr-1" />
+                    ) : (
+                      <RefreshCw className="h-4 w-4 mr-1" />
+                    )}
+                    Refresh Cache
+                  </Button>
+                )}
+              </div>
+            );
+          })}
+        </div>
+
+        {totalCount === 0 && (
+          <div className="text-center py-8 text-muted-foreground">
+            <HardDrive className="h-12 w-12 mx-auto mb-4 opacity-50" />
+            <p>No videos to display cache status for</p>
+          </div>
+        )}
+      </CardContent>
+    </Card>
+  );
+};
+
+export default VideoCacheStatus;

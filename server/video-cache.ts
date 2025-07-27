@@ -208,25 +208,71 @@ export class VideoCache {
   }
 
   /**
-   * Get cache statistics
+   * Get cache statistics with detailed file information for admin interface
    */
-  getCacheStats(): { fileCount: number; totalSize: number; sizeMB: string; files: string[] } {
+  getCacheStats(): { fileCount: number; totalSize: number; sizeMB: string; files: string[]; fileDetails: Array<{filename: string; size: number; lastModified: string}> } {
     try {
       const files = readdirSync(this.cacheDir);
+      const fileDetails: Array<{filename: string; size: number; lastModified: string}> = [];
+      
       const totalSize = files.reduce((sum, file) => {
         const filePath = join(this.cacheDir, file);
-        return sum + statSync(filePath).size;
+        const stats = statSync(filePath);
+        
+        fileDetails.push({
+          filename: file,
+          size: stats.size,
+          lastModified: stats.mtime.toISOString()
+        });
+        
+        return sum + stats.size;
       }, 0);
       
       return {
         fileCount: files.length,
         totalSize,
         sizeMB: (totalSize / 1024 / 1024).toFixed(1),
-        files: files // Include list of cached filenames
+        files: files,
+        fileDetails: fileDetails.sort((a, b) => b.lastModified.localeCompare(a.lastModified))
       };
     } catch (error) {
-      return { fileCount: 0, totalSize: 0, sizeMB: '0.0', files: [] };
+      return { fileCount: 0, totalSize: 0, sizeMB: '0.0', files: [], fileDetails: [] };
     }
+  }
+
+  /**
+   * Check if a specific video is cached (for admin interface indicators)
+   */
+  isVideoCachedByFilename(filename: string): boolean {
+    const cacheFile = this.getCacheFilePath(filename);
+    return existsSync(cacheFile);
+  }
+
+  /**
+   * Get detailed cache status for multiple videos (for admin interface)
+   */
+  getVideoCacheStatus(filenames: string[]): Record<string, {cached: boolean; size?: number; lastModified?: string}> {
+    const status: Record<string, {cached: boolean; size?: number; lastModified?: string}> = {};
+    
+    filenames.forEach(filename => {
+      const cacheFile = this.getCacheFilePath(filename);
+      if (existsSync(cacheFile)) {
+        try {
+          const stats = statSync(cacheFile);
+          status[filename] = {
+            cached: true,
+            size: stats.size,
+            lastModified: stats.mtime.toISOString()
+          };
+        } catch (error) {
+          status[filename] = { cached: false };
+        }
+      } else {
+        status[filename] = { cached: false };
+      }
+    });
+    
+    return status;
   }
 
   /**

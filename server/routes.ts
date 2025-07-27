@@ -1321,43 +1321,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
         filename: videoFilename,
         message: "All videos must be served from local cache only"
       });
-      const contentRange = response.headers.get('content-range');
-
-      // Set response headers
-      res.setHeader('Content-Type', contentType);
-      res.setHeader('Access-Control-Allow-Origin', '*');
-      res.setHeader('Access-Control-Allow-Headers', 'range, content-type');
-      res.setHeader('Cache-Control', 'public, max-age=86400');
-      
-      if (acceptRanges) res.setHeader('Accept-Ranges', acceptRanges);
-      if (contentLength) res.setHeader('Content-Length', contentLength);
-      if (contentRange) res.setHeader('Content-Range', contentRange);
-
-      // Set appropriate status code
-      res.status(range && response.status === 206 ? 206 : 200);
-
-      // Handle response body streaming
-      if (response.body) {
-        const reader = response.body.getReader();
-        
-        const pump = async () => {
-          try {
-            while (true) {
-              const { done, value } = await reader.read();
-              if (done) break;
-              res.write(Buffer.from(value));
-            }
-            res.end();
-          } catch (error) {
-            console.error('Stream error:', error);
-            res.end();
-          }
-        };
-        
-        await pump();
-      } else {
-        res.end();
-      }
 
     } catch (error: any) {
       console.error(`❌ VIDEO PROXY FATAL ERROR for ${req.query.filename}:`, error);
@@ -2195,6 +2158,104 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error) {
       console.error('Cache clear error:', error);
       res.status(500).json({ error: "Failed to clear video cache" });
+    }
+  });
+
+  // Get cache status for specific videos (admin interface visual indicators)
+  app.post("/api/video-cache/status", async (req, res) => {
+    try {
+      const { filenames } = req.body;
+      if (!Array.isArray(filenames)) {
+        return res.status(400).json({ error: "filenames must be an array" });
+      }
+      
+      const status = videoCache.getVideoCacheStatus(filenames);
+      res.json({ success: true, status });
+    } catch (error) {
+      console.error('Cache status error:', error);
+      res.status(500).json({ error: "Failed to get cache status" });
+    }
+  });
+
+  // Force cache specific video (admin interface - when video updated with same name)
+  app.post("/api/video-cache/force", async (req, res) => {
+    try {
+      const { filename } = req.body;
+      if (!filename) {
+        return res.status(400).json({ error: "filename is required" });
+      }
+      
+      console.log(`🔄 Admin-forced cache refresh for: ${filename}`);
+      
+      // Remove from cache if exists
+      videoCache.clearSpecificFile(filename);
+      
+      // Download fresh copy
+      await videoCache.downloadAndCacheVideo(filename);
+      
+      res.json({ 
+        success: true, 
+        message: `Video ${filename} cached successfully`,
+        filename: filename
+      });
+    } catch (error: any) {
+      console.error(`Cache force error for ${req.body.filename}:`, error);
+      res.status(500).json({ 
+        error: "Failed to force cache video",
+        filename: req.body.filename,
+        details: error.message
+      });
+    }
+  });
+
+  // Force cache ALL videos (deployment startup equivalent)
+  app.post("/api/video-cache/force-all", async (req, res) => {
+    try {
+      console.log(`🚀 Admin-triggered FORCE CACHE ALL videos...`);
+      
+      // Get all hero videos
+      const heroVideos = await hybridStorage.getHeroVideos();
+      const heroFilenames = heroVideos.map(v => v.filename);
+      
+      // Get all gallery videos  
+      const galleryItems = await hybridStorage.getGalleryItems();
+      const galleryFilenames = galleryItems
+        .filter(item => item.video_url_en)
+        .map(item => item.video_url_en!.split('/').pop()!)
+        .filter(filename => filename);
+      
+      const allVideos = [...heroFilenames, ...galleryFilenames];
+      const cached: string[] = [];
+      const errors: string[] = [];
+      
+      for (const filename of allVideos) {
+        try {
+          // Force refresh: remove old cache and download fresh
+          videoCache.clearSpecificFile(filename);
+          await videoCache.downloadAndCacheVideo(filename);
+          cached.push(filename);
+          console.log(`✅ Force cached: ${filename}`);
+        } catch (error: any) {
+          errors.push(`${filename}: ${error.message}`);
+          console.error(`❌ Failed to cache ${filename}:`, error);
+        }
+      }
+      
+      const stats = videoCache.getCacheStats();
+      res.json({ 
+        success: true, 
+        message: `Force cached ${cached.length} videos`,
+        cached: cached,
+        errors: errors,
+        totalVideos: allVideos.length,
+        cacheStats: stats
+      });
+    } catch (error: any) {
+      console.error('Force cache all error:', error);
+      res.status(500).json({ 
+        error: "Failed to force cache all videos",
+        details: error.message
+      });
     }
   });
 
