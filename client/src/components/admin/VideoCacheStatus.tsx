@@ -19,6 +19,7 @@ interface VideoCacheStatusProps {
   videoFilenames: string[];
   title?: string;
   showForceAllButton?: boolean;
+  description?: string;
 }
 
 interface CacheStatsResponse {
@@ -36,7 +37,8 @@ interface CacheStatus {
 export const VideoCacheStatus: React.FC<VideoCacheStatusProps> = ({ 
   videoFilenames, 
   title = "Video Cache Status",
-  showForceAllButton = false 
+  showForceAllButton = false,
+  description
 }) => {
   const { toast } = useToast();
   const queryClient = useQueryClient();
@@ -57,7 +59,10 @@ export const VideoCacheStatus: React.FC<VideoCacheStatusProps> = ({
 
   // Force cache single video mutation
   const forceCacheMutation = useMutation({
-    mutationFn: (filename: string) => apiRequest('/api/video-cache/force', 'POST', { filename }),
+    mutationFn: async (filename: string) => {
+      const response = await apiRequest('/api/video-cache/force', 'POST', { filename });
+      return response as {filename: string};
+    },
     onSuccess: (data: {filename: string}) => {
       toast({
         title: "Video Cached",
@@ -78,7 +83,10 @@ export const VideoCacheStatus: React.FC<VideoCacheStatusProps> = ({
 
   // Force cache all videos mutation  
   const forceAllMutation = useMutation({
-    mutationFn: () => apiRequest('/api/video-cache/force-all', 'POST'),
+    mutationFn: async () => {
+      const response = await apiRequest('/api/video-cache/force-all', 'POST');
+      return response as {cached?: string[]};
+    },
     onSuccess: (data: {cached?: string[]}) => {
       toast({
         title: "All Videos Cached",
@@ -165,6 +173,9 @@ export const VideoCacheStatus: React.FC<VideoCacheStatusProps> = ({
             )}
           </div>
         </CardTitle>
+        {description && (
+          <p className="text-sm text-muted-foreground mt-2">{description}</p>
+        )}
       </CardHeader>
       <CardContent>
         {/* Overall cache stats */}

@@ -16,6 +16,7 @@ import FAQManagementWorking from '@/components/admin/FAQManagementWorking';
 import { LegalDocumentManagement } from '@/components/admin/LegalDocumentManagement';
 import { CtaManagement } from '@/components/admin/CtaManagement';
 import { AnalyticsDashboard } from '@/components/admin/AnalyticsDashboard';
+import VideoCacheStatus from '@/components/admin/VideoCacheStatus';
 import CryptoJS from 'crypto-js';
 
 
@@ -438,7 +439,15 @@ export default function AdminPage() {
                 </nav>
               </div>
 
-
+              {/* Hero Video Cache Status - Section-Specific */}
+              {heroTab === 'videos' && (
+                <VideoCacheStatus 
+                  videoFilenames={heroVideos.map(video => video.url_en).filter(url => url !== '')}
+                  title="Hero Videos Cache Status"
+                  showForceAllButton={false}
+                  description="Manage caching for hero carousel videos only"
+                />
+              )}
 
               {/* Videos Tab */}
               {heroTab === 'videos' && (

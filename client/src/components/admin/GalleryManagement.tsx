@@ -986,22 +986,19 @@ export default function GalleryManagement() {
         </div>
       </div>
 
-      {/* Unified Video Cache Status - All Videos (Hero + Gallery) */}
+      {/* Gallery Video Cache Status - Section-Specific */}
       <VideoCacheStatus 
-        videoFilenames={[
-          // Hero videos (assume these are available from query)
-          'VideoHero1.mp4', 'VideoHero2.mp4', 'VideoHero3.mp4',
-          // Gallery videos
-          ...sortedItems
-            .filter(item => item.video_url_en || item.video_url_fr)
-            .map(item => {
-              const url = item.video_url_en || item.video_url_fr || '';
-              return url.includes('/') ? url.split('/').pop()! : url;
-            })
-            .filter(filename => filename)
-        ]}
-        title="All Videos Cache Status (Hero + Gallery)"
+        videoFilenames={sortedItems
+          .filter(item => item.video_url_en || item.video_url_fr)
+          .map(item => {
+            const url = item.video_url_en || item.video_url_fr || '';
+            return url.includes('/') ? url.split('/').pop()! : url;
+          })
+          .filter(filename => filename)
+        }
+        title="Gallery Videos Cache Status"
         showForceAllButton={true}
+        description="Manage caching for gallery videos only. Use Force Cache All to cache all videos (hero + gallery)"
       />
 
       <div className="space-y-4">
