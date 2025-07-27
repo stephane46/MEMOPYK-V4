@@ -60,8 +60,8 @@ export function Layout({ children }: LayoutProps) {
                   onClick={() => setLanguage('en-US')}
                   className={`p-2 rounded-md transition-all ${
                     language === 'en-US' 
-                      ? 'border-2 border-blue-500 bg-blue-50 shadow-md' 
-                      : 'border-2 border-transparent hover:border-gray-300 hover:bg-gray-50'
+                      ? 'border-2 border-memopyk-orange bg-memopyk-cream shadow-md' 
+                      : 'border-2 border-transparent hover:border-memopyk-blue-gray hover:bg-gray-50'
                   }`}
                   title="Switch to English"
                 >
@@ -75,8 +75,8 @@ export function Layout({ children }: LayoutProps) {
                   onClick={() => setLanguage('fr-FR')}
                   className={`p-2 rounded-md transition-all ${
                     language === 'fr-FR' 
-                      ? 'border-2 border-blue-500 bg-blue-50 shadow-md' 
-                      : 'border-2 border-transparent hover:border-gray-300 hover:bg-gray-50'
+                      ? 'border-2 border-memopyk-orange bg-memopyk-cream shadow-md' 
+                      : 'border-2 border-transparent hover:border-memopyk-blue-gray hover:bg-gray-50'
                   }`}
                   title="Passer au français"
                 >

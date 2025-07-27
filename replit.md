@@ -24,7 +24,7 @@ Preferred communication style: Simple, everyday language.
 ✅ **Typography Correction**: Poppins (sans-serif) everywhere EXCEPT Playfair Display (serif) ONLY for hero video overlay text
 ✅ **Logo Integration**: MEMOPYK text replaced with logo image in top banner and footer
 ✅ **Fixed Navigation**: Banner remains fixed at top during scroll with proper padding
-✅ **Dual-Flag Language Switcher**: Both language options visible with highlighted border around active language button
+✅ **Dual-Flag Language Switcher**: Both language options visible with MEMOPYK orange border around active language button
 
 **Analytics Implementation Status (July 26, 2025):**
 - ✅ **Hero Video Exclusion Applied**: All analytics methods now filter out VideoHero1.mp4, VideoHero2.mp4, VideoHero3.mp4
