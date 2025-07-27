@@ -1214,8 +1214,17 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   // DUPLICATE FAQ ROUTES REMOVED - Using detailed routes above
 
-  // Video streaming proxy with caching system
+  // Video streaming proxy with caching system - ULTRA-ROBUST v1.0.3
   app.get("/api/video-proxy", async (req, res) => {
+    // Prevent any uncaught errors from crashing the server
+    process.on('uncaughtException', (error) => {
+      console.error('🚨 UNCAUGHT EXCEPTION in video-proxy:', error);
+    });
+    
+    process.on('unhandledRejection', (reason, promise) => {
+      console.error('🚨 UNHANDLED REJECTION in video-proxy:', reason);
+    });
+    
     try {
       const { url, filename } = req.query;
       
@@ -1378,7 +1387,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         cache: stats,
         timestamp: new Date().toISOString(),
         deployment: {
-          version: "enhanced-file-detection-v2.0",
+          version: "Gallery Video Fix v1.0.3 - Ultra-robust",
           fileFilters: "MIME+Extension checking active",
           limits: "5000MB video, 5000MB image"
         }
