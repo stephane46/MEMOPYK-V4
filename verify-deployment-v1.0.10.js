@@ -1,24 +1,65 @@
 #!/usr/bin/env node
 
-// Deployment verification script for v1.0.10
-console.log('🔍 DEPLOYMENT VERIFICATION v1.0.10');
+const https = require('https');
+
+console.log('🔍 VERIFYING v1.0.10 DEPLOYMENT');
 console.log('Timestamp:', new Date().toISOString());
 console.log('');
-console.log('CRITICAL FIX IN v1.0.10:');
-console.log('- Double encoding bug fixed in video proxy');
-console.log('- Gallery video with spaces in filename will now work');
-console.log('- Maximum debugging enabled for production troubleshooting');
+
+// The production URL from the logs
+const baseUrl = 'https://memopyk-gallery-video-fix-v1-0-10-maximum-debug-deployment.f9af3e2d.repl.co';
+
+console.log('Testing deployment at:', baseUrl);
 console.log('');
-console.log('TO VERIFY DEPLOYMENT:');
-console.log('1. Check https://memopyk.replit.app/api/video-proxy/health');
-console.log('   - Should show version: "Gallery Video Fix v1.0.10"');
-console.log('2. Test gallery video with spaces in filename');
-console.log('   - Should load without 500 error');
-console.log('3. Monitor browser console for v1.0.10 version string');
-console.log('');
-console.log('EXPECTED BEHAVIOR:');
-console.log('- Video filename "1753390495474-Pom%20Gallery%20(RAV%20AAA_001)%20compressed.mp4"');
-console.log('- Will be decoded to "1753390495474-Pom Gallery (RAV AAA_001) compressed.mp4"');
-console.log('- Then encoded once for URL: "1753390495474-Pom%20Gallery%20(RAV%20AAA_001)%20compressed.mp4"');
-console.log('- No double encoding (%2520) will occur');
-process.exit(0);
+
+// Test 1: Check if the site is up
+https.get(baseUrl, (res) => {
+  console.log('1. Site Status:', res.statusCode);
+  
+  if (res.statusCode === 200) {
+    console.log('   ✅ Site is accessible');
+    
+    // Test 2: Check the problematic video
+    const videoUrl = `${baseUrl}/api/video-proxy?filename=1753390495474-Pom%20Gallery%20(RAV%20AAA_001)%20compressed.mp4`;
+    
+    console.log('\n2. Testing problematic gallery video...');
+    
+    https.get(videoUrl, {
+      headers: {
+        'Range': 'bytes=0-1023',
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36'
+      }
+    }, (videoRes) => {
+      console.log('   Status:', videoRes.statusCode);
+      
+      let body = '';
+      videoRes.on('data', (chunk) => body += chunk);
+      videoRes.on('end', () => {
+        if (videoRes.statusCode === 500) {
+          console.log('   ❌ Still getting 500 error');
+          try {
+            const error = JSON.parse(body);
+            console.log('   Error details:', JSON.stringify(error, null, 2));
+            
+            // Check if it's v1.0.9 or v1.0.10
+            if (error.version && error.version.includes('v1.0.10')) {
+              console.log('   ⚠️ v1.0.10 is deployed but still failing');
+            } else {
+              console.log('   ⚠️ Old version still deployed:', error.version || 'unknown');
+            }
+          } catch {
+            console.log('   Raw error:', body.substring(0, 200));
+          }
+        } else if (videoRes.statusCode === 206) {
+          console.log('   ✅ Video is working! v1.0.10 fix successful');
+        }
+      });
+    }).on('error', (err) => {
+      console.error('   Video request failed:', err.message);
+    });
+  } else {
+    console.log('   ❌ Site not accessible');
+  }
+}).on('error', (err) => {
+  console.error('Site check failed:', err.message);
+});
