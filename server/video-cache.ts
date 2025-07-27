@@ -552,7 +552,7 @@ export class VideoCache {
    * Preload all gallery videos and images for instant deployment availability
    */
   private async preloadGalleryVideos(): Promise<void> {
-    console.log('📸 PRODUCTION GALLERY PRELOAD v1.0.9 - Starting gallery video and image preloading...');
+    console.log('📸 PRODUCTION GALLERY PRELOAD v1.0.11 - Starting gallery video and image preloading...');
     
     try {
       // Import hybrid storage to get gallery items
@@ -572,7 +572,7 @@ export class VideoCache {
         .map(item => item.static_image_url!.split('/').pop()!)
         .filter(filename => filename);
 
-      console.log(`📋 PRODUCTION GALLERY ANALYSIS v1.0.9: ${galleryVideos.length} videos, ${galleryImages.length} images to preload`);
+      console.log(`📋 PRODUCTION GALLERY ANALYSIS v1.0.11: ${galleryVideos.length} videos, ${galleryImages.length} images to preload`);
       console.log(`🎬 Gallery video filenames:`, galleryVideos);
       console.log(`🖼️ Gallery image filenames:`, galleryImages);
       
@@ -586,7 +586,7 @@ export class VideoCache {
         try {
           console.log(`🔍 Checking cache status for gallery video: ${filename}`);
           if (!this.isVideoCached(filename)) {
-            console.log(`⬇️ PRODUCTION DOWNLOAD v1.0.9 - Preloading gallery video: ${filename}`);
+            console.log(`⬇️ PRODUCTION DOWNLOAD v1.0.11 - Preloading gallery video: ${filename}`);
             await this.downloadAndCacheVideo(filename);
             videosProcessed++;
             console.log(`✅ SUCCESS: Gallery video cached: ${filename}`);
@@ -595,7 +595,7 @@ export class VideoCache {
           }
         } catch (error) {
           videoErrors++;
-          console.error(`❌ PRODUCTION ERROR v1.0.9 - Failed to preload gallery video ${filename}:`, error);
+          console.error(`❌ PRODUCTION ERROR v1.0.11 - Failed to preload gallery video ${filename}:`, error);
           console.error(`❌ Error details:`, {
             message: error.message,
             stack: error.stack?.substring(0, 200)
@@ -608,7 +608,7 @@ export class VideoCache {
         try {
           console.log(`🔍 Checking cache status for gallery image: ${filename}`);
           if (!this.isImageCached(filename)) {
-            console.log(`⬇️ PRODUCTION DOWNLOAD v1.0.9 - Preloading gallery image: ${filename}`);
+            console.log(`⬇️ PRODUCTION DOWNLOAD v1.0.11 - Preloading gallery image: ${filename}`);
             await this.downloadAndCacheImage(filename);
             imagesProcessed++;
             console.log(`✅ SUCCESS: Gallery image cached: ${filename}`);
@@ -617,7 +617,7 @@ export class VideoCache {
           }
         } catch (error) {
           imageErrors++;
-          console.error(`❌ PRODUCTION ERROR v1.0.9 - Failed to preload gallery image ${filename}:`, error);
+          console.error(`❌ PRODUCTION ERROR v1.0.11 - Failed to preload gallery image ${filename}:`, error);
           console.error(`❌ Error details:`, {
             message: error.message,
             stack: error.stack?.substring(0, 200)
@@ -625,12 +625,12 @@ export class VideoCache {
         }
       }
       
-      console.log(`🎬 PRODUCTION GALLERY PRELOAD COMPLETE v1.0.9!`);
+      console.log(`🎬 PRODUCTION GALLERY PRELOAD COMPLETE v1.0.11!`);
       console.log(`📊 Results: ${videosProcessed} videos cached, ${imagesProcessed} images cached`);
       console.log(`❌ Errors: ${videoErrors} video errors, ${imageErrors} image errors`);
       console.log(`✅ Total success rate: ${Math.round(((videosProcessed + imagesProcessed) / (galleryVideos.length + galleryImages.length)) * 100)}%`);
     } catch (error) {
-      console.error('❌ PRODUCTION GALLERY PRELOAD FATAL ERROR v1.0.9:', error);
+      console.error('❌ PRODUCTION GALLERY PRELOAD FATAL ERROR v1.0.11:', error);
       console.error('❌ Fatal error details:', {
         message: error.message,
         stack: error.stack,
@@ -650,16 +650,12 @@ export class VideoCache {
         console.log(`📁 Created cache directory for download: ${this.videoCacheDir}`);
       }
       
-      // CRITICAL FIX v1.0.11: Convert underscores to spaces for gallery videos before encoding
-      // Gallery videos in JSON have underscores but Supabase has spaces in actual filenames
+      // CRITICAL FIX v1.0.11: Gallery videos should keep their original filenames with underscores
+      // The 400 error shows that Supabase storage has the files with underscores, not spaces
       let supabaseFilename = filename;
-      if (filename.startsWith('gallery_')) {
-        // Convert underscores to spaces for gallery videos
-        supabaseFilename = filename.replace(/_/g, ' ');
-        console.log(`🔄 GALLERY VIDEO FIX v1.0.11: Converting underscores to spaces`);
-        console.log(`   - JSON filename: ${filename}`);
-        console.log(`   - Supabase filename: ${supabaseFilename}`);
-      }
+      console.log(`🎯 GALLERY VIDEO FIX v1.0.11: Using original filename for Supabase`);
+      console.log(`   - Filename: ${filename}`);
+      console.log(`   - Using for Supabase: ${supabaseFilename}`);
       
       // CRITICAL FIX v1.0.7: Properly encode filename for Supabase URL while preserving original for cache
       // Gallery videos like "1753390495474-Pom Gallery (RAV AAA_001) compressed.mp4" need URL encoding
@@ -668,10 +664,19 @@ export class VideoCache {
       const cacheFile = this.getVideoCacheFilePath(filename); // Keep original filename for cache lookup
       
       console.log(`📥 PRODUCTION URL ENCODING v1.0.11 WITH FIX: Downloading ${filename} from Supabase...`);
-      console.log(`   - Original filename: ${filename}`);
-      console.log(`   - Supabase filename: ${supabaseFilename}`);
-      console.log(`   - URL encoded filename: ${encodedFilename}`);
-      console.log(`   - Final Supabase URL: ${fullVideoUrl}`);
+      console.log(`   - Original filename: "${filename}"`);
+      console.log(`   - Supabase filename: "${supabaseFilename}"`);
+      console.log(`   - URL encoded filename: "${encodedFilename}"`);
+      console.log(`   - Final Supabase URL: "${fullVideoUrl}"`);
+      
+      // EXTENSIVE DEBUG v1.0.11 - Character analysis
+      console.log(`🔍 EXTENSIVE DEBUG v1.0.11 - Character-by-character analysis:`);
+      console.log(`   - Filename characters: [${filename.split('').map(c => `'${c}'(${c.charCodeAt(0)})`).join(', ')}]`);
+      console.log(`   - Starts with 'gallery_': ${filename.startsWith('gallery_')}`);
+      console.log(`   - Contains spaces: ${supabaseFilename.includes(' ')}`);
+      console.log(`   - Contains underscores: ${supabaseFilename.includes('_')}`);
+      console.log(`   - URL after encoding check: ${decodeURIComponent(encodedFilename) === supabaseFilename}`);
+      console.log(`   - Request headers: User-Agent=MEMOPYK-CachePreloader/1.0`);
       
       const fetch = (await import('node-fetch')).default;
       const response = await fetch(fullVideoUrl, {
@@ -734,7 +739,7 @@ export class VideoCache {
    * Ensures first visitors get instant performance, never wait for Supabase downloads
    */
   async immediatePreloadCriticalAssets(): Promise<void> {
-    console.log(`🚀 MEMOPYK PRODUCTION PRELOAD v1.0.9 - Starting immediate preload of critical assets...`);
+    console.log(`🚀 MEMOPYK PRODUCTION PRELOAD v1.0.11 - Starting immediate preload of critical assets...`);
     console.log(`📊 NODE_ENV: ${process.env.NODE_ENV || 'undefined'}`);
     console.log(`📁 Cache directories: videos=${this.videoCacheDir}, images=${this.imageCacheDir}`);
     
@@ -747,10 +752,10 @@ export class VideoCache {
       ]);
       
       const finalStats = this.getCacheStats();
-      console.log(`✅ PRODUCTION PRELOAD COMPLETE v1.0.9! Cache: ${finalStats.fileCount} files, ${finalStats.sizeMB}MB`);
+      console.log(`✅ PRODUCTION PRELOAD COMPLETE v1.0.11! Cache: ${finalStats.fileCount} files, ${finalStats.sizeMB}MB`);
       console.log(`🎯 First visitors will get instant ~50ms performance, never 1500ms CDN waits`);
     } catch (error) {
-      console.error('❌ PRODUCTION PRELOAD FAILED v1.0.9:', error);
+      console.error('❌ PRODUCTION PRELOAD FAILED v1.0.11:', error);
       console.error('❌ Error details:', {
         message: error.message,
         stack: error.stack,

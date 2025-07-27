@@ -50,16 +50,17 @@ Preferred communication style: Simple, everyday language.
 - ✅ **Complete Tracking Prevention**: Updated useVideoAnalytics hook to stop tracking hero videos entirely at source
 - ✅ **Frontend Exclusion**: Video player components now skip analytics calls for hero videos automatically
 
-## Recent Changes (July 27, 2025)
+## Recent Changes (July 28, 2025)
 
-### CRITICAL PRODUCTION BUG FIX - Gallery Videos 500 Error FINAL RESOLUTION (July 27, 2025)
+### CRITICAL PRODUCTION BUG FIX - Gallery Videos 500 Error ULTIMATE RESOLUTION (July 28, 2025)
 **Production Gallery Video Failure Analysis - COMPLETE SOLUTION DEPLOYED:**
 ✅ **v1.0.5 Emergency Override**: Initial comprehensive error handling and debugging system
 ✅ **v1.0.6 Range Parsing Fix**: Fixed `Range: bytes=0-` request parsing bug (parseInt NaN issue)
 ✅ **v1.0.7-v1.0.8 URL Encoding Fixes**: Fixed Supabase URL encoding for gallery videos with special characters
-✅ **v1.0.9 FINAL FIX**: **ROOT CAUSE RESOLVED** - Fixed double encoding bug in video proxy fallback logic
-🎯 **Issue Identified**: Video proxy used `videoFilename` (potentially encoded) instead of `decodedFilename` for URL construction
-📊 **Technical Fix**: Always use original decoded filename for Supabase URL construction, preventing double encoding
+✅ **v1.0.9 Double Encoding Fix**: Fixed double encoding bug in video proxy fallback logic
+✅ **v1.0.12 FINAL FIX**: **FILENAME FORMAT RESOLVED** - Gallery videos in Supabase have underscores, not spaces
+🎯 **Root Cause**: Gallery JSON has underscores, automatic conversion to spaces was causing 400 errors
+📊 **Technical Fix**: Removed underscore-to-space conversion, use original filenames for Supabase URLs
 
 **Technical Implementation v1.0.9 - DOUBLE ENCODING BUG FIX:**
 - **Root Cause**: Video proxy fallback used `encodeURIComponent(videoFilename)` where `videoFilename` was already encoded
