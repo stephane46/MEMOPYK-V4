@@ -2106,17 +2106,17 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Clear cache endpoint
+  // Clear cache endpoint with immediate preload
   app.post("/api/video-cache/clear", async (req, res) => {
     try {
-      console.log('🗑️ Admin-triggered cache clear...');
+      console.log('🗑️ Admin-triggered cache clear with immediate preload...');
       
-      videoCache.clearCache();
+      await videoCache.clearCache(); // Now async with immediate preload
       const stats = await videoCache.getCacheStats();
       
       res.json({ 
         success: true,
-        message: "Video cache cleared successfully",
+        message: "Cache cleared and immediately repopulated for instant visitor performance",
         stats 
       });
     } catch (error) {

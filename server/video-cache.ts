@@ -11,8 +11,8 @@ export class VideoCache {
   constructor() {
     this.videoCacheDir = join(process.cwd(), 'server/cache/videos');
     this.imageCacheDir = join(process.cwd(), 'server/cache/images');
-    this.maxCacheSize = 1000 * 1024 * 1024; // 1GB total cache limit (REDUCED for production safety)
-    this.maxCacheAge = 3 * 24 * 60 * 60 * 1000; // 3 days (REDUCED for faster cleanup)
+    this.maxCacheSize = 1000 * 1024 * 1024; // 1GB total cache limit (sufficient for max 6 videos)
+    this.maxCacheAge = 30 * 24 * 60 * 60 * 1000; // 30 days (manual cleanup preferred)
     
     // Ensure cache directories exist
     try {
@@ -28,11 +28,11 @@ export class VideoCache {
       console.log(`✅ Video & Image cache initialized`);
       console.log(`📊 NODE_ENV: ${process.env.NODE_ENV || 'undefined'}`);
       
-      // Perform cache cleanup on startup to remove old files
-      this.performCacheCleanup();
+      // Skip automatic cleanup - manual management preferred for small video set
+      console.log(`📋 Manual cache management enabled for max 6 videos (3 hero + 3 gallery)`);
       
-      // Proactively preload critical videos on startup
-      this.preloadCriticalVideos();
+      // Immediate preloading to ensure first visitors get instant performance
+      this.immediatePreloadCriticalAssets();
     } catch (error: any) {
       console.error(`❌ Cache directory creation failed: ${error.message}`);
       console.error(`❌ Video cache dir path: ${this.videoCacheDir}`);
@@ -423,8 +423,8 @@ export class VideoCache {
       },
       management: {
         maxCacheDays: Math.round(this.maxCacheAge / (24 * 60 * 60 * 1000)),
-        autoCleanup: true,
-        nextCleanup: new Date(Date.now() + (24 * 60 * 60 * 1000)).toISOString().split('T')[0] // Tomorrow
+        autoCleanup: false, // Manual management preferred for small video set (max 6 videos)
+        nextCleanup: "Manual" // User manages cleanup as needed
       }
     };
   }
@@ -472,15 +472,29 @@ export class VideoCache {
   }
 
   /**
-   * Clear entire cache
+   * Clear entire cache and immediately preload critical assets
    */
-  clearCache(): void {
+  async clearCache(): Promise<void> {
     try {
-      const files = readdirSync(this.videoCacheDir);
-      files.forEach(file => {
+      const videoFiles = readdirSync(this.videoCacheDir);
+      const imageFiles = readdirSync(this.imageCacheDir);
+      
+      // Clear video cache
+      videoFiles.forEach(file => {
         unlinkSync(join(this.videoCacheDir, file));
       });
-      console.log(`🗑️ Cleared video cache (${files.length} files removed)`);
+      
+      // Clear image cache  
+      imageFiles.forEach(file => {
+        unlinkSync(join(this.imageCacheDir, file));
+      });
+      
+      console.log(`🗑️ Cache cleared: ${videoFiles.length} videos, ${imageFiles.length} images removed`);
+      console.log(`🚀 Immediately preloading critical assets to ensure instant visitor performance...`);
+      
+      // Immediate preload after cleanup ensures first visitors never wait for Supabase downloads
+      await this.immediatePreloadCriticalAssets();
+      
     } catch (error) {
       console.error('❌ Failed to clear cache:', error);
     }
@@ -667,6 +681,27 @@ export class VideoCache {
   private extractFilenameFromUrl(url: string): string {
     const parts = url.split('/');
     return parts[parts.length - 1];
+  }
+
+  /**
+   * Immediate preloading of all critical assets (videos + images) on startup
+   * Ensures first visitors get instant performance, never wait for Supabase downloads
+   */
+  async immediatePreloadCriticalAssets(): Promise<void> {
+    console.log(`🚀 Starting immediate preload of critical assets for instant visitor performance...`);
+    
+    try {
+      // Run hero videos and gallery assets preloading in parallel
+      await Promise.all([
+        this.preloadCriticalVideos(),
+        this.preloadGalleryVideos()
+      ]);
+      
+      console.log(`✅ Immediate preload complete! All critical assets cached for instant visitor performance`);
+    } catch (error) {
+      console.error('❌ Immediate preload failed:', error);
+      console.log(`⚠️ Some assets may need manual caching or will download on first request`);
+    }
   }
 
   /**

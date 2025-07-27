@@ -170,10 +170,23 @@ export const VideoCacheStatus: React.FC<VideoCacheStatusProps> = ({
     const date = new Date(dateString);
     const now = new Date();
     const diffHours = (now.getTime() - date.getTime()) / (1000 * 60 * 60);
+    const diffDays = diffHours / 24;
     
     if (diffHours < 1) return 'Just cached';
     if (diffHours < 24) return `${Math.floor(diffHours)}h ago`;
-    return `${Math.floor(diffHours / 24)}d ago`;
+    if (diffDays < 7) return `${Math.floor(diffDays)}d ago`;
+    return `${Math.floor(diffDays / 7)}w ago`;
+  };
+
+  const getCacheAgeColor = (dateString: string): string => {
+    const date = new Date(dateString);
+    const now = new Date();
+    const diffDays = (now.getTime() - date.getTime()) / (1000 * 60 * 60 * 24);
+    
+    if (diffDays < 1) return 'text-green-600'; // Fresh (< 1 day)
+    if (diffDays < 7) return 'text-blue-600';  // Recent (< 1 week)
+    if (diffDays < 30) return 'text-yellow-600'; // Older (< 1 month)
+    return 'text-red-600'; // Very old (> 1 month)
   };
 
   if (statusLoading) {
@@ -221,11 +234,11 @@ export const VideoCacheStatus: React.FC<VideoCacheStatusProps> = ({
                 </div>
               </div>
               <div className="space-y-2">
-                <div className="text-sm font-medium text-gray-700">Auto-Cleanup</div>
+                <div className="text-sm font-medium text-gray-700">Management</div>
                 <div className="flex items-center gap-2">
-                  <Badge variant="outline" className="bg-green-50 text-green-700 border-green-300">
-                    <CheckCircle className="h-3 w-3 mr-1" />
-                    {unifiedStats.management.maxCacheDays} days
+                  <Badge variant="outline" className="bg-blue-50 text-blue-700 border-blue-300">
+                    <Clock className="h-3 w-3 mr-1" />
+                    Manual Cleanup
                   </Badge>
                 </div>
               </div>
@@ -238,7 +251,11 @@ export const VideoCacheStatus: React.FC<VideoCacheStatusProps> = ({
               </div>
             </div>
             <div className="text-xs text-gray-600 mt-2">
-              Next automatic cleanup: {new Date(unifiedStats.management.nextCleanup).toLocaleDateString()}
+              {unifiedStats.management.nextCleanup === "Manual" ? (
+                <span>Manual management: Clear cache when needed for max 6 videos (3 hero + 3 gallery)</span>
+              ) : (
+                <span>Next cleanup: {new Date(unifiedStats.management.nextCleanup).toLocaleDateString()}</span>
+              )}
             </div>
           </CardContent>
         </Card>
@@ -310,7 +327,7 @@ export const VideoCacheStatus: React.FC<VideoCacheStatusProps> = ({
                           <span className="text-green-600">✅ Cached (~50ms)</span>
                           {status.size && <span>• {formatFileSize(status.size)}</span>}
                           {status.lastModified && (
-                            <span className="flex items-center gap-1">
+                            <span className={`flex items-center gap-1 ${getCacheAgeColor(status.lastModified)}`}>
                               • <Clock className="h-3 w-3" /> {formatLastModified(status.lastModified)}
                             </span>
                           )}
