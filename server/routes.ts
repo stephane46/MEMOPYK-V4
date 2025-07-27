@@ -1465,9 +1465,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
         cache: stats,
         timestamp: new Date().toISOString(),
         deployment: {
-          version: "Gallery Video Fix v1.0.8 - COMPLETE AUTO-DOWNLOAD FIX",
-          urlEncoding: "Both manual caching AND auto-download use encodeURIComponent",
-          limits: "5000MB video, 5000MB image"
+          version: "Gallery Video Fix v1.0.10 - MAXIMUM DEBUG DEPLOYMENT",
+          urlEncoding: "Fixed double encoding bug + extensive production debugging",
+          limits: "5000MB video, 5000MB image",
+          debug: "Maximum debugging enabled for production troubleshooting",
+          timestamp: Date.now()
         }
       });
     } catch (error) {
