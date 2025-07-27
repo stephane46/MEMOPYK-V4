@@ -65,6 +65,7 @@ Preferred communication style: Simple, everyday language.
 - All CRUD operations (create, read, update, delete) verified working correctly
 - Button text editable in French/English, URLs configurable, active status toggleable
 - **NEW**: CTA buttons now open in new window/tab using target="_blank" and rel="noopener noreferrer" for security
+- **LAYOUT UPDATE**: Removed ContactSection from HomePage - FAQ section now flows directly to Footer (Footer remains in Layout)
 
 ## Recent Changes (July 26, 2025)
 

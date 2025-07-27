@@ -5,7 +5,6 @@ import { WhyMemopykSection } from '../components/sections/WhyMemopykSection';
 import GallerySection from '../components/sections/GallerySection';
 import FAQSection from '../components/sections/FAQSection';
 import { CtaSection } from '../components/sections/CtaSection';
-import { ContactSection } from '../components/sections/ContactSection';
 
 
 export function HomePage() {
@@ -31,9 +30,6 @@ export function HomePage() {
 
       {/* FAQ Section */}
       <FAQSection />
-
-      {/* Contact Section */}
-      <ContactSection />
 
       {/* All Phase 6.2 Content Sections Complete */}
     </div>
