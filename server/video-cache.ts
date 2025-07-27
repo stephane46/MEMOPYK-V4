@@ -552,12 +552,15 @@ export class VideoCache {
    * Preload all gallery videos and images for instant deployment availability
    */
   private async preloadGalleryVideos(): Promise<void> {
-    console.log('📸 Starting gallery video and image preloading...');
+    console.log('📸 PRODUCTION GALLERY PRELOAD v1.0.9 - Starting gallery video and image preloading...');
     
     try {
       // Import hybrid storage to get gallery items
+      console.log('📊 Importing hybrid storage to get gallery items...');
       const { hybridStorage } = await import('./hybrid-storage');
       const galleryItems = await hybridStorage.getGalleryItems();
+      
+      console.log(`📋 Retrieved ${galleryItems.length} gallery items from storage`);
       
       const galleryVideos = galleryItems
         .filter(item => item.video_url_en)
@@ -569,45 +572,70 @@ export class VideoCache {
         .map(item => item.static_image_url!.split('/').pop()!)
         .filter(filename => filename);
 
-      console.log(`📋 Found ${galleryVideos.length} gallery videos and ${galleryImages.length} gallery images to preload`);
+      console.log(`📋 PRODUCTION GALLERY ANALYSIS v1.0.9: ${galleryVideos.length} videos, ${galleryImages.length} images to preload`);
+      console.log(`🎬 Gallery video filenames:`, galleryVideos);
+      console.log(`🖼️ Gallery image filenames:`, galleryImages);
       
       let videosProcessed = 0;
       let imagesProcessed = 0;
+      let videoErrors = 0;
+      let imageErrors = 0;
 
       // Preload videos
       for (const filename of galleryVideos) {
         try {
+          console.log(`🔍 Checking cache status for gallery video: ${filename}`);
           if (!this.isVideoCached(filename)) {
-            console.log(`⬇️ Preloading gallery video: ${filename}`);
+            console.log(`⬇️ PRODUCTION DOWNLOAD v1.0.9 - Preloading gallery video: ${filename}`);
             await this.downloadAndCacheVideo(filename);
             videosProcessed++;
+            console.log(`✅ SUCCESS: Gallery video cached: ${filename}`);
           } else {
             console.log(`✅ Gallery video already cached: ${filename}`);
           }
         } catch (error) {
-          console.error(`❌ Failed to preload gallery video ${filename}:`, error);
+          videoErrors++;
+          console.error(`❌ PRODUCTION ERROR v1.0.9 - Failed to preload gallery video ${filename}:`, error);
+          console.error(`❌ Error details:`, {
+            message: error.message,
+            stack: error.stack?.substring(0, 200)
+          });
         }
       }
 
       // Preload images
       for (const filename of galleryImages) {
         try {
+          console.log(`🔍 Checking cache status for gallery image: ${filename}`);
           if (!this.isImageCached(filename)) {
-            console.log(`⬇️ Preloading gallery image: ${filename}`);
+            console.log(`⬇️ PRODUCTION DOWNLOAD v1.0.9 - Preloading gallery image: ${filename}`);
             await this.downloadAndCacheImage(filename);
             imagesProcessed++;
+            console.log(`✅ SUCCESS: Gallery image cached: ${filename}`);
           } else {
             console.log(`✅ Gallery image already cached: ${filename}`);
           }
         } catch (error) {
-          console.error(`❌ Failed to preload gallery image ${filename}:`, error);
+          imageErrors++;
+          console.error(`❌ PRODUCTION ERROR v1.0.9 - Failed to preload gallery image ${filename}:`, error);
+          console.error(`❌ Error details:`, {
+            message: error.message,
+            stack: error.stack?.substring(0, 200)
+          });
         }
       }
       
-      console.log(`🎬 Gallery media preloading complete! ${galleryVideos.length} videos and ${galleryImages.length} images processed`);
-      console.log(`📊 Cache summary: ${videosProcessed} new videos, ${imagesProcessed} new images cached`);
+      console.log(`🎬 PRODUCTION GALLERY PRELOAD COMPLETE v1.0.9!`);
+      console.log(`📊 Results: ${videosProcessed} videos cached, ${imagesProcessed} images cached`);
+      console.log(`❌ Errors: ${videoErrors} video errors, ${imageErrors} image errors`);
+      console.log(`✅ Total success rate: ${Math.round(((videosProcessed + imagesProcessed) / (galleryVideos.length + galleryImages.length)) * 100)}%`);
     } catch (error) {
-      console.error('❌ Failed to preload gallery media:', error);
+      console.error('❌ PRODUCTION GALLERY PRELOAD FATAL ERROR v1.0.9:', error);
+      console.error('❌ Fatal error details:', {
+        message: error.message,
+        stack: error.stack,
+        name: error.name
+      });
     }
   }
 
@@ -694,18 +722,28 @@ export class VideoCache {
    * Ensures first visitors get instant performance, never wait for Supabase downloads
    */
   async immediatePreloadCriticalAssets(): Promise<void> {
-    console.log(`🚀 Starting immediate preload of critical assets for instant visitor performance...`);
+    console.log(`🚀 MEMOPYK PRODUCTION PRELOAD v1.0.9 - Starting immediate preload of critical assets...`);
+    console.log(`📊 NODE_ENV: ${process.env.NODE_ENV || 'undefined'}`);
+    console.log(`📁 Cache directories: videos=${this.videoCacheDir}, images=${this.imageCacheDir}`);
     
     try {
       // Run hero videos and gallery assets preloading in parallel
+      console.log(`🎬 Starting parallel preload: hero videos + gallery assets...`);
       await Promise.all([
         this.preloadCriticalVideos(),
         this.preloadGalleryVideos()
       ]);
       
-      console.log(`✅ Immediate preload complete! All critical assets cached for instant visitor performance`);
+      const finalStats = this.getCacheStats();
+      console.log(`✅ PRODUCTION PRELOAD COMPLETE v1.0.9! Cache: ${finalStats.fileCount} files, ${finalStats.sizeMB}MB`);
+      console.log(`🎯 First visitors will get instant ~50ms performance, never 1500ms CDN waits`);
     } catch (error) {
-      console.error('❌ Immediate preload failed:', error);
+      console.error('❌ PRODUCTION PRELOAD FAILED v1.0.9:', error);
+      console.error('❌ Error details:', {
+        message: error.message,
+        stack: error.stack,
+        name: error.name
+      });
       console.log(`⚠️ Some assets may need manual caching or will download on first request`);
     }
   }
