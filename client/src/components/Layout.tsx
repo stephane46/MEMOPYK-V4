@@ -55,24 +55,38 @@ export function Layout({ children }: LayoutProps) {
 
             {/* Language Toggle & Mobile Menu */}
             <div className="flex items-center space-x-4">
-              <button
-                onClick={toggleLanguage}
-                className="px-3 py-2 rounded-md text-sm font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-100 transition-colors"
-              >
-                {language === 'fr-FR' ? (
-                  <img 
-                    src="https://flagcdn.com/w40/fr.png" 
-                    alt="French"
-                    className="w-8 h-6 object-cover rounded shadow-sm"
-                  />
-                ) : (
+              <div className="flex items-center space-x-2">
+                <button
+                  onClick={() => setLanguage('en-US')}
+                  className={`p-2 rounded-md transition-all ${
+                    language === 'en-US' 
+                      ? 'border-2 border-blue-500 bg-blue-50 shadow-md' 
+                      : 'border-2 border-transparent hover:border-gray-300 hover:bg-gray-50'
+                  }`}
+                  title="Switch to English"
+                >
                   <img 
                     src="https://flagcdn.com/w40/us.png" 
                     alt="English"
-                    className="w-8 h-6 object-cover rounded shadow-sm"
+                    className="w-8 h-6 object-cover rounded"
                   />
-                )}
-              </button>
+                </button>
+                <button
+                  onClick={() => setLanguage('fr-FR')}
+                  className={`p-2 rounded-md transition-all ${
+                    language === 'fr-FR' 
+                      ? 'border-2 border-blue-500 bg-blue-50 shadow-md' 
+                      : 'border-2 border-transparent hover:border-gray-300 hover:bg-gray-50'
+                  }`}
+                  title="Passer au français"
+                >
+                  <img 
+                    src="https://flagcdn.com/w40/fr.png" 
+                    alt="French"
+                    className="w-8 h-6 object-cover rounded"
+                  />
+                </button>
+              </div>
 
               {/* Mobile menu button */}
               <button className="md:hidden p-2 rounded-md text-gray-600 hover:text-gray-900 hover:bg-gray-100">
