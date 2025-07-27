@@ -59,9 +59,19 @@ export function Layout({ children }: LayoutProps) {
                 onClick={toggleLanguage}
                 className="px-3 py-2 rounded-md text-sm font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-100 transition-colors"
               >
-                <span className="text-3xl">
-                  {language === 'fr-FR' ? '🇫🇷' : '🇺🇸'}
-                </span>
+                {language === 'fr-FR' ? (
+                  <img 
+                    src="https://flagcdn.com/w40/fr.png" 
+                    alt="French"
+                    className="w-8 h-6 object-cover rounded shadow-sm"
+                  />
+                ) : (
+                  <img 
+                    src="https://flagcdn.com/w40/us.png" 
+                    alt="English"
+                    className="w-8 h-6 object-cover rounded shadow-sm"
+                  />
+                )}
               </button>
 
               {/* Mobile menu button */}
