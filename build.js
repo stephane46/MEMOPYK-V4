@@ -23,10 +23,28 @@ try {
   // Step 3: Use tsx for production TypeScript execution (no compilation needed)
   console.log('🔧 TypeScript backend ready (using tsx runtime)...');
   
+  // Ensure all server files are ready for deployment
+  console.log('📄 Verifying server files for deployment...');
+  const serverFiles = ['server/index.ts', 'server/routes.ts', 'server/video-cache.ts', 'server/hybrid-storage.ts'];
+  serverFiles.forEach(file => {
+    if (!fs.existsSync(file)) {
+      throw new Error(`Missing critical server file: ${file}`);
+    }
+    console.log(`   ✅ ${file} ready`);
+  });
+  
   // Update package.json start script to use tsx in production
   const packageJson = JSON.parse(fs.readFileSync('package.json', 'utf8'));
   packageJson.scripts.start = 'NODE_ENV=production tsx server/index.ts';
   fs.writeFileSync('package.json', JSON.stringify(packageJson, null, 2));
+  
+  // Create deployment marker with timestamp to force fresh deployment
+  const deploymentMarker = {
+    timestamp: new Date().toISOString(),
+    fix: 'Gallery video range request parsing fix',
+    commit: 'Range parsing bug fixed - production ready'
+  };
+  fs.writeFileSync('DEPLOYMENT_MARKER.json', JSON.stringify(deploymentMarker, null, 2));
   
   // Step 3: Ensure cache directories exist
   console.log('📋 Setting up production directories...');
