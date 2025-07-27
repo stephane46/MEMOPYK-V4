@@ -917,16 +917,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Create new CTA setting
   app.post("/api/cta", async (req, res) => {
     try {
-      const { id, titleFr, titleEn, buttonTextFr, buttonTextEn, buttonUrl, isActive } = req.body;
+      const { id, buttonTextFr, buttonTextEn, buttonUrl, isActive } = req.body;
       
-      if (!id || !titleFr || !titleEn || !buttonTextFr || !buttonTextEn || !buttonUrl) {
+      if (!id || !buttonTextFr || !buttonTextEn || !buttonUrl) {
         return res.status(400).json({ error: "All fields required" });
       }
 
       const newCta = await hybridStorage.createCtaSettings({
         id,
-        titleFr,
-        titleEn,
         buttonTextFr,
         buttonTextEn,
         buttonUrl,

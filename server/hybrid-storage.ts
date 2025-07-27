@@ -808,8 +808,6 @@ export class HybridStorage implements HybridStorageInterface {
           .from('cta_settings')
           .insert({
             id: ctaData.id,
-            title_fr: ctaData.titleFr,
-            title_en: ctaData.titleEn,
             button_text_fr: ctaData.buttonTextFr,
             button_text_en: ctaData.buttonTextEn,
             button_url: ctaData.buttonUrl,
@@ -824,8 +822,6 @@ export class HybridStorage implements HybridStorageInterface {
           // Convert back and update JSON backup
           const converted = {
             id: data.id,
-            title_fr: data.title_fr,
-            title_en: data.title_en,
             button_text_fr: data.button_text_fr,
             button_text_en: data.button_text_en,
             button_url: data.button_url,
@@ -850,8 +846,6 @@ export class HybridStorage implements HybridStorageInterface {
     const settings = this.loadJsonFile('cta-settings.json');
     const newSetting = {
       id: ctaData.id,
-      title_fr: ctaData.titleFr,
-      title_en: ctaData.titleEn,
       button_text_fr: ctaData.buttonTextFr,
       button_text_en: ctaData.buttonTextEn,
       button_url: ctaData.buttonUrl,
