@@ -24,7 +24,7 @@ export function Layout({ children }: LayoutProps) {
   return (
     <div className="min-h-screen bg-white">
       {/* Fixed Navigation */}
-      <nav className="fixed top-0 left-0 right-0 z-50 bg-white shadow-sm border-b">
+      <nav className="fixed top-0 left-0 right-0 z-50 bg-memopyk-cream shadow-sm border-b">
         <div className="container mx-auto px-4">
           <div className="flex justify-between items-center h-16">
             {/* Logo */}
@@ -60,7 +60,7 @@ export function Layout({ children }: LayoutProps) {
                   onClick={() => setLanguage('en-US')}
                   className={`p-2 rounded-md transition-all ${
                     language === 'en-US' 
-                      ? 'border-2 border-memopyk-orange bg-memopyk-cream shadow-md' 
+                      ? 'border-2 border-memopyk-navy bg-white shadow-md' 
                       : 'border-2 border-transparent hover:border-memopyk-blue-gray hover:bg-gray-50'
                   }`}
                   title="Switch to English"
@@ -75,7 +75,7 @@ export function Layout({ children }: LayoutProps) {
                   onClick={() => setLanguage('fr-FR')}
                   className={`p-2 rounded-md transition-all ${
                     language === 'fr-FR' 
-                      ? 'border-2 border-memopyk-orange bg-memopyk-cream shadow-md' 
+                      ? 'border-2 border-memopyk-navy bg-white shadow-md' 
                       : 'border-2 border-transparent hover:border-memopyk-blue-gray hover:bg-gray-50'
                   }`}
                   title="Passer au français"
