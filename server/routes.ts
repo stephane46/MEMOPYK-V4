@@ -1214,16 +1214,25 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   // DUPLICATE FAQ ROUTES REMOVED - Using detailed routes above
 
-  // Video streaming proxy with caching system - ULTRA-ROBUST v1.0.3
+  // Video streaming proxy with caching system - EMERGENCY OVERRIDE v1.0.5
   app.get("/api/video-proxy", async (req, res) => {
-    // Prevent any uncaught errors from crashing the server
-    process.on('uncaughtException', (error) => {
-      console.error('🚨 UNCAUGHT EXCEPTION in video-proxy:', error);
-    });
+    // EMERGENCY: Wrap everything in bulletproof error handling
+    const emergencyErrorHandler = (error: any) => {
+      console.error('🚨 EMERGENCY HANDLER - VIDEO PROXY ERROR:', error);
+      if (!res.headersSent) {
+        res.status(500).json({ 
+          error: "Emergency error handler activated",
+          message: error.message,
+          version: "v1.0.5-emergency",
+          timestamp: new Date().toISOString()
+        });
+      }
+    };
     
-    process.on('unhandledRejection', (reason, promise) => {
-      console.error('🚨 UNHANDLED REJECTION in video-proxy:', reason);
-    });
+    process.removeAllListeners('uncaughtException');
+    process.removeAllListeners('unhandledRejection');
+    process.on('uncaughtException', emergencyErrorHandler);
+    process.on('unhandledRejection', emergencyErrorHandler);
     
     try {
       const { url, filename } = req.query;
@@ -1396,7 +1405,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         cache: stats,
         timestamp: new Date().toISOString(),
         deployment: {
-          version: "Gallery Video Fix v1.0.4 - Bulletproof",
+          version: "Gallery Video Fix v1.0.5 - Emergency Override",
           fileFilters: "MIME+Extension checking active",
           limits: "5000MB video, 5000MB image"
         }
