@@ -622,14 +622,15 @@ export class VideoCache {
         console.log(`📁 Created cache directory for download: ${this.videoCacheDir}`);
       }
       
-      // PRODUCTION FIX: Filename comes already decoded from Express URL parser
-      // We need to encode it once for the Supabase URL (no double decoding)
-      const fullVideoUrl = customUrl || `https://supabase.memopyk.org/storage/v1/object/public/memopyk-gallery/${encodeURIComponent(filename)}`;
+      // CRITICAL FIX: Don't double-encode! Database already contains encoded filenames
+      // If customUrl is provided, use it directly. Otherwise, use filename as-is (already encoded in DB)
+      const fullVideoUrl = customUrl || `https://supabase.memopyk.org/storage/v1/object/public/memopyk-gallery/${filename}`;
       const cacheFile = this.getVideoCacheFilePath(filename);
       
-      console.log(`📥 PRODUCTION URL ENCODING FIX: Downloading ${filename} from Supabase...`);
-      console.log(`   - Filename (Express decoded): ${filename}`);
+      console.log(`📥 FINAL URL ENCODING FIX: Downloading ${filename} from Supabase...`);
+      console.log(`   - Filename (from DB/frontend): ${filename}`);
       console.log(`   - Final Supabase URL: ${fullVideoUrl}`);
+      console.log(`   - NOT encoding filename - using as-is from database`);
       
       const fetch = (await import('node-fetch')).default;
       const response = await fetch(fullVideoUrl, {
