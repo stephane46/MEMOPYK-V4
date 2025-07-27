@@ -64,6 +64,7 @@ Preferred communication style: Simple, everyday language.
 - Admin can manage existing 2 CTA buttons (Quick Quote, Book a Call) without individual titles
 - All CRUD operations (create, read, update, delete) verified working correctly
 - Button text editable in French/English, URLs configurable, active status toggleable
+- **NEW**: CTA buttons now open in new window/tab using target="_blank" and rel="noopener noreferrer" for security
 
 ## Recent Changes (July 26, 2025)
 
