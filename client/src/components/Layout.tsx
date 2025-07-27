@@ -57,9 +57,9 @@ export function Layout({ children }: LayoutProps) {
             <div className="flex items-center space-x-4">
               <button
                 onClick={toggleLanguage}
-                className="flex items-center space-x-2 px-3 py-2 rounded-md text-sm font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-100 transition-colors"
+                className="px-3 py-2 rounded-md text-sm font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-100 transition-colors"
               >
-                <span className="text-2xl">
+                <span className="text-3xl">
                   {language === 'fr-FR' ? '🇫🇷' : '🇺🇸'}
                 </span>
               </button>
