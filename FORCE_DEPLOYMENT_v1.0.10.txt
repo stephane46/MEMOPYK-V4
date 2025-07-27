@@ -1,0 +1,10 @@
+FORCE DEPLOYMENT v1.0.10 - MAXIMUM DEBUG ENABLED
+Timestamp: 2025-07-27T21:18:00.000Z
+
+CHANGES MADE:
+- Added comprehensive debugging to video proxy route
+- Enhanced error logging with full request context
+- Updated version markers throughout codebase
+- Added extensive debug output for production troubleshooting
+
+DEPLOYMENT MARKER: This file forces a new deployment with v1.0.10 changes
