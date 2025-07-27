@@ -4,6 +4,7 @@ import { HowItWorksSection } from '../components/sections/HowItWorksSection';
 import { WhyMemopykSection } from '../components/sections/WhyMemopykSection';
 import GallerySection from '../components/sections/GallerySection';
 import FAQSection from '../components/sections/FAQSection';
+import { CtaSection } from '../components/sections/CtaSection';
 import { ContactSection } from '../components/sections/ContactSection';
 
 
@@ -27,6 +28,9 @@ export function HomePage() {
 
       {/* FAQ Section */}
       <FAQSection />
+
+      {/* Call to Action Section */}
+      <CtaSection />
 
       {/* Contact Section */}
       <ContactSection />
