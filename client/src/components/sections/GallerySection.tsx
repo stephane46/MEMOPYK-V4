@@ -212,6 +212,8 @@ export default function GallerySection() {
       
       const proxyUrl = `/api/video-proxy?filename=${encodeURIComponent(filename || '')}`;
       console.log('🎬 GALLERY VIDEO PROXY URL:', proxyUrl, '(from', rawVideoUrl + ')');
+      console.log('🎬 DECODED FILENAME:', filename);
+      console.log('🎬 ENCODED FOR URL:', encodeURIComponent(filename || ''));
       
       setPreviewItem({
         type: 'video',
