@@ -66,11 +66,6 @@ export function HowItWorksSection() {
             const isMiddleCard = step.number === 2;
             return (
               <div key={step.number} className="relative h-full">
-                {/* Connection Line (except for last step) */}
-                {index < steps.length - 1 && (
-                  <div className="hidden lg:block absolute top-40 left-full w-full h-0.5 bg-gradient-to-r from-memopyk-cream/30 to-memopyk-cream/10 transform -translate-x-1/2 z-0"></div>
-                )}
-                
                 {/* Step Card */}
                 <div className={`relative bg-memopyk-dark-blue rounded-3xl shadow-2xl text-center group hover:shadow-3xl transition-all duration-500 transform hover:-translate-y-2 z-10 h-full flex flex-col p-12 ${
                   isMiddleCard ? 'border-4 border-memopyk-orange' : ''
