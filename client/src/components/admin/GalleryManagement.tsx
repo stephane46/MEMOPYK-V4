@@ -997,8 +997,8 @@ export default function GalleryManagement() {
           .filter(filename => filename)
         }
         title="Gallery Videos Cache Status"
-        showForceAllButton={true}
-        description="Gallery videos shown below. Total Cache includes all videos (hero + gallery). Force Cache All downloads any missing videos."
+        showForceAllButton={false}
+        description="Gallery video caching status. Videos are cached locally for ~50ms performance vs ~1500ms direct streaming."
       />
 
       <div className="space-y-4">

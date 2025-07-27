@@ -219,17 +219,15 @@ export const VideoCacheStatus: React.FC<VideoCacheStatusProps> = ({
         )}
       </CardHeader>
       <CardContent>
-        {/* Overall cache stats */}
-        {cacheStats && (
-          <div className="mb-4 p-3 bg-muted rounded-lg">
-            <div className="flex items-center justify-between text-sm">
-              <span>Server Total: {cacheStats.fileCount} files ({cacheStats.sizeMB}MB) • This Section: {cachedCount}/{totalCount}</span>
-              <span className="text-muted-foreground">
-                Performance: ~50ms cached vs ~1500ms uncached
-              </span>
-            </div>
+        {/* Section-specific cache stats only */}
+        <div className="mb-4 p-3 bg-muted rounded-lg">
+          <div className="flex items-center justify-between text-sm">
+            <span>This Section: {cachedCount}/{totalCount} cached ({totalCount > 0 ? Math.round((cachedCount/totalCount)*100) : 0}%)</span>
+            <span className="text-muted-foreground">
+              Performance: ~50ms cached vs ~1500ms uncached
+            </span>
           </div>
-        )}
+        </div>
 
         {/* Individual video status */}
         <div className="space-y-3">
