@@ -1283,8 +1283,15 @@ export async function registerRoutes(app: Express): Promise<Server> {
         if (range) {
           console.log(`   - Processing range request: ${range}`);
           const parts = range.replace(/bytes=/, "").split("-");
-          const start = parseInt(parts[0], 10);
-          const end = parts[1] ? parseInt(parts[1], 10) : fileSize - 1;
+          const start = parseInt(parts[0], 10) || 0;
+          const end = (parts[1] && parts[1].trim()) ? parseInt(parts[1], 10) : fileSize - 1;
+          
+          // Validate range values to prevent NaN errors
+          if (isNaN(start) || isNaN(end) || start < 0 || end >= fileSize || start > end) {
+            console.error(`❌ Invalid range: ${range} (start: ${start}, end: ${end}, fileSize: ${fileSize})`);
+            return res.status(416).json({ error: 'Invalid range request' });
+          }
+          
           const chunksize = (end - start) + 1;
           console.log(`   - Range: ${start}-${end}, chunk size: ${chunksize}`);
 
