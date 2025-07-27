@@ -102,31 +102,7 @@ export function WhyMemopykSection() {
           })}
         </div>
 
-        {/* Trust Indicators */}
-        <div className="mt-16 text-center">
-          <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-8 shadow-lg border border-memopyk-sky-blue/20">
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-              <div>
-                <div className="text-3xl font-bold text-memopyk-orange mb-2">100+</div>
-                <p className="text-memopyk-dark-blue">
-                  {language === 'fr-FR' ? 'Films créés' : 'Films created'}
-                </p>
-              </div>
-              <div>
-                <div className="text-3xl font-bold text-memopyk-orange mb-2">24h</div>
-                <p className="text-memopyk-dark-blue">
-                  {language === 'fr-FR' ? 'Temps de réponse' : 'Response time'}
-                </p>
-              </div>
-              <div>
-                <div className="text-3xl font-bold text-memopyk-orange mb-2">100%</div>
-                <p className="text-memopyk-dark-blue">
-                  {language === 'fr-FR' ? 'Satisfaction client' : 'Client satisfaction'}
-                </p>
-              </div>
-            </div>
-          </div>
-        </div>
+
       </div>
     </section>
   );
