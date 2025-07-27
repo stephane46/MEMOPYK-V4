@@ -74,8 +74,8 @@ export function HowItWorksSection() {
                 <div className="relative bg-memopyk-dark-blue rounded-3xl shadow-2xl text-center group hover:shadow-3xl transition-all duration-500 transform hover:-translate-y-2 z-10 h-full flex flex-col p-12">
                   
                   {/* Step Image */}
-                  <div className="mb-8 mt-2">
-                    <div className="w-56 h-56 mx-auto bg-memopyk-cream rounded-3xl p-6 shadow-lg">
+                  <div className="mb-8">
+                    <div className="w-64 h-64 mx-auto bg-memopyk-cream rounded-3xl p-6 shadow-lg">
                       <img 
                         src={step.image}
                         alt={language === 'fr-FR' ? step.titleFr : step.titleEn}
