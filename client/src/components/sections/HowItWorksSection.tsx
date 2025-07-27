@@ -60,22 +60,22 @@ export function HowItWorksSection() {
         </div>
 
         {/* Steps */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
           {steps.map((step, index) => {
             const Icon = step.icon;
             return (
               <div key={step.number} className="relative h-full">
                 {/* Connection Line (except for last step) */}
                 {index < steps.length - 1 && (
-                  <div className="hidden lg:block absolute top-24 left-full w-full h-0.5 bg-gradient-to-r from-memopyk-sky-blue to-memopyk-blue-gray/30 transform -translate-x-1/2 z-0"></div>
+                  <div className="hidden lg:block absolute top-32 left-full w-full h-0.5 bg-gradient-to-r from-memopyk-sky-blue to-memopyk-blue-gray/30 transform -translate-x-1/2 z-0"></div>
                 )}
                 
                 {/* Step Card */}
-                <div className="relative bg-memopyk-dark-blue rounded-3xl shadow-2xl text-center group hover:shadow-3xl transition-all duration-500 transform hover:-translate-y-2 z-10 h-full flex flex-col p-8">
+                <div className="relative bg-memopyk-dark-blue rounded-3xl shadow-2xl text-center group hover:shadow-3xl transition-all duration-500 transform hover:-translate-y-2 z-10 h-full flex flex-col p-12">
                   
                   {/* Step Image */}
-                  <div className="mb-6 mt-4">
-                    <div className="w-32 h-32 mx-auto bg-memopyk-cream rounded-2xl p-4 shadow-lg">
+                  <div className="mb-8 mt-6">
+                    <div className="w-48 h-48 mx-auto bg-memopyk-cream rounded-3xl p-6 shadow-lg">
                       <img 
                         src={step.image}
                         alt={language === 'fr-FR' ? step.titleFr : step.titleEn}
@@ -85,27 +85,26 @@ export function HowItWorksSection() {
                   </div>
 
                   {/* Step Title */}
-                  <h3 className="text-xl font-bold text-white mb-4">
+                  <h3 className="text-2xl font-bold text-white mb-6">
                     {step.number}. {language === 'fr-FR' ? step.titleFr : step.titleEn}
                   </h3>
 
                   {/* Step Description */}
-                  <p className="text-white/90 leading-relaxed text-sm mb-4 flex-grow">
+                  <p className="text-white/90 leading-relaxed text-base mb-6 flex-grow">
                     {language === 'fr-FR' ? step.descriptionFr : step.descriptionEn}
                   </p>
 
                   {/* Sub Description */}
-                  <div className="mt-4 pt-4 border-t border-white/20">
-                    <div className="flex items-start space-x-2">
-                      <div className="w-4 h-4 rounded-full bg-memopyk-cream mt-1 flex-shrink-0 flex items-center justify-center">
-                        <Icon className="w-2 h-2 text-memopyk-dark-blue" />
+                  <div className="mt-6 pt-6 border-t border-white/20">
+                    <div className="flex items-start space-x-3">
+                      <div className="w-6 h-6 rounded-full bg-memopyk-cream mt-1 flex-shrink-0 flex items-center justify-center">
+                        <Icon className="w-3 h-3 text-memopyk-dark-blue" />
                       </div>
-                      <p className="text-white/80 text-xs leading-relaxed">
+                      <p className="text-white/80 text-sm leading-relaxed">
                         {language === 'fr-FR' ? step.subDescriptionFr : step.subDescriptionEn}
                       </p>
                     </div>
                   </div>
-
 
                 </div>
               </div>
