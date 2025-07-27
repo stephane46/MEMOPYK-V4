@@ -119,10 +119,13 @@ export default function GallerySection() {
 
   const getItemUrl = (item: GalleryItem, type: 'video' | 'image') => {
     if (type === 'video') {
-      // Use direct CDN URLs since proxy system has deployment issues
+      // Use video proxy for automatic caching (same as hero videos)
       const videoUrl = language === 'fr-FR' ? item.videoUrlFr : item.videoUrlEn;
-      console.log(`🎬 DIRECT CDN VIDEO URL: ${videoUrl}`);
-      return videoUrl;
+      // Extract filename from full URL
+      const filename = videoUrl.includes('/') ? videoUrl.split('/').pop() : videoUrl;
+      const proxyUrl = `/api/video-proxy?filename=${encodeURIComponent(filename || '')}`;
+      console.log(`🎬 GALLERY VIDEO PROXY URL: ${proxyUrl} (from ${videoUrl})`);
+      return proxyUrl;
     } else {
       // Prioritize static image (300x200 cropped) if available, otherwise use regular image
       let imageUrl = '';
@@ -176,13 +179,15 @@ export default function GallerySection() {
     e.stopPropagation();
     
     if (hasVideo(item)) {
-      // Original behavior: play video with pulsing orange button
-      const videoUrl = language === 'fr-FR' ? item.videoUrlFr : item.videoUrlEn;
-      console.log('🎬 DIRECT CDN VIDEO URL:', videoUrl);
+      // Use video proxy for automatic caching (same as hero videos)
+      const rawVideoUrl = language === 'fr-FR' ? item.videoUrlFr : item.videoUrlEn;
+      const filename = rawVideoUrl.includes('/') ? rawVideoUrl.split('/').pop() : rawVideoUrl;
+      const proxyUrl = `/api/video-proxy?filename=${encodeURIComponent(filename || '')}`;
+      console.log('🎬 GALLERY VIDEO PROXY URL:', proxyUrl, '(from', rawVideoUrl + ')');
       
       setPreviewItem({
         type: 'video',
-        url: videoUrl,
+        url: proxyUrl,
         title: getItemTitle(item),
         itemId: String(item.id),
         width: item.videoWidth,
