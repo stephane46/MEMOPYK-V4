@@ -1,6 +1,6 @@
 {
   "name": "workspace",
-  "version": "1.0.0",
+  "version": "1.0.10",
   "main": "postcss.config.js",
   "dependencies": {
     "@hookform/resolvers": "^3.10.0",

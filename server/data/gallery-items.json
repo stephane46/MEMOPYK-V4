@@ -47,54 +47,5 @@
       },
       "format": "PNG"
     }
-  },
-  {
-    "id": 1753390724196,
-    "title_en": "The summer of Pom",
-    "title_fr": "L'été de Pom",
-    "source_en": "50 photos & 22 videos",
-    "source_fr": "50 photos & 22 videos",
-    "duration_en": "3 minutes",
-    "duration_fr": "3 minutes",
-    "situation_en": "3 minutes",
-    "situation_fr": "",
-    "story_en": "The Client is the dogsitters who wants to surprise the owners of Pom, who are also their friends.",
-    "story_fr": "Le Client est ...",
-    "sorry_message_en": "Sorry, we cannot show you the video at this stage",
-    "sorry_message_fr": "Désolé, nous ne pouvons pas vous montrer la vidéo à ce stade",
-    "video_url_en": "https://supabase.memopyk.org/storage/v1/object/public/memopyk-gallery/1753390495474-Pom%20Gallery%20(RAV%20AAA_001)%20compressed.mp4",
-    "video_url_fr": "https://supabase.memopyk.org/storage/v1/object/public/memopyk-gallery/1753390495474-Pom%20Gallery%20(RAV%20AAA_001)%20compressed.mp4",
-    "video_width": 1080,
-    "video_height": 1350,
-    "video_orientation": "portrait",
-    "image_url_en": "https://supabase.memopyk.org/storage/v1/object/public/memopyk-gallery/1753390526482-AAA_002_0000014%20(3).jpg",
-    "image_url_fr": "https://supabase.memopyk.org/storage/v1/object/public/memopyk-gallery/1753390526482-AAA_002_0000014%20(3).jpg",
-    "price_en": "USD 225",
-    "price_fr": "225 €",
-    "alt_text_en": "",
-    "alt_text_fr": "",
-    "order_index": 2,
-    "is_active": true,
-    "use_same_video": true,
-    "created_at": "2025-07-24T20:58:44.196Z",
-    "updated_at": "2025-07-25T06:05:46.791Z",
-    "static_image_url": "https://supabase.memopyk.org/storage/v1/object/public/memopyk-gallery/static_1753390724196.png?v=1753429546258",
-    "crop_settings": {
-      "method": "draggable-cover-hd",
-      "position": {
-        "x": 42.66666666666667,
-        "y": 0
-      },
-      "devicePixelRatio": 2.25,
-      "originalDimensions": {
-        "width": 3024,
-        "height": 2127
-      },
-      "outputDimensions": {
-        "width": 300,
-        "height": 200
-      },
-      "format": "PNG"
-    }
   }
 ]
