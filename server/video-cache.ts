@@ -359,7 +359,7 @@ export class VideoCache {
         }
       });
     } catch (error: any) {
-      console.error(`❌ Failed to download and cache image ${cleanFilename}: ${error.message}`);
+      console.error(`❌ Failed to download and cache image ${filename}: ${error.message}`);
       throw error;
     }
   }

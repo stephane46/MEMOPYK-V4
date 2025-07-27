@@ -1286,15 +1286,22 @@ export async function registerRoutes(app: Express): Promise<Server> {
       if (!cachedVideo) {
         console.log(`🚨 VIDEO NOT CACHED: ${videoFilename} - FORCING download and cache before serving`);
         try {
-          await videoCache.downloadAndCacheVideo(videoFilename);
+          // CRITICAL FIX v1.0.8: Provide properly encoded URL for Supabase download
+          const encodedForDownload = encodeURIComponent(videoFilename);
+          const supabaseUrl = `https://supabase.memopyk.org/storage/v1/object/public/memopyk-gallery/${encodedForDownload}`;
+          console.log(`   - Building Supabase URL with encoding: ${supabaseUrl}`);
+          await videoCache.downloadAndCacheVideo(videoFilename, supabaseUrl);
           cachedVideo = videoCache.getCachedVideoPath(videoFilename);
           console.log(`✅ FORCED download successful for ${videoFilename} - now serving from cache`);
         } catch (downloadError: any) {
           console.error(`❌ CRITICAL: Failed to download ${videoFilename}: ${downloadError.message}`);
+          console.error(`   - Attempted URL encoding: ${encodeURIComponent(videoFilename)}`);
+          console.error(`   - Original filename: ${videoFilename}`);
           return res.status(500).json({ 
             error: `Video caching failed - cannot serve video`,
             filename: videoFilename,
-            details: downloadError.message 
+            details: downloadError.message,
+            encodedFilename: encodeURIComponent(videoFilename)
           });
         }
       }
@@ -1417,8 +1424,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
         cache: stats,
         timestamp: new Date().toISOString(),
         deployment: {
-          version: "Gallery Video Fix v1.0.7 - Supabase URL Encoding Fix",
-          fileFilters: "MIME+Extension checking active",
+          version: "Gallery Video Fix v1.0.8 - COMPLETE AUTO-DOWNLOAD FIX",
+          urlEncoding: "Both manual caching AND auto-download use encodeURIComponent",
           limits: "5000MB video, 5000MB image"
         }
       });
@@ -1450,7 +1457,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
         try {
           if (!videoCache.isVideoCached(filename)) {
             console.log(`⬇️ Caching gallery video: ${filename}`);
-            const videoUrl = `https://supabase.memopyk.org/storage/v1/object/public/memopyk-gallery/${filename}`;
+            const encodedFilename = encodeURIComponent(filename);
+            const videoUrl = `https://supabase.memopyk.org/storage/v1/object/public/memopyk-gallery/${encodedFilename}`;
+            console.log(`   - Original filename: ${filename}`);
+            console.log(`   - Encoded for URL: ${encodedFilename}`);
+            console.log(`   - Supabase URL: ${videoUrl}`);
             await videoCache.downloadAndCacheVideo(filename, videoUrl);
             cached++;
           } else {
