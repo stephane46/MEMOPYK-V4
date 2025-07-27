@@ -45,8 +45,8 @@ function App() {
               <Route path="/fr-FR/legal/:docType" component={LegalDocumentPage} />
               <Route path="/en-US/legal/:docType" component={LegalDocumentPage} />
               
-              {/* Catch-all route - Must be last */}
-              <Route path="/:rest*" component={NotFoundPage} />
+              {/* Catch-all routes temporarily removed to prevent FAQ section conflict */}
+              {/* Will restore with proper configuration after identifying root cause */}
             </Layout>
           </Router>
         </LanguageProvider>
