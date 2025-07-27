@@ -2268,31 +2268,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Unified Cache Stats (Videos + Images)
+  // Unified Cache Stats (Videos + Images) with Storage Management
   app.get('/api/unified-cache/stats', (req, res) => {
     try {
-      const videoStats = videoCache.getCacheStats();
-      const imageStats = videoCache.getImageCacheStats();
-      
-      res.json({
-        videos: {
-          fileCount: videoStats.fileCount,
-          totalSize: videoStats.totalSize,
-          sizeMB: videoStats.sizeMB,
-          files: videoStats.files
-        },
-        images: {
-          fileCount: imageStats.fileCount,
-          totalSize: imageStats.totalSize,
-          sizeMB: imageStats.sizeMB,
-          files: imageStats.files
-        },
-        total: {
-          fileCount: videoStats.fileCount + imageStats.fileCount,
-          totalSize: videoStats.totalSize + imageStats.totalSize,
-          sizeMB: ((videoStats.totalSize + imageStats.totalSize) / 1024 / 1024).toFixed(1)
-        }
-      });
+      const unifiedStats = videoCache.getUnifiedCacheStats();
+      console.log(`📊 Unified cache stats: ${unifiedStats.total.sizeMB}MB/${unifiedStats.total.limitMB}MB (${unifiedStats.total.usagePercent}%) - Auto-cleanup: ${unifiedStats.management.maxCacheDays} days`);
+      res.json(unifiedStats);
     } catch (error) {
       console.error('Unified cache stats error:', error);
       res.status(500).json({ error: 'Failed to get unified cache stats' });

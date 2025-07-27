@@ -28,6 +28,13 @@ interface CacheStatsResponse {
   [key: string]: unknown;
 }
 
+interface UnifiedCacheStats {
+  videos: { fileCount: number; totalSize: number; sizeMB: string };
+  images: { fileCount: number; totalSize: number; sizeMB: string };
+  total: { fileCount: number; totalSize: number; sizeMB: string; limitMB: string; usagePercent: number };
+  management: { maxCacheDays: number; autoCleanup: boolean; nextCleanup: string };
+}
+
 interface CacheStatus {
   cached: boolean;
   size?: number;
@@ -58,6 +65,12 @@ export const VideoCacheStatus: React.FC<VideoCacheStatusProps> = ({
   // Query overall cache stats
   const { data: cacheStats, refetch: refetchStats } = useQuery<CacheStatsResponse>({
     queryKey: ['/api/video-cache/stats'],
+    refetchInterval: 30000
+  });
+
+  // Query unified cache stats with storage management
+  const { data: unifiedStats, refetch: refetchUnified } = useQuery<UnifiedCacheStats>({
+    queryKey: ['/api/unified-cache/stats'],
     refetchInterval: 30000
   });
 
@@ -186,38 +199,84 @@ export const VideoCacheStatus: React.FC<VideoCacheStatusProps> = ({
   const totalCount = videoFilenames.length;
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle className="flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <HardDrive className="h-5 w-5" />
-            {title}
-          </div>
-          <div className="flex items-center gap-2">
-            <Badge variant={cachedCount === totalCount ? "default" : "secondary"}>
-              {cachedCount}/{totalCount} Cached
-            </Badge>
-            {showForceAllButton && (
-              <Button 
-                size="sm" 
-                variant="outline"
-                onClick={() => forceAllMutation.mutate()}
-                disabled={forceAllMutation.isPending}
-              >
-                {forceAllMutation.isPending ? (
-                  <RefreshCw className="h-4 w-4 animate-spin mr-2" />
-                ) : (
-                  <Zap className="h-4 w-4 mr-2" />
-                )}
-                Force Cache All
-              </Button>
-            )}
-          </div>
-        </CardTitle>
-        {description && (
-          <p className="text-sm text-muted-foreground mt-2">{description}</p>
-        )}
-      </CardHeader>
+    <div className="space-y-4">
+      {/* Storage Management Overview */}
+      {unifiedStats && (
+        <Card className="border-2 border-orange-200 bg-orange-50">
+          <CardHeader className="pb-3">
+            <CardTitle className="text-lg font-semibold flex items-center gap-2 text-orange-900">
+              <HardDrive className="h-5 w-5" />
+              Storage Management Overview
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-3">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div className="space-y-2">
+                <div className="text-sm font-medium text-gray-700">Cache Usage</div>
+                <div className="flex items-center gap-2">
+                  <Badge variant={unifiedStats.total.usagePercent > 80 ? "destructive" : unifiedStats.total.usagePercent > 50 ? "default" : "secondary"}>
+                    {unifiedStats.total.sizeMB}MB / {unifiedStats.total.limitMB}MB
+                  </Badge>
+                  <span className="text-sm text-gray-600">({unifiedStats.total.usagePercent}%)</span>
+                </div>
+              </div>
+              <div className="space-y-2">
+                <div className="text-sm font-medium text-gray-700">Auto-Cleanup</div>
+                <div className="flex items-center gap-2">
+                  <Badge variant="outline" className="bg-green-50 text-green-700 border-green-300">
+                    <CheckCircle className="h-3 w-3 mr-1" />
+                    {unifiedStats.management.maxCacheDays} days
+                  </Badge>
+                </div>
+              </div>
+              <div className="space-y-2">
+                <div className="text-sm font-medium text-gray-700">Media Files</div>
+                <div className="flex items-center gap-2">
+                  <Badge variant="outline">{unifiedStats.videos.fileCount} videos</Badge>
+                  <Badge variant="outline">{unifiedStats.images.fileCount} images</Badge>
+                </div>
+              </div>
+            </div>
+            <div className="text-xs text-gray-600 mt-2">
+              Next automatic cleanup: {new Date(unifiedStats.management.nextCleanup).toLocaleDateString()}
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
+      {/* Section-Specific Cache Status */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <HardDrive className="h-5 w-5" />
+              {title}
+            </div>
+            <div className="flex items-center gap-2">
+              <Badge variant={cachedCount === totalCount ? "default" : "secondary"}>
+                {cachedCount}/{totalCount} Cached
+              </Badge>
+              {showForceAllButton && (
+                <Button 
+                  size="sm" 
+                  variant="outline"
+                  onClick={() => forceAllMutation.mutate()}
+                  disabled={forceAllMutation.isPending}
+                >
+                  {forceAllMutation.isPending ? (
+                    <RefreshCw className="h-4 w-4 animate-spin mr-2" />
+                  ) : (
+                    <Zap className="h-4 w-4 mr-2" />
+                  )}
+                  Force Cache All
+                </Button>
+              )}
+            </div>
+          </CardTitle>
+          {description && (
+            <p className="text-sm text-muted-foreground mt-2">{description}</p>
+          )}
+        </CardHeader>
       <CardContent>
         {/* Section-specific cache stats only */}
         <div className="mb-4 p-3 bg-muted rounded-lg">
@@ -327,7 +386,8 @@ export const VideoCacheStatus: React.FC<VideoCacheStatusProps> = ({
           </div>
         )}
       </CardContent>
-    </Card>
+      </Card>
+    </div>
   );
 };
 

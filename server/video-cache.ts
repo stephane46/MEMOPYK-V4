@@ -11,8 +11,8 @@ export class VideoCache {
   constructor() {
     this.videoCacheDir = join(process.cwd(), 'server/cache/videos');
     this.imageCacheDir = join(process.cwd(), 'server/cache/images');
-    this.maxCacheSize = 5000 * 1024 * 1024; // 5000MB cache limit  
-    this.maxCacheAge = 7 * 24 * 60 * 60 * 1000; // 7 days (extended since we use smart replacement)
+    this.maxCacheSize = 1000 * 1024 * 1024; // 1GB total cache limit (REDUCED for production safety)
+    this.maxCacheAge = 3 * 24 * 60 * 60 * 1000; // 3 days (REDUCED for faster cleanup)
     
     // Ensure cache directories exist
     try {
@@ -27,6 +27,9 @@ export class VideoCache {
       
       console.log(`✅ Video & Image cache initialized`);
       console.log(`📊 NODE_ENV: ${process.env.NODE_ENV || 'undefined'}`);
+      
+      // Perform cache cleanup on startup to remove old files
+      this.performCacheCleanup();
       
       // Proactively preload critical videos on startup
       this.preloadCriticalVideos();
@@ -382,6 +385,48 @@ export class VideoCache {
     } catch (error) {
       return { fileCount: 0, totalSize: 0, sizeMB: '0.0', files: [] };
     }
+  }
+
+  /**
+   * Get unified cache statistics (videos + images) with storage management info
+   */
+  getUnifiedCacheStats(): { 
+    videos: { fileCount: number; totalSize: number; sizeMB: string };
+    images: { fileCount: number; totalSize: number; sizeMB: string };
+    total: { fileCount: number; totalSize: number; sizeMB: string; limitMB: string; usagePercent: number };
+    management: { maxCacheDays: number; autoCleanup: boolean; nextCleanup: string };
+  } {
+    const videoStats = this.getCacheStats();
+    const imageStats = this.getImageCacheStats();
+    
+    const totalSize = videoStats.totalSize + imageStats.totalSize;
+    const totalFiles = videoStats.fileCount + imageStats.fileCount;
+    const usagePercent = Math.round((totalSize / this.maxCacheSize) * 100);
+    
+    return {
+      videos: {
+        fileCount: videoStats.fileCount,
+        totalSize: videoStats.totalSize,
+        sizeMB: videoStats.sizeMB
+      },
+      images: {
+        fileCount: imageStats.fileCount,
+        totalSize: imageStats.totalSize,
+        sizeMB: imageStats.sizeMB
+      },
+      total: {
+        fileCount: totalFiles,
+        totalSize: totalSize,
+        sizeMB: (totalSize / 1024 / 1024).toFixed(1),
+        limitMB: (this.maxCacheSize / 1024 / 1024).toFixed(0),
+        usagePercent: usagePercent
+      },
+      management: {
+        maxCacheDays: Math.round(this.maxCacheAge / (24 * 60 * 60 * 1000)),
+        autoCleanup: true,
+        nextCleanup: new Date(Date.now() + (24 * 60 * 60 * 1000)).toISOString().split('T')[0] // Tomorrow
+      }
+    };
   }
 
   /**
