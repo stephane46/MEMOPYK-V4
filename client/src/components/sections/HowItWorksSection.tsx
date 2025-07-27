@@ -68,7 +68,7 @@ export function HowItWorksSection() {
               <div key={step.number} className="relative h-full">
                 {/* Connection Line (except for last step) */}
                 {index < steps.length - 1 && (
-                  <div className="hidden lg:block absolute top-32 left-full w-full h-0.5 bg-gradient-to-r from-memopyk-sky-blue to-memopyk-blue-gray/30 transform -translate-x-1/2 z-0"></div>
+                  <div className="hidden lg:block absolute top-40 left-full w-full h-0.5 bg-gradient-to-r from-memopyk-cream/30 to-memopyk-cream/10 transform -translate-x-1/2 z-0"></div>
                 )}
                 
                 {/* Step Card */}
