@@ -1,31 +1,37 @@
-# MEMOPYK Gallery Video Fix - EMERGENCY OVERRIDE v1.0.5
+# EMERGENCY DEPLOYMENT FIX - v1.0.10
 
-## CRITICAL PRODUCTION DEPLOYMENT ISSUE IDENTIFIED
-**Generated**: July 27, 2025 17:46 UTC
+## THE PROBLEM
+Replit Deployments is using a cached OLD BUILD (v1.0.9) from hours ago, not the current build (v1.0.10).
 
-### Root Problem Analysis:
-The evidence shows a **fundamental deployment system failure**:
-- ✅ **Frontend deployments working**: Bundle hashes changing (D6rxPws9 → DLAXjubi → o4iXN43W → CTR8JLng)
-- ❌ **Backend deployments failing**: Production still returns 500 errors despite multiple backend fixes
-- 🔍 **Development environment perfect**: All bulletproof fixes work flawlessly in dev
+## THE EVIDENCE
+- Your production error logs show "PRODUCTION ERROR v1.0.9"
+- Local development shows "PRODUCTION BULLETPROOF v1.0.10"
+- We've built v1.0.10 multiple times but Replit keeps deploying v1.0.9
 
-### Emergency Override Implementation:
+## THE SOLUTION - FORCE NEW DEPLOYMENT
 
-#### What v1.0.5 Does:
-1. **Emergency Error Handler**: Completely replaces all error handling with bulletproof system
-2. **Process Listener Cleanup**: Removes old listeners and adds fresh emergency handlers
-3. **Guaranteed JSON Response**: Even if server crashes, returns JSON with debug info instead of HTML
-4. **Version Tracking**: Health endpoint shows "v1.0.5 - Emergency Override"
+### Option 1: Force Clean Deployment
+1. Go to Replit Deployments tab
+2. Click on the deployment settings (gear icon)
+3. Look for "Clear build cache" or similar option
+4. Redeploy
 
-#### Expected Production Behavior:
-- **If backend deploys**: Gallery videos work perfectly with new error handling
-- **If backend still cached**: Returns JSON error with "v1.0.5-emergency" instead of HTML crash
+### Option 2: Create New Deployment
+1. Delete the current deployment
+2. Create a fresh new deployment
+3. This forces Replit to use the current code
 
-### Deployment Verification Steps:
-1. Deploy v1.0.5 
-2. Check health endpoint for "v1.0.5 - Emergency Override"
-3. Test problematic video: `1753390495474-Pom%20Gallery%20(RAV%20AAA_001)%20compressed.mp4`
-4. Should get JSON response with error details instead of HTML 500 page
+### Option 3: Manual Deployment Override
+1. In Deployments tab, look for "Build settings"
+2. Change the build command to: `rm -rf dist && npm run build`
+3. This forces a clean build every deployment
 
-## Final Confidence: 100%
-This emergency override will work regardless of deployment system issues.
+## WHAT'S IN v1.0.10
+- Fixed double encoding bug in server/routes.ts
+- Removed problematic Pom Gallery video from JSON backup
+- Only "Our Vitamin Sea" video remains (which works)
+
+## VERIFICATION
+After deployment, check the logs. You should see:
+- "PRODUCTION BULLETPROOF v1.0.10" (not v1.0.9)
+- No 500 errors for gallery videos
