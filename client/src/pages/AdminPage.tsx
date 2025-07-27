@@ -17,7 +17,7 @@ import { LegalDocumentManagement } from '@/components/admin/LegalDocumentManagem
 import { CtaManagement } from '@/components/admin/CtaManagement';
 import { AnalyticsDashboard } from '@/components/admin/AnalyticsDashboard';
 import CryptoJS from 'crypto-js';
-import VideoCacheStatus from '@/components/admin/VideoCacheStatus';
+
 
 interface HeroVideo {
   id: number;
@@ -438,14 +438,7 @@ export default function AdminPage() {
                 </nav>
               </div>
 
-              {/* Hero Video Cache Status - Unified Interface */}
-              {heroTab === 'videos' && (
-                <VideoCacheStatus 
-                  videoFilenames={heroVideos.map(video => video.url_en).filter(url => url !== '')}
-                  title="Hero Video Cache Status"
-                  showForceAllButton={true}
-                />
-              )}
+
 
               {/* Videos Tab */}
               {heroTab === 'videos' && (
