@@ -144,6 +144,14 @@ export const VideoCacheStatus: React.FC<VideoCacheStatusProps> = ({
 
   const cacheStatus: Record<string, CacheStatus> = (cacheStatusData as unknown as {status?: Record<string, CacheStatus>})?.status || {};
 
+  // Debug cache status data
+  console.log('🔍 Cache Status Debug:', {
+    cacheStatusData,
+    cacheStatus,
+    videoFilenames,
+    cachedVideos: Object.entries(cacheStatus).filter(([_, status]) => status.cached)
+  });
+
   const formatFileSize = (bytes: number): string => {
     const mb = bytes / (1024 * 1024);
     return `${mb.toFixed(1)}MB`;
