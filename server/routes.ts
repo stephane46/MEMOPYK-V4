@@ -1259,7 +1259,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       console.log(`   - Original filename: "${decodedFilename}"`);
       console.log(`   - Encoded filename: "${encodedFilename}"`);
       console.log(`   - Sanitized filename: "${sanitizedFilename}"`);
-      console.log(`   - PRODUCTION BULLETPROOF v1.0.4`);
+      console.log(`   - PRODUCTION BULLETPROOF v1.0.10`);
       
       // Try multiple filename variations to find cached video
       let videoFilename = decodedFilename;
