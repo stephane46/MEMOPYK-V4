@@ -42,6 +42,7 @@ export const VideoCacheStatus: React.FC<VideoCacheStatusProps> = ({
 }) => {
   const { toast } = useToast();
   const queryClient = useQueryClient();
+  const [pendingVideos, setPendingVideos] = React.useState<Set<string>>(new Set());
 
   // Query cache status for specific videos
   const { data: cacheStatusData, isLoading: statusLoading, refetch: refetchStatus } = useQuery({
@@ -60,22 +61,34 @@ export const VideoCacheStatus: React.FC<VideoCacheStatusProps> = ({
   // Force cache single video mutation
   const forceCacheMutation = useMutation({
     mutationFn: async (filename: string) => {
+      setPendingVideos(prev => new Set(Array.from(prev).concat([filename])));
       const response = await apiRequest('/api/video-cache/force', 'POST', { filename });
-      return response as unknown as {filename: string};
+      return { response: response as unknown as {message?: string}, filename };
     },
-    onSuccess: (data: {filename: string}) => {
+    onSuccess: (data: {response: {message?: string}, filename: string}) => {
+      const { response, filename } = data;
+      setPendingVideos(prev => {
+        const newSet = new Set(prev);
+        newSet.delete(filename);
+        return newSet;
+      });
       toast({
         title: "Video Cached",
-        description: `${data.filename} has been cached successfully`,
+        description: response.message || `${filename} has been cached successfully`,
       });
       refetchStatus();
       refetchStats();
       queryClient.invalidateQueries({ queryKey: ['/api/video-cache/stats'] });
     },
-    onError: (error: Error & {response?: {data?: {details?: string}}}) => {
+    onError: (error: Error & {response?: {data?: {details?: string}}}, filename: string) => {
+      setPendingVideos(prev => {
+        const newSet = new Set(prev);
+        newSet.delete(filename);
+        return newSet;
+      });
       toast({
         title: "Cache Failed",
-        description: `Failed to cache video: ${error.response?.data?.details || error.message}`,
+        description: `Failed to cache ${filename}: ${error.response?.data?.details || error.message}`,
         variant: "destructive",
       });
     }
@@ -253,9 +266,9 @@ export const VideoCacheStatus: React.FC<VideoCacheStatusProps> = ({
                     size="sm"
                     variant="outline"
                     onClick={() => forceCacheMutation.mutate(filename)}
-                    disabled={forceCacheMutation.isPending}
+                    disabled={pendingVideos.has(filename)}
                   >
-                    {forceCacheMutation.isPending ? (
+                    {pendingVideos.has(filename) ? (
                       <RefreshCw className="h-4 w-4 animate-spin mr-1" />
                     ) : (
                       <Download className="h-4 w-4 mr-1" />
@@ -269,10 +282,10 @@ export const VideoCacheStatus: React.FC<VideoCacheStatusProps> = ({
                     size="sm"
                     variant="outline"
                     onClick={() => forceCacheMutation.mutate(filename)}
-                    disabled={forceCacheMutation.isPending}
+                    disabled={pendingVideos.has(filename)}
                     className="text-orange-600 hover:text-orange-700"
                   >
-                    {forceCacheMutation.isPending ? (
+                    {pendingVideos.has(filename) ? (
                       <RefreshCw className="h-4 w-4 animate-spin mr-1" />
                     ) : (
                       <RefreshCw className="h-4 w-4 mr-1" />
