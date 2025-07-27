@@ -1346,16 +1346,22 @@ export async function registerRoutes(app: Express): Promise<Server> {
       });
 
     } catch (error: any) {
-      console.error(`❌ VIDEO PROXY FATAL ERROR for ${req.query.filename}:`, error);
+      const filename = String(req.query.filename || 'unknown');
+      console.error(`❌ VIDEO PROXY FATAL ERROR for ${filename}:`, error);
       console.error(`   - Error type: ${error.constructor.name}`);
       console.error(`   - Error message: ${error.message}`);
+      console.error(`   - Range header: ${req.headers.range}`);
+      console.error(`   - Production Debug - Gallery Video Fix v1.0.2`);
       console.error(`   - Stack trace:`, error.stack);
       
       if (!res.headersSent) {
         res.status(500).json({ 
           error: "Video streaming failed",
-          filename: req.query.filename,
-          details: error.message 
+          filename: filename,
+          details: error.message,
+          version: "Gallery Video Fix v1.0.2",
+          rangeHeader: req.headers.range,
+          timestamp: new Date().toISOString()
         });
       }
     }
