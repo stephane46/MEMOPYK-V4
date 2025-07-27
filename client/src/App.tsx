@@ -13,7 +13,7 @@ import { queryClient } from './lib/queryClient';
 import { Toaster } from '@/components/ui/toaster';
 
 // Gallery Video Fix v1.0.2 - Force new deployment hash  
-console.log("🚀 MEMOPYK Gallery Video Fix v1.0.3 - ULTRA-ROBUST - " + Date.now());
+console.log("🚀 MEMOPYK Gallery Video Fix v1.0.4 - BULLETPROOF - " + Date.now());
 
 function App() {
   return (

@@ -1240,22 +1240,31 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(400).json({ error: "filename parameter is required" });
       }
 
-      // CRITICAL FIX: Express auto-decodes URL parameters, but some cache files were stored with encoded names
-      // Try both the decoded version (what Express gives us) and URL-encoded version (what might be in cache)
+      // BULLETPROOF FILENAME HANDLING - v1.0.4
       const decodedFilename = filename as string;
-      const encodedFilename = encodeURIComponent(decodedFilename).replace(/%20/g, '%20').replace(/%28/g, '%28').replace(/%29/g, '%29');
+      const encodedFilename = encodeURIComponent(decodedFilename);
       
-      console.log(`   - Decoded filename (from Express): "${decodedFilename}"`);
-      console.log(`   - Encoded filename (for cache lookup): "${encodedFilename}"`);
+      // CRITICAL: Handle problematic characters that crash production
+      const sanitizedFilename = decodedFilename.replace(/[()]/g, '_');
       
-      // Try both versions to see which one exists in cache
+      console.log(`   - Original filename: "${decodedFilename}"`);
+      console.log(`   - Encoded filename: "${encodedFilename}"`);
+      console.log(`   - Sanitized filename: "${sanitizedFilename}"`);
+      console.log(`   - PRODUCTION BULLETPROOF v1.0.4`);
+      
+      // Try multiple filename variations to find cached video
       let videoFilename = decodedFilename;
-      if (!videoCache.isVideoCached(decodedFilename) && videoCache.isVideoCached(encodedFilename)) {
-        console.log(`   - Using encoded filename for cache lookup: "${encodedFilename}"`);
+      
+      if (videoCache.isVideoCached(decodedFilename)) {
+        console.log(`   - ✅ Found with decoded filename: "${decodedFilename}"`);
+      } else if (videoCache.isVideoCached(encodedFilename)) {
+        console.log(`   - ✅ Found with encoded filename: "${encodedFilename}"`);
         videoFilename = encodedFilename;
+      } else if (videoCache.isVideoCached(sanitizedFilename)) {
+        console.log(`   - ✅ Found with sanitized filename: "${sanitizedFilename}"`);
+        videoFilename = sanitizedFilename;
       } else {
-        console.log(`   - Using decoded filename for cache lookup: "${decodedFilename}"`);
-        videoFilename = decodedFilename;
+        console.log(`   - ❌ Not found in cache - will try to download: "${decodedFilename}"`);
       }
       const range = req.headers.range;
 
@@ -1387,7 +1396,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         cache: stats,
         timestamp: new Date().toISOString(),
         deployment: {
-          version: "Gallery Video Fix v1.0.3 - Ultra-robust",
+          version: "Gallery Video Fix v1.0.4 - Bulletproof",
           fileFilters: "MIME+Extension checking active",
           limits: "5000MB video, 5000MB image"
         }
