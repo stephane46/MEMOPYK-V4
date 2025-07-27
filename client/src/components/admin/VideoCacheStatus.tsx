@@ -223,7 +223,7 @@ export const VideoCacheStatus: React.FC<VideoCacheStatusProps> = ({
         {cacheStats && (
           <div className="mb-4 p-3 bg-muted rounded-lg">
             <div className="flex items-center justify-between text-sm">
-              <span>Total Cache: {cacheStats.fileCount} files ({cacheStats.sizeMB}MB)</span>
+              <span>Server Total: {cacheStats.fileCount} files ({cacheStats.sizeMB}MB) • This Section: {cachedCount}/{totalCount}</span>
               <span className="text-muted-foreground">
                 Performance: ~50ms cached vs ~1500ms uncached
               </span>
