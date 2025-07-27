@@ -21,6 +21,16 @@ function App() {
             <Route path="/language" component={LanguageSelectionPage} />
             
             <Layout>
+              {/* Root redirects - Handle these first */}
+              <Route path="/" component={() => { 
+                window.location.href = '/fr-FR'; 
+                return null; 
+              }} />
+              <Route path="/admin/*" component={() => { 
+                window.location.href = '/fr-FR/admin'; 
+                return null; 
+              }} />
+              
               {/* Localized Routes */}
               <Route path="/fr-FR" component={HomePage} />
               <Route path="/en-US" component={HomePage} />
@@ -35,17 +45,8 @@ function App() {
               <Route path="/fr-FR/legal/:docType" component={LegalDocumentPage} />
               <Route path="/en-US/legal/:docType" component={LegalDocumentPage} />
               
-              {/* Root redirects */}
-              <Route path="/" component={() => { 
-                window.location.href = '/fr-FR'; 
-                return null; 
-              }} />
-              <Route path="/admin/*" component={() => { 
-                window.location.href = '/fr-FR/admin'; 
-                return null; 
-              }} />
-              
-              <Route path="/:rest*" component={NotFoundPage} />
+              {/* Temporarily removed catch-all route to debug routing issue */}
+              {/* <Route path="/:rest*" component={NotFoundPage} /> */}
             </Layout>
           </Router>
         </LanguageProvider>

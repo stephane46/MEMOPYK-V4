@@ -11,14 +11,14 @@ export default function NotFound() {
         <CardContent className="pt-6">
           <div className="flex mb-4 gap-2">
             <AlertCircle className="h-8 w-8 text-red-500" />
-            <h1 className="text-2xl font-bold text-gray-900">DEBUG: Route Issue Detected</h1>
+            <h1 className="text-2xl font-bold text-gray-900">Page not found</h1>
           </div>
 
           <p className="mt-4 text-sm text-gray-600">
             Current route: <code className="bg-gray-200 px-1 rounded">{location}</code>
           </p>
           <p className="mt-2 text-xs text-gray-500">
-            This component should not appear on the homepage. If you see this after FAQ, there's a routing conflict.
+            The page you're looking for doesn't exist or has been moved.
           </p>
         </CardContent>
       </Card>
