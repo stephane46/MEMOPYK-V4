@@ -79,7 +79,7 @@ export function HowItWorksSection() {
 
                   {/* Step Image */}
                   <div className={`${isMemopykCard ? 'mb-8 mt-6' : 'mb-6 mt-4'}`}>
-                    <div className={`${isMemopykCard ? 'w-64 h-64' : 'w-48 h-48'} mx-auto`}>
+                    <div className="w-48 h-48 mx-auto">
                       <img 
                         src={step.image}
                         alt={language === 'fr-FR' ? step.titleFr : step.titleEn}
