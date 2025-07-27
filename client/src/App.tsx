@@ -12,8 +12,8 @@ import NotFoundPage from './pages/not-found';
 import { queryClient } from './lib/queryClient';
 import { Toaster } from '@/components/ui/toaster';
 
-// Gallery Video Fix v1.0.2 - Force new bundle hash for deployment
-console.log("🚀 MEMOPYK Gallery Video Fix v1.0.2 - Frontend Deployed");
+// Gallery Video Fix v1.0.2 - Force new deployment hash  
+console.log("🚀 MEMOPYK Gallery Video Fix v1.0.2 - FORCE DEPLOYMENT - " + Date.now());
 
 function App() {
   return (
