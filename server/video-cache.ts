@@ -622,10 +622,15 @@ export class VideoCache {
         console.log(`📁 Created cache directory for download: ${this.videoCacheDir}`);
       }
       
-      const fullVideoUrl = customUrl || `https://supabase.memopyk.org/storage/v1/object/public/memopyk-gallery/${filename}`;
+      // CRITICAL FIX: Properly decode filename for URL construction
+      const decodedFilename = decodeURIComponent(filename);
+      const fullVideoUrl = customUrl || `https://supabase.memopyk.org/storage/v1/object/public/memopyk-gallery/${encodeURIComponent(decodedFilename)}`;
       const cacheFile = this.getVideoCacheFilePath(filename);
       
-      console.log(`📥 Downloading ${filename} from Supabase...`);
+      console.log(`📥 PRODUCTION FIX: Downloading ${filename} from Supabase...`);
+      console.log(`   - Original filename: ${filename}`);
+      console.log(`   - Decoded filename: ${decodedFilename}`);
+      console.log(`   - Final URL: ${fullVideoUrl}`);
       
       const fetch = (await import('node-fetch')).default;
       const response = await fetch(fullVideoUrl, {
