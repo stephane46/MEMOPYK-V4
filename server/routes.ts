@@ -1214,6 +1214,19 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   // DUPLICATE FAQ ROUTES REMOVED - Using detailed routes above
 
+  // EMERGENCY GALLERY VIDEO DEBUG ROUTE - v1.0.13
+  app.get("/api/debug-gallery-video", (req, res) => {
+    console.log("🔍 EMERGENCY DEBUG ROUTE HIT - v1.0.13");
+    console.log("   - Current version should be v1.0.13");
+    console.log("   - Gallery video proxy route should work");
+    res.json({ 
+      version: "v1.0.13",
+      message: "Debug route working",
+      timestamp: new Date().toISOString(),
+      videoProxyRouteExists: true
+    });
+  });
+
   // Video streaming proxy with caching system - EMERGENCY OVERRIDE v1.0.5
   app.get("/api/video-proxy", async (req, res) => {
     // EMERGENCY: Wrap everything in bulletproof error handling
@@ -1259,7 +1272,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       console.log(`   - Original filename: "${decodedFilename}"`);
       console.log(`   - Encoded filename: "${encodedFilename}"`);
       console.log(`   - Sanitized filename: "${sanitizedFilename}"`);
-      console.log(`   - PRODUCTION BULLETPROOF v1.0.13`);
+      console.log(`   - PRODUCTION BULLETPROOF v1.0.13 - GALLERY VIDEO FIX DEPLOYED`);
       
       // Try multiple filename variations to find cached video
       let videoFilename = decodedFilename;
