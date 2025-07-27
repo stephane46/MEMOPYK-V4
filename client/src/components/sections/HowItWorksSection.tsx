@@ -54,18 +54,21 @@ export function HowItWorksSection() {
         </div>
 
         {/* Steps */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
+        <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
           {steps.map((step, index) => {
             const Icon = step.icon;
+            const isMemopykCard = step.number === 2;
             return (
-              <div key={step.number} className="relative h-full">
+              <div key={step.number} className={`relative h-full ${isMemopykCard ? 'lg:col-span-2' : 'lg:col-span-1'}`}>
                 {/* Connection Line (except for last step) */}
                 {index < steps.length - 1 && (
                   <div className="hidden lg:block absolute top-24 left-full w-full h-0.5 bg-gradient-to-r from-memopyk-sky-blue to-memopyk-blue-gray/30 transform -translate-x-1/2 z-0"></div>
                 )}
                 
                 {/* Step Card */}
-                <div className="relative bg-white rounded-2xl shadow-2xl p-8 text-center group hover:shadow-3xl transition-all duration-500 transform hover:-translate-y-2 z-10 h-full flex flex-col">
+                <div className={`relative bg-white rounded-2xl shadow-2xl text-center group hover:shadow-3xl transition-all duration-500 transform hover:-translate-y-2 z-10 h-full flex flex-col ${
+                  isMemopykCard ? 'p-12 border-4 border-memopyk-orange/20' : 'p-8'
+                }`}>
                   
                   {/* Step Number */}
                   <div className="absolute -top-6 left-1/2 transform -translate-x-1/2">
@@ -75,30 +78,56 @@ export function HowItWorksSection() {
                   </div>
 
                   {/* Step Image */}
-                  <div className="mb-6 mt-4">
-                    <img 
-                      src={step.image}
-                      alt={language === 'fr-FR' ? step.titleFr : step.titleEn}
-                      className="w-full h-48 object-contain rounded-xl shadow-lg"
-                    />
+                  <div className={`${isMemopykCard ? 'mb-8 mt-6' : 'mb-6 mt-4'}`}>
+                    <div className={`${isMemopykCard ? 'w-64 h-64' : 'w-48 h-48'} mx-auto`}>
+                      <img 
+                        src={step.image}
+                        alt={language === 'fr-FR' ? step.titleFr : step.titleEn}
+                        className="w-full h-full object-contain rounded-xl shadow-lg"
+                      />
+                    </div>
                   </div>
 
                   {/* Step Icon */}
-                  <div className="mb-4">
-                    <div className="w-16 h-16 bg-gradient-to-br from-memopyk-sky-blue/20 to-memopyk-blue-gray/20 rounded-full flex items-center justify-center mx-auto group-hover:scale-110 transition-transform duration-300">
-                      <Icon className="w-8 h-8 text-memopyk-dark-blue" />
+                  <div className={`${isMemopykCard ? 'mb-6' : 'mb-4'}`}>
+                    <div className={`${isMemopykCard ? 'w-20 h-20' : 'w-16 h-16'} bg-gradient-to-br from-memopyk-sky-blue/20 to-memopyk-blue-gray/20 rounded-full flex items-center justify-center mx-auto group-hover:scale-110 transition-transform duration-300`}>
+                      <Icon className={`${isMemopykCard ? 'w-10 h-10' : 'w-8 h-8'} text-memopyk-dark-blue`} />
                     </div>
                   </div>
 
                   {/* Step Title */}
-                  <h3 className="text-2xl font-bold text-memopyk-navy mb-4">
+                  <h3 className={`${isMemopykCard ? 'text-3xl' : 'text-2xl'} font-bold text-memopyk-navy mb-4`}>
                     {language === 'fr-FR' ? step.titleFr : step.titleEn}
                   </h3>
 
                   {/* Step Description */}
-                  <p className="text-memopyk-dark-blue leading-relaxed flex-grow">
+                  <p className={`text-memopyk-dark-blue leading-relaxed flex-grow ${isMemopykCard ? 'text-lg' : ''}`}>
                     {language === 'fr-FR' ? step.descriptionFr : step.descriptionEn}
                   </p>
+
+                  {/* Enhanced MEMOPYK Features */}
+                  {isMemopykCard && (
+                    <div className="mt-6 space-y-3">
+                      <div className="flex items-center justify-center space-x-2 text-memopyk-dark-blue">
+                        <div className="w-2 h-2 rounded-full bg-memopyk-orange"></div>
+                        <span className="text-sm">
+                          {language === 'fr-FR' ? 'Organisation professionnelle' : 'Professional organization'}
+                        </span>
+                      </div>
+                      <div className="flex items-center justify-center space-x-2 text-memopyk-dark-blue">
+                        <div className="w-2 h-2 rounded-full bg-memopyk-orange"></div>
+                        <span className="text-sm">
+                          {language === 'fr-FR' ? 'Narration cinématographique' : 'Cinematic storytelling'}
+                        </span>
+                      </div>
+                      <div className="flex items-center justify-center space-x-2 text-memopyk-dark-blue">
+                        <div className="w-2 h-2 rounded-full bg-memopyk-orange"></div>
+                        <span className="text-sm">
+                          {language === 'fr-FR' ? 'Montage artistique expert' : 'Expert artistic editing'}
+                        </span>
+                      </div>
+                    </div>
+                  )}
 
                   {/* Responsibility Badge */}
                   <div className="mt-6">
