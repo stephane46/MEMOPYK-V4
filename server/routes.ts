@@ -1239,20 +1239,26 @@ export async function registerRoutes(app: Express): Promise<Server> {
       console.log(`   - Cache path: "${cachedVideo}"`);
       console.log(`   - Cache exists: ${cachedVideo && existsSync(cachedVideo)}`);
       
-      // If not cached, try to download it now (production failsafe)
+      // FORCE LOCAL CACHING - Videos MUST be served from local storage only
       if (!cachedVideo) {
-        console.log(`⚡ Video not cached: ${videoFilename} - attempting on-demand download...`);
+        console.log(`🚨 VIDEO NOT CACHED: ${videoFilename} - FORCING download and cache before serving`);
         try {
           await videoCache.downloadAndCacheVideo(videoFilename);
           cachedVideo = videoCache.getCachedVideoPath(videoFilename);
-          console.log(`✅ On-demand download successful for ${videoFilename}`);
+          console.log(`✅ FORCED download successful for ${videoFilename} - now serving from cache`);
         } catch (downloadError: any) {
-          console.log(`❌ On-demand download failed: ${downloadError.message} - will try direct CDN`);
+          console.error(`❌ CRITICAL: Failed to download ${videoFilename}: ${downloadError.message}`);
+          return res.status(500).json({ 
+            error: `Video caching failed - cannot serve video`,
+            filename: videoFilename,
+            details: downloadError.message 
+          });
         }
       }
       
+      // At this point, video MUST be cached - serve only from local storage
       if (cachedVideo && existsSync(cachedVideo)) {
-        console.log(`📦 Serving from cache: ${videoFilename}`);
+        console.log(`📦 Serving from LOCAL cache (MANDATORY): ${videoFilename}`);
         
         const stat = statSync(cachedVideo);
         const fileSize = stat.size;
@@ -1308,39 +1314,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return;
       }
 
-      // Construct Supabase CDN URL from filename
-      let videoUrl: string;
-      
-      // All videos are now stored in memopyk-gallery bucket
-      videoUrl = `https://supabase.memopyk.org/storage/v1/object/public/memopyk-gallery/${videoFilename}`;
-
-      console.log(`Video proxy: Constructed URL from filename '${videoFilename}' -> '${videoUrl}'`);
-      console.log(`Video proxy: Final encoded URL: ${videoUrl}`);
-
-      // Fetch from Supabase CDN with range support
-      const headers: Record<string, string> = {
-        'User-Agent': 'MEMOPYK-VideoProxy/1.0'
-      };
-
-      if (range) {
-        headers['Range'] = range;
-      }
-
-      const response = await fetch(videoUrl, { headers });
-      
-      if (!response.ok) {
-        console.error(`Video proxy error: ${response.status} ${response.statusText} for ${videoUrl}`);
-        return res.status(response.status).json({ 
-          error: `Video not available: ${response.statusText}`,
-          url: videoUrl,
-          status: response.status 
-        });
-      }
-
-      // Stream the response and optionally cache it
-      const contentType = response.headers.get('content-type') || 'video/mp4';
-      const contentLength = response.headers.get('content-length');
-      const acceptRanges = response.headers.get('accept-ranges');
+      // This should NEVER happen - videos must always be served from cache
+      console.error(`🚨 CRITICAL ERROR: Failed to cache video ${videoFilename} - cannot serve`);
+      return res.status(500).json({ 
+        error: `Critical caching failure - video cannot be served`,
+        filename: videoFilename,
+        message: "All videos must be served from local cache only"
+      });
       const contentRange = response.headers.get('content-range');
 
       // Set response headers
