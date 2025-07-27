@@ -667,7 +667,7 @@ export class VideoCache {
       const fullVideoUrl = customUrl || `https://supabase.memopyk.org/storage/v1/object/public/memopyk-gallery/${encodedFilename}`;
       const cacheFile = this.getVideoCacheFilePath(filename); // Keep original filename for cache lookup
       
-      console.log(`📥 PRODUCTION URL ENCODING v1.0.11: Downloading ${filename} from Supabase...`);
+      console.log(`📥 PRODUCTION URL ENCODING v1.0.11 WITH FIX: Downloading ${filename} from Supabase...`);
       console.log(`   - Original filename: ${filename}`);
       console.log(`   - Supabase filename: ${supabaseFilename}`);
       console.log(`   - URL encoded filename: ${encodedFilename}`);
