@@ -140,8 +140,6 @@ export const legalDocuments = pgTable("legal_documents", {
 // CTA settings table - bilingual structure
 export const ctaSettings = pgTable("cta_settings", {
   id: varchar("id").primaryKey(),
-  titleFr: varchar("title_fr").notNull(),
-  titleEn: varchar("title_en").notNull(),
   buttonTextFr: varchar("button_text_fr").notNull(),
   buttonTextEn: varchar("button_text_en").notNull(),
   buttonUrl: varchar("button_url").notNull(),

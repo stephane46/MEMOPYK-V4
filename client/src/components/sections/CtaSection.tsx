@@ -31,26 +31,19 @@ export function CtaSection() {
             )}
           </p>
           
-          <div className="flex flex-col sm:flex-row gap-8 justify-center items-center">
+          <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
             {/* Filter and display only active CTA buttons */}
             {ctaSettings
               .filter((cta: CtaSettings) => cta.isActive)
               .map((cta: CtaSettings) => (
-                <div key={cta.id} className="text-center">
-                  {/* Individual CTA Title from database */}
-                  <h3 className="text-xl font-semibold text-white mb-4">
-                    {language === 'fr-FR' ? cta.titleFr : cta.titleEn}
-                  </h3>
-                  
-                  {/* CTA Button */}
-                  <a
-                    href={cta.buttonUrl}
-                    className="inline-flex items-center gap-3 bg-memopyk-orange hover:bg-memopyk-orange/90 text-white px-8 py-4 rounded-full font-semibold text-lg transition-all duration-300 transform hover:scale-105 shadow-lg"
-                  >
-                    {cta.id === 'book_call' ? <Phone className="w-5 h-5" /> : <Edit className="w-5 h-5" />}
-                    {language === 'fr-FR' ? cta.buttonTextFr : cta.buttonTextEn}
-                  </a>
-                </div>
+                <a
+                  key={cta.id}
+                  href={cta.buttonUrl}
+                  className="inline-flex items-center gap-3 bg-memopyk-orange hover:bg-memopyk-orange/90 text-white px-8 py-4 rounded-full font-semibold text-lg transition-all duration-300 transform hover:scale-105 shadow-lg"
+                >
+                  {cta.id === 'book_call' ? <Phone className="w-5 h-5" /> : <Edit className="w-5 h-5" />}
+                  {language === 'fr-FR' ? cta.buttonTextFr : cta.buttonTextEn}
+                </a>
               ))
             }
           </div>

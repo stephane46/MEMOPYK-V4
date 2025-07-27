@@ -1,13 +1,20 @@
 [
   {
-    "id": 1,
-    "title_fr": "Prêt à créer votre film de souvenirs?",
-    "title_en": "Ready to create your memory film?",
-    "button_text_fr": "Commencer maintenant",
-    "button_text_en": "Get started now",
+    "id": "quick_quote",
+    "button_text_fr": "Devis rapide",
+    "button_text_en": "Quick Quote",
     "button_url": "/contact",
     "is_active": true,
-    "created_at": "2024-01-01T00:00:00.000Z",
-    "updated_at": "2024-01-01T00:00:00.000Z"
+    "created_at": "2024-07-23T00:00:00.000Z",
+    "updated_at": "2024-07-23T00:00:00.000Z"
+  },
+  {
+    "id": "book_call",
+    "button_text_fr": "Réserver un appel",
+    "button_text_en": "Book a Call",
+    "button_url": "tel:+33123456789",
+    "is_active": true,
+    "created_at": "2024-07-23T00:00:00.000Z",
+    "updated_at": "2024-07-23T00:00:00.000Z"
   }
 ]

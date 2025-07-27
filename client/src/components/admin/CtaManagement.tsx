@@ -72,8 +72,6 @@ export function CtaManagement() {
     setIsCreating(true);
     setEditingCta({
       id: '',
-      titleFr: '',
-      titleEn: '',
       buttonTextFr: '',
       buttonTextEn: '',
       buttonUrl: '',
@@ -89,8 +87,6 @@ export function CtaManagement() {
     if (isCreating) {
       createCtaMutation.mutate({
         id: editingCta.id,
-        titleFr: editingCta.titleFr,
-        titleEn: editingCta.titleEn,
         buttonTextFr: editingCta.buttonTextFr,
         buttonTextEn: editingCta.buttonTextEn,
         buttonUrl: editingCta.buttonUrl,
@@ -100,8 +96,6 @@ export function CtaManagement() {
       updateCtaMutation.mutate({
         id: editingCta.id,
         data: {
-          titleFr: editingCta.titleFr,
-          titleEn: editingCta.titleEn,
           buttonTextFr: editingCta.buttonTextFr,
           buttonTextEn: editingCta.buttonTextEn,
           buttonUrl: editingCta.buttonUrl,
@@ -141,7 +135,7 @@ export function CtaManagement() {
               <CardTitle className="text-sm font-medium flex items-center gap-2">
                 {cta.id === 'book_call' && <Phone className="h-4 w-4" />}
                 {cta.id === 'quick_quote' && <Edit className="h-4 w-4" />}
-                {cta.titleEn} / {cta.titleFr}
+                {cta.id === 'book_call' ? 'Book Call Button' : 'Quick Quote Button'}
               </CardTitle>
               <div className="flex items-center gap-2">
                 <Switch
@@ -221,26 +215,7 @@ export function CtaManagement() {
               </div>
             </div>
 
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <Label htmlFor="titleEn">English Title</Label>
-                <Input
-                  id="titleEn"
-                  value={editingCta.titleEn}
-                  onChange={(e) => setEditingCta({ ...editingCta, titleEn: e.target.value })}
-                  placeholder="English section title"
-                />
-              </div>
-              <div>
-                <Label htmlFor="titleFr">French Title</Label>
-                <Input
-                  id="titleFr"
-                  value={editingCta.titleFr}
-                  onChange={(e) => setEditingCta({ ...editingCta, titleFr: e.target.value })}
-                  placeholder="Titre de section français"
-                />
-              </div>
-            </div>
+
 
             <div className="grid grid-cols-2 gap-4">
               <div>
