@@ -1,6 +1,6 @@
 {
   "name": "workspace",
-  "version": "1.0.10",
+  "version": "1.0.11",
   "main": "postcss.config.js",
   "dependencies": {
     "@hookform/resolvers": "^3.10.0",
@@ -409,5 +409,6 @@
     "http-proxy-middleware": "^3.0.5",
     "nodemon": "^3.1.10",
     "ts-node": "^10.9.2"
-  }
+  },
+  "deploymentTimestamp": "2025-07-27T22:55:25.626Z"
 }

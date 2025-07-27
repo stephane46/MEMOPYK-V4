@@ -1,0 +1,9 @@
+{
+  "timestamp": "2025-07-27T22:58:44.553Z",
+  "expectedVersion": "v1.0.11",
+  "gitStatus": "Check git status manually",
+  "checksums": {
+    "routes": "da9b2f8762c2f276e2ee5443cceddf22",
+    "videoCache": "5ae7da80764aaca2cc28269e1884f801"
+  }
+}

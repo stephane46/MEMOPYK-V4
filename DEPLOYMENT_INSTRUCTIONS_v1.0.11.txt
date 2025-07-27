@@ -1,0 +1,24 @@
+
+DEPLOYMENT INSTRUCTIONS FOR v1.0.11
+===================================
+
+CRITICAL: This deployment MUST include the v1.0.11 gallery video fix.
+
+Before deploying:
+1. Ensure all files are saved
+2. Check that server/video-cache.ts has the underscore-to-space fix at line 658
+3. Verify package.json shows version 1.0.11
+
+The v1.0.11 fix addresses:
+- Gallery videos failing with browser Accept-Encoding headers (500 error)
+- Force cache endpoint failing due to filename encoding conflicts
+- Gallery videos with underscores in filenames not loading properly
+
+Key changes in v1.0.11:
+- video-cache.ts line 658: Converts underscores to spaces for gallery videos
+- routes.ts: Simplified force cache endpoint to prevent double encoding
+
+After deployment:
+1. Test gallery video playback
+2. Test force cache button in admin panel
+3. Verify deployment version at /api/video-proxy/health endpoint

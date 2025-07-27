@@ -2276,7 +2276,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // Remove from cache if exists
       videoCache.clearSpecificFile(filename);
       
-      // Download fresh copy
+      // Let the video cache handle URL construction with v1.0.11 underscore-to-space conversion
+      // Don't pass a custom URL - the downloadAndCacheVideo method will handle it properly
+      console.log(`   - Forcing re-download of: ${filename}`);
+      console.log(`   - Video cache will handle underscore-to-space conversion automatically`);
+      
+      // Download fresh copy - let video cache handle URL construction
       await videoCache.downloadAndCacheVideo(filename);
       
       res.json({ 
