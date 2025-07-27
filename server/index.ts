@@ -8,8 +8,8 @@ import { registerRoutes } from "./routes";
 import { log } from "./vite";           
 import { testDatabaseConnection } from "./database";
 
-console.log("=== MEMOPYK Server Starting - Gallery Video Fix v1.0.2 ===");
-console.log("🔧 Range Request Fix: DEPLOYED");
+console.log("=== MEMOPYK Server Starting - Gallery Video Fix v1.0.8 ===");
+console.log("🔧 URL Encoding Fix: BOTH manual cache AND auto-download DEPLOYED");
 console.log("NODE_ENV:", process.env.NODE_ENV);
 console.log(
   "DATABASE_URL:",
