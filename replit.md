@@ -76,6 +76,8 @@ Preferred communication style: Simple, everyday language.
 - Clear visual indicators for cache age help inform manual cleanup decisions
 - Small scale system (max 6 videos) perfect for personal hands-on management
 - No automatic systems interfering with user's preferred manual control approach
+- **NEW**: Unified gallery cache status displaying "Video: Cached/Not cached" and "Image: Cached/CDN direct" for each gallery item
+- **NEW**: Individual gallery item cache monitoring with color-coded status indicators (green: cached, red: not cached, orange: CDN direct)
 
 ### Gallery Video Caching System Implementation - COMPLETED (July 27, 2025)
 **Complete Gallery Video Cache Parity with Hero Videos:**

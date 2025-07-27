@@ -156,6 +156,35 @@ export default function GalleryManagement() {
     queryKey: ['/api/gallery'],
   });
 
+  // Fetch cache status for all gallery items
+  const { data: galleryCacheStatus = {} } = useQuery({
+    queryKey: ['/api/video-cache/status', 'gallery'],
+    queryFn: async () => {
+      const filenames = [...galleryItems]
+        .filter(item => item.video_url_en || item.static_image_url || item.image_url_en)
+        .flatMap(item => {
+          const files = [];
+          if (item.video_url_en) {
+            const videoFilename = item.video_url_en.includes('/') ? item.video_url_en.split('/').pop()! : item.video_url_en;
+            files.push(videoFilename);
+          }
+          if (item.static_image_url) {
+            const imageFilename = item.static_image_url.includes('/') ? item.static_image_url.split('/').pop()! : item.static_image_url;
+            files.push(imageFilename);
+          }
+          return files;
+        })
+        .filter(filename => filename);
+
+      if (filenames.length === 0) return { status: {} };
+
+      const response = await apiRequest('/api/video-cache/status', 'POST', { filenames });
+      return await response.json();
+    },
+    enabled: galleryItems.length > 0,
+    refetchInterval: 30000, // Refresh every 30 seconds
+  });
+
   // Create gallery item mutation
   const createItemMutation = useMutation({
     mutationFn: async (data: Partial<GalleryItem>) => {
@@ -1096,6 +1125,34 @@ export default function GalleryManagement() {
                       {item.is_active ? "Actif" : "Inactif"}
                     </Badge>
                     <span className="text-xs text-gray-500">#{item.order_index}</span>
+                  </div>
+                  
+                  {/* Unified Cache Status for this Gallery Item */}
+                  <div className="p-2 bg-gray-50 dark:bg-gray-800 rounded text-xs space-y-1">
+                    <div className="font-medium text-gray-700 dark:text-gray-300">Cache Status:</div>
+                    {item.video_url_en && (() => {
+                      const videoFilename = item.video_url_en.includes('/') ? item.video_url_en.split('/').pop()! : item.video_url_en;
+                      const videoStatus = (galleryCacheStatus as any)?.status?.[videoFilename];
+                      const isCached = videoStatus?.exists || false;
+                      return (
+                        <div className="flex items-center gap-1">
+                          <Video className={`h-3 w-3 ${isCached ? 'text-green-500' : 'text-red-500'}`} />
+                          <span>Video: {isCached ? 'Cached' : 'Not cached'}</span>
+                        </div>
+                      );
+                    })()}
+                    {(item.static_image_url || item.image_url_en) && (() => {
+                      const imageUrl = item.static_image_url || item.image_url_en;
+                      const imageFilename = imageUrl!.includes('/') ? imageUrl!.split('/').pop()! : imageUrl!;
+                      const imageStatus = (galleryCacheStatus as any)?.status?.[imageFilename];
+                      const isCached = imageStatus?.exists || false;
+                      return (
+                        <div className="flex items-center gap-1">
+                          <Image className={`h-3 w-3 ${isCached ? 'text-green-500' : 'text-orange-500'}`} />
+                          <span>Image: {isCached ? 'Cached' : 'CDN direct'}</span>
+                        </div>
+                      );
+                    })()}
                   </div>
                 </div>
 
