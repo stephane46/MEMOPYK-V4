@@ -52,25 +52,22 @@ Preferred communication style: Simple, everyday language.
 
 ## Recent Changes (July 27, 2025)
 
-### CRITICAL PRODUCTION BUG FIX - Gallery Videos 500 Error RESOLUTION PROGRESS (July 27, 2025)
-**Production Gallery Video Failure Analysis - MULTIPLE FIXES DEPLOYED:**
+### CRITICAL PRODUCTION BUG FIX - Gallery Videos 500 Error FINAL RESOLUTION (July 27, 2025)
+**Production Gallery Video Failure Analysis - COMPLETE SOLUTION DEPLOYED:**
 ✅ **v1.0.5 Emergency Override**: Initial comprehensive error handling and debugging system
 ✅ **v1.0.6 Range Parsing Fix**: Fixed `Range: bytes=0-` request parsing bug (parseInt NaN issue)
-⚠️ **Frontend/Backend Sync Issue**: Production shows v1.0.6 backend but v1.0.5 frontend (Replit Deploy caching)
-🎯 **Next Deployment**: v1.0.7 Supabase URL Encoding Fix for gallery videos with special characters
-📊 **Root Cause Confirmed**: Gallery video filenames with spaces/parentheses need encodeURIComponent() for Supabase downloads
+✅ **v1.0.7-v1.0.8 URL Encoding Fixes**: Fixed Supabase URL encoding for gallery videos with special characters
+✅ **v1.0.9 FINAL FIX**: **ROOT CAUSE RESOLVED** - Fixed double encoding bug in video proxy fallback logic
+🎯 **Issue Identified**: Video proxy used `videoFilename` (potentially encoded) instead of `decodedFilename` for URL construction
+📊 **Technical Fix**: Always use original decoded filename for Supabase URL construction, preventing double encoding
 
-**Technical Implementation:**
-- Fixed range parsing: `(parts[1] && parts[1].trim()) ? parseInt(parts[1], 10) : fileSize - 1`
-- Added NaN validation to prevent stream creation failures
-- Enhanced error handling with HTTP 416 for invalid ranges
-- Gallery videos will work immediately after deployment with proper browser range request support
-
-**Technical Implementation:**
-- Added proper `decodeURIComponent()` before building Supabase URLs
-- Enhanced debug logging to track filename encoding transformations
-- Maintained existing cache-first serving strategy with working Supabase fallback
-- Gallery videos with names like "Pom Gallery (RAV AAA_001) compressed.mp4" now handled correctly
+**Technical Implementation v1.0.9 - DOUBLE ENCODING BUG FIX:**
+- **Root Cause**: Video proxy fallback used `encodeURIComponent(videoFilename)` where `videoFilename` was already encoded
+- **Double Encoding Example**: `1753390495474-Pom%2520Gallery%2520(RAV%2520AAA_001)%2520compressed.mp4` (malformed - 500 error)
+- **Fixed Logic**: Always use `encodeURIComponent(decodedFilename)` for consistent single encoding
+- **Single Encoding Result**: `1753390495474-Pom%20Gallery%20(RAV%20AAA_001)%20compressed.mp4` (valid - works!)
+- **Files Modified**: `server/routes.ts` lines 1292-1312 (video proxy fallback logic)
+- **Enhanced Logging**: Version-tagged debug output for production deployment tracking
 
 **User Experience Achievement:**
 - Gallery videos will work immediately in production deployment

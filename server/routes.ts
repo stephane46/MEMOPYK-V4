@@ -1286,22 +1286,33 @@ export async function registerRoutes(app: Express): Promise<Server> {
       if (!cachedVideo) {
         console.log(`🚨 VIDEO NOT CACHED: ${videoFilename} - FORCING download and cache before serving`);
         try {
-          // CRITICAL FIX v1.0.8: Provide properly encoded URL for Supabase download
-          const encodedForDownload = encodeURIComponent(videoFilename);
+          // CRITICAL FIX v1.0.9: Always use original decoded filename for Supabase URL construction
+          // Problem: videoFilename might already be encoded, causing double encoding
+          // Solution: Always use decodedFilename for URL construction, videoFilename for cache lookup
+          const encodedForDownload = encodeURIComponent(decodedFilename);
           const supabaseUrl = `https://supabase.memopyk.org/storage/v1/object/public/memopyk-gallery/${encodedForDownload}`;
-          console.log(`   - Building Supabase URL with encoding: ${supabaseUrl}`);
-          await videoCache.downloadAndCacheVideo(videoFilename, supabaseUrl);
-          cachedVideo = videoCache.getCachedVideoPath(videoFilename);
-          console.log(`✅ FORCED download successful for ${videoFilename} - now serving from cache`);
+          console.log(`   - FIXED v1.0.9 - Using original decoded filename: ${decodedFilename}`);
+          console.log(`   - Encoded for URL: ${encodedForDownload}`);
+          console.log(`   - Final Supabase URL: ${supabaseUrl}`);
+          
+          // Use decodedFilename for download, not videoFilename (which might be encoded)
+          await videoCache.downloadAndCacheVideo(decodedFilename, supabaseUrl);
+          cachedVideo = videoCache.getCachedVideoPath(decodedFilename);
+          
+          // Update videoFilename to match what we actually cached
+          videoFilename = decodedFilename;
+          
+          console.log(`✅ FORCED download successful for ${decodedFilename} - now serving from cache`);
         } catch (downloadError: any) {
-          console.error(`❌ CRITICAL: Failed to download ${videoFilename}: ${downloadError.message}`);
-          console.error(`   - Attempted URL encoding: ${encodeURIComponent(videoFilename)}`);
-          console.error(`   - Original filename: ${videoFilename}`);
+          console.error(`❌ CRITICAL v1.0.9: Failed to download ${decodedFilename}: ${downloadError.message}`);
+          console.error(`   - Original filename: ${decodedFilename}`);
+          console.error(`   - Encoded for URL: ${encodeURIComponent(decodedFilename)}`);
+          console.error(`   - Final URL attempted: https://supabase.memopyk.org/storage/v1/object/public/memopyk-gallery/${encodeURIComponent(decodedFilename)}`);
           return res.status(500).json({ 
             error: `Video caching failed - cannot serve video`,
-            filename: videoFilename,
+            filename: decodedFilename,
             details: downloadError.message,
-            encodedFilename: encodeURIComponent(videoFilename)
+            version: "v1.0.9-fallback-fix"
           });
         }
       }
