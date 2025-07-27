@@ -125,7 +125,7 @@ export const VideoCacheStatus: React.FC<VideoCacheStatusProps> = ({
   // Clear cache mutation
   const clearCacheMutation = useMutation({
     mutationFn: async () => {
-      const response = await apiRequest('/api/video-cache/clear', 'DELETE');
+      const response = await apiRequest('/api/video-cache/clear', 'POST');
       return await response.json() as {status?: string};
     },
     onSuccess: () => {
