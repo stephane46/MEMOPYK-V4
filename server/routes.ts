@@ -1231,7 +1231,23 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(400).json({ error: "filename parameter is required" });
       }
 
-      const videoFilename = filename as string;
+      // CRITICAL FIX: Express auto-decodes URL parameters, but some cache files were stored with encoded names
+      // Try both the decoded version (what Express gives us) and URL-encoded version (what might be in cache)
+      const decodedFilename = filename as string;
+      const encodedFilename = encodeURIComponent(decodedFilename).replace(/%20/g, '%20').replace(/%28/g, '%28').replace(/%29/g, '%29');
+      
+      console.log(`   - Decoded filename (from Express): "${decodedFilename}"`);
+      console.log(`   - Encoded filename (for cache lookup): "${encodedFilename}"`);
+      
+      // Try both versions to see which one exists in cache
+      let videoFilename = decodedFilename;
+      if (!videoCache.isVideoCached(decodedFilename) && videoCache.isVideoCached(encodedFilename)) {
+        console.log(`   - Using encoded filename for cache lookup: "${encodedFilename}"`);
+        videoFilename = encodedFilename;
+      } else {
+        console.log(`   - Using decoded filename for cache lookup: "${decodedFilename}"`);
+        videoFilename = decodedFilename;
+      }
       const range = req.headers.range;
 
       // Check if video exists in cache
