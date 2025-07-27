@@ -1338,43 +1338,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Image proxy endpoint to solve CORS issues for cropping
-  app.get("/api/image-proxy", async (req, res) => {
-    try {
-      const imageUrl = req.query.url as string;
-      if (!imageUrl) {
-        return res.status(400).json({ error: "Missing image URL parameter" });
-      }
 
-      console.log(`🖼️  IMAGE PROXY REQUEST: ${imageUrl}`);
-
-      // Set CORS headers
-      res.setHeader('Access-Control-Allow-Origin', '*');
-      res.setHeader('Access-Control-Allow-Methods', 'GET');
-      res.setHeader('Access-Control-Allow-Headers', 'Range');
-
-      // Fetch image from Supabase
-      const response = await fetch(imageUrl);
-      if (!response.ok) {
-        throw new Error(`Failed to fetch image: ${response.status} ${response.statusText}`);
-      }
-
-      // Set proper headers
-      res.setHeader('Content-Type', response.headers.get('content-type') || 'image/jpeg');
-      res.setHeader('Content-Length', response.headers.get('content-length') || '0');
-
-      // Stream the image
-      const buffer = await response.arrayBuffer();
-      res.send(Buffer.from(buffer));
-
-    } catch (error: any) {
-      console.error(`❌ IMAGE PROXY ERROR:`, error);
-      res.status(500).json({ 
-        error: "Image proxy failed",
-        details: error.message 
-      });
-    }
-  });
 
   // Video cache health endpoint
   app.get("/api/video-proxy/health", async (req, res) => {
@@ -2282,6 +2246,115 @@ export async function registerRoutes(app: Express): Promise<Server> {
     console.log(`🐛 DEBUG [${type}]:`, JSON.stringify(data, null, 2));
     res.json({ logged: true });
   });
+
+  // Image Cache Management Routes
+  app.get('/api/image-cache/stats', (req, res) => {
+    try {
+      const stats = videoCache.getImageCacheStats();
+      res.json(stats);
+    } catch (error) {
+      console.error('Image cache stats error:', error);
+      res.status(500).json({ error: 'Failed to get image cache stats' });
+    }
+  });
+
+  app.post('/api/image-cache/clear', (req, res) => {
+    try {
+      videoCache.clearImageCache();
+      res.json({ success: true, message: 'Image cache cleared successfully' });
+    } catch (error) {
+      console.error('Image cache clear error:', error);
+      res.status(500).json({ error: 'Failed to clear image cache' });
+    }
+  });
+
+  // Unified Cache Stats (Videos + Images)
+  app.get('/api/unified-cache/stats', (req, res) => {
+    try {
+      const videoStats = videoCache.getCacheStats();
+      const imageStats = videoCache.getImageCacheStats();
+      
+      res.json({
+        videos: {
+          fileCount: videoStats.fileCount,
+          totalSize: videoStats.totalSize,
+          sizeMB: videoStats.sizeMB,
+          files: videoStats.files
+        },
+        images: {
+          fileCount: imageStats.fileCount,
+          totalSize: imageStats.totalSize,
+          sizeMB: imageStats.sizeMB,
+          files: imageStats.files
+        },
+        total: {
+          fileCount: videoStats.fileCount + imageStats.fileCount,
+          totalSize: videoStats.totalSize + imageStats.totalSize,
+          sizeMB: ((videoStats.totalSize + imageStats.totalSize) / 1024 / 1024).toFixed(1)
+        }
+      });
+    } catch (error) {
+      console.error('Unified cache stats error:', error);
+      res.status(500).json({ error: 'Failed to get unified cache stats' });
+    }
+  });
+
+  // Image proxy endpoint for serving cached images
+  app.get('/api/image-proxy', async (req, res) => {
+    try {
+      const filename = req.query.filename as string;
+      
+      if (!filename) {
+        return res.status(400).json({ error: 'Missing image URL parameter' });
+      }
+
+      console.log(`🖼️ IMAGE PROXY REQUEST for: ${filename}`);
+      
+      // Check if image is cached
+      const cachedImagePath = videoCache.getCachedImagePath(filename);
+      
+      if (cachedImagePath) {
+        console.log(`📦 Serving image from LOCAL cache: ${filename}`);
+        
+        // Set appropriate headers for image serving
+        const ext = filename.toLowerCase().split('.').pop();
+        const mimeType = ext === 'jpg' || ext === 'jpeg' ? 'image/jpeg' : 
+                        ext === 'png' ? 'image/png' : 
+                        ext === 'webp' ? 'image/webp' : 'image/jpeg';
+        
+        res.setHeader('Content-Type', mimeType);
+        res.setHeader('Cache-Control', 'public, max-age=31536000'); // 1 year cache
+        res.sendFile(cachedImagePath);
+      } else {
+        console.log(`🌐 Image not cached, downloading and caching: ${filename}`);
+        
+        // Download and cache the image
+        await videoCache.downloadAndCacheImage(filename);
+        
+        // Serve the now-cached image
+        const newCachedPath = videoCache.getCachedImagePath(filename);
+        if (newCachedPath) {
+          console.log(`📦 Serving newly cached image: ${filename}`);
+          const ext = filename.toLowerCase().split('.').pop();
+          const mimeType = ext === 'jpg' || ext === 'jpeg' ? 'image/jpeg' : 
+                          ext === 'png' ? 'image/png' : 
+                          ext === 'webp' ? 'image/webp' : 'image/jpeg';
+          
+          res.setHeader('Content-Type', mimeType);
+          res.setHeader('Cache-Control', 'public, max-age=31536000');
+          res.sendFile(newCachedPath);
+        } else {
+          console.error(`❌ Failed to cache and serve image: ${filename}`);
+          res.status(500).json({ error: 'Failed to serve image' });
+        }
+      }
+    } catch (error: any) {
+      console.error('Image proxy error:', error);
+      res.status(500).json({ error: 'Image proxy failed', details: error.message });
+    }
+  });
+
+  console.log("📋 Video proxy, image proxy, and cache endpoints registered");
 
   return createServer(app);
 }

@@ -135,9 +135,15 @@ export default function GallerySection() {
         imageUrl = language === 'fr-FR' ? item.imageUrlFr : item.imageUrlEn;
       }
       
-      // Add cache-busting timestamp to ensure fresh images
-      const separator = imageUrl.includes('?') ? '&' : '?';
-      return `${imageUrl}${separator}t=${Date.now()}`;
+      // Use image proxy for automatic caching (similar to video proxy)
+      let filename = imageUrl.includes('/') ? imageUrl.split('/').pop() : imageUrl;
+      // Remove query parameters from filename (like ?v=timestamp)
+      if (filename && filename.includes('?')) {
+        filename = filename.split('?')[0];
+      }
+      const proxyUrl = `/api/image-proxy?filename=${encodeURIComponent(filename || '')}`;
+      console.log(`🖼️ GALLERY IMAGE PROXY URL: ${proxyUrl} (from ${imageUrl})`);
+      return proxyUrl;
     }
   };
 
@@ -189,13 +195,13 @@ export default function GallerySection() {
         type: 'video',
         url: proxyUrl,
         title: getItemTitle(item),
-        itemId: String(item.id),
+        itemId: typeof item.id === 'string' ? parseInt(item.id, 10) : item.id,
         width: item.videoWidth,
         height: item.videoHeight,
         orientation: item.videoOrientation as 'landscape' | 'portrait'
       });
       
-      trackVideoView(String(item.id), getItemTitle(item), 'gallery');
+      trackVideoView(typeof item.id === 'string' ? parseInt(item.id, 10) : item.id, getItemTitle(item), 'gallery');
     } else {
       // New behavior: flip card to show sorry message
       setFlippedCards(prev => {

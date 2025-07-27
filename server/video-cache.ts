@@ -3,54 +3,79 @@ import { join } from 'path';
 import { createHash } from 'crypto';
 
 export class VideoCache {
-  private cacheDir: string;
+  private videoCacheDir: string;
+  private imageCacheDir: string;
   private maxCacheSize: number; // in bytes
   private maxCacheAge: number; // in milliseconds
 
   constructor() {
-    this.cacheDir = join(process.cwd(), 'server/cache/videos');
+    this.videoCacheDir = join(process.cwd(), 'server/cache/videos');
+    this.imageCacheDir = join(process.cwd(), 'server/cache/images');
     this.maxCacheSize = 5000 * 1024 * 1024; // 5000MB cache limit  
     this.maxCacheAge = 7 * 24 * 60 * 60 * 1000; // 7 days (extended since we use smart replacement)
     
-    // Ensure cache directory exists
+    // Ensure cache directories exist
     try {
-      if (!existsSync(this.cacheDir)) {
-        require('fs').mkdirSync(this.cacheDir, { recursive: true });
-        console.log(`📁 Created cache directory: ${this.cacheDir}`);
+      if (!existsSync(this.videoCacheDir)) {
+        require('fs').mkdirSync(this.videoCacheDir, { recursive: true });
+        console.log(`📁 Created video cache directory: ${this.videoCacheDir}`);
+      }
+      if (!existsSync(this.imageCacheDir)) {
+        require('fs').mkdirSync(this.imageCacheDir, { recursive: true });
+        console.log(`📁 Created image cache directory: ${this.imageCacheDir}`);
       }
       
-      console.log(`✅ Video cache initialized: ${this.cacheDir}`);
+      console.log(`✅ Video & Image cache initialized`);
       console.log(`📊 NODE_ENV: ${process.env.NODE_ENV || 'undefined'}`);
       
       // Proactively preload critical videos on startup
       this.preloadCriticalVideos();
     } catch (error: any) {
       console.error(`❌ Cache directory creation failed: ${error.message}`);
-      console.error(`❌ Cache dir path: ${this.cacheDir}`);
+      console.error(`❌ Video cache dir path: ${this.videoCacheDir}`);
+      console.error(`❌ Image cache dir path: ${this.imageCacheDir}`);
       console.error(`❌ Process CWD: ${process.cwd()}`);
       // Don't throw - allow server to continue without cache
-      console.log(`⚠️ Server will continue without video cache - videos will stream directly from CDN`);
+      console.log(`⚠️ Server will continue without cache - media will stream directly from CDN`);
     }
   }
 
   /**
    * Get cache file path for a video filename
    */
-  private getCacheFilePath(filename: string): string {
+  private getVideoCacheFilePath(filename: string): string {
     if (!filename || filename.trim() === '') {
       throw new Error(`Invalid filename provided: ${filename}`);
     }
     // Create hash of filename for safe filesystem storage
     const hash = createHash('md5').update(filename.trim()).digest('hex');
     const extension = filename.split('.').pop() || 'mp4';
-    return join(this.cacheDir, `${hash}.${extension}`);
+    return join(this.videoCacheDir, `${hash}.${extension}`);
+  }
+
+  /**
+   * Get cache file path for an image filename
+   */
+  private getImageCacheFilePath(filename: string): string {
+    if (!filename || filename.trim() === '') {
+      throw new Error(`Invalid filename provided: ${filename}`);
+    }
+    // Remove query parameters from filename before hashing
+    let cleanFilename = filename.trim();
+    if (cleanFilename.includes('?')) {
+      cleanFilename = cleanFilename.split('?')[0];
+    }
+    // Create hash of clean filename for safe filesystem storage
+    const hash = createHash('md5').update(cleanFilename).digest('hex');
+    const extension = cleanFilename.split('.').pop() || 'jpg';
+    return join(this.imageCacheDir, `${hash}.${extension}`);
   }
 
   /**
    * Public method to get cache file path (for external use)
    */
   getCachedFilePath(filename: string): string {
-    return this.getCacheFilePath(filename);
+    return this.getVideoCacheFilePath(filename);
   }
 
   /**
@@ -58,7 +83,7 @@ export class VideoCache {
    */
   isVideoCached(filename: string): boolean {
     try {
-      const cacheFile = this.getCacheFilePath(filename);
+      const cacheFile = this.getVideoCacheFilePath(filename);
       return existsSync(cacheFile);
     } catch (error: any) {
       console.error(`❌ Cache check failed for ${filename}: ${error.message}`);
@@ -72,7 +97,7 @@ export class VideoCache {
   getCachedVideoPath(filename: string): string | null {
     try {
       if (this.isVideoCached(filename)) {
-        return this.getCacheFilePath(filename);
+        return this.getVideoCacheFilePath(filename);
       }
       return null;
     } catch (error: any) {
@@ -85,7 +110,7 @@ export class VideoCache {
    * Cache a video from Supabase response
    */
   async cacheVideo(filename: string, videoResponse: any): Promise<string> {
-    const cacheFile = this.getCacheFilePath(filename);
+    const cacheFile = this.getVideoCacheFilePath(filename);
     
     // Smart replacement: Remove old video if it exists
     if (existsSync(cacheFile)) {
@@ -123,7 +148,7 @@ export class VideoCache {
    * Remove a specific video from cache
    */
   removeCachedVideo(filename: string): void {
-    const cacheFile = this.getCacheFilePath(filename);
+    const cacheFile = this.getVideoCacheFilePath(filename);
     if (existsSync(cacheFile)) {
       unlinkSync(cacheFile);
       console.log(`🗑️ Removed cached video: ${filename}`);
@@ -135,12 +160,12 @@ export class VideoCache {
    */
   private smartCleanupBeforeCache(): void {
     try {
-      const files = readdirSync(this.cacheDir);
+      const files = readdirSync(this.videoCacheDir);
       
       // If we have more than 8 videos (keeping some buffer below max 10), remove oldest
       if (files.length >= 8) {
         const fileStats = files.map(file => {
-          const filePath = join(this.cacheDir, file);
+          const filePath = join(this.videoCacheDir, file);
           const stats = statSync(filePath);
           return {
             path: filePath,
@@ -166,9 +191,9 @@ export class VideoCache {
    */
   private cleanupCache(): void {
     try {
-      const files = readdirSync(this.cacheDir);
+      const files = readdirSync(this.videoCacheDir);
       const fileStats = files.map(file => {
-        const filePath = join(this.cacheDir, file);
+        const filePath = join(this.videoCacheDir, file);
         const stats = statSync(filePath);
         return {
           path: filePath,
@@ -215,11 +240,11 @@ export class VideoCache {
    */
   getCacheStats(): { fileCount: number; totalSize: number; sizeMB: string; files: string[]; fileDetails: Array<{filename: string; size: number; lastModified: string}> } {
     try {
-      const files = readdirSync(this.cacheDir);
+      const files = readdirSync(this.videoCacheDir);
       const fileDetails: Array<{filename: string; size: number; lastModified: string}> = [];
       
       const totalSize = files.reduce((sum, file) => {
-        const filePath = join(this.cacheDir, file);
+        const filePath = join(this.videoCacheDir, file);
         const stats = statSync(filePath);
         
         fileDetails.push({
@@ -247,8 +272,131 @@ export class VideoCache {
    * Check if a specific video is cached (for admin interface indicators)
    */
   isVideoCachedByFilename(filename: string): boolean {
-    const cacheFile = this.getCacheFilePath(filename);
+    const cacheFile = this.getVideoCacheFilePath(filename);
     return existsSync(cacheFile);
+  }
+
+  // ========================
+  // IMAGE CACHING METHODS
+  // ========================
+
+  /**
+   * Check if image exists in local cache
+   */
+  isImageCached(filename: string): boolean {
+    try {
+      const cacheFile = this.getImageCacheFilePath(filename);
+      return existsSync(cacheFile);
+    } catch (error: any) {
+      console.error(`❌ Image cache check failed for ${filename}: ${error.message}`);
+      return false;
+    }
+  }
+
+  /**
+   * Get cached image file path
+   */
+  getCachedImagePath(filename: string): string | null {
+    try {
+      if (this.isImageCached(filename)) {
+        return this.getImageCacheFilePath(filename);
+      }
+      return null;
+    } catch (error: any) {
+      console.error(`❌ Failed to get cached image path for ${filename}: ${error.message}`);
+      return null;
+    }
+  }
+
+  /**
+   * Download and cache an image from Supabase
+   */
+  async downloadAndCacheImage(filename: string, customUrl?: string): Promise<void> {
+    try {
+      // Ensure cache directory exists before downloading
+      if (!existsSync(this.imageCacheDir)) {
+        require('fs').mkdirSync(this.imageCacheDir, { recursive: true });
+        console.log(`📁 Created image cache directory for download: ${this.imageCacheDir}`);
+      }
+      
+      // Remove query parameters from filename for clean display and caching
+      let cleanFilename = filename;
+      if (cleanFilename.includes('?')) {
+        cleanFilename = cleanFilename.split('?')[0];
+      }
+      
+      const fullImageUrl = customUrl || `https://supabase.memopyk.org/storage/v1/object/public/memopyk-gallery/${filename}`;
+      const cacheFile = this.getImageCacheFilePath(cleanFilename);
+      
+      console.log(`📥 Downloading image ${cleanFilename} from Supabase...`);
+      
+      const fetch = (await import('node-fetch')).default;
+      const response = await fetch(fullImageUrl, {
+        headers: { 'User-Agent': 'MEMOPYK-ImageCachePreloader/1.0' }
+      });
+      
+      if (!response.ok) {
+        throw new Error(`Failed to download image ${cleanFilename}: ${response.status} ${response.statusText}`);
+      }
+    
+      return new Promise((resolve, reject) => {
+        const writeStream = createWriteStream(cacheFile);
+        
+        writeStream.on('error', reject);
+        writeStream.on('finish', () => {
+          console.log(`💾 Successfully cached image: ${cleanFilename}`);
+          resolve();
+        });
+        
+        if (response.body) {
+          response.body.pipe(writeStream);
+        } else {
+          writeStream.end();
+          reject(new Error('No response body'));
+        }
+      });
+    } catch (error: any) {
+      console.error(`❌ Failed to download and cache image ${cleanFilename}: ${error.message}`);
+      throw error;
+    }
+  }
+
+  /**
+   * Get image cache statistics
+   */
+  getImageCacheStats(): { fileCount: number; totalSize: number; sizeMB: string; files: string[] } {
+    try {
+      const files = readdirSync(this.imageCacheDir);
+      const totalSize = files.reduce((sum, file) => {
+        const filePath = join(this.imageCacheDir, file);
+        const stats = statSync(filePath);
+        return sum + stats.size;
+      }, 0);
+      
+      return {
+        fileCount: files.length,
+        totalSize,
+        sizeMB: (totalSize / 1024 / 1024).toFixed(1),
+        files: files
+      };
+    } catch (error) {
+      return { fileCount: 0, totalSize: 0, sizeMB: '0.0', files: [] };
+    }
+  }
+
+  /**
+   * Clear all cached images
+   */
+  clearImageCache(): void {
+    try {
+      const files = readdirSync(this.imageCacheDir);
+      files.forEach(file => {
+        unlinkSync(join(this.imageCacheDir, file));
+      });
+      console.log(`🗑️ Cleared image cache (${files.length} files removed)`);
+    } catch (error) {
+      console.error('❌ Failed to clear image cache:', error);
+    }
   }
 
   /**
@@ -258,7 +406,7 @@ export class VideoCache {
     const status: Record<string, {cached: boolean; size?: number; lastModified?: string}> = {};
     
     filenames.forEach(filename => {
-      const cacheFile = this.getCacheFilePath(filename);
+      const cacheFile = this.getVideoCacheFilePath(filename);
       if (existsSync(cacheFile)) {
         try {
           const stats = statSync(cacheFile);
@@ -283,9 +431,9 @@ export class VideoCache {
    */
   clearCache(): void {
     try {
-      const files = readdirSync(this.cacheDir);
+      const files = readdirSync(this.videoCacheDir);
       files.forEach(file => {
-        unlinkSync(join(this.cacheDir, file));
+        unlinkSync(join(this.videoCacheDir, file));
       });
       console.log(`🗑️ Cleared video cache (${files.length} files removed)`);
     } catch (error) {
@@ -298,7 +446,7 @@ export class VideoCache {
    */
   clearSpecificFile(filename: string): void {
     try {
-      const cacheFile = this.getCacheFilePath(filename);
+      const cacheFile = this.getVideoCacheFilePath(filename);
       if (existsSync(cacheFile)) {
         unlinkSync(cacheFile);
         console.log(`🗑️ Cleared cached file: ${filename}`);
@@ -342,10 +490,10 @@ export class VideoCache {
   }
 
   /**
-   * Preload all gallery videos for instant deployment availability
+   * Preload all gallery videos and images for instant deployment availability
    */
   private async preloadGalleryVideos(): Promise<void> {
-    console.log('📸 Starting gallery video preloading...');
+    console.log('📸 Starting gallery video and image preloading...');
     
     try {
       // Import hybrid storage to get gallery items
@@ -357,13 +505,23 @@ export class VideoCache {
         .map(item => item.video_url_en!.split('/').pop()!)
         .filter(filename => filename);
 
-      console.log(`📋 Found ${galleryVideos.length} gallery videos to preload`);
+      const galleryImages = galleryItems
+        .filter(item => item.static_image_url)
+        .map(item => item.static_image_url!.split('/').pop()!)
+        .filter(filename => filename);
+
+      console.log(`📋 Found ${galleryVideos.length} gallery videos and ${galleryImages.length} gallery images to preload`);
       
+      let videosProcessed = 0;
+      let imagesProcessed = 0;
+
+      // Preload videos
       for (const filename of galleryVideos) {
         try {
           if (!this.isVideoCached(filename)) {
             console.log(`⬇️ Preloading gallery video: ${filename}`);
             await this.downloadAndCacheVideo(filename);
+            videosProcessed++;
           } else {
             console.log(`✅ Gallery video already cached: ${filename}`);
           }
@@ -371,10 +529,26 @@ export class VideoCache {
           console.error(`❌ Failed to preload gallery video ${filename}:`, error);
         }
       }
+
+      // Preload images
+      for (const filename of galleryImages) {
+        try {
+          if (!this.isImageCached(filename)) {
+            console.log(`⬇️ Preloading gallery image: ${filename}`);
+            await this.downloadAndCacheImage(filename);
+            imagesProcessed++;
+          } else {
+            console.log(`✅ Gallery image already cached: ${filename}`);
+          }
+        } catch (error) {
+          console.error(`❌ Failed to preload gallery image ${filename}:`, error);
+        }
+      }
       
-      console.log(`🎬 Gallery video preloading complete! ${galleryVideos.length} videos processed`);
+      console.log(`🎬 Gallery media preloading complete! ${galleryVideos.length} videos and ${galleryImages.length} images processed`);
+      console.log(`📊 Cache summary: ${videosProcessed} new videos, ${imagesProcessed} new images cached`);
     } catch (error) {
-      console.error('❌ Failed to preload gallery videos:', error);
+      console.error('❌ Failed to preload gallery media:', error);
     }
   }
 
@@ -384,13 +558,13 @@ export class VideoCache {
   async downloadAndCacheVideo(filename: string, customUrl?: string): Promise<void> {
     try {
       // Ensure cache directory exists before downloading
-      if (!existsSync(this.cacheDir)) {
-        require('fs').mkdirSync(this.cacheDir, { recursive: true });
-        console.log(`📁 Created cache directory for download: ${this.cacheDir}`);
+      if (!existsSync(this.videoCacheDir)) {
+        require('fs').mkdirSync(this.videoCacheDir, { recursive: true });
+        console.log(`📁 Created cache directory for download: ${this.videoCacheDir}`);
       }
       
       const fullVideoUrl = customUrl || `https://supabase.memopyk.org/storage/v1/object/public/memopyk-gallery/${filename}`;
-      const cacheFile = this.getCacheFilePath(filename);
+      const cacheFile = this.getVideoCacheFilePath(filename);
       
       console.log(`📥 Downloading ${filename} from Supabase...`);
       
