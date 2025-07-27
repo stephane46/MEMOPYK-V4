@@ -58,14 +58,14 @@ export function HowItWorksSection() {
           {steps.map((step, index) => {
             const Icon = step.icon;
             return (
-              <div key={step.number} className="relative">
+              <div key={step.number} className="relative h-full">
                 {/* Connection Line (except for last step) */}
                 {index < steps.length - 1 && (
                   <div className="hidden lg:block absolute top-24 left-full w-full h-0.5 bg-gradient-to-r from-memopyk-sky-blue to-memopyk-blue-gray/30 transform -translate-x-1/2 z-0"></div>
                 )}
                 
                 {/* Step Card */}
-                <div className="relative bg-white rounded-2xl shadow-2xl p-8 text-center group hover:shadow-3xl transition-all duration-500 transform hover:-translate-y-2 z-10">
+                <div className="relative bg-white rounded-2xl shadow-2xl p-8 text-center group hover:shadow-3xl transition-all duration-500 transform hover:-translate-y-2 z-10 h-full flex flex-col">
                   
                   {/* Step Number */}
                   <div className="absolute -top-6 left-1/2 transform -translate-x-1/2">
@@ -79,7 +79,7 @@ export function HowItWorksSection() {
                     <img 
                       src={step.image}
                       alt={language === 'fr-FR' ? step.titleFr : step.titleEn}
-                      className="w-full h-48 object-cover rounded-xl shadow-lg"
+                      className="w-full h-48 object-contain rounded-xl shadow-lg"
                     />
                   </div>
 
@@ -96,7 +96,7 @@ export function HowItWorksSection() {
                   </h3>
 
                   {/* Step Description */}
-                  <p className="text-memopyk-dark-blue leading-relaxed">
+                  <p className="text-memopyk-dark-blue leading-relaxed flex-grow">
                     {language === 'fr-FR' ? step.descriptionFr : step.descriptionEn}
                   </p>
 

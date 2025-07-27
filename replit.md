@@ -30,6 +30,7 @@ Preferred communication style: Simple, everyday language.
 **Phase 8 Brand Assets & Visual Polish - Layout Update (July 27, 2025):**
 ✅ **KeyVisualSection Layout**: Image moved to left side, text content moved to right side for improved visual flow
 ✅ **KeyVisualSection Cleanup**: Removed floating pill elements (top-right "100+ Films created" and bottom-left "Expert artists") for cleaner image presentation
+✅ **HowItWorksSection Fixes**: Fixed card height inconsistency with flexbox layout and prevented image cropping using object-contain
 
 **Analytics Implementation Status (July 26, 2025):**
 - ✅ **Hero Video Exclusion Applied**: All analytics methods now filter out VideoHero1.mp4, VideoHero2.mp4, VideoHero3.mp4
