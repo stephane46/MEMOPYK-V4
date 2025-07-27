@@ -1417,7 +1417,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         cache: stats,
         timestamp: new Date().toISOString(),
         deployment: {
-          version: "Gallery Video Fix v1.0.6 - Range Parsing Fix",
+          version: "Gallery Video Fix v1.0.7 - Supabase URL Encoding Fix",
           fileFilters: "MIME+Extension checking active",
           limits: "5000MB video, 5000MB image"
         }
