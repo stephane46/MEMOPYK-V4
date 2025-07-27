@@ -122,7 +122,18 @@ export default function GallerySection() {
       // Use video proxy for automatic caching (same as hero videos)
       const videoUrl = language === 'fr-FR' ? item.videoUrlFr : item.videoUrlEn;
       // Extract filename from full URL
-      const filename = videoUrl.includes('/') ? videoUrl.split('/').pop() : videoUrl;
+      let filename = videoUrl.includes('/') ? videoUrl.split('/').pop() : videoUrl;
+      
+      // CRITICAL FIX: Decode filename first to prevent double-encoding
+      // Some filenames in database are already URL-encoded (contain %20, %28, %29)
+      try {
+        const decodedFilename = decodeURIComponent(filename || '');
+        filename = decodedFilename;
+      } catch (e) {
+        // If decoding fails, use original filename
+        console.warn(`Failed to decode filename: ${filename}`);
+      }
+      
       const proxyUrl = `/api/video-proxy?filename=${encodeURIComponent(filename || '')}`;
       console.log(`🎬 GALLERY VIDEO PROXY URL: ${proxyUrl} (from ${videoUrl})`);
       return proxyUrl;
@@ -187,7 +198,18 @@ export default function GallerySection() {
     if (hasVideo(item)) {
       // Use video proxy for automatic caching (same as hero videos)
       const rawVideoUrl = language === 'fr-FR' ? item.videoUrlFr : item.videoUrlEn;
-      const filename = rawVideoUrl.includes('/') ? rawVideoUrl.split('/').pop() : rawVideoUrl;
+      let filename = rawVideoUrl.includes('/') ? rawVideoUrl.split('/').pop() : rawVideoUrl;
+      
+      // CRITICAL FIX: Decode filename first to prevent double-encoding
+      // Some filenames in database are already URL-encoded (contain %20, %28, %29)
+      try {
+        const decodedFilename = decodeURIComponent(filename || '');
+        filename = decodedFilename;
+      } catch (e) {
+        // If decoding fails, use original filename
+        console.warn(`Failed to decode filename: ${filename}`);
+      }
+      
       const proxyUrl = `/api/video-proxy?filename=${encodeURIComponent(filename || '')}`;
       console.log('🎬 GALLERY VIDEO PROXY URL:', proxyUrl, '(from', rawVideoUrl + ')');
       
@@ -201,7 +223,7 @@ export default function GallerySection() {
         orientation: item.videoOrientation as 'landscape' | 'portrait'
       });
       
-      trackVideoView(typeof item.id === 'string' ? parseInt(item.id, 10) : item.id, getItemTitle(item), 'gallery');
+      trackVideoView(String(item.id));
     } else {
       // New behavior: flip card to show sorry message
       setFlippedCards(prev => {
