@@ -93,9 +93,11 @@ export function HowItWorksSection() {
                   </h3>
 
                   {/* Step Description */}
-                  <p className="text-memopyk-cream/90 leading-relaxed text-base mb-4 flex-grow">
-                    {language === 'fr-FR' ? step.descriptionFr : step.descriptionEn}
-                  </p>
+                  <div className="flex-grow">
+                    <p className="text-memopyk-cream/90 leading-relaxed text-base h-32 mb-4">
+                      {language === 'fr-FR' ? step.descriptionFr : step.descriptionEn}
+                    </p>
+                  </div>
 
                   {/* Sub Description */}
                   <div className="mt-4 pt-4 border-t border-memopyk-cream/20">
@@ -103,7 +105,7 @@ export function HowItWorksSection() {
                       <div className="w-6 h-6 rounded-full bg-memopyk-cream mt-1 flex-shrink-0 flex items-center justify-center">
                         <Icon className="w-3 h-3 text-memopyk-dark-blue" />
                       </div>
-                      <p className="text-memopyk-cream/90 text-base leading-relaxed">
+                      <p className="text-memopyk-cream/90 text-base leading-relaxed h-20">
                         {language === 'fr-FR' ? step.subDescriptionFr : step.subDescriptionEn}
                       </p>
                     </div>
