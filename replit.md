@@ -12,6 +12,7 @@ Preferred communication style: Simple, everyday language.
 - React Editor Future-Proofing: Consider TipTap as React 19 alternative to ReactQuill when needed
 - Track ReactQuill updates for React 19 compatibility improvements
 - Prioritize stable, tested solutions over bleeding-edge dependencies
+- **Typography**: Poppins (sans-serif) everywhere EXCEPT Playfair Display (serif) ONLY for hero video overlay text
 
 **Analytics Strategy Decision (Jan 22, 2025):**
 - Remove hero video tracking (auto-play videos don't provide meaningful analytics)

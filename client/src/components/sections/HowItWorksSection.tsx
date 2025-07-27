@@ -39,7 +39,7 @@ export function HowItWorksSection() {
       <div className="container mx-auto px-4">
         {/* Section Header */}
         <div className="text-center mb-16">
-          <h2 className="text-4xl md:text-5xl font-playfair font-bold text-memopyk-navy mb-6">
+          <h2 className="text-4xl md:text-5xl font-poppins font-bold text-memopyk-navy mb-6">
             {language === 'fr-FR' 
               ? "3 étapes simples pour transformer le chaos en film mémoire"
               : "3 easy steps to turn chaos into a memory film"

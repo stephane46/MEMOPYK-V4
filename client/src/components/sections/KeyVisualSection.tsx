@@ -11,7 +11,7 @@ export function KeyVisualSection() {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
           {/* Left: Problem Statement */}
           <div className="space-y-6">
-            <h2 className="text-4xl md:text-5xl font-playfair font-bold text-memopyk-navy leading-tight">
+            <h2 className="text-4xl md:text-5xl font-poppins font-bold text-memopyk-navy leading-tight">
               {language === 'fr-FR' 
                 ? "Vos souvenirs dorment-ils dans vos téléphones ?"
                 : "Are your memories sleeping in your phones?"
