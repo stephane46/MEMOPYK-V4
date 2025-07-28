@@ -253,9 +253,9 @@ export function VideoOverlay({ videoUrl, title, width, height, orientation, onCl
           onClick={handleVideoClick}
           onPlay={handlePlay}
           onPause={handlePause}
-          onLoadedMetadata={(e) => {
+          onLoadedMetadata={() => {
             handleLoadedMetadata();
-            console.log(`✅ VIDEO OVERLAY FIXED (v1.0.14): loadedmetadata - ${videoUrl}`);
+            console.log(`✅ VIDEO OVERLAY FIXED (v1.0.15): loadedmetadata - ${videoUrl}`);
           }}
           onError={handleVideoError}
           onLoadStart={() => {
