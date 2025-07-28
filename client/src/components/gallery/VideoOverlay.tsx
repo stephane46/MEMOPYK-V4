@@ -201,10 +201,9 @@ export function VideoOverlay({ videoUrl, title, width, height, orientation, onCl
         }}
         onMouseMove={resetControlsTimer}
       >
-        {/* Video Element */}
+        {/* Video Element - Use same structure as hero videos */}
         <video
           ref={videoRef}
-          src={videoUrl}
           className="w-full h-full object-contain"
           onClick={handleVideoClick}
           onPlay={handlePlay}
@@ -228,7 +227,10 @@ export function VideoOverlay({ videoUrl, title, width, height, orientation, onCl
           }}
           preload="metadata"
           playsInline
-        />
+          crossOrigin="anonymous"
+        >
+          <source src={videoUrl} type="video/mp4" />
+        </video>
 
         {/* Control Bar */}
         <div
