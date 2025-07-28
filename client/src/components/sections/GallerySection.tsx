@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -75,6 +75,17 @@ export default function GallerySection() {
         isActive: item.is_active
       }))
   });
+
+  // Add gallery video logging similar to hero videos
+  useEffect(() => {
+    if (galleryItems.length > 0) {
+      const galleryVideoFilenames = galleryItems.map(item => {
+        const videoUrl = language === 'fr-FR' ? item.videoUrlFr : item.videoUrlEn;
+        return videoUrl.includes('/') ? videoUrl.split('/').pop() : videoUrl;
+      });
+      console.log(`🎬 Gallery videos available: ${galleryItems.length}`, galleryVideoFilenames);
+    }
+  }, [galleryItems.length, language]);
 
   const content = {
     'fr-FR': {
@@ -154,7 +165,8 @@ export default function GallerySection() {
   };
 
   const hasVideo = (item: GalleryItem, index: number) => {
-    // All gallery items can have video functionality if they have a video URL
+    // GALLERY INDEPENDENCE FIX: All gallery items can have video functionality
+    // Removed hard-coded restriction that only allowed first video to play
     const videoUrl = language === 'fr-FR' ? item.videoUrlFr : item.videoUrlEn;
     return videoUrl && videoUrl.trim() !== '';
   };
