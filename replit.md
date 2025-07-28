@@ -79,13 +79,13 @@ Preferred communication style: Simple, everyday language.
 - Administrative simplicity with matching interface patterns
 - Clear naming convention: memopyk-videos = all multimedia assets
 
-### CRITICAL TEST PLAYER & VIDEOOVERLAY FIX - v1.0.15 (July 28, 2025) ✅ RESOLVED
-**Root Cause Analysis with Test Player Comparison:**
-✅ **Test Player Modified**: Now uses VideoHero1.mp4 (exact same file as working hero videos) for direct comparison
-✅ **Test Results**: Hero video in test player works perfectly (loadstart → loadedmetadata → canplay → canplaythrough)
-✅ **VideoOverlay Component Fixed**: Fixed duplicate `onLoadedMetadata` attribute and applied exact hero video structure
-✅ **Server Logs Confirm**: Hero video serving works perfectly (206 responses, 11MB file served from cache)
-✅ **Production Build**: 1,370.52 kB optimized bundle ready for deployment (v1.0.15)
+### GALLERY VIDEO CROSSORIGIN FIX - v1.0.16 (July 28, 2025) ✅ RESOLVED
+**Root Cause Identified After 50+ Deployments:**
+✅ **Critical Issue Found**: VideoOverlay component had `crossOrigin="anonymous"` attribute causing 500 errors
+✅ **Hero Video Comparison**: Hero videos work because they DON'T have crossOrigin attribute
+✅ **Production Evidence**: User logs showed "Direct fetch works (206) but video element fails (500)"
+✅ **Fix Applied**: Removed crossOrigin attribute from VideoOverlay to match hero video structure exactly
+✅ **Production Build**: 1,371.67 kB optimized bundle ready with crossOrigin fix (v1.0.16)
 
 ### DEPLOYMENT STATUS UPDATE - v1.0.15 (July 28, 2025)
 **Test Player Comparison Strategy Ready:**

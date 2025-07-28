@@ -255,26 +255,25 @@ export function VideoOverlay({ videoUrl, title, width, height, orientation, onCl
           onPause={handlePause}
           onLoadedMetadata={() => {
             handleLoadedMetadata();
-            console.log(`✅ VIDEO OVERLAY FIXED (v1.0.15): loadedmetadata - ${videoUrl}`);
+            console.log(`✅ VIDEO OVERLAY FINAL FIX (v1.0.16): loadedmetadata - ${videoUrl}`);
           }}
           onError={handleVideoError}
           onLoadStart={() => {
-            console.log(`🎬 VIDEO OVERLAY FIXED (v1.0.14): loadstart`);
+            console.log(`🎬 VIDEO OVERLAY FINAL FIX (v1.0.16): loadstart`);
             console.log(`   - Video URL: "${videoUrl}"`);
             console.log(`   - Title: "${title}"`);
           }}
           onCanPlay={() => {
-            console.log(`✅ VIDEO OVERLAY FIXED (v1.0.14): canplay - ${videoUrl}`);
+            console.log(`✅ VIDEO OVERLAY FINAL FIX (v1.0.16): canplay - ${videoUrl}`);
           }}
           onLoadedData={() => {
-            console.log(`✅ VIDEO OVERLAY FIXED (v1.0.14): loadeddata - ${videoUrl}`);
+            console.log(`✅ VIDEO OVERLAY FINAL FIX (v1.0.16): loadeddata - ${videoUrl}`);
           }}
           onCanPlayThrough={() => {
-            console.log(`✅ VIDEO OVERLAY FIXED (v1.0.14): canplaythrough - ${videoUrl}`);
+            console.log(`✅ VIDEO OVERLAY FINAL FIX (v1.0.16): canplaythrough - ${videoUrl}`);
           }}
           preload="metadata"
           playsInline
-          crossOrigin="anonymous"
         >
           <source src={videoUrl} type="video/mp4" />
           Your browser does not support the video tag.
