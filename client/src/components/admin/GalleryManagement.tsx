@@ -213,7 +213,7 @@ export default function GalleryManagement({ smartCacheRefreshMutation }: Gallery
 
   // Update gallery item mutation
   const updateItemMutation = useMutation({
-    mutationFn: async ({ id, data }: { id: number; data: Partial<GalleryItem> }) => {
+    mutationFn: async ({ id, data }: { id: string; data: Partial<GalleryItem> }) => {
       console.log('🚨 UPDATE MUTATION DEBUG - Data being sent to server:', {
         id: id,
         video_filename: data.video_filename,
@@ -221,6 +221,9 @@ export default function GalleryManagement({ smartCacheRefreshMutation }: Gallery
         title_en: data.title_en,
         fullData: data
       });
+      console.log('🚨 API URL:', `/api/gallery/${id}`);
+      console.log('🚨 API METHOD:', 'PATCH');
+      console.log('🚨 REQUEST BODY:', JSON.stringify(data, null, 2));
       
       // Make the API request
       const result = await apiRequest(`/api/gallery/${id}`, 'PATCH', data);
@@ -243,7 +246,7 @@ export default function GalleryManagement({ smartCacheRefreshMutation }: Gallery
 
   // Reorder gallery item mutation
   const reorderItemMutation = useMutation({
-    mutationFn: async ({ id, order_index }: { id: number; order_index: number }) => {
+    mutationFn: async ({ id, order_index }: { id: string; order_index: number }) => {
       return apiRequest(`/api/gallery/${id}/reorder`, 'PATCH', { order_index });
     },
     onSuccess: () => {
@@ -261,7 +264,7 @@ export default function GalleryManagement({ smartCacheRefreshMutation }: Gallery
 
   // Delete gallery item mutation
   const deleteItemMutation = useMutation({
-    mutationFn: async (id: number) => {
+    mutationFn: async (id: string) => {
       return apiRequest(`/api/gallery/${id}`, 'DELETE');
     },
     onSuccess: () => {
