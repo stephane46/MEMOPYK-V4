@@ -1239,30 +1239,15 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       console.log(`🔄 REDIRECTING ${videoId} → ${filename}`);
       
-      // Forward to video proxy with actual filename
-      console.log(`🔄 Forwarding to video proxy with filename: ${filename}`);
-      req.query.filename = filename;
-      
-      // Forward request internally to video proxy route
-      req.url = `/api/video-proxy?filename=${encodeURIComponent(filename)}`;
-      req.originalUrl = req.url;
-      
-      // Find and call video proxy route handler
-      const routes = app._router.stack;
-      for (const layer of routes) {
-        if (layer.route && layer.route.path === '/api/video-proxy' && layer.route.methods.get) {
-          const handler = layer.route.stack[0].handle;
-          return handler(req, res, () => {});
-        }
-      }
-      
-      // If direct forwarding fails, redirect
-      console.log(`⚠️ Direct forwarding failed, using redirect`);
-      return res.redirect(`/api/video-proxy?filename=${encodeURIComponent(filename)}`);
+      // Use simple redirect to video proxy - this bypasses internal forwarding issues
+      const targetUrl = `/api/video-proxy?filename=${encodeURIComponent(filename)}`;
+      console.log(`📍 Redirecting to: ${targetUrl}`);
+      return res.redirect(302, targetUrl);
       
     } catch (error) {
-      console.error('Short URL alias error:', error);
-      res.status(500).json({ error: "Short URL alias failed" });
+      console.error('❌ Short URL alias error:', error);
+      const errorMessage = error instanceof Error ? error.message : String(error);
+      res.status(500).json({ error: "Short URL alias failed", details: errorMessage });
     }
   });
 
