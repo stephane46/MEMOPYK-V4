@@ -328,7 +328,7 @@ export class VideoCache {
         cleanFilename = cleanFilename.split('?')[0];
       }
       
-      const fullImageUrl = customUrl || `https://supabase.memopyk.org/storage/v1/object/public/memopyk-gallery/${filename}`;
+      const fullImageUrl = customUrl || `https://supabase.memopyk.org/storage/v1/object/public/memopyk-videos/${filename}`;
       const cacheFile = this.getImageCacheFilePath(cleanFilename);
       
       console.log(`📥 Downloading image ${cleanFilename} from Supabase...`);
@@ -657,8 +657,8 @@ export class VideoCache {
       console.log(`   - Filename: ${filename}`);
       console.log(`   - Using for Supabase: ${supabaseFilename}`);
       
-      // UNIFIED BUCKET v1.0.16: All videos now stored in memopyk-videos bucket
-      // This includes hero videos (VideoHero1.mp4) and gallery videos (gallery_*.mp4)
+      // UNIFIED BUCKET v1.0.16: All media (videos + images) now stored in memopyk-videos bucket
+      // This includes hero videos (VideoHero1.mp4), gallery videos (gallery_*.mp4), and gallery images (static_*.png/jpg)
       const encodedFilename = encodeURIComponent(supabaseFilename);
       const fullVideoUrl = customUrl || `https://supabase.memopyk.org/storage/v1/object/public/memopyk-videos/${encodedFilename}`;
       const cacheFile = this.getVideoCacheFilePath(filename); // Keep original filename for cache lookup

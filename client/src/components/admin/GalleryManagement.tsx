@@ -745,7 +745,10 @@ export default function GalleryManagement() {
             🎯 Nom de fichier vidéo (système unifié)
           </h4>
           <p className="text-sm text-blue-800 dark:text-blue-200 mb-3">
-            Entrez directement le nom du fichier vidéo stocké dans le bucket memopyk-videos (ex: VideoHero1.mp4, gallery_Our_vitamin_sea_rework_2_compressed.mp4)
+            Entrez directement le nom du fichier vidéo stocké dans le bucket unifié memopyk-videos. Ce bucket contient TOUTES les ressources multimédia (vidéos ET images).
+          </p>
+          <p className="text-xs text-blue-700 dark:text-blue-300 mb-3">
+            Exemples: VideoHero1.mp4, gallery_Our_vitamin_sea_rework_2_compressed.mp4, static_123456789.png
           </p>
           <div>
             <Label htmlFor="video_filename" className="text-gray-700 dark:text-gray-300">Nom de fichier vidéo</Label>
