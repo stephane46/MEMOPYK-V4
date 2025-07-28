@@ -1507,6 +1507,99 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
 
 
+  // DEBUG ENDPOINT: Capture gallery video error logs
+  app.get("/api/debug/gallery-video-error", async (req, res) => {
+    const errorLogs: any[] = [];
+    const originalConsoleError = console.error;
+    
+    // Capture console.error output
+    console.error = (...args) => {
+      errorLogs.push({
+        timestamp: new Date().toISOString(),
+        message: args.join(' ')
+      });
+      originalConsoleError(...args);
+    };
+    
+    try {
+      // Simulate video element request with video-specific Accept header
+      const testReq = {
+        query: { filename: 'gallery_Our_vitamin_sea_rework_2_compressed.mp4' },
+        headers: {
+          'accept': 'video/webm,video/ogg,video/*;q=0.9,application/ogg;q=0.7,audio/*;q=0.6,*/*;q=0.5',
+          'range': 'bytes=0-',
+          'user-agent': 'Mozilla/5.0 (debug-test) VideoElement/Debug'
+        },
+        method: 'GET'
+      };
+      
+      const testRes = {
+        headersSent: false,
+        writeHead: () => {},
+        status: (code: number) => ({
+          json: (data: any) => {
+            errorLogs.push({
+              timestamp: new Date().toISOString(),
+              type: 'response',
+              statusCode: code,
+              data: data
+            });
+          }
+        })
+      };
+
+      // Try to trigger the same error
+      const filename = testReq.query.filename;
+      const cachedVideo = await videoCache.getCachedVideoPath(filename);
+      
+      if (cachedVideo && existsSync(cachedVideo)) {
+        const fileSize = statSync(cachedVideo).size;
+        const stream = createReadStream(cachedVideo, { start: 0, end: fileSize - 1 });
+        
+        // Force an error to test error handling
+        stream.destroy();
+        
+        setTimeout(() => {
+          console.error = originalConsoleError;
+          
+          res.json({
+            debug: "Gallery Video Error Investigation v1.0.17",
+            timestamp: new Date().toISOString(),
+            testRequest: {
+              filename: filename,
+              headers: testReq.headers,
+              method: testReq.method
+            },
+            cacheInfo: {
+              cachedPath: cachedVideo,
+              exists: existsSync(cachedVideo),
+              fileSize: fileSize
+            },
+            capturedLogs: errorLogs,
+            instructions: "Check capturedLogs for enhanced v1.0.17 error details"
+          });
+        }, 100);
+        
+      } else {
+        console.error = originalConsoleError;
+        res.json({
+          debug: "Gallery video not cached",
+          filename: filename,
+          cachePath: cachedVideo,
+          capturedLogs: errorLogs
+        });
+      }
+      
+    } catch (error: any) {
+      console.error = originalConsoleError;
+      res.json({
+        debug: "Debug endpoint error",
+        error: error.message,
+        capturedLogs: errorLogs
+      });
+    }
+  });
+
   // Video cache health endpoint
   app.get("/api/video-proxy/health", async (req, res) => {
     try {
