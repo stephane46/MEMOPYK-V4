@@ -52,6 +52,25 @@ Preferred communication style: Simple, everyday language.
 
 ## Recent Changes (July 28, 2025)
 
+### SMART GALLERY CACHE REFRESH FIX - v1.0.25 (July 28, 2025)
+**Critical Bug Fix for Smart Gallery Cache Refresh Button:**
+✅ **Parameter Order Fixed**: Fixed `apiRequest('POST', url)` to correct `apiRequest(url, 'POST')` parameter order
+✅ **Error Handling Enhanced**: Added proper success/error toast notifications for Smart Gallery Cache Refresh
+✅ **Functionality Restored**: Smart Gallery Cache Refresh button now works correctly without errors
+✅ **Cache Synchronization**: Button successfully syncs cache with current database video content
+✅ **User Experience**: Clear feedback shows "Removed X outdated files, cached Y new files" message
+
+**Technical Fix Applied:**
+- Updated AdminPage.tsx smartCacheRefreshMutation to use correct apiRequest parameter order
+- Added comprehensive onSuccess and onError handlers with detailed user feedback
+- Smart Gallery Cache Refresh now properly calls `/api/video-cache/refresh-gallery` endpoint
+- Cache synchronization working as designed - removes outdated files and caches current database videos
+
+**User Impact:**
+- Smart Gallery Cache Refresh button no longer produces error messages
+- Button correctly syncs cache with current database content (G1.mp4, G2.mp4, G3.mp4)
+- Clear success feedback shows exactly what files were processed during cache refresh
+
 ### CACHE CLEARING UX IMPROVEMENT - v1.0.24 (July 28, 2025)
 **Enhanced Cache Management System - User-Requested Fix:**
 ✅ **Clear Cache Behavior Fixed**: Cache clearing now truly empties cache without immediate automatic reloading
