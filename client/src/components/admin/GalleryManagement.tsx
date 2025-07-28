@@ -996,6 +996,13 @@ export default function GalleryManagement({ smartCacheRefreshMutation }: Gallery
           </Button>
           <Button 
             onClick={() => {
+              console.log('🚨 SAVE BUTTON CLICKED!!! This should appear first');
+              console.log('🚨 SAVE BUTTON - Current formData state:', {
+                video_filename: formData.video_filename,
+                video_url_en: formData.video_url_en,
+                title_en: formData.title_en
+              });
+              
               // Validate required fields
               if (!formData.title_en || !formData.title_fr) {
                 toast({ 
