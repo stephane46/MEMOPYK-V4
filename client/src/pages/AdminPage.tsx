@@ -254,11 +254,15 @@ export default function AdminPage() {
   const clearCacheMutation = useMutation({
     mutationFn: async () => {
       const response = await apiRequest('POST', '/api/video-cache/clear');
-      return await response.json();
+      return await response.json() as {removed?: {videosRemoved: number; imagesRemoved: number}; message?: string};
     },
-    onSuccess: () => {
+    onSuccess: (data) => {
+      const result = data.removed || { videosRemoved: 0, imagesRemoved: 0 };
       queryClient.invalidateQueries({ queryKey: ['/api/video-cache/stats'] });
-      toast({ title: "Cache Cleared", description: "Video cache cleared successfully" });
+      toast({ 
+        title: "Cache Completely Cleared", 
+        description: `Removed ${result.videosRemoved} videos and ${result.imagesRemoved} images. Cache is now empty.`
+      });
     },
     onError: () => {
       toast({ title: "Error", description: "Failed to clear video cache", variant: "destructive" });
