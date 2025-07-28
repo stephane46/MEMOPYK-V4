@@ -36,6 +36,7 @@ interface GalleryItem {
 export default function GallerySection() {
   const { language } = useLanguage();
   const [flippedCards, setFlippedCards] = useState<Set<string | number>>(new Set());
+  const [playingVideo, setPlayingVideo] = useState<string | number | null>(null);
   
   // Fetch active gallery items with type conversion from snake_case API
   const { data: galleryItems = [], isLoading } = useQuery<any[]>({
@@ -152,20 +153,63 @@ export default function GallerySection() {
     return language === 'fr-FR' ? item.sorryMessageFr : item.sorryMessageEn;
   };
 
-  const handlePlayClick = (item: GalleryItem, e: React.MouseEvent) => {
+  const hasVideo = (item: GalleryItem, index: number) => {
+    // Only the first gallery item has video functionality
+    if (index !== 0) return false;
+    const videoUrl = language === 'fr-FR' ? item.videoUrlFr : item.videoUrlEn;
+    return videoUrl && videoUrl.trim() !== '';
+  };
+
+  const getVideoUrl = (item: GalleryItem) => {
+    const rawVideoUrl = language === 'fr-FR' ? item.videoUrlFr : item.videoUrlEn;
+    let filename = rawVideoUrl.includes('/') ? rawVideoUrl.split('/').pop() : rawVideoUrl;
+    
+    try {
+      const decodedFilename = decodeURIComponent(filename || '');
+      filename = decodedFilename;
+    } catch (e) {
+      console.warn(`Failed to decode filename: ${filename}`);
+    }
+    
+    // Use short URL alias for gallery videos to bypass infrastructure filtering
+    const videoAliasMap: Record<string, string> = {
+      'gallery_Our_vitamin_sea_rework_2_compressed.mp4': 'g1',
+      'VideoHero1.mp4': 'h1',
+      'VideoHero2.mp4': 'h2',
+      'VideoHero3.mp4': 'h3'
+    };
+    
+    const alias = videoAliasMap[filename || ''];
+    if (alias) {
+      return `/api/v/${alias}`;
+    } else {
+      return `/api/video-proxy?filename=${encodeURIComponent(filename || '')}`;
+    }
+  };
+
+  const handlePlayClick = (item: GalleryItem, e: React.MouseEvent, index: number) => {
     e.preventDefault();
     e.stopPropagation();
     
-    // Just flip card to show sorry message - no video functionality
-    setFlippedCards(prev => {
-      const newSet = new Set(prev);
-      if (newSet.has(item.id)) {
-        newSet.delete(item.id);
+    if (hasVideo(item, index)) {
+      // Toggle video playback for first item
+      if (playingVideo === item.id) {
+        setPlayingVideo(null); // Stop video, show image
       } else {
-        newSet.add(item.id);
+        setPlayingVideo(item.id); // Start video
       }
-      return newSet;
-    });
+    } else {
+      // Flip card to show sorry message for items without video
+      setFlippedCards(prev => {
+        const newSet = new Set(prev);
+        if (newSet.has(item.id)) {
+          newSet.delete(item.id);
+        } else {
+          newSet.add(item.id);
+        }
+        return newSet;
+      });
+    }
   };
 
   if (isLoading) {
@@ -211,6 +255,8 @@ export default function GallerySection() {
             const imageUrl = getImageUrl(item);
             const thumbnailUrl = imageUrl;
             const isFlipped = flippedCards.has(item.id);
+            const itemHasVideo = hasVideo(item, index);
+            const isPlayingVideo = playingVideo === item.id;
             
 
             
@@ -222,9 +268,39 @@ export default function GallerySection() {
                 <div className="card-flip-inner">
                   {/* FRONT SIDE - Normal Gallery Card */}
                   <div className="card-front bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 shadow-lg hover:shadow-2xl transition-all duration-300 rounded-2xl overflow-hidden">
-                    {/* Image with Overlays - Always 3:2 aspect ratio */}
+                    {/* Image/Video with Overlays - Always 3:2 aspect ratio */}
                     <div className="aspect-[3/2] bg-gray-100 dark:bg-gray-700 relative overflow-hidden rounded-t-2xl">
-                      {thumbnailUrl ? (
+                      {isPlayingVideo && itemHasVideo ? (
+                        /* Video Player - Only for first item when playing */
+                        <div className="w-full h-full relative">
+                          <video
+                            className="w-full h-full object-cover"
+                            controls
+                            autoPlay
+                            onEnded={() => setPlayingVideo(null)}
+                            onError={() => setPlayingVideo(null)}
+                          >
+                            <source 
+                              src={getVideoUrl(item)} 
+                              type="video/mp4"
+                            />
+                            Your browser does not support the video tag.
+                          </video>
+                          
+                          {/* Close video button */}
+                          <button
+                            className="absolute top-4 right-4 bg-black/70 text-white w-8 h-8 rounded-full flex items-center justify-center hover:bg-black/90 transition-colors"
+                            onClick={(e) => {
+                              e.preventDefault();
+                              e.stopPropagation();
+                              setPlayingVideo(null);
+                            }}
+                          >
+                            ×
+                          </button>
+                        </div>
+                      ) : thumbnailUrl ? (
+                        /* Static Image - Default display */
                         <div className="w-full h-full relative">
                           {/* Main Image */}
                           <img
@@ -251,18 +327,19 @@ export default function GallerySection() {
                             </div>
                           )}
                           
-                          {/* Play Button - Center (decorative only) */}
+                          {/* Play Button - Center */}
                           <div className="absolute inset-0 flex items-center justify-center">
-                            {/* Always show orange play button (decorative) - matching your design */}
                             <div 
                               className="w-16 h-16 rounded-full flex items-center justify-center transition-all duration-300 hover:scale-110 shadow-lg cursor-pointer"
-                              onClick={(e) => handlePlayClick(item, e)}
+                              onClick={(e) => handlePlayClick(item, e, index)}
                               style={{
-                                backgroundColor: '#D67C4A', // MEMOPYK orange from brand palette
-                                border: 'none'
+                                backgroundColor: itemHasVideo ? '#D67C4A' : '#ffffff', // Orange for video, white for flip
+                                border: itemHasVideo ? 'none' : '2px solid #d1d5db'
                               }}
                             >
-                              <div className="text-white text-xl ml-1">▶</div>
+                              <div className={itemHasVideo ? "text-white text-xl ml-1" : "text-gray-600 text-xl ml-1"}>
+                                ▶
+                              </div>
                             </div>
                           </div>
                         </div>
@@ -322,7 +399,7 @@ export default function GallerySection() {
                         {getItemSorryMessage(item)}
                       </div>
                       <button
-                        onClick={(e) => handlePlayClick(item, e)}
+                        onClick={(e) => handlePlayClick(item, e, index)}
                         className="mt-6 bg-white text-gray-800 px-6 py-2 rounded-lg hover:bg-gray-100 transition-colors"
                       >
                         {language === 'fr-FR' ? 'Retour' : 'Back'}
