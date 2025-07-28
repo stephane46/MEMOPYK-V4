@@ -365,15 +365,25 @@ export default function GalleryManagement({ smartCacheRefreshMutation }: Gallery
               📤 Téléchargement uniquement via le système Direct Upload ci-dessous
             </p>
             
-            {/* Current Video Display */}
-            {formData.video_url_en && (
+            {/* Current Video Display - UNIFIED SYSTEM v1.0.26 */}
+            {(formData.video_filename || formData.video_url_en) && (
               <div className="mb-3 p-3 bg-green-50 dark:bg-green-900/20 rounded border border-green-200 dark:border-green-800">
                 <p className="text-sm font-medium text-green-800 dark:text-green-200 mb-1">
                   ✅ Vidéo actuelle:
                 </p>
                 <p className="text-xs font-mono text-green-700 dark:text-green-300 break-all">
-                  {formData.video_url_en}
+                  {formData.video_filename || formData.video_url_en}
                 </p>
+                {formData.video_filename && formData.video_url_en && (
+                  <p className="text-xs text-green-600 dark:text-green-400 mt-1">
+                    🎯 Utilise le système unifié (video_filename)
+                  </p>
+                )}
+                {!formData.video_filename && formData.video_url_en && (
+                  <p className="text-xs text-orange-600 dark:text-orange-400 mt-1">
+                    ⚠️ Système legacy (video_url) - Considérez mettre à jour vers video_filename
+                  </p>
+                )}
                 <div className="mt-2 flex items-center gap-2">
                   <video 
                     src={`/api/video-proxy?filename=${encodeURIComponent(formData.video_url_en.split('/').pop() || formData.video_url_en)}`}
