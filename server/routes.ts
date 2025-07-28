@@ -1507,6 +1507,53 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
 
 
+  // GALLERY DEBUG: Test actual gallery URLs
+  app.get("/api/debug/gallery-urls", async (req, res) => {
+    try {
+      const galleryItems = await hybridStorage.getGalleryItems();
+      const urlTests = [];
+      
+      for (const item of galleryItems) {
+        if (item.video_url_en) {
+          // Extract filename the same way frontend does
+          let filename = item.video_url_en.includes('/') ? item.video_url_en.split('/').pop() : item.video_url_en;
+          
+          try {
+            const decodedFilename = decodeURIComponent(filename || '');
+            filename = decodedFilename;
+          } catch (e) {
+            // If decoding fails, use original filename
+          }
+          
+          const proxyUrl = `/api/video-proxy?filename=${encodeURIComponent(filename || '')}`;
+          const cachedPath = await videoCache.getCachedVideoPath(filename || '');
+          
+          urlTests.push({
+            itemTitle: item.title_en,
+            originalUrl: item.video_url_en,
+            extractedFilename: filename,
+            generatedProxyUrl: proxyUrl,
+            cachedPath: cachedPath,
+            cacheExists: cachedPath ? require('fs').existsSync(cachedPath) : false
+          });
+        }
+      }
+      
+      res.json({
+        debug: "Gallery URL Analysis",
+        timestamp: new Date().toISOString(),
+        urlTests,
+        instructions: "Compare originalUrl vs generatedProxyUrl vs cachedPath"
+      });
+      
+    } catch (error: any) {
+      res.json({
+        debug: "Gallery URL debug error",
+        error: error.message
+      });
+    }
+  });
+
   // DEBUG ENDPOINT: Capture gallery video error logs
   app.get("/api/debug/gallery-video-error", async (req, res) => {
     const errorLogs: any[] = [];
