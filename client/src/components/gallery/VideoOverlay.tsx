@@ -246,62 +246,38 @@ export function VideoOverlay({ videoUrl, title, width, height, orientation, onCl
         }}
         onMouseMove={resetControlsTimer}
       >
-        {/* Video Element - Use same structure as hero videos */}
+        {/* Video Element - FIXED: Use exact hero video structure */}
         <video
           ref={videoRef}
           className="w-full h-full object-contain"
           onClick={handleVideoClick}
           onPlay={handlePlay}
           onPause={handlePause}
-          onLoadedMetadata={handleLoadedMetadata}
-          onError={(e) => {
-            console.error(`❌ VIDEO OVERLAY ERROR (v1.0.13-debug):`);
-            console.error(`   - Video URL: "${videoUrl}"`);
-            console.error(`   - Error event:`, e);
-            console.error(`   - Error details:`, e.currentTarget.error);
-            console.error(`   - Network state:`, e.currentTarget.networkState);
-            console.error(`   - Ready state:`, e.currentTarget.readyState);
-            console.error(`   - Current src:`, e.currentTarget.currentSrc);
-            console.error(`   - Source elements:`, e.currentTarget.querySelectorAll('source'));
-            
-            // Test direct fetch to see if URL is accessible
-            console.log(`🔍 TESTING DIRECT FETCH: ${videoUrl}`);
-            fetch(videoUrl, { 
-              method: 'HEAD',
-              headers: { 'Range': 'bytes=0-1023' }
-            })
-            .then(response => {
-              console.log(`✅ DIRECT FETCH RESULT: ${response.status} ${response.statusText}`);
-              console.log(`   - Headers:`, Array.from(response.headers.entries()));
-            })
-            .catch(err => {
-              console.error(`❌ DIRECT FETCH FAILED:`, err);
-            });
+          onLoadedMetadata={(e) => {
+            handleLoadedMetadata();
+            console.log(`✅ VIDEO OVERLAY FIXED (v1.0.14): loadedmetadata - ${videoUrl}`);
           }}
+          onError={handleVideoError}
           onLoadStart={() => {
-            console.log(`🎬 VIDEO OVERLAY LOAD START (v1.0.13-debug):`);
+            console.log(`🎬 VIDEO OVERLAY FIXED (v1.0.14): loadstart`);
             console.log(`   - Video URL: "${videoUrl}"`);
             console.log(`   - Title: "${title}"`);
-            console.log(`   - Element src:`, videoRef.current?.currentSrc);
-            console.log(`   - Source elements:`, videoRef.current?.querySelectorAll('source').length || 0);
           }}
           onCanPlay={() => {
-            console.log(`✅ VIDEO OVERLAY CAN PLAY: ${videoUrl}`);
+            console.log(`✅ VIDEO OVERLAY FIXED (v1.0.14): canplay - ${videoUrl}`);
           }}
-          onProgress={() => {
-            console.log(`📊 VIDEO OVERLAY PROGRESS: ${videoUrl}`);
+          onLoadedData={() => {
+            console.log(`✅ VIDEO OVERLAY FIXED (v1.0.14): loadeddata - ${videoUrl}`);
           }}
-          onSuspend={() => {
-            console.log(`⏸️ VIDEO OVERLAY SUSPEND: ${videoUrl}`);
-          }}
-          onStalled={() => {
-            console.log(`🔄 VIDEO OVERLAY STALLED: ${videoUrl}`);
+          onCanPlayThrough={() => {
+            console.log(`✅ VIDEO OVERLAY FIXED (v1.0.14): canplaythrough - ${videoUrl}`);
           }}
           preload="metadata"
           playsInline
           crossOrigin="anonymous"
         >
           <source src={videoUrl} type="video/mp4" />
+          Your browser does not support the video tag.
         </video>
 
         {/* Control Bar */}
