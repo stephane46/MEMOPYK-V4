@@ -81,20 +81,22 @@ const getVideoUrl = (item: GalleryItem) => {
 
 **Production Deployment Ready**: Gallery video uses identical code pattern and performance characteristics as hero videos
 
-### GALLERY EXPANSION COMPLETE - 3 HERO VIDEOS INTEGRATED (July 28, 2025)
-**Complete Gallery System Using All Hero Videos:**
-✅ **Gallery Item 1**: "Our Vitamin Sea" → uses VideoHero1.mp4 (replaced complex Supabase URL)
-✅ **Gallery Item 2**: "Romantic Sunset Wedding" → uses VideoHero2.mp4 (newly created)
-✅ **Gallery Item 3**: "Elegant Garden Celebration" → uses VideoHero3.mp4 (newly created)
-✅ **Unified System**: All gallery videos now use identical hero video proxy pattern
-✅ **Performance Consistency**: All 3 gallery videos serve from local cache with 29-98ms response times
-✅ **Bilingual Content**: Each gallery item has unique French/English titles, descriptions, and pricing
+### GALLERY VIDEO INDEPENDENCE - DEDICATED G1/G2/G3 VIDEOS (July 28, 2025)
+**Complete Gallery Video Independence Implementation:**
+✅ **Video Copying**: Successfully copied VideoHero1.mp4→G1.mp4, VideoHero2.mp4→G2.mp4, VideoHero3.mp4→G3.mp4 to Supabase
+✅ **Gallery Item 1**: "Our Vitamin Sea" → now uses G1.mp4 (independent from hero videos)
+✅ **Gallery Item 2**: "Romantic Sunset Wedding" → now uses G2.mp4 (independent from hero videos)
+✅ **Gallery Item 3**: "Elegant Garden Celebration" → now uses G3.mp4 (independent from hero videos)
+✅ **Video Restriction Fixed**: Removed hard-coded restriction allowing only first gallery video to play
+✅ **System Independence**: Gallery videos now completely separate from hero video carousel system
+✅ **Performance Maintained**: All 3 gallery videos serve through video proxy with identical performance
 
 **Technical Implementation:**
-- Updated GallerySection.tsx to dynamically map video filenames to proxy URLs
-- Created 2 additional gallery items programmatically in server/data/gallery-items.json
-- All gallery videos now use `/api/video-proxy?filename=VideoHero[1-3].mp4` pattern
-- Server logs confirm all 3 videos serving successfully from local cache
+- Used Supabase secrets to copy 3 hero videos to new G1.mp4, G2.mp4, G3.mp4 filenames in memopyk-videos bucket
+- Updated server/data/gallery-items.json to reference new video filenames instead of VideoHero files
+- Fixed hasVideo() function removing `if (index !== 0) return false;` restriction
+- All gallery videos now use `/api/video-proxy?filename=G[1-3].mp4` pattern
+- Gallery videos completely independent from hero video management and cycling
 
 ### ENHANCED PRODUCTION DEBUGGING SYSTEM - v1.0.19 (July 28, 2025) ✅ DEPLOYED
 **Comprehensive Header Analysis Implementation - READY FOR ROOT CAUSE IDENTIFICATION:**
