@@ -210,20 +210,47 @@ export function VideoOverlay({ videoUrl, title, width, height, orientation, onCl
           onPause={handlePause}
           onLoadedMetadata={handleLoadedMetadata}
           onError={(e) => {
-            console.error(`❌ VIDEO OVERLAY ERROR:`);
+            console.error(`❌ VIDEO OVERLAY ERROR (v1.0.13-debug):`);
             console.error(`   - Video URL: "${videoUrl}"`);
             console.error(`   - Error event:`, e);
             console.error(`   - Error details:`, e.currentTarget.error);
             console.error(`   - Network state:`, e.currentTarget.networkState);
             console.error(`   - Ready state:`, e.currentTarget.readyState);
+            console.error(`   - Current src:`, e.currentTarget.currentSrc);
+            console.error(`   - Source elements:`, e.currentTarget.querySelectorAll('source'));
+            
+            // Test direct fetch to see if URL is accessible
+            console.log(`🔍 TESTING DIRECT FETCH: ${videoUrl}`);
+            fetch(videoUrl, { 
+              method: 'HEAD',
+              headers: { 'Range': 'bytes=0-1023' }
+            })
+            .then(response => {
+              console.log(`✅ DIRECT FETCH RESULT: ${response.status} ${response.statusText}`);
+              console.log(`   - Headers:`, Array.from(response.headers.entries()));
+            })
+            .catch(err => {
+              console.error(`❌ DIRECT FETCH FAILED:`, err);
+            });
           }}
           onLoadStart={() => {
-            console.log(`🎬 VIDEO OVERLAY LOAD START:`);
+            console.log(`🎬 VIDEO OVERLAY LOAD START (v1.0.13-debug):`);
             console.log(`   - Video URL: "${videoUrl}"`);
             console.log(`   - Title: "${title}"`);
+            console.log(`   - Element src:`, videoRef.current?.currentSrc);
+            console.log(`   - Source elements:`, videoRef.current?.querySelectorAll('source').length || 0);
           }}
           onCanPlay={() => {
             console.log(`✅ VIDEO OVERLAY CAN PLAY: ${videoUrl}`);
+          }}
+          onProgress={() => {
+            console.log(`📊 VIDEO OVERLAY PROGRESS: ${videoUrl}`);
+          }}
+          onSuspend={() => {
+            console.log(`⏸️ VIDEO OVERLAY SUSPEND: ${videoUrl}`);
+          }}
+          onStalled={() => {
+            console.log(`🔄 VIDEO OVERLAY STALLED: ${videoUrl}`);
           }}
           preload="metadata"
           playsInline
