@@ -139,12 +139,13 @@ export const VideoCacheStatus: React.FC<VideoCacheStatusProps> = ({
   const clearCacheMutation = useMutation({
     mutationFn: async () => {
       const response = await apiRequest('/api/video-cache/clear', 'POST');
-      return await response.json() as {status?: string};
+      return await response.json() as {removed?: {videosRemoved: number; imagesRemoved: number}; message?: string};
     },
-    onSuccess: () => {
+    onSuccess: (data) => {
+      const result = data.removed || { videosRemoved: 0, imagesRemoved: 0 };
       toast({
-        title: "Cache Cleared",
-        description: "All cached videos have been removed",
+        title: "Cache Completely Cleared",
+        description: `Removed ${result.videosRemoved} videos and ${result.imagesRemoved} images. Cache is now empty.`,
       });
       refetchStatus();
       refetchStats();

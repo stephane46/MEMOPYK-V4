@@ -501,6 +501,39 @@ export class VideoCache {
   }
 
   /**
+   * Clear cache completely without immediate repreload (for admin interface)
+   * This gives users the visual feedback they expect when clearing cache
+   */
+  async clearCacheCompletely(): Promise<{ videosRemoved: number; imagesRemoved: number }> {
+    try {
+      const videoFiles = readdirSync(this.videoCacheDir);
+      const imageFiles = readdirSync(this.imageCacheDir);
+      
+      // Clear video cache
+      videoFiles.forEach(file => {
+        unlinkSync(join(this.videoCacheDir, file));
+      });
+      
+      // Clear image cache  
+      imageFiles.forEach(file => {
+        unlinkSync(join(this.imageCacheDir, file));
+      });
+      
+      console.log(`🗑️ ADMIN CACHE CLEAR: ${videoFiles.length} videos, ${imageFiles.length} images removed`);
+      console.log(`⚠️ Cache is now empty - videos will download when requested by visitors`);
+      
+      return {
+        videosRemoved: videoFiles.length,
+        imagesRemoved: imageFiles.length
+      };
+      
+    } catch (error) {
+      console.error('❌ Failed to clear cache completely:', error);
+      throw error;
+    }
+  }
+
+  /**
    * Clear a specific cached file
    */
   clearSpecificFile(filename: string): void {

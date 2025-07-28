@@ -2505,12 +2505,32 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Clear cache endpoint with immediate preload
+  // Clear cache endpoint - complete clear without immediate preload
   app.post("/api/video-cache/clear", async (req, res) => {
     try {
-      console.log('🗑️ Admin-triggered cache clear with immediate preload...');
+      console.log('🗑️ Admin-triggered complete cache clear...');
       
-      await videoCache.clearCache(); // Now async with immediate preload
+      const result = await videoCache.clearCacheCompletely();
+      const stats = await videoCache.getCacheStats();
+      
+      res.json({ 
+        success: true,
+        message: `Cache completely cleared: ${result.videosRemoved} videos, ${result.imagesRemoved} images removed`,
+        removed: result,
+        stats 
+      });
+    } catch (error) {
+      console.error('Cache clear error:', error);
+      res.status(500).json({ error: "Failed to clear video cache" });
+    }
+  });
+
+  // Clear cache endpoint with immediate repopulation (for automated systems)
+  app.post("/api/video-cache/clear-and-reload", async (req, res) => {
+    try {
+      console.log('🗑️ System-triggered cache clear with immediate preload...');
+      
+      await videoCache.clearCache(); // Uses original method with immediate preload
       const stats = await videoCache.getCacheStats();
       
       res.json({ 
@@ -2519,8 +2539,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
         stats 
       });
     } catch (error) {
-      console.error('Cache clear error:', error);
-      res.status(500).json({ error: "Failed to clear video cache" });
+      console.error('Cache clear and reload error:', error);
+      res.status(500).json({ error: "Failed to clear and reload video cache" });
     }
   });
 
