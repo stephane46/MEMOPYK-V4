@@ -161,30 +161,9 @@ export default function GallerySection() {
   };
 
   const getVideoUrl = (item: GalleryItem) => {
-    const rawVideoUrl = language === 'fr-FR' ? item.videoUrlFr : item.videoUrlEn;
-    let filename = rawVideoUrl.includes('/') ? rawVideoUrl.split('/').pop() : rawVideoUrl;
-    
-    try {
-      const decodedFilename = decodeURIComponent(filename || '');
-      filename = decodedFilename;
-    } catch (e) {
-      console.warn(`Failed to decode filename: ${filename}`);
-    }
-    
-    // Use short URL alias for gallery videos to bypass infrastructure filtering
-    const videoAliasMap: Record<string, string> = {
-      'gallery_Our_vitamin_sea_rework_2_compressed.mp4': 'g1',
-      'VideoHero1.mp4': 'h1',
-      'VideoHero2.mp4': 'h2',
-      'VideoHero3.mp4': 'h3'
-    };
-    
-    const alias = videoAliasMap[filename || ''];
-    if (alias) {
-      return `/api/v/${alias}`;
-    } else {
-      return `/api/video-proxy?filename=${encodeURIComponent(filename || '')}`;
-    }
+    // HYBRID GALLERY FIX: Always use VideoHero1.mp4 for the first gallery item
+    // This uses the exact same pattern as working hero videos
+    return `/api/video-proxy?filename=VideoHero1.mp4`;
   };
 
   const handlePlayClick = (item: GalleryItem, e: React.MouseEvent, index: number) => {
