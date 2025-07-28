@@ -22,13 +22,15 @@ export function VideoOverlay({ videoUrl, title, width, height, orientation, onCl
   const controlsTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const progressUpdateRef = useRef<number | null>(null);
 
-  // EXTENSIVE DEBUGGING - v1.0.13
+  // CODER DEBUG ENHANCED - v1.0.18
   useEffect(() => {
-    console.log('🎬 VIDEO OVERLAY LOAD START (v1.0.13-debug):');
+    console.log('🎬 CODER DEBUG - VIDEO OVERLAY LOAD START (v1.0.18):');
     console.log('   - Video URL:', videoUrl);
     console.log('   - Title:', title);
     console.log('   - Element src:', videoRef.current?.src);
     console.log('   - Source elements:', videoRef.current?.querySelectorAll('source').length);
+    console.log('   - Video element ready state:', videoRef.current?.readyState);
+    console.log('   - Video element network state:', videoRef.current?.networkState);
     
     // Test direct fetch to compare with video element behavior
     console.log('🔍 TESTING DIRECT FETCH:', videoUrl);
