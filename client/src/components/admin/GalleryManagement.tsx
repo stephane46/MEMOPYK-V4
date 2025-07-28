@@ -995,22 +995,33 @@ export default function GalleryManagement({ smartCacheRefreshMutation }: Gallery
             Annuler
           </Button>
           <Button 
-            onClick={() => {
-              console.log('🚨 SAVE BUTTON CLICKED!!! This should appear first');
-              console.log('🚨 SAVE BUTTON - Current formData state:', {
-                video_filename: formData.video_filename,
-                video_url_en: formData.video_url_en,
-                title_en: formData.title_en
-              });
-              
-              // Validate required fields
-              if (!formData.title_en || !formData.title_fr) {
-                toast({ 
-                  title: "Erreur", 
-                  description: "Les titres en français et anglais sont obligatoires", 
-                  variant: "destructive" 
+            onClick={(e) => {
+              try {
+                console.log('🚨 SAVE BUTTON CLICKED!!! This should appear first');
+                console.log('🚨 SAVE BUTTON - Current formData state:', {
+                  video_filename: formData.video_filename,
+                  video_url_en: formData.video_url_en,
+                  title_en: formData.title_en
                 });
-                return;
+                
+                // Prevent any default behavior that might interfere
+                e.preventDefault();
+                e.stopPropagation();
+                
+                // Validate required fields
+                if (!formData.title_en || !formData.title_fr) {
+                  console.log('🚨 VALIDATION FAILED - Missing titles');
+                  toast({ 
+                    title: "Erreur", 
+                    description: "Les titres en français et anglais sont obligatoires", 
+                    variant: "destructive" 
+                  });
+                  return;
+                }
+                
+                console.log('🚨 VALIDATION PASSED - Proceeding with save');
+              } catch (error) {
+                console.error('🚨 ERROR IN SAVE BUTTON:', error);
               }
               
               // Validate video dimensions if video URL is provided
