@@ -1769,6 +1769,35 @@ export async function registerRoutes(app: Express): Promise<Server> {
     });
   });
 
+  // Emergency manual cache gallery video endpoint
+  app.post("/api/video-cache/emergency-gallery", async (req, res) => {
+    try {
+      console.log("🚨 EMERGENCY GALLERY VIDEO CACHING INITIATED");
+      
+      // Force cache the gallery video that's causing 500 errors
+      const galleryVideoFilename = "gallery_Our_vitamin_sea_rework_2_compressed.mp4";
+      
+      // Use video cache system to download and cache
+      await videoCache.downloadAndCacheVideo(galleryVideoFilename);
+      
+      console.log("✅ EMERGENCY CACHE COMPLETE - Gallery video now cached");
+      
+      res.json({
+        success: true,
+        message: "Gallery video emergency caching complete",
+        filename: galleryVideoFilename,
+        timestamp: new Date().toISOString()
+      });
+    } catch (error: any) {
+      console.error("❌ EMERGENCY CACHE FAILED:", error);
+      res.status(500).json({
+        success: false,
+        error: "Emergency cache failed",
+        details: error.message
+      });
+    }
+  });
+
   // Production deployment test endpoint
   app.get("/api/deployment-test", (req, res) => {
     const fs = require('fs');
