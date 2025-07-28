@@ -484,20 +484,21 @@ export default function GalleryManagement({ smartCacheRefreshMutation }: Gallery
                     });
                     
                     // Save to module-level persistent state
-                    persistentUploadState.video_url_en = url;
+                    persistentUploadState.video_url_en = filename;
                     persistentUploadState.video_filename = filename;
                     if (formData.use_same_video) {
-                      persistentUploadState.video_url_fr = url;
+                      persistentUploadState.video_url_fr = filename;
                     }
                     console.log('💾 Saved direct upload to persistent state:', persistentUploadState);
                     
                     setFormData(prev => {
                       const newData = prev.use_same_video 
-                        ? { ...prev, video_url_en: url, video_url_fr: url, video_filename: filename }
-                        : { ...prev, video_url_en: url, video_filename: filename };
+                        ? { ...prev, video_url_en: filename, video_url_fr: filename, video_filename: filename }
+                        : { ...prev, video_url_en: filename, video_filename: filename };
                       console.log('🎯 UPLOAD FIX: Updated formData with filename:', {
                         old_filename: prev.video_filename,
                         new_filename: filename,
+                        video_url_en: filename,
                         full_new_data: newData
                       });
                       return newData;
