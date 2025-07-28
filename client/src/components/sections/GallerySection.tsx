@@ -36,7 +36,7 @@ interface GalleryItem {
 export default function GallerySection() {
   const { language } = useLanguage();
   const [flippedCards, setFlippedCards] = useState<Set<string | number>>(new Set());
-  const [playingVideo, setPlayingVideo] = useState<string | number | null>(null);
+  const [lightboxVideo, setLightboxVideo] = useState<GalleryItem | null>(null);
   
   // Fetch active gallery items with type conversion from snake_case API
   const { data: galleryItems = [], isLoading } = useQuery<any[]>({
@@ -186,12 +186,10 @@ export default function GallerySection() {
     e.stopPropagation();
     
     if (hasVideo(item, index)) {
-      // Toggle video playback for first item
-      if (playingVideo === item.id) {
-        setPlayingVideo(null); // Stop video, show image
-      } else {
-        setPlayingVideo(item.id); // Start video
-      }
+      // Open video in lightbox
+      setLightboxVideo(item);
+      // Prevent body scrolling when lightbox is open
+      document.body.style.overflow = 'hidden';
     } else {
       // Flip card to show sorry message for items without video
       setFlippedCards(prev => {
@@ -205,6 +203,33 @@ export default function GallerySection() {
       });
     }
   };
+
+  const closeLightbox = () => {
+    setLightboxVideo(null);
+    // Restore body scrolling
+    document.body.style.overflow = 'unset';
+  };
+
+  const handleBackdropClick = (e: React.MouseEvent) => {
+    // Only close if clicking the backdrop (not the video player)
+    if (e.target === e.currentTarget) {
+      closeLightbox();
+    }
+  };
+
+  // Close lightbox on ESC key
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape' && lightboxVideo) {
+        closeLightbox();
+      }
+    };
+
+    if (lightboxVideo) {
+      document.addEventListener('keydown', handleKeyDown);
+      return () => document.removeEventListener('keydown', handleKeyDown);
+    }
+  }, [lightboxVideo]);
 
   if (isLoading) {
     return (
@@ -250,7 +275,6 @@ export default function GallerySection() {
             const thumbnailUrl = imageUrl;
             const isFlipped = flippedCards.has(item.id);
             const itemHasVideo = hasVideo(item, index);
-            const isPlayingVideo = playingVideo === item.id;
             
 
             
@@ -264,36 +288,7 @@ export default function GallerySection() {
                   <div className="card-front bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 shadow-lg hover:shadow-2xl transition-all duration-300 rounded-2xl overflow-hidden">
                     {/* Image/Video with Overlays - Always 3:2 aspect ratio */}
                     <div className="aspect-[3/2] bg-gray-100 dark:bg-gray-700 relative overflow-hidden rounded-t-2xl">
-                      {isPlayingVideo && itemHasVideo ? (
-                        /* Video Player - Only for first item when playing */
-                        <div className="w-full h-full relative">
-                          <video
-                            className="w-full h-full object-cover"
-                            controls
-                            autoPlay
-                            onEnded={() => setPlayingVideo(null)}
-                            onError={() => setPlayingVideo(null)}
-                          >
-                            <source 
-                              src={getVideoUrl(item)} 
-                              type="video/mp4"
-                            />
-                            Your browser does not support the video tag.
-                          </video>
-                          
-                          {/* Close video button */}
-                          <button
-                            className="absolute top-4 right-4 bg-black/70 text-white w-8 h-8 rounded-full flex items-center justify-center hover:bg-black/90 transition-colors"
-                            onClick={(e) => {
-                              e.preventDefault();
-                              e.stopPropagation();
-                              setPlayingVideo(null);
-                            }}
-                          >
-                            ×
-                          </button>
-                        </div>
-                      ) : thumbnailUrl ? (
+                      {thumbnailUrl ? (
                         /* Static Image - Default display */
                         <div className="w-full h-full relative">
                           {/* Main Image */}
@@ -427,6 +422,63 @@ export default function GallerySection() {
 
 
       </div>
+
+      {/* Video Lightbox Modal */}
+      {lightboxVideo && (
+        <div 
+          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm"
+          onClick={handleBackdropClick}
+        >
+          {/* Video Container - 2/3 screen width, centered */}
+          <div 
+            className="relative w-full max-w-4xl mx-auto bg-black rounded-lg overflow-hidden shadow-2xl"
+            style={{ width: 'min(66.67vw, 100vw - 2rem)', maxHeight: '90vh' }}
+          >
+            {/* Video Player */}
+            <div className="relative aspect-video bg-black">
+              <video
+                className="w-full h-full object-contain"
+                controls
+                autoPlay
+                onError={() => closeLightbox()}
+                style={{ backgroundColor: 'black' }}
+              >
+                <source 
+                  src={getVideoUrl(lightboxVideo)} 
+                  type="video/mp4"
+                />
+                Your browser does not support the video tag.
+              </video>
+            </div>
+
+            {/* Video Info Overlay - Bottom */}
+            <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent p-6">
+              <h3 className="text-white text-xl font-bold mb-2">
+                {language === 'fr-FR' ? lightboxVideo.titleFr : lightboxVideo.titleEn}
+              </h3>
+              <div className="flex flex-wrap gap-4 text-white/80 text-sm">
+                {(language === 'fr-FR' ? lightboxVideo.durationFr : lightboxVideo.durationEn) && (
+                  <div className="flex items-center gap-1">
+                    <Clock className="w-4 h-4" />
+                    {language === 'fr-FR' ? lightboxVideo.durationFr : lightboxVideo.durationEn}
+                  </div>
+                )}
+                {(language === 'fr-FR' ? lightboxVideo.sourceFr : lightboxVideo.sourceEn) && (
+                  <div className="flex items-center gap-1">
+                    <Film className="w-4 h-4" />
+                    {language === 'fr-FR' ? lightboxVideo.sourceFr : lightboxVideo.sourceEn}
+                  </div>
+                )}
+                {(language === 'fr-FR' ? lightboxVideo.priceFr : lightboxVideo.priceEn) && (
+                  <div className="ml-auto text-[#D67C4A] font-bold">
+                    {language === 'fr-FR' ? lightboxVideo.priceFr : lightboxVideo.priceEn}
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </section>
   );
 }
