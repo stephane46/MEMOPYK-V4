@@ -1272,7 +1272,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       console.log(`   - Original filename: "${decodedFilename}"`);
       console.log(`   - Encoded filename: "${encodedFilename}"`);
       console.log(`   - Sanitized filename: "${sanitizedFilename}"`);
-      console.log(`   - PRODUCTION BULLETPROOF v1.0.13 - GALLERY VIDEO FIX DEPLOYED`);
+      console.log(`   - PRODUCTION BULLETPROOF v1.0.17 - ENHANCED STREAM ERROR DETECTION`);
       
       // Try multiple filename variations to find cached video
       let videoFilename = decodedFilename;
@@ -1298,7 +1298,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // FORCE LOCAL CACHING - Videos MUST be served from local storage only
       if (!cachedVideo) {
         console.log(`🚨 VIDEO NOT CACHED: ${videoFilename} - FORCING download and cache before serving`);
-        console.log(`🔍 PRODUCTION DEBUG v1.0.13 - MAXIMUM DEBUGGING ENABLED:`);
+        console.log(`🔍 PRODUCTION DEBUG v1.0.17 - ENHANCED STREAM ERROR DETECTION:`);
         console.log(`   - Request method: ${req.method}`);
         console.log(`   - Request URL: ${req.url}`);
         console.log(`   - Original filename param: "${filename}"`);
@@ -1310,6 +1310,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
         console.log(`   - Headers:`, JSON.stringify(req.headers));
         console.log(`   - User-Agent: ${req.headers['user-agent']}`);
         console.log(`   - Range header: ${req.headers.range}`);
+        console.log(`   - Accept header: ${req.headers.accept}`);
+        console.log(`   - Connection header: ${req.headers.connection}`);
         
         try {
           // CRITICAL FIX v1.0.10: Always use original decoded filename for Supabase URL construction
@@ -1408,9 +1410,29 @@ export async function registerRoutes(app: Express): Promise<Server> {
           });
           
           stream.on('error', (error) => {
-            console.error(`❌ Stream error for ${videoFilename}:`, error);
+            console.error(`❌ PRODUCTION RANGE STREAM ERROR for ${videoFilename}:`, error);
+            console.error(`   - Error type: ${error.constructor.name}`);
+            console.error(`   - Error message: ${error.message}`);
+            console.error(`   - Error code: ${(error as any).code || 'unknown'}`);
+            console.error(`   - Headers sent: ${res.headersSent}`);
+            console.error(`   - Request method: ${req.method}`);
+            console.error(`   - User-Agent: ${req.headers['user-agent']}`);
+            console.error(`   - Range header: ${req.headers.range}`);
+            console.error(`   - Video file exists: ${existsSync(cachedVideo)}`);
+            console.error(`   - Range details: start=${start}, end=${end}, chunksize=${chunksize}`);
             if (!res.headersSent) {
-              res.status(500).json({ error: 'Stream error' });
+              res.status(500).json({ 
+                error: 'Range stream error',
+                details: error.message,
+                code: (error as any).code || 'unknown',
+                filename: videoFilename,
+                debug: {
+                  method: req.method,
+                  range: req.headers.range,
+                  userAgent: req.headers['user-agent'],
+                  start, end, chunksize
+                }
+              });
             }
           });
           
@@ -1426,9 +1448,25 @@ export async function registerRoutes(app: Express): Promise<Server> {
           
           const stream = createReadStream(cachedVideo);
           stream.on('error', (error) => {
-            console.error(`❌ Stream error for ${videoFilename}:`, error);
+            console.error(`❌ PRODUCTION FULL STREAM ERROR for ${videoFilename}:`, error);
+            console.error(`   - Error type: ${error.constructor.name}`);
+            console.error(`   - Error message: ${error.message}`);
+            console.error(`   - Error code: ${(error as any).code || 'unknown'}`);
+            console.error(`   - Headers sent: ${res.headersSent}`);
+            console.error(`   - Request method: ${req.method}`);
+            console.error(`   - User-Agent: ${req.headers['user-agent']}`);
+            console.error(`   - Video file exists: ${existsSync(cachedVideo)}`);
             if (!res.headersSent) {
-              res.status(500).json({ error: 'Stream error' });
+              res.status(500).json({ 
+                error: 'Full stream error',
+                details: error.message,
+                code: (error as any).code || 'unknown',
+                filename: videoFilename,
+                debug: {
+                  method: req.method,
+                  userAgent: req.headers['user-agent']
+                }
+              });
             }
           });
           

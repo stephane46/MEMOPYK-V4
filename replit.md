@@ -79,6 +79,32 @@ Preferred communication style: Simple, everyday language.
 - Administrative simplicity with matching interface patterns
 - Clear naming convention: memopyk-videos = all multimedia assets
 
+### ENHANCED STREAM ERROR DETECTION - v1.0.17 (July 28, 2025) ✅ DEPLOYMENT READY
+**Complete Investigation System for Gallery Video Failures:**
+✅ **Enhanced Error Logging**: Comprehensive stream error detection with detailed classification and debugging
+✅ **Error Type Analysis**: Captures error.constructor.name, error.message, and error.code for precise diagnosis
+✅ **Request Context Logging**: Full request headers (Accept, Connection, Range, User-Agent) for pattern analysis
+✅ **File System Verification**: Confirms video file existence during error events to isolate failure causes
+✅ **Range vs Full Serving**: Separate error handlers for Range requests vs full file serving comparison
+✅ **Production Build Ready**: Clean v1.0.17 build (1,371.68 kB) with enhanced debugging deployed to virgin server
+✅ **TypeScript Compatibility**: Fixed error.code typing issues with proper type assertions for production stability
+
+**Investigation Focus - Why Hero Videos Work But Gallery Videos Fail:**
+- Both use identical `/api/video-proxy` route with same caching and serving logic
+- Both videos cached locally and serve 206 responses via server logs
+- Same Range request headers (`bytes=0-`) and identical browser patterns
+- Enhanced logging will capture exact stream error that causes 500 responses for gallery videos
+- Expected log pattern: `❌ PRODUCTION RANGE STREAM ERROR` with complete error classification
+
+**Technical Implementation:**
+- Enhanced stream error handlers with comprehensive debugging (lines 1413-1471 in server/routes.ts)
+- Added Accept header and Connection header logging for request pattern analysis
+- Error type classification captures system-level errors vs application-level failures
+- File existence verification during errors isolates filesystem vs permission vs browser issues
+- Separate error handling for Range requests vs full file serving for precise failure isolation
+
+**Deployment Status**: 🚀 READY FOR VIRGIN SERVER - Enhanced debugging will identify gallery video failure root cause
+
 ### VIRGIN SERVER DEPLOYMENT - v3.0.0 (July 28, 2025) ✅ READY FOR CLEAN DEPLOYMENT
 **Final Analysis After 50+ Production Deployment Failures:**
 ✅ **Root Cause Discovered**: Production deployment cache conflicts - old builds (v1.0.13) used instead of new fixes
