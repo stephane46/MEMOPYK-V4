@@ -310,7 +310,16 @@ export default function GalleryManagement({ smartCacheRefreshMutation }: Gallery
         sorry_message_fr: item?.sorry_message_fr || 'Désolé, nous ne pouvons pas vous montrer la vidéo à ce stade',
         video_url_en: item?.video_url_en || persistentUploadState.video_url_en || '',
         video_url_fr: item?.video_url_fr || persistentUploadState.video_url_fr || '',
-        video_filename: item?.video_filename || persistentUploadState.video_filename || '',
+        video_filename: (() => {
+          const result = item?.video_filename || persistentUploadState.video_filename || '';
+          console.log('🎯 INITIAL VIDEO_FILENAME ASSIGNMENT:', {
+            item_video_filename: item?.video_filename,
+            persistent_video_filename: persistentUploadState.video_filename,
+            final_result: result,
+            item_id: item?.id
+          });
+          return result;
+        })(),
         video_width: item?.video_width || 0,
         video_height: item?.video_height || 0,
         video_orientation: item?.video_orientation || 'landscape',
@@ -778,7 +787,14 @@ export default function GalleryManagement({ smartCacheRefreshMutation }: Gallery
             <Input
               id="video_filename"
               value={formData.video_filename || ''}
-              onChange={(e) => setFormData({ ...formData, video_filename: e.target.value })}
+              onChange={(e) => {
+                console.log('🎯 FILENAME CHANGE DEBUG:', {
+                  oldValue: formData.video_filename,
+                  newValue: e.target.value,
+                  timestamp: new Date().toISOString()
+                });
+                setFormData({ ...formData, video_filename: e.target.value });
+              }}
               placeholder="Ex: VideoHero1.mp4 ou gallery_Our_vitamin_sea_rework_2_compressed.mp4"
               className="bg-white dark:bg-gray-800 text-gray-900 dark:text-white font-mono"
             />
