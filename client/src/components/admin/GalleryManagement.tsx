@@ -477,6 +477,11 @@ export default function GalleryManagement({ smartCacheRefreshMutation }: Gallery
                     // Extract filename from the URL - CRITICAL FIX
                     const filename = url.split('/').pop() || '';
                     console.log('🎯 UPLOAD FIX: Extracted filename from URL:', filename);
+                    console.log('🎯 UPLOAD DEBUG: Full URL received:', url);
+                    console.log('🎯 UPLOAD DEBUG: Current formData before update:', {
+                      video_filename: formData.video_filename,
+                      video_url_en: formData.video_url_en
+                    });
                     
                     // Save to module-level persistent state
                     persistentUploadState.video_url_en = url;
@@ -490,7 +495,11 @@ export default function GalleryManagement({ smartCacheRefreshMutation }: Gallery
                       const newData = prev.use_same_video 
                         ? { ...prev, video_url_en: url, video_url_fr: url, video_filename: filename }
                         : { ...prev, video_url_en: url, video_filename: filename };
-                      console.log('🎯 UPLOAD FIX: Updated formData with filename:', newData);
+                      console.log('🎯 UPLOAD FIX: Updated formData with filename:', {
+                        old_filename: prev.video_filename,
+                        new_filename: filename,
+                        full_new_data: newData
+                      });
                       return newData;
                     });
                     

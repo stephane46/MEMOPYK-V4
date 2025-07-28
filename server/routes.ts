@@ -283,11 +283,25 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const itemId = req.params.id;
       const updates = req.body;
       
+      console.log('🚨 SERVER DEBUG - Gallery update received:', {
+        itemId: itemId,
+        video_filename: updates.video_filename,
+        video_url_en: updates.video_url_en,
+        title_en: updates.title_en,
+        fullUpdates: updates
+      });
+      
       if (!itemId) {
         return res.status(400).json({ error: "Gallery item ID is required" });
       }
       
       const item = await hybridStorage.updateGalleryItem(itemId, updates);
+      
+      console.log('🚨 SERVER DEBUG - Gallery update completed:', {
+        updated_video_filename: item.video_filename,
+        updated_video_url_en: item.video_url_en
+      });
+      
       res.json(item);
     } catch (error: any) {
       console.error('Gallery update error:', error);
