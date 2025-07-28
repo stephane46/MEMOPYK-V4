@@ -827,53 +827,7 @@ export default function GalleryManagement({ smartCacheRefreshMutation }: Gallery
           </div>
         </div>
 
-        {/* Video URL Display */}
-        <div className="bg-gray-50 dark:bg-gray-800/50 p-4 rounded-lg border">
-          <h4 className="font-semibold mb-3 text-gray-900 dark:text-white flex items-center gap-2">
-            🔗 URLs générées automatiquement (legacy)
-          </h4>
-          <p className="text-sm text-gray-600 dark:text-gray-400 mb-3">
-            Ces URLs sont encore utilisées pour la compatibilité, mais le système privilégie maintenant le nom de fichier ci-dessus
-          </p>
-          {formData.use_same_video ? (
-            <div>
-              <Label htmlFor="video_url_en" className="text-gray-700 dark:text-gray-300">URL Vidéo (utilisée pour FR et EN)</Label>
-              <Input
-                id="video_url_en"
-                value={formData.video_url_en}
-                onChange={(e) => {
-                  const url = e.target.value;
-                  setFormData({ ...formData, video_url_en: url, video_url_fr: url });
-                }}
-                placeholder="Sera rempli après upload de vidéo..."
-                className="bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-white font-mono text-sm"
-              />
-            </div>
-          ) : (
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <Label htmlFor="video_url_en" className="text-gray-700 dark:text-gray-300">URL Vidéo (English)</Label>
-                <Input
-                  id="video_url_en"
-                  value={formData.video_url_en}
-                  onChange={(e) => setFormData({ ...formData, video_url_en: e.target.value })}
-                  placeholder="Sera rempli après upload..."
-                  className="bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-white font-mono text-sm"
-                />
-              </div>
-              <div>
-                <Label htmlFor="video_url_fr" className="text-gray-700 dark:text-gray-300">URL Vidéo (Français)</Label>
-                <Input
-                  id="video_url_fr"
-                  value={formData.video_url_fr}
-                  onChange={(e) => setFormData({ ...formData, video_url_fr: e.target.value })}
-                  placeholder="Sera rempli après upload..."
-                  className="bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-white font-mono text-sm"
-                />
-              </div>
-            </div>
-          )}
-        </div>
+
 
         {/* Video Dimensions Section - CRITICAL for video overlay sizing */}
         <div className="bg-red-50 dark:bg-red-900/20 p-4 rounded-lg border border-red-200 dark:border-red-800">
