@@ -61,6 +61,7 @@ interface GalleryItem {
   sorry_message_fr: string;
   video_url_en?: string;
   video_url_fr?: string;
+  video_filename?: string;
   video_width?: number;
   video_height?: number;
   video_orientation?: string;
@@ -192,7 +193,7 @@ export default function GalleryManagement({ smartCacheRefreshMutation }: Gallery
   // Create gallery item mutation
   const createItemMutation = useMutation({
     mutationFn: async (data: Partial<GalleryItem>) => {
-      return apiRequest('POST', '/api/gallery', data);
+      return apiRequest('/api/gallery', 'POST', data);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['/api/gallery'] });
@@ -211,7 +212,7 @@ export default function GalleryManagement({ smartCacheRefreshMutation }: Gallery
   // Update gallery item mutation
   const updateItemMutation = useMutation({
     mutationFn: async ({ id, data }: { id: number; data: Partial<GalleryItem> }) => {
-      return apiRequest('PATCH', `/api/gallery/${id}`, data);
+      return apiRequest(`/api/gallery/${id}`, 'PATCH', data);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['/api/gallery'] });
@@ -230,7 +231,7 @@ export default function GalleryManagement({ smartCacheRefreshMutation }: Gallery
   // Reorder gallery item mutation
   const reorderItemMutation = useMutation({
     mutationFn: async ({ id, order_index }: { id: number; order_index: number }) => {
-      return apiRequest('PATCH', `/api/gallery/${id}/reorder`, { order_index });
+      return apiRequest(`/api/gallery/${id}/reorder`, 'PATCH', { order_index });
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['/api/gallery'] });
@@ -248,7 +249,7 @@ export default function GalleryManagement({ smartCacheRefreshMutation }: Gallery
   // Delete gallery item mutation
   const deleteItemMutation = useMutation({
     mutationFn: async (id: number) => {
-      return apiRequest('DELETE', `/api/gallery/${id}`);
+      return apiRequest(`/api/gallery/${id}`, 'DELETE');
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['/api/gallery'] });
@@ -307,6 +308,7 @@ export default function GalleryManagement({ smartCacheRefreshMutation }: Gallery
         sorry_message_fr: item?.sorry_message_fr || 'Désolé, nous ne pouvons pas vous montrer la vidéo à ce stade',
         video_url_en: item?.video_url_en || persistentUploadState.video_url_en || '',
         video_url_fr: item?.video_url_fr || persistentUploadState.video_url_fr || '',
+        video_filename: item?.video_filename || '',
         video_width: item?.video_width || 0,
         video_height: item?.video_height || 0,
         video_orientation: item?.video_orientation || 'landscape',
