@@ -1,9 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
 import { useLanguage } from "@/contexts/LanguageContext";
-import { useVideoAnalytics } from "@/hooks/useVideoAnalytics";
 import { Button } from "@/components/ui/button";
-import { VideoOverlay } from "@/components/gallery/VideoOverlay";
 import { Badge } from "@/components/ui/badge";
 import { Play, Eye, Star, ArrowRight, Image as ImageIcon, Film, Users, Clock } from "lucide-react";
 // Gallery item interface matching the new schema
@@ -37,17 +35,6 @@ interface GalleryItem {
 
 export default function GallerySection() {
   const { language } = useLanguage();
-  const { trackVideoView } = useVideoAnalytics();
-  const [previewItem, setPreviewItem] = useState<{ 
-    type: 'video' | 'image'; 
-    url: string; 
-    title: string; 
-    itemId: number;
-    width?: number;
-    height?: number;
-    orientation?: 'landscape' | 'portrait';
-  } | null>(null);
-
   const [flippedCards, setFlippedCards] = useState<Set<string | number>>(new Set());
   
   // Fetch active gallery items with type conversion from snake_case API
@@ -117,46 +104,24 @@ export default function GallerySection() {
 
   const t = content[language];
 
-  const getItemUrl = (item: GalleryItem, type: 'video' | 'image') => {
-    if (type === 'video') {
-      // FIXED: Use direct video proxy URL like hero videos - video elements can't handle redirects
-      const videoUrl = language === 'fr-FR' ? item.videoUrlFr : item.videoUrlEn;
-      let filename = videoUrl.includes('/') ? videoUrl.split('/').pop() : videoUrl;
-      
-      // CRITICAL FIX: Decode filename first to prevent double-encoding
-      try {
-        const decodedFilename = decodeURIComponent(filename || '');
-        filename = decodedFilename;
-      } catch (e) {
-        console.warn(`Failed to decode filename: ${filename}`);
-      }
-      
-      console.log(`🔍 DEBUG - Raw filename before encoding: "${filename}"`);
-      console.log(`🔍 DEBUG - Original videoUrl: "${videoUrl}"`);
-      
-      // Use direct video proxy URL - same as working hero videos
-      const proxyUrl = `/api/video-proxy?filename=${encodeURIComponent(filename || '')}`;
-      console.log(`🎬 GALLERY VIDEO DIRECT PROXY URL: ${proxyUrl} (from ${videoUrl})`);
-      return proxyUrl;
+  const getImageUrl = (item: GalleryItem) => {
+    // Prioritize static image (300x200 cropped) if available, otherwise use regular image
+    let imageUrl = '';
+    if (item.staticImageUrl && item.staticImageUrl.trim() !== '') {
+      imageUrl = item.staticImageUrl;
     } else {
-      // Prioritize static image (300x200 cropped) if available, otherwise use regular image
-      let imageUrl = '';
-      if (item.staticImageUrl && item.staticImageUrl.trim() !== '') {
-        imageUrl = item.staticImageUrl;
-      } else {
-        imageUrl = language === 'fr-FR' ? item.imageUrlFr : item.imageUrlEn;
-      }
-      
-      // Use image proxy for automatic caching (similar to video proxy)
-      let filename = imageUrl.includes('/') ? imageUrl.split('/').pop() : imageUrl;
-      // Remove query parameters from filename (like ?v=timestamp)
-      if (filename && filename.includes('?')) {
-        filename = filename.split('?')[0];
-      }
-      const proxyUrl = `/api/image-proxy?filename=${encodeURIComponent(filename || '')}`;
-      console.log(`🖼️ GALLERY IMAGE PROXY URL: ${proxyUrl} (from ${imageUrl})`);
-      return proxyUrl;
+      imageUrl = language === 'fr-FR' ? item.imageUrlFr : item.imageUrlEn;
     }
+    
+    // Use image proxy for automatic caching
+    let filename = imageUrl.includes('/') ? imageUrl.split('/').pop() : imageUrl;
+    // Remove query parameters from filename (like ?v=timestamp)
+    if (filename && filename.includes('?')) {
+      filename = filename.split('?')[0];
+    }
+    const proxyUrl = `/api/image-proxy?filename=${encodeURIComponent(filename || '')}`;
+    console.log(`🖼️ GALLERY IMAGE PROXY URL: ${proxyUrl} (from ${imageUrl})`);
+    return proxyUrl;
   };
 
   const getItemTitle = (item: GalleryItem) => {
@@ -187,70 +152,20 @@ export default function GallerySection() {
     return language === 'fr-FR' ? item.sorryMessageFr : item.sorryMessageEn;
   };
 
-  const hasVideo = (item: GalleryItem) => {
-    const videoUrl = language === 'fr-FR' ? item.videoUrlFr : item.videoUrlEn;
-    return videoUrl && videoUrl.trim() !== '';
-  };
-
   const handlePlayClick = (item: GalleryItem, e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
     
-    if (hasVideo(item)) {
-      // Use short URL alias for gallery videos to bypass infrastructure filtering
-      const rawVideoUrl = language === 'fr-FR' ? item.videoUrlFr : item.videoUrlEn;
-      let filename = rawVideoUrl.includes('/') ? rawVideoUrl.split('/').pop() : rawVideoUrl;
-      
-      try {
-        const decodedFilename = decodeURIComponent(filename || '');
-        filename = decodedFilename;
-      } catch (e) {
-        console.warn(`Failed to decode filename: ${filename}`);
-      }
-      
-      // Use same alias mapping as getItemUrl
-      const videoAliasMap: Record<string, string> = {
-        // Gallery videos
-        'gallery_Our_vitamin_sea_rework_2_compressed.mp4': 'g1',
-        // Hero videos (for consistency)
-        'VideoHero1.mp4': 'h1',
-        'VideoHero2.mp4': 'h2',
-        'VideoHero3.mp4': 'h3'
-      };
-      
-      let videoUrl = '';
-      const alias = videoAliasMap[filename || ''];
-      if (alias) {
-        videoUrl = `/api/v/${alias}`;
-        console.log(`🎯 GALLERY VIDEO PREVIEW SHORT URL: ${videoUrl} (alias for ${filename})`);
+    // Just flip card to show sorry message - no video functionality
+    setFlippedCards(prev => {
+      const newSet = new Set(prev);
+      if (newSet.has(item.id)) {
+        newSet.delete(item.id);
       } else {
-        videoUrl = `/api/video-proxy?filename=${encodeURIComponent(filename || '')}`;
-        console.log('🎬 GALLERY VIDEO PREVIEW PROXY URL:', videoUrl, '(from', rawVideoUrl + ')');
+        newSet.add(item.id);
       }
-      
-      setPreviewItem({
-        type: 'video',
-        url: videoUrl,
-        title: getItemTitle(item),
-        itemId: typeof item.id === 'string' ? parseInt(item.id, 10) : item.id,
-        width: item.videoWidth,
-        height: item.videoHeight,
-        orientation: item.videoOrientation as 'landscape' | 'portrait'
-      });
-      
-      trackVideoView(String(item.id));
-    } else {
-      // New behavior: flip card to show sorry message
-      setFlippedCards(prev => {
-        const newSet = new Set(prev);
-        if (newSet.has(item.id)) {
-          newSet.delete(item.id);
-        } else {
-          newSet.add(item.id);
-        }
-        return newSet;
-      });
-    }
+      return newSet;
+    });
   };
 
   if (isLoading) {
@@ -293,10 +208,8 @@ export default function GallerySection() {
         {/* Gallery Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
           {galleryItems.map((item, index) => {
-            const videoUrl = getItemUrl(item, 'video');
-            const imageUrl = getItemUrl(item, 'image');
+            const imageUrl = getImageUrl(item);
             const thumbnailUrl = imageUrl;
-            const itemHasVideo = hasVideo(item);
             const isFlipped = flippedCards.has(item.id);
             
 
@@ -338,29 +251,19 @@ export default function GallerySection() {
                             </div>
                           )}
                           
-                          {/* Play Button - Center (3) */}
+                          {/* Play Button - Center (decorative only) */}
                           <div className="absolute inset-0 flex items-center justify-center">
-                            {itemHasVideo ? (
-                              // Orange filled circle button for videos - matching your design
-                              <div 
-                                className="w-16 h-16 rounded-full flex items-center justify-center transition-all duration-300 hover:scale-110 shadow-lg cursor-pointer"
-                                onClick={(e) => handlePlayClick(item, e)}
-                                style={{
-                                  backgroundColor: '#D67C4A', // MEMOPYK orange from brand palette
-                                  border: 'none'
-                                }}
-                              >
-                                <div className="text-white text-xl ml-1">▶</div>
-                              </div>
-                            ) : (
-                              // White circle button with border for card flip - matching your design
-                              <div
-                                className="w-16 h-16 rounded-full flex items-center justify-center transition-all duration-300 hover:scale-110 shadow-md cursor-pointer bg-white border-2 border-gray-300"
-                                onClick={(e) => handlePlayClick(item, e)}
-                              >
-                                <div className="text-gray-600 text-xl ml-1">▶</div>
-                              </div>
-                            )}
+                            {/* Always show orange play button (decorative) - matching your design */}
+                            <div 
+                              className="w-16 h-16 rounded-full flex items-center justify-center transition-all duration-300 hover:scale-110 shadow-lg cursor-pointer"
+                              onClick={(e) => handlePlayClick(item, e)}
+                              style={{
+                                backgroundColor: '#D67C4A', // MEMOPYK orange from brand palette
+                                border: 'none'
+                              }}
+                            >
+                              <div className="text-white text-xl ml-1">▶</div>
+                            </div>
                           </div>
                         </div>
                       ) : (
@@ -434,90 +337,7 @@ export default function GallerySection() {
           })}
         </div>
 
-        {/* TEST VIDEO PLAYER - Using Hero Video Structure */}
-        <div className="mt-16 bg-green-50 border-2 border-green-200 rounded-lg p-6">
-          <h3 className="text-xl font-bold text-green-800 mb-4">🧪 TEST VIDEO PLAYER (Hero Video - VideoHero1.mp4)</h3>
-          <p className="text-green-600 mb-4">Testing HERO VIDEO (VideoHero1.mp4) using exact same code structure as working hero videos</p>
-          
-          <div className="bg-black rounded-lg overflow-hidden" style={{ maxWidth: '800px', height: '450px' }}>
-            <video
-              ref={(el) => {
-                if (el) {
-                  console.log('🧪 TEST PLAYER (HERO VIDEO): Video element created');
-                  console.log('   - Source URL will be:', '/api/video-proxy?filename=VideoHero1.mp4');
-                  console.log('   - Element readyState:', el.readyState);
-                  console.log('   - Element networkState:', el.networkState);
-                  
-                  // Add extensive debugging event listeners
-                  el.addEventListener('loadstart', () => {
-                    console.log('🧪 TEST PLAYER: loadstart event');
-                  });
-                  el.addEventListener('loadeddata', () => {
-                    console.log('🧪 TEST PLAYER: loadeddata event');
-                  });
-                  el.addEventListener('loadedmetadata', () => {
-                    console.log('🧪 TEST PLAYER: loadedmetadata event');
-                  });
-                  el.addEventListener('canplay', () => {
-                    console.log('🧪 TEST PLAYER: canplay event');
-                  });
-                  el.addEventListener('canplaythrough', () => {
-                    console.log('🧪 TEST PLAYER: canplaythrough event');
-                  });
-                  el.addEventListener('error', (e) => {
-                    console.error('🧪 TEST PLAYER ERROR:', e);
-                    console.error('   - Error code:', el.error?.code);
-                    console.error('   - Error message:', el.error?.message);
-                    console.error('   - Network state:', el.networkState);
-                    console.error('   - Ready state:', el.readyState);
-                  });
-                  el.addEventListener('stalled', () => {
-                    console.warn('🧪 TEST PLAYER: stalled event');
-                  });
-                  el.addEventListener('suspend', () => {
-                    console.warn('🧪 TEST PLAYER: suspend event');
-                  });
-                  el.addEventListener('abort', () => {
-                    console.warn('🧪 TEST PLAYER: abort event');
-                  });
-                  el.addEventListener('emptied', () => {
-                    console.warn('🧪 TEST PLAYER: emptied event');
-                  });
-                }
-              }}
-              className="w-full h-full object-cover"
-              controls
-              preload="metadata"
-              onLoadStart={() => console.log('🧪 TEST PLAYER: React onLoadStart')}
-              onError={(e) => {
-                console.error('🧪 TEST PLAYER: React onError', e);
-                const target = e.target as HTMLVideoElement;
-                console.error('   - Target error:', target.error);
-                console.error('   - Target networkState:', target.networkState);
-                console.error('   - Target readyState:', target.readyState);
-              }}
-            >
-              <source 
-                src="/api/video-proxy?filename=VideoHero1.mp4" 
-                type="video/mp4"
-                onError={(e) => {
-                  console.error('🧪 TEST PLAYER: Source element error', e);
-                }}
-              />
-              Your browser does not support the video tag.
-            </video>
-          </div>
-          
-          <div className="mt-4 text-sm text-green-600">
-            <p><strong>Test Comparison:</strong></p>
-            <ul className="list-disc list-inside mt-2">
-              <li>Using VideoHero1.mp4 (same as working hero videos)</li>
-              <li>Same video proxy URL structure (/api/video-proxy?filename=VideoHero1.mp4)</li>
-              <li>Exact hero video code pattern (video + source elements)</li>
-              <li>Should work if hero videos work, fail if server has issues</li>
-            </ul>
-          </div>
-        </div>
+
 
         {/* View All Button */}
         {galleryItems.length > 6 && (
@@ -534,17 +354,7 @@ export default function GallerySection() {
 
 
 
-        {/* Inline Video Overlay */}
-        {previewItem && previewItem.type === 'video' && previewItem.width && previewItem.height && previewItem.orientation && (
-          <VideoOverlay
-            videoUrl={previewItem.url}
-            title={previewItem.title}
-            width={previewItem.width}
-            height={previewItem.height}
-            orientation={previewItem.orientation}
-            onClose={() => setPreviewItem(null)}
-          />
-        )}
+
       </div>
     </section>
   );
