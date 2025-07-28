@@ -214,6 +214,13 @@ export default function GalleryManagement({ smartCacheRefreshMutation }: Gallery
   // Update gallery item mutation
   const updateItemMutation = useMutation({
     mutationFn: async ({ id, data }: { id: number; data: Partial<GalleryItem> }) => {
+      console.log('🚨 UPDATE MUTATION DEBUG - Data being sent to server:', {
+        id: id,
+        video_filename: data.video_filename,
+        video_url_en: data.video_url_en,
+        title_en: data.title_en,
+        fullData: data
+      });
       return apiRequest(`/api/gallery/${id}`, 'PATCH', data);
     },
     onSuccess: () => {
@@ -1010,6 +1017,14 @@ export default function GalleryManagement({ smartCacheRefreshMutation }: Gallery
                 width: formData.video_width,
                 height: formData.video_height,
                 calculatedOrientation: finalData.video_orientation
+              });
+              
+              console.log('🚨 SAVE DEBUG - Final data being sent:', {
+                video_filename: finalData.video_filename,
+                video_url_en: finalData.video_url_en,
+                video_url_fr: finalData.video_url_fr,
+                title_en: finalData.title_en,
+                id: item?.id
               });
               
               onSave(finalData);
