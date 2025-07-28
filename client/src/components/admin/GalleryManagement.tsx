@@ -37,11 +37,13 @@ const persistentUploadState = {
   image_url_en: '',
   video_url_fr: '',
   image_url_fr: '',
+  video_filename: '',
   reset: () => {
     persistentUploadState.video_url_en = '';
     persistentUploadState.image_url_en = '';
     persistentUploadState.video_url_fr = '';
     persistentUploadState.image_url_fr = '';
+    persistentUploadState.video_filename = '';
   }
 };
 
@@ -308,7 +310,7 @@ export default function GalleryManagement({ smartCacheRefreshMutation }: Gallery
         sorry_message_fr: item?.sorry_message_fr || 'Désolé, nous ne pouvons pas vous montrer la vidéo à ce stade',
         video_url_en: item?.video_url_en || persistentUploadState.video_url_en || '',
         video_url_fr: item?.video_url_fr || persistentUploadState.video_url_fr || '',
-        video_filename: item?.video_filename || '',
+        video_filename: item?.video_filename || persistentUploadState.video_filename || '',
         video_width: item?.video_width || 0,
         video_height: item?.video_height || 0,
         video_orientation: item?.video_orientation || 'landscape',
@@ -456,8 +458,13 @@ export default function GalleryManagement({ smartCacheRefreshMutation }: Gallery
                     console.log('Direct video upload completed:', result);
                     const url = result.url;
                     
+                    // Extract filename from the URL - CRITICAL FIX
+                    const filename = url.split('/').pop() || '';
+                    console.log('🎯 UPLOAD FIX: Extracted filename from URL:', filename);
+                    
                     // Save to module-level persistent state
                     persistentUploadState.video_url_en = url;
+                    persistentUploadState.video_filename = filename;
                     if (formData.use_same_video) {
                       persistentUploadState.video_url_fr = url;
                     }
@@ -465,15 +472,15 @@ export default function GalleryManagement({ smartCacheRefreshMutation }: Gallery
                     
                     setFormData(prev => {
                       const newData = prev.use_same_video 
-                        ? { ...prev, video_url_en: url, video_url_fr: url }
-                        : { ...prev, video_url_en: url };
-                      console.log('Updated formData with direct upload:', newData);
+                        ? { ...prev, video_url_en: url, video_url_fr: url, video_filename: filename }
+                        : { ...prev, video_url_en: url, video_filename: filename };
+                      console.log('🎯 UPLOAD FIX: Updated formData with filename:', newData);
                       return newData;
                     });
                     
                     toast({
                       title: "✅ Succès",
-                      description: "Vidéo téléchargée directement avec succès!",
+                      description: `Vidéo téléchargée: ${filename}`,
                       className: "bg-green-50 dark:bg-green-900/20 border-green-200 dark:border-green-800"
                     });
                   }}
