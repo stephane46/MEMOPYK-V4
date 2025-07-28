@@ -22,6 +22,51 @@ export function VideoOverlay({ videoUrl, title, width, height, orientation, onCl
   const controlsTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const progressUpdateRef = useRef<number | null>(null);
 
+  // EXTENSIVE DEBUGGING - v1.0.13
+  useEffect(() => {
+    console.log('🎬 VIDEO OVERLAY LOAD START (v1.0.13-debug):');
+    console.log('   - Video URL:', videoUrl);
+    console.log('   - Title:', title);
+    console.log('   - Element src:', videoRef.current?.src);
+    console.log('   - Source elements:', videoRef.current?.querySelectorAll('source').length);
+    
+    // Test direct fetch to compare with video element behavior
+    console.log('🔍 TESTING DIRECT FETCH:', videoUrl);
+    fetch(videoUrl, { 
+      method: 'GET',
+      headers: { 
+        'Range': 'bytes=0-1023',
+        'Accept': 'video/mp4,video/*,*/*'
+      }
+    })
+    .then(response => {
+      console.log('✅ DIRECT FETCH RESULT:', response.status);
+      console.log('   - Headers:', Array.from(response.headers.entries()));
+      return response;
+    })
+    .catch(error => {
+      console.error('❌ DIRECT FETCH ERROR:', error);
+    });
+  }, [videoUrl, title]);
+
+  // Enhanced error handling
+  const handleVideoError = useCallback((e: any) => {
+    console.error(' ❌ VIDEO OVERLAY ERROR (v1.0.13-debug):');
+    console.error('    - Video URL:', videoUrl);
+    console.error('    - Error event:', e);
+    console.error('    - Error details:', e.target?.error);
+    console.error('    - Network state:', e.target?.networkState);
+    console.error('    - Ready state:', e.target?.readyState);
+    console.error('    - Current src:', e.target?.currentSrc);
+    console.error('    - Source elements:', e.target?.querySelectorAll('source'));
+    
+    // Additional network state analysis
+    const networkStates = ['NETWORK_EMPTY', 'NETWORK_IDLE', 'NETWORK_LOADING', 'NETWORK_NO_SOURCE'];
+    const readyStates = ['HAVE_NOTHING', 'HAVE_METADATA', 'HAVE_CURRENT_DATA', 'HAVE_FUTURE_DATA', 'HAVE_ENOUGH_DATA'];
+    console.error('    - Network state meaning:', networkStates[e.target?.networkState] || 'Unknown');
+    console.error('    - Ready state meaning:', readyStates[e.target?.readyState] || 'Unknown');
+  }, [videoUrl]);
+
   // CSS variables for 2/3 viewport sizing
   const twoThirdsRatio = 66.66;
 

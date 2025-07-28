@@ -421,6 +421,91 @@ export default function GallerySection() {
           })}
         </div>
 
+        {/* TEST VIDEO PLAYER - Using Hero Video Structure */}
+        <div className="mt-16 bg-red-50 border-2 border-red-200 rounded-lg p-6">
+          <h3 className="text-xl font-bold text-red-800 mb-4">🧪 TEST VIDEO PLAYER (Hero Video Structure)</h3>
+          <p className="text-red-600 mb-4">Testing gallery video using hero video code structure for comparison</p>
+          
+          <div className="bg-black rounded-lg overflow-hidden" style={{ maxWidth: '800px', height: '450px' }}>
+            <video
+              ref={(el) => {
+                if (el) {
+                  console.log('🧪 TEST PLAYER: Video element created');
+                  console.log('   - Source URL will be:', '/api/video-proxy?filename=gallery_Our_vitamin_sea_rework_2_compressed.mp4');
+                  console.log('   - Element readyState:', el.readyState);
+                  console.log('   - Element networkState:', el.networkState);
+                  
+                  // Add extensive debugging event listeners
+                  el.addEventListener('loadstart', () => {
+                    console.log('🧪 TEST PLAYER: loadstart event');
+                  });
+                  el.addEventListener('loadeddata', () => {
+                    console.log('🧪 TEST PLAYER: loadeddata event');
+                  });
+                  el.addEventListener('loadedmetadata', () => {
+                    console.log('🧪 TEST PLAYER: loadedmetadata event');
+                  });
+                  el.addEventListener('canplay', () => {
+                    console.log('🧪 TEST PLAYER: canplay event');
+                  });
+                  el.addEventListener('canplaythrough', () => {
+                    console.log('🧪 TEST PLAYER: canplaythrough event');
+                  });
+                  el.addEventListener('error', (e) => {
+                    console.error('🧪 TEST PLAYER ERROR:', e);
+                    console.error('   - Error code:', el.error?.code);
+                    console.error('   - Error message:', el.error?.message);
+                    console.error('   - Network state:', el.networkState);
+                    console.error('   - Ready state:', el.readyState);
+                  });
+                  el.addEventListener('stalled', () => {
+                    console.warn('🧪 TEST PLAYER: stalled event');
+                  });
+                  el.addEventListener('suspend', () => {
+                    console.warn('🧪 TEST PLAYER: suspend event');
+                  });
+                  el.addEventListener('abort', () => {
+                    console.warn('🧪 TEST PLAYER: abort event');
+                  });
+                  el.addEventListener('emptied', () => {
+                    console.warn('🧪 TEST PLAYER: emptied event');
+                  });
+                }
+              }}
+              className="w-full h-full object-cover"
+              controls
+              preload="metadata"
+              onLoadStart={() => console.log('🧪 TEST PLAYER: React onLoadStart')}
+              onError={(e) => {
+                console.error('🧪 TEST PLAYER: React onError', e);
+                const target = e.target as HTMLVideoElement;
+                console.error('   - Target error:', target.error);
+                console.error('   - Target networkState:', target.networkState);
+                console.error('   - Target readyState:', target.readyState);
+              }}
+            >
+              <source 
+                src="/api/video-proxy?filename=gallery_Our_vitamin_sea_rework_2_compressed.mp4" 
+                type="video/mp4"
+                onError={(e) => {
+                  console.error('🧪 TEST PLAYER: Source element error', e);
+                }}
+              />
+              Your browser does not support the video tag.
+            </video>
+          </div>
+          
+          <div className="mt-4 text-sm text-red-600">
+            <p><strong>Comparison Points:</strong></p>
+            <ul className="list-disc list-inside mt-2">
+              <li>Same video file as gallery modal</li>
+              <li>Same video proxy URL structure</li>
+              <li>Hero video code pattern (video + source elements)</li>
+              <li>Extensive debugging in console</li>
+            </ul>
+          </div>
+        </div>
+
         {/* View All Button */}
         {galleryItems.length > 6 && (
           <div className="text-center">
