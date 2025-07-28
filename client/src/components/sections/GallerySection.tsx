@@ -134,6 +134,10 @@ export default function GallerySection() {
         console.warn(`Failed to decode filename: ${filename}`);
       }
       
+      // DEBUG: Log raw filename value before encoding (requested by coder)
+      console.log(`🔍 DEBUG - Raw filename before encoding: "${filename}"`);
+      console.log(`🔍 DEBUG - Original videoUrl: "${videoUrl}"`);
+      
       const proxyUrl = `/api/video-proxy?filename=${encodeURIComponent(filename || '')}`;
       console.log(`🎬 GALLERY VIDEO PROXY URL: ${proxyUrl} (from ${videoUrl})`);
       return proxyUrl;
