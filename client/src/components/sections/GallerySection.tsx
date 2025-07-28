@@ -154,8 +154,7 @@ export default function GallerySection() {
   };
 
   const hasVideo = (item: GalleryItem, index: number) => {
-    // Only the first gallery item has video functionality
-    if (index !== 0) return false;
+    // All gallery items can have video functionality if they have a video URL
     const videoUrl = language === 'fr-FR' ? item.videoUrlFr : item.videoUrlEn;
     return videoUrl && videoUrl.trim() !== '';
   };
