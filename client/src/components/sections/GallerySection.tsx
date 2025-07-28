@@ -119,7 +119,7 @@ export default function GallerySection() {
 
   const getItemUrl = (item: GalleryItem, type: 'video' | 'image') => {
     if (type === 'video') {
-      // Use SHORT URL ALIAS for gallery videos to bypass infrastructure filtering
+      // FIXED: Use direct video proxy URL like hero videos - video elements can't handle redirects
       const videoUrl = language === 'fr-FR' ? item.videoUrlFr : item.videoUrlEn;
       let filename = videoUrl.includes('/') ? videoUrl.split('/').pop() : videoUrl;
       
@@ -134,27 +134,10 @@ export default function GallerySection() {
       console.log(`🔍 DEBUG - Raw filename before encoding: "${filename}"`);
       console.log(`🔍 DEBUG - Original videoUrl: "${videoUrl}"`);
       
-      // Map video filenames to short aliases - expandable for all videos
-      const videoAliasMap: Record<string, string> = {
-        // Gallery videos
-        'gallery_Our_vitamin_sea_rework_2_compressed.mp4': 'g1',
-        // Hero videos (for consistency)
-        'VideoHero1.mp4': 'h1',
-        'VideoHero2.mp4': 'h2',
-        'VideoHero3.mp4': 'h3'
-      };
-      
-      // Use short alias if available, otherwise fall back to original proxy
-      const alias = videoAliasMap[filename || ''];
-      if (alias) {
-        const shortUrl = `/api/v/${alias}`;
-        console.log(`🎯 GALLERY VIDEO SHORT URL: ${shortUrl} (alias for ${filename})`);
-        return shortUrl;
-      } else {
-        const proxyUrl = `/api/video-proxy?filename=${encodeURIComponent(filename || '')}`;
-        console.log(`🎬 GALLERY VIDEO PROXY URL: ${proxyUrl} (from ${videoUrl})`);
-        return proxyUrl;
-      }
+      // Use direct video proxy URL - same as working hero videos
+      const proxyUrl = `/api/video-proxy?filename=${encodeURIComponent(filename || '')}`;
+      console.log(`🎬 GALLERY VIDEO DIRECT PROXY URL: ${proxyUrl} (from ${videoUrl})`);
+      return proxyUrl;
     } else {
       // Prioritize static image (300x200 cropped) if available, otherwise use regular image
       let imageUrl = '';
