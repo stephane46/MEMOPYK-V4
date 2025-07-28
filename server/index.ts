@@ -45,6 +45,37 @@ app.use(express.urlencoded({
   parameterLimit: 50000
 }));
 
+// ULTIMATE REQUEST INTERCEPTOR: Capture ALL requests before ANY processing
+app.use((req, res, next) => {
+  // Log EVERY video-proxy request, no matter what
+  if (req.url.includes('video-proxy')) {
+    console.log(`🔥 ULTIMATE INTERCEPTOR - RAW REQUEST CAPTURED:`);
+    console.log(`   - Raw URL: ${req.url}`);
+    console.log(`   - Method: ${req.method}`);
+    console.log(`   - Path: ${req.path}`);
+    console.log(`   - Raw query string: "${req.url.split('?')[1] || 'NO_QUERY'}"`);
+    console.log(`   - Parsed query object:`, req.query);
+    console.log(`   - URL length: ${req.url.length} characters`);
+    console.log(`   - User-Agent: ${req.headers['user-agent']?.slice(0, 100)}`);
+    
+    // Check if this is the problematic gallery video
+    if (req.url.includes('gallery_Our_vitamin_sea_rework_2_compressed.mp4')) {
+      console.log(`🎯 GALLERY VIDEO REQUEST INTERCEPTED - THIS IS THE FAILING ONE!`);
+      console.log(`   - Full raw URL: ${req.url}`);
+      console.log(`   - URL breakdown:`);
+      console.log(`     - Base: ${req.url.split('?')[0]}`);
+      console.log(`     - Query: ${req.url.split('?')[1] || 'NONE'}`);
+      console.log(`   - Headers:`, JSON.stringify({
+        range: req.headers.range,
+        accept: req.headers.accept,
+        'user-agent': req.headers['user-agent']?.slice(0, 50),
+        'accept-encoding': req.headers['accept-encoding']
+      }, null, 2));
+    }
+  }
+  next();
+});
+
 // EMERGENCY: Log ALL requests to diagnose production routing
 app.use((req, res, next) => {
   if (req.path.includes('/api/video-proxy') || req.path.includes('/api/debug-gallery-video')) {
