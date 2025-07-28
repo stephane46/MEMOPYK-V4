@@ -546,8 +546,8 @@ export class VideoCache {
       const galleryItems = await hybridStorage.getGalleryItems();
       
       const currentGalleryVideos = galleryItems
-        .filter(item => item.video_url_en)
-        .map(item => item.video_url_en!.split('/').pop()!)
+        .filter(item => item.video_filename || item.video_url_en)
+        .map(item => (item.video_filename || item.video_url_en!).split('/').pop()!)
         .filter(filename => filename);
 
       const currentGalleryImages = galleryItems
@@ -706,8 +706,8 @@ export class VideoCache {
       console.log(`📋 Retrieved ${galleryItems.length} gallery items from storage`);
       
       const galleryVideos = galleryItems
-        .filter(item => item.video_url_en)
-        .map(item => item.video_url_en!.split('/').pop()!)
+        .filter(item => item.video_filename || item.video_url_en)
+        .map(item => (item.video_filename || item.video_url_en!).split('/').pop()!)
         .filter(filename => filename);
 
       const galleryImages = galleryItems

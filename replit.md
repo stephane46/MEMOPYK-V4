@@ -52,13 +52,31 @@ Preferred communication style: Simple, everyday language.
 
 ## Recent Changes (July 28, 2025)
 
-### GALLERY MANAGEMENT API PARAMETER FIX - v1.0.26 (July 28, 2025)
-**Critical Gallery Update Bug Resolution - COMPLETE:**
+### COMPLETE GALLERY MANAGEMENT SYSTEM FIX - v1.0.27 (July 28, 2025)
+**Critical Gallery Video Display and Cache System Resolution - COMPLETE:**
 ✅ **All API Parameter Orders Fixed**: Corrected all `apiRequest` calls from `('METHOD', 'url', data)` to `('url', 'METHOD', data)` in GalleryManagement.tsx
 ✅ **Gallery Video Updates Working**: Users can now change gallery videos and have them persist in database instead of reverting to G1.mp4
 ✅ **Create/Update/Delete/Reorder Fixed**: All gallery management operations now use correct API parameter order
 ✅ **TypeScript Errors Resolved**: Added `video_filename` field to GalleryItem interface and formData initialization
-✅ **Smart Gallery Cache Functional**: Smart Gallery Cache Refresh button now works with proper API parameter order
+✅ **UI Display Bug Fixed**: Gallery management now shows `video_filename` field instead of legacy `video_url_en` field
+✅ **Smart Gallery Cache Fixed**: Cache system now reads updated `video_filename` values from database correctly
+✅ **Video Cache Sync Complete**: Smart Gallery Cache Refresh now detects and processes video filename changes properly
+✅ **Backward Compatibility**: System supports both new `video_filename` and legacy `video_url_en` fields seamlessly
+
+**Technical Fixes Applied:**
+- Fixed `createItemMutation`: `apiRequest('POST', '/api/gallery', formData)` → `apiRequest('/api/gallery', 'POST', formData)`
+- Fixed `updateItemMutation`: `apiRequest('PATCH', `/api/gallery/${item.id}`, formData)` → `apiRequest(`/api/gallery/${item.id}`, 'PATCH', formData)`
+- Fixed `reorderItemMutation`: `apiRequest('PATCH', `/api/gallery/${id}/reorder`, { order_index })` → `apiRequest(`/api/gallery/${id}/reorder`, 'PATCH', { order_index })`
+- Fixed `deleteItemMutation`: `apiRequest('DELETE', `/api/gallery/${id}`)` → `apiRequest(`/api/gallery/${id}`, 'DELETE')`
+- Added `video_filename?: string` to GalleryItem interface
+- Added `video_filename: item?.video_filename || ''` to formData initialization
+
+**User Experience Achievement:**
+- Gallery video changes now save correctly to database
+- Smart Gallery Cache Refresh works without errors
+- All gallery management operations functional (create, edit, delete, reorder)
+- TypeScript compilation errors eliminated
+- Video filename field properly integrated into admin interface
 
 **Technical Fixes Applied:**
 - Fixed `createItemMutation`: `apiRequest('POST', '/api/gallery', formData)` → `apiRequest('/api/gallery', 'POST', formData)`
