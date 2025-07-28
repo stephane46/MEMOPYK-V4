@@ -119,28 +119,37 @@ export default function GallerySection() {
 
   const getItemUrl = (item: GalleryItem, type: 'video' | 'image') => {
     if (type === 'video') {
-      // Use video proxy for automatic caching (same as hero videos)
+      // Use SHORT URL ALIAS for gallery videos to bypass infrastructure filtering
       const videoUrl = language === 'fr-FR' ? item.videoUrlFr : item.videoUrlEn;
-      // Extract filename from full URL
       let filename = videoUrl.includes('/') ? videoUrl.split('/').pop() : videoUrl;
       
       // CRITICAL FIX: Decode filename first to prevent double-encoding
-      // Some filenames in database are already URL-encoded (contain %20, %28, %29)
       try {
         const decodedFilename = decodeURIComponent(filename || '');
         filename = decodedFilename;
       } catch (e) {
-        // If decoding fails, use original filename
         console.warn(`Failed to decode filename: ${filename}`);
       }
       
-      // DEBUG: Log raw filename value before encoding (requested by coder)
       console.log(`🔍 DEBUG - Raw filename before encoding: "${filename}"`);
       console.log(`🔍 DEBUG - Original videoUrl: "${videoUrl}"`);
       
-      const proxyUrl = `/api/video-proxy?filename=${encodeURIComponent(filename || '')}`;
-      console.log(`🎬 GALLERY VIDEO PROXY URL: ${proxyUrl} (from ${videoUrl})`);
-      return proxyUrl;
+      // Map gallery video filenames to short aliases  
+      const videoAliasMap: Record<string, string> = {
+        'gallery_Our_vitamin_sea_rework_2_compressed.mp4': 'g1'
+      };
+      
+      // Use short alias if available, otherwise fall back to original proxy
+      const alias = videoAliasMap[filename || ''];
+      if (alias) {
+        const shortUrl = `/api/v/${alias}`;
+        console.log(`🎯 GALLERY VIDEO SHORT URL: ${shortUrl} (alias for ${filename})`);
+        return shortUrl;
+      } else {
+        const proxyUrl = `/api/video-proxy?filename=${encodeURIComponent(filename || '')}`;
+        console.log(`🎬 GALLERY VIDEO PROXY URL: ${proxyUrl} (from ${videoUrl})`);
+        return proxyUrl;
+      }
     } else {
       // Prioritize static image (300x200 cropped) if available, otherwise use regular image
       let imageUrl = '';
@@ -200,28 +209,35 @@ export default function GallerySection() {
     e.stopPropagation();
     
     if (hasVideo(item)) {
-      // Use video proxy for automatic caching (same as hero videos)
+      // Use short URL alias for gallery videos to bypass infrastructure filtering
       const rawVideoUrl = language === 'fr-FR' ? item.videoUrlFr : item.videoUrlEn;
       let filename = rawVideoUrl.includes('/') ? rawVideoUrl.split('/').pop() : rawVideoUrl;
       
-      // CRITICAL FIX: Decode filename first to prevent double-encoding
-      // Some filenames in database are already URL-encoded (contain %20, %28, %29)
       try {
         const decodedFilename = decodeURIComponent(filename || '');
         filename = decodedFilename;
       } catch (e) {
-        // If decoding fails, use original filename
         console.warn(`Failed to decode filename: ${filename}`);
       }
       
-      const proxyUrl = `/api/video-proxy?filename=${encodeURIComponent(filename || '')}`;
-      console.log('🎬 GALLERY VIDEO PROXY URL:', proxyUrl, '(from', rawVideoUrl + ')');
-      console.log('🎬 DECODED FILENAME:', filename);
-      console.log('🎬 ENCODED FOR URL:', encodeURIComponent(filename || ''));
+      // Use same alias mapping as getItemUrl
+      const videoAliasMap: Record<string, string> = {
+        'gallery_Our_vitamin_sea_rework_2_compressed.mp4': 'g1'
+      };
+      
+      let videoUrl = '';
+      const alias = videoAliasMap[filename || ''];
+      if (alias) {
+        videoUrl = `/api/v/${alias}`;
+        console.log(`🎯 GALLERY VIDEO PREVIEW SHORT URL: ${videoUrl} (alias for ${filename})`);
+      } else {
+        videoUrl = `/api/video-proxy?filename=${encodeURIComponent(filename || '')}`;
+        console.log('🎬 GALLERY VIDEO PREVIEW PROXY URL:', videoUrl, '(from', rawVideoUrl + ')');
+      }
       
       setPreviewItem({
         type: 'video',
-        url: proxyUrl,
+        url: videoUrl,
         title: getItemTitle(item),
         itemId: typeof item.id === 'string' ? parseInt(item.id, 10) : item.id,
         width: item.videoWidth,

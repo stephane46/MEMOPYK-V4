@@ -1214,6 +1214,55 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   // DUPLICATE FAQ ROUTES REMOVED - Using detailed routes above
 
+  // SHORT URL ALIAS SYSTEM - v1.0.20 INFRASTRUCTURE WORKAROUND
+  app.get("/api/v/:id", async (req, res) => {
+    try {
+      const videoId = req.params.id;
+      console.log(`🎯 SHORT URL ALIAS REQUEST: /api/v/${videoId}`);
+      
+      // Map short IDs to actual filenames
+      const videoMap: Record<string, string> = {
+        'g1': 'gallery_Our_vitamin_sea_rework_2_compressed.mp4',
+        'h1': 'VideoHero1.mp4',
+        'h2': 'VideoHero2.mp4', 
+        'h3': 'VideoHero3.mp4'
+      };
+      
+      const filename = videoMap[videoId];
+      if (!filename) {
+        console.log(`❌ Unknown video ID: ${videoId}`);
+        return res.status(404).json({ error: "Video not found" });
+      }
+      
+      console.log(`🔄 REDIRECTING ${videoId} → ${filename}`);
+      
+      // Forward to video proxy with actual filename
+      console.log(`🔄 Forwarding to video proxy with filename: ${filename}`);
+      req.query.filename = filename;
+      
+      // Forward request internally to video proxy route
+      req.url = `/api/video-proxy?filename=${encodeURIComponent(filename)}`;
+      req.originalUrl = req.url;
+      
+      // Find and call video proxy route handler
+      const routes = app._router.stack;
+      for (const layer of routes) {
+        if (layer.route && layer.route.path === '/api/video-proxy' && layer.route.methods.get) {
+          const handler = layer.route.stack[0].handle;
+          return handler(req, res, () => {});
+        }
+      }
+      
+      // If direct forwarding fails, redirect
+      console.log(`⚠️ Direct forwarding failed, using redirect`);
+      return res.redirect(`/api/video-proxy?filename=${encodeURIComponent(filename)}`);
+      
+    } catch (error) {
+      console.error('Short URL alias error:', error);
+      res.status(500).json({ error: "Short URL alias failed" });
+    }
+  });
+
   // EMERGENCY GALLERY VIDEO DEBUG ROUTE - v1.0.13
   app.get("/api/debug-gallery-video", (req, res) => {
     console.log("🔍 EMERGENCY DEBUG ROUTE HIT - v1.0.13");
