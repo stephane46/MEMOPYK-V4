@@ -2544,6 +2544,27 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Smart gallery cache refresh endpoint - syncs cache with current database
+  app.post("/api/video-cache/refresh-gallery", async (req, res) => {
+    try {
+      console.log('🔄 Admin-triggered smart gallery cache refresh...');
+      
+      const result = await videoCache.refreshGalleryCache();
+      const stats = await videoCache.getCacheStats();
+      
+      res.json({ 
+        success: true,
+        message: `Gallery cache refreshed: removed ${result.removed.length} outdated files, cached ${result.cached.length} new files`,
+        removed: result.removed,
+        cached: result.cached,
+        stats 
+      });
+    } catch (error) {
+      console.error('Gallery cache refresh error:', error);
+      res.status(500).json({ error: "Failed to refresh gallery cache" });
+    }
+  });
+
   // Get cache status for specific videos (admin interface visual indicators)
   app.post("/api/video-cache/status", async (req, res) => {
     try {

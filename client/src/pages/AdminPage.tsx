@@ -250,6 +250,32 @@ export default function AdminPage() {
     }
   });
 
+  // Smart gallery cache refresh mutation - syncs cache with current database
+  const smartCacheRefreshMutation = useMutation({
+    mutationFn: async () => {
+      const response = await apiRequest('POST', '/api/video-cache/refresh-gallery');
+      return await response.json() as {
+        success: boolean;
+        message: string;
+        removed: string[];
+        cached: string[];
+        stats: any;
+      };
+    },
+    onSuccess: (data) => {
+      queryClient.invalidateQueries({ queryKey: ['/api/video-cache/stats'] });
+      const removedCount = data.removed?.length || 0;
+      const cachedCount = data.cached?.length || 0;
+      toast({ 
+        title: "Smart Cache Refresh Complete", 
+        description: `Removed ${removedCount} outdated files, cached ${cachedCount} new files` 
+      });
+    },
+    onError: () => {
+      toast({ title: "Error", description: "Failed to refresh gallery cache", variant: "destructive" });
+    }
+  });
+
   // Clear cache mutation
   const clearCacheMutation = useMutation({
     mutationFn: async () => {
@@ -1191,7 +1217,7 @@ export default function AdminPage() {
               </div>
               <Card>
                 <CardContent className="p-6">
-                  <GalleryManagement />
+                  <GalleryManagement smartCacheRefreshMutation={smartCacheRefreshMutation} />
                 </CardContent>
               </Card>
             </div>

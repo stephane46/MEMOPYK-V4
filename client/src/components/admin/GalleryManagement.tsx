@@ -103,7 +103,11 @@ const addCacheBuster = (url: string): string => {
   return `${url}${separator}t=${Date.now()}`;
 };
 
-export default function GalleryManagement() {
+interface GalleryManagementProps {
+  smartCacheRefreshMutation?: any;
+}
+
+export default function GalleryManagement({ smartCacheRefreshMutation }: GalleryManagementProps = {}) {
   const [editingItem, setEditingItem] = useState<GalleryItem | null>(null);
   const [showCreateDialog, setShowCreateDialog] = useState(false);
   const [showPreview, setShowPreview] = useState<{ type: 'video' | 'image'; url: string; title: string } | null>(null);
@@ -1051,6 +1055,7 @@ export default function GalleryManagement() {
         title="Gallery Videos Cache Status"
         showForceAllButton={false}
         description="Gallery video caching status. Videos are cached locally for ~50ms performance vs ~1500ms direct streaming."
+        smartCacheRefreshMutation={smartCacheRefreshMutation}
       />
 
       <div className="space-y-4">
