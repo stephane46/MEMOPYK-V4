@@ -345,7 +345,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
 
       // Validate bucket name
-      const allowedBuckets = ['memopyk-gallery', 'memopyk-hero-videos'];
+      const allowedBuckets = ['memopyk-videos']; // Unified bucket for all media
       if (!allowedBuckets.includes(bucket)) {
         return res.status(400).json({ error: "Invalid bucket name" });
       }
@@ -456,7 +456,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // Read file from disk and upload to Supabase storage (gallery bucket) with overwrite enabled
       const fileBuffer = require('fs').readFileSync(req.file.path);
       const { data: uploadData, error: uploadError } = await supabase.storage
-        .from('memopyk-gallery')
+        .from('memopyk-videos')
         .upload(filename, fileBuffer, {
           contentType: req.file.mimetype,
           cacheControl: '3600',
@@ -468,7 +468,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(500).json({ error: `Upload failed: ${uploadError.message}` });
       }
 
-      const videoUrl = `https://supabase.memopyk.org/storage/v1/object/public/memopyk-gallery/${filename}`;
+      const videoUrl = `https://supabase.memopyk.org/storage/v1/object/public/memopyk-videos/${filename}`;
       
       // Immediately cache the newly uploaded gallery video
       try {
@@ -530,7 +530,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // Read file from disk and upload to Supabase storage (gallery bucket) with overwrite enabled
       const fileBuffer = require('fs').readFileSync(req.file.path);
       const { data: uploadData, error: uploadError } = await supabase.storage
-        .from('memopyk-gallery')
+        .from('memopyk-videos')
         .upload(filename, fileBuffer, {
           contentType: req.file.mimetype,
           cacheControl: '3600',
@@ -542,7 +542,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(500).json({ error: `Upload failed: ${uploadError.message}` });
       }
 
-      const imageUrl = `https://supabase.memopyk.org/storage/v1/object/public/memopyk-gallery/${filename}`;
+      const imageUrl = `https://supabase.memopyk.org/storage/v1/object/public/memopyk-videos/${filename}`;
       
       // Clean up temporary file
       try {
@@ -608,7 +608,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       // First, delete the old file to ensure clean CDN cache invalidation
       const { error: deleteError } = await supabase.storage
-        .from('memopyk-gallery')
+        .from('memopyk-videos')
         .remove([filename]);
       
       if (deleteError && deleteError.message !== 'The resource was not found') {
@@ -622,7 +622,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // Read file from disk and upload to Supabase storage (gallery bucket) 
       const fileBuffer = require('fs').readFileSync(req.file.path);
       const { data: uploadData, error: uploadError } = await supabase.storage
-        .from('memopyk-gallery')
+        .from('memopyk-videos')
         .upload(filename, fileBuffer, {
           contentType: 'image/png',
           cacheControl: '300', // Shorter cache for thumbnails (5 minutes)
@@ -636,7 +636,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       // Add cache-busting timestamp to force fresh loads
       const timestamp = Date.now();
-      const staticImageUrl = `https://supabase.memopyk.org/storage/v1/object/public/memopyk-gallery/${filename}?v=${timestamp}`;
+      const staticImageUrl = `https://supabase.memopyk.org/storage/v1/object/public/memopyk-videos/${filename}?v=${timestamp}`;
       
       console.log(`✅ Static image uploaded successfully: ${staticImageUrl}`);
       
@@ -1316,7 +1316,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
           // Problem: videoFilename might already be encoded, causing double encoding
           // Solution: Always use decodedFilename for URL construction, videoFilename for cache lookup
           const encodedForDownload = encodeURIComponent(decodedFilename);
-          const supabaseUrl = `https://supabase.memopyk.org/storage/v1/object/public/memopyk-gallery/${encodedForDownload}`;
+          const supabaseUrl = `https://supabase.memopyk.org/storage/v1/object/public/memopyk-videos/${encodedForDownload}`;
           console.log(`   - STEP 1: Using original decoded filename: "${decodedFilename}"`);
           console.log(`   - STEP 2: Encoded for URL: "${encodedForDownload}"`);
           console.log(`   - STEP 3: Final Supabase URL: ${supabaseUrl}`);
@@ -1341,20 +1341,20 @@ export async function registerRoutes(app: Express): Promise<Server> {
           console.error(`   - Original filename param: "${filename}"`);
           console.error(`   - Decoded filename: "${decodedFilename}"`);
           console.error(`   - Encoded for URL: "${encodeURIComponent(decodedFilename)}"`);
-          console.error(`   - Final URL attempted: https://supabase.memopyk.org/storage/v1/object/public/memopyk-gallery/${encodeURIComponent(decodedFilename)}`);
+          console.error(`   - Final URL attempted: https://supabase.memopyk.org/storage/v1/object/public/memopyk-videos/${encodeURIComponent(decodedFilename)}`);
           console.error(`   - Cache directory exists: ${require('fs').existsSync('./server/cache/videos')}`);
           console.error(`   - Working directory: ${process.cwd()}`);
           return res.status(500).json({ 
             error: `Video caching failed - cannot serve video`,
             filename: decodedFilename,
             details: downloadError.message,
-            version: "v1.0.10-maximum-debug",
+            version: "v1.0.16-unified-bucket",
             timestamp: Date.now(),
             debug: {
               originalParam: filename,
               decoded: decodedFilename,
               encoded: encodeURIComponent(decodedFilename),
-              url: `https://supabase.memopyk.org/storage/v1/object/public/memopyk-gallery/${encodeURIComponent(decodedFilename)}`
+              url: `https://supabase.memopyk.org/storage/v1/object/public/memopyk-videos/${encodeURIComponent(decodedFilename)}`
             }
           });
         }
@@ -2130,9 +2130,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // Clear cache if file exists (for overwrite scenario)
       videoCache.clearSpecificFile(filename);
 
-      // Upload to Supabase storage (memopyk-gallery bucket) with overwrite enabled
+      // Upload to Supabase storage (memopyk-videos unified bucket) with overwrite enabled
       const { data: uploadData, error: uploadError } = await supabase.storage
-        .from('memopyk-gallery')
+        .from('memopyk-videos')
         .upload(filename, req.file.buffer, {
           contentType: req.file.mimetype,
           cacheControl: '3600',
@@ -2144,7 +2144,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(500).json({ error: `Upload failed: ${uploadError.message}` });
       }
 
-      const videoUrl = `https://supabase.memopyk.org/storage/v1/object/public/memopyk-gallery/${filename}`;
+      const videoUrl = `https://supabase.memopyk.org/storage/v1/object/public/memopyk-videos/${filename}`;
       
       res.json({ 
         success: true, 
@@ -2177,14 +2177,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(400).json({ error: "filename is required" });
       }
 
-      // Construct Supabase CDN URL from filename
-      let videoUrl: string;
-      
-      if (filename.startsWith('gallery_')) {
-        videoUrl = `https://supabase.memopyk.org/storage/v1/object/public/memopyk-gallery/${filename}`;
-      } else {
-        videoUrl = `https://supabase.memopyk.org/storage/v1/object/public/memopyk-gallery/${filename}`;
-      }
+      // Construct Supabase CDN URL from filename (unified bucket)
+      const videoUrl = `https://supabase.memopyk.org/storage/v1/object/public/memopyk-videos/${filename}`;
 
       console.log(`🔄 Force caching video: ${filename} from ${videoUrl}`);
 

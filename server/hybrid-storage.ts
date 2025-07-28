@@ -997,7 +997,7 @@ export class HybridStorage implements HybridStorageInterface {
    */
   private async deleteFromSupabaseStorage(filename: string, type: 'hero' | 'gallery'): Promise<void> {
     try {
-      const bucketName = type === 'hero' ? 'memopyk-hero' : 'memopyk-gallery';
+      const bucketName = 'memopyk-videos'; // Unified bucket for all media types
       
       console.log(`🗑️ Deleting ${filename} from Supabase bucket: ${bucketName}`);
       

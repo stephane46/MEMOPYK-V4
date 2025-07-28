@@ -432,7 +432,7 @@ export default function GalleryManagement() {
                   Vidéo (.mp4, .mov, .avi...)
                 </Label>
                 <DirectUpload
-                  bucket="memopyk-gallery"
+                  bucket="memopyk-videos"
                   acceptedTypes="video/*"
                   maxSizeMB={5000}
                   uploadId="gallery-video-upload"
@@ -478,7 +478,7 @@ export default function GalleryManagement() {
                   Image (.jpg, .png, .gif...)
                 </Label>
                 <DirectUpload
-                  bucket="memopyk-gallery"
+                  bucket="memopyk-videos"
                   acceptedTypes="image/*"
                   maxSizeMB={5000}
                   uploadId="gallery-image-upload"
