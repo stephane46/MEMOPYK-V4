@@ -161,9 +161,13 @@ export default function GallerySection() {
   };
 
   const getVideoUrl = (item: GalleryItem) => {
-    // HYBRID GALLERY FIX: Always use VideoHero1.mp4 for the first gallery item
+    // HYBRID GALLERY FIX: Map gallery items to corresponding hero videos
     // This uses the exact same pattern as working hero videos
-    return `/api/video-proxy?filename=VideoHero1.mp4`;
+    const videoUrl = language === 'fr-FR' ? item.videoUrlFr : item.videoUrlEn;
+    const filename = videoUrl.includes('/') ? videoUrl.split('/').pop() : videoUrl;
+    
+    // Use hero video filenames that are already cached and working
+    return `/api/video-proxy?filename=${filename}`;
   };
 
   const handlePlayClick = (item: GalleryItem, e: React.MouseEvent, index: number) => {
