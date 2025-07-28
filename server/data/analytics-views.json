@@ -3528,5 +3528,16 @@
     "completion_rate": 0,
     "created_at": "2025-07-28T14:07:44.868Z",
     "updated_at": "2025-07-28T14:07:44.868Z"
+  },
+  {
+    "id": "view_1753713570511_n2b6tg51y",
+    "video_id": "a2f1f51f-dddc-4284-b385-54f658424444",
+    "video_type": "gallery",
+    "video_title": "",
+    "language": "fr-FR",
+    "watch_time": 0,
+    "completion_rate": 0,
+    "created_at": "2025-07-28T14:39:30.511Z",
+    "updated_at": "2025-07-28T14:39:30.511Z"
   }
 ]
