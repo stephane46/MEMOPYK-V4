@@ -657,10 +657,10 @@ export class VideoCache {
       console.log(`   - Filename: ${filename}`);
       console.log(`   - Using for Supabase: ${supabaseFilename}`);
       
-      // CRITICAL FIX v1.0.7: Properly encode filename for Supabase URL while preserving original for cache
-      // Gallery videos like "1753390495474-Pom Gallery (RAV AAA_001) compressed.mp4" need URL encoding
+      // UNIFIED BUCKET v1.0.16: All videos now stored in memopyk-videos bucket
+      // This includes hero videos (VideoHero1.mp4) and gallery videos (gallery_*.mp4)
       const encodedFilename = encodeURIComponent(supabaseFilename);
-      const fullVideoUrl = customUrl || `https://supabase.memopyk.org/storage/v1/object/public/memopyk-gallery/${encodedFilename}`;
+      const fullVideoUrl = customUrl || `https://supabase.memopyk.org/storage/v1/object/public/memopyk-videos/${encodedFilename}`;
       const cacheFile = this.getVideoCacheFilePath(filename); // Keep original filename for cache lookup
       
       console.log(`📥 PRODUCTION URL ENCODING v1.0.11 WITH FIX: Downloading ${filename} from Supabase...`);

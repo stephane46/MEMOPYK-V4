@@ -739,13 +739,33 @@ export default function GalleryManagement() {
           </div>
         </div>
 
+        {/* Manual Video Filename Entry - UNIFIED SYSTEM v1.0.16 */}
+        <div className="bg-blue-50 dark:bg-blue-900/20 p-4 rounded-lg border border-blue-200 dark:border-blue-800">
+          <h4 className="font-semibold mb-3 text-blue-900 dark:text-blue-100 flex items-center gap-2">
+            🎯 Nom de fichier vidéo (système unifié)
+          </h4>
+          <p className="text-sm text-blue-800 dark:text-blue-200 mb-3">
+            Entrez directement le nom du fichier vidéo stocké dans le bucket memopyk-videos (ex: VideoHero1.mp4, gallery_Our_vitamin_sea_rework_2_compressed.mp4)
+          </p>
+          <div>
+            <Label htmlFor="video_filename" className="text-gray-700 dark:text-gray-300">Nom de fichier vidéo</Label>
+            <Input
+              id="video_filename"
+              value={formData.video_filename || ''}
+              onChange={(e) => setFormData({ ...formData, video_filename: e.target.value })}
+              placeholder="Ex: VideoHero1.mp4 ou gallery_Our_vitamin_sea_rework_2_compressed.mp4"
+              className="bg-white dark:bg-gray-800 text-gray-900 dark:text-white font-mono"
+            />
+          </div>
+        </div>
+
         {/* Video URL Display */}
         <div className="bg-gray-50 dark:bg-gray-800/50 p-4 rounded-lg border">
           <h4 className="font-semibold mb-3 text-gray-900 dark:text-white flex items-center gap-2">
-            🔗 URLs générées automatiquement
+            🔗 URLs générées automatiquement (legacy)
           </h4>
           <p className="text-sm text-gray-600 dark:text-gray-400 mb-3">
-            Ces URLs sont remplies automatiquement quand vous téléchargez des fichiers ci-dessus
+            Ces URLs sont encore utilisées pour la compatibilité, mais le système privilégie maintenant le nom de fichier ci-dessus
           </p>
           {formData.use_same_video ? (
             <div>

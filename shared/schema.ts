@@ -63,6 +63,7 @@ export const galleryItems = pgTable("gallery_items", {
   // Media fields
   videoUrlEn: text("video_url_en"),
   videoUrlFr: text("video_url_fr"),
+  videoFilename: text("video_filename"), // Unified filename for memopyk-videos bucket (e.g., "VideoHero1.mp4")
   useSameVideo: boolean("use_same_video").default(true), // When true, use videoUrlEn for both languages
   videoWidth: integer("video_width"),
   videoHeight: integer("video_height"),
