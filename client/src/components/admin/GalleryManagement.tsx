@@ -221,7 +221,11 @@ export default function GalleryManagement({ smartCacheRefreshMutation }: Gallery
         title_en: data.title_en,
         fullData: data
       });
-      return apiRequest(`/api/gallery/${id}`, 'PATCH', data);
+      
+      // Make the API request
+      const result = await apiRequest(`/api/gallery/${id}`, 'PATCH', data);
+      console.log('🚨 UPDATE MUTATION RESPONSE - Server returned:', result);
+      return result;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['/api/gallery'] });
