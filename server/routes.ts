@@ -1414,12 +1414,22 @@ export async function registerRoutes(app: Express): Promise<Server> {
             console.error(`   - Error type: ${error.constructor.name}`);
             console.error(`   - Error message: ${error.message}`);
             console.error(`   - Error code: ${(error as any).code || 'unknown'}`);
+            console.error(`   - Error stack: ${error.stack}`);
             console.error(`   - Headers sent: ${res.headersSent}`);
             console.error(`   - Request method: ${req.method}`);
             console.error(`   - User-Agent: ${req.headers['user-agent']}`);
             console.error(`   - Range header: ${req.headers.range}`);
+            console.error(`   - Accept header: ${req.headers.accept}`);
+            console.error(`   - Accept-Encoding: ${req.headers['accept-encoding']}`);
+            console.error(`   - Connection: ${req.headers.connection}`);
+            console.error(`   - sec-ch-ua-mobile: ${req.headers['sec-ch-ua-mobile']}`);
+            console.error(`   - sec-ch-ua-platform: ${req.headers['sec-ch-ua-platform']}`);
+            console.error(`   - sec-fetch-dest: ${req.headers['sec-fetch-dest']}`);
+            console.error(`   - sec-fetch-mode: ${req.headers['sec-fetch-mode']}`);
             console.error(`   - Video file exists: ${existsSync(cachedVideo)}`);
             console.error(`   - Range details: start=${start}, end=${end}, chunksize=${chunksize}`);
+            console.error(`   - Cache file path: ${cachedVideo}`);
+            console.error(`   - FULL REQ HEADERS: ${JSON.stringify(req.headers, null, 2)}`);
             if (!res.headersSent) {
               res.status(500).json({ 
                 error: 'Range stream error',
@@ -1488,17 +1498,33 @@ export async function registerRoutes(app: Express): Promise<Server> {
       console.error(`❌ VIDEO PROXY FATAL ERROR for ${filename}:`, error);
       console.error(`   - Error type: ${error.constructor.name}`);
       console.error(`   - Error message: ${error.message}`);
+      console.error(`   - Error stack: ${error.stack}`);
       console.error(`   - Range header: ${req.headers.range}`);
-      console.error(`   - Production Debug - Gallery Video Fix v1.0.2`);
-      console.error(`   - Stack trace:`, error.stack);
+      console.error(`   - Accept header: ${req.headers.accept}`);
+      console.error(`   - Accept-Encoding: ${req.headers['accept-encoding']}`);
+      console.error(`   - Connection: ${req.headers.connection}`);
+      console.error(`   - sec-ch-ua-mobile: ${req.headers['sec-ch-ua-mobile']}`);
+      console.error(`   - sec-ch-ua-platform: ${req.headers['sec-ch-ua-platform']}`);
+      console.error(`   - sec-fetch-dest: ${req.headers['sec-fetch-dest']}`);
+      console.error(`   - sec-fetch-mode: ${req.headers['sec-fetch-mode']}`);
+      console.error(`   - Cache-Control: ${req.headers['cache-control']}`);
+      console.error(`   - Pragma: ${req.headers.pragma}`);
+      console.error(`   - Production Debug - Gallery Video Fix v1.0.18 - FULL HEADERS`);
+      console.error(`   - COMPLETE HEADERS: ${JSON.stringify(req.headers, null, 2)}`);
       
       if (!res.headersSent) {
         res.status(500).json({ 
           error: "Video streaming failed",
           filename: filename,
           details: error.message,
-          version: "Gallery Video Fix v1.0.2",
+          version: "Gallery Video Fix v1.0.18-full-headers",
           rangeHeader: req.headers.range,
+          acceptHeader: req.headers.accept,
+          acceptEncoding: req.headers['accept-encoding'],
+          connection: req.headers.connection,
+          secChUaMobile: req.headers['sec-ch-ua-mobile'],
+          secChUaPlatform: req.headers['sec-ch-ua-platform'],
+          fullHeaders: req.headers,
           timestamp: new Date().toISOString()
         });
       }

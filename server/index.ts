@@ -51,6 +51,20 @@ app.use((req, res, next) => {
     console.log(`🚨 EMERGENCY REQUEST LOG: ${req.method} ${req.path} from ${req.headers['user-agent']?.slice(0, 50)}`);
     console.log(`   - Query params:`, req.query);
     console.log(`   - Headers:`, { range: req.headers.range, accept: req.headers.accept });
+    
+    // STEP 1: COMPREHENSIVE PRODUCTION 500 DEBUGGING - FULL HEADER CONTEXT
+    console.log(`📋 PRODUCTION 500 DEBUG - COMPLETE REQUEST CONTEXT v1.0.18:`);
+    console.log(`   - Accept-Encoding: "${req.headers['accept-encoding']}"`);
+    console.log(`   - sec-ch-ua-mobile: "${req.headers['sec-ch-ua-mobile']}"`);
+    console.log(`   - sec-ch-ua-platform: "${req.headers['sec-ch-ua-platform']}"`);
+    console.log(`   - Connection: "${req.headers.connection}"`);
+    console.log(`   - Cache-Control: "${req.headers['cache-control']}"`);
+    console.log(`   - Pragma: "${req.headers.pragma}"`);
+    console.log(`   - Priority: "${req.headers.priority}"`);
+    console.log(`   - sec-fetch-dest: "${req.headers['sec-fetch-dest']}"`);
+    console.log(`   - sec-fetch-mode: "${req.headers['sec-fetch-mode']}"`);
+    console.log(`   - sec-fetch-site: "${req.headers['sec-fetch-site']}"`);
+    console.log(`📋 FULL REQ.HEADERS OBJECT:`, JSON.stringify(req.headers, null, 2));
   }
   next();
 });
