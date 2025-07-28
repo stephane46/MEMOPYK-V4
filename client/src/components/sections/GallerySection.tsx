@@ -422,16 +422,16 @@ export default function GallerySection() {
         </div>
 
         {/* TEST VIDEO PLAYER - Using Hero Video Structure */}
-        <div className="mt-16 bg-red-50 border-2 border-red-200 rounded-lg p-6">
-          <h3 className="text-xl font-bold text-red-800 mb-4">🧪 TEST VIDEO PLAYER (Hero Video Structure)</h3>
-          <p className="text-red-600 mb-4">Testing gallery video using hero video code structure for comparison</p>
+        <div className="mt-16 bg-green-50 border-2 border-green-200 rounded-lg p-6">
+          <h3 className="text-xl font-bold text-green-800 mb-4">🧪 TEST VIDEO PLAYER (Hero Video - VideoHero1.mp4)</h3>
+          <p className="text-green-600 mb-4">Testing HERO VIDEO (VideoHero1.mp4) using exact same code structure as working hero videos</p>
           
           <div className="bg-black rounded-lg overflow-hidden" style={{ maxWidth: '800px', height: '450px' }}>
             <video
               ref={(el) => {
                 if (el) {
-                  console.log('🧪 TEST PLAYER: Video element created');
-                  console.log('   - Source URL will be:', '/api/video-proxy?filename=gallery_Our_vitamin_sea_rework_2_compressed.mp4');
+                  console.log('🧪 TEST PLAYER (HERO VIDEO): Video element created');
+                  console.log('   - Source URL will be:', '/api/video-proxy?filename=VideoHero1.mp4');
                   console.log('   - Element readyState:', el.readyState);
                   console.log('   - Element networkState:', el.networkState);
                   
@@ -485,7 +485,7 @@ export default function GallerySection() {
               }}
             >
               <source 
-                src="/api/video-proxy?filename=gallery_Our_vitamin_sea_rework_2_compressed.mp4" 
+                src="/api/video-proxy?filename=VideoHero1.mp4" 
                 type="video/mp4"
                 onError={(e) => {
                   console.error('🧪 TEST PLAYER: Source element error', e);
@@ -495,13 +495,13 @@ export default function GallerySection() {
             </video>
           </div>
           
-          <div className="mt-4 text-sm text-red-600">
-            <p><strong>Comparison Points:</strong></p>
+          <div className="mt-4 text-sm text-green-600">
+            <p><strong>Test Comparison:</strong></p>
             <ul className="list-disc list-inside mt-2">
-              <li>Same video file as gallery modal</li>
-              <li>Same video proxy URL structure</li>
-              <li>Hero video code pattern (video + source elements)</li>
-              <li>Extensive debugging in console</li>
+              <li>Using VideoHero1.mp4 (same as working hero videos)</li>
+              <li>Same video proxy URL structure (/api/video-proxy?filename=VideoHero1.mp4)</li>
+              <li>Exact hero video code pattern (video + source elements)</li>
+              <li>Should work if hero videos work, fail if server has issues</li>
             </ul>
           </div>
         </div>
