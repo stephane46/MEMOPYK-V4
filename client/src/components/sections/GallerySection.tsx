@@ -134,9 +134,14 @@ export default function GallerySection() {
       console.log(`🔍 DEBUG - Raw filename before encoding: "${filename}"`);
       console.log(`🔍 DEBUG - Original videoUrl: "${videoUrl}"`);
       
-      // Map gallery video filenames to short aliases  
+      // Map video filenames to short aliases - expandable for all videos
       const videoAliasMap: Record<string, string> = {
-        'gallery_Our_vitamin_sea_rework_2_compressed.mp4': 'g1'
+        // Gallery videos
+        'gallery_Our_vitamin_sea_rework_2_compressed.mp4': 'g1',
+        // Hero videos (for consistency)
+        'VideoHero1.mp4': 'h1',
+        'VideoHero2.mp4': 'h2',
+        'VideoHero3.mp4': 'h3'
       };
       
       // Use short alias if available, otherwise fall back to original proxy
@@ -222,7 +227,12 @@ export default function GallerySection() {
       
       // Use same alias mapping as getItemUrl
       const videoAliasMap: Record<string, string> = {
-        'gallery_Our_vitamin_sea_rework_2_compressed.mp4': 'g1'
+        // Gallery videos
+        'gallery_Our_vitamin_sea_rework_2_compressed.mp4': 'g1',
+        // Hero videos (for consistency)
+        'VideoHero1.mp4': 'h1',
+        'VideoHero2.mp4': 'h2',
+        'VideoHero3.mp4': 'h3'
       };
       
       let videoUrl = '';

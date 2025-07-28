@@ -1215,17 +1215,20 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // DUPLICATE FAQ ROUTES REMOVED - Using detailed routes above
 
   // SHORT URL ALIAS SYSTEM - v1.0.20 INFRASTRUCTURE WORKAROUND
-  app.get("/api/v/:id", async (req, res) => {
+  app.all("/api/v/:id", async (req, res) => {
     try {
       const videoId = req.params.id;
       console.log(`🎯 SHORT URL ALIAS REQUEST: /api/v/${videoId}`);
       
-      // Map short IDs to actual filenames
+      // Map short IDs to actual filenames - expandable for all videos
       const videoMap: Record<string, string> = {
+        // Gallery videos
         'g1': 'gallery_Our_vitamin_sea_rework_2_compressed.mp4',
+        // Hero videos
         'h1': 'VideoHero1.mp4',
         'h2': 'VideoHero2.mp4', 
-        'h3': 'VideoHero3.mp4'
+        'h3': 'VideoHero3.mp4',
+        // Future videos can be added as: 'g2', 'g3', 'h4', etc.
       };
       
       const filename = videoMap[videoId];
