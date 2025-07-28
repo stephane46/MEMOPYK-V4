@@ -1086,11 +1086,8 @@ export default function GalleryManagement({ smartCacheRefreshMutation }: Gallery
       {/* Gallery Video Cache Status - Section-Specific */}
       <VideoCacheStatus 
         videoFilenames={sortedItems
-          .filter(item => item.video_url_en || item.video_url_fr)
-          .map(item => {
-            const url = item.video_url_en || item.video_url_fr || '';
-            return url.includes('/') ? url.split('/').pop()! : url;
-          })
+          .filter(item => item.video_filename && item.video_filename.trim() !== '')
+          .map(item => item.video_filename!)
           .filter(filename => filename)
         }
         title="Gallery Videos Cache Status"

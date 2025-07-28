@@ -47,8 +47,10 @@ export const ImageCropper: React.FC<ImageCropperProps> = ({
   const imageRef = useRef<HTMLImageElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
 
-  // Load image through proxy to avoid CORS issues
-  const proxyImageUrl = `/api/video-proxy?filename=${encodeURIComponent(imageUrl.split('/').pop() || imageUrl)}`;
+  // Load image through IMAGE proxy to avoid CORS issues
+  const filename = imageUrl.split('/').pop() || imageUrl;
+  const cleanFilename = filename.includes('?') ? filename.split('?')[0] : filename;
+  const proxyImageUrl = `/api/image-proxy?filename=${encodeURIComponent(cleanFilename)}`;
 
   useEffect(() => {
     const img = new Image();
