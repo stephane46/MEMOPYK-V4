@@ -464,8 +464,18 @@ export default function GallerySection() {
           
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             {galleryItems.slice(0, 3).map((item, index) => {
-              const videoFilename = item.video_filename || item.videoUrlEn || item.videoUrlFr;
-              const videoUrl = `/api/video-proxy?filename=${videoFilename}`;
+              const videoFilename = item.videoFilename || item.videoUrlEn || item.videoUrlFr;
+              const videoUrl = `/api/video-proxy?filename=${encodeURIComponent(videoFilename)}`;
+              
+              console.log(`🧪 TEST PLAYER ${index + 1}:`, {
+                videoFilename,
+                videoUrl,
+                itemData: {
+                  videoFilename: item.videoFilename,
+                  videoUrlEn: item.videoUrlEn,
+                  videoUrlFr: item.videoUrlFr
+                }
+              });
               
               return (
                 <div key={item.id} className="border border-gray-300 rounded p-4">
@@ -475,6 +485,16 @@ export default function GallerySection() {
                     controls 
                     className="w-full h-32 bg-black rounded"
                     preload="none"
+                    onLoadStart={(e) => {
+                      console.log(`🎬 TEST PLAYER ${index + 1} - Load started:`, videoUrl);
+                    }}
+                    onError={(e) => {
+                      console.error(`❌ TEST PLAYER ${index + 1} - Error:`, videoUrl);
+                      console.error(`❌ Error details:`, e);
+                    }}
+                    onCanPlay={(e) => {
+                      console.log(`✅ TEST PLAYER ${index + 1} - Can play:`, videoUrl);
+                    }}
                   >
                     <source src={videoUrl} type="video/mp4" />
                     Your browser does not support video playback.
