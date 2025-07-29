@@ -201,9 +201,13 @@ app.use((req, res, next) => {
     // — Prod mode: serve static build
     const clientDist = path.resolve(process.cwd(), "dist");
     
-    app.use(express.static(clientDist, {
-      index: false
-    }));
+    // CRITICAL FIX: Only serve static files for non-API routes
+    app.use((req, res, next) => {
+      if (req.path.startsWith("/api")) {
+        return next(); // Skip static serving for API routes
+      }
+      express.static(clientDist, { index: false })(req, res, next);
+    });
     
     // Only serve index.html for non-API routes
     app.get("*", (req: Request, res: Response, next) => {
