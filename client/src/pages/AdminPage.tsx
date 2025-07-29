@@ -54,6 +54,11 @@ export default function AdminPage() {
   const [uploadingFile, setUploadingFile] = useState(false);
   const [dragActive, setDragActive] = useState(false);
   const [selectedTextId, setSelectedTextId] = useState<number | null>(null);
+
+  // Auto-scroll to top when admin page loads
+  React.useEffect(() => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }, []);
   
   // File upload handler
   const handleFileUpload = async (file: File, isEnglish: boolean = true) => {
