@@ -12,8 +12,8 @@ import NotFoundPage from './pages/not-found';
 import { queryClient } from './lib/queryClient';
 import { Toaster } from '@/components/ui/toaster';
 
-// VIRGIN SERVER DEPLOYMENT v3.0.0 - ULTIMATE CLEAN BUILD
-console.log("🚀 MEMOPYK VIRGIN SERVER v3.0.0 - ULTIMATE CLEAN - " + Date.now());
+// GALLERY VIDEO FIX DEPLOYMENT v1.0.35 - FORCED FRESH BUILD
+console.log("🚀 MEMOPYK GALLERY VIDEO FIX v1.0.35 - FRESH BUILD FORCE - " + Date.now());
 
 function App() {
   return (
