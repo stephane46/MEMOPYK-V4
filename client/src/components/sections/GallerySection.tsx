@@ -465,7 +465,10 @@ export default function GallerySection() {
                           return (
                             <div className={`${format.color} text-white px-2 py-1 rounded-full text-xs font-medium flex items-center gap-1 shadow-sm`}>
                               <IconComponent className="w-3 h-3" />
-                              <div className="font-bold leading-tight">{format.platform}</div>
+                              <div>
+                                <div className="font-bold leading-tight">{format.platform}</div>
+                                <div className="text-xs opacity-90 leading-tight">{format.type}</div>
+                              </div>
                             </div>
                           );
                         })()}

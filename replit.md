@@ -51,6 +51,28 @@ Preferred communication style: Simple, everyday language.
 
 ## Recent Changes (July 29, 2025)
 
+### STRATEGIC MARKETING VISUAL INDICATORS COMPLETE - v1.0.63 (July 29, 2025) ✅ PERFECT POSITIONING
+**Marketing Visual Format Badges Implementation - USER PREFERENCE ACHIEVED:**
+✅ **Strategic Positioning**: Format badges positioned horizontally across from duration information for optimal user experience
+✅ **Two-Line Format Restored**: Platform name (Social Media/Social Feed/Professional) + format type (Mobile Stories/Instagram Posts/TV & Desktop)
+✅ **Clean Image Areas**: Badges moved from image overlay to content area to avoid visual clutter in video thumbnails
+✅ **Smart Format Detection**: Automated detection based on video dimensions and aspect ratios
+✅ **Color-Coded System**: Pink (mobile/social stories), Purple (Instagram feed), Blue (professional/TV)
+✅ **Bilingual Support**: Format recommendations display in French/English based on language setting
+
+**Technical Implementation:**
+- Format badges positioned on duration line using `justify-between` flex layout
+- Left side: Clock icon + duration information
+- Right side: Color-coded badge with icon + two-line format description
+- Compact design with smaller icons (w-3 h-3) and reduced padding for clean appearance
+- Maintains all existing functionality while adding strategic marketing guidance
+
+**Marketing Strategy Achievement:**
+- Visual badges help clients immediately understand which video format suits their intended platform
+- Clean separation between video content (image area) and marketing information (content area)
+- Strategic placement guides customers toward optimal platform selection for their needs
+- Professional appearance that enhances rather than clutters the gallery card design
+
 ### VIDEO CONTROLS OPTIMIZATION COMPLETE - v1.0.62 (July 29, 2025) ✅ PERFECT IMPLEMENTATION
 **Clean Minimal Video Controls - USER REQUIREMENT FULLY ACHIEVED:**
 ✅ **Three-Dots Menu Removed**: Eliminated vertical menu with download, playback speed, and picture-in-picture options
