@@ -68,14 +68,9 @@ export default function SeoManagement() {
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
-  // Available pages for SEO management
+  // Available pages for SEO management - Only fully coded pages
   const availablePages = [
-    { value: 'homepage', label: 'Page d\'accueil / Homepage' },
-    { value: 'gallery', label: 'Galerie / Gallery' },
-    { value: 'contact', label: 'Contact / Contact' },
-    { value: 'about', label: 'À propos / About' },
-    { value: 'services', label: 'Services / Services' },
-    { value: 'faq', label: 'FAQ / FAQ' }
+    { value: 'homepage', label: 'Page d\'accueil / Homepage' }
   ];
 
   // Fetch SEO settings for selected page
