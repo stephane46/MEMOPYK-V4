@@ -1480,7 +1480,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     const isGalleryVideo = filename && (filename.includes('-') || filename.includes('1753'));
     const isHeroVideo = filename && (filename.includes('VideoHero') || filename.includes('Hero'));
     
-    console.log(`🔥 VIDEO PROXY ENTRY v1.0.48-enhanced-pipe-logging - REQUEST RECEIVED:`);
+    console.log(`🔥 VIDEO PROXY ENTRY v1.0.50-route-entry-debug - REQUEST RECEIVED:`);
     console.log(`   - Raw URL: ${req.url}`);
     console.log(`   - Filename: "${filename}"`);
     console.log(`   - Is Gallery Video: ${isGalleryVideo}`);

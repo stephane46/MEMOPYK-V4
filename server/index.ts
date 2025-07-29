@@ -9,9 +9,9 @@ import { log } from "./vite";
 import { testDatabaseConnection } from "./database";
 import { VideoCache } from "./video-cache";
 
-console.log("=== MEMOPYK Server Starting v1.0.41 ===");
-console.log("🔧 PRODUCTION GALLERY FIX: Video cache system initialization v1.0.41");
-console.log("🎬 Gallery videos will be preloaded on server startup");
+console.log("=== MEMOPYK Server Starting v1.0.50-route-entry-debug ===");
+console.log("🔧 ROUTE DEBUGGING: Comprehensive request interception v1.0.50");
+console.log("🎬 Gallery video routing debug active - every request logged");
 console.log("NODE_ENV:", process.env.NODE_ENV);
 console.log(
   "DATABASE_URL:",
