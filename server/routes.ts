@@ -1281,7 +1281,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         code: error.code || 'unknown'
       },
       context,
-      version: 'v1.0.46-timeout-safeguard'
+      version: 'v1.0.47-pre-pipe-diagnostic'
     };
     
     productionErrorLog.unshift(logEntry);
@@ -1296,7 +1296,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.get("/api/debug/production-errors", (req, res) => {
     console.log("🔍 PRODUCTION ERROR LOG REQUEST");
     res.json({
-      version: "v1.0.46-timeout-safeguard",
+      version: "v1.0.47-pre-pipe-diagnostic",
       timestamp: new Date().toISOString(),
       environment: process.env.NODE_ENV,
       totalErrors: productionErrorLog.length,
@@ -1320,7 +1320,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
 
     const diagnosticReport: any = {
-      version: "v1.0.46-timeout-safeguard",
+      version: "v1.0.47-pre-pipe-diagnostic",
       timestamp: new Date().toISOString(),
       requestedFilename: filename,
       environment: {
@@ -1465,7 +1465,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     const isGalleryVideo = filename && (filename.includes('-') || filename.includes('1753'));
     const isHeroVideo = filename && (filename.includes('VideoHero') || filename.includes('Hero'));
     
-    console.log(`🔥 VIDEO PROXY ENTRY v1.0.46-timeout-safeguard - REQUEST RECEIVED:`);
+    console.log(`🔥 VIDEO PROXY ENTRY v1.0.47-pre-pipe-diagnostic - REQUEST RECEIVED:`);
     console.log(`   - Raw URL: ${req.url}`);
     console.log(`   - Filename: "${filename}"`);
     console.log(`   - Is Gallery Video: ${isGalleryVideo}`);
@@ -1686,7 +1686,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
           console.log(`   - Range: ${start}-${end}, chunk size: ${chunksize}`);
 
           // TIMEOUT SAFEGUARD v1.0.46 - Comprehensive debug before streaming
-          console.log(`🎯 PRODUCTION STREAM DEBUG v1.0.46-timeout-safeguard - About to serve video:`, {
+          console.log(`🎯 PRODUCTION STREAM DEBUG v1.0.47-pre-pipe-diagnostic - About to serve video:`, {
             filename: videoFilename,
             fullPath: cachedVideo,
             fileExists: existsSync(cachedVideo),
@@ -1697,7 +1697,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
             cwd: process.cwd(),
             __dirname: __dirname,
             nodeEnv: process.env.NODE_ENV,
-            version: "v1.0.46-timeout-safeguard"
+            version: "v1.0.47-pre-pipe-diagnostic"
           });
 
           // Test file existence just before reading
@@ -1767,11 +1767,33 @@ export async function registerRoutes(app: Express): Promise<Server> {
               details: streamCreateError.message,
               filename: videoFilename,
               path: cachedVideo,
-              version: 'v1.0.46-timeout-safeguard'
+              version: 'v1.0.47-pre-pipe-diagnostic'
             });
           }
           
-          // FINAL-STAGE LOGGING v1.0.45 - Pre-pipe verification
+          // PRE-PIPE DIAGNOSTIC v1.0.47 - Silent fast stream failure analysis
+          console.log(`[PROXY] 🔍 Entering pre-pipe diagnostic for ${videoFilename}`);
+          console.log(`[PROXY] Stream readable:`, stream.readable);
+          console.log(`[PROXY] Stream destroyed:`, stream.destroyed);
+          console.log(`[PROXY] Response writable:`, res.writable);
+          console.log(`[PROXY] Response headersSent:`, res.headersSent);
+          
+          // Add detailed stream event monitoring BEFORE pipe
+          stream.on("data", (chunk) => {
+            console.log(`[PROXY] Stream read successful – chunk size:`, chunk.length, `for ${videoFilename}`);
+          });
+          stream.on("end", () => {
+            console.log(`[PROXY] Stream ended cleanly for ${videoFilename}`);
+          });
+          stream.on("error", (err) => {
+            console.error(`[PROXY] Stream emitted error for ${videoFilename}:`, err);
+            logProductionError(err, {
+              type: 'stream_data_error',
+              filename: videoFilename,
+              phase: 'pre_pipe_stream_monitoring'
+            });
+          });
+          
           console.log(`[PROXY] Pre-pipe status for ${videoFilename}:`, {
             headersSent: res.headersSent,
             resWritable: res.writable,
@@ -1835,7 +1857,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
                 details: error.message,
                 code: (error as any).code || 'unknown',
                 filename: videoFilename,
-                version: 'v1.0.46-timeout-safeguard'
+                version: 'v1.0.47-pre-pipe-diagnostic'
               });
             }
           });
@@ -1912,7 +1934,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
                     res.end(JSON.stringify({
                       error: 'Stream timeout - silent failure detected',
                       filename: videoFilename,
-                      version: 'v1.0.46-timeout-safeguard',
+                      version: 'v1.0.47-pre-pipe-diagnostic',
                       elapsedMs: Date.now() - startTime
                     }));
                   }
@@ -2009,7 +2031,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
                 details: error.message,
                 code: (error as any).code || 'unknown',
                 filename: videoFilename,
-                version: 'v1.0.46-timeout-safeguard'
+                version: 'v1.0.47-pre-pipe-diagnostic'
               });
             }
           });

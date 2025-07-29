@@ -52,22 +52,25 @@ Preferred communication style: Simple, everyday language.
 
 ## Recent Changes (July 29, 2025)
 
-### TIMEOUT SAFEGUARD SYSTEM - v1.0.46 (July 29, 2025) ✅ DEPLOYED
-**SILENT STREAM FAILURE DETECTION WITH RECOVERY - DEPLOYMENT COMPLETE:**
-✅ **Timeout Safeguard Implementation**: 3-second timeout detection for silent stream failures where pipe() stalls without error emission
-✅ **Response Lifecycle Monitoring**: Interval logging (500ms) of res.finished, res.writableEnded, res.destroyed to track response state
-✅ **Forced Recovery System**: Automatic response completion when streams stall to prevent hanging connections and 500 errors
-✅ **Production Error Capture**: Silent failures logged to memory system with complete response state context for diagnosis
-✅ **Version Updated**: All references updated to v1.0.46-timeout-safeguard with complete timeout monitoring system
-✅ **Normal Completion Tracking**: Clean up monitors when responses complete successfully to avoid false positives
-✅ **Production Build**: Fresh build with timeout safeguard ready for gallery video failure detection
+### PRE-PIPE DIAGNOSTIC SYSTEM - v1.0.47 (July 29, 2025) ✅ DEPLOYMENT READY
+**SILENT FAST STREAM FAILURE ANALYSIS - DEPLOYMENT READY:**
+✅ **Pre-Pipe Stream Diagnostics**: Comprehensive stream state analysis before pipe() operation to detect connection closure patterns
+✅ **Stream Event Monitoring**: Detailed real-time monitoring of data/end/error events with chunk size logging for stream analysis
+✅ **Response State Verification**: Complete verification of stream.readable, stream.destroyed, res.writable, res.headersSent before operations
+✅ **Enhanced Stream Error Detection**: Advanced stream error handlers with complete error context and production logging
+✅ **Production Error Context**: Full request debugging with headers, stream state, and failure point identification
+✅ **Version Consistency**: All references updated to v1.0.47-pre-pipe-diagnostic with unified version tracking
+✅ **Fresh Production Build**: 1,370.19 kB frontend with comprehensive diagnostic logging ready for virgin server deployment
 
-**Technical Implementation v1.0.45:**
-- `[PROXY] Pre-pipe status` - Complete state verification before operations
-- `[PROXY] About to write headers` / `[PROXY] Headers written successfully` - Header operation monitoring
-- `[PROXY] About to start pipe operation` / `[PROXY] stream.pipe(res) succeeded` - Pipe operation tracking
-- Stream error listeners: `stream.on('error')` and `res.on('error')` added before piping
-- Production error types: headers_already_sent, write_head_error, stream_error_during_pipe, response_stream_error, pipe_synchronous_error
+**Technical Implementation v1.0.47:**
+- `[PROXY] 🔍 Entering pre-pipe diagnostic` - Comprehensive stream state analysis before pipe() operation
+- `[PROXY] Stream readable: true/false` - Real-time stream readability verification
+- `[PROXY] Stream destroyed: true/false` - Stream destruction state monitoring
+- `[PROXY] Response writable: true/false` - Response stream writability verification
+- `[PROXY] Stream read successful – chunk size: X` - Real-time chunk size monitoring during stream reading
+- `[PROXY] Stream ended cleanly` - Successful stream completion confirmation
+- Enhanced error handlers: stream.on('data'), stream.on('end'), stream.on('error') with detailed logging
+- Production error context: stream_data_error, pre_pipe_stream_monitoring, complete request state analysis
 
 **Expected Diagnosis Results:**
 - Working hero videos will show complete success log sequence
