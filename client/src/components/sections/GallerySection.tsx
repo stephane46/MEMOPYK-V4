@@ -224,13 +224,23 @@ export default function GallerySection() {
     e.preventDefault();
     e.stopPropagation();
     
-    if (hasVideo(item, index)) {
+    const hasVideoResult = hasVideo(item, index);
+    console.log(`🎬 HANDLEPLAYCLICK DEBUG v1.0.32 - Item ${index}:`, {
+      hasVideoResult,
+      videoFilename: item.videoFilename,
+      willOpenLightbox: hasVideoResult,
+      willFlipCard: !hasVideoResult
+    });
+    
+    if (hasVideoResult) {
       // Open video in lightbox
+      console.log(`🎬 OPENING LIGHTBOX for ${item.videoFilename}`);
       setLightboxVideo(item);
       // Prevent body scrolling when lightbox is open
       document.body.style.overflow = 'hidden';
     } else {
       // Flip card to show sorry message for items without video
+      console.log(`🎬 FLIPPING CARD for item without video`);
       setFlippedCards(prev => {
         const newSet = new Set(prev);
         if (newSet.has(item.id)) {
