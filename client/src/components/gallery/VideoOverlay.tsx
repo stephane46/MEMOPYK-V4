@@ -69,25 +69,25 @@ export function VideoOverlay({ videoUrl, title, width, height, orientation, onCl
     console.error('    - Ready state meaning:', readyStates[e.target?.readyState] || 'Unknown');
   }, [videoUrl]);
 
-  // CSS variables for 2/3 viewport sizing
-  const twoThirdsRatio = 66.66;
+  // CSS variables for 80% viewport sizing
+  const viewportRatio = 80;
 
-  // Calculate video container dimensions based on orientation - FIXED ASPECT RATIO BUG
+  // Calculate video container dimensions based on orientation - 80% viewport scaling
   const getVideoDimensions = useCallback(() => {
     if (orientation === 'portrait') {
-      // Portrait: height = 66.66% of viewport height, width = auto
-      const containerHeight = (window.innerHeight * twoThirdsRatio) / 100;
+      // Portrait: height = 80% of viewport height, width = auto
+      const containerHeight = (window.innerHeight * viewportRatio) / 100;
       const aspectRatio = width / height;
       const containerWidth = containerHeight * aspectRatio;
       return { width: containerWidth, height: containerHeight };
     } else {
-      // Landscape: width = 66.66% of viewport width, height = auto  
-      const containerWidth = (window.innerWidth * twoThirdsRatio) / 100;
-      const aspectRatio = width / height; // FIXED: was height/width - caused wrong container dimensions
-      const containerHeight = containerWidth / aspectRatio; // FIXED: divide instead of multiply
+      // Landscape: width = 80% of viewport width, height = auto  
+      const containerWidth = (window.innerWidth * viewportRatio) / 100;
+      const aspectRatio = width / height;
+      const containerHeight = containerWidth / aspectRatio;
       return { width: containerWidth, height: containerHeight };
     }
-  }, [orientation, width, height, twoThirdsRatio]);
+  }, [orientation, width, height, viewportRatio]);
 
   const [videoDimensions, setVideoDimensions] = useState(() => getVideoDimensions());
 
@@ -235,7 +235,7 @@ export function VideoOverlay({ videoUrl, title, width, height, orientation, onCl
       ref={overlayRef}
       className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-md transition-all duration-300 ease-out"
       style={{
-        '--two-thirds-ratio': `${twoThirdsRatio}%`,
+        '--viewport-ratio': `${viewportRatio}%`,
       } as React.CSSProperties}
       onClick={handleOverlayClick}
     >
