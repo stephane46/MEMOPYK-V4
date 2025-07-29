@@ -460,7 +460,24 @@ export default function GallerySection() {
                 className="w-full h-full object-contain"
                 controls
                 autoPlay
-                onError={() => closeLightbox()}
+                onError={(e) => {
+                  console.error('❌ VIDEO PLAYBACK ERROR:', e);
+                  console.error('❌ Video source URL:', getVideoUrl(lightboxVideo));
+                  console.error('❌ Video filename:', lightboxVideo.videoFilename);
+                  const video = e.target as HTMLVideoElement;
+                  console.error('❌ Video error code:', video.error?.code);
+                  console.error('❌ Video error message:', video.error?.message);
+                  closeLightbox();
+                }}
+                onLoadStart={() => {
+                  console.log('🎬 Video load started:', getVideoUrl(lightboxVideo));
+                }}
+                onCanPlay={() => {
+                  console.log('✅ Video can play:', getVideoUrl(lightboxVideo));
+                }}
+                onLoadedData={() => {
+                  console.log('✅ Video data loaded:', getVideoUrl(lightboxVideo));
+                }}
                 style={{ backgroundColor: 'black' }}
               >
                 <source 
