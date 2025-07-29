@@ -2794,7 +2794,199 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  console.log("📋 Video proxy, image proxy, and cache endpoints registered");
+  // Comprehensive diagnostic endpoint - captures all system information in one place
+  app.get("/api/debug/system-info", async (req, res) => {
+    try {
+      const fs = await import('fs');
+      const path = await import('path');
+      
+      // Get version info
+      let versionInfo = "Unknown";
+      try {
+        const versionPath = path.join(process.cwd(), 'VERSION');
+        if (fs.existsSync(versionPath)) {
+          versionInfo = fs.readFileSync(versionPath, 'utf8').trim();
+        }
+      } catch (e) {
+        versionInfo = "Version file not found";
+      }
+
+      // Get package.json version
+      let packageVersion = "Unknown";
+      try {
+        const packagePath = path.join(process.cwd(), 'package.json');
+        const packageData = JSON.parse(fs.readFileSync(packagePath, 'utf8'));
+        packageVersion = packageData.version || "No version in package.json";
+      } catch (e) {
+        packageVersion = "Package.json not readable";
+      }
+
+      // Get build info
+      let buildInfo = {};
+      try {
+        const buildPath = path.join(process.cwd(), 'dist');
+        const buildExists = fs.existsSync(buildPath);
+        if (buildExists) {
+          const buildStats = fs.statSync(buildPath);
+          buildInfo = {
+            exists: true,
+            lastModified: buildStats.mtime.toISOString(),
+            size: buildStats.size
+          };
+        } else {
+          buildInfo = { exists: false };
+        }
+      } catch (e) {
+        buildInfo = { error: e.message };
+      }
+
+      // Get gallery items info
+      let galleryInfo = {};
+      try {
+        const galleryItems = await hybridStorage.getGalleryItems();
+        galleryInfo = {
+          count: galleryItems.length,
+          videoFilenames: galleryItems.map(item => ({
+            id: item.id,
+            title: item.title_en,
+            videoFilename: item.video_filename || item.video_url_en,
+            hasVideo: !!(item.video_filename || item.video_url_en)
+          }))
+        };
+      } catch (e) {
+        galleryInfo = { error: e.message };
+      }
+
+      // Get hero videos info
+      let heroInfo = {};
+      try {
+        const heroVideos = await hybridStorage.getHeroVideos();
+        heroInfo = {
+          count: heroVideos.length,
+          videoFilenames: heroVideos.map(video => ({
+            id: video.id,
+            title: video.title_en,
+            filename: video.url_en,
+            isActive: video.is_active
+          }))
+        };
+      } catch (e) {
+        heroInfo = { error: e.message };
+      }
+
+      // Get cache info
+      let cacheInfo = {};
+      try {
+        const cacheStats = await videoCache.getCacheStats();
+        cacheInfo = cacheStats;
+      } catch (e) {
+        cacheInfo = { error: e.message };
+      }
+
+      // Environment info
+      const envInfo = {
+        nodeEnv: process.env.NODE_ENV,
+        port: process.env.PORT,
+        hasSupabaseUrl: !!process.env.SUPABASE_URL,
+        hasSupabaseKey: !!process.env.SUPABASE_SERVICE_KEY,
+        hasDatabaseUrl: !!process.env.DATABASE_URL,
+        currentTime: new Date().toISOString(),
+        uptime: process.uptime()
+      };
+
+      // File system info
+      let fileSystemInfo = {};
+      try {
+        const cacheDir = path.join(process.cwd(), 'server', 'cache', 'videos');
+        const cacheDirExists = fs.existsSync(cacheDir);
+        let cacheFiles = [];
+        if (cacheDirExists) {
+          cacheFiles = fs.readdirSync(cacheDir).map(file => {
+            const filePath = path.join(cacheDir, file);
+            const stats = fs.statSync(filePath);
+            return {
+              name: file,
+              size: stats.size,
+              lastModified: stats.mtime.toISOString()
+            };
+          });
+        }
+        fileSystemInfo = {
+          cacheDirectoryExists: cacheDirExists,
+          cacheFiles: cacheFiles,
+          cacheFileCount: cacheFiles.length
+        };
+      } catch (e) {
+        fileSystemInfo = { error: e.message };
+      }
+
+      // Test gallery video URLs directly
+      let galleryVideoTests = {};
+      try {
+        const galleryItems = await hybridStorage.getGalleryItems();
+        const testResults = [];
+        
+        for (const item of galleryItems.slice(0, 3)) { // Test first 3 items
+          const videoFilename = item.video_filename || item.video_url_en;
+          if (videoFilename) {
+            try {
+              const supabaseUrl = `https://supabase.memopyk.org/storage/v1/object/public/memopyk-videos/${videoFilename}`;
+              const cacheExists = videoCache.isCached(videoFilename);
+              
+              testResults.push({
+                title: item.title_en,
+                filename: videoFilename,
+                supabaseUrl: supabaseUrl,
+                cacheExists: cacheExists,
+                cachePath: cacheExists ? videoCache.getCachedVideoPath(videoFilename) : null
+              });
+            } catch (e) {
+              testResults.push({
+                title: item.title_en,
+                filename: videoFilename,
+                error: e.message
+              });
+            }
+          }
+        }
+        
+        galleryVideoTests = { results: testResults };
+      } catch (e) {
+        galleryVideoTests = { error: e.message };
+      }
+
+      const systemInfo = {
+        timestamp: new Date().toISOString(),
+        environment: envInfo,
+        versions: {
+          file: versionInfo,
+          package: packageVersion
+        },
+        build: buildInfo,
+        gallery: galleryInfo,
+        hero: heroInfo,
+        cache: cacheInfo,
+        fileSystem: fileSystemInfo,
+        galleryVideoTests: galleryVideoTests,
+        platform: {
+          hostname: require('os').hostname(),
+          platform: process.platform,
+          arch: process.arch,
+          nodeVersion: process.version
+        }
+      };
+
+      res.json(systemInfo);
+    } catch (error) {
+      res.status(500).json({
+        error: "Failed to get system info",
+        details: error.message,
+        timestamp: new Date().toISOString()
+      });
+    }
+  });
+
+  console.log("📋 Video proxy, image proxy, cache endpoints, and diagnostic endpoint registered");
 
   return createServer(app);
 }
