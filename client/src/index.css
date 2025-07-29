@@ -4,6 +4,20 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Hide fullscreen button from video controls */
+video::-webkit-media-controls-fullscreen-button {
+  display: none !important;
+}
+
+video::-moz-media-controls-fullscreen-button {
+  display: none !important;
+}
+
+/* Hide picture-in-picture button */
+video::-webkit-media-controls-picture-in-picture-button {
+  display: none !important;
+}
+
 /* MEMOPYK Official Brand Colors */
 :root {
   --memopyk-navy: #011526;        /* Navy - Primary brand color (RGB 1,21,38) */
