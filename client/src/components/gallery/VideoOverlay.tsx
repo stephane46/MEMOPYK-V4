@@ -261,15 +261,16 @@ export function VideoOverlay({ videoUrl, title, width, height, orientation, onCl
           }}
           onError={handleVideoError}
           onLoadStart={() => {
-            console.log(`🎬 VIDEO OVERLAY ASPECT RATIO FIX (v1.0.57): loadstart`);
+            console.log(`🎬 VIDEO OVERLAY 80% VIEWPORT SIZING (v1.0.61): loadstart`);
             console.log(`   - Video URL: "${videoUrl}"`);
             console.log(`   - Title: "${title}"`);
             console.log(`   - Container: ${videoDimensions.width}x${videoDimensions.height}px`);
             console.log(`   - Video Dimensions: ${width}x${height}px`);
             console.log(`   - Orientation: ${orientation}`);
+            console.log(`   - Viewport Ratio: ${viewportRatio}% (updated from 66.66% to 80%)`);
             console.log(`   - Aspect Ratio: ${width}/${height} = ${(width/height).toFixed(3)}`);
             console.log(`   - Container Aspect Ratio: ${(videoDimensions.width/videoDimensions.height).toFixed(3)}`);
-            console.log(`   - Using object-cover + corrected aspect ratio calculations`);
+            console.log(`   - Using 80% viewport scaling with object-cover for no black bars`);
           }}
           onCanPlay={() => {
             console.log(`✅ VIDEO OVERLAY FINAL FIX (v1.0.16): canplay - ${videoUrl}`);
