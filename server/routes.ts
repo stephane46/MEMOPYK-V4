@@ -2944,14 +2944,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
           if (videoFilename) {
             try {
               const supabaseUrl = `https://supabase.memopyk.org/storage/v1/object/public/memopyk-videos/${videoFilename}`;
-              const cacheExists = videoCache.isCached(videoFilename);
+              const cacheExists = videoCache.isVideoCachedByFilename(videoFilename);
               
               testResults.push({
                 title: item.title_en,
                 filename: videoFilename,
                 supabaseUrl: supabaseUrl,
                 cacheExists: cacheExists,
-                cachePath: cacheExists ? videoCache.getCachedVideoPath(videoFilename) : null
+                cachePath: cacheExists ? await videoCache.getCachedVideoPath(videoFilename) : null
               });
             } catch (e) {
               testResults.push({
