@@ -45,8 +45,39 @@ export interface HybridStorageInterface {
   updateCtaSettings(ctaId: string, updates: any): Promise<any>;
   deleteCtaSettings(ctaId: string): Promise<any>;
   
-  // SEO settings
+  // SEO settings - comprehensive management
   getSeoSettings(page?: string, language?: string): Promise<any[]>;
+  createSeoSettings(seoData: any): Promise<any>;
+  updateSeoSettings(pageId: string, updates: any): Promise<any>;
+  deleteSeoSettings(pageId: string): Promise<any>;
+  
+  // SEO redirects management
+  getSeoRedirects(isActive?: boolean): Promise<any[]>;
+  createSeoRedirect(redirectData: any): Promise<any>;
+  updateSeoRedirect(redirectId: number, updates: any): Promise<any>;
+  deleteSeoRedirect(redirectId: number): Promise<any>;
+  incrementRedirectHit(redirectId: number): Promise<any>;
+  
+  // SEO audit logs
+  getSeoAuditLogs(pageId?: string, limit?: number): Promise<any[]>;
+  createSeoAuditLog(auditData: any): Promise<any>;
+  
+  // SEO image metadata
+  getSeoImageMeta(imageUrl?: string): Promise<any[]>;
+  createSeoImageMeta(imageData: any): Promise<any>;
+  updateSeoImageMeta(imageId: number, updates: any): Promise<any>;
+  deleteSeoImageMeta(imageId: number): Promise<any>;
+  
+  // SEO global settings
+  getSeoGlobalSettings(): Promise<any>;
+  updateSeoGlobalSettings(settings: any): Promise<any>;
+  generateSitemap(): Promise<string>;
+  generateRobotsTxt(): Promise<string>;
+  
+  // SEO analytics and scoring
+  calculateSeoScore(pageId: string): Promise<number>;
+  getSeoPerformanceReport(): Promise<any>;
+  validateMetaTags(pageData: any): Promise<{ score: number; issues: string[] }>;
   
   // Analytics methods
   getAnalyticsSessions(dateFrom?: string, dateTo?: string, language?: string): Promise<any[]>;
@@ -950,9 +981,1046 @@ export class HybridStorage implements HybridStorageInterface {
   }
 
   // SEO settings operations
+  // ==================== SEO SETTINGS OPERATIONS ====================
+  
   async getSeoSettings(page?: string, language?: string): Promise<any[]> {
+    try {
+      console.log('🔍 SEO Settings: Querying database...');
+      
+      if (this.db) {
+        const { seoSettings } = await import('../shared/schema');
+        let query = this.db.select().from(seoSettings);
+        
+        if (page) {
+          query = query.where(eq(seoSettings.page, page));
+        }
+        
+        const data = await query;
+        
+        if (data && data.length > 0) {
+          console.log('✅ SEO Settings retrieved from database:', data.length, 'items');
+          return data;
+        }
+      }
+    } catch (error) {
+      console.warn('⚠️ SEO Settings: Database query failed, using JSON fallback:', error);
+    }
+    
+    // Fallback to JSON
     const data = this.loadJsonFile('seo-settings.json');
-    return page ? data.filter(s => s.page === page) : data;
+    return page ? data.filter((s: any) => s.page === page) : data;
+  }
+
+  async createSeoSettings(seoData: any): Promise<any> {
+    try {
+      console.log('🆕 Creating SEO Settings in database:', seoData);
+      
+      if (this.db) {
+        const { seoSettings } = await import('../shared/schema');
+        
+        const [newRecord] = await this.db
+          .insert(seoSettings)
+          .values({
+            page: seoData.page,
+            urlSlugEn: seoData.urlSlugEn,
+            urlSlugFr: seoData.urlSlugFr,
+            metaTitleEn: seoData.metaTitleEn,
+            metaTitleFr: seoData.metaTitleFr,
+            metaDescriptionEn: seoData.metaDescriptionEn,
+            metaDescriptionFr: seoData.metaDescriptionFr,
+            metaKeywordsEn: seoData.metaKeywordsEn,
+            metaKeywordsFr: seoData.metaKeywordsFr,
+            ogTitleEn: seoData.ogTitleEn,
+            ogTitleFr: seoData.ogTitleFr,
+            ogDescriptionEn: seoData.ogDescriptionEn,
+            ogDescriptionFr: seoData.ogDescriptionFr,
+            ogImageUrl: seoData.ogImageUrl,
+            ogType: seoData.ogType || 'website',
+            twitterCard: seoData.twitterCard || 'summary_large_image',
+            twitterTitleEn: seoData.twitterTitleEn,
+            twitterTitleFr: seoData.twitterTitleFr,
+            twitterDescriptionEn: seoData.twitterDescriptionEn,
+            twitterDescriptionFr: seoData.twitterDescriptionFr,
+            twitterImageUrl: seoData.twitterImageUrl,
+            canonicalUrl: seoData.canonicalUrl,
+            robotsIndex: seoData.robotsIndex !== false,
+            robotsFollow: seoData.robotsFollow !== false,
+            robotsNoArchive: seoData.robotsNoArchive || false,
+            robotsNoSnippet: seoData.robotsNoSnippet || false,
+            customMetaTags: seoData.customMetaTags || null,
+            structuredData: seoData.structuredData || null,
+            priority: seoData.priority || "0.5",
+            changeFreq: seoData.changeFreq || "monthly",
+            isActive: seoData.isActive !== false
+          })
+          .returning();
+        
+        if (newRecord) {
+          console.log('✅ SEO Settings created in database:', newRecord);
+          
+          // Update JSON backup
+          const settings = this.loadJsonFile('seo-settings.json');
+          settings.push(newRecord);
+          this.saveJsonFile('seo-settings.json', settings);
+          
+          // Create audit log
+          await this.createSeoAuditLog({
+            pageId: newRecord.id,
+            action: 'created',
+            field: 'all',
+            newValue: 'SEO settings created',
+            adminUser: 'system',
+            changeReason: 'New SEO page created'
+          });
+          
+          return newRecord;
+        }
+      }
+    } catch (error) {
+      console.warn('⚠️ SEO Settings: Database create failed, using JSON fallback:', error);
+    }
+    
+    // Fallback to JSON
+    const settings = this.loadJsonFile('seo-settings.json');
+    const newSetting = {
+      id: Date.now().toString(),
+      ...seoData,
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString()
+    };
+    settings.push(newSetting);
+    this.saveJsonFile('seo-settings.json', settings);
+    return newSetting;
+  }
+
+  async updateSeoSettings(pageId: string, updates: any): Promise<any> {
+    try {
+      console.log('🔄 Updating SEO Settings:', pageId, updates);
+      
+      if (this.db) {
+        const { seoSettings } = await import('../shared/schema');
+        
+        const [updatedRecord] = await this.db
+          .update(seoSettings)
+          .set({
+            ...updates,
+            updatedAt: new Date()
+          })
+          .where(eq(seoSettings.id, pageId))
+          .returning();
+        
+        if (updatedRecord) {
+          console.log('✅ SEO Settings updated in database');
+          
+          // Update JSON backup
+          const settings = this.loadJsonFile('seo-settings.json');
+          const index = settings.findIndex((s: any) => s.id === pageId);
+          if (index !== -1) {
+            settings[index] = { ...settings[index], ...updates, updatedAt: new Date().toISOString() };
+            this.saveJsonFile('seo-settings.json', settings);
+          }
+          
+          // Create audit log for each changed field
+          for (const [field, value] of Object.entries(updates)) {
+            await this.createSeoAuditLog({
+              pageId: pageId,
+              action: 'updated',
+              field: field,
+              newValue: String(value),
+              adminUser: 'admin',
+              changeReason: 'SEO optimization update'
+            });
+          }
+          
+          return updatedRecord;
+        }
+      }
+    } catch (error) {
+      console.warn('⚠️ SEO Settings: Database update failed, using JSON fallback:', error);
+    }
+    
+    // Fallback to JSON
+    const settings = this.loadJsonFile('seo-settings.json');
+    const index = settings.findIndex((s: any) => s.id === pageId);
+    if (index !== -1) {
+      settings[index] = { ...settings[index], ...updates, updatedAt: new Date().toISOString() };
+      this.saveJsonFile('seo-settings.json', settings);
+      return settings[index];
+    }
+    return null;
+  }
+
+  async deleteSeoSettings(pageId: string): Promise<any> {
+    try {
+      console.log('🗑️ Deleting SEO Settings:', pageId);
+      
+      if (this.db) {
+        const { seoSettings } = await import('../shared/schema');
+        
+        const [deletedRecord] = await this.db
+          .delete(seoSettings)
+          .where(eq(seoSettings.id, pageId))
+          .returning();
+        
+        if (deletedRecord) {
+          console.log('✅ SEO Settings deleted from database');
+          
+          // Create audit log
+          await this.createSeoAuditLog({
+            pageId: pageId,
+            action: 'deleted',
+            field: 'all',
+            oldValue: 'SEO settings existed',
+            adminUser: 'admin',
+            changeReason: 'Page SEO removed'
+          });
+        }
+      }
+    } catch (error) {
+      console.warn('⚠️ SEO Settings: Database delete failed, continuing with JSON cleanup:', error);
+    }
+    
+    // Update JSON backup
+    const settings = this.loadJsonFile('seo-settings.json');
+    const filtered = settings.filter((s: any) => s.id !== pageId);
+    this.saveJsonFile('seo-settings.json', filtered);
+    return true;
+  }
+
+  // ==================== SEO REDIRECTS OPERATIONS ====================
+  
+  async getSeoRedirects(isActive?: boolean): Promise<any[]> {
+    try {
+      console.log('🔍 SEO Redirects: Querying database...');
+      
+      if (this.db) {
+        const { seoRedirects } = await import('../shared/schema');
+        let query = this.db.select().from(seoRedirects).orderBy(desc(seoRedirects.createdAt));
+        
+        if (isActive !== undefined) {
+          query = query.where(eq(seoRedirects.isActive, isActive));
+        }
+        
+        const data = await query;
+        
+        if (data) {
+          console.log('✅ SEO Redirects retrieved from database:', data.length, 'items');
+          return data;
+        }
+      }
+    } catch (error) {
+      console.warn('⚠️ SEO Redirects: Database query failed, using JSON fallback:', error);
+    }
+    
+    // Fallback to JSON
+    const data = this.loadJsonFile('seo-redirects.json');
+    return isActive !== undefined ? data.filter((r: any) => r.isActive === isActive) : data;
+  }
+
+  async createSeoRedirect(redirectData: any): Promise<any> {
+    try {
+      console.log('🆕 Creating SEO Redirect:', redirectData);
+      
+      if (this.db) {
+        const { seoRedirects } = await import('../shared/schema');
+        
+        const [newRecord] = await this.db
+          .insert(seoRedirects)
+          .values({
+            fromPath: redirectData.fromPath,
+            toPath: redirectData.toPath,
+            redirectType: redirectData.redirectType || 301,
+            isActive: redirectData.isActive !== false,
+            description: redirectData.description || '',
+            hitCount: 0
+          })
+          .returning();
+        
+        if (newRecord) {
+          console.log('✅ SEO Redirect created in database:', newRecord);
+          
+          // Update JSON backup
+          const redirects = this.loadJsonFile('seo-redirects.json');
+          redirects.push(newRecord);
+          this.saveJsonFile('seo-redirects.json', redirects);
+          
+          return newRecord;
+        }
+      }
+    } catch (error) {
+      console.warn('⚠️ SEO Redirects: Database create failed, using JSON fallback:', error);
+    }
+    
+    // Fallback to JSON
+    const redirects = this.loadJsonFile('seo-redirects.json');
+    const newRedirect = {
+      id: Date.now(),
+      ...redirectData,
+      hitCount: 0,
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString()
+    };
+    redirects.push(newRedirect);
+    this.saveJsonFile('seo-redirects.json', redirects);
+    return newRedirect;
+  }
+
+  async updateSeoRedirect(redirectId: number, updates: any): Promise<any> {
+    try {
+      console.log('🔄 Updating SEO Redirect:', redirectId, updates);
+      
+      if (this.db) {
+        const { seoRedirects } = await import('../shared/schema');
+        
+        const [updatedRecord] = await this.db
+          .update(seoRedirects)
+          .set({
+            ...updates,
+            updatedAt: new Date()
+          })
+          .where(eq(seoRedirects.id, redirectId))
+          .returning();
+        
+        if (updatedRecord) {
+          console.log('✅ SEO Redirect updated in database');
+          
+          // Update JSON backup
+          const redirects = this.loadJsonFile('seo-redirects.json');
+          const index = redirects.findIndex((r: any) => r.id === redirectId);
+          if (index !== -1) {
+            redirects[index] = { ...redirects[index], ...updates, updatedAt: new Date().toISOString() };
+            this.saveJsonFile('seo-redirects.json', redirects);
+          }
+          
+          return updatedRecord;
+        }
+      }
+    } catch (error) {
+      console.warn('⚠️ SEO Redirects: Database update failed, using JSON fallback:', error);
+    }
+    
+    // Fallback to JSON
+    const redirects = this.loadJsonFile('seo-redirects.json');
+    const index = redirects.findIndex((r: any) => r.id === redirectId);
+    if (index !== -1) {
+      redirects[index] = { ...redirects[index], ...updates, updatedAt: new Date().toISOString() };
+      this.saveJsonFile('seo-redirects.json', redirects);
+      return redirects[index];
+    }
+    return null;
+  }
+
+  async deleteSeoRedirect(redirectId: number): Promise<any> {
+    try {
+      console.log('🗑️ Deleting SEO Redirect:', redirectId);
+      
+      if (this.db) {
+        const { seoRedirects } = await import('../shared/schema');
+        
+        await this.db
+          .delete(seoRedirects)
+          .where(eq(seoRedirects.id, redirectId));
+        
+        console.log('✅ SEO Redirect deleted from database');
+      }
+    } catch (error) {
+      console.warn('⚠️ SEO Redirects: Database delete failed, continuing with JSON cleanup:', error);
+    }
+    
+    // Update JSON backup
+    const redirects = this.loadJsonFile('seo-redirects.json');
+    const filtered = redirects.filter((r: any) => r.id !== redirectId);
+    this.saveJsonFile('seo-redirects.json', filtered);
+    return true;
+  }
+
+  async incrementRedirectHit(redirectId: number): Promise<any> {
+    try {
+      if (this.db) {
+        const { seoRedirects } = await import('../shared/schema');
+        
+        const [updatedRecord] = await this.db
+          .update(seoRedirects)
+          .set({
+            hitCount: sql`${seoRedirects.hitCount} + 1`,
+            lastHit: new Date()
+          })
+          .where(eq(seoRedirects.id, redirectId))
+          .returning();
+        
+        if (updatedRecord) {
+          // Update JSON backup
+          const redirects = this.loadJsonFile('seo-redirects.json');
+          const index = redirects.findIndex((r: any) => r.id === redirectId);
+          if (index !== -1) {
+            redirects[index].hitCount = (redirects[index].hitCount || 0) + 1;
+            redirects[index].lastHit = new Date().toISOString();
+            this.saveJsonFile('seo-redirects.json', redirects);
+          }
+          
+          return updatedRecord;
+        }
+      }
+    } catch (error) {
+      console.warn('⚠️ SEO Redirects: Hit count update failed:', error);
+    }
+    
+    // Fallback to JSON
+    const redirects = this.loadJsonFile('seo-redirects.json');
+    const index = redirects.findIndex((r: any) => r.id === redirectId);
+    if (index !== -1) {
+      redirects[index].hitCount = (redirects[index].hitCount || 0) + 1;
+      redirects[index].lastHit = new Date().toISOString();
+      this.saveJsonFile('seo-redirects.json', redirects);
+      return redirects[index];
+    }
+    return null;
+  }
+
+  // ==================== SEO AUDIT LOGS OPERATIONS ====================
+  
+  async getSeoAuditLogs(pageId?: string, limit?: number): Promise<any[]> {
+    try {
+      console.log('🔍 SEO Audit Logs: Querying database...');
+      
+      if (this.db) {
+        const { seoAuditLogs } = await import('../shared/schema');
+        let query = this.db.select().from(seoAuditLogs).orderBy(desc(seoAuditLogs.createdAt));
+        
+        if (pageId) {
+          query = query.where(eq(seoAuditLogs.pageId, pageId));
+        }
+        
+        if (limit) {
+          query = query.limit(limit);
+        }
+        
+        const data = await query;
+        
+        if (data) {
+          console.log('✅ SEO Audit Logs retrieved from database:', data.length, 'items');
+          return data;
+        }
+      }
+    } catch (error) {
+      console.warn('⚠️ SEO Audit Logs: Database query failed, using JSON fallback:', error);
+    }
+    
+    // Fallback to JSON
+    let data = this.loadJsonFile('seo-audit-logs.json');
+    if (pageId) {
+      data = data.filter((log: any) => log.pageId === pageId);
+    }
+    if (limit) {
+      data = data.slice(0, limit);
+    }
+    return data;
+  }
+
+  async createSeoAuditLog(auditData: any): Promise<any> {
+    try {
+      if (this.db) {
+        const { seoAuditLogs } = await import('../shared/schema');
+        
+        const [newRecord] = await this.db
+          .insert(seoAuditLogs)
+          .values({
+            pageId: auditData.pageId,
+            action: auditData.action,
+            field: auditData.field,
+            oldValue: auditData.oldValue,
+            newValue: auditData.newValue,
+            adminUser: auditData.adminUser || 'system',
+            changeReason: auditData.changeReason
+          })
+          .returning();
+        
+        if (newRecord) {
+          // Update JSON backup
+          const logs = this.loadJsonFile('seo-audit-logs.json');
+          logs.push(newRecord);
+          this.saveJsonFile('seo-audit-logs.json', logs);
+          
+          return newRecord;
+        }
+      }
+    } catch (error) {
+      console.warn('⚠️ SEO Audit Logs: Database create failed, using JSON fallback:', error);
+    }
+    
+    // Fallback to JSON
+    const logs = this.loadJsonFile('seo-audit-logs.json');
+    const newLog = {
+      id: Date.now(),
+      ...auditData,
+      createdAt: new Date().toISOString()
+    };
+    logs.push(newLog);
+    this.saveJsonFile('seo-audit-logs.json', logs);
+    return newLog;
+  }
+
+  // ==================== SEO IMAGE METADATA OPERATIONS ====================
+  
+  async getSeoImageMeta(imageUrl?: string): Promise<any[]> {
+    try {
+      console.log('🔍 SEO Image Meta: Querying database...');
+      
+      if (this.db) {
+        const { seoImageMeta } = await import('../shared/schema');
+        let query = this.db.select().from(seoImageMeta).orderBy(desc(seoImageMeta.createdAt));
+        
+        if (imageUrl) {
+          query = query.where(eq(seoImageMeta.imageUrl, imageUrl));
+        }
+        
+        const data = await query;
+        
+        if (data) {
+          console.log('✅ SEO Image Meta retrieved from database:', data.length, 'items');
+          return data;
+        }
+      }
+    } catch (error) {
+      console.warn('⚠️ SEO Image Meta: Database query failed, using JSON fallback:', error);
+    }
+    
+    // Fallback to JSON
+    const data = this.loadJsonFile('seo-image-meta.json');
+    return imageUrl ? data.filter((img: any) => img.imageUrl === imageUrl) : data;
+  }
+
+  async createSeoImageMeta(imageData: any): Promise<any> {
+    try {
+      console.log('🆕 Creating SEO Image Meta:', imageData);
+      
+      if (this.db) {
+        const { seoImageMeta } = await import('../shared/schema');
+        
+        const [newRecord] = await this.db
+          .insert(seoImageMeta)
+          .values({
+            imageUrl: imageData.imageUrl,
+            altTextEn: imageData.altTextEn,
+            altTextFr: imageData.altTextFr,
+            titleEn: imageData.titleEn,
+            titleFr: imageData.titleFr,
+            caption: imageData.caption,
+            isLazyLoaded: imageData.isLazyLoaded !== false,
+            compressionLevel: imageData.compressionLevel || 80,
+            width: imageData.width,
+            height: imageData.height,
+            fileSize: imageData.fileSize,
+            format: imageData.format,
+            seoFriendlyName: imageData.seoFriendlyName
+          })
+          .returning();
+        
+        if (newRecord) {
+          console.log('✅ SEO Image Meta created in database:', newRecord);
+          
+          // Update JSON backup
+          const images = this.loadJsonFile('seo-image-meta.json');
+          images.push(newRecord);
+          this.saveJsonFile('seo-image-meta.json', images);
+          
+          return newRecord;
+        }
+      }
+    } catch (error) {
+      console.warn('⚠️ SEO Image Meta: Database create failed, using JSON fallback:', error);
+    }
+    
+    // Fallback to JSON
+    const images = this.loadJsonFile('seo-image-meta.json');
+    const newImage = {
+      id: Date.now(),
+      ...imageData,
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString()
+    };
+    images.push(newImage);
+    this.saveJsonFile('seo-image-meta.json', images);
+    return newImage;
+  }
+
+  async updateSeoImageMeta(imageId: number, updates: any): Promise<any> {
+    try {
+      console.log('🔄 Updating SEO Image Meta:', imageId, updates);
+      
+      if (this.db) {
+        const { seoImageMeta } = await import('../shared/schema');
+        
+        const [updatedRecord] = await this.db
+          .update(seoImageMeta)
+          .set({
+            ...updates,
+            updatedAt: new Date()
+          })
+          .where(eq(seoImageMeta.id, imageId))
+          .returning();
+        
+        if (updatedRecord) {
+          console.log('✅ SEO Image Meta updated in database');
+          
+          // Update JSON backup
+          const images = this.loadJsonFile('seo-image-meta.json');
+          const index = images.findIndex((img: any) => img.id === imageId);
+          if (index !== -1) {
+            images[index] = { ...images[index], ...updates, updatedAt: new Date().toISOString() };
+            this.saveJsonFile('seo-image-meta.json', images);
+          }
+          
+          return updatedRecord;
+        }
+      }
+    } catch (error) {
+      console.warn('⚠️ SEO Image Meta: Database update failed, using JSON fallback:', error);
+    }
+    
+    // Fallback to JSON
+    const images = this.loadJsonFile('seo-image-meta.json');
+    const index = images.findIndex((img: any) => img.id === imageId);
+    if (index !== -1) {
+      images[index] = { ...images[index], ...updates, updatedAt: new Date().toISOString() };
+      this.saveJsonFile('seo-image-meta.json', images);
+      return images[index];
+    }
+    return null;
+  }
+
+  async deleteSeoImageMeta(imageId: number): Promise<any> {
+    try {
+      console.log('🗑️ Deleting SEO Image Meta:', imageId);
+      
+      if (this.db) {
+        const { seoImageMeta } = await import('../shared/schema');
+        
+        await this.db
+          .delete(seoImageMeta)
+          .where(eq(seoImageMeta.id, imageId));
+        
+        console.log('✅ SEO Image Meta deleted from database');
+      }
+    } catch (error) {
+      console.warn('⚠️ SEO Image Meta: Database delete failed, continuing with JSON cleanup:', error);
+    }
+    
+    // Update JSON backup
+    const images = this.loadJsonFile('seo-image-meta.json');
+    const filtered = images.filter((img: any) => img.id !== imageId);
+    this.saveJsonFile('seo-image-meta.json', filtered);
+    return true;
+  }
+
+  // ==================== SEO GLOBAL SETTINGS OPERATIONS ====================
+  
+  async getSeoGlobalSettings(): Promise<any> {
+    try {
+      console.log('🔍 SEO Global Settings: Querying database...');
+      
+      if (this.db) {
+        const { seoGlobalSettings } = await import('../shared/schema');
+        
+        const [data] = await this.db
+          .select()
+          .from(seoGlobalSettings)
+          .limit(1);
+        
+        if (data) {
+          console.log('✅ SEO Global Settings retrieved from database');
+          return data;
+        }
+      }
+    } catch (error) {
+      console.warn('⚠️ SEO Global Settings: Database query failed, using JSON fallback:', error);
+    }
+    
+    // Fallback to JSON
+    const settings = this.loadJsonFile('seo-global-settings.json');
+    return settings[0] || this.createDefaultGlobalSettings();
+  }
+
+  async updateSeoGlobalSettings(settings: any): Promise<any> {
+    try {
+      console.log('🔄 Updating SEO Global Settings:', settings);
+      
+      if (this.db) {
+        const { seoGlobalSettings } = await import('../shared/schema');
+        
+        // Check if settings exist
+        const [existing] = await this.db
+          .select()
+          .from(seoGlobalSettings)
+          .limit(1);
+        
+        let updatedRecord;
+        
+        if (existing) {
+          // Update existing settings
+          [updatedRecord] = await this.db
+            .update(seoGlobalSettings)
+            .set({
+              ...settings,
+              updatedAt: new Date()
+            })
+            .where(eq(seoGlobalSettings.id, existing.id))
+            .returning();
+        } else {
+          // Create new settings
+          [updatedRecord] = await this.db
+            .insert(seoGlobalSettings)
+            .values({
+              ...settings,
+              createdAt: new Date(),
+              updatedAt: new Date()
+            })
+            .returning();
+        }
+        
+        if (updatedRecord) {
+          console.log('✅ SEO Global Settings updated in database');
+          
+          // Update JSON backup
+          const globalSettings = this.loadJsonFile('seo-global-settings.json');
+          if (globalSettings.length > 0) {
+            globalSettings[0] = updatedRecord;
+          } else {
+            globalSettings.push(updatedRecord);
+          }
+          this.saveJsonFile('seo-global-settings.json', globalSettings);
+          
+          return updatedRecord;
+        }
+      }
+    } catch (error) {
+      console.warn('⚠️ SEO Global Settings: Database update failed, using JSON fallback:', error);
+    }
+    
+    // Fallback to JSON
+    const globalSettings = this.loadJsonFile('seo-global-settings.json');
+    if (globalSettings.length > 0) {
+      globalSettings[0] = { ...globalSettings[0], ...settings, updatedAt: new Date().toISOString() };
+    } else {
+      globalSettings.push({ id: 1, ...settings, createdAt: new Date().toISOString(), updatedAt: new Date().toISOString() });
+    }
+    this.saveJsonFile('seo-global-settings.json', globalSettings);
+    return globalSettings[0];
+  }
+
+  createDefaultGlobalSettings(): any {
+    return {
+      id: 1,
+      robotsTxt: `User-agent: *
+Allow: /
+Sitemap: https://memopyk.com/sitemap.xml`,
+      sitemapEnabled: true,
+      sitemapFrequency: "daily",
+      defaultMetaTitle: "MEMOPYK - Premium Memory Films & Wedding Videos",
+      defaultMetaDescription: "Transform your precious memories into cinematic masterpieces with MEMOPYK's professional video creation services.",
+      isMaintenanceMode: false,
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString()
+    };
+  }
+
+  async generateSitemap(): Promise<string> {
+    try {
+      const seoSettings = await this.getSeoSettings();
+      const baseUrl = "https://memopyk.com";
+      
+      let sitemap = `<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">`;
+
+      // Add homepage
+      sitemap += `
+  <url>
+    <loc>${baseUrl}/</loc>
+    <lastmod>${new Date().toISOString().split('T')[0]}</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>1.0</priority>
+  </url>`;
+
+      // Add pages from SEO settings
+      for (const page of seoSettings) {
+        if (page.isActive) {
+          const englishUrl = page.urlSlugEn ? `${baseUrl}/${page.urlSlugEn}` : `${baseUrl}/${page.page}`;
+          const frenchUrl = page.urlSlugFr ? `${baseUrl}/fr-FR/${page.urlSlugFr}` : `${baseUrl}/fr-FR/${page.page}`;
+          
+          sitemap += `
+  <url>
+    <loc>${englishUrl}</loc>
+    <lastmod>${page.updatedAt?.split('T')[0] || new Date().toISOString().split('T')[0]}</lastmod>
+    <changefreq>${page.changeFreq || 'monthly'}</changefreq>
+    <priority>${page.priority || '0.5'}</priority>
+  </url>
+  <url>
+    <loc>${frenchUrl}</loc>
+    <lastmod>${page.updatedAt?.split('T')[0] || new Date().toISOString().split('T')[0]}</lastmod>
+    <changefreq>${page.changeFreq || 'monthly'}</changefreq>
+    <priority>${page.priority || '0.5'}</priority>
+  </url>`;
+        }
+      }
+
+      sitemap += `
+</urlset>`;
+
+      console.log('✅ Sitemap generated successfully');
+      return sitemap;
+    } catch (error) {
+      console.error('❌ Sitemap generation failed:', error);
+      throw error;
+    }
+  }
+
+  async generateRobotsTxt(): Promise<string> {
+    try {
+      const globalSettings = await this.getSeoGlobalSettings();
+      
+      if (globalSettings.robotsTxt) {
+        return globalSettings.robotsTxt;
+      }
+      
+      // Default robots.txt
+      return `User-agent: *
+Allow: /
+Sitemap: https://memopyk.com/sitemap.xml
+
+# Block admin areas
+Disallow: /admin
+Disallow: /api
+
+# Allow important directories
+Allow: /gallery
+Allow: /contact`;
+    } catch (error) {
+      console.error('❌ Robots.txt generation failed:', error);
+      throw error;
+    }
+  }
+
+  // ==================== SEO ANALYTICS AND SCORING ====================
+  
+  async calculateSeoScore(pageId: string): Promise<number> {
+    try {
+      const seoSettings = await this.getSeoSettings();
+      const page = seoSettings.find((s: any) => s.id === pageId);
+      
+      if (!page) {
+        return 0;
+      }
+      
+      let score = 0;
+      const maxScore = 100;
+      
+      // Meta title (20 points)
+      if (page.metaTitleEn && page.metaTitleFr) {
+        if (page.metaTitleEn.length >= 30 && page.metaTitleEn.length <= 60) score += 10;
+        if (page.metaTitleFr.length >= 30 && page.metaTitleFr.length <= 60) score += 10;
+      }
+      
+      // Meta description (20 points)
+      if (page.metaDescriptionEn && page.metaDescriptionFr) {
+        if (page.metaDescriptionEn.length >= 120 && page.metaDescriptionEn.length <= 160) score += 10;
+        if (page.metaDescriptionFr.length >= 120 && page.metaDescriptionFr.length <= 160) score += 10;
+      }
+      
+      // Keywords (15 points)
+      if (page.metaKeywordsEn && page.metaKeywordsFr) {
+        const enKeywords = page.metaKeywordsEn.split(',').length;
+        const frKeywords = page.metaKeywordsFr.split(',').length;
+        if (enKeywords >= 3 && enKeywords <= 10) score += 7;
+        if (frKeywords >= 3 && frKeywords <= 10) score += 8;
+      }
+      
+      // Open Graph (15 points)
+      if (page.ogTitleEn && page.ogTitleFr) score += 5;
+      if (page.ogDescriptionEn && page.ogDescriptionFr) score += 5;
+      if (page.ogImageUrl) score += 5;
+      
+      // Twitter Cards (10 points)
+      if (page.twitterTitleEn && page.twitterTitleFr) score += 5;
+      if (page.twitterImageUrl) score += 5;
+      
+      // Technical SEO (10 points)
+      if (page.canonicalUrl) score += 3;
+      if (page.robotsIndex && page.robotsFollow) score += 4;
+      if (page.structuredData) score += 3;
+      
+      // URL Structure (10 points)
+      if (page.urlSlugEn && page.urlSlugFr) {
+        const enSlugValid = page.urlSlugEn.length <= 60 && !page.urlSlugEn.includes(' ');
+        const frSlugValid = page.urlSlugFr.length <= 60 && !page.urlSlugFr.includes(' ');
+        if (enSlugValid) score += 5;
+        if (frSlugValid) score += 5;
+      }
+      
+      // Update score in database
+      await this.updateSeoSettings(pageId, { seoScore: score });
+      
+      console.log(`✅ SEO Score calculated for page ${pageId}: ${score}/${maxScore}`);
+      return score;
+    } catch (error) {
+      console.error('❌ SEO Score calculation failed:', error);
+      return 0;
+    }
+  }
+
+  async getSeoPerformanceReport(): Promise<any> {
+    try {
+      const seoSettings = await this.getSeoSettings();
+      const redirects = await this.getSeoRedirects();
+      const auditLogs = await this.getSeoAuditLogs(undefined, 50);
+      
+      // Calculate overall scores
+      let totalScore = 0;
+      let validPages = 0;
+      
+      for (const page of seoSettings) {
+        if (page.isActive) {
+          const score = await this.calculateSeoScore(page.id);
+          totalScore += score;
+          validPages++;
+        }
+      }
+      
+      const averageScore = validPages > 0 ? Math.round(totalScore / validPages) : 0;
+      
+      // Analyze redirects
+      const activeRedirects = redirects.filter((r: any) => r.isActive);
+      const totalRedirectHits = redirects.reduce((sum: number, r: any) => sum + (r.hitCount || 0), 0);
+      
+      // Recent activity
+      const recentActivity = auditLogs.slice(0, 10);
+      
+      const report = {
+        overview: {
+          totalPages: seoSettings.length,
+          activePages: seoSettings.filter((s: any) => s.isActive).length,
+          averageSeoScore: averageScore,
+          totalRedirects: redirects.length,
+          activeRedirects: activeRedirects.length,
+          totalRedirectHits: totalRedirectHits
+        },
+        pageScores: seoSettings.map((page: any) => ({
+          id: page.id,
+          page: page.page,
+          score: page.seoScore || 0,
+          isActive: page.isActive,
+          lastUpdated: page.updatedAt
+        })),
+        topRedirects: redirects
+          .sort((a: any, b: any) => (b.hitCount || 0) - (a.hitCount || 0))
+          .slice(0, 5)
+          .map((r: any) => ({
+            fromPath: r.fromPath,
+            toPath: r.toPath,
+            hits: r.hitCount || 0,
+            lastHit: r.lastHit
+          })),
+        recentActivity: recentActivity.map((log: any) => ({
+          action: log.action,
+          field: log.field,
+          page: log.pageId,
+          timestamp: log.createdAt,
+          user: log.adminUser
+        })),
+        recommendations: this.generateSeoRecommendations(averageScore, seoSettings, redirects)
+      };
+      
+      console.log('✅ SEO Performance Report generated');
+      return report;
+    } catch (error) {
+      console.error('❌ SEO Performance Report generation failed:', error);
+      throw error;
+    }
+  }
+
+  generateSeoRecommendations(averageScore: number, pages: any[], redirects: any[]): string[] {
+    const recommendations = [];
+    
+    if (averageScore < 70) {
+      recommendations.push("Improve meta titles and descriptions across pages for better search visibility");
+    }
+    
+    if (averageScore < 50) {
+      recommendations.push("Add Open Graph and Twitter Card metadata for social media optimization");
+    }
+    
+    const pagesWithoutKeywords = pages.filter((p: any) => !p.metaKeywordsEn || !p.metaKeywordsFr);
+    if (pagesWithoutKeywords.length > 0) {
+      recommendations.push(`Add meta keywords to ${pagesWithoutKeywords.length} pages for better targeting`);
+    }
+    
+    const inactiveRedirects = redirects.filter((r: any) => !r.isActive);
+    if (inactiveRedirects.length > 5) {
+      recommendations.push("Review and clean up inactive redirects to improve site performance");
+    }
+    
+    const pagesWithoutStructuredData = pages.filter((p: any) => !p.structuredData);
+    if (pagesWithoutStructuredData.length > 0) {
+      recommendations.push("Add structured data (JSON-LD) to improve rich snippet appearance");
+    }
+    
+    if (recommendations.length === 0) {
+      recommendations.push("Great job! Your SEO setup is well-optimized. Consider regular content updates.");
+    }
+    
+    return recommendations;
+  }
+
+  async validateMetaTags(pageData: any): Promise<{ score: number; issues: string[] }> {
+    const issues = [];
+    let score = 100;
+    
+    // Title validation
+    if (!pageData.metaTitleEn || !pageData.metaTitleFr) {
+      issues.push("Missing meta titles for one or both languages");
+      score -= 20;
+    } else {
+      if (pageData.metaTitleEn.length < 30 || pageData.metaTitleEn.length > 60) {
+        issues.push("English meta title should be 30-60 characters");
+        score -= 10;
+      }
+      if (pageData.metaTitleFr.length < 30 || pageData.metaTitleFr.length > 60) {
+        issues.push("French meta title should be 30-60 characters");
+        score -= 10;
+      }
+    }
+    
+    // Description validation
+    if (!pageData.metaDescriptionEn || !pageData.metaDescriptionFr) {
+      issues.push("Missing meta descriptions for one or both languages");
+      score -= 20;
+    } else {
+      if (pageData.metaDescriptionEn.length < 120 || pageData.metaDescriptionEn.length > 160) {
+        issues.push("English meta description should be 120-160 characters");
+        score -= 10;
+      }
+      if (pageData.metaDescriptionFr.length < 120 || pageData.metaDescriptionFr.length > 160) {
+        issues.push("French meta description should be 120-160 characters");
+        score -= 10;
+      }
+    }
+    
+    // URL slug validation
+    if (pageData.urlSlugEn && pageData.urlSlugEn.includes(' ')) {
+      issues.push("English URL slug should not contain spaces");
+      score -= 5;
+    }
+    if (pageData.urlSlugFr && pageData.urlSlugFr.includes(' ')) {
+      issues.push("French URL slug should not contain spaces");
+      score -= 5;
+    }
+    
+    // Open Graph validation
+    if (!pageData.ogImageUrl) {
+      issues.push("Missing Open Graph image for social sharing");
+      score -= 10;
+    }
+    
+    return { score: Math.max(0, score), issues };
   }
 
   /**

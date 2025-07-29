@@ -2981,6 +2981,406 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // ==================== SEO MANAGEMENT API ROUTES ====================
+  
+  // SEO Settings Management
+  app.get('/api/seo/settings', async (req, res) => {
+    try {
+      const { page } = req.query;
+      const settings = await hybridStorage.getSeoSettings(page as string);
+      res.json({ success: true, settings });
+    } catch (error) {
+      console.error('Get SEO settings error:', error);
+      res.status(500).json({ error: 'Failed to get SEO settings' });
+    }
+  });
+
+  app.post('/api/seo/settings', async (req, res) => {
+    try {
+      const seoSettingsSchema = z.object({
+        page: z.string().min(1),
+        urlSlugEn: z.string().optional(),
+        urlSlugFr: z.string().optional(),
+        metaTitleEn: z.string().optional(),
+        metaTitleFr: z.string().optional(),
+        metaDescriptionEn: z.string().optional(),
+        metaDescriptionFr: z.string().optional(),
+        metaKeywordsEn: z.string().optional(),
+        metaKeywordsFr: z.string().optional(),
+        ogTitleEn: z.string().optional(),
+        ogTitleFr: z.string().optional(),
+        ogDescriptionEn: z.string().optional(),
+        ogDescriptionFr: z.string().optional(),
+        ogImageUrl: z.string().optional(),
+        ogType: z.string().optional(),
+        twitterCard: z.string().optional(),
+        twitterTitleEn: z.string().optional(),
+        twitterTitleFr: z.string().optional(),
+        twitterDescriptionEn: z.string().optional(),
+        twitterDescriptionFr: z.string().optional(),
+        twitterImageUrl: z.string().optional(),
+        canonicalUrl: z.string().optional(),
+        robotsIndex: z.boolean().optional(),
+        robotsFollow: z.boolean().optional(),
+        robotsNoArchive: z.boolean().optional(),
+        robotsNoSnippet: z.boolean().optional(),
+        priority: z.string().optional(),
+        changeFreq: z.string().optional(),
+        isActive: z.boolean().optional()
+      });
+
+      const validatedData = seoSettingsSchema.parse(req.body);
+      const settings = await hybridStorage.createSeoSettings(validatedData);
+      res.json({ success: true, settings });
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({ error: 'Validation failed', details: error.errors });
+      }
+      console.error('Create SEO settings error:', error);
+      res.status(500).json({ error: 'Failed to create SEO settings' });
+    }
+  });
+
+  app.patch('/api/seo/settings/:pageId', async (req, res) => {
+    try {
+      const { pageId } = req.params;
+      const settings = await hybridStorage.updateSeoSettings(pageId, req.body);
+      res.json({ success: true, settings });
+    } catch (error) {
+      console.error('Update SEO settings error:', error);
+      res.status(500).json({ error: 'Failed to update SEO settings' });
+    }
+  });
+
+  app.delete('/api/seo/settings/:pageId', async (req, res) => {
+    try {
+      const { pageId } = req.params;
+      await hybridStorage.deleteSeoSettings(pageId);
+      res.json({ success: true, message: 'SEO settings deleted' });
+    } catch (error) {
+      console.error('Delete SEO settings error:', error);
+      res.status(500).json({ error: 'Failed to delete SEO settings' });
+    }
+  });
+
+  // SEO Keywords Management
+  app.get('/api/seo/keywords', async (req, res) => {
+    try {
+      const { keyword, language } = req.query;
+      const keywords = await hybridStorage.getSeoKeywords(keyword as string, language as string);
+      res.json({ success: true, keywords });
+    } catch (error) {
+      console.error('Get SEO keywords error:', error);
+      res.status(500).json({ error: 'Failed to get SEO keywords' });
+    }
+  });
+
+  app.post('/api/seo/keywords', async (req, res) => {
+    try {
+      const keywordSchema = z.object({
+        keyword: z.string().min(1),
+        language: z.enum(['en', 'fr']),
+        searchVolume: z.number().optional(),
+        difficulty: z.number().min(0).max(100).optional(),
+        targetPage: z.string().optional(),
+        isTargeted: z.boolean().default(true),
+        competitorUrls: z.array(z.string()).optional()
+      });
+
+      const validatedData = keywordSchema.parse(req.body);
+      const keyword = await hybridStorage.createSeoKeyword(validatedData);
+      res.json({ success: true, keyword });
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({ error: 'Validation failed', details: error.errors });
+      }
+      console.error('Create SEO keyword error:', error);
+      res.status(500).json({ error: 'Failed to create SEO keyword' });
+    }
+  });
+
+  app.patch('/api/seo/keywords/:keywordId', async (req, res) => {
+    try {
+      const { keywordId } = req.params;
+      const keyword = await hybridStorage.updateSeoKeyword(parseInt(keywordId), req.body);
+      res.json({ success: true, keyword });
+    } catch (error) {
+      console.error('Update SEO keyword error:', error);
+      res.status(500).json({ error: 'Failed to update SEO keyword' });
+    }
+  });
+
+  app.delete('/api/seo/keywords/:keywordId', async (req, res) => {
+    try {
+      const { keywordId } = req.params;
+      await hybridStorage.deleteSeoKeyword(parseInt(keywordId));
+      res.json({ success: true, message: 'SEO keyword deleted' });
+    } catch (error) {
+      console.error('Delete SEO keyword error:', error);
+      res.status(500).json({ error: 'Failed to delete SEO keyword' });
+    }
+  });
+
+  // SEO Redirects Management
+  app.get('/api/seo/redirects', async (req, res) => {
+    try {
+      const { fromPath } = req.query;
+      const redirects = await hybridStorage.getSeoRedirects(fromPath as string);
+      res.json({ success: true, redirects });
+    } catch (error) {
+      console.error('Get SEO redirects error:', error);
+      res.status(500).json({ error: 'Failed to get SEO redirects' });
+    }
+  });
+
+  app.post('/api/seo/redirects', async (req, res) => {
+    try {
+      const redirectSchema = z.object({
+        fromPath: z.string().min(1),
+        toPath: z.string().min(1),
+        redirectType: z.number().int().min(300).max(399).default(301),
+        description: z.string().optional(),
+        isActive: z.boolean().default(true)
+      });
+
+      const validatedData = redirectSchema.parse(req.body);
+      const redirect = await hybridStorage.createSeoRedirect(validatedData);
+      res.json({ success: true, redirect });
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({ error: 'Validation failed', details: error.errors });
+      }
+      console.error('Create SEO redirect error:', error);
+      res.status(500).json({ error: 'Failed to create SEO redirect' });
+    }
+  });
+
+  app.patch('/api/seo/redirects/:redirectId', async (req, res) => {
+    try {
+      const { redirectId } = req.params;
+      const redirect = await hybridStorage.updateSeoRedirect(parseInt(redirectId), req.body);
+      res.json({ success: true, redirect });
+    } catch (error) {
+      console.error('Update SEO redirect error:', error);
+      res.status(500).json({ error: 'Failed to update SEO redirect' });
+    }
+  });
+
+  app.delete('/api/seo/redirects/:redirectId', async (req, res) => {
+    try {
+      const { redirectId } = req.params;
+      await hybridStorage.deleteSeoRedirect(parseInt(redirectId));
+      res.json({ success: true, message: 'SEO redirect deleted' });
+    } catch (error) {
+      console.error('Delete SEO redirect error:', error);
+      res.status(500).json({ error: 'Failed to delete SEO redirect' });
+    }
+  });
+
+  // Track redirect hits
+  app.post('/api/seo/redirects/:redirectId/hit', async (req, res) => {
+    try {
+      const { redirectId } = req.params;
+      const { userAgent, referer } = req.body;
+      await hybridStorage.trackRedirectHit(parseInt(redirectId), userAgent, referer);
+      res.json({ success: true, message: 'Redirect hit tracked' });
+    } catch (error) {
+      console.error('Track redirect hit error:', error);
+      res.status(500).json({ error: 'Failed to track redirect hit' });
+    }
+  });
+
+  // SEO Audit Logs
+  app.get('/api/seo/audit-logs', async (req, res) => {
+    try {
+      const { pageId, limit } = req.query;
+      const logs = await hybridStorage.getSeoAuditLogs(
+        pageId as string,
+        limit ? parseInt(limit as string) : undefined
+      );
+      res.json({ success: true, logs });
+    } catch (error) {
+      console.error('Get SEO audit logs error:', error);
+      res.status(500).json({ error: 'Failed to get SEO audit logs' });
+    }
+  });
+
+  app.post('/api/seo/audit-logs', async (req, res) => {
+    try {
+      const auditSchema = z.object({
+        pageId: z.string().min(1),
+        action: z.string().min(1),
+        field: z.string().min(1),
+        oldValue: z.string().optional(),
+        newValue: z.string().optional(),
+        adminUser: z.string().min(1),
+        changeReason: z.string().optional()
+      });
+
+      const validatedData = auditSchema.parse(req.body);
+      const log = await hybridStorage.createSeoAuditLog(validatedData);
+      res.json({ success: true, log });
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({ error: 'Validation failed', details: error.errors });
+      }
+      console.error('Create SEO audit log error:', error);
+      res.status(500).json({ error: 'Failed to create SEO audit log' });
+    }
+  });
+
+  // SEO Image Metadata Management
+  app.get('/api/seo/images', async (req, res) => {
+    try {
+      const { imageUrl } = req.query;
+      const images = await hybridStorage.getSeoImageMeta(imageUrl as string);
+      res.json({ success: true, images });
+    } catch (error) {
+      console.error('Get SEO image metadata error:', error);
+      res.status(500).json({ error: 'Failed to get SEO image metadata' });
+    }
+  });
+
+  app.post('/api/seo/images', async (req, res) => {
+    try {
+      const imageSchema = z.object({
+        imageUrl: z.string().url(),
+        altTextEn: z.string().optional(),
+        altTextFr: z.string().optional(),
+        titleEn: z.string().optional(),
+        titleFr: z.string().optional(),
+        caption: z.string().optional(),
+        isLazyLoaded: z.boolean().default(true),
+        compressionLevel: z.number().min(1).max(100).default(80),
+        width: z.number().positive().optional(),
+        height: z.number().positive().optional(),
+        fileSize: z.number().positive().optional(),
+        format: z.string().optional(),
+        seoFriendlyName: z.string().optional()
+      });
+
+      const validatedData = imageSchema.parse(req.body);
+      const image = await hybridStorage.createSeoImageMeta(validatedData);
+      res.json({ success: true, image });
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({ error: 'Validation failed', details: error.errors });
+      }
+      console.error('Create SEO image metadata error:', error);
+      res.status(500).json({ error: 'Failed to create SEO image metadata' });
+    }
+  });
+
+  app.patch('/api/seo/images/:imageId', async (req, res) => {
+    try {
+      const { imageId } = req.params;
+      const image = await hybridStorage.updateSeoImageMeta(parseInt(imageId), req.body);
+      res.json({ success: true, image });
+    } catch (error) {
+      console.error('Update SEO image metadata error:', error);
+      res.status(500).json({ error: 'Failed to update SEO image metadata' });
+    }
+  });
+
+  app.delete('/api/seo/images/:imageId', async (req, res) => {
+    try {
+      const { imageId } = req.params;
+      await hybridStorage.deleteSeoImageMeta(parseInt(imageId));
+      res.json({ success: true, message: 'SEO image metadata deleted' });
+    } catch (error) {
+      console.error('Delete SEO image metadata error:', error);
+      res.status(500).json({ error: 'Failed to delete SEO image metadata' });
+    }
+  });
+
+  // SEO Global Settings Management
+  app.get('/api/seo/global-settings', async (req, res) => {
+    try {
+      const settings = await hybridStorage.getSeoGlobalSettings();
+      res.json({ success: true, settings });
+    } catch (error) {
+      console.error('Get SEO global settings error:', error);
+      res.status(500).json({ error: 'Failed to get SEO global settings' });
+    }
+  });
+
+  app.patch('/api/seo/global-settings', async (req, res) => {
+    try {
+      const globalSchema = z.object({
+        robotsTxt: z.string().optional(),
+        sitemapEnabled: z.boolean().optional(),
+        sitemapFrequency: z.enum(['always', 'hourly', 'daily', 'weekly', 'monthly', 'yearly', 'never']).optional(),
+        defaultMetaTitle: z.string().optional(),
+        defaultMetaDescription: z.string().optional(),
+        isMaintenanceMode: z.boolean().optional()
+      });
+
+      const validatedData = globalSchema.parse(req.body);
+      const settings = await hybridStorage.updateSeoGlobalSettings(validatedData);
+      res.json({ success: true, settings });
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({ error: 'Validation failed', details: error.errors });
+      }
+      console.error('Update SEO global settings error:', error);
+      res.status(500).json({ error: 'Failed to update SEO global settings' });
+    }
+  });
+
+  // SEO Utilities and Tools
+  app.get('/api/seo/sitemap.xml', async (req, res) => {
+    try {
+      const sitemap = await hybridStorage.generateSitemap();
+      res.setHeader('Content-Type', 'application/xml');
+      res.send(sitemap);
+    } catch (error) {
+      console.error('Generate sitemap error:', error);
+      res.status(500).json({ error: 'Failed to generate sitemap' });
+    }
+  });
+
+  app.get('/api/seo/robots.txt', async (req, res) => {
+    try {
+      const robotsTxt = await hybridStorage.generateRobotsTxt();
+      res.setHeader('Content-Type', 'text/plain');
+      res.send(robotsTxt);
+    } catch (error) {
+      console.error('Generate robots.txt error:', error);
+      res.status(500).json({ error: 'Failed to generate robots.txt' });
+    }
+  });
+
+  app.get('/api/seo/score/:pageId', async (req, res) => {
+    try {
+      const { pageId } = req.params;
+      const score = await hybridStorage.calculateSeoScore(pageId);
+      res.json({ success: true, score });
+    } catch (error) {
+      console.error('Calculate SEO score error:', error);
+      res.status(500).json({ error: 'Failed to calculate SEO score' });
+    }
+  });
+
+  app.get('/api/seo/performance-report', async (req, res) => {
+    try {
+      const report = await hybridStorage.getSeoPerformanceReport();
+      res.json({ success: true, report });
+    } catch (error) {
+      console.error('Get SEO performance report error:', error);
+      res.status(500).json({ error: 'Failed to get SEO performance report' });
+    }
+  });
+
+  app.post('/api/seo/validate-meta', async (req, res) => {
+    try {
+      const validation = await hybridStorage.validateMetaTags(req.body);
+      res.json({ success: true, validation });
+    } catch (error) {
+      console.error('Validate meta tags error:', error);
+      res.status(500).json({ error: 'Failed to validate meta tags' });
+    }
+  });
+
   // Hero video upload endpoint
   app.post("/api/hero-videos/upload", uploadVideo.single('video'), async (req, res) => {
     try {

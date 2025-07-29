@@ -1,0 +1,13 @@
+[
+  {
+    "id": 1,
+    "pageId": "homepage",
+    "action": "created",
+    "field": "all",
+    "oldValue": null,
+    "newValue": "SEO settings initialized",
+    "adminUser": "system",
+    "changeReason": "Initial SEO setup",
+    "createdAt": "2025-07-29T14:00:00.000Z"
+  }
+]

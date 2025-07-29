@@ -149,7 +149,7 @@ export const ctaSettings = pgTable("cta_settings", {
   updatedAt: timestamp("updated_at").defaultNow()
 });
 
-// SEO settings table - bilingual structure
+// SEO settings table - comprehensive SEO management
 export const seoSettings = pgTable("seo_settings", {
   id: uuid("id").primaryKey().defaultRandom(),
   page: text("page").notNull(),
@@ -159,11 +159,15 @@ export const seoSettings = pgTable("seo_settings", {
   metaTitleFr: text("meta_title_fr"),
   metaDescriptionEn: text("meta_description_en"),
   metaDescriptionFr: text("meta_description_fr"),
+  metaKeywordsEn: text("meta_keywords_en"), // Keywords separated by commas
+  metaKeywordsFr: text("meta_keywords_fr"), // Keywords separated by commas
   ogTitleEn: text("og_title_en"),
   ogTitleFr: text("og_title_fr"),
   ogDescriptionEn: text("og_description_en"),
   ogDescriptionFr: text("og_description_fr"),
   ogImageUrl: text("og_image_url"),
+  ogType: text("og_type").default("website"), // website, article, video, etc.
+  twitterCard: text("twitter_card").default("summary_large_image"), // summary, summary_large_image, app, player
   twitterTitleEn: text("twitter_title_en"),
   twitterTitleFr: text("twitter_title_fr"),
   twitterDescriptionEn: text("twitter_description_en"),
@@ -172,7 +176,80 @@ export const seoSettings = pgTable("seo_settings", {
   canonicalUrl: text("canonical_url"),
   robotsIndex: boolean("robots_index").default(true),
   robotsFollow: boolean("robots_follow").default(true),
+  robotsNoArchive: boolean("robots_noarchive").default(false),
+  robotsNoSnippet: boolean("robots_nosnippet").default(false),
+  customMetaTags: jsonb("custom_meta_tags"), // Additional custom meta tags as JSON
+  structuredData: jsonb("structured_data"), // JSON-LD structured data
+  seoScore: integer("seo_score").default(0), // 0-100 SEO score
+  priority: decimal("priority").default("0.5"), // Sitemap priority 0.0-1.0
+  changeFreq: text("change_freq").default("monthly"), // never, yearly, monthly, weekly, daily, hourly, always
+  isActive: boolean("is_active").default(true),
   jsonLd: jsonb("json_ld"),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow()
+});
+
+// SEO redirect rules table - 301/302 redirects management
+export const seoRedirects = pgTable("seo_redirects", {
+  id: serial("id").primaryKey(),
+  fromPath: text("from_path").notNull(), // Source path to redirect from
+  toPath: text("to_path").notNull(), // Target path to redirect to
+  redirectType: integer("redirect_type").default(301), // 301 permanent, 302 temporary
+  isActive: boolean("is_active").default(true),
+  description: text("description"), // Admin notes about the redirect
+  hitCount: integer("hit_count").default(0), // Track how often redirect is used
+  lastHit: timestamp("last_hit"), // When redirect was last used
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow()
+});
+
+// SEO audit logs table - track SEO changes over time
+export const seoAuditLogs = pgTable("seo_audit_logs", {
+  id: serial("id").primaryKey(),
+  pageId: text("page_id"), // References seoSettings.id
+  action: text("action").notNull(), // "created", "updated", "deleted"
+  field: text("field"), // Which field was changed
+  oldValue: text("old_value"), // Previous value
+  newValue: text("new_value"), // New value
+  adminUser: text("admin_user"), // Who made the change
+  changeReason: text("change_reason"), // Why the change was made
+  createdAt: timestamp("created_at").defaultNow()
+});
+
+// SEO image metadata table - manage alt text and SEO for images
+export const seoImageMeta = pgTable("seo_image_meta", {
+  id: serial("id").primaryKey(),
+  imageUrl: text("image_url").notNull(),
+  altTextEn: text("alt_text_en"),
+  altTextFr: text("alt_text_fr"),
+  titleEn: text("title_en"), // Image title attribute
+  titleFr: text("title_fr"), // Image title attribute
+  caption: text("caption"), // Image caption
+  isLazyLoaded: boolean("is_lazy_loaded").default(true),
+  compressionLevel: integer("compression_level").default(80), // 1-100
+  width: integer("width"),
+  height: integer("height"),
+  fileSize: integer("file_size"), // In bytes
+  format: text("format"), // jpg, png, webp, etc.
+  seoFriendlyName: text("seo_friendly_name"), // SEO-optimized filename
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow()
+});
+
+// SEO global settings table - robots.txt, sitemap configuration
+export const seoGlobalSettings = pgTable("seo_global_settings", {
+  id: serial("id").primaryKey(),
+  robotsTxt: text("robots_txt"), // Content of robots.txt file
+  sitemapEnabled: boolean("sitemap_enabled").default(true),
+  sitemapFrequency: text("sitemap_frequency").default("daily"), // How often to regenerate sitemap
+  defaultMetaTitle: text("default_meta_title"), // Fallback meta title
+  defaultMetaDescription: text("default_meta_description"), // Fallback meta description
+  defaultOgImage: text("default_og_image"), // Default Open Graph image
+  googleAnalyticsId: text("google_analytics_id"), // GA tracking ID
+  googleSearchConsoleCode: text("google_search_console_code"), // GSC verification code
+  bingWebmasterCode: text("bing_webmaster_code"), // Bing verification code
+  facebookPixelId: text("facebook_pixel_id"), // Facebook Pixel ID
+  isMaintenanceMode: boolean("is_maintenance_mode").default(false),
   createdAt: timestamp("created_at").defaultNow(),
   updatedAt: timestamp("updated_at").defaultNow()
 });
@@ -287,6 +364,10 @@ export const insertContactSchema = createInsertSchema(contacts).omit({ id: true,
 export const insertLegalDocumentSchema = createInsertSchema(legalDocuments).omit({ id: true, updatedAt: true });
 export const insertCtaSettingsSchema = createInsertSchema(ctaSettings).omit({ createdAt: true, updatedAt: true });
 export const insertSeoSettingsSchema = createInsertSchema(seoSettings).omit({ id: true, createdAt: true, updatedAt: true });
+export const insertSeoRedirectSchema = createInsertSchema(seoRedirects).omit({ id: true, createdAt: true, updatedAt: true });
+export const insertSeoAuditLogSchema = createInsertSchema(seoAuditLogs).omit({ id: true, createdAt: true });
+export const insertSeoImageMetaSchema = createInsertSchema(seoImageMeta).omit({ id: true, createdAt: true, updatedAt: true });
+export const insertSeoGlobalSettingsSchema = createInsertSchema(seoGlobalSettings).omit({ id: true, createdAt: true, updatedAt: true });
 export const insertDeploymentHistorySchema = createInsertSchema(deploymentHistory).omit({ id: true, createdAt: true });
 export const insertAnalyticsSessionSchema = createInsertSchema(analyticsSessions).omit({ id: true, createdAt: true });
 export const insertAnalyticsViewSchema = createInsertSchema(analyticsViews).omit({ id: true, createdAt: true });
@@ -306,6 +387,10 @@ export type Contact = typeof contacts.$inferSelect;
 export type LegalDocument = typeof legalDocuments.$inferSelect;
 export type CtaSettings = typeof ctaSettings.$inferSelect;
 export type SeoSettings = typeof seoSettings.$inferSelect;
+export type SeoRedirect = typeof seoRedirects.$inferSelect;
+export type SeoAuditLog = typeof seoAuditLogs.$inferSelect;
+export type SeoImageMeta = typeof seoImageMeta.$inferSelect;
+export type SeoGlobalSettings = typeof seoGlobalSettings.$inferSelect;
 export type DeploymentHistory = typeof deploymentHistory.$inferSelect;
 export type AnalyticsSession = typeof analyticsSessions.$inferSelect;
 export type AnalyticsView = typeof analyticsViews.$inferSelect;
@@ -325,6 +410,10 @@ export type InsertContact = z.infer<typeof insertContactSchema>;
 export type InsertLegalDocument = z.infer<typeof insertLegalDocumentSchema>;
 export type InsertCtaSettings = z.infer<typeof insertCtaSettingsSchema>;
 export type InsertSeoSettings = z.infer<typeof insertSeoSettingsSchema>;
+export type InsertSeoRedirect = z.infer<typeof insertSeoRedirectSchema>;
+export type InsertSeoAuditLog = z.infer<typeof insertSeoAuditLogSchema>;
+export type InsertSeoImageMeta = z.infer<typeof insertSeoImageMetaSchema>;
+export type InsertSeoGlobalSettings = z.infer<typeof insertSeoGlobalSettingsSchema>;
 export type InsertDeploymentHistory = z.infer<typeof insertDeploymentHistorySchema>;
 export type InsertAnalyticsSession = z.infer<typeof insertAnalyticsSessionSchema>;
 export type InsertAnalyticsView = z.infer<typeof insertAnalyticsViewSchema>;
