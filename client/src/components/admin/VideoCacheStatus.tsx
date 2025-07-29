@@ -137,6 +137,27 @@ export const VideoCacheStatus: React.FC<VideoCacheStatusProps> = ({
     }
   });
 
+  // Force cache gallery videos mutation
+  const forceCacheGalleryMutation = useMutation({
+    mutationFn: () => apiRequest('/api/video-cache/cache-gallery-videos', 'POST'),
+    onSuccess: (data) => {
+      toast({
+        title: "Gallery Videos Cached",
+        description: data.message || "All gallery videos are now cached for instant playback",
+      });
+      queryClient.invalidateQueries({ queryKey: ['/api/video-cache/status'] });
+      queryClient.invalidateQueries({ queryKey: ['/api/video-cache/stats'] });
+    },
+    onError: (error: any) => {
+      console.error('Force cache gallery error:', error);
+      toast({
+        title: "Cache Error",
+        description: error.message || "Failed to cache gallery videos",
+        variant: "destructive",
+      });
+    },
+  });
+
   // Clear cache mutation
   const clearCacheMutation = useMutation({
     mutationFn: async () => {
@@ -391,20 +412,36 @@ export const VideoCacheStatus: React.FC<VideoCacheStatusProps> = ({
           <div className="mt-6 pt-4 border-t space-y-3">
             {/* Smart Gallery Cache Refresh Button - only show for Gallery Videos */}
             {title === 'Gallery Videos Cache Status' && (
-              <Button
-                size="sm"
-                variant="default"
-                onClick={() => smartCacheRefreshMutation.mutate()}
-                disabled={smartCacheRefreshMutation.isPending}
-                className="w-full bg-blue-600 hover:bg-blue-700"
-              >
-                {smartCacheRefreshMutation.isPending ? (
-                  <RefreshCw className="h-4 w-4 animate-spin mr-2" />
-                ) : (
-                  <Zap className="h-4 w-4 mr-2" />
-                )}
-                Smart Gallery Refresh
-              </Button>
+              <>
+                <Button
+                  size="sm"
+                  variant="default"
+                  onClick={() => smartCacheRefreshMutation.mutate()}
+                  disabled={smartCacheRefreshMutation.isPending}
+                  className="w-full bg-blue-600 hover:bg-blue-700"
+                >
+                  {smartCacheRefreshMutation.isPending ? (
+                    <RefreshCw className="h-4 w-4 animate-spin mr-2" />
+                  ) : (
+                    <Zap className="h-4 w-4 mr-2" />
+                  )}
+                  Smart Gallery Refresh
+                </Button>
+                <Button
+                  size="sm"
+                  variant="default"
+                  onClick={() => forceCacheGalleryMutation.mutate()}
+                  disabled={forceCacheGalleryMutation.isPending}
+                  className="w-full bg-green-600 hover:bg-green-700"
+                >
+                  {forceCacheGalleryMutation.isPending ? (
+                    <Download className="h-4 w-4 animate-spin mr-2" />
+                  ) : (
+                    <Download className="h-4 w-4 mr-2" />
+                  )}
+                  Force Cache Gallery Videos
+                </Button>
+              </>
             )}
             <Button
               size="sm"

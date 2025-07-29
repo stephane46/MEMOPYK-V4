@@ -39,11 +39,11 @@ export default function GallerySection() {
   const [flippedCards, setFlippedCards] = useState<Set<string | number>>(new Set());
   const [lightboxVideo, setLightboxVideo] = useState<GalleryItem | null>(null);
   
-  // 🚨 DEPLOYMENT DIAGNOSTIC v1.0.32 - VIRGIN SERVER TEST
+  // 🚨 DEPLOYMENT DIAGNOSTIC v1.0.33 - CARD FLIP FIX
   useEffect(() => {
-    console.log("🚨 DEPLOYMENT DIAGNOSTIC v1.0.32 - VIRGIN SERVER TEST");
-    console.log("📋 Frontend component loaded - checking if updates reach production");
-    console.log("🎯 This should appear in production console if deployment works");
+    console.log("🚨 DEPLOYMENT DIAGNOSTIC v1.0.33 - CARD FLIP FIX");
+    console.log("📋 Critical fix applied: Cards with videos cannot be flipped to back side");
+    console.log("🎯 Gallery videos should now show play buttons instead of 'Video Not Available'");
   }, []);
   
   // Fetch active gallery items with type conversion from snake_case API
@@ -322,8 +322,11 @@ export default function GallerySection() {
           {galleryItems.map((item, index) => {
             const imageUrl = getImageUrl(item);
             const thumbnailUrl = imageUrl;
-            const isFlipped = flippedCards.has(item.id);
             const itemHasVideo = hasVideo(item, index);
+            
+            // CRITICAL FIX: Cards with videos should NEVER be flipped by default
+            // Only flip if explicitly flipped AND has no video
+            const isFlipped = flippedCards.has(item.id) && !itemHasVideo;
             
 
             
