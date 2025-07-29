@@ -1460,6 +1460,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   // Video streaming proxy with TIMEOUT SAFEGUARD - v1.0.46
   app.get("/api/video-proxy", async (req, res) => {
+    // CRITICAL DEBUG: Route entry detection
+    console.log(`🔥🔥🔥 VIDEO PROXY ROUTE HIT! v1.0.49 - ${new Date().toISOString()}`);
+    console.log(`🔥🔥🔥 Raw request URL: ${req.url}`);
+    console.log(`🔥🔥🔥 Filename param: ${req.query.filename}`);
+    
     // GALLERY VIDEO DETECTION - Track all requests at entry point
     const filename = req.query.filename as string;
     const isGalleryVideo = filename && (filename.includes('-') || filename.includes('1753'));
