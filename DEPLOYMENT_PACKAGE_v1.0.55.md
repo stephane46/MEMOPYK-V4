@@ -7,7 +7,7 @@
 - **CSS Bundle**: 140.75 kB (21.39 kB gzipped) 
 - **TypeScript Errors**: 0 (Clean LSP diagnostics)
 - **Build Time**: 17.18s
-- **Cache Included**: 549.7MB (10 video files + 3 image files)
+- **Cache Cleaned**: Empty cache directory (hero videos will cache automatically on first visit)
 
 ### 📁 Deployment Structure (Replit Deploy Compatible)
 ```
@@ -22,9 +22,9 @@
 │   ├── routes.ts                   # API routes
 │   ├── video-cache.ts              # Video caching system (hero videos only)
 │   ├── hybrid-storage.ts           # Database + JSON fallback
-│   └── cache/                      # Pre-cached assets
-│       ├── videos/ (10 files)      # All videos cached for instant performance
-│       └── images/ (3 files)       # Images cached
+│   └── cache/                      # Cache directory (empty - videos cache on demand)
+│       ├── videos/                 # Hero videos cache automatically on server startup
+│       └── images/                 # Images cache on demand
 └── shared/                         # Shared TypeScript schemas
 ```
 
@@ -54,7 +54,7 @@ NODE_ENV=production tsx server/index.ts
 - **Admin Interface**: Complete content management with clean cache indicators
 
 ### ✅ Production Optimizations
-- **Video Cache Preloaded**: All critical videos cached on server startup
+- **Clean Cache System**: Hero videos cache automatically on server startup
 - **Hybrid Storage**: Database + JSON fallback for 100% uptime
 - **Performance**: Hero videos <50ms, API responses <5ms
 - **Security**: XSS protection, session management, input sanitization
