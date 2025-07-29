@@ -1,13 +1,18 @@
 [
   {
     "id": 1,
-    "robotsTxt": "User-agent: *\nAllow: /\nSitemap: https://memopyk.com/sitemap.xml\n\n# Block admin areas\nDisallow: /admin\nDisallow: /api\n\n# Allow important directories\nAllow: /gallery\nAllow: /contact",
+    "robotsTxt": "User-agent: *\nDisallow: /admin\nDisallow: /private\nAllow: /\n\nSitemap: https://memopyk.com/sitemap.xml",
     "sitemapEnabled": true,
     "sitemapFrequency": "daily",
-    "defaultMetaTitle": "MEMOPYK - Premium Memory Films & Wedding Videos",
-    "defaultMetaDescription": "Transform your precious memories into cinematic masterpieces with MEMOPYK's professional video creation services.",
+    "defaultMetaTitle": null,
+    "defaultMetaDescription": null,
+    "defaultOgImage": null,
+    "googleAnalyticsId": null,
+    "googleSearchConsoleCode": null,
+    "bingWebmasterCode": null,
+    "facebookPixelId": null,
     "isMaintenanceMode": false,
-    "createdAt": "2025-07-29T14:00:00.000Z",
-    "updatedAt": "2025-07-29T14:00:00.000Z"
+    "createdAt": "2025-07-29T15:26:56.769Z",
+    "updatedAt": "2025-07-29T15:30:43.141Z"
   }
 ]

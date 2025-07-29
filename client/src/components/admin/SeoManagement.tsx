@@ -12,6 +12,7 @@ import { Separator } from '@/components/ui/separator';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useToast } from '@/hooks/use-toast';
 import { Search, Globe, FileText, Zap, Eye, ExternalLink, Plus, Save, RefreshCw } from 'lucide-react';
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 
 interface SeoSettings {
   id?: string;
@@ -60,6 +61,8 @@ export default function SeoManagement() {
   const [currentLanguage, setCurrentLanguage] = useState<'fr' | 'en'>('fr');
   const [customMetaTags, setCustomMetaTags] = useState('');
   const [seoScore, setSeoScore] = useState(75);
+  const [showRobotsDialog, setShowRobotsDialog] = useState(false);
+  const [robotsContent, setRobotsContent] = useState('');
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
@@ -76,13 +79,13 @@ export default function SeoManagement() {
   // Fetch SEO settings for selected page
   const { data: seoSettings, isLoading: settingsLoading } = useQuery({
     queryKey: ['/api/seo/settings', selectedPage],
-    queryFn: () => apiRequest(`/api/seo/settings?page=${selectedPage}`)
+    queryFn: () => apiRequest(`/api/seo/settings?page=${selectedPage}`, 'GET')
   });
 
   // Fetch global SEO settings
   const { data: globalSettings, isLoading: globalLoading } = useQuery({
     queryKey: ['/api/seo/global-settings'],
-    queryFn: () => apiRequest('/api/seo/global-settings')
+    queryFn: () => apiRequest('/api/seo/global-settings', 'GET')
   });
 
   // Save SEO settings mutation
@@ -121,16 +124,20 @@ export default function SeoManagement() {
   // Get SEO score mutation
   const getSeoScoreMutation = useMutation({
     mutationFn: async () => {
-      return apiRequest(`/api/seo/score/${selectedPage}`);
+      const response = await apiRequest(`/api/seo/score/${selectedPage}`, 'GET');
+      return response;
     },
-    onSuccess: (data) => {
-      setSeoScore(data.score || 75);
-      toast({ title: "Score SEO", description: `Score calculé: ${data.score}/100` });
+    onSuccess: (data: any) => {
+      setSeoScore(data?.score || 75);
+      toast({ title: "SEO Score", description: `Score calculated: ${data?.score || 0}/100` });
+    },
+    onError: () => {
+      toast({ title: "Error", description: "Could not calculate SEO score", variant: "destructive" });
     }
   });
 
-  const currentSettings = seoSettings?.settings?.[0] || {};
-  const currentGlobal = globalSettings?.settings || {};
+  const currentSettings = (seoSettings as any)?.settings?.[0] || {};
+  const currentGlobal = (globalSettings as any)?.settings || {};
 
   const [formState, setFormState] = useState({
     metaTitleEn: '',
@@ -161,6 +168,11 @@ export default function SeoManagement() {
 
   const handleSave = () => {
     saveSeoMutation.mutate(formState);
+  };
+
+  const saveRobotsTxt = () => {
+    updateGlobalMutation.mutate({ robotsTxt: robotsContent });
+    setShowRobotsDialog(false);
   };
 
   const getCurrentTitle = () => {
@@ -423,8 +435,10 @@ export default function SeoManagement() {
                       size="sm" 
                       variant="outline" 
                       className="text-xs"
-                      onClick={() => updateGlobalMutation.mutate({ robotsTxt: currentGlobal.robotsTxt })}
-                      disabled={updateGlobalMutation.isPending}
+                      onClick={() => {
+                        setRobotsContent(currentGlobal?.robotsTxt || 'User-agent: *\nDisallow: /admin\nAllow: /\n\nSitemap: https://memopyk.com/sitemap.xml');
+                        setShowRobotsDialog(true);
+                      }}
                     >
                       EDIT
                     </Button>
@@ -481,6 +495,43 @@ export default function SeoManagement() {
           </div>
         </div>
       </div>
+
+      {/* Robots.txt Edit Dialog */}
+      <Dialog open={showRobotsDialog} onOpenChange={setShowRobotsDialog}>
+        <DialogContent className="max-w-2xl">
+          <DialogHeader>
+            <DialogTitle>Edit Robots.txt</DialogTitle>
+            <DialogDescription>
+              Configure search engine crawler access to your website
+            </DialogDescription>
+          </DialogHeader>
+          <div className="py-4">
+            <Textarea
+              value={robotsContent}
+              onChange={(e) => setRobotsContent(e.target.value)}
+              placeholder="User-agent: *&#10;Disallow: /admin&#10;Allow: /&#10;&#10;Sitemap: https://memopyk.com/sitemap.xml"
+              rows={12}
+              className="font-mono text-sm"
+            />
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setShowRobotsDialog(false)}>
+              Cancel
+            </Button>
+            <Button 
+              onClick={saveRobotsTxt}
+              disabled={updateGlobalMutation.isPending}
+            >
+              {updateGlobalMutation.isPending ? (
+                <RefreshCw className="h-4 w-4 mr-2 animate-spin" />
+              ) : (
+                <Save className="h-4 w-4 mr-2" />
+              )}
+              Save Robots.txt
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
