@@ -497,21 +497,20 @@ export default function GallerySection() {
             className="relative w-full max-w-4xl mx-auto bg-black rounded-lg overflow-hidden shadow-2xl"
             style={{ width: 'min(66.67vw, 100vw - 2rem)', maxHeight: '90vh' }}
           >
-            {/* Video Player - FIXED: Dynamic aspect ratio + object-cover for no black bars */}
+            {/* Video Player - FIXED: Dynamic aspect ratio using actual video dimensions */}
             <div 
               className="relative bg-black"
-              style={{
-                aspectRatio: lightboxVideo ? `${lightboxVideo.videoWidth || 16} / ${lightboxVideo.videoHeight || 9}` : '16 / 9'
-              }}
               ref={(containerRef) => {
                 if (containerRef && lightboxVideo) {
-                  console.log('🎬 LIGHTBOX VIDEO DEBUG v1.0.57 - Container created:');
+                  console.log('🎬 LIGHTBOX CONTAINER DEBUG v1.0.58 - Container created:');
                   console.log('   - Video filename:', lightboxVideo.videoFilename);
                   console.log('   - Admin dimensions: Width =', lightboxVideo.videoWidth, 'Height =', lightboxVideo.videoHeight);
-                  console.log('   - Calculated aspect ratio:', lightboxVideo.videoWidth || 16, '/', lightboxVideo.videoHeight || 9);
-                  console.log('   - CSS aspect-ratio value:', `${lightboxVideo.videoWidth || 16} / ${lightboxVideo.videoHeight || 9}`);
-                  console.log('   - Container computed style:', window.getComputedStyle(containerRef).aspectRatio);
-                  console.log('   - Container dimensions:', containerRef.offsetWidth, 'x', containerRef.offsetHeight);
+                  console.log('   - Container will be resized when video loads with actual dimensions');
+                  
+                  // Set initial aspect ratio from admin data, will be updated when video loads
+                  const initialAspectRatio = `${lightboxVideo.videoWidth || 16} / ${lightboxVideo.videoHeight || 9}`;
+                  containerRef.style.aspectRatio = initialAspectRatio;
+                  console.log('   - Initial aspect ratio set to:', initialAspectRatio);
                 }
               }}
             >
@@ -559,6 +558,15 @@ export default function GallerySection() {
                   console.log('   - Admin stored height:', lightboxVideo.videoHeight);
                   console.log('   - Admin stored aspect ratio:', (lightboxVideo.videoWidth || 16) / (lightboxVideo.videoHeight || 9));
                   console.log('   - DIMENSION MISMATCH:', video.videoWidth !== lightboxVideo.videoWidth || video.videoHeight !== lightboxVideo.videoHeight);
+                  
+                  // CRITICAL FIX: Update container aspect ratio to match actual video dimensions
+                  const container = video.parentElement;
+                  if (container && video.videoWidth && video.videoHeight) {
+                    const actualAspectRatio = `${video.videoWidth} / ${video.videoHeight}`;
+                    container.style.aspectRatio = actualAspectRatio;
+                    console.log('🔧 FIXED: Container aspect ratio updated to actual video dimensions:', actualAspectRatio);
+                    console.log('   - Container should now perfectly match video with no black bars or cropping');
+                  }
                 }}
                 style={{ backgroundColor: 'black' }}
               >
