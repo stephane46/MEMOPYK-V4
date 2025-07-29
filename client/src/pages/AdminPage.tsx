@@ -8,7 +8,7 @@ import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
 import { Badge } from '@/components/ui/badge';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
-import { ArrowUp, ArrowDown, Play, RefreshCw, BarChart3, Video, HardDrive, Users, MessageSquare, FileText, LogOut, TestTube, Rocket, X, Type, Save, Palette, ChevronUp, ChevronDown, Trash2, Eye, EyeOff, Upload, FileVideo, Database, Check, Zap } from 'lucide-react';
+import { ArrowUp, ArrowDown, Play, RefreshCw, BarChart3, Video, HardDrive, Users, MessageSquare, FileText, LogOut, TestTube, Rocket, X, Type, Save, Palette, ChevronUp, ChevronDown, Trash2, Eye, EyeOff, Upload, FileVideo, Database, Check, Zap, Search } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import GalleryManagement from '@/components/admin/GalleryManagement';
 import { ContactManagement } from '@/components/admin/ContactManagement';
@@ -17,6 +17,7 @@ import { LegalDocumentManagement } from '@/components/admin/LegalDocumentManagem
 import { CtaManagement } from '@/components/admin/CtaManagement';
 import { AnalyticsDashboard } from '@/components/admin/AnalyticsDashboard';
 import VideoCacheStatus from '@/components/admin/VideoCacheStatus';
+import SeoManagement from '@/components/admin/SeoManagement';
 import CryptoJS from 'crypto-js';
 
 
@@ -150,6 +151,7 @@ export default function AdminPage() {
     { id: 'faq', label: 'FAQ', icon: MessageSquare },
     { id: 'cta', label: 'CTA Buttons', icon: Zap },
     { id: 'legal-docs', label: 'Documents Légaux', icon: FileText },
+    { id: 'seo-management', label: 'SEO Management', icon: Search },
     { id: 'analytics', label: 'Analytiques', icon: BarChart3 },
     { id: 'tests', label: 'Tests', icon: TestTube },
     { id: 'deployment', label: 'Déploiement', icon: Rocket },
@@ -1256,6 +1258,11 @@ export default function AdminPage() {
             <div className="space-y-6">
               <LegalDocumentManagement />
             </div>
+          )}
+
+          {/* SEO Management */}
+          {activeSection === 'seo-management' && (
+            <SeoManagement />
           )}
 
           {/* Tests */}
