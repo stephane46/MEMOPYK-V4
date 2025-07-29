@@ -256,6 +256,7 @@ export function VideoOverlay({ videoUrl, title, width, height, orientation, onCl
         <video
           ref={videoRef}
           className="w-full h-full object-cover"
+          controls={false}
           onClick={handleVideoClick}
           onPlay={handlePlay}
           onPause={handlePause}
@@ -265,7 +266,7 @@ export function VideoOverlay({ videoUrl, title, width, height, orientation, onCl
           }}
           onError={handleVideoError}
           onLoadStart={() => {
-            console.log(`🎬 VIDEO OVERLAY 80% VIEWPORT SIZING (v1.0.61): loadstart`);
+            console.log(`🎬 VIDEO OVERLAY 80% VIEWPORT SIZING (v1.0.62): loadstart - NO BROWSER CONTROLS`);
             console.log(`   - Video URL: "${videoUrl}"`);
             console.log(`   - Title: "${title}"`);
             console.log(`   - Container: ${videoDimensions.width}x${videoDimensions.height}px`);
@@ -275,6 +276,7 @@ export function VideoOverlay({ videoUrl, title, width, height, orientation, onCl
             console.log(`   - Aspect Ratio: ${width}/${height} = ${(width/height).toFixed(3)}`);
             console.log(`   - Container Aspect Ratio: ${(videoDimensions.width/videoDimensions.height).toFixed(3)}`);
             console.log(`   - Using 80% viewport scaling with object-cover for no black bars`);
+            console.log(`   - Browser controls disabled: controls={false}, no fullscreen, no download, no context menu`);
           }}
           onCanPlay={() => {
             console.log(`✅ VIDEO OVERLAY FINAL FIX (v1.0.16): canplay - ${videoUrl}`);
@@ -288,7 +290,8 @@ export function VideoOverlay({ videoUrl, title, width, height, orientation, onCl
           preload="metadata"
           playsInline
           disablePictureInPicture
-          controlsList="nodownload nofullscreen noremoteplayback"
+          disableRemotePlayback
+          controlsList="nodownload nofullscreen noremoteplayback noplaybackrate"
           onContextMenu={(e) => e.preventDefault()}
         >
           <source src={videoUrl} type="video/mp4" />
