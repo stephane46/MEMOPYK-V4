@@ -516,10 +516,10 @@ export default function SeoManagement() {
 
       {/* Robots.txt Edit Dialog */}
       <Dialog open={showRobotsDialog} onOpenChange={setShowRobotsDialog}>
-        <DialogContent className="max-w-2xl">
+        <DialogContent className="max-w-2xl bg-white dark:bg-gray-900 border shadow-lg">
           <DialogHeader>
-            <DialogTitle>Edit Robots.txt</DialogTitle>
-            <DialogDescription>
+            <DialogTitle className="text-gray-900 dark:text-gray-100">Edit Robots.txt</DialogTitle>
+            <DialogDescription className="text-gray-600 dark:text-gray-400">
               Configure search engine crawler access to your website
             </DialogDescription>
           </DialogHeader>
@@ -529,10 +529,10 @@ export default function SeoManagement() {
               onChange={(e) => setRobotsContent(e.target.value)}
               placeholder="User-agent: *&#10;Disallow: /admin&#10;Allow: /&#10;&#10;Sitemap: https://memopyk.com/sitemap.xml"
               rows={12}
-              className="font-mono text-sm"
+              className="font-mono text-sm bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-600 text-gray-900 dark:text-gray-100"
             />
           </div>
-          <DialogFooter>
+          <DialogFooter className="bg-gray-50 dark:bg-gray-800 -mx-6 -mb-6 px-6 py-4 rounded-b-lg">
             <Button variant="outline" onClick={() => setShowRobotsDialog(false)}>
               Cancel
             </Button>
@@ -553,21 +553,21 @@ export default function SeoManagement() {
 
       {/* View Robots.txt Dialog */}
       <Dialog open={showViewRobotsDialog} onOpenChange={setShowViewRobotsDialog}>
-        <DialogContent className="max-w-2xl">
+        <DialogContent className="max-w-2xl bg-white dark:bg-gray-900 border shadow-lg">
           <DialogHeader>
-            <DialogTitle>Current Robots.txt Content</DialogTitle>
-            <DialogDescription>
+            <DialogTitle className="text-gray-900 dark:text-gray-100">Current Robots.txt Content</DialogTitle>
+            <DialogDescription className="text-gray-600 dark:text-gray-400">
               View the current robots.txt file content served to search engines
             </DialogDescription>
           </DialogHeader>
           <div className="py-4">
-            <div className="bg-gray-50 dark:bg-gray-800 rounded-lg p-4 border">
+            <div className="bg-gray-50 dark:bg-gray-800 rounded-lg p-4 border border-gray-200 dark:border-gray-700">
               <pre className="text-sm font-mono whitespace-pre-wrap text-gray-800 dark:text-gray-200">
                 {viewRobotsContent || 'No robots.txt content found'}
               </pre>
             </div>
           </div>
-          <DialogFooter>
+          <DialogFooter className="bg-gray-50 dark:bg-gray-800 -mx-6 -mb-6 px-6 py-4 rounded-b-lg">
             <Button variant="outline" onClick={() => setShowViewRobotsDialog(false)}>
               Close
             </Button>
