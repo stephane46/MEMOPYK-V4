@@ -1268,7 +1268,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Production Error Logging System - NEW v1.0.43
+  // Production Error Logging System - ENHANCED v1.0.45
   const productionErrorLog: any[] = [];
   const maxLogEntries = 50;
 
@@ -1281,7 +1281,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         code: error.code || 'unknown'
       },
       context,
-      version: 'v1.0.43-enhanced-debugging'
+      version: 'v1.0.45-final-stage-logging'
     };
     
     productionErrorLog.unshift(logEntry);
@@ -1296,7 +1296,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.get("/api/debug/production-errors", (req, res) => {
     console.log("🔍 PRODUCTION ERROR LOG REQUEST");
     res.json({
-      version: "v1.0.43-enhanced-debugging",
+      version: "v1.0.45-final-stage-logging",
       timestamp: new Date().toISOString(),
       environment: process.env.NODE_ENV,
       totalErrors: productionErrorLog.length,
@@ -1309,7 +1309,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     });
   });
 
-  // VIDEO DIAGNOSTIC ENDPOINT - v1.0.43
+  // VIDEO DIAGNOSTIC ENDPOINT - v1.0.45
   app.get("/api/video-debug", async (req, res) => {
     const filename = req.query.filename as string;
     
@@ -1320,7 +1320,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
 
     const diagnosticReport: any = {
-      version: "v1.0.43-enhanced-debugging",
+      version: "v1.0.45-final-stage-logging",
       timestamp: new Date().toISOString(),
       requestedFilename: filename,
       environment: {
@@ -1442,13 +1442,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // EMERGENCY GALLERY VIDEO DEBUG ROUTE - v1.0.43
+  // EMERGENCY GALLERY VIDEO DEBUG ROUTE - v1.0.45
   app.get("/api/debug-gallery-video", (req, res) => {
-    console.log("🔍 EMERGENCY DEBUG ROUTE HIT - v1.0.43");
-    console.log("   - Current version should be v1.0.43");
+    console.log("🔍 EMERGENCY DEBUG ROUTE HIT - v1.0.45");
+    console.log("   - Current version should be v1.0.45");
     console.log("   - Gallery video proxy route should work");
     res.json({ 
-      version: "v1.0.43-enhanced-debugging",
+      version: "v1.0.45-final-stage-logging",
       message: "Debug route working",
       timestamp: new Date().toISOString(),
       videoProxyRouteExists: true,
@@ -1458,14 +1458,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
     });
   });
 
-  // Video streaming proxy with GALLERY VIDEO FIX - v1.0.34
+  // Video streaming proxy with FINAL-STAGE LOGGING - v1.0.45
   app.get("/api/video-proxy", async (req, res) => {
     // GALLERY VIDEO DETECTION - Track all requests at entry point
     const filename = req.query.filename as string;
     const isGalleryVideo = filename && (filename.includes('-') || filename.includes('1753'));
     const isHeroVideo = filename && (filename.includes('VideoHero') || filename.includes('Hero'));
     
-    console.log(`🔥 VIDEO PROXY ENTRY v1.0.34 - REQUEST RECEIVED:`);
+    console.log(`🔥 VIDEO PROXY ENTRY v1.0.45 - REQUEST RECEIVED:`);
     console.log(`   - Raw URL: ${req.url}`);
     console.log(`   - Filename: "${filename}"`);
     console.log(`   - Is Gallery Video: ${isGalleryVideo}`);
@@ -1490,7 +1490,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
           message: error.message,
           isGalleryVideo,
           filename,
-          version: "v1.0.34-gallery-fix",
+          version: "v1.0.45-final-stage-logging",
           timestamp: new Date().toISOString()
         });
       }
@@ -1504,7 +1504,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       const { url } = req.query;
       
-      console.log(`🎬 VIDEO PROXY REQUEST DEBUG v1.0.34:`);
+      console.log(`🎬 VIDEO PROXY REQUEST DEBUG v1.0.45:`);
       console.log(`   - Filename: "${filename}"`);
       console.log(`   - URL param: "${url}"`);
       console.log(`   - Range header: "${req.headers.range}"`);
@@ -1685,8 +1685,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
           const chunksize = (end - start) + 1;
           console.log(`   - Range: ${start}-${end}, chunk size: ${chunksize}`);
 
-          // PRODUCTION DEBUG: Add comprehensive file reading logging
-          console.log(`🎯 PRODUCTION STREAM DEBUG v1.0.43 - About to serve video:`, {
+          // FINAL-STAGE LOGGING v1.0.45 - Comprehensive debug before streaming
+          console.log(`🎯 PRODUCTION STREAM DEBUG v1.0.45 - About to serve video:`, {
             filename: videoFilename,
             fullPath: cachedVideo,
             fileExists: existsSync(cachedVideo),
@@ -1697,7 +1697,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
             cwd: process.cwd(),
             __dirname: __dirname,
             nodeEnv: process.env.NODE_ENV,
-            version: "v1.0.43-enhanced-debugging"
+            version: "v1.0.45-final-stage-logging"
           });
 
           // Test file existence just before reading
@@ -1767,7 +1767,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
               details: streamCreateError.message,
               filename: videoFilename,
               path: cachedVideo,
-              version: 'v1.0.43-enhanced-debugging'
+              version: 'v1.0.45-final-stage-logging'
             });
           }
           
@@ -1997,7 +1997,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
           error: "Video streaming failed",
           filename: filename,
           details: error.message,
-          version: "Gallery Video Fix v1.0.18-full-headers",
+          version: "v1.0.45-final-stage-logging",
           rangeHeader: req.headers.range,
           acceptHeader: req.headers.accept,
           acceptEncoding: req.headers['accept-encoding'],
