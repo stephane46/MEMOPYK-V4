@@ -497,15 +497,42 @@ export default function GallerySection() {
             className="relative w-full max-w-4xl mx-auto bg-black rounded-lg overflow-hidden shadow-2xl"
             style={{ width: 'min(66.67vw, 100vw - 2rem)', maxHeight: '90vh' }}
           >
-            {/* Video Player */}
-            <div className="relative aspect-video bg-black">
+            {/* Video Player - FIXED: Dynamic aspect ratio + object-cover for no black bars */}
+            <div 
+              className="relative bg-black"
+              style={{
+                aspectRatio: lightboxVideo ? `${lightboxVideo.videoWidth || 16} / ${lightboxVideo.videoHeight || 9}` : '16 / 9'
+              }}
+              ref={(containerRef) => {
+                if (containerRef && lightboxVideo) {
+                  console.log('🎬 LIGHTBOX VIDEO DEBUG v1.0.57 - Container created:');
+                  console.log('   - Video filename:', lightboxVideo.videoFilename);
+                  console.log('   - Admin dimensions: Width =', lightboxVideo.videoWidth, 'Height =', lightboxVideo.videoHeight);
+                  console.log('   - Calculated aspect ratio:', lightboxVideo.videoWidth || 16, '/', lightboxVideo.videoHeight || 9);
+                  console.log('   - CSS aspect-ratio value:', `${lightboxVideo.videoWidth || 16} / ${lightboxVideo.videoHeight || 9}`);
+                  console.log('   - Container computed style:', window.getComputedStyle(containerRef).aspectRatio);
+                  console.log('   - Container dimensions:', containerRef.offsetWidth, 'x', containerRef.offsetHeight);
+                }
+              }}
+            >
               <video
-                className="w-full h-full object-contain"
+                className="w-full h-full object-cover"
                 controls
                 autoPlay
-                controlsList="nodownload nofullscreen noremoteplayback"
+                controlsList="nodownload nofullscreen noremoteplaybook"
                 disablePictureInPicture
                 onContextMenu={(e) => e.preventDefault()}
+                onClick={(e) => {
+                  // Click-to-play/pause functionality
+                  const video = e.target as HTMLVideoElement;
+                  if (video.paused) {
+                    video.play();
+                    console.log('▶️ Video resumed via click');
+                  } else {
+                    video.pause();
+                    console.log('⏸️ Video paused via click');
+                  }
+                }}
                 onError={(e) => {
                   console.error('❌ VIDEO PLAYBACK ERROR:', e);
                   console.error('❌ Video source URL:', lightboxVideo.lightboxVideoUrl);
