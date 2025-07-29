@@ -62,7 +62,9 @@ export default function SeoManagement() {
   const [customMetaTags, setCustomMetaTags] = useState('');
   const [seoScore, setSeoScore] = useState(75);
   const [showRobotsDialog, setShowRobotsDialog] = useState(false);
+  const [showViewRobotsDialog, setShowViewRobotsDialog] = useState(false);
   const [robotsContent, setRobotsContent] = useState('');
+  const [viewRobotsContent, setViewRobotsContent] = useState('');
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
@@ -173,6 +175,22 @@ export default function SeoManagement() {
   const saveRobotsTxt = () => {
     updateGlobalMutation.mutate({ robotsTxt: robotsContent });
     setShowRobotsDialog(false);
+  };
+
+  const viewRobotsTxt = async () => {
+    try {
+      // Fetch current robots.txt content from API
+      const response = await fetch('/api/seo/robots.txt');
+      const content = await response.text();
+      setViewRobotsContent(content);
+      setShowViewRobotsDialog(true);
+    } catch (error) {
+      toast({ 
+        title: "Erreur", 
+        description: "Impossible de charger le contenu robots.txt", 
+        variant: "destructive" 
+      });
+    }
   };
 
   const getCurrentTitle = () => {
@@ -427,7 +445,7 @@ export default function SeoManagement() {
                       size="sm" 
                       variant="outline" 
                       className="text-xs"
-                      onClick={() => window.open('/robots.txt', '_blank')}
+                      onClick={viewRobotsTxt}
                     >
                       VIEW
                     </Button>
@@ -528,6 +546,30 @@ export default function SeoManagement() {
                 <Save className="h-4 w-4 mr-2" />
               )}
               Save Robots.txt
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* View Robots.txt Dialog */}
+      <Dialog open={showViewRobotsDialog} onOpenChange={setShowViewRobotsDialog}>
+        <DialogContent className="max-w-2xl">
+          <DialogHeader>
+            <DialogTitle>Current Robots.txt Content</DialogTitle>
+            <DialogDescription>
+              View the current robots.txt file content served to search engines
+            </DialogDescription>
+          </DialogHeader>
+          <div className="py-4">
+            <div className="bg-gray-50 dark:bg-gray-800 rounded-lg p-4 border">
+              <pre className="text-sm font-mono whitespace-pre-wrap text-gray-800 dark:text-gray-200">
+                {viewRobotsContent || 'No robots.txt content found'}
+              </pre>
+            </div>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setShowViewRobotsDialog(false)}>
+              Close
             </Button>
           </DialogFooter>
         </DialogContent>
