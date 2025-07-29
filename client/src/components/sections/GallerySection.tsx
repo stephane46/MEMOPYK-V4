@@ -548,8 +548,17 @@ export default function GallerySection() {
                 onCanPlay={() => {
                   console.log('✅ Video can play:', lightboxVideo.lightboxVideoUrl);
                 }}
-                onLoadedData={() => {
+                onLoadedData={(e) => {
                   console.log('✅ Video data loaded:', lightboxVideo.lightboxVideoUrl);
+                  const video = e.target as HTMLVideoElement;
+                  console.log('🎬 ACTUAL VIDEO DIMENSIONS DEBUG v1.0.58:');
+                  console.log('   - Video natural width:', video.videoWidth);
+                  console.log('   - Video natural height:', video.videoHeight);
+                  console.log('   - Actual video aspect ratio:', video.videoWidth / video.videoHeight);
+                  console.log('   - Admin stored width:', lightboxVideo.videoWidth);
+                  console.log('   - Admin stored height:', lightboxVideo.videoHeight);
+                  console.log('   - Admin stored aspect ratio:', (lightboxVideo.videoWidth || 16) / (lightboxVideo.videoHeight || 9));
+                  console.log('   - DIMENSION MISMATCH:', video.videoWidth !== lightboxVideo.videoWidth || video.videoHeight !== lightboxVideo.videoHeight);
                 }}
                 style={{ backgroundColor: 'black' }}
               >
