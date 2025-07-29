@@ -1509,7 +1509,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
           console.log(`   - Range: ${start}-${end}, chunk size: ${chunksize}`);
 
           // PRODUCTION DEBUG: Add comprehensive file reading logging
-          console.log(`🎯 PRODUCTION STREAM DEBUG - About to serve video:`, {
+          console.log(`🎯 PRODUCTION STREAM DEBUG v1.0.43 - About to serve video:`, {
             filename: videoFilename,
             fullPath: cachedVideo,
             fileExists: existsSync(cachedVideo),
@@ -1518,7 +1518,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
             rangeEnd: end,
             chunkSize: chunksize,
             cwd: process.cwd(),
-            __dirname: __dirname
+            __dirname: __dirname,
+            nodeEnv: process.env.NODE_ENV,
+            version: "v1.0.43-enhanced-debugging"
           });
 
           // Test file existence just before reading
@@ -1557,7 +1559,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
           });
           
           stream.on('error', (error) => {
-            console.error(`❌ STREAM ERROR CAUGHT for ${videoFilename}:`, {
+            console.error(`❌ PRODUCTION STREAM ERROR v1.0.43 for ${videoFilename}:`, {
+              version: "v1.0.43-enhanced-debugging",
               errorType: error.constructor.name,
               errorMessage: error.message,
               errorCode: (error as any).code || 'unknown',
@@ -1567,6 +1570,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
               fileStats: existsSync(cachedVideo) ? statSync(cachedVideo) : 'FILE_NOT_FOUND',
               headersSent: res.headersSent,
               rangeDetails: { start, end, chunksize },
+              environmentInfo: {
+                nodeEnv: process.env.NODE_ENV,
+                cwd: process.cwd(),
+                __dirname: __dirname
+              },
               requestInfo: {
                 method: req.method,
                 range: req.headers.range,
