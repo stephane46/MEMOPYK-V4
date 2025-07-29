@@ -709,13 +709,23 @@ export class VideoCache {
       for (const filename of uniqueFilenames) {
         try {
           console.log(`🔍 Checking cache status for video: ${filename}`);
-          if (!this.isVideoCached(filename)) {
+          const cacheFile = this.getVideoCacheFilePath(filename);
+          const fileExists = this.isVideoCached(filename);
+          console.log(`📂 DEPLOYMENT CHECK - File: ${filename}, Exists: ${fileExists}, Path: ${cacheFile}`);
+          
+          if (!fileExists) {
             console.log(`⬇️ UNIVERSAL DOWNLOAD v1.0.40 - Preloading video: ${filename}`);
             await this.downloadAndCacheVideo(filename);
             videosProcessed++;
+            
+            // CRITICAL: Verify file was actually written after download
+            const postDownloadExists = this.isVideoCached(filename);
+            const postDownloadSize = postDownloadExists ? statSync(cacheFile).size : 0;
+            console.log(`📂 POST-DOWNLOAD VERIFICATION - File: ${filename}, Exists: ${postDownloadExists}, Size: ${postDownloadSize} bytes`);
             console.log(`✅ SUCCESS: Video cached: ${filename}`);
           } else {
-            console.log(`✅ Video already cached: ${filename}`);
+            const fileSize = statSync(cacheFile).size;
+            console.log(`✅ Video already cached: ${filename} (${fileSize} bytes)`);
           }
         } catch (error) {
           videoErrors++;
@@ -871,8 +881,19 @@ export class VideoCache {
         });
         
         writeStream.on('finish', () => {
+          // CRITICAL: Verify file was actually written to disk
+          const fileExists = existsSync(cacheFile);
+          const fileSize = fileExists ? statSync(cacheFile).size : 0;
           console.log(`✅ Successfully cached: ${cleanFilename}`);
-          resolve();
+          console.log(`📂 DEPLOYMENT VERIFICATION - Cache file exists: ${fileExists}, size: ${fileSize} bytes`);
+          console.log(`📂 Cache file path: ${cacheFile}`);
+          
+          if (!fileExists) {
+            console.error(`🚨 CRITICAL: Cache file was not written to disk! Path: ${cacheFile}`);
+            reject(new Error(`Cache file was not written to disk: ${cacheFile}`));
+          } else {
+            resolve();
+          }
         });
         
         if (response.body) {

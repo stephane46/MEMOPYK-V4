@@ -3036,6 +3036,73 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // CRITICAL: File existence verification for deployment debugging
+  app.get('/api/debug/cache-files', async (req, res) => {
+    try {
+      const fs = require('fs');
+      const path = require('path');
+      
+      const cacheDir = path.join(process.cwd(), 'server', 'cache', 'videos');
+      const galleryFiles = ['VitaminSeaC.mp4', 'PomGalleryC.mp4', 'safari-1.mp4'];
+      const heroFiles = ['VideoHero1.mp4', 'VideoHero2.mp4', 'VideoHero3.mp4'];
+      
+      const fileStatus = {};
+      
+      // Check if cache directory exists
+      const cacheDirExists = fs.existsSync(cacheDir);
+      fileStatus.cacheDirectory = {
+        path: cacheDir,
+        exists: cacheDirExists,
+        absolutePath: path.resolve(cacheDir)
+      };
+      
+      if (cacheDirExists) {
+        const cachedFiles = fs.readdirSync(cacheDir);
+        fileStatus.cachedFiles = cachedFiles;
+        
+        // Check each gallery file
+        for (const filename of galleryFiles) {
+          const cacheFile = videoCache.getVideoCacheFilePath(filename);
+          const exists = fs.existsSync(cacheFile);
+          const size = exists ? fs.statSync(cacheFile).size : 0;
+          
+          fileStatus[filename] = {
+            exists,
+            size,
+            path: cacheFile,
+            relativePath: path.relative(process.cwd(), cacheFile)
+          };
+        }
+        
+        // Check each hero file
+        for (const filename of heroFiles) {
+          const cacheFile = videoCache.getVideoCacheFilePath(filename);
+          const exists = fs.existsSync(cacheFile);
+          const size = exists ? fs.statSync(cacheFile).size : 0;
+          
+          fileStatus[filename] = {
+            exists,
+            size,
+            path: cacheFile,
+            relativePath: path.relative(process.cwd(), cacheFile)
+          };
+        }
+      }
+      
+      res.json({
+        timestamp: new Date().toISOString(),
+        nodeEnv: process.env.NODE_ENV,
+        workingDirectory: process.cwd(),
+        cacheStats: videoCache.getCacheStats(),
+        fileStatus
+      });
+      
+    } catch (error) {
+      console.error('❌ Cache files debug error:', error);
+      res.status(500).json({ error: error.message, stack: error.stack });
+    }
+  });
+
   console.log("📋 Video proxy, image proxy, cache endpoints, and diagnostic endpoint registered");
 
   return createServer(app);
