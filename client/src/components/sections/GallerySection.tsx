@@ -457,6 +457,44 @@ export default function GallerySection() {
 
 
 
+        {/* DEBUG: Simple Video Player Test */}
+        <div className="mt-16 p-8 bg-yellow-50 border-2 border-yellow-200 rounded-lg">
+          <h3 className="text-xl font-bold mb-4 text-gray-800">🧪 Simple Video Test - Direct API Test</h3>
+          <p className="text-sm text-gray-600 mb-4">Testing direct video proxy URLs to verify backend functionality</p>
+          
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            {galleryItems.slice(0, 3).map((item, index) => {
+              const videoFilename = item.video_filename || item.videoUrlEn || item.videoUrlFr;
+              const videoUrl = `/api/video-proxy?filename=${videoFilename}`;
+              
+              return (
+                <div key={item.id} className="border border-gray-300 rounded p-4">
+                  <div className="text-sm font-medium mb-2">Video {index + 1}: {getItemTitle(item)}</div>
+                  <div className="text-xs text-gray-500 mb-2">File: {videoFilename}</div>
+                  <video 
+                    controls 
+                    className="w-full h-32 bg-black rounded"
+                    preload="none"
+                  >
+                    <source src={videoUrl} type="video/mp4" />
+                    Your browser does not support video playback.
+                  </video>
+                  <div className="mt-2">
+                    <a 
+                      href={videoUrl} 
+                      target="_blank" 
+                      rel="noopener noreferrer"
+                      className="text-xs text-blue-600 hover:underline"
+                    >
+                      Direct URL Test
+                    </a>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+
         {/* View All Button */}
         {galleryItems.length > 6 && (
           <div className="text-center">
