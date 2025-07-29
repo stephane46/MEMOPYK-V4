@@ -494,8 +494,7 @@ export default function GallerySection() {
         >
           {/* Video Container - 2/3 screen width, centered */}
           <div 
-            className="relative w-full max-w-4xl mx-auto bg-black rounded-lg overflow-hidden shadow-2xl"
-            style={{ width: 'min(66.67vw, 100vw - 2rem)', maxHeight: '90vh' }}
+            className="relative mx-auto bg-black rounded-lg overflow-hidden shadow-2xl"
           >
             {/* Video Player - FIXED: 2/3 viewport scaling with correct aspect ratio */}
             <div 
