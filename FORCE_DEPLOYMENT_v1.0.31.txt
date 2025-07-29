@@ -1,0 +1,1 @@
+DEPLOYMENT FORCE v1.0.31 - hasVideo function fixed to check videoFilename field instead of videoUrlEn/videoUrlFr
