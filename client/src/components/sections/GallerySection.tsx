@@ -3,7 +3,7 @@ import { useState, useEffect } from "react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Play, Eye, Star, ArrowRight, Image as ImageIcon, Film, Users, Clock } from "lucide-react";
+import { Play, Eye, Star, ArrowRight, Image as ImageIcon, Film, Users, Clock, Smartphone, Monitor, Instagram } from "lucide-react";
 import { VideoOverlay } from "@/components/gallery/VideoOverlay";
 // Gallery item interface matching the new schema
 interface GalleryItem {
@@ -227,6 +227,45 @@ export default function GallerySection() {
     return directCdnUrl;
   };
 
+  // Get optimal viewing format info for marketing display
+  const getViewingFormat = (item: GalleryItem) => {
+    const width = item.videoWidth || 16;
+    const height = item.videoHeight || 9;
+    const aspectRatio = width / height;
+    
+    if (aspectRatio < 0.6) {
+      // Very tall portrait (9:16 like TikTok/Stories)
+      return {
+        platform: language === 'fr-FR' ? "Réseaux Sociaux" : "Social Media",
+        type: language === 'fr-FR' ? "Stories Mobiles" : "Mobile Stories",
+        icon: Smartphone,
+        color: "bg-pink-500",
+        textColor: "text-pink-600",
+        formats: language === 'fr-FR' ? ["TikTok", "Instagram Stories", "YouTube Shorts"] : ["TikTok", "Instagram Stories", "YouTube Shorts"]
+      };
+    } else if (aspectRatio < 1) {
+      // Portrait but not as tall (4:5 like Instagram feed)
+      return {
+        platform: language === 'fr-FR' ? "Réseaux Sociaux" : "Social Feed",
+        type: language === 'fr-FR' ? "Posts Instagram" : "Instagram Posts",
+        icon: Instagram,
+        color: "bg-purple-500", 
+        textColor: "text-purple-600",
+        formats: language === 'fr-FR' ? ["Instagram Feed", "Facebook Posts", "Pinterest"] : ["Instagram Feed", "Facebook Posts", "Pinterest"]
+      };
+    } else {
+      // Landscape (16:9 TV format)
+      return {
+        platform: language === 'fr-FR' ? "Professionnel" : "Professional",
+        type: language === 'fr-FR' ? "TV & Bureau" : "TV & Desktop",
+        icon: Monitor,
+        color: "bg-blue-500",
+        textColor: "text-blue-600", 
+        formats: language === 'fr-FR' ? ["YouTube", "Affichage TV", "Présentations"] : ["YouTube", "TV Display", "Presentations"]
+      };
+    }
+  };
+
   const handlePlayClick = (item: GalleryItem, e: React.MouseEvent, index: number) => {
     e.preventDefault();
     e.stopPropagation();
@@ -367,6 +406,21 @@ export default function GallerySection() {
                               <div className="text-xs text-gray-300">provided by Client</div>
                             </div>
                           )}
+
+                          {/* Top-right Viewing Format Badge - Marketing Feature */}
+                          {(() => {
+                            const format = getViewingFormat(item);
+                            const IconComponent = format.icon;
+                            return (
+                              <div className={`absolute top-4 right-4 ${format.color} text-white px-3 py-2 rounded-full text-xs font-medium backdrop-blur-sm flex items-center gap-2 shadow-lg`}>
+                                <IconComponent className="w-4 h-4" />
+                                <div>
+                                  <div className="font-bold leading-tight">{format.platform}</div>
+                                  <div className="text-xs opacity-90 leading-tight">{format.type}</div>
+                                </div>
+                              </div>
+                            );
+                          })()}
 
                           {/* Price Tag - Bottom Right (3) */}
                           {getItemPrice(item) && (
