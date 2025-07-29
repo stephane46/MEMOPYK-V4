@@ -50,6 +50,23 @@ Preferred communication style: Simple, everyday language.
 - ✅ **Complete Tracking Prevention**: Updated useVideoAnalytics hook to stop tracking hero videos entirely at source
 - ✅ **Frontend Exclusion**: Video player components now skip analytics calls for hero videos automatically
 
+## Recent Changes (July 29, 2025)
+
+### DEPLOYMENT PIPELINE ISSUE CONFIRMED - v1.0.31.1 (July 29, 2025)
+**Critical Production Deployment Problem - Code Not Reaching Production:**
+🔍 **Issue Confirmed**: Production deployment completed successfully but updated frontend code is NOT being served
+🔍 **Evidence**: Development console shows `hasVideoResult: true` for all 3 gallery items, production still shows "Vidéo Non Disponible"
+🔍 **Root Cause**: Replit Deploy bundling/caching issue preventing updated frontend from reaching production environment
+🔍 **Multiple Attempts**: 50+ deployment attempts over 2 weeks, all with same pattern - backend works, frontend updates don't reach production
+🔍 **Next Strategy**: Need alternative deployment approach or Replit Deploy troubleshooting
+
+**Technical Status:**
+- ✅ **Backend Working**: Production API returns correct data with video_filename values
+- ✅ **Development Working**: hasVideo function returns true for all 3 gallery items in dev environment
+- ❌ **Production Frontend**: Still running old code that shows "Vidéo Non Disponible" for all gallery videos
+- ✅ **Build Process**: Clean 7MB production build created successfully
+- ❌ **Deployment Process**: Replit Deploy not serving updated frontend bundle
+
 ## Recent Changes (July 28, 2025)
 
 ### STATIC IMAGE DISPLAY FIX - v1.0.29 (July 28, 2025)
