@@ -26,8 +26,9 @@ const supabase = createClient(
 // Generate signed upload URL for direct Supabase uploads
 async function generateSignedUploadUrl(filename: string, bucket: string): Promise<{ signedUrl: string; publicUrl: string }> {
   try {
-    // Generate unique filename with timestamp
-    const uniqueFilename = `${Date.now()}-${filename}`;
+    // Keep original filename - no timestamp prefix for gallery uploads
+    const uniqueFilename = filename;
+    console.log(`📁 SIGNED UPLOAD URL - Using original filename: ${uniqueFilename}`);
     
     // Create signed URL for upload (expires in 1 hour)
     const { data: signedUrlData, error: signedError } = await supabase.storage
@@ -73,9 +74,10 @@ const videoStorage = multer.diskStorage({
     cb(null, uploadsDir);
   },
   filename: (req, file, cb) => {
-    // Prepend timestamp to avoid name collisions
-    const uniqueName = `${Date.now()}-${file.originalname}`;
-    cb(null, uniqueName);
+    // Keep original filename - no timestamp prefix for gallery videos
+    const originalName = file.originalname;
+    console.log(`📁 GALLERY VIDEO UPLOAD - Using original filename: ${originalName}`);
+    cb(null, originalName);
   }
 });
 
@@ -121,9 +123,10 @@ const imageStorage = multer.diskStorage({
     cb(null, uploadsDir);
   },
   filename: (req, file, cb) => {
-    // Prepend timestamp to avoid name collisions
-    const uniqueName = `${Date.now()}-${file.originalname}`;
-    cb(null, uniqueName);
+    // Keep original filename - no timestamp prefix for gallery images
+    const originalName = file.originalname;
+    console.log(`📁 GALLERY IMAGE UPLOAD - Using original filename: ${originalName}`);
+    cb(null, originalName);
   }
 });
 
