@@ -463,7 +463,7 @@ export default function GallerySection() {
                           const format = getViewingFormat(item);
                           const IconComponent = format.icon;
                           return (
-                            <div className={`${format.color} text-white px-2 py-1 rounded-full text-xs font-medium flex items-center gap-1 shadow-sm`}>
+                            <div className={`${format.color} text-white px-3 py-2 rounded-full text-xs font-medium flex items-center gap-1 shadow-sm`}>
                               <IconComponent className="w-3 h-3" />
                               <div>
                                 <div className="font-bold leading-tight">{format.platform}</div>
