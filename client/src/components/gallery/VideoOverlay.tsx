@@ -323,10 +323,7 @@ export function VideoOverlay({ videoUrl, title, width, height, orientation, onCl
           </div>
         </div>
 
-        {/* Title Overlay */}
-        <div className="absolute top-0 left-0 right-0 bg-gradient-to-b from-black/60 to-transparent p-4">
-          <h3 className="text-white text-lg font-semibold text-center">{title}</h3>
-        </div>
+
       </div>
     </div>
   );
