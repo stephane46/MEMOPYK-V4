@@ -212,6 +212,13 @@ export default function GallerySection() {
   };
 
   const getVideoUrl = (item: GalleryItem, index: number) => {
+    // 🧪 FILENAME TEST v1.0.40: Replace first gallery video with hero filename
+    // This tests if hero-style filenames work in gallery context
+    if (index === 0) {
+      console.log(`🧪 TEST: Using VideoHero1.mp4 for gallery item ${index} instead of ${item.videoFilename}`);
+      return `/api/video-proxy?filename=VideoHero1.mp4`;
+    }
+    
     // TIMESTAMP PREFIX FIX v1.0.38: Use actual gallery video filenames
     // Extract filename from videoFilename field which contains the timestamp-prefixed names
     const filename = item.videoFilename || item.videoUrlEn || item.videoUrlFr;
