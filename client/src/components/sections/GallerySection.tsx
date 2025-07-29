@@ -212,19 +212,14 @@ export default function GallerySection() {
   };
 
   const getVideoUrl = (item: GalleryItem, index: number) => {
-    // INFRASTRUCTURE WORKAROUND v1.0.37: Map gallery videos to working hero videos
-    // Since gallery video requests are blocked at Replit infrastructure level,
-    // temporarily use hero videos which we know work perfectly
-    const heroVideoMapping = [
-      'VideoHero1.mp4', // Gallery item 0 -> Hero video 1
-      'VideoHero2.mp4', // Gallery item 1 -> Hero video 2  
-      'VideoHero3.mp4'  // Gallery item 2 -> Hero video 3
-    ];
+    // TIMESTAMP PREFIX FIX v1.0.38: Use actual gallery video filenames
+    // Extract filename from videoFilename field which contains the timestamp-prefixed names
+    const filename = item.videoFilename || item.videoUrlEn || item.videoUrlFr;
     
-    const heroFilename = heroVideoMapping[index] || 'VideoHero1.mp4';
-    console.log(`🔧 INFRASTRUCTURE WORKAROUND: Gallery item ${index} mapped to ${heroFilename}`);
+    console.log(`🎬 GALLERY VIDEO URL for item ${index}: ${filename}`);
+    console.log(`🔧 Video proxy URL: /api/video-proxy?filename=${filename}`);
     
-    return `/api/video-proxy?filename=${heroFilename}`;
+    return `/api/video-proxy?filename=${filename}`;
   };
 
   const handlePlayClick = (item: GalleryItem, e: React.MouseEvent, index: number) => {
@@ -241,10 +236,10 @@ export default function GallerySection() {
     
     if (hasVideoResult) {
       // Open video in lightbox
-      const workaroundUrl = getVideoUrl(item, index);
+      const videoUrl = getVideoUrl(item, index);
       console.log(`🎬 OPENING LIGHTBOX for ${item.videoFilename}`);
-      console.log(`🔧 Using workaround URL: ${workaroundUrl}`);
-      setLightboxVideo({...item, lightboxVideoUrl: workaroundUrl});
+      console.log(`✅ Using actual gallery video URL: ${videoUrl}`);
+      setLightboxVideo({...item, lightboxVideoUrl: videoUrl});
       // Prevent body scrolling when lightbox is open
       document.body.style.overflow = 'hidden';
     } else {

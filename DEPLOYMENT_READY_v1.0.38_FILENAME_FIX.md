@@ -24,6 +24,12 @@
 - Upload `PomGalleryC.mp4` → stored as `PomGalleryC.mp4`
 - Upload `safari-1.mp4` → stored as `safari-1.mp4`
 
+### Infrastructure Workaround Removed - v1.0.38
+✅ **Root Cause Fixed**: Removed infrastructure workaround that mapped gallery videos to hero videos
+✅ **Actual Gallery Videos**: Gallery now plays actual uploaded videos (VitaminSeaC.mp4, PomGalleryC.mp4, safari-1.mp4)
+✅ **Hero Video Independence**: Gallery and hero videos are now completely separate systems
+✅ **Authentic Content**: Each gallery item plays its own unique video content
+
 ### Auto-Cache System Status
 ✅ **Server Startup Caching**: System automatically caches all videos on server startup
 ✅ **Hero Videos**: VideoHero1.mp4, VideoHero2.mp4, VideoHero3.mp4 pre-cached
