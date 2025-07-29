@@ -190,13 +190,13 @@ export default function GallerySection() {
   };
 
   const getVideoUrl = (item: GalleryItem) => {
-    // HYBRID GALLERY FIX: Map gallery items to corresponding hero videos
-    // This uses the exact same pattern as working hero videos
-    const videoUrl = language === 'fr-FR' ? item.videoUrlFr : item.videoUrlEn;
-    const filename = videoUrl.includes('/') ? videoUrl.split('/').pop() : videoUrl;
+    // GALLERY VIDEO FIX v1.0.30: Use video_filename field and proper URL encoding
+    // Get the actual video filename from the database
+    const filename = item.videoFilename || item.videoUrlEn || item.videoUrlFr;
     
-    // Use hero video filenames that are already cached and working
-    return `/api/video-proxy?filename=${filename}`;
+    // CRITICAL FIX: URL encode the filename for proper query parameter handling
+    // Gallery videos have timestamp prefixes and special characters that need encoding
+    return `/api/video-proxy?filename=${encodeURIComponent(filename)}`;
   };
 
   const handlePlayClick = (item: GalleryItem, e: React.MouseEvent, index: number) => {
