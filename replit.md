@@ -54,9 +54,10 @@ Preferred communication style: Simple, everyday language.
 ### GALLERY VIDEO OVERLAY CLEANUP - COMPLETED (July 29, 2025) ✅ USER REQUEST
 **Simplified Video Lightbox Interface per User Preference:**
 ✅ **Title Overlay Removed**: Eliminated title text display that appeared at top of gallery videos during playback
-✅ **Controls Only Design**: Gallery video lightbox now shows only essential video controls (play/pause, restart, mute, progress bar)
-✅ **Clean Viewing Experience**: Users can focus purely on video content without overlaid text information
-✅ **Maintained Functionality**: All video controls remain fully functional while removing visual clutter
+✅ **Controls Only Design**: Gallery video lightbox now shows only essential video controls (play/pause, progress bar, volume)
+✅ **Removed Menu Options**: Eliminated three-dots menu with download, playback speed, and picture-in-picture options
+✅ **Clean Viewing Experience**: Users can focus purely on video content without overlaid text information or additional menu options
+✅ **Maintained Functionality**: Essential video controls remain fully functional while removing visual clutter
 
 **Technical Implementation:**
 - Modified `client/src/components/gallery/VideoOverlay.tsx` to remove title overlay section

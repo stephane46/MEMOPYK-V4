@@ -503,6 +503,9 @@ export default function GallerySection() {
                 className="w-full h-full object-contain"
                 controls
                 autoPlay
+                controlsList="nodownload nofullscreen noremoteplayback"
+                disablePictureInPicture
+                onContextMenu={(e) => e.preventDefault()}
                 onError={(e) => {
                   console.error('❌ VIDEO PLAYBACK ERROR:', e);
                   console.error('❌ Video source URL:', lightboxVideo.lightboxVideoUrl);
