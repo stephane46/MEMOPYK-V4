@@ -205,7 +205,11 @@ app.use((req, res, next) => {
       index: false
     }));
     
-    app.get("*", (_req: Request, res: Response) => {
+    // Only serve index.html for non-API routes
+    app.get("*", (req: Request, res: Response, next) => {
+      if (req.path.startsWith("/api")) {
+        return next(); // Let API routes be handled by registerRoutes
+      }
       res.sendFile(path.join(clientDist, "index.html"));
     });
     
