@@ -188,7 +188,19 @@ export default function GallerySection() {
     // GALLERY INDEPENDENCE FIX: All gallery items can have video functionality
     // Check video_filename field which contains the actual timestamp-prefixed filenames
     const filename = item.videoFilename || item.videoUrlEn || item.videoUrlFr;
-    return filename && filename.trim() !== '';
+    const hasVideoResult = filename && filename.trim() !== '';
+    
+    // PRODUCTION DEBUG: Log hasVideo results to identify the issue
+    console.log(`🎬 hasVideo check for item ${index}:`, {
+      id: item.id,
+      filename,
+      videoFilename: item.videoFilename,
+      videoUrlEn: item.videoUrlEn,
+      videoUrlFr: item.videoUrlFr,
+      hasVideoResult
+    });
+    
+    return hasVideoResult;
   };
 
   const getVideoUrl = (item: GalleryItem) => {

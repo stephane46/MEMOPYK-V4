@@ -19,3 +19,8 @@
 
 ## Next Step
 Deploy to production immediately to fix gallery video availability
+
+## DEBUG VERSION v1.0.31.1
+- Added comprehensive hasVideo debug logging to identify production issue
+- Will show exactly what data is being passed to hasVideo function
+- Console logs will reveal if data mapping or logic is the problem
