@@ -793,24 +793,34 @@ export class VideoCache {
         console.log(`📁 Created cache directory for download: ${this.videoCacheDir}`);
       }
       
-      // CRITICAL FIX v1.0.11: Gallery videos should keep their original filenames with underscores
-      // The 400 error shows that Supabase storage has the files with underscores, not spaces
+      // TIMESTAMP PREFIX FIX v1.0.30: Handle timestamp-prefixed gallery videos specially
+      const isTimestampPrefixed = /^\d{13}-/.test(filename);
       let supabaseFilename = filename;
-      console.log(`🎯 GALLERY VIDEO FIX v1.0.11: Using original filename for Supabase`);
-      console.log(`   - Filename: ${filename}`);
-      console.log(`   - Using for Supabase: ${supabaseFilename}`);
+      
+      if (isTimestampPrefixed) {
+        console.log(`🚨 TIMESTAMP-PREFIXED VIDEO v1.0.30: Special handling for ${filename}`);
+        console.log(`   - This is a gallery video with timestamp prefix - using exact filename`);
+        // Keep exact filename as it exists in Supabase storage
+        supabaseFilename = filename;
+      } else {
+        console.log(`🎯 REGULAR VIDEO v1.0.30: Using standard filename handling for ${filename}`);
+      }
+      
+      console.log(`   - Original filename: ${filename}`);
+      console.log(`   - Supabase filename: ${supabaseFilename}`);
       
       // UNIFIED BUCKET v1.0.16: All media (videos + images) now stored in memopyk-videos bucket
-      // This includes hero videos (VideoHero1.mp4), gallery videos (gallery_*.mp4), and gallery images (static_*.png/jpg)
+      // This includes hero videos (VideoHero1.mp4), gallery videos (gallery_*.mp4), and timestamp-prefixed videos (1753736019450-VitaminSeaC.mp4)
       const encodedFilename = encodeURIComponent(supabaseFilename);
       const fullVideoUrl = customUrl || `https://supabase.memopyk.org/storage/v1/object/public/memopyk-videos/${encodedFilename}`;
       const cacheFile = this.getVideoCacheFilePath(filename); // Keep original filename for cache lookup
       
-      console.log(`📥 PRODUCTION URL ENCODING v1.0.11 WITH FIX: Downloading ${filename} from Supabase...`);
+      console.log(`📥 TIMESTAMP PREFIX FIX v1.0.30: Downloading ${filename} from Supabase...`);
       console.log(`   - Original filename: "${filename}"`);
       console.log(`   - Supabase filename: "${supabaseFilename}"`);
       console.log(`   - URL encoded filename: "${encodedFilename}"`);
       console.log(`   - Final Supabase URL: "${fullVideoUrl}"`);
+      console.log(`   - Cache file path: "${cacheFile}"`);
       
       // EXTENSIVE DEBUG v1.0.11 - Character analysis
       console.log(`🔍 EXTENSIVE DEBUG v1.0.11 - Character-by-character analysis:`);

@@ -23,6 +23,7 @@ interface GalleryItem {
   sorryMessageFr: string; // "Désolé, nous ne pouvons pas vous montrer la vidéo à ce stade"
   videoUrlEn: string;
   videoUrlFr: string;
+  videoFilename: string; // CRITICAL: timestamp-prefixed filename (1753736019450-VitaminSeaC.mp4)
   videoWidth: number;
   videoHeight: number;
   videoOrientation: string;
@@ -65,6 +66,7 @@ export default function GallerySection() {
         sorryMessageFr: item.sorry_message_fr,
         videoUrlEn: item.video_url_en,
         videoUrlFr: item.video_url_fr,
+        videoFilename: item.video_filename || item.video_url_en || item.video_url_fr, // TIMESTAMP PREFIX FIX
         videoWidth: item.video_width,
         videoHeight: item.video_height,
         videoOrientation: item.video_orientation,
