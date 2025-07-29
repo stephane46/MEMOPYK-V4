@@ -45,6 +45,15 @@ app.use(express.urlencoded({
   parameterLimit: 50000
 }));
 
+// 🔍 DIAGNOSTIC 2: Log ALL Proxy Requests (Before Any Route Logic) 
+app.use('/api/video-proxy', (req, res, next) => {
+  console.log('🔍 RAW VIDEO PROXY ENTRY', req.originalUrl, req.query);
+  console.log('🔍 FILENAME REQUESTED:', req.query.filename);
+  console.log('🔍 USER-AGENT:', req.headers['user-agent']);
+  console.log('🔍 IF THIS LOG APPEARS FOR BLOCKED FILES, THEY REACH EXPRESS');
+  next();
+});
+
 // ULTIMATE REQUEST INTERCEPTOR: Capture ALL requests before ANY processing
 app.use((req, res, next) => {
   // Log EVERY video-proxy request, no matter what
@@ -60,9 +69,9 @@ app.use((req, res, next) => {
     
     // Check if this is any gallery video (updated for current filenames)
     const galleryVideoPatterns = [
-      '1753736019450-VitaminSeaC.mp4',
-      '1753736667497-PomGalleryC.mp4', 
-      '1753736982469-safari-1.mp4'
+      'VitaminSeaC.mp4',
+      'PomGalleryC.mp4', 
+      'safari-1.mp4'
     ];
     
     const isGalleryVideo = galleryVideoPatterns.some(pattern => req.url.includes(pattern));
