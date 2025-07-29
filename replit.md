@@ -52,6 +52,26 @@ Preferred communication style: Simple, everyday language.
 
 ## Recent Changes (July 28, 2025)
 
+### STATIC IMAGE DISPLAY FIX - v1.0.29 (July 28, 2025)
+**Static Image Display Issue Resolution - USER PREFERENCE IMPLEMENTATION:**
+✅ **Root Cause Identified**: Items 2 and 3 were sharing the same static image filename as Item 1
+✅ **URL Handling Fixed**: Enhanced getImageUrl() function to handle both full URLs and filenames consistently
+✅ **User Choice Implemented**: Cleared static_image_url for Items 2 & 3 to null per user preference for manual admin creation
+✅ **Fallback Behavior**: Items 2 & 3 now display their original high-quality images while Item 1 shows its custom cropped static image
+✅ **Admin Ready**: Gallery management interface ready for user to create individual static images for Items 2 & 3
+
+**Technical Implementation:**
+- Fixed getImageUrl() function to properly extract filenames from both full URLs and standalone filenames
+- Set static_image_url to null for "Romantic Sunset Wedding" and "Elegant Garden Celebration"
+- Maintained existing static image for "Our Vitamin Sea" (properly cropped and functional)
+- Enhanced image proxy URL handling for consistent behavior across all gallery items
+
+**User Experience Achievement:**
+- Item 1: Shows custom cropped static image (300x200 thumbnail)
+- Items 2 & 3: Show original high-quality images until user creates custom static images in admin
+- All images load properly through image proxy system with automatic caching
+- Clean separation allows user full control over when to create custom thumbnails
+
 ### ULTIMATE GALLERY UPLOAD SUCCESS - v1.0.28 (July 28, 2025)
 **Complete Gallery Video Upload System - FULLY OPERATIONAL:**
 ✅ **Upload Priority Fix**: Form initialization now prioritizes uploaded filenames over database values (`persistentUploadState` first, database second)
