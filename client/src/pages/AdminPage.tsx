@@ -139,10 +139,10 @@ export default function AdminPage() {
   };
 
   const sidebarItems = [
+    { id: 'contacts', label: 'Contacts', icon: Users },
     { id: 'hero-management', label: 'Gestion Hero', icon: Video },
     { id: 'gallery', label: 'Galerie', icon: Play },
     { id: 'faq', label: 'FAQ', icon: MessageSquare },
-    { id: 'contacts', label: 'Contacts', icon: Users },
     { id: 'cta', label: 'CTA Buttons', icon: Zap },
     { id: 'legal-docs', label: 'Documents Légaux', icon: FileText },
     { id: 'analytics', label: 'Analytiques', icon: BarChart3 },

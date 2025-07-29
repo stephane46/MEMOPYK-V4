@@ -117,12 +117,14 @@ export default function GallerySection() {
   const t = content[language];
 
   const getImageUrl = (item: GalleryItem) => {
-    // Prioritize static image (300x200 cropped) if available, otherwise use regular image
+    // PRIORITY FIX: Always use static image first (admin-created cropped images)
     let imageUrl = '';
     if (item.staticImageUrl && item.staticImageUrl.trim() !== '') {
       imageUrl = item.staticImageUrl;
+      console.log(`🖼️ USING STATIC IMAGE: ${imageUrl} for ${item.titleEn}`);
     } else {
       imageUrl = language === 'fr-FR' ? item.imageUrlFr : item.imageUrlEn;
+      console.log(`🖼️ FALLBACK TO ORIGINAL IMAGE: ${imageUrl} for ${item.titleEn}`);
     }
     
     // Use image proxy for automatic caching
