@@ -13,8 +13,8 @@ import NotFoundPage from './pages/not-found';
 import { queryClient } from './lib/queryClient';
 import { Toaster } from '@/components/ui/toaster';
 
-// GALLERY VIDEO INTERCEPTION DEBUG v1.0.38 - TIMESTAMP PREFIX REMOVAL
-console.log("🚀 MEMOPYK GALLERY VIDEO DEBUG v1.0.38 - TIMESTAMP PREFIX REMOVAL - " + Date.now());
+// GALLERY VIDEO INTERCEPTION DEBUG v1.0.39 - CACHE BUST FIX
+console.log("🚀 MEMOPYK GALLERY VIDEO DEBUG v1.0.39 - CACHE BUST FIX - " + Date.now());
 
 function App() {
   return (

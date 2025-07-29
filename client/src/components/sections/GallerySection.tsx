@@ -49,7 +49,7 @@ export default function GallerySection() {
   
   // Fetch active gallery items with type conversion from snake_case API
   const { data: galleryItems = [], isLoading } = useQuery<any[]>({
-    queryKey: ['/api/gallery'],
+    queryKey: ['/api/gallery', Date.now()], // Force cache bust with timestamp
     staleTime: 0, // Always refetch to get latest static images
     gcTime: 0, // Don't cache to ensure fresh data
     select: (data) => data
