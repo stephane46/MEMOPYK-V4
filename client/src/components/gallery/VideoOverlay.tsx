@@ -248,10 +248,10 @@ export function VideoOverlay({ videoUrl, title, width, height, orientation, onCl
         }}
         onMouseMove={resetControlsTimer}
       >
-        {/* Video Element - FIXED: Use exact hero video structure */}
+        {/* Video Element - NO LETTERBOXING FIX: object-cover eliminates black bars */}
         <video
           ref={videoRef}
-          className="w-full h-full object-contain"
+          className="w-full h-full object-cover"
           onClick={handleVideoClick}
           onPlay={handlePlay}
           onPause={handlePause}
@@ -261,9 +261,13 @@ export function VideoOverlay({ videoUrl, title, width, height, orientation, onCl
           }}
           onError={handleVideoError}
           onLoadStart={() => {
-            console.log(`🎬 VIDEO OVERLAY FINAL FIX (v1.0.16): loadstart`);
+            console.log(`🎬 VIDEO OVERLAY NO LETTERBOXING FIX (v1.0.56): loadstart`);
             console.log(`   - Video URL: "${videoUrl}"`);
             console.log(`   - Title: "${title}"`);
+            console.log(`   - Container: ${videoDimensions.width}x${videoDimensions.height}px`);
+            console.log(`   - Video Dimensions: ${width}x${height}px`);
+            console.log(`   - Orientation: ${orientation}`);
+            console.log(`   - Using object-cover to eliminate black bars`);
           }}
           onCanPlay={() => {
             console.log(`✅ VIDEO OVERLAY FINAL FIX (v1.0.16): canplay - ${videoUrl}`);
