@@ -217,9 +217,9 @@ export default function GallerySection() {
     const filename = item.videoFilename || item.videoUrlEn || item.videoUrlFr;
     
     console.log(`🎬 GALLERY VIDEO URL for item ${index}: ${filename}`);
-    console.log(`🔧 Video proxy URL: /api/video-proxy?filename=${filename}`);
+    console.log(`🔧 Video proxy URL: /api/video-proxy?filename=${encodeURIComponent(filename)}`);
     
-    return `/api/video-proxy?filename=${filename}`;
+    return `/api/video-proxy?filename=${encodeURIComponent(filename)}`;
   };
 
   const handlePlayClick = (item: GalleryItem, e: React.MouseEvent, index: number) => {
