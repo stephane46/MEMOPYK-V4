@@ -1715,6 +1715,39 @@ export async function registerRoutes(app: Express): Promise<Server> {
             console.log(`🔥 CREATING READ STREAM for: ${cachedVideo}`);
             stream = createReadStream(cachedVideo, { start, end });
             console.log(`✅ READ STREAM CREATED successfully for: ${videoFilename}`);
+            
+            // Add comprehensive stream error handling BEFORE piping
+            stream.on('error', (streamError: any) => {
+              console.error(`❌ STREAM ERROR DURING PIPE for ${videoFilename}:`, {
+                error: streamError.message,
+                code: streamError.code,
+                stack: streamError.stack,
+                filename: videoFilename,
+                path: cachedVideo,
+                headersSent: res.headersSent,
+                timestamp: new Date().toISOString()
+              });
+              
+              // Log to production error system
+              logProductionError(streamError, {
+                type: 'stream_pipe_error',
+                filename: videoFilename,
+                path: cachedVideo,
+                headersSent: res.headersSent,
+                phase: 'during_pipe_operation'
+              });
+              
+              if (!res.headersSent) {
+                res.status(500).json({
+                  error: 'Stream pipe error',
+                  details: streamError.message,
+                  code: streamError.code,
+                  filename: videoFilename,
+                  version: 'v1.0.44-stream-debug'
+                });
+              }
+            });
+            
           } catch (streamCreateError: any) {
             console.error(`❌ FAILED TO CREATE READ STREAM for ${cachedVideo}:`, streamCreateError.message);
             
@@ -1738,15 +1771,44 @@ export async function registerRoutes(app: Express): Promise<Server> {
             });
           }
           
-          res.writeHead(206, {
-            'Content-Range': `bytes ${start}-${end}/${fileSize}`,
-            'Accept-Ranges': 'bytes',
-            'Content-Length': chunksize,
-            'Content-Type': 'video/mp4',
-            'Access-Control-Allow-Origin': '*',
-            'Access-Control-Allow-Headers': 'range, content-type',
-            'Cache-Control': 'public, max-age=86400'
+          // Pre-pipe verification
+          console.log(`🚀 ABOUT TO PIPE STREAM for ${videoFilename}:`, {
+            headersSent: res.headersSent,
+            streamReadable: stream.readable,
+            responseWritable: res.writable,
+            start, end, chunksize,
+            timestamp: new Date().toISOString()
           });
+          
+          // Verify res.headersSent before setting headers
+          if (res.headersSent) {
+            console.error(`❌ HEADERS ALREADY SENT for ${videoFilename} - Cannot set response headers`);
+            return;
+          }
+          
+          try {
+            // Set headers with error handling
+            console.log(`📝 SETTING HEADERS for ${videoFilename}`);
+            res.writeHead(206, {
+              'Content-Range': `bytes ${start}-${end}/${fileSize}`,
+              'Accept-Ranges': 'bytes',
+              'Content-Length': chunksize,
+              'Content-Type': 'video/mp4',
+              'Access-Control-Allow-Origin': '*',
+              'Access-Control-Allow-Headers': 'range, content-type',
+              'Cache-Control': 'public, max-age=86400'
+            });
+            console.log(`✅ HEADERS SET successfully for ${videoFilename}`);
+          } catch (headerError: any) {
+            console.error(`❌ HEADER SETTING ERROR for ${videoFilename}:`, headerError);
+            logProductionError(headerError, {
+              type: 'header_setting_error',
+              filename: videoFilename,
+              headersSent: res.headersSent,
+              phase: 'setting_response_headers'
+            });
+            return;
+          }
           
           stream.on('error', (error) => {
             console.error(`❌ PRODUCTION STREAM ERROR v1.0.43 for ${videoFilename}:`, {
@@ -1809,15 +1871,47 @@ export async function registerRoutes(app: Express): Promise<Server> {
             }
           });
           
-          stream.pipe(res);
+          // Pipe with comprehensive logging
+          console.log(`🔄 STARTING PIPE OPERATION for ${videoFilename}`);
+          try {
+            stream.pipe(res);
+            console.log(`✅ PIPE OPERATION INITIATED for ${videoFilename}`);
+          } catch (pipeError: any) {
+            console.error(`❌ PIPE OPERATION ERROR for ${videoFilename}:`, pipeError);
+            logProductionError(pipeError, {
+              type: 'pipe_operation_error',
+              filename: videoFilename,
+              phase: 'pipe_initiation'
+            });
+          }
         } else {
           console.log(`   - Serving full file (no range)`);
-          res.writeHead(200, {
-            'Content-Length': fileSize,
-            'Content-Type': 'video/mp4',
-            'Access-Control-Allow-Origin': '*',
-            'Cache-Control': 'public, max-age=86400'
+          
+          // Pre-pipe verification for full file
+          console.log(`🚀 ABOUT TO PIPE FULL FILE for ${videoFilename}:`, {
+            headersSent: res.headersSent,
+            responseWritable: res.writable,
+            fileSize,
+            timestamp: new Date().toISOString()
           });
+          
+          if (res.headersSent) {
+            console.error(`❌ HEADERS ALREADY SENT for full file ${videoFilename}`);
+            return;
+          }
+          
+          try {
+            res.writeHead(200, {
+              'Content-Length': fileSize,
+              'Content-Type': 'video/mp4',
+              'Access-Control-Allow-Origin': '*',
+              'Cache-Control': 'public, max-age=86400'
+            });
+            console.log(`✅ FULL FILE HEADERS SET for ${videoFilename}`);
+          } catch (headerError: any) {
+            console.error(`❌ FULL FILE HEADER ERROR for ${videoFilename}:`, headerError);
+            return;
+          }
           
           const stream = createReadStream(cachedVideo);
           stream.on('error', (error) => {
@@ -1843,7 +1937,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
             }
           });
           
-          stream.pipe(res);
+          // Pipe full file with logging
+          console.log(`🔄 STARTING FULL FILE PIPE for ${videoFilename}`);
+          try {
+            stream.pipe(res);
+            console.log(`✅ FULL FILE PIPE INITIATED for ${videoFilename}`);
+          } catch (pipeError: any) {
+            console.error(`❌ FULL FILE PIPE ERROR for ${videoFilename}:`, pipeError);
+          }
         }
         return;
       }

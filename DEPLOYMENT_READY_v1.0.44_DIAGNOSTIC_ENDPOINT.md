@@ -41,12 +41,20 @@ curl "https://memopyk.replit.app/api/video-debug?filename=VitaminSeaC.mp4"
 - Real-time error capture in memory
 - Production error log API: `/api/debug/production-errors`
 - Stream creation and reading errors logged with full context
+- **NEW**: Stream pipe operation errors with exact failure point
+- **NEW**: Header setting errors with res.headersSent validation
+- **NEW**: Pre-pipe verification logging (stream readable, response writable)
+- **NEW**: Stream error listeners attached BEFORE pipe operations
 - File system permission and path resolution debugging
 
 ### 🔧 VERSION TRACKING:
 
-- **v1.0.43-enhanced-debugging** deployed
-- Enhanced error handling in video proxy stream operations
+- **v1.0.44-stream-debug** deployed
+- Enhanced stream error handling with comprehensive logging
+- Pre-pipe verification (headersSent, stream.readable, res.writable)
+- Header setting error handling with try/catch blocks
+- Pipe operation error handling with detailed logging
+- Stream error listeners added BEFORE piping operations
 - Production error memory logging system operational
 - Diagnostic endpoint with comprehensive file system analysis
 
