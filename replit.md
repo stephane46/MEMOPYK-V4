@@ -52,6 +52,27 @@ Preferred communication style: Simple, everyday language.
 
 ## Recent Changes (July 29, 2025)
 
+### TIMESTAMP PREFIX SYSTEM REMOVAL - v1.0.38 (July 29, 2025)
+**ROOT CAUSE RESOLUTION - Gallery Video Production Fix:**
+✅ **Timestamp Prefix System Removed**: Eliminated automatic `Date.now()-filename` prefix addition in upload system
+✅ **Original Filename Preservation**: Gallery uploads now keep user's original filenames (VitaminSeaC.mp4, PomGalleryC.mp4, safari-1.mp4)
+✅ **Production Compatibility**: Simple filenames work in production, timestamp-prefixed filenames get blocked by Replit infrastructure
+✅ **Upload System Fixed**: Modified 3 critical functions - video storage, image storage, and signed URL generation
+✅ **Hero Video Parity**: Gallery uploads now follow same naming pattern as working hero videos
+
+**Technical Implementation:**
+- **Video Storage**: Removed `${Date.now()}-${file.originalname}` → use `file.originalname` directly
+- **Image Storage**: Removed `${Date.now()}-${file.originalname}` → use `file.originalname` directly  
+- **Signed URLs**: Removed `${Date.now()}-${filename}` → use `filename` directly
+- **Console Logging**: Added upload confirmation logs for filename verification
+
+**User Experience Achievement:**
+- Upload `VitaminSeaC.mp4` → stays `VitaminSeaC.mp4` (no timestamp prefix)
+- Upload `PomGalleryC.mp4` → stays `PomGalleryC.mp4` (no timestamp prefix)
+- Upload `safari-1.mp4` → stays `safari-1.mp4` (no timestamp prefix)
+- Production deployment will work with simple filenames
+- Existing timestamp-prefixed files remain functional but new uploads will use clean names
+
 ### BREAKTHROUGH: DEPLOYMENT PIPELINE FIXED - v1.0.32 (July 29, 2025)
 **Virgin Server Strategy Success - Frontend Updates Now Reaching Production:**
 ✅ **PIPELINE RESOLVED**: Virgin server deployment fixed systematic issue where frontend updates weren't reaching production
