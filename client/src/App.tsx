@@ -12,8 +12,8 @@ import NotFoundPage from './pages/not-found';
 import { queryClient } from './lib/queryClient';
 import { Toaster } from '@/components/ui/toaster';
 
-// GALLERY VIDEO INTERCEPTION DEBUG v1.0.36 - ENHANCED LOGGING
-console.log("🚀 MEMOPYK GALLERY VIDEO DEBUG v1.0.36 - INTERCEPTION TEST - " + Date.now());
+// GALLERY VIDEO INTERCEPTION DEBUG v1.0.37 - INFRASTRUCTURE WORKAROUND
+console.log("🚀 MEMOPYK GALLERY VIDEO DEBUG v1.0.37 - INFRASTRUCTURE WORKAROUND - " + Date.now());
 
 function App() {
   return (

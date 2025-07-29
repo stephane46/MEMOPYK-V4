@@ -32,6 +32,7 @@ interface GalleryItem {
   staticImageUrl: string | null; // 300x200 cropped thumbnail
   orderIndex: number;
   isActive: boolean;
+  lightboxVideoUrl?: string; // Infrastructure workaround URL for lightbox display
 }
 
 export default function GallerySection() {
