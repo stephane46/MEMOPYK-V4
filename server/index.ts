@@ -58,9 +58,17 @@ app.use((req, res, next) => {
     console.log(`   - URL length: ${req.url.length} characters`);
     console.log(`   - User-Agent: ${req.headers['user-agent']?.slice(0, 100)}`);
     
-    // Check if this is the problematic gallery video
-    if (req.url.includes('gallery_Our_vitamin_sea_rework_2_compressed.mp4')) {
-      console.log(`🎯 GALLERY VIDEO REQUEST INTERCEPTED - THIS IS THE FAILING ONE!`);
+    // Check if this is any gallery video (updated for current filenames)
+    const galleryVideoPatterns = [
+      '1753736019450-VitaminSeaC.mp4',
+      '1753736667497-PomGalleryC.mp4', 
+      '1753736982469-safari-1.mp4'
+    ];
+    
+    const isGalleryVideo = galleryVideoPatterns.some(pattern => req.url.includes(pattern));
+    
+    if (isGalleryVideo) {
+      console.log(`🎯 GALLERY VIDEO REQUEST INTERCEPTED - v1.0.35 ENHANCED DEBUG!`);
       console.log(`   - Full raw URL: ${req.url}`);
       console.log(`   - URL breakdown:`);
       console.log(`     - Base: ${req.url.split('?')[0]}`);
@@ -71,6 +79,7 @@ app.use((req, res, next) => {
         'user-agent': req.headers['user-agent']?.slice(0, 50),
         'accept-encoding': req.headers['accept-encoding']
       }, null, 2));
+      console.log(`🚨 CRITICAL: If you see this log, gallery requests ARE reaching the server!`);
     }
   }
   next();
