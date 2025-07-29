@@ -553,7 +553,7 @@ export default function GallerySection() {
                 className="w-full h-full object-contain"
                 controls
                 autoPlay
-                controlsList="nodownload nofullscreen noremoteplayback noplaybackrate"
+                controlsList="nodownload nofullscreen noremoteplayback noplaybackrate nopictureinpicture"
                 disablePictureInPicture
                 disableRemotePlayback
                 onContextMenu={(e) => e.preventDefault()}
