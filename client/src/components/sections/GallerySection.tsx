@@ -119,20 +119,36 @@ export default function GallerySection() {
   const getImageUrl = (item: GalleryItem) => {
     // PRIORITY FIX: Always use static image first (admin-created cropped images)
     let imageUrl = '';
+    let filename = '';
+    
     if (item.staticImageUrl && item.staticImageUrl.trim() !== '') {
       imageUrl = item.staticImageUrl;
       console.log(`🖼️ USING STATIC IMAGE: ${imageUrl} for ${item.titleEn}`);
+      
+      // Handle both full URLs and filenames for static images
+      if (imageUrl.includes('/')) {
+        // Full URL - extract filename
+        filename = imageUrl.split('/').pop() || '';
+        // Remove query parameters from filename (like ?v=timestamp)
+        if (filename.includes('?')) {
+          filename = filename.split('?')[0];
+        }
+      } else {
+        // Already a filename
+        filename = imageUrl;
+      }
     } else {
+      // Fallback to original image
       imageUrl = language === 'fr-FR' ? item.imageUrlFr : item.imageUrlEn;
       console.log(`🖼️ FALLBACK TO ORIGINAL IMAGE: ${imageUrl} for ${item.titleEn}`);
+      filename = imageUrl.includes('/') ? (imageUrl.split('/').pop() || '') : imageUrl;
+      // Remove query parameters from filename
+      if (filename && filename.includes('?')) {
+        filename = filename.split('?')[0];
+      }
     }
     
     // Use image proxy for automatic caching
-    let filename = imageUrl.includes('/') ? imageUrl.split('/').pop() : imageUrl;
-    // Remove query parameters from filename (like ?v=timestamp)
-    if (filename && filename.includes('?')) {
-      filename = filename.split('?')[0];
-    }
     const proxyUrl = `/api/image-proxy?filename=${encodeURIComponent(filename || '')}`;
     console.log(`🖼️ GALLERY IMAGE PROXY URL: ${proxyUrl} (from ${imageUrl})`);
     return proxyUrl;
