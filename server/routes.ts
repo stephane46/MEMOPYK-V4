@@ -3,7 +3,7 @@ import { createServer, type Server } from "http";
 import { hybridStorage } from "./hybrid-storage";
 import { z } from "zod";
 import { videoCache } from "./video-cache";
-import { createReadStream, existsSync, statSync, mkdirSync } from 'fs';
+import { createReadStream, existsSync, statSync, mkdirSync, openSync, closeSync } from 'fs';
 import path from 'path';
 import multer from 'multer';
 import { createClient } from '@supabase/supabase-js';
@@ -1268,16 +1268,193 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // EMERGENCY GALLERY VIDEO DEBUG ROUTE - v1.0.13
+  // Production Error Logging System - NEW v1.0.43
+  const productionErrorLog: any[] = [];
+  const maxLogEntries = 50;
+
+  function logProductionError(error: any, context: any) {
+    const logEntry = {
+      timestamp: new Date().toISOString(),
+      error: {
+        message: error.message || 'Unknown error',
+        stack: error.stack || 'No stack trace',
+        code: error.code || 'unknown'
+      },
+      context,
+      version: 'v1.0.43-enhanced-debugging'
+    };
+    
+    productionErrorLog.unshift(logEntry);
+    if (productionErrorLog.length > maxLogEntries) {
+      productionErrorLog.pop();
+    }
+    
+    console.error('🚨 PRODUCTION ERROR LOGGED:', logEntry);
+  }
+
+  // API to retrieve production error logs
+  app.get("/api/debug/production-errors", (req, res) => {
+    console.log("🔍 PRODUCTION ERROR LOG REQUEST");
+    res.json({
+      version: "v1.0.43-enhanced-debugging",
+      timestamp: new Date().toISOString(),
+      environment: process.env.NODE_ENV,
+      totalErrors: productionErrorLog.length,
+      errors: productionErrorLog.slice(0, 10), // Return last 10 errors
+      serverInfo: {
+        workingDirectory: process.cwd(),
+        dirname: __dirname,
+        nodeEnv: process.env.NODE_ENV
+      }
+    });
+  });
+
+  // VIDEO DIAGNOSTIC ENDPOINT - v1.0.43
+  app.get("/api/video-debug", async (req, res) => {
+    const filename = req.query.filename as string;
+    
+    console.log(`🔍 VIDEO DIAGNOSTIC REQUEST: ${filename}`);
+    
+    if (!filename) {
+      return res.status(400).json({ error: "filename parameter is required" });
+    }
+
+    const diagnosticReport: any = {
+      version: "v1.0.43-enhanced-debugging",
+      timestamp: new Date().toISOString(),
+      requestedFilename: filename,
+      environment: {
+        nodeEnv: process.env.NODE_ENV,
+        workingDirectory: process.cwd(),
+        dirname: __dirname
+      }
+    };
+
+    try {
+      // Run the same logic as video proxy
+      const decodedFilename = filename;
+      const encodedFilename = encodeURIComponent(decodedFilename);
+      const sanitizedFilename = decodedFilename.replace(/[()]/g, '_');
+      
+      diagnosticReport.filenames = {
+        original: decodedFilename,
+        encoded: encodedFilename,
+        sanitized: sanitizedFilename
+      };
+
+      // Check cache status
+      let videoFilename = decodedFilename;
+      let cacheCheckResults: any = {};
+      
+      try {
+        cacheCheckResults.decodedExists = videoCache.isVideoCached(decodedFilename);
+        cacheCheckResults.encodedExists = videoCache.isVideoCached(encodedFilename);
+        cacheCheckResults.sanitizedExists = videoCache.isVideoCached(sanitizedFilename);
+        
+        if (cacheCheckResults.decodedExists) {
+          videoFilename = decodedFilename;
+        } else if (cacheCheckResults.encodedExists) {
+          videoFilename = encodedFilename;
+        } else if (cacheCheckResults.sanitizedExists) {
+          videoFilename = sanitizedFilename;
+        }
+      } catch (cacheError: any) {
+        cacheCheckResults.error = cacheError.message;
+      }
+      
+      diagnosticReport.cacheCheck = cacheCheckResults;
+      diagnosticReport.selectedFilename = videoFilename;
+
+      // Get cache path
+      const cachedVideo = videoCache.getCachedVideoPath(videoFilename);
+      diagnosticReport.cachePath = cachedVideo;
+
+      // File existence and stats
+      if (cachedVideo) {
+        const fileExists = existsSync(cachedVideo);
+        diagnosticReport.fileExists = fileExists;
+        
+        if (fileExists) {
+          try {
+            const stats = statSync(cachedVideo);
+            diagnosticReport.fileStats = {
+              size: stats.size,
+              mode: stats.mode,
+              uid: stats.uid,
+              gid: stats.gid,
+              atime: stats.atime,
+              mtime: stats.mtime,
+              ctime: stats.ctime,
+              permissions: (stats.mode & parseInt('777', 8)).toString(8)
+            };
+            
+            // Test read permissions
+            try {
+              const fd = openSync(cachedVideo, 'r');
+              closeSync(fd);
+              diagnosticReport.readable = true;
+            } catch (readError: any) {
+              diagnosticReport.readable = false;
+              diagnosticReport.readError = {
+                code: readError.code,
+                message: readError.message
+              };
+            }
+            
+            // Test createReadStream
+            try {
+              const testStream = createReadStream(cachedVideo, { start: 0, end: 100 });
+              testStream.destroy();
+              diagnosticReport.streamCreation = { success: true };
+            } catch (streamError: any) {
+              diagnosticReport.streamCreation = {
+                success: false,
+                error: {
+                  code: streamError.code,
+                  message: streamError.message,
+                  stack: streamError.stack
+                }
+              };
+            }
+          } catch (statError: any) {
+            diagnosticReport.statError = {
+              code: statError.code,
+              message: statError.message
+            };
+          }
+        }
+      } else {
+        diagnosticReport.cachePath = null;
+        diagnosticReport.fileExists = false;
+      }
+
+      console.log(`✅ VIDEO DIAGNOSTIC COMPLETE: ${filename}`);
+      res.json(diagnosticReport);
+      
+    } catch (error: any) {
+      console.error(`❌ VIDEO DIAGNOSTIC ERROR: ${filename}`, error);
+      diagnosticReport.criticalError = {
+        message: error.message,
+        stack: error.stack,
+        code: error.code
+      };
+      res.status(500).json(diagnosticReport);
+    }
+  });
+
+  // EMERGENCY GALLERY VIDEO DEBUG ROUTE - v1.0.43
   app.get("/api/debug-gallery-video", (req, res) => {
-    console.log("🔍 EMERGENCY DEBUG ROUTE HIT - v1.0.13");
-    console.log("   - Current version should be v1.0.13");
+    console.log("🔍 EMERGENCY DEBUG ROUTE HIT - v1.0.43");
+    console.log("   - Current version should be v1.0.43");
     console.log("   - Gallery video proxy route should work");
     res.json({ 
-      version: "v1.0.13",
+      version: "v1.0.43-enhanced-debugging",
       message: "Debug route working",
       timestamp: new Date().toISOString(),
-      videoProxyRouteExists: true
+      videoProxyRouteExists: true,
+      environment: process.env.NODE_ENV,
+      workingDirectory: process.cwd(),
+      dirname: __dirname
     });
   });
 
@@ -1540,11 +1717,24 @@ export async function registerRoutes(app: Express): Promise<Server> {
             console.log(`✅ READ STREAM CREATED successfully for: ${videoFilename}`);
           } catch (streamCreateError: any) {
             console.error(`❌ FAILED TO CREATE READ STREAM for ${cachedVideo}:`, streamCreateError.message);
+            
+            // Log to production error system
+            logProductionError(streamCreateError, {
+              type: 'createReadStream_failure',
+              filename: videoFilename,
+              path: cachedVideo,
+              fileExists: existsSync(cachedVideo),
+              workingDirectory: process.cwd(),
+              dirname: __dirname,
+              nodeEnv: process.env.NODE_ENV
+            });
+            
             return res.status(500).json({ 
               error: 'Failed to create read stream',
               details: streamCreateError.message,
               filename: videoFilename,
-              path: cachedVideo
+              path: cachedVideo,
+              version: 'v1.0.43-enhanced-debugging'
             });
           }
           
@@ -1584,6 +1774,23 @@ export async function registerRoutes(app: Express): Promise<Server> {
               }
             });
             
+            // Log to production error system
+            logProductionError(error, {
+              type: 'stream_reading_error',
+              filename: videoFilename,
+              path: cachedVideo,
+              fileExists: existsSync(cachedVideo),
+              rangeDetails: { start, end, chunksize },
+              workingDirectory: process.cwd(),
+              dirname: __dirname,
+              nodeEnv: process.env.NODE_ENV,
+              requestInfo: {
+                method: req.method,
+                range: req.headers.range,
+                userAgent: req.headers['user-agent']
+              }
+            });
+            
             if (!res.headersSent) {
               res.status(500).json({ 
                 error: 'Stream reading error',
@@ -1591,6 +1798,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
                 code: (error as any).code || 'unknown',
                 filename: videoFilename,
                 path: cachedVideo,
+                version: 'v1.0.43-enhanced-debugging',
                 debug: {
                   method: req.method,
                   range: req.headers.range,
