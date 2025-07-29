@@ -1385,70 +1385,81 @@ export async function registerRoutes(app: Express): Promise<Server> {
       console.log(`   - Cache path: "${cachedVideo}"`);
       console.log(`   - Cache exists: ${cachedVideo && existsSync(cachedVideo)}`);
       
-      // FORCE LOCAL CACHING - Videos MUST be served from local storage only
+      // UNIVERSAL VIDEO SERVING v1.0.40 - Try cache first, fallback if needed
       if (!cachedVideo) {
-        console.log(`🚨 VIDEO NOT CACHED: ${videoFilename} - FORCING download and cache before serving`);
-        console.log(`🔍 PRODUCTION DEBUG v1.0.17 - ENHANCED STREAM ERROR DETECTION:`);
-        console.log(`   - Request method: ${req.method}`);
-        console.log(`   - Request URL: ${req.url}`);
-        console.log(`   - Original filename param: "${filename}"`);
-        console.log(`   - Decoded filename: "${decodedFilename}"`);
-        console.log(`   - Encoded filename: "${encodedFilename}"`);
-        console.log(`   - Sanitized filename: "${sanitizedFilename}"`);
-        console.log(`   - Video filename to use: "${videoFilename}"`);
-        console.log(`   - Query params:`, JSON.stringify(req.query));
-        console.log(`   - Headers:`, JSON.stringify(req.headers));
-        console.log(`   - User-Agent: ${req.headers['user-agent']}`);
-        console.log(`   - Range header: ${req.headers.range}`);
-        console.log(`   - Accept header: ${req.headers.accept}`);
-        console.log(`   - Connection header: ${req.headers.connection}`);
+        console.log(`🚨 VIDEO NOT CACHED: ${videoFilename} - Attempting auto-download...`);
         
         try {
-          // CRITICAL FIX v1.0.10: Always use original decoded filename for Supabase URL construction
-          // Problem: videoFilename might already be encoded, causing double encoding
-          // Solution: Always use decodedFilename for URL construction, videoFilename for cache lookup
+          // Clean download attempt
           const encodedForDownload = encodeURIComponent(decodedFilename);
           const supabaseUrl = `https://supabase.memopyk.org/storage/v1/object/public/memopyk-videos/${encodedForDownload}`;
-          console.log(`   - STEP 1: Using original decoded filename: "${decodedFilename}"`);
-          console.log(`   - STEP 2: Encoded for URL: "${encodedForDownload}"`);
-          console.log(`   - STEP 3: Final Supabase URL: ${supabaseUrl}`);
-          console.log(`   - STEP 4: About to call videoCache.downloadAndCacheVideo("${decodedFilename}", "${supabaseUrl}")`);
+          console.log(`📥 UNIVERSAL AUTO-DOWNLOAD v1.0.40: ${decodedFilename}`);
+          console.log(`   - Supabase URL: ${supabaseUrl}`);
           
-          // Use decodedFilename for download, not videoFilename (which might be encoded)
           await videoCache.downloadAndCacheVideo(decodedFilename, supabaseUrl);
           cachedVideo = videoCache.getCachedVideoPath(decodedFilename);
-          
-          // Update videoFilename to match what we actually cached
           videoFilename = decodedFilename;
           
-          console.log(`✅ FORCED download successful for ${decodedFilename} - now serving from cache`);
-          console.log(`   - Updated cached video path: ${cachedVideo}`);
-          console.log(`   - Updated videoFilename: ${videoFilename}`);
+          console.log(`✅ Auto-download successful for ${decodedFilename}`);
         } catch (downloadError: any) {
-          console.error(`❌ CRITICAL v1.0.10: Failed to download ${decodedFilename}: ${downloadError.message}`);
-          console.error(`🔍 EXTENSIVE ERROR DEBUG v1.0.10:`);
-          console.error(`   - Error type: ${downloadError.constructor.name}`);
-          console.error(`   - Error message: ${downloadError.message}`);
-          console.error(`   - Error stack: ${downloadError.stack}`);
-          console.error(`   - Original filename param: "${filename}"`);
-          console.error(`   - Decoded filename: "${decodedFilename}"`);
-          console.error(`   - Encoded for URL: "${encodeURIComponent(decodedFilename)}"`);
-          console.error(`   - Final URL attempted: https://supabase.memopyk.org/storage/v1/object/public/memopyk-videos/${encodeURIComponent(decodedFilename)}`);
-          console.error(`   - Cache directory exists: ${require('fs').existsSync('./server/cache/videos')}`);
-          console.error(`   - Working directory: ${process.cwd()}`);
-          return res.status(500).json({ 
-            error: `Video caching failed - cannot serve video`,
-            filename: decodedFilename,
-            details: downloadError.message,
-            version: "v1.0.16-unified-bucket",
-            timestamp: Date.now(),
-            debug: {
-              originalParam: filename,
-              decoded: decodedFilename,
-              encoded: encodeURIComponent(decodedFilename),
-              url: `https://supabase.memopyk.org/storage/v1/object/public/memopyk-videos/${encodeURIComponent(decodedFilename)}`
+          console.warn(`⚠️ Auto-download failed for ${decodedFilename}: ${downloadError.message}`);
+          console.log(`🔄 FALLBACK: Attempting direct Supabase stream for ${decodedFilename}`);
+          
+          // FALLBACK: Direct Supabase streaming
+          try {
+            const encodedForStream = encodeURIComponent(decodedFilename);
+            const directUrl = `https://supabase.memopyk.org/storage/v1/object/public/memopyk-videos/${encodedForStream}`;
+            
+            const fetch = (await import('node-fetch')).default;
+            const response = await fetch(directUrl, {
+              headers: { 
+                'Range': req.headers.range || 'bytes=0-',
+                'User-Agent': 'MEMOPYK-DirectStream/1.0'
+              }
+            });
+            
+            if (!response.ok) {
+              throw new Error(`HTTP ${response.status} ${response.statusText}`);
             }
-          });
+            
+            console.log(`🌐 DIRECT STREAM v1.0.40: Serving ${decodedFilename} directly from Supabase`);
+            
+            // Forward headers from Supabase
+            const contentRange = response.headers.get('content-range');
+            const contentLength = response.headers.get('content-length');
+            const acceptRanges = response.headers.get('accept-ranges');
+            
+            const headers: any = {
+              'Content-Type': 'video/mp4',
+              'Access-Control-Allow-Origin': '*',
+              'Access-Control-Allow-Headers': 'range, content-type',
+              'Cache-Control': 'public, max-age=3600'
+            };
+            
+            if (contentRange) headers['Content-Range'] = contentRange;
+            if (contentLength) headers['Content-Length'] = contentLength;
+            if (acceptRanges) headers['Accept-Ranges'] = acceptRanges;
+            
+            const statusCode = response.status === 206 ? 206 : 200;
+            res.writeHead(statusCode, headers);
+            
+            if (response.body) {
+              response.body.pipe(res);
+            } else {
+              res.end();
+            }
+            return;
+            
+          } catch (streamError: any) {
+            console.error(`❌ DIRECT STREAM FAILED for ${decodedFilename}: ${streamError.message}`);
+            return res.status(500).json({ 
+              error: `Video not available - cache and stream both failed`,
+              filename: decodedFilename,
+              details: `Cache: ${downloadError.message}, Stream: ${streamError.message}`,
+              version: "v1.0.40-universal-fallback",
+              timestamp: Date.now()
+            });
+          }
         }
       }
       

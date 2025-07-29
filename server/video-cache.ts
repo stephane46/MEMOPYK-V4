@@ -659,36 +659,77 @@ export class VideoCache {
   }
 
   /**
-   * Proactively preload critical videos (hero videos that auto-play) and gallery videos
+   * Proactively preload all videos (no hardcoded limitations)
    */
   private async preloadCriticalVideos(): Promise<void> {
-    // Critical videos that should ALWAYS be cached (hero videos auto-play)
-    const criticalVideos = [
-      'VideoHero1.mp4',
-      'VideoHero2.mp4', 
-      'VideoHero3.mp4'
-    ];
-
-    console.log('🚀 Starting proactive cache preloading for critical videos...');
+    console.log('🚀 Starting universal video preloading - no filename restrictions...');
     
-    for (const filename of criticalVideos) {
-      try {
-        if (!this.isVideoCached(filename)) {
-          console.log(`⬇️ Preloading critical video: ${filename}`);
-          await this.downloadAndCacheVideo(filename);
-        } else {
-          console.log(`✅ Critical video already cached: ${filename}`);
-        }
-      } catch (error) {
-        console.error(`❌ Failed to preload ${filename}:`, error);
-      }
-    }
-    
-    // Now preload gallery videos
-    await this.preloadGalleryVideos();
+    // Load all videos from hybrid storage (hero + gallery)
+    await this.preloadAllVideos();
     
     const stats = this.getCacheStats();
-    console.log(`🎯 Critical video preloading complete! Cache: ${stats.fileCount} files, ${stats.sizeMB}MB`);
+    console.log(`🎯 Universal video preloading complete! Cache: ${stats.fileCount} files, ${stats.sizeMB}MB`);
+  }
+
+  /**
+   * Preload all videos from storage without any filename restrictions
+   */
+  private async preloadAllVideos(): Promise<void> {
+    console.log('📥 UNIVERSAL PRELOAD v1.0.40 - Loading ALL videos from storage...');
+    
+    try {
+      // Import hybrid storage to get all video sources
+      const { hybridStorage } = await import('./hybrid-storage');
+      
+      // Get hero videos
+      const heroVideos = await hybridStorage.getHeroVideos();
+      const heroVideoFilenames = heroVideos
+        .filter(video => video.url_en)
+        .map(video => video.url_en.split('/').pop()!)
+        .filter(filename => filename && filename.endsWith('.mp4'));
+      
+      // Get gallery videos
+      const galleryItems = await hybridStorage.getGalleryItems();
+      const galleryVideoFilenames = galleryItems
+        .filter(item => item.video_filename || item.video_url_en)
+        .map(item => (item.video_filename || item.video_url_en!).split('/').pop()!)
+        .filter(filename => filename && filename.endsWith('.mp4'));
+
+      // Combine all video filenames
+      const allVideoFilenames = [...heroVideoFilenames, ...galleryVideoFilenames];
+      const uniqueFilenames = [...new Set(allVideoFilenames)]; // Remove duplicates
+      
+      console.log(`📋 UNIVERSAL PRELOAD: Found ${uniqueFilenames.length} unique videos to cache`);
+      console.log(`🎬 All video filenames:`, uniqueFilenames);
+      
+      let videosProcessed = 0;
+      let videoErrors = 0;
+
+      // Preload all videos without any filename restrictions
+      for (const filename of uniqueFilenames) {
+        try {
+          console.log(`🔍 Checking cache status for video: ${filename}`);
+          if (!this.isVideoCached(filename)) {
+            console.log(`⬇️ UNIVERSAL DOWNLOAD v1.0.40 - Preloading video: ${filename}`);
+            await this.downloadAndCacheVideo(filename);
+            videosProcessed++;
+            console.log(`✅ SUCCESS: Video cached: ${filename}`);
+          } else {
+            console.log(`✅ Video already cached: ${filename}`);
+          }
+        } catch (error) {
+          videoErrors++;
+          console.error(`❌ UNIVERSAL ERROR v1.0.40 - Failed to preload video ${filename}:`, error);
+        }
+      }
+      
+      console.log(`🎬 UNIVERSAL PRELOAD COMPLETE v1.0.40!`);
+      console.log(`📊 Results: ${videosProcessed} videos cached, ${videoErrors} errors`);
+      console.log(`✅ Success rate: ${uniqueFilenames.length > 0 ? Math.round((videosProcessed / uniqueFilenames.length) * 100) : 100}%`);
+      
+    } catch (error) {
+      console.error('❌ UNIVERSAL PRELOAD FATAL ERROR v1.0.40:', error);
+    }
   }
 
   /**
@@ -783,81 +824,72 @@ export class VideoCache {
   }
 
   /**
-   * Download and cache a video from Supabase
+   * Universal video download system - handles any valid filename
    */
   async downloadAndCacheVideo(filename: string, customUrl?: string): Promise<void> {
     try {
-      // Ensure cache directory exists before downloading
+      // Ensure cache directory exists
       if (!existsSync(this.videoCacheDir)) {
         require('fs').mkdirSync(this.videoCacheDir, { recursive: true });
-        console.log(`📁 Created cache directory for download: ${this.videoCacheDir}`);
+        console.log(`📁 Created cache directory: ${this.videoCacheDir}`);
       }
       
-      // TIMESTAMP PREFIX FIX v1.0.30: Handle timestamp-prefixed gallery videos specially
-      const isTimestampPrefixed = /^\d{13}-/.test(filename);
-      let supabaseFilename = filename;
-      
-      if (isTimestampPrefixed) {
-        console.log(`🚨 TIMESTAMP-PREFIXED VIDEO v1.0.30: Special handling for ${filename}`);
-        console.log(`   - This is a gallery video with timestamp prefix - using exact filename`);
-        // Keep exact filename as it exists in Supabase storage
-        supabaseFilename = filename;
-      } else {
-        console.log(`🎯 REGULAR VIDEO v1.0.30: Using standard filename handling for ${filename}`);
-      }
-      
-      console.log(`   - Original filename: ${filename}`);
-      console.log(`   - Supabase filename: ${supabaseFilename}`);
-      
-      // UNIFIED BUCKET v1.0.16: All media (videos + images) now stored in memopyk-videos bucket
-      // This includes hero videos (VideoHero1.mp4), gallery videos (gallery_*.mp4), and timestamp-prefixed videos (1753736019450-VitaminSeaC.mp4)
-      const encodedFilename = encodeURIComponent(supabaseFilename);
+      // Clean filename handling - no special cases or assumptions
+      const cleanFilename = filename.trim();
+      const encodedFilename = encodeURIComponent(cleanFilename);
       const fullVideoUrl = customUrl || `https://supabase.memopyk.org/storage/v1/object/public/memopyk-videos/${encodedFilename}`;
-      const cacheFile = this.getVideoCacheFilePath(filename); // Keep original filename for cache lookup
+      const cacheFile = this.getVideoCacheFilePath(cleanFilename);
       
-      console.log(`📥 TIMESTAMP PREFIX FIX v1.0.30: Downloading ${filename} from Supabase...`);
-      console.log(`   - Original filename: "${filename}"`);
-      console.log(`   - Supabase filename: "${supabaseFilename}"`);
-      console.log(`   - URL encoded filename: "${encodedFilename}"`);
-      console.log(`   - Final Supabase URL: "${fullVideoUrl}"`);
-      console.log(`   - Cache file path: "${cacheFile}"`);
+      console.log(`📥 UNIVERSAL DOWNLOAD v1.0.40: ${cleanFilename}`);
+      console.log(`   - Encoded filename: "${encodedFilename}"`);
+      console.log(`   - Supabase URL: "${fullVideoUrl}"`);
+      console.log(`   - Cache path: "${cacheFile}"`);
       
-      // EXTENSIVE DEBUG v1.0.11 - Character analysis
-      console.log(`🔍 EXTENSIVE DEBUG v1.0.11 - Character-by-character analysis:`);
-      console.log(`   - Filename characters: [${filename.split('').map(c => `'${c}'(${c.charCodeAt(0)})`).join(', ')}]`);
-      console.log(`   - Starts with 'gallery_': ${filename.startsWith('gallery_')}`);
-      console.log(`   - Contains spaces: ${supabaseFilename.includes(' ')}`);
-      console.log(`   - Contains underscores: ${supabaseFilename.includes('_')}`);
-      console.log(`   - URL after encoding check: ${decodeURIComponent(encodedFilename) === supabaseFilename}`);
-      console.log(`   - Request headers: User-Agent=MEMOPYK-CachePreloader/1.0`);
-      
+      // Enhanced fetch with better error handling
       const fetch = (await import('node-fetch')).default;
       const response = await fetch(fullVideoUrl, {
-        headers: { 'User-Agent': 'MEMOPYK-CachePreloader/1.0' }
+        headers: { 
+          'User-Agent': 'MEMOPYK-Universal-Cache/1.0',
+          'Accept': 'video/mp4,video/*,*/*'
+        },
+        timeout: 30000 // 30 second timeout
       });
       
       if (!response.ok) {
-        throw new Error(`Failed to download ${filename}: ${response.status} ${response.statusText}`);
+        throw new Error(`HTTP ${response.status} ${response.statusText} for ${cleanFilename}`);
       }
-    
-    return new Promise((resolve, reject) => {
-      const writeStream = createWriteStream(cacheFile);
+
+      const contentLength = response.headers.get('content-length');
+      console.log(`   - Content-Length: ${contentLength} bytes`);
       
-      writeStream.on('error', reject);
-      writeStream.on('finish', () => {
-        console.log(`💾 Successfully cached critical video: ${filename}`);
-        resolve();
+      return new Promise((resolve, reject) => {
+        const writeStream = createWriteStream(cacheFile);
+        
+        writeStream.on('error', (error) => {
+          console.error(`❌ Write stream error for ${cleanFilename}:`, error);
+          reject(error);
+        });
+        
+        writeStream.on('finish', () => {
+          console.log(`✅ Successfully cached: ${cleanFilename}`);
+          resolve();
+        });
+        
+        if (response.body) {
+          response.body.on('error', (error) => {
+            console.error(`❌ Response body error for ${cleanFilename}:`, error);
+            reject(error);
+          });
+          
+          response.body.pipe(writeStream);
+        } else {
+          writeStream.end();
+          reject(new Error(`No response body for ${cleanFilename}`));
+        }
       });
       
-      if (response.body) {
-        response.body.pipe(writeStream);
-      } else {
-        writeStream.end();
-        reject(new Error('No response body'));
-      }
-    });
     } catch (error: any) {
-      console.error(`❌ Failed to download and cache ${filename}: ${error.message}`);
+      console.error(`❌ UNIVERSAL DOWNLOAD FAILED for ${filename}:`, error.message);
       throw error;
     }
   }
