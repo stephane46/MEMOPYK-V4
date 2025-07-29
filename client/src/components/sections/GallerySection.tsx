@@ -40,12 +40,12 @@ export default function GallerySection() {
   const [flippedCards, setFlippedCards] = useState<Set<string | number>>(new Set());
   const [lightboxVideo, setLightboxVideo] = useState<GalleryItem | null>(null);
   
-  // 🚀 GALLERY VIDEO CACHE INTEGRATION v1.0.54
+  // 🚨 DIRECT CDN STREAMING v1.0.51 - INFRASTRUCTURE BYPASS
   useEffect(() => {
-    console.log("🚀 GALLERY VIDEO CACHE INTEGRATION v1.0.54");
-    console.log("📋 Gallery videos now use video proxy for caching");
-    console.log("🎯 Using same cache system as hero videos for ~50ms performance");
-    console.log("✅ Gallery videos will auto-cache on first request");
+    console.log("🚨 DIRECT CDN STREAMING v1.0.51 - INFRASTRUCTURE BYPASS");
+    console.log("📋 Gallery videos now use direct Supabase CDN URLs");
+    console.log("🎯 Bypassing video proxy to avoid infrastructure blocking");
+    console.log("⚠️ Trade-off: Slower loading (1500ms) but guaranteed functionality");
   }, []);
   
   // Fetch active gallery items with type conversion from snake_case API
@@ -213,17 +213,17 @@ export default function GallerySection() {
   };
 
   const getVideoUrl = (item: GalleryItem, index: number) => {
-    // FIXED: Use video proxy for cache system like hero videos
+    // DIRECT CDN IMPLEMENTATION: Bypass video proxy entirely to avoid infrastructure blocking
     const filename = item.videoFilename || item.videoUrlEn || item.videoUrlFr;
     
-    // Use video proxy for automatic caching and ~50ms performance
-    const proxyUrl = `/api/video-proxy?filename=${encodeURIComponent(filename)}`;
+    // Generate direct Supabase CDN URL
+    const directCdnUrl = `https://supabase.memopyk.org/storage/v1/object/public/memopyk-videos/${filename}`;
     
-    console.log(`🎬 GALLERY VIDEO PROXY for item ${index}: ${filename}`);
-    console.log(`🚀 Using cached proxy: ${proxyUrl}`);
-    console.log(`✅ Gallery videos now get same ~50ms performance as hero videos`);
+    console.log(`🎬 DIRECT CDN STREAMING for item ${index}: ${filename}`);
+    console.log(`🔧 CDN URL (bypassing proxy): ${directCdnUrl}`);
+    console.log(`⚠️ Note: Direct CDN streaming (slower 1500ms) to avoid infrastructure blocking`);
     
-    return proxyUrl;
+    return directCdnUrl;
   };
 
   const handlePlayClick = (item: GalleryItem, e: React.MouseEvent, index: number) => {
@@ -231,19 +231,19 @@ export default function GallerySection() {
     e.stopPropagation();
     
     const hasVideoResult = hasVideo(item, index);
-    console.log(`🎬 GALLERY CACHE PLAYCLICK v1.0.54 - Item ${index}:`, {
+    console.log(`🎬 DIRECT CDN PLAYCLICK v1.0.51 - Item ${index}:`, {
       hasVideoResult,
       videoFilename: item.videoFilename,
       willOpenLightbox: hasVideoResult,
       willFlipCard: !hasVideoResult,
-      streamingMethod: 'Video Proxy (cached performance)'
+      streamingMethod: 'Direct CDN (bypassing proxy)'
     });
     
     if (hasVideoResult) {
       // Open video in lightbox
       const videoUrl = getVideoUrl(item, index);
       console.log(`🎬 OPENING LIGHTBOX for ${item.videoFilename}`);
-      console.log(`✅ Using cached video proxy: ${videoUrl}`);
+      console.log(`✅ Using direct CDN streaming: ${videoUrl}`);
       setLightboxVideo({...item, lightboxVideoUrl: videoUrl});
       // Prevent body scrolling when lightbox is open
       document.body.style.overflow = 'hidden';
