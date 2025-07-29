@@ -531,31 +531,7 @@ export default function GallerySection() {
               </video>
             </div>
 
-            {/* Video Info Overlay - Bottom */}
-            <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent p-6">
-              <h3 className="text-white text-xl font-bold mb-2">
-                {language === 'fr-FR' ? lightboxVideo.titleFr : lightboxVideo.titleEn}
-              </h3>
-              <div className="flex flex-wrap gap-4 text-white/80 text-sm">
-                {(language === 'fr-FR' ? lightboxVideo.durationFr : lightboxVideo.durationEn) && (
-                  <div className="flex items-center gap-1">
-                    <Clock className="w-4 h-4" />
-                    {language === 'fr-FR' ? lightboxVideo.durationFr : lightboxVideo.durationEn}
-                  </div>
-                )}
-                {(language === 'fr-FR' ? lightboxVideo.sourceFr : lightboxVideo.sourceEn) && (
-                  <div className="flex items-center gap-1">
-                    <Film className="w-4 h-4" />
-                    {language === 'fr-FR' ? lightboxVideo.sourceFr : lightboxVideo.sourceEn}
-                  </div>
-                )}
-                {(language === 'fr-FR' ? lightboxVideo.priceFr : lightboxVideo.priceEn) && (
-                  <div className="ml-auto text-[#D67C4A] font-bold">
-                    {language === 'fr-FR' ? lightboxVideo.priceFr : lightboxVideo.priceEn}
-                  </div>
-                )}
-              </div>
-            </div>
+
           </div>
         </div>
       )}

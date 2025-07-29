@@ -60,6 +60,8 @@ Preferred communication style: Simple, everyday language.
 
 **Technical Implementation:**
 - Modified `client/src/components/gallery/VideoOverlay.tsx` to remove title overlay section
+- Modified `client/src/components/sections/GallerySection.tsx` to remove bottom video info overlay with metadata
+- Removed title, duration, source, and price information display from gallery video lightbox
 - Preserved all video control functionality and user interaction features
 - Maintained responsive video sizing and lightbox backdrop blur effect
 - Clean interface focuses attention on video content rather than metadata
