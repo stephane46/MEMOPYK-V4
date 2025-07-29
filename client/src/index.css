@@ -81,6 +81,37 @@ body {
   color: #f9fafb !important;
 }
 
+/* Select Dropdown Visibility Fix - Force solid backgrounds */
+[data-radix-select-content] {
+  background-color: white !important;
+  border: 1px solid #e5e7eb !important;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05) !important;
+  z-index: 50 !important;
+}
+
+.dark [data-radix-select-content] {
+  background-color: #111827 !important;
+  border-color: #374151 !important;
+  color: #f9fafb !important;
+}
+
+[data-radix-select-item] {
+  background-color: transparent !important;
+  color: inherit !important;
+}
+
+[data-radix-select-item]:hover,
+[data-radix-select-item][data-highlighted] {
+  background-color: #f3f4f6 !important;
+  color: #111827 !important;
+}
+
+.dark [data-radix-select-item]:hover,
+.dark [data-radix-select-item][data-highlighted] {
+  background-color: #374151 !important;
+  color: #f9fafb !important;
+}
+
 /* Card Flip Animation */
 .card-flip-container {
   perspective: 1000px;
