@@ -41,8 +41,8 @@ try {
   // Create deployment marker with timestamp to force fresh deployment
   const deploymentMarker = {
     timestamp: new Date().toISOString(),
-    fix: 'Gallery video range request parsing fix',
-    commit: 'Range parsing bug fixed - production ready'
+    fix: 'Enhanced stream error debugging for production gallery video diagnosis',
+    commit: 'Added comprehensive file reading and stream error logging - v1.0.43'
   };
   fs.writeFileSync('DEPLOYMENT_MARKER.json', JSON.stringify(deploymentMarker, null, 2));
   

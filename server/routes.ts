@@ -1385,6 +1385,16 @@ export async function registerRoutes(app: Express): Promise<Server> {
       console.log(`   - Cache path: "${cachedVideo}"`);
       console.log(`   - Cache exists: ${cachedVideo && existsSync(cachedVideo)}`);
       
+      // PRODUCTION PATH DEBUG: Log exact path resolution
+      console.log(`🔍 PRODUCTION PATH DEBUG:`, {
+        requestedFilename: videoFilename,
+        computedCachePath: cachedVideo,
+        pathExists: cachedVideo ? existsSync(cachedVideo) : false,
+        currentWorkingDir: process.cwd(),
+        __dirname: __dirname,
+        nodeEnv: process.env.NODE_ENV
+      });
+      
       // UNIVERSAL VIDEO SERVING v1.0.40 - Try cache first, fallback if needed
       if (!cachedVideo) {
         console.log(`🚨 VIDEO NOT CACHED: ${videoFilename} - Attempting auto-download...`);
@@ -1498,7 +1508,43 @@ export async function registerRoutes(app: Express): Promise<Server> {
           const chunksize = (end - start) + 1;
           console.log(`   - Range: ${start}-${end}, chunk size: ${chunksize}`);
 
-          const stream = createReadStream(cachedVideo, { start, end });
+          // PRODUCTION DEBUG: Add comprehensive file reading logging
+          console.log(`🎯 PRODUCTION STREAM DEBUG - About to serve video:`, {
+            filename: videoFilename,
+            fullPath: cachedVideo,
+            fileExists: existsSync(cachedVideo),
+            fileStats: existsSync(cachedVideo) ? statSync(cachedVideo) : 'FILE_NOT_FOUND',
+            rangeStart: start,
+            rangeEnd: end,
+            chunkSize: chunksize,
+            cwd: process.cwd(),
+            __dirname: __dirname
+          });
+
+          // Test file existence just before reading
+          if (!existsSync(cachedVideo)) {
+            console.error(`❌ CRITICAL: File does not exist at path: ${cachedVideo}`);
+            return res.status(500).json({ 
+              error: 'Cached video file not found',
+              path: cachedVideo,
+              filename: videoFilename
+            });
+          }
+
+          let stream;
+          try {
+            console.log(`🔥 CREATING READ STREAM for: ${cachedVideo}`);
+            stream = createReadStream(cachedVideo, { start, end });
+            console.log(`✅ READ STREAM CREATED successfully for: ${videoFilename}`);
+          } catch (streamCreateError: any) {
+            console.error(`❌ FAILED TO CREATE READ STREAM for ${cachedVideo}:`, streamCreateError.message);
+            return res.status(500).json({ 
+              error: 'Failed to create read stream',
+              details: streamCreateError.message,
+              filename: videoFilename,
+              path: cachedVideo
+            });
+          }
           
           res.writeHead(206, {
             'Content-Range': `bytes ${start}-${end}/${fileSize}`,
@@ -1511,32 +1557,32 @@ export async function registerRoutes(app: Express): Promise<Server> {
           });
           
           stream.on('error', (error) => {
-            console.error(`❌ PRODUCTION RANGE STREAM ERROR for ${videoFilename}:`, error);
-            console.error(`   - Error type: ${error.constructor.name}`);
-            console.error(`   - Error message: ${error.message}`);
-            console.error(`   - Error code: ${(error as any).code || 'unknown'}`);
-            console.error(`   - Error stack: ${error.stack}`);
-            console.error(`   - Headers sent: ${res.headersSent}`);
-            console.error(`   - Request method: ${req.method}`);
-            console.error(`   - User-Agent: ${req.headers['user-agent']}`);
-            console.error(`   - Range header: ${req.headers.range}`);
-            console.error(`   - Accept header: ${req.headers.accept}`);
-            console.error(`   - Accept-Encoding: ${req.headers['accept-encoding']}`);
-            console.error(`   - Connection: ${req.headers.connection}`);
-            console.error(`   - sec-ch-ua-mobile: ${req.headers['sec-ch-ua-mobile']}`);
-            console.error(`   - sec-ch-ua-platform: ${req.headers['sec-ch-ua-platform']}`);
-            console.error(`   - sec-fetch-dest: ${req.headers['sec-fetch-dest']}`);
-            console.error(`   - sec-fetch-mode: ${req.headers['sec-fetch-mode']}`);
-            console.error(`   - Video file exists: ${existsSync(cachedVideo)}`);
-            console.error(`   - Range details: start=${start}, end=${end}, chunksize=${chunksize}`);
-            console.error(`   - Cache file path: ${cachedVideo}`);
-            console.error(`   - FULL REQ HEADERS: ${JSON.stringify(req.headers, null, 2)}`);
+            console.error(`❌ STREAM ERROR CAUGHT for ${videoFilename}:`, {
+              errorType: error.constructor.name,
+              errorMessage: error.message,
+              errorCode: (error as any).code || 'unknown',
+              errorStack: error.stack,
+              filePath: cachedVideo,
+              fileExists: existsSync(cachedVideo),
+              fileStats: existsSync(cachedVideo) ? statSync(cachedVideo) : 'FILE_NOT_FOUND',
+              headersSent: res.headersSent,
+              rangeDetails: { start, end, chunksize },
+              requestInfo: {
+                method: req.method,
+                range: req.headers.range,
+                userAgent: req.headers['user-agent'],
+                acceptEncoding: req.headers['accept-encoding'],
+                secFetchDest: req.headers['sec-fetch-dest']
+              }
+            });
+            
             if (!res.headersSent) {
               res.status(500).json({ 
-                error: 'Range stream error',
+                error: 'Stream reading error',
                 details: error.message,
                 code: (error as any).code || 'unknown',
                 filename: videoFilename,
+                path: cachedVideo,
                 debug: {
                   method: req.method,
                   range: req.headers.range,
