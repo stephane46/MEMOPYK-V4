@@ -48,7 +48,7 @@ const persistentUploadState = {
 };
 
 interface GalleryItem {
-  id: number;
+  id: string;
   title_en: string;
   title_fr: string;
   source_en: string;
