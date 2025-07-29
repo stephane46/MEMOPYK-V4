@@ -186,9 +186,9 @@ export default function GallerySection() {
 
   const hasVideo = (item: GalleryItem, index: number) => {
     // GALLERY INDEPENDENCE FIX: All gallery items can have video functionality
-    // Removed hard-coded restriction that only allowed first video to play
-    const videoUrl = language === 'fr-FR' ? item.videoUrlFr : item.videoUrlEn;
-    return videoUrl && videoUrl.trim() !== '';
+    // Check video_filename field which contains the actual timestamp-prefixed filenames
+    const filename = item.videoFilename || item.videoUrlEn || item.videoUrlFr;
+    return filename && filename.trim() !== '';
   };
 
   const getVideoUrl = (item: GalleryItem) => {
