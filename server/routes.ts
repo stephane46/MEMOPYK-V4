@@ -1309,7 +1309,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     });
   });
 
-  // VIDEO DIAGNOSTIC ENDPOINT - v1.0.45
+  // VIDEO DIAGNOSTIC ENDPOINT - v1.0.46
   app.get("/api/video-debug", async (req, res) => {
     const filename = req.query.filename as string;
     
@@ -1320,7 +1320,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
 
     const diagnosticReport: any = {
-      version: "v1.0.45-final-stage-logging",
+      version: "v1.0.46-timeout-safeguard",
       timestamp: new Date().toISOString(),
       requestedFilename: filename,
       environment: {
@@ -1685,8 +1685,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
           const chunksize = (end - start) + 1;
           console.log(`   - Range: ${start}-${end}, chunk size: ${chunksize}`);
 
-          // FINAL-STAGE LOGGING v1.0.45 - Comprehensive debug before streaming
-          console.log(`🎯 PRODUCTION STREAM DEBUG v1.0.45 - About to serve video:`, {
+          // TIMEOUT SAFEGUARD v1.0.46 - Comprehensive debug before streaming
+          console.log(`🎯 PRODUCTION STREAM DEBUG v1.0.46-timeout-safeguard - About to serve video:`, {
             filename: videoFilename,
             fullPath: cachedVideo,
             fileExists: existsSync(cachedVideo),
@@ -1697,7 +1697,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
             cwd: process.cwd(),
             __dirname: __dirname,
             nodeEnv: process.env.NODE_ENV,
-            version: "v1.0.45-final-stage-logging"
+            version: "v1.0.46-timeout-safeguard"
           });
 
           // Test file existence just before reading
