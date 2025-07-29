@@ -492,16 +492,20 @@ export default function GallerySection() {
           className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm"
           onClick={handleBackdropClick}
         >
-          {/* Video Container - 2/3 screen width, centered */}
+          {/* Video Container - 80% screen width, centered */}
           <div 
-            className="relative mx-auto bg-black rounded-lg overflow-hidden shadow-2xl"
+            className="relative mx-auto bg-black rounded-lg overflow-hidden shadow-2xl border-4 border-red-500"
           >
+            {/* DEBUG: Visible size indicator */}
+            <div className="absolute top-2 left-2 bg-red-500 text-white px-2 py-1 text-xs z-10">
+              80% VIEWPORT v1.0.61 - Gallery Lightbox
+            </div>
             {/* Video Player - FIXED: 2/3 viewport scaling with correct aspect ratio */}
             <div 
               className="relative bg-black"
               ref={(containerRef) => {
                 if (containerRef && lightboxVideo) {
-                  console.log('🎬 2/3 VIEWPORT SCALING DEBUG v1.0.59 - Container created:');
+                  console.log('🎬 80% VIEWPORT SCALING DEBUG v1.0.61 - Container created:');
                   console.log('   - Video filename:', lightboxVideo.videoFilename);
                   console.log('   - Admin dimensions: Width =', lightboxVideo.videoWidth, 'Height =', lightboxVideo.videoHeight);
                   
@@ -509,14 +513,14 @@ export default function GallerySection() {
                   const adminHeight = lightboxVideo.videoHeight || 9;
                   const aspectRatio = adminWidth / adminHeight;
                   
-                  // Calculate 2/3 viewport scaling
+                  // Calculate 80% viewport scaling (updated from 2/3 = 66.66%)
                   const viewportWidth = window.innerWidth;
                   const viewportHeight = window.innerHeight;
-                  const maxWidth = (viewportWidth * 2) / 3;
-                  const maxHeight = (viewportHeight * 2) / 3;
+                  const maxWidth = (viewportWidth * 80) / 100;
+                  const maxHeight = (viewportHeight * 80) / 100;
                   
                   console.log('   - Viewport:', viewportWidth, 'x', viewportHeight);
-                  console.log('   - Max container (2/3):', maxWidth, 'x', maxHeight);
+                  console.log('   - Max container (80%):', maxWidth, 'x', maxHeight);
                   console.log('   - Video aspect ratio:', aspectRatio);
                   
                   // Scale based on largest dimension constraint
