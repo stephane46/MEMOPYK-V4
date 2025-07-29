@@ -4,6 +4,7 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Play, Eye, Star, ArrowRight, Image as ImageIcon, Film, Users, Clock } from "lucide-react";
+import { VideoOverlay } from "@/components/gallery/VideoOverlay";
 // Gallery item interface matching the new schema
 interface GalleryItem {
   id: string | number;
@@ -550,7 +551,7 @@ export default function GallerySection() {
             >
               <video
                 className="w-full h-full object-contain"
-                controls={false}
+                controls
                 autoPlay
                 controlsList="nodownload nofullscreen noremoteplayback noplaybackrate"
                 disablePictureInPicture
