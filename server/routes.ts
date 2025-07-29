@@ -1458,14 +1458,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
     });
   });
 
-  // Video streaming proxy with FINAL-STAGE LOGGING - v1.0.45
+  // Video streaming proxy with TIMEOUT SAFEGUARD - v1.0.46
   app.get("/api/video-proxy", async (req, res) => {
     // GALLERY VIDEO DETECTION - Track all requests at entry point
     const filename = req.query.filename as string;
     const isGalleryVideo = filename && (filename.includes('-') || filename.includes('1753'));
     const isHeroVideo = filename && (filename.includes('VideoHero') || filename.includes('Hero'));
     
-    console.log(`🔥 VIDEO PROXY ENTRY v1.0.45 - REQUEST RECEIVED:`);
+    console.log(`🔥 VIDEO PROXY ENTRY v1.0.46 - REQUEST RECEIVED:`);
     console.log(`   - Raw URL: ${req.url}`);
     console.log(`   - Filename: "${filename}"`);
     console.log(`   - Is Gallery Video: ${isGalleryVideo}`);
@@ -1504,7 +1504,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       const { url } = req.query;
       
-      console.log(`🎬 VIDEO PROXY REQUEST DEBUG v1.0.45:`);
+      console.log(`🎬 VIDEO PROXY REQUEST DEBUG v1.0.46:`);
       console.log(`   - Filename: "${filename}"`);
       console.log(`   - URL param: "${url}"`);
       console.log(`   - Range header: "${req.headers.range}"`);
@@ -1859,6 +1859,86 @@ export async function registerRoutes(app: Express): Promise<Server> {
           try {
             stream.pipe(res);
             console.log(`[PROXY] stream.pipe(res) succeeded for ${videoFilename}`);
+            
+            // TIMEOUT SAFEGUARD v1.0.46 - Detect silent stream failures
+            const startTime = Date.now();
+            let timeoutTriggered = false;
+            
+            // Monitor response lifecycle every 500ms
+            const lifecycleMonitor = setInterval(() => {
+              const elapsed = Date.now() - startTime;
+              console.log(`[PROXY] Lifecycle monitor for ${videoFilename} at ${elapsed}ms:`, {
+                headersSent: res.headersSent,
+                finished: res.finished,
+                writableEnded: res.writableEnded,
+                destroyed: res.destroyed
+              });
+            }, 500);
+            
+            // Timeout safeguard after 3 seconds
+            const timeoutSafeguard = setTimeout(() => {
+              clearInterval(lifecycleMonitor);
+              
+              if (!res.finished && !res.writableEnded && !res.destroyed) {
+                timeoutTriggered = true;
+                console.warn(`[PROXY] TIMEOUT SAFEGUARD TRIGGERED for ${videoFilename} - Stream appears to have stalled`);
+                console.warn(`[PROXY] Response state:`, {
+                  headersSent: res.headersSent,
+                  finished: res.finished,
+                  writableEnded: res.writableEnded,
+                  destroyed: res.destroyed,
+                  elapsed: Date.now() - startTime
+                });
+                
+                logProductionError(new Error('Stream timeout - silent failure detected'), {
+                  type: 'stream_timeout_safeguard',
+                  filename: videoFilename,
+                  phase: 'timeout_after_pipe',
+                  elapsedMs: Date.now() - startTime,
+                  responseState: {
+                    headersSent: res.headersSent,
+                    finished: res.finished,
+                    writableEnded: res.writableEnded,
+                    destroyed: res.destroyed
+                  }
+                });
+                
+                // Force response completion to prevent hanging
+                try {
+                  if (!res.headersSent) {
+                    res.writeHead(500, { 'Content-Type': 'application/json' });
+                  }
+                  if (!res.finished) {
+                    res.end(JSON.stringify({
+                      error: 'Stream timeout - silent failure detected',
+                      filename: videoFilename,
+                      version: 'v1.0.46-timeout-safeguard',
+                      elapsedMs: Date.now() - startTime
+                    }));
+                  }
+                } catch (forceEndError: any) {
+                  console.error(`[PROXY] Failed to force response end:`, forceEndError.message);
+                }
+              }
+            }, 3000);
+            
+            // Clean up monitors when response completes normally
+            res.on('finish', () => {
+              if (!timeoutTriggered) {
+                clearTimeout(timeoutSafeguard);
+                clearInterval(lifecycleMonitor);
+                console.log(`[PROXY] Response completed normally for ${videoFilename} after ${Date.now() - startTime}ms`);
+              }
+            });
+            
+            res.on('close', () => {
+              if (!timeoutTriggered) {
+                clearTimeout(timeoutSafeguard);
+                clearInterval(lifecycleMonitor);
+                console.log(`[PROXY] Response closed for ${videoFilename} after ${Date.now() - startTime}ms`);
+              }
+            });
+            
           } catch (pipeError: any) {
             console.error(`[PROXY] pipe error for ${videoFilename}:`, pipeError);
             logProductionError(pipeError, {
