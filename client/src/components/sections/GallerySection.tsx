@@ -516,7 +516,7 @@ export default function GallerySection() {
               }}
             >
               <video
-                className="w-full h-full object-cover"
+                className="w-full h-full object-contain"
                 controls
                 autoPlay
                 controlsList="nodownload nofullscreen noremoteplaybook"
