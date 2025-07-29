@@ -13,8 +13,8 @@ import NotFoundPage from './pages/not-found';
 import { queryClient } from './lib/queryClient';
 import { Toaster } from '@/components/ui/toaster';
 
-// PRODUCTION GALLERY FIX v1.0.41 - VIDEO CACHE SYSTEM INITIALIZED
-console.log("🚀 MEMOPYK PRODUCTION FIX v1.0.41 - Video cache system initialized on server startup - " + Date.now());
+// TIMEOUT SAFEGUARD SYSTEM v1.0.46 - SILENT STREAM FAILURE DETECTION
+console.log("🚀 MEMOPYK TIMEOUT SAFEGUARD v1.0.46 - Silent stream failure detection active - " + Date.now());
 
 function App() {
   return (

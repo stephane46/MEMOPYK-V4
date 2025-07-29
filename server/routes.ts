@@ -1281,7 +1281,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         code: error.code || 'unknown'
       },
       context,
-      version: 'v1.0.45-final-stage-logging'
+      version: 'v1.0.46-timeout-safeguard'
     };
     
     productionErrorLog.unshift(logEntry);
@@ -1296,7 +1296,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.get("/api/debug/production-errors", (req, res) => {
     console.log("🔍 PRODUCTION ERROR LOG REQUEST");
     res.json({
-      version: "v1.0.45-final-stage-logging",
+      version: "v1.0.46-timeout-safeguard",
       timestamp: new Date().toISOString(),
       environment: process.env.NODE_ENV,
       totalErrors: productionErrorLog.length,
@@ -1465,7 +1465,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     const isGalleryVideo = filename && (filename.includes('-') || filename.includes('1753'));
     const isHeroVideo = filename && (filename.includes('VideoHero') || filename.includes('Hero'));
     
-    console.log(`🔥 VIDEO PROXY ENTRY v1.0.46 - REQUEST RECEIVED:`);
+    console.log(`🔥 VIDEO PROXY ENTRY v1.0.46-timeout-safeguard - REQUEST RECEIVED:`);
     console.log(`   - Raw URL: ${req.url}`);
     console.log(`   - Filename: "${filename}"`);
     console.log(`   - Is Gallery Video: ${isGalleryVideo}`);
@@ -1767,7 +1767,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
               details: streamCreateError.message,
               filename: videoFilename,
               path: cachedVideo,
-              version: 'v1.0.45-final-stage-logging'
+              version: 'v1.0.46-timeout-safeguard'
             });
           }
           
@@ -1835,7 +1835,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
                 details: error.message,
                 code: (error as any).code || 'unknown',
                 filename: videoFilename,
-                version: 'v1.0.45-final-stage-logging'
+                version: 'v1.0.46-timeout-safeguard'
               });
             }
           });
@@ -2009,7 +2009,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
                 details: error.message,
                 code: (error as any).code || 'unknown',
                 filename: videoFilename,
-                version: 'v1.0.45-final-stage-logging'
+                version: 'v1.0.46-timeout-safeguard'
               });
             }
           });
