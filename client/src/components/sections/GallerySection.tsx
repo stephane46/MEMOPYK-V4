@@ -550,10 +550,11 @@ export default function GallerySection() {
             >
               <video
                 className="w-full h-full object-contain"
-                controls
+                controls={false}
                 autoPlay
-                controlsList="nodownload nofullscreen noremoteplaybook"
+                controlsList="nodownload nofullscreen noremoteplayback noplaybackrate"
                 disablePictureInPicture
+                disableRemotePlayback
                 onContextMenu={(e) => e.preventDefault()}
                 onClick={(e) => {
                   // Click-to-play/pause functionality
