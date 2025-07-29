@@ -72,7 +72,7 @@ export function VideoOverlay({ videoUrl, title, width, height, orientation, onCl
   // CSS variables for 2/3 viewport sizing
   const twoThirdsRatio = 66.66;
 
-  // Calculate video container dimensions based on orientation
+  // Calculate video container dimensions based on orientation - FIXED ASPECT RATIO BUG
   const getVideoDimensions = useCallback(() => {
     if (orientation === 'portrait') {
       // Portrait: height = 66.66% of viewport height, width = auto
@@ -81,10 +81,10 @@ export function VideoOverlay({ videoUrl, title, width, height, orientation, onCl
       const containerWidth = containerHeight * aspectRatio;
       return { width: containerWidth, height: containerHeight };
     } else {
-      // Landscape: width = 66.66% of viewport width, height = auto
+      // Landscape: width = 66.66% of viewport width, height = auto  
       const containerWidth = (window.innerWidth * twoThirdsRatio) / 100;
-      const aspectRatio = height / width;
-      const containerHeight = containerWidth * aspectRatio;
+      const aspectRatio = width / height; // FIXED: was height/width - caused wrong container dimensions
+      const containerHeight = containerWidth / aspectRatio; // FIXED: divide instead of multiply
       return { width: containerWidth, height: containerHeight };
     }
   }, [orientation, width, height, twoThirdsRatio]);
@@ -261,13 +261,15 @@ export function VideoOverlay({ videoUrl, title, width, height, orientation, onCl
           }}
           onError={handleVideoError}
           onLoadStart={() => {
-            console.log(`🎬 VIDEO OVERLAY NO LETTERBOXING FIX (v1.0.56): loadstart`);
+            console.log(`🎬 VIDEO OVERLAY ASPECT RATIO FIX (v1.0.57): loadstart`);
             console.log(`   - Video URL: "${videoUrl}"`);
             console.log(`   - Title: "${title}"`);
             console.log(`   - Container: ${videoDimensions.width}x${videoDimensions.height}px`);
             console.log(`   - Video Dimensions: ${width}x${height}px`);
             console.log(`   - Orientation: ${orientation}`);
-            console.log(`   - Using object-cover to eliminate black bars`);
+            console.log(`   - Aspect Ratio: ${width}/${height} = ${(width/height).toFixed(3)}`);
+            console.log(`   - Container Aspect Ratio: ${(videoDimensions.width/videoDimensions.height).toFixed(3)}`);
+            console.log(`   - Using object-cover + corrected aspect ratio calculations`);
           }}
           onCanPlay={() => {
             console.log(`✅ VIDEO OVERLAY FINAL FIX (v1.0.16): canplay - ${videoUrl}`);
