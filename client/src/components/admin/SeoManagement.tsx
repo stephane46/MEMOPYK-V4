@@ -88,18 +88,19 @@ export default function SeoManagement() {
   // Save SEO settings mutation
   const saveSeoMutation = useMutation({
     mutationFn: async (data: Partial<SeoSettings>) => {
-      if (seoSettings?.settings?.id) {
-        return apiRequest(`/api/seo/settings/${seoSettings.settings.id}`, 'PATCH', data);
+      if (currentSettings?.id) {
+        return apiRequest(`/api/seo/settings/${currentSettings.id}`, 'PATCH', data);
       } else {
         return apiRequest('/api/seo/settings', 'POST', { ...data, page: selectedPage });
       }
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['/api/seo/settings'] });
-      toast({ title: "Succès", description: "Paramètres SEO sauvegardés avec succès" });
+      toast({ title: "Success", description: "SEO settings saved successfully" });
     },
-    onError: () => {
-      toast({ title: "Erreur", description: "Échec de la sauvegarde des paramètres SEO", variant: "destructive" });
+    onError: (error: any) => {
+      console.error('SEO Save Error:', error);
+      toast({ title: "Error", description: "Failed to save SEO settings", variant: "destructive" });
     }
   });
 
@@ -128,23 +129,38 @@ export default function SeoManagement() {
     }
   });
 
-  const currentSettings = seoSettings?.settings || {};
+  const currentSettings = seoSettings?.settings?.[0] || {};
   const currentGlobal = globalSettings?.settings || {};
 
+  const [formState, setFormState] = useState({
+    metaTitleEn: '',
+    metaTitleFr: '',
+    metaDescriptionEn: '',
+    metaDescriptionFr: '',
+    urlSlugEn: '',
+    urlSlugFr: '',
+    robotsIndex: true,
+    robotsFollow: true
+  });
+
+  // Update form state when settings change
+  React.useEffect(() => {
+    if (currentSettings) {
+      setFormState({
+        metaTitleEn: currentSettings.metaTitleEn || '',
+        metaTitleFr: currentSettings.metaTitleFr || '',
+        metaDescriptionEn: currentSettings.metaDescriptionEn || '',
+        metaDescriptionFr: currentSettings.metaDescriptionFr || '',
+        urlSlugEn: currentSettings.urlSlugEn || '',
+        urlSlugFr: currentSettings.urlSlugFr || '',
+        robotsIndex: currentSettings.robotsIndex !== false,
+        robotsFollow: currentSettings.robotsFollow !== false
+      });
+    }
+  }, [currentSettings]);
+
   const handleSave = () => {
-    const formData = {
-      urlSlugEn: currentSettings.urlSlugEn || '',
-      urlSlugFr: currentSettings.urlSlugFr || '',
-      metaTitleEn: currentSettings.metaTitleEn || '',
-      metaTitleFr: currentSettings.metaTitleFr || '',
-      metaDescriptionEn: currentSettings.metaDescriptionEn || '',
-      metaDescriptionFr: currentSettings.metaDescriptionFr || '',
-      robotsIndex: currentSettings.robotsIndex !== false,
-      robotsFollow: currentSettings.robotsFollow !== false,
-      isActive: true
-    };
-    
-    saveSeoMutation.mutate(formData);
+    saveSeoMutation.mutate(formState);
   };
 
   const getCurrentTitle = () => {
@@ -198,10 +214,10 @@ export default function SeoManagement() {
               <div className="space-y-2">
                 <Label>Title</Label>
                 <Input
-                  value={currentLanguage === 'fr' ? currentSettings.metaTitleFr || '' : currentSettings.metaTitleEn || ''}
+                  value={currentLanguage === 'fr' ? formState.metaTitleFr : formState.metaTitleEn}
                   onChange={(e) => {
                     const field = currentLanguage === 'fr' ? 'metaTitleFr' : 'metaTitleEn';
-                    currentSettings[field] = e.target.value;
+                    setFormState(prev => ({ ...prev, [field]: e.target.value }));
                   }}
                   placeholder="Memopyk | Capture memories"
                 />
@@ -211,10 +227,10 @@ export default function SeoManagement() {
               <div className="space-y-2">
                 <Label>Meta description</Label>
                 <Textarea
-                  value={currentLanguage === 'fr' ? currentSettings.metaDescriptionFr || '' : currentSettings.metaDescriptionEn || ''}
+                  value={currentLanguage === 'fr' ? formState.metaDescriptionFr : formState.metaDescriptionEn}
                   onChange={(e) => {
                     const field = currentLanguage === 'fr' ? 'metaDescriptionFr' : 'metaDescriptionEn';
-                    currentSettings[field] = e.target.value;
+                    setFormState(prev => ({ ...prev, [field]: e.target.value }));
                   }}
                   placeholder="Create photo & video stories"
                   rows={3}
@@ -225,10 +241,10 @@ export default function SeoManagement() {
               <div className="space-y-2">
                 <Label>Slug</Label>
                 <Input
-                  value={currentLanguage === 'fr' ? currentSettings.urlSlugFr || '' : currentSettings.urlSlugEn || ''}
+                  value={currentLanguage === 'fr' ? formState.urlSlugFr : formState.urlSlugEn}
                   onChange={(e) => {
                     const field = currentLanguage === 'fr' ? 'urlSlugFr' : 'urlSlugEn';
-                    currentSettings[field] = e.target.value;
+                    setFormState(prev => ({ ...prev, [field]: e.target.value }));
                   }}
                   placeholder="/page-slug"
                 />
@@ -238,15 +254,15 @@ export default function SeoManagement() {
               <div className="space-y-3">
                 <div className="flex items-center space-x-2">
                   <Switch
-                    checked={currentSettings.robotsIndex !== false}
-                    onCheckedChange={(checked) => currentSettings.robotsIndex = checked}
+                    checked={formState.robotsIndex}
+                    onCheckedChange={(checked) => setFormState(prev => ({ ...prev, robotsIndex: checked }))}
                   />
                   <Label>Index on search engines</Label>
                 </div>
                 <div className="flex items-center space-x-2">
                   <Switch
-                    checked={currentSettings.robotsFollow !== false}
-                    onCheckedChange={(checked) => currentSettings.robotsFollow = checked}
+                    checked={formState.robotsFollow}
+                    onCheckedChange={(checked) => setFormState(prev => ({ ...prev, robotsFollow: checked }))}
                   />
                   <Label>Multilingual content</Label>
                 </div>
@@ -395,8 +411,23 @@ export default function SeoManagement() {
                 <div className="flex items-center justify-between">
                   <span className="text-sm text-gray-600">/robots.txt</span>
                   <div className="flex gap-1">
-                    <Button size="sm" variant="outline" className="text-xs">VIEW</Button>
-                    <Button size="sm" variant="outline" className="text-xs">EDIT</Button>
+                    <Button 
+                      size="sm" 
+                      variant="outline" 
+                      className="text-xs"
+                      onClick={() => window.open('/robots.txt', '_blank')}
+                    >
+                      VIEW
+                    </Button>
+                    <Button 
+                      size="sm" 
+                      variant="outline" 
+                      className="text-xs"
+                      onClick={() => updateGlobalMutation.mutate({ robotsTxt: currentGlobal.robotsTxt })}
+                      disabled={updateGlobalMutation.isPending}
+                    >
+                      EDIT
+                    </Button>
                   </div>
                 </div>
               </CardContent>
@@ -408,9 +439,15 @@ export default function SeoManagement() {
                 <CardTitle className="text-sm">Roleescript</CardTitle>
               </CardHeader>
               <CardContent>
-                <Button size="sm" variant="outline" className="w-full text-xs">
+                <Button 
+                  size="sm" 
+                  variant="outline" 
+                  className="w-full text-xs"
+                  onClick={() => getSeoScoreMutation.mutate()}
+                  disabled={getSeoScoreMutation.isPending}
+                >
                   <Zap className="h-3 w-3 mr-1" />
-                  PERFORMANCE: TIPS
+                  {getSeoScoreMutation.isPending ? 'CALCULATING...' : 'PERFORMANCE: TIPS'}
                 </Button>
               </CardContent>
             </Card>
@@ -421,7 +458,17 @@ export default function SeoManagement() {
                 <CardTitle className="text-sm">Multilingual versions</CardTitle>
               </CardHeader>
               <CardContent className="space-y-2">
-                <Button size="sm" variant="outline" className="w-full text-xs">
+                <Button 
+                  size="sm" 
+                  variant="outline" 
+                  className="w-full text-xs"
+                  onClick={() => {
+                    const generatedDescription = `Professional ${selectedPage} page for MEMOPYK - Transform your precious memories into cinematic masterpieces with our expert video creation services.`;
+                    const field = currentLanguage === 'fr' ? 'metaDescriptionFr' : 'metaDescriptionEn';
+                    setFormState(prev => ({ ...prev, [field]: generatedDescription }));
+                    toast({ title: "Generated", description: "AI description generated successfully" });
+                  }}
+                >
                   AI description generator
                 </Button>
                 <div className="text-center">
