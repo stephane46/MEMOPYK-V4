@@ -241,13 +241,17 @@ export function VideoOverlay({ videoUrl, title, width, height, orientation, onCl
     >
       {/* Video Container */}
       <div
-        className="relative bg-black rounded-lg overflow-hidden shadow-2xl"
+        className="relative bg-black rounded-lg overflow-hidden shadow-2xl border-4 border-red-500"
         style={{
           width: `${videoDimensions.width}px`,
           height: `${videoDimensions.height}px`,
         }}
         onMouseMove={resetControlsTimer}
       >
+        {/* DEBUG: Visible size indicator */}
+        <div className="absolute top-2 left-2 bg-red-500 text-white px-2 py-1 text-xs z-10">
+          80% VIEWPORT v1.0.61 - {videoDimensions.width}x{videoDimensions.height}px
+        </div>
         {/* Video Element - NO LETTERBOXING FIX: object-cover eliminates black bars */}
         <video
           ref={videoRef}
