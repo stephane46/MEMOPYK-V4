@@ -1222,7 +1222,7 @@ export default function AdminPage() {
               </div>
               <Card>
                 <CardContent className="p-6">
-                  <GalleryManagement smartCacheRefreshMutation={smartCacheRefreshMutation} />
+                  <GalleryManagement />
                 </CardContent>
               </Card>
             </div>

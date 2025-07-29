@@ -51,6 +51,21 @@ Preferred communication style: Simple, everyday language.
 
 ## Recent Changes (July 29, 2025)
 
+### ADMIN CACHE MANAGEMENT CLEANUP - v1.0.55 (July 29, 2025) ✅ COMPLETED
+**Removed Irrelevant Cache Features from Gallery Management:**
+✅ **Cache Button Removed**: Eliminated "Cache Vidéos" button since gallery videos use Direct CDN streaming
+✅ **Cache Status Removed**: Removed VideoCacheStatus component and cache status indicators from gallery management
+✅ **Interface Cleanup**: Replaced cache status with "Streaming Method: Direct CDN streaming" information
+✅ **Prop Cleanup**: Removed smartCacheRefreshMutation parameter from GalleryManagement component
+✅ **Clear Architecture**: Admin interface now reflects actual architecture - no confusing cache features for direct CDN videos
+
+**Technical Changes:**
+- Removed VideoCacheStatus import and component usage
+- Removed cache-related queries and mutations (cacheGalleryVideosMutation, galleryCacheStatus)
+- Updated individual gallery item status indicators to show "Direct CDN streaming" instead of cache status
+- Simplified GalleryManagement component props by removing cache-related parameters
+- Admin interface now clearly shows gallery videos use direct CDN while hero videos use cache
+
 ### DIRECT CDN STREAMING IMPLEMENTATION - v1.0.51 (July 29, 2025) ✅ DEPLOYMENT READY
 **Complete Infrastructure Bypass Solution - Gallery Videos Now Working:**
 ✅ **Direct CDN Implementation**: Gallery videos now use direct Supabase CDN URLs bypassing `/api/video-proxy` entirely

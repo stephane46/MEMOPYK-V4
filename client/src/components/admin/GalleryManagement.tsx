@@ -29,7 +29,7 @@ import {
 } from "lucide-react";
 import ImageCropperEasyCrop from './ImageCropperEasyCrop';
 import DirectUpload from './DirectUpload';
-import VideoCacheStatus from './VideoCacheStatus';
+// Removed VideoCacheStatus - Gallery videos use Direct CDN streaming (no cache)
 
 // Module-level persistent state that survives component re-creations
 const persistentUploadState = {
@@ -106,11 +106,9 @@ const addCacheBuster = (url: string): string => {
   return `${url}${separator}t=${Date.now()}`;
 };
 
-interface GalleryManagementProps {
-  smartCacheRefreshMutation?: any;
-}
+// Removed smartCacheRefreshMutation prop - Gallery videos use Direct CDN streaming
 
-export default function GalleryManagement({ smartCacheRefreshMutation }: GalleryManagementProps = {}) {
+export default function GalleryManagement() {
   const [editingItem, setEditingItem] = useState<GalleryItem | null>(null);
   const [showCreateDialog, setShowCreateDialog] = useState(false);
   const [showPreview, setShowPreview] = useState<{ type: 'video' | 'image'; url: string; title: string } | null>(null);
@@ -120,39 +118,7 @@ export default function GalleryManagement({ smartCacheRefreshMutation }: Gallery
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
-  // Cache management state
-  const [cacheStatsRefreshKey, setCacheStatsRefreshKey] = useState(0);
-
-  // Cache stats query
-  const { data: cacheStats, refetch: refetchCacheStats } = useQuery({
-    queryKey: ['/api/video-cache/stats', cacheStatsRefreshKey],
-    staleTime: 1000, // Refresh every second for real-time updates
-  });
-
-  // Cache all gallery videos mutation
-  const cacheGalleryVideosMutation = useMutation({
-    mutationFn: async () => {
-      const response = await apiRequest('/api/video-cache/cache-gallery-videos', 'POST');
-      return response;
-    },
-    onSuccess: () => {
-      toast({
-        title: "✅ Cache des vidéos de galerie",
-        description: "Toutes les vidéos de galerie ont été mises en cache avec succès",
-        className: "bg-green-50 dark:bg-green-900/20 border-green-200 dark:border-green-800"
-      });
-      refetchCacheStats();
-      setCacheStatsRefreshKey(prev => prev + 1);
-    },
-    onError: (error: any) => {
-      toast({
-        title: "❌ Erreur de cache",
-        description: "Échec de la mise en cache des vidéos de galerie",
-        variant: "destructive",
-        className: "bg-red-50 dark:bg-red-900/20 border-red-200 dark:border-red-800"
-      });
-    }
-  });
+  // Removed cache management - Gallery videos use Direct CDN streaming
 
 
 
@@ -163,34 +129,7 @@ export default function GalleryManagement({ smartCacheRefreshMutation }: Gallery
     queryKey: ['/api/gallery'],
   });
 
-  // Fetch cache status for all gallery items
-  const { data: galleryCacheStatus = {} } = useQuery({
-    queryKey: ['/api/video-cache/status', 'gallery'],
-    queryFn: async () => {
-      const filenames = [...galleryItems]
-        .filter(item => item.video_url_en || item.static_image_url || item.image_url_en)
-        .flatMap(item => {
-          const files = [];
-          if (item.video_url_en) {
-            const videoFilename = item.video_url_en.includes('/') ? item.video_url_en.split('/').pop()! : item.video_url_en;
-            files.push(videoFilename);
-          }
-          if (item.static_image_url) {
-            const imageFilename = item.static_image_url.includes('/') ? item.static_image_url.split('/').pop()! : item.static_image_url;
-            files.push(imageFilename);
-          }
-          return files;
-        })
-        .filter(filename => filename);
-
-      if (filenames.length === 0) return { status: {} };
-
-      const response = await apiRequest('/api/video-cache/status', 'POST', { filenames });
-      return await response.json();
-    },
-    enabled: galleryItems.length > 0,
-    refetchInterval: 30000, // Refresh every 30 seconds
-  });
+  // Removed cache status query - Gallery videos use Direct CDN streaming
 
   // Create gallery item mutation
   const createItemMutation = useMutation({
@@ -1048,20 +987,7 @@ export default function GalleryManagement({ smartCacheRefreshMutation }: Gallery
           <p className="text-sm text-gray-600">Gérez les éléments de votre galerie de films</p>
         </div>
         <div className="flex gap-3">
-          {/* Cache Gallery Videos Button */}
-          <Button
-            onClick={() => cacheGalleryVideosMutation.mutate()}
-            disabled={cacheGalleryVideosMutation.isPending}
-            variant="outline"
-            className="border-green-500 text-green-600 hover:bg-green-50 dark:border-green-400 dark:text-green-400 dark:hover:bg-green-900/20"
-          >
-            {cacheGalleryVideosMutation.isPending ? (
-              <div className="animate-spin h-4 w-4 border-2 border-green-500 border-t-transparent rounded-full mr-2" />
-            ) : (
-              <Download className="h-4 w-4 mr-2" />
-            )}
-            Cache Vidéos
-          </Button>
+          {/* Removed Cache Gallery Videos button - Gallery videos use Direct CDN streaming */}
           
           <Dialog open={showCreateDialog} onOpenChange={setShowCreateDialog}>
             <DialogTrigger asChild>
@@ -1083,18 +1009,7 @@ export default function GalleryManagement({ smartCacheRefreshMutation }: Gallery
         </div>
       </div>
 
-      {/* Gallery Video Cache Status - Section-Specific */}
-      <VideoCacheStatus 
-        videoFilenames={sortedItems
-          .filter(item => item.video_filename && item.video_filename.trim() !== '')
-          .map(item => item.video_filename!)
-          .filter(filename => filename)
-        }
-        title="Gallery Videos Cache Status"
-        showForceAllButton={false}
-        description="Gallery video caching status. Videos are cached locally for ~50ms performance vs ~1500ms direct streaming."
-        smartCacheRefreshMutation={smartCacheRefreshMutation}
-      />
+      {/* Removed VideoCacheStatus - Gallery videos use Direct CDN streaming (no cache) */}
 
       <div className="space-y-4">
         {sortedItems.map((item, index) => (
@@ -1193,32 +1108,17 @@ export default function GalleryManagement({ smartCacheRefreshMutation }: Gallery
                     <span className="text-xs text-gray-500">#{item.order_index}</span>
                   </div>
                   
-                  {/* Unified Cache Status for this Gallery Item */}
-                  <div className="p-2 bg-gray-50 dark:bg-gray-800 rounded text-xs space-y-1">
-                    <div className="font-medium text-gray-700 dark:text-gray-300">Cache Status:</div>
-                    {item.video_url_en && (() => {
-                      const videoFilename = item.video_url_en.includes('/') ? item.video_url_en.split('/').pop()! : item.video_url_en;
-                      const videoStatus = (galleryCacheStatus as any)?.status?.[videoFilename];
-                      const isCached = videoStatus?.exists || false;
-                      return (
-                        <div className="flex items-center gap-1">
-                          <Video className={`h-3 w-3 ${isCached ? 'text-green-500' : 'text-red-500'}`} />
-                          <span>Video: {isCached ? 'Cached' : 'Not cached'}</span>
-                        </div>
-                      );
-                    })()}
-                    {(item.static_image_url || item.image_url_en) && (() => {
-                      const imageUrl = item.static_image_url || item.image_url_en;
-                      const imageFilename = imageUrl!.includes('/') ? imageUrl!.split('/').pop()! : imageUrl!;
-                      const imageStatus = (galleryCacheStatus as any)?.status?.[imageFilename];
-                      const isCached = imageStatus?.exists || false;
-                      return (
-                        <div className="flex items-center gap-1">
-                          <Image className={`h-3 w-3 ${isCached ? 'text-green-500' : 'text-orange-500'}`} />
-                          <span>Image: {isCached ? 'Cached' : 'CDN direct'}</span>
-                        </div>
-                      );
-                    })()}
+                  {/* Updated streaming status for gallery items */}
+                  <div className="p-2 bg-blue-50 dark:bg-blue-900/20 rounded text-xs space-y-1">
+                    <div className="font-medium text-blue-700 dark:text-blue-300">Streaming Method:</div>
+                    <div className="flex items-center gap-1">
+                      <Video className="h-3 w-3 text-blue-600" />
+                      <span>Video: Direct CDN streaming</span>
+                    </div>
+                    <div className="flex items-center gap-1">
+                      <Image className="h-3 w-3 text-blue-600" />
+                      <span>Image: Direct CDN serving</span>
+                    </div>
                   </div>
                 </div>
 
