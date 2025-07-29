@@ -69,16 +69,44 @@ export function VideoOverlay({ videoUrl, title, width, height, orientation, onCl
     console.error('    - Ready state meaning:', readyStates[e.target?.readyState] || 'Unknown');
   }, [videoUrl]);
 
-  // Use pre-calculated dimensions from GallerySection - no recalculation needed
-  const videoDimensions = { width, height };
-  
-  console.log('🎬 VIDEO OVERLAY DIMENSIONS v1.0.60 - Using pre-calculated container:');
-  console.log('   - Container width:', width);
-  console.log('   - Container height:', height);
-  console.log('   - Orientation:', orientation);
-  console.log('   - Using direct dimensions from GallerySection algorithm');
+  // CSS variables for 2/3 viewport sizing
+  const twoThirdsRatio = 66.66;
 
-  // No resize handler needed - dimensions are pre-calculated and passed as props
+  // Calculate video container dimensions based on orientation - FIXED ASPECT RATIO BUG
+  const getVideoDimensions = useCallback(() => {
+    if (orientation === 'portrait') {
+      // Portrait: height = 66.66% of viewport height, width = auto
+      const containerHeight = (window.innerHeight * twoThirdsRatio) / 100;
+      const aspectRatio = width / height;
+      const containerWidth = containerHeight * aspectRatio;
+      return { width: containerWidth, height: containerHeight };
+    } else {
+      // Landscape: width = 66.66% of viewport width, height = auto  
+      const containerWidth = (window.innerWidth * twoThirdsRatio) / 100;
+      const aspectRatio = width / height; // FIXED: was height/width - caused wrong container dimensions
+      const containerHeight = containerWidth / aspectRatio; // FIXED: divide instead of multiply
+      return { width: containerWidth, height: containerHeight };
+    }
+  }, [orientation, width, height, twoThirdsRatio]);
+
+  const [videoDimensions, setVideoDimensions] = useState(() => getVideoDimensions());
+
+  // Debounced resize handler
+  useEffect(() => {
+    let resizeTimeout: NodeJS.Timeout;
+    const handleResize = () => {
+      clearTimeout(resizeTimeout);
+      resizeTimeout = setTimeout(() => {
+        setVideoDimensions(getVideoDimensions());
+      }, 150);
+    };
+
+    window.addEventListener('resize', handleResize);
+    return () => {
+      window.removeEventListener('resize', handleResize);
+      clearTimeout(resizeTimeout);
+    };
+  }, [getVideoDimensions]);
 
   // Auto-hide controls after 3 seconds
   const resetControlsTimer = useCallback(() => {
@@ -206,7 +234,9 @@ export function VideoOverlay({ videoUrl, title, width, height, orientation, onCl
     <div
       ref={overlayRef}
       className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-md transition-all duration-300 ease-out"
-      style={{}}
+      style={{
+        '--two-thirds-ratio': `${twoThirdsRatio}%`,
+      } as React.CSSProperties}
       onClick={handleOverlayClick}
     >
       {/* Video Container */}
