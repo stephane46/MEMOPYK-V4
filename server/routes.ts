@@ -1771,24 +1771,29 @@ export async function registerRoutes(app: Express): Promise<Server> {
             });
           }
           
-          // Pre-pipe verification
-          console.log(`🚀 ABOUT TO PIPE STREAM for ${videoFilename}:`, {
+          // FINAL-STAGE LOGGING v1.0.45 - Pre-pipe verification
+          console.log(`[PROXY] Pre-pipe status for ${videoFilename}:`, {
             headersSent: res.headersSent,
+            resWritable: res.writable,
             streamReadable: stream.readable,
-            responseWritable: res.writable,
             start, end, chunksize,
             timestamp: new Date().toISOString()
           });
           
           // Verify res.headersSent before setting headers
           if (res.headersSent) {
-            console.error(`❌ HEADERS ALREADY SENT for ${videoFilename} - Cannot set response headers`);
+            console.error(`[PROXY] HEADERS ALREADY SENT for ${videoFilename} - Cannot set response headers`);
+            logProductionError(new Error('Headers already sent'), {
+              type: 'headers_already_sent',
+              filename: videoFilename,
+              phase: 'pre_header_check'
+            });
             return;
           }
           
+          // Set headers with comprehensive error handling
+          console.log(`[PROXY] About to write headers for ${videoFilename}`);
           try {
-            // Set headers with error handling
-            console.log(`📝 SETTING HEADERS for ${videoFilename}`);
             res.writeHead(206, {
               'Content-Range': `bytes ${start}-${end}/${fileSize}`,
               'Accept-Ranges': 'bytes',
@@ -1798,108 +1803,92 @@ export async function registerRoutes(app: Express): Promise<Server> {
               'Access-Control-Allow-Headers': 'range, content-type',
               'Cache-Control': 'public, max-age=86400'
             });
-            console.log(`✅ HEADERS SET successfully for ${videoFilename}`);
+            console.log(`[PROXY] Headers written successfully for ${videoFilename}`);
           } catch (headerError: any) {
-            console.error(`❌ HEADER SETTING ERROR for ${videoFilename}:`, headerError);
+            console.error(`[PROXY] writeHead error for ${videoFilename}:`, headerError);
             logProductionError(headerError, {
-              type: 'header_setting_error',
+              type: 'write_head_error',
               filename: videoFilename,
               headersSent: res.headersSent,
-              phase: 'setting_response_headers'
+              phase: 'write_head_operation'
             });
             return;
           }
           
+          // Add comprehensive error listeners BEFORE piping
           stream.on('error', (error) => {
-            console.error(`❌ PRODUCTION STREAM ERROR v1.0.43 for ${videoFilename}:`, {
-              version: "v1.0.43-enhanced-debugging",
-              errorType: error.constructor.name,
-              errorMessage: error.message,
-              errorCode: (error as any).code || 'unknown',
-              errorStack: error.stack,
-              filePath: cachedVideo,
-              fileExists: existsSync(cachedVideo),
-              fileStats: existsSync(cachedVideo) ? statSync(cachedVideo) : 'FILE_NOT_FOUND',
-              headersSent: res.headersSent,
-              rangeDetails: { start, end, chunksize },
-              environmentInfo: {
-                nodeEnv: process.env.NODE_ENV,
-                cwd: process.cwd(),
-                __dirname: __dirname
-              },
-              requestInfo: {
-                method: req.method,
-                range: req.headers.range,
-                userAgent: req.headers['user-agent'],
-                acceptEncoding: req.headers['accept-encoding'],
-                secFetchDest: req.headers['sec-fetch-dest']
-              }
-            });
-            
-            // Log to production error system
+            console.error(`[PROXY] Stream error during pipe for ${videoFilename}:`, error);
             logProductionError(error, {
-              type: 'stream_reading_error',
+              type: 'stream_error_during_pipe',
               filename: videoFilename,
-              path: cachedVideo,
-              fileExists: existsSync(cachedVideo),
-              rangeDetails: { start, end, chunksize },
-              workingDirectory: process.cwd(),
-              dirname: __dirname,
-              nodeEnv: process.env.NODE_ENV,
-              requestInfo: {
-                method: req.method,
-                range: req.headers.range,
-                userAgent: req.headers['user-agent']
+              phase: 'stream_pipe_operation',
+              errorDetails: {
+                errorType: error.constructor.name,
+                errorMessage: error.message,
+                errorCode: (error as any).code || 'unknown'
               }
             });
             
             if (!res.headersSent) {
               res.status(500).json({ 
-                error: 'Stream reading error',
+                error: 'Stream error during pipe',
                 details: error.message,
                 code: (error as any).code || 'unknown',
                 filename: videoFilename,
-                path: cachedVideo,
-                version: 'v1.0.43-enhanced-debugging',
-                debug: {
-                  method: req.method,
-                  range: req.headers.range,
-                  userAgent: req.headers['user-agent'],
-                  start, end, chunksize
-                }
+                version: 'v1.0.45-final-stage-logging'
               });
             }
           });
           
-          // Pipe with comprehensive logging
-          console.log(`🔄 STARTING PIPE OPERATION for ${videoFilename}`);
+          res.on('error', (error) => {
+            console.error(`[PROXY] Response stream error for ${videoFilename}:`, error);
+            logProductionError(error, {
+              type: 'response_stream_error',
+              filename: videoFilename,
+              phase: 'response_writing',
+              errorDetails: {
+                errorType: error.constructor.name,
+                errorMessage: error.message,
+                errorCode: (error as any).code || 'unknown'
+              }
+            });
+          });
+          
+          // Pipe operation with detailed logging
+          console.log(`[PROXY] About to start pipe operation for ${videoFilename}`);
           try {
             stream.pipe(res);
-            console.log(`✅ PIPE OPERATION INITIATED for ${videoFilename}`);
+            console.log(`[PROXY] stream.pipe(res) succeeded for ${videoFilename}`);
           } catch (pipeError: any) {
-            console.error(`❌ PIPE OPERATION ERROR for ${videoFilename}:`, pipeError);
+            console.error(`[PROXY] pipe error for ${videoFilename}:`, pipeError);
             logProductionError(pipeError, {
-              type: 'pipe_operation_error',
+              type: 'pipe_synchronous_error',
               filename: videoFilename,
-              phase: 'pipe_initiation'
+              phase: 'pipe_call_execution'
             });
           }
         } else {
           console.log(`   - Serving full file (no range)`);
           
-          // Pre-pipe verification for full file
-          console.log(`🚀 ABOUT TO PIPE FULL FILE for ${videoFilename}:`, {
+          // FINAL-STAGE LOGGING v1.0.45 - Pre-pipe verification for full file
+          console.log(`[PROXY] Pre-pipe status for full file ${videoFilename}:`, {
             headersSent: res.headersSent,
-            responseWritable: res.writable,
+            resWritable: res.writable,
             fileSize,
             timestamp: new Date().toISOString()
           });
           
           if (res.headersSent) {
-            console.error(`❌ HEADERS ALREADY SENT for full file ${videoFilename}`);
+            console.error(`[PROXY] HEADERS ALREADY SENT for full file ${videoFilename}`);
+            logProductionError(new Error('Headers already sent for full file'), {
+              type: 'headers_already_sent_full_file',
+              filename: videoFilename,
+              phase: 'pre_header_check_full_file'
+            });
             return;
           }
           
+          console.log(`[PROXY] About to write headers for full file ${videoFilename}`);
           try {
             res.writeHead(200, {
               'Content-Length': fileSize,
@@ -1907,43 +1896,70 @@ export async function registerRoutes(app: Express): Promise<Server> {
               'Access-Control-Allow-Origin': '*',
               'Cache-Control': 'public, max-age=86400'
             });
-            console.log(`✅ FULL FILE HEADERS SET for ${videoFilename}`);
+            console.log(`[PROXY] Headers written successfully for full file ${videoFilename}`);
           } catch (headerError: any) {
-            console.error(`❌ FULL FILE HEADER ERROR for ${videoFilename}:`, headerError);
+            console.error(`[PROXY] writeHead error for full file ${videoFilename}:`, headerError);
+            logProductionError(headerError, {
+              type: 'write_head_error_full_file',
+              filename: videoFilename,
+              phase: 'write_head_operation_full_file'
+            });
             return;
           }
           
           const stream = createReadStream(cachedVideo);
+          
+          // Add comprehensive error listeners BEFORE piping (full file)
           stream.on('error', (error) => {
-            console.error(`❌ PRODUCTION FULL STREAM ERROR for ${videoFilename}:`, error);
-            console.error(`   - Error type: ${error.constructor.name}`);
-            console.error(`   - Error message: ${error.message}`);
-            console.error(`   - Error code: ${(error as any).code || 'unknown'}`);
-            console.error(`   - Headers sent: ${res.headersSent}`);
-            console.error(`   - Request method: ${req.method}`);
-            console.error(`   - User-Agent: ${req.headers['user-agent']}`);
-            console.error(`   - Video file exists: ${existsSync(cachedVideo)}`);
+            console.error(`[PROXY] Stream error during full file pipe for ${videoFilename}:`, error);
+            logProductionError(error, {
+              type: 'stream_error_during_full_file_pipe',
+              filename: videoFilename,
+              phase: 'full_file_stream_pipe_operation',
+              errorDetails: {
+                errorType: error.constructor.name,
+                errorMessage: error.message,
+                errorCode: (error as any).code || 'unknown'
+              }
+            });
+            
             if (!res.headersSent) {
               res.status(500).json({ 
-                error: 'Full stream error',
+                error: 'Full file stream error during pipe',
                 details: error.message,
                 code: (error as any).code || 'unknown',
                 filename: videoFilename,
-                debug: {
-                  method: req.method,
-                  userAgent: req.headers['user-agent']
-                }
+                version: 'v1.0.45-final-stage-logging'
               });
             }
           });
           
-          // Pipe full file with logging
-          console.log(`🔄 STARTING FULL FILE PIPE for ${videoFilename}`);
+          res.on('error', (error) => {
+            console.error(`[PROXY] Response stream error for full file ${videoFilename}:`, error);
+            logProductionError(error, {
+              type: 'response_stream_error_full_file',
+              filename: videoFilename,
+              phase: 'full_file_response_writing',
+              errorDetails: {
+                errorType: error.constructor.name,
+                errorMessage: error.message,
+                errorCode: (error as any).code || 'unknown'
+              }
+            });
+          });
+          
+          // Pipe full file with detailed logging
+          console.log(`[PROXY] About to start full file pipe operation for ${videoFilename}`);
           try {
             stream.pipe(res);
-            console.log(`✅ FULL FILE PIPE INITIATED for ${videoFilename}`);
+            console.log(`[PROXY] stream.pipe(res) succeeded for full file ${videoFilename}`);
           } catch (pipeError: any) {
-            console.error(`❌ FULL FILE PIPE ERROR for ${videoFilename}:`, pipeError);
+            console.error(`[PROXY] pipe error for full file ${videoFilename}:`, pipeError);
+            logProductionError(pipeError, {
+              type: 'pipe_synchronous_error_full_file',
+              filename: videoFilename,
+              phase: 'full_file_pipe_call_execution'
+            });
           }
         }
         return;
