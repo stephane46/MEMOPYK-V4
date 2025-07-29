@@ -5,24 +5,24 @@ console.log("================================================");
 
 const testUrls = [
   {
-    name: "🔴 PRODUCTION Gallery Video 1 (REAL TEST)",
-    url: "https://memopyk.replit.app/api/video-proxy?filename=1753736019450-VitaminSeaC.mp4"
-  },
-  {
-    name: "🔴 PRODUCTION Gallery Video 2 (REAL TEST)", 
-    url: "https://memopyk.replit.app/api/video-proxy?filename=1753736667497-PomGalleryC.mp4"
-  },
-  {
-    name: "🔴 PRODUCTION Gallery Video 3 (REAL TEST)",
-    url: "https://memopyk.replit.app/api/video-proxy?filename=1753736982469-safari-1.mp4"
-  },
-  {
-    name: "🟢 PRODUCTION Hero Video 1 (Known Working)",
+    name: "🔴 PROD VideoHero1.mp4 (Browser reports working)",
     url: "https://memopyk.replit.app/api/video-proxy?filename=VideoHero1.mp4"
   },
   {
-    name: "🔵 DEVELOPMENT Gallery Video 1 (Local)",
-    url: "http://localhost:5000/api/video-proxy?filename=1753736019450-VitaminSeaC.mp4"
+    name: "🔴 PROD VideoHero2.mp4 (Browser reports working)",
+    url: "https://memopyk.replit.app/api/video-proxy?filename=VideoHero2.mp4"
+  },
+  {
+    name: "🔴 PROD VideoHero3.mp4 (Browser reports working)", 
+    url: "https://memopyk.replit.app/api/video-proxy?filename=VideoHero3.mp4"
+  },
+  {
+    name: "🔴 PROD Gallery Video 1 (User reports 500)",
+    url: "https://memopyk.replit.app/api/video-proxy?filename=1753736019450-VitaminSeaC.mp4"
+  },
+  {
+    name: "🔴 PROD Gallery Video 2 (User reports 500)",
+    url: "https://memopyk.replit.app/api/video-proxy?filename=1753736667497-PomGalleryC.mp4"
   }
 ];
 
