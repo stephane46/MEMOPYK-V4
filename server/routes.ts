@@ -1278,16 +1278,39 @@ export async function registerRoutes(app: Express): Promise<Server> {
     });
   });
 
-  // Video streaming proxy with TIMESTAMP PREFIX FIX - v1.0.30
+  // Video streaming proxy with GALLERY VIDEO FIX - v1.0.34
   app.get("/api/video-proxy", async (req, res) => {
+    // GALLERY VIDEO DETECTION - Track all requests at entry point
+    const filename = req.query.filename as string;
+    const isGalleryVideo = filename && (filename.includes('-') || filename.includes('1753'));
+    const isHeroVideo = filename && (filename.includes('VideoHero') || filename.includes('Hero'));
+    
+    console.log(`🔥 VIDEO PROXY ENTRY v1.0.34 - REQUEST RECEIVED:`);
+    console.log(`   - Raw URL: ${req.url}`);
+    console.log(`   - Filename: "${filename}"`);
+    console.log(`   - Is Gallery Video: ${isGalleryVideo}`);
+    console.log(`   - Is Hero Video: ${isHeroVideo}`);
+    console.log(`   - Method: ${req.method}`);
+    console.log(`   - User-Agent: ${req.headers['user-agent']?.substring(0, 100)}`);
+    
+    if (isGalleryVideo) {
+      console.log(`🎬 GALLERY VIDEO REQUEST DETECTED: ${filename}`);
+      console.log(`   - This should work identically to hero videos`);
+      console.log(`   - Gallery video should be cached and served from local storage`);
+    }
+    
     // EMERGENCY: Wrap everything in bulletproof error handling
     const emergencyErrorHandler = (error: any) => {
       console.error('🚨 EMERGENCY HANDLER - VIDEO PROXY ERROR:', error);
+      console.error(`   - Was Gallery Video: ${isGalleryVideo}`);
+      console.error(`   - Filename: ${filename}`);
       if (!res.headersSent) {
         res.status(500).json({ 
           error: "Emergency error handler activated",
           message: error.message,
-          version: "v1.0.30-timestamp-fix",
+          isGalleryVideo,
+          filename,
+          version: "v1.0.34-gallery-fix",
           timestamp: new Date().toISOString()
         });
       }
@@ -1299,9 +1322,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
     process.on('unhandledRejection', emergencyErrorHandler);
     
     try {
-      const { url, filename } = req.query;
+      const { url } = req.query;
       
-      console.log(`🎬 VIDEO PROXY REQUEST DEBUG v1.0.30:`);
+      console.log(`🎬 VIDEO PROXY REQUEST DEBUG v1.0.34:`);
       console.log(`   - Filename: "${filename}"`);
       console.log(`   - URL param: "${url}"`);
       console.log(`   - Range header: "${req.headers.range}"`);
