@@ -1442,6 +1442,16 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // CRITICAL ROUTING TEST - v1.0.50
+  app.get("/api/test-routing", (req, res) => {
+    console.log("🔥 ROUTING TEST HIT - v1.0.50");
+    res.json({ 
+      message: "Routing works",
+      version: "v1.0.50-route-entry-debug",
+      timestamp: new Date().toISOString()
+    });
+  });
+
   // EMERGENCY GALLERY VIDEO DEBUG ROUTE - v1.0.45
   app.get("/api/debug-gallery-video", (req, res) => {
     console.log("🔍 EMERGENCY DEBUG ROUTE HIT - v1.0.45");

@@ -43,6 +43,19 @@ console.log("✅ Video cache system initialized - gallery videos will be preload
 const app = express();
 const server = createServer(app);
 
+// 🔍 ABSOLUTE FIRST MIDDLEWARE: Log EVERY request that reaches Express
+app.use((req, res, next) => {
+  console.log(`🚨 ABSOLUTE REQUEST INTERCEPTOR v1.0.50: ${req.method} ${req.url}`);
+  if (req.url.includes('PomGalleryC.mp4') || req.url.includes('video-proxy')) {
+    console.log(`🎯 CRITICAL REQUEST DETECTED: ${req.url}`);
+    console.log(`   - Method: ${req.method}`);
+    console.log(`   - Path: ${req.path}`);
+    console.log(`   - Query: ${JSON.stringify(req.query)}`);
+    console.log(`   - User-Agent: ${req.headers['user-agent']?.slice(0, 100)}`);
+  }
+  next();
+});
+
 // Configure Express with large body limits for file uploads
 app.use(express.json({ limit: '5000mb' }));
 app.use(express.urlencoded({ 
