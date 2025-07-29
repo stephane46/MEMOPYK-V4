@@ -39,6 +39,13 @@ export default function GallerySection() {
   const [flippedCards, setFlippedCards] = useState<Set<string | number>>(new Set());
   const [lightboxVideo, setLightboxVideo] = useState<GalleryItem | null>(null);
   
+  // 🚨 DEPLOYMENT DIAGNOSTIC v1.0.32 - VIRGIN SERVER TEST
+  useEffect(() => {
+    console.log("🚨 DEPLOYMENT DIAGNOSTIC v1.0.32 - VIRGIN SERVER TEST");
+    console.log("📋 Frontend component loaded - checking if updates reach production");
+    console.log("🎯 This should appear in production console if deployment works");
+  }, []);
+  
   // Fetch active gallery items with type conversion from snake_case API
   const { data: galleryItems = [], isLoading } = useQuery<any[]>({
     queryKey: ['/api/gallery'],
