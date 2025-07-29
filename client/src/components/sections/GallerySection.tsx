@@ -497,20 +497,55 @@ export default function GallerySection() {
             className="relative w-full max-w-4xl mx-auto bg-black rounded-lg overflow-hidden shadow-2xl"
             style={{ width: 'min(66.67vw, 100vw - 2rem)', maxHeight: '90vh' }}
           >
-            {/* Video Player - FIXED: Dynamic aspect ratio using actual video dimensions */}
+            {/* Video Player - FIXED: 2/3 viewport scaling with correct aspect ratio */}
             <div 
               className="relative bg-black"
               ref={(containerRef) => {
                 if (containerRef && lightboxVideo) {
-                  console.log('🎬 LIGHTBOX CONTAINER DEBUG v1.0.58 - Container created:');
+                  console.log('🎬 2/3 VIEWPORT SCALING DEBUG v1.0.59 - Container created:');
                   console.log('   - Video filename:', lightboxVideo.videoFilename);
                   console.log('   - Admin dimensions: Width =', lightboxVideo.videoWidth, 'Height =', lightboxVideo.videoHeight);
-                  console.log('   - Container will be resized when video loads with actual dimensions');
                   
-                  // Set initial aspect ratio from admin data, will be updated when video loads
-                  const initialAspectRatio = `${lightboxVideo.videoWidth || 16} / ${lightboxVideo.videoHeight || 9}`;
-                  containerRef.style.aspectRatio = initialAspectRatio;
-                  console.log('   - Initial aspect ratio set to:', initialAspectRatio);
+                  const adminWidth = lightboxVideo.videoWidth || 16;
+                  const adminHeight = lightboxVideo.videoHeight || 9;
+                  const aspectRatio = adminWidth / adminHeight;
+                  
+                  // Calculate 2/3 viewport scaling
+                  const viewportWidth = window.innerWidth;
+                  const viewportHeight = window.innerHeight;
+                  const maxWidth = (viewportWidth * 2) / 3;
+                  const maxHeight = (viewportHeight * 2) / 3;
+                  
+                  console.log('   - Viewport:', viewportWidth, 'x', viewportHeight);
+                  console.log('   - Max container (2/3):', maxWidth, 'x', maxHeight);
+                  console.log('   - Video aspect ratio:', aspectRatio);
+                  
+                  // Scale based on largest dimension constraint
+                  let containerWidth, containerHeight;
+                  if (aspectRatio > 1) {
+                    // Landscape: width is larger, limit by width
+                    containerWidth = maxWidth;
+                    containerHeight = maxWidth / aspectRatio;
+                    if (containerHeight > maxHeight) {
+                      containerHeight = maxHeight;
+                      containerWidth = maxHeight * aspectRatio;
+                    }
+                  } else {
+                    // Portrait: height is larger, limit by height
+                    containerHeight = maxHeight;
+                    containerWidth = maxHeight * aspectRatio;
+                    if (containerWidth > maxWidth) {
+                      containerWidth = maxWidth;
+                      containerHeight = maxWidth / aspectRatio;
+                    }
+                  }
+                  
+                  console.log('   - Final container:', containerWidth, 'x', containerHeight);
+                  console.log('   - Scaling factor:', containerWidth / adminWidth);
+                  
+                  containerRef.style.width = `${containerWidth}px`;
+                  containerRef.style.height = `${containerHeight}px`;
+                  containerRef.style.aspectRatio = `${adminWidth} / ${adminHeight}`;
                 }
               }}
             >
@@ -547,26 +582,8 @@ export default function GallerySection() {
                 onCanPlay={() => {
                   console.log('✅ Video can play:', lightboxVideo.lightboxVideoUrl);
                 }}
-                onLoadedData={(e) => {
-                  console.log('✅ Video data loaded:', lightboxVideo.lightboxVideoUrl);
-                  const video = e.target as HTMLVideoElement;
-                  console.log('🎬 ACTUAL VIDEO DIMENSIONS DEBUG v1.0.58:');
-                  console.log('   - Video natural width:', video.videoWidth);
-                  console.log('   - Video natural height:', video.videoHeight);
-                  console.log('   - Actual video aspect ratio:', video.videoWidth / video.videoHeight);
-                  console.log('   - Admin stored width:', lightboxVideo.videoWidth);
-                  console.log('   - Admin stored height:', lightboxVideo.videoHeight);
-                  console.log('   - Admin stored aspect ratio:', (lightboxVideo.videoWidth || 16) / (lightboxVideo.videoHeight || 9));
-                  console.log('   - DIMENSION MISMATCH:', video.videoWidth !== lightboxVideo.videoWidth || video.videoHeight !== lightboxVideo.videoHeight);
-                  
-                  // CRITICAL FIX: Update container aspect ratio to match actual video dimensions
-                  const container = video.parentElement;
-                  if (container && video.videoWidth && video.videoHeight) {
-                    const actualAspectRatio = `${video.videoWidth} / ${video.videoHeight}`;
-                    container.style.aspectRatio = actualAspectRatio;
-                    console.log('🔧 FIXED: Container aspect ratio updated to actual video dimensions:', actualAspectRatio);
-                    console.log('   - Container should now perfectly match video with no black bars or cropping');
-                  }
+                onLoadedData={() => {
+                  console.log('✅ Video data loaded - using admin dimensions with 2/3 viewport scaling');
                 }}
                 style={{ backgroundColor: 'black' }}
               >
