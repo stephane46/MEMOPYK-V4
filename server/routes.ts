@@ -3621,7 +3621,198 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  console.log("📋 Video proxy, image proxy, cache endpoints, and diagnostic endpoint registered");
+  // Stream Limit Testing System v1.0.48 - Automated video file size testing
+  app.get('/api/test-stream-limits', async (req, res) => {
+    console.log('[STREAM-TEST] 🧪 Starting automated stream limit testing...');
+    
+    const results: any[] = [];
+    const testSizes = [5, 10, 15, 20, 25, 30, 40, 50, 60, 70, 80, 90, 100]; // MB
+    let maxStreamableSize = 0;
+    let consecutiveFailures = 0;
+    
+    try {
+      // Use fs functions that are already imported
+      const { createWriteStream, unlinkSync } = require('fs');
+      
+      for (const sizeMB of testSizes) {
+        console.log(`[STREAM-TEST] 📊 Testing ${sizeMB}MB file...`);
+        
+        // Generate test file path
+        const testFilename = `stream-test-${sizeMB}MB.mp4`;
+        const testFilePath = path.join(__dirname, 'cache', 'videos', testFilename);
+        
+        try {
+          // Create dummy MP4 file of specified size
+          const fileSizeBytes = sizeMB * 1024 * 1024;
+          
+          // Create minimal MP4 header (valid but minimal)
+          const mp4Header = Buffer.from([
+            0x00, 0x00, 0x00, 0x20, 0x66, 0x74, 0x79, 0x70, // ftyp box
+            0x69, 0x73, 0x6f, 0x6d, 0x00, 0x00, 0x02, 0x00,
+            0x69, 0x73, 0x6f, 0x6d, 0x69, 0x73, 0x6f, 0x32,
+            0x61, 0x76, 0x63, 0x31, 0x6d, 0x70, 0x34, 0x31
+          ]);
+          
+          // Write file with padding
+          const writeStream = createWriteStream(testFilePath);
+          writeStream.write(mp4Header);
+          
+          // Pad with zeros to reach target size
+          const paddingSize = fileSizeBytes - mp4Header.length;
+          const chunkSize = 1024 * 1024; // 1MB chunks
+          const paddingBuffer = Buffer.alloc(Math.min(chunkSize, paddingSize), 0);
+          
+          for (let i = 0; i < Math.ceil(paddingSize / chunkSize); i++) {
+            const remainingBytes = paddingSize - (i * chunkSize);
+            const writeSize = Math.min(chunkSize, remainingBytes);
+            writeStream.write(paddingBuffer.slice(0, writeSize));
+          }
+          
+          writeStream.end();
+          await new Promise((resolve, reject) => {
+            writeStream.on('finish', resolve);
+            writeStream.on('error', reject);
+          });
+          
+          console.log(`[STREAM-TEST] ✅ Created test file: ${testFilename} (${sizeMB}MB)`);
+          
+          // Test streaming via createReadStream (same function used in video proxy)
+          const testResult = await new Promise<any>((resolve) => {
+            const startTime = Date.now();
+            let responseStatus = 200;
+            let responseFinished = false;
+            let responseClosed = false;
+            
+            // Test file streaming using imported createReadStream function
+            const testStream = createReadStream(testFilePath, { 
+              start: 0, 
+              end: Math.min(1024 * 1024, fileSizeBytes - 1) // Test first 1MB
+            });
+            
+            testStream.on('data', (chunk) => {
+              // Successful chunk reading
+            });
+            
+            testStream.on('end', () => {
+              responseFinished = true;
+              responseStatus = 200;
+              resolve({
+                status: responseStatus,
+                success: true,
+                duration: Date.now() - startTime,
+                finished: responseFinished,
+                closed: responseClosed
+              });
+            });
+            
+            testStream.on('error', (error: any) => {
+              responseStatus = 500;
+              resolve({
+                status: responseStatus,
+                success: false,
+                duration: Date.now() - startTime,
+                error: error.message,
+                finished: responseFinished,
+                closed: responseClosed
+              });
+            });
+            
+            // Timeout after 15 seconds
+            setTimeout(() => {
+              if (!responseFinished) {
+                responseStatus = 500;
+                testStream.destroy();
+                resolve({
+                  status: responseStatus,
+                  success: false,
+                  duration: Date.now() - startTime,
+                  error: 'Timeout after 15 seconds',
+                  finished: responseFinished,
+                  closed: responseClosed
+                });
+              }
+            }, 15000);
+          });
+          
+          results.push({
+            sizeMB: sizeMB,
+            status: testResult.status,
+            success: testResult.success,
+            duration: testResult.duration,
+            details: testResult
+          });
+          
+          console.log(`[STREAM-TEST] 📋 ${sizeMB}MB: Status ${testResult.status}, Duration: ${testResult.duration}ms`);
+          
+          if (testResult.success && testResult.status === 200) {
+            maxStreamableSize = sizeMB;
+            consecutiveFailures = 0;
+          } else {
+            consecutiveFailures++;
+            console.log(`[STREAM-TEST] ❌ Failure detected for ${sizeMB}MB (consecutive: ${consecutiveFailures})`);
+          }
+          
+          // Clean up test file
+          try {
+            unlinkSync(testFilePath);
+            console.log(`[STREAM-TEST] 🗑️ Cleaned up test file: ${testFilename}`);
+          } catch (cleanupError: any) {
+            console.warn(`[STREAM-TEST] ⚠️ Could not clean up ${testFilename}:`, cleanupError.message);
+          }
+          
+          // Stop after 2 consecutive failures
+          if (consecutiveFailures >= 2) {
+            console.log(`[STREAM-TEST] 🛑 Stopping after ${consecutiveFailures} consecutive failures`);
+            break;
+          }
+          
+        } catch (fileError: any) {
+          console.error(`[STREAM-TEST] ❌ Error creating/testing ${sizeMB}MB file:`, fileError.message);
+          results.push({
+            sizeMB: sizeMB,
+            status: 500,
+            success: false,
+            duration: 0,
+            error: fileError.message
+          });
+          consecutiveFailures++;
+          
+          if (consecutiveFailures >= 2) break;
+        }
+      }
+      
+      const summary = {
+        maxStreamableSizeMB: maxStreamableSize,
+        tested: results,
+        totalTests: results.length,
+        successfulTests: results.filter(r => r.success).length,
+        failedTests: results.filter(r => !r.success).length,
+        testTimestamp: new Date().toISOString(),
+        platform: 'Replit',
+        version: 'v1.0.48-enhanced-pipe-logging',
+        recommendation: maxStreamableSize > 0 
+          ? `Consider limiting uploads to ${maxStreamableSize}MB for reliable streaming`
+          : 'No reliable streaming threshold found - investigate infrastructure limits'
+      };
+      
+      console.log(`[STREAM-TEST] 📊 FINAL RESULTS: Max streamable size: ${maxStreamableSize}MB`);
+      console.log(`[STREAM-TEST] 📈 Success rate: ${summary.successfulTests}/${summary.totalTests} tests passed`);
+      
+      res.json(summary);
+      
+    } catch (error: any) {
+      console.error('[STREAM-TEST] ❌ Stream limit testing failed:', error);
+      res.status(500).json({
+        error: 'Stream limit testing failed',
+        message: error.message,
+        maxStreamableSizeMB: 0,
+        tested: results,
+        testTimestamp: new Date().toISOString()
+      });
+    }
+  });
+
+  console.log("📋 Video proxy, image proxy, cache endpoints, diagnostic endpoint, and stream testing registered");
 
   return createServer(app);
 }

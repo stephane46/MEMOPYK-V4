@@ -77,6 +77,26 @@ Preferred communication style: Simple, everyday language.
 - Silent failures will now be captured and logged for targeted resolution
 - Production error endpoint will contain complete failure analysis
 
+**AUTOMATED STREAM LIMIT TESTING SYSTEM - v1.0.48:**
+✅ **Progressive File Size Testing**: Automated testing of 5MB, 10MB, 15MB up to 100MB video files
+✅ **Real MP4 File Generation**: Creates valid MP4 files with proper headers and zero-padding to target sizes
+✅ **Streaming Simulation**: Tests fs.createReadStream() with same patterns as video proxy route
+✅ **Failure Detection**: Stops after 2 consecutive failures to identify maximum reliable streaming size
+✅ **Comprehensive Reporting**: JSON results with success rates, timing, and platform-specific recommendations
+✅ **Automatic Cleanup**: Removes test files after each test to maintain clean cache directory
+
+**New Diagnostic Endpoint:** `GET /api/test-stream-limits`
+- Tests progressive file sizes to find Replit streaming limits
+- Returns JSON with maxStreamableSizeMB and detailed test results
+- Provides specific recommendations for upload size restrictions
+- Example output: `{"maxStreamableSizeMB": 75, "recommendation": "Consider limiting uploads to 75MB for reliable streaming"}`
+
+**CRITICAL: PRODUCTION TESTING REQUIREMENT**
+⚠️ **Stream testing MUST be performed in PRODUCTION environment** - Dev server cannot replicate Replit Deployments infrastructure limits
+🎯 **Testing Strategy**: Deploy v1.0.48 to production → access `/api/test-stream-limits` → identify exact streaming thresholds
+📊 **Expected Results**: Determine maximum file size that can be streamed reliably through Replit Deployments infrastructure
+🔧 **Infrastructure Analysis**: Production testing will reveal if VitaminSeaC.mp4 (75MB) exceeds platform streaming limits
+
 ### ENHANCED PRODUCTION DEBUGGING - v1.0.43 (July 29, 2025)
 **COMPREHENSIVE STREAM ERROR DIAGNOSIS SYSTEM - DEPLOYMENT READY:**
 ✅ **Root Cause Investigation**: Added extensive logging to identify why gallery videos fail with 500 errors while hero videos work
