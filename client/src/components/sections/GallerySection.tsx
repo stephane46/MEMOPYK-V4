@@ -449,14 +449,26 @@ export default function GallerySection() {
                         {getItemTitle(item)}
                       </h3>
                           
-                      {/* Duration (5) - Clock icon, single line height */}
-                      <div className="mb-3 h-6 overflow-hidden">
+                      {/* Duration (5) - Clock icon, single line height with format badge on right */}
+                      <div className="mb-3 h-6 overflow-hidden flex items-center justify-between">
                         <div className="flex items-center gap-2">
                           <Clock className="w-4 h-4 flex-shrink-0" style={{ color: '#D67C4A' }} />
                           <div className="text-sm leading-4" style={{ color: '#4B5563' }}>
                             {getItemDuration(item) || <div className="h-4"></div>}
                           </div>
                         </div>
+                        
+                        {/* Viewing Format Badge - Marketing Feature */}
+                        {(() => {
+                          const format = getViewingFormat(item);
+                          const IconComponent = format.icon;
+                          return (
+                            <div className={`${format.color} text-white px-2 py-1 rounded-full text-xs font-medium flex items-center gap-1 shadow-sm`}>
+                              <IconComponent className="w-3 h-3" />
+                              <div className="font-bold leading-tight">{format.platform}</div>
+                            </div>
+                          );
+                        })()}
                       </div>
                       
                       {/* Situation (6) - Users icon, fixed height: 80px (5 lines max) */}
@@ -470,7 +482,7 @@ export default function GallerySection() {
                       </div>
                       
                       {/* Story (7) - Film icon, fixed height: 80px (5 lines max) */}
-                      <div className="h-20 overflow-hidden mb-4">
+                      <div className="h-20 overflow-hidden">
                         <div className="flex items-start gap-2">
                           <Film className="w-4 h-4 flex-shrink-0" style={{ color: '#D67C4A' }} />
                           <div className="text-sm leading-4" style={{ color: '#4B5563' }}>
@@ -478,21 +490,6 @@ export default function GallerySection() {
                           </div>
                         </div>
                       </div>
-
-                      {/* Viewing Format Badge - Marketing Feature */}
-                      {(() => {
-                        const format = getViewingFormat(item);
-                        const IconComponent = format.icon;
-                        return (
-                          <div className={`${format.color} text-white px-4 py-2 rounded-full text-xs font-medium flex items-center gap-2 shadow-lg w-fit`}>
-                            <IconComponent className="w-4 h-4" />
-                            <div>
-                              <div className="font-bold leading-tight">{format.platform}</div>
-                              <div className="text-xs opacity-90 leading-tight">{format.type}</div>
-                            </div>
-                          </div>
-                        );
-                      })()}
                     </div>
                   </div>
 
