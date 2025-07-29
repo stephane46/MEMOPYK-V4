@@ -193,6 +193,25 @@ export default function SeoManagement() {
     }
   };
 
+  const editRobotsTxt = async () => {
+    try {
+      // Fetch current robots.txt content from API to edit
+      const response = await fetch('/api/seo/robots.txt');
+      const content = await response.text();
+      setRobotsContent(content);
+      setShowRobotsDialog(true);
+    } catch (error) {
+      // Fallback to default content if API fails
+      setRobotsContent(currentGlobal?.robotsTxt || 'User-agent: *\nDisallow: /admin\nAllow: /\n\nSitemap: https://memopyk.com/sitemap.xml');
+      setShowRobotsDialog(true);
+      toast({ 
+        title: "Avertissement", 
+        description: "Chargement du contenu par défaut", 
+        variant: "default" 
+      });
+    }
+  };
+
   const getCurrentTitle = () => {
     return currentLanguage === 'fr' 
       ? currentSettings.metaTitleFr || 'Memopyk | Capture memories'
@@ -453,10 +472,7 @@ export default function SeoManagement() {
                       size="sm" 
                       variant="outline" 
                       className="text-xs"
-                      onClick={() => {
-                        setRobotsContent(currentGlobal?.robotsTxt || 'User-agent: *\nDisallow: /admin\nAllow: /\n\nSitemap: https://memopyk.com/sitemap.xml');
-                        setShowRobotsDialog(true);
-                      }}
+                      onClick={editRobotsTxt}
                     >
                       EDIT
                     </Button>

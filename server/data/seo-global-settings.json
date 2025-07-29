@@ -1,7 +1,7 @@
 [
   {
     "id": 1,
-    "robotsTxt": "User-agent: *\nDisallow: /admin\nDisallow: /private\nAllow: /\n\nSitemap: https://memopyk.com/sitemap.xml",
+    "robotsTxt": "User-agent: *\nDisallow: /admin\nAllow: /\n\nSitemap: https://memopyk.com/sitemap.xml\n\ntest",
     "sitemapEnabled": true,
     "sitemapFrequency": "daily",
     "defaultMetaTitle": null,
@@ -13,6 +13,6 @@
     "facebookPixelId": null,
     "isMaintenanceMode": false,
     "createdAt": "2025-07-29T15:26:56.769Z",
-    "updatedAt": "2025-07-29T15:30:43.141Z"
+    "updatedAt": "2025-07-29T15:56:41.848Z"
   }
 ]
