@@ -14,7 +14,7 @@ import { queryClient } from './lib/queryClient';
 import { Toaster } from '@/components/ui/toaster';
 
 // TIMEOUT SAFEGUARD SYSTEM v1.0.46 - SILENT STREAM FAILURE DETECTION
-console.log("🚀 MEMOPYK PRE-PIPE DIAGNOSTIC v1.0.47 - Silent fast stream failure analysis active - " + Date.now());
+console.log("🚀 MEMOPYK ENHANCED PIPE LOGGING v1.0.48 - Silent connection closure detection active - " + Date.now());
 
 function App() {
   return (
