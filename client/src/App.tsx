@@ -8,6 +8,7 @@ import { HomePage } from './pages/HomePage';
 import { AdminRoute } from './components/AdminRoute';
 import { LanguageSelectionPage } from './pages/LanguageSelectionPage';
 import { LegalDocumentPage } from './pages/LegalDocumentPage';
+import TestGalleryVideo from './pages/TestGalleryVideo';
 import NotFoundPage from './pages/not-found';
 import { queryClient } from './lib/queryClient';
 import { Toaster } from '@/components/ui/toaster';
@@ -43,6 +44,9 @@ function App() {
               <Route path="/en-US/gallery" component={() => <div className="min-h-screen flex items-center justify-center"><div className="text-2xl text-gray-500">Gallery Coming Soon</div></div>} />
               <Route path="/fr-FR/contact" component={() => <div className="min-h-screen flex items-center justify-center"><div className="text-2xl text-gray-500">Contact Bientôt Disponible</div></div>} />
               <Route path="/en-US/contact" component={() => <div className="min-h-screen flex items-center justify-center"><div className="text-2xl text-gray-500">Contact Coming Soon</div></div>} />
+              
+              {/* Test Route */}
+              <Route path="/test-gallery-video" component={TestGalleryVideo} />
               
               {/* Legal Document Routes */}
               <Route path="/fr-FR/legal/:docType" component={LegalDocumentPage} />
