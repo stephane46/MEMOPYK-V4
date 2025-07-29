@@ -36,9 +36,9 @@ testDatabaseConnection()
   });
 
 // Initialize video cache system for production gallery video support
-console.log("🎬 PRODUCTION FIX v1.0.41 - Initializing video cache system...");
+console.log("🎬 ROUTE DEBUGGING v1.0.50 - Initializing video cache system...");
 const videoCache = new VideoCache();
-console.log("✅ Video cache system initialized - gallery videos will be preloaded");
+console.log("✅ Video cache system initialized - comprehensive request logging active");
 
 const app = express();
 const server = createServer(app);
