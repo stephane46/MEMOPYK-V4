@@ -287,6 +287,9 @@ export function VideoOverlay({ videoUrl, title, width, height, orientation, onCl
           }}
           preload="metadata"
           playsInline
+          disablePictureInPicture
+          controlsList="nodownload nofullscreen noremoteplayback"
+          onContextMenu={(e) => e.preventDefault()}
         >
           <source src={videoUrl} type="video/mp4" />
           Your browser does not support the video tag.
