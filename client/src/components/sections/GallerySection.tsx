@@ -494,12 +494,8 @@ export default function GallerySection() {
         >
           {/* Video Container - 80% screen width, centered */}
           <div 
-            className="relative mx-auto bg-black rounded-lg overflow-hidden shadow-2xl border-4 border-red-500"
+            className="relative mx-auto bg-black rounded-lg overflow-hidden shadow-2xl"
           >
-            {/* DEBUG: Visible size indicator */}
-            <div className="absolute top-2 left-2 bg-red-500 text-white px-2 py-1 text-xs z-10">
-              80% VIEWPORT v1.0.61 - Gallery Lightbox
-            </div>
             {/* Video Player - FIXED: 2/3 viewport scaling with correct aspect ratio */}
             <div 
               className="relative bg-black"
