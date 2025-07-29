@@ -13,8 +13,8 @@ import NotFoundPage from './pages/not-found';
 import { queryClient } from './lib/queryClient';
 import { Toaster } from '@/components/ui/toaster';
 
-// GALLERY VIDEO INTERCEPTION DEBUG v1.0.39 - CACHE BUST FIX
-console.log("🚀 MEMOPYK GALLERY VIDEO DEBUG v1.0.39 - CACHE BUST FIX - " + Date.now());
+// PRODUCTION GALLERY FIX v1.0.41 - VIDEO CACHE SYSTEM INITIALIZED
+console.log("🚀 MEMOPYK PRODUCTION FIX v1.0.41 - Video cache system initialized on server startup - " + Date.now());
 
 function App() {
   return (

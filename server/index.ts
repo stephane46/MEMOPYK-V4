@@ -7,10 +7,11 @@ import { createProxyMiddleware } from "http-proxy-middleware";
 import { registerRoutes } from "./routes";
 import { log } from "./vite";           
 import { testDatabaseConnection } from "./database";
+import { VideoCache } from "./video-cache";
 
-console.log("=== MEMOPYK Server Starting v1.0.13 ===");
-console.log("🔧 Gallery Video Fix: PRODUCTION DEPLOYMENT WITH DEBUG ROUTE v1.0.13");
-console.log("🔍 Emergency debug route added: /api/debug-gallery-video");
+console.log("=== MEMOPYK Server Starting v1.0.41 ===");
+console.log("🔧 PRODUCTION GALLERY FIX: Video cache system initialization v1.0.41");
+console.log("🎬 Gallery videos will be preloaded on server startup");
 console.log("NODE_ENV:", process.env.NODE_ENV);
 console.log(
   "DATABASE_URL:",
@@ -33,6 +34,11 @@ testDatabaseConnection()
   .catch((err) => {
     console.error("❌ Database test error:", err);
   });
+
+// Initialize video cache system for production gallery video support
+console.log("🎬 PRODUCTION FIX v1.0.41 - Initializing video cache system...");
+const videoCache = new VideoCache();
+console.log("✅ Video cache system initialized - gallery videos will be preloaded");
 
 const app = express();
 const server = createServer(app);
