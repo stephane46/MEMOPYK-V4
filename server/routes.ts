@@ -1281,7 +1281,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         code: error.code || 'unknown'
       },
       context,
-      version: 'v1.0.48-enhanced-pipe-logging'
+      version: 'v1.0.50-route-entry-debug'
     };
     
     productionErrorLog.unshift(logEntry);
@@ -1296,7 +1296,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.get("/api/debug/production-errors", (req, res) => {
     console.log("🔍 PRODUCTION ERROR LOG REQUEST");
     res.json({
-      version: "v1.0.48-enhanced-pipe-logging",
+      version: "v1.0.50-route-entry-debug",
       timestamp: new Date().toISOString(),
       environment: process.env.NODE_ENV,
       totalErrors: productionErrorLog.length,
@@ -1320,7 +1320,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
 
     const diagnosticReport: any = {
-      version: "v1.0.48-enhanced-pipe-logging",
+      version: "v1.0.50-route-entry-debug",
       timestamp: new Date().toISOString(),
       requestedFilename: filename,
       environment: {
@@ -1693,15 +1693,15 @@ export async function registerRoutes(app: Express): Promise<Server> {
             return res.status(416).json({ 
               error: "Invalid range request",
               debug: { start, end, range, fileSize },
-              version: "v1.0.5-emergency"
+              version: "v1.0.50-route-entry-debug"
             });
           }
           
           const chunksize = (end - start) + 1;
           console.log(`   - Range: ${start}-${end}, chunk size: ${chunksize}`);
 
-          // TIMEOUT SAFEGUARD v1.0.46 - Comprehensive debug before streaming
-          console.log(`🎯 PRODUCTION STREAM DEBUG v1.0.48-enhanced-pipe-logging - About to serve video:`, {
+          // TIMEOUT SAFEGUARD v1.0.50 - Comprehensive debug before streaming
+          console.log(`🎯 PRODUCTION STREAM DEBUG v1.0.50-route-entry-debug - About to serve video:`, {
             filename: videoFilename,
             fullPath: cachedVideo,
             fileExists: existsSync(cachedVideo),
@@ -1712,7 +1712,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
             cwd: process.cwd(),
             __dirname: __dirname,
             nodeEnv: process.env.NODE_ENV,
-            version: "v1.0.48-enhanced-pipe-logging"
+            version: "v1.0.50-route-entry-debug"
           });
 
           // Test file existence just before reading
@@ -1758,7 +1758,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
                   details: streamError.message,
                   code: streamError.code,
                   filename: videoFilename,
-                  version: 'v1.0.44-stream-debug'
+                  version: 'v1.0.50-route-entry-debug'
                 });
               }
             });
@@ -1782,7 +1782,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
               details: streamCreateError.message,
               filename: videoFilename,
               path: cachedVideo,
-              version: 'v1.0.48-enhanced-pipe-logging'
+              version: 'v1.0.50-route-entry-debug'
             });
           }
           
@@ -1872,7 +1872,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
                 details: error.message,
                 code: (error as any).code || 'unknown',
                 filename: videoFilename,
-                version: 'v1.0.48-enhanced-pipe-logging'
+                version: 'v1.0.50-route-entry-debug'
               });
             }
           });
@@ -1964,7 +1964,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
                     res.end(JSON.stringify({
                       error: 'Stream timeout - silent failure detected',
                       filename: videoFilename,
-                      version: 'v1.0.48-enhanced-pipe-logging',
+                      version: 'v1.0.50-route-entry-debug',
                       elapsedMs: Date.now() - startTime
                     }));
                   }
@@ -2083,7 +2083,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
                 details: error.message,
                 code: (error as any).code || 'unknown',
                 filename: videoFilename,
-                version: 'v1.0.48-enhanced-pipe-logging'
+                version: 'v1.0.50-route-entry-debug'
               });
             }
           });
@@ -3804,7 +3804,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         failedTests: results.filter(r => !r.success).length,
         testTimestamp: new Date().toISOString(),
         platform: 'Replit',
-        version: 'v1.0.48-enhanced-pipe-logging',
+        version: 'v1.0.50-route-entry-debug',
         recommendation: maxStreamableSize > 0 
           ? `Consider limiting uploads to ${maxStreamableSize}MB for reliable streaming`
           : 'No reliable streaming threshold found - investigate infrastructure limits'
