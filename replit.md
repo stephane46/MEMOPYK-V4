@@ -52,6 +52,26 @@ Preferred communication style: Simple, everyday language.
 
 ## Recent Changes (July 29, 2025)
 
+### FRONTEND CACHE BUG RESOLUTION - v1.0.39 (July 29, 2025)
+**ROOT CAUSE DISCOVERED AND FIXED - Gallery Video Clean Filename Display:**
+✅ **Cache Issue Identified**: Frontend React Query was serving stale cached data with old timestamp-prefixed filenames
+✅ **Database Verification**: API endpoint confirmed returning clean filenames (VitaminSeaC.mp4, PomGalleryC.mp4, safari-1.mp4)
+✅ **Cache Fix Applied**: Updated query key to version-specific cache (`'v1.0.39'`) to force fresh data fetch in production
+✅ **Development Confirmed**: Browser console now shows clean filenames without timestamp prefixes
+✅ **Production Build Ready**: Build completed (1,370.12 kB) with cache fix included for deployment
+
+**Technical Resolution:**
+- Fixed React Query queryKey from `['/api/gallery']` to `['/api/gallery', 'v1.0.39']` for version-specific cache invalidation
+- Removed continuous cache busting with `Date.now()` in favor of deployment-specific version cache
+- Confirmed API returns clean data: `{"videoFilename":"VitaminSeaC.mp4"}` instead of timestamp-prefixed versions
+- Production deployment will now serve fresh data instead of cached timestamp-prefixed filenames
+
+**User Experience Achievement:**
+- Gallery videos display with original uploaded filenames (VitaminSeaC.mp4, PomGalleryC.mp4, safari-1.mp4)
+- No more confusing timestamp prefixes in video URLs or admin interface
+- Clean professional appearance matching user's upload intentions
+- Ready for immediate production deployment with fixed cache behavior
+
 ### TIMESTAMP PREFIX SYSTEM REMOVAL - v1.0.38 (July 29, 2025)
 **ROOT CAUSE RESOLUTION - Gallery Video Production Fix:**
 ✅ **Timestamp Prefix System Removed**: Eliminated automatic `Date.now()-filename` prefix addition in upload system
