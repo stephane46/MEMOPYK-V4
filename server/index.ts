@@ -193,8 +193,11 @@ app.use((req, res, next) => {
         return next(); // Skip for API routes
       }
       
-      // Only serve dynamic HTML for the root path - let Vite handle everything else
-      if (req.path === '/' || req.path === '/index.html') {
+      // Only serve dynamic SEO HTML for specific crawler requests - let Vite handle normal browsing
+      const userAgent = req.headers['user-agent'] || '';
+      const isCrawler = /bot|crawler|spider|crawling/i.test(userAgent);
+      
+      if ((req.path === '/' || req.path === '/index.html') && isCrawler) {
         const fs = require('fs');
         const htmlPath = path.resolve(process.cwd(), "public/index.html");
         
@@ -223,13 +226,13 @@ app.use((req, res, next) => {
           
           html = html.replace(/DYNAMIC_CANONICAL_URL/g, canonicalUrl);
           
-          console.log(`🔍 DEV SEO HREFLANG: Serving ${req.path} with baseUrl: ${baseUrl}, canonical: ${canonicalUrl}`);
+          console.log(`🔍 SEO CRAWLER: Serving ${req.path} to ${userAgent.slice(0, 50)} with baseUrl: ${baseUrl}`);
           
           res.set('Content-Type', 'text/html');
           res.send(html);
           return;
         } catch (error) {
-          console.error('❌ Error serving dynamic HTML in dev mode:', error);
+          console.error('❌ Error serving dynamic HTML to crawler:', error);
           // Fall through to proxy for error cases
         }
       }
@@ -269,50 +272,58 @@ app.use((req, res, next) => {
       express.static(clientDist, { index: false })(req, res, next);
     });
     
-    // Server-side HTML serving with dynamic hreflang tags for SEO
+    // Server-side HTML serving with dynamic hreflang tags for SEO crawlers only
     app.get("*", (req: Request, res: Response, next) => {
       if (req.path.startsWith("/api")) {
         return next(); // Let API routes be handled by registerRoutes
       }
       
-      // Read the HTML template and inject dynamic hreflang tags
-      const htmlPath = path.join(clientDist, "index.html");
-      const fs = require('fs');
+      const userAgent = req.headers['user-agent'] || '';
+      const isCrawler = /bot|crawler|spider|crawling/i.test(userAgent);
       
-      try {
-        let html = fs.readFileSync(htmlPath, 'utf8');
+      // Only serve dynamic HTML to crawlers - regular users get normal static files
+      if (isCrawler) {
+        const htmlPath = path.join(clientDist, "index.html");
+        const fs = require('fs');
         
-        // Determine the base URL for hreflang tags
-        const protocol = req.headers['x-forwarded-proto'] || (req.secure ? 'https' : 'http');
-        const host = req.headers['x-forwarded-host'] || req.headers.host;
-        const baseUrl = `${protocol}://${host}`;
-        
-        // Replace dynamic placeholders with actual URLs
-        html = html.replace(/DYNAMIC_BASE_URL/g, baseUrl);
-        
-        // Determine current language from path and set canonical URL
-        const currentPath = req.path;
-        let canonicalUrl = baseUrl;
-        
-        if (currentPath.startsWith('/en') || currentPath.includes('lang=en')) {
-          canonicalUrl = `${baseUrl}/en/`;
-        } else if (currentPath.startsWith('/fr') || currentPath.includes('lang=fr')) {
-          canonicalUrl = `${baseUrl}/fr/`;
-        } else {
-          canonicalUrl = `${baseUrl}/`; // x-default
+        try {
+          let html = fs.readFileSync(htmlPath, 'utf8');
+          
+          // Determine the base URL for hreflang tags
+          const protocol = req.headers['x-forwarded-proto'] || (req.secure ? 'https' : 'http');
+          const host = req.headers['x-forwarded-host'] || req.headers.host;
+          const baseUrl = `${protocol}://${host}`;
+          
+          // Replace dynamic placeholders with actual URLs
+          html = html.replace(/DYNAMIC_BASE_URL/g, baseUrl);
+          
+          // Determine current language from path and set canonical URL
+          const currentPath = req.path;
+          let canonicalUrl = baseUrl;
+          
+          if (currentPath.startsWith('/en') || currentPath.includes('lang=en')) {
+            canonicalUrl = `${baseUrl}/en/`;
+          } else if (currentPath.startsWith('/fr') || currentPath.includes('lang=fr')) {
+            canonicalUrl = `${baseUrl}/fr/`;
+          } else {
+            canonicalUrl = `${baseUrl}/`; // x-default
+          }
+          
+          html = html.replace(/DYNAMIC_CANONICAL_URL/g, canonicalUrl);
+          
+          console.log(`🔍 SEO CRAWLER PROD: Serving ${req.path} to ${userAgent.slice(0, 50)} with baseUrl: ${baseUrl}`);
+          
+          res.set('Content-Type', 'text/html');
+          res.send(html);
+          return;
+        } catch (error) {
+          console.error('❌ Error serving dynamic HTML to crawler in prod:', error);
+          // Fall through to static file serving
         }
-        
-        html = html.replace(/DYNAMIC_CANONICAL_URL/g, canonicalUrl);
-        
-        console.log(`🔍 SEO HREFLANG: Serving ${req.path} with baseUrl: ${baseUrl}, canonical: ${canonicalUrl}`);
-        
-        res.set('Content-Type', 'text/html');
-        res.send(html);
-        
-      } catch (error) {
-        console.error('❌ Error serving dynamic HTML:', error);
-        res.sendFile(htmlPath); // Fallback to static file
       }
+      
+      // For regular users, serve static files normally
+      res.sendFile(path.join(clientDist, "index.html"));
     });
     
     console.log("📦 Serving static files from", clientDist);
