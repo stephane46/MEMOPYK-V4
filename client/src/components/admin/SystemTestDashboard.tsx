@@ -350,10 +350,11 @@ Cache Status: ${cacheData?.success ? 'Operational' : 'Failed'}`;
         details: `Cache validation failed: ${error}`,
         timestamp: new Date()
       }]);
+    } finally {
+      // Always ensure state is cleared regardless of success or failure
+      setIsRunningTests(false);
+      setActiveTest(null);
     }
-    
-    setIsRunningTests(false);
-    setActiveTest(null);
   };
 
   // Database connectivity test
@@ -401,10 +402,11 @@ Cache Status: ${cacheData?.success ? 'Operational' : 'Failed'}`;
         details: `Database connection failed: ${error}`,
         timestamp: new Date()
       }]);
+    } finally {
+      // Always ensure state is cleared regardless of success or failure
+      setIsRunningTests(false);
+      setActiveTest(null);
     }
-    
-    setIsRunningTests(false);
-    setActiveTest(null);
   };
 
   // File upload system test
@@ -438,10 +440,11 @@ Cache Status: ${cacheData?.success ? 'Operational' : 'Failed'}`;
         details: `File upload test failed: ${error}`,
         timestamp: new Date()
       }]);
+    } finally {
+      // Always ensure state is cleared regardless of success or failure
+      setIsRunningTests(false);
+      setActiveTest(null);
     }
-    
-    setIsRunningTests(false);
-    setActiveTest(null);
   };
 
   const getStatusIcon = (status: TestResult['status']) => {
