@@ -282,26 +282,8 @@ export default function SystemTestDashboard() {
     } catch (error) {
       console.error('Performance benchmark error:', error);
     } finally {
-      // Always ensure state is cleared regardless of success or failure
       setIsRunningTests(false);
       setActiveTest(null);
-      
-      // Auto-open dialog with test summary after a brief delay
-      setTimeout(() => {
-        // Create a summary of all performance benchmark results
-        const recentResults = testResults.slice(-5); // Get last 5 results (the benchmarks we just ran)
-        if (recentResults.length > 0) {
-          const summary = {
-            name: 'Performance Benchmarks Summary',
-            status: recentResults.every(r => r.status === 'success') ? 'success' : 
-                   recentResults.some(r => r.status === 'error') ? 'error' : 'warning',
-            duration: recentResults.reduce((sum, r) => sum + (r.duration || 0), 0),
-            details: recentResults.map(r => `${r.name}: ${r.details || 'Completed'}`).join('\n\n'),
-            timestamp: new Date()
-          } as TestResult;
-          setSelectedTest(summary);
-        }
-      }, 500);
     }
   };
 
@@ -371,25 +353,8 @@ Cache Status: ${cacheData?.success ? 'Operational' : 'Failed'}`;
         timestamp: new Date()
       }]);
     } finally {
-      // Always ensure state is cleared regardless of success or failure
       setIsRunningTests(false);
       setActiveTest(null);
-      
-      // Auto-open dialog with cache validation summary
-      setTimeout(() => {
-        const recentResults = testResults.slice(-2); // Get last 2 cache-related results
-        if (recentResults.length > 0) {
-          const summary = {
-            name: 'Cache Validation Summary',
-            status: recentResults.every(r => r.status === 'success') ? 'success' : 
-                   recentResults.some(r => r.status === 'error') ? 'error' : 'warning',
-            duration: recentResults.reduce((sum, r) => sum + (r.duration || 0), 0),
-            details: recentResults.map(r => `${r.name}: ${r.details || 'Completed'}`).join('\n\n'),
-            timestamp: new Date()
-          } as TestResult;
-          setSelectedTest(summary);
-        }
-      }, 500);
     }
   };
 
@@ -440,25 +405,8 @@ Cache Status: ${cacheData?.success ? 'Operational' : 'Failed'}`;
         timestamp: new Date()
       }]);
     } finally {
-      // Always ensure state is cleared regardless of success or failure
       setIsRunningTests(false);
       setActiveTest(null);
-      
-      // Auto-open dialog with database test summary
-      setTimeout(() => {
-        const recentResults = testResults.slice(-4); // Get last 4 database-related results
-        if (recentResults.length > 0) {
-          const summary = {
-            name: 'Database Connection Summary',
-            status: recentResults.every(r => r.status === 'success') ? 'success' : 
-                   recentResults.some(r => r.status === 'error') ? 'error' : 'warning',
-            duration: recentResults.reduce((sum, r) => sum + (r.duration || 0), 0),
-            details: recentResults.map(r => `${r.name}: ${r.details || 'Completed'}`).join('\n\n'),
-            timestamp: new Date()
-          } as TestResult;
-          setSelectedTest(summary);
-        }
-      }, 500);
     }
   };
 
@@ -495,24 +443,8 @@ Cache Status: ${cacheData?.success ? 'Operational' : 'Failed'}`;
         timestamp: new Date()
       }]);
     } finally {
-      // Always ensure state is cleared regardless of success or failure
       setIsRunningTests(false);
       setActiveTest(null);
-      
-      // Auto-open dialog with file upload summary
-      setTimeout(() => {
-        const recentResults = testResults.slice(-1); // Get last upload result
-        if (recentResults.length > 0) {
-          const summary = {
-            name: 'File Upload System Summary',
-            status: recentResults[0].status,
-            duration: recentResults[0].duration,
-            details: recentResults[0].details,
-            timestamp: new Date()
-          } as TestResult;
-          setSelectedTest(summary);
-        }
-      }, 500);
     }
   };
 
@@ -691,7 +623,9 @@ Cache Status: ${cacheData?.success ? 'Operational' : 'Failed'}`;
             <CardTitle className="flex items-center justify-between text-gray-900 dark:text-white">
               <span className="flex items-center gap-2">
                 <TestTube className="h-5 w-5" />
-                <span className="text-lg font-semibold">System Test Results</span>
+                <span className="text-lg font-semibold">
+                  {currentTestType || 'System Test Results'}
+                </span>
               </span>
               <div className="flex items-center gap-4">
                 <div className="text-base font-medium text-gray-700 dark:text-gray-300">
