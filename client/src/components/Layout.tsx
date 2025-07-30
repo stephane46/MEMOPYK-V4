@@ -1,37 +1,199 @@
-import React, { ReactNode } from 'react';
+import { ReactNode } from 'react';
+import { Link, useLocation } from 'wouter';
+import { useLanguage } from '../contexts/LanguageContext';
 
 interface LayoutProps {
   children: ReactNode;
-  currentLanguage: 'en' | 'fr';
-  onLanguageSwitch: (lang: 'en' | 'fr') => void;
 }
 
-export function Layout({ children, currentLanguage, onLanguageSwitch }: LayoutProps) {
+export function Layout({ children }: LayoutProps) {
+  const { t, language, setLanguage, getLocalizedPath } = useLanguage();
+  const [location] = useLocation();
+  
+  const navigation = [
+    { name: t('nav.home'), href: getLocalizedPath('/') },
+    { name: t('nav.gallery'), href: getLocalizedPath('/gallery') },
+    { name: t('nav.contact'), href: getLocalizedPath('/contact') },
+    { name: t('nav.admin'), href: getLocalizedPath('/admin') },
+  ];
+
+  const toggleLanguage = () => {
+    setLanguage(language === 'fr-FR' ? 'en-US' : 'fr-FR');
+  };
+
   return (
     <div className="min-h-screen bg-white">
-      {/* Simple header for now */}
-      <header className="bg-blue-600 text-white p-4">
-        <div className="container mx-auto flex justify-between items-center">
-          <h1 className="text-xl font-bold">MEMOPYK</h1>
-          <div className="flex gap-2">
-            <button 
-              onClick={() => onLanguageSwitch('en')}
-              className={`px-3 py-1 rounded ${currentLanguage === 'en' ? 'bg-blue-800' : 'bg-blue-500'}`}
-            >
-              EN
-            </button>
-            <button 
-              onClick={() => onLanguageSwitch('fr')}
-              className={`px-3 py-1 rounded ${currentLanguage === 'fr' ? 'bg-blue-800' : 'bg-blue-500'}`}
-            >
-              FR
-            </button>
+      {/* Fixed Navigation */}
+      <nav className="fixed top-0 left-0 right-0 z-50 bg-memopyk-cream shadow-sm border-b">
+        <div className="container mx-auto px-4">
+          <div className="flex justify-between items-center h-16">
+            {/* Logo */}
+            <Link href="/" className="flex items-center">
+              <img 
+                src="/logo.svg" 
+                alt="MEMOPYK" 
+                className="h-10 w-auto"
+              />
+            </Link>
+
+            {/* Navigation Links */}
+            <div className="hidden md:flex space-x-8">
+              {navigation.map((item) => (
+                <Link 
+                  key={item.href} 
+                  href={item.href}
+                  className={`text-sm font-medium transition-colors ${
+                    location === item.href
+                      ? 'text-blue-600 border-b-2 border-blue-600 pb-1'
+                      : 'text-gray-600 hover:text-gray-900'
+                  }`}
+                >
+                  {item.name}
+                </Link>
+              ))}
+            </div>
+
+            {/* Language Toggle & Mobile Menu */}
+            <div className="flex items-center space-x-4">
+              <div className="flex items-center space-x-2">
+                <button
+                  onClick={() => setLanguage('en-US')}
+                  className={`p-2 rounded-md transition-all ${
+                    language === 'en-US' 
+                      ? 'border-2 border-memopyk-navy bg-memopyk-cream shadow-md' 
+                      : 'border-2 border-transparent hover:border-memopyk-blue-gray hover:bg-gray-50'
+                  }`}
+                  title="Switch to English"
+                >
+                  <img 
+                    src="https://flagcdn.com/w40/us.png" 
+                    alt="English"
+                    className="w-8 h-6 object-cover rounded"
+                  />
+                </button>
+                <button
+                  onClick={() => setLanguage('fr-FR')}
+                  className={`p-2 rounded-md transition-all ${
+                    language === 'fr-FR' 
+                      ? 'border-2 border-memopyk-navy bg-memopyk-cream shadow-md' 
+                      : 'border-2 border-transparent hover:border-memopyk-blue-gray hover:bg-gray-50'
+                  }`}
+                  title="Passer au français"
+                >
+                  <img 
+                    src="https://flagcdn.com/w40/fr.png" 
+                    alt="French"
+                    className="w-8 h-6 object-cover rounded"
+                  />
+                </button>
+              </div>
+
+              {/* Mobile menu button */}
+              <button className="md:hidden p-2 rounded-md text-gray-600 hover:text-gray-900 hover:bg-gray-100">
+                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+                </svg>
+              </button>
+            </div>
+          </div>
+
+          {/* Mobile Navigation */}
+          <div className="md:hidden border-t border-gray-200 py-4">
+            <div className="space-y-2">
+              {navigation.map((item) => (
+                <Link 
+                  key={item.href} 
+                  href={item.href}
+                  className={`block px-3 py-2 rounded-md text-base font-medium transition-colors ${
+                    location === item.href
+                      ? 'text-blue-600 bg-blue-50'
+                      : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
+                  }`}
+                >
+                  {item.name}
+                </Link>
+              ))}
+            </div>
           </div>
         </div>
-      </header>
-      
-      {/* Content */}
-      <main className="pt-4">{children}</main>
+      </nav>
+
+      {/* Main Content - Add padding for fixed nav */}
+      <main className="pt-16">
+        {children}
+      </main>
+
+      {/* Footer */}
+      <footer className="bg-gray-900 text-white">
+        <div className="container mx-auto px-4 py-12">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+            <div className="col-span-1 lg:col-span-1">
+              <img 
+                src="/logo.svg" 
+                alt="MEMOPYK" 
+                className="h-12 w-auto mb-4"
+              />
+              <p className="text-gray-400 mb-4">
+                {language === 'fr-FR' 
+                  ? 'Créateur de films mémoire pour immortaliser vos moments précieux.'
+                  : 'Memory film creator to immortalize your precious moments.'
+                }
+              </p>
+            </div>
+            
+            <div>
+              <h4 className="font-semibold mb-4">
+                {language === 'fr-FR' ? 'Liens Rapides' : 'Quick Links'}
+              </h4>
+              <ul className="space-y-2 text-gray-400">
+                <li><Link href={getLocalizedPath('/')} className="hover:text-white">{t('nav.home')}</Link></li>
+                <li><Link href={getLocalizedPath('/gallery')} className="hover:text-white">{t('nav.gallery')}</Link></li>
+                <li><Link href={getLocalizedPath('/contact')} className="hover:text-white">{t('nav.contact')}</Link></li>
+              </ul>
+            </div>
+            
+            <div>
+              <h4 className="font-semibold mb-4">
+                {language === 'fr-FR' ? 'Légal' : 'Legal'}
+              </h4>
+              <ul className="space-y-2 text-gray-400">
+                <li><Link href={getLocalizedPath('/legal/privacy-policy')} className="hover:text-white">
+                  {language === 'fr-FR' ? 'Politique de confidentialité' : 'Privacy Policy'}
+                </Link></li>
+                <li><Link href={getLocalizedPath('/legal/terms-of-service')} className="hover:text-white">
+                  {language === 'fr-FR' ? 'Conditions générales d\'utilisation' : 'Terms of Service'}
+                </Link></li>
+                <li><Link href={getLocalizedPath('/legal/cookie-policy')} className="hover:text-white">
+                  {language === 'fr-FR' ? 'Politique des cookies' : 'Cookie Policy'}
+                </Link></li>
+                <li><Link href={getLocalizedPath('/legal/terms-of-sale')} className="hover:text-white">
+                  {language === 'fr-FR' ? 'Conditions générales de vente' : 'Terms of Sale'}
+                </Link></li>
+                <li><Link href={getLocalizedPath('/legal/legal-notice')} className="hover:text-white">
+                  {language === 'fr-FR' ? 'Mentions légales' : 'Legal Notice'}
+                </Link></li>
+              </ul>
+            </div>
+            
+            <div>
+              <h4 className="font-semibold mb-4">Contact</h4>
+              <ul className="space-y-2 text-gray-400">
+                <li>contact@memopyk.com</li>
+                <li>+33 1 23 45 67 89</li>
+              </ul>
+            </div>
+          </div>
+          
+          <div className="border-t border-gray-800 mt-8 pt-8 text-center text-gray-400">
+            <p>&copy; 2025 MEMOPYK. {language === 'fr-FR' ? 'Tous droits réservés.' : 'All rights reserved.'}</p>
+            <div className="mt-2">
+              <Link href={getLocalizedPath('/admin')} className="text-xs text-gray-600 hover:text-gray-400 transition-colors">
+                admin
+              </Link>
+            </div>
+          </div>
+        </div>
+      </footer>
     </div>
   );
 }

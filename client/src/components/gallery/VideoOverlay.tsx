@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect, useCallback } from 'react';
+import { useState, useRef, useEffect, useCallback } from 'react';
 import { Play, Pause, RotateCcw, Volume2, VolumeX } from 'lucide-react';
 
 interface VideoOverlayProps {
