@@ -11,6 +11,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/u
 import { ArrowUp, ArrowDown, Play, RefreshCw, BarChart3, Video, HardDrive, Users, MessageSquare, FileText, LogOut, TestTube, Rocket, X, Type, Save, Palette, ChevronUp, ChevronDown, Trash2, Eye, EyeOff, Upload, FileVideo, Database, Check, Zap, Search } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import GalleryManagementNew from '@/components/admin/GalleryManagementNew';
+import FormatBadgeManager from '@/components/admin/FormatBadgeManager';
 
 import FAQManagementWorking from '@/components/admin/FAQManagementWorking';
 import { LegalDocumentManagement } from '@/components/admin/LegalDocumentManagement';
@@ -148,6 +149,7 @@ export default function AdminPage() {
   const sidebarItems = [
     { id: 'hero-management', label: 'Gestion Hero', icon: Video },
     { id: 'gallery', label: 'Galerie', icon: Play },
+    { id: 'format-badges', label: 'Format Badges', icon: Palette },
     { id: 'faq', label: 'FAQ', icon: MessageSquare },
     { id: 'cta', label: 'CTA Buttons', icon: Zap },
     { id: 'legal-docs', label: 'Documents Légaux', icon: FileText },
@@ -1223,6 +1225,17 @@ export default function AdminPage() {
                 <p className="text-gray-600 dark:text-gray-400">Gestion des éléments de galerie portfolio - Interface améliorée</p>
               </div>
               <GalleryManagementNew />
+            </div>
+          )}
+
+          {/* Format Badge Manager */}
+          {activeSection === 'format-badges' && (
+            <div className="space-y-6">
+              <div className="mb-6">
+                <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Format Badge Manager</h2>
+                <p className="text-gray-600 dark:text-gray-400">Gestion des templates de format badges pour une application rapide aux éléments de galerie</p>
+              </div>
+              <FormatBadgeManager />
             </div>
           )}
 
