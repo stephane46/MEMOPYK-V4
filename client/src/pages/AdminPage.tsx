@@ -18,6 +18,7 @@ import { CtaManagement } from '@/components/admin/CtaManagement';
 import { AnalyticsDashboard } from '@/components/admin/AnalyticsDashboard';
 import VideoCacheStatus from '@/components/admin/VideoCacheStatus';
 import SeoManagement from '@/components/admin/SeoManagement';
+import SystemTestDashboard from '@/components/admin/SystemTestDashboard';
 import CryptoJS from 'crypto-js';
 
 
@@ -1267,18 +1268,7 @@ export default function AdminPage() {
 
           {/* Tests */}
           {activeSection === 'tests' && (
-            <div className="space-y-6">
-              <div className="mb-6">
-                <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Tests</h2>
-                <p className="text-gray-600 dark:text-gray-400">Tests système et validation</p>
-              </div>
-              <Card>
-                <CardHeader>
-                  <CardTitle>Tests Système</CardTitle>
-                  <CardDescription>Prochainement - Interface de test et validation</CardDescription>
-                </CardHeader>
-              </Card>
-            </div>
+            <SystemTestDashboard />
           )}
 
           {/* Deployment */}

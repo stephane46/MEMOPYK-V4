@@ -7,6 +7,7 @@ import { createReadStream, existsSync, statSync, mkdirSync, openSync, closeSync 
 import path from 'path';
 import multer from 'multer';
 import { createClient } from '@supabase/supabase-js';
+import testRoutes from './test-routes';
 
 // Contact form validation schema
 const contactFormSchema = z.object({
@@ -4227,7 +4228,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  console.log("📋 Video proxy, image proxy, cache endpoints, diagnostic endpoint, and stream testing registered");
+  // Import test routes
+  const testRouter = (await import('./test-routes')).default;
+  app.use('/api', testRouter);
+
+  console.log("📋 Video proxy, image proxy, cache endpoints, diagnostic endpoint, stream testing, and system test routes registered");
 
   return createServer(app);
 }
