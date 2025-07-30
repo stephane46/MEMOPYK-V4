@@ -28,7 +28,8 @@ import {
   Upload,
   CheckCircle,
   Monitor,
-  Smartphone
+  Smartphone,
+  Power
 } from "lucide-react";
 import ImageCropperEasyCrop from './ImageCropperEasyCrop';
 import DirectUpload from './DirectUpload';
@@ -374,12 +375,11 @@ export default function GalleryManagementNew() {
                   </Button>
                   <Button
                     onClick={handleCreateNew}
-                    variant="outline"
                     size="sm"
-                    className="bg-[#89BAD9] hover:bg-[#89BAD9]/90 text-[#011526] border-[#89BAD9]"
+                    className="bg-gradient-to-r from-[#89BAD9] to-[#2A4759] hover:from-[#7AA8CC] hover:to-[#1e3340] text-white border-none shadow-lg font-semibold"
                   >
                     <Plus className="w-4 h-4 mr-1" />
-                    Nouveau
+                    NOUVEAU
                   </Button>
                 </>
               ) : (
@@ -400,6 +400,26 @@ export default function GalleryManagementNew() {
       {/* Main Form */}
       {(selectedItem || isCreateMode) && (
         <div className="space-y-8">
+          {/* Status Section - Moved to Top */}
+          <Card className="border-[#89BAD9] dark:border-[#2A4759]">
+            <CardContent className="p-6">
+              <h3 className="text-lg font-semibold text-[#011526] dark:text-[#F2EBDC] mb-6 flex items-center gap-2">
+                <Power className="w-5 h-5" />
+                Statut & Activation
+              </h3>
+              <div className="flex items-center space-x-3">
+                <Switch
+                  checked={formData.is_active}
+                  onCheckedChange={(checked) => setFormData({...formData, is_active: checked})}
+                  className="data-[state=checked]:bg-[#2A4759]"
+                />
+                <Label className="text-base font-medium text-[#011526] dark:text-[#F2EBDC]">
+                  {formData.is_active ? 'Actif' : 'Inactif'}
+                </Label>
+              </div>
+            </CardContent>
+          </Card>
+
           {/* Basic Information */}
           <Card className="border-[#89BAD9] dark:border-[#2A4759]">
             <CardContent className="p-6">
@@ -663,16 +683,42 @@ export default function GalleryManagementNew() {
                 Gestion des médias
               </h3>
               
-              <div className="space-y-4">
-                <div>
-                  <Label htmlFor="video_filename">Nom du fichier vidéo</Label>
-                  <Input
-                    id="video_filename"
-                    value={formData.video_filename}
-                    onChange={(e) => setFormData({ ...formData, video_filename: e.target.value })}
-                    placeholder="video.mp4"
-                    className="bg-white dark:bg-gray-800"
-                  />
+              <div className="space-y-6">
+                {/* Separate Video Fields for EN and FR */}
+                <div className="grid grid-cols-2 gap-6">
+                  <div className="space-y-4">
+                    <h4 className="font-medium text-[#011526] dark:text-[#F2EBDC] border-b border-gray-200 dark:border-gray-600 pb-2">Vidéo English</h4>
+                    <div>
+                      <Label htmlFor="video_filename_en">Fichier vidéo EN</Label>
+                      <Input
+                        id="video_filename_en"
+                        value={formData.video_filename || formData.video_url_en}
+                        onChange={(e) => setFormData({ ...formData, video_filename: e.target.value, video_url_en: e.target.value })}
+                        placeholder="video-en.mp4"
+                        className="bg-white dark:bg-gray-800"
+                      />
+                    </div>
+                  </div>
+                  
+                  <div className="space-y-4">
+                    <h4 className="font-medium text-[#011526] dark:text-[#F2EBDC] border-b border-gray-200 dark:border-gray-600 pb-2">Vidéo Français</h4>
+                    <div>
+                      <Label htmlFor="video_filename_fr">Fichier vidéo FR</Label>
+                      <Input
+                        id="video_filename_fr"
+                        value={formData.video_url_fr || formData.video_filename}
+                        onChange={(e) => setFormData({ ...formData, video_url_fr: e.target.value })}
+                        placeholder="video-fr.mp4"
+                        className="bg-white dark:bg-gray-800"
+                      />
+                    </div>
+                  </div>
+                </div>
+                
+                <div className="p-3 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-200 dark:border-blue-700">
+                  <p className="text-sm text-blue-800 dark:text-blue-200">
+                    <strong>Note:</strong> Si vous utilisez la même vidéo pour les deux langues, remplissez les deux champs avec le même nom de fichier.
+                  </p>
                 </div>
                 
                 <div className="grid grid-cols-3 gap-4">

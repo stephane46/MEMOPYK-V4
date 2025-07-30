@@ -254,15 +254,12 @@ export default function ImageCropperEasyCrop({ imageUrl, onSave, onCancel }: Ima
         </p>
       </div>
 
-      {/* Action Buttons */}
-      <div className="flex justify-center gap-3">
-        <Button variant="outline" onClick={onCancel}>
-          Annuler
-        </Button>
+      {/* Action Button */}
+      <div className="flex justify-center">
         <Button 
           onClick={generateStaticImage}
           disabled={loading}
-          className="bg-green-600 hover:bg-green-700 text-white"
+          className="bg-[#2A4759] hover:bg-[#1e3340] text-white px-8 py-3"
         >
           {loading ? 'Génération...' : 'Générer Image Statique (300×200)'}
         </Button>
