@@ -114,9 +114,15 @@ const addCacheBuster = (url: string): string => {
 // Removed smartCacheRefreshMutation prop - Gallery videos use Direct CDN streaming
 
 export default function GalleryManagement() {
-  // VERSION: LANGUAGE-SPECIFIC-UPLOAD-v1.0.80 - CACHE BUST
-  console.log('🚀 GALLERY MANAGEMENT v1.0.80 - Language-specific upload system loaded');
-  console.log('💡 Look for orange/purple mode indicators and toggle debugging!');
+  // VERSION: LANGUAGE-SPECIFIC-UPLOAD-v1.0.81 - FORCE BROWSER REFRESH
+  console.log('🚀🚀🚀 GALLERY MANAGEMENT v1.0.81 - FORCING BROWSER REFRESH 🚀🚀🚀');
+  console.log('💡 Look for ORANGE/PURPLE mode indicators and toggle debugging!');
+  console.log('🔥 If you see this message, the new code IS loading!');
+  
+  // FORCE ALERT TO CONFIRM CODE IS LOADING
+  if (typeof window !== 'undefined') {
+    console.log('🎯 BROWSER ENVIRONMENT DETECTED - CODE IS ACTIVE');
+  }
   
   const [editingItem, setEditingItem] = useState<GalleryItem | null>(null);
   const [showCreateDialog, setShowCreateDialog] = useState(false);
@@ -416,14 +422,36 @@ export default function GalleryManagement() {
             )}
           </div>
 
+          {/* SUPER PROMINENT MODE INDICATOR - CANNOT BE MISSED */}
+          <div style={{
+            position: 'fixed',
+            top: '10px',
+            right: '10px',
+            zIndex: 9999,
+            padding: '20px',
+            fontSize: '18px',
+            fontWeight: 'bold',
+            borderRadius: '10px',
+            border: '3px solid',
+            backgroundColor: formData.use_same_video ? '#FFA500' : '#800080',
+            color: 'white',
+            boxShadow: '0 4px 20px rgba(0,0,0,0.5)'
+          }}>
+            {formData.use_same_video ? '🟠 SHARED MODE' : '🟣 SEPARATE MODE'}
+          </div>
+
           {/* Language-Specific Upload System */}
-          <div className="mb-4 p-3 text-center font-bold text-lg border-2 rounded-lg">
+          <div className="mb-4 p-6 text-center font-bold text-2xl border-4 rounded-lg" style={{
+            backgroundColor: formData.use_same_video ? '#FFE4B5' : '#E6E6FA',
+            borderColor: formData.use_same_video ? '#FFA500' : '#800080',
+            color: formData.use_same_video ? '#FF8C00' : '#4B0082'
+          }}>
             {formData.use_same_video ? (
-              <div className="text-orange-700 bg-orange-100 border-orange-300">
+              <div>
                 🟠 MODE: VIDÉO PARTAGÉE (même fichier pour FR et EN)
               </div>
             ) : (
-              <div className="text-purple-700 bg-purple-100 border-purple-300">
+              <div>
                 🟣 MODE: VIDÉOS SÉPARÉES (fichiers différents pour FR et EN)
               </div>
             )}
