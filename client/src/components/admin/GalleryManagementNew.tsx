@@ -80,6 +80,7 @@ interface GalleryItem {
   video_url_en: string;
   video_url_fr: string;
   video_filename: string;
+  use_same_video: boolean; // RESTORED: Bilingual video selection toggle
   video_width: number;
   video_height: number;
   video_orientation: string;
@@ -131,6 +132,7 @@ export default function GalleryManagementNew() {
     video_url_en: '',
     video_url_fr: '',
     video_filename: '', // Legacy field for backward compatibility
+    use_same_video: true, // RESTORED: Bilingual video selection - default to same video
     video_width: 16,
     video_height: 9,
     video_orientation: 'landscape',
@@ -165,6 +167,7 @@ export default function GalleryManagementNew() {
         video_url_en: persistentUploadState.video_url_en || selectedItem.video_url_en || '',
         video_url_fr: persistentUploadState.video_url_fr || selectedItem.video_url_fr || '',
         video_filename: persistentUploadState.video_filename || selectedItem.video_filename || '',
+        use_same_video: selectedItem.use_same_video !== undefined ? selectedItem.use_same_video : true, // RESTORED: Load bilingual setting
         video_width: selectedItem.video_width || 16,
         video_height: selectedItem.video_height || 9,
         video_orientation: selectedItem.video_orientation || 'landscape',
@@ -197,6 +200,7 @@ export default function GalleryManagementNew() {
         video_url_en: persistentUploadState.video_url_en || '',
         video_url_fr: persistentUploadState.video_url_fr || '',
         video_filename: persistentUploadState.video_filename || '',
+        use_same_video: true, // RESTORED: Default to same video for new items
         video_width: 16,
         video_height: 9,
         video_orientation: 'landscape',
@@ -304,6 +308,16 @@ export default function GalleryManagementNew() {
       setSelectedVideoId(galleryItems[0].id);
     }
     persistentUploadState.reset();
+  };
+
+  // RESTORED: Bilingual video selection toggle handler
+  const handleSameVideoToggle = (checked: boolean) => {
+    setFormData({ 
+      ...formData, 
+      use_same_video: checked,
+      // When switching to same video, copy EN video to FR
+      video_url_fr: checked ? formData.video_url_en : formData.video_url_fr
+    });
   };
 
   if (isLoading) {
@@ -776,6 +790,58 @@ export default function GalleryManagementNew() {
                     currentFilename={formData.image_url_en}
                   />
                 </div>
+
+                {/* RESTORED: Bilingual Video Selection Switch */}
+                <div className="bg-blue-50 dark:bg-blue-900/20 p-4 rounded-lg border border-blue-200 dark:border-blue-800">
+                  <div className="flex items-center space-x-3">
+                    <Switch
+                      checked={formData.use_same_video}
+                      onCheckedChange={handleSameVideoToggle}
+                    />
+                    <Label className="text-blue-900 dark:text-blue-100 font-medium cursor-pointer">
+                      Utiliser la même vidéo pour FR et EN
+                    </Label>
+                  </div>
+                  <p className="text-sm text-blue-700 dark:text-blue-300 mt-2">
+                    {formData.use_same_video 
+                      ? "✅ La même vidéo sera utilisée pour les deux langues" 
+                      : "⚠️ Vous pouvez maintenant spécifier des vidéos différentes pour FR et EN"}
+                  </p>
+                </div>
+
+                {/* Separate Video Fields for FR/EN when use_same_video is false */}
+                {!formData.use_same_video && (
+                  <div className="bg-yellow-50 dark:bg-yellow-900/20 p-4 rounded-lg border border-yellow-200 dark:border-yellow-800">
+                    <h4 className="font-medium text-yellow-900 dark:text-yellow-100 mb-3">
+                      Vidéos séparées par langue
+                    </h4>
+                    <div className="grid grid-cols-2 gap-4">
+                      <div className="space-y-2">
+                        <Label htmlFor="video_url_en">Vidéo English</Label>
+                        <Input
+                          id="video_url_en"
+                          value={formData.video_url_en}
+                          onChange={(e) => setFormData({ ...formData, video_url_en: e.target.value })}
+                          placeholder="VideoEnglish.mp4"
+                          className="bg-white dark:bg-gray-800"
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <Label htmlFor="video_url_fr">Vidéo Français</Label>
+                        <Input
+                          id="video_url_fr"
+                          value={formData.video_url_fr}
+                          onChange={(e) => setFormData({ ...formData, video_url_fr: e.target.value })}
+                          placeholder="VideoFrancais.mp4"
+                          className="bg-white dark:bg-gray-800"
+                        />
+                      </div>
+                    </div>
+                    <p className="text-xs text-yellow-700 dark:text-yellow-300 mt-2">
+                      💡 Spécifiez des fichiers vidéo différents pour chaque langue
+                    </p>
+                  </div>
+                )}
 
                 {/* Manual Filename Override (for advanced users) */}
                 <div className="grid grid-cols-2 gap-6 pt-4 border-t border-gray-200 dark:border-gray-600">
