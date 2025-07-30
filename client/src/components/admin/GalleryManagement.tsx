@@ -9,7 +9,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Switch } from "@/components/ui/switch";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogDescription } from "@/components/ui/dialog";
 import { useToast } from "@/hooks/use-toast";
 import { 
   Plus, 
@@ -27,9 +27,11 @@ import {
   Power,
   FileText,
   Globe,
-  Crop
+  Crop,
+  CheckCircle
 } from "lucide-react";
 import DirectUpload from './DirectUpload';
+import ImageCropperEasyCrop from './ImageCropperEasyCrop';
 
 // Module-level persistent state that survives component re-creations
 const persistentUploadState = {
@@ -113,17 +115,17 @@ const addCacheBuster = (url: string): string => {
 // Removed smartCacheRefreshMutation prop - Gallery videos use Direct CDN streaming
 
 export default function GalleryManagement() {
-  // VERSION: ULTRA-MODERN-INTERFACE-v1.0.83 - COMPLETE INTERFACE REPLACEMENT
-  console.log('🚀🚀🚀 MODERN GALLERY MANAGEMENT v1.0.83 - CLEAN INTERFACE DEPLOYED 🚀🚀🚀');
-  console.log('💡 Complete modern interface with language-specific upload system!');
-  console.log('🔥 If you see this v1.0.83 message, the MODERN interface IS loading!');
-  console.log('🎯 Old 3-column interface has been completely replaced!');
+  // VERSION: COMPILATION-FIXED-v1.0.84 - ALL IMPORTS RESOLVED
+  console.log('🚀🚀🚀 COMPILATION FIXED v1.0.84 - ALL IMPORTS RESOLVED 🚀🚀🚀');
+  console.log('✅ Added CheckCircle import - no more compilation errors!');
+  console.log('🔥 Modern language-specific upload interface should NOW be visible!');
+  console.log('🎯 Toggle between French (blue) and English (green) sections!');
   
-  // FORCE ALERT TO CONFIRM MODERN CODE IS LOADING
+  // FORCE ALERT TO CONFIRM FIXED CODE IS LOADING
   if (typeof window !== 'undefined') {
-    console.log('🎯 BROWSER ENVIRONMENT DETECTED - v1.0.83 MODERN INTERFACE ACTIVE');
-    // Force reload to clear any cached interface state
-    console.log('🔄 Interface state reset - modern layout should now display');
+    console.log('🎯 BROWSER ENVIRONMENT - v1.0.84 COMPILATION FIXED ACTIVE');
+    console.log('✅ All imports resolved: Crop, CheckCircle, etc.');
+    console.log('🔄 Interface should display modern layout with language sections');
   }
   
   const [editingItem, setEditingItem] = useState<GalleryItem | null>(null);
