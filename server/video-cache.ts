@@ -659,48 +659,41 @@ export class VideoCache {
   }
 
   /**
-   * Proactively preload all videos (no hardcoded limitations)
+   * Preload only hero videos (gallery videos excluded - they don't work in production)
    */
   private async preloadCriticalVideos(): Promise<void> {
-    console.log('🚀 Starting universal video preloading - no filename restrictions...');
+    console.log('🚀 Starting HERO-ONLY video preloading - gallery videos excluded...');
     
-    // Load all videos from hybrid storage (hero + gallery)
-    await this.preloadAllVideos();
+    // Load only hero videos (gallery videos fail in production)
+    await this.preloadHeroVideosOnly();
     
     const stats = this.getCacheStats();
-    console.log(`🎯 Universal video preloading complete! Cache: ${stats.fileCount} files, ${stats.sizeMB}MB`);
+    console.log(`🎯 Hero-only video preloading complete! Cache: ${stats.fileCount} files, ${stats.sizeMB}MB`);
   }
 
   /**
    * Preload all videos from storage without any filename restrictions
    */
-  private async preloadAllVideos(): Promise<void> {
-    console.log('📥 UNIVERSAL PRELOAD v1.0.40 - Loading ALL videos from storage...');
+  private async preloadHeroVideosOnly(): Promise<void> {
+    console.log('📥 HERO-ONLY PRELOAD v1.0.66 - Loading ONLY hero videos (gallery uses direct CDN)...');
     
     try {
-      // Import hybrid storage to get all video sources
+      // Import hybrid storage to get hero video sources only
       const { hybridStorage } = await import('./hybrid-storage');
       
-      // Get hero videos
+      // Get ONLY hero videos (gallery videos use direct CDN streaming per architecture)
       const heroVideos = await hybridStorage.getHeroVideos();
       const heroVideoFilenames = heroVideos
         .filter(video => video.url_en)
         .map(video => video.url_en.split('/').pop()!)
         .filter(filename => filename && filename.endsWith('.mp4'));
       
-      // Get gallery videos
-      const galleryItems = await hybridStorage.getGalleryItems();
-      const galleryVideoFilenames = galleryItems
-        .filter(item => item.video_filename || item.video_url_en)
-        .map(item => (item.video_filename || item.video_url_en!).split('/').pop()!)
-        .filter(filename => filename && filename.endsWith('.mp4'));
-
-      // Combine all video filenames
-      const allVideoFilenames = [...heroVideoFilenames, ...galleryVideoFilenames];
-      const uniqueFilenames = [...new Set(allVideoFilenames)]; // Remove duplicates
+      // ARCHITECTURE COMPLIANCE: Only cache hero videos, gallery uses direct CDN
+      const uniqueFilenames = [...new Set(heroVideoFilenames)]; // Remove duplicates
       
-      console.log(`📋 UNIVERSAL PRELOAD: Found ${uniqueFilenames.length} unique videos to cache`);
-      console.log(`🎬 All video filenames:`, uniqueFilenames);
+      console.log(`📋 HERO-ONLY PRELOAD: Found ${uniqueFilenames.length} hero videos to cache`);
+      console.log(`🎬 Hero video filenames:`, uniqueFilenames);
+      console.log(`🚫 Gallery videos excluded - using direct CDN streaming per architecture`);
       
       let videosProcessed = 0;
       let videoErrors = 0;
@@ -733,20 +726,23 @@ export class VideoCache {
         }
       }
       
-      console.log(`🎬 UNIVERSAL PRELOAD COMPLETE v1.0.40!`);
-      console.log(`📊 Results: ${videosProcessed} videos cached, ${videoErrors} errors`);
+      console.log(`🎬 HERO-ONLY PRELOAD COMPLETE v1.0.66!`);
+      console.log(`📊 Results: ${videosProcessed} hero videos cached, ${videoErrors} errors`);
       console.log(`✅ Success rate: ${uniqueFilenames.length > 0 ? Math.round((videosProcessed / uniqueFilenames.length) * 100) : 100}%`);
+      console.log(`🏗️ Architecture compliant: Hero videos cached, gallery videos use direct CDN`);
       
     } catch (error) {
-      console.error('❌ UNIVERSAL PRELOAD FATAL ERROR v1.0.40:', error);
+      console.error('❌ HERO-ONLY PRELOAD FATAL ERROR v1.0.66:', error);
     }
   }
 
   /**
-   * Preload all gallery videos and images for instant deployment availability
+   * DISABLED - Gallery videos now use direct CDN streaming (don't work in production cache)
    */
   private async preloadGalleryVideos(): Promise<void> {
-    console.log('📸 PRODUCTION GALLERY PRELOAD v1.0.11 - Starting gallery video and image preloading...');
+    console.log('🚫 GALLERY PRELOAD DISABLED v1.0.66 - Gallery videos use direct CDN streaming...');
+    console.log('🎯 ARCHITECTURE: Gallery videos don\'t work in production cache, using direct CDN instead');
+    return; // Exit early - no gallery video caching
     
     try {
       // Import hybrid storage to get gallery items
@@ -945,29 +941,28 @@ export class VideoCache {
    * Ensures first visitors get instant performance, never wait for Supabase downloads
    */
   async immediatePreloadCriticalAssets(): Promise<void> {
-    console.log(`🚀 MEMOPYK PRODUCTION PRELOAD v1.0.11 - Starting immediate preload of critical assets...`);
+    console.log(`🚀 MEMOPYK HERO-ONLY PRELOAD v1.0.66 - Starting immediate preload of hero videos only...`);
     console.log(`📊 NODE_ENV: ${process.env.NODE_ENV || 'undefined'}`);
     console.log(`📁 Cache directories: videos=${this.videoCacheDir}, images=${this.imageCacheDir}`);
+    console.log(`🎯 ARCHITECTURE: Hero videos = cache system, Gallery videos = direct CDN streaming`);
     
     try {
-      // Run hero videos and gallery assets preloading in parallel
-      console.log(`🎬 Starting parallel preload: hero videos + gallery assets...`);
-      await Promise.all([
-        this.preloadCriticalVideos(),
-        this.preloadGalleryVideos()
-      ]);
+      // Only preload hero videos - gallery videos use direct CDN per architecture decision
+      console.log(`🎬 Starting hero video preload only (gallery videos excluded)...`);
+      await this.preloadCriticalVideos();
       
       const finalStats = this.getCacheStats();
-      console.log(`✅ PRODUCTION PRELOAD COMPLETE v1.0.11! Cache: ${finalStats.fileCount} files, ${finalStats.sizeMB}MB`);
-      console.log(`🎯 First visitors will get instant ~50ms performance, never 1500ms CDN waits`);
+      console.log(`✅ HERO-ONLY PRELOAD COMPLETE v1.0.66! Cache: ${finalStats.fileCount} files, ${finalStats.sizeMB}MB`);
+      console.log(`🎯 Hero videos: instant ~50ms performance from cache`);
+      console.log(`🎯 Gallery videos: direct CDN streaming (slower but reliable in production)`);
     } catch (error) {
-      console.error('❌ PRODUCTION PRELOAD FAILED v1.0.11:', error);
+      console.error('❌ HERO PRELOAD FAILED v1.0.66:', error);
       console.error('❌ Error details:', {
         message: error.message,
         stack: error.stack,
         name: error.name
       });
-      console.log(`⚠️ Some assets may need manual caching or will download on first request`);
+      console.log(`⚠️ Some hero videos may need manual caching or will download on first request`);
     }
   }
 
