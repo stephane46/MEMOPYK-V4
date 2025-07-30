@@ -41,12 +41,16 @@ const persistentUploadState = {
   video_url_fr: '',
   image_url_fr: '',
   video_filename: '',
+  video_filename_en: '', // Added separate EN video filename
+  video_filename_fr: '', // Added separate FR video filename
   reset: () => {
     persistentUploadState.video_url_en = '';
     persistentUploadState.image_url_en = '';
     persistentUploadState.video_url_fr = '';
     persistentUploadState.image_url_fr = '';
     persistentUploadState.video_filename = '';
+    persistentUploadState.video_filename_en = '';
+    persistentUploadState.video_filename_fr = '';
   }
 };
 
@@ -122,7 +126,7 @@ export default function GalleryManagementNew() {
     format_type_fr: '',
     video_url_en: '',
     video_url_fr: '',
-    video_filename: '',
+    video_filename: '', // Legacy field for backward compatibility
     video_width: 16,
     video_height: 9,
     video_orientation: 'landscape',
@@ -692,11 +696,12 @@ export default function GalleryManagementNew() {
                       <Label htmlFor="video_filename_en">Fichier vidéo EN</Label>
                       <Input
                         id="video_filename_en"
-                        value={formData.video_filename || formData.video_url_en}
-                        onChange={(e) => setFormData({ ...formData, video_filename: e.target.value, video_url_en: e.target.value })}
+                        value={formData.video_url_en}
+                        onChange={(e) => setFormData({ ...formData, video_url_en: e.target.value, video_filename: e.target.value })}
                         placeholder="video-en.mp4"
                         className="bg-white dark:bg-gray-800"
                       />
+                      <p className="text-xs text-gray-500 mt-1">Stocké dans: video_url_en</p>
                     </div>
                   </div>
                   
@@ -706,11 +711,12 @@ export default function GalleryManagementNew() {
                       <Label htmlFor="video_filename_fr">Fichier vidéo FR</Label>
                       <Input
                         id="video_filename_fr"
-                        value={formData.video_url_fr || formData.video_filename}
+                        value={formData.video_url_fr}
                         onChange={(e) => setFormData({ ...formData, video_url_fr: e.target.value })}
                         placeholder="video-fr.mp4"
                         className="bg-white dark:bg-gray-800"
                       />
+                      <p className="text-xs text-gray-500 mt-1">Stocké dans: video_url_fr</p>
                     </div>
                   </div>
                 </div>
