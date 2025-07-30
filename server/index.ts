@@ -284,8 +284,16 @@ app.use((req, res, next) => {
       }
       
       // In production, serve dynamic HTML to ALL users for maximum SEO compatibility
-      const htmlPath = path.join(clientDist, "index.html");
       const fs = require('fs');
+      
+      // Try to use public/index.html with placeholders, fallback to dist/index.html
+      let htmlPath = path.resolve(process.cwd(), "public/index.html");
+      let usePublicTemplate = true;
+      
+      if (!fs.existsSync(htmlPath)) {
+        htmlPath = path.join(clientDist, "index.html");
+        usePublicTemplate = false;
+      }
       
       try {
         let html = fs.readFileSync(htmlPath, 'utf8');
@@ -294,9 +302,6 @@ app.use((req, res, next) => {
         const protocol = req.headers['x-forwarded-proto'] || (req.secure ? 'https' : 'http');
         const host = req.headers['x-forwarded-host'] || req.headers.host;
         const baseUrl = `${protocol}://${host}`;
-        
-        // Replace dynamic placeholders with actual URLs
-        html = html.replace(/DYNAMIC_BASE_URL/g, baseUrl);
         
         // Determine current language from path and set canonical URL
         const currentPath = req.path;
@@ -310,10 +315,36 @@ app.use((req, res, next) => {
           canonicalUrl = `${baseUrl}/`; // x-default
         }
         
-        html = html.replace(/DYNAMIC_CANONICAL_URL/g, canonicalUrl);
+        if (usePublicTemplate) {
+          // Replace dynamic placeholders with actual URLs
+          html = html.replace(/DYNAMIC_BASE_URL/g, baseUrl);
+          html = html.replace(/DYNAMIC_CANONICAL_URL/g, canonicalUrl);
+        } else {
+          // If using dist/index.html, inject SEO tags into the head section
+          const seoTags = `
+  <!-- Hreflang Tags for SEO -->
+  <link rel="alternate" hreflang="en" href="${baseUrl}/en/" />
+  <link rel="alternate" hreflang="fr" href="${baseUrl}/fr/" />
+  <link rel="alternate" hreflang="x-default" href="${baseUrl}/" />
+  
+  <!-- Canonical URL -->
+  <link rel="canonical" href="${canonicalUrl}" />`;
+          
+          html = html.replace('</head>', `${seoTags}
+</head>`);
+        }
         
         const userAgent = req.headers['user-agent'] || '';
         console.log(`🔍 SEO PRODUCTION: Serving ${req.path} to ${userAgent.slice(0, 50)} with baseUrl: ${baseUrl}`);
+        console.log(`📄 Template Source: ${usePublicTemplate ? 'public/index.html' : 'dist/index.html'}`);
+        console.log(`🏷️ SEO Tags Injected: hreflang (en, fr, x-default), canonical (${canonicalUrl})`);
+        
+        // Debug: Log first 10 lines of processed HTML
+        const htmlLines = html.split('\n');
+        console.log(`📋 HTML Preview (first 10 lines):`);
+        htmlLines.slice(0, 10).forEach((line: string, i: number) => {
+          console.log(`${i + 1}: ${line}`);
+        });
         
         // Add cache-busting headers to prevent CDN caching of dynamic content
         res.set({
@@ -327,6 +358,8 @@ app.use((req, res, next) => {
         return;
       } catch (error) {
         console.error('❌ Error serving dynamic HTML in prod:', error);
+        console.error('❌ HTML Path attempted:', htmlPath);
+        console.error('❌ Use public template:', usePublicTemplate);
         // Fallback to static file
         res.sendFile(path.join(clientDist, "index.html"));
       }

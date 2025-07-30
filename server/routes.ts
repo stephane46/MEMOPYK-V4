@@ -4232,6 +4232,62 @@ export async function registerRoutes(app: Express): Promise<Server> {
   const testRouter = (await import('./test-routes')).default;
   app.use('/api', testRouter);
 
+  // DEBUG: Endpoint to check what HTML is being served in production
+  app.get('/api/debug-html', (req, res) => {
+    const fs = require('fs');
+    const path = require('path');
+    
+    try {
+      const clientDist = path.resolve(process.cwd(), "dist");
+      
+      // Check both template sources
+      const publicHtmlPath = path.resolve(process.cwd(), "public/index.html");
+      const distHtmlPath = path.join(clientDist, "index.html");
+      
+      const publicExists = fs.existsSync(publicHtmlPath);
+      const distExists = fs.existsSync(distHtmlPath);
+      
+      let publicContent = '';
+      let distContent = '';
+      
+      if (publicExists) {
+        publicContent = fs.readFileSync(publicHtmlPath, 'utf8').slice(0, 2000);
+      }
+      
+      if (distExists) {
+        distContent = fs.readFileSync(distHtmlPath, 'utf8').slice(0, 2000);
+      }
+      
+      // Check production routing
+      const protocol = req.headers['x-forwarded-proto'] || (req.secure ? 'https' : 'http');
+      const host = req.headers['x-forwarded-host'] || req.headers.host;
+      const baseUrl = `${protocol}://${host}`;
+      
+      res.json({
+        debug: 'HTML template analysis',
+        environment: process.env.NODE_ENV,
+        routing: {
+          baseUrl,
+          protocol,
+          host: req.headers.host,
+          forwardedHost: req.headers['x-forwarded-host'],
+          forwardedProto: req.headers['x-forwarded-proto']
+        },
+        templates: {
+          publicExists,
+          distExists,
+          publicContent: publicExists ? publicContent : 'File not found',
+          distContent: distExists ? distContent : 'File not found'
+        }
+      });
+    } catch (error) {
+      res.status(500).json({
+        error: 'Debug endpoint failed',
+        message: error.message
+      });
+    }
+  });
+
   console.log("📋 Video proxy, image proxy, cache endpoints, diagnostic endpoint, stream testing, and system test routes registered");
 
   return createServer(app);
