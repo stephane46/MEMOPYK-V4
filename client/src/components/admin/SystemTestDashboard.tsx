@@ -229,20 +229,31 @@ export default function SystemTestDashboard() {
           
           if (data.success) {
             if (benchmark.name === 'Video Streaming Speed') {
-              status = data.averageDuration < 50 ? 'success' : data.averageDuration < 100 ? 'warning' : 'error';
-              details = `Average: ${data.averageDuration}ms (${data.successCount}/${data.testCount} successful)`;
+              const avgSpeed = data.details?.averageSpeed || 0;
+              const successRate = data.details?.successRate || '0/0';
+              status = avgSpeed < 50 ? 'success' : avgSpeed < 100 ? 'warning' : 'error';
+              details = `Average: ${avgSpeed}ms (${successRate} successful)`;
             } else if (benchmark.name === 'Image Loading Speed') {
-              status = data.averageDuration < 10 ? 'success' : data.averageDuration < 50 ? 'warning' : 'error';
-              details = data.message || `Average: ${data.averageDuration}ms (${data.testCount} files)`;
+              const avgSpeed = data.details?.averageSpeed || 0;
+              const successRate = data.details?.successRate || '0/0';
+              status = avgSpeed < 10 ? 'success' : avgSpeed < 50 ? 'warning' : 'error';
+              details = `Average: ${avgSpeed}ms (${successRate} successful)`;
             } else if (benchmark.name === 'Database Query Speed') {
-              status = data.averageDuration < 100 ? 'success' : data.averageDuration < 300 ? 'warning' : 'error';
-              details = `Average: ${data.averageDuration}ms (${data.successCount}/${data.testCount} queries)`;
+              const avgSpeed = data.details?.averageSpeed || 0;
+              const successRate = data.details?.successRate || '0/0';
+              status = avgSpeed < 100 ? 'success' : avgSpeed < 300 ? 'warning' : 'error';
+              details = `Average: ${avgSpeed}ms (${successRate} successful)`;
             } else if (benchmark.name === 'Cache Performance') {
-              status = data.fileCount > 0 ? 'success' : 'warning';
-              details = `${data.fileCount} files, ${data.totalSizeMB}MB (${data.efficiency})`;
+              const fileCount = data.details?.fileCount || 0;
+              const totalSizeMB = data.details?.totalSizeMB || 0;
+              const efficiency = data.details?.efficiency || 'Unknown';
+              status = fileCount > 0 ? 'success' : 'warning';
+              details = `${fileCount} files, ${totalSizeMB}MB (${efficiency})`;
             } else if (benchmark.name === 'API Response Times') {
-              status = data.averageDuration < 100 ? 'success' : data.averageDuration < 200 ? 'warning' : 'error';
-              details = `Average: ${data.averageDuration}ms (${data.successCount}/${data.testCount} endpoints)`;
+              const avgSpeed = data.details?.averageSpeed || 0;
+              const successRate = data.details?.successRate || '0/0';
+              status = avgSpeed < 100 ? 'success' : avgSpeed < 200 ? 'warning' : 'error';
+              details = `Average: ${avgSpeed}ms (${successRate} successful)`;
             }
           } else {
             status = 'error';
@@ -268,10 +279,11 @@ export default function SystemTestDashboard() {
       }
     } catch (error) {
       console.error('Performance benchmark error:', error);
+    } finally {
+      // Always ensure state is cleared regardless of success or failure
+      setIsRunningTests(false);
+      setActiveTest(null);
     }
-    
-    setIsRunningTests(false);
-    setActiveTest(null);
   };
 
   // Cache validation tests
