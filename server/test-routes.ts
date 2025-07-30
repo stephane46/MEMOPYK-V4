@@ -83,6 +83,7 @@ router.get('/test/video-cache', async (req, res) => {
     
     // Known original filenames that should be cached
     const expectedFiles = [
+      // Video files
       'VideoHero1.mp4',
       'VideoHero2.mp4', 
       'VideoHero3.mp4',
@@ -91,7 +92,11 @@ router.get('/test/video-cache', async (req, res) => {
       'safari-1.mp4',
       'G1.mp4',
       'G2.mp4',
-      'G3.mp4'
+      'G3.mp4',
+      // Image files (static gallery images)
+      'static_1753304723805.png',
+      'static_gallery-hero2-1753727544112.png',
+      '1753737011770-IMG_9217.JPG'
     ];
     
     const files = fs.readdirSync(cacheDir);
