@@ -303,7 +303,7 @@ export default function FAQManagement() {
       <div className="flex gap-3">
         <Button 
           variant="outline" 
-          className="border-blue-500 text-blue-600 hover:bg-blue-50"
+          className="border-[#2A4759] text-[#2A4759] hover:bg-[#F2EBDC]"
           onClick={() => {
             const maxOrder = sections.length > 0 ? Math.max(...sections.map(s => s.order_index)) : 0;
             sectionForm.reset({
@@ -621,7 +621,7 @@ export default function FAQManagement() {
                 <Button
                   type="submit"
                   disabled={createSectionMutation.isPending || updateSectionMutation.isPending}
-                  className="bg-blue-500 hover:bg-blue-600"
+                  className="bg-[#2A4759] hover:bg-[#011526]"
                 >
                   {createSectionMutation.isPending || updateSectionMutation.isPending ? 'En cours...' : editingSection ? 'Mettre à jour' : 'Créer'}
                 </Button>

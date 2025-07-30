@@ -393,23 +393,23 @@ export default function GalleryManagement() {
           </div>
 
           {/* Direct Upload for Large Files */}
-          <div className="mt-6 p-4 bg-gradient-to-r from-purple-50 to-blue-50 dark:from-purple-900/20 dark:to-blue-900/20 rounded-lg border border-purple-200 dark:border-purple-800">
+          <div className="mt-6 p-4 bg-gradient-to-r from-[#F2EBDC] to-[#89BAD9]/20 dark:from-[#011526]/20 dark:to-[#2A4759]/20 rounded-lg border border-[#89BAD9] dark:border-[#2A4759]">
             <div className="flex items-center gap-2 mb-3">
-              <div className="bg-purple-500 rounded-full p-1">
+              <div className="bg-[#D67C4A] rounded-full p-1">
                 <Upload className="h-4 w-4 text-white" />
               </div>
-              <h4 className="font-semibold text-purple-900 dark:text-purple-100">
+              <h4 className="font-semibold text-[#011526] dark:text-[#F2EBDC]">
                 Téléchargement de Fichiers
               </h4>
             </div>
-            <p className="text-sm text-purple-800 dark:text-purple-200 mb-4">
+            <p className="text-sm text-[#2A4759] dark:text-[#89BAD9] mb-4">
               Téléchargez vos vidéos et images directement. Supporte tous les formats et tailles jusqu'à 5GB.
               Le système contourne automatiquement les limites du serveur.
             </p>
             
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <Label className="text-purple-900 dark:text-purple-100 mb-2 block">
+                <Label className="text-[#011526] dark:text-[#F2EBDC] mb-2 block">
                   <Video className="h-4 w-4 inline mr-1" />
                   Vidéo (.mp4, .mov, .avi...)
                 </Label>
@@ -470,7 +470,7 @@ export default function GalleryManagement() {
               </div>
               
               <div>
-                <Label className="text-purple-900 dark:text-purple-100 mb-2 block">
+                <Label className="text-[#011526] dark:text-[#F2EBDC] mb-2 block">
                   <Image className="h-4 w-4 inline mr-1" />
                   Image (.jpg, .png, .gif...)
                 </Label>
@@ -582,7 +582,7 @@ export default function GalleryManagement() {
 
         {/* Source Section */}
         <div className="bg-purple-50 dark:bg-purple-900/20 p-4 rounded-lg border border-purple-200 dark:border-purple-800">
-          <h4 className="font-semibold mb-3 text-purple-900 dark:text-purple-100 flex items-center gap-2">
+          <h4 className="font-semibold mb-3 text-[#011526] dark:text-[#F2EBDC] flex items-center gap-2">
             📷 3. Source (affiché en overlay sur l'image)
           </h4>
           <div className="grid grid-cols-2 gap-4">

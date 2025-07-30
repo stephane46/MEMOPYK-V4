@@ -542,7 +542,7 @@ export function AnalyticsDashboard() {
                 onClick={() => setShowSettings(true)}
                 variant="outline"
                 size="sm"
-                className="text-blue-600 border-blue-300 hover:bg-blue-50"
+                className="text-[#2A4759] border-[#89BAD9] hover:bg-[#F2EBDC]"
               >
                 <Settings className="h-4 w-4 mr-2" />
                 Manage Test Data
@@ -675,7 +675,7 @@ export function AnalyticsDashboard() {
                     variant="outline"
                     size="sm"
                     disabled={recalculateHistoricalMutation.isPending}
-                    className="text-purple-600 border-purple-300 hover:bg-purple-50"
+                    className="text-[#D67C4A] border-[#D67C4A] hover:bg-[#F2EBDC]"
                   >
                     <RotateCcw className="h-3 w-3 mr-1" />
                     {recalculateHistoricalMutation.isPending ? 'Recalculating...' : 'Apply to Historical Data'}
@@ -697,7 +697,7 @@ export function AnalyticsDashboard() {
                   onClick={() => generateTestDataMutation.mutate()}
                   variant="outline"
                   disabled={generateTestDataMutation.isPending}
-                  className="text-blue-600 border-blue-300 hover:bg-blue-50 justify-start"
+                  className="text-[#2A4759] border-[#89BAD9] hover:bg-[#F2EBDC] justify-start"
                 >
                   <Plus className="h-4 w-4 mr-2" />
                   {generateTestDataMutation.isPending ? 'Generating...' : 'Generate Test Data'}
@@ -716,7 +716,7 @@ export function AnalyticsDashboard() {
               
               {/* Dynamic Test Data Status */}
               {(testDataStatus as any)?.status?.hasTestData ? (
-                <div className="bg-blue-50 p-4 rounded-lg text-sm space-y-2">
+                <div className="bg-[#F2EBDC] p-4 rounded-lg text-sm space-y-2">
                   <div className="font-medium text-blue-800 flex items-center gap-2">
                     <TestTube className="h-4 w-4" />
                     Current Test Data Status
@@ -1483,7 +1483,7 @@ export function AnalyticsDashboard() {
                         <p className="text-xs text-muted-foreground">Additional engagement</p>
                       </div>
                       <div className="text-center">
-                        <div className="text-2xl font-bold text-purple-600">
+                        <div className="text-2xl font-bold text-[#D67C4A]">
                           {(videoEngagementData as any).metrics.engagementScore}/100
                         </div>
                         <p className="text-sm text-muted-foreground">Engagement Score</p>
@@ -1567,7 +1567,7 @@ export function AnalyticsDashboard() {
                 <Card>
                   <CardHeader>
                     <CardTitle className="flex items-center gap-2">
-                      <RefreshCw className="h-5 w-5 text-purple-600" />
+                      <RefreshCw className="h-5 w-5 text-[#D67C4A]" />
                       Re-Engagement Analytics
                     </CardTitle>
                     <CardDescription>
@@ -1619,7 +1619,7 @@ export function AnalyticsDashboard() {
               )}
 
               {/* Business Intelligence Guide */}
-              <Card className="bg-blue-50 dark:bg-blue-950 border-blue-200 dark:border-blue-800">
+              <Card className="bg-[#F2EBDC] dark:bg-[#011526] border-[#89BAD9] dark:border-[#2A4759]">
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2 text-blue-800 dark:text-blue-200">
                     <Activity className="h-5 w-5" />
