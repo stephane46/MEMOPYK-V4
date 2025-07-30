@@ -243,9 +243,9 @@ export default function SystemTestDashboard() {
     setIsRunningTests(true);
     
     try {
-      // Test video cache using the correct endpoint
-      const videoTest = await apiRequest('/api/test/video-cache', 'GET');
-      const cacheData = videoTest as any;
+      // Test video cache using the correct endpoint - fetch directly to ensure proper JSON parsing
+      const response = await fetch('/api/test/video-cache');
+      const cacheData = await response.json();
       
       // Debug logging to see what we're actually getting
       console.log('🔍 Cache test response:', cacheData);
@@ -283,9 +283,9 @@ Cache Status: ${cacheData?.success ? 'Operational' : 'Failed'}`;
         timestamp: new Date()
       }]);
 
-      // Test video cache stats endpoint
-      const statsTest = await apiRequest('/api/video-cache/stats', 'GET');
-      const statsData = statsTest as any;
+      // Test video cache stats endpoint - fetch directly to ensure proper JSON parsing
+      const statsResponse = await fetch('/api/video-cache/stats');
+      const statsData = await statsResponse.json();
       
       setTestResults(prev => [...prev, {
         name: 'Cache Stats API',
