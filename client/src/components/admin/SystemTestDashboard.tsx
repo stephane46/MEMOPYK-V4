@@ -283,7 +283,6 @@ export default function SystemTestDashboard() {
       console.error('Performance benchmark error:', error);
     } finally {
       setIsRunningTests(false);
-      setActiveTest(null);
     }
   };
 
@@ -354,7 +353,6 @@ Cache Status: ${cacheData?.success ? 'Operational' : 'Failed'}`;
       }]);
     } finally {
       setIsRunningTests(false);
-      setActiveTest(null);
     }
   };
 
@@ -406,7 +404,6 @@ Cache Status: ${cacheData?.success ? 'Operational' : 'Failed'}`;
       }]);
     } finally {
       setIsRunningTests(false);
-      setActiveTest(null);
     }
   };
 
@@ -444,7 +441,6 @@ Cache Status: ${cacheData?.success ? 'Operational' : 'Failed'}`;
       }]);
     } finally {
       setIsRunningTests(false);
-      setActiveTest(null);
     }
   };
 
