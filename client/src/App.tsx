@@ -21,19 +21,17 @@ function App() {
     <QueryClientProvider client={queryClient}>
       <AuthProvider>
         <LanguageProvider>
-          <Router>
-            <Route path="/language" component={LanguageSelectionPage} />
-            
-            <Layout>
-              {/* Root redirects - Handle these first */}
-              <Route path="/" component={() => { 
-                window.location.href = '/fr-FR'; 
-                return null; 
-              }} />
-              <Route path="/admin/*" component={() => { 
-                window.location.href = '/fr-FR/admin'; 
-                return null; 
-              }} />
+          <div style={{ minHeight: '100vh', backgroundColor: '#f0f0f0', padding: '20px' }}>
+            <h1 style={{ color: 'red', fontSize: '48px', textAlign: 'center' }}>
+              MEMOPYK APP LOADING TEST v1.0.79
+            </h1>
+            <Router>
+              <Route path="/language" component={LanguageSelectionPage} />
+              
+              <Layout>
+                {/* Root route - serve HomePage directly */}
+                <Route path="/" component={HomePage} />
+              <Route path="/admin/*" component={AdminRoute} />
               
               {/* Localized Routes */}
               <Route path="/fr-FR" component={HomePage} />
@@ -56,6 +54,7 @@ function App() {
               {/* Will restore with proper configuration after identifying root cause */}
             </Layout>
           </Router>
+          </div>
         </LanguageProvider>
       </AuthProvider>
       <Toaster />
