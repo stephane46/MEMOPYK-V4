@@ -89,10 +89,21 @@ router.get('/test/video-cache', async (req, res) => {
       'VideoHero1.mp4',
       'VideoHero2.mp4', 
       'VideoHero3.mp4',
-      // Image files (static gallery images - these do use cache)
+      // Gallery image files (static thumbnails and original images)
       'static_1753304723805.png',
       'static_gallery-hero2-1753727544112.png',
-      '1753737011770-IMG_9217.JPG'
+      '1753737011770-IMG_9217.JPG',
+      // Additional image files that may be cached
+      'current_static.jpg',
+      'debug_test.jpg',
+      'final_test.jpg',
+      'static_image.jpg',
+      'latest_static.jpg',
+      'latest_crop_test.jpg',
+      'newest_test.jpg',
+      'KeyVisual_Hero.png',
+      'test_static.jpg',
+      'gallery_test.jpg'
     ];
     
     const files = fs.readdirSync(cacheDir);
