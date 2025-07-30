@@ -1,3 +1,4 @@
+import React from 'react';
 import { useLanguage } from '../../contexts/LanguageContext';
 // Using direct path to public asset
 const keyVisualImage = '/KeyVisualS.png';

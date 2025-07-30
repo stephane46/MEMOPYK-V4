@@ -1,3 +1,4 @@
+import React from 'react';
 import { useLanguage } from '../contexts/LanguageContext';
 import { useLocation } from 'wouter';
 

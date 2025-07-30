@@ -1,4 +1,4 @@
-import { useState, useRef, useCallback } from 'react';
+import React, { useState, useRef, useCallback } from 'react';
 import { Move, RotateCw, ZoomIn, ZoomOut, Download, Upload } from 'lucide-react';
 import { cn } from '../../lib/utils';
 import { Button } from '../ui/button';

@@ -1,6 +1,6 @@
+import React, { useEffect } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { useRoute } from 'wouter';
-import { useEffect } from 'react';
 import { useLanguage } from '../contexts/LanguageContext';
 import { htmlSanitizer } from '../lib/sanitize-html';
 import type { LegalDocument } from '@shared/schema';

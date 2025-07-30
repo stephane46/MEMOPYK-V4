@@ -1,5 +1,5 @@
+import React, { useCallback } from 'react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { useCallback } from 'react';
 import { apiRequest } from '../lib/queryClient';
 
 interface VideoViewData {
@@ -65,7 +65,8 @@ export const useVideoAnalytics = () => {
       return;
     }
     
-    const language = localStorage.getItem('memopyk-language') as 'en' | 'fr' || 'fr';
+    const languageShort = localStorage.getItem('memopyk-language') as 'en' | 'fr' || 'fr';
+    const language = languageShort === 'en' ? 'en-US' : 'fr-FR';
     
     // Very aggressive duplicate prevention - 30 second window
     const lastTracked = localStorage.getItem(`last-tracked-${videoId}`);
@@ -90,7 +91,8 @@ export const useVideoAnalytics = () => {
 
   // Helper function to track session with automatic data collection
   const trackSessionWithDefaults = () => {
-    const language = localStorage.getItem('memopyk-language') as 'en' | 'fr' || 'fr';
+    const languageShort = localStorage.getItem('memopyk-language') as 'en' | 'fr' || 'fr';
+    const language = languageShort === 'en' ? 'en-US' : 'fr-FR';
     
     trackSession.mutate({
       language,
