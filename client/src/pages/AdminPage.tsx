@@ -11,7 +11,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/u
 import { ArrowUp, ArrowDown, Play, RefreshCw, BarChart3, Video, HardDrive, Users, MessageSquare, FileText, LogOut, TestTube, Rocket, X, Type, Save, Palette, ChevronUp, ChevronDown, Trash2, Eye, EyeOff, Upload, FileVideo, Database, Check, Zap, Search } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import GalleryManagement from '@/components/admin/GalleryManagement';
-import { ContactManagement } from '@/components/admin/ContactManagement';
+
 import FAQManagementWorking from '@/components/admin/FAQManagementWorking';
 import { LegalDocumentManagement } from '@/components/admin/LegalDocumentManagement';
 import { CtaManagement } from '@/components/admin/CtaManagement';
@@ -146,7 +146,6 @@ export default function AdminPage() {
   };
 
   const sidebarItems = [
-    { id: 'contacts', label: 'Contacts', icon: Users },
     { id: 'hero-management', label: 'Gestion Hero', icon: Video },
     { id: 'gallery', label: 'Galerie', icon: Play },
     { id: 'faq', label: 'FAQ', icon: MessageSquare },
@@ -1231,12 +1230,7 @@ export default function AdminPage() {
             </div>
           )}
 
-          {/* Contacts */}
-          {activeSection === 'contacts' && (
-            <div className="space-y-6">
-              <ContactManagement />
-            </div>
-          )}
+
 
           {/* FAQ */}
           {activeSection === 'faq' && (

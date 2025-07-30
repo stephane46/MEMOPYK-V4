@@ -27,6 +27,7 @@ import {
   Server
 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import { formatDateTime } from '@/lib/date-utils';
 
 interface TestResult {
   name: string;
@@ -75,7 +76,7 @@ export default function SystemTestDashboard() {
 
   // Fetch cache status
   const { data: cacheStatus } = useQuery({
-    queryKey: ['/api/video-cache/status'],
+    queryKey: ['/api/video-cache/stats'],
     refetchInterval: realTimeMonitoring ? 5000 : 30000,
   });
 
@@ -92,7 +93,7 @@ export default function SystemTestDashboard() {
       { name: 'Analytics System', endpoint: '/api/test/analytics' },
       { name: 'Gallery API Endpoints', endpoint: '/api/test/gallery' },
       { name: 'FAQ System', endpoint: '/api/test/faq' },
-      { name: 'Contact Management', endpoint: '/api/test/contacts' },
+
       { name: 'SEO Management', endpoint: '/api/test/seo' },
       { name: 'Performance Benchmarks', endpoint: '/api/test/performance' },
     ];
@@ -145,7 +146,7 @@ export default function SystemTestDashboard() {
     setIsRunningTests(false);
     toast({
       title: "System Tests Complete",
-      description: `Completed ${tests.length} tests. Check results below.`,
+      description: `Completed ${tests.length} tests. Results are displayed in the Test Results section below.`,
     });
   };
 
@@ -155,9 +156,9 @@ export default function SystemTestDashboard() {
       { name: 'Gallery Items', url: '/api/gallery', method: 'GET' },
       { name: 'Hero Videos', url: '/api/hero-videos', method: 'GET' },
       { name: 'FAQ Items', url: '/api/faq', method: 'GET' },
-      { name: 'Contact Messages', url: '/api/contacts', method: 'GET' },
+
       { name: 'Analytics Dashboard', url: '/api/analytics/dashboard', method: 'GET' },
-      { name: 'Cache Status', url: '/api/video-cache/status', method: 'GET' },
+      { name: 'Cache Status', url: '/api/video-cache/stats', method: 'GET' },
       { name: 'SEO Settings', url: '/api/seo/settings', method: 'GET' },
     ];
 
@@ -531,12 +532,12 @@ export default function SystemTestDashboard() {
 
       {/* Test Results */}
       {testResults.length > 0 && (
-        <Card>
+        <Card className="bg-white dark:bg-gray-800">
           <CardHeader>
-            <CardTitle className="flex items-center justify-between">
-              <span>Test Results</span>
+            <CardTitle className="flex items-center justify-between text-gray-900 dark:text-white">
+              <span className="text-base font-semibold">Test Results</span>
               <div className="flex items-center gap-4">
-                <div className="text-sm text-muted-foreground">
+                <div className="text-base font-medium text-gray-700 dark:text-gray-300">
                   Success Rate: {successRate}%
                 </div>
                 <Progress value={successRate} className="w-24" />
@@ -544,27 +545,30 @@ export default function SystemTestDashboard() {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="space-y-2">
+            <div className="space-y-3">
               {testResults.map((result, index) => (
-                <div
-                  key={index}
-                  className="flex items-center justify-between p-3 border rounded-lg hover:bg-gray-50 cursor-pointer"
-                  onClick={() => setSelectedTest(result)}
-                >
+                <div key={index} className="flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg">
                   <div className="flex items-center gap-3">
                     {getStatusIcon(result.status)}
                     <div>
-                      <div className="font-medium">{result.name}</div>
+                      <div className="text-base font-medium text-gray-900 dark:text-white">{result.name}</div>
                       {result.duration && (
-                        <div className="text-sm text-muted-foreground">
-                          {result.duration}ms
+                        <div className="text-sm text-gray-600 dark:text-gray-400">
+                          Completed in {result.duration}ms
                         </div>
                       )}
                     </div>
                   </div>
-                  <div className="flex items-center gap-2">
+                  <div className="flex items-center gap-3">
                     {getStatusBadge(result.status)}
-                    <Eye className="h-4 w-4 text-muted-foreground" />
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => setSelectedTest(result)}
+                      className="text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white"
+                    >
+                      <Eye className="h-4 w-4" />
+                    </Button>
                   </div>
                 </div>
               ))}
@@ -575,37 +579,36 @@ export default function SystemTestDashboard() {
 
       {/* Test Details Dialog */}
       <Dialog open={!!selectedTest} onOpenChange={() => setSelectedTest(null)}>
-        <DialogContent className="bg-white">
+        <DialogContent className="bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700">
           <DialogHeader>
-            <DialogTitle className="flex items-center gap-2 text-lg font-semibold text-gray-900">
-              {selectedTest && getStatusIcon(selectedTest.status)}
-              {selectedTest?.name}
+            <DialogTitle className="text-gray-900 dark:text-white text-lg font-semibold">
+              {selectedTest?.name} - Test Details
             </DialogTitle>
           </DialogHeader>
           {selectedTest && (
             <div className="space-y-4">
+              <div className="flex items-center gap-2">
+                {getStatusIcon(selectedTest.status)}
+                {getStatusBadge(selectedTest.status)}
+              </div>
               <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <div className="text-sm font-medium text-gray-700">Status</div>
-                  <div>{getStatusBadge(selectedTest.status)}</div>
-                </div>
                 {selectedTest.duration && (
                   <div>
-                    <div className="text-sm font-medium text-gray-700">Duration</div>
-                    <div className="text-base text-gray-900">{selectedTest.duration}ms</div>
+                    <div className="text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">Duration</div>
+                    <div className="text-base text-gray-900 dark:text-white">{selectedTest.duration}ms</div>
                   </div>
                 )}
               </div>
               <div>
-                <div className="text-sm font-medium mb-2 text-gray-700">Timestamp</div>
-                <div className="text-base text-gray-900">
-                  {selectedTest.timestamp.toLocaleString()}
+                <div className="text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">Timestamp</div>
+                <div className="text-base text-gray-900 dark:text-white">
+                  {formatDateTime(selectedTest.timestamp)}
                 </div>
               </div>
               {selectedTest.details && (
                 <div>
-                  <div className="text-sm font-medium mb-2 text-gray-700">Details</div>
-                  <div className="text-base bg-gray-50 p-4 rounded-lg border text-gray-900">
+                  <div className="text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">Details</div>
+                  <div className="text-base bg-gray-50 dark:bg-gray-900 p-4 rounded-lg border text-gray-900 dark:text-white">
                     {selectedTest.details}
                   </div>
                 </div>

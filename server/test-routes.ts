@@ -37,8 +37,7 @@ router.get('/test/database', async (req, res) => {
     // Test FAQ items query  
     const faqItems = await hybridStorage.getFaqs();
     
-    // Test contact messages query
-    const contacts = await hybridStorage.getContacts();
+
     
     const duration = Date.now() - startTime;
     
@@ -48,7 +47,7 @@ router.get('/test/database', async (req, res) => {
       details: {
         galleryItems: galleryItems.length,
         faqItems: faqItems.length,
-        contacts: contacts.length,
+
         duration: `${duration}ms`
       }
     });
@@ -239,29 +238,7 @@ router.get('/test/faq', async (req, res) => {
   }
 });
 
-// Contact management test
-router.get('/test/contacts', async (req, res) => {
-  try {
-    const contacts = await hybridStorage.getContacts();
-    
-    res.json({
-      success: true,
-      message: 'Contact management operational',
-      details: {
-        messageCount: contacts.length,
-        hasRecentMessages: contacts.some(contact => 
-          new Date(contact.created_at) > new Date(Date.now() - 30 * 24 * 60 * 60 * 1000)
-        )
-      }
-    });
-  } catch (error) {
-    res.status(500).json({
-      success: false,
-      message: 'Contact management test failed',
-      details: error instanceof Error ? error.message : 'Unknown error'
-    });
-  }
-});
+
 
 // SEO management test
 router.get('/test/seo', async (req, res) => {
