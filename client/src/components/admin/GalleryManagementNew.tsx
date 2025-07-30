@@ -92,6 +92,12 @@ interface GalleryItem {
 }
 
 export default function GalleryManagementNew() {
+  // VERSION: NEW-COMPONENT-v1.0.85 - MODERN INTERFACE ACTIVE
+  console.log('🎯🎯🎯 GALLERYMANAGEMENTNEW v1.0.85 - MODERN INTERFACE LOADING! 🎯🎯🎯');
+  console.log('✅ This is the CORRECT modern component with language-specific uploads!');
+  console.log('🔥 French (blue) + English (green) sections should be visible!');
+  console.log('🎨 Toggle: "Utiliser la même vidéo pour FR et EN" controls layout!');
+  
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const [selectedVideoId, setSelectedVideoId] = useState<string | number | null>(null);

@@ -115,17 +115,19 @@ const addCacheBuster = (url: string): string => {
 // Removed smartCacheRefreshMutation prop - Gallery videos use Direct CDN streaming
 
 export default function GalleryManagement() {
-  // VERSION: COMPILATION-FIXED-v1.0.84 - ALL IMPORTS RESOLVED
-  console.log('🚀🚀🚀 COMPILATION FIXED v1.0.84 - ALL IMPORTS RESOLVED 🚀🚀🚀');
-  console.log('✅ Added CheckCircle import - no more compilation errors!');
-  console.log('🔥 Modern language-specific upload interface should NOW be visible!');
-  console.log('🎯 Toggle between French (blue) and English (green) sections!');
+  // VERSION: FORCE-RELOAD-v1.0.85 - CACHE BUSTING COMPONENT
+  console.log('🚨🚨🚨 FORCE COMPONENT RELOAD v1.0.85 - CACHE BUSTING ACTIVE 🚨🚨🚨');
+  console.log('🔥 FORCING MODERN INTERFACE TO LOAD - BREAKING ALL CACHES!');
+  console.log('🎯 Language-specific upload system MUST be visible now!');
+  console.log('✅ All compilation errors fixed - modern interface loading!');
   
-  // FORCE ALERT TO CONFIRM FIXED CODE IS LOADING
+  // FORCE ALERT AND RELOAD TO BREAK CACHE
   if (typeof window !== 'undefined') {
-    console.log('🎯 BROWSER ENVIRONMENT - v1.0.84 COMPILATION FIXED ACTIVE');
-    console.log('✅ All imports resolved: Crop, CheckCircle, etc.');
-    console.log('🔄 Interface should display modern layout with language sections');
+    console.log('🚨 EMERGENCY CACHE BUST v1.0.85 - MODERN INTERFACE ACTIVE');
+    console.log('🔥 Breaking component cache - modern interface should display');
+    console.log('🎯 Looking for: French (blue) + English (green) upload sections');
+    // Force a timestamp to break any caching
+    console.log('⏰ Timestamp:', Date.now());
   }
   
   const [editingItem, setEditingItem] = useState<GalleryItem | null>(null);

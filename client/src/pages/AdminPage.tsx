@@ -10,7 +10,7 @@ import { Badge } from '@/components/ui/badge';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { ArrowUp, ArrowDown, Play, RefreshCw, BarChart3, Video, HardDrive, Users, MessageSquare, FileText, LogOut, TestTube, Rocket, X, Type, Save, Palette, ChevronUp, ChevronDown, Trash2, Eye, EyeOff, Upload, FileVideo, Database, Check, Zap, Search } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
-import GalleryManagement from '@/components/admin/GalleryManagement';
+import GalleryManagement from '@/components/admin/GalleryManagementNew';
 import FormatBadgeManager from '@/components/admin/FormatBadgeManager';
 
 import FAQManagementWorking from '@/components/admin/FAQManagementWorking';
