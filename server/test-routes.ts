@@ -73,13 +73,8 @@ router.get('/test/video-cache', async (req, res) => {
       });
     }
     
-    // Create hash mapping function (same as VideoCache class)
-    const createHash = require('crypto').createHash;
-    const getHashForFilename = (filename: string): string => {
-      const hash = createHash('md5').update(filename.trim()).digest('hex');
-      const extension = filename.split('.').pop() || 'mp4';
-      return `${hash}.${extension}`;
-    };
+    // FIXED: No longer using hash mapping - cache now uses original filenames
+    // This eliminates the "Unknown" filename issue and provides consistent naming
     
     // Known original filenames that SHOULD be cached (according to current architecture)
     // ARCHITECTURE NOTE: Gallery videos (VitaminSeaC.mp4, PomGalleryC.mp4, safari-1.mp4) 
@@ -111,22 +106,16 @@ router.get('/test/video-cache', async (req, res) => {
       const filePath = path.join(cacheDir, file);
       const stats = fs.statSync(filePath);
       
-      // Try to find matching original filename
-      let originalFilename = 'Unknown';
-      for (const original of expectedFiles) {
-        if (getHashForFilename(original) === file) {
-          originalFilename = original;
-          break;
-        }
-      }
-      
       return {
-        hashedFilename: file,
-        originalFilename,
+        // FIXED: Use original filename directly (no more hashing confusion)
+        filename: file,
+        originalFilename: file, // Same as filename now
+        hashedFilename: file,   // For compatibility with frontend, but they're the same now
         size: stats.size,
         sizeMB: Math.round(stats.size / (1024 * 1024) * 100) / 100,
         modified: stats.mtime,
-        type: file.toLowerCase().includes('.mp4') ? 'video' : 'image'
+        type: file.toLowerCase().includes('.mp4') ? 'video' : 'image',
+        isExpected: expectedFiles.includes(file)
       };
     });
     
@@ -135,8 +124,8 @@ router.get('/test/video-cache', async (req, res) => {
     const imageFiles = cacheStats.filter(f => f.type === 'image');
     
     // Separate expected vs unexpected files based on current architecture
-    const expectedVideoFiles = cacheStats.filter(f => f.type === 'video' && f.originalFilename.startsWith('VideoHero'));
-    const unexpectedGalleryVideos = cacheStats.filter(f => f.type === 'video' && !f.originalFilename.startsWith('VideoHero') && f.originalFilename !== 'Unknown');
+    const expectedVideoFiles = cacheStats.filter(f => f.type === 'video' && f.filename.startsWith('VideoHero'));
+    const unexpectedGalleryVideos = cacheStats.filter(f => f.type === 'video' && !f.filename.startsWith('VideoHero'));
     const expectedImageFiles = cacheStats.filter(f => f.type === 'image');
     
     let message = `Cache system analysis - ${expectedVideoFiles.length} hero videos, ${expectedImageFiles.length} images`;
@@ -155,8 +144,8 @@ router.get('/test/video-cache', async (req, res) => {
         unexpectedGalleryVideos: unexpectedGalleryVideos.length,
         totalSizeMB: Math.round(totalSize / (1024 * 1024) * 100) / 100,
         cachePath: cacheDir,
-        files: cacheStats.sort((a, b) => a.originalFilename.localeCompare(b.originalFilename)),
-        architectureNote: "Gallery videos (VitaminSeaC.mp4, PomGalleryC.mp4, safari-1.mp4) should use direct CDN streaming, not cache"
+        files: cacheStats.sort((a, b) => a.filename.localeCompare(b.filename)),
+        architectureNote: "✅ FIXED: Cache now uses original filenames consistently (VideoHero1.mp4, static_image.png, etc.)"
       }
     });
   } catch (error) {
@@ -368,6 +357,342 @@ router.get('/test/performance', async (req, res) => {
     res.status(500).json({
       success: false,
       message: 'Performance test failed',
+      details: error instanceof Error ? error.message : 'Unknown error'
+    });
+  }
+});
+
+// Video streaming speed test
+router.get('/test/video-streaming-speed', async (req, res) => {
+  try {
+    const testVideos = ['VideoHero1.mp4', 'VideoHero2.mp4', 'VideoHero3.mp4'];
+    const results = [];
+    let totalSpeed = 0;
+
+    for (const video of testVideos) {
+      const startTime = Date.now();
+      try {
+        // Test video proxy endpoint speed
+        const response = await fetch(`http://localhost:5000/api/video-proxy?filename=${video}`, {
+          method: 'HEAD',
+          headers: { 'Range': 'bytes=0-1023' }
+        });
+        
+        const duration = Date.now() - startTime;
+        const status = response.status === 206 ? 'success' : 'error';
+        
+        results.push({
+          video,
+          status,
+          duration,
+          responseCode: response.status
+        });
+        
+        if (status === 'success') {
+          totalSpeed += duration;
+        }
+      } catch (error) {
+        const duration = Date.now() - startTime;
+        results.push({
+          video,
+          status: 'error',
+          duration,
+          error: error instanceof Error ? error.message : 'Unknown error'
+        });
+      }
+    }
+
+    const successfulTests = results.filter(r => r.status === 'success');
+    const averageSpeed = successfulTests.length > 0 ? 
+      Math.round(totalSpeed / successfulTests.length) : 0;
+
+    res.json({
+      success: true,
+      message: `Video streaming speed test completed - ${successfulTests.length}/${testVideos.length} successful`,
+      details: {
+        averageSpeed,
+        tests: results,
+        successRate: `${successfulTests.length}/${testVideos.length}`
+      }
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: 'Video streaming speed test failed',
+      details: error instanceof Error ? error.message : 'Unknown error'
+    });
+  }
+});
+
+// Image loading speed test  
+router.get('/test/image-loading-speed', async (req, res) => {
+  try {
+    const cacheDir = path.join(process.cwd(), 'server', 'cache', 'images');
+    let testImages = [];
+    
+    if (fs.existsSync(cacheDir)) {
+      const files = fs.readdirSync(cacheDir);
+      testImages = files.filter(f => f.toLowerCase().includes('.jpg') || f.toLowerCase().includes('.png')).slice(0, 3);
+    }
+
+    if (testImages.length === 0) {
+      return res.json({
+        success: true,
+        message: 'No cached images found for speed testing',
+        details: {
+          averageSpeed: 0,
+          tests: [],
+          note: 'Image cache empty - images will be cached on first access'
+        }
+      });
+    }
+
+    const results = [];
+    let totalSpeed = 0;
+
+    for (const image of testImages) {
+      const startTime = Date.now();
+      try {
+        const response = await fetch(`http://localhost:5000/api/image-proxy?filename=${image}`, {
+          method: 'HEAD'
+        });
+        
+        const duration = Date.now() - startTime;
+        const status = response.status === 200 ? 'success' : 'error';
+        
+        results.push({
+          image,
+          status,
+          duration,
+          responseCode: response.status
+        });
+        
+        if (status === 'success') {
+          totalSpeed += duration;
+        }
+      } catch (error) {
+        const duration = Date.now() - startTime;
+        results.push({
+          image,
+          status: 'error',
+          duration,
+          error: error instanceof Error ? error.message : 'Unknown error'
+        });
+      }
+    }
+
+    const successfulTests = results.filter(r => r.status === 'success');
+    const averageSpeed = successfulTests.length > 0 ? 
+      Math.round(totalSpeed / successfulTests.length) : 0;
+
+    res.json({
+      success: true,
+      message: `Image loading speed test completed - ${successfulTests.length}/${testImages.length} successful`,
+      details: {
+        averageSpeed,
+        tests: results,
+        successRate: `${successfulTests.length}/${testImages.length}`
+      }
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: 'Image loading speed test failed',
+      details: error instanceof Error ? error.message : 'Unknown error'
+    });
+  }
+});
+
+// Database query speed test
+router.get('/test/database-query-speed', async (req, res) => {
+  try {
+    const startTime = Date.now();
+    
+    // Test multiple database queries
+    const tests = [
+      { name: 'Gallery Items', query: () => hybridStorage.getGalleryItems() },
+      { name: 'FAQ Items', query: () => hybridStorage.getFaqs() },
+      { name: 'Hero Videos', query: () => hybridStorage.getHeroVideos() },
+      { name: 'Analytics Views', query: () => hybridStorage.getAnalyticsViews() }
+    ];
+
+    const results = [];
+    let totalTime = 0;
+
+    for (const test of tests) {
+      const testStartTime = Date.now();
+      try {
+        const data = await test.query();
+        const duration = Date.now() - testStartTime;
+        
+        results.push({
+          name: test.name,
+          status: 'success',
+          duration,
+          recordCount: Array.isArray(data) ? data.length : typeof data === 'object' ? Object.keys(data).length : 1
+        });
+        
+        totalTime += duration;
+      } catch (error) {
+        const duration = Date.now() - testStartTime;
+        results.push({
+          name: test.name,
+          status: 'error',
+          duration,
+          error: error instanceof Error ? error.message : 'Unknown error'
+        });
+      }
+    }
+
+    const successfulTests = results.filter(r => r.status === 'success');
+    const averageSpeed = successfulTests.length > 0 ? 
+      Math.round(totalTime / successfulTests.length) : 0;
+
+    res.json({
+      success: true,
+      message: `Database query speed test completed - ${successfulTests.length}/${tests.length} successful`,
+      details: {
+        averageSpeed,
+        totalDuration: Date.now() - startTime,
+        tests: results,
+        successRate: `${successfulTests.length}/${tests.length}`
+      }
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: 'Database query speed test failed',
+      details: error instanceof Error ? error.message : 'Unknown error'
+    });
+  }
+});
+
+// Cache performance test
+router.get('/test/cache-performance', async (req, res) => {
+  try {
+    const startTime = Date.now();
+    
+    // Test video cache performance
+    const videoCacheDir = path.join(process.cwd(), 'server', 'cache', 'videos');
+    const imageCacheDir = path.join(process.cwd(), 'server', 'cache', 'images');
+    
+    let videoCount = 0;
+    let imageCount = 0;
+    let totalVideoSize = 0;
+    let totalImageSize = 0;
+
+    if (fs.existsSync(videoCacheDir)) {
+      const videoFiles = fs.readdirSync(videoCacheDir);
+      videoCount = videoFiles.length;
+      videoFiles.forEach(file => {
+        const stats = fs.statSync(path.join(videoCacheDir, file));
+        totalVideoSize += stats.size;
+      });
+    }
+
+    if (fs.existsSync(imageCacheDir)) {
+      const imageFiles = fs.readdirSync(imageCacheDir);
+      imageCount = imageFiles.length;
+      imageFiles.forEach(file => {
+        const stats = fs.statSync(path.join(imageCacheDir, file));
+        totalImageSize += stats.size;
+      });
+    }
+
+    const totalSize = totalVideoSize + totalImageSize;
+    const totalSizeMB = Math.round(totalSize / (1024 * 1024) * 100) / 100;
+    const cacheUtilization = Math.round((totalSize / (1024 * 1024 * 1024)) * 100) / 100;
+
+    res.json({
+      success: true,
+      message: `Cache performance analysis completed in ${Date.now() - startTime}ms`,
+      details: {
+        videoCount,
+        imageCount,
+        totalFiles: videoCount + imageCount,
+        totalSizeMB,
+        cacheUtilizationGB: cacheUtilization,
+        cacheUtilizationPercent: `${cacheUtilization}% of 1GB limit`,
+        videoSizeMB: Math.round(totalVideoSize / (1024 * 1024) * 100) / 100,
+        imageSizeMB: Math.round(totalImageSize / (1024 * 1024) * 100) / 100,
+        cacheEfficiency: videoCount >= 3 ? 'Optimal (3+ hero videos cached)' : 'Suboptimal (missing hero videos)'
+      }
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: 'Cache performance test failed',
+      details: error instanceof Error ? error.message : 'Unknown error'
+    });
+  }
+});
+
+// API response times test
+router.get('/test/api-response-times', async (req, res) => {
+  try {
+    const endpoints = [
+      { name: 'Gallery API', url: '/api/gallery' },
+      { name: 'Hero Videos API', url: '/api/hero-videos' },
+      { name: 'FAQ API', url: '/api/faq' },
+      { name: 'Cache Stats API', url: '/api/video-cache/stats' },
+      { name: 'Analytics API', url: '/api/analytics/dashboard' }
+    ];
+
+    const results = [];
+    let totalTime = 0;
+
+    for (const endpoint of endpoints) {
+      const startTime = Date.now();
+      try {
+        const response = await fetch(`http://localhost:5000${endpoint.url}`);
+        const duration = Date.now() - startTime;
+        
+        results.push({
+          name: endpoint.name,
+          status: response.ok ? 'success' : 'error',
+          duration,
+          responseCode: response.status
+        });
+        
+        if (response.ok) {
+          totalTime += duration;
+        }
+      } catch (error) {
+        const duration = Date.now() - startTime;
+        results.push({
+          name: endpoint.name,
+          status: 'error',
+          duration,
+          error: error instanceof Error ? error.message : 'Unknown error'
+        });
+      }
+    }
+
+    const successfulTests = results.filter(r => r.status === 'success');
+    const averageResponseTime = successfulTests.length > 0 ? 
+      Math.round(totalTime / successfulTests.length) : 0;
+
+    res.json({
+      success: true,
+      message: `API response times test completed - ${successfulTests.length}/${endpoints.length} successful`,
+      details: {
+        averageResponseTime,
+        tests: results,
+        successRate: `${successfulTests.length}/${endpoints.length}`,
+        fastestAPI: results.reduce((fastest, current) => 
+          current.status === 'success' && current.duration < fastest.duration ? current : fastest, 
+          { duration: Infinity, name: 'None' }
+        ).name,
+        slowestAPI: results.reduce((slowest, current) => 
+          current.status === 'success' && current.duration > slowest.duration ? current : slowest, 
+          { duration: 0, name: 'None' }
+        ).name
+      }
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: 'API response times test failed',
       details: error instanceof Error ? error.message : 'Unknown error'
     });
   }

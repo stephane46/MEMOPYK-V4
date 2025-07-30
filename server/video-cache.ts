@@ -50,10 +50,8 @@ export class VideoCache {
     if (!filename || filename.trim() === '') {
       throw new Error(`Invalid filename provided: ${filename}`);
     }
-    // Create hash of filename for safe filesystem storage
-    const hash = createHash('md5').update(filename.trim()).digest('hex');
-    const extension = filename.split('.').pop() || 'mp4';
-    return join(this.videoCacheDir, `${hash}.${extension}`);
+    // Use original filename directly for consistency and transparency
+    return join(this.videoCacheDir, filename.trim());
   }
 
   /**
@@ -63,15 +61,13 @@ export class VideoCache {
     if (!filename || filename.trim() === '') {
       throw new Error(`Invalid filename provided: ${filename}`);
     }
-    // Remove query parameters from filename before hashing
+    // Remove query parameters from filename before caching
     let cleanFilename = filename.trim();
     if (cleanFilename.includes('?')) {
       cleanFilename = cleanFilename.split('?')[0];
     }
-    // Create hash of clean filename for safe filesystem storage
-    const hash = createHash('md5').update(cleanFilename).digest('hex');
-    const extension = cleanFilename.split('.').pop() || 'jpg';
-    return join(this.imageCacheDir, `${hash}.${extension}`);
+    // Use original filename directly for consistency with videos
+    return join(this.imageCacheDir, cleanFilename);
   }
 
   /**
