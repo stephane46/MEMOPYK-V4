@@ -422,40 +422,7 @@ export default function GalleryManagement() {
             )}
           </div>
 
-          {/* SUPER PROMINENT MODE INDICATOR - CANNOT BE MISSED */}
-          <div style={{
-            position: 'fixed',
-            top: '10px',
-            right: '10px',
-            zIndex: 9999,
-            padding: '20px',
-            fontSize: '18px',
-            fontWeight: 'bold',
-            borderRadius: '10px',
-            border: '3px solid',
-            backgroundColor: formData.use_same_video ? '#FFA500' : '#800080',
-            color: 'white',
-            boxShadow: '0 4px 20px rgba(0,0,0,0.5)'
-          }}>
-            {formData.use_same_video ? '🟠 SHARED MODE' : '🟣 SEPARATE MODE'}
-          </div>
 
-          {/* Language-Specific Upload System */}
-          <div className="mb-4 p-6 text-center font-bold text-2xl border-4 rounded-lg" style={{
-            backgroundColor: formData.use_same_video ? '#FFE4B5' : '#E6E6FA',
-            borderColor: formData.use_same_video ? '#FFA500' : '#800080',
-            color: formData.use_same_video ? '#FF8C00' : '#4B0082'
-          }}>
-            {formData.use_same_video ? (
-              <div>
-                🟠 MODE: VIDÉO PARTAGÉE (même fichier pour FR et EN)
-              </div>
-            ) : (
-              <div>
-                🟣 MODE: VIDÉOS SÉPARÉES (fichiers différents pour FR et EN)
-              </div>
-            )}
-          </div>
           
           {formData.use_same_video ? (
             // Shared upload for both languages
