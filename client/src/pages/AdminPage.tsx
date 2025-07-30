@@ -10,7 +10,7 @@ import { Badge } from '@/components/ui/badge';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { ArrowUp, ArrowDown, Play, RefreshCw, BarChart3, Video, HardDrive, Users, MessageSquare, FileText, LogOut, TestTube, Rocket, X, Type, Save, Palette, ChevronUp, ChevronDown, Trash2, Eye, EyeOff, Upload, FileVideo, Database, Check, Zap, Search } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
-import GalleryManagementNew from '@/components/admin/GalleryManagementNew';
+import GalleryManagement from '@/components/admin/GalleryManagement';
 import FormatBadgeManager from '@/components/admin/FormatBadgeManager';
 
 import FAQManagementWorking from '@/components/admin/FAQManagementWorking';
@@ -1223,7 +1223,7 @@ export default function AdminPage() {
                 <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Galerie</h2>
                 <p className="text-gray-600 dark:text-gray-400">Gestion des éléments de galerie portfolio - Interface améliorée</p>
               </div>
-              <GalleryManagementNew />
+              <GalleryManagement />
             </div>
           )}
 
