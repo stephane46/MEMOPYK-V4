@@ -187,13 +187,54 @@ app.use((req, res, next) => {
       timeout: 10000,
     });
 
-    // Proxy non-API requests to Vite dev server with error handling
-    app.use((req, res, next) => {
+    // Server-side hreflang injection for development mode
+    app.get("*", (req, res, next) => {
       if (req.path.startsWith("/api")) {
-        return next(); // Skip proxy for API routes
+        return next(); // Skip for API routes
       }
       
-      // Handle proxy with try-catch
+      // Only serve dynamic HTML for the root path - let Vite handle everything else
+      if (req.path === '/' || req.path === '/index.html') {
+        const fs = require('fs');
+        const htmlPath = path.resolve(process.cwd(), "public/index.html");
+        
+        try {
+          let html = fs.readFileSync(htmlPath, 'utf8');
+          
+          // Determine the base URL for hreflang tags
+          const protocol = req.headers['x-forwarded-proto'] || (req.secure ? 'https' : 'http');
+          const host = req.headers['x-forwarded-host'] || req.headers.host;
+          const baseUrl = `${protocol}://${host}`;
+          
+          // Replace dynamic placeholders with actual URLs
+          html = html.replace(/DYNAMIC_BASE_URL/g, baseUrl);
+          
+          // Determine current language from path and set canonical URL
+          const currentPath = req.path;
+          let canonicalUrl = baseUrl;
+          
+          if (currentPath.startsWith('/en') || req.query.lang === 'en') {
+            canonicalUrl = `${baseUrl}/en/`;
+          } else if (currentPath.startsWith('/fr') || req.query.lang === 'fr') {
+            canonicalUrl = `${baseUrl}/fr/`;
+          } else {
+            canonicalUrl = `${baseUrl}/`; // x-default
+          }
+          
+          html = html.replace(/DYNAMIC_CANONICAL_URL/g, canonicalUrl);
+          
+          console.log(`🔍 DEV SEO HREFLANG: Serving ${req.path} with baseUrl: ${baseUrl}, canonical: ${canonicalUrl}`);
+          
+          res.set('Content-Type', 'text/html');
+          res.send(html);
+          return;
+        } catch (error) {
+          console.error('❌ Error serving dynamic HTML in dev mode:', error);
+          // Fall through to proxy for error cases
+        }
+      }
+      
+      // Proxy other requests to Vite dev server
       try {
         return proxy(req, res, (error: any) => {
           if (error) {
@@ -211,23 +252,67 @@ app.use((req, res, next) => {
 
     console.log("🔄 Proxying frontend requests to Vite on port 5173");
   } else {
-    // — Prod mode: serve static build
+    // — Prod mode: serve static build with dynamic hreflang injection
     const clientDist = path.resolve(process.cwd(), "dist");
     
-    // CRITICAL FIX: Only serve static files for non-API routes
+    // CRITICAL FIX: Only serve static files for non-API routes (but NOT index.html)
     app.use((req, res, next) => {
       if (req.path.startsWith("/api")) {
         return next(); // Skip static serving for API routes
       }
+      
+      // Don't serve index.html statically - we'll handle it dynamically
+      if (req.path === '/' || req.path === '/index.html') {
+        return next();
+      }
+      
       express.static(clientDist, { index: false })(req, res, next);
     });
     
-    // Only serve index.html for non-API routes
+    // Server-side HTML serving with dynamic hreflang tags for SEO
     app.get("*", (req: Request, res: Response, next) => {
       if (req.path.startsWith("/api")) {
         return next(); // Let API routes be handled by registerRoutes
       }
-      res.sendFile(path.join(clientDist, "index.html"));
+      
+      // Read the HTML template and inject dynamic hreflang tags
+      const htmlPath = path.join(clientDist, "index.html");
+      const fs = require('fs');
+      
+      try {
+        let html = fs.readFileSync(htmlPath, 'utf8');
+        
+        // Determine the base URL for hreflang tags
+        const protocol = req.headers['x-forwarded-proto'] || (req.secure ? 'https' : 'http');
+        const host = req.headers['x-forwarded-host'] || req.headers.host;
+        const baseUrl = `${protocol}://${host}`;
+        
+        // Replace dynamic placeholders with actual URLs
+        html = html.replace(/DYNAMIC_BASE_URL/g, baseUrl);
+        
+        // Determine current language from path and set canonical URL
+        const currentPath = req.path;
+        let canonicalUrl = baseUrl;
+        
+        if (currentPath.startsWith('/en') || currentPath.includes('lang=en')) {
+          canonicalUrl = `${baseUrl}/en/`;
+        } else if (currentPath.startsWith('/fr') || currentPath.includes('lang=fr')) {
+          canonicalUrl = `${baseUrl}/fr/`;
+        } else {
+          canonicalUrl = `${baseUrl}/`; // x-default
+        }
+        
+        html = html.replace(/DYNAMIC_CANONICAL_URL/g, canonicalUrl);
+        
+        console.log(`🔍 SEO HREFLANG: Serving ${req.path} with baseUrl: ${baseUrl}, canonical: ${canonicalUrl}`);
+        
+        res.set('Content-Type', 'text/html');
+        res.send(html);
+        
+      } catch (error) {
+        console.error('❌ Error serving dynamic HTML:', error);
+        res.sendFile(htmlPath); // Fallback to static file
+      }
     });
     
     console.log("📦 Serving static files from", clientDist);

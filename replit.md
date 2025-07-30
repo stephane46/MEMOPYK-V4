@@ -51,6 +51,36 @@ Preferred communication style: Simple, everyday language.
 
 ## Recent Changes (July 30, 2025)
 
+### SEO HREFLANG TAGS SERVER-RENDERED - v1.0.76 (July 30, 2025) ✅ CRITICAL SEO FIX
+**Server-Side Multilingual SEO Implementation - USER REQUEST RESOLVED:**
+✅ **Critical Issue Identified**: Client-side language switching invisible to search crawlers - missing server-rendered hreflang tags
+✅ **Server-Side HTML Injection**: Implemented dynamic HTML serving that replaces placeholder tags with actual domain URLs
+✅ **Production Deployment Ready**: Both development and production modes now serve proper hreflang tags in raw HTML
+✅ **SEO Crawler Compliance**: Search engines can now properly discover English and French versions through server-rendered tags
+✅ **Dynamic Domain Support**: Hreflang tags automatically use correct domain (new.memopyk.com) instead of hardcoded legacy URLs
+✅ **Canonical URL Logic**: Smart canonical URL detection based on path (/en/, /fr/) and query parameters
+
+**Technical Implementation:**
+- Modified server/index.ts to serve dynamic HTML instead of static files for root requests
+- Updated public/index.html with placeholder tags (DYNAMIC_BASE_URL, DYNAMIC_CANONICAL_URL)
+- Added server-side template replacement logic that reads request headers for proper domain detection
+- Implemented both development and production mode support for consistent SEO tag injection
+- Protocol detection (http/https) and host detection from x-forwarded-host headers for deployment compatibility
+
+**SEO Tags Now Server-Rendered:**
+```html
+<link rel="alternate" hreflang="en" href="https://new.memopyk.com/en/" />
+<link rel="alternate" hreflang="fr" href="https://new.memopyk.com/fr/" />
+<link rel="alternate" hreflang="x-default" href="https://new.memopyk.com/" />
+<link rel="canonical" href="[dynamic based on current path]" />
+```
+
+**User Experience Achievement:**
+- Google and other search engines can now properly index French and English versions separately
+- Crawlers see hreflang tags in raw HTML before any JavaScript execution
+- Automatic domain detection ensures tags work across development, staging, and production environments
+- Improved international SEO ranking potential through proper multilingual site structure
+
 ### EDITABLE FORMAT BADGE SYSTEM COMPLETE - v1.0.75 (July 30, 2025) ✅ ADMIN CUSTOMIZATION
 **Dynamic Format Badge Management - User Request Implemented:**
 ✅ **Database Schema Enhanced**: Added format badge fields (formatPlatformEn/Fr, formatTypeEn/Fr) to galleryItems table
