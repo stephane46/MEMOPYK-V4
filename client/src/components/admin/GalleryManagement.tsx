@@ -114,6 +114,10 @@ const addCacheBuster = (url: string): string => {
 // Removed smartCacheRefreshMutation prop - Gallery videos use Direct CDN streaming
 
 export default function GalleryManagement() {
+  // VERSION: LANGUAGE-SPECIFIC-UPLOAD-v1.0.80 - CACHE BUST
+  console.log('🚀 GALLERY MANAGEMENT v1.0.80 - Language-specific upload system loaded');
+  console.log('💡 Look for orange/purple mode indicators and toggle debugging!');
+  
   const [editingItem, setEditingItem] = useState<GalleryItem | null>(null);
   const [showCreateDialog, setShowCreateDialog] = useState(false);
   const [showPreview, setShowPreview] = useState<{ type: 'video' | 'image'; url: string; title: string } | null>(null);
@@ -310,17 +314,28 @@ export default function GalleryManagement() {
 
     // When use_same_video changes, sync the video URLs
     const handleSameVideoToggle = (useSame: boolean) => {
+      console.log('🔄 TOGGLE CLICKED! Previous state:', formData.use_same_video, '→ New state:', useSame);
+      console.log('🔄 Current formData before change:', formData);
+      
       if (useSame && formData.video_url_en) {
-        setFormData(prev => ({ 
-          ...prev, 
-          use_same_video: useSame,
-          video_url_fr: prev.video_url_en
-        }));
+        setFormData(prev => {
+          const newData = { 
+            ...prev, 
+            use_same_video: useSame,
+            video_url_fr: prev.video_url_en
+          };
+          console.log('🔄 Updated formData (sync mode):', newData);
+          return newData;
+        });
       } else {
-        setFormData(prev => ({ 
-          ...prev, 
-          use_same_video: useSame
-        }));
+        setFormData(prev => {
+          const newData = { 
+            ...prev, 
+            use_same_video: useSame
+          };
+          console.log('🔄 Updated formData (separate mode):', newData);
+          return newData;
+        });
       }
     };
 
@@ -402,6 +417,18 @@ export default function GalleryManagement() {
           </div>
 
           {/* Language-Specific Upload System */}
+          <div className="mb-4 p-3 text-center font-bold text-lg border-2 rounded-lg">
+            {formData.use_same_video ? (
+              <div className="text-orange-700 bg-orange-100 border-orange-300">
+                🟠 MODE: VIDÉO PARTAGÉE (même fichier pour FR et EN)
+              </div>
+            ) : (
+              <div className="text-purple-700 bg-purple-100 border-purple-300">
+                🟣 MODE: VIDÉOS SÉPARÉES (fichiers différents pour FR et EN)
+              </div>
+            )}
+          </div>
+          
           {formData.use_same_video ? (
             // Shared upload for both languages
             <div className="mt-6 p-4 bg-gradient-to-r from-[#F2EBDC] to-[#89BAD9]/20 dark:from-[#011526]/20 dark:to-[#2A4759]/20 rounded-lg border border-[#89BAD9] dark:border-[#2A4759]">
@@ -709,8 +736,17 @@ export default function GalleryManagement() {
             </Label>
           </div>
           <p className="text-xs text-blue-700 dark:text-blue-300 mt-1">
-            Activé par défaut - La vidéo sera utilisée dans les deux langues
+            {formData.use_same_video ? (
+              "✅ ACTIVÉ - Même vidéo pour les deux langues"
+            ) : (
+              "❌ DÉSACTIVÉ - Vidéos séparées pour FR et EN"
+            )}
           </p>
+          <div className="mt-2 p-2 bg-yellow-50 dark:bg-yellow-900/20 rounded border border-yellow-200 dark:border-yellow-800">
+            <p className="text-xs text-yellow-800 dark:text-yellow-200">
+              🔧 Debug: use_same_video = {String(formData.use_same_video)} | Type: {typeof formData.use_same_video}
+            </p>
+          </div>
         </div>
 
         {/* Title Section */}
