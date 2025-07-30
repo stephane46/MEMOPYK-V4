@@ -60,6 +60,12 @@ export const galleryItems = pgTable("gallery_items", {
   sorryMessageEn: text("sorry_message_en"), // "Sorry, we cannot show you the video at this stage"
   sorryMessageFr: text("sorry_message_fr"), // "Désolé, nous ne pouvons pas vous montrer la vidéo à ce stade"
   
+  // Format badge fields for strategic marketing display
+  formatPlatformEn: text("format_platform_en"), // "Social Media", "Social Feed", "Professional"
+  formatPlatformFr: text("format_platform_fr"), // "Réseaux Sociaux", "Réseaux Sociaux", "Professionnel"
+  formatTypeEn: text("format_type_en"), // "Mobile Stories", "Instagram Posts", "TV & Desktop"
+  formatTypeFr: text("format_type_fr"), // "Stories Mobiles", "Posts Instagram", "TV & Bureau"
+  
   // Media fields
   videoUrlEn: text("video_url_en"),
   videoUrlFr: text("video_url_fr"),

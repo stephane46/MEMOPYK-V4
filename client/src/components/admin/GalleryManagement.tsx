@@ -8,6 +8,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Switch } from "@/components/ui/switch";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogTrigger } from "@/components/ui/dialog";
 import { useToast } from "@/hooks/use-toast";
 import { 
@@ -261,6 +262,10 @@ export default function GalleryManagement() {
         story_fr: item?.story_fr || '',
         sorry_message_en: item?.sorry_message_en || 'Sorry, we cannot show you the video at this stage',
         sorry_message_fr: item?.sorry_message_fr || 'Désolé, nous ne pouvons pas vous montrer la vidéo à ce stade',
+        format_platform_en: item?.format_platform_en || '',
+        format_platform_fr: item?.format_platform_fr || '',
+        format_type_en: item?.format_type_en || '',
+        format_type_fr: item?.format_type_fr || '',
         video_url_en: persistentUploadState.video_url_en || item?.video_url_en || '',
         video_url_fr: persistentUploadState.video_url_fr || item?.video_url_fr || '',
         video_filename: (() => {
@@ -733,6 +738,90 @@ export default function GalleryManagement() {
                 className="bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
               />
             </div>
+          </div>
+        </div>
+
+        {/* Format Badge Section - Editable Marketing Display */}
+        <div className="bg-[#F2EBDC] dark:bg-[#011526]/20 p-4 rounded-lg border border-[#89BAD9] dark:border-[#2A4759]">
+          <h4 className="font-semibold mb-3 text-[#011526] dark:text-[#F2EBDC] flex items-center gap-2">
+            🎯 7. Badge Format (marketing visuel)
+          </h4>
+          <p className="text-sm text-[#2A4759] dark:text-[#89BAD9] mb-4">
+            Personnalisez le texte du badge format affiché avec chaque vidéo. Ces badges guident les clients vers les plateformes optimales.
+          </p>
+          
+          <div className="grid grid-cols-2 gap-6">
+            <div className="space-y-4">
+              <h5 className="font-medium text-[#011526] dark:text-[#F2EBDC]">English</h5>
+              <div>
+                <Label htmlFor="format_platform_en" className="text-gray-700 dark:text-gray-300">Platform Line 1</Label>
+                <Select value={formData.format_platform_en} onValueChange={(value) => setFormData({ ...formData, format_platform_en: value })}>
+                  <SelectTrigger className="bg-white dark:bg-gray-800">
+                    <SelectValue placeholder="Select platform category" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="Social Media">Social Media</SelectItem>
+                    <SelectItem value="Social Feed">Social Feed</SelectItem>
+                    <SelectItem value="Professional">Professional</SelectItem>
+                    <SelectItem value="Custom">Custom...</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              <div>
+                <Label htmlFor="format_type_en" className="text-gray-700 dark:text-gray-300">Format Line 2</Label>
+                <Select value={formData.format_type_en} onValueChange={(value) => setFormData({ ...formData, format_type_en: value })}>
+                  <SelectTrigger className="bg-white dark:bg-gray-800">
+                    <SelectValue placeholder="Select format type" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="Mobile Stories">Mobile Stories</SelectItem>
+                    <SelectItem value="Instagram Posts">Instagram Posts</SelectItem>
+                    <SelectItem value="TV & Desktop">TV & Desktop</SelectItem>
+                    <SelectItem value="Short Videos">Short Videos</SelectItem>
+                    <SelectItem value="Custom">Custom...</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+            
+            <div className="space-y-4">
+              <h5 className="font-medium text-[#011526] dark:text-[#F2EBDC]">Français</h5>
+              <div>
+                <Label htmlFor="format_platform_fr" className="text-gray-700 dark:text-gray-300">Platform Line 1</Label>
+                <Select value={formData.format_platform_fr} onValueChange={(value) => setFormData({ ...formData, format_platform_fr: value })}>
+                  <SelectTrigger className="bg-white dark:bg-gray-800">
+                    <SelectValue placeholder="Sélectionner catégorie plateforme" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="Réseaux Sociaux">Réseaux Sociaux</SelectItem>
+                    <SelectItem value="Flux Social">Flux Social</SelectItem>
+                    <SelectItem value="Professionnel">Professionnel</SelectItem>
+                    <SelectItem value="Personnalisé">Personnalisé...</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              <div>
+                <Label htmlFor="format_type_fr" className="text-gray-700 dark:text-gray-300">Format Line 2</Label>
+                <Select value={formData.format_type_fr} onValueChange={(value) => setFormData({ ...formData, format_type_fr: value })}>
+                  <SelectTrigger className="bg-white dark:bg-gray-800">
+                    <SelectValue placeholder="Sélectionner type de format" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="Stories Mobiles">Stories Mobiles</SelectItem>
+                    <SelectItem value="Posts Instagram">Posts Instagram</SelectItem>
+                    <SelectItem value="TV & Bureau">TV & Bureau</SelectItem>
+                    <SelectItem value="Vidéos Courtes">Vidéos Courtes</SelectItem>
+                    <SelectItem value="Personnalisé">Personnalisé...</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+          </div>
+          
+          <div className="mt-4 p-3 bg-[#89BAD9]/10 dark:bg-[#2A4759]/10 rounded-lg">
+            <p className="text-xs text-[#2A4759] dark:text-[#89BAD9]">
+              💡 Astuce: Choisissez les textes qui correspondent le mieux aux dimensions de votre vidéo et aux plateformes cibles de vos clients.
+            </p>
           </div>
         </div>
 

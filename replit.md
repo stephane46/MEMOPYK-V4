@@ -51,6 +51,29 @@ Preferred communication style: Simple, everyday language.
 
 ## Recent Changes (July 30, 2025)
 
+### EDITABLE FORMAT BADGE SYSTEM COMPLETE - v1.0.75 (July 30, 2025) ✅ ADMIN CUSTOMIZATION
+**Dynamic Format Badge Management - User Request Implemented:**
+✅ **Database Schema Enhanced**: Added format badge fields (formatPlatformEn/Fr, formatTypeEn/Fr) to galleryItems table
+✅ **Admin Interface Complete**: Added bilingual dropdown selectors for platform and format type customization
+✅ **Dynamic Frontend Integration**: Updated getViewingFormat() function to use editable database fields instead of hard-coded values
+✅ **Fallback System**: Automatic format detection remains as fallback when admin hasn't set custom format badges
+✅ **Bilingual Consistency**: Separate EN/FR fields ensure consistent messaging across languages
+✅ **Brand Consistency Maintained**: All format badges continue using uniform MEMOPYK Dark Blue #2A4759
+
+**Technical Implementation:**
+- Enhanced shared/schema.ts with format badge fields for strategic marketing display
+- Added comprehensive admin interface with dropdown selectors for platform categories and format types
+- Updated GallerySection.tsx to prioritize custom format badge text over automatic detection
+- Intelligent icon selection based on format type content (mobile → Smartphone, instagram → Instagram, tv/desktop → Monitor)
+- MEMOPYK brand color system maintained throughout format badge system
+
+**User Experience Achievement:**
+- Admin can now customize format badge text for each video through professional dropdown interface
+- Format badges display admin-selected text instead of hard-coded automatic detection
+- Bilingual consistency ensured with separate fields for French and English format recommendations
+- Strategic marketing guidance maintained with uniform professional color scheme
+- Perfect for maintaining brand consistency while allowing content customization
+
 ### BRAND COLOR CONSISTENCY IMPLEMENTED - v1.0.74 (July 30, 2025) ✅ UNIFORM FORMAT BADGES
 **Format Badge Uniform Design - User Request Implemented:**
 ✅ **Uniform Color Scheme**: All format badges now use MEMOPYK Dark Blue #2A4759 for consistent brand appearance

@@ -22,6 +22,10 @@ interface GalleryItem {
   storyFr: string; // "Ce film montre..." - story description (up to 5 lines)
   sorryMessageEn: string; // "Sorry, we cannot show you the video at this stage"
   sorryMessageFr: string; // "Désolé, nous ne pouvons pas vous montrer la vidéo à ce stade"
+  formatPlatformEn: string; // "Social Media", "Social Feed", "Professional"
+  formatPlatformFr: string; // "Réseaux Sociaux", "Flux Social", "Professionnel"
+  formatTypeEn: string; // "Mobile Stories", "Instagram Posts", "TV & Desktop"
+  formatTypeFr: string; // "Stories Mobiles", "Posts Instagram", "TV & Bureau"
   videoUrlEn: string;
   videoUrlFr: string;
   videoFilename: string; // CRITICAL: timestamp-prefixed filename (1753736019450-VitaminSeaC.mp4)
@@ -74,6 +78,10 @@ export default function GallerySection() {
         storyFr: item.story_fr,
         sorryMessageEn: item.sorry_message_en,
         sorryMessageFr: item.sorry_message_fr,
+        formatPlatformEn: item.format_platform_en,
+        formatPlatformFr: item.format_platform_fr,
+        formatTypeEn: item.format_type_en,
+        formatTypeFr: item.format_type_fr,
         videoUrlEn: item.video_url_en,
         videoUrlFr: item.video_url_fr,
         videoFilename: item.video_filename || item.video_url_en || item.video_url_fr, // TIMESTAMP PREFIX FIX
@@ -227,8 +235,35 @@ export default function GallerySection() {
     return directCdnUrl;
   };
 
-  // Get optimal viewing format info for marketing display
+  // Get optimal viewing format info for marketing display - now using editable database fields
   const getViewingFormat = (item: GalleryItem) => {
+    // Use editable format badge data from database if available, otherwise fall back to auto-detection
+    const platformText = language === 'fr-FR' ? item.formatPlatformFr : item.formatPlatformEn;
+    const typeText = language === 'fr-FR' ? item.formatTypeFr : item.formatTypeEn;
+    
+    // If admin has set custom format badge text, use it
+    if (platformText && typeText) {
+      // Determine icon based on type text content
+      let icon = Monitor; // default
+      if (typeText.toLowerCase().includes('stories') || typeText.toLowerCase().includes('mobile')) {
+        icon = Smartphone;
+      } else if (typeText.toLowerCase().includes('instagram') || typeText.toLowerCase().includes('social')) {
+        icon = Instagram;
+      } else if (typeText.toLowerCase().includes('tv') || typeText.toLowerCase().includes('desktop') || typeText.toLowerCase().includes('bureau')) {
+        icon = Monitor;
+      }
+      
+      return {
+        platform: platformText,
+        type: typeText,
+        icon: icon,
+        color: "bg-[#2A4759]", // MEMOPYK Dark Blue - Uniform brand color for all badges
+        textColor: "text-[#2A4759]",
+        formats: [] // Custom format badges don't need format arrays
+      };
+    }
+    
+    // Fall back to automatic detection if no custom format badge is set
     const width = item.videoWidth || 16;
     const height = item.videoHeight || 9;
     const aspectRatio = width / height;
