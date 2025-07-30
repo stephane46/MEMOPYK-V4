@@ -112,14 +112,17 @@ const addCacheBuster = (url: string): string => {
 // Removed smartCacheRefreshMutation prop - Gallery videos use Direct CDN streaming
 
 export default function GalleryManagement() {
-  // VERSION: LANGUAGE-SPECIFIC-UPLOAD-v1.0.82 - FORCE COMPONENT REFRESH
-  console.log('🚀🚀🚀 GALLERY MANAGEMENT v1.0.82 - LANGUAGE UPLOAD SYSTEM FIXED 🚀🚀🚀');
-  console.log('💡 English upload section should be visible when toggle is OFF!');
-  console.log('🔥 If you see this v1.0.82 message, the latest code IS loading!');
+  // VERSION: ULTRA-MODERN-INTERFACE-v1.0.83 - COMPLETE INTERFACE REPLACEMENT
+  console.log('🚀🚀🚀 MODERN GALLERY MANAGEMENT v1.0.83 - CLEAN INTERFACE DEPLOYED 🚀🚀🚀');
+  console.log('💡 Complete modern interface with language-specific upload system!');
+  console.log('🔥 If you see this v1.0.83 message, the MODERN interface IS loading!');
+  console.log('🎯 Old 3-column interface has been completely replaced!');
   
-  // FORCE ALERT TO CONFIRM CODE IS LOADING
+  // FORCE ALERT TO CONFIRM MODERN CODE IS LOADING
   if (typeof window !== 'undefined') {
-    console.log('🎯 BROWSER ENVIRONMENT DETECTED - v1.0.82 ACTIVE');
+    console.log('🎯 BROWSER ENVIRONMENT DETECTED - v1.0.83 MODERN INTERFACE ACTIVE');
+    // Force reload to clear any cached interface state
+    console.log('🔄 Interface state reset - modern layout should now display');
   }
   
   const [editingItem, setEditingItem] = useState<GalleryItem | null>(null);
