@@ -1,4 +1,4 @@
-import { ReactNode } from 'react';
+import React, { ReactNode } from 'react';
 import { Link, useLocation } from 'wouter';
 import { useLanguage } from '../contexts/LanguageContext';
 

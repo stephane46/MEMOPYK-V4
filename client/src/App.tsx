@@ -1,3 +1,4 @@
+import React from "react";
 import "./index.css";
 import { QueryClientProvider } from '@tanstack/react-query';
 import { Router, Route } from 'wouter';
@@ -21,11 +22,7 @@ function App() {
     <QueryClientProvider client={queryClient}>
       <AuthProvider>
         <LanguageProvider>
-          <div style={{ minHeight: '100vh', backgroundColor: '#f0f0f0', padding: '20px' }}>
-            <h1 style={{ color: 'red', fontSize: '48px', textAlign: 'center' }}>
-              MEMOPYK APP LOADING TEST v1.0.79
-            </h1>
-            <Router>
+          <Router>
               <Route path="/language" component={LanguageSelectionPage} />
               
               <Layout>
@@ -54,7 +51,6 @@ function App() {
               {/* Will restore with proper configuration after identifying root cause */}
             </Layout>
           </Router>
-          </div>
         </LanguageProvider>
       </AuthProvider>
       <Toaster />
