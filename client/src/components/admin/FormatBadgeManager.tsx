@@ -5,7 +5,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Badge } from '@/components/ui/badge';
-import { Trash2, Plus, Edit, Save, X, Monitor, Smartphone } from 'lucide-react';
+import { Trash2, Plus, Edit, Save, X, Monitor, Smartphone, Instagram, Tv, Tablet, Camera, Video, PlayCircle } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 
 interface FormatBadgeTemplate {
@@ -15,12 +15,44 @@ interface FormatBadgeTemplate {
   typeEn: string;
   typeFr: string;
   category: 'social' | 'professional' | 'custom';
+  iconName: string; // Icon identifier for manual selection
 }
 
 const FormatBadgeManager: React.FC = () => {
   const { toast } = useToast();
   const [isAddingNew, setIsAddingNew] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
+  
+  // Available icons for format badges
+  const availableIcons = [
+    { name: 'Smartphone', component: Smartphone, label: 'Mobile Phone' },
+    { name: 'Monitor', component: Monitor, label: 'Desktop/TV' },
+    { name: 'Instagram', component: Instagram, label: 'Instagram' },
+    { name: 'Tablet', component: Tablet, label: 'Tablet' },
+    { name: 'Tv', component: Tv, label: 'Television' },
+    { name: 'Camera', component: Camera, label: 'Camera' },
+    { name: 'Video', component: Video, label: 'Video' },
+    { name: 'PlayCircle', component: PlayCircle, label: 'Play Button' },
+  ];
+  
+  // Get icon component by name
+  const getIconComponent = (iconName: string) => {
+    const icon = availableIcons.find(i => i.name === iconName);
+    return icon ? icon.component : Monitor; // Default fallback
+  };
+  
+  // Intelligent icon suggestion based on text content
+  const suggestIcon = (typeText: string) => {
+    const text = typeText.toLowerCase();
+    if (text.includes('stories') || text.includes('mobile')) return 'Smartphone';
+    if (text.includes('instagram') || text.includes('social')) return 'Instagram';
+    if (text.includes('tv') || text.includes('television')) return 'Tv';
+    if (text.includes('tablet')) return 'Tablet';
+    if (text.includes('camera') || text.includes('photo')) return 'Camera';
+    if (text.includes('video') || text.includes('film')) return 'Video';
+    if (text.includes('play')) return 'PlayCircle';
+    return 'Monitor'; // Default for desktop/professional
+  };
   
   // Predefined format badge templates
   const [templates, setTemplates] = useState<FormatBadgeTemplate[]>([
@@ -30,7 +62,8 @@ const FormatBadgeManager: React.FC = () => {
       platformFr: 'Réseaux Sociaux',
       typeEn: 'Mobile Stories',
       typeFr: 'Stories Mobiles',
-      category: 'social'
+      category: 'social',
+      iconName: 'Smartphone'
     },
     {
       id: '2',
@@ -38,7 +71,8 @@ const FormatBadgeManager: React.FC = () => {
       platformFr: 'Flux Social',
       typeEn: 'Instagram Posts',
       typeFr: 'Posts Instagram',
-      category: 'social'
+      category: 'social',
+      iconName: 'Instagram'
     },
     {
       id: '3',
@@ -46,7 +80,8 @@ const FormatBadgeManager: React.FC = () => {
       platformFr: 'Professionnel',
       typeEn: 'TV & Desktop',
       typeFr: 'TV & Bureau',
-      category: 'professional'
+      category: 'professional',
+      iconName: 'Monitor'
     }
   ]);
 
@@ -55,7 +90,8 @@ const FormatBadgeManager: React.FC = () => {
     platformFr: '',
     typeEn: '',
     typeFr: '',
-    category: 'custom'
+    category: 'custom',
+    iconName: 'Monitor'
   });
 
   const [editingTemplate, setEditingTemplate] = useState<FormatBadgeTemplate | null>(null);
@@ -63,8 +99,8 @@ const FormatBadgeManager: React.FC = () => {
   const handleAddTemplate = () => {
     if (!newTemplate.platformEn || !newTemplate.typeEn) {
       toast({
-        title: "Champs requis",
-        description: "Platform EN et Type EN sont obligatoires",
+        title: "Erreur",
+        description: "Les champs English Platform et English Type sont requis",
         variant: "destructive"
       });
       return;
@@ -83,18 +119,19 @@ const FormatBadgeManager: React.FC = () => {
       platformFr: '',
       typeEn: '',
       typeFr: '',
-      category: 'custom'
+      category: 'custom',
+      iconName: 'Monitor'
     });
     setIsAddingNew(false);
 
     toast({
-      title: "Template ajouté",
-      description: "Nouveau format badge template créé avec succès"
+      title: "Succès",
+      description: "Template format badge créé avec succès"
     });
   };
 
   const handleEditTemplate = (template: FormatBadgeTemplate) => {
-    setEditingTemplate({ ...template });
+    setEditingTemplate(template);
     setEditingId(template.id);
   };
 
@@ -108,16 +145,16 @@ const FormatBadgeManager: React.FC = () => {
     setEditingTemplate(null);
 
     toast({
-      title: "Template mis à jour",
-      description: "Format badge template modifié avec succès"
+      title: "Succès",
+      description: "Template format badge modifié avec succès"
     });
   };
 
   const handleDeleteTemplate = (id: string) => {
     const template = templates.find(t => t.id === id);
-    if (template?.category !== 'custom') {
+    if (template && template.category !== 'custom') {
       toast({
-        title: "Suppression impossible",
+        title: "Erreur",
         description: "Les templates prédéfinis ne peuvent pas être supprimés",
         variant: "destructive"
       });
@@ -126,13 +163,28 @@ const FormatBadgeManager: React.FC = () => {
 
     setTemplates(templates.filter(t => t.id !== id));
     toast({
-      title: "Template supprimé",
+      title: "Succès",
       description: "Format badge template supprimé avec succès"
     });
   };
 
-  const getCategoryIcon = (category: string) => {
-    return category === 'social' ? Smartphone : Monitor;
+  // Auto-suggest icon when type text changes
+  const handleTypeTextChange = (value: string, isEditing = false) => {
+    const suggestedIcon = suggestIcon(value);
+    
+    if (isEditing && editingTemplate) {
+      setEditingTemplate({ 
+        ...editingTemplate, 
+        typeEn: value,
+        iconName: suggestedIcon 
+      });
+    } else {
+      setNewTemplate({ 
+        ...newTemplate, 
+        typeEn: value,
+        iconName: suggestedIcon 
+      });
+    }
   };
 
   const getCategoryColor = (category: string) => {
@@ -151,7 +203,7 @@ const FormatBadgeManager: React.FC = () => {
           Gestionnaire Format Badge Templates
         </CardTitle>
         <p className="text-sm text-[#2A4759] dark:text-[#89BAD9]">
-          Gérez les templates de format badges pour les appliquer rapidement aux éléments de galerie
+          Gérez les templates de format badges avec icônes visuelles pour les appliquer rapidement aux éléments de galerie
         </p>
       </CardHeader>
       <CardContent className="space-y-6">
@@ -161,7 +213,7 @@ const FormatBadgeManager: React.FC = () => {
           <h3 className="font-semibold text-[#011526] dark:text-[#F2EBDC]">Templates Disponibles</h3>
           
           {templates.map((template) => {
-            const CategoryIcon = getCategoryIcon(template.category);
+            const CategoryIcon = getIconComponent(template.iconName);
             const isEditing = editingId === template.id;
             
             return (
@@ -227,68 +279,120 @@ const FormatBadgeManager: React.FC = () => {
                 </div>
 
                 {isEditing && editingTemplate ? (
-                  <div className="grid grid-cols-2 gap-4">
-                    <div className="space-y-2">
-                      <Label>English Platform</Label>
-                      <Input
-                        value={editingTemplate.platformEn}
-                        onChange={(e) => setEditingTemplate({
-                          ...editingTemplate,
-                          platformEn: e.target.value
-                        })}
-                        className="bg-white dark:bg-gray-800"
-                      />
+                  <div className="space-y-4">
+                    <div className="grid grid-cols-2 gap-4">
+                      <div className="space-y-2">
+                        <Label>English Platform</Label>
+                        <Input
+                          value={editingTemplate.platformEn}
+                          onChange={(e) => setEditingTemplate({
+                            ...editingTemplate,
+                            platformEn: e.target.value
+                          })}
+                          className="bg-white dark:bg-gray-800"
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <Label>French Platform</Label>
+                        <Input
+                          value={editingTemplate.platformFr}
+                          onChange={(e) => setEditingTemplate({
+                            ...editingTemplate,
+                            platformFr: e.target.value
+                          })}
+                          className="bg-white dark:bg-gray-800"
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <Label>English Type</Label>
+                        <Input
+                          value={editingTemplate.typeEn}
+                          onChange={(e) => handleTypeTextChange(e.target.value, true)}
+                          className="bg-white dark:bg-gray-800"
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <Label>French Type</Label>
+                        <Input
+                          value={editingTemplate.typeFr}
+                          onChange={(e) => setEditingTemplate({
+                            ...editingTemplate,
+                            typeFr: e.target.value
+                          })}
+                          className="bg-white dark:bg-gray-800"
+                        />
+                      </div>
                     </div>
+                    
+                    {/* Icon Selection for Editing */}
                     <div className="space-y-2">
-                      <Label>French Platform</Label>
-                      <Input
-                        value={editingTemplate.platformFr}
-                        onChange={(e) => setEditingTemplate({
-                          ...editingTemplate,
-                          platformFr: e.target.value
+                      <Label>Icon Selection</Label>
+                      <div className="flex items-center gap-2 mb-2">
+                        <div className="text-sm text-[#2A4759] dark:text-[#89BAD9]">
+                          Current icon:
+                        </div>
+                        <div className="flex items-center gap-1 px-2 py-1 bg-[#2A4759] text-white rounded-full text-xs">
+                          <CategoryIcon className="w-3 h-3" />
+                          <span>{availableIcons.find(i => i.name === editingTemplate.iconName)?.label}</span>
+                        </div>
+                      </div>
+                      <div className="grid grid-cols-4 gap-2">
+                        {availableIcons.map((iconOption) => {
+                          const IconComp = iconOption.component;
+                          const isSelected = editingTemplate.iconName === iconOption.name;
+                          return (
+                            <button
+                              key={iconOption.name}
+                              type="button"
+                              onClick={() => setEditingTemplate({
+                                ...editingTemplate,
+                                iconName: iconOption.name
+                              })}
+                              className={`flex flex-col items-center gap-1 p-2 rounded border transition-colors ${
+                                isSelected 
+                                  ? 'border-[#D67C4A] bg-[#D67C4A]/10 text-[#D67C4A]' 
+                                  : 'border-gray-200 hover:border-[#89BAD9] hover:bg-[#89BAD9]/10'
+                              }`}
+                            >
+                              <IconComp className="w-4 h-4" />
+                              <span className="text-xs">{iconOption.label}</span>
+                            </button>
+                          );
                         })}
-                        className="bg-white dark:bg-gray-800"
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <Label>English Type</Label>
-                      <Input
-                        value={editingTemplate.typeEn}
-                        onChange={(e) => setEditingTemplate({
-                          ...editingTemplate,
-                          typeEn: e.target.value
-                        })}
-                        className="bg-white dark:bg-gray-800"
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <Label>French Type</Label>
-                      <Input
-                        value={editingTemplate.typeFr}
-                        onChange={(e) => setEditingTemplate({
-                          ...editingTemplate,
-                          typeFr: e.target.value
-                        })}
-                        className="bg-white dark:bg-gray-800"
-                      />
+                      </div>
                     </div>
                   </div>
                 ) : (
-                  <div className="grid grid-cols-2 gap-4 text-sm">
-                    <div>
-                      <div className="font-medium text-[#011526] dark:text-[#F2EBDC]">
-                        {template.platformEn}
-                      </div>
-                      <div className="text-[#2A4759] dark:text-[#89BAD9]">
-                        {template.typeEn}
+                  <div className="space-y-3">
+                    {/* Visual Format Badge Preview */}
+                    <div className="flex items-center gap-3">
+                      <div className="text-sm text-[#2A4759] dark:text-[#89BAD9]">Preview:</div>
+                      <div className="bg-[#2A4759] text-white px-3 py-2 rounded-full text-xs font-medium flex items-center gap-2 shadow-sm">
+                        <CategoryIcon className="w-3 h-3" />
+                        <div>
+                          <div className="font-bold leading-tight">{template.platformEn}</div>
+                          <div className="text-xs opacity-90 leading-tight">{template.typeEn}</div>
+                        </div>
                       </div>
                     </div>
-                    <div>
-                      <div className="font-medium text-[#011526] dark:text-[#F2EBDC]">
-                        {template.platformFr}
+                    
+                    {/* Template Details */}
+                    <div className="grid grid-cols-2 gap-4 text-sm">
+                      <div>
+                        <div className="font-medium text-[#011526] dark:text-[#F2EBDC]">
+                          {template.platformEn}
+                        </div>
+                        <div className="text-[#2A4759] dark:text-[#89BAD9]">
+                          {template.typeEn}
+                        </div>
                       </div>
-                      <div className="text-[#2A4759] dark:text-[#89BAD9]">
-                        {template.typeFr}
+                      <div>
+                        <div className="font-medium text-[#011526] dark:text-[#F2EBDC]">
+                          {template.platformFr}
+                        </div>
+                        <div className="text-[#2A4759] dark:text-[#89BAD9]">
+                          {template.typeFr}
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -343,13 +447,13 @@ const FormatBadgeManager: React.FC = () => {
                   <Label>English Type *</Label>
                   <Input
                     value={newTemplate.typeEn}
-                    onChange={(e) => setNewTemplate({
-                      ...newTemplate,
-                      typeEn: e.target.value
-                    })}
-                    placeholder="e.g., Mobile Stories"
+                    onChange={(e) => handleTypeTextChange(e.target.value)}
+                    placeholder="Mobile Stories, Instagram Posts, TV & Desktop..."
                     className="bg-white dark:bg-gray-800"
                   />
+                  <div className="text-xs text-[#2A4759] dark:text-[#89BAD9]">
+                    💡 Type keywords like "stories", "instagram", "tv" for automatic icon suggestions
+                  </div>
                 </div>
                 <div className="space-y-2">
                   <Label>French Type</Label>
@@ -383,6 +487,47 @@ const FormatBadgeManager: React.FC = () => {
                   </SelectContent>
                 </Select>
               </div>
+              
+              {/* Icon Selection for New Template */}
+              <div className="space-y-2">
+                <Label>Icon Selection</Label>
+                <div className="flex items-center gap-2 mb-2">
+                  <div className="text-sm text-[#2A4759] dark:text-[#89BAD9]">
+                    Suggested icon:
+                  </div>
+                  <div className="flex items-center gap-1 px-2 py-1 bg-[#2A4759] text-white rounded-full text-xs">
+                    {(() => {
+                      const SuggestedIcon = getIconComponent(newTemplate.iconName);
+                      return <SuggestedIcon className="w-3 h-3" />;
+                    })()}
+                    <span>{availableIcons.find(i => i.name === newTemplate.iconName)?.label}</span>
+                  </div>
+                </div>
+                <div className="grid grid-cols-4 gap-2">
+                  {availableIcons.map((iconOption) => {
+                    const IconComp = iconOption.component;
+                    const isSelected = newTemplate.iconName === iconOption.name;
+                    return (
+                      <button
+                        key={iconOption.name}
+                        type="button"
+                        onClick={() => setNewTemplate({
+                          ...newTemplate,
+                          iconName: iconOption.name
+                        })}
+                        className={`flex flex-col items-center gap-1 p-2 rounded border transition-colors ${
+                          isSelected 
+                            ? 'border-[#D67C4A] bg-[#D67C4A]/10 text-[#D67C4A]' 
+                            : 'border-gray-200 hover:border-[#89BAD9] hover:bg-[#89BAD9]/10'
+                        }`}
+                      >
+                        <IconComp className="w-4 h-4" />
+                        <span className="text-xs">{iconOption.label}</span>
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
 
               <div className="flex gap-2">
                 <Button
@@ -401,7 +546,8 @@ const FormatBadgeManager: React.FC = () => {
                       platformFr: '',
                       typeEn: '',
                       typeFr: '',
-                      category: 'custom'
+                      category: 'custom',
+                      iconName: 'Monitor'
                     });
                   }}
                 >
@@ -416,11 +562,13 @@ const FormatBadgeManager: React.FC = () => {
         {/* Usage Instructions */}
         <div className="bg-[#F2EBDC]/50 dark:bg-[#011526]/20 p-4 rounded-lg">
           <h4 className="font-semibold text-[#011526] dark:text-[#F2EBDC] mb-2">
-            Comment utiliser les templates:
+            Comment utiliser les templates avec icônes:
           </h4>
           <ul className="text-sm text-[#2A4759] dark:text-[#89BAD9] space-y-1">
             <li>• Les templates créés ici apparaîtront dans les dropdown du Gallery Management</li>
-            <li>• Chaque élément de galerie peut utiliser un template différent</li>
+            <li>• Chaque template inclut une icône visuelle qui s'affiche automatiquement</li>
+            <li>• Les icônes sont suggérées automatiquement basées sur le texte du type</li>
+            <li>• Vous pouvez manuellement sélectionner une icône différente si nécessaire</li>
             <li>• Les templates personnalisés peuvent être modifiés ou supprimés</li>
             <li>• Si aucun template n'est choisi, le système utilise la détection automatique</li>
           </ul>
