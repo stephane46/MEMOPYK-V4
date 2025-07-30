@@ -208,39 +208,66 @@ export default function SystemTestDashboard() {
     setActiveTest('performance');
     
     const benchmarks = [
-      { name: 'Video Streaming Speed', test: 'video-stream' },
-      { name: 'Image Loading Speed', test: 'image-load' },
-      { name: 'Database Query Speed', test: 'db-query' },
-      { name: 'Cache Performance', test: 'cache-perf' },
-      { name: 'API Response Times', test: 'api-response' },
+      { name: 'Video Streaming Speed', endpoint: '/api/test/video-streaming-speed' },
+      { name: 'Image Loading Speed', endpoint: '/api/test/image-loading-speed' },
+      { name: 'Database Query Speed', endpoint: '/api/test/database-query-speed' },
+      { name: 'Cache Performance', endpoint: '/api/test/cache-performance' },
+      { name: 'API Response Times', endpoint: '/api/test/api-response-times' },
     ];
 
-    for (const benchmark of benchmarks) {
-      const startTime = Date.now();
-      
-      try {
-        // Simulate performance test (in real implementation, these would be actual tests)
-        await new Promise(resolve => setTimeout(resolve, Math.random() * 1000 + 500));
-        const duration = Date.now() - startTime;
+    try {
+      for (const benchmark of benchmarks) {
+        const startTime = Date.now();
         
-        const status = duration < 100 ? 'success' : duration < 500 ? 'warning' : 'error';
-        
-        setTestResults(prev => [...prev, {
-          name: benchmark.name,
-          status,
-          duration,
-          details: `Average response time: ${duration}ms`,
-          timestamp: new Date()
-        }]);
-      } catch (error) {
-        setTestResults(prev => [...prev, {
-          name: benchmark.name,
-          status: 'error',
-          duration: Date.now() - startTime,
-          details: `Benchmark failed: ${error}`,
-          timestamp: new Date()
-        }]);
+        try {
+          const response = await fetch(benchmark.endpoint);
+          const data = await response.json();
+          const duration = Date.now() - startTime;
+          
+          let status: TestResult['status'] = 'success';
+          let details = '';
+          
+          if (data.success) {
+            if (benchmark.name === 'Video Streaming Speed') {
+              status = data.averageDuration < 50 ? 'success' : data.averageDuration < 100 ? 'warning' : 'error';
+              details = `Average: ${data.averageDuration}ms (${data.successCount}/${data.testCount} successful)`;
+            } else if (benchmark.name === 'Image Loading Speed') {
+              status = data.averageDuration < 10 ? 'success' : data.averageDuration < 50 ? 'warning' : 'error';
+              details = data.message || `Average: ${data.averageDuration}ms (${data.testCount} files)`;
+            } else if (benchmark.name === 'Database Query Speed') {
+              status = data.averageDuration < 100 ? 'success' : data.averageDuration < 300 ? 'warning' : 'error';
+              details = `Average: ${data.averageDuration}ms (${data.successCount}/${data.testCount} queries)`;
+            } else if (benchmark.name === 'Cache Performance') {
+              status = data.fileCount > 0 ? 'success' : 'warning';
+              details = `${data.fileCount} files, ${data.totalSizeMB}MB (${data.efficiency})`;
+            } else if (benchmark.name === 'API Response Times') {
+              status = data.averageDuration < 100 ? 'success' : data.averageDuration < 200 ? 'warning' : 'error';
+              details = `Average: ${data.averageDuration}ms (${data.successCount}/${data.testCount} endpoints)`;
+            }
+          } else {
+            status = 'error';
+            details = data.error || 'Test failed';
+          }
+          
+          setTestResults(prev => [...prev, {
+            name: benchmark.name,
+            status,
+            duration,
+            details,
+            timestamp: new Date()
+          }]);
+        } catch (error) {
+          setTestResults(prev => [...prev, {
+            name: benchmark.name,
+            status: 'error',
+            duration: Date.now() - startTime,
+            details: `Test failed: ${error}`,
+            timestamp: new Date()
+          }]);
+        }
       }
+    } catch (error) {
+      console.error('Performance benchmark error:', error);
     }
     
     setIsRunningTests(false);
@@ -314,6 +341,7 @@ Cache Status: ${cacheData?.success ? 'Operational' : 'Failed'}`;
     }
     
     setIsRunningTests(false);
+    setActiveTest(null);
   };
 
   // Database connectivity test
@@ -327,8 +355,8 @@ Cache Status: ${cacheData?.success ? 'Operational' : 'Failed'}`;
       // Test multiple database operations
       const tests = [
         { name: 'Gallery Items Query', endpoint: '/api/gallery' },
-        { name: 'FAQ Items Query', endpoint: '/api/faq' },
-        { name: 'Contact Messages Query', endpoint: '/api/contacts' },
+        { name: 'FAQ Items Query', endpoint: '/api/faqs' },
+        { name: 'Hero Videos Query', endpoint: '/api/hero-videos' },
       ];
 
       for (const test of tests) {
