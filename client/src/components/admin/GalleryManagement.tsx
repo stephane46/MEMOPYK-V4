@@ -26,7 +26,8 @@ import {
   Upload,
   Power,
   FileText,
-  Globe
+  Globe,
+  Crop
 } from "lucide-react";
 import DirectUpload from './DirectUpload';
 
