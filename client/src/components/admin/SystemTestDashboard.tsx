@@ -56,6 +56,7 @@ interface RequestLog {
 export default function SystemTestDashboard() {
   const [testResults, setTestResults] = useState<TestResult[]>([]);
   const [isRunningTests, setIsRunningTests] = useState(false);
+  const [activeTest, setActiveTest] = useState<string | null>(null);
   const [systemHealth, setSystemHealth] = useState<SystemHealth>({
     database: 'healthy',
     cache: 'healthy',
@@ -83,17 +84,20 @@ export default function SystemTestDashboard() {
   // Run comprehensive system tests
   const runSystemTests = async () => {
     setIsRunningTests(true);
+    setActiveTest('system');
     setTestResults([]);
     
     const tests = [
-      { name: 'Database Connection', endpoint: '/api/test/database' },
+      { name: 'Database Connection Test', endpoint: '/api/test/database' },
       { name: 'Video Cache System', endpoint: '/api/test/video-cache' },
-      { name: 'Image Proxy System', endpoint: '/api/test/image-proxy' },
-      { name: 'File Upload System', endpoint: '/api/test/file-upload' },
+      { name: 'Video Streaming Speed', endpoint: '/api/test/video-streaming-speed' },
+      { name: 'Image Loading Speed', endpoint: '/api/test/image-loading-speed' },
+      { name: 'Database Query Speed', endpoint: '/api/test/database-query-speed' },
+      { name: 'Cache Performance', endpoint: '/api/test/cache-performance' },
+      { name: 'API Response Times', endpoint: '/api/test/api-response-times' },
       { name: 'Analytics System', endpoint: '/api/test/analytics' },
       { name: 'Gallery API Endpoints', endpoint: '/api/test/gallery' },
       { name: 'FAQ System', endpoint: '/api/test/faq' },
-
       { name: 'SEO Management', endpoint: '/api/test/seo' },
       { name: 'Performance Benchmarks', endpoint: '/api/test/performance' },
     ];
@@ -144,6 +148,7 @@ export default function SystemTestDashboard() {
     }
     
     setIsRunningTests(false);
+    setActiveTest(null);
     toast({
       title: "System Tests Complete",
       description: `Completed ${tests.length} tests. Results are displayed in the Test Results section below.`,
@@ -163,6 +168,7 @@ export default function SystemTestDashboard() {
     ];
 
     setIsRunningTests(true);
+    setActiveTest('endpoints');
     setTestResults([]);
 
     for (const endpoint of endpoints) {
@@ -193,11 +199,13 @@ export default function SystemTestDashboard() {
     }
     
     setIsRunningTests(false);
+    setActiveTest(null);
   };
 
   // Performance benchmarks
   const runPerformanceBenchmarks = async () => {
     setIsRunningTests(true);
+    setActiveTest('performance');
     
     const benchmarks = [
       { name: 'Video Streaming Speed', test: 'video-stream' },
@@ -236,11 +244,13 @@ export default function SystemTestDashboard() {
     }
     
     setIsRunningTests(false);
+    setActiveTest(null);
   };
 
   // Cache validation tests
   const validateCacheSystem = async () => {
     setIsRunningTests(true);
+    setActiveTest('cache');
     
     try {
       // Test video cache using the correct endpoint - fetch directly to ensure proper JSON parsing
@@ -309,6 +319,7 @@ Cache Status: ${cacheData?.success ? 'Operational' : 'Failed'}`;
   // Database connectivity test
   const testDatabaseConnection = async () => {
     setIsRunningTests(true);
+    setActiveTest('database');
     
     try {
       const startTime = Date.now();
@@ -353,11 +364,13 @@ Cache Status: ${cacheData?.success ? 'Operational' : 'Failed'}`;
     }
     
     setIsRunningTests(false);
+    setActiveTest(null);
   };
 
   // File upload system test
   const testFileUploadSystem = async () => {
     setIsRunningTests(true);
+    setActiveTest('upload');
     
     // Create a small test file
     const testFile = new File(['test'], 'test-upload.txt', { type: 'text/plain' });
@@ -388,6 +401,7 @@ Cache Status: ${cacheData?.success ? 'Operational' : 'Failed'}`;
     }
     
     setIsRunningTests(false);
+    setActiveTest(null);
   };
 
   const getStatusIcon = (status: TestResult['status']) => {
@@ -446,7 +460,7 @@ Cache Status: ${cacheData?.success ? 'Operational' : 'Failed'}`;
             <Button
               onClick={runSystemTests}
               disabled={isRunningTests}
-              className="h-auto p-4 flex flex-col items-center gap-2"
+              className={`h-auto p-4 flex flex-col items-center gap-2 ${activeTest === 'system' ? 'bg-blue-600 text-white border-blue-600' : ''}`}
               variant="outline"
             >
               <Server className="h-6 w-6" />
@@ -457,7 +471,7 @@ Cache Status: ${cacheData?.success ? 'Operational' : 'Failed'}`;
             <Button
               onClick={testAllEndpoints}
               disabled={isRunningTests}
-              className="h-auto p-4 flex flex-col items-center gap-2"
+              className={`h-auto p-4 flex flex-col items-center gap-2 ${activeTest === 'endpoints' ? 'bg-blue-600 text-white border-blue-600' : ''}`}
               variant="outline"
             >
               <Network className="h-6 w-6" />
@@ -468,7 +482,7 @@ Cache Status: ${cacheData?.success ? 'Operational' : 'Failed'}`;
             <Button
               onClick={runPerformanceBenchmarks}
               disabled={isRunningTests}
-              className="h-auto p-4 flex flex-col items-center gap-2"
+              className={`h-auto p-4 flex flex-col items-center gap-2 ${activeTest === 'performance' ? 'bg-blue-600 text-white border-blue-600' : ''}`}
               variant="outline"
             >
               <Zap className="h-6 w-6" />
@@ -479,7 +493,7 @@ Cache Status: ${cacheData?.success ? 'Operational' : 'Failed'}`;
             <Button
               onClick={validateCacheSystem}
               disabled={isRunningTests}
-              className="h-auto p-4 flex flex-col items-center gap-2"
+              className={`h-auto p-4 flex flex-col items-center gap-2 ${activeTest === 'cache' ? 'bg-blue-600 text-white border-blue-600' : ''}`}
               variant="outline"
             >
               <HardDrive className="h-6 w-6" />
@@ -490,7 +504,7 @@ Cache Status: ${cacheData?.success ? 'Operational' : 'Failed'}`;
             <Button
               onClick={testDatabaseConnection}
               disabled={isRunningTests}
-              className="h-auto p-4 flex flex-col items-center gap-2"
+              className={`h-auto p-4 flex flex-col items-center gap-2 ${activeTest === 'database' ? 'bg-blue-600 text-white border-blue-600' : ''}`}
               variant="outline"
             >
               <Database className="h-6 w-6" />
@@ -501,7 +515,7 @@ Cache Status: ${cacheData?.success ? 'Operational' : 'Failed'}`;
             <Button
               onClick={testFileUploadSystem}
               disabled={isRunningTests}
-              className="h-auto p-4 flex flex-col items-center gap-2"
+              className={`h-auto p-4 flex flex-col items-center gap-2 ${activeTest === 'upload' ? 'bg-blue-600 text-white border-blue-600' : ''}`}
               variant="outline"
             >
               <Upload className="h-6 w-6" />
