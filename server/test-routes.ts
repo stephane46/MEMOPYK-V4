@@ -60,7 +60,7 @@ router.get('/test/database', async (req, res) => {
   }
 });
 
-// Video cache system test
+// Video cache system test with original filename mapping
 router.get('/test/video-cache', async (req, res) => {
   try {
     const cacheDir = path.join(process.cwd(), 'server', 'cache', 'videos');
@@ -73,27 +73,65 @@ router.get('/test/video-cache', async (req, res) => {
       });
     }
     
+    // Create hash mapping function (same as VideoCache class)
+    const createHash = require('crypto').createHash;
+    const getHashForFilename = (filename: string): string => {
+      const hash = createHash('md5').update(filename.trim()).digest('hex');
+      const extension = filename.split('.').pop() || 'mp4';
+      return `${hash}.${extension}`;
+    };
+    
+    // Known original filenames that should be cached
+    const expectedFiles = [
+      'VideoHero1.mp4',
+      'VideoHero2.mp4', 
+      'VideoHero3.mp4',
+      'VitaminSeaC.mp4',
+      'PomGalleryC.mp4',
+      'safari-1.mp4',
+      'G1.mp4',
+      'G2.mp4',
+      'G3.mp4'
+    ];
+    
     const files = fs.readdirSync(cacheDir);
     const cacheStats = files.map(file => {
       const filePath = path.join(cacheDir, file);
       const stats = fs.statSync(filePath);
+      
+      // Try to find matching original filename
+      let originalFilename = 'Unknown';
+      for (const original of expectedFiles) {
+        if (getHashForFilename(original) === file) {
+          originalFilename = original;
+          break;
+        }
+      }
+      
       return {
-        filename: file,
+        hashedFilename: file,
+        originalFilename,
         size: stats.size,
-        modified: stats.mtime
+        sizeMB: Math.round(stats.size / (1024 * 1024) * 100) / 100,
+        modified: stats.mtime,
+        type: file.toLowerCase().includes('.mp4') ? 'video' : 'image'
       };
     });
     
     const totalSize = cacheStats.reduce((sum, file) => sum + file.size, 0);
+    const videoFiles = cacheStats.filter(f => f.type === 'video');
+    const imageFiles = cacheStats.filter(f => f.type === 'image');
     
     res.json({
       success: true,
-      message: `Video cache system operational`,
+      message: `Video cache system operational - ${videoFiles.length} videos, ${imageFiles.length} images`,
       details: {
         fileCount: files.length,
+        videoCount: videoFiles.length,
+        imageCount: imageFiles.length,
         totalSizeMB: Math.round(totalSize / (1024 * 1024) * 100) / 100,
         cachePath: cacheDir,
-        files: cacheStats
+        files: cacheStats.sort((a, b) => a.originalFilename.localeCompare(b.originalFilename))
       }
     });
   } catch (error) {

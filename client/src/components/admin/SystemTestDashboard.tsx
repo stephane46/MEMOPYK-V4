@@ -247,12 +247,21 @@ export default function SystemTestDashboard() {
       const videoTest = await apiRequest('/api/test/video-cache', 'GET');
       const cacheData = videoTest as any;
       const fileCount = cacheData?.details?.fileCount || 0;
+      const videoCount = cacheData?.details?.videoCount || 0;
+      const imageCount = cacheData?.details?.imageCount || 0;
       const totalSizeMB = cacheData?.details?.totalSizeMB || 0;
+      
+      // Create detailed breakdown of cached files
+      const files = cacheData?.details?.files || [];
+      const videoFiles = files.filter((f: any) => f.type === 'video').map((f: any) => f.originalFilename).join(', ');
+      const imageFiles = files.filter((f: any) => f.type === 'image').map((f: any) => f.originalFilename).join(', ');
+      
+      const detailsText = `${fileCount} files total: ${videoCount} videos (${videoFiles || 'none'}), ${imageCount} images (${imageFiles || 'none'}) - ${totalSizeMB}MB`;
       
       setTestResults(prev => [...prev, {
         name: 'Video Cache System',
         status: cacheData?.success ? 'success' : 'error',
-        details: `${fileCount} files cached (${totalSizeMB}MB) - ${cacheData?.message || 'No details'}`,
+        details: detailsText,
         timestamp: new Date()
       }]);
 
