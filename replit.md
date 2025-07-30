@@ -51,6 +51,25 @@ Preferred communication style: Simple, everyday language.
 
 ## Recent Changes (July 30, 2025)
 
+### GALLERY BADGE VERTICAL ALIGNMENT FIXED - v1.0.72 (July 30, 2025) ✅ USER REQUEST IMPLEMENTED
+**Viewing Format Badge Center Alignment - User Requirement Achieved:**
+✅ **Center-to-Center Alignment**: Both pills now have their centers aligned on the same horizontal line
+✅ **Flexbox Implementation**: Used `flex justify-between items-center` to ensure proper vertical centering
+✅ **Position Maintained**: Left source overlay and right format badge stay in their respective corners
+✅ **Height Independent**: Alignment works regardless of different pill heights (two-line vs single-line content)
+✅ **Professional Layout**: Clean horizontal alignment creates better visual balance
+
+**Technical Implementation:**
+- Replaced separate absolute positioning with single flex container
+- Container spans full width: `absolute top-4 left-4 right-4`
+- Flexbox properties: `justify-between` (left/right spacing) + `items-center` (vertical centering)
+- Both pills maintain their styling while being perfectly center-aligned vertically
+
+**User Experience Achievement:**
+- Source overlay ("80 photos & 10 videos") and format badge ("Réseaux Sociaux") centers are on same imaginary horizontal line
+- Visual balance improved with proper center-to-center alignment
+- Clean professional appearance with both informational badges properly aligned
+
 ### TEST RESULTS TITLE DISPLAY FIXED - v1.0.71 (July 30, 2025) ✅ USER REQUEST IMPLEMENTED
 **Test Results Show Title Above Table - POPUP DIALOGS REMOVED:**
 ✅ **Title Above Results**: Test results now display the test type name as the table title (e.g., "Performance Benchmarks", "Cache Validation")

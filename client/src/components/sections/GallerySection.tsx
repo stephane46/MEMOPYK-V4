@@ -399,20 +399,21 @@ export default function GallerySection() {
                             className="w-full h-full object-cover"
                           />
                           
-                          {/* Top-left Source Overlay (1) */}
-                          {getItemSource(item) && (
-                            <div className="absolute top-4 left-4 bg-black/70 text-white px-3 py-2 rounded-full text-sm backdrop-blur-sm">
-                              <div className="font-medium">{getItemSource(item)}</div>
-                              <div className="text-xs text-gray-300">provided by Client</div>
-                            </div>
-                          )}
+                          {/* Top overlays - Horizontally centered on same line */}
+                          <div className="absolute top-4 left-4 right-4 flex justify-between items-center">
+                            {/* Source Overlay (1) */}
+                            {getItemSource(item) && (
+                              <div className="bg-black/70 text-white px-3 py-2 rounded-full text-sm backdrop-blur-sm">
+                                <div className="font-medium">{getItemSource(item)}</div>
+                                <div className="text-xs text-gray-300">provided by Client</div>
+                              </div>
+                            )}
 
-                          {/* Viewing Format Badge - Top Right (2) - Aligned with left pill */}
-                          {(() => {
-                            const format = getViewingFormat(item);
-                            const IconComponent = format.icon;
-                            return (
-                              <div className="absolute top-4 right-4">
+                            {/* Viewing Format Badge (2) - Center-aligned with source overlay */}
+                            {(() => {
+                              const format = getViewingFormat(item);
+                              const IconComponent = format.icon;
+                              return (
                                 <div className={`${format.color} text-white px-2 py-1 rounded-full text-xs font-medium flex items-center gap-1 shadow-sm`}>
                                   <IconComponent className="w-3 h-3" />
                                   <div>
@@ -420,9 +421,9 @@ export default function GallerySection() {
                                     <div className="text-xs opacity-90 leading-tight">{format.type}</div>
                                   </div>
                                 </div>
-                              </div>
-                            );
-                          })()}
+                              );
+                            })()}
+                          </div>
 
                           {/* Price Tag - Bottom Right (3) */}
                           {getItemPrice(item) && (
