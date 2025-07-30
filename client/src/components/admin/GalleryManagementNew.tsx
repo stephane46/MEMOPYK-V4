@@ -724,43 +724,90 @@ export default function GalleryManagementNew() {
               </h3>
               
               <div className="space-y-6">
-                {/* Separate Video Fields for EN and FR */}
-                <div className="grid grid-cols-2 gap-6">
-                  <div className="space-y-4">
-                    <h4 className="font-medium text-[#011526] dark:text-[#F2EBDC] border-b border-gray-200 dark:border-gray-600 pb-2">Vidéo English</h4>
-                    <div>
-                      <Label htmlFor="video_filename_en">Fichier vidéo EN</Label>
-                      <Input
-                        id="video_filename_en"
-                        value={formData.video_url_en}
-                        onChange={(e) => setFormData({ ...formData, video_url_en: e.target.value, video_filename: e.target.value })}
-                        placeholder="video-en.mp4"
-                        className="bg-white dark:bg-gray-800"
-                      />
-                      <p className="text-xs text-gray-500 mt-1">Stocké dans: video_url_en</p>
-                    </div>
+                {/* Video Upload Section */}
+                <div className="space-y-4">
+                  <h4 className="font-medium text-[#011526] dark:text-[#F2EBDC] border-b border-gray-200 dark:border-gray-600 pb-2">Upload Vidéo</h4>
+                  <DirectUpload
+                    type="video"
+                    onUploadComplete={(result) => {
+                      console.log('✅ Video upload completed:', result);
+                      setFormData({
+                        ...formData,
+                        video_filename: result.filename,
+                        video_url_en: result.filename,
+                        video_url_fr: result.filename
+                      });
+                      // Update persistent state
+                      persistentUploadState.video_filename = result.filename;
+                      persistentUploadState.video_url_en = result.filename;
+                      persistentUploadState.video_url_fr = result.filename;
+                      toast({ 
+                        title: "✅ Succès", 
+                        description: `Vidéo uploadée: ${result.filename}` 
+                      });
+                    }}
+                    currentFilename={formData.video_filename || formData.video_url_en}
+                  />
+                </div>
+
+                {/* Image Upload Section */}
+                <div className="space-y-4">
+                  <h4 className="font-medium text-[#011526] dark:text-[#F2EBDC] border-b border-gray-200 dark:border-gray-600 pb-2">Upload Image</h4>
+                  <DirectUpload
+                    type="image"
+                    onUploadComplete={(result) => {
+                      console.log('✅ Image upload completed:', result);
+                      setFormData({
+                        ...formData,
+                        image_url_en: result.url,
+                        image_url_fr: result.url
+                      });
+                      // Update persistent state
+                      persistentUploadState.image_url_en = result.url;
+                      persistentUploadState.image_url_fr = result.url;
+                      toast({ 
+                        title: "✅ Succès", 
+                        description: `Image uploadée: ${result.filename}` 
+                      });
+                    }}
+                    currentFilename={formData.image_url_en}
+                  />
+                </div>
+
+                {/* Manual Filename Override (for advanced users) */}
+                <div className="grid grid-cols-2 gap-6 pt-4 border-t border-gray-200 dark:border-gray-600">
+                  <div className="space-y-2">
+                    <Label htmlFor="video_filename_override">Nom de fichier vidéo (optionnel)</Label>
+                    <Input
+                      id="video_filename_override"
+                      value={formData.video_filename || formData.video_url_en}
+                      onChange={(e) => setFormData({ 
+                        ...formData, 
+                        video_filename: e.target.value,
+                        video_url_en: e.target.value, 
+                        video_url_fr: e.target.value 
+                      })}
+                      placeholder="VitaminSeaC.mp4"
+                      className="bg-white dark:bg-gray-800 text-sm"
+                    />
+                    <p className="text-xs text-gray-500">Laissez vide pour utiliser le fichier uploadé</p>
                   </div>
                   
-                  <div className="space-y-4">
-                    <h4 className="font-medium text-[#011526] dark:text-[#F2EBDC] border-b border-gray-200 dark:border-gray-600 pb-2">Vidéo Français</h4>
-                    <div>
-                      <Label htmlFor="video_filename_fr">Fichier vidéo FR</Label>
-                      <Input
-                        id="video_filename_fr"
-                        value={formData.video_url_fr}
-                        onChange={(e) => setFormData({ ...formData, video_url_fr: e.target.value })}
-                        placeholder="video-fr.mp4"
-                        className="bg-white dark:bg-gray-800"
-                      />
-                      <p className="text-xs text-gray-500 mt-1">Stocké dans: video_url_fr</p>
-                    </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="image_filename_override">URL image (optionnel)</Label>
+                    <Input
+                      id="image_filename_override"
+                      value={formData.image_url_en}
+                      onChange={(e) => setFormData({ 
+                        ...formData, 
+                        image_url_en: e.target.value,
+                        image_url_fr: e.target.value 
+                      })}
+                      placeholder="https://supabase.memopyk.org/..."
+                      className="bg-white dark:bg-gray-800 text-sm"
+                    />
+                    <p className="text-xs text-gray-500">Laissez vide pour utiliser l&apos;image uploadée</p>
                   </div>
-                </div>
-                
-                <div className="p-3 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-200 dark:border-blue-700">
-                  <p className="text-sm text-blue-800 dark:text-blue-200">
-                    <strong>Note:</strong> Si vous utilisez la même vidéo pour les deux langues, remplissez les deux champs avec le même nom de fichier.
-                  </p>
                 </div>
                 
                 <div className="grid grid-cols-3 gap-4">

@@ -5,12 +5,14 @@ import { Upload, AlertCircle, CheckCircle } from 'lucide-react';
 
 interface DirectUploadProps {
   onUploadComplete: (result: { url: string; filename: string }) => void;
-  onUploadError: (error: string) => void;
-  bucket: string;
+  onUploadError?: (error: string) => void;
+  type?: 'video' | 'image';
+  bucket?: string;
   acceptedTypes?: string;
   maxSizeMB?: number;
   children?: React.ReactNode;
   uploadId?: string;
+  currentFilename?: string;
 }
 
 interface UploadState {
@@ -22,13 +24,18 @@ interface UploadState {
 
 export default function DirectUpload({ 
   onUploadComplete, 
-  onUploadError, 
-  bucket, 
-  acceptedTypes = "video/*",
+  onUploadError = (error) => console.error('Upload error:', error), 
+  type = 'video',
+  bucket = 'memopyk-videos',
+  acceptedTypes,
   maxSizeMB = 5000,
   children,
-  uploadId = 'direct-upload'
+  uploadId = 'direct-upload',
+  currentFilename
 }: DirectUploadProps) {
+  // Set default accepted types based on type
+  const defaultAcceptedTypes = type === 'video' ? 'video/*' : 'image/*';
+  const finalAcceptedTypes = acceptedTypes || defaultAcceptedTypes;
   const [uploadState, setUploadState] = useState<UploadState>({
     status: 'idle',
     progress: 0
@@ -72,7 +79,7 @@ export default function DirectUpload({
         body: JSON.stringify({
           filename: file.name,
           fileType: file.type,
-          bucket
+          bucket: bucket
         })
       });
 
@@ -211,7 +218,7 @@ export default function DirectUpload({
         <div className="relative">
           <input
             type="file"
-            accept={acceptedTypes}
+            accept={finalAcceptedTypes}
             onChange={handleFileSelect}
             disabled={isUploading}
             className="absolute inset-0 w-full h-full opacity-0 cursor-pointer disabled:cursor-not-allowed"
@@ -222,7 +229,7 @@ export default function DirectUpload({
         <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center hover:border-gray-400 transition-colors">
           <input
             type="file"
-            accept={acceptedTypes}
+            accept={finalAcceptedTypes}
             onChange={handleFileSelect}
             disabled={isUploading}
             className="hidden"
@@ -237,7 +244,7 @@ export default function DirectUpload({
               {isUploading ? 'Téléchargement en cours...' : 'Cliquez pour choisir un fichier'}
             </span>
             <span className="text-xs text-gray-500">
-              {acceptedTypes} • Max {maxSizeMB}MB • Contourne les limites serveur
+              {finalAcceptedTypes} • Max {maxSizeMB}MB • Contourne les limites serveur
             </span>
           </label>
         </div>
