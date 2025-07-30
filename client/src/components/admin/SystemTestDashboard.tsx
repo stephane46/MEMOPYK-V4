@@ -65,6 +65,7 @@ export default function SystemTestDashboard() {
   });
   const [requestLogs, setRequestLogs] = useState<RequestLog[]>([]);
   const [selectedTest, setSelectedTest] = useState<TestResult | null>(null);
+  const [currentTestType, setCurrentTestType] = useState<string>('');
   const [realTimeMonitoring, setRealTimeMonitoring] = useState(false);
   const { toast } = useToast();
   const queryClient = useQueryClient();
@@ -206,6 +207,7 @@ export default function SystemTestDashboard() {
   const runPerformanceBenchmarks = async () => {
     setIsRunningTests(true);
     setActiveTest('performance');
+    setCurrentTestType('Performance Benchmarks');
     
     const benchmarks = [
       { name: 'Video Streaming Speed', endpoint: '/api/test/video-streaming-speed' },
@@ -244,9 +246,9 @@ export default function SystemTestDashboard() {
               status = avgSpeed < 100 ? 'success' : avgSpeed < 300 ? 'warning' : 'error';
               details = `Average: ${avgSpeed}ms (${successRate} successful)`;
             } else if (benchmark.name === 'Cache Performance') {
-              const fileCount = data.details?.fileCount || 0;
+              const fileCount = data.details?.totalFiles || 0;
               const totalSizeMB = data.details?.totalSizeMB || 0;
-              const efficiency = data.details?.efficiency || 'Unknown';
+              const efficiency = data.details?.cacheEfficiency || 'Unknown';
               status = fileCount > 0 ? 'success' : 'warning';
               details = `${fileCount} files, ${totalSizeMB}MB (${efficiency})`;
             } else if (benchmark.name === 'API Response Times') {
@@ -290,6 +292,7 @@ export default function SystemTestDashboard() {
   const validateCacheSystem = async () => {
     setIsRunningTests(true);
     setActiveTest('cache');
+    setCurrentTestType('Validate Cache System');
     
     try {
       // Test video cache using the correct endpoint - fetch directly to ensure proper JSON parsing
@@ -361,6 +364,7 @@ Cache Status: ${cacheData?.success ? 'Operational' : 'Failed'}`;
   const testDatabaseConnection = async () => {
     setIsRunningTests(true);
     setActiveTest('database');
+    setCurrentTestType('Test Database Connection');
     
     try {
       const startTime = Date.now();
@@ -413,6 +417,7 @@ Cache Status: ${cacheData?.success ? 'Operational' : 'Failed'}`;
   const testFileUploadSystem = async () => {
     setIsRunningTests(true);
     setActiveTest('upload');
+    setCurrentTestType('Test File Upload System');
     
     // Create a small test file
     const testFile = new File(['test'], 'test-upload.txt', { type: 'text/plain' });
@@ -669,11 +674,14 @@ Cache Status: ${cacheData?.success ? 'Operational' : 'Failed'}`;
       )}
 
       {/* Test Details Dialog */}
-      <Dialog open={!!selectedTest} onOpenChange={() => setSelectedTest(null)}>
+      <Dialog open={!!selectedTest} onOpenChange={() => {
+        setSelectedTest(null);
+        setCurrentTestType('');
+      }}>
         <DialogContent className="bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700">
           <DialogHeader>
             <DialogTitle className="text-gray-900 dark:text-white text-lg font-semibold">
-              {selectedTest?.name} - Test Details
+              {currentTestType || selectedTest?.name} - Test Details
             </DialogTitle>
           </DialogHeader>
           {selectedTest && (
