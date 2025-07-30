@@ -25,8 +25,11 @@ const DraggableCover: React.FC<DraggableCoverProps> = ({
 
   // Test image loading
   useEffect(() => {
-    const proxyUrl = `/api/image-proxy?url=${encodeURIComponent(imageUrl)}`;
+    // Extract filename from Supabase URL
+    const filename = imageUrl.split('/').pop()?.split('?')[0] || '';
+    const proxyUrl = `/api/image-proxy?filename=${filename}`;
     console.log('🖼️ DraggableCover attempting to load:', proxyUrl);
+    console.log('🖼️ Extracted filename from URL:', filename);
     
     const testImg = new Image();
     testImg.onload = () => {
@@ -37,6 +40,7 @@ const DraggableCover: React.FC<DraggableCoverProps> = ({
       console.error('❌ DraggableCover image failed to load:', error);
       console.error('❌ Original URL:', imageUrl);
       console.error('❌ Proxy URL:', proxyUrl);
+      console.error('❌ Extracted filename:', filename);
     };
     testImg.src = proxyUrl;
   }, [imageUrl]);
@@ -90,7 +94,9 @@ const DraggableCover: React.FC<DraggableCoverProps> = ({
     };
   }, [dragging, handleMouseMove, handleMouseUp]);
 
-  const proxyUrl = `/api/image-proxy?url=${encodeURIComponent(imageUrl)}`;
+  // Extract filename from Supabase URL for display
+  const filename = imageUrl.split('/').pop()?.split('?')[0] || '';
+  const proxyUrl = `/api/image-proxy?filename=${filename}`;
 
   return (
     <div
@@ -153,7 +159,8 @@ export default function ImageCropperEasyCrop({ imageUrl, onSave, onCancel }: Ima
       img.crossOrigin = 'anonymous';
       
       // Use image proxy for canvas generation too
-      const proxyUrl = `/api/image-proxy?url=${encodeURIComponent(imageUrl)}`;
+      const filename = imageUrl.split('/').pop()?.split('?')[0] || '';
+      const proxyUrl = `/api/image-proxy?filename=${filename}`;
       console.log(`🖼️ Canvas loading image via proxy: ${proxyUrl}`);
       
       await new Promise<void>((resolve, reject) => {
