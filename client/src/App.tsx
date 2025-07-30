@@ -14,7 +14,7 @@ import { queryClient } from './lib/queryClient';
 import { Toaster } from '@/components/ui/toaster';
 
 // TIMEOUT SAFEGUARD SYSTEM v1.0.46 - SILENT STREAM FAILURE DETECTION
-console.log("%c🚀 MEMOPYK 80% VIEWPORT VIDEO SIZING v1.0.61 - Gallery video controls simplified and sizing updated", "color: red; font-size: 16px; font-weight: bold;");
+console.log("%c🚀 MEMOPYK LANGUAGE-SPECIFIC UPLOAD SYSTEM v1.0.82 - Force reload to fix English upload section visibility", "color: red; font-size: 16px; font-weight: bold;");
 
 function App() {
   return (
