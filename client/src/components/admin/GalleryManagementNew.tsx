@@ -815,37 +815,156 @@ export default function GalleryManagementNew() {
                   </p>
                 </div>
 
-                {/* Separate Video Fields for FR/EN when use_same_video is false */}
+                {/* Language-Specific Upload Sections - French (Blue) and English (Green) */}
                 {!formData.use_same_video && (
-                  <div className="bg-yellow-50 dark:bg-yellow-900/20 p-4 rounded-lg border border-yellow-200 dark:border-yellow-800">
-                    <h4 className="font-medium text-yellow-900 dark:text-yellow-100 mb-3">
+                  <div className="space-y-4">
+                    <h4 className="font-medium text-[#011526] dark:text-[#F2EBDC] mb-3">
                       Vidéos séparées par langue
                     </h4>
-                    <div className="grid grid-cols-2 gap-4">
-                      <div className="space-y-2">
-                        <Label htmlFor="video_url_en">Vidéo English</Label>
-                        <Input
-                          id="video_url_en"
-                          value={formData.video_url_en}
-                          onChange={(e) => setFormData({ ...formData, video_url_en: e.target.value })}
-                          placeholder="VideoEnglish.mp4"
-                          className="bg-white dark:bg-gray-800"
-                        />
+                    
+                    {/* French Upload Section (Blue) */}
+                    <div className="p-4 bg-gradient-to-r from-blue-50 to-blue-100 dark:from-blue-900/20 dark:to-blue-800/20 rounded-lg border border-blue-200 dark:border-blue-800">
+                      <div className="flex items-center gap-2 mb-3">
+                        <div className="bg-blue-600 rounded-full p-1">
+                          <Upload className="h-4 w-4 text-white" />
+                        </div>
+                        <h4 className="font-semibold text-blue-900 dark:text-blue-100">
+                          🇫🇷 Fichiers Français
+                        </h4>
                       </div>
-                      <div className="space-y-2">
-                        <Label htmlFor="video_url_fr">Vidéo Français</Label>
-                        <Input
-                          id="video_url_fr"
-                          value={formData.video_url_fr}
-                          onChange={(e) => setFormData({ ...formData, video_url_fr: e.target.value })}
-                          placeholder="VideoFrancais.mp4"
-                          className="bg-white dark:bg-gray-800"
-                        />
+                      <p className="text-sm text-blue-800 dark:text-blue-200 mb-4">
+                        Téléchargez les fichiers spécifiques à la version française.
+                      </p>
+                      
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                          <Label className="text-blue-900 dark:text-blue-100 mb-2 block">
+                            <Video className="h-4 w-4 inline mr-1" />
+                            Vidéo Française
+                          </Label>
+                          <DirectUpload
+                            type="video"
+                            onUploadComplete={(result) => {
+                              console.log('✅ French video upload completed:', result);
+                              setFormData(prev => ({
+                                ...prev,
+                                video_url_fr: result.filename,
+                                video_filename: result.filename
+                              }));
+                              persistentUploadState.video_url_fr = result.filename;
+                              persistentUploadState.video_filename_fr = result.filename;
+                              toast({ 
+                                title: "✅ Succès", 
+                                description: `Vidéo française uploadée: ${result.filename}`,
+                                className: "bg-blue-50 dark:bg-blue-900/20 border-blue-200 dark:border-blue-800"
+                              });
+                            }}
+                            currentFilename={formData.video_url_fr}
+                          />
+                        </div>
+                        <div>
+                          <Label className="text-blue-900 dark:text-blue-100 mb-2 block">
+                            <Image className="h-4 w-4 inline mr-1" />
+                            Image Française
+                          </Label>
+                          <DirectUpload
+                            type="image"
+                            onUploadComplete={(result) => {
+                              console.log('✅ French image upload completed:', result);
+                              setFormData(prev => ({
+                                ...prev,
+                                image_url_fr: result.url
+                              }));
+                              persistentUploadState.image_url_fr = result.url;
+                              toast({ 
+                                title: "✅ Succès", 
+                                description: `Image française uploadée: ${result.filename}`,
+                                className: "bg-blue-50 dark:bg-blue-900/20 border-blue-200 dark:border-blue-800"
+                              });
+                            }}
+                            currentFilename={formData.image_url_fr}
+                          />
+                        </div>
                       </div>
                     </div>
-                    <p className="text-xs text-yellow-700 dark:text-yellow-300 mt-2">
-                      💡 Spécifiez des fichiers vidéo différents pour chaque langue
-                    </p>
+
+                    {/* English Upload Section (Green) */}
+                    <div className="p-4 bg-gradient-to-r from-green-50 to-green-100 dark:from-green-900/20 dark:to-green-800/20 rounded-lg border border-green-200 dark:border-green-800">
+                      <div className="flex items-center gap-2 mb-3">
+                        <div className="bg-green-600 rounded-full p-1">
+                          <Upload className="h-4 w-4 text-white" />
+                        </div>
+                        <h4 className="font-semibold text-green-900 dark:text-green-100">
+                          🇺🇸 English Files
+                        </h4>
+                      </div>
+                      <p className="text-sm text-green-800 dark:text-green-200 mb-4">
+                        Upload files specific to the English version.
+                      </p>
+                      
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                          <Label className="text-green-900 dark:text-green-100 mb-2 block">
+                            <Video className="h-4 w-4 inline mr-1" />
+                            English Video
+                          </Label>
+                          <DirectUpload
+                            type="video"
+                            onUploadComplete={(result) => {
+                              console.log('✅ English video upload completed:', result);
+                              setFormData(prev => ({
+                                ...prev,
+                                video_url_en: result.filename,
+                                video_filename: result.filename
+                              }));
+                              persistentUploadState.video_url_en = result.filename;
+                              persistentUploadState.video_filename_en = result.filename;
+                              toast({ 
+                                title: "✅ Success", 
+                                description: `English video uploaded: ${result.filename}`,
+                                className: "bg-green-50 dark:bg-green-900/20 border-green-200 dark:border-green-800"
+                              });
+                            }}
+                            currentFilename={formData.video_url_en}
+                          />
+                        </div>
+                        <div>
+                          <Label className="text-green-900 dark:text-green-100 mb-2 block">
+                            <Image className="h-4 w-4 inline mr-1" />
+                            English Image
+                          </Label>
+                          <DirectUpload
+                            type="image"
+                            onUploadComplete={(result) => {
+                              console.log('✅ English image upload completed:', result);
+                              setFormData(prev => ({
+                                ...prev,
+                                image_url_en: result.url
+                              }));
+                              persistentUploadState.image_url_en = result.url;
+                              toast({ 
+                                title: "✅ Success", 
+                                description: `English image uploaded: ${result.filename}`,
+                                className: "bg-green-50 dark:bg-green-900/20 border-green-200 dark:border-green-800"
+                              });
+                            }}
+                            currentFilename={formData.image_url_en}
+                          />
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="mt-4 p-3 bg-blue-50 dark:bg-blue-900/30 rounded border border-blue-200 dark:border-blue-700">
+                      <div className="flex items-start gap-2">
+                        <CheckCircle className="h-4 w-4 text-blue-600 mt-0.5 flex-shrink-0" />
+                        <div className="text-xs text-blue-800 dark:text-blue-200">
+                          <p className="font-medium mb-1">Guide d'utilisation :</p>
+                          <p>1. Téléchargez vos fichiers français dans la section bleue</p>
+                          <p>2. Téléchargez vos fichiers anglais dans la section verte</p>
+                          <p>3. Chaque langue aura ses propres fichiers média</p>
+                        </div>
+                      </div>
+                    </div>
                   </div>
                 )}
 
