@@ -72,8 +72,24 @@
     "video_orientation": "portrait",
     "image_url_en": "https://supabase.memopyk.org/storage/v1/object/public/memopyk-videos/1753736725306-AAA_002_0000014.jpg",
     "image_url_fr": "https://supabase.memopyk.org/storage/v1/object/public/memopyk-videos/1753736725306-AAA_002_0000014.jpg",
-    "static_image_url": null,
-    "crop_settings": null,
+    "static_image_url": "https://supabase.memopyk.org/storage/v1/object/public/memopyk-videos/static_gallery-hero2-1753727544112.png?v=1753853393052",
+    "crop_settings": {
+      "method": "draggable-cover-hd",
+      "position": {
+        "x": 47,
+        "y": 0
+      },
+      "devicePixelRatio": 2.25,
+      "originalDimensions": {
+        "width": 3024,
+        "height": 2127
+      },
+      "outputDimensions": {
+        "width": 300,
+        "height": 200
+      },
+      "format": "PNG"
+    },
     "price_en": "USD 195",
     "price_fr": "195 USD",
     "alt_text_en": "Romantic sunset wedding video",
@@ -81,7 +97,7 @@
     "order_index": 2,
     "is_active": true,
     "created_at": "2025-07-28T18:32:24.112Z",
-    "updated_at": "2025-07-29T16:24:51.973Z"
+    "updated_at": "2025-07-30T05:29:53.058Z"
   },
   {
     "id": "gallery-hero3-1753727544113",

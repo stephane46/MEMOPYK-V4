@@ -575,9 +575,9 @@ export default function SystemTestDashboard() {
 
       {/* Test Details Dialog */}
       <Dialog open={!!selectedTest} onOpenChange={() => setSelectedTest(null)}>
-        <DialogContent>
+        <DialogContent className="bg-white">
           <DialogHeader>
-            <DialogTitle className="flex items-center gap-2">
+            <DialogTitle className="flex items-center gap-2 text-lg font-semibold text-gray-900">
               {selectedTest && getStatusIcon(selectedTest.status)}
               {selectedTest?.name}
             </DialogTitle>
@@ -586,26 +586,26 @@ export default function SystemTestDashboard() {
             <div className="space-y-4">
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <div className="text-sm font-medium">Status</div>
+                  <div className="text-sm font-medium text-gray-700">Status</div>
                   <div>{getStatusBadge(selectedTest.status)}</div>
                 </div>
                 {selectedTest.duration && (
                   <div>
-                    <div className="text-sm font-medium">Duration</div>
-                    <div className="text-sm">{selectedTest.duration}ms</div>
+                    <div className="text-sm font-medium text-gray-700">Duration</div>
+                    <div className="text-base text-gray-900">{selectedTest.duration}ms</div>
                   </div>
                 )}
               </div>
               <div>
-                <div className="text-sm font-medium mb-2">Timestamp</div>
-                <div className="text-sm text-muted-foreground">
+                <div className="text-sm font-medium mb-2 text-gray-700">Timestamp</div>
+                <div className="text-base text-gray-900">
                   {selectedTest.timestamp.toLocaleString()}
                 </div>
               </div>
               {selectedTest.details && (
                 <div>
-                  <div className="text-sm font-medium mb-2">Details</div>
-                  <div className="text-sm bg-gray-50 p-3 rounded-lg">
+                  <div className="text-sm font-medium mb-2 text-gray-700">Details</div>
+                  <div className="text-base bg-gray-50 p-4 rounded-lg border text-gray-900">
                     {selectedTest.details}
                   </div>
                 </div>

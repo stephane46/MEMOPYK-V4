@@ -174,7 +174,7 @@ router.get('/test/analytics', async (req, res) => {
   try {
     // Test analytics data retrieval
     const sessions = await hybridStorage.getAnalyticsSessions();
-    const views = await hybridStorage.getVideoViews();
+    const views = await hybridStorage.getAnalyticsViews();
     
     res.json({
       success: true,
