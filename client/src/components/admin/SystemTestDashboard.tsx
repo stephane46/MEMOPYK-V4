@@ -243,26 +243,27 @@ export default function SystemTestDashboard() {
     setIsRunningTests(true);
     
     try {
-      // Test video cache
-      const videoTest = await apiRequest('/api/video-cache/status', 'GET');
+      // Test video cache using the correct endpoint
+      const videoTest = await apiRequest('/api/test/video-cache', 'GET');
       const cacheData = videoTest as any;
+      const fileCount = cacheData?.details?.fileCount || 0;
+      const totalSizeMB = cacheData?.details?.totalSizeMB || 0;
+      
       setTestResults(prev => [...prev, {
-        name: 'Video Cache Status',
-        status: cacheData?.fileCount > 0 ? 'success' : 'warning',
-        details: `${cacheData?.fileCount || 0} files cached, ${cacheData?.sizeMB || 0}MB`,
+        name: 'Video Cache System',
+        status: cacheData?.success ? 'success' : 'error',
+        details: `${fileCount} files cached (${totalSizeMB}MB) - ${cacheData?.message || 'No details'}`,
         timestamp: new Date()
       }]);
 
-      // Test cache refresh
-      const refreshStart = Date.now();
-      await apiRequest('/api/video-cache/refresh', 'POST');
-      const refreshDuration = Date.now() - refreshStart;
+      // Test video cache stats endpoint
+      const statsTest = await apiRequest('/api/video-cache/stats', 'GET');
+      const statsData = statsTest as any;
       
       setTestResults(prev => [...prev, {
-        name: 'Cache Refresh System',
-        status: 'success',
-        duration: refreshDuration,
-        details: `Cache refresh completed in ${refreshDuration}ms`,
+        name: 'Cache Stats API',
+        status: statsData?.fileCount >= 0 ? 'success' : 'warning',
+        details: `Stats API: ${statsData?.fileCount || 0} files, ${statsData?.sizeMB || 0}MB total`,
         timestamp: new Date()
       }]);
 
