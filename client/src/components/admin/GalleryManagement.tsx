@@ -62,6 +62,10 @@ interface GalleryItem {
   story_fr: string;
   sorry_message_en: string;
   sorry_message_fr: string;
+  format_platform_en?: string;
+  format_platform_fr?: string;
+  format_type_en?: string;
+  format_type_fr?: string;
   video_url_en?: string;
   video_url_fr?: string;
   video_filename?: string;
@@ -397,142 +401,297 @@ export default function GalleryManagement() {
             )}
           </div>
 
-          {/* Direct Upload for Large Files */}
-          <div className="mt-6 p-4 bg-gradient-to-r from-[#F2EBDC] to-[#89BAD9]/20 dark:from-[#011526]/20 dark:to-[#2A4759]/20 rounded-lg border border-[#89BAD9] dark:border-[#2A4759]">
-            <div className="flex items-center gap-2 mb-3">
-              <div className="bg-[#D67C4A] rounded-full p-1">
-                <Upload className="h-4 w-4 text-white" />
-              </div>
-              <h4 className="font-semibold text-[#011526] dark:text-[#F2EBDC]">
-                Téléchargement de Fichiers
-              </h4>
-            </div>
-            <p className="text-sm text-[#2A4759] dark:text-[#89BAD9] mb-4">
-              Téléchargez vos vidéos et images directement. Supporte tous les formats et tailles jusqu'à 5GB.
-              Le système contourne automatiquement les limites du serveur.
-            </p>
-            
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
-                <Label className="text-[#011526] dark:text-[#F2EBDC] mb-2 block">
-                  <Video className="h-4 w-4 inline mr-1" />
-                  Vidéo (.mp4, .mov, .avi...)
-                </Label>
-                <DirectUpload
-                  bucket="memopyk-videos"
-                  acceptedTypes="video/*"
-                  maxSizeMB={5000}
-                  uploadId="gallery-video-upload"
-                  onUploadComplete={(result) => {
-                    console.log('Direct video upload completed:', result);
-                    const url = result.url;
-                    
-                    // Extract filename from the URL - CRITICAL FIX
-                    const filename = url.split('/').pop() || '';
-                    console.log('🎯 UPLOAD FIX: Extracted filename from URL:', filename);
-                    console.log('🎯 UPLOAD DEBUG: Full URL received:', url);
-                    console.log('🎯 UPLOAD DEBUG: Current formData before update:', {
-                      video_filename: formData.video_filename,
-                      video_url_en: formData.video_url_en
-                    });
-                    
-                    // Save to module-level persistent state
-                    persistentUploadState.video_url_en = filename;
-                    persistentUploadState.video_filename = filename;
-                    if (formData.use_same_video) {
-                      persistentUploadState.video_url_fr = filename;
-                    }
-                    console.log('💾 Saved direct upload to persistent state:', persistentUploadState);
-                    
-                    setFormData(prev => {
-                      const newData = prev.use_same_video 
-                        ? { ...prev, video_url_en: filename, video_url_fr: filename, video_filename: filename }
-                        : { ...prev, video_url_en: filename, video_filename: filename };
-                      console.log('🎯 UPLOAD FIX: Updated formData with filename:', {
-                        old_filename: prev.video_filename,
-                        new_filename: filename,
-                        video_url_en: filename,
-                        full_new_data: newData
-                      });
-                      return newData;
-                    });
-                    
-                    toast({
-                      title: "✅ Succès",
-                      description: `Vidéo téléchargée: ${filename}`,
-                      className: "bg-green-50 dark:bg-green-900/20 border-green-200 dark:border-green-800"
-                    });
-                  }}
-                  onUploadError={(error) => {
-                    console.error('Direct video upload failed:', error);
-                    toast({
-                      title: "❌ Erreur",
-                      description: `Échec du téléchargement direct: ${error}`,
-                      variant: "destructive"
-                    });
-                  }}
-                />
-              </div>
-              
-              <div>
-                <Label className="text-[#011526] dark:text-[#F2EBDC] mb-2 block">
-                  <Image className="h-4 w-4 inline mr-1" />
-                  Image (.jpg, .png, .gif...)
-                </Label>
-                <DirectUpload
-                  bucket="memopyk-videos"
-                  acceptedTypes="image/*"
-                  maxSizeMB={5000}
-                  uploadId="gallery-image-upload"
-                  onUploadComplete={(result) => {
-                    console.log('Direct image upload completed:', result);
-                    const url = result.url;
-                    
-                    // Save to module-level persistent state
-                    persistentUploadState.image_url_en = url;
-                    persistentUploadState.image_url_fr = url;
-                    console.log('💾 Saved direct image upload to persistent state:', persistentUploadState);
-                    
-                    setFormData(prev => {
-                      const newData = { 
-                        ...prev, 
-                        video_url_en: persistentUploadState.video_url_en || prev.video_url_en,
-                        video_url_fr: persistentUploadState.video_url_fr || prev.video_url_fr,
-                        image_url_en: url, 
-                        image_url_fr: url 
-                      };
-                      console.log('Updated formData with direct image upload:', newData);
-                      return newData;
-                    });
-                    
-                    toast({
-                      title: "✅ Succès",
-                      description: "Image téléchargée directement avec succès!",
-                      className: "bg-green-50 dark:bg-green-900/20 border-green-200 dark:border-green-800"
-                    });
-                  }}
-                  onUploadError={(error) => {
-                    console.error('Direct image upload failed:', error);
-                    toast({
-                      title: "❌ Erreur",
-                      description: `Échec du téléchargement direct: ${error}`,
-                      variant: "destructive"
-                    });
-                  }}
-                />
-              </div>
-            </div>
-            
-            <div className="mt-4 p-3 bg-blue-50 dark:bg-blue-900/30 rounded border border-blue-200 dark:border-blue-700">
-              <div className="flex items-start gap-2">
-                <CheckCircle className="h-4 w-4 text-blue-600 mt-0.5 flex-shrink-0" />
-                <div className="text-xs text-blue-800 dark:text-blue-200">
-                  <p className="font-medium mb-1">Guide d'utilisation :</p>
-                  <p>1. Téléchargez d'abord votre vidéo (.mp4, .mov, .avi...)</p>
-                  <p>2. Puis téléchargez votre image de couverture (.jpg, .png...)</p>
-                  <p>3. Chaque fichier se reset automatiquement après téléchargement</p>
-                  <p className="mt-1 font-medium">✨ Supporte jusqu'à 5GB • Contourne les limites serveur</p>
+          {/* Language-Specific Upload System */}
+          {formData.use_same_video ? (
+            // Shared upload for both languages
+            <div className="mt-6 p-4 bg-gradient-to-r from-[#F2EBDC] to-[#89BAD9]/20 dark:from-[#011526]/20 dark:to-[#2A4759]/20 rounded-lg border border-[#89BAD9] dark:border-[#2A4759]">
+              <div className="flex items-center gap-2 mb-3">
+                <div className="bg-[#D67C4A] rounded-full p-1">
+                  <Upload className="h-4 w-4 text-white" />
                 </div>
+                <h4 className="font-semibold text-[#011526] dark:text-[#F2EBDC]">
+                  Téléchargement de Fichiers (Français & English)
+                </h4>
+              </div>
+              <p className="text-sm text-[#2A4759] dark:text-[#89BAD9] mb-4">
+                Même vidéo pour les deux langues. Téléchargez vos fichiers - ils seront utilisés pour FR et EN.
+              </p>
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <Label className="text-[#011526] dark:text-[#F2EBDC] mb-2 block">
+                    <Video className="h-4 w-4 inline mr-1" />
+                    Vidéo (.mp4, .mov, .avi...)
+                  </Label>
+                  <DirectUpload
+                    bucket="memopyk-videos"
+                    acceptedTypes="video/*"
+                    maxSizeMB={5000}
+                    uploadId="gallery-video-shared-upload"
+                    onUploadComplete={(result) => {
+                      const filename = result.url.split('/').pop() || '';
+                      persistentUploadState.video_url_en = filename;
+                      persistentUploadState.video_url_fr = filename;
+                      persistentUploadState.video_filename = filename;
+                      
+                      setFormData(prev => ({
+                        ...prev,
+                        video_url_en: filename,
+                        video_url_fr: filename,
+                        video_filename: filename
+                      }));
+                      
+                      toast({
+                        title: "✅ Succès",
+                        description: `Vidéo partagée téléchargée: ${filename}`,
+                        className: "bg-green-50 dark:bg-green-900/20 border-green-200 dark:border-green-800"
+                      });
+                    }}
+                    onUploadError={(error) => {
+                      toast({
+                        title: "❌ Erreur", 
+                        description: `Échec du téléchargement: ${error}`,
+                        variant: "destructive"
+                      });
+                    }}
+                  />
+                </div>
+                
+                <div>
+                  <Label className="text-[#011526] dark:text-[#F2EBDC] mb-2 block">
+                    <Image className="h-4 w-4 inline mr-1" />
+                    Image (.jpg, .png, .gif...)
+                  </Label>
+                  <DirectUpload
+                    bucket="memopyk-videos"
+                    acceptedTypes="image/*"
+                    maxSizeMB={5000}
+                    uploadId="gallery-image-shared-upload"
+                    onUploadComplete={(result) => {
+                      const url = result.url;
+                      persistentUploadState.image_url_en = url;
+                      persistentUploadState.image_url_fr = url;
+                      
+                      setFormData(prev => ({
+                        ...prev,
+                        image_url_en: url,
+                        image_url_fr: url
+                      }));
+                      
+                      toast({
+                        title: "✅ Succès",
+                        description: "Image partagée téléchargée!",
+                        className: "bg-green-50 dark:bg-green-900/20 border-green-200 dark:border-green-800"
+                      });
+                    }}
+                    onUploadError={(error) => {
+                      toast({
+                        title: "❌ Erreur",
+                        description: `Échec du téléchargement: ${error}`,
+                        variant: "destructive"
+                      });
+                    }}
+                  />
+                </div>
+              </div>
+            </div>
+          ) : (
+            // Separate uploads for French and English
+            <div className="mt-6 space-y-6">
+              {/* French Upload Section */}
+              <div className="p-4 bg-gradient-to-r from-blue-50 to-blue-100 dark:from-blue-900/20 dark:to-blue-800/20 rounded-lg border border-blue-200 dark:border-blue-800">
+                <div className="flex items-center gap-2 mb-3">
+                  <div className="bg-blue-600 rounded-full p-1">
+                    <Upload className="h-4 w-4 text-white" />
+                  </div>
+                  <h4 className="font-semibold text-blue-900 dark:text-blue-100">
+                    🇫🇷 Fichiers Français
+                  </h4>
+                </div>
+                <p className="text-sm text-blue-800 dark:text-blue-200 mb-4">
+                  Téléchargez les fichiers spécifiques à la version française.
+                </p>
+                
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <Label className="text-blue-900 dark:text-blue-100 mb-2 block">
+                      <Video className="h-4 w-4 inline mr-1" />
+                      Vidéo Française
+                    </Label>
+                    <DirectUpload
+                      bucket="memopyk-videos"
+                      acceptedTypes="video/*"
+                      maxSizeMB={5000}
+                      uploadId="gallery-video-fr-upload"
+                      onUploadComplete={(result) => {
+                        const filename = result.url.split('/').pop() || '';
+                        persistentUploadState.video_url_fr = filename;
+                        
+                        setFormData(prev => ({
+                          ...prev,
+                          video_url_fr: filename
+                        }));
+                        
+                        toast({
+                          title: "✅ Succès",
+                          description: `Vidéo française téléchargée: ${filename}`,
+                          className: "bg-green-50 dark:bg-green-900/20 border-green-200 dark:border-green-800"
+                        });
+                      }}
+                      onUploadError={(error) => {
+                        toast({
+                          title: "❌ Erreur",
+                          description: `Échec vidéo française: ${error}`,
+                          variant: "destructive"
+                        });
+                      }}
+                    />
+                  </div>
+                  
+                  <div>
+                    <Label className="text-blue-900 dark:text-blue-100 mb-2 block">
+                      <Image className="h-4 w-4 inline mr-1" />
+                      Image Française
+                    </Label>
+                    <DirectUpload
+                      bucket="memopyk-videos"
+                      acceptedTypes="image/*"
+                      maxSizeMB={5000}
+                      uploadId="gallery-image-fr-upload"
+                      onUploadComplete={(result) => {
+                        const url = result.url;
+                        persistentUploadState.image_url_fr = url;
+                        
+                        setFormData(prev => ({
+                          ...prev,
+                          image_url_fr: url
+                        }));
+                        
+                        toast({
+                          title: "✅ Succès",
+                          description: "Image française téléchargée!",
+                          className: "bg-green-50 dark:bg-green-900/20 border-green-200 dark:border-green-800"
+                        });
+                      }}
+                      onUploadError={(error) => {
+                        toast({
+                          title: "❌ Erreur",
+                          description: `Échec image française: ${error}`,
+                          variant: "destructive"
+                        });
+                      }}
+                    />
+                  </div>
+                </div>
+              </div>
+
+              {/* English Upload Section */}
+              <div className="p-4 bg-gradient-to-r from-green-50 to-green-100 dark:from-green-900/20 dark:to-green-800/20 rounded-lg border border-green-200 dark:border-green-800">
+                <div className="flex items-center gap-2 mb-3">
+                  <div className="bg-green-600 rounded-full p-1">
+                    <Upload className="h-4 w-4 text-white" />
+                  </div>
+                  <h4 className="font-semibold text-green-900 dark:text-green-100">
+                    🇺🇸 English Files
+                  </h4>
+                </div>
+                <p className="text-sm text-green-800 dark:text-green-200 mb-4">
+                  Upload files specific to the English version.
+                </p>
+                
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <Label className="text-green-900 dark:text-green-100 mb-2 block">
+                      <Video className="h-4 w-4 inline mr-1" />
+                      English Video
+                    </Label>
+                    <DirectUpload
+                      bucket="memopyk-videos"
+                      acceptedTypes="video/*"
+                      maxSizeMB={5000}
+                      uploadId="gallery-video-en-upload"
+                      onUploadComplete={(result) => {
+                        const filename = result.url.split('/').pop() || '';
+                        persistentUploadState.video_url_en = filename;
+                        
+                        setFormData(prev => ({
+                          ...prev,
+                          video_url_en: filename
+                        }));
+                        
+                        toast({
+                          title: "✅ Success",
+                          description: `English video uploaded: ${filename}`,
+                          className: "bg-green-50 dark:bg-green-900/20 border-green-200 dark:border-green-800"
+                        });
+                      }}
+                      onUploadError={(error) => {
+                        toast({
+                          title: "❌ Error",
+                          description: `English video failed: ${error}`,
+                          variant: "destructive"
+                        });
+                      }}
+                    />
+                  </div>
+                  
+                  <div>
+                    <Label className="text-green-900 dark:text-green-100 mb-2 block">
+                      <Image className="h-4 w-4 inline mr-1" />
+                      English Image
+                    </Label>
+                    <DirectUpload
+                      bucket="memopyk-videos"
+                      acceptedTypes="image/*"
+                      maxSizeMB={5000}
+                      uploadId="gallery-image-en-upload"
+                      onUploadComplete={(result) => {
+                        const url = result.url;
+                        persistentUploadState.image_url_en = url;
+                        
+                        setFormData(prev => ({
+                          ...prev,
+                          image_url_en: url
+                        }));
+                        
+                        toast({
+                          title: "✅ Success",
+                          description: "English image uploaded!",
+                          className: "bg-green-50 dark:bg-green-900/20 border-green-200 dark:border-green-800"
+                        });
+                      }}
+                      onUploadError={(error) => {
+                        toast({
+                          title: "❌ Error",
+                          description: `English image failed: ${error}`,
+                          variant: "destructive"
+                        });
+                      }}
+                    />
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+          
+          <div className="mt-4 p-3 bg-blue-50 dark:bg-blue-900/30 rounded border border-blue-200 dark:border-blue-700">
+            <div className="flex items-start gap-2">
+              <CheckCircle className="h-4 w-4 text-blue-600 mt-0.5 flex-shrink-0" />
+              <div className="text-xs text-blue-800 dark:text-blue-200">
+                <p className="font-medium mb-1">Guide d'utilisation :</p>
+                {formData.use_same_video ? (
+                  <>
+                    <p>1. Téléchargez votre vidéo (sera utilisée pour FR et EN)</p>
+                    <p>2. Téléchargez votre image de couverture (sera utilisée pour FR et EN)</p>
+                  </>
+                ) : (
+                  <>
+                    <p>1. Téléchargez vos fichiers français dans la section bleue</p>
+                    <p>2. Téléchargez vos fichiers anglais dans la section verte</p>
+                    <p>3. Chaque langue aura ses propres fichiers média</p>
+                  </>
+                )}
+                <p className="mt-1 font-medium">✨ Supporte jusqu'à 5GB • Contourne les limites serveur</p>
               </div>
             </div>
           </div>
@@ -825,34 +984,48 @@ export default function GalleryManagement() {
           </div>
         </div>
 
-        {/* Manual Video Filename Entry - UNIFIED SYSTEM v1.0.16 */}
+        {/* Language-Specific URL Display */}
         <div className="bg-blue-50 dark:bg-blue-900/20 p-4 rounded-lg border border-blue-200 dark:border-blue-800">
           <h4 className="font-semibold mb-3 text-blue-900 dark:text-blue-100 flex items-center gap-2">
-            🎯 Nom de fichier vidéo (système unifié)
+            🎯 Fichiers actuels
           </h4>
           <p className="text-sm text-blue-800 dark:text-blue-200 mb-3">
-            Entrez directement le nom du fichier vidéo stocké dans le bucket unifié memopyk-videos. Ce bucket contient TOUTES les ressources multimédia (vidéos ET images).
+            Aperçu des fichiers configurés pour chaque langue.
           </p>
-          <p className="text-xs text-blue-700 dark:text-blue-300 mb-3">
-            Exemples: VideoHero1.mp4, gallery_Our_vitamin_sea_rework_2_compressed.mp4, static_123456789.png
-          </p>
-          <div>
-            <Label htmlFor="video_filename" className="text-gray-700 dark:text-gray-300">Nom de fichier vidéo</Label>
-            <Input
-              id="video_filename"
-              value={formData.video_filename || ''}
-              onChange={(e) => {
-                console.log('🎯 FILENAME CHANGE DEBUG:', {
-                  oldValue: formData.video_filename,
-                  newValue: e.target.value,
-                  timestamp: new Date().toISOString()
-                });
-                setFormData({ ...formData, video_filename: e.target.value });
-              }}
-              placeholder="Ex: VideoHero1.mp4 ou gallery_Our_vitamin_sea_rework_2_compressed.mp4"
-              className="bg-white dark:bg-gray-800 text-gray-900 dark:text-white font-mono"
-            />
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <Label className="text-blue-900 dark:text-blue-100 font-medium">🇫🇷 Français</Label>
+              <div className="space-y-1">
+                <div className="text-xs text-blue-700 dark:text-blue-300">
+                  Vidéo: <span className="font-mono bg-blue-100 dark:bg-blue-800 px-1 rounded">{formData.video_url_fr || 'Non définie'}</span>
+                </div>
+                <div className="text-xs text-blue-700 dark:text-blue-300">
+                  Image: <span className="font-mono bg-blue-100 dark:bg-blue-800 px-1 rounded">{formData.image_url_fr || 'Non définie'}</span>
+                </div>
+              </div>
+            </div>
+            
+            <div className="space-y-2">
+              <Label className="text-green-900 dark:text-green-100 font-medium">🇺🇸 English</Label>
+              <div className="space-y-1">
+                <div className="text-xs text-green-700 dark:text-green-300">
+                  Video: <span className="font-mono bg-green-100 dark:bg-green-800 px-1 rounded">{formData.video_url_en || 'Not set'}</span>
+                </div>
+                <div className="text-xs text-green-700 dark:text-green-300">
+                  Image: <span className="font-mono bg-green-100 dark:bg-green-800 px-1 rounded">{formData.image_url_en || 'Not set'}</span>
+                </div>
+              </div>
+            </div>
           </div>
+          
+          {formData.video_filename && (
+            <div className="mt-3 p-2 bg-gray-100 dark:bg-gray-800 rounded">
+              <div className="text-xs text-gray-600 dark:text-gray-400">
+                Legacy filename: <span className="font-mono">{formData.video_filename}</span>
+              </div>
+            </div>
+          )}
         </div>
 
 
