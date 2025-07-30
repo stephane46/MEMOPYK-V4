@@ -253,14 +253,27 @@ export default function SystemTestDashboard() {
       
       // Create detailed breakdown of cached files
       const files = cacheData?.details?.files || [];
-      const videoFiles = files.filter((f: any) => f.type === 'video').map((f: any) => f.originalFilename).join(', ');
-      const imageFiles = files.filter((f: any) => f.type === 'image').map((f: any) => f.originalFilename).join(', ');
+      const videoFiles = files.filter((f: any) => f.type === 'video');
+      const imageFiles = files.filter((f: any) => f.type === 'image');
       
-      const detailsText = `${fileCount} files total: ${videoCount} videos (${videoFiles || 'none'}), ${imageCount} images (${imageFiles || 'none'}) - ${totalSizeMB}MB`;
+      // Create detailed file list for display
+      const videoList = videoFiles.map((f: any) => `${f.originalFilename} (${f.sizeMB}MB)`).join(', ');
+      const imageList = imageFiles.map((f: any) => `${f.originalFilename !== 'Unknown' ? f.originalFilename : f.hashedFilename} (${f.sizeMB}MB)`).join(', ');
+      
+      const detailsText = `CACHE SYSTEM ANALYSIS:
+Total: ${fileCount} files (${totalSizeMB}MB)
+
+VIDEOS (${videoCount} files):
+${videoList || 'No videos cached'}
+
+IMAGES (${imageCount} files):  
+${imageList || 'No images cached'}
+
+Cache Status: ${cacheData?.success ? 'Operational' : 'Failed'}`;
       
       setTestResults(prev => [...prev, {
         name: 'Video Cache System',
-        status: cacheData?.success ? 'success' : 'error',
+        status: cacheData?.success && fileCount > 0 ? 'success' : fileCount === 0 ? 'warning' : 'error',
         details: detailsText,
         timestamp: new Date()
       }]);
@@ -545,14 +558,20 @@ export default function SystemTestDashboard() {
         <Card className="bg-white dark:bg-gray-800">
           <CardHeader>
             <CardTitle className="flex items-center justify-between text-gray-900 dark:text-white">
-              <span className="text-base font-semibold">Test Results</span>
+              <span className="flex items-center gap-2">
+                <TestTube className="h-5 w-5" />
+                <span className="text-lg font-semibold">System Test Results</span>
+              </span>
               <div className="flex items-center gap-4">
                 <div className="text-base font-medium text-gray-700 dark:text-gray-300">
                   Success Rate: {successRate}%
                 </div>
-                <Progress value={successRate} className="w-24" />
+                <Progress value={successRate} className="w-32" />
               </div>
             </CardTitle>
+            <CardDescription className="text-gray-600 dark:text-gray-400">
+              Results from system component validation and performance testing
+            </CardDescription>
           </CardHeader>
           <CardContent>
             <div className="space-y-3">
@@ -618,7 +637,7 @@ export default function SystemTestDashboard() {
               {selectedTest.details && (
                 <div>
                   <div className="text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">Details</div>
-                  <div className="text-base bg-gray-50 dark:bg-gray-900 p-4 rounded-lg border text-gray-900 dark:text-white">
+                  <div className="text-sm bg-gray-50 dark:bg-gray-900 p-4 rounded-lg border text-gray-900 dark:text-white font-mono whitespace-pre-line">
                     {selectedTest.details}
                   </div>
                 </div>
