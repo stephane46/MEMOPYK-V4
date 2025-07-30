@@ -1223,7 +1223,7 @@ export default function AdminPage() {
                 <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Galerie</h2>
                 <p className="text-gray-600 dark:text-gray-400">Gestion des éléments de galerie portfolio - Interface améliorée</p>
               </div>
-              <GalleryManagement />
+              <GalleryManagement key="gallery-v1.0.82" />
             </div>
           )}
 
