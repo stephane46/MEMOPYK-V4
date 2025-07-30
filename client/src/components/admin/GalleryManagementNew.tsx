@@ -30,10 +30,12 @@ import {
   CheckCircle,
   Monitor,
   Smartphone,
-  Power
+  Power,
+  Palette
 } from "lucide-react";
 import ImageCropperEasyCrop from './ImageCropperEasyCrop';
 import DirectUpload from './DirectUpload';
+import FormatBadgeManager from './FormatBadgeManager';
 
 // Module-level persistent state that survives component re-creations
 const persistentUploadState = {
@@ -94,6 +96,7 @@ export default function GalleryManagementNew() {
   const [selectedVideoId, setSelectedVideoId] = useState<string | number | null>(null);
   const [isCreateMode, setIsCreateMode] = useState(false);
   const [cropperOpen, setCropperOpen] = useState(false);
+  const [showFormatBadgeManager, setShowFormatBadgeManager] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   // Fetch gallery items
@@ -857,7 +860,7 @@ export default function GalleryManagementNew() {
             </CardContent>
           </Card>
 
-          {/* Save/Delete Actions */}
+          {/* Save/Delete/Cancel Actions */}
           <div className="flex justify-between items-center pt-6 border-t border-gray-200 dark:border-gray-700">
             <div className="flex gap-3">
               <Button
@@ -867,6 +870,18 @@ export default function GalleryManagementNew() {
               >
                 <Save className="w-4 h-4 mr-2" />
                 {isCreateMode ? 'Créer' : 'Sauvegarder'}
+              </Button>
+              
+              <Button
+                variant="outline"
+                onClick={() => {
+                  persistentUploadState.reset();
+                  setSelectedVideoId(null);
+                  setIsCreateMode(false);
+                }}
+                className="border-gray-300 dark:border-gray-600 hover:bg-gray-100 dark:hover:bg-gray-800"
+              >
+                Annuler
               </Button>
               
               {!isCreateMode && selectedVideoId && (
@@ -911,6 +926,37 @@ export default function GalleryManagementNew() {
           </DialogContent>
         </Dialog>
       )}
+
+      {/* Format Badge Manager Section */}
+      <Card className="mt-6 border-[#89BAD9] dark:border-[#2A4759]">
+        <CardContent className="p-6">
+          <div className="flex items-center justify-between mb-4">
+            <div className="flex items-center gap-2">
+              <Palette className="w-5 h-5 text-[#D67C4A]" />
+              <h3 className="text-lg font-semibold text-[#011526] dark:text-[#F2EBDC]">
+                Format Badge Templates
+              </h3>
+            </div>
+            <Button
+              variant="outline"
+              onClick={() => setShowFormatBadgeManager(!showFormatBadgeManager)}
+              className="border-[#89BAD9] hover:bg-[#F2EBDC] dark:hover:bg-[#011526]/20"
+            >
+              {showFormatBadgeManager ? 'Masquer' : 'Gérer Templates'}
+            </Button>
+          </div>
+          
+          <p className="text-sm text-[#2A4759] dark:text-[#89BAD9] mb-4">
+            Créez et gérez les templates de format badges qui apparaissent dans les dropdown des éléments de galerie.
+          </p>
+
+          {showFormatBadgeManager && (
+            <div className="border-t border-gray-200 dark:border-gray-600 pt-4">
+              <FormatBadgeManager />
+            </div>
+          )}
+        </CardContent>
+      </Card>
     </div>
   );
 }

@@ -149,7 +149,6 @@ export default function AdminPage() {
   const sidebarItems = [
     { id: 'hero-management', label: 'Gestion Hero', icon: Video },
     { id: 'gallery', label: 'Galerie', icon: Play },
-    { id: 'format-badges', label: 'Format Badges', icon: Palette },
     { id: 'faq', label: 'FAQ', icon: MessageSquare },
     { id: 'cta', label: 'CTA Buttons', icon: Zap },
     { id: 'legal-docs', label: 'Documents Légaux', icon: FileText },
@@ -1228,16 +1227,7 @@ export default function AdminPage() {
             </div>
           )}
 
-          {/* Format Badge Manager */}
-          {activeSection === 'format-badges' && (
-            <div className="space-y-6">
-              <div className="mb-6">
-                <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Format Badge Manager</h2>
-                <p className="text-gray-600 dark:text-gray-400">Gestion des templates de format badges pour une application rapide aux éléments de galerie</p>
-              </div>
-              <FormatBadgeManager />
-            </div>
-          )}
+
 
 
 
