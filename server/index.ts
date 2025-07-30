@@ -193,11 +193,8 @@ app.use((req, res, next) => {
         return next(); // Skip for API routes
       }
       
-      // Only serve dynamic SEO HTML for specific crawler requests - let Vite handle normal browsing
-      const userAgent = req.headers['user-agent'] || '';
-      const isCrawler = /bot|crawler|spider|crawling/i.test(userAgent);
-      
-      if ((req.path === '/' || req.path === '/index.html') && isCrawler) {
+      // In development, serve dynamic SEO HTML to all users for testing consistency
+      if (req.path === '/' || req.path === '/index.html') {
         const fs = require('fs');
         const htmlPath = path.resolve(process.cwd(), "public/index.html");
         
@@ -226,13 +223,21 @@ app.use((req, res, next) => {
           
           html = html.replace(/DYNAMIC_CANONICAL_URL/g, canonicalUrl);
           
-          console.log(`🔍 SEO CRAWLER: Serving ${req.path} to ${userAgent.slice(0, 50)} with baseUrl: ${baseUrl}`);
+          const userAgent = req.headers['user-agent'] || '';
+          console.log(`🔍 SEO DEVELOPMENT: Serving ${req.path} to ${userAgent.slice(0, 50)} with baseUrl: ${baseUrl}`);
           
-          res.set('Content-Type', 'text/html');
+          // Add cache-busting headers for development consistency
+          res.set({
+            'Content-Type': 'text/html',
+            'Cache-Control': 'no-cache, no-store, must-revalidate',
+            'Pragma': 'no-cache',
+            'Expires': '0'
+          });
+          
           res.send(html);
           return;
         } catch (error) {
-          console.error('❌ Error serving dynamic HTML to crawler:', error);
+          console.error('❌ Error serving dynamic HTML in dev:', error);
           // Fall through to proxy for error cases
         }
       }
@@ -272,58 +277,59 @@ app.use((req, res, next) => {
       express.static(clientDist, { index: false })(req, res, next);
     });
     
-    // Server-side HTML serving with dynamic hreflang tags for SEO crawlers only
+    // Server-side HTML serving with dynamic hreflang tags for ALL requests in production
     app.get("*", (req: Request, res: Response, next) => {
       if (req.path.startsWith("/api")) {
         return next(); // Let API routes be handled by registerRoutes
       }
       
-      const userAgent = req.headers['user-agent'] || '';
-      const isCrawler = /bot|crawler|spider|crawling/i.test(userAgent);
+      // In production, serve dynamic HTML to ALL users for maximum SEO compatibility
+      const htmlPath = path.join(clientDist, "index.html");
+      const fs = require('fs');
       
-      // Only serve dynamic HTML to crawlers - regular users get normal static files
-      if (isCrawler) {
-        const htmlPath = path.join(clientDist, "index.html");
-        const fs = require('fs');
+      try {
+        let html = fs.readFileSync(htmlPath, 'utf8');
         
-        try {
-          let html = fs.readFileSync(htmlPath, 'utf8');
-          
-          // Determine the base URL for hreflang tags
-          const protocol = req.headers['x-forwarded-proto'] || (req.secure ? 'https' : 'http');
-          const host = req.headers['x-forwarded-host'] || req.headers.host;
-          const baseUrl = `${protocol}://${host}`;
-          
-          // Replace dynamic placeholders with actual URLs
-          html = html.replace(/DYNAMIC_BASE_URL/g, baseUrl);
-          
-          // Determine current language from path and set canonical URL
-          const currentPath = req.path;
-          let canonicalUrl = baseUrl;
-          
-          if (currentPath.startsWith('/en') || currentPath.includes('lang=en')) {
-            canonicalUrl = `${baseUrl}/en/`;
-          } else if (currentPath.startsWith('/fr') || currentPath.includes('lang=fr')) {
-            canonicalUrl = `${baseUrl}/fr/`;
-          } else {
-            canonicalUrl = `${baseUrl}/`; // x-default
-          }
-          
-          html = html.replace(/DYNAMIC_CANONICAL_URL/g, canonicalUrl);
-          
-          console.log(`🔍 SEO CRAWLER PROD: Serving ${req.path} to ${userAgent.slice(0, 50)} with baseUrl: ${baseUrl}`);
-          
-          res.set('Content-Type', 'text/html');
-          res.send(html);
-          return;
-        } catch (error) {
-          console.error('❌ Error serving dynamic HTML to crawler in prod:', error);
-          // Fall through to static file serving
+        // Determine the base URL for hreflang tags
+        const protocol = req.headers['x-forwarded-proto'] || (req.secure ? 'https' : 'http');
+        const host = req.headers['x-forwarded-host'] || req.headers.host;
+        const baseUrl = `${protocol}://${host}`;
+        
+        // Replace dynamic placeholders with actual URLs
+        html = html.replace(/DYNAMIC_BASE_URL/g, baseUrl);
+        
+        // Determine current language from path and set canonical URL
+        const currentPath = req.path;
+        let canonicalUrl = baseUrl;
+        
+        if (currentPath.startsWith('/en') || currentPath.includes('lang=en')) {
+          canonicalUrl = `${baseUrl}/en/`;
+        } else if (currentPath.startsWith('/fr') || currentPath.includes('lang=fr')) {
+          canonicalUrl = `${baseUrl}/fr/`;
+        } else {
+          canonicalUrl = `${baseUrl}/`; // x-default
         }
+        
+        html = html.replace(/DYNAMIC_CANONICAL_URL/g, canonicalUrl);
+        
+        const userAgent = req.headers['user-agent'] || '';
+        console.log(`🔍 SEO PRODUCTION: Serving ${req.path} to ${userAgent.slice(0, 50)} with baseUrl: ${baseUrl}`);
+        
+        // Add cache-busting headers to prevent CDN caching of dynamic content
+        res.set({
+          'Content-Type': 'text/html',
+          'Cache-Control': 'no-cache, no-store, must-revalidate',
+          'Pragma': 'no-cache',
+          'Expires': '0'
+        });
+        
+        res.send(html);
+        return;
+      } catch (error) {
+        console.error('❌ Error serving dynamic HTML in prod:', error);
+        // Fallback to static file
+        res.sendFile(path.join(clientDist, "index.html"));
       }
-      
-      // For regular users, serve static files normally
-      res.sendFile(path.join(clientDist, "index.html"));
     });
     
     console.log("📦 Serving static files from", clientDist);
