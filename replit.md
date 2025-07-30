@@ -51,6 +51,27 @@ Preferred communication style: Simple, everyday language.
 
 ## Recent Changes (July 30, 2025)
 
+### PRODUCTION DOMAIN DETECTION ENHANCEMENT - v1.0.78 (July 30, 2025) ✅ DEPLOYMENT READY
+**Dynamic Production Domain Support - USER REQUEST IMPLEMENTED:**
+✅ **Host Header Detection**: Enhanced server logic to properly detect production domain from request headers
+✅ **BASE_URL Environment Variable**: Added support for BASE_URL env var to override domain detection for production
+✅ **Staging Verification**: Confirmed dynamic HTML injection working correctly on new.memopyk.com with proper hreflang tags
+✅ **Production Ready**: Server now automatically detects memopyk.com vs new.memopyk.com vs localhost based on request context
+✅ **Enhanced Logging**: Added comprehensive domain detection logging for production troubleshooting
+✅ **Cache Headers Confirmed**: Verified no-cache headers working correctly to prevent CDN bypass
+
+**Technical Implementation v1.0.78:**
+- Protocol detection: `x-forwarded-proto` header for HTTPS/HTTP determination
+- Host detection: `x-forwarded-host` or `host` header with BASE_URL env var override
+- Domain flexibility: Works automatically across development, staging, and production environments
+- Production logging: Complete domain detection context for deployment verification
+
+**User Experience Achievement:**
+- Production deployment at memopyk.com will automatically use correct domain in hreflang/canonical tags
+- No hard-coded domains - fully dynamic based on request context
+- Environment variable support for explicit production domain control
+- Enhanced debugging for production domain detection verification
+
 ### REPLIT PRODUCTION CACHE BYPASS FIX - v1.0.77 (July 30, 2025) ✅ DEPLOYMENT READY
 **Production CDN Cache Issue Resolved - CRITICAL REPLIT FIX:**
 ✅ **Universal Dynamic HTML:** All users now receive dynamic HTML with hreflang tags in production (not just crawlers)

@@ -4258,9 +4258,16 @@ export async function registerRoutes(app: Express): Promise<Server> {
         distContent = fs.readFileSync(distHtmlPath, 'utf8').slice(0, 2000);
       }
       
-      // Check production routing
+      // Check production routing with domain detection
       const protocol = req.headers['x-forwarded-proto'] || (req.secure ? 'https' : 'http');
-      const host = req.headers['x-forwarded-host'] || req.headers.host;
+      let host = req.headers['x-forwarded-host'] || req.headers.host;
+      
+      // Production domain override - use BASE_URL env var if available  
+      if (process.env.BASE_URL) {
+        const baseUrlObj = new URL(process.env.BASE_URL);
+        host = baseUrlObj.host;
+      }
+      
       const baseUrl = `${protocol}://${host}`;
       
       res.json({

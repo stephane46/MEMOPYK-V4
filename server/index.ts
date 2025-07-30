@@ -298,10 +298,25 @@ app.use((req, res, next) => {
       try {
         let html = fs.readFileSync(htmlPath, 'utf8');
         
-        // Determine the base URL for hreflang tags
+        // Determine the base URL for hreflang tags - Production Domain Detection
         const protocol = req.headers['x-forwarded-proto'] || (req.secure ? 'https' : 'http');
-        const host = req.headers['x-forwarded-host'] || req.headers.host;
+        let host = req.headers['x-forwarded-host'] || req.headers.host;
+        
+        // Production domain override - use BASE_URL env var if available
+        if (process.env.BASE_URL) {
+          const baseUrlObj = new URL(process.env.BASE_URL);
+          host = baseUrlObj.host;
+        }
+        
         const baseUrl = `${protocol}://${host}`;
+        
+        // Enhanced production logging for domain detection
+        console.log(`🌐 Domain Detection v1.0.78:`);
+        console.log(`   - Protocol: ${protocol}`);
+        console.log(`   - x-forwarded-host: ${req.headers['x-forwarded-host']}`);
+        console.log(`   - host header: ${req.headers.host}`);
+        console.log(`   - BASE_URL env: ${process.env.BASE_URL || 'not set'}`);
+        console.log(`   - Final baseUrl: ${baseUrl}`);
         
         // Determine current language from path and set canonical URL
         const currentPath = req.path;
