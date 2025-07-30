@@ -1266,12 +1266,8 @@ export default function AdminPage() {
               <div className="mb-6">
                 <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Tests</h2>
                 <p className="text-gray-600 dark:text-gray-400">Tests système et validation</p>
-                <p className="text-sm text-blue-600">DEBUG: Tests section is active</p>
               </div>
-              <div className="border-2 border-red-300 p-4 rounded">
-                <p className="text-red-600 font-bold">DEBUG: SystemTestDashboard should appear below:</p>
-                <SystemTestDashboard />
-              </div>
+              <SystemTestDashboard />
             </div>
           )}
 

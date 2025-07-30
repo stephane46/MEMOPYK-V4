@@ -54,8 +54,6 @@ interface RequestLog {
 }
 
 export default function SystemTestDashboard() {
-  console.log('🔧 SystemTestDashboard component is mounting');
-  
   const [testResults, setTestResults] = useState<TestResult[]>([]);
   const [isRunningTests, setIsRunningTests] = useState(false);
   const [systemHealth, setSystemHealth] = useState<SystemHealth>({
