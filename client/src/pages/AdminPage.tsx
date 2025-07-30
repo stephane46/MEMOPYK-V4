@@ -1262,7 +1262,13 @@ export default function AdminPage() {
 
           {/* Tests */}
           {activeSection === 'tests' && (
-            <SystemTestDashboard />
+            <div className="space-y-6">
+              <div className="mb-6">
+                <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Tests</h2>
+                <p className="text-gray-600 dark:text-gray-400">Tests système et validation</p>
+              </div>
+              <SystemTestDashboard />
+            </div>
           )}
 
           {/* Deployment */}
