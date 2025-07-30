@@ -246,6 +246,11 @@ export default function SystemTestDashboard() {
       // Test video cache using the correct endpoint
       const videoTest = await apiRequest('/api/test/video-cache', 'GET');
       const cacheData = videoTest as any;
+      
+      // Debug logging to see what we're actually getting
+      console.log('🔍 Cache test response:', cacheData);
+      console.log('🔍 Cache details:', cacheData?.details);
+      
       const fileCount = cacheData?.details?.fileCount || 0;
       const videoCount = cacheData?.details?.videoCount || 0;
       const imageCount = cacheData?.details?.imageCount || 0;
