@@ -81,19 +81,15 @@ router.get('/test/video-cache', async (req, res) => {
       return `${hash}.${extension}`;
     };
     
-    // Known original filenames that should be cached
+    // Known original filenames that SHOULD be cached (according to current architecture)
+    // ARCHITECTURE NOTE: Gallery videos (VitaminSeaC.mp4, PomGalleryC.mp4, safari-1.mp4) 
+    // use DIRECT CDN streaming and should NOT be cached
     const expectedFiles = [
-      // Video files
+      // Hero videos ONLY (these use cache system)
       'VideoHero1.mp4',
       'VideoHero2.mp4', 
       'VideoHero3.mp4',
-      'VitaminSeaC.mp4',
-      'PomGalleryC.mp4',
-      'safari-1.mp4',
-      'G1.mp4',
-      'G2.mp4',
-      'G3.mp4',
-      // Image files (static gallery images)
+      // Image files (static gallery images - these do use cache)
       'static_1753304723805.png',
       'static_gallery-hero2-1753727544112.png',
       '1753737011770-IMG_9217.JPG'
@@ -127,16 +123,29 @@ router.get('/test/video-cache', async (req, res) => {
     const videoFiles = cacheStats.filter(f => f.type === 'video');
     const imageFiles = cacheStats.filter(f => f.type === 'image');
     
+    // Separate expected vs unexpected files based on current architecture
+    const expectedVideoFiles = cacheStats.filter(f => f.type === 'video' && f.originalFilename.startsWith('VideoHero'));
+    const unexpectedGalleryVideos = cacheStats.filter(f => f.type === 'video' && !f.originalFilename.startsWith('VideoHero') && f.originalFilename !== 'Unknown');
+    const expectedImageFiles = cacheStats.filter(f => f.type === 'image');
+    
+    let message = `Cache system analysis - ${expectedVideoFiles.length} hero videos, ${expectedImageFiles.length} images`;
+    if (unexpectedGalleryVideos.length > 0) {
+      message += ` (WARNING: ${unexpectedGalleryVideos.length} gallery videos found - should use direct CDN)`;
+    }
+    
     res.json({
       success: true,
-      message: `Video cache system operational - ${videoFiles.length} videos, ${imageFiles.length} images`,
+      message,
       details: {
         fileCount: files.length,
         videoCount: videoFiles.length,
         imageCount: imageFiles.length,
+        expectedHeroVideos: expectedVideoFiles.length,
+        unexpectedGalleryVideos: unexpectedGalleryVideos.length,
         totalSizeMB: Math.round(totalSize / (1024 * 1024) * 100) / 100,
         cachePath: cacheDir,
-        files: cacheStats.sort((a, b) => a.originalFilename.localeCompare(b.originalFilename))
+        files: cacheStats.sort((a, b) => a.originalFilename.localeCompare(b.originalFilename)),
+        architectureNote: "Gallery videos (VitaminSeaC.mp4, PomGalleryC.mp4, safari-1.mp4) should use direct CDN streaming, not cache"
       }
     });
   } catch (error) {
