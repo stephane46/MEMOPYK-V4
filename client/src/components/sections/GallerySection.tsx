@@ -239,8 +239,8 @@ export default function GallerySection() {
         platform: language === 'fr-FR' ? "Réseaux Sociaux" : "Social Media",
         type: language === 'fr-FR' ? "Stories Mobiles" : "Mobile Stories",
         icon: Smartphone,
-        color: "bg-[#011526]", // MEMOPYK Navy - Primary brand color
-        textColor: "text-[#011526]",
+        color: "bg-[#2A4759]", // MEMOPYK Dark Blue - Uniform brand color for all badges
+        textColor: "text-[#2A4759]",
         formats: language === 'fr-FR' ? ["TikTok", "Instagram Stories", "YouTube Shorts"] : ["TikTok", "Instagram Stories", "YouTube Shorts"]
       };
     } else if (aspectRatio < 1) {
@@ -249,7 +249,7 @@ export default function GallerySection() {
         platform: language === 'fr-FR' ? "Réseaux Sociaux" : "Social Feed",
         type: language === 'fr-FR' ? "Posts Instagram" : "Instagram Posts",
         icon: Instagram,
-        color: "bg-[#2A4759]", // MEMOPYK Dark Blue - Secondary brand color
+        color: "bg-[#2A4759]", // MEMOPYK Dark Blue - Uniform brand color for all badges
         textColor: "text-[#2A4759]",
         formats: language === 'fr-FR' ? ["Instagram Feed", "Facebook Posts", "Pinterest"] : ["Instagram Feed", "Facebook Posts", "Pinterest"]
       };
@@ -259,8 +259,8 @@ export default function GallerySection() {
         platform: language === 'fr-FR' ? "Professionnel" : "Professional",
         type: language === 'fr-FR' ? "TV & Bureau" : "TV & Desktop",
         icon: Monitor,
-        color: "bg-[#D67C4A]", // MEMOPYK Orange - Action/highlight color
-        textColor: "text-[#D67C4A]", 
+        color: "bg-[#2A4759]", // MEMOPYK Dark Blue - Uniform brand color for all badges
+        textColor: "text-[#2A4759]", 
         formats: language === 'fr-FR' ? ["YouTube", "Affichage TV", "Présentations"] : ["YouTube", "TV Display", "Presentations"]
       };
     }
