@@ -407,7 +407,7 @@ export default function GallerySection() {
                             </div>
                           )}
 
-                          {/* Viewing Format Badge - Top Right (2) */}
+                          {/* Viewing Format Badge - Top Right (2) - Aligned with left pill */}
                           {(() => {
                             const format = getViewingFormat(item);
                             const IconComponent = format.icon;
