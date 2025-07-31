@@ -261,11 +261,11 @@ export default function GallerySection() {
     // DIRECT CDN IMPLEMENTATION: Bypass video proxy entirely to avoid infrastructure blocking
     const filename = item.videoFilename || item.videoUrlEn || item.videoUrlFr;
     
-    // Generate direct Supabase CDN URL
-    const directCdnUrl = `https://supabase.memopyk.org/storage/v1/object/public/memopyk-videos/${filename}`;
+    // Fix URL duplication - if filename is already a full URL, use it directly
+    const directCdnUrl = filename.startsWith('https://') ? filename : `https://supabase.memopyk.org/storage/v1/object/public/memopyk-videos/${filename}`;
     
     console.log(`🎬 DIRECT CDN STREAMING for item ${index}: ${filename}`);
-    console.log(`🔧 CDN URL (bypassing proxy): ${directCdnUrl}`);
+    console.log(`🔧 FIXED CDN URL: ${directCdnUrl}`);
     console.log(`⚠️ Note: Direct CDN streaming (slower 1500ms) to avoid infrastructure blocking`);
     
     return directCdnUrl;

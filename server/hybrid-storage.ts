@@ -452,8 +452,15 @@ export class HybridStorage implements HybridStorageInterface {
       if (updateData.video_filename !== undefined) dbUpdateData.videoFilename = updateData.video_filename;
       if (updateData.video_url_en !== undefined) dbUpdateData.videoUrlEn = updateData.video_url_en;
       if (updateData.video_url_fr !== undefined) dbUpdateData.videoUrlFr = updateData.video_url_fr;
+      if (updateData.image_url_en !== undefined) dbUpdateData.imageUrlEn = updateData.image_url_en;
+      if (updateData.image_url_fr !== undefined) dbUpdateData.imageUrlFr = updateData.image_url_fr;
       if (updateData.use_same_video !== undefined) dbUpdateData.useSameVideo = updateData.use_same_video;
+      if (updateData.static_image_url_en !== undefined) dbUpdateData.staticImageUrlEn = updateData.static_image_url_en;
+      if (updateData.static_image_url_fr !== undefined) dbUpdateData.staticImageUrlFr = updateData.static_image_url_fr;
       dbUpdateData.updatedAt = new Date();
+      
+      console.log(`🔍 DATABASE UPDATE - image_url_fr: ${updateData.image_url_fr} -> imageUrlFr: ${dbUpdateData.imageUrlFr}`);
+      console.log(`🔍 DATABASE UPDATE - image_url_en: ${updateData.image_url_en} -> imageUrlEn: ${dbUpdateData.imageUrlEn}`);
       
       console.log(`🔍 DATABASE UPDATE - Converting is_active ${updateData.is_active} to isActive ${dbUpdateData.isActive}`);
       
