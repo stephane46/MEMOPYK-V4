@@ -324,10 +324,27 @@ export default function GalleryManagementNew() {
   
 
 
-  // Fetch gallery items with cache-busting
+  // Fetch gallery items with aggressive cache-busting and debug info
   const { data: galleryItems = [], isLoading } = useQuery<GalleryItem[]>({
-    queryKey: ['/api/gallery', 'v1.0.107'],
-    select: (data) => data.sort((a, b) => a.order_index - b.order_index)
+    queryKey: ['/api/gallery', 'v1.0.108', Date.now()], // Force fresh cache with timestamp
+    staleTime: 0, // Always consider data stale
+    cacheTime: 0, // Don't cache at all
+    refetchOnMount: true,
+    refetchOnWindowFocus: true,
+    select: (data) => {
+      console.log(`🔍 RAW DATA FROM SERVER: ${data.length} items`);
+      console.log('🔍 RAW IDs:', data.map(item => `${item.id.toString().slice(0,8)}... (${item.title_en})`));
+      const filtered = data.filter(item => {
+        // Filter out any items that might have invalid or problematic IDs
+        const isValid = item.id && item.title_en && item.title_fr;
+        if (!isValid) {
+          console.log(`🚫 FILTERING OUT INVALID ITEM:`, item);
+        }
+        return isValid;
+      });
+      console.log(`✅ FILTERED TO ${filtered.length} valid items`);
+      return filtered.sort((a, b) => a.order_index - b.order_index);
+    }
   });
 
   // Get selected item
@@ -626,17 +643,42 @@ export default function GalleryManagementNew() {
       <div className="mb-4 p-3 bg-red-50 border-2 border-red-200 rounded-lg">
         <div className="flex items-center justify-between">
           <div>
-            <p className="text-sm text-red-800 font-medium">🔧 DEBUG: Showing {galleryItems.length} items from database</p>
-            <p className="text-xs text-gray-600">Available IDs: {galleryItems.map(item => item.id.toString().slice(0,8)).join(', ')}</p>
+            <p className="text-sm text-red-800 font-medium">🔧 DEBUG: Showing {galleryItems.length} items from frontend</p>
+            <p className="text-xs text-gray-600 mb-1">Current IDs: {galleryItems.map(item => `${item.id.toString().slice(0,8)}...`).join(', ')}</p>
+            <p className="text-xs text-gray-600">Current Titles: {galleryItems.map(item => item.title_en).join(', ')}</p>
+            <p className="text-xs text-blue-600 mt-1">Expected DB IDs: a2f1f51f, gallery-hero2, gallery-hero3</p>
           </div>
-          <Button
-            onClick={forceClearAllCaches}
-            variant="destructive"
-            size="sm"
-            className="ml-4"
-          >
-            🧹 Clear All Caches
-          </Button>
+          <div className="flex gap-2">
+            <Button
+              onClick={async () => {
+                console.log('🔍 MANUAL DATABASE CHECK');
+                try {
+                  const response = await fetch('/api/gallery');
+                  const dbData = await response.json();
+                  console.log(`📊 DATABASE HAS ${dbData.length} items:`, dbData.map(item => `${item.id} (${item.title_en})`));
+                  
+                  toast({ 
+                    title: `Database Check: ${dbData.length} items found`, 
+                    description: dbData.map(item => item.title_en).join(', '),
+                    className: "bg-blue-50 border-blue-200 text-blue-900"
+                  });
+                } catch (error) {
+                  console.error('DB check failed:', error);
+                }
+              }}
+              variant="outline"
+              size="sm"
+            >
+              📊 Check DB
+            </Button>
+            <Button
+              onClick={forceClearAllCaches}
+              variant="destructive"
+              size="sm"
+            >
+              🧹 Clear Cache
+            </Button>
+          </div>
         </div>
       </div>
 
