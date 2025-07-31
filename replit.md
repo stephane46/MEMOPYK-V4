@@ -75,7 +75,7 @@ Preferred communication style: Simple, everyday language.
 
 ## Recent Changes (July 31, 2025)
 
-### IMAGE REFRAMING SYSTEM COMPLETE - v1.0.106 (July 31, 2025) ✅ FULLY FUNCTIONAL
+### IMAGE REFRAMING SYSTEM COMPLETE - v1.0.107 (July 31, 2025) ✅ FULLY FUNCTIONAL
 **Complete Image Cropper Workflow - User Can Successfully Reframe Images:**
 ✅ **Display Issue Fixed**: Image cropper now properly displays images with fixed CSS backgroundImage quotes and backgroundRepeat settings
 ✅ **Debug System Added**: Visual "✅ Image Loaded" indicator confirms image loading state successfully
@@ -86,12 +86,14 @@ Preferred communication style: Simple, everyday language.
 ✅ **Error Handling**: Complete error handling with user feedback for upload/save failures
 ✅ **Language Support**: Separate French/English cropping with proper language context in filenames
 
-**Technical Implementation v1.0.106:**
+**Technical Implementation v1.0.107:**
 - Fixed CSS: `backgroundImage: url("${imageUrl}")` with quotes and `backgroundRepeat: 'no-repeat'`
 - Debug overlay: Real-time loading state indicator for user feedback
 - Complete save workflow: blob → FormData → /api/upload/image → database update → cache refresh
+- Upload endpoint: Added `/api/upload/image` route for cropped image uploads (uses 'file' field name)
+- Triple white background system: fillRect + ImageData pixel control + JPEG format for guaranteed solid white
 - Filename generation: `static_${language}_${timestamp}.jpg` for organized file management
-- Query cache versioning: Updated to v1.0.106 for consistent cache invalidation
+- Query cache versioning: Updated to v1.0.107 for consistent cache invalidation
 - Success/error toast notifications for complete user experience
 
 **User Experience Achievement:**

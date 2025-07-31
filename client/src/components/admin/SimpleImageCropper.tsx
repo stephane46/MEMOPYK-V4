@@ -221,10 +221,20 @@ export default function SimpleImageCropper({ imageUrl, onSave, onCancel }: Simpl
       canvas.height = 200 * dpr;
       ctx.scale(dpr, dpr);
 
-      // Base white background
-      ctx.fillStyle = '#fff';
+      // TRIPLE WHITE BACKGROUND SYSTEM - Nuclear approach
+      ctx.fillStyle = '#ffffff';
       ctx.fillRect(0, 0, 300, 200);
-      console.log('✅ Expert fix: White base background applied');
+      
+      // Layer 2: ImageData pixel-level white fill
+      const imageData = ctx.createImageData(300, 200);
+      for (let i = 0; i < imageData.data.length; i += 4) {
+        imageData.data[i] = 255;     // Red
+        imageData.data[i + 1] = 255; // Green
+        imageData.data[i + 2] = 255; // Blue
+        imageData.data[i + 3] = 255; // Alpha
+      }
+      ctx.putImageData(imageData, 0, 0);
+      console.log('✅ TRIPLE WHITE BACKGROUND: fillRect + ImageData pixel control applied');
       
       // Load image
       const img = document.createElement('img') as HTMLImageElement;

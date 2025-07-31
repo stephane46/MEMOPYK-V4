@@ -532,6 +532,66 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Generic image upload endpoint for cropped images
+  app.post("/api/upload/image", uploadImage.single('file'), async (req, res) => {
+    try {
+      if (!req.file) {
+        return res.status(400).json({ error: "No image file provided" });
+      }
+
+      // Keep original filename for cropped images
+      const filename = req.file.originalname;
+
+      console.log(`📤 Uploading cropped image: ${filename} (${(req.file.size / 1024 / 1024).toFixed(2)}MB)`);
+
+      // Read file from disk and upload to Supabase storage
+      const fileBuffer = require('fs').readFileSync(req.file.path);
+      const { data: uploadData, error: uploadError } = await supabase.storage
+        .from('memopyk-videos')
+        .upload(filename, fileBuffer, {
+          contentType: req.file.mimetype,
+          cacheControl: '3600',
+          upsert: true  // Enable overwrite if file exists
+        });
+
+      if (uploadError) {
+        console.error('Supabase upload error:', uploadError);
+        return res.status(500).json({ error: `Upload failed: ${uploadError.message}` });
+      }
+
+      const imageUrl = `https://supabase.memopyk.org/storage/v1/object/public/memopyk-videos/${filename}`;
+      
+      // Clean up temporary file
+      try {
+        require('fs').unlinkSync(req.file.path);
+        console.log(`🧹 Cleaned up temporary file: ${req.file.path}`);
+      } catch (cleanupError) {
+        console.warn(`⚠️ Failed to cleanup temp file: ${(cleanupError as any).message}`);
+      }
+      
+      res.json({ 
+        success: true, 
+        url: imageUrl,
+        filename: filename
+      });
+
+    } catch (error) {
+      console.error('Cropped image upload error:', error);
+      
+      // Clean up temporary file on error
+      if (req.file && req.file.path) {
+        try {
+          require('fs').unlinkSync(req.file.path);
+          console.log(`🧹 Cleaned up temporary file after error: ${req.file.path}`);
+        } catch (cleanupError) {
+          console.warn(`⚠️ Failed to cleanup temp file: ${(cleanupError as any).message}`);
+        }
+      }
+      
+      res.status(500).json({ error: "Failed to upload cropped image" });
+    }
+  });
+
   // Upload gallery image/thumbnail endpoint  
   app.post("/api/gallery/upload-image", uploadImage.single('image'), async (req, res) => {
     try {

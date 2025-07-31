@@ -1665,7 +1665,8 @@ export default function GalleryManagementNew() {
                   
                   console.log(`🖼️ Uploading cropped image as: ${filename}`);
                   
-                  // Upload the cropped image
+                  // Upload the cropped image using correct endpoint
+                  console.log(`🚀 UPLOAD v1.0.107: Using /api/upload/image endpoint`);
                   const uploadResponse = await fetch('/api/upload/image', {
                     method: 'POST',
                     body: formData
