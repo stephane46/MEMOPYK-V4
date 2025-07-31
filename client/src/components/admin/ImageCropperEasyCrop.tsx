@@ -217,16 +217,16 @@ export default function ImageCropperEasyCrop({ imageUrl, onSave, onCancel }: Ima
       ctx.fillStyle = '#FFFFFF';
       ctx.fillRect(0, 0, 300, 200);
       
-      // LAYER 4: NUCLEAR OPTION - Force white background with source-over
-      console.log('🎨 LAYER 4: NUCLEAR OPTION - Force white background');
+      // LAYER 4: FINAL WHITE BACKGROUND ENFORCEMENT
+      console.log('🎨 LAYER 4: Final white background enforcement with source-over');
       ctx.globalCompositeOperation = 'source-over';
       ctx.save();
       ctx.globalAlpha = 1.0;
-      ctx.fillStyle = 'rgb(255, 255, 255)';  // Pure white, no alpha
+      ctx.fillStyle = 'rgba(255, 255, 255, 1.0)';  // Pure white with full alpha
       ctx.fillRect(0, 0, 300, 200);
       ctx.restore();
       
-      console.log('✅ NUCLEAR WHITE BACKGROUND: 4-layer protection applied');
+      console.log('✅ FINAL WHITE BACKGROUND: Complete 4-layer protection applied');
 
       // DEBUG: Check canvas final state before conversion
       console.log('🔍 FINAL CANVAS DEBUG:');
@@ -237,6 +237,28 @@ export default function ImageCropperEasyCrop({ imageUrl, onSave, onCancel }: Ima
       // Test: Create a data URL to check transparency
       const testDataUrl = canvas.toDataURL('image/png');
       console.log('🔍 TEST PNG DataURL length:', testDataUrl.length);
+      
+      // NUCLEAR APPROACH: Pixel-level manipulation to force white background
+      console.log('🎨 NUCLEAR APPROACH: Pixel-level white background enforcement');
+      const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+      const pixels = imageData.data;
+      let transparentPixelsFound = 0;
+      
+      // Force any transparent pixels to white
+      for (let i = 0; i < pixels.length; i += 4) {
+        if (pixels[i + 3] < 255) { // If alpha < 255 (transparent)
+          pixels[i] = 255;     // Red = 255
+          pixels[i + 1] = 255; // Green = 255
+          pixels[i + 2] = 255; // Blue = 255
+          pixels[i + 3] = 255; // Alpha = 255
+          transparentPixelsFound++;
+        }
+      }
+      
+      console.log(`🔍 Transparent pixels found and fixed: ${transparentPixelsFound}`);
+      
+      // Put corrected pixels back
+      ctx.putImageData(imageData, 0, 0);
       
       // Convert to JPEG (no transparency support) with maximum quality
       console.log('🎨 Converting to JPEG with quality 1.0 (maximum)...');
