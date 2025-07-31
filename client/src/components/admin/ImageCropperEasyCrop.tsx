@@ -269,6 +269,13 @@ export default function ImageCropperEasyCrop({ imageUrl, onSave, onCancel }: Ima
       ctx.drawImage(img, offsetX, offsetY, scaledWidth, scaledHeight);
       
       console.log('✅ Image drawn on pixel-level white background');
+      
+      // FINAL SAFETY: Force white background behind any transparent areas using destination-over
+      console.log('🔒 FINAL SAFETY: Enforcing white background behind image');
+      ctx.globalCompositeOperation = 'destination-over';
+      ctx.fillStyle = '#FFFFFF';
+      ctx.fillRect(0, 0, 300, 200);
+      console.log('✅ FINAL WHITE LAYER: Applied behind image');
 
       // Convert to JPEG (no transparency support) for guaranteed white background
       const blob = await new Promise<Blob>((resolve) => {
