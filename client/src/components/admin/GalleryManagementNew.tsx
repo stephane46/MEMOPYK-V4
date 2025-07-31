@@ -374,27 +374,24 @@ export default function GalleryManagementNew() {
             )}
           </div>
 
-          {/* Right: NEW Button - Clearly separated from video selection */}
+          {/* Right: NEW Button - Big prominent button */}
           <div className="flex-shrink-0">
-            <Label className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2 block">
-              Gestion des vidéos
-            </Label>
             <div className="flex gap-2">
               {!isCreateMode ? (
                 <Button
                   onClick={handleCreateNew}
-                  size="sm"
-                  className="bg-gradient-to-r from-[#89BAD9] to-[#2A4759] hover:from-[#7AA8CC] hover:to-[#1e3340] text-white border-none shadow-lg font-semibold"
+                  size="lg"
+                  className="bg-gradient-to-r from-[#89BAD9] to-[#2A4759] hover:from-[#7AA8CC] hover:to-[#1e3340] text-white border-none shadow-lg font-bold text-lg px-8 py-4"
                 >
-                  <Plus className="w-4 h-4 mr-1" />
-                  NOUVEAU
+                  <Plus className="w-6 h-6 mr-2" />
+                  NOUVELLE VIDEO
                 </Button>
               ) : (
                 <Button
                   onClick={handleCancelCreate}
                   variant="outline"
-                  size="sm"
-                  className="bg-gray-500 hover:bg-gray-600 text-white"
+                  size="lg"
+                  className="bg-gray-500 hover:bg-gray-600 text-white px-8 py-4"
                 >
                   Annuler
                 </Button>
@@ -411,57 +408,7 @@ export default function GalleryManagementNew() {
           <Card className="border-[#89BAD9] dark:border-[#2A4759]">
             <CardContent className="p-6">
               <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                {/* Left Side - Status Controls */}
-                <div>
-                  <h3 className="text-lg font-semibold text-[#011526] dark:text-[#F2EBDC] mb-6 flex items-center gap-2">
-                    <Power className="w-5 h-5" />
-                    Statut & Activation
-                  </h3>
-                  <div className="flex items-center space-x-3">
-                    <Switch
-                      checked={formData.is_active}
-                      onCheckedChange={(checked) => setFormData({...formData, is_active: checked})}
-                      className="data-[state=checked]:bg-[#2A4759]"
-                    />
-                    <Label className="text-base font-medium text-[#011526] dark:text-[#F2EBDC]">
-                      {formData.is_active ? 'Actif' : 'Inactif'}
-                    </Label>
-                  </div>
-                </div>
-
-                {/* Center - Video Preview */}
-                <div>
-                  <div className="flex items-center justify-between mb-4">
-                    <h4 className="text-lg font-semibold text-[#011526] dark:text-[#F2EBDC] flex items-center gap-2">
-                      <PlayCircle className="w-5 h-5" />
-                      Aperçu Vidéo
-                    </h4>
-                  </div>
-                  {formData.video_filename || formData.video_url_en ? (
-                    <div className="relative bg-black rounded-lg overflow-hidden aspect-video max-w-sm">
-                      <video
-                        controls
-                        className="w-full h-full object-contain"
-                        style={{ backgroundColor: 'black' }}
-                      >
-                        <source 
-                          src={`/api/video-proxy?filename=${formData.video_filename || formData.video_url_en}`}
-                          type="video/mp4"
-                        />
-                        Votre navigateur ne supporte pas la lecture vidéo.
-                      </video>
-                    </div>
-                  ) : (
-                    <div className="aspect-video max-w-sm bg-gray-100 dark:bg-gray-800 rounded-lg flex items-center justify-center border-2 border-dashed border-gray-300 dark:border-gray-600">
-                      <div className="text-center text-gray-500 dark:text-gray-400">
-                        <PlayCircle className="w-12 h-12 mx-auto mb-2 opacity-50" />
-                        <p className="text-sm">Aucune vidéo disponible</p>
-                      </div>
-                    </div>
-                  )}
-                </div>
-
-                {/* Right Side - Image Preview */}
+                {/* Left Side - Image Preview */}
                 <div>
                   <div className="flex items-center justify-between mb-4">
                     <h4 className="text-lg font-semibold text-[#011526] dark:text-[#F2EBDC] flex items-center gap-2">
@@ -497,6 +444,56 @@ export default function GalleryManagementNew() {
                       </div>
                     )}
                   </div>
+                </div>
+
+                {/* Center - Status Controls */}
+                <div>
+                  <h3 className="text-lg font-semibold text-[#011526] dark:text-[#F2EBDC] mb-6 flex items-center gap-2">
+                    <Power className="w-5 h-5" />
+                    Statut & Activation
+                  </h3>
+                  <div className="flex items-center space-x-3">
+                    <Switch
+                      checked={formData.is_active}
+                      onCheckedChange={(checked) => setFormData({...formData, is_active: checked})}
+                      className="data-[state=checked]:bg-[#2A4759]"
+                    />
+                    <Label className="text-base font-medium text-[#011526] dark:text-[#F2EBDC]">
+                      {formData.is_active ? 'Actif' : 'Inactif'}
+                    </Label>
+                  </div>
+                </div>
+
+                {/* Right Side - Video Preview */}
+                <div>
+                  <div className="flex items-center justify-between mb-4">
+                    <h4 className="text-lg font-semibold text-[#011526] dark:text-[#F2EBDC] flex items-center gap-2">
+                      <PlayCircle className="w-5 h-5" />
+                      Aperçu Vidéo
+                    </h4>
+                  </div>
+                  {formData.video_filename || formData.video_url_en ? (
+                    <div className="relative bg-black rounded-lg overflow-hidden aspect-video max-w-sm">
+                      <video
+                        controls
+                        className="w-full h-full object-contain"
+                        style={{ backgroundColor: 'black' }}
+                      >
+                        <source 
+                          src={`/api/video-proxy?filename=${formData.video_filename || formData.video_url_en}`}
+                          type="video/mp4"
+                        />
+                        Votre navigateur ne supporte pas la lecture vidéo.
+                      </video>
+                    </div>
+                  ) : (
+                    <div className="aspect-video max-w-sm bg-gray-100 dark:bg-gray-800 rounded-lg flex items-center justify-center border-2 border-dashed border-gray-300 dark:border-gray-600">
+                      <div className="text-center text-gray-500 dark:text-gray-400">
+                        <PlayCircle className="w-12 h-12 mx-auto mb-2 opacity-50" />
+                        <p className="text-sm">Aucune vidéo disponible</p>
+                      </div>
+                    </div>
+                  )}
                 </div>
               </div>
             </CardContent>
