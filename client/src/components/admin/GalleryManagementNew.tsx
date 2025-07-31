@@ -588,86 +588,7 @@ export default function GalleryManagementNew() {
             </CardContent>
           </Card>
 
-          {/* Format Badge Section */}
-          <Card className="border-[#89BAD9] dark:border-[#2A4759]">
-            <CardContent className="p-6">
-              <h3 className="text-lg font-semibold text-[#011526] dark:text-[#F2EBDC] mb-6 flex items-center gap-2">
-                <Monitor className="w-5 h-5" />
-                Badge Format (marketing visuel)
-              </h3>
-              <p className="text-sm text-[#2A4759] dark:text-[#89BAD9] mb-6">
-                Personnalisez le texte du badge format affiché avec chaque vidéo. Ces badges guident les clients vers les plateformes optimales.
-              </p>
-              
-              <div className="grid grid-cols-2 gap-6">
-                <div className="space-y-4">
-                  <h4 className="font-medium text-[#011526] dark:text-[#F2EBDC]">English</h4>
-                  <div>
-                    <Label htmlFor="format_platform_en">Platform Line 1</Label>
-                    <Select value={formData.format_platform_en} onValueChange={(value) => setFormData({ ...formData, format_platform_en: value })}>
-                      <SelectTrigger className="bg-white dark:bg-gray-800">
-                        <SelectValue placeholder="Select platform category" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="Social Media">Social Media</SelectItem>
-                        <SelectItem value="Social Feed">Social Feed</SelectItem>
-                        <SelectItem value="Professional">Professional</SelectItem>
-                        <SelectItem value="Custom">Custom...</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-                  <div>
-                    <Label htmlFor="format_type_en">Format Line 2</Label>
-                    <Select value={formData.format_type_en} onValueChange={(value) => setFormData({ ...formData, format_type_en: value })}>
-                      <SelectTrigger className="bg-white dark:bg-gray-800">
-                        <SelectValue placeholder="Select format type" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="Mobile Stories">Mobile Stories</SelectItem>
-                        <SelectItem value="Instagram Posts">Instagram Posts</SelectItem>
-                        <SelectItem value="TV & Desktop">TV & Desktop</SelectItem>
-                        <SelectItem value="Short Videos">Short Videos</SelectItem>
-                        <SelectItem value="Custom">Custom...</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-                </div>
-                
-                <div className="space-y-4">
-                  <h4 className="font-medium text-[#011526] dark:text-[#F2EBDC]">Français</h4>
-                  <div>
-                    <Label htmlFor="format_platform_fr">Platform Line 1</Label>
-                    <Select value={formData.format_platform_fr} onValueChange={(value) => setFormData({ ...formData, format_platform_fr: value })}>
-                      <SelectTrigger className="bg-white dark:bg-gray-800">
-                        <SelectValue placeholder="Sélectionner catégorie plateforme" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="Réseaux Sociaux">Réseaux Sociaux</SelectItem>
-                        <SelectItem value="Flux Social">Flux Social</SelectItem>
-                        <SelectItem value="Professionnel">Professionnel</SelectItem>
-                        <SelectItem value="Personnalisé">Personnalisé...</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-                  <div>
-                    <Label htmlFor="format_type_fr">Format Line 2</Label>
-                    <Select value={formData.format_type_fr} onValueChange={(value) => setFormData({ ...formData, format_type_fr: value })}>
-                      <SelectTrigger className="bg-white dark:bg-gray-800">
-                        <SelectValue placeholder="Sélectionner type de format" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="Stories Mobiles">Stories Mobiles</SelectItem>
-                        <SelectItem value="Posts Instagram">Posts Instagram</SelectItem>
-                        <SelectItem value="TV & Bureau">TV & Bureau</SelectItem>
-                        <SelectItem value="Vidéos Courtes">Vidéos Courtes</SelectItem>
-                        <SelectItem value="Personnalisé">Personnalisé...</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
+
 
           {/* Content Descriptions */}
           <Card className="border-[#89BAD9] dark:border-[#2A4759]">
@@ -1248,6 +1169,87 @@ export default function GalleryManagementNew() {
                     onCheckedChange={(checked) => setFormData({ ...formData, is_active: checked })}
                   />
                   <Label htmlFor="is_active">Élément actif</Label>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Format Badge Section - Moved to Bottom */}
+          <Card className="border-[#89BAD9] dark:border-[#2A4759]">
+            <CardContent className="p-6">
+              <h3 className="text-lg font-semibold text-[#011526] dark:text-[#F2EBDC] mb-6 flex items-center gap-2">
+                <Monitor className="w-5 h-5" />
+                Badge Format (marketing visuel)
+              </h3>
+              <p className="text-sm text-[#2A4759] dark:text-[#89BAD9] mb-6">
+                Personnalisez le texte du badge format affiché avec chaque vidéo. Ces badges guident les clients vers les plateformes optimales.
+              </p>
+              
+              <div className="grid grid-cols-2 gap-6">
+                <div className="space-y-4">
+                  <h4 className="font-medium text-[#011526] dark:text-[#F2EBDC]">English</h4>
+                  <div>
+                    <Label htmlFor="format_platform_en">Platform Line 1</Label>
+                    <Select value={formData.format_platform_en} onValueChange={(value) => setFormData({ ...formData, format_platform_en: value })}>
+                      <SelectTrigger className="bg-white dark:bg-gray-800">
+                        <SelectValue placeholder="Select platform category" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="Social Media">Social Media</SelectItem>
+                        <SelectItem value="Social Feed">Social Feed</SelectItem>
+                        <SelectItem value="Professional">Professional</SelectItem>
+                        <SelectItem value="Custom">Custom...</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div>
+                    <Label htmlFor="format_type_en">Format Line 2</Label>
+                    <Select value={formData.format_type_en} onValueChange={(value) => setFormData({ ...formData, format_type_en: value })}>
+                      <SelectTrigger className="bg-white dark:bg-gray-800">
+                        <SelectValue placeholder="Select format type" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="Mobile Stories">Mobile Stories</SelectItem>
+                        <SelectItem value="Instagram Posts">Instagram Posts</SelectItem>
+                        <SelectItem value="TV & Desktop">TV & Desktop</SelectItem>
+                        <SelectItem value="Short Videos">Short Videos</SelectItem>
+                        <SelectItem value="Custom">Custom...</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </div>
+                
+                <div className="space-y-4">
+                  <h4 className="font-medium text-[#011526] dark:text-[#F2EBDC]">Français</h4>
+                  <div>
+                    <Label htmlFor="format_platform_fr">Platform Line 1</Label>
+                    <Select value={formData.format_platform_fr} onValueChange={(value) => setFormData({ ...formData, format_platform_fr: value })}>
+                      <SelectTrigger className="bg-white dark:bg-gray-800">
+                        <SelectValue placeholder="Sélectionner catégorie plateforme" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="Réseaux Sociaux">Réseaux Sociaux</SelectItem>
+                        <SelectItem value="Flux Social">Flux Social</SelectItem>
+                        <SelectItem value="Professionnel">Professionnel</SelectItem>
+                        <SelectItem value="Personnalisé">Personnalisé...</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div>
+                    <Label htmlFor="format_type_fr">Format Line 2</Label>
+                    <Select value={formData.format_type_fr} onValueChange={(value) => setFormData({ ...formData, format_type_fr: value })}>
+                      <SelectTrigger className="bg-white dark:bg-gray-800">
+                        <SelectValue placeholder="Sélectionner type de format" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="Stories Mobiles">Stories Mobiles</SelectItem>
+                        <SelectItem value="Posts Instagram">Posts Instagram</SelectItem>
+                        <SelectItem value="TV & Bureau">TV & Bureau</SelectItem>
+                        <SelectItem value="Vidéos Courtes">Vidéos Courtes</SelectItem>
+                        <SelectItem value="Personnalisé">Personnalisé...</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
                 </div>
               </div>
             </CardContent>
