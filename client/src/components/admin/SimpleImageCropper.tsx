@@ -135,7 +135,7 @@ const DraggableCover = ({ imageUrl, onPositionChange, previewRef }: { imageUrl: 
       onMouseLeave={handleMouseUp}
       style={{
         backgroundImage: imageLoaded ? `url(${imageUrl})` : undefined,
-        backgroundColor: imageLoaded ? 'transparent' : '#f3f4f6',
+        backgroundColor: '#ffffff', // Always solid white background - matches canvas generation
         backgroundSize: 'cover',
         backgroundPosition: `${position.x}% ${position.y}%`,
         borderRadius: 8,
