@@ -1196,7 +1196,7 @@ export default function GalleryManagementNew() {
                           Image Partagée
                         </Label>
                         <DirectUpload
-                          key={`shared-image-${formData.image_url_en || 'empty'}`}
+
                           type="image"
                           acceptedTypes="image/*"
                           uploadId="shared-image-upload-v87"
@@ -1284,7 +1284,7 @@ export default function GalleryManagementNew() {
                             Image Française
                           </Label>
                           <DirectUpload
-                            key={`french-image-${formData.image_url_fr || 'empty'}`}
+
                             type="image"
                             acceptedTypes="image/*"
                             uploadId="french-image-upload-v87"
@@ -1363,7 +1363,7 @@ export default function GalleryManagementNew() {
                             English Image
                           </Label>
                           <DirectUpload
-                            key={`english-image-${formData.image_url_en || 'empty'}`}
+
                             type="image"
                             acceptedTypes="image/*"
                             uploadId="english-image-upload-v87"
