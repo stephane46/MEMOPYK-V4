@@ -1645,7 +1645,7 @@ export default function GalleryManagementNew() {
             </div>
             
             <SimpleImageCropper
-              imageUrl={cropperLanguage === 'fr' ? selectedItem.image_url_fr : selectedItem.image_url_en}
+              imageUrl={getFullUrl(cropperLanguage === 'fr' ? selectedItem.image_url_fr : selectedItem.image_url_en)}
               onSave={(blob: Blob, cropSettings: any) => {
                 console.log(`🖼️ SIMPLE CROPPER: Cropping ${cropperLanguage} image`);
                 console.log(`🖼️ Source URL: ${cropperLanguage === 'fr' ? selectedItem.image_url_fr : selectedItem.image_url_en}`);
