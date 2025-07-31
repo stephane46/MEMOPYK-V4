@@ -727,6 +727,8 @@ export default function GalleryManagementNew() {
                         </Label>
                         <DirectUpload
                           type="video"
+                          acceptedTypes="video/*"
+                          uploadId="shared-video-upload-v87"
                           onUploadComplete={(result) => {
                             console.log('✅ Shared video upload completed:', result);
                             setFormData({
@@ -754,6 +756,8 @@ export default function GalleryManagementNew() {
                         </Label>
                         <DirectUpload
                           type="image"
+                          acceptedTypes="image/*"
+                          uploadId="shared-image-upload-v87"
                           onUploadComplete={(result) => {
                             console.log('✅ Shared image upload completed:', result);
                             setFormData({
@@ -828,6 +832,8 @@ export default function GalleryManagementNew() {
                           </Label>
                           <DirectUpload
                             type="image"
+                            acceptedTypes="image/*"
+                            uploadId="french-image-upload-v87"
                             onUploadComplete={(result) => {
                               console.log('✅ French image upload completed:', result);
                               setFormData(prev => ({
@@ -894,6 +900,8 @@ export default function GalleryManagementNew() {
                           </Label>
                           <DirectUpload
                             type="image"
+                            acceptedTypes="image/*"
+                            uploadId="english-image-upload-v87"
                             onUploadComplete={(result) => {
                               console.log('✅ English image upload completed:', result);
                               setFormData(prev => ({

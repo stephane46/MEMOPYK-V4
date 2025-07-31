@@ -95,6 +95,7 @@ Preferred communication style: Simple, everyday language.
 - Gallery management interface uses modern component with proper upload validation
 - Clear debugging logs help identify component configuration and prevent future format validation issues
 - Upload system consistency maintained across all image and video upload components
+- Explicit acceptedTypes and unique uploadId props added to all DirectUpload components for browser compatibility
 
 ### VIDEO URL DISPLAY FIX & ADMIN INTERFACE CLEANUP COMPLETE - v1.0.86 (July 31, 2025) ✅ FIELD ACCURACY
 **Video URL Complete Display Fix - User Request Implemented:**
