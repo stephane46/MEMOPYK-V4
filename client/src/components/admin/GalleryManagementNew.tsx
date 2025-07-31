@@ -468,23 +468,15 @@ export default function GalleryManagementNew() {
       toast({ title: "✅ Succès", description: "Élément de galerie mis à jour avec succès" });
       queryClient.invalidateQueries({ queryKey: ['/api/gallery'] });
       queryClient.removeQueries({ queryKey: ['/api/gallery'] });
-      
-      // Don't clear pending previews or reset state immediately to prevent URL loss
-      console.log('✅ UPDATE SUCCESS - Preserving uploaded URLs');
-      
-      // Force component re-render with cache refresh key update after delay
+      setPendingPreviews({}); // Clear pending previews after successful save
+      // Force component re-render with cache refresh key update
       setTimeout(() => {
         queryClient.invalidateQueries({ queryKey: ['/api/gallery'] });
+        setFormData({ ...formData }); // Force state update
         setForceRefreshKey(prev => prev + 1); // Force image refresh
         console.log(`🖼️ FORCE REFRESH KEY UPDATED: ${forceRefreshKey + 1}`);
-        
-        // Clear state only after successful refresh
-        setTimeout(() => {
-          setPendingPreviews({}); // Clear pending previews after successful save
-          persistentUploadState.reset();
-          console.log('🧹 State cleaned after successful update');
-        }, 1000);
       }, 500);
+      persistentUploadState.reset();
     },
     onError: (error: any) => {
       toast({ title: "❌ Erreur", description: "Erreur lors de la mise à jour de l'élément", variant: "destructive" });
@@ -507,25 +499,10 @@ export default function GalleryManagementNew() {
   });
 
   const handleSave = () => {
-    // Merge uploaded URLs with form data before saving
-    const dataToSave = {
-      ...formData,
-      // Ensure uploaded URLs are included
-      image_url_en: pendingPreviews.image_url_en || persistentUploadState.image_url_en || formData.image_url_en,
-      image_url_fr: pendingPreviews.image_url_fr || persistentUploadState.image_url_fr || formData.image_url_fr,
-      video_url_en: pendingPreviews.video_url_en || persistentUploadState.video_url_en || formData.video_url_en,
-      video_url_fr: pendingPreviews.video_url_fr || persistentUploadState.video_url_fr || formData.video_url_fr,
-      video_filename: pendingPreviews.video_filename || persistentUploadState.video_filename || formData.video_filename,
-    };
-    
-    console.log('🔄 SAVE DEBUG - Data being saved:', dataToSave);
-    console.log('🔄 SAVE DEBUG - Pending previews:', pendingPreviews);
-    console.log('🔄 SAVE DEBUG - Persistent state:', persistentUploadState);
-    
     if (isCreateMode) {
-      createItemMutation.mutate(dataToSave);
+      createItemMutation.mutate(formData);
     } else if (selectedVideoId) {
-      updateItemMutation.mutate({ id: selectedVideoId, data: dataToSave });
+      updateItemMutation.mutate({ id: selectedVideoId, data: formData });
     }
   };
 
@@ -1137,7 +1114,11 @@ export default function GalleryManagementNew() {
                       Utiliser la même vidéo pour FR et EN
                     </Label>
                   </div>
-
+                  <p className="text-sm text-blue-700 dark:text-blue-300 mt-2">
+                    {formData.use_same_video 
+                      ? "✅ La même vidéo sera utilisée pour les deux langues" 
+                      : "⚠️ Vous pouvez maintenant spécifier des vidéos différentes pour FR et EN"}
+                  </p>
                 </div>
 
                 {formData.use_same_video ? (
@@ -1151,7 +1132,9 @@ export default function GalleryManagementNew() {
                         🌐 Fichiers Partagés (FR + EN)
                       </h4>
                     </div>
-
+                    <p className="text-sm text-purple-800 dark:text-purple-200 mb-4">
+                      Téléchargez les fichiers qui seront utilisés pour les deux langues.
+                    </p>
                     
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       <div>
@@ -1187,7 +1170,7 @@ export default function GalleryManagementNew() {
                               className: "bg-purple-50 dark:bg-purple-900/20 border-purple-200 dark:border-purple-800"
                             });
                           }}
-                          currentFilename={getFullUrl(formData.video_filename || formData.video_url_en)}
+                          currentFilename={formData.video_filename || formData.video_url_en}
                         />
                       </div>
                       <div>
@@ -1196,7 +1179,6 @@ export default function GalleryManagementNew() {
                           Image Partagée
                         </Label>
                         <DirectUpload
-
                           type="image"
                           acceptedTypes="image/*"
                           uploadId="shared-image-upload-v87"
@@ -1221,7 +1203,7 @@ export default function GalleryManagementNew() {
                               className: "bg-purple-50 dark:bg-purple-900/20 border-purple-200 dark:border-purple-800"
                             });
                           }}
-                          currentFilename={getFullUrl(pendingPreviews.image_url_en || formData.image_url_en)}
+                          currentFilename={formData.image_url_en}
                         />
                       </div>
                     </div>
@@ -1275,7 +1257,7 @@ export default function GalleryManagementNew() {
                                 className: "bg-blue-50 dark:bg-blue-900/20 border-blue-200 dark:border-blue-800"
                               });
                             }}
-                            currentFilename={getFullUrl(formData.video_url_fr)}
+                            currentFilename={formData.video_url_fr}
                           />
                         </div>
                         <div>
@@ -1284,7 +1266,6 @@ export default function GalleryManagementNew() {
                             Image Française
                           </Label>
                           <DirectUpload
-
                             type="image"
                             acceptedTypes="image/*"
                             uploadId="french-image-upload-v87"
@@ -1306,7 +1287,7 @@ export default function GalleryManagementNew() {
                                 className: "bg-blue-50 dark:bg-blue-900/20 border-blue-200 dark:border-blue-800"
                               });
                             }}
-                            currentFilename={getFullUrl(pendingPreviews.image_url_fr || formData.image_url_fr)}
+                            currentFilename={formData.image_url_fr}
                           />
                         </div>
                       </div>
@@ -1354,7 +1335,7 @@ export default function GalleryManagementNew() {
                                 className: "bg-green-50 dark:bg-green-900/20 border-green-200 dark:border-green-800"
                               });
                             }}
-                            currentFilename={getFullUrl(formData.video_url_en)}
+                            currentFilename={formData.video_url_en}
                           />
                         </div>
                         <div>
@@ -1363,7 +1344,6 @@ export default function GalleryManagementNew() {
                             English Image
                           </Label>
                           <DirectUpload
-
                             type="image"
                             acceptedTypes="image/*"
                             uploadId="english-image-upload-v87"
@@ -1385,7 +1365,7 @@ export default function GalleryManagementNew() {
                                 className: "bg-green-50 dark:bg-green-900/20 border-green-200 dark:border-green-800"
                               });
                             }}
-                            currentFilename={getFullUrl(pendingPreviews.image_url_en || formData.image_url_en)}
+                            currentFilename={formData.image_url_en}
                           />
                         </div>
                       </div>
@@ -1487,7 +1467,17 @@ export default function GalleryManagementNew() {
                     </div>
                   )}
                   
-
+                  <div className="mt-3 p-2 bg-blue-50 dark:bg-blue-900/30 rounded border border-blue-200 dark:border-blue-700">
+                    <div className="flex items-start gap-2">
+                      <Info className="h-4 w-4 text-blue-600 mt-0.5 flex-shrink-0" />
+                      <div className="text-xs text-blue-800 dark:text-blue-200">
+                        <p className="font-medium mb-1">📋 Format de données uniforme :</p>
+                        <p>• Toutes les URLs sont maintenant au format complet Supabase</p>
+                        <p>• Vidéos et images utilisent le même format d'URL pour la cohérence</p>
+                        <p>• Les URLs complètes permettent un accès direct aux fichiers</p>
+                      </div>
+                    </div>
+                  </div>
                 </div>
 
                 {/* Manual URL Override (for advanced users) */}
@@ -1498,7 +1488,12 @@ export default function GalleryManagementNew() {
                       Modification Manuelle des URLs
                       <Badge variant="secondary" className="text-xs">Manuel</Badge>
                     </h4>
-
+                    <p className="text-xs text-gray-600 dark:text-gray-400">
+                      {formData.use_same_video 
+                        ? "Section avancée pour modifier directement les URLs Supabase partagées entre FR et EN."
+                        : "Section avancée pour modifier directement les URLs Supabase spécifiques à chaque langue."
+                      }
+                    </p>
                   </div>
                   
                   {formData.use_same_video ? (
@@ -1674,7 +1669,9 @@ export default function GalleryManagementNew() {
                 <Monitor className="w-5 h-5" />
                 Badge Format (marketing visuel)
               </h3>
-
+              <p className="text-sm text-[#2A4759] dark:text-[#89BAD9] mb-6">
+                Personnalisez le texte du badge format affiché avec chaque vidéo. Ces badges guident les clients vers les plateformes optimales.
+              </p>
               
               <div className="grid grid-cols-2 gap-6">
                 <div className="space-y-4">
@@ -1929,7 +1926,9 @@ export default function GalleryManagementNew() {
             </Button>
           </div>
           
-
+          <p className="text-sm text-[#2A4759] dark:text-[#89BAD9] mb-4">
+            Créez et gérez les templates de format badges qui apparaissent dans les dropdown des éléments de galerie.
+          </p>
 
           {showFormatBadgeManager && (
             <div className="border-t border-gray-200 dark:border-gray-600 pt-4">

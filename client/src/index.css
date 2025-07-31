@@ -71,25 +71,6 @@ body {
   background: linear-gradient(135deg, var(--memopyk-cream) 0%, #FFFFFF 100%);
 }
 
-/* Toast Override - Fix transparent background */
-[data-sonner-toaster] [data-sonner-toast] {
-  background: white !important;
-  border: 1px solid #E5E7EB !important;
-  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05) !important;
-}
-
-[data-sonner-toaster] [data-sonner-toast][data-type="error"] {
-  background: #FEF2F2 !important;
-  border-color: #FECACA !important;
-  color: #DC2626 !important;
-}
-
-[data-sonner-toaster] [data-sonner-toast][data-type="success"] {
-  background: #F0FDF4 !important;
-  border-color: #BBF7D0 !important;
-  color: #16A34A !important;
-}
-
 /* Glass Morphism Card Effects */
 .glass-card {
   background: rgba(255, 255, 255, 0.25);

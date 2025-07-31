@@ -315,10 +315,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.delete("/api/gallery/:id", async (req, res) => {
     try {
-      const itemId = req.params.id; // Keep as string - hybrid storage handles both string and number IDs
-      console.log(`🗑️ Deleting gallery item with ID: ${itemId} (type: ${typeof itemId})`);
+      const itemId = parseInt(req.params.id);
+      console.log(`🗑️ Deleting gallery item with ID: ${itemId}`);
       
-      if (!itemId) {
+      if (isNaN(itemId)) {
         return res.status(400).json({ error: "Invalid gallery item ID" });
       }
       
@@ -363,7 +363,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
 
       // Validate bucket name
-      const allowedBuckets = ['memopyk-videos']; // Unified bucket for ALL content (videos and images)
+      const allowedBuckets = ['memopyk-videos']; // Unified bucket for all media
       if (!allowedBuckets.includes(bucket)) {
         return res.status(400).json({ error: "Invalid bucket name" });
       }
@@ -2417,7 +2417,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
           if (!videoCache.isVideoCached(filename)) {
             console.log(`⬇️ Caching gallery video: ${filename}`);
             const encodedFilename = encodeURIComponent(filename);
-            const videoUrl = `https://supabase.memopyk.org/storage/v1/object/public/memopyk-videos/${encodedFilename}`;
+            const videoUrl = `https://supabase.memopyk.org/storage/v1/object/public/memopyk-gallery/${encodedFilename}`;
             console.log(`   - Original filename: ${filename}`);
             console.log(`   - Encoded for URL: ${encodedFilename}`);
             console.log(`   - Supabase URL: ${videoUrl}`);
@@ -3540,7 +3540,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       for (const filename of heroVideos) {
         try {
-          const videoUrl = `https://supabase.memopyk.org/storage/v1/object/public/memopyk-videos/${filename}`;
+          const videoUrl = `https://supabase.memopyk.org/storage/v1/object/public/memopyk-gallery/${filename}`;
           console.log(`🔄 Caching hero video: ${filename} from ${videoUrl}`);
           
           // Download and cache the video

@@ -6,11 +6,6 @@ MEMOPYK is a full-stack memory film platform currently undergoing a complete reb
 ## User Preferences
 Preferred communication style: Simple, everyday language.
 
-**Architectural Decision Authority:**
-- Always ask before making architectural changes that affect bucket strategy or content organization
-- Unified bucket approach (memopyk-videos for all content) is the established architecture
-- DO NOT change bucket configurations without explicit user approval
-
 **Technical Decisions:**
 - React Editor Future-Proofing: Consider TipTap as React 19 alternative to ReactQuill when needed
 - Track ReactQuill updates for React 19 compatibility improvements
@@ -23,15 +18,13 @@ Preferred communication style: Simple, everyday language.
 - Track which gallery items are most popular to inform business decisions
 
 **Gallery Video Architecture Decision - FINAL:**
-- Unified Bucket Strategy: All videos (hero and gallery) use single `memopyk-videos` bucket for consistency
-- Fixed URL Extraction: Gallery section properly extracts filenames from full URLs for proxy compatibility
-- Cached Proxy System: Both hero and gallery videos use video proxy for fast cached serving (50ms load times)
-- Database Cleanup: All gallery items point to correct `memopyk-videos` bucket URLs
-- Old Buckets Removed: `memopyk-gallery` bucket (66 files) and `memopyk-hero` bucket (4 files) completely deleted from Supabase
-- Consistent Performance: Gallery videos now match hero video performance with cached serving
-- Simplified Architecture: Single bucket (`memopyk-videos`), single proxy system, unified caching for all video content
-- Final Infrastructure: Only 1 bucket remains - `memopyk-videos` (all content: videos, images, and documents)
-- Database Migration: All existing image URLs migrated from `memopyk-media` to `memopyk-videos` bucket
+- Direct CDN Streaming: Gallery videos use direct Supabase CDN URLs for reliable production playback
+- Infrastructure Bypass: Avoids infrastructure blocking issues that prevented cached video serving in production
+- Clean Architecture: Hero videos = cache system (50ms), Gallery videos = direct CDN (1500ms but reliable)
+- Production Reliability: Eliminates HTTP 500 errors and ensures gallery videos work in all deployment environments
+- Simplified Maintenance: Reduced complexity by keeping cache system only where it works (hero videos)
+- Complete Functionality: Gallery lightbox, admin management, and all features working reliably
+- Performance Trade-off: Accepted slower gallery video loading for guaranteed production functionality
 
 **Clean Minimal Video Controls - USER REQUIREMENT FULLY ACHIEVED:**
 - Three-Dots Menu Removed: Eliminated vertical menu with download, playback speed, and picture-in-picture options

@@ -198,7 +198,7 @@ export default function GallerySection() {
     const random = Math.random().toString(36).substring(7);
     const hash = `#${timestamp}-${random}`; // Fragment identifier forces browser to treat as new resource
     const directUrl = `https://supabase.memopyk.org/storage/v1/object/public/memopyk-videos/${encodeURIComponent(filename || '')}?cacheBust=${timestamp}&v=${random}&nocache=1${hash}`;
-    console.log(`🖼️ DIRECT CDN IMAGE URL v1.0.107: ${directUrl} (unified bucket - memopyk-videos)`);
+    console.log(`🖼️ DIRECT CDN IMAGE URL v1.0.107: ${directUrl} (reframed static priority)`);
     return directUrl;
   };
 
@@ -250,25 +250,17 @@ export default function GallerySection() {
   };
 
   const getVideoUrl = (item: GalleryItem, index: number) => {
-    // CACHED PROXY IMPLEMENTATION: Use video proxy for fast cached serving (50ms vs 1500ms)
+    // DIRECT CDN IMPLEMENTATION: Bypass video proxy entirely to avoid infrastructure blocking
     const filename = item.videoFilename || item.videoUrlEn || item.videoUrlFr;
     
-    // Extract filename from full URLs for proxy compatibility
-    let actualFilename = filename;
-    if (filename && filename.startsWith('http')) {
-      // Extract just the filename from full URLs
-      actualFilename = filename.split('/').pop() || filename;
-      console.log(`🎬 EXTRACTED FILENAME for item ${index}: ${actualFilename} from ${filename}`);
-    }
+    // Generate direct Supabase CDN URL
+    const directCdnUrl = `https://supabase.memopyk.org/storage/v1/object/public/memopyk-videos/${filename}`;
     
-    // Use video proxy for cached serving (much faster than direct CDN)
-    const proxyUrl = `/api/video-proxy?filename=${encodeURIComponent(actualFilename)}`;
+    console.log(`🎬 DIRECT CDN STREAMING for item ${index}: ${filename}`);
+    console.log(`🔧 CDN URL (bypassing proxy): ${directCdnUrl}`);
+    console.log(`⚠️ Note: Direct CDN streaming (slower 1500ms) to avoid infrastructure blocking`);
     
-    console.log(`🎬 CACHED PROXY STREAMING for item ${index}: ${actualFilename}`);
-    console.log(`🔧 Proxy URL: ${proxyUrl}`);
-    console.log(`⚡ Note: Using cached proxy (50ms) instead of direct CDN (1500ms)`);
-    
-    return proxyUrl;
+    return directCdnUrl;
   };
 
   // Get optimal viewing format info for marketing display - now using editable database fields
