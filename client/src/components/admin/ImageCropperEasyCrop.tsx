@@ -25,8 +25,6 @@ const DraggableCover: React.FC<DraggableCoverProps> = ({
 
   // Test image loading - handle both proxy URLs and direct Supabase URLs
   useEffect(() => {
-    console.log('🖼️ DraggableCover imageUrl received:', imageUrl);
-    
     let finalUrl = imageUrl;
     
     // If it's already a full URL, use it directly with cache-busting
@@ -34,24 +32,17 @@ const DraggableCover: React.FC<DraggableCoverProps> = ({
       const timestamp = Date.now();
       const separator = imageUrl.includes('?') ? '&' : '?';
       finalUrl = `${imageUrl}${separator}cacheBust=${timestamp}&nocache=1`;
-      console.log('🖼️ Using direct URL with cache-busting:', finalUrl);
     } else {
       // Extract filename and use proxy
       const filename = imageUrl.split('/').pop()?.split('?')[0] || '';
       finalUrl = `/api/image-proxy?filename=${filename}`;
-      console.log('🖼️ Using proxy URL:', finalUrl);
     }
     
     const testImg = new Image();
     testImg.crossOrigin = 'anonymous';
-    testImg.onload = () => {
-      console.log('✅ DraggableCover image loaded successfully');
-      setImageLoaded(true);
-    };
+    testImg.onload = () => setImageLoaded(true);
     testImg.onerror = (error) => {
       console.error('❌ DraggableCover image failed to load:', error);
-      console.error('❌ Original imageUrl:', imageUrl);
-      console.error('❌ Final URL:', finalUrl);
     };
     testImg.src = finalUrl;
   }, [imageUrl]);
@@ -73,49 +64,44 @@ const DraggableCover: React.FC<DraggableCoverProps> = ({
   const handleMouseMove = useCallback((e: MouseEvent) => {
     if (!dragging || !dragStart.current) return;
     const rect = containerRef.current!.getBoundingClientRect();
-    const dx = e.clientX - dragStart.current.mouseX;
-    const dy = e.clientY - dragStart.current.mouseY;
-    const deltaX = (dx / rect.width) * 100;
-    const deltaY = (dy / rect.height) * 100;
-    let newX = dragStart.current.posX + deltaX;
-    let newY = dragStart.current.posY + deltaY;
-    newX = Math.min(100, Math.max(0, newX));
-    newY = Math.min(100, Math.max(0, newY));
+
+    const deltaX = e.clientX - dragStart.current.mouseX;
+    const deltaY = e.clientY - dragStart.current.mouseY;
+    
+    const newX = Math.max(0, Math.min(100, dragStart.current.posX + (deltaX / rect.width) * 100));
+    const newY = Math.max(0, Math.min(100, dragStart.current.posY + (deltaY / rect.height) * 100));
+    
     setPos({ x: newX, y: newY });
     onPositionChange?.({ x: newX, y: newY });
   }, [dragging, onPositionChange]);
 
-  // Mouse up: stop dragging
   const handleMouseUp = useCallback(() => {
-    if (dragging) setDragging(false);
-  }, [dragging]);
+    setDragging(false);
+    dragStart.current = null;
+  }, []);
 
-  // Attach global listeners when dragging
+  // Global mouse events
   useEffect(() => {
     if (dragging) {
-      window.addEventListener('mousemove', handleMouseMove);
-      window.addEventListener('mouseup', handleMouseUp);
-    } else {
-      window.removeEventListener('mousemove', handleMouseMove);
-      window.removeEventListener('mouseup', handleMouseUp);
+      document.addEventListener('mousemove', handleMouseMove);
+      document.addEventListener('mouseup', handleMouseUp);
+      return () => {
+        document.removeEventListener('mousemove', handleMouseMove);
+        document.removeEventListener('mouseup', handleMouseUp);
+      };
     }
-    return () => {
-      window.removeEventListener('mousemove', handleMouseMove);
-      window.removeEventListener('mouseup', handleMouseUp);
-    };
   }, [dragging, handleMouseMove, handleMouseUp]);
 
-  // Get final URL for background display
-  const getFinalUrl = () => {
-    if (imageUrl.startsWith('http')) {
-      const timestamp = Date.now();
-      const separator = imageUrl.includes('?') ? '&' : '?';
-      return `${imageUrl}${separator}cacheBust=${timestamp}&nocache=1`;
-    } else {
-      const filename = imageUrl.split('/').pop()?.split('?')[0] || '';
-      return `/api/image-proxy?filename=${filename}`;
-    }
-  };
+  // Create final URL for background image
+  let finalImageUrl = imageUrl;
+  if (imageUrl.startsWith('http')) {
+    const timestamp = Date.now();
+    const separator = imageUrl.includes('?') ? '&' : '?';
+    finalImageUrl = `${imageUrl}${separator}cacheBust=${timestamp}&nocache=1`;
+  } else {
+    const filename = imageUrl.split('/').pop()?.split('?')[0] || '';
+    finalImageUrl = `/api/image-proxy?filename=${filename}`;
+  }
 
   return (
     <div
@@ -124,9 +110,8 @@ const DraggableCover: React.FC<DraggableCoverProps> = ({
       style={{
         width: 300,
         height: 200,
-        overflow: 'hidden',
         cursor: dragging ? 'grabbing' : 'grab',
-        backgroundImage: imageLoaded ? `url("${getFinalUrl()}")` : 'none',
+        backgroundImage: imageLoaded ? `url(${finalImageUrl})` : 'none',
         backgroundColor: imageLoaded ? 'transparent' : '#f3f4f6',
         backgroundSize: 'cover',
         backgroundPosition: `${pos.x}% ${pos.y}%`,
@@ -148,106 +133,29 @@ const DraggableCover: React.FC<DraggableCoverProps> = ({
 
 export default function ImageCropperEasyCrop({ imageUrl, onSave, onCancel }: ImageCropperEasyCropProps) {
   const [loading, setLoading] = useState(false);
-  const [position, setPosition] = useState({ x: 50, y: 50 }); // track position for canvas generation
-
-  // Debug log the received image URL
-  useEffect(() => {
-    console.log('🎨 ImageCropperEasyCrop received imageUrl:', imageUrl);
-  }, [imageUrl]);
+  const [position, setPosition] = useState({ x: 50, y: 50 });
 
   const generateStaticImage = async () => {
     setLoading(true);
+    
     try {
       console.log('🚀 PROOF: ImageCropperEasyCrop.tsx generateStaticImage() called - THIS IS THE CORRECT COMPONENT!');
       console.log('🎨 TRIPLE-LAYER WHITE BACKGROUND v1.0.98 - Starting image generation');
-      console.log('📍 File: client/src/components/admin/ImageCropperEasyCrop.tsx');
-      console.log('🖼️ Source imageUrl:', imageUrl);
       
-      // Create a canvas to generate the 300×200 static image with BULLETPROOF white background
+      // Create canvas with high-DPI support
       const canvas = document.createElement('canvas');
-      const ctx = canvas.getContext('2d');
-      if (!ctx) throw new Error('Canvas context not available');
-
-      // Set canvas to high-DPI dimensions for maximum sharpness
+      const ctx = canvas.getContext('2d')!;
       const dpr = window.devicePixelRatio || 1;
+      
       canvas.width = 300 * dpr;
       canvas.height = 200 * dpr;
-      canvas.style.backgroundColor = '#FFFFFF'; // Force white in CSS
-      canvas.style.width = '300px';
-      canvas.style.height = '200px';
-
-      console.log(`🎨 BULLETPROOF WHITE BACKGROUND v1.0.96: DPR=${dpr}, Canvas: ${canvas.width}×${canvas.height}px`);
-
-      // Scale context back to CSS pixels while maintaining high-DPI backing store
       ctx.scale(dpr, dpr);
-      
-      // IMMEDIATE WHITE BACKGROUND ENFORCEMENT - BEFORE ANY OTHER OPERATIONS
-      console.log('🎨 IMMEDIATE WHITE FILL: Before any image operations');
-      ctx.globalCompositeOperation = 'source-over';
-      ctx.fillStyle = '#FFFFFF';
-      ctx.fillRect(0, 0, 300, 200);
-      ctx.strokeStyle = '#FFFFFF';
-      ctx.lineWidth = 4;
-      ctx.strokeRect(0, 0, 300, 200);
 
-      // Load the image - handle both direct URLs and proxy URLs
-      const img = new Image();
-      img.crossOrigin = 'anonymous';
-      
-      let finalUrl = imageUrl;
-      if (imageUrl.startsWith('http')) {
-        // Use direct URL with cache-busting for canvas generation
-        const timestamp = Date.now();
-        const separator = imageUrl.includes('?') ? '&' : '?';
-        finalUrl = `${imageUrl}${separator}cacheBust=${timestamp}&nocache=1`;
-        console.log(`🖼️ Canvas loading direct URL: ${finalUrl}`);
-      } else {
-        // Use image proxy for canvas generation
-        const filename = imageUrl.split('/').pop()?.split('?')[0] || '';
-        finalUrl = `/api/image-proxy?filename=${filename}`;
-        console.log(`🖼️ Canvas loading image via proxy: ${finalUrl}`);
-      }
-      
-      await new Promise<void>((resolve, reject) => {
-        img.onload = () => {
-          console.log(`✅ Canvas image loaded successfully: ${img.naturalWidth}×${img.naturalHeight}`);
-          resolve();
-        };
-        img.onerror = (error) => {
-          console.error(`❌ Canvas image failed to load:`, error);
-          console.error(`❌ Original URL:`, imageUrl);
-          console.error(`❌ Final URL:`, finalUrl);
-          reject(new Error(`Failed to load image: ${imageUrl}`));
-        };
-        img.src = finalUrl;
-      });
-
-      // Calculate background-size: cover dimensions
-      const imgAspect = img.naturalWidth / img.naturalHeight;
-      const canvasAspect = 300 / 200;
-
-      let scaledWidth, scaledHeight;
-      if (imgAspect > canvasAspect) {
-        // Image is wider - fit to height, crop width
-        scaledHeight = 200;
-        scaledWidth = scaledHeight * imgAspect;
-      } else {
-        // Image is taller - fit to width, crop height
-        scaledWidth = 300;
-        scaledHeight = scaledWidth / imgAspect;
-      }
-
-      console.log(`📐 Original: ${img.naturalWidth}×${img.naturalHeight} (${imgAspect.toFixed(2)})`);
-      console.log(`📐 Scaled: ${scaledWidth}×${scaledHeight} covering 300×200`);
-
-      // NUCLEAR WHITE BACKGROUND v1.0.97: PIXEL-LEVEL CONTROL FIRST
-      console.log('🎨 NUCLEAR WHITE BACKGROUND v1.0.97 - Creating pure white ImageData FIRST');
-      
-      // Create ImageData and set every pixel to pure white BEFORE any drawing
+      // LAYER 1: Nuclear white background - pixel-level control
+      console.log('🎨 LAYER 1: Nuclear white background - pixel-level control');
       const whiteData = ctx.createImageData(300, 200);
       const pixelArray = whiteData.data;
       
-      // Fill every single pixel with pure white (255, 255, 255, 255)
       for (let i = 0; i < pixelArray.length; i += 4) {
         pixelArray[i] = 255;     // Red
         pixelArray[i + 1] = 255; // Green  
@@ -255,43 +163,69 @@ export default function ImageCropperEasyCrop({ imageUrl, onSave, onCancel }: Ima
         pixelArray[i + 3] = 255; // Alpha (fully opaque)
       }
       
-      // Apply white ImageData to canvas - this sets every pixel to white
       ctx.putImageData(whiteData, 0, 0);
-      console.log('✅ NUCLEAR WHITE: All 60,000 pixels set to pure white (255,255,255,255)');
+      console.log('✅ LAYER 1: All 60,000 pixels set to pure white');
 
-      // Calculate position offset based on background-position percentages
+      // Load and draw image
+      const img = new Image();
+      img.crossOrigin = 'anonymous';
+      
+      let finalUrl = imageUrl;
+      if (imageUrl.startsWith('http')) {
+        const timestamp = Date.now();
+        const separator = imageUrl.includes('?') ? '&' : '?';
+        finalUrl = `${imageUrl}${separator}cacheBust=${timestamp}&nocache=1`;
+      } else {
+        const filename = imageUrl.split('/').pop()?.split('?')[0] || '';
+        finalUrl = `/api/image-proxy?filename=${filename}`;
+      }
+      
+      await new Promise<void>((resolve, reject) => {
+        img.onload = () => resolve();
+        img.onerror = () => reject(new Error(`Failed to load image: ${imageUrl}`));
+        img.src = finalUrl;
+      });
+
+      // Calculate cover dimensions
+      const imgAspect = img.naturalWidth / img.naturalHeight;
+      const canvasAspect = 300 / 200;
+
+      let scaledWidth, scaledHeight;
+      if (imgAspect > canvasAspect) {
+        scaledHeight = 200;
+        scaledWidth = scaledHeight * imgAspect;
+      } else {
+        scaledWidth = 300;
+        scaledHeight = scaledWidth / imgAspect;
+      }
+
+      // Calculate position offset
       const offsetX = (position.x / 100) * (300 - scaledWidth);
       const offsetY = (position.y / 100) * (200 - scaledHeight);
-      
-      console.log(`📍 Position: ${position.x}%,${position.y}% → Offset: ${offsetX.toFixed(1)},${offsetY.toFixed(1)}`);
 
-      // Maximum quality settings for sharpest results
+      // LAYER 2: Draw image
+      console.log('🎨 LAYER 2: Drawing image on white background');
+      ctx.globalCompositeOperation = 'source-over';
       ctx.imageSmoothingEnabled = true;
       ctx.imageSmoothingQuality = 'high';
-
-      // NOW draw the image on top of the guaranteed white pixels
-      ctx.globalCompositeOperation = 'source-over';
       ctx.drawImage(img, offsetX, offsetY, scaledWidth, scaledHeight);
       
-      console.log('✅ Image drawn on pixel-level white background');
-      
-      // FINAL SAFETY: Force white background behind any transparent areas using destination-over
-      console.log('🔒 FINAL SAFETY: Enforcing white background behind image');
+      // LAYER 3: Final safety white background behind any transparent areas
+      console.log('🎨 LAYER 3: Final safety white background');
       ctx.globalCompositeOperation = 'destination-over';
       ctx.fillStyle = '#FFFFFF';
       ctx.fillRect(0, 0, 300, 200);
-      console.log('✅ FINAL WHITE LAYER: Applied behind image');
+      console.log('✅ TRIPLE-LAYER WHITE BACKGROUND: Complete protection applied');
 
-      // Convert to JPEG (no transparency support) for guaranteed white background
+      // Convert to JPEG (no transparency support)
       const blob = await new Promise<Blob>((resolve) => {
         canvas.toBlob((blob) => {
           resolve(blob!);
-        }, 'image/jpeg', 1.0); // JPEG format at maximum quality - no transparency possible
+        }, 'image/jpeg', 1.0);
       });
 
-      // Save with position data and high-DPI info
       const cropSettings = {
-        method: 'draggable-cover-hd',
+        method: 'triple-layer-white-bg',
         position: position,
         devicePixelRatio: dpr,
         originalDimensions: { width: img.naturalWidth, height: img.naturalHeight },
@@ -315,7 +249,6 @@ export default function ImageCropperEasyCrop({ imageUrl, onSave, onCancel }: Ima
           Glissez pour repositionner l'image dans le cadre 300×200
         </p>
         
-        {/* 300×200 Draggable Preview Box */}
         <div className="mx-auto">
           <DraggableCover 
             imageUrl={imageUrl} 
@@ -328,12 +261,18 @@ export default function ImageCropperEasyCrop({ imageUrl, onSave, onCancel }: Ima
         </p>
       </div>
 
-      {/* Action Button */}
-      <div className="flex justify-center">
+      <div className="flex justify-center gap-4">
+        <Button 
+          onClick={onCancel}
+          variant="outline"
+          className="px-6"
+        >
+          Annuler
+        </Button>
         <Button 
           onClick={generateStaticImage}
           disabled={loading}
-          className="bg-[#2A4759] hover:bg-[#1e3340] text-white px-8 py-3"
+          className="bg-[#2A4759] hover:bg-[#1e3340] text-white px-8"
         >
           {loading ? 'Génération...' : 'Générer Image Statique (300×200)'}
         </Button>
