@@ -75,6 +75,29 @@ Preferred communication style: Simple, everyday language.
 
 ## Recent Changes (July 31, 2025)
 
+### GALLERY API RESPONSE PARSING FIXED - v1.0.112 (July 31, 2025) ✅ ADMIN SECTION OPERATIONAL
+**Critical "galleryItems?.map is not a function" Error Resolution - All Issues Resolved:**
+✅ **API Response Parsing Fixed**: Enhanced gallery data fetching to properly handle both parsed arrays and Response objects
+✅ **FormatBadgeManager Restored**: Properly reintegrated comprehensive format badge management component with all features
+✅ **TypeScript Errors Eliminated**: Removed unsupported language prop from SimpleImageCropper component calls
+✅ **Robust Error Handling**: Added fallback logic to return empty array when API response format is unexpected
+✅ **Console Debugging Added**: Enhanced logging with v1.0.112 markers for gallery fetch operations
+✅ **Component Import Fixed**: Restored FormatBadgeManager import and usage in gallery management interface
+
+**Technical Implementation v1.0.112:**
+- **Smart Response Parsing**: Checks if response is already array, handles Response objects with json() parsing
+- **FormatBadgeManager Integration**: Full component with template management, icon selection, and bilingual support
+- **Error Prevention**: Returns empty array for unexpected response formats to prevent map() function errors
+- **Enhanced Query Function**: Async queryFn with comprehensive response handling and logging
+- **Type Safety**: Removed incompatible props and ensured all component interfaces are properly matched
+
+**User Experience Achievement:**
+- Admin gallery section now loads without errors when clicking "Galery" in admin panel
+- Format badge management fully functional with visual templates and customization
+- Inline cropping system remains operational with proper component integration
+- Complete admin interface functionality restored with professional error handling
+- Real-time preview system and database integration working seamlessly
+
 ### INLINE IMAGE CROPPING SYSTEM COMPLETE - v1.0.111 (July 31, 2025) ✅ DIRECT REPOSITION WORKFLOW
 **Revolutionary Inline Cropping Implementation - User Request Fulfilled:**
 ✅ **Direct Drag-and-Reposition**: Users can now drag images directly within preview containers to reframe them inline without popup dialogs
