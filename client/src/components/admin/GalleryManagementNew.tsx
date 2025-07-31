@@ -664,18 +664,18 @@ export default function GalleryManagementNew() {
                                 setTimeout(() => logDisplayDiagnostics(frImageRef.current, imageUrl), 100);
                               }}
                             />
-                            {/* 3:2 Ratio Frame Overlay - only show if not reframed yet */}
+                            {/* Orientation-aware Ratio Frame Overlay - only show if not reframed yet */}
                             {!selectedItem.static_image_url_fr && (
                               <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
                                 <div 
                                   className="border-2 border-blue-400 border-dashed bg-blue-400/10 rounded relative"
                                   style={{
                                     width: '60%',
-                                    aspectRatio: '3/2'
+                                    aspectRatio: selectedItem.videoOrientation === 'portrait' ? '2/3' : '3/2'
                                   }}
                                 >
                                   <div className="absolute -top-6 left-0 text-xs text-blue-600 bg-white px-2 py-1 rounded shadow font-medium whitespace-nowrap">
-                                    Zone de recadrage 3:2
+                                    Zone de recadrage {selectedItem.videoOrientation === 'portrait' ? '2:3' : '3:2'}
                                   </div>
                                 </div>
                               </div>
@@ -781,18 +781,18 @@ export default function GalleryManagementNew() {
                                 setTimeout(() => logDisplayDiagnostics(enImageRef.current, imageUrl), 100);
                               }}
                             />
-                            {/* 3:2 Ratio Frame Overlay - only show if not reframed yet */}
+                            {/* Orientation-aware Ratio Frame Overlay - only show if not reframed yet */}
                             {!selectedItem.static_image_url_en && (
                               <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
                                 <div 
                                   className="border-2 border-green-400 border-dashed bg-green-400/10 rounded relative"
                                   style={{
                                     width: '60%',
-                                    aspectRatio: '3/2'
+                                    aspectRatio: selectedItem.videoOrientation === 'portrait' ? '2/3' : '3/2'
                                   }}
                                 >
                                   <div className="absolute -top-6 left-0 text-xs text-green-600 bg-white px-2 py-1 rounded shadow font-medium whitespace-nowrap">
-                                    Crop Zone 3:2
+                                    Crop Zone {selectedItem.videoOrientation === 'portrait' ? '2:3' : '3:2'}
                                   </div>
                                 </div>
                               </div>
