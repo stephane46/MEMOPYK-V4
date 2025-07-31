@@ -343,7 +343,7 @@ export default function GalleryManagementNew() {
 
   return (
     <div className="p-6 max-w-7xl mx-auto">
-      {/* Top Section: Video Selector + Thumbnail + Actions */}
+      {/* Top Section: Video Selector + NEW Button */}
       <div className="mb-8 bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6">
         <div className="flex items-center justify-between gap-6">
           {/* Left: Video Selector */}
@@ -374,53 +374,21 @@ export default function GalleryManagementNew() {
             )}
           </div>
 
-          {/* Center: Thumbnail Preview */}
+          {/* Right: NEW Button - Clearly separated from video selection */}
           <div className="flex-shrink-0">
             <Label className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2 block">
-              Aperçu
+              Gestion des vidéos
             </Label>
-            <div className="w-32 h-20 bg-gray-100 dark:bg-gray-700 rounded-lg overflow-hidden border border-gray-200 dark:border-gray-600">
-              {selectedItem && getThumbnailUrl(selectedItem) ? (
-                <img 
-                  src={getThumbnailUrl(selectedItem)!} 
-                  alt="Aperçu"
-                  className="w-full h-full object-cover"
-                />
-              ) : (
-                <div className="w-full h-full flex items-center justify-center">
-                  <Video className="w-8 h-8 text-gray-400" />
-                </div>
-              )}
-            </div>
-          </div>
-
-          {/* Right: Action Buttons */}
-          <div className="flex-shrink-0 space-y-2">
-            <Label className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2 block">
-              Actions
-            </Label>
-            <div className="flex flex-col gap-2">
+            <div className="flex gap-2">
               {!isCreateMode ? (
-                <>
-                  <Button
-                    onClick={() => setCropperOpen(true)}
-                    variant="outline"
-                    size="sm"
-                    className="bg-[#D67C4A] hover:bg-[#D67C4A]/90 text-white border-[#D67C4A]"
-                    disabled={!selectedItem}
-                  >
-                    <Crop className="w-4 h-4 mr-1" />
-                    Recadrer Image
-                  </Button>
-                  <Button
-                    onClick={handleCreateNew}
-                    size="sm"
-                    className="bg-gradient-to-r from-[#89BAD9] to-[#2A4759] hover:from-[#7AA8CC] hover:to-[#1e3340] text-white border-none shadow-lg font-semibold"
-                  >
-                    <Plus className="w-4 h-4 mr-1" />
-                    NOUVEAU
-                  </Button>
-                </>
+                <Button
+                  onClick={handleCreateNew}
+                  size="sm"
+                  className="bg-gradient-to-r from-[#89BAD9] to-[#2A4759] hover:from-[#7AA8CC] hover:to-[#1e3340] text-white border-none shadow-lg font-semibold"
+                >
+                  <Plus className="w-4 h-4 mr-1" />
+                  NOUVEAU
+                </Button>
               ) : (
                 <Button
                   onClick={handleCancelCreate}
@@ -439,10 +407,10 @@ export default function GalleryManagementNew() {
       {/* Main Form */}
       {(selectedItem || isCreateMode) && (
         <div className="space-y-8">
-          {/* Status Section with Video Preview */}
+          {/* Status Section with Video & Image Previews */}
           <Card className="border-[#89BAD9] dark:border-[#2A4759]">
             <CardContent className="p-6">
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
                 {/* Left Side - Status Controls */}
                 <div>
                   <h3 className="text-lg font-semibold text-[#011526] dark:text-[#F2EBDC] mb-6 flex items-center gap-2">
@@ -461,12 +429,14 @@ export default function GalleryManagementNew() {
                   </div>
                 </div>
 
-                {/* Right Side - Video Preview */}
+                {/* Center - Video Preview */}
                 <div>
-                  <h4 className="text-lg font-semibold text-[#011526] dark:text-[#F2EBDC] mb-4 flex items-center gap-2">
-                    <PlayCircle className="w-5 h-5" />
-                    Aperçu Vidéo
-                  </h4>
+                  <div className="flex items-center justify-between mb-4">
+                    <h4 className="text-lg font-semibold text-[#011526] dark:text-[#F2EBDC] flex items-center gap-2">
+                      <PlayCircle className="w-5 h-5" />
+                      Aperçu Vidéo
+                    </h4>
+                  </div>
                   {formData.video_filename || formData.video_url_en ? (
                     <div className="relative bg-black rounded-lg overflow-hidden aspect-video max-w-sm">
                       <video
@@ -489,6 +459,44 @@ export default function GalleryManagementNew() {
                       </div>
                     </div>
                   )}
+                </div>
+
+                {/* Right Side - Image Preview */}
+                <div>
+                  <div className="flex items-center justify-between mb-4">
+                    <h4 className="text-lg font-semibold text-[#011526] dark:text-[#F2EBDC] flex items-center gap-2">
+                      <Image className="w-5 h-5" />
+                      Aperçu Image
+                    </h4>
+                    {!isCreateMode && selectedItem && (
+                      <Button
+                        onClick={() => setCropperOpen(true)}
+                        variant="outline"
+                        size="sm"
+                        className="bg-[#D67C4A] hover:bg-[#D67C4A]/90 text-white border-[#D67C4A]"
+                        disabled={!selectedItem}
+                      >
+                        <Crop className="w-4 h-4 mr-1" />
+                        Recadrer
+                      </Button>
+                    )}
+                  </div>
+                  <div className="aspect-video max-w-sm bg-gray-100 dark:bg-gray-700 rounded-lg overflow-hidden border border-gray-200 dark:border-gray-600">
+                    {selectedItem && getThumbnailUrl(selectedItem) ? (
+                      <img 
+                        src={getThumbnailUrl(selectedItem)!} 
+                        alt="Aperçu"
+                        className="w-full h-full object-cover"
+                      />
+                    ) : (
+                      <div className="w-full h-full flex items-center justify-center">
+                        <div className="text-center text-gray-500 dark:text-gray-400">
+                          <Image className="w-12 h-12 mx-auto mb-2 opacity-50" />
+                          <p className="text-sm">Aucune image disponible</p>
+                        </div>
+                      </div>
+                    )}
+                  </div>
                 </div>
               </div>
             </CardContent>
