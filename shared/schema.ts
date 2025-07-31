@@ -78,7 +78,9 @@ export const galleryItems = pgTable("gallery_items", {
   // Image fields
   imageUrlEn: text("image_url_en"),
   imageUrlFr: text("image_url_fr"),
-  staticImageUrl: text("static_image_url"), // 300x200 cropped JPEG for thumbnails
+  staticImageUrlEn: text("static_image_url_en"), // 300x200 cropped JPEG for English thumbnails
+  staticImageUrlFr: text("static_image_url_fr"), // 300x200 cropped JPEG for French thumbnails
+  staticImageUrl: text("static_image_url"), // DEPRECATED: Legacy single field - will be removed
   cropSettings: jsonb("crop_settings"), // Stores crop position settings for re-editing
   
   // System fields

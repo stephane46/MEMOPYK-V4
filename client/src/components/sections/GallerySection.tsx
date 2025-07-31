@@ -34,7 +34,9 @@ interface GalleryItem {
   videoOrientation: string;
   imageUrlEn: string;
   imageUrlFr: string;
-  staticImageUrl: string | null; // 300x200 cropped thumbnail
+  staticImageUrlEn: string | null; // 300x200 cropped English thumbnail
+  staticImageUrlFr: string | null; // 300x200 cropped French thumbnail
+  staticImageUrl: string | null; // DEPRECATED: Legacy field
   orderIndex: number;
   isActive: boolean;
   lightboxVideoUrl?: string; // Infrastructure workaround URL for lightbox display
@@ -90,7 +92,9 @@ export default function GallerySection() {
         videoOrientation: item.video_orientation,
         imageUrlEn: item.image_url_en,
         imageUrlFr: item.image_url_fr,
-        staticImageUrl: item.static_image_url,
+        staticImageUrlEn: item.static_image_url_en,
+        staticImageUrlFr: item.static_image_url_fr,
+        staticImageUrl: item.static_image_url, // Legacy field
         orderIndex: item.order_index,
         isActive: item.is_active
       }))
@@ -137,14 +141,15 @@ export default function GallerySection() {
   const t = content[language];
 
   const getImageUrl = (item: GalleryItem) => {
-    // PRIORITY v1.0.107: REFRAMED STATIC IMAGES OVER UPLOADS
+    // PRIORITY v1.0.109: Language-specific reframed images > uploads > fallback  
     let imageUrl = '';
     let filename = '';
     
-    // FIXED PRIORITY v1.0.108: static_image_url (reframed) > uploads > fallback  
-    if (item.staticImageUrl && item.staticImageUrl.trim() !== '') {
-      imageUrl = item.staticImageUrl;
-      console.log(`🖼️ USING REFRAMED STATIC IMAGE: ${imageUrl} for ${item.titleEn}`);
+    // Priority 1: Language-specific reframed image
+    const staticImageUrl = language === 'fr-FR' ? item.staticImageUrlFr : item.staticImageUrlEn;
+    if (staticImageUrl && staticImageUrl.trim() !== '') {
+      imageUrl = staticImageUrl;
+      console.log(`🖼️ USING LANGUAGE-SPECIFIC REFRAMED IMAGE (${language}): ${imageUrl} for ${item.titleEn}`);
       
       // Handle both full URLs and filenames for static images
       if (imageUrl.includes('/')) {

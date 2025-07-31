@@ -736,11 +736,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
         console.log(`🔍 Item ${itemId} found at index: ${itemIndex}`);
         
         if (itemIndex !== -1) {
-          console.log(`📝 Before update: ${items[itemIndex].static_image_url}`);
-          items[itemIndex].static_image_url = staticImageUrl;
+          const language = req.body.language || 'en'; // Get language from request body
+          const staticField = language === 'fr' ? 'static_image_url_fr' : 'static_image_url_en';
+          
+          console.log(`📝 Before update (${language}): ${items[itemIndex][staticField]}`);
+          items[itemIndex][staticField] = staticImageUrl; // Update language-specific field
           items[itemIndex].crop_settings = cropSettings;
           items[itemIndex].updated_at = new Date().toISOString();
-          console.log(`📝 After update: ${items[itemIndex].static_image_url}`);
+          console.log(`📝 After update (${language}): ${items[itemIndex][staticField]}`);
           
           fs.writeFileSync(jsonPath, JSON.stringify(items, null, 2));
           console.log(`✅ File written successfully`);
@@ -749,7 +752,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
           const verifyData = fs.readFileSync(jsonPath, 'utf8');
           const verifyItems = JSON.parse(verifyData);
           const verifyItem = verifyItems.find((item: any) => item.id.toString() === itemId.toString());
-          console.log(`🔍 Verification - Updated URL: ${verifyItem?.static_image_url}`);
+          console.log(`🔍 Verification - Updated URL (${language}): ${verifyItem?.[staticField]}`);
         } else {
           console.error(`❌ Item ${itemId} not found in ${items.length} items`);
           console.error(`❌ Available IDs:`, items.map((i: any) => i.id));
@@ -761,10 +764,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // Method 2: Try hybrid storage as backup
       try {
         console.log(`🔄 Method 2: Hybrid storage backup`);
-        await hybridStorage.updateGalleryItem(itemId, {
-          static_image_url: staticImageUrl,
-          crop_settings: cropSettings
-        });
+        const language = req.body.language || 'en';
+        const updateData = language === 'fr' 
+          ? { static_image_url_fr: staticImageUrl, crop_settings: cropSettings }
+          : { static_image_url_en: staticImageUrl, crop_settings: cropSettings };
+        
+        await hybridStorage.updateGalleryItem(itemId, updateData);
         console.log(`✅ Hybrid storage update completed`);
       } catch (hybridError) {
         console.error('❌ Hybrid storage failed:', hybridError);

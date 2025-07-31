@@ -186,7 +186,9 @@ interface GalleryItem {
   video_orientation: string;
   image_url_en: string;
   image_url_fr: string;
-  static_image_url: string | null;
+  static_image_url_en: string | null;
+  static_image_url_fr: string | null;
+  static_image_url: string | null; // Legacy field
   order_index: number;
   is_active: boolean;
 }
@@ -209,6 +211,34 @@ export default function GalleryManagementNew() {
     if (value.startsWith('http')) return value;
     // If it's just a filename, convert to full Supabase URL
     return `https://supabase.memopyk.org/storage/v1/object/public/memopyk-videos/${value}`;
+  };
+
+  // Helper function to get thumbnail URL with language-specific reframing support
+  const getThumbnailUrl = (item: GalleryItem, language: 'en' | 'fr' = 'en') => {
+    if (!item) return '';
+    
+    // Priority 1: Language-specific reframed image
+    const staticImageUrl = language === 'fr' ? item.static_image_url_fr : item.static_image_url_en;
+    if (staticImageUrl) {
+      console.log(`🖼️ USING REFRAMED IMAGE (${language.toUpperCase()}): ${staticImageUrl} for ${item.title_en}`);
+      return staticImageUrl;
+    }
+    
+    // Priority 2: Language-specific uploaded image
+    const imageUrl = language === 'fr' ? item.image_url_fr : item.image_url_en;
+    if (imageUrl) {
+      console.log(`🖼️ FALLBACK TO UPLOAD (${language.toUpperCase()}): ${imageUrl} for ${item.title_en}`);
+      return imageUrl;
+    }
+    
+    // Priority 3: Legacy static image (deprecated)
+    if (item.static_image_url) {
+      console.log(`🖼️ LEGACY STATIC IMAGE: ${item.static_image_url} for ${item.title_en}`);
+      return item.static_image_url;
+    }
+    
+    console.log(`🖼️ NO IMAGE AVAILABLE for ${item.title_en} in ${language.toUpperCase()}`);
+    return '';
   };
 
   // Helper function to get image with cache-busting - SUPER AGGRESSIVE METHOD
@@ -357,39 +387,7 @@ export default function GalleryManagementNew() {
     }
   }, [galleryItems, selectedVideoId, isCreateMode]);
 
-  // Get thumbnail URL with cache-busting - PRIORITIZE REFRAMED STATIC IMAGES v1.0.108
-  const getThumbnailUrl = (item: GalleryItem) => {
-    // FIXED PRIORITY v1.0.108: static_image_url (reframed) > latest uploads > fallback uploads
-    const staticImageUrl = item.static_image_url; // FIXED: Use correct snake_case field name
-    const imageUrl = staticImageUrl || item.image_url_en || item.image_url_fr;
-    if (!imageUrl) return null;
-    
-    console.log(`🖼️ ADMIN THUMBNAIL PRIORITY v1.0.108: Using ${imageUrl === staticImageUrl ? 'REFRAMED STATIC IMAGE' : imageUrl === item.image_url_en ? 'image_url_en' : 'image_url_fr'} for item ${item.id}`);
-    console.log(`🖼️ ADMIN FULL URL: ${imageUrl}`);
-    
-    // If it's already a full URL, use it directly with cache-busting
-    if (imageUrl.startsWith('http')) {
-      const timestamp = Date.now();
-      const random = Math.random().toString(36).substring(7);
-      const separator = imageUrl.includes('?') ? '&' : '?';
-      const cacheBustUrl = `${imageUrl}${separator}cacheBust=${timestamp}&v=${random}&nocache=1#${timestamp}-${random}`;
-      console.log(`🖼️ ADMIN DIRECT URL: ${cacheBustUrl}`);
-      return cacheBustUrl;
-    }
-    
-    // Otherwise extract filename and use proxy
-    let filename = '';
-    if (imageUrl.includes('/')) {
-      filename = imageUrl.split('/').pop() || '';
-      if (filename.includes('?')) {
-        filename = filename.split('?')[0];
-      }
-    } else {
-      filename = imageUrl;
-    }
-    
-    return getImageUrlWithCacheBust(filename);
-  };
+
 
   // Create/Update mutations
   const createItemMutation = useMutation({
@@ -594,7 +592,7 @@ export default function GalleryManagementNew() {
                           <>
                             <img 
                               ref={frImageRef}
-                              src={getThumbnailUrl(selectedItem) || (selectedItem.image_url_fr.startsWith('http') 
+                              src={getThumbnailUrl(selectedItem, 'fr') || (selectedItem.image_url_fr.startsWith('http') 
                                 ? `${selectedItem.image_url_fr}?cacheBust=${Date.now()}&nocache=1`
                                 : `/api/image-proxy?filename=${selectedItem.image_url_fr.split('/').pop()?.split('?')[0]}`
                               )} 
@@ -603,15 +601,15 @@ export default function GalleryManagementNew() {
                               style={{ outline: '2px solid magenta' }}
                               onLoad={() => {
                                 const imageUrl = selectedItem.image_url_fr.startsWith('http') 
-                                  ? `${selectedItem.image_url_fr}?cacheBust=${Date.now()}&nocache=1`
+                                  ? `${selectedItem.image_url_fr}?cacheBust=${Date.now()}&nocache=1}`
                                   : `/api/image-proxy?filename=${selectedItem.image_url_fr.split('/').pop()?.split('?')[0]}`;
                                 console.log('🔍 FRENCH IMAGE LOADED - Running diagnostics...');
                                 setTimeout(() => logDisplayDiagnostics(frImageRef.current, imageUrl), 100);
                               }}
                             />
-                            {selectedItem.static_image_url && (
+                            {selectedItem.static_image_url_fr && (
                               <div className="absolute top-2 right-2 bg-emerald-500 text-white px-2 py-1 rounded-full text-xs font-bold shadow-lg">
-                                ✂️ Recadré
+                                ✂️ Recadré FR
                               </div>
                             )}
                           </>
@@ -657,7 +655,7 @@ export default function GalleryManagementNew() {
                           <>
                             <img 
                               ref={enImageRef}
-                              src={getThumbnailUrl(selectedItem) || (selectedItem.image_url_en.startsWith('http') 
+                              src={getThumbnailUrl(selectedItem, 'en') || (selectedItem.image_url_en.startsWith('http') 
                                 ? `${selectedItem.image_url_en}?cacheBust=${Date.now()}&nocache=1`
                                 : `/api/image-proxy?filename=${selectedItem.image_url_en.split('/').pop()?.split('?')[0]}`
                               )} 
@@ -672,9 +670,9 @@ export default function GalleryManagementNew() {
                                 setTimeout(() => logDisplayDiagnostics(enImageRef.current, imageUrl), 100);
                               }}
                             />
-                            {selectedItem.static_image_url && (
+                            {selectedItem.static_image_url_en && (
                               <div className="absolute top-2 right-2 bg-emerald-500 text-white px-2 py-1 rounded-full text-xs font-bold shadow-lg">
-                                ✂️ Recadré
+                                ✂️ Recadré EN
                               </div>
                             )}
                           </>
@@ -1684,6 +1682,7 @@ export default function GalleryManagementNew() {
                   const formData = new FormData();
                   const filename = `static_${cropperLanguage}_${Date.now()}.jpg`;
                   formData.append('file', blob, filename);
+                  formData.append('language', cropperLanguage); // Add language information
                   
                   console.log(`🖼️ Uploading cropped image as: ${filename}`);
                   
@@ -1702,12 +1701,14 @@ export default function GalleryManagementNew() {
                   console.log(`✅ Upload successful:`, uploadResult);
                   
                   // Update the gallery item with the new static image URL
-                  console.log(`🔧 UPDATING GALLERY ITEM: ${selectedItem.id} with static image URL: ${uploadResult.url}`);
+                  console.log(`🔧 UPDATING GALLERY ITEM: ${selectedItem.id} with static image URL (${cropperLanguage}): ${uploadResult.url}`);
                   
-                  // Use correct snake_case field name and JSON format
+                  // Use correct language-specific field name and JSON format
+                  const staticField = cropperLanguage === 'fr' ? 'static_image_url_fr' : 'static_image_url_en';
                   const updateData = {
-                    static_image_url: uploadResult.url,
-                    crop_settings: cropSettings
+                    [staticField]: uploadResult.url,
+                    crop_settings: cropSettings,
+                    language: cropperLanguage // Include language for server processing
                   };
                   
                   console.log(`📊 Update data:`, updateData);
