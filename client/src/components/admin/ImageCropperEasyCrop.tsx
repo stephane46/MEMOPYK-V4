@@ -23,26 +23,37 @@ const DraggableCover: React.FC<DraggableCoverProps> = ({
   const [imageLoaded, setImageLoaded] = useState(false);
   const dragStart = useRef<{ mouseX: number; mouseY: number; posX: number; posY: number } | null>(null);
 
-  // Test image loading
+  // Test image loading - handle both proxy URLs and direct Supabase URLs
   useEffect(() => {
-    // Extract filename from Supabase URL
-    const filename = imageUrl.split('/').pop()?.split('?')[0] || '';
-    const proxyUrl = `/api/image-proxy?filename=${filename}`;
-    console.log('🖼️ DraggableCover attempting to load:', proxyUrl);
-    console.log('🖼️ Extracted filename from URL:', filename);
+    console.log('🖼️ DraggableCover imageUrl received:', imageUrl);
+    
+    let finalUrl = imageUrl;
+    
+    // If it's already a full URL, use it directly with cache-busting
+    if (imageUrl.startsWith('http')) {
+      const timestamp = Date.now();
+      const separator = imageUrl.includes('?') ? '&' : '?';
+      finalUrl = `${imageUrl}${separator}cacheBust=${timestamp}&nocache=1`;
+      console.log('🖼️ Using direct URL with cache-busting:', finalUrl);
+    } else {
+      // Extract filename and use proxy
+      const filename = imageUrl.split('/').pop()?.split('?')[0] || '';
+      finalUrl = `/api/image-proxy?filename=${filename}`;
+      console.log('🖼️ Using proxy URL:', finalUrl);
+    }
     
     const testImg = new Image();
+    testImg.crossOrigin = 'anonymous';
     testImg.onload = () => {
       console.log('✅ DraggableCover image loaded successfully');
       setImageLoaded(true);
     };
     testImg.onerror = (error) => {
       console.error('❌ DraggableCover image failed to load:', error);
-      console.error('❌ Original URL:', imageUrl);
-      console.error('❌ Proxy URL:', proxyUrl);
-      console.error('❌ Extracted filename:', filename);
+      console.error('❌ Original imageUrl:', imageUrl);
+      console.error('❌ Final URL:', finalUrl);
     };
-    testImg.src = proxyUrl;
+    testImg.src = finalUrl;
   }, [imageUrl]);
 
   // Mouse down: record start positions
@@ -94,9 +105,17 @@ const DraggableCover: React.FC<DraggableCoverProps> = ({
     };
   }, [dragging, handleMouseMove, handleMouseUp]);
 
-  // Extract filename from Supabase URL for display
-  const filename = imageUrl.split('/').pop()?.split('?')[0] || '';
-  const proxyUrl = `/api/image-proxy?filename=${filename}`;
+  // Get final URL for background display
+  const getFinalUrl = () => {
+    if (imageUrl.startsWith('http')) {
+      const timestamp = Date.now();
+      const separator = imageUrl.includes('?') ? '&' : '?';
+      return `${imageUrl}${separator}cacheBust=${timestamp}&nocache=1`;
+    } else {
+      const filename = imageUrl.split('/').pop()?.split('?')[0] || '';
+      return `/api/image-proxy?filename=${filename}`;
+    }
+  };
 
   return (
     <div
@@ -107,7 +126,7 @@ const DraggableCover: React.FC<DraggableCoverProps> = ({
         height: 200,
         overflow: 'hidden',
         cursor: dragging ? 'grabbing' : 'grab',
-        backgroundImage: imageLoaded ? `url("${proxyUrl}")` : 'none',
+        backgroundImage: imageLoaded ? `url("${getFinalUrl()}")` : 'none',
         backgroundColor: imageLoaded ? 'transparent' : '#f3f4f6',
         backgroundSize: 'cover',
         backgroundPosition: `${pos.x}% ${pos.y}%`,
@@ -154,14 +173,23 @@ export default function ImageCropperEasyCrop({ imageUrl, onSave, onCancel }: Ima
       // Scale context back to CSS pixels while maintaining high-DPI backing store
       ctx.scale(dpr, dpr);
 
-      // Load the image using proxy to solve CORS issues
+      // Load the image - handle both direct URLs and proxy URLs
       const img = new Image();
       img.crossOrigin = 'anonymous';
       
-      // Use image proxy for canvas generation too
-      const filename = imageUrl.split('/').pop()?.split('?')[0] || '';
-      const proxyUrl = `/api/image-proxy?filename=${filename}`;
-      console.log(`🖼️ Canvas loading image via proxy: ${proxyUrl}`);
+      let finalUrl = imageUrl;
+      if (imageUrl.startsWith('http')) {
+        // Use direct URL with cache-busting for canvas generation
+        const timestamp = Date.now();
+        const separator = imageUrl.includes('?') ? '&' : '?';
+        finalUrl = `${imageUrl}${separator}cacheBust=${timestamp}&nocache=1`;
+        console.log(`🖼️ Canvas loading direct URL: ${finalUrl}`);
+      } else {
+        // Use image proxy for canvas generation
+        const filename = imageUrl.split('/').pop()?.split('?')[0] || '';
+        finalUrl = `/api/image-proxy?filename=${filename}`;
+        console.log(`🖼️ Canvas loading image via proxy: ${finalUrl}`);
+      }
       
       await new Promise<void>((resolve, reject) => {
         img.onload = () => {
@@ -171,10 +199,10 @@ export default function ImageCropperEasyCrop({ imageUrl, onSave, onCancel }: Ima
         img.onerror = (error) => {
           console.error(`❌ Canvas image failed to load:`, error);
           console.error(`❌ Original URL:`, imageUrl);
-          console.error(`❌ Proxy URL:`, proxyUrl);
+          console.error(`❌ Final URL:`, finalUrl);
           reject(new Error(`Failed to load image: ${imageUrl}`));
         };
-        img.src = proxyUrl;
+        img.src = finalUrl;
       });
 
       // Calculate background-size: cover dimensions

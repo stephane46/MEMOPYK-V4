@@ -423,11 +423,11 @@ export default function AdminPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-100 dark:bg-gray-900 flex">
-      {/* Sidebar */}
-      <div className="w-64 bg-gray-900 text-white flex-shrink-0">
+    <div className="min-h-screen bg-gray-100 dark:bg-gray-900">
+      {/* Fixed Sidebar */}
+      <div className="fixed left-0 top-0 w-64 h-full bg-gray-900 text-white flex flex-col z-40">
         {/* Header */}
-        <div className="p-6 border-b border-gray-700">
+        <div className="p-6 border-b border-gray-700 flex-shrink-0">
           <div className="flex items-center space-x-3">
             <div className="w-8 h-8 bg-orange-500 rounded-lg flex items-center justify-center">
               <span className="text-sm font-bold text-white">M</span>
@@ -439,8 +439,8 @@ export default function AdminPage() {
           </div>
         </div>
 
-        {/* Navigation */}
-        <nav className="flex-1 p-4">
+        {/* Navigation - Scrollable */}
+        <nav className="flex-1 p-4 overflow-y-auto">
           <div className="space-y-2">
             {sidebarItems.map((item) => {
               const Icon = item.icon;
@@ -463,8 +463,8 @@ export default function AdminPage() {
           </div>
         </nav>
 
-        {/* Logout */}
-        <div className="p-4 border-t border-gray-700">
+        {/* Logout - Fixed at bottom */}
+        <div className="p-4 border-t border-gray-700 flex-shrink-0">
           <button
             onClick={handleLogout}
             className="w-full flex items-center space-x-3 px-3 py-2 rounded-lg text-gray-300 hover:bg-gray-800 hover:text-white transition-colors"
@@ -475,8 +475,8 @@ export default function AdminPage() {
         </div>
       </div>
 
-      {/* Main Content */}
-      <div className="flex-1 overflow-auto">
+      {/* Main Content with left margin to account for fixed sidebar */}
+      <div className="ml-64">
         <div className="p-8">
 
           {/* Hero Management */}
