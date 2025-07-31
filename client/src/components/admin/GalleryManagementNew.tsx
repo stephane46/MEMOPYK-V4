@@ -603,15 +603,15 @@ export default function GalleryManagementNew() {
           {/* Status Section with Video & Image Previews */}
           <Card className="border-[#89BAD9] dark:border-[#2A4759]">
             <CardContent className="p-8">
-              <div className="flex flex-col lg:flex-row gap-8">
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
                 {/* Left Column - Image Previews */}
-                <div className="flex-1 flex flex-col">
+                <div className="flex flex-col">
                   <h4 className="text-lg font-semibold text-[#011526] dark:text-[#F2EBDC] flex items-center gap-2 mb-6">
                     <Image className="w-5 h-5" />
                     Aperçu Images
                   </h4>
                   
-                  <div className="flex flex-col flex-1 space-y-8">
+                  <div className="grid grid-rows-2 gap-8 flex-1">
                     {/* French Image */}
                     <div className="space-y-2">
                       <div className="flex items-center justify-between">
@@ -799,13 +799,13 @@ export default function GalleryManagementNew() {
                 </div>
 
                 {/* Right Column - Video Previews */}
-                <div className="flex-1 flex flex-col">
+                <div className="flex flex-col">
                   <h4 className="text-lg font-semibold text-[#011526] dark:text-[#F2EBDC] flex items-center gap-2 mb-6">
                     <PlayCircle className="w-5 h-5" />
                     Aperçu Vidéos
                   </h4>
                   
-                  <div className="flex flex-col flex-1 space-y-8">
+                  <div className="grid grid-rows-2 gap-8 flex-1">
                     {/* French Video */}
                     <div className="space-y-2">
                       <div className="flex items-center gap-2">
