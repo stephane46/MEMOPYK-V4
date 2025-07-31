@@ -99,6 +99,8 @@ const DraggableCover = ({ imageUrl, onPositionChange, previewRef }: { imageUrl: 
   const [isDragging, setIsDragging] = useState(false);
   const [position, setPosition] = useState({ x: 50, y: 50 });
   const [imageLoaded, setImageLoaded] = useState(false);
+  
+  console.log(`🎯 DRAGGABLE COVER v1.0.105 - imageLoaded: ${imageLoaded}, imageUrl: ${imageUrl}`);
 
   const handleMouseDown = (e: React.MouseEvent) => {
     setIsDragging(true);
@@ -163,11 +165,11 @@ const DraggableCover = ({ imageUrl, onPositionChange, previewRef }: { imageUrl: 
       <img
         src={imageUrl}
         onLoad={() => {
-          console.log(`✅ Image loaded successfully: ${imageUrl}`);
+          console.log(`✅ DRAGGABLE COVER v1.0.105 - Image loaded successfully: ${imageUrl}`);
           setImageLoaded(true);
         }}
         onError={(e) => {
-          console.error(`❌ Image failed to load: ${imageUrl}`, e);
+          console.error(`❌ DRAGGABLE COVER v1.0.105 - Image failed to load: ${imageUrl}`, e);
           setImageLoaded(false);
         }}
         style={{ display: 'none' }}
