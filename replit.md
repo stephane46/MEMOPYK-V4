@@ -73,6 +73,32 @@ Preferred communication style: Simple, everyday language.
 - ✅ **Complete Tracking Prevention**: Updated useVideoAnalytics hook to stop tracking hero videos entirely at source
 - ✅ **Frontend Exclusion**: Video player components now skip analytics calls for hero videos automatically
 
+## Recent Changes (July 31, 2025)
+
+### LANGUAGE-SPECIFIC UPLOAD SECTIONS COMPLETE - v1.0.83 (July 31, 2025) ✅ USER CONFIRMED WORKING
+**French/English Upload Interface Implementation - Feature Gap Resolved:**
+✅ **Component Integration Fixed**: AdminPage.tsx now correctly imports GalleryManagementNew.tsx instead of old component
+✅ **Language-Specific Sections Added**: French (blue) and English (green) upload sections successfully ported to modern interface
+✅ **Toggle Functionality Working**: "Utiliser la même vidéo pour FR et EN" switch properly shows/hides language-specific sections
+✅ **DirectUpload Integration**: Both French and English sections include proper video and image upload components
+✅ **User Confirmation**: User confirmed "turning the toggle OFF now shows the French (blue) and English (green) upload sections!"
+✅ **Feature Parity Achieved**: Modern interface now matches functionality of old component with improved UI design
+
+**Technical Implementation:**
+- Added comprehensive French upload section with blue gradient background and 🇫🇷 branding
+- Added comprehensive English upload section with green gradient background and 🇺🇸 branding
+- Implemented conditional rendering based on `use_same_video` toggle state
+- Integrated DirectUpload components for separate video/image uploads per language
+- Added usage guide and proper state management for language-specific uploads
+- Maintained MEMOPYK brand colors and modern interface design patterns
+
+**User Experience Achievement:**
+- Toggle ON: Shows shared upload section (purple/cream) for same video across languages
+- Toggle OFF: Shows separate French (blue) and English (green) upload sections
+- Each language section includes dedicated video and image upload areas
+- Clear visual distinction between languages with flag icons and color coding
+- Professional interface matching modern admin panel design standards
+
 ## Recent Changes (July 30, 2025)
 
 ### EDITABLE FORMAT BADGE SYSTEM COMPLETE - v1.0.75 (July 30, 2025) ✅ ADMIN CUSTOMIZATION
