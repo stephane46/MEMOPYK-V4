@@ -315,10 +315,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.delete("/api/gallery/:id", async (req, res) => {
     try {
-      const itemId = parseInt(req.params.id);
+      const itemId = req.params.id;
       console.log(`🗑️ Deleting gallery item with ID: ${itemId}`);
       
-      if (isNaN(itemId)) {
+      if (!itemId || itemId.trim() === '') {
         return res.status(400).json({ error: "Invalid gallery item ID" });
       }
       
@@ -334,12 +334,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.patch("/api/gallery/:id/reorder", async (req, res) => {
     try {
-      const itemId = parseInt(req.params.id);
+      const itemId = req.params.id;
       const { order_index } = req.body;
       
       console.log(`🔄 Reordering gallery item ${itemId} to position ${order_index}`);
       
-      if (isNaN(itemId)) {
+      if (!itemId || itemId.trim() === '') {
         return res.status(400).json({ error: "Invalid gallery item ID" });
       }
       
