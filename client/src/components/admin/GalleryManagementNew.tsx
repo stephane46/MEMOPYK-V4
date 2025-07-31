@@ -702,11 +702,7 @@ export default function GalleryManagementNew() {
                       <div className="flex items-center justify-between min-h-[2.5rem]">
                         <div className="flex items-center gap-2">
                           <span className="text-xs font-medium text-blue-700 dark:text-blue-300">🇫🇷 Français</span>
-                          {(formData.image_url_fr || selectedItem?.image_url_fr) && (
-                            <span className="text-xs text-gray-500 font-mono truncate max-w-32">
-                              {(formData.image_url_fr || selectedItem?.image_url_fr)?.split('/').pop()?.split('?')[0]}
-                            </span>
-                          )}
+
                         </div>
                         {!isCreateMode && selectedItem?.image_url_fr && (
                           <div className="flex gap-1">
@@ -801,9 +797,7 @@ export default function GalleryManagementNew() {
                       <div className="flex items-center justify-between min-h-[2.5rem]">
                         <div className="flex items-center gap-2">
                           <span className="text-xs font-medium text-blue-700 dark:text-blue-300">🇫🇷 Français</span>
-                          <span className="text-xs text-gray-500 font-mono">
-                            {formData.video_url_fr || formData.video_filename || 'Aucun'}
-                          </span>
+
                         </div>
                       </div>
                       {formData.video_url_fr || formData.video_filename ? (
@@ -848,11 +842,7 @@ export default function GalleryManagementNew() {
                       <div className="flex items-center justify-between min-h-[2.5rem]">
                         <div className="flex items-center gap-2">
                           <span className="text-xs font-medium text-green-700 dark:text-green-300">🇺🇸 English</span>
-                          {(formData.image_url_en || selectedItem?.image_url_en) && (
-                            <span className="text-xs text-gray-500 font-mono truncate max-w-32">
-                              {(formData.image_url_en || selectedItem?.image_url_en)?.split('/').pop()?.split('?')[0]}
-                            </span>
-                          )}
+
                         </div>
                         {!isCreateMode && selectedItem?.image_url_en && (
                           <div className="flex gap-1">
@@ -947,9 +937,7 @@ export default function GalleryManagementNew() {
                       <div className="flex items-center justify-between min-h-[2.5rem]">
                         <div className="flex items-center gap-2">
                           <span className="text-xs font-medium text-green-700 dark:text-green-300">🇺🇸 English</span>
-                          <span className="text-xs text-gray-500 font-mono">
-                            {formData.video_url_en || formData.video_filename || 'None'}
-                          </span>
+
                         </div>
                       </div>
                       {formData.video_url_en || formData.video_filename ? (
@@ -1439,17 +1427,7 @@ export default function GalleryManagementNew() {
                       </div>
                     </div>
 
-                    <div className="mt-4 p-3 bg-blue-50 dark:bg-blue-900/30 rounded border border-blue-200 dark:border-blue-700">
-                      <div className="flex items-start gap-2">
-                        <CheckCircle className="h-4 w-4 text-blue-600 mt-0.5 flex-shrink-0" />
-                        <div className="text-xs text-blue-800 dark:text-blue-200">
-                          <p className="font-medium mb-1">Guide d'utilisation :</p>
-                          <p>1. Téléchargez vos fichiers français dans la section bleue</p>
-                          <p>2. Téléchargez vos fichiers anglais dans la section verte</p>
-                          <p>3. Chaque langue aura ses propres fichiers média</p>
-                        </div>
-                      </div>
-                    </div>
+
                   </div>
                 )}
 
@@ -1535,17 +1513,7 @@ export default function GalleryManagementNew() {
                     </div>
                   )}
                   
-                  <div className="mt-3 p-2 bg-blue-50 dark:bg-blue-900/30 rounded border border-blue-200 dark:border-blue-700">
-                    <div className="flex items-start gap-2">
-                      <Info className="h-4 w-4 text-blue-600 mt-0.5 flex-shrink-0" />
-                      <div className="text-xs text-blue-800 dark:text-blue-200">
-                        <p className="font-medium mb-1">📋 Format de données uniforme :</p>
-                        <p>• Toutes les URLs sont maintenant au format complet Supabase</p>
-                        <p>• Vidéos et images utilisent le même format d'URL pour la cohérence</p>
-                        <p>• Les URLs complètes permettent un accès direct aux fichiers</p>
-                      </div>
-                    </div>
-                  </div>
+
                 </div>
 
                 {/* Manual URL Override (for advanced users) */}
@@ -1737,9 +1705,7 @@ export default function GalleryManagementNew() {
                 <Monitor className="w-5 h-5" />
                 Badge Format (marketing visuel)
               </h3>
-              <p className="text-sm text-[#2A4759] dark:text-[#89BAD9] mb-6">
-                Personnalisez le texte du badge format affiché avec chaque vidéo. Ces badges guident les clients vers les plateformes optimales.
-              </p>
+
               
               <div className="grid grid-cols-2 gap-6">
                 <div className="space-y-4">
@@ -1994,9 +1960,7 @@ export default function GalleryManagementNew() {
             </Button>
           </div>
           
-          <p className="text-sm text-[#2A4759] dark:text-[#89BAD9] mb-4">
-            Créez et gérez les templates de format badges qui apparaissent dans les dropdown des éléments de galerie.
-          </p>
+
 
           {showFormatBadgeManager && (
             <div className="border-t border-gray-200 dark:border-gray-600 pt-4">
