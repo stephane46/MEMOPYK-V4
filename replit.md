@@ -91,12 +91,26 @@ Preferred communication style: Simple, everyday language.
 - Component refresh through cache-busting key updates
 - Canvas background fill with #FFFFFF before image drawing
 
-**Current Status - CRITICAL CACHE ISSUE IDENTIFIED:**
-- Image uploads complete successfully and save to server cache
-- Cache-busting implemented on client-side with timestamp parameters
-- However: Server still sends aggressive caching headers preventing browser updates
-- ISSUE: Both admin preview AND live site fail to show updated images
-- NEXT: Complete server-side cache header fix required
+### BROWSER CACHE BYPASS IMPLEMENTATION - v1.0.89 (July 31, 2025) ✅ DIRECT CDN SOLUTION
+**Complete Cache Bypass Strategy - Browser Cache Issue Resolution:**
+✅ **Root Cause Identified**: Browser-level caching persists despite server no-cache headers
+✅ **Direct CDN Bypass**: Preview images now use direct Supabase URLs instead of local cache proxy
+✅ **Aggressive Cache-Busting**: Multiple cache-busting parameters (cacheBust + random version)
+✅ **Page Refresh Eliminated**: Removed forced page reload that "violently kicked" user to admin top
+✅ **Component-Level Refresh**: Gentle component re-render instead of full page navigation
+✅ **Database URL Confirmed**: Image correctly saved as https://supabase.memopyk.org/storage/v1/object/public/memopyk-videos/generated-image%20(1).png
+
+**Technical Implementation v1.0.89:**
+- Modified getImageUrlWithCacheBust() to use direct Supabase URLs with dual cache-busting parameters
+- Replaced window.location.reload() with gentle queryClient.invalidateQueries() and state update
+- Preview images bypass local cache proxy entirely to prevent browser caching conflicts
+- Component versioning updated to v1.0.89 with "DIRECT CDN BYPASS" messaging
+
+**User Experience Improvement:**
+- No more sudden navigation to admin top page during uploads
+- Preview images load directly from CDN with fresh cache-busting parameters
+- Smooth component refresh without disrupting user workflow
+- Expected behavior: Upload image → see immediate preview update without page disruption
 
 ### UPLOAD DIALOG FORMAT VALIDATION FIX COMPLETE - v1.0.87 (July 31, 2025) ✅ CRITICAL BUG RESOLVED
 **Upload Dialog Video Format Request Bug Fixed - Root Cause Resolved:**

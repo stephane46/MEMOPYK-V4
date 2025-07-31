@@ -103,8 +103,8 @@ interface GalleryItem {
 }
 
 export default function GalleryManagementNew() {
-  // VERSION: NEW-COMPONENT-v1.0.88 - CACHE-BUSTING SYSTEM ACTIVE
-  console.log('🎯🎯🎯 GALLERYMANAGEMENTNEW v1.0.88 - CACHE-BUSTING ACTIVE! 🎯🎯🎯');
+  // VERSION: NEW-COMPONENT-v1.0.89 - DIRECT CDN BYPASS ACTIVE
+  console.log('🎯🎯🎯 GALLERYMANAGEMENTNEW v1.0.89 - DIRECT CDN BYPASS! 🎯🎯🎯');
   console.log('✅ This is the CORRECT modern component with language-specific uploads!');
   console.log('🔥 French (blue) + English (green) sections should be visible!');
   console.log('🎨 Toggle: "Utiliser la même vidéo pour FR et EN" controls layout!');
@@ -120,11 +120,14 @@ export default function GalleryManagementNew() {
     return `https://supabase.memopyk.org/storage/v1/object/public/memopyk-videos/${value}`;
   };
 
-  // Helper function to get image with cache-busting
+  // Helper function to get image with cache-busting - BYPASS CACHE COMPLETELY
   const getImageUrlWithCacheBust = (filename: string) => {
     if (!filename) return '';
-    const cacheBuster = Date.now() + Math.random(); // Even stronger cache busting
-    return `/api/image-proxy?filename=${encodeURIComponent(filename)}&t=${cacheBuster}&nocache=1`;
+    // Use direct Supabase URL to completely bypass local cache
+    if (filename.includes('http')) {
+      return `${filename}?cacheBust=${Date.now()}&v=${Math.random()}`;
+    }
+    return `https://supabase.memopyk.org/storage/v1/object/public/memopyk-videos/${encodeURIComponent(filename)}?cacheBust=${Date.now()}&v=${Math.random()}`;
   };
   const queryClient = useQueryClient();
   const [selectedVideoId, setSelectedVideoId] = useState<string | number | null>(null);
@@ -292,8 +295,11 @@ export default function GalleryManagementNew() {
       toast({ title: "✅ Succès", description: "Élément de galerie mis à jour avec succès" });
       queryClient.invalidateQueries({ queryKey: ['/api/gallery'] });
       queryClient.removeQueries({ queryKey: ['/api/gallery'] });
-      // Force complete page refresh to bypass all caching
-      setTimeout(() => window.location.reload(), 1000);
+      // Force component re-render instead of full page refresh
+      setTimeout(() => {
+        queryClient.invalidateQueries({ queryKey: ['/api/gallery'] });
+        setFormData({ ...formData }); // Force state update
+      }, 500);
       persistentUploadState.reset();
     },
     onError: (error: any) => {
