@@ -324,13 +324,11 @@ export default function GalleryManagementNew() {
   
 
 
-  // Fetch gallery items with aggressive cache-busting and debug info
+  // Fetch gallery items with debug info but stable caching
   const { data: galleryItems = [], isLoading } = useQuery<GalleryItem[]>({
-    queryKey: ['/api/gallery', 'v1.0.108', Date.now()], // Force fresh cache with timestamp
+    queryKey: ['/api/gallery', 'v1.0.109'], // Stable cache key
     staleTime: 0, // Always consider data stale
-    cacheTime: 0, // Don't cache at all
     refetchOnMount: true,
-    refetchOnWindowFocus: true,
     select: (data) => {
       console.log(`🔍 RAW DATA FROM SERVER: ${data.length} items`);
       console.log('🔍 RAW IDs:', data.map(item => `${item.id.toString().slice(0,8)}... (${item.title_en})`));
