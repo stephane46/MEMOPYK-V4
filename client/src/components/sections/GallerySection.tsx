@@ -168,9 +168,11 @@ export default function GallerySection() {
       }
     }
     
-    // DIRECT CDN BYPASS: Use Supabase URL with aggressive cache-busting
-    const cacheBuster = Date.now() + Math.random();
-    const directUrl = `https://supabase.memopyk.org/storage/v1/object/public/memopyk-videos/${encodeURIComponent(filename || '')}?cacheBust=${cacheBuster}&v=${Math.random()}`;
+    // DIRECT CDN BYPASS: Use Supabase URL with aggressive cache-busting + hash fragment
+    const timestamp = Date.now();
+    const random = Math.random().toString(36).substring(7);
+    const hash = `#${timestamp}-${random}`; // Fragment identifier forces browser to treat as new resource
+    const directUrl = `https://supabase.memopyk.org/storage/v1/object/public/memopyk-videos/${encodeURIComponent(filename || '')}?cacheBust=${timestamp}&v=${random}&nocache=1${hash}`;
     console.log(`🖼️ DIRECT CDN IMAGE URL v1.0.89: ${directUrl} (bypassing proxy cache)`);
     return directUrl;
   };

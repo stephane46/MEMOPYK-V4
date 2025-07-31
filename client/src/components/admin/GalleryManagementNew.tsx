@@ -103,8 +103,8 @@ interface GalleryItem {
 }
 
 export default function GalleryManagementNew() {
-  // VERSION: NEW-COMPONENT-v1.0.89 - DIRECT CDN BYPASS ACTIVE
-  console.log('🎯🎯🎯 GALLERYMANAGEMENTNEW v1.0.89 - DIRECT CDN BYPASS! 🎯🎯🎯');
+  // VERSION: NEW-COMPONENT-v1.0.90 - SUPER AGGRESSIVE CACHE-BUSTING
+  console.log('🎯🎯🎯 GALLERYMANAGEMENTNEW v1.0.90 - SUPER AGGRESSIVE CACHE-BUST! 🎯🎯🎯');
   console.log('✅ This is the CORRECT modern component with language-specific uploads!');
   console.log('🔥 French (blue) + English (green) sections should be visible!');
   console.log('🎨 Toggle: "Utiliser la même vidéo pour FR et EN" controls layout!');
@@ -120,14 +120,24 @@ export default function GalleryManagementNew() {
     return `https://supabase.memopyk.org/storage/v1/object/public/memopyk-videos/${value}`;
   };
 
-  // Helper function to get image with cache-busting - BYPASS CACHE COMPLETELY
+  // Helper function to get image with cache-busting - SUPER AGGRESSIVE METHOD
+  const [forceRefreshKey, setForceRefreshKey] = useState(0);
+  
   const getImageUrlWithCacheBust = (filename: string) => {
     if (!filename) return '';
-    // Use direct Supabase URL to completely bypass local cache
+    // Use super aggressive cache-busting with multiple parameters + component refresh key
+    const timestamp = Date.now();
+    const random = Math.random().toString(36).substring(7);
+    const componentKey = forceRefreshKey; // Changes when we need to force refresh
+    
     if (filename.includes('http')) {
-      return `${filename}?cacheBust=${Date.now()}&v=${Math.random()}`;
+      const url = `${filename}?bustCache=${timestamp}&version=${random}&refresh=${componentKey}&nocache=1&_=${Date.now()}`;
+      console.log(`🖼️ SUPER AGGRESSIVE CACHE-BUST URL v1.0.90: ${url}`);
+      return url;
     }
-    return `https://supabase.memopyk.org/storage/v1/object/public/memopyk-videos/${encodeURIComponent(filename)}?cacheBust=${Date.now()}&v=${Math.random()}`;
+    const url = `https://supabase.memopyk.org/storage/v1/object/public/memopyk-videos/${encodeURIComponent(filename)}?bustCache=${timestamp}&version=${random}&refresh=${componentKey}&nocache=1&_=${Date.now()}`;
+    console.log(`🖼️ SUPER AGGRESSIVE CACHE-BUST URL v1.0.90: ${url}`);
+    return url;
   };
   const queryClient = useQueryClient();
   const [selectedVideoId, setSelectedVideoId] = useState<string | number | null>(null);
@@ -295,10 +305,12 @@ export default function GalleryManagementNew() {
       toast({ title: "✅ Succès", description: "Élément de galerie mis à jour avec succès" });
       queryClient.invalidateQueries({ queryKey: ['/api/gallery'] });
       queryClient.removeQueries({ queryKey: ['/api/gallery'] });
-      // Force component re-render instead of full page refresh
+      // Force component re-render with cache refresh key update
       setTimeout(() => {
         queryClient.invalidateQueries({ queryKey: ['/api/gallery'] });
         setFormData({ ...formData }); // Force state update
+        setForceRefreshKey(prev => prev + 1); // Force image refresh
+        console.log(`🖼️ FORCE REFRESH KEY UPDATED: ${forceRefreshKey + 1}`);
       }, 500);
       persistentUploadState.reset();
     },
