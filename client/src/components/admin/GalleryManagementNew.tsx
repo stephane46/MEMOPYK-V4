@@ -103,8 +103,8 @@ interface GalleryItem {
 }
 
 export default function GalleryManagementNew() {
-  // VERSION: NEW-COMPONENT-v1.0.85 - MODERN INTERFACE ACTIVE
-  console.log('🎯🎯🎯 GALLERYMANAGEMENTNEW v1.0.85 - MODERN INTERFACE LOADING! 🎯🎯🎯');
+  // VERSION: NEW-COMPONENT-v1.0.88 - CACHE-BUSTING SYSTEM ACTIVE
+  console.log('🎯🎯🎯 GALLERYMANAGEMENTNEW v1.0.88 - CACHE-BUSTING ACTIVE! 🎯🎯🎯');
   console.log('✅ This is the CORRECT modern component with language-specific uploads!');
   console.log('🔥 French (blue) + English (green) sections should be visible!');
   console.log('🎨 Toggle: "Utiliser la même vidéo pour FR et EN" controls layout!');
@@ -123,8 +123,8 @@ export default function GalleryManagementNew() {
   // Helper function to get image with cache-busting
   const getImageUrlWithCacheBust = (filename: string) => {
     if (!filename) return '';
-    const cacheBuster = Date.now();
-    return `/api/image-proxy?filename=${encodeURIComponent(filename)}&t=${cacheBuster}`;
+    const cacheBuster = Date.now() + Math.random(); // Even stronger cache busting
+    return `/api/image-proxy?filename=${encodeURIComponent(filename)}&t=${cacheBuster}&nocache=1`;
   };
   const queryClient = useQueryClient();
   const [selectedVideoId, setSelectedVideoId] = useState<string | number | null>(null);
@@ -291,6 +291,9 @@ export default function GalleryManagementNew() {
     onSuccess: () => {
       toast({ title: "✅ Succès", description: "Élément de galerie mis à jour avec succès" });
       queryClient.invalidateQueries({ queryKey: ['/api/gallery'] });
+      queryClient.removeQueries({ queryKey: ['/api/gallery'] });
+      // Force complete page refresh to bypass all caching
+      setTimeout(() => window.location.reload(), 1000);
       persistentUploadState.reset();
     },
     onError: (error: any) => {
@@ -774,11 +777,26 @@ export default function GalleryManagementNew() {
                             });
                             persistentUploadState.image_url_en = result.url;
                             persistentUploadState.image_url_fr = result.url;
+                            // Clear all caches and force refresh
+                            queryClient.removeQueries({ queryKey: ['/api/gallery'] });
                             toast({ 
                               title: "✅ Succès", 
                               description: `Image partagée uploadée: ${result.filename}`,
                               className: "bg-purple-50 dark:bg-purple-900/20 border-purple-200 dark:border-purple-800"
                             });
+                            // Force immediate save and refresh
+                            setTimeout(() => {
+                              if (selectedVideoId) {
+                                updateItemMutation.mutate({ 
+                                  id: selectedVideoId, 
+                                  data: {
+                                    ...formData,
+                                    image_url_en: result.url,
+                                    image_url_fr: result.url
+                                  }
+                                });
+                              }
+                            }, 500);
                           }}
                           currentFilename={formData.image_url_en}
                         />

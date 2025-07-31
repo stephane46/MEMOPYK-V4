@@ -3767,7 +3767,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
                           ext === 'webp' ? 'image/webp' : 'image/jpeg';
           
           res.setHeader('Content-Type', mimeType);
-          res.setHeader('Cache-Control', 'public, max-age=31536000');
+          res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
+          res.setHeader('Pragma', 'no-cache');
+          res.setHeader('Expires', '0');
+          res.setHeader('ETag', `"${Date.now()}"`);
           res.sendFile(newCachedPath);
         } else {
           console.error(`❌ Failed to cache and serve image: ${filename}`);
