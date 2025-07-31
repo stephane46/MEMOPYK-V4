@@ -75,6 +75,31 @@ Preferred communication style: Simple, everyday language.
 
 ## Recent Changes (July 31, 2025)
 
+### INLINE IMAGE CROPPING SYSTEM COMPLETE - v1.0.111 (July 31, 2025) ✅ DIRECT REPOSITION WORKFLOW
+**Revolutionary Inline Cropping Implementation - User Request Fulfilled:**
+✅ **Direct Drag-and-Reposition**: Users can now drag images directly within preview containers to reframe them inline without popup dialogs
+✅ **Seamless Button State Management**: "Recadrer FR/EN" buttons transform into Save/Cancel controls when in crop mode
+✅ **Real-Time Visual Feedback**: 300x200 crop zone with live repositioning preview using CSS backgroundPosition
+✅ **Canvas Generation Integration**: Reuses existing SimpleImageCropper canvas logic for consistent JPEG output with solid white backgrounds
+✅ **Database Integration**: Leverages existing upload endpoint and database update system for seamless save workflow
+✅ **Bilingual Support**: Separate inline cropping for French and English images with language-specific save states
+
+**Technical Implementation v1.0.111:**
+- **Inline State Management**: Added frCropMode/enCropMode, cropPosition, isDragging, and dragStart states for each language
+- **Direct Manipulation UI**: CSS backgroundImage with backgroundPosition for real-time drag repositioning
+- **Mouse Event Handling**: onMouseDown/Move/Up/Leave for smooth dragging experience with boundary constraints
+- **Canvas Reuse**: generateCroppedImage() function reuses existing SimpleImageCropper canvas generation logic
+- **Save Integration**: saveInlineCrop() function integrates with existing /api/upload/image endpoint and database updates
+- **Loading States**: frCropSaving/enCropSaving states with spinner animations during save operations
+
+**User Experience Achievement:**
+- Click "Recadrer FR" → Image transforms into draggable 300x200 crop zone within preview container
+- Drag to reposition → Real-time visual feedback shows exact crop result
+- Click "Sauver" → Image saves with solid white background and updates preview instantly
+- Click "Cancel" → Returns to normal preview mode without saving changes
+- Complete workflow happens inline without any popup dialogs or navigation disruption
+- Maintains user preference for compact, inline interface design over dedicated sections
+
 ### UI REVERT TO ORIGINAL LAYOUT - v1.0.110R (July 31, 2025) ✅ INLINE BUTTONS RESTORED
 **Admin Interface Reverted to Original Design - User Request:**
 ✅ **Inline Buttons Restored**: Reframing buttons returned to their original inline position within image preview sections

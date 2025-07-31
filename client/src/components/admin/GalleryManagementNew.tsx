@@ -118,6 +118,165 @@ async function logDisplayDiagnostics(previewEl: HTMLElement | null, imageUrl: st
     console.log(`📊 Calculated dimensions: ${displayedWidth} x ${displayedHeight} (from ${naturalWidth} x ${naturalHeight} in ${containerWidth} x ${containerHeight})`);
     return {width: displayedWidth, height: displayedHeight};
   };
+
+  // Inline canvas generation function (reused from SimpleImageCropper)
+  const generateCroppedImage = async (imageUrl: string, position: { x: number; y: number }, language: 'fr' | 'en') => {
+    console.log(`🚀 INLINE CROPPER v1.0.111 - Starting canvas generation for ${language.toUpperCase()}`);
+    
+    // Reuse the exact canvas generation logic from SimpleImageCropper
+    const canvas = document.createElement('canvas');
+    const ctx = canvas.getContext('2d')!;
+    const dpr = window.devicePixelRatio || 1;
+    canvas.width = 300 * dpr;
+    canvas.height = 200 * dpr;
+    ctx.scale(dpr, dpr);
+
+    // TRIPLE WHITE BACKGROUND SYSTEM - Nuclear approach
+    ctx.fillStyle = '#ffffff';
+    ctx.fillRect(0, 0, 300, 200);
+    
+    // Layer 2: ImageData pixel-level white fill
+    const imageData = ctx.createImageData(300, 200);
+    for (let i = 0; i < imageData.data.length; i += 4) {
+      imageData.data[i] = 255;     // Red
+      imageData.data[i + 1] = 255; // Green
+      imageData.data[i + 2] = 255; // Blue
+      imageData.data[i + 3] = 255; // Alpha
+    }
+    ctx.putImageData(imageData, 0, 0);
+    console.log('✅ TRIPLE WHITE BACKGROUND: fillRect + ImageData pixel control applied');
+    
+    // Load image
+    const img = document.createElement('img') as HTMLImageElement;
+    img.crossOrigin = 'anonymous';
+    
+    await new Promise<void>((resolve, reject) => {
+      img.onload = () => resolve();
+      img.onerror = () => reject(new Error('Failed to load image'));
+      img.src = imageUrl;
+    });
+    
+    console.log('✅ Image loaded successfully');
+    
+    // Calculate positioning for cover effect (same logic as SimpleImageCropper)
+    const scale = Math.max(300 / img.naturalWidth, 200 / img.naturalHeight);
+    const scaledWidth = img.naturalWidth * scale;
+    const scaledHeight = img.naturalHeight * scale;
+    
+    const offsetX = (scaledWidth - 300) * (-position.x / 100);
+    const offsetY = (scaledHeight - 200) * (-position.y / 100);
+    
+    // Draw the image with proper composite operation
+    ctx.globalCompositeOperation = 'source-over';
+    ctx.imageSmoothingEnabled = true;
+    ctx.imageSmoothingQuality = 'high';
+    ctx.drawImage(img, offsetX, offsetY, scaledWidth, scaledHeight);
+    console.log('✅ Image drawn on canvas');
+    
+    // Export as JPEG with maximum quality
+    const blob = await new Promise<Blob>((resolve) => {
+      canvas.toBlob((blob) => {
+        console.log('✅ INLINE CROPPER: JPEG blob created:', blob?.size, 'bytes');
+        resolve(blob!);
+      }, 'image/jpeg', 1.0);
+    });
+
+    return blob;
+  };
+
+  // Inline save function that reuses existing upload/database update logic
+  const saveInlineCrop = async (language: 'fr' | 'en') => {
+    if (!selectedItem) return;
+    
+    const position = language === 'fr' ? frCropPosition : enCropPosition;
+    const imageUrl = language === 'fr' ? selectedItem.image_url_fr : selectedItem.image_url_en;
+    
+    if (!imageUrl) {
+      toast({
+        title: "Erreur",
+        description: `Aucune image ${language === 'fr' ? 'française' : 'anglaise'} disponible pour le recadrage`,
+        variant: "destructive"
+      });
+      return;
+    }
+
+    if (language === 'fr') {
+      setFrCropSaving(true);
+    } else {
+      setEnCropSaving(true);
+    }
+
+    try {
+      console.log(`🚀 INLINE SAVE v1.0.111 - Starting save for ${language.toUpperCase()}`);
+      
+      // Generate cropped image using canvas
+      const blob = await generateCroppedImage(imageUrl, position, language);
+      
+      // Upload to server using existing endpoint (reuse from SimpleImageCropper)
+      const formData = new FormData();
+      const timestamp = Date.now();
+      const filename = `static_${language}_${timestamp}.jpg`;
+      formData.append('file', blob, filename);
+
+      const uploadResponse = await fetch('/api/upload/image', {
+        method: 'POST',
+        body: formData
+      });
+
+      if (!uploadResponse.ok) {
+        throw new Error('Upload failed');
+      }
+
+      const uploadResult = await uploadResponse.json();
+      console.log('✅ Upload successful:', uploadResult);
+
+      // Update database using existing API endpoint
+      const updateData = {
+        [`static_image_url_${language}`]: uploadResult.url
+      };
+
+      const response = await fetch(`/api/gallery/${selectedItem.id}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(updateData)
+      });
+
+      if (!response.ok) {
+        throw new Error('Database update failed');
+      }
+
+      console.log(`✅ Database updated for ${language.toUpperCase()}`);
+      
+      // Refresh cache and exit crop mode
+      queryClient.invalidateQueries({ queryKey: ['/api/gallery', 'v1.0.111'] });
+      
+      if (language === 'fr') {
+        setFrCropMode(false);
+      } else {
+        setEnCropMode(false);
+      }
+
+      toast({
+        title: "Succès",
+        description: `Image ${language === 'fr' ? 'française' : 'anglaise'} recadrée et sauvegardée avec succès`,
+        variant: "default"
+      });
+
+    } catch (error) {
+      console.error('Error saving inline crop:', error);
+      toast({
+        title: "Erreur",
+        description: "Échec de la sauvegarde du recadrage",
+        variant: "destructive"
+      });
+    } finally {
+      if (language === 'fr') {
+        setFrCropSaving(false);
+      } else {
+        setEnCropSaving(false);
+      }
+    }
+  };
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -317,6 +476,14 @@ export default function GalleryManagementNew() {
   // State for tracking actual image dimensions for crop frame positioning
   const [frImageDimensions, setFrImageDimensions] = useState<{width: number, height: number} | null>(null);
   const [enImageDimensions, setEnImageDimensions] = useState<{width: number, height: number} | null>(null);
+  
+  // State for inline cropping functionality
+  const [frCropMode, setFrCropMode] = useState(false);
+  const [enCropMode, setEnCropMode] = useState(false);
+  const [frCropPosition, setFrCropPosition] = useState({ x: 50, y: 50 });
+  const [enCropPosition, setEnCropPosition] = useState({ x: 50, y: 50 });
+  const [frCropSaving, setFrCropSaving] = useState(false);
+  const [enCropSaving, setEnCropSaving] = useState(false);
 
   // Fetch gallery items with cache-busting
   const { data: galleryItems = [], isLoading } = useQuery<GalleryItem[]>({
@@ -626,18 +793,47 @@ export default function GalleryManagementNew() {
                         </div>
                         {!isCreateMode && selectedItem?.image_url_fr && (
                           <div className="flex gap-1">
-                            <Button
-                              onClick={() => {
-                                setCropperLanguage('fr');
-                                setCropperOpen(true);
-                              }}
-                              variant="outline"
-                              size="sm"
-                              className="bg-blue-600 hover:bg-blue-700 text-white border-blue-600 px-2 py-1 text-xs"
-                            >
-                              <Crop className="w-3 h-3 mr-1" />
-                              Recadrer FR
-                            </Button>
+                            {!frCropMode ? (
+                              <Button
+                                onClick={() => setFrCropMode(true)}
+                                variant="outline"
+                                size="sm"
+                                className="bg-blue-600 hover:bg-blue-700 text-white border-blue-600 px-2 py-1 text-xs"
+                              >
+                                <Crop className="w-3 h-3 mr-1" />
+                                Recadrer FR
+                              </Button>
+                            ) : (
+                              <div className="flex gap-1">
+                                <Button
+                                  onClick={() => saveInlineCrop('fr')}
+                                  disabled={frCropSaving}
+                                  variant="outline"
+                                  size="sm"
+                                  className="bg-green-600 hover:bg-green-700 text-white border-green-600 px-2 py-1 text-xs"
+                                >
+                                  {frCropSaving ? (
+                                    <>
+                                      <div className="w-3 h-3 mr-1 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                                      Saving...
+                                    </>
+                                  ) : (
+                                    <>
+                                      <Save className="w-3 h-3 mr-1" />
+                                      Sauver
+                                    </>
+                                  )}
+                                </Button>
+                                <Button
+                                  onClick={() => setFrCropMode(false)}
+                                  variant="outline"
+                                  size="sm"
+                                  className="bg-gray-500 hover:bg-gray-600 text-white border-gray-500 px-2 py-1 text-xs"
+                                >
+                                  Annuler
+                                </Button>
+                              </div>
+                            )}
                             {selectedItem.static_image_url_fr && (
                               <Button
                                 onClick={async () => {
@@ -680,51 +876,109 @@ export default function GalleryManagementNew() {
                       <div className="aspect-video w-full bg-black rounded-lg overflow-hidden border border-blue-200 dark:border-blue-600 relative">
                         {selectedItem?.image_url_fr ? (
                           <>
-                            <img 
-                              ref={frImageRef}
-                              src={getThumbnailUrl(selectedItem, 'fr') || (selectedItem.image_url_fr.startsWith('http') 
-                                ? `${selectedItem.image_url_fr}?cacheBust=${Date.now()}&nocache=1`
-                                : `/api/image-proxy?filename=${selectedItem.image_url_fr.split('/').pop()?.split('?')[0]}`
-                              )} 
-                              alt="Aperçu Français"
-                              className="w-full h-full object-contain"
-                              style={{ outline: '2px solid magenta' }}
-                              onLoad={() => {
-                                const imageUrl = selectedItem.image_url_fr.startsWith('http') 
-                                  ? `${selectedItem.image_url_fr}?cacheBust=${Date.now()}&nocache=1}`
-                                  : `/api/image-proxy?filename=${selectedItem.image_url_fr.split('/').pop()?.split('?')[0]}`;
-                                console.log('🔍 FRENCH IMAGE LOADED - Running diagnostics...');
-                                setTimeout(() => {
-                                  logDisplayDiagnostics(frImageRef.current, imageUrl);
-                                  if (frImageRef.current) {
-                                    const dimensions = calculateImageDimensions(frImageRef.current);
-                                    setFrImageDimensions(dimensions);
-                                  }
-                                }, 100);
-                              }}
-                            />
-                            {/* 3:2 Ratio Frame Overlay - positioned over actual image dimensions */}
-                            {!selectedItem.static_image_url_fr && frImageDimensions && (
-                              <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-                                {/* Frame positioned over actual image size only */}
+                            {frCropMode ? (
+                              // Inline Cropping Mode for French
+                              <div className="w-full h-full relative bg-white flex items-center justify-center">
                                 <div 
-                                  className="border-2 border-blue-400 border-dashed bg-blue-400/10 rounded relative"
-                                  style={{
-                                    width: `${frImageDimensions.width}px`,
-                                    aspectRatio: '3/2',
-                                    maxHeight: `${frImageDimensions.height}px`
-                                  }}
+                                  className="relative bg-white border-2 border-blue-400"
+                                  style={{ width: '300px', height: '200px' }}
                                 >
+                                  <div 
+                                    className="w-full h-full cursor-move relative overflow-hidden"
+                                    style={{
+                                      backgroundImage: `url("${selectedItem.image_url_fr.startsWith('http') 
+                                        ? selectedItem.image_url_fr
+                                        : `/api/image-proxy?filename=${selectedItem.image_url_fr.split('/').pop()?.split('?')[0]}`
+                                      }")`,
+                                      backgroundSize: 'cover',
+                                      backgroundPosition: `${frCropPosition.x}% ${frCropPosition.y}%`,
+                                      backgroundRepeat: 'no-repeat'
+                                    }}
+                                    onMouseDown={(e) => {
+                                      setFrIsDragging(true);
+                                      const rect = e.currentTarget.getBoundingClientRect();
+                                      setFrDragStart({
+                                        x: e.clientX - rect.left,
+                                        y: e.clientY - rect.top
+                                      });
+                                    }}
+                                    onMouseMove={(e) => {
+                                      if (!frIsDragging) return;
+                                      
+                                      const rect = e.currentTarget.getBoundingClientRect();
+                                      const deltaX = (e.clientX - rect.left - frDragStart.x) / rect.width * 100;
+                                      const deltaY = (e.clientY - rect.top - frDragStart.y) / rect.height * 100;
+                                      
+                                      setFrCropPosition(prev => ({
+                                        x: Math.max(-50, Math.min(50, prev.x - deltaX)),
+                                        y: Math.max(-50, Math.min(50, prev.y - deltaY))
+                                      }));
+                                      
+                                      setFrDragStart({
+                                        x: e.clientX - rect.left,
+                                        y: e.clientY - rect.top
+                                      });
+                                    }}
+                                    onMouseUp={() => setFrIsDragging(false)}
+                                    onMouseLeave={() => setFrIsDragging(false)}
+                                  >
+                                    <div className="absolute inset-0 border-2 border-blue-400 border-dashed pointer-events-none" />
+                                  </div>
                                   <div className="absolute -top-6 left-0 text-xs text-blue-600 bg-white px-2 py-1 rounded shadow font-medium whitespace-nowrap">
-                                    Zone de recadrage 3:2
+                                    Zone de recadrage 3:2 - Glissez pour positionner
                                   </div>
                                 </div>
                               </div>
-                            )}
-                            {selectedItem.static_image_url_fr && (
-                              <div className="absolute top-2 right-2 bg-emerald-500 text-white px-2 py-1 rounded-full text-xs font-bold shadow-lg">
-                                ✂️ Recadré FR
-                              </div>
+                            ) : (
+                              // Normal Preview Mode for French
+                              <>
+                                <img 
+                                  ref={frImageRef}
+                                  src={getThumbnailUrl(selectedItem, 'fr') || (selectedItem.image_url_fr.startsWith('http') 
+                                    ? `${selectedItem.image_url_fr}?cacheBust=${Date.now()}&nocache=1`
+                                    : `/api/image-proxy?filename=${selectedItem.image_url_fr.split('/').pop()?.split('?')[0]}`
+                                  )} 
+                                  alt="Aperçu Français"
+                                  className="w-full h-full object-contain"
+                                  style={{ outline: '2px solid magenta' }}
+                                  onLoad={() => {
+                                    const imageUrl = selectedItem.image_url_fr.startsWith('http') 
+                                      ? `${selectedItem.image_url_fr}?cacheBust=${Date.now()}&nocache=1}`
+                                      : `/api/image-proxy?filename=${selectedItem.image_url_fr.split('/').pop()?.split('?')[0]}`;
+                                    console.log('🔍 FRENCH IMAGE LOADED - Running diagnostics...');
+                                    setTimeout(() => {
+                                      logDisplayDiagnostics(frImageRef.current, imageUrl);
+                                      if (frImageRef.current) {
+                                        const dimensions = calculateImageDimensions(frImageRef.current);
+                                        setFrImageDimensions(dimensions);
+                                      }
+                                    }, 100);
+                                  }}
+                                />
+                                {/* 3:2 Ratio Frame Overlay - positioned over actual image dimensions */}
+                                {!selectedItem.static_image_url_fr && frImageDimensions && (
+                                  <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+                                    {/* Frame positioned over actual image size only */}
+                                    <div 
+                                      className="border-2 border-blue-400 border-dashed bg-blue-400/10 rounded relative"
+                                      style={{
+                                        width: `${frImageDimensions.width}px`,
+                                        aspectRatio: '3/2',
+                                        maxHeight: `${frImageDimensions.height}px`
+                                      }}
+                                    >
+                                      <div className="absolute -top-6 left-0 text-xs text-blue-600 bg-white px-2 py-1 rounded shadow font-medium whitespace-nowrap">
+                                        Zone de recadrage 3:2
+                                      </div>
+                                    </div>
+                                  </div>
+                                )}
+                                {selectedItem.static_image_url_fr && (
+                                  <div className="absolute top-2 right-2 bg-emerald-500 text-white px-2 py-1 rounded-full text-xs font-bold shadow-lg">
+                                    ✂️ Recadré FR
+                                  </div>
+                                )}
+                              </>
                             )}
                           </>
                         ) : (
@@ -751,18 +1005,47 @@ export default function GalleryManagementNew() {
                         </div>
                         {!isCreateMode && selectedItem?.image_url_en && (
                           <div className="flex gap-1">
-                            <Button
-                              onClick={() => {
-                                setCropperLanguage('en');
-                                setCropperOpen(true);
-                              }}
-                              variant="outline"
-                              size="sm"
-                              className="bg-green-600 hover:bg-green-700 text-white border-green-600 px-2 py-1 text-xs"
-                            >
-                              <Crop className="w-3 h-3 mr-1" />
-                              Recadrer EN
-                            </Button>
+                            {!enCropMode ? (
+                              <Button
+                                onClick={() => setEnCropMode(true)}
+                                variant="outline"
+                                size="sm"
+                                className="bg-green-600 hover:bg-green-700 text-white border-green-600 px-2 py-1 text-xs"
+                              >
+                                <Crop className="w-3 h-3 mr-1" />
+                                Recadrer EN
+                              </Button>
+                            ) : (
+                              <div className="flex gap-1">
+                                <Button
+                                  onClick={() => saveInlineCrop('en')}
+                                  disabled={enCropSaving}
+                                  variant="outline"
+                                  size="sm"
+                                  className="bg-green-600 hover:bg-green-700 text-white border-green-600 px-2 py-1 text-xs"
+                                >
+                                  {enCropSaving ? (
+                                    <>
+                                      <div className="w-3 h-3 mr-1 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                                      Saving...
+                                    </>
+                                  ) : (
+                                    <>
+                                      <Save className="w-3 h-3 mr-1" />
+                                      Save
+                                    </>
+                                  )}
+                                </Button>
+                                <Button
+                                  onClick={() => setEnCropMode(false)}
+                                  variant="outline"
+                                  size="sm"
+                                  className="bg-gray-500 hover:bg-gray-600 text-white border-gray-500 px-2 py-1 text-xs"
+                                >
+                                  Cancel
+                                </Button>
+                              </div>
+                            )}
                             {selectedItem.static_image_url_en && (
                               <Button
                                 onClick={async () => {
@@ -805,51 +1088,109 @@ export default function GalleryManagementNew() {
                       <div className="aspect-video w-full bg-black rounded-lg overflow-hidden border border-green-200 dark:border-green-600 relative">
                         {selectedItem?.image_url_en ? (
                           <>
-                            <img 
-                              ref={enImageRef}
-                              src={getThumbnailUrl(selectedItem, 'en') || (selectedItem.image_url_en.startsWith('http') 
-                                ? `${selectedItem.image_url_en}?cacheBust=${Date.now()}&nocache=1`
-                                : `/api/image-proxy?filename=${selectedItem.image_url_en.split('/').pop()?.split('?')[0]}`
-                              )} 
-                              alt="Aperçu English"
-                              className="w-full h-full object-contain"
-                              style={{ outline: '2px solid magenta' }}
-                              onLoad={() => {
-                                const imageUrl = selectedItem.image_url_en.startsWith('http') 
-                                  ? `${selectedItem.image_url_en}?cacheBust=${Date.now()}&nocache=1`
-                                  : `/api/image-proxy?filename=${selectedItem.image_url_en.split('/').pop()?.split('?')[0]}`;
-                                console.log('🔍 ENGLISH IMAGE LOADED - Running diagnostics...');
-                                setTimeout(() => {
-                                  logDisplayDiagnostics(enImageRef.current, imageUrl);
-                                  if (enImageRef.current) {
-                                    const dimensions = calculateImageDimensions(enImageRef.current);
-                                    setEnImageDimensions(dimensions);
-                                  }
-                                }, 100);
-                              }}
-                            />
-                            {/* 3:2 Ratio Frame Overlay - positioned over actual image dimensions */}
-                            {!selectedItem.static_image_url_en && enImageDimensions && (
-                              <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-                                {/* Frame positioned over actual image size only */}
+                            {enCropMode ? (
+                              // Inline Cropping Mode for English
+                              <div className="w-full h-full relative bg-white flex items-center justify-center">
                                 <div 
-                                  className="border-2 border-green-400 border-dashed bg-green-400/10 rounded relative"
-                                  style={{
-                                    width: `${enImageDimensions.width}px`,
-                                    aspectRatio: '3/2',
-                                    maxHeight: `${enImageDimensions.height}px`
-                                  }}
+                                  className="relative bg-white border-2 border-green-400"
+                                  style={{ width: '300px', height: '200px' }}
                                 >
+                                  <div 
+                                    className="w-full h-full cursor-move relative overflow-hidden"
+                                    style={{
+                                      backgroundImage: `url("${selectedItem.image_url_en.startsWith('http') 
+                                        ? selectedItem.image_url_en
+                                        : `/api/image-proxy?filename=${selectedItem.image_url_en.split('/').pop()?.split('?')[0]}`
+                                      }")`,
+                                      backgroundSize: 'cover',
+                                      backgroundPosition: `${enCropPosition.x}% ${enCropPosition.y}%`,
+                                      backgroundRepeat: 'no-repeat'
+                                    }}
+                                    onMouseDown={(e) => {
+                                      setEnIsDragging(true);
+                                      const rect = e.currentTarget.getBoundingClientRect();
+                                      setEnDragStart({
+                                        x: e.clientX - rect.left,
+                                        y: e.clientY - rect.top
+                                      });
+                                    }}
+                                    onMouseMove={(e) => {
+                                      if (!enIsDragging) return;
+                                      
+                                      const rect = e.currentTarget.getBoundingClientRect();
+                                      const deltaX = (e.clientX - rect.left - enDragStart.x) / rect.width * 100;
+                                      const deltaY = (e.clientY - rect.top - enDragStart.y) / rect.height * 100;
+                                      
+                                      setEnCropPosition(prev => ({
+                                        x: Math.max(-50, Math.min(50, prev.x - deltaX)),
+                                        y: Math.max(-50, Math.min(50, prev.y - deltaY))
+                                      }));
+                                      
+                                      setEnDragStart({
+                                        x: e.clientX - rect.left,
+                                        y: e.clientY - rect.top
+                                      });
+                                    }}
+                                    onMouseUp={() => setEnIsDragging(false)}
+                                    onMouseLeave={() => setEnIsDragging(false)}
+                                  >
+                                    <div className="absolute inset-0 border-2 border-green-400 border-dashed pointer-events-none" />
+                                  </div>
                                   <div className="absolute -top-6 left-0 text-xs text-green-600 bg-white px-2 py-1 rounded shadow font-medium whitespace-nowrap">
-                                    Crop Zone 3:2
+                                    Crop Zone 3:2 - Drag to position
                                   </div>
                                 </div>
                               </div>
-                            )}
-                            {selectedItem.static_image_url_en && (
-                              <div className="absolute top-2 right-2 bg-emerald-500 text-white px-2 py-1 rounded-full text-xs font-bold shadow-lg">
-                                ✂️ Recadré EN
-                              </div>
+                            ) : (
+                              // Normal Preview Mode for English
+                              <>
+                                <img 
+                                  ref={enImageRef}
+                                  src={getThumbnailUrl(selectedItem, 'en') || (selectedItem.image_url_en.startsWith('http') 
+                                    ? `${selectedItem.image_url_en}?cacheBust=${Date.now()}&nocache=1`
+                                    : `/api/image-proxy?filename=${selectedItem.image_url_en.split('/').pop()?.split('?')[0]}`
+                                  )} 
+                                  alt="Aperçu English"
+                                  className="w-full h-full object-contain"
+                                  style={{ outline: '2px solid magenta' }}
+                                  onLoad={() => {
+                                    const imageUrl = selectedItem.image_url_en.startsWith('http') 
+                                      ? `${selectedItem.image_url_en}?cacheBust=${Date.now()}&nocache=1}`
+                                      : `/api/image-proxy?filename=${selectedItem.image_url_en.split('/').pop()?.split('?')[0]}`;
+                                    console.log('🔍 ENGLISH IMAGE LOADED - Running diagnostics...');
+                                    setTimeout(() => {
+                                      logDisplayDiagnostics(enImageRef.current, imageUrl);
+                                      if (enImageRef.current) {
+                                        const dimensions = calculateImageDimensions(enImageRef.current);
+                                        setEnImageDimensions(dimensions);
+                                      }
+                                    }, 100);
+                                  }}
+                                />
+                                {/* 3:2 Ratio Frame Overlay - positioned over actual image dimensions */}
+                                {!selectedItem.static_image_url_en && enImageDimensions && (
+                                  <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+                                    {/* Frame positioned over actual image size only */}
+                                    <div 
+                                      className="border-2 border-green-400 border-dashed bg-green-400/10 rounded relative"
+                                      style={{
+                                        width: `${enImageDimensions.width}px`,
+                                        aspectRatio: '3/2',
+                                        maxHeight: `${enImageDimensions.height}px`
+                                      }}
+                                    >
+                                      <div className="absolute -top-6 left-0 text-xs text-green-600 bg-white px-2 py-1 rounded shadow font-medium whitespace-nowrap">
+                                        Crop Zone 3:2
+                                      </div>
+                                    </div>
+                                  </div>
+                                )}
+                                {selectedItem.static_image_url_en && (
+                                  <div className="absolute top-2 right-2 bg-emerald-500 text-white px-2 py-1 rounded-full text-xs font-bold shadow-lg">
+                                    ✂️ Recadré EN
+                                  </div>
+                                )}
+                              </>
                             )}
                           </>
                         ) : (
