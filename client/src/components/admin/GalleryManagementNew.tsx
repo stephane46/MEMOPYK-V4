@@ -213,9 +213,16 @@ export default function GalleryManagementNew() {
     return `https://supabase.memopyk.org/storage/v1/object/public/memopyk-videos/${value}`;
   };
 
-  // Helper function to get thumbnail URL with language-specific reframing support
+  // Helper function to get thumbnail URL with language-specific reframing support and real-time preview
   const getThumbnailUrl = (item: GalleryItem, language: 'en' | 'fr' = 'en') => {
     if (!item) return '';
+    
+    // Priority 0: Real-time pending upload preview (highest priority)
+    const pendingImageUrl = language === 'fr' ? pendingPreviews.image_url_fr : pendingPreviews.image_url_en;
+    if (pendingImageUrl) {
+      console.log(`📸 REAL-TIME PREVIEW (${language.toUpperCase()}): ${pendingImageUrl} for ${item.title_en}`);
+      return pendingImageUrl;
+    }
     
     // Priority 1: Language-specific reframed image
     const staticImageUrl = language === 'fr' ? item.static_image_url_fr : item.static_image_url_en;
@@ -267,6 +274,15 @@ export default function GalleryManagementNew() {
   const [cropperLanguage, setCropperLanguage] = useState<'en' | 'fr'>('en');
   const [showFormatBadgeManager, setShowFormatBadgeManager] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  
+  // Real-time preview state for pending uploads
+  const [pendingPreviews, setPendingPreviews] = useState<{
+    video_url_en?: string;
+    video_url_fr?: string;
+    image_url_en?: string;
+    image_url_fr?: string;
+    video_filename?: string;
+  }>({});
 
   // Fetch gallery items with cache-busting
   const { data: galleryItems = [], isLoading } = useQuery<GalleryItem[]>({
@@ -332,15 +348,15 @@ export default function GalleryManagementNew() {
         format_platform_fr: selectedItem.format_platform_fr || '',
         format_type_en: selectedItem.format_type_en || '',
         format_type_fr: selectedItem.format_type_fr || '',
-        video_url_en: persistentUploadState.video_url_en || selectedItem.video_url_en || '',
-        video_url_fr: persistentUploadState.video_url_fr || selectedItem.video_url_fr || '',
-        video_filename: persistentUploadState.video_filename || selectedItem.video_filename || '',
+        video_url_en: pendingPreviews.video_url_en || persistentUploadState.video_url_en || selectedItem.video_url_en || '',
+        video_url_fr: pendingPreviews.video_url_fr || persistentUploadState.video_url_fr || selectedItem.video_url_fr || '',
+        video_filename: pendingPreviews.video_filename || persistentUploadState.video_filename || selectedItem.video_filename || '',
         use_same_video: selectedItem.use_same_video !== undefined ? selectedItem.use_same_video : true, // RESTORED: Load bilingual setting
         video_width: selectedItem.video_width || 16,
         video_height: selectedItem.video_height || 9,
         video_orientation: selectedItem.video_orientation || 'landscape',
-        image_url_en: persistentUploadState.image_url_en || selectedItem.image_url_en || '',
-        image_url_fr: persistentUploadState.image_url_fr || selectedItem.image_url_fr || '',
+        image_url_en: pendingPreviews.image_url_en || persistentUploadState.image_url_en || selectedItem.image_url_en || '',
+        image_url_fr: pendingPreviews.image_url_fr || persistentUploadState.image_url_fr || selectedItem.image_url_fr || '',
         static_image_url: selectedItem.static_image_url || '',
         is_active: selectedItem.is_active
       });
@@ -397,6 +413,7 @@ export default function GalleryManagementNew() {
       queryClient.invalidateQueries({ queryKey: ['/api/gallery'] });
       persistentUploadState.reset();
       setIsCreateMode(false);
+      setPendingPreviews({}); // Clear pending previews after successful save
     },
     onError: (error: any) => {
       toast({ title: "❌ Erreur", description: "Erreur lors de la création de l'élément", variant: "destructive" });
@@ -411,6 +428,7 @@ export default function GalleryManagementNew() {
       toast({ title: "✅ Succès", description: "Élément de galerie mis à jour avec succès" });
       queryClient.invalidateQueries({ queryKey: ['/api/gallery'] });
       queryClient.removeQueries({ queryKey: ['/api/gallery'] });
+      setPendingPreviews({}); // Clear pending previews after successful save
       // Force component re-render with cache refresh key update
       setTimeout(() => {
         queryClient.invalidateQueries({ queryKey: ['/api/gallery'] });
@@ -1014,6 +1032,13 @@ export default function GalleryManagementNew() {
                           uploadId="shared-video-upload-v87"
                           onUploadComplete={(result) => {
                             console.log('✅ Shared video upload completed:', result);
+                            // Real-time preview: Update pending state immediately
+                            setPendingPreviews(prev => ({
+                              ...prev,
+                              video_url_en: result.url,
+                              video_url_fr: result.url,
+                              video_filename: result.url
+                            }));
                             setFormData({
                               ...formData,
                               video_filename: result.url,
@@ -1024,8 +1049,8 @@ export default function GalleryManagementNew() {
                             persistentUploadState.video_url_en = result.url;
                             persistentUploadState.video_url_fr = result.url;
                             toast({ 
-                              title: "✅ Succès", 
-                              description: `Vidéo partagée uploadée: ${result.filename}`,
+                              title: "✅ Preview mise à jour", 
+                              description: `Vidéo visible immédiatement: ${result.filename}`,
                               className: "bg-purple-50 dark:bg-purple-900/20 border-purple-200 dark:border-purple-800"
                             });
                           }}
@@ -1043,6 +1068,12 @@ export default function GalleryManagementNew() {
                           uploadId="shared-image-upload-v87"
                           onUploadComplete={(result) => {
                             console.log('✅ Shared image upload completed:', result);
+                            // Real-time preview: Update pending state immediately for instant preview
+                            setPendingPreviews(prev => ({
+                              ...prev,
+                              image_url_en: result.url,
+                              image_url_fr: result.url
+                            }));
                             setFormData({
                               ...formData,
                               image_url_en: result.url,
@@ -1050,26 +1081,11 @@ export default function GalleryManagementNew() {
                             });
                             persistentUploadState.image_url_en = result.url;
                             persistentUploadState.image_url_fr = result.url;
-                            // Clear all caches and force refresh
-                            queryClient.removeQueries({ queryKey: ['/api/gallery'] });
                             toast({ 
-                              title: "✅ Succès", 
-                              description: `Image partagée uploadée: ${result.filename}`,
+                              title: "📸 Aperçu instantané", 
+                              description: `Image visible immédiatement: ${result.filename}`,
                               className: "bg-purple-50 dark:bg-purple-900/20 border-purple-200 dark:border-purple-800"
                             });
-                            // Force immediate save and refresh
-                            setTimeout(() => {
-                              if (selectedVideoId) {
-                                updateItemMutation.mutate({ 
-                                  id: selectedVideoId, 
-                                  data: {
-                                    ...formData,
-                                    image_url_en: result.url,
-                                    image_url_fr: result.url
-                                  }
-                                });
-                              }
-                            }, 500);
                           }}
                           currentFilename={formData.image_url_en}
                         />
@@ -1107,6 +1123,11 @@ export default function GalleryManagementNew() {
                             type="video"
                             onUploadComplete={(result) => {
                               console.log('✅ French video upload completed:', result);
+                              // Real-time preview: Update pending state immediately
+                              setPendingPreviews(prev => ({
+                                ...prev,
+                                video_url_fr: result.url
+                              }));
                               setFormData(prev => ({
                                 ...prev,
                                 video_url_fr: result.url,
@@ -1115,8 +1136,8 @@ export default function GalleryManagementNew() {
                               persistentUploadState.video_url_fr = result.url;
                               persistentUploadState.video_filename_fr = result.url;
                               toast({ 
-                                title: "✅ Succès", 
-                                description: `Vidéo française uploadée: ${result.filename}`,
+                                title: "📹 Aperçu instantané", 
+                                description: `Vidéo française visible immédiatement: ${result.filename}`,
                                 className: "bg-blue-50 dark:bg-blue-900/20 border-blue-200 dark:border-blue-800"
                               });
                             }}
@@ -1134,14 +1155,19 @@ export default function GalleryManagementNew() {
                             uploadId="french-image-upload-v87"
                             onUploadComplete={(result) => {
                               console.log('✅ French image upload completed:', result);
+                              // Real-time preview: Update pending state immediately
+                              setPendingPreviews(prev => ({
+                                ...prev,
+                                image_url_fr: result.url
+                              }));
                               setFormData(prev => ({
                                 ...prev,
                                 image_url_fr: result.url
                               }));
                               persistentUploadState.image_url_fr = result.url;
                               toast({ 
-                                title: "✅ Succès", 
-                                description: `Image française uploadée: ${result.filename}`,
+                                title: "📸 Aperçu instantané FR", 
+                                description: `Image française visible immédiatement: ${result.filename}`,
                                 className: "bg-blue-50 dark:bg-blue-900/20 border-blue-200 dark:border-blue-800"
                               });
                             }}
@@ -1175,6 +1201,11 @@ export default function GalleryManagementNew() {
                             type="video"
                             onUploadComplete={(result) => {
                               console.log('✅ English video upload completed:', result);
+                              // Real-time preview: Update pending state immediately
+                              setPendingPreviews(prev => ({
+                                ...prev,
+                                video_url_en: result.url
+                              }));
                               setFormData(prev => ({
                                 ...prev,
                                 video_url_en: result.url,
@@ -1183,8 +1214,8 @@ export default function GalleryManagementNew() {
                               persistentUploadState.video_url_en = result.url;
                               persistentUploadState.video_filename_en = result.url;
                               toast({ 
-                                title: "✅ Success", 
-                                description: `English video uploaded: ${result.filename}`,
+                                title: "📹 Instant Preview", 
+                                description: `English video visible immediately: ${result.filename}`,
                                 className: "bg-green-50 dark:bg-green-900/20 border-green-200 dark:border-green-800"
                               });
                             }}
@@ -1202,14 +1233,19 @@ export default function GalleryManagementNew() {
                             uploadId="english-image-upload-v87"
                             onUploadComplete={(result) => {
                               console.log('✅ English image upload completed:', result);
+                              // Real-time preview: Update pending state immediately
+                              setPendingPreviews(prev => ({
+                                ...prev,
+                                image_url_en: result.url
+                              }));
                               setFormData(prev => ({
                                 ...prev,
                                 image_url_en: result.url
                               }));
                               persistentUploadState.image_url_en = result.url;
                               toast({ 
-                                title: "✅ Success", 
-                                description: `English image uploaded: ${result.filename}`,
+                                title: "📸 Instant Preview EN", 
+                                description: `English image visible immediately: ${result.filename}`,
                                 className: "bg-green-50 dark:bg-green-900/20 border-green-200 dark:border-green-800"
                               });
                             }}

@@ -75,6 +75,28 @@ Preferred communication style: Simple, everyday language.
 
 ## Recent Changes (July 31, 2025)
 
+### REAL-TIME PREVIEW SYSTEM COMPLETE - v1.0.109 (July 31, 2025) ✅ INSTANT UPLOAD FEEDBACK
+**Instant Preview Functionality Implementation - User Request Fulfilled:**
+✅ **Real-Time Preview State**: Added pendingPreviews state system that tracks uploaded files immediately upon upload completion
+✅ **Instant Visual Feedback**: All DirectUpload components now update preview sections immediately when files are uploaded, even before saving
+✅ **Priority Display Logic**: getThumbnailUrl function enhanced with preview priority - pending uploads > saved reframed images > saved original uploads
+✅ **Cross-Language Support**: Real-time previews work for shared uploads (FR+EN), French-specific uploads, and English-specific uploads
+✅ **Enhanced Toast Messages**: Upload notifications now emphasize instant preview ("📸 Aperçu instantané", "📹 Instant Preview")
+✅ **State Management**: Pending previews clear automatically after successful form save to prevent display conflicts
+
+**Technical Implementation v1.0.109:**
+- Added `pendingPreviews` state with video_url_en/fr, image_url_en/fr, and video_filename fields
+- Updated all 5 DirectUpload components to call `setPendingPreviews()` on upload completion
+- Enhanced `getThumbnailUrl()` function with Priority 0: pending uploads for immediate display
+- Modified form data initialization to prioritize pending previews over persistent and saved state
+- Added automatic preview clearing in both create and update mutation success handlers
+
+**User Experience Achievement:**
+- Upload image/video → Preview appears instantly in admin interface (no save needed)
+- Visual feedback shows uploaded content immediately for better workflow continuity
+- Maintains all existing functionality while adding seamless real-time preview experience
+- Supports all upload scenarios: shared content, language-specific content, and mixed bilingual workflows
+
 ### REFRAMING BADGE SYSTEM COMPLETE - v1.0.108 (July 31, 2025) ✅ ADMIN VISUAL INDICATORS
 **Complete Admin Reframing Badge Implementation - User Request Fulfilled:**
 ✅ **Preview Display Fixed**: Admin interface now correctly prioritizes reframed static images (static_image_url) over original uploads
