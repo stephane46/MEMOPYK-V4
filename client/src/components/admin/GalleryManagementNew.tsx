@@ -324,25 +324,10 @@ export default function GalleryManagementNew() {
   
 
 
-  // Fetch gallery items with debug info but stable caching
+  // Fetch gallery items
   const { data: galleryItems = [], isLoading } = useQuery<GalleryItem[]>({
-    queryKey: ['/api/gallery', 'v1.0.109'], // Stable cache key
-    staleTime: 0, // Always consider data stale
-    refetchOnMount: true,
-    select: (data) => {
-      console.log(`🔍 RAW DATA FROM SERVER: ${data.length} items`);
-      console.log('🔍 RAW IDs:', data.map(item => `${item.id.toString().slice(0,8)}... (${item.title_en})`));
-      const filtered = data.filter(item => {
-        // Filter out any items that might have invalid or problematic IDs
-        const isValid = item.id && item.title_en && item.title_fr;
-        if (!isValid) {
-          console.log(`🚫 FILTERING OUT INVALID ITEM:`, item);
-        }
-        return isValid;
-      });
-      console.log(`✅ FILTERED TO ${filtered.length} valid items`);
-      return filtered.sort((a, b) => a.order_index - b.order_index);
-    }
+    queryKey: ['/api/gallery', 'v1.0.110'],
+    select: (data) => data.sort((a, b) => a.order_index - b.order_index)
   });
 
   // Get selected item
@@ -603,33 +588,7 @@ export default function GalleryManagementNew() {
     });
   };
 
-  // Emergency cache clearing function
-  const forceClearAllCaches = async () => {
-    console.log('🧹 EMERGENCY: Force clearing all caches');
-    
-    // Clear React Query cache
-    queryClient.clear();
-    queryClient.removeQueries();
-    
-    // Clear browser storage
-    localStorage.clear();
-    sessionStorage.clear();
-    
-    // Clear service worker caches
-    if ('caches' in window) {
-      const cacheNames = await caches.keys();
-      await Promise.all(cacheNames.map(name => caches.delete(name)));
-    }
-    
-    toast({ 
-      title: "🧹 Cache cleared", 
-      description: "Page will reload to show fresh data",
-      className: "bg-blue-50 border-blue-200 text-blue-900"
-    });
-    
-    // Force reload after short delay
-    setTimeout(() => window.location.reload(), 1000);
-  };
+
 
   if (isLoading) {
     return <div className="p-8">Chargement...</div>;
@@ -637,48 +596,7 @@ export default function GalleryManagementNew() {
 
   return (
     <div className="p-6 max-w-7xl mx-auto">
-      {/* DEBUG PANEL - Emergency Cache Clear */}
-      <div className="mb-4 p-3 bg-red-50 border-2 border-red-200 rounded-lg">
-        <div className="flex items-center justify-between">
-          <div>
-            <p className="text-sm text-red-800 font-medium">🔧 DEBUG: Showing {galleryItems.length} items from frontend</p>
-            <p className="text-xs text-gray-600 mb-1">Current IDs: {galleryItems.map(item => `${item.id.toString().slice(0,8)}...`).join(', ')}</p>
-            <p className="text-xs text-gray-600">Current Titles: {galleryItems.map(item => item.title_en).join(', ')}</p>
-            <p className="text-xs text-blue-600 mt-1">Expected DB IDs: a2f1f51f, gallery-hero2, gallery-hero3</p>
-          </div>
-          <div className="flex gap-2">
-            <Button
-              onClick={async () => {
-                console.log('🔍 MANUAL DATABASE CHECK');
-                try {
-                  const response = await fetch('/api/gallery');
-                  const dbData = await response.json();
-                  console.log(`📊 DATABASE HAS ${dbData.length} items:`, dbData.map(item => `${item.id} (${item.title_en})`));
-                  
-                  toast({ 
-                    title: `Database Check: ${dbData.length} items found`, 
-                    description: dbData.map(item => item.title_en).join(', '),
-                    className: "bg-blue-50 border-blue-200 text-blue-900"
-                  });
-                } catch (error) {
-                  console.error('DB check failed:', error);
-                }
-              }}
-              variant="outline"
-              size="sm"
-            >
-              📊 Check DB
-            </Button>
-            <Button
-              onClick={forceClearAllCaches}
-              variant="destructive"
-              size="sm"
-            >
-              🧹 Clear Cache
-            </Button>
-          </div>
-        </div>
-      </div>
+
 
       {/* Top Left: NEW Button */}
       <div className="mb-6">
