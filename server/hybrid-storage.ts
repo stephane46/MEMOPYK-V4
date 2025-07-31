@@ -424,15 +424,94 @@ export class HybridStorage implements HybridStorageInterface {
   }
 
   async createGalleryItem(item: any): Promise<any> {
-    const items = this.loadJsonFile('gallery-items.json');
+    console.log('🆕 HYBRID STORAGE: Creating new gallery item:', item.title_en);
+    
+    // First, create in database with UUID
+    let newItemId: string;
+    let dbNewItem: any;
+    
+    try {
+      const { galleryItems } = await import('../shared/schema');
+      const { db } = await import('./db');
+      
+      // Convert to database format with UUID
+      const dbInsertData = {
+        titleEn: item.title_en || 'Untitled',
+        titleFr: item.title_fr || 'Sans titre',
+        priceEn: item.price_en || '',
+        priceFr: item.price_fr || '',
+        sourceEn: item.source_en || '',
+        sourceFr: item.source_fr || '',
+        durationEn: item.duration_en || '',
+        durationFr: item.duration_fr || '',
+        situationEn: item.situation_en || '',
+        situationFr: item.situation_fr || '',
+        storyEn: item.story_en || '',
+        storyFr: item.story_fr || '',
+        sorryMessageEn: item.sorry_message_en || 'Sorry, we cannot show you the video at this stage',
+        sorryMessageFr: item.sorry_message_fr || 'Désolé, nous ne pouvons pas vous montrer la vidéo à ce stade',
+        formatPlatformEn: item.format_platform_en || 'Professional',
+        formatPlatformFr: item.format_platform_fr || 'Professionnel',
+        formatTypeEn: item.format_type_en || 'TV & Desktop',
+        formatTypeFr: item.format_type_fr || 'TV & Bureau',
+        videoUrlEn: item.video_url_en || '',
+        videoUrlFr: item.video_url_fr || item.video_url_en || '',
+        videoFilename: item.video_filename || item.video_url_en || '',
+        useSameVideo: item.use_same_video !== undefined ? item.use_same_video : true,
+        videoWidth: item.video_width || 1920,
+        videoHeight: item.video_height || 1080,
+        videoOrientation: item.video_orientation || 'landscape',
+        imageUrlEn: item.image_url_en || '',
+        imageUrlFr: item.image_url_fr || item.image_url_en || '',
+        staticImageUrl: item.static_image_url || '',
+        staticImageUrlEn: item.static_image_url_en || '',
+        staticImageUrlFr: item.static_image_url_fr || '',
+        altTextEn: item.alt_text_en || item.title_en || 'Gallery item',
+        altTextFr: item.alt_text_fr || item.title_fr || 'Élément de la galerie',
+        orderIndex: item.order_index || 1,
+        isActive: item.is_active !== undefined ? item.is_active : true,
+        cropSettings: item.crop_settings || null
+      };
+      
+      console.log('💾 DATABASE INSERT: Creating gallery item with data:', {
+        titleEn: dbInsertData.titleEn,
+        videoFilename: dbInsertData.videoFilename,
+        isActive: dbInsertData.isActive
+      });
+      
+      const dbResult = await db.insert(galleryItems)
+        .values(dbInsertData)
+        .returning();
+        
+      if (dbResult.length > 0) {
+        dbNewItem = dbResult[0];
+        newItemId = dbNewItem.id;
+        console.log(`✅ DATABASE INSERT SUCCESS: Created item with ID ${newItemId}`);
+      } else {
+        throw new Error('Database insert returned no results');
+      }
+      
+    } catch (error) {
+      console.error('❌ DATABASE INSERT FAILED:', error);
+      // Fall back to timestamp ID for JSON-only mode
+      newItemId = Date.now().toString();
+      console.log(`⚠️ Using fallback timestamp ID: ${newItemId}`);
+    }
+    
+    // Create JSON item (using UUID from database or timestamp fallback)
     const newItem = {
-      id: Date.now(),
+      id: newItemId,
       ...item,
       created_at: new Date().toISOString(),
       updated_at: new Date().toISOString()
     };
+    
+    // Add to JSON file for backup/fallback
+    const items = this.loadJsonFile('gallery-items.json');
     items.push(newItem);
     this.saveJsonFile('gallery-items.json', items);
+    
+    console.log(`🎯 HYBRID STORAGE SUCCESS: Created gallery item "${item.title_en}" with ID ${newItemId}`);
     return newItem;
   }
 
