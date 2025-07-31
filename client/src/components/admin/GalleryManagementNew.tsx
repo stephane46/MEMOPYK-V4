@@ -240,7 +240,7 @@ export default function GalleryManagementNew() {
 
   // Fetch gallery items with cache-busting
   const { data: galleryItems = [], isLoading } = useQuery<GalleryItem[]>({
-    queryKey: ['/api/gallery', 'v1.0.88'],
+    queryKey: ['/api/gallery', 'v1.0.106'],
     select: (data) => data.sort((a, b) => a.order_index - b.order_index)
   });
 
@@ -1652,17 +1652,61 @@ export default function GalleryManagementNew() {
             
             <SimpleImageCropper
               imageUrl={getFullUrl(cropperLanguage === 'fr' ? selectedItem.image_url_fr : selectedItem.image_url_en)}
-              onSave={(blob: Blob, cropSettings: any) => {
-                console.log(`🖼️ SIMPLE CROPPER: Cropping ${cropperLanguage} image`);
+              onSave={async (blob: Blob, cropSettings: any) => {
+                console.log(`🖼️ SIMPLE CROPPER v1.0.106: Starting save process for ${cropperLanguage} image`);
                 console.log(`🖼️ Source URL: ${cropperLanguage === 'fr' ? selectedItem.image_url_fr : selectedItem.image_url_en}`);
+                console.log(`🖼️ Blob size: ${blob.size} bytes`);
                 
-                // Handle save logic here
-                setCropperOpen(false);
-                queryClient.invalidateQueries({ queryKey: ['/api/gallery'] });
-                toast({ 
-                  title: "✅ Succès", 
-                  description: `Image statique générée avec succès (${cropperLanguage === 'fr' ? 'Français' : 'English'})` 
-                });
+                try {
+                  // Create FormData for upload
+                  const formData = new FormData();
+                  const filename = `static_${cropperLanguage}_${Date.now()}.jpg`;
+                  formData.append('file', blob, filename);
+                  
+                  console.log(`🖼️ Uploading cropped image as: ${filename}`);
+                  
+                  // Upload the cropped image
+                  const uploadResponse = await fetch('/api/upload/image', {
+                    method: 'POST',
+                    body: formData
+                  });
+                  
+                  if (!uploadResponse.ok) {
+                    throw new Error(`Upload failed: ${uploadResponse.status}`);
+                  }
+                  
+                  const uploadResult = await uploadResponse.json();
+                  console.log(`✅ Upload successful:`, uploadResult);
+                  
+                  // Update the gallery item with the new static image URL
+                  const updateData = new FormData();
+                  updateData.append('static_image_url', uploadResult.url);
+                  
+                  const updateResponse = await apiRequest(`/api/gallery/${selectedItem.id}`, 'PATCH', updateData);
+                  console.log(`✅ Gallery item updated:`, updateResponse);
+                  
+                  // Close cropper and refresh data
+                  setCropperOpen(false);
+                  
+                  // Invalidate cache with version bump to force refresh
+                  queryClient.invalidateQueries({ queryKey: ['/api/gallery', 'v1.0.106'] });
+                  
+                  // Force component refresh by updating cache-busting key
+                  queryClient.refetchQueries({ queryKey: ['/api/gallery'] });
+                  
+                  toast({ 
+                    title: "✅ Succès", 
+                    description: `Image recadrée sauvegardée avec succès (${cropperLanguage === 'fr' ? 'Français' : 'English'})` 
+                  });
+                  
+                } catch (error) {
+                  console.error(`❌ Error saving cropped image:`, error);
+                  toast({ 
+                    title: "❌ Erreur", 
+                    description: `Erreur lors de la sauvegarde: ${error instanceof Error ? error.message : 'Erreur inconnue'}`,
+                    variant: "destructive"
+                  });
+                }
               }}
               onCancel={() => setCropperOpen(false)}
             />

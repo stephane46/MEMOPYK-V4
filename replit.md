@@ -75,6 +75,32 @@ Preferred communication style: Simple, everyday language.
 
 ## Recent Changes (July 31, 2025)
 
+### IMAGE REFRAMING SYSTEM COMPLETE - v1.0.106 (July 31, 2025) ✅ FULLY FUNCTIONAL
+**Complete Image Cropper Workflow - User Can Successfully Reframe Images:**
+✅ **Display Issue Fixed**: Image cropper now properly displays images with fixed CSS backgroundImage quotes and backgroundRepeat settings
+✅ **Debug System Added**: Visual "✅ Image Loaded" indicator confirms image loading state successfully
+✅ **Dragging Functionality Working**: Users can drag to position images within the 300x200 cropping area
+✅ **Save Process Complete**: Cropped images upload to server and update database with new static_image_url
+✅ **Preview Updates**: Reframed images immediately appear in admin preview and live gallery site
+✅ **Cache Refresh System**: Query cache invalidation ensures instant preview updates without page refresh
+✅ **Error Handling**: Complete error handling with user feedback for upload/save failures
+✅ **Language Support**: Separate French/English cropping with proper language context in filenames
+
+**Technical Implementation v1.0.106:**
+- Fixed CSS: `backgroundImage: url("${imageUrl}")` with quotes and `backgroundRepeat: 'no-repeat'`
+- Debug overlay: Real-time loading state indicator for user feedback
+- Complete save workflow: blob → FormData → /api/upload/image → database update → cache refresh
+- Filename generation: `static_${language}_${timestamp}.jpg` for organized file management
+- Query cache versioning: Updated to v1.0.106 for consistent cache invalidation
+- Success/error toast notifications for complete user experience
+
+**User Experience Achievement:**
+- Click "Recadrer FR" or "Recadrer EN" → Image displays correctly with draggable positioning
+- Drag to reframe the image within the white 300x200 preview area
+- Click save → Image uploads, saves, and preview updates immediately
+- Reframed image appears instantly in both admin interface and live gallery site
+- No page refresh needed - complete workflow with real-time updates
+
 ### CROPPER TRANSPARENCY FIX IMPLEMENTATION - v1.0.102 (July 31, 2025) ✅ ACTUAL ROOT CAUSE RESOLVED
 **Critical Transparency Issue Resolution - User Screenshot Analysis:**
 ✅ **Real Issue Identified**: Cropping interface canvas was transparent, not the generated image output
