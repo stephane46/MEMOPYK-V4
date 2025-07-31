@@ -140,7 +140,8 @@ export default function ImageCropperEasyCrop({ imageUrl, onSave, onCancel }: Ima
     
     try {
       console.log('🚀 PROOF: ImageCropperEasyCrop.tsx generateStaticImage() called - THIS IS THE CORRECT COMPONENT!');
-      console.log('🎨 TRIPLE-LAYER WHITE BACKGROUND v1.0.98 - Starting image generation');
+      console.log('🎨 TRIPLE-LAYER WHITE BACKGROUND v1.0.99 - Starting image generation');
+      console.log('🔍 DEBUG: Starting transparency investigation...');
       
       // Create canvas with high-DPI support
       const canvas = document.createElement('canvas');
@@ -215,11 +216,38 @@ export default function ImageCropperEasyCrop({ imageUrl, onSave, onCancel }: Ima
       ctx.globalCompositeOperation = 'destination-over';
       ctx.fillStyle = '#FFFFFF';
       ctx.fillRect(0, 0, 300, 200);
-      console.log('✅ TRIPLE-LAYER WHITE BACKGROUND: Complete protection applied');
+      
+      // LAYER 4: NUCLEAR OPTION - Force white background with source-over
+      console.log('🎨 LAYER 4: NUCLEAR OPTION - Force white background');
+      ctx.globalCompositeOperation = 'source-over';
+      ctx.save();
+      ctx.globalAlpha = 1.0;
+      ctx.fillStyle = 'rgb(255, 255, 255)';  // Pure white, no alpha
+      ctx.fillRect(0, 0, 300, 200);
+      ctx.restore();
+      
+      console.log('✅ NUCLEAR WHITE BACKGROUND: 4-layer protection applied');
 
-      // Convert to JPEG (no transparency support)
+      // DEBUG: Check canvas final state before conversion
+      console.log('🔍 FINAL CANVAS DEBUG:');
+      console.log('- Canvas dimensions:', canvas.width, 'x', canvas.height);
+      console.log('- Device pixel ratio:', dpr);
+      console.log('- Composite operation:', ctx.globalCompositeOperation);
+      
+      // Test: Create a data URL to check transparency
+      const testDataUrl = canvas.toDataURL('image/png');
+      console.log('🔍 TEST PNG DataURL length:', testDataUrl.length);
+      
+      // Convert to JPEG (no transparency support) with maximum quality
+      console.log('🎨 Converting to JPEG with quality 1.0 (maximum)...');
       const blob = await new Promise<Blob>((resolve) => {
         canvas.toBlob((blob) => {
+          if (blob) {
+            console.log('✅ JPEG blob created successfully, size:', blob.size, 'bytes');
+            console.log('✅ JPEG blob type:', blob.type);
+          } else {
+            console.error('❌ Failed to create JPEG blob');
+          }
           resolve(blob!);
         }, 'image/jpeg', 1.0);
       });
