@@ -1626,7 +1626,7 @@ export default function GalleryManagementNew() {
             
 
             
-            {/* Current Language Display */}
+            {/* Current Language Display + Debug Info */}
             <div className="mb-4 p-3 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-200 dark:border-blue-800">
               <div className="flex items-center gap-2 text-blue-900 dark:text-blue-100">
                 <Globe className="w-4 h-4" />
@@ -1636,6 +1636,11 @@ export default function GalleryManagementNew() {
               </div>
               <div className="text-xs text-blue-800 dark:text-blue-200 font-mono mt-1 break-all">
                 {cropperLanguage === 'fr' ? selectedItem.image_url_fr : selectedItem.image_url_en}
+              </div>
+              {/* Debug info */}
+              <div className="text-xs text-gray-600 mt-2 space-y-1">
+                <div>French URL: {selectedItem.image_url_fr || 'NOT SET'}</div>
+                <div>English URL: {selectedItem.image_url_en || 'NOT SET'}</div>
               </div>
             </div>
             

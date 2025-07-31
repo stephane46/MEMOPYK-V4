@@ -151,7 +151,7 @@ const DraggableCover = ({ imageUrl, onPositionChange, previewRef }: { imageUrl: 
       {/* Image layer on top of white background */}
       {imageLoaded && (
         <div 
-          className="absolute inset-0"
+          className="absolute inset-0 pointer-events-none"
           style={{
             backgroundImage: `url(${imageUrl})`,
             backgroundSize: 'cover',
