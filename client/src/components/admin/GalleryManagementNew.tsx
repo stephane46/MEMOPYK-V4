@@ -473,17 +473,23 @@ export default function GalleryManagementNew() {
     video_filename?: string;
   }>({});
 
-  // State for tracking actual image dimensions for crop frame positioning
-  const [frImageDimensions, setFrImageDimensions] = useState<{width: number, height: number} | null>(null);
-  const [enImageDimensions, setEnImageDimensions] = useState<{width: number, height: number} | null>(null);
-  
-  // State for inline cropping functionality
+  // Inline cropping state variables
   const [frCropMode, setFrCropMode] = useState(false);
   const [enCropMode, setEnCropMode] = useState(false);
   const [frCropPosition, setFrCropPosition] = useState({ x: 50, y: 50 });
   const [enCropPosition, setEnCropPosition] = useState({ x: 50, y: 50 });
+  const [frIsDragging, setFrIsDragging] = useState(false);
+  const [enIsDragging, setEnIsDragging] = useState(false);
+  const [frDragStart, setFrDragStart] = useState({ x: 0, y: 0 });
+  const [enDragStart, setEnDragStart] = useState({ x: 0, y: 0 });
   const [frCropSaving, setFrCropSaving] = useState(false);
   const [enCropSaving, setEnCropSaving] = useState(false);
+
+  // State for tracking actual image dimensions for crop frame positioning
+  const [frImageDimensions, setFrImageDimensions] = useState<{width: number, height: number} | null>(null);
+  const [enImageDimensions, setEnImageDimensions] = useState<{width: number, height: number} | null>(null);
+  
+
 
   // Fetch gallery items with cache-busting
   const { data: galleryItems = [], isLoading } = useQuery<GalleryItem[]>({
