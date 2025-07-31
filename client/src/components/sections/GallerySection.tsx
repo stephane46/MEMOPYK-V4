@@ -198,7 +198,7 @@ export default function GallerySection() {
     const random = Math.random().toString(36).substring(7);
     const hash = `#${timestamp}-${random}`; // Fragment identifier forces browser to treat as new resource
     const directUrl = `https://supabase.memopyk.org/storage/v1/object/public/memopyk-media/${encodeURIComponent(filename || '')}?cacheBust=${timestamp}&v=${random}&nocache=1${hash}`;
-    console.log(`🖼️ DIRECT CDN IMAGE URL v1.0.107: ${directUrl} (reframed static priority)`);
+    console.log(`🖼️ DIRECT CDN IMAGE URL v1.0.107: ${directUrl} (existing image bucket - memopyk-media)`);
     return directUrl;
   };
 
