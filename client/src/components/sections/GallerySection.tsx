@@ -176,11 +176,13 @@ export default function GallerySection() {
         // If it's already a full URL, use it directly
         if (imageUrl.startsWith('http')) {
           console.log(`🖼️ LATEST UPLOAD IS FULL URL - USING DIRECTLY`);
+          console.log(`🖼️ DEBUG: Original URL: ${imageUrl}`);
+          console.log(`🖼️ DEBUG: URL already encoded: ${imageUrl.includes('%20') ? 'YES' : 'NO'}`);
           const timestamp = Date.now();
           const random = Math.random().toString(36).substring(7);
           const separator = imageUrl.includes('?') ? '&' : '?';
           const directUrl = `${imageUrl}${separator}cacheBust=${timestamp}&v=${random}&nocache=1#${timestamp}-${random}`;
-          console.log(`🖼️ DIRECT CDN IMAGE URL v1.0.107: ${directUrl} (upload fallback)`);
+          console.log(`🖼️ DIRECT CDN IMAGE URL v1.0.108: ${directUrl} (upload fallback)`);
           return directUrl;
         }
         
