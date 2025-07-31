@@ -1,5 +1,93 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { Button } from '@/components/ui/button';
+
+// Diagnostic helper: compares the previewed element vs the exported blob
+async function logDisplayDiagnostics(previewEl: HTMLElement | null, blobUrl: string) {
+  if (!previewEl) {
+    console.warn('[Diag] preview element is null');
+    return;
+  }
+
+  const cs = getComputedStyle(previewEl);
+  console.group('[Diag] Image Display Diagnostics');
+
+  // Basic computed style checks
+  console.log('mix-blend-mode:', cs.mixBlendMode);
+  console.log('opacity:', cs.opacity);
+  console.log('filter:', cs.filter);
+  console.log('background:', cs.background);
+  console.log('has ::before content:', getComputedStyle(previewEl, '::before').content);
+  console.log('has ::after content:', getComputedStyle(previewEl, '::after').content);
+
+  // Determine what image the preview is actually showing
+  let displayedUrl: string | null = null;
+  if (previewEl.tagName === 'IMG') {
+    displayedUrl = (previewEl as HTMLImageElement).src;
+  } else {
+    const bg = cs.backgroundImage;
+    if (bg && bg.startsWith('url(')) {
+      displayedUrl = bg.slice(4, -1).replace(/["']/g, '');
+    }
+  }
+  console.log('Displayed image URL:', displayedUrl);
+  console.log('Exported blob URL:', blobUrl);
+  if (displayedUrl === blobUrl) {
+    console.log('✅ Preview is using the exported blob.');
+  } else {
+    console.warn('⚠️ Preview is NOT using the exported blob (might be showing original source or something else).');
+  }
+
+  // Optional: compare average color of displayed vs blob image to detect visual alteration
+  const loadImage = (url: string) =>
+    new Promise<HTMLImageElement>((resolve, reject) => {
+      const img = new Image();
+      img.crossOrigin = 'anonymous';
+      img.onload = () => resolve(img);
+      img.onerror = () => reject(`Failed to load image: ${url}`);
+      img.src = url;
+    });
+
+  try {
+    if (displayedUrl) {
+      const [displayedImg, blobImg] = await Promise.all([loadImage(displayedUrl), loadImage(blobUrl)]);
+      const avgColor = (img: HTMLImageElement) => {
+        const c = document.createElement('canvas');
+        c.width = Math.min(50, img.naturalWidth);
+        c.height = Math.min(50, img.naturalHeight);
+        const ctx = c.getContext('2d')!;
+        ctx.drawImage(img, 0, 0, c.width, c.height);
+        const data = ctx.getImageData(0, 0, c.width, c.height).data;
+        let r = 0, g = 0, b = 0, count = 0;
+        for (let i = 0; i < data.length; i += 4) {
+          r += data[i];
+          g += data[i + 1];
+          b += data[i + 2];
+          count++;
+        }
+        return { r: r / count, g: g / count, b: b / count };
+      };
+      const avgDisplayed = avgColor(displayedImg);
+      const avgBlob = avgColor(blobImg);
+      console.log('Average RGB of displayed image:', avgDisplayed);
+      console.log('Average RGB of blob image:', avgBlob);
+      const diff = {
+        dr: Math.abs(avgDisplayed.r - avgBlob.r),
+        dg: Math.abs(avgDisplayed.g - avgBlob.g),
+        db: Math.abs(avgDisplayed.b - avgBlob.b),
+      };
+      console.log('Average color difference:', diff);
+      if (diff.dr > 5 || diff.dg > 5 || diff.db > 5) {
+        console.warn('[Diag] Significant average color difference; display may be altered or a different image is shown.');
+      } else {
+        console.log('[Diag] Displayed image and blob are similar in average color.');
+      }
+    }
+  } catch (e) {
+    console.warn('[Diag] Image comparison failed:', e);
+  }
+
+  console.groupEnd();
+}
 
 interface SimpleImageCropperProps {
   imageUrl: string;
@@ -7,7 +95,7 @@ interface SimpleImageCropperProps {
   onCancel: () => void;
 }
 
-const DraggableCover = ({ imageUrl, onPositionChange }: { imageUrl: string; onPositionChange: (pos: { x: number; y: number }) => void }) => {
+const DraggableCover = ({ imageUrl, onPositionChange, previewRef }: { imageUrl: string; onPositionChange: (pos: { x: number; y: number }) => void; previewRef: React.RefObject<HTMLDivElement> }) => {
   const [isDragging, setIsDragging] = useState(false);
   const [position, setPosition] = useState({ x: 50, y: 50 });
   const [imageLoaded, setImageLoaded] = useState(false);
@@ -39,6 +127,7 @@ const DraggableCover = ({ imageUrl, onPositionChange }: { imageUrl: string; onPo
 
   return (
     <div
+      ref={previewRef}
       className={`w-[300px] h-[200px] border-2 border-gray-300 relative overflow-hidden ${isDragging ? 'cursor-grabbing' : 'cursor-grab'}`}
       onMouseDown={handleMouseDown}
       onMouseMove={handleMouseMove}
@@ -74,6 +163,7 @@ const DraggableCover = ({ imageUrl, onPositionChange }: { imageUrl: string; onPo
 export default function SimpleImageCropper({ imageUrl, onSave, onCancel }: SimpleImageCropperProps) {
   const [loading, setLoading] = useState(false);
   const [position, setPosition] = useState({ x: 50, y: 50 });
+  const previewRef = useRef<HTMLDivElement>(null);
 
   const generateImage = async () => {
     setLoading(true);
@@ -129,6 +219,15 @@ export default function SimpleImageCropper({ imageUrl, onSave, onCancel }: Simpl
           const blobUrl = URL.createObjectURL(blob!);
           console.log('🔍 DIRECT BLOB URL for inspection:', blobUrl);
           console.log('📋 Open this URL in new tab to verify white background');
+          
+          // Run diagnostic helper after a short delay to allow any DOM updates
+          setTimeout(() => {
+            if (previewRef.current) {
+              previewRef.current.style.outline = '2px solid magenta';
+              logDisplayDiagnostics(previewRef.current, blobUrl);
+            }
+          }, 100);
+          
           resolve(blob!);
         }, 'image/jpeg', 1.0);
       });
@@ -165,6 +264,7 @@ export default function SimpleImageCropper({ imageUrl, onSave, onCancel }: Simpl
           <DraggableCover 
             imageUrl={imageUrl} 
             onPositionChange={setPosition}
+            previewRef={previewRef}
           />
         </div>
         
