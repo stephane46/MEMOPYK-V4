@@ -480,14 +480,62 @@ export default function GalleryManagementNew() {
   const [enCropPosition, setEnCropPosition] = useState({ x: 50, y: 50 });
   const [frIsDragging, setFrIsDragging] = useState(false);
   const [enIsDragging, setEnIsDragging] = useState(false);
-  const [frDragStart, setFrDragStart] = useState({ x: 0, y: 0 });
-  const [enDragStart, setEnDragStart] = useState({ x: 0, y: 0 });
+  const [frDragStart, setFrDragStart] = useState({ x: 0, y: 0, positionX: 50, positionY: 50 });
+  const [enDragStart, setEnDragStart] = useState({ x: 0, y: 0, positionX: 50, positionY: 50 });
   const [frCropSaving, setFrCropSaving] = useState(false);
   const [enCropSaving, setEnCropSaving] = useState(false);
 
   // State for tracking actual image dimensions for crop frame positioning
   const [frImageDimensions, setFrImageDimensions] = useState<{width: number, height: number} | null>(null);
   const [enImageDimensions, setEnImageDimensions] = useState<{width: number, height: number} | null>(null);
+
+  // Global mouse event handlers for smooth dragging
+  useEffect(() => {
+    const handleGlobalMouseMove = (e: MouseEvent) => {
+      if (frIsDragging) {
+        e.preventDefault();
+        const deltaX = (e.clientX - frDragStart.x) * 0.2;
+        const deltaY = (e.clientY - frDragStart.y) * 0.2;
+        
+        const newX = frDragStart.positionX + deltaX;
+        const newY = frDragStart.positionY + deltaY;
+        
+        setFrCropPosition({
+          x: Math.max(0, Math.min(100, newX)),
+          y: Math.max(0, Math.min(100, newY))
+        });
+      }
+      
+      if (enIsDragging) {
+        e.preventDefault();
+        const deltaX = (e.clientX - enDragStart.x) * 0.2;
+        const deltaY = (e.clientY - enDragStart.y) * 0.2;
+        
+        const newX = enDragStart.positionX + deltaX;
+        const newY = enDragStart.positionY + deltaY;
+        
+        setEnCropPosition({
+          x: Math.max(0, Math.min(100, newX)),
+          y: Math.max(0, Math.min(100, newY))
+        });
+      }
+    };
+
+    const handleGlobalMouseUp = () => {
+      setFrIsDragging(false);
+      setEnIsDragging(false);
+    };
+
+    if (frIsDragging || enIsDragging) {
+      document.addEventListener('mousemove', handleGlobalMouseMove);
+      document.addEventListener('mouseup', handleGlobalMouseUp);
+    }
+
+    return () => {
+      document.removeEventListener('mousemove', handleGlobalMouseMove);
+      document.removeEventListener('mouseup', handleGlobalMouseUp);
+    };
+  }, [frIsDragging, enIsDragging, frDragStart, enDragStart]);
   
 
 
@@ -901,30 +949,16 @@ export default function GalleryManagementNew() {
                                       backgroundRepeat: 'no-repeat'
                                     }}
                                     onMouseDown={(e) => {
+                                      e.preventDefault();
                                       setFrIsDragging(true);
-                                      const rect = e.currentTarget.getBoundingClientRect();
                                       setFrDragStart({
-                                        x: e.clientX - rect.left,
-                                        y: e.clientY - rect.top
+                                        x: e.clientX,
+                                        y: e.clientY,
+                                        positionX: frCropPosition.x,
+                                        positionY: frCropPosition.y
                                       });
                                     }}
-                                    onMouseMove={(e) => {
-                                      if (!frIsDragging) return;
-                                      
-                                      const rect = e.currentTarget.getBoundingClientRect();
-                                      const deltaX = (e.clientX - rect.left - frDragStart.x) / rect.width * 100;
-                                      const deltaY = (e.clientY - rect.top - frDragStart.y) / rect.height * 100;
-                                      
-                                      setFrCropPosition(prev => ({
-                                        x: Math.max(-50, Math.min(50, prev.x - deltaX)),
-                                        y: Math.max(-50, Math.min(50, prev.y - deltaY))
-                                      }));
-                                      
-                                      setFrDragStart({
-                                        x: e.clientX - rect.left,
-                                        y: e.clientY - rect.top
-                                      });
-                                    }}
+
                                     onMouseUp={() => setFrIsDragging(false)}
                                     onMouseLeave={() => setFrIsDragging(false)}
                                   >
@@ -1113,30 +1147,16 @@ export default function GalleryManagementNew() {
                                       backgroundRepeat: 'no-repeat'
                                     }}
                                     onMouseDown={(e) => {
+                                      e.preventDefault();
                                       setEnIsDragging(true);
-                                      const rect = e.currentTarget.getBoundingClientRect();
                                       setEnDragStart({
-                                        x: e.clientX - rect.left,
-                                        y: e.clientY - rect.top
+                                        x: e.clientX,
+                                        y: e.clientY,
+                                        positionX: enCropPosition.x,
+                                        positionY: enCropPosition.y
                                       });
                                     }}
-                                    onMouseMove={(e) => {
-                                      if (!enIsDragging) return;
-                                      
-                                      const rect = e.currentTarget.getBoundingClientRect();
-                                      const deltaX = (e.clientX - rect.left - enDragStart.x) / rect.width * 100;
-                                      const deltaY = (e.clientY - rect.top - enDragStart.y) / rect.height * 100;
-                                      
-                                      setEnCropPosition(prev => ({
-                                        x: Math.max(-50, Math.min(50, prev.x - deltaX)),
-                                        y: Math.max(-50, Math.min(50, prev.y - deltaY))
-                                      }));
-                                      
-                                      setEnDragStart({
-                                        x: e.clientX - rect.left,
-                                        y: e.clientY - rect.top
-                                      });
-                                    }}
+
                                     onMouseUp={() => setEnIsDragging(false)}
                                     onMouseLeave={() => setEnIsDragging(false)}
                                   >
