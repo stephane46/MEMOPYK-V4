@@ -162,7 +162,14 @@ const DraggableCover = ({ imageUrl, onPositionChange, previewRef }: { imageUrl: 
       )}
       <img
         src={imageUrl}
-        onLoad={() => setImageLoaded(true)}
+        onLoad={() => {
+          console.log(`✅ Image loaded successfully: ${imageUrl}`);
+          setImageLoaded(true);
+        }}
+        onError={(e) => {
+          console.error(`❌ Image failed to load: ${imageUrl}`, e);
+          setImageLoaded(false);
+        }}
         style={{ display: 'none' }}
         alt=""
       />
