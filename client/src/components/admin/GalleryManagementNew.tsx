@@ -588,12 +588,58 @@ export default function GalleryManagementNew() {
     });
   };
 
+  // Emergency cache clearing function
+  const forceClearAllCaches = async () => {
+    console.log('🧹 EMERGENCY: Force clearing all caches');
+    
+    // Clear React Query cache
+    queryClient.clear();
+    queryClient.removeQueries();
+    
+    // Clear browser storage
+    localStorage.clear();
+    sessionStorage.clear();
+    
+    // Clear service worker caches
+    if ('caches' in window) {
+      const cacheNames = await caches.keys();
+      await Promise.all(cacheNames.map(name => caches.delete(name)));
+    }
+    
+    toast({ 
+      title: "🧹 Cache cleared", 
+      description: "Page will reload to show fresh data",
+      className: "bg-blue-50 border-blue-200 text-blue-900"
+    });
+    
+    // Force reload after short delay
+    setTimeout(() => window.location.reload(), 1000);
+  };
+
   if (isLoading) {
     return <div className="p-8">Chargement...</div>;
   }
 
   return (
     <div className="p-6 max-w-7xl mx-auto">
+      {/* DEBUG PANEL - Emergency Cache Clear */}
+      <div className="mb-4 p-3 bg-red-50 border-2 border-red-200 rounded-lg">
+        <div className="flex items-center justify-between">
+          <div>
+            <p className="text-sm text-red-800 font-medium">🔧 DEBUG: Showing {galleryItems.length} items from database</p>
+            <p className="text-xs text-gray-600">Available IDs: {galleryItems.map(item => item.id.toString().slice(0,8)).join(', ')}</p>
+          </div>
+          <Button
+            onClick={forceClearAllCaches}
+            variant="destructive"
+            size="sm"
+            className="ml-4"
+          >
+            🧹 Clear All Caches
+          </Button>
+        </div>
+      </div>
+
       {/* Top Left: NEW Button */}
       <div className="mb-6">
         {!isCreateMode ? (
