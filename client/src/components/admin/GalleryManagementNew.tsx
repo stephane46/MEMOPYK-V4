@@ -806,6 +806,8 @@ export default function GalleryManagementNew() {
                   </h4>
                   
                   <div className="space-y-8">
+                    {/* Spacer to align with French image */}
+                    <div style={{ height: '60px' }}></div>
                     {/* French Video */}
                     <div className="space-y-2">
                       <div className="flex items-center justify-between">
