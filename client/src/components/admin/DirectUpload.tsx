@@ -38,7 +38,7 @@ export default function DirectUpload({
   const finalAcceptedTypes = acceptedTypes || defaultAcceptedTypes;
   
   // Set default bucket based on type if not provided
-  const defaultBucket = type === 'video' ? 'memopyk-videos' : 'memopyk-media'; // Match existing data structure
+  const defaultBucket = 'memopyk-videos'; // Unified bucket for ALL content (videos and images)
   const finalBucket = bucket || defaultBucket;
   
   // DEBUG: Log component configuration to help troubleshoot upload dialog issues

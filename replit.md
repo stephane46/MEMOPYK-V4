@@ -30,7 +30,8 @@ Preferred communication style: Simple, everyday language.
 - Old Buckets Removed: `memopyk-gallery` bucket (66 files) and `memopyk-hero` bucket (4 files) completely deleted from Supabase
 - Consistent Performance: Gallery videos now match hero video performance with cached serving
 - Simplified Architecture: Single bucket (`memopyk-videos`), single proxy system, unified caching for all video content
-- Final Infrastructure: Only 2 buckets remain - `memopyk-videos` (all videos) and `memopyk-media` (images/documents)
+- Final Infrastructure: Only 1 bucket remains - `memopyk-videos` (all content: videos, images, and documents)
+- Database Migration: All existing image URLs migrated from `memopyk-media` to `memopyk-videos` bucket
 
 **Clean Minimal Video Controls - USER REQUIREMENT FULLY ACHIEVED:**
 - Three-Dots Menu Removed: Eliminated vertical menu with download, playback speed, and picture-in-picture options

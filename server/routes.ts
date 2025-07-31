@@ -363,7 +363,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
 
       // Validate bucket name
-      const allowedBuckets = ['memopyk-videos', 'memopyk-media']; // Keep existing structure while preparing for unified approach
+      const allowedBuckets = ['memopyk-videos']; // Unified bucket for ALL content (videos and images)
       if (!allowedBuckets.includes(bucket)) {
         return res.status(400).json({ error: "Invalid bucket name" });
       }
