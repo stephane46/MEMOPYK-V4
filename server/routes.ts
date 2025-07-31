@@ -2417,7 +2417,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
           if (!videoCache.isVideoCached(filename)) {
             console.log(`⬇️ Caching gallery video: ${filename}`);
             const encodedFilename = encodeURIComponent(filename);
-            const videoUrl = `https://supabase.memopyk.org/storage/v1/object/public/memopyk-gallery/${encodedFilename}`;
+            const videoUrl = `https://supabase.memopyk.org/storage/v1/object/public/memopyk-videos/${encodedFilename}`;
             console.log(`   - Original filename: ${filename}`);
             console.log(`   - Encoded for URL: ${encodedFilename}`);
             console.log(`   - Supabase URL: ${videoUrl}`);
@@ -3540,7 +3540,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       for (const filename of heroVideos) {
         try {
-          const videoUrl = `https://supabase.memopyk.org/storage/v1/object/public/memopyk-gallery/${filename}`;
+          const videoUrl = `https://supabase.memopyk.org/storage/v1/object/public/memopyk-videos/${filename}`;
           console.log(`🔄 Caching hero video: ${filename} from ${videoUrl}`);
           
           // Download and cache the video
