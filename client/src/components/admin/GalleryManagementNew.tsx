@@ -1,6 +1,94 @@
 import React, { useState, useEffect, useRef } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { apiRequest } from "@/lib/queryClient";
+
+// Diagnostic helper: compares the previewed element vs the exported blob
+async function logDisplayDiagnostics(previewEl: HTMLElement | null, imageUrl: string) {
+  if (!previewEl) {
+    console.warn('[Diag] preview element is null');
+    return;
+  }
+
+  const cs = getComputedStyle(previewEl);
+  console.group('[Diag] Image Display Diagnostics');
+
+  // Basic computed style checks
+  console.log('mix-blend-mode:', cs.mixBlendMode);
+  console.log('opacity:', cs.opacity);
+  console.log('filter:', cs.filter);
+  console.log('background:', cs.background);
+  console.log('has ::before content:', getComputedStyle(previewEl, '::before').content);
+  console.log('has ::after content:', getComputedStyle(previewEl, '::after').content);
+
+  // Determine what image the preview is actually showing
+  let displayedUrl: string | null = null;
+  if (previewEl.tagName === 'IMG') {
+    displayedUrl = (previewEl as HTMLImageElement).src;
+  } else {
+    const bg = cs.backgroundImage;
+    if (bg && bg.startsWith('url(')) {
+      displayedUrl = bg.slice(4, -1).replace(/["']/g, '');
+    }
+  }
+  console.log('Displayed image URL:', displayedUrl);
+  console.log('Expected image URL:', imageUrl);
+  if (displayedUrl === imageUrl) {
+    console.log('✅ Preview is using the expected image URL.');
+  } else {
+    console.warn('⚠️ Preview is NOT using the expected image URL (might be showing different source).');
+  }
+
+  // Optional: compare average color of displayed vs expected image to detect visual alteration
+  const loadImage = (url: string) =>
+    new Promise<HTMLImageElement>((resolve, reject) => {
+      const img = new Image();
+      img.crossOrigin = 'anonymous';
+      img.onload = () => resolve(img);
+      img.onerror = () => reject(`Failed to load image: ${url}`);
+      img.src = url;
+    });
+
+  try {
+    if (displayedUrl) {
+      const [displayedImg, expectedImg] = await Promise.all([loadImage(displayedUrl), loadImage(imageUrl)]);
+      const avgColor = (img: HTMLImageElement) => {
+        const c = document.createElement('canvas');
+        c.width = Math.min(50, img.naturalWidth);
+        c.height = Math.min(50, img.naturalHeight);
+        const ctx = c.getContext('2d')!;
+        ctx.drawImage(img, 0, 0, c.width, c.height);
+        const data = ctx.getImageData(0, 0, c.width, c.height).data;
+        let r = 0, g = 0, b = 0, count = 0;
+        for (let i = 0; i < data.length; i += 4) {
+          r += data[i];
+          g += data[i + 1];
+          b += data[i + 2];
+          count++;
+        }
+        return { r: r / count, g: g / count, b: b / count };
+      };
+      const avgDisplayed = avgColor(displayedImg);
+      const avgExpected = avgColor(expectedImg);
+      console.log('Average RGB of displayed image:', avgDisplayed);
+      console.log('Average RGB of expected image:', avgExpected);
+      const diff = {
+        dr: Math.abs(avgDisplayed.r - avgExpected.r),
+        dg: Math.abs(avgDisplayed.g - avgExpected.g),
+        db: Math.abs(avgDisplayed.b - avgExpected.b),
+      };
+      console.log('Average color difference:', diff);
+      if (diff.dr > 5 || diff.dg > 5 || diff.db > 5) {
+        console.warn('[Diag] Significant average color difference; display may be altered or a different image is shown.');
+      } else {
+        console.log('[Diag] Displayed image and expected image are similar in average color.');
+      }
+    }
+  } catch (e) {
+    console.warn('[Diag] Image comparison failed:', e);
+  }
+
+  console.groupEnd();
+}
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -111,6 +199,8 @@ export default function GalleryManagementNew() {
   console.log('🎨 Toggle: "Utiliser la même vidéo pour FR et EN" controls layout!');
   
   const { toast } = useToast();
+  const frImageRef = useRef<HTMLImageElement>(null);
+  const enImageRef = useRef<HTMLImageElement>(null);
 
   // Helper function to convert filename to full URL when displaying with cache-busting
   const getFullUrl = (value: string) => {
@@ -494,12 +584,21 @@ export default function GalleryManagementNew() {
                       <div className="aspect-video w-full bg-gray-100 dark:bg-gray-700 rounded-lg overflow-hidden border border-blue-200 dark:border-blue-600">
                         {selectedItem?.image_url_fr ? (
                           <img 
+                            ref={frImageRef}
                             src={selectedItem.image_url_fr.startsWith('http') 
                               ? `${selectedItem.image_url_fr}?cacheBust=${Date.now()}&nocache=1`
                               : `/api/image-proxy?filename=${selectedItem.image_url_fr.split('/').pop()?.split('?')[0]}`
                             } 
                             alt="Aperçu Français"
                             className="w-full h-full object-cover"
+                            style={{ outline: '2px solid magenta' }}
+                            onLoad={() => {
+                              const imageUrl = selectedItem.image_url_fr.startsWith('http') 
+                                ? `${selectedItem.image_url_fr}?cacheBust=${Date.now()}&nocache=1`
+                                : `/api/image-proxy?filename=${selectedItem.image_url_fr.split('/').pop()?.split('?')[0]}`;
+                              console.log('🔍 FRENCH IMAGE LOADED - Running diagnostics...');
+                              setTimeout(() => logDisplayDiagnostics(frImageRef.current, imageUrl), 100);
+                            }}
                           />
                         ) : (
                           <div className="w-full h-full flex items-center justify-center">
@@ -541,12 +640,21 @@ export default function GalleryManagementNew() {
                       <div className="aspect-video w-full bg-gray-100 dark:bg-gray-700 rounded-lg overflow-hidden border border-green-200 dark:border-green-600">
                         {selectedItem?.image_url_en ? (
                           <img 
+                            ref={enImageRef}
                             src={selectedItem.image_url_en.startsWith('http') 
                               ? `${selectedItem.image_url_en}?cacheBust=${Date.now()}&nocache=1`
                               : `/api/image-proxy?filename=${selectedItem.image_url_en.split('/').pop()?.split('?')[0]}`
                             } 
                             alt="Aperçu English"
                             className="w-full h-full object-cover"
+                            style={{ outline: '2px solid magenta' }}
+                            onLoad={() => {
+                              const imageUrl = selectedItem.image_url_en.startsWith('http') 
+                                ? `${selectedItem.image_url_en}?cacheBust=${Date.now()}&nocache=1`
+                                : `/api/image-proxy?filename=${selectedItem.image_url_en.split('/').pop()?.split('?')[0]}`;
+                              console.log('🔍 ENGLISH IMAGE LOADED - Running diagnostics...');
+                              setTimeout(() => logDisplayDiagnostics(enImageRef.current, imageUrl), 100);
+                            }}
                           />
                         ) : (
                           <div className="w-full h-full flex items-center justify-center">
