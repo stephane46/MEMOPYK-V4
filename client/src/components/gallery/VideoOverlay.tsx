@@ -69,10 +69,10 @@ export function VideoOverlay({ videoUrl, title, width, height, orientation, onCl
     console.error('    - Ready state meaning:', readyStates[e.target?.readyState] || 'Unknown');
   }, [videoUrl]);
 
-  // CSS variables for 80% viewport sizing
-  const viewportRatio = 80;
+  // Mobile-responsive viewport sizing
+  const viewportRatio = 90; // Increased to 90% for mobile
 
-  // Calculate video container dimensions based on orientation - 80% viewport scaling
+  // Calculate video container dimensions based on orientation - Mobile responsive scaling
   const getVideoDimensions = useCallback(() => {
     if (orientation === 'portrait') {
       // Portrait: height = 80% of viewport height, width = auto
@@ -294,44 +294,60 @@ export function VideoOverlay({ videoUrl, title, width, height, orientation, onCl
           Your browser does not support the video tag.
         </video>
 
-        {/* Control Bar */}
+        {/* Control Bar - Mobile Optimized */}
         <div
-          className={`absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent p-4 transition-opacity duration-300 ${
+          className={`absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent p-2 sm:p-4 transition-opacity duration-300 ${
             showControls ? 'opacity-100' : 'opacity-0'
           }`}
         >
-          {/* Progress Bar */}
-          <div className="w-full bg-white/20 h-1 rounded-full mb-4">
+          {/* Progress Bar - Mobile Touch-Friendly */}
+          <div className="w-full bg-white/20 h-2 sm:h-1 rounded-full mb-3 sm:mb-4 touch-manipulation">
             <div
               className="h-full bg-white rounded-full transition-all duration-100"
               style={{ width: `${progress}%` }}
             />
           </div>
 
-          {/* Control Buttons - As per requirements: Restart, Play/Pause, Mute */}
-          <div className="flex items-center justify-center space-x-4">
+          {/* Control Buttons - Mobile Optimized */}
+          <div className="flex items-center justify-center space-x-2 sm:space-x-4">
             <button
               onClick={handleRestart}
-              className="text-white hover:text-orange-400 transition-colors p-2 rounded-full hover:bg-white/10"
+              className="text-white hover:text-orange-400 transition-colors p-2 sm:p-2 rounded-full hover:bg-white/10 touch-manipulation min-w-[44px] min-h-[44px] flex items-center justify-center"
               aria-label="Restart video"
             >
-              <RotateCcw size={20} />
+              <RotateCcw size={16} className="sm:w-5 sm:h-5" />
             </button>
 
             <button
               onClick={togglePlayPause}
-              className="text-white hover:text-orange-400 transition-colors p-3 rounded-full hover:bg-white/10"
+              className="text-white hover:text-orange-400 transition-colors p-2 sm:p-3 rounded-full hover:bg-white/10 touch-manipulation min-w-[48px] min-h-[48px] flex items-center justify-center"
               aria-label={isPlaying ? 'Pause video' : 'Play video'}
             >
-              {isPlaying ? <Pause size={24} /> : <Play size={24} />}
+              {isPlaying ? <Pause size={20} className="sm:w-6 sm:h-6" /> : <Play size={20} className="sm:w-6 sm:h-6" />}
             </button>
 
             <button
               onClick={toggleMute}
-              className="text-white hover:text-orange-400 transition-colors p-2 rounded-full hover:bg-white/10"
+              className="text-white hover:text-orange-400 transition-colors p-2 sm:p-2 rounded-full hover:bg-white/10 touch-manipulation min-w-[44px] min-h-[44px] flex items-center justify-center"
               aria-label={isMuted ? 'Unmute video' : 'Mute video'}
             >
-              {isMuted ? <VolumeX size={20} /> : <Volume2 size={20} />}
+              {isMuted ? <VolumeX size={16} className="sm:w-5 sm:h-5" /> : <Volume2 size={16} className="sm:w-5 sm:h-5" />}
+            </button>
+          </div>
+          
+          {/* Close Button - Mobile Optimized */}
+          <div className="absolute top-2 sm:top-4 right-2 sm:right-4">
+            <button
+              onClick={onClose}
+              className="text-white hover:text-orange-400 transition-colors p-2 sm:p-2 rounded-full hover:bg-black/30 bg-black/20 backdrop-blur-sm touch-manipulation min-w-[44px] min-h-[44px] flex items-center justify-center"
+              aria-label="Close video"
+            >
+              <div className="w-4 h-4 sm:w-5 sm:h-5 relative">
+                <div className="absolute inset-0 flex items-center justify-center">
+                  <div className="w-3 h-0.5 sm:w-4 sm:h-0.5 bg-current rotate-45"></div>
+                  <div className="w-3 h-0.5 sm:w-4 sm:h-0.5 bg-current -rotate-45 absolute"></div>
+                </div>
+              </div>
             </button>
           </div>
         </div>

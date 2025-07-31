@@ -422,23 +422,23 @@ export default function GallerySection() {
   return (
     <section className="py-20 bg-gray-50 dark:bg-gray-900">
       <div className="container mx-auto px-4">
-        {/* Header */}
-        <div className="text-center mb-16">
-          <h2 className="text-4xl md:text-5xl font-bold text-gray-900 dark:text-white mb-6">
+        {/* Header - Mobile Optimized */}
+        <div className="text-center mb-8 sm:mb-12 lg:mb-16">
+          <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-gray-900 dark:text-white mb-3 sm:mb-4 lg:mb-6 px-2">
             {t.title}
           </h2>
-          <p className="text-xl text-gray-600 dark:text-gray-300 mb-2">
+          <p className="text-lg sm:text-xl text-gray-600 dark:text-gray-300 mb-2 px-4">
             {t.subtitle}
           </p>
-          <p className="text-gray-500 dark:text-gray-400 max-w-2xl mx-auto">
+          <p className="text-sm sm:text-base text-gray-500 dark:text-gray-400 max-w-2xl mx-auto px-4">
             {t.description}
           </p>
         </div>
 
 
 
-        {/* Gallery Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
+        {/* Gallery Grid - Mobile Optimized */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 lg:gap-8 mb-8 sm:mb-12">
           {galleryItems.map((item, index) => {
             const imageUrl = getImageUrl(item);
             const thumbnailUrl = imageUrl;
@@ -470,53 +470,53 @@ export default function GallerySection() {
                             className="w-full h-full object-cover"
                           />
                           
-                          {/* Top overlays - Horizontally centered on same line */}
-                          <div className="absolute top-4 left-4 right-4 flex justify-between items-center">
-                            {/* Source Overlay (1) */}
+                          {/* Top overlays - Mobile Responsive */}
+                          <div className="absolute top-2 sm:top-4 left-2 sm:left-4 right-2 sm:right-4 flex justify-between items-start gap-2">
+                            {/* Source Overlay (1) - Mobile Optimized */}
                             {getItemSource(item) && (
-                              <div className="bg-black/70 text-white px-3 py-2 rounded-full text-sm backdrop-blur-sm">
-                                <div className="font-medium">{getItemSource(item)}</div>
-                                <div className="text-xs text-gray-300">provided by Client</div>
+                              <div className="bg-black/70 text-white px-2 sm:px-3 py-1 sm:py-2 rounded-full text-xs sm:text-sm backdrop-blur-sm max-w-[140px] sm:max-w-none">
+                                <div className="font-medium leading-tight">{getItemSource(item)}</div>
+                                <div className="text-xs text-gray-300 hidden sm:block">provided by Client</div>
                               </div>
                             )}
 
-                            {/* Viewing Format Badge (2) - Center-aligned with source overlay */}
+                            {/* Viewing Format Badge (2) - Mobile Optimized */}
                             {(() => {
                               const format = getViewingFormat(item);
                               const IconComponent = format.icon;
                               return (
-                                <div className={`${format.color} text-white px-2 py-1 rounded-full text-xs font-medium flex items-center gap-1 shadow-sm`}>
-                                  <IconComponent className="w-3 h-3" />
-                                  <div>
-                                    <div className="font-bold leading-tight">{format.platform}</div>
-                                    <div className="text-xs opacity-90 leading-tight">{format.type}</div>
+                                <div className={`${format.color} text-white px-1.5 sm:px-2 py-1 rounded-full text-xs font-medium flex items-center gap-1 shadow-sm max-w-[120px] sm:max-w-none`}>
+                                  <IconComponent className="w-2.5 h-2.5 sm:w-3 sm:h-3 flex-shrink-0" />
+                                  <div className="min-w-0">
+                                    <div className="font-bold leading-tight truncate text-xs sm:text-xs">{format.platform}</div>
+                                    <div className="text-xs opacity-90 leading-tight truncate hidden sm:block">{format.type}</div>
                                   </div>
                                 </div>
                               );
                             })()}
                           </div>
 
-                          {/* Price Tag - Bottom Right (3) */}
+                          {/* Price Tag - Bottom Right (3) - Mobile Optimized */}
                           {getItemPrice(item) && (
                             <div 
-                              className="absolute bottom-4 right-4 text-white px-4 py-2 rounded-full text-sm font-bold shadow-lg backdrop-blur-sm"
+                              className="absolute bottom-2 sm:bottom-4 right-2 sm:right-4 text-white px-2 sm:px-4 py-1 sm:py-2 rounded-full text-xs sm:text-sm font-bold shadow-lg backdrop-blur-sm"
                               style={{ backgroundColor: 'rgba(214, 124, 74, 0.9)' }} // MEMOPYK orange with transparency
                             >
                               {getItemPrice(item)}
                             </div>
                           )}
                           
-                          {/* Play Button - Center */}
+                          {/* Play Button - Mobile Optimized */}
                           <div className="absolute inset-0 flex items-center justify-center">
                             <div 
-                              className="w-16 h-16 rounded-full flex items-center justify-center transition-all duration-300 hover:scale-110 shadow-lg cursor-pointer"
+                              className="w-12 h-12 sm:w-16 sm:h-16 rounded-full flex items-center justify-center transition-all duration-300 hover:scale-110 shadow-lg cursor-pointer touch-manipulation"
                               onClick={(e) => handlePlayClick(item, e, index)}
                               style={{
                                 backgroundColor: itemHasVideo ? '#D67C4A' : '#ffffff', // Orange for video, white for flip
                                 border: itemHasVideo ? 'none' : '2px solid #d1d5db'
                               }}
                             >
-                              <div className={itemHasVideo ? "text-white text-xl ml-1" : "text-gray-600 text-xl ml-1"}>
+                              <div className={itemHasVideo ? "text-white text-lg sm:text-xl ml-0.5 sm:ml-1" : "text-gray-600 text-lg sm:text-xl ml-0.5 sm:ml-1"}>
                                 ▶
                               </div>
                             </div>
@@ -529,36 +529,36 @@ export default function GallerySection() {
                       )}
                     </div>
 
-                    {/* Card Content */}
-                    <div className="px-6 pt-1 pb-6">
-                      {/* Title (4) - Fixed height: 32px */}
-                      <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-1 h-8 overflow-hidden">
+                    {/* Card Content - Mobile Optimized */}
+                    <div className="px-3 sm:px-4 lg:px-6 pt-1 pb-3 sm:pb-4 lg:pb-6">
+                      {/* Title (4) - Mobile Responsive */}
+                      <h3 className="text-lg sm:text-xl font-bold text-gray-900 dark:text-white mb-1 sm:mb-1 h-6 sm:h-8 overflow-hidden leading-6 sm:leading-8">
                         {getItemTitle(item)}
                       </h3>
                           
-                      {/* Duration (5) - Clock icon, single line height */}
-                      <div className="mb-3 h-6 overflow-hidden flex items-center">
-                        <Clock className="w-4 h-4 flex-shrink-0" style={{ color: '#D67C4A' }} />
-                        <div className="text-sm leading-4 ml-2" style={{ color: '#4B5563' }}>
+                      {/* Duration (5) - Mobile Optimized */}
+                      <div className="mb-2 sm:mb-3 h-5 sm:h-6 overflow-hidden flex items-center">
+                        <Clock className="w-3 h-3 sm:w-4 sm:h-4 flex-shrink-0" style={{ color: '#D67C4A' }} />
+                        <div className="text-xs sm:text-sm leading-4 ml-1 sm:ml-2" style={{ color: '#4B5563' }}>
                           {getItemDuration(item) || <div className="h-4"></div>}
                         </div>
                       </div>
                       
-                      {/* Situation (6) - Users icon, fixed height: 80px (5 lines max) */}
-                      <div className="mb-3 h-20 overflow-hidden">
-                        <div className="flex items-start gap-2">
-                          <Users className="w-4 h-4 flex-shrink-0" style={{ color: '#D67C4A' }} />
-                          <div className="text-sm leading-4" style={{ color: '#4B5563' }}>
+                      {/* Situation (6) - Mobile Optimized */}
+                      <div className="mb-2 sm:mb-3 h-16 sm:h-20 overflow-hidden">
+                        <div className="flex items-start gap-1 sm:gap-2">
+                          <Users className="w-3 h-3 sm:w-4 sm:h-4 flex-shrink-0" style={{ color: '#D67C4A' }} />
+                          <div className="text-xs sm:text-sm leading-4" style={{ color: '#4B5563' }}>
                             {getItemSituation(item) || <div className="h-4"></div>}
                           </div>
                         </div>
                       </div>
                       
-                      {/* Story (7) - Film icon, fixed height: 80px (5 lines max) */}
-                      <div className="h-20 overflow-hidden">
-                        <div className="flex items-start gap-2">
-                          <Film className="w-4 h-4 flex-shrink-0" style={{ color: '#D67C4A' }} />
-                          <div className="text-sm leading-4" style={{ color: '#4B5563' }}>
+                      {/* Story (7) - Mobile Optimized */}
+                      <div className="h-16 sm:h-20 overflow-hidden">
+                        <div className="flex items-start gap-1 sm:gap-2">
+                          <Film className="w-3 h-3 sm:w-4 sm:h-4 flex-shrink-0" style={{ color: '#D67C4A' }} />
+                          <div className="text-xs sm:text-sm leading-4" style={{ color: '#4B5563' }}>
                             {getItemStory(item) || <div className="h-4"></div>}
                           </div>
                         </div>
@@ -595,12 +595,12 @@ export default function GallerySection() {
 
 
 
-        {/* View All Button */}
+        {/* View All Button - Mobile Optimized */}
         {galleryItems.length > 6 && (
           <div className="text-center">
             <Button 
               size="lg"
-              className="bg-orange-500 hover:bg-orange-600 text-white px-8 py-3 rounded-full transform hover:scale-105 transition-all duration-300"
+              className="bg-orange-500 hover:bg-orange-600 text-white px-6 sm:px-8 py-2 sm:py-3 text-sm sm:text-base rounded-full transform hover:scale-105 transition-all duration-300 touch-manipulation min-h-[44px]"
             >
               {t.viewAll}
               <ArrowRight className="h-5 w-5 ml-2" />

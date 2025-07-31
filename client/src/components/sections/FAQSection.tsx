@@ -163,14 +163,14 @@ export default function FAQSection() {
   }
 
   return (
-    <section className="py-16 bg-gray-50">
-      <div className="max-w-4xl mx-auto px-4">
-        {/* Section Header */}
-        <div className="text-center mb-12">
-          <h2 className="text-3xl font-bold text-gray-900 mb-4">
+    <section className="py-8 sm:py-12 lg:py-16 bg-gray-50">
+      <div className="max-w-4xl mx-auto px-4 sm:px-6">
+        {/* Section Header - Mobile Optimized */}
+        <div className="text-center mb-6 sm:mb-8 lg:mb-12">
+          <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-3 sm:mb-4 px-2">
             {language === 'fr-FR' ? 'Questions Fréquemment Posées' : 'Frequently Asked Questions'}
           </h2>
-          <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+          <p className="text-base sm:text-lg text-gray-600 max-w-2xl mx-auto px-4">
             {language === 'fr-FR' 
               ? 'Trouvez les réponses aux questions les plus courantes sur nos services de films de mariage et de famille.'
               : 'Find answers to the most common questions about our wedding and family film services.'
@@ -178,8 +178,8 @@ export default function FAQSection() {
           </p>
         </div>
 
-        {/* FAQ Content */}
-        <div className="space-y-8">
+        {/* FAQ Content - Mobile Optimized */}
+        <div className="space-y-4 sm:space-y-6 lg:space-y-8">
           {/* All FAQ Sections - Accordion Style */}
           {sortedSections.map((section) => {
             if (!section || !section.id) return null;
@@ -188,32 +188,32 @@ export default function FAQSection() {
             const sectionFAQs = faqsBySection[sectionKey] || [];
 
             return (
-              <div key={section.id} className="space-y-4">
-                {/* Section Header - Clickable Accordion */}
+              <div key={section.id} className="space-y-3 sm:space-y-4">
+                {/* Section Header - Mobile Optimized Accordion */}
                 <div 
                   ref={(el) => { sectionRefs.current[sectionKey] = el; }}
-                  className="border-l-4 border-orange-500 pl-4 mb-6"
+                  className="border-l-4 border-orange-500 pl-3 sm:pl-4 mb-4 sm:mb-6"
                 >
                   <button
                     onClick={() => toggleSection(sectionKey)}
-                    className="w-full text-left flex items-center justify-between hover:bg-gray-50 transition-colors p-2 rounded"
+                    className="w-full text-left flex items-center justify-between hover:bg-gray-50 transition-colors p-2 sm:p-2 rounded touch-manipulation min-h-[44px]"
                   >
-                    <h3 className="text-2xl font-bold text-gray-900">
+                    <h3 className="text-lg sm:text-xl lg:text-2xl font-bold text-gray-900 pr-2">
                       {language === 'fr-FR' ? section.title_fr : section.title_en}
                     </h3>
                     {openSection === sectionKey ? (
-                      <ChevronUp className="h-6 w-6 text-gray-500 flex-shrink-0" />
+                      <ChevronUp className="h-5 w-5 sm:h-6 sm:w-6 text-gray-500 flex-shrink-0" />
                     ) : (
-                      <ChevronDown className="h-6 w-6 text-gray-500 flex-shrink-0" />
+                      <ChevronDown className="h-5 w-5 sm:h-6 sm:w-6 text-gray-500 flex-shrink-0" />
                     )}
                   </button>
                 </div>
 
-                {/* Section Content - Only show when open */}
+                {/* Section Content - Mobile Optimized */}
                 {openSection === sectionKey && (
-                  <div className="space-y-4 animate-in slide-in-from-top-2 duration-300">
+                  <div className="space-y-3 sm:space-y-4 animate-in slide-in-from-top-2 duration-300">
                     {sectionFAQs.length === 0 ? (
-                      <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 text-center text-gray-500">
+                      <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 sm:p-6 text-center text-gray-500 text-sm sm:text-base">
                         {language === 'fr-FR' 
                           ? 'Aucune question dans cette section pour le moment.' 
                           : 'No questions in this section yet.'}
@@ -225,26 +225,26 @@ export default function FAQSection() {
                           ref={(el) => { questionRefs.current[faq.id] = el; }}
                           className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden"
                         >
-                          {/* Question Header - Clickable */}
+                          {/* Question Header - Mobile Optimized */}
                           <button
                             onClick={() => toggleQuestion(faq.id)}
-                            className="w-full text-left px-6 py-4 hover:bg-gray-50 transition-colors flex items-center justify-between"
+                            className="w-full text-left px-4 sm:px-6 py-3 sm:py-4 hover:bg-gray-50 transition-colors flex items-center justify-between touch-manipulation min-h-[44px]"
                           >
-                            <h4 className="text-lg font-semibold text-gray-900 pr-4">
+                            <h4 className="text-base sm:text-lg font-semibold text-gray-900 pr-2 sm:pr-4 leading-tight">
                               {language === 'fr-FR' ? faq.question_fr : faq.question_en}
                             </h4>
                             {openQuestions.has(faq.id) ? (
-                              <ChevronUp className="h-5 w-5 text-gray-500 flex-shrink-0" />
+                              <ChevronUp className="h-4 w-4 sm:h-5 sm:w-5 text-gray-500 flex-shrink-0" />
                             ) : (
-                              <ChevronDown className="h-5 w-5 text-gray-500 flex-shrink-0" />
+                              <ChevronDown className="h-4 w-4 sm:h-5 sm:w-5 text-gray-500 flex-shrink-0" />
                             )}
                           </button>
 
-                          {/* Answer Content - Only show when open */}
+                          {/* Answer Content - Mobile Optimized */}
                           {openQuestions.has(faq.id) && (
-                            <div className="px-6 pb-4 pt-2 border-t border-gray-100 animate-in slide-in-from-top-2 duration-200">
+                            <div className="px-4 sm:px-6 pb-3 sm:pb-4 pt-2 border-t border-gray-100 animate-in slide-in-from-top-2 duration-200">
                               <div 
-                                className="text-gray-700 leading-relaxed prose prose-sm max-w-none"
+                                className="text-gray-700 leading-relaxed prose prose-sm max-w-none text-sm sm:text-base"
                                 dangerouslySetInnerHTML={{
                                   __html: htmlSanitizer.sanitize(language === 'fr-FR' ? faq.answer_fr : faq.answer_en)
                                 }}
