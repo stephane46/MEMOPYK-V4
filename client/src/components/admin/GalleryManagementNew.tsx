@@ -240,7 +240,7 @@ export default function GalleryManagementNew() {
 
   // Fetch gallery items with cache-busting
   const { data: galleryItems = [], isLoading } = useQuery<GalleryItem[]>({
-    queryKey: ['/api/gallery', 'v1.0.106'],
+    queryKey: ['/api/gallery', 'v1.0.107'],
     select: (data) => data.sort((a, b) => a.order_index - b.order_index)
   });
 
@@ -344,7 +344,7 @@ export default function GalleryManagementNew() {
         video_orientation: 'landscape',
         image_url_en: persistentUploadState.image_url_en || '',
         image_url_fr: persistentUploadState.image_url_fr || '',
-        static_image_url: '',
+        staticImageUrl: '',
         is_active: true
       });
     }
@@ -357,13 +357,13 @@ export default function GalleryManagementNew() {
     }
   }, [galleryItems, selectedVideoId, isCreateMode]);
 
-  // Get thumbnail URL with cache-busting - PRIORITIZE LATEST UPLOADS
+  // Get thumbnail URL with cache-busting - INCLUDE STATIC IMAGE URL
   const getThumbnailUrl = (item: GalleryItem) => {
-    // NEW LOGIC: Prioritize image_url_en (latest uploads) over static_image_url (old crops)
-    const imageUrl = item.image_url_en || item.image_url_fr || item.static_image_url;
+    // PRIORITY: staticImageUrl (reframed) > latest uploads > fallback uploads
+    const imageUrl = item.staticImageUrl || item.imageUrlEn || item.imageUrlFr;
     if (!imageUrl) return null;
     
-    console.log(`🖼️ ADMIN THUMBNAIL PRIORITY v1.0.91: Using ${imageUrl === item.image_url_en ? 'image_url_en' : imageUrl === item.image_url_fr ? 'image_url_fr' : 'static_image_url'} for item ${item.id}`);
+    console.log(`🖼️ ADMIN THUMBNAIL PRIORITY v1.0.107: Using ${imageUrl === item.staticImageUrl ? 'staticImageUrl (reframed)' : imageUrl === item.imageUrlEn ? 'imageUrlEn' : 'imageUrlFr'} for item ${item.id}`);
     console.log(`🖼️ ADMIN FULL URL: ${imageUrl}`);
     
     // If it's already a full URL, use it directly with cache-busting
@@ -1681,7 +1681,7 @@ export default function GalleryManagementNew() {
                   
                   // Update the gallery item with the new static image URL
                   const updateData = new FormData();
-                  updateData.append('static_image_url', uploadResult.url);
+                  updateData.append('staticImageUrl', uploadResult.url);
                   
                   const updateResponse = await apiRequest(`/api/gallery/${selectedItem.id}`, 'PATCH', updateData);
                   console.log(`✅ Gallery item updated:`, updateResponse);
@@ -1690,7 +1690,7 @@ export default function GalleryManagementNew() {
                   setCropperOpen(false);
                   
                   // Invalidate cache with version bump to force refresh
-                  queryClient.invalidateQueries({ queryKey: ['/api/gallery', 'v1.0.106'] });
+                  queryClient.invalidateQueries({ queryKey: ['/api/gallery', 'v1.0.107'] });
                   
                   // Force component refresh by updating cache-busting key
                   queryClient.refetchQueries({ queryKey: ['/api/gallery'] });

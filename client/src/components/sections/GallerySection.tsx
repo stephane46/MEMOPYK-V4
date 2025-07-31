@@ -137,36 +137,14 @@ export default function GallerySection() {
   const t = content[language];
 
   const getImageUrl = (item: GalleryItem) => {
-    // CACHE-BUSTING v1.0.91: PRIORITIZE LATEST UPLOADS OVER OLD STATIC IMAGES
+    // PRIORITY v1.0.107: REFRAMED STATIC IMAGES OVER UPLOADS
     let imageUrl = '';
     let filename = '';
     
-    // NEW PRIORITY: Latest uploads (image_url_en/fr) take precedence over old crops (staticImageUrl)
-    const latestImageUrl = language === 'fr-FR' ? item.imageUrlFr : item.imageUrlEn;
-    
-    if (latestImageUrl && latestImageUrl.trim() !== '') {
-      imageUrl = latestImageUrl;
-      console.log(`🖼️ USING LATEST UPLOAD: ${imageUrl} for ${item.titleEn}`);
-      
-      // If it's already a full URL, use it directly
-      if (imageUrl.startsWith('http')) {
-        console.log(`🖼️ LATEST UPLOAD IS FULL URL - USING DIRECTLY`);
-        const timestamp = Date.now();
-        const random = Math.random().toString(36).substring(7);
-        const separator = imageUrl.includes('?') ? '&' : '?';
-        const directUrl = `${imageUrl}${separator}cacheBust=${timestamp}&v=${random}&nocache=1#${timestamp}-${random}`;
-        console.log(`🖼️ DIRECT CDN IMAGE URL v1.0.91: ${directUrl} (latest upload priority)`);
-        return directUrl;
-      }
-      
-      filename = imageUrl.includes('/') ? (imageUrl.split('/').pop() || '') : imageUrl;
-      // Remove query parameters from filename
-      if (filename && filename.includes('?')) {
-        filename = filename.split('?')[0];
-      }
-    } else if (item.staticImageUrl && item.staticImageUrl.trim() !== '') {
+    // NEW PRIORITY: staticImageUrl (reframed) > uploads > fallback
+    if (item.staticImageUrl && item.staticImageUrl.trim() !== '') {
       imageUrl = item.staticImageUrl;
-      console.log(`🖼️ FALLBACK TO STATIC IMAGE: ${imageUrl} for ${item.titleEn}`);
+      console.log(`🖼️ USING REFRAMED STATIC IMAGE: ${imageUrl} for ${item.titleEn}`);
       
       // Handle both full URLs and filenames for static images
       if (imageUrl.includes('/')) {
@@ -181,8 +159,33 @@ export default function GallerySection() {
         filename = imageUrl;
       }
     } else {
-      console.log(`🖼️ NO IMAGE AVAILABLE for ${item.titleEn}`);
-      return '';
+      // Fallback to latest uploads
+      const latestImageUrl = language === 'fr-FR' ? item.imageUrlFr : item.imageUrlEn;
+      
+      if (latestImageUrl && latestImageUrl.trim() !== '') {
+        imageUrl = latestImageUrl;
+        console.log(`🖼️ FALLBACK TO LATEST UPLOAD: ${imageUrl} for ${item.titleEn}`);
+        
+        // If it's already a full URL, use it directly
+        if (imageUrl.startsWith('http')) {
+          console.log(`🖼️ LATEST UPLOAD IS FULL URL - USING DIRECTLY`);
+          const timestamp = Date.now();
+          const random = Math.random().toString(36).substring(7);
+          const separator = imageUrl.includes('?') ? '&' : '?';
+          const directUrl = `${imageUrl}${separator}cacheBust=${timestamp}&v=${random}&nocache=1#${timestamp}-${random}`;
+          console.log(`🖼️ DIRECT CDN IMAGE URL v1.0.107: ${directUrl} (upload fallback)`);
+          return directUrl;
+        }
+        
+        filename = imageUrl.includes('/') ? (imageUrl.split('/').pop() || '') : imageUrl;
+        // Remove query parameters from filename
+        if (filename && filename.includes('?')) {
+          filename = filename.split('?')[0];
+        }
+      } else {
+        console.log(`🖼️ NO IMAGE AVAILABLE for ${item.titleEn}`);
+        return '';
+      }
     }
     
     // DIRECT CDN BYPASS: Use Supabase URL with aggressive cache-busting + hash fragment
@@ -190,7 +193,7 @@ export default function GallerySection() {
     const random = Math.random().toString(36).substring(7);
     const hash = `#${timestamp}-${random}`; // Fragment identifier forces browser to treat as new resource
     const directUrl = `https://supabase.memopyk.org/storage/v1/object/public/memopyk-videos/${encodeURIComponent(filename || '')}?cacheBust=${timestamp}&v=${random}&nocache=1${hash}`;
-    console.log(`🖼️ DIRECT CDN IMAGE URL v1.0.91: ${directUrl} (latest upload priority)`);
+    console.log(`🖼️ DIRECT CDN IMAGE URL v1.0.107: ${directUrl} (reframed static priority)`);
     return directUrl;
   };
 
