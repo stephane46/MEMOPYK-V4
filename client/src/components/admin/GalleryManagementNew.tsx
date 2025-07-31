@@ -344,7 +344,7 @@ export default function GalleryManagementNew() {
         video_orientation: 'landscape',
         image_url_en: persistentUploadState.image_url_en || '',
         image_url_fr: persistentUploadState.image_url_fr || '',
-        staticImageUrl: '',
+        static_image_url: '',
         is_active: true
       });
     }
@@ -357,13 +357,14 @@ export default function GalleryManagementNew() {
     }
   }, [galleryItems, selectedVideoId, isCreateMode]);
 
-  // Get thumbnail URL with cache-busting - INCLUDE STATIC IMAGE URL
+  // Get thumbnail URL with cache-busting - PRIORITIZE REFRAMED STATIC IMAGES v1.0.108
   const getThumbnailUrl = (item: GalleryItem) => {
-    // PRIORITY: staticImageUrl (reframed) > latest uploads > fallback uploads
-    const imageUrl = item.staticImageUrl || item.imageUrlEn || item.imageUrlFr;
+    // FIXED PRIORITY v1.0.108: static_image_url (reframed) > latest uploads > fallback uploads
+    const staticImageUrl = item.static_image_url; // FIXED: Use correct snake_case field name
+    const imageUrl = staticImageUrl || item.image_url_en || item.image_url_fr;
     if (!imageUrl) return null;
     
-    console.log(`🖼️ ADMIN THUMBNAIL PRIORITY v1.0.107: Using ${imageUrl === item.staticImageUrl ? 'staticImageUrl (reframed)' : imageUrl === item.imageUrlEn ? 'imageUrlEn' : 'imageUrlFr'} for item ${item.id}`);
+    console.log(`🖼️ ADMIN THUMBNAIL PRIORITY v1.0.108: Using ${imageUrl === staticImageUrl ? 'REFRAMED STATIC IMAGE' : imageUrl === item.image_url_en ? 'image_url_en' : 'image_url_fr'} for item ${item.id}`);
     console.log(`🖼️ ADMIN FULL URL: ${imageUrl}`);
     
     // If it's already a full URL, use it directly with cache-busting
