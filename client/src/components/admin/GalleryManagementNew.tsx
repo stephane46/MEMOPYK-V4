@@ -816,8 +816,15 @@ export default function GalleryManagementNew() {
                           </span>
                         </div>
                         <div className="flex gap-1">
-                          {/* Placeholder buttons to match image section height */}
-                          <div className="h-6 w-20"></div>
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            className="bg-blue-600 hover:bg-blue-700 text-white border-blue-600 px-2 py-1 text-xs"
+                            disabled
+                          >
+                            <Crop className="w-3 h-3 mr-1" />
+                            Recadrer FR
+                          </Button>
                         </div>
                       </div>
                       {formData.video_url_fr || formData.video_filename ? (
