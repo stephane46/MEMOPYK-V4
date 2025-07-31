@@ -58,9 +58,47 @@ export default function AdminPage() {
   const [dragActive, setDragActive] = useState(false);
   const [selectedTextId, setSelectedTextId] = useState<number | null>(null);
 
-  // Auto-scroll to top when admin page loads
+  // Auto-scroll to top when admin page loads or refreshes
   React.useEffect(() => {
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    // Immediate scroll without animation for instant positioning
+    window.scrollTo(0, 0);
+    // Add a small delay to ensure DOM is fully rendered, then smooth scroll
+    const timeoutId = setTimeout(() => {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }, 50);
+    return () => clearTimeout(timeoutId);
+  }, []);
+
+  // Handle page refresh (F5) and browser back/forward
+  React.useEffect(() => {
+    const handlePageLoad = () => {
+      // Force scroll to top on page load/refresh
+      window.scrollTo(0, 0);
+    };
+
+    // Handle window focus and page visibility
+    const handleVisibilityChange = () => {
+      if (!document.hidden) {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }
+    };
+
+    // Handle browser back/forward navigation
+    const handlePopState = () => {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    };
+
+    // Add event listeners
+    window.addEventListener('load', handlePageLoad);
+    window.addEventListener('popstate', handlePopState);
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+    
+    // Cleanup
+    return () => {
+      window.removeEventListener('load', handlePageLoad);
+      window.removeEventListener('popstate', handlePopState);
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+    };
   }, []);
   
   // File upload handler

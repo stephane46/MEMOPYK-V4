@@ -88,7 +88,7 @@ Preferred communication style: Simple, everyday language.
 ✅ **Smart Upload Toggle**: Enhanced "Utiliser la même vidéo pour FR et EN" switch to control interface display completely
 ✅ **Purple Shared Section**: When toggle ON → displays purple "Fichiers Partagés (FR + EN)" section for same content across languages
 ✅ **Blue/Green Separate Sections**: When toggle OFF → displays blue "Fichiers Français" and green "English Files" sections for language-specific uploads
-✅ **F5 Scroll Behavior**: AdminPage automatically scrolls to top on refresh/load for better user experience
+✅ **F5 Scroll Behavior Fixed**: AdminPage now properly scrolls to top on F5 refresh, page load, and navigation with comprehensive event handling
 ✅ **Format Badge Positioning**: "Badge Format (marketing visuel)" section moved to bottom of form for logical information flow
 
 **Technical Implementation:**
