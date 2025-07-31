@@ -183,6 +183,18 @@ const DraggableCover = ({ imageUrl, onPositionChange, previewRef }: { imageUrl: 
 };
 
 export default function SimpleImageCropper({ imageUrl, onSave, onCancel }: SimpleImageCropperProps) {
+  console.log(`🚀 SIMPLE CROPPER v1.0.104 - Component mounted with imageUrl: "${imageUrl}"`);
+  console.log(`🚀 URL type: ${typeof imageUrl}, Length: ${imageUrl?.length || 0}`);
+  console.log(`🚀 URL starts with http: ${imageUrl?.startsWith('http')}`);
+  console.log(`🚀 URL includes supabase: ${imageUrl?.includes('supabase.memopyk.org')}`);
+  
+  // Test if URL is accessible by testing in a new image
+  if (imageUrl) {
+    const testImg = new Image();
+    testImg.onload = () => console.log(`✅ SIMPLE CROPPER v1.0.104 - URL is accessible: ${imageUrl}`);
+    testImg.onerror = (e) => console.error(`❌ SIMPLE CROPPER v1.0.104 - URL failed to load: ${imageUrl}`, e);
+    testImg.src = imageUrl;
+  }
   const [loading, setLoading] = useState(false);
   const [position, setPosition] = useState({ x: 50, y: 50 });
   const previewRef = useRef<HTMLDivElement>(null);

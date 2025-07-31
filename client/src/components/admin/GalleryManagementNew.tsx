@@ -1637,10 +1637,16 @@ export default function GalleryManagementNew() {
               <div className="text-xs text-blue-800 dark:text-blue-200 font-mono mt-1 break-all">
                 {cropperLanguage === 'fr' ? selectedItem.image_url_fr : selectedItem.image_url_en}
               </div>
-              {/* Debug info */}
+              {/* Enhanced Debug Info v1.0.104 */}
               <div className="text-xs text-gray-600 mt-2 space-y-1">
                 <div>French URL: {selectedItem.image_url_fr || 'NOT SET'}</div>
                 <div>English URL: {selectedItem.image_url_en || 'NOT SET'}</div>
+                <div className="mt-2 p-2 bg-yellow-50 border border-yellow-200 rounded">
+                  <div className="font-semibold text-yellow-800">🔍 CROPPER DEBUG v1.0.104:</div>
+                  <div>Raw URL: {cropperLanguage === 'fr' ? selectedItem.image_url_fr : selectedItem.image_url_en}</div>
+                  <div>Full URL: {getFullUrl(cropperLanguage === 'fr' ? selectedItem.image_url_fr : selectedItem.image_url_en)}</div>
+                  <div>Language: {cropperLanguage}</div>
+                </div>
               </div>
             </div>
             
