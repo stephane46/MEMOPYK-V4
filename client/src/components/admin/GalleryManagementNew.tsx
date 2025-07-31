@@ -38,7 +38,6 @@ import {
 } from "lucide-react";
 import SimpleImageCropper from './SimpleImageCropper';
 import DirectUpload from './DirectUpload';
-import FormatBadgeManager from './FormatBadgeManager';
 
 // Helper function to convert filename to full URL if needed
 const getFullUrl = (value: string): string => {
@@ -372,7 +371,23 @@ export default function GalleryManagementNew({ key }: { key?: string }) {
   // Fetch gallery items
   const { data: galleryItems, isLoading: galleryLoading } = useQuery({
     queryKey: ['/api/gallery', 'v1.0.111'],
-    queryFn: () => apiRequest('/api/gallery'),
+    queryFn: async () => {
+      const response = await apiRequest('/api/gallery', 'GET');
+      console.log('🔍 ADMIN GALLERY FETCH v1.0.112 - Raw response:', response);
+      // If response is already parsed data, return it
+      if (Array.isArray(response)) {
+        console.log('✅ Response is already array:', response.length);
+        return response;
+      }
+      // If response is a Response object, parse it
+      if (response && typeof response.json === 'function') {
+        const data = await response.json();
+        console.log('✅ Parsed response data:', data);
+        return Array.isArray(data) ? data : [];
+      }
+      console.log('⚠️ Unexpected response format, returning empty array');
+      return [];
+    },
   });
 
   // Create mutation  
@@ -1186,15 +1201,40 @@ export default function GalleryManagementNew({ key }: { key?: string }) {
                 )}
 
                 {/* Format Badge Management */}
-                <FormatBadgeManager
-                  formatPlatformFr={formData.format_platform_fr}
-                  formatTypeFr={formData.format_type_fr}
-                  formatPlatformEn={formData.format_platform_en}
-                  formatTypeEn={formData.format_type_en}
-                  onFormatChange={(field, value) => {
-                    setFormData(prev => ({ ...prev, [field]: value }));
-                  }}
-                />
+                <div className="space-y-4">
+                  <h3 className="text-md font-semibold text-[#011526] dark:text-white flex items-center gap-2">
+                    <Palette className="w-4 h-4" />
+                    Badge Format (marketing visuel)
+                  </h3>
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                      <Label className="text-blue-600 dark:text-blue-400">🇫🇷 Plateforme Française</Label>
+                      <Select value={formData.format_platform_fr} onValueChange={(value) => setFormData(prev => ({ ...prev, format_platform_fr: value }))}>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Sélectionner plateforme" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="reseaux-sociaux">Réseaux Sociaux</SelectItem>
+                          <SelectItem value="professionnel">Professionnel</SelectItem>
+                          <SelectItem value="tv-desktop">TV & Desktop</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    <div className="space-y-2">
+                      <Label className="text-green-600 dark:text-green-400">🇺🇸 English Platform</Label>
+                      <Select value={formData.format_platform_en} onValueChange={(value) => setFormData(prev => ({ ...prev, format_platform_en: value }))}>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select platform" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="social-media">Social Media</SelectItem>
+                          <SelectItem value="professional">Professional</SelectItem>
+                          <SelectItem value="tv-desktop">TV & Desktop</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  </div>
+                </div>
 
                 {/* Settings */}
                 <div className="grid grid-cols-2 gap-4">
@@ -1280,7 +1320,7 @@ export default function GalleryManagementNew({ key }: { key?: string }) {
               imageUrl={selectedLanguage === 'fr' ? selectedItem.image_url_fr : selectedItem.image_url_en}
               onSave={async (blob) => {
                 try {
-                  console.log('🚀 CROPPER SAVE v1.0.107 - Starting save process');
+                  console.log('🚀 CROPPER SAVE v1.0.112 - Starting save process');
                   
                   // Upload cropped image
                   const formData = new FormData();
@@ -1318,7 +1358,7 @@ export default function GalleryManagementNew({ key }: { key?: string }) {
                   console.log('✅ Database updated successfully');
 
                   // Refresh data
-                  queryClient.invalidateQueries({ queryKey: ['/api/gallery', 'v1.0.107'] });
+                  queryClient.invalidateQueries({ queryKey: ['/api/gallery', 'v1.0.112'] });
                   
                   setShowCropper(false);
                   toast({
@@ -1336,7 +1376,6 @@ export default function GalleryManagementNew({ key }: { key?: string }) {
                 }
               }}
               onCancel={() => setShowCropper(false)}
-              language={selectedLanguage}
             />
           )}
         </DialogContent>
