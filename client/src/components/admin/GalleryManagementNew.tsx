@@ -1083,52 +1083,129 @@ export default function GalleryManagementNew() {
                       <Badge variant="secondary" className="text-xs">Manuel</Badge>
                     </h4>
                     <p className="text-xs text-gray-600 dark:text-gray-400">
-                      Section avancée pour modifier directement les URLs Supabase. Les modifications s&apos;appliquent aux deux langues (FR et EN).
+                      {formData.use_same_video 
+                        ? "Section avancée pour modifier directement les URLs Supabase partagées entre FR et EN."
+                        : "Section avancée pour modifier directement les URLs Supabase spécifiques à chaque langue."
+                      }
                     </p>
                   </div>
                   
-                  <div className="grid grid-cols-2 gap-6">
-                    <div className="space-y-2">
-                      <Label htmlFor="video_url_override" className="flex items-center gap-2">
-                        <Video className="w-4 h-4" />
-                        URL Vidéo Complète
-                        <Badge className="text-xs bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-200">FR + EN</Badge>
-                      </Label>
-                      <Input
-                        id="video_url_override"
-                        value={getFullUrl(formData.video_url_en || formData.video_filename)}
-                        onChange={(e) => setFormData({ 
-                          ...formData, 
-                          video_filename: e.target.value,
-                          video_url_en: e.target.value, 
-                          video_url_fr: e.target.value 
-                        })}
-                        placeholder="https://supabase.memopyk.org/storage/v1/object/public/memopyk-videos/..."
-                        className="bg-white dark:bg-gray-800 text-sm font-mono"
-                      />
-                      <p className="text-xs text-gray-500">URL partagée pour les deux langues</p>
+                  {formData.use_same_video ? (
+                    // Shared URLs when using same video for both languages
+                    <div className="grid grid-cols-2 gap-6">
+                      <div className="space-y-2">
+                        <Label htmlFor="video_url_override" className="flex items-center gap-2">
+                          <Video className="w-4 h-4" />
+                          URL Vidéo Complète
+                          <Badge className="text-xs bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-200">FR + EN</Badge>
+                        </Label>
+                        <Input
+                          id="video_url_override"
+                          value={getFullUrl(formData.video_url_en || formData.video_filename)}
+                          onChange={(e) => setFormData({ 
+                            ...formData, 
+                            video_filename: e.target.value,
+                            video_url_en: e.target.value, 
+                            video_url_fr: e.target.value 
+                          })}
+                          placeholder="https://supabase.memopyk.org/storage/v1/object/public/memopyk-videos/..."
+                          className="bg-white dark:bg-gray-800 text-sm font-mono"
+                        />
+                        <p className="text-xs text-gray-500">URL partagée pour les deux langues</p>
+                      </div>
+                      
+                      <div className="space-y-2">
+                        <Label htmlFor="image_url_override" className="flex items-center gap-2">
+                          <Image className="w-4 h-4" />
+                          URL Image Complète
+                          <Badge className="text-xs bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-200">FR + EN</Badge>
+                        </Label>
+                        <Input
+                          id="image_url_override"
+                          value={getFullUrl(formData.image_url_en)}
+                          onChange={(e) => setFormData({ 
+                            ...formData, 
+                            image_url_en: e.target.value,
+                            image_url_fr: e.target.value 
+                          })}
+                          placeholder="https://supabase.memopyk.org/storage/v1/object/public/memopyk-videos/..."
+                          className="bg-white dark:bg-gray-800 text-sm font-mono"
+                        />
+                        <p className="text-xs text-gray-500">URL partagée pour les deux langues</p>
+                      </div>
                     </div>
-                    
-                    <div className="space-y-2">
-                      <Label htmlFor="image_url_override" className="flex items-center gap-2">
-                        <Image className="w-4 h-4" />
-                        URL Image Complète
-                        <Badge className="text-xs bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-200">FR + EN</Badge>
-                      </Label>
-                      <Input
-                        id="image_url_override"
-                        value={getFullUrl(formData.image_url_en)}
-                        onChange={(e) => setFormData({ 
-                          ...formData, 
-                          image_url_en: e.target.value,
-                          image_url_fr: e.target.value 
-                        })}
-                        placeholder="https://supabase.memopyk.org/storage/v1/object/public/memopyk-videos/..."
-                        className="bg-white dark:bg-gray-800 text-sm font-mono"
-                      />
-                      <p className="text-xs text-gray-500">URL partagée pour les deux langues</p>
+                  ) : (
+                    // Separate URLs for French and English
+                    <div className="space-y-6">
+                      {/* French URLs */}
+                      <div className="space-y-4 p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-200 dark:border-blue-700">
+                        <div className="flex items-center gap-2 mb-3">
+                          <span className="text-2xl">🇫🇷</span>
+                          <h5 className="font-medium text-blue-800 dark:text-blue-200">URLs Français</h5>
+                        </div>
+                        <div className="grid grid-cols-2 gap-4">
+                          <div className="space-y-2">
+                            <Label className="flex items-center gap-2 text-blue-800 dark:text-blue-200">
+                              <Video className="w-4 h-4" />
+                              URL Vidéo FR
+                            </Label>
+                            <Input
+                              value={getFullUrl(formData.video_url_fr)}
+                              onChange={(e) => setFormData({ ...formData, video_url_fr: e.target.value })}
+                              placeholder="https://supabase.memopyk.org/storage/v1/object/public/memopyk-videos/..."
+                              className="bg-white dark:bg-gray-800 text-sm font-mono"
+                            />
+                          </div>
+                          <div className="space-y-2">
+                            <Label className="flex items-center gap-2 text-blue-800 dark:text-blue-200">
+                              <Image className="w-4 h-4" />
+                              URL Image FR
+                            </Label>
+                            <Input
+                              value={getFullUrl(formData.image_url_fr)}
+                              onChange={(e) => setFormData({ ...formData, image_url_fr: e.target.value })}
+                              placeholder="https://supabase.memopyk.org/storage/v1/object/public/memopyk-videos/..."
+                              className="bg-white dark:bg-gray-800 text-sm font-mono"
+                            />
+                          </div>
+                        </div>
+                      </div>
+                      
+                      {/* English URLs */}
+                      <div className="space-y-4 p-4 bg-green-50 dark:bg-green-900/20 rounded-lg border border-green-200 dark:border-green-700">
+                        <div className="flex items-center gap-2 mb-3">
+                          <span className="text-2xl">🇺🇸</span>
+                          <h5 className="font-medium text-green-800 dark:text-green-200">URLs English</h5>
+                        </div>
+                        <div className="grid grid-cols-2 gap-4">
+                          <div className="space-y-2">
+                            <Label className="flex items-center gap-2 text-green-800 dark:text-green-200">
+                              <Video className="w-4 h-4" />
+                              URL Vidéo EN
+                            </Label>
+                            <Input
+                              value={getFullUrl(formData.video_url_en)}
+                              onChange={(e) => setFormData({ ...formData, video_url_en: e.target.value })}
+                              placeholder="https://supabase.memopyk.org/storage/v1/object/public/memopyk-videos/..."
+                              className="bg-white dark:bg-gray-800 text-sm font-mono"
+                            />
+                          </div>
+                          <div className="space-y-2">
+                            <Label className="flex items-center gap-2 text-green-800 dark:text-green-200">
+                              <Image className="w-4 h-4" />
+                              URL Image EN
+                            </Label>
+                            <Input
+                              value={getFullUrl(formData.image_url_en)}
+                              onChange={(e) => setFormData({ ...formData, image_url_en: e.target.value })}
+                              placeholder="https://supabase.memopyk.org/storage/v1/object/public/memopyk-videos/..."
+                              className="bg-white dark:bg-gray-800 text-sm font-mono"
+                            />
+                          </div>
+                        </div>
+                      </div>
                     </div>
-                  </div>
+                  )}
                 </div>
                 
                 <div className="grid grid-cols-3 gap-4">
