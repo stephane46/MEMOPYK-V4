@@ -4293,11 +4293,31 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Image comparison page route
+  app.get("/image-comparison", (req, res) => {
+    try {
+      const fs = require('fs');
+      const path = require('path');
+      const filePath = path.join(__dirname, '../public/image_comparison.html');
+      
+      if (fs.existsSync(filePath)) {
+        const htmlContent = fs.readFileSync(filePath, 'utf8');
+        res.setHeader('Content-Type', 'text/html');
+        res.send(htmlContent);
+      } else {
+        res.status(404).send('Image comparison page not found');
+      }
+    } catch (error) {
+      console.error('Error serving image comparison page:', error);
+      res.status(500).send('Error loading image comparison page');
+    }
+  });
+
   // Import test routes
   const testRouter = (await import('./test-routes')).default;
   app.use('/api', testRouter);
 
-  console.log("📋 Video proxy, image proxy, cache endpoints, diagnostic endpoint, stream testing, and system test routes registered");
+  console.log("📋 Video proxy, image proxy, cache endpoints, diagnostic endpoint, stream testing, image comparison page, and system test routes registered");
 
   return createServer(app);
 }
