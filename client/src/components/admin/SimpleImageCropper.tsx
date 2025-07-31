@@ -134,10 +134,7 @@ const DraggableCover = ({ imageUrl, onPositionChange, previewRef }: { imageUrl: 
       onMouseUp={handleMouseUp}
       onMouseLeave={handleMouseUp}
       style={{
-        backgroundImage: imageLoaded ? `url(${imageUrl})` : undefined,
-        backgroundColor: '#ffffff', // Always solid white background - matches canvas generation
-        backgroundSize: 'cover',
-        backgroundPosition: `${position.x}% ${position.y}%`,
+        backgroundColor: '#ffffff', // Solid white base background
         borderRadius: 8,
         userSelect: 'none',
         display: 'flex',
@@ -145,6 +142,24 @@ const DraggableCover = ({ imageUrl, onPositionChange, previewRef }: { imageUrl: 
         justifyContent: 'center',
       }}
     >
+      {/* Solid white background layer */}
+      <div 
+        className="absolute inset-0 bg-white"
+        style={{ zIndex: 1 }}
+      />
+      
+      {/* Image layer on top of white background */}
+      {imageLoaded && (
+        <div 
+          className="absolute inset-0"
+          style={{
+            backgroundImage: `url(${imageUrl})`,
+            backgroundSize: 'cover',
+            backgroundPosition: `${position.x}% ${position.y}%`,
+            zIndex: 2
+          }}
+        />
+      )}
       <img
         src={imageUrl}
         onLoad={() => setImageLoaded(true)}
