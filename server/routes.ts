@@ -4293,45 +4293,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Image comparison page route
-  app.get("/image-comparison", (req, res) => {
-    try {
-      const fs = require('fs');
-      const path = require('path');
-      const filePath = path.join(__dirname, '../public/image_comparison.html');
-      
-      if (fs.existsSync(filePath)) {
-        const htmlContent = fs.readFileSync(filePath, 'utf8');
-        res.setHeader('Content-Type', 'text/html');
-        res.send(htmlContent);
-      } else {
-        res.status(404).send('Image comparison page not found');
-      }
-    } catch (error) {
-      console.error('Error serving image comparison page:', error);
-      res.status(500).send('Error loading image comparison page');
-    }
-  });
 
-  // Fresh reframe status page route
-  app.get("/fresh-reframe-status", (req, res) => {
-    try {
-      const fs = require('fs');
-      const path = require('path');
-      const filePath = path.join(__dirname, '../public/fresh_reframe_status.html');
-      
-      if (fs.existsSync(filePath)) {
-        const htmlContent = fs.readFileSync(filePath, 'utf8');
-        res.setHeader('Content-Type', 'text/html');
-        res.send(htmlContent);
-      } else {
-        res.status(404).send('Fresh reframe status page not found');
-      }
-    } catch (error) {
-      console.error('Error serving fresh reframe status page:', error);
-      res.status(500).send('Error loading fresh reframe status page');
-    }
-  });
 
   // Reframe success page route
   app.get("/reframe-success", (req, res) => {
