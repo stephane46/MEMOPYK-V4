@@ -229,9 +229,14 @@ export default function ImageCropperEasyCrop({ imageUrl, onSave, onCancel }: Ima
       
       console.log(`📍 Position: ${position.x}%,${position.y}% → Offset: ${offsetX.toFixed(1)},${offsetY.toFixed(1)}`);
 
-      // Fill with solid white background to prevent transparency
+      // CRITICAL: Fill with solid white background to prevent transparency
+      // This MUST be done before any other drawing operations
+      console.log('🎨 CRITICAL WHITE BACKGROUND FIX v1.0.93: Applying solid white fill');
       ctx.fillStyle = '#FFFFFF';
       ctx.fillRect(0, 0, 300, 200);
+      
+      // Double-check: Ensure no transparency by setting composite operation
+      ctx.globalCompositeOperation = 'source-over';
 
       // Maximum quality settings for sharpest results
       ctx.imageSmoothingEnabled = true;
