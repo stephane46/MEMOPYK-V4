@@ -632,47 +632,18 @@ export default function GalleryManagementNew() {
                         </div>
                         {!isCreateMode && selectedItem?.image_url_fr && (
                           <div className="flex gap-1">
-                            {!frCropMode ? (
-                              <Button
-                                onClick={() => setFrCropMode(true)}
-                                variant="outline"
-                                size="sm"
-                                className="bg-blue-600 hover:bg-blue-700 text-white border-blue-600 px-2 py-1 text-xs"
-                              >
-                                <Crop className="w-3 h-3 mr-1" />
-                                Recadrer FR
-                              </Button>
-                            ) : (
-                              <div className="flex gap-1">
-                                <Button
-                                  onClick={() => saveInlineCrop('fr')}
-                                  disabled={frCropSaving}
-                                  variant="outline"
-                                  size="sm"
-                                  className="bg-green-600 hover:bg-green-700 text-white border-green-600 px-2 py-1 text-xs"
-                                >
-                                  {frCropSaving ? (
-                                    <>
-                                      <div className="w-3 h-3 mr-1 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                                      Saving...
-                                    </>
-                                  ) : (
-                                    <>
-                                      <Save className="w-3 h-3 mr-1" />
-                                      Sauver
-                                    </>
-                                  )}
-                                </Button>
-                                <Button
-                                  onClick={() => setFrCropMode(false)}
-                                  variant="outline"
-                                  size="sm"
-                                  className="bg-gray-500 hover:bg-gray-600 text-white border-gray-500 px-2 py-1 text-xs"
-                                >
-                                  Annuler
-                                </Button>
-                              </div>
-                            )}
+                            <Button
+                              onClick={() => {
+                                setCropperLanguage('fr');
+                                setCropperOpen(true);
+                              }}
+                              variant="outline"
+                              size="sm"
+                              className="bg-blue-600 hover:bg-blue-700 text-white border-blue-600 px-2 py-1 text-xs"
+                            >
+                              <Crop className="w-3 h-3 mr-1" />
+                              Recadrer FR
+                            </Button>
                             {selectedItem.static_image_url_fr && (
                               <Button
                                 onClick={async () => {
@@ -715,109 +686,18 @@ export default function GalleryManagementNew() {
                       <div className="aspect-video w-full bg-black rounded-lg overflow-hidden border border-blue-200 dark:border-blue-600 relative">
                         {selectedItem?.image_url_fr ? (
                           <>
-                            {frCropMode ? (
-                              // Inline Cropping Mode for French
-                              <div className="w-full h-full relative bg-white flex items-center justify-center">
-                                <div 
-                                  className="relative bg-white border-2 border-blue-400"
-                                  style={{ width: '300px', height: '200px' }}
-                                >
-                                  <div 
-                                    className="w-full h-full cursor-move relative overflow-hidden"
-                                    style={{
-                                      backgroundImage: `url("${selectedItem.image_url_fr.startsWith('http') 
-                                        ? selectedItem.image_url_fr
-                                        : `/api/image-proxy?filename=${selectedItem.image_url_fr.split('/').pop()?.split('?')[0]}`
-                                      }")`,
-                                      backgroundSize: 'cover',
-                                      backgroundPosition: `${frCropPosition.x}% ${frCropPosition.y}%`,
-                                      backgroundRepeat: 'no-repeat'
-                                    }}
-                                    onMouseDown={(e) => {
-                                      setFrIsDragging(true);
-                                      const rect = e.currentTarget.getBoundingClientRect();
-                                      setFrDragStart({
-                                        x: e.clientX - rect.left,
-                                        y: e.clientY - rect.top
-                                      });
-                                    }}
-                                    onMouseMove={(e) => {
-                                      if (!frIsDragging) return;
-                                      
-                                      const rect = e.currentTarget.getBoundingClientRect();
-                                      const deltaX = (e.clientX - rect.left - frDragStart.x) / rect.width * 100;
-                                      const deltaY = (e.clientY - rect.top - frDragStart.y) / rect.height * 100;
-                                      
-                                      setFrCropPosition(prev => ({
-                                        x: Math.max(-50, Math.min(50, prev.x - deltaX)),
-                                        y: Math.max(-50, Math.min(50, prev.y - deltaY))
-                                      }));
-                                      
-                                      setFrDragStart({
-                                        x: e.clientX - rect.left,
-                                        y: e.clientY - rect.top
-                                      });
-                                    }}
-                                    onMouseUp={() => setFrIsDragging(false)}
-                                    onMouseLeave={() => setFrIsDragging(false)}
-                                  >
-                                    <div className="absolute inset-0 border-2 border-blue-400 border-dashed pointer-events-none" />
-                                  </div>
-                                  <div className="absolute -top-6 left-0 text-xs text-blue-600 bg-white px-2 py-1 rounded shadow font-medium whitespace-nowrap">
-                                    Zone de recadrage 3:2 - Glissez pour positionner
-                                  </div>
-                                </div>
+                            <img 
+                              src={getThumbnailUrl(selectedItem, 'fr') || (selectedItem.image_url_fr.startsWith('http') 
+                                ? `${selectedItem.image_url_fr}?cacheBust=${Date.now()}&nocache=1`
+                                : `/api/image-proxy?filename=${selectedItem.image_url_fr.split('/').pop()?.split('?')[0]}`
+                              )} 
+                              alt="Aperçu Français"
+                              className="w-full h-full object-contain"
+                            />
+                            {selectedItem.static_image_url_fr && (
+                              <div className="absolute top-2 right-2 bg-emerald-500 text-white px-2 py-1 rounded-full text-xs font-bold shadow-lg">
+                                ✂️ Recadré FR
                               </div>
-                            ) : (
-                              // Normal Preview Mode for French
-                              <>
-                                <img 
-                                  ref={frImageRef}
-                                  src={getThumbnailUrl(selectedItem, 'fr') || (selectedItem.image_url_fr.startsWith('http') 
-                                    ? `${selectedItem.image_url_fr}?cacheBust=${Date.now()}&nocache=1`
-                                    : `/api/image-proxy?filename=${selectedItem.image_url_fr.split('/').pop()?.split('?')[0]}`
-                                  )} 
-                                  alt="Aperçu Français"
-                                  className="w-full h-full object-contain"
-                                  style={{ outline: '2px solid magenta' }}
-                                  onLoad={() => {
-                                    const imageUrl = selectedItem.image_url_fr.startsWith('http') 
-                                      ? `${selectedItem.image_url_fr}?cacheBust=${Date.now()}&nocache=1}`
-                                      : `/api/image-proxy?filename=${selectedItem.image_url_fr.split('/').pop()?.split('?')[0]}`;
-                                    console.log('🔍 FRENCH IMAGE LOADED - Running diagnostics...');
-                                    setTimeout(() => {
-                                      logDisplayDiagnostics(frImageRef.current, imageUrl);
-                                      if (frImageRef.current) {
-                                        const dimensions = calculateImageDimensions(frImageRef.current);
-                                        setFrImageDimensions(dimensions);
-                                      }
-                                    }, 100);
-                                  }}
-                                />
-                                {/* 3:2 Ratio Frame Overlay - positioned over actual image dimensions */}
-                                {!selectedItem.static_image_url_fr && frImageDimensions && (
-                                  <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-                                    {/* Frame positioned over actual image size only */}
-                                    <div 
-                                      className="border-2 border-blue-400 border-dashed bg-blue-400/10 rounded relative"
-                                      style={{
-                                        width: `${frImageDimensions.width}px`,
-                                        aspectRatio: '3/2',
-                                        maxHeight: `${frImageDimensions.height}px`
-                                      }}
-                                    >
-                                      <div className="absolute -top-6 left-0 text-xs text-blue-600 bg-white px-2 py-1 rounded shadow font-medium whitespace-nowrap">
-                                        Zone de recadrage 3:2
-                                      </div>
-                                    </div>
-                                  </div>
-                                )}
-                                {selectedItem.static_image_url_fr && (
-                                  <div className="absolute top-2 right-2 bg-emerald-500 text-white px-2 py-1 rounded-full text-xs font-bold shadow-lg">
-                                    ✂️ Recadré FR
-                                  </div>
-                                )}
-                              </>
                             )}
                           </>
                         ) : (
@@ -844,47 +724,18 @@ export default function GalleryManagementNew() {
                         </div>
                         {!isCreateMode && selectedItem?.image_url_en && (
                           <div className="flex gap-1">
-                            {!enCropMode ? (
-                              <Button
-                                onClick={() => setEnCropMode(true)}
-                                variant="outline"
-                                size="sm"
-                                className="bg-green-600 hover:bg-green-700 text-white border-green-600 px-2 py-1 text-xs"
-                              >
-                                <Crop className="w-3 h-3 mr-1" />
-                                Recadrer EN
-                              </Button>
-                            ) : (
-                              <div className="flex gap-1">
-                                <Button
-                                  onClick={() => saveInlineCrop('en')}
-                                  disabled={enCropSaving}
-                                  variant="outline"
-                                  size="sm"
-                                  className="bg-green-600 hover:bg-green-700 text-white border-green-600 px-2 py-1 text-xs"
-                                >
-                                  {enCropSaving ? (
-                                    <>
-                                      <div className="w-3 h-3 mr-1 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                                      Saving...
-                                    </>
-                                  ) : (
-                                    <>
-                                      <Save className="w-3 h-3 mr-1" />
-                                      Save
-                                    </>
-                                  )}
-                                </Button>
-                                <Button
-                                  onClick={() => setEnCropMode(false)}
-                                  variant="outline"
-                                  size="sm"
-                                  className="bg-gray-500 hover:bg-gray-600 text-white border-gray-500 px-2 py-1 text-xs"
-                                >
-                                  Cancel
-                                </Button>
-                              </div>
-                            )}
+                            <Button
+                              onClick={() => {
+                                setCropperLanguage('en');
+                                setCropperOpen(true);
+                              }}
+                              variant="outline"
+                              size="sm"
+                              className="bg-green-600 hover:bg-green-700 text-white border-green-600 px-2 py-1 text-xs"
+                            >
+                              <Crop className="w-3 h-3 mr-1" />
+                              Recadrer EN
+                            </Button>
                             {selectedItem.static_image_url_en && (
                               <Button
                                 onClick={async () => {
@@ -927,109 +778,18 @@ export default function GalleryManagementNew() {
                       <div className="aspect-video w-full bg-black rounded-lg overflow-hidden border border-green-200 dark:border-green-600 relative">
                         {selectedItem?.image_url_en ? (
                           <>
-                            {enCropMode ? (
-                              // Inline Cropping Mode for English
-                              <div className="w-full h-full relative bg-white flex items-center justify-center">
-                                <div 
-                                  className="relative bg-white border-2 border-green-400"
-                                  style={{ width: '300px', height: '200px' }}
-                                >
-                                  <div 
-                                    className="w-full h-full cursor-move relative overflow-hidden"
-                                    style={{
-                                      backgroundImage: `url("${selectedItem.image_url_en.startsWith('http') 
-                                        ? selectedItem.image_url_en
-                                        : `/api/image-proxy?filename=${selectedItem.image_url_en.split('/').pop()?.split('?')[0]}`
-                                      }")`,
-                                      backgroundSize: 'cover',
-                                      backgroundPosition: `${enCropPosition.x}% ${enCropPosition.y}%`,
-                                      backgroundRepeat: 'no-repeat'
-                                    }}
-                                    onMouseDown={(e) => {
-                                      setEnIsDragging(true);
-                                      const rect = e.currentTarget.getBoundingClientRect();
-                                      setEnDragStart({
-                                        x: e.clientX - rect.left,
-                                        y: e.clientY - rect.top
-                                      });
-                                    }}
-                                    onMouseMove={(e) => {
-                                      if (!enIsDragging) return;
-                                      
-                                      const rect = e.currentTarget.getBoundingClientRect();
-                                      const deltaX = (e.clientX - rect.left - enDragStart.x) / rect.width * 100;
-                                      const deltaY = (e.clientY - rect.top - enDragStart.y) / rect.height * 100;
-                                      
-                                      setEnCropPosition(prev => ({
-                                        x: Math.max(-50, Math.min(50, prev.x - deltaX)),
-                                        y: Math.max(-50, Math.min(50, prev.y - deltaY))
-                                      }));
-                                      
-                                      setEnDragStart({
-                                        x: e.clientX - rect.left,
-                                        y: e.clientY - rect.top
-                                      });
-                                    }}
-                                    onMouseUp={() => setEnIsDragging(false)}
-                                    onMouseLeave={() => setEnIsDragging(false)}
-                                  >
-                                    <div className="absolute inset-0 border-2 border-green-400 border-dashed pointer-events-none" />
-                                  </div>
-                                  <div className="absolute -top-6 left-0 text-xs text-green-600 bg-white px-2 py-1 rounded shadow font-medium whitespace-nowrap">
-                                    Crop Zone 3:2 - Drag to position
-                                  </div>
-                                </div>
+                            <img 
+                              src={getThumbnailUrl(selectedItem, 'en') || (selectedItem.image_url_en.startsWith('http') 
+                                ? `${selectedItem.image_url_en}?cacheBust=${Date.now()}&nocache=1`
+                                : `/api/image-proxy?filename=${selectedItem.image_url_en.split('/').pop()?.split('?')[0]}`
+                              )} 
+                              alt="Aperçu English"
+                              className="w-full h-full object-contain"
+                            />
+                            {selectedItem.static_image_url_en && (
+                              <div className="absolute top-2 right-2 bg-emerald-500 text-white px-2 py-1 rounded-full text-xs font-bold shadow-lg">
+                                ✂️ Recadré EN
                               </div>
-                            ) : (
-                              // Normal Preview Mode for English
-                              <>
-                                <img 
-                                  ref={enImageRef}
-                                  src={getThumbnailUrl(selectedItem, 'en') || (selectedItem.image_url_en.startsWith('http') 
-                                    ? `${selectedItem.image_url_en}?cacheBust=${Date.now()}&nocache=1`
-                                    : `/api/image-proxy?filename=${selectedItem.image_url_en.split('/').pop()?.split('?')[0]}`
-                                  )} 
-                                  alt="Aperçu English"
-                                  className="w-full h-full object-contain"
-                                  style={{ outline: '2px solid magenta' }}
-                                  onLoad={() => {
-                                    const imageUrl = selectedItem.image_url_en.startsWith('http') 
-                                      ? `${selectedItem.image_url_en}?cacheBust=${Date.now()}&nocache=1}`
-                                      : `/api/image-proxy?filename=${selectedItem.image_url_en.split('/').pop()?.split('?')[0]}`;
-                                    console.log('🔍 ENGLISH IMAGE LOADED - Running diagnostics...');
-                                    setTimeout(() => {
-                                      logDisplayDiagnostics(enImageRef.current, imageUrl);
-                                      if (enImageRef.current) {
-                                        const dimensions = calculateImageDimensions(enImageRef.current);
-                                        setEnImageDimensions(dimensions);
-                                      }
-                                    }, 100);
-                                  }}
-                                />
-                                {/* 3:2 Ratio Frame Overlay - positioned over actual image dimensions */}
-                                {!selectedItem.static_image_url_en && enImageDimensions && (
-                                  <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-                                    {/* Frame positioned over actual image size only */}
-                                    <div 
-                                      className="border-2 border-green-400 border-dashed bg-green-400/10 rounded relative"
-                                      style={{
-                                        width: `${enImageDimensions.width}px`,
-                                        aspectRatio: '3/2',
-                                        maxHeight: `${enImageDimensions.height}px`
-                                      }}
-                                    >
-                                      <div className="absolute -top-6 left-0 text-xs text-green-600 bg-white px-2 py-1 rounded shadow font-medium whitespace-nowrap">
-                                        Crop Zone 3:2
-                                      </div>
-                                    </div>
-                                  </div>
-                                )}
-                                {selectedItem.static_image_url_en && (
-                                  <div className="absolute top-2 right-2 bg-emerald-500 text-white px-2 py-1 rounded-full text-xs font-bold shadow-lg">
-                                    ✂️ Recadré EN
-                                  </div>
-                                )}
-                              </>
                             )}
                           </>
                         ) : (
