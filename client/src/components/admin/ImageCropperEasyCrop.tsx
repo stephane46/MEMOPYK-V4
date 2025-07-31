@@ -158,6 +158,11 @@ export default function ImageCropperEasyCrop({ imageUrl, onSave, onCancel }: Ima
   const generateStaticImage = async () => {
     setLoading(true);
     try {
+      console.log('🚀 PROOF: ImageCropperEasyCrop.tsx generateStaticImage() called - THIS IS THE CORRECT COMPONENT!');
+      console.log('🎨 TRIPLE-LAYER WHITE BACKGROUND v1.0.98 - Starting image generation');
+      console.log('📍 File: client/src/components/admin/ImageCropperEasyCrop.tsx');
+      console.log('🖼️ Source imageUrl:', imageUrl);
+      
       // Create a canvas to generate the 300×200 static image with BULLETPROOF white background
       const canvas = document.createElement('canvas');
       const ctx = canvas.getContext('2d');
