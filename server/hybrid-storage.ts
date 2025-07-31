@@ -398,8 +398,8 @@ export class HybridStorage implements HybridStorageInterface {
           static_image_url: item.staticImageUrl,
           static_image_url_en: item.staticImageUrlEn,
           static_image_url_fr: item.staticImageUrlFr,
-          alt_text_en: item.altTextEn,
-          alt_text_fr: item.altTextFr,
+          alt_text_en: (item as any).altTextEn || '',
+          alt_text_fr: (item as any).altTextFr || '',
           order_index: item.orderIndex,
           is_active: item.isActive, // CRITICAL: This will have the correct database value
           created_at: item.createdAt,
@@ -466,7 +466,7 @@ export class HybridStorage implements HybridStorageInterface {
       if (dbResult.length > 0) {
         console.log(`✅ Database confirms is_active = ${dbResult[0].isActive}`);
       }
-    } catch (error) {
+    } catch (error: any) {
       console.log(`⚠️ DATABASE UPDATE FAILED, updating JSON only:`, error.message);
     }
 
@@ -532,8 +532,27 @@ export class HybridStorage implements HybridStorageInterface {
   }
 
   async deleteGalleryItem(itemId: string | number): Promise<any> {
+    console.log(`🔍 HYBRID STORAGE DELETE - Deleting item ID: ${itemId} (type: ${typeof itemId})`);
+    
+    // Delete from database first if available
+    try {
+      const { galleryItems } = await import('../shared/schema');
+      const { eq } = await import('drizzle-orm');
+      
+      const dbResult = await db.delete(galleryItems)
+        .where(eq(galleryItems.id, itemId.toString()))
+        .returning();
+        
+      console.log(`✅ DATABASE DELETE SUCCESS - Deleted ${dbResult.length} rows`);
+    } catch (error: any) {
+      console.log(`⚠️ DATABASE DELETE FAILED, deleting from JSON only:`, error.message);
+    }
+
+    // Delete from JSON file as backup/fallback
     const items = this.loadJsonFile('gallery-items.json');
     const itemIndex = items.findIndex((item: any) => item.id.toString() === itemId.toString());
+    
+    console.log(`🔍 JSON DELETE - Found item at index: ${itemIndex}`);
     
     if (itemIndex === -1) {
       throw new Error('Gallery item not found');

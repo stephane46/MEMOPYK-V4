@@ -315,10 +315,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.delete("/api/gallery/:id", async (req, res) => {
     try {
-      const itemId = parseInt(req.params.id);
-      console.log(`🗑️ Deleting gallery item with ID: ${itemId}`);
+      const itemId = req.params.id; // Keep as string - hybrid storage handles both string and number IDs
+      console.log(`🗑️ Deleting gallery item with ID: ${itemId} (type: ${typeof itemId})`);
       
-      if (isNaN(itemId)) {
+      if (!itemId) {
         return res.status(400).json({ error: "Invalid gallery item ID" });
       }
       
