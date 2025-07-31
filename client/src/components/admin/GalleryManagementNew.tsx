@@ -39,6 +39,15 @@ import ImageCropperEasyCrop from './ImageCropperEasyCrop';
 import DirectUpload from './DirectUpload';
 import FormatBadgeManager from './FormatBadgeManager';
 
+// Helper function to convert filename to full URL if needed
+const getFullUrl = (value: string): string => {
+  if (!value) return '';
+  if (value.includes('supabase.memopyk.org')) return value; // Already a full URL
+  if (value.includes('http')) return value; // Already some kind of URL
+  // Convert filename to full URL
+  return `https://supabase.memopyk.org/storage/v1/object/public/memopyk-videos/${value}`;
+};
+
 // Module-level persistent state that survives component re-creations
 const persistentUploadState = {
   video_url_en: '',
@@ -1066,46 +1075,59 @@ export default function GalleryManagementNew() {
                 </div>
 
                 {/* Manual URL Override (for advanced users) */}
-                <div className="grid grid-cols-2 gap-6 pt-4 border-t border-gray-200 dark:border-gray-600">
-                  <div className="space-y-2">
-                    <Label htmlFor="video_url_override" className="flex items-center gap-2">
-                      <Video className="w-4 h-4" />
-                      URL Vidéo Complète
+                <div className="pt-4 border-t border-gray-200 dark:border-gray-600">
+                  <div className="mb-4">
+                    <h4 className="font-medium text-[#011526] dark:text-[#F2EBDC] mb-2 flex items-center gap-2">
+                      <Globe className="w-4 h-4" />
+                      Modification Manuelle des URLs
                       <Badge variant="secondary" className="text-xs">Manuel</Badge>
-                    </Label>
-                    <Input
-                      id="video_url_override"
-                      value={formData.video_filename || formData.video_url_en}
-                      onChange={(e) => setFormData({ 
-                        ...formData, 
-                        video_filename: e.target.value,
-                        video_url_en: e.target.value, 
-                        video_url_fr: e.target.value 
-                      })}
-                      placeholder="https://supabase.memopyk.org/storage/v1/object/public/memopyk-videos/..."
-                      className="bg-white dark:bg-gray-800 text-sm font-mono"
-                    />
-                    <p className="text-xs text-gray-500">Entrez l&apos;URL complète Supabase ou laissez vide pour utiliser les fichiers uploadés</p>
+                    </h4>
+                    <p className="text-xs text-gray-600 dark:text-gray-400">
+                      Section avancée pour modifier directement les URLs Supabase. Les modifications s&apos;appliquent aux deux langues (FR et EN).
+                    </p>
                   </div>
                   
-                  <div className="space-y-2">
-                    <Label htmlFor="image_url_override" className="flex items-center gap-2">
-                      <Image className="w-4 h-4" />
-                      URL Image Complète
-                      <Badge variant="secondary" className="text-xs">Manuel</Badge>
-                    </Label>
-                    <Input
-                      id="image_url_override"
-                      value={formData.image_url_en}
-                      onChange={(e) => setFormData({ 
-                        ...formData, 
-                        image_url_en: e.target.value,
-                        image_url_fr: e.target.value 
-                      })}
-                      placeholder="https://supabase.memopyk.org/storage/v1/object/public/memopyk-videos/..."
-                      className="bg-white dark:bg-gray-800 text-sm font-mono"
-                    />
-                    <p className="text-xs text-gray-500">Entrez l&apos;URL complète Supabase ou laissez vide pour utiliser les images uploadées</p>
+                  <div className="grid grid-cols-2 gap-6">
+                    <div className="space-y-2">
+                      <Label htmlFor="video_url_override" className="flex items-center gap-2">
+                        <Video className="w-4 h-4" />
+                        URL Vidéo Complète
+                        <Badge className="text-xs bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-200">FR + EN</Badge>
+                      </Label>
+                      <Input
+                        id="video_url_override"
+                        value={getFullUrl(formData.video_url_en || formData.video_filename)}
+                        onChange={(e) => setFormData({ 
+                          ...formData, 
+                          video_filename: e.target.value,
+                          video_url_en: e.target.value, 
+                          video_url_fr: e.target.value 
+                        })}
+                        placeholder="https://supabase.memopyk.org/storage/v1/object/public/memopyk-videos/..."
+                        className="bg-white dark:bg-gray-800 text-sm font-mono"
+                      />
+                      <p className="text-xs text-gray-500">URL partagée pour les deux langues</p>
+                    </div>
+                    
+                    <div className="space-y-2">
+                      <Label htmlFor="image_url_override" className="flex items-center gap-2">
+                        <Image className="w-4 h-4" />
+                        URL Image Complète
+                        <Badge className="text-xs bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-200">FR + EN</Badge>
+                      </Label>
+                      <Input
+                        id="image_url_override"
+                        value={getFullUrl(formData.image_url_en)}
+                        onChange={(e) => setFormData({ 
+                          ...formData, 
+                          image_url_en: e.target.value,
+                          image_url_fr: e.target.value 
+                        })}
+                        placeholder="https://supabase.memopyk.org/storage/v1/object/public/memopyk-videos/..."
+                        className="bg-white dark:bg-gray-800 text-sm font-mono"
+                      />
+                      <p className="text-xs text-gray-500">URL partagée pour les deux langues</p>
+                    </div>
                   </div>
                 </div>
                 
