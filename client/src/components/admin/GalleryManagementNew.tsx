@@ -644,7 +644,7 @@ export default function GalleryManagementNew() {
                           </div>
                         )}
                       </div>
-                      <div className="aspect-video w-full bg-gray-100 dark:bg-gray-700 rounded-lg overflow-hidden border border-blue-200 dark:border-blue-600 relative">
+                      <div className="aspect-video w-full bg-black rounded-lg overflow-hidden border border-blue-200 dark:border-blue-600 relative">
                         {selectedItem?.image_url_fr ? (
                           <>
                             <img 
@@ -654,7 +654,7 @@ export default function GalleryManagementNew() {
                                 : `/api/image-proxy?filename=${selectedItem.image_url_fr.split('/').pop()?.split('?')[0]}`
                               )} 
                               alt="Aperçu Français"
-                              className="w-full h-full object-cover"
+                              className="w-full h-full object-contain"
                               style={{ outline: '2px solid magenta' }}
                               onLoad={() => {
                                 const imageUrl = selectedItem.image_url_fr.startsWith('http') 
@@ -664,6 +664,22 @@ export default function GalleryManagementNew() {
                                 setTimeout(() => logDisplayDiagnostics(frImageRef.current, imageUrl), 100);
                               }}
                             />
+                            {/* 3:2 Ratio Frame Overlay - only show if not reframed yet */}
+                            {!selectedItem.static_image_url_fr && (
+                              <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+                                <div 
+                                  className="border-2 border-blue-400 border-dashed bg-blue-400/10 rounded relative"
+                                  style={{
+                                    width: '60%',
+                                    aspectRatio: '3/2'
+                                  }}
+                                >
+                                  <div className="absolute -top-6 left-0 text-xs text-blue-600 bg-white px-2 py-1 rounded shadow font-medium whitespace-nowrap">
+                                    Zone de recadrage 3:2
+                                  </div>
+                                </div>
+                              </div>
+                            )}
                             {selectedItem.static_image_url_fr && (
                               <div className="absolute top-2 right-2 bg-emerald-500 text-white px-2 py-1 rounded-full text-xs font-bold shadow-lg">
                                 ✂️ Recadré FR
@@ -745,7 +761,7 @@ export default function GalleryManagementNew() {
                           </div>
                         )}
                       </div>
-                      <div className="aspect-video w-full bg-gray-100 dark:bg-gray-700 rounded-lg overflow-hidden border border-green-200 dark:border-green-600 relative">
+                      <div className="aspect-video w-full bg-black rounded-lg overflow-hidden border border-green-200 dark:border-green-600 relative">
                         {selectedItem?.image_url_en ? (
                           <>
                             <img 
@@ -755,7 +771,7 @@ export default function GalleryManagementNew() {
                                 : `/api/image-proxy?filename=${selectedItem.image_url_en.split('/').pop()?.split('?')[0]}`
                               )} 
                               alt="Aperçu English"
-                              className="w-full h-full object-cover"
+                              className="w-full h-full object-contain"
                               style={{ outline: '2px solid magenta' }}
                               onLoad={() => {
                                 const imageUrl = selectedItem.image_url_en.startsWith('http') 
@@ -765,6 +781,22 @@ export default function GalleryManagementNew() {
                                 setTimeout(() => logDisplayDiagnostics(enImageRef.current, imageUrl), 100);
                               }}
                             />
+                            {/* 3:2 Ratio Frame Overlay - only show if not reframed yet */}
+                            {!selectedItem.static_image_url_en && (
+                              <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+                                <div 
+                                  className="border-2 border-green-400 border-dashed bg-green-400/10 rounded relative"
+                                  style={{
+                                    width: '60%',
+                                    aspectRatio: '3/2'
+                                  }}
+                                >
+                                  <div className="absolute -top-6 left-0 text-xs text-green-600 bg-white px-2 py-1 rounded shadow font-medium whitespace-nowrap">
+                                    Crop Zone 3:2
+                                  </div>
+                                </div>
+                              </div>
+                            )}
                             {selectedItem.static_image_url_en && (
                               <div className="absolute top-2 right-2 bg-emerald-500 text-white px-2 py-1 rounded-full text-xs font-bold shadow-lg">
                                 ✂️ Recadré EN
