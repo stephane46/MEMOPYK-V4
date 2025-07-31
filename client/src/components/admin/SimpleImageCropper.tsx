@@ -200,7 +200,7 @@ export default function SimpleImageCropper({ imageUrl, onSave, onCancel }: Simpl
       console.log('✅ Expert fix: White base background applied');
       
       // Load image
-      const img = new Image();
+      const img = document.createElement('img') as HTMLImageElement;
       img.crossOrigin = 'anonymous';
       
       await new Promise<void>((resolve, reject) => {
