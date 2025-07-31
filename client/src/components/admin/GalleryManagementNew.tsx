@@ -1187,7 +1187,7 @@ export default function GalleryManagementNew() {
                               className: "bg-purple-50 dark:bg-purple-900/20 border-purple-200 dark:border-purple-800"
                             });
                           }}
-                          currentFilename={formData.video_filename || formData.video_url_en}
+                          currentFilename={getFullUrl(formData.video_filename || formData.video_url_en)}
                         />
                       </div>
                       <div>
@@ -1220,7 +1220,7 @@ export default function GalleryManagementNew() {
                               className: "bg-purple-50 dark:bg-purple-900/20 border-purple-200 dark:border-purple-800"
                             });
                           }}
-                          currentFilename={formData.image_url_en}
+                          currentFilename={getFullUrl(formData.image_url_en)}
                         />
                       </div>
                     </div>
@@ -1274,7 +1274,7 @@ export default function GalleryManagementNew() {
                                 className: "bg-blue-50 dark:bg-blue-900/20 border-blue-200 dark:border-blue-800"
                               });
                             }}
-                            currentFilename={formData.video_url_fr}
+                            currentFilename={getFullUrl(formData.video_url_fr)}
                           />
                         </div>
                         <div>
@@ -1304,7 +1304,7 @@ export default function GalleryManagementNew() {
                                 className: "bg-blue-50 dark:bg-blue-900/20 border-blue-200 dark:border-blue-800"
                               });
                             }}
-                            currentFilename={formData.image_url_fr}
+                            currentFilename={getFullUrl(formData.image_url_fr)}
                           />
                         </div>
                       </div>
@@ -1352,7 +1352,7 @@ export default function GalleryManagementNew() {
                                 className: "bg-green-50 dark:bg-green-900/20 border-green-200 dark:border-green-800"
                               });
                             }}
-                            currentFilename={formData.video_url_en}
+                            currentFilename={getFullUrl(formData.video_url_en)}
                           />
                         </div>
                         <div>
@@ -1382,7 +1382,7 @@ export default function GalleryManagementNew() {
                                 className: "bg-green-50 dark:bg-green-900/20 border-green-200 dark:border-green-800"
                               });
                             }}
-                            currentFilename={formData.image_url_en}
+                            currentFilename={getFullUrl(formData.image_url_en)}
                           />
                         </div>
                       </div>
