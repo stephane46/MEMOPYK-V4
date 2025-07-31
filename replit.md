@@ -75,6 +75,14 @@ Preferred communication style: Simple, everyday language.
 
 ## Recent Changes (July 31, 2025)
 
+### GALLERY MANAGEMENT ALIGNMENT ISSUE - UNRESOLVED (July 31, 2025) ⚠️ REQUIRES ROLLBACK
+**Gallery Management Video-to-Image Alignment Issue - Multiple Failed Attempts:**
+❌ **Core Problem**: English video label ("🇺🇸 English VitaminSeaC.mp4") not aligning horizontally with English image label ("🇺🇸 English Image628(7).jpg")
+❌ **French Labels Work**: French sections align properly across both columns
+❌ **Multiple Failed Approaches**: CSS Grid conversion, spacing adjustments, button structure matching, placeholder divs - all unsuccessful
+❌ **User Frustration**: Agent not following simple alignment instructions despite clear screenshots showing the issue
+⚠️ **Recommendation**: User should use rollback button to restore working state before alignment attempts
+
 ### GALLERY VIDEO ALIGNMENT FIX COMPLETE - v1.0.114 (July 31, 2025) ✅ GRID STRUCTURE ALIGNMENT ACHIEVED
 **Gallery Management Video-to-Image Alignment Issue Resolved - User Request Implemented:**
 ✅ **Grid Structure Implementation**: Applied identical `grid grid-cols-2 gap-8` structure used throughout successful page sections
