@@ -584,14 +584,7 @@ export default function GalleryManagementNew() {
               <SelectContent>
                 {galleryItems.map((item) => (
                   <SelectItem key={item.id} value={item.id.toString()}>
-                    <div className="flex items-center justify-between w-full">
-                      <span>{item.title_en} - {item.title_fr}</span>
-                      {item.static_image_url && (
-                        <span className="ml-2 px-2 py-1 bg-emerald-100 text-emerald-800 text-xs rounded-full font-medium">
-                          ✂️ Recadré
-                        </span>
-                      )}
-                    </div>
+                    <span>{item.title_en} - {item.title_fr}</span>
                   </SelectItem>
                 ))}
               </SelectContent>
