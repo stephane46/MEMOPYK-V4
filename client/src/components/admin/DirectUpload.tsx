@@ -26,7 +26,7 @@ export default function DirectUpload({
   onUploadComplete, 
   onUploadError = (error) => console.error('Upload error:', error), 
   type = 'video',
-  bucket = 'memopyk-videos',
+  bucket,
   acceptedTypes,
   maxSizeMB = 5000,
   children,
@@ -37,6 +37,10 @@ export default function DirectUpload({
   const defaultAcceptedTypes = type === 'video' ? 'video/*' : 'image/*';
   const finalAcceptedTypes = acceptedTypes || defaultAcceptedTypes;
   
+  // Set default bucket based on type if not provided
+  const defaultBucket = type === 'video' ? 'memopyk-videos' : 'memopyk-media';
+  const finalBucket = bucket || defaultBucket;
+  
   // DEBUG: Log component configuration to help troubleshoot upload dialog issues
   React.useEffect(() => {
     console.log(`🔧 DirectUpload Component Initialized:`, {
@@ -45,9 +49,11 @@ export default function DirectUpload({
       acceptedTypes,
       defaultAcceptedTypes,
       finalAcceptedTypes,
-      bucket
+      bucket,
+      defaultBucket,
+      finalBucket
     });
-  }, [uploadId, type, acceptedTypes, defaultAcceptedTypes, finalAcceptedTypes, bucket]);
+  }, [uploadId, type, acceptedTypes, defaultAcceptedTypes, finalAcceptedTypes, bucket, defaultBucket, finalBucket]);
   const [uploadState, setUploadState] = useState<UploadState>({
     status: 'idle',
     progress: 0
@@ -80,7 +86,7 @@ export default function DirectUpload({
       console.log(`   - File: ${file.name}`);
       console.log(`   - Size: ${fileSizeMB.toFixed(2)}MB`);
       console.log(`   - Type: ${file.type}`);
-      console.log(`   - Bucket: ${bucket}`);
+      console.log(`   - Bucket: ${finalBucket}`);
 
       // Step 1: Generate signed upload URL
       setUploadState(prev => ({ ...prev, status: 'generating', progress: 20 }));
@@ -91,7 +97,7 @@ export default function DirectUpload({
         body: JSON.stringify({
           filename: file.name,
           fileType: file.type,
-          bucket: bucket
+          bucket: finalBucket
         })
       });
 
@@ -131,7 +137,7 @@ export default function DirectUpload({
         body: JSON.stringify({
           publicUrl,
           filename,
-          bucket,
+          bucket: finalBucket,
           fileType: file.type
         })
       });
@@ -226,6 +232,23 @@ export default function DirectUpload({
 
   return (
     <div className="space-y-4">
+      {/* Current Filename Display */}
+      {currentFilename && (
+        <div className="p-3 bg-blue-50 dark:bg-blue-900/20 rounded border border-blue-200 dark:border-blue-800">
+          <div className="flex items-center gap-2">
+            <CheckCircle className="h-4 w-4 text-blue-600" />
+            <div className="flex-1">
+              <p className="text-sm font-medium text-blue-900 dark:text-blue-100">
+                Fichier actuel:
+              </p>
+              <p className="text-xs font-mono text-blue-700 dark:text-blue-300 break-all">
+                {currentFilename}
+              </p>
+            </div>
+          </div>
+        </div>
+      )}
+
       {children ? (
         <div className="relative">
           <input

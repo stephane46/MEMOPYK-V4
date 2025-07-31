@@ -1174,6 +1174,7 @@ export default function GalleryManagementNew() {
                         </Label>
                         <DirectUpload
                           type="image"
+                          bucket="memopyk-media"
                           acceptedTypes="image/*"
                           uploadId="shared-image-upload-v87"
                           onUploadComplete={(result) => {
@@ -1261,6 +1262,7 @@ export default function GalleryManagementNew() {
                           </Label>
                           <DirectUpload
                             type="image"
+                            bucket="memopyk-media"
                             acceptedTypes="image/*"
                             uploadId="french-image-upload-v87"
                             onUploadComplete={(result) => {
@@ -1339,6 +1341,7 @@ export default function GalleryManagementNew() {
                           </Label>
                           <DirectUpload
                             type="image"
+                            bucket="memopyk-media"
                             acceptedTypes="image/*"
                             uploadId="english-image-upload-v87"
                             onUploadComplete={(result) => {
