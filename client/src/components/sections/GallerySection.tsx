@@ -137,13 +137,24 @@ export default function GallerySection() {
   const t = content[language];
 
   const getImageUrl = (item: GalleryItem) => {
-    // CACHE-BUSTING v1.0.89: Use direct CDN URLs to bypass all caching
+    // CACHE-BUSTING v1.0.91: PRIORITIZE LATEST UPLOADS OVER OLD STATIC IMAGES
     let imageUrl = '';
     let filename = '';
     
-    if (item.staticImageUrl && item.staticImageUrl.trim() !== '') {
+    // NEW PRIORITY: Latest uploads (image_url_en/fr) take precedence over old crops (staticImageUrl)
+    const latestImageUrl = language === 'fr-FR' ? item.imageUrlFr : item.imageUrlEn;
+    
+    if (latestImageUrl && latestImageUrl.trim() !== '') {
+      imageUrl = latestImageUrl;
+      console.log(`🖼️ USING LATEST UPLOAD: ${imageUrl} for ${item.titleEn}`);
+      filename = imageUrl.includes('/') ? (imageUrl.split('/').pop() || '') : imageUrl;
+      // Remove query parameters from filename
+      if (filename && filename.includes('?')) {
+        filename = filename.split('?')[0];
+      }
+    } else if (item.staticImageUrl && item.staticImageUrl.trim() !== '') {
       imageUrl = item.staticImageUrl;
-      console.log(`🖼️ USING STATIC IMAGE: ${imageUrl} for ${item.titleEn}`);
+      console.log(`🖼️ FALLBACK TO STATIC IMAGE: ${imageUrl} for ${item.titleEn}`);
       
       // Handle both full URLs and filenames for static images
       if (imageUrl.includes('/')) {
@@ -158,14 +169,8 @@ export default function GallerySection() {
         filename = imageUrl;
       }
     } else {
-      // Fallback to original image
-      imageUrl = language === 'fr-FR' ? item.imageUrlFr : item.imageUrlEn;
-      console.log(`🖼️ FALLBACK TO ORIGINAL IMAGE: ${imageUrl} for ${item.titleEn}`);
-      filename = imageUrl.includes('/') ? (imageUrl.split('/').pop() || '') : imageUrl;
-      // Remove query parameters from filename
-      if (filename && filename.includes('?')) {
-        filename = filename.split('?')[0];
-      }
+      console.log(`🖼️ NO IMAGE AVAILABLE for ${item.titleEn}`);
+      return '';
     }
     
     // DIRECT CDN BYPASS: Use Supabase URL with aggressive cache-busting + hash fragment
@@ -173,7 +178,7 @@ export default function GallerySection() {
     const random = Math.random().toString(36).substring(7);
     const hash = `#${timestamp}-${random}`; // Fragment identifier forces browser to treat as new resource
     const directUrl = `https://supabase.memopyk.org/storage/v1/object/public/memopyk-videos/${encodeURIComponent(filename || '')}?cacheBust=${timestamp}&v=${random}&nocache=1${hash}`;
-    console.log(`🖼️ DIRECT CDN IMAGE URL v1.0.89: ${directUrl} (bypassing proxy cache)`);
+    console.log(`🖼️ DIRECT CDN IMAGE URL v1.0.91: ${directUrl} (latest upload priority)`);
     return directUrl;
   };
 

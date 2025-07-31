@@ -91,28 +91,30 @@ Preferred communication style: Simple, everyday language.
 - Component refresh through cache-busting key updates
 - Canvas background fill with #FFFFFF before image drawing
 
-### BROWSER CACHE BYPASS IMPLEMENTATION - v1.0.89 (July 31, 2025) ✅ DIRECT CDN SOLUTION
-**Complete Cache Bypass Strategy - Browser Cache Issue Resolution:**
-✅ **Root Cause Identified**: Browser-level caching persists despite server no-cache headers
-✅ **Direct CDN Bypass**: Preview images now use direct Supabase URLs instead of local cache proxy
-✅ **Aggressive Cache-Busting**: Multiple cache-busting parameters (cacheBust + random version)
-✅ **Page Refresh Eliminated**: Removed forced page reload that "violently kicked" user to admin top
-✅ **Component-Level Refresh**: Gentle component re-render instead of full page navigation
-✅ **Database URL Confirmed**: Image correctly saved as https://supabase.memopyk.org/storage/v1/object/public/memopyk-videos/generated-image%20(1).png
+### IMAGE PREVIEW DISPLAY LOGIC FIX COMPLETE - v1.0.91 (July 31, 2025) ✅ ROOT CAUSE RESOLVED
+**BREAKTHROUGH: Image Preview Issue Was NOT Caching - Fixed Display Priority Logic:**
+✅ **True Root Cause Identified**: Display logic prioritized `static_image_url` over newly uploaded `image_url_en/fr`
+✅ **Priority Logic Fixed**: Both admin and gallery components now prioritize latest uploads (`image_url_en/fr`) over old crops (`static_image_url`)
+✅ **Upload Workflow Confirmed**: System correctly saves uploads to `image_url_en` field with proper URLs (TestImage.png)
+✅ **Console Evidence**: Browser logs show "USING LATEST UPLOAD: TestImage.png" instead of "USING STATIC IMAGE: static_1753304723805.png"
+✅ **Cache-Busting Still Active**: Maintained aggressive cache-busting parameters for maximum reliability
+✅ **Two-Component Fix**: Updated both GalleryManagementNew.tsx and GallerySection.tsx with new priority logic
 
-**Technical Implementation v1.0.89:**
-- Modified getImageUrlWithCacheBust() to use direct Supabase URLs with dual cache-busting parameters
-- Replaced window.location.reload() with gentle queryClient.invalidateQueries() and state update
-- Preview images bypass local cache proxy entirely to prevent browser caching conflicts
-- Component versioning updated to v1.0.89 with "DIRECT CDN BYPASS" messaging
+**Technical Implementation v1.0.91:**
+- **Admin Component**: Changed `item.static_image_url || item.image_url_en || item.image_url_fr` → `item.image_url_en || item.image_url_fr || item.static_image_url`
+- **Gallery Component**: Restructured logic to check `latestImageUrl` (image_url_en/fr) first, fallback to `staticImageUrl` second  
+- **Enhanced Logging**: Added "ADMIN THUMBNAIL PRIORITY v1.0.91" and "USING LATEST UPLOAD" debug messages
+- **Workflow Verification**: Upload saves to `image_url_en` → display logic prioritizes `image_url_en` → immediate preview update
+
+**Previous Approaches That Didn't Solve Root Cause:**
+- v1.0.88-1.0.90: Aggressive cache-busting, direct CDN bypass, component refresh - all bypassed the real issue
+- Real Issue: Display logic always checked `static_image_url` FIRST, ignoring newly uploaded `image_url_en`
 
 **User Experience Achievement:**
-- No more sudden navigation to admin top page during uploads
-- Both admin interface AND live site now use direct CDN URLs with aggressive cache-busting
-- Preview images bypass ALL local caching (proxy cache + browser cache)
-- Smooth component refresh without disrupting user workflow
-- Real-time console confirmation: "DIRECT CDN IMAGE URL v1.0.89" with unique cache-busting parameters
-- Complete cache bypass: Upload image → immediate preview update in both admin and live site
+- Upload image → immediate preview update in both admin interface AND live gallery site
+- No page navigation disruption, no forced refreshes needed
+- Display logic correctly prioritizes most recent uploads over old cropped images
+- Complete workflow: Upload → Save to database → Display latest upload → User sees updated image instantly
 
 ### UPLOAD DIALOG FORMAT VALIDATION FIX COMPLETE - v1.0.87 (July 31, 2025) ✅ CRITICAL BUG RESOLVED
 **Upload Dialog Video Format Request Bug Fixed - Root Cause Resolved:**

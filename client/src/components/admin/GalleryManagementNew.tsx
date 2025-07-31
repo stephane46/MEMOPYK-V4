@@ -103,8 +103,8 @@ interface GalleryItem {
 }
 
 export default function GalleryManagementNew() {
-  // VERSION: NEW-COMPONENT-v1.0.90 - SUPER AGGRESSIVE CACHE-BUSTING
-  console.log('🎯🎯🎯 GALLERYMANAGEMENTNEW v1.0.90 - SUPER AGGRESSIVE CACHE-BUST! 🎯🎯🎯');
+  // VERSION: NEW-COMPONENT-v1.0.91 - LATEST UPLOAD PRIORITY FIX
+  console.log('🎯🎯🎯 GALLERYMANAGEMENTNEW v1.0.91 - LATEST UPLOAD PRIORITY! 🎯🎯🎯');
   console.log('✅ This is the CORRECT modern component with language-specific uploads!');
   console.log('🔥 French (blue) + English (green) sections should be visible!');
   console.log('🎨 Toggle: "Utiliser la même vidéo pour FR et EN" controls layout!');
@@ -265,10 +265,13 @@ export default function GalleryManagementNew() {
     }
   }, [galleryItems, selectedVideoId, isCreateMode]);
 
-  // Get thumbnail URL with cache-busting
+  // Get thumbnail URL with cache-busting - PRIORITIZE LATEST UPLOADS
   const getThumbnailUrl = (item: GalleryItem) => {
-    const imageUrl = item.static_image_url || item.image_url_en || item.image_url_fr;
+    // NEW LOGIC: Prioritize image_url_en (latest uploads) over static_image_url (old crops)
+    const imageUrl = item.image_url_en || item.image_url_fr || item.static_image_url;
     if (!imageUrl) return null;
+    
+    console.log(`🖼️ ADMIN THUMBNAIL PRIORITY v1.0.91: Using ${imageUrl === item.image_url_en ? 'image_url_en' : imageUrl === item.image_url_fr ? 'image_url_fr' : 'static_image_url'} for item ${item.id}`);
     
     let filename = '';
     if (imageUrl.includes('/')) {
