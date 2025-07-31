@@ -343,61 +343,56 @@ export default function GalleryManagementNew() {
 
   return (
     <div className="p-6 max-w-7xl mx-auto">
-      {/* Top Section: Video Selector + NEW Button */}
-      <div className="mb-8 bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6">
-        <div className="flex items-center justify-between gap-6">
-          {/* Left: Video Selector */}
-          <div className="flex-1">
-            <Label className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2 block">
-              Sélectionner une vidéo de galerie
-            </Label>
-            {!isCreateMode ? (
-              <Select 
-                value={selectedVideoId?.toString() || ''} 
-                onValueChange={(value) => setSelectedVideoId(value)}
-              >
-                <SelectTrigger className="w-full">
-                  <SelectValue placeholder="Choisir une vidéo..." />
-                </SelectTrigger>
-                <SelectContent>
-                  {galleryItems.map((item) => (
-                    <SelectItem key={item.id} value={item.id.toString()}>
-                      {item.title_en} - {item.title_fr}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            ) : (
-              <div className="p-3 bg-[#F2EBDC] dark:bg-[#011526]/20 rounded border-2 border-dashed border-[#89BAD9]">
-                <span className="text-[#2A4759] font-medium">Mode création - Nouvelle vidéo</span>
-              </div>
-            )}
-          </div>
+      {/* Top Left: NEW Button */}
+      <div className="mb-6">
+        {!isCreateMode ? (
+          <Button
+            onClick={handleCreateNew}
+            size="lg"
+            className="bg-gradient-to-r from-[#89BAD9] to-[#2A4759] hover:from-[#7AA8CC] hover:to-[#1e3340] text-white border-none shadow-lg font-bold text-lg px-8 py-4"
+          >
+            <Plus className="w-6 h-6 mr-2" />
+            NOUVELLE VIDEO
+          </Button>
+        ) : (
+          <Button
+            onClick={handleCancelCreate}
+            variant="outline"
+            size="lg"
+            className="bg-gray-500 hover:bg-gray-600 text-white px-8 py-4"
+          >
+            Annuler
+          </Button>
+        )}
+      </div>
 
-          {/* Right: NEW Button - Big prominent button */}
-          <div className="flex-shrink-0">
-            <div className="flex gap-2">
-              {!isCreateMode ? (
-                <Button
-                  onClick={handleCreateNew}
-                  size="lg"
-                  className="bg-gradient-to-r from-[#89BAD9] to-[#2A4759] hover:from-[#7AA8CC] hover:to-[#1e3340] text-white border-none shadow-lg font-bold text-lg px-8 py-4"
-                >
-                  <Plus className="w-6 h-6 mr-2" />
-                  NOUVELLE VIDEO
-                </Button>
-              ) : (
-                <Button
-                  onClick={handleCancelCreate}
-                  variant="outline"
-                  size="lg"
-                  className="bg-gray-500 hover:bg-gray-600 text-white px-8 py-4"
-                >
-                  Annuler
-                </Button>
-              )}
+      {/* Video Selector Section */}
+      <div className="mb-8 bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6">
+        <div className="w-full">
+          <Label className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2 block">
+            Sélectionner une vidéo de galerie
+          </Label>
+          {!isCreateMode ? (
+            <Select 
+              value={selectedVideoId?.toString() || ''} 
+              onValueChange={(value) => setSelectedVideoId(value)}
+            >
+              <SelectTrigger className="w-full">
+                <SelectValue placeholder="Choisir une vidéo..." />
+              </SelectTrigger>
+              <SelectContent>
+                {galleryItems.map((item) => (
+                  <SelectItem key={item.id} value={item.id.toString()}>
+                    {item.title_en} - {item.title_fr}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          ) : (
+            <div className="p-3 bg-[#F2EBDC] dark:bg-[#011526]/20 rounded border-2 border-dashed border-[#89BAD9]">
+              <span className="text-[#2A4759] font-medium">Mode création - Nouvelle vidéo</span>
             </div>
-          </div>
+          )}
         </div>
       </div>
 
