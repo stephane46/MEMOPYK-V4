@@ -155,13 +155,19 @@ const DraggableCover = ({ imageUrl, onPositionChange, previewRef }: { imageUrl: 
         <div 
           className="absolute inset-0 pointer-events-none"
           style={{
-            backgroundImage: `url(${imageUrl})`,
+            backgroundImage: `url("${imageUrl}")`,
             backgroundSize: 'cover',
             backgroundPosition: `${position.x}% ${position.y}%`,
+            backgroundRepeat: 'no-repeat',
             zIndex: 2
           }}
         />
       )}
+      
+      {/* Debug overlay to show image loading state */}
+      <div className="absolute top-2 left-2 bg-black bg-opacity-75 text-white text-xs px-2 py-1 rounded z-10">
+        {imageLoaded ? '✅ Image Loaded' : '⏳ Loading...'}
+      </div>
       <img
         src={imageUrl}
         onLoad={() => {
