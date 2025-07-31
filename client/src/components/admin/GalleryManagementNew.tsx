@@ -31,7 +31,9 @@ import {
   Monitor,
   Smartphone,
   Power,
-  Palette
+  Palette,
+  Globe,
+  Info
 } from "lucide-react";
 import ImageCropperEasyCrop from './ImageCropperEasyCrop';
 import DirectUpload from './DirectUpload';
@@ -756,14 +758,14 @@ export default function GalleryManagementNew() {
                       console.log('✅ Video upload completed:', result);
                       setFormData({
                         ...formData,
-                        video_filename: result.filename,
-                        video_url_en: result.filename,
-                        video_url_fr: result.filename
+                        video_filename: result.url,
+                        video_url_en: result.url,
+                        video_url_fr: result.url
                       });
                       // Update persistent state
-                      persistentUploadState.video_filename = result.filename;
-                      persistentUploadState.video_url_en = result.filename;
-                      persistentUploadState.video_url_fr = result.filename;
+                      persistentUploadState.video_filename = result.url;
+                      persistentUploadState.video_url_en = result.url;
+                      persistentUploadState.video_url_fr = result.url;
                       toast({ 
                         title: "✅ Succès", 
                         description: `Vidéo uploadée: ${result.filename}` 
@@ -848,11 +850,11 @@ export default function GalleryManagementNew() {
                               console.log('✅ French video upload completed:', result);
                               setFormData(prev => ({
                                 ...prev,
-                                video_url_fr: result.filename,
-                                video_filename: result.filename
+                                video_url_fr: result.url,
+                                video_filename: result.url
                               }));
-                              persistentUploadState.video_url_fr = result.filename;
-                              persistentUploadState.video_filename_fr = result.filename;
+                              persistentUploadState.video_url_fr = result.url;
+                              persistentUploadState.video_filename_fr = result.url;
                               toast({ 
                                 title: "✅ Succès", 
                                 description: `Vidéo française uploadée: ${result.filename}`,
@@ -914,11 +916,11 @@ export default function GalleryManagementNew() {
                               console.log('✅ English video upload completed:', result);
                               setFormData(prev => ({
                                 ...prev,
-                                video_url_en: result.filename,
-                                video_filename: result.filename
+                                video_url_en: result.url,
+                                video_filename: result.url
                               }));
-                              persistentUploadState.video_url_en = result.filename;
-                              persistentUploadState.video_filename_en = result.filename;
+                              persistentUploadState.video_url_en = result.url;
+                              persistentUploadState.video_filename_en = result.url;
                               toast({ 
                                 title: "✅ Success", 
                                 description: `English video uploaded: ${result.filename}`,
@@ -968,12 +970,111 @@ export default function GalleryManagementNew() {
                   </div>
                 )}
 
-                {/* Manual Filename Override (for advanced users) */}
+                {/* Current Content Display with Clear Language Indicators */}
+                <div className="bg-gray-50 dark:bg-gray-800/50 p-4 rounded-lg border border-gray-200 dark:border-gray-600">
+                  <h4 className="font-medium text-[#011526] dark:text-[#F2EBDC] mb-4 flex items-center gap-2">
+                    <Eye className="w-4 h-4" />
+                    Contenu Actuel {formData.use_same_video ? "(Partagé FR/EN)" : "(Séparé par langue)"}
+                  </h4>
+                  
+                  {formData.use_same_video ? (
+                    // Shared content display
+                    <div className="space-y-3">
+                      <div className="bg-purple-50 dark:bg-purple-900/20 p-3 rounded border border-purple-200 dark:border-purple-800">
+                        <div className="flex items-center gap-2 mb-2">
+                          <Globe className="w-4 h-4 text-purple-600" />
+                          <span className="text-sm font-medium text-purple-900 dark:text-purple-100">
+                            🌐 Contenu Partagé (Français + English)
+                          </span>
+                        </div>
+                        <div className="grid grid-cols-2 gap-4 text-xs">
+                          <div>
+                            <Label className="text-purple-800 dark:text-purple-200">URL Vidéo Actuelle:</Label>
+                            <div className="bg-white dark:bg-gray-800 p-2 rounded border text-purple-900 dark:text-purple-100 font-mono break-all">
+                              {formData.video_filename || formData.video_url_en || "Aucune vidéo"}
+                            </div>
+                          </div>
+                          <div>
+                            <Label className="text-purple-800 dark:text-purple-200">URL Image Actuelle:</Label>
+                            <div className="bg-white dark:bg-gray-800 p-2 rounded border text-purple-900 dark:text-purple-100 font-mono break-all">
+                              {formData.image_url_en || "Aucune image"}
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  ) : (
+                    // Separate language content display
+                    <div className="grid grid-cols-2 gap-4">
+                      <div className="bg-blue-50 dark:bg-blue-900/20 p-3 rounded border border-blue-200 dark:border-blue-800">
+                        <div className="flex items-center gap-2 mb-2">
+                          <span className="text-sm font-medium text-blue-900 dark:text-blue-100">
+                            🇫🇷 Version Française
+                          </span>
+                        </div>
+                        <div className="space-y-2 text-xs">
+                          <div>
+                            <Label className="text-blue-800 dark:text-blue-200">URL Vidéo FR:</Label>
+                            <div className="bg-white dark:bg-gray-800 p-2 rounded border text-blue-900 dark:text-blue-100 font-mono break-all">
+                              {formData.video_url_fr || "Aucune vidéo FR"}
+                            </div>
+                          </div>
+                          <div>
+                            <Label className="text-blue-800 dark:text-blue-200">URL Image FR:</Label>
+                            <div className="bg-white dark:bg-gray-800 p-2 rounded border text-blue-900 dark:text-blue-100 font-mono break-all">
+                              {formData.image_url_fr || "Aucune image FR"}
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      
+                      <div className="bg-green-50 dark:bg-green-900/20 p-3 rounded border border-green-200 dark:border-green-800">
+                        <div className="flex items-center gap-2 mb-2">
+                          <span className="text-sm font-medium text-green-900 dark:text-green-100">
+                            🇺🇸 English Version
+                          </span>
+                        </div>
+                        <div className="space-y-2 text-xs">
+                          <div>
+                            <Label className="text-green-800 dark:text-green-200">URL Video EN:</Label>
+                            <div className="bg-white dark:bg-gray-800 p-2 rounded border text-green-900 dark:text-green-100 font-mono break-all">
+                              {formData.video_url_en || "No English video"}
+                            </div>
+                          </div>
+                          <div>
+                            <Label className="text-green-800 dark:text-green-200">URL Image EN:</Label>
+                            <div className="bg-white dark:bg-gray-800 p-2 rounded border text-green-900 dark:text-green-100 font-mono break-all">
+                              {formData.image_url_en || "No English image"}
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+                  
+                  <div className="mt-3 p-2 bg-blue-50 dark:bg-blue-900/30 rounded border border-blue-200 dark:border-blue-700">
+                    <div className="flex items-start gap-2">
+                      <Info className="h-4 w-4 text-blue-600 mt-0.5 flex-shrink-0" />
+                      <div className="text-xs text-blue-800 dark:text-blue-200">
+                        <p className="font-medium mb-1">📋 Format de données uniforme :</p>
+                        <p>• Toutes les URLs sont maintenant au format complet Supabase</p>
+                        <p>• Vidéos et images utilisent le même format d'URL pour la cohérence</p>
+                        <p>• Les URLs complètes permettent un accès direct aux fichiers</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Manual URL Override (for advanced users) */}
                 <div className="grid grid-cols-2 gap-6 pt-4 border-t border-gray-200 dark:border-gray-600">
                   <div className="space-y-2">
-                    <Label htmlFor="video_filename_override">Nom de fichier vidéo (optionnel)</Label>
+                    <Label htmlFor="video_url_override" className="flex items-center gap-2">
+                      <Video className="w-4 h-4" />
+                      URL Vidéo Complète
+                      <Badge variant="secondary" className="text-xs">Manuel</Badge>
+                    </Label>
                     <Input
-                      id="video_filename_override"
+                      id="video_url_override"
                       value={formData.video_filename || formData.video_url_en}
                       onChange={(e) => setFormData({ 
                         ...formData, 
@@ -981,26 +1082,30 @@ export default function GalleryManagementNew() {
                         video_url_en: e.target.value, 
                         video_url_fr: e.target.value 
                       })}
-                      placeholder="VitaminSeaC.mp4"
-                      className="bg-white dark:bg-gray-800 text-sm"
+                      placeholder="https://supabase.memopyk.org/storage/v1/object/public/memopyk-videos/..."
+                      className="bg-white dark:bg-gray-800 text-sm font-mono"
                     />
-                    <p className="text-xs text-gray-500">Laissez vide pour utiliser le fichier uploadé</p>
+                    <p className="text-xs text-gray-500">Entrez l&apos;URL complète Supabase ou laissez vide pour utiliser les fichiers uploadés</p>
                   </div>
                   
                   <div className="space-y-2">
-                    <Label htmlFor="image_filename_override">URL image (optionnel)</Label>
+                    <Label htmlFor="image_url_override" className="flex items-center gap-2">
+                      <Image className="w-4 h-4" />
+                      URL Image Complète
+                      <Badge variant="secondary" className="text-xs">Manuel</Badge>
+                    </Label>
                     <Input
-                      id="image_filename_override"
+                      id="image_url_override"
                       value={formData.image_url_en}
                       onChange={(e) => setFormData({ 
                         ...formData, 
                         image_url_en: e.target.value,
                         image_url_fr: e.target.value 
                       })}
-                      placeholder="https://supabase.memopyk.org/..."
-                      className="bg-white dark:bg-gray-800 text-sm"
+                      placeholder="https://supabase.memopyk.org/storage/v1/object/public/memopyk-videos/..."
+                      className="bg-white dark:bg-gray-800 text-sm font-mono"
                     />
-                    <p className="text-xs text-gray-500">Laissez vide pour utiliser l&apos;image uploadée</p>
+                    <p className="text-xs text-gray-500">Entrez l&apos;URL complète Supabase ou laissez vide pour utiliser les images uploadées</p>
                   </div>
                 </div>
                 

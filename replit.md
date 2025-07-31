@@ -75,6 +75,30 @@ Preferred communication style: Simple, everyday language.
 
 ## Recent Changes (July 31, 2025)
 
+### COMPREHENSIVE UI CLARITY IMPROVEMENTS COMPLETE - v1.0.84 (July 31, 2025) ✅ ALL ISSUES RESOLVED
+**Complete UI/UX Enhancement - Data Consistency & Language Clarity Implementation:**
+✅ **Data Format Consistency Fixed**: Both videos and images now use full URLs (result.url) instead of mixed filename/URL format
+✅ **Clear Language Indicators Added**: New "Contenu Actuel" section shows exactly which language version is displayed
+✅ **Visual Language Context**: Purple for shared content, Blue for French, Green for English with flag icons
+✅ **Improved Field Labels**: Replaced confusing "optionnel" labels with descriptive "URL Complète" and "Manuel" badges
+✅ **Current vs New Content Display**: Visual feedback clearly shows existing content vs upload areas
+✅ **Unified Data Format**: All uploads now consistently save full Supabase URLs for both videos and images
+
+**Technical Implementation:**
+- **Data Consistency**: Changed all video uploads from `result.filename` to `result.url` for uniform URL format
+- **Language Indicators**: Added conditional display showing FR/EN content with proper color coding and flag icons
+- **Current Content Section**: New "Contenu Actuel" panel with visual separation of shared vs language-specific content
+- **Enhanced Labels**: Updated field labels from "Nom de fichier vidéo (optionnel)" to "URL Vidéo Complète" with "Manuel" badge
+- **Visual Feedback**: Added explanatory text about unified data format and direct file access
+- **Font-Mono Display**: URLs displayed in monospace font for better readability and professional appearance
+
+**User Experience Achievement:**
+- Clear visual indication of which language version is being edited (shared, French, or English)
+- Consistent data format eliminates confusion between filename vs URL display
+- Professional field labeling that describes actual content rather than misleading "optional" flags
+- Better visual separation between current content display and upload/edit areas
+- Complete transparency about what content is stored and how it's formatted
+
 ### LANGUAGE-SPECIFIC UPLOAD SECTIONS COMPLETE - v1.0.83 (July 31, 2025) ✅ USER CONFIRMED WORKING
 **French/English Upload Interface Implementation - Feature Gap Resolved:**
 ✅ **Component Integration Fixed**: AdminPage.tsx now correctly imports GalleryManagementNew.tsx instead of old component
