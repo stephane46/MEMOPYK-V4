@@ -81,16 +81,18 @@ export default function SimpleImageCropper({ imageUrl, onSave, onCancel }: Simpl
     try {
       console.log('🚀 SIMPLE IMAGE CROPPER: Starting basic canvas generation');
       
-      // Create simple canvas
+      // EXPERT FIX: Minimal canvas sequence for guaranteed white-backed JPEG
       const canvas = document.createElement('canvas');
       const ctx = canvas.getContext('2d')!;
-      canvas.width = 300;
-      canvas.height = 200;
-      
-      // Fill with white background (this should be all we need!)
-      ctx.fillStyle = '#FFFFFF';
+      const dpr = window.devicePixelRatio || 1;
+      canvas.width = 300 * dpr;
+      canvas.height = 200 * dpr;
+      ctx.scale(dpr, dpr);
+
+      // Base white background
+      ctx.fillStyle = '#fff';
       ctx.fillRect(0, 0, 300, 200);
-      console.log('✅ White background applied');
+      console.log('✅ Expert fix: White base background applied');
       
       // Load image
       const img = new Image();
@@ -112,23 +114,32 @@ export default function SimpleImageCropper({ imageUrl, onSave, onCancel }: Simpl
       const offsetX = (scaledWidth - 300) * (-position.x / 100);
       const offsetY = (scaledHeight - 200) * (-position.y / 100);
       
-      // Draw image on white background
+      // Draw the image with proper composite operation
+      ctx.globalCompositeOperation = 'source-over';
+      ctx.imageSmoothingEnabled = true;
+      ctx.imageSmoothingQuality = 'high';
       ctx.drawImage(img, offsetX, offsetY, scaledWidth, scaledHeight);
       console.log('✅ Image drawn on canvas');
       
-      // Convert to JPEG
+      // Export as JPEG with maximum quality
       const blob = await new Promise<Blob>((resolve) => {
         canvas.toBlob((blob) => {
-          console.log('✅ JPEG blob created:', blob?.size, 'bytes');
+          console.log('✅ Expert fix: JPEG blob created:', blob?.size, 'bytes');
+          // Create blob URL for direct inspection
+          const blobUrl = URL.createObjectURL(blob!);
+          console.log('🔍 DIRECT BLOB URL for inspection:', blobUrl);
+          console.log('📋 Open this URL in new tab to verify white background');
           resolve(blob!);
-        }, 'image/jpeg', 0.95);
+        }, 'image/jpeg', 1.0);
       });
 
       const settings = {
-        method: 'simple',
+        method: 'expert-minimal-fix',
         position: position,
         dimensions: { width: 300, height: 200 },
-        format: 'JPEG'
+        format: 'JPEG',
+        quality: 1.0,
+        devicePixelRatio: dpr
       };
       
       onSave(blob, settings);
@@ -143,8 +154,8 @@ export default function SimpleImageCropper({ imageUrl, onSave, onCancel }: Simpl
   return (
     <div className="space-y-4">
       <div className="text-center">
-        <div className="mb-2 p-2 bg-blue-100 border border-blue-300 rounded">
-          <span className="text-blue-800 font-bold">🔧 SIMPLE IMAGE CROPPER - No Nuclear Complexity!</span>
+        <div className="mb-2 p-2 bg-green-100 border border-green-300 rounded">
+          <span className="text-green-800 font-bold">✅ EXPERT FIX APPLIED - Minimal Canvas Sequence</span>
         </div>
         <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">
           Glissez pour repositionner l'image dans le cadre 300×200
