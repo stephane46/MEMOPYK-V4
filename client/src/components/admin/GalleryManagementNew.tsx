@@ -670,7 +670,7 @@ export default function GalleryManagementNew() {
                                 <div 
                                   className="border-2 border-blue-400 border-dashed bg-blue-400/10 rounded relative"
                                   style={{
-                                    width: '90%',
+                                    height: '70%',
                                     aspectRatio: '3/2'
                                   }}
                                 >
@@ -787,7 +787,7 @@ export default function GalleryManagementNew() {
                                 <div 
                                   className="border-2 border-green-400 border-dashed bg-green-400/10 rounded relative"
                                   style={{
-                                    width: '90%',
+                                    height: '70%',
                                     aspectRatio: '3/2'
                                   }}
                                 >
