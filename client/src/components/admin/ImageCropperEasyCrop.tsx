@@ -235,69 +235,46 @@ export default function ImageCropperEasyCrop({ imageUrl, onSave, onCancel }: Ima
       console.log(`📐 Original: ${img.naturalWidth}×${img.naturalHeight} (${imgAspect.toFixed(2)})`);
       console.log(`📐 Scaled: ${scaledWidth}×${scaledHeight} covering 300×200`);
 
+      // NUCLEAR WHITE BACKGROUND v1.0.97: PIXEL-LEVEL CONTROL FIRST
+      console.log('🎨 NUCLEAR WHITE BACKGROUND v1.0.97 - Creating pure white ImageData FIRST');
+      
+      // Create ImageData and set every pixel to pure white BEFORE any drawing
+      const whiteData = ctx.createImageData(300, 200);
+      const pixelArray = whiteData.data;
+      
+      // Fill every single pixel with pure white (255, 255, 255, 255)
+      for (let i = 0; i < pixelArray.length; i += 4) {
+        pixelArray[i] = 255;     // Red
+        pixelArray[i + 1] = 255; // Green  
+        pixelArray[i + 2] = 255; // Blue
+        pixelArray[i + 3] = 255; // Alpha (fully opaque)
+      }
+      
+      // Apply white ImageData to canvas - this sets every pixel to white
+      ctx.putImageData(whiteData, 0, 0);
+      console.log('✅ NUCLEAR WHITE: All 60,000 pixels set to pure white (255,255,255,255)');
+
       // Calculate position offset based on background-position percentages
       const offsetX = (position.x / 100) * (300 - scaledWidth);
       const offsetY = (position.y / 100) * (200 - scaledHeight);
       
       console.log(`📍 Position: ${position.x}%,${position.y}% → Offset: ${offsetX.toFixed(1)},${offsetY.toFixed(1)}`);
 
-      // ADDITIONAL WHITE LAYER PROTECTION AFTER IMAGE DRAW
-      console.log('🎨 POST-IMAGE WHITE LAYER PROTECTION v1.0.96');
-      
-      // Apply white background AFTER image is drawn to prevent any alpha blending issues
-      ctx.globalCompositeOperation = 'destination-over'; // Put white BEHIND the image
-      ctx.fillStyle = '#FFFFFF';
-      ctx.fillRect(0, 0, 300, 200);
-      
-      // Reset composite operation for final safety layer
-      ctx.globalCompositeOperation = 'source-over';
-      console.log('✅ POST-IMAGE WHITE PROTECTION COMPLETED');
-
       // Maximum quality settings for sharpest results
       ctx.imageSmoothingEnabled = true;
       ctx.imageSmoothingQuality = 'high';
 
-      // Draw the image with position offset
+      // NOW draw the image on top of the guaranteed white pixels
+      ctx.globalCompositeOperation = 'source-over';
       ctx.drawImage(img, offsetX, offsetY, scaledWidth, scaledHeight);
+      
+      console.log('✅ Image drawn on pixel-level white background');
 
-      // ULTIMATE WHITE BACKGROUND ENFORCEMENT - Create completely new canvas
-      console.log('🎨 ULTIMATE WHITE BACKGROUND ENFORCEMENT v1.0.96');
-      const finalCanvas = document.createElement('canvas');
-      const finalCtx = finalCanvas.getContext('2d')!;
-      finalCanvas.width = 300 * dpr;
-      finalCanvas.height = 200 * dpr;
-      finalCanvas.style.width = '300px';
-      finalCanvas.style.height = '200px';
-      finalCanvas.style.backgroundColor = '#FFFFFF';
-      finalCtx.scale(dpr, dpr);
-      
-      // FORCE WHITE BACKGROUND - Multiple approaches for maximum guarantee
-      finalCtx.globalAlpha = 1.0;
-      finalCtx.globalCompositeOperation = 'source-over';
-      
-      // 1. Fill entire canvas with solid white
-      finalCtx.fillStyle = '#FFFFFF';
-      finalCtx.fillRect(0, 0, 300, 200);
-      
-      // 2. Stroke white border for edge protection
-      finalCtx.strokeStyle = '#FFFFFF';
-      finalCtx.lineWidth = 10;
-      finalCtx.strokeRect(0, 0, 300, 200);
-      
-      // 3. Fill again to ensure no gaps
-      finalCtx.fillStyle = '#FFFFFF';
-      finalCtx.fillRect(0, 0, 300, 200);
-      
-      // 4. Draw the original canvas on top of guaranteed white background
-      finalCtx.drawImage(canvas, 0, 0, 300, 200);
-      
-      console.log('✅ ULTIMATE WHITE BACKGROUND ENFORCEMENT COMPLETED - Triple protection applied');
-
-      // Convert to JPEG format which doesn't support transparency
+      // Convert to JPEG (no transparency support) for guaranteed white background
       const blob = await new Promise<Blob>((resolve) => {
-        finalCanvas.toBlob((blob) => {
+        canvas.toBlob((blob) => {
           resolve(blob!);
-        }, 'image/jpeg', 1.0); // JPEG format with maximum quality - no transparency possible
+        }, 'image/jpeg', 1.0); // JPEG format at maximum quality - no transparency possible
       });
 
       // Save with position data and high-DPI info
@@ -307,7 +284,7 @@ export default function ImageCropperEasyCrop({ imageUrl, onSave, onCancel }: Ima
         devicePixelRatio: dpr,
         originalDimensions: { width: img.naturalWidth, height: img.naturalHeight },
         outputDimensions: { width: 300, height: 200 },
-        format: 'PNG'
+        format: 'JPEG'
       };
       
       onSave(blob, cropSettings);
