@@ -768,7 +768,7 @@ export default function GalleryManagementNew() {
                               src={
                                 // Prioritize formData (fresh uploads) over selectedItem (database values)
                                 (formData.image_url_fr || selectedItem?.image_url_fr)?.startsWith('http')
-                                  ? `${formData.image_url_fr || selectedItem?.image_url_fr}?cacheBust=${Date.now()}&nocache=1`
+                                  ? `${formData.image_url_fr || selectedItem?.image_url_fr}?v=${formData.image_url_fr ? 'new' : 'old'}`
                                   : getThumbnailUrl(selectedItem, 'fr') || `/api/image-proxy?filename=${(formData.image_url_fr || selectedItem?.image_url_fr)?.split('/').pop()?.split('?')[0]}`
                               } 
                               alt="Aperçu Français"
@@ -914,7 +914,7 @@ export default function GalleryManagementNew() {
                               src={
                                 // Prioritize formData (fresh uploads) over selectedItem (database values)
                                 (formData.image_url_en || selectedItem?.image_url_en)?.startsWith('http')
-                                  ? `${formData.image_url_en || selectedItem?.image_url_en}?cacheBust=${Date.now()}&nocache=1`
+                                  ? `${formData.image_url_en || selectedItem?.image_url_en}?v=${formData.image_url_en ? 'new' : 'old'}`
                                   : getThumbnailUrl(selectedItem, 'en') || `/api/image-proxy?filename=${(formData.image_url_en || selectedItem?.image_url_en)?.split('/').pop()?.split('?')[0]}`
                               } 
                               alt="Aperçu English"
