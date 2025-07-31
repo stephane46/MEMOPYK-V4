@@ -612,11 +612,26 @@ export default function GalleryManagementNew() {
                 <div className="flex flex-col items-center space-y-3">
                   <Switch
                     checked={formData.is_active}
-                    onCheckedChange={(checked) => setFormData({...formData, is_active: checked})}
+                    onCheckedChange={(checked) => {
+                      // Update form data immediately
+                      setFormData({...formData, is_active: checked});
+                      
+                      // Auto-save the is_active change immediately
+                      if (selectedVideoId && !isCreateMode) {
+                        console.log('🔄 Auto-saving is_active change:', checked);
+                        updateItemMutation.mutate({ 
+                          id: selectedVideoId, 
+                          data: { is_active: checked } 
+                        });
+                      }
+                    }}
                     className="data-[state=checked]:bg-[#2A4759]"
                   />
                   <Label className="text-base font-medium text-[#011526] dark:text-[#F2EBDC] text-center">
                     {formData.is_active ? 'Actif' : 'Inactif'}
+                    {updateItemMutation.isPending && (
+                      <span className="ml-2 text-xs text-blue-600 dark:text-blue-400">(Sauvegarde...)</span>
+                    )}
                   </Label>
                 </div>
               </div>
