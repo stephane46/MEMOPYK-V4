@@ -1,7 +1,7 @@
 # MEMOPYK - Replit Project Documentation
 
 ## Overview
-MEMOPYK is a full-stack memory film platform with a comprehensive bilingual (French/English) content management system. The platform features professional video lightbox system, gallery management with reliable video streaming, language-specific upload functionality, image reframing tools, and real-time preview capabilities. Recent success: Complete resolution of language-specific image/video display issues with working French/English content separation and database synchronization.
+MEMOPYK is a full-stack memory film platform with a comprehensive bilingual (French/English) content management system. The platform features professional video lightbox system, gallery management with reliable video streaming, language-specific upload functionality, image reframing tools, and real-time preview capabilities. Recent success: Complete resolution of critical duplicate ID bug preventing video creation - all gallery management features now fully operational with proper database integration.
 
 ## User Preferences
 Preferred communication style: Simple, everyday language.
@@ -26,6 +26,7 @@ Preferred communication style: Simple, everyday language.
 - Complete Functionality: Gallery lightbox, admin management, and all features working reliably
 - Performance Trade-off: Accepted slower gallery video loading for guaranteed production functionality
 - **Language-Specific Upload System FULLY OPERATIONAL (July 31, 2025)**: French/English image uploads work correctly, database sync fixed, public site displays correct language-specific images and videos
+- **Critical Duplicate ID Bug RESOLVED (July 31, 2025)**: Fixed createGalleryItem function to properly insert into database with UUID generation, eliminating duplicate ID errors and ensuring new videos appear in dropdown and public site
 
 **Clean Minimal Video Controls - USER REQUIREMENT FULLY ACHIEVED:**
 - Three-Dots Menu Removed: Eliminated vertical menu with download, playback speed, and picture-in-picture options
