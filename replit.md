@@ -75,6 +75,27 @@ Preferred communication style: Simple, everyday language.
 
 ## Recent Changes (July 31, 2025)
 
+### VIDEO ALIGNMENT FIX COMPLETE - v1.0.112 (July 31, 2025) ✅ HERO VIDEO PREVIEW ALIGNMENT
+**Bottom Section Video Alignment Issue Resolved - User Request Implemented:**
+✅ **English Video Alignment Fixed**: Added `flex-shrink-0` to English video preview element ensuring consistent thumbnail sizing
+✅ **French Video Alignment Fixed**: Added `flex-shrink-0` to French video preview element for perfect vertical alignment
+✅ **Professional Layout**: Both language video previews now maintain consistent 16x10 pixel dimensions without compression
+✅ **Center-to-Center Alignment**: Video thumbnails now properly align with adjacent image previews in hero management interface
+✅ **CSS Enhancement**: flex-shrink-0 prevents video elements from compressing and maintains visual balance
+
+**Technical Implementation v1.0.112:**
+- Enhanced English video preview: `className="w-16 h-10 object-cover rounded border flex-shrink-0"`
+- Enhanced French video preview: `className="w-16 h-10 object-cover rounded border flex-shrink-0"`
+- Fixed flexbox layout preventing video thumbnail compression in admin interface
+- Maintained consistent video preview sizing across both language sections
+- Professional admin interface appearance with proper visual alignment
+
+**User Experience Achievement:**
+- Hero video management interface displays with perfect alignment between all preview elements
+- English and French video thumbnails maintain consistent sizing and positioning
+- No more misaligned video previews in bottom section of admin interface
+- Clean professional appearance with all elements properly aligned
+
 ### INLINE IMAGE CROPPING SYSTEM COMPLETE - v1.0.111 (July 31, 2025) ✅ DIRECT REPOSITION WORKFLOW
 **Revolutionary Inline Cropping Implementation - User Request Fulfilled:**
 ✅ **Direct Drag-and-Reposition**: Users can now drag images directly within preview containers to reframe them inline without popup dialogs

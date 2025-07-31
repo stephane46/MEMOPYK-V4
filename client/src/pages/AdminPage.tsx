@@ -1592,7 +1592,7 @@ export default function AdminPage() {
                           <div className="flex items-center gap-2">
                             <video 
                               src={`/api/video-proxy?filename=${encodeURIComponent(editVideoData.url_en)}`}
-                              className="w-16 h-10 object-cover rounded border"
+                              className="w-16 h-10 object-cover rounded border flex-shrink-0"
                               muted
                             />
                             <span className="text-xs text-green-600 dark:text-green-400">Remplacer ci-dessus</span>
@@ -1652,7 +1652,7 @@ export default function AdminPage() {
                           <div className="flex items-center gap-2">
                             <video 
                               src={`/api/video-proxy?filename=${encodeURIComponent(editVideoData.url_fr)}`}
-                              className="w-16 h-10 object-cover rounded border"
+                              className="w-16 h-10 object-cover rounded border flex-shrink-0"
                               muted
                             />
                             <span className="text-xs text-green-600 dark:text-green-400">Remplacer ci-dessus</span>
