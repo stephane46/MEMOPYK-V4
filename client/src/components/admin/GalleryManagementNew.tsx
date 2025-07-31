@@ -528,7 +528,14 @@ export default function GalleryManagementNew() {
               <SelectContent>
                 {galleryItems.map((item) => (
                   <SelectItem key={item.id} value={item.id.toString()}>
-                    {item.title_en} - {item.title_fr}
+                    <div className="flex items-center justify-between w-full">
+                      <span>{item.title_en} - {item.title_fr}</span>
+                      {item.static_image_url && (
+                        <span className="ml-2 px-2 py-1 bg-emerald-100 text-emerald-800 text-xs rounded-full font-medium">
+                          ✂️ Recadré
+                        </span>
+                      )}
+                    </div>
                   </SelectItem>
                 ))}
               </SelectContent>
@@ -582,25 +589,32 @@ export default function GalleryManagementNew() {
                           </Button>
                         )}
                       </div>
-                      <div className="aspect-video w-full bg-gray-100 dark:bg-gray-700 rounded-lg overflow-hidden border border-blue-200 dark:border-blue-600">
+                      <div className="aspect-video w-full bg-gray-100 dark:bg-gray-700 rounded-lg overflow-hidden border border-blue-200 dark:border-blue-600 relative">
                         {selectedItem?.image_url_fr ? (
-                          <img 
-                            ref={frImageRef}
-                            src={selectedItem.image_url_fr.startsWith('http') 
-                              ? `${selectedItem.image_url_fr}?cacheBust=${Date.now()}&nocache=1`
-                              : `/api/image-proxy?filename=${selectedItem.image_url_fr.split('/').pop()?.split('?')[0]}`
-                            } 
-                            alt="Aperçu Français"
-                            className="w-full h-full object-cover"
-                            style={{ outline: '2px solid magenta' }}
-                            onLoad={() => {
-                              const imageUrl = selectedItem.image_url_fr.startsWith('http') 
+                          <>
+                            <img 
+                              ref={frImageRef}
+                              src={getThumbnailUrl(selectedItem) || (selectedItem.image_url_fr.startsWith('http') 
                                 ? `${selectedItem.image_url_fr}?cacheBust=${Date.now()}&nocache=1`
-                                : `/api/image-proxy?filename=${selectedItem.image_url_fr.split('/').pop()?.split('?')[0]}`;
-                              console.log('🔍 FRENCH IMAGE LOADED - Running diagnostics...');
-                              setTimeout(() => logDisplayDiagnostics(frImageRef.current, imageUrl), 100);
-                            }}
-                          />
+                                : `/api/image-proxy?filename=${selectedItem.image_url_fr.split('/').pop()?.split('?')[0]}`
+                              )} 
+                              alt="Aperçu Français"
+                              className="w-full h-full object-cover"
+                              style={{ outline: '2px solid magenta' }}
+                              onLoad={() => {
+                                const imageUrl = selectedItem.image_url_fr.startsWith('http') 
+                                  ? `${selectedItem.image_url_fr}?cacheBust=${Date.now()}&nocache=1`
+                                  : `/api/image-proxy?filename=${selectedItem.image_url_fr.split('/').pop()?.split('?')[0]}`;
+                                console.log('🔍 FRENCH IMAGE LOADED - Running diagnostics...');
+                                setTimeout(() => logDisplayDiagnostics(frImageRef.current, imageUrl), 100);
+                              }}
+                            />
+                            {selectedItem.static_image_url && (
+                              <div className="absolute top-2 right-2 bg-emerald-500 text-white px-2 py-1 rounded-full text-xs font-bold shadow-lg">
+                                ✂️ Recadré
+                              </div>
+                            )}
+                          </>
                         ) : (
                           <div className="w-full h-full flex items-center justify-center">
                             <div className="text-center text-gray-500 dark:text-gray-400">
@@ -638,25 +652,32 @@ export default function GalleryManagementNew() {
                           </Button>
                         )}
                       </div>
-                      <div className="aspect-video w-full bg-gray-100 dark:bg-gray-700 rounded-lg overflow-hidden border border-green-200 dark:border-green-600">
+                      <div className="aspect-video w-full bg-gray-100 dark:bg-gray-700 rounded-lg overflow-hidden border border-green-200 dark:border-green-600 relative">
                         {selectedItem?.image_url_en ? (
-                          <img 
-                            ref={enImageRef}
-                            src={selectedItem.image_url_en.startsWith('http') 
-                              ? `${selectedItem.image_url_en}?cacheBust=${Date.now()}&nocache=1`
-                              : `/api/image-proxy?filename=${selectedItem.image_url_en.split('/').pop()?.split('?')[0]}`
-                            } 
-                            alt="Aperçu English"
-                            className="w-full h-full object-cover"
-                            style={{ outline: '2px solid magenta' }}
-                            onLoad={() => {
-                              const imageUrl = selectedItem.image_url_en.startsWith('http') 
+                          <>
+                            <img 
+                              ref={enImageRef}
+                              src={getThumbnailUrl(selectedItem) || (selectedItem.image_url_en.startsWith('http') 
                                 ? `${selectedItem.image_url_en}?cacheBust=${Date.now()}&nocache=1`
-                                : `/api/image-proxy?filename=${selectedItem.image_url_en.split('/').pop()?.split('?')[0]}`;
-                              console.log('🔍 ENGLISH IMAGE LOADED - Running diagnostics...');
-                              setTimeout(() => logDisplayDiagnostics(enImageRef.current, imageUrl), 100);
-                            }}
-                          />
+                                : `/api/image-proxy?filename=${selectedItem.image_url_en.split('/').pop()?.split('?')[0]}`
+                              )} 
+                              alt="Aperçu English"
+                              className="w-full h-full object-cover"
+                              style={{ outline: '2px solid magenta' }}
+                              onLoad={() => {
+                                const imageUrl = selectedItem.image_url_en.startsWith('http') 
+                                  ? `${selectedItem.image_url_en}?cacheBust=${Date.now()}&nocache=1`
+                                  : `/api/image-proxy?filename=${selectedItem.image_url_en.split('/').pop()?.split('?')[0]}`;
+                                console.log('🔍 ENGLISH IMAGE LOADED - Running diagnostics...');
+                                setTimeout(() => logDisplayDiagnostics(enImageRef.current, imageUrl), 100);
+                              }}
+                            />
+                            {selectedItem.static_image_url && (
+                              <div className="absolute top-2 right-2 bg-emerald-500 text-white px-2 py-1 rounded-full text-xs font-bold shadow-lg">
+                                ✂️ Recadré
+                              </div>
+                            )}
+                          </>
                         ) : (
                           <div className="w-full h-full flex items-center justify-center">
                             <div className="text-center text-gray-500 dark:text-gray-400">

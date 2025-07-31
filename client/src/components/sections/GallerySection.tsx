@@ -141,7 +141,7 @@ export default function GallerySection() {
     let imageUrl = '';
     let filename = '';
     
-    // NEW PRIORITY: staticImageUrl (reframed) > uploads > fallback
+    // FIXED PRIORITY v1.0.108: static_image_url (reframed) > uploads > fallback  
     if (item.staticImageUrl && item.staticImageUrl.trim() !== '') {
       imageUrl = item.staticImageUrl;
       console.log(`🖼️ USING REFRAMED STATIC IMAGE: ${imageUrl} for ${item.titleEn}`);

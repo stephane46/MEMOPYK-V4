@@ -75,6 +75,29 @@ Preferred communication style: Simple, everyday language.
 
 ## Recent Changes (July 31, 2025)
 
+### REFRAMING BADGE SYSTEM COMPLETE - v1.0.108 (July 31, 2025) ✅ ADMIN VISUAL INDICATORS
+**Complete Admin Reframing Badge Implementation - User Request Fulfilled:**
+✅ **Preview Display Fixed**: Admin interface now correctly prioritizes reframed static images (static_image_url) over original uploads
+✅ **Field Name Consistency**: Fixed camelCase vs snake_case inconsistency - now uses correct database field names throughout
+✅ **Dropdown Badge**: Gallery selector dropdown shows "✂️ Recadré" badge next to items that have been reframed
+✅ **Image Overlay Badge**: Green "✂️ Recadré" badge appears on image previews when static_image_url exists
+✅ **Priority Logic Fixed**: getThumbnailUrl function now correctly shows static_image_url first, then image_url_en/fr fallbacks
+✅ **Saving Workflow Confirmed**: Reframing automatically saves to database without requiring form save button
+
+**Technical Implementation v1.0.108:**
+- Fixed display priority: `item.static_image_url || item.image_url_en || item.image_url_fr` (reframed first)
+- Added reframing status badge in SelectItem dropdown with emerald styling
+- Added absolute positioned overlay badge on both French and English image previews
+- Updated both admin and public gallery components with consistent field naming
+- Enhanced visual feedback system for admin users to track reframing status
+
+**User Experience Achievement:**
+- Clear visual indication when images have been reframed in dropdown selector
+- Overlay badges on image previews show reframing status at a glance
+- Admin can instantly see which gallery items have custom 300x200 thumbnails
+- Preview images correctly display the reframed version instead of original uploads
+- No form saving required for reframing operations - workflow streamlined
+
 ### IMAGE REFRAMING SYSTEM COMPLETE - v1.0.107 (July 31, 2025) ✅ FULLY FUNCTIONAL
 **Complete Image Cropper Workflow - User Can Successfully Reframe Images:**
 ✅ **Display Issue Fixed**: Image cropper now properly displays images with fixed CSS backgroundImage quotes and backgroundRepeat settings
