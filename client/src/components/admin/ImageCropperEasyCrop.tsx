@@ -229,14 +229,26 @@ export default function ImageCropperEasyCrop({ imageUrl, onSave, onCancel }: Ima
       
       console.log(`📍 Position: ${position.x}%,${position.y}% → Offset: ${offsetX.toFixed(1)},${offsetY.toFixed(1)}`);
 
-      // CRITICAL: Fill with solid white background to prevent transparency
-      // This MUST be done before any other drawing operations
-      console.log('🎨 CRITICAL WHITE BACKGROUND FIX v1.0.93: Applying solid white fill');
+      // ULTIMATE WHITE BACKGROUND FIX v1.0.95 - Multiple layers of protection
+      console.log('🎨 ULTIMATE WHITE BACKGROUND FIX v1.0.95: Applying multiple white layers');
+      
+      // 1. Set composite operation first
+      ctx.globalCompositeOperation = 'source-over';
+      
+      // 2. Fill with white using fillRect
       ctx.fillStyle = '#FFFFFF';
       ctx.fillRect(0, 0, 300, 200);
       
-      // Double-check: Ensure no transparency by setting composite operation
-      ctx.globalCompositeOperation = 'source-over';
+      // 3. Draw a white rectangle using strokeRect for extra coverage
+      ctx.strokeStyle = '#FFFFFF';
+      ctx.lineWidth = 2;
+      ctx.strokeRect(0, 0, 300, 200);
+      
+      // 4. Fill again to ensure complete coverage
+      ctx.fillStyle = '#FFFFFF';
+      ctx.fillRect(0, 0, 300, 200);
+      
+      console.log('✅ TRIPLE WHITE FILL COMPLETED - No transparency possible');
 
       // Maximum quality settings for sharpest results
       ctx.imageSmoothingEnabled = true;

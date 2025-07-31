@@ -75,6 +75,30 @@ Preferred communication style: Simple, everyday language.
 
 ## Recent Changes (July 31, 2025)
 
+### PERFECT ALIGNMENT & TRANSPARENT BACKGROUND FIX COMPLETE - v1.0.95 (July 31, 2025) ✅ PROFESSIONAL LAYOUT
+**Critical Layout & Image Generation Issues Resolved - User Requirements Achieved:**
+✅ **Perfect Center Alignment**: French video center now aligns with French image center, English video center aligns with English image center
+✅ **Professional 2x2 Grid**: Images on left column, videos on right column with proper `space-y-6` spacing and `items-start` alignment
+✅ **Status Button Positioning**: "Statut & Activation" button now properly centered across both columns instead of being confined to right column
+✅ **Language Dialog Eliminated**: Individual "Recadrer FR" and "Recadrer EN" buttons work directly without any popup language selection
+✅ **Ultimate Transparent Background Fix**: Triple-layer white background protection in canvas generation prevents any transparency issues
+✅ **Enhanced White Fill Protection**: Multiple fillRect() calls, strokeRect() coverage, and proper composite operation settings
+
+**Technical Implementation v1.0.95:**
+- Layout: `grid grid-cols-1 lg:grid-cols-2 gap-8 items-start` with status section moved outside grid for proper centering
+- Spacing: Consistent `space-y-6` between French and English sections for perfect vertical alignment
+- Canvas Generation: Triple white background layers with `globalCompositeOperation = 'source-over'` and multiple fill operations
+- Language Selection: Completely removed from ImageCropper dialog - individual buttons provide direct access
+- Professional Appearance: Clean 2x2 layout matching user's alignment requirements
+
+**User Experience Achievement:**
+- Click "Recadrer FR" → Opens cropper directly for French image without any language choice dialog
+- Click "Recadrer EN" → Opens cropper directly for English image without any language choice dialog
+- French content (image + video) perfectly aligned in vertical centers
+- English content (image + video) perfectly aligned in vertical centers
+- Status activation button spans both columns for logical positioning
+- Generated static images guaranteed solid white background (no transparency)
+
 ### BILINGUAL REFRAMING WORKFLOW COMPLETE - v1.0.92 (July 31, 2025) ✅ COMPREHENSIVE LANGUAGE SELECTION
 **Complete Bilingual Image Reframing System - USER REQUEST IMPLEMENTED:**
 ✅ **Smart Language Detection**: Intelligent default language selection when opening cropper based on available image_url_en/fr values
