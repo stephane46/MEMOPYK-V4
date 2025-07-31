@@ -119,164 +119,9 @@ async function logDisplayDiagnostics(previewEl: HTMLElement | null, imageUrl: st
     return {width: displayedWidth, height: displayedHeight};
   };
 
-  // Inline canvas generation function (reused from SimpleImageCropper)
-  const generateCroppedImage = async (imageUrl: string, position: { x: number; y: number }, language: 'fr' | 'en') => {
-    console.log(`🚀 INLINE CROPPER v1.0.111 - Starting canvas generation for ${language.toUpperCase()}`);
-    
-    // Reuse the exact canvas generation logic from SimpleImageCropper
-    const canvas = document.createElement('canvas');
-    const ctx = canvas.getContext('2d')!;
-    const dpr = window.devicePixelRatio || 1;
-    canvas.width = 300 * dpr;
-    canvas.height = 200 * dpr;
-    ctx.scale(dpr, dpr);
 
-    // TRIPLE WHITE BACKGROUND SYSTEM - Nuclear approach
-    ctx.fillStyle = '#ffffff';
-    ctx.fillRect(0, 0, 300, 200);
-    
-    // Layer 2: ImageData pixel-level white fill
-    const imageData = ctx.createImageData(300, 200);
-    for (let i = 0; i < imageData.data.length; i += 4) {
-      imageData.data[i] = 255;     // Red
-      imageData.data[i + 1] = 255; // Green
-      imageData.data[i + 2] = 255; // Blue
-      imageData.data[i + 3] = 255; // Alpha
-    }
-    ctx.putImageData(imageData, 0, 0);
-    console.log('✅ TRIPLE WHITE BACKGROUND: fillRect + ImageData pixel control applied');
-    
-    // Load image
-    const img = document.createElement('img') as HTMLImageElement;
-    img.crossOrigin = 'anonymous';
-    
-    await new Promise<void>((resolve, reject) => {
-      img.onload = () => resolve();
-      img.onerror = () => reject(new Error('Failed to load image'));
-      img.src = imageUrl;
-    });
-    
-    console.log('✅ Image loaded successfully');
-    
-    // Calculate positioning for cover effect (same logic as SimpleImageCropper)
-    const scale = Math.max(300 / img.naturalWidth, 200 / img.naturalHeight);
-    const scaledWidth = img.naturalWidth * scale;
-    const scaledHeight = img.naturalHeight * scale;
-    
-    const offsetX = (scaledWidth - 300) * (-position.x / 100);
-    const offsetY = (scaledHeight - 200) * (-position.y / 100);
-    
-    // Draw the image with proper composite operation
-    ctx.globalCompositeOperation = 'source-over';
-    ctx.imageSmoothingEnabled = true;
-    ctx.imageSmoothingQuality = 'high';
-    ctx.drawImage(img, offsetX, offsetY, scaledWidth, scaledHeight);
-    console.log('✅ Image drawn on canvas');
-    
-    // Export as JPEG with maximum quality
-    const blob = await new Promise<Blob>((resolve) => {
-      canvas.toBlob((blob) => {
-        console.log('✅ INLINE CROPPER: JPEG blob created:', blob?.size, 'bytes');
-        resolve(blob!);
-      }, 'image/jpeg', 1.0);
-    });
 
-    return blob;
-  };
 
-  // Inline save function that reuses existing upload/database update logic
-  const saveInlineCrop = async (language: 'fr' | 'en') => {
-    if (!selectedItem) return;
-    
-    const position = language === 'fr' ? frCropPosition : enCropPosition;
-    const imageUrl = language === 'fr' ? selectedItem.image_url_fr : selectedItem.image_url_en;
-    
-    if (!imageUrl) {
-      toast({
-        title: "Erreur",
-        description: `Aucune image ${language === 'fr' ? 'française' : 'anglaise'} disponible pour le recadrage`,
-        variant: "destructive"
-      });
-      return;
-    }
-
-    if (language === 'fr') {
-      setFrCropSaving(true);
-    } else {
-      setEnCropSaving(true);
-    }
-
-    try {
-      console.log(`🚀 INLINE SAVE v1.0.111 - Starting save for ${language.toUpperCase()}`);
-      
-      // Generate cropped image using canvas
-      const blob = await generateCroppedImage(imageUrl, position, language);
-      
-      // Upload to server using existing endpoint (reuse from SimpleImageCropper)
-      const formData = new FormData();
-      const timestamp = Date.now();
-      const filename = `static_${language}_${timestamp}.jpg`;
-      formData.append('file', blob, filename);
-
-      const uploadResponse = await fetch('/api/upload/image', {
-        method: 'POST',
-        body: formData
-      });
-
-      if (!uploadResponse.ok) {
-        throw new Error('Upload failed');
-      }
-
-      const uploadResult = await uploadResponse.json();
-      console.log('✅ Upload successful:', uploadResult);
-
-      // Update database using existing API endpoint
-      const updateData = {
-        [`static_image_url_${language}`]: uploadResult.url
-      };
-
-      const response = await fetch(`/api/gallery/${selectedItem.id}`, {
-        method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(updateData)
-      });
-
-      if (!response.ok) {
-        throw new Error('Database update failed');
-      }
-
-      console.log(`✅ Database updated for ${language.toUpperCase()}`);
-      
-      // Refresh cache and exit crop mode
-      queryClient.invalidateQueries({ queryKey: ['/api/gallery', 'v1.0.111'] });
-      
-      if (language === 'fr') {
-        setFrCropMode(false);
-      } else {
-        setEnCropMode(false);
-      }
-
-      toast({
-        title: "Succès",
-        description: `Image ${language === 'fr' ? 'française' : 'anglaise'} recadrée et sauvegardée avec succès`,
-        variant: "default"
-      });
-
-    } catch (error) {
-      console.error('Error saving inline crop:', error);
-      toast({
-        title: "Erreur",
-        description: "Échec de la sauvegarde du recadrage",
-        variant: "destructive"
-      });
-    } finally {
-      if (language === 'fr') {
-        setFrCropSaving(false);
-      } else {
-        setEnCropSaving(false);
-      }
-    }
-  };
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -473,21 +318,9 @@ export default function GalleryManagementNew() {
     video_filename?: string;
   }>({});
 
-  // Inline cropping state variables
-  const [frCropMode, setFrCropMode] = useState(false);
-  const [enCropMode, setEnCropMode] = useState(false);
-  const [frCropPosition, setFrCropPosition] = useState({ x: 50, y: 50 });
-  const [enCropPosition, setEnCropPosition] = useState({ x: 50, y: 50 });
-  const [frIsDragging, setFrIsDragging] = useState(false);
-  const [enIsDragging, setEnIsDragging] = useState(false);
-  const [frDragStart, setFrDragStart] = useState({ x: 0, y: 0 });
-  const [enDragStart, setEnDragStart] = useState({ x: 0, y: 0 });
-  const [frCropSaving, setFrCropSaving] = useState(false);
-  const [enCropSaving, setEnCropSaving] = useState(false);
 
-  // State for tracking actual image dimensions for crop frame positioning
-  const [frImageDimensions, setFrImageDimensions] = useState<{width: number, height: number} | null>(null);
-  const [enImageDimensions, setEnImageDimensions] = useState<{width: number, height: number} | null>(null);
+
+
   
 
 
