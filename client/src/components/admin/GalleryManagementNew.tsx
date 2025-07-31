@@ -603,6 +603,24 @@ export default function GalleryManagementNew() {
           {/* Status Section with Video & Image Previews */}
           <Card className="border-[#89BAD9] dark:border-[#2A4759]">
             <CardContent className="p-8">
+              {/* Status Controls - At Top */}
+              <div className="pb-6 border-b border-gray-200 dark:border-gray-700 mb-8">
+                <h3 className="text-lg font-semibold text-[#011526] dark:text-[#F2EBDC] flex items-center justify-center gap-2 mb-4">
+                  <Power className="w-5 h-5" />
+                  Statut & Activation
+                </h3>
+                <div className="flex flex-col items-center space-y-3">
+                  <Switch
+                    checked={formData.is_active}
+                    onCheckedChange={(checked) => setFormData({...formData, is_active: checked})}
+                    className="data-[state=checked]:bg-[#2A4759]"
+                  />
+                  <Label className="text-base font-medium text-[#011526] dark:text-[#F2EBDC] text-center">
+                    {formData.is_active ? 'Actif' : 'Inactif'}
+                  </Label>
+                </div>
+              </div>
+
               <div className="flex flex-col gap-8">
                 {/* French Row */}
                 <div className="flex flex-col lg:flex-row gap-8">
@@ -880,24 +898,6 @@ export default function GalleryManagementNew() {
                       )}
                     </div>
                   </div>
-                </div>
-              </div>
-
-              {/* Status Controls - Centered across both columns */}
-              <div className="pt-6 border-t border-gray-200 dark:border-gray-700">
-                <h3 className="text-lg font-semibold text-[#011526] dark:text-[#F2EBDC] flex items-center justify-center gap-2 mb-4">
-                  <Power className="w-5 h-5" />
-                  Statut & Activation
-                </h3>
-                <div className="flex flex-col items-center space-y-3">
-                  <Switch
-                    checked={formData.is_active}
-                    onCheckedChange={(checked) => setFormData({...formData, is_active: checked})}
-                    className="data-[state=checked]:bg-[#2A4759]"
-                  />
-                  <Label className="text-base font-medium text-[#011526] dark:text-[#F2EBDC] text-center">
-                    {formData.is_active ? 'Actif' : 'Inactif'}
-                  </Label>
                 </div>
               </div>
             </CardContent>
