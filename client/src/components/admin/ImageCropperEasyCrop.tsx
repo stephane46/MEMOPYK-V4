@@ -245,6 +245,9 @@ export default function ImageCropperEasyCrop({ imageUrl, onSave, onCancel }: Ima
   return (
     <div className="space-y-4">
       <div className="text-center">
+        <div className="mb-2 p-2 bg-green-100 border border-green-300 rounded">
+          <span className="text-green-800 font-bold">✅ OPTIMIZED v1.0.99 - Clean Component Loaded (281 lines)</span>
+        </div>
         <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">
           Glissez pour repositionner l'image dans le cadre 300×200
         </p>
