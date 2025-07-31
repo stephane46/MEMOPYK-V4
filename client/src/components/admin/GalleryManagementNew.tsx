@@ -611,7 +611,7 @@ export default function GalleryManagementNew() {
                     Aperçu Images
                   </h4>
                   
-                  <div className="flex flex-col justify-center flex-1 space-y-8">
+                  <div className="flex flex-col justify-start flex-1 space-y-8">
                     {/* French Image */}
                     <div className="space-y-2">
                       <div className="flex items-center justify-between">
