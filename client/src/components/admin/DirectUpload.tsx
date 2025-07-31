@@ -167,10 +167,11 @@ export default function DirectUpload({
         filename: publicUrl // Pass full URL as filename so it displays properly in admin
       });
 
-      // Auto-reset after 2 seconds to prepare for next upload
-      setTimeout(() => {
-        resetUpload();
-      }, 2000);
+      // Don't auto-reset - let the component stay in success state to show the upload was successful
+      // The currentFilename prop will handle displaying the uploaded file
+      // setTimeout(() => {
+      //   resetUpload();
+      // }, 2000);
 
     } catch (error) {
       console.error('❌ Direct upload failed:', error);
@@ -232,7 +233,7 @@ export default function DirectUpload({
 
   return (
     <div className="space-y-4">
-      {/* Current Filename Display */}
+      {/* Current Filename Display with Image Preview */}
       {currentFilename && (
         <div className="p-3 bg-blue-50 dark:bg-blue-900/20 rounded border border-blue-200 dark:border-blue-800">
           <div className="flex items-center gap-2">
@@ -244,6 +245,19 @@ export default function DirectUpload({
               <p className="text-xs font-mono text-blue-700 dark:text-blue-300 break-all">
                 {currentFilename}
               </p>
+              {/* Image Preview for uploaded images */}
+              {type === 'image' && currentFilename && (
+                <div className="mt-2">
+                  <img 
+                    src={currentFilename} 
+                    alt="Current uploaded image"
+                    className="max-w-full h-auto max-h-32 rounded border"
+                    onError={(e) => {
+                      console.log('Image failed to load:', currentFilename);
+                    }}
+                  />
+                </div>
+              )}
             </div>
           </div>
         </div>
