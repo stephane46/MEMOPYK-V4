@@ -167,15 +167,7 @@ export default function GallerySection() {
       // Fallback to latest uploads
       const latestImageUrl = language === 'fr-FR' ? item.imageUrlFr : item.imageUrlEn;
       
-      console.log(`🔍 DEBUG IMAGE FALLBACK for ${item.titleEn}:`, {
-        language,
-        imageUrlEn: item.imageUrlEn,
-        imageUrlFr: item.imageUrlFr,
-        latestImageUrl,
-        hasValue: !!latestImageUrl,
-        trimmedValue: latestImageUrl?.trim(),
-        isEmpty: !latestImageUrl || latestImageUrl.trim() === ''
-      });
+
       
       if (latestImageUrl && latestImageUrl.trim() !== '') {
         imageUrl = latestImageUrl;
