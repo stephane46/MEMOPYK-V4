@@ -33,7 +33,7 @@
     "is_active": true,
     "use_same_video": true,
     "created_at": "2025-07-23T21:05:23.805Z",
-    "updated_at": "2025-07-31T21:29:24.075Z",
+    "updated_at": "2025-07-31T21:33:16.186Z",
     "static_image_url": "",
     "crop_settings": {
       "method": "expert-minimal-fix",
