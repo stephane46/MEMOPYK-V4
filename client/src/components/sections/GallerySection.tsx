@@ -253,11 +253,24 @@ export default function GallerySection() {
     // DIRECT CDN IMPLEMENTATION: Bypass video proxy entirely to avoid infrastructure blocking
     const filename = item.videoFilename || item.videoUrlEn || item.videoUrlFr;
     
-    // Generate direct Supabase CDN URL
-    const directCdnUrl = `https://supabase.memopyk.org/storage/v1/object/public/memopyk-videos/${filename}`;
+    // BUCKET FIX: Use the correct bucket based on video URL in database
+    // If video_url_en contains full URL, extract bucket from it, otherwise use memopyk-videos
+    let bucket = 'memopyk-videos'; // default for hero videos
+    if (item.videoUrlEn && item.videoUrlEn.includes('memopyk-gallery')) {
+      bucket = 'memopyk-gallery';
+    }
+    
+    // For full URLs, use them directly (they already have correct bucket)
+    if (filename && filename.startsWith('http')) {
+      console.log(`🎬 USING FULL URL for item ${index}: ${filename}`);
+      return filename;
+    }
+    
+    // Generate direct Supabase CDN URL with correct bucket
+    const directCdnUrl = `https://supabase.memopyk.org/storage/v1/object/public/${bucket}/${filename}`;
     
     console.log(`🎬 DIRECT CDN STREAMING for item ${index}: ${filename}`);
-    console.log(`🔧 CDN URL (bypassing proxy): ${directCdnUrl}`);
+    console.log(`🔧 CDN URL (${bucket} bucket): ${directCdnUrl}`);
     console.log(`⚠️ Note: Direct CDN streaming (slower 1500ms) to avoid infrastructure blocking`);
     
     return directCdnUrl;
