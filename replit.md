@@ -75,29 +75,26 @@ Preferred communication style: Simple, everyday language.
 
 ## Recent Changes (July 31, 2025)
 
-### UI WORKFLOW REORGANIZATION COMPLETE - v1.0.110 (July 31, 2025) ✅ LOGICAL SECTION ORDER
-**Admin Interface Workflow Improvement - User Request Implemented:**
-✅ **Dedicated Reframing Section**: Created comprehensive "Outils de recadrage d'images" section with side-by-side French/English interface
-✅ **Logical Workflow Order**: Reframing section moved above "Badge Format (marketing visuel)" section for better workflow progression
-✅ **Enhanced Reframing Interface**: Full-width preview images with prominent crop buttons and status badges indicating cropped images
-✅ **Removed Inline Buttons**: Eliminated small reframing buttons from image preview areas for cleaner interface
-✅ **Conditional Display**: Reframing section only shows when images are available and not in create mode
-✅ **Visual Status Indicators**: Clear badges show "✂️ Recadrée" / "✂️ Cropped" status for completed reframing operations
+### UI REVERT TO ORIGINAL LAYOUT - v1.0.110R (July 31, 2025) ✅ INLINE BUTTONS RESTORED
+**Admin Interface Reverted to Original Design - User Request:**
+✅ **Inline Buttons Restored**: Reframing buttons returned to their original inline position within image preview sections
+✅ **Dedicated Section Removed**: Eliminated separate "Outils de recadrage d'images" section that was created above Badge Format
+✅ **Original Workflow Maintained**: Interface maintains the established pattern with reframing buttons directly in image preview areas
+✅ **Compact Design**: Small "Recadrer FR" and "Recadrer EN" buttons positioned next to image filename displays
+✅ **Preserved Functionality**: All reframing capabilities remain fully functional in original compact format
 
-**Technical Implementation v1.0.110:**
-- Created dedicated Card section with Crop icon and bilingual reframing tools
-- Grid layout with 2 columns for French/English reframing interfaces  
-- Enhanced preview images specifically for reframing workflow
-- Conditional rendering based on `!isCreateMode && selectedItem && (selectedItem.image_url_fr || selectedItem.image_url_en)`
-- Removed inline reframing buttons from status section image previews
-- Clear visual hierarchy: Upload → Reframe → Marketing badges
+**Technical Revert Implementation:**
+- Restored inline reframing buttons in French and English image preview sections
+- Removed dedicated Card section for reframing tools
+- Maintained existing button styling: blue for French, green for English
+- Kept conditional rendering based on `!isCreateMode && selectedItem?.image_url_[fr/en]`
+- Badge Format section returned to original position without dedicated reframing section above it
 
-**User Experience Achievement:**
-- Upload workflow flows logically: upload content → reframe images → configure marketing badges
-- Dedicated reframing section provides better visual space and context
-- Clear status indicators show which images have been cropped
-- Professional interface design with consistent MEMOPYK branding
-- Eliminates workflow confusion by grouping related functionality together
+**User Preference Achievement:**
+- Interface returned to familiar original layout pattern
+- Compact inline buttons maintain clean interface without separate section
+- Workflow remains Upload → Configure (with inline reframing available) → Save
+- Original admin interface design preserved as preferred by user
 
 ### REAL-TIME PREVIEW SYSTEM COMPLETE - v1.0.109 (July 31, 2025) ✅ INSTANT UPLOAD FEEDBACK
 **Instant Preview Functionality Implementation - User Request Fulfilled:**

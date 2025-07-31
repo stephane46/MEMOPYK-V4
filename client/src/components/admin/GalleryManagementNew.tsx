@@ -590,7 +590,20 @@ export default function GalleryManagementNew() {
                             </span>
                           )}
                         </div>
-
+                        {!isCreateMode && selectedItem?.image_url_fr && (
+                          <Button
+                            onClick={() => {
+                              setCropperLanguage('fr');
+                              setCropperOpen(true);
+                            }}
+                            variant="outline"
+                            size="sm"
+                            className="bg-blue-600 hover:bg-blue-700 text-white border-blue-600 px-2 py-1 text-xs"
+                          >
+                            <Crop className="w-3 h-3 mr-1" />
+                            Recadrer FR
+                          </Button>
+                        )}
                       </div>
                       <div className="aspect-video w-full bg-gray-100 dark:bg-gray-700 rounded-lg overflow-hidden border border-blue-200 dark:border-blue-600 relative">
                         {selectedItem?.image_url_fr ? (
@@ -640,7 +653,20 @@ export default function GalleryManagementNew() {
                             </span>
                           )}
                         </div>
-
+                        {!isCreateMode && selectedItem?.image_url_en && (
+                          <Button
+                            onClick={() => {
+                              setCropperLanguage('en');
+                              setCropperOpen(true);
+                            }}
+                            variant="outline"
+                            size="sm"
+                            className="bg-green-600 hover:bg-green-700 text-white border-green-600 px-2 py-1 text-xs"
+                          >
+                            <Crop className="w-3 h-3 mr-1" />
+                            Recadrer EN
+                          </Button>
+                        )}
                       </div>
                       <div className="aspect-video w-full bg-gray-100 dark:bg-gray-700 rounded-lg overflow-hidden border border-green-200 dark:border-green-600 relative">
                         {selectedItem?.image_url_en ? (
@@ -1519,116 +1545,6 @@ export default function GalleryManagementNew() {
             </CardContent>
           </Card>
 
-          {/* Image Reframing Tools Section */}
-          {!isCreateMode && selectedItem && (selectedItem.image_url_fr || selectedItem.image_url_en) && (
-            <Card className="border-[#89BAD9] dark:border-[#2A4759]">
-              <CardContent className="p-6">
-                <h3 className="text-lg font-semibold text-[#011526] dark:text-[#F2EBDC] mb-6 flex items-center gap-2">
-                  <Crop className="w-5 h-5" />
-                  Outils de recadrage d'images
-                </h3>
-                <p className="text-sm text-[#2A4759] dark:text-[#89BAD9] mb-6">
-                  Créez des vignettes 300×200 parfaitement cadrées pour vos images. Utilisez ces outils après avoir téléchargé vos images.
-                </p>
-                
-                <div className="grid grid-cols-2 gap-6">
-                  {/* French Reframing */}
-                  <div className="space-y-3">
-                    <h4 className="font-medium text-[#011526] dark:text-[#F2EBDC] flex items-center gap-2">
-                      🇫🇷 Image Française
-                      {selectedItem.static_image_url_fr && (
-                        <Badge className="bg-emerald-100 text-emerald-800 dark:bg-emerald-900 dark:text-emerald-200">
-                          ✂️ Recadrée
-                        </Badge>
-                      )}
-                    </h4>
-                    
-                    {selectedItem.image_url_fr ? (
-                      <div className="space-y-2">
-                        <div className="aspect-video w-full bg-gray-100 dark:bg-gray-700 rounded-lg overflow-hidden border border-blue-200 dark:border-blue-600 relative">
-                          <img 
-                            src={getThumbnailUrl(selectedItem, 'fr') || (selectedItem.image_url_fr.startsWith('http') 
-                              ? `${selectedItem.image_url_fr}?cacheBust=${Date.now()}&nocache=1`
-                              : `/api/image-proxy?filename=${selectedItem.image_url_fr.split('/').pop()?.split('?')[0]}`
-                            )} 
-                            alt="Aperçu Français pour recadrage"
-                            className="w-full h-full object-cover"
-                          />
-                          {selectedItem.static_image_url_fr && (
-                            <div className="absolute top-2 right-2 bg-emerald-500 text-white px-2 py-1 rounded-full text-xs font-bold shadow-lg">
-                              ✂️ Recadré
-                            </div>
-                          )}
-                        </div>
-                        <Button
-                          onClick={() => {
-                            setCropperLanguage('fr');
-                            setCropperOpen(true);
-                          }}
-                          className="w-full bg-blue-600 hover:bg-blue-700 text-white"
-                        >
-                          <Crop className="w-4 h-4 mr-2" />
-                          Recadrer l'image française
-                        </Button>
-                      </div>
-                    ) : (
-                      <div className="p-4 bg-gray-50 dark:bg-gray-800 rounded-lg text-center text-gray-500 dark:text-gray-400">
-                        <Image className="w-8 h-8 mx-auto mb-2 opacity-50" />
-                        <p className="text-sm">Aucune image française à recadrer</p>
-                      </div>
-                    )}
-                  </div>
-
-                  {/* English Reframing */}
-                  <div className="space-y-3">
-                    <h4 className="font-medium text-[#011526] dark:text-[#F2EBDC] flex items-center gap-2">
-                      🇺🇸 English Image
-                      {selectedItem.static_image_url_en && (
-                        <Badge className="bg-emerald-100 text-emerald-800 dark:bg-emerald-900 dark:text-emerald-200">
-                          ✂️ Cropped
-                        </Badge>
-                      )}
-                    </h4>
-                    
-                    {selectedItem.image_url_en ? (
-                      <div className="space-y-2">
-                        <div className="aspect-video w-full bg-gray-100 dark:bg-gray-700 rounded-lg overflow-hidden border border-green-200 dark:border-green-600 relative">
-                          <img 
-                            src={getThumbnailUrl(selectedItem, 'en') || (selectedItem.image_url_en.startsWith('http') 
-                              ? `${selectedItem.image_url_en}?cacheBust=${Date.now()}&nocache=1`
-                              : `/api/image-proxy?filename=${selectedItem.image_url_en.split('/').pop()?.split('?')[0]}`
-                            )} 
-                            alt="English preview for cropping"
-                            className="w-full h-full object-cover"
-                          />
-                          {selectedItem.static_image_url_en && (
-                            <div className="absolute top-2 right-2 bg-emerald-500 text-white px-2 py-1 rounded-full text-xs font-bold shadow-lg">
-                              ✂️ Cropped
-                            </div>
-                          )}
-                        </div>
-                        <Button
-                          onClick={() => {
-                            setCropperLanguage('en');
-                            setCropperOpen(true);
-                          }}
-                          className="w-full bg-green-600 hover:bg-green-700 text-white"
-                        >
-                          <Crop className="w-4 h-4 mr-2" />
-                          Crop English image
-                        </Button>
-                      </div>
-                    ) : (
-                      <div className="p-4 bg-gray-50 dark:bg-gray-800 rounded-lg text-center text-gray-500 dark:text-gray-400">
-                        <Image className="w-8 h-8 mx-auto mb-2 opacity-50" />
-                        <p className="text-sm">No English image to crop</p>
-                      </div>
-                    )}
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          )}
 
           {/* Format Badge Section - Moved to Bottom */}
           <Card className="border-[#89BAD9] dark:border-[#2A4759]">
