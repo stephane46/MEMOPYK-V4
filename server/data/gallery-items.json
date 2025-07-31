@@ -24,7 +24,7 @@
     "video_height": 1919,
     "video_orientation": "portrait",
     "image_url_en": "https://supabase.memopyk.org/storage/v1/object/public/memopyk-videos/Image%20(7).jpg",
-    "image_url_fr": "https://supabase.memopyk.org/storage/v1/object/public/memopyk-videos/33248EMO-FK-3PL+CSAR%20%20F20-TX2525_VELOURS.jpg",
+    "image_url_fr": "https://supabase.memopyk.org/storage/v1/object/public/memopyk-videos/AH4A0403-1-1.jpg",
     "price_en": "USD 1452",
     "price_fr": "145 €2",
     "alt_text_en": "Our Vitamin Sea",
@@ -33,13 +33,13 @@
     "is_active": true,
     "use_same_video": false,
     "created_at": "2025-07-23T21:05:23.805Z",
-    "updated_at": "2025-07-31T13:24:35.863Z",
+    "updated_at": "2025-07-31T13:54:00.233Z",
     "static_image_url": "https://supabase.memopyk.org/storage/v1/object/public/memopyk-videos/static_en_1753968265005.jpg",
     "crop_settings": {
       "method": "expert-minimal-fix",
       "position": {
-        "x": 60.755548018844806,
-        "y": 0.49999996185303025
+        "x": 51.370371500651046,
+        "y": 96.33332824707031
       },
       "dimensions": {
         "width": 300,
@@ -47,9 +47,12 @@
       },
       "format": "JPEG",
       "quality": 1,
-      "devicePixelRatio": 1.875
+      "devicePixelRatio": 2.25
     },
-    "staticImageUrl": null
+    "staticImageUrl": null,
+    "static_image_url_en": "https://supabase.memopyk.org/storage/v1/object/public/memopyk-videos/static_en_1753969976040.jpg",
+    "language": "fr",
+    "static_image_url_fr": "https://supabase.memopyk.org/storage/v1/object/public/memopyk-videos/static_fr_1753970036541.jpg"
   },
   {
     "id": "gallery-hero2-1753727544112",
