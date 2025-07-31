@@ -75,6 +75,29 @@ Preferred communication style: Simple, everyday language.
 
 ## Recent Changes (July 31, 2025)
 
+### ADMIN INTERFACE CLEANUP & OPTIMIZATION COMPLETE - v1.0.85 (July 31, 2025) ✅ UX STREAMLINED
+**Gallery Management Interface Simplification - User Request Implemented:**
+✅ **Redundant Section Removed**: Eliminated basic "Upload Vidéo/Upload Image" section that duplicated functionality available in advanced bilingual system
+✅ **Smart Upload Toggle**: Enhanced "Utiliser la même vidéo pour FR et EN" switch to control interface display completely
+✅ **Purple Shared Section**: When toggle ON → displays purple "Fichiers Partagés (FR + EN)" section for same content across languages
+✅ **Blue/Green Separate Sections**: When toggle OFF → displays blue "Fichiers Français" and green "English Files" sections for language-specific uploads
+✅ **F5 Scroll Behavior**: AdminPage automatically scrolls to top on refresh/load for better user experience
+✅ **Format Badge Positioning**: "Badge Format (marketing visuel)" section moved to bottom of form for logical information flow
+
+**Technical Implementation:**
+- Removed redundant basic upload sections that provided no unique functionality
+- Enhanced conditional rendering based on `use_same_video` toggle state
+- Purple gradient styling for shared uploads with proper bilingual branding
+- Maintained existing blue (French) and green (English) color-coded sections
+- AdminPage useEffect ensures smooth scroll to top on component mount
+
+**User Experience Achievement:**
+- Single comprehensive upload system handles all scenarios without confusion
+- Clear visual distinction: Toggle ON = shared purple section, Toggle OFF = separate blue/green sections
+- Eliminated duplicate functionality that created interface confusion
+- Logical form progression from video selection through configuration to marketing badges
+- Smooth page behavior with automatic scroll-to-top on refresh
+
 ### COMPREHENSIVE UI CLARITY IMPROVEMENTS COMPLETE - v1.0.84 (July 31, 2025) ✅ ALL ISSUES RESOLVED
 **Complete UI/UX Enhancement - Data Consistency & Language Clarity Implementation:**
 ✅ **Data Format Consistency Fixed**: Both videos and images now use full URLs (result.url) instead of mixed filename/URL format

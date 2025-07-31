@@ -677,57 +677,7 @@ export default function GalleryManagementNew() {
               </h3>
               
               <div className="space-y-6">
-                {/* Video Upload Section */}
-                <div className="space-y-4">
-                  <h4 className="font-medium text-[#011526] dark:text-[#F2EBDC] border-b border-gray-200 dark:border-gray-600 pb-2">Upload Vidéo</h4>
-                  <DirectUpload
-                    type="video"
-                    onUploadComplete={(result) => {
-                      console.log('✅ Video upload completed:', result);
-                      setFormData({
-                        ...formData,
-                        video_filename: result.url,
-                        video_url_en: result.url,
-                        video_url_fr: result.url
-                      });
-                      // Update persistent state
-                      persistentUploadState.video_filename = result.url;
-                      persistentUploadState.video_url_en = result.url;
-                      persistentUploadState.video_url_fr = result.url;
-                      toast({ 
-                        title: "✅ Succès", 
-                        description: `Vidéo uploadée: ${result.filename}` 
-                      });
-                    }}
-                    currentFilename={formData.video_filename || formData.video_url_en}
-                  />
-                </div>
-
-                {/* Image Upload Section */}
-                <div className="space-y-4">
-                  <h4 className="font-medium text-[#011526] dark:text-[#F2EBDC] border-b border-gray-200 dark:border-gray-600 pb-2">Upload Image</h4>
-                  <DirectUpload
-                    type="image"
-                    onUploadComplete={(result) => {
-                      console.log('✅ Image upload completed:', result);
-                      setFormData({
-                        ...formData,
-                        image_url_en: result.url,
-                        image_url_fr: result.url
-                      });
-                      // Update persistent state
-                      persistentUploadState.image_url_en = result.url;
-                      persistentUploadState.image_url_fr = result.url;
-                      toast({ 
-                        title: "✅ Succès", 
-                        description: `Image uploadée: ${result.filename}` 
-                      });
-                    }}
-                    currentFilename={formData.image_url_en}
-                  />
-                </div>
-
-                {/* RESTORED: Bilingual Video Selection Switch */}
+                {/* Bilingual Media Selection Switch */}
                 <div className="bg-blue-50 dark:bg-blue-900/20 p-4 rounded-lg border border-blue-200 dark:border-blue-800">
                   <div className="flex items-center space-x-3">
                     <Switch
@@ -745,8 +695,78 @@ export default function GalleryManagementNew() {
                   </p>
                 </div>
 
-                {/* Language-Specific Upload Sections - French (Blue) and English (Green) */}
-                {!formData.use_same_video && (
+                {formData.use_same_video ? (
+                  /* Shared Upload Section (Purple) */
+                  <div className="p-4 bg-gradient-to-r from-purple-50 to-purple-100 dark:from-purple-900/20 dark:to-purple-800/20 rounded-lg border border-purple-200 dark:border-purple-800">
+                    <div className="flex items-center gap-2 mb-3">
+                      <div className="bg-purple-600 rounded-full p-1">
+                        <Upload className="h-4 w-4 text-white" />
+                      </div>
+                      <h4 className="font-semibold text-purple-900 dark:text-purple-100">
+                        🌐 Fichiers Partagés (FR + EN)
+                      </h4>
+                    </div>
+                    <p className="text-sm text-purple-800 dark:text-purple-200 mb-4">
+                      Téléchargez les fichiers qui seront utilisés pour les deux langues.
+                    </p>
+                    
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div>
+                        <Label className="text-purple-900 dark:text-purple-100 mb-2 block">
+                          <Video className="h-4 w-4 inline mr-1" />
+                          Vidéo Partagée
+                        </Label>
+                        <DirectUpload
+                          type="video"
+                          onUploadComplete={(result) => {
+                            console.log('✅ Shared video upload completed:', result);
+                            setFormData({
+                              ...formData,
+                              video_filename: result.url,
+                              video_url_en: result.url,
+                              video_url_fr: result.url
+                            });
+                            persistentUploadState.video_filename = result.url;
+                            persistentUploadState.video_url_en = result.url;
+                            persistentUploadState.video_url_fr = result.url;
+                            toast({ 
+                              title: "✅ Succès", 
+                              description: `Vidéo partagée uploadée: ${result.filename}`,
+                              className: "bg-purple-50 dark:bg-purple-900/20 border-purple-200 dark:border-purple-800"
+                            });
+                          }}
+                          currentFilename={formData.video_filename || formData.video_url_en}
+                        />
+                      </div>
+                      <div>
+                        <Label className="text-purple-900 dark:text-purple-100 mb-2 block">
+                          <Image className="h-4 w-4 inline mr-1" />
+                          Image Partagée
+                        </Label>
+                        <DirectUpload
+                          type="image"
+                          onUploadComplete={(result) => {
+                            console.log('✅ Shared image upload completed:', result);
+                            setFormData({
+                              ...formData,
+                              image_url_en: result.url,
+                              image_url_fr: result.url
+                            });
+                            persistentUploadState.image_url_en = result.url;
+                            persistentUploadState.image_url_fr = result.url;
+                            toast({ 
+                              title: "✅ Succès", 
+                              description: `Image partagée uploadée: ${result.filename}`,
+                              className: "bg-purple-50 dark:bg-purple-900/20 border-purple-200 dark:border-purple-800"
+                            });
+                          }}
+                          currentFilename={formData.image_url_en}
+                        />
+                      </div>
+                    </div>
+                  </div>
+                ) : (
+                  /* Language-Specific Upload Sections - French (Blue) and English (Green) */
                   <div className="space-y-4">
                     <h4 className="font-medium text-[#011526] dark:text-[#F2EBDC] mb-3">
                       Vidéos séparées par langue
