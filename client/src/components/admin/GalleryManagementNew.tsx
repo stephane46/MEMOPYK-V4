@@ -805,7 +805,7 @@ export default function GalleryManagementNew() {
                     Aperçu Vidéos
                   </h4>
                   
-                  <div className="flex flex-col justify-center flex-1 space-y-8">
+                  <div className="flex flex-col justify-between flex-1">
                     {/* French Video */}
                     <div className="space-y-2">
                       <div className="flex items-center gap-2">
