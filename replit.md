@@ -6,6 +6,11 @@ MEMOPYK is a full-stack memory film platform currently undergoing a complete reb
 ## User Preferences
 Preferred communication style: Simple, everyday language.
 
+**Architectural Decision Authority:**
+- Always ask before making architectural changes that affect bucket strategy or content organization
+- Unified bucket approach (memopyk-videos for all content) is the established architecture
+- DO NOT change bucket configurations without explicit user approval
+
 **Technical Decisions:**
 - React Editor Future-Proofing: Consider TipTap as React 19 alternative to ReactQuill when needed
 - Track ReactQuill updates for React 19 compatibility improvements
