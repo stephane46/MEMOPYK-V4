@@ -121,7 +121,8 @@ import {
   Power,
   Palette,
   Globe,
-  Info
+  Info,
+  RotateCcw
 } from "lucide-react";
 import SimpleImageCropper from './SimpleImageCropper';
 // Force cache bust v1.0.99 - ensure optimized component loads
@@ -591,18 +592,56 @@ export default function GalleryManagementNew() {
                           )}
                         </div>
                         {!isCreateMode && selectedItem?.image_url_fr && (
-                          <Button
-                            onClick={() => {
-                              setCropperLanguage('fr');
-                              setCropperOpen(true);
-                            }}
-                            variant="outline"
-                            size="sm"
-                            className="bg-blue-600 hover:bg-blue-700 text-white border-blue-600 px-2 py-1 text-xs"
-                          >
-                            <Crop className="w-3 h-3 mr-1" />
-                            Recadrer FR
-                          </Button>
+                          <div className="flex gap-1">
+                            <Button
+                              onClick={() => {
+                                setCropperLanguage('fr');
+                                setCropperOpen(true);
+                              }}
+                              variant="outline"
+                              size="sm"
+                              className="bg-blue-600 hover:bg-blue-700 text-white border-blue-600 px-2 py-1 text-xs"
+                            >
+                              <Crop className="w-3 h-3 mr-1" />
+                              Recadrer FR
+                            </Button>
+                            {selectedItem.static_image_url_fr && (
+                              <Button
+                                onClick={async () => {
+                                  try {
+                                    const updateData = {
+                                      static_image_url_fr: null,
+                                      crop_settings: null,
+                                      language: 'fr'
+                                    };
+                                    
+                                    await apiRequest(`/api/gallery/${selectedItem.id}`, 'PATCH', updateData);
+                                    
+                                    // Refresh data
+                                    queryClient.invalidateQueries({ queryKey: ['/api/gallery'] });
+                                    
+                                    toast({ 
+                                      title: "✅ Succès", 
+                                      description: "Image française restaurée à l'original" 
+                                    });
+                                  } catch (error) {
+                                    console.error('Error unframing French image:', error);
+                                    toast({ 
+                                      title: "❌ Erreur", 
+                                      description: "Impossible de restaurer l'image française",
+                                      variant: "destructive"
+                                    });
+                                  }
+                                }}
+                                variant="outline"
+                                size="sm"
+                                className="bg-gray-500 hover:bg-gray-600 text-white border-gray-500 px-2 py-1 text-xs"
+                              >
+                                <RotateCcw className="w-3 h-3 mr-1" />
+                                Original
+                              </Button>
+                            )}
+                          </div>
                         )}
                       </div>
                       <div className="aspect-video w-full bg-gray-100 dark:bg-gray-700 rounded-lg overflow-hidden border border-blue-200 dark:border-blue-600 relative">
@@ -654,18 +693,56 @@ export default function GalleryManagementNew() {
                           )}
                         </div>
                         {!isCreateMode && selectedItem?.image_url_en && (
-                          <Button
-                            onClick={() => {
-                              setCropperLanguage('en');
-                              setCropperOpen(true);
-                            }}
-                            variant="outline"
-                            size="sm"
-                            className="bg-green-600 hover:bg-green-700 text-white border-green-600 px-2 py-1 text-xs"
-                          >
-                            <Crop className="w-3 h-3 mr-1" />
-                            Recadrer EN
-                          </Button>
+                          <div className="flex gap-1">
+                            <Button
+                              onClick={() => {
+                                setCropperLanguage('en');
+                                setCropperOpen(true);
+                              }}
+                              variant="outline"
+                              size="sm"
+                              className="bg-green-600 hover:bg-green-700 text-white border-green-600 px-2 py-1 text-xs"
+                            >
+                              <Crop className="w-3 h-3 mr-1" />
+                              Recadrer EN
+                            </Button>
+                            {selectedItem.static_image_url_en && (
+                              <Button
+                                onClick={async () => {
+                                  try {
+                                    const updateData = {
+                                      static_image_url_en: null,
+                                      crop_settings: null,
+                                      language: 'en'
+                                    };
+                                    
+                                    await apiRequest(`/api/gallery/${selectedItem.id}`, 'PATCH', updateData);
+                                    
+                                    // Refresh data
+                                    queryClient.invalidateQueries({ queryKey: ['/api/gallery'] });
+                                    
+                                    toast({ 
+                                      title: "✅ Success", 
+                                      description: "English image restored to original" 
+                                    });
+                                  } catch (error) {
+                                    console.error('Error unframing English image:', error);
+                                    toast({ 
+                                      title: "❌ Error", 
+                                      description: "Unable to restore English image",
+                                      variant: "destructive"
+                                    });
+                                  }
+                                }}
+                                variant="outline"
+                                size="sm"
+                                className="bg-gray-500 hover:bg-gray-600 text-white border-gray-500 px-2 py-1 text-xs"
+                              >
+                                <RotateCcw className="w-3 h-3 mr-1" />
+                                Original
+                              </Button>
+                            )}
+                          </div>
                         )}
                       </div>
                       <div className="aspect-video w-full bg-gray-100 dark:bg-gray-700 rounded-lg overflow-hidden border border-green-200 dark:border-green-600 relative">
