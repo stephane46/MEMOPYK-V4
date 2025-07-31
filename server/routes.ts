@@ -4333,6 +4333,66 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Reframe success page route
+  app.get("/reframe-success", (req, res) => {
+    try {
+      const fs = require('fs');
+      const path = require('path');
+      const filePath = path.join(__dirname, '../public/reframe_success.html');
+      
+      if (fs.existsSync(filePath)) {
+        const htmlContent = fs.readFileSync(filePath, 'utf8');
+        res.setHeader('Content-Type', 'text/html');
+        res.send(htmlContent);
+      } else {
+        res.status(404).send('Reframe success page not found');
+      }
+    } catch (error) {
+      console.error('Error serving reframe success page:', error);
+      res.status(500).send('Error loading reframe success page');
+    }
+  });
+
+  // Reframe diagnosis page route
+  app.get("/reframe-diagnosis", (req, res) => {
+    try {
+      const fs = require('fs');
+      const path = require('path');
+      const filePath = path.join(__dirname, '../public/reframe_diagnosis.html');
+      
+      if (fs.existsSync(filePath)) {
+        const htmlContent = fs.readFileSync(filePath, 'utf8');
+        res.setHeader('Content-Type', 'text/html');
+        res.send(htmlContent);
+      } else {
+        res.status(404).send('Reframe diagnosis page not found');
+      }
+    } catch (error) {
+      console.error('Error serving reframe diagnosis page:', error);
+      res.status(500).send('Error loading reframe diagnosis page');
+    }
+  });
+
+  // Reframe test v1.0.108 page route
+  app.get("/reframe-test", (req, res) => {
+    try {
+      const fs = require('fs');
+      const path = require('path');
+      const filePath = path.join(__dirname, '../public/reframe_test_v108.html');
+      
+      if (fs.existsSync(filePath)) {
+        const htmlContent = fs.readFileSync(filePath, 'utf8');
+        res.setHeader('Content-Type', 'text/html');
+        res.send(htmlContent);
+      } else {
+        res.status(404).send('Reframe test page not found');
+      }
+    } catch (error) {
+      console.error('Error serving reframe test page:', error);
+      res.status(500).send('Error loading reframe test page');
+    }
+  });
+
   // Import test routes
   const testRouter = (await import('./test-routes')).default;
   app.use('/api', testRouter);

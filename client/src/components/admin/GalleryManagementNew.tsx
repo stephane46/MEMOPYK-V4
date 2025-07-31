@@ -1680,8 +1680,15 @@ export default function GalleryManagementNew() {
                   console.log(`✅ Upload successful:`, uploadResult);
                   
                   // Update the gallery item with the new static image URL
-                  const updateData = new FormData();
-                  updateData.append('staticImageUrl', uploadResult.url);
+                  console.log(`🔧 UPDATING GALLERY ITEM: ${selectedItem.id} with static image URL: ${uploadResult.url}`);
+                  
+                  // Use correct snake_case field name and JSON format
+                  const updateData = {
+                    static_image_url: uploadResult.url,
+                    crop_settings: cropSettings
+                  };
+                  
+                  console.log(`📊 Update data:`, updateData);
                   
                   const updateResponse = await apiRequest(`/api/gallery/${selectedItem.id}`, 'PATCH', updateData);
                   console.log(`✅ Gallery item updated:`, updateResponse);
@@ -1701,7 +1708,16 @@ export default function GalleryManagementNew() {
                   });
                   
                 } catch (error) {
-                  console.error(`❌ Error saving cropped image:`, error);
+                  console.error(`❌ SAVE ERROR v1.0.108: Complete error details:`, {
+                    error: error,
+                    message: error instanceof Error ? error.message : String(error),
+                    stack: error instanceof Error ? error.stack : 'No stack trace',
+                    timestamp: new Date().toISOString(),
+                    cropperLanguage: cropperLanguage,
+                    selectedItemId: selectedItem.id,
+                    blobSize: blob.size
+                  });
+                  
                   toast({ 
                     title: "❌ Erreur", 
                     description: `Erreur lors de la sauvegarde: ${error instanceof Error ? error.message : 'Erreur inconnue'}`,
