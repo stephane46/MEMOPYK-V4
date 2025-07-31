@@ -75,6 +75,30 @@ Preferred communication style: Simple, everyday language.
 
 ## Recent Changes (July 31, 2025)
 
+### UI WORKFLOW REORGANIZATION COMPLETE - v1.0.110 (July 31, 2025) ✅ LOGICAL SECTION ORDER
+**Admin Interface Workflow Improvement - User Request Implemented:**
+✅ **Dedicated Reframing Section**: Created comprehensive "Outils de recadrage d'images" section with side-by-side French/English interface
+✅ **Logical Workflow Order**: Reframing section moved above "Badge Format (marketing visuel)" section for better workflow progression
+✅ **Enhanced Reframing Interface**: Full-width preview images with prominent crop buttons and status badges indicating cropped images
+✅ **Removed Inline Buttons**: Eliminated small reframing buttons from image preview areas for cleaner interface
+✅ **Conditional Display**: Reframing section only shows when images are available and not in create mode
+✅ **Visual Status Indicators**: Clear badges show "✂️ Recadrée" / "✂️ Cropped" status for completed reframing operations
+
+**Technical Implementation v1.0.110:**
+- Created dedicated Card section with Crop icon and bilingual reframing tools
+- Grid layout with 2 columns for French/English reframing interfaces  
+- Enhanced preview images specifically for reframing workflow
+- Conditional rendering based on `!isCreateMode && selectedItem && (selectedItem.image_url_fr || selectedItem.image_url_en)`
+- Removed inline reframing buttons from status section image previews
+- Clear visual hierarchy: Upload → Reframe → Marketing badges
+
+**User Experience Achievement:**
+- Upload workflow flows logically: upload content → reframe images → configure marketing badges
+- Dedicated reframing section provides better visual space and context
+- Clear status indicators show which images have been cropped
+- Professional interface design with consistent MEMOPYK branding
+- Eliminates workflow confusion by grouping related functionality together
+
 ### REAL-TIME PREVIEW SYSTEM COMPLETE - v1.0.109 (July 31, 2025) ✅ INSTANT UPLOAD FEEDBACK
 **Instant Preview Functionality Implementation - User Request Fulfilled:**
 ✅ **Real-Time Preview State**: Added pendingPreviews state system that tracks uploaded files immediately upon upload completion
