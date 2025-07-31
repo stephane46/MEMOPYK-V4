@@ -455,178 +455,182 @@ export default function GalleryManagementNew() {
           {/* Status Section with Video & Image Previews */}
           <Card className="border-[#89BAD9] dark:border-[#2A4759]">
             <CardContent className="p-8">
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
+              <div className="flex flex-col lg:flex-row gap-8">
                 {/* Left Column - Image Previews */}
-                <div className="space-y-6">
-                  <h4 className="text-lg font-semibold text-[#011526] dark:text-[#F2EBDC] flex items-center gap-2">
+                <div className="flex-1 flex flex-col">
+                  <h4 className="text-lg font-semibold text-[#011526] dark:text-[#F2EBDC] flex items-center gap-2 mb-6">
                     <Image className="w-5 h-5" />
                     Aperçu Images
                   </h4>
                   
-                  {/* French Image */}
-                  <div className="space-y-2">
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-2">
-                        <span className="text-xs font-medium text-blue-700 dark:text-blue-300">🇫🇷 Français</span>
-                        {selectedItem?.image_url_fr && (
-                          <span className="text-xs text-gray-500 font-mono truncate max-w-32">
-                            {selectedItem.image_url_fr.split('/').pop()?.split('?')[0]}
-                          </span>
+                  <div className="flex flex-col justify-center flex-1 space-y-8">
+                    {/* French Image */}
+                    <div className="space-y-2">
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-2">
+                          <span className="text-xs font-medium text-blue-700 dark:text-blue-300">🇫🇷 Français</span>
+                          {selectedItem?.image_url_fr && (
+                            <span className="text-xs text-gray-500 font-mono truncate max-w-32">
+                              {selectedItem.image_url_fr.split('/').pop()?.split('?')[0]}
+                            </span>
+                          )}
+                        </div>
+                        {!isCreateMode && selectedItem?.image_url_fr && (
+                          <Button
+                            onClick={() => {
+                              setCropperLanguage('fr');
+                              setCropperOpen(true);
+                            }}
+                            variant="outline"
+                            size="sm"
+                            className="bg-blue-600 hover:bg-blue-700 text-white border-blue-600 px-2 py-1 text-xs"
+                          >
+                            <Crop className="w-3 h-3 mr-1" />
+                            Recadrer FR
+                          </Button>
                         )}
                       </div>
-                      {!isCreateMode && selectedItem?.image_url_fr && (
-                        <Button
-                          onClick={() => {
-                            setCropperLanguage('fr');
-                            setCropperOpen(true);
-                          }}
-                          variant="outline"
-                          size="sm"
-                          className="bg-blue-600 hover:bg-blue-700 text-white border-blue-600 px-2 py-1 text-xs"
-                        >
-                          <Crop className="w-3 h-3 mr-1" />
-                          Recadrer FR
-                        </Button>
-                      )}
-                    </div>
-                    <div className="aspect-video w-full bg-gray-100 dark:bg-gray-700 rounded-lg overflow-hidden border border-blue-200 dark:border-blue-600">
-                      {selectedItem?.image_url_fr ? (
-                        <img 
-                          src={selectedItem.image_url_fr.startsWith('http') 
-                            ? `${selectedItem.image_url_fr}?cacheBust=${Date.now()}&nocache=1`
-                            : `/api/image-proxy?filename=${selectedItem.image_url_fr.split('/').pop()?.split('?')[0]}`
-                          } 
-                          alt="Aperçu Français"
-                          className="w-full h-full object-cover"
-                        />
-                      ) : (
-                        <div className="w-full h-full flex items-center justify-center">
-                          <div className="text-center text-gray-500 dark:text-gray-400">
-                            <Image className="w-8 h-8 mx-auto mb-1 opacity-50" />
-                            <p className="text-xs">Pas d'image FR</p>
+                      <div className="aspect-video w-full bg-gray-100 dark:bg-gray-700 rounded-lg overflow-hidden border border-blue-200 dark:border-blue-600">
+                        {selectedItem?.image_url_fr ? (
+                          <img 
+                            src={selectedItem.image_url_fr.startsWith('http') 
+                              ? `${selectedItem.image_url_fr}?cacheBust=${Date.now()}&nocache=1`
+                              : `/api/image-proxy?filename=${selectedItem.image_url_fr.split('/').pop()?.split('?')[0]}`
+                            } 
+                            alt="Aperçu Français"
+                            className="w-full h-full object-cover"
+                          />
+                        ) : (
+                          <div className="w-full h-full flex items-center justify-center">
+                            <div className="text-center text-gray-500 dark:text-gray-400">
+                              <Image className="w-8 h-8 mx-auto mb-1 opacity-50" />
+                              <p className="text-xs">Pas d'image FR</p>
+                            </div>
                           </div>
-                        </div>
-                      )}
+                        )}
+                      </div>
                     </div>
-                  </div>
 
-                  {/* English Image */}
-                  <div className="space-y-2">
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-2">
-                        <span className="text-xs font-medium text-green-700 dark:text-green-300">🇺🇸 English</span>
-                        {selectedItem?.image_url_en && (
-                          <span className="text-xs text-gray-500 font-mono truncate max-w-32">
-                            {selectedItem.image_url_en.split('/').pop()?.split('?')[0]}
-                          </span>
+                    {/* English Image */}
+                    <div className="space-y-2">
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-2">
+                          <span className="text-xs font-medium text-green-700 dark:text-green-300">🇺🇸 English</span>
+                          {selectedItem?.image_url_en && (
+                            <span className="text-xs text-gray-500 font-mono truncate max-w-32">
+                              {selectedItem.image_url_en.split('/').pop()?.split('?')[0]}
+                            </span>
+                          )}
+                        </div>
+                        {!isCreateMode && selectedItem?.image_url_en && (
+                          <Button
+                            onClick={() => {
+                              setCropperLanguage('en');
+                              setCropperOpen(true);
+                            }}
+                            variant="outline"
+                            size="sm"
+                            className="bg-green-600 hover:bg-green-700 text-white border-green-600 px-2 py-1 text-xs"
+                          >
+                            <Crop className="w-3 h-3 mr-1" />
+                            Recadrer EN
+                          </Button>
                         )}
                       </div>
-                      {!isCreateMode && selectedItem?.image_url_en && (
-                        <Button
-                          onClick={() => {
-                            setCropperLanguage('en');
-                            setCropperOpen(true);
-                          }}
-                          variant="outline"
-                          size="sm"
-                          className="bg-green-600 hover:bg-green-700 text-white border-green-600 px-2 py-1 text-xs"
-                        >
-                          <Crop className="w-3 h-3 mr-1" />
-                          Recadrer EN
-                        </Button>
-                      )}
-                    </div>
-                    <div className="aspect-video w-full bg-gray-100 dark:bg-gray-700 rounded-lg overflow-hidden border border-green-200 dark:border-green-600">
-                      {selectedItem?.image_url_en ? (
-                        <img 
-                          src={selectedItem.image_url_en.startsWith('http') 
-                            ? `${selectedItem.image_url_en}?cacheBust=${Date.now()}&nocache=1`
-                            : `/api/image-proxy?filename=${selectedItem.image_url_en.split('/').pop()?.split('?')[0]}`
-                          } 
-                          alt="Aperçu English"
-                          className="w-full h-full object-cover"
-                        />
-                      ) : (
-                        <div className="w-full h-full flex items-center justify-center">
-                          <div className="text-center text-gray-500 dark:text-gray-400">
-                            <Image className="w-8 h-8 mx-auto mb-1 opacity-50" />
-                            <p className="text-xs">No EN image</p>
+                      <div className="aspect-video w-full bg-gray-100 dark:bg-gray-700 rounded-lg overflow-hidden border border-green-200 dark:border-green-600">
+                        {selectedItem?.image_url_en ? (
+                          <img 
+                            src={selectedItem.image_url_en.startsWith('http') 
+                              ? `${selectedItem.image_url_en}?cacheBust=${Date.now()}&nocache=1`
+                              : `/api/image-proxy?filename=${selectedItem.image_url_en.split('/').pop()?.split('?')[0]}`
+                            } 
+                            alt="Aperçu English"
+                            className="w-full h-full object-cover"
+                          />
+                        ) : (
+                          <div className="w-full h-full flex items-center justify-center">
+                            <div className="text-center text-gray-500 dark:text-gray-400">
+                              <Image className="w-8 h-8 mx-auto mb-1 opacity-50" />
+                              <p className="text-xs">No EN image</p>
+                            </div>
                           </div>
-                        </div>
-                      )}
+                        )}
+                      </div>
                     </div>
                   </div>
                 </div>
 
                 {/* Right Column - Video Previews */}
-                <div className="space-y-6">
-                  <h4 className="text-lg font-semibold text-[#011526] dark:text-[#F2EBDC] flex items-center gap-2">
+                <div className="flex-1 flex flex-col">
+                  <h4 className="text-lg font-semibold text-[#011526] dark:text-[#F2EBDC] flex items-center gap-2 mb-6">
                     <PlayCircle className="w-5 h-5" />
                     Aperçu Vidéos
                   </h4>
                   
-                  {/* French Video */}
-                  <div className="space-y-2">
-                    <div className="flex items-center gap-2">
-                      <span className="text-xs font-medium text-blue-700 dark:text-blue-300">🇫🇷 Français</span>
-                      <span className="text-xs text-gray-500 font-mono">
-                        {formData.video_url_fr || formData.video_filename || 'Aucun'}
-                      </span>
-                    </div>
-                    {formData.video_url_fr || formData.video_filename ? (
-                      <div className="relative bg-black rounded-lg overflow-hidden aspect-video w-full border border-blue-200 dark:border-blue-600">
-                        <video
-                          controls
-                          className="w-full h-full object-contain"
-                          style={{ backgroundColor: 'black' }}
-                        >
-                          <source 
-                            src={`/api/video-proxy?filename=${formData.video_url_fr || formData.video_filename}`}
-                            type="video/mp4"
-                          />
-                          Votre navigateur ne supporte pas la lecture vidéo.
-                        </video>
+                  <div className="flex flex-col justify-center flex-1 space-y-8">
+                    {/* French Video */}
+                    <div className="space-y-2">
+                      <div className="flex items-center gap-2">
+                        <span className="text-xs font-medium text-blue-700 dark:text-blue-300">🇫🇷 Français</span>
+                        <span className="text-xs text-gray-500 font-mono">
+                          {formData.video_url_fr || formData.video_filename || 'Aucun'}
+                        </span>
                       </div>
-                    ) : (
-                      <div className="aspect-video w-full bg-gray-100 dark:bg-gray-800 rounded-lg flex items-center justify-center border border-blue-200 dark:border-blue-600">
-                        <div className="text-center text-gray-500 dark:text-gray-400">
-                          <PlayCircle className="w-8 h-8 mx-auto mb-1 opacity-50" />
-                          <p className="text-xs">Pas de vidéo FR</p>
+                      {formData.video_url_fr || formData.video_filename ? (
+                        <div className="relative bg-black rounded-lg overflow-hidden aspect-video w-full border border-blue-200 dark:border-blue-600">
+                          <video
+                            controls
+                            className="w-full h-full object-contain"
+                            style={{ backgroundColor: 'black' }}
+                          >
+                            <source 
+                              src={`/api/video-proxy?filename=${formData.video_url_fr || formData.video_filename}`}
+                              type="video/mp4"
+                            />
+                            Votre navigateur ne supporte pas la lecture vidéo.
+                          </video>
                         </div>
-                      </div>
-                    )}
-                  </div>
+                      ) : (
+                        <div className="aspect-video w-full bg-gray-100 dark:bg-gray-800 rounded-lg flex items-center justify-center border border-blue-200 dark:border-blue-600">
+                          <div className="text-center text-gray-500 dark:text-gray-400">
+                            <PlayCircle className="w-8 h-8 mx-auto mb-1 opacity-50" />
+                            <p className="text-xs">Pas de vidéo FR</p>
+                          </div>
+                        </div>
+                      )}
+                    </div>
 
-                  {/* English Video */}
-                  <div className="space-y-2">
-                    <div className="flex items-center gap-2">
-                      <span className="text-xs font-medium text-green-700 dark:text-green-300">🇺🇸 English</span>
-                      <span className="text-xs text-gray-500 font-mono">
-                        {formData.video_url_en || formData.video_filename || 'None'}
-                      </span>
-                    </div>
-                    {formData.video_url_en || formData.video_filename ? (
-                      <div className="relative bg-black rounded-lg overflow-hidden aspect-video w-full border border-green-200 dark:border-green-600">
-                        <video
-                          controls
-                          className="w-full h-full object-contain"
-                          style={{ backgroundColor: 'black' }}
-                        >
-                          <source 
-                            src={`/api/video-proxy?filename=${formData.video_url_en || formData.video_filename}`}
-                            type="video/mp4"
-                          />
-                          Votre navigateur ne supporte pas la lecture vidéo.
-                        </video>
+                    {/* English Video */}
+                    <div className="space-y-2">
+                      <div className="flex items-center gap-2">
+                        <span className="text-xs font-medium text-green-700 dark:text-green-300">🇺🇸 English</span>
+                        <span className="text-xs text-gray-500 font-mono">
+                          {formData.video_url_en || formData.video_filename || 'None'}
+                        </span>
                       </div>
-                    ) : (
-                      <div className="aspect-video w-full bg-gray-100 dark:bg-gray-800 rounded-lg flex items-center justify-center border border-green-200 dark:border-green-600">
-                        <div className="text-center text-gray-500 dark:text-gray-400">
-                          <PlayCircle className="w-8 h-8 mx-auto mb-1 opacity-50" />
-                          <p className="text-xs">No EN video</p>
+                      {formData.video_url_en || formData.video_filename ? (
+                        <div className="relative bg-black rounded-lg overflow-hidden aspect-video w-full border border-green-200 dark:border-green-600">
+                          <video
+                            controls
+                            className="w-full h-full object-contain"
+                            style={{ backgroundColor: 'black' }}
+                          >
+                            <source 
+                              src={`/api/video-proxy?filename=${formData.video_url_en || formData.video_filename}`}
+                              type="video/mp4"
+                            />
+                            Votre navigateur ne supporte pas la lecture vidéo.
+                          </video>
                         </div>
-                      </div>
-                    )}
+                      ) : (
+                        <div className="aspect-video w-full bg-gray-100 dark:bg-gray-800 rounded-lg flex items-center justify-center border border-green-200 dark:border-green-600">
+                          <div className="text-center text-gray-500 dark:text-gray-400">
+                            <PlayCircle className="w-8 h-8 mx-auto mb-1 opacity-50" />
+                            <p className="text-xs">No EN video</p>
+                          </div>
+                        </div>
+                      )}
+                    </div>
                   </div>
                 </div>
               </div>

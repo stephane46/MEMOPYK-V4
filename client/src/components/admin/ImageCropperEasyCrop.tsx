@@ -257,9 +257,28 @@ export default function ImageCropperEasyCrop({ imageUrl, onSave, onCancel }: Ima
       // Draw the image with position offset
       ctx.drawImage(img, offsetX, offsetY, scaledWidth, scaledHeight);
 
-      // Convert to PNG blob for lossless quality and maximum sharpness
+      // FINAL WHITE BACKGROUND ENFORCEMENT - Create a new canvas with guaranteed white background
+      const finalCanvas = document.createElement('canvas');
+      const finalCtx = finalCanvas.getContext('2d')!;
+      finalCanvas.width = 300 * dpr;
+      finalCanvas.height = 200 * dpr;
+      finalCanvas.style.width = '300px';
+      finalCanvas.style.height = '200px';
+      finalCtx.scale(dpr, dpr);
+      
+      // Force absolute white background on final canvas
+      finalCtx.globalCompositeOperation = 'source-over';
+      finalCtx.fillStyle = '#FFFFFF';
+      finalCtx.fillRect(0, 0, 300, 200);
+      
+      // Draw the original canvas onto the white background
+      finalCtx.drawImage(canvas, 0, 0, 300, 200);
+      
+      console.log('✅ FINAL WHITE BACKGROUND ENFORCEMENT COMPLETED');
+
+      // Convert final canvas to PNG blob for lossless quality and guaranteed white background
       const blob = await new Promise<Blob>((resolve) => {
-        canvas.toBlob((blob) => {
+        finalCanvas.toBlob((blob) => {
           resolve(blob!);
         }, 'image/png');
       });
