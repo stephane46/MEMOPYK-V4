@@ -539,9 +539,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(400).json({ error: "No image file provided" });
       }
 
-      // Use original filename - clean but preserve structure
-      const originalName = req.file.originalname.replace(/[^a-zA-Z0-9.-]/g, '_');
-      const filename = `gallery_thumb_${originalName}`;
+      // Keep original filename without transformation for consistency with video uploads
+      const filename = req.file.originalname;
 
       console.log(`📤 Uploading gallery image: ${filename} (${(req.file.size / 1024 / 1024).toFixed(2)}MB) - Overwrite mode`);
 

@@ -91,12 +91,20 @@ Preferred communication style: Simple, everyday language.
 ✅ **F5 Scroll Behavior Fixed**: AdminPage now properly scrolls to top on F5 refresh, page load, and navigation with comprehensive event handling
 ✅ **Format Badge Positioning**: "Badge Format (marketing visuel)" section moved to bottom of form for logical information flow
 
+**Image Filename Consistency Fix - User Investigation Resolved:**
+✅ **Original Filename Preservation**: Image uploads now preserve original filenames just like video uploads (no more "gallery_thumb_" prefix)
+✅ **Special Character Removal Eliminated**: Removed automatic replacement of spaces and parentheses with underscores  
+✅ **Consistent Upload Behavior**: Both videos and images now maintain their original uploaded filenames
+✅ **URL Display Accuracy**: `getFullUrl()` helper function converts filenames to complete Supabase URLs for display
+✅ **User Investigation Resolution**: Addressed filename transformation that was changing "Media 0000103 (2).JPG" to "gallery_thumb_Media_0000103__2_.JPG"
+
 **Technical Implementation:**
 - Removed redundant basic upload sections that provided no unique functionality
 - Enhanced conditional rendering based on `use_same_video` toggle state
 - Purple gradient styling for shared uploads with proper bilingual branding
 - Maintained existing blue (French) and green (English) color-coded sections
 - AdminPage useEffect ensures smooth scroll to top on component mount
+- Fixed image upload route to use `req.file.originalname` directly without transformation
 
 **User Experience Achievement:**
 - Single comprehensive upload system handles all scenarios without confusion
