@@ -1544,9 +1544,9 @@ export default function AdminPage() {
                     </div>
                   </div>
                 ) : (
-                  <div className="grid grid-cols-2 gap-6">
+                  <div className="grid grid-cols-2 gap-6 items-start">
                     {/* English Video Upload */}
-                    <div className="space-y-3">
+                    <div className="space-y-3 flex flex-col">
                       <Label className="text-gray-700 dark:text-gray-300 font-medium">English Video</Label>
                       <div 
                         className="border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg p-4 text-center hover:border-gray-400 dark:hover:border-gray-500"
@@ -1581,21 +1581,21 @@ export default function AdminPage() {
                         </label>
                       </div>
                       {editVideoData.url_en && (
-                        <div className="p-3 bg-gradient-to-r from-green-50 to-emerald-50 dark:from-green-900/20 dark:to-emerald-900/20 rounded-lg border border-green-200 dark:border-green-800">
+                        <div className="p-3 bg-gradient-to-r from-green-50 to-emerald-50 dark:from-green-900/20 dark:to-emerald-900/20 rounded-lg border border-green-200 dark:border-green-800 h-auto">
                           <div className="flex items-center gap-2 mb-2">
-                            <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                            <div className="w-2 h-2 bg-green-500 rounded-full flex-shrink-0"></div>
                             <Label className="text-xs font-medium text-green-800 dark:text-green-200">Vidéo EN téléchargée ✓</Label>
                           </div>
-                          <p className="text-xs font-mono text-green-700 dark:text-green-300 break-all mb-2">
+                          <p className="text-xs font-mono text-green-700 dark:text-green-300 break-all mb-2 min-h-[1.5rem]">
                             {editVideoData.url_en}
                           </p>
-                          <div className="flex items-center gap-2">
+                          <div className="flex items-center gap-2 h-10">
                             <video 
                               src={`/api/video-proxy?filename=${encodeURIComponent(editVideoData.url_en)}`}
                               className="w-16 h-10 object-cover rounded border flex-shrink-0"
                               muted
                             />
-                            <span className="text-xs text-green-600 dark:text-green-400">Remplacer ci-dessus</span>
+                            <span className="text-xs text-green-600 dark:text-green-400 flex-1 leading-tight">Remplacer ci-dessus</span>
                           </div>
                         </div>
                       )}
@@ -1608,7 +1608,7 @@ export default function AdminPage() {
                     </div>
                     
                     {/* French Video Upload */}
-                    <div className="space-y-3">
+                    <div className="space-y-3 flex flex-col">
                       <Label className="text-gray-700 dark:text-gray-300 font-medium">French Video</Label>
                       <div 
                         className="border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg p-4 text-center hover:border-gray-400 dark:hover:border-gray-500"
@@ -1641,21 +1641,21 @@ export default function AdminPage() {
                         </label>
                       </div>
                       {editVideoData.url_fr && (
-                        <div className="p-3 bg-gradient-to-r from-green-50 to-emerald-50 dark:from-green-900/20 dark:to-emerald-900/20 rounded-lg border border-green-200 dark:border-green-800">
+                        <div className="p-3 bg-gradient-to-r from-green-50 to-emerald-50 dark:from-green-900/20 dark:to-emerald-900/20 rounded-lg border border-green-200 dark:border-green-800 h-auto">
                           <div className="flex items-center gap-2 mb-2">
-                            <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                            <div className="w-2 h-2 bg-green-500 rounded-full flex-shrink-0"></div>
                             <Label className="text-xs font-medium text-green-800 dark:text-green-200">Vidéo FR téléchargée ✓</Label>
                           </div>
-                          <p className="text-xs font-mono text-green-700 dark:text-green-300 break-all mb-2">
+                          <p className="text-xs font-mono text-green-700 dark:text-green-300 break-all mb-2 min-h-[1.5rem]">
                             {editVideoData.url_fr}
                           </p>
-                          <div className="flex items-center gap-2">
+                          <div className="flex items-center gap-2 h-10">
                             <video 
                               src={`/api/video-proxy?filename=${encodeURIComponent(editVideoData.url_fr)}`}
                               className="w-16 h-10 object-cover rounded border flex-shrink-0"
                               muted
                             />
-                            <span className="text-xs text-green-600 dark:text-green-400">Remplacer ci-dessus</span>
+                            <span className="text-xs text-green-600 dark:text-green-400 flex-1 leading-tight">Remplacer ci-dessus</span>
                           </div>
                         </div>
                       )}
