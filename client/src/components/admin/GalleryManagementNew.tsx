@@ -702,9 +702,9 @@ export default function GalleryManagementNew() {
                       <div className="flex items-center justify-between min-h-[2.5rem]">
                         <div className="flex items-center gap-2">
                           <span className="text-xs font-medium text-blue-700 dark:text-blue-300">🇫🇷 Français</span>
-                          {selectedItem?.image_url_fr && (
+                          {(formData.image_url_fr || selectedItem?.image_url_fr) && (
                             <span className="text-xs text-gray-500 font-mono truncate max-w-32">
-                              {selectedItem.image_url_fr.split('/').pop()?.split('?')[0]}
+                              {(formData.image_url_fr || selectedItem?.image_url_fr)?.split('/').pop()?.split('?')[0]}
                             </span>
                           )}
                         </div>
@@ -762,14 +762,14 @@ export default function GalleryManagementNew() {
                         )}
                       </div>
                       <div className="aspect-video w-full bg-black rounded-lg overflow-hidden border border-blue-200 dark:border-blue-600 relative">
-                        {(selectedItem?.image_url_fr || formData.image_url_fr) ? (
+                        {(formData.image_url_fr || selectedItem?.image_url_fr) ? (
                           <>
                             <img 
                               src={
-                                // For new uploads with full URLs, use direct CDN streaming
-                                (selectedItem?.image_url_fr || formData.image_url_fr)?.startsWith('http')
-                                  ? `${selectedItem?.image_url_fr || formData.image_url_fr}?cacheBust=${Date.now()}&nocache=1`
-                                  : getThumbnailUrl(selectedItem, 'fr') || `/api/image-proxy?filename=${(selectedItem?.image_url_fr || formData.image_url_fr)?.split('/').pop()?.split('?')[0]}`
+                                // Prioritize formData (fresh uploads) over selectedItem (database values)
+                                (formData.image_url_fr || selectedItem?.image_url_fr)?.startsWith('http')
+                                  ? `${formData.image_url_fr || selectedItem?.image_url_fr}?cacheBust=${Date.now()}&nocache=1`
+                                  : getThumbnailUrl(selectedItem, 'fr') || `/api/image-proxy?filename=${(formData.image_url_fr || selectedItem?.image_url_fr)?.split('/').pop()?.split('?')[0]}`
                               } 
                               alt="Aperçu Français"
                               className="w-full h-full object-contain"
@@ -848,9 +848,9 @@ export default function GalleryManagementNew() {
                       <div className="flex items-center justify-between min-h-[2.5rem]">
                         <div className="flex items-center gap-2">
                           <span className="text-xs font-medium text-green-700 dark:text-green-300">🇺🇸 English</span>
-                          {selectedItem?.image_url_en && (
+                          {(formData.image_url_en || selectedItem?.image_url_en) && (
                             <span className="text-xs text-gray-500 font-mono truncate max-w-32">
-                              {selectedItem.image_url_en.split('/').pop()?.split('?')[0]}
+                              {(formData.image_url_en || selectedItem?.image_url_en)?.split('/').pop()?.split('?')[0]}
                             </span>
                           )}
                         </div>
@@ -908,14 +908,14 @@ export default function GalleryManagementNew() {
                         )}
                       </div>
                       <div className="aspect-video w-full bg-black rounded-lg overflow-hidden border border-green-200 dark:border-green-600 relative">
-                        {(selectedItem?.image_url_en || formData.image_url_en) ? (
+                        {(formData.image_url_en || selectedItem?.image_url_en) ? (
                           <>
                             <img 
                               src={
-                                // For new uploads with full URLs, use direct CDN streaming
-                                (selectedItem?.image_url_en || formData.image_url_en)?.startsWith('http')
-                                  ? `${selectedItem?.image_url_en || formData.image_url_en}?cacheBust=${Date.now()}&nocache=1`
-                                  : getThumbnailUrl(selectedItem, 'en') || `/api/image-proxy?filename=${(selectedItem?.image_url_en || formData.image_url_en)?.split('/').pop()?.split('?')[0]}`
+                                // Prioritize formData (fresh uploads) over selectedItem (database values)
+                                (formData.image_url_en || selectedItem?.image_url_en)?.startsWith('http')
+                                  ? `${formData.image_url_en || selectedItem?.image_url_en}?cacheBust=${Date.now()}&nocache=1`
+                                  : getThumbnailUrl(selectedItem, 'en') || `/api/image-proxy?filename=${(formData.image_url_en || selectedItem?.image_url_en)?.split('/').pop()?.split('?')[0]}`
                               } 
                               alt="Aperçu English"
                               className="w-full h-full object-contain"
