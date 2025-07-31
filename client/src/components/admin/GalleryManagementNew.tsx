@@ -436,10 +436,17 @@ export default function GalleryManagementNew() {
     }
   }, [selectedItem, isCreateMode]);
 
-  // Auto-select first item when data loads
+  // Auto-select first item when data loads OR when selected item no longer exists
   useEffect(() => {
-    if (galleryItems.length > 0 && !selectedVideoId && !isCreateMode) {
-      setSelectedVideoId(galleryItems[0].id);
+    if (galleryItems.length > 0 && !isCreateMode) {
+      // If no item is selected OR the selected item doesn't exist anymore
+      if (!selectedVideoId || !galleryItems.find(item => item.id === selectedVideoId)) {
+        console.log(`🔄 Auto-selecting first item. Current selection: ${selectedVideoId}, Available items: ${galleryItems.length}`);
+        setSelectedVideoId(galleryItems[0].id);
+      }
+    } else if (galleryItems.length === 0 && !isCreateMode) {
+      // No items available, clear selection
+      setSelectedVideoId(null);
     }
   }, [galleryItems, selectedVideoId, isCreateMode]);
 
@@ -490,16 +497,32 @@ export default function GalleryManagementNew() {
       console.log(`🗑️ FRONTEND: ID type: ${typeof id}`);
       return apiRequest(`/api/gallery/${id}`, 'DELETE');
     },
-    onSuccess: () => {
-      console.log(`✅ FRONTEND: Delete successful`);
-      toast({ 
-        title: "✅ Succès", 
-        description: "Élément de galerie supprimé avec succès",
-        className: "bg-emerald-50 border-emerald-200 text-emerald-900"
-      });
+    onSuccess: (response: any) => {
+      console.log(`✅ FRONTEND: Delete successful - Response:`, response);
+      
+      // Clear all related caches aggressively
+      queryClient.removeQueries({ queryKey: ['/api/gallery'] });
       queryClient.invalidateQueries({ queryKey: ['/api/gallery'] });
+      
+      // Reset selected item to first available item
       setSelectedVideoId(null);
       setIsCreateMode(false);
+      
+      // Show success message based on response
+      const message = response?.alreadyDeleted 
+        ? "L'élément était déjà supprimé ou n'existait pas"
+        : "Élément de galerie supprimé avec succès";
+      
+      toast({ 
+        title: "✅ Succès", 
+        description: message,
+        className: "bg-emerald-50 border-emerald-200 text-emerald-900"
+      });
+      
+      // Force refetch after a short delay
+      setTimeout(() => {
+        queryClient.refetchQueries({ queryKey: ['/api/gallery'] });
+      }, 100);
     },
     onError: (error: any) => {
       console.error('❌ FRONTEND: Delete error details:', error);
