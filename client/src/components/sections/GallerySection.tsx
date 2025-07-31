@@ -45,17 +45,17 @@ export default function GallerySection() {
   const [flippedCards, setFlippedCards] = useState<Set<string | number>>(new Set());
   const [lightboxVideo, setLightboxVideo] = useState<GalleryItem | null>(null);
   
-  // 🚨 DIRECT CDN STREAMING v1.0.51 - INFRASTRUCTURE BYPASS
+  // 🚨 DIRECT CDN STREAMING + IMAGE CACHE-BUSTING v1.0.89
   useEffect(() => {
-    console.log("🚨 DIRECT CDN STREAMING v1.0.51 - INFRASTRUCTURE BYPASS");
-    console.log("📋 Gallery videos now use direct Supabase CDN URLs");
-    console.log("🎯 Bypassing video proxy to avoid infrastructure blocking");
-    console.log("⚠️ Trade-off: Slower loading (1500ms) but guaranteed functionality");
+    console.log("🚨 DIRECT CDN STREAMING + IMAGE CACHE-BUSTING v1.0.89");
+    console.log("📋 Gallery videos AND images now use direct Supabase CDN URLs");
+    console.log("🎯 Bypassing ALL local caching to prevent browser cache issues");
+    console.log("⚠️ Trade-off: Slower loading but guaranteed fresh content");
   }, []);
   
   // Fetch active gallery items with type conversion from snake_case API
   const { data: galleryItems = [], isLoading } = useQuery<any[]>({
-    queryKey: ['/api/gallery', 'v1.0.39'], // Version-specific cache to force refresh
+    queryKey: ['/api/gallery', 'v1.0.89'], // Version-specific cache to force refresh
     staleTime: 0, // Always refetch to get latest static images
     gcTime: 0, // Don't cache to ensure fresh data
     select: (data) => data
@@ -137,7 +137,7 @@ export default function GallerySection() {
   const t = content[language];
 
   const getImageUrl = (item: GalleryItem) => {
-    // PRIORITY FIX: Always use static image first (admin-created cropped images)
+    // CACHE-BUSTING v1.0.89: Use direct CDN URLs to bypass all caching
     let imageUrl = '';
     let filename = '';
     
@@ -168,10 +168,11 @@ export default function GallerySection() {
       }
     }
     
-    // Use image proxy for automatic caching
-    const proxyUrl = `/api/image-proxy?filename=${encodeURIComponent(filename || '')}`;
-    console.log(`🖼️ GALLERY IMAGE PROXY URL: ${proxyUrl} (from ${imageUrl})`);
-    return proxyUrl;
+    // DIRECT CDN BYPASS: Use Supabase URL with aggressive cache-busting
+    const cacheBuster = Date.now() + Math.random();
+    const directUrl = `https://supabase.memopyk.org/storage/v1/object/public/memopyk-videos/${encodeURIComponent(filename || '')}?cacheBust=${cacheBuster}&v=${Math.random()}`;
+    console.log(`🖼️ DIRECT CDN IMAGE URL v1.0.89: ${directUrl} (bypassing proxy cache)`);
+    return directUrl;
   };
 
   const getItemTitle = (item: GalleryItem) => {

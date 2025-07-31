@@ -106,11 +106,13 @@ Preferred communication style: Simple, everyday language.
 - Preview images bypass local cache proxy entirely to prevent browser caching conflicts
 - Component versioning updated to v1.0.89 with "DIRECT CDN BYPASS" messaging
 
-**User Experience Improvement:**
+**User Experience Achievement:**
 - No more sudden navigation to admin top page during uploads
-- Preview images load directly from CDN with fresh cache-busting parameters
+- Both admin interface AND live site now use direct CDN URLs with aggressive cache-busting
+- Preview images bypass ALL local caching (proxy cache + browser cache)
 - Smooth component refresh without disrupting user workflow
-- Expected behavior: Upload image → see immediate preview update without page disruption
+- Real-time console confirmation: "DIRECT CDN IMAGE URL v1.0.89" with unique cache-busting parameters
+- Complete cache bypass: Upload image → immediate preview update in both admin and live site
 
 ### UPLOAD DIALOG FORMAT VALIDATION FIX COMPLETE - v1.0.87 (July 31, 2025) ✅ CRITICAL BUG RESOLVED
 **Upload Dialog Video Format Request Bug Fixed - Root Cause Resolved:**
