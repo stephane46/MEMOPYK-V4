@@ -33,11 +33,24 @@
     "is_active": true,
     "use_same_video": false,
     "created_at": "2025-07-23T21:05:23.805Z",
-    "updated_at": "2025-07-31T14:26:23.014Z",
+    "updated_at": "2025-07-31T15:57:28.322Z",
     "static_image_url": "https://supabase.memopyk.org/storage/v1/object/public/memopyk-videos/static_en_1753968265005.jpg",
-    "crop_settings": null,
+    "crop_settings": {
+      "method": "expert-minimal-fix",
+      "position": {
+        "x": 61.422214617694635,
+        "y": 0.9999999237060605
+      },
+      "dimensions": {
+        "width": 300,
+        "height": 200
+      },
+      "format": "JPEG",
+      "quality": 1,
+      "devicePixelRatio": 1.875
+    },
     "staticImageUrl": null,
-    "static_image_url_en": null,
+    "static_image_url_en": "https://supabase.memopyk.org/storage/v1/object/public/memopyk-videos/static_en_1753977444661.jpg",
     "language": "en",
     "static_image_url_fr": null
   },
