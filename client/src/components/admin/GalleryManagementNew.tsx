@@ -406,11 +406,11 @@ export default function GalleryManagementNew() {
         <div className="space-y-8">
           {/* Status Section with Video & Image Previews */}
           <Card className="border-[#89BAD9] dark:border-[#2A4759]">
-            <CardContent className="p-6">
-              <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <CardContent className="p-8">
+              <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
                 {/* Left Side - Image Preview */}
-                <div>
-                  <div className="flex items-center justify-between mb-4">
+                <div className="space-y-4">
+                  <div className="flex items-center justify-between">
                     <h4 className="text-lg font-semibold text-[#011526] dark:text-[#F2EBDC] flex items-center gap-2">
                       <Image className="w-5 h-5" />
                       Aperçu Image
@@ -428,7 +428,7 @@ export default function GalleryManagementNew() {
                       </Button>
                     )}
                   </div>
-                  <div className="aspect-video max-w-sm bg-gray-100 dark:bg-gray-700 rounded-lg overflow-hidden border border-gray-200 dark:border-gray-600">
+                  <div className="aspect-video w-full bg-gray-100 dark:bg-gray-700 rounded-lg overflow-hidden border border-gray-200 dark:border-gray-600">
                     {selectedItem && getThumbnailUrl(selectedItem) ? (
                       <img 
                         src={getThumbnailUrl(selectedItem)!} 
@@ -447,33 +447,31 @@ export default function GalleryManagementNew() {
                 </div>
 
                 {/* Center - Status Controls */}
-                <div>
-                  <h3 className="text-lg font-semibold text-[#011526] dark:text-[#F2EBDC] mb-6 flex items-center gap-2">
+                <div className="space-y-4 flex flex-col items-center justify-center min-h-[200px]">
+                  <h3 className="text-lg font-semibold text-[#011526] dark:text-[#F2EBDC] flex items-center gap-2">
                     <Power className="w-5 h-5" />
                     Statut & Activation
                   </h3>
-                  <div className="flex items-center space-x-3">
+                  <div className="flex flex-col items-center space-y-3">
                     <Switch
                       checked={formData.is_active}
                       onCheckedChange={(checked) => setFormData({...formData, is_active: checked})}
                       className="data-[state=checked]:bg-[#2A4759]"
                     />
-                    <Label className="text-base font-medium text-[#011526] dark:text-[#F2EBDC]">
+                    <Label className="text-base font-medium text-[#011526] dark:text-[#F2EBDC] text-center">
                       {formData.is_active ? 'Actif' : 'Inactif'}
                     </Label>
                   </div>
                 </div>
 
                 {/* Right Side - Video Preview */}
-                <div>
-                  <div className="flex items-center justify-between mb-4">
-                    <h4 className="text-lg font-semibold text-[#011526] dark:text-[#F2EBDC] flex items-center gap-2">
-                      <PlayCircle className="w-5 h-5" />
-                      Aperçu Vidéo
-                    </h4>
-                  </div>
+                <div className="space-y-4">
+                  <h4 className="text-lg font-semibold text-[#011526] dark:text-[#F2EBDC] flex items-center gap-2">
+                    <PlayCircle className="w-5 h-5" />
+                    Aperçu Vidéo
+                  </h4>
                   {formData.video_filename || formData.video_url_en ? (
-                    <div className="relative bg-black rounded-lg overflow-hidden aspect-video max-w-sm">
+                    <div className="relative bg-black rounded-lg overflow-hidden aspect-video w-full">
                       <video
                         controls
                         className="w-full h-full object-contain"
@@ -487,7 +485,7 @@ export default function GalleryManagementNew() {
                       </video>
                     </div>
                   ) : (
-                    <div className="aspect-video max-w-sm bg-gray-100 dark:bg-gray-800 rounded-lg flex items-center justify-center border-2 border-dashed border-gray-300 dark:border-gray-600">
+                    <div className="aspect-video w-full bg-gray-100 dark:bg-gray-800 rounded-lg flex items-center justify-center border-2 border-dashed border-gray-300 dark:border-gray-600">
                       <div className="text-center text-gray-500 dark:text-gray-400">
                         <PlayCircle className="w-12 h-12 mx-auto mb-2 opacity-50" />
                         <p className="text-sm">Aucune vidéo disponible</p>
