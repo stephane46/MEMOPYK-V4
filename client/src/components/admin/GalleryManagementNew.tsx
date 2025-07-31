@@ -89,6 +89,35 @@ async function logDisplayDiagnostics(previewEl: HTMLElement | null, imageUrl: st
 
   console.groupEnd();
 }
+
+  // Calculate actual displayed image dimensions within object-contain
+  const calculateImageDimensions = (imgElement: HTMLImageElement): {width: number, height: number} => {
+    const containerWidth = imgElement.offsetWidth;
+    const containerHeight = imgElement.offsetHeight;
+    const naturalWidth = imgElement.naturalWidth;
+    const naturalHeight = imgElement.naturalHeight;
+    
+    if (!naturalWidth || !naturalHeight) return {width: containerWidth, height: containerHeight};
+    
+    const containerRatio = containerWidth / containerHeight;
+    const imageRatio = naturalWidth / naturalHeight;
+    
+    let displayedWidth: number;
+    let displayedHeight: number;
+    
+    if (imageRatio > containerRatio) {
+      // Image is wider than container - width constrained
+      displayedWidth = containerWidth;
+      displayedHeight = containerWidth / imageRatio;
+    } else {
+      // Image is taller than container - height constrained  
+      displayedHeight = containerHeight;
+      displayedWidth = containerHeight * imageRatio;
+    }
+    
+    console.log(`📊 Calculated dimensions: ${displayedWidth} x ${displayedHeight} (from ${naturalWidth} x ${naturalHeight} in ${containerWidth} x ${containerHeight})`);
+    return {width: displayedWidth, height: displayedHeight};
+  };
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -284,6 +313,10 @@ export default function GalleryManagementNew() {
     image_url_fr?: string;
     video_filename?: string;
   }>({});
+
+  // State for tracking actual image dimensions for crop frame positioning
+  const [frImageDimensions, setFrImageDimensions] = useState<{width: number, height: number} | null>(null);
+  const [enImageDimensions, setEnImageDimensions] = useState<{width: number, height: number} | null>(null);
 
   // Fetch gallery items with cache-busting
   const { data: galleryItems = [], isLoading } = useQuery<GalleryItem[]>({
@@ -661,17 +694,25 @@ export default function GalleryManagementNew() {
                                   ? `${selectedItem.image_url_fr}?cacheBust=${Date.now()}&nocache=1}`
                                   : `/api/image-proxy?filename=${selectedItem.image_url_fr.split('/').pop()?.split('?')[0]}`;
                                 console.log('🔍 FRENCH IMAGE LOADED - Running diagnostics...');
-                                setTimeout(() => logDisplayDiagnostics(frImageRef.current, imageUrl), 100);
+                                setTimeout(() => {
+                                  logDisplayDiagnostics(frImageRef.current, imageUrl);
+                                  if (frImageRef.current) {
+                                    const dimensions = calculateImageDimensions(frImageRef.current);
+                                    setFrImageDimensions(dimensions);
+                                  }
+                                }, 100);
                               }}
                             />
-                            {/* 3:2 Ratio Frame Overlay - only show if not reframed yet */}
-                            {!selectedItem.static_image_url_fr && (
+                            {/* 3:2 Ratio Frame Overlay - positioned over actual image dimensions */}
+                            {!selectedItem.static_image_url_fr && frImageDimensions && (
                               <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+                                {/* Frame positioned over actual image size only */}
                                 <div 
                                   className="border-2 border-blue-400 border-dashed bg-blue-400/10 rounded relative"
                                   style={{
-                                    width: '100%',
-                                    aspectRatio: '3/2'
+                                    width: `${frImageDimensions.width}px`,
+                                    aspectRatio: '3/2',
+                                    maxHeight: `${frImageDimensions.height}px`
                                   }}
                                 >
                                   <div className="absolute -top-6 left-0 text-xs text-blue-600 bg-white px-2 py-1 rounded shadow font-medium whitespace-nowrap">
@@ -778,17 +819,25 @@ export default function GalleryManagementNew() {
                                   ? `${selectedItem.image_url_en}?cacheBust=${Date.now()}&nocache=1`
                                   : `/api/image-proxy?filename=${selectedItem.image_url_en.split('/').pop()?.split('?')[0]}`;
                                 console.log('🔍 ENGLISH IMAGE LOADED - Running diagnostics...');
-                                setTimeout(() => logDisplayDiagnostics(enImageRef.current, imageUrl), 100);
+                                setTimeout(() => {
+                                  logDisplayDiagnostics(enImageRef.current, imageUrl);
+                                  if (enImageRef.current) {
+                                    const dimensions = calculateImageDimensions(enImageRef.current);
+                                    setEnImageDimensions(dimensions);
+                                  }
+                                }, 100);
                               }}
                             />
-                            {/* 3:2 Ratio Frame Overlay - only show if not reframed yet */}
-                            {!selectedItem.static_image_url_en && (
+                            {/* 3:2 Ratio Frame Overlay - positioned over actual image dimensions */}
+                            {!selectedItem.static_image_url_en && enImageDimensions && (
                               <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+                                {/* Frame positioned over actual image size only */}
                                 <div 
                                   className="border-2 border-green-400 border-dashed bg-green-400/10 rounded relative"
                                   style={{
-                                    width: '100%',
-                                    aspectRatio: '3/2'
+                                    width: `${enImageDimensions.width}px`,
+                                    aspectRatio: '3/2',
+                                    maxHeight: `${enImageDimensions.height}px`
                                   }}
                                 >
                                   <div className="absolute -top-6 left-0 text-xs text-green-600 bg-white px-2 py-1 rounded shadow font-medium whitespace-nowrap">
