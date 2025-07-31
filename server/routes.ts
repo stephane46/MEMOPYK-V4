@@ -1659,9 +1659,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         try {
           // Clean download attempt
           const encodedForDownload = encodeURIComponent(decodedFilename);
-          // BUCKET FIX: Use correct bucket based on filename
-          const bucket = filename.includes('gallery_') || filename.includes('memopyk-gallery') ? 'memopyk-gallery' : 'memopyk-videos';
-          const supabaseUrl = `https://supabase.memopyk.org/storage/v1/object/public/${bucket}/${encodedForDownload}`;
+          const supabaseUrl = `https://supabase.memopyk.org/storage/v1/object/public/memopyk-videos/${encodedForDownload}`;
           console.log(`📥 UNIVERSAL AUTO-DOWNLOAD v1.0.40: ${decodedFilename}`);
           console.log(`   - Supabase URL: ${supabaseUrl}`);
           
@@ -1677,9 +1675,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
           // FALLBACK: Direct Supabase streaming
           try {
             const encodedForStream = encodeURIComponent(decodedFilename);
-            // BUCKET FIX: Use correct bucket based on filename  
-            const bucket = filename.includes('gallery_') || filename.includes('memopyk-gallery') ? 'memopyk-gallery' : 'memopyk-videos';
-            const directUrl = `https://supabase.memopyk.org/storage/v1/object/public/${bucket}/${encodedForStream}`;
+            const directUrl = `https://supabase.memopyk.org/storage/v1/object/public/memopyk-videos/${encodedForStream}`;
             
             const fetch = (await import('node-fetch')).default;
             const response = await fetch(directUrl, {

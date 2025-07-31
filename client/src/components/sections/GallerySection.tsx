@@ -250,30 +250,25 @@ export default function GallerySection() {
   };
 
   const getVideoUrl = (item: GalleryItem, index: number) => {
-    // DIRECT CDN IMPLEMENTATION: Bypass video proxy entirely to avoid infrastructure blocking
+    // CACHED PROXY IMPLEMENTATION: Use video proxy for fast cached serving (50ms vs 1500ms)
     const filename = item.videoFilename || item.videoUrlEn || item.videoUrlFr;
     
-    // BUCKET FIX: Use the correct bucket based on video URL in database
-    // If video_url_en contains full URL, extract bucket from it, otherwise use memopyk-videos
-    let bucket = 'memopyk-videos'; // default for hero videos
-    if (item.videoUrlEn && item.videoUrlEn.includes('memopyk-gallery')) {
-      bucket = 'memopyk-gallery';
-    }
-    
-    // For full URLs, use them directly (they already have correct bucket)
+    // Extract filename from full URLs for proxy compatibility
+    let actualFilename = filename;
     if (filename && filename.startsWith('http')) {
-      console.log(`🎬 USING FULL URL for item ${index}: ${filename}`);
-      return filename;
+      // Extract just the filename from full URLs
+      actualFilename = filename.split('/').pop() || filename;
+      console.log(`🎬 EXTRACTED FILENAME for item ${index}: ${actualFilename} from ${filename}`);
     }
     
-    // Generate direct Supabase CDN URL with correct bucket
-    const directCdnUrl = `https://supabase.memopyk.org/storage/v1/object/public/${bucket}/${filename}`;
+    // Use video proxy for cached serving (much faster than direct CDN)
+    const proxyUrl = `/api/video-proxy?filename=${encodeURIComponent(actualFilename)}`;
     
-    console.log(`🎬 DIRECT CDN STREAMING for item ${index}: ${filename}`);
-    console.log(`🔧 CDN URL (${bucket} bucket): ${directCdnUrl}`);
-    console.log(`⚠️ Note: Direct CDN streaming (slower 1500ms) to avoid infrastructure blocking`);
+    console.log(`🎬 CACHED PROXY STREAMING for item ${index}: ${actualFilename}`);
+    console.log(`🔧 Proxy URL: ${proxyUrl}`);
+    console.log(`⚡ Note: Using cached proxy (50ms) instead of direct CDN (1500ms)`);
     
-    return directCdnUrl;
+    return proxyUrl;
   };
 
   // Get optimal viewing format info for marketing display - now using editable database fields
