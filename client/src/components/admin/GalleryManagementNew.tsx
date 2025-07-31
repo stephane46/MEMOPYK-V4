@@ -485,16 +485,35 @@ export default function GalleryManagementNew() {
   });
 
   const deleteItemMutation = useMutation({
-    mutationFn: (id: string | number) => apiRequest(`/api/gallery/${id}`, 'DELETE'),
+    mutationFn: (id: string | number) => {
+      console.log(`🗑️ FRONTEND: Attempting to delete gallery item with ID: ${id}`);
+      console.log(`🗑️ FRONTEND: ID type: ${typeof id}`);
+      return apiRequest(`/api/gallery/${id}`, 'DELETE');
+    },
     onSuccess: () => {
-      toast({ title: "✅ Succès", description: "Élément de galerie supprimé avec succès" });
+      console.log(`✅ FRONTEND: Delete successful`);
+      toast({ 
+        title: "✅ Succès", 
+        description: "Élément de galerie supprimé avec succès",
+        className: "bg-emerald-50 border-emerald-200 text-emerald-900"
+      });
       queryClient.invalidateQueries({ queryKey: ['/api/gallery'] });
       setSelectedVideoId(null);
       setIsCreateMode(false);
     },
     onError: (error: any) => {
-      toast({ title: "❌ Erreur", description: "Erreur lors de la suppression de l'élément", variant: "destructive" });
-      console.error('Delete error:', error);
+      console.error('❌ FRONTEND: Delete error details:', error);
+      console.error('❌ FRONTEND: Error message:', error?.message);
+      console.error('❌ FRONTEND: Error response:', error?.response);
+      
+      const errorMessage = error?.message || error?.response?.data?.error || "Erreur inconnue lors de la suppression";
+      
+      toast({ 
+        title: "❌ ERREUR DE SUPPRESSION", 
+        description: `Détails: ${errorMessage}`,
+        variant: "destructive",
+        className: "bg-red-50 border-red-200 text-red-900 font-medium"
+      });
     }
   });
 
@@ -508,9 +527,17 @@ export default function GalleryManagementNew() {
 
   const handleDelete = () => {
     if (selectedVideoId && !isCreateMode) {
+      console.log(`🗑️ FRONTEND: handleDelete called with selectedVideoId: ${selectedVideoId}`);
+      console.log(`🗑️ FRONTEND: selectedVideoId type: ${typeof selectedVideoId}`);
+      
       if (confirm("Êtes-vous sûr de vouloir supprimer cet élément ?")) {
+        console.log(`🗑️ FRONTEND: User confirmed deletion, calling mutation...`);
         deleteItemMutation.mutate(selectedVideoId);
+      } else {
+        console.log(`🗑️ FRONTEND: User cancelled deletion`);
       }
+    } else {
+      console.log(`🗑️ FRONTEND: Cannot delete - selectedVideoId: ${selectedVideoId}, isCreateMode: ${isCreateMode}`);
     }
   };
 
