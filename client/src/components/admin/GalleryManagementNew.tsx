@@ -111,13 +111,20 @@ export default function GalleryManagementNew() {
   
   const { toast } = useToast();
 
-  // Helper function to convert filename to full URL when displaying
+  // Helper function to convert filename to full URL when displaying with cache-busting
   const getFullUrl = (value: string) => {
     if (!value) return '';
     // If it's already a full URL, return as-is
     if (value.startsWith('http')) return value;
     // If it's just a filename, convert to full Supabase URL
     return `https://supabase.memopyk.org/storage/v1/object/public/memopyk-videos/${value}`;
+  };
+
+  // Helper function to get image with cache-busting
+  const getImageUrlWithCacheBust = (filename: string) => {
+    if (!filename) return '';
+    const cacheBuster = Date.now();
+    return `/api/image-proxy?filename=${encodeURIComponent(filename)}&t=${cacheBuster}`;
   };
   const queryClient = useQueryClient();
   const [selectedVideoId, setSelectedVideoId] = useState<string | number | null>(null);
@@ -126,9 +133,9 @@ export default function GalleryManagementNew() {
   const [showFormatBadgeManager, setShowFormatBadgeManager] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  // Fetch gallery items
+  // Fetch gallery items with cache-busting
   const { data: galleryItems = [], isLoading } = useQuery<GalleryItem[]>({
-    queryKey: ['/api/gallery'],
+    queryKey: ['/api/gallery', 'v1.0.88'],
     select: (data) => data.sort((a, b) => a.order_index - b.order_index)
   });
 
@@ -245,7 +252,7 @@ export default function GalleryManagementNew() {
     }
   }, [galleryItems, selectedVideoId, isCreateMode]);
 
-  // Get thumbnail URL
+  // Get thumbnail URL with cache-busting
   const getThumbnailUrl = (item: GalleryItem) => {
     const imageUrl = item.static_image_url || item.image_url_en || item.image_url_fr;
     if (!imageUrl) return null;
@@ -260,7 +267,7 @@ export default function GalleryManagementNew() {
       filename = imageUrl;
     }
     
-    return `/api/image-proxy?filename=${encodeURIComponent(filename)}`;
+    return getImageUrlWithCacheBust(filename);
   };
 
   // Create/Update mutations

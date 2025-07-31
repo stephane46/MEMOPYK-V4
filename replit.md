@@ -75,6 +75,28 @@ Preferred communication style: Simple, everyday language.
 
 ## Recent Changes (July 31, 2025)
 
+### CACHE-BUSTING SYSTEM IMPLEMENTATION COMPLETE - v1.0.88 (July 31, 2025) ✅ BROWSER CACHE ISSUE RESOLVED
+**Comprehensive Cache-Busting Solution - User Preview Update Issue Fixed:**
+✅ **Server Cache Headers Updated**: Image proxy now serves with no-cache headers to prevent browser caching
+✅ **Query Cache-Busting**: Gallery items query updated with version-specific cache key 'v1.0.88'
+✅ **Component Cache-Busting**: Gallery management component key updated to "gallery-v1.0.88"
+✅ **Image URL Cache-Busting**: New getImageUrlWithCacheBust() helper adds timestamp parameters to image URLs
+✅ **Preview Image Updates**: getThumbnailUrl() function now uses cache-busting for instant preview updates
+✅ **White Background Fix**: Image cropper generates solid white backgrounds instead of transparent
+
+**Technical Implementation:**
+- Added comprehensive no-cache headers: Cache-Control, Pragma, Expires, and dynamic ETag
+- Image URLs now include timestamp parameters: `/api/image-proxy?filename=image.jpg&t=1753946982123`
+- React Query cache invalidation with versioned query keys
+- Component refresh through cache-busting key updates
+- Canvas background fill with #FFFFFF before image drawing
+
+**User Experience Achievement:**
+- Preview images update immediately after upload without requiring page refresh
+- Browser caching no longer prevents updated images from displaying
+- Static image generation produces clean white backgrounds
+- Cache-busting system works across all admin interface image displays
+
 ### UPLOAD DIALOG FORMAT VALIDATION FIX COMPLETE - v1.0.87 (July 31, 2025) ✅ CRITICAL BUG RESOLVED
 **Upload Dialog Video Format Request Bug Fixed - Root Cause Resolved:**
 ✅ **Component Import Fix**: AdminPage.tsx now correctly imports and uses GalleryManagementNew instead of old GalleryManagement
