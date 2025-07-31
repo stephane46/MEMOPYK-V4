@@ -75,6 +75,31 @@ Preferred communication style: Simple, everyday language.
 
 ## Recent Changes (July 31, 2025)
 
+### BILINGUAL REFRAMING WORKFLOW COMPLETE - v1.0.92 (July 31, 2025) ✅ COMPREHENSIVE LANGUAGE SELECTION
+**Complete Bilingual Image Reframing System - USER REQUEST IMPLEMENTED:**
+✅ **Smart Language Detection**: Intelligent default language selection when opening cropper based on available image_url_en/fr values
+✅ **Visual Language Selection**: Professional interface with French/English buttons, flags, and image URL previews
+✅ **Conditional Language Picker**: Language selection only appears when separate French and English images exist and are different
+✅ **Current Image Display**: Clear visual indicator showing which language version is being cropped with flag and URL
+✅ **Enhanced Debugging**: Comprehensive console logging for bilingual reframing workflow v1.0.92
+✅ **Disabled State Logic**: Reframing button disabled when no images are available for cropping
+
+**Technical Implementation:**
+- **Smart Default Selection**: Opens English by default when both exist, French when only French exists
+- **Language Selection UI**: Yellow-highlighted panel with grid layout for French (blue) and English (green) selection buttons
+- **Current Language Display**: Blue panel showing selected language with flag icon and full image URL
+- **Enhanced Button Logic**: Reframing button includes intelligent language detection before opening cropper
+- **Console Debugging**: Added v1.0.92 logging for cropping language and source URL verification
+
+**User Experience Achievement:**
+- Click "Recadrer" → Intelligent language detection and cropper opens with appropriate default
+- When both French/English images exist and differ → Language selection interface appears for user choice
+- When only one language has image → Automatically selects that language without showing picker
+- Clear visual feedback showing which image is being cropped with flag icons and URL display
+- Professional bilingual workflow maintaining MEMOPYK design consistency
+
+## Recent Changes (July 31, 2025)
+
 ### CACHE-BUSTING SYSTEM IMPLEMENTATION COMPLETE - v1.0.88 (July 31, 2025) ✅ BROWSER CACHE ISSUE RESOLVED
 **Comprehensive Cache-Busting Solution - User Preview Update Issue Fixed:**
 ✅ **Server Cache Headers Updated**: Image proxy now serves with no-cache headers to prevent browser caching

@@ -143,6 +143,7 @@ export default function GalleryManagementNew() {
   const [selectedVideoId, setSelectedVideoId] = useState<string | number | null>(null);
   const [isCreateMode, setIsCreateMode] = useState(false);
   const [cropperOpen, setCropperOpen] = useState(false);
+  const [cropperLanguage, setCropperLanguage] = useState<'en' | 'fr'>('en');
   const [showFormatBadgeManager, setShowFormatBadgeManager] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -464,11 +465,24 @@ export default function GalleryManagementNew() {
                     </h4>
                     {!isCreateMode && selectedItem && (
                       <Button
-                        onClick={() => setCropperOpen(true)}
+                        onClick={() => {
+                          // Smart language detection for reframing
+                          if (selectedItem.image_url_en && selectedItem.image_url_fr && selectedItem.image_url_en !== selectedItem.image_url_fr) {
+                            // Both languages have different images - user will need to choose
+                            setCropperLanguage('en'); // Default to English
+                          } else if (selectedItem.image_url_fr && !selectedItem.image_url_en) {
+                            // Only French image exists
+                            setCropperLanguage('fr');
+                          } else {
+                            // Only English image exists (or they're the same)
+                            setCropperLanguage('en');
+                          }
+                          setCropperOpen(true);
+                        }}
                         variant="outline"
                         size="sm"
                         className="bg-[#D67C4A] hover:bg-[#D67C4A]/90 text-white border-[#D67C4A]"
-                        disabled={!selectedItem}
+                        disabled={!selectedItem || (!selectedItem.image_url_en && !selectedItem.image_url_fr)}
                       >
                         <Crop className="w-4 h-4 mr-1" />
                         Recadrer
@@ -1393,7 +1407,7 @@ export default function GalleryManagementNew() {
         </div>
       )}
 
-      {/* Image Cropper Dialog */}
+      {/* Image Cropper Dialog with Language Selection */}
       {selectedItem && cropperOpen && (
         <Dialog open={cropperOpen} onOpenChange={setCropperOpen}>
           <DialogContent className="max-w-4xl max-h-[90vh] overflow-auto">
@@ -1403,13 +1417,84 @@ export default function GalleryManagementNew() {
                 Créer une image statique 300×200 pour {selectedItem.title_en}
               </DialogDescription>
             </DialogHeader>
+            
+            {/* Language Selection - Only show if both images exist */}
+            {selectedItem.image_url_en && selectedItem.image_url_fr && selectedItem.image_url_en !== selectedItem.image_url_fr && (
+              <div className="mb-4 p-4 bg-yellow-50 dark:bg-yellow-900/20 rounded-lg border border-yellow-200 dark:border-yellow-800">
+                <h4 className="font-medium text-yellow-900 dark:text-yellow-100 mb-3 flex items-center gap-2">
+                  <Globe className="w-4 h-4" />
+                  Sélectionner l'image à recadrer
+                </h4>
+                <p className="text-sm text-yellow-800 dark:text-yellow-200 mb-3">
+                  Cette galerie a des images différentes pour le français et l'anglais. Choisissez laquelle recadrer :
+                </p>
+                <div className="grid grid-cols-2 gap-4">
+                  <button
+                    onClick={() => setCropperLanguage('fr')}
+                    className={`p-3 rounded-lg border-2 transition-all ${
+                      cropperLanguage === 'fr' 
+                        ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20' 
+                        : 'border-gray-200 dark:border-gray-600 hover:border-blue-300'
+                    }`}
+                  >
+                    <div className="flex items-center gap-2 mb-2">
+                      <span className="text-lg">🇫🇷</span>
+                      <span className="font-medium text-blue-900 dark:text-blue-100">
+                        Image Française
+                      </span>
+                    </div>
+                    <div className="text-xs text-blue-800 dark:text-blue-200 font-mono break-all">
+                      {selectedItem.image_url_fr}
+                    </div>
+                  </button>
+                  <button
+                    onClick={() => setCropperLanguage('en')}
+                    className={`p-3 rounded-lg border-2 transition-all ${
+                      cropperLanguage === 'en' 
+                        ? 'border-green-500 bg-green-50 dark:bg-green-900/20' 
+                        : 'border-gray-200 dark:border-gray-600 hover:border-green-300'
+                    }`}
+                  >
+                    <div className="flex items-center gap-2 mb-2">
+                      <span className="text-lg">🇺🇸</span>
+                      <span className="font-medium text-green-900 dark:text-green-100">
+                        English Image
+                      </span>
+                    </div>
+                    <div className="text-xs text-green-800 dark:text-green-200 font-mono break-all">
+                      {selectedItem.image_url_en}
+                    </div>
+                  </button>
+                </div>
+              </div>
+            )}
+            
+            {/* Current Language Display */}
+            <div className="mb-4 p-3 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-200 dark:border-blue-800">
+              <div className="flex items-center gap-2 text-blue-900 dark:text-blue-100">
+                <Globe className="w-4 h-4" />
+                <span className="font-medium">
+                  Image sélectionnée: {cropperLanguage === 'fr' ? '🇫🇷 Français' : '🇺🇸 English'}
+                </span>
+              </div>
+              <div className="text-xs text-blue-800 dark:text-blue-200 font-mono mt-1 break-all">
+                {cropperLanguage === 'fr' ? selectedItem.image_url_fr : selectedItem.image_url_en}
+              </div>
+            </div>
+            
             <ImageCropperEasyCrop
-              imageUrl={selectedItem.image_url_en}
+              imageUrl={cropperLanguage === 'fr' ? selectedItem.image_url_fr : selectedItem.image_url_en}
               onSave={(blob, cropSettings) => {
+                console.log(`🖼️ BILINGUAL REFRAMING v1.0.92: Cropping ${cropperLanguage} image`);
+                console.log(`🖼️ Source URL: ${cropperLanguage === 'fr' ? selectedItem.image_url_fr : selectedItem.image_url_en}`);
+                
                 // Handle save logic here
                 setCropperOpen(false);
                 queryClient.invalidateQueries({ queryKey: ['/api/gallery'] });
-                toast({ title: "✅ Succès", description: "Image statique générée avec succès" });
+                toast({ 
+                  title: "✅ Succès", 
+                  description: `Image statique générée avec succès (${cropperLanguage === 'fr' ? 'Français' : 'English'})` 
+                });
               }}
               onCancel={() => setCropperOpen(false)}
             />
