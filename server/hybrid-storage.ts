@@ -354,7 +354,66 @@ export class HybridStorage implements HybridStorageInterface {
 
   // Gallery operations
   async getGalleryItems(): Promise<any[]> {
+    try {
+      console.log('🔍 HYBRID STORAGE: Attempting to read from database...');
+      // Try to get data from database first (most up-to-date)
+      const { galleryItems } = await import('../shared/schema');
+      console.log('🔍 HYBRID STORAGE: Schema imported successfully');
+      const dbItems = await db.select().from(galleryItems).orderBy(galleryItems.orderIndex);
+      console.log(`🔍 HYBRID STORAGE: Database query completed, found ${dbItems.length} items`);
+      
+      if (dbItems.length > 0) {
+        console.log(`✅ HYBRID STORAGE: Retrieved ${dbItems.length} items from database`);
+        console.log('🔍 First item is_active value:', dbItems[0]?.isActive);
+        return dbItems.map(item => ({
+          // Convert database fields to expected format
+          id: item.id,
+          title_en: item.titleEn,
+          title_fr: item.titleFr,
+          price_en: item.priceEn,
+          price_fr: item.priceFr,
+          source_en: item.sourceEn,
+          source_fr: item.sourceFr,
+          duration_en: item.durationEn,
+          duration_fr: item.durationFr,
+          situation_en: item.situationEn,
+          situation_fr: item.situationFr,
+          story_en: item.storyEn,
+          story_fr: item.storyFr,
+          sorry_message_en: item.sorryMessageEn,
+          sorry_message_fr: item.sorryMessageFr,
+          format_platform_en: item.formatPlatformEn,
+          format_platform_fr: item.formatPlatformFr,
+          format_type_en: item.formatTypeEn,
+          format_type_fr: item.formatTypeFr,
+          video_url_en: item.videoUrlEn,
+          video_url_fr: item.videoUrlFr,
+          video_filename: item.videoFilename,
+          use_same_video: item.useSameVideo,
+          video_width: item.videoWidth,
+          video_height: item.videoHeight,
+          video_orientation: item.videoOrientation,
+          image_url_en: item.imageUrlEn,
+          image_url_fr: item.imageUrlFr,
+          static_image_url: item.staticImageUrl,
+          static_image_url_en: item.staticImageUrlEn,
+          static_image_url_fr: item.staticImageUrlFr,
+          alt_text_en: item.altTextEn,
+          alt_text_fr: item.altTextFr,
+          order_index: item.orderIndex,
+          is_active: item.isActive, // CRITICAL: This will have the correct database value
+          created_at: item.createdAt,
+          updated_at: item.updatedAt,
+          crop_settings: item.cropSettings
+        }));
+      }
+    } catch (error) {
+      console.log(`⚠️ HYBRID STORAGE: Database read failed, falling back to JSON:`, error.message);
+    }
+
+    // Fallback to JSON file if database is unavailable
     const data = this.loadJsonFile('gallery-items.json');
+    console.log(`📁 HYBRID STORAGE: Retrieved ${data.length} items from JSON file`);
     return data; // Return all items for admin management
   }
 
@@ -378,20 +437,45 @@ export class HybridStorage implements HybridStorageInterface {
   }
 
   async updateGalleryItem(itemId: string | number, updateData: any): Promise<any> {
+    console.log(`🔍 HYBRID STORAGE DEBUG - updateGalleryItem - is_active: ${updateData.is_active}`);
+    
+    // Update database first if available
+    try {
+      const { galleryItems } = await import('../shared/schema');
+      const { eq } = await import('drizzle-orm');
+      
+      // Convert to database format
+      const dbUpdateData: any = {};
+      if (updateData.title_en !== undefined) dbUpdateData.titleEn = updateData.title_en;
+      if (updateData.title_fr !== undefined) dbUpdateData.titleFr = updateData.title_fr;
+      if (updateData.is_active !== undefined) dbUpdateData.isActive = updateData.is_active;
+      if (updateData.video_filename !== undefined) dbUpdateData.videoFilename = updateData.video_filename;
+      if (updateData.video_url_en !== undefined) dbUpdateData.videoUrlEn = updateData.video_url_en;
+      if (updateData.video_url_fr !== undefined) dbUpdateData.videoUrlFr = updateData.video_url_fr;
+      if (updateData.use_same_video !== undefined) dbUpdateData.useSameVideo = updateData.use_same_video;
+      dbUpdateData.updatedAt = new Date();
+      
+      console.log(`🔍 DATABASE UPDATE - Converting is_active ${updateData.is_active} to isActive ${dbUpdateData.isActive}`);
+      
+      const dbResult = await db.update(galleryItems)
+        .set(dbUpdateData)
+        .where(eq(galleryItems.id, itemId.toString()))
+        .returning();
+        
+      console.log(`✅ DATABASE UPDATE SUCCESS - Updated ${dbResult.length} rows`);
+      if (dbResult.length > 0) {
+        console.log(`✅ Database confirms is_active = ${dbResult[0].isActive}`);
+      }
+    } catch (error) {
+      console.log(`⚠️ DATABASE UPDATE FAILED, updating JSON only:`, error.message);
+    }
+
+    // Update JSON file as backup/fallback
     const items = this.loadJsonFile('gallery-items.json');
     
-    console.log(`🔍 HYBRID STORAGE DEBUG - updateGalleryItem:`);
-    console.log(`   - Looking for item ID: ${itemId} (type: ${typeof itemId})`);
-    console.log(`   - Items in database: ${items.length}`);
-    console.log(`   - All item IDs:`, items.map((item: any) => ({ id: item.id, type: typeof item.id })));
-    
     const itemIndex = items.findIndex((item: any) => {
-      const match = item.id.toString() === itemId.toString();
-      console.log(`   - Comparing ${item.id} (${typeof item.id}) === ${itemId} (${typeof itemId}) → ${match}`);
-      return match;
+      return item.id.toString() === itemId.toString();
     });
-    
-    console.log(`   - Item index found: ${itemIndex}`);
     
     if (itemIndex === -1) {
       throw new Error(`Gallery item not found: ${itemId}`);
@@ -404,12 +488,9 @@ export class HybridStorage implements HybridStorageInterface {
     };
     items[itemIndex] = updatedItem;
     
-    console.log(`   - Updated item:`, updatedItem);
-    console.log(`   - Saving to JSON file...`);
+    console.log(`🔍 JSON UPDATE - is_active: ${updatedItem.is_active}`);
     
     this.saveJsonFile('gallery-items.json', items);
-    
-    console.log(`   - JSON file saved successfully`);
     
     return updatedItem;
   }
