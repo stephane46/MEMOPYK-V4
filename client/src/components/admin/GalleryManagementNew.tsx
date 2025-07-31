@@ -762,17 +762,19 @@ export default function GalleryManagementNew() {
                         )}
                       </div>
                       <div className="aspect-video w-full bg-black rounded-lg overflow-hidden border border-blue-200 dark:border-blue-600 relative">
-                        {selectedItem?.image_url_fr ? (
+                        {(selectedItem?.image_url_fr || formData.image_url_fr) ? (
                           <>
                             <img 
-                              src={getThumbnailUrl(selectedItem, 'fr') || (selectedItem.image_url_fr.startsWith('http') 
-                                ? `${selectedItem.image_url_fr}?cacheBust=${Date.now()}&nocache=1`
-                                : `/api/image-proxy?filename=${selectedItem.image_url_fr.split('/').pop()?.split('?')[0]}`
-                              )} 
+                              src={
+                                // For new uploads with full URLs, use direct CDN streaming
+                                (selectedItem?.image_url_fr || formData.image_url_fr)?.startsWith('http')
+                                  ? `${selectedItem?.image_url_fr || formData.image_url_fr}?cacheBust=${Date.now()}&nocache=1`
+                                  : getThumbnailUrl(selectedItem, 'fr') || `/api/image-proxy?filename=${(selectedItem?.image_url_fr || formData.image_url_fr)?.split('/').pop()?.split('?')[0]}`
+                              } 
                               alt="Aperçu Français"
                               className="w-full h-full object-contain"
                             />
-                            {selectedItem.static_image_url_fr && (
+                            {selectedItem?.static_image_url_fr && (
                               <div className="absolute top-2 right-2 bg-emerald-500 text-white px-2 py-1 rounded-full text-xs font-bold shadow-lg">
                                 ✂️ Recadré FR
                               </div>
@@ -812,7 +814,12 @@ export default function GalleryManagementNew() {
                             style={{ backgroundColor: 'black' }}
                           >
                             <source 
-                              src={`/api/video-proxy?filename=${formData.video_url_fr || formData.video_filename}`}
+                              src={
+                                // For new uploads with full URLs, use direct CDN streaming
+                                (formData.video_url_fr || formData.video_filename)?.startsWith('http') 
+                                  ? (formData.video_url_fr || formData.video_filename)
+                                  : `/api/video-proxy?filename=${formData.video_url_fr || formData.video_filename}`
+                              }
                               type="video/mp4"
                             />
                             Votre navigateur ne supporte pas la lecture vidéo.
@@ -901,17 +908,19 @@ export default function GalleryManagementNew() {
                         )}
                       </div>
                       <div className="aspect-video w-full bg-black rounded-lg overflow-hidden border border-green-200 dark:border-green-600 relative">
-                        {selectedItem?.image_url_en ? (
+                        {(selectedItem?.image_url_en || formData.image_url_en) ? (
                           <>
                             <img 
-                              src={getThumbnailUrl(selectedItem, 'en') || (selectedItem.image_url_en.startsWith('http') 
-                                ? `${selectedItem.image_url_en}?cacheBust=${Date.now()}&nocache=1`
-                                : `/api/image-proxy?filename=${selectedItem.image_url_en.split('/').pop()?.split('?')[0]}`
-                              )} 
+                              src={
+                                // For new uploads with full URLs, use direct CDN streaming
+                                (selectedItem?.image_url_en || formData.image_url_en)?.startsWith('http')
+                                  ? `${selectedItem?.image_url_en || formData.image_url_en}?cacheBust=${Date.now()}&nocache=1`
+                                  : getThumbnailUrl(selectedItem, 'en') || `/api/image-proxy?filename=${(selectedItem?.image_url_en || formData.image_url_en)?.split('/').pop()?.split('?')[0]}`
+                              } 
                               alt="Aperçu English"
                               className="w-full h-full object-contain"
                             />
-                            {selectedItem.static_image_url_en && (
+                            {selectedItem?.static_image_url_en && (
                               <div className="absolute top-2 right-2 bg-emerald-500 text-white px-2 py-1 rounded-full text-xs font-bold shadow-lg">
                                 ✂️ Recadré EN
                               </div>
@@ -951,7 +960,12 @@ export default function GalleryManagementNew() {
                             style={{ backgroundColor: 'black' }}
                           >
                             <source 
-                              src={`/api/video-proxy?filename=${formData.video_url_en || formData.video_filename}`}
+                              src={
+                                // For new uploads with full URLs, use direct CDN streaming
+                                (formData.video_url_en || formData.video_filename)?.startsWith('http') 
+                                  ? (formData.video_url_en || formData.video_filename)
+                                  : `/api/video-proxy?filename=${formData.video_url_en || formData.video_filename}`
+                              }
                               type="video/mp4"
                             />
                             Votre navigateur ne supporte pas la lecture vidéo.
