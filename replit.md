@@ -75,7 +75,14 @@ Preferred communication style: Simple, everyday language.
 
 ## Recent Changes (July 31, 2025)
 
-### ADMIN INTERFACE CLEANUP & OPTIMIZATION COMPLETE - v1.0.85 (July 31, 2025) ✅ UX STREAMLINED
+### VIDEO URL DISPLAY FIX & ADMIN INTERFACE CLEANUP COMPLETE - v1.0.86 (July 31, 2025) ✅ FIELD ACCURACY
+**Video URL Complete Display Fix - User Request Implemented:**
+✅ **Full URL Display**: Video fields now display complete URLs as indicated by "URL Vidéo Complète" field labels instead of just filenames
+✅ **Helper Function Added**: `getFullUrl()` function converts filenames to full Supabase URLs when displaying in admin interface
+✅ **Consistent Field Labels**: All URL fields now show "URL Complète" or "Complete URL" matching their actual display behavior
+✅ **Bilingual URL Display**: Both French and English sections show complete URLs for video and image fields
+✅ **Data Integrity Maintained**: Backend storage remains unchanged - only display layer enhanced to show full URLs
+
 **Gallery Management Interface Simplification - User Request Implemented:**
 ✅ **Redundant Section Removed**: Eliminated basic "Upload Vidéo/Upload Image" section that duplicated functionality available in advanced bilingual system
 ✅ **Smart Upload Toggle**: Enhanced "Utiliser la même vidéo pour FR et EN" switch to control interface display completely

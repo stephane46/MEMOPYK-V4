@@ -110,6 +110,15 @@ export default function GalleryManagementNew() {
   console.log('🎨 Toggle: "Utiliser la même vidéo pour FR et EN" controls layout!');
   
   const { toast } = useToast();
+
+  // Helper function to convert filename to full URL when displaying
+  const getFullUrl = (value: string) => {
+    if (!value) return '';
+    // If it's already a full URL, return as-is
+    if (value.startsWith('http')) return value;
+    // If it's just a filename, convert to full Supabase URL
+    return `https://supabase.memopyk.org/storage/v1/object/public/memopyk-videos/${value}`;
+  };
   const queryClient = useQueryClient();
   const [selectedVideoId, setSelectedVideoId] = useState<string | number | null>(null);
   const [isCreateMode, setIsCreateMode] = useState(false);
@@ -937,15 +946,15 @@ export default function GalleryManagementNew() {
                         </div>
                         <div className="grid grid-cols-2 gap-4 text-xs">
                           <div>
-                            <Label className="text-purple-800 dark:text-purple-200">URL Vidéo Actuelle:</Label>
+                            <Label className="text-purple-800 dark:text-purple-200">URL Vidéo Complète:</Label>
                             <div className="bg-white dark:bg-gray-800 p-2 rounded border text-purple-900 dark:text-purple-100 font-mono break-all">
-                              {formData.video_filename || formData.video_url_en || "Aucune vidéo"}
+                              {getFullUrl(formData.video_filename || formData.video_url_en) || "Aucune vidéo"}
                             </div>
                           </div>
                           <div>
-                            <Label className="text-purple-800 dark:text-purple-200">URL Image Actuelle:</Label>
+                            <Label className="text-purple-800 dark:text-purple-200">URL Image Complète:</Label>
                             <div className="bg-white dark:bg-gray-800 p-2 rounded border text-purple-900 dark:text-purple-100 font-mono break-all">
-                              {formData.image_url_en || "Aucune image"}
+                              {getFullUrl(formData.image_url_en) || "Aucune image"}
                             </div>
                           </div>
                         </div>
@@ -962,15 +971,15 @@ export default function GalleryManagementNew() {
                         </div>
                         <div className="space-y-2 text-xs">
                           <div>
-                            <Label className="text-blue-800 dark:text-blue-200">URL Vidéo FR:</Label>
+                            <Label className="text-blue-800 dark:text-blue-200">URL Vidéo Complète FR:</Label>
                             <div className="bg-white dark:bg-gray-800 p-2 rounded border text-blue-900 dark:text-blue-100 font-mono break-all">
-                              {formData.video_url_fr || "Aucune vidéo FR"}
+                              {getFullUrl(formData.video_url_fr) || "Aucune vidéo FR"}
                             </div>
                           </div>
                           <div>
-                            <Label className="text-blue-800 dark:text-blue-200">URL Image FR:</Label>
+                            <Label className="text-blue-800 dark:text-blue-200">URL Image Complète FR:</Label>
                             <div className="bg-white dark:bg-gray-800 p-2 rounded border text-blue-900 dark:text-blue-100 font-mono break-all">
-                              {formData.image_url_fr || "Aucune image FR"}
+                              {getFullUrl(formData.image_url_fr) || "Aucune image FR"}
                             </div>
                           </div>
                         </div>
@@ -984,15 +993,15 @@ export default function GalleryManagementNew() {
                         </div>
                         <div className="space-y-2 text-xs">
                           <div>
-                            <Label className="text-green-800 dark:text-green-200">URL Video EN:</Label>
+                            <Label className="text-green-800 dark:text-green-200">Complete URL Video EN:</Label>
                             <div className="bg-white dark:bg-gray-800 p-2 rounded border text-green-900 dark:text-green-100 font-mono break-all">
-                              {formData.video_url_en || "No English video"}
+                              {getFullUrl(formData.video_url_en) || "No English video"}
                             </div>
                           </div>
                           <div>
-                            <Label className="text-green-800 dark:text-green-200">URL Image EN:</Label>
+                            <Label className="text-green-800 dark:text-green-200">Complete URL Image EN:</Label>
                             <div className="bg-white dark:bg-gray-800 p-2 rounded border text-green-900 dark:text-green-100 font-mono break-all">
-                              {formData.image_url_en || "No English image"}
+                              {getFullUrl(formData.image_url_en) || "No English image"}
                             </div>
                           </div>
                         </div>
