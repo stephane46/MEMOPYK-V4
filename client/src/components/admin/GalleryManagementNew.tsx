@@ -816,15 +816,7 @@ export default function GalleryManagementNew() {
                           </span>
                         </div>
                         <div className="flex gap-1">
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            className="bg-blue-600 hover:bg-blue-700 text-white border-blue-600 px-2 py-1 text-xs"
-                            disabled
-                          >
-                            <Crop className="w-3 h-3 mr-1" />
-                            Recadrer FR
-                          </Button>
+                          <div className="h-6 w-20"></div>
                         </div>
                       </div>
                       {formData.video_url_fr || formData.video_filename ? (
@@ -861,15 +853,7 @@ export default function GalleryManagementNew() {
                           </span>
                         </div>
                         <div className="flex gap-1">
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            className="bg-green-600 hover:bg-green-700 text-white border-green-600 px-2 py-1 text-xs"
-                            disabled
-                          >
-                            <Crop className="w-3 h-3 mr-1" />
-                            Recadrer EN
-                          </Button>
+                          <div className="h-6 w-20"></div>
                         </div>
                       </div>
                       {formData.video_url_en || formData.video_filename ? (
