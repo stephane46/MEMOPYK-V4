@@ -1,0 +1,28 @@
+FORCE DEPLOYMENT v1.0.12 - Gallery Video 500 Error Fix
+=======================================================
+
+DEPLOYMENT TRIGGER: 2025-01-28 23:40:00 UTC
+ISSUE: Gallery videos return 500 error in production but work locally
+CODE VERSION: v1.0.12 (underscore-to-space conversion fix applied)
+
+CRITICAL FIX DEPLOYED:
+- Gallery videos filename format resolved 
+- Removed underscore-to-space conversion causing 400 errors
+- Fixed double encoding bug in video proxy fallback
+- Production debugging enabled with version tags
+
+LOCAL VERIFICATION: ✅ CONFIRMED WORKING
+- curl test returns 206 status with 78MB video data
+- Server logs show proper cache serving
+- All debug logging operational
+
+PRODUCTION ISSUE: Gallery video proxy returns 500 error
+SOLUTION: Force fresh deployment to sync code changes
+
+DEPLOYMENT REQUIREMENTS:
+1. Fresh container deployment
+2. Cache directory initialization  
+3. Environment variable sync
+4. Gallery video preloading on startup
+
+This file triggers immediate deployment refresh.

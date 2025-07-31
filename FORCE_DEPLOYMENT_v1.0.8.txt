@@ -1,0 +1,16 @@
+FORCE DEPLOYMENT v1.0.8 - Gallery Video Complete Fix
+
+CRITICAL: Production deployment cache issue detected
+- Frontend shows v1.0.7 but v1.0.8 was deployed
+- Backend fixes for URL encoding not reaching production
+- 500 errors still occurring due to old code running
+
+SOLUTION: Force clear deployment
+1. Server version updated to v1.0.8 
+2. New build created with proper version
+3. Ready for redeployment with cache clearing
+
+Expected Result After Deployment:
+- Console should show "Gallery Video Fix v1.0.8"
+- Gallery videos should work on first click
+- Auto-download with proper URL encoding active
