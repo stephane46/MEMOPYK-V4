@@ -35,7 +35,7 @@ import {
   Globe,
   Info
 } from "lucide-react";
-import ImageCropperEasyCrop from './ImageCropperEasyCrop';
+import SimpleImageCropper from './SimpleImageCropper';
 // Force cache bust v1.0.99 - ensure optimized component loads
 import DirectUpload from './DirectUpload';
 import FormatBadgeManager from './FormatBadgeManager';
@@ -1531,11 +1531,10 @@ export default function GalleryManagementNew() {
               </div>
             </div>
             
-            <ImageCropperEasyCrop
-              key="optimized-v1.0.99-clean-component"
+            <SimpleImageCropper
               imageUrl={cropperLanguage === 'fr' ? selectedItem.image_url_fr : selectedItem.image_url_en}
-              onSave={(blob, cropSettings) => {
-                console.log(`🖼️ BILINGUAL REFRAMING v1.0.92: Cropping ${cropperLanguage} image`);
+              onSave={(blob: Blob, cropSettings: any) => {
+                console.log(`🖼️ SIMPLE CROPPER: Cropping ${cropperLanguage} image`);
                 console.log(`🖼️ Source URL: ${cropperLanguage === 'fr' ? selectedItem.image_url_fr : selectedItem.image_url_en}`);
                 
                 // Handle save logic here
