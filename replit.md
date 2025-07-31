@@ -1,7 +1,7 @@
 # MEMOPYK - Replit Project Documentation
 
 ## Overview
-MEMOPYK is a full-stack memory film platform currently undergoing a complete rebuild. The project is in Phase 1, focusing on a minimal React + TypeScript + Vite setup integrated with MEMOPYK visual assets. The overarching goal is to create a robust, scalable platform by systematically documenting and incrementally implementing features, addressing past technical challenges. The business vision is to provide a reliable and high-performance platform for memory film creation, with significant market potential for personalized video content.
+MEMOPYK is a full-stack memory film platform with a comprehensive bilingual (French/English) content management system. The platform features professional video lightbox system, gallery management with reliable video streaming, language-specific upload functionality, image reframing tools, and real-time preview capabilities. Recent success: Complete resolution of language-specific image/video display issues with working French/English content separation and database synchronization.
 
 ## User Preferences
 Preferred communication style: Simple, everyday language.
@@ -25,6 +25,7 @@ Preferred communication style: Simple, everyday language.
 - Simplified Maintenance: Reduced complexity by keeping cache system only where it works (hero videos)
 - Complete Functionality: Gallery lightbox, admin management, and all features working reliably
 - Performance Trade-off: Accepted slower gallery video loading for guaranteed production functionality
+- **Language-Specific Upload System FULLY OPERATIONAL (July 31, 2025)**: French/English image uploads work correctly, database sync fixed, public site displays correct language-specific images and videos
 
 **Clean Minimal Video Controls - USER REQUIREMENT FULLY ACHIEVED:**
 - Three-Dots Menu Removed: Eliminated vertical menu with download, playback speed, and picture-in-picture options
