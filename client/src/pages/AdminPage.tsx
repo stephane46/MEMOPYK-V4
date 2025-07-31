@@ -1589,7 +1589,7 @@ export default function AdminPage() {
                           <p className="text-xs font-mono text-green-700 dark:text-green-300 break-all mb-2 min-h-[1.5rem]">
                             {editVideoData.url_en}
                           </p>
-                          <div className="flex items-center gap-2 h-10">
+                          <div className="flex items-start gap-2">
                             <video 
                               src={`/api/video-proxy?filename=${encodeURIComponent(editVideoData.url_en)}`}
                               className="w-16 h-10 object-cover rounded border flex-shrink-0"
@@ -1649,7 +1649,7 @@ export default function AdminPage() {
                           <p className="text-xs font-mono text-green-700 dark:text-green-300 break-all mb-2 min-h-[1.5rem]">
                             {editVideoData.url_fr}
                           </p>
-                          <div className="flex items-center gap-2 h-10">
+                          <div className="flex items-start gap-2">
                             <video 
                               src={`/api/video-proxy?filename=${encodeURIComponent(editVideoData.url_fr)}`}
                               className="w-16 h-10 object-cover rounded border flex-shrink-0"
