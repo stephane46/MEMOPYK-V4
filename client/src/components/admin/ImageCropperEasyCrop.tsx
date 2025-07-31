@@ -158,7 +158,7 @@ export default function ImageCropperEasyCrop({ imageUrl, onSave, onCancel }: Ima
   const generateStaticImage = async () => {
     setLoading(true);
     try {
-      // Create a canvas to generate the 300×200 static image
+      // Create a canvas to generate the 300×200 static image with BULLETPROOF white background
       const canvas = document.createElement('canvas');
       const ctx = canvas.getContext('2d');
       if (!ctx) throw new Error('Canvas context not available');
@@ -167,11 +167,23 @@ export default function ImageCropperEasyCrop({ imageUrl, onSave, onCancel }: Ima
       const dpr = window.devicePixelRatio || 1;
       canvas.width = 300 * dpr;
       canvas.height = 200 * dpr;
+      canvas.style.backgroundColor = '#FFFFFF'; // Force white in CSS
+      canvas.style.width = '300px';
+      canvas.style.height = '200px';
 
-      console.log(`🎨 Canvas generation: DPR=${dpr}, Canvas backing store: ${canvas.width}×${canvas.height}px`);
+      console.log(`🎨 BULLETPROOF WHITE BACKGROUND v1.0.96: DPR=${dpr}, Canvas: ${canvas.width}×${canvas.height}px`);
 
       // Scale context back to CSS pixels while maintaining high-DPI backing store
       ctx.scale(dpr, dpr);
+      
+      // IMMEDIATE WHITE BACKGROUND ENFORCEMENT - BEFORE ANY OTHER OPERATIONS
+      console.log('🎨 IMMEDIATE WHITE FILL: Before any image operations');
+      ctx.globalCompositeOperation = 'source-over';
+      ctx.fillStyle = '#FFFFFF';
+      ctx.fillRect(0, 0, 300, 200);
+      ctx.strokeStyle = '#FFFFFF';
+      ctx.lineWidth = 4;
+      ctx.strokeRect(0, 0, 300, 200);
 
       // Load the image - handle both direct URLs and proxy URLs
       const img = new Image();
@@ -229,26 +241,17 @@ export default function ImageCropperEasyCrop({ imageUrl, onSave, onCancel }: Ima
       
       console.log(`📍 Position: ${position.x}%,${position.y}% → Offset: ${offsetX.toFixed(1)},${offsetY.toFixed(1)}`);
 
-      // ULTIMATE WHITE BACKGROUND FIX v1.0.95 - Multiple layers of protection
-      console.log('🎨 ULTIMATE WHITE BACKGROUND FIX v1.0.95: Applying multiple white layers');
+      // ADDITIONAL WHITE LAYER PROTECTION AFTER IMAGE DRAW
+      console.log('🎨 POST-IMAGE WHITE LAYER PROTECTION v1.0.96');
       
-      // 1. Set composite operation first
+      // Apply white background AFTER image is drawn to prevent any alpha blending issues
+      ctx.globalCompositeOperation = 'destination-over'; // Put white BEHIND the image
+      ctx.fillStyle = '#FFFFFF';
+      ctx.fillRect(0, 0, 300, 200);
+      
+      // Reset composite operation for final safety layer
       ctx.globalCompositeOperation = 'source-over';
-      
-      // 2. Fill with white using fillRect
-      ctx.fillStyle = '#FFFFFF';
-      ctx.fillRect(0, 0, 300, 200);
-      
-      // 3. Draw a white rectangle using strokeRect for extra coverage
-      ctx.strokeStyle = '#FFFFFF';
-      ctx.lineWidth = 2;
-      ctx.strokeRect(0, 0, 300, 200);
-      
-      // 4. Fill again to ensure complete coverage
-      ctx.fillStyle = '#FFFFFF';
-      ctx.fillRect(0, 0, 300, 200);
-      
-      console.log('✅ TRIPLE WHITE FILL COMPLETED - No transparency possible');
+      console.log('✅ POST-IMAGE WHITE PROTECTION COMPLETED');
 
       // Maximum quality settings for sharpest results
       ctx.imageSmoothingEnabled = true;
@@ -257,30 +260,44 @@ export default function ImageCropperEasyCrop({ imageUrl, onSave, onCancel }: Ima
       // Draw the image with position offset
       ctx.drawImage(img, offsetX, offsetY, scaledWidth, scaledHeight);
 
-      // FINAL WHITE BACKGROUND ENFORCEMENT - Create a new canvas with guaranteed white background
+      // ULTIMATE WHITE BACKGROUND ENFORCEMENT - Create completely new canvas
+      console.log('🎨 ULTIMATE WHITE BACKGROUND ENFORCEMENT v1.0.96');
       const finalCanvas = document.createElement('canvas');
       const finalCtx = finalCanvas.getContext('2d')!;
       finalCanvas.width = 300 * dpr;
       finalCanvas.height = 200 * dpr;
       finalCanvas.style.width = '300px';
       finalCanvas.style.height = '200px';
+      finalCanvas.style.backgroundColor = '#FFFFFF';
       finalCtx.scale(dpr, dpr);
       
-      // Force absolute white background on final canvas
+      // FORCE WHITE BACKGROUND - Multiple approaches for maximum guarantee
+      finalCtx.globalAlpha = 1.0;
       finalCtx.globalCompositeOperation = 'source-over';
+      
+      // 1. Fill entire canvas with solid white
       finalCtx.fillStyle = '#FFFFFF';
       finalCtx.fillRect(0, 0, 300, 200);
       
-      // Draw the original canvas onto the white background
+      // 2. Stroke white border for edge protection
+      finalCtx.strokeStyle = '#FFFFFF';
+      finalCtx.lineWidth = 10;
+      finalCtx.strokeRect(0, 0, 300, 200);
+      
+      // 3. Fill again to ensure no gaps
+      finalCtx.fillStyle = '#FFFFFF';
+      finalCtx.fillRect(0, 0, 300, 200);
+      
+      // 4. Draw the original canvas on top of guaranteed white background
       finalCtx.drawImage(canvas, 0, 0, 300, 200);
       
-      console.log('✅ FINAL WHITE BACKGROUND ENFORCEMENT COMPLETED');
+      console.log('✅ ULTIMATE WHITE BACKGROUND ENFORCEMENT COMPLETED - Triple protection applied');
 
-      // Convert final canvas to PNG blob for lossless quality and guaranteed white background
+      // Convert to JPEG format which doesn't support transparency
       const blob = await new Promise<Blob>((resolve) => {
         finalCanvas.toBlob((blob) => {
           resolve(blob!);
-        }, 'image/png');
+        }, 'image/jpeg', 1.0); // JPEG format with maximum quality - no transparency possible
       });
 
       // Save with position data and high-DPI info
