@@ -808,11 +808,17 @@ export default function GalleryManagementNew() {
                   <div className="space-y-8">
                     {/* French Video */}
                     <div className="space-y-2">
-                      <div className="flex items-center gap-2">
-                        <span className="text-xs font-medium text-blue-700 dark:text-blue-300">🇫🇷 Français</span>
-                        <span className="text-xs text-gray-500 font-mono">
-                          {formData.video_url_fr || formData.video_filename || 'Aucun'}
-                        </span>
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-2">
+                          <span className="text-xs font-medium text-blue-700 dark:text-blue-300">🇫🇷 Français</span>
+                          <span className="text-xs text-gray-500 font-mono">
+                            {formData.video_url_fr || formData.video_filename || 'Aucun'}
+                          </span>
+                        </div>
+                        <div className="flex gap-1">
+                          {/* Placeholder buttons to match image section height */}
+                          <div className="h-6 w-20"></div>
+                        </div>
                       </div>
                       {formData.video_url_fr || formData.video_filename ? (
                         <div className="relative bg-black rounded-lg overflow-hidden aspect-video w-full border border-blue-200 dark:border-blue-600">
@@ -839,12 +845,18 @@ export default function GalleryManagementNew() {
                     </div>
 
                     {/* English Video */}
-                    <div className="space-y-2" style={{ marginTop: '100px' }}>
-                      <div className="flex items-center gap-2">
-                        <span className="text-xs font-medium text-green-700 dark:text-green-300">🇺🇸 English</span>
-                        <span className="text-xs text-gray-500 font-mono">
-                          {formData.video_url_en || formData.video_filename || 'None'}
-                        </span>
+                    <div className="space-y-2">
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-2">
+                          <span className="text-xs font-medium text-green-700 dark:text-green-300">🇺🇸 English</span>
+                          <span className="text-xs text-gray-500 font-mono">
+                            {formData.video_url_en || formData.video_filename || 'None'}
+                          </span>
+                        </div>
+                        <div className="flex gap-1">
+                          {/* Placeholder buttons to match image section height */}
+                          <div className="h-6 w-20"></div>
+                        </div>
                       </div>
                       {formData.video_url_en || formData.video_filename ? (
                         <div className="relative bg-black rounded-lg overflow-hidden aspect-video w-full border border-green-200 dark:border-green-600">
