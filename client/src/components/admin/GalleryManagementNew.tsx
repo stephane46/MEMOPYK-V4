@@ -468,15 +468,23 @@ export default function GalleryManagementNew() {
       toast({ title: "✅ Succès", description: "Élément de galerie mis à jour avec succès" });
       queryClient.invalidateQueries({ queryKey: ['/api/gallery'] });
       queryClient.removeQueries({ queryKey: ['/api/gallery'] });
-      setPendingPreviews({}); // Clear pending previews after successful save
-      // Force component re-render with cache refresh key update
+      
+      // Don't clear pending previews or reset state immediately to prevent URL loss
+      console.log('✅ UPDATE SUCCESS - Preserving uploaded URLs');
+      
+      // Force component re-render with cache refresh key update after delay
       setTimeout(() => {
         queryClient.invalidateQueries({ queryKey: ['/api/gallery'] });
-        setFormData({ ...formData }); // Force state update
         setForceRefreshKey(prev => prev + 1); // Force image refresh
         console.log(`🖼️ FORCE REFRESH KEY UPDATED: ${forceRefreshKey + 1}`);
+        
+        // Clear state only after successful refresh
+        setTimeout(() => {
+          setPendingPreviews({}); // Clear pending previews after successful save
+          persistentUploadState.reset();
+          console.log('🧹 State cleaned after successful update');
+        }, 1000);
       }, 500);
-      persistentUploadState.reset();
     },
     onError: (error: any) => {
       toast({ title: "❌ Erreur", description: "Erreur lors de la mise à jour de l'élément", variant: "destructive" });
@@ -499,10 +507,25 @@ export default function GalleryManagementNew() {
   });
 
   const handleSave = () => {
+    // Merge uploaded URLs with form data before saving
+    const dataToSave = {
+      ...formData,
+      // Ensure uploaded URLs are included
+      image_url_en: pendingPreviews.image_url_en || persistentUploadState.image_url_en || formData.image_url_en,
+      image_url_fr: pendingPreviews.image_url_fr || persistentUploadState.image_url_fr || formData.image_url_fr,
+      video_url_en: pendingPreviews.video_url_en || persistentUploadState.video_url_en || formData.video_url_en,
+      video_url_fr: pendingPreviews.video_url_fr || persistentUploadState.video_url_fr || formData.video_url_fr,
+      video_filename: pendingPreviews.video_filename || persistentUploadState.video_filename || formData.video_filename,
+    };
+    
+    console.log('🔄 SAVE DEBUG - Data being saved:', dataToSave);
+    console.log('🔄 SAVE DEBUG - Pending previews:', pendingPreviews);
+    console.log('🔄 SAVE DEBUG - Persistent state:', persistentUploadState);
+    
     if (isCreateMode) {
-      createItemMutation.mutate(formData);
+      createItemMutation.mutate(dataToSave);
     } else if (selectedVideoId) {
-      updateItemMutation.mutate({ id: selectedVideoId, data: formData });
+      updateItemMutation.mutate({ id: selectedVideoId, data: dataToSave });
     }
   };
 
