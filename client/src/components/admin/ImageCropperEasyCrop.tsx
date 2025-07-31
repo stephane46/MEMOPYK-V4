@@ -201,6 +201,10 @@ export default function ImageCropperEasyCrop({ imageUrl, onSave, onCancel }: Ima
       
       console.log(`📍 Position: ${position.x}%,${position.y}% → Offset: ${offsetX.toFixed(1)},${offsetY.toFixed(1)}`);
 
+      // Fill with solid white background to prevent transparency
+      ctx.fillStyle = '#FFFFFF';
+      ctx.fillRect(0, 0, 300, 200);
+
       // Maximum quality settings for sharpest results
       ctx.imageSmoothingEnabled = true;
       ctx.imageSmoothingQuality = 'high';
