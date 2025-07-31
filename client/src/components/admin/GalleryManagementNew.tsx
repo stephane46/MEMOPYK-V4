@@ -1202,7 +1202,40 @@ export default function GalleryManagementNew({ key }: { key?: string }) {
                 )}
 
                 {/* Format Badge Management */}
-                <FormatBadgeManager />
+                <div className="space-y-4">
+                  <h3 className="text-md font-semibold text-[#011526] dark:text-white flex items-center gap-2">
+                    <Palette className="w-4 h-4" />
+                    Badge Format (marketing visuel)
+                  </h3>
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                      <Label className="text-blue-600 dark:text-blue-400">🇫🇷 Plateforme Française</Label>
+                      <Select value={formData.format_platform_fr} onValueChange={(value) => setFormData(prev => ({ ...prev, format_platform_fr: value }))}>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Sélectionner plateforme" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="reseaux-sociaux">Réseaux Sociaux</SelectItem>
+                          <SelectItem value="professionnel">Professionnel</SelectItem>
+                          <SelectItem value="tv-desktop">TV & Desktop</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    <div className="space-y-2">
+                      <Label className="text-green-600 dark:text-green-400">🇺🇸 English Platform</Label>
+                      <Select value={formData.format_platform_en} onValueChange={(value) => setFormData(prev => ({ ...prev, format_platform_en: value }))}>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select platform" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="social-media">Social Media</SelectItem>
+                          <SelectItem value="professional">Professional</SelectItem>
+                          <SelectItem value="tv-desktop">TV & Desktop</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  </div>
+                </div>
 
                 {/* Settings */}
                 <div className="grid grid-cols-2 gap-4">
