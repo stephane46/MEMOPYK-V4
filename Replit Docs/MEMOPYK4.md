@@ -475,7 +475,7 @@ Homepage (new.memopyk.com)
 **Technical Implementation Details:**
 - **Image Proxy**: `/api/image-proxy/` for static thumbnails
 - **Video Proxy**: `/api/video-proxy/` for streaming content  
-- **File Storage**: Self-hosted Supabase buckets (memopyk-gallery, memopyk-hero)
+- **File Storage**: Self-hosted Supabase buckets (memopyk-videos, memopyk-media)
 - **Language Detection**: URL-based routing (/fr-FR/, /en-US/)
 - **Form Validation**: Zod schemas with React Hook Form
 - **Analytics**: Video engagement tracking with IP geolocation
@@ -493,7 +493,7 @@ Homepage (new.memopyk.com)
 - **Database**: PostgreSQL at 82.29.168.136:5432
 - **Storage API**: Self-hosted Supabase at supabase.memopyk.org:8001
 - **SSH Tunnel**: Secure connection to localhost:15432
-- **Media Buckets**: memopyk-hero, memopyk-gallery, memopyk-media
+- **Media Buckets**: memopyk-videos, memopyk-media
 
 **Deployment Method:**
 - **Platform**: Replit Deployments (fully automated)
@@ -707,8 +707,8 @@ CREATE TABLE analytics_sessions (
 [
   {
     "id": "hero1",
-    "urlFr": "http://supabase.memopyk.org:8001/object/public/memopyk-hero/VideoHero1.mp4",
-    "urlEn": "http://supabase.memopyk.org:8001/object/public/memopyk-hero/VideoHero1_EN.mp4",
+    "urlFr": "http://supabase.memopyk.org:8001/object/public/memopyk-videos/VideoHero1.mp4",
+    "urlEn": "http://supabase.memopyk.org:8001/object/public/memopyk-videos/VideoHero1_EN.mp4",
     "order": 1,
     "isActive": true,
     "videoWidth": 1920,
@@ -791,7 +791,7 @@ stopVideoTracking('hero1');
 ```
 
 **3. Supabase Buckets Setup:**
-- `memopyk-hero` - Hero video carousel files
+- `memopyk-videos` - All video files (hero and gallery)
 - `memopyk-gallery` - Portfolio project videos/images
 - `memopyk-media` - General file storage
 

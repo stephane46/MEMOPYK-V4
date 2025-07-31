@@ -22,9 +22,10 @@ Preferred communication style: Simple, everyday language.
 - Fixed URL Extraction: Gallery section properly extracts filenames from full URLs for proxy compatibility
 - Cached Proxy System: Both hero and gallery videos use video proxy for fast cached serving (50ms load times)
 - Database Cleanup: All gallery items point to correct `memopyk-videos` bucket URLs
-- Old Bucket Removed: `memopyk-gallery` bucket and all 66 files completely deleted from Supabase
+- Old Buckets Removed: `memopyk-gallery` bucket (66 files) and `memopyk-hero` bucket (4 files) completely deleted from Supabase
 - Consistent Performance: Gallery videos now match hero video performance with cached serving
-- Simplified Architecture: Single bucket, single proxy system, unified caching for all video content
+- Simplified Architecture: Single bucket (`memopyk-videos`), single proxy system, unified caching for all video content
+- Final Infrastructure: Only 2 buckets remain - `memopyk-videos` (all videos) and `memopyk-media` (images/documents)
 
 **Clean Minimal Video Controls - USER REQUIREMENT FULLY ACHIEVED:**
 - Three-Dots Menu Removed: Eliminated vertical menu with download, playback speed, and picture-in-picture options
