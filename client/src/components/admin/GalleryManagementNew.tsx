@@ -799,15 +799,13 @@ export default function GalleryManagementNew() {
                 </div>
 
                 {/* Right Column - Video Previews */}
-                <div className="flex-1">
+                <div className="flex-1 flex flex-col">
                   <h4 className="text-lg font-semibold text-[#011526] dark:text-[#F2EBDC] flex items-center gap-2 mb-6">
                     <PlayCircle className="w-5 h-5" />
                     Aperçu Vidéos
                   </h4>
                   
-                  <div className="space-y-8">
-                    {/* Spacer to align with French image */}
-                    <div style={{ height: '60px' }}></div>
+                  <div className="space-y-6">
                     {/* French Video */}
                     <div className="space-y-2">
                       <div className="flex items-center justify-between">
