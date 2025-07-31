@@ -1,149 +1,122 @@
 import React, { useState, useEffect, useRef } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { apiRequest } from "@/lib/queryClient";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
-import { Card, CardContent } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Switch } from "@/components/ui/switch";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogTrigger } from "@/components/ui/dialog";
-import { useToast } from "@/hooks/use-toast";
-import { 
-  Plus, 
-  Edit, 
-  Trash2, 
-  ArrowUp, 
-  ArrowDown, 
-  Eye, 
-  EyeOff, 
-  Video,
-  Image,
-  Play,
-  PlayCircle,
-  Save,
-  Crop,
-  Download,
-  Upload,
-  CheckCircle,
-  Monitor,
-  Smartphone,
-  Power,
-  Palette,
-  Globe,
-  Info,
-  RotateCcw
-} from "lucide-react";
-import SimpleImageCropper from './SimpleImageCropper';
-import DirectUpload from './DirectUpload';
-import FormatBadgeManager from './FormatBadgeManager';
 
-// Helper function to convert filename to full URL if needed
-const getFullUrl = (value: string): string => {
-  if (!value) return '';
-  if (value.includes('supabase.memopyk.org')) return value; // Already a full URL
-  if (value.includes('http')) return value; // Already some kind of URL
-  // Convert filename to full URL
-  return `https://supabase.memopyk.org/storage/v1/object/public/memopyk-videos/${value}`;
-};
-
-// Module-level persistent state that survives component re-creations
-const persistentUploadState = {
-  video_url_en: '',
-  image_url_en: '',
-  video_url_fr: '',
-  image_url_fr: '',
-  video_filename: '',
-  video_filename_en: '', // Added separate EN video filename
-  video_filename_fr: '', // Added separate FR video filename
-  reset: () => {
-    persistentUploadState.video_url_en = '';
-    persistentUploadState.image_url_en = '';
-    persistentUploadState.video_url_fr = '';
-    persistentUploadState.image_url_fr = '';
-    persistentUploadState.video_filename = '';
-    persistentUploadState.video_filename_en = '';
-    persistentUploadState.video_filename_fr = '';
+// Diagnostic helper: compares the previewed element vs the exported blob
+async function logDisplayDiagnostics(previewEl: HTMLElement | null, imageUrl: string) {
+  if (!previewEl) {
+    console.warn('[Diag] preview element is null');
+    return;
   }
-};
 
-// Create consistent image URL with cache-busting for thumbnail previews
-const getImageUrlWithCacheBust = (imageUrl: string | undefined): string => {
-  if (!imageUrl) return '';
-  if (imageUrl.includes('cacheBust')) return imageUrl; // Already has cache-busting
-  const separator = imageUrl.includes('?') ? '&' : '?';
-  return `${imageUrl}${separator}cacheBust=${Date.now()}&nocache=1`;
-};
+  const cs = getComputedStyle(previewEl);
+  console.group('[Diag] Image Display Diagnostics');
 
-export default function GalleryManagementNew({ key }: { key?: string }) {
-  const [isCreateMode, setIsCreateMode] = useState(false);
-  const [selectedItem, setSelectedItem] = useState<any>(null);
-  const [showCropper, setShowCropper] = useState(false);
-  const [selectedLanguage, setSelectedLanguage] = useState<'fr' | 'en'>('fr');
-  const { toast } = useToast();
-  const queryClient = useQueryClient();
-  
-  // Inline cropping states - moved after other state declarations
-  const [frCropMode, setFrCropMode] = useState(false);
-  const [enCropMode, setEnCropMode] = useState(false);
-  const [frCropPosition, setFrCropPosition] = useState({ x: 50, y: 50 });
-  const [enCropPosition, setEnCropPosition] = useState({ x: 50, y: 50 });
-  const [frIsDragging, setFrIsDragging] = useState(false);
-  const [enIsDragging, setEnIsDragging] = useState(false);
-  const [frDragStart, setFrDragStart] = useState({ x: 0, y: 0, positionX: 50, positionY: 50 });
-  const [enDragStart, setEnDragStart] = useState({ x: 0, y: 0, positionX: 50, positionY: 50 });
-  const [frCropSaving, setFrCropSaving] = useState(false);
-  const [enCropSaving, setEnCropSaving] = useState(false);
+  // Basic computed style checks
+  console.log('mix-blend-mode:', cs.mixBlendMode);
+  console.log('opacity:', cs.opacity);
+  console.log('filter:', cs.filter);
+  console.log('background:', cs.background);
+  console.log('has ::before content:', getComputedStyle(previewEl, '::before').content);
+  console.log('has ::after content:', getComputedStyle(previewEl, '::after').content);
 
-  // Real-time preview system state
-  const [pendingPreviews, setPendingPreviews] = useState<{
-    video_url_en?: string;
-    video_url_fr?: string;
-    image_url_en?: string;
-    image_url_fr?: string;
-    video_filename?: string;
-  }>({});
+  // Determine what image the preview is actually showing
+  let displayedUrl: string | null = null;
+  if (previewEl.tagName === 'IMG') {
+    displayedUrl = (previewEl as HTMLImageElement).src;
+  } else {
+    const bg = cs.backgroundImage;
+    if (bg && bg.startsWith('url(')) {
+      displayedUrl = bg.slice(4, -1).replace(/["']/g, '');
+    }
+  }
+  console.log('Displayed image URL:', displayedUrl);
+  console.log('Expected image URL:', imageUrl);
+  if (displayedUrl === imageUrl) {
+    console.log('✅ Preview is using the expected image URL.');
+  } else {
+    console.warn('⚠️ Preview is NOT using the expected image URL (might be showing different source).');
+  }
 
-  // Enhanced getThumbnailUrl with pending preview priority
-  const getThumbnailUrl = (item: any, language: 'fr' | 'en'): string => {
-    console.log(`🔍 ADMIN THUMBNAIL PRIORITY v1.0.109 - Getting ${language.toUpperCase()} thumbnail`);
-    
-    // Priority 0: Check pending previews first (real-time uploads)
-    if (language === 'fr' && pendingPreviews.image_url_fr) {
-      console.log('USING PENDING PREVIEW FR:', pendingPreviews.image_url_fr);
-      return getImageUrlWithCacheBust(pendingPreviews.image_url_fr);
+  // Optional: compare average color of displayed vs expected image to detect visual alteration
+  const loadImage = (url: string) =>
+    new Promise<HTMLImageElement>((resolve, reject) => {
+      const img = document.createElement('img') as HTMLImageElement;
+      img.crossOrigin = 'anonymous';
+      img.onload = () => resolve(img);
+      img.onerror = () => reject(`Failed to load image: ${url}`);
+      img.src = url;
+    });
+
+  try {
+    if (displayedUrl) {
+      const [displayedImg, expectedImg] = await Promise.all([loadImage(displayedUrl), loadImage(imageUrl)]);
+      const avgColor = (img: HTMLImageElement) => {
+        const c = document.createElement('canvas');
+        c.width = Math.min(50, img.naturalWidth);
+        c.height = Math.min(50, img.naturalHeight);
+        const ctx = c.getContext('2d')!;
+        ctx.drawImage(img, 0, 0, c.width, c.height);
+        const data = ctx.getImageData(0, 0, c.width, c.height).data;
+        let r = 0, g = 0, b = 0, count = 0;
+        for (let i = 0; i < data.length; i += 4) {
+          r += data[i];
+          g += data[i + 1];
+          b += data[i + 2];
+          count++;
+        }
+        return { r: r / count, g: g / count, b: b / count };
+      };
+      const avgDisplayed = avgColor(displayedImg);
+      const avgExpected = avgColor(expectedImg);
+      console.log('Average RGB of displayed image:', avgDisplayed);
+      console.log('Average RGB of expected image:', avgExpected);
+      const diff = {
+        dr: Math.abs(avgDisplayed.r - avgExpected.r),
+        dg: Math.abs(avgDisplayed.g - avgExpected.g),
+        db: Math.abs(avgDisplayed.b - avgExpected.b),
+      };
+      console.log('Average color difference:', diff);
+      if (diff.dr > 5 || diff.dg > 5 || diff.db > 5) {
+        console.warn('[Diag] Significant average color difference; display may be altered or a different image is shown.');
+      } else {
+        console.log('[Diag] Displayed image and expected image are similar in average color.');
+      }
     }
-    if (language === 'en' && pendingPreviews.image_url_en) {
-      console.log('USING PENDING PREVIEW EN:', pendingPreviews.image_url_en);
-      return getImageUrlWithCacheBust(pendingPreviews.image_url_en);
+  } catch (e) {
+    console.warn('[Diag] Image comparison failed:', e);
+  }
+
+  console.groupEnd();
+}
+
+  // Calculate actual displayed image dimensions within object-contain
+  const calculateImageDimensions = (imgElement: HTMLImageElement): {width: number, height: number} => {
+    const containerWidth = imgElement.offsetWidth;
+    const containerHeight = imgElement.offsetHeight;
+    const naturalWidth = imgElement.naturalWidth;
+    const naturalHeight = imgElement.naturalHeight;
+    
+    if (!naturalWidth || !naturalHeight) return {width: containerWidth, height: containerHeight};
+    
+    const containerRatio = containerWidth / containerHeight;
+    const imageRatio = naturalWidth / naturalHeight;
+    
+    let displayedWidth: number;
+    let displayedHeight: number;
+    
+    if (imageRatio > containerRatio) {
+      // Image is wider than container - width constrained
+      displayedWidth = containerWidth;
+      displayedHeight = containerWidth / imageRatio;
+    } else {
+      // Image is taller than container - height constrained  
+      displayedHeight = containerHeight;
+      displayedWidth = containerHeight * imageRatio;
     }
     
-    // Priority 1: Latest uploads (image_url_en/fr) over old crops (static_image_url)
-    const latestImageUrl = language === 'fr' ? item.image_url_fr : item.image_url_en;
-    const staticImageUrl = language === 'fr' ? item.static_image_url_fr : item.static_image_url_en;
-    
-    if (latestImageUrl) {
-      console.log(`USING LATEST UPLOAD ${language.toUpperCase()}:`, latestImageUrl);
-      return getImageUrlWithCacheBust(latestImageUrl);
-    }
-    
-    // Priority 2: Static image (cropped)
-    if (staticImageUrl) {
-      console.log(`USING STATIC IMAGE ${language.toUpperCase()}:`, staticImageUrl);
-      return getImageUrlWithCacheBust(staticImageUrl);
-    }
-    
-    // Priority 3: Fallback to opposite language
-    const fallbackImageUrl = language === 'fr' ? item.image_url_en : item.image_url_fr;
-    if (fallbackImageUrl) {
-      console.log(`USING FALLBACK ${language === 'fr' ? 'EN' : 'FR'}:`, fallbackImageUrl);
-      return getImageUrlWithCacheBust(fallbackImageUrl);
-    }
-    
-    console.log(`NO THUMBNAIL FOUND for ${language.toUpperCase()}`);
-    return '';
+    console.log(`📊 Calculated dimensions: ${displayedWidth} x ${displayedHeight} (from ${naturalWidth} x ${naturalHeight} in ${containerWidth} x ${containerHeight})`);
+    return {width: displayedWidth, height: displayedHeight};
   };
 
   // Inline canvas generation function (reused from SimpleImageCropper)
@@ -304,1083 +277,2055 @@ export default function GalleryManagementNew({ key }: { key?: string }) {
       }
     }
   };
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import { Card, CardContent } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Switch } from "@/components/ui/switch";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogTrigger } from "@/components/ui/dialog";
+import { useToast } from "@/hooks/use-toast";
+import { 
+  Plus, 
+  Edit, 
+  Trash2, 
+  ArrowUp, 
+  ArrowDown, 
+  Eye, 
+  EyeOff, 
+  Video,
+  Image,
+  Play,
+  PlayCircle,
+  Save,
+  Crop,
+  Download,
+  Upload,
+  CheckCircle,
+  Monitor,
+  Smartphone,
+  Power,
+  Palette,
+  Globe,
+  Info,
+  RotateCcw
+} from "lucide-react";
+import SimpleImageCropper from './SimpleImageCropper';
+// Force cache bust v1.0.99 - ensure optimized component loads
+import DirectUpload from './DirectUpload';
+import FormatBadgeManager from './FormatBadgeManager';
 
-  // Global mouse move handler for smooth dragging
-  useEffect(() => {
-    const handleGlobalMouseMove = (e: MouseEvent) => {
-      if (frIsDragging) {
-        e.preventDefault(); 
-        const sensitivity = 0.2; // Reduced sensitivity for smoother control
-        const deltaX = (e.clientX - frDragStart.x) * sensitivity;
-        const deltaY = (e.clientY - frDragStart.y) * sensitivity;
-        
-        const newX = Math.max(0, Math.min(100, frDragStart.positionX + deltaX));
-        const newY = Math.max(0, Math.min(100, frDragStart.positionY + deltaY));
-        
-        setFrCropPosition({ x: newX, y: newY });
-      }
-      
-      if (enIsDragging) {
-        e.preventDefault();
-        const sensitivity = 0.2;
-        const deltaX = (e.clientX - enDragStart.x) * sensitivity;
-        const deltaY = (e.clientY - enDragStart.y) * sensitivity;
-        
-        const newX = Math.max(0, Math.min(100, enDragStart.positionX + deltaX));
-        const newY = Math.max(0, Math.min(100, enDragStart.positionY + deltaY));
-        
-        setEnCropPosition({ x: newX, y: newY });
-      }
-    };
+// Helper function to convert filename to full URL if needed
+const getFullUrl = (value: string): string => {
+  if (!value) return '';
+  if (value.includes('supabase.memopyk.org')) return value; // Already a full URL
+  if (value.includes('http')) return value; // Already some kind of URL
+  // Convert filename to full URL
+  return `https://supabase.memopyk.org/storage/v1/object/public/memopyk-videos/${value}`;
+};
 
-    const handleGlobalMouseUp = () => {
-      setFrIsDragging(false);
-      setEnIsDragging(false);
-    };
+// Module-level persistent state that survives component re-creations
+const persistentUploadState = {
+  video_url_en: '',
+  image_url_en: '',
+  video_url_fr: '',
+  image_url_fr: '',
+  video_filename: '',
+  video_filename_en: '', // Added separate EN video filename
+  video_filename_fr: '', // Added separate FR video filename
+  reset: () => {
+    persistentUploadState.video_url_en = '';
+    persistentUploadState.image_url_en = '';
+    persistentUploadState.video_url_fr = '';
+    persistentUploadState.image_url_fr = '';
+    persistentUploadState.video_filename = '';
+    persistentUploadState.video_filename_en = '';
+    persistentUploadState.video_filename_fr = '';
+  }
+};
 
-    if (frIsDragging || enIsDragging) {
-      document.addEventListener('mousemove', handleGlobalMouseMove);
-      document.addEventListener('mouseup', handleGlobalMouseUp);
-      
-      return () => {
-        document.removeEventListener('mousemove', handleGlobalMouseMove);
-        document.removeEventListener('mouseup', handleGlobalMouseUp);
-      };
-    }
-  }, [frIsDragging, enIsDragging, frDragStart, enDragStart]);
+interface GalleryItem {
+  id: string | number;
+  title_en: string;
+  title_fr: string;
+  price_en: string;
+  price_fr: string;
+  source_en: string;
+  source_fr: string;
+  duration_en: string;
+  duration_fr: string;
+  situation_en: string;
+  situation_fr: string;
+  story_en: string;
+  story_fr: string;
+  sorry_message_en: string;
+  sorry_message_fr: string;
+  format_platform_en: string;
+  format_platform_fr: string;
+  format_type_en: string;
+  format_type_fr: string;
+  video_url_en: string;
+  video_url_fr: string;
+  video_filename: string;
+  use_same_video: boolean; // RESTORED: Bilingual video selection toggle
+  video_width: number;
+  video_height: number;
+  video_orientation: string;
+  image_url_en: string;
+  image_url_fr: string;
+  static_image_url_en: string | null;
+  static_image_url_fr: string | null;
+  static_image_url: string | null; // Legacy field
+  order_index: number;
+  is_active: boolean;
+}
 
-  // Form management states
-  const [formData, setFormData] = useState({
-    title_fr: '',
-    title_en: '',
-    description_fr: '',
-    description_en: '',
-    video_url_fr: '',
-    video_url_en: '',
-    image_url_fr: '',
-    image_url_en: '',
-    video_filename: '',
-    order_index: 0,
-    is_active: true,
-    use_same_video: true,
-    format_platform_fr: '',
-    format_type_fr: '',
-    format_platform_en: '',
-    format_type_en: ''
-  });
+export default function GalleryManagementNew() {
+  // VERSION: NEW-COMPONENT-v1.0.91 - LATEST UPLOAD PRIORITY FIX
+  console.log('🎯🎯🎯 GALLERYMANAGEMENTNEW v1.0.91 - LATEST UPLOAD PRIORITY! 🎯🎯🎯');
+  console.log('✅ This is the CORRECT modern component with language-specific uploads!');
+  console.log('🔥 French (blue) + English (green) sections should be visible!');
+  console.log('🎨 Toggle: "Utiliser la même vidéo pour FR et EN" controls layout!');
+  
+  const { toast } = useToast();
+  const frImageRef = useRef<HTMLImageElement>(null);
+  const enImageRef = useRef<HTMLImageElement>(null);
 
-  // Fetch gallery items
-  const { data: galleryItems, isLoading: galleryLoading } = useQuery({
-    queryKey: ['/api/gallery', 'v1.0.111'],
-    queryFn: async () => {
-      const response = await apiRequest('/api/gallery', 'GET');
-      console.log('🔍 ADMIN GALLERY FETCH v1.0.112 - Raw response:', response);
-      // If response is already parsed data, return it
-      if (Array.isArray(response)) {
-        console.log('✅ Response is already array:', response.length);
-        return response;
-      }
-      // If response is a Response object, parse it
-      if (response && typeof response.json === 'function') {
-        const data = await response.json();
-        console.log('✅ Parsed response data:', data);
-        return Array.isArray(data) ? data : [];
-      }
-      console.log('⚠️ Unexpected response format, returning empty array');
-      return [];
-    },
-  });
-
-  // Create mutation  
-  const createMutation = useMutation({
-    mutationFn: (data: any) => apiRequest('/api/gallery', 'POST', data),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['/api/gallery', 'v1.0.111'] });
-      setIsCreateMode(false);
-      resetForm();
-      setPendingPreviews({}); // Clear pending previews after successful save
-      toast({ title: "Succès", description: "Élément créé avec succès" });
-    }
-  });
-
-  // Update mutation
-  const updateMutation = useMutation({
-    mutationFn: ({ id, data }: { id: number; data: any }) => 
-      apiRequest(`/api/gallery/${id}`, 'PATCH', data),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['/api/gallery', 'v1.0.111'] });
-      setSelectedItem(null);
-      resetForm();
-      setPendingPreviews({}); // Clear pending previews after successful save
-      toast({ title: "Succès", description: "Élément mis à jour avec succès" });
-    }
-  });
-
-  // Delete mutation
-  const deleteMutation = useMutation({
-    mutationFn: (id: number) => apiRequest(`/api/gallery/${id}`, 'DELETE'),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['/api/gallery', 'v1.0.111'] });
-      toast({ title: "Succès", description: "Élément supprimé avec succès" });
-    }
-  });
-
-  // Reset form function
-  const resetForm = () => {
-    setFormData({
-      title_fr: '',
-      title_en: '',
-      description_fr: '',
-      description_en: '',
-      video_url_fr: '',
-      video_url_en: '',
-      image_url_fr: '',
-      image_url_en: '',
-      video_filename: '',
-      order_index: 0,
-      is_active: true,
-      use_same_video: true,
-      format_platform_fr: '',
-      format_type_fr: '',
-      format_platform_en: '',
-      format_type_en: ''
-    });
-    persistentUploadState.reset();
-    setSelectedItem(null);
-    setIsCreateMode(false);
+  // Helper function to convert filename to full URL when displaying with cache-busting
+  const getFullUrl = (value: string) => {
+    if (!value) return '';
+    // If it's already a full URL, return as-is
+    if (value.startsWith('http')) return value;
+    // If it's just a filename, convert to full Supabase URL
+    return `https://supabase.memopyk.org/storage/v1/object/public/memopyk-videos/${value}`;
   };
 
-  // Initialize form data when editing
+  // Helper function to get thumbnail URL with language-specific reframing support and real-time preview
+  const getThumbnailUrl = (item: GalleryItem, language: 'en' | 'fr' = 'en') => {
+    if (!item) return '';
+    
+    // Priority 0: Real-time pending upload preview (highest priority)
+    const pendingImageUrl = language === 'fr' ? pendingPreviews.image_url_fr : pendingPreviews.image_url_en;
+    if (pendingImageUrl) {
+      console.log(`📸 REAL-TIME PREVIEW (${language.toUpperCase()}): ${pendingImageUrl} for ${item.title_en}`);
+      return pendingImageUrl;
+    }
+    
+    // Priority 1: Language-specific reframed image
+    const staticImageUrl = language === 'fr' ? item.static_image_url_fr : item.static_image_url_en;
+    if (staticImageUrl) {
+      console.log(`🖼️ USING REFRAMED IMAGE (${language.toUpperCase()}): ${staticImageUrl} for ${item.title_en}`);
+      return staticImageUrl;
+    }
+    
+    // Priority 2: Language-specific uploaded image
+    const imageUrl = language === 'fr' ? item.image_url_fr : item.image_url_en;
+    if (imageUrl) {
+      console.log(`🖼️ FALLBACK TO UPLOAD (${language.toUpperCase()}): ${imageUrl} for ${item.title_en}`);
+      return imageUrl;
+    }
+    
+    // Priority 3: Legacy static image (deprecated)
+    if (item.static_image_url) {
+      console.log(`🖼️ LEGACY STATIC IMAGE: ${item.static_image_url} for ${item.title_en}`);
+      return item.static_image_url;
+    }
+    
+    console.log(`🖼️ NO IMAGE AVAILABLE for ${item.title_en} in ${language.toUpperCase()}`);
+    return '';
+  };
+
+  // Helper function to get image with cache-busting - SUPER AGGRESSIVE METHOD
+  const [forceRefreshKey, setForceRefreshKey] = useState(0);
+  
+  const getImageUrlWithCacheBust = (filename: string) => {
+    if (!filename) return '';
+    // Use super aggressive cache-busting with multiple parameters + component refresh key
+    const timestamp = Date.now();
+    const random = Math.random().toString(36).substring(7);
+    const componentKey = forceRefreshKey; // Changes when we need to force refresh
+    
+    if (filename.includes('http')) {
+      const url = `${filename}?bustCache=${timestamp}&version=${random}&refresh=${componentKey}&nocache=1&_=${Date.now()}`;
+      console.log(`🖼️ SUPER AGGRESSIVE CACHE-BUST URL v1.0.90: ${url}`);
+      return url;
+    }
+    const url = `https://supabase.memopyk.org/storage/v1/object/public/memopyk-videos/${encodeURIComponent(filename)}?bustCache=${timestamp}&version=${random}&refresh=${componentKey}&nocache=1&_=${Date.now()}`;
+    console.log(`🖼️ SUPER AGGRESSIVE CACHE-BUST URL v1.0.90: ${url}`);
+    return url;
+  };
+  const queryClient = useQueryClient();
+  const [selectedVideoId, setSelectedVideoId] = useState<string | number | null>(null);
+  const [isCreateMode, setIsCreateMode] = useState(false);
+  const [cropperOpen, setCropperOpen] = useState(false);
+  const [cropperLanguage, setCropperLanguage] = useState<'en' | 'fr'>('en');
+  const [showFormatBadgeManager, setShowFormatBadgeManager] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  
+  // Real-time preview state for pending uploads
+  const [pendingPreviews, setPendingPreviews] = useState<{
+    video_url_en?: string;
+    video_url_fr?: string;
+    image_url_en?: string;
+    image_url_fr?: string;
+    video_filename?: string;
+  }>({});
+
+  // Inline cropping state variables
+  const [frCropMode, setFrCropMode] = useState(false);
+  const [enCropMode, setEnCropMode] = useState(false);
+  const [frCropPosition, setFrCropPosition] = useState({ x: 50, y: 50 });
+  const [enCropPosition, setEnCropPosition] = useState({ x: 50, y: 50 });
+  const [frIsDragging, setFrIsDragging] = useState(false);
+  const [enIsDragging, setEnIsDragging] = useState(false);
+  const [frDragStart, setFrDragStart] = useState({ x: 0, y: 0 });
+  const [enDragStart, setEnDragStart] = useState({ x: 0, y: 0 });
+  const [frCropSaving, setFrCropSaving] = useState(false);
+  const [enCropSaving, setEnCropSaving] = useState(false);
+
+  // State for tracking actual image dimensions for crop frame positioning
+  const [frImageDimensions, setFrImageDimensions] = useState<{width: number, height: number} | null>(null);
+  const [enImageDimensions, setEnImageDimensions] = useState<{width: number, height: number} | null>(null);
+  
+
+
+  // Fetch gallery items with cache-busting
+  const { data: galleryItems = [], isLoading } = useQuery<GalleryItem[]>({
+    queryKey: ['/api/gallery', 'v1.0.107'],
+    select: (data) => data.sort((a, b) => a.order_index - b.order_index)
+  });
+
+  // Get selected item
+  const selectedItem = galleryItems.find(item => item.id === selectedVideoId);
+
+  // Initialize form data
+  const [formData, setFormData] = useState({
+    title_en: '',
+    title_fr: '',
+    price_en: '',
+    price_fr: '',
+    source_en: '',
+    source_fr: '',
+    duration_en: '',
+    duration_fr: '',
+    situation_en: '',
+    situation_fr: '',
+    story_en: '',
+    story_fr: '',
+    sorry_message_en: 'Sorry, we cannot show you the video at this stage',
+    sorry_message_fr: 'Désolé, nous ne pouvons pas vous montrer la vidéo à ce stade',
+    format_platform_en: '',
+    format_platform_fr: '',
+    format_type_en: '',
+    format_type_fr: '',
+    video_url_en: '',
+    video_url_fr: '',
+    video_filename: '', // Legacy field for backward compatibility
+    use_same_video: true, // RESTORED: Bilingual video selection - default to same video
+    video_width: 16,
+    video_height: 9,
+    video_orientation: 'landscape',
+    image_url_en: '',
+    image_url_fr: '',
+    static_image_url: '',
+    is_active: true
+  });
+
+  // Update form data when selected item changes
   useEffect(() => {
     if (selectedItem && !isCreateMode) {
       setFormData({
-        title_fr: selectedItem.title_fr || '',  
         title_en: selectedItem.title_en || '',
-        description_fr: selectedItem.description_fr || '',
-        description_en: selectedItem.description_en || '',
-        video_url_fr: pendingPreviews.video_url_fr || selectedItem.video_url_fr || '',
-        video_url_en: pendingPreviews.video_url_en || selectedItem.video_url_en || '',
-        image_url_fr: pendingPreviews.image_url_fr || selectedItem.image_url_fr || '',
-        image_url_en: pendingPreviews.image_url_en || selectedItem.image_url_en || '',
-        video_filename: pendingPreviews.video_filename || selectedItem.video_filename || '',
-        order_index: selectedItem.order_index || 0,
-        is_active: selectedItem.is_active ?? true,
-        use_same_video: selectedItem.use_same_video ?? true,
-        format_platform_fr: selectedItem.format_platform_fr || '',
-        format_type_fr: selectedItem.format_type_fr || '',
+        title_fr: selectedItem.title_fr || '',
+        price_en: selectedItem.price_en || '',
+        price_fr: selectedItem.price_fr || '',
+        source_en: selectedItem.source_en || '',
+        source_fr: selectedItem.source_fr || '',
+        duration_en: selectedItem.duration_en || '',
+        duration_fr: selectedItem.duration_fr || '',
+        situation_en: selectedItem.situation_en || '',
+        situation_fr: selectedItem.situation_fr || '',
+        story_en: selectedItem.story_en || '',
+        story_fr: selectedItem.story_fr || '',
+        sorry_message_en: selectedItem.sorry_message_en || 'Sorry, we cannot show you the video at this stage',
+        sorry_message_fr: selectedItem.sorry_message_fr || 'Désolé, nous ne pouvons pas vous montrer la vidéo à ce stade',
         format_platform_en: selectedItem.format_platform_en || '',
-        format_type_en: selectedItem.format_type_en || ''
+        format_platform_fr: selectedItem.format_platform_fr || '',
+        format_type_en: selectedItem.format_type_en || '',
+        format_type_fr: selectedItem.format_type_fr || '',
+        video_url_en: pendingPreviews.video_url_en || persistentUploadState.video_url_en || selectedItem.video_url_en || '',
+        video_url_fr: pendingPreviews.video_url_fr || persistentUploadState.video_url_fr || selectedItem.video_url_fr || '',
+        video_filename: pendingPreviews.video_filename || persistentUploadState.video_filename || selectedItem.video_filename || '',
+        use_same_video: selectedItem.use_same_video !== undefined ? selectedItem.use_same_video : true, // RESTORED: Load bilingual setting
+        video_width: selectedItem.video_width || 16,
+        video_height: selectedItem.video_height || 9,
+        video_orientation: selectedItem.video_orientation || 'landscape',
+        image_url_en: pendingPreviews.image_url_en || persistentUploadState.image_url_en || selectedItem.image_url_en || '',
+        image_url_fr: pendingPreviews.image_url_fr || persistentUploadState.image_url_fr || selectedItem.image_url_fr || '',
+        static_image_url: selectedItem.static_image_url || '',
+        is_active: selectedItem.is_active
       });
     } else if (isCreateMode) {
-      setFormData(prev => ({
-        ...prev,
-        video_url_fr: pendingPreviews.video_url_fr || persistentUploadState.video_url_fr || '',
-        video_url_en: pendingPreviews.video_url_en || persistentUploadState.video_url_en || '',
-        image_url_fr: pendingPreviews.image_url_fr || persistentUploadState.image_url_fr || '',
-        image_url_en: pendingPreviews.image_url_en || persistentUploadState.image_url_en || '',
-        video_filename: pendingPreviews.video_filename || persistentUploadState.video_filename || ''
-      }));
+      // Reset form for create mode
+      setFormData({
+        title_en: '',
+        title_fr: '',
+        price_en: '',
+        price_fr: '',
+        source_en: '',
+        source_fr: '',
+        duration_en: '',
+        duration_fr: '',
+        situation_en: '',
+        situation_fr: '',
+        story_en: '',
+        story_fr: '',
+        sorry_message_en: 'Sorry, we cannot show you the video at this stage',
+        sorry_message_fr: 'Désolé, nous ne pouvons pas vous montrer la vidéo à ce stade',
+        format_platform_en: '',
+        format_platform_fr: '',
+        format_type_en: '',
+        format_type_fr: '',
+        video_url_en: persistentUploadState.video_url_en || '',
+        video_url_fr: persistentUploadState.video_url_fr || '',
+        video_filename: persistentUploadState.video_filename || '',
+        use_same_video: true, // RESTORED: Default to same video for new items
+        video_width: 16,
+        video_height: 9,
+        video_orientation: 'landscape',
+        image_url_en: persistentUploadState.image_url_en || '',
+        image_url_fr: persistentUploadState.image_url_fr || '',
+        static_image_url: '',
+        is_active: true
+      });
     }
-  }, [selectedItem, isCreateMode, pendingPreviews]);
+  }, [selectedItem, isCreateMode]);
 
-  // Handle form submission
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    
-    const submitData = {
-      ...formData,
-      video_url_fr: formData.use_same_video ? formData.video_url_en : formData.video_url_fr,
-    };
-    
-    if (selectedItem && !isCreateMode) {
-      updateMutation.mutate({ id: selectedItem.id, data: submitData });
-    } else {
-      createMutation.mutate(submitData);
+  // Auto-select first item when data loads
+  useEffect(() => {
+    if (galleryItems.length > 0 && !selectedVideoId && !isCreateMode) {
+      setSelectedVideoId(galleryItems[0].id);
+    }
+  }, [galleryItems, selectedVideoId, isCreateMode]);
+
+
+
+  // Create/Update mutations
+  const createItemMutation = useMutation({
+    mutationFn: (data: any) => apiRequest('/api/gallery', 'POST', data),
+    onSuccess: () => {
+      toast({ title: "✅ Succès", description: "Élément de galerie créé avec succès" });
+      queryClient.invalidateQueries({ queryKey: ['/api/gallery'] });
+      persistentUploadState.reset();
+      setIsCreateMode(false);
+      setPendingPreviews({}); // Clear pending previews after successful save
+    },
+    onError: (error: any) => {
+      toast({ title: "❌ Erreur", description: "Erreur lors de la création de l'élément", variant: "destructive" });
+      console.error('Create error:', error);
+    }
+  });
+
+  const updateItemMutation = useMutation({
+    mutationFn: ({ id, data }: { id: string | number; data: any }) => 
+      apiRequest(`/api/gallery/${id}`, 'PATCH', data),
+    onSuccess: () => {
+      toast({ title: "✅ Succès", description: "Élément de galerie mis à jour avec succès" });
+      queryClient.invalidateQueries({ queryKey: ['/api/gallery'] });
+      queryClient.removeQueries({ queryKey: ['/api/gallery'] });
+      setPendingPreviews({}); // Clear pending previews after successful save
+      // Force component re-render with cache refresh key update
+      setTimeout(() => {
+        queryClient.invalidateQueries({ queryKey: ['/api/gallery'] });
+        setFormData({ ...formData }); // Force state update
+        setForceRefreshKey(prev => prev + 1); // Force image refresh
+        console.log(`🖼️ FORCE REFRESH KEY UPDATED: ${forceRefreshKey + 1}`);
+      }, 500);
+      persistentUploadState.reset();
+    },
+    onError: (error: any) => {
+      toast({ title: "❌ Erreur", description: "Erreur lors de la mise à jour de l'élément", variant: "destructive" });
+      console.error('Update error:', error);
+    }
+  });
+
+  const deleteItemMutation = useMutation({
+    mutationFn: (id: string | number) => apiRequest(`/api/gallery/${id}`, 'DELETE'),
+    onSuccess: () => {
+      toast({ title: "✅ Succès", description: "Élément de galerie supprimé avec succès" });
+      queryClient.invalidateQueries({ queryKey: ['/api/gallery'] });
+      setSelectedVideoId(null);
+      setIsCreateMode(false);
+    },
+    onError: (error: any) => {
+      toast({ title: "❌ Erreur", description: "Erreur lors de la suppression de l'élément", variant: "destructive" });
+      console.error('Delete error:', error);
+    }
+  });
+
+  const handleSave = () => {
+    if (isCreateMode) {
+      createItemMutation.mutate(formData);
+    } else if (selectedVideoId) {
+      updateItemMutation.mutate({ id: selectedVideoId, data: formData });
     }
   };
 
-  if (galleryLoading) {
-    return <div className="p-4">Chargement...</div>;
+  const handleDelete = () => {
+    if (selectedVideoId && !isCreateMode) {
+      if (confirm("Êtes-vous sûr de vouloir supprimer cet élément ?")) {
+        deleteItemMutation.mutate(selectedVideoId);
+      }
+    }
+  };
+
+  const handleCreateNew = () => {
+    setIsCreateMode(true);
+    setSelectedVideoId(null);
+    persistentUploadState.reset();
+  };
+
+  const handleCancelCreate = () => {
+    setIsCreateMode(false);
+    if (galleryItems.length > 0) {
+      setSelectedVideoId(galleryItems[0].id);
+    }
+    persistentUploadState.reset();
+  };
+
+  // RESTORED: Bilingual video selection toggle handler
+  const handleSameVideoToggle = (checked: boolean) => {
+    setFormData({ 
+      ...formData, 
+      use_same_video: checked,
+      // When switching to same video, copy EN video to FR
+      video_url_fr: checked ? formData.video_url_en : formData.video_url_fr
+    });
+  };
+
+  if (isLoading) {
+    return <div className="p-8">Chargement...</div>;
   }
 
   return (
-    <div className="p-6 max-w-6xl mx-auto">
-      <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-bold text-[#011526] dark:text-white">
-          🎬 Gestion de la Galerie
-        </h1>
-        
-        <div className="flex gap-2">
+    <div className="p-6 max-w-7xl mx-auto">
+      {/* Top Left: NEW Button */}
+      <div className="mb-6">
+        {!isCreateMode ? (
           <Button
-            onClick={() => {
-              setIsCreateMode(true);
-              resetForm();
-            }}
-            className="bg-[#D67C4A] hover:bg-[#C66A38] text-white"
+            onClick={handleCreateNew}
+            size="lg"
+            className="bg-gradient-to-r from-[#89BAD9] to-[#2A4759] hover:from-[#7AA8CC] hover:to-[#1e3340] text-white border-none shadow-lg font-bold text-lg px-8 py-4"
           >
-            <Plus className="w-4 h-4 mr-2" />
-            Nouvel Élément
+            <Plus className="w-6 h-6 mr-2" />
+            NOUVELLE VIDEO
           </Button>
+        ) : (
+          <Button
+            onClick={handleCancelCreate}
+            variant="outline"
+            size="lg"
+            className="bg-gray-500 hover:bg-gray-600 text-white px-8 py-4"
+          >
+            Annuler
+          </Button>
+        )}
+      </div>
+
+      {/* Video Selector Section */}
+      <div className="mb-8 bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6">
+        <div className="w-full">
+          <Label className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2 block">
+            Sélectionner une vidéo de galerie
+          </Label>
+          {!isCreateMode ? (
+            <Select 
+              value={selectedVideoId?.toString() || ''} 
+              onValueChange={(value) => setSelectedVideoId(value)}
+            >
+              <SelectTrigger className="w-full">
+                <SelectValue placeholder="Choisir une vidéo..." />
+              </SelectTrigger>
+              <SelectContent>
+                {galleryItems.map((item) => (
+                  <SelectItem key={item.id} value={item.id.toString()}>
+                    <div className="flex items-center justify-between w-full">
+                      <span>{item.title_en} - {item.title_fr}</span>
+                      {item.static_image_url && (
+                        <span className="ml-2 px-2 py-1 bg-emerald-100 text-emerald-800 text-xs rounded-full font-medium">
+                          ✂️ Recadré
+                        </span>
+                      )}
+                    </div>
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          ) : (
+            <div className="p-3 bg-[#F2EBDC] dark:bg-[#011526]/20 rounded border-2 border-dashed border-[#89BAD9]">
+              <span className="text-[#2A4759] font-medium">Mode création - Nouvelle vidéo</span>
+            </div>
+          )}
         </div>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Left Column - Item List */}
-        <Card>
-          <CardContent className="p-4">
-            <h2 className="text-lg font-semibold mb-4 text-[#011526] dark:text-white">
-              Éléments de la Galerie
-            </h2>
-            
-            <div className="space-y-2 max-h-96 overflow-y-auto">
-              {galleryItems?.map((item: any) => (
-                <div
-                  key={item.id}
-                  className={`p-3 border rounded-lg cursor-pointer transition-colors ${
-                    selectedItem?.id === item.id
-                      ? 'border-[#D67C4A] bg-[#D67C4A]/10'
-                      : 'border-gray-200 dark:border-gray-700 hover:border-[#D67C4A]/50'
-                  }`}
-                  onClick={() => {
-                    setSelectedItem(item);
-                    setIsCreateMode(false);
-                  }}
-                >
-                  <div className="flex justify-between items-start">
-                    <div className="flex-1">
-                      <h3 className="font-medium text-sm">
-                        {item.title_fr || item.title_en || 'Sans titre'}
-                        {item.static_image_url_fr || item.static_image_url_en ? (
-                          <Badge variant="secondary" className="ml-2 bg-emerald-100 text-emerald-800 text-xs">
-                            ✂️ Recadré
-                          </Badge>
-                        ) : null}
-                      </h3>
-                      <p className="text-xs text-gray-600 dark:text-gray-400 mt-1">
-                        Ordre: {item.order_index}
-                      </p>
+      {/* Main Form */}
+      {(selectedItem || isCreateMode) && (
+        <div className="space-y-8">
+          {/* Status Section with Video & Image Previews */}
+          <Card className="border-[#89BAD9] dark:border-[#2A4759]">
+            <CardContent className="p-8">
+              <div className="flex flex-col lg:flex-row gap-8">
+                {/* Left Column - Image Previews */}
+                <div className="flex-1 flex flex-col">
+                  <h4 className="text-lg font-semibold text-[#011526] dark:text-[#F2EBDC] flex items-center gap-2 mb-6">
+                    <Image className="w-5 h-5" />
+                    Aperçu Images
+                  </h4>
+                  
+                  <div className="flex flex-col justify-center flex-1 space-y-8">
+                    {/* French Image */}
+                    <div className="space-y-2">
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-2">
+                          <span className="text-xs font-medium text-blue-700 dark:text-blue-300">🇫🇷 Français</span>
+                          {selectedItem?.image_url_fr && (
+                            <span className="text-xs text-gray-500 font-mono truncate max-w-32">
+                              {selectedItem.image_url_fr.split('/').pop()?.split('?')[0]}
+                            </span>
+                          )}
+                        </div>
+                        {!isCreateMode && selectedItem?.image_url_fr && (
+                          <div className="flex gap-1">
+                            {!frCropMode ? (
+                              <Button
+                                onClick={() => setFrCropMode(true)}
+                                variant="outline"
+                                size="sm"
+                                className="bg-blue-600 hover:bg-blue-700 text-white border-blue-600 px-2 py-1 text-xs"
+                              >
+                                <Crop className="w-3 h-3 mr-1" />
+                                Recadrer FR
+                              </Button>
+                            ) : (
+                              <div className="flex gap-1">
+                                <Button
+                                  onClick={() => saveInlineCrop('fr')}
+                                  disabled={frCropSaving}
+                                  variant="outline"
+                                  size="sm"
+                                  className="bg-green-600 hover:bg-green-700 text-white border-green-600 px-2 py-1 text-xs"
+                                >
+                                  {frCropSaving ? (
+                                    <>
+                                      <div className="w-3 h-3 mr-1 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                                      Saving...
+                                    </>
+                                  ) : (
+                                    <>
+                                      <Save className="w-3 h-3 mr-1" />
+                                      Sauver
+                                    </>
+                                  )}
+                                </Button>
+                                <Button
+                                  onClick={() => setFrCropMode(false)}
+                                  variant="outline"
+                                  size="sm"
+                                  className="bg-gray-500 hover:bg-gray-600 text-white border-gray-500 px-2 py-1 text-xs"
+                                >
+                                  Annuler
+                                </Button>
+                              </div>
+                            )}
+                            {selectedItem.static_image_url_fr && (
+                              <Button
+                                onClick={async () => {
+                                  try {
+                                    const updateData = {
+                                      static_image_url_fr: null,
+                                      crop_settings: null,
+                                      language: 'fr'
+                                    };
+                                    
+                                    await apiRequest(`/api/gallery/${selectedItem.id}`, 'PATCH', updateData);
+                                    
+                                    // Refresh data
+                                    queryClient.invalidateQueries({ queryKey: ['/api/gallery'] });
+                                    
+                                    toast({ 
+                                      title: "✅ Succès", 
+                                      description: "Image française restaurée à l'original" 
+                                    });
+                                  } catch (error) {
+                                    console.error('Error unframing French image:', error);
+                                    toast({ 
+                                      title: "❌ Erreur", 
+                                      description: "Impossible de restaurer l'image française",
+                                      variant: "destructive"
+                                    });
+                                  }
+                                }}
+                                variant="outline"
+                                size="sm"
+                                className="bg-gray-500 hover:bg-gray-600 text-white border-gray-500 px-2 py-1 text-xs"
+                              >
+                                <RotateCcw className="w-3 h-3 mr-1" />
+                                Original
+                              </Button>
+                            )}
+                          </div>
+                        )}
+                      </div>
+                      <div className="aspect-video w-full bg-black rounded-lg overflow-hidden border border-blue-200 dark:border-blue-600 relative">
+                        {selectedItem?.image_url_fr ? (
+                          <>
+                            {frCropMode ? (
+                              // Inline Cropping Mode for French
+                              <div className="w-full h-full relative bg-white flex items-center justify-center">
+                                <div 
+                                  className="relative bg-white border-2 border-blue-400"
+                                  style={{ width: '300px', height: '200px' }}
+                                >
+                                  <div 
+                                    className="w-full h-full cursor-move relative overflow-hidden"
+                                    style={{
+                                      backgroundImage: `url("${selectedItem.image_url_fr.startsWith('http') 
+                                        ? selectedItem.image_url_fr
+                                        : `/api/image-proxy?filename=${selectedItem.image_url_fr.split('/').pop()?.split('?')[0]}`
+                                      }")`,
+                                      backgroundSize: 'cover',
+                                      backgroundPosition: `${frCropPosition.x}% ${frCropPosition.y}%`,
+                                      backgroundRepeat: 'no-repeat'
+                                    }}
+                                    onMouseDown={(e) => {
+                                      setFrIsDragging(true);
+                                      const rect = e.currentTarget.getBoundingClientRect();
+                                      setFrDragStart({
+                                        x: e.clientX - rect.left,
+                                        y: e.clientY - rect.top
+                                      });
+                                    }}
+                                    onMouseMove={(e) => {
+                                      if (!frIsDragging) return;
+                                      
+                                      const rect = e.currentTarget.getBoundingClientRect();
+                                      const deltaX = (e.clientX - rect.left - frDragStart.x) / rect.width * 100;
+                                      const deltaY = (e.clientY - rect.top - frDragStart.y) / rect.height * 100;
+                                      
+                                      setFrCropPosition(prev => ({
+                                        x: Math.max(-50, Math.min(50, prev.x - deltaX)),
+                                        y: Math.max(-50, Math.min(50, prev.y - deltaY))
+                                      }));
+                                      
+                                      setFrDragStart({
+                                        x: e.clientX - rect.left,
+                                        y: e.clientY - rect.top
+                                      });
+                                    }}
+                                    onMouseUp={() => setFrIsDragging(false)}
+                                    onMouseLeave={() => setFrIsDragging(false)}
+                                  >
+                                    <div className="absolute inset-0 border-2 border-blue-400 border-dashed pointer-events-none" />
+                                  </div>
+                                  <div className="absolute -top-6 left-0 text-xs text-blue-600 bg-white px-2 py-1 rounded shadow font-medium whitespace-nowrap">
+                                    Zone de recadrage 3:2 - Glissez pour positionner
+                                  </div>
+                                </div>
+                              </div>
+                            ) : (
+                              // Normal Preview Mode for French
+                              <>
+                                <img 
+                                  ref={frImageRef}
+                                  src={getThumbnailUrl(selectedItem, 'fr') || (selectedItem.image_url_fr.startsWith('http') 
+                                    ? `${selectedItem.image_url_fr}?cacheBust=${Date.now()}&nocache=1`
+                                    : `/api/image-proxy?filename=${selectedItem.image_url_fr.split('/').pop()?.split('?')[0]}`
+                                  )} 
+                                  alt="Aperçu Français"
+                                  className="w-full h-full object-contain"
+                                  style={{ outline: '2px solid magenta' }}
+                                  onLoad={() => {
+                                    const imageUrl = selectedItem.image_url_fr.startsWith('http') 
+                                      ? `${selectedItem.image_url_fr}?cacheBust=${Date.now()}&nocache=1}`
+                                      : `/api/image-proxy?filename=${selectedItem.image_url_fr.split('/').pop()?.split('?')[0]}`;
+                                    console.log('🔍 FRENCH IMAGE LOADED - Running diagnostics...');
+                                    setTimeout(() => {
+                                      logDisplayDiagnostics(frImageRef.current, imageUrl);
+                                      if (frImageRef.current) {
+                                        const dimensions = calculateImageDimensions(frImageRef.current);
+                                        setFrImageDimensions(dimensions);
+                                      }
+                                    }, 100);
+                                  }}
+                                />
+                                {/* 3:2 Ratio Frame Overlay - positioned over actual image dimensions */}
+                                {!selectedItem.static_image_url_fr && frImageDimensions && (
+                                  <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+                                    {/* Frame positioned over actual image size only */}
+                                    <div 
+                                      className="border-2 border-blue-400 border-dashed bg-blue-400/10 rounded relative"
+                                      style={{
+                                        width: `${frImageDimensions.width}px`,
+                                        aspectRatio: '3/2',
+                                        maxHeight: `${frImageDimensions.height}px`
+                                      }}
+                                    >
+                                      <div className="absolute -top-6 left-0 text-xs text-blue-600 bg-white px-2 py-1 rounded shadow font-medium whitespace-nowrap">
+                                        Zone de recadrage 3:2
+                                      </div>
+                                    </div>
+                                  </div>
+                                )}
+                                {selectedItem.static_image_url_fr && (
+                                  <div className="absolute top-2 right-2 bg-emerald-500 text-white px-2 py-1 rounded-full text-xs font-bold shadow-lg">
+                                    ✂️ Recadré FR
+                                  </div>
+                                )}
+                              </>
+                            )}
+                          </>
+                        ) : (
+                          <div className="w-full h-full flex items-center justify-center">
+                            <div className="text-center text-gray-500 dark:text-gray-400">
+                              <Image className="w-8 h-8 mx-auto mb-1 opacity-50" />
+                              <p className="text-xs">Pas d'image FR</p>
+                            </div>
+                          </div>
+                        )}
+                      </div>
                     </div>
-                    
-                    <div className="flex items-center gap-2">
-                      <div className={`w-2 h-2 rounded-full ${
-                        item.is_active ? 'bg-green-500' : 'bg-red-500'
-                      }`} />
-                      
-                      <Button
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          deleteMutation.mutate(item.id);
-                        }}
-                        variant="ghost"
-                        size="sm"
-                        className="h-6 w-6 p-0 text-red-500 hover:text-red-700"
-                      >
-                        <Trash2 className="w-3 h-3" />
-                      </Button>
+
+                    {/* English Image */}
+                    <div className="space-y-2">
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-2">
+                          <span className="text-xs font-medium text-green-700 dark:text-green-300">🇺🇸 English</span>
+                          {selectedItem?.image_url_en && (
+                            <span className="text-xs text-gray-500 font-mono truncate max-w-32">
+                              {selectedItem.image_url_en.split('/').pop()?.split('?')[0]}
+                            </span>
+                          )}
+                        </div>
+                        {!isCreateMode && selectedItem?.image_url_en && (
+                          <div className="flex gap-1">
+                            {!enCropMode ? (
+                              <Button
+                                onClick={() => setEnCropMode(true)}
+                                variant="outline"
+                                size="sm"
+                                className="bg-green-600 hover:bg-green-700 text-white border-green-600 px-2 py-1 text-xs"
+                              >
+                                <Crop className="w-3 h-3 mr-1" />
+                                Recadrer EN
+                              </Button>
+                            ) : (
+                              <div className="flex gap-1">
+                                <Button
+                                  onClick={() => saveInlineCrop('en')}
+                                  disabled={enCropSaving}
+                                  variant="outline"
+                                  size="sm"
+                                  className="bg-green-600 hover:bg-green-700 text-white border-green-600 px-2 py-1 text-xs"
+                                >
+                                  {enCropSaving ? (
+                                    <>
+                                      <div className="w-3 h-3 mr-1 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                                      Saving...
+                                    </>
+                                  ) : (
+                                    <>
+                                      <Save className="w-3 h-3 mr-1" />
+                                      Save
+                                    </>
+                                  )}
+                                </Button>
+                                <Button
+                                  onClick={() => setEnCropMode(false)}
+                                  variant="outline"
+                                  size="sm"
+                                  className="bg-gray-500 hover:bg-gray-600 text-white border-gray-500 px-2 py-1 text-xs"
+                                >
+                                  Cancel
+                                </Button>
+                              </div>
+                            )}
+                            {selectedItem.static_image_url_en && (
+                              <Button
+                                onClick={async () => {
+                                  try {
+                                    const updateData = {
+                                      static_image_url_en: null,
+                                      crop_settings: null,
+                                      language: 'en'
+                                    };
+                                    
+                                    await apiRequest(`/api/gallery/${selectedItem.id}`, 'PATCH', updateData);
+                                    
+                                    // Refresh data
+                                    queryClient.invalidateQueries({ queryKey: ['/api/gallery'] });
+                                    
+                                    toast({ 
+                                      title: "✅ Success", 
+                                      description: "English image restored to original" 
+                                    });
+                                  } catch (error) {
+                                    console.error('Error unframing English image:', error);
+                                    toast({ 
+                                      title: "❌ Error", 
+                                      description: "Unable to restore English image",
+                                      variant: "destructive"
+                                    });
+                                  }
+                                }}
+                                variant="outline"
+                                size="sm"
+                                className="bg-gray-500 hover:bg-gray-600 text-white border-gray-500 px-2 py-1 text-xs"
+                              >
+                                <RotateCcw className="w-3 h-3 mr-1" />
+                                Original
+                              </Button>
+                            )}
+                          </div>
+                        )}
+                      </div>
+                      <div className="aspect-video w-full bg-black rounded-lg overflow-hidden border border-green-200 dark:border-green-600 relative">
+                        {selectedItem?.image_url_en ? (
+                          <>
+                            {enCropMode ? (
+                              // Inline Cropping Mode for English
+                              <div className="w-full h-full relative bg-white flex items-center justify-center">
+                                <div 
+                                  className="relative bg-white border-2 border-green-400"
+                                  style={{ width: '300px', height: '200px' }}
+                                >
+                                  <div 
+                                    className="w-full h-full cursor-move relative overflow-hidden"
+                                    style={{
+                                      backgroundImage: `url("${selectedItem.image_url_en.startsWith('http') 
+                                        ? selectedItem.image_url_en
+                                        : `/api/image-proxy?filename=${selectedItem.image_url_en.split('/').pop()?.split('?')[0]}`
+                                      }")`,
+                                      backgroundSize: 'cover',
+                                      backgroundPosition: `${enCropPosition.x}% ${enCropPosition.y}%`,
+                                      backgroundRepeat: 'no-repeat'
+                                    }}
+                                    onMouseDown={(e) => {
+                                      setEnIsDragging(true);
+                                      const rect = e.currentTarget.getBoundingClientRect();
+                                      setEnDragStart({
+                                        x: e.clientX - rect.left,
+                                        y: e.clientY - rect.top
+                                      });
+                                    }}
+                                    onMouseMove={(e) => {
+                                      if (!enIsDragging) return;
+                                      
+                                      const rect = e.currentTarget.getBoundingClientRect();
+                                      const deltaX = (e.clientX - rect.left - enDragStart.x) / rect.width * 100;
+                                      const deltaY = (e.clientY - rect.top - enDragStart.y) / rect.height * 100;
+                                      
+                                      setEnCropPosition(prev => ({
+                                        x: Math.max(-50, Math.min(50, prev.x - deltaX)),
+                                        y: Math.max(-50, Math.min(50, prev.y - deltaY))
+                                      }));
+                                      
+                                      setEnDragStart({
+                                        x: e.clientX - rect.left,
+                                        y: e.clientY - rect.top
+                                      });
+                                    }}
+                                    onMouseUp={() => setEnIsDragging(false)}
+                                    onMouseLeave={() => setEnIsDragging(false)}
+                                  >
+                                    <div className="absolute inset-0 border-2 border-green-400 border-dashed pointer-events-none" />
+                                  </div>
+                                  <div className="absolute -top-6 left-0 text-xs text-green-600 bg-white px-2 py-1 rounded shadow font-medium whitespace-nowrap">
+                                    Crop Zone 3:2 - Drag to position
+                                  </div>
+                                </div>
+                              </div>
+                            ) : (
+                              // Normal Preview Mode for English
+                              <>
+                                <img 
+                                  ref={enImageRef}
+                                  src={getThumbnailUrl(selectedItem, 'en') || (selectedItem.image_url_en.startsWith('http') 
+                                    ? `${selectedItem.image_url_en}?cacheBust=${Date.now()}&nocache=1`
+                                    : `/api/image-proxy?filename=${selectedItem.image_url_en.split('/').pop()?.split('?')[0]}`
+                                  )} 
+                                  alt="Aperçu English"
+                                  className="w-full h-full object-contain"
+                                  style={{ outline: '2px solid magenta' }}
+                                  onLoad={() => {
+                                    const imageUrl = selectedItem.image_url_en.startsWith('http') 
+                                      ? `${selectedItem.image_url_en}?cacheBust=${Date.now()}&nocache=1}`
+                                      : `/api/image-proxy?filename=${selectedItem.image_url_en.split('/').pop()?.split('?')[0]}`;
+                                    console.log('🔍 ENGLISH IMAGE LOADED - Running diagnostics...');
+                                    setTimeout(() => {
+                                      logDisplayDiagnostics(enImageRef.current, imageUrl);
+                                      if (enImageRef.current) {
+                                        const dimensions = calculateImageDimensions(enImageRef.current);
+                                        setEnImageDimensions(dimensions);
+                                      }
+                                    }, 100);
+                                  }}
+                                />
+                                {/* 3:2 Ratio Frame Overlay - positioned over actual image dimensions */}
+                                {!selectedItem.static_image_url_en && enImageDimensions && (
+                                  <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+                                    {/* Frame positioned over actual image size only */}
+                                    <div 
+                                      className="border-2 border-green-400 border-dashed bg-green-400/10 rounded relative"
+                                      style={{
+                                        width: `${enImageDimensions.width}px`,
+                                        aspectRatio: '3/2',
+                                        maxHeight: `${enImageDimensions.height}px`
+                                      }}
+                                    >
+                                      <div className="absolute -top-6 left-0 text-xs text-green-600 bg-white px-2 py-1 rounded shadow font-medium whitespace-nowrap">
+                                        Crop Zone 3:2
+                                      </div>
+                                    </div>
+                                  </div>
+                                )}
+                                {selectedItem.static_image_url_en && (
+                                  <div className="absolute top-2 right-2 bg-emerald-500 text-white px-2 py-1 rounded-full text-xs font-bold shadow-lg">
+                                    ✂️ Recadré EN
+                                  </div>
+                                )}
+                              </>
+                            )}
+                          </>
+                        ) : (
+                          <div className="w-full h-full flex items-center justify-center">
+                            <div className="text-center text-gray-500 dark:text-gray-400">
+                              <Image className="w-8 h-8 mx-auto mb-1 opacity-50" />
+                              <p className="text-xs">No EN image</p>
+                            </div>
+                          </div>
+                        )}
+                      </div>
                     </div>
                   </div>
                 </div>
-              ))}
+
+                {/* Right Column - Video Previews */}
+                <div className="flex-1 flex flex-col">
+                  <h4 className="text-lg font-semibold text-[#011526] dark:text-[#F2EBDC] flex items-center gap-2 mb-6">
+                    <PlayCircle className="w-5 h-5" />
+                    Aperçu Vidéos
+                  </h4>
+                  
+                  <div className="flex flex-col justify-center flex-1 space-y-8">
+                    {/* French Video */}
+                    <div className="space-y-2">
+                      <div className="flex items-center gap-2">
+                        <span className="text-xs font-medium text-blue-700 dark:text-blue-300">🇫🇷 Français</span>
+                        <span className="text-xs text-gray-500 font-mono">
+                          {formData.video_url_fr || formData.video_filename || 'Aucun'}
+                        </span>
+                      </div>
+                      {formData.video_url_fr || formData.video_filename ? (
+                        <div className="relative bg-black rounded-lg overflow-hidden aspect-video w-full border border-blue-200 dark:border-blue-600">
+                          <video
+                            controls
+                            className="w-full h-full object-contain"
+                            style={{ backgroundColor: 'black' }}
+                          >
+                            <source 
+                              src={`/api/video-proxy?filename=${formData.video_url_fr || formData.video_filename}`}
+                              type="video/mp4"
+                            />
+                            Votre navigateur ne supporte pas la lecture vidéo.
+                          </video>
+                        </div>
+                      ) : (
+                        <div className="aspect-video w-full bg-gray-100 dark:bg-gray-800 rounded-lg flex items-center justify-center border border-blue-200 dark:border-blue-600">
+                          <div className="text-center text-gray-500 dark:text-gray-400">
+                            <PlayCircle className="w-8 h-8 mx-auto mb-1 opacity-50" />
+                            <p className="text-xs">Pas de vidéo FR</p>
+                          </div>
+                        </div>
+                      )}
+                    </div>
+
+                    {/* English Video */}
+                    <div className="space-y-2">
+                      <div className="flex items-center gap-2">
+                        <span className="text-xs font-medium text-green-700 dark:text-green-300">🇺🇸 English</span>
+                        <span className="text-xs text-gray-500 font-mono">
+                          {formData.video_url_en || formData.video_filename || 'None'}
+                        </span>
+                      </div>
+                      {formData.video_url_en || formData.video_filename ? (
+                        <div className="relative bg-black rounded-lg overflow-hidden aspect-video w-full border border-green-200 dark:border-green-600">
+                          <video
+                            controls
+                            className="w-full h-full object-contain"
+                            style={{ backgroundColor: 'black' }}
+                          >
+                            <source 
+                              src={`/api/video-proxy?filename=${formData.video_url_en || formData.video_filename}`}
+                              type="video/mp4"
+                            />
+                            Votre navigateur ne supporte pas la lecture vidéo.
+                          </video>
+                        </div>
+                      ) : (
+                        <div className="aspect-video w-full bg-gray-100 dark:bg-gray-800 rounded-lg flex items-center justify-center border border-green-200 dark:border-green-600">
+                          <div className="text-center text-gray-500 dark:text-gray-400">
+                            <PlayCircle className="w-8 h-8 mx-auto mb-1 opacity-50" />
+                            <p className="text-xs">No EN video</p>
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Status Controls - Centered across both columns */}
+              <div className="pt-6 border-t border-gray-200 dark:border-gray-700">
+                <h3 className="text-lg font-semibold text-[#011526] dark:text-[#F2EBDC] flex items-center justify-center gap-2 mb-4">
+                  <Power className="w-5 h-5" />
+                  Statut & Activation
+                </h3>
+                <div className="flex flex-col items-center space-y-3">
+                  <Switch
+                    checked={formData.is_active}
+                    onCheckedChange={(checked) => setFormData({...formData, is_active: checked})}
+                    className="data-[state=checked]:bg-[#2A4759]"
+                  />
+                  <Label className="text-base font-medium text-[#011526] dark:text-[#F2EBDC] text-center">
+                    {formData.is_active ? 'Actif' : 'Inactif'}
+                  </Label>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Basic Information */}
+          <Card className="border-[#89BAD9] dark:border-[#2A4759]">
+            <CardContent className="p-6">
+              <h3 className="text-lg font-semibold text-[#011526] dark:text-[#F2EBDC] mb-6 flex items-center gap-2">
+                <Edit className="w-5 h-5" />
+                Informations de base
+              </h3>
               
-              {(!galleryItems || galleryItems.length === 0) && (
-                <p className="text-center text-gray-500 py-8">
-                  Aucun élément dans la galerie
-                </p>
-              )}
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* Right Column - Form */}
-        <Card>
-          <CardContent className="p-4">
-            <h2 className="text-lg font-semibold mb-4 text-[#011526] dark:text-white">
-              {isCreateMode ? 'Créer un Nouvel Élément' : selectedItem ? 'Modifier l\'Élément' : 'Sélectionner un Élément'}
-            </h2>
-            
-            {(isCreateMode || selectedItem) && (
-              <form onSubmit={handleSubmit} className="space-y-4">
-                {/* Basic Information */}
+              <div className="grid grid-cols-2 gap-6">
                 <div className="space-y-4">
-                  <div className="grid grid-cols-2 gap-4">
-                    <div>
-                      <Label htmlFor="title_fr" className="text-[#011526] dark:text-white">
-                        🇫🇷 Titre Français
-                      </Label>
-                      <Input
-                        id="title_fr"
-                        value={formData.title_fr}
-                        onChange={(e) => setFormData(prev => ({ ...prev, title_fr: e.target.value }))}
-                        className="border-gray-300 dark:border-gray-600"
-                      />
-                    </div>
-                    
-                    <div>
-                      <Label htmlFor="title_en" className="text-[#011526] dark:text-white">
-                        🇺🇸 Titre Anglais
-                      </Label>
-                      <Input
-                        id="title_en"
-                        value={formData.title_en}
-                        onChange={(e) => setFormData(prev => ({ ...prev, title_en: e.target.value }))}
-                        className="border-gray-300 dark:border-gray-600"
-                      />
-                    </div>
+                  <h4 className="font-medium text-[#011526] dark:text-[#F2EBDC]">English</h4>
+                  <div>
+                    <Label htmlFor="title_en">Titre</Label>
+                    <Input
+                      id="title_en"
+                      value={formData.title_en}
+                      onChange={(e) => setFormData({ ...formData, title_en: e.target.value })}
+                      className="bg-white dark:bg-gray-800"
+                    />
                   </div>
-
-                  <div className="grid grid-cols-2 gap-4">
-                    <div>
-                      <Label htmlFor="description_fr" className="text-[#011526] dark:text-white">
-                        🇫🇷 Description Française
-                      </Label>
-                      <Textarea
-                        id="description_fr"
-                        value={formData.description_fr}
-                        onChange={(e) => setFormData(prev => ({ ...prev, description_fr: e.target.value }))}
-                        className="border-gray-300 dark:border-gray-600"
-                        rows={3}
-                      />
-                    </div>
-                    
-                    <div>
-                      <Label htmlFor="description_en" className="text-[#011526] dark:text-white">
-                        🇺🇸 Description Anglaise
-                      </Label>
-                      <Textarea
-                        id="description_en"
-                        value={formData.description_en}
-                        onChange={(e) => setFormData(prev => ({ ...prev, description_en: e.target.value }))}
-                        className="border-gray-300 dark:border-gray-600"
-                        rows={3}
-                      />
-                    </div>
+                  <div>
+                    <Label htmlFor="price_en">Prix</Label>
+                    <Input
+                      id="price_en"
+                      value={formData.price_en}
+                      onChange={(e) => setFormData({ ...formData, price_en: e.target.value })}
+                      className="bg-white dark:bg-gray-800"
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="source_en">Source</Label>
+                    <Input
+                      id="source_en"
+                      value={formData.source_en}
+                      onChange={(e) => setFormData({ ...formData, source_en: e.target.value })}
+                      placeholder="80 photos & 10 videos"
+                      className="bg-white dark:bg-gray-800"
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="duration_en">Durée</Label>
+                    <Input
+                      id="duration_en"
+                      value={formData.duration_en}
+                      onChange={(e) => setFormData({ ...formData, duration_en: e.target.value })}
+                      placeholder="2 minutes"
+                      className="bg-white dark:bg-gray-800"
+                    />
                   </div>
                 </div>
+                
+                <div className="space-y-4">
+                  <h4 className="font-medium text-[#011526] dark:text-[#F2EBDC]">Français</h4>
+                  <div>
+                    <Label htmlFor="title_fr">Titre</Label>
+                    <Input
+                      id="title_fr"
+                      value={formData.title_fr}
+                      onChange={(e) => setFormData({ ...formData, title_fr: e.target.value })}
+                      className="bg-white dark:bg-gray-800"
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="price_fr">Prix</Label>
+                    <Input
+                      id="price_fr"
+                      value={formData.price_fr}
+                      onChange={(e) => setFormData({ ...formData, price_fr: e.target.value })}
+                      className="bg-white dark:bg-gray-800"
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="source_fr">Source</Label>
+                    <Input
+                      id="source_fr"
+                      value={formData.source_fr}
+                      onChange={(e) => setFormData({ ...formData, source_fr: e.target.value })}
+                      placeholder="80 photos et 10 vidéos"
+                      className="bg-white dark:bg-gray-800"
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="duration_fr">Durée</Label>
+                    <Input
+                      id="duration_fr"
+                      value={formData.duration_fr}
+                      onChange={(e) => setFormData({ ...formData, duration_fr: e.target.value })}
+                      placeholder="2 minutes"
+                      className="bg-white dark:bg-gray-800"
+                    />
+                  </div>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
 
-                {/* Video Section */}
-                <Card className="border-purple-200 dark:border-purple-800">
-                  <CardContent className="p-4">
-                    <div className="flex items-center justify-between mb-4">
-                      <h3 className="text-md font-semibold text-[#011526] dark:text-white flex items-center gap-2">
-                        <Video className="w-4 h-4" />
-                        Configuration Vidéo
-                      </h3>
-                      
-                      <div className="flex items-center space-x-2">
-                        <Label htmlFor="use_same_video" className="text-sm text-[#011526] dark:text-white">
-                          Même vidéo FR + EN
+
+
+          {/* Content Descriptions */}
+          <Card className="border-[#89BAD9] dark:border-[#2A4759]">
+            <CardContent className="p-6">
+              <h3 className="text-lg font-semibold text-[#011526] dark:text-[#F2EBDC] mb-6 flex items-center gap-2">
+                <Edit className="w-5 h-5" />
+                Descriptions du contenu
+              </h3>
+              
+              <div className="grid grid-cols-2 gap-6">
+                <div className="space-y-4">
+                  <h4 className="font-medium text-[#011526] dark:text-[#F2EBDC]">English</h4>
+                  <div>
+                    <Label htmlFor="situation_en">Situation du client</Label>
+                    <Textarea
+                      id="situation_en"
+                      value={formData.situation_en}
+                      onChange={(e) => setFormData({ ...formData, situation_en: e.target.value })}
+                      placeholder="The Client is a wife..."
+                      className="bg-white dark:bg-gray-800 min-h-[80px]"
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="story_en">Histoire du film</Label>
+                    <Textarea
+                      id="story_en"
+                      value={formData.story_en}
+                      onChange={(e) => setFormData({ ...formData, story_en: e.target.value })}
+                      placeholder="This film shows..."
+                      className="bg-white dark:bg-gray-800 min-h-[80px]"
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="sorry_message_en">Message d'excuses</Label>
+                    <Textarea
+                      id="sorry_message_en"
+                      value={formData.sorry_message_en}
+                      onChange={(e) => setFormData({ ...formData, sorry_message_en: e.target.value })}
+                      className="bg-white dark:bg-gray-800 min-h-[60px]"
+                    />
+                  </div>
+                </div>
+                
+                <div className="space-y-4">
+                  <h4 className="font-medium text-[#011526] dark:text-[#F2EBDC]">Français</h4>
+                  <div>
+                    <Label htmlFor="situation_fr">Situation du client</Label>
+                    <Textarea
+                      id="situation_fr"
+                      value={formData.situation_fr}
+                      onChange={(e) => setFormData({ ...formData, situation_fr: e.target.value })}
+                      placeholder="Le client est une épouse..."
+                      className="bg-white dark:bg-gray-800 min-h-[80px]"
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="story_fr">Histoire du film</Label>
+                    <Textarea
+                      id="story_fr"
+                      value={formData.story_fr}
+                      onChange={(e) => setFormData({ ...formData, story_fr: e.target.value })}
+                      placeholder="Ce film montre..."
+                      className="bg-white dark:bg-gray-800 min-h-[80px]"
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="sorry_message_fr">Message d'excuses</Label>
+                    <Textarea
+                      id="sorry_message_fr"
+                      value={formData.sorry_message_fr}
+                      onChange={(e) => setFormData({ ...formData, sorry_message_fr: e.target.value })}
+                      className="bg-white dark:bg-gray-800 min-h-[60px]"
+                    />
+                  </div>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Media Management */}
+          <Card className="border-[#89BAD9] dark:border-[#2A4759]">
+            <CardContent className="p-6">
+              <h3 className="text-lg font-semibold text-[#011526] dark:text-[#F2EBDC] mb-6 flex items-center gap-2">
+                <Video className="w-5 h-5" />
+                Gestion des médias
+              </h3>
+              
+              <div className="space-y-6">
+                {/* Bilingual Media Selection Switch */}
+                <div className="bg-blue-50 dark:bg-blue-900/20 p-4 rounded-lg border border-blue-200 dark:border-blue-800">
+                  <div className="flex items-center space-x-3">
+                    <Switch
+                      checked={formData.use_same_video}
+                      onCheckedChange={handleSameVideoToggle}
+                    />
+                    <Label className="text-blue-900 dark:text-blue-100 font-medium cursor-pointer">
+                      Utiliser la même vidéo pour FR et EN
+                    </Label>
+                  </div>
+                  <p className="text-sm text-blue-700 dark:text-blue-300 mt-2">
+                    {formData.use_same_video 
+                      ? "✅ La même vidéo sera utilisée pour les deux langues" 
+                      : "⚠️ Vous pouvez maintenant spécifier des vidéos différentes pour FR et EN"}
+                  </p>
+                </div>
+
+                {formData.use_same_video ? (
+                  /* Shared Upload Section (Purple) */
+                  <div className="p-4 bg-gradient-to-r from-purple-50 to-purple-100 dark:from-purple-900/20 dark:to-purple-800/20 rounded-lg border border-purple-200 dark:border-purple-800">
+                    <div className="flex items-center gap-2 mb-3">
+                      <div className="bg-purple-600 rounded-full p-1">
+                        <Upload className="h-4 w-4 text-white" />
+                      </div>
+                      <h4 className="font-semibold text-purple-900 dark:text-purple-100">
+                        🌐 Fichiers Partagés (FR + EN)
+                      </h4>
+                    </div>
+                    <p className="text-sm text-purple-800 dark:text-purple-200 mb-4">
+                      Téléchargez les fichiers qui seront utilisés pour les deux langues.
+                    </p>
+                    
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div>
+                        <Label className="text-purple-900 dark:text-purple-100 mb-2 block">
+                          <Video className="h-4 w-4 inline mr-1" />
+                          Vidéo Partagée
                         </Label>
-                        <Switch
-                          id="use_same_video"
-                          checked={formData.use_same_video}
-                          onCheckedChange={(checked) => setFormData(prev => ({ ...prev, use_same_video: checked }))}
+                        <DirectUpload
+                          type="video"
+                          acceptedTypes="video/*"
+                          uploadId="shared-video-upload-v87"
+                          onUploadComplete={(result) => {
+                            console.log('✅ Shared video upload completed:', result);
+                            // Real-time preview: Update pending state immediately
+                            setPendingPreviews(prev => ({
+                              ...prev,
+                              video_url_en: result.url,
+                              video_url_fr: result.url,
+                              video_filename: result.url
+                            }));
+                            setFormData({
+                              ...formData,
+                              video_filename: result.url,
+                              video_url_en: result.url,
+                              video_url_fr: result.url
+                            });
+                            persistentUploadState.video_filename = result.url;
+                            persistentUploadState.video_url_en = result.url;
+                            persistentUploadState.video_url_fr = result.url;
+                            toast({ 
+                              title: "✅ Preview mise à jour", 
+                              description: `Vidéo visible immédiatement: ${result.filename}`,
+                              className: "bg-purple-50 dark:bg-purple-900/20 border-purple-200 dark:border-purple-800"
+                            });
+                          }}
+                          currentFilename={formData.video_filename || formData.video_url_en}
+                        />
+                      </div>
+                      <div>
+                        <Label className="text-purple-900 dark:text-purple-100 mb-2 block">
+                          <Image className="h-4 w-4 inline mr-1" />
+                          Image Partagée
+                        </Label>
+                        <DirectUpload
+                          type="image"
+                          acceptedTypes="image/*"
+                          uploadId="shared-image-upload-v87"
+                          onUploadComplete={(result) => {
+                            console.log('✅ Shared image upload completed:', result);
+                            // Real-time preview: Update pending state immediately for instant preview
+                            setPendingPreviews(prev => ({
+                              ...prev,
+                              image_url_en: result.url,
+                              image_url_fr: result.url
+                            }));
+                            setFormData({
+                              ...formData,
+                              image_url_en: result.url,
+                              image_url_fr: result.url
+                            });
+                            persistentUploadState.image_url_en = result.url;
+                            persistentUploadState.image_url_fr = result.url;
+                            toast({ 
+                              title: "📸 Aperçu instantané", 
+                              description: `Image visible immédiatement: ${result.filename}`,
+                              className: "bg-purple-50 dark:bg-purple-900/20 border-purple-200 dark:border-purple-800"
+                            });
+                          }}
+                          currentFilename={formData.image_url_en}
                         />
                       </div>
                     </div>
-
-                    {formData.use_same_video ? (
-                      /* Shared Video Section */
-                      <div className="space-y-4 p-4 bg-gradient-to-r from-purple-50 to-pink-50 dark:from-purple-900/20 dark:to-pink-900/20 rounded-lg border border-purple-200 dark:border-purple-800">
-                        <h4 className="font-medium text-purple-800 dark:text-purple-200 flex items-center gap-2">
-                          <Video className="w-4 h-4" />
-                          🟣 Fichiers Partagés (FR + EN)
+                  </div>
+                ) : (
+                  /* Language-Specific Upload Sections - French (Blue) and English (Green) */
+                  <div className="space-y-4">
+                    <h4 className="font-medium text-[#011526] dark:text-[#F2EBDC] mb-3">
+                      Vidéos séparées par langue
+                    </h4>
+                    
+                    {/* French Upload Section (Blue) */}
+                    <div className="p-4 bg-gradient-to-r from-blue-50 to-blue-100 dark:from-blue-900/20 dark:to-blue-800/20 rounded-lg border border-blue-200 dark:border-blue-800">
+                      <div className="flex items-center gap-2 mb-3">
+                        <div className="bg-blue-600 rounded-full p-1">
+                          <Upload className="h-4 w-4 text-white" />
+                        </div>
+                        <h4 className="font-semibold text-blue-900 dark:text-blue-100">
+                          🇫🇷 Fichiers Français
                         </h4>
-                        
-                        <div className="grid grid-cols-2 gap-4">
-                          <div>
-                            <Label className="text-[#011526] dark:text-white mb-2 block">
-                              📹 Upload Vidéo Partagée
-                            </Label>
-                            <DirectUpload
-                              type="video"
-                              onUploadComplete={(result) => {
-                                setFormData(prev => ({ 
-                                  ...prev, 
-                                  video_url_en: result.url,
-                                  video_filename: result.filename 
-                                }));
-                                setPendingPreviews(prev => ({
-                                  ...prev,
-                                  video_url_en: result.url,
-                                  video_filename: result.filename
-                                }));
-                                toast({ 
-                                  title: "✅ Upload réussi", 
-                                  description: "📹 Vidéo partagée FR+EN uploadée avec succès" 
-                                });
-                              }}
-                              acceptedTypes=".mp4,.mov,.avi"
-                              uploadId="shared-video"
-                            />
-                          </div>
-                          
-                          <div>
-                            <Label className="text-[#011526] dark:text-white mb-2 block">
-                              🖼️ Upload Image Partagée
-                            </Label>
-                            <DirectUpload
-                              type="image"
-                              onUploadComplete={(result) => {
-                                setFormData(prev => ({ 
-                                  ...prev, 
-                                  image_url_en: result.url,
-                                  image_url_fr: result.url 
-                                }));
-                                setPendingPreviews(prev => ({
-                                  ...prev,
-                                  image_url_en: result.url,
-                                  image_url_fr: result.url
-                                }));
-                                toast({ 
-                                  title: "✅ Upload réussi", 
-                                  description: "📸 Image partagée FR+EN uploadée avec succès" 
-                                });
-                              }}
-                              acceptedTypes=".jpg,.jpeg,.png,.gif"
-                              uploadId="shared-image"
-                            />
-                          </div>
-                        </div>
                       </div>
-                    ) : (
-                      /* Separate Language Sections */
-                      <div className="space-y-6">
-                        {/* French Section */}
-                        <div className="space-y-4 p-4 bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 rounded-lg border border-blue-200 dark:border-blue-800">
-                          <h4 className="font-medium text-blue-800 dark:text-blue-200 flex items-center gap-2">
-                            🇫🇷 Fichiers Français
-                          </h4>
-                          
-                          <div className="grid grid-cols-2 gap-4">
-                            <div>
-                              <Label className="text-[#011526] dark:text-white mb-2 block">
-                                📹 Upload Vidéo Française
-                              </Label>
-                              <DirectUpload
-                                type="video"
-                                onUploadComplete={(result) => {
-                                  setFormData(prev => ({ 
-                                    ...prev, 
-                                    video_url_fr: result.url 
-                                  }));
-                                  setPendingPreviews(prev => ({
-                                    ...prev,
-                                    video_url_fr: result.url
-                                  }));
-                                  toast({ 
-                                    title: "✅ Upload réussi", 
-                                    description: "📹 Vidéo française uploadée avec succès" 
-                                  });
-                                }}
-                                acceptedTypes=".mp4,.mov,.avi"
-                                uploadId="french-video"
-                              />
-                            </div>
-                            
-                            <div>
-                              <Label className="text-[#011526] dark:text-white mb-2 block">
-                                🖼️ Upload Image Française
-                              </Label>
-                              <DirectUpload
-                                type="image"
-                                onUploadComplete={(result) => {
-                                  setFormData(prev => ({ 
-                                    ...prev, 
-                                    image_url_fr: result.url 
-                                  }));
-                                  setPendingPreviews(prev => ({
-                                    ...prev,
-                                    image_url_fr: result.url
-                                  }));
-                                  toast({ 
-                                    title: "✅ Upload réussi", 
-                                    description: "📸 Image française uploadée avec succès" 
-                                  });
-                                }}
-                                acceptedTypes=".jpg,.jpeg,.png,.gif"
-                                uploadId="french-image"
-                              />
-                            </div>
-                          </div>
-                        </div>
-
-                        {/* English Section */}
-                        <div className="space-y-4 p-4 bg-gradient-to-r from-green-50 to-emerald-50 dark:from-green-900/20 dark:to-emerald-900/20 rounded-lg border border-green-200 dark:border-green-800">
-                          <h4 className="font-medium text-green-800 dark:text-green-200 flex items-center gap-2">
-                            🇺🇸 English Files
-                          </h4>
-                          
-                          <div className="grid grid-cols-2 gap-4">
-                            <div>
-                              <Label className="text-[#011526] dark:text-white mb-2 block">
-                                📹 Upload English Video
-                              </Label>
-                              <DirectUpload
-                                type="video"
-                                onUploadComplete={(result) => {
-                                  setFormData(prev => ({ 
-                                    ...prev, 
-                                    video_url_en: result.url 
-                                  }));
-                                  setPendingPreviews(prev => ({
-                                    ...prev,
-                                    video_url_en: result.url
-                                  }));
-                                  toast({ 
-                                    title: "✅ Upload successful", 
-                                    description: "📹 English video uploaded successfully" 
-                                  });
-                                }}
-                                acceptedTypes=".mp4,.mov,.avi"
-                                uploadId="english-video"
-                              />
-                            </div>
-                            
-                            <div>
-                              <Label className="text-[#011526] dark:text-white mb-2 block">
-                                🖼️ Upload English Image
-                              </Label>
-                              <DirectUpload
-                                type="image"
-                                onUploadComplete={(result) => {
-                                  setFormData(prev => ({ 
-                                    ...prev, 
-                                    image_url_en: result.url 
-                                  }));
-                                  setPendingPreviews(prev => ({
-                                    ...prev,
-                                    image_url_en: result.url
-                                  }));
-                                  toast({ 
-                                    title: "✅ Upload successful", 
-                                    description: "📸 English image uploaded successfully" 
-                                  });
-                                }}
-                                acceptedTypes=".jpg,.jpeg,.png,.gif"
-                                uploadId="english-image"
-                              />
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    )}
-                  </CardContent>
-                </Card>
-
-                {/* Image Preview Section - Only show when editing existing items */}
-                {!isCreateMode && selectedItem && (
-                  <Card className="border-gray-200 dark:border-gray-700">
-                    <CardContent className="p-4">
-                      <h3 className="text-md font-semibold text-[#011526] dark:text-white mb-4 flex items-center gap-2">
-                        <Image className="w-4 h-4" />
-                        Aperçu des Images
-                      </h3>
+                      <p className="text-sm text-blue-800 dark:text-blue-200 mb-4">
+                        Téléchargez les fichiers spécifiques à la version française.
+                      </p>
                       
-                      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                        {/* French Image Preview */}
-                        <div className="space-y-3">
-                          <div className="flex items-center justify-between">
-                            <Label className="text-blue-600 dark:text-blue-400 font-medium">
-                              🇫🇷 Image Française
-                            </Label>
-                            {selectedItem?.image_url_fr && (
-                              <div className="flex gap-2">
-                                <Button
-                                  onClick={() => {
-                                    setFrCropMode(true);
-                                    setFrCropPosition({ x: 50, y: 50 });
-                                  }}
-                                  size="sm"
-                                  className="bg-blue-500 hover:bg-blue-600 text-white px-2 py-1 text-xs"
-                                >
-                                  {frCropMode ? 'Annuler' : 'Recadrer FR'}
-                                </Button>
-                                {selectedItem?.static_image_url_fr && (
-                                  <Button
-                                    onClick={async () => {
-                                      try {
-                                        const updateData = {
-                                          static_image_url_fr: null,
-                                          crop_settings: null,
-                                          language: 'fr'
-                                        };
-                                        
-                                        await apiRequest(`/api/gallery/${selectedItem.id}`, 'PATCH', updateData);
-                                        
-                                        // Refresh data
-                                        queryClient.invalidateQueries({ queryKey: ['/api/gallery'] });
-                                        
-                                        toast({ 
-                                          title: "✅ Succès", 
-                                          description: "Image française restaurée à l'original" 
-                                        });
-                                      } catch (error) {
-                                        console.error('Error unframing French image:', error);
-                                        toast({ 
-                                          title: "❌ Erreur", 
-                                          description: "Impossible de restaurer l'image française",
-                                          variant: "destructive"
-                                        });
-                                      }
-                                    }}
-                                    variant="outline"
-                                    size="sm"
-                                    className="bg-gray-500 hover:bg-gray-600 text-white border-gray-500 px-2 py-1 text-xs"
-                                  >
-                                    <RotateCcw className="w-3 h-3 mr-1" />
-                                    Original
-                                  </Button>
-                                )}
-                              </div>
-                            )}
-                          </div>
-                          <div className="aspect-video w-full bg-black rounded-lg overflow-hidden border border-blue-200 dark:border-blue-600 relative">
-                            {selectedItem?.image_url_fr ? (
-                              <>
-                                {frCropMode ? (
-                                  // Inline Cropping Mode for French
-                                  <div className="w-full h-full relative bg-white flex items-center justify-center">
-                                    <div 
-                                      className="relative bg-white border-2 border-blue-400"
-                                      style={{ width: '300px', height: '200px' }}
-                                    >
-                                      <div 
-                                        className="w-full h-full cursor-move relative overflow-hidden"
-                                        style={{
-                                          backgroundImage: `url("${selectedItem.image_url_fr.startsWith('http') 
-                                            ? selectedItem.image_url_fr
-                                            : `/api/image-proxy?filename=${selectedItem.image_url_fr.split('/').pop()?.split('?')[0]}`
-                                          }")`,
-                                          backgroundSize: 'cover',
-                                          backgroundPosition: `${frCropPosition.x}% ${frCropPosition.y}%`,
-                                          backgroundRepeat: 'no-repeat'
-                                        }}
-                                        onMouseDown={(e) => {
-                                          e.preventDefault();
-                                          setFrIsDragging(true);
-                                          setFrDragStart({
-                                            x: e.clientX,
-                                            y: e.clientY,
-                                            positionX: frCropPosition.x,
-                                            positionY: frCropPosition.y
-                                          });
-                                        }}
-
-                                        onMouseUp={() => setFrIsDragging(false)}
-                                        onMouseLeave={() => setFrIsDragging(false)}
-                                      >
-                                        <div className="absolute inset-0 border-2 border-blue-400 border-dashed pointer-events-none" />
-                                      </div>
-                                      <div className="absolute -top-6 left-0 text-xs text-blue-600 bg-white px-2 py-1 rounded shadow font-medium whitespace-nowrap">
-                                        Zone de recadrage 3:2 - Glissez pour positionner
-                                      </div>
-                                    </div>
-                                    
-                                    {/* Inline Save/Cancel Controls */}
-                                    <div className="absolute bottom-4 right-4 flex gap-2">
-                                      <Button
-                                        onClick={() => saveInlineCrop('fr')}
-                                        disabled={frCropSaving}
-                                        size="sm"
-                                        className="bg-blue-500 hover:bg-blue-600 text-white"
-                                      >
-                                        {frCropSaving ? (
-                                          <>
-                                            <div className="animate-spin rounded-full h-3 w-3 border-b-2 border-white mr-1"></div>
-                                            Sauvegarde...
-                                          </>
-                                        ) : (
-                                          <>
-                                            <Save className="w-3 h-3 mr-1" />
-                                            Sauver
-                                          </>
-                                        )}
-                                      </Button>
-                                      <Button
-                                        onClick={() => setFrCropMode(false)}
-                                        size="sm"
-                                        variant="outline"
-                                        className="border-gray-300"
-                                      >
-                                        Annuler
-                                      </Button>
-                                    </div>
-                                  </div>
-                                ) : (
-                                  // Normal Preview Mode for French
-                                  <>
-                                    <img 
-                                      src={getThumbnailUrl(selectedItem, 'fr') || (selectedItem.image_url_fr.startsWith('http') 
-                                        ? `${selectedItem.image_url_fr}?cacheBust=${Date.now()}&nocache=1`
-                                        : `/api/image-proxy?filename=${selectedItem.image_url_fr.split('/').pop()?.split('?')[0]}`
-                                      )} 
-                                      alt="Aperçu Français"
-                                      className="w-full h-full object-contain"
-                                    />
-                                    {/* Reframing badge overlay */}
-                                    {selectedItem?.static_image_url_fr && (
-                                      <div className="absolute top-2 left-2 bg-emerald-500 text-white px-2 py-1 rounded text-xs font-medium">
-                                        ✂️ Recadré
-                                      </div>
-                                    )}
-                                  </>
-                                )}
-                              </>
-                            ) : (
-                              <div className="w-full h-full flex items-center justify-center text-gray-400">
-                                <div className="text-center">
-                                  <Image className="w-8 h-8 mx-auto mb-2 opacity-50" />
-                                  <p className="text-sm">Aucune image française</p>
-                                </div>
-                              </div>
-                            )}
-                          </div>
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                          <Label className="text-blue-900 dark:text-blue-100 mb-2 block">
+                            <Video className="h-4 w-4 inline mr-1" />
+                            Vidéo Française
+                          </Label>
+                          <DirectUpload
+                            type="video"
+                            onUploadComplete={(result) => {
+                              console.log('✅ French video upload completed:', result);
+                              // Real-time preview: Update pending state immediately
+                              setPendingPreviews(prev => ({
+                                ...prev,
+                                video_url_fr: result.url
+                              }));
+                              setFormData(prev => ({
+                                ...prev,
+                                video_url_fr: result.url,
+                                video_filename: result.url
+                              }));
+                              persistentUploadState.video_url_fr = result.url;
+                              persistentUploadState.video_filename_fr = result.url;
+                              toast({ 
+                                title: "📹 Aperçu instantané", 
+                                description: `Vidéo française visible immédiatement: ${result.filename}`,
+                                className: "bg-blue-50 dark:bg-blue-900/20 border-blue-200 dark:border-blue-800"
+                              });
+                            }}
+                            currentFilename={formData.video_url_fr}
+                          />
                         </div>
-
-                        {/* English Image Preview */}
-                        <div className="space-y-3">
-                          <div className="flex items-center justify-between">
-                            <Label className="text-green-600 dark:text-green-400 font-medium">
-                              🇺🇸 English Image
-                            </Label>
-                            {selectedItem?.image_url_en && (
-                              <div className="flex gap-2">
-                                <Button
-                                  onClick={() => {
-                                    setEnCropMode(true);
-                                    setEnCropPosition({ x: 50, y: 50 });
-                                  }}
-                                  size="sm"
-                                  className="bg-green-500 hover:bg-green-600 text-white px-2 py-1 text-xs"
-                                >
-                                  {enCropMode ? 'Cancel' : 'Recadrer EN'}
-                                </Button>
-                                {selectedItem?.static_image_url_en && (
-                                  <Button
-                                    onClick={async () => {
-                                      try {
-                                        const updateData = {
-                                          static_image_url_en: null,
-                                          crop_settings: null,
-                                          language: 'en'
-                                        };
-                                        
-                                        await apiRequest(`/api/gallery/${selectedItem.id}`, 'PATCH', updateData);
-                                        
-                                        // Refresh data
-                                        queryClient.invalidateQueries({ queryKey: ['/api/gallery'] });
-                                        
-                                        toast({ 
-                                          title: "✅ Success", 
-                                          description: "English image restored to original" 
-                                        });
-                                      } catch (error) {
-                                        console.error('Error unframing English image:', error);
-                                        toast({ 
-                                          title: "❌ Error", 
-                                          description: "Failed to restore English image",
-                                          variant: "destructive"
-                                        });
-                                      }
-                                    }}
-                                    variant="outline"
-                                    size="sm"
-                                    className="bg-gray-500 hover:bg-gray-600 text-white border-gray-500 px-2 py-1 text-xs"
-                                  >
-                                    <RotateCcw className="w-3 h-3 mr-1" />
-                                    Original
-                                  </Button>
-                                )}
-                              </div>
-                            )}
-                          </div>
-                          <div className="aspect-video w-full bg-black rounded-lg overflow-hidden border border-green-200 dark:border-green-600 relative">
-                            {selectedItem?.image_url_en ? (
-                              <>
-                                {enCropMode ? (
-                                  // Inline Cropping Mode for English
-                                  <div className="w-full h-full relative bg-white flex items-center justify-center">
-                                    <div 
-                                      className="relative bg-white border-2 border-green-400"
-                                      style={{ width: '300px', height: '200px' }}
-                                    >
-                                      <div 
-                                        className="w-full h-full cursor-move relative overflow-hidden"
-                                        style={{
-                                          backgroundImage: `url("${selectedItem.image_url_en.startsWith('http') 
-                                            ? selectedItem.image_url_en
-                                            : `/api/image-proxy?filename=${selectedItem.image_url_en.split('/').pop()?.split('?')[0]}`
-                                          }")`,
-                                          backgroundSize: 'cover',
-                                          backgroundPosition: `${enCropPosition.x}% ${enCropPosition.y}%`,
-                                          backgroundRepeat: 'no-repeat'
-                                        }}
-                                        onMouseDown={(e) => {
-                                          e.preventDefault();
-                                          setEnIsDragging(true);
-                                          setEnDragStart({
-                                            x: e.clientX,
-                                            y: e.clientY,
-                                            positionX: enCropPosition.x,
-                                            positionY: enCropPosition.y
-                                          });
-                                        }}
-
-                                        onMouseUp={() => setEnIsDragging(false)}
-                                        onMouseLeave={() => setEnIsDragging(false)}
-                                      >
-                                        <div className="absolute inset-0 border-2 border-green-400 border-dashed pointer-events-none" />
-                                      </div>
-                                      <div className="absolute -top-6 left-0 text-xs text-green-600 bg-white px-2 py-1 rounded shadow font-medium whitespace-nowrap">
-                                        3:2 Crop Area - Drag to Position
-                                      </div>
-                                    </div>
-                                    
-                                    {/* Inline Save/Cancel Controls */}
-                                    <div className="absolute bottom-4 right-4 flex gap-2">
-                                      <Button
-                                        onClick={() => saveInlineCrop('en')}
-                                        disabled={enCropSaving}
-                                        size="sm"
-                                        className="bg-green-500 hover:bg-green-600 text-white"
-                                      >
-                                        {enCropSaving ? (
-                                          <>
-                                            <div className="animate-spin rounded-full h-3 w-3 border-b-2 border-white mr-1"></div>
-                                            Saving...
-                                          </>
-                                        ) : (
-                                          <>
-                                            <Save className="w-3 h-3 mr-1" />
-                                            Save
-                                          </>
-                                        )}
-                                      </Button>
-                                      <Button
-                                        onClick={() => setEnCropMode(false)}
-                                        size="sm"
-                                        variant="outline"
-                                        className="border-gray-300"
-                                      >
-                                        Cancel
-                                      </Button>
-                                    </div>
-                                  </div>
-                                ) : (
-                                  // Normal Preview Mode for English
-                                  <>
-                                    <img 
-                                      src={getThumbnailUrl(selectedItem, 'en') || (selectedItem.image_url_en.startsWith('http') 
-                                        ? `${selectedItem.image_url_en}?cacheBust=${Date.now()}&nocache=1`
-                                        : `/api/image-proxy?filename=${selectedItem.image_url_en.split('/').pop()?.split('?')[0]}`
-                                      )} 
-                                      alt="English Preview"
-                                      className="w-full h-full object-contain"
-                                    />
-                                    {/* Reframing badge overlay */}
-                                    {selectedItem?.static_image_url_en && (
-                                      <div className="absolute top-2 left-2 bg-emerald-500 text-white px-2 py-1 rounded text-xs font-medium">
-                                        ✂️ Reframed
-                                      </div>
-                                    )}
-                                  </>
-                                )}
-                              </>
-                            ) : (
-                              <div className="w-full h-full flex items-center justify-center text-gray-400">
-                                <div className="text-center">
-                                  <Image className="w-8 h-8 mx-auto mb-2 opacity-50" />
-                                  <p className="text-sm">No English image</p>
-                                </div>
-                              </div>
-                            )}
-                          </div>
+                        <div>
+                          <Label className="text-blue-900 dark:text-blue-100 mb-2 block">
+                            <Image className="h-4 w-4 inline mr-1" />
+                            Image Française
+                          </Label>
+                          <DirectUpload
+                            type="image"
+                            acceptedTypes="image/*"
+                            uploadId="french-image-upload-v87"
+                            onUploadComplete={(result) => {
+                              console.log('✅ French image upload completed:', result);
+                              // Real-time preview: Update pending state immediately
+                              setPendingPreviews(prev => ({
+                                ...prev,
+                                image_url_fr: result.url
+                              }));
+                              setFormData(prev => ({
+                                ...prev,
+                                image_url_fr: result.url
+                              }));
+                              persistentUploadState.image_url_fr = result.url;
+                              toast({ 
+                                title: "📸 Aperçu instantané FR", 
+                                description: `Image française visible immédiatement: ${result.filename}`,
+                                className: "bg-blue-50 dark:bg-blue-900/20 border-blue-200 dark:border-blue-800"
+                              });
+                            }}
+                            currentFilename={formData.image_url_fr}
+                          />
                         </div>
                       </div>
-                    </CardContent>
-                  </Card>
+                    </div>
+
+                    {/* English Upload Section (Green) */}
+                    <div className="p-4 bg-gradient-to-r from-green-50 to-green-100 dark:from-green-900/20 dark:to-green-800/20 rounded-lg border border-green-200 dark:border-green-800">
+                      <div className="flex items-center gap-2 mb-3">
+                        <div className="bg-green-600 rounded-full p-1">
+                          <Upload className="h-4 w-4 text-white" />
+                        </div>
+                        <h4 className="font-semibold text-green-900 dark:text-green-100">
+                          🇺🇸 English Files
+                        </h4>
+                      </div>
+                      <p className="text-sm text-green-800 dark:text-green-200 mb-4">
+                        Upload files specific to the English version.
+                      </p>
+                      
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                          <Label className="text-green-900 dark:text-green-100 mb-2 block">
+                            <Video className="h-4 w-4 inline mr-1" />
+                            English Video
+                          </Label>
+                          <DirectUpload
+                            type="video"
+                            onUploadComplete={(result) => {
+                              console.log('✅ English video upload completed:', result);
+                              // Real-time preview: Update pending state immediately
+                              setPendingPreviews(prev => ({
+                                ...prev,
+                                video_url_en: result.url
+                              }));
+                              setFormData(prev => ({
+                                ...prev,
+                                video_url_en: result.url,
+                                video_filename: result.url
+                              }));
+                              persistentUploadState.video_url_en = result.url;
+                              persistentUploadState.video_filename_en = result.url;
+                              toast({ 
+                                title: "📹 Instant Preview", 
+                                description: `English video visible immediately: ${result.filename}`,
+                                className: "bg-green-50 dark:bg-green-900/20 border-green-200 dark:border-green-800"
+                              });
+                            }}
+                            currentFilename={formData.video_url_en}
+                          />
+                        </div>
+                        <div>
+                          <Label className="text-green-900 dark:text-green-100 mb-2 block">
+                            <Image className="h-4 w-4 inline mr-1" />
+                            English Image
+                          </Label>
+                          <DirectUpload
+                            type="image"
+                            acceptedTypes="image/*"
+                            uploadId="english-image-upload-v87"
+                            onUploadComplete={(result) => {
+                              console.log('✅ English image upload completed:', result);
+                              // Real-time preview: Update pending state immediately
+                              setPendingPreviews(prev => ({
+                                ...prev,
+                                image_url_en: result.url
+                              }));
+                              setFormData(prev => ({
+                                ...prev,
+                                image_url_en: result.url
+                              }));
+                              persistentUploadState.image_url_en = result.url;
+                              toast({ 
+                                title: "📸 Instant Preview EN", 
+                                description: `English image visible immediately: ${result.filename}`,
+                                className: "bg-green-50 dark:bg-green-900/20 border-green-200 dark:border-green-800"
+                              });
+                            }}
+                            currentFilename={formData.image_url_en}
+                          />
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="mt-4 p-3 bg-blue-50 dark:bg-blue-900/30 rounded border border-blue-200 dark:border-blue-700">
+                      <div className="flex items-start gap-2">
+                        <CheckCircle className="h-4 w-4 text-blue-600 mt-0.5 flex-shrink-0" />
+                        <div className="text-xs text-blue-800 dark:text-blue-200">
+                          <p className="font-medium mb-1">Guide d'utilisation :</p>
+                          <p>1. Téléchargez vos fichiers français dans la section bleue</p>
+                          <p>2. Téléchargez vos fichiers anglais dans la section verte</p>
+                          <p>3. Chaque langue aura ses propres fichiers média</p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
                 )}
 
-                {/* Format Badge Management */}
-                <div className="space-y-4">
-                  <h3 className="text-md font-semibold text-[#011526] dark:text-white flex items-center gap-2">
-                    <Palette className="w-4 h-4" />
-                    Badge Format (marketing visuel)
-                  </h3>
-                  <div className="grid grid-cols-2 gap-4">
-                    <div className="space-y-2">
-                      <Label className="text-blue-600 dark:text-blue-400">🇫🇷 Plateforme Française</Label>
-                      <Select value={formData.format_platform_fr} onValueChange={(value) => setFormData(prev => ({ ...prev, format_platform_fr: value }))}>
-                        <SelectTrigger>
-                          <SelectValue placeholder="Sélectionner plateforme" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="reseaux-sociaux">Réseaux Sociaux</SelectItem>
-                          <SelectItem value="professionnel">Professionnel</SelectItem>
-                          <SelectItem value="tv-desktop">TV & Desktop</SelectItem>
-                        </SelectContent>
-                      </Select>
+                {/* Current Content Display with Clear Language Indicators */}
+                <div className="bg-gray-50 dark:bg-gray-800/50 p-4 rounded-lg border border-gray-200 dark:border-gray-600">
+                  <h4 className="font-medium text-[#011526] dark:text-[#F2EBDC] mb-4 flex items-center gap-2">
+                    <Eye className="w-4 h-4" />
+                    Contenu Actuel {formData.use_same_video ? "(Partagé FR/EN)" : "(Séparé par langue)"}
+                  </h4>
+                  
+                  {formData.use_same_video ? (
+                    // Shared content display
+                    <div className="space-y-3">
+                      <div className="bg-purple-50 dark:bg-purple-900/20 p-3 rounded border border-purple-200 dark:border-purple-800">
+                        <div className="flex items-center gap-2 mb-2">
+                          <Globe className="w-4 h-4 text-purple-600" />
+                          <span className="text-sm font-medium text-purple-900 dark:text-purple-100">
+                            🌐 Contenu Partagé (Français + English)
+                          </span>
+                        </div>
+                        <div className="grid grid-cols-2 gap-4 text-xs">
+                          <div>
+                            <Label className="text-purple-800 dark:text-purple-200">URL Vidéo Complète:</Label>
+                            <div className="bg-white dark:bg-gray-800 p-2 rounded border text-purple-900 dark:text-purple-100 font-mono break-all">
+                              {getFullUrl(formData.video_filename || formData.video_url_en) || "Aucune vidéo"}
+                            </div>
+                          </div>
+                          <div>
+                            <Label className="text-purple-800 dark:text-purple-200">URL Image Complète:</Label>
+                            <div className="bg-white dark:bg-gray-800 p-2 rounded border text-purple-900 dark:text-purple-100 font-mono break-all">
+                              {getFullUrl(formData.image_url_en) || "Aucune image"}
+                            </div>
+                          </div>
+                        </div>
+                      </div>
                     </div>
-                    <div className="space-y-2">
-                      <Label className="text-green-600 dark:text-green-400">🇺🇸 English Platform</Label>
-                      <Select value={formData.format_platform_en} onValueChange={(value) => setFormData(prev => ({ ...prev, format_platform_en: value }))}>
-                        <SelectTrigger>
-                          <SelectValue placeholder="Select platform" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="social-media">Social Media</SelectItem>
-                          <SelectItem value="professional">Professional</SelectItem>
-                          <SelectItem value="tv-desktop">TV & Desktop</SelectItem>
-                        </SelectContent>
-                      </Select>
+                  ) : (
+                    // Separate language content display
+                    <div className="grid grid-cols-2 gap-4">
+                      <div className="bg-blue-50 dark:bg-blue-900/20 p-3 rounded border border-blue-200 dark:border-blue-800">
+                        <div className="flex items-center gap-2 mb-2">
+                          <span className="text-sm font-medium text-blue-900 dark:text-blue-100">
+                            🇫🇷 Version Française
+                          </span>
+                        </div>
+                        <div className="space-y-2 text-xs">
+                          <div>
+                            <Label className="text-blue-800 dark:text-blue-200">URL Vidéo Complète FR:</Label>
+                            <div className="bg-white dark:bg-gray-800 p-2 rounded border text-blue-900 dark:text-blue-100 font-mono break-all">
+                              {getFullUrl(formData.video_url_fr) || "Aucune vidéo FR"}
+                            </div>
+                          </div>
+                          <div>
+                            <Label className="text-blue-800 dark:text-blue-200">URL Image Complète FR:</Label>
+                            <div className="bg-white dark:bg-gray-800 p-2 rounded border text-blue-900 dark:text-blue-100 font-mono break-all">
+                              {getFullUrl(formData.image_url_fr) || "Aucune image FR"}
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      
+                      <div className="bg-green-50 dark:bg-green-900/20 p-3 rounded border border-green-200 dark:border-green-800">
+                        <div className="flex items-center gap-2 mb-2">
+                          <span className="text-sm font-medium text-green-900 dark:text-green-100">
+                            🇺🇸 English Version
+                          </span>
+                        </div>
+                        <div className="space-y-2 text-xs">
+                          <div>
+                            <Label className="text-green-800 dark:text-green-200">Complete URL Video EN:</Label>
+                            <div className="bg-white dark:bg-gray-800 p-2 rounded border text-green-900 dark:text-green-100 font-mono break-all">
+                              {getFullUrl(formData.video_url_en) || "No English video"}
+                            </div>
+                          </div>
+                          <div>
+                            <Label className="text-green-800 dark:text-green-200">Complete URL Image EN:</Label>
+                            <div className="bg-white dark:bg-gray-800 p-2 rounded border text-green-900 dark:text-green-100 font-mono break-all">
+                              {getFullUrl(formData.image_url_en) || "No English image"}
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+                  
+                  <div className="mt-3 p-2 bg-blue-50 dark:bg-blue-900/30 rounded border border-blue-200 dark:border-blue-700">
+                    <div className="flex items-start gap-2">
+                      <Info className="h-4 w-4 text-blue-600 mt-0.5 flex-shrink-0" />
+                      <div className="text-xs text-blue-800 dark:text-blue-200">
+                        <p className="font-medium mb-1">📋 Format de données uniforme :</p>
+                        <p>• Toutes les URLs sont maintenant au format complet Supabase</p>
+                        <p>• Vidéos et images utilisent le même format d'URL pour la cohérence</p>
+                        <p>• Les URLs complètes permettent un accès direct aux fichiers</p>
+                      </div>
                     </div>
                   </div>
                 </div>
 
-                {/* Settings */}
-                <div className="grid grid-cols-2 gap-4">
+                {/* Manual URL Override (for advanced users) */}
+                <div className="pt-4 border-t border-gray-200 dark:border-gray-600">
+                  <div className="mb-4">
+                    <h4 className="font-medium text-[#011526] dark:text-[#F2EBDC] mb-2 flex items-center gap-2">
+                      <Globe className="w-4 h-4" />
+                      Modification Manuelle des URLs
+                      <Badge variant="secondary" className="text-xs">Manuel</Badge>
+                    </h4>
+                    <p className="text-xs text-gray-600 dark:text-gray-400">
+                      {formData.use_same_video 
+                        ? "Section avancée pour modifier directement les URLs Supabase partagées entre FR et EN."
+                        : "Section avancée pour modifier directement les URLs Supabase spécifiques à chaque langue."
+                      }
+                    </p>
+                  </div>
+                  
+                  {formData.use_same_video ? (
+                    // Shared URLs when using same video for both languages
+                    <div className="grid grid-cols-2 gap-6">
+                      <div className="space-y-2">
+                        <Label htmlFor="video_url_override" className="flex items-center gap-2">
+                          <Video className="w-4 h-4" />
+                          URL Vidéo Complète
+                          <Badge className="text-xs bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-200">FR + EN</Badge>
+                        </Label>
+                        <Input
+                          id="video_url_override"
+                          value={getFullUrl(formData.video_url_en || formData.video_filename)}
+                          onChange={(e) => setFormData({ 
+                            ...formData, 
+                            video_filename: e.target.value,
+                            video_url_en: e.target.value, 
+                            video_url_fr: e.target.value 
+                          })}
+                          placeholder="https://supabase.memopyk.org/storage/v1/object/public/memopyk-videos/..."
+                          className="bg-white dark:bg-gray-800 text-sm font-mono"
+                        />
+                        <p className="text-xs text-gray-500">URL partagée pour les deux langues</p>
+                      </div>
+                      
+                      <div className="space-y-2">
+                        <Label htmlFor="image_url_override" className="flex items-center gap-2">
+                          <Image className="w-4 h-4" />
+                          URL Image Complète
+                          <Badge className="text-xs bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-200">FR + EN</Badge>
+                        </Label>
+                        <Input
+                          id="image_url_override"
+                          value={getFullUrl(formData.image_url_en)}
+                          onChange={(e) => setFormData({ 
+                            ...formData, 
+                            image_url_en: e.target.value,
+                            image_url_fr: e.target.value 
+                          })}
+                          placeholder="https://supabase.memopyk.org/storage/v1/object/public/memopyk-videos/..."
+                          className="bg-white dark:bg-gray-800 text-sm font-mono"
+                        />
+                        <p className="text-xs text-gray-500">URL partagée pour les deux langues</p>
+                      </div>
+                    </div>
+                  ) : (
+                    // Separate URLs for French and English
+                    <div className="space-y-6">
+                      {/* French URLs */}
+                      <div className="space-y-4 p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-200 dark:border-blue-700">
+                        <div className="flex items-center gap-2 mb-3">
+                          <span className="text-2xl">🇫🇷</span>
+                          <h5 className="font-medium text-blue-800 dark:text-blue-200">URLs Français</h5>
+                        </div>
+                        <div className="grid grid-cols-2 gap-4">
+                          <div className="space-y-2">
+                            <Label className="flex items-center gap-2 text-blue-800 dark:text-blue-200">
+                              <Video className="w-4 h-4" />
+                              URL Vidéo FR
+                            </Label>
+                            <Input
+                              value={getFullUrl(formData.video_url_fr)}
+                              onChange={(e) => setFormData({ ...formData, video_url_fr: e.target.value })}
+                              placeholder="https://supabase.memopyk.org/storage/v1/object/public/memopyk-videos/..."
+                              className="bg-white dark:bg-gray-800 text-sm font-mono"
+                            />
+                          </div>
+                          <div className="space-y-2">
+                            <Label className="flex items-center gap-2 text-blue-800 dark:text-blue-200">
+                              <Image className="w-4 h-4" />
+                              URL Image FR
+                            </Label>
+                            <Input
+                              value={getFullUrl(formData.image_url_fr)}
+                              onChange={(e) => setFormData({ ...formData, image_url_fr: e.target.value })}
+                              placeholder="https://supabase.memopyk.org/storage/v1/object/public/memopyk-videos/..."
+                              className="bg-white dark:bg-gray-800 text-sm font-mono"
+                            />
+                          </div>
+                        </div>
+                      </div>
+                      
+                      {/* English URLs */}
+                      <div className="space-y-4 p-4 bg-green-50 dark:bg-green-900/20 rounded-lg border border-green-200 dark:border-green-700">
+                        <div className="flex items-center gap-2 mb-3">
+                          <span className="text-2xl">🇺🇸</span>
+                          <h5 className="font-medium text-green-800 dark:text-green-200">URLs English</h5>
+                        </div>
+                        <div className="grid grid-cols-2 gap-4">
+                          <div className="space-y-2">
+                            <Label className="flex items-center gap-2 text-green-800 dark:text-green-200">
+                              <Video className="w-4 h-4" />
+                              URL Vidéo EN
+                            </Label>
+                            <Input
+                              value={getFullUrl(formData.video_url_en)}
+                              onChange={(e) => setFormData({ ...formData, video_url_en: e.target.value })}
+                              placeholder="https://supabase.memopyk.org/storage/v1/object/public/memopyk-videos/..."
+                              className="bg-white dark:bg-gray-800 text-sm font-mono"
+                            />
+                          </div>
+                          <div className="space-y-2">
+                            <Label className="flex items-center gap-2 text-green-800 dark:text-green-200">
+                              <Image className="w-4 h-4" />
+                              URL Image EN
+                            </Label>
+                            <Input
+                              value={getFullUrl(formData.image_url_en)}
+                              onChange={(e) => setFormData({ ...formData, image_url_en: e.target.value })}
+                              placeholder="https://supabase.memopyk.org/storage/v1/object/public/memopyk-videos/..."
+                              className="bg-white dark:bg-gray-800 text-sm font-mono"
+                            />
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+                </div>
+                
+                <div className="grid grid-cols-3 gap-4">
                   <div>
-                    <Label htmlFor="order_index" className="text-[#011526] dark:text-white">
-                      Ordre d'Affichage
-                    </Label>
+                    <Label htmlFor="video_width">Largeur vidéo</Label>
                     <Input
-                      id="order_index"
+                      id="video_width"
                       type="number"
-                      value={formData.order_index}
-                      onChange={(e) => setFormData(prev => ({ ...prev, order_index: parseInt(e.target.value) || 0 }))}
-                      className="border-gray-300 dark:border-gray-600"
+                      value={formData.video_width}
+                      onChange={(e) => setFormData({ ...formData, video_width: parseInt(e.target.value) || 16 })}
+                      className="bg-white dark:bg-gray-800"
                     />
                   </div>
-                  
-                  <div className="flex items-center space-x-2 pt-6">
-                    <Switch
-                      id="is_active"
-                      checked={formData.is_active}
-                      onCheckedChange={(checked) => setFormData(prev => ({ ...prev, is_active: checked }))}
+                  <div>
+                    <Label htmlFor="video_height">Hauteur vidéo</Label>
+                    <Input
+                      id="video_height"
+                      type="number"
+                      value={formData.video_height}
+                      onChange={(e) => setFormData({ ...formData, video_height: parseInt(e.target.value) || 9 })}
+                      className="bg-white dark:bg-gray-800"
                     />
-                    <Label htmlFor="is_active" className="text-[#011526] dark:text-white">
-                      Élément Actif
-                    </Label>
+                  </div>
+                  <div>
+                    <Label htmlFor="video_orientation">Orientation</Label>
+                    <Select value={formData.video_orientation} onValueChange={(value) => setFormData({ ...formData, video_orientation: value })}>
+                      <SelectTrigger className="bg-white dark:bg-gray-800">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="landscape">Paysage</SelectItem>
+                        <SelectItem value="portrait">Portrait</SelectItem>
+                      </SelectContent>
+                    </Select>
                   </div>
                 </div>
 
-                {/* Action Buttons */}
-                <div className="flex justify-between items-center pt-4">
-                  <Button
-                    type="button"
-                    onClick={resetForm}
-                    variant="outline"
-                    className="border-gray-300 text-gray-700 hover:bg-gray-50"
-                  >
-                    Annuler
-                  </Button>
-                  
-                  <Button
-                    type="submit"
-                    disabled={createMutation.isPending || updateMutation.isPending}
-                    className="bg-[#D67C4A] hover:bg-[#C66A38] text-white"
-                  >
-                    {createMutation.isPending || updateMutation.isPending ? (
-                      <>
-                        <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
-                        {isCreateMode ? 'Création...' : 'Mise à jour...'}
-                      </>
-                    ) : (
-                      <>
-                        <Save className="w-4 h-4 mr-2" />
-                        {isCreateMode ? 'Créer' : 'Mettre à jour'}
-                      </>
-                    )}
-                  </Button>
+                <div className="flex items-center space-x-2">
+                  <Switch
+                    id="is_active"
+                    checked={formData.is_active}
+                    onCheckedChange={(checked) => setFormData({ ...formData, is_active: checked })}
+                  />
+                  <Label htmlFor="is_active">Élément actif</Label>
                 </div>
-              </form>
-            )}
-            
-            {!isCreateMode && !selectedItem && (
-              <div className="text-center py-8 text-gray-500">
-                <Image className="w-12 h-12 mx-auto mb-4 opacity-50" />
-                <p>Sélectionnez un élément à modifier ou créez-en un nouveau</p>
               </div>
-            )}
-          </CardContent>
-        </Card>
-      </div>
+            </CardContent>
+          </Card>
 
-      {/* Image Cropper Dialog */}
-      <Dialog open={showCropper} onOpenChange={setShowCropper}>
-        <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
-          <DialogHeader>
-            <DialogTitle>Recadrer l'Image</DialogTitle>
-            <DialogDescription>
-              Ajustez le recadrage pour créer une miniature 300x200 pixels avec arrière-plan blanc.
-            </DialogDescription>
-          </DialogHeader>
-          
-          {showCropper && selectedItem && (
+
+          {/* Format Badge Section - Moved to Bottom */}
+          <Card className="border-[#89BAD9] dark:border-[#2A4759]">
+            <CardContent className="p-6">
+              <h3 className="text-lg font-semibold text-[#011526] dark:text-[#F2EBDC] mb-6 flex items-center gap-2">
+                <Monitor className="w-5 h-5" />
+                Badge Format (marketing visuel)
+              </h3>
+              <p className="text-sm text-[#2A4759] dark:text-[#89BAD9] mb-6">
+                Personnalisez le texte du badge format affiché avec chaque vidéo. Ces badges guident les clients vers les plateformes optimales.
+              </p>
+              
+              <div className="grid grid-cols-2 gap-6">
+                <div className="space-y-4">
+                  <h4 className="font-medium text-[#011526] dark:text-[#F2EBDC]">English</h4>
+                  <div>
+                    <Label htmlFor="format_platform_en">Platform Line 1</Label>
+                    <Select value={formData.format_platform_en} onValueChange={(value) => setFormData({ ...formData, format_platform_en: value })}>
+                      <SelectTrigger className="bg-white dark:bg-gray-800">
+                        <SelectValue placeholder="Select platform category" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="Social Media">Social Media</SelectItem>
+                        <SelectItem value="Social Feed">Social Feed</SelectItem>
+                        <SelectItem value="Professional">Professional</SelectItem>
+                        <SelectItem value="Custom">Custom...</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div>
+                    <Label htmlFor="format_type_en">Format Line 2</Label>
+                    <Select value={formData.format_type_en} onValueChange={(value) => setFormData({ ...formData, format_type_en: value })}>
+                      <SelectTrigger className="bg-white dark:bg-gray-800">
+                        <SelectValue placeholder="Select format type" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="Mobile Stories">Mobile Stories</SelectItem>
+                        <SelectItem value="Instagram Posts">Instagram Posts</SelectItem>
+                        <SelectItem value="TV & Desktop">TV & Desktop</SelectItem>
+                        <SelectItem value="Short Videos">Short Videos</SelectItem>
+                        <SelectItem value="Custom">Custom...</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </div>
+                
+                <div className="space-y-4">
+                  <h4 className="font-medium text-[#011526] dark:text-[#F2EBDC]">Français</h4>
+                  <div>
+                    <Label htmlFor="format_platform_fr">Platform Line 1</Label>
+                    <Select value={formData.format_platform_fr} onValueChange={(value) => setFormData({ ...formData, format_platform_fr: value })}>
+                      <SelectTrigger className="bg-white dark:bg-gray-800">
+                        <SelectValue placeholder="Sélectionner catégorie plateforme" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="Réseaux Sociaux">Réseaux Sociaux</SelectItem>
+                        <SelectItem value="Flux Social">Flux Social</SelectItem>
+                        <SelectItem value="Professionnel">Professionnel</SelectItem>
+                        <SelectItem value="Personnalisé">Personnalisé...</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div>
+                    <Label htmlFor="format_type_fr">Format Line 2</Label>
+                    <Select value={formData.format_type_fr} onValueChange={(value) => setFormData({ ...formData, format_type_fr: value })}>
+                      <SelectTrigger className="bg-white dark:bg-gray-800">
+                        <SelectValue placeholder="Sélectionner type de format" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="Stories Mobiles">Stories Mobiles</SelectItem>
+                        <SelectItem value="Posts Instagram">Posts Instagram</SelectItem>
+                        <SelectItem value="TV & Bureau">TV & Bureau</SelectItem>
+                        <SelectItem value="Vidéos Courtes">Vidéos Courtes</SelectItem>
+                        <SelectItem value="Personnalisé">Personnalisé...</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Save/Delete/Cancel Actions */}
+          <div className="flex justify-between items-center pt-6 border-t border-gray-200 dark:border-gray-700">
+            <div className="flex gap-3">
+              <Button
+                onClick={handleSave}
+                disabled={createItemMutation.isPending || updateItemMutation.isPending}
+                className="bg-[#2A4759] hover:bg-[#2A4759]/90 text-white"
+              >
+                <Save className="w-4 h-4 mr-2" />
+                {isCreateMode ? 'Créer' : 'Sauvegarder'}
+              </Button>
+              
+              <Button
+                variant="outline"
+                onClick={() => {
+                  persistentUploadState.reset();
+                  setSelectedVideoId(null);
+                  setIsCreateMode(false);
+                }}
+                className="border-gray-300 dark:border-gray-600 hover:bg-gray-100 dark:hover:bg-gray-800"
+              >
+                Annuler
+              </Button>
+              
+              {!isCreateMode && selectedVideoId && (
+                <Button
+                  onClick={handleDelete}
+                  disabled={deleteItemMutation.isPending}
+                  variant="destructive"
+                >
+                  <Trash2 className="w-4 h-4 mr-2" />
+                  Supprimer
+                </Button>
+              )}
+            </div>
+            
+            <Badge variant={formData.is_active ? "default" : "secondary"}>
+              {formData.is_active ? "✅ Actif" : "⚠️ Inactif"}
+            </Badge>
+          </div>
+        </div>
+      )}
+
+      {/* Image Cropper Dialog with Language Selection */}
+      {selectedItem && cropperOpen && (
+        <Dialog open={cropperOpen} onOpenChange={setCropperOpen}>
+          <DialogContent className="max-w-4xl max-h-[90vh] overflow-auto bg-white dark:bg-gray-900 border-2 border-gray-300 dark:border-gray-600">
+            <DialogHeader>
+              <DialogTitle>Recadrer Image - {selectedItem.title_en}</DialogTitle>
+              <DialogDescription>
+                Créer une image statique 300×200 pour {selectedItem.title_en}
+              </DialogDescription>
+            </DialogHeader>
+            
+
+            
+            {/* Current Language Display + Debug Info */}
+            <div className="mb-4 p-3 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-200 dark:border-blue-800">
+              <div className="flex items-center gap-2 text-blue-900 dark:text-blue-100">
+                <Globe className="w-4 h-4" />
+                <span className="font-medium">
+                  Image sélectionnée: {cropperLanguage === 'fr' ? '🇫🇷 Français' : '🇺🇸 English'}
+                </span>
+              </div>
+              <div className="text-xs text-blue-800 dark:text-blue-200 font-mono mt-1 break-all">
+                {cropperLanguage === 'fr' ? selectedItem.image_url_fr : selectedItem.image_url_en}
+              </div>
+              {/* Enhanced Debug Info v1.0.104 */}
+              <div className="text-xs text-gray-600 mt-2 space-y-1">
+                <div>French URL: {selectedItem.image_url_fr || 'NOT SET'}</div>
+                <div>English URL: {selectedItem.image_url_en || 'NOT SET'}</div>
+                <div className="mt-2 p-2 bg-yellow-50 border border-yellow-200 rounded">
+                  <div className="font-semibold text-yellow-800">🔍 CROPPER DEBUG v1.0.104:</div>
+                  <div>Raw URL: {cropperLanguage === 'fr' ? selectedItem.image_url_fr : selectedItem.image_url_en}</div>
+                  <div>Full URL: {getFullUrl(cropperLanguage === 'fr' ? selectedItem.image_url_fr : selectedItem.image_url_en)}</div>
+                  <div>Language: {cropperLanguage}</div>
+                </div>
+              </div>
+            </div>
+            
             <SimpleImageCropper
-              imageUrl={selectedLanguage === 'fr' ? selectedItem.image_url_fr : selectedItem.image_url_en}
-              onSave={async (blob) => {
+              imageUrl={getFullUrl(cropperLanguage === 'fr' ? selectedItem.image_url_fr : selectedItem.image_url_en)}
+              onSave={async (blob: Blob, cropSettings: any) => {
+                console.log(`🖼️ SIMPLE CROPPER v1.0.106: Starting save process for ${cropperLanguage} image`);
+                console.log(`🖼️ Source URL: ${cropperLanguage === 'fr' ? selectedItem.image_url_fr : selectedItem.image_url_en}`);
+                console.log(`🖼️ Blob size: ${blob.size} bytes`);
+                
                 try {
-                  console.log('🚀 CROPPER SAVE v1.0.112 - Starting save process');
-                  
-                  // Upload cropped image
+                  // Create FormData for upload
                   const formData = new FormData();
-                  const timestamp = Date.now();
-                  const filename = `static_${selectedLanguage}_${timestamp}.jpg`;
+                  const filename = `static_${cropperLanguage}_${Date.now()}.jpg`;
                   formData.append('file', blob, filename);
-
+                  formData.append('language', cropperLanguage); // Add language information
+                  
+                  console.log(`🖼️ Uploading cropped image as: ${filename}`);
+                  
+                  // Upload the cropped image using correct endpoint
+                  console.log(`🚀 UPLOAD v1.0.107: Using /api/upload/image endpoint`);
                   const uploadResponse = await fetch('/api/upload/image', {
                     method: 'POST',
                     body: formData
                   });
-
-                  if (!uploadResponse.ok) {
-                    throw new Error('Upload failed');
-                  }
-
-                  const uploadResult = await uploadResponse.json();
-                  console.log('✅ Upload successful:', uploadResult);
-
-                  // Update database
-                  const updateData = {
-                    [`static_image_url_${selectedLanguage}`]: uploadResult.url
-                  };
-
-                  const response = await fetch(`/api/gallery/${selectedItem.id}`, {
-                    method: 'PATCH',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(updateData)
-                  });
-
-                  if (!response.ok) {
-                    throw new Error('Database update failed');
-                  }
-
-                  console.log('✅ Database updated successfully');
-
-                  // Refresh data
-                  queryClient.invalidateQueries({ queryKey: ['/api/gallery', 'v1.0.112'] });
                   
-                  setShowCropper(false);
-                  toast({
-                    title: "✅ Succès",
-                    description: `Image ${selectedLanguage === 'fr' ? 'française' : 'anglaise'} recadrée et sauvegardée`
+                  if (!uploadResponse.ok) {
+                    throw new Error(`Upload failed: ${uploadResponse.status}`);
+                  }
+                  
+                  const uploadResult = await uploadResponse.json();
+                  console.log(`✅ Upload successful:`, uploadResult);
+                  
+                  // Update the gallery item with the new static image URL
+                  console.log(`🔧 UPDATING GALLERY ITEM: ${selectedItem.id} with static image URL (${cropperLanguage}): ${uploadResult.url}`);
+                  
+                  // Use correct language-specific field name and JSON format
+                  const staticField = cropperLanguage === 'fr' ? 'static_image_url_fr' : 'static_image_url_en';
+                  const updateData = {
+                    [staticField]: uploadResult.url,
+                    crop_settings: cropSettings,
+                    language: cropperLanguage // Include language for server processing
+                  };
+                  
+                  console.log(`📊 Update data:`, updateData);
+                  
+                  const updateResponse = await apiRequest(`/api/gallery/${selectedItem.id}`, 'PATCH', updateData);
+                  console.log(`✅ Gallery item updated:`, updateResponse);
+                  
+                  // Close cropper and refresh data
+                  setCropperOpen(false);
+                  
+                  // Invalidate cache with version bump to force refresh
+                  queryClient.invalidateQueries({ queryKey: ['/api/gallery', 'v1.0.107'] });
+                  
+                  // Force component refresh by updating cache-busting key
+                  queryClient.refetchQueries({ queryKey: ['/api/gallery'] });
+                  
+                  toast({ 
+                    title: "✅ Succès", 
+                    description: `Image recadrée sauvegardée avec succès (${cropperLanguage === 'fr' ? 'Français' : 'English'})` 
                   });
-
+                  
                 } catch (error) {
-                  console.error('Cropper save error:', error);
-                  toast({
-                    title: "❌ Erreur",
-                    description: "Échec de la sauvegarde du recadrage",
+                  console.error(`❌ SAVE ERROR v1.0.108: Complete error details:`, {
+                    error: error,
+                    message: error instanceof Error ? error.message : String(error),
+                    stack: error instanceof Error ? error.stack : 'No stack trace',
+                    timestamp: new Date().toISOString(),
+                    cropperLanguage: cropperLanguage,
+                    selectedItemId: selectedItem.id,
+                    blobSize: blob.size
+                  });
+                  
+                  toast({ 
+                    title: "❌ Erreur", 
+                    description: `Erreur lors de la sauvegarde: ${error instanceof Error ? error.message : 'Erreur inconnue'}`,
                     variant: "destructive"
                   });
                 }
               }}
-              onCancel={() => setShowCropper(false)}
+              onCancel={() => setCropperOpen(false)}
             />
+          </DialogContent>
+        </Dialog>
+      )}
+
+      {/* Format Badge Manager Section */}
+      <Card className="mt-6 border-[#89BAD9] dark:border-[#2A4759]">
+        <CardContent className="p-6">
+          <div className="flex items-center justify-between mb-4">
+            <div className="flex items-center gap-2">
+              <Palette className="w-5 h-5 text-[#D67C4A]" />
+              <h3 className="text-lg font-semibold text-[#011526] dark:text-[#F2EBDC]">
+                Format Badge Templates
+              </h3>
+            </div>
+            <Button
+              variant="outline"
+              onClick={() => setShowFormatBadgeManager(!showFormatBadgeManager)}
+              className="border-[#89BAD9] hover:bg-[#F2EBDC] dark:hover:bg-[#011526]/20"
+            >
+              {showFormatBadgeManager ? 'Masquer' : 'Gérer Templates'}
+            </Button>
+          </div>
+          
+          <p className="text-sm text-[#2A4759] dark:text-[#89BAD9] mb-4">
+            Créez et gérez les templates de format badges qui apparaissent dans les dropdown des éléments de galerie.
+          </p>
+
+          {showFormatBadgeManager && (
+            <div className="border-t border-gray-200 dark:border-gray-600 pt-4">
+              <FormatBadgeManager />
+            </div>
           )}
-        </DialogContent>
-      </Dialog>
+        </CardContent>
+      </Card>
     </div>
   );
 }
