@@ -272,7 +272,19 @@ export default function GalleryManagementNew() {
     if (!imageUrl) return null;
     
     console.log(`🖼️ ADMIN THUMBNAIL PRIORITY v1.0.91: Using ${imageUrl === item.image_url_en ? 'image_url_en' : imageUrl === item.image_url_fr ? 'image_url_fr' : 'static_image_url'} for item ${item.id}`);
+    console.log(`🖼️ ADMIN FULL URL: ${imageUrl}`);
     
+    // If it's already a full URL, use it directly with cache-busting
+    if (imageUrl.startsWith('http')) {
+      const timestamp = Date.now();
+      const random = Math.random().toString(36).substring(7);
+      const separator = imageUrl.includes('?') ? '&' : '?';
+      const cacheBustUrl = `${imageUrl}${separator}cacheBust=${timestamp}&v=${random}&nocache=1#${timestamp}-${random}`;
+      console.log(`🖼️ ADMIN DIRECT URL: ${cacheBustUrl}`);
+      return cacheBustUrl;
+    }
+    
+    // Otherwise extract filename and use proxy
     let filename = '';
     if (imageUrl.includes('/')) {
       filename = imageUrl.split('/').pop() || '';

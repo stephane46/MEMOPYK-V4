@@ -147,6 +147,18 @@ export default function GallerySection() {
     if (latestImageUrl && latestImageUrl.trim() !== '') {
       imageUrl = latestImageUrl;
       console.log(`🖼️ USING LATEST UPLOAD: ${imageUrl} for ${item.titleEn}`);
+      
+      // If it's already a full URL, use it directly
+      if (imageUrl.startsWith('http')) {
+        console.log(`🖼️ LATEST UPLOAD IS FULL URL - USING DIRECTLY`);
+        const timestamp = Date.now();
+        const random = Math.random().toString(36).substring(7);
+        const separator = imageUrl.includes('?') ? '&' : '?';
+        const directUrl = `${imageUrl}${separator}cacheBust=${timestamp}&v=${random}&nocache=1#${timestamp}-${random}`;
+        console.log(`🖼️ DIRECT CDN IMAGE URL v1.0.91: ${directUrl} (latest upload priority)`);
+        return directUrl;
+      }
+      
       filename = imageUrl.includes('/') ? (imageUrl.split('/').pop() || '') : imageUrl;
       // Remove query parameters from filename
       if (filename && filename.includes('?')) {
