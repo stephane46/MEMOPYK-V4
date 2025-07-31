@@ -36,6 +36,18 @@ export default function DirectUpload({
   // Set default accepted types based on type
   const defaultAcceptedTypes = type === 'video' ? 'video/*' : 'image/*';
   const finalAcceptedTypes = acceptedTypes || defaultAcceptedTypes;
+  
+  // DEBUG: Log component configuration to help troubleshoot upload dialog issues
+  React.useEffect(() => {
+    console.log(`🔧 DirectUpload Component Initialized:`, {
+      uploadId,
+      type,
+      acceptedTypes,
+      defaultAcceptedTypes,
+      finalAcceptedTypes,
+      bucket
+    });
+  }, [uploadId, type, acceptedTypes, defaultAcceptedTypes, finalAcceptedTypes, bucket]);
   const [uploadState, setUploadState] = useState<UploadState>({
     status: 'idle',
     progress: 0

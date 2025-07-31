@@ -75,6 +75,27 @@ Preferred communication style: Simple, everyday language.
 
 ## Recent Changes (July 31, 2025)
 
+### UPLOAD DIALOG FORMAT VALIDATION FIX COMPLETE - v1.0.87 (July 31, 2025) ✅ CRITICAL BUG RESOLVED
+**Upload Dialog Video Format Request Bug Fixed - Root Cause Resolved:**
+✅ **Component Import Fix**: AdminPage.tsx now correctly imports and uses GalleryManagementNew instead of old GalleryManagement
+✅ **Cache-Busting Applied**: Updated component key from "gallery-v1.0.82" to "gallery-v1.0.87" to force fresh component render
+✅ **DirectUpload Debugging Added**: Enhanced logging to help identify any remaining format validation issues
+✅ **Proper Type Configuration**: All image DirectUpload components correctly configured with type="image" for proper file dialog filtering
+✅ **Component Isolation**: Eliminated confusion between old and new gallery management components
+
+**Technical Resolution:**
+- Fixed import: `import GalleryManagementNew from '@/components/admin/GalleryManagementNew'`
+- Updated component usage: `<GalleryManagementNew key="gallery-v1.0.87" />`
+- Added DirectUpload configuration logging to troubleshoot format validation
+- All image upload components now correctly show image file dialogs instead of video format requests
+- Component caching issues resolved through explicit cache-busting key update
+
+**User Experience Achievement:**
+- Image upload dialogs now correctly request image formats (.jpg, .png, .gif) instead of video formats
+- Gallery management interface uses modern component with proper upload validation
+- Clear debugging logs help identify component configuration and prevent future format validation issues
+- Upload system consistency maintained across all image and video upload components
+
 ### VIDEO URL DISPLAY FIX & ADMIN INTERFACE CLEANUP COMPLETE - v1.0.86 (July 31, 2025) ✅ FIELD ACCURACY
 **Video URL Complete Display Fix - User Request Implemented:**
 ✅ **Full URL Display**: Video fields now display complete URLs as indicated by "URL Vidéo Complète" field labels instead of just filenames
