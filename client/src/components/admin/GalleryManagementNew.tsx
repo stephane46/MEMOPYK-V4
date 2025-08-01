@@ -719,7 +719,7 @@ export default function GalleryManagementNew() {
                                   try {
                                     const updateData = {
                                       static_image_url_fr: null,
-                                      crop_settings: null,
+                                      cropSettings: null,
                                       language: 'fr'
                                     };
                                     
@@ -771,11 +771,11 @@ export default function GalleryManagementNew() {
                              selectedItem.static_image_url_fr !== selectedItem.image_url_fr && 
                              selectedItem.static_image_url_fr !== formData.image_url_fr && (
                               <div className={`absolute top-2 right-2 text-white px-2 py-1 rounded-full text-xs font-bold shadow-lg ${
-                                (selectedItem as any).crop_settings?.method === 'triple-layer-white-bg' 
+                                (selectedItem as any).cropSettings?.method === 'triple-layer-white-bg' 
                                   ? 'bg-emerald-500' 
                                   : 'bg-blue-500'
                               }`}>
-                                {(selectedItem as any).crop_settings?.method === 'triple-layer-white-bg' 
+                                {(selectedItem as any).cropSettings?.method === 'triple-layer-white-bg' 
                                   ? '✂️ Recadré FR' 
                                   : '✂️ Auto FR'
                                 }
@@ -878,7 +878,7 @@ export default function GalleryManagementNew() {
                                   try {
                                     const updateData = {
                                       static_image_url_en: null,
-                                      crop_settings: null,
+                                      cropSettings: null,
                                       language: 'en'
                                     };
                                     
@@ -930,13 +930,13 @@ export default function GalleryManagementNew() {
                              selectedItem.static_image_url_en !== selectedItem.image_url_en && 
                              selectedItem.static_image_url_en !== formData.image_url_en && (
                               <div className={`absolute top-2 right-2 text-white px-2 py-1 rounded-full text-xs font-bold shadow-lg ${
-                                (selectedItem as any).crop_settings?.method === 'triple-layer-white-bg' 
+                                (selectedItem as any).cropSettings?.method === 'triple-layer-white-bg' 
                                   ? 'bg-emerald-500' 
                                   : 'bg-blue-500'
                               }`}>
                                 {(() => {
-                                  console.log('🔍 BADGE DEBUG EN - crop_settings:', (selectedItem as any).crop_settings, 'method:', (selectedItem as any).crop_settings?.method);
-                                  return (selectedItem as any).crop_settings?.method === 'triple-layer-white-bg' 
+                                  console.log('🔍 BADGE DEBUG EN - cropSettings:', (selectedItem as any).cropSettings, 'method:', (selectedItem as any).cropSettings?.method);
+                                  return (selectedItem as any).cropSettings?.method === 'triple-layer-white-bg' 
                                     ? '✂️ Recadré EN' 
                                     : '✂️ Auto EN';
                                 })()}
@@ -1957,17 +1957,17 @@ export default function GalleryManagementNew() {
                     ? {
                         static_image_url_fr: uploadResult.url,
                         static_image_url_en: uploadResult.url,
-                        crop_settings: cropSettings,
+                        cropSettings: cropSettings,
                         language: 'shared'
                       }
                     : {
                         [cropperLanguage === 'fr' ? 'static_image_url_fr' : 'static_image_url_en']: uploadResult.url,
-                        crop_settings: cropSettings,
+                        cropSettings: cropSettings,
                         language: cropperLanguage
                       };
                   
-                  console.log('🔍 CROP SETTINGS DEBUG - Saving:', cropSettings);
-                  console.log('🔍 UPDATE DATA DEBUG:', updateData);
+                  console.log('🔍 CROP SETTINGS DEBUG - Saving:', JSON.stringify(cropSettings, null, 2));
+                  console.log('🔍 UPDATE DATA DEBUG:', JSON.stringify(updateData, null, 2));
                   
                   const updateResponse = await apiRequest(`/api/gallery/${selectedItem.id}`, 'PATCH', updateData);
                   console.log('🔍 UPDATE RESPONSE DEBUG:', updateResponse);
@@ -1983,12 +1983,14 @@ export default function GalleryManagementNew() {
                   queryClient.removeQueries({ queryKey: ['/api/gallery', 'v1.0.110'] });
                   
                   // Force component refresh by updating cache-busting key
-                  queryClient.refetchQueries({ queryKey: ['/api/gallery'] });
+                  await queryClient.refetchQueries({ queryKey: ['/api/gallery'] });
+                  await queryClient.refetchQueries({ queryKey: ['/api/gallery', 'v1.0.110'] });
                   
-                  // Force UI refresh for badge update - wait for data to refresh first
+                  // Wait for query to complete, then force UI refresh
                   setTimeout(() => {
                     setForceRefreshKey(prev => prev + 1);
-                  }, 100);
+                    console.log('🔍 AFTER REFRESH - selectedItem cropSettings:', (selectedItem as any)?.cropSettings);
+                  }, 200);
                   
                   toast({ 
                     title: "✅ Succès", 
