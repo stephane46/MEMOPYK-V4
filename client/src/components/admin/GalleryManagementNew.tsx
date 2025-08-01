@@ -676,7 +676,8 @@ export default function GalleryManagementNew() {
               </div>
 
               <div className="flex flex-col gap-8">
-                {/* French Row */}
+                {/* French Row - Hidden when shared mode is enabled */}
+                {!formData.use_same_video && (
                 <div className="flex flex-col lg:flex-row gap-8">
                   <div className="flex-1">
                     <h4 className="text-lg font-semibold text-[#011526] dark:text-[#F2EBDC] flex items-center gap-2 mb-4">
@@ -815,13 +816,21 @@ export default function GalleryManagementNew() {
                     </div>
                   </div>
                 </div>
+                )}
 
-                {/* English Row */}
+                {/* English Row - Modified header when shared mode is enabled */}
                 <div className="flex flex-col lg:flex-row gap-8">
                   <div className="flex-1">
                     <h4 className="text-lg font-semibold text-[#011526] dark:text-[#F2EBDC] flex items-center gap-2 mb-4">
                       <Image className="w-5 h-5" />
-                      English Image
+                      {formData.use_same_video ? (
+                        <>
+                          <span>Image Partagée</span>
+                          <Badge className="text-xs bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-200">FR + EN</Badge>
+                        </>
+                      ) : (
+                        "English Image"
+                      )}
                     </h4>
                     <div className="space-y-2">
                       <div className="flex items-center justify-between min-h-[2.5rem]">
@@ -916,7 +925,14 @@ export default function GalleryManagementNew() {
                   <div className="flex-1">
                     <h4 className="text-lg font-semibold text-[#011526] dark:text-[#F2EBDC] flex items-center gap-2 mb-4">
                       <PlayCircle className="w-5 h-5" />
-                      English Video
+                      {formData.use_same_video ? (
+                        <>
+                          <span>Vidéo Partagée</span>
+                          <Badge className="text-xs bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-200">FR + EN</Badge>
+                        </>
+                      ) : (
+                        "English Video"
+                      )}
                     </h4>
                     <div className="space-y-2">
                       <div className="flex items-center justify-between min-h-[2.5rem]">
@@ -969,7 +985,15 @@ export default function GalleryManagementNew() {
               
               <div className="grid grid-cols-2 gap-6">
                 <div className="space-y-4">
-                  <h4 className="font-medium text-[#011526] dark:text-[#F2EBDC]">English</h4>
+                  <h4 className="font-medium text-[#011526] dark:text-[#F2EBDC]">
+                    {formData.use_same_video ? (
+                      <>
+                        English <Badge className="text-xs bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-200 ml-2">Source pour FR + EN</Badge>
+                      </>
+                    ) : (
+                      "English"
+                    )}
+                  </h4>
                   <div>
                     <Label htmlFor="title_en">Titre</Label>
                     <Input
@@ -1010,6 +1034,8 @@ export default function GalleryManagementNew() {
                   </div>
                 </div>
                 
+                {/* French Basic Information - Hidden when shared mode is enabled */}
+                {!formData.use_same_video && (
                 <div className="space-y-4">
                   <h4 className="font-medium text-[#011526] dark:text-[#F2EBDC]">Français</h4>
                   <div>
@@ -1051,6 +1077,7 @@ export default function GalleryManagementNew() {
                     />
                   </div>
                 </div>
+                )}
               </div>
             </CardContent>
           </Card>
@@ -1067,7 +1094,15 @@ export default function GalleryManagementNew() {
               
               <div className="grid grid-cols-2 gap-6">
                 <div className="space-y-4">
-                  <h4 className="font-medium text-[#011526] dark:text-[#F2EBDC]">English</h4>
+                  <h4 className="font-medium text-[#011526] dark:text-[#F2EBDC]">
+                    {formData.use_same_video ? (
+                      <>
+                        English <Badge className="text-xs bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-200 ml-2">Source pour FR + EN</Badge>
+                      </>
+                    ) : (
+                      "English"
+                    )}
+                  </h4>
                   <div>
                     <Label htmlFor="situation_en">Situation du client</Label>
                     <Textarea
@@ -1099,6 +1134,8 @@ export default function GalleryManagementNew() {
                   </div>
                 </div>
                 
+                {/* French Content Descriptions - Hidden when shared mode is enabled */}
+                {!formData.use_same_video && (
                 <div className="space-y-4">
                   <h4 className="font-medium text-[#011526] dark:text-[#F2EBDC]">Français</h4>
                   <div>
@@ -1131,6 +1168,7 @@ export default function GalleryManagementNew() {
                     />
                   </div>
                 </div>
+                )}
               </div>
             </CardContent>
           </Card>
@@ -1256,7 +1294,8 @@ export default function GalleryManagementNew() {
                       Vidéos séparées par langue
                     </h4>
                     
-                    {/* French Upload Section (Blue) */}
+                    {/* French Upload Section (Blue) - Hidden when shared mode is enabled */}
+                    {!formData.use_same_video && (
                     <div className="p-4 bg-gradient-to-r from-blue-50 to-blue-100 dark:from-blue-900/20 dark:to-blue-800/20 rounded-lg border border-blue-200 dark:border-blue-800">
                       <div className="flex items-center gap-2 mb-3">
                         <div className="bg-blue-600 rounded-full p-1">
@@ -1333,26 +1372,37 @@ export default function GalleryManagementNew() {
                         </div>
                       </div>
                     </div>
+                    )}
 
-                    {/* English Upload Section (Green) */}
+                    {/* English Upload Section (Green) - Modified header when shared mode is enabled */}
                     <div className="p-4 bg-gradient-to-r from-green-50 to-green-100 dark:from-green-900/20 dark:to-green-800/20 rounded-lg border border-green-200 dark:border-green-800">
                       <div className="flex items-center gap-2 mb-3">
                         <div className="bg-green-600 rounded-full p-1">
                           <Upload className="h-4 w-4 text-white" />
                         </div>
                         <h4 className="font-semibold text-green-900 dark:text-green-100">
-                          🇺🇸 English Files
+                          {formData.use_same_video ? (
+                            <>
+                              🌐 Fichiers Partagés <Badge className="text-xs bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-200 ml-2">FR + EN</Badge>
+                            </>
+                          ) : (
+                            "🇺🇸 English Files"
+                          )}
                         </h4>
                       </div>
                       <p className="text-sm text-green-800 dark:text-green-200 mb-4">
-                        Upload files specific to the English version.
+                        {formData.use_same_video ? (
+                          "Téléchargez les fichiers qui seront utilisés pour les deux langues (Français et English)."
+                        ) : (
+                          "Upload files specific to the English version."
+                        )}
                       </p>
                       
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
                           <Label className="text-green-900 dark:text-green-100 mb-2 block">
                             <Video className="h-4 w-4 inline mr-1" />
-                            English Video
+                            {formData.use_same_video ? "Vidéo (Partagée FR+EN)" : "English Video"}
                           </Label>
                           <DirectUpload
                             type="video"
@@ -1382,7 +1432,7 @@ export default function GalleryManagementNew() {
                         <div>
                           <Label className="text-green-900 dark:text-green-100 mb-2 block">
                             <Image className="h-4 w-4 inline mr-1" />
-                            English Image
+                            {formData.use_same_video ? "Image (Partagée FR+EN)" : "English Image"}
                           </Label>
                           <DirectUpload
                             type="image"
@@ -1694,7 +1744,15 @@ export default function GalleryManagementNew() {
               
               <div className="grid grid-cols-2 gap-6">
                 <div className="space-y-4">
-                  <h4 className="font-medium text-[#011526] dark:text-[#F2EBDC]">English</h4>
+                  <h4 className="font-medium text-[#011526] dark:text-[#F2EBDC]">
+                    {formData.use_same_video ? (
+                      <>
+                        English <Badge className="text-xs bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-200 ml-2">Source pour FR + EN</Badge>
+                      </>
+                    ) : (
+                      "English"
+                    )}
+                  </h4>
                   <div>
                     <Label htmlFor="format_platform_en">Platform Line 1</Label>
                     <Select value={formData.format_platform_en} onValueChange={(value) => setFormData({ ...formData, format_platform_en: value })}>
@@ -1726,6 +1784,8 @@ export default function GalleryManagementNew() {
                   </div>
                 </div>
                 
+                {/* French Format and Specifications - Hidden when shared mode is enabled */}
+                {!formData.use_same_video && (
                 <div className="space-y-4">
                   <h4 className="font-medium text-[#011526] dark:text-[#F2EBDC]">Français</h4>
                   <div>
@@ -1758,6 +1818,7 @@ export default function GalleryManagementNew() {
                     </Select>
                   </div>
                 </div>
+                )}
               </div>
             </CardContent>
           </Card>

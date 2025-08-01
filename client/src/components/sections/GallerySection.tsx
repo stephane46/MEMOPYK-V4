@@ -40,6 +40,7 @@ interface GalleryItem {
   staticImageUrlEn: string | null; // 300x200 cropped English thumbnail
   staticImageUrlFr: string | null; // 300x200 cropped French thumbnail
   staticImageUrl: string | null; // DEPRECATED: Legacy field
+  useSameVideo: boolean; // Shared mode indicator
   orderIndex: number;
   isActive: boolean;
   lightboxVideoUrl?: string; // Infrastructure workaround URL for lightbox display
@@ -109,6 +110,7 @@ export default function GallerySection() {
         staticImageUrlEn: item.static_image_url_en,
         staticImageUrlFr: item.static_image_url_fr,
         staticImageUrl: item.static_image_url, // Legacy field
+        useSameVideo: item.use_same_video, // Shared mode indicator
         orderIndex: item.order_index,
         isActive: item.is_active
       }))
@@ -155,12 +157,22 @@ export default function GallerySection() {
   const t = content[language];
 
   const getImageUrl = (item: GalleryItem) => {
-    // PRIORITY v1.0.109: Language-specific reframed images > uploads > fallback  
+    // PRIORITY v1.0.110: Shared mode logic + Language-specific reframed images > uploads > fallback  
     let imageUrl = '';
     let filename = '';
     
-    // Priority 1: Language-specific reframed image
-    const staticImageUrl = language === 'fr-FR' ? item.staticImageUrlFr : item.staticImageUrlEn;
+    // Priority 1: Language-specific reframed image with shared mode logic
+    let staticImageUrl = '';
+    if (item.useSameVideo) {
+      // Shared mode: Use EN reframed image for both languages
+      staticImageUrl = item.staticImageUrlEn || '';
+      console.log(`🔗 SHARED MODE: Using EN reframed image for ${language} visitor: ${staticImageUrl} for ${item.titleEn}`);
+    } else {
+      // Separate mode: Use language-specific reframed image
+      staticImageUrl = (language === 'fr-FR' ? item.staticImageUrlFr : item.staticImageUrlEn) || '';
+      console.log(`🌍 SEPARATE MODE: Using ${language}-specific reframed image: ${staticImageUrl} for ${item.titleEn}`);
+    }
+    
     if (staticImageUrl && staticImageUrl.trim() !== '') {
       imageUrl = staticImageUrl;
       console.log(`🖼️ USING LANGUAGE-SPECIFIC REFRAMED IMAGE (${language}): ${imageUrl} for ${item.titleEn}`);
