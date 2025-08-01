@@ -365,6 +365,7 @@ export class HybridStorage implements HybridStorageInterface {
       if (dbItems.length > 0) {
         console.log(`✅ HYBRID STORAGE: Retrieved ${dbItems.length} items from database`);
         console.log('🔍 First item is_active value:', dbItems[0]?.isActive);
+        console.log('🔍 First item cropSettings value:', JSON.stringify(dbItems[0]?.cropSettings));
         return dbItems.map(item => ({
           // Convert database fields to expected format
           id: item.id,
