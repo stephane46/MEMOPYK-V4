@@ -962,9 +962,10 @@ export default function GalleryManagementNew() {
                               className="w-full h-full object-contain"
                             />
                             {/* Show different badges for manual vs automatic cropping */}
-                            {selectedItem?.static_image_url_en && 
-                             selectedItem.static_image_url_en !== selectedItem.image_url_en && 
-                             selectedItem.static_image_url_en !== formData.image_url_en && (
+                            {(selectedItem?.static_image_url_en || selectedItem?.static_image_url) && (
+                             (selectedItem?.static_image_url_en && selectedItem.static_image_url_en !== selectedItem.image_url_en) ||
+                             (selectedItem?.static_image_url && selectedItem.static_image_url !== selectedItem.image_url_en)
+                            ) && (
                               <div className={`absolute top-2 right-2 text-white px-2 py-1 rounded-full text-xs font-bold shadow-lg ${
                                 (selectedItem as any).cropSettings?.method === 'triple-layer-white-bg' 
                                   ? 'bg-emerald-500' 
@@ -972,6 +973,9 @@ export default function GalleryManagementNew() {
                               }`}>
                                 {(() => {
                                   console.log('🔍 BADGE DEBUG EN - cropSettings:', (selectedItem as any).cropSettings, 'method:', (selectedItem as any).cropSettings?.method);
+                                  console.log('🔍 BADGE DEBUG EN - static_image_url_en:', selectedItem?.static_image_url_en);
+                                  console.log('🔍 BADGE DEBUG EN - image_url_en:', selectedItem?.image_url_en);
+                                  console.log('🔍 BADGE DEBUG EN - formData.use_same_video:', formData.use_same_video);
                                   
                                   // Real-time badge: Show current cropping state or saved state
                                   if (activeCroppingState.isActive && activeCroppingState.language === 'en') {
@@ -1373,6 +1377,9 @@ export default function GalleryManagementNew() {
                             if (result.static_image_url) {
                               console.log('🎯 Auto-thumbnail detected, updating static URLs');
                               updatedFormData.static_image_url = result.static_image_url;
+                              // In shared mode, both EN and FR get the same static image
+                              updatedFormData.static_image_url_en = result.static_image_url;
+                              updatedFormData.static_image_url_fr = result.static_image_url;
                               
                               // Store auto-crop settings if available (for badge logic)
                               if (result.auto_crop_settings) {
@@ -1386,7 +1393,9 @@ export default function GalleryManagementNew() {
                               ...prev,
                               image_url_en: result.url,
                               image_url_fr: result.url,
-                              static_image_url: result.static_image_url || prev.static_image_url
+                              static_image_url: result.static_image_url || prev.static_image_url,
+                              static_image_url_en: result.static_image_url || prev.static_image_url_en,
+                              static_image_url_fr: result.static_image_url || prev.static_image_url_fr
                             }));
                             
                             setFormData(updatedFormData);
