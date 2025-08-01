@@ -223,6 +223,7 @@ interface GalleryItem {
   static_image_url_en: string | null;
   static_image_url_fr: string | null;
   static_image_url: string | null; // Legacy field
+  cropSettings?: any; // Auto-crop settings for badge detection
   order_index: number;
   is_active: boolean;
 }
@@ -1572,15 +1573,40 @@ export default function GalleryManagementNew() {
                             uploadId="english-image-upload-v87"
                             onUploadComplete={(result) => {
                               console.log('✅ English image upload completed:', result);
+                              console.log('🎯 Auto-crop settings received:', result.auto_crop_settings);
+                              console.log('🎯 Static image URL received:', result.static_image_url);
+                              
                               // Real-time preview: Update pending state immediately
                               setPendingPreviews(prev => ({
                                 ...prev,
                                 image_url_en: result.url
                               }));
-                              setFormData(prev => ({
-                                ...prev,
-                                image_url_en: result.url
-                              }));
+                              
+                              // Handle auto-crop settings for new uploads
+                              if (result.auto_crop_settings && result.static_image_url) {
+                                console.log('🎯 Processing auto-crop settings for new upload');
+                                setFormData(prev => ({
+                                  ...prev,
+                                  image_url_en: result.url,
+                                  // Set static image URLs based on shared mode
+                                  static_image_url_en: formData.use_same_video ? result.static_image_url : result.static_image_url,
+                                  static_image_url_fr: formData.use_same_video ? result.static_image_url : prev.static_image_url_fr,
+                                  // Store auto-crop settings for badge detection
+                                  cropSettings: result.auto_crop_settings
+                                }));
+                              } else {
+                                // No auto-cropping needed (image was already 3:2 ratio)
+                                setFormData(prev => ({
+                                  ...prev,
+                                  image_url_en: result.url,
+                                  // Clear static URLs since no cropping was needed
+                                  static_image_url_en: null,
+                                  static_image_url_fr: formData.use_same_video ? null : prev.static_image_url_fr,
+                                  // Clear cropSettings since no cropping occurred
+                                  cropSettings: null
+                                }));
+                              }
+                              
                               persistentUploadState.image_url_en = result.url;
                               toast({ 
                                 title: "📸 Instant Preview EN", 
