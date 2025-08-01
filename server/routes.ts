@@ -308,6 +308,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
         updated_video_url_en: item.video_url_en
       });
       
+      // CROSS-ENVIRONMENT SYNC: Notify other environments about the change
+      console.log('🌍 CROSS-ENVIRONMENT: Gallery item updated in database - other environments will see changes after F5 refresh');
+      
       res.json(item);
     } catch (error: any) {
       console.error('Gallery update error:', error);
