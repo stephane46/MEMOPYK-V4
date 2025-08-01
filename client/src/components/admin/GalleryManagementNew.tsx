@@ -788,11 +788,19 @@ export default function GalleryManagementNew() {
                                     return activeCroppingState.hasChanges ? '✂️ Recadré FR*' : '✂️ Auto FR';
                                   }
                                   
-                                  // FIXED LOGIC: Only manual crops should show "Recadré"
-                                  // Everything else (no cropSettings, auto-generated, etc.) should show "Auto"
-                                  const isManualCrop = (selectedItem as any).cropSettings?.method === 'triple-layer-white-bg';
+                                  // UPDATED LOGIC: Only show badges when actual cropping occurred
+                                  const cropSettings = (selectedItem as any).cropSettings;
+                                  const isManualCrop = cropSettings?.method === 'triple-layer-white-bg';
+                                  const isAutoCrop = cropSettings?.method === 'sharp-auto-thumbnail' && cropSettings?.cropped === true;
                                   
-                                  return isManualCrop ? '✂️ Recadré FR' : '✂️ Auto FR';
+                                  if (isManualCrop) {
+                                    return '✂️ Recadré FR';
+                                  } else if (isAutoCrop) {
+                                    return '✂️ Auto FR';
+                                  } else {
+                                    // No cropSettings or no cropping needed - don't show badge
+                                    return '';
+                                  }
                                 })()}
                               </div>
                             )}
@@ -957,11 +965,19 @@ export default function GalleryManagementNew() {
                                     return activeCroppingState.hasChanges ? '✂️ Recadré EN*' : '✂️ Auto EN';
                                   }
                                   
-                                  // FIXED LOGIC: Only manual crops should show "Recadré"
-                                  // Everything else (no cropSettings, auto-generated, etc.) should show "Auto"
-                                  const isManualCrop = (selectedItem as any).cropSettings?.method === 'triple-layer-white-bg';
+                                  // UPDATED LOGIC: Only show badges when actual cropping occurred
+                                  const cropSettings = (selectedItem as any).cropSettings;
+                                  const isManualCrop = cropSettings?.method === 'triple-layer-white-bg';
+                                  const isAutoCrop = cropSettings?.method === 'sharp-auto-thumbnail' && cropSettings?.cropped === true;
                                   
-                                  return isManualCrop ? '✂️ Recadré EN' : '✂️ Auto EN';
+                                  if (isManualCrop) {
+                                    return '✂️ Recadré EN';
+                                  } else if (isAutoCrop) {
+                                    return '✂️ Auto EN';
+                                  } else {
+                                    // No cropSettings or no cropping needed - don't show badge
+                                    return '';
+                                  }
                                 })()}
                               </div>
                             )}

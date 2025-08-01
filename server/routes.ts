@@ -642,14 +642,22 @@ export async function registerRoutes(app: Express): Promise<Server> {
         console.log(`🤖 AUTO-GENERATING 300x200 thumbnail for new image: ${filename}`);
         const sharp = require('sharp');
         
-        // Create automatic 300x200 thumbnail with object-cover behavior
+        // Get image metadata to check if cropping is actually needed
+        const metadata = await sharp(req.file.path).metadata();
+        const originalAspectRatio = metadata.width! / metadata.height!;
+        const targetAspectRatio = 300 / 200; // 1.5 (3:2 ratio)
+        const aspectRatioTolerance = 0.01; // Small tolerance for floating point comparison
+        
+        const needsCropping = Math.abs(originalAspectRatio - targetAspectRatio) > aspectRatioTolerance;
+        
+        // Create automatic 300x200 thumbnail
         const thumbnailBuffer = await sharp(req.file.path)
           .resize(300, 200, {
-            fit: 'cover',  // Crop to fill the dimensions (like CSS object-fit: cover)
-            position: 'center'  // Center the crop
+            fit: needsCropping ? 'cover' : 'fill',  // Only crop if aspect ratio is different
+            position: 'center'
           })
           .flatten({ background: { r: 255, g: 255, b: 255 } })  // White background for transparency
-          .jpeg({ quality: 90, progressive: true })
+          .jpeg({ quality: 100, progressive: true })  // 100% quality as requested
           .toBuffer();
         
         // Upload auto-generated thumbnail
@@ -665,17 +673,24 @@ export async function registerRoutes(app: Express): Promise<Server> {
         if (!staticUploadError) {
           staticImageUrl = `https://supabase.memopyk.org/storage/v1/object/public/memopyk-videos/${staticFilename}`;
           
-          // Create cropSettings for automatic generation (different from manual "triple-layer-white-bg")
-          autoCropSettings = {
-            method: 'sharp-auto-thumbnail',
-            type: 'automatic',
-            fit: 'cover',
-            position: 'center',
-            dimensions: { width: 300, height: 200 },
-            timestamp: new Date().toISOString()
-          };
-          
-          console.log(`✅ Auto-generated static thumbnail: ${staticImageUrl}`);
+          // Only create cropSettings if actual cropping was performed
+          if (needsCropping) {
+            autoCropSettings = {
+              method: 'sharp-auto-thumbnail',
+              type: 'automatic',
+              fit: 'cover',
+              position: 'center',
+              dimensions: { width: 300, height: 200 },
+              aspectRatio: { original: originalAspectRatio, target: targetAspectRatio },
+              cropped: true,
+              timestamp: new Date().toISOString()
+            };
+            console.log(`✅ Auto-cropped and generated static thumbnail: ${staticImageUrl}`);
+          } else {
+            // No cropSettings for images that didn't need cropping (already 3:2 ratio)
+            autoCropSettings = null;
+            console.log(`✅ Auto-resized static thumbnail (no cropping needed): ${staticImageUrl}`);
+          }
         } else {
           console.warn(`⚠️ Failed to upload auto-generated thumbnail: ${staticUploadError.message}`);
         }
