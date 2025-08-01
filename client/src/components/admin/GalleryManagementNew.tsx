@@ -961,24 +961,101 @@ export default function GalleryManagementNew() {
                   </>
                 )}
 
-                {/* Shared Cropping Interface */}
-                {formData.use_same_video && !isCreateMode && selectedItem && (selectedItem.image_url_en || selectedItem.image_url_fr) && (
-                  <div className="mt-8 p-4 bg-gradient-to-r from-purple-50 to-purple-100 dark:from-purple-900/20 dark:to-purple-800/20 rounded-lg border border-purple-200 dark:border-purple-800">
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-3">
-                        <div className="bg-purple-600 rounded-full p-2">
-                          <Crop className="h-5 w-5 text-white" />
-                        </div>
-                        <div>
-                          <h4 className="font-semibold text-purple-900 dark:text-purple-100">
-                            🌐 Photo Partagée (FR + EN)
-                          </h4>
-                          <p className="text-sm text-purple-800 dark:text-purple-200">
-                            Recadrer l'image pour les deux langues simultanément
-                          </p>
+                {/* Shared Video and Image Preview - Only show when using shared mode */}
+                {formData.use_same_video && (
+                  <div className="space-y-6">
+                    {/* Shared Image Section */}
+                    <div className="bg-gradient-to-r from-purple-50 to-purple-100 dark:from-purple-900/20 dark:to-purple-800/20 rounded-lg border border-purple-200 dark:border-purple-800 p-6">
+                      <h4 className="text-lg font-semibold text-purple-900 dark:text-purple-100 flex items-center gap-2 mb-4">
+                        <Image className="w-5 h-5" />
+                        🌐 Photo Partagée (FR + EN)
+                      </h4>
+                      
+                      {/* Shared Image Preview */}
+                      <div className="mb-4">
+                        <div className="aspect-video w-full bg-black rounded-lg overflow-hidden border border-purple-200 dark:border-purple-600 relative">
+                          {(formData.image_url_fr || formData.image_url_en || selectedItem?.image_url_fr || selectedItem?.image_url_en) ? (
+                            <>
+                              <img 
+                                src={
+                                  // Use FR image first, then EN as fallback
+                                  (formData.image_url_fr || selectedItem?.image_url_fr)?.startsWith('http')
+                                    ? `${formData.image_url_fr || selectedItem?.image_url_fr}?v=${formData.image_url_fr ? 'new' : 'old'}`
+                                    : (formData.image_url_en || selectedItem?.image_url_en)?.startsWith('http')
+                                    ? `${formData.image_url_en || selectedItem?.image_url_en}?v=${formData.image_url_en ? 'new' : 'old'}`
+                                    : (selectedItem ? getThumbnailUrl(selectedItem, 'fr') : null) || 
+                                      (selectedItem ? getThumbnailUrl(selectedItem, 'en') : null) ||
+                                      `/api/image-proxy?filename=${((formData.image_url_fr || selectedItem?.image_url_fr) || (formData.image_url_en || selectedItem?.image_url_en))?.split('/').pop()?.split('?')[0]}`
+                                } 
+                                alt="Aperçu Partagé"
+                                className="w-full h-full object-contain"
+                              />
+                              {(selectedItem?.static_image_url_fr || selectedItem?.static_image_url_en) && (
+                                <div className="absolute top-2 right-2 bg-purple-500 text-white px-2 py-1 rounded-full text-xs font-bold shadow-lg">
+                                  ✂️ Recadré Partagé
+                                </div>
+                              )}
+                            </>
+                          ) : (
+                            <div className="w-full h-full flex items-center justify-center">
+                              <div className="text-center text-purple-500 dark:text-purple-400">
+                                <Image className="w-8 h-8 mx-auto mb-1 opacity-50" />
+                                <p className="text-xs">Pas d'image partagée</p>
+                              </div>
+                            </div>
+                          )}
                         </div>
                       </div>
-                      <div className="flex gap-2">
+
+                      {/* Shared Video Preview */}
+                      <div className="mb-4">
+                        <h5 className="text-md font-medium text-purple-900 dark:text-purple-100 flex items-center gap-2 mb-2">
+                          <PlayCircle className="w-4 h-4" />
+                          Vidéo Partagée
+                        </h5>
+                        {formData.video_url_fr || formData.video_url_en || formData.video_filename ? (
+                          <div className="relative bg-black rounded-lg overflow-hidden aspect-video w-full border border-purple-200 dark:border-purple-600">
+                            <video
+                              controls
+                              className="w-full h-full object-contain"
+                              style={{ backgroundColor: 'black' }}
+                            >
+                              <source 
+                                src={
+                                  // Use FR video first, then EN as fallback
+                                  ((formData.video_url_fr || formData.video_url_en || formData.video_filename)?.startsWith('http')) 
+                                    ? (formData.video_url_fr || formData.video_url_en || formData.video_filename)
+                                    : `/api/video-proxy?filename=${formData.video_url_fr || formData.video_url_en || formData.video_filename}`
+                                }
+                                type="video/mp4"
+                              />
+                              Votre navigateur ne supporte pas la lecture vidéo.
+                            </video>
+                          </div>
+                        ) : (
+                          <div className="aspect-video w-full bg-purple-100 dark:bg-purple-800 rounded-lg flex items-center justify-center border border-purple-200 dark:border-purple-600">
+                            <div className="text-center text-purple-500 dark:text-purple-400">
+                              <PlayCircle className="w-8 h-8 mx-auto mb-1 opacity-50" />
+                              <p className="text-xs">Pas de vidéo partagée</p>
+                            </div>
+                          </div>
+                        )}
+                      </div>
+
+                      {/* Shared Cropping Interface */}
+                      {!isCreateMode && selectedItem && (selectedItem.image_url_en || selectedItem.image_url_fr) && (
+                        <div className="flex items-center justify-between pt-4 border-t border-purple-200 dark:border-purple-700">
+                          <div className="flex items-center gap-3">
+                            <div className="bg-purple-600 rounded-full p-2">
+                              <Crop className="h-4 w-4 text-white" />
+                            </div>
+                            <div>
+                              <p className="text-sm text-purple-800 dark:text-purple-200">
+                                Recadrer l'image pour les deux langues simultanément
+                              </p>
+                            </div>
+                          </div>
+                          <div className="flex gap-2">
                         <Button
                           onClick={() => {
                             setCropperLanguage('shared');
@@ -1030,7 +1107,7 @@ export default function GalleryManagementNew() {
                           </Button>
                         )}
                       </div>
-                    </div>
+                    )}
                   </div>
                 )}
               </div>
