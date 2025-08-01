@@ -1,9 +1,7 @@
 import { ReactNode, useState, useEffect } from 'react';
 import { Link, useLocation } from 'wouter';
 import { useLanguage } from '../contexts/LanguageContext';
-import { useQuery } from '@tanstack/react-query';
 import { Menu, X } from 'lucide-react';
-import type { CtaSettings } from '@shared/schema';
 
 interface LayoutProps {
   children: ReactNode;
@@ -13,11 +11,6 @@ export function Layout({ children }: LayoutProps) {
   const { t, language, setLanguage, getLocalizedPath } = useLanguage();
   const [location] = useLocation();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-
-  // Fetch CTA settings for quote and appointment URLs
-  const { data: ctaSettings = [] } = useQuery<CtaSettings[]>({
-    queryKey: ['/api/cta']
-  });
 
   // Close mobile menu on route change
   useEffect(() => {
@@ -36,12 +29,6 @@ export function Layout({ children }: LayoutProps) {
       document.body.style.overflow = 'unset';
     };
   }, [isMobileMenuOpen]);
-
-  // Get CTA URLs
-  const getCtaUrl = (id: string) => {
-    const cta = ctaSettings.find(c => c.id === id && c.isActive);
-    return cta?.buttonUrl || '#';
-  };
 
   // Handle anchor scrolling
   const handleAnchorClick = (sectionId: string) => {
@@ -76,13 +63,13 @@ export function Layout({ children }: LayoutProps) {
     },
     { 
       name: t('nav.quote'), 
-      type: 'external', 
-      href: getCtaUrl('quick_quote') 
+      type: 'anchor', 
+      sectionId: 'cta' 
     },
     { 
       name: t('nav.appointment'), 
-      type: 'external', 
-      href: getCtaUrl('book_call') 
+      type: 'anchor', 
+      sectionId: 'cta' 
     },
   ];
 
@@ -275,24 +262,20 @@ export function Layout({ children }: LayoutProps) {
                   </button>
                 </li>
                 <li>
-                  <a 
-                    href={getCtaUrl('quick_quote')}
-                    target="_blank"
-                    rel="noopener noreferrer"
+                  <button 
+                    onClick={() => handleAnchorClick('cta')}
                     className="hover:text-white transition-colors"
                   >
                     {t('nav.quote')}
-                  </a>
+                  </button>
                 </li>
                 <li>
-                  <a 
-                    href={getCtaUrl('book_call')}
-                    target="_blank"
-                    rel="noopener noreferrer"
+                  <button 
+                    onClick={() => handleAnchorClick('cta')}
                     className="hover:text-white transition-colors"
                   >
                     {t('nav.appointment')}
-                  </a>
+                  </button>
                 </li>
               </ul>
             </div>
