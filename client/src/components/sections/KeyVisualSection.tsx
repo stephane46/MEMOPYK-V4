@@ -85,7 +85,7 @@ export function KeyVisualSection() {
               <p className="text-memopyk-dark-blue">
                 {language === 'fr-FR' 
                   ? "Transformez le chaos numérique en films cinématographiques personnalisés. Nos artistes créent des narrations visuelles qui révèlent la beauté de votre histoire familiale."
-                  : "Transform digital chaos into personalized cinematic films. Our artists create visual narratives that reveal the beauty of your family story."
+                  : "Let us rescue your photos and videos and transform them into a beautiful, personal film you'll truly treasure."
                 }
               </p>
             </div>
