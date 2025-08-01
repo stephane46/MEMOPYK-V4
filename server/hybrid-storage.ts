@@ -495,16 +495,19 @@ export class HybridStorage implements HybridStorageInterface {
 
   // Gallery operations
   async getGalleryItems(): Promise<any[]> {
+    console.log(`🌍 CROSS-ENVIRONMENT SYNC - getGalleryItems in ${process.env.NODE_ENV || 'development'} environment`);
+    
     try {
-      console.log('🔍 HYBRID STORAGE: Attempting to read from database...');
+      console.log('🔍 ATTEMPTING DATABASE READ for cross-environment sync...');
       // Try to get data from database first (most up-to-date)
       const { galleryItems } = await import('../shared/schema');
-      console.log('🔍 HYBRID STORAGE: Schema imported successfully');
+      console.log('🔍 Schema imported successfully');
       const dbItems = await db.select().from(galleryItems).orderBy(galleryItems.orderIndex);
-      console.log(`🔍 HYBRID STORAGE: Database query completed, found ${dbItems.length} items`);
+      console.log(`🔍 Database query completed, found ${dbItems.length} items`);
       
       if (dbItems.length > 0) {
-        console.log(`✅ HYBRID STORAGE: Retrieved ${dbItems.length} items from database`);
+        console.log(`✅ SUCCESS: Retrieved ${dbItems.length} items from SHARED DATABASE`);
+        console.log(`🌍 This data should be identical in both development and production!`);
         console.log('🔍 First item is_active value:', dbItems[0]?.isActive);
         console.log('🔍 First item cropSettings value:', JSON.stringify(dbItems[0]?.cropSettings));
         return dbItems.map(item => ({
@@ -548,14 +551,19 @@ export class HybridStorage implements HybridStorageInterface {
           updated_at: item.updatedAt,
           cropSettings: item.cropSettings
         }));
+      } else {
+        console.log(`⚠️ DATABASE IS EMPTY - This could explain sync issues!`);
       }
     } catch (error) {
-      console.log(`⚠️ HYBRID STORAGE: Database read failed, falling back to JSON:`, error.message);
+      console.error(`❌ DATABASE CONNECTION FAILED - This prevents cross-environment sync:`);
+      console.error(`❌ Error details:`, error.message);
+      console.error(`❌ If you see this error, database connectivity is broken and changes won't sync between dev/production`);
     }
 
     // Fallback to JSON file if database is unavailable
     const data = this.loadJsonFile('gallery-items.json');
-    console.log(`📁 HYBRID STORAGE: Retrieved ${data.length} items from JSON file`);
+    console.log(`📁 FALLBACK: Retrieved ${data.length} items from LOCAL JSON file`);
+    console.log(`⚠️ USING LOCAL DATA - Changes will NOT sync between environments!`);
     return data; // Return all items for admin management
   }
 
@@ -658,9 +666,13 @@ export class HybridStorage implements HybridStorageInterface {
   }
 
   async updateGalleryItem(itemId: string | number, updateData: any): Promise<any> {
-    console.log(`🔍 HYBRID STORAGE DEBUG - updateGalleryItem - is_active: ${updateData.is_active}`);
+    console.log(`🔍 CROSS-ENVIRONMENT SYNC - updateGalleryItem - is_active: ${updateData.is_active}`);
+    console.log(`🌍 ENVIRONMENT: ${process.env.NODE_ENV || 'development'}`);
     
-    // Update database first if available
+    let dbUpdateSuccessful = false;
+    let updatedDbItem: any = null;
+    
+    // CRITICAL: Update database first for cross-environment synchronization
     try {
       const { galleryItems } = await import('../shared/schema');
       const { eq } = await import('drizzle-orm');
@@ -681,10 +693,6 @@ export class HybridStorage implements HybridStorageInterface {
       if (updateData.cropSettings !== undefined) dbUpdateData.cropSettings = updateData.cropSettings;
       dbUpdateData.updatedAt = new Date();
       
-      console.log(`🔍 DATABASE UPDATE - image_url_fr: ${updateData.image_url_fr} -> imageUrlFr: ${dbUpdateData.imageUrlFr}`);
-      console.log(`🔍 DATABASE UPDATE - image_url_en: ${updateData.image_url_en} -> imageUrlEn: ${dbUpdateData.imageUrlEn}`);
-      console.log(`🔍 DATABASE UPDATE - cropSettings: ${JSON.stringify(updateData.cropSettings)} -> cropSettings: ${JSON.stringify(dbUpdateData.cropSettings)}`);
-      
       console.log(`🔍 DATABASE UPDATE - Converting is_active ${updateData.is_active} to isActive ${dbUpdateData.isActive}`);
       
       const dbResult = await db.update(galleryItems)
@@ -694,10 +702,14 @@ export class HybridStorage implements HybridStorageInterface {
         
       console.log(`✅ DATABASE UPDATE SUCCESS - Updated ${dbResult.length} rows`);
       if (dbResult.length > 0) {
+        updatedDbItem = dbResult[0];
+        dbUpdateSuccessful = true;
         console.log(`✅ Database confirms is_active = ${dbResult[0].isActive}`);
+        console.log(`🌍 CROSS-ENVIRONMENT: Database updated successfully! This change should be visible in both dev and production after F5.`);
       }
     } catch (error) {
-      console.log(`⚠️ DATABASE UPDATE FAILED, updating JSON only:`, error.message);
+      console.error(`❌ DATABASE UPDATE FAILED:`, error);
+      console.log(`⚠️ FALLBACK: Updating JSON only - changes will NOT sync between environments`);
     }
 
     // Update JSON file as backup/fallback
@@ -721,6 +733,28 @@ export class HybridStorage implements HybridStorageInterface {
     console.log(`🔍 JSON UPDATE - is_active: ${updatedItem.is_active}`);
     
     this.saveJsonFile('gallery-items.json', items);
+    
+    // CRITICAL: Return database result if successful for consistency across environments
+    if (dbUpdateSuccessful && updatedDbItem) {
+      console.log(`🌍 RETURNING DATABASE RESULT for cross-environment consistency`);
+      return {
+        // Convert database fields back to expected format
+        id: updatedDbItem.id,
+        title_en: updatedDbItem.titleEn,
+        title_fr: updatedDbItem.titleFr,
+        is_active: updatedDbItem.isActive,
+        video_filename: updatedDbItem.videoFilename,
+        video_url_en: updatedDbItem.videoUrlEn,
+        video_url_fr: updatedDbItem.videoUrlFr,
+        image_url_en: updatedDbItem.imageUrlEn,
+        image_url_fr: updatedDbItem.imageUrlFr,
+        use_same_video: updatedDbItem.useSameVideo,
+        static_image_url_en: updatedDbItem.staticImageUrlEn,
+        static_image_url_fr: updatedDbItem.staticImageUrlFr,
+        cropSettings: updatedDbItem.cropSettings,
+        updated_at: updatedDbItem.updatedAt?.toISOString() || new Date().toISOString()
+      };
+    }
     
     return updatedItem;
   }
