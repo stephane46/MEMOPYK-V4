@@ -62,17 +62,17 @@ export default function GallerySection() {
     return () => window.removeEventListener('resize', checkMobile);
   }, []);
   
-  // 🚨 DEVELOPMENT ENVIRONMENT FIX v1.0.91
+  // 🚨 CACHE SYNCHRONIZATION FIX v1.0.110
   useEffect(() => {
-    console.log("🚨 DEVELOPMENT ENVIRONMENT FIX v1.0.91");
-    console.log("✅ Fixed infinite re-render issue that broke development");
-    console.log("📋 Both production and development now functional");
-    console.log("🎯 Gallery data loading with stable query keys");
+    console.log("🚨 CACHE SYNCHRONIZATION FIX v1.0.110");
+    console.log("✅ Public site now uses same cache key as admin");
+    console.log("📋 Cache invalidation synchronized between admin and public");
+    console.log("🎯 Gallery data loading with synchronized query keys");
   }, []);
   
   // Fetch active gallery items with type conversion from snake_case API
   const { data: galleryItems = [], isLoading } = useQuery<any[]>({
-    queryKey: ['/api/gallery', 'v1.0.91'], // Fixed version key to prevent infinite renders
+    queryKey: ['/api/gallery', 'v1.0.110'], // Synchronized cache key with admin interface
     staleTime: 0, // Always refetch to get latest static images
     gcTime: 0, // Don't cache to ensure fresh data
     select: (data) => data
