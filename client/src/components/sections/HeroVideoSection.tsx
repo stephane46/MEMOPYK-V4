@@ -22,6 +22,9 @@ interface HeroText {
   subtitle_fr: string;
   subtitle_en: string;
   font_size: number;
+  font_size_desktop?: number;
+  font_size_tablet?: number;
+  font_size_mobile?: number;
   is_active: boolean;
 }
 
@@ -152,7 +155,13 @@ export function HeroVideoSection() {
   }
 
   const videoUrl = language === 'fr-FR' ? currentVideo.url_fr : currentVideo.url_en;
-  const fontSize = activeHeroText?.font_size || 60;
+  // Generate responsive font sizes using device-specific values and CSS clamp
+  const fontSizeDesktop = activeHeroText?.font_size_desktop || activeHeroText?.font_size || 60;
+  const fontSizeTablet = activeHeroText?.font_size_tablet || Math.round(fontSizeDesktop * 0.75);
+  const fontSizeMobile = activeHeroText?.font_size_mobile || Math.round(fontSizeDesktop * 0.53);
+  
+  // CSS clamp function for responsive scaling: clamp(min, preferred, max)
+  const responsiveFontSize = `clamp(${fontSizeMobile}px, ${fontSizeTablet}px, ${fontSizeDesktop}px)`;
 
   return (
     <section 
@@ -207,7 +216,7 @@ export function HeroVideoSection() {
           <h1 
             className="font-playfair font-bold mb-2 sm:mb-4 lg:mb-6 leading-tight"
             style={{ 
-              fontSize: `clamp(20px, ${Math.max(24, Math.min(fontSize * 0.6, 60))}px, 60px)`,
+              fontSize: responsiveFontSize,
               textShadow: '2px 2px 4px rgba(0,0,0,0.8)'
             }}
           >
@@ -220,7 +229,7 @@ export function HeroVideoSection() {
           <p 
             className="mb-4 sm:mb-6 lg:mb-8 text-white/90 font-poppins leading-snug"
             style={{ 
-              fontSize: `clamp(14px, ${Math.max(16, Math.min(fontSize * 0.25, 20))}px, 20px)`,
+              fontSize: `clamp(${Math.round(fontSizeMobile * 0.47)}px, ${Math.round(fontSizeTablet * 0.47)}px, ${Math.round(fontSizeDesktop * 0.47)}px)`,
               textShadow: '1px 1px 2px rgba(0,0,0,0.8)' 
             }}
           >

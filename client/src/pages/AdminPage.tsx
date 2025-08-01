@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { apiRequest } from '@/lib/queryClient';
 import { Button } from '@/components/ui/button';
@@ -8,7 +8,7 @@ import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
 import { Badge } from '@/components/ui/badge';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
-import { ArrowUp, ArrowDown, Play, RefreshCw, BarChart3, Video, HardDrive, Users, MessageSquare, FileText, LogOut, TestTube, Rocket, X, Type, Save, Palette, ChevronUp, ChevronDown, Trash2, Eye, EyeOff, Upload, FileVideo, Database, Check, Zap, Search } from 'lucide-react';
+import { ArrowUp, ArrowDown, Play, RefreshCw, BarChart3, Video, HardDrive, Users, MessageSquare, FileText, LogOut, TestTube, Rocket, X, Type, Save, Palette, ChevronUp, ChevronDown, Trash2, Eye, EyeOff, Upload, FileVideo, Database, Check, Zap, Search, Monitor, Tablet, Smartphone } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import GalleryManagementNew from '@/components/admin/GalleryManagementNew';
 import FormatBadgeManager from '@/components/admin/FormatBadgeManager';
@@ -168,14 +168,38 @@ export default function AdminPage() {
       handleFileUpload(files[0]);
     }
   };
-  const [previewFontSize, setPreviewFontSize] = useState(48);
+  const [previewFontSizeDesktop, setPreviewFontSizeDesktop] = useState(60);
+  const [previewFontSizeTablet, setPreviewFontSizeTablet] = useState(45);
+  const [previewFontSizeMobile, setPreviewFontSizeMobile] = useState(32);
+  const [currentPreviewDevice, setCurrentPreviewDevice] = useState<'desktop' | 'tablet' | 'mobile'>('desktop');
   const [textPreview, setTextPreview] = useState('');
   const [editingTextId, setEditingTextId] = useState<number | null>(null);
   const [editFormData, setEditFormData] = useState({ title_fr: '', subtitle_fr: '', title_en: '', subtitle_en: '' });
   const [showNewTextForm, setShowNewTextForm] = useState(false);
-  const [newTextData, setNewTextData] = useState({ title_fr: '', subtitle_fr: '', title_en: '', subtitle_en: '', font_size: 48 });
+  const [newTextData, setNewTextData] = useState({ 
+    title_fr: '', 
+    subtitle_fr: '', 
+    title_en: '', 
+    subtitle_en: '', 
+    font_size_desktop: 60,
+    font_size_tablet: 45,
+    font_size_mobile: 32
+  });
   const { toast } = useToast();
   const queryClient = useQueryClient();
+
+  // Sync responsive font sizes when a text is selected
+  useEffect(() => {
+    if (selectedTextId && heroTexts.length > 0) {
+      const selectedText = heroTexts.find((t: any) => t.id === selectedTextId);
+      if (selectedText) {
+        // Use responsive font sizes from database if available, otherwise use defaults
+        setPreviewFontSizeDesktop(selectedText.font_size_desktop || selectedText.font_size || 60);
+        setPreviewFontSizeTablet(selectedText.font_size_tablet || Math.round((selectedText.font_size || 60) * 0.75));
+        setPreviewFontSizeMobile(selectedText.font_size_mobile || Math.round((selectedText.font_size || 60) * 0.53));
+      }
+    }
+  }, [selectedTextId, heroTexts]);
 
   // Add logout functionality
   const handleLogout = () => {
@@ -358,9 +382,20 @@ export default function AdminPage() {
 
   // Apply text to site mutation
   const applyTextMutation = useMutation({
-    mutationFn: async ({ textId, fontSize }: { textId: number; fontSize: number }) => {
+    mutationFn: async ({ textId, fontSizes }: { 
+      textId: number; 
+      fontSizes: { 
+        desktop: number; 
+        tablet: number; 
+        mobile: number; 
+        legacy?: number;
+      } 
+    }) => {
       const response = await apiRequest(`/api/hero-text/${textId}/apply`, 'PATCH', { 
-        font_size: fontSize,
+        font_size: fontSizes.legacy || fontSizes.desktop, // Keep legacy compatibility
+        font_size_desktop: fontSizes.desktop,
+        font_size_tablet: fontSizes.tablet,
+        font_size_mobile: fontSizes.mobile,
         is_active: true 
       });
       return await response.json();
@@ -1101,7 +1136,12 @@ export default function AdminPage() {
                                             onClick={() => {
                                               applyTextMutation.mutate({ 
                                                 textId: text.id, 
-                                                fontSize: text.font_size 
+                                                fontSizes: {
+                                                  desktop: text.font_size_desktop || text.font_size || 60,
+                                                  tablet: text.font_size_tablet || Math.round((text.font_size || 60) * 0.75),
+                                                  mobile: text.font_size_mobile || Math.round((text.font_size || 60) * 0.53),
+                                                  legacy: text.font_size
+                                                }
                                               });
                                             }}
                                             disabled={applyTextMutation.isPending}
@@ -1139,24 +1179,100 @@ export default function AdminPage() {
                                 </CardTitle>
                               </CardHeader>
                               <CardContent className="space-y-6">
-                                {/* Font Size Slider */}
-                                <div className="space-y-4">
-                                  <Label>Taille de Police: {previewFontSize}px</Label>
-                                  <input
-                                    type="range"
-                                    min="20"
-                                    max="120"
-                                    value={previewFontSize}
-                                    onChange={(e) => setPreviewFontSize(Number(e.target.value))}
-                                    className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer slider"
-                                    style={{
-                                      background: `linear-gradient(to right, #D67C4A 0%, #D67C4A ${((previewFontSize - 20) / 100) * 100}%, #e5e7eb ${((previewFontSize - 20) / 100) * 100}%, #e5e7eb 100%)`
-                                    }}
-                                  />
-                                  <div className="flex justify-between text-xs text-gray-500">
-                                    <span>20px</span>
-                                    <span>70px</span>
-                                    <span>120px</span>
+                                {/* Responsive Font Size Controls */}
+                                <div className="space-y-6">
+                                  {/* Device Preview Selector */}
+                                  <div className="space-y-3">
+                                    <Label className="text-lg font-semibold text-gray-900 dark:text-white flex items-center gap-2">
+                                      <Monitor className="h-5 w-5" />
+                                      Responsive Font Size Controls
+                                    </Label>
+                                    <div className="flex space-x-2 bg-gray-100 dark:bg-gray-800 p-1 rounded-lg">
+                                      <button
+                                        onClick={() => setCurrentPreviewDevice('desktop')}
+                                        className={`flex-1 px-4 py-2 rounded-md text-sm font-medium transition-all flex items-center justify-center gap-2 ${
+                                          currentPreviewDevice === 'desktop'
+                                            ? 'bg-white dark:bg-gray-700 text-gray-900 dark:text-white shadow-sm'
+                                            : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white'
+                                        }`}
+                                      >
+                                        <Monitor className="h-4 w-4" />
+                                        Desktop
+                                      </button>
+                                      <button
+                                        onClick={() => setCurrentPreviewDevice('tablet')}
+                                        className={`flex-1 px-4 py-2 rounded-md text-sm font-medium transition-all flex items-center justify-center gap-2 ${
+                                          currentPreviewDevice === 'tablet'
+                                            ? 'bg-white dark:bg-gray-700 text-gray-900 dark:text-white shadow-sm'
+                                            : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white'
+                                        }`}
+                                      >
+                                        <Tablet className="h-4 w-4" />
+                                        Tablet
+                                      </button>
+                                      <button
+                                        onClick={() => setCurrentPreviewDevice('mobile')}
+                                        className={`flex-1 px-4 py-2 rounded-md text-sm font-medium transition-all flex items-center justify-center gap-2 ${
+                                          currentPreviewDevice === 'mobile'
+                                            ? 'bg-white dark:bg-gray-700 text-gray-900 dark:text-white shadow-sm'
+                                            : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white'
+                                        }`}
+                                      >
+                                        <Smartphone className="h-4 w-4" />
+                                        Mobile
+                                      </button>
+                                    </div>
+                                  </div>
+
+                                  {/* Current Device Font Size Slider */}
+                                  <div className="space-y-4">
+                                    <Label className="text-base font-medium">
+                                      {currentPreviewDevice === 'desktop' && `Desktop Font Size: ${previewFontSizeDesktop}px`}
+                                      {currentPreviewDevice === 'tablet' && `Tablet Font Size: ${previewFontSizeTablet}px`}
+                                      {currentPreviewDevice === 'mobile' && `Mobile Font Size: ${previewFontSizeMobile}px`}
+                                    </Label>
+                                    <input
+                                      type="range"
+                                      min="16"
+                                      max="120"
+                                      value={
+                                        currentPreviewDevice === 'desktop' ? previewFontSizeDesktop :
+                                        currentPreviewDevice === 'tablet' ? previewFontSizeTablet :
+                                        previewFontSizeMobile
+                                      }
+                                      onChange={(e) => {
+                                        const newSize = Number(e.target.value);
+                                        if (currentPreviewDevice === 'desktop') {
+                                          setPreviewFontSizeDesktop(newSize);
+                                        } else if (currentPreviewDevice === 'tablet') {
+                                          setPreviewFontSizeTablet(newSize);
+                                        } else {
+                                          setPreviewFontSizeMobile(newSize);
+                                        }
+                                      }}
+                                      className="w-full h-3 bg-gray-200 dark:bg-gray-700 rounded-lg appearance-none cursor-pointer slider"
+                                      style={{
+                                        background: `linear-gradient(to right, #D67C4A 0%, #D67C4A ${((
+                                          currentPreviewDevice === 'desktop' ? previewFontSizeDesktop :
+                                          currentPreviewDevice === 'tablet' ? previewFontSizeTablet :
+                                          previewFontSizeMobile
+                                        ) - 16) / 104 * 100}%, #e5e7eb ${((
+                                          currentPreviewDevice === 'desktop' ? previewFontSizeDesktop :
+                                          currentPreviewDevice === 'tablet' ? previewFontSizeTablet :
+                                          previewFontSizeMobile
+                                        ) - 16) / 104 * 100}%)`
+                                      }}
+                                    />
+                                    <div className="text-sm text-gray-600 dark:text-gray-400 space-y-1">
+                                      <div className="flex justify-between">
+                                        <span>Desktop: {previewFontSizeDesktop}px</span>
+                                        <span>Tablet: {previewFontSizeTablet}px</span>
+                                        <span>Mobile: {previewFontSizeMobile}px</span>
+                                      </div>
+                                      <p className="text-xs text-center text-gray-500 dark:text-gray-500">
+                                        🎯 Current preview: {currentPreviewDevice.charAt(0).toUpperCase() + currentPreviewDevice.slice(1)}
+                                      </p>
+                                    </div>
                                   </div>
                                 </div>
 
@@ -1177,9 +1293,14 @@ export default function AdminPage() {
                                           <h1 
                                             className="font-bold mb-4"
                                             style={{ 
-                                              fontSize: `${previewFontSize}px`,
+                                              fontSize: `${
+                                                currentPreviewDevice === 'desktop' ? previewFontSizeDesktop :
+                                                currentPreviewDevice === 'tablet' ? previewFontSizeTablet :
+                                                previewFontSizeMobile
+                                              }px`,
                                               lineHeight: '1.2',
-                                              textShadow: '2px 2px 4px rgba(0,0,0,0.8)'
+                                              textShadow: '2px 2px 4px rgba(0,0,0,0.8)',
+                                              fontFamily: currentPreviewDevice === 'mobile' ? 'Poppins, sans-serif' : 'Playfair Display, serif'
                                             }}
                                           >
                                             {selectedText.title_fr}
@@ -1187,7 +1308,11 @@ export default function AdminPage() {
                                           <p 
                                             className="opacity-90"
                                             style={{ 
-                                              fontSize: `${previewFontSize * 0.6}px`,
+                                              fontSize: `${(
+                                                currentPreviewDevice === 'desktop' ? previewFontSizeDesktop :
+                                                currentPreviewDevice === 'tablet' ? previewFontSizeTablet :
+                                                previewFontSizeMobile
+                                              ) * 0.6}px`,
                                               textShadow: '1px 1px 2px rgba(0,0,0,0.8)'
                                             }}
                                           >
@@ -1209,7 +1334,12 @@ export default function AdminPage() {
                                         if (selectedText) {
                                           updateTextMutation.mutate({
                                             textId: selectedTextId,
-                                            data: { font_size: previewFontSize }
+                                            data: { 
+                                              font_size_desktop: previewFontSizeDesktop,
+                                              font_size_tablet: previewFontSizeTablet,
+                                              font_size_mobile: previewFontSizeMobile,
+                                              font_size: previewFontSizeDesktop // Legacy field for backward compatibility
+                                            }
                                           });
                                         }
                                       }
@@ -1217,7 +1347,7 @@ export default function AdminPage() {
                                     disabled={updateTextMutation.isPending}
                                   >
                                     <Save className="h-4 w-4 mr-2" />
-                                    Sauvegarder Taille
+                                    Save Responsive Sizes
                                   </Button>
                                   <Button
                                     className="bg-orange-500 hover:bg-orange-600"
@@ -1225,7 +1355,12 @@ export default function AdminPage() {
                                       if (selectedTextId) {
                                         applyTextMutation.mutate({ 
                                           textId: selectedTextId, 
-                                          fontSize: previewFontSize 
+                                          fontSizes: {
+                                            desktop: previewFontSizeDesktop,
+                                            tablet: previewFontSizeTablet,
+                                            mobile: previewFontSizeMobile,
+                                            legacy: previewFontSize
+                                          }
                                         });
                                       }
                                     }}

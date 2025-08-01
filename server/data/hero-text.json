@@ -6,9 +6,12 @@
     "subtitle_fr": "Vos souvenirs méritent mieux que d'être simplement stockés, ils méritent une histoire",
     "subtitle_en": "Your memories deserve better than just being stored, they deserve a story",
     "font_size": 48,
+    "font_size_desktop": 60,
+    "font_size_tablet": 45,
+    "font_size_mobile": 32,
     "is_active": false,
     "created_at": "2025-08-01T13:00:00.000Z",
-    "updated_at": "2025-08-01T15:41:03.448Z"
+    "updated_at": "2025-08-01T15:45:39.601Z"
   },
   {
     "id": "1",
@@ -17,8 +20,11 @@
     "subtitle_fr": "Créez des vidéos professionnelles à partir de vos photos et vidéos",
     "subtitle_en": "Create professional videos from your photos and videos",
     "font_size": 48,
+    "font_size_desktop": 60,
+    "font_size_tablet": 45,
+    "font_size_mobile": 32,
     "is_active": true,
     "created_at": "2024-01-01T00:00:00.000Z",
-    "updated_at": "2025-08-01T15:41:35.369Z"
+    "updated_at": "2025-08-01T15:45:42.135Z"
   }
 ]

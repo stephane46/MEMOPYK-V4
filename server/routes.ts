@@ -1028,14 +1028,21 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.patch("/api/hero-text/:id/apply", async (req, res) => {
     try {
       const textId = parseInt(req.params.id);
-      const { font_size } = req.body;
+      const { font_size, font_size_desktop, font_size_tablet, font_size_mobile } = req.body;
       
       await hybridStorage.deactivateAllHeroTexts();
       
-      const appliedText = await hybridStorage.updateHeroText(textId, {
+      const updateData: any = {
         is_active: true,
-        font_size: font_size || 48
-      });
+        font_size: font_size || font_size_desktop || 48
+      };
+      
+      // Add responsive font sizes if provided
+      if (font_size_desktop) updateData.font_size_desktop = font_size_desktop;
+      if (font_size_tablet) updateData.font_size_tablet = font_size_tablet;
+      if (font_size_mobile) updateData.font_size_mobile = font_size_mobile;
+      
+      const appliedText = await hybridStorage.updateHeroText(textId, updateData);
       
       res.json({ success: true, text: appliedText });
     } catch (error) {

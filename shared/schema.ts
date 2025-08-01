@@ -23,7 +23,7 @@ export const heroVideos = pgTable("hero_videos", {
   updatedAt: timestamp("updated_at").defaultNow()
 });
 
-// Hero text settings table - bilingual structure  
+// Hero text settings table - bilingual structure with responsive font sizes  
 export const heroTextSettings = pgTable("hero_text_settings", {
   id: varchar("id").primaryKey(),
   titleFr: varchar("title_fr").notNull(),
@@ -31,7 +31,10 @@ export const heroTextSettings = pgTable("hero_text_settings", {
   subtitleFr: varchar("subtitle_fr"),
   subtitleEn: varchar("subtitle_en"),
   isActive: boolean("is_active").notNull().default(false),
-  fontSize: integer("font_size").default(60),
+  fontSize: integer("font_size").default(60), // Legacy field maintained for backward compatibility
+  fontSizeDesktop: integer("font_size_desktop").default(60),
+  fontSizeTablet: integer("font_size_tablet").default(45),
+  fontSizeMobile: integer("font_size_mobile").default(32),
   createdAt: timestamp("created_at").defaultNow(),
   updatedAt: timestamp("updated_at").defaultNow()
 });

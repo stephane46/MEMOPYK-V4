@@ -307,14 +307,17 @@ export class HybridStorage implements HybridStorageInterface {
       if (result && result.length > 0) {
         console.log(`✅ Hero Text: Found ${result.length} texts in PostgreSQL`);
         
-        // Convert camelCase to snake_case for frontend compatibility
+        // Convert camelCase to snake_case for frontend compatibility with responsive font sizes
         const formattedResult = result.map(item => ({
           id: item.id,
           title_fr: item.titleFr,
           title_en: item.titleEn,
           subtitle_fr: item.subtitleFr,
           subtitle_en: item.subtitleEn,
-          font_size: item.fontSize,
+          font_size: item.fontSize, // Legacy field for backward compatibility
+          font_size_desktop: item.fontSizeDesktop || item.fontSize || 60,
+          font_size_tablet: item.fontSizeTablet || Math.round((item.fontSize || 60) * 0.75),
+          font_size_mobile: item.fontSizeMobile || Math.round((item.fontSize || 60) * 0.53),
           is_active: item.isActive,
           created_at: item.createdAt,
           updated_at: item.updatedAt
@@ -385,7 +388,10 @@ export class HybridStorage implements HybridStorageInterface {
           titleEn: updateData.title_en, 
           subtitleFr: updateData.subtitle_fr,
           subtitleEn: updateData.subtitle_en,
-          fontSize: updateData.font_size,
+          fontSize: updateData.font_size, // Legacy field
+          fontSizeDesktop: updateData.font_size_desktop,
+          fontSizeTablet: updateData.font_size_tablet,
+          fontSizeMobile: updateData.font_size_mobile,
           isActive: updateData.is_active,
           updatedAt: new Date()
         })
