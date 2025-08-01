@@ -37,10 +37,30 @@ video::-webkit-media-controls-picture-in-picture-button {
 }
 
 /* Base Styles with Poppins as primary font */
-body {
+html, body {
   font-family: 'Poppins', sans-serif;
   background-color: #FFFFFF;
   color: var(--memopyk-navy);
+  /* Prevent horizontal scroll and fix mobile overflow issues */
+  overflow-x: hidden;
+  max-width: 100vw;
+}
+
+/* Global fix for mobile overflow issues */
+* {
+  box-sizing: border-box;
+}
+
+/* Ensure all containers respect viewport width */
+.container {
+  max-width: 100%;
+  overflow-x: hidden;
+}
+
+/* Fix for any elements that might cause horizontal overflow */
+img, video, iframe, canvas, svg {
+  max-width: 100%;
+  height: auto;
 }
 
 /* Typography Classes */
