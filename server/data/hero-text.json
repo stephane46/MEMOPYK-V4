@@ -19,12 +19,12 @@
     "title_en": "Transform your memories into cinematic films",
     "subtitle_fr": "Créez des vidéos professionnelles à partir de vos photos et vidéos",
     "subtitle_en": "Create professional videos from your photos and videos",
-    "font_size": 48,
+    "font_size": 60,
     "font_size_desktop": 60,
     "font_size_tablet": 45,
-    "font_size_mobile": 32,
+    "font_size_mobile": 40,
     "is_active": true,
     "created_at": "2024-01-01T00:00:00.000Z",
-    "updated_at": "2025-08-01T15:45:42.135Z"
+    "updated_at": "2025-08-01T15:59:21.607Z"
   }
 ]
