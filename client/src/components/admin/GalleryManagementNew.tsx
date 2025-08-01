@@ -486,20 +486,15 @@ export default function GalleryManagementNew() {
     onSuccess: () => {
       toast({ title: "✅ Succès", description: "Élément de galerie mis à jour avec succès" });
       
-      // Invalidate ALL gallery queries - admin and public site
+      // ADMIN ONLY: Invalidate only admin gallery cache, NOT public site
       queryClient.invalidateQueries({ queryKey: ['/api/gallery'] });
       queryClient.removeQueries({ queryKey: ['/api/gallery'] });
       
-      // Also invalidate public gallery query specifically
-      queryClient.invalidateQueries({ queryKey: ['/api/gallery', 'v1.0.110'] });
-      queryClient.removeQueries({ queryKey: ['/api/gallery', 'v1.0.110'] });
-      
       setPendingPreviews({}); // Clear pending previews after successful save
       
-      // Force component re-render with cache refresh key update
+      // Force component re-render with cache refresh key update  
       setTimeout(() => {
         queryClient.invalidateQueries({ queryKey: ['/api/gallery'] });
-        queryClient.invalidateQueries({ queryKey: ['/api/gallery', 'v1.0.110'] });
         setFormData({ ...formData }); // Force state update
         setForceRefreshKey(prev => prev + 1); // Force image refresh
         console.log(`🖼️ FORCE REFRESH KEY UPDATED: ${forceRefreshKey + 1}`);
@@ -752,9 +747,8 @@ export default function GalleryManagementNew() {
                                     
                                     await apiRequest(`/api/gallery/${selectedItem.id}`, 'PATCH', updateData);
                                     
-                                    // Refresh data - invalidate both admin and public gallery
+                                    // ADMIN ONLY: Refresh data - invalidate only admin gallery
                                     queryClient.invalidateQueries({ queryKey: ['/api/gallery'] });
-                                    queryClient.invalidateQueries({ queryKey: ['/api/gallery', 'v1.0.110'] });
                                     
                                     toast({ 
                                       title: "✅ Succès", 
@@ -940,9 +934,8 @@ export default function GalleryManagementNew() {
                                     
                                     await apiRequest(`/api/gallery/${selectedItem.id}`, 'PATCH', updateData);
                                     
-                                    // Refresh data - invalidate both admin and public gallery
+                                    // ADMIN ONLY: Refresh data - invalidate only admin gallery
                                     queryClient.invalidateQueries({ queryKey: ['/api/gallery'] });
-                                    queryClient.invalidateQueries({ queryKey: ['/api/gallery', 'v1.0.110'] });
                                     
                                     toast({ 
                                       title: "✅ Success", 
@@ -1935,13 +1928,7 @@ export default function GalleryManagementNew() {
               <div className="grid grid-cols-2 gap-6">
                 <div className="space-y-4">
                   <h4 className="font-medium text-[#011526] dark:text-[#F2EBDC]">
-                    {formData.use_same_video ? (
-                      <>
-                        English <Badge className="text-xs bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-200 ml-2">Source pour FR + EN</Badge>
-                      </>
-                    ) : (
-                      "English"
-                    )}
+                    English <Badge className="text-xs bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200 ml-2">Toujours séparé</Badge>
                   </h4>
                   <div>
                     <Label htmlFor="format_platform_en">Platform Line 1</Label>
@@ -1974,10 +1961,11 @@ export default function GalleryManagementNew() {
                   </div>
                 </div>
                 
-                {/* French Format and Specifications - Hidden when shared mode is enabled */}
-                {!formData.use_same_video && (
+                {/* French Format and Specifications - Always visible */}
                 <div className="space-y-4">
-                  <h4 className="font-medium text-[#011526] dark:text-[#F2EBDC]">Français</h4>
+                  <h4 className="font-medium text-[#011526] dark:text-[#F2EBDC]">
+                    Français <Badge className="text-xs bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200 ml-2">Toujours séparé</Badge>
+                  </h4>
                   <div>
                     <Label htmlFor="format_platform_fr">Platform Line 1</Label>
                     <Select value={formData.format_platform_fr} onValueChange={(value) => setFormData({ ...formData, format_platform_fr: value })}>
@@ -2008,7 +1996,6 @@ export default function GalleryManagementNew() {
                     </Select>
                   </div>
                 </div>
-                )}
               </div>
             </CardContent>
           </Card>
@@ -2156,15 +2143,12 @@ export default function GalleryManagementNew() {
                     hasChanges: false
                   });
                   
-                  // Invalidate ALL gallery caches - admin and public site
+                  // ADMIN ONLY: Invalidate only admin gallery caches, NOT public site
                   queryClient.invalidateQueries({ queryKey: ['/api/gallery'] });
-                  queryClient.invalidateQueries({ queryKey: ['/api/gallery', 'v1.0.110'] });
                   queryClient.removeQueries({ queryKey: ['/api/gallery'] });
-                  queryClient.removeQueries({ queryKey: ['/api/gallery', 'v1.0.110'] });
                   
-                  // Force component refresh by updating cache-busting key
+                  // Force admin component refresh only
                   await queryClient.refetchQueries({ queryKey: ['/api/gallery'] });
-                  await queryClient.refetchQueries({ queryKey: ['/api/gallery', 'v1.0.110'] });
                   
                   // Wait for query to complete, then force UI refresh
                   setTimeout(() => {

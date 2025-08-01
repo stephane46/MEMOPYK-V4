@@ -15,7 +15,7 @@
     "sorry_message_fr": "Désolé, nous ne pouvons pas vous montrer la vidéo à ce stade",
     "format_platform_en": "Social Feed",
     "format_platform_fr": "Flux Social",
-    "format_type_en": "Instagram Posts",
+    "format_type_en": "Short Videos",
     "format_type_fr": "Posts Instagram",
     "video_url_en": "https://supabase.memopyk.org/storage/v1/object/public/memopyk-videos/VitaminSeaC.mp4",
     "video_url_fr": "https://supabase.memopyk.org/storage/v1/object/public/memopyk-videos/VitaminSeaC.mp4",
@@ -23,8 +23,8 @@
     "video_width": 1080,
     "video_height": 1920,
     "video_orientation": "portrait",
-    "image_url_en": "https://supabase.memopyk.org/storage/v1/object/public/memopyk-videos/oldsite.jpg",
-    "image_url_fr": "https://supabase.memopyk.org/storage/v1/object/public/memopyk-videos/oldsite.jpg",
+    "image_url_en": "https://supabase.memopyk.org/storage/v1/object/public/memopyk-videos/VitaminSeaC.JPG",
+    "image_url_fr": "https://supabase.memopyk.org/storage/v1/object/public/memopyk-videos/VitaminSeaC.JPG",
     "price_en": "$2,500",
     "price_fr": "2 500$",
     "alt_text_en": "Our Vitamin Sea",
@@ -33,7 +33,7 @@
     "is_active": true,
     "use_same_video": true,
     "created_at": "2025-07-23T21:05:23.805Z",
-    "updated_at": "2025-08-01T11:21:07.575Z",
+    "updated_at": "2025-08-01T17:22:46.846Z",
     "static_image_url": "",
     "crop_settings": {
       "method": "triple-layer-white-bg",
@@ -50,22 +50,22 @@
       "devicePixelRatio": 2.25
     },
     "staticImageUrl": null,
-    "static_image_url_en": "https://supabase.memopyk.org/storage/v1/object/public/memopyk-videos/static_en_1754047256497.jpg",
+    "static_image_url_en": "https://supabase.memopyk.org/storage/v1/object/public/memopyk-videos/static_en_1754068942055.jpg",
     "language": "shared",
-    "static_image_url_fr": "https://supabase.memopyk.org/storage/v1/object/public/memopyk-videos/static_en_1754047256497.jpg",
+    "static_image_url_fr": "https://supabase.memopyk.org/storage/v1/object/public/memopyk-videos/static_en_1754068942055.jpg",
     "cropSettings": {
+      "format": "JPEG",
       "method": "triple-layer-white-bg",
+      "quality": 1,
       "position": {
-        "x": 72,
-        "y": 15.666656494140623
+        "x": 58.740743001302086,
+        "y": 95.22221374511719
       },
       "dimensions": {
         "width": 300,
         "height": 200
       },
-      "format": "JPEG",
-      "quality": 1,
-      "devicePixelRatio": 1.5
+      "devicePixelRatio": 2.25
     }
   },
   {
