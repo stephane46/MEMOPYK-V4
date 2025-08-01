@@ -5,8 +5,8 @@
     "titleEn": "We transform your personal photos and videos into unforgettable memory films",
     "subtitleFr": "Vos souvenirs méritent mieux que d'être simplement stockés, ils méritent une histoire",
     "subtitleEn": "Your memories deserve better than just being stored, they deserve a story",
-    "fontSize": 48,
     "isActive": true,
+    "fontSize": 48,
     "createdAt": "2025-08-01T13:00:00.000Z",
     "updatedAt": "2025-08-01T13:00:00.000Z"
   },
@@ -16,8 +16,8 @@
     "titleEn": "Transform your memories into cinematic films",
     "subtitleFr": "Créez des vidéos professionnelles à partir de vos photos et vidéos",
     "subtitleEn": "Create professional videos from your photos and videos",
-    "fontSize": 48,
     "isActive": false,
+    "fontSize": 48,
     "createdAt": "2024-01-01T00:00:00.000Z",
     "updatedAt": "2024-01-01T00:00:00.000Z"
   }

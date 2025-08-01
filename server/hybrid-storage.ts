@@ -3,7 +3,7 @@ import { join } from "path";
 import { createClient } from '@supabase/supabase-js';
 import { db } from './db';
 import { eq, and, desc, asc, sql } from 'drizzle-orm';
-import { ctaSettings, heroTexts } from '../shared/schema';
+import { ctaSettings, heroTextSettings } from '../shared/schema';
 
 export interface HybridStorageInterface {
   // Hero videos
@@ -302,7 +302,7 @@ export class HybridStorage implements HybridStorageInterface {
   async getHeroTextSettings(language?: string): Promise<any[]> {
     try {
       console.log('🔍 Hero Text: Fetching from PostgreSQL database...');
-      const result = await this.db.select().from(heroTexts).orderBy(desc(heroTexts.createdAt));
+      const result = await this.db.select().from(heroTextSettings).orderBy(desc(heroTextSettings.createdAt));
       
       if (result && result.length > 0) {
         console.log(`✅ Hero Text: Found ${result.length} texts in PostgreSQL`);

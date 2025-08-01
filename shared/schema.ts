@@ -36,18 +36,7 @@ export const heroTextSettings = pgTable("hero_text_settings", {
   updatedAt: timestamp("updated_at").defaultNow()
 });
 
-// Hero texts table - actual production hero text content
-export const heroTexts = pgTable("hero_texts", {
-  id: serial("id").primaryKey(),
-  titleFr: text("title_fr").notNull(),
-  titleEn: text("title_en").notNull(),
-  subtitleFr: text("subtitle_fr").default(''),
-  subtitleEn: text("subtitle_en").default(''),
-  fontSize: integer("font_size").default(48),
-  isActive: boolean("is_active").default(false),
-  createdAt: timestamp("created_at").defaultNow(),
-  updatedAt: timestamp("updated_at").defaultNow()
-});
+
 
 // Gallery items table - bilingual structure
 export const galleryItems = pgTable("gallery_items", {
