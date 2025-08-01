@@ -756,12 +756,19 @@ export default function GalleryManagementNew() {
                               alt="Aperçu Français"
                               className="w-full h-full object-contain"
                             />
-                            {/* Only show badge if there's a static image URL that's different from the regular image URL */}
+                            {/* Show different badges for manual vs automatic cropping */}
                             {selectedItem?.static_image_url_fr && 
                              selectedItem.static_image_url_fr !== selectedItem.image_url_fr && 
                              selectedItem.static_image_url_fr !== formData.image_url_fr && (
-                              <div className="absolute top-2 right-2 bg-emerald-500 text-white px-2 py-1 rounded-full text-xs font-bold shadow-lg">
-                                ✂️ Recadré FR
+                              <div className={`absolute top-2 right-2 text-white px-2 py-1 rounded-full text-xs font-bold shadow-lg ${
+                                (selectedItem as any).crop_settings?.method === 'triple-layer-white-bg' 
+                                  ? 'bg-emerald-500' 
+                                  : 'bg-blue-500'
+                              }`}>
+                                {(selectedItem as any).crop_settings?.method === 'triple-layer-white-bg' 
+                                  ? '✂️ Recadré FR' 
+                                  : '🤖 Auto FR'
+                                }
                               </div>
                             )}
                           </>
@@ -907,12 +914,19 @@ export default function GalleryManagementNew() {
                               alt="Aperçu English"
                               className="w-full h-full object-contain"
                             />
-                            {/* Only show badge if there's a static image URL that's different from the regular image URL */}
+                            {/* Show different badges for manual vs automatic cropping */}
                             {selectedItem?.static_image_url_en && 
                              selectedItem.static_image_url_en !== selectedItem.image_url_en && 
                              selectedItem.static_image_url_en !== formData.image_url_en && (
-                              <div className="absolute top-2 right-2 bg-emerald-500 text-white px-2 py-1 rounded-full text-xs font-bold shadow-lg">
-                                ✂️ Recadré EN
+                              <div className={`absolute top-2 right-2 text-white px-2 py-1 rounded-full text-xs font-bold shadow-lg ${
+                                (selectedItem as any).crop_settings?.method === 'triple-layer-white-bg' 
+                                  ? 'bg-emerald-500' 
+                                  : 'bg-blue-500'
+                              }`}>
+                                {(selectedItem as any).crop_settings?.method === 'triple-layer-white-bg' 
+                                  ? '✂️ Recadré EN' 
+                                  : '🤖 Auto EN'
+                                }
                               </div>
                             )}
                           </>
