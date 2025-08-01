@@ -15,16 +15,16 @@
   },
   {
     "id": "1",
-    "title_fr": "Transformez vos souvenirs en films cinématographiques FR",
-    "title_en": "Transform your memories into cinematic films EN",
-    "subtitle_fr": "Créez des vidéos professionnelles à partir de vos photos et vidéos fr",
-    "subtitle_en": "Create professional videos from your photos and videos rn",
+    "title_fr": "Transformez vos souvenirs en films cinématographiques",
+    "title_en": "Transform your memories into cinematic films",
+    "subtitle_fr": "Créez des vidéos professionnelles à partir de vos photos et vidéos",
+    "subtitle_en": "Create professional videos from your photos and videos",
     "font_size": 60,
     "font_size_desktop": 60,
     "font_size_tablet": 45,
     "font_size_mobile": 40,
     "is_active": true,
     "created_at": "2024-01-01T00:00:00.000Z",
-    "updated_at": "2025-08-01T16:02:30.749Z"
+    "updated_at": "2025-08-01T16:03:19.812Z"
   }
 ]
