@@ -96,9 +96,6 @@ export function HeroVideoSection() {
 
     if (isPlaying) {
       video.pause();
-      if (intervalRef.current) {
-        clearInterval(intervalRef.current);
-      }
     } else {
       video.play();
     }
@@ -141,12 +138,12 @@ export function HeroVideoSection() {
 
   if (!currentVideo) {
     return (
-      <section className="relative h-screen bg-gradient-memopyk flex items-center justify-center">
+      <section className="relative h-[80vh] sm:h-[85vh] lg:h-screen bg-gradient-memopyk flex items-center justify-center">
         <div className="text-center text-white">
-          <h1 className="text-4xl md:text-6xl font-playfair font-bold mb-6">
+          <h1 className="text-3xl sm:text-4xl lg:text-6xl font-playfair font-bold mb-4 sm:mb-6">
             Transformez vos souvenirs en films cinématographiques
           </h1>
-          <p className="text-xl md:text-2xl text-white/90">
+          <p className="text-lg sm:text-xl lg:text-2xl text-white/90">
             Chargement de la galerie vidéo...
           </p>
         </div>
@@ -159,7 +156,7 @@ export function HeroVideoSection() {
 
   return (
     <section 
-      className="relative h-screen overflow-hidden bg-black"
+      className="relative h-[80vh] sm:h-[85vh] lg:h-screen overflow-hidden bg-black"
       onTouchStart={handleTouchStart}
       onTouchMove={handleTouchMove}
       onTouchEnd={handleTouchEnd}
@@ -204,13 +201,13 @@ export function HeroVideoSection() {
         </div>
       )}
 
-      {/* Hero Text Content */}
-      <div className="absolute inset-0 flex items-center justify-center text-center text-white px-4 sm:px-6 lg:px-8">
+      {/* Hero Text Content - Mobile Optimized for Better Fit */}
+      <div className="absolute inset-0 flex items-center justify-center text-center text-white px-3 sm:px-6 lg:px-8">
         <div className="max-w-7xl w-full">
           <h1 
-            className="font-playfair font-bold mb-4 sm:mb-6 leading-tight"
+            className="font-playfair font-bold mb-2 sm:mb-4 lg:mb-6 leading-tight"
             style={{ 
-              fontSize: `clamp(28px, ${Math.max(32, Math.min(fontSize, 100))}px, 100px)`,
+              fontSize: `clamp(20px, ${Math.max(24, Math.min(fontSize * 0.6, 60))}px, 60px)`,
               textShadow: '2px 2px 4px rgba(0,0,0,0.8)'
             }}
           >
@@ -221,9 +218,9 @@ export function HeroVideoSection() {
           </h1>
           
           <p 
-            className="mb-6 sm:mb-8 text-white/90 font-poppins"
+            className="mb-4 sm:mb-6 lg:mb-8 text-white/90 font-poppins leading-snug"
             style={{ 
-              fontSize: `clamp(16px, ${Math.max(18, Math.min(fontSize * 0.4, 28))}px, 28px)`,
+              fontSize: `clamp(14px, ${Math.max(16, Math.min(fontSize * 0.25, 20))}px, 20px)`,
               textShadow: '1px 1px 2px rgba(0,0,0,0.8)' 
             }}
           >
@@ -233,17 +230,17 @@ export function HeroVideoSection() {
             }
           </p>
 
-          <div className="flex flex-col sm:flex-row gap-4 sm:gap-6 justify-center items-center">
+          <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 lg:gap-6 justify-center items-center">
             <Button 
               size="lg" 
-              className="bg-memopyk-orange hover:bg-memopyk-orange/90 text-white font-semibold px-6 sm:px-8 py-3 text-base sm:text-lg w-full sm:w-auto min-w-[200px]"
+              className="bg-memopyk-orange hover:bg-memopyk-orange/90 text-white font-semibold px-4 sm:px-6 lg:px-8 py-2 sm:py-3 text-sm sm:text-base lg:text-lg w-full sm:w-auto min-w-[180px] sm:min-w-[200px]"
             >
               {language === 'fr-FR' ? 'Découvrir nos films' : 'Discover our films'}
             </Button>
             <Button 
               variant="outline" 
               size="lg"
-              className="border-2 border-white text-white hover:bg-white hover:text-memopyk-navy font-semibold px-6 sm:px-8 py-3 text-base sm:text-lg w-full sm:w-auto min-w-[200px]"
+              className="border-2 border-white text-white hover:bg-white hover:text-memopyk-navy font-semibold px-4 sm:px-6 lg:px-8 py-2 sm:py-3 text-sm sm:text-base lg:text-lg w-full sm:w-auto min-w-[180px] sm:min-w-[200px]"
             >
               {language === 'fr-FR' ? 'Commencer mon projet' : 'Start my project'}
             </Button>
