@@ -965,19 +965,30 @@ export default function GalleryManagementNew() {
                                     return activeCroppingState.hasChanges ? '✂️ Recadré EN*' : '✂️ Auto EN';
                                   }
                                   
-                                  // UPDATED LOGIC: Only show badges when actual cropping occurred
+                                  // FIXED LOGIC: Only show badges when actual cropping was needed and performed
                                   const cropSettings = (selectedItem as any).cropSettings;
-                                  const isManualCrop = cropSettings?.method === 'triple-layer-white-bg';
-                                  const isAutoCrop = cropSettings?.method === 'sharp-auto-thumbnail' && cropSettings?.cropped === true;
                                   
-                                  if (isManualCrop) {
-                                    return '✂️ Recadré EN';
-                                  } else if (isAutoCrop) {
+                                  // New Sharp auto-cropping (only shows badge if cropping actually occurred)
+                                  if (cropSettings?.method === 'sharp-auto-thumbnail' && cropSettings?.cropped === true) {
                                     return '✂️ Auto EN';
-                                  } else {
-                                    // No cropSettings or no cropping needed - don't show badge
-                                    return '';
                                   }
+                                  
+                                  // Manual cropping: only show badge if the user has different original vs static images
+                                  // This indicates actual cropping/reframing was performed
+                                  if (cropSettings?.method === 'triple-layer-white-bg') {
+                                    const hasOriginalImage = selectedItem?.image_url_en;
+                                    const hasStaticImage = selectedItem?.static_image_url_en;
+                                    const imagesDifferent = hasOriginalImage && hasStaticImage && 
+                                                          selectedItem.image_url_en !== selectedItem.static_image_url_en;
+                                    
+                                    // Only show "Recadré" if we have different images (actual cropping occurred)
+                                    if (imagesDifferent) {
+                                      return '✂️ Recadré EN';
+                                    }
+                                  }
+                                  
+                                  // No badge for: no cropSettings, no actual cropping, or same image URLs
+                                  return '';
                                 })()}
                               </div>
                             )}
