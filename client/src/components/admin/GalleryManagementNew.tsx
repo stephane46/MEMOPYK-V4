@@ -292,6 +292,13 @@ export default function GalleryManagementNew() {
   const [cropperOpen, setCropperOpen] = useState(false);
   const [cropperLanguage, setCropperLanguage] = useState<'en' | 'fr'>('en');
   const [showFormatBadgeManager, setShowFormatBadgeManager] = useState(false);
+  
+  // Real-time cropping state tracking
+  const [activeCroppingState, setActiveCroppingState] = useState<{
+    isActive: boolean;
+    language: 'en' | 'fr';
+    hasChanges: boolean;
+  }>({ isActive: false, language: 'en', hasChanges: false });
   const fileInputRef = useRef<HTMLInputElement>(null);
   
   // Real-time preview state for pending uploads
@@ -775,10 +782,16 @@ export default function GalleryManagementNew() {
                                   ? 'bg-emerald-500' 
                                   : 'bg-blue-500'
                               }`}>
-                                {(selectedItem as any).cropSettings?.method === 'triple-layer-white-bg' 
-                                  ? '✂️ Recadré FR' 
-                                  : '✂️ Auto FR'
-                                }
+                                {(() => {
+                                  // Real-time badge: Show current cropping state or saved state
+                                  if (activeCroppingState.isActive && activeCroppingState.language === 'fr') {
+                                    return activeCroppingState.hasChanges ? '✂️ Recadré FR*' : '✂️ Auto FR';
+                                  }
+                                  
+                                  return (selectedItem as any).cropSettings?.method === 'triple-layer-white-bg' 
+                                    ? '✂️ Recadré FR' 
+                                    : '✂️ Auto FR';
+                                })()}
                               </div>
                             )}
                           </>
@@ -936,6 +949,12 @@ export default function GalleryManagementNew() {
                               }`}>
                                 {(() => {
                                   console.log('🔍 BADGE DEBUG EN - cropSettings:', (selectedItem as any).cropSettings, 'method:', (selectedItem as any).cropSettings?.method);
+                                  
+                                  // Real-time badge: Show current cropping state or saved state
+                                  if (activeCroppingState.isActive && activeCroppingState.language === 'en') {
+                                    return activeCroppingState.hasChanges ? '✂️ Recadré EN*' : '✂️ Auto EN';
+                                  }
+                                  
                                   return (selectedItem as any).cropSettings?.method === 'triple-layer-white-bg' 
                                     ? '✂️ Recadré EN' 
                                     : '✂️ Auto EN';
@@ -1923,6 +1942,7 @@ export default function GalleryManagementNew() {
             </div>
             
             <SimpleImageCropper
+              isOpen={cropperOpen}
               imageUrl={getFullUrl(
                 // Priority 1: Latest uploaded image from formData (fresh uploads)
                 selectedItem.use_same_video 
@@ -1931,6 +1951,21 @@ export default function GalleryManagementNew() {
                     ? (formData.image_url_fr || selectedItem.image_url_fr)
                     : (formData.image_url_en || selectedItem.image_url_en))
               )}
+              onOpen={() => {
+                // Track when cropper opens
+                setActiveCroppingState({
+                  isActive: true,
+                  language: cropperLanguage,
+                  hasChanges: false
+                });
+              }}
+              onCropChange={() => {
+                // Track when user makes cropping changes
+                setActiveCroppingState(prev => ({
+                  ...prev,
+                  hasChanges: true
+                }));
+              }}
               onSave={async (blob: Blob, cropSettings: any) => {
                 try {
                   // Create FormData for upload
@@ -1976,6 +2011,13 @@ export default function GalleryManagementNew() {
                   // Close cropper and refresh data
                   setCropperOpen(false);
                   
+                  // Reset cropping state after successful save
+                  setActiveCroppingState({
+                    isActive: false,
+                    language: 'en',
+                    hasChanges: false
+                  });
+                  
                   // Invalidate ALL gallery caches - admin and public site
                   queryClient.invalidateQueries({ queryKey: ['/api/gallery'] });
                   queryClient.invalidateQueries({ queryKey: ['/api/gallery', 'v1.0.110'] });
@@ -2008,7 +2050,15 @@ export default function GalleryManagementNew() {
                   });
                 }
               }}
-              onCancel={() => setCropperOpen(false)}
+              onCancel={() => {
+                setCropperOpen(false);
+                // Reset cropping state when closing
+                setActiveCroppingState({
+                  isActive: false,
+                  language: 'en',
+                  hasChanges: false
+                });
+              }}
             />
           </DialogContent>
         </Dialog>

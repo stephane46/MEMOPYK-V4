@@ -14,6 +14,9 @@ interface SimpleImageCropperProps {
   imageUrl: string;
   onSave: (blob: Blob, settings: any) => void;
   onCancel: () => void;
+  onOpen?: () => void;
+  onCropChange?: () => void;
+  isOpen?: boolean;
 }
 
 const DraggableCover = ({ imageUrl, onPositionChange, previewRef }: { imageUrl: string; onPositionChange: (pos: { x: number; y: number }) => void; previewRef: React.RefObject<HTMLDivElement> }) => {
@@ -102,10 +105,17 @@ const DraggableCover = ({ imageUrl, onPositionChange, previewRef }: { imageUrl: 
   );
 };
 
-export default function SimpleImageCropper({ imageUrl, onSave, onCancel }: SimpleImageCropperProps) {
+export default function SimpleImageCropper({ imageUrl, onSave, onCancel, onOpen, onCropChange, isOpen }: SimpleImageCropperProps) {
   const [loading, setLoading] = useState(false);
   const [position, setPosition] = useState({ x: 50, y: 50 });
   const previewRef = useRef<HTMLDivElement>(null);
+
+  // Trigger onOpen when component becomes visible
+  React.useEffect(() => {
+    if (isOpen && onOpen) {
+      onOpen();
+    }
+  }, [isOpen, onOpen]);
 
   const generateImage = async () => {
     setLoading(true);
@@ -196,7 +206,12 @@ export default function SimpleImageCropper({ imageUrl, onSave, onCancel }: Simpl
         <div className="mx-auto">
           <DraggableCover 
             imageUrl={imageUrl} 
-            onPositionChange={setPosition}
+            onPositionChange={(pos) => {
+              setPosition(pos);
+              if (onCropChange) {
+                onCropChange();
+              }
+            }}
             previewRef={previewRef}
           />
         </div>
