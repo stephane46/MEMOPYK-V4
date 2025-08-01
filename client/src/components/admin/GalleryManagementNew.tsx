@@ -223,6 +223,8 @@ interface GalleryItem {
   static_image_url_en: string | null;
   static_image_url_fr: string | null;
   static_image_url: string | null; // Legacy field
+  static_image_url_en?: string | null; // English static image
+  static_image_url_fr?: string | null; // French static image
   cropSettings?: any; // Auto-crop settings for badge detection
   order_index: number;
   is_active: boolean;
