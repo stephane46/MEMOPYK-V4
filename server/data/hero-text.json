@@ -19,5 +19,15 @@
     "font_size": 95,
     "is_active": false,
     "created_at": "2025-07-22T12:04:35.572Z"
+  },
+  {
+    "id": 1754054511783,
+    "title_fr": "Test Français",
+    "title_en": "Test English",
+    "subtitle_fr": "Sous-titre FR",
+    "subtitle_en": "Subtitle EN",
+    "font_size": 48,
+    "is_active": false,
+    "created_at": "2025-08-01T13:21:51.783Z"
   }
 ]

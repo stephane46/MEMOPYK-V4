@@ -247,7 +247,7 @@ export default function AdminPage() {
       console.log('Sending PATCH to:', `/api/hero-videos/${videoId}/reorder`);
       console.log('Payload:', { order_index: newOrder });
       
-      const response = await apiRequest('PATCH', `/api/hero-videos/${videoId}/reorder`, { order_index: newOrder });
+      const response = await apiRequest(`/api/hero-videos/${videoId}/reorder`, 'PATCH', { order_index: newOrder });
       const result = await response.json();
       console.log('=== MUTATION RESPONSE ===', result);
       return result;
@@ -266,7 +266,7 @@ export default function AdminPage() {
   // Video toggle mutation
   const toggleMutation = useMutation({
     mutationFn: async ({ videoId, isActive }: { videoId: number; isActive: boolean }) => {
-      const response = await apiRequest('PATCH', `/api/hero-videos/${videoId}/toggle`, { is_active: isActive });
+      const response = await apiRequest(`/api/hero-videos/${videoId}/toggle`, 'PATCH', { is_active: isActive });
       return await response.json();
     },
     onSuccess: () => {
@@ -281,7 +281,7 @@ export default function AdminPage() {
   // Cache refresh mutation
   const refreshCacheMutation = useMutation({
     mutationFn: async () => {
-      const response = await apiRequest('POST', '/api/video-cache/refresh');
+      const response = await apiRequest('/api/video-cache/refresh', 'POST');
       return await response.json();
     },
     onSuccess: (data: any) => {
@@ -325,7 +325,7 @@ export default function AdminPage() {
   // Clear cache mutation
   const clearCacheMutation = useMutation({
     mutationFn: async () => {
-      const response = await apiRequest('POST', '/api/video-cache/clear');
+      const response = await apiRequest('/api/video-cache/clear', 'POST');
       return await response.json() as {removed?: {videosRemoved: number; imagesRemoved: number}; message?: string};
     },
     onSuccess: (data) => {
@@ -344,7 +344,7 @@ export default function AdminPage() {
   // Hero text update mutation
   const updateTextMutation = useMutation({
     mutationFn: async ({ textId, data }: { textId: number; data: any }) => {
-      const response = await apiRequest('PATCH', `/api/hero-text/${textId}`, data);
+      const response = await apiRequest(`/api/hero-text/${textId}`, 'PATCH', data);
       return await response.json();
     },
     onSuccess: () => {
@@ -359,7 +359,7 @@ export default function AdminPage() {
   // Apply text to site mutation
   const applyTextMutation = useMutation({
     mutationFn: async ({ textId, fontSize }: { textId: number; fontSize: number }) => {
-      const response = await apiRequest('PATCH', `/api/hero-text/${textId}/apply`, { 
+      const response = await apiRequest(`/api/hero-text/${textId}/apply`, 'PATCH', { 
         font_size: fontSize,
         is_active: true 
       });
@@ -377,7 +377,7 @@ export default function AdminPage() {
   // Create new text mutation
   const createTextMutation = useMutation({
     mutationFn: async (data: any) => {
-      const response = await apiRequest('POST', '/api/hero-text', data);
+      const response = await apiRequest('/api/hero-text', 'POST', data);
       return await response.json();
     },
     onSuccess: () => {
@@ -394,7 +394,7 @@ export default function AdminPage() {
   // Delete text mutation
   const deleteTextMutation = useMutation({
     mutationFn: async (textId: number) => {
-      const response = await apiRequest('DELETE', `/api/hero-text/${textId}`);
+      const response = await apiRequest(`/api/hero-text/${textId}`, 'DELETE');
       return await response.json();
     },
     onSuccess: () => {
