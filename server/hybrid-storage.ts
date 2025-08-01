@@ -298,13 +298,64 @@ export class HybridStorage implements HybridStorageInterface {
     return deletedVideo;
   }
 
-  // Hero text settings operations
+  // Hero text settings operations - TRUE HYBRID STORAGE
   async getHeroTextSettings(language?: string): Promise<any[]> {
+    try {
+      console.log('🔍 Hero Text: Fetching from Supabase database...');
+      const { data, error } = await this.supabase
+        .from('hero_texts')
+        .select('*')
+        .order('created_at', { ascending: false });
+      
+      if (!error && data) {
+        console.log(`✅ Hero Text: Found ${data.length} texts in Supabase`);
+        
+        // Save to JSON as backup
+        this.saveJsonFile('hero-text.json', data);
+        return data;
+      } else {
+        console.warn('⚠️ Hero Text: Supabase error, falling back to JSON:', error);
+      }
+    } catch (error) {
+      console.warn('⚠️ Hero Text: Database connection failed, using JSON fallback:', error);
+    }
+    
+    // Fallback to JSON
     const data = this.loadJsonFile('hero-text.json');
     return data; // Return all texts for admin management
   }
 
   async createHeroText(text: any): Promise<any> {
+    try {
+      console.log('🔍 Hero Text: Creating in Supabase database...');
+      const newText = {
+        ...text,
+        created_at: new Date().toISOString()
+      };
+      
+      const { data, error } = await this.supabase
+        .from('hero_texts')
+        .insert([newText])
+        .select()
+        .single();
+      
+      if (!error && data) {
+        console.log('✅ Hero Text: Created in Supabase successfully');
+        
+        // Update JSON backup
+        const texts = this.loadJsonFile('hero-text.json');
+        texts.push(data);
+        this.saveJsonFile('hero-text.json', texts);
+        
+        return data;
+      } else {
+        console.warn('⚠️ Hero Text: Supabase create error, falling back to JSON:', error);
+      }
+    } catch (error) {
+      console.warn('⚠️ Hero Text: Database connection failed, using JSON fallback:', error);
+    }
+    
+    // Fallback to JSON
     const texts = this.loadJsonFile('hero-text.json');
     const newText = {
       id: Date.now(), // Simple ID generation
@@ -317,6 +368,35 @@ export class HybridStorage implements HybridStorageInterface {
   }
 
   async updateHeroText(textId: number, updateData: any): Promise<any> {
+    try {
+      console.log(`🔍 Hero Text: Updating ID ${textId} in Supabase database...`);
+      const { data, error } = await this.supabase
+        .from('hero_texts')
+        .update(updateData)
+        .eq('id', textId)
+        .select()
+        .single();
+      
+      if (!error && data) {
+        console.log('✅ Hero Text: Updated in Supabase successfully');
+        
+        // Update JSON backup
+        const texts = this.loadJsonFile('hero-text.json');
+        const textIndex = texts.findIndex((t: any) => t.id === textId);
+        if (textIndex !== -1) {
+          texts[textIndex] = data;
+          this.saveJsonFile('hero-text.json', texts);
+        }
+        
+        return data;
+      } else {
+        console.warn('⚠️ Hero Text: Supabase update error, falling back to JSON:', error);
+      }
+    } catch (error) {
+      console.warn('⚠️ Hero Text: Database connection failed, using JSON fallback:', error);
+    }
+    
+    // Fallback to JSON
     const texts = this.loadJsonFile('hero-text.json');
     const textIndex = texts.findIndex((t: any) => t.id === textId);
     
@@ -332,12 +412,64 @@ export class HybridStorage implements HybridStorageInterface {
   }
 
   async deactivateAllHeroTexts(): Promise<void> {
+    try {
+      console.log('🔍 Hero Text: Deactivating all texts in Supabase database...');
+      const { error } = await this.supabase
+        .from('hero_texts')
+        .update({ is_active: false })
+        .neq('id', 0); // Update all records
+      
+      if (!error) {
+        console.log('✅ Hero Text: All texts deactivated in Supabase successfully');
+        
+        // Update JSON backup
+        const texts = this.loadJsonFile('hero-text.json');
+        const updatedTexts = texts.map((text: any) => ({ ...text, is_active: false }));
+        this.saveJsonFile('hero-text.json', updatedTexts);
+        return;
+      } else {
+        console.warn('⚠️ Hero Text: Supabase deactivate error, falling back to JSON:', error);
+      }
+    } catch (error) {
+      console.warn('⚠️ Hero Text: Database connection failed, using JSON fallback:', error);
+    }
+    
+    // Fallback to JSON
     const texts = this.loadJsonFile('hero-text.json');
     const updatedTexts = texts.map((text: any) => ({ ...text, is_active: false }));
     this.saveJsonFile('hero-text.json', updatedTexts);
   }
 
   async deleteHeroText(textId: number): Promise<any> {
+    try {
+      console.log(`🔍 Hero Text: Deleting ID ${textId} from Supabase database...`);
+      const { data, error } = await this.supabase
+        .from('hero_texts')
+        .delete()
+        .eq('id', textId)
+        .select()
+        .single();
+      
+      if (!error && data) {
+        console.log('✅ Hero Text: Deleted from Supabase successfully');
+        
+        // Update JSON backup
+        const texts = this.loadJsonFile('hero-text.json');
+        const textIndex = texts.findIndex((t: any) => t.id === textId);
+        if (textIndex !== -1) {
+          texts.splice(textIndex, 1);
+          this.saveJsonFile('hero-text.json', texts);
+        }
+        
+        return data;
+      } else {
+        console.warn('⚠️ Hero Text: Supabase delete error, falling back to JSON:', error);
+      }
+    } catch (error) {
+      console.warn('⚠️ Hero Text: Database connection failed, using JSON fallback:', error);
+    }
+    
+    // Fallback to JSON
     const texts = this.loadJsonFile('hero-text.json');
     const textIndex = texts.findIndex((t: any) => t.id === textId);
     
