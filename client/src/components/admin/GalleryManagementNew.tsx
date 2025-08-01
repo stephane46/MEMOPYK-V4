@@ -1357,22 +1357,47 @@ export default function GalleryManagementNew() {
                           uploadId="shared-image-upload-v87"
                           onUploadComplete={(result) => {
                             console.log('✅ Shared image upload completed:', result);
+                            
+                            // Handle auto-generated thumbnail data
+                            const updatedFormData = {
+                              ...formData,
+                              image_url_en: result.url,
+                              image_url_fr: result.url
+                            };
+
+                            // If auto-thumbnail was generated, store it
+                            if (result.static_image_url) {
+                              console.log('🎯 Auto-thumbnail detected, updating static URLs');
+                              updatedFormData.static_image_url = result.static_image_url;
+                              
+                              // Store auto-crop settings if available (for badge logic)
+                              if (result.auto_crop_settings) {
+                                updatedFormData.cropSettings = result.auto_crop_settings;
+                                console.log('🎯 Auto-crop settings applied:', result.auto_crop_settings);
+                              }
+                            }
+
                             // Real-time preview: Update pending state immediately for instant preview
                             setPendingPreviews(prev => ({
                               ...prev,
                               image_url_en: result.url,
-                              image_url_fr: result.url
+                              image_url_fr: result.url,
+                              static_image_url: result.static_image_url || prev.static_image_url
                             }));
-                            setFormData({
-                              ...formData,
-                              image_url_en: result.url,
-                              image_url_fr: result.url
-                            });
+                            
+                            setFormData(updatedFormData);
                             persistentUploadState.image_url_en = result.url;
                             persistentUploadState.image_url_fr = result.url;
+                            if (result.static_image_url) {
+                              persistentUploadState.static_image_url = result.static_image_url;
+                            }
+                            
+                            const badgeInfo = result.auto_crop_settings ? 
+                              (result.auto_crop_settings.cropped ? " (Auto-crop applied)" : " (No crop needed)") : "";
+                            
                             toast({ 
                               title: "📸 Aperçu instantané", 
-                              description: `Image visible immédiatement: ${result.filename}`,
+                              description: `Image visible immédiatement: ${result.filename}${badgeInfo}`,
                               className: "bg-purple-50 dark:bg-purple-900/20 border-purple-200 dark:border-purple-800"
                             });
                           }}

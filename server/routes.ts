@@ -433,11 +433,91 @@ export async function registerRoutes(app: Express): Promise<Server> {
         }
       }
 
+      // AUTO-GENERATE STATIC 300x200 THUMBNAIL for direct uploaded images
+      let staticImageUrl = null;
+      let autoCropSettings = null;
+      
+      if (fileType?.startsWith('image/') || filename.toLowerCase().match(/\.(jpg|jpeg|png|gif|bmp|webp)$/)) {
+        console.log(`🔍 STARTING DIRECT UPLOAD AUTO-THUMBNAIL PROCESS for: ${filename}`);
+        
+        try {
+          console.log(`🤖 AUTO-GENERATING 300x200 thumbnail for direct uploaded image: ${filename}`);
+          
+          // Download the image to process with Sharp
+          const imageResponse = await fetch(publicUrl);
+          if (!imageResponse.ok) {
+            throw new Error(`Failed to download image: ${imageResponse.status} ${imageResponse.statusText}`);
+          }
+          
+          const imageBuffer = await imageResponse.arrayBuffer();
+          const sharp = require('sharp');
+          
+          // Get image metadata to check if cropping is actually needed
+          const metadata = await sharp(Buffer.from(imageBuffer)).metadata();
+          const originalAspectRatio = metadata.width! / metadata.height!;
+          const targetAspectRatio = 300 / 200; // 1.5 (3:2 ratio)
+          const aspectRatioTolerance = 0.01; // Small tolerance for floating point comparison
+          
+          const needsCropping = Math.abs(originalAspectRatio - targetAspectRatio) > aspectRatioTolerance;
+          
+          // Create automatic 300x200 thumbnail
+          const thumbnailBuffer = await sharp(Buffer.from(imageBuffer))
+            .resize(300, 200, {
+              fit: needsCropping ? 'cover' : 'fill',  // Only crop if aspect ratio is different
+              position: 'center'
+            })
+            .flatten({ background: { r: 255, g: 255, b: 255 } })  // White background for transparency
+            .jpeg({ quality: 100, progressive: true })  // 100% quality as requested
+            .toBuffer();
+          
+          // Upload auto-generated thumbnail
+          const staticFilename = `static_auto_${Date.now()}.jpg`;
+          const { data: staticUploadData, error: staticUploadError } = await supabase.storage
+            .from('memopyk-videos')
+            .upload(staticFilename, thumbnailBuffer, {
+              contentType: 'image/jpeg',
+              cacheControl: '300',
+              upsert: true
+            });
+
+          if (!staticUploadError) {
+            staticImageUrl = `https://supabase.memopyk.org/storage/v1/object/public/memopyk-videos/${staticFilename}`;
+            
+            // Only create cropSettings if actual cropping was performed
+            if (needsCropping) {
+              autoCropSettings = {
+                method: 'sharp-auto-thumbnail',
+                type: 'automatic',
+                fit: 'cover',
+                position: 'center',
+                dimensions: { width: 300, height: 200 },
+                aspectRatio: { original: originalAspectRatio, target: targetAspectRatio },
+                cropped: true,
+                timestamp: new Date().toISOString()
+              };
+              console.log(`✅ Direct upload auto-cropped and generated static thumbnail: ${staticImageUrl}`);
+            } else {
+              // No cropSettings for images that didn't need cropping (already 3:2 ratio)
+              autoCropSettings = null;
+              console.log(`✅ Direct upload auto-resized static thumbnail (no cropping needed): ${staticImageUrl}`);
+            }
+          } else {
+            console.warn(`⚠️ Failed to upload direct upload auto-generated thumbnail: ${staticUploadError.message}`);
+          }
+        } catch (autoGenError) {
+          console.error(`❌ DIRECT UPLOAD AUTO-THUMBNAIL ERROR:`, autoGenError);
+          console.error(`❌ Sharp processing failed for direct upload:`, autoGenError.message, autoGenError.stack);
+        }
+      }
+
       res.json({ 
         success: true,
         message: "Upload completed successfully",
         url: publicUrl,
-        filename: filename
+        filename: filename,
+        // Include auto-generated thumbnail info for images
+        static_image_url: staticImageUrl,
+        auto_crop_settings: autoCropSettings
       });
 
     } catch (error) {
