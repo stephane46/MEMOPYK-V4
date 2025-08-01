@@ -307,9 +307,22 @@ export class HybridStorage implements HybridStorageInterface {
       if (result && result.length > 0) {
         console.log(`✅ Hero Text: Found ${result.length} texts in PostgreSQL`);
         
-        // Save to JSON as backup
-        this.saveJsonFile('hero-text.json', result);
-        return result;
+        // Convert camelCase to snake_case for frontend compatibility
+        const formattedResult = result.map(item => ({
+          id: item.id,
+          title_fr: item.titleFr,
+          title_en: item.titleEn,
+          subtitle_fr: item.subtitleFr,
+          subtitle_en: item.subtitleEn,
+          font_size: item.fontSize,
+          is_active: item.isActive,
+          created_at: item.createdAt,
+          updated_at: item.updatedAt
+        }));
+        
+        // Save to JSON as backup (using converted format)
+        this.saveJsonFile('hero-text.json', formattedResult);
+        return formattedResult;
       } else {
         console.log('⚠️ Hero Text: No data in PostgreSQL, checking JSON fallback...');
       }
