@@ -290,7 +290,7 @@ export default function GalleryManagementNew() {
   const [selectedVideoId, setSelectedVideoId] = useState<string | number | null>(null);
   const [isCreateMode, setIsCreateMode] = useState(false);
   const [cropperOpen, setCropperOpen] = useState(false);
-  const [cropperLanguage, setCropperLanguage] = useState<'en' | 'fr'>('en');
+  const [cropperLanguage, setCropperLanguage] = useState<'en' | 'fr' | 'shared'>('en');
   const [showFormatBadgeManager, setShowFormatBadgeManager] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   
