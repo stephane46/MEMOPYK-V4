@@ -151,6 +151,40 @@ body {
   border-color: #374151 !important;
 }
 
+/* Mobile Performance Optimizations */
+@media (max-width: 768px) {
+  * {
+    /* Reduce animations on mobile for better performance */
+    animation-duration: 0.2s !important;
+    transition-duration: 0.2s !important;
+  }
+  
+  /* Improve touch scrolling */
+  body {
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior: contain;
+  }
+}
+
+/* Shimmer animation for lazy loading */
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+/* Network-aware loading states */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
 /* Card Flip Animation */
 .card-flip-container {
   perspective: 1000px;

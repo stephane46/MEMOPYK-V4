@@ -1,6 +1,7 @@
-import { ReactNode } from 'react';
+import { ReactNode, useState, useEffect } from 'react';
 import { Link, useLocation } from 'wouter';
 import { useLanguage } from '../contexts/LanguageContext';
+import { Menu, X } from 'lucide-react';
 
 interface LayoutProps {
   children: ReactNode;
@@ -9,6 +10,25 @@ interface LayoutProps {
 export function Layout({ children }: LayoutProps) {
   const { t, language, setLanguage, getLocalizedPath } = useLanguage();
   const [location] = useLocation();
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+
+  // Close mobile menu on route change
+  useEffect(() => {
+    setIsMobileMenuOpen(false);
+  }, [location]);
+
+  // Prevent body scroll when mobile menu is open
+  useEffect(() => {
+    if (isMobileMenuOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = 'unset';
+    }
+    
+    return () => {
+      document.body.style.overflow = 'unset';
+    };
+  }, [isMobileMenuOpen]);
   
   const navigation = [
     { name: t('nav.home'), href: getLocalizedPath('/') },
@@ -88,26 +108,36 @@ export function Layout({ children }: LayoutProps) {
                 </button>
               </div>
 
-              {/* Mobile menu button */}
-              <button className="md:hidden p-2 rounded-md text-gray-600 hover:text-gray-900 hover:bg-gray-100">
-                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
-                </svg>
+              {/* Mobile menu button - Enhanced with 44px touch target */}
+              <button 
+                onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+                className="md:hidden p-3 rounded-md text-gray-600 hover:text-gray-900 hover:bg-gray-100 transition-colors min-w-[44px] min-h-[44px] flex items-center justify-center"
+                aria-label={isMobileMenuOpen ? "Close menu" : "Open menu"}
+              >
+                {isMobileMenuOpen ? (
+                  <X className="w-6 h-6" />
+                ) : (
+                  <Menu className="w-6 h-6" />
+                )}
               </button>
             </div>
           </div>
 
-          {/* Mobile Navigation */}
-          <div className="md:hidden border-t border-gray-200 py-4">
-            <div className="space-y-2">
+          {/* Enhanced Mobile Navigation - Slide Down Animation */}
+          <div className={`md:hidden transition-all duration-300 ease-in-out overflow-hidden ${
+            isMobileMenuOpen 
+              ? 'max-h-96 opacity-100 border-t border-gray-200' 
+              : 'max-h-0 opacity-0'
+          }`}>
+            <div className="py-4 space-y-2">
               {navigation.map((item) => (
                 <Link 
                   key={item.href} 
                   href={item.href}
-                  className={`block px-3 py-2 rounded-md text-base font-medium transition-colors ${
+                  className={`block px-4 py-3 rounded-md text-base font-medium transition-all duration-200 min-h-[44px] flex items-center ${
                     location === item.href
-                      ? 'text-blue-600 bg-blue-50'
-                      : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
+                      ? 'text-memopyk-navy bg-memopyk-cream border-l-4 border-memopyk-orange'
+                      : 'text-gray-600 hover:text-memopyk-navy hover:bg-gray-50 hover:border-l-4 hover:border-memopyk-blue-gray'
                   }`}
                 >
                   {item.name}

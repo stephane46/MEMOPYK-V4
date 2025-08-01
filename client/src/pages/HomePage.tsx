@@ -5,9 +5,13 @@ import { WhyMemopykSection } from '../components/sections/WhyMemopykSection';
 import GallerySection from '../components/sections/GallerySection';
 import FAQSection from '../components/sections/FAQSection';
 import { CtaSection } from '../components/sections/CtaSection';
+import { MobileOptimizationIndicator } from '../components/mobile/MobileOptimizationIndicator';
+import { useLanguage } from '../contexts/LanguageContext';
 
 
 export function HomePage() {
+  const { language } = useLanguage();
+  
   return (
     <div className="min-h-screen">
       {/* Hero Video Carousel Section */}
@@ -30,6 +34,9 @@ export function HomePage() {
 
       {/* FAQ Section */}
       <FAQSection />
+
+      {/* Mobile Optimization Indicator */}
+      <MobileOptimizationIndicator language={language} />
 
       {/* All Phase 6.2 Content Sections Complete */}
     </div>

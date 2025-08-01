@@ -5,6 +5,9 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Play, Eye, Star, ArrowRight, Image as ImageIcon, Film, Users, Clock, Smartphone, Monitor, Instagram } from "lucide-react";
 import { VideoOverlay } from "@/components/gallery/VideoOverlay";
+import { MobileEnhancedGallery } from "@/components/mobile/MobileEnhancedGallery";
+import { useNetworkStatus } from "@/hooks/useNetworkStatus";
+import { useDeviceOrientation } from "@/hooks/useDeviceOrientation";
 // Gallery item interface matching the new schema
 interface GalleryItem {
   id: string | number;
@@ -46,6 +49,17 @@ export default function GallerySection() {
   const { language } = useLanguage();
   const [flippedCards, setFlippedCards] = useState<Set<string | number>>(new Set());
   const [lightboxVideo, setLightboxVideo] = useState<GalleryItem | null>(null);
+  const [isMobile, setIsMobile] = useState(false);
+  const networkStatus = useNetworkStatus();
+  const { orientation } = useDeviceOrientation();
+
+  // Detect mobile viewport
+  useEffect(() => {
+    const checkMobile = () => setIsMobile(window.innerWidth < 768);
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
   
   // 🚨 DIRECT CDN STREAMING + IMAGE CACHE-BUSTING v1.0.89
   useEffect(() => {
@@ -437,8 +451,31 @@ export default function GallerySection() {
 
 
 
-        {/* Gallery Grid - Mobile Optimized */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 lg:gap-8 mb-8 sm:mb-12">
+        {/* Gallery Grid - Conditional Rendering for Mobile Enhancement */}
+        {isMobile ? (
+          <MobileEnhancedGallery
+            items={galleryItems}
+            language={language}
+            onVideoClick={(item) => {
+              const videoUrl = getVideoUrl(item, 0);
+              setLightboxVideo({...item, lightboxVideoUrl: videoUrl});
+              document.body.style.overflow = 'hidden';
+            }}
+            onFlipCard={(id) => {
+              setFlippedCards(prev => {
+                const newSet = new Set(prev);
+                if (newSet.has(id)) {
+                  newSet.delete(id);
+                } else {
+                  newSet.add(id);
+                }
+                return newSet;
+              });
+            }}
+            flippedCards={flippedCards}
+          />
+        ) : (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 lg:gap-8 mb-8 sm:mb-12">
           {galleryItems.map((item, index) => {
             const imageUrl = getImageUrl(item);
             const thumbnailUrl = imageUrl;
@@ -589,7 +626,8 @@ export default function GallerySection() {
 
             );
           })}
-        </div>
+          </div>
+        )}
 
 
 
