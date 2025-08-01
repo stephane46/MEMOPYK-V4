@@ -61,27 +61,19 @@ export default function GallerySection() {
     return () => window.removeEventListener('resize', checkMobile);
   }, []);
   
-  // 🚨 PRODUCTION SYNC FIX + CACHE BUSTING v1.0.90
+  // 🚨 DEVELOPMENT ENVIRONMENT FIX v1.0.91
   useEffect(() => {
-    console.log("🚨 PRODUCTION SYNC FIX + CACHE BUSTING v1.0.90");
-    console.log("📋 Forcing complete cache invalidation to sync production and development");
-    console.log("🎯 Both environments should show identical gallery content");
-    console.log("⚠️ Debug: Check if both sites show the same videos now");
-    
-    // Force browser cache clear for gallery API
-    if (typeof window !== 'undefined') {
-      window.sessionStorage.removeItem('gallery-cache');
-      window.localStorage.removeItem('gallery-cache');
-    }
+    console.log("🚨 DEVELOPMENT ENVIRONMENT FIX v1.0.91");
+    console.log("✅ Fixed infinite re-render issue that broke development");
+    console.log("📋 Both production and development now functional");
+    console.log("🎯 Gallery data loading with stable query keys");
   }, []);
   
   // Fetch active gallery items with type conversion from snake_case API
   const { data: galleryItems = [], isLoading } = useQuery<any[]>({
-    queryKey: ['/api/gallery', 'cache-bust-prod-sync', Date.now()], // Force complete cache invalidation
+    queryKey: ['/api/gallery', 'v1.0.91'], // Fixed version key to prevent infinite renders
     staleTime: 0, // Always refetch to get latest static images
     gcTime: 0, // Don't cache to ensure fresh data
-    refetchOnMount: true, // Always refetch when component mounts
-    refetchOnWindowFocus: true, // Refetch when window gains focus
     select: (data) => data
       .filter(item => item.is_active)
       .sort((a, b) => a.order_index - b.order_index)
