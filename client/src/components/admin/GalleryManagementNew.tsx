@@ -1922,10 +1922,12 @@ export default function GalleryManagementNew() {
             
             <SimpleImageCropper
               imageUrl={getFullUrl(
-                // In shared mode, always use the EN image URL since it's the source of truth
+                // Priority 1: Latest uploaded image from formData (fresh uploads)
                 selectedItem.use_same_video 
-                  ? selectedItem.image_url_en 
-                  : (cropperLanguage === 'fr' ? selectedItem.image_url_fr : selectedItem.image_url_en)
+                  ? (formData.image_url_en || selectedItem.image_url_en)
+                  : (cropperLanguage === 'fr' 
+                    ? (formData.image_url_fr || selectedItem.image_url_fr)
+                    : (formData.image_url_en || selectedItem.image_url_en))
               )}
               onSave={async (blob: Blob, cropSettings: any) => {
                 try {
@@ -1977,24 +1979,10 @@ export default function GalleryManagementNew() {
                   // Force component refresh by updating cache-busting key
                   queryClient.refetchQueries({ queryKey: ['/api/gallery'] });
                   
-                  // Force UI refresh for badge update
-                  setForceRefreshKey(prev => prev + 1);
-                  
-                  // Update selectedItem state to reflect the new crop_settings immediately
-                  if (selectedItem) {
-                    const updatedItem = {
-                      ...selectedItem,
-                      crop_settings: cropSettings,
-                      [cropperLanguage === 'fr' ? 'static_image_url_fr' : 'static_image_url_en']: uploadResult.url
-                    };
-                    
-                    if (selectedItem.use_same_video) {
-                      updatedItem.static_image_url_fr = uploadResult.url;
-                      updatedItem.static_image_url_en = uploadResult.url;
-                    }
-                    
-                    setSelectedItem(updatedItem);
-                  }
+                  // Force UI refresh for badge update - wait for data to refresh first
+                  setTimeout(() => {
+                    setForceRefreshKey(prev => prev + 1);
+                  }, 100);
                   
                   toast({ 
                     title: "✅ Succès", 

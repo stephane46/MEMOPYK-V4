@@ -168,7 +168,7 @@ export default function SimpleImageCropper({ imageUrl, onSave, onCancel }: Simpl
       });
 
       const settings = {
-        method: 'expert-minimal-fix',
+        method: 'triple-layer-white-bg',
         position: position,
         dimensions: { width: 300, height: 200 },
         format: 'JPEG',

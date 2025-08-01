@@ -23,8 +23,8 @@
     "video_width": 1080,
     "video_height": 1920,
     "video_orientation": "portrait",
-    "image_url_en": "https://supabase.memopyk.org/storage/v1/object/public/memopyk-videos/Image%20(7).jpg",
-    "image_url_fr": "https://supabase.memopyk.org/storage/v1/object/public/memopyk-videos/Image%20(7).jpg",
+    "image_url_en": "https://supabase.memopyk.org/storage/v1/object/public/memopyk-videos/livingroom.jpg",
+    "image_url_fr": "https://supabase.memopyk.org/storage/v1/object/public/memopyk-videos/livingroom.jpg",
     "price_en": "$2,500",
     "price_fr": "2 500$",
     "alt_text_en": "Our Vitamin Sea",
@@ -33,13 +33,13 @@
     "is_active": true,
     "use_same_video": true,
     "created_at": "2025-07-23T21:05:23.805Z",
-    "updated_at": "2025-08-01T09:31:30.165Z",
+    "updated_at": "2025-08-01T09:41:12.405Z",
     "static_image_url": "",
     "crop_settings": {
       "method": "expert-minimal-fix",
       "position": {
-        "x": 74.74074300130208,
-        "y": 0.2222137451171875
+        "x": 93.40740966796875,
+        "y": 57.72221374511719
       },
       "dimensions": {
         "width": 300,
@@ -50,9 +50,9 @@
       "devicePixelRatio": 2.25
     },
     "staticImageUrl": null,
-    "static_image_url_en": "https://supabase.memopyk.org/storage/v1/object/public/memopyk-videos/static_en_1754040687654.jpg",
+    "static_image_url_en": "https://supabase.memopyk.org/storage/v1/object/public/memopyk-videos/static_en_1754041260082.jpg",
     "language": "shared",
-    "static_image_url_fr": "https://supabase.memopyk.org/storage/v1/object/public/memopyk-videos/static_en_1754040687654.jpg"
+    "static_image_url_fr": "https://supabase.memopyk.org/storage/v1/object/public/memopyk-videos/static_en_1754041260082.jpg"
   },
   {
     "id": 1754002883309,
