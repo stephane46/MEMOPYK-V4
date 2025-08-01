@@ -188,19 +188,6 @@ export default function AdminPage() {
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
-  // Sync responsive font sizes when a text is selected
-  useEffect(() => {
-    if (selectedTextId && heroTexts.length > 0) {
-      const selectedText = heroTexts.find((t: any) => t.id === selectedTextId);
-      if (selectedText) {
-        // Use responsive font sizes from database if available, otherwise use defaults
-        setPreviewFontSizeDesktop(selectedText.font_size_desktop || selectedText.font_size || 60);
-        setPreviewFontSizeTablet(selectedText.font_size_tablet || Math.round((selectedText.font_size || 60) * 0.75));
-        setPreviewFontSizeMobile(selectedText.font_size_mobile || Math.round((selectedText.font_size || 60) * 0.53));
-      }
-    }
-  }, [selectedTextId, heroTexts]);
-
   // Add logout functionality
   const handleLogout = () => {
     localStorage.removeItem('memopyk_admin_authenticated');
@@ -229,6 +216,19 @@ export default function AdminPage() {
   const { data: heroTexts = [], isLoading: textsLoading } = useQuery<any[]>({
     queryKey: ['/api/hero-text'],
   });
+
+  // Sync responsive font sizes when a text is selected
+  useEffect(() => {
+    if (selectedTextId && heroTexts.length > 0) {
+      const selectedText = heroTexts.find((t: any) => t.id === selectedTextId);
+      if (selectedText) {
+        // Use responsive font sizes from database if available, otherwise use defaults
+        setPreviewFontSizeDesktop(selectedText.font_size_desktop || selectedText.font_size || 60);
+        setPreviewFontSizeTablet(selectedText.font_size_tablet || Math.round((selectedText.font_size || 60) * 0.75));
+        setPreviewFontSizeMobile(selectedText.font_size_mobile || Math.round((selectedText.font_size || 60) * 0.53));
+      }
+    }
+  }, [selectedTextId, heroTexts]);
 
   // Fetch cache statistics
   const { data: cacheStats, isLoading: cacheLoading } = useQuery<CacheStats>({
