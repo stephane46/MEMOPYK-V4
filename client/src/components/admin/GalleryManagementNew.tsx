@@ -290,7 +290,7 @@ export default function GalleryManagementNew() {
   const [selectedVideoId, setSelectedVideoId] = useState<string | number | null>(null);
   const [isCreateMode, setIsCreateMode] = useState(false);
   const [cropperOpen, setCropperOpen] = useState(false);
-  const [cropperLanguage, setCropperLanguage] = useState<'en' | 'fr' | 'shared'>('en');
+  const [cropperLanguage, setCropperLanguage] = useState<'en' | 'fr'>('en');
   const [showFormatBadgeManager, setShowFormatBadgeManager] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   
@@ -676,23 +676,20 @@ export default function GalleryManagementNew() {
               </div>
 
               <div className="flex flex-col gap-8">
-                {/* Individual Language Sections - Only show when NOT using shared mode */}
-                {!formData.use_same_video && (
-                  <>
-                    {/* French Row */}
-                    <div className="flex flex-col lg:flex-row gap-8">
-                      <div className="flex-1">
-                        <h4 className="text-lg font-semibold text-[#011526] dark:text-[#F2EBDC] flex items-center gap-2 mb-4">
-                          <Image className="w-5 h-5" />
-                          Image Français
-                        </h4>
+                {/* French Row */}
+                <div className="flex flex-col lg:flex-row gap-8">
+                  <div className="flex-1">
+                    <h4 className="text-lg font-semibold text-[#011526] dark:text-[#F2EBDC] flex items-center gap-2 mb-4">
+                      <Image className="w-5 h-5" />
+                      Image Français
+                    </h4>
                     <div className="space-y-2">
                       <div className="flex items-center justify-between min-h-[2.5rem]">
                         <div className="flex items-center gap-2">
                           <span className="text-xs font-medium text-blue-700 dark:text-blue-300">🇫🇷 Français</span>
 
                         </div>
-                        {!isCreateMode && selectedItem?.image_url_fr && !formData.use_same_video && (
+                        {!isCreateMode && selectedItem?.image_url_fr && (
                           <div className="flex gap-1">
                             <Button
                               onClick={() => {
@@ -832,7 +829,7 @@ export default function GalleryManagementNew() {
                           <span className="text-xs font-medium text-green-700 dark:text-green-300">🇺🇸 English</span>
 
                         </div>
-                        {!isCreateMode && selectedItem?.image_url_en && !formData.use_same_video && (
+                        {!isCreateMode && selectedItem?.image_url_en && (
                           <div className="flex gap-1">
                             <Button
                               onClick={() => {
@@ -958,158 +955,6 @@ export default function GalleryManagementNew() {
                     </div>
                   </div>
                 </div>
-                  </>
-                )}
-
-                {/* Shared Video and Image Preview - Only show when using shared mode */}
-                {formData.use_same_video && (
-                  <div className="space-y-6">
-                    {/* Shared Image Section */}
-                    <div className="bg-gradient-to-r from-purple-50 to-purple-100 dark:from-purple-900/20 dark:to-purple-800/20 rounded-lg border border-purple-200 dark:border-purple-800 p-6">
-                      <h4 className="text-lg font-semibold text-purple-900 dark:text-purple-100 flex items-center gap-2 mb-4">
-                        <Image className="w-5 h-5" />
-                        🌐 Photo Partagée (FR + EN)
-                      </h4>
-                      
-                      {/* Shared Image Preview */}
-                      <div className="mb-4">
-                        <div className="aspect-video w-full bg-black rounded-lg overflow-hidden border border-purple-200 dark:border-purple-600 relative">
-                          {(formData.image_url_fr || formData.image_url_en || selectedItem?.image_url_fr || selectedItem?.image_url_en) ? (
-                            <>
-                              <img 
-                                src={
-                                  // Use FR image first, then EN as fallback
-                                  (formData.image_url_fr || selectedItem?.image_url_fr)?.startsWith('http')
-                                    ? `${formData.image_url_fr || selectedItem?.image_url_fr}?v=${formData.image_url_fr ? 'new' : 'old'}`
-                                    : (formData.image_url_en || selectedItem?.image_url_en)?.startsWith('http')
-                                    ? `${formData.image_url_en || selectedItem?.image_url_en}?v=${formData.image_url_en ? 'new' : 'old'}`
-                                    : (selectedItem ? getThumbnailUrl(selectedItem, 'fr') : null) || 
-                                      (selectedItem ? getThumbnailUrl(selectedItem, 'en') : null) ||
-                                      `/api/image-proxy?filename=${((formData.image_url_fr || selectedItem?.image_url_fr) || (formData.image_url_en || selectedItem?.image_url_en))?.split('/').pop()?.split('?')[0]}`
-                                } 
-                                alt="Aperçu Partagé"
-                                className="w-full h-full object-contain"
-                              />
-                              {(selectedItem?.static_image_url_fr || selectedItem?.static_image_url_en) && (
-                                <div className="absolute top-2 right-2 bg-purple-500 text-white px-2 py-1 rounded-full text-xs font-bold shadow-lg">
-                                  ✂️ Recadré Partagé
-                                </div>
-                              )}
-                            </>
-                          ) : (
-                            <div className="w-full h-full flex items-center justify-center">
-                              <div className="text-center text-purple-500 dark:text-purple-400">
-                                <Image className="w-8 h-8 mx-auto mb-1 opacity-50" />
-                                <p className="text-xs">Pas d'image partagée</p>
-                              </div>
-                            </div>
-                          )}
-                        </div>
-                      </div>
-
-                      {/* Shared Video Preview */}
-                      <div className="mb-4">
-                        <h5 className="text-md font-medium text-purple-900 dark:text-purple-100 flex items-center gap-2 mb-2">
-                          <PlayCircle className="w-4 h-4" />
-                          Vidéo Partagée
-                        </h5>
-                        {formData.video_url_fr || formData.video_url_en || formData.video_filename ? (
-                          <div className="relative bg-black rounded-lg overflow-hidden aspect-video w-full border border-purple-200 dark:border-purple-600">
-                            <video
-                              controls
-                              className="w-full h-full object-contain"
-                              style={{ backgroundColor: 'black' }}
-                            >
-                              <source 
-                                src={
-                                  // Use FR video first, then EN as fallback
-                                  ((formData.video_url_fr || formData.video_url_en || formData.video_filename)?.startsWith('http')) 
-                                    ? (formData.video_url_fr || formData.video_url_en || formData.video_filename)
-                                    : `/api/video-proxy?filename=${formData.video_url_fr || formData.video_url_en || formData.video_filename}`
-                                }
-                                type="video/mp4"
-                              />
-                              Votre navigateur ne supporte pas la lecture vidéo.
-                            </video>
-                          </div>
-                        ) : (
-                          <div className="aspect-video w-full bg-purple-100 dark:bg-purple-800 rounded-lg flex items-center justify-center border border-purple-200 dark:border-purple-600">
-                            <div className="text-center text-purple-500 dark:text-purple-400">
-                              <PlayCircle className="w-8 h-8 mx-auto mb-1 opacity-50" />
-                              <p className="text-xs">Pas de vidéo partagée</p>
-                            </div>
-                          </div>
-                        )}
-                      </div>
-
-                      {/* Shared Cropping Interface */}
-                      {!isCreateMode && selectedItem && (selectedItem.image_url_en || selectedItem.image_url_fr) && (
-                        <div className="flex items-center justify-between pt-4 border-t border-purple-200 dark:border-purple-700">
-                          <div className="flex items-center gap-3">
-                            <div className="bg-purple-600 rounded-full p-2">
-                              <Crop className="h-4 w-4 text-white" />
-                            </div>
-                            <div>
-                              <p className="text-sm text-purple-800 dark:text-purple-200">
-                                Recadrer l'image pour les deux langues simultanément
-                              </p>
-                            </div>
-                          </div>
-                          <div className="flex gap-2">
-                        <Button
-                          onClick={() => {
-                            setCropperLanguage('shared');
-                            setCropperOpen(true);
-                          }}
-                          variant="outline"
-                          size="sm"
-                          className="bg-purple-600 hover:bg-purple-700 text-white border-purple-600 px-3 py-2"
-                        >
-                          <Crop className="w-4 h-4 mr-2" />
-                          Recadrer Photo Partagée
-                        </Button>
-                        {(selectedItem.static_image_url_fr || selectedItem.static_image_url_en) && (
-                          <Button
-                            onClick={async () => {
-                              try {
-                                // Clear both language static images
-                                const updateData = {
-                                  static_image_url_fr: null,
-                                  static_image_url_en: null,
-                                  crop_settings: null,
-                                  language: 'both'
-                                };
-                                
-                                await apiRequest(`/api/gallery/${selectedItem.id}`, 'PATCH', updateData);
-                                
-                                // Refresh data
-                                queryClient.invalidateQueries({ queryKey: ['/api/gallery'] });
-                                
-                                toast({ 
-                                  title: "✅ Succès", 
-                                  description: "Images partagées restaurées à l'original" 
-                                });
-                              } catch (error) {
-                                console.error('Error unframing shared images:', error);
-                                toast({ 
-                                  title: "❌ Erreur", 
-                                  description: "Impossible de restaurer les images partagées",
-                                  variant: "destructive"
-                                });
-                              }
-                            }}
-                            variant="outline"
-                            size="sm"
-                            className="bg-gray-500 hover:bg-gray-600 text-white border-gray-500 px-3 py-2"
-                          >
-                            <RotateCcw className="w-4 h-4 mr-2" />
-                            Restaurer Original
-                          </Button>
-                        )}
-                      </div>
-                    )}
-                  </div>
-                )}
               </div>
             </CardContent>
           </Card>
@@ -1978,94 +1823,43 @@ export default function GalleryManagementNew() {
               <div className="flex items-center gap-2 text-blue-900 dark:text-blue-100">
                 <Globe className="w-4 h-4" />
                 <span className="font-medium">
-                  {cropperLanguage === 'shared' 
-                    ? '🌐 Image Partagée (FR + EN)' 
-                    : `Image sélectionnée: ${cropperLanguage === 'fr' ? '🇫🇷 Français' : '🇺🇸 English'}`
-                  }
+                  Image sélectionnée: {cropperLanguage === 'fr' ? '🇫🇷 Français' : '🇺🇸 English'}
                 </span>
               </div>
-              {cropperLanguage === 'shared' && (
-                <p className="text-sm text-blue-800 dark:text-blue-200 mt-2">
-                  Le recadrage sera appliqué aux deux langues simultanément
-                </p>
-              )}
             </div>
             
             <SimpleImageCropper
-              imageUrl={getFullUrl(
-                cropperLanguage === 'shared' 
-                  ? (selectedItem.image_url_fr || selectedItem.image_url_en)
-                  : cropperLanguage === 'fr' ? selectedItem.image_url_fr : selectedItem.image_url_en
-              )}
+              imageUrl={getFullUrl(cropperLanguage === 'fr' ? selectedItem.image_url_fr : selectedItem.image_url_en)}
               onSave={async (blob: Blob, cropSettings: any) => {
                 try {
-                  if (cropperLanguage === 'shared') {
-                    // Handle shared mode - upload and update both languages
-                    const formData = new FormData();
-                    const filename = `static_shared_${Date.now()}.jpg`;
-                    formData.append('file', blob, filename);
-                    formData.append('language', 'shared');
-                    
-                    // Upload the cropped image
-                    const uploadResponse = await fetch('/api/upload/image', {
-                      method: 'POST',
-                      body: formData
-                    });
-                    
-                    if (!uploadResponse.ok) {
-                      throw new Error(`Upload failed: ${uploadResponse.status}`);
-                    }
-                    
-                    const uploadResult = await uploadResponse.json();
-                    
-                    // Update both language static image URLs
-                    const updateData = {
-                      static_image_url_fr: uploadResult.url,
-                      static_image_url_en: uploadResult.url,
-                      crop_settings: cropSettings,
-                      language: 'both'
-                    };
-                    
-                    await apiRequest(`/api/gallery/${selectedItem.id}`, 'PATCH', updateData);
-                    
-                    toast({ 
-                      title: "✅ Succès", 
-                      description: "Image partagée recadrée sauvegardée pour les deux langues" 
-                    });
-                  } else {
-                    // Handle individual language mode
-                    const formData = new FormData();
-                    const filename = `static_${cropperLanguage}_${Date.now()}.jpg`;
-                    formData.append('file', blob, filename);
-                    formData.append('language', cropperLanguage);
-                    
-                    // Upload the cropped image
-                    const uploadResponse = await fetch('/api/upload/image', {
-                      method: 'POST',
-                      body: formData
-                    });
-                    
-                    if (!uploadResponse.ok) {
-                      throw new Error(`Upload failed: ${uploadResponse.status}`);
-                    }
-                    
-                    const uploadResult = await uploadResponse.json();
-                    
-                    // Update the gallery item with the new static image URL
-                    const staticField = cropperLanguage === 'fr' ? 'static_image_url_fr' : 'static_image_url_en';
-                    const updateData = {
-                      [staticField]: uploadResult.url,
-                      crop_settings: cropSettings,
-                      language: cropperLanguage
-                    };
-                    
-                    await apiRequest(`/api/gallery/${selectedItem.id}`, 'PATCH', updateData);
-                    
-                    toast({ 
-                      title: "✅ Succès", 
-                      description: `Image recadrée sauvegardée avec succès (${cropperLanguage === 'fr' ? 'Français' : 'English'})` 
-                    });
+                  // Create FormData for upload
+                  const formData = new FormData();
+                  const filename = `static_${cropperLanguage}_${Date.now()}.jpg`;
+                  formData.append('file', blob, filename);
+                  formData.append('language', cropperLanguage);
+                  
+                  // Upload the cropped image
+                  const uploadResponse = await fetch('/api/upload/image', {
+                    method: 'POST',
+                    body: formData
+                  });
+                  
+                  if (!uploadResponse.ok) {
+                    throw new Error(`Upload failed: ${uploadResponse.status}`);
                   }
+                  
+                  const uploadResult = await uploadResponse.json();
+                  
+                  // Update the gallery item with the new static image URL
+                  const staticField = cropperLanguage === 'fr' ? 'static_image_url_fr' : 'static_image_url_en';
+                  const updateData = {
+                    [staticField]: uploadResult.url,
+                    crop_settings: cropSettings,
+                    language: cropperLanguage
+                  };
+                  
+                  const updateResponse = await apiRequest(`/api/gallery/${selectedItem.id}`, 'PATCH', updateData);
+                  // Gallery item updated successfully
                   
                   // Close cropper and refresh data
                   setCropperOpen(false);
@@ -2076,7 +1870,13 @@ export default function GalleryManagementNew() {
                   // Force component refresh by updating cache-busting key
                   queryClient.refetchQueries({ queryKey: ['/api/gallery'] });
                   
+                  toast({ 
+                    title: "✅ Succès", 
+                    description: `Image recadrée sauvegardée avec succès (${cropperLanguage === 'fr' ? 'Français' : 'English'})` 
+                  });
+                  
                 } catch (error) {
+                  
                   toast({ 
                     title: "❌ Erreur", 
                     description: `Erreur lors de la sauvegarde: ${error instanceof Error ? error.message : 'Erreur inconnue'}`,

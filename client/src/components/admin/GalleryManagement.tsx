@@ -733,14 +733,14 @@ export default function GalleryManagement() {
               onCheckedChange={handleSameVideoToggle}
             />
             <Label className="text-blue-900 dark:text-blue-100 font-medium">
-              Utiliser la même vidéo et la même photo pour FR et EN
+              Utiliser la même vidéo pour FR et EN
             </Label>
           </div>
           <p className="text-xs text-blue-700 dark:text-blue-300 mt-1">
             {formData.use_same_video ? (
-              "✅ ACTIVÉ - Même vidéo et photo pour les deux langues"
+              "✅ ACTIVÉ - Même vidéo pour les deux langues"
             ) : (
-              "❌ DÉSACTIVÉ - Vidéos et photos séparées pour FR et EN"
+              "❌ DÉSACTIVÉ - Vidéos séparées pour FR et EN"
             )}
           </p>
           <div className="mt-2 p-2 bg-yellow-50 dark:bg-yellow-900/20 rounded border border-yellow-200 dark:border-yellow-800">
