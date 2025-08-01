@@ -19,7 +19,7 @@ interface SimpleImageCropperProps {
   isOpen?: boolean;
 }
 
-const DraggableCover = ({ imageUrl, onPositionChange, previewRef }: { imageUrl: string; onPositionChange: (pos: { x: number; y: number }) => void; previewRef: React.RefObject<HTMLDivElement> }) => {
+const DraggableCover = ({ imageUrl, onPositionChange, previewRef, onCropChange }: { imageUrl: string; onPositionChange: (pos: { x: number; y: number }) => void; previewRef: React.RefObject<HTMLDivElement>; onCropChange?: () => void }) => {
   const [isDragging, setIsDragging] = useState(false);
   const [position, setPosition] = useState({ x: 50, y: 50 });
   const [imageLoaded, setImageLoaded] = useState(false);
@@ -45,6 +45,7 @@ const DraggableCover = ({ imageUrl, onPositionChange, previewRef }: { imageUrl: 
     
     setPosition(newPos);
     onPositionChange(newPos);
+    onCropChange?.(); // Trigger crop change callback for real-time preview updates
   };
 
   const handleMouseUp = () => {
@@ -208,10 +209,8 @@ export default function SimpleImageCropper({ imageUrl, onSave, onCancel, onOpen,
             imageUrl={imageUrl} 
             onPositionChange={(pos) => {
               setPosition(pos);
-              if (onCropChange) {
-                onCropChange();
-              }
             }}
+            onCropChange={onCropChange}
             previewRef={previewRef}
           />
         </div>
