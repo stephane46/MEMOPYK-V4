@@ -5,29 +5,20 @@
     "title_en": "Transform your memories into cinematic films",
     "subtitle_fr": "Créez des vidéos professionnelles à partir de vos photos et vidéos",
     "subtitle_en": "Create professional videos from your photos and videos",
-    "is_active": true,
+    "is_active": false,
     "created_at": "2024-01-01T00:00:00.000Z",
     "updated_at": "2024-01-01T00:00:00.000Z",
     "font_size": 48
   },
   {
-    "id": 1753185875572,
-    "title_fr": "Test Français",
-    "title_en": "Test English",
-    "subtitle_fr": "sous-titre",
-    "subtitle_en": "subtitle",
-    "font_size": 95,
-    "is_active": false,
-    "created_at": "2025-07-22T12:04:35.572Z"
-  },
-  {
-    "id": 1754054511783,
-    "title_fr": "Test Français",
-    "title_en": "Test English",
-    "subtitle_fr": "Sous-titre FR",
-    "subtitle_en": "Subtitle EN",
-    "font_size": 48,
-    "is_active": false,
-    "created_at": "2025-08-01T13:21:51.783Z"
+    "id": 2,
+    "title_fr": "Nous transformons vos photos et vidéos personnelles en films souvenirs inoubliables",
+    "title_en": "We transform your personal photos and videos into unforgettable memory films",
+    "subtitle_fr": "Vos souvenirs méritent mieux que d'être simplement stockés, ils méritent une histoire",
+    "subtitle_en": "Your memories deserve better than just being stored, they deserve a story",
+    "is_active": true,
+    "created_at": "2025-08-01T13:00:00.000Z",
+    "updated_at": "2025-08-01T13:00:00.000Z",
+    "font_size": 48
   }
 ]
