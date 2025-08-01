@@ -3,7 +3,7 @@ import { join } from "path";
 import { createClient } from '@supabase/supabase-js';
 import { db } from './db';
 import { eq, and, desc, asc, sql } from 'drizzle-orm';
-import { ctaSettings } from '../shared/schema';
+import { ctaSettings, heroTexts } from '../shared/schema';
 
 export interface HybridStorageInterface {
   // Hero videos
@@ -301,20 +301,17 @@ export class HybridStorage implements HybridStorageInterface {
   // Hero text settings operations - TRUE HYBRID STORAGE
   async getHeroTextSettings(language?: string): Promise<any[]> {
     try {
-      console.log('🔍 Hero Text: Fetching from Supabase database...');
-      const { data, error } = await this.supabase
-        .from('hero_texts')
-        .select('*')
-        .order('created_at', { ascending: false });
+      console.log('🔍 Hero Text: Fetching from PostgreSQL database...');
+      const result = await this.db.select().from(heroTexts).orderBy(desc(heroTexts.createdAt));
       
-      if (!error && data) {
-        console.log(`✅ Hero Text: Found ${data.length} texts in Supabase`);
+      if (result && result.length > 0) {
+        console.log(`✅ Hero Text: Found ${result.length} texts in PostgreSQL`);
         
         // Save to JSON as backup
-        this.saveJsonFile('hero-text.json', data);
-        return data;
+        this.saveJsonFile('hero-text.json', result);
+        return result;
       } else {
-        console.warn('⚠️ Hero Text: Supabase error, falling back to JSON:', error);
+        console.log('⚠️ Hero Text: No data in PostgreSQL, checking JSON fallback...');
       }
     } catch (error) {
       console.warn('⚠️ Hero Text: Database connection failed, using JSON fallback:', error);

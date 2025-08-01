@@ -1,24 +1,24 @@
 [
   {
-    "id": 1,
-    "title_fr": "Transformez vos souvenirs en films cinématographiques",
-    "title_en": "Transform your memories into cinematic films",
-    "subtitle_fr": "Créez des vidéos professionnelles à partir de vos photos et vidéos",
-    "subtitle_en": "Create professional videos from your photos and videos",
-    "is_active": false,
-    "created_at": "2024-01-01T00:00:00.000Z",
-    "updated_at": "2024-01-01T00:00:00.000Z",
-    "font_size": 48
+    "id": "2",
+    "titleFr": "Nous transformons vos photos et vidéos personnelles en films souvenirs inoubliables",
+    "titleEn": "We transform your personal photos and videos into unforgettable memory films",
+    "subtitleFr": "Vos souvenirs méritent mieux que d'être simplement stockés, ils méritent une histoire",
+    "subtitleEn": "Your memories deserve better than just being stored, they deserve a story",
+    "fontSize": 48,
+    "isActive": true,
+    "createdAt": "2025-08-01T13:00:00.000Z",
+    "updatedAt": "2025-08-01T13:00:00.000Z"
   },
   {
-    "id": 2,
-    "title_fr": "Nous transformons vos photos et vidéos personnelles en films souvenirs inoubliables",
-    "title_en": "We transform your personal photos and videos into unforgettable memory films",
-    "subtitle_fr": "Vos souvenirs méritent mieux que d'être simplement stockés, ils méritent une histoire",
-    "subtitle_en": "Your memories deserve better than just being stored, they deserve a story",
-    "is_active": true,
-    "created_at": "2025-08-01T13:00:00.000Z",
-    "updated_at": "2025-08-01T13:00:00.000Z",
-    "font_size": 48
+    "id": "1",
+    "titleFr": "Transformez vos souvenirs en films cinématographiques",
+    "titleEn": "Transform your memories into cinematic films",
+    "subtitleFr": "Créez des vidéos professionnelles à partir de vos photos et vidéos",
+    "subtitleEn": "Create professional videos from your photos and videos",
+    "fontSize": 48,
+    "isActive": false,
+    "createdAt": "2024-01-01T00:00:00.000Z",
+    "updatedAt": "2024-01-01T00:00:00.000Z"
   }
 ]
