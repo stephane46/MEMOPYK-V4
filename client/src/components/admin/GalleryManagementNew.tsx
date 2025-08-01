@@ -1890,7 +1890,12 @@ export default function GalleryManagementNew() {
             </div>
             
             <SimpleImageCropper
-              imageUrl={getFullUrl(cropperLanguage === 'fr' ? selectedItem.image_url_fr : selectedItem.image_url_en)}
+              imageUrl={getFullUrl(
+                // In shared mode, always use the EN image URL since it's the source of truth
+                selectedItem.use_same_video 
+                  ? selectedItem.image_url_en 
+                  : (cropperLanguage === 'fr' ? selectedItem.image_url_fr : selectedItem.image_url_en)
+              )}
               onSave={async (blob: Blob, cropSettings: any) => {
                 try {
                   // Create FormData for upload
@@ -1912,12 +1917,19 @@ export default function GalleryManagementNew() {
                   const uploadResult = await uploadResponse.json();
                   
                   // Update the gallery item with the new static image URL
-                  const staticField = cropperLanguage === 'fr' ? 'static_image_url_fr' : 'static_image_url_en';
-                  const updateData = {
-                    [staticField]: uploadResult.url,
-                    crop_settings: cropSettings,
-                    language: cropperLanguage
-                  };
+                  // In shared mode, update both language static URLs since they use the same source image
+                  const updateData = selectedItem.use_same_video 
+                    ? {
+                        static_image_url_fr: uploadResult.url,
+                        static_image_url_en: uploadResult.url,
+                        crop_settings: cropSettings,
+                        language: 'shared'
+                      }
+                    : {
+                        [cropperLanguage === 'fr' ? 'static_image_url_fr' : 'static_image_url_en']: uploadResult.url,
+                        crop_settings: cropSettings,
+                        language: cropperLanguage
+                      };
                   
                   const updateResponse = await apiRequest(`/api/gallery/${selectedItem.id}`, 'PATCH', updateData);
                   // Gallery item updated successfully
@@ -1933,7 +1945,9 @@ export default function GalleryManagementNew() {
                   
                   toast({ 
                     title: "✅ Succès", 
-                    description: `Image recadrée sauvegardée avec succès (${cropperLanguage === 'fr' ? 'Français' : 'English'})` 
+                    description: selectedItem.use_same_video 
+                      ? `Image recadrée sauvegardée avec succès (Partagée FR+EN)`
+                      : `Image recadrée sauvegardée avec succès (${cropperLanguage === 'fr' ? 'Français' : 'English'})` 
                   });
                   
                 } catch (error) {
