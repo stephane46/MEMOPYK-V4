@@ -469,7 +469,7 @@ export default function GalleryManagementNew() {
     mutationFn: (data: any) => apiRequest('/api/gallery', 'POST', data),
     onSuccess: () => {
       toast({ title: "✅ Succès", description: "Élément de galerie créé avec succès" });
-      queryClient.invalidateQueries({ queryKey: ['/api/gallery'] });
+      queryClient.invalidateQueries({ queryKey: ['/api/gallery', 'v1.0.110'] });
       persistentUploadState.reset();
       setIsCreateMode(false);
       setPendingPreviews({}); // Clear pending previews after successful save
@@ -487,14 +487,14 @@ export default function GalleryManagementNew() {
       toast({ title: "✅ Succès", description: "Élément de galerie mis à jour avec succès" });
       
       // ADMIN ONLY: Invalidate only admin gallery cache, NOT public site
-      queryClient.invalidateQueries({ queryKey: ['/api/gallery'] });
-      queryClient.removeQueries({ queryKey: ['/api/gallery'] });
+      queryClient.invalidateQueries({ queryKey: ['/api/gallery', 'v1.0.110'] });
+      queryClient.removeQueries({ queryKey: ['/api/gallery', 'v1.0.110'] });
       
       setPendingPreviews({}); // Clear pending previews after successful save
       
       // Force component re-render with cache refresh key update  
       setTimeout(() => {
-        queryClient.invalidateQueries({ queryKey: ['/api/gallery'] });
+        queryClient.invalidateQueries({ queryKey: ['/api/gallery', 'v1.0.110'] });
         setFormData({ ...formData }); // Force state update
         setForceRefreshKey(prev => prev + 1); // Force image refresh
         console.log(`🖼️ FORCE REFRESH KEY UPDATED: ${forceRefreshKey + 1}`);
@@ -517,8 +517,8 @@ export default function GalleryManagementNew() {
       console.log(`✅ FRONTEND: Delete successful - Response:`, response);
       
       // Clear all related caches aggressively
-      queryClient.removeQueries({ queryKey: ['/api/gallery'] });
-      queryClient.invalidateQueries({ queryKey: ['/api/gallery'] });
+      queryClient.removeQueries({ queryKey: ['/api/gallery', 'v1.0.110'] });
+      queryClient.invalidateQueries({ queryKey: ['/api/gallery', 'v1.0.110'] });
       
       // Reset selected item to first available item
       setSelectedVideoId(null);
@@ -537,7 +537,7 @@ export default function GalleryManagementNew() {
       
       // Force refetch after a short delay
       setTimeout(() => {
-        queryClient.refetchQueries({ queryKey: ['/api/gallery'] });
+        queryClient.refetchQueries({ queryKey: ['/api/gallery', 'v1.0.110'] });
       }, 100);
     },
     onError: (error: any) => {
@@ -748,7 +748,7 @@ export default function GalleryManagementNew() {
                                     await apiRequest(`/api/gallery/${selectedItem.id}`, 'PATCH', updateData);
                                     
                                     // ADMIN ONLY: Refresh data - invalidate only admin gallery
-                                    queryClient.invalidateQueries({ queryKey: ['/api/gallery'] });
+                                    queryClient.invalidateQueries({ queryKey: ['/api/gallery', 'v1.0.110'] });
                                     
                                     toast({ 
                                       title: "✅ Succès", 
@@ -935,7 +935,7 @@ export default function GalleryManagementNew() {
                                     await apiRequest(`/api/gallery/${selectedItem.id}`, 'PATCH', updateData);
                                     
                                     // ADMIN ONLY: Refresh data - invalidate only admin gallery
-                                    queryClient.invalidateQueries({ queryKey: ['/api/gallery'] });
+                                    queryClient.invalidateQueries({ queryKey: ['/api/gallery', 'v1.0.110'] });
                                     
                                     toast({ 
                                       title: "✅ Success", 
@@ -2144,11 +2144,11 @@ export default function GalleryManagementNew() {
                   });
                   
                   // ADMIN ONLY: Invalidate only admin gallery caches, NOT public site
-                  queryClient.invalidateQueries({ queryKey: ['/api/gallery'] });
-                  queryClient.removeQueries({ queryKey: ['/api/gallery'] });
+                  queryClient.invalidateQueries({ queryKey: ['/api/gallery', 'v1.0.110'] });
+                  queryClient.removeQueries({ queryKey: ['/api/gallery', 'v1.0.110'] });
                   
                   // Force admin component refresh only
-                  await queryClient.refetchQueries({ queryKey: ['/api/gallery'] });
+                  await queryClient.refetchQueries({ queryKey: ['/api/gallery', 'v1.0.110'] });
                   
                   // Wait for query to complete, then force UI refresh
                   setTimeout(() => {
