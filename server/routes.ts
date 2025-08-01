@@ -638,6 +638,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
       let staticImageUrl = null;
       let autoCropSettings = null;
       
+      console.log(`🔍 STARTING AUTO-THUMBNAIL PROCESS for: ${filename}`);
+      console.log(`🔍 File path exists: ${require('fs').existsSync(req.file.path)}`);
+      console.log(`🔍 File size: ${req.file.size} bytes`);
+      
       try {
         console.log(`🤖 AUTO-GENERATING 300x200 thumbnail for new image: ${filename}`);
         const sharp = require('sharp');
@@ -695,7 +699,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
           console.warn(`⚠️ Failed to upload auto-generated thumbnail: ${staticUploadError.message}`);
         }
       } catch (autoGenError) {
-        console.warn(`⚠️ Auto-thumbnail generation failed: ${autoGenError.message}`);
+        console.error(`❌ AUTO-THUMBNAIL ERROR:`, autoGenError);
+        console.error(`❌ Sharp processing failed:`, autoGenError.message, autoGenError.stack);
       }
       
       // Clean up temporary file
