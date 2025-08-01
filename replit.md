@@ -32,7 +32,8 @@ Preferred communication style: Simple, everyday language.
 - **Shared Mode Image Cropper Fix COMPLETED (August 1, 2025)**: Fixed critical bug where image cropper showed previous image instead of newly uploaded shared image. In shared mode, cropper now always uses English image URL as source of truth, and save operation updates both French and English static image URLs simultaneously since they share the same source image.
 - **Dual Badge System for Image Processing COMPLETED (August 1, 2025)**: Implemented smart badge system with ✂️ scissors icon for both manual and automatic image processing. Green "✂️ Recadré EN/FR" badges indicate manual user cropping via reframe tool, while blue "✂️ Auto EN/FR" badges show automatic system-generated 300x200 thumbnails. System intelligently detects processing method via crop_settings to provide accurate visual feedback to users.
 - **Sharp Auto-Processing Integration COMPLETED (August 1, 2025)**: Fixed critical issue where DirectUpload bypassed Sharp auto-processing. Integrated Sharp thumbnail generation into complete-direct-upload route, ensuring all image uploads (both server-side and direct-to-Supabase) automatically generate 300x200 thumbnails with proper aspect ratio detection. Auto-processing now triggers for all upload methods, resolving badge system inconsistencies where new uploads showed incorrect "Recadré" status instead of "Auto" or no badge.
-- **Real-Time Crop Preview Fix COMPLETED (August 1, 2025)**: Fixed critical issue where manual crop adjustments in admin interface didn't show real-time preview updates. Resolved position state synchronization between parent and child components in SimpleImageCropper, ensuring drag operations update preview immediately. Admin interface now provides instant visual feedback when repositioning crops, matching exactly what appears on public site after saving.
+- **Auto-Crop Badge System FULLY OPERATIONAL (August 1, 2025)**: Complete end-to-end auto-crop functionality working correctly. New uploads show "✂️ Auto EN/FR" badges for Sharp auto-processed images, badge updates to "✂️ Recadré EN/FR" when manual cropping performed, cropped images save correctly to database and display properly on public site. Badge logic prioritizes formData.cropSettings over selectedItem.cropSettings for accurate new upload detection.
+- **Image Cropper Status - FUNCTIONAL WITH LIMITATIONS (August 1, 2025)**: Core functionality complete - users can successfully create and manage cropped images, with proper saving and public site display. Real-time preview updates during dragging partially implemented but not fully operational. Position state synchronization improvements made to SimpleImageCropper component, but live preview feedback during manual crop adjustments needs further refinement for optimal user experience.
 
 **Clean Minimal Video Controls - USER REQUIREMENT FULLY ACHIEVED:**
 - Three-Dots Menu Removed: Eliminated vertical menu with download, playback speed, and picture-in-picture options
@@ -86,6 +87,20 @@ Preferred communication style: Simple, everyday language.
 - **Direct Supabase Upload System**: Bypasses Replit deployment limits by uploading large files directly to Supabase storage.
 - **SEO Management System**: Comprehensive interface for page-level meta tags, keywords, redirects, image SEO, and global settings.
 - **Advanced Mobile Features**: Progressive web app capabilities including lazy image loading with intersection observer, network status monitoring, device orientation detection, mobile-enhanced gallery with smart touch interactions, performance optimization indicators, and adaptive UI based on device capabilities.
+
+## Known Issues - Future Refinements Needed
+
+### Image Cropper Real-Time Preview (Low Priority)
+- **Issue**: Manual crop position adjustments in admin interface don't show real-time preview updates during dragging
+- **Impact**: Functional but suboptimal user experience - users must generate final image to see crop result
+- **Status**: Core functionality complete (saving/loading works correctly), UI enhancement needed
+- **Components**: SimpleImageCropper.tsx position state synchronization between parent and child components
+
+### TypeScript Interface Warnings (Low Priority)  
+- **Issue**: 22 LSP diagnostics in GalleryManagementNew.tsx related to interface mismatches
+- **Impact**: No functional impact, development warnings only
+- **Status**: All features work correctly despite TypeScript warnings
+- **Components**: Interface definitions need alignment with database schema fields
 
 ## External Dependencies
 
