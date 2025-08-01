@@ -788,9 +788,11 @@ export default function GalleryManagementNew() {
                                     return activeCroppingState.hasChanges ? '✂️ Recadré FR*' : '✂️ Auto FR';
                                   }
                                   
-                                  return (selectedItem as any).cropSettings?.method === 'triple-layer-white-bg' 
-                                    ? '✂️ Recadré FR' 
-                                    : '✂️ Auto FR';
+                                  // FIXED LOGIC: Only manual crops should show "Recadré"
+                                  // Everything else (no cropSettings, auto-generated, etc.) should show "Auto"
+                                  const isManualCrop = (selectedItem as any).cropSettings?.method === 'triple-layer-white-bg';
+                                  
+                                  return isManualCrop ? '✂️ Recadré FR' : '✂️ Auto FR';
                                 })()}
                               </div>
                             )}
@@ -955,9 +957,11 @@ export default function GalleryManagementNew() {
                                     return activeCroppingState.hasChanges ? '✂️ Recadré EN*' : '✂️ Auto EN';
                                   }
                                   
-                                  return (selectedItem as any).cropSettings?.method === 'triple-layer-white-bg' 
-                                    ? '✂️ Recadré EN' 
-                                    : '✂️ Auto EN';
+                                  // FIXED LOGIC: Only manual crops should show "Recadré"
+                                  // Everything else (no cropSettings, auto-generated, etc.) should show "Auto"
+                                  const isManualCrop = (selectedItem as any).cropSettings?.method === 'triple-layer-white-bg';
+                                  
+                                  return isManualCrop ? '✂️ Recadré EN' : '✂️ Auto EN';
                                 })()}
                               </div>
                             )}

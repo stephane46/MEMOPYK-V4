@@ -634,6 +634,55 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       const imageUrl = `https://supabase.memopyk.org/storage/v1/object/public/memopyk-videos/${filename}`;
       
+      // AUTO-GENERATE STATIC 300x200 THUMBNAIL for new images
+      let staticImageUrl = null;
+      let autoCropSettings = null;
+      
+      try {
+        console.log(`🤖 AUTO-GENERATING 300x200 thumbnail for new image: ${filename}`);
+        const sharp = require('sharp');
+        
+        // Create automatic 300x200 thumbnail with object-cover behavior
+        const thumbnailBuffer = await sharp(req.file.path)
+          .resize(300, 200, {
+            fit: 'cover',  // Crop to fill the dimensions (like CSS object-fit: cover)
+            position: 'center'  // Center the crop
+          })
+          .flatten({ background: { r: 255, g: 255, b: 255 } })  // White background for transparency
+          .jpeg({ quality: 90, progressive: true })
+          .toBuffer();
+        
+        // Upload auto-generated thumbnail
+        const staticFilename = `static_auto_${Date.now()}.jpg`;
+        const { data: staticUploadData, error: staticUploadError } = await supabase.storage
+          .from('memopyk-videos')
+          .upload(staticFilename, thumbnailBuffer, {
+            contentType: 'image/jpeg',
+            cacheControl: '300',
+            upsert: true
+          });
+
+        if (!staticUploadError) {
+          staticImageUrl = `https://supabase.memopyk.org/storage/v1/object/public/memopyk-videos/${staticFilename}`;
+          
+          // Create cropSettings for automatic generation (different from manual "triple-layer-white-bg")
+          autoCropSettings = {
+            method: 'sharp-auto-thumbnail',
+            type: 'automatic',
+            fit: 'cover',
+            position: 'center',
+            dimensions: { width: 300, height: 200 },
+            timestamp: new Date().toISOString()
+          };
+          
+          console.log(`✅ Auto-generated static thumbnail: ${staticImageUrl}`);
+        } else {
+          console.warn(`⚠️ Failed to upload auto-generated thumbnail: ${staticUploadError.message}`);
+        }
+      } catch (autoGenError) {
+        console.warn(`⚠️ Auto-thumbnail generation failed: ${autoGenError.message}`);
+      }
+      
       // Clean up temporary file
       try {
         require('fs').unlinkSync(req.file.path);
@@ -647,7 +696,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
         url: imageUrl,
         filename: filename,
         width: req.body.width || null,
-        height: req.body.height || null
+        height: req.body.height || null,
+        // Include auto-generated thumbnail info
+        static_image_url: staticImageUrl,
+        auto_crop_settings: autoCropSettings
       });
 
     } catch (error) {
