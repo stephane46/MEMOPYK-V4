@@ -793,7 +793,8 @@ export default function GalleryManagementNew() {
                                   
                                   // New Sharp auto-cropping (only shows badge if cropping actually occurred)
                                   if (cropSettings?.method === 'sharp-auto-thumbnail' && cropSettings?.cropped === true) {
-                                    return '✂️ Auto FR';
+                                    // In shared mode, show "Auto EN/FR" badge
+                                    return formData.use_same_video ? '✂️ Auto EN/FR' : '✂️ Auto FR';
                                   }
                                   
                                   // Manual cropping: only show badge if the user has different original vs static images
@@ -806,7 +807,8 @@ export default function GalleryManagementNew() {
                                     
                                     // Only show "Recadré" if we have different images (actual cropping occurred)
                                     if (imagesDifferent) {
-                                      return '✂️ Recadré FR';
+                                      // In shared mode, show "Recadré EN/FR" badge
+                                      return formData.use_same_video ? '✂️ Recadré EN/FR' : '✂️ Recadré FR';
                                     }
                                   }
                                   
@@ -981,7 +983,8 @@ export default function GalleryManagementNew() {
                                   
                                   // New Sharp auto-cropping (only shows badge if cropping actually occurred)
                                   if (cropSettings?.method === 'sharp-auto-thumbnail' && cropSettings?.cropped === true) {
-                                    return '✂️ Auto EN';
+                                    // In shared mode, show "Auto EN/FR" badge
+                                    return formData.use_same_video ? '✂️ Auto EN/FR' : '✂️ Auto EN';
                                   }
                                   
                                   // Manual cropping: only show badge if the user has different original vs static images
@@ -994,7 +997,8 @@ export default function GalleryManagementNew() {
                                     
                                     // Only show "Recadré" if we have different images (actual cropping occurred)
                                     if (imagesDifferent) {
-                                      return '✂️ Recadré EN';
+                                      // In shared mode, show "Recadré EN/FR" badge
+                                      return formData.use_same_video ? '✂️ Recadré EN/FR' : '✂️ Recadré EN';
                                     }
                                   }
                                   
