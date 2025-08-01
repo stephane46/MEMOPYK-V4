@@ -725,8 +725,9 @@ export default function GalleryManagementNew() {
                                     
                                     await apiRequest(`/api/gallery/${selectedItem.id}`, 'PATCH', updateData);
                                     
-                                    // Refresh data
+                                    // Refresh data - invalidate both admin and public gallery
                                     queryClient.invalidateQueries({ queryKey: ['/api/gallery'] });
+                                    queryClient.invalidateQueries({ queryKey: ['/api/gallery', 'v1.0.91'] });
                                     
                                     toast({ 
                                       title: "✅ Succès", 
@@ -883,8 +884,9 @@ export default function GalleryManagementNew() {
                                     
                                     await apiRequest(`/api/gallery/${selectedItem.id}`, 'PATCH', updateData);
                                     
-                                    // Refresh data
+                                    // Refresh data - invalidate both admin and public gallery
                                     queryClient.invalidateQueries({ queryKey: ['/api/gallery'] });
+                                    queryClient.invalidateQueries({ queryKey: ['/api/gallery', 'v1.0.91'] });
                                     
                                     toast({ 
                                       title: "✅ Success", 
@@ -1966,11 +1968,33 @@ export default function GalleryManagementNew() {
                   // Close cropper and refresh data
                   setCropperOpen(false);
                   
-                  // Invalidate cache with version bump to force refresh
-                  queryClient.invalidateQueries({ queryKey: ['/api/gallery', 'v1.0.107'] });
+                  // Invalidate ALL gallery caches - admin and public site
+                  queryClient.invalidateQueries({ queryKey: ['/api/gallery'] });
+                  queryClient.invalidateQueries({ queryKey: ['/api/gallery', 'v1.0.91'] });
+                  queryClient.removeQueries({ queryKey: ['/api/gallery'] });
+                  queryClient.removeQueries({ queryKey: ['/api/gallery', 'v1.0.91'] });
                   
                   // Force component refresh by updating cache-busting key
                   queryClient.refetchQueries({ queryKey: ['/api/gallery'] });
+                  
+                  // Force UI refresh for badge update
+                  setForceRefreshKey(prev => prev + 1);
+                  
+                  // Update selectedItem state to reflect the new crop_settings immediately
+                  if (selectedItem) {
+                    const updatedItem = {
+                      ...selectedItem,
+                      crop_settings: cropSettings,
+                      [cropperLanguage === 'fr' ? 'static_image_url_fr' : 'static_image_url_en']: uploadResult.url
+                    };
+                    
+                    if (selectedItem.use_same_video) {
+                      updatedItem.static_image_url_fr = uploadResult.url;
+                      updatedItem.static_image_url_en = uploadResult.url;
+                    }
+                    
+                    setSelectedItem(updatedItem);
+                  }
                   
                   toast({ 
                     title: "✅ Succès", 
