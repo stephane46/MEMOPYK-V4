@@ -1142,10 +1142,16 @@ export default function GalleryManagementNew() {
                   </div>
                 </div>
                 
-                {/* French Basic Information - Hidden when shared mode is enabled */}
-                {!formData.use_same_video && (
+                {/* French Basic Information - Always visible for independent text management */}
                 <div className="space-y-4">
-                  <h4 className="font-medium text-[#011526] dark:text-[#F2EBDC]">Français</h4>
+                  <h4 className="font-medium text-[#011526] dark:text-[#F2EBDC]">
+                    Français
+                    {formData.use_same_video && (
+                      <Badge className="text-xs bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-200 ml-2">
+                        Texte indépendant
+                      </Badge>
+                    )}
+                  </h4>
                   <div>
                     <Label htmlFor="title_fr">Titre</Label>
                     <Input
@@ -1185,7 +1191,6 @@ export default function GalleryManagementNew() {
                     />
                   </div>
                 </div>
-                )}
               </div>
             </CardContent>
           </Card>
@@ -1242,10 +1247,16 @@ export default function GalleryManagementNew() {
                   </div>
                 </div>
                 
-                {/* French Content Descriptions - Hidden when shared mode is enabled */}
-                {!formData.use_same_video && (
+                {/* French Content Descriptions - Always visible for independent text management */}
                 <div className="space-y-4">
-                  <h4 className="font-medium text-[#011526] dark:text-[#F2EBDC]">Français</h4>
+                  <h4 className="font-medium text-[#011526] dark:text-[#F2EBDC]">
+                    Français
+                    {formData.use_same_video && (
+                      <Badge className="text-xs bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-200 ml-2">
+                        Texte indépendant
+                      </Badge>
+                    )}
+                  </h4>
                   <div>
                     <Label htmlFor="situation_fr">Situation du client</Label>
                     <Textarea
@@ -1276,7 +1287,6 @@ export default function GalleryManagementNew() {
                     />
                   </div>
                 </div>
-                )}
               </div>
             </CardContent>
           </Card>
