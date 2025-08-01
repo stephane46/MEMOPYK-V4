@@ -1818,7 +1818,7 @@ export default function GalleryManagementNew() {
             
 
             
-            {/* Current Language Display + Debug Info */}
+            {/* Current Language Display */}
             <div className="mb-4 p-3 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-200 dark:border-blue-800">
               <div className="flex items-center gap-2 text-blue-900 dark:text-blue-100">
                 <Globe className="w-4 h-4" />
@@ -1826,40 +1826,19 @@ export default function GalleryManagementNew() {
                   Image sélectionnée: {cropperLanguage === 'fr' ? '🇫🇷 Français' : '🇺🇸 English'}
                 </span>
               </div>
-              <div className="text-xs text-blue-800 dark:text-blue-200 font-mono mt-1 break-all">
-                {cropperLanguage === 'fr' ? selectedItem.image_url_fr : selectedItem.image_url_en}
-              </div>
-              {/* Enhanced Debug Info v1.0.104 */}
-              <div className="text-xs text-gray-600 mt-2 space-y-1">
-                <div>French URL: {selectedItem.image_url_fr || 'NOT SET'}</div>
-                <div>English URL: {selectedItem.image_url_en || 'NOT SET'}</div>
-                <div className="mt-2 p-2 bg-yellow-50 border border-yellow-200 rounded">
-                  <div className="font-semibold text-yellow-800">🔍 CROPPER DEBUG v1.0.104:</div>
-                  <div>Raw URL: {cropperLanguage === 'fr' ? selectedItem.image_url_fr : selectedItem.image_url_en}</div>
-                  <div>Full URL: {getFullUrl(cropperLanguage === 'fr' ? selectedItem.image_url_fr : selectedItem.image_url_en)}</div>
-                  <div>Language: {cropperLanguage}</div>
-                </div>
-              </div>
             </div>
             
             <SimpleImageCropper
               imageUrl={getFullUrl(cropperLanguage === 'fr' ? selectedItem.image_url_fr : selectedItem.image_url_en)}
               onSave={async (blob: Blob, cropSettings: any) => {
-                console.log(`🖼️ SIMPLE CROPPER v1.0.106: Starting save process for ${cropperLanguage} image`);
-                console.log(`🖼️ Source URL: ${cropperLanguage === 'fr' ? selectedItem.image_url_fr : selectedItem.image_url_en}`);
-                console.log(`🖼️ Blob size: ${blob.size} bytes`);
-                
                 try {
                   // Create FormData for upload
                   const formData = new FormData();
                   const filename = `static_${cropperLanguage}_${Date.now()}.jpg`;
                   formData.append('file', blob, filename);
-                  formData.append('language', cropperLanguage); // Add language information
+                  formData.append('language', cropperLanguage);
                   
-                  console.log(`🖼️ Uploading cropped image as: ${filename}`);
-                  
-                  // Upload the cropped image using correct endpoint
-                  console.log(`🚀 UPLOAD v1.0.107: Using /api/upload/image endpoint`);
+                  // Upload the cropped image
                   const uploadResponse = await fetch('/api/upload/image', {
                     method: 'POST',
                     body: formData
@@ -1870,23 +1849,17 @@ export default function GalleryManagementNew() {
                   }
                   
                   const uploadResult = await uploadResponse.json();
-                  console.log(`✅ Upload successful:`, uploadResult);
                   
                   // Update the gallery item with the new static image URL
-                  console.log(`🔧 UPDATING GALLERY ITEM: ${selectedItem.id} with static image URL (${cropperLanguage}): ${uploadResult.url}`);
-                  
-                  // Use correct language-specific field name and JSON format
                   const staticField = cropperLanguage === 'fr' ? 'static_image_url_fr' : 'static_image_url_en';
                   const updateData = {
                     [staticField]: uploadResult.url,
                     crop_settings: cropSettings,
-                    language: cropperLanguage // Include language for server processing
+                    language: cropperLanguage
                   };
                   
-                  console.log(`📊 Update data:`, updateData);
-                  
                   const updateResponse = await apiRequest(`/api/gallery/${selectedItem.id}`, 'PATCH', updateData);
-                  console.log(`✅ Gallery item updated:`, updateResponse);
+                  // Gallery item updated successfully
                   
                   // Close cropper and refresh data
                   setCropperOpen(false);
@@ -1903,15 +1876,6 @@ export default function GalleryManagementNew() {
                   });
                   
                 } catch (error) {
-                  console.error(`❌ SAVE ERROR v1.0.108: Complete error details:`, {
-                    error: error,
-                    message: error instanceof Error ? error.message : String(error),
-                    stack: error instanceof Error ? error.stack : 'No stack trace',
-                    timestamp: new Date().toISOString(),
-                    cropperLanguage: cropperLanguage,
-                    selectedItemId: selectedItem.id,
-                    blobSize: blob.size
-                  });
                   
                   toast({ 
                     title: "❌ Erreur", 
