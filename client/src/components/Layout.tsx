@@ -56,16 +56,16 @@ export function Layout({ children }: LayoutProps) {
               />
             </Link>
 
-            {/* Navigation Links */}
-            <div className="hidden md:flex space-x-8">
+            {/* Navigation Links - Hidden on mobile */}
+            <div className="hidden lg:flex space-x-6">
               {navigation.map((item) => (
                 <Link 
                   key={item.href} 
                   href={item.href}
                   className={`text-sm font-medium transition-colors ${
                     location === item.href
-                      ? 'text-blue-600 border-b-2 border-blue-600 pb-1'
-                      : 'text-gray-600 hover:text-gray-900'
+                      ? 'text-memopyk-navy border-b-2 border-memopyk-orange pb-1'
+                      : 'text-gray-600 hover:text-memopyk-navy'
                   }`}
                 >
                   {item.name}
@@ -110,8 +110,11 @@ export function Layout({ children }: LayoutProps) {
 
               {/* Mobile menu button - Enhanced with 44px touch target */}
               <button 
-                onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-                className="md:hidden p-3 rounded-md text-gray-600 hover:text-gray-900 hover:bg-gray-100 transition-colors min-w-[44px] min-h-[44px] flex items-center justify-center"
+                onClick={() => {
+                  console.log('Hamburger menu clicked! Current state:', isMobileMenuOpen);
+                  setIsMobileMenuOpen(!isMobileMenuOpen);
+                }}
+                className="lg:hidden p-3 rounded-md text-gray-600 hover:text-memopyk-navy hover:bg-gray-100 transition-colors min-w-[44px] min-h-[44px] flex items-center justify-center"
                 aria-label={isMobileMenuOpen ? "Close menu" : "Open menu"}
               >
                 {isMobileMenuOpen ? (
@@ -124,9 +127,9 @@ export function Layout({ children }: LayoutProps) {
           </div>
 
           {/* Enhanced Mobile Navigation - Slide Down Animation */}
-          <div className={`md:hidden transition-all duration-300 ease-in-out overflow-hidden ${
+          <div className={`lg:hidden transition-all duration-300 ease-in-out overflow-hidden ${
             isMobileMenuOpen 
-              ? 'max-h-96 opacity-100 border-t border-gray-200' 
+              ? 'max-h-96 opacity-100 border-t border-gray-200 bg-white' 
               : 'max-h-0 opacity-0'
           }`}>
             <div className="py-4 space-y-2">
