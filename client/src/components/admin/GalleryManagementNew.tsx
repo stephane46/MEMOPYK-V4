@@ -1986,11 +1986,22 @@ export default function GalleryManagementNew() {
                   await queryClient.refetchQueries({ queryKey: ['/api/gallery'] });
                   await queryClient.refetchQueries({ queryKey: ['/api/gallery', 'v1.0.110'] });
                   
-                  // Wait for query to complete, then force UI refresh
-                  setTimeout(() => {
+                  // Wait for query to complete, then force UI refresh and re-select item
+                  setTimeout(async () => {
+                    // Force a fresh data fetch
+                    await queryClient.invalidateQueries({ queryKey: ['/api/gallery'] });
+                    const freshData = await queryClient.fetchQuery({ queryKey: ['/api/gallery'] });
+                    console.log('🔍 FRESH DATA after update:', JSON.stringify(freshData, null, 2));
+                    
+                    // Find and re-select the updated item
+                    const updatedItem = (freshData as any[])?.find((item: any) => item.id === selectedItem.id);
+                    if (updatedItem) {
+                      setSelectedItem(updatedItem);
+                      console.log('🔍 UPDATED ITEM cropSettings:', JSON.stringify(updatedItem.cropSettings, null, 2));
+                    }
+                    
                     setForceRefreshKey(prev => prev + 1);
-                    console.log('🔍 AFTER REFRESH - selectedItem cropSettings:', (selectedItem as any)?.cropSettings);
-                  }, 200);
+                  }, 500);
                   
                   toast({ 
                     title: "✅ Succès", 
