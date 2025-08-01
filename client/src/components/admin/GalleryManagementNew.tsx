@@ -789,8 +789,8 @@ export default function GalleryManagementNew() {
                                     return activeCroppingState.hasChanges ? '✂️ Recadré FR*' : '✂️ Auto FR';
                                   }
                                   
-                                  // FIXED LOGIC: Only show badges when actual cropping was needed and performed
-                                  const cropSettings = (selectedItem as any).cropSettings;
+                                  // FIXED LOGIC: Check formData first (new uploads), then selectedItem (saved data)
+                                  const cropSettings = formData.cropSettings || (selectedItem as any).cropSettings;
                                   
                                   // New Sharp auto-cropping (only shows badge if cropping actually occurred)
                                   if (cropSettings?.method === 'sharp-auto-thumbnail' && cropSettings?.cropped === true) {
@@ -983,8 +983,11 @@ export default function GalleryManagementNew() {
                                     return activeCroppingState.hasChanges ? '✂️ Recadré EN*' : '✂️ Auto EN';
                                   }
                                   
-                                  // FIXED LOGIC: Only show badges when actual cropping was needed and performed
-                                  const cropSettings = (selectedItem as any).cropSettings;
+                                  // FIXED LOGIC: Check formData first (new uploads), then selectedItem (saved data)
+                                  const cropSettings = formData.cropSettings || (selectedItem as any).cropSettings;
+                                  console.log('🎯 BADGE CROP SETTINGS - formData.cropSettings:', formData.cropSettings);
+                                  console.log('🎯 BADGE CROP SETTINGS - selectedItem.cropSettings:', (selectedItem as any).cropSettings);
+                                  console.log('🎯 BADGE CROP SETTINGS - final cropSettings:', cropSettings);
                                   
                                   // New Sharp auto-cropping (only shows badge if cropping actually occurred)
                                   if (cropSettings?.method === 'sharp-auto-thumbnail' && cropSettings?.cropped === true) {
