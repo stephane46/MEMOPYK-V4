@@ -1,7 +1,9 @@
 import { ReactNode, useState, useEffect } from 'react';
 import { Link, useLocation } from 'wouter';
 import { useLanguage } from '../contexts/LanguageContext';
+import { useQuery } from '@tanstack/react-query';
 import { Menu, X } from 'lucide-react';
+import type { CtaSettings } from '@shared/schema';
 
 interface LayoutProps {
   children: ReactNode;
@@ -11,6 +13,11 @@ export function Layout({ children }: LayoutProps) {
   const { t, language, setLanguage, getLocalizedPath } = useLanguage();
   const [location] = useLocation();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+
+  // Fetch CTA settings for quote and appointment URLs
+  const { data: ctaSettings = [] } = useQuery<CtaSettings[]>({
+    queryKey: ['/api/cta']
+  });
 
   // Close mobile menu on route change
   useEffect(() => {
@@ -29,12 +36,54 @@ export function Layout({ children }: LayoutProps) {
       document.body.style.overflow = 'unset';
     };
   }, [isMobileMenuOpen]);
-  
+
+  // Get CTA URLs
+  const getCtaUrl = (id: string) => {
+    const cta = ctaSettings.find(c => c.id === id && c.isActive);
+    return cta?.buttonUrl || '#';
+  };
+
+  // Handle anchor scrolling
+  const handleAnchorClick = (sectionId: string) => {
+    // First navigate to home page if not already there
+    const cleanLocation = location.replace(/^\/(fr-FR|en-US)/, '') || '/';
+    if (cleanLocation !== '/') {
+      window.location.href = getLocalizedPath('/');
+      setTimeout(() => {
+        const element = document.getElementById(sectionId);
+        if (element) {
+          element.scrollIntoView({ behavior: 'smooth' });
+        }
+      }, 500);
+    } else {
+      const element = document.getElementById(sectionId);
+      if (element) {
+        element.scrollIntoView({ behavior: 'smooth' });
+      }
+    }
+  };
+
   const navigation = [
-    { name: t('nav.home'), href: getLocalizedPath('/') },
-    { name: t('nav.gallery'), href: getLocalizedPath('/gallery') },
-    { name: t('nav.contact'), href: getLocalizedPath('/contact') },
-    { name: t('nav.admin'), href: getLocalizedPath('/admin') },
+    { 
+      name: t('nav.how-it-works'), 
+      type: 'anchor', 
+      sectionId: 'how-it-works' 
+    },
+    { 
+      name: t('nav.gallery'), 
+      type: 'anchor', 
+      sectionId: 'gallery' 
+    },
+    { 
+      name: t('nav.quote'), 
+      type: 'external', 
+      href: getCtaUrl('quick_quote') 
+    },
+    { 
+      name: t('nav.appointment'), 
+      type: 'external', 
+      href: getCtaUrl('book_call') 
+    },
   ];
 
   const toggleLanguage = () => {
@@ -48,7 +97,7 @@ export function Layout({ children }: LayoutProps) {
         <div className="container mx-auto px-4">
           <div className="flex justify-between items-center h-16">
             {/* Logo */}
-            <Link href="/" className="flex items-center">
+            <Link href={getLocalizedPath('/')} className="flex items-center">
               <img 
                 src="/logo.svg" 
                 alt="MEMOPYK" 
@@ -58,19 +107,32 @@ export function Layout({ children }: LayoutProps) {
 
             {/* Navigation Links - Hidden on mobile */}
             <div className="hidden lg:flex space-x-6">
-              {navigation.map((item) => (
-                <Link 
-                  key={item.href} 
-                  href={item.href}
-                  className={`text-sm font-medium transition-colors ${
-                    location === item.href
-                      ? 'text-memopyk-navy border-b-2 border-memopyk-orange pb-1'
-                      : 'text-gray-600 hover:text-memopyk-navy'
-                  }`}
-                >
-                  {item.name}
-                </Link>
-              ))}
+              {navigation.map((item, index) => {
+                if (item.type === 'anchor') {
+                  return (
+                    <button
+                      key={`nav-${index}`}
+                      onClick={() => handleAnchorClick(item.sectionId)}
+                      className="text-sm font-medium transition-colors text-gray-600 hover:text-memopyk-navy cursor-pointer"
+                    >
+                      {item.name}
+                    </button>
+                  );
+                } else if (item.type === 'external') {
+                  return (
+                    <a
+                      key={`nav-${index}`}
+                      href={item.href}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-sm font-medium transition-colors text-gray-600 hover:text-memopyk-navy"
+                    >
+                      {item.name}
+                    </a>
+                  );
+                }
+                return null;
+              })}
             </div>
 
             {/* Language Toggle & Mobile Menu */}
@@ -133,19 +195,36 @@ export function Layout({ children }: LayoutProps) {
               : 'max-h-0 opacity-0'
           }`}>
             <div className="py-4 space-y-2">
-              {navigation.map((item) => (
-                <Link 
-                  key={item.href} 
-                  href={item.href}
-                  className={`block px-4 py-3 rounded-md text-base font-medium transition-all duration-200 min-h-[44px] flex items-center ${
-                    location === item.href
-                      ? 'text-memopyk-navy bg-memopyk-cream border-l-4 border-memopyk-orange'
-                      : 'text-gray-600 hover:text-memopyk-navy hover:bg-gray-50 hover:border-l-4 hover:border-memopyk-blue-gray'
-                  }`}
-                >
-                  {item.name}
-                </Link>
-              ))}
+              {navigation.map((item, index) => {
+                if (item.type === 'anchor') {
+                  return (
+                    <button
+                      key={`mobile-nav-${index}`}
+                      onClick={() => {
+                        handleAnchorClick(item.sectionId);
+                        setIsMobileMenuOpen(false);
+                      }}
+                      className="block w-full text-left px-4 py-3 rounded-md text-base font-medium transition-all duration-200 min-h-[44px] flex items-center text-gray-600 hover:text-memopyk-navy hover:bg-gray-50 hover:border-l-4 hover:border-memopyk-blue-gray"
+                    >
+                      {item.name}
+                    </button>
+                  );
+                } else if (item.type === 'external') {
+                  return (
+                    <a
+                      key={`mobile-nav-${index}`}
+                      href={item.href}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      onClick={() => setIsMobileMenuOpen(false)}
+                      className="block px-4 py-3 rounded-md text-base font-medium transition-all duration-200 min-h-[44px] flex items-center text-gray-600 hover:text-memopyk-navy hover:bg-gray-50 hover:border-l-4 hover:border-memopyk-blue-gray"
+                    >
+                      {item.name}
+                    </a>
+                  );
+                }
+                return null;
+              })}
             </div>
           </div>
         </div>
@@ -176,12 +255,45 @@ export function Layout({ children }: LayoutProps) {
             
             <div>
               <h4 className="font-semibold mb-4">
-                {language === 'fr-FR' ? 'Liens Rapides' : 'Quick Links'}
+                {language === 'fr-FR' ? 'Navigation' : 'Navigation'}
               </h4>
               <ul className="space-y-2 text-gray-400">
-                <li><Link href={getLocalizedPath('/')} className="hover:text-white">{t('nav.home')}</Link></li>
-                <li><Link href={getLocalizedPath('/gallery')} className="hover:text-white">{t('nav.gallery')}</Link></li>
-                <li><Link href={getLocalizedPath('/contact')} className="hover:text-white">{t('nav.contact')}</Link></li>
+                <li>
+                  <button 
+                    onClick={() => handleAnchorClick('how-it-works')}
+                    className="hover:text-white transition-colors"
+                  >
+                    {t('nav.how-it-works')}
+                  </button>
+                </li>
+                <li>
+                  <button 
+                    onClick={() => handleAnchorClick('gallery')}
+                    className="hover:text-white transition-colors"
+                  >
+                    {t('nav.gallery')}
+                  </button>
+                </li>
+                <li>
+                  <a 
+                    href={getCtaUrl('quick_quote')}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="hover:text-white transition-colors"
+                  >
+                    {t('nav.quote')}
+                  </a>
+                </li>
+                <li>
+                  <a 
+                    href={getCtaUrl('book_call')}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="hover:text-white transition-colors"
+                  >
+                    {t('nav.appointment')}
+                  </a>
+                </li>
               </ul>
             </div>
             

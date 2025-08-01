@@ -446,7 +446,7 @@ export default function GallerySection() {
   }
 
   return (
-    <section className="py-20 bg-gray-50 dark:bg-gray-900">
+    <section id="gallery" className="py-20 bg-gray-50 dark:bg-gray-900">
       <div className="container mx-auto px-4">
         {/* Header - Mobile Optimized */}
         <div className="text-center mb-8 sm:mb-12 lg:mb-16">

@@ -17,10 +17,10 @@ export const LanguageContext = createContext<LanguageContextType | undefined>(un
 const translations: Record<Language, Record<string, string>> = {
   'fr-FR': {
     'site.title': 'MEMOPYK - Films Mémoire',
-    'nav.home': 'Accueil',
+    'nav.how-it-works': 'Comment ça marche',
     'nav.gallery': 'Galerie',
-    'nav.contact': 'Contact',
-    'nav.admin': 'Administration',
+    'nav.quote': 'Devis',
+    'nav.appointment': 'Rendez-vous',
     'nav.language': 'Langue',
     'hero.title': 'Créateur de Films Mémoire',
     'hero.subtitle': 'Transformez vos moments précieux en films cinématographiques',
@@ -30,10 +30,10 @@ const translations: Record<Language, Record<string, string>> = {
   },
   'en-US': {
     'site.title': 'MEMOPYK - Memory Films',
-    'nav.home': 'Home',
+    'nav.how-it-works': 'How it works',
     'nav.gallery': 'Gallery',
-    'nav.contact': 'Contact',
-    'nav.admin': 'Admin',
+    'nav.quote': 'Quote',
+    'nav.appointment': 'Appointment',
     'nav.language': 'Language',
     'hero.title': 'Memory Film Creator',
     'hero.subtitle': 'Transform your precious moments into cinematic films',
