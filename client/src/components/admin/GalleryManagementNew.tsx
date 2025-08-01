@@ -676,13 +676,16 @@ export default function GalleryManagementNew() {
               </div>
 
               <div className="flex flex-col gap-8">
-                {/* French Row */}
-                <div className="flex flex-col lg:flex-row gap-8">
-                  <div className="flex-1">
-                    <h4 className="text-lg font-semibold text-[#011526] dark:text-[#F2EBDC] flex items-center gap-2 mb-4">
-                      <Image className="w-5 h-5" />
-                      Image Français
-                    </h4>
+                {/* Individual Language Sections - Only show when NOT using shared mode */}
+                {!formData.use_same_video && (
+                  <>
+                    {/* French Row */}
+                    <div className="flex flex-col lg:flex-row gap-8">
+                      <div className="flex-1">
+                        <h4 className="text-lg font-semibold text-[#011526] dark:text-[#F2EBDC] flex items-center gap-2 mb-4">
+                          <Image className="w-5 h-5" />
+                          Image Français
+                        </h4>
                     <div className="space-y-2">
                       <div className="flex items-center justify-between min-h-[2.5rem]">
                         <div className="flex items-center gap-2">
@@ -955,6 +958,8 @@ export default function GalleryManagementNew() {
                     </div>
                   </div>
                 </div>
+                  </>
+                )}
 
                 {/* Shared Cropping Interface */}
                 {formData.use_same_video && !isCreateMode && selectedItem && (selectedItem.image_url_en || selectedItem.image_url_fr) && (
