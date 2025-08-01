@@ -19,10 +19,15 @@ interface SimpleImageCropperProps {
   isOpen?: boolean;
 }
 
-const DraggableCover = ({ imageUrl, onPositionChange, previewRef, onCropChange }: { imageUrl: string; onPositionChange: (pos: { x: number; y: number }) => void; previewRef: React.RefObject<HTMLDivElement>; onCropChange?: () => void }) => {
+const DraggableCover = ({ imageUrl, onPositionChange, previewRef, onCropChange, initialPosition }: { imageUrl: string; onPositionChange: (pos: { x: number; y: number }) => void; previewRef: React.RefObject<HTMLDivElement>; onCropChange?: () => void; initialPosition: { x: number; y: number } }) => {
   const [isDragging, setIsDragging] = useState(false);
-  const [position, setPosition] = useState({ x: 50, y: 50 });
+  const [position, setPosition] = useState(initialPosition);
   const [imageLoaded, setImageLoaded] = useState(false);
+
+  // Update position when parent position changes
+  React.useEffect(() => {
+    setPosition(initialPosition);
+  }, [initialPosition.x, initialPosition.y]);
   
 
 
@@ -212,6 +217,7 @@ export default function SimpleImageCropper({ imageUrl, onSave, onCancel, onOpen,
             }}
             onCropChange={onCropChange}
             previewRef={previewRef}
+            initialPosition={position}
           />
         </div>
         
