@@ -404,7 +404,7 @@ export class HybridStorage implements HybridStorageInterface {
           is_active: item.isActive, // CRITICAL: This will have the correct database value
           created_at: item.createdAt,
           updated_at: item.updatedAt,
-          crop_settings: item.cropSettings
+          cropSettings: item.cropSettings
         }));
       }
     } catch (error) {

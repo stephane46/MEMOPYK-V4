@@ -292,8 +292,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
         video_filename: updates.video_filename,
         video_url_en: updates.video_url_en,
         title_en: updates.title_en,
+        cropSettings: updates.cropSettings,
         fullUpdates: updates
       });
+      console.log('🔍 CROP SETTINGS SERVER PATCH:', JSON.stringify(updates.cropSettings, null, 2));
       
       if (!itemId) {
         return res.status(400).json({ error: "Gallery item ID is required" });
