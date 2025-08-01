@@ -180,6 +180,9 @@ const persistentUploadState = {
   video_filename: '',
   video_filename_en: '', // Added separate EN video filename
   video_filename_fr: '', // Added separate FR video filename
+  static_image_url: '',
+  static_image_url_en: null as string | null,
+  static_image_url_fr: null as string | null,
   reset: () => {
     persistentUploadState.video_url_en = '';
     persistentUploadState.image_url_en = '';
@@ -188,6 +191,9 @@ const persistentUploadState = {
     persistentUploadState.video_filename = '';
     persistentUploadState.video_filename_en = '';
     persistentUploadState.video_filename_fr = '';
+    persistentUploadState.static_image_url = '';
+    persistentUploadState.static_image_url_en = null;
+    persistentUploadState.static_image_url_fr = null;
   }
 };
 
@@ -220,8 +226,6 @@ interface GalleryItem {
   video_orientation: string;
   image_url_en: string;
   image_url_fr: string;
-  static_image_url_en: string | null;
-  static_image_url_fr: string | null;
   static_image_url: string | null; // Legacy field
   static_image_url_en?: string | null; // English static image
   static_image_url_fr?: string | null; // French static image
@@ -311,6 +315,10 @@ export default function GalleryManagementNew() {
     image_url_en?: string;
     image_url_fr?: string;
     video_filename?: string;
+    static_image_url?: string;
+    static_image_url_en?: string;
+    static_image_url_fr?: string;
+    cropSettings?: any;
   }>({});
 
 
@@ -358,6 +366,9 @@ export default function GalleryManagementNew() {
     image_url_en: '',
     image_url_fr: '',
     static_image_url: '',
+    static_image_url_en: null as string | null,
+    static_image_url_fr: null as string | null,
+    cropSettings: null as any,
     is_active: true
   });
 
@@ -393,6 +404,9 @@ export default function GalleryManagementNew() {
         image_url_en: pendingPreviews.image_url_en || persistentUploadState.image_url_en || selectedItem.image_url_en || '',
         image_url_fr: pendingPreviews.image_url_fr || persistentUploadState.image_url_fr || selectedItem.image_url_fr || '',
         static_image_url: selectedItem.static_image_url || '',
+        static_image_url_en: selectedItem.static_image_url_en || null,
+        static_image_url_fr: selectedItem.static_image_url_fr || null,
+        cropSettings: selectedItem.cropSettings || null,
         is_active: selectedItem.is_active
       });
     } else if (isCreateMode) {
@@ -426,6 +440,9 @@ export default function GalleryManagementNew() {
         image_url_en: persistentUploadState.image_url_en || '',
         image_url_fr: persistentUploadState.image_url_fr || '',
         static_image_url: '',
+        static_image_url_en: null as string | null,
+        static_image_url_fr: null as string | null,
+        cropSettings: null as any,
         is_active: true
       });
     }
@@ -1604,8 +1621,8 @@ export default function GalleryManagementNew() {
                                   ...prev,
                                   image_url_en: result.url,
                                   // Set static image URLs based on shared mode
-                                  static_image_url_en: formData.use_same_video ? result.static_image_url : result.static_image_url,
-                                  static_image_url_fr: formData.use_same_video ? result.static_image_url : prev.static_image_url_fr,
+                                  static_image_url_en: formData.use_same_video ? result.static_image_url || null : result.static_image_url || null,
+                                  static_image_url_fr: formData.use_same_video ? result.static_image_url || null : prev.static_image_url_fr,
                                   // Store auto-crop settings for badge detection
                                   cropSettings: result.auto_crop_settings
                                 }));
