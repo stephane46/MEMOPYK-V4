@@ -464,15 +464,15 @@ export default function GalleryManagementNew() {
       queryClient.removeQueries({ queryKey: ['/api/gallery'] });
       
       // Also invalidate public gallery query specifically
-      queryClient.invalidateQueries({ queryKey: ['/api/gallery', 'v1.0.91'] });
-      queryClient.removeQueries({ queryKey: ['/api/gallery', 'v1.0.91'] });
+      queryClient.invalidateQueries({ queryKey: ['/api/gallery', 'v1.0.110'] });
+      queryClient.removeQueries({ queryKey: ['/api/gallery', 'v1.0.110'] });
       
       setPendingPreviews({}); // Clear pending previews after successful save
       
       // Force component re-render with cache refresh key update
       setTimeout(() => {
         queryClient.invalidateQueries({ queryKey: ['/api/gallery'] });
-        queryClient.invalidateQueries({ queryKey: ['/api/gallery', 'v1.0.91'] });
+        queryClient.invalidateQueries({ queryKey: ['/api/gallery', 'v1.0.110'] });
         setFormData({ ...formData }); // Force state update
         setForceRefreshKey(prev => prev + 1); // Force image refresh
         console.log(`🖼️ FORCE REFRESH KEY UPDATED: ${forceRefreshKey + 1}`);
@@ -727,7 +727,7 @@ export default function GalleryManagementNew() {
                                     
                                     // Refresh data - invalidate both admin and public gallery
                                     queryClient.invalidateQueries({ queryKey: ['/api/gallery'] });
-                                    queryClient.invalidateQueries({ queryKey: ['/api/gallery', 'v1.0.91'] });
+                                    queryClient.invalidateQueries({ queryKey: ['/api/gallery', 'v1.0.110'] });
                                     
                                     toast({ 
                                       title: "✅ Succès", 
@@ -886,7 +886,7 @@ export default function GalleryManagementNew() {
                                     
                                     // Refresh data - invalidate both admin and public gallery
                                     queryClient.invalidateQueries({ queryKey: ['/api/gallery'] });
-                                    queryClient.invalidateQueries({ queryKey: ['/api/gallery', 'v1.0.91'] });
+                                    queryClient.invalidateQueries({ queryKey: ['/api/gallery', 'v1.0.110'] });
                                     
                                     toast({ 
                                       title: "✅ Success", 
@@ -934,10 +934,12 @@ export default function GalleryManagementNew() {
                                   ? 'bg-emerald-500' 
                                   : 'bg-blue-500'
                               }`}>
-                                {(selectedItem as any).crop_settings?.method === 'triple-layer-white-bg' 
-                                  ? '✂️ Recadré EN' 
-                                  : '✂️ Auto EN'
-                                }
+                                {(() => {
+                                  console.log('🔍 BADGE DEBUG EN - crop_settings:', (selectedItem as any).crop_settings, 'method:', (selectedItem as any).crop_settings?.method);
+                                  return (selectedItem as any).crop_settings?.method === 'triple-layer-white-bg' 
+                                    ? '✂️ Recadré EN' 
+                                    : '✂️ Auto EN';
+                                })()}
                               </div>
                             )}
                           </>
@@ -1964,7 +1966,11 @@ export default function GalleryManagementNew() {
                         language: cropperLanguage
                       };
                   
+                  console.log('🔍 CROP SETTINGS DEBUG - Saving:', cropSettings);
+                  console.log('🔍 UPDATE DATA DEBUG:', updateData);
+                  
                   const updateResponse = await apiRequest(`/api/gallery/${selectedItem.id}`, 'PATCH', updateData);
+                  console.log('🔍 UPDATE RESPONSE DEBUG:', updateResponse);
                   // Gallery item updated successfully
                   
                   // Close cropper and refresh data
@@ -1972,9 +1978,9 @@ export default function GalleryManagementNew() {
                   
                   // Invalidate ALL gallery caches - admin and public site
                   queryClient.invalidateQueries({ queryKey: ['/api/gallery'] });
-                  queryClient.invalidateQueries({ queryKey: ['/api/gallery', 'v1.0.91'] });
+                  queryClient.invalidateQueries({ queryKey: ['/api/gallery', 'v1.0.110'] });
                   queryClient.removeQueries({ queryKey: ['/api/gallery'] });
-                  queryClient.removeQueries({ queryKey: ['/api/gallery', 'v1.0.91'] });
+                  queryClient.removeQueries({ queryKey: ['/api/gallery', 'v1.0.110'] });
                   
                   // Force component refresh by updating cache-busting key
                   queryClient.refetchQueries({ queryKey: ['/api/gallery'] });
