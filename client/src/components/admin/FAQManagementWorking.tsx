@@ -470,12 +470,7 @@ export default function FAQManagementWorking() {
     return acc;
   }, {} as Record<string, FAQ[]>);
   
-  console.log('🔍 Admin FAQ Debug:');
-  console.log('📊 Total FAQs loaded:', faqs.length);
-  console.log('📊 FAQs by section:', Object.keys(groupedFaqs).map(key => `${key}: ${groupedFaqs[key].length}`));
-  console.log('💰 Pricing FAQs:', groupedFaqs['ORDERS AND PAYMENT|COMMANDES ET PAIEMENT']?.map(f => ({id: f.id, question: f.question_fr.substring(0,30), active: f.is_active})));
-  console.log('🔑 All section keys:', Object.keys(groupedFaqs));
-  console.log('🚨 Orphaned FAQs check:', faqs.filter(faq => !sections.find(s => s.id === faq.section_id)).map(f => ({id: f.id, section_id: f.section_id, question: f.question_fr.substring(0,30)})));
+  // Admin FAQ ready
 
   // Create complete section list
   const allSections = sections.sort((a, b) => a.order_index - b.order_index);

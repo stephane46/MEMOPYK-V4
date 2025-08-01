@@ -61,29 +61,7 @@ export function LegalDocumentPage() {
     doc.type === documentType
   );
 
-  // Debug logging for Replit Preview
-  console.log('🔍 LEGAL DOCUMENT DEBUG:');
-  console.log('  - Requested URL param:', params?.docType);
-  console.log('  - Mapped document type:', documentType);
-  console.log('  - Available documents:', documents?.map(d => ({ type: d.type, isActive: d.isActive })));
-  console.log('  - Found matching document:', document ? 'YES' : 'NO');
-  console.log('  - Documents loaded:', documents ? documents.length : 'NONE');
-  
-  // Enhanced debug - show the exact match attempt
-  if (documents && documentType) {
-    const exactMatch = documents.find(doc => doc.type === documentType);
-    console.log('  - Exact type match found:', exactMatch ? 'YES' : 'NO');
-    if (exactMatch) {
-      console.log('  - Exact match isActive:', exactMatch.isActive);
-      console.log('  - Exact match type:', exactMatch.type);
-      console.log('  - Exact match title:', exactMatch.titleFr || (exactMatch as any).title_fr);
-    }
-    console.log('  - Looking for document type:', documentType);
-    console.log('  - All document types available:', documents.map(d => d.type));
-  }
-  
-  console.log('🔍 FINAL RESULT - Document found with isActive check:', document ? 'YES' : 'NO');
-  console.log('🔍 FINAL RESULT - Document found ignoring isActive:', documentAnyStatus ? 'YES' : 'NO');
+  // Legal document page ready
 
   if (!document) {
     return (

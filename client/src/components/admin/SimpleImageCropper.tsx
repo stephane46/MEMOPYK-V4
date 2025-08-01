@@ -1,92 +1,13 @@
 import React, { useState, useRef } from 'react';
 import { Button } from '@/components/ui/button';
 
-// Diagnostic helper: compares the previewed element vs the exported blob
-async function logDisplayDiagnostics(previewEl: HTMLElement | null, blobUrl: string) {
-  if (!previewEl) {
-    console.warn('[Diag] preview element is null');
-    return;
-  }
-
-  const cs = getComputedStyle(previewEl);
-  console.group('[Diag] Image Display Diagnostics');
-
-  // Basic computed style checks
-  console.log('mix-blend-mode:', cs.mixBlendMode);
-  console.log('opacity:', cs.opacity);
-  console.log('filter:', cs.filter);
-  console.log('background:', cs.background);
-  console.log('has ::before content:', getComputedStyle(previewEl, '::before').content);
-  console.log('has ::after content:', getComputedStyle(previewEl, '::after').content);
-
-  // Determine what image the preview is actually showing
-  let displayedUrl: string | null = null;
-  if (previewEl.tagName === 'IMG') {
-    displayedUrl = (previewEl as HTMLImageElement).src;
+// Minimal diagnostic helper
+function logBasicDiagnostics(success: boolean) {
+  if (success) {
+    console.log('✅ Image generation completed');
   } else {
-    const bg = cs.backgroundImage;
-    if (bg && bg.startsWith('url(')) {
-      displayedUrl = bg.slice(4, -1).replace(/["']/g, '');
-    }
+    console.warn('⚠️ Image generation failed');
   }
-  console.log('Displayed image URL:', displayedUrl);
-  console.log('Exported blob URL:', blobUrl);
-  if (displayedUrl === blobUrl) {
-    console.log('✅ Preview is using the exported blob.');
-  } else {
-    console.warn('⚠️ Preview is NOT using the exported blob (might be showing original source or something else).');
-  }
-
-  // Optional: compare average color of displayed vs blob image to detect visual alteration
-  const loadImage = (url: string) =>
-    new Promise<HTMLImageElement>((resolve, reject) => {
-      const img = new Image();
-      img.crossOrigin = 'anonymous';
-      img.onload = () => resolve(img);
-      img.onerror = () => reject(`Failed to load image: ${url}`);
-      img.src = url;
-    });
-
-  try {
-    if (displayedUrl) {
-      const [displayedImg, blobImg] = await Promise.all([loadImage(displayedUrl), loadImage(blobUrl)]);
-      const avgColor = (img: HTMLImageElement) => {
-        const c = document.createElement('canvas');
-        c.width = Math.min(50, img.naturalWidth);
-        c.height = Math.min(50, img.naturalHeight);
-        const ctx = c.getContext('2d')!;
-        ctx.drawImage(img, 0, 0, c.width, c.height);
-        const data = ctx.getImageData(0, 0, c.width, c.height).data;
-        let r = 0, g = 0, b = 0, count = 0;
-        for (let i = 0; i < data.length; i += 4) {
-          r += data[i];
-          g += data[i + 1];
-          b += data[i + 2];
-          count++;
-        }
-        return { r: r / count, g: g / count, b: b / count };
-      };
-      const avgDisplayed = avgColor(displayedImg);
-      const avgBlob = avgColor(blobImg);
-      console.log('Average RGB of displayed image:', avgDisplayed);
-      console.log('Average RGB of blob image:', avgBlob);
-      const diff = {
-        dr: Math.abs(avgDisplayed.r - avgBlob.r),
-        dg: Math.abs(avgDisplayed.g - avgBlob.g),
-        db: Math.abs(avgDisplayed.b - avgBlob.b),
-      };
-      console.log('Average color difference:', diff);
-      if (diff.dr > 5 || diff.dg > 5 || diff.db > 5) {
-        console.warn('[Diag] Significant average color difference; display may be altered or a different image is shown.');
-      } else {
-        console.log('[Diag] Displayed image and blob are similar in average color.');
-      }
-    }
-  } catch (e) {
-    console.warn('[Diag] Image comparison failed:', e);
-  }
-
-  console.groupEnd();
 }
 
 interface SimpleImageCropperProps {
@@ -100,7 +21,7 @@ const DraggableCover = ({ imageUrl, onPositionChange, previewRef }: { imageUrl: 
   const [position, setPosition] = useState({ x: 50, y: 50 });
   const [imageLoaded, setImageLoaded] = useState(false);
   
-  console.log(`🎯 DRAGGABLE COVER v1.0.105 - imageLoaded: ${imageLoaded}, imageUrl: ${imageUrl}`);
+
 
   const handleMouseDown = (e: React.MouseEvent) => {
     setIsDragging(true);
@@ -164,20 +85,11 @@ const DraggableCover = ({ imageUrl, onPositionChange, previewRef }: { imageUrl: 
         />
       )}
       
-      {/* Debug overlay to show image loading state */}
-      <div className="absolute top-2 left-2 bg-black bg-opacity-75 text-white text-xs px-2 py-1 rounded z-10">
-        {imageLoaded ? '✅ Image Loaded' : '⏳ Loading...'}
-      </div>
+
       <img
         src={imageUrl}
-        onLoad={() => {
-          console.log(`✅ DRAGGABLE COVER v1.0.105 - Image loaded successfully: ${imageUrl}`);
-          setImageLoaded(true);
-        }}
-        onError={(e) => {
-          console.error(`❌ DRAGGABLE COVER v1.0.105 - Image failed to load: ${imageUrl}`, e);
-          setImageLoaded(false);
-        }}
+        onLoad={() => setImageLoaded(true)}
+        onError={() => setImageLoaded(false)}
         style={{ display: 'none' }}
         alt=""
       />
@@ -191,18 +103,6 @@ const DraggableCover = ({ imageUrl, onPositionChange, previewRef }: { imageUrl: 
 };
 
 export default function SimpleImageCropper({ imageUrl, onSave, onCancel }: SimpleImageCropperProps) {
-  console.log(`🚀 SIMPLE CROPPER v1.0.104 - Component mounted with imageUrl: "${imageUrl}"`);
-  console.log(`🚀 URL type: ${typeof imageUrl}, Length: ${imageUrl?.length || 0}`);
-  console.log(`🚀 URL starts with http: ${imageUrl?.startsWith('http')}`);
-  console.log(`🚀 URL includes supabase: ${imageUrl?.includes('supabase.memopyk.org')}`);
-  
-  // Test if URL is accessible by testing in a new image
-  if (imageUrl) {
-    const testImg = new Image();
-    testImg.onload = () => console.log(`✅ SIMPLE CROPPER v1.0.104 - URL is accessible: ${imageUrl}`);
-    testImg.onerror = (e) => console.error(`❌ SIMPLE CROPPER v1.0.104 - URL failed to load: ${imageUrl}`, e);
-    testImg.src = imageUrl;
-  }
   const [loading, setLoading] = useState(false);
   const [position, setPosition] = useState({ x: 50, y: 50 });
   const previewRef = useRef<HTMLDivElement>(null);
@@ -211,9 +111,7 @@ export default function SimpleImageCropper({ imageUrl, onSave, onCancel }: Simpl
     setLoading(true);
     
     try {
-      console.log('🚀 SIMPLE IMAGE CROPPER: Starting basic canvas generation');
-      
-      // EXPERT FIX: Minimal canvas sequence for guaranteed white-backed JPEG
+      // Create canvas with white background
       const canvas = document.createElement('canvas');
       const ctx = canvas.getContext('2d')!;
       const dpr = window.devicePixelRatio || 1;
@@ -221,11 +119,11 @@ export default function SimpleImageCropper({ imageUrl, onSave, onCancel }: Simpl
       canvas.height = 200 * dpr;
       ctx.scale(dpr, dpr);
 
-      // TRIPLE WHITE BACKGROUND SYSTEM - Nuclear approach
+      // White background
       ctx.fillStyle = '#ffffff';
       ctx.fillRect(0, 0, 300, 200);
       
-      // Layer 2: ImageData pixel-level white fill
+      // Pixel-level white fill for JPEG export
       const imageData = ctx.createImageData(300, 200);
       for (let i = 0; i < imageData.data.length; i += 4) {
         imageData.data[i] = 255;     // Red
@@ -234,7 +132,6 @@ export default function SimpleImageCropper({ imageUrl, onSave, onCancel }: Simpl
         imageData.data[i + 3] = 255; // Alpha
       }
       ctx.putImageData(imageData, 0, 0);
-      console.log('✅ TRIPLE WHITE BACKGROUND: fillRect + ImageData pixel control applied');
       
       // Load image
       const img = document.createElement('img') as HTMLImageElement;
@@ -246,7 +143,7 @@ export default function SimpleImageCropper({ imageUrl, onSave, onCancel }: Simpl
         img.src = imageUrl;
       });
       
-      console.log('✅ Image loaded successfully');
+
       
       // Calculate positioning for cover effect
       const scale = Math.max(300 / img.naturalWidth, 200 / img.naturalHeight);
@@ -261,25 +158,11 @@ export default function SimpleImageCropper({ imageUrl, onSave, onCancel }: Simpl
       ctx.imageSmoothingEnabled = true;
       ctx.imageSmoothingQuality = 'high';
       ctx.drawImage(img, offsetX, offsetY, scaledWidth, scaledHeight);
-      console.log('✅ Image drawn on canvas');
       
       // Export as JPEG with maximum quality
       const blob = await new Promise<Blob>((resolve) => {
         canvas.toBlob((blob) => {
-          console.log('✅ Expert fix: JPEG blob created:', blob?.size, 'bytes');
-          // Create blob URL for direct inspection
-          const blobUrl = URL.createObjectURL(blob!);
-          console.log('🔍 DIRECT BLOB URL for inspection:', blobUrl);
-          console.log('📋 Open this URL in new tab to verify white background');
-          
-          // Run diagnostic helper after a short delay to allow any DOM updates
-          setTimeout(() => {
-            if (previewRef.current) {
-              previewRef.current.style.outline = '2px solid magenta';
-              logDisplayDiagnostics(previewRef.current, blobUrl);
-            }
-          }, 100);
-          
+          logBasicDiagnostics(!!blob);
           resolve(blob!);
         }, 'image/jpeg', 1.0);
       });
@@ -305,9 +188,7 @@ export default function SimpleImageCropper({ imageUrl, onSave, onCancel }: Simpl
   return (
     <div className="space-y-4">
       <div className="text-center">
-        <div className="mb-2 p-2 bg-green-100 border border-green-300 rounded">
-          <span className="text-green-800 font-bold">✅ EXPERT FIX APPLIED - Minimal Canvas Sequence</span>
-        </div>
+
         <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">
           Glissez pour repositionner l'image dans le cadre 300×200
         </p>

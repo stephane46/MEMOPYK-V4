@@ -228,12 +228,6 @@ interface GalleryItem {
 }
 
 export default function GalleryManagementNew() {
-  // VERSION: NEW-COMPONENT-v1.0.91 - LATEST UPLOAD PRIORITY FIX
-  console.log('🎯🎯🎯 GALLERYMANAGEMENTNEW v1.0.91 - LATEST UPLOAD PRIORITY! 🎯🎯🎯');
-  console.log('✅ This is the CORRECT modern component with language-specific uploads!');
-  console.log('🔥 French (blue) + English (green) sections should be visible!');
-  console.log('🎨 Toggle: "Utiliser la même vidéo pour FR et EN" controls layout!');
-  
   const { toast } = useToast();
   const frImageRef = useRef<HTMLImageElement>(null);
   const enImageRef = useRef<HTMLImageElement>(null);
@@ -254,31 +248,26 @@ export default function GalleryManagementNew() {
     // Priority 0: Real-time pending upload preview (highest priority)
     const pendingImageUrl = language === 'fr' ? pendingPreviews.image_url_fr : pendingPreviews.image_url_en;
     if (pendingImageUrl) {
-      console.log(`📸 REAL-TIME PREVIEW (${language.toUpperCase()}): ${pendingImageUrl} for ${item.title_en}`);
       return pendingImageUrl;
     }
     
     // Priority 1: Language-specific reframed image
     const staticImageUrl = language === 'fr' ? item.static_image_url_fr : item.static_image_url_en;
     if (staticImageUrl) {
-      console.log(`🖼️ USING REFRAMED IMAGE (${language.toUpperCase()}): ${staticImageUrl} for ${item.title_en}`);
       return staticImageUrl;
     }
     
     // Priority 2: Language-specific uploaded image
     const imageUrl = language === 'fr' ? item.image_url_fr : item.image_url_en;
     if (imageUrl) {
-      console.log(`🖼️ FALLBACK TO UPLOAD (${language.toUpperCase()}): ${imageUrl} for ${item.title_en}`);
       return imageUrl;
     }
     
     // Priority 3: Legacy static image (deprecated)
     if (item.static_image_url) {
-      console.log(`🖼️ LEGACY STATIC IMAGE: ${item.static_image_url} for ${item.title_en}`);
       return item.static_image_url;
     }
     
-    console.log(`🖼️ NO IMAGE AVAILABLE for ${item.title_en} in ${language.toUpperCase()}`);
     return '';
   };
 
@@ -287,19 +276,15 @@ export default function GalleryManagementNew() {
   
   const getImageUrlWithCacheBust = (filename: string) => {
     if (!filename) return '';
-    // Use super aggressive cache-busting with multiple parameters + component refresh key
+    // Use cache-busting with multiple parameters + component refresh key
     const timestamp = Date.now();
     const random = Math.random().toString(36).substring(7);
-    const componentKey = forceRefreshKey; // Changes when we need to force refresh
+    const componentKey = forceRefreshKey;
     
     if (filename.includes('http')) {
-      const url = `${filename}?bustCache=${timestamp}&version=${random}&refresh=${componentKey}&nocache=1&_=${Date.now()}`;
-      console.log(`🖼️ SUPER AGGRESSIVE CACHE-BUST URL v1.0.90: ${url}`);
-      return url;
+      return `${filename}?bustCache=${timestamp}&version=${random}&refresh=${componentKey}&nocache=1&_=${Date.now()}`;
     }
-    const url = `https://supabase.memopyk.org/storage/v1/object/public/memopyk-videos/${encodeURIComponent(filename)}?bustCache=${timestamp}&version=${random}&refresh=${componentKey}&nocache=1&_=${Date.now()}`;
-    console.log(`🖼️ SUPER AGGRESSIVE CACHE-BUST URL v1.0.90: ${url}`);
-    return url;
+    return `https://supabase.memopyk.org/storage/v1/object/public/memopyk-videos/${encodeURIComponent(filename)}?bustCache=${timestamp}&version=${random}&refresh=${componentKey}&nocache=1&_=${Date.now()}`;
   };
   const queryClient = useQueryClient();
   const [selectedVideoId, setSelectedVideoId] = useState<string | number | null>(null);
