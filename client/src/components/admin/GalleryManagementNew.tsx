@@ -458,12 +458,21 @@ export default function GalleryManagementNew() {
       apiRequest(`/api/gallery/${id}`, 'PATCH', data),
     onSuccess: () => {
       toast({ title: "✅ Succès", description: "Élément de galerie mis à jour avec succès" });
+      
+      // Invalidate ALL gallery queries - admin and public site
       queryClient.invalidateQueries({ queryKey: ['/api/gallery'] });
       queryClient.removeQueries({ queryKey: ['/api/gallery'] });
+      
+      // Also invalidate public gallery query specifically
+      queryClient.invalidateQueries({ queryKey: ['/api/gallery', 'v1.0.91'] });
+      queryClient.removeQueries({ queryKey: ['/api/gallery', 'v1.0.91'] });
+      
       setPendingPreviews({}); // Clear pending previews after successful save
+      
       // Force component re-render with cache refresh key update
       setTimeout(() => {
         queryClient.invalidateQueries({ queryKey: ['/api/gallery'] });
+        queryClient.invalidateQueries({ queryKey: ['/api/gallery', 'v1.0.91'] });
         setFormData({ ...formData }); // Force state update
         setForceRefreshKey(prev => prev + 1); // Force image refresh
         console.log(`🖼️ FORCE REFRESH KEY UPDATED: ${forceRefreshKey + 1}`);
