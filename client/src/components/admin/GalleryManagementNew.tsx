@@ -767,7 +767,7 @@ export default function GalleryManagementNew() {
                               }`}>
                                 {(selectedItem as any).crop_settings?.method === 'triple-layer-white-bg' 
                                   ? '✂️ Recadré FR' 
-                                  : '🤖 Auto FR'
+                                  : '✂️ Auto FR'
                                 }
                               </div>
                             )}
@@ -925,7 +925,7 @@ export default function GalleryManagementNew() {
                               }`}>
                                 {(selectedItem as any).crop_settings?.method === 'triple-layer-white-bg' 
                                   ? '✂️ Recadré EN' 
-                                  : '🤖 Auto EN'
+                                  : '✂️ Auto EN'
                                 }
                               </div>
                             )}
