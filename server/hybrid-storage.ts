@@ -261,10 +261,23 @@ export class HybridStorage implements HybridStorageInterface {
       throw new Error('Video not found');
     }
     
-    videos[videoIndex] = { ...videos[videoIndex], ...updates };
+    // Complete field mapping for Hero Videos
+    const updatedVideo = {
+      ...videos[videoIndex],
+      title_en: updates.title_en || videos[videoIndex].title_en,
+      title_fr: updates.title_fr || videos[videoIndex].title_fr,
+      url_en: updates.url_en || videos[videoIndex].url_en,
+      url_fr: updates.url_fr || videos[videoIndex].url_fr,
+      use_same_video: updates.use_same_video !== undefined ? updates.use_same_video : videos[videoIndex].use_same_video,
+      order_index: updates.order_index !== undefined ? updates.order_index : videos[videoIndex].order_index,
+      is_active: updates.is_active !== undefined ? updates.is_active : videos[videoIndex].is_active,
+      updated_at: new Date().toISOString()
+    };
+    
+    videos[videoIndex] = updatedVideo;
     this.saveJsonFile('hero-videos.json', videos);
     
-    return videos[videoIndex];
+    return updatedVideo;
   }
 
   async addHeroVideo(video: any): Promise<any> {
@@ -308,7 +321,7 @@ export class HybridStorage implements HybridStorageInterface {
         console.log(`✅ Hero Text: Found ${result.length} texts in PostgreSQL`);
         
         // Convert camelCase to snake_case for frontend compatibility with responsive font sizes
-        const formattedResult = result.map(item => ({
+        const formattedResult = result.map((item: any) => ({
           id: item.id,
           title_fr: item.titleFr,
           title_en: item.titleEn,
@@ -543,8 +556,9 @@ export class HybridStorage implements HybridStorageInterface {
           static_image_url: item.staticImageUrl,
           static_image_url_en: item.staticImageUrlEn,
           static_image_url_fr: item.staticImageUrlFr,
-          alt_text_en: item.altTextEn,
-          alt_text_fr: item.altTextFr,
+          // Note: alt_text fields not in current database schema - remove if needed
+          // alt_text_en: item.altTextEn,
+          // alt_text_fr: item.altTextFr,
           order_index: item.orderIndex,
           is_active: item.isActive, // CRITICAL: This will have the correct database value
           created_at: item.createdAt,
@@ -554,9 +568,9 @@ export class HybridStorage implements HybridStorageInterface {
       } else {
         console.log(`⚠️ DATABASE IS EMPTY - This could explain sync issues!`);
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error(`❌ DATABASE CONNECTION FAILED - This prevents cross-environment sync:`);
-      console.error(`❌ Error details:`, error.message);
+      console.error(`❌ Error details:`, error?.message || error);
       console.error(`❌ If you see this error, database connectivity is broken and changes won't sync between dev/production`);
     }
 
@@ -1081,12 +1095,20 @@ export class HybridStorage implements HybridStorageInterface {
   async updateLegalDocument(docId: string, updates: any): Promise<any> {
     // Try Supabase first
     try {
+      // Complete field mapping for Legal Documents
+      const updateData = {
+        type: updates.type,
+        title_en: updates.title_en,
+        title_fr: updates.title_fr,
+        content_en: updates.content_en,
+        content_fr: updates.content_fr,
+        is_active: updates.is_active !== undefined ? updates.is_active : true,
+        updated_at: new Date().toISOString()
+      };
+
       const { data, error } = await this.supabase
         .from('legal_documents')
-        .update({
-          ...updates,
-          updated_at: new Date().toISOString()
-        })
+        .update(updateData)
         .eq('id', docId)
         .select()
         .single();
@@ -1094,13 +1116,18 @@ export class HybridStorage implements HybridStorageInterface {
       if (!error && data) {
         console.log(`✅ Legal Document updated in Supabase:`, docId);
         
-        // Update JSON backup
+        // Update JSON backup with complete field mapping
         const docs = this.loadJsonFile('legal-documents.json');
         const docIndex = docs.findIndex((d: any) => d.id === docId);
         if (docIndex !== -1) {
           docs[docIndex] = {
-            ...docs[docIndex],
-            ...updates,
+            id: data.id,
+            type: data.type,
+            title_en: data.title_en,
+            title_fr: data.title_fr,
+            content_en: data.content_en,
+            content_fr: data.content_fr,
+            is_active: data.is_active,
             updated_at: data.updated_at
           };
           this.saveJsonFile('legal-documents.json', docs);
@@ -1114,7 +1141,7 @@ export class HybridStorage implements HybridStorageInterface {
       console.warn('⚠️ Legal Document: Database connection failed, using JSON fallback:', error);
     }
 
-    // Fallback to JSON
+    // Fallback to JSON with complete field mapping
     const docs = this.loadJsonFile('legal-documents.json');
     const docIndex = docs.findIndex((d: any) => d.id === docId);
     
@@ -1122,14 +1149,20 @@ export class HybridStorage implements HybridStorageInterface {
       throw new Error('Legal document not found');
     }
     
-    docs[docIndex] = {
+    const updatedDoc = {
       ...docs[docIndex],
-      ...updates,
+      type: updates.type || docs[docIndex].type,
+      title_en: updates.title_en || docs[docIndex].title_en,
+      title_fr: updates.title_fr || docs[docIndex].title_fr,
+      content_en: updates.content_en || docs[docIndex].content_en,
+      content_fr: updates.content_fr || docs[docIndex].content_fr,
+      is_active: updates.is_active !== undefined ? updates.is_active : docs[docIndex].is_active,
       updated_at: new Date().toISOString()
     };
     
+    docs[docIndex] = updatedDoc;
     this.saveJsonFile('legal-documents.json', docs);
-    return docs[docIndex];
+    return updatedDoc;
   }
 
   async deleteLegalDocument(docId: string): Promise<any> {
