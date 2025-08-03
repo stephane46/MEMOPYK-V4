@@ -681,6 +681,8 @@ export class HybridStorage implements HybridStorageInterface {
       const dbUpdateData: any = {};
       if (updateData.title_en !== undefined) dbUpdateData.titleEn = updateData.title_en;
       if (updateData.title_fr !== undefined) dbUpdateData.titleFr = updateData.title_fr;
+      if (updateData.price_en !== undefined) dbUpdateData.priceEn = updateData.price_en;
+      if (updateData.price_fr !== undefined) dbUpdateData.priceFr = updateData.price_fr;
       if (updateData.is_active !== undefined) dbUpdateData.isActive = updateData.is_active;
       if (updateData.video_filename !== undefined) dbUpdateData.videoFilename = updateData.video_filename;
       if (updateData.video_url_en !== undefined) dbUpdateData.videoUrlEn = updateData.video_url_en;
