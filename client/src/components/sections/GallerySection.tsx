@@ -1,3 +1,4 @@
+import React from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useState, useEffect } from "react";
 import { useLanguage } from "@/contexts/LanguageContext";
@@ -94,7 +95,7 @@ export default function GallerySection() {
   }, []);
   
   // 🚨 ULTIMATE CACHE BYPASS v1.0.111 - Force fresh data every time
-  const { data: galleryItems = [], isLoading, refetch } = useQuery<any[]>({
+  const { data: rawData = [], isLoading, refetch } = useQuery<any[]>({
     queryKey: ['/api/gallery', `refresh-${Date.now()}`], // Dynamic key forces new requests
     staleTime: 0, // Never consider data stale
     gcTime: 0, // Immediate garbage collection
@@ -102,46 +103,60 @@ export default function GallerySection() {
     refetchOnWindowFocus: true, // Refetch when window regains focus
     refetchInterval: 3000, // Poll every 3 seconds for immediate updates
     retry: false, // No retries to avoid delays
-    select: (data) => data
-      .filter(item => item.is_active)
-      .sort((a, b) => a.order_index - b.order_index)
-      .map(item => ({
-        // Convert snake_case API response to camelCase for TypeScript compatibility
-        id: item.id,
-        titleEn: item.title_en,
-        titleFr: item.title_fr,
-        priceEn: item.price_en,
-        priceFr: item.price_fr,
-        sourceEn: item.source_en,
-        sourceFr: item.source_fr,
-        durationEn: item.duration_en,
-        durationFr: item.duration_fr,
-        situationEn: item.situation_en,
-        situationFr: item.situation_fr,
-        storyEn: item.story_en,
-        storyFr: item.story_fr,
-        sorryMessageEn: item.sorry_message_en,
-        sorryMessageFr: item.sorry_message_fr,
-        formatPlatformEn: item.format_platform_en,
-        formatPlatformFr: item.format_platform_fr,
-        formatTypeEn: item.format_type_en,
-        formatTypeFr: item.format_type_fr,
-        videoUrlEn: item.video_url_en,
-        videoUrlFr: item.video_url_fr,
-        videoFilename: item.video_filename || item.video_url_en || item.video_url_fr, // TIMESTAMP PREFIX FIX
-        videoWidth: item.video_width,
-        videoHeight: item.video_height,
-        videoOrientation: item.video_orientation,
-        imageUrlEn: item.image_url_en,
-        imageUrlFr: item.image_url_fr,
-        staticImageUrlEn: item.static_image_url_en,
-        staticImageUrlFr: item.static_image_url_fr,
-        staticImageUrl: item.static_image_url, // Legacy field
-        useSameVideo: item.use_same_video, // Shared mode indicator
-        orderIndex: item.order_index,
-        isActive: item.is_active
-      }))
   });
+
+  // Process and transform data
+  const galleryItems = React.useMemo(() => {
+    console.log('🔍 RAW GALLERY DATA:', rawData);
+    console.log('🔍 FIRST ITEM DETAILS:', rawData[0]);
+    console.log('🔍 IS_ACTIVE STATUS:', rawData[0]?.is_active);
+    
+    const filteredData = rawData
+      .filter((item: any) => {
+        console.log(`🔍 FILTER CHECK: Item ${item.id} - is_active: ${item.is_active}`);
+        return item.is_active;
+      })
+      .sort((a: any, b: any) => a.order_index - b.order_index);
+    
+    console.log('🔍 FILTERED GALLERY ITEMS:', filteredData.length);
+    
+    return filteredData.map((item: any) => ({
+      // Convert snake_case API response to camelCase for TypeScript compatibility
+      id: item.id,
+      titleEn: item.title_en,
+      titleFr: item.title_fr,
+      priceEn: item.price_en,
+      priceFr: item.price_fr,
+      sourceEn: item.source_en,
+      sourceFr: item.source_fr,
+      durationEn: item.duration_en,
+      durationFr: item.duration_fr,
+      situationEn: item.situation_en,
+      situationFr: item.situation_fr,
+      storyEn: item.story_en,
+      storyFr: item.story_fr,
+      sorryMessageEn: item.sorry_message_en,
+      sorryMessageFr: item.sorry_message_fr,
+      formatPlatformEn: item.format_platform_en,
+      formatPlatformFr: item.format_platform_fr,
+      formatTypeEn: item.format_type_en,
+      formatTypeFr: item.format_type_fr,
+      videoUrlEn: item.video_url_en,
+      videoUrlFr: item.video_url_fr,
+      videoFilename: item.video_filename || item.video_url_en || item.video_url_fr, // TIMESTAMP PREFIX FIX
+      videoWidth: item.video_width,
+      videoHeight: item.video_height,
+      videoOrientation: item.video_orientation,
+      imageUrlEn: item.image_url_en,
+      imageUrlFr: item.image_url_fr,
+      staticImageUrlEn: item.static_image_url_en,
+      staticImageUrlFr: item.static_image_url_fr,
+      staticImageUrl: item.static_image_url, // Legacy field
+      useSameVideo: item.use_same_video, // Shared mode indicator
+      orderIndex: item.order_index,
+      isActive: item.is_active
+    }));
+  }, [rawData]);
 
   // Add gallery video logging similar to hero videos
   useEffect(() => {
