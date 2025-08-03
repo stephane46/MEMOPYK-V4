@@ -507,17 +507,10 @@ export default function GalleryManagementNew() {
       console.log("🔄 FORCING COMPLETE FORM REFRESH");
       const currentSelectedId = selectedVideoId;
       
-      // IMMEDIATE form data refresh - force input fields to re-render with updated values
-      console.log("💰 IMMEDIATE FORM UPDATE - Forcing input field refresh");
-      setFormRefreshKey(prev => prev + 1); // This forces input fields to re-render immediately
-      
-      // Force the data to refresh by invalidating the selected item cache
+      // Simple approach: Just refetch the data and let React handle the updates
+      console.log("💰 SIMPLE REFRESH - Just refetching data");
       setTimeout(() => {
-        console.log("🔄 Re-triggering form sync after cache refresh");
-        setSelectedVideoId(null);
-        setTimeout(() => {
-          setSelectedVideoId(currentSelectedId);
-        }, 100);
+        queryClient.refetchQueries({ queryKey: ['/api/gallery'] });
       }, 100);
       
       setPendingPreviews({}); // Clear pending previews after successful save
@@ -1151,9 +1144,8 @@ export default function GalleryManagementNew() {
                   <div>
                     <Label htmlFor="price_en">Prix</Label>
                     <Input
-                      key={`price_en_${selectedVideoId}_${formRefreshKey}`}
                       id="price_en"
-                      value={formData.price_en}
+                      value={formData.price_en || ''}
                       onChange={(e) => setFormData({ ...formData, price_en: e.target.value })}
                       className="bg-white dark:bg-gray-800"
                     />
@@ -1202,9 +1194,8 @@ export default function GalleryManagementNew() {
                   <div>
                     <Label htmlFor="price_fr">Prix</Label>
                     <Input
-                      key={`price_fr_${selectedVideoId}_${formRefreshKey}`}
                       id="price_fr"
-                      value={formData.price_fr}
+                      value={formData.price_fr || ''}
                       onChange={(e) => setFormData({ ...formData, price_fr: e.target.value })}
                       className="bg-white dark:bg-gray-800"
                     />
