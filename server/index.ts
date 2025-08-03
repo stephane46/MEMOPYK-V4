@@ -43,8 +43,8 @@ console.log("✅ Video cache system initialized - comprehensive request logging 
 const app = express();
 const server = createServer(app);
 
-// Add simple health check endpoint first (before any middleware)
-app.get('/', (req: Request, res: Response) => {
+// Add health check endpoint (not root path - that should serve the app)
+app.get('/api/health-check', (req: Request, res: Response) => {
   res.status(200).json({ 
     status: 'healthy', 
     timestamp: new Date().toISOString(),
@@ -208,8 +208,8 @@ app.use((req, res, next) => {
 
     // Proxy non-API requests to Vite dev server with error handling
     app.use((req, res, next) => {
-      if (req.path.startsWith("/api") || req.path === "/" || req.path === "/health") {
-        return next(); // Skip proxy for API routes and health checks
+      if (req.path.startsWith("/api")) {
+        return next(); // Skip proxy for API routes only
       }
       
       // Handle proxy with try-catch
@@ -233,18 +233,18 @@ app.use((req, res, next) => {
     // — Prod mode: serve static build
     const clientDist = path.resolve(process.cwd(), "dist");
     
-    // CRITICAL FIX: Only serve static files for non-API routes and non-health routes
+    // CRITICAL FIX: Only serve static files for non-API routes
     app.use((req, res, next) => {
-      if (req.path.startsWith("/api") || req.path === "/" || req.path === "/health") {
-        return next(); // Skip static serving for API routes and health checks
+      if (req.path.startsWith("/api")) {
+        return next(); // Skip static serving for API routes only
       }
       express.static(clientDist, { index: false })(req, res, next);
     });
     
-    // Only serve index.html for non-API routes (excluding health checks)
+    // Serve index.html for all non-API routes (SPA fallback)
     app.get("*", (req: Request, res: Response, next) => {
-      if (req.path.startsWith("/api") || req.path === "/" || req.path === "/health") {
-        return next(); // Let API routes and health checks be handled directly
+      if (req.path.startsWith("/api")) {
+        return next(); // Let API routes be handled directly
       }
       res.sendFile(path.join(clientDist, "index.html"));
     });
