@@ -377,9 +377,11 @@ export default function GalleryManagementNew() {
     is_active: true
   });
 
-  // Update form data when selected item changes
+  // Update form data when selected item changes - CRITICAL: Include galleryItems in dependencies
   useEffect(() => {
+    console.log("🔄 FORM SYNC TRIGGER - selectedItem:", selectedItem?.id, "price_en:", selectedItem?.price_en);
     if (selectedItem && !isCreateMode) {
+      console.log("🔄 UPDATING FORM DATA with price_en:", selectedItem.price_en);
       setFormData({
         title_en: selectedItem.title_en || '',
         title_fr: selectedItem.title_fr || '',
@@ -450,8 +452,9 @@ export default function GalleryManagementNew() {
         cropSettings: null as any,
         is_active: true
       });
+      console.log("✅ FORM DATA UPDATED with price_en:", selectedItem.price_en);
     }
-  }, [selectedItem, isCreateMode]);
+  }, [selectedItem, isCreateMode, galleryItems]); // CRITICAL: Add galleryItems as dependency
 
   // Auto-select first item when data loads OR when selected item no longer exists
   useEffect(() => {
@@ -499,12 +502,18 @@ export default function GalleryManagementNew() {
       queryClient.invalidateQueries({ queryKey: ['/api/gallery'] });
       queryClient.refetchQueries({ queryKey: ['/api/gallery'] });
       
-      // Force form refresh by temporarily clearing and resetting selectedVideoId
+      // Force complete form refresh by refetching and resetting state
+      console.log("🔄 FORCING COMPLETE FORM REFRESH");
       const currentSelectedId = selectedVideoId;
-      setSelectedVideoId(null);
+      
+      // Force the data to refresh by invalidating the selected item cache
       setTimeout(() => {
-        setSelectedVideoId(currentSelectedId);
-      }, 100);
+        console.log("🔄 Re-triggering form sync after cache refresh");
+        setSelectedVideoId(null);
+        setTimeout(() => {
+          setSelectedVideoId(currentSelectedId);
+        }, 50);
+      }, 50);
       
       setPendingPreviews({}); // Clear pending previews after successful save
       setForceRefreshKey(prev => prev + 1); // Force image refresh
