@@ -280,6 +280,7 @@ export default function GalleryManagementNew() {
 
   // Helper function to get image with cache-busting - SUPER AGGRESSIVE METHOD
   const [forceRefreshKey, setForceRefreshKey] = useState(0);
+  const [formRefreshKey, setFormRefreshKey] = useState(0); // Force form field refresh
   
   const getImageUrlWithCacheBust = (filename: string) => {
     if (!filename) return '';
@@ -454,7 +455,7 @@ export default function GalleryManagementNew() {
       });
       console.log("✅ FORM DATA UPDATED with price_en:", selectedItem.price_en);
     }
-  }, [selectedItem, isCreateMode, galleryItems]); // CRITICAL: Add galleryItems as dependency
+  }, [selectedItem?.id, selectedItem?.price_en, selectedItem?.price_fr, isCreateMode]); // Only depend on specific fields that matter
 
   // Auto-select first item when data loads OR when selected item no longer exists
   useEffect(() => {
@@ -506,14 +507,18 @@ export default function GalleryManagementNew() {
       console.log("🔄 FORCING COMPLETE FORM REFRESH");
       const currentSelectedId = selectedVideoId;
       
+      // IMMEDIATE form data refresh - force input fields to re-render with updated values
+      console.log("💰 IMMEDIATE FORM UPDATE - Forcing input field refresh");
+      setFormRefreshKey(prev => prev + 1); // This forces input fields to re-render immediately
+      
       // Force the data to refresh by invalidating the selected item cache
       setTimeout(() => {
         console.log("🔄 Re-triggering form sync after cache refresh");
         setSelectedVideoId(null);
         setTimeout(() => {
           setSelectedVideoId(currentSelectedId);
-        }, 50);
-      }, 50);
+        }, 100);
+      }, 100);
       
       setPendingPreviews({}); // Clear pending previews after successful save
       setForceRefreshKey(prev => prev + 1); // Force image refresh
@@ -1146,13 +1151,10 @@ export default function GalleryManagementNew() {
                   <div>
                     <Label htmlFor="price_en">Prix</Label>
                     <Input
-                      key={`price_en_${selectedVideoId}_${formData.price_en}`}
+                      key={`price_en_${selectedVideoId}_${formRefreshKey}`}
                       id="price_en"
                       value={formData.price_en}
-                      onChange={(e) => {
-                        console.log("💰 Price EN input changed to:", e.target.value);
-                        setFormData({ ...formData, price_en: e.target.value });
-                      }}
+                      onChange={(e) => setFormData({ ...formData, price_en: e.target.value })}
                       className="bg-white dark:bg-gray-800"
                     />
                   </div>
@@ -1200,13 +1202,10 @@ export default function GalleryManagementNew() {
                   <div>
                     <Label htmlFor="price_fr">Prix</Label>
                     <Input
-                      key={`price_fr_${selectedVideoId}_${formData.price_fr}`}
+                      key={`price_fr_${selectedVideoId}_${formRefreshKey}`}
                       id="price_fr"
                       value={formData.price_fr}
-                      onChange={(e) => {
-                        console.log("💰 Price FR input changed to:", e.target.value);
-                        setFormData({ ...formData, price_fr: e.target.value });
-                      }}
+                      onChange={(e) => setFormData({ ...formData, price_fr: e.target.value })}
                       className="bg-white dark:bg-gray-800"
                     />
                   </div>
