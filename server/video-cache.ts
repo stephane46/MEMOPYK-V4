@@ -31,8 +31,14 @@ export class VideoCache {
       // Skip automatic cleanup - manual management preferred for small video set
       console.log(`📋 Manual cache management enabled for max 6 videos (3 hero + 3 gallery)`);
       
-      // Immediate preloading to ensure first visitors get instant performance
-      this.immediatePreloadCriticalAssets();
+      // Skip immediate preloading during deployment to improve health check response time
+      if (process.env.NODE_ENV === 'production') {
+        console.log(`⚡ Production mode: Skipping immediate preload for faster health checks`);
+        console.log(`📋 Videos will be cached on first request instead`);
+      } else {
+        // Immediate preloading only in development
+        this.immediatePreloadCriticalAssets();
+      }
     } catch (error: any) {
       console.error(`❌ Cache directory creation failed: ${error.message}`);
       console.error(`❌ Video cache dir path: ${this.videoCacheDir}`);

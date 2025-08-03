@@ -42,6 +42,7 @@ Preferred communication style: Simple, everyday language.
 - **Real-time Analytics**: Backend system for tracking visitors, performance, and engagement, with IP management tools.
 - **Direct Supabase Upload System**: Bypasses deployment limits for large file uploads.
 - **SEO Management System**: Comprehensive interface for page-level meta tags, keywords, redirects, image SEO, and global settings.
+- **Deployment Optimizations**: Fast health check endpoints (/ and /health), production video cache preloading disabled for faster startup, optimized server timeouts, proper routing priorities to prevent static file serving interference.
 
 ## External Dependencies
 

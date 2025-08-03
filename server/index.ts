@@ -43,6 +43,15 @@ console.log("✅ Video cache system initialized - comprehensive request logging 
 const app = express();
 const server = createServer(app);
 
+// Add simple health check endpoint first (before any middleware)
+app.get('/', (req: Request, res: Response) => {
+  res.status(200).json({ 
+    status: 'healthy', 
+    timestamp: new Date().toISOString(),
+    version: '1.0.50'
+  });
+});
+
 // 🔍 ABSOLUTE FIRST MIDDLEWARE: Log EVERY request that reaches Express
 app.use((req, res, next) => {
   console.log(`🚨 ABSOLUTE REQUEST INTERCEPTOR v1.0.50: ${req.method} ${req.url}`);
@@ -167,6 +176,16 @@ app.use((req, res, next) => {
 (async () => {
   // 1) Register API routes FIRST - before any static file handling
   registerRoutes(app);
+  
+  // Add health check endpoint after API routes for better organization
+  app.get('/health', (req: Request, res: Response) => {
+    res.status(200).json({ 
+      status: 'healthy', 
+      timestamp: new Date().toISOString(),
+      version: '1.0.50',
+      uptime: process.uptime()
+    });
+  });
 
   // 2) Frontend handling
   if (process.env.NODE_ENV !== "production") {
@@ -189,8 +208,8 @@ app.use((req, res, next) => {
 
     // Proxy non-API requests to Vite dev server with error handling
     app.use((req, res, next) => {
-      if (req.path.startsWith("/api")) {
-        return next(); // Skip proxy for API routes
+      if (req.path.startsWith("/api") || req.path === "/" || req.path === "/health") {
+        return next(); // Skip proxy for API routes and health checks
       }
       
       // Handle proxy with try-catch
@@ -214,18 +233,18 @@ app.use((req, res, next) => {
     // — Prod mode: serve static build
     const clientDist = path.resolve(process.cwd(), "dist");
     
-    // CRITICAL FIX: Only serve static files for non-API routes
+    // CRITICAL FIX: Only serve static files for non-API routes and non-health routes
     app.use((req, res, next) => {
-      if (req.path.startsWith("/api")) {
-        return next(); // Skip static serving for API routes
+      if (req.path.startsWith("/api") || req.path === "/" || req.path === "/health") {
+        return next(); // Skip static serving for API routes and health checks
       }
       express.static(clientDist, { index: false })(req, res, next);
     });
     
-    // Only serve index.html for non-API routes
+    // Only serve index.html for non-API routes (excluding health checks)
     app.get("*", (req: Request, res: Response, next) => {
-      if (req.path.startsWith("/api")) {
-        return next(); // Let API routes be handled by registerRoutes
+      if (req.path.startsWith("/api") || req.path === "/" || req.path === "/health") {
+        return next(); // Let API routes and health checks be handled directly
       }
       res.sendFile(path.join(clientDist, "index.html"));
     });
@@ -245,8 +264,15 @@ app.use((req, res, next) => {
 
   // 4) Start server
   const port = parseInt(process.env.PORT || "5000", 10);
+  
+  // Set server timeout for production deployments
+  server.timeout = 30000; // 30 seconds timeout for requests
+  server.headersTimeout = 31000; // Slightly higher than server timeout
+  server.keepAliveTimeout = 5000; // Keep alive timeout
+  
   server.listen(port, "0.0.0.0", () => {
     log(`MEMOPYK Server running on port ${port}`);
+    log(`Health check: http://localhost:${port}/`);
     log(`API endpoints: http://localhost:${port}/api`);
     if (process.env.NODE_ENV !== "production") {
       log(`Dev frontend: http://localhost:${port} (proxied to Vite)`);
