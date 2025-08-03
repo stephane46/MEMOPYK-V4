@@ -65,10 +65,10 @@ export default function GallerySection() {
   
   // 🚨 CACHE SYNCHRONIZATION FIX v1.0.111 - Browser storage cache busting
   useEffect(() => {
-    console.log("🚨 CACHE SYNCHRONIZATION FIX v1.0.111");
-    console.log("✅ Public site now uses same cache key as admin");
-    console.log("📋 Cache invalidation synchronized between admin and public");
-    console.log("🎯 Gallery data loading with synchronized query keys + polling");
+    console.log("🚨 CACHE SYNCHRONIZATION FIX v1.0.112");
+    console.log("✅ Cache properly configured for F5 refresh synchronization");
+    console.log("📋 Data refreshes on page load and window focus");
+    console.log("🎯 Efficient caching with 5-minute staleness");
     
     // Clear any browser-cached gallery data on component mount
     const clearBrowserCache = () => {
@@ -94,15 +94,14 @@ export default function GallerySection() {
     clearBrowserCache();
   }, []);
   
-  // 🚨 ULTIMATE CACHE BYPASS v1.0.111 - Force fresh data every time
+  // 🚨 CACHE SYNCHRONIZATION FIX v1.0.112 - Efficient cache invalidation
   const { data: rawData = [], isLoading, refetch } = useQuery<any[]>({
-    queryKey: ['/api/gallery', `refresh-${Date.now()}`], // Dynamic key forces new requests
-    staleTime: 0, // Never consider data stale
-    gcTime: 0, // Immediate garbage collection
-    refetchOnMount: 'always', // Always refetch on mount
+    queryKey: ['/api/gallery'], // Static key for normal caching
+    staleTime: 5 * 60 * 1000, // Consider data fresh for 5 minutes
+    gcTime: 10 * 60 * 1000, // Keep in cache for 10 minutes
+    refetchOnMount: 'always', // Always refetch on mount (F5 refresh)
     refetchOnWindowFocus: true, // Refetch when window regains focus
-    refetchInterval: 3000, // Poll every 3 seconds for immediate updates
-    retry: false, // No retries to avoid delays
+    retry: 1, // Single retry on failure
   });
 
   // Process and transform data
