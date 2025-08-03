@@ -479,7 +479,7 @@ export default function GalleryManagementNew() {
     onSuccess: () => {
       toast({ title: "✅ Succès", description: "Élément de galerie créé avec succès" });
       // Invalidate gallery cache
-      queryClient.invalidateQueries({ queryKey: ['/api/gallery', 'v1.0.110'] });
+      queryClient.invalidateQueries({ queryKey: ['/api/gallery'] });
       persistentUploadState.reset();
       setIsCreateMode(false);
       setPendingPreviews({}); // Clear pending previews after successful save
@@ -535,8 +535,8 @@ export default function GalleryManagementNew() {
       console.log(`✅ FRONTEND: Delete successful - Response:`, response);
       
       // Clear all related caches aggressively
-      queryClient.removeQueries({ queryKey: ['/api/gallery', 'v1.0.110'] });
-      queryClient.invalidateQueries({ queryKey: ['/api/gallery', 'v1.0.110'] });
+      queryClient.removeQueries({ queryKey: ['/api/gallery'] });
+      queryClient.invalidateQueries({ queryKey: ['/api/gallery'] });
       
       // Reset selected item to first available item
       setSelectedVideoId(null);
