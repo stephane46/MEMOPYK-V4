@@ -328,9 +328,10 @@ export default function GalleryManagementNew() {
 
 
   // 🚨 ADMIN CACHE BYPASS v1.0.111 - Force fresh data for admin
+  // 🚨 ADMIN CACHE SYNCHRONIZATION FIX v1.0.113 - Fixed admin cache key
   const { data: galleryItems = [], isLoading } = useQuery<GalleryItem[]>({
-    queryKey: ['/api/gallery', `admin-${Date.now()}`], // Dynamic key forces fresh data
-    staleTime: 0, // Never consider data stale
+    queryKey: ['/api/gallery'], // Use same key as public site for cache consistency
+    staleTime: 0, // Admin always gets fresh data
     gcTime: 0, // Immediate garbage collection
     refetchOnMount: 'always', // Always refetch on mount
     refetchOnWindowFocus: true, // Refetch when window regains focus
