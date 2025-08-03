@@ -1146,9 +1146,13 @@ export default function GalleryManagementNew() {
                   <div>
                     <Label htmlFor="price_en">Prix</Label>
                     <Input
+                      key={`price_en_${selectedVideoId}_${formData.price_en}`}
                       id="price_en"
                       value={formData.price_en}
-                      onChange={(e) => setFormData({ ...formData, price_en: e.target.value })}
+                      onChange={(e) => {
+                        console.log("💰 Price EN input changed to:", e.target.value);
+                        setFormData({ ...formData, price_en: e.target.value });
+                      }}
                       className="bg-white dark:bg-gray-800"
                     />
                   </div>
@@ -1196,9 +1200,13 @@ export default function GalleryManagementNew() {
                   <div>
                     <Label htmlFor="price_fr">Prix</Label>
                     <Input
+                      key={`price_fr_${selectedVideoId}_${formData.price_fr}`}
                       id="price_fr"
                       value={formData.price_fr}
-                      onChange={(e) => setFormData({ ...formData, price_fr: e.target.value })}
+                      onChange={(e) => {
+                        console.log("💰 Price FR input changed to:", e.target.value);
+                        setFormData({ ...formData, price_fr: e.target.value });
+                      }}
                       className="bg-white dark:bg-gray-800"
                     />
                   </div>
