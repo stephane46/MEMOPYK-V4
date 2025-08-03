@@ -32,7 +32,7 @@ Preferred communication style: Simple, everyday language.
 - **Session Management**: Express sessions with PostgreSQL store
 
 ### Key Architectural Decisions
-- **Hybrid Storage System**: JSON fallback for all data, complementing PostgreSQL.
+- **Hybrid Storage System**: JSON fallback for all data, complementing PostgreSQL. Complete field mapping ensures all 36 database columns sync properly between environments.
 - **Universal Video Proxy**: Handles all video serving, range requests, local caching, and fallback to Supabase CDN.
 - **Image Proxy**: Manages image loading, resolves CORS issues, prioritizes static cropped images.
 - **Cache Management**: Smart caching for hero videos (immediate preload). Gallery videos use direct CDN streaming for production reliability.
