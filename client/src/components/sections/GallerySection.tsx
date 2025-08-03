@@ -62,19 +62,45 @@ export default function GallerySection() {
     return () => window.removeEventListener('resize', checkMobile);
   }, []);
   
-  // 🚨 CACHE SYNCHRONIZATION FIX v1.0.110
+  // 🚨 CACHE SYNCHRONIZATION FIX v1.0.111 - Browser storage cache busting
   useEffect(() => {
-    console.log("🚨 CACHE SYNCHRONIZATION FIX v1.0.110");
+    console.log("🚨 CACHE SYNCHRONIZATION FIX v1.0.111");
     console.log("✅ Public site now uses same cache key as admin");
     console.log("📋 Cache invalidation synchronized between admin and public");
-    console.log("🎯 Gallery data loading with synchronized query keys");
+    console.log("🎯 Gallery data loading with synchronized query keys + polling");
+    
+    // Clear any browser-cached gallery data on component mount
+    const clearBrowserCache = () => {
+      try {
+        // Clear localStorage items that might cache gallery data
+        Object.keys(localStorage).forEach(key => {
+          if (key.includes('gallery') || key.includes('react-query')) {
+            localStorage.removeItem(key);
+          }
+        });
+        // Clear sessionStorage as well
+        Object.keys(sessionStorage).forEach(key => {
+          if (key.includes('gallery') || key.includes('react-query')) {
+            sessionStorage.removeItem(key);
+          }
+        });
+        console.log("🧹 Browser cache cleared for gallery data");
+      } catch (e) {
+        console.warn("Cache clear failed:", e);
+      }
+    };
+    
+    clearBrowserCache();
   }, []);
   
   // Fetch active gallery items with type conversion from snake_case API
   const { data: galleryItems = [], isLoading } = useQuery<any[]>({
     queryKey: ['/api/gallery', 'v1.0.110'], // Synchronized cache key with admin interface
-    staleTime: 0, // Always refetch to get latest static images
+    staleTime: 0, // Always refetch to get latest static images  
     gcTime: 0, // Don't cache to ensure fresh data
+    refetchOnMount: true, // Always refetch when component mounts
+    refetchOnWindowFocus: true, // Refetch when window regains focus
+    refetchInterval: 5000, // Poll every 5 seconds for production updates
     select: (data) => data
       .filter(item => item.is_active)
       .sort((a, b) => a.order_index - b.order_index)

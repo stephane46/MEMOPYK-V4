@@ -487,19 +487,29 @@ export default function GalleryManagementNew() {
     onSuccess: () => {
       toast({ title: "✅ Succès", description: "Élément de galerie mis à jour avec succès" });
       
-      // Invalidate gallery cache so changes appear everywhere
+      // 🚨 PRODUCTION CACHE INVALIDATION v1.0.111 - Force public site refresh
+      console.log("💰 PRICE UPDATE CACHE INVALIDATION v1.0.111");
+      console.log("🔄 Clearing ALL gallery caches for immediate public site update");
+      
+      // Step 1: Remove all cached queries completely
+      queryClient.removeQueries({ queryKey: ['/api/gallery'] });
+      queryClient.invalidateQueries({ queryKey: ['/api/gallery'] });
+      
+      // Step 2: Force refetch with specific cache key
       queryClient.invalidateQueries({ queryKey: ['/api/gallery', 'v1.0.110'] });
-      queryClient.removeQueries({ queryKey: ['/api/gallery', 'v1.0.110'] });
+      queryClient.refetchQueries({ queryKey: ['/api/gallery', 'v1.0.110'] });
       
       setPendingPreviews({}); // Clear pending previews after successful save
       
-      // Force component re-render with cache refresh key update  
+      // Step 3: Delayed second invalidation for production sync
       setTimeout(() => {
-        queryClient.invalidateQueries({ queryKey: ['/api/gallery', 'v1.0.110'] }); // Synchronized cache
-        setFormData({ ...formData }); // Force state update
+        console.log("🔄 Second wave cache invalidation for production sync");
+        queryClient.removeQueries({ queryKey: ['/api/gallery'] });
+        queryClient.invalidateQueries({ queryKey: ['/api/gallery', 'v1.0.110'] });
+        queryClient.refetchQueries({ queryKey: ['/api/gallery', 'v1.0.110'] });
         setForceRefreshKey(prev => prev + 1); // Force image refresh
         console.log(`🖼️ FORCE REFRESH KEY UPDATED: ${forceRefreshKey + 1}`);
-      }, 500);
+      }, 1000);
       persistentUploadState.reset();
     },
     onError: (error: any) => {
