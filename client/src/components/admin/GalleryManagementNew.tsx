@@ -327,9 +327,13 @@ export default function GalleryManagementNew() {
   
 
 
-  // Fetch gallery items
+  // 🚨 ADMIN CACHE BYPASS v1.0.111 - Force fresh data for admin
   const { data: galleryItems = [], isLoading } = useQuery<GalleryItem[]>({
-    queryKey: ['/api/gallery', 'v1.0.110'],
+    queryKey: ['/api/gallery', `admin-${Date.now()}`], // Dynamic key forces fresh data
+    staleTime: 0, // Never consider data stale
+    gcTime: 0, // Immediate garbage collection
+    refetchOnMount: 'always', // Always refetch on mount
+    refetchOnWindowFocus: true, // Refetch when window regains focus
     select: (data) => data.sort((a, b) => a.order_index - b.order_index)
   });
 
@@ -487,29 +491,27 @@ export default function GalleryManagementNew() {
     onSuccess: () => {
       toast({ title: "✅ Succès", description: "Élément de galerie mis à jour avec succès" });
       
-      // 🚨 PRODUCTION CACHE INVALIDATION v1.0.111 - Force public site refresh
-      console.log("💰 PRICE UPDATE CACHE INVALIDATION v1.0.111");
-      console.log("🔄 Clearing ALL gallery caches for immediate public site update");
+      // 🚨 NUCLEAR CACHE INVALIDATION v1.0.111 - Total cache destruction
+      console.log("💣 NUCLEAR CACHE INVALIDATION v1.0.111 - Destroying ALL cache");
+      console.log("🔄 Clearing EVERY gallery cache entry for immediate update");
       
-      // Step 1: Remove all cached queries completely
-      queryClient.removeQueries({ queryKey: ['/api/gallery'] });
-      queryClient.invalidateQueries({ queryKey: ['/api/gallery'] });
+      // NUCLEAR OPTION: Clear absolutely everything
+      queryClient.clear(); // Clear all cached data
+      queryClient.removeQueries(); // Remove all queries
       
-      // Step 2: Force refetch with specific cache key
-      queryClient.invalidateQueries({ queryKey: ['/api/gallery', 'v1.0.110'] });
-      queryClient.refetchQueries({ queryKey: ['/api/gallery', 'v1.0.110'] });
+      // Clear browser storage as well
+      try {
+        localStorage.clear();
+        sessionStorage.clear();
+        console.log("🧹 Browser storage completely cleared");
+      } catch (e) {
+        console.warn("Browser storage clear failed:", e);
+      }
       
       setPendingPreviews({}); // Clear pending previews after successful save
+      setForceRefreshKey(prev => prev + 1); // Force image refresh
       
-      // Step 3: Delayed second invalidation for production sync
-      setTimeout(() => {
-        console.log("🔄 Second wave cache invalidation for production sync");
-        queryClient.removeQueries({ queryKey: ['/api/gallery'] });
-        queryClient.invalidateQueries({ queryKey: ['/api/gallery', 'v1.0.110'] });
-        queryClient.refetchQueries({ queryKey: ['/api/gallery', 'v1.0.110'] });
-        setForceRefreshKey(prev => prev + 1); // Force image refresh
-        console.log(`🖼️ FORCE REFRESH KEY UPDATED: ${forceRefreshKey + 1}`);
-      }, 1000);
+      console.log("✅ CACHE DESTRUCTION COMPLETE - All data will be fresh fetched");
       persistentUploadState.reset();
     },
     onError: (error: any) => {

@@ -93,14 +93,15 @@ export default function GallerySection() {
     clearBrowserCache();
   }, []);
   
-  // Fetch active gallery items with type conversion from snake_case API
-  const { data: galleryItems = [], isLoading } = useQuery<any[]>({
-    queryKey: ['/api/gallery', 'v1.0.110'], // Synchronized cache key with admin interface
-    staleTime: 0, // Always refetch to get latest static images  
-    gcTime: 0, // Don't cache to ensure fresh data
-    refetchOnMount: true, // Always refetch when component mounts
+  // 🚨 ULTIMATE CACHE BYPASS v1.0.111 - Force fresh data every time
+  const { data: galleryItems = [], isLoading, refetch } = useQuery<any[]>({
+    queryKey: ['/api/gallery', `refresh-${Date.now()}`], // Dynamic key forces new requests
+    staleTime: 0, // Never consider data stale
+    gcTime: 0, // Immediate garbage collection
+    refetchOnMount: 'always', // Always refetch on mount
     refetchOnWindowFocus: true, // Refetch when window regains focus
-    refetchInterval: 5000, // Poll every 5 seconds for production updates
+    refetchInterval: 3000, // Poll every 3 seconds for immediate updates
+    retry: false, // No retries to avoid delays
     select: (data) => data
       .filter(item => item.is_active)
       .sort((a, b) => a.order_index - b.order_index)

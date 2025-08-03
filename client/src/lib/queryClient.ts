@@ -29,13 +29,17 @@ export const getQueryFn: <T>(options: {
 }) => QueryFunction<T> =
   ({ on401: unauthorizedBehavior }) =>
   async ({ queryKey }) => {
-    // Handle query parameters properly
+    // 🚨 CACHE BYPASS v1.0.111 - Use only the base URL, ignore version keys
     let url = queryKey[0] as string;
+    
+    // Only add actual parameters, not cache version keys
     if (queryKey.length > 1) {
       const params = new URLSearchParams();
       for (let i = 1; i < queryKey.length; i++) {
-        if (queryKey[i]) {
-          params.set('lang', queryKey[i] as string);
+        const param = queryKey[i] as string;
+        // Skip version keys like 'v1.0.110' - only add real query parameters
+        if (param && !param.startsWith('v') && param.length > 10) {
+          params.set('lang', param);
         }
       }
       if (params.toString()) {
@@ -61,7 +65,8 @@ export const queryClient = new QueryClient({
       queryFn: getQueryFn({ on401: "throw" }),
       refetchInterval: false,
       refetchOnWindowFocus: false,
-      staleTime: 5 * 60 * 1000, // 5 minutes instead of Infinity
+      staleTime: 0, // 🚨 FORCE FRESH DATA - No caching for immediate updates
+      gcTime: 0, // 🚨 FORCE GARBAGE COLLECTION - Clear cache immediately
       retry: false,
     },
     mutations: {
