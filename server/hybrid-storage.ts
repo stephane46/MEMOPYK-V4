@@ -677,22 +677,41 @@ export class HybridStorage implements HybridStorageInterface {
       const { galleryItems } = await import('../shared/schema');
       const { eq } = await import('drizzle-orm');
       
-      // Convert to database format
+      // Convert to database format - COMPLETE FIELD MAPPING
       const dbUpdateData: any = {};
       if (updateData.title_en !== undefined) dbUpdateData.titleEn = updateData.title_en;
       if (updateData.title_fr !== undefined) dbUpdateData.titleFr = updateData.title_fr;
       if (updateData.price_en !== undefined) dbUpdateData.priceEn = updateData.price_en;
       if (updateData.price_fr !== undefined) dbUpdateData.priceFr = updateData.price_fr;
-      if (updateData.is_active !== undefined) dbUpdateData.isActive = updateData.is_active;
-      if (updateData.video_filename !== undefined) dbUpdateData.videoFilename = updateData.video_filename;
+      if (updateData.source_en !== undefined) dbUpdateData.sourceEn = updateData.source_en;
+      if (updateData.source_fr !== undefined) dbUpdateData.sourceFr = updateData.source_fr;
+      if (updateData.duration_en !== undefined) dbUpdateData.durationEn = updateData.duration_en;
+      if (updateData.duration_fr !== undefined) dbUpdateData.durationFr = updateData.duration_fr;
+      if (updateData.situation_en !== undefined) dbUpdateData.situationEn = updateData.situation_en;
+      if (updateData.situation_fr !== undefined) dbUpdateData.situationFr = updateData.situation_fr;
+      if (updateData.story_en !== undefined) dbUpdateData.storyEn = updateData.story_en;
+      if (updateData.story_fr !== undefined) dbUpdateData.storyFr = updateData.story_fr;
+      if (updateData.sorry_message_en !== undefined) dbUpdateData.sorryMessageEn = updateData.sorry_message_en;
+      if (updateData.sorry_message_fr !== undefined) dbUpdateData.sorryMessageFr = updateData.sorry_message_fr;
+      if (updateData.format_platform_en !== undefined) dbUpdateData.formatPlatformEn = updateData.format_platform_en;
+      if (updateData.format_platform_fr !== undefined) dbUpdateData.formatPlatformFr = updateData.format_platform_fr;
+      if (updateData.format_type_en !== undefined) dbUpdateData.formatTypeEn = updateData.format_type_en;
+      if (updateData.format_type_fr !== undefined) dbUpdateData.formatTypeFr = updateData.format_type_fr;
       if (updateData.video_url_en !== undefined) dbUpdateData.videoUrlEn = updateData.video_url_en;
       if (updateData.video_url_fr !== undefined) dbUpdateData.videoUrlFr = updateData.video_url_fr;
+      if (updateData.video_filename !== undefined) dbUpdateData.videoFilename = updateData.video_filename;
+      if (updateData.use_same_video !== undefined) dbUpdateData.useSameVideo = updateData.use_same_video;
+      if (updateData.video_width !== undefined) dbUpdateData.videoWidth = updateData.video_width;
+      if (updateData.video_height !== undefined) dbUpdateData.videoHeight = updateData.video_height;
+      if (updateData.video_orientation !== undefined) dbUpdateData.videoOrientation = updateData.video_orientation;
       if (updateData.image_url_en !== undefined) dbUpdateData.imageUrlEn = updateData.image_url_en;
       if (updateData.image_url_fr !== undefined) dbUpdateData.imageUrlFr = updateData.image_url_fr;
-      if (updateData.use_same_video !== undefined) dbUpdateData.useSameVideo = updateData.use_same_video;
+      if (updateData.static_image_url !== undefined) dbUpdateData.staticImageUrl = updateData.static_image_url;
       if (updateData.static_image_url_en !== undefined) dbUpdateData.staticImageUrlEn = updateData.static_image_url_en;
       if (updateData.static_image_url_fr !== undefined) dbUpdateData.staticImageUrlFr = updateData.static_image_url_fr;
       if (updateData.cropSettings !== undefined) dbUpdateData.cropSettings = updateData.cropSettings;
+      if (updateData.order_index !== undefined) dbUpdateData.orderIndex = updateData.order_index;
+      if (updateData.is_active !== undefined) dbUpdateData.isActive = updateData.is_active;
       dbUpdateData.updatedAt = new Date();
       
       console.log(`🔍 DATABASE UPDATE - Converting is_active ${updateData.is_active} to isActive ${dbUpdateData.isActive}`);
@@ -740,20 +759,42 @@ export class HybridStorage implements HybridStorageInterface {
     if (dbUpdateSuccessful && updatedDbItem) {
       console.log(`🌍 RETURNING DATABASE RESULT for cross-environment consistency`);
       return {
-        // Convert database fields back to expected format
+        // Convert database fields back to expected format - COMPLETE MAPPING
         id: updatedDbItem.id,
         title_en: updatedDbItem.titleEn,
         title_fr: updatedDbItem.titleFr,
-        is_active: updatedDbItem.isActive,
-        video_filename: updatedDbItem.videoFilename,
+        price_en: updatedDbItem.priceEn,
+        price_fr: updatedDbItem.priceFr,
+        source_en: updatedDbItem.sourceEn,
+        source_fr: updatedDbItem.sourceFr,
+        duration_en: updatedDbItem.durationEn,
+        duration_fr: updatedDbItem.durationFr,
+        situation_en: updatedDbItem.situationEn,
+        situation_fr: updatedDbItem.situationFr,
+        story_en: updatedDbItem.storyEn,
+        story_fr: updatedDbItem.storyFr,
+        sorry_message_en: updatedDbItem.sorryMessageEn,
+        sorry_message_fr: updatedDbItem.sorryMessageFr,
+        format_platform_en: updatedDbItem.formatPlatformEn,
+        format_platform_fr: updatedDbItem.formatPlatformFr,
+        format_type_en: updatedDbItem.formatTypeEn,
+        format_type_fr: updatedDbItem.formatTypeFr,
         video_url_en: updatedDbItem.videoUrlEn,
         video_url_fr: updatedDbItem.videoUrlFr,
+        video_filename: updatedDbItem.videoFilename,
+        use_same_video: updatedDbItem.useSameVideo,
+        video_width: updatedDbItem.videoWidth,
+        video_height: updatedDbItem.videoHeight,
+        video_orientation: updatedDbItem.videoOrientation,
         image_url_en: updatedDbItem.imageUrlEn,
         image_url_fr: updatedDbItem.imageUrlFr,
-        use_same_video: updatedDbItem.useSameVideo,
+        static_image_url: updatedDbItem.staticImageUrl,
         static_image_url_en: updatedDbItem.staticImageUrlEn,
         static_image_url_fr: updatedDbItem.staticImageUrlFr,
         cropSettings: updatedDbItem.cropSettings,
+        order_index: updatedDbItem.orderIndex,
+        is_active: updatedDbItem.isActive,
+        created_at: updatedDbItem.createdAt?.toISOString() || new Date().toISOString(),
         updated_at: updatedDbItem.updatedAt?.toISOString() || new Date().toISOString()
       };
     }
