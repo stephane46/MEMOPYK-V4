@@ -499,6 +499,13 @@ export default function GalleryManagementNew() {
       queryClient.invalidateQueries({ queryKey: ['/api/gallery'] });
       queryClient.refetchQueries({ queryKey: ['/api/gallery'] });
       
+      // Force form refresh by temporarily clearing and resetting selectedVideoId
+      const currentSelectedId = selectedVideoId;
+      setSelectedVideoId(null);
+      setTimeout(() => {
+        setSelectedVideoId(currentSelectedId);
+      }, 100);
+      
       setPendingPreviews({}); // Clear pending previews after successful save
       setForceRefreshKey(prev => prev + 1); // Force image refresh
       
