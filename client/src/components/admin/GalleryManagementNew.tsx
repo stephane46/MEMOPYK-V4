@@ -492,27 +492,17 @@ export default function GalleryManagementNew() {
     onSuccess: () => {
       toast({ title: "✅ Succès", description: "Élément de galerie mis à jour avec succès" });
       
-      // 🚨 NUCLEAR CACHE INVALIDATION v1.0.111 - Total cache destruction
-      console.log("💣 NUCLEAR CACHE INVALIDATION v1.0.111 - Destroying ALL cache");
-      console.log("🔄 Clearing EVERY gallery cache entry for immediate update");
+      // 🚨 SMART CACHE REFRESH v1.0.114 - Proper cache invalidation
+      console.log("🔄 SMART CACHE REFRESH - Invalidating gallery cache only");
       
-      // NUCLEAR OPTION: Clear absolutely everything
-      queryClient.clear(); // Clear all cached data
-      queryClient.removeQueries(); // Remove all queries
-      
-      // Clear browser storage as well
-      try {
-        localStorage.clear();
-        sessionStorage.clear();
-        console.log("🧹 Browser storage completely cleared");
-      } catch (e) {
-        console.warn("Browser storage clear failed:", e);
-      }
+      // Invalidate only gallery-related queries for immediate refresh
+      queryClient.invalidateQueries({ queryKey: ['/api/gallery'] });
+      queryClient.refetchQueries({ queryKey: ['/api/gallery'] });
       
       setPendingPreviews({}); // Clear pending previews after successful save
       setForceRefreshKey(prev => prev + 1); // Force image refresh
       
-      console.log("✅ CACHE DESTRUCTION COMPLETE - All data will be fresh fetched");
+      console.log("✅ SMART CACHE REFRESH COMPLETE - Gallery data will be fresh fetched");
       persistentUploadState.reset();
     },
     onError: (error: any) => {
