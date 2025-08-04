@@ -4,12 +4,12 @@
 MEMOPYK is a full-stack memory film platform that transforms personal photos and videos into cinematic memory films. It features a bilingual (French/English) content management system, a professional video lightbox, robust gallery management with reliable video streaming, language-specific upload functionality, image reframing tools, and real-time preview capabilities. The platform aims to provide a seamless and intuitive experience for creating and managing cherished memory films.
 
 ## Recent Changes (August 2025)
-- **DEPLOYMENT REGRESSION FIX v1.0.127**: Identified deployment system packaging wrong code version
-- **Critical Issue**: Working shared mode logic in development was not deployed to production
-- **Timeline**: 15 minutes ago deployment broke admin/public synchronization that was working
-- **Root Cause**: Replit deployment packaged older frontend code instead of current git HEAD
-- **Evidence**: Admin shows AAA_002_0000014.jpg (user choice), Public shows VitaminSeaC.JPG (fallback)
-- **Solution**: Force clean deployment with current development code containing shared mode fixes
+- **DEPLOYMENT REGRESSION CONFIRMED v1.0.128**: User testing confirms production admin/public sync broken
+- **Visual Evidence**: User cropped production admin image to show space above dog's head, public gallery still shows cropped head
+- **Development Works**: Same test in development shows proper synchronization 
+- **Root Cause Confirmed**: Replit deployment packaged older frontend code instead of current working development code
+- **Timeline**: Deployment 3 minutes ago broke functionality that works perfectly in development
+- **Solution Ready**: Force clean deployment markers created to deploy current working development code
 - **Prevention Strategy**: Created deployment checklist to avoid future deployment regressions (see DEPLOYMENT_PREVENTION_CHECKLIST.md)
 - **GALLERY SYNC FIX v1.0.126**: Identified and fixed gallery image mismatch in development environment
 - **Root Cause Identified**: Admin and public site used different image priority logic AND shared mode logic
