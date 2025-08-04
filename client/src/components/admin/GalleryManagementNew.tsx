@@ -309,6 +309,48 @@ export default function GalleryManagementNew() {
   }>({ isActive: false, language: 'en', hasChanges: false });
   const fileInputRef = useRef<HTMLInputElement>(null);
   
+  // 🔄 SCROLL POSITION PRESERVATION - Fix Alt+Tab behavior
+  const scrollPositionRef = useRef<number>(0);
+  const mainContainerRef = useRef<HTMLDivElement>(null);
+  
+  // Save scroll position on scroll events
+  useEffect(() => {
+    const handleScroll = () => {
+      if (mainContainerRef.current) {
+        scrollPositionRef.current = window.pageYOffset || document.documentElement.scrollTop;
+      }
+    };
+
+    // Save scroll position before window loses focus (Alt+Tab)
+    const handleBeforeUnload = () => {
+      scrollPositionRef.current = window.pageYOffset || document.documentElement.scrollTop;
+    };
+
+    const handleVisibilityChange = () => {
+      if (document.hidden) {
+        // Save scroll position when tab becomes hidden
+        scrollPositionRef.current = window.pageYOffset || document.documentElement.scrollTop;
+      } else {
+        // Restore scroll position when tab becomes visible again
+        setTimeout(() => {
+          if (scrollPositionRef.current > 0) {
+            window.scrollTo(0, scrollPositionRef.current);
+          }
+        }, 50);
+      }
+    };
+
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    window.addEventListener('beforeunload', handleBeforeUnload);
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+      window.removeEventListener('beforeunload', handleBeforeUnload);
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+    };
+  }, []);
+  
   // Real-time preview state for pending uploads
   const [pendingPreviews, setPendingPreviews] = useState<{
     video_url_en?: string;
