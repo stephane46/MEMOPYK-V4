@@ -135,5 +135,57 @@
     "is_active": true,
     "created_at": "2025-07-31T23:07:38.249Z",
     "updated_at": "2025-07-31T23:07:38.249Z"
+  },
+  {
+    "id": "fe696b9e-6fd5-4c54-bf73-018439c95999",
+    "title_en": "The summer of Pom",
+    "title_fr": "L’été de Pom",
+    "price_en": "USD 225",
+    "price_fr": "225 €",
+    "source_en": "50 photos & 22 videos",
+    "source_fr": "50 photos & 22 videos",
+    "duration_en": "3 minutes",
+    "duration_fr": "3 minutes",
+    "situation_en": "The Client is the dogsitters who wants to surprise the owners of Pom, who are also their friends.",
+    "situation_fr": "This film shows the summer vacation of Pom, a young golden retriever, and shows the different sides of his personality in 3 environments: at home, in nature, and in city.",
+    "story_en": "This film shows the summer vacation of Pom, a young golden retriever, and shows the different sides of his personality in 3 environments: at home, in nature, and in city.",
+    "story_fr": "Ce film montre les vacances d'été de Pom, un jeune golden retriever, et présente les différentes facettes de sa personnalité dans trois environnements : à la maison, dans la nature et en ville.",
+    "sorry_message_en": "Sorry, we cannot show you the video at this stage",
+    "sorry_message_fr": "Désolé, nous ne pouvons pas vous montrer la vidéo à ce stade",
+    "format_platform_en": "Social Media",
+    "format_platform_fr": "Réseaux Sociaux",
+    "format_type_en": "Instagram Posts",
+    "format_type_fr": "Posts Instagram",
+    "video_url_en": "https://supabase.memopyk.org/storage/v1/object/public/memopyk-videos/PomGalleryC.mp4",
+    "video_url_fr": "https://supabase.memopyk.org/storage/v1/object/public/memopyk-videos/PomGalleryC.mp4",
+    "video_filename": "https://supabase.memopyk.org/storage/v1/object/public/memopyk-videos/PomGalleryC.mp4",
+    "use_same_video": true,
+    "video_width": 1080,
+    "video_height": 1350,
+    "video_orientation": "portrait",
+    "image_url_en": "https://supabase.memopyk.org/storage/v1/object/public/memopyk-videos/AAA_002_0000014.jpg",
+    "image_url_fr": "https://supabase.memopyk.org/storage/v1/object/public/memopyk-videos/AAA_002_0000014.jpg",
+    "static_image_url": "https://supabase.memopyk.org/storage/v1/object/public/memopyk-videos/static_auto_1754282589626.jpg",
+    "static_image_url_en": "https://supabase.memopyk.org/storage/v1/object/public/memopyk-videos/static_auto_1754282589626.jpg",
+    "static_image_url_fr": "https://supabase.memopyk.org/storage/v1/object/public/memopyk-videos/static_auto_1754282589626.jpg",
+    "cropSettings": {
+      "method": "sharp-auto-thumbnail",
+      "type": "automatic",
+      "fit": "cover",
+      "position": "center",
+      "dimensions": {
+        "width": 300,
+        "height": 200
+      },
+      "aspectRatio": {
+        "original": 1.4217207334273625,
+        "target": 1.5
+      },
+      "cropped": true,
+      "timestamp": "2025-08-04T04:43:09.920Z"
+    },
+    "is_active": true,
+    "created_at": "2025-08-04T04:44:25.672Z",
+    "updated_at": "2025-08-04T04:44:25.672Z"
   }
 ]
