@@ -20,6 +20,7 @@ import { AnalyticsDashboard } from '@/components/admin/AnalyticsDashboard';
 import VideoCacheStatus from '@/components/admin/VideoCacheStatus';
 import SeoManagement from '@/components/admin/SeoManagement';
 import SystemTestDashboard from '@/components/admin/SystemTestDashboard';
+import DeploymentManagement from '@/components/admin/DeploymentManagement';
 import CryptoJS from 'crypto-js';
 
 
@@ -1453,12 +1454,7 @@ export default function AdminPage() {
                 <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Déploiement</h2>
                 <p className="text-gray-600 dark:text-gray-400">Gestion du déploiement et de la production</p>
               </div>
-              <Card>
-                <CardHeader>
-                  <CardTitle>Gestion du Déploiement</CardTitle>
-                  <CardDescription>Prochainement - Interface de déploiement en un clic</CardDescription>
-                </CardHeader>
-              </Card>
+              <DeploymentManagement />
             </div>
           )}
 

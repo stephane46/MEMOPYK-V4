@@ -4579,11 +4579,165 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Deployment Management Routes
+  app.post("/api/deployment/create-marker", async (req, res) => {
+    try {
+      const { description, keep = 10 } = req.body;
+      
+      if (!description || typeof description !== 'string') {
+        return res.status(400).json({ error: "Description is required" });
+      }
+
+      const { spawn } = require('child_process');
+      const scriptPath = path.join(__dirname, '../scripts/create-deployment-marker.js');
+      
+      const child = spawn('node', [
+        scriptPath,
+        '--description', description.trim(),
+        '--keep', String(keep)
+      ]);
+
+      let output = '';
+      let error = '';
+
+      child.stdout.on('data', (data: Buffer) => {
+        output += data.toString();
+      });
+
+      child.stderr.on('data', (data: Buffer) => {
+        error += data.toString();
+      });
+
+      child.on('close', (code: number) => {
+        if (code === 0) {
+          // Extract filename from output
+          const filenameMatch = output.match(/FORCE_CLEAN_DEPLOYMENT_([^.]+\.txt)/);
+          const filename = filenameMatch ? filenameMatch[0] : 'unknown';
+          
+          res.json({
+            success: true,
+            message: "Deployment marker created successfully",
+            filename: filename,
+            output: output.trim()
+          });
+        } else {
+          res.status(500).json({
+            error: "Failed to create deployment marker",
+            details: error || output,
+            code: code
+          });
+        }
+      });
+
+    } catch (error: any) {
+      res.status(500).json({
+        error: "Internal server error",
+        details: error.message
+      });
+    }
+  });
+
+  app.post("/api/deployment/cleanup", async (req, res) => {
+    try {
+      const { keep = 10 } = req.body;
+      
+      const { spawn } = require('child_process');
+      const scriptPath = path.join(__dirname, '../scripts/create-deployment-marker.js');
+      
+      const child = spawn('node', [
+        scriptPath,
+        '--cleanup',
+        '--keep', String(keep)
+      ]);
+
+      let output = '';
+      let error = '';
+
+      child.stdout.on('data', (data: Buffer) => {
+        output += data.toString();
+      });
+
+      child.stderr.on('data', (data: Buffer) => {
+        error += data.toString();
+      });
+
+      child.on('close', (code: number) => {
+        if (code === 0) {
+          // Extract deleted count from output
+          const deletedMatch = output.match(/deleted (\d+)\/\d+ old markers/);
+          const deletedCount = deletedMatch ? parseInt(deletedMatch[1]) : 0;
+          
+          res.json({
+            success: true,
+            message: "Cleanup completed successfully",
+            deletedCount: deletedCount,
+            output: output.trim()
+          });
+        } else {
+          res.status(500).json({
+            error: "Cleanup failed",
+            details: error || output,
+            code: code
+          });
+        }
+      });
+
+    } catch (error: any) {
+      res.status(500).json({
+        error: "Internal server error",
+        details: error.message
+      });
+    }
+  });
+
+  app.get("/api/deployment/markers", async (req, res) => {
+    try {
+      const fs = require('fs');
+      const markersDir = path.join(__dirname, '../.deployment_markers');
+      
+      if (!fs.existsSync(markersDir)) {
+        return res.json({ markers: [] });
+      }
+
+      const files = fs.readdirSync(markersDir)
+        .filter((file: string) => file.startsWith('FORCE_CLEAN_DEPLOYMENT_') && file.endsWith('.txt'))
+        .map((file: string) => {
+          const filePath = path.join(markersDir, file);
+          const stats = fs.statSync(filePath);
+          const content = fs.readFileSync(filePath, 'utf8');
+          
+          // Extract description from content
+          const descMatch = content.match(/Description: (.+)/);
+          const description = descMatch ? descMatch[1] : 'No description';
+          
+          // Extract version from filename
+          const versionMatch = file.match(/v1\.0-(.+)\.txt$/);
+          const version = versionMatch ? versionMatch[1] : 'unknown';
+
+          return {
+            filename: file,
+            description: description,
+            timestamp: stats.mtime.toISOString(),
+            version: version
+          };
+        })
+        .sort((a: any, b: any) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
+
+      res.json({ markers: files });
+
+    } catch (error: any) {
+      res.status(500).json({
+        error: "Failed to load deployment markers",
+        details: error.message
+      });
+    }
+  });
+
   // Import test routes
   const testRouter = (await import('./test-routes')).default;
   app.use('/api', testRouter);
 
-  console.log("📋 Video proxy, image proxy, cache endpoints, diagnostic endpoint, stream testing, image comparison page, and system test routes registered");
+  console.log("📋 Video proxy, image proxy, cache endpoints, diagnostic endpoint, stream testing, image comparison page, deployment management, and system test routes registered");
 
   return createServer(app);
 }
