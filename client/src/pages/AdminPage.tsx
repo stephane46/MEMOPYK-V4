@@ -76,13 +76,6 @@ export default function AdminPage() {
       window.scrollTo(0, 0);
     };
 
-    // Handle window focus and page visibility
-    const handleVisibilityChange = () => {
-      if (!document.hidden) {
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-      }
-    };
-
     // Handle browser back/forward navigation
     const handlePopState = () => {
       window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -91,13 +84,11 @@ export default function AdminPage() {
     // Add event listeners
     window.addEventListener('load', handlePageLoad);
     window.addEventListener('popstate', handlePopState);
-    document.addEventListener('visibilitychange', handleVisibilityChange);
     
     // Cleanup
     return () => {
       window.removeEventListener('load', handlePageLoad);
       window.removeEventListener('popstate', handlePopState);
-      document.removeEventListener('visibilitychange', handleVisibilityChange);
     };
   }, []);
   
