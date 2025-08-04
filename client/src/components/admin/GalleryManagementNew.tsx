@@ -815,13 +815,20 @@ export default function GalleryManagementNew() {
                               className="w-full h-full object-contain"
                               onLoad={(e) => {
                                 const img = e.target as HTMLImageElement;
-                                console.log(`🔍 ADMIN FR IMAGE LOADED:`, {
+                                console.warn(`🔍 ADMIN FR IMAGE LOADED:`, {
                                   src: img.src,
                                   naturalWidth: img.naturalWidth,
                                   naturalHeight: img.naturalHeight,
                                   displayWidth: img.width,
-                                  displayHeight: img.height
+                                  displayHeight: img.height,
+                                  isHighRes: img.naturalWidth > 1000,
+                                  isThumbnail: img.naturalWidth <= 300
                                 });
+                                
+                                // Alert for easy spotting
+                                if (img.naturalWidth > 0) {
+                                  alert(`ADMIN IMAGE: ${img.naturalWidth}x${img.naturalHeight} - ${img.naturalWidth > 1000 ? 'HIGH-RES' : 'THUMBNAIL'}`);
+                                }
                               }}
                             />
                             {/* Show different badges for manual vs automatic cropping */}
