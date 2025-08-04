@@ -1,8 +1,8 @@
 [
   {
     "id": "a2f1f51f-dddc-4284-b385-54f658424444",
-    "title_en": "Our Vitamin Sea",
-    "title_fr": "Notre Vitamine Sea",
+    "title_en": "Our Vitamin Sea 2",
+    "title_fr": "Notre Vitamine Sea 2",
     "source_en": "Marina Lifestyle Film",
     "source_fr": "Film de Lifestyle Marina",
     "duration_en": "3 minutes of coastal bliss",
@@ -33,7 +33,7 @@
     "is_active": true,
     "use_same_video": true,
     "created_at": "2025-07-23T21:05:23.805Z",
-    "updated_at": "2025-08-03T08:59:38.095Z",
+    "updated_at": "2025-08-04T05:49:04.293Z",
     "static_image_url": "",
     "crop_settings": {
       "method": "triple-layer-white-bg",
@@ -168,24 +168,10 @@
     "static_image_url": "https://supabase.memopyk.org/storage/v1/object/public/memopyk-videos/static_auto_1754282589626.jpg",
     "static_image_url_en": "https://supabase.memopyk.org/storage/v1/object/public/memopyk-videos/static_auto_1754282589626.jpg",
     "static_image_url_fr": "https://supabase.memopyk.org/storage/v1/object/public/memopyk-videos/static_auto_1754282589626.jpg",
-    "cropSettings": {
-      "method": "sharp-auto-thumbnail",
-      "type": "automatic",
-      "fit": "cover",
-      "position": "center",
-      "dimensions": {
-        "width": 300,
-        "height": 200
-      },
-      "aspectRatio": {
-        "original": 1.4217207334273625,
-        "target": 1.5
-      },
-      "cropped": true,
-      "timestamp": "2025-08-04T04:43:09.920Z"
-    },
+    "cropSettings": null,
     "is_active": true,
     "created_at": "2025-08-04T04:44:25.672Z",
-    "updated_at": "2025-08-04T04:44:25.672Z"
+    "updated_at": "2025-08-04T05:48:36.964Z",
+    "language": "shared"
   }
 ]

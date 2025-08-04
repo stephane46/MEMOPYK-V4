@@ -4,13 +4,15 @@
 MEMOPYK is a full-stack memory film platform that transforms personal photos and videos into cinematic memory films. It features a bilingual (French/English) content management system, a professional video lightbox, robust gallery management with reliable video streaming, language-specific upload functionality, image reframing tools, and real-time preview capabilities. The platform aims to provide a seamless and intuitive experience for creating and managing cherished memory films.
 
 ## Recent Changes (August 2025)
+- **IMAGE QUALITY FIX v1.0.117**: Public gallery image quality RESOLVED
+- **Root Cause Identified**: Public gallery prioritized 300x200 static thumbnails over high-resolution original images
+- **Fix Applied**: Modified both desktop and mobile gallery components to prioritize original high-quality images like admin interface
+- **Quality Improvement**: Public gallery now displays same high-resolution images (4032x3024) as admin interface instead of low-quality thumbnails
+- **User Experience Enhanced**: Visitors now see crisp, high-quality gallery images matching admin preview quality
+- **Admin Interface Cleaned**: Removed debugging popup alerts for smoother admin workflow
 - **CRITICAL BREAKTHROUGH v1.0.116**: Alt+Tab scroll navigation issue RESOLVED
-- **Root Cause Identified**: `visibilitychange` event listener in AdminPage.tsx was forcing scroll to top on Alt+Tab return
-- **Fix Applied**: Removed problematic visibility change handler that caused scroll jumping
-- **User Workflow Restored**: Alt+Tab between external data sources and form entry now works without scroll position loss
 - **Complete Field Mapping Audit v1.0.114**: Achieved 100% field synchronization across ALL 7 sections (84 total fields)
 - **Cross-Environment Sync Confirmed**: Admin changes properly synchronize between production and preview environments
-- **All Debugging Code Cleaned**: Removed temporary Alt+Tab debugging code and console logs
 
 ## User Preferences
 Preferred communication style: Simple, everyday language.
