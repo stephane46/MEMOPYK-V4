@@ -809,15 +809,20 @@ export default function GalleryManagementNew() {
                         )}
                       </div>
                       <div className="aspect-video w-full bg-black rounded-lg overflow-hidden border border-blue-200 dark:border-blue-600 relative">
-                        {/* Force timestamp for cache busting */}
+                        {/* DEBUGGING: Always show this info */}
+                        {(() => {
+                          const hasSelectedItem = !!selectedItem;
+                          const selectedItemId = selectedItem?.id || 'NONE';
+                          const thumbnailUrl = selectedItem ? getThumbnailUrl(selectedItem, 'fr') : 'NO_ITEM';
+                          const hasImageUrlFr = !!selectedItem?.image_url_fr;
+                          const hasStaticImageUrlFr = !!selectedItem?.static_image_url_fr;
+                          
+                          console.log('🔍 RENDER DEBUG:', { hasSelectedItem, selectedItemId, thumbnailUrl, hasImageUrlFr, hasStaticImageUrlFr });
+                          alert(`RENDER: hasItem=${hasSelectedItem}, ID=${selectedItemId}, thumbnailUrl=${thumbnailUrl}`);
+                          return null;
+                        })()}
                         {selectedItem ? (
                           <>
-                            {(() => {
-                              const thumbnailUrl = getThumbnailUrl(selectedItem, 'fr');
-                              console.log('🔍 CONDITIONAL DEBUG: selectedItem exists, thumbnailUrl:', thumbnailUrl);
-                              alert(`CONDITIONAL: thumbnailUrl = ${thumbnailUrl || 'EMPTY!'}`);
-                              return null; // Just for debugging
-                            })()}
                             <img 
                               src={
                                 // FIXED: Always prioritize static thumbnails in admin interface
