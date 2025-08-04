@@ -62,40 +62,57 @@ const DraggableCover = ({ imageUrl, onPositionChange, previewRef, onCropChange, 
     setIsDragging(false);
   };
 
-  // Global mouse move and up handlers for smooth dragging
+  // Keyboard controls for precise positioning
   React.useEffect(() => {
-    if (!isDragging) return;
-
-    const handleGlobalMouseMove = (e: MouseEvent) => {
-      const container = previewRef.current;
-      if (!container) return;
+    const handleKeyDown = (e: KeyboardEvent) => {
+      const step = 2; // 2% movement per key press
+      let newPosition = { ...position };
       
-      const rect = container.getBoundingClientRect();
-      const x = ((e.clientX - rect.left) / rect.width) * 100;
-      const y = ((e.clientY - rect.top) / rect.height) * 100;
+      switch (e.key) {
+        case 'ArrowUp':
+          newPosition.y = Math.max(0, position.y - step);
+          break;
+        case 'ArrowDown':
+          newPosition.y = Math.min(100, position.y + step);
+          break;
+        case 'ArrowLeft':
+          newPosition.x = Math.max(0, position.x - step);
+          break;
+        case 'ArrowRight':
+          newPosition.x = Math.min(100, position.x + step);
+          break;
+        default:
+          return; // Don't prevent default for other keys
+      }
       
-      const newPos = {
-        x: Math.max(0, Math.min(100, x)),
-        y: Math.max(0, Math.min(100, y))
-      };
-      
-      setPosition(newPos);
-      onPositionChange(newPos);
+      e.preventDefault();
+      setPosition(newPosition);
+      onPositionChange(newPosition);
       onCropChange?.();
     };
 
-    const handleGlobalMouseUp = () => {
-      setIsDragging(false);
-    };
+    document.addEventListener('keydown', handleKeyDown);
+    return () => document.removeEventListener('keydown', handleKeyDown);
+  }, [position, onPositionChange, onCropChange]);
 
-    document.addEventListener('mousemove', handleGlobalMouseMove);
-    document.addEventListener('mouseup', handleGlobalMouseUp);
-
-    return () => {
-      document.removeEventListener('mousemove', handleGlobalMouseMove);
-      document.removeEventListener('mouseup', handleGlobalMouseUp);
+  // Simple click-to-position (more reliable than drag)
+  const handleContainerClick = (e: React.MouseEvent) => {
+    const container = previewRef.current;
+    if (!container) return;
+    
+    const rect = container.getBoundingClientRect();
+    const x = ((e.clientX - rect.left) / rect.width) * 100;
+    const y = ((e.clientY - rect.top) / rect.height) * 100;
+    
+    const newPos = {
+      x: Math.max(0, Math.min(100, x)),
+      y: Math.max(0, Math.min(100, y))
     };
-  }, [isDragging, onPositionChange, onCropChange]);
+    
+    setPosition(newPos);
+    onPositionChange(newPos);
+    onCropChange?.();
+  };
 
   return (
     <div className="space-y-3">
@@ -105,21 +122,21 @@ const DraggableCover = ({ imageUrl, onPositionChange, previewRef, onCropChange, 
           🖼️ Recadrage de l'image
         </h3>
         <p className="text-sm text-gray-600 dark:text-gray-400">
-          Cliquez et glissez le cercle orange pour repositionner votre image
+          Cliquez sur l'aperçu ou utilisez les flèches du clavier pour repositionner
         </p>
       </div>
 
       <div
         ref={previewRef}
-        className="w-[400px] h-[300px] border-4 border-[#D67C4A] relative overflow-hidden mx-auto"
+        className="w-[400px] h-[300px] border-4 border-[#D67C4A] relative overflow-hidden mx-auto cursor-crosshair focus:outline-none focus:ring-2 focus:ring-[#D67C4A]"
         style={{
           backgroundColor: '#ffffff',
           borderRadius: 12,
           userSelect: 'none',
         }}
-        onMouseMove={handleMouseMove}
-        onMouseUp={handleMouseUp}
-        onMouseLeave={handleMouseUp}
+        onClick={handleContainerClick}
+        tabIndex={0}
+        title="Cliquez pour repositionner ou utilisez les flèches du clavier"
       >
         {/* Background image */}
         {imageLoaded && (
@@ -148,13 +165,12 @@ const DraggableCover = ({ imageUrl, onPositionChange, previewRef, onCropChange, 
             zIndex: 10
           }}
         >
-          {/* Drag handle in center */}
+          {/* Position indicator in center */}
           <div 
-            className={`absolute left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2 w-12 h-12 bg-[#D67C4A] rounded-full flex items-center justify-center text-white text-xl font-bold shadow-lg ${isDragging ? 'cursor-grabbing scale-110' : 'cursor-grab hover:scale-105'} transition-transform select-none`}
-            onMouseDown={handleMouseDown}
-            title="Glissez pour repositionner l'image"
+            className="absolute left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2 w-8 h-8 bg-[#D67C4A] rounded-full flex items-center justify-center text-white text-sm font-bold shadow-lg pointer-events-none"
+            title="Position actuelle de l'image"
           >
-            ⋮⋮
+            ⋄
           </div>
         </div>
 
@@ -237,6 +253,9 @@ const DraggableCover = ({ imageUrl, onPositionChange, previewRef, onCropChange, 
             <div>Zone de recadrage: {cropDimensions.width.toFixed(0)}x{cropDimensions.height.toFixed(0)} (aperçu)</div>
             <div className="text-[#D67C4A] font-medium">
               Ratio proche de 1.5 = {(imageDimensions.width / imageDimensions.height).toFixed(2)} - Recadrage minimal possible
+            </div>
+            <div className="text-blue-600 font-medium mt-2">
+              ⌨️ Utilisez les flèches ↑↓←→ pour un positionnement précis
             </div>
           </div>
         )}
