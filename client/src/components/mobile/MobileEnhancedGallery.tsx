@@ -122,8 +122,20 @@ export function MobileEnhancedGallery({
                             naturalWidth: img.naturalWidth,
                             naturalHeight: img.naturalHeight,
                             displayWidth: img.width,
-                            displayHeight: img.height
+                            displayHeight: img.height,
+                            isStaticThumbnail: img.src.includes('static_')
                           });
+                          
+                          // Additional dimension analysis
+                          if (img.naturalWidth && img.naturalHeight) {
+                            const aspectRatio = img.naturalWidth / img.naturalHeight;
+                            console.log(`📊 IMAGE ANALYSIS for ${title}:`, {
+                              resolution: `${img.naturalWidth}x${img.naturalHeight}`,
+                              aspectRatio: aspectRatio.toFixed(2),
+                              isHighRes: img.naturalWidth > 1000,
+                              isThumbnail: img.naturalWidth <= 300
+                            });
+                          }
                         }}
                       />
                       
