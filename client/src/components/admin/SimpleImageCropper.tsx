@@ -127,20 +127,25 @@ export default function SimpleImageCropper({ imageUrl, onSave, onCancel, onOpen,
     setLoading(true);
     
     try {
-      // Create canvas with white background
+      // HIGH-QUALITY CROP GENERATION v1.0.121: Increased resolution for better quality
       const canvas = document.createElement('canvas');
       const ctx = canvas.getContext('2d')!;
       const dpr = window.devicePixelRatio || 1;
-      canvas.width = 300 * dpr;
-      canvas.height = 200 * dpr;
+      
+      // UPGRADED: Use 800x533 instead of 300x200 (maintains 1.5 aspect ratio with much higher quality)
+      const cropWidth = 800;
+      const cropHeight = 533;
+      
+      canvas.width = cropWidth * dpr;
+      canvas.height = cropHeight * dpr;
       ctx.scale(dpr, dpr);
 
       // White background
       ctx.fillStyle = '#ffffff';
-      ctx.fillRect(0, 0, 300, 200);
+      ctx.fillRect(0, 0, cropWidth, cropHeight);
       
       // Pixel-level white fill for JPEG export
-      const imageData = ctx.createImageData(300, 200);
+      const imageData = ctx.createImageData(cropWidth, cropHeight);
       for (let i = 0; i < imageData.data.length; i += 4) {
         imageData.data[i] = 255;     // Red
         imageData.data[i + 1] = 255; // Green
@@ -161,13 +166,13 @@ export default function SimpleImageCropper({ imageUrl, onSave, onCancel, onOpen,
       
 
       
-      // Calculate positioning for cover effect
-      const scale = Math.max(300 / img.naturalWidth, 200 / img.naturalHeight);
+      // Calculate positioning for cover effect (updated for high-quality dimensions)
+      const scale = Math.max(cropWidth / img.naturalWidth, cropHeight / img.naturalHeight);
       const scaledWidth = img.naturalWidth * scale;
       const scaledHeight = img.naturalHeight * scale;
       
-      const offsetX = (scaledWidth - 300) * (-position.x / 100);
-      const offsetY = (scaledHeight - 200) * (-position.y / 100);
+      const offsetX = (scaledWidth - cropWidth) * (-position.x / 100);
+      const offsetY = (scaledHeight - cropHeight) * (-position.y / 100);
       
       // Draw the image with proper composite operation
       ctx.globalCompositeOperation = 'source-over';
@@ -186,7 +191,7 @@ export default function SimpleImageCropper({ imageUrl, onSave, onCancel, onOpen,
       const settings = {
         method: 'triple-layer-white-bg',
         position: position,
-        dimensions: { width: 300, height: 200 },
+        dimensions: { width: cropWidth, height: cropHeight },
         format: 'JPEG',
         quality: 1.0,
         devicePixelRatio: dpr
@@ -206,7 +211,7 @@ export default function SimpleImageCropper({ imageUrl, onSave, onCancel, onOpen,
       <div className="text-center">
 
         <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">
-          Glissez pour repositionner l'image dans le cadre 300×200
+          Glissez pour repositionner l'image dans le cadre haute qualité (800×533)
         </p>
         
         <div className="mx-auto">
