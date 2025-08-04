@@ -671,7 +671,10 @@ export default function GalleryManagementNew() {
           {!isCreateMode ? (
             <Select 
               value={selectedVideoId?.toString() || ''} 
-              onValueChange={(value) => setSelectedVideoId(value)}
+              onValueChange={(value) => {
+                setSelectedVideoId(value);
+                alert(`Admin item selected: ${value}`);
+              }}
             >
               <SelectTrigger className="w-full">
                 <SelectValue placeholder="Choisir une vidéo..." />
@@ -829,6 +832,10 @@ export default function GalleryManagementNew() {
                                 if (img.naturalWidth > 0) {
                                   alert(`ADMIN IMAGE: ${img.naturalWidth}x${img.naturalHeight} - ${img.naturalWidth > 1000 ? 'HIGH-RES' : 'THUMBNAIL'}`);
                                 }
+                              }}
+                              onError={(e) => {
+                                console.error('🚨 ADMIN FR IMAGE ERROR:', e);
+                                alert('ADMIN IMAGE FAILED TO LOAD!');
                               }}
                             />
                             {/* Show different badges for manual vs automatic cropping */}
