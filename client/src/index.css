@@ -266,3 +266,22 @@ img, video, iframe, canvas, svg {
 .animate-pulse-orange {
   animation: pulse-orange 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
 }
+
+/* 🔄 ALT+TAB SCROLL FIX v1.0.115 - Prevent unwanted scroll behaviors */
+html, body {
+  scroll-behavior: auto !important;
+  overflow-anchor: none !important;
+}
+
+/* Prevent React focus-related scroll jumps */
+*:focus, *:focus-visible {
+  scroll-margin: 0 !important;
+  scroll-padding: 0 !important;
+}
+
+/* Disable smooth scrolling in admin areas to prevent Alt+Tab issues */
+.admin-container * {
+  scroll-behavior: auto !important;
+  overflow-anchor: none !important;
+}
+

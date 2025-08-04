@@ -646,7 +646,13 @@ export default function GalleryManagementNew() {
   }
 
   return (
-    <div className="p-6 max-w-7xl mx-auto">
+    <div 
+      className="p-6 max-w-7xl mx-auto admin-container"
+      style={{ 
+        scrollBehavior: 'auto', // 🔄 ALT+TAB FIX v1.0.115 - Force instant scroll instead of smooth
+        overflowAnchor: 'none'   // 🔄 ALT+TAB FIX v1.0.115 - Prevent anchor scrolling corrections
+      }}
+    >
 
 
       {/* Top Left: NEW Button */}
