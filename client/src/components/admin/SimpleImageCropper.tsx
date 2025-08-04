@@ -66,7 +66,7 @@ const DraggableCover = ({ imageUrl, onPositionChange, previewRef, onCropChange, 
   // Keyboard controls for precise positioning of crop frame
   React.useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      const step = 5; // 5% movement per key press for better range
+      const step = 1; // 1% movement per key press for precise control
       let newCropPosition = { ...cropPosition };
       
       // Calculate boundaries based on crop size to prevent empty areas
@@ -168,34 +168,18 @@ const DraggableCover = ({ imageUrl, onPositionChange, previewRef, onCropChange, 
           />
         )}
 
-        {/* Crop frame overlay - movable crop area */}
+        {/* Simple orange crop rectangle */}
         <div 
-          className="absolute border-4 border-[#D67C4A] bg-[#D67C4A]/10"
+          className="absolute border-4 border-[#D67C4A] pointer-events-none"
           style={{
             width: `${cropDimensions.width}px`,
             height: `${cropDimensions.height}px`,
             left: `${cropPosition.x}%`,
             top: `${cropPosition.y}%`,
             transform: 'translate(-50%, -50%)',
-            boxShadow: '0 0 0 9999px rgba(0,0,0,0.4)', // Dark overlay outside crop area
-            borderRadius: 8,
             zIndex: 10
           }}
-        >
-          {/* Position indicator in center */}
-          <div 
-            className="absolute left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2 w-8 h-8 bg-[#D67C4A] rounded-full flex items-center justify-center text-white text-sm font-bold shadow-lg pointer-events-none"
-            title="Position actuelle de l'image"
-          >
-            ⋄
-          </div>
-        </div>
-
-        {/* Corner indicators */}
-        <div className="absolute top-2 left-2 w-4 h-4 border-l-4 border-t-4 border-[#D67C4A]" style={{ zIndex: 11 }}></div>
-        <div className="absolute top-2 right-2 w-4 h-4 border-r-4 border-t-4 border-[#D67C4A]" style={{ zIndex: 11 }}></div>
-        <div className="absolute bottom-2 left-2 w-4 h-4 border-l-4 border-b-4 border-[#D67C4A]" style={{ zIndex: 11 }}></div>
-        <div className="absolute bottom-2 right-2 w-4 h-4 border-r-4 border-b-4 border-[#D67C4A]" style={{ zIndex: 11 }}></div>
+        />
 
         <img
           src={imageUrl}
