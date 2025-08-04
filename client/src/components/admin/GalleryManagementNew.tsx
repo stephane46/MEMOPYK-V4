@@ -379,11 +379,17 @@ export default function GalleryManagementNew() {
     is_active: true
   });
 
-  // Update form data when selected item changes - SAFE: Check selectedItem exists first
+  // Update form data when selected item changes - SAFE: Check selectedItem exists first  
+  // 🔄 ALT+TAB FIX v1.0.115 - Added ref check to prevent unnecessary re-renders
+  const formSyncRef = useRef(false);
   useEffect(() => {
+    // Skip if already processing to prevent scroll jumps
+    if (formSyncRef.current) return;
+    
     console.log("🔄 FORM SYNC TRIGGER - selectedItem:", selectedItem?.id, "isCreateMode:", isCreateMode);
     if (selectedItem && !isCreateMode) {
       console.log("🔄 UPDATING FORM DATA with price_en:", selectedItem.price_en);
+      formSyncRef.current = true;
       setFormData({
         title_en: selectedItem.title_en || '',
         title_fr: selectedItem.title_fr || '',
@@ -418,7 +424,9 @@ export default function GalleryManagementNew() {
         cropSettings: selectedItem.cropSettings || null,
         is_active: selectedItem.is_active
       });
+      setTimeout(() => { formSyncRef.current = false; }, 100);
     } else if (isCreateMode) {
+      formSyncRef.current = true;
       // Reset form for create mode
       setFormData({
         title_en: '',
@@ -455,22 +463,30 @@ export default function GalleryManagementNew() {
         is_active: true
       });
       console.log("✅ FORM DATA RESET FOR CREATE MODE");
+      setTimeout(() => { formSyncRef.current = false; }, 100);
     }
   }, [selectedItem?.id, isCreateMode]); // Simplified dependencies to avoid undefined access
 
   // Auto-select first item when data loads OR when selected item no longer exists
+  // 🔄 ALT+TAB FIX v1.0.115 - Added debouncing to prevent focus-triggered re-selection
+  const autoSelectRef = useRef(false);
   useEffect(() => {
+    // Debounce auto-selection to prevent Alt+Tab triggers
+    if (autoSelectRef.current) return;
+    
     if (galleryItems.length > 0 && !isCreateMode) {
       // If no item is selected OR the selected item doesn't exist anymore
       if (!selectedVideoId || !galleryItems.find(item => item.id === selectedVideoId)) {
         console.log(`🔄 Auto-selecting first item. Current selection: ${selectedVideoId}, Available items: ${galleryItems.length}`);
+        autoSelectRef.current = true;
         setSelectedVideoId(galleryItems[0].id);
+        setTimeout(() => { autoSelectRef.current = false; }, 300);
       }
     } else if (galleryItems.length === 0 && !isCreateMode) {
       // No items available, clear selection
       setSelectedVideoId(null);
     }
-  }, [galleryItems, selectedVideoId, isCreateMode]);
+  }, [galleryItems.length, selectedVideoId, isCreateMode]); // Removed galleryItems direct dependency
 
 
 
