@@ -249,32 +249,47 @@ export default function GalleryManagementNew() {
   };
 
   // Helper function to get thumbnail URL with language-specific reframing support and real-time preview
-  const getThumbnailUrl = (item: GalleryItem, language: 'en' | 'fr' = 'en') => {
-    if (!item) return '';
-    
-    // Priority 0: Real-time pending upload preview (highest priority)
+  const getThumbnailUrl = (item: GalleryItem | null | undefined, language: 'en' | 'fr' = 'en') => {
+    // Priority 0: Real-time pending upload preview (highest priority) - works in create mode
     const pendingImageUrl = language === 'fr' ? pendingPreviews.image_url_fr : pendingPreviews.image_url_en;
     if (pendingImageUrl) {
+      console.log(`🔍 Using pending preview for ${language}:`, pendingImageUrl);
       return pendingImageUrl;
     }
     
-    // Priority 1: Language-specific reframed image
-    const staticImageUrl = language === 'fr' ? item.static_image_url_fr : item.static_image_url_en;
-    if (staticImageUrl) {
-      return staticImageUrl;
+    // Priority 1: Form data (for newly uploaded images before save) - works in create mode
+    const formImageUrl = language === 'fr' ? formData.image_url_fr : formData.image_url_en;
+    if (formImageUrl) {
+      console.log(`🔍 Using form data for ${language}:`, formImageUrl);
+      return formImageUrl;
     }
     
-    // Priority 2: Language-specific uploaded image
+    if (!item) {
+      console.log(`🔍 No item provided for ${language} - returning empty`);
+      return '';
+    }
+    
+    // Priority 2: Language-specific uploaded image from database
     const imageUrl = language === 'fr' ? item.image_url_fr : item.image_url_en;
     if (imageUrl) {
+      console.log(`🔍 Using database image for ${language}:`, imageUrl);
       return imageUrl;
     }
     
-    // Priority 3: Legacy static image (deprecated)
+    // Priority 3: Language-specific reframed image
+    const staticImageUrl = language === 'fr' ? item.static_image_url_fr : item.static_image_url_en;
+    if (staticImageUrl) {
+      console.log(`🔍 Using static thumbnail for ${language}:`, staticImageUrl);
+      return staticImageUrl;
+    }
+    
+    // Priority 4: Legacy static image (deprecated)
     if (item.static_image_url) {
+      console.log(`🔍 Using legacy static for ${language}:`, item.static_image_url);
       return item.static_image_url;
     }
     
+    console.log(`🔍 No image found for ${language}`);
     return '';
   };
 
@@ -807,27 +822,15 @@ export default function GalleryManagementNew() {
                         )}
                       </div>
                       <div className="aspect-video w-full bg-black rounded-lg overflow-hidden border border-blue-200 dark:border-blue-600 relative">
-                        {/* DEBUGGING: Always show this info */}
-                        {(() => {
-                          const hasSelectedItem = !!selectedItem;
-                          const selectedItemId = selectedItem?.id || 'NONE';
-                          const thumbnailUrl = selectedItem ? getThumbnailUrl(selectedItem, 'fr') : 'NO_ITEM';
-                          const hasImageUrlFr = !!selectedItem?.image_url_fr;
-                          const hasStaticImageUrlFr = !!selectedItem?.static_image_url_fr;
-                          
-                          console.log('🔍 RENDER DEBUG:', { hasSelectedItem, selectedItemId, thumbnailUrl, hasImageUrlFr, hasStaticImageUrlFr });
-                          alert(`RENDER: hasItem=${hasSelectedItem}, ID=${selectedItemId}, thumbnailUrl=${thumbnailUrl}`);
-                          return null;
-                        })()}
-                        {selectedItem ? (
+
+                        {(selectedItem || isCreateMode) && (formData.image_url_fr || pendingPreviews.image_url_fr) ? (
                           <>
                             <img 
                               src={
-                                // FIXED: Always prioritize static thumbnails in admin interface
+                                // In create mode or when selectedItem exists, use thumbnail URL function
                                 selectedItem ? getThumbnailUrl(selectedItem, 'fr') : 
-                                (formData.image_url_fr?.startsWith('http') 
-                                  ? `${formData.image_url_fr}?v=new`
-                                  : `/api/image-proxy?filename=${formData.image_url_fr?.split('/').pop()?.split('?')[0]}`)
+                                // In create mode without selectedItem, use formData or pending previews
+                                (pendingPreviews.image_url_fr || formData.image_url_fr || '')
                               }
                               onLoadStart={() => {
                                 const imageUrl = selectedItem ? getThumbnailUrl(selectedItem, 'fr') : 
@@ -835,7 +838,6 @@ export default function GalleryManagementNew() {
                                     ? `${formData.image_url_fr}?v=new`
                                     : `/api/image-proxy?filename=${formData.image_url_fr?.split('/').pop()?.split('?')[0]}`);
                                 console.log('🔍 ADMIN IMAGE START LOADING:', imageUrl);
-                                alert(`ADMIN: Starting to load image: ${imageUrl}`);
                               }} 
                               alt="Aperçu Français"
                               className="w-full h-full object-contain"
@@ -851,14 +853,10 @@ export default function GalleryManagementNew() {
                                   isThumbnail: img.naturalWidth <= 300
                                 });
                                 
-                                // Alert for easy spotting
-                                if (img.naturalWidth > 0) {
-                                  alert(`ADMIN IMAGE: ${img.naturalWidth}x${img.naturalHeight} - ${img.naturalWidth > 1000 ? 'HIGH-RES' : 'THUMBNAIL'}`);
-                                }
+
                               }}
                               onError={(e) => {
                                 console.error('🚨 ADMIN FR IMAGE ERROR:', e);
-                                alert('ADMIN IMAGE FAILED TO LOAD!');
                               }}
                             />
                             {/* Show different badges for manual vs automatic cropping */}
@@ -1037,14 +1035,14 @@ export default function GalleryManagementNew() {
                         )}
                       </div>
                       <div className="aspect-video w-full bg-black rounded-lg overflow-hidden border border-green-200 dark:border-green-600 relative">
-                        {(formData.image_url_en || selectedItem?.image_url_en) ? (
+                        {(selectedItem || isCreateMode) && (formData.image_url_en || pendingPreviews.image_url_en) ? (
                           <>
                             <img 
                               src={
-                                // Admin interface uses original high-res images (like public gallery now does)
-                                (formData.image_url_en || selectedItem?.image_url_en)?.startsWith('http')
-                                  ? `${formData.image_url_en || selectedItem?.image_url_en}?v=${formData.image_url_en ? 'new' : 'old'}`
-                                  : (selectedItem ? getThumbnailUrl(selectedItem, 'en') : null) || `/api/image-proxy?filename=${(formData.image_url_en || selectedItem?.image_url_en)?.split('/').pop()?.split('?')[0]}`
+                                // In create mode or when selectedItem exists, use thumbnail URL function
+                                selectedItem ? getThumbnailUrl(selectedItem, 'en') : 
+                                // In create mode without selectedItem, use formData or pending previews
+                                (pendingPreviews.image_url_en || formData.image_url_en || '')
                               } 
                               alt="Aperçu English"
                               className="w-full h-full object-contain"
