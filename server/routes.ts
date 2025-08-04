@@ -4612,7 +4612,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
         if (code === 0) {
           // Extract filename from output
           const filenameMatch = output.match(/FORCE_CLEAN_DEPLOYMENT_([^.]+\.txt)/);
-          const filename = filenameMatch ? filenameMatch[0] : 'unknown';
+          const filename = filenameMatch ? filenameMatch[0] : 
+                          output.match(/([^/\\]+\.txt)/) ? output.match(/([^/\\]+\.txt)/)[1] : 'unknown';
           
           res.json({
             success: true,
