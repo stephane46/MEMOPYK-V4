@@ -145,7 +145,7 @@ const DraggableCover = ({ imageUrl, onPositionChange, previewRef, onCropChange, 
 
       <div
         ref={previewRef}
-        className="w-[400px] h-[300px] border-4 border-[#D67C4A] relative overflow-hidden mx-auto cursor-crosshair focus:outline-none focus:ring-2 focus:ring-[#D67C4A]"
+        className="w-[400px] h-[300px] relative overflow-hidden mx-auto cursor-crosshair focus:outline-none"
         style={{
           backgroundColor: '#ffffff',
           borderRadius: 12,
