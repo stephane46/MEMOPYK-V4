@@ -818,7 +818,8 @@ export default function GalleryManagementNew() {
                           
                           alert(`DEBUG: formData.image_url_fr: ${formData.image_url_fr || 'NONE'}, selectedItem?.image_url_fr: ${selectedItem?.image_url_fr || 'NONE'}, thumbnailUrl: ${thumbnailUrl || 'NONE'}`);
                           
-                          return (formData.image_url_fr || selectedItem?.image_url_fr);
+                          // FIXED: Check getThumbnailUrl result instead of just raw image_url_fr
+                          return thumbnailUrl && thumbnailUrl.length > 0;
                         })() ? (
                           <>
                             <img 
