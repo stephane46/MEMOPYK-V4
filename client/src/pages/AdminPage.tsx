@@ -483,12 +483,16 @@ export default function AdminPage() {
                   onClick={() => setActiveSection(item.id)}
                   className={`w-full flex items-center space-x-3 px-4 py-3 rounded-lg text-left transition-colors duration-200 group ${
                     isActive 
-                      ? 'bg-orange-500 text-white' 
+                      ? 'text-white' 
                       : 'text-gray-300 hover:bg-gray-800 hover:text-white'
                   }`}
+                  style={isActive ? { backgroundColor: 'var(--memopyk-orange)' } : {}}
                 >
                   {/* Icon with background that changes on hover */}
-                  <div className={`p-2 rounded-md ${isActive ? 'bg-orange-600' : 'group-hover:bg-gray-700'}`}>
+                  <div 
+                    className={`p-2 rounded-md ${isActive ? '' : 'group-hover:bg-gray-700'}`}
+                    style={isActive ? { backgroundColor: 'rgba(255,255,255,0.2)' } : {}}
+                  >
                     <Icon className={`h-4 w-4 ${isActive ? 'text-white' : 'text-gray-400 group-hover:text-white'}`} />
                   </div>
                   
