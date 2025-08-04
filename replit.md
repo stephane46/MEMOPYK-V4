@@ -4,6 +4,11 @@
 MEMOPYK is a full-stack memory film platform that transforms personal photos and videos into cinematic memory films. It features a bilingual (French/English) content management system, a professional video lightbox, robust gallery management with reliable video streaming, language-specific upload functionality, image reframing tools, and real-time preview capabilities. The platform aims to provide a seamless and intuitive experience for creating and managing cherished memory films.
 
 ## Recent Changes (August 2025)
+- **ADMIN MENU ENHANCEMENT v1.0.129**: Completely redesigned admin navigation for better user experience
+- **Visual Improvements**: Enhanced sidebar with gradient active states, icon backgrounds, active indicator bar, and right arrow indicators
+- **Bilingual Menu Labels**: Updated all 9 menu items with proper French names (Vidéos Hero, Galerie Vidéos, Boutons CTA, Documents Légaux, Gestion SEO, etc.)
+- **Modern UI Elements**: Added section title, improved spacing, hover animations, and scale transforms for better visual feedback
+- **User Navigation**: Clear active state indicators help users understand their current location in the admin interface
 - **DEPLOYMENT REGRESSION CONFIRMED v1.0.128**: User testing confirms production admin/public sync broken
 - **Visual Evidence**: User cropped production admin image to show space above dog's head, public gallery still shows cropped head
 - **Development Works**: Same test in development shows proper synchronization 

@@ -187,12 +187,12 @@ export default function AdminPage() {
   };
 
   const sidebarItems = [
-    { id: 'hero-management', label: 'Gestion Hero', icon: Video },
-    { id: 'gallery', label: 'Galerie', icon: Play },
+    { id: 'hero-management', label: 'Vidéos Hero', icon: Video },
+    { id: 'gallery', label: 'Galerie Vidéos', icon: Play },
     { id: 'faq', label: 'FAQ', icon: MessageSquare },
-    { id: 'cta', label: 'CTA Buttons', icon: Zap },
+    { id: 'cta', label: 'Boutons CTA', icon: Zap },
     { id: 'legal-docs', label: 'Documents Légaux', icon: FileText },
-    { id: 'seo-management', label: 'SEO Management', icon: Search },
+    { id: 'seo-management', label: 'Gestion SEO', icon: Search },
     { id: 'analytics', label: 'Analytiques', icon: BarChart3 },
     { id: 'tests', label: 'Tests', icon: TestTube },
     { id: 'deployment', label: 'Déploiement', icon: Rocket },
@@ -467,7 +467,12 @@ export default function AdminPage() {
 
         {/* Navigation - Scrollable */}
         <nav className="flex-1 p-4 overflow-y-auto">
-          <div className="space-y-2">
+          {/* Section Title */}
+          <div className="mb-4 px-2">
+            <h3 className="text-xs font-semibold text-gray-400 uppercase tracking-wider">Sections</h3>
+          </div>
+          
+          <div className="space-y-1">
             {sidebarItems.map((item) => {
               const Icon = item.icon;
               const isActive = activeSection === item.id;
@@ -475,14 +480,44 @@ export default function AdminPage() {
                 <button
                   key={item.id}
                   onClick={() => setActiveSection(item.id)}
-                  className={`w-full flex items-center space-x-3 px-3 py-2 rounded-lg text-left transition-colors ${
+                  className={`w-full flex items-center space-x-3 px-4 py-3 rounded-lg text-left transition-all duration-200 relative group ${
                     isActive 
-                      ? 'bg-orange-500 text-white' 
-                      : 'text-gray-300 hover:bg-gray-800 hover:text-white'
+                      ? 'bg-gradient-to-r from-orange-500 to-orange-600 text-white shadow-lg transform scale-105' 
+                      : 'text-gray-300 hover:bg-gray-800 hover:text-white hover:transform hover:scale-102'
                   }`}
                 >
-                  <Icon className="h-5 w-5" />
-                  <span className="text-sm font-medium">{item.label}</span>
+                  {/* Active indicator bar */}
+                  {isActive && (
+                    <div className="absolute left-0 top-0 bottom-0 w-1 bg-white rounded-r-full"></div>
+                  )}
+                  
+                  {/* Icon with enhanced styling */}
+                  <div className={`p-1 rounded-md ${isActive ? 'bg-white/20' : 'group-hover:bg-gray-700'}`}>
+                    <Icon className={`h-5 w-5 ${isActive ? 'text-white' : 'text-gray-400 group-hover:text-white'}`} />
+                  </div>
+                  
+                  {/* Label with enhanced typography */}
+                  <span className={`text-sm font-medium flex-1 ${isActive ? 'text-white font-semibold' : 'text-gray-300 group-hover:text-white'}`}>
+                    {item.label}
+                  </span>
+                  
+                  {/* Right arrow indicator for active item */}
+                  {isActive && (
+                    <div className="text-white/80">
+                      <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                        <path fillRule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clipRule="evenodd" />
+                      </svg>
+                    </div>
+                  )}
+                  
+                  {/* Right arrow indicator for active item */}
+                  {isActive && (
+                    <div className="text-white/80">
+                      <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                        <path fillRule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clipRule="evenodd" />
+                      </svg>
+                    </div>
+                  )}
                 </button>
               );
             })}
