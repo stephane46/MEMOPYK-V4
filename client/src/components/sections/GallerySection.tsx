@@ -98,11 +98,12 @@ export default function GallerySection() {
   const [refreshKey, setRefreshKey] = useState(0);
   
   const { data: rawData = [], isLoading, refetch } = useQuery<any[]>({
-    queryKey: ['/api/gallery', 'public', refreshKey], // Stable key with refresh trigger
-    staleTime: 1000, // Short stale time for responsiveness
-    gcTime: 5 * 60 * 1000, // Keep in cache for 5 minutes
+    queryKey: ['/api/gallery'], // 🚨 CACHE SYNC FIX v1.0.125 - Use same key as admin
+    staleTime: 0, // No stale time - always fresh data
+    gcTime: 0, // No garbage collection time - immediate cache clear
     refetchOnMount: 'always', // Always refetch on mount
     refetchOnWindowFocus: true, // Refetch when window regains focus
+    refetchInterval: 5000, // 🚨 Poll every 5 seconds in production for cache sync
     retry: 2, // Retry on failure
   });
   
