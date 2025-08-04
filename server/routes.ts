@@ -3,7 +3,7 @@ import { createServer, type Server } from "http";
 import { hybridStorage } from "./hybrid-storage";
 import { z } from "zod";
 import { videoCache } from "./video-cache";
-import { createReadStream, existsSync, statSync, mkdirSync, openSync, closeSync } from 'fs';
+import fs, { createReadStream, existsSync, statSync, mkdirSync, openSync, closeSync } from 'fs';
 import path from 'path';
 import multer from 'multer';
 import { createClient } from '@supabase/supabase-js';
@@ -4720,7 +4720,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.get("/api/deployment/markers", async (req, res) => {
     try {
-      const fs = require('fs');
       const markersDir = path.join(__dirname, '../.deployment_markers');
       
       if (!fs.existsSync(markersDir)) {
