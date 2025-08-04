@@ -31,21 +31,20 @@ const DraggableCover = ({ imageUrl, onPositionChange, previewRef, onCropChange, 
   }, [initialPosition.x, initialPosition.y]);
 
   const handleMouseDown = (e: React.MouseEvent) => {
-    const rect = e.currentTarget.getBoundingClientRect();
-    setDragStart({
-      x: e.clientX - rect.left - (rect.width * position.x / 100),
-      y: e.clientY - rect.top - (rect.height * position.y / 100)
-    });
     setIsDragging(true);
     e.preventDefault();
+    e.stopPropagation();
   };
 
   const handleMouseMove = (e: React.MouseEvent) => {
     if (!isDragging) return;
     
-    const rect = e.currentTarget.getBoundingClientRect();
-    const x = ((e.clientX - rect.left - dragStart.x) / rect.width) * 100;
-    const y = ((e.clientY - rect.top - dragStart.y) / rect.height) * 100;
+    const container = previewRef.current;
+    if (!container) return;
+    
+    const rect = container.getBoundingClientRect();
+    const x = ((e.clientX - rect.left) / rect.width) * 100;
+    const y = ((e.clientY - rect.top) / rect.height) * 100;
     
     const newPos = {
       x: Math.max(0, Math.min(100, x)),
@@ -61,6 +60,41 @@ const DraggableCover = ({ imageUrl, onPositionChange, previewRef, onCropChange, 
     setIsDragging(false);
   };
 
+  // Global mouse move and up handlers for smooth dragging
+  React.useEffect(() => {
+    if (!isDragging) return;
+
+    const handleGlobalMouseMove = (e: MouseEvent) => {
+      const container = previewRef.current;
+      if (!container) return;
+      
+      const rect = container.getBoundingClientRect();
+      const x = ((e.clientX - rect.left) / rect.width) * 100;
+      const y = ((e.clientY - rect.top) / rect.height) * 100;
+      
+      const newPos = {
+        x: Math.max(0, Math.min(100, x)),
+        y: Math.max(0, Math.min(100, y))
+      };
+      
+      setPosition(newPos);
+      onPositionChange(newPos);
+      onCropChange?.();
+    };
+
+    const handleGlobalMouseUp = () => {
+      setIsDragging(false);
+    };
+
+    document.addEventListener('mousemove', handleGlobalMouseMove);
+    document.addEventListener('mouseup', handleGlobalMouseUp);
+
+    return () => {
+      document.removeEventListener('mousemove', handleGlobalMouseMove);
+      document.removeEventListener('mouseup', handleGlobalMouseUp);
+    };
+  }, [isDragging, onPositionChange, onCropChange]);
+
   return (
     <div className="space-y-3">
       {/* Clear instructions */}
@@ -69,7 +103,7 @@ const DraggableCover = ({ imageUrl, onPositionChange, previewRef, onCropChange, 
           🖼️ Recadrage de l'image
         </h3>
         <p className="text-sm text-gray-600 dark:text-gray-400">
-          Déplacez le carré orange pour positionner votre image dans le cadre
+          Cliquez et glissez le cercle orange pour repositionner votre image
         </p>
       </div>
 
@@ -81,28 +115,29 @@ const DraggableCover = ({ imageUrl, onPositionChange, previewRef, onCropChange, 
           borderRadius: 12,
           userSelect: 'none',
         }}
+        onMouseMove={handleMouseMove}
+        onMouseUp={handleMouseUp}
+        onMouseLeave={handleMouseUp}
       >
-        {/* Background image - larger for better positioning */}
+        {/* Background image */}
         {imageLoaded && (
           <div 
-            className="absolute inset-0"
+            className="absolute inset-0 pointer-events-none"
             style={{
               backgroundImage: `url("${imageUrl}")`,
               backgroundSize: 'cover',
               backgroundPosition: `${position.x}% ${position.y}%`,
-              backgroundRepeat: 'no-repeat',
-              transform: 'scale(1.2)', // Slightly larger for better control
-              transformOrigin: 'center'
+              backgroundRepeat: 'no-repeat'
             }}
           />
         )}
 
-        {/* Crop frame overlay - shows exactly what will be captured */}
+        {/* Crop frame overlay - shows exactly what will be captured with 1.5 aspect ratio */}
         <div 
           className="absolute border-4 border-[#D67C4A] bg-[#D67C4A]/10"
           style={{
-            width: '300px',
-            height: '200px',
+            width: '360px',  // 1.5 aspect ratio: 360x240
+            height: '240px',
             left: '50%',
             top: '50%',
             transform: 'translate(-50%, -50%)',
@@ -113,11 +148,8 @@ const DraggableCover = ({ imageUrl, onPositionChange, previewRef, onCropChange, 
         >
           {/* Drag handle in center */}
           <div 
-            className={`absolute left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2 w-12 h-12 bg-[#D67C4A] rounded-full flex items-center justify-center text-white text-xl font-bold shadow-lg ${isDragging ? 'cursor-grabbing scale-110' : 'cursor-grab hover:scale-105'} transition-transform`}
+            className={`absolute left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2 w-12 h-12 bg-[#D67C4A] rounded-full flex items-center justify-center text-white text-xl font-bold shadow-lg ${isDragging ? 'cursor-grabbing scale-110' : 'cursor-grab hover:scale-105'} transition-transform select-none`}
             onMouseDown={handleMouseDown}
-            onMouseMove={handleMouseMove}
-            onMouseUp={handleMouseUp}
-            onMouseLeave={handleMouseUp}
             title="Glissez pour repositionner l'image"
           >
             ⋮⋮
