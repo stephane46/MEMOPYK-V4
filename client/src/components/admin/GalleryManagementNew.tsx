@@ -809,19 +809,15 @@ export default function GalleryManagementNew() {
                         )}
                       </div>
                       <div className="aspect-video w-full bg-black rounded-lg overflow-hidden border border-blue-200 dark:border-blue-600 relative">
-                        {(() => {
-                          console.log('🔍 DEBUG: formData.image_url_fr:', formData.image_url_fr);
-                          console.log('🔍 DEBUG: selectedItem?.image_url_fr:', selectedItem?.image_url_fr);
-                          console.log('🔍 DEBUG: selectedItem object:', selectedItem);
-                          const thumbnailUrl = selectedItem ? getThumbnailUrl(selectedItem, 'fr') : '';
-                          console.log('🔍 DEBUG: getThumbnailUrl result:', thumbnailUrl);
-                          
-                          alert(`DEBUG: formData.image_url_fr: ${formData.image_url_fr || 'NONE'}, selectedItem?.image_url_fr: ${selectedItem?.image_url_fr || 'NONE'}, thumbnailUrl: ${thumbnailUrl || 'NONE'}`);
-                          
-                          // FIXED: Check getThumbnailUrl result instead of just raw image_url_fr
-                          return thumbnailUrl && thumbnailUrl.length > 0;
-                        })() ? (
+                        {/* Force timestamp for cache busting */}
+                        {selectedItem ? (
                           <>
+                            {(() => {
+                              const thumbnailUrl = getThumbnailUrl(selectedItem, 'fr');
+                              console.log('🔍 CONDITIONAL DEBUG: selectedItem exists, thumbnailUrl:', thumbnailUrl);
+                              alert(`CONDITIONAL: thumbnailUrl = ${thumbnailUrl || 'EMPTY!'}`);
+                              return null; // Just for debugging
+                            })()}
                             <img 
                               src={
                                 // FIXED: Always prioritize static thumbnails in admin interface
