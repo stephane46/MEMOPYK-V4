@@ -569,7 +569,15 @@ export default function GalleryManagementNew() {
       return apiRequest(`/api/gallery/${id}/reorder`, 'PATCH', { order_index });
     },
     onSuccess: () => {
+      // Aggressive cache refresh to ensure UI updates
+      queryClient.removeQueries({ queryKey: ['/api/gallery'] });
       queryClient.invalidateQueries({ queryKey: ['/api/gallery'] });
+      
+      // Force a complete refetch
+      setTimeout(() => {
+        queryClient.refetchQueries({ queryKey: ['/api/gallery'] });
+      }, 100);
+      
       toast({ 
         title: "✅ Succès", 
         description: "Ordre mis à jour!",
@@ -581,20 +589,52 @@ export default function GalleryManagementNew() {
     }
   });
 
-  const handleReorder = (item: GalleryItem, direction: 'up' | 'down') => {
+  const handleReorder = async (item: GalleryItem, direction: 'up' | 'down') => {
     const sortedItems = [...galleryItems].sort((a, b) => a.order_index - b.order_index);
     const currentIndex = sortedItems.findIndex(i => i.id === item.id);
     
+    console.log('🔄 REORDER DEBUG:', {
+      direction,
+      currentIndex,
+      totalItems: sortedItems.length,
+      sortedItems: sortedItems.map(i => ({ id: i.id, title: i.title_en, order: i.order_index }))
+    });
+    
+    let targetIndex = -1;
+    
     if (direction === 'up' && currentIndex > 0) {
-      const targetItem = sortedItems[currentIndex - 1];
-      // Swap order indexes
-      reorderItemMutation.mutate({ id: item.id, order_index: targetItem.order_index });
-      reorderItemMutation.mutate({ id: targetItem.id, order_index: item.order_index });
+      targetIndex = currentIndex - 1;
     } else if (direction === 'down' && currentIndex < sortedItems.length - 1) {
-      const targetItem = sortedItems[currentIndex + 1];
-      // Swap order indexes
-      reorderItemMutation.mutate({ id: item.id, order_index: targetItem.order_index });
-      reorderItemMutation.mutate({ id: targetItem.id, order_index: item.order_index });
+      targetIndex = currentIndex + 1;
+    }
+    
+    if (targetIndex >= 0) {
+      const targetItem = sortedItems[targetIndex];
+      const currentItemOrder = item.order_index;
+      const targetItemOrder = targetItem.order_index;
+      
+      console.log('🔄 SWAPPING:', { 
+        current: { id: item.id, title: item.title_en, order: currentItemOrder }, 
+        target: { id: targetItem.id, title: targetItem.title_en, order: targetItemOrder } 
+      });
+      
+      // Use a temporary order to avoid conflicts
+      const tempOrder = 9999;
+      
+      try {
+        // Step 1: Move current item to temp position
+        await reorderItemMutation.mutateAsync({ id: item.id, order_index: tempOrder });
+        
+        // Step 2: Move target item to current position
+        await reorderItemMutation.mutateAsync({ id: targetItem.id, order_index: currentItemOrder });
+        
+        // Step 3: Move current item to target position
+        await reorderItemMutation.mutateAsync({ id: item.id, order_index: targetItemOrder });
+        
+        console.log('✅ SWAP COMPLETE');
+      } catch (error) {
+        console.error('❌ Reorder error:', error);
+      }
     }
   };
 
