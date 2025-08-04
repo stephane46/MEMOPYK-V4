@@ -4,6 +4,10 @@
 MEMOPYK is a full-stack memory film platform that transforms personal photos and videos into cinematic memory films. It features a bilingual (French/English) content management system, a professional video lightbox, robust gallery management with reliable video streaming, language-specific upload functionality, image reframing tools, and real-time preview capabilities. The platform aims to provide a seamless and intuitive experience for creating and managing cherished memory films.
 
 ## Recent Changes (August 2025)
+- **ADMIN MENU ORANGE HIGHLIGHTING SUCCESS v1.0.130**: CONFIRMED WORKING - Menu highlighting system implemented perfectly
+- **Brand Color Integration**: Used official MEMOPYK orange (`#D67C4A`) from CSS custom properties instead of generic Tailwind classes
+- **Visual Feedback**: Active menu items now display proper orange background with white text and semi-transparent icon backgrounds
+- **User Confirmation**: System tested and confirmed working by user - orange highlighting visible and functional across all menu sections
 - **DEPLOYMENT SYSTEM ENHANCEMENT v2.0**: Professional-grade deployment marker system with enterprise features
 - **Organized Structure**: New `.deployment_markers/` directory with `.gitkeep` for clean version control
 - **Enhanced Script**: `scripts/create-deployment-marker.js` with CLI flags, retention policies, atomic writes
@@ -12,11 +16,7 @@ MEMOPYK is a full-stack memory film platform that transforms personal photos and
 - **Safety Features**: Input sanitization, 50-char limit, unsafe character replacement, atomic file operations
 - **Flexibility**: `--cleanup` mode, `--description`, `--out-dir`, and `--help` flags for various workflows
 - **Documentation**: Enhanced deployment prevention checklist with troubleshooting and best practices
-- **ADMIN MENU ENHANCEMENT v1.0.129**: Redesigned admin navigation with clean official orange highlighting
-- **Simple Design**: Active menu items highlighted with official orange color (bg-orange-500) as requested by user
-- **Icon Hover Effects**: Maintained icon background containers that change on hover for better interaction feedback
 - **Bilingual Menu Labels**: Updated all 9 menu items with proper French names (Vidéos Hero, Galerie Vidéos, Boutons CTA, Documents Légaux, Gestion SEO, etc.)
-- **Clean UI**: Removed complex visual indicators (gradients, shadows, arrows) in favor of simple, clear orange highlighting
 - **DEPLOYMENT REGRESSION CONFIRMED v1.0.128**: User testing confirms production admin/public sync broken
 - **Visual Evidence**: User cropped production admin image to show space above dog's head, public gallery still shows cropped head
 - **Development Works**: Same test in development shows proper synchronization 
