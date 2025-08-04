@@ -675,7 +675,7 @@ export default function GalleryManagementNew() {
                 setSelectedVideoId(value);
                 
                 // Find the selected item to debug its properties
-                const item = galleryData?.find(item => item.id?.toString() === value);
+                const item = galleryItems?.find(item => item.id?.toString() === value);
                 console.log('🔍 FULL SELECTED ITEM:', item);
                 
                 alert(`Admin item selected: ${value}. Item has image_url_fr: ${item?.image_url_fr ? 'YES' : 'NO'}, static_image_url_fr: ${item?.static_image_url_fr ? 'YES' : 'NO'}`);
