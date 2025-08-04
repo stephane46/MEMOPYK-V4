@@ -515,9 +515,20 @@ export default function GalleryManagementNew() {
       // 🚨 SMART CACHE REFRESH v1.0.114 - Proper cache invalidation
       console.log("🔄 SMART CACHE REFRESH - Invalidating gallery cache only");
       
-      // Invalidate only gallery-related queries for immediate refresh
+      // Invalidate ALL gallery-related queries for immediate refresh across admin and public
       queryClient.invalidateQueries({ queryKey: ['/api/gallery'] });
+      queryClient.invalidateQueries({ queryKey: ['/api/gallery', 'v1.0.110'] });
+      queryClient.invalidateQueries({ queryKey: ['/api/gallery', 'public'] });
       queryClient.refetchQueries({ queryKey: ['/api/gallery'] });
+      
+      // Force public gallery to refresh by triggering storage event
+      console.log("🔄 FORCING PUBLIC GALLERY REFRESH - Triggering storage event");
+      localStorage.setItem('gallery-updated', Date.now().toString());
+      
+      // Dispatch custom event for immediate refresh
+      window.dispatchEvent(new CustomEvent('gallery-updated', { 
+        detail: { timestamp: Date.now() } 
+      }));
       
       // Force complete form refresh by refetching and resetting state
       console.log("🔄 FORCING COMPLETE FORM REFRESH");
@@ -860,22 +871,9 @@ export default function GalleryManagementNew() {
                               }}
                             />
                             {/* Show different badges for manual vs automatic cropping */}
-                            {(() => {
-                              console.log('🔍 BADGE VISIBILITY CHECK FR:', {
-                                hasStaticImage: !!selectedItem?.static_image_url_fr,
-                                staticImageUrl: selectedItem?.static_image_url_fr,
-                                originalImageUrl: selectedItem?.image_url_fr,
-                                formImageUrl: formData.image_url_fr,
-                                staticNotEqualOriginal: selectedItem?.static_image_url_fr !== selectedItem?.image_url_fr,
-                                staticNotEqualForm: selectedItem?.static_image_url_fr !== formData.image_url_fr,
-                                shouldShowBadge: selectedItem?.static_image_url_fr && 
-                                  selectedItem.static_image_url_fr !== selectedItem.image_url_fr && 
-                                  selectedItem.static_image_url_fr !== formData.image_url_fr
-                              });
-                              return selectedItem?.static_image_url_fr && 
-                                selectedItem.static_image_url_fr !== selectedItem.image_url_fr && 
-                                selectedItem.static_image_url_fr !== formData.image_url_fr;
-                            })() && (
+                            {selectedItem?.static_image_url_fr && 
+                             selectedItem.static_image_url_fr !== selectedItem.image_url_fr && 
+                             selectedItem.static_image_url_fr !== formData.image_url_fr && (
                               <div className={`absolute top-2 right-2 text-white px-2 py-1 rounded-full text-xs font-bold shadow-lg ${
                                 (selectedItem as any).cropSettings?.method === 'triple-layer-white-bg' 
                                   ? 'bg-emerald-500' 
@@ -896,40 +894,37 @@ export default function GalleryManagementNew() {
                                     ? formData.cropSettings  // For new uploads, only use formData cropSettings
                                     : (formData.cropSettings || (selectedItem as any).cropSettings); // For existing items, use either
                                   
-                                  console.log('🎯 BADGE DEBUG FR - isUploadingNewImage:', isUploadingNewImage);
-                                  console.log('🎯 BADGE DEBUG FR - cropSettings:', cropSettings);
-                                  console.log('🎯 BADGE DEBUG FR - selectedItem.static_image_url_fr:', selectedItem?.static_image_url_fr);
-                                  console.log('🎯 BADGE DEBUG FR - selectedItem.image_url_fr:', selectedItem?.image_url_fr);
+
                                   
                                   // Check if we have a static image (indicates any cropping was performed)
                                   const hasStaticImage = selectedItem?.static_image_url_fr;
                                   const hasOriginalImage = selectedItem?.image_url_fr;
                                   
                                   if (hasStaticImage && hasOriginalImage) {
-                                    console.log('🎯 BADGE DEBUG FR - Has both images, checking crop method...');
+
                                     
                                     // MANUAL CROPPING: Check if the cropSettings indicate manual cropping
                                     if (cropSettings?.method === 'triple-layer-white-bg') {
-                                      console.log('🎯 BADGE DEBUG FR - MANUAL CROPPING DETECTED');
+
                                       // Manual cropping was performed via the image cropper interface
                                       return formData.use_same_video ? '✂️ Recadré EN/FR' : '✂️ Recadré FR';
                                     }
                                     
                                     // AUTO CROPPING: Sharp auto-cropping (only shows badge if cropping actually occurred)
                                     else if (cropSettings?.method === 'sharp-auto-thumbnail' && cropSettings?.cropped === true) {
-                                      console.log('🎯 BADGE DEBUG FR - AUTO CROPPING DETECTED');
+
                                       return formData.use_same_video ? '✂️ Auto EN/FR' : '✂️ Auto FR';
                                     }
                                     
                                     // FALLBACK: If static image exists but no clear method, assume manual cropping
                                     else if (selectedItem.image_url_fr !== selectedItem.static_image_url_fr) {
-                                      console.log('🎯 BADGE DEBUG FR - FALLBACK MANUAL CROPPING (different URLs)');
+
                                       return formData.use_same_video ? '✂️ Recadré EN/FR' : '✂️ Recadré FR';
                                     } else {
-                                      console.log('🎯 BADGE DEBUG FR - No badge conditions met');
+
                                     }
                                   } else {
-                                    console.log('🎯 BADGE DEBUG FR - Missing static or original image');
+
                                   }
                                   
                                   // No badge for: no cropSettings, no actual cropping, or same image URLs
@@ -1096,26 +1091,10 @@ export default function GalleryManagementNew() {
                               }}
                             />
                             {/* Show different badges for manual vs automatic cropping */}
-                            {(() => {
-                              console.log('🔍 BADGE VISIBILITY CHECK EN:', {
-                                hasStaticImageEn: !!selectedItem?.static_image_url_en,
-                                hasLegacyStatic: !!selectedItem?.static_image_url,
-                                staticImageUrlEn: selectedItem?.static_image_url_en,
-                                legacyStaticUrl: selectedItem?.static_image_url,
-                                originalImageUrl: selectedItem?.image_url_en,
-                                formImageUrl: formData.image_url_en,
-                                condition1: selectedItem?.static_image_url_en && selectedItem.static_image_url_en !== selectedItem.image_url_en,
-                                condition2: selectedItem?.static_image_url && selectedItem.static_image_url !== selectedItem.image_url_en,
-                                shouldShowBadge: (selectedItem?.static_image_url_en || selectedItem?.static_image_url) && (
-                                  (selectedItem?.static_image_url_en && selectedItem.static_image_url_en !== selectedItem.image_url_en) ||
-                                  (selectedItem?.static_image_url && selectedItem.static_image_url !== selectedItem.image_url_en)
-                                )
-                              });
-                              return (selectedItem?.static_image_url_en || selectedItem?.static_image_url) && (
-                                (selectedItem?.static_image_url_en && selectedItem.static_image_url_en !== selectedItem.image_url_en) ||
-                                (selectedItem?.static_image_url && selectedItem.static_image_url !== selectedItem.image_url_en)
-                              );
-                            })() && (
+                            {(selectedItem?.static_image_url_en || selectedItem?.static_image_url) && (
+                             (selectedItem?.static_image_url_en && selectedItem.static_image_url_en !== selectedItem.image_url_en) ||
+                             (selectedItem?.static_image_url && selectedItem.static_image_url !== selectedItem.image_url_en)
+                            ) && (
                               <div className={`absolute top-2 right-2 text-white px-2 py-1 rounded-full text-xs font-bold shadow-lg ${
                                 (selectedItem as any).cropSettings?.method === 'triple-layer-white-bg' 
                                   ? 'bg-emerald-500' 

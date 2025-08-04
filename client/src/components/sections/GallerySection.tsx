@@ -94,15 +94,40 @@ export default function GallerySection() {
     clearBrowserCache();
   }, []);
   
-  // 🚨 CACHE SYNCHRONIZATION FIX v1.0.112 - Efficient cache invalidation
+  // 🚨 CACHE SYNCHRONIZATION FIX v1.0.119 - Stable cache with forced refresh
+  const [refreshKey, setRefreshKey] = useState(0);
+  
   const { data: rawData = [], isLoading, refetch } = useQuery<any[]>({
-    queryKey: ['/api/gallery'], // Static key for normal caching
-    staleTime: 5 * 60 * 1000, // Consider data fresh for 5 minutes
-    gcTime: 10 * 60 * 1000, // Keep in cache for 10 minutes
-    refetchOnMount: 'always', // Always refetch on mount (F5 refresh)
+    queryKey: ['/api/gallery', 'public', refreshKey], // Stable key with refresh trigger
+    staleTime: 1000, // Short stale time for responsiveness
+    gcTime: 5 * 60 * 1000, // Keep in cache for 5 minutes
+    refetchOnMount: 'always', // Always refetch on mount
     refetchOnWindowFocus: true, // Refetch when window regains focus
-    retry: 1, // Single retry on failure
+    retry: 2, // Retry on failure
   });
+  
+  // Force refresh mechanism for admin updates
+  useEffect(() => {
+    const handleStorageChange = () => {
+      console.log("🔄 Storage change detected - refreshing public gallery");
+      setRefreshKey(prev => prev + 1);
+    };
+    
+    window.addEventListener('storage', handleStorageChange);
+    
+    // Listen for custom admin update events
+    const handleAdminUpdate = () => {
+      console.log("🔄 Admin update event - refreshing public gallery");
+      setRefreshKey(prev => prev + 1);
+    };
+    
+    window.addEventListener('gallery-updated', handleAdminUpdate);
+    
+    return () => {
+      window.removeEventListener('storage', handleStorageChange);
+      window.removeEventListener('gallery-updated', handleAdminUpdate);
+    };
+  }, []);
 
   // Process and transform data
   const galleryItems = React.useMemo(() => {
