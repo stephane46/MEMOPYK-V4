@@ -835,9 +835,6 @@ export class HybridStorage implements HybridStorageInterface {
     
     this.saveJsonFile('gallery-items.json', items);
     
-    // Sync to database
-    await this.syncToDatabase();
-    
     console.log(`✅ Order updated: ${item.title_en} now at position ${newOrder}`);
     return item;
   }
@@ -871,9 +868,6 @@ export class HybridStorage implements HybridStorageInterface {
     item2.updated_at = now;
     
     this.saveJsonFile('gallery-items.json', items);
-    
-    // Sync to database
-    await this.syncToDatabase();
     
     console.log(`✅ Swap complete: ${item1.title_en} now at ${order2}, ${item2.title_en} now at ${order1}`);
     return { item1, item2 };
