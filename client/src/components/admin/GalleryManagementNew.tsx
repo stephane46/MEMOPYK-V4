@@ -328,44 +328,7 @@ export default function GalleryManagementNew() {
     };
 
     const handleScroll = () => logScrollEvent('SCROLL_EVENT');
-    const handleFocus = () => {
-      logScrollEvent('WINDOW_FOCUS');
-      
-      // 🔄 TARGETED FIX: Preserve scroll position and prevent focus-related scrolling
-      const currentScroll = window.pageYOffset || document.documentElement.scrollTop;
-      preservedScrollPosition.current = currentScroll;
-      console.log(`🔍 PRESERVING SCROLL POSITION: ${currentScroll}`);
-      
-      // Prevent any element from being focused programmatically during Alt+Tab return
-      const originalScrollTo = window.scrollTo;
-      const originalScrollIntoView = Element.prototype.scrollIntoView;
-      
-      // Override scrolling methods temporarily
-      window.scrollTo = function(...args) {
-        console.log('🚨 BLOCKED window.scrollTo during focus event:', args);
-        return;
-      };
-      
-      Element.prototype.scrollIntoView = function(...args) {
-        console.log('🚨 BLOCKED scrollIntoView during focus event:', this, args);
-        return;
-      };
-      
-      // Track what happens immediately after focus
-      setTimeout(() => {
-        logScrollEvent('FOCUS_AFTER_1MS');
-        // Restore scroll methods after immediate DOM updates
-        window.scrollTo = originalScrollTo;
-        Element.prototype.scrollIntoView = originalScrollIntoView;
-        
-        // Check if scroll position changed and restore it
-        const newScroll = window.pageYOffset || document.documentElement.scrollTop;
-        if (Math.abs(newScroll - preservedScrollPosition.current) > 10) {
-          console.log(`🚨 SCROLL JUMP DETECTED! Restoring from ${newScroll} to ${preservedScrollPosition.current}`);
-          window.scrollTo(0, preservedScrollPosition.current);
-        }
-      }, 1);
-    };
+    const handleFocus = () => logScrollEvent('WINDOW_FOCUS');
     const handleBlur = () => {
       logScrollEvent('WINDOW_BLUR');
       // Store current scroll position before Alt+Tab away
