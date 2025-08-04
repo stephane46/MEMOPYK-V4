@@ -12,10 +12,11 @@
    - Check git status shows latest commits
    - Verify no uncommitted critical changes
 
-3. **Force Clean Build Markers**
-   - Create deployment marker files with timestamp
+3. **Force Clean Build Markers** (ALWAYS RECOMMENDED)
+   - Create deployment marker files with timestamp for every deployment
    - Include version numbers and force clean build flags
    - Document specific fixes being deployed
+   - **Why:** Prevents Replit from packaging cached/inconsistent code snapshots
 
 ### Deployment Process
 1. **Incremental Testing**
