@@ -860,9 +860,22 @@ export default function GalleryManagementNew() {
                               }}
                             />
                             {/* Show different badges for manual vs automatic cropping */}
-                            {selectedItem?.static_image_url_fr && 
-                             selectedItem.static_image_url_fr !== selectedItem.image_url_fr && 
-                             selectedItem.static_image_url_fr !== formData.image_url_fr && (
+                            {(() => {
+                              console.log('🔍 BADGE VISIBILITY CHECK FR:', {
+                                hasStaticImage: !!selectedItem?.static_image_url_fr,
+                                staticImageUrl: selectedItem?.static_image_url_fr,
+                                originalImageUrl: selectedItem?.image_url_fr,
+                                formImageUrl: formData.image_url_fr,
+                                staticNotEqualOriginal: selectedItem?.static_image_url_fr !== selectedItem?.image_url_fr,
+                                staticNotEqualForm: selectedItem?.static_image_url_fr !== formData.image_url_fr,
+                                shouldShowBadge: selectedItem?.static_image_url_fr && 
+                                  selectedItem.static_image_url_fr !== selectedItem.image_url_fr && 
+                                  selectedItem.static_image_url_fr !== formData.image_url_fr
+                              });
+                              return selectedItem?.static_image_url_fr && 
+                                selectedItem.static_image_url_fr !== selectedItem.image_url_fr && 
+                                selectedItem.static_image_url_fr !== formData.image_url_fr;
+                            })() && (
                               <div className={`absolute top-2 right-2 text-white px-2 py-1 rounded-full text-xs font-bold shadow-lg ${
                                 (selectedItem as any).cropSettings?.method === 'triple-layer-white-bg' 
                                   ? 'bg-emerald-500' 
@@ -1083,10 +1096,26 @@ export default function GalleryManagementNew() {
                               }}
                             />
                             {/* Show different badges for manual vs automatic cropping */}
-                            {(selectedItem?.static_image_url_en || selectedItem?.static_image_url) && (
-                             (selectedItem?.static_image_url_en && selectedItem.static_image_url_en !== selectedItem.image_url_en) ||
-                             (selectedItem?.static_image_url && selectedItem.static_image_url !== selectedItem.image_url_en)
-                            ) && (
+                            {(() => {
+                              console.log('🔍 BADGE VISIBILITY CHECK EN:', {
+                                hasStaticImageEn: !!selectedItem?.static_image_url_en,
+                                hasLegacyStatic: !!selectedItem?.static_image_url,
+                                staticImageUrlEn: selectedItem?.static_image_url_en,
+                                legacyStaticUrl: selectedItem?.static_image_url,
+                                originalImageUrl: selectedItem?.image_url_en,
+                                formImageUrl: formData.image_url_en,
+                                condition1: selectedItem?.static_image_url_en && selectedItem.static_image_url_en !== selectedItem.image_url_en,
+                                condition2: selectedItem?.static_image_url && selectedItem.static_image_url !== selectedItem.image_url_en,
+                                shouldShowBadge: (selectedItem?.static_image_url_en || selectedItem?.static_image_url) && (
+                                  (selectedItem?.static_image_url_en && selectedItem.static_image_url_en !== selectedItem.image_url_en) ||
+                                  (selectedItem?.static_image_url && selectedItem.static_image_url !== selectedItem.image_url_en)
+                                )
+                              });
+                              return (selectedItem?.static_image_url_en || selectedItem?.static_image_url) && (
+                                (selectedItem?.static_image_url_en && selectedItem.static_image_url_en !== selectedItem.image_url_en) ||
+                                (selectedItem?.static_image_url && selectedItem.static_image_url !== selectedItem.image_url_en)
+                              );
+                            })() && (
                               <div className={`absolute top-2 right-2 text-white px-2 py-1 rounded-full text-xs font-bold shadow-lg ${
                                 (selectedItem as any).cropSettings?.method === 'triple-layer-white-bg' 
                                   ? 'bg-emerald-500' 
