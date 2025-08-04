@@ -369,6 +369,27 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  app.patch("/api/gallery/:id1/swap/:id2", async (req, res) => {
+    try {
+      const itemId1 = req.params.id1;
+      const itemId2 = req.params.id2;
+      
+      console.log(`🔄 Swapping gallery items ${itemId1} ↔ ${itemId2}`);
+      
+      if (!itemId1 || !itemId2 || itemId1.trim() === '' || itemId2.trim() === '') {
+        return res.status(400).json({ error: "Invalid gallery item IDs" });
+      }
+      
+      const result = await hybridStorage.swapGalleryItemOrder(itemId1, itemId2);
+      console.log(`✅ Successfully swapped gallery items`);
+      
+      res.json(result);
+    } catch (error: any) {
+      console.error('Gallery swap error:', error);
+      res.status(500).json({ error: `Failed to swap gallery items: ${error.message}` });
+    }
+  });
+
   // Generate signed upload URL for direct Supabase uploads (bypasses Replit infrastructure limit)
   app.post("/api/upload/generate-signed-url", async (req, res) => {
     try {

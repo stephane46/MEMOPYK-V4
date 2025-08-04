@@ -569,14 +569,10 @@ export default function GalleryManagementNew() {
       return apiRequest(`/api/gallery/${id}/reorder`, 'PATCH', { order_index });
     },
     onSuccess: () => {
-      // Aggressive cache refresh to ensure UI updates
+      // Force immediate cache invalidation and refetch
       queryClient.removeQueries({ queryKey: ['/api/gallery'] });
       queryClient.invalidateQueries({ queryKey: ['/api/gallery'] });
-      
-      // Force a complete refetch
-      setTimeout(() => {
-        queryClient.refetchQueries({ queryKey: ['/api/gallery'] });
-      }, 100);
+      queryClient.refetchQueries({ queryKey: ['/api/gallery'] });
       
       toast({ 
         title: "✅ Succès", 
@@ -610,30 +606,35 @@ export default function GalleryManagementNew() {
     
     if (targetIndex >= 0) {
       const targetItem = sortedItems[targetIndex];
-      const currentItemOrder = item.order_index;
-      const targetItemOrder = targetItem.order_index;
       
       console.log('🔄 SWAPPING:', { 
-        current: { id: item.id, title: item.title_en, order: currentItemOrder }, 
-        target: { id: targetItem.id, title: targetItem.title_en, order: targetItemOrder } 
+        current: { id: item.id, title: item.title_en, order: item.order_index }, 
+        target: { id: targetItem.id, title: targetItem.title_en, order: targetItem.order_index } 
       });
       
-      // Use a temporary order to avoid conflicts
-      const tempOrder = 9999;
-      
       try {
-        // Step 1: Move current item to temp position
-        await reorderItemMutation.mutateAsync({ id: item.id, order_index: tempOrder });
+        // Use new swap API endpoint
+        const response = await apiRequest(`/api/gallery/${item.id}/swap/${targetItem.id}`, 'PATCH');
+        console.log('✅ SWAP COMPLETE:', response);
         
-        // Step 2: Move target item to current position
-        await reorderItemMutation.mutateAsync({ id: targetItem.id, order_index: currentItemOrder });
+        // Force immediate UI refresh after swap
+        queryClient.removeQueries({ queryKey: ['/api/gallery'] });
+        queryClient.invalidateQueries({ queryKey: ['/api/gallery'] });
         
-        // Step 3: Move current item to target position
-        await reorderItemMutation.mutateAsync({ id: item.id, order_index: targetItemOrder });
+        // Wait a moment then refetch to ensure database changes are reflected
+        setTimeout(async () => {
+          await queryClient.refetchQueries({ queryKey: ['/api/gallery'] });
+          console.log('🔄 Forced gallery refetch after reorder');
+        }, 300);
         
-        console.log('✅ SWAP COMPLETE');
+        toast({ 
+          title: "✅ Succès", 
+          description: "Ordre mis à jour!",
+          className: "bg-green-50 dark:bg-green-900/20 border-green-200 dark:border-green-800 text-green-900 dark:text-green-100"
+        });
       } catch (error) {
         console.error('❌ Reorder error:', error);
+        toast({ title: "Erreur", description: "Échec du réordonnancement", variant: "destructive" });
       }
     }
   };

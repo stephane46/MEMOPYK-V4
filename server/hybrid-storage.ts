@@ -817,6 +817,8 @@ export class HybridStorage implements HybridStorageInterface {
   }
 
   async updateGalleryItemOrder(itemId: string | number, newOrder: number): Promise<any> {
+    console.log(`🔄 Direct order update: ${itemId} → ${newOrder}`);
+    
     const items = this.loadJsonFile('gallery-items.json');
     const itemIndex = items.findIndex((item: any) => item.id.toString() === itemId.toString());
     
@@ -825,31 +827,56 @@ export class HybridStorage implements HybridStorageInterface {
     }
     
     const item = items[itemIndex];
-    const oldOrder = item.order_index;
+    console.log(`📝 Updating ${item.title_en} from order ${item.order_index} to ${newOrder}`);
     
-    // Update order indexes for other items
-    items.forEach((otherItem: any) => {
-      if (otherItem.id.toString() !== itemId.toString()) {
-        if (newOrder > oldOrder) {
-          // Moving down - shift others up
-          if (otherItem.order_index > oldOrder && otherItem.order_index <= newOrder) {
-            otherItem.order_index--;
-          }
-        } else {
-          // Moving up - shift others down  
-          if (otherItem.order_index >= newOrder && otherItem.order_index < oldOrder) {
-            otherItem.order_index++;
-          }
-        }
-      }
-    });
-    
-    // Update the target item's order
+    // Simple direct order update - no shifting logic
     item.order_index = newOrder;
     item.updated_at = new Date().toISOString();
     
     this.saveJsonFile('gallery-items.json', items);
+    
+    // Sync to database
+    await this.syncToDatabase();
+    
+    console.log(`✅ Order updated: ${item.title_en} now at position ${newOrder}`);
     return item;
+  }
+
+  async swapGalleryItemOrder(itemId1: string | number, itemId2: string | number): Promise<any> {
+    console.log(`🔄 SWAP operation: ${itemId1} ↔ ${itemId2}`);
+    
+    const items = this.loadJsonFile('gallery-items.json');
+    const item1Index = items.findIndex((item: any) => item.id.toString() === itemId1.toString());
+    const item2Index = items.findIndex((item: any) => item.id.toString() === itemId2.toString());
+    
+    if (item1Index === -1 || item2Index === -1) {
+      throw new Error('One or both gallery items not found');
+    }
+    
+    const item1 = items[item1Index];
+    const item2 = items[item2Index];
+    
+    const order1 = item1.order_index;
+    const order2 = item2.order_index;
+    
+    console.log(`📝 Swapping: ${item1.title_en} (${order1}) ↔ ${item2.title_en} (${order2})`);
+    
+    // Swap the order indexes
+    item1.order_index = order2;
+    item2.order_index = order1;
+    
+    // Update timestamps
+    const now = new Date().toISOString();
+    item1.updated_at = now;
+    item2.updated_at = now;
+    
+    this.saveJsonFile('gallery-items.json', items);
+    
+    // Sync to database
+    await this.syncToDatabase();
+    
+    console.log(`✅ Swap complete: ${item1.title_en} now at ${order2}, ${item2.title_en} now at ${order1}`);
+    return { item1, item2 };
   }
 
   async deleteGalleryItem(itemId: string | number): Promise<any> {
