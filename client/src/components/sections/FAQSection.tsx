@@ -84,9 +84,13 @@ export default function FAQSection() {
       setTimeout(() => {
         const element = sectionRefs.current[sectionId];
         if (element) {
-          element.scrollIntoView({ 
-            behavior: 'smooth', 
-            block: 'start' 
+          // Calculate offset to show section title and some content
+          const elementRect = element.getBoundingClientRect();
+          const offset = window.scrollY + elementRect.top - 100; // 100px padding from top
+          
+          window.scrollTo({
+            top: offset,
+            behavior: 'smooth'
           });
         }
       }, 100);
@@ -105,9 +109,13 @@ export default function FAQSection() {
       setTimeout(() => {
         const element = questionRefs.current[questionId];
         if (element) {
-          element.scrollIntoView({ 
-            behavior: 'smooth', 
-            block: 'start' 
+          // Calculate offset to show question title and answer content
+          const elementRect = element.getBoundingClientRect();
+          const offset = window.scrollY + elementRect.top - 80; // 80px padding from top
+          
+          window.scrollTo({
+            top: offset,
+            behavior: 'smooth'
           });
         }
       }, 100);
