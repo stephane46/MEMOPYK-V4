@@ -166,13 +166,13 @@
     "image_url_en": "https://supabase.memopyk.org/storage/v1/object/public/memopyk-videos/VitaminSeaC.JPG",
     "image_url_fr": "https://supabase.memopyk.org/storage/v1/object/public/memopyk-videos/VitaminSeaC.JPG",
     "static_image_url": "https://supabase.memopyk.org/storage/v1/object/public/memopyk-videos/static_auto_1754294078769.jpg",
-    "static_image_url_en": "https://supabase.memopyk.org/storage/v1/object/public/memopyk-videos/static_en_1754330275589.jpg",
-    "static_image_url_fr": "https://supabase.memopyk.org/storage/v1/object/public/memopyk-videos/static_en_1754330275589.jpg",
+    "static_image_url_en": null,
+    "static_image_url_fr": null,
     "cropSettings": {
       "method": "triple-layer-white-bg",
       "position": {
-        "x": 56.40740966796876,
-        "y": 67.22221374511719
+        "x": 61.74074300130208,
+        "y": 0.2222137451171875
       },
       "dimensions": {
         "width": 3024,
@@ -184,7 +184,7 @@
     },
     "is_active": true,
     "created_at": "2025-08-04T04:44:25.672Z",
-    "updated_at": "2025-08-04T17:58:07.044Z",
+    "updated_at": "2025-08-04T18:02:42.206Z",
     "language": "shared",
     "order_index": 0
   }

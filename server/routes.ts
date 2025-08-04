@@ -875,8 +875,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(400).json({ error: "Gallery item ID required" });
       }
 
-      // Use consistent naming for static images - PNG for lossless quality
-      const filename = `static_${itemId}.png`;
+      // Use unique timestamp-based naming for cache invalidation
+      const timestamp = Date.now();
+      const language = req.body.language || 'en';
+      const filename = `static_${language}_${timestamp}.jpg`;
 
       // First, delete the old file to ensure clean CDN cache invalidation
       const { error: deleteError } = await supabase.storage
@@ -896,9 +898,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const { data: uploadData, error: uploadError } = await supabase.storage
         .from('memopyk-videos')
         .upload(filename, fileBuffer, {
-          contentType: 'image/png',
+          contentType: 'image/jpeg',
           cacheControl: '300', // Shorter cache for thumbnails (5 minutes)
-          upsert: false  // Use explicit delete+upload for better cache invalidation
+          upsert: true  // Allow overwrite
         });
 
       if (uploadError) {
@@ -906,9 +908,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(500).json({ error: `Static image upload failed: ${uploadError.message}` });
       }
 
-      // Add cache-busting timestamp to force fresh loads
-      const timestamp = Date.now();
-      const staticImageUrl = `https://supabase.memopyk.org/storage/v1/object/public/memopyk-videos/${filename}?v=${timestamp}`;
+      // Create clean public URL
+      const staticImageUrl = `https://supabase.memopyk.org/storage/v1/object/public/memopyk-videos/${filename}`;
       
       console.log(`✅ Static image uploaded successfully: ${staticImageUrl}`);
       
