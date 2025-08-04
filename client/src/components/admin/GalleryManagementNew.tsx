@@ -1043,26 +1043,28 @@ export default function GalleryManagementNew() {
                           <>
                             <img 
                               src={(() => {
-                                // Prioritize formData (fresh uploads) over selectedItem (database values)
+                                // FIXED: Prioritize static thumbnails (like public gallery) over high-res originals
+                                const thumbnailUrl = selectedItem ? getThumbnailUrl(selectedItem, 'en') : null;
                                 const directUrl = (formData.image_url_en || selectedItem?.image_url_en)?.startsWith('http')
                                   ? `${formData.image_url_en || selectedItem?.image_url_en}?v=${formData.image_url_en ? 'new' : 'old'}`
                                   : null;
-                                const thumbnailUrl = selectedItem ? getThumbnailUrl(selectedItem, 'en') : null;
                                 const proxyUrl = `/api/image-proxy?filename=${(formData.image_url_en || selectedItem?.image_url_en)?.split('/').pop()?.split('?')[0]}`;
                                 
-                                const finalUrl = directUrl || thumbnailUrl || proxyUrl;
+                                // PRIORITY: Static thumbnail first (for consistent quality with public gallery)
+                                const finalUrl = thumbnailUrl || directUrl || proxyUrl;
                                 
-                                console.log('🔍 ADMIN EN IMAGE URL LOGIC:', {
+                                console.log('🔍 ADMIN EN IMAGE URL LOGIC (FIXED):', {
                                   formDataImageUrlEn: formData.image_url_en,
                                   selectedItemImageUrlEn: selectedItem?.image_url_en,
-                                  directUrl,
                                   thumbnailUrl,
+                                  directUrl,
                                   proxyUrl,
                                   finalUrl,
-                                  publicGalleryUrl: 'static_auto_1754282589626.jpg'
+                                  publicGalleryUrl: 'static_auto_1754282589626.jpg',
+                                  usingThumbnail: finalUrl === thumbnailUrl
                                 });
                                 
-                                alert(`ADMIN EN IMAGE: directUrl=${directUrl ? 'YES' : 'NO'}, thumbnailUrl=${thumbnailUrl}, finalUrl=${finalUrl}`);
+                                alert(`ADMIN EN IMAGE FIXED: thumbnailUrl=${thumbnailUrl ? 'YES' : 'NO'}, finalUrl=${finalUrl}, usingThumbnail=${finalUrl === thumbnailUrl}`);
                                 
                                 return finalUrl;
                               })()} 
