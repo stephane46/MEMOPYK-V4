@@ -4,6 +4,11 @@
 MEMOPYK is a full-stack memory film platform that transforms personal photos and videos into cinematic memory films. It features a bilingual (French/English) content management system, a professional video lightbox, robust gallery management with reliable video streaming, language-specific upload functionality, image reframing tools, and real-time preview capabilities. The platform aims to provide a seamless and intuitive experience for creating and managing cherished memory films.
 
 ## Recent Changes (August 2025)
+- **GALLERY REORDERING SYSTEM SUCCESS v1.0.131**: CONFIRMED WORKING - Gallery item reordering now functions perfectly with instant UI updates
+- **Real-time Updates**: Fixed cache invalidation to provide instant position updates without page refresh
+- **Hybrid Storage Fix**: Enhanced error handling for missing JSON files while maintaining database-first operations
+- **Position Calculation**: Unified sorting logic ensures accurate position display and button states across all components
+- **User Confirmation**: "It works and (great!) the site updated instantly and on its own (no F5 needed!)" - reordering system fully operational
 - **ADMIN MENU ORANGE HIGHLIGHTING SUCCESS v1.0.130**: CONFIRMED WORKING - Menu highlighting system implemented perfectly
 - **Brand Color Integration**: Used official MEMOPYK orange (`#D67C4A`) from CSS custom properties instead of generic Tailwind classes
 - **Visual Feedback**: Active menu items now display proper orange background with white text and semi-transparent icon backgrounds
