@@ -817,26 +817,55 @@ export default function GalleryManagementNew() {
                 Change Display Order
               </h3>
               <div className="flex gap-2">
-                <button
-                  onClick={() => handleReorder(selectedItem, 'up')}
-                  disabled={reorderItemMutation.isPending || galleryItems.findIndex(item => item.id === selectedItem.id) === 0}
-                  className="flex items-center gap-2 px-4 py-2 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md hover:bg-gray-50 dark:hover:bg-gray-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-                >
-                  <div className="w-4 h-4 flex items-center justify-center">↑</div>
-                  Move Earlier
-                </button>
-                <button
-                  onClick={() => handleReorder(selectedItem, 'down')}
-                  disabled={reorderItemMutation.isPending || galleryItems.findIndex(item => item.id === selectedItem.id) === galleryItems.length - 1}
-                  className="flex items-center gap-2 px-4 py-2 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md hover:bg-gray-50 dark:hover:bg-gray-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-                >
-                  <div className="w-4 h-4 flex items-center justify-center">↓</div>
-                  Move Later
-                </button>
+                {(() => {
+                  const sortedItems = [...galleryItems].sort((a, b) => a.order_index - b.order_index);
+                  const currentIndex = sortedItems.findIndex(item => item.id === selectedItem.id);
+                  const isFirst = currentIndex === 0;
+                  const isLast = currentIndex === sortedItems.length - 1;
+                  
+                  return (
+                    <>
+                      <button
+                        onClick={() => handleReorder(selectedItem, 'up')}
+                        disabled={reorderItemMutation.isPending || isFirst}
+                        className="flex items-center gap-2 px-4 py-2 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md hover:bg-gray-50 dark:hover:bg-gray-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                      >
+                        <div className="w-4 h-4 flex items-center justify-center">↑</div>
+                        Move Earlier
+                      </button>
+                      <button
+                        onClick={() => handleReorder(selectedItem, 'down')}
+                        disabled={reorderItemMutation.isPending || isLast}
+                        className="flex items-center gap-2 px-4 py-2 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md hover:bg-gray-50 dark:hover:bg-gray-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                      >
+                        <div className="w-4 h-4 flex items-center justify-center">↓</div>
+                        Move Later
+                      </button>
+                    </>
+                  );
+                })()}
               </div>
-              <p className="text-xs text-gray-600 dark:text-gray-400 mt-2">
-                Current position: {galleryItems.findIndex(item => item.id === selectedItem.id) + 1} of {galleryItems.length}
-              </p>
+              {(() => {
+                const sortedItems = [...galleryItems].sort((a, b) => a.order_index - b.order_index);
+                const currentIndex = sortedItems.findIndex(item => item.id === selectedItem.id);
+                console.log('🔍 POSITION CALCULATION:', {
+                  selectedItemId: selectedItem.id,
+                  selectedItemTitle: selectedItem.title_en,
+                  selectedItemOrder: selectedItem.order_index,
+                  sortedItems: sortedItems.map(item => ({ id: item.id, title: item.title_en, order: item.order_index })),
+                  currentIndex,
+                  displayPosition: currentIndex + 1
+                });
+                return (
+                  <p className="text-xs text-gray-600 dark:text-gray-400 mt-2">
+                    Current position: {currentIndex + 1} of {galleryItems.length}
+                    <br />
+                    <span className="text-xs text-blue-600 dark:text-blue-400">
+                      Order index: {selectedItem.order_index} | ID: {selectedItem.id.toString().substring(0, 8)}...
+                    </span>
+                  </p>
+                );
+              })()}
             </div>
           )}
         </div>
