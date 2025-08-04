@@ -269,10 +269,20 @@ export default function GalleryManagementNew() {
       return '';
     }
     
-    // 🔧 ALIGNMENT FIX: Use same priority as public site - static crops first!
-    // Priority 2: Language-specific static crop (SAME AS PUBLIC SITE)
-    const staticImageUrl = language === 'fr' ? item.static_image_url_fr : item.static_image_url_en;
-    if (staticImageUrl) {
+    // 🔧 ALIGNMENT FIX: Use same priority AND shared mode logic as public site!
+    // Priority 2: Static crops with shared mode logic (SAME AS PUBLIC SITE)
+    let staticImageUrl = '';
+    if (item.use_same_video) {
+      // Shared mode: Use EN static crop for both languages (same as public site)
+      staticImageUrl = item.static_image_url_en || '';
+      console.log(`🔗 ADMIN SHARED MODE: Using EN static crop for ${language}: ${staticImageUrl} for ${item.title_en}`);
+    } else {
+      // Separate mode: Use language-specific static crop
+      staticImageUrl = (language === 'fr' ? item.static_image_url_fr : item.static_image_url_en) || '';
+      console.log(`🌍 ADMIN SEPARATE MODE: Using ${language}-specific static crop: ${staticImageUrl} for ${item.title_en}`);
+    }
+    
+    if (staticImageUrl && staticImageUrl.trim() !== '') {
       console.log(`🔍 ADMIN: Using static thumbnail for ${language}:`, staticImageUrl);
       return staticImageUrl;
     }
