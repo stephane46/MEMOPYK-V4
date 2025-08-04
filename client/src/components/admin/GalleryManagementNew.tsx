@@ -673,7 +673,12 @@ export default function GalleryManagementNew() {
               value={selectedVideoId?.toString() || ''} 
               onValueChange={(value) => {
                 setSelectedVideoId(value);
-                alert(`Admin item selected: ${value}`);
+                
+                // Find the selected item to debug its properties
+                const item = galleryData?.find(item => item.id?.toString() === value);
+                console.log('🔍 FULL SELECTED ITEM:', item);
+                
+                alert(`Admin item selected: ${value}. Item has image_url_fr: ${item?.image_url_fr ? 'YES' : 'NO'}, static_image_url_fr: ${item?.static_image_url_fr ? 'YES' : 'NO'}`);
               }}
             >
               <SelectTrigger className="w-full">
