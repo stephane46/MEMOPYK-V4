@@ -480,44 +480,21 @@ export default function AdminPage() {
                 <button
                   key={item.id}
                   onClick={() => setActiveSection(item.id)}
-                  className={`w-full flex items-center space-x-3 px-4 py-3 rounded-lg text-left transition-all duration-200 relative group ${
+                  className={`w-full flex items-center space-x-3 px-4 py-3 rounded-lg text-left transition-colors duration-200 group ${
                     isActive 
-                      ? 'bg-gradient-to-r from-orange-500 to-orange-600 text-white shadow-lg transform scale-105' 
-                      : 'text-gray-300 hover:bg-gray-800 hover:text-white hover:transform hover:scale-102'
+                      ? 'bg-orange-500 text-white' 
+                      : 'text-gray-300 hover:bg-gray-800 hover:text-white'
                   }`}
                 >
-                  {/* Active indicator bar */}
-                  {isActive && (
-                    <div className="absolute left-0 top-0 bottom-0 w-1 bg-white rounded-r-full"></div>
-                  )}
-                  
-                  {/* Icon with enhanced styling */}
+                  {/* Icon with background that changes on hover */}
                   <div className={`p-1 rounded-md ${isActive ? 'bg-white/20' : 'group-hover:bg-gray-700'}`}>
                     <Icon className={`h-5 w-5 ${isActive ? 'text-white' : 'text-gray-400 group-hover:text-white'}`} />
                   </div>
                   
-                  {/* Label with enhanced typography */}
-                  <span className={`text-sm font-medium flex-1 ${isActive ? 'text-white font-semibold' : 'text-gray-300 group-hover:text-white'}`}>
+                  {/* Label */}
+                  <span className={`text-sm font-medium ${isActive ? 'text-white font-semibold' : 'text-gray-300 group-hover:text-white'}`}>
                     {item.label}
                   </span>
-                  
-                  {/* Right arrow indicator for active item */}
-                  {isActive && (
-                    <div className="text-white/80">
-                      <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-                        <path fillRule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clipRule="evenodd" />
-                      </svg>
-                    </div>
-                  )}
-                  
-                  {/* Right arrow indicator for active item */}
-                  {isActive && (
-                    <div className="text-white/80">
-                      <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-                        <path fillRule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clipRule="evenodd" />
-                      </svg>
-                    </div>
-                  )}
                 </button>
               );
             })}
