@@ -874,9 +874,16 @@ export default function GalleryManagementNew() {
                                     return activeCroppingState.hasChanges ? '✂️ Recadré FR*' : '✂️ Auto FR';
                                   }
                                   
-                                  // FIXED LOGIC: Check formData first (new uploads), then selectedItem (saved data)
-                                  const cropSettings = formData.cropSettings || (selectedItem as any).cropSettings;
+                                  // CRITICAL FIX: For fresh uploads, ignore existing cropSettings and only use formData
+                                  // This ensures new uploads start with "Auto" badge, not inherited "Recadré" badge
+                                  const isUploadingNewImage = pendingPreviews.image_url_fr || 
+                                    (formData.image_url_fr && formData.image_url_fr !== selectedItem?.image_url_fr);
                                   
+                                  const cropSettings = isUploadingNewImage 
+                                    ? formData.cropSettings  // For new uploads, only use formData cropSettings
+                                    : (formData.cropSettings || (selectedItem as any).cropSettings); // For existing items, use either
+                                  
+                                  console.log('🎯 BADGE DEBUG FR - isUploadingNewImage:', isUploadingNewImage);
                                   console.log('🎯 BADGE DEBUG FR - cropSettings:', cropSettings);
                                   console.log('🎯 BADGE DEBUG FR - selectedItem.static_image_url_fr:', selectedItem?.static_image_url_fr);
                                   console.log('🎯 BADGE DEBUG FR - selectedItem.image_url_fr:', selectedItem?.image_url_fr);
@@ -1096,8 +1103,16 @@ export default function GalleryManagementNew() {
                                     return activeCroppingState.hasChanges ? '✂️ Recadré EN*' : '✂️ Auto EN';
                                   }
                                   
-                                  // FIXED LOGIC: Check formData first (new uploads), then selectedItem (saved data)
-                                  const cropSettings = formData.cropSettings || (selectedItem as any).cropSettings;
+                                  // CRITICAL FIX: For fresh uploads, ignore existing cropSettings and only use formData
+                                  // This ensures new uploads start with "Auto" badge, not inherited "Recadré" badge
+                                  const isUploadingNewImage = pendingPreviews.image_url_en || 
+                                    (formData.image_url_en && formData.image_url_en !== selectedItem?.image_url_en);
+                                  
+                                  const cropSettings = isUploadingNewImage 
+                                    ? formData.cropSettings  // For new uploads, only use formData cropSettings
+                                    : (formData.cropSettings || (selectedItem as any).cropSettings); // For existing items, use either
+                                    
+                                  console.log('🎯 BADGE DEBUG EN - isUploadingNewImage:', isUploadingNewImage);
                                   console.log('🎯 BADGE CROP SETTINGS - formData.cropSettings:', formData.cropSettings);
                                   console.log('🎯 BADGE CROP SETTINGS - selectedItem.cropSettings:', (selectedItem as any).cropSettings);
                                   console.log('🎯 BADGE CROP SETTINGS - final cropSettings:', cropSettings);
