@@ -142,22 +142,11 @@ export default function SimpleImageCropper({ imageUrl, onSave, onCancel, onOpen,
         img.src = imageUrl;
       });
 
-      // SMART SIZING: Preserve larger dimension, calculate other for 1.5 aspect ratio
-      const targetAspectRatio = 1.5; // 3:2 ratio
-      let cropWidth: number;
-      let cropHeight: number;
+      // WEB-OPTIMIZED SIZING: Use reasonable dimensions for web delivery
+      const cropWidth = 800;   // Good quality without massive file sizes
+      const cropHeight = 533;  // 1.5 aspect ratio
       
-      if (img.naturalWidth >= img.naturalHeight) {
-        // Landscape or square: preserve width, calculate height
-        cropWidth = img.naturalWidth;
-        cropHeight = Math.round(cropWidth / targetAspectRatio);
-      } else {
-        // Portrait: preserve height, calculate width  
-        cropHeight = img.naturalHeight;
-        cropWidth = Math.round(cropHeight * targetAspectRatio);
-      }
-      
-      console.log(`🎯 SMART CROP DIMENSIONS: Original ${img.naturalWidth}x${img.naturalHeight} → Crop ${cropWidth}x${cropHeight}`);
+      console.log(`🎯 WEB-OPTIMIZED CROP: Original ${img.naturalWidth}x${img.naturalHeight} → Crop ${cropWidth}x${cropHeight}`);
       
       canvas.width = cropWidth * dpr;
       canvas.height = cropHeight * dpr;

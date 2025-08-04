@@ -463,22 +463,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
           
           const needsCropping = Math.abs(originalAspectRatio - targetAspectRatio) > aspectRatioTolerance;
           
-          // SMART HIGH-QUALITY THUMBNAIL - preserve original dimensions but limit for web optimization
-          const maxWebDimension = 1920; // Maximum dimension for web delivery
-          let thumbnailWidth: number;
-          let thumbnailHeight: number;
+          // WEB-OPTIMIZED THUMBNAIL - balance quality with reasonable file sizes
+          const thumbnailWidth = 800;  // Reasonable web resolution
+          const thumbnailHeight = 533;  // 1.5 aspect ratio (800/533 ≈ 1.5)
           
-          if (metadata.width! >= metadata.height!) {
-            // Landscape or square: preserve width, calculate height
-            thumbnailWidth = Math.min(metadata.width!, maxWebDimension);
-            thumbnailHeight = Math.round(thumbnailWidth / targetAspectRatio);
-          } else {
-            // Portrait: preserve height, calculate width  
-            thumbnailHeight = Math.min(metadata.height!, maxWebDimension);
-            thumbnailWidth = Math.round(thumbnailHeight * targetAspectRatio);
-          }
-          
-          console.log(`🎯 SMART SERVER CROP: Original ${metadata.width}x${metadata.height} → Thumbnail ${thumbnailWidth}x${thumbnailHeight}`);
+          console.log(`🎯 WEB-OPTIMIZED SERVER CROP: Original ${metadata.width}x${metadata.height} → Thumbnail ${thumbnailWidth}x${thumbnailHeight}`);
           
           // Create high-quality thumbnail using smart dimensions
           const thumbnailBuffer = await sharp(Buffer.from(imageBuffer))
