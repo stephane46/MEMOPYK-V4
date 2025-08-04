@@ -69,24 +69,18 @@ const DraggableCover = ({ imageUrl, onPositionChange, previewRef, onCropChange, 
       const step = 5; // 5% movement per key press for better range
       let newCropPosition = { ...cropPosition };
       
-      // Calculate the boundaries based on crop size to allow edge positioning
-      const maxX = 95 - (cropDimensions.width / 8); // Adjust based on crop width
-      const maxY = 95 - (cropDimensions.height / 6); // Adjust based on crop height
-      const minX = 5 + (cropDimensions.width / 8);
-      const minY = 5 + (cropDimensions.height / 6);
-      
       switch (e.key) {
         case 'ArrowUp':
-          newCropPosition.y = Math.max(minY, cropPosition.y - step); 
+          newCropPosition.y = Math.max(5, cropPosition.y - step); // Allow full top positioning
           break;
         case 'ArrowDown':
-          newCropPosition.y = Math.min(maxY, cropPosition.y + step); 
+          newCropPosition.y = Math.min(95, cropPosition.y + step); // Allow full bottom positioning
           break;
         case 'ArrowLeft':
-          newCropPosition.x = Math.max(minX, cropPosition.x - step); 
+          newCropPosition.x = Math.max(5, cropPosition.x - step); 
           break;
         case 'ArrowRight':
-          newCropPosition.x = Math.min(maxX, cropPosition.x + step); 
+          newCropPosition.x = Math.min(95, cropPosition.x + step); 
           break;
         default:
           return; // Don't prevent default for other keys
@@ -99,7 +93,7 @@ const DraggableCover = ({ imageUrl, onPositionChange, previewRef, onCropChange, 
 
     document.addEventListener('keydown', handleKeyDown);
     return () => document.removeEventListener('keydown', handleKeyDown);
-  }, [cropPosition, cropDimensions, onCropChange]);
+  }, [cropPosition, onCropChange]);
 
   // Click to position the crop frame
   const handleContainerClick = (e: React.MouseEvent) => {
@@ -111,8 +105,8 @@ const DraggableCover = ({ imageUrl, onPositionChange, previewRef, onCropChange, 
     const y = ((e.clientY - rect.top) / rect.height) * 100;
     
     const newCropPos = {
-      x: Math.max(10, Math.min(90, x)), // Keep crop frame within reasonable bounds
-      y: Math.max(10, Math.min(90, y))
+      x: Math.max(5, Math.min(95, x)), // Allow full range positioning
+      y: Math.max(5, Math.min(95, y))  // Allow full range positioning
     };
     
     setCropPosition(newCropPos);
@@ -127,7 +121,7 @@ const DraggableCover = ({ imageUrl, onPositionChange, previewRef, onCropChange, 
           🖼️ Recadrage de l'image
         </h3>
         <p className="text-sm text-gray-600 dark:text-gray-400">
-          Cliquez ou utilisez les flèches ↑↓←→ pour déplacer la zone de recadrage
+          Cliquez ou utilisez les flèches ↑↓←→ pour positionner la zone où vous voulez
         </p>
       </div>
 
@@ -206,31 +200,31 @@ const DraggableCover = ({ imageUrl, onPositionChange, previewRef, onCropChange, 
             const scaledImageWidth = naturalWidth * scale;
             const scaledImageHeight = naturalHeight * scale;
             
-            // Calculate maximum crop using either full width OR full height
+            // Give user the maximum possible crop area - use the larger dimension approach
             let maxCropWidth, maxCropHeight;
             
-            // Option 1: Use full height of the scaled image
-            const cropHeightOption = scaledImageHeight;
-            const cropWidthFromHeight = cropHeightOption * targetAspectRatio;
+            // Try using full height first
+            const fullHeightCrop = {
+              height: Math.min(scaledImageHeight, containerHeight * 0.95),
+              width: Math.min(scaledImageHeight * targetAspectRatio, containerWidth * 0.95)
+            };
             
-            // Option 2: Use full width of the scaled image
-            const cropWidthOption = scaledImageWidth;
-            const cropHeightFromWidth = cropWidthOption / targetAspectRatio;
+            // Try using full width  
+            const fullWidthCrop = {
+              width: Math.min(scaledImageWidth, containerWidth * 0.95),
+              height: Math.min(scaledImageWidth / targetAspectRatio, containerHeight * 0.95)
+            };
             
-            // Choose the option that gives the largest crop area AND fits in the container
-            if (cropWidthFromHeight <= scaledImageWidth && cropHeightOption <= containerHeight * 0.99) {
-              // Use full height approach
-              maxCropHeight = cropHeightOption;
-              maxCropWidth = cropWidthFromHeight;
-            } else if (cropHeightFromWidth <= scaledImageHeight && cropWidthOption <= containerWidth * 0.99) {
-              // Use full width approach
-              maxCropWidth = cropWidthOption;
-              maxCropHeight = cropHeightFromWidth;
+            // Use whichever gives the bigger crop area
+            const fullHeightArea = fullHeightCrop.width * fullHeightCrop.height;
+            const fullWidthArea = fullWidthCrop.width * fullWidthCrop.height;
+            
+            if (fullHeightArea >= fullWidthArea) {
+              maxCropWidth = fullHeightCrop.width;
+              maxCropHeight = fullHeightCrop.height;
             } else {
-              // Fallback: fit within container bounds
-              const containerScale = Math.min(containerWidth * 0.95 / scaledImageWidth, containerHeight * 0.95 / scaledImageHeight);
-              maxCropWidth = scaledImageWidth * containerScale;
-              maxCropHeight = scaledImageHeight * containerScale;
+              maxCropWidth = fullWidthCrop.width;
+              maxCropHeight = fullWidthCrop.height;
             }
             
             setCropDimensions({ 
@@ -240,9 +234,8 @@ const DraggableCover = ({ imageUrl, onPositionChange, previewRef, onCropChange, 
             
             console.log(`📐 Image: ${naturalWidth}x${naturalHeight} (ratio: ${imageAspectRatio.toFixed(2)})`);
             console.log(`📐 Scaled image: ${scaledImageWidth.toFixed(0)}x${scaledImageHeight.toFixed(0)}`);
-            console.log(`📐 Full height option: ${cropHeightOption.toFixed(0)}h × ${cropWidthFromHeight.toFixed(0)}w`);
-            console.log(`📐 Full width option: ${cropWidthOption.toFixed(0)}w × ${cropHeightFromWidth.toFixed(0)}h`);
-            console.log(`📐 CHOSEN: ${maxCropWidth.toFixed(0)}x${maxCropHeight.toFixed(0)} = ${(maxCropWidth * maxCropHeight).toFixed(0)} pixels²`);
+            console.log(`📐 Max crop: ${maxCropWidth.toFixed(0)}x${maxCropHeight.toFixed(0)} pixels`);
+            console.log(`📐 Crop area: ${(maxCropWidth * maxCropHeight).toFixed(0)} pixels² available`);
             
             setImageLoaded(true);
           }}
@@ -274,13 +267,13 @@ const DraggableCover = ({ imageUrl, onPositionChange, previewRef, onCropChange, 
             <div>Image originale: {imageDimensions.width}x{imageDimensions.height}</div>
             <div>Zone de recadrage: {cropDimensions.width.toFixed(0)}x{cropDimensions.height.toFixed(0)} (aperçu)</div>
             <div className="text-[#D67C4A] font-medium">
-              Ratio = {(imageDimensions.width / imageDimensions.height).toFixed(2)} → {cropDimensions.width >= imageDimensions.width * 0.9 ? 'PLEINE LARGEUR' : cropDimensions.height >= imageDimensions.height * 0.9 ? 'PLEINE HAUTEUR' : 'MAXIMISÉ'}
+              Zone: {cropDimensions.width.toFixed(0)}×{cropDimensions.height.toFixed(0)}px - Positionnez où vous voulez!
             </div>
             <div className="text-blue-600 font-medium mt-2">
-              ⌨️ Flèches ↑↓←→ pour déplacer vers la tête de Pom, ses pattes, etc.
+              ↑ Vers le haut ↓ Vers le bas ← Vers la gauche → Vers la droite
             </div>
             <div className="text-xs text-green-600 mt-1">
-              Position: {cropPosition.x.toFixed(0)}%, {cropPosition.y.toFixed(0)}% | Taille max: {cropDimensions.width.toFixed(0)}x{cropDimensions.height.toFixed(0)}px (pleine résolution)
+              Position: {cropPosition.x.toFixed(0)}%, {cropPosition.y.toFixed(0)}% | Maintenant libre sur tous les bords
             </div>
           </div>
         )}
