@@ -1042,37 +1042,17 @@ export default function GalleryManagementNew() {
                         {(formData.image_url_en || selectedItem?.image_url_en) ? (
                           <>
                             <img 
-                              src={(() => {
-                                // FIXED: Prioritize static thumbnails (like public gallery) over high-res originals
-                                const thumbnailUrl = selectedItem ? getThumbnailUrl(selectedItem, 'en') : null;
-                                const directUrl = (formData.image_url_en || selectedItem?.image_url_en)?.startsWith('http')
+                              src={
+                                // Admin interface uses original high-res images (like public gallery now does)
+                                (formData.image_url_en || selectedItem?.image_url_en)?.startsWith('http')
                                   ? `${formData.image_url_en || selectedItem?.image_url_en}?v=${formData.image_url_en ? 'new' : 'old'}`
-                                  : null;
-                                const proxyUrl = `/api/image-proxy?filename=${(formData.image_url_en || selectedItem?.image_url_en)?.split('/').pop()?.split('?')[0]}`;
-                                
-                                // PRIORITY: Static thumbnail first (for consistent quality with public gallery)
-                                const finalUrl = thumbnailUrl || directUrl || proxyUrl;
-                                
-                                console.log('🔍 ADMIN EN IMAGE URL LOGIC (FIXED):', {
-                                  formDataImageUrlEn: formData.image_url_en,
-                                  selectedItemImageUrlEn: selectedItem?.image_url_en,
-                                  thumbnailUrl,
-                                  directUrl,
-                                  proxyUrl,
-                                  finalUrl,
-                                  publicGalleryUrl: 'static_auto_1754282589626.jpg',
-                                  usingThumbnail: finalUrl === thumbnailUrl
-                                });
-                                
-                                alert(`ADMIN EN IMAGE FIXED: thumbnailUrl=${thumbnailUrl ? 'YES' : 'NO'}, finalUrl=${finalUrl}, usingThumbnail=${finalUrl === thumbnailUrl}`);
-                                
-                                return finalUrl;
-                              })()} 
+                                  : (selectedItem ? getThumbnailUrl(selectedItem, 'en') : null) || `/api/image-proxy?filename=${(formData.image_url_en || selectedItem?.image_url_en)?.split('/').pop()?.split('?')[0]}`
+                              } 
                               alt="Aperçu English"
                               className="w-full h-full object-contain"
                               onLoad={(e) => {
                                 const img = e.target as HTMLImageElement;
-                                alert(`ADMIN EN LOADED: ${img.naturalWidth}x${img.naturalHeight} - ${img.naturalWidth > 1000 ? 'HIGH-RES' : 'THUMBNAIL'} (PUBLIC: 300x200)`);
+                                console.log(`Admin EN image loaded: ${img.naturalWidth}x${img.naturalHeight}`);
                               }}
                             />
                             {/* Show different badges for manual vs automatic cropping */}

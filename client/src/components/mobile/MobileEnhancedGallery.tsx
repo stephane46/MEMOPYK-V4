@@ -76,19 +76,21 @@ export function MobileEnhancedGallery({
 
           // Dynamic image URL selection with fallback
           const getImageUrl = () => {
+            // FIXED: Prioritize high-quality original images (like admin interface)
             const result = language === 'fr-FR' 
-              ? (item.staticImageUrlFr || item.imageUrlFr || item.staticImageUrlEn || item.imageUrlEn)
-              : (item.staticImageUrlEn || item.imageUrlEn || item.staticImageUrlFr || item.imageUrlFr);
+              ? (item.imageUrlFr || item.staticImageUrlFr || item.imageUrlEn || item.staticImageUrlEn)
+              : (item.imageUrlEn || item.staticImageUrlEn || item.imageUrlFr || item.staticImageUrlFr);
             
-            console.log(`🔍 PUBLIC IMAGE DEBUG for ${item.titleEn}:`, {
+            console.log(`🔍 MOBILE IMAGE DEBUG (HIGH-QUALITY PRIORITY) for ${item.titleEn}:`, {
               language,
-              staticImageUrlFr: item.staticImageUrlFr,
               imageUrlFr: item.imageUrlFr,
-              staticImageUrlEn: item.staticImageUrlEn,
+              staticImageUrlFr: item.staticImageUrlFr,
               imageUrlEn: item.imageUrlEn,
+              staticImageUrlEn: item.staticImageUrlEn,
               finalUrl: result,
-              usingStatic: (language === 'fr-FR' && result === item.staticImageUrlFr) || 
-                          (language !== 'fr-FR' && result === item.staticImageUrlEn)
+              usingOriginal: (language === 'fr-FR' && result === item.imageUrlFr) || 
+                            (language !== 'fr-FR' && result === item.imageUrlEn),
+              isHighQuality: result && !result.includes('static_')
             });
             
             return result;

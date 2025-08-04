@@ -202,69 +202,101 @@ export default function GallerySection() {
     let imageUrl = '';
     let filename = '';
     
-    // Priority 1: Language-specific reframed image with shared mode logic
-    let staticImageUrl = '';
+    // FIXED: Priority 1: High-quality original images (like admin interface)
+    let originalImageUrl = '';
     if (item.useSameVideo) {
-      // Shared mode: Use EN reframed image for both languages
-      staticImageUrl = item.staticImageUrlEn || '';
-      console.log(`🔗 SHARED MODE: Using EN reframed image for ${language} visitor: ${staticImageUrl} for ${item.titleEn}`);
+      // Shared mode: Use EN original image for both languages
+      originalImageUrl = item.imageUrlEn || '';
+      console.log(`🔗 SHARED MODE: Using EN original image for ${language} visitor: ${originalImageUrl} for ${item.titleEn}`);
     } else {
-      // Separate mode: Use language-specific reframed image
-      staticImageUrl = (language === 'fr-FR' ? item.staticImageUrlFr : item.staticImageUrlEn) || '';
-      console.log(`🌍 SEPARATE MODE: Using ${language}-specific reframed image: ${staticImageUrl} for ${item.titleEn}`);
+      // Separate mode: Use language-specific original image
+      originalImageUrl = (language === 'fr-FR' ? item.imageUrlFr : item.imageUrlEn) || '';
+      console.log(`🌍 SEPARATE MODE: Using ${language}-specific original image: ${originalImageUrl} for ${item.titleEn}`);
     }
     
-    if (staticImageUrl && staticImageUrl.trim() !== '') {
-      imageUrl = staticImageUrl;
-      console.log(`🖼️ USING LANGUAGE-SPECIFIC REFRAMED IMAGE (${language}): ${imageUrl} for ${item.titleEn}`);
+    if (originalImageUrl && originalImageUrl.trim() !== '') {
+      imageUrl = originalImageUrl;
+      console.log(`🖼️ USING HIGH-QUALITY ORIGINAL IMAGE (${language}): ${imageUrl} for ${item.titleEn}`);
       
-      // Handle both full URLs and filenames for static images
+      // If it's already a full URL, use it directly with cache busting
+      if (imageUrl.startsWith('http')) {
+        console.log(`🖼️ ORIGINAL IS FULL URL - USING DIRECTLY`);
+        const timestamp = Date.now();
+        const random = Math.random().toString(36).substring(7);
+        const separator = imageUrl.includes('?') ? '&' : '?';
+        const directUrl = `${imageUrl}${separator}cacheBust=${timestamp}&v=${random}&nocache=1#${timestamp}-${random}`;
+        console.log(`🖼️ DIRECT CDN HIGH-QUALITY IMAGE URL: ${directUrl}`);
+        return directUrl;
+      }
+      
+      // Handle filename extraction for proxy
       if (imageUrl.includes('/')) {
-        // Full URL - extract filename
         filename = imageUrl.split('/').pop() || '';
-        // Remove query parameters from filename (like ?v=timestamp)
         if (filename.includes('?')) {
           filename = filename.split('?')[0];
         }
       } else {
-        // Already a filename
         filename = imageUrl;
       }
     } else {
-      // Fallback to latest uploads
-      const latestImageUrl = language === 'fr-FR' ? item.imageUrlFr : item.imageUrlEn;
+      // Priority 2: Fallback to static thumbnails only if no original image exists
+      let staticImageUrl = '';
+      if (item.useSameVideo) {
+        staticImageUrl = item.staticImageUrlEn || '';
+        console.log(`🔗 SHARED MODE FALLBACK: Using EN thumbnail for ${language} visitor: ${staticImageUrl} for ${item.titleEn}`);
+      } else {
+        staticImageUrl = (language === 'fr-FR' ? item.staticImageUrlFr : item.staticImageUrlEn) || '';
+        console.log(`🌍 SEPARATE MODE FALLBACK: Using ${language}-specific thumbnail: ${staticImageUrl} for ${item.titleEn}`);
+      }
       
-      console.log(`🖼️ DEBUG LANGUAGE-SPECIFIC FALLBACK for ${item.titleEn}:`);
-      console.log(`   - Current language: ${language}`);
-      console.log(`   - item.imageUrlFr: ${item.imageUrlFr}`);
-      console.log(`   - item.imageUrlEn: ${item.imageUrlEn}`);
-      console.log(`   - Selected latestImageUrl: ${latestImageUrl}`);
-      
-      if (latestImageUrl && latestImageUrl.trim() !== '') {
-        imageUrl = latestImageUrl;
-        console.log(`🖼️ FALLBACK TO LATEST UPLOAD: ${imageUrl} for ${item.titleEn}`);
+      if (staticImageUrl && staticImageUrl.trim() !== '') {
+        imageUrl = staticImageUrl;
+        console.log(`🖼️ FALLBACK TO THUMBNAIL (${language}): ${imageUrl} for ${item.titleEn}`);
         
-        // If it's already a full URL, use it directly
-        if (imageUrl.startsWith('http')) {
-          console.log(`🖼️ LATEST UPLOAD IS FULL URL - USING DIRECTLY`);
-          console.log(`🖼️ DEBUG: Original URL: ${imageUrl}`);
-          console.log(`🖼️ DEBUG: URL already encoded: ${imageUrl.includes('%20') ? 'YES' : 'NO'}`);
-          const timestamp = Date.now();
-          const random = Math.random().toString(36).substring(7);
-          const separator = imageUrl.includes('?') ? '&' : '?';
-          const directUrl = `${imageUrl}${separator}cacheBust=${timestamp}&v=${random}&nocache=1#${timestamp}-${random}`;
-          console.log(`🖼️ DIRECT CDN IMAGE URL v1.0.108: ${directUrl} (upload fallback)`);
-          return directUrl;
-        }
-        
-        filename = imageUrl.includes('/') ? (imageUrl.split('/').pop() || '') : imageUrl;
-        // Remove query parameters from filename
-        if (filename && filename.includes('?')) {
-          filename = filename.split('?')[0];
+        if (imageUrl.includes('/')) {
+          filename = imageUrl.split('/').pop() || '';
+          if (filename.includes('?')) {
+            filename = filename.split('?')[0];
+          }
+        } else {
+          filename = imageUrl;
         }
       } else {
-        console.log(`🖼️ NO IMAGE AVAILABLE for ${item.titleEn}`);
-        return '';
+        // Final fallback to latest uploads (legacy)
+        const latestImageUrl = language === 'fr-FR' ? item.imageUrlFr : item.imageUrlEn;
+        
+        console.log(`🖼️ DEBUG LANGUAGE-SPECIFIC FALLBACK for ${item.titleEn}:`);
+        console.log(`   - Current language: ${language}`);
+        console.log(`   - item.imageUrlFr: ${item.imageUrlFr}`);
+        console.log(`   - item.imageUrlEn: ${item.imageUrlEn}`);
+        console.log(`   - Selected latestImageUrl: ${latestImageUrl}`);
+        
+        if (latestImageUrl && latestImageUrl.trim() !== '') {
+          imageUrl = latestImageUrl;
+          console.log(`🖼️ FALLBACK TO LATEST UPLOAD: ${imageUrl} for ${item.titleEn}`);
+          
+          // If it's already a full URL, use it directly
+          if (imageUrl.startsWith('http')) {
+            console.log(`🖼️ LATEST UPLOAD IS FULL URL - USING DIRECTLY`);
+            console.log(`🖼️ DEBUG: Original URL: ${imageUrl}`);
+            console.log(`🖼️ DEBUG: URL already encoded: ${imageUrl.includes('%20') ? 'YES' : 'NO'}`);
+            const timestamp = Date.now();
+            const random = Math.random().toString(36).substring(7);
+            const separator = imageUrl.includes('?') ? '&' : '?';
+            const directUrl = `${imageUrl}${separator}cacheBust=${timestamp}&v=${random}&nocache=1#${timestamp}-${random}`;
+            console.log(`🖼️ DIRECT CDN IMAGE URL v1.0.108: ${directUrl} (upload fallback)`);
+            return directUrl;
+          }
+          
+          filename = imageUrl.includes('/') ? (imageUrl.split('/').pop() || '') : imageUrl;
+          // Remove query parameters from filename
+          if (filename && filename.includes('?')) {
+            filename = filename.split('?')[0];
+          }
+        } else {
+          console.log(`🖼️ NO IMAGE AVAILABLE for ${item.titleEn}`);
+          return '';
+        }
       }
     }
     
