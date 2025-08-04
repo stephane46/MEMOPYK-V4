@@ -981,11 +981,18 @@ export default function GalleryManagementNew() {
                                 // FIXED: Only use video_filename as fallback in shared mode
                                 (() => {
                                   const videoUrl = formData.video_url_fr || (formData.use_same_video ? formData.video_filename : '');
+                                  console.log('🎬 FR VIDEO DEBUG:', {
+                                    video_url_fr: formData.video_url_fr,
+                                    video_filename: formData.video_filename,
+                                    use_same_video: formData.use_same_video,
+                                    selectedVideoUrl: videoUrl,
+                                    selectedItem: selectedItem?.title_en
+                                  });
                                   const baseUrl = videoUrl?.startsWith('http') 
                                     ? videoUrl
                                     : `/api/video-proxy?filename=${videoUrl}`;
-                                  // Add cache-busting timestamp to force fresh video loads
-                                  return baseUrl ? `${baseUrl}&t=${Date.now()}` : baseUrl;
+                                  // Add cache-busting with item ID to ensure unique URLs per item
+                                  return baseUrl ? `${baseUrl}&t=${Date.now()}&item=${selectedItem?.id}` : baseUrl;
                                 })()
                               }
                               type="video/mp4"
@@ -1227,11 +1234,18 @@ export default function GalleryManagementNew() {
                                 // FIXED: Only use video_filename as fallback in shared mode
                                 (() => {
                                   const videoUrl = formData.video_url_en || (formData.use_same_video ? formData.video_filename : '');
+                                  console.log('🎬 EN VIDEO DEBUG:', {
+                                    video_url_en: formData.video_url_en,
+                                    video_filename: formData.video_filename,
+                                    use_same_video: formData.use_same_video,
+                                    selectedVideoUrl: videoUrl,
+                                    selectedItem: selectedItem?.title_en
+                                  });
                                   const baseUrl = videoUrl?.startsWith('http') 
                                     ? videoUrl
                                     : `/api/video-proxy?filename=${videoUrl}`;
-                                  // Add cache-busting timestamp to force fresh video loads
-                                  return baseUrl ? `${baseUrl}&t=${Date.now()}` : baseUrl;
+                                  // Add cache-busting with item ID to ensure unique URLs per item
+                                  return baseUrl ? `${baseUrl}&t=${Date.now()}&item=${selectedItem?.id}` : baseUrl;
                                 })()
                               }
                               type="video/mp4"
