@@ -223,34 +223,34 @@ export default function GallerySection() {
   const t = content[language];
 
   const getImageUrl = (item: GalleryItem) => {
-    // PRIORITY v1.0.110: Shared mode logic + Language-specific reframed images > uploads > fallback  
+    // CORRECTED PRIORITY v1.0.120: Use static crops when available (respects cropping work)
     let imageUrl = '';
     let filename = '';
     
-    // FIXED: Priority 1: High-quality original images (like admin interface)
-    let originalImageUrl = '';
+    // Priority 1: Use static crops first (these are the properly cropped, high-quality results)
+    let staticImageUrl = '';
     if (item.useSameVideo) {
-      // Shared mode: Use EN original image for both languages
-      originalImageUrl = item.imageUrlEn || '';
-      console.log(`🔗 SHARED MODE: Using EN original image for ${language} visitor: ${originalImageUrl} for ${item.titleEn}`);
+      // Shared mode: Use EN static crop for both languages
+      staticImageUrl = item.staticImageUrlEn || '';
+      console.log(`🔗 SHARED MODE: Using EN static crop for ${language} visitor: ${staticImageUrl} for ${item.titleEn}`);
     } else {
-      // Separate mode: Use language-specific original image
-      originalImageUrl = (language === 'fr-FR' ? item.imageUrlFr : item.imageUrlEn) || '';
-      console.log(`🌍 SEPARATE MODE: Using ${language}-specific original image: ${originalImageUrl} for ${item.titleEn}`);
+      // Separate mode: Use language-specific static crop
+      staticImageUrl = (language === 'fr-FR' ? item.staticImageUrlFr : item.staticImageUrlEn) || '';
+      console.log(`🌍 SEPARATE MODE: Using ${language}-specific static crop: ${staticImageUrl} for ${item.titleEn}`);
     }
     
-    if (originalImageUrl && originalImageUrl.trim() !== '') {
-      imageUrl = originalImageUrl;
-      console.log(`🖼️ USING HIGH-QUALITY ORIGINAL IMAGE (${language}): ${imageUrl} for ${item.titleEn}`);
+    if (staticImageUrl && staticImageUrl.trim() !== '') {
+      imageUrl = staticImageUrl;
+      console.log(`✂️ USING STATIC CROP (respecting cropping work) (${language}): ${imageUrl} for ${item.titleEn}`);
       
       // If it's already a full URL, use it directly with cache busting
       if (imageUrl.startsWith('http')) {
-        console.log(`🖼️ ORIGINAL IS FULL URL - USING DIRECTLY`);
+        console.log(`✂️ STATIC CROP IS FULL URL - USING DIRECTLY`);
         const timestamp = Date.now();
         const random = Math.random().toString(36).substring(7);
         const separator = imageUrl.includes('?') ? '&' : '?';
         const directUrl = `${imageUrl}${separator}cacheBust=${timestamp}&v=${random}&nocache=1#${timestamp}-${random}`;
-        console.log(`🖼️ DIRECT CDN HIGH-QUALITY IMAGE URL: ${directUrl}`);
+        console.log(`✂️ DIRECT CDN STATIC CROP URL: ${directUrl}`);
         return directUrl;
       }
       
@@ -264,19 +264,30 @@ export default function GallerySection() {
         filename = imageUrl;
       }
     } else {
-      // Priority 2: Fallback to static thumbnails only if no original image exists
-      let staticImageUrl = '';
+      // Priority 2: Fallback to original images only if no static crop exists
+      let originalImageUrl = '';
       if (item.useSameVideo) {
-        staticImageUrl = item.staticImageUrlEn || '';
-        console.log(`🔗 SHARED MODE FALLBACK: Using EN thumbnail for ${language} visitor: ${staticImageUrl} for ${item.titleEn}`);
+        originalImageUrl = item.imageUrlEn || '';
+        console.log(`🔗 SHARED MODE FALLBACK: Using EN original for ${language} visitor: ${originalImageUrl} for ${item.titleEn}`);
       } else {
-        staticImageUrl = (language === 'fr-FR' ? item.staticImageUrlFr : item.staticImageUrlEn) || '';
-        console.log(`🌍 SEPARATE MODE FALLBACK: Using ${language}-specific thumbnail: ${staticImageUrl} for ${item.titleEn}`);
+        originalImageUrl = (language === 'fr-FR' ? item.imageUrlFr : item.imageUrlEn) || '';
+        console.log(`🌍 SEPARATE MODE FALLBACK: Using ${language}-specific original: ${originalImageUrl} for ${item.titleEn}`);
       }
       
-      if (staticImageUrl && staticImageUrl.trim() !== '') {
-        imageUrl = staticImageUrl;
-        console.log(`🖼️ FALLBACK TO THUMBNAIL (${language}): ${imageUrl} for ${item.titleEn}`);
+      if (originalImageUrl && originalImageUrl.trim() !== '') {
+        imageUrl = originalImageUrl;
+        console.log(`🖼️ FALLBACK TO ORIGINAL (${language}): ${imageUrl} for ${item.titleEn}`);
+        
+        // If it's already a full URL, use it directly with cache busting
+        if (imageUrl.startsWith('http')) {
+          console.log(`🖼️ ORIGINAL IS FULL URL - USING DIRECTLY`);
+          const timestamp = Date.now();
+          const random = Math.random().toString(36).substring(7);
+          const separator = imageUrl.includes('?') ? '&' : '?';
+          const directUrl = `${imageUrl}${separator}cacheBust=${timestamp}&v=${random}&nocache=1#${timestamp}-${random}`;
+          console.log(`🖼️ DIRECT CDN ORIGINAL URL: ${directUrl}`);
+          return directUrl;
+        }
         
         if (imageUrl.includes('/')) {
           filename = imageUrl.split('/').pop() || '';

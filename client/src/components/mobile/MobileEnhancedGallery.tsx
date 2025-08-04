@@ -76,21 +76,20 @@ export function MobileEnhancedGallery({
 
           // Dynamic image URL selection with fallback
           const getImageUrl = () => {
-            // FIXED: Prioritize high-quality original images (like admin interface)
+            // CORRECTED: Prioritize static crops (respects cropping work) then fallback to originals
             const result = language === 'fr-FR' 
-              ? (item.imageUrlFr || item.staticImageUrlFr || item.imageUrlEn || item.staticImageUrlEn)
-              : (item.imageUrlEn || item.staticImageUrlEn || item.imageUrlFr || item.staticImageUrlFr);
+              ? (item.staticImageUrlFr || item.staticImageUrlEn || item.imageUrlFr || item.imageUrlEn)
+              : (item.staticImageUrlEn || item.staticImageUrlFr || item.imageUrlEn || item.imageUrlFr);
             
-            console.log(`🔍 MOBILE IMAGE DEBUG (HIGH-QUALITY PRIORITY) for ${item.titleEn}:`, {
+            console.log(`🔍 MOBILE IMAGE DEBUG (STATIC CROP PRIORITY) for ${item.titleEn}:`, {
               language,
-              imageUrlFr: item.imageUrlFr,
               staticImageUrlFr: item.staticImageUrlFr,
-              imageUrlEn: item.imageUrlEn,
               staticImageUrlEn: item.staticImageUrlEn,
+              imageUrlFr: item.imageUrlFr,
+              imageUrlEn: item.imageUrlEn,
               finalUrl: result,
-              usingOriginal: (language === 'fr-FR' && result === item.imageUrlFr) || 
-                            (language !== 'fr-FR' && result === item.imageUrlEn),
-              isHighQuality: result && !result.includes('static_')
+              usingStaticCrop: result && result.includes('static_'),
+              respectsCropping: result && result.includes('static_')
             });
             
             return result;
