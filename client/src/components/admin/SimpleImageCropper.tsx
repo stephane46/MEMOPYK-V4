@@ -264,7 +264,7 @@ export default function SimpleImageCropper({ imageUrl, onSave, onCancel, onOpen,
           disabled={loading}
           className="bg-[#2A4759] hover:bg-[#1e3340] text-white px-8"
         >
-          {loading ? 'Génération...' : 'Générer Image Statique (300×200)'}
+          {loading ? 'Génération...' : 'Sauvegarder Recadrage'}
         </Button>
       </div>
     </div>
