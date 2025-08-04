@@ -981,9 +981,11 @@ export default function GalleryManagementNew() {
                                 // FIXED: Only use video_filename as fallback in shared mode
                                 (() => {
                                   const videoUrl = formData.video_url_fr || (formData.use_same_video ? formData.video_filename : '');
-                                  return videoUrl?.startsWith('http') 
+                                  const baseUrl = videoUrl?.startsWith('http') 
                                     ? videoUrl
                                     : `/api/video-proxy?filename=${videoUrl}`;
+                                  // Add cache-busting timestamp to force fresh video loads
+                                  return baseUrl ? `${baseUrl}&t=${Date.now()}` : baseUrl;
                                 })()
                               }
                               type="video/mp4"
@@ -1225,9 +1227,11 @@ export default function GalleryManagementNew() {
                                 // FIXED: Only use video_filename as fallback in shared mode
                                 (() => {
                                   const videoUrl = formData.video_url_en || (formData.use_same_video ? formData.video_filename : '');
-                                  return videoUrl?.startsWith('http') 
+                                  const baseUrl = videoUrl?.startsWith('http') 
                                     ? videoUrl
                                     : `/api/video-proxy?filename=${videoUrl}`;
+                                  // Add cache-busting timestamp to force fresh video loads
+                                  return baseUrl ? `${baseUrl}&t=${Date.now()}` : baseUrl;
                                 })()
                               }
                               type="video/mp4"
