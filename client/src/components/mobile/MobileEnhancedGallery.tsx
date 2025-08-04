@@ -99,7 +99,7 @@ export function MobileEnhancedGallery({
                       <LazyImage
                         src={getImageUrl()}
                         alt={title}
-                        className="w-full h-full object-cover"
+                        className="w-full h-full object-contain"
                         placeholderClassName="bg-gradient-to-r from-gray-200 via-gray-300 to-gray-200"
                         fallbackSrc="/placeholder-gallery.jpg"
                         onError={() => console.warn(`Failed to load image for ${title}`)}

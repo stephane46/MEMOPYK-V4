@@ -557,7 +557,7 @@ export default function GallerySection() {
                           <img
                             src={thumbnailUrl}
                             alt={getItemTitle(item)}
-                            className="w-full h-full object-cover"
+                            className="w-full h-full object-contain"
                           />
                           
                           {/* Top overlays - Mobile Responsive */}
