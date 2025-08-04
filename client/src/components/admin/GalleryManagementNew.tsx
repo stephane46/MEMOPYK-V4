@@ -378,9 +378,9 @@ export default function GalleryManagementNew() {
     is_active: true
   });
 
-  // Update form data when selected item changes - CRITICAL: Include galleryItems in dependencies
+  // Update form data when selected item changes - SAFE: Check selectedItem exists first
   useEffect(() => {
-    console.log("🔄 FORM SYNC TRIGGER - selectedItem:", selectedItem?.id, "price_en:", selectedItem?.price_en);
+    console.log("🔄 FORM SYNC TRIGGER - selectedItem:", selectedItem?.id, "isCreateMode:", isCreateMode);
     if (selectedItem && !isCreateMode) {
       console.log("🔄 UPDATING FORM DATA with price_en:", selectedItem.price_en);
       setFormData({
@@ -455,7 +455,7 @@ export default function GalleryManagementNew() {
       });
       console.log("✅ FORM DATA RESET FOR CREATE MODE");
     }
-  }, [selectedItem?.id, selectedItem?.price_en, selectedItem?.price_fr, isCreateMode]); // Only depend on specific fields that matter
+  }, [selectedItem?.id, isCreateMode]); // Simplified dependencies to avoid undefined access
 
   // Auto-select first item when data loads OR when selected item no longer exists
   useEffect(() => {
