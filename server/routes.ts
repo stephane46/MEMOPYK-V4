@@ -4593,8 +4593,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       const child = spawn('node', [
         scriptPath,
-        '--description', description.trim(),
-        '--keep', String(keep)
+        `--description=${description.trim()}`,
+        `--keep=${String(keep)}`
       ]);
 
       let output = '';
@@ -4647,7 +4647,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const child = spawn('node', [
         scriptPath,
         '--cleanup',
-        '--keep', String(keep)
+        `--keep=${String(keep)}`
       ]);
 
       let output = '';
