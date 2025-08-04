@@ -4,6 +4,12 @@
 MEMOPYK is a full-stack memory film platform that transforms personal photos and videos into cinematic memory films. It features a bilingual (French/English) content management system, a professional video lightbox, robust gallery management with reliable video streaming, language-specific upload functionality, image reframing tools, and real-time preview capabilities. The platform aims to provide a seamless and intuitive experience for creating and managing cherished memory films.
 
 ## Recent Changes (August 2025)
+- **SMART HIGH-QUALITY CROPPING SYSTEM v1.0.122**: Revolutionary image quality breakthrough CONFIRMED
+- **User Feedback**: "It looks good on screen!" - Visual quality dramatically improved
+- **Smart Dimension Preservation**: System now preserves original dimensions (e.g., 3024x2127 → 3024x2016) instead of downscaling to 300x200
+- **Dual Implementation**: Both manual cropping (SimpleImageCropper) and server-side auto-generation use smart dimension logic
+- **Quality Achievement**: Gallery images now maintain near-original resolution while achieving consistent 1.5 aspect ratio
+- **Technical Innovation**: Preserves larger dimension, calculates other dimension for maximum quality with minimal loss
 - **IMAGE QUALITY FIX v1.0.117**: Public gallery image quality RESOLVED
 - **Root Cause Identified**: Public gallery prioritized 300x200 static thumbnails over high-resolution original images
 - **Fix Applied**: Modified both desktop and mobile gallery components to prioritize original high-quality images like admin interface
