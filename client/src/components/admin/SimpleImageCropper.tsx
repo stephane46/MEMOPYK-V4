@@ -142,9 +142,21 @@ export default function SimpleImageCropper({ imageUrl, onSave, onCancel, onOpen,
         img.src = imageUrl;
       });
 
-      // WEB-OPTIMIZED SIZING: Use reasonable dimensions for web delivery
-      const cropWidth = 800;   // Good quality without massive file sizes
-      const cropHeight = 533;  // 1.5 aspect ratio
+      // PRESERVE ORIGINAL QUALITY: Crop from original dimensions with 1.5 aspect ratio
+      const targetAspectRatio = 1.5; // 3:2 ratio
+      let cropWidth: number;
+      let cropHeight: number;
+      
+      // Calculate crop size based on original image dimensions to preserve quality
+      if (img.naturalWidth / img.naturalHeight > targetAspectRatio) {
+        // Image is wider than target - limit by height
+        cropHeight = img.naturalHeight;
+        cropWidth = Math.round(cropHeight * targetAspectRatio);
+      } else {
+        // Image is taller than target - limit by width  
+        cropWidth = img.naturalWidth;
+        cropHeight = Math.round(cropWidth / targetAspectRatio);
+      }
       
       console.log(`🎯 WEB-OPTIMIZED CROP: Original ${img.naturalWidth}x${img.naturalHeight} → Crop ${cropWidth}x${cropHeight}`);
       
@@ -185,7 +197,7 @@ export default function SimpleImageCropper({ imageUrl, onSave, onCancel, onOpen,
         canvas.toBlob((blob) => {
           logBasicDiagnostics(!!blob);
           resolve(blob!);
-        }, 'image/jpeg', 0.7);  // Reduced to 70% quality for reasonable file sizes
+        }, 'image/jpeg', 0.9);  // High quality to preserve your original file quality
       });
 
       const settings = {
