@@ -200,8 +200,13 @@ export default function SimpleImageCropper({ imageUrl, onSave, onCancel, onOpen,
           // 🎯 FILE SIZE CHECK: Log the cropped file size
           if (blob) {
             const sizeInMB = (blob.size / (1024 * 1024)).toFixed(2);
-            console.log(`🎯 CROPPED FILE SIZE: ${sizeInMB}MB (was aiming for 3-4MB from your original 4MB)`);
-            console.log(`🎯 CROPPED DIMENSIONS: ${cropWidth}x${cropHeight} (preserving original quality)`);
+            const sizeInKB = (blob.size / 1024).toFixed(0);
+            console.log(`%c🎯 CROPPED FILE SIZE: ${sizeInMB}MB (${sizeInKB}KB)`, 'background: #4CAF50; color: white; padding: 5px; font-weight: bold;');
+            console.log(`%c🎯 DIMENSIONS: ${cropWidth}x${cropHeight} (smart high-quality)`, 'background: #2196F3; color: white; padding: 5px; font-weight: bold;');
+            console.log(`%c🎯 QUALITY: 90% JPEG (preserving original quality)`, 'background: #FF9800; color: white; padding: 5px; font-weight: bold;');
+            
+            // Additional alert for testing
+            alert(`✅ CROPPING SUCCESS!\n\nFile Size: ${sizeInMB}MB (${sizeInKB}KB)\nDimensions: ${cropWidth}x${cropHeight}\nQuality: 90% JPEG\n\nThis preserves your original image quality!`);
           }
           
           resolve(blob!);
