@@ -877,26 +877,39 @@ export default function GalleryManagementNew() {
                                   // FIXED LOGIC: Check formData first (new uploads), then selectedItem (saved data)
                                   const cropSettings = formData.cropSettings || (selectedItem as any).cropSettings;
                                   
+                                  console.log('🎯 BADGE DEBUG FR - cropSettings:', cropSettings);
+                                  console.log('🎯 BADGE DEBUG FR - selectedItem.static_image_url_fr:', selectedItem?.static_image_url_fr);
+                                  console.log('🎯 BADGE DEBUG FR - selectedItem.image_url_fr:', selectedItem?.image_url_fr);
+                                  
                                   // Check if we have a static image (indicates any cropping was performed)
                                   const hasStaticImage = selectedItem?.static_image_url_fr;
                                   const hasOriginalImage = selectedItem?.image_url_fr;
                                   
                                   if (hasStaticImage && hasOriginalImage) {
+                                    console.log('🎯 BADGE DEBUG FR - Has both images, checking crop method...');
+                                    
                                     // MANUAL CROPPING: Check if the cropSettings indicate manual cropping
                                     if (cropSettings?.method === 'triple-layer-white-bg') {
+                                      console.log('🎯 BADGE DEBUG FR - MANUAL CROPPING DETECTED');
                                       // Manual cropping was performed via the image cropper interface
                                       return formData.use_same_video ? '✂️ Recadré EN/FR' : '✂️ Recadré FR';
                                     }
                                     
                                     // AUTO CROPPING: Sharp auto-cropping (only shows badge if cropping actually occurred)
                                     else if (cropSettings?.method === 'sharp-auto-thumbnail' && cropSettings?.cropped === true) {
+                                      console.log('🎯 BADGE DEBUG FR - AUTO CROPPING DETECTED');
                                       return formData.use_same_video ? '✂️ Auto EN/FR' : '✂️ Auto FR';
                                     }
                                     
                                     // FALLBACK: If static image exists but no clear method, assume manual cropping
                                     else if (selectedItem.image_url_fr !== selectedItem.static_image_url_fr) {
+                                      console.log('🎯 BADGE DEBUG FR - FALLBACK MANUAL CROPPING (different URLs)');
                                       return formData.use_same_video ? '✂️ Recadré EN/FR' : '✂️ Recadré FR';
+                                    } else {
+                                      console.log('🎯 BADGE DEBUG FR - No badge conditions met');
                                     }
+                                  } else {
+                                    console.log('🎯 BADGE DEBUG FR - Missing static or original image');
                                   }
                                   
                                   // No badge for: no cropSettings, no actual cropping, or same image URLs
@@ -1089,26 +1102,39 @@ export default function GalleryManagementNew() {
                                   console.log('🎯 BADGE CROP SETTINGS - selectedItem.cropSettings:', (selectedItem as any).cropSettings);
                                   console.log('🎯 BADGE CROP SETTINGS - final cropSettings:', cropSettings);
                                   
+                                  console.log('🎯 BADGE DEBUG EN - cropSettings:', cropSettings);
+                                  console.log('🎯 BADGE DEBUG EN - selectedItem.static_image_url_en:', selectedItem?.static_image_url_en);
+                                  console.log('🎯 BADGE DEBUG EN - selectedItem.image_url_en:', selectedItem?.image_url_en);
+                                  
                                   // Check if we have a static image (indicates any cropping was performed)
                                   const hasStaticImage = selectedItem?.static_image_url_en;
                                   const hasOriginalImage = selectedItem?.image_url_en;
                                   
                                   if (hasStaticImage && hasOriginalImage) {
+                                    console.log('🎯 BADGE DEBUG EN - Has both images, checking crop method...');
+                                    
                                     // MANUAL CROPPING: Check if the cropSettings indicate manual cropping
                                     if (cropSettings?.method === 'triple-layer-white-bg') {
+                                      console.log('🎯 BADGE DEBUG EN - MANUAL CROPPING DETECTED');
                                       // Manual cropping was performed via the image cropper interface
                                       return formData.use_same_video ? '✂️ Recadré EN/FR' : '✂️ Recadré EN';
                                     }
                                     
                                     // AUTO CROPPING: Sharp auto-cropping (only shows badge if cropping actually occurred)
                                     else if (cropSettings?.method === 'sharp-auto-thumbnail' && cropSettings?.cropped === true) {
+                                      console.log('🎯 BADGE DEBUG EN - AUTO CROPPING DETECTED');
                                       return formData.use_same_video ? '✂️ Auto EN/FR' : '✂️ Auto EN';
                                     }
                                     
                                     // FALLBACK: If static image exists but no clear method, assume manual cropping
                                     else if (selectedItem.image_url_en !== selectedItem.static_image_url_en) {
+                                      console.log('🎯 BADGE DEBUG EN - FALLBACK MANUAL CROPPING (different URLs)');
                                       return formData.use_same_video ? '✂️ Recadré EN/FR' : '✂️ Recadré EN';
+                                    } else {
+                                      console.log('🎯 BADGE DEBUG EN - No badge conditions met');
                                     }
+                                  } else {
+                                    console.log('🎯 BADGE DEBUG EN - Missing static or original image');
                                   }
                                   
                                   // No badge for: no cropSettings, no actual cropping, or same image URLs
@@ -2249,6 +2275,7 @@ export default function GalleryManagementNew() {
                   
                   console.log('🔍 CROP SETTINGS DEBUG - Saving:', JSON.stringify(cropSettings, null, 2));
                   console.log('🔍 UPDATE DATA DEBUG:', JSON.stringify(updateData, null, 2));
+                  console.log('🔍 MANUAL CROPPING COMPLETED - Method should be: triple-layer-white-bg');
                   
                   const updateResponse = await apiRequest(`/api/gallery/${selectedItem.id}`, 'PATCH', updateData);
                   console.log('🔍 UPDATE RESPONSE DEBUG:', updateResponse);
@@ -2274,10 +2301,19 @@ export default function GalleryManagementNew() {
                   await queryClient.refetchQueries({ queryKey: ['/api/gallery', 'v1.0.110'] });
                   await queryClient.refetchQueries({ queryKey: ['/api/gallery', 'v1.0.110'] });
                   
+                  // CRITICAL: Update the formData with the new crop settings immediately for badge display
+                  setFormData(prev => ({
+                    ...prev,
+                    cropSettings: cropSettings
+                  }));
+                  
+                  console.log('🔍 IMMEDIATE CROP UPDATE - Setting formData.cropSettings to:', cropSettings);
+                  
                   // Wait for query to complete, then force UI refresh
                   setTimeout(() => {
                     setForceRefreshKey(prev => prev + 1);
                     console.log('🔍 AFTER REFRESH - selectedItem cropSettings:', (selectedItem as any)?.cropSettings);
+                    console.log('🔍 AFTER REFRESH - formData cropSettings:', formData.cropSettings);
                   }, 200);
                   
                   toast({ 
