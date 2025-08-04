@@ -1468,6 +1468,7 @@ export default function GalleryManagementNew() {
                           uploadId="shared-image-upload-v87"
                           onUploadComplete={(result) => {
                             console.log('✅ Shared image upload completed:', result);
+                            console.log('📸 Setting pending preview for SHARED:', result.url);
                             
                             // Handle auto-generated thumbnail data
                             const updatedFormData = {
@@ -1492,14 +1493,18 @@ export default function GalleryManagementNew() {
                             }
 
                             // Real-time preview: Update pending state immediately for instant preview
-                            setPendingPreviews(prev => ({
-                              ...prev,
-                              image_url_en: result.url,
-                              image_url_fr: result.url,
-                              static_image_url: result.static_image_url || prev.static_image_url,
-                              static_image_url_en: result.static_image_url || prev.static_image_url_en,
-                              static_image_url_fr: result.static_image_url || prev.static_image_url_fr
-                            }));
+                            setPendingPreviews(prev => {
+                              const newPreviews = {
+                                ...prev,
+                                image_url_en: result.url,
+                                image_url_fr: result.url,
+                                static_image_url: result.static_image_url || prev.static_image_url,
+                                static_image_url_en: result.static_image_url || prev.static_image_url_en,
+                                static_image_url_fr: result.static_image_url || prev.static_image_url_fr
+                              };
+                              console.log('📸 Updated pending previews (SHARED):', newPreviews);
+                              return newPreviews;
+                            });
                             
                             setFormData(updatedFormData);
                             persistentUploadState.image_url_en = result.url;
@@ -1507,6 +1512,9 @@ export default function GalleryManagementNew() {
                             if (result.static_image_url) {
                               persistentUploadState.static_image_url = result.static_image_url;
                             }
+                            
+                            // Force a component refresh to ensure image displays
+                            setForceRefreshKey(prev => prev + 1);
                             
                             const badgeInfo = result.auto_crop_settings ? 
                               (result.auto_crop_settings.cropped ? " (Auto-crop applied)" : " (No crop needed)") : "";
@@ -1586,16 +1594,32 @@ export default function GalleryManagementNew() {
                             uploadId="french-image-upload-v87"
                             onUploadComplete={(result) => {
                               console.log('✅ French image upload completed:', result);
+                              console.log('📸 Setting pending preview for FR:', result.url);
+                              
                               // Real-time preview: Update pending state immediately
-                              setPendingPreviews(prev => ({
-                                ...prev,
-                                image_url_fr: result.url
-                              }));
-                              setFormData(prev => ({
-                                ...prev,
-                                image_url_fr: result.url
-                              }));
+                              setPendingPreviews(prev => {
+                                const newPreviews = {
+                                  ...prev,
+                                  image_url_fr: result.url
+                                };
+                                console.log('📸 Updated pending previews:', newPreviews);
+                                return newPreviews;
+                              });
+                              
+                              setFormData(prev => {
+                                const newFormData = {
+                                  ...prev,
+                                  image_url_fr: result.url
+                                };
+                                console.log('📸 Updated form data:', newFormData);
+                                return newFormData;
+                              });
+                              
                               persistentUploadState.image_url_fr = result.url;
+                              
+                              // Force a component refresh to ensure image displays
+                              setForceRefreshKey(prev => prev + 1);
+                              
                               toast({ 
                                 title: "📸 Aperçu instantané FR", 
                                 description: `Image française visible immédiatement: ${result.filename}`,
@@ -1677,12 +1701,16 @@ export default function GalleryManagementNew() {
                               console.log('✅ English image upload completed:', result);
                               console.log('🎯 Auto-crop settings received:', result.auto_crop_settings);
                               console.log('🎯 Static image URL received:', result.static_image_url);
+                              console.log('📸 Setting pending preview for EN:', result.url);
                               
-                              // Real-time preview: Update pending state immediately
-                              setPendingPreviews(prev => ({
-                                ...prev,
-                                image_url_en: result.url
-                              }));
+                              setPendingPreviews(prev => {
+                                const newPreviews = {
+                                  ...prev,
+                                  image_url_en: result.url
+                                };
+                                console.log('📸 Updated pending previews:', newPreviews);
+                                return newPreviews;
+                              });
                               
                               // Handle auto-crop settings for new uploads
                               if (result.auto_crop_settings && result.static_image_url) {
@@ -1710,6 +1738,10 @@ export default function GalleryManagementNew() {
                               }
                               
                               persistentUploadState.image_url_en = result.url;
+                              
+                              // Force a component refresh to ensure image displays
+                              setForceRefreshKey(prev => prev + 1);
+                              
                               toast({ 
                                 title: "📸 Instant Preview EN", 
                                 description: `English image visible immediately: ${result.filename}`,
