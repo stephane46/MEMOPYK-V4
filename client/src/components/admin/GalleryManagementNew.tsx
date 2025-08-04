@@ -988,11 +988,11 @@ export default function GalleryManagementNew() {
                                     selectedVideoUrl: videoUrl,
                                     selectedItem: selectedItem?.title_en
                                   });
-                                  const baseUrl = videoUrl?.startsWith('http') 
-                                    ? videoUrl
-                                    : `/api/video-proxy?filename=${videoUrl}`;
-                                  // Add cache-busting with item ID to ensure unique URLs per item
-                                  return baseUrl ? `${baseUrl}&t=${Date.now()}&item=${selectedItem?.id}` : baseUrl;
+                                  if (!videoUrl) return '';
+                                  const baseUrl = videoUrl.startsWith('http') 
+                                    ? `${videoUrl}?t=${Date.now()}&item=${selectedItem?.id}`
+                                    : `/api/video-proxy?filename=${videoUrl}&t=${Date.now()}&item=${selectedItem?.id}`;
+                                  return baseUrl;
                                 })()
                               }
                               type="video/mp4"
@@ -1241,11 +1241,11 @@ export default function GalleryManagementNew() {
                                     selectedVideoUrl: videoUrl,
                                     selectedItem: selectedItem?.title_en
                                   });
-                                  const baseUrl = videoUrl?.startsWith('http') 
-                                    ? videoUrl
-                                    : `/api/video-proxy?filename=${videoUrl}`;
-                                  // Add cache-busting with item ID to ensure unique URLs per item
-                                  return baseUrl ? `${baseUrl}&t=${Date.now()}&item=${selectedItem?.id}` : baseUrl;
+                                  if (!videoUrl) return '';
+                                  const baseUrl = videoUrl.startsWith('http') 
+                                    ? `${videoUrl}?t=${Date.now()}&item=${selectedItem?.id}`
+                                    : `/api/video-proxy?filename=${videoUrl}&t=${Date.now()}&item=${selectedItem?.id}`;
+                                  return baseUrl;
                                 })()
                               }
                               type="video/mp4"
