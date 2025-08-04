@@ -163,28 +163,30 @@
     "video_width": 1080,
     "video_height": 1350,
     "video_orientation": "portrait",
-    "image_url_en": "https://supabase.memopyk.org/storage/v1/object/public/memopyk-videos/VitaminSeaC.JPG",
-    "image_url_fr": "https://supabase.memopyk.org/storage/v1/object/public/memopyk-videos/VitaminSeaC.JPG",
-    "static_image_url": "https://supabase.memopyk.org/storage/v1/object/public/memopyk-videos/static_auto_1754294078769.jpg",
-    "static_image_url_en": null,
-    "static_image_url_fr": null,
+    "image_url_en": "https://supabase.memopyk.org/storage/v1/object/public/memopyk-videos/AAA_002_0000014.jpg",
+    "image_url_fr": "https://supabase.memopyk.org/storage/v1/object/public/memopyk-videos/AAA_002_0000014.jpg",
+    "static_image_url": "https://supabase.memopyk.org/storage/v1/object/public/memopyk-videos/static_auto_1754337679940.jpg",
+    "static_image_url_en": "https://supabase.memopyk.org/storage/v1/object/public/memopyk-videos/static_auto_1754337679940.jpg",
+    "static_image_url_fr": "https://supabase.memopyk.org/storage/v1/object/public/memopyk-videos/static_auto_1754337679940.jpg",
     "cropSettings": {
-      "method": "triple-layer-white-bg",
-      "position": {
-        "x": 61.74074300130208,
-        "y": 0.2222137451171875
-      },
+      "method": "sharp-auto-thumbnail",
+      "type": "automatic",
+      "fit": "cover",
+      "position": "center",
       "dimensions": {
-        "width": 3024,
-        "height": 2016
+        "width": 800,
+        "height": 533
       },
-      "format": "JPEG",
-      "quality": 1,
-      "devicePixelRatio": 2.25
+      "aspectRatio": {
+        "original": 1.4217207334273625,
+        "target": 1.5
+      },
+      "cropped": true,
+      "timestamp": "2025-08-04T20:01:20.252Z"
     },
     "is_active": true,
     "created_at": "2025-08-04T04:44:25.672Z",
-    "updated_at": "2025-08-04T18:02:42.206Z",
+    "updated_at": "2025-08-04T20:01:24.557Z",
     "language": "shared",
     "order_index": 0
   }
