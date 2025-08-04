@@ -74,22 +74,38 @@ export function MobileEnhancedGallery({
           const title = language === 'fr-FR' ? item.titleFr : item.titleEn;
           const hasVideo = Boolean(item.videoUrlEn && item.videoUrlFr);
 
-          // Dynamic image URL selection with fallback
+          // Dynamic image URL selection with shared mode logic (matches admin)
           const getImageUrl = () => {
-            // CORRECTED: Prioritize static crops (respects cropping work) then fallback to originals
-            const result = language === 'fr-FR' 
-              ? (item.staticImageUrlFr || item.staticImageUrlEn || item.imageUrlFr || item.imageUrlEn)
-              : (item.staticImageUrlEn || item.staticImageUrlFr || item.imageUrlEn || item.imageUrlFr);
+            // FIXED: Use same shared mode logic as admin
+            let staticImageUrl = '';
+            if (item.useSameVideo) {
+              // Shared mode: Use EN static crop for both languages (same as admin)
+              staticImageUrl = item.staticImageUrlEn || '';
+              console.log(`🔗 PUBLIC SHARED MODE: Using EN static crop for ${language}: ${staticImageUrl} for ${item.titleEn}`);
+            } else {
+              // Separate mode: Use language-specific static crop
+              staticImageUrl = language === 'fr-FR' 
+                ? (item.staticImageUrlFr || item.staticImageUrlEn || '')
+                : (item.staticImageUrlEn || item.staticImageUrlFr || '');
+              console.log(`🌍 PUBLIC SEPARATE MODE: Using ${language}-specific static crop: ${staticImageUrl} for ${item.titleEn}`);
+            }
             
-            console.log(`🔍 MOBILE IMAGE DEBUG (STATIC CROP PRIORITY) for ${item.titleEn}:`, {
+            // If no static crop, fallback to original images
+            const result = staticImageUrl || (language === 'fr-FR' 
+              ? (item.imageUrlFr || item.imageUrlEn)
+              : (item.imageUrlEn || item.imageUrlFr));
+            
+            console.log(`🔍 MOBILE IMAGE DEBUG (SHARED MODE ALIGNED) for ${item.titleEn}:`, {
               language,
+              useSameVideo: item.useSameVideo,
               staticImageUrlFr: item.staticImageUrlFr,
               staticImageUrlEn: item.staticImageUrlEn,
               imageUrlFr: item.imageUrlFr,
               imageUrlEn: item.imageUrlEn,
               finalUrl: result,
               usingStaticCrop: result && result.includes('static_'),
-              respectsCropping: result && result.includes('static_')
+              respectsCropping: result && result.includes('static_'),
+              sharedModeActive: item.useSameVideo
             });
             
             return result;
