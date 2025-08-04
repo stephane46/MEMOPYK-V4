@@ -185,7 +185,7 @@ export default function SimpleImageCropper({ imageUrl, onSave, onCancel, onOpen,
         canvas.toBlob((blob) => {
           logBasicDiagnostics(!!blob);
           resolve(blob!);
-        }, 'image/jpeg', 0.85);  // Reduced from 100% to 85% quality for web optimization
+        }, 'image/jpeg', 0.7);  // Reduced to 70% quality for reasonable file sizes
       });
 
       const settings = {
