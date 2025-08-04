@@ -269,18 +269,19 @@ export default function GalleryManagementNew() {
       return '';
     }
     
-    // Priority 2: Language-specific uploaded image from database
-    const imageUrl = language === 'fr' ? item.image_url_fr : item.image_url_en;
-    if (imageUrl) {
-      console.log(`🔍 Using database image for ${language}:`, imageUrl);
-      return imageUrl;
-    }
-    
-    // Priority 3: Language-specific reframed image
+    // 🔧 ALIGNMENT FIX: Use same priority as public site - static crops first!
+    // Priority 2: Language-specific static crop (SAME AS PUBLIC SITE)
     const staticImageUrl = language === 'fr' ? item.static_image_url_fr : item.static_image_url_en;
     if (staticImageUrl) {
-      console.log(`🔍 Using static thumbnail for ${language}:`, staticImageUrl);
+      console.log(`🔍 ADMIN: Using static thumbnail for ${language}:`, staticImageUrl);
       return staticImageUrl;
+    }
+    
+    // Priority 3: Language-specific uploaded image from database (fallback)
+    const imageUrl = language === 'fr' ? item.image_url_fr : item.image_url_en;
+    if (imageUrl) {
+      console.log(`🔍 ADMIN: Using database image for ${language}:`, imageUrl);
+      return imageUrl;
     }
     
     // Priority 4: Legacy static image (deprecated)
