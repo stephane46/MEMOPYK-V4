@@ -65,21 +65,21 @@ const DraggableCover = ({ imageUrl, onPositionChange, previewRef, onCropChange, 
   // Keyboard controls for precise positioning
   React.useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      const step = 2; // 2% movement per key press
+      const step = 5; // 5% movement per key press for better range
       let newPosition = { ...position };
       
       switch (e.key) {
         case 'ArrowUp':
-          newPosition.y = Math.max(0, position.y - step);
+          newPosition.y = Math.max(-50, position.y - step); // Allow negative values to reach edges
           break;
         case 'ArrowDown':
-          newPosition.y = Math.min(100, position.y + step);
+          newPosition.y = Math.min(150, position.y + step); // Allow beyond 100% to reach edges
           break;
         case 'ArrowLeft':
-          newPosition.x = Math.max(0, position.x - step);
+          newPosition.x = Math.max(-50, position.x - step); // Allow negative values to reach edges
           break;
         case 'ArrowRight':
-          newPosition.x = Math.min(100, position.x + step);
+          newPosition.x = Math.min(150, position.x + step); // Allow beyond 100% to reach edges
           break;
         default:
           return; // Don't prevent default for other keys
@@ -101,12 +101,13 @@ const DraggableCover = ({ imageUrl, onPositionChange, previewRef, onCropChange, 
     if (!container) return;
     
     const rect = container.getBoundingClientRect();
-    const x = ((e.clientX - rect.left) / rect.width) * 100;
-    const y = ((e.clientY - rect.top) / rect.height) * 100;
+    // Scale coordinates to allow full positioning range
+    const x = ((e.clientX - rect.left) / rect.width) * 200 - 50; // Maps 0-400px to -50% to 150%
+    const y = ((e.clientY - rect.top) / rect.height) * 200 - 50; // Maps 0-300px to -50% to 150%
     
     const newPos = {
-      x: Math.max(0, Math.min(100, x)),
-      y: Math.max(0, Math.min(100, y))
+      x: Math.max(-50, Math.min(150, x)), // Allow full range for edge positioning
+      y: Math.max(-50, Math.min(150, y))  // Allow full range for edge positioning
     };
     
     setPosition(newPos);
@@ -255,7 +256,10 @@ const DraggableCover = ({ imageUrl, onPositionChange, previewRef, onCropChange, 
               Ratio proche de 1.5 = {(imageDimensions.width / imageDimensions.height).toFixed(2)} - Recadrage minimal possible
             </div>
             <div className="text-blue-600 font-medium mt-2">
-              ⌨️ Utilisez les flèches ↑↓←→ pour un positionnement précis
+              ⌨️ Utilisez les flèches ↑↓←→ pour un positionnement précis (maintenant jusqu'aux bords)
+            </div>
+            <div className="text-xs text-green-600 mt-1">
+              Position actuelle: {position.x.toFixed(0)}%, {position.y.toFixed(0)}% - Cliquez près des bords pour atteindre les extrémités
             </div>
           </div>
         )}
