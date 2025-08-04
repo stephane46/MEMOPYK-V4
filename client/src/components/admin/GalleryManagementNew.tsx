@@ -330,42 +330,41 @@ export default function GalleryManagementNew() {
     const handleScroll = () => logScrollEvent('SCROLL_EVENT');
     const handleFocus = () => {
       logScrollEvent('WINDOW_FOCUS');
-      isWindowFocusing.current = true;
       
-      // 🔄 AGGRESSIVE FIX: Preserve scroll position and restore it immediately
+      // 🔄 TARGETED FIX: Preserve scroll position and prevent focus-related scrolling
       const currentScroll = window.pageYOffset || document.documentElement.scrollTop;
       preservedScrollPosition.current = currentScroll;
       console.log(`🔍 PRESERVING SCROLL POSITION: ${currentScroll}`);
       
-      // 🔍 Track what happens immediately after focus
+      // Prevent any element from being focused programmatically during Alt+Tab return
+      const originalScrollTo = window.scrollTo;
+      const originalScrollIntoView = Element.prototype.scrollIntoView;
+      
+      // Override scrolling methods temporarily
+      window.scrollTo = function(...args) {
+        console.log('🚨 BLOCKED window.scrollTo during focus event:', args);
+        return;
+      };
+      
+      Element.prototype.scrollIntoView = function(...args) {
+        console.log('🚨 BLOCKED scrollIntoView during focus event:', this, args);
+        return;
+      };
+      
+      // Track what happens immediately after focus
       setTimeout(() => {
         logScrollEvent('FOCUS_AFTER_1MS');
+        // Restore scroll methods after immediate DOM updates
+        window.scrollTo = originalScrollTo;
+        Element.prototype.scrollIntoView = originalScrollIntoView;
+        
+        // Check if scroll position changed and restore it
         const newScroll = window.pageYOffset || document.documentElement.scrollTop;
         if (Math.abs(newScroll - preservedScrollPosition.current) > 10) {
           console.log(`🚨 SCROLL JUMP DETECTED! Restoring from ${newScroll} to ${preservedScrollPosition.current}`);
           window.scrollTo(0, preservedScrollPosition.current);
         }
       }, 1);
-      
-      setTimeout(() => {
-        logScrollEvent('FOCUS_AFTER_10MS');
-        const newScroll = window.pageYOffset || document.documentElement.scrollTop;
-        if (Math.abs(newScroll - preservedScrollPosition.current) > 10) {
-          console.log(`🚨 SCROLL JUMP DETECTED! Restoring from ${newScroll} to ${preservedScrollPosition.current}`);
-          window.scrollTo(0, preservedScrollPosition.current);
-        }
-      }, 10);
-      
-      setTimeout(() => {
-        logScrollEvent('FOCUS_AFTER_50MS');
-        const newScroll = window.pageYOffset || document.documentElement.scrollTop;
-        if (Math.abs(newScroll - preservedScrollPosition.current) > 10) {
-          console.log(`🚨 SCROLL JUMP DETECTED! Restoring from ${newScroll} to ${preservedScrollPosition.current}`);
-          window.scrollTo(0, preservedScrollPosition.current);
-        }
-        // Reset focus flag after React rendering cycle completes
-        isWindowFocusing.current = false;
-      }, 50);
     };
     const handleBlur = () => {
       logScrollEvent('WINDOW_BLUR');
@@ -483,11 +482,7 @@ export default function GalleryManagementNew() {
       return;
     }
     
-    // 🔄 ALT+TAB FIX v1.0.115 - Block ALL state updates during window focus events
-    if (isWindowFocusing.current) {
-      console.log("🔍 FORM SYNC BLOCKED - Window is focusing (Alt+Tab protection)");
-      return;
-    }
+
     
     const currentScroll = window.pageYOffset || document.documentElement.scrollTop;
     console.log("🔍 FORM SYNC TRIGGER - selectedItem:", selectedItem?.id, "isCreateMode:", isCreateMode, "currentScroll:", currentScroll);
@@ -588,11 +583,7 @@ export default function GalleryManagementNew() {
       return;
     }
     
-    // 🔄 ALT+TAB FIX v1.0.115 - Block ALL auto-selection during window focus events
-    if (isWindowFocusing.current) {
-      console.log("🔍 AUTO-SELECT BLOCKED - Window is focusing (Alt+Tab protection)");
-      return;
-    }
+
     
     const currentScroll = window.pageYOffset || document.documentElement.scrollTop;
     console.log(`🔍 AUTO-SELECT TRIGGER - Items: ${galleryItems.length}, Selected: ${selectedVideoId}, CreateMode: ${isCreateMode}, Scroll: ${currentScroll}`);
