@@ -331,15 +331,47 @@ export default function GalleryManagementNew() {
     const handleFocus = () => {
       logScrollEvent('WINDOW_FOCUS');
       isWindowFocusing.current = true;
+      
+      // 🔄 AGGRESSIVE FIX: Preserve scroll position and restore it immediately
+      const currentScroll = window.pageYOffset || document.documentElement.scrollTop;
+      preservedScrollPosition.current = currentScroll;
+      console.log(`🔍 PRESERVING SCROLL POSITION: ${currentScroll}`);
+      
       // 🔍 Track what happens immediately after focus
-      setTimeout(() => logScrollEvent('FOCUS_AFTER_1MS'), 1);
-      setTimeout(() => logScrollEvent('FOCUS_AFTER_10MS'), 10);
-      setTimeout(() => logScrollEvent('FOCUS_AFTER_50MS'), 50);
-      // Reset focus flag after React rendering cycle completes
-      setTimeout(() => { isWindowFocusing.current = false; }, 100);
+      setTimeout(() => {
+        logScrollEvent('FOCUS_AFTER_1MS');
+        const newScroll = window.pageYOffset || document.documentElement.scrollTop;
+        if (Math.abs(newScroll - preservedScrollPosition.current) > 10) {
+          console.log(`🚨 SCROLL JUMP DETECTED! Restoring from ${newScroll} to ${preservedScrollPosition.current}`);
+          window.scrollTo(0, preservedScrollPosition.current);
+        }
+      }, 1);
+      
+      setTimeout(() => {
+        logScrollEvent('FOCUS_AFTER_10MS');
+        const newScroll = window.pageYOffset || document.documentElement.scrollTop;
+        if (Math.abs(newScroll - preservedScrollPosition.current) > 10) {
+          console.log(`🚨 SCROLL JUMP DETECTED! Restoring from ${newScroll} to ${preservedScrollPosition.current}`);
+          window.scrollTo(0, preservedScrollPosition.current);
+        }
+      }, 10);
+      
+      setTimeout(() => {
+        logScrollEvent('FOCUS_AFTER_50MS');
+        const newScroll = window.pageYOffset || document.documentElement.scrollTop;
+        if (Math.abs(newScroll - preservedScrollPosition.current) > 10) {
+          console.log(`🚨 SCROLL JUMP DETECTED! Restoring from ${newScroll} to ${preservedScrollPosition.current}`);
+          window.scrollTo(0, preservedScrollPosition.current);
+        }
+        // Reset focus flag after React rendering cycle completes
+        isWindowFocusing.current = false;
+      }, 50);
     };
     const handleBlur = () => {
       logScrollEvent('WINDOW_BLUR');
+      // Store current scroll position before Alt+Tab away
+      preservedScrollPosition.current = window.pageYOffset || document.documentElement.scrollTop;
+      console.log(`🔍 STORING SCROLL POSITION ON BLUR: ${preservedScrollPosition.current}`);
       isWindowFocusing.current = false;
     };
     const handleVisibilityChange = () => logScrollEvent('VISIBILITY_CHANGE', { 
@@ -404,6 +436,7 @@ export default function GalleryManagementNew() {
   // Initialize form data
   // 🔄 ALT+TAB FIX v1.0.115 - Track window focus to prevent state updates during Alt+Tab
   const isWindowFocusing = useRef(false);
+  const preservedScrollPosition = useRef(0);
   
   const [formData, setFormData] = useState({
     title_en: '',
