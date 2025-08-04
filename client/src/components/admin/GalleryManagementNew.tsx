@@ -1042,14 +1042,36 @@ export default function GalleryManagementNew() {
                         {(formData.image_url_en || selectedItem?.image_url_en) ? (
                           <>
                             <img 
-                              src={
+                              src={(() => {
                                 // Prioritize formData (fresh uploads) over selectedItem (database values)
-                                (formData.image_url_en || selectedItem?.image_url_en)?.startsWith('http')
+                                const directUrl = (formData.image_url_en || selectedItem?.image_url_en)?.startsWith('http')
                                   ? `${formData.image_url_en || selectedItem?.image_url_en}?v=${formData.image_url_en ? 'new' : 'old'}`
-                                  : (selectedItem ? getThumbnailUrl(selectedItem, 'en') : null) || `/api/image-proxy?filename=${(formData.image_url_en || selectedItem?.image_url_en)?.split('/').pop()?.split('?')[0]}`
-                              } 
+                                  : null;
+                                const thumbnailUrl = selectedItem ? getThumbnailUrl(selectedItem, 'en') : null;
+                                const proxyUrl = `/api/image-proxy?filename=${(formData.image_url_en || selectedItem?.image_url_en)?.split('/').pop()?.split('?')[0]}`;
+                                
+                                const finalUrl = directUrl || thumbnailUrl || proxyUrl;
+                                
+                                console.log('🔍 ADMIN EN IMAGE URL LOGIC:', {
+                                  formDataImageUrlEn: formData.image_url_en,
+                                  selectedItemImageUrlEn: selectedItem?.image_url_en,
+                                  directUrl,
+                                  thumbnailUrl,
+                                  proxyUrl,
+                                  finalUrl,
+                                  publicGalleryUrl: 'static_auto_1754282589626.jpg'
+                                });
+                                
+                                alert(`ADMIN EN IMAGE: directUrl=${directUrl ? 'YES' : 'NO'}, thumbnailUrl=${thumbnailUrl}, finalUrl=${finalUrl}`);
+                                
+                                return finalUrl;
+                              })()} 
                               alt="Aperçu English"
                               className="w-full h-full object-contain"
+                              onLoad={(e) => {
+                                const img = e.target as HTMLImageElement;
+                                alert(`ADMIN EN LOADED: ${img.naturalWidth}x${img.naturalHeight} - ${img.naturalWidth > 1000 ? 'HIGH-RES' : 'THUMBNAIL'} (PUBLIC: 300x200)`);
+                              }}
                             />
                             {/* Show different badges for manual vs automatic cropping */}
                             {(selectedItem?.static_image_url_en || selectedItem?.static_image_url) && (
