@@ -859,10 +859,6 @@ export default function GalleryManagementNew() {
                 return (
                   <p className="text-xs text-gray-600 dark:text-gray-400 mt-2">
                     Current position: {currentIndex + 1} of {galleryItems.length}
-                    <br />
-                    <span className="text-xs text-blue-600 dark:text-blue-400">
-                      Order index: {selectedItem.order_index} | ID: {selectedItem.id.toString().substring(0, 8)}...
-                    </span>
                   </p>
                 );
               })()}
