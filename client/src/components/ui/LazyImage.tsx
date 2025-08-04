@@ -8,7 +8,7 @@ interface LazyImageProps {
   className?: string;
   placeholderClassName?: string;
   fallbackSrc?: string;
-  onLoad?: () => void;
+  onLoad?: (e?: React.SyntheticEvent<HTMLImageElement>) => void;
   onError?: () => void;
 }
 
@@ -29,9 +29,9 @@ export function LazyImage({
     triggerOnce: true
   });
 
-  const handleLoad = () => {
+  const handleLoad = (e: React.SyntheticEvent<HTMLImageElement>) => {
     setIsLoaded(true);
-    onLoad?.();
+    onLoad?.(e);
   };
 
   const handleError = () => {
