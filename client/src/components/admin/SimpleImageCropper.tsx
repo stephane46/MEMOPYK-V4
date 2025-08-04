@@ -127,14 +127,37 @@ export default function SimpleImageCropper({ imageUrl, onSave, onCancel, onOpen,
     setLoading(true);
     
     try {
-      // HIGH-QUALITY CROP GENERATION v1.0.121: Increased resolution for better quality
+      // SMART HIGH-QUALITY CROP GENERATION v1.0.122: Preserve original dimensions for maximum quality
       const canvas = document.createElement('canvas');
       const ctx = canvas.getContext('2d')!;
       const dpr = window.devicePixelRatio || 1;
       
-      // UPGRADED: Use 800x533 instead of 300x200 (maintains 1.5 aspect ratio with much higher quality)
-      const cropWidth = 800;
-      const cropHeight = 533;
+      // Load image first to get actual dimensions
+      const img = document.createElement('img') as HTMLImageElement;
+      img.crossOrigin = 'anonymous';
+      
+      await new Promise<void>((resolve, reject) => {
+        img.onload = () => resolve();
+        img.onerror = () => reject(new Error('Failed to load image'));
+        img.src = imageUrl;
+      });
+
+      // SMART SIZING: Preserve larger dimension, calculate other for 1.5 aspect ratio
+      const targetAspectRatio = 1.5; // 3:2 ratio
+      let cropWidth: number;
+      let cropHeight: number;
+      
+      if (img.naturalWidth >= img.naturalHeight) {
+        // Landscape or square: preserve width, calculate height
+        cropWidth = img.naturalWidth;
+        cropHeight = Math.round(cropWidth / targetAspectRatio);
+      } else {
+        // Portrait: preserve height, calculate width  
+        cropHeight = img.naturalHeight;
+        cropWidth = Math.round(cropHeight * targetAspectRatio);
+      }
+      
+      console.log(`🎯 SMART CROP DIMENSIONS: Original ${img.naturalWidth}x${img.naturalHeight} → Crop ${cropWidth}x${cropHeight}`);
       
       canvas.width = cropWidth * dpr;
       canvas.height = cropHeight * dpr;
@@ -154,19 +177,7 @@ export default function SimpleImageCropper({ imageUrl, onSave, onCancel, onOpen,
       }
       ctx.putImageData(imageData, 0, 0);
       
-      // Load image
-      const img = document.createElement('img') as HTMLImageElement;
-      img.crossOrigin = 'anonymous';
-      
-      await new Promise<void>((resolve, reject) => {
-        img.onload = () => resolve();
-        img.onerror = () => reject(new Error('Failed to load image'));
-        img.src = imageUrl;
-      });
-      
-
-      
-      // Calculate positioning for cover effect (updated for high-quality dimensions)
+      // Calculate positioning for cover effect (using smart high-quality dimensions)
       const scale = Math.max(cropWidth / img.naturalWidth, cropHeight / img.naturalHeight);
       const scaledWidth = img.naturalWidth * scale;
       const scaledHeight = img.naturalHeight * scale;
@@ -211,7 +222,7 @@ export default function SimpleImageCropper({ imageUrl, onSave, onCancel, onOpen,
       <div className="text-center">
 
         <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">
-          Glissez pour repositionner l'image dans le cadre haute qualité (800×533)
+          Glissez pour repositionner l'image dans le cadre haute qualité (dimensions originales préservées)
         </p>
         
         <div className="mx-auto">

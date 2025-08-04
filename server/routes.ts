@@ -444,7 +444,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         console.log(`🔍 STARTING DIRECT UPLOAD AUTO-THUMBNAIL PROCESS for: ${filename}`);
         
         try {
-          console.log(`🤖 AUTO-GENERATING 300x200 thumbnail for direct uploaded image: ${filename}`);
+          console.log(`🤖 AUTO-GENERATING smart high-quality thumbnail for direct uploaded image: ${filename}`);
           
           // Download the image to process with Sharp
           const imageResponse = await fetch(publicUrl);
@@ -463,14 +463,30 @@ export async function registerRoutes(app: Express): Promise<Server> {
           
           const needsCropping = Math.abs(originalAspectRatio - targetAspectRatio) > aspectRatioTolerance;
           
-          // Create automatic 300x200 thumbnail
+          // SMART HIGH-QUALITY THUMBNAIL - preserve original dimensions for maximum quality
+          let thumbnailWidth: number;
+          let thumbnailHeight: number;
+          
+          if (metadata.width! >= metadata.height!) {
+            // Landscape or square: preserve width, calculate height
+            thumbnailWidth = metadata.width!;
+            thumbnailHeight = Math.round(thumbnailWidth / targetAspectRatio);
+          } else {
+            // Portrait: preserve height, calculate width  
+            thumbnailHeight = metadata.height!;
+            thumbnailWidth = Math.round(thumbnailHeight * targetAspectRatio);
+          }
+          
+          console.log(`🎯 SMART SERVER CROP: Original ${metadata.width}x${metadata.height} → Thumbnail ${thumbnailWidth}x${thumbnailHeight}`);
+          
+          // Create high-quality thumbnail using smart dimensions
           const thumbnailBuffer = await sharp(Buffer.from(imageBuffer))
-            .resize(300, 200, {
+            .resize(thumbnailWidth, thumbnailHeight, {
               fit: needsCropping ? 'cover' : 'fill',  // Only crop if aspect ratio is different
               position: 'center'
             })
             .flatten({ background: { r: 255, g: 255, b: 255 } })  // White background for transparency
-            .jpeg({ quality: 100, progressive: true })  // 100% quality as requested
+            .jpeg({ quality: 95, progressive: true })  // High quality
             .toBuffer();
           
           // Upload auto-generated thumbnail
@@ -493,7 +509,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
                 type: 'automatic',
                 fit: 'cover',
                 position: 'center',
-                dimensions: { width: 300, height: 200 },
+                dimensions: { width: thumbnailWidth, height: thumbnailHeight },
                 aspectRatio: { original: originalAspectRatio, target: targetAspectRatio },
                 cropped: true,
                 timestamp: new Date().toISOString()
