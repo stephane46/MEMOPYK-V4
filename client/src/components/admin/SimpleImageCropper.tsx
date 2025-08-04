@@ -206,21 +206,31 @@ const DraggableCover = ({ imageUrl, onPositionChange, previewRef, onCropChange, 
             const scaledImageWidth = naturalWidth * scale;
             const scaledImageHeight = naturalHeight * scale;
             
-            // For images close to 1.5 ratio, use maximum possible dimensions
+            // Calculate maximum crop using either full width OR full height
             let maxCropWidth, maxCropHeight;
             
-            // Calculate both possible crop sizes and choose the larger one
-            const cropByHeight = scaledImageHeight * targetAspectRatio; // If we use full height
-            const cropByWidth = scaledImageWidth / targetAspectRatio;   // If we use full width
+            // Option 1: Use full height of the scaled image
+            const cropHeightOption = scaledImageHeight;
+            const cropWidthFromHeight = cropHeightOption * targetAspectRatio;
             
-            if (cropByHeight <= scaledImageWidth) {
-              // Can use full height of image
-              maxCropHeight = Math.min(scaledImageHeight, containerHeight * 0.98);
-              maxCropWidth = maxCropHeight * targetAspectRatio;
+            // Option 2: Use full width of the scaled image
+            const cropWidthOption = scaledImageWidth;
+            const cropHeightFromWidth = cropWidthOption / targetAspectRatio;
+            
+            // Choose the option that gives the largest crop area AND fits in the container
+            if (cropWidthFromHeight <= scaledImageWidth && cropHeightOption <= containerHeight * 0.99) {
+              // Use full height approach
+              maxCropHeight = cropHeightOption;
+              maxCropWidth = cropWidthFromHeight;
+            } else if (cropHeightFromWidth <= scaledImageHeight && cropWidthOption <= containerWidth * 0.99) {
+              // Use full width approach
+              maxCropWidth = cropWidthOption;
+              maxCropHeight = cropHeightFromWidth;
             } else {
-              // Use full width of image  
-              maxCropWidth = Math.min(scaledImageWidth, containerWidth * 0.98);
-              maxCropHeight = maxCropWidth / targetAspectRatio;
+              // Fallback: fit within container bounds
+              const containerScale = Math.min(containerWidth * 0.95 / scaledImageWidth, containerHeight * 0.95 / scaledImageHeight);
+              maxCropWidth = scaledImageWidth * containerScale;
+              maxCropHeight = scaledImageHeight * containerScale;
             }
             
             setCropDimensions({ 
@@ -230,8 +240,9 @@ const DraggableCover = ({ imageUrl, onPositionChange, previewRef, onCropChange, 
             
             console.log(`📐 Image: ${naturalWidth}x${naturalHeight} (ratio: ${imageAspectRatio.toFixed(2)})`);
             console.log(`📐 Scaled image: ${scaledImageWidth.toFixed(0)}x${scaledImageHeight.toFixed(0)}`);
-            console.log(`📐 Max crop dimensions: ${maxCropWidth.toFixed(0)}x${maxCropHeight.toFixed(0)}`);
-            console.log(`📐 Using ${imageAspectRatio > targetAspectRatio ? 'full height' : 'full width'} approach`);
+            console.log(`📐 Full height option: ${cropHeightOption.toFixed(0)}h × ${cropWidthFromHeight.toFixed(0)}w`);
+            console.log(`📐 Full width option: ${cropWidthOption.toFixed(0)}w × ${cropHeightFromWidth.toFixed(0)}h`);
+            console.log(`📐 CHOSEN: ${maxCropWidth.toFixed(0)}x${maxCropHeight.toFixed(0)} = ${(maxCropWidth * maxCropHeight).toFixed(0)} pixels²`);
             
             setImageLoaded(true);
           }}
@@ -263,7 +274,7 @@ const DraggableCover = ({ imageUrl, onPositionChange, previewRef, onCropChange, 
             <div>Image originale: {imageDimensions.width}x{imageDimensions.height}</div>
             <div>Zone de recadrage: {cropDimensions.width.toFixed(0)}x{cropDimensions.height.toFixed(0)} (aperçu)</div>
             <div className="text-[#D67C4A] font-medium">
-              Ratio = {(imageDimensions.width / imageDimensions.height).toFixed(2)} → Zone de recadrage maximisée!
+              Ratio = {(imageDimensions.width / imageDimensions.height).toFixed(2)} → {cropDimensions.width >= imageDimensions.width * 0.9 ? 'PLEINE LARGEUR' : cropDimensions.height >= imageDimensions.height * 0.9 ? 'PLEINE HAUTEUR' : 'MAXIMISÉ'}
             </div>
             <div className="text-blue-600 font-medium mt-2">
               ⌨️ Flèches ↑↓←→ pour déplacer vers la tête de Pom, ses pattes, etc.
