@@ -827,17 +827,17 @@ export default function GalleryManagementNew() {
                           <>
                             <img 
                               src={
-                                // In create mode or when selectedItem exists, use thumbnail URL function
-                                selectedItem ? getThumbnailUrl(selectedItem, 'fr') : 
-                                // In create mode without selectedItem, use formData or pending previews
-                                (pendingPreviews.image_url_fr || formData.image_url_fr || '')
+                                // Priority 1: Pending previews (for immediate upload display)
+                                pendingPreviews.image_url_fr || 
+                                // Priority 2: Form data (for uploaded but not saved images)
+                                formData.image_url_fr || 
+                                // Priority 3: Existing item thumbnails
+                                (selectedItem ? getThumbnailUrl(selectedItem, 'fr') : '')
                               }
                               onLoadStart={() => {
-                                const imageUrl = selectedItem ? getThumbnailUrl(selectedItem, 'fr') : 
-                                  (formData.image_url_fr?.startsWith('http') 
-                                    ? `${formData.image_url_fr}?v=new`
-                                    : `/api/image-proxy?filename=${formData.image_url_fr?.split('/').pop()?.split('?')[0]}`);
-                                console.log('🔍 ADMIN IMAGE START LOADING:', imageUrl);
+                                const imageUrl = pendingPreviews.image_url_fr || formData.image_url_fr || 
+                                  (selectedItem ? getThumbnailUrl(selectedItem, 'fr') : '');
+                                console.log('🔍 ADMIN FR IMAGE START LOADING:', imageUrl);
                               }} 
                               alt="Aperçu Français"
                               className="w-full h-full object-contain"
@@ -1039,16 +1039,26 @@ export default function GalleryManagementNew() {
                           <>
                             <img 
                               src={
-                                // In create mode or when selectedItem exists, use thumbnail URL function
-                                selectedItem ? getThumbnailUrl(selectedItem, 'en') : 
-                                // In create mode without selectedItem, use formData or pending previews
-                                (pendingPreviews.image_url_en || formData.image_url_en || '')
+                                // Priority 1: Pending previews (for immediate upload display)
+                                pendingPreviews.image_url_en || 
+                                // Priority 2: Form data (for uploaded but not saved images)
+                                formData.image_url_en || 
+                                // Priority 3: Existing item thumbnails
+                                (selectedItem ? getThumbnailUrl(selectedItem, 'en') : '')
                               } 
                               alt="Aperçu English"
                               className="w-full h-full object-contain"
+                              onLoadStart={() => {
+                                const imageUrl = pendingPreviews.image_url_en || formData.image_url_en || 
+                                  (selectedItem ? getThumbnailUrl(selectedItem, 'en') : '');
+                                console.log('🔍 ADMIN EN IMAGE START LOADING:', imageUrl);
+                              }}
                               onLoad={(e) => {
                                 const img = e.target as HTMLImageElement;
-                                console.log(`Admin EN image loaded: ${img.naturalWidth}x${img.naturalHeight}`);
+                                console.log(`🔍 Admin EN image loaded: ${img.naturalWidth}x${img.naturalHeight}`);
+                              }}
+                              onError={(e) => {
+                                console.error('🚨 ADMIN EN IMAGE ERROR:', e);
                               }}
                             />
                             {/* Show different badges for manual vs automatic cropping */}
