@@ -842,12 +842,49 @@ export class HybridStorage implements HybridStorageInterface {
   async swapGalleryItemOrder(itemId1: string | number, itemId2: string | number): Promise<any> {
     console.log(`🔄 SWAP operation: ${itemId1} ↔ ${itemId2}`);
     
+    // First update database to ensure cross-environment sync
+    let dbSwapSuccessful = false;
+    try {
+      const { galleryItems } = await import('../shared/schema');
+      const { eq } = await import('drizzle-orm');
+      const { db } = await import('./db');
+      
+      // Get current orders from database
+      const dbItems = await db.select().from(galleryItems).where(eq(galleryItems.id, itemId1)).union(
+        db.select().from(galleryItems).where(eq(galleryItems.id, itemId2))
+      );
+      
+      if (dbItems.length === 2) {
+        const dbItem1 = dbItems.find(item => item.id === itemId1);
+        const dbItem2 = dbItems.find(item => item.id === itemId2);
+        
+        if (dbItem1 && dbItem2) {
+          console.log(`💾 DATABASE SWAP: ${dbItem1.titleEn} (${dbItem1.orderIndex}) ↔ ${dbItem2.titleEn} (${dbItem2.orderIndex})`);
+          
+          // Perform database swap
+          await db.update(galleryItems)
+            .set({ orderIndex: dbItem2.orderIndex, updatedAt: new Date() })
+            .where(eq(galleryItems.id, itemId1));
+            
+          await db.update(galleryItems)
+            .set({ orderIndex: dbItem1.orderIndex, updatedAt: new Date() })
+            .where(eq(galleryItems.id, itemId2));
+            
+          console.log(`✅ DATABASE SWAP SUCCESS`);
+          dbSwapSuccessful = true;
+        }
+      }
+    } catch (error) {
+      console.error('❌ DATABASE SWAP FAILED:', error);
+    }
+    
+    // Update JSON file as backup/fallback
     const items = this.loadJsonFile('gallery-items.json');
     const item1Index = items.findIndex((item: any) => item.id.toString() === itemId1.toString());
     const item2Index = items.findIndex((item: any) => item.id.toString() === itemId2.toString());
     
     if (item1Index === -1 || item2Index === -1) {
-      throw new Error('One or both gallery items not found');
+      throw new Error('One or both gallery items not found in JSON');
     }
     
     const item1 = items[item1Index];
@@ -856,9 +893,9 @@ export class HybridStorage implements HybridStorageInterface {
     const order1 = item1.order_index;
     const order2 = item2.order_index;
     
-    console.log(`📝 Swapping: ${item1.title_en} (${order1}) ↔ ${item2.title_en} (${order2})`);
+    console.log(`📝 JSON SWAP: ${item1.title_en} (${order1}) ↔ ${item2.title_en} (${order2})`);
     
-    // Swap the order indexes
+    // Swap the order indexes in JSON
     item1.order_index = order2;
     item2.order_index = order1;
     
@@ -869,8 +906,10 @@ export class HybridStorage implements HybridStorageInterface {
     
     this.saveJsonFile('gallery-items.json', items);
     
-    console.log(`✅ Swap complete: ${item1.title_en} now at ${order2}, ${item2.title_en} now at ${order1}`);
-    return { item1, item2 };
+    console.log(`✅ HYBRID SWAP COMPLETE: ${item1.title_en} now at ${order2}, ${item2.title_en} now at ${order1}`);
+    console.log(`📊 Database sync: ${dbSwapSuccessful ? 'SUCCESS' : 'FAILED - using JSON fallback'}`);
+    
+    return { item1, item2, dbSwapSuccessful };
   }
 
   async deleteGalleryItem(itemId: string | number): Promise<any> {
