@@ -309,48 +309,6 @@ export default function GalleryManagementNew() {
   }>({ isActive: false, language: 'en', hasChanges: false });
   const fileInputRef = useRef<HTMLInputElement>(null);
   
-  // 🔄 SCROLL POSITION PRESERVATION - Fix Alt+Tab behavior
-  const scrollPositionRef = useRef<number>(0);
-  const mainContainerRef = useRef<HTMLDivElement>(null);
-  
-  // Save scroll position on scroll events
-  useEffect(() => {
-    const handleScroll = () => {
-      if (mainContainerRef.current) {
-        scrollPositionRef.current = window.pageYOffset || document.documentElement.scrollTop;
-      }
-    };
-
-    // Save scroll position before window loses focus (Alt+Tab)
-    const handleBeforeUnload = () => {
-      scrollPositionRef.current = window.pageYOffset || document.documentElement.scrollTop;
-    };
-
-    const handleVisibilityChange = () => {
-      if (document.hidden) {
-        // Save scroll position when tab becomes hidden
-        scrollPositionRef.current = window.pageYOffset || document.documentElement.scrollTop;
-      } else {
-        // Restore scroll position when tab becomes visible again
-        setTimeout(() => {
-          if (scrollPositionRef.current > 0) {
-            window.scrollTo(0, scrollPositionRef.current);
-          }
-        }, 50);
-      }
-    };
-
-    window.addEventListener('scroll', handleScroll, { passive: true });
-    window.addEventListener('beforeunload', handleBeforeUnload);
-    document.addEventListener('visibilitychange', handleVisibilityChange);
-
-    return () => {
-      window.removeEventListener('scroll', handleScroll);
-      window.removeEventListener('beforeunload', handleBeforeUnload);
-      document.removeEventListener('visibilitychange', handleVisibilityChange);
-    };
-  }, []);
-  
   // Real-time preview state for pending uploads
   const [pendingPreviews, setPendingPreviews] = useState<{
     video_url_en?: string;
@@ -372,12 +330,13 @@ export default function GalleryManagementNew() {
 
   // 🚨 ADMIN CACHE BYPASS v1.0.111 - Force fresh data for admin
   // 🚨 ADMIN CACHE SYNCHRONIZATION FIX v1.0.113 - Fixed admin cache key
+  // 🔄 ALT+TAB FIX v1.0.115 - Disabled refetchOnWindowFocus to prevent form reset
   const { data: galleryItems = [], isLoading } = useQuery<GalleryItem[]>({
     queryKey: ['/api/gallery'], // Use same key as public site for cache consistency
     staleTime: 0, // Admin always gets fresh data
     gcTime: 0, // Immediate garbage collection
     refetchOnMount: 'always', // Always refetch on mount
-    refetchOnWindowFocus: true, // Refetch when window regains focus
+    refetchOnWindowFocus: false, // FIXED: Disabled to prevent Alt+Tab scroll reset
     select: (data) => data.sort((a, b) => a.order_index - b.order_index)
   });
 
