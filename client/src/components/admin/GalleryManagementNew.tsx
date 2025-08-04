@@ -977,14 +977,13 @@ export default function GalleryManagementNew() {
                           >
                             <source 
                               src={
-                                // For new uploads with full URLs, use direct CDN streaming
-                                // FIXED: Only use video_filename as fallback in shared mode
+                                // FIXED: Match public site logic - use same priority as getVideoUrl()
                                 (() => {
-                                  const videoUrl = formData.video_url_fr || (formData.use_same_video ? formData.video_filename : '');
-                                  console.log('🎬 FR VIDEO DEBUG:', {
-                                    video_url_fr: formData.video_url_fr,
+                                  const videoUrl = formData.video_filename || formData.video_url_en || formData.video_url_fr;
+                                  console.log('🎬 FR VIDEO DEBUG (FIXED):', {
                                     video_filename: formData.video_filename,
-                                    use_same_video: formData.use_same_video,
+                                    video_url_en: formData.video_url_en,
+                                    video_url_fr: formData.video_url_fr,
                                     selectedVideoUrl: videoUrl,
                                     selectedItem: selectedItem?.title_en
                                   });
@@ -1230,14 +1229,13 @@ export default function GalleryManagementNew() {
                           >
                             <source 
                               src={
-                                // For new uploads with full URLs, use direct CDN streaming
-                                // FIXED: Only use video_filename as fallback in shared mode
+                                // FIXED: Match public site logic - use same priority as getVideoUrl()
                                 (() => {
-                                  const videoUrl = formData.video_url_en || (formData.use_same_video ? formData.video_filename : '');
-                                  console.log('🎬 EN VIDEO DEBUG:', {
-                                    video_url_en: formData.video_url_en,
+                                  const videoUrl = formData.video_filename || formData.video_url_en || formData.video_url_fr;
+                                  console.log('🎬 EN VIDEO DEBUG (FIXED):', {
                                     video_filename: formData.video_filename,
-                                    use_same_video: formData.use_same_video,
+                                    video_url_en: formData.video_url_en,
+                                    video_url_fr: formData.video_url_fr,
                                     selectedVideoUrl: videoUrl,
                                     selectedItem: selectedItem?.title_en
                                   });
