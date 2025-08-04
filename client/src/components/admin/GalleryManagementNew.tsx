@@ -968,7 +968,7 @@ export default function GalleryManagementNew() {
 
                         </div>
                       </div>
-                      {formData.video_url_fr || formData.video_filename ? (
+                      {formData.video_url_fr || (formData.use_same_video && formData.video_filename) ? (
                         <div className="relative bg-black rounded-lg overflow-hidden aspect-video w-full border border-blue-200 dark:border-blue-600">
                           <video
                             controls
@@ -978,9 +978,13 @@ export default function GalleryManagementNew() {
                             <source 
                               src={
                                 // For new uploads with full URLs, use direct CDN streaming
-                                (formData.video_url_fr || formData.video_filename)?.startsWith('http') 
-                                  ? (formData.video_url_fr || formData.video_filename)
-                                  : `/api/video-proxy?filename=${formData.video_url_fr || formData.video_filename}`
+                                // FIXED: Only use video_filename as fallback in shared mode
+                                (() => {
+                                  const videoUrl = formData.video_url_fr || (formData.use_same_video ? formData.video_filename : '');
+                                  return videoUrl?.startsWith('http') 
+                                    ? videoUrl
+                                    : `/api/video-proxy?filename=${videoUrl}`;
+                                })()
                               }
                               type="video/mp4"
                             />
@@ -1208,7 +1212,7 @@ export default function GalleryManagementNew() {
 
                         </div>
                       </div>
-                      {formData.video_url_en || formData.video_filename ? (
+                      {formData.video_url_en || (formData.use_same_video && formData.video_filename) ? (
                         <div className="relative bg-black rounded-lg overflow-hidden aspect-video w-full border border-green-200 dark:border-green-600">
                           <video
                             controls
@@ -1218,9 +1222,13 @@ export default function GalleryManagementNew() {
                             <source 
                               src={
                                 // For new uploads with full URLs, use direct CDN streaming
-                                (formData.video_url_en || formData.video_filename)?.startsWith('http') 
-                                  ? (formData.video_url_en || formData.video_filename)
-                                  : `/api/video-proxy?filename=${formData.video_url_en || formData.video_filename}`
+                                // FIXED: Only use video_filename as fallback in shared mode
+                                (() => {
+                                  const videoUrl = formData.video_url_en || (formData.use_same_video ? formData.video_filename : '');
+                                  return videoUrl?.startsWith('http') 
+                                    ? videoUrl
+                                    : `/api/video-proxy?filename=${videoUrl}`;
+                                })()
                               }
                               type="video/mp4"
                             />
