@@ -76,10 +76,22 @@ export function MobileEnhancedGallery({
 
           // Dynamic image URL selection with fallback
           const getImageUrl = () => {
-            if (language === 'fr-FR') {
-              return item.staticImageUrlFr || item.imageUrlFr || item.staticImageUrlEn || item.imageUrlEn;
-            }
-            return item.staticImageUrlEn || item.imageUrlEn || item.staticImageUrlFr || item.imageUrlFr;
+            const result = language === 'fr-FR' 
+              ? (item.staticImageUrlFr || item.imageUrlFr || item.staticImageUrlEn || item.imageUrlEn)
+              : (item.staticImageUrlEn || item.imageUrlEn || item.staticImageUrlFr || item.imageUrlFr);
+            
+            console.log(`🔍 PUBLIC IMAGE DEBUG for ${item.titleEn}:`, {
+              language,
+              staticImageUrlFr: item.staticImageUrlFr,
+              imageUrlFr: item.imageUrlFr,
+              staticImageUrlEn: item.staticImageUrlEn,
+              imageUrlEn: item.imageUrlEn,
+              finalUrl: result,
+              usingStatic: (language === 'fr-FR' && result === item.staticImageUrlFr) || 
+                          (language !== 'fr-FR' && result === item.staticImageUrlEn)
+            });
+            
+            return result;
           };
 
           return (
