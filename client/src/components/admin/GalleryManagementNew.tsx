@@ -309,6 +309,52 @@ export default function GalleryManagementNew() {
   }>({ isActive: false, language: 'en', hasChanges: false });
   const fileInputRef = useRef<HTMLInputElement>(null);
   
+  // 🔍 ALT+TAB DEBUG v1.0.115 - Track all scroll events and state changes
+  useEffect(() => {
+    let scrollPosition = 0;
+    
+    const logScrollEvent = (event: string, detail?: any) => {
+      const currentScroll = window.pageYOffset || document.documentElement.scrollTop;
+      console.log(`🔍 SCROLL DEBUG [${event}]:`, {
+        timestamp: new Date().toISOString().split('T')[1],
+        currentScroll,
+        previousScroll: scrollPosition,
+        scrollDelta: currentScroll - scrollPosition,
+        detail,
+        documentHidden: document.hidden,
+        documentVisibilityState: document.visibilityState
+      });
+      scrollPosition = currentScroll;
+    };
+
+    const handleScroll = () => logScrollEvent('SCROLL_EVENT');
+    const handleFocus = () => logScrollEvent('WINDOW_FOCUS');
+    const handleBlur = () => logScrollEvent('WINDOW_BLUR');
+    const handleVisibilityChange = () => logScrollEvent('VISIBILITY_CHANGE', { 
+      hidden: document.hidden, 
+      state: document.visibilityState 
+    });
+    const handleBeforeUnload = () => logScrollEvent('BEFORE_UNLOAD');
+    
+    // Log initial state
+    logScrollEvent('COMPONENT_MOUNT');
+    
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    window.addEventListener('focus', handleFocus);
+    window.addEventListener('blur', handleBlur);
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+    window.addEventListener('beforeunload', handleBeforeUnload);
+
+    return () => {
+      logScrollEvent('COMPONENT_UNMOUNT');
+      window.removeEventListener('scroll', handleScroll);
+      window.removeEventListener('focus', handleFocus);
+      window.removeEventListener('blur', handleBlur);
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+      window.removeEventListener('beforeunload', handleBeforeUnload);
+    };
+  }, []);
+  
   // Real-time preview state for pending uploads
   const [pendingPreviews, setPendingPreviews] = useState<{
     video_url_en?: string;
@@ -384,11 +430,16 @@ export default function GalleryManagementNew() {
   const formSyncRef = useRef(false);
   useEffect(() => {
     // Skip if already processing to prevent scroll jumps
-    if (formSyncRef.current) return;
+    if (formSyncRef.current) {
+      console.log("🔍 FORM SYNC BLOCKED - Already processing to prevent scroll jump");
+      return;
+    }
     
-    console.log("🔄 FORM SYNC TRIGGER - selectedItem:", selectedItem?.id, "isCreateMode:", isCreateMode);
+    const currentScroll = window.pageYOffset || document.documentElement.scrollTop;
+    console.log("🔍 FORM SYNC TRIGGER - selectedItem:", selectedItem?.id, "isCreateMode:", isCreateMode, "currentScroll:", currentScroll);
+    
     if (selectedItem && !isCreateMode) {
-      console.log("🔄 UPDATING FORM DATA with price_en:", selectedItem.price_en);
+      console.log("🔍 UPDATING FORM DATA - BEFORE scroll:", currentScroll);
       formSyncRef.current = true;
       setFormData({
         title_en: selectedItem.title_en || '',
@@ -424,8 +475,14 @@ export default function GalleryManagementNew() {
         cropSettings: selectedItem.cropSettings || null,
         is_active: selectedItem.is_active
       });
-      setTimeout(() => { formSyncRef.current = false; }, 100);
+      const afterScroll = window.pageYOffset || document.documentElement.scrollTop;
+      console.log("🔍 FORM DATA UPDATED - AFTER scroll:", afterScroll);
+      setTimeout(() => { 
+        formSyncRef.current = false; 
+        console.log("🔍 FORM SYNC REF RESET");
+      }, 100);
     } else if (isCreateMode) {
+      console.log("🔍 ENTERING CREATE MODE");
       formSyncRef.current = true;
       // Reset form for create mode
       setFormData({
@@ -472,18 +529,30 @@ export default function GalleryManagementNew() {
   const autoSelectRef = useRef(false);
   useEffect(() => {
     // Debounce auto-selection to prevent Alt+Tab triggers
-    if (autoSelectRef.current) return;
+    if (autoSelectRef.current) {
+      console.log("🔍 AUTO-SELECT BLOCKED - Already processing");
+      return;
+    }
+    
+    const currentScroll = window.pageYOffset || document.documentElement.scrollTop;
+    console.log(`🔍 AUTO-SELECT TRIGGER - Items: ${galleryItems.length}, Selected: ${selectedVideoId}, CreateMode: ${isCreateMode}, Scroll: ${currentScroll}`);
     
     if (galleryItems.length > 0 && !isCreateMode) {
       // If no item is selected OR the selected item doesn't exist anymore
       if (!selectedVideoId || !galleryItems.find(item => item.id === selectedVideoId)) {
-        console.log(`🔄 Auto-selecting first item. Current selection: ${selectedVideoId}, Available items: ${galleryItems.length}`);
+        console.log(`🔍 AUTO-SELECTING FIRST ITEM - BEFORE scroll: ${currentScroll}`);
         autoSelectRef.current = true;
         setSelectedVideoId(galleryItems[0].id);
-        setTimeout(() => { autoSelectRef.current = false; }, 300);
+        const afterScroll = window.pageYOffset || document.documentElement.scrollTop;
+        console.log(`🔍 AUTO-SELECTION COMPLETE - AFTER scroll: ${afterScroll}`);
+        setTimeout(() => { 
+          autoSelectRef.current = false; 
+          console.log("🔍 AUTO-SELECT REF RESET");
+        }, 300);
       }
     } else if (galleryItems.length === 0 && !isCreateMode) {
       // No items available, clear selection
+      console.log("🔍 CLEARING SELECTION - No items available");
       setSelectedVideoId(null);
     }
   }, [galleryItems.length, selectedVideoId, isCreateMode]); // Removed galleryItems direct dependency
