@@ -171,8 +171,8 @@
     "cropSettings": {
       "method": "triple-layer-white-bg",
       "position": {
-        "x": 45.74074300130208,
-        "y": 1.2222137451171875
+        "x": 67.07407633463541,
+        "y": 1.7222137451171875
       },
       "dimensions": {
         "width": 3024,
@@ -184,7 +184,7 @@
     },
     "is_active": true,
     "created_at": "2025-08-04T04:44:25.672Z",
-    "updated_at": "2025-08-04T07:44:52.634Z",
+    "updated_at": "2025-08-04T07:51:59.734Z",
     "language": "shared"
   }
 ]

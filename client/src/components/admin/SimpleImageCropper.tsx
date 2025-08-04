@@ -196,6 +196,14 @@ export default function SimpleImageCropper({ imageUrl, onSave, onCancel, onOpen,
       const blob = await new Promise<Blob>((resolve) => {
         canvas.toBlob((blob) => {
           logBasicDiagnostics(!!blob);
+          
+          // 🎯 FILE SIZE CHECK: Log the cropped file size
+          if (blob) {
+            const sizeInMB = (blob.size / (1024 * 1024)).toFixed(2);
+            console.log(`🎯 CROPPED FILE SIZE: ${sizeInMB}MB (was aiming for 3-4MB from your original 4MB)`);
+            console.log(`🎯 CROPPED DIMENSIONS: ${cropWidth}x${cropHeight} (preserving original quality)`);
+          }
+          
           resolve(blob!);
         }, 'image/jpeg', 0.9);  // High quality to preserve your original file quality
       });
