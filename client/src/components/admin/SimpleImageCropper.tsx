@@ -69,18 +69,27 @@ const DraggableCover = ({ imageUrl, onPositionChange, previewRef, onCropChange, 
       const step = 5; // 5% movement per key press for better range
       let newCropPosition = { ...cropPosition };
       
+      // Calculate boundaries based on crop size to prevent empty areas
+      const cropWidthPercent = (cropDimensions.width / 400) * 100; // Crop width as % of container
+      const cropHeightPercent = (cropDimensions.height / 300) * 100; // Crop height as % of container  
+      
+      const minX = cropWidthPercent / 2;   // Half crop width from left edge
+      const maxX = 100 - cropWidthPercent / 2; // Half crop width from right edge
+      const minY = cropHeightPercent / 2;  // Half crop height from top edge
+      const maxY = 100 - cropHeightPercent / 2; // Half crop height from bottom edge
+      
       switch (e.key) {
         case 'ArrowUp':
-          newCropPosition.y = Math.max(5, cropPosition.y - step); // Allow full top positioning
+          newCropPosition.y = Math.max(minY, cropPosition.y - step); // Can't go beyond top image edge
           break;
         case 'ArrowDown':
-          newCropPosition.y = Math.min(95, cropPosition.y + step); // Allow full bottom positioning
+          newCropPosition.y = Math.min(maxY, cropPosition.y + step); // Can't go beyond bottom image edge
           break;
         case 'ArrowLeft':
-          newCropPosition.x = Math.max(5, cropPosition.x - step); 
+          newCropPosition.x = Math.max(minX, cropPosition.x - step); // Can't go beyond left image edge
           break;
         case 'ArrowRight':
-          newCropPosition.x = Math.min(95, cropPosition.x + step); 
+          newCropPosition.x = Math.min(maxX, cropPosition.x + step); // Can't go beyond right image edge
           break;
         default:
           return; // Don't prevent default for other keys
@@ -104,9 +113,18 @@ const DraggableCover = ({ imageUrl, onPositionChange, previewRef, onCropChange, 
     const x = ((e.clientX - rect.left) / rect.width) * 100;
     const y = ((e.clientY - rect.top) / rect.height) * 100;
     
+    // Calculate click boundaries to prevent empty areas
+    const cropWidthPercent = (cropDimensions.width / 400) * 100;
+    const cropHeightPercent = (cropDimensions.height / 300) * 100;
+    
+    const minX = cropWidthPercent / 2;
+    const maxX = 100 - cropWidthPercent / 2;
+    const minY = cropHeightPercent / 2;
+    const maxY = 100 - cropHeightPercent / 2;
+    
     const newCropPos = {
-      x: Math.max(5, Math.min(95, x)), // Allow full range positioning
-      y: Math.max(5, Math.min(95, y))  // Allow full range positioning
+      x: Math.max(minX, Math.min(maxX, x)), // Keep crop within image bounds
+      y: Math.max(minY, Math.min(maxY, y))  // Keep crop within image bounds
     };
     
     setCropPosition(newCropPos);
@@ -273,7 +291,7 @@ const DraggableCover = ({ imageUrl, onPositionChange, previewRef, onCropChange, 
               ↑ Vers le haut ↓ Vers le bas ← Vers la gauche → Vers la droite
             </div>
             <div className="text-xs text-green-600 mt-1">
-              Position: {cropPosition.x.toFixed(0)}%, {cropPosition.y.toFixed(0)}% | Maintenant libre sur tous les bords
+              Position: {cropPosition.x.toFixed(0)}%, {cropPosition.y.toFixed(0)}% | Limité aux bords de l'image (pas de zones vides)
             </div>
           </div>
         )}
