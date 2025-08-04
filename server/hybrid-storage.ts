@@ -875,38 +875,55 @@ export class HybridStorage implements HybridStorageInterface {
       console.error('❌ DATABASE SWAP FAILED:', error);
     }
     
-    // Update JSON file as backup/fallback
-    const items = this.loadJsonFile('gallery-items.json');
-    const item1Index = items.findIndex((item: any) => item.id.toString() === itemId1.toString());
-    const item2Index = items.findIndex((item: any) => item.id.toString() === itemId2.toString());
+    // Update JSON file as backup/fallback - BUT only if database failed
+    let jsonSwapSuccessful = false;
+    try {
+      const items = this.loadJsonFile('gallery-items.json');
+      const item1Index = items.findIndex((item: any) => item.id.toString() === itemId1.toString());
+      const item2Index = items.findIndex((item: any) => item.id.toString() === itemId2.toString());
+      
+      if (item1Index === -1 || item2Index === -1) {
+        console.log('⚠️ Items not found in JSON file - this is expected if using database-first mode');
+        if (dbSwapSuccessful) {
+          console.log('✅ Database swap succeeded, JSON sync not required');
+          return { dbSwapSuccessful, jsonSwapSuccessful: true, message: 'Database swap completed successfully' };
+        } else {
+          throw new Error('One or both gallery items not found in JSON and database swap failed');
+        }
+      }
     
-    if (item1Index === -1 || item2Index === -1) {
-      throw new Error('One or both gallery items not found in JSON');
+      const item1 = items[item1Index];
+      const item2 = items[item2Index];
+      
+      const order1 = item1.order_index;
+      const order2 = item2.order_index;
+      
+      console.log(`📝 JSON SWAP: ${item1.title_en} (${order1}) ↔ ${item2.title_en} (${order2})`);
+      
+      // Swap the order indexes in JSON
+      item1.order_index = order2;
+      item2.order_index = order1;
+      
+      // Update timestamps
+      const now = new Date().toISOString();
+      item1.updated_at = now;
+      item2.updated_at = now;
+      
+      this.saveJsonFile('gallery-items.json', items);
+      jsonSwapSuccessful = true;
+      
+      console.log(`✅ HYBRID SWAP COMPLETE: ${item1.title_en} now at ${order2}, ${item2.title_en} now at ${order1}`);
+    } catch (error) {
+      console.error('❌ JSON SWAP FAILED:', error);
+      if (!dbSwapSuccessful) {
+        throw error;
+      }
+      console.log('⚠️ JSON swap failed but database swap succeeded - continuing');
     }
     
-    const item1 = items[item1Index];
-    const item2 = items[item2Index];
+    console.log(`📊 Final results: Database=${dbSwapSuccessful ? 'SUCCESS' : 'FAILED'}, JSON=${jsonSwapSuccessful ? 'SUCCESS' : 'FAILED'}`);
     
-    const order1 = item1.order_index;
-    const order2 = item2.order_index;
-    
-    console.log(`📝 JSON SWAP: ${item1.title_en} (${order1}) ↔ ${item2.title_en} (${order2})`);
-    
-    // Swap the order indexes in JSON
-    item1.order_index = order2;
-    item2.order_index = order1;
-    
-    // Update timestamps
-    const now = new Date().toISOString();
-    item1.updated_at = now;
-    item2.updated_at = now;
-    
-    this.saveJsonFile('gallery-items.json', items);
-    
-    console.log(`✅ HYBRID SWAP COMPLETE: ${item1.title_en} now at ${order2}, ${item2.title_en} now at ${order1}`);
-    console.log(`📊 Database sync: ${dbSwapSuccessful ? 'SUCCESS' : 'FAILED - using JSON fallback'}`);
-    
-    return { item1, item2, dbSwapSuccessful };
+    return { dbSwapSuccessful, jsonSwapSuccessful };
   }
 
   async deleteGalleryItem(itemId: string | number): Promise<any> {
