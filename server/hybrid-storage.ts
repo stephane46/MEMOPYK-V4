@@ -850,29 +850,26 @@ export class HybridStorage implements HybridStorageInterface {
       const { db } = await import('./db');
       
       // Get current orders from database
-      const dbItems = await db.select().from(galleryItems).where(eq(galleryItems.id, itemId1)).union(
-        db.select().from(galleryItems).where(eq(galleryItems.id, itemId2))
-      );
+      const dbItem1 = await db.select().from(galleryItems).where(eq(galleryItems.id, itemId1.toString()));
+      const dbItem2 = await db.select().from(galleryItems).where(eq(galleryItems.id, itemId2.toString()));
       
-      if (dbItems.length === 2) {
-        const dbItem1 = dbItems.find(item => item.id === itemId1);
-        const dbItem2 = dbItems.find(item => item.id === itemId2);
+      if (dbItem1.length === 1 && dbItem2.length === 1) {
+        const item1 = dbItem1[0];
+        const item2 = dbItem2[0];
         
-        if (dbItem1 && dbItem2) {
-          console.log(`💾 DATABASE SWAP: ${dbItem1.titleEn} (${dbItem1.orderIndex}) ↔ ${dbItem2.titleEn} (${dbItem2.orderIndex})`);
+        console.log(`💾 DATABASE SWAP: ${item1.titleEn} (${item1.orderIndex}) ↔ ${item2.titleEn} (${item2.orderIndex})`);
+        
+        // Perform database swap
+        await db.update(galleryItems)
+          .set({ orderIndex: item2.orderIndex, updatedAt: new Date() })
+          .where(eq(galleryItems.id, itemId1.toString()));
           
-          // Perform database swap
-          await db.update(galleryItems)
-            .set({ orderIndex: dbItem2.orderIndex, updatedAt: new Date() })
-            .where(eq(galleryItems.id, itemId1));
-            
-          await db.update(galleryItems)
-            .set({ orderIndex: dbItem1.orderIndex, updatedAt: new Date() })
-            .where(eq(galleryItems.id, itemId2));
-            
-          console.log(`✅ DATABASE SWAP SUCCESS`);
-          dbSwapSuccessful = true;
-        }
+        await db.update(galleryItems)
+          .set({ orderIndex: item1.orderIndex, updatedAt: new Date() })
+          .where(eq(galleryItems.id, itemId2.toString()));
+          
+        console.log(`✅ DATABASE SWAP SUCCESS`);
+        dbSwapSuccessful = true;
       }
     } catch (error) {
       console.error('❌ DATABASE SWAP FAILED:', error);
