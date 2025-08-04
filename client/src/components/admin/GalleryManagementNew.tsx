@@ -813,7 +813,15 @@ export default function GalleryManagementNew() {
                                 (formData.image_url_fr?.startsWith('http') 
                                   ? `${formData.image_url_fr}?v=new`
                                   : `/api/image-proxy?filename=${formData.image_url_fr?.split('/').pop()?.split('?')[0]}`)
-                              } 
+                              }
+                              onLoadStart={() => {
+                                const imageUrl = selectedItem ? getThumbnailUrl(selectedItem, 'fr') : 
+                                  (formData.image_url_fr?.startsWith('http') 
+                                    ? `${formData.image_url_fr}?v=new`
+                                    : `/api/image-proxy?filename=${formData.image_url_fr?.split('/').pop()?.split('?')[0]}`);
+                                console.log('🔍 ADMIN IMAGE START LOADING:', imageUrl);
+                                alert(`ADMIN: Starting to load image: ${imageUrl}`);
+                              }} 
                               alt="Aperçu Français"
                               className="w-full h-full object-contain"
                               onLoad={(e) => {
