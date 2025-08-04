@@ -971,9 +971,11 @@ export default function GalleryManagementNew() {
                       {formData.video_url_fr || (formData.use_same_video && formData.video_filename) ? (
                         <div className="relative bg-black rounded-lg overflow-hidden aspect-video w-full border border-blue-200 dark:border-blue-600">
                           <video
+                            key={`fr-video-${selectedItem?.id}-${Date.now()}`}
                             controls
                             className="w-full h-full object-contain"
                             style={{ backgroundColor: 'black' }}
+                            onLoadStart={() => console.log('🎬 FR VIDEO: Loading started for', selectedItem?.title_en)}
                           >
                             <source 
                               src={
@@ -1223,9 +1225,11 @@ export default function GalleryManagementNew() {
                       {formData.video_url_en || (formData.use_same_video && formData.video_filename) ? (
                         <div className="relative bg-black rounded-lg overflow-hidden aspect-video w-full border border-green-200 dark:border-green-600">
                           <video
+                            key={`en-video-${selectedItem?.id}-${Date.now()}`}
                             controls
                             className="w-full h-full object-contain"
                             style={{ backgroundColor: 'black' }}
+                            onLoadStart={() => console.log('🎬 EN VIDEO: Loading started for', selectedItem?.title_en)}
                           >
                             <source 
                               src={
