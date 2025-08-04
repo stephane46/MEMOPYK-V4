@@ -4,12 +4,13 @@
 MEMOPYK is a full-stack memory film platform that transforms personal photos and videos into cinematic memory films. It features a bilingual (French/English) content management system, a professional video lightbox, robust gallery management with reliable video streaming, language-specific upload functionality, image reframing tools, and real-time preview capabilities. The platform aims to provide a seamless and intuitive experience for creating and managing cherished memory films.
 
 ## Recent Changes (August 2025)
+- **CRITICAL BREAKTHROUGH v1.0.116**: Alt+Tab scroll navigation issue RESOLVED
+- **Root Cause Identified**: `visibilitychange` event listener in AdminPage.tsx was forcing scroll to top on Alt+Tab return
+- **Fix Applied**: Removed problematic visibility change handler that caused scroll jumping
+- **User Workflow Restored**: Alt+Tab between external data sources and form entry now works without scroll position loss
 - **Complete Field Mapping Audit v1.0.114**: Achieved 100% field synchronization across ALL 7 sections (84 total fields)
-- **Critical Fix Applied**: Resolved 70% data loss issue in hybrid storage system by implementing complete field mapping for all database columns
-- **Cross-Environment Sync Confirmed**: Admin changes now properly synchronize between production and preview environments after F5 refresh
-- **All Sections Verified**: Video Gallery (36 fields), Hero Videos (9 fields), Hero Text (10 fields), FAQ Sections (7 fields), FAQs (10 fields), Legal Documents (7 fields), CTA Settings (5 fields)
-- **TypeScript Errors Resolved**: Fixed all LSP diagnostic issues in hybrid storage system
-- **Deployment Package Created**: Complete v1.0.113 deployment package ready with all essential files and fixed storage system
+- **Cross-Environment Sync Confirmed**: Admin changes properly synchronize between production and preview environments
+- **All Debugging Code Cleaned**: Removed temporary Alt+Tab debugging code and console logs
 
 ## User Preferences
 Preferred communication style: Simple, everyday language.
