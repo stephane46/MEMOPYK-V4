@@ -1,0 +1,16 @@
+EMERGENCY DEPLOYMENT FORCE v1.31
+==================================
+
+CRITICAL: Production deployed OLD CODE despite force-clean markers
+CONFIRMED: Orange highlighting (#D67C4A) missing in production
+EVIDENCE: Git commits show current code has orange highlighting
+PROBLEM: Replit deployment system ignored force-clean markers
+
+This is an EMERGENCY deployment marker to force current code.
+
+Orange highlighting code is in:
+- AdminPage.tsx lines 663 and 1263 
+- Git commit: 9af6dc4 "Make the active admin panel section more visually prominent"
+- Working in development, missing in production
+
+DEPLOYMENT REQUIRED: Current development code with orange highlighting
