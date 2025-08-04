@@ -23,8 +23,8 @@
     "video_width": 1080,
     "video_height": 1920,
     "video_orientation": "portrait",
-    "image_url_en": "https://supabase.memopyk.org/storage/v1/object/public/memopyk-videos/VitaminSeaC.JPG",
-    "image_url_fr": "https://supabase.memopyk.org/storage/v1/object/public/memopyk-videos/VitaminSeaC.JPG",
+    "image_url_en": "https://supabase.memopyk.org/storage/v1/object/public/memopyk-videos/AAA_002_0000014.jpg",
+    "image_url_fr": "https://supabase.memopyk.org/storage/v1/object/public/memopyk-videos/AAA_002_0000014.jpg",
     "price_en": "USD 145",
     "price_fr": "145 €",
     "alt_text_en": "Our Vitamin Sea",
@@ -33,8 +33,8 @@
     "is_active": true,
     "use_same_video": true,
     "created_at": "2025-07-23T21:05:23.805Z",
-    "updated_at": "2025-08-04T05:54:11.644Z",
-    "static_image_url": "",
+    "updated_at": "2025-08-04T06:11:17.064Z",
+    "static_image_url": "https://supabase.memopyk.org/storage/v1/object/public/memopyk-videos/static_auto_1754287795155.jpg",
     "crop_settings": {
       "method": "triple-layer-white-bg",
       "position": {
@@ -50,22 +50,24 @@
       "devicePixelRatio": 2.25
     },
     "staticImageUrl": null,
-    "static_image_url_en": "https://supabase.memopyk.org/storage/v1/object/public/memopyk-videos/static_en_1754068942055.jpg",
+    "static_image_url_en": "https://supabase.memopyk.org/storage/v1/object/public/memopyk-videos/static_auto_1754287795155.jpg",
     "language": "shared",
-    "static_image_url_fr": "https://supabase.memopyk.org/storage/v1/object/public/memopyk-videos/static_en_1754068942055.jpg",
+    "static_image_url_fr": "https://supabase.memopyk.org/storage/v1/object/public/memopyk-videos/static_auto_1754287795155.jpg",
     "cropSettings": {
-      "format": "JPEG",
-      "method": "triple-layer-white-bg",
-      "quality": 1,
-      "position": {
-        "x": 58.740743001302086,
-        "y": 95.22221374511719
-      },
+      "method": "sharp-auto-thumbnail",
+      "type": "automatic",
+      "fit": "cover",
+      "position": "center",
       "dimensions": {
         "width": 300,
         "height": 200
       },
-      "devicePixelRatio": 2.25
+      "aspectRatio": {
+        "original": 1.4217207334273625,
+        "target": 1.5
+      },
+      "cropped": true,
+      "timestamp": "2025-08-04T06:09:55.467Z"
     }
   },
   {

@@ -877,23 +877,24 @@ export default function GalleryManagementNew() {
                                   // FIXED LOGIC: Check formData first (new uploads), then selectedItem (saved data)
                                   const cropSettings = formData.cropSettings || (selectedItem as any).cropSettings;
                                   
-                                  // New Sharp auto-cropping (only shows badge if cropping actually occurred)
-                                  if (cropSettings?.method === 'sharp-auto-thumbnail' && cropSettings?.cropped === true) {
-                                    // In shared mode, show "Auto EN/FR" badge
-                                    return formData.use_same_video ? '✂️ Auto EN/FR' : '✂️ Auto FR';
-                                  }
+                                  // Check if we have a static image (indicates any cropping was performed)
+                                  const hasStaticImage = selectedItem?.static_image_url_fr;
+                                  const hasOriginalImage = selectedItem?.image_url_fr;
                                   
-                                  // Manual cropping: only show badge if the user has different original vs static images
-                                  // This indicates actual cropping/reframing was performed
-                                  if (cropSettings?.method === 'triple-layer-white-bg') {
-                                    const hasOriginalImage = selectedItem?.image_url_fr;
-                                    const hasStaticImage = selectedItem?.static_image_url_fr;
-                                    const imagesDifferent = hasOriginalImage && hasStaticImage && 
-                                                          selectedItem.image_url_fr !== selectedItem.static_image_url_fr;
+                                  if (hasStaticImage && hasOriginalImage) {
+                                    // MANUAL CROPPING: Check if the cropSettings indicate manual cropping
+                                    if (cropSettings?.method === 'triple-layer-white-bg') {
+                                      // Manual cropping was performed via the image cropper interface
+                                      return formData.use_same_video ? '✂️ Recadré EN/FR' : '✂️ Recadré FR';
+                                    }
                                     
-                                    // Only show "Recadré" if we have different images (actual cropping occurred)
-                                    if (imagesDifferent) {
-                                      // In shared mode, show "Recadré EN/FR" badge
+                                    // AUTO CROPPING: Sharp auto-cropping (only shows badge if cropping actually occurred)
+                                    else if (cropSettings?.method === 'sharp-auto-thumbnail' && cropSettings?.cropped === true) {
+                                      return formData.use_same_video ? '✂️ Auto EN/FR' : '✂️ Auto FR';
+                                    }
+                                    
+                                    // FALLBACK: If static image exists but no clear method, assume manual cropping
+                                    else if (selectedItem.image_url_fr !== selectedItem.static_image_url_fr) {
                                       return formData.use_same_video ? '✂️ Recadré EN/FR' : '✂️ Recadré FR';
                                     }
                                   }
@@ -1088,23 +1089,24 @@ export default function GalleryManagementNew() {
                                   console.log('🎯 BADGE CROP SETTINGS - selectedItem.cropSettings:', (selectedItem as any).cropSettings);
                                   console.log('🎯 BADGE CROP SETTINGS - final cropSettings:', cropSettings);
                                   
-                                  // New Sharp auto-cropping (only shows badge if cropping actually occurred)
-                                  if (cropSettings?.method === 'sharp-auto-thumbnail' && cropSettings?.cropped === true) {
-                                    // In shared mode, show "Auto EN/FR" badge
-                                    return formData.use_same_video ? '✂️ Auto EN/FR' : '✂️ Auto EN';
-                                  }
+                                  // Check if we have a static image (indicates any cropping was performed)
+                                  const hasStaticImage = selectedItem?.static_image_url_en;
+                                  const hasOriginalImage = selectedItem?.image_url_en;
                                   
-                                  // Manual cropping: only show badge if the user has different original vs static images
-                                  // This indicates actual cropping/reframing was performed
-                                  if (cropSettings?.method === 'triple-layer-white-bg') {
-                                    const hasOriginalImage = selectedItem?.image_url_en;
-                                    const hasStaticImage = selectedItem?.static_image_url_en;
-                                    const imagesDifferent = hasOriginalImage && hasStaticImage && 
-                                                          selectedItem.image_url_en !== selectedItem.static_image_url_en;
+                                  if (hasStaticImage && hasOriginalImage) {
+                                    // MANUAL CROPPING: Check if the cropSettings indicate manual cropping
+                                    if (cropSettings?.method === 'triple-layer-white-bg') {
+                                      // Manual cropping was performed via the image cropper interface
+                                      return formData.use_same_video ? '✂️ Recadré EN/FR' : '✂️ Recadré EN';
+                                    }
                                     
-                                    // Only show "Recadré" if we have different images (actual cropping occurred)
-                                    if (imagesDifferent) {
-                                      // In shared mode, show "Recadré EN/FR" badge
+                                    // AUTO CROPPING: Sharp auto-cropping (only shows badge if cropping actually occurred)
+                                    else if (cropSettings?.method === 'sharp-auto-thumbnail' && cropSettings?.cropped === true) {
+                                      return formData.use_same_video ? '✂️ Auto EN/FR' : '✂️ Auto EN';
+                                    }
+                                    
+                                    // FALLBACK: If static image exists but no clear method, assume manual cropping
+                                    else if (selectedItem.image_url_en !== selectedItem.static_image_url_en) {
                                       return formData.use_same_video ? '✂️ Recadré EN/FR' : '✂️ Recadré EN';
                                     }
                                   }
