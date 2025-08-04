@@ -328,8 +328,20 @@ export default function GalleryManagementNew() {
     };
 
     const handleScroll = () => logScrollEvent('SCROLL_EVENT');
-    const handleFocus = () => logScrollEvent('WINDOW_FOCUS');
-    const handleBlur = () => logScrollEvent('WINDOW_BLUR');
+    const handleFocus = () => {
+      logScrollEvent('WINDOW_FOCUS');
+      isWindowFocusing.current = true;
+      // 🔍 Track what happens immediately after focus
+      setTimeout(() => logScrollEvent('FOCUS_AFTER_1MS'), 1);
+      setTimeout(() => logScrollEvent('FOCUS_AFTER_10MS'), 10);
+      setTimeout(() => logScrollEvent('FOCUS_AFTER_50MS'), 50);
+      // Reset focus flag after React rendering cycle completes
+      setTimeout(() => { isWindowFocusing.current = false; }, 100);
+    };
+    const handleBlur = () => {
+      logScrollEvent('WINDOW_BLUR');
+      isWindowFocusing.current = false;
+    };
     const handleVisibilityChange = () => logScrollEvent('VISIBILITY_CHANGE', { 
       hidden: document.hidden, 
       state: document.visibilityState 
@@ -390,6 +402,9 @@ export default function GalleryManagementNew() {
   const selectedItem = galleryItems.find(item => item.id === selectedVideoId);
 
   // Initialize form data
+  // 🔄 ALT+TAB FIX v1.0.115 - Track window focus to prevent state updates during Alt+Tab
+  const isWindowFocusing = useRef(false);
+  
   const [formData, setFormData] = useState({
     title_en: '',
     title_fr: '',
@@ -432,6 +447,12 @@ export default function GalleryManagementNew() {
     // Skip if already processing to prevent scroll jumps
     if (formSyncRef.current) {
       console.log("🔍 FORM SYNC BLOCKED - Already processing to prevent scroll jump");
+      return;
+    }
+    
+    // 🔄 ALT+TAB FIX v1.0.115 - Block ALL state updates during window focus events
+    if (isWindowFocusing.current) {
+      console.log("🔍 FORM SYNC BLOCKED - Window is focusing (Alt+Tab protection)");
       return;
     }
     
@@ -531,6 +552,12 @@ export default function GalleryManagementNew() {
     // Debounce auto-selection to prevent Alt+Tab triggers
     if (autoSelectRef.current) {
       console.log("🔍 AUTO-SELECT BLOCKED - Already processing");
+      return;
+    }
+    
+    // 🔄 ALT+TAB FIX v1.0.115 - Block ALL auto-selection during window focus events
+    if (isWindowFocusing.current) {
+      console.log("🔍 AUTO-SELECT BLOCKED - Window is focusing (Alt+Tab protection)");
       return;
     }
     
