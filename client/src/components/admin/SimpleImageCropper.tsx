@@ -23,15 +23,19 @@ const DraggableCover = ({ imageUrl, onPositionChange, previewRef, onCropChange, 
   const [isDragging, setIsDragging] = useState(false);
   const [position, setPosition] = useState(initialPosition);
   const [imageLoaded, setImageLoaded] = useState(false);
+  const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
 
   // Update position when parent position changes
   React.useEffect(() => {
     setPosition(initialPosition);
   }, [initialPosition.x, initialPosition.y]);
-  
-
 
   const handleMouseDown = (e: React.MouseEvent) => {
+    const rect = e.currentTarget.getBoundingClientRect();
+    setDragStart({
+      x: e.clientX - rect.left - (rect.width * position.x / 100),
+      y: e.clientY - rect.top - (rect.height * position.y / 100)
+    });
     setIsDragging(true);
     e.preventDefault();
   };
@@ -40,8 +44,8 @@ const DraggableCover = ({ imageUrl, onPositionChange, previewRef, onCropChange, 
     if (!isDragging) return;
     
     const rect = e.currentTarget.getBoundingClientRect();
-    const x = ((e.clientX - rect.left) / rect.width) * 100;
-    const y = ((e.clientY - rect.top) / rect.height) * 100;
+    const x = ((e.clientX - rect.left - dragStart.x) / rect.width) * 100;
+    const y = ((e.clientY - rect.top - dragStart.y) / rect.height) * 100;
     
     const newPos = {
       x: Math.max(0, Math.min(100, x)),
@@ -50,7 +54,7 @@ const DraggableCover = ({ imageUrl, onPositionChange, previewRef, onCropChange, 
     
     setPosition(newPos);
     onPositionChange(newPos);
-    onCropChange?.(); // Trigger crop change callback for real-time preview updates
+    onCropChange?.();
   };
 
   const handleMouseUp = () => {
@@ -58,55 +62,100 @@ const DraggableCover = ({ imageUrl, onPositionChange, previewRef, onCropChange, 
   };
 
   return (
-    <div
-      ref={previewRef}
-      className={`w-[300px] h-[200px] border-2 border-gray-300 relative overflow-hidden ${isDragging ? 'cursor-grabbing' : 'cursor-grab'}`}
-      onMouseDown={handleMouseDown}
-      onMouseMove={handleMouseMove}
-      onMouseUp={handleMouseUp}
-      onMouseLeave={handleMouseUp}
-      style={{
-        backgroundColor: '#ffffff', // Solid white base background
-        borderRadius: 8,
-        userSelect: 'none',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-      }}
-    >
-      {/* Solid white background layer */}
-      <div 
-        className="absolute inset-0 bg-white"
-        style={{ zIndex: 1 }}
-      />
-      
-      {/* Image layer on top of white background */}
-      {imageLoaded && (
-        <div 
-          className="absolute inset-0 pointer-events-none"
-          style={{
-            backgroundImage: `url("${imageUrl}")`,
-            backgroundSize: 'cover',
-            backgroundPosition: `${position.x}% ${position.y}%`,
-            backgroundRepeat: 'no-repeat',
-            zIndex: 2
-          }}
-        />
-      )}
-      
+    <div className="space-y-3">
+      {/* Clear instructions */}
+      <div className="text-center">
+        <h3 className="text-lg font-semibold text-[#2A4759] mb-2">
+          🖼️ Recadrage de l'image
+        </h3>
+        <p className="text-sm text-gray-600 dark:text-gray-400">
+          Déplacez le carré orange pour positionner votre image dans le cadre
+        </p>
+      </div>
 
-      <img
-        src={imageUrl}
-        onLoad={() => setImageLoaded(true)}
-        onError={() => setImageLoaded(false)}
-        style={{ display: 'none' }}
-        alt=""
-      />
-      {!imageLoaded && (
-        <div className="text-gray-500 text-sm">
-          Chargement de l'image...
+      <div
+        ref={previewRef}
+        className="w-[400px] h-[300px] border-4 border-[#D67C4A] relative overflow-hidden mx-auto"
+        style={{
+          backgroundColor: '#ffffff',
+          borderRadius: 12,
+          userSelect: 'none',
+        }}
+      >
+        {/* Background image - larger for better positioning */}
+        {imageLoaded && (
+          <div 
+            className="absolute inset-0"
+            style={{
+              backgroundImage: `url("${imageUrl}")`,
+              backgroundSize: 'cover',
+              backgroundPosition: `${position.x}% ${position.y}%`,
+              backgroundRepeat: 'no-repeat',
+              transform: 'scale(1.2)', // Slightly larger for better control
+              transformOrigin: 'center'
+            }}
+          />
+        )}
+
+        {/* Crop frame overlay - shows exactly what will be captured */}
+        <div 
+          className="absolute border-4 border-[#D67C4A] bg-[#D67C4A]/10"
+          style={{
+            width: '300px',
+            height: '200px',
+            left: '50%',
+            top: '50%',
+            transform: 'translate(-50%, -50%)',
+            boxShadow: '0 0 0 9999px rgba(0,0,0,0.3)', // Dark overlay outside crop area
+            borderRadius: 8,
+            zIndex: 10
+          }}
+        >
+          {/* Drag handle in center */}
+          <div 
+            className={`absolute left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2 w-12 h-12 bg-[#D67C4A] rounded-full flex items-center justify-center text-white text-xl font-bold shadow-lg ${isDragging ? 'cursor-grabbing scale-110' : 'cursor-grab hover:scale-105'} transition-transform`}
+            onMouseDown={handleMouseDown}
+            onMouseMove={handleMouseMove}
+            onMouseUp={handleMouseUp}
+            onMouseLeave={handleMouseUp}
+            title="Glissez pour repositionner l'image"
+          >
+            ⋮⋮
+          </div>
         </div>
-      )}
+
+        {/* Corner indicators */}
+        <div className="absolute top-2 left-2 w-4 h-4 border-l-4 border-t-4 border-[#D67C4A]" style={{ zIndex: 11 }}></div>
+        <div className="absolute top-2 right-2 w-4 h-4 border-r-4 border-t-4 border-[#D67C4A]" style={{ zIndex: 11 }}></div>
+        <div className="absolute bottom-2 left-2 w-4 h-4 border-l-4 border-b-4 border-[#D67C4A]" style={{ zIndex: 11 }}></div>
+        <div className="absolute bottom-2 right-2 w-4 h-4 border-r-4 border-b-4 border-[#D67C4A]" style={{ zIndex: 11 }}></div>
+
+        <img
+          src={imageUrl}
+          onLoad={() => setImageLoaded(true)}
+          onError={() => setImageLoaded(false)}
+          style={{ display: 'none' }}
+          alt=""
+        />
+        
+        {!imageLoaded && (
+          <div className="absolute inset-0 flex items-center justify-center">
+            <div className="text-gray-500 text-sm">
+              Chargement de l'image...
+            </div>
+          </div>
+        )}
+      </div>
+
+      {/* Status indicator */}
+      <div className="text-center">
+        <div className="inline-flex items-center gap-2 px-3 py-1 bg-[#D67C4A]/10 rounded-full text-sm">
+          <div className={`w-2 h-2 rounded-full ${isDragging ? 'bg-green-500 animate-pulse' : 'bg-[#D67C4A]'}`}></div>
+          <span className="text-[#2A4759] font-medium">
+            {isDragging ? 'En cours de positionnement...' : 'Prêt à recadrer'}
+          </span>
+        </div>
+      </div>
     </div>
   );
 };
@@ -231,44 +280,39 @@ export default function SimpleImageCropper({ imageUrl, onSave, onCancel, onOpen,
   };
 
   return (
-    <div className="space-y-4">
-      <div className="text-center">
+    <div className="space-y-6">
+      <DraggableCover 
+        imageUrl={imageUrl} 
+        onPositionChange={(pos) => {
+          setPosition(pos);
+        }}
+        onCropChange={onCropChange}
+        previewRef={previewRef}
+        initialPosition={position}
+      />
 
-        <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">
-          Glissez pour repositionner l'image dans le cadre haute qualité (dimensions originales préservées)
-        </p>
-        
-        <div className="mx-auto">
-          <DraggableCover 
-            imageUrl={imageUrl} 
-            onPositionChange={(pos) => {
-              setPosition(pos);
-            }}
-            onCropChange={onCropChange}
-            previewRef={previewRef}
-            initialPosition={position}
-          />
-        </div>
-        
-        <p className="text-xs text-gray-500 dark:text-gray-400 mt-2">
-          Position: {position.x.toFixed(0)}% x {position.y.toFixed(0)}%
-        </p>
-      </div>
-
-      <div className="flex justify-center gap-4">
+      {/* Action buttons */}
+      <div className="flex justify-center gap-4 pt-4 border-t border-gray-200 dark:border-gray-700">
         <Button 
           onClick={onCancel}
           variant="outline"
-          className="px-6"
+          className="px-8 py-2 text-gray-600 border-gray-300 hover:bg-gray-50"
         >
-          Annuler
+          ❌ Annuler
         </Button>
         <Button 
           onClick={generateImage}
           disabled={loading}
-          className="bg-[#2A4759] hover:bg-[#1e3340] text-white px-8"
+          className="bg-[#D67C4A] hover:bg-[#b85d37] text-white px-8 py-2 font-semibold"
         >
-          {loading ? 'Génération...' : 'Sauvegarder Recadrage'}
+          {loading ? (
+            <>
+              <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin mr-2"></div>
+              Génération...
+            </>
+          ) : (
+            '✅ Sauvegarder Recadrage'
+          )}
         </Button>
       </div>
     </div>
