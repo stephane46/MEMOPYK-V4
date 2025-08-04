@@ -38,3 +38,12 @@ cache/
 *TOKEN*
 *KEY*
 *PASSWORD*
+
+# Deployment markers - track directory but not the marker files
+.deployment_markers/*.txt
+!.deployment_markers/.gitkeep
+
+# Legacy deployment files (can be cleaned up later)
+FORCE_CLEAN_DEPLOYMENT_*.txt
+DEPLOYMENT_MARKER*.json
+*DEPLOYMENT*.md

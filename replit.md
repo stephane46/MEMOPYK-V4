@@ -4,6 +4,14 @@
 MEMOPYK is a full-stack memory film platform that transforms personal photos and videos into cinematic memory films. It features a bilingual (French/English) content management system, a professional video lightbox, robust gallery management with reliable video streaming, language-specific upload functionality, image reframing tools, and real-time preview capabilities. The platform aims to provide a seamless and intuitive experience for creating and managing cherished memory films.
 
 ## Recent Changes (August 2025)
+- **DEPLOYMENT SYSTEM ENHANCEMENT v2.0**: Professional-grade deployment marker system with enterprise features
+- **Organized Structure**: New `.deployment_markers/` directory with `.gitkeep` for clean version control
+- **Enhanced Script**: `scripts/create-deployment-marker.js` with CLI flags, retention policies, atomic writes
+- **Automatic Cleanup**: Smart retention (default 10 markers) with configurable `--keep=N` parameter
+- **Human-Readable Names**: ISO-style timestamps (`v1.0-2025-08-04T142312Z`) instead of epoch milliseconds
+- **Safety Features**: Input sanitization, 50-char limit, unsafe character replacement, atomic file operations
+- **Flexibility**: `--cleanup` mode, `--description`, `--out-dir`, and `--help` flags for various workflows
+- **Documentation**: Enhanced deployment prevention checklist with troubleshooting and best practices
 - **ADMIN MENU ENHANCEMENT v1.0.129**: Redesigned admin navigation with clean official orange highlighting
 - **Simple Design**: Active menu items highlighted with official orange color (bg-orange-500) as requested by user
 - **Icon Hover Effects**: Maintained icon background containers that change on hover for better interaction feedback
