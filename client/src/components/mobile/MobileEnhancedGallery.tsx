@@ -74,7 +74,7 @@ export function MobileEnhancedGallery({
           const title = language === 'fr-FR' ? item.titleFr : item.titleEn;
           const hasVideo = Boolean(item.videoUrlEn && item.videoUrlFr);
 
-          // Dynamic image URL selection with shared mode logic (matches admin)
+          // Dynamic image URL selection with shared mode logic AND cache-busting (matches desktop)
           const getImageUrl = () => {
             // FIXED: Use same shared mode logic as admin
             let staticImageUrl = '';
@@ -91,7 +91,7 @@ export function MobileEnhancedGallery({
             }
             
             // If no static crop, fallback to original images
-            const result = staticImageUrl || (language === 'fr-FR' 
+            let baseUrl = staticImageUrl || (language === 'fr-FR' 
               ? (item.imageUrlFr || item.imageUrlEn)
               : (item.imageUrlEn || item.imageUrlFr));
             
@@ -102,13 +102,42 @@ export function MobileEnhancedGallery({
               staticImageUrlEn: item.staticImageUrlEn,
               imageUrlFr: item.imageUrlFr,
               imageUrlEn: item.imageUrlEn,
-              finalUrl: result,
-              usingStaticCrop: result && result.includes('static_'),
-              respectsCropping: result && result.includes('static_'),
+              finalUrl: baseUrl,
+              usingStaticCrop: baseUrl && baseUrl.includes('static_'),
+              respectsCropping: baseUrl && baseUrl.includes('static_'),
               sharedModeActive: item.useSameVideo
             });
             
-            return result;
+            // CACHE BUSTING: Apply same aggressive cache-busting as desktop version
+            if (baseUrl && baseUrl.trim() !== '') {
+              // If it's already a full URL, add cache-busting parameters
+              if (baseUrl.startsWith('http')) {
+                const timestamp = Date.now();
+                const random = Math.random().toString(36).substring(7);
+                const separator = baseUrl.includes('?') ? '&' : '?';
+                const cachedBustUrl = `${baseUrl}${separator}cacheBust=${timestamp}&v=${random}&nocache=1#${timestamp}-${random}`;
+                console.log(`🔄 MOBILE CACHE-BUSTED URL: ${cachedBustUrl}`);
+                return cachedBustUrl;
+              }
+              
+              // If it's a filename, build the full URL with cache-busting
+              let filename = baseUrl;
+              if (baseUrl.includes('/')) {
+                filename = baseUrl.split('/').pop() || '';
+                if (filename.includes('?')) {
+                  filename = filename.split('?')[0];
+                }
+              }
+              
+              const timestamp = Date.now();
+              const random = Math.random().toString(36).substring(7);
+              const hash = `#${timestamp}-${random}`; // Fragment identifier forces browser to treat as new resource
+              const fullUrl = `https://supabase.memopyk.org/storage/v1/object/public/memopyk-videos/${encodeURIComponent(filename)}?cacheBust=${timestamp}&v=${random}&nocache=1${hash}`;
+              console.log(`🔄 MOBILE DIRECT CDN URL: ${fullUrl}`);
+              return fullUrl;
+            }
+            
+            return baseUrl || '';
           };
 
           return (
