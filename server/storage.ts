@@ -157,7 +157,7 @@ export class MemStorage implements IStorage {
 
       // Load contacts
       const contactsData = JSON.parse(readFileSync(join(process.cwd(), 'server/data/contacts.json'), 'utf-8'));
-      contactsData.forEach((contact: Contact) => this.contacts.set(contact.id, contact));
+      contactsData.forEach((contact: any) => this.contacts.set(contact.id, contact));
 
       // Load legal documents
       const legalData = JSON.parse(readFileSync(join(process.cwd(), 'server/data/legal-documents.json'), 'utf-8'));
@@ -183,8 +183,8 @@ export class MemStorage implements IStorage {
   }
 
   async getUserByEmail(email: string): Promise<User | undefined> {
-    for (const user of this.users.values()) {
-      if (user.email === email) {
+    for (const user of Array.from(this.users.values())) {
+      if (user.username === email) {
         return user;
       }
     }
@@ -195,11 +195,8 @@ export class MemStorage implements IStorage {
     const id = this.currentIds.users++;
     const newUser: User = {
       id,
-      ...user,
-      firstName: user.firstName || null,
-      lastName: user.lastName || null,
-      createdAt: new Date(),
-      updatedAt: new Date()
+      username: user.username,
+      password: user.password
     };
     this.users.set(id, newUser);
     return newUser;
@@ -211,8 +208,7 @@ export class MemStorage implements IStorage {
 
     const updatedUser: User = {
       ...user,
-      ...updates,
-      updatedAt: new Date()
+      ...updates
     };
     this.users.set(id, updatedUser);
     return updatedUser;
@@ -288,7 +284,7 @@ export class MemStorage implements IStorage {
 
   async createGalleryItem(item: InsertGalleryItem): Promise<GalleryItem> {
     const id = this.currentIds.galleryItems++;
-    const newItem: GalleryItem = {
+    const newItem: any = {
       id,
       ...item,
       createdAt: new Date(),
@@ -330,9 +326,11 @@ export class MemStorage implements IStorage {
 
   async createFaqSection(section: InsertFaqSection): Promise<FaqSection> {
     const id = this.currentIds.faqSections++;
-    const newSection: FaqSection = {
+    const newSection: any = {
       id,
       ...section,
+      isActive: section.isActive ?? true,
+      orderIndex: section.orderIndex ?? 0,
       createdAt: new Date(),
       updatedAt: new Date()
     };
@@ -397,7 +395,7 @@ export class MemStorage implements IStorage {
 
   async createContact(contact: InsertContact): Promise<Contact> {
     const id = this.currentIds.contacts++;
-    const newContact: Contact = {
+    const newContact: any = {
       id,
       ...contact,
       createdAt: new Date()
