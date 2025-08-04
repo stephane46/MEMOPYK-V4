@@ -10,6 +10,7 @@ MEMOPYK is a full-stack memory film platform that transforms personal photos and
 - **Root Cause**: Replit deployment packaged older frontend code instead of current git HEAD
 - **Evidence**: Admin shows AAA_002_0000014.jpg (user choice), Public shows VitaminSeaC.JPG (fallback)
 - **Solution**: Force clean deployment with current development code containing shared mode fixes
+- **Prevention Strategy**: Created deployment checklist to avoid future deployment regressions (see DEPLOYMENT_PREVENTION_CHECKLIST.md)
 - **GALLERY SYNC FIX v1.0.126**: Identified and fixed gallery image mismatch in development environment
 - **Root Cause Identified**: Admin and public site used different image priority logic AND shared mode logic
 - **Development Fix Applied**: 
