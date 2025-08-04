@@ -453,7 +453,7 @@ export default function GalleryManagementNew() {
         cropSettings: null as any,
         is_active: true
       });
-      console.log("✅ FORM DATA UPDATED with price_en:", selectedItem.price_en);
+      console.log("✅ FORM DATA RESET FOR CREATE MODE");
     }
   }, [selectedItem?.id, selectedItem?.price_en, selectedItem?.price_fr, isCreateMode]); // Only depend on specific fields that matter
 
