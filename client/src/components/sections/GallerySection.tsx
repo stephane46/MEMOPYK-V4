@@ -624,6 +624,7 @@ export default function GallerySection() {
                         <div className="w-full h-full relative">
                           {/* Main Image */}
                           <img
+                            key={`${item.id}-${thumbnailUrl}`} // Force reload when URL changes
                             src={thumbnailUrl}
                             alt={getItemTitle(item)}
                             className="w-full h-full object-contain"

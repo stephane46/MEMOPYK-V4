@@ -155,32 +155,35 @@ export function MobileEnhancedGallery({
                     {/* Lazy-loaded Image */}
                     <div className="relative h-48 sm:h-56 lg:h-64 overflow-hidden">
                       <LazyImage
+                        key={`${item.id}-${getImageUrl()}`} // Force remount when URL changes
                         src={getImageUrl()}
                         alt={title}
                         className="w-full h-full object-contain"
                         placeholderClassName="bg-gradient-to-r from-gray-200 via-gray-300 to-gray-200"
                         fallbackSrc="/placeholder-gallery.jpg"
                         onError={() => console.warn(`Failed to load image for ${title}`)}
-                        onLoad={(e: React.SyntheticEvent<HTMLImageElement>) => {
-                          const img = e.currentTarget;
-                          console.log(`🔍 PUBLIC IMAGE LOADED for ${title}:`, {
-                            src: img.src,
-                            naturalWidth: img.naturalWidth,
-                            naturalHeight: img.naturalHeight,
-                            displayWidth: img.width,
-                            displayHeight: img.height,
-                            isStaticThumbnail: img.src.includes('static_')
-                          });
-                          
-                          // Additional dimension analysis
-                          if (img.naturalWidth && img.naturalHeight) {
-                            const aspectRatio = img.naturalWidth / img.naturalHeight;
-                            console.log(`📊 IMAGE ANALYSIS for ${title}:`, {
-                              resolution: `${img.naturalWidth}x${img.naturalHeight}`,
-                              aspectRatio: aspectRatio.toFixed(2),
-                              isHighRes: img.naturalWidth > 1000,
-                              isThumbnail: img.naturalWidth <= 300
+                        onLoad={(e?: React.SyntheticEvent<HTMLImageElement>) => {
+                          const img = e?.currentTarget;
+                          if (img) {
+                            console.log(`🔍 PUBLIC IMAGE LOADED for ${title}:`, {
+                              src: img.src,
+                              naturalWidth: img.naturalWidth,
+                              naturalHeight: img.naturalHeight,
+                              displayWidth: img.width,
+                              displayHeight: img.height,
+                              isStaticThumbnail: img.src.includes('static_')
                             });
+                            
+                            // Additional dimension analysis
+                            if (img.naturalWidth && img.naturalHeight) {
+                              const aspectRatio = img.naturalWidth / img.naturalHeight;
+                              console.log(`📊 IMAGE ANALYSIS for ${title}:`, {
+                                resolution: `${img.naturalWidth}x${img.naturalHeight}`,
+                                aspectRatio: aspectRatio.toFixed(2),
+                                isHighRes: img.naturalWidth > 1000,
+                                isThumbnail: img.naturalWidth <= 300
+                              });
+                            }
                           }
                         }}
                       />
