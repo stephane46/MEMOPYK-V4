@@ -480,10 +480,7 @@ export default function AdminPage() {
               return (
                 <button
                   key={item.id}
-                  onClick={() => {
-                    console.log('🔥 CLICKED MENU ITEM:', item.id);
-                    setActiveSection(item.id);
-                  }}
+                  onClick={() => setActiveSection(item.id)}
                   className={`w-full flex items-center space-x-3 px-4 py-3 rounded-lg text-left transition-colors duration-200 group ${
                     isActive 
                       ? 'bg-orange-500 text-white' 
