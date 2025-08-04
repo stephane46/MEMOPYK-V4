@@ -488,8 +488,8 @@ export default function AdminPage() {
                   }`}
                 >
                   {/* Icon with background that changes on hover */}
-                  <div className={`p-1 rounded-md ${isActive ? 'bg-white/20' : 'group-hover:bg-gray-700'}`}>
-                    <Icon className={`h-5 w-5 ${isActive ? 'text-white' : 'text-gray-400 group-hover:text-white'}`} />
+                  <div className={`p-2 rounded-md ${isActive ? 'bg-orange-600' : 'group-hover:bg-gray-700'}`}>
+                    <Icon className={`h-4 w-4 ${isActive ? 'text-white' : 'text-gray-400 group-hover:text-white'}`} />
                   </div>
                   
                   {/* Label */}
