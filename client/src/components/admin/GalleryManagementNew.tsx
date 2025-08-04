@@ -805,27 +805,24 @@ export default function GalleryManagementNew() {
                           <>
                             <img 
                               src={
-                                // DEBUG: Log what URL is being used
-                                (() => {
-                                  const thumbnailUrl = selectedItem ? getThumbnailUrl(selectedItem, 'fr') : null;
-                                  const originalUrl = formData.image_url_fr || selectedItem?.image_url_fr;
-                                  const finalUrl = originalUrl?.startsWith('http')
-                                    ? `${originalUrl}?v=${formData.image_url_fr ? 'new' : 'old'}`
-                                    : thumbnailUrl || `/api/image-proxy?filename=${originalUrl?.split('/').pop()?.split('?')[0]}`;
-                                  
-                                  console.log(`🔍 ADMIN IMAGE DEBUG FR:`, {
-                                    originalUrl,
-                                    thumbnailUrl,
-                                    finalUrl,
-                                    usingOriginal: originalUrl?.startsWith('http'),
-                                    item: selectedItem
-                                  });
-                                  
-                                  return finalUrl;
-                                })()
+                                // FIXED: Always prioritize static thumbnails in admin interface
+                                selectedItem ? getThumbnailUrl(selectedItem, 'fr') : 
+                                (formData.image_url_fr?.startsWith('http') 
+                                  ? `${formData.image_url_fr}?v=new`
+                                  : `/api/image-proxy?filename=${formData.image_url_fr?.split('/').pop()?.split('?')[0]}`)
                               } 
                               alt="Aperçu Français"
                               className="w-full h-full object-contain"
+                              onLoad={(e) => {
+                                const img = e.target as HTMLImageElement;
+                                console.log(`🔍 ADMIN FR IMAGE LOADED:`, {
+                                  src: img.src,
+                                  naturalWidth: img.naturalWidth,
+                                  naturalHeight: img.naturalHeight,
+                                  displayWidth: img.width,
+                                  displayHeight: img.height
+                                });
+                              }}
                             />
                             {/* Show different badges for manual vs automatic cropping */}
                             {selectedItem?.static_image_url_fr && 

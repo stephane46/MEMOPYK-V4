@@ -115,6 +115,16 @@ export function MobileEnhancedGallery({
                         placeholderClassName="bg-gradient-to-r from-gray-200 via-gray-300 to-gray-200"
                         fallbackSrc="/placeholder-gallery.jpg"
                         onError={() => console.warn(`Failed to load image for ${title}`)}
+                        onLoad={(e: React.SyntheticEvent<HTMLImageElement>) => {
+                          const img = e.currentTarget;
+                          console.log(`🔍 PUBLIC IMAGE LOADED for ${title}:`, {
+                            src: img.src,
+                            naturalWidth: img.naturalWidth,
+                            naturalHeight: img.naturalHeight,
+                            displayWidth: img.width,
+                            displayHeight: img.height
+                          });
+                        }}
                       />
                       
                       {/* Mobile-Optimized Overlays */}
