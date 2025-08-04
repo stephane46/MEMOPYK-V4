@@ -205,8 +205,7 @@ export default function SimpleImageCropper({ imageUrl, onSave, onCancel, onOpen,
             console.log(`%c🎯 DIMENSIONS: ${cropWidth}x${cropHeight} (smart high-quality)`, 'background: #2196F3; color: white; padding: 5px; font-weight: bold;');
             console.log(`%c🎯 QUALITY: 90% JPEG (preserving original quality)`, 'background: #FF9800; color: white; padding: 5px; font-weight: bold;');
             
-            // Additional alert for testing
-            alert(`✅ CROPPING SUCCESS!\n\nFile Size: ${sizeInMB}MB (${sizeInKB}KB)\nDimensions: ${cropWidth}x${cropHeight}\nQuality: 90% JPEG\n\nThis preserves your original image quality!`);
+            // Alert removed - cropping system confirmed working
           }
           
           resolve(blob!);

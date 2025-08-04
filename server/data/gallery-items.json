@@ -33,7 +33,7 @@
     "is_active": true,
     "use_same_video": true,
     "created_at": "2025-07-23T21:05:23.805Z",
-    "updated_at": "2025-08-04T08:01:52.874Z",
+    "updated_at": "2025-08-04T08:04:38.169Z",
     "static_image_url": "https://supabase.memopyk.org/storage/v1/object/public/memopyk-videos/static_auto_1754294117667.jpg",
     "crop_settings": {
       "method": "triple-layer-white-bg",
@@ -50,18 +50,18 @@
       "devicePixelRatio": 2.25
     },
     "staticImageUrl": null,
-    "static_image_url_en": "https://supabase.memopyk.org/storage/v1/object/public/memopyk-videos/static_en_1754294510468.jpg",
+    "static_image_url_en": "https://supabase.memopyk.org/storage/v1/object/public/memopyk-videos/static_en_1754294671867.jpg",
     "language": "shared",
-    "static_image_url_fr": "https://supabase.memopyk.org/storage/v1/object/public/memopyk-videos/static_en_1754294510468.jpg",
+    "static_image_url_fr": "https://supabase.memopyk.org/storage/v1/object/public/memopyk-videos/static_en_1754294671867.jpg",
     "cropSettings": {
       "method": "triple-layer-white-bg",
       "position": {
-        "x": 54.074076334635414,
-        "y": 0.7222137451171875
+        "x": 63.40740966796875,
+        "y": 98.22221374511719
       },
       "dimensions": {
-        "width": 3024,
-        "height": 2016
+        "width": 4032,
+        "height": 2688
       },
       "format": "JPEG",
       "quality": 1,
@@ -166,17 +166,17 @@
     "image_url_en": "https://supabase.memopyk.org/storage/v1/object/public/memopyk-videos/VitaminSeaC.JPG",
     "image_url_fr": "https://supabase.memopyk.org/storage/v1/object/public/memopyk-videos/VitaminSeaC.JPG",
     "static_image_url": "https://supabase.memopyk.org/storage/v1/object/public/memopyk-videos/static_auto_1754294078769.jpg",
-    "static_image_url_en": "https://supabase.memopyk.org/storage/v1/object/public/memopyk-videos/static_auto_1754294078769.jpg",
-    "static_image_url_fr": "https://supabase.memopyk.org/storage/v1/object/public/memopyk-videos/static_auto_1754294078769.jpg",
+    "static_image_url_en": "https://supabase.memopyk.org/storage/v1/object/public/memopyk-videos/static_en_1754294713571.jpg",
+    "static_image_url_fr": "https://supabase.memopyk.org/storage/v1/object/public/memopyk-videos/static_en_1754294713571.jpg",
     "cropSettings": {
       "method": "triple-layer-white-bg",
       "position": {
-        "x": 63.40740966796875,
-        "y": 92.22221374511719
+        "x": 67.40740966796875,
+        "y": 0.2222137451171875
       },
       "dimensions": {
-        "width": 4032,
-        "height": 2688
+        "width": 3024,
+        "height": 2016
       },
       "format": "JPEG",
       "quality": 1,
@@ -184,7 +184,7 @@
     },
     "is_active": true,
     "created_at": "2025-08-04T04:44:25.672Z",
-    "updated_at": "2025-08-04T07:54:57.438Z",
+    "updated_at": "2025-08-04T08:05:15.867Z",
     "language": "shared"
   }
 ]
