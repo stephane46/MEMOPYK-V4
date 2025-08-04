@@ -4591,10 +4591,16 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const { spawn } = require('child_process');
       const scriptPath = path.join(__dirname, '../scripts/create-deployment-marker.js');
       
+      // Use enhanced deployment marker for better cache-busting
+      const enhancedScriptPath = path.join(__dirname, '../scripts/enhanced-deployment-marker.js');
+      const useEnhanced = fs.existsSync(enhancedScriptPath);
+      
       const child = spawn('node', [
-        scriptPath,
+        useEnhanced ? enhancedScriptPath : scriptPath,
         `--description=${description.trim()}`,
-        `--keep=${String(keep)}`
+        `--keep=${String(keep)}`,
+        '--aggressive',
+        '--verify'
       ]);
 
       let output = '';
