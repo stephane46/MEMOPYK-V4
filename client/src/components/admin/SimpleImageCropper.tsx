@@ -24,6 +24,8 @@ const DraggableCover = ({ imageUrl, onPositionChange, previewRef, onCropChange, 
   const [position, setPosition] = useState(initialPosition);
   const [imageLoaded, setImageLoaded] = useState(false);
   const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
+  const [imageDimensions, setImageDimensions] = useState({ width: 0, height: 0 });
+  const [cropDimensions, setCropDimensions] = useState({ width: 360, height: 240 });
 
   // Update position when parent position changes
   React.useEffect(() => {
@@ -132,12 +134,12 @@ const DraggableCover = ({ imageUrl, onPositionChange, previewRef, onCropChange, 
           />
         )}
 
-        {/* Crop frame overlay - shows exactly what will be captured with 1.5 aspect ratio */}
+        {/* Crop frame overlay - shows exactly what will be captured based on actual image */}
         <div 
           className="absolute border-4 border-[#D67C4A] bg-[#D67C4A]/10"
           style={{
-            width: '360px',  // 1.5 aspect ratio: 360x240
-            height: '240px',
+            width: `${cropDimensions.width}px`,
+            height: `${cropDimensions.height}px`,
             left: '50%',
             top: '50%',
             transform: 'translate(-50%, -50%)',
@@ -164,7 +166,48 @@ const DraggableCover = ({ imageUrl, onPositionChange, previewRef, onCropChange, 
 
         <img
           src={imageUrl}
-          onLoad={() => setImageLoaded(true)}
+          onLoad={(e) => {
+            const img = e.target as HTMLImageElement;
+            const naturalWidth = img.naturalWidth;
+            const naturalHeight = img.naturalHeight;
+            
+            setImageDimensions({ width: naturalWidth, height: naturalHeight });
+            
+            // Calculate actual crop dimensions based on image aspect ratio
+            const targetAspectRatio = 1.5; // 3:2 ratio
+            const imageAspectRatio = naturalWidth / naturalHeight;
+            
+            let cropWidth, cropHeight;
+            
+            if (imageAspectRatio > targetAspectRatio) {
+              // Image is wider than target - limit by height
+              cropHeight = naturalHeight;
+              cropWidth = Math.round(cropHeight * targetAspectRatio);
+            } else {
+              // Image is taller than target - limit by width  
+              cropWidth = naturalWidth;
+              cropHeight = Math.round(cropWidth / targetAspectRatio);
+            }
+            
+            // Scale to preview size (400x300 container)
+            const containerWidth = 400;
+            const containerHeight = 300;
+            const scale = Math.min(containerWidth / naturalWidth, containerHeight / naturalHeight);
+            
+            const previewCropWidth = cropWidth * scale;
+            const previewCropHeight = cropHeight * scale;
+            
+            setCropDimensions({ 
+              width: Math.min(previewCropWidth, containerWidth * 0.9), 
+              height: Math.min(previewCropHeight, containerHeight * 0.9)
+            });
+            
+            console.log(`📐 Image: ${naturalWidth}x${naturalHeight} (ratio: ${imageAspectRatio.toFixed(2)})`);
+            console.log(`📐 Actual crop will be: ${cropWidth}x${cropHeight}`);
+            console.log(`📐 Preview crop: ${previewCropWidth.toFixed(0)}x${previewCropHeight.toFixed(0)}`);
+            
+            setImageLoaded(true);
+          }}
           onError={() => setImageLoaded(false)}
           style={{ display: 'none' }}
           alt=""
@@ -179,14 +222,24 @@ const DraggableCover = ({ imageUrl, onPositionChange, previewRef, onCropChange, 
         )}
       </div>
 
-      {/* Status indicator */}
-      <div className="text-center">
+      {/* Status indicator with dimensions */}
+      <div className="text-center space-y-2">
         <div className="inline-flex items-center gap-2 px-3 py-1 bg-[#D67C4A]/10 rounded-full text-sm">
           <div className={`w-2 h-2 rounded-full ${isDragging ? 'bg-green-500 animate-pulse' : 'bg-[#D67C4A]'}`}></div>
           <span className="text-[#2A4759] font-medium">
             {isDragging ? 'En cours de positionnement...' : 'Prêt à recadrer'}
           </span>
         </div>
+        
+        {imageLoaded && imageDimensions.width > 0 && (
+          <div className="text-xs text-gray-500 space-y-1">
+            <div>Image originale: {imageDimensions.width}x{imageDimensions.height}</div>
+            <div>Zone de recadrage: {cropDimensions.width.toFixed(0)}x{cropDimensions.height.toFixed(0)} (aperçu)</div>
+            <div className="text-[#D67C4A] font-medium">
+              Ratio proche de 1.5 = {(imageDimensions.width / imageDimensions.height).toFixed(2)} - Recadrage minimal possible
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );
