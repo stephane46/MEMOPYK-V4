@@ -804,7 +804,17 @@ export default function GalleryManagementNew() {
                         )}
                       </div>
                       <div className="aspect-video w-full bg-black rounded-lg overflow-hidden border border-blue-200 dark:border-blue-600 relative">
-                        {(formData.image_url_fr || selectedItem?.image_url_fr) ? (
+                        {(() => {
+                          console.log('🔍 DEBUG: formData.image_url_fr:', formData.image_url_fr);
+                          console.log('🔍 DEBUG: selectedItem?.image_url_fr:', selectedItem?.image_url_fr);
+                          console.log('🔍 DEBUG: selectedItem object:', selectedItem);
+                          const thumbnailUrl = selectedItem ? getThumbnailUrl(selectedItem, 'fr') : '';
+                          console.log('🔍 DEBUG: getThumbnailUrl result:', thumbnailUrl);
+                          
+                          alert(`DEBUG: formData.image_url_fr: ${formData.image_url_fr || 'NONE'}, selectedItem?.image_url_fr: ${selectedItem?.image_url_fr || 'NONE'}, thumbnailUrl: ${thumbnailUrl || 'NONE'}`);
+                          
+                          return (formData.image_url_fr || selectedItem?.image_url_fr);
+                        })() ? (
                           <>
                             <img 
                               src={
