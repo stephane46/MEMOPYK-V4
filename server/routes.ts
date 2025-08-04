@@ -463,17 +463,18 @@ export async function registerRoutes(app: Express): Promise<Server> {
           
           const needsCropping = Math.abs(originalAspectRatio - targetAspectRatio) > aspectRatioTolerance;
           
-          // SMART HIGH-QUALITY THUMBNAIL - preserve original dimensions for maximum quality
+          // SMART HIGH-QUALITY THUMBNAIL - preserve original dimensions but limit for web optimization
+          const maxWebDimension = 1920; // Maximum dimension for web delivery
           let thumbnailWidth: number;
           let thumbnailHeight: number;
           
           if (metadata.width! >= metadata.height!) {
             // Landscape or square: preserve width, calculate height
-            thumbnailWidth = metadata.width!;
+            thumbnailWidth = Math.min(metadata.width!, maxWebDimension);
             thumbnailHeight = Math.round(thumbnailWidth / targetAspectRatio);
           } else {
             // Portrait: preserve height, calculate width  
-            thumbnailHeight = metadata.height!;
+            thumbnailHeight = Math.min(metadata.height!, maxWebDimension);
             thumbnailWidth = Math.round(thumbnailHeight * targetAspectRatio);
           }
           
@@ -486,7 +487,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
               position: 'center'
             })
             .flatten({ background: { r: 255, g: 255, b: 255 } })  // White background for transparency
-            .jpeg({ quality: 95, progressive: true })  // High quality
+            .jpeg({ quality: 80, progressive: true, mozjpeg: true })  // Web-optimized quality
             .toBuffer();
           
           // Upload auto-generated thumbnail
