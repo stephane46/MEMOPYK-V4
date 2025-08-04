@@ -563,6 +563,41 @@ export default function GalleryManagementNew() {
     }
   });
 
+  // Reorder gallery item mutation
+  const reorderItemMutation = useMutation({
+    mutationFn: async ({ id, order_index }: { id: string; order_index: number }) => {
+      return apiRequest(`/api/gallery/${id}/reorder`, 'PATCH', { order_index });
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['/api/gallery'] });
+      toast({ 
+        title: "✅ Succès", 
+        description: "Ordre mis à jour!",
+        className: "bg-green-50 dark:bg-green-900/20 border-green-200 dark:border-green-800 text-green-900 dark:text-green-100"
+      });
+    },
+    onError: () => {
+      toast({ title: "Erreur", description: "Échec du réordonnancement", variant: "destructive" });
+    }
+  });
+
+  const handleReorder = (item: GalleryItem, direction: 'up' | 'down') => {
+    const sortedItems = [...galleryItems].sort((a, b) => a.order_index - b.order_index);
+    const currentIndex = sortedItems.findIndex(i => i.id === item.id);
+    
+    if (direction === 'up' && currentIndex > 0) {
+      const targetItem = sortedItems[currentIndex - 1];
+      // Swap order indexes
+      reorderItemMutation.mutate({ id: item.id, order_index: targetItem.order_index });
+      reorderItemMutation.mutate({ id: targetItem.id, order_index: item.order_index });
+    } else if (direction === 'down' && currentIndex < sortedItems.length - 1) {
+      const targetItem = sortedItems[currentIndex + 1];
+      // Swap order indexes
+      reorderItemMutation.mutate({ id: item.id, order_index: targetItem.order_index });
+      reorderItemMutation.mutate({ id: targetItem.id, order_index: item.order_index });
+    }
+  };
+
   const deleteItemMutation = useMutation({
     mutationFn: (id: string | number) => {
       console.log(`🗑️ FRONTEND: Attempting to delete gallery item with ID: ${id}`);
@@ -730,6 +765,37 @@ export default function GalleryManagementNew() {
           ) : (
             <div className="p-3 bg-[#F2EBDC] dark:bg-[#011526]/20 rounded border-2 border-dashed border-[#89BAD9]">
               <span className="text-[#2A4759] font-medium">Mode création - Nouvelle vidéo</span>
+            </div>
+          )}
+          
+          {/* Change Display Order Section */}
+          {!isCreateMode && selectedItem && (
+            <div className="mt-4 p-4 bg-gray-50 dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-600">
+              <h3 className="text-lg font-semibold text-[#011526] dark:text-[#F2EBDC] mb-3 flex items-center gap-2">
+                <div className="w-5 h-5 flex items-center justify-center">↕️</div>
+                Change Display Order
+              </h3>
+              <div className="flex gap-2">
+                <button
+                  onClick={() => handleReorder(selectedItem, 'up')}
+                  disabled={reorderItemMutation.isPending || galleryItems.findIndex(item => item.id === selectedItem.id) === 0}
+                  className="flex items-center gap-2 px-4 py-2 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md hover:bg-gray-50 dark:hover:bg-gray-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                >
+                  <div className="w-4 h-4 flex items-center justify-center">↑</div>
+                  Move Earlier
+                </button>
+                <button
+                  onClick={() => handleReorder(selectedItem, 'down')}
+                  disabled={reorderItemMutation.isPending || galleryItems.findIndex(item => item.id === selectedItem.id) === galleryItems.length - 1}
+                  className="flex items-center gap-2 px-4 py-2 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md hover:bg-gray-50 dark:hover:bg-gray-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                >
+                  <div className="w-4 h-4 flex items-center justify-center">↓</div>
+                  Move Later
+                </button>
+              </div>
+              <p className="text-xs text-gray-600 dark:text-gray-400 mt-2">
+                Current position: {galleryItems.findIndex(item => item.id === selectedItem.id) + 1} of {galleryItems.length}
+              </p>
             </div>
           )}
         </div>
