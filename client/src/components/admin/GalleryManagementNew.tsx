@@ -678,7 +678,7 @@ export default function GalleryManagementNew() {
                 const item = galleryItems?.find(item => item.id?.toString() === value);
                 console.log('🔍 FULL SELECTED ITEM:', item);
                 
-                alert(`Admin item selected: ${value}. Item has image_url_fr: ${item?.image_url_fr ? 'YES' : 'NO'}, static_image_url_fr: ${item?.static_image_url_fr ? 'YES' : 'NO'}`);
+                alert(`Admin item selected: ${value}. Item has image_url_fr: ${item?.image_url_fr ? 'YES' : 'NO'}, static_image_url_fr: ${item?.static_image_url_fr ? 'YES' : 'NO'}, formData.use_same_video: ${formData.use_same_video}`);
               }}
             >
               <SelectTrigger className="w-full">
