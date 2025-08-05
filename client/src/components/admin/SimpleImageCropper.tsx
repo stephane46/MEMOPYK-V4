@@ -302,6 +302,7 @@ export default function SimpleImageCropper({ imageUrl, onSave, onCancel, onOpen,
   }, [isOpen, onOpen]);
 
   const generateImage = async () => {
+    console.log(`🚀 STARTING CROP GENERATION - Function called!`);
     setLoading(true);
     
     try {
@@ -431,7 +432,10 @@ export default function SimpleImageCropper({ imageUrl, onSave, onCancel, onOpen,
           ❌ Annuler
         </Button>
         <Button 
-          onClick={generateImage}
+          onClick={() => {
+            console.log(`🔴 BUTTON CLICKED - About to call generateImage`);
+            generateImage();
+          }}
           disabled={loading}
           className="bg-[#D67C4A] hover:bg-[#b85d37] text-white px-8 py-2 font-semibold"
         >
