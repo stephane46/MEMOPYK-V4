@@ -254,49 +254,51 @@ export default function SimpleImageCropper({
           />
         )}
 
-        {/* Orange crop frame (3:2 ratio) */}
+        {/* Orange crop frame - YOUR PREFERRED SIZE covering most of image width */}
         <div 
-          className="absolute border-4 border-[#D67C4A] pointer-events-none bg-transparent"
+          className="absolute border-4 border-[#D67C4A] pointer-events-none"
           style={{
-            width: '300px',  // 3:2 ratio preview
-            height: '200px',
+            width: '360px',  // Your preferred full-width coverage
+            height: '240px', // 3:2 ratio maintained 
             left: '50%',
             top: '50%',
             transform: 'translate(-50%, -50%)',
-            zIndex: 10
+            zIndex: 10,
+            backgroundColor: '#D67C4A', // Orange background as you prefer
+            opacity: 0.3
           }}
         />
 
-        {/* Corner indicators */}
+        {/* Corner indicators for your preferred 360x240 frame */}
         <div 
-          className="absolute w-2 h-2 bg-[#D67C4A] pointer-events-none"
+          className="absolute w-3 h-3 bg-white border-2 border-[#D67C4A] pointer-events-none"
           style={{
-            left: 'calc(50% - 150px - 4px)',
-            top: 'calc(50% - 100px - 4px)',
+            left: 'calc(50% - 180px - 4px)',
+            top: 'calc(50% - 120px - 4px)',
             zIndex: 11
           }}
         />
         <div 
-          className="absolute w-2 h-2 bg-[#D67C4A] pointer-events-none"
+          className="absolute w-3 h-3 bg-white border-2 border-[#D67C4A] pointer-events-none"
           style={{
-            right: 'calc(50% - 150px - 4px)',
-            top: 'calc(50% - 100px - 4px)',
+            right: 'calc(50% - 180px - 4px)',
+            top: 'calc(50% - 120px - 4px)',
             zIndex: 11
           }}
         />
         <div 
-          className="absolute w-2 h-2 bg-[#D67C4A] pointer-events-none"
+          className="absolute w-3 h-3 bg-white border-2 border-[#D67C4A] pointer-events-none"
           style={{
-            left: 'calc(50% - 150px - 4px)',
-            bottom: 'calc(50% - 100px - 4px)',
+            left: 'calc(50% - 180px - 4px)',
+            bottom: 'calc(50% - 120px - 4px)',
             zIndex: 11
           }}
         />
         <div 
-          className="absolute w-2 h-2 bg-[#D67C4A] pointer-events-none"
+          className="absolute w-3 h-3 bg-white border-2 border-[#D67C4A] pointer-events-none"
           style={{
-            right: 'calc(50% - 150px - 4px)',
-            bottom: 'calc(50% - 100px - 4px)',
+            right: 'calc(50% - 180px - 4px)',
+            bottom: 'calc(50% - 120px - 4px)',
             zIndex: 11
           }}
         />
