@@ -187,6 +187,7 @@ const DraggableCover = ({ imageUrl, onPositionChange, previewRef, onCropChange, 
             const img = e.target as HTMLImageElement;
             const naturalWidth = img.naturalWidth;
             const naturalHeight = img.naturalHeight;
+            alert(`IMAGE LOADED SUCCESSFULLY!\nDimensions: ${naturalWidth}x${naturalHeight}\nSetting imageLoaded=true...`);
             
             setImageDimensions({ width: naturalWidth, height: naturalHeight });
             
