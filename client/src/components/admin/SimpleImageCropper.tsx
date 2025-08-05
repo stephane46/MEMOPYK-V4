@@ -239,14 +239,15 @@ export default function SimpleImageCropper({
         <div 
           className="absolute border-4 border-[#D67C4A] pointer-events-none"
           style={{
-            width: '300px',  // Matches video card width
-            height: '200px', // Matches video card height (1.5 ratio)
+            width: imageDimensions ? `${Math.min(imageDimensions.width * 0.8, 360)}px` : '360px',
+            height: imageDimensions ? `${Math.min(imageDimensions.width * 0.8, 360) / 1.5}px` : '240px',
             left: '50%',
             top: '50%',
             transform: 'translate(-50%, -50%)',
             zIndex: 10,
-            backgroundColor: '#D67C4A',
-            opacity: 0.3
+            backgroundColor: 'transparent',
+            border: '4px solid #D67C4A',
+            boxShadow: '0 0 0 9999px rgba(0, 0, 0, 0.5)'
           }}
         />
 
