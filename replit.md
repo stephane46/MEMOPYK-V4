@@ -1,81 +1,7 @@
 # MEMOPYK - Replit Project Documentation
 
 ## Overview
-MEMOPYK is a full-stack memory film platform that transforms personal photos and videos into cinematic memory films. It features a bilingual (French/English) content management system, a professional video lightbox, robust gallery management with reliable video streaming, language-specific upload functionality, image reframing tools, and real-time preview capabilities. The platform aims to provide a seamless and intuitive experience for creating and managing cherished memory films.
-
-## Recent Changes (August 2025)
-- **CROP COORDINATE FIX & CACHE REFRESH v1.0.138**: COMPREHENSIVE SOLUTION - Fixed crop positioning bug and cache display issue
-- **Root Cause Fixed**: Coordinate calculation was inverting position (negative signs causing opposite crop placement)
-- **Cache Issue Resolved**: Added immediate cache invalidation after successful crop operations to force admin interface refresh
-- **User Experience**: Crop now displays correctly and immediately visible in admin interface without manual refresh
-- **Technical Fix**: Enhanced queryClient.invalidateQueries() with forced refetch after crop save operations
-- **SMOOTH IMAGE REFRAMING INTERFACE v1.0.133**: MAJOR UX IMPROVEMENT - Completely redesigned image cropping interface
-- **Visual Feedback**: Added bright orange crop frame, drag handle, corner markers, and dark overlay for clear visual boundaries
-- **User-Friendly Design**: Larger 400x300 preview, obvious drag controls, real-time status indicators, and smooth animations
-- **Clear Instructions**: Added intuitive title, simple instructions, and visual cues using brand orange color (#D67C4A)
-- **Enhanced Usability**: Users can now clearly see what they're cropping and easily control image positioning with the central drag handle
-- **DEPLOYMENT MARKER CREATION FIX v1.0.132**: CONFIRMED WORKING - Fixed "fs is not defined" error in deployment marker creation
-- **User Interface Clean-up**: Removed technical order index display from gallery management - users now only see clean position numbers
-- **GALLERY REORDERING SYSTEM SUCCESS v1.0.131**: CONFIRMED WORKING - Gallery item reordering now functions perfectly with instant UI updates
-- **Real-time Updates**: Fixed cache invalidation to provide instant position updates without page refresh
-- **Hybrid Storage Fix**: Enhanced error handling for missing JSON files while maintaining database-first operations
-- **Position Calculation**: Unified sorting logic ensures accurate position display and button states across all components
-- **User Confirmation**: "It works and (great!) the site updated instantly and on its own (no F5 needed!)" - reordering system fully operational
-- **ADMIN MENU ORANGE HIGHLIGHTING SUCCESS v1.0.130**: CONFIRMED WORKING - Menu highlighting system implemented perfectly
-- **Brand Color Integration**: Used official MEMOPYK orange (`#D67C4A`) from CSS custom properties instead of generic Tailwind classes
-- **Visual Feedback**: Active menu items now display proper orange background with white text and semi-transparent icon backgrounds
-- **User Confirmation**: System tested and confirmed working by user - orange highlighting visible and functional across all menu sections
-- **DEPLOYMENT SYSTEM ENHANCEMENT v2.0**: Professional-grade deployment marker system with enterprise features - CONFIRMED WORKING
-- **API Bug Fixed**: Corrected server routes to use proper argument format (`--description=value` instead of `--description value`)
-- **Full Functionality**: Admin interface deployment marker creation working perfectly with success response
-- **Organized Structure**: New `.deployment_markers/` directory with `.gitkeep` for clean version control
-- **Enhanced Script**: `scripts/create-deployment-marker.js` with CLI flags, retention policies, atomic writes
-- **Automatic Cleanup**: Smart retention (default 10 markers) with configurable `--keep=N` parameter
-- **Human-Readable Names**: ISO-style timestamps (`v1.0-2025-08-04T142312Z`) instead of epoch milliseconds
-- **Safety Features**: Input sanitization, 50-char limit, unsafe character replacement, atomic file operations
-- **Flexibility**: `--cleanup` mode, `--description`, `--out-dir`, and `--help` flags for various workflows
-- **Documentation**: Enhanced deployment prevention checklist with troubleshooting and best practices
-- **Bilingual Menu Labels**: Updated all 9 menu items with proper French names (Vidéos Hero, Galerie Vidéos, Boutons CTA, Documents Légaux, Gestion SEO, etc.)
-- **DEPLOYMENT REGRESSION CONFIRMED v1.0.128**: User testing confirms production admin/public sync broken
-- **Visual Evidence**: User cropped production admin image to show space above dog's head, public gallery still shows cropped head
-- **Development Works**: Same test in development shows proper synchronization 
-- **Root Cause Confirmed**: Replit deployment packaged older frontend code instead of current working development code
-- **Timeline**: Deployment 3 minutes ago broke functionality that works perfectly in development
-- **Solution Ready**: Force clean deployment markers created to deploy current working development code
-- **Prevention Strategy**: Always use force clean deployment markers to prevent Replit packaging cache issues
-- **Created Tools**: DEPLOYMENT_PREVENTION_CHECKLIST.md and create-force-clean-marker.js for reliable deployments
-- **GALLERY SYNC FIX v1.0.126**: Identified and fixed gallery image mismatch in development environment
-- **Root Cause Identified**: Admin and public site used different image priority logic AND shared mode logic
-- **Development Fix Applied**: 
-  - Admin logic updated to match public site (static crop priority)
-  - Admin now implements same shared mode logic (EN static crop for both languages when use_same_video=true)
-  - Unified React Query cache keys across all components
-  - Database updated with consistent static crop URLs for both languages
-- **Status**: Fix working in development, requires deployment to production
-- **Technical Details**: Public site transforms database fields (static_image_url_en → staticImageUrlEn, use_same_video → useSameVideo) while admin works with raw database fields, requiring different access patterns but same logic
-- **DEPLOYMENT READY v1.0.124**: All files prepared for production deployment with cache and hybrid storage optimizations
-- **Manual Cropping Production Success**: User confirmed "production site shows nice images!!" - system working perfectly
-- **Deployment Optimizations Applied**: Critical file verification, cache management, and performance tuning complete
-- **TypeScript Issues Resolved**: Fixed storage and routing type errors for clean production deployment
-- **MANUAL CROPPING SYSTEM CONFIRMED WORKING v1.0.123**: Console logs confirm successful manual cropping detection
-- **Enhanced File Size Logging**: Added colorful console logs and popup alerts showing exact file sizes and dimensions
-- **Quality Verification**: Manual cropping generates files with smart dimensions (3024x2016) and 90% JPEG quality
-- **User Interface Success**: GalleryManagementNew.tsx correctly implements manual cropping with real-time feedback
-- **SMART HIGH-QUALITY CROPPING SYSTEM v1.0.122**: Revolutionary image quality breakthrough CONFIRMED
-- **User Feedback**: "It looks good on screen!" - Visual quality dramatically improved
-- **Smart Dimension Preservation**: System now preserves original dimensions (e.g., 3024x2127 → 3024x2016) instead of downscaling to 300x200
-- **Dual Implementation**: Both manual cropping (SimpleImageCropper) and server-side auto-generation use smart dimension logic
-- **Quality Achievement**: Gallery images now maintain near-original resolution while achieving consistent 1.5 aspect ratio
-- **Technical Innovation**: Preserves larger dimension, calculates other dimension for maximum quality with minimal loss
-- **IMAGE QUALITY FIX v1.0.117**: Public gallery image quality RESOLVED
-- **Root Cause Identified**: Public gallery prioritized 300x200 static thumbnails over high-resolution original images
-- **Fix Applied**: Modified both desktop and mobile gallery components to prioritize original high-quality images like admin interface
-- **Quality Improvement**: Public gallery now displays same high-resolution images (4032x3024) as admin interface instead of low-quality thumbnails
-- **User Experience Enhanced**: Visitors now see crisp, high-quality gallery images matching admin preview quality
-- **Admin Interface Cleaned**: Removed debugging popup alerts for smoother admin workflow
-- **CRITICAL BREAKTHROUGH v1.0.116**: Alt+Tab scroll navigation issue RESOLVED
-- **Complete Field Mapping Audit v1.0.114**: Achieved 100% field synchronization across ALL 7 sections (84 total fields)
-- **Cross-Environment Sync Confirmed**: Admin changes properly synchronize between production and preview environments
+MEMOPYK is a full-stack memory film platform designed to transform personal photos and videos into cinematic memory films. Its core purpose is to offer a seamless and intuitive experience for creating and managing cherished memory films. Key capabilities include a bilingual (French/English) content management system, a professional video lightbox, robust gallery management with reliable video streaming, language-specific upload functionality, advanced image reframing tools, and real-time preview capabilities. The project aims to capture a market niche for personalized, high-quality video memories.
 
 ## User Preferences
 Preferred communication style: Simple, everyday language.
@@ -83,40 +9,39 @@ Preferred communication style: Simple, everyday language.
 ## System Architecture
 
 ### Frontend Architecture
-- **Framework**: React 18 with TypeScript
-- **Build Tool**: Vite
-- **UI Library**: shadcn/ui (built on Radix UI)
-- **Styling**: Tailwind CSS with CSS custom properties
-- **State Management**: TanStack Query
-- **Form Handling**: React Hook Form with Zod validation
+- **Framework**: React 18 with TypeScript and Vite.
+- **UI Library**: shadcn/ui (built on Radix UI).
+- **Styling**: Tailwind CSS with CSS custom properties.
+- **State Management**: TanStack Query.
+- **Form Handling**: React Hook Form with Zod validation.
 - **UI/UX Decisions**:
-    - **Typography**: Poppins (sans-serif) for general text, Playfair Display (serif) for hero video overlay text.
+    - **Typography**: Poppins for general text, Playfair Display for hero video overlay text.
     - **Color Scheme**: MEMOPYK brand palette (Dark Blue #2A4759, Orange #D67C4A, Navy #011526, Cream #F2EBDC, Sky Blue #89BAD9).
-    - **Responsive Design**: Adapts to all screen sizes, including advanced mobile optimizations for gallery, FAQ, video lightbox, and hero sections (e.g., responsive grids, touch-friendly overlays, optimized text sizing, 44px touch targets). Includes progressive web app features like lazy loading, network status detection, and device orientation optimization.
-    - **Navigation**: Customer journey-focused anchor-based scrolling navigation on the homepage ("Comment ça marche", "Galerie", "Devis", "Rendez-vous"). Logo acts as home button with language routing.
-    - **Image Cropping**: Inline drag-and-reposition interface with real-time visual feedback. Features a dual badge system (✂️ Recadré EN/FR for manual, ✂️ Auto EN/FR for automatic 300x200 thumbnails).
-    - **Video Display**: Minimal controls for gallery videos (play/pause, scrubber, volume), 2/3 screen size lightbox with blurred background, no black bars. Hero videos use a cache system for fast loading, while gallery videos stream directly from CDN for reliability.
-    - **Admin Interface**: Streamlined content management, professional field labeling, clear visual indicators. Includes a responsive font size system with desktop, tablet, and mobile controls and real-time preview, using CSS clamp().
+    - **Responsive Design**: Adaptive to all screen sizes, including advanced mobile optimizations (responsive grids, touch-friendly overlays, optimized text sizing, 44px touch targets). Includes PWA features like lazy loading and network status detection.
+    - **Navigation**: Customer journey-focused anchor-based scrolling on the homepage. Logo acts as home button with language routing.
+    - **Image Cropping**: Inline drag-and-reposition interface with real-time visual feedback and a dual badge system for manual/automatic crops.
+    - **Video Display**: Minimal controls for gallery videos, 2/3 screen size lightbox with blurred background. Hero videos use a cache system for fast loading; gallery videos stream directly from CDN.
+    - **Admin Interface**: Streamlined content management, professional field labeling, clear visual indicators, responsive font size system with real-time preview.
 
 ### Backend Architecture
-- **Runtime**: Node.js with Express.js
-- **Language**: TypeScript with ES modules
-- **Database ORM**: Drizzle ORM with PostgreSQL dialect
-- **Database Provider**: Neon Database (serverless PostgreSQL)
-- **Session Management**: Express sessions with PostgreSQL store
+- **Runtime**: Node.js with Express.js.
+- **Language**: TypeScript with ES modules.
+- **Database ORM**: Drizzle ORM with PostgreSQL dialect.
+- **Database Provider**: Neon Database (serverless PostgreSQL).
+- **Session Management**: Express sessions with PostgreSQL store.
 
 ### Key Architectural Decisions
-- **Hybrid Storage System**: JSON fallback for all data, complementing PostgreSQL. Complete field mapping ensures all 36 database columns sync properly between environments.
-- **Universal Video Proxy**: Handles all video serving, range requests, local caching, and fallback to Supabase CDN.
-- **Image Proxy**: Manages image loading, resolves CORS issues, prioritizes static cropped images.
-- **Cache Management**: Smart caching for hero videos (immediate preload). Gallery videos use direct CDN streaming for production reliability.
-- **Bilingual Support**: Comprehensive French/English content management (UI, data, SEO).
-- **Modular API Design**: RESTful API for content types (hero videos, gallery, FAQs, legal docs, analytics).
-- **Static Image Generation**: Automated Sharp-based cropping and generation of 300x200 static images for gallery thumbnails, ensuring all uploads are auto-processed.
-- **Real-time Analytics**: Backend system for tracking visitors, performance, and engagement, with IP management tools.
-- **Direct Supabase Upload System**: Bypasses deployment limits for large file uploads.
+- **Hybrid Storage System**: JSON fallback for all data, complementing PostgreSQL for data persistence and synchronization across environments.
+- **Universal Video Proxy**: Manages all video serving, including range requests, local caching, and fallback to Supabase CDN.
+- **Image Proxy**: Handles image loading, resolves CORS issues, and prioritizes static cropped images.
+- **Cache Management**: Smart caching for hero videos (immediate preload) and direct CDN streaming for gallery videos.
+- **Bilingual Support**: Comprehensive French/English content management for UI, data, and SEO.
+- **Modular API Design**: RESTful API for various content types (hero videos, gallery, FAQs, legal docs, analytics).
+- **Static Image Generation**: Automated Sharp-based cropping and generation of static images for gallery thumbnails upon upload.
+- **Real-time Analytics**: Backend system for tracking visitors, performance, and engagement with IP management.
+- **Direct Supabase Upload System**: Facilitates large file uploads by bypassing deployment limits.
 - **SEO Management System**: Comprehensive interface for page-level meta tags, keywords, redirects, image SEO, and global settings.
-- **Deployment Optimizations**: Fast health check endpoints (/api/health-check), production video cache preloading optimized for hero videos only, hybrid storage system with JSON fallback, comprehensive error handling, proper routing priorities to prevent static file serving interference. All critical files verified for deployment readiness.
+- **Deployment Optimizations**: Includes fast health check endpoints, production video cache preloading for hero videos, comprehensive error handling, and routing priorities to prevent static file serving interference.
 
 ## External Dependencies
 
