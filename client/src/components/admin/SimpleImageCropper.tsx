@@ -388,7 +388,7 @@ export default function SimpleImageCropper({ imageUrl, onSave, onCancel, onOpen,
           }
           
           resolve(blob!);
-        }, 'image/jpeg', 0.9);  // High quality to preserve your original file quality
+        }, 'image/jpeg', 0.8);  // Balanced quality for faster uploads
       });
 
       const settings = {
