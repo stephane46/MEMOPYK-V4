@@ -12,7 +12,7 @@ function logBasicDiagnostics(success: boolean) {
 
 interface SimpleImageCropperProps {
   imageUrl: string;
-  onSave: (blob: Blob, settings: any) => void;
+  onSave: (blob: Blob, settings: any) => Promise<void>;
   onCancel: () => void;
   onOpen?: () => void;
   onCropChange?: () => void;
