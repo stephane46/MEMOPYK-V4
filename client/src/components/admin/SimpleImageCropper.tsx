@@ -301,12 +301,13 @@ export default function SimpleImageCropper({ imageUrl, onSave, onCancel, onOpen,
   const [position, setPosition] = useState({ x: 50, y: 50 });
   const previewRef = useRef<HTMLDivElement>(null);
 
-  // Log when imageUrl changes
+  // Debug crop workflow states
   React.useEffect(() => {
     if (imageUrl) {
-      console.log('🖼️ SimpleImageCropper received imageUrl:', imageUrl);
+      console.log('🖼️ CROP WORKFLOW - SimpleImageCropper received imageUrl:', imageUrl);
+      console.log('🖼️ CROP WORKFLOW - Modal isOpen:', isOpen);
     }
-  }, [imageUrl]);
+  }, [imageUrl, isOpen]);
 
   // Trigger onOpen when component becomes visible
   React.useEffect(() => {
@@ -316,6 +317,10 @@ export default function SimpleImageCropper({ imageUrl, onSave, onCancel, onOpen,
   }, [isOpen, onOpen]);
 
   const generateImage = async () => {
+    console.log('🎯 CROP WORKFLOW - Starting generateImage function');
+    console.log('🎯 CROP WORKFLOW - Current position:', position);
+    console.log('🎯 CROP WORKFLOW - imageUrl:', imageUrl);
+    
     setLoading(true);
     
     try {
@@ -413,10 +418,17 @@ export default function SimpleImageCropper({ imageUrl, onSave, onCancel, onOpen,
         devicePixelRatio: dpr
       };
       
+      console.log('🎯 CROP COMPLETE - calling onSave with:', { 
+        blobSize: blob.size, 
+        settings 
+      });
+      
       await onSave(blob, settings);
+      console.log('✅ onSave completed successfully');
       
     } catch (error) {
-      console.error('Error generating image:', error);
+      console.error('❌ Error generating image:', error);
+      alert(`CROP ERROR: ${error.message || error}`);
     } finally {
       setLoading(false);
     }
