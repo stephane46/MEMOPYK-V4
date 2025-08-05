@@ -427,9 +427,13 @@ export default function SimpleImageCropper({ imageUrl, onSave, onCancel, onOpen,
       
       // Call onSave with detailed error tracking
       try {
-        console.log('🚀 ABOUT TO CALL onSave...');
+        console.log('🚀 CANVAS STEP: About to call onSave function...');
+        console.log('🚀 CANVAS STEP: Blob ready:', blob.size, 'bytes');
+        console.log('🚀 CANVAS STEP: Settings ready:', settings);
+        
         await onSave(blob, settings);
-        console.log('✅ onSave completed successfully');
+        
+        console.log('✅ CANVAS STEP: onSave completed successfully');
       } catch (onSaveError) {
         console.error('❌ onSave function threw error:', onSaveError);
         console.error('❌ onSave error type:', typeof onSaveError);

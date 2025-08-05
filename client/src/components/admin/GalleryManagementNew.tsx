@@ -2450,28 +2450,40 @@ export default function GalleryManagementNew() {
                 }));
               }}
               onSave={async (blob: Blob, cropSettings: any) => {
-                console.log('🚀 CROP SAVE START');
+                console.log('🚀 STEP 1: CROP SAVE STARTED');
+                console.log('🚀 STEP 1a: Blob size:', blob.size, 'bytes');
+                console.log('🚀 STEP 1b: Crop settings:', cropSettings);
                 
                 try {
-                  // 🚨 NON-BLOCKING FORMDATA CREATION
+                  console.log('🚀 STEP 2: Starting FormData creation...');
                   await new Promise(resolve => setTimeout(resolve, 0));
+                  console.log('🚀 STEP 2a: First yield complete');
                   
                   const uploadFormData = new FormData();
+                  console.log('🚀 STEP 2b: FormData created');
+                  
                   const filename = `static_${cropperLanguage}_${Date.now()}.jpg`;
+                  console.log('🚀 STEP 2c: Filename generated:', filename);
                   
-                  // Break up FormData operations
                   await new Promise(resolve => setTimeout(resolve, 0));
+                  console.log('🚀 STEP 2d: Second yield complete');
+                  
+                  console.log('🚀 STEP 3: Appending file to FormData...');
                   uploadFormData.append('file', blob, filename);
+                  console.log('🚀 STEP 3a: File appended successfully');
+                  
                   await new Promise(resolve => setTimeout(resolve, 0));
+                  console.log('🚀 STEP 3b: Third yield complete');
+                  
                   uploadFormData.append('language', cropperLanguage);
+                  console.log('🚀 STEP 3c: Language appended successfully');
                   
-                  console.log('📤 Starting upload...');
-                  
-                  // 🚨 NON-BLOCKING FETCH
+                  console.log('🚀 STEP 4: Starting fetch request...');
                   const uploadResponse = await fetch('/api/upload/image', {
                     method: 'POST',
                     body: uploadFormData
                   });
+                  console.log('🚀 STEP 4a: Fetch completed, status:', uploadResponse.status);
                   
                   if (!uploadResponse.ok) {
                     throw new Error(`Upload failed: ${uploadResponse.status}`);
