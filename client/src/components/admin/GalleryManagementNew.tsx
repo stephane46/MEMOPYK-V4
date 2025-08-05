@@ -2434,11 +2434,15 @@ export default function GalleryManagementNew() {
               }}
               onSave={async (blob: Blob, cropSettings: any) => {
                 try {
+                  console.log('🚀 STARTING CROP SAVE PROCESS:', { language: cropperLanguage, selectedItemId: selectedItem.id });
+                  
                   // Create FormData for upload
                   const formData = new FormData();
                   const filename = `static_${cropperLanguage}_${Date.now()}.jpg`;
                   formData.append('file', blob, filename);
                   formData.append('language', cropperLanguage);
+                  
+                  console.log('📤 UPLOADING CROPPED IMAGE:', { filename, blobSize: blob.size });
                   
                   // Upload the cropped image
                   const uploadResponse = await fetch('/api/upload/image', {
@@ -2447,10 +2451,13 @@ export default function GalleryManagementNew() {
                   });
                   
                   if (!uploadResponse.ok) {
-                    throw new Error(`Upload failed: ${uploadResponse.status}`);
+                    const errorText = await uploadResponse.text();
+                    console.error('❌ UPLOAD FAILED:', { status: uploadResponse.status, error: errorText });
+                    throw new Error(`Upload failed: ${uploadResponse.status} - ${errorText}`);
                   }
                   
                   const uploadResult = await uploadResponse.json();
+                  console.log('✅ UPLOAD SUCCESS:', uploadResult);
                   
                   // Update the gallery item with the new static image URL
                   // In shared mode, update both language static URLs since they use the same source image
@@ -2471,8 +2478,9 @@ export default function GalleryManagementNew() {
                   console.log('🔍 UPDATE DATA DEBUG:', JSON.stringify(updateData, null, 2));
                   console.log('🔍 MANUAL CROPPING COMPLETED - Method should be: triple-layer-white-bg');
                   
+                  console.log('📝 UPDATING DATABASE:', { itemId: selectedItem.id, updateData });
                   const updateResponse = await apiRequest(`/api/gallery/${selectedItem.id}`, 'PATCH', updateData);
-                  console.log('🔍 UPDATE RESPONSE DEBUG:', updateResponse);
+                  console.log('✅ DATABASE UPDATE SUCCESS:', updateResponse);
                   // Gallery item updated successfully
                   
                   // IMMEDIATE PREVIEW UPDATE: Show cropped image in admin interface right away
@@ -2534,6 +2542,8 @@ export default function GalleryManagementNew() {
                   });
                   
                 } catch (error) {
+                  console.error('❌ CROP SAVE ERROR:', error);
+                  console.error('❌ ERROR STACK:', error instanceof Error ? error.stack : 'No stack trace');
                   
                   toast({ 
                     title: "❌ Erreur", 
