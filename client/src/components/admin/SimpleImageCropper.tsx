@@ -384,26 +384,12 @@ export default function SimpleImageCropper({ imageUrl, onSave, onCancel, onOpen,
       ctx.imageSmoothingQuality = 'high';
       ctx.drawImage(img, offsetX, offsetY, scaledWidth, scaledHeight);
       
-      // Export as JPEG with maximum quality
-      // 🚀 PERFORMANCE OPTIMIZATION: Use async canvas processing to prevent UI blocking
+      // Simple synchronous canvas export
       const blob = await new Promise<Blob>((resolve) => {
-        // Defer canvas processing to next tick to prevent UI freeze
-        setTimeout(() => {
-          canvas.toBlob((blob) => {
-            logBasicDiagnostics(!!blob);
-            
-            // 🎯 FILE SIZE CHECK: Log the cropped file size
-            if (blob) {
-              const sizeInMB = (blob.size / (1024 * 1024)).toFixed(2);
-              const sizeInKB = (blob.size / 1024).toFixed(0);
-              console.log(`%c🎯 CROPPED FILE SIZE: ${sizeInMB}MB (${sizeInKB}KB) - ASYNC PROCESSING`, 'background: #4CAF50; color: white; padding: 5px; font-weight: bold;');
-              console.log(`%c🎯 DIMENSIONS: ${cropWidth}x${cropHeight} (smart high-quality)`, 'background: #2196F3; color: white; padding: 5px; font-weight: bold;');
-              console.log(`%c🎯 QUALITY: 80% JPEG (balanced for speed)`, 'background: #FF9800; color: white; padding: 5px; font-weight: bold;');
-            }
-            
-            resolve(blob!);
-          }, 'image/jpeg', 0.8);  // Balanced quality for faster uploads
-        }, 0); // Defer to next event loop tick
+        canvas.toBlob((blob) => {
+          console.log(`🔧 CROP COMPLETED - Size: ${cropWidth}x${cropHeight}`);
+          resolve(blob!);
+        }, 'image/jpeg', 0.8);
       });
 
       const settings = {
