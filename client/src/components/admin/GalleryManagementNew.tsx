@@ -2503,15 +2503,13 @@ export default function GalleryManagementNew() {
                     hasChanges: false
                   });
                   
-                  // Invalidate both admin and public gallery caches so changes appear everywhere
-                  queryClient.invalidateQueries({ queryKey: ['/api/gallery', 'v1.0.110'] }); // Admin cache
-                  queryClient.invalidateQueries({ queryKey: ['/api/gallery', 'v1.0.110'] });  // Public cache
-                  queryClient.removeQueries({ queryKey: ['/api/gallery', 'v1.0.110'] });
-                  queryClient.removeQueries({ queryKey: ['/api/gallery', 'v1.0.110'] });
+                  // 🚀 OPTIMIZED CACHE MANAGEMENT: Single efficient invalidation
+                  queryClient.invalidateQueries({ queryKey: ['/api/gallery'] }); // Primary cache
                   
-                  // Force both admin and public component refresh
-                  await queryClient.refetchQueries({ queryKey: ['/api/gallery', 'v1.0.110'] });
-                  await queryClient.refetchQueries({ queryKey: ['/api/gallery', 'v1.0.110'] });
+                  // Non-blocking cache cleanup
+                  setTimeout(() => {
+                    queryClient.removeQueries({ queryKey: ['/api/gallery', 'v1.0.110'] });
+                  }, 100);
                   
                   // CRITICAL: Update the formData with the new crop settings immediately for badge display
                   setFormData(prev => ({
