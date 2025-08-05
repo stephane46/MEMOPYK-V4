@@ -2450,133 +2450,84 @@ export default function GalleryManagementNew() {
                 }));
               }}
               onSave={async (blob: Blob, cropSettings: any) => {
-                console.log('🚀 STARTING CROP SAVE PROCESS - STEP BY STEP');
-                console.log('📊 Blob details:', { size: blob.size, type: blob.type });
-                console.log('⚙️ Crop settings:', cropSettings);
-                console.log('🌐 Language:', cropperLanguage);
-                console.log('📝 Selected item ID:', selectedItem.id);
+                console.log('🚀 CROP SAVE START');
                 
                 try {
-                  // Step 1: Create FormData for upload
-                  console.log('📋 Step 1: Creating FormData...');
-                  const formData = new FormData();
+                  // Create upload data
+                  const uploadFormData = new FormData();
                   const filename = `static_${cropperLanguage}_${Date.now()}.jpg`;
-                  formData.append('file', blob, filename);
-                  formData.append('language', cropperLanguage);
-                  console.log('✅ FormData created with filename:', filename);
+                  uploadFormData.append('file', blob, filename);
+                  uploadFormData.append('language', cropperLanguage);
                   
-                  // Step 2: Upload the cropped image
-                  console.log('📤 Step 2: Uploading cropped image...');
+                  // Upload image with timeout
+                  const uploadController = new AbortController();
+                  const uploadTimeout = setTimeout(() => uploadController.abort(), 10000); // 10 second timeout
+                  
                   const uploadResponse = await fetch('/api/upload/image', {
                     method: 'POST',
-                    body: formData
+                    body: uploadFormData,
+                    signal: uploadController.signal
                   });
-                  
-                  console.log('📡 Upload response status:', uploadResponse.status);
-                  console.log('📡 Upload response OK:', uploadResponse.ok);
+                  clearTimeout(uploadTimeout);
                   
                   if (!uploadResponse.ok) {
-                    const errorText = await uploadResponse.text();
-                    console.error('❌ Upload failed response:', errorText);
-                    throw new Error(`Upload failed: ${uploadResponse.status} - ${errorText}`);
+                    throw new Error(`Upload failed: ${uploadResponse.status}`);
                   }
                   
                   const uploadResult = await uploadResponse.json();
-                  console.log('✅ Step 2 COMPLETE - Upload success:', uploadResult);
+                  console.log('✅ Upload success:', uploadResult.url);
                   
-                  // Step 3: Prepare database update
-                  console.log('📝 Step 3: Preparing database update...');
+                  // Update database with timeout
                   const updateData = selectedItem.use_same_video 
                     ? {
                         static_image_url_fr: uploadResult.url,
                         static_image_url_en: uploadResult.url,
-                        cropSettings: cropSettings,
-                        language: 'shared'
+                        cropSettings: cropSettings
                       }
                     : {
                         [cropperLanguage === 'fr' ? 'static_image_url_fr' : 'static_image_url_en']: uploadResult.url,
-                        cropSettings: cropSettings,
-                        language: cropperLanguage
+                        cropSettings: cropSettings
                       };
                   
-                  console.log('📊 Update data prepared:', updateData);
+                  const updateController = new AbortController();
+                  const updateTimeout = setTimeout(() => updateController.abort(), 5000); // 5 second timeout
                   
-                  // Step 4: Send database update using fetch directly
-                  console.log('💾 Step 4: Updating database...');
                   const updateResponse = await fetch(`/api/gallery/${selectedItem.id}`, {
                     method: 'PATCH',
-                    headers: {
-                      'Content-Type': 'application/json'
-                    },
+                    headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(updateData),
-                    credentials: 'include'
+                    signal: updateController.signal
                   });
-                  
-                  console.log('📡 Database response status:', updateResponse.status);
-                  console.log('📡 Database response OK:', updateResponse.ok);
+                  clearTimeout(updateTimeout);
                   
                   if (!updateResponse.ok) {
-                    const errorText = await updateResponse.text();
-                    console.error('❌ Database update failed response:', errorText);
-                    throw new Error(`Database update failed: ${updateResponse.status} - ${errorText}`);
+                    throw new Error(`Database update failed: ${updateResponse.status}`);
                   }
                   
-                  const updateResult = await updateResponse.json();
-                  console.log('✅ Step 4 COMPLETE - Database update success:', updateResult);
+                  console.log('✅ Database updated');
                   
-                  // Step 5: Refresh gallery data and close modal
-                  console.log('🎉 Step 5: Refreshing gallery data...');
+                  // Quick refresh without blocking
+                  setTimeout(() => {
+                    queryClient.invalidateQueries({ queryKey: ['/api/gallery'] });
+                    setForceRefreshKey(prev => prev + 1);
+                    window.dispatchEvent(new CustomEvent('gallery-updated'));
+                  }, 100);
                   
-                  // Invalidate React Query cache to force refresh
-                  await queryClient.invalidateQueries({ queryKey: ['/api/gallery'] });
-                  console.log('✅ Gallery cache invalidated');
-                  
-                  // Force component refresh for image cache-busting
-                  setForceRefreshKey(prev => prev + 1);
-                  console.log('✅ Force refresh key updated for cache-busting');
-                  
-                  // Notify public gallery of the update (for cross-tab sync)
-                  window.dispatchEvent(new CustomEvent('gallery-updated', { 
-                    detail: { 
-                      itemId: selectedItem.id, 
-                      language: cropperLanguage,
-                      newImageUrl: uploadResult.url
-                    } 
-                  }));
-                  console.log('✅ Gallery update event dispatched for public site');
-                  
-                  // Update formData with new static image URL to refresh preview
-                  if (selectedItem.use_same_video) {
-                    setFormData(prev => ({
-                      ...prev,
-                      static_image_url_en: uploadResult.url,
-                      static_image_url_fr: uploadResult.url
-                    }));
-                  } else {
-                    setFormData(prev => ({
-                      ...prev,
-                      [cropperLanguage === 'fr' ? 'static_image_url_fr' : 'static_image_url_en']: uploadResult.url
-                    }));
-                  }
-                  console.log('✅ FormData updated with new static image URL');
-                  
+                  // Close modal immediately
                   setCropperOpen(false);
                   toast({ 
                     title: "✅ Succès", 
-                    description: "Image recadrée sauvegardée avec succès - Preview mis à jour" 
+                    description: "Image recadrée sauvegardée" 
                   });
-                  
-                  console.log('🎯 ALL STEPS COMPLETED SUCCESSFULLY!');
                   
                 } catch (error) {
-                  console.error('❌ CROP SAVE ERROR:', error);
-                  console.error('❌ Error stack:', error instanceof Error ? error.stack : 'No stack');
+                  console.error('❌ CROP ERROR:', error);
+                  setCropperOpen(false);
                   toast({ 
                     title: "❌ Erreur", 
-                    description: `Erreur: ${error instanceof Error ? error.message : 'Erreur inconnue'}`,
+                    description: "Erreur de recadrage",
                     variant: "destructive"
                   });
-                  // Don't re-throw - let the function complete normally
                 }
               }}
               onCancel={() => {
