@@ -2485,8 +2485,9 @@ export default function GalleryManagementNew() {
                       };
                   
                   console.log('📝 UPDATING DATABASE...');
-                  await apiRequest(`/api/gallery/${selectedItem.id}`, 'PATCH', updateData);
-                  console.log('✅ DATABASE UPDATE SUCCESS');
+                  const updateResponse = await apiRequest(`/api/gallery/${selectedItem.id}`, 'PATCH', updateData);
+                  const updateResult = await updateResponse.json();
+                  console.log('✅ DATABASE UPDATE SUCCESS:', updateResult);
                   
                   // Close modal and show success
                   setCropperOpen(false);
