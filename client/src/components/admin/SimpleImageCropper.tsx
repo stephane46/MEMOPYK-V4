@@ -71,23 +71,33 @@ const DraggableCover = ({ imageUrl, onPositionChange, previewRef, onCropChange, 
       const step = 2; // 2% movement per key press
       let newCropPosition = { ...cropPosition };
       
+      // Calculate proper boundaries based on actual crop frame size
+      const cropWidthPercent = (cropDimensions.width / 400) * 100; // Crop width as % of container
+      const cropHeightPercent = (cropDimensions.height / 300) * 100; // Crop height as % of container
+      
+      const minX = cropWidthPercent / 2;   // Half crop width from left edge
+      const maxX = 100 - cropWidthPercent / 2; // Half crop width from right edge
+      const minY = cropHeightPercent / 2;  // Half crop height from top edge
+      const maxY = 100 - cropHeightPercent / 2; // Half crop height from bottom edge
+
       switch (e.key) {
         case 'ArrowUp':
-          newCropPosition.y = Math.max(10, cropPosition.y - step);
+          newCropPosition.y = Math.max(minY, cropPosition.y - step);
           break;
         case 'ArrowDown':
-          newCropPosition.y = Math.min(90, cropPosition.y + step);
+          newCropPosition.y = Math.min(maxY, cropPosition.y + step);
           break;
         case 'ArrowLeft':
-          newCropPosition.x = Math.max(10, cropPosition.x - step);
+          newCropPosition.x = Math.max(minX, cropPosition.x - step);
           break;
         case 'ArrowRight':
-          newCropPosition.x = Math.min(90, cropPosition.x + step);
+          newCropPosition.x = Math.min(maxX, cropPosition.x + step);
           break;
       }
       
       e.preventDefault();
       setCropPosition(newCropPosition);
+      console.log(`🎯 CROP POSITION: ${newCropPosition.x.toFixed(1)}%, ${newCropPosition.y.toFixed(1)}%`);
     };
 
     document.addEventListener('keydown', handleKeyDown);
@@ -103,9 +113,18 @@ const DraggableCover = ({ imageUrl, onPositionChange, previewRef, onCropChange, 
     const x = ((e.clientX - rect.left) / rect.width) * 100;
     const y = ((e.clientY - rect.top) / rect.height) * 100;
     
+    // Calculate proper boundaries based on actual crop frame size
+    const cropWidthPercent = (cropDimensions.width / 400) * 100;
+    const cropHeightPercent = (cropDimensions.height / 300) * 100;
+    
+    const minX = cropWidthPercent / 2;
+    const maxX = 100 - cropWidthPercent / 2;
+    const minY = cropHeightPercent / 2;
+    const maxY = 100 - cropHeightPercent / 2;
+    
     const newCropPos = {
-      x: Math.max(10, Math.min(90, x)),
-      y: Math.max(10, Math.min(90, y))
+      x: Math.max(minX, Math.min(maxX, x)),
+      y: Math.max(minY, Math.min(maxY, y))
     };
     
     setCropPosition(newCropPos);
@@ -354,7 +373,9 @@ export default function SimpleImageCropper({ imageUrl, onSave, onCancel, onOpen,
       const offsetX = (scaledWidth - cropWidth) * ((100 - position.x) / 100);
       const offsetY = (scaledHeight - cropHeight) * ((100 - position.y) / 100);
       
-      // Coordinate calculations complete
+      console.log(`🔧 COORDINATE DEBUG - Position: ${position.x}%, ${position.y}%`);
+      console.log(`📐 Image: ${img.naturalWidth}x${img.naturalHeight}, Crop: ${cropWidth}x${cropHeight}`);
+      console.log(`📍 Offset: ${offsetX.toFixed(0)}, ${offsetY.toFixed(0)}`);
       
       // Draw the image with proper composite operation
       ctx.globalCompositeOperation = 'source-over';
@@ -365,7 +386,7 @@ export default function SimpleImageCropper({ imageUrl, onSave, onCancel, onOpen,
       // Simple synchronous canvas export
       const blob = await new Promise<Blob>((resolve) => {
         canvas.toBlob((blob) => {
-          // Crop completed
+          console.log(`✅ CROP COMPLETED - Size: ${cropWidth}x${cropHeight}`);
           resolve(blob!);
         }, 'image/jpeg', 0.8);
       });
