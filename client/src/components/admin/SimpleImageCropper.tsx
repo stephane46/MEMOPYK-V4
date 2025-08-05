@@ -423,21 +423,10 @@ export default function SimpleImageCropper({ imageUrl, onSave, onCancel, onOpen,
         settings 
       });
       
-      // 🚨 CRITICAL FIX: Wrap onSave in try-catch with timeout to prevent hanging button
-      try {
-        // Add timeout to prevent infinite hanging
-        const savePromise = onSave(blob, settings);
-        const timeoutPromise = new Promise((_, reject) => 
-          setTimeout(() => reject(new Error('Save operation timed out after 30 seconds')), 30000)
-        );
-        
-        await Promise.race([savePromise, timeoutPromise]);
-        console.log('✅ onSave completed successfully');
-      } catch (onSaveError: any) {
-        console.error('❌ onSave failed:', onSaveError);
-        alert(`Save failed: ${onSaveError?.message || onSaveError}`);
-        throw onSaveError; // Re-throw to trigger finally block
-      }
+      // 🚨 DIRECT CALL: Call onSave directly without Promise.race complications
+      console.log('📞 CALLING onSave function...');
+      await onSave(blob, settings);
+      console.log('✅ onSave completed successfully');
       
     } catch (error: any) {
       console.error('❌ Error generating image:', error);
