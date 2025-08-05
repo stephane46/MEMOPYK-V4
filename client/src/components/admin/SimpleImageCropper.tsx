@@ -304,7 +304,7 @@ export default function SimpleImageCropper({ imageUrl, onSave, onCancel, onOpen,
     setLoading(true);
     
     try {
-      alert('Crop generation starting...');
+      // Starting crop generation
       // SMART HIGH-QUALITY CROP GENERATION v1.0.122: Preserve original dimensions for maximum quality
       const canvas = document.createElement('canvas');
       const ctx = canvas.getContext('2d')!;
@@ -384,7 +384,7 @@ export default function SimpleImageCropper({ imageUrl, onSave, onCancel, onOpen,
       // Simple synchronous canvas export
       const blob = await new Promise<Blob>((resolve) => {
         canvas.toBlob((blob) => {
-          alert('Crop completed successfully!');
+          // Crop completed
           resolve(blob!);
         }, 'image/jpeg', 0.8);
       });
@@ -398,7 +398,7 @@ export default function SimpleImageCropper({ imageUrl, onSave, onCancel, onOpen,
         devicePixelRatio: dpr
       };
       
-      onSave(blob, settings);
+      await onSave(blob, settings);
       
     } catch (error) {
       console.error('Error generating image:', error);

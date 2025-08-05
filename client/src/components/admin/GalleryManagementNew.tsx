@@ -2386,7 +2386,20 @@ export default function GalleryManagementNew() {
 
       {/* Image Cropper Dialog with Language Selection */}
       {selectedItem && cropperOpen && (
-        <Dialog open={cropperOpen} onOpenChange={setCropperOpen}>
+        <Dialog 
+          open={cropperOpen} 
+          onOpenChange={(open) => {
+            setCropperOpen(open);
+            if (!open) {
+              // Reset state when dialog closes
+              setActiveCroppingState({
+                isActive: false,
+                language: 'en',
+                hasChanges: false
+              });
+            }
+          }}
+        >
           <DialogContent className="max-w-4xl max-h-[90vh] overflow-auto bg-white dark:bg-gray-900 border-2 border-gray-300 dark:border-gray-600">
             <DialogHeader>
               <DialogTitle>Recadrer Image - {selectedItem.title_en}</DialogTitle>
@@ -2513,8 +2526,13 @@ export default function GalleryManagementNew() {
                   }
                   console.log(`🔍 ADMIN PREVIEW UPDATED: ${cropperLanguage} preview now shows cropped image: ${newStaticUrl}`);
                   
-                  // Close cropper and refresh data
+                  // Force close modal immediately 
                   setCropperOpen(false);
+                  
+                  // Additional cleanup to prevent black screen
+                  setTimeout(() => {
+                    setCropperOpen(false);
+                  }, 100);
                   
                   // Reset cropping state after successful save
                   setActiveCroppingState({
