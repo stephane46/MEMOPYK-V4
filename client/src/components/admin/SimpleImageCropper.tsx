@@ -362,8 +362,14 @@ export default function SimpleImageCropper({ imageUrl, onSave, onCancel, onOpen,
       const scaledWidth = img.naturalWidth * scale;
       const scaledHeight = img.naturalHeight * scale;
       
-      const offsetX = (scaledWidth - cropWidth) * (-position.x / 100);
-      const offsetY = (scaledHeight - cropHeight) * (-position.y / 100);
+      // 🔧 COORDINATE FIX v1.0.137: Remove incorrect negative signs that inverted position calculations
+      // position.x/y are percentages (0-100) where 0=left/top, 100=right/bottom
+      // We need to position the crop window correctly, not invert the coordinates
+      const offsetX = (scaledWidth - cropWidth) * (position.x / 100);
+      const offsetY = (scaledHeight - cropHeight) * (position.y / 100);
+      
+      console.log(`🔧 POSITION FIX: User position ${position.x}%, ${position.y}% → Crop offset ${offsetX.toFixed(0)}, ${offsetY.toFixed(0)}`);
+      console.log(`🔧 SCALE INFO: Image ${img.naturalWidth}x${img.naturalHeight} → Scaled ${scaledWidth.toFixed(0)}x${scaledHeight.toFixed(0)} → Crop ${cropWidth}x${cropHeight}`);
       
       // Draw the image with proper composite operation
       ctx.globalCompositeOperation = 'source-over';
