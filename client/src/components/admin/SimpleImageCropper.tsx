@@ -181,7 +181,9 @@ const DraggableCover = ({ imageUrl, onPositionChange, previewRef, onCropChange, 
 
         <img
           src={imageUrl}
+          crossOrigin="anonymous"
           onLoad={(e) => {
+            console.log('✅ Image loaded successfully:', imageUrl);
             const img = e.target as HTMLImageElement;
             const naturalWidth = img.naturalWidth;
             const naturalHeight = img.naturalHeight;
@@ -245,7 +247,11 @@ const DraggableCover = ({ imageUrl, onPositionChange, previewRef, onCropChange, 
             
             setImageLoaded(true);
           }}
-          onError={() => setImageLoaded(false)}
+          onError={(e) => {
+            console.error('❌ Image failed to load:', imageUrl);
+            console.error('❌ Image error event:', e);
+            setImageLoaded(false);
+          }}
           style={{ display: 'none' }}
           alt=""
         />
@@ -292,6 +298,13 @@ export default function SimpleImageCropper({ imageUrl, onSave, onCancel, onOpen,
   const [loading, setLoading] = useState(false);
   const [position, setPosition] = useState({ x: 50, y: 50 });
   const previewRef = useRef<HTMLDivElement>(null);
+
+  // Debug image URL
+  React.useEffect(() => {
+    console.log('🖼️ SimpleImageCropper received imageUrl:', imageUrl);
+    console.log('🖼️ Image URL type:', typeof imageUrl);
+    console.log('🖼️ Image URL length:', imageUrl?.length);
+  }, [imageUrl]);
 
   // Trigger onOpen when component becomes visible
   React.useEffect(() => {
