@@ -299,11 +299,16 @@ export default function SimpleImageCropper({ imageUrl, onSave, onCancel, onOpen,
   const [position, setPosition] = useState({ x: 50, y: 50 });
   const previewRef = useRef<HTMLDivElement>(null);
 
-  // Debug image URL
+  // Debug image URL with alert popup
   React.useEffect(() => {
-    console.log('🖼️ SimpleImageCropper received imageUrl:', imageUrl);
-    console.log('🖼️ Image URL type:', typeof imageUrl);
-    console.log('🖼️ Image URL length:', imageUrl?.length);
+    if (imageUrl) {
+      alert(`IMAGE DEBUG:\nURL: ${imageUrl}\nType: ${typeof imageUrl}\nLength: ${imageUrl?.length}`);
+      console.log('🖼️ SimpleImageCropper received imageUrl:', imageUrl);
+      console.log('🖼️ Image URL type:', typeof imageUrl);
+      console.log('🖼️ Image URL length:', imageUrl?.length);
+    } else {
+      alert('ERROR: No imageUrl provided to SimpleImageCropper!');
+    }
   }, [imageUrl]);
 
   // Trigger onOpen when component becomes visible
