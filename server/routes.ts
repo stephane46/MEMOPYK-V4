@@ -4767,6 +4767,36 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Debug logging endpoint for crop issue analysis
+  app.post('/api/debug-log', (req, res) => {
+    const { message } = req.body;
+    const timestamp = new Date().toISOString();
+    const logEntry = `${timestamp}: ${message}`;
+    
+    console.log(`[CROP DEBUG] ${logEntry}`);
+    
+    // Write to debug file
+    const fs = require('fs');
+    try {
+      fs.appendFileSync('crop-debug.log', logEntry + '\n');
+    } catch (error) {
+      console.error('Failed to write debug log:', error);
+    }
+    
+    res.json({ success: true });
+  });
+
+  // Read debug log endpoint
+  app.get('/api/debug-log', (req, res) => {
+    const fs = require('fs');
+    try {
+      const log = fs.readFileSync('crop-debug.log', 'utf8');
+      res.json({ log });
+    } catch (error) {
+      res.json({ log: 'No debug log found or error reading log' });
+    }
+  });
+
   // Import test routes
   const testRouter = (await import('./test-routes')).default;
   app.use('/api', testRouter);

@@ -313,14 +313,33 @@ export default function SimpleImageCropper({ imageUrl, onSave, onCancel, onOpen,
   }, [isOpen, onOpen]);
 
   const generateImage = async () => {
+    // Log every step to server
+    await fetch('/api/debug-log', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ message: 'GENERATE_START: generateImage function called' })
+    }).catch(e => {});
+    
     console.log('🔥 BUTTON CLICKED - generateImage function called!');
     console.log('🎯 CROP WORKFLOW - Starting generateImage function');
     console.log('🎯 CROP WORKFLOW - Current position:', position);
     console.log('🎯 CROP WORKFLOW - imageUrl:', imageUrl);
     
+    await fetch('/api/debug-log', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ message: 'GENERATE_SET_LOADING: About to set loading state' })
+    }).catch(e => {});
+    
     console.log('🟡 Setting loading state to true...');
     setLoading(true);
     console.log('✅ Loading state set to true');
+    
+    await fetch('/api/debug-log', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ message: 'GENERATE_LOADING_SET: Loading state set successfully' })
+    }).catch(e => {});
     
     try {
       // Starting crop generation
@@ -474,8 +493,21 @@ export default function SimpleImageCropper({ imageUrl, onSave, onCancel, onOpen,
         </Button>
         <Button 
           onClick={() => {
+            // Log to server for analysis
+            fetch('/api/debug-log', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ message: 'BUTTON_CLICKED: Save button clicked' })
+            }).catch(e => {});
+            
             console.log('🚨 BUTTON IMMEDIATE: Save button clicked - this runs first!');
             setTimeout(() => {
+              fetch('/api/debug-log', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ message: 'BUTTON_ASYNC: About to call generateImage' })
+              }).catch(e => {});
+              
               console.log('🚨 BUTTON ASYNC: About to call generateImage');
               generateImage();
             }, 0);
