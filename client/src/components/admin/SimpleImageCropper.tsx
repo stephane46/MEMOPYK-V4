@@ -475,7 +475,10 @@ export default function SimpleImageCropper({ imageUrl, onSave, onCancel, onOpen,
         <Button 
           onClick={() => {
             console.log('🚨 BUTTON IMMEDIATE: Save button clicked - this runs first!');
-            generateImage();
+            setTimeout(() => {
+              console.log('🚨 BUTTON ASYNC: About to call generateImage');
+              generateImage();
+            }, 0);
           }}
           disabled={loading}
           className="bg-[#D67C4A] hover:bg-[#b85d37] text-white px-8 py-2 font-semibold"
