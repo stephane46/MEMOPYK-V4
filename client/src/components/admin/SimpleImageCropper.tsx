@@ -116,8 +116,8 @@ export default function SimpleImageCropper({
 
       const img = imageRef.current;
       
-      // Calculate 3:2 aspect ratio crop from the original image
-      const targetAspectRatio = 3/2; // 1.5
+      // Calculate 1.5 aspect ratio crop (like 300x200 video cards) from the original image
+      const targetAspectRatio = 1.5; // Same as 300x200
       const originalWidth = imageDimensions.width;
       const originalHeight = imageDimensions.height;
       
@@ -145,9 +145,9 @@ export default function SimpleImageCropper({
       
       console.log(`📍 Crop position: (${cropX.toFixed(0)}, ${cropY.toFixed(0)}) from center (${centerX.toFixed(0)}, ${centerY.toFixed(0)})`);
       
-      // Set canvas size to output size (high quality)
-      const outputWidth = 1200; // Fixed high-quality output
-      const outputHeight = Math.round(outputWidth / targetAspectRatio);
+      // Set canvas size to crop size (maintains original quality)
+      const outputWidth = Math.round(cropWidth);
+      const outputHeight = Math.round(cropHeight);
       
       canvas.width = outputWidth;
       canvas.height = outputHeight;
