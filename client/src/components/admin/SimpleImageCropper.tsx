@@ -362,29 +362,21 @@ export default function SimpleImageCropper({ imageUrl, onSave, onCancel, onOpen,
       const scaledWidth = img.naturalWidth * scale;
       const scaledHeight = img.naturalHeight * scale;
       
-      // 🔧 COORDINATE SYSTEM FIX v1.0.139: CSS background-position vs Canvas coordinate mismatch!
-      // The preview uses CSS background-position where 50% 50% shows CENTER of image
-      // Canvas drawImage needs NEGATIVE offsets to show the SAME part
-      // CSS 0% 0% (top-left) = Canvas offset 0, 0 (no movement)
-      // CSS 50% 50% (center) = Canvas offset to move image LEFT/UP to show center
-      // CSS 100% 100% (bottom-right) = Canvas offset maximum LEFT/UP
+      // 🔧 COORDINATE FIX v1.0.140: FINAL SOLUTION!
+      // CSS background-position 50% 50% = show CENTER of image
+      // To show CENTER in canvas crop, we need to MOVE image DOWN and RIGHT
+      // NOT up and left! The sign was backwards!
       
-      // Convert CSS background-position percentages to canvas draw offsets
-      // CSS percentage represents what PART of image to show
-      // Canvas offset represents how much to MOVE image (negative = move left/up)
-      const offsetX = -(scaledWidth - cropWidth) * (position.x / 100);
-      const offsetY = -(scaledHeight - cropHeight) * (position.y / 100);
+      // When position.y = 50% (center), we want to show MIDDLE of image
+      // Available movement = 111 pixels (height difference)  
+      // Offset should be: +56 pixels (move image DOWN to center it)
+      // Formula: +availableMovement * ((100 - position) / 100)
+      const offsetX = (scaledWidth - cropWidth) * ((100 - position.x) / 100);
+      const offsetY = (scaledHeight - cropHeight) * ((100 - position.y) / 100);
       
-      console.log(`🔧 COORDINATE DEBUG v1.0.139 - CSS vs Canvas Coordinate System:`);
-      console.log(`   📍 User Position: ${position.x}%, ${position.y}% (CSS background-position style)`);
-      console.log(`   📋 CSS Interpretation: ${position.x}% ${position.y}% shows THIS part of image`);
-      console.log(`   📏 Original Image: ${img.naturalWidth}x${img.naturalHeight}`);
-      console.log(`   📏 Scale Factor: ${scale.toFixed(3)}`);
-      console.log(`   📏 Scaled Image: ${scaledWidth.toFixed(0)}x${scaledHeight.toFixed(0)}`);
-      console.log(`   ✂️ Crop Dimensions: ${cropWidth}x${cropHeight}`);
-      console.log(`   📐 Available Movement: ${(scaledWidth - cropWidth).toFixed(0)}x${(scaledHeight - cropHeight).toFixed(0)}`);
-      console.log(`   🔄 Canvas Offset: ${offsetX.toFixed(0)}, ${offsetY.toFixed(0)} (to show same part as CSS)`);
-      console.log(`   🖼️ Canvas Draw: drawImage(img, ${offsetX.toFixed(0)}, ${offsetY.toFixed(0)}, ${scaledWidth.toFixed(0)}, ${scaledHeight.toFixed(0)})`);
+      console.log(`🔧 COORDINATE DEBUG - Position: ${position.x}%, ${position.y}%`);
+      console.log(`   Image: ${img.naturalWidth}x${img.naturalHeight}, Crop: ${cropWidth}x${cropHeight}`);
+      console.log(`   Offset: ${offsetX.toFixed(0)}, ${offsetY.toFixed(0)}`);
       
       // Draw the image with proper composite operation
       ctx.globalCompositeOperation = 'source-over';
