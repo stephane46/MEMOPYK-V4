@@ -235,17 +235,17 @@ export default function SimpleImageCropper({
           />
         )}
 
-        {/* Orange crop frame - YOUR PREFERRED SIZE covering most of image width */}
+        {/* Crop frame for 1.5 aspect ratio (300x200 video card) */}
         <div 
           className="absolute border-4 border-[#D67C4A] pointer-events-none"
           style={{
-            width: '360px',  // Your preferred full-width coverage
-            height: '240px', // 3:2 ratio maintained 
+            width: '300px',  // Matches video card width
+            height: '200px', // Matches video card height (1.5 ratio)
             left: '50%',
             top: '50%',
             transform: 'translate(-50%, -50%)',
             zIndex: 10,
-            backgroundColor: '#D67C4A', // Orange background as you prefer
+            backgroundColor: '#D67C4A',
             opacity: 0.3
           }}
         />
