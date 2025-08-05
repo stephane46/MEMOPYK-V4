@@ -105,13 +105,6 @@ export default function SimpleImageCropper({
   const generateImage = async () => {
     console.log('🔥 GENERATE_START: Starting crop generation');
     setLoading(true);
-    
-    // Add timeout protection
-    const timeoutId = setTimeout(() => {
-      console.error('⏰ TIMEOUT: Crop process exceeded 20 seconds');
-      setLoading(false);
-      alert('Crop process timed out. Please try again.');
-    }, 20000);
 
     try {
       const canvas = document.createElement('canvas');
@@ -172,50 +165,38 @@ export default function SimpleImageCropper({
       
       console.log('✅ Canvas drawing completed');
       
-      // Convert to blob
-      canvas.toBlob(async (blob) => {
-        if (!blob) {
-          clearTimeout(timeoutId);
-          throw new Error('Failed to create image blob');
-        }
-        
-        console.log(`📸 Created blob: ${blob.size} bytes, type: ${blob.type}`);
-        
-        const settings = {
-          format: 'JPEG',
-          method: 'simple-click-crop',
-          quality: 0.95,
-          position: position,
-          dimensions: { width: cropWidth, height: cropHeight },
-          outputSize: { width: outputWidth, height: outputHeight }
-        };
-        
-        try {
-          console.log('🚀 Starting upload...');
-          
-          // Start upload but don't wait for it to complete
-          onSave(blob, settings).then(() => {
-            console.log('✅ Upload completed successfully');
-            clearTimeout(timeoutId);
-          }).catch((error) => {
-            console.error('❌ Upload failed:', error);
-            clearTimeout(timeoutId);
-          });
-          
-          // Return immediately without waiting
-          console.log('✅ Crop generation completed, upload started');
-          
-        } catch (error) {
-          clearTimeout(timeoutId);
-          console.error('❌ Error in onSave call:', error);
-          throw error;
-        }
-      }, 'image/jpeg', 0.95);
+      // Create blob with Promise to fix hanging issue
+      const blob = await new Promise<Blob>((resolve, reject) => {
+        canvas.toBlob((result) => {
+          if (result) {
+            resolve(result);
+          } else {
+            reject(new Error('Failed to create image blob'));
+          }
+        }, 'image/jpeg', 0.95);
+      });
+      
+      console.log(`📸 Created blob: ${blob.size} bytes, type: ${blob.type}`);
+      
+      const settings = {
+        format: 'JPEG',
+        method: 'simple-click-crop',
+        quality: 0.95,
+        position: position,
+        dimensions: { width: cropWidth, height: cropHeight },
+        outputSize: { width: outputWidth, height: outputHeight }
+      };
+      
+      console.log('🚀 Starting upload...');
+      
+      // Call onSave and wait for it to complete
+      await onSave(blob, settings);
+      
+      console.log('✅ Upload completed successfully');
       
     } catch (error: any) {
       console.error('❌ Error generating image:', error);
       alert(`Crop Error: ${error?.message || error}`);
-      clearTimeout(timeoutId);
     } finally {
       setLoading(false);
       console.log('🏁 Crop function completed');
