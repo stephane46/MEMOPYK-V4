@@ -2446,16 +2446,16 @@ export default function GalleryManagementNew() {
                 }));
               }}
               onSave={async (blob: Blob, cropSettings: any) => {
+                console.log('🚀 STARTING CROP SAVE PROCESS - SIMPLIFIED VERSION');
+                
                 try {
-                  console.log('🚀 STARTING CROP SAVE PROCESS:', { language: cropperLanguage, selectedItemId: selectedItem.id });
-                  
                   // Create FormData for upload
                   const formData = new FormData();
                   const filename = `static_${cropperLanguage}_${Date.now()}.jpg`;
                   formData.append('file', blob, filename);
                   formData.append('language', cropperLanguage);
                   
-                  console.log('📤 UPLOADING CROPPED IMAGE:', { filename, blobSize: blob.size });
+                  console.log('📤 UPLOADING CROPPED IMAGE...');
                   
                   // Upload the cropped image
                   const uploadResponse = await fetch('/api/upload/image', {
@@ -2464,16 +2464,13 @@ export default function GalleryManagementNew() {
                   });
                   
                   if (!uploadResponse.ok) {
-                    const errorText = await uploadResponse.text();
-                    console.error('❌ UPLOAD FAILED:', { status: uploadResponse.status, error: errorText });
-                    throw new Error(`Upload failed: ${uploadResponse.status} - ${errorText}`);
+                    throw new Error(`Upload failed: ${uploadResponse.status}`);
                   }
                   
                   const uploadResult = await uploadResponse.json();
-                  console.log('✅ UPLOAD SUCCESS:', uploadResult);
+                  console.log('✅ UPLOAD SUCCESS');
                   
-                  // Update the gallery item with the new static image URL
-                  // In shared mode, update both language static URLs since they use the same source image
+                  // Update database
                   const updateData = selectedItem.use_same_video 
                     ? {
                         static_image_url_fr: uploadResult.url,
@@ -2487,86 +2484,27 @@ export default function GalleryManagementNew() {
                         language: cropperLanguage
                       };
                   
-                  console.log('🔍 CROP SETTINGS DEBUG - Saving:', JSON.stringify(cropSettings, null, 2));
-                  console.log('🔍 UPDATE DATA DEBUG:', JSON.stringify(updateData, null, 2));
-                  console.log('🔍 MANUAL CROPPING COMPLETED - Method should be: triple-layer-white-bg');
+                  console.log('📝 UPDATING DATABASE...');
+                  await apiRequest(`/api/gallery/${selectedItem.id}`, 'PATCH', updateData);
+                  console.log('✅ DATABASE UPDATE SUCCESS');
                   
-                  console.log('📝 UPDATING DATABASE:', { itemId: selectedItem.id, updateData });
-                  const updateResponse = await apiRequest(`/api/gallery/${selectedItem.id}`, 'PATCH', updateData);
-                  console.log('✅ DATABASE UPDATE SUCCESS:', updateResponse);
-                  
-                  // 🔧 FORCE CACHE REFRESH v1.0.138: Immediately refresh gallery data to show new crop
-                  console.log('🔄 FORCING CACHE REFRESH TO SHOW NEW CROP...');
-                  queryClient.removeQueries({ queryKey: ['/api/gallery'] });
-                  queryClient.invalidateQueries({ queryKey: ['/api/gallery'] });
-                  
-                  // 🚨 FIX: Remove async setTimeout - just invalidate and continue
-                  console.log('✅ Gallery cache invalidated - will refresh automatically');
-                  
-                  // Gallery item updated successfully
-                  
-                  // IMMEDIATE PREVIEW UPDATE: Show cropped image in admin interface right away
-                  const newStaticUrl = uploadResult.url;
-                  if (selectedItem.use_same_video) {
-                    // Shared mode: Update both language previews
-                    setPendingPreviews(prev => ({
-                      ...prev,
-                      static_image_url_en: newStaticUrl,
-                      static_image_url_fr: newStaticUrl
-                    }));
-                  } else {
-                    // Language-specific mode: Update only the relevant language
-                    setPendingPreviews(prev => ({
-                      ...prev,
-                      [cropperLanguage === 'fr' ? 'static_image_url_fr' : 'static_image_url_en']: newStaticUrl
-                    }));
-                  }
-                  console.log(`🔍 ADMIN PREVIEW UPDATED: ${cropperLanguage} preview now shows cropped image: ${newStaticUrl}`);
-                  
-                  // Force close modal immediately 
+                  // Close modal and show success
                   setCropperOpen(false);
-                  
-                  // Reset cropping state after successful save
-                  setActiveCroppingState({
-                    isActive: false,
-                    language: 'en',
-                    hasChanges: false
-                  });
-                  
-                  // Remove duplicate cache invalidation (already done above)
-                  
-                  // CRITICAL: Update the formData with the new crop settings immediately for badge display
-                  setFormData(prev => ({
-                    ...prev,
-                    cropSettings: cropSettings
-                  }));
-                  
-                  console.log('🔍 IMMEDIATE CROP UPDATE - Setting formData.cropSettings to:', cropSettings);
-                  
-                  // Force UI refresh immediately
-                  setForceRefreshKey(prev => prev + 1);
-                  console.log('🔍 IMMEDIATE REFRESH - formData updated with cropSettings:', cropSettings);
-                  
                   toast({ 
                     title: "✅ Succès", 
-                    description: selectedItem.use_same_video 
-                      ? `Image recadrée sauvegardée avec succès (Partagée FR+EN)`
-                      : `Image recadrée sauvegardée avec succès (${cropperLanguage === 'fr' ? 'Français' : 'English'})` 
+                    description: "Image recadrée sauvegardée avec succès" 
                   });
                   
-                  // 🚨 CRITICAL: Explicitly return to resolve the Promise
-                  console.log('✅ CROP SAVE COMPLETED - returning success');
-                  return; // Ensure Promise resolves
+                  console.log('✅ CROP SAVE COMPLETED - ALL DONE');
                   
                 } catch (error) {
                   console.error('❌ CROP SAVE ERROR:', error);
-                  console.error('❌ ERROR STACK:', error instanceof Error ? error.stack : 'No stack trace');
-                  
                   toast({ 
                     title: "❌ Erreur", 
-                    description: `Erreur lors de la sauvegarde: ${error instanceof Error ? error.message : 'Erreur inconnue'}`,
+                    description: `Erreur: ${error instanceof Error ? error.message : 'Erreur inconnue'}`,
                     variant: "destructive"
                   });
+                  throw error; // Important: Re-throw to ensure Promise rejects properly
                 }
               }}
               onCancel={() => {
