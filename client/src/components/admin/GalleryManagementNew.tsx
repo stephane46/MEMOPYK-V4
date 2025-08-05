@@ -2481,6 +2481,18 @@ export default function GalleryManagementNew() {
                   console.log('📝 UPDATING DATABASE:', { itemId: selectedItem.id, updateData });
                   const updateResponse = await apiRequest(`/api/gallery/${selectedItem.id}`, 'PATCH', updateData);
                   console.log('✅ DATABASE UPDATE SUCCESS:', updateResponse);
+                  
+                  // 🔧 FORCE CACHE REFRESH v1.0.138: Immediately refresh gallery data to show new crop
+                  console.log('🔄 FORCING CACHE REFRESH TO SHOW NEW CROP...');
+                  queryClient.removeQueries({ queryKey: ['/api/gallery'] });
+                  queryClient.invalidateQueries({ queryKey: ['/api/gallery'] });
+                  
+                  // Wait a moment then refetch to ensure new crop is visible
+                  setTimeout(async () => {
+                    await queryClient.refetchQueries({ queryKey: ['/api/gallery'] });
+                    console.log('✅ Gallery cache refreshed - new crop should be visible');
+                  }, 500);
+                  
                   // Gallery item updated successfully
                   
                   // IMMEDIATE PREVIEW UPDATE: Show cropped image in admin interface right away
@@ -2511,13 +2523,7 @@ export default function GalleryManagementNew() {
                     hasChanges: false
                   });
                   
-                  // 🚀 OPTIMIZED CACHE MANAGEMENT: Single efficient invalidation
-                  queryClient.invalidateQueries({ queryKey: ['/api/gallery'] }); // Primary cache
-                  
-                  // Non-blocking cache cleanup
-                  setTimeout(() => {
-                    queryClient.removeQueries({ queryKey: ['/api/gallery', 'v1.0.110'] });
-                  }, 100);
+                  // Remove duplicate cache invalidation (already done above)
                   
                   // CRITICAL: Update the formData with the new crop settings immediately for badge display
                   setFormData(prev => ({
