@@ -925,8 +925,10 @@ export default function GalleryManagementNew() {
                           <div className="flex gap-1">
                             <Button
                               onClick={() => {
+                                console.log('🔥 FR CROP BUTTON CLICKED!');
                                 setCropperLanguage('fr');
                                 setCropperOpen(true);
+                                console.log('✅ FR Crop modal should now be open');
                               }}
                               variant="outline"
                               size="sm"
@@ -985,8 +987,8 @@ export default function GalleryManagementNew() {
                                 pendingPreviews.image_url_fr || 
                                 // Priority 2: Form data (for uploaded but not saved images)
                                 formData.image_url_fr || 
-                                // Priority 3: Existing item thumbnails
-                                (selectedItem ? getThumbnailUrl(selectedItem, 'fr') : '')
+                                // Priority 3: Existing item thumbnails with cache-busting
+                                (selectedItem ? getImageUrlWithCacheBust(getThumbnailUrl(selectedItem, 'fr')) : '')
                               }
                               onLoadStart={() => {
                                 const imageUrl = pendingPreviews.image_url_fr || formData.image_url_fr || 
@@ -1170,8 +1172,10 @@ export default function GalleryManagementNew() {
                           <div className="flex gap-1">
                             <Button
                               onClick={() => {
+                                console.log('🔥 EN CROP BUTTON CLICKED!');
                                 setCropperLanguage('en');
                                 setCropperOpen(true);
+                                console.log('✅ EN Crop modal should now be open');
                               }}
                               variant="outline"
                               size="sm"
@@ -1229,8 +1233,8 @@ export default function GalleryManagementNew() {
                                 pendingPreviews.image_url_en || 
                                 // Priority 2: Form data (for uploaded but not saved images)
                                 formData.image_url_en || 
-                                // Priority 3: Existing item thumbnails
-                                (selectedItem ? getThumbnailUrl(selectedItem, 'en') : '')
+                                // Priority 3: Existing item thumbnails with cache-busting
+                                (selectedItem ? getImageUrlWithCacheBust(getThumbnailUrl(selectedItem, 'en')) : '')
                               } 
                               alt="Aperçu English"
                               className="w-full h-full object-contain"
@@ -2520,12 +2524,46 @@ export default function GalleryManagementNew() {
                   const updateResult = await updateResponse.json();
                   console.log('✅ Step 4 COMPLETE - Database update success:', updateResult);
                   
-                  // Step 5: Close modal and show success
-                  console.log('🎉 Step 5: Finalizing...');
+                  // Step 5: Refresh gallery data and close modal
+                  console.log('🎉 Step 5: Refreshing gallery data...');
+                  
+                  // Invalidate React Query cache to force refresh
+                  await queryClient.invalidateQueries({ queryKey: ['/api/gallery'] });
+                  console.log('✅ Gallery cache invalidated');
+                  
+                  // Force component refresh for image cache-busting
+                  setForceRefreshKey(prev => prev + 1);
+                  console.log('✅ Force refresh key updated for cache-busting');
+                  
+                  // Notify public gallery of the update (for cross-tab sync)
+                  window.dispatchEvent(new CustomEvent('gallery-updated', { 
+                    detail: { 
+                      itemId: selectedItem.id, 
+                      language: cropperLanguage,
+                      newImageUrl: uploadResult.url
+                    } 
+                  }));
+                  console.log('✅ Gallery update event dispatched for public site');
+                  
+                  // Update formData with new static image URL to refresh preview
+                  if (selectedItem.use_same_video) {
+                    setFormData(prev => ({
+                      ...prev,
+                      static_image_url_en: uploadResult.url,
+                      static_image_url_fr: uploadResult.url
+                    }));
+                  } else {
+                    setFormData(prev => ({
+                      ...prev,
+                      [cropperLanguage === 'fr' ? 'static_image_url_fr' : 'static_image_url_en']: uploadResult.url
+                    }));
+                  }
+                  console.log('✅ FormData updated with new static image URL');
+                  
                   setCropperOpen(false);
                   toast({ 
                     title: "✅ Succès", 
-                    description: "Image recadrée sauvegardée avec succès" 
+                    description: "Image recadrée sauvegardée avec succès - Preview mis à jour" 
                   });
                   
                   console.log('🎯 ALL STEPS COMPLETED SUCCESSFULLY!');
