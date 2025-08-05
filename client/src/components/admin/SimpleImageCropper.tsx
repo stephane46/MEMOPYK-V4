@@ -373,19 +373,9 @@ export default function SimpleImageCropper({ imageUrl, onSave, onCancel, onOpen,
       canvas.height = cropHeight * dpr;
       ctx.scale(dpr, dpr);
 
-      // White background
+      // Simple white background
       ctx.fillStyle = '#ffffff';
       ctx.fillRect(0, 0, cropWidth, cropHeight);
-      
-      // Pixel-level white fill for JPEG export
-      const imageData = ctx.createImageData(cropWidth, cropHeight);
-      for (let i = 0; i < imageData.data.length; i += 4) {
-        imageData.data[i] = 255;     // Red
-        imageData.data[i + 1] = 255; // Green
-        imageData.data[i + 2] = 255; // Blue
-        imageData.data[i + 3] = 255; // Alpha
-      }
-      ctx.putImageData(imageData, 0, 0);
       
       // Calculate positioning for cover effect (using smart high-quality dimensions)
       const scale = Math.max(cropWidth / img.naturalWidth, cropHeight / img.naturalHeight);
