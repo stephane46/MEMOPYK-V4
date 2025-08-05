@@ -362,14 +362,24 @@ export default function SimpleImageCropper({ imageUrl, onSave, onCancel, onOpen,
       const scaledWidth = img.naturalWidth * scale;
       const scaledHeight = img.naturalHeight * scale;
       
-      // 🔧 COORDINATE FIX v1.0.137: Remove incorrect negative signs that inverted position calculations
-      // position.x/y are percentages (0-100) where 0=left/top, 100=right/bottom
-      // We need to position the crop window correctly, not invert the coordinates
-      const offsetX = (scaledWidth - cropWidth) * (position.x / 100);
-      const offsetY = (scaledHeight - cropHeight) * (position.y / 100);
+      // 🔧 COORDINATE FIX v1.0.138: The positioning logic was backwards!
+      // When user positions crop window at TOP (position.y = 0), we want to show TOP of image
+      // This means the image needs to be drawn at offset 0 (not moved down)
+      // When user positions crop window at BOTTOM (position.y = 100), we want to show BOTTOM of image  
+      // This means the image needs to be drawn up (negative offset)
+      // Therefore: offset = -availableMovement * (position/100)
+      const offsetX = -(scaledWidth - cropWidth) * (position.x / 100);
+      const offsetY = -(scaledHeight - cropHeight) * (position.y / 100);
       
-      console.log(`🔧 POSITION FIX: User position ${position.x}%, ${position.y}% → Crop offset ${offsetX.toFixed(0)}, ${offsetY.toFixed(0)}`);
-      console.log(`🔧 SCALE INFO: Image ${img.naturalWidth}x${img.naturalHeight} → Scaled ${scaledWidth.toFixed(0)}x${scaledHeight.toFixed(0)} → Crop ${cropWidth}x${cropHeight}`);
+      console.log(`🔧 COORDINATE DEBUG v1.0.138 (FIXED):`);
+      console.log(`   📍 User Position: ${position.x}%, ${position.y}% (where 0=top/left, 100=bottom/right)`);
+      console.log(`   📏 Original Image: ${img.naturalWidth}x${img.naturalHeight}`);
+      console.log(`   📏 Scale Factor: ${scale.toFixed(3)}`);
+      console.log(`   📏 Scaled Image: ${scaledWidth.toFixed(0)}x${scaledHeight.toFixed(0)}`);
+      console.log(`   ✂️ Crop Dimensions: ${cropWidth}x${cropHeight}`);
+      console.log(`   📐 Available Movement: ${(scaledWidth - cropWidth).toFixed(0)}x${(scaledHeight - cropHeight).toFixed(0)}`);
+      console.log(`   🎯 Final Offset: ${offsetX.toFixed(0)}, ${offsetY.toFixed(0)} (negative = show top/left of image)`);
+      console.log(`   🖼️ Canvas Draw Position: (${offsetX.toFixed(0)}, ${offsetY.toFixed(0)}) size ${scaledWidth.toFixed(0)}x${scaledHeight.toFixed(0)}`);
       
       // Draw the image with proper composite operation
       ctx.globalCompositeOperation = 'source-over';
