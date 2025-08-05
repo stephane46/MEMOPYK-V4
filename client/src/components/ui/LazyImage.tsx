@@ -30,13 +30,11 @@ export function LazyImage({
   });
 
   const handleLoad = (e: React.SyntheticEvent<HTMLImageElement>) => {
-    console.log(`✅ LazyImage loaded successfully: ${src}`);
     setIsLoaded(true);
     onLoad?.(e);
   };
 
   const handleError = () => {
-    console.log(`❌ LazyImage load error for: ${src}`);
     setHasError(true);
     onError?.();
   };
