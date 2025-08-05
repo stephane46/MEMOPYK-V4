@@ -317,6 +317,13 @@ export default function SimpleImageCropper({ imageUrl, onSave, onCancel, onOpen,
     setLoading(true);
     console.log('✅ Loading state set');
     
+    // Add timeout to prevent infinite loading
+    const timeoutId = setTimeout(() => {
+      console.error('⏰ TIMEOUT: Crop process exceeded 30 seconds');
+      setLoading(false);
+      alert('Crop process timed out after 30 seconds');
+    }, 30000);
+    
     try {
       // Starting crop generation
       // SMART HIGH-QUALITY CROP GENERATION v1.0.122: Preserve original dimensions for maximum quality
@@ -426,10 +433,21 @@ export default function SimpleImageCropper({ imageUrl, onSave, onCancel, onOpen,
         console.log('🚀 CANVAS STEP: Blob ready:', blob.size, 'bytes');
         console.log('🚀 CANVAS STEP: Settings ready:', settings);
         
-        await onSave(blob, settings);
+        // Call onSave without await to prevent hanging
+        console.log('🚀 CALLING onSave without await to prevent Promise hang...');
+        onSave(blob, settings).then(() => {
+          console.log('✅ CANVAS STEP: onSave completed successfully');
+          clearTimeout(timeoutId); // Clear timeout on success
+        }).catch((onSaveError) => {
+          clearTimeout(timeoutId); // Clear timeout on error  
+          console.error('❌ onSave function threw error:', onSaveError);
+          throw onSaveError;
+        });
         
-        console.log('✅ CANVAS STEP: onSave completed successfully');
+        // Don't wait for onSave to complete - return immediately
+        console.log('✅ CANVAS STEP: Crop processing initiated, not waiting for upload');
       } catch (onSaveError) {
+        clearTimeout(timeoutId); // Clear timeout on error
         console.error('❌ onSave function threw error:', onSaveError);
         console.error('❌ onSave error type:', typeof onSaveError);
         console.error('❌ onSave error message:', onSaveError instanceof Error ? onSaveError.message : String(onSaveError));
@@ -441,8 +459,10 @@ export default function SimpleImageCropper({ imageUrl, onSave, onCancel, onOpen,
     } catch (error: any) {
       console.error('❌ Error generating image:', error);
       alert(`CROP ERROR: ${error?.message || error}`);
+      clearTimeout(timeoutId); // Clear timeout on error
     } finally {
       setLoading(false);
+      console.log('🏁 GENERATE_END: generateImage function completed, loading set to false');
     }
   };
 
