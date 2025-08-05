@@ -185,67 +185,19 @@ const DraggableCover = ({ imageUrl, onPositionChange, previewRef, onCropChange, 
           onLoad={(e) => {
             console.log('✅ Image loaded successfully:', imageUrl);
             const img = e.target as HTMLImageElement;
-            const naturalWidth = img.naturalWidth;
-            const naturalHeight = img.naturalHeight;
-            console.log(`✅ Image loaded: ${naturalWidth}x${naturalHeight}, setting imageLoaded=true`);
             
-            setImageDimensions({ width: naturalWidth, height: naturalHeight });
-            
-            // Calculate maximum possible crop dimensions for 1.5 ratio
-            const targetAspectRatio = 1.5; // 3:2 ratio
-            const imageAspectRatio = naturalWidth / naturalHeight;
-            
-            // Scale to preview size (400x300 container) first
-            const containerWidth = 400;
-            const containerHeight = 300;
-            const scale = Math.min(containerWidth / naturalWidth, containerHeight / naturalHeight);
-            
-            const scaledImageWidth = naturalWidth * scale;
-            const scaledImageHeight = naturalHeight * scale;
-            
-            // Calculate maximum crop based on ACTUAL image dimensions (not preview container)
-            let maxCropWidth, maxCropHeight;
-            
-            // Option 1: Use full width of original image
-            const fullWidthCropActual = {
-              width: naturalWidth,
-              height: naturalWidth / targetAspectRatio
-            };
-            
-            // Option 2: Use full height of original image  
-            const fullHeightCropActual = {
-              width: naturalHeight * targetAspectRatio,
-              height: naturalHeight
-            };
-            
-            // Choose the option that fits within image bounds
-            if (fullWidthCropActual.height <= naturalHeight) {
-              // Full width approach fits - use it!
-              maxCropWidth = scaledImageWidth;  // Scale to preview
-              maxCropHeight = scaledImageWidth / targetAspectRatio;
-              console.log(`🎯 USING FULL WIDTH: ${naturalWidth}×${fullWidthCropActual.height.toFixed(0)} (original) → ${maxCropWidth.toFixed(0)}×${maxCropHeight.toFixed(0)} (preview)`);
-            } else if (fullHeightCropActual.width <= naturalWidth) {
-              // Full height approach fits - use it!
-              maxCropHeight = scaledImageHeight; // Scale to preview
-              maxCropWidth = scaledImageHeight * targetAspectRatio;
-              console.log(`🎯 USING FULL HEIGHT: ${fullHeightCropActual.width.toFixed(0)}×${naturalHeight} (original) → ${maxCropWidth.toFixed(0)}×${maxCropHeight.toFixed(0)} (preview)`);
-            } else {
-              // Fallback - shouldn't happen for normal images
-              maxCropWidth = scaledImageWidth * 0.9;
-              maxCropHeight = maxCropWidth / targetAspectRatio;
-              console.log(`⚠️ FALLBACK CROP: ${maxCropWidth.toFixed(0)}×${maxCropHeight.toFixed(0)}`);
-            }
-            
+            // Simple fixed crop dimensions - no complex calculations
             setCropDimensions({ 
-              width: maxCropWidth, 
-              height: maxCropHeight
+              width: 360, 
+              height: 240 
             });
             
-            console.log(`📐 Image: ${naturalWidth}x${naturalHeight} (ratio: ${imageAspectRatio.toFixed(2)})`);
-            console.log(`📐 Scaled image: ${scaledImageWidth.toFixed(0)}x${scaledImageHeight.toFixed(0)}`);
-            console.log(`📐 Max crop: ${maxCropWidth.toFixed(0)}x${maxCropHeight.toFixed(0)} pixels`);
-            console.log(`📐 Crop area: ${(maxCropWidth * maxCropHeight).toFixed(0)} pixels² available`);
+            setImageDimensions({ 
+              width: img.naturalWidth, 
+              height: img.naturalHeight 
+            });
             
+            console.log(`📐 Image: ${img.naturalWidth}x${img.naturalHeight}`);
             setImageLoaded(true);
           }}
           onError={(e) => {
