@@ -63,48 +63,38 @@ const DraggableCover = ({ imageUrl, onPositionChange, previewRef, onCropChange, 
     setIsDragging(false);
   };
 
-  // Keyboard controls for precise positioning of crop frame
+  // Simple keyboard controls without complex calculations
   React.useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      const step = 1; // 1% movement per key press for precise control
+      if (!['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'].includes(e.key)) return;
+      
+      const step = 2; // 2% movement per key press
       let newCropPosition = { ...cropPosition };
-      
-      // Calculate boundaries based on crop size to prevent empty areas
-      const cropWidthPercent = (cropDimensions.width / 400) * 100; // Crop width as % of container
-      const cropHeightPercent = (cropDimensions.height / 300) * 100; // Crop height as % of container  
-      
-      const minX = cropWidthPercent / 2;   // Half crop width from left edge
-      const maxX = 100 - cropWidthPercent / 2; // Half crop width from right edge
-      const minY = cropHeightPercent / 2;  // Half crop height from top edge
-      const maxY = 100 - cropHeightPercent / 2; // Half crop height from bottom edge
       
       switch (e.key) {
         case 'ArrowUp':
-          newCropPosition.y = Math.max(minY, cropPosition.y - step); // Can't go beyond top image edge
+          newCropPosition.y = Math.max(10, cropPosition.y - step);
           break;
         case 'ArrowDown':
-          newCropPosition.y = Math.min(maxY, cropPosition.y + step); // Can't go beyond bottom image edge
+          newCropPosition.y = Math.min(90, cropPosition.y + step);
           break;
         case 'ArrowLeft':
-          newCropPosition.x = Math.max(minX, cropPosition.x - step); // Can't go beyond left image edge
+          newCropPosition.x = Math.max(10, cropPosition.x - step);
           break;
         case 'ArrowRight':
-          newCropPosition.x = Math.min(maxX, cropPosition.x + step); // Can't go beyond right image edge
+          newCropPosition.x = Math.min(90, cropPosition.x + step);
           break;
-        default:
-          return; // Don't prevent default for other keys
       }
       
       e.preventDefault();
       setCropPosition(newCropPosition);
-      onCropChange?.();
     };
 
     document.addEventListener('keydown', handleKeyDown);
     return () => document.removeEventListener('keydown', handleKeyDown);
-  }, [cropPosition, onCropChange]);
+  }, [cropPosition]);
 
-  // Click to position the crop frame
+  // Simple click positioning
   const handleContainerClick = (e: React.MouseEvent) => {
     const container = previewRef.current;
     if (!container) return;
@@ -113,22 +103,12 @@ const DraggableCover = ({ imageUrl, onPositionChange, previewRef, onCropChange, 
     const x = ((e.clientX - rect.left) / rect.width) * 100;
     const y = ((e.clientY - rect.top) / rect.height) * 100;
     
-    // Calculate click boundaries to prevent empty areas
-    const cropWidthPercent = (cropDimensions.width / 400) * 100;
-    const cropHeightPercent = (cropDimensions.height / 300) * 100;
-    
-    const minX = cropWidthPercent / 2;
-    const maxX = 100 - cropWidthPercent / 2;
-    const minY = cropHeightPercent / 2;
-    const maxY = 100 - cropHeightPercent / 2;
-    
     const newCropPos = {
-      x: Math.max(minX, Math.min(maxX, x)), // Keep crop within image bounds
-      y: Math.max(minY, Math.min(maxY, y))  // Keep crop within image bounds
+      x: Math.max(10, Math.min(90, x)),
+      y: Math.max(10, Math.min(90, y))
     };
     
     setCropPosition(newCropPos);
-    onCropChange?.();
   };
 
   return (
@@ -337,7 +317,7 @@ export default function SimpleImageCropper({ imageUrl, onSave, onCancel, onOpen,
         cropHeight = Math.round(cropWidth / targetAspectRatio);
       }
       
-      console.log(`🎯 WEB-OPTIMIZED CROP: Original ${img.naturalWidth}x${img.naturalHeight} → Crop ${cropWidth}x${cropHeight}`);
+      // Crop dimensions calculated
       
       canvas.width = cropWidth * dpr;
       canvas.height = cropHeight * dpr;
@@ -374,9 +354,7 @@ export default function SimpleImageCropper({ imageUrl, onSave, onCancel, onOpen,
       const offsetX = (scaledWidth - cropWidth) * ((100 - position.x) / 100);
       const offsetY = (scaledHeight - cropHeight) * ((100 - position.y) / 100);
       
-      console.log(`🔧 COORDINATE DEBUG - Position: ${position.x}%, ${position.y}%`);
-      console.log(`   Image: ${img.naturalWidth}x${img.naturalHeight}, Crop: ${cropWidth}x${cropHeight}`);
-      console.log(`   Offset: ${offsetX.toFixed(0)}, ${offsetY.toFixed(0)}`);
+      // Coordinate calculations complete
       
       // Draw the image with proper composite operation
       ctx.globalCompositeOperation = 'source-over';
@@ -387,7 +365,7 @@ export default function SimpleImageCropper({ imageUrl, onSave, onCancel, onOpen,
       // Simple synchronous canvas export
       const blob = await new Promise<Blob>((resolve) => {
         canvas.toBlob((blob) => {
-          console.log(`🔧 CROP COMPLETED - Size: ${cropWidth}x${cropHeight}`);
+          // Crop completed
           resolve(blob!);
         }, 'image/jpeg', 0.8);
       });
