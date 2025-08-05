@@ -317,11 +317,14 @@ export default function SimpleImageCropper({ imageUrl, onSave, onCancel, onOpen,
   }, [isOpen, onOpen]);
 
   const generateImage = async () => {
+    console.log('🔥 BUTTON CLICKED - generateImage function called!');
     console.log('🎯 CROP WORKFLOW - Starting generateImage function');
     console.log('🎯 CROP WORKFLOW - Current position:', position);
     console.log('🎯 CROP WORKFLOW - imageUrl:', imageUrl);
     
+    console.log('🟡 Setting loading state to true...');
     setLoading(true);
+    console.log('✅ Loading state set to true');
     
     try {
       // Starting crop generation
@@ -334,11 +337,19 @@ export default function SimpleImageCropper({ imageUrl, onSave, onCancel, onOpen,
       const img = document.createElement('img') as HTMLImageElement;
       img.crossOrigin = 'anonymous';
       
+      console.log('📸 Loading image for cropping...');
       await new Promise<void>((resolve, reject) => {
-        img.onload = () => resolve();
-        img.onerror = () => reject(new Error('Failed to load image'));
+        img.onload = () => {
+          console.log('✅ Image loaded successfully for cropping');
+          resolve();
+        };
+        img.onerror = () => {
+          console.error('❌ Failed to load image for cropping');
+          reject(new Error('Failed to load image'));
+        };
         img.src = imageUrl;
       });
+      console.log('📸 Image loading complete, proceeding with crop...');
 
       // PRESERVE ORIGINAL QUALITY: Crop from original dimensions with 1.5 aspect ratio
       const targetAspectRatio = 1.5; // 3:2 ratio
