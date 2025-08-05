@@ -239,8 +239,8 @@ export default function SimpleImageCropper({
         <div 
           className="absolute border-4 border-[#D67C4A] pointer-events-none"
           style={{
-            width: imageDimensions ? `${Math.min(imageDimensions.width * 0.8, 360)}px` : '360px',
-            height: imageDimensions ? `${Math.min(imageDimensions.width * 0.8, 360) / 1.5}px` : '240px',
+            width: '300px',
+            height: '200px', // 300/200 = 1.5 aspect ratio
             left: '50%',
             top: '50%',
             transform: 'translate(-50%, -50%)',
