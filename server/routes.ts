@@ -665,23 +665,26 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // Keep original filename for cropped images
       const filename = req.file.originalname;
 
-      console.log(`🚀 OPTIMIZED UPLOAD: ${filename} (${(req.file.size / 1024 / 1024).toFixed(2)}MB) - Direct stream processing`);
+      console.log(`🚀 OPTIMIZED UPLOAD: ${filename} (${(req.file.size / 1024 / 1024).toFixed(2)}MB) - Buffer processing`);
 
-      // 🚀 PERFORMANCE OPTIMIZATION: Direct file stream instead of read + upload
-      const fileStream = require('fs').createReadStream(req.file.path);
+      // 🚀 PERFORMANCE OPTIMIZATION: Use buffer instead of stream for Supabase compatibility
+      const fileBuffer = require('fs').readFileSync(req.file.path);
       const { data: uploadData, error: uploadError } = await supabase.storage
         .from('memopyk-videos')
-        .upload(filename, fileStream, {
+        .upload(filename, fileBuffer, {
           contentType: req.file.mimetype,
           cacheControl: '3600',
           upsert: true  // Enable overwrite if file exists
         });
 
       if (uploadError) {
-        console.error('Supabase upload error:', uploadError);
+        console.error('🚨 CROPPED IMAGE UPLOAD ERROR:', uploadError);
+        console.error('🚨 ERROR DETAILS:', JSON.stringify(uploadError, null, 2));
+        console.error('🚨 FILE INFO:', { filename, size: req.file.size, mimetype: req.file.mimetype });
         return res.status(500).json({ error: `Upload failed: ${uploadError.message}` });
       }
 
+      console.log(`✅ CROPPED IMAGE UPLOADED SUCCESSFULLY: ${filename}`);
       const imageUrl = `https://supabase.memopyk.org/storage/v1/object/public/memopyk-videos/${filename}`;
       
       // Immediate cleanup and response (non-blocking)
