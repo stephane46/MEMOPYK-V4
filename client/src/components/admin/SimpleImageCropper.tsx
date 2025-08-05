@@ -187,7 +187,7 @@ const DraggableCover = ({ imageUrl, onPositionChange, previewRef, onCropChange, 
             const img = e.target as HTMLImageElement;
             const naturalWidth = img.naturalWidth;
             const naturalHeight = img.naturalHeight;
-            alert(`IMAGE LOADED SUCCESSFULLY!\nDimensions: ${naturalWidth}x${naturalHeight}\nSetting imageLoaded=true...`);
+            console.log(`✅ Image loaded: ${naturalWidth}x${naturalHeight}, setting imageLoaded=true`);
             
             setImageDimensions({ width: naturalWidth, height: naturalHeight });
             
@@ -251,7 +251,7 @@ const DraggableCover = ({ imageUrl, onPositionChange, previewRef, onCropChange, 
           onError={(e) => {
             console.error('❌ Image failed to load:', imageUrl);
             console.error('❌ Image error event:', e);
-            alert(`IMAGE LOAD FAILED!\nURL: ${imageUrl}\nError: ${e.type}`);
+            console.error('❌ Image load failed:', imageUrl, e.type);
             setImageLoaded(false);
           }}
           style={{ display: 'none' }}
@@ -301,15 +301,10 @@ export default function SimpleImageCropper({ imageUrl, onSave, onCancel, onOpen,
   const [position, setPosition] = useState({ x: 50, y: 50 });
   const previewRef = useRef<HTMLDivElement>(null);
 
-  // Debug image URL with alert popup
+  // Log when imageUrl changes
   React.useEffect(() => {
     if (imageUrl) {
-      alert(`IMAGE DEBUG:\nURL: ${imageUrl}\nType: ${typeof imageUrl}\nLength: ${imageUrl?.length}`);
       console.log('🖼️ SimpleImageCropper received imageUrl:', imageUrl);
-      console.log('🖼️ Image URL type:', typeof imageUrl);
-      console.log('🖼️ Image URL length:', imageUrl?.length);
-    } else {
-      alert('ERROR: No imageUrl provided to SimpleImageCropper!');
     }
   }, [imageUrl]);
 
