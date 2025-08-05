@@ -235,21 +235,41 @@ export default function SimpleImageCropper({
           />
         )}
 
-        {/* Crop frame for 1.5 aspect ratio (300x200 video card) */}
-        <div 
-          className="absolute border-4 border-[#D67C4A] pointer-events-none"
-          style={{
-            width: imageDimensions ? `${imageDimensions.width}px` : '100%',
-            height: imageDimensions ? `${imageDimensions.width / 1.5}px` : '67%', // 1.5 aspect ratio
-            left: '50%',
-            top: '50%',
-            transform: 'translate(-50%, -50%)',
-            zIndex: 10,
-            backgroundColor: 'transparent',
-            border: '4px solid #D67C4A',
-            boxShadow: '0 0 0 9999px rgba(0, 0, 0, 0.5)'
-          }}
-        />
+        {/* Crop frame for 1.5 aspect ratio */}
+        {imageDimensions && (() => {
+          // Calculate crop dimensions (same logic as generateImage)
+          const targetAspectRatio = 1.5;
+          let cropWidth = imageDimensions.width;
+          let cropHeight = cropWidth / targetAspectRatio;
+          
+          if (cropHeight > imageDimensions.height) {
+            cropHeight = imageDimensions.height;
+            cropWidth = cropHeight * targetAspectRatio;
+          }
+          
+          // Convert percentage position to pixel position
+          const centerX = (position.x / 100) * imageDimensions.width;
+          const centerY = (position.y / 100) * imageDimensions.height;
+          
+          // Calculate top-left corner (same as generateImage)
+          const left = Math.max(0, Math.min(imageDimensions.width - cropWidth, centerX - cropWidth/2));
+          const top = Math.max(0, Math.min(imageDimensions.height - cropHeight, centerY - cropHeight/2));
+          
+          return (
+            <div 
+              className="absolute border-4 border-[#D67C4A] pointer-events-none"
+              style={{
+                width: `${cropWidth}px`,
+                height: `${cropHeight}px`,
+                left: `${left}px`,
+                top: `${top}px`,
+                zIndex: 10,
+                backgroundColor: 'transparent',
+                boxShadow: '0 0 0 9999px rgba(0, 0, 0, 0.5)'
+              }}
+            />
+          );
+        })()}
 
         {/* Corner indicators for your preferred 360x240 frame */}
         <div 
