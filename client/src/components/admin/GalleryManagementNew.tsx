@@ -2521,11 +2521,18 @@ export default function GalleryManagementNew() {
                   });
                   
                 } catch (error) {
-                  console.error('❌ CROP ERROR:', error);
+                  console.error('❌ CROP ERROR - DETAILED:', error);
+                  console.error('❌ ERROR TYPE:', typeof error);
+                  console.error('❌ ERROR MESSAGE:', error instanceof Error ? error.message : String(error));
+                  console.error('❌ ERROR STACK:', error instanceof Error ? error.stack : 'No stack');
+                  
                   setCropperOpen(false);
+                  
+                  // Show detailed error message
+                  const errorMessage = error instanceof Error ? error.message : String(error);
                   toast({ 
-                    title: "❌ Erreur", 
-                    description: "Erreur de recadrage",
+                    title: "❌ Erreur de Recadrage", 
+                    description: `Détails: ${errorMessage}`,
                     variant: "destructive"
                   });
                 }

@@ -436,7 +436,10 @@ export default function SimpleImageCropper({ imageUrl, onSave, onCancel, onOpen,
         console.log('✅ onSave completed successfully');
       } catch (onSaveError) {
         console.error('❌ onSave function threw error:', onSaveError);
+        console.error('❌ onSave error type:', typeof onSaveError);
+        console.error('❌ onSave error message:', onSaveError instanceof Error ? onSaveError.message : String(onSaveError));
         console.error('❌ onSave error stack:', onSaveError instanceof Error ? onSaveError.stack : 'No stack');
+        console.error('❌ onSave error details:', JSON.stringify(onSaveError, null, 2));
         throw onSaveError;
       }
       
