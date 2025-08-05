@@ -2446,31 +2446,42 @@ export default function GalleryManagementNew() {
                 }));
               }}
               onSave={async (blob: Blob, cropSettings: any) => {
-                console.log('🚀 STARTING CROP SAVE PROCESS - SIMPLIFIED VERSION');
+                console.log('🚀 STARTING CROP SAVE PROCESS - STEP BY STEP');
+                console.log('📊 Blob details:', { size: blob.size, type: blob.type });
+                console.log('⚙️ Crop settings:', cropSettings);
+                console.log('🌐 Language:', cropperLanguage);
+                console.log('📝 Selected item ID:', selectedItem.id);
                 
                 try {
-                  // Create FormData for upload
+                  // Step 1: Create FormData for upload
+                  console.log('📋 Step 1: Creating FormData...');
                   const formData = new FormData();
                   const filename = `static_${cropperLanguage}_${Date.now()}.jpg`;
                   formData.append('file', blob, filename);
                   formData.append('language', cropperLanguage);
+                  console.log('✅ FormData created with filename:', filename);
                   
-                  console.log('📤 UPLOADING CROPPED IMAGE...');
-                  
-                  // Upload the cropped image
+                  // Step 2: Upload the cropped image
+                  console.log('📤 Step 2: Uploading cropped image...');
                   const uploadResponse = await fetch('/api/upload/image', {
                     method: 'POST',
                     body: formData
                   });
                   
+                  console.log('📡 Upload response status:', uploadResponse.status);
+                  console.log('📡 Upload response OK:', uploadResponse.ok);
+                  
                   if (!uploadResponse.ok) {
-                    throw new Error(`Upload failed: ${uploadResponse.status}`);
+                    const errorText = await uploadResponse.text();
+                    console.error('❌ Upload failed response:', errorText);
+                    throw new Error(`Upload failed: ${uploadResponse.status} - ${errorText}`);
                   }
                   
                   const uploadResult = await uploadResponse.json();
-                  console.log('✅ UPLOAD SUCCESS');
+                  console.log('✅ Step 2 COMPLETE - Upload success:', uploadResult);
                   
-                  // Update database
+                  // Step 3: Prepare database update
+                  console.log('📝 Step 3: Preparing database update...');
                   const updateData = selectedItem.use_same_video 
                     ? {
                         static_image_url_fr: uploadResult.url,
@@ -2484,28 +2495,50 @@ export default function GalleryManagementNew() {
                         language: cropperLanguage
                       };
                   
-                  console.log('📝 UPDATING DATABASE...');
-                  const updateResponse = await apiRequest(`/api/gallery/${selectedItem.id}`, 'PATCH', updateData);
-                  const updateResult = await updateResponse.json();
-                  console.log('✅ DATABASE UPDATE SUCCESS:', updateResult);
+                  console.log('📊 Update data prepared:', updateData);
                   
-                  // Close modal and show success
+                  // Step 4: Send database update using fetch directly
+                  console.log('💾 Step 4: Updating database...');
+                  const updateResponse = await fetch(`/api/gallery/${selectedItem.id}`, {
+                    method: 'PATCH',
+                    headers: {
+                      'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(updateData),
+                    credentials: 'include'
+                  });
+                  
+                  console.log('📡 Database response status:', updateResponse.status);
+                  console.log('📡 Database response OK:', updateResponse.ok);
+                  
+                  if (!updateResponse.ok) {
+                    const errorText = await updateResponse.text();
+                    console.error('❌ Database update failed response:', errorText);
+                    throw new Error(`Database update failed: ${updateResponse.status} - ${errorText}`);
+                  }
+                  
+                  const updateResult = await updateResponse.json();
+                  console.log('✅ Step 4 COMPLETE - Database update success:', updateResult);
+                  
+                  // Step 5: Close modal and show success
+                  console.log('🎉 Step 5: Finalizing...');
                   setCropperOpen(false);
                   toast({ 
                     title: "✅ Succès", 
                     description: "Image recadrée sauvegardée avec succès" 
                   });
                   
-                  console.log('✅ CROP SAVE COMPLETED - ALL DONE');
+                  console.log('🎯 ALL STEPS COMPLETED SUCCESSFULLY!');
                   
                 } catch (error) {
                   console.error('❌ CROP SAVE ERROR:', error);
+                  console.error('❌ Error stack:', error instanceof Error ? error.stack : 'No stack');
                   toast({ 
                     title: "❌ Erreur", 
                     description: `Erreur: ${error instanceof Error ? error.message : 'Erreur inconnue'}`,
                     variant: "destructive"
                   });
-                  throw error; // Important: Re-throw to ensure Promise rejects properly
+                  // Don't re-throw - let the function complete normally
                 }
               }}
               onCancel={() => {
