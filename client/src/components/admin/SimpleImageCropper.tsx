@@ -97,7 +97,6 @@ const DraggableCover = ({ imageUrl, onPositionChange, previewRef, onCropChange, 
       
       e.preventDefault();
       setCropPosition(newCropPosition);
-      console.log(`🎯 CROP POSITION: ${newCropPosition.x.toFixed(1)}%, ${newCropPosition.y.toFixed(1)}%`);
     };
 
     document.addEventListener('keydown', handleKeyDown);
@@ -302,10 +301,10 @@ export default function SimpleImageCropper({ imageUrl, onSave, onCancel, onOpen,
   }, [isOpen, onOpen]);
 
   const generateImage = async () => {
-    console.log(`🚀 STARTING CROP GENERATION - Function called!`);
     setLoading(true);
     
     try {
+      alert('Crop generation starting...');
       // SMART HIGH-QUALITY CROP GENERATION v1.0.122: Preserve original dimensions for maximum quality
       const canvas = document.createElement('canvas');
       const ctx = canvas.getContext('2d')!;
@@ -374,9 +373,7 @@ export default function SimpleImageCropper({ imageUrl, onSave, onCancel, onOpen,
       const offsetX = (scaledWidth - cropWidth) * ((100 - position.x) / 100);
       const offsetY = (scaledHeight - cropHeight) * ((100 - position.y) / 100);
       
-      console.log(`🔧 COORDINATE DEBUG - Position: ${position.x}%, ${position.y}%`);
-      console.log(`📐 Image: ${img.naturalWidth}x${img.naturalHeight}, Crop: ${cropWidth}x${cropHeight}`);
-      console.log(`📍 Offset: ${offsetX.toFixed(0)}, ${offsetY.toFixed(0)}`);
+      // Coordinate calculations complete
       
       // Draw the image with proper composite operation
       ctx.globalCompositeOperation = 'source-over';
@@ -387,7 +384,7 @@ export default function SimpleImageCropper({ imageUrl, onSave, onCancel, onOpen,
       // Simple synchronous canvas export
       const blob = await new Promise<Blob>((resolve) => {
         canvas.toBlob((blob) => {
-          console.log(`✅ CROP COMPLETED - Size: ${cropWidth}x${cropHeight}`);
+          alert('Crop completed successfully!');
           resolve(blob!);
         }, 'image/jpeg', 0.8);
       });
@@ -432,10 +429,7 @@ export default function SimpleImageCropper({ imageUrl, onSave, onCancel, onOpen,
           ❌ Annuler
         </Button>
         <Button 
-          onClick={() => {
-            console.log(`🔴 BUTTON CLICKED - About to call generateImage`);
-            generateImage();
-          }}
+          onClick={generateImage}
           disabled={loading}
           className="bg-[#D67C4A] hover:bg-[#b85d37] text-white px-8 py-2 font-semibold"
         >
