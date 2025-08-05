@@ -2535,6 +2535,9 @@ export default function GalleryManagementNew() {
                     description: "Image recadrée sauvegardée" 
                   });
                   
+                  console.log('✅ CROP SAVE COMPLETE - returning successfully');
+                  return; // Explicitly return to resolve the Promise
+                  
                 } catch (error) {
                   console.error('❌ CROP ERROR - DETAILED:', error);
                   console.error('❌ ERROR TYPE:', typeof error);
@@ -2550,6 +2553,9 @@ export default function GalleryManagementNew() {
                     description: `Détails: ${errorMessage}`,
                     variant: "destructive"
                   });
+                  
+                  console.log('❌ CROP SAVE FAILED - throwing error to resolve Promise with rejection');
+                  throw error; // Re-throw to properly reject the Promise
                 }
               }}
               onCancel={() => {
