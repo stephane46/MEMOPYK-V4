@@ -2475,6 +2475,24 @@ export default function GalleryManagementNew() {
                   console.log('🔍 UPDATE RESPONSE DEBUG:', updateResponse);
                   // Gallery item updated successfully
                   
+                  // IMMEDIATE PREVIEW UPDATE: Show cropped image in admin interface right away
+                  const newStaticUrl = uploadResult.url;
+                  if (selectedItem.use_same_video) {
+                    // Shared mode: Update both language previews
+                    setPendingPreviews(prev => ({
+                      ...prev,
+                      static_image_url_en: newStaticUrl,
+                      static_image_url_fr: newStaticUrl
+                    }));
+                  } else {
+                    // Language-specific mode: Update only the relevant language
+                    setPendingPreviews(prev => ({
+                      ...prev,
+                      [cropperLanguage === 'fr' ? 'static_image_url_fr' : 'static_image_url_en']: newStaticUrl
+                    }));
+                  }
+                  console.log(`🔍 ADMIN PREVIEW UPDATED: ${cropperLanguage} preview now shows cropped image: ${newStaticUrl}`);
+                  
                   // Close cropper and refresh data
                   setCropperOpen(false);
                   
