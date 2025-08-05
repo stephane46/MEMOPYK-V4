@@ -468,9 +468,22 @@ export default function SimpleImageCropper({ imageUrl, onSave, onCancel, onOpen,
           ❌ Annuler
         </Button>
         <Button 
-          onClick={() => {
+          onClick={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
             console.log('🚨 BUTTON CLICKED: Save button clicked');
-            generateImage();
+            console.log('🚨 BUTTON CLICKED: Event details:', e);
+            
+            // Test immediate response
+            alert('Button clicked - starting crop save...');
+            
+            // Try to call generateImage with error handling
+            try {
+              generateImage();
+            } catch (error) {
+              console.error('❌ Error calling generateImage:', error);
+              alert('Error calling generateImage: ' + error);
+            }
           }}
           disabled={loading}
           className="bg-[#D67C4A] hover:bg-[#b85d37] text-white px-8 py-2 font-semibold"
