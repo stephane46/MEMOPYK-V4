@@ -425,8 +425,19 @@ export default function SimpleImageCropper({ imageUrl, onSave, onCancel, onOpen,
       
       // 🚨 DIRECT CALL: Call onSave directly without Promise.race complications
       console.log('📞 CALLING onSave function...');
-      await onSave(blob, settings);
-      console.log('✅ onSave completed successfully');
+      console.log('📞 onSave type:', typeof onSave);
+      console.log('📞 onSave function:', onSave);
+      
+      // Call onSave with detailed error tracking
+      try {
+        console.log('🚀 ABOUT TO CALL onSave...');
+        await onSave(blob, settings);
+        console.log('✅ onSave completed successfully');
+      } catch (onSaveError) {
+        console.error('❌ onSave function threw error:', onSaveError);
+        console.error('❌ onSave error stack:', onSaveError instanceof Error ? onSaveError.stack : 'No stack');
+        throw onSaveError;
+      }
       
     } catch (error: any) {
       console.error('❌ Error generating image:', error);
