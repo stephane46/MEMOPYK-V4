@@ -250,6 +250,7 @@ const DraggableCover = ({ imageUrl, onPositionChange, previewRef, onCropChange, 
           onError={(e) => {
             console.error('❌ Image failed to load:', imageUrl);
             console.error('❌ Image error event:', e);
+            alert(`IMAGE LOAD FAILED!\nURL: ${imageUrl}\nError: ${e.type}`);
             setImageLoaded(false);
           }}
           style={{ display: 'none' }}
