@@ -2453,22 +2453,25 @@ export default function GalleryManagementNew() {
                 console.log('🚀 CROP SAVE START');
                 
                 try {
-                  // Create upload data
+                  // 🚨 NON-BLOCKING FORMDATA CREATION
+                  await new Promise(resolve => setTimeout(resolve, 0));
+                  
                   const uploadFormData = new FormData();
                   const filename = `static_${cropperLanguage}_${Date.now()}.jpg`;
+                  
+                  // Break up FormData operations
+                  await new Promise(resolve => setTimeout(resolve, 0));
                   uploadFormData.append('file', blob, filename);
+                  await new Promise(resolve => setTimeout(resolve, 0));
                   uploadFormData.append('language', cropperLanguage);
                   
-                  // Upload image with timeout
-                  const uploadController = new AbortController();
-                  const uploadTimeout = setTimeout(() => uploadController.abort(), 10000); // 10 second timeout
+                  console.log('📤 Starting upload...');
                   
+                  // 🚨 NON-BLOCKING FETCH
                   const uploadResponse = await fetch('/api/upload/image', {
                     method: 'POST',
-                    body: uploadFormData,
-                    signal: uploadController.signal
+                    body: uploadFormData
                   });
-                  clearTimeout(uploadTimeout);
                   
                   if (!uploadResponse.ok) {
                     throw new Error(`Upload failed: ${uploadResponse.status}`);
