@@ -2500,11 +2500,8 @@ export default function GalleryManagementNew() {
                   queryClient.removeQueries({ queryKey: ['/api/gallery'] });
                   queryClient.invalidateQueries({ queryKey: ['/api/gallery'] });
                   
-                  // Wait a moment then refetch to ensure new crop is visible
-                  setTimeout(async () => {
-                    await queryClient.refetchQueries({ queryKey: ['/api/gallery'] });
-                    console.log('✅ Gallery cache refreshed - new crop should be visible');
-                  }, 500);
+                  // 🚨 FIX: Remove async setTimeout - just invalidate and continue
+                  console.log('✅ Gallery cache invalidated - will refresh automatically');
                   
                   // Gallery item updated successfully
                   
@@ -2529,11 +2526,6 @@ export default function GalleryManagementNew() {
                   // Force close modal immediately 
                   setCropperOpen(false);
                   
-                  // Additional cleanup to prevent black screen
-                  setTimeout(() => {
-                    setCropperOpen(false);
-                  }, 100);
-                  
                   // Reset cropping state after successful save
                   setActiveCroppingState({
                     isActive: false,
@@ -2551,12 +2543,9 @@ export default function GalleryManagementNew() {
                   
                   console.log('🔍 IMMEDIATE CROP UPDATE - Setting formData.cropSettings to:', cropSettings);
                   
-                  // Wait for query to complete, then force UI refresh
-                  setTimeout(() => {
-                    setForceRefreshKey(prev => prev + 1);
-                    console.log('🔍 AFTER REFRESH - selectedItem cropSettings:', (selectedItem as any)?.cropSettings);
-                    console.log('🔍 AFTER REFRESH - formData cropSettings:', formData.cropSettings);
-                  }, 200);
+                  // Force UI refresh immediately
+                  setForceRefreshKey(prev => prev + 1);
+                  console.log('🔍 IMMEDIATE REFRESH - formData updated with cropSettings:', cropSettings);
                   
                   toast({ 
                     title: "✅ Succès", 
@@ -2564,6 +2553,10 @@ export default function GalleryManagementNew() {
                       ? `Image recadrée sauvegardée avec succès (Partagée FR+EN)`
                       : `Image recadrée sauvegardée avec succès (${cropperLanguage === 'fr' ? 'Français' : 'English'})` 
                   });
+                  
+                  // 🚨 CRITICAL: Explicitly return to resolve the Promise
+                  console.log('✅ CROP SAVE COMPLETED - returning success');
+                  return; // Ensure Promise resolves
                   
                 } catch (error) {
                   console.error('❌ CROP SAVE ERROR:', error);
