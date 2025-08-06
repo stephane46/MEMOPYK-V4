@@ -577,6 +577,7 @@ export default function GallerySection() {
 
 
         {/* Gallery Grid - Conditional Rendering for Mobile Enhancement */}
+        {console.log(`📱 MOBILE DETECTION: isMobile=${isMobile}, showing ${isMobile ? 'MOBILE' : 'DESKTOP'} gallery`)}
         {isMobile ? (
           <MobileEnhancedGallery
             items={galleryItems}
