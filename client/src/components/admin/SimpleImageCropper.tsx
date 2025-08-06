@@ -25,7 +25,8 @@ export default function SimpleImageCropper({
   const [imgHeight, setImgHeight] = useState(0);
   const [offsetY, setOffsetY] = useState(0);
   const [loading, setLoading] = useState(false);
-  const containerWidth = 800;
+  // Use dynamic container width based on viewport
+  const containerWidth = Math.min(window.innerWidth - 200, 1200); // Leave margin, max 1200px
 
   // When the image loads, measure its displayed height
   const handleImageLoad = () => {
