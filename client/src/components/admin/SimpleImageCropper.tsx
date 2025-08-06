@@ -123,8 +123,8 @@ export default function SimpleImageCropper({
   }, [imgHeight, offsetY, onCancel, generateImage]);
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50 p-4">
-      <div className="bg-white p-6 rounded-lg w-full max-w-5xl">
+    <div className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50 p-4 overflow-auto">
+      <div className="bg-white p-6 rounded-lg w-full max-w-none mx-auto" style={{ maxHeight: 'none' }}>
         <h3 className="text-xl font-semibold mb-4">Crop Image</h3>
 
         <div className="flex justify-center">
