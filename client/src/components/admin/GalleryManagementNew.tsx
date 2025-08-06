@@ -442,8 +442,8 @@ export default function GalleryManagementNew() {
         video_width: selectedItem.video_width || 16,
         video_height: selectedItem.video_height || 9,
         video_orientation: selectedItem.video_orientation || 'landscape',
-        image_url_en: pendingPreviews.image_url_en || persistentUploadState.image_url_en || getThumbnailUrl(selectedItem, 'en') || '',
-        image_url_fr: pendingPreviews.image_url_fr || persistentUploadState.image_url_fr || getThumbnailUrl(selectedItem, 'fr') || '',
+        image_url_en: pendingPreviews.image_url_en || persistentUploadState.image_url_en || selectedItem.image_url_en || '',
+        image_url_fr: pendingPreviews.image_url_fr || persistentUploadState.image_url_fr || selectedItem.image_url_fr || '',
         static_image_url: selectedItem.static_image_url || '',
         static_image_url_en: selectedItem.static_image_url_en || null,
         static_image_url_fr: selectedItem.static_image_url_fr || null,
@@ -986,23 +986,8 @@ export default function GalleryManagementNew() {
                         {(selectedItem || isCreateMode) && (pendingPreviews.image_url_fr || selectedItem || formData.image_url_fr) ? (
                           <>
                             <img 
-                              src={(() => {
-                                const pendingUrl = pendingPreviews.image_url_fr;
-                                const croppedUrl = selectedItem ? getImageUrlWithCacheBust(getThumbnailUrl(selectedItem, 'fr')) : '';
-                                const formUrl = formData.image_url_fr;
-                                
-                                // CRITICAL FIX: Always prioritize cropped over form data for existing items
-                                const finalUrl = pendingUrl || (selectedItem ? croppedUrl : formUrl);
-                                console.log('🎯 ADMIN FR FINAL URL SELECTION:', {
-                                  pendingUrl,
-                                  croppedUrl,
-                                  formUrl,
-                                  finalUrl,
-                                  selectedTitle: selectedItem?.title_fr,
-                                  isExistingItem: !!selectedItem
-                                });
-                                return finalUrl;
-                              })()}
+                              src={pendingPreviews.image_url_fr || 
+                                   (selectedItem ? getImageUrlWithCacheBust(getThumbnailUrl(selectedItem, 'fr')) : formData.image_url_fr)}
                               onLoadStart={() => {
                                 const imageUrl = pendingPreviews.image_url_fr || formData.image_url_fr || 
                                   (selectedItem ? getThumbnailUrl(selectedItem, 'fr') : '');
@@ -1242,23 +1227,8 @@ export default function GalleryManagementNew() {
                           <>
                             <img 
                               key={`en-${selectedItem?.id || 'new'}-${Date.now()}`}
-                              src={(() => {
-                                const pendingUrl = pendingPreviews.image_url_en;
-                                const croppedUrl = selectedItem ? getImageUrlWithCacheBust(getThumbnailUrl(selectedItem, 'en')) : '';
-                                const formUrl = formData.image_url_en;
-                                
-                                // CRITICAL FIX: Always prioritize cropped over form data for existing items
-                                const finalUrl = pendingUrl || (selectedItem ? croppedUrl : formUrl);
-                                console.log('🎯 ADMIN EN FINAL URL SELECTION:', {
-                                  pendingUrl,
-                                  croppedUrl,
-                                  formUrl,
-                                  finalUrl,
-                                  selectedTitle: selectedItem?.title_en,
-                                  isExistingItem: !!selectedItem
-                                });
-                                return finalUrl;
-                              })()} 
+                              src={pendingPreviews.image_url_en || 
+                                   (selectedItem ? getImageUrlWithCacheBust(getThumbnailUrl(selectedItem, 'en')) : formData.image_url_en)} 
                               alt="Aperçu English"
                               className="w-full h-full object-contain"
                               onLoadStart={() => {
