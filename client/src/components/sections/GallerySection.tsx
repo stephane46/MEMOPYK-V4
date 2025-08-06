@@ -232,20 +232,36 @@ export default function GallerySection() {
   };
 
   const getImageUrl = (item: GalleryItem) => {
-    // 1) thumbnail first
+    console.group(`getImageUrl for ${item.id || item.videoId}`);
+    console.log("useSameVideo:", item.useSameVideo);
+    console.log("staticImageUrlEn:", item.staticImageUrlEn);
+    console.log("staticImageUrlFr:", item.staticImageUrlFr);
+    console.log("imageUrlEn:", item.imageUrlEn);
+    console.log("imageUrlFr:", item.imageUrlFr);
+
+    // 1) Try the cropped thumbnail:
     const thumb = item.useSameVideo
       ? item.staticImageUrlEn
       : language === 'fr-FR'
         ? item.staticImageUrlFr
         : item.staticImageUrlEn;
-    if (thumb) return cacheBusted(thumb);
+    console.log("→ selected thumb:", thumb);
 
-    // 2) fallback to original
+    if (thumb) {
+      console.log("✅ returning thumb URL");
+      console.groupEnd();
+      return cacheBusted(thumb);
+    }
+
+    // 2) Otherwise fall back to the full-res image:
     const original = item.useSameVideo
       ? item.imageUrlEn
       : language === 'fr-FR'
         ? item.imageUrlFr
         : item.imageUrlEn;
+    console.log("→ falling back to original:", original);
+    console.groupEnd();
+
     return original ? cacheBusted(original) : '';
   };
 
