@@ -1,3 +1,5 @@
+console.log("📦 GallerySection loaded");
+
 import React from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useState, useEffect } from "react";
@@ -50,6 +52,8 @@ interface GalleryItem {
 
 export default function GallerySection() {
   const { language } = useLanguage();
+  
+  console.log("📦 GallerySection render", { language });
   const [flippedCards, setFlippedCards] = useState<Set<string | number>>(new Set());
   const [lightboxVideo, setLightboxVideo] = useState<GalleryItem | null>(null);
   const [isMobile, setIsMobile] = useState(false);
@@ -232,6 +236,11 @@ export default function GallerySection() {
   };
 
   const getImageUrl = (item: GalleryItem) => {
+    console.log("🖼 GallerySection#getImageUrl", item.videoId || item.id, {
+      useSameVideo: item.useSameVideo,
+      staticImageUrlEn: item.staticImageUrlEn,
+      imageUrlEn: item.imageUrlEn
+    });
     console.group(`🖼️ GallerySection#getImageUrl [id=${item.id || item.videoId}]`);
     console.log("useSameVideo:",    item.useSameVideo);
     console.log("staticImageUrlEn:", item.staticImageUrlEn);
