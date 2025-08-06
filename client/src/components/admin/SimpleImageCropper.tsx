@@ -139,7 +139,7 @@ export default function SimpleImageCropper({
           >
             <img
               ref={imgRef}
-              src={`/api/image-proxy?url=${encodeURIComponent(imageUrl)}`}
+              src={imageUrl}
               alt="To crop"
               onLoad={handleImageLoad}
               crossOrigin="anonymous"
@@ -173,7 +173,7 @@ export default function SimpleImageCropper({
             <p>• Use ↑↓ arrow keys to move the image vertically (1% increments)</p>
             <p>• Press <strong>Enter</strong> to confirm and save</p>
             <p>• Press <strong>Escape</strong> to cancel</p>
-            <p>• Current position: {((offsetY / imgHeight) * 100).toFixed(1)}%</p>
+            <p>• Crop vertical position: {((offsetY / imgHeight) * 100).toFixed(1)}% from top</p>
           </div>
 
           <div className="flex gap-4 justify-end">
