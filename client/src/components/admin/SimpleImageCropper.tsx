@@ -32,9 +32,10 @@ export default function SimpleImageCropper({
     if (!imgRef.current) return;
     const displayedHeight = imgRef.current.getBoundingClientRect().height;
     setImgHeight(displayedHeight);
-    // center it initially
-    setOffsetY(Math.max(0, (displayedHeight - containerWidth / 1.5) / 2));
-    console.log("🖼️ Image loaded:", { displayedHeight, initialOffset: offsetY });
+    // center the crop overlay initially
+    const centerOffset = Math.max(0, (displayedHeight - containerWidth / 1.5) / 2);
+    setOffsetY(centerOffset);
+    console.log("🖼️ Image loaded:", { displayedHeight, centerOffset });
   };
 
   // Generate the cropped image
@@ -57,7 +58,7 @@ export default function SimpleImageCropper({
       const scaleX = naturalWidth / displayedWidth;
       const scaleY = naturalHeight / displayedHeight;
 
-      // Crop rectangle in natural coordinates
+      // Crop rectangle in natural coordinates - overlay position determines crop
       const cropY = (offsetY / displayedHeight) * naturalHeight;
       const cropHeight = (containerWidth / 1.5 / displayedHeight) * naturalHeight;
       const cropWidth = naturalWidth; // Full width
@@ -65,7 +66,7 @@ export default function SimpleImageCropper({
       canvas.width = cropWidth;
       canvas.height = cropHeight;
 
-      // Draw the cropped portion
+      // Draw the cropped portion from where the overlay is positioned
       ctx.drawImage(
         imgRef.current,
         0, cropY, cropWidth, cropHeight, // source rectangle
@@ -130,10 +131,9 @@ export default function SimpleImageCropper({
           <div
             style={{
               width: containerWidth,
-              aspectRatio: "3/2",
+              margin: "0 auto",
               position: "relative",
-              overflow: "hidden",
-              background: "#000",
+              // NO overflow:hidden here - show full image!
             }}
           >
             <img
@@ -142,19 +142,21 @@ export default function SimpleImageCropper({
               alt="To crop"
               onLoad={handleImageLoad}
               style={{
-                position: "absolute",
-                top: -offsetY,
-                left: 0,
+                display: "block",
                 width: "100%",
                 height: "auto",
                 userSelect: "none",
               }}
             />
 
+            {/* Orange overlay rectangle that moves up/down */}
             <div
               style={{
                 position: "absolute",
-                inset: 0,
+                top: offsetY,
+                left: 0,
+                width: "100%",
+                height: containerWidth / 1.5, // 3:2 crop box
                 border: "4px solid #D67C4A",
                 boxSizing: "border-box",
                 pointerEvents: "none",
