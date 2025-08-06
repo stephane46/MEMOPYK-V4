@@ -79,17 +79,16 @@ export default function SimpleImageCropper({
       const constrainedOffset = Math.max(0, Math.min(initialOffset, maxOffset));
       
       setOffsetY(constrainedOffset);
-      console.log("🚨 FIXED PERCENTAGE-TO-PIXEL CONVERSION:", { 
-        storedPercent: `${initialCropSettings.position.y.toFixed(3)}%`,
-        naturalHeight: naturalHeight,
-        displayedHeight: displayedHeight,
-        scaleToDisplay: scaleToDisplay.toFixed(3),
-        naturalCropY: naturalCropY.toFixed(1),
-        initialOffsetPx: initialOffset.toFixed(1),
-        finalOffsetPx: constrainedOffset.toFixed(1),
-        cropOverlayHeight: cropOverlayHeight,
-        wasConstrained: initialOffset !== constrainedOffset
-      });
+      console.log("🚨 FIXED PERCENTAGE-TO-PIXEL CONVERSION:"); 
+      console.log("- Stored percentage:", `${initialCropSettings.position.y.toFixed(3)}%`);
+      console.log("- Natural height:", naturalHeight);
+      console.log("- Displayed height:", displayedHeight);
+      console.log("- Scale to display:", scaleToDisplay.toFixed(3));
+      console.log("- Natural crop Y:", naturalCropY.toFixed(1));
+      console.log("- Initial offset px:", initialOffset.toFixed(1));
+      console.log("- Final offset px:", constrainedOffset.toFixed(1));
+      console.log("- Crop overlay height:", cropOverlayHeight);
+      console.log("- Was constrained:", initialOffset !== constrainedOffset);
     } else {
       // center the crop overlay initially
       const centerOffset = Math.max(0, (displayedHeight - containerWidth / 1.5) / 2);
