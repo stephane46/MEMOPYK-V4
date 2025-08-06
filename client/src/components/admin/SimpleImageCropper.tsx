@@ -185,21 +185,36 @@ const SimpleImageCropper: React.FC<SimpleImageCropperProps> = ({
           />
           
           {/* Fixed crop frame: full width, 3:2 aspect ratio, vertical movement only */}
-          {imageDimensions && imageRef.current && (
-            <div 
-              className="absolute border-4 border-[#D67C4A] pointer-events-none"
-              style={{
-                width: '100%', // Full width of image container
-                height: 'calc(100% * 0.66)', // 3:2 aspect ratio
-                left: '0px',
-                top: `${verticalPosition}%`, // Direct percentage positioning
-                zIndex: 10,
-                backgroundColor: 'transparent',
-                boxShadow: '0 0 0 9999px rgba(0, 0, 0, 0.5)',
-                transform: 'translateY(-50%)' // Center the frame at the percentage position
-              }}
-            />
-          )}
+          {imageDimensions && imageRef.current && (() => {
+            // Get actual displayed image dimensions
+            const rect = imageRef.current.getBoundingClientRect();
+            const displayWidth = rect.width;
+            const displayHeight = rect.height;
+            
+            // Calculate crop frame dimensions for 3:2 ratio (width:height = 1:0.66)
+            // Frame spans full display width
+            const frameWidth = displayWidth;
+            const frameHeight = displayWidth * 0.66; // height = width * 0.66 for 3:2
+            
+            // Calculate vertical position with bounds checking
+            const maxTop = displayHeight - frameHeight;
+            const frameTop = Math.max(0, Math.min(maxTop, (verticalPosition / 100) * maxTop));
+            
+            return (
+              <div 
+                className="absolute border-4 border-[#D67C4A] pointer-events-none"
+                style={{
+                  width: `${frameWidth}px`,
+                  height: `${frameHeight}px`,
+                  left: '0px',
+                  top: `${frameTop}px`,
+                  zIndex: 10,
+                  backgroundColor: 'transparent',
+                  boxShadow: '0 0 0 9999px rgba(0, 0, 0, 0.5)'
+                }}
+              />
+            );
+          })()}
         </div>
         
         <div className="mt-6 space-y-4">
