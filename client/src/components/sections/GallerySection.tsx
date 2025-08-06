@@ -562,20 +562,7 @@ export default function GallerySection() {
                               </div>
                             )}
 
-                            {/* Viewing Format Badge (2) - Mobile Optimized */}
-                            {(() => {
-                              const format = getViewingFormat(item);
-                              const IconComponent = format.icon;
-                              return (
-                                <div className={`${format.color} text-white px-1.5 sm:px-2 py-1 rounded-full text-xs font-medium flex items-center gap-1 shadow-sm max-w-[120px] sm:max-w-none min-h-[32px] sm:min-h-[36px]`}>
-                                  <IconComponent className="w-2.5 h-2.5 sm:w-3 sm:h-3 flex-shrink-0" />
-                                  <div className="min-w-0 flex flex-col justify-center">
-                                    <div className="font-bold leading-tight truncate text-xs sm:text-xs">{format.platform}</div>
-                                    <div className="text-xs opacity-90 leading-tight truncate hidden sm:block">{format.type}</div>
-                                  </div>
-                                </div>
-                              );
-                            })()}
+
                           </div>
 
                           {/* Price Tag - Bottom Right (3) - Mobile Optimized */}
@@ -613,10 +600,27 @@ export default function GallerySection() {
 
                     {/* Card Content - Mobile Optimized */}
                     <div className="px-3 sm:px-4 lg:px-6 pt-1 pb-3 sm:pb-4 lg:pb-6">
-                      {/* Title (4) - Mobile Responsive */}
-                      <h3 className="text-lg sm:text-xl font-bold text-gray-900 dark:text-white mb-1 sm:mb-1 h-6 sm:h-8 overflow-hidden leading-6 sm:leading-8">
-                        {getItemTitle(item)}
-                      </h3>
+                      {/* Title and Social Media Badge Row */}
+                      <div className="flex justify-between items-start mb-1 sm:mb-1 gap-2">
+                        <h3 className="text-lg sm:text-xl font-bold text-gray-900 dark:text-white h-6 sm:h-8 overflow-hidden leading-6 sm:leading-8 flex-1">
+                          {getItemTitle(item)}
+                        </h3>
+                        
+                        {/* Social Media Badge - Moved outside image */}
+                        {(() => {
+                          const format = getViewingFormat(item);
+                          const IconComponent = format.icon;
+                          return (
+                            <div className={`${format.color} text-white px-2 py-1 rounded-full text-xs font-medium flex items-center gap-1 shadow-sm flex-shrink-0 h-6 sm:h-8`}>
+                              <IconComponent className="w-3 h-3 flex-shrink-0" />
+                              <div className="min-w-0 flex flex-col justify-center">
+                                <div className="font-bold leading-tight truncate text-xs">{format.platform}</div>
+                                <div className="text-xs opacity-90 leading-tight truncate hidden lg:block">{format.type}</div>
+                              </div>
+                            </div>
+                          );
+                        })()}
+                      </div>
                           
                       {/* Duration (5) - Mobile Optimized */}
                       <div className="mb-2 sm:mb-3 h-5 sm:h-6 overflow-hidden flex items-center">
