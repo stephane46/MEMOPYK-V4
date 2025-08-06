@@ -196,7 +196,7 @@ const SimpleImageCropper: React.FC<SimpleImageCropperProps> = ({
       <div className="bg-white p-6 rounded-lg max-w-4xl max-h-[90vh] overflow-auto">
         <h3 className="text-xl font-semibold mb-4">Crop Image</h3>
 
-        <div className="relative inline-block">
+        <div className="relative inline-block w-[800px]">
           <img
             ref={imageRef}
             src={imageUrl}
