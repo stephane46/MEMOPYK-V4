@@ -2486,7 +2486,25 @@ export default function GalleryManagementNew() {
                   
                   const uploadResult = await uploadResponse.json();
                   console.log('✅ Upload success:', uploadResult.url);
-                  console.log('✅ Database automatically updated by upload endpoint');
+                  
+                  // CRITICAL FIX: Update crop settings in database
+                  console.log('🚀 STEP 5: Updating crop settings in database...');
+                  const updateResponse = await fetch(`/api/gallery/${selectedItem.id}`, {
+                    method: 'PATCH',
+                    headers: {
+                      'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                      cropSettings: cropSettings
+                    })
+                  });
+                  
+                  if (!updateResponse.ok) {
+                    throw new Error(`Database update failed: ${updateResponse.status}`);
+                  }
+                  
+                  const updateResult = await updateResponse.json();
+                  console.log('✅ Crop settings saved to database:', updateResult.cropSettings);
                   
                   // AGGRESSIVE CACHE REFRESH - Force admin preview to show cropped image
                   console.log('🔄 STARTING AGGRESSIVE CACHE REFRESH...');
