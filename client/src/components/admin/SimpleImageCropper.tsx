@@ -33,6 +33,14 @@ export default function SimpleImageCropper({
     hasInitialSettings: !!initialCropSettings
   });
   
+  if (initialCropSettings?.position) {
+    console.log("🎯 EXACT CROP POSITION VALUES:", {
+      originalX: initialCropSettings.position.x,
+      originalY: initialCropSettings.position.y,
+      positionObject: initialCropSettings.position
+    });
+  }
+  
   const imgRef = useRef<HTMLImageElement>(null);
   const [imgHeight, setImgHeight] = useState(0);
   const [offsetY, setOffsetY] = useState(0);
