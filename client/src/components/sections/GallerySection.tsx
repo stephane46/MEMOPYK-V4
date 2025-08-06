@@ -603,6 +603,13 @@ export default function GallerySection() {
           {galleryItems.map((item, index) => {
             const imageUrl = getImageUrl(item);
             const thumbnailUrl = imageUrl;
+            console.log(`🔍 FINAL URL DEBUG for ${item.titleEn}:`, {
+              imageUrl,
+              thumbnailUrl,
+              staticImageUrlEn: item.staticImageUrlEn,
+              staticImageUrlFr: item.staticImageUrlFr,
+              finalSrcAttribute: thumbnailUrl
+            });
             const itemHasVideo = hasVideo(item, index);
             
             // CRITICAL FIX: Cards with videos should NEVER be flipped by default
@@ -626,10 +633,12 @@ export default function GallerySection() {
                         <div className="w-full h-full relative">
                           {/* Main Image */}
                           <img
-                            key={`${item.id}-${thumbnailUrl}`} // Force reload when URL changes
-                            src={thumbnailUrl}
+                            key={`${item.id}-${thumbnailUrl}-${Date.now()}`} // Force reload when URL changes
+                            src={`${thumbnailUrl}${thumbnailUrl.includes('?') ? '&' : '?'}forceReload=${Date.now()}&v=${Math.random()}`}
                             alt={getItemTitle(item)}
                             className="w-full h-full object-cover"
+                            onLoad={() => console.log(`🖼️ Image loaded: ${thumbnailUrl}`)}
+                            onError={(e) => console.log(`❌ Image failed to load: ${thumbnailUrl}`, e)}
                           />
                           
                           {/* Top overlays - Mobile Responsive */}

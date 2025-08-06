@@ -171,7 +171,13 @@ export function MobileEnhancedGallery({
                               naturalHeight: img.naturalHeight,
                               displayWidth: img.width,
                               displayHeight: img.height,
-                              isStaticThumbnail: img.src.includes('static_')
+                              isStaticThumbnail: img.src.includes('static_'),
+                              isCroppedVersion: img.src.includes('-C.'),
+                              originalImageUrl: language === 'fr-FR' ? item.imageUrlFr : item.imageUrlEn,
+                              staticImageUrlEn: item.staticImageUrlEn,
+                              staticImageUrlFr: item.staticImageUrlFr,
+                              expectedCroppedUrl: 'AAA_002_0000014-C.jpg',
+                              actuallyDisplaying: img.src.includes('AAA_002_0000014-C.jpg') ? 'CROPPED' : 'ORIGINAL'
                             });
                             
                             // Additional dimension analysis
