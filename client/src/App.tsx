@@ -12,6 +12,9 @@ import TestGalleryVideo from './pages/TestGalleryVideo';
 import NotFoundPage from './pages/not-found';
 import { queryClient } from './lib/queryClient';
 import { Toaster } from '@/components/ui/toaster';
+import GallerySection from './components/sections/GallerySection';
+
+console.log("🔀 routes configured for /gallery");
 
 // TIMEOUT SAFEGUARD SYSTEM v1.0.46 - SILENT STREAM FAILURE DETECTION
 console.log("%c🚀 MEMOPYK LANGUAGE-SPECIFIC UPLOAD SYSTEM v1.0.82 - Force reload to fix English upload section visibility", "color: red; font-size: 16px; font-weight: bold;");
@@ -40,8 +43,14 @@ function App() {
               <Route path="/en-US" component={HomePage} />
               <Route path="/fr-FR/admin*" component={AdminRoute} />
               <Route path="/en-US/admin*" component={AdminRoute} />
-              <Route path="/fr-FR/gallery" component={() => <div className="min-h-screen flex items-center justify-center"><div className="text-2xl text-gray-500">Galerie Bientôt Disponible</div></div>} />
-              <Route path="/en-US/gallery" component={() => <div className="min-h-screen flex items-center justify-center"><div className="text-2xl text-gray-500">Gallery Coming Soon</div></div>} />
+              <Route path="/fr-FR/gallery" component={() => {
+                console.log("🎬 Rendering GallerySection at /fr-FR/gallery");
+                return <GallerySection />;
+              }} />
+              <Route path="/en-US/gallery" component={() => {
+                console.log("🎬 Rendering GallerySection at /en-US/gallery");
+                return <GallerySection />;
+              }} />
               <Route path="/fr-FR/contact" component={() => <div className="min-h-screen flex items-center justify-center"><div className="text-2xl text-gray-500">Contact Bientôt Disponible</div></div>} />
               <Route path="/en-US/contact" component={() => <div className="min-h-screen flex items-center justify-center"><div className="text-2xl text-gray-500">Contact Coming Soon</div></div>} />
               
