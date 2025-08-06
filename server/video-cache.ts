@@ -515,27 +515,27 @@ export class VideoCache {
       let imagesRemoved = 0;
       const failedDeletions: string[] = [];
       
-      // Clear video cache with retry logic
+      // Clear video cache with aggressive retry logic (needed because hero videos are always streaming)
       for (const file of videoFiles) {
         const filePath = join(this.videoCacheDir, file);
-        try {
-          // Wait a moment to avoid conflicts with active streams
-          await new Promise(resolve => setTimeout(resolve, 100));
-          unlinkSync(filePath);
-          videosRemoved++;
-          console.log(`🗑️ Deleted video: ${file}`);
-        } catch (error: any) {
-          console.warn(`⚠️ Failed to delete video ${file}:`, error.message);
-          failedDeletions.push(`video: ${file}`);
-          
-          // Try again with force delete after a longer wait
+        let deleted = false;
+        
+        // Try multiple times with increasing delays since videos are constantly streamed
+        for (let attempt = 1; attempt <= 5; attempt++) {
           try {
-            await new Promise(resolve => setTimeout(resolve, 500));
+            await new Promise(resolve => setTimeout(resolve, attempt * 200)); // 200ms, 400ms, 600ms, 800ms, 1000ms
             unlinkSync(filePath);
             videosRemoved++;
-            console.log(`🗑️ Force deleted video: ${file}`);
-          } catch (retryError: any) {
-            console.error(`❌ Force delete failed for video ${file}:`, retryError.message);
+            console.log(`🗑️ Deleted video: ${file} (attempt ${attempt})`);
+            deleted = true;
+            break;
+          } catch (error: any) {
+            if (attempt === 5) {
+              console.warn(`⚠️ Final attempt failed for video ${file}:`, error.message);
+              failedDeletions.push(`video: ${file}`);
+            } else {
+              console.log(`⚙️ Retry ${attempt}/5 for ${file} (file in use by stream)`);
+            }
           }
         }
       }
