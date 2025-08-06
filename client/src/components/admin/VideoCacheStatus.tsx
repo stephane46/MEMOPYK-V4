@@ -183,6 +183,46 @@ export const VideoCacheStatus: React.FC<VideoCacheStatusProps> = ({
     }
   });
 
+  // Force cache ALL MEDIA (videos + images) mutation  
+  const forceAllMediaMutation = useMutation({
+    mutationFn: async () => {
+      const response = await apiRequest('/api/video-cache/force-all-media', 'POST');
+      return await response.json() as {
+        stats?: {
+          videos: {attempted: number, successful: number};
+          images: {attempted: number, successful: number};
+          processingTime: string;
+        };
+        verification?: {
+          videos: Array<{filename: string, success: boolean, sizeMB: string}>;
+          images: Array<{filename: string, success: boolean, sizeMB: string}>;
+        };
+      };
+    },
+    onSuccess: (data) => {
+      const videoCount = data.stats?.videos?.successful || 0;
+      const imageCount = data.stats?.images?.successful || 0;
+      const processingTime = data.stats?.processingTime || '0s';
+      
+      toast({
+        title: "BULLETPROOF ALL MEDIA Complete",
+        description: `Successfully cached ${videoCount} videos & ${imageCount} images in ${processingTime}`,
+      });
+      refetchStatus();
+      refetchStats();
+      refetchUnified();
+      queryClient.invalidateQueries({ queryKey: ['/api/video-cache/stats'] });
+      queryClient.invalidateQueries({ queryKey: ['/api/unified-cache/stats'] });
+    },
+    onError: (error: Error & {response?: {data?: {details?: string}}}) => {
+      toast({
+        title: "BULLETPROOF Cache Failed", 
+        description: `Failed to cache all media: ${error.response?.data?.details || error.message}`,
+        variant: "destructive",
+      });
+    }
+  });
+
   const cacheStatus: Record<string, CacheStatus> = (cacheStatusData as {status?: Record<string, CacheStatus>})?.status || {};
 
   const formatFileSize = (bytes: number): string => {
@@ -443,6 +483,23 @@ export const VideoCacheStatus: React.FC<VideoCacheStatusProps> = ({
                 </Button>
               </>
             )}
+            
+            {/* BULLETPROOF ALL MEDIA Cache Button - shows for all sections */}
+            <Button
+              size="sm"
+              variant="default"
+              onClick={() => forceAllMediaMutation.mutate()}
+              disabled={forceAllMediaMutation.isPending}
+              className="w-full bg-purple-600 hover:bg-purple-700 text-white font-medium"
+            >
+              {forceAllMediaMutation.isPending ? (
+                <RefreshCw className="h-4 w-4 animate-spin mr-2" />
+              ) : (
+                <Zap className="h-4 w-4 mr-2" />
+              )}
+              🚀 BULLETPROOF All Media Cache
+            </Button>
+            
             <Button
               size="sm"
               variant="destructive"
