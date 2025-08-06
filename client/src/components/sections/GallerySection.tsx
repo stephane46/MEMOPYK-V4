@@ -615,7 +615,7 @@ export default function GallerySection() {
                           return (
                             <div className="bg-gray-500 text-white px-2 py-1 rounded-full text-xs font-medium flex items-center gap-1 shadow-sm flex-shrink-0 h-6 sm:h-8">
                               <IconComponent className="w-2.5 h-2.5 flex-shrink-0" />
-                              <div className="min-w-0 flex flex-col justify-center">
+                              <div className="min-w-0 flex flex-col justify-center items-center text-center">
                                 <div className="opacity-60 leading-tight truncate" style={{ fontSize: '8px' }}>{standardPlatform}</div>
                                 <div className="font-semibold leading-tight truncate" style={{ fontSize: '10px' }}>{format.type}</div>
                               </div>
