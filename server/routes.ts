@@ -4739,36 +4739,68 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.get("/api/deployment/markers", async (req, res) => {
     try {
       const markersDir = path.join(__dirname, '../.deployment_markers');
+      const rootDir = path.join(__dirname, '..');
       
-      if (!fs.existsSync(markersDir)) {
-        return res.json({ markers: [] });
+      let allMarkers: any[] = [];
+
+      // Read from .deployment_markers directory (existing markers)
+      if (fs.existsSync(markersDir)) {
+        const oldFiles = fs.readdirSync(markersDir)
+          .filter((file: string) => file.startsWith('FORCE_CLEAN_DEPLOYMENT_') && file.endsWith('.txt'))
+          .map((file: string) => {
+            const filePath = path.join(markersDir, file);
+            const stats = fs.statSync(filePath);
+            const content = fs.readFileSync(filePath, 'utf8');
+            
+            // Extract description from content
+            const descMatch = content.match(/Description: (.+)/);
+            const description = descMatch ? descMatch[1] : 'No description';
+            
+            // Extract version from filename
+            const versionMatch = file.match(/v1\.0-(.+)\.txt$/);
+            const version = versionMatch ? versionMatch[1] : 'unknown';
+
+            return {
+              filename: file,
+              description: description,
+              timestamp: stats.mtime.toISOString(),
+              version: version
+            };
+          });
+        allMarkers = [...allMarkers, ...oldFiles];
       }
 
-      const files = fs.readdirSync(markersDir)
-        .filter((file: string) => file.startsWith('FORCE_CLEAN_DEPLOYMENT_') && file.endsWith('.txt'))
-        .map((file: string) => {
-          const filePath = path.join(markersDir, file);
-          const stats = fs.statSync(filePath);
-          const content = fs.readFileSync(filePath, 'utf8');
-          
-          // Extract description from content
-          const descMatch = content.match(/Description: (.+)/);
-          const description = descMatch ? descMatch[1] : 'No description';
-          
-          // Extract version from filename
-          const versionMatch = file.match(/v1\.0-(.+)\.txt$/);
-          const version = versionMatch ? versionMatch[1] : 'unknown';
+      // Read from root directory (new DEPLOYMENT_READY files)
+      if (fs.existsSync(rootDir)) {
+        const newFiles = fs.readdirSync(rootDir)
+          .filter((file: string) => file.startsWith('DEPLOYMENT_READY_v1.0.') && file.endsWith('.md'))
+          .map((file: string) => {
+            const filePath = path.join(rootDir, file);
+            const stats = fs.statSync(filePath);
+            const content = fs.readFileSync(filePath, 'utf8');
+            
+            // Extract description from content (look for first line after #)
+            const titleMatch = content.match(/# DEPLOYMENT READY v1\.0\.\d+ - (.+)/);
+            const description = titleMatch ? titleMatch[1] : 'New deployment marker';
+            
+            // Extract version from filename
+            const versionMatch = file.match(/DEPLOYMENT_READY_v1\.0\.(\d+)/);
+            const version = versionMatch ? `1.0.${versionMatch[1]}` : 'unknown';
 
-          return {
-            filename: file,
-            description: description,
-            timestamp: stats.mtime.toISOString(),
-            version: version
-          };
-        })
-        .sort((a: any, b: any) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
+            return {
+              filename: file,
+              description: description,
+              timestamp: stats.mtime.toISOString(),
+              version: version
+            };
+          });
+        allMarkers = [...allMarkers, ...newFiles];
+      }
 
-      res.json({ markers: files });
+      // Sort by timestamp (newest first)
+      allMarkers.sort((a: any, b: any) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
+
+      res.json({ markers: allMarkers });
 
     } catch (error: any) {
       res.status(500).json({

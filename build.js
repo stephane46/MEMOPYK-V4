@@ -41,8 +41,10 @@ try {
   // Create deployment marker with timestamp to force fresh deployment
   const deploymentMarker = {
     timestamp: new Date().toISOString(),
-    fix: 'Enhanced stream error debugging for production gallery video diagnosis',
-    commit: 'Added comprehensive file reading and stream error logging - v1.0.43'
+    fix: 'Complete cropping system success - database persistence, loading spinner, cross-environment sync verified',
+    commit: 'Fixed hybrid-storage database import, created missing JSON file, implemented user-requested loading feedback - v1.0.127',
+    version: '1.0.127',
+    status: 'CROPPING_SYSTEM_COMPLETE'
   };
   fs.writeFileSync('DEPLOYMENT_MARKER.json', JSON.stringify(deploymentMarker, null, 2));
   
