@@ -27,14 +27,27 @@ export default function SimpleImageCropper({
   const [imgHeight, setImgHeight] = useState(0);
   const [offsetY, setOffsetY] = useState(0);
   const [loading, setLoading] = useState(false);
+  const [aspectRatio, setAspectRatio] = useState<number | null>(null);
   // Use 50% of viewport width with reasonable limits
   const containerWidth = Math.min(window.innerWidth * 0.5, 800); // 50% viewport, max 800px
 
-  // When the image loads, measure its displayed height
+  // When the image loads, measure its displayed height and calculate aspect ratio
   const handleImageLoad = () => {
     if (!imgRef.current) return;
     const displayedHeight = imgRef.current.getBoundingClientRect().height;
     setImgHeight(displayedHeight);
+    
+    // Calculate and store aspect ratio from natural dimensions
+    const naturalWidth = imgRef.current.naturalWidth;
+    const naturalHeight = imgRef.current.naturalHeight;
+    const ratio = naturalWidth / naturalHeight;
+    setAspectRatio(ratio);
+    
+    console.log("🖼️ Image dimensions:", {
+      natural: `${naturalWidth} × ${naturalHeight}`,
+      aspectRatio: ratio.toFixed(2),
+      displayedHeight
+    });
     
     // Use initial crop settings if provided, otherwise center
     if (initialCropSettings?.position) {
@@ -180,17 +193,24 @@ export default function SimpleImageCropper({
 
         <div className="mt-6 space-y-4">
           <div className="text-sm text-gray-600">
-            <p><strong>Instructions:</strong></p>
+            <p><strong>Image Info:</strong></p>
+            {aspectRatio && (
+              <p>• Aspect ratio: <span className="font-mono font-bold text-blue-600">{aspectRatio.toFixed(2)}</span> ({aspectRatio > 1 ? 'landscape' : aspectRatio < 1 ? 'portrait' : 'square'})</p>
+            )}
+            <p>• Crop position: {((offsetY / imgHeight) * 100).toFixed(1)}% from top</p>
+          </div>
+          
+          <div className="text-sm text-gray-600">
+            <p><strong>Controls:</strong></p>
             <p>• Use ↑↓ arrow keys to move the image vertically (1% increments)</p>
             <p>• Press <strong>Enter</strong> to confirm and save</p>
             <p>• Press <strong>Escape</strong> to cancel</p>
-            <p>• Crop vertical position: {((offsetY / imgHeight) * 100).toFixed(1)}% from top</p>
           </div>
 
           <div className="flex gap-4 justify-end">
             <button
               onClick={onCancel}
-              className="px-4 py-2 text-gray-600 border border-gray-300 rounded hover:bg-gray-50"
+              className="px-4 py-2 text-gray-600 border border-gray-300 rounded hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
               disabled={loading}
             >
               Cancel
@@ -198,9 +218,19 @@ export default function SimpleImageCropper({
             <button
               onClick={generateImage}
               disabled={loading}
-              className="px-4 py-2 bg-[#D67C4A] text-white rounded hover:bg-[#C06B3F] disabled:opacity-50"
+              className="px-6 py-2 bg-[#D67C4A] text-white rounded hover:bg-[#C06B3F] disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 flex items-center gap-2 min-w-[120px] justify-center"
             >
-              {loading ? "Processing..." : "Save Crop"}
+              {loading ? (
+                <>
+                  <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                  <span>Saving...</span>
+                </>
+              ) : (
+                <>
+                  <span>✂️</span>
+                  <span>Save Crop</span>
+                </>
+              )}
             </button>
           </div>
         </div>
