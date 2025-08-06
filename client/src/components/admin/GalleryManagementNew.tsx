@@ -986,8 +986,16 @@ export default function GalleryManagementNew() {
                         {(selectedItem || isCreateMode) && (pendingPreviews.image_url_fr || selectedItem || formData.image_url_fr) ? (
                           <>
                             <img 
-                              src={pendingPreviews.image_url_fr || 
-                                   (selectedItem ? getImageUrlWithCacheBust(getThumbnailUrl(selectedItem, 'fr')) : formData.image_url_fr)}
+                              src={(() => {
+                                // HYBRID LOGIC: Always show cropped for existing items, formData for new uploads
+                                if (pendingPreviews.image_url_fr) {
+                                  return pendingPreviews.image_url_fr; // Priority 1: Fresh uploads
+                                }
+                                if (selectedItem) {
+                                  return getImageUrlWithCacheBust(getThumbnailUrl(selectedItem, 'fr')); // Priority 2: Cropped thumbnails
+                                }
+                                return formData.image_url_fr; // Priority 3: New items only
+                              })()}
                               onLoadStart={() => {
                                 const imageUrl = pendingPreviews.image_url_fr || formData.image_url_fr || 
                                   (selectedItem ? getThumbnailUrl(selectedItem, 'fr') : '');
@@ -1227,8 +1235,16 @@ export default function GalleryManagementNew() {
                           <>
                             <img 
                               key={`en-${selectedItem?.id || 'new'}-${Date.now()}`}
-                              src={pendingPreviews.image_url_en || 
-                                   (selectedItem ? getImageUrlWithCacheBust(getThumbnailUrl(selectedItem, 'en')) : formData.image_url_en)} 
+                              src={(() => {
+                                // HYBRID LOGIC: Always show cropped for existing items, formData for new uploads
+                                if (pendingPreviews.image_url_en) {
+                                  return pendingPreviews.image_url_en; // Priority 1: Fresh uploads
+                                }
+                                if (selectedItem) {
+                                  return getImageUrlWithCacheBust(getThumbnailUrl(selectedItem, 'en')); // Priority 2: Cropped thumbnails
+                                }
+                                return formData.image_url_en; // Priority 3: New items only
+                              })()} 
                               alt="Aperçu English"
                               className="w-full h-full object-contain"
                               onLoadStart={() => {
@@ -2456,6 +2472,10 @@ export default function GalleryManagementNew() {
                     queryClient.invalidateQueries({ queryKey: ['/api/gallery'] });
                     setForceRefreshKey(prev => prev + 1);
                     window.dispatchEvent(new CustomEvent('gallery-updated'));
+                    
+                    // CRITICAL: Force preview refresh by re-fetching the selected item
+                    setSelectedVideoId(null);
+                    setTimeout(() => setSelectedVideoId(selectedItem.id), 50);
                   }, 100);
                   
                   // Close modal immediately
