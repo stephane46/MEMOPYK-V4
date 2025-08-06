@@ -10,41 +10,41 @@ import { MobileEnhancedGallery } from "@/components/mobile/MobileEnhancedGallery
 import { LazyImage } from "@/components/ui/LazyImage";
 import { useNetworkStatus } from "@/hooks/useNetworkStatus";
 import { useDeviceOrientation } from "@/hooks/useDeviceOrientation";
-// Gallery item interface matching API response format (snake_case)
+// Gallery item interface using camelCase (transformed from API snake_case)
 interface GalleryItem {
   id: string | number;
-  title_en: string;
-  title_fr: string;
-  price_en: string;
-  price_fr: string;
-  source_en: string; // "80 photos & 10 videos" - top overlay
-  source_fr: string; // "80 photos et 10 vidéos" - top overlay
-  duration_en: string; // "2 minutes" - duration with film icon (up to 5 lines)
-  duration_fr: string; // "2 minutes" - duration with film icon (up to 5 lines)
-  situation_en: string; // "The Client is a wife..." - client description (up to 5 lines)
-  situation_fr: string; // "Le client est une épouse..." - client description (up to 5 lines)
-  story_en: string; // "This film shows..." - story description (up to 5 lines)
-  story_fr: string; // "Ce film montre..." - story description (up to 5 lines)
-  sorry_message_en: string; // "Sorry, we cannot show you the video at this stage"
-  sorry_message_fr: string; // "Désolé, nous ne pouvons pas vous montrer la vidéo à ce stade"
-  format_platform_en: string; // "Social Media", "Social Feed", "Professional"
-  format_platform_fr: string; // "Réseaux Sociaux", "Flux Social", "Professionnel"
-  format_type_en: string; // "Mobile Stories", "Instagram Posts", "TV & Desktop"
-  format_type_fr: string; // "Stories Mobiles", "Posts Instagram", "TV & Bureau"
-  video_url_en: string;
-  video_url_fr: string;
-  video_filename: string; // CRITICAL: timestamp-prefixed filename (1753736019450-VitaminSeaC.mp4)
-  video_width: number;
-  video_height: number;
-  video_orientation: string;
-  image_url_en: string;
-  image_url_fr: string;
-  static_image_url_en: string | null; // 300x200 cropped English thumbnail (with -C suffix)
-  static_image_url_fr: string | null; // 300x200 cropped French thumbnail (with -C suffix)
-  static_image_url: string | null; // DEPRECATED: Legacy field
-  use_same_video: boolean; // Shared mode indicator
-  order_index: number;
-  is_active: boolean;
+  titleEn: string;
+  titleFr: string;
+  priceEn: string;
+  priceFr: string;
+  sourceEn: string; // "80 photos & 10 videos" - top overlay
+  sourceFr: string; // "80 photos et 10 vidéos" - top overlay
+  durationEn: string; // "2 minutes" - duration with film icon (up to 5 lines)
+  durationFr: string; // "2 minutes" - duration with film icon (up to 5 lines)
+  situationEn: string; // "The Client is a wife..." - client description (up to 5 lines)
+  situationFr: string; // "Le client est une épouse..." - client description (up to 5 lines)
+  storyEn: string; // "This film shows..." - story description (up to 5 lines)
+  storyFr: string; // "Ce film montre..." - story description (up to 5 lines)
+  sorryMessageEn: string; // "Sorry, we cannot show you the video at this stage"
+  sorryMessageFr: string; // "Désolé, nous ne pouvons pas vous montrer la vidéo à ce stade"
+  formatPlatformEn: string; // "Social Media", "Social Feed", "Professional"
+  formatPlatformFr: string; // "Réseaux Sociaux", "Flux Social", "Professionnel"
+  formatTypeEn: string; // "Mobile Stories", "Instagram Posts", "TV & Desktop"
+  formatTypeFr: string; // "Stories Mobiles", "Posts Instagram", "TV & Bureau"
+  videoUrlEn: string;
+  videoUrlFr: string;
+  videoFilename: string; // CRITICAL: timestamp-prefixed filename (1753736019450-VitaminSeaC.mp4)
+  videoWidth: number;
+  videoHeight: number;
+  videoOrientation: string;
+  imageUrlEn: string;
+  imageUrlFr: string;
+  staticImageUrlEn: string | null; // 300x200 cropped English thumbnail (with -C suffix)
+  staticImageUrlFr: string | null; // 300x200 cropped French thumbnail (with -C suffix)
+  staticImageUrl: string | null; // DEPRECATED: Legacy field
+  useSameVideo: boolean; // Shared mode indicator
+  orderIndex: number;
+  isActive: boolean;
   lightboxVideoUrl?: string; // Infrastructure workaround URL for lightbox display
 }
 
