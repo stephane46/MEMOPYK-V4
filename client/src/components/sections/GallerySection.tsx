@@ -225,37 +225,30 @@ export default function GallerySection() {
   const t = content[language];
 
   const getImageUrl = (item: GalleryItem) => {
-    // CORRECTED PRIORITY v1.0.120: Use static crops when available (respects cropping work)
-    let imageUrl = '';
-    let filename = '';
+    console.log(`🖥️ DESKTOP getImageUrl called for item:`, { id: item.id, title_en: item.title_en, use_same_video: item.use_same_video });
+    
+    // EXACTLY match the mobile gallery logic - Use static crops when available
+    let finalUrl = '';
     
     // Priority 1: Use static crops first (these are the properly cropped, high-quality results)
     let staticImageUrl = '';
     if (item.use_same_video) {
       // Shared mode: Use EN static crop for both languages (CORRECT: use snake_case)
       staticImageUrl = item.static_image_url_en || '';
-      console.log(`🔗 PUBLIC SHARED MODE: Using EN static crop for ${language}: ${staticImageUrl} for ${item.title_en}`);
+      console.log(`🔗 DESKTOP SHARED MODE: Using EN static crop for ${language}: ${staticImageUrl} for ${item.title_en}`);
     } else {
       // Separate mode: Use language-specific static crop (CORRECT: use snake_case)
       staticImageUrl = (language === 'fr-FR' ? item.static_image_url_fr : item.static_image_url_en) || '';
-      console.log(`🌍 SEPARATE MODE: Using ${language}-specific static crop: ${staticImageUrl} for ${item.title_en}`);
+      console.log(`🌍 DESKTOP SEPARATE MODE: Using ${language}-specific static crop: ${staticImageUrl} for ${item.title_en}`);
     }
     
     if (staticImageUrl && staticImageUrl.trim() !== '') {
-      imageUrl = staticImageUrl;
-      console.log(`✂️ USING STATIC CROP (respecting cropping work) (${language}): ${imageUrl} for ${item.title_en}`);
+      finalUrl = staticImageUrl;
+      console.log(`✂️ DESKTOP USING STATIC CROP (respecting cropping work) (${language}): ${finalUrl} for ${item.title_en}`);
       
-      // If it's already a full URL, use it directly with AGGRESSIVE cache busting
-      if (imageUrl.startsWith('http')) {
-        console.log(`✂️ STATIC CROP IS FULL URL - USING DIRECTLY WITH AGGRESSIVE CACHE BYPASS`);
-        const timestamp = Date.now();
-        const random = Math.random().toString(36).substring(7);
-        const separator = imageUrl.includes('?') ? '&' : '?';
-        // AGGRESSIVE cache bypass: multiple params + headers + fragment
-        const directUrl = `${imageUrl}${separator}t=${timestamp}&r=${random}&bust=${timestamp}&nocache=${timestamp}&v=${random}&force=1#${timestamp}-${random}-bypass`;
-        console.log(`🚨 AGGRESSIVE CACHE-BYPASS URL: ${directUrl}`);
-        return directUrl;
-      }
+      // Return the clean static crop URL directly - no cache busting needed
+      console.log(`🔄 DESKTOP CLEAN URL: ${finalUrl}`);
+      return finalUrl;
       
       // Handle filename extraction for proxy
       if (imageUrl.includes('/')) {
@@ -603,6 +596,7 @@ export default function GallerySection() {
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 lg:gap-8 mb-8 sm:mb-12">
           {galleryItems.map((item, index) => {
+            console.log(`🖥️ DESKTOP GALLERY ITEM ${index}:`, item);
             const imageUrl = getImageUrl(item);
             const thumbnailUrl = imageUrl;
             console.log(`🚨 DESKTOP GALLERY URL DEBUG for ${item.title_en}:`, {
