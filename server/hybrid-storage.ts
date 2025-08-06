@@ -878,26 +878,82 @@ export class HybridStorage implements HybridStorageInterface {
   }
 
   async updateGalleryItemOrder(itemId: string | number, newOrder: number): Promise<any> {
-    console.log(`🔄 Direct order update: ${itemId} → ${newOrder}`);
+    console.log(`🔄 HYBRID ORDER UPDATE: ${itemId} → ${newOrder}`);
     
-    const items = this.loadJsonFile('gallery-items.json');
-    const itemIndex = items.findIndex((item: any) => item.id.toString() === itemId.toString());
+    // First update database for cross-environment sync
+    let dbUpdateSuccessful = false;
+    let updatedDbItem: any = null;
     
-    if (itemIndex === -1) {
-      throw new Error('Gallery item not found');
+    try {
+      const { galleryItems } = await import('../shared/schema');
+      const { eq } = await import('drizzle-orm');
+      const { db } = await import('./db');
+      
+      console.log(`💾 DATABASE UPDATE: Setting order_index to ${newOrder} for item ${itemId}`);
+      
+      const dbResult = await db.update(galleryItems)
+        .set({ 
+          orderIndex: newOrder,
+          updatedAt: new Date()
+        })
+        .where(eq(galleryItems.id, itemId.toString()))
+        .returning();
+        
+      if (dbResult.length > 0) {
+        updatedDbItem = dbResult[0];
+        dbUpdateSuccessful = true;
+        console.log(`✅ DATABASE UPDATE SUCCESS: ${updatedDbItem.titleEn} now at order ${newOrder}`);
+      }
+    } catch (error) {
+      console.error('❌ DATABASE UPDATE FAILED:', error);
     }
     
-    const item = items[itemIndex];
-    console.log(`📝 Updating ${item.title_en} from order ${item.order_index} to ${newOrder}`);
-    
-    // Simple direct order update - no shifting logic
-    item.order_index = newOrder;
-    item.updated_at = new Date().toISOString();
-    
-    this.saveJsonFile('gallery-items.json', items);
-    
-    console.log(`✅ Order updated: ${item.title_en} now at position ${newOrder}`);
-    return item;
+    // Update JSON file as backup/fallback
+    try {
+      const items = this.loadJsonFile('gallery-items.json');
+      const itemIndex = items.findIndex((item: any) => item.id.toString() === itemId.toString());
+      
+      if (itemIndex !== -1) {
+        const item = items[itemIndex];
+        console.log(`📝 JSON UPDATE: ${item.title_en} from order ${item.order_index} to ${newOrder}`);
+        
+        item.order_index = newOrder;
+        item.updated_at = new Date().toISOString();
+        
+        this.saveJsonFile('gallery-items.json', items);
+        console.log(`✅ JSON UPDATE SUCCESS: ${item.title_en} now at position ${newOrder}`);
+        
+        // Return updated item (prefer database result if available)
+        return updatedDbItem || item;
+      } else {
+        console.log('⚠️ Item not found in JSON file - this is expected in database-first mode');
+        if (dbUpdateSuccessful) {
+          // Convert database item to expected format
+          return {
+            id: updatedDbItem.id,
+            title_en: updatedDbItem.titleEn,
+            title_fr: updatedDbItem.titleFr,
+            order_index: updatedDbItem.orderIndex,
+            updated_at: updatedDbItem.updatedAt
+          };
+        } else {
+          throw new Error('Gallery item not found in both database and JSON');
+        }
+      }
+    } catch (error) {
+      if (!dbUpdateSuccessful) {
+        console.error('❌ Both database and JSON updates failed:', error);
+        throw error;
+      }
+      console.log('⚠️ JSON update failed but database update succeeded - continuing');
+      return {
+        id: updatedDbItem.id,
+        title_en: updatedDbItem.titleEn,
+        title_fr: updatedDbItem.titleFr,
+        order_index: updatedDbItem.orderIndex,
+        updated_at: updatedDbItem.updatedAt
+      };
+    }
   }
 
   async swapGalleryItemOrder(itemId1: string | number, itemId2: string | number): Promise<any> {
