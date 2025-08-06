@@ -276,6 +276,9 @@ export default function GalleryManagementNew() {
       // Shared mode: Use EN static crop for both languages (same as public site)
       staticImageUrl = item.static_image_url_en || '';
       console.log(`🔗 ADMIN SHARED MODE: Using EN static crop for ${language}: ${staticImageUrl} for ${item.title_en}`);
+      console.log(`🔍 ADMIN DEBUG - item.static_image_url_en:`, item.static_image_url_en);
+      console.log(`🔍 ADMIN DEBUG - item.image_url_en:`, item.image_url_en);
+      console.log(`🔍 ADMIN DEBUG - Should be showing -C.jpg version`);
     } else {
       // Separate mode: Use language-specific static crop
       staticImageUrl = (language === 'fr' ? item.static_image_url_fr : item.static_image_url_en) || '';
