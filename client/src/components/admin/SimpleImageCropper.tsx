@@ -69,29 +69,22 @@ export default function SimpleImageCropper({
     
     // Use initial crop settings if provided, otherwise center
     if (initialCropSettings?.position) {
-      // ULTIMATE FIX: Use stored dimensions to get the original reference size
-      const originalHeight = initialCropSettings.dimensions?.height || naturalHeight;
-      const originalCropY = (initialCropSettings.position.y / 100) * originalHeight;
-      
-      // Scale from original to current natural dimensions, then to display
-      const scaleToNatural = naturalHeight / originalHeight;
-      const naturalCropY = originalCropY * scaleToNatural;
-      const scaleToDisplay = displayedHeight / naturalHeight;
-      const initialOffset = naturalCropY * scaleToDisplay;
+      // NEW CONSISTENT LOGIC: Percentage is now always saved as natural-based
+      const naturalCropY = (initialCropSettings.position.y / 100) * naturalHeight;
+      const initialOffset = (naturalCropY / naturalHeight) * displayedHeight;
       
       const cropOverlayHeight = containerWidth / 1.5;
       const maxOffset = Math.max(0, displayedHeight - cropOverlayHeight);
       const constrainedOffset = Math.max(0, Math.min(initialOffset, maxOffset));
       
       setOffsetY(constrainedOffset);
-      console.log("🎯 ULTIMATE FIX - DIMENSION-AWARE CONVERSION:"); 
+      console.log("🎯 CONSISTENT RESTORE - NATURAL-BASED PERCENTAGE:"); 
       console.log("- Stored percentage:", `${initialCropSettings.position.y.toFixed(3)}%`);
-      console.log("- Original height (stored):", originalHeight);
-      console.log("- Natural height (current):", naturalHeight);
-      console.log("- Displayed height:", displayedHeight);
-      console.log("- Original crop Y:", originalCropY.toFixed(1));
+      console.log("- Natural height:", naturalHeight);
       console.log("- Natural crop Y:", naturalCropY.toFixed(1));
-      console.log("- Final display offset:", constrainedOffset.toFixed(1));
+      console.log("- Display height:", displayedHeight);
+      console.log("- Display offset:", initialOffset.toFixed(1));
+      console.log("- Final constrained offset:", constrainedOffset.toFixed(1));
       console.log("- Was constrained:", initialOffset !== constrainedOffset);
     } else {
       // center the crop overlay initially
@@ -142,15 +135,26 @@ export default function SimpleImageCropper({
           throw new Error("Failed to generate image blob");
         }
 
+        // Calculate percentage based on natural coordinates for consistency
+        const naturalCropY = (offsetY / displayedHeight) * naturalHeight;
+        const naturalCropPercentage = (naturalCropY / naturalHeight) * 100;
+        
         const settings: CropSettings = {
           format: "JPEG",
           method: "triple-layer-white-bg",
           quality: 1,
-          position: { x: 50, y: (offsetY / imgHeight) * 100 },
-          dimensions: { width: cropWidth, height: cropHeight },
+          position: { x: 50, y: naturalCropPercentage },
+          dimensions: { width: naturalWidth, height: naturalHeight },
           devicePixelRatio: window.devicePixelRatio || 1,
           outputSize: { width: cropWidth, height: cropHeight },
         };
+        
+        console.log("💾 SAVE DEBUG - Crop position calculation:");
+        console.log("- Display offset Y:", offsetY.toFixed(1));
+        console.log("- Display height:", displayedHeight);
+        console.log("- Natural height:", naturalHeight);
+        console.log("- Natural crop Y:", naturalCropY.toFixed(1));
+        console.log("- Percentage saved:", naturalCropPercentage.toFixed(3) + "%");
 
         onSave(blob, settings);
       }, "image/jpeg", 1.0);
