@@ -23,6 +23,12 @@ export default function SimpleImageCropper({
   onCancel,
   initialCropSettings,
 }: SimpleImageCropperProps) {
+  console.log("🚨 CROPPER DEBUG - Component loaded with:", {
+    imageUrl,
+    initialCropSettings,
+    hasInitialSettings: !!initialCropSettings
+  });
+  
   const imgRef = useRef<HTMLImageElement>(null);
   const [imgHeight, setImgHeight] = useState(0);
   const [offsetY, setOffsetY] = useState(0);
@@ -53,13 +59,22 @@ export default function SimpleImageCropper({
     if (initialCropSettings?.position) {
       // Convert percentage position back to pixel offset
       const initialOffset = (initialCropSettings.position.y / 100) * displayedHeight;
-      setOffsetY(Math.max(0, Math.min(initialOffset, displayedHeight - containerWidth / 1.5)));
-      console.log("🖼️ Image loaded with initial crop:", { displayedHeight, initialOffset, position: initialCropSettings.position });
+      const constrainedOffset = Math.max(0, Math.min(initialOffset, displayedHeight - containerWidth / 1.5));
+      setOffsetY(constrainedOffset);
+      console.log("🚨 RESTORING CROP POSITION:", { 
+        displayedHeight, 
+        initialOffsetPct: initialCropSettings.position.y,
+        initialOffsetPx: initialOffset, 
+        constrainedOffset,
+        cropBoxHeight: containerWidth / 1.5,
+        maxOffset: displayedHeight - containerWidth / 1.5,
+        position: initialCropSettings.position 
+      });
     } else {
       // center the crop overlay initially
       const centerOffset = Math.max(0, (displayedHeight - containerWidth / 1.5) / 2);
       setOffsetY(centerOffset);
-      console.log("🖼️ Image loaded:", { displayedHeight, centerOffset });
+      console.log("🚨 NO INITIAL SETTINGS - CENTERING:", { displayedHeight, centerOffset });
     }
   };
 
