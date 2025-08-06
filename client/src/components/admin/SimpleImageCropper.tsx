@@ -191,14 +191,42 @@ const SimpleImageCropper: React.FC<SimpleImageCropperProps> = ({
             const displayWidth = rect.width;
             const displayHeight = rect.height;
             
-            // Calculate crop frame dimensions for 3:2 ratio (width:height = 1:0.66)
-            // Frame spans full display width
+            // DEBUG: Log dimensions
+            console.log('🔧 CROP DEBUG:', {
+              displayWidth,
+              displayHeight,
+              imageDimensions,
+              verticalPosition
+            });
+            
+            // For 3:2 aspect ratio, let's ensure we get a proper rectangle
+            // If the image is wider than it is tall, use display height as base
             const frameWidth = displayWidth;
-            const frameHeight = displayWidth * 0.66; // height = width * 0.66 for 3:2
+            let frameHeight;
+            
+            // Make sure the frame is substantial - use a minimum height
+            if (displayHeight > displayWidth) {
+              // Portrait image: use width/1.5 for 3:2
+              frameHeight = displayWidth / 1.5;
+            } else {
+              // Landscape image: use a substantial portion of height
+              frameHeight = Math.min(displayHeight * 0.4, displayWidth / 1.5);
+            }
+            
+            // Ensure minimum height for visibility
+            frameHeight = Math.max(frameHeight, 100);
             
             // Calculate vertical position with bounds checking
-            const maxTop = displayHeight - frameHeight;
+            const maxTop = Math.max(0, displayHeight - frameHeight);
             const frameTop = Math.max(0, Math.min(maxTop, (verticalPosition / 100) * maxTop));
+            
+            console.log('🔧 CROP CALCULATIONS:', {
+              frameWidth,
+              frameHeight,
+              maxTop,
+              frameTop,
+              ratio: frameWidth / frameHeight
+            });
             
             return (
               <div 
