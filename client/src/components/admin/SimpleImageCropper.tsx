@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useRef, useEffect, useCallback } from "react";
 
 interface CropSettings {
   format: string;
@@ -38,8 +38,8 @@ export default function SimpleImageCropper({
     console.log("🖼️ Image loaded:", { displayedHeight, centerOffset });
   };
 
-  // Generate the cropped image
-  const generateImage = async () => {
+  // Generate the cropped image - memoized to prevent unnecessary re-renders
+  const generateImage = useCallback(async () => {
     if (!imgRef.current || loading) return;
 
     setLoading(true);
@@ -98,7 +98,7 @@ export default function SimpleImageCropper({
     } finally {
       setLoading(false);
     }
-  };
+  }, [offsetY, imgHeight, containerWidth, loading, onSave]);
 
   // Key handlers for panning and confirm/cancel
   useEffect(() => {
