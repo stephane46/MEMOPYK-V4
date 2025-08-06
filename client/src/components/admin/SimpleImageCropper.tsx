@@ -112,7 +112,7 @@ export default function SimpleImageCropper({
         setOffsetY((y) => Math.min(y + imgHeight * 0.01, maxOffset));
       } else if (e.key === "Enter") {
         e.preventDefault();
-        generateImage();
+        generateImage(); // now always uses latest offsetY
       } else if (e.key === "Escape") {
         e.preventDefault();
         onCancel();
@@ -120,7 +120,7 @@ export default function SimpleImageCropper({
     };
     window.addEventListener("keydown", handler);
     return () => window.removeEventListener("keydown", handler);
-  }, [imgHeight, containerWidth, onCancel]);
+  }, [imgHeight, offsetY, containerWidth, onCancel, generateImage]);
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50 p-4">
