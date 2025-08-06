@@ -56,9 +56,9 @@ export default function GallerySection() {
   const networkStatus = useNetworkStatus();
   const { orientation } = useDeviceOrientation();
 
-  // Detect mobile viewport
+  // Detect mobile viewport - ALWAYS USE DESKTOP GALLERY FOR DEBUGGING
   useEffect(() => {
-    const checkMobile = () => setIsMobile(window.innerWidth < 768);
+    const checkMobile = () => setIsMobile(false); // FORCE DESKTOP GALLERY
     checkMobile();
     window.addEventListener('resize', checkMobile);
     return () => window.removeEventListener('resize', checkMobile);
