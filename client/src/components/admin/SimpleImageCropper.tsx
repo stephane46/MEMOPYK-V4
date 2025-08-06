@@ -139,9 +139,10 @@ export default function SimpleImageCropper({
           >
             <img
               ref={imgRef}
-              src={imageUrl}
+              src={`/api/image-proxy?url=${encodeURIComponent(imageUrl)}`}
               alt="To crop"
               onLoad={handleImageLoad}
+              crossOrigin="anonymous"
               style={{
                 display: "block",
                 width: "100%",
