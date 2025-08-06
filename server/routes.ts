@@ -881,10 +881,15 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(400).json({ error: "Gallery item ID required" });
       }
 
-      // CACHE-BUSTING FILENAME: Add "-C" suffix for cropped images + base original name  
-      const originalFile = itemId.replace('gallery-', ''); // Get base filename from item ID
+      // CACHE-BUSTING FILENAME: Extract original filename and add "-C" suffix
       const language = req.body.language || 'en';
-      const baseFilename = req.body.original_filename || `image_${originalFile}`;
+      const originalFilename = req.body.original_filename || 'image';
+      
+      // Extract just the filename from URL if it's a full URL
+      let baseFilename = originalFilename;
+      if (originalFilename.includes('/')) {
+        baseFilename = originalFilename.split('/').pop() || 'image';
+      }
       
       // Remove extension and add "-C" suffix for cropped version
       const nameWithoutExt = baseFilename.replace(/\.[^/.]+$/, '');
