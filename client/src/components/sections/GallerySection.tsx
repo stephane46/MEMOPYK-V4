@@ -225,30 +225,21 @@ export default function GallerySection() {
   const t = content[language];
 
   const getImageUrl = (item: GalleryItem) => {
-    console.log(`🖥️ DESKTOP getImageUrl called for item:`, { id: item.id, title_en: item.title_en, use_same_video: item.use_same_video });
-    
-    // EXACTLY match the mobile gallery logic - Use static crops when available
-    let finalUrl = '';
-    
-    // Priority 1: Use static crops first (these are the properly cropped, high-quality results)
+    // Use static crops when available (these are the properly cropped, high-quality results)
     let staticImageUrl = '';
-    if (item.use_same_video) {
-      // Shared mode: Use EN static crop for both languages (CORRECT: use snake_case)
-      staticImageUrl = item.static_image_url_en || '';
-      console.log(`🔗 DESKTOP SHARED MODE: Using EN static crop for ${language}: ${staticImageUrl} for ${item.title_en}`);
+    if (item.useSameVideo || item.use_same_video) {
+      // Shared mode: Use EN static crop for both languages - handle both camelCase and snake_case
+      staticImageUrl = item.staticImageUrlEn || item.static_image_url_en || '';
     } else {
-      // Separate mode: Use language-specific static crop (CORRECT: use snake_case)
-      staticImageUrl = (language === 'fr-FR' ? item.static_image_url_fr : item.static_image_url_en) || '';
-      console.log(`🌍 DESKTOP SEPARATE MODE: Using ${language}-specific static crop: ${staticImageUrl} for ${item.title_en}`);
+      // Separate mode: Use language-specific static crop - handle both camelCase and snake_case
+      staticImageUrl = (language === 'fr-FR' 
+        ? (item.staticImageUrlFr || item.static_image_url_fr) 
+        : (item.staticImageUrlEn || item.static_image_url_en)) || '';
     }
     
     if (staticImageUrl && staticImageUrl.trim() !== '') {
-      finalUrl = staticImageUrl;
-      console.log(`✂️ DESKTOP USING STATIC CROP (respecting cropping work) (${language}): ${finalUrl} for ${item.title_en}`);
-      
-      // Return the clean static crop URL directly - no cache busting needed
-      console.log(`🔄 DESKTOP CLEAN URL: ${finalUrl}`);
-      return finalUrl;
+      // Return the clean static crop URL directly
+      return staticImageUrl;
       
       // Handle filename extraction for proxy
       if (imageUrl.includes('/')) {
@@ -262,12 +253,14 @@ export default function GallerySection() {
     } else {
       // Priority 2: Fallback to original images only if no static crop exists
       let originalImageUrl = '';
-      if (item.use_same_video) {
-        originalImageUrl = item.image_url_en || '';
-        console.log(`🔗 SHARED MODE FALLBACK: Using EN original for ${language} visitor: ${originalImageUrl} for ${item.title_en}`);
+      if (item.useSameVideo || item.use_same_video) {
+        originalImageUrl = item.imageUrlEn || item.image_url_en || '';
+        console.log(`🔗 SHARED MODE FALLBACK: Using EN original for ${language} visitor: ${originalImageUrl} for ${item.titleEn || item.title_en}`);
       } else {
-        originalImageUrl = (language === 'fr-FR' ? item.image_url_fr : item.image_url_en) || '';
-        console.log(`🌍 SEPARATE MODE FALLBACK: Using ${language}-specific original: ${originalImageUrl} for ${item.title_en}`);
+        originalImageUrl = (language === 'fr-FR' 
+          ? (item.imageUrlFr || item.image_url_fr) 
+          : (item.imageUrlEn || item.image_url_en)) || '';
+        console.log(`🌍 SEPARATE MODE FALLBACK: Using ${language}-specific original: ${originalImageUrl} for ${item.titleEn || item.title_en}`);
       }
       
       if (originalImageUrl && originalImageUrl.trim() !== '') {
@@ -327,7 +320,7 @@ export default function GallerySection() {
             filename = filename.split('?')[0];
           }
         } else {
-          console.log(`🖼️ NO IMAGE AVAILABLE for ${item.title_en}`);
+          console.log(`🖼️ NO IMAGE AVAILABLE for ${item.titleEn || item.title_en}`);
           return '';
         }
       }
@@ -343,46 +336,60 @@ export default function GallerySection() {
   };
 
   const getItemTitle = (item: GalleryItem) => {
-    return language === 'fr-FR' ? item.title_fr : item.title_en;
+    return language === 'fr-FR' 
+      ? (item.titleFr || item.title_fr) 
+      : (item.titleEn || item.title_en);
   };
 
   const getItemPrice = (item: GalleryItem) => {
-    return language === 'fr-FR' ? item.price_fr : item.price_en;
+    return language === 'fr-FR' 
+      ? (item.priceFr || item.price_fr) 
+      : (item.priceEn || item.price_en);
   };
 
   const getItemSource = (item: GalleryItem) => {
-    return language === 'fr-FR' ? item.source_fr : item.source_en;
+    return language === 'fr-FR' 
+      ? (item.sourceFr || item.source_fr) 
+      : (item.sourceEn || item.source_en);
   };
 
   const getItemDuration = (item: GalleryItem) => {
-    return language === 'fr-FR' ? item.duration_fr : item.duration_en;
+    return language === 'fr-FR' 
+      ? (item.durationFr || item.duration_fr) 
+      : (item.durationEn || item.duration_en);
   };
 
   const getItemSituation = (item: GalleryItem) => {
-    return language === 'fr-FR' ? item.situation_fr : item.situation_en;
+    return language === 'fr-FR' 
+      ? (item.situationFr || item.situation_fr) 
+      : (item.situationEn || item.situation_en);
   };
 
   const getItemStory = (item: GalleryItem) => {
-    return language === 'fr-FR' ? item.story_fr : item.story_en;
+    return language === 'fr-FR' 
+      ? (item.storyFr || item.story_fr) 
+      : (item.storyEn || item.story_en);
   };
 
   const getItemSorryMessage = (item: GalleryItem) => {
-    return language === 'fr-FR' ? item.sorry_message_fr : item.sorry_message_en;
+    return language === 'fr-FR' 
+      ? (item.sorryMessageFr || item.sorry_message_fr) 
+      : (item.sorryMessageEn || item.sorry_message_en);
   };
 
   const hasVideo = (item: GalleryItem, index: number) => {
     // GALLERY INDEPENDENCE FIX: All gallery items can have video functionality
     // Check video_filename field which contains the actual timestamp-prefixed filenames
-    const filename = item.video_filename || item.video_url_en || item.video_url_fr;
+    const filename = item.videoFilename || item.video_filename || item.videoUrlEn || item.video_url_en || item.videoUrlFr || item.video_url_fr;
     const hasVideoResult = filename && filename.trim() !== '';
     
     // PRODUCTION DEBUG: Log hasVideo results to identify the issue
     console.log(`🎬 hasVideo check for item ${index}:`, {
       id: item.id,
       filename,
-      videoFilename: item.video_filename,
-      videoUrlEn: item.video_url_en,
-      videoUrlFr: item.video_url_fr,
+      videoFilename: item.videoFilename || item.video_filename,
+      videoUrlEn: item.videoUrlEn || item.video_url_en,
+      videoUrlFr: item.videoUrlFr || item.video_url_fr,
       hasVideoResult
     });
     
@@ -596,19 +603,8 @@ export default function GallerySection() {
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 lg:gap-8 mb-8 sm:mb-12">
           {galleryItems.map((item, index) => {
-            console.log(`🖥️ DESKTOP GALLERY ITEM ${index}:`, item);
             const imageUrl = getImageUrl(item);
             const thumbnailUrl = imageUrl;
-            console.log(`🚨 DESKTOP GALLERY URL DEBUG for ${item.title_en}:`, {
-              imageUrl,
-              thumbnailUrl,
-              static_image_url_en: item.static_image_url_en,
-              static_image_url_fr: item.static_image_url_fr,
-              use_same_video: item.use_same_video,
-              language: language,
-              isCroppedUrl: thumbnailUrl.includes('-C.jpg'),
-              finalSrcAttribute: thumbnailUrl
-            });
             const itemHasVideo = hasVideo(item, index);
             
             // CRITICAL FIX: Cards with videos should NEVER be flipped by default
