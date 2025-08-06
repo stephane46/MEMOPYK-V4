@@ -231,19 +231,19 @@ export default function GallerySection() {
     
     // Priority 1: Use static crops first (these are the properly cropped, high-quality results)
     let staticImageUrl = '';
-    if (item.useSameVideo) {
-      // Shared mode: Use EN static crop for both languages (FIXED: use camelCase)
-      staticImageUrl = item.staticImageUrlEn || '';
-      console.log(`🔗 PUBLIC SHARED MODE: Using EN static crop for ${language}: ${staticImageUrl} for ${item.titleEn}`);
+    if (item.use_same_video) {
+      // Shared mode: Use EN static crop for both languages (CORRECT: use snake_case)
+      staticImageUrl = item.static_image_url_en || '';
+      console.log(`🔗 PUBLIC SHARED MODE: Using EN static crop for ${language}: ${staticImageUrl} for ${item.title_en}`);
     } else {
-      // Separate mode: Use language-specific static crop (FIXED: use camelCase)
-      staticImageUrl = (language === 'fr-FR' ? item.staticImageUrlFr : item.staticImageUrlEn) || '';
-      console.log(`🌍 SEPARATE MODE: Using ${language}-specific static crop: ${staticImageUrl} for ${item.titleEn}`);
+      // Separate mode: Use language-specific static crop (CORRECT: use snake_case)
+      staticImageUrl = (language === 'fr-FR' ? item.static_image_url_fr : item.static_image_url_en) || '';
+      console.log(`🌍 SEPARATE MODE: Using ${language}-specific static crop: ${staticImageUrl} for ${item.title_en}`);
     }
     
     if (staticImageUrl && staticImageUrl.trim() !== '') {
       imageUrl = staticImageUrl;
-      console.log(`✂️ USING STATIC CROP (respecting cropping work) (${language}): ${imageUrl} for ${item.titleEn}`);
+      console.log(`✂️ USING STATIC CROP (respecting cropping work) (${language}): ${imageUrl} for ${item.title_en}`);
       
       // If it's already a full URL, use it directly with AGGRESSIVE cache busting
       if (imageUrl.startsWith('http')) {
@@ -269,12 +269,12 @@ export default function GallerySection() {
     } else {
       // Priority 2: Fallback to original images only if no static crop exists
       let originalImageUrl = '';
-      if (item.useSameVideo) {
-        originalImageUrl = item.imageUrlEn || '';
-        console.log(`🔗 SHARED MODE FALLBACK: Using EN original for ${language} visitor: ${originalImageUrl} for ${item.titleEn}`);
+      if (item.use_same_video) {
+        originalImageUrl = item.image_url_en || '';
+        console.log(`🔗 SHARED MODE FALLBACK: Using EN original for ${language} visitor: ${originalImageUrl} for ${item.title_en}`);
       } else {
-        originalImageUrl = (language === 'fr-FR' ? item.imageUrlFr : item.imageUrlEn) || '';
-        console.log(`🌍 SEPARATE MODE FALLBACK: Using ${language}-specific original: ${originalImageUrl} for ${item.titleEn}`);
+        originalImageUrl = (language === 'fr-FR' ? item.image_url_fr : item.image_url_en) || '';
+        console.log(`🌍 SEPARATE MODE FALLBACK: Using ${language}-specific original: ${originalImageUrl} for ${item.title_en}`);
       }
       
       if (originalImageUrl && originalImageUrl.trim() !== '') {
@@ -303,17 +303,17 @@ export default function GallerySection() {
         }
       } else {
         // Final fallback to latest uploads (legacy)
-        const latestImageUrl = language === 'fr-FR' ? item.imageUrlFr : item.imageUrlEn;
+        const latestImageUrl = language === 'fr-FR' ? item.image_url_fr : item.image_url_en;
         
-        console.log(`🖼️ DEBUG LANGUAGE-SPECIFIC FALLBACK for ${item.titleEn}:`);
+        console.log(`🖼️ DEBUG LANGUAGE-SPECIFIC FALLBACK for ${item.title_en}:`);
         console.log(`   - Current language: ${language}`);
-        console.log(`   - item.imageUrlFr: ${item.imageUrlFr}`);
-        console.log(`   - item.imageUrlEn: ${item.imageUrlEn}`);
+        console.log(`   - item.image_url_fr: ${item.image_url_fr}`);
+        console.log(`   - item.image_url_en: ${item.image_url_en}`);
         console.log(`   - Selected latestImageUrl: ${latestImageUrl}`);
         
         if (latestImageUrl && latestImageUrl.trim() !== '') {
           imageUrl = latestImageUrl;
-          console.log(`🖼️ FALLBACK TO LATEST UPLOAD: ${imageUrl} for ${item.titleEn}`);
+          console.log(`🖼️ FALLBACK TO LATEST UPLOAD: ${imageUrl} for ${item.title_en}`);
           
           // If it's already a full URL, use it directly
           if (imageUrl.startsWith('http')) {
@@ -604,11 +604,14 @@ export default function GallerySection() {
           {galleryItems.map((item, index) => {
             const imageUrl = getImageUrl(item);
             const thumbnailUrl = imageUrl;
-            console.log(`🔍 FINAL URL DEBUG for ${item.titleEn}:`, {
+            console.log(`🚨 DESKTOP GALLERY URL DEBUG for ${item.title_en}:`, {
               imageUrl,
               thumbnailUrl,
-              staticImageUrlEn: item.staticImageUrlEn,
-              staticImageUrlFr: item.staticImageUrlFr,
+              static_image_url_en: item.static_image_url_en,
+              static_image_url_fr: item.static_image_url_fr,
+              use_same_video: item.use_same_video,
+              language: language,
+              isCroppedUrl: thumbnailUrl.includes('-C.jpg'),
               finalSrcAttribute: thumbnailUrl
             });
             const itemHasVideo = hasVideo(item, index);
