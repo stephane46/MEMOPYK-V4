@@ -34,12 +34,36 @@ export function LazyImage({
     onLoad?.(e);
   };
 
-  const handleError = () => {
+  const handleError = (e?: React.SyntheticEvent<HTMLImageElement>) => {
+    const img = e?.currentTarget;
+    console.log(`🚨 LAZY IMAGE ERROR for ${src}:`, {
+      originalSrc: src,
+      failedSrc: img?.src,
+      fallbackSrc,
+      hasError: true,
+      willUseFallback: !!fallbackSrc,
+      errorDetails: img ? {
+        naturalWidth: img.naturalWidth,
+        naturalHeight: img.naturalHeight,
+        complete: img.complete
+      } : 'No image element'
+    });
     setHasError(true);
     onError?.();
   };
 
   const currentSrc = hasError && fallbackSrc ? fallbackSrc : src;
+  
+  // Debug current src selection
+  if (src.includes('AAA_002_0000014')) {
+    console.log(`🔍 LAZY IMAGE SRC SELECTION for ${alt}:`, {
+      originalSrc: src,
+      fallbackSrc,
+      hasError,
+      currentSrc,
+      isUsingFallback: hasError && !!fallbackSrc
+    });
+  }
 
   return (
     <div
@@ -65,7 +89,15 @@ export function LazyImage({
         <img
           src={currentSrc}
           alt={alt}
-          onLoad={handleLoad}
+          onLoad={(e) => {
+            console.log(`✅ LAZY IMAGE LOADED for ${alt}:`, {
+              actualLoadedSrc: e.currentTarget.src,
+              expectedSrc: currentSrc,
+              srcMatches: e.currentTarget.src === currentSrc,
+              isCroppedVersion: e.currentTarget.src.includes('-C.jpg')
+            });
+            handleLoad(e);
+          }}
           onError={handleError}
           className={cn(
             'transition-opacity duration-300',

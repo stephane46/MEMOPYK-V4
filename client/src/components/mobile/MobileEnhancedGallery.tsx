@@ -108,19 +108,15 @@ export function MobileEnhancedGallery({
               sharedModeActive: item.useSameVideo
             });
             
-            // CACHE BUSTING: Apply same aggressive cache-busting as desktop version
+            // SIMPLIFIED APPROACH: Use clean URLs to ensure loading works
             if (baseUrl && baseUrl.trim() !== '') {
-              // If it's already a full URL, add cache-busting parameters
+              // If it's already a full URL, use it directly
               if (baseUrl.startsWith('http')) {
-                const timestamp = Date.now();
-                const random = Math.random().toString(36).substring(7);
-                const separator = baseUrl.includes('?') ? '&' : '?';
-                const cachedBustUrl = `${baseUrl}${separator}cacheBust=${timestamp}&v=${random}&nocache=1#${timestamp}-${random}`;
-                console.log(`🔄 MOBILE CACHE-BUSTED URL: ${cachedBustUrl}`);
-                return cachedBustUrl;
+                console.log(`🔄 MOBILE CLEAN URL: ${baseUrl}`);
+                return baseUrl;
               }
               
-              // If it's a filename, build the full URL with cache-busting
+              // If it's a filename, build the full URL without cache-busting
               let filename = baseUrl;
               if (baseUrl.includes('/')) {
                 filename = baseUrl.split('/').pop() || '';
@@ -129,10 +125,7 @@ export function MobileEnhancedGallery({
                 }
               }
               
-              const timestamp = Date.now();
-              const random = Math.random().toString(36).substring(7);
-              const hash = `#${timestamp}-${random}`; // Fragment identifier forces browser to treat as new resource
-              const fullUrl = `https://supabase.memopyk.org/storage/v1/object/public/memopyk-videos/${encodeURIComponent(filename)}?cacheBust=${timestamp}&v=${random}&nocache=1${hash}`;
+              const fullUrl = `https://supabase.memopyk.org/storage/v1/object/public/memopyk-videos/${encodeURIComponent(filename)}`;
               console.log(`🔄 MOBILE DIRECT CDN URL: ${fullUrl}`);
               return fullUrl;
             }
