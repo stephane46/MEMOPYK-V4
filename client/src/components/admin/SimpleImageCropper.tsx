@@ -69,20 +69,25 @@ export default function SimpleImageCropper({
     
     // Use initial crop settings if provided, otherwise center
     if (initialCropSettings?.position) {
-      // Convert percentage position back to pixel offset
-      const initialOffset = (initialCropSettings.position.y / 100) * displayedHeight;
+      // CRITICAL FIX: Use natural dimensions for percentage conversion, then scale to display
+      const naturalCropY = (initialCropSettings.position.y / 100) * naturalHeight;
+      const scaleToDisplay = displayedHeight / naturalHeight;
+      const initialOffset = naturalCropY * scaleToDisplay;
+      
       const cropOverlayHeight = containerWidth / 1.5;
       const maxOffset = Math.max(0, displayedHeight - cropOverlayHeight);
       const constrainedOffset = Math.max(0, Math.min(initialOffset, maxOffset));
       
       setOffsetY(constrainedOffset);
-      console.log("🚨 PERCENTAGE-TO-PIXEL CONVERSION DEBUG:", { 
-        positionPercent: `${initialCropSettings.position.y.toFixed(1)}%`,
+      console.log("🚨 FIXED PERCENTAGE-TO-PIXEL CONVERSION:", { 
+        storedPercent: `${initialCropSettings.position.y.toFixed(3)}%`,
+        naturalHeight: naturalHeight,
         displayedHeight: displayedHeight,
+        scaleToDisplay: scaleToDisplay.toFixed(3),
+        naturalCropY: naturalCropY.toFixed(1),
+        initialOffsetPx: initialOffset.toFixed(1),
+        finalOffsetPx: constrainedOffset.toFixed(1),
         cropOverlayHeight: cropOverlayHeight,
-        initialOffsetPx: initialOffset.toFixed(0),
-        maxOffsetPx: maxOffset.toFixed(0),
-        finalOffsetPx: constrainedOffset.toFixed(0),
         wasConstrained: initialOffset !== constrainedOffset
       });
     } else {
