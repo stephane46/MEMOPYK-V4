@@ -224,8 +224,8 @@ export default function AdminPage() {
   }, [selectedTextId, heroTexts]);
 
   // Fetch cache statistics
-  const { data: cacheStats, isLoading: cacheLoading } = useQuery<CacheStats>({
-    queryKey: ['/api/video-cache/stats'],
+  const { data: cacheStats, isLoading: cacheLoading } = useQuery<any>({
+    queryKey: ['/api/unified-cache/stats'],
     refetchInterval: 5000, // Refresh every 5 seconds
   });
 
@@ -1431,10 +1431,10 @@ export default function AdminPage() {
                       <div className="space-y-2">
                         <div className="text-sm font-medium text-gray-700">Cache Usage</div>
                         <div className="flex items-center gap-2">
-                          <Badge variant={cacheStats.sizeMB > 800 ? "destructive" : cacheStats.sizeMB > 500 ? "default" : "secondary"}>
-                            {cacheStats.sizeMB}MB / {cacheStats.maxCacheSizeMB || 'MB'}
+                          <Badge variant={cacheStats.total?.sizeMB > 800 ? "destructive" : cacheStats.total?.sizeMB > 500 ? "default" : "secondary"}>
+                            {cacheStats.total?.sizeMB}MB / {cacheStats.total?.limitMB}MB
                           </Badge>
-                          <span className="text-sm text-gray-600">({cacheStats.maxCacheSizeMB > 0 ? Math.round((cacheStats.sizeMB / cacheStats.maxCacheSizeMB) * 100) : 0}%)</span>
+                          <span className="text-sm text-gray-600">({cacheStats.total?.usagePercent || 0}%)</span>
                         </div>
                       </div>
                       <div className="space-y-2">
@@ -1457,8 +1457,8 @@ export default function AdminPage() {
                       <div className="space-y-2">
                         <div className="text-sm font-medium text-gray-700">Media Files</div>
                         <div className="flex items-center gap-2">
-                          <Badge variant="outline">{cacheStats.fileCount} files</Badge>
-                          <Badge variant="outline">290MB total</Badge>
+                          <Badge variant="outline">{cacheStats.total?.fileCount || 0} files</Badge>
+                          <Badge variant="outline">{cacheStats.total?.sizeMB || 0}MB total</Badge>
                         </div>
                       </div>
                     </div>
