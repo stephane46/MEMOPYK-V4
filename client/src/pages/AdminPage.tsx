@@ -190,6 +190,7 @@ export default function AdminPage() {
   const sidebarItems = [
     { id: 'hero-management', label: 'Vidéos Hero', icon: Video },
     { id: 'gallery', label: 'Galerie Vidéos', icon: Play },
+    { id: 'cache', label: 'Cache', icon: HardDrive },
     { id: 'faq', label: 'FAQ', icon: MessageSquare },
     { id: 'cta', label: 'Boutons CTA', icon: Zap },
     { id: 'legal-docs', label: 'Documents Légaux', icon: FileText },
@@ -1405,6 +1406,95 @@ export default function AdminPage() {
                 <p className="text-gray-600 dark:text-gray-400">Gestion des éléments de galerie portfolio - Interface améliorée</p>
               </div>
               <GalleryManagementNew key="gallery-v1.0.88" />
+            </div>
+          )}
+
+          {/* Cache Management */}
+          {activeSection === 'cache' && (
+            <div className="space-y-6">
+              <div className="mb-6">
+                <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Gestion du Cache</h2>
+                <p className="text-gray-600 dark:text-gray-400">Gestion complète du cache pour tous les médias (Vidéos Hero, Vidéos Galerie, Images)</p>
+              </div>
+              
+              {/* Cache Overview Stats */}
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+                <Card>
+                  <CardHeader className="pb-3">
+                    <CardTitle className="text-lg flex items-center gap-2">
+                      <Video className="h-5 w-5 text-blue-600" />
+                      Vidéos Hero
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <VideoCacheStatus
+                      title="Hero Videos Cache Status"
+                      description="Critical videos for homepage carousel - preloaded for instant display"
+                      videoFilenames={heroVideos.map(v => v.url_en).filter(Boolean)}
+                      showForceAllButton={false}
+                      smartCacheRefreshMutation={{
+                        mutate: () => {},
+                        isPending: false
+                      }}
+                    />
+                  </CardContent>
+                </Card>
+
+                <Card>
+                  <CardHeader className="pb-3">
+                    <CardTitle className="text-lg flex items-center gap-2">
+                      <Play className="h-5 w-5 text-green-600" />
+                      Vidéos Galerie
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <VideoCacheStatus
+                      title="Gallery Videos Cache Status"
+                      description="Portfolio gallery videos - optimized for lightbox display"
+                      videoFilenames={['PomGalleryC.mp4', 'VitaminSeaC.mp4', 'safari-1.mp4']}
+                      showForceAllButton={false}
+                      smartCacheRefreshMutation={{
+                        mutate: () => {},
+                        isPending: false
+                      }}
+                    />
+                  </CardContent>
+                </Card>
+
+                <Card>
+                  <CardHeader className="pb-3">
+                    <CardTitle className="text-lg flex items-center gap-2">
+                      <HardDrive className="h-5 w-5 text-purple-600" />
+                      Actions Globales
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="space-y-3">
+                      <p className="text-sm text-gray-600 dark:text-gray-400">
+                        Gestion complète du cache pour production
+                      </p>
+                      
+                      <Button
+                        size="sm"
+                        variant="default"
+                        onClick={() => {
+                          // This will use the mutation from VideoCacheStatus component
+                          const event = new CustomEvent('triggerBulletproofCache');
+                          window.dispatchEvent(event);
+                        }}
+                        className="w-full bg-purple-600 hover:bg-purple-700 text-white font-medium"
+                      >
+                        <Zap className="h-4 w-4 mr-2" />
+                        🚀 BULLETPROOF All Media Cache
+                      </Button>
+                      
+                      <p className="text-xs text-gray-500">
+                        Cache tous les médias (6 vidéos + 4 images) avec vérification complète
+                      </p>
+                    </div>
+                  </CardContent>
+                </Card>
+              </div>
             </div>
           )}
 

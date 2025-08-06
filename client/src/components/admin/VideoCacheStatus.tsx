@@ -53,6 +53,16 @@ export const VideoCacheStatus: React.FC<VideoCacheStatusProps> = ({
   const queryClient = useQueryClient();
   const [pendingVideos, setPendingVideos] = React.useState<Set<string>>(new Set());
 
+  // Listen for global bulletproof cache trigger
+  React.useEffect(() => {
+    const handleBulletproofCache = () => {
+      forceAllMediaMutation.mutate();
+    };
+
+    window.addEventListener('triggerBulletproofCache', handleBulletproofCache);
+    return () => window.removeEventListener('triggerBulletproofCache', handleBulletproofCache);
+  }, []);
+
   // Query cache status for specific videos
   const { data: cacheStatusData, isLoading: statusLoading, refetch: refetchStatus } = useQuery({
     queryKey: ['/api/video-cache/status', videoFilenames],
