@@ -120,7 +120,7 @@ export default function SimpleImageCropper({
     };
     window.addEventListener("keydown", handler);
     return () => window.removeEventListener("keydown", handler);
-  }, [imgHeight, containerWidth, offsetY, onCancel, generateImage]);
+  }, [imgHeight, offsetY, onCancel, generateImage]);
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50 p-4">
