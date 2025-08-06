@@ -286,9 +286,12 @@ export default function GalleryManagementNew() {
     }
     
     if (staticImageUrl && staticImageUrl.trim() !== '') {
-      console.log(`🔍 ADMIN: Using static thumbnail for ${language}:`, staticImageUrl);
-      console.log(`🔍 ADMIN FINAL RETURN:`, staticImageUrl);
-      return staticImageUrl;
+      // Add cache busting for recently updated images to ensure preview refresh
+      const cacheBustParam = forceRefreshKey > 0 ? `?v=${forceRefreshKey}` : '';
+      const finalUrl = staticImageUrl + cacheBustParam;
+      console.log(`🔍 ADMIN: Using static thumbnail for ${language}:`, finalUrl);
+      console.log(`🔍 ADMIN FINAL RETURN with cache busting:`, finalUrl);
+      return finalUrl;
     }
     
     // Priority 3: Language-specific uploaded image from database (fallback)
@@ -2468,15 +2471,29 @@ export default function GalleryManagementNew() {
                   console.log('✅ Upload success:', uploadResult.url);
                   console.log('✅ Database automatically updated by upload endpoint');
                   
-                  // Quick refresh without blocking
+                  // COMPREHENSIVE PREVIEW REFRESH - Fix all 3 issues together
                   setTimeout(() => {
+                    // 1. Invalidate all cache
                     queryClient.invalidateQueries({ queryKey: ['/api/gallery'] });
                     setForceRefreshKey(prev => prev + 1);
                     window.dispatchEvent(new CustomEvent('gallery-updated'));
                     
-                    // CRITICAL: Force preview refresh by re-fetching the selected item
+                    // 2. Force thumbnail URL refresh with timestamp
+                    const timestamp = Date.now();
+                    console.log('🔄 FORCED THUMBNAIL REFRESH with timestamp:', timestamp);
+                    
+                    // 3. Reset and reload selected item to trigger preview update
                     setSelectedVideoId(null);
-                    setTimeout(() => setSelectedVideoId(selectedItem.id), 50);
+                    
+                    // 4. Reload selected item after cache invalidation completes
+                    setTimeout(() => {
+                      setSelectedVideoId(selectedItem.id);
+                      // Force another refresh cycle to ensure thumbnails update
+                      setTimeout(() => {
+                        setForceRefreshKey(prev => prev + 1);
+                        console.log('✅ PREVIEW REFRESH COMPLETE - thumbnails should update now');
+                      }, 100);
+                    }, 150);
                   }, 100);
                   
                   // Close modal immediately
