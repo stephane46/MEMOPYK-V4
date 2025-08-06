@@ -232,36 +232,19 @@ export default function GallerySection() {
   };
 
   const getImageUrl = (item: GalleryItem) => {
-    console.group(`getImageUrl for ${item.id || item.videoId}`);
-    console.log("useSameVideo:", item.useSameVideo);
-    console.log("staticImageUrlEn:", item.staticImageUrlEn);
-    console.log("staticImageUrlFr:", item.staticImageUrlFr);
-    console.log("imageUrlEn:", item.imageUrlEn);
-    console.log("imageUrlFr:", item.imageUrlFr);
-
-    // 1) Try the cropped thumbnail:
+    // Priority: Use cropped thumbnail if available, fallback to original
     const thumb = item.useSameVideo
       ? item.staticImageUrlEn
-      : language === 'fr-FR'
-        ? item.staticImageUrlFr
-        : item.staticImageUrlEn;
-    console.log("→ selected thumb:", thumb);
-
+      : (language === 'fr-FR' ? item.staticImageUrlFr : item.staticImageUrlEn);
+    
     if (thumb) {
-      console.log("✅ returning thumb URL");
-      console.groupEnd();
       return cacheBusted(thumb);
     }
-
-    // 2) Otherwise fall back to the full-res image:
+    
+    // Fallback to original image
     const original = item.useSameVideo
       ? item.imageUrlEn
-      : language === 'fr-FR'
-        ? item.imageUrlFr
-        : item.imageUrlEn;
-    console.log("→ falling back to original:", original);
-    console.groupEnd();
-
+      : (language === 'fr-FR' ? item.imageUrlFr : item.imageUrlEn);
     return original ? cacheBusted(original) : '';
   };
 
@@ -523,6 +506,7 @@ export default function GallerySection() {
           {galleryItems.map((item, index) => {
             const imageUrl = getImageUrl(item);
             const thumbnailUrl = imageUrl;
+
             const itemHasVideo = hasVideo(item, index);
             
             // CRITICAL FIX: Cards with videos should NEVER be flipped by default
