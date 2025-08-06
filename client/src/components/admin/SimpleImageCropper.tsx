@@ -202,7 +202,7 @@ const SimpleImageCropper: React.FC<SimpleImageCropperProps> = ({
             src={imageUrl}
             alt="Image to crop"
             onLoad={handleImageLoad}
-            className="max-w-full max-h-[60vh] object-contain select-none"
+            className="w-full h-auto object-contain select-none"
             style={{ maxWidth: "800px" }}
           />
 
@@ -259,7 +259,6 @@ const SimpleImageCropper: React.FC<SimpleImageCropperProps> = ({
                     top: `${frameTop}px`,
                     zIndex: 10,
                     backgroundColor: "transparent",
-                    boxShadow: "0 0 0 9999px rgba(0, 0, 0, 0.5)",
                   }}
                 />
               );
