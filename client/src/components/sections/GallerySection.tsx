@@ -236,12 +236,12 @@ export default function GallerySection() {
   };
 
   const getImageUrl = (item: GalleryItem) => {
-    console.log("🖼 GallerySection#getImageUrl", item.videoId || item.id, {
+    console.log("🖼 GallerySection#getImageUrl", item.id, {
       useSameVideo: item.useSameVideo,
       staticImageUrlEn: item.staticImageUrlEn,
       imageUrlEn: item.imageUrlEn
     });
-    console.group(`🖼️ GallerySection#getImageUrl [id=${item.id || item.videoId}]`);
+    console.group(`🖼️ GallerySection#getImageUrl [id=${item.id}]`);
     console.log("useSameVideo:",    item.useSameVideo);
     console.log("staticImageUrlEn:", item.staticImageUrlEn);
     console.log("imageUrlEn:",       item.imageUrlEn);
@@ -553,10 +553,10 @@ export default function GallerySection() {
                           />
                           
                           {/* Top overlays - Mobile Responsive */}
-                          <div className="absolute top-2 sm:top-4 left-2 sm:left-4 right-2 sm:right-4 flex justify-between items-start gap-2">
+                          <div className="absolute top-2 sm:top-4 left-2 sm:left-4 right-2 sm:right-4 flex justify-between items-center gap-2">
                             {/* Source Overlay (1) - Mobile Optimized */}
                             {getItemSource(item) && (
-                              <div className="bg-black/70 text-white px-2 sm:px-3 py-1 sm:py-2 rounded-full text-xs sm:text-sm backdrop-blur-sm max-w-[140px] sm:max-w-none">
+                              <div className="bg-black/70 text-white px-2 sm:px-3 py-1 sm:py-2 rounded-full text-xs sm:text-sm backdrop-blur-sm max-w-[140px] sm:max-w-none flex flex-col items-center justify-center min-h-[32px] sm:min-h-[36px]">
                                 <div className="font-medium leading-tight">{getItemSource(item)}</div>
                                 <div className="text-xs text-gray-300 hidden sm:block">provided by Client</div>
                               </div>
@@ -567,9 +567,9 @@ export default function GallerySection() {
                               const format = getViewingFormat(item);
                               const IconComponent = format.icon;
                               return (
-                                <div className={`${format.color} text-white px-1.5 sm:px-2 py-1 rounded-full text-xs font-medium flex items-center gap-1 shadow-sm max-w-[120px] sm:max-w-none`}>
+                                <div className={`${format.color} text-white px-1.5 sm:px-2 py-1 rounded-full text-xs font-medium flex items-center gap-1 shadow-sm max-w-[120px] sm:max-w-none min-h-[32px] sm:min-h-[36px]`}>
                                   <IconComponent className="w-2.5 h-2.5 sm:w-3 sm:h-3 flex-shrink-0" />
-                                  <div className="min-w-0">
+                                  <div className="min-w-0 flex flex-col justify-center">
                                     <div className="font-bold leading-tight truncate text-xs sm:text-xs">{format.platform}</div>
                                     <div className="text-xs opacity-90 leading-tight truncate hidden sm:block">{format.type}</div>
                                   </div>
