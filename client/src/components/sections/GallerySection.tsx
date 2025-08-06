@@ -629,7 +629,7 @@ export default function GallerySection() {
                             key={`${item.id}-${thumbnailUrl}`} // Force reload when URL changes
                             src={thumbnailUrl}
                             alt={getItemTitle(item)}
-                            className="w-full h-full object-contain"
+                            className="w-full h-full object-cover"
                           />
                           
                           {/* Top overlays - Mobile Responsive */}
