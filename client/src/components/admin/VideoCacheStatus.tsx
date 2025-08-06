@@ -53,14 +53,23 @@ export const VideoCacheStatus: React.FC<VideoCacheStatusProps> = ({
   const queryClient = useQueryClient();
   const [pendingVideos, setPendingVideos] = React.useState<Set<string>>(new Set());
 
-  // Listen for global bulletproof cache trigger
+  // Listen for global cache triggers
   React.useEffect(() => {
     const handleBulletproofCache = () => {
       forceAllMediaMutation.mutate();
     };
 
+    const handleClearCache = () => {
+      clearCacheMutation.mutate();
+    };
+
     window.addEventListener('triggerBulletproofCache', handleBulletproofCache);
-    return () => window.removeEventListener('triggerBulletproofCache', handleBulletproofCache);
+    window.addEventListener('triggerClearCache', handleClearCache);
+    
+    return () => {
+      window.removeEventListener('triggerBulletproofCache', handleBulletproofCache);
+      window.removeEventListener('triggerClearCache', handleClearCache);
+    };
   }, []);
 
   // Query cache status for specific videos
@@ -370,12 +379,14 @@ export const VideoCacheStatus: React.FC<VideoCacheStatusProps> = ({
         </CardHeader>
       <CardContent>
         {/* Section-specific cache stats only */}
-        <div className="mb-4 p-3 bg-muted rounded-lg">
-          <div className="flex items-center justify-between text-sm">
-            <span>This Section: {cachedCount}/{totalCount} cached ({totalCount > 0 ? Math.round((cachedCount/totalCount)*100) : 0}%)</span>
-            <span className="text-muted-foreground">
+        <div className="mb-4 p-4 bg-muted rounded-lg">
+          <div className="space-y-2">
+            <div className="flex items-center justify-between text-sm font-medium">
+              <span>Section Status: {cachedCount}/{totalCount} cached ({totalCount > 0 ? Math.round((cachedCount/totalCount)*100) : 0}%)</span>
+            </div>
+            <div className="text-xs text-muted-foreground">
               Performance: ~50ms cached vs ~1500ms uncached
-            </span>
+            </div>
           </div>
         </div>
 
@@ -395,19 +406,21 @@ export const VideoCacheStatus: React.FC<VideoCacheStatusProps> = ({
                   )}
                   <div>
                     <div className="font-medium text-sm">{filename}</div>
-                    <div className="text-xs text-muted-foreground">
+                    <div className="text-xs text-muted-foreground space-y-1">
                       {isCached ? (
-                        <div className="flex items-center gap-2">
-                          <span className="text-green-600">✅ Cached (~50ms)</span>
-                          {status.size && <span>• {formatFileSize(status.size)}</span>}
-                          {status.lastModified && (
-                            <span className={`flex items-center gap-1 ${getCacheAgeColor(status.lastModified)}`}>
-                              • <Clock className="h-3 w-3" /> {formatLastModified(status.lastModified)}
-                            </span>
-                          )}
+                        <div className="space-y-1">
+                          <div className="text-green-600 font-medium">✅ Cached (~50ms)</div>
+                          <div className="flex items-center gap-3 text-xs">
+                            {status.size && <span>Size: {formatFileSize(status.size)}</span>}
+                            {status.lastModified && (
+                              <span className={`flex items-center gap-1 ${getCacheAgeColor(status.lastModified)}`}>
+                                <Clock className="h-3 w-3" /> {formatLastModified(status.lastModified)}
+                              </span>
+                            )}
+                          </div>
                         </div>
                       ) : (
-                        <span className="text-orange-600">⏳ Not Cached (~1500ms)</span>
+                        <span className="text-orange-600 font-medium">⏳ Not Cached (~1500ms)</span>
                       )}
                     </div>
                   </div>
@@ -457,73 +470,26 @@ export const VideoCacheStatus: React.FC<VideoCacheStatusProps> = ({
           </div>
         )}
 
-        {/* Cache Management Buttons */}
+        {/* Cache Management Buttons - Simplified and Consistent */}
         {totalCount > 0 && (
-          <div className="mt-6 pt-4 border-t space-y-3">
-            {/* Smart Gallery Cache Refresh Button - only show for Gallery Videos */}
+          <div className="mt-6 pt-4 border-t space-y-2">
+            {/* Only show section-specific buttons, not global ones */}
             {title === 'Gallery Videos Cache Status' && (
-              <>
-                <Button
-                  size="sm"
-                  variant="default"
-                  onClick={() => smartCacheRefreshMutation.mutate()}
-                  disabled={smartCacheRefreshMutation.isPending}
-                  className="w-full bg-blue-600 hover:bg-blue-700"
-                >
-                  {smartCacheRefreshMutation.isPending ? (
-                    <RefreshCw className="h-4 w-4 animate-spin mr-2" />
-                  ) : (
-                    <Zap className="h-4 w-4 mr-2" />
-                  )}
-                  Smart Gallery Refresh
-                </Button>
-                <Button
-                  size="sm"
-                  variant="default"
-                  onClick={() => forceCacheGalleryMutation.mutate()}
-                  disabled={forceCacheGalleryMutation.isPending}
-                  className="w-full bg-green-600 hover:bg-green-700"
-                >
-                  {forceCacheGalleryMutation.isPending ? (
-                    <Download className="h-4 w-4 animate-spin mr-2" />
-                  ) : (
-                    <Download className="h-4 w-4 mr-2" />
-                  )}
-                  Force Cache Gallery Videos
-                </Button>
-              </>
+              <Button
+                size="sm"
+                variant="default"
+                onClick={() => smartCacheRefreshMutation.mutate()}
+                disabled={smartCacheRefreshMutation.isPending}
+                className="w-full bg-blue-600 hover:bg-blue-700"
+              >
+                {smartCacheRefreshMutation.isPending ? (
+                  <RefreshCw className="h-4 w-4 animate-spin mr-2" />
+                ) : (
+                  <Zap className="h-4 w-4 mr-2" />
+                )}
+                Smart Gallery Refresh
+              </Button>
             )}
-            
-            {/* BULLETPROOF ALL MEDIA Cache Button - shows for all sections */}
-            <Button
-              size="sm"
-              variant="default"
-              onClick={() => forceAllMediaMutation.mutate()}
-              disabled={forceAllMediaMutation.isPending}
-              className="w-full bg-purple-600 hover:bg-purple-700 text-white font-medium"
-            >
-              {forceAllMediaMutation.isPending ? (
-                <RefreshCw className="h-4 w-4 animate-spin mr-2" />
-              ) : (
-                <Zap className="h-4 w-4 mr-2" />
-              )}
-              🚀 BULLETPROOF All Media Cache
-            </Button>
-            
-            <Button
-              size="sm"
-              variant="destructive"
-              onClick={() => clearCacheMutation.mutate()}
-              disabled={clearCacheMutation.isPending}
-              className="w-full"
-            >
-              {clearCacheMutation.isPending ? (
-                <RefreshCw className="h-4 w-4 animate-spin mr-2" />
-              ) : (
-                <HardDrive className="h-4 w-4 mr-2" />
-              )}
-              Clear All Cache
-            </Button>
           </div>
         )}
       </CardContent>

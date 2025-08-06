@@ -1417,14 +1417,15 @@ export default function AdminPage() {
                 <p className="text-gray-600 dark:text-gray-400">Gestion complète du cache pour tous les médias (Vidéos Hero, Vidéos Galerie, Images)</p>
               </div>
               
-              {/* Cache Overview Stats */}
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+              {/* Cache Status Overview */}
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
                 <Card>
                   <CardHeader className="pb-3">
                     <CardTitle className="text-lg flex items-center gap-2">
                       <Video className="h-5 w-5 text-blue-600" />
                       Vidéos Hero
                     </CardTitle>
+                    <CardDescription>Vidéos critiques du carrousel homepage</CardDescription>
                   </CardHeader>
                   <CardContent>
                     <VideoCacheStatus
@@ -1446,6 +1447,7 @@ export default function AdminPage() {
                       <Play className="h-5 w-5 text-green-600" />
                       Vidéos Galerie
                     </CardTitle>
+                    <CardDescription>Vidéos portfolio optimisées pour lightbox</CardDescription>
                   </CardHeader>
                   <CardContent>
                     <VideoCacheStatus
@@ -1460,41 +1462,64 @@ export default function AdminPage() {
                     />
                   </CardContent>
                 </Card>
-
-                <Card>
-                  <CardHeader className="pb-3">
-                    <CardTitle className="text-lg flex items-center gap-2">
-                      <HardDrive className="h-5 w-5 text-purple-600" />
-                      Actions Globales
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="space-y-3">
-                      <p className="text-sm text-gray-600 dark:text-gray-400">
-                        Gestion complète du cache pour production
-                      </p>
-                      
-                      <Button
-                        size="sm"
-                        variant="default"
-                        onClick={() => {
-                          // This will use the mutation from VideoCacheStatus component
-                          const event = new CustomEvent('triggerBulletproofCache');
-                          window.dispatchEvent(event);
-                        }}
-                        className="w-full bg-purple-600 hover:bg-purple-700 text-white font-medium"
-                      >
-                        <Zap className="h-4 w-4 mr-2" />
-                        🚀 BULLETPROOF All Media Cache
-                      </Button>
-                      
-                      <p className="text-xs text-gray-500">
-                        Cache tous les médias (6 vidéos + 4 images) avec vérification complète
-                      </p>
-                    </div>
-                  </CardContent>
-                </Card>
               </div>
+
+              {/* Global Cache Actions */}
+              <Card>
+                <CardHeader>
+                  <CardTitle className="text-xl flex items-center gap-2">
+                    <HardDrive className="h-6 w-6 text-purple-600" />
+                    Actions Globales du Cache
+                  </CardTitle>
+                  <CardDescription>
+                    Gestion complète du cache pour tous les médias (Hero Videos + Gallery Videos + Images)
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <Button
+                      size="lg"
+                      variant="default"
+                      onClick={() => {
+                        const event = new CustomEvent('triggerBulletproofCache');
+                        window.dispatchEvent(event);
+                      }}
+                      className="bg-purple-600 hover:bg-purple-700 text-white font-medium h-20 flex-col gap-2"
+                    >
+                      <div className="flex items-center gap-2">
+                        <Zap className="h-5 w-5" />
+                        <span className="text-lg">🚀 BULLETPROOF All Media Cache</span>
+                      </div>
+                      <span className="text-sm opacity-90">Cache tous les médias avec vérification complète</span>
+                    </Button>
+                    
+                    <Button
+                      size="lg"
+                      variant="destructive"
+                      className="h-20 flex-col gap-2"
+                      onClick={() => {
+                        // Clear cache functionality
+                        const event = new CustomEvent('triggerClearCache');
+                        window.dispatchEvent(event);
+                      }}
+                    >
+                      <div className="flex items-center gap-2">
+                        <HardDrive className="h-5 w-5" />
+                        <span className="text-lg">Clear All Cache</span>
+                      </div>
+                      <span className="text-sm opacity-90">Supprime tous les fichiers en cache</span>
+                    </Button>
+                  </div>
+                  
+                  <div className="mt-4 p-4 bg-muted rounded-lg">
+                    <div className="text-sm text-muted-foreground space-y-1">
+                      <div><strong>Contenu:</strong> 6 vidéos + 4 images (≈290MB total)</div>
+                      <div><strong>Temps de traitement:</strong> ≈14 secondes</div>
+                      <div><strong>Usage:</strong> Recommandé après chaque déploiement en production</div>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
             </div>
           )}
 
