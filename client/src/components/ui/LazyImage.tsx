@@ -34,36 +34,14 @@ export function LazyImage({
     onLoad?.(e);
   };
 
-  const handleError = (e?: React.SyntheticEvent<HTMLImageElement>) => {
-    const img = e?.currentTarget;
-    console.log(`🚨 LAZY IMAGE ERROR for ${src}:`, {
-      originalSrc: src,
-      failedSrc: img?.src,
-      fallbackSrc,
-      hasError: true,
-      willUseFallback: !!fallbackSrc,
-      errorDetails: img ? {
-        naturalWidth: img.naturalWidth,
-        naturalHeight: img.naturalHeight,
-        complete: img.complete
-      } : 'No image element'
-    });
+  const handleError = () => {
     setHasError(true);
     onError?.();
   };
 
   const currentSrc = hasError && fallbackSrc ? fallbackSrc : src;
   
-  // Debug current src selection
-  if (src.includes('AAA_002_0000014')) {
-    console.log(`🔍 LAZY IMAGE SRC SELECTION for ${alt}:`, {
-      originalSrc: src,
-      fallbackSrc,
-      hasError,
-      currentSrc,
-      isUsingFallback: hasError && !!fallbackSrc
-    });
-  }
+
 
   return (
     <div
@@ -89,17 +67,7 @@ export function LazyImage({
         <img
           src={currentSrc}
           alt={alt}
-          onLoad={(e) => {
-            console.log(`✅ ACTUAL IMAGE LOADED for ${alt}:`, {
-              actualBrowserSrc: e.currentTarget.src,
-              expectedReactSrc: currentSrc,
-              srcMatches: e.currentTarget.src === currentSrc,
-              browserLoadedCropped: e.currentTarget.src.includes('-C.jpg'),
-              reactExpectedCropped: currentSrc.includes('-C.jpg'),
-              PROBLEM: e.currentTarget.src.includes('-C.jpg') ? 'NONE - CROPPED LOADED' : 'BROWSER LOADING ORIGINAL INSTEAD OF CROPPED'
-            });
-            handleLoad(e);
-          }}
+          onLoad={handleLoad}
           onError={handleError}
           className={cn(
             'transition-opacity duration-300',
