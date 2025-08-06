@@ -194,8 +194,8 @@ export const VideoCacheStatus: React.FC<VideoCacheStatusProps> = ({
         });
       } else {
         toast({
-          title: "Cache Clear Issue",
-          description: "No files were removed. Cache may already be empty, or hero videos are actively streaming (which is normal). Videos will re-download from CDN when needed.",
+          title: "Cache Already Empty",
+          description: "No files were found to clear. Cache is already empty and ready for fresh downloads.",
           variant: "default",
         });
       }

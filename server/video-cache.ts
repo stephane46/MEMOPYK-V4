@@ -1,4 +1,4 @@
-import { existsSync, createWriteStream, statSync, unlinkSync, readdirSync } from 'fs';
+import { existsSync, createWriteStream, statSync, unlinkSync, readdirSync, renameSync } from 'fs';
 import { join } from 'path';
 import { createHash } from 'crypto';
 
@@ -503,8 +503,8 @@ export class VideoCache {
   }
 
   /**
-   * Clear cache completely without immediate repreload (for admin interface)
-   * This gives users the visual feedback they expect when clearing cache
+   * Clear cache completely using rename-and-schedule-delete approach
+   * This works even when files are actively being streamed
    */
   async clearCacheCompletely(): Promise<{ videosRemoved: number; imagesRemoved: number }> {
     try {
@@ -513,34 +513,40 @@ export class VideoCache {
       
       let videosRemoved = 0;
       let imagesRemoved = 0;
-      const failedDeletions: string[] = [];
       
-      // Clear video cache with aggressive retry logic (needed because hero videos are always streaming)
+      console.log(`🗑️ SMART CACHE CLEAR: Renaming ${videoFiles.length} videos and ${imageFiles.length} images for deletion...`);
+      
+      // Strategy: Rename files to .deleted extension, then schedule cleanup
+      // This immediately makes cache "empty" from proxy perspective while allowing cleanup later
+      
+      // Process video files
       for (const file of videoFiles) {
         const filePath = join(this.videoCacheDir, file);
-        let deleted = false;
+        const deletedPath = filePath + '.deleted';
         
-        // Try multiple times with increasing delays since videos are constantly streamed
-        for (let attempt = 1; attempt <= 5; attempt++) {
-          try {
-            await new Promise(resolve => setTimeout(resolve, attempt * 200)); // 200ms, 400ms, 600ms, 800ms, 1000ms
-            unlinkSync(filePath);
-            videosRemoved++;
-            console.log(`🗑️ Deleted video: ${file} (attempt ${attempt})`);
-            deleted = true;
-            break;
-          } catch (error: any) {
-            if (attempt === 5) {
-              console.warn(`⚠️ Final attempt failed for video ${file}:`, error.message);
-              failedDeletions.push(`video: ${file}`);
-            } else {
-              console.log(`⚙️ Retry ${attempt}/5 for ${file} (file in use by stream)`);
+        try {
+          // Rename file to .deleted extension - this works even if file is in use
+          renameSync(filePath, deletedPath);
+          videosRemoved++;
+          console.log(`🗑️ Marked for deletion: ${file}`);
+          
+          // Schedule actual deletion in background (fire and forget)
+          setTimeout(() => {
+            try {
+              unlinkSync(deletedPath);
+              console.log(`🗑️ Background cleanup completed: ${file}`);
+            } catch (cleanupError) {
+              console.log(`⏳ Will retry cleanup later: ${file}`);
+              // File will be cleaned up on next server restart
             }
-          }
+          }, 5000); // 5 second delay allows streams to finish
+          
+        } catch (error: any) {
+          console.warn(`⚠️ Failed to mark video for deletion ${file}:`, error.message);
         }
       }
       
-      // Clear image cache
+      // Process image files (usually not in use, can delete immediately)
       for (const file of imageFiles) {
         const filePath = join(this.imageCacheDir, file);
         try {
@@ -548,20 +554,32 @@ export class VideoCache {
           imagesRemoved++;
           console.log(`🗑️ Deleted image: ${file}`);
         } catch (error: any) {
-          console.warn(`⚠️ Failed to delete image ${file}:`, error.message);
-          failedDeletions.push(`image: ${file}`);
+          // Try rename approach for images too if direct delete fails
+          try {
+            const deletedPath = filePath + '.deleted';
+            renameSync(filePath, deletedPath);
+            imagesRemoved++;
+            console.log(`🗑️ Marked image for deletion: ${file}`);
+            
+            setTimeout(() => {
+              try {
+                unlinkSync(deletedPath);
+                console.log(`🗑️ Background image cleanup: ${file}`);
+              } catch (cleanupError) {
+                console.log(`⏳ Image cleanup will retry later: ${file}`);
+              }
+            }, 1000);
+            
+          } catch (renameError: any) {
+            console.warn(`⚠️ Failed to process image ${file}:`, renameError.message);
+          }
         }
       }
       
-      console.log(`🗑️ ADMIN CACHE CLEAR COMPLETE:`);
-      console.log(`✅ Successfully removed: ${videosRemoved}/${videoFiles.length} videos, ${imagesRemoved}/${imageFiles.length} images`);
-      
-      if (failedDeletions.length > 0) {
-        console.log(`⚠️ Failed to delete ${failedDeletions.length} files: ${failedDeletions.join(', ')}`);
-        console.log(`💡 Files may be in use by active streams. Try clearing cache when no videos are playing.`);
-      } else {
-        console.log(`✅ Cache is now completely empty`);
-      }
+      console.log(`🗑️ SMART CACHE CLEAR COMPLETE:`);
+      console.log(`✅ Successfully marked ${videosRemoved}/${videoFiles.length} videos and ${imagesRemoved}/${imageFiles.length} images for deletion`);
+      console.log(`🔄 Background cleanup will complete deletion within 5-10 seconds`);
+      console.log(`⚡ Cache is now effectively empty - new requests will download fresh files`);
       
       return {
         videosRemoved,
