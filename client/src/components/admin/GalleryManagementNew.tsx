@@ -248,66 +248,71 @@ export default function GalleryManagementNew() {
     return `https://supabase.memopyk.org/storage/v1/object/public/memopyk-videos/${value}`;
   };
 
-  // Helper function to get thumbnail URL with language-specific reframing support and real-time preview
+  // Helper function to get thumbnail URL - SIMPLIFIED TO FORCE -C VERSION
   const getThumbnailUrl = (item: GalleryItem | null | undefined, language: 'en' | 'fr' = 'en') => {
-    // Priority 0: Real-time pending upload preview (highest priority) - works in create mode
+    // Priority 0: Real-time pending upload preview (admin only)
     const pendingImageUrl = language === 'fr' ? pendingPreviews.image_url_fr : pendingPreviews.image_url_en;
     if (pendingImageUrl) {
-      console.log(`🔍 Using pending preview for ${language}:`, pendingImageUrl);
+      console.log(`🔍 ADMIN: Using pending preview for ${language}:`, pendingImageUrl);
       return pendingImageUrl;
     }
     
-    // Priority 1: Form data (for newly uploaded images before save) - works in create mode
+    // Priority 1: Form data (admin only - for newly uploaded images before save)
     const formImageUrl = language === 'fr' ? formData.image_url_fr : formData.image_url_en;
-    if (formImageUrl) {
-      console.log(`🔍 Using form data for ${language}:`, formImageUrl);
+    if (formImageUrl && !item) { // Only use formData if no existing item (create mode)
+      console.log(`🔍 ADMIN: Using form data for ${language}:`, formImageUrl);
       return formImageUrl;
     }
     
     if (!item) {
-      console.log(`🔍 No item provided for ${language} - returning empty`);
+      console.log(`🔍 ADMIN: No item provided for ${language} - returning empty`);
       return '';
     }
     
-    // 🔧 ALIGNMENT FIX: Use same priority AND shared mode logic as public site!
-    // Priority 2: Static crops with shared mode logic (SAME AS PUBLIC SITE)
-    let staticImageUrl = '';
+    // 🚨 FORCE ADMIN TO ALWAYS USE -C VERSION (CROPPED)
+    console.log(`🔍 ADMIN FORCE -C DEBUG:`, {
+      use_same_video: item.use_same_video,
+      static_image_url_en: item.static_image_url_en,
+      static_image_url_fr: item.static_image_url_fr,
+      image_url_en: item.image_url_en,
+      image_url_fr: item.image_url_fr
+    });
+    
+    // FORCE: Always use static cropped version (-C) if available
+    let croppedUrl = '';
     if (item.use_same_video) {
-      // Shared mode: Use EN static crop for both languages (same as public site)
-      staticImageUrl = item.static_image_url_en || '';
-      console.log(`🔗 ADMIN SHARED MODE: Using EN static crop for ${language}: ${staticImageUrl} for ${item.title_en}`);
-      console.log(`🔍 ADMIN DEBUG - item.static_image_url_en:`, item.static_image_url_en);
-      console.log(`🔍 ADMIN DEBUG - item.image_url_en:`, item.image_url_en);
-      console.log(`🔍 ADMIN DEBUG - Should be showing -C.jpg version`);
+      // Shared mode: Both languages use EN cropped version  
+      croppedUrl = item.static_image_url_en || '';
+      console.log(`🚨 ADMIN FORCE SHARED: Using EN cropped (-C): ${croppedUrl}`);
     } else {
-      // Separate mode: Use language-specific static crop
-      staticImageUrl = (language === 'fr' ? item.static_image_url_fr : item.static_image_url_en) || '';
-      console.log(`🌍 ADMIN SEPARATE MODE: Using ${language}-specific static crop: ${staticImageUrl} for ${item.title_en}`);
+      // Separate mode: Use language-specific cropped version
+      croppedUrl = (language === 'fr' ? item.static_image_url_fr : item.static_image_url_en) || '';
+      console.log(`🚨 ADMIN FORCE SEPARATE: Using ${language} cropped (-C): ${croppedUrl}`);
     }
     
-    if (staticImageUrl && staticImageUrl.trim() !== '') {
-      // Add cache busting for recently updated images to ensure preview refresh
-      const cacheBustParam = forceRefreshKey > 0 ? `?v=${forceRefreshKey}` : '';
-      const finalUrl = staticImageUrl + cacheBustParam;
-      console.log(`🔍 ADMIN: Using static thumbnail for ${language}:`, finalUrl);
-      console.log(`🔍 ADMIN FINAL RETURN with cache busting:`, finalUrl);
+    if (croppedUrl && croppedUrl.trim() !== '') {
+      const finalUrl = croppedUrl + (forceRefreshKey > 0 ? `?v=${forceRefreshKey}` : '');
+      console.log(`✅ ADMIN RETURNING CROPPED (-C): ${finalUrl}`);
       return finalUrl;
     }
     
-    // Priority 3: Language-specific uploaded image from database (fallback)
-    const imageUrl = language === 'fr' ? item.image_url_fr : item.image_url_en;
-    if (imageUrl) {
-      console.log(`🔍 ADMIN: Using database image for ${language}:`, imageUrl);
-      return imageUrl;
+    // If no cropped version exists, fallback to original (shouldn't happen for existing items)
+    const originalUrl = item.use_same_video 
+      ? item.image_url_en 
+      : (language === 'fr' ? item.image_url_fr : item.image_url_en);
+    
+    if (originalUrl) {
+      console.log(`⚠️ ADMIN FALLBACK TO ORIGINAL: ${originalUrl}`);
+      return originalUrl;
     }
     
-    // Priority 4: Legacy static image (deprecated)
+    // Legacy fallback
     if (item.static_image_url) {
-      console.log(`🔍 Using legacy static for ${language}:`, item.static_image_url);
+      console.log(`⚠️ ADMIN LEGACY: ${item.static_image_url}`);
       return item.static_image_url;
     }
     
-    console.log(`🔍 No image found for ${language}`);
+    console.log(`❌ ADMIN: No image found for ${language}`);
     return '';
   };
 
