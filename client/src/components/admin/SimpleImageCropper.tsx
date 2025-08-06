@@ -69,21 +69,29 @@ export default function SimpleImageCropper({
     
     // Use initial crop settings if provided, otherwise center
     if (initialCropSettings?.position) {
-      // BREAKTHROUGH FIX: Percentage was originally calculated from DISPLAYED height, not natural!
-      // So we convert directly: percentage * displayed height = pixel position
-      const initialOffset = (initialCropSettings.position.y / 100) * displayedHeight;
+      // ULTIMATE FIX: Use stored dimensions to get the original reference size
+      const originalHeight = initialCropSettings.dimensions?.height || naturalHeight;
+      const originalCropY = (initialCropSettings.position.y / 100) * originalHeight;
+      
+      // Scale from original to current natural dimensions, then to display
+      const scaleToNatural = naturalHeight / originalHeight;
+      const naturalCropY = originalCropY * scaleToNatural;
+      const scaleToDisplay = displayedHeight / naturalHeight;
+      const initialOffset = naturalCropY * scaleToDisplay;
       
       const cropOverlayHeight = containerWidth / 1.5;
       const maxOffset = Math.max(0, displayedHeight - cropOverlayHeight);
       const constrainedOffset = Math.max(0, Math.min(initialOffset, maxOffset));
       
       setOffsetY(constrainedOffset);
-      console.log("🎯 BREAKTHROUGH FIX - DIRECT PERCENTAGE CONVERSION:"); 
+      console.log("🎯 ULTIMATE FIX - DIMENSION-AWARE CONVERSION:"); 
       console.log("- Stored percentage:", `${initialCropSettings.position.y.toFixed(3)}%`);
+      console.log("- Original height (stored):", originalHeight);
+      console.log("- Natural height (current):", naturalHeight);
       console.log("- Displayed height:", displayedHeight);
-      console.log("- Direct calculation:", `${initialCropSettings.position.y.toFixed(3)}% × ${displayedHeight}px = ${initialOffset.toFixed(1)}px`);
-      console.log("- Final offset px:", constrainedOffset.toFixed(1));
-      console.log("- Crop overlay height:", cropOverlayHeight);
+      console.log("- Original crop Y:", originalCropY.toFixed(1));
+      console.log("- Natural crop Y:", naturalCropY.toFixed(1));
+      console.log("- Final display offset:", constrainedOffset.toFixed(1));
       console.log("- Was constrained:", initialOffset !== constrainedOffset);
     } else {
       // center the crop overlay initially
