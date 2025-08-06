@@ -337,6 +337,7 @@ export default function GalleryManagementNew() {
   const [isCreateMode, setIsCreateMode] = useState(false);
   const [cropperOpen, setCropperOpen] = useState(false);
   const [cropperLanguage, setCropperLanguage] = useState<'en' | 'fr'>('en');
+  const [cropSaving, setCropSaving] = useState(false);
   const [showFormatBadgeManager, setShowFormatBadgeManager] = useState(false);
   
   // Real-time cropping state tracking
@@ -2429,7 +2430,9 @@ export default function GalleryManagementNew() {
           <SimpleImageCropper
             imageUrl={imageUrl}
             initialCropSettings={selectedItem.cropSettings}
+            isParentSaving={cropSaving}
             onSave={async (blob: Blob, cropSettings: any) => {
+                setCropSaving(true);
                 console.log('🚀 STEP 1: CROP SAVE STARTED');
                 console.log('🚀 STEP 1a: Blob size:', blob.size, 'bytes');
                 console.log('🚀 STEP 1b: Crop settings:', cropSettings);
@@ -2551,6 +2554,7 @@ export default function GalleryManagementNew() {
                   
                   // Close modal immediately
                   setCropperOpen(false);
+                  setCropSaving(false);
                   toast({ 
                     title: "✅ Succès", 
                     description: "Image recadrée sauvegardée" 
@@ -2566,6 +2570,7 @@ export default function GalleryManagementNew() {
                   console.error('❌ ERROR STACK:', error instanceof Error ? error.stack : 'No stack');
                   
                   setCropperOpen(false);
+                  setCropSaving(false);
                   
                   // Show detailed error message
                   const errorMessage = error instanceof Error ? error.message : String(error);

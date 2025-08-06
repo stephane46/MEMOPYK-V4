@@ -15,6 +15,7 @@ interface SimpleImageCropperProps {
   onSave: (blob: Blob, settings: CropSettings) => Promise<void>;
   onCancel: () => void;
   initialCropSettings?: CropSettings;
+  isParentSaving?: boolean;
 }
 
 export default function SimpleImageCropper({
@@ -22,6 +23,7 @@ export default function SimpleImageCropper({
   onSave,
   onCancel,
   initialCropSettings,
+  isParentSaving = false,
 }: SimpleImageCropperProps) {
   console.log("🚨 URGENT DEBUG - Cropper opened with:", {
     imageUrl,
@@ -253,16 +255,16 @@ export default function SimpleImageCropper({
             <button
               onClick={onCancel}
               className="px-4 py-2 text-gray-600 border border-gray-300 rounded hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
-              disabled={loading}
+              disabled={loading || isParentSaving}
             >
               Cancel
             </button>
             <button
               onClick={generateImage}
-              disabled={loading}
+              disabled={loading || isParentSaving}
               className="px-6 py-2 bg-[#D67C4A] text-white rounded hover:bg-[#C06B3F] disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 flex items-center gap-2 min-w-[120px] justify-center"
             >
-              {loading ? (
+              {(loading || isParentSaving) ? (
                 <>
                   <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
                   <span>Saving...</span>
