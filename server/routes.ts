@@ -3863,7 +3863,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Force cache specific video (admin interface - when video updated with same name)
+  // Force cache specific video (admin interface - with bulletproof verification)
   app.post("/api/video-cache/force", async (req, res) => {
     try {
       const { filename } = req.body;
@@ -3871,38 +3871,85 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(400).json({ error: "filename is required" });
       }
       
-      console.log(`🔄 Admin-forced cache refresh for: ${filename}`);
+      console.log(`🔄 BULLETPROOF CACHE v1.0 - Admin-forced cache refresh for: ${filename}`);
       
-      // Remove from cache if exists
+      // STEP 1: Get original file timestamp to verify actual refresh
+      const cacheFilePath = videoCache.getCachedFilePath(filename);
+      let originalTimestamp = null;
+      let originalExists = false;
+      
+      if (existsSync(cacheFilePath)) {
+        const originalStats = statSync(cacheFilePath);
+        originalTimestamp = originalStats.mtime.getTime();
+        originalExists = true;
+        console.log(`📂 ORIGINAL FILE: Exists=${originalExists}, Timestamp=${new Date(originalTimestamp).toISOString()}`);
+      } else {
+        console.log(`📂 ORIGINAL FILE: Does not exist - will be fresh download`);
+      }
+      
+      // STEP 2: Remove from cache if exists
       videoCache.clearSpecificFile(filename);
+      console.log(`🗑️ CACHE CLEARED: Removed existing cache file`);
       
-      // Let the video cache handle URL construction with v1.0.11 underscore-to-space conversion
-      // Don't pass a custom URL - the downloadAndCacheVideo method will handle it properly
-      console.log(`   - Forcing re-download of: ${filename}`);
-      console.log(`   - Video cache will handle underscore-to-space conversion automatically`);
-      
-      // Download fresh copy - let video cache handle URL construction
+      // STEP 3: Download fresh copy with verification
+      console.log(`⬇️ DOWNLOAD START: Fetching fresh copy of ${filename}...`);
       await videoCache.downloadAndCacheVideo(filename);
+      console.log(`✅ DOWNLOAD COMPLETE: File downloaded to cache`);
+      
+      // STEP 4: BULLETPROOF VERIFICATION - Ensure file was actually cached
+      const postCacheExists = existsSync(cacheFilePath);
+      if (!postCacheExists) {
+        throw new Error(`CACHE VERIFICATION FAILED: File ${filename} not found after download`);
+      }
+      
+      const postCacheStats = statSync(cacheFilePath);
+      const newTimestamp = postCacheStats.mtime.getTime();
+      const newSize = postCacheStats.size;
+      
+      // STEP 5: Verify timestamp changed (or file is new)
+      const actuallyRefreshed = !originalExists || newTimestamp > originalTimestamp;
+      if (!actuallyRefreshed) {
+        throw new Error(`TIMESTAMP VERIFICATION FAILED: File timestamp didn't update (Old: ${originalTimestamp}, New: ${newTimestamp})`);
+      }
+      
+      // STEP 6: Verify file has reasonable size (not empty or corrupted)
+      if (newSize < 1000) { // Less than 1KB is likely corrupt
+        throw new Error(`SIZE VERIFICATION FAILED: File size ${newSize} bytes is too small, likely corrupt`);
+      }
+      
+      console.log(`🎯 BULLETPROOF SUCCESS: File ${filename} cached and verified`);
+      console.log(`   - File exists: ${postCacheExists}`);
+      console.log(`   - File size: ${(newSize / 1024 / 1024).toFixed(1)}MB`);
+      console.log(`   - Timestamp: ${new Date(newTimestamp).toISOString()}`);
+      console.log(`   - Actually refreshed: ${actuallyRefreshed}`);
       
       res.json({ 
         success: true, 
-        message: `Video ${filename} cached successfully`,
-        filename: filename
+        message: `Video ${filename} cached and verified successfully`,
+        filename: filename,
+        verification: {
+          exists: postCacheExists,
+          size: newSize,
+          sizeMB: `${(newSize / 1024 / 1024).toFixed(1)}MB`,
+          timestamp: new Date(newTimestamp).toISOString(),
+          actuallyRefreshed: actuallyRefreshed,
+          originalExists: originalExists
+        }
       });
     } catch (error: any) {
-      console.error(`Cache force error for ${req.body.filename}:`, error);
+      console.error(`❌ BULLETPROOF CACHE FAILED for ${req.body.filename}:`, error);
       res.status(500).json({ 
-        error: "Failed to force cache video",
+        error: "Failed to force cache video with verification",
         filename: req.body.filename,
         details: error.message
       });
     }
   });
 
-  // Force cache ALL videos (deployment startup equivalent)
+  // Force cache ALL videos (with bulletproof verification for each)
   app.post("/api/video-cache/force-all", async (req, res) => {
     try {
-      console.log(`🚀 Admin-triggered FORCE CACHE ALL videos...`);
+      console.log(`🚀 BULLETPROOF CACHE ALL v1.0 - Admin-triggered force cache all videos...`);
       
       // Get all hero videos
       const heroVideos = await hybridStorage.getHeroVideos();
@@ -3930,6 +3977,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       const cached: string[] = [];
       const errors: string[] = [];
+      const verificationResults: Array<{filename: string; success: boolean; size: number; timestamp: string}> = [];
       
       for (const filename of allVideos) {
         if (!filename || filename.trim() === '') {
@@ -3938,30 +3986,83 @@ export async function registerRoutes(app: Express): Promise<Server> {
         }
         
         try {
+          console.log(`🔄 BULLETPROOF PROCESSING: ${filename}`);
+          
+          // Get original state for verification
+          const cacheFilePath = videoCache.getCachedFilePath(filename);
+          const originalExists = existsSync(cacheFilePath);
+          let originalTimestamp = 0;
+          
+          if (originalExists) {
+            originalTimestamp = statSync(cacheFilePath).mtime.getTime();
+          }
+          
           // Force refresh: remove old cache and download fresh
           videoCache.clearSpecificFile(filename);
           await videoCache.downloadAndCacheVideo(filename);
+          
+          // BULLETPROOF VERIFICATION - Ensure file was actually cached
+          const postCacheExists = existsSync(cacheFilePath);
+          if (!postCacheExists) {
+            throw new Error(`File not found after download`);
+          }
+          
+          const postCacheStats = statSync(cacheFilePath);
+          const newTimestamp = postCacheStats.mtime.getTime();
+          const newSize = postCacheStats.size;
+          
+          // Verify timestamp changed (or file is new)
+          const actuallyRefreshed = !originalExists || newTimestamp > originalTimestamp;
+          if (!actuallyRefreshed) {
+            throw new Error(`Timestamp didn't update (Old: ${originalTimestamp}, New: ${newTimestamp})`);
+          }
+          
+          // Verify file has reasonable size (not empty or corrupted)
+          if (newSize < 1000) {
+            throw new Error(`File size ${newSize} bytes is too small`);
+          }
+          
           cached.push(filename);
-          console.log(`✅ Force cached: ${filename}`);
+          verificationResults.push({
+            filename,
+            success: true,
+            size: newSize,
+            timestamp: new Date(newTimestamp).toISOString()
+          });
+          
+          console.log(`✅ BULLETPROOF SUCCESS: ${filename} (${(newSize / 1024 / 1024).toFixed(1)}MB)`);
         } catch (error: any) {
-          errors.push(`${filename}: ${error.message}`);
-          console.error(`❌ Failed to cache ${filename}:`, error);
+          const errorMsg = `${filename}: ${error.message}`;
+          errors.push(errorMsg);
+          verificationResults.push({
+            filename,
+            success: false,
+            size: 0,
+            timestamp: new Date().toISOString()
+          });
+          console.error(`❌ BULLETPROOF FAILED for ${filename}:`, error);
         }
+      }
+      
+      console.log(`🎯 BULLETPROOF CACHE ALL COMPLETE: ${cached.length}/${allVideos.length} videos verified successfully`);
+      if (errors.length > 0) {
+        console.log(`❌ Verification failures:`, errors);
       }
       
       const stats = videoCache.getCacheStats();
       res.json({ 
-        success: true, 
-        message: `Force cached ${cached.length} videos`,
+        success: true,
+        message: `Bulletproof cached and verified ${cached.length}/${allVideos.length} videos`,
         cached: cached,
         errors: errors,
-        totalVideos: allVideos.length,
+        totalProcessed: allVideos.length,
+        verification: verificationResults,
         cacheStats: stats
       });
     } catch (error: any) {
-      console.error('Force cache all error:', error);
+      console.error('❌ BULLETPROOF CACHE ALL FATAL ERROR:', error);
       res.status(500).json({ 
-        error: "Failed to force cache all videos",
+        error: "Failed to bulletproof cache all videos",
         details: error.message
       });
     }
