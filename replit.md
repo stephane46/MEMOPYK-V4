@@ -5,7 +5,7 @@ MEMOPYK is a full-stack memory film platform designed to transform personal phot
 
 ## Recent Changes  
 - **August 6, 2025**: Fixed admin interface image display logic with hybrid solution. Admin preview sections now consistently show cropped thumbnails matching the public site, while the reframe tool shows original images with preserved crop position. Eliminated race condition where cropped thumbnails briefly appeared then got replaced by originals. After reframing, preview properly updates to show newly cropped image. Added crop settings persistence so reframe tool restores previous crop rectangle position instead of centering.
-- **August 6, 2025**: Enhanced image cropping interface with aspect ratio display and save button loading states. Cropper now shows original image aspect ratio (e.g., 1.5) with landscape/portrait/square classification. Save button displays animated spinner and "Saving..." text during processing, providing clear visual feedback to users.
+- **August 6, 2025**: Enhanced image cropping interface with aspect ratio display and save button loading states. Cropper now shows original image aspect ratio (e.g., 1.5) with landscape/portrait/square classification. Save button displays animated spinner and "Saving..." text during processing, providing clear visual feedback to users. Fixed regression in reframe functionality - crop position is now properly restored when reopening the cropper.
 
 ## User Preferences
 Preferred communication style: Simple, everyday language.

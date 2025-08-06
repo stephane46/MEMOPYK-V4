@@ -23,11 +23,6 @@ export default function SimpleImageCropper({
   onCancel,
   initialCropSettings,
 }: SimpleImageCropperProps) {
-  console.log("🚨 CROPPER DEBUG - Component loaded with:", {
-    imageUrl,
-    initialCropSettings,
-    hasInitialSettings: !!initialCropSettings
-  });
   
   const imgRef = useRef<HTMLImageElement>(null);
   const [imgHeight, setImgHeight] = useState(0);
@@ -61,20 +56,15 @@ export default function SimpleImageCropper({
       const initialOffset = (initialCropSettings.position.y / 100) * displayedHeight;
       const constrainedOffset = Math.max(0, Math.min(initialOffset, displayedHeight - containerWidth / 1.5));
       setOffsetY(constrainedOffset);
-      console.log("🚨 RESTORING CROP POSITION:", { 
-        displayedHeight, 
-        initialOffsetPct: initialCropSettings.position.y,
-        initialOffsetPx: initialOffset, 
-        constrainedOffset,
-        cropBoxHeight: containerWidth / 1.5,
-        maxOffset: displayedHeight - containerWidth / 1.5,
-        position: initialCropSettings.position 
+      console.log("🖼️ Restored crop position:", { 
+        position: `${initialCropSettings.position.y.toFixed(1)}%`,
+        offsetPx: constrainedOffset.toFixed(0)
       });
     } else {
       // center the crop overlay initially
       const centerOffset = Math.max(0, (displayedHeight - containerWidth / 1.5) / 2);
       setOffsetY(centerOffset);
-      console.log("🚨 NO INITIAL SETTINGS - CENTERING:", { displayedHeight, centerOffset });
+      console.log("🖼️ Centered crop position");
     }
   };
 
