@@ -54,12 +54,12 @@ const FormatBadgeManager: React.FC = () => {
     return 'Monitor'; // Default for desktop/professional
   };
   
-  // Predefined format badge templates
+  // Predefined format badge templates (simplified - platform is standardized)
   const [templates, setTemplates] = useState<FormatBadgeTemplate[]>([
     {
       id: '1',
-      platformEn: 'Social Media',
-      platformFr: 'Réseaux Sociaux',
+      platformEn: 'Recommended Format', // Standardized
+      platformFr: 'Format Recommandé', // Standardized
       typeEn: 'Mobile Stories',
       typeFr: 'Stories Mobiles',
       category: 'social',
@@ -67,8 +67,8 @@ const FormatBadgeManager: React.FC = () => {
     },
     {
       id: '2',
-      platformEn: 'Social Feed',
-      platformFr: 'Flux Social',
+      platformEn: 'Recommended Format', // Standardized
+      platformFr: 'Format Recommandé', // Standardized
       typeEn: 'Instagram Posts',
       typeFr: 'Posts Instagram',
       category: 'social',
@@ -76,8 +76,8 @@ const FormatBadgeManager: React.FC = () => {
     },
     {
       id: '3',
-      platformEn: 'Professional',
-      platformFr: 'Professionnel',
+      platformEn: 'Recommended Format', // Standardized
+      platformFr: 'Format Recommandé', // Standardized
       typeEn: 'TV & Desktop',
       typeFr: 'TV & Bureau',
       category: 'professional',
@@ -86,8 +86,8 @@ const FormatBadgeManager: React.FC = () => {
   ]);
 
   const [newTemplate, setNewTemplate] = useState<Omit<FormatBadgeTemplate, 'id'>>({
-    platformEn: '',
-    platformFr: '',
+    platformEn: 'Recommended Format', // Standardized - no need to edit
+    platformFr: 'Format Recommandé', // Standardized - no need to edit
     typeEn: '',
     typeFr: '',
     category: 'custom',
@@ -97,10 +97,10 @@ const FormatBadgeManager: React.FC = () => {
   const [editingTemplate, setEditingTemplate] = useState<FormatBadgeTemplate | null>(null);
 
   const handleAddTemplate = () => {
-    if (!newTemplate.platformEn || !newTemplate.typeEn) {
+    if (!newTemplate.typeEn) {
       toast({
-        title: "Erreur",
-        description: "Les champs English Platform et English Type sont requis",
+        title: "Erreur", 
+        description: "Le champ Format Type (English) est requis",
         variant: "destructive"
       });
       return;
@@ -109,14 +109,15 @@ const FormatBadgeManager: React.FC = () => {
     const template: FormatBadgeTemplate = {
       ...newTemplate,
       id: Date.now().toString(),
-      platformFr: newTemplate.platformFr || newTemplate.platformEn,
+      platformEn: 'Recommended Format', // Always standardized
+      platformFr: 'Format Recommandé',  // Always standardized
       typeFr: newTemplate.typeFr || newTemplate.typeEn
     };
 
     setTemplates([...templates, template]);
     setNewTemplate({
-      platformEn: '',
-      platformFr: '',
+      platformEn: 'Recommended Format', // Always standardized
+      platformFr: 'Format Recommandé',  // Always standardized
       typeEn: '',
       typeFr: '',
       category: 'custom',
