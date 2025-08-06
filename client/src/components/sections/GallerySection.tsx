@@ -617,7 +617,7 @@ export default function GallerySection() {
                               <IconComponent className="w-2.5 h-2.5 flex-shrink-0" />
                               <div className="min-w-0 flex flex-col justify-center">
                                 <div className="opacity-60 leading-tight truncate" style={{ fontSize: '8px' }}>{standardPlatform}</div>
-                                <div className="font-semibold leading-tight truncate hidden lg:block" style={{ fontSize: '10px' }}>{format.type}</div>
+                                <div className="font-semibold leading-tight truncate" style={{ fontSize: '10px' }}>{format.type}</div>
                               </div>
                             </div>
                           );
