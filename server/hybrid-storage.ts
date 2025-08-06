@@ -690,6 +690,7 @@ export class HybridStorage implements HybridStorageInterface {
     try {
       const { galleryItems } = await import('../shared/schema');
       const { eq } = await import('drizzle-orm');
+      const { db } = await import('./db');
       
       // Convert to database format - COMPLETE FIELD MAPPING
       const dbUpdateData: any = {};
