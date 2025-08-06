@@ -2406,18 +2406,30 @@ export default function GalleryManagementNew() {
       )}
 
       {/* Image Cropper - SimpleImageCropper handles its own modal */}
-      {selectedItem && cropperOpen && (
-        <SimpleImageCropper
-          imageUrl={getFullUrl(
-            // Priority 1: Latest uploaded image from formData (fresh uploads)
-            selectedItem.use_same_video 
-              ? (formData.image_url_en || selectedItem.image_url_en)
-              : (cropperLanguage === 'fr' 
-                ? (formData.image_url_fr || selectedItem.image_url_fr)
-                : (formData.image_url_en || selectedItem.image_url_en))
-          )}
-          initialCropSettings={selectedItem.cropSettings}
-          onSave={async (blob: Blob, cropSettings: any) => {
+      {selectedItem && cropperOpen && (() => {
+        const imageUrl = getFullUrl(
+          // Priority 1: Latest uploaded image from formData (fresh uploads)
+          selectedItem.use_same_video 
+            ? (formData.image_url_en || selectedItem.image_url_en)
+            : (cropperLanguage === 'fr' 
+              ? (formData.image_url_fr || selectedItem.image_url_fr)
+              : (formData.image_url_en || selectedItem.image_url_en))
+        );
+        
+        console.log("🚨 CROP BUTTON DEBUG - Opening cropper for:", {
+          cropperLanguage,
+          imageUrl,
+          selectedItemId: selectedItem.id,
+          selectedItemCropSettings: selectedItem.cropSettings,
+          formDataCropSettings: formData.cropSettings,
+          passedInitialCropSettings: selectedItem.cropSettings
+        });
+        
+        return (
+          <SimpleImageCropper
+            imageUrl={imageUrl}
+            initialCropSettings={selectedItem.cropSettings}
+            onSave={async (blob: Blob, cropSettings: any) => {
                 console.log('🚀 STEP 1: CROP SAVE STARTED');
                 console.log('🚀 STEP 1a: Blob size:', blob.size, 'bytes');
                 console.log('🚀 STEP 1b: Crop settings:', cropSettings);
@@ -2559,7 +2571,8 @@ export default function GalleryManagementNew() {
                 });
               }}
             />
-      )}
+        );
+      })()}
 
       {/* Format Badge Manager Section */}
       <Card className="mt-6 border-[#89BAD9] dark:border-[#2A4759]">

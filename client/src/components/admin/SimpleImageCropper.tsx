@@ -23,6 +23,15 @@ export default function SimpleImageCropper({
   onCancel,
   initialCropSettings,
 }: SimpleImageCropperProps) {
+  console.log("🚨 URGENT DEBUG - Cropper opened with:", {
+    imageUrl,
+    initialCropSettings: initialCropSettings ? {
+      position: initialCropSettings.position,
+      dimensions: initialCropSettings.dimensions,
+      method: initialCropSettings.method
+    } : null,
+    hasInitialSettings: !!initialCropSettings
+  });
   
   const imgRef = useRef<HTMLImageElement>(null);
   const [imgHeight, setImgHeight] = useState(0);
