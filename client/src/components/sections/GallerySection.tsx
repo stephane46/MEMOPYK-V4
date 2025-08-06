@@ -243,7 +243,7 @@ export default function GallerySection() {
     
     if (staticImageUrl && staticImageUrl.trim() !== '') {
       imageUrl = staticImageUrl;
-      console.log(`✂️ USING STATIC CROP (respecting cropping work) (${language}): ${imageUrl} for ${item.title_en}`);
+      console.log(`✂️ USING STATIC CROP (respecting cropping work) (${language}): ${imageUrl} for ${item.titleEn}`);
       
       // If it's already a full URL, use it directly with AGGRESSIVE cache busting
       if (imageUrl.startsWith('http')) {
