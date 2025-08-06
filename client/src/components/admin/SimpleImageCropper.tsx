@@ -1,4 +1,4 @@
-import React from 'react';
+import React from "react";
 
 interface CropSettings {
   format: string;
@@ -21,17 +21,20 @@ const SimpleImageCropper: React.FC<SimpleImageCropperProps> = ({
   imageUrl,
   onSave,
   onCancel,
-  onCropChange
+  onCropChange,
 }) => {
   // Vertical position only (0-100% of image height)
   const [verticalPosition, setVerticalPosition] = React.useState(50);
   const [imageLoaded, setImageLoaded] = React.useState(false);
   const [loading, setLoading] = React.useState(false);
-  const [imageDimensions, setImageDimensions] = React.useState<{ width: number; height: number } | null>(null);
+  const [imageDimensions, setImageDimensions] = React.useState<{
+    width: number;
+    height: number;
+  } | null>(null);
   const imageRef = React.useRef<HTMLImageElement>(null);
 
   const handleImageLoad = () => {
-    console.log('🖼️ Image loaded successfully');
+    console.log("🖼️ Image loaded successfully");
     if (imageRef.current) {
       const { naturalWidth, naturalHeight } = imageRef.current;
       console.log(`📏 Natural dimensions: ${naturalWidth}×${naturalHeight}`);
@@ -45,127 +48,146 @@ const SimpleImageCropper: React.FC<SimpleImageCropperProps> = ({
   React.useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       // Up/Down arrow keys for vertical movement in 1% increments
-      if (e.key === 'ArrowUp') {
+      if (e.key === "ArrowUp") {
         e.preventDefault();
-        setVerticalPosition(prev => Math.max(0, prev - 1));
+        setVerticalPosition((prev) => Math.max(0, prev - 1));
         onCropChange?.();
         return;
       }
-      
-      if (e.key === 'ArrowDown') {
+
+      if (e.key === "ArrowDown") {
         e.preventDefault();
-        setVerticalPosition(prev => Math.min(100, prev + 1));
+        setVerticalPosition((prev) => Math.min(100, prev + 1));
         onCropChange?.();
         return;
       }
-      
+
       // Enter key to save
-      if (e.key === 'Enter' && imageLoaded && !loading) {
+      if (e.key === "Enter" && imageLoaded && !loading) {
         e.preventDefault();
-        console.log('⌨️ Enter pressed - saving crop');
+        console.log("⌨️ Enter pressed - saving crop");
         generateImage();
         return;
       }
-      
+
       // Escape key to cancel
-      if (e.key === 'Escape') {
+      if (e.key === "Escape") {
         e.preventDefault();
-        console.log('⌨️ Escape pressed - cancelling');
+        console.log("⌨️ Escape pressed - cancelling");
         onCancel();
         return;
       }
     };
 
-    document.addEventListener('keydown', handleKeyDown);
-    return () => document.removeEventListener('keydown', handleKeyDown);
+    document.addEventListener("keydown", handleKeyDown);
+    return () => document.removeEventListener("keydown", handleKeyDown);
   }, [verticalPosition, onCropChange, imageLoaded, loading, onCancel]);
 
   const generateImage = async () => {
-    console.log('🔥 GENERATE_START: Starting crop generation');
+    console.log("🔥 GENERATE_START: Starting crop generation");
     setLoading(true);
 
     try {
-      const canvas = document.createElement('canvas');
-      const ctx = canvas.getContext('2d');
-      
+      const canvas = document.createElement("canvas");
+      const ctx = canvas.getContext("2d");
+
       if (!ctx || !imageRef.current || !imageDimensions?.width) {
-        throw new Error('Canvas or image not ready');
+        throw new Error("Canvas or image not ready");
       }
 
       const img = imageRef.current;
-      
+
       // Calculate 3:2 aspect ratio crop (width:height = 1:0.66)
       const targetAspectRatio = 1 / 0.66; // 1.515... (3:2 ratio)
       const originalWidth = imageDimensions.width;
       const originalHeight = imageDimensions.height;
-      
+
       // Crop always spans full width, height determined by 3:2 ratio
       const cropWidth = originalWidth;
       const cropHeight = cropWidth * 0.66; // height = width * 0.66
-      
-      console.log(`📐 Calculated crop size: ${cropWidth.toFixed(0)}×${cropHeight.toFixed(0)} from ${originalWidth}×${originalHeight}`);
-      
+
+      console.log(
+        `📐 Calculated crop size: ${cropWidth.toFixed(0)}×${cropHeight.toFixed(0)} from ${originalWidth}×${originalHeight}`,
+      );
+
       // Calculate vertical position (0-100% converted to pixels)
-      const cropY = Math.max(0, Math.min(originalHeight - cropHeight, (verticalPosition / 100) * (originalHeight - cropHeight)));
+      const cropY = Math.max(
+        0,
+        Math.min(
+          originalHeight - cropHeight,
+          (verticalPosition / 100) * (originalHeight - cropHeight),
+        ),
+      );
       const cropX = 0; // Always starts at left edge (full width)
-      
-      console.log(`📍 Crop position: (${cropX.toFixed(0)}, ${cropY.toFixed(0)}) from vertical position ${verticalPosition}%`);
-      
+
+      console.log(
+        `📍 Crop position: (${cropX.toFixed(0)}, ${cropY.toFixed(0)}) from vertical position ${verticalPosition}%`,
+      );
+
       // Set canvas size to crop size (maintains original quality)
       const outputWidth = Math.round(cropWidth);
       const outputHeight = Math.round(cropHeight);
-      
+
       canvas.width = outputWidth;
       canvas.height = outputHeight;
-      
+
       // Fill with white background
-      ctx.fillStyle = '#FFFFFF';
+      ctx.fillStyle = "#FFFFFF";
       ctx.fillRect(0, 0, outputWidth, outputHeight);
-      
+
       // Draw the cropped image
       ctx.drawImage(
         img,
-        cropX, cropY, cropWidth, cropHeight, // Source crop area
-        0, 0, outputWidth, outputHeight       // Destination (full canvas)
+        cropX,
+        cropY,
+        cropWidth,
+        cropHeight, // Source crop area
+        0,
+        0,
+        outputWidth,
+        outputHeight, // Destination (full canvas)
       );
-      
-      console.log('✅ Canvas drawing completed');
-      
+
+      console.log("✅ Canvas drawing completed");
+
       // Create blob with Promise to fix hanging issue
       const blob = await new Promise<Blob>((resolve, reject) => {
-        canvas.toBlob((result) => {
-          if (result) {
-            resolve(result);
-          } else {
-            reject(new Error('Failed to create image blob'));
-          }
-        }, 'image/jpeg', 0.95);
+        canvas.toBlob(
+          (result) => {
+            if (result) {
+              resolve(result);
+            } else {
+              reject(new Error("Failed to create image blob"));
+            }
+          },
+          "image/jpeg",
+          0.95,
+        );
       });
-      
+
       console.log(`📸 Created blob: ${blob.size} bytes, type: ${blob.type}`);
-      
+
       const settings = {
-        format: 'JPEG',
-        method: 'fixed-width-3-2-crop',
+        format: "JPEG",
+        method: "fixed-width-3-2-crop",
         quality: 0.95,
         position: { x: 0, y: verticalPosition }, // x always 0 (full width), y is vertical position
         dimensions: { width: cropWidth, height: cropHeight },
-        outputSize: { width: outputWidth, height: outputHeight }
+        outputSize: { width: outputWidth, height: outputHeight },
       };
-      
-      console.log('🚀 Starting upload...');
-      
+
+      console.log("🚀 Starting upload...");
+
       // Call onSave and wait for it to complete
       await onSave(blob, settings);
-      
-      console.log('✅ Upload completed successfully');
-      
+
+      console.log("✅ Upload completed successfully");
     } catch (error: any) {
-      console.error('❌ Error generating image:', error);
+      console.error("❌ Error generating image:", error);
       alert(`Crop Error: ${error?.message || error}`);
     } finally {
       setLoading(false);
-      console.log('🏁 Crop function completed');
+      console.log("🏁 Crop function completed");
     }
   };
 
@@ -173,7 +195,7 @@ const SimpleImageCropper: React.FC<SimpleImageCropperProps> = ({
     <div className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50">
       <div className="bg-white p-6 rounded-lg max-w-4xl max-h-[90vh] overflow-auto">
         <h3 className="text-xl font-semibold mb-4">Crop Image</h3>
-        
+
         <div className="relative inline-block">
           <img
             ref={imageRef}
@@ -181,79 +203,87 @@ const SimpleImageCropper: React.FC<SimpleImageCropperProps> = ({
             alt="Image to crop"
             onLoad={handleImageLoad}
             className="max-w-full max-h-[60vh] object-contain select-none"
-            style={{ maxWidth: '800px' }}
+            style={{ maxWidth: "800px" }}
           />
-          
+
           {/* Fixed crop frame: full width, 3:2 aspect ratio, vertical movement only */}
-          {imageDimensions && imageRef.current && (() => {
-            // Get actual displayed image dimensions
-            const rect = imageRef.current.getBoundingClientRect();
-            const displayWidth = rect.width;
-            const displayHeight = rect.height;
-            
-            // DEBUG: Log dimensions
-            console.log('🔧 CROP DEBUG:', {
-              displayWidth,
-              displayHeight,
-              imageDimensions,
-              verticalPosition
-            });
-            
-            // For 3:2 aspect ratio, let's ensure we get a proper rectangle
-            // If the image is wider than it is tall, use display height as base
-            const frameWidth = displayWidth;
-            let frameHeight;
-            
-            // Make sure the frame is substantial - use a minimum height
-            if (displayHeight > displayWidth) {
-              // Portrait image: use width/1.5 for 3:2
-              frameHeight = displayWidth / 1.5;
-            } else {
-              // Landscape image: use a substantial portion of height
-              frameHeight = Math.min(displayHeight * 0.4, displayWidth / 1.5);
-            }
-            
-            // Ensure minimum height for visibility
-            frameHeight = Math.max(frameHeight, 100);
-            
-            // Calculate vertical position with bounds checking
-            const maxTop = Math.max(0, displayHeight - frameHeight);
-            const frameTop = Math.max(0, Math.min(maxTop, (verticalPosition / 100) * maxTop));
-            
-            console.log('🔧 CROP CALCULATIONS:', {
-              frameWidth,
-              frameHeight,
-              maxTop,
-              frameTop,
-              ratio: frameWidth / frameHeight
-            });
-            
-            return (
-              <div 
-                className="absolute border-4 border-[#D67C4A] pointer-events-none"
-                style={{
-                  width: `${frameWidth}px`,
-                  height: `${frameHeight}px`,
-                  left: '0px',
-                  top: `${frameTop}px`,
-                  zIndex: 10,
-                  backgroundColor: 'transparent',
-                  boxShadow: '0 0 0 9999px rgba(0, 0, 0, 0.5)'
-                }}
-              />
-            );
-          })()}
+          {imageDimensions &&
+            imageRef.current &&
+            (() => {
+              // Get actual displayed image dimensions
+              const rect = imageRef.current.getBoundingClientRect();
+              const displayWidth = rect.width;
+              const displayHeight = rect.height;
+
+              // DEBUG: Log dimensions
+              console.log("🔧 CROP DEBUG:", {
+                displayWidth,
+                displayHeight,
+                imageDimensions,
+                verticalPosition,
+              });
+
+              // ALWAYS compute frame height from container width for true 3:2 ratio
+              const containerWidth = displayWidth;
+              const containerHeight = displayHeight;
+
+              // Enforce 3:2 landscape on full width: width ÷ 1.5 = height
+              const frameWidth = containerWidth;
+              const idealFrameHeight = containerWidth / 1.5; // Always width × 0.66
+
+              // Clamp frameHeight so it never exceeds the actual image height
+              const frameHeight = Math.min(idealFrameHeight, containerHeight);
+
+              // Calculate vertical position with bounds checking
+              const maxTop = Math.max(0, displayHeight - frameHeight);
+              const frameTop = Math.max(
+                0,
+                Math.min(maxTop, (verticalPosition / 100) * maxTop),
+              );
+
+              console.log("🔧 CROP CALCULATIONS:", {
+                frameWidth,
+                frameHeight,
+                maxTop,
+                frameTop,
+                ratio: frameWidth / frameHeight,
+              });
+
+              return (
+                <div
+                  className="absolute border-4 border-[#D67C4A] pointer-events-none"
+                  style={{
+                    width: `${frameWidth}px`,
+                    height: `${frameHeight}px`,
+                    left: "0px",
+                    top: `${frameTop}px`,
+                    zIndex: 10,
+                    backgroundColor: "transparent",
+                    boxShadow: "0 0 0 9999px rgba(0, 0, 0, 0.5)",
+                  }}
+                />
+              );
+            })()}
         </div>
-        
+
         <div className="mt-6 space-y-4">
           <div className="text-sm text-gray-600">
-            <p><strong>Instructions:</strong></p>
-            <p>• Use ↑↓ arrow keys to move the crop frame vertically (1% increments)</p>
-            <p>• Press <strong>Enter</strong> to confirm and save</p>
-            <p>• Press <strong>Escape</strong> to cancel</p>
+            <p>
+              <strong>Instructions:</strong>
+            </p>
+            <p>
+              • Use ↑↓ arrow keys to move the crop frame vertically (1%
+              increments)
+            </p>
+            <p>
+              • Press <strong>Enter</strong> to confirm and save
+            </p>
+            <p>
+              • Press <strong>Escape</strong> to cancel
+            </p>
             <p>• Current position: {verticalPosition}%</p>
           </div>
-          
+
           <div className="flex gap-4 justify-end">
             <button
               onClick={onCancel}
@@ -267,7 +297,7 @@ const SimpleImageCropper: React.FC<SimpleImageCropperProps> = ({
               disabled={!imageLoaded || loading}
               className="px-4 py-2 bg-[#D67C4A] text-white rounded hover:bg-[#C06B3F] disabled:opacity-50"
             >
-              {loading ? 'Processing...' : 'Save Crop'}
+              {loading ? "Processing..." : "Save Crop"}
             </button>
           </div>
         </div>
