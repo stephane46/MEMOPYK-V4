@@ -238,45 +238,30 @@ export default function GallerySection() {
     }
     
     if (staticImageUrl && staticImageUrl.trim() !== '') {
-      // Return the clean static crop URL directly
-      return staticImageUrl;
-      
-      // Handle filename extraction for proxy
-      if (imageUrl.includes('/')) {
-        filename = imageUrl.split('/').pop() || '';
-        if (filename.includes('?')) {
-          filename = filename.split('?')[0];
-        }
-      } else {
-        filename = imageUrl;
-      }
+      // Force reload of cropped images with aggressive cache busting to override browser cache
+      const timestamp = Date.now();
+      const random = Math.random().toString(36).substring(7);
+      const separator = staticImageUrl.includes('?') ? '&' : '?';
+      const cacheBustedUrl = `${staticImageUrl}${separator}crop=static&t=${timestamp}&r=${random}&force=1`;
+      return cacheBustedUrl;
     } else {
       // Priority 2: Fallback to original images only if no static crop exists
       let originalImageUrl = '';
       if (item.useSameVideo || item.use_same_video) {
         originalImageUrl = item.imageUrlEn || item.image_url_en || '';
-        console.log(`🔗 SHARED MODE FALLBACK: Using EN original for ${language} visitor: ${originalImageUrl} for ${item.titleEn || item.title_en}`);
       } else {
         originalImageUrl = (language === 'fr-FR' 
           ? (item.imageUrlFr || item.image_url_fr) 
           : (item.imageUrlEn || item.image_url_en)) || '';
-        console.log(`🌍 SEPARATE MODE FALLBACK: Using ${language}-specific original: ${originalImageUrl} for ${item.titleEn || item.title_en}`);
       }
       
       if (originalImageUrl && originalImageUrl.trim() !== '') {
-        imageUrl = originalImageUrl;
-        console.log(`🖼️ FALLBACK TO ORIGINAL (${language}): ${imageUrl} for ${item.title_en}`);
-        
-        // If it's already a full URL, use it directly with AGGRESSIVE cache busting  
-        if (imageUrl.startsWith('http')) {
-          console.log(`🖼️ ORIGINAL IS FULL URL - USING DIRECTLY WITH AGGRESSIVE CACHE BYPASS`);
+        // If it's already a full URL, use it directly with light cache busting for originals
+        if (originalImageUrl.startsWith('http')) {
           const timestamp = Date.now();
-          const random = Math.random().toString(36).substring(7);
-          const separator = imageUrl.includes('?') ? '&' : '?';
-          // AGGRESSIVE cache bypass for fallback images too
-          const directUrl = `${imageUrl}${separator}t=${timestamp}&r=${random}&bust=${timestamp}&nocache=${timestamp}&v=${random}&force=1#${timestamp}-${random}-bypass`;
-          console.log(`🚨 AGGRESSIVE CACHE-BYPASS FALLBACK URL: ${directUrl}`);
-          return directUrl;
+          const separator = originalImageUrl.includes('?') ? '&' : '?';
+          const cacheBustedUrl = `${originalImageUrl}${separator}orig=true&t=${timestamp}`;
+          return cacheBustedUrl;
         }
         
         if (imageUrl.includes('/')) {

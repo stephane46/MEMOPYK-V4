@@ -3,6 +3,9 @@
 ## Overview
 MEMOPYK is a full-stack memory film platform designed to transform personal photos and videos into cinematic memory films. Its core purpose is to offer a seamless and intuitive experience for creating and managing cherished memory films. Key capabilities include a bilingual (French/English) content management system, a professional video lightbox, robust gallery management with reliable video streaming, language-specific upload functionality, advanced image reframing tools, and real-time preview capabilities. The project aims to capture a market niche for personalized, high-quality video memories.
 
+## Recent Changes
+- **January 6, 2025**: Fixed critical desktop gallery image display issue by resolving data structure mismatch between API response (camelCase) and gallery code (snake_case). Updated all field references to handle both formats and implemented aggressive cache busting for cropped images to override browser cache. Desktop gallery now correctly displays cropped images with -C.jpg URLs matching mobile gallery behavior.
+
 ## User Preferences
 Preferred communication style: Simple, everyday language.
 
