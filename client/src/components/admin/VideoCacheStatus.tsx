@@ -205,6 +205,12 @@ export const VideoCacheStatus: React.FC<VideoCacheStatusProps> = ({
   // Force cache ALL MEDIA (videos + images) mutation  
   const forceAllMediaMutation = useMutation({
     mutationFn: async () => {
+      // Show immediate feedback
+      toast({
+        title: "BULLETPROOF Cache Starting",
+        description: "Processing all media files... This will take 15-45 seconds.",
+      });
+      
       const response = await apiRequest('/api/video-cache/force-all-media', 'POST');
       return await response.json() as {
         stats?: {
@@ -251,11 +257,19 @@ export const VideoCacheStatus: React.FC<VideoCacheStatusProps> = ({
 
   const formatLastModified = (dateString: string): string => {
     const date = new Date(dateString);
+    
+    // Validate the date
+    if (isNaN(date.getTime())) {
+      return 'Invalid date';
+    }
+    
     const now = new Date();
-    const diffHours = (now.getTime() - date.getTime()) / (1000 * 60 * 60);
+    const diffMinutes = (now.getTime() - date.getTime()) / (1000 * 60);
+    const diffHours = diffMinutes / 60;
     const diffDays = diffHours / 24;
     
-    if (diffHours < 1) return 'Just cached';
+    if (diffMinutes < 5) return 'Just cached';
+    if (diffMinutes < 60) return `${Math.floor(diffMinutes)}min ago`;
     if (diffHours < 24) return `${Math.floor(diffHours)}h ago`;
     if (diffDays < 7) return `${Math.floor(diffDays)}d ago`;
     return `${Math.floor(diffDays / 7)}w ago`;

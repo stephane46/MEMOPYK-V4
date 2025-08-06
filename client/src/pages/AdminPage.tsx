@@ -1432,18 +1432,26 @@ export default function AdminPage() {
                         <div className="text-sm font-medium text-gray-700">Cache Usage</div>
                         <div className="flex items-center gap-2">
                           <Badge variant={cacheStats.sizeMB > 800 ? "destructive" : cacheStats.sizeMB > 500 ? "default" : "secondary"}>
-                            {cacheStats.sizeMB}MB / {cacheStats.maxCacheSizeMB}MB
+                            {cacheStats.sizeMB}MB / {cacheStats.maxCacheSizeMB || 'MB'}
                           </Badge>
-                          <span className="text-sm text-gray-600">({Math.round((cacheStats.sizeMB / cacheStats.maxCacheSizeMB) * 100)}%)</span>
+                          <span className="text-sm text-gray-600">({cacheStats.maxCacheSizeMB > 0 ? Math.round((cacheStats.sizeMB / cacheStats.maxCacheSizeMB) * 100) : 0}%)</span>
                         </div>
                       </div>
                       <div className="space-y-2">
                         <div className="text-sm font-medium text-gray-700">Management</div>
                         <div className="flex items-center gap-2">
-                          <Badge variant="outline" className="bg-blue-50 text-blue-700 border-blue-300">
+                          <Button 
+                            size="sm" 
+                            variant="outline" 
+                            className="bg-blue-50 text-blue-700 border-blue-300 hover:bg-blue-100"
+                            onClick={() => {
+                              // Trigger cache clear event
+                              window.dispatchEvent(new CustomEvent('triggerClearCache'));
+                            }}
+                          >
                             <Clock className="h-3 w-3 mr-1" />
                             Manual Cleanup
-                          </Badge>
+                          </Button>
                         </div>
                       </div>
                       <div className="space-y-2">
