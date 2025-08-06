@@ -232,35 +232,25 @@ export default function GallerySection() {
   };
 
   const getImageUrl = (item: GalleryItem) => {
-    // DEBUG: Check what URLs we actually have
-    console.log(`🔍 GETIMAGEURL DEBUG for ${item.id}:`, {
-      staticImageUrlEn: item.staticImageUrlEn,
-      staticImageUrlFr: item.staticImageUrlFr,
-      imageUrlEn: item.imageUrlEn,
-      imageUrlFr: item.imageUrlFr,
-      useSameVideo: item.useSameVideo,
-      language
-    });
-    
-    // Priority: Use cropped thumbnail if available, fallback to original
+    console.group(`🖼️ GallerySection#getImageUrl [id=${item.id || item.videoId}]`);
+    console.log("useSameVideo:",    item.useSameVideo);
+    console.log("staticImageUrlEn:", item.staticImageUrlEn);
+    console.log("imageUrlEn:",       item.imageUrlEn);
+
     const thumb = item.useSameVideo
       ? item.staticImageUrlEn
       : (language === 'fr-FR' ? item.staticImageUrlFr : item.staticImageUrlEn);
-    
-    console.log(`🎯 Selected thumb URL: ${thumb}`);
-    
+    console.log("→ chosen thumb:", thumb);
+
     if (thumb) {
-      const finalUrl = cacheBusted(thumb);
-      console.log(`🚀 Final cached URL: ${finalUrl}`);
-      return finalUrl;
+      console.log("✅ returning thumb URL");
+      console.groupEnd();
+      return cacheBusted(thumb);
     }
-    
-    // Fallback to original image
-    const original = item.useSameVideo
-      ? item.imageUrlEn
-      : (language === 'fr-FR' ? item.imageUrlFr : item.imageUrlEn);
-    console.log(`⚠️ FALLBACK to original: ${original}`);
-    return original ? cacheBusted(original) : '';
+
+    console.log("🚨 falling back to original:", item.imageUrlEn);
+    console.groupEnd();
+    return item.imageUrlEn ? cacheBusted(item.imageUrlEn) : "";
   };
 
   const getItemTitle = (item: GalleryItem) => {
