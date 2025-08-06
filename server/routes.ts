@@ -881,20 +881,26 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(400).json({ error: "Gallery item ID required" });
       }
 
-      // Use unique timestamp-based naming for cache invalidation
-      const timestamp = Date.now();
+      // CACHE-BUSTING FILENAME: Add "-C" suffix for cropped images + base original name  
+      const originalFile = itemId.replace('gallery-', ''); // Get base filename from item ID
       const language = req.body.language || 'en';
-      const filename = `static_${language}_${timestamp}.jpg`;
+      const baseFilename = req.body.original_filename || `image_${originalFile}`;
+      
+      // Remove extension and add "-C" suffix for cropped version
+      const nameWithoutExt = baseFilename.replace(/\.[^/.]+$/, '');
+      const filename = `${nameWithoutExt}-C.jpg`;
+      
+      console.log(`🔄 CROPPED IMAGE NAMING: ${baseFilename} → ${filename} (with -C suffix)`);
 
-      // First, delete the old file to ensure clean CDN cache invalidation
+      // Always delete any existing cropped version to force cache refresh
       const { error: deleteError } = await supabase.storage
         .from('memopyk-videos')
         .remove([filename]);
       
       if (deleteError && deleteError.message !== 'The resource was not found') {
-        console.log(`⚠️ Could not delete old thumbnail: ${deleteError.message}`);
+        console.log(`⚠️ Could not delete old cropped image: ${deleteError.message}`);
       } else {
-        console.log(`🗑️ Deleted old thumbnail: ${filename}`);
+        console.log(`🗑️ Deleted old cropped image: ${filename} (fresh cache)`);
       }
 
       console.log(`📤 Uploading static image: ${filename} (300x200 PNG) - Fresh upload`);

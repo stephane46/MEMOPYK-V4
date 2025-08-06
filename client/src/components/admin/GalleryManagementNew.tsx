@@ -2412,24 +2412,39 @@ export default function GalleryManagementNew() {
                   const uploadFormData = new FormData();
                   console.log('🚀 STEP 2b: FormData created');
                   
-                  const filename = `static_${cropperLanguage}_${Date.now()}.jpg`;
-                  console.log('🚀 STEP 2c: Filename generated:', filename);
+                  // CACHE-BUSTING: Extract original filename and use -C suffix approach
+                  const originalImageUrl = selectedItem.use_same_video 
+                    ? (formData.image_url_en || selectedItem.image_url_en)
+                    : (cropperLanguage === 'fr' 
+                      ? (formData.image_url_fr || selectedItem.image_url_fr)
+                      : (formData.image_url_en || selectedItem.image_url_en));
+                  
+                  const originalFilename = originalImageUrl.split('/').pop() || `item_${selectedItem.id}`;
+                  console.log('🔄 CACHE-BUSTING APPROACH: Original filename:', originalFilename);
+                  
+                  // Use original base name with -C suffix (server will handle the exact naming)
+                  const baseFilename = originalFilename.replace(/\.[^/.]+$/, ''); // Remove extension
+                  const filename = `${baseFilename}-C.jpg`;
+                  console.log('🚀 STEP 2c: Cropped filename generated:', filename);
                   
                   await new Promise(resolve => setTimeout(resolve, 0));
                   console.log('🚀 STEP 2d: Second yield complete');
                   
-                  console.log('🚀 STEP 3: Appending file to FormData...');
-                  uploadFormData.append('file', blob, filename);
+                  console.log('🚀 STEP 3: Appending image to FormData...');
+                  uploadFormData.append('image', blob, filename);
                   console.log('🚀 STEP 3a: File appended successfully');
                   
                   await new Promise(resolve => setTimeout(resolve, 0));
                   console.log('🚀 STEP 3b: Third yield complete');
                   
                   uploadFormData.append('language', cropperLanguage);
-                  console.log('🚀 STEP 3c: Language appended successfully');
+                  uploadFormData.append('original_filename', originalFilename);
+                  uploadFormData.append('item_id', selectedItem.id.toString());
+                  uploadFormData.append('crop_settings', JSON.stringify(cropSettings));
+                  console.log('🚀 STEP 3c: Language, original filename, item_id, and crop settings appended successfully');
                   
-                  console.log('🚀 STEP 4: Starting fetch request...');
-                  const uploadResponse = await fetch('/api/upload/image', {
+                  console.log('🚀 STEP 4: Starting static image upload request...');
+                  const uploadResponse = await fetch('/api/gallery/upload-static-image', {
                     method: 'POST',
                     body: uploadFormData
                   });
@@ -2441,35 +2456,7 @@ export default function GalleryManagementNew() {
                   
                   const uploadResult = await uploadResponse.json();
                   console.log('✅ Upload success:', uploadResult.url);
-                  
-                  // Update database with timeout
-                  const updateData = selectedItem.use_same_video 
-                    ? {
-                        static_image_url_fr: uploadResult.url,
-                        static_image_url_en: uploadResult.url,
-                        cropSettings: cropSettings
-                      }
-                    : {
-                        [cropperLanguage === 'fr' ? 'static_image_url_fr' : 'static_image_url_en']: uploadResult.url,
-                        cropSettings: cropSettings
-                      };
-                  
-                  const updateController = new AbortController();
-                  const updateTimeout = setTimeout(() => updateController.abort(), 5000); // 5 second timeout
-                  
-                  const updateResponse = await fetch(`/api/gallery/${selectedItem.id}`, {
-                    method: 'PATCH',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(updateData),
-                    signal: updateController.signal
-                  });
-                  clearTimeout(updateTimeout);
-                  
-                  if (!updateResponse.ok) {
-                    throw new Error(`Database update failed: ${updateResponse.status}`);
-                  }
-                  
-                  console.log('✅ Database updated');
+                  console.log('✅ Database automatically updated by upload endpoint');
                   
                   // Quick refresh without blocking
                   setTimeout(() => {
