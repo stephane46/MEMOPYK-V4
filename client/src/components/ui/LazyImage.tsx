@@ -90,11 +90,13 @@ export function LazyImage({
           src={currentSrc}
           alt={alt}
           onLoad={(e) => {
-            console.log(`✅ LAZY IMAGE LOADED for ${alt}:`, {
-              actualLoadedSrc: e.currentTarget.src,
-              expectedSrc: currentSrc,
+            console.log(`✅ ACTUAL IMAGE LOADED for ${alt}:`, {
+              actualBrowserSrc: e.currentTarget.src,
+              expectedReactSrc: currentSrc,
               srcMatches: e.currentTarget.src === currentSrc,
-              isCroppedVersion: e.currentTarget.src.includes('-C.jpg')
+              browserLoadedCropped: e.currentTarget.src.includes('-C.jpg'),
+              reactExpectedCropped: currentSrc.includes('-C.jpg'),
+              PROBLEM: e.currentTarget.src.includes('-C.jpg') ? 'NONE - CROPPED LOADED' : 'BROWSER LOADING ORIGINAL INSTEAD OF CROPPED'
             });
             handleLoad(e);
           }}
