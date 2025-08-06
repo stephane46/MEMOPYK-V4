@@ -1417,6 +1417,50 @@ export default function AdminPage() {
                 <p className="text-gray-600 dark:text-gray-400">Gestion complète du cache pour tous les médias (Vidéos Hero, Vidéos Galerie, Images)</p>
               </div>
               
+              {/* Storage Management Overview */}
+              {cacheStats && (
+                <Card className="border-2 border-orange-200 bg-orange-50 mb-6">
+                  <CardHeader className="pb-3">
+                    <CardTitle className="text-lg font-semibold flex items-center gap-2 text-orange-900">
+                      <HardDrive className="h-5 w-5" />
+                      Storage Management Overview
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-3">
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                      <div className="space-y-2">
+                        <div className="text-sm font-medium text-gray-700">Cache Usage</div>
+                        <div className="flex items-center gap-2">
+                          <Badge variant={cacheStats.sizeMB > 800 ? "destructive" : cacheStats.sizeMB > 500 ? "default" : "secondary"}>
+                            {cacheStats.sizeMB}MB / {cacheStats.maxCacheSizeMB}MB
+                          </Badge>
+                          <span className="text-sm text-gray-600">({Math.round((cacheStats.sizeMB / cacheStats.maxCacheSizeMB) * 100)}%)</span>
+                        </div>
+                      </div>
+                      <div className="space-y-2">
+                        <div className="text-sm font-medium text-gray-700">Management</div>
+                        <div className="flex items-center gap-2">
+                          <Badge variant="outline" className="bg-blue-50 text-blue-700 border-blue-300">
+                            <Clock className="h-3 w-3 mr-1" />
+                            Manual Cleanup
+                          </Badge>
+                        </div>
+                      </div>
+                      <div className="space-y-2">
+                        <div className="text-sm font-medium text-gray-700">Media Files</div>
+                        <div className="flex items-center gap-2">
+                          <Badge variant="outline">{cacheStats.fileCount} files</Badge>
+                          <Badge variant="outline">290MB total</Badge>
+                        </div>
+                      </div>
+                    </div>
+                    <div className="text-xs text-gray-600 mt-2">
+                      Manual management: Clear cache when needed for max 6 videos (3 hero + 3 gallery) + 4 images
+                    </div>
+                  </CardContent>
+                </Card>
+              )}
+
               {/* Cache Status Overview */}
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
                 <Card>
