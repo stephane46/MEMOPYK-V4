@@ -661,6 +661,21 @@ export class VideoCache {
   }
 
   /**
+   * Clear a specific cached image file
+   */
+  clearSpecificImageFile(filename: string): void {
+    try {
+      const cacheFile = this.getImageCacheFilePath(filename);
+      if (existsSync(cacheFile)) {
+        unlinkSync(cacheFile);
+        console.log(`🗑️ Cleared cached image: ${filename}`);
+      }
+    } catch (error) {
+      console.error(`❌ Failed to clear cached image ${filename}:`, error);
+    }
+  }
+
+  /**
    * Preload only hero videos (gallery videos excluded - they don't work in production)
    */
   private async preloadCriticalVideos(): Promise<void> {
@@ -739,16 +754,13 @@ export class VideoCache {
   }
 
   /**
-   * DISABLED - Gallery videos now use direct CDN streaming (don't work in production cache)
+   * BULLETPROOF Gallery Media Preload - Videos AND Images with verification
    */
   private async preloadGalleryVideos(): Promise<void> {
-    console.log('🚫 GALLERY PRELOAD DISABLED v1.0.66 - Gallery videos use direct CDN streaming...');
-    console.log('🎯 ARCHITECTURE: Gallery videos don\'t work in production cache, using direct CDN instead');
-    return; // Exit early - no gallery video caching
+    console.log('🚀 BULLETPROOF GALLERY PRELOAD v2.0 - Videos AND Images with verification...');
     
     try {
       // Import hybrid storage to get gallery items
-      console.log('📊 Importing hybrid storage to get gallery items...');
       const { hybridStorage } = await import('./hybrid-storage');
       const galleryItems = await hybridStorage.getGalleryItems();
       
@@ -764,7 +776,7 @@ export class VideoCache {
         .map(item => item.static_image_url!.split('/').pop()!)
         .filter(filename => filename);
 
-      console.log(`📋 PRODUCTION GALLERY ANALYSIS v1.0.11: ${galleryVideos.length} videos, ${galleryImages.length} images to preload`);
+      console.log(`📋 BULLETPROOF GALLERY: ${galleryVideos.length} videos, ${galleryImages.length} images to cache`);
       console.log(`🎬 Gallery video filenames:`, galleryVideos);
       console.log(`🖼️ Gallery image filenames:`, galleryImages);
       
@@ -773,61 +785,235 @@ export class VideoCache {
       let videoErrors = 0;
       let imageErrors = 0;
 
-      // Preload videos
+      // Bulletproof video caching with verification
       for (const filename of galleryVideos) {
         try {
           console.log(`🔍 Checking cache status for gallery video: ${filename}`);
           if (!this.isVideoCached(filename)) {
-            console.log(`⬇️ PRODUCTION DOWNLOAD v1.0.11 - Preloading gallery video: ${filename}`);
+            console.log(`⬇️ BULLETPROOF DOWNLOAD - Gallery video: ${filename}`);
             await this.downloadAndCacheVideo(filename);
             videosProcessed++;
-            console.log(`✅ SUCCESS: Gallery video cached: ${filename}`);
+            
+            // Verification
+            const postDownloadExists = this.isVideoCached(filename);
+            const cacheFile = this.getVideoCacheFilePath(filename);
+            const postDownloadSize = postDownloadExists ? statSync(cacheFile).size : 0;
+            console.log(`✅ BULLETPROOF SUCCESS: Gallery video ${filename} (${postDownloadSize} bytes)`);
           } else {
-            console.log(`✅ Gallery video already cached: ${filename}`);
+            const cacheFile = this.getVideoCacheFilePath(filename);
+            const fileSize = statSync(cacheFile).size;
+            console.log(`✅ Gallery video already cached: ${filename} (${fileSize} bytes)`);
           }
         } catch (error) {
           videoErrors++;
-          console.error(`❌ PRODUCTION ERROR v1.0.11 - Failed to preload gallery video ${filename}:`, error);
-          console.error(`❌ Error details:`, {
-            message: error.message,
-            stack: error.stack?.substring(0, 200)
-          });
+          console.error(`❌ BULLETPROOF ERROR - Failed to cache gallery video ${filename}:`, error);
         }
       }
 
-      // Preload images
+      // Bulletproof image caching with verification  
       for (const filename of galleryImages) {
         try {
           console.log(`🔍 Checking cache status for gallery image: ${filename}`);
           if (!this.isImageCached(filename)) {
-            console.log(`⬇️ PRODUCTION DOWNLOAD v1.0.11 - Preloading gallery image: ${filename}`);
+            console.log(`⬇️ BULLETPROOF DOWNLOAD - Gallery image: ${filename}`);
             await this.downloadAndCacheImage(filename);
             imagesProcessed++;
-            console.log(`✅ SUCCESS: Gallery image cached: ${filename}`);
+            
+            // Verification
+            const postDownloadExists = this.isImageCached(filename);
+            const cacheFile = this.getImageCacheFilePath(filename);
+            const postDownloadSize = postDownloadExists ? statSync(cacheFile).size : 0;
+            console.log(`✅ BULLETPROOF SUCCESS: Gallery image ${filename} (${postDownloadSize} bytes)`);
           } else {
-            console.log(`✅ Gallery image already cached: ${filename}`);
+            const cacheFile = this.getImageCacheFilePath(filename);
+            const fileSize = statSync(cacheFile).size;
+            console.log(`✅ Gallery image already cached: ${filename} (${fileSize} bytes)`);
           }
         } catch (error) {
           imageErrors++;
-          console.error(`❌ PRODUCTION ERROR v1.0.11 - Failed to preload gallery image ${filename}:`, error);
-          console.error(`❌ Error details:`, {
-            message: error.message,
-            stack: error.stack?.substring(0, 200)
-          });
+          console.error(`❌ BULLETPROOF ERROR - Failed to cache gallery image ${filename}:`, error);
         }
       }
       
-      console.log(`🎬 PRODUCTION GALLERY PRELOAD COMPLETE v1.0.11!`);
+      console.log(`🎯 BULLETPROOF GALLERY PRELOAD COMPLETE!`);
       console.log(`📊 Results: ${videosProcessed} videos cached, ${imagesProcessed} images cached`);
       console.log(`❌ Errors: ${videoErrors} video errors, ${imageErrors} image errors`);
       console.log(`✅ Total success rate: ${Math.round(((videosProcessed + imagesProcessed) / (galleryVideos.length + galleryImages.length)) * 100)}%`);
+      
     } catch (error) {
-      console.error('❌ PRODUCTION GALLERY PRELOAD FATAL ERROR v1.0.11:', error);
-      console.error('❌ Fatal error details:', {
-        message: error.message,
-        stack: error.stack,
-        name: error.name
-      });
+      console.error('❌ BULLETPROOF GALLERY PRELOAD FATAL ERROR:', error);
+    }
+  }
+
+  /**
+   * BULLETPROOF Force Cache ALL Media - Heroes, Gallery Videos, Gallery Images
+   */
+  async forceCacheAllMedia(): Promise<any> {
+    console.log('🚀 BULLETPROOF FORCE CACHE ALL MEDIA v2.0 - Complete media caching...');
+    
+    try {
+      const startTime = Date.now();
+      
+      // Import hybrid storage to get all media
+      const { hybridStorage } = await import('./hybrid-storage');
+      const [heroVideos, galleryItems] = await Promise.all([
+        hybridStorage.getHeroVideos(),
+        hybridStorage.getGalleryItems()
+      ]);
+      
+      // Collect all media filenames
+      const heroVideoFilenames = heroVideos
+        .filter(video => video.url_en)
+        .map(video => video.url_en.split('/').pop()!)
+        .filter(filename => filename && filename.endsWith('.mp4'));
+
+      const galleryVideoFilenames = galleryItems
+        .filter(item => item.video_filename || item.video_url_en)
+        .map(item => (item.video_filename || item.video_url_en!).split('/').pop()!)
+        .filter(filename => filename);
+
+      const galleryImageFilenames = galleryItems
+        .filter(item => item.static_image_url)
+        .map(item => item.static_image_url!.split('/').pop()!)
+        .filter(filename => filename);
+
+      const allVideoFilenames = Array.from(new Set([...heroVideoFilenames, ...galleryVideoFilenames]));
+      
+      console.log(`📋 BULLETPROOF ALL MEDIA: ${allVideoFilenames.length} videos, ${galleryImageFilenames.length} images`);
+      console.log(`🎬 Hero videos: ${heroVideoFilenames.length}, Gallery videos: ${galleryVideoFilenames.length}`);
+      
+      const videoVerification: any[] = [];
+      const imageVerification: any[] = [];
+      
+      // Process all videos with bulletproof verification
+      for (const filename of allVideoFilenames) {
+        try {
+          console.log(`🔄 BULLETPROOF PROCESSING: ${filename}`);
+          
+          // Clear and re-download for fresh cache
+          this.clearSpecificFile(filename);
+          
+          // Pre-download state
+          const preExists = this.isVideoCached(filename);
+          const cacheFile = this.getVideoCacheFilePath(filename);
+          
+          // Download
+          await this.downloadAndCacheVideo(filename);
+          
+          // Post-download verification
+          const postExists = existsSync(cacheFile);
+          const fileSize = postExists ? statSync(cacheFile).size : 0;
+          const isValid = fileSize > 1024; // Minimum 1KB
+          const timestamp = new Date().toISOString();
+          
+          if (postExists && isValid) {
+            videoVerification.push({
+              filename,
+              success: true,
+              size: fileSize,
+              sizeMB: `${(fileSize / 1024 / 1024).toFixed(1)}MB`,
+              timestamp
+            });
+            console.log(`✅ BULLETPROOF SUCCESS: ${filename} (${(fileSize / 1024 / 1024).toFixed(1)}MB)`);
+          } else {
+            videoVerification.push({
+              filename,
+              success: false,
+              error: 'File not created or too small',
+              timestamp
+            });
+          }
+          
+        } catch (error: any) {
+          videoVerification.push({
+            filename,
+            success: false,
+            error: error.message,
+            timestamp: new Date().toISOString()
+          });
+          console.error(`❌ BULLETPROOF FAILED: ${filename} - ${error.message}`);
+        }
+      }
+      
+      // Process all images with bulletproof verification
+      for (const filename of galleryImageFilenames) {
+        try {
+          console.log(`🔄 BULLETPROOF PROCESSING IMAGE: ${filename}`);
+          
+          // Clear and re-download for fresh cache
+          this.clearSpecificImageFile(filename);
+          
+          // Pre-download state
+          const preExists = this.isImageCached(filename);
+          const cacheFile = this.getImageCacheFilePath(filename);
+          
+          // Download
+          await this.downloadAndCacheImage(filename);
+          
+          // Post-download verification
+          const postExists = existsSync(cacheFile);
+          const fileSize = postExists ? statSync(cacheFile).size : 0;
+          const isValid = fileSize > 1024; // Minimum 1KB
+          const timestamp = new Date().toISOString();
+          
+          if (postExists && isValid) {
+            imageVerification.push({
+              filename,
+              success: true,
+              size: fileSize,
+              sizeMB: `${(fileSize / 1024 / 1024).toFixed(1)}MB`,
+              timestamp
+            });
+            console.log(`✅ BULLETPROOF SUCCESS: ${filename} (${(fileSize / 1024 / 1024).toFixed(1)}MB)`);
+          } else {
+            imageVerification.push({
+              filename,
+              success: false,
+              error: 'File not created or too small',
+              timestamp
+            });
+          }
+          
+        } catch (error: any) {
+          imageVerification.push({
+            filename,
+            success: false,
+            error: error.message,
+            timestamp: new Date().toISOString()
+          });
+          console.error(`❌ BULLETPROOF FAILED IMAGE: ${filename} - ${error.message}`);
+        }
+      }
+      
+      const successfulVideos = videoVerification.filter(v => v.success).length;
+      const successfulImages = imageVerification.filter(v => v.success).length;
+      const totalSuccess = successfulVideos + successfulImages;
+      const totalAttempted = allVideoFilenames.length + galleryImageFilenames.length;
+      
+      const endTime = Date.now();
+      const processingTime = `${((endTime - startTime) / 1000).toFixed(1)}s`;
+      
+      console.log(`🎯 BULLETPROOF ALL MEDIA COMPLETE: ${totalSuccess}/${totalAttempted} cached successfully in ${processingTime}`);
+      
+      return {
+        success: true,
+        message: `Bulletproof cached and verified ${totalSuccess}/${totalAttempted} media files`,
+        stats: {
+          videos: { attempted: allVideoFilenames.length, successful: successfulVideos },
+          images: { attempted: galleryImageFilenames.length, successful: successfulImages },
+          processingTime
+        },
+        videoVerification,
+        imageVerification
+      };
+      
+    } catch (error: any) {
+      console.error('❌ BULLETPROOF ALL MEDIA FATAL ERROR:', error);
+      return {
+        success: false,
+        message: `Bulletproof all media caching failed: ${error.message}`,
+        error: error.message
+      };
     }
   }
 

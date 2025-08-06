@@ -4068,6 +4068,46 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // BULLETPROOF Force cache ALL MEDIA - Heroes, Gallery Videos, Gallery Images
+  app.post("/api/video-cache/force-all-media", async (req, res) => {
+    try {
+      console.log(`🚀 BULLETPROOF ALL MEDIA v2.0 - Admin-triggered complete media caching...`);
+      
+      const result = await videoCache.forceCacheAllMedia();
+      
+      if (result.success) {
+        const { stats, videoVerification, imageVerification } = result;
+        console.log(`✅ BULLETPROOF ALL MEDIA SUCCESS: ${stats.videos.successful}/${stats.videos.attempted} videos, ${stats.images.successful}/${stats.images.attempted} images in ${stats.processingTime}`);
+        
+        res.json({
+          success: true,
+          message: result.message,
+          stats,
+          verification: {
+            videos: videoVerification,
+            images: imageVerification
+          },
+          processingTime: stats.processingTime
+        });
+      } else {
+        console.error(`❌ BULLETPROOF ALL MEDIA FAILED: ${result.message}`);
+        res.status(500).json({
+          success: false,
+          message: result.message,
+          error: result.error
+        });
+      }
+      
+    } catch (error: any) {
+      console.error(`❌ BULLETPROOF ALL MEDIA ENDPOINT ERROR:`, error);
+      res.status(500).json({ 
+        success: false,
+        error: "Failed to force cache all media with verification",
+        details: error.message
+      });
+    }
+  });
+
   // Debug logging endpoint
   app.post('/api/debug-log', (req, res) => {
     const { type, data } = req.body;
