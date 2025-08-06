@@ -224,157 +224,71 @@ export default function GallerySection() {
 
   const t = content[language];
 
-  const getImageUrl = (item: GalleryItem) => {
-    // Use static crops when available (these are the properly cropped, high-quality results)
-    let staticImageUrl = '';
-    if (item.useSameVideo || item.use_same_video) {
-      // Shared mode: Use EN static crop for both languages - handle both camelCase and snake_case
-      staticImageUrl = item.staticImageUrlEn || item.static_image_url_en || '';
-    } else {
-      // Separate mode: Use language-specific static crop - handle both camelCase and snake_case
-      staticImageUrl = (language === 'fr-FR' 
-        ? (item.staticImageUrlFr || item.static_image_url_fr) 
-        : (item.staticImageUrlEn || item.static_image_url_en)) || '';
-    }
-    
-    if (staticImageUrl && staticImageUrl.trim() !== '') {
-      // Force reload of cropped images with aggressive cache busting to override browser cache
-      const timestamp = Date.now();
-      const random = Math.random().toString(36).substring(7);
-      const separator = staticImageUrl.includes('?') ? '&' : '?';
-      const cacheBustedUrl = `${staticImageUrl}${separator}crop=static&t=${timestamp}&r=${random}&force=1`;
-      return cacheBustedUrl;
-    } else {
-      // Priority 2: Fallback to original images only if no static crop exists
-      let originalImageUrl = '';
-      if (item.useSameVideo || item.use_same_video) {
-        originalImageUrl = item.imageUrlEn || item.image_url_en || '';
-      } else {
-        originalImageUrl = (language === 'fr-FR' 
-          ? (item.imageUrlFr || item.image_url_fr) 
-          : (item.imageUrlEn || item.image_url_en)) || '';
-      }
-      
-      if (originalImageUrl && originalImageUrl.trim() !== '') {
-        // If it's already a full URL, use it directly with light cache busting for originals
-        if (originalImageUrl.startsWith('http')) {
-          const timestamp = Date.now();
-          const separator = originalImageUrl.includes('?') ? '&' : '?';
-          const cacheBustedUrl = `${originalImageUrl}${separator}orig=true&t=${timestamp}`;
-          return cacheBustedUrl;
-        }
-        
-        if (imageUrl.includes('/')) {
-          filename = imageUrl.split('/').pop() || '';
-          if (filename.includes('?')) {
-            filename = filename.split('?')[0];
-          }
-        } else {
-          filename = imageUrl;
-        }
-      } else {
-        // Final fallback to latest uploads (legacy)
-        const latestImageUrl = language === 'fr-FR' ? item.image_url_fr : item.image_url_en;
-        
-        console.log(`🖼️ DEBUG LANGUAGE-SPECIFIC FALLBACK for ${item.title_en}:`);
-        console.log(`   - Current language: ${language}`);
-        console.log(`   - item.image_url_fr: ${item.image_url_fr}`);
-        console.log(`   - item.image_url_en: ${item.image_url_en}`);
-        console.log(`   - Selected latestImageUrl: ${latestImageUrl}`);
-        
-        if (latestImageUrl && latestImageUrl.trim() !== '') {
-          imageUrl = latestImageUrl;
-          console.log(`🖼️ FALLBACK TO LATEST UPLOAD: ${imageUrl} for ${item.title_en}`);
-          
-          // If it's already a full URL, use it directly
-          if (imageUrl.startsWith('http')) {
-            console.log(`🖼️ LATEST UPLOAD IS FULL URL - USING DIRECTLY`);
-            console.log(`🖼️ DEBUG: Original URL: ${imageUrl}`);
-            console.log(`🖼️ DEBUG: URL already encoded: ${imageUrl.includes('%20') ? 'YES' : 'NO'}`);
-            const timestamp = Date.now();
-            const random = Math.random().toString(36).substring(7);
-            const separator = imageUrl.includes('?') ? '&' : '?';
-            const directUrl = `${imageUrl}${separator}cacheBust=${timestamp}&v=${random}&nocache=1#${timestamp}-${random}`;
-            console.log(`🖼️ DIRECT CDN IMAGE URL v1.0.108: ${directUrl} (upload fallback)`);
-            return directUrl;
-          }
-          
-          filename = imageUrl.includes('/') ? (imageUrl.split('/').pop() || '') : imageUrl;
-          // Remove query parameters from filename
-          if (filename && filename.includes('?')) {
-            filename = filename.split('?')[0];
-          }
-        } else {
-          console.log(`🖼️ NO IMAGE AVAILABLE for ${item.titleEn || item.title_en}`);
-          return '';
-        }
-      }
-    }
-    
-    // DIRECT CDN BYPASS: Use Supabase URL with aggressive cache-busting + hash fragment
+  const cacheBusted = (url: string) => {
     const timestamp = Date.now();
     const random = Math.random().toString(36).substring(7);
-    const hash = `#${timestamp}-${random}`; // Fragment identifier forces browser to treat as new resource
-    const directUrl = `https://supabase.memopyk.org/storage/v1/object/public/memopyk-videos/${encodeURIComponent(filename || '')}?cacheBust=${timestamp}&v=${random}&nocache=1${hash}`;
-    console.log(`🖼️ DIRECT CDN IMAGE URL v1.0.107: ${directUrl} (reframed static priority)`);
-    return directUrl;
+    const separator = url.includes('?') ? '&' : '?';
+    return `${url}${separator}crop=static&t=${timestamp}&r=${random}&force=1`;
+  };
+
+  const getImageUrl = (item: GalleryItem) => {
+    // 1) thumbnail first
+    const thumb = item.useSameVideo
+      ? item.staticImageUrlEn
+      : language === 'fr-FR'
+        ? item.staticImageUrlFr
+        : item.staticImageUrlEn;
+    if (thumb) return cacheBusted(thumb);
+
+    // 2) fallback to original
+    const original = item.useSameVideo
+      ? item.imageUrlEn
+      : language === 'fr-FR'
+        ? item.imageUrlFr
+        : item.imageUrlEn;
+    return original ? cacheBusted(original) : '';
   };
 
   const getItemTitle = (item: GalleryItem) => {
-    return language === 'fr-FR' 
-      ? (item.titleFr || item.title_fr) 
-      : (item.titleEn || item.title_en);
+    return language === 'fr-FR' ? item.titleFr : item.titleEn;
   };
 
   const getItemPrice = (item: GalleryItem) => {
-    return language === 'fr-FR' 
-      ? (item.priceFr || item.price_fr) 
-      : (item.priceEn || item.price_en);
+    return language === 'fr-FR' ? item.priceFr : item.priceEn;
   };
 
   const getItemSource = (item: GalleryItem) => {
-    return language === 'fr-FR' 
-      ? (item.sourceFr || item.source_fr) 
-      : (item.sourceEn || item.source_en);
+    return language === 'fr-FR' ? item.sourceFr : item.sourceEn;
   };
 
   const getItemDuration = (item: GalleryItem) => {
-    return language === 'fr-FR' 
-      ? (item.durationFr || item.duration_fr) 
-      : (item.durationEn || item.duration_en);
+    return language === 'fr-FR' ? item.durationFr : item.durationEn;
   };
 
   const getItemSituation = (item: GalleryItem) => {
-    return language === 'fr-FR' 
-      ? (item.situationFr || item.situation_fr) 
-      : (item.situationEn || item.situation_en);
+    return language === 'fr-FR' ? item.situationFr : item.situationEn;
   };
 
   const getItemStory = (item: GalleryItem) => {
-    return language === 'fr-FR' 
-      ? (item.storyFr || item.story_fr) 
-      : (item.storyEn || item.story_en);
+    return language === 'fr-FR' ? item.storyFr : item.storyEn;
   };
 
   const getItemSorryMessage = (item: GalleryItem) => {
-    return language === 'fr-FR' 
-      ? (item.sorryMessageFr || item.sorry_message_fr) 
-      : (item.sorryMessageEn || item.sorry_message_en);
+    return language === 'fr-FR' ? item.sorryMessageFr : item.sorryMessageEn;
   };
 
   const hasVideo = (item: GalleryItem, index: number) => {
-    // GALLERY INDEPENDENCE FIX: All gallery items can have video functionality
-    // Check video_filename field which contains the actual timestamp-prefixed filenames
-    const filename = item.videoFilename || item.video_filename || item.videoUrlEn || item.video_url_en || item.videoUrlFr || item.video_url_fr;
+    // Check video availability using camelCase properties only
+    const filename = item.videoFilename || item.videoUrlEn || item.videoUrlFr;
     const hasVideoResult = filename && filename.trim() !== '';
     
     // PRODUCTION DEBUG: Log hasVideo results to identify the issue
     console.log(`🎬 hasVideo check for item ${index}:`, {
       id: item.id,
       filename,
-      videoFilename: item.videoFilename || item.video_filename,
-      videoUrlEn: item.videoUrlEn || item.video_url_en,
-      videoUrlFr: item.videoUrlFr || item.video_url_fr,
+      videoFilename: item.videoFilename,
+      videoUrlEn: item.videoUrlEn,
+      videoUrlFr: item.videoUrlFr,
       hasVideoResult
     });
     
