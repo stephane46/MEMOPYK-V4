@@ -76,7 +76,7 @@ export const VideoCacheStatus: React.FC<VideoCacheStatusProps> = ({
   const { data: cacheStatusData, isLoading: statusLoading, refetch: refetchStatus } = useQuery({
     queryKey: ['/api/video-cache/status', videoFilenames],
     queryFn: async () => {
-      const response = await apiRequest('/api/video-cache/status', 'POST', { videoFilenames: videoFilenames });
+      const response = await apiRequest('/api/video-cache/status', 'POST', { filenames: videoFilenames });
       return await response.json();
     },
     enabled: videoFilenames.length > 0,
@@ -334,7 +334,7 @@ export const VideoCacheStatus: React.FC<VideoCacheStatusProps> = ({
         <div className="mb-4 p-4 bg-muted rounded-lg">
           <div className="space-y-2">
             <div className="flex items-center justify-between text-sm font-medium">
-              <span>Section Status: {cachedCount}/{totalCount} cached ({totalCount > 0 ? Math.round((cachedCount/totalCount)*100) : 0}%)</span>
+              <span>Section Status: {cachedCount}/{totalCount} cached ({cachedCount > 0 && totalCount > 0 ? Math.round((cachedCount/totalCount)*100) : 0}%)</span>
             </div>
             <div className="text-xs text-muted-foreground">
               Performance: ~50ms cached vs ~1500ms uncached
