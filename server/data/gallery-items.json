@@ -192,7 +192,7 @@
     },
     "is_active": true,
     "created_at": "2025-08-04T04:44:25.672Z",
-    "updated_at": "2025-08-06T09:37:49.508Z",
+    "updated_at": "2025-08-06T09:51:24.097Z",
     "language": "shared",
     "order_index": 0,
     "crop_settings": {
@@ -201,7 +201,7 @@
       "quality": 1,
       "position": {
         "x": 50,
-        "y": 5.217951635498688
+        "y": 0
       },
       "dimensions": {
         "width": 3024,
