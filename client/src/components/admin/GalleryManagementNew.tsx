@@ -989,10 +989,10 @@ export default function GalleryManagementNew() {
                               src={
                                 // Priority 1: Pending previews (for immediate upload display)
                                 pendingPreviews.image_url_fr || 
-                                // Priority 2: Form data (for uploaded but not saved images)
-                                formData.image_url_fr || 
-                                // Priority 3: Existing item thumbnails with cache-busting
-                                (selectedItem ? getImageUrlWithCacheBust(getThumbnailUrl(selectedItem, 'fr')) : '')
+                                // Priority 2: Use cropped version like public site (FIXED)
+                                (selectedItem ? getImageUrlWithCacheBust(getThumbnailUrl(selectedItem, 'fr')) : '') ||
+                                // Priority 3: Form data fallback (for uploaded but not saved images)
+                                formData.image_url_fr
                               }
                               onLoadStart={() => {
                                 const imageUrl = pendingPreviews.image_url_fr || formData.image_url_fr || 
@@ -1235,10 +1235,10 @@ export default function GalleryManagementNew() {
                               src={
                                 // Priority 1: Pending previews (for immediate upload display)
                                 pendingPreviews.image_url_en || 
-                                // Priority 2: Form data (for uploaded but not saved images)
-                                formData.image_url_en || 
-                                // Priority 3: Existing item thumbnails with cache-busting
-                                (selectedItem ? getImageUrlWithCacheBust(getThumbnailUrl(selectedItem, 'en')) : '')
+                                // Priority 2: Use cropped version like public site (FIXED)
+                                (selectedItem ? getImageUrlWithCacheBust(getThumbnailUrl(selectedItem, 'en')) : '') ||
+                                // Priority 3: Form data fallback (for uploaded but not saved images)
+                                formData.image_url_en
                               } 
                               alt="Aperçu English"
                               className="w-full h-full object-contain"
