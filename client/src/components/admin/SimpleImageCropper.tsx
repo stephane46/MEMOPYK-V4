@@ -63,11 +63,19 @@ export default function SimpleImageCropper({
     if (initialCropSettings?.position) {
       // Convert percentage position back to pixel offset
       const initialOffset = (initialCropSettings.position.y / 100) * displayedHeight;
-      const constrainedOffset = Math.max(0, Math.min(initialOffset, displayedHeight - containerWidth / 1.5));
+      const cropOverlayHeight = containerWidth / 1.5;
+      const maxOffset = Math.max(0, displayedHeight - cropOverlayHeight);
+      const constrainedOffset = Math.max(0, Math.min(initialOffset, maxOffset));
+      
       setOffsetY(constrainedOffset);
-      console.log("🖼️ Restored crop position:", { 
-        position: `${initialCropSettings.position.y.toFixed(1)}%`,
-        offsetPx: constrainedOffset.toFixed(0)
+      console.log("🚨 PERCENTAGE-TO-PIXEL CONVERSION DEBUG:", { 
+        positionPercent: `${initialCropSettings.position.y.toFixed(1)}%`,
+        displayedHeight: displayedHeight,
+        cropOverlayHeight: cropOverlayHeight,
+        initialOffsetPx: initialOffset.toFixed(0),
+        maxOffsetPx: maxOffset.toFixed(0),
+        finalOffsetPx: constrainedOffset.toFixed(0),
+        wasConstrained: initialOffset !== constrainedOffset
       });
     } else {
       // center the crop overlay initially
