@@ -196,73 +196,60 @@ const SimpleImageCropper: React.FC<SimpleImageCropperProps> = ({
       <div className="bg-white p-6 rounded-lg max-w-4xl w-full">
         <h3 className="text-xl font-semibold mb-4">Crop Image</h3>
 
-        <div className="relative inline-block w-[800px]">
+        <div
+          className="cropper-container"
+          style={{
+            width: "800px",
+            aspectRatio: "3 / 2",
+            position: "relative",
+            overflow: "hidden",
+            border: "2px solid #ccc",
+            borderRadius: "4px",
+          }}
+        >
+          {/* Image that moves up/down */}
           <img
             ref={imageRef}
             src={imageUrl}
             alt="Image to crop"
             onLoad={handleImageLoad}
-            className="w-full h-auto object-contain select-none"
-            style={{ maxWidth: "800px" }}
+            className="select-none"
+            style={{
+              position: "absolute",
+              left: 0,
+              width: "100%",
+              height: "auto",
+              top: imageDimensions && imageRef.current 
+                ? (() => {
+                    const rect = imageRef.current.getBoundingClientRect();
+                    const containerHeight = 800 / 1.5; // 3:2 ratio = 533px
+                    const imageHeight = rect.height;
+                    const maxOffset = Math.max(0, imageHeight - containerHeight);
+                    const offset = (verticalPosition / 100) * maxOffset;
+                    console.log("🔧 IMAGE POSITION:", {
+                      containerHeight,
+                      imageHeight,
+                      maxOffset,
+                      verticalPosition,
+                      offset: -offset
+                    });
+                    return `${-offset}px`;
+                  })()
+                : "0px"
+            }}
           />
 
-          {/* Fixed crop frame: full width, 3:2 aspect ratio, vertical movement only */}
-          {imageDimensions &&
-            imageRef.current &&
-            (() => {
-              // Get actual displayed image dimensions
-              const rect = imageRef.current.getBoundingClientRect();
-              const displayWidth = rect.width;
-              const displayHeight = rect.height;
-
-              // DEBUG: Log dimensions
-              console.log("🔧 CROP DEBUG:", {
-                displayWidth,
-                displayHeight,
-                imageDimensions,
-                verticalPosition,
-              });
-
-              // ALWAYS compute frame height from container width for true 3:2 ratio
-              const containerWidth = displayWidth;
-              const containerHeight = displayHeight;
-
-              // Enforce 3:2 landscape on full width: width ÷ 1.5 = height
-              const frameWidth = containerWidth;
-              const idealFrameHeight = containerWidth / 1.5; // Always width × 0.66
-
-              // Clamp frameHeight so it never exceeds the actual image height
-              const frameHeight = Math.min(idealFrameHeight, containerHeight);
-
-              // Calculate vertical position with bounds checking
-              const maxTop = Math.max(0, displayHeight - frameHeight);
-              const frameTop = Math.max(
-                0,
-                Math.min(maxTop, (verticalPosition / 100) * maxTop),
-              );
-
-              console.log("🔧 CROP CALCULATIONS:", {
-                frameWidth,
-                frameHeight,
-                maxTop,
-                frameTop,
-                ratio: frameWidth / frameHeight,
-              });
-
-              return (
-                <div
-                  className="absolute border-4 border-[#D67C4A] pointer-events-none"
-                  style={{
-                    width: `${frameWidth}px`,
-                    height: `${frameHeight}px`,
-                    left: "0px",
-                    top: `${frameTop}px`,
-                    zIndex: 10,
-                    backgroundColor: "transparent",
-                  }}
-                />
-              );
-            })()}
+          {/* Static orange frame that fills the container */}
+          <div
+            className="crop-frame"
+            style={{
+              position: "absolute",
+              inset: 0,
+              border: "4px solid #D67C4A",
+              pointerEvents: "none",
+              boxSizing: "border-box",
+            }}
+          />
         </div>
 
         <div className="mt-6 space-y-4">
