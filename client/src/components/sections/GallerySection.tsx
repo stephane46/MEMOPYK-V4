@@ -233,7 +233,7 @@ export default function GallerySection() {
     if (item.useSameVideo) {
       // Shared mode: Use EN static crop for both languages
       staticImageUrl = item.staticImageUrlEn || '';
-      console.log(`🔗 SHARED MODE: Using EN static crop for ${language} visitor: ${staticImageUrl} for ${item.titleEn}`);
+      console.log(`🔗 PUBLIC SHARED MODE: Using EN static crop for ${language}: ${staticImageUrl} for ${item.titleEn}`);
     } else {
       // Separate mode: Use language-specific static crop
       staticImageUrl = (language === 'fr-FR' ? item.staticImageUrlFr : item.staticImageUrlEn) || '';
