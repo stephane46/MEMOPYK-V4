@@ -244,14 +244,15 @@ export default function GallerySection() {
       imageUrl = staticImageUrl;
       console.log(`✂️ USING STATIC CROP (respecting cropping work) (${language}): ${imageUrl} for ${item.titleEn}`);
       
-      // If it's already a full URL, use it directly with cache busting
+      // If it's already a full URL, use it directly with AGGRESSIVE cache busting
       if (imageUrl.startsWith('http')) {
-        console.log(`✂️ STATIC CROP IS FULL URL - USING DIRECTLY`);
+        console.log(`✂️ STATIC CROP IS FULL URL - USING DIRECTLY WITH AGGRESSIVE CACHE BYPASS`);
         const timestamp = Date.now();
         const random = Math.random().toString(36).substring(7);
         const separator = imageUrl.includes('?') ? '&' : '?';
-        const directUrl = `${imageUrl}${separator}cacheBust=${timestamp}&v=${random}&nocache=1#${timestamp}-${random}`;
-        console.log(`✂️ DIRECT CDN STATIC CROP URL: ${directUrl}`);
+        // AGGRESSIVE cache bypass: multiple params + headers + fragment
+        const directUrl = `${imageUrl}${separator}t=${timestamp}&r=${random}&bust=${timestamp}&nocache=${timestamp}&v=${random}&force=1#${timestamp}-${random}-bypass`;
+        console.log(`🚨 AGGRESSIVE CACHE-BYPASS URL: ${directUrl}`);
         return directUrl;
       }
       
@@ -279,14 +280,15 @@ export default function GallerySection() {
         imageUrl = originalImageUrl;
         console.log(`🖼️ FALLBACK TO ORIGINAL (${language}): ${imageUrl} for ${item.titleEn}`);
         
-        // If it's already a full URL, use it directly with cache busting
+        // If it's already a full URL, use it directly with AGGRESSIVE cache busting  
         if (imageUrl.startsWith('http')) {
-          console.log(`🖼️ ORIGINAL IS FULL URL - USING DIRECTLY`);
+          console.log(`🖼️ ORIGINAL IS FULL URL - USING DIRECTLY WITH AGGRESSIVE CACHE BYPASS`);
           const timestamp = Date.now();
           const random = Math.random().toString(36).substring(7);
           const separator = imageUrl.includes('?') ? '&' : '?';
-          const directUrl = `${imageUrl}${separator}cacheBust=${timestamp}&v=${random}&nocache=1#${timestamp}-${random}`;
-          console.log(`🖼️ DIRECT CDN ORIGINAL URL: ${directUrl}`);
+          // AGGRESSIVE cache bypass for fallback images too
+          const directUrl = `${imageUrl}${separator}t=${timestamp}&r=${random}&bust=${timestamp}&nocache=${timestamp}&v=${random}&force=1#${timestamp}-${random}-bypass`;
+          console.log(`🚨 AGGRESSIVE CACHE-BYPASS FALLBACK URL: ${directUrl}`);
           return directUrl;
         }
         
