@@ -599,17 +599,17 @@ export default function GallerySection() {
                     </div>
 
                     {/* Card Content - Mobile Optimized with balanced spacing */}
-                    <div className="px-3 sm:px-4 lg:px-6 pt-1 pb-3 sm:pb-4 lg:pb-6">
-                      {/* Title Row - Full width */}
-                      <div className="mb-1 sm:mb-1">
+                    <div className="pt-1 pb-3 sm:pb-4 lg:pb-6">
+                      {/* Title Row - Full width with content padding */}
+                      <div className="px-3 sm:px-4 lg:px-6 mb-1 sm:mb-1">
                         <h3 className="text-lg sm:text-xl font-bold text-gray-900 dark:text-white h-6 sm:h-8 overflow-hidden leading-6 sm:leading-8">
                           {getItemTitle(item)}
                         </h3>
                       </div>
                       
-                      {/* Social Media Badge Row - Right aligned with balanced spacing */}
-                      <div className="flex justify-end mb-1 sm:mb-1">
-                        {/* Social Media Badge - Right aligned to match price badge positioning */}
+                      {/* Social Media Badge Row - Right aligned with matching overlay spacing */}
+                      <div className="px-2 sm:px-4 mb-1 sm:mb-1 flex justify-end">
+                        {/* Social Media Badge - Positioned to match price badge overlay spacing */}
                         {(() => {
                           const format = getViewingFormat(item);
                           const IconComponent = format.icon;
@@ -627,16 +627,16 @@ export default function GallerySection() {
                         })()}
                       </div>
                           
-                      {/* Duration (5) - Mobile Optimized */}
-                      <div className="mb-2 sm:mb-3 h-5 sm:h-6 overflow-hidden flex items-center">
+                      {/* Duration (5) - Mobile Optimized with content padding */}
+                      <div className="px-3 sm:px-4 lg:px-6 mb-2 sm:mb-3 h-5 sm:h-6 overflow-hidden flex items-center">
                         <Clock className="w-3 h-3 sm:w-4 sm:h-4 flex-shrink-0" style={{ color: '#D67C4A' }} />
                         <div className="text-xs sm:text-sm leading-4 ml-1 sm:ml-2" style={{ color: '#4B5563' }}>
                           {getItemDuration(item) || <div className="h-4"></div>}
                         </div>
                       </div>
                       
-                      {/* Situation (6) - Mobile Optimized */}
-                      <div className="mb-2 sm:mb-3 h-16 sm:h-20 overflow-hidden">
+                      {/* Situation (6) - Mobile Optimized with content padding */}
+                      <div className="px-3 sm:px-4 lg:px-6 mb-2 sm:mb-3 h-16 sm:h-20 overflow-hidden">
                         <div className="flex items-start gap-1 sm:gap-2">
                           <Users className="w-3 h-3 sm:w-4 sm:h-4 flex-shrink-0" style={{ color: '#D67C4A' }} />
                           <div className="text-xs sm:text-sm leading-4" style={{ color: '#4B5563' }}>
@@ -645,8 +645,8 @@ export default function GallerySection() {
                         </div>
                       </div>
                       
-                      {/* Story (7) - Mobile Optimized */}
-                      <div className="h-16 sm:h-20 overflow-hidden">
+                      {/* Story (7) - Mobile Optimized with content padding */}
+                      <div className="px-3 sm:px-4 lg:px-6 h-16 sm:h-20 overflow-hidden">
                         <div className="flex items-start gap-1 sm:gap-2">
                           <Film className="w-3 h-3 sm:w-4 sm:h-4 flex-shrink-0" style={{ color: '#D67C4A' }} />
                           <div className="text-xs sm:text-sm leading-4" style={{ color: '#4B5563' }}>
