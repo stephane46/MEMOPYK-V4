@@ -69,23 +69,19 @@ export default function SimpleImageCropper({
     
     // Use initial crop settings if provided, otherwise center
     if (initialCropSettings?.position) {
-      // CRITICAL FIX: Use natural dimensions for percentage conversion, then scale to display
-      const naturalCropY = (initialCropSettings.position.y / 100) * naturalHeight;
-      const scaleToDisplay = displayedHeight / naturalHeight;
-      const initialOffset = naturalCropY * scaleToDisplay;
+      // BREAKTHROUGH FIX: Percentage was originally calculated from DISPLAYED height, not natural!
+      // So we convert directly: percentage * displayed height = pixel position
+      const initialOffset = (initialCropSettings.position.y / 100) * displayedHeight;
       
       const cropOverlayHeight = containerWidth / 1.5;
       const maxOffset = Math.max(0, displayedHeight - cropOverlayHeight);
       const constrainedOffset = Math.max(0, Math.min(initialOffset, maxOffset));
       
       setOffsetY(constrainedOffset);
-      console.log("🚨 FIXED PERCENTAGE-TO-PIXEL CONVERSION:"); 
+      console.log("🎯 BREAKTHROUGH FIX - DIRECT PERCENTAGE CONVERSION:"); 
       console.log("- Stored percentage:", `${initialCropSettings.position.y.toFixed(3)}%`);
-      console.log("- Natural height:", naturalHeight);
       console.log("- Displayed height:", displayedHeight);
-      console.log("- Scale to display:", scaleToDisplay.toFixed(3));
-      console.log("- Natural crop Y:", naturalCropY.toFixed(1));
-      console.log("- Initial offset px:", initialOffset.toFixed(1));
+      console.log("- Direct calculation:", `${initialCropSettings.position.y.toFixed(3)}% × ${displayedHeight}px = ${initialOffset.toFixed(1)}px`);
       console.log("- Final offset px:", constrainedOffset.toFixed(1));
       console.log("- Crop overlay height:", cropOverlayHeight);
       console.log("- Was constrained:", initialOffset !== constrainedOffset);
