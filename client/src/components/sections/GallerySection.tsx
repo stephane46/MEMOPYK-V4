@@ -598,15 +598,18 @@ export default function GallerySection() {
                       )}
                     </div>
 
-                    {/* Card Content - Mobile Optimized */}
+                    {/* Card Content - Mobile Optimized with balanced spacing */}
                     <div className="px-3 sm:px-4 lg:px-6 pt-1 pb-3 sm:pb-4 lg:pb-6">
-                      {/* Title and Social Media Badge Row */}
-                      <div className="flex justify-between items-start mb-1 sm:mb-1 gap-2">
-                        <h3 className="text-lg sm:text-xl font-bold text-gray-900 dark:text-white h-6 sm:h-8 overflow-hidden leading-6 sm:leading-8 flex-1">
+                      {/* Title Row - Full width */}
+                      <div className="mb-1 sm:mb-1">
+                        <h3 className="text-lg sm:text-xl font-bold text-gray-900 dark:text-white h-6 sm:h-8 overflow-hidden leading-6 sm:leading-8">
                           {getItemTitle(item)}
                         </h3>
-                        
-                        {/* Social Media Badge - Moved outside image */}
+                      </div>
+                      
+                      {/* Social Media Badge Row - Right aligned with balanced spacing */}
+                      <div className="flex justify-end mb-1 sm:mb-1">
+                        {/* Social Media Badge - Right aligned to match price badge positioning */}
                         {(() => {
                           const format = getViewingFormat(item);
                           const IconComponent = format.icon;
