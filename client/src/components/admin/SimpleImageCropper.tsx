@@ -14,12 +14,14 @@ interface SimpleImageCropperProps {
   imageUrl: string;
   onSave: (blob: Blob, settings: CropSettings) => Promise<void>;
   onCancel: () => void;
+  initialCropSettings?: CropSettings;
 }
 
 export default function SimpleImageCropper({
   imageUrl,
   onSave,
   onCancel,
+  initialCropSettings,
 }: SimpleImageCropperProps) {
   const imgRef = useRef<HTMLImageElement>(null);
   const [imgHeight, setImgHeight] = useState(0);
@@ -33,10 +35,19 @@ export default function SimpleImageCropper({
     if (!imgRef.current) return;
     const displayedHeight = imgRef.current.getBoundingClientRect().height;
     setImgHeight(displayedHeight);
-    // center the crop overlay initially
-    const centerOffset = Math.max(0, (displayedHeight - containerWidth / 1.5) / 2);
-    setOffsetY(centerOffset);
-    console.log("🖼️ Image loaded:", { displayedHeight, centerOffset });
+    
+    // Use initial crop settings if provided, otherwise center
+    if (initialCropSettings?.position) {
+      // Convert percentage position back to pixel offset
+      const initialOffset = (initialCropSettings.position.y / 100) * displayedHeight;
+      setOffsetY(Math.max(0, Math.min(initialOffset, displayedHeight - containerWidth / 1.5)));
+      console.log("🖼️ Image loaded with initial crop:", { displayedHeight, initialOffset, position: initialCropSettings.position });
+    } else {
+      // center the crop overlay initially
+      const centerOffset = Math.max(0, (displayedHeight - containerWidth / 1.5) / 2);
+      setOffsetY(centerOffset);
+      console.log("🖼️ Image loaded:", { displayedHeight, centerOffset });
+    }
   };
 
   // Generate the cropped image - memoized to prevent unnecessary re-renders

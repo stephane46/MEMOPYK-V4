@@ -2408,6 +2408,7 @@ export default function GalleryManagementNew() {
                 ? (formData.image_url_fr || selectedItem.image_url_fr)
                 : (formData.image_url_en || selectedItem.image_url_en))
           )}
+          initialCropSettings={selectedItem.cropSettings}
           onSave={async (blob: Blob, cropSettings: any) => {
                 console.log('🚀 STEP 1: CROP SAVE STARTED');
                 console.log('🚀 STEP 1a: Blob size:', blob.size, 'bytes');
