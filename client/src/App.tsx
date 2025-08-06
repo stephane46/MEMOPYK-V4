@@ -45,11 +45,21 @@ function App() {
               <Route path="/en-US/admin*" component={AdminRoute} />
               <Route path="/fr-FR/gallery" component={() => {
                 console.log("🎬 Rendering GallerySection at /fr-FR/gallery");
-                return <GallerySection />;
+                return (
+                  <>
+                    {console.log("🎬 Rendering GallerySection at /gallery")}
+                    <GallerySection />
+                  </>
+                );
               }} />
               <Route path="/en-US/gallery" component={() => {
                 console.log("🎬 Rendering GallerySection at /en-US/gallery");
-                return <GallerySection />;
+                return (
+                  <>
+                    {console.log("🎬 Rendering GallerySection at /gallery")}
+                    <GallerySection />
+                  </>
+                );
               }} />
               <Route path="/fr-FR/contact" component={() => <div className="min-h-screen flex items-center justify-center"><div className="text-2xl text-gray-500">Contact Bientôt Disponible</div></div>} />
               <Route path="/en-US/contact" component={() => <div className="min-h-screen flex items-center justify-center"><div className="text-2xl text-gray-500">Contact Coming Soon</div></div>} />
