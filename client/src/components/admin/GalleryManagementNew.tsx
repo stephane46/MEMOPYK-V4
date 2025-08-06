@@ -2388,68 +2388,18 @@ export default function GalleryManagementNew() {
         </div>
       )}
 
-      {/* Image Cropper Dialog with Language Selection */}
+      {/* Image Cropper - SimpleImageCropper handles its own modal */}
       {selectedItem && cropperOpen && (
-        <Dialog 
-          open={cropperOpen} 
-          onOpenChange={(open) => {
-            setCropperOpen(open);
-            if (!open) {
-              // Reset state when dialog closes
-              setActiveCroppingState({
-                isActive: false,
-                language: 'en',
-                hasChanges: false
-              });
-            }
-          }}
-        >
-          <DialogContent className="max-w-4xl max-h-[90vh] overflow-auto bg-white dark:bg-gray-900 border-2 border-gray-300 dark:border-gray-600">
-            <DialogHeader>
-              <DialogTitle>Recadrer Image - {selectedItem.title_en}</DialogTitle>
-              <DialogDescription>
-                Créer une image statique 300×200 pour {selectedItem.title_en}
-              </DialogDescription>
-            </DialogHeader>
-            
-
-            
-            {/* Current Language Display */}
-            <div className="mb-4 p-3 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-200 dark:border-blue-800">
-              <div className="flex items-center gap-2 text-blue-900 dark:text-blue-100">
-                <Globe className="w-4 h-4" />
-                <span className="font-medium">
-                  Image sélectionnée: {cropperLanguage === 'fr' ? '🇫🇷 Français' : '🇺🇸 English'}
-                </span>
-              </div>
-            </div>
-            
-            <SimpleImageCropper
-              isOpen={cropperOpen}
-              imageUrl={getFullUrl(
-                // Priority 1: Latest uploaded image from formData (fresh uploads)
-                selectedItem.use_same_video 
-                  ? (formData.image_url_en || selectedItem.image_url_en)
-                  : (cropperLanguage === 'fr' 
-                    ? (formData.image_url_fr || selectedItem.image_url_fr)
-                    : (formData.image_url_en || selectedItem.image_url_en))
-              )}
-              onOpen={() => {
-                // Track when cropper opens
-                setActiveCroppingState({
-                  isActive: true,
-                  language: cropperLanguage,
-                  hasChanges: false
-                });
-              }}
-              onCropChange={() => {
-                // Track when user makes cropping changes
-                setActiveCroppingState(prev => ({
-                  ...prev,
-                  hasChanges: true
-                }));
-              }}
-              onSave={async (blob: Blob, cropSettings: any) => {
+        <SimpleImageCropper
+          imageUrl={getFullUrl(
+            // Priority 1: Latest uploaded image from formData (fresh uploads)
+            selectedItem.use_same_video 
+              ? (formData.image_url_en || selectedItem.image_url_en)
+              : (cropperLanguage === 'fr' 
+                ? (formData.image_url_fr || selectedItem.image_url_fr)
+                : (formData.image_url_en || selectedItem.image_url_en))
+          )}
+          onSave={async (blob: Blob, cropSettings: any) => {
                 console.log('🚀 STEP 1: CROP SAVE STARTED');
                 console.log('🚀 STEP 1a: Blob size:', blob.size, 'bytes');
                 console.log('🚀 STEP 1b: Crop settings:', cropSettings);
@@ -2568,8 +2518,6 @@ export default function GalleryManagementNew() {
                 });
               }}
             />
-          </DialogContent>
-        </Dialog>
       )}
 
       {/* Format Badge Manager Section */}
