@@ -232,19 +232,34 @@ export default function GallerySection() {
   };
 
   const getImageUrl = (item: GalleryItem) => {
+    // DEBUG: Check what URLs we actually have
+    console.log(`🔍 GETIMAGEURL DEBUG for ${item.id}:`, {
+      staticImageUrlEn: item.staticImageUrlEn,
+      staticImageUrlFr: item.staticImageUrlFr,
+      imageUrlEn: item.imageUrlEn,
+      imageUrlFr: item.imageUrlFr,
+      useSameVideo: item.useSameVideo,
+      language
+    });
+    
     // Priority: Use cropped thumbnail if available, fallback to original
     const thumb = item.useSameVideo
       ? item.staticImageUrlEn
       : (language === 'fr-FR' ? item.staticImageUrlFr : item.staticImageUrlEn);
     
+    console.log(`🎯 Selected thumb URL: ${thumb}`);
+    
     if (thumb) {
-      return cacheBusted(thumb);
+      const finalUrl = cacheBusted(thumb);
+      console.log(`🚀 Final cached URL: ${finalUrl}`);
+      return finalUrl;
     }
     
     // Fallback to original image
     const original = item.useSameVideo
       ? item.imageUrlEn
       : (language === 'fr-FR' ? item.imageUrlFr : item.imageUrlEn);
+    console.log(`⚠️ FALLBACK to original: ${original}`);
     return original ? cacheBusted(original) : '';
   };
 
