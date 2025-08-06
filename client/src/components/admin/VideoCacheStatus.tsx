@@ -76,7 +76,7 @@ export const VideoCacheStatus: React.FC<VideoCacheStatusProps> = ({
   const { data: cacheStatusData, isLoading: statusLoading, refetch: refetchStatus } = useQuery({
     queryKey: ['/api/video-cache/status', videoFilenames],
     queryFn: async () => {
-      const response = await apiRequest('/api/video-cache/status', 'POST', { filenames: videoFilenames });
+      const response = await apiRequest('/api/video-cache/status', 'POST', { videoFilenames: videoFilenames });
       return await response.json();
     },
     enabled: videoFilenames.length > 0,
