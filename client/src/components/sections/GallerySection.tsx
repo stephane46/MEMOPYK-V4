@@ -9,41 +9,41 @@ import { VideoOverlay } from "@/components/gallery/VideoOverlay";
 import { MobileEnhancedGallery } from "@/components/mobile/MobileEnhancedGallery";
 import { useNetworkStatus } from "@/hooks/useNetworkStatus";
 import { useDeviceOrientation } from "@/hooks/useDeviceOrientation";
-// Gallery item interface matching the new schema
+// Gallery item interface matching API response format (snake_case)
 interface GalleryItem {
   id: string | number;
-  titleEn: string;
-  titleFr: string;
-  priceEn: string;
-  priceFr: string;
-  sourceEn: string; // "80 photos & 10 videos" - top overlay
-  sourceFr: string; // "80 photos et 10 vidéos" - top overlay
-  durationEn: string; // "2 minutes" - duration with film icon (up to 5 lines)
-  durationFr: string; // "2 minutes" - duration with film icon (up to 5 lines)
-  situationEn: string; // "The Client is a wife..." - client description (up to 5 lines)
-  situationFr: string; // "Le client est une épouse..." - client description (up to 5 lines)
-  storyEn: string; // "This film shows..." - story description (up to 5 lines)
-  storyFr: string; // "Ce film montre..." - story description (up to 5 lines)
-  sorryMessageEn: string; // "Sorry, we cannot show you the video at this stage"
-  sorryMessageFr: string; // "Désolé, nous ne pouvons pas vous montrer la vidéo à ce stade"
-  formatPlatformEn: string; // "Social Media", "Social Feed", "Professional"
-  formatPlatformFr: string; // "Réseaux Sociaux", "Flux Social", "Professionnel"
-  formatTypeEn: string; // "Mobile Stories", "Instagram Posts", "TV & Desktop"
-  formatTypeFr: string; // "Stories Mobiles", "Posts Instagram", "TV & Bureau"
-  videoUrlEn: string;
-  videoUrlFr: string;
-  videoFilename: string; // CRITICAL: timestamp-prefixed filename (1753736019450-VitaminSeaC.mp4)
-  videoWidth: number;
-  videoHeight: number;
-  videoOrientation: string;
-  imageUrlEn: string;
-  imageUrlFr: string;
-  staticImageUrlEn: string | null; // 300x200 cropped English thumbnail
-  staticImageUrlFr: string | null; // 300x200 cropped French thumbnail
-  staticImageUrl: string | null; // DEPRECATED: Legacy field
-  useSameVideo: boolean; // Shared mode indicator
-  orderIndex: number;
-  isActive: boolean;
+  title_en: string;
+  title_fr: string;
+  price_en: string;
+  price_fr: string;
+  source_en: string; // "80 photos & 10 videos" - top overlay
+  source_fr: string; // "80 photos et 10 vidéos" - top overlay
+  duration_en: string; // "2 minutes" - duration with film icon (up to 5 lines)
+  duration_fr: string; // "2 minutes" - duration with film icon (up to 5 lines)
+  situation_en: string; // "The Client is a wife..." - client description (up to 5 lines)
+  situation_fr: string; // "Le client est une épouse..." - client description (up to 5 lines)
+  story_en: string; // "This film shows..." - story description (up to 5 lines)
+  story_fr: string; // "Ce film montre..." - story description (up to 5 lines)
+  sorry_message_en: string; // "Sorry, we cannot show you the video at this stage"
+  sorry_message_fr: string; // "Désolé, nous ne pouvons pas vous montrer la vidéo à ce stade"
+  format_platform_en: string; // "Social Media", "Social Feed", "Professional"
+  format_platform_fr: string; // "Réseaux Sociaux", "Flux Social", "Professionnel"
+  format_type_en: string; // "Mobile Stories", "Instagram Posts", "TV & Desktop"
+  format_type_fr: string; // "Stories Mobiles", "Posts Instagram", "TV & Bureau"
+  video_url_en: string;
+  video_url_fr: string;
+  video_filename: string; // CRITICAL: timestamp-prefixed filename (1753736019450-VitaminSeaC.mp4)
+  video_width: number;
+  video_height: number;
+  video_orientation: string;
+  image_url_en: string;
+  image_url_fr: string;
+  static_image_url_en: string | null; // 300x200 cropped English thumbnail (with -C suffix)
+  static_image_url_fr: string | null; // 300x200 cropped French thumbnail (with -C suffix)
+  static_image_url: string | null; // DEPRECATED: Legacy field
+  use_same_video: boolean; // Shared mode indicator
+  order_index: number;
+  is_active: boolean;
   lightboxVideoUrl?: string; // Infrastructure workaround URL for lightbox display
 }
 
@@ -230,19 +230,19 @@ export default function GallerySection() {
     
     // Priority 1: Use static crops first (these are the properly cropped, high-quality results)
     let staticImageUrl = '';
-    if (item.useSameVideo) {
+    if (item.use_same_video) {
       // Shared mode: Use EN static crop for both languages
-      staticImageUrl = item.staticImageUrlEn || '';
-      console.log(`🔗 PUBLIC SHARED MODE: Using EN static crop for ${language}: ${staticImageUrl} for ${item.titleEn}`);
+      staticImageUrl = item.static_image_url_en || '';
+      console.log(`🔗 PUBLIC SHARED MODE: Using EN static crop for ${language}: ${staticImageUrl} for ${item.title_en}`);
     } else {
       // Separate mode: Use language-specific static crop
-      staticImageUrl = (language === 'fr-FR' ? item.staticImageUrlFr : item.staticImageUrlEn) || '';
-      console.log(`🌍 SEPARATE MODE: Using ${language}-specific static crop: ${staticImageUrl} for ${item.titleEn}`);
+      staticImageUrl = (language === 'fr-FR' ? item.static_image_url_fr : item.static_image_url_en) || '';
+      console.log(`🌍 SEPARATE MODE: Using ${language}-specific static crop: ${staticImageUrl} for ${item.title_en}`);
     }
     
     if (staticImageUrl && staticImageUrl.trim() !== '') {
       imageUrl = staticImageUrl;
-      console.log(`✂️ USING STATIC CROP (respecting cropping work) (${language}): ${imageUrl} for ${item.titleEn}`);
+      console.log(`✂️ USING STATIC CROP (respecting cropping work) (${language}): ${imageUrl} for ${item.title_en}`);
       
       // If it's already a full URL, use it directly with AGGRESSIVE cache busting
       if (imageUrl.startsWith('http')) {
@@ -268,17 +268,17 @@ export default function GallerySection() {
     } else {
       // Priority 2: Fallback to original images only if no static crop exists
       let originalImageUrl = '';
-      if (item.useSameVideo) {
-        originalImageUrl = item.imageUrlEn || '';
-        console.log(`🔗 SHARED MODE FALLBACK: Using EN original for ${language} visitor: ${originalImageUrl} for ${item.titleEn}`);
+      if (item.use_same_video) {
+        originalImageUrl = item.image_url_en || '';
+        console.log(`🔗 SHARED MODE FALLBACK: Using EN original for ${language} visitor: ${originalImageUrl} for ${item.title_en}`);
       } else {
-        originalImageUrl = (language === 'fr-FR' ? item.imageUrlFr : item.imageUrlEn) || '';
-        console.log(`🌍 SEPARATE MODE FALLBACK: Using ${language}-specific original: ${originalImageUrl} for ${item.titleEn}`);
+        originalImageUrl = (language === 'fr-FR' ? item.image_url_fr : item.image_url_en) || '';
+        console.log(`🌍 SEPARATE MODE FALLBACK: Using ${language}-specific original: ${originalImageUrl} for ${item.title_en}`);
       }
       
       if (originalImageUrl && originalImageUrl.trim() !== '') {
         imageUrl = originalImageUrl;
-        console.log(`🖼️ FALLBACK TO ORIGINAL (${language}): ${imageUrl} for ${item.titleEn}`);
+        console.log(`🖼️ FALLBACK TO ORIGINAL (${language}): ${imageUrl} for ${item.title_en}`);
         
         // If it's already a full URL, use it directly with AGGRESSIVE cache busting  
         if (imageUrl.startsWith('http')) {
@@ -302,17 +302,17 @@ export default function GallerySection() {
         }
       } else {
         // Final fallback to latest uploads (legacy)
-        const latestImageUrl = language === 'fr-FR' ? item.imageUrlFr : item.imageUrlEn;
+        const latestImageUrl = language === 'fr-FR' ? item.image_url_fr : item.image_url_en;
         
-        console.log(`🖼️ DEBUG LANGUAGE-SPECIFIC FALLBACK for ${item.titleEn}:`);
+        console.log(`🖼️ DEBUG LANGUAGE-SPECIFIC FALLBACK for ${item.title_en}:`);
         console.log(`   - Current language: ${language}`);
-        console.log(`   - item.imageUrlFr: ${item.imageUrlFr}`);
-        console.log(`   - item.imageUrlEn: ${item.imageUrlEn}`);
+        console.log(`   - item.image_url_fr: ${item.image_url_fr}`);
+        console.log(`   - item.image_url_en: ${item.image_url_en}`);
         console.log(`   - Selected latestImageUrl: ${latestImageUrl}`);
         
         if (latestImageUrl && latestImageUrl.trim() !== '') {
           imageUrl = latestImageUrl;
-          console.log(`🖼️ FALLBACK TO LATEST UPLOAD: ${imageUrl} for ${item.titleEn}`);
+          console.log(`🖼️ FALLBACK TO LATEST UPLOAD: ${imageUrl} for ${item.title_en}`);
           
           // If it's already a full URL, use it directly
           if (imageUrl.startsWith('http')) {
@@ -333,7 +333,7 @@ export default function GallerySection() {
             filename = filename.split('?')[0];
           }
         } else {
-          console.log(`🖼️ NO IMAGE AVAILABLE for ${item.titleEn}`);
+          console.log(`🖼️ NO IMAGE AVAILABLE for ${item.title_en}`);
           return '';
         }
       }
@@ -349,46 +349,46 @@ export default function GallerySection() {
   };
 
   const getItemTitle = (item: GalleryItem) => {
-    return language === 'fr-FR' ? item.titleFr : item.titleEn;
+    return language === 'fr-FR' ? item.title_fr : item.title_en;
   };
 
   const getItemPrice = (item: GalleryItem) => {
-    return language === 'fr-FR' ? item.priceFr : item.priceEn;
+    return language === 'fr-FR' ? item.price_fr : item.price_en;
   };
 
   const getItemSource = (item: GalleryItem) => {
-    return language === 'fr-FR' ? item.sourceFr : item.sourceEn;
+    return language === 'fr-FR' ? item.source_fr : item.source_en;
   };
 
   const getItemDuration = (item: GalleryItem) => {
-    return language === 'fr-FR' ? item.durationFr : item.durationEn;
+    return language === 'fr-FR' ? item.duration_fr : item.duration_en;
   };
 
   const getItemSituation = (item: GalleryItem) => {
-    return language === 'fr-FR' ? item.situationFr : item.situationEn;
+    return language === 'fr-FR' ? item.situation_fr : item.situation_en;
   };
 
   const getItemStory = (item: GalleryItem) => {
-    return language === 'fr-FR' ? item.storyFr : item.storyEn;
+    return language === 'fr-FR' ? item.story_fr : item.story_en;
   };
 
   const getItemSorryMessage = (item: GalleryItem) => {
-    return language === 'fr-FR' ? item.sorryMessageFr : item.sorryMessageEn;
+    return language === 'fr-FR' ? item.sorry_message_fr : item.sorry_message_en;
   };
 
   const hasVideo = (item: GalleryItem, index: number) => {
     // GALLERY INDEPENDENCE FIX: All gallery items can have video functionality
     // Check video_filename field which contains the actual timestamp-prefixed filenames
-    const filename = item.videoFilename || item.videoUrlEn || item.videoUrlFr;
+    const filename = item.video_filename || item.video_url_en || item.video_url_fr;
     const hasVideoResult = filename && filename.trim() !== '';
     
     // PRODUCTION DEBUG: Log hasVideo results to identify the issue
     console.log(`🎬 hasVideo check for item ${index}:`, {
       id: item.id,
       filename,
-      videoFilename: item.videoFilename,
-      videoUrlEn: item.videoUrlEn,
-      videoUrlFr: item.videoUrlFr,
+      videoFilename: item.video_filename,
+      videoUrlEn: item.video_url_en,
+      videoUrlFr: item.video_url_fr,
       hasVideoResult
     });
     
