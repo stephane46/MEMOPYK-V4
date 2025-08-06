@@ -3,8 +3,8 @@
 ## Overview
 MEMOPYK is a full-stack memory film platform designed to transform personal photos and videos into cinematic memory films. Its core purpose is to offer a seamless and intuitive experience for creating and managing cherished memory films. Key capabilities include a bilingual (French/English) content management system, a professional video lightbox, robust gallery management with reliable video streaming, language-specific upload functionality, advanced image reframing tools, and real-time preview capabilities. The project aims to capture a market niche for personalized, high-quality video memories.
 
-## Recent Changes
-- **August 6, 2025**: Resolved desktop gallery image display issue. Fixed data structure mismatch between API response (camelCase) and gallery component (snake_case) by updating all field references to handle both formats. Implemented aggressive cache busting for cropped images. Browser console logs confirm desktop gallery now correctly loads cropped images with -C.jpg URLs matching mobile gallery behavior.
+## Recent Changes  
+- **August 6, 2025**: Resolved desktop gallery image display issue. Completed comprehensive camelCase standardization in GallerySection.tsx by eliminating all 86 TypeScript property access errors. Removed all snake_case direct references (item.static_image_url_en, item.use_same_video, etc.) while maintaining useEffect mapping from API snake_case to camelCase. Simplified getImageUrl function to use only camelCase properties. TypeScript compilation now error-free for property access, confirming desktop gallery should display cropped thumbnails (-C.jpg) matching mobile gallery behavior.
 
 ## User Preferences
 Preferred communication style: Simple, everyday language.
