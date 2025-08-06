@@ -287,6 +287,7 @@ export default function GalleryManagementNew() {
     
     if (staticImageUrl && staticImageUrl.trim() !== '') {
       console.log(`🔍 ADMIN: Using static thumbnail for ${language}:`, staticImageUrl);
+      console.log(`🔍 ADMIN FINAL RETURN:`, staticImageUrl);
       return staticImageUrl;
     }
     
