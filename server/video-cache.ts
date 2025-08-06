@@ -511,22 +511,61 @@ export class VideoCache {
       const videoFiles = readdirSync(this.videoCacheDir);
       const imageFiles = readdirSync(this.imageCacheDir);
       
-      // Clear video cache
-      videoFiles.forEach(file => {
-        unlinkSync(join(this.videoCacheDir, file));
-      });
+      let videosRemoved = 0;
+      let imagesRemoved = 0;
+      const failedDeletions: string[] = [];
       
-      // Clear image cache  
-      imageFiles.forEach(file => {
-        unlinkSync(join(this.imageCacheDir, file));
-      });
+      // Clear video cache with retry logic
+      for (const file of videoFiles) {
+        const filePath = join(this.videoCacheDir, file);
+        try {
+          // Wait a moment to avoid conflicts with active streams
+          await new Promise(resolve => setTimeout(resolve, 100));
+          unlinkSync(filePath);
+          videosRemoved++;
+          console.log(`🗑️ Deleted video: ${file}`);
+        } catch (error: any) {
+          console.warn(`⚠️ Failed to delete video ${file}:`, error.message);
+          failedDeletions.push(`video: ${file}`);
+          
+          // Try again with force delete after a longer wait
+          try {
+            await new Promise(resolve => setTimeout(resolve, 500));
+            unlinkSync(filePath);
+            videosRemoved++;
+            console.log(`🗑️ Force deleted video: ${file}`);
+          } catch (retryError: any) {
+            console.error(`❌ Force delete failed for video ${file}:`, retryError.message);
+          }
+        }
+      }
       
-      console.log(`🗑️ ADMIN CACHE CLEAR: ${videoFiles.length} videos, ${imageFiles.length} images removed`);
-      console.log(`⚠️ Cache is now empty - videos will download when requested by visitors`);
+      // Clear image cache
+      for (const file of imageFiles) {
+        const filePath = join(this.imageCacheDir, file);
+        try {
+          unlinkSync(filePath);
+          imagesRemoved++;
+          console.log(`🗑️ Deleted image: ${file}`);
+        } catch (error: any) {
+          console.warn(`⚠️ Failed to delete image ${file}:`, error.message);
+          failedDeletions.push(`image: ${file}`);
+        }
+      }
+      
+      console.log(`🗑️ ADMIN CACHE CLEAR COMPLETE:`);
+      console.log(`✅ Successfully removed: ${videosRemoved}/${videoFiles.length} videos, ${imagesRemoved}/${imageFiles.length} images`);
+      
+      if (failedDeletions.length > 0) {
+        console.log(`⚠️ Failed to delete ${failedDeletions.length} files: ${failedDeletions.join(', ')}`);
+        console.log(`💡 Files may be in use by active streams. Try clearing cache when no videos are playing.`);
+      } else {
+        console.log(`✅ Cache is now completely empty`);
+      }
       
       return {
-        videosRemoved: videoFiles.length,
-        imagesRemoved: imageFiles.length
+        videosRemoved,
+        imagesRemoved
       };
       
     } catch (error) {

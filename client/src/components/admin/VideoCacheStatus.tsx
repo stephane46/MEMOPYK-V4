@@ -185,13 +185,25 @@ export const VideoCacheStatus: React.FC<VideoCacheStatusProps> = ({
     },
     onSuccess: (data) => {
       const result = data.removed || { videosRemoved: 0, imagesRemoved: 0 };
-      toast({
-        title: "Cache Completely Cleared",
-        description: `Removed ${result.videosRemoved} videos and ${result.imagesRemoved} images. Cache is now empty.`,
-      });
+      const totalRemoved = result.videosRemoved + result.imagesRemoved;
+      
+      if (totalRemoved > 0) {
+        toast({
+          title: "Cache Successfully Cleared",
+          description: `Removed ${result.videosRemoved} videos and ${result.imagesRemoved} images. Cache is now empty.`,
+        });
+      } else {
+        toast({
+          title: "Cache Clear Attempted",
+          description: "No files were removed - cache may already be empty or files are currently in use by active video streams. Try again when no videos are playing.",
+          variant: "destructive",
+        });
+      }
+      
       refetchStatus();
       refetchStats();
       queryClient.invalidateQueries({ queryKey: ['/api/video-cache/stats'] });
+      queryClient.invalidateQueries({ queryKey: ['/api/unified-cache/stats'] });
     },
     onError: (error: Error & {response?: {data?: {details?: string}}}) => {
       toast({
