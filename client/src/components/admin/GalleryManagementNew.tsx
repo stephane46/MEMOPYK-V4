@@ -983,7 +983,7 @@ export default function GalleryManagementNew() {
                       </div>
                       <div className="aspect-video w-full bg-black rounded-lg overflow-hidden border border-blue-200 dark:border-blue-600 relative">
 
-                        {(selectedItem || isCreateMode) && (formData.image_url_fr || pendingPreviews.image_url_fr) ? (
+                        {(selectedItem || isCreateMode) && (pendingPreviews.image_url_fr || selectedItem || formData.image_url_fr) ? (
                           <>
                             <img 
                               src={
@@ -1229,17 +1229,24 @@ export default function GalleryManagementNew() {
                         )}
                       </div>
                       <div className="aspect-video w-full bg-black rounded-lg overflow-hidden border border-green-200 dark:border-green-600 relative">
-                        {(selectedItem || isCreateMode) && (formData.image_url_en || pendingPreviews.image_url_en) ? (
+                        {(selectedItem || isCreateMode) && (pendingPreviews.image_url_en || selectedItem || formData.image_url_en) ? (
                           <>
                             <img 
-                              src={
-                                // Priority 1: Pending previews (for immediate upload display)
-                                pendingPreviews.image_url_en || 
-                                // Priority 2: Use cropped version like public site (FIXED)
-                                (selectedItem ? getImageUrlWithCacheBust(getThumbnailUrl(selectedItem, 'en')) : '') ||
-                                // Priority 3: Form data fallback (for uploaded but not saved images)
-                                formData.image_url_en
-                              } 
+                              src={(() => {
+                                const pendingUrl = pendingPreviews.image_url_en;
+                                const croppedUrl = selectedItem ? getImageUrlWithCacheBust(getThumbnailUrl(selectedItem, 'en')) : '';
+                                const formUrl = formData.image_url_en;
+                                
+                                const finalUrl = pendingUrl || croppedUrl || formUrl;
+                                console.log('🎯 ADMIN EN FINAL URL SELECTION:', {
+                                  pendingUrl,
+                                  croppedUrl,
+                                  formUrl,
+                                  finalUrl,
+                                  selectedTitle: selectedItem?.title_en
+                                });
+                                return finalUrl;
+                              })()} 
                               alt="Aperçu English"
                               className="w-full h-full object-contain"
                               onLoadStart={() => {
