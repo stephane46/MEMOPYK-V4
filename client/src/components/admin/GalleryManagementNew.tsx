@@ -2471,29 +2471,47 @@ export default function GalleryManagementNew() {
                   console.log('✅ Upload success:', uploadResult.url);
                   console.log('✅ Database automatically updated by upload endpoint');
                   
-                  // COMPREHENSIVE PREVIEW REFRESH - Fix all 3 issues together
+                  // AGGRESSIVE CACHE REFRESH - Force admin preview to show cropped image
+                  console.log('🔄 STARTING AGGRESSIVE CACHE REFRESH...');
+                  
+                  // Immediate cache invalidation
+                  queryClient.invalidateQueries({ queryKey: ['/api/gallery'] });
+                  
+                  // Force refresh key update (used in cache busting)
+                  const newRefreshKey = Date.now();
+                  setForceRefreshKey(newRefreshKey);
+                  console.log('🔄 Updated forceRefreshKey to:', newRefreshKey);
+                  
+                  // Dispatch global gallery update event
+                  window.dispatchEvent(new CustomEvent('gallery-updated'));
+                  
+                  // CRITICAL: Force image elements to reload by clearing src and setting again
                   setTimeout(() => {
-                    // 1. Invalidate all cache
-                    queryClient.invalidateQueries({ queryKey: ['/api/gallery'] });
-                    setForceRefreshKey(prev => prev + 1);
-                    window.dispatchEvent(new CustomEvent('gallery-updated'));
+                    console.log('🔄 FORCING IMAGE ELEMENT RELOAD...');
                     
-                    // 2. Force thumbnail URL refresh with timestamp
-                    const timestamp = Date.now();
-                    console.log('🔄 FORCED THUMBNAIL REFRESH with timestamp:', timestamp);
-                    
-                    // 3. Reset and reload selected item to trigger preview update
-                    setSelectedVideoId(null);
-                    
-                    // 4. Reload selected item after cache invalidation completes
-                    setTimeout(() => {
-                      setSelectedVideoId(selectedItem.id);
-                      // Force another refresh cycle to ensure thumbnails update
+                    // Find all admin preview images and force reload
+                    const previewImages = document.querySelectorAll('img[alt*="Aperçu"], img[alt*="Preview"]');
+                    previewImages.forEach((img: any) => {
+                      const originalSrc = img.src;
+                      console.log('🔄 Forcing reload of image:', originalSrc);
+                      img.src = ''; // Clear source
                       setTimeout(() => {
-                        setForceRefreshKey(prev => prev + 1);
-                        console.log('✅ PREVIEW REFRESH COMPLETE - thumbnails should update now');
-                      }, 100);
-                    }, 150);
+                        // Add aggressive cache busting
+                        const cacheBustSrc = originalSrc.includes('?') 
+                          ? `${originalSrc}&force=${newRefreshKey}&reload=${Date.now()}`
+                          : `${originalSrc}?force=${newRefreshKey}&reload=${Date.now()}`;
+                        img.src = cacheBustSrc;
+                        console.log('🔄 Reloaded image with cache busting:', cacheBustSrc);
+                      }, 50);
+                    });
+                    
+                    // Also force selected item refresh
+                    const currentId = selectedItem.id;
+                    setSelectedVideoId(null);
+                    setTimeout(() => {
+                      setSelectedVideoId(currentId);
+                      console.log('✅ FORCED ADMIN PREVIEW REFRESH COMPLETE');
+                    }, 200);
                   }, 100);
                   
                   // Close modal immediately
