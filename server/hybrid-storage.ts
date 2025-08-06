@@ -767,7 +767,25 @@ export class HybridStorage implements HybridStorageInterface {
     
     console.log(`🔍 JSON UPDATE - is_active: ${updatedItem.is_active}`);
     
-    this.saveJsonFile('gallery-items.json', items);
+    // 🚨 CRITICAL CACHE SYNC: Only update JSON if database update failed
+    if (!dbUpdateSuccessful) {
+      console.log('⚠️ Database failed, updating JSON as fallback');
+      this.saveJsonFile('gallery-items.json', items);
+    } else {
+      console.log('✅ Database update successful, skipping JSON cache to prevent conflicts');
+      // Delete JSON cache to ensure fresh reads from database
+      try {
+        const fs = await import('fs');
+        const path = await import('path');
+        const cacheFilePath = path.join(__dirname, 'data', 'gallery-items.json');
+        if (fs.existsSync(cacheFilePath)) {
+          fs.unlinkSync(cacheFilePath);
+          console.log('🗑️ JSON cache cleared - forcing fresh database reads');
+        }
+      } catch (error) {
+        console.warn('⚠️ Cache clearing failed:', error);
+      }
+    }
     
     // CRITICAL: Return database result if successful for consistency across environments
     if (dbUpdateSuccessful && updatedDbItem) {
