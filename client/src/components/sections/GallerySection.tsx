@@ -7,6 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import { Play, Eye, Star, ArrowRight, Image as ImageIcon, Film, Users, Clock, Smartphone, Monitor, Instagram } from "lucide-react";
 import { VideoOverlay } from "@/components/gallery/VideoOverlay";
 import { MobileEnhancedGallery } from "@/components/mobile/MobileEnhancedGallery";
+import { LazyImage } from "@/components/ui/LazyImage";
 import { useNetworkStatus } from "@/hooks/useNetworkStatus";
 import { useDeviceOrientation } from "@/hooks/useDeviceOrientation";
 // Gallery item interface matching API response format (snake_case)
@@ -632,13 +633,13 @@ export default function GallerySection() {
                         /* Static Image - Default display */
                         <div className="w-full h-full relative">
                           {/* Main Image */}
-                          <img
-                            key={`${item.id}-${thumbnailUrl}-${Date.now()}`} // Force reload when URL changes
-                            src={`${thumbnailUrl}${thumbnailUrl.includes('?') ? '&' : '?'}forceReload=${Date.now()}&v=${Math.random()}`}
+                          <LazyImage
+                            src={thumbnailUrl}
                             alt={getItemTitle(item)}
                             className="w-full h-full object-cover"
-                            onLoad={() => console.log(`🖼️ Image loaded: ${thumbnailUrl}`)}
-                            onError={(e) => console.log(`❌ Image failed to load: ${thumbnailUrl}`, e)}
+                            fallbackSrc="/placeholder-gallery.jpg"
+                            onLoad={() => console.log(`🖼️ LazyImage loaded: ${thumbnailUrl}`)}
+                            onError={() => console.log(`❌ LazyImage failed to load: ${thumbnailUrl}`)}
                           />
                           
                           {/* Top overlays - Mobile Responsive */}
