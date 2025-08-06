@@ -17,7 +17,7 @@ interface SimpleImageCropperProps {
   onCropChange?: () => void;
 }
 
-export const SimpleImageCropper: React.FC<SimpleImageCropperProps> = ({
+const SimpleImageCropper: React.FC<SimpleImageCropperProps> = ({
   imageUrl,
   onSave,
   onCancel,
@@ -245,3 +245,5 @@ export const SimpleImageCropper: React.FC<SimpleImageCropperProps> = ({
     </div>
   );
 };
+
+export default SimpleImageCropper;
