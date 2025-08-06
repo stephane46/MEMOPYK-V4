@@ -756,6 +756,48 @@ export class HybridStorage implements HybridStorageInterface {
     });
     
     if (itemIndex === -1) {
+      // If database update was successful but JSON doesn't have the item, create a minimal entry
+      if (dbUpdateSuccessful && updatedDbItem) {
+        console.log('🔄 Item not in JSON but database update succeeded - returning database result only');
+        return {
+          id: updatedDbItem.id,
+          title_en: updatedDbItem.titleEn,
+          title_fr: updatedDbItem.titleFr,
+          price_en: updatedDbItem.priceEn,
+          price_fr: updatedDbItem.priceFr,
+          source_en: updatedDbItem.sourceEn,
+          source_fr: updatedDbItem.sourceFr,
+          duration_en: updatedDbItem.durationEn,
+          duration_fr: updatedDbItem.durationFr,
+          situation_en: updatedDbItem.situationEn,
+          situation_fr: updatedDbItem.situationFr,
+          story_en: updatedDbItem.storyEn,
+          story_fr: updatedDbItem.storyFr,
+          sorry_message_en: updatedDbItem.sorryMessageEn,
+          sorry_message_fr: updatedDbItem.sorryMessageFr,
+          format_platform_en: updatedDbItem.formatPlatformEn,
+          format_platform_fr: updatedDbItem.formatPlatformFr,
+          format_type_en: updatedDbItem.formatTypeEn,
+          format_type_fr: updatedDbItem.formatTypeFr,
+          video_url_en: updatedDbItem.videoUrlEn,
+          video_url_fr: updatedDbItem.videoUrlFr,
+          video_filename: updatedDbItem.videoFilename,
+          use_same_video: updatedDbItem.useSameVideo,
+          video_width: updatedDbItem.videoWidth,
+          video_height: updatedDbItem.videoHeight,
+          video_orientation: updatedDbItem.videoOrientation,
+          image_url_en: updatedDbItem.imageUrlEn,
+          image_url_fr: updatedDbItem.imageUrlFr,
+          static_image_url: updatedDbItem.staticImageUrl,
+          static_image_url_en: updatedDbItem.staticImageUrlEn,
+          static_image_url_fr: updatedDbItem.staticImageUrlFr,
+          order_index: updatedDbItem.orderIndex,
+          is_active: updatedDbItem.isActive,
+          created_at: updatedDbItem.createdAt,
+          updated_at: updatedDbItem.updatedAt,
+          cropSettings: updatedDbItem.cropSettings
+        };
+      }
       throw new Error(`Gallery item not found: ${itemId}`);
     }
     
