@@ -600,31 +600,33 @@ export default function GallerySection() {
 
                     {/* Card Content - Mobile Optimized with balanced spacing */}
                     <div className="pt-1 pb-3 sm:pb-4 lg:pb-6">
-                      {/* Title Row - Full width with content padding */}
-                      <div className="px-3 sm:px-4 lg:px-6 mb-1 sm:mb-1">
-                        <h3 className="text-lg sm:text-xl font-bold text-gray-900 dark:text-white h-6 sm:h-8 overflow-hidden leading-6 sm:leading-8">
-                          {getItemTitle(item)}
-                        </h3>
-                      </div>
-                      
-                      {/* Social Media Badge Row - Right aligned with matching overlay spacing */}
-                      <div className="px-2 sm:px-4 mb-1 sm:mb-1 flex justify-end">
-                        {/* Social Media Badge - Positioned to match price badge overlay spacing */}
-                        {(() => {
-                          const format = getViewingFormat(item);
-                          const IconComponent = format.icon;
-                          // Standardized labels
-                          const standardPlatform = language === 'fr-FR' ? 'Format Recommandé' : 'Recommended Format';
-                          return (
-                            <div className="bg-gray-500 text-white px-2 py-1 rounded-full text-xs font-medium flex items-center gap-1 shadow-sm flex-shrink-0 h-6 sm:h-8">
-                              <IconComponent className="w-2.5 h-2.5 flex-shrink-0" />
-                              <div className="min-w-0 flex flex-col justify-center items-center text-center">
-                                <div className="opacity-60 leading-tight truncate" style={{ fontSize: '8px' }}>{standardPlatform}</div>
-                                <div className="font-semibold leading-tight truncate" style={{ fontSize: '10px' }}>{format.type}</div>
+                      {/* Title and Social Media Badge Row - Same line with responsive spacing */}
+                      <div className="mb-1 sm:mb-1">
+                        <div className="px-3 sm:px-4 lg:px-6 flex justify-between items-start gap-2">
+                          <h3 className="text-lg sm:text-xl font-bold text-gray-900 dark:text-white h-6 sm:h-8 overflow-hidden leading-6 sm:leading-8 flex-1">
+                            {getItemTitle(item)}
+                          </h3>
+                        </div>
+                        
+                        {/* Social Media Badge positioned with overlay spacing */}
+                        <div className="absolute right-2 sm:right-4 -mt-6 sm:-mt-8">
+                          {/* Social Media Badge - Positioned to match price badge overlay spacing */}
+                          {(() => {
+                            const format = getViewingFormat(item);
+                            const IconComponent = format.icon;
+                            // Standardized labels
+                            const standardPlatform = language === 'fr-FR' ? 'Format Recommandé' : 'Recommended Format';
+                            return (
+                              <div className="bg-gray-500 text-white px-2 py-1 rounded-full text-xs font-medium flex items-center gap-1 shadow-sm flex-shrink-0 h-6 sm:h-8">
+                                <IconComponent className="w-2.5 h-2.5 flex-shrink-0" />
+                                <div className="min-w-0 flex flex-col justify-center items-center text-center">
+                                  <div className="opacity-60 leading-tight truncate" style={{ fontSize: '8px' }}>{standardPlatform}</div>
+                                  <div className="font-semibold leading-tight truncate" style={{ fontSize: '10px' }}>{format.type}</div>
+                                </div>
                               </div>
-                            </div>
-                          );
-                        })()}
+                            );
+                          })()}
+                        </div>
                       </div>
                           
                       {/* Duration (5) - Mobile Optimized with content padding */}
