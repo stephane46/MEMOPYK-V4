@@ -442,8 +442,8 @@ export default function GalleryManagementNew() {
         video_width: selectedItem.video_width || 16,
         video_height: selectedItem.video_height || 9,
         video_orientation: selectedItem.video_orientation || 'landscape',
-        image_url_en: pendingPreviews.image_url_en || persistentUploadState.image_url_en || selectedItem.image_url_en || '',
-        image_url_fr: pendingPreviews.image_url_fr || persistentUploadState.image_url_fr || selectedItem.image_url_fr || '',
+        image_url_en: pendingPreviews.image_url_en || persistentUploadState.image_url_en || getThumbnailUrl(selectedItem, 'en') || '',
+        image_url_fr: pendingPreviews.image_url_fr || persistentUploadState.image_url_fr || getThumbnailUrl(selectedItem, 'fr') || '',
         static_image_url: selectedItem.static_image_url || '',
         static_image_url_en: selectedItem.static_image_url_en || null,
         static_image_url_fr: selectedItem.static_image_url_fr || null,
@@ -1241,6 +1241,7 @@ export default function GalleryManagementNew() {
                         {(selectedItem || isCreateMode) && (pendingPreviews.image_url_en || selectedItem || formData.image_url_en) ? (
                           <>
                             <img 
+                              key={`en-${selectedItem?.id || 'new'}-${Date.now()}`}
                               src={(() => {
                                 const pendingUrl = pendingPreviews.image_url_en;
                                 const croppedUrl = selectedItem ? getImageUrlWithCacheBust(getThumbnailUrl(selectedItem, 'en')) : '';
