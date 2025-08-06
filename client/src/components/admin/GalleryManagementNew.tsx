@@ -986,14 +986,23 @@ export default function GalleryManagementNew() {
                         {(selectedItem || isCreateMode) && (pendingPreviews.image_url_fr || selectedItem || formData.image_url_fr) ? (
                           <>
                             <img 
-                              src={
-                                // Priority 1: Pending previews (for immediate upload display)
-                                pendingPreviews.image_url_fr || 
-                                // Priority 2: Use cropped version like public site (FIXED)
-                                (selectedItem ? getImageUrlWithCacheBust(getThumbnailUrl(selectedItem, 'fr')) : '') ||
-                                // Priority 3: Form data fallback (for uploaded but not saved images)
-                                formData.image_url_fr
-                              }
+                              src={(() => {
+                                const pendingUrl = pendingPreviews.image_url_fr;
+                                const croppedUrl = selectedItem ? getImageUrlWithCacheBust(getThumbnailUrl(selectedItem, 'fr')) : '';
+                                const formUrl = formData.image_url_fr;
+                                
+                                // CRITICAL FIX: Always prioritize cropped over form data for existing items
+                                const finalUrl = pendingUrl || (selectedItem ? croppedUrl : formUrl);
+                                console.log('🎯 ADMIN FR FINAL URL SELECTION:', {
+                                  pendingUrl,
+                                  croppedUrl,
+                                  formUrl,
+                                  finalUrl,
+                                  selectedTitle: selectedItem?.title_fr,
+                                  isExistingItem: !!selectedItem
+                                });
+                                return finalUrl;
+                              })()}
                               onLoadStart={() => {
                                 const imageUrl = pendingPreviews.image_url_fr || formData.image_url_fr || 
                                   (selectedItem ? getThumbnailUrl(selectedItem, 'fr') : '');
@@ -1237,13 +1246,15 @@ export default function GalleryManagementNew() {
                                 const croppedUrl = selectedItem ? getImageUrlWithCacheBust(getThumbnailUrl(selectedItem, 'en')) : '';
                                 const formUrl = formData.image_url_en;
                                 
-                                const finalUrl = pendingUrl || croppedUrl || formUrl;
+                                // CRITICAL FIX: Always prioritize cropped over form data for existing items
+                                const finalUrl = pendingUrl || (selectedItem ? croppedUrl : formUrl);
                                 console.log('🎯 ADMIN EN FINAL URL SELECTION:', {
                                   pendingUrl,
                                   croppedUrl,
                                   formUrl,
                                   finalUrl,
-                                  selectedTitle: selectedItem?.title_en
+                                  selectedTitle: selectedItem?.title_en,
+                                  isExistingItem: !!selectedItem
                                 });
                                 return finalUrl;
                               })()} 
