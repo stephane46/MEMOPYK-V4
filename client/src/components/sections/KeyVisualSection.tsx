@@ -9,7 +9,7 @@ export function KeyVisualSection() {
   return (
     <section className="py-0 bg-gradient-cream">
       <div className="container mx-auto px-4">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 sm:gap-10 lg:gap-12 items-center border-4 border-red-500">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 sm:gap-10 lg:gap-12 items-center">
           {/* Left: Key Visual Illustration - Show on mobile */}
           <div className="relative order-1 lg:order-none mb-8 sm:mb-0">
             <div className="relative min-h-[200px] sm:min-h-[300px] flex items-center justify-center">
