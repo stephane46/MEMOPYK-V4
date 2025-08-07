@@ -31,7 +31,7 @@ export function KeyVisualSection() {
           {/* Right: Emotional Message */}
           <div className="space-y-8">
             {/* Opening Hook */}
-            <h2 className="text-4xl md:text-5xl font-playfair font-bold text-memopyk-navy leading-tight">
+            <h2 className="text-4xl md:text-5xl font-poppins font-bold text-memopyk-navy leading-tight">
               {language === 'fr-FR' 
                 ? "Tant de souvenirs précieux, perdus dans le chaos du quotidien."
                 : "So many precious memories, lost in the chaos of daily life."
@@ -69,7 +69,7 @@ export function KeyVisualSection() {
                 
                 {/* Elegant closing tagline */}
                 <div className="text-center pt-4 border-t border-memopyk-orange/20">
-                  <p className="text-lg font-playfair italic text-memopyk-navy">
+                  <p className="text-lg font-poppins italic text-memopyk-navy">
                     {language === 'fr-FR' 
                       ? "Personnel, unique et émouvant."
                       : "A personalized visual story, unique and touching."
