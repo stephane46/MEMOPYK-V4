@@ -580,9 +580,9 @@ export default function AdminPage() {
                     onClick={() => setHeroTab('text')}
                     className="py-4 px-6 font-bold text-lg rounded-lg transition-all duration-300 transform hover:scale-105 shadow-xl border-2"
                     style={{
-                      backgroundColor: heroTab === 'text' ? '#3b82f6' : '#ffffff',
+                      backgroundColor: heroTab === 'text' ? '#f97316' : '#ffffff',
                       color: heroTab === 'text' ? '#ffffff' : '#374151',
-                      borderColor: heroTab === 'text' ? '#2563eb' : '#e5e7eb'
+                      borderColor: heroTab === 'text' ? '#ea580c' : '#e5e7eb'
                     }}
                   >
                     <Type className="inline-block h-4 w-4 mr-2" />
