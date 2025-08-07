@@ -43,13 +43,13 @@ export function KeyVisualSection() {
               <p className="text-xl text-memopyk-dark-blue leading-relaxed font-light">
                 {language === 'fr-FR' 
                   ? "Enfouis dans des téléphones, oubliés sur des disques durs, entassés dans des cartons…"
-                  : "Buried in phones, forgotten on hard drives, piled up in boxes…"
+                  : "Buried in phones, forgotten on hard drives, piled in boxes…"
                 }
               </p>
               <p className="text-xl text-memopyk-dark-blue leading-relaxed font-medium">
                 {language === 'fr-FR' 
                   ? "Vos souvenirs méritent mieux que ça, ils méritent une histoire."
-                  : "Your memories deserve better than that, they deserve a story."
+                  : "Your memories deserve more than that, they deserve a story."
                 }
               </p>
             </div>
@@ -63,7 +63,7 @@ export function KeyVisualSection() {
                 <p className="text-lg text-memopyk-dark-blue leading-relaxed mb-4">
                   {language === 'fr-FR' 
                     ? "Laissez-nous sauver vos photos et vidéos en les transformant en un film souvenir que vous garderez précieusement."
-                    : "Let us rescue your photos and videos by transforming them into a memory film you'll treasure forever."
+                    : "Let us rescue your photos and video by transforming them into a souvenir personal film you'll truly treasure."
                   }
                 </p>
                 
@@ -72,7 +72,7 @@ export function KeyVisualSection() {
                   <p className="text-lg font-playfair italic text-memopyk-navy">
                     {language === 'fr-FR' 
                       ? "Personnel, unique et émouvant."
-                      : "Personal, unique, and moving."
+                      : "A personalized visual story, unique and touching."
                     }
                   </p>
                 </div>
