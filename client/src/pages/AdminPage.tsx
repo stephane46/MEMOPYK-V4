@@ -387,7 +387,10 @@ export default function AdminPage() {
       return await response.json();
     },
     onSuccess: () => {
+      // Invalidate all hero-text queries (admin and public site with language variants)
       queryClient.invalidateQueries({ queryKey: ['/api/hero-text'] });
+      queryClient.invalidateQueries({ queryKey: ['/api/hero-text', 'fr-FR'] });
+      queryClient.invalidateQueries({ queryKey: ['/api/hero-text', 'en-US'] });
       toast({ title: "Succès", description: "Texte hero mis à jour avec succès" });
     },
     onError: () => {
@@ -416,7 +419,10 @@ export default function AdminPage() {
       return await response.json();
     },
     onSuccess: () => {
+      // Invalidate all hero-text queries (admin and public site with language variants)
       queryClient.invalidateQueries({ queryKey: ['/api/hero-text'] });
+      queryClient.invalidateQueries({ queryKey: ['/api/hero-text', 'fr-FR'] });
+      queryClient.invalidateQueries({ queryKey: ['/api/hero-text', 'en-US'] });
       toast({ title: "Succès", description: "Texte appliqué au site avec succès" });
     },
     onError: () => {
@@ -431,7 +437,10 @@ export default function AdminPage() {
       return await response.json();
     },
     onSuccess: () => {
+      // Invalidate all hero-text queries (admin and public site with language variants)
       queryClient.invalidateQueries({ queryKey: ['/api/hero-text'] });
+      queryClient.invalidateQueries({ queryKey: ['/api/hero-text', 'fr-FR'] });
+      queryClient.invalidateQueries({ queryKey: ['/api/hero-text', 'en-US'] });
       setShowNewTextForm(false);
       setNewTextData({ title_fr: '', subtitle_fr: '', title_en: '', subtitle_en: '', font_size_desktop: 60, font_size_tablet: 45, font_size_mobile: 36 });
       toast({ title: "Succès", description: "Nouveau texte créé avec succès" });
@@ -448,7 +457,10 @@ export default function AdminPage() {
       return await response.json();
     },
     onSuccess: () => {
+      // Invalidate all hero-text queries (admin and public site with language variants)
       queryClient.invalidateQueries({ queryKey: ['/api/hero-text'] });
+      queryClient.invalidateQueries({ queryKey: ['/api/hero-text', 'fr-FR'] });
+      queryClient.invalidateQueries({ queryKey: ['/api/hero-text', 'en-US'] });
       setSelectedTextId(null);
       setEditingTextId(null);
       toast({ title: "Succès", description: "Texte supprimé avec succès" });

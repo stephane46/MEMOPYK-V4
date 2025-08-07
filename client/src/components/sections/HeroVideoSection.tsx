@@ -45,10 +45,11 @@ export function HeroVideoSection() {
     staleTime: 5 * 60 * 1000,
   });
 
-  // Fetch hero text settings
+  // Fetch hero text settings with shorter stale time for real-time updates
   const { data: heroTextData = [] } = useQuery<HeroText[]>({
     queryKey: ['/api/hero-text', language],
-    staleTime: 5 * 60 * 1000,
+    staleTime: 10 * 1000, // 10 seconds for quick updates from admin
+    refetchInterval: 15 * 1000, // Auto-refetch every 15 seconds
   });
 
   const activeVideos = heroVideos.filter(video => video.is_active)
