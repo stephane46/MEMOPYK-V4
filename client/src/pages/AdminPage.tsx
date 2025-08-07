@@ -1168,7 +1168,6 @@ export default function AdminPage() {
                                               setPreviewFontSizeDesktop(text.font_size_desktop || text.font_size || 60);
                                               setPreviewFontSizeTablet(text.font_size_tablet || Math.round((text.font_size || 60) * 0.75));
                                               setPreviewFontSizeMobile(text.font_size_mobile || Math.round((text.font_size || 60) * 0.53));
-                                              setTextPreview(`${text.title_fr}\n${text.subtitle_fr}`);
                                             }}
                                           >
                                             <Eye className="h-3 w-3 mr-1" />
