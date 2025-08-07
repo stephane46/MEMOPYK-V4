@@ -177,9 +177,16 @@ export const VideoCacheStatus: React.FC<VideoCacheStatusProps> = ({
     },
   });
 
-  // Clear cache mutation
+  // Environment safety check
+  const isProduction = window.location.hostname.endsWith('.replit.app') || window.location.hostname === 'memopyk.replit.app';
+
+  // Clear cache mutation with production safety
   const clearCacheMutation = useMutation({
     mutationFn: async () => {
+      // PRODUCTION SAFETY: Manual cleanup should be protected
+      if (isProduction) {
+        throw new Error('Manual cleanup is disabled on production for safety. Use BULLETPROOF cache refresh instead.');
+      }
       const response = await apiRequest('/api/video-cache/clear', 'POST');
       return await response.json() as {removed?: {videosRemoved: number; imagesRemoved: number}; message?: string};
     },
@@ -329,8 +336,8 @@ export const VideoCacheStatus: React.FC<VideoCacheStatusProps> = ({
             <div className="flex items-center gap-2">
               <HardDrive className="h-5 w-5" />
               {title}
-              <Badge className={`ml-2 text-xs ${window.location.hostname.includes('.replit.app') ? 'bg-green-100 text-green-800' : 'bg-blue-100 text-blue-800'}`}>
-                {window.location.hostname.includes('.replit.app') ? 'Production' : 'Development'} Server
+              <Badge className={`ml-2 text-xs ${isProduction ? 'bg-green-100 text-green-800' : 'bg-blue-100 text-blue-800'}`}>
+                {isProduction ? 'Production' : 'Development'} Server
               </Badge>
             </div>
             <div className="flex items-center gap-2">
