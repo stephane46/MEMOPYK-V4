@@ -1356,7 +1356,7 @@ export default function AdminPage() {
                                       return selectedText ? (
                                         <div>
                                           <h1 
-                                            className="font-bold mb-4 whitespace-nowrap"
+                                            className="font-bold mb-4 text-center"
                                             style={{ 
                                               fontSize: `${
                                                 currentPreviewDevice === 'desktop' ? previewFontSizeDesktop :
@@ -1388,7 +1388,7 @@ export default function AdminPage() {
                                             })()}
                                           </h1>
                                           <p 
-                                            className="opacity-90"
+                                            className="opacity-90 text-center"
                                             style={{ 
                                               fontSize: `${(
                                                 currentPreviewDevice === 'desktop' ? previewFontSizeDesktop :
