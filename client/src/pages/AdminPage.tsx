@@ -1339,7 +1339,7 @@ export default function AdminPage() {
                                   }}
                                 >
                                   <div className="text-center text-white">
-                                    {selectedTextId && (() => {
+                                    {selectedTextId ? (() => {
                                       const selectedText = heroTexts.find((t: any) => t.id === selectedTextId);
                                       return selectedText ? (
                                         <div>
@@ -1361,10 +1361,11 @@ export default function AdminPage() {
                                               if (text.includes('\\n')) {
                                                 text = text.replace(/\\n/g, '\n');
                                               }
-                                              return text.split('\n').map((line: string, index: number) => (
+                                              const lines = text.split('\n');
+                                              return lines.map((line: string, index: number) => (
                                                 <React.Fragment key={index}>
                                                   {line}
-                                                  {index < text.split('\n').length - 1 && <br />}
+                                                  {index < lines.length - 1 && <br />}
                                                 </React.Fragment>
                                               ));
                                             })()}
@@ -1385,17 +1386,26 @@ export default function AdminPage() {
                                               if (text.includes('\\n')) {
                                                 text = text.replace(/\\n/g, '\n');
                                               }
-                                              return text.split('\n').map((line: string, index: number) => (
+                                              const lines = text.split('\n');
+                                              return lines.map((line: string, index: number) => (
                                                 <React.Fragment key={index}>
                                                   {line}
-                                                  {index < text.split('\n').length - 1 && <br />}
+                                                  {index < lines.length - 1 && <br />}
                                                 </React.Fragment>
                                               ));
                                             })()}
                                           </p>
                                         </div>
-                                      ) : null;
-                                    })()}
+                                      ) : (
+                                        <div className="text-gray-400">
+                                          <p>Texte non trouvé pour l'ID: {selectedTextId}</p>
+                                        </div>
+                                      );
+                                    })() : (
+                                      <div className="text-gray-400">
+                                        <p>Cliquez sur "Prévisualiser" pour voir le texte ici</p>
+                                      </div>
+                                    )}
                                   </div>
                                 </div>
 
