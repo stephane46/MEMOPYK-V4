@@ -225,10 +225,11 @@ export function HeroVideoSection() {
                 ? (activeHeroText?.title_fr || "Transformez vos souvenirs\nen films cinématographiques")
                 : (activeHeroText?.title_en || "Transform your memories\ninto cinematic films");
               
-              return text.split('\n').map((line, index) => (
+              const processedText = text.replace(/\\n/g, '\n');
+              return processedText.split('\n').map((line, index) => (
                 <React.Fragment key={index}>
                   {line}
-                  {index < text.split('\n').length - 1 && <br />}
+                  {index < processedText.split('\n').length - 1 && <br />}
                 </React.Fragment>
               ));
             })()}
@@ -246,10 +247,11 @@ export function HeroVideoSection() {
                 ? (activeHeroText?.subtitle_fr || "Redonnez vie à vos moments précieux\navec notre expertise cinématographique")
                 : (activeHeroText?.subtitle_en || "Bring your precious moments to life\nwith our cinematic expertise");
               
-              return text.split('\n').map((line, index) => (
+              const processedText = text.replace(/\\n/g, '\n');
+              return processedText.split('\n').map((line, index) => (
                 <React.Fragment key={index}>
                   {line}
-                  {index < text.split('\n').length - 1 && <br />}
+                  {index < processedText.split('\n').length - 1 && <br />}
                 </React.Fragment>
               ));
             })()}
