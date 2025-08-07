@@ -1247,7 +1247,7 @@ export default function AdminPage() {
                                   <div className="space-y-3">
                                     <Label className="text-lg font-semibold text-gray-900 dark:text-white flex items-center gap-2">
                                       <Monitor className="h-5 w-5" />
-                                      Responsive Font Size Controls
+                                      Contrôles de Taille de Police Responsive
                                     </Label>
                                     
 
@@ -1261,7 +1261,7 @@ export default function AdminPage() {
                                         }`}
                                       >
                                         <Monitor className="h-4 w-4" />
-                                        Desktop
+                                        Ordinateur
                                       </button>
                                       <button
                                         onClick={() => setCurrentPreviewDevice('tablet')}
@@ -1272,7 +1272,7 @@ export default function AdminPage() {
                                         }`}
                                       >
                                         <Tablet className="h-4 w-4" />
-                                        Tablet
+                                        Tablette
                                       </button>
                                       <button
                                         onClick={() => setCurrentPreviewDevice('mobile')}
@@ -1291,9 +1291,9 @@ export default function AdminPage() {
                                   {/* Current Device Font Size Slider */}
                                   <div className="space-y-4">
                                     <Label className="text-base font-medium">
-                                      {currentPreviewDevice === 'desktop' && `Desktop Font Size: ${previewFontSizeDesktop}px`}
-                                      {currentPreviewDevice === 'tablet' && `Tablet Font Size: ${previewFontSizeTablet}px`}
-                                      {currentPreviewDevice === 'mobile' && `Mobile Font Size: ${previewFontSizeMobile}px`}
+                                      {currentPreviewDevice === 'desktop' && `Taille Police Ordinateur: ${previewFontSizeDesktop}px`}
+                                      {currentPreviewDevice === 'tablet' && `Taille Police Tablette: ${previewFontSizeTablet}px`}
+                                      {currentPreviewDevice === 'mobile' && `Taille Police Mobile: ${previewFontSizeMobile}px`}
                                     </Label>
                                     <input
                                       type="range"
@@ -1329,12 +1329,16 @@ export default function AdminPage() {
                                     />
                                     <div className="text-sm text-gray-600 dark:text-gray-400 space-y-1">
                                       <div className="flex justify-between">
-                                        <span>Desktop: {previewFontSizeDesktop}px</span>
-                                        <span>Tablet: {previewFontSizeTablet}px</span>
+                                        <span>Ordinateur: {previewFontSizeDesktop}px</span>
+                                        <span>Tablette: {previewFontSizeTablet}px</span>
                                         <span>Mobile: {previewFontSizeMobile}px</span>
                                       </div>
                                       <p className="text-xs text-center text-gray-500 dark:text-gray-500">
-                                        🎯 Current preview: {currentPreviewDevice.charAt(0).toUpperCase() + currentPreviewDevice.slice(1)}
+                                        🎯 Aperçu actuel: {
+                                          currentPreviewDevice === 'desktop' ? 'Ordinateur' :
+                                          currentPreviewDevice === 'tablet' ? 'Tablette' :
+                                          'Mobile'
+                                        }
                                       </p>
                                     </div>
                                   </div>
@@ -1368,7 +1372,7 @@ export default function AdminPage() {
                                   </button>
                                 </div>
 
-                                {/* Live Preview - Full Width Like Public Site */}
+                                {/* Aperçu en Direct - Pleine Largeur Comme Site Public */}
                                 <div 
                                   className="bg-black rounded-lg p-4 sm:p-8 min-h-[300px] flex items-center justify-center relative overflow-hidden w-full"
                                   style={{
@@ -1478,7 +1482,7 @@ export default function AdminPage() {
                                     disabled={updateTextMutation.isPending}
                                   >
                                     <Save className="h-4 w-4 mr-2" />
-                                    Save Responsive Sizes
+                                    Sauvegarder Tailles Responsive
                                   </Button>
                                   <Button
                                     className="bg-orange-500 hover:bg-orange-600"
@@ -1763,7 +1767,7 @@ export default function AdminPage() {
         <DialogContent className="max-w-4xl w-full">
           <DialogHeader>
             <DialogTitle className="flex items-center justify-between">
-              <span>Video Preview: {previewVideo?.title}</span>
+              <span>Aperçu Vidéo: {previewVideo?.title}</span>
               <Button 
                 variant="ghost" 
                 size="sm" 
