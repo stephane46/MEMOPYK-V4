@@ -225,19 +225,11 @@ export function HeroVideoSection() {
                 ? (activeHeroText?.title_fr || "Transformez vos souvenirs\nen films cinématographiques")
                 : (activeHeroText?.title_en || "Transform your memories\ninto cinematic films");
               
-              // DEBUG: Log public site processing
-              console.log('🔍 Public Site - Raw text:', JSON.stringify(text));
-              console.log('🔍 Public Site - activeHeroText:', activeHeroText);
-              
               // Handle multiple escaping scenarios: raw newlines, \n, \\n
               let processedText = text;
-              console.log('🔍 Public Site - Before replacement, includes \\\\n?', processedText.includes('\\n'));
               if (processedText.includes('\\n')) {
                 processedText = processedText.replace(/\\n/g, '\n');
-                console.log('🔍 Public Site - After replacement:', JSON.stringify(processedText));
               }
-              
-              console.log('🔍 Public Site - Final processed text:', JSON.stringify(processedText));
               const lines = processedText.split('\n');
               console.log('🔍 Public Site - Lines:', lines);
               
