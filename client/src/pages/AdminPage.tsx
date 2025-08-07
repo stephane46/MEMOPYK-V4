@@ -752,32 +752,7 @@ export default function AdminPage() {
                                       </div>
                                     </div>
                                     
-                                    {/* Cache Status */}
-                                    <div className="flex items-center justify-center">
-                                      {(() => {
-                                        const filename = video.url_en;
-                                        const isCached = cacheStatus[filename];
-                                        return (
-                                          <div className={`px-4 py-2 rounded-lg font-medium text-sm border-2 ${
-                                            isCached 
-                                              ? 'bg-green-50 dark:bg-green-900/20 text-green-700 dark:text-green-300 border-green-200 dark:border-green-800' 
-                                              : 'bg-orange-50 dark:bg-orange-900/20 text-orange-700 dark:text-orange-300 border-orange-200 dark:border-orange-800'
-                                          }`}>
-                                            {isCached ? (
-                                              <>
-                                                <Check className="inline h-4 w-4 mr-1" />
-                                                ✅ Cached (~50ms load)
-                                              </>
-                                            ) : (
-                                              <>
-                                                <Zap className="inline h-4 w-4 mr-1" />
-                                                ⏳ Not Cached (~1500ms load)
-                                              </>
-                                            )}
-                                          </div>
-                                        );
-                                      })()}
-                                    </div>
+
                                     
                                     {/* Toggle Switch */}
                                     <div className="flex items-center justify-center space-x-3">
@@ -863,7 +838,7 @@ export default function AdminPage() {
                                     </div>
                                   </div>
 
-                                  <div className="grid grid-cols-3 gap-2">
+                                  <div className="grid grid-cols-2 gap-2">
                                     <Button
                                       size="sm"
                                       variant="outline"
@@ -877,40 +852,6 @@ export default function AdminPage() {
                                       }}
                                     >
                                       Edit Video
-                                    </Button>
-                                    <Button
-                                      size="sm"
-                                      variant="outline"
-                                      onClick={async () => {
-                                        try {
-                                          // Force cache this specific video file
-                                          const response = await fetch(`/api/video-cache/cache-video`, {
-                                            method: 'POST',
-                                            headers: { 'Content-Type': 'application/json' },
-                                            body: JSON.stringify({ filename: video.url_en })
-                                          });
-                                          
-                                          if (response.ok) {
-                                            const result = await response.json();
-                                            queryClient.invalidateQueries({ queryKey: ['/api/video-cache/stats'] });
-                                            toast({ 
-                                              title: "Video Cached Successfully!", 
-                                              description: result.message || "Video is now cached for faster loading"
-                                            });
-                                          } else {
-                                            const error = await response.json();
-                                            toast({ 
-                                              title: "Cache Failed", 
-                                              description: error.error || "Failed to cache video", 
-                                              variant: "destructive" 
-                                            });
-                                          }
-                                        } catch (error) {
-                                          toast({ title: "Error", description: "Network error", variant: "destructive" });
-                                        }
-                                      }}
-                                    >
-                                      Cache Video
                                     </Button>
                                     <Button
                                       size="sm"
