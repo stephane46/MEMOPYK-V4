@@ -38,15 +38,32 @@ export function KeyVisualSection() {
               }
             </h2>
             
-            {/* Simple description */}
-            <p className="text-xl text-memopyk-sky-blue leading-relaxed">
+            {/* Three-line description */}
+            <div className="text-xl text-memopyk-sky-blue leading-relaxed space-y-2">
+              {language === 'fr-FR' ? (
+                <>
+                  <p>Enfouis dans des téléphones...</p>
+                  <p>oubliés sur des disques durs...</p>
+                  <p>entassés dans des cartons...</p>
+                </>
+              ) : (
+                <>
+                  <p>Buried in phones...</p>
+                  <p>forgotten on hard drives...</p>
+                  <p>piled in boxes...</p>
+                </>
+              )}
+            </div>
+
+            {/* Key message */}
+            <p className="text-xl text-memopyk-dark-blue leading-relaxed font-medium">
               {language === 'fr-FR' 
-                ? "Enfouis dans des téléphones, oubliés sur des disques durs, entassés dans des cartons… Vos souvenirs méritent mieux que ça, ils méritent une histoire."
-                : "Buried in phones, forgotten on hard drives, piled in boxes… Your memories deserve more than that, they deserve a story."
+                ? "Vos souvenirs méritent mieux que ça, ils méritent une histoire."
+                : "Your memories deserve more than that, they deserve a story."
               }
             </p>
 
-            {/* Simple solution statement */}
+            {/* Solution statement */}
             <p className="text-lg text-memopyk-dark-blue leading-relaxed">
               {language === 'fr-FR' 
                 ? "Laissez-nous sauver vos photos et vidéos en les transformant en un film souvenir que vous garderez précieusement."
@@ -54,13 +71,15 @@ export function KeyVisualSection() {
               }
             </p>
             
-            {/* Simple tagline */}
-            <p className="text-xl font-poppins italic text-memopyk-sky-blue">
-              {language === 'fr-FR' 
-                ? "Personnel, unique et émouvant."
-                : "Personal, unique and moving."
-              }
-            </p>
+            {/* Centered tagline at bottom */}
+            <div className="text-center pt-4">
+              <p className="text-xl font-poppins italic text-memopyk-sky-blue">
+                {language === 'fr-FR' 
+                  ? "Personnel, unique et émouvant."
+                  : "Personal, unique and moving."
+                }
+              </p>
+            </div>
           </div>
         </div>
       </div>
