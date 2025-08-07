@@ -1356,7 +1356,12 @@ export default function AdminPage() {
                                               fontFamily: currentPreviewDevice === 'mobile' ? 'Poppins, sans-serif' : 'Playfair Display, serif'
                                             }}
                                           >
-                                            {selectedText.title_fr}
+                                            {(selectedText.title_fr || '').split('\n').map((line: string, index: number) => (
+                                              <React.Fragment key={index}>
+                                                {line}
+                                                {index < (selectedText.title_fr || '').split('\n').length - 1 && <br />}
+                                              </React.Fragment>
+                                            ))}
                                           </h1>
                                           <p 
                                             className="opacity-90"
@@ -1369,7 +1374,12 @@ export default function AdminPage() {
                                               textShadow: '1px 1px 2px rgba(0,0,0,0.8)'
                                             }}
                                           >
-                                            {selectedText.subtitle_fr}
+                                            {(selectedText.subtitle_fr || '').split('\n').map((line: string, index: number) => (
+                                              <React.Fragment key={index}>
+                                                {line}
+                                                {index < (selectedText.subtitle_fr || '').split('\n').length - 1 && <br />}
+                                              </React.Fragment>
+                                            ))}
                                           </p>
                                         </div>
                                       ) : null;
