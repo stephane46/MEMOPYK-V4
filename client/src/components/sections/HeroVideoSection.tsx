@@ -231,8 +231,6 @@ export function HeroVideoSection() {
                 processedText = processedText.replace(/\\n/g, '\n');
               }
               const lines = processedText.split('\n');
-              console.log('🔍 Public Site - Lines:', lines);
-              
               return lines.map((line, index) => (
                 <React.Fragment key={index}>
                   {line}
