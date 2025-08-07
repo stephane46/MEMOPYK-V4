@@ -12,14 +12,14 @@ export function KeyVisualSection() {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 sm:gap-10 lg:gap-12 items-center">
           {/* Left: Key Visual Illustration - Show on mobile */}
           <div className="relative order-1 lg:order-none mb-8 sm:mb-0">
-            <div className="relative group min-h-[200px] sm:min-h-[300px] flex items-center justify-center">
+            <div className="relative min-h-[200px] sm:min-h-[300px] flex items-center justify-center">
               <img 
                 src={keyVisualImage}
                 alt={language === 'fr-FR' 
                   ? "Illustration MEMOPYK - Transformation des souvenirs"
                   : "MEMOPYK Illustration - Memory transformation"
                 }
-                className="w-full h-auto max-w-full rounded-2xl shadow-2xl transition-transform duration-500 group-hover:scale-105 block"
+                className="w-full h-auto max-w-full rounded-2xl block"
                 loading="eager"
                 style={{ maxWidth: '100%', height: 'auto', visibility: 'visible', minHeight: '200px', objectFit: 'contain' }}
                 onError={(e) => {
