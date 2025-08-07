@@ -586,9 +586,6 @@ export default function AdminPage() {
                     <Type className="inline-block h-4 w-4 mr-2" />
                     Textes & Superpositions
                   </button>
-                    <Type className="inline-block h-4 w-4 mr-2" />
-                    Textes & Superpositions
-                  </button>
                 </nav>
               </div>
 
