@@ -1343,20 +1343,20 @@ export default function AdminPage() {
 
                                 {/* Live Preview */}
                                 <div 
-                                  className="bg-black rounded-lg p-8 min-h-[200px] flex items-center justify-center relative overflow-hidden"
+                                  className="bg-black rounded-lg p-8 min-h-[200px] flex items-center justify-center relative overflow-hidden w-full"
                                   style={{
                                     backgroundImage: 'linear-gradient(45deg, #1a1a1a 25%, transparent 25%), linear-gradient(-45deg, #1a1a1a 25%, transparent 25%), linear-gradient(45deg, transparent 75%, #1a1a1a 75%), linear-gradient(-45deg, transparent 75%, #1a1a1a 75%)',
                                     backgroundSize: '20px 20px',
                                     backgroundPosition: '0 0, 0 10px, 10px -10px, -10px 0px'
                                   }}
                                 >
-                                  <div className="text-center text-white">
+                                  <div className="text-center text-white max-w-4xl mx-auto">
                                     {selectedTextId ? (() => {
                                       const selectedText = heroTexts.find((t: any) => t.id === selectedTextId);
                                       return selectedText ? (
                                         <div>
                                           <h1 
-                                            className="font-bold mb-4"
+                                            className="font-bold mb-4 whitespace-nowrap"
                                             style={{ 
                                               fontSize: `${
                                                 currentPreviewDevice === 'desktop' ? previewFontSizeDesktop :
