@@ -51,52 +51,37 @@ export function KeyVisualSection() {
             
             {/* Three-line description with icons */}
             <div className="text-lg sm:text-xl text-memopyk-sky-blue leading-relaxed space-y-3 sm:space-y-2">
-              {/* Elegant backdrop for better contrast */}
-              <div className="relative bg-white/60 backdrop-blur-sm rounded-2xl px-6 py-5 border border-white/40 shadow-lg shadow-memopyk-sky-blue/10">
-                {language === 'fr-FR' ? (
-                  <>
-                    <p className="flex items-center gap-3 mb-3">
-                      <div className="bg-memopyk-sky-blue/15 p-2 rounded-full">
-                        <Smartphone className="w-5 h-5 sm:w-6 sm:h-6 flex-shrink-0 text-memopyk-sky-blue" />
-                      </div>
-                      <span className="text-memopyk-navy font-medium">enfouis dans des téléphones...</span>
-                    </p>
-                    <p className="flex items-center gap-3 mb-3">
-                      <div className="bg-memopyk-sky-blue/15 p-2 rounded-full">
-                        <Laptop className="w-5 h-5 sm:w-6 sm:h-6 flex-shrink-0 text-memopyk-sky-blue" />
-                      </div>
-                      <span className="text-memopyk-navy font-medium">oubliés sur des disques durs...</span>
-                    </p>
-                    <p className="flex items-center gap-3">
-                      <div className="bg-memopyk-sky-blue/15 p-2 rounded-full">
-                        <Package className="w-5 h-5 sm:w-6 sm:h-6 flex-shrink-0 text-memopyk-sky-blue" />
-                      </div>
-                      <span className="text-memopyk-navy font-medium">entassés dans des cartons...</span>
-                    </p>
-                  </>
-                ) : (
-                  <>
-                    <p className="flex items-center gap-3 mb-3">
-                      <div className="bg-memopyk-sky-blue/15 p-2 rounded-full">
-                        <Smartphone className="w-5 h-5 sm:w-6 sm:h-6 flex-shrink-0 text-memopyk-sky-blue" />
-                      </div>
-                      <span className="text-memopyk-navy font-medium">buried in phones...</span>
-                    </p>
-                    <p className="flex items-center gap-3 mb-3">
-                      <div className="bg-memopyk-sky-blue/15 p-2 rounded-full">
-                        <Laptop className="w-5 h-5 sm:w-6 sm:h-6 flex-shrink-0 text-memopyk-sky-blue" />
-                      </div>
-                      <span className="text-memopyk-navy font-medium">forgotten on hard drives...</span>
-                    </p>
-                    <p className="flex items-center gap-3">
-                      <div className="bg-memopyk-sky-blue/15 p-2 rounded-full">
-                        <Package className="w-5 h-5 sm:w-6 sm:h-6 flex-shrink-0 text-memopyk-sky-blue" />
-                      </div>
-                      <span className="text-memopyk-navy font-medium">piled in boxes...</span>
-                    </p>
-                  </>
-                )}
-              </div>
+              {language === 'fr-FR' ? (
+                <>
+                  <div className="flex items-center gap-3 bg-white/40 backdrop-blur-sm rounded-xl px-4 py-3 border border-white/30 shadow-sm">
+                    <Smartphone className="w-5 h-5 sm:w-6 sm:h-6 flex-shrink-0" />
+                    <span>enfouis dans des téléphones...</span>
+                  </div>
+                  <div className="flex items-center gap-3 bg-white/40 backdrop-blur-sm rounded-xl px-4 py-3 border border-white/30 shadow-sm">
+                    <Laptop className="w-5 h-5 sm:w-6 sm:h-6 flex-shrink-0" />
+                    <span>oubliés sur des disques durs...</span>
+                  </div>
+                  <div className="flex items-center gap-3 bg-white/40 backdrop-blur-sm rounded-xl px-4 py-3 border border-white/30 shadow-sm">
+                    <Package className="w-5 h-5 sm:w-6 sm:h-6 flex-shrink-0" />
+                    <span>entassés dans des cartons...</span>
+                  </div>
+                </>
+              ) : (
+                <>
+                  <div className="flex items-center gap-3 bg-white/40 backdrop-blur-sm rounded-xl px-4 py-3 border border-white/30 shadow-sm">
+                    <Smartphone className="w-5 h-5 sm:w-6 sm:h-6 flex-shrink-0" />
+                    <span>buried in phones...</span>
+                  </div>
+                  <div className="flex items-center gap-3 bg-white/40 backdrop-blur-sm rounded-xl px-4 py-3 border border-white/30 shadow-sm">
+                    <Laptop className="w-5 h-5 sm:w-6 sm:h-6 flex-shrink-0" />
+                    <span>forgotten on hard drives...</span>
+                  </div>
+                  <div className="flex items-center gap-3 bg-white/40 backdrop-blur-sm rounded-xl px-4 py-3 border border-white/30 shadow-sm">
+                    <Package className="w-5 h-5 sm:w-6 sm:h-6 flex-shrink-0" />
+                    <span>piled in boxes...</span>
+                  </div>
+                </>
+              )}
             </div>
 
             {/* Key message */}
