@@ -198,6 +198,10 @@ app.use((req, res, next) => {
     // Wait a bit for Vite to start before setting up proxy
     await new Promise(resolve => setTimeout(resolve, 2000));
 
+    // Serve static files before proxy (for images and other assets)
+    app.use('/images', express.static(path.join(__dirname, '../public/images')));
+    app.use('/logo.svg', express.static(path.join(__dirname, '../public/logo.svg')));
+    
     // Create proxy for Vite dev server
     const proxy = createProxyMiddleware({
       target: "http://localhost:5173",
@@ -208,8 +212,8 @@ app.use((req, res, next) => {
 
     // Proxy non-API requests to Vite dev server with error handling
     app.use((req, res, next) => {
-      if (req.path.startsWith("/api")) {
-        return next(); // Skip proxy for API routes only
+      if (req.path.startsWith("/api") || req.path.startsWith("/images") || req.path === "/logo.svg") {
+        return next(); // Skip proxy for API routes and static assets
       }
       
       // Handle proxy with try-catch
