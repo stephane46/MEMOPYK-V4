@@ -239,18 +239,40 @@ export const VideoCacheStatus: React.FC<VideoCacheStatusProps> = ({
         description: "Processing all media files... This will take 15-45 seconds.",
       });
       
-      const response = await apiRequest('/api/video-cache/force-all-media', 'POST');
-      return await response.json() as {
-        stats?: {
-          videos: {attempted: number, successful: number};
-          images: {attempted: number, successful: number};
-          processingTime: string;
+      try {
+        // Use longer timeout for this heavy operation
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 60000); // 60 second timeout
+        
+        const response = await fetch('/api/video-cache/force-all-media', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          signal: controller.signal
+        });
+        
+        clearTimeout(timeoutId);
+        
+        if (!response.ok) {
+          throw new Error(`Server responded with ${response.status}: ${response.statusText}`);
+        }
+        
+        return await response.json() as {
+          stats?: {
+            videos: {attempted: number, successful: number};
+            images: {attempted: number, successful: number};
+            processingTime: string;
+          };
+          verification?: {
+            videos: Array<{filename: string, success: boolean, sizeMB: string}>;
+            images: Array<{filename: string, success: boolean, sizeMB: string}>;
+          };
         };
-        verification?: {
-          videos: Array<{filename: string, success: boolean, sizeMB: string}>;
-          images: Array<{filename: string, success: boolean, sizeMB: string}>;
-        };
-      };
+      } catch (error: any) {
+        if (error.name === 'AbortError') {
+          throw new Error('Operation timed out after 60 seconds. The cache may still be processing in background.');
+        }
+        throw error;
+      }
     },
     onSuccess: (data) => {
       const videoCount = data.stats?.videos?.successful || 0;
@@ -271,11 +293,27 @@ export const VideoCacheStatus: React.FC<VideoCacheStatusProps> = ({
       window.dispatchEvent(new CustomEvent('bulletproofCacheComplete'));
     },
     onError: (error: Error & {response?: {data?: {details?: string}}}) => {
+      console.error('BULLETPROOF cache error:', error);
+      
+      // Check if this might be a timeout but operation could still be running
+      const isTimeout = error.message.includes('timeout') || error.message.includes('timed out');
+      
       toast({
-        title: "BULLETPROOF Cache Failed", 
-        description: `Failed to cache all media: ${error.response?.data?.details || error.message}`,
-        variant: "destructive",
+        title: isTimeout ? "Cache Operation May Still Be Running" : "BULLETPROOF Cache Failed",
+        description: isTimeout 
+          ? "The operation timed out but may still be processing. Check cache status in a few minutes."
+          : `Failed to cache all media: ${error.response?.data?.details || error.message}`,
+        variant: isTimeout ? "default" : "destructive",
       });
+      
+      // Refresh stats in case operation actually succeeded
+      if (isTimeout) {
+        setTimeout(() => {
+          refetchStats();
+          refetchUnified();
+          queryClient.invalidateQueries({ queryKey: ['/api/video-cache/stats'] });
+        }, 5000);
+      }
       
       // Notify AdminPage that bulletproof cache failed
       window.dispatchEvent(new CustomEvent('bulletproofCacheError'));
