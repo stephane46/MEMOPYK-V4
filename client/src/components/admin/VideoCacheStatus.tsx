@@ -20,7 +20,6 @@ interface VideoCacheStatusProps {
   title?: string;
   showForceAllButton?: boolean;
   description?: string;
-  smartCacheRefreshMutation?: any;
 }
 
 interface CacheStatsResponse {
@@ -46,8 +45,7 @@ export const VideoCacheStatus: React.FC<VideoCacheStatusProps> = ({
   videoFilenames, 
   title = "Video Cache Status",
   showForceAllButton = false,
-  description,
-  smartCacheRefreshMutation
+  description
 }) => {
   const { toast } = useToast();
   const queryClient = useQueryClient();
@@ -512,28 +510,8 @@ export const VideoCacheStatus: React.FC<VideoCacheStatusProps> = ({
           </div>
         )}
 
-        {/* Cache Management Buttons - Simplified and Consistent */}
-        {totalCount > 0 && (
-          <div className="mt-6 pt-4 border-t space-y-2">
-            {/* Only show section-specific buttons, not global ones */}
-            {title === 'Gallery Videos Cache Status' && (
-              <Button
-                size="sm"
-                variant="default"
-                onClick={() => smartCacheRefreshMutation.mutate()}
-                disabled={smartCacheRefreshMutation.isPending}
-                className="w-full bg-blue-600 hover:bg-blue-700"
-              >
-                {smartCacheRefreshMutation.isPending ? (
-                  <RefreshCw className="h-4 w-4 animate-spin mr-2" />
-                ) : (
-                  <Zap className="h-4 w-4 mr-2" />
-                )}
-                Smart Gallery Refresh
-              </Button>
-            )}
-          </div>
-        )}
+        {/* Cache Management - Individual buttons provide all needed functionality */}
+        {/* Removed redundant "Smart Gallery Refresh" - use individual cache buttons or BULLETPROOF All Media Cache instead */}
       </CardContent>
       </Card>
     </div>
