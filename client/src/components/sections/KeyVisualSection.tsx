@@ -28,66 +28,55 @@ export function KeyVisualSection() {
             </div>
           </div>
 
-          {/* Right: Problem Statement */}
-          <div className="space-y-6">
-            <h2 className="text-4xl md:text-5xl font-poppins font-bold text-memopyk-navy leading-tight">
+          {/* Right: Emotional Message */}
+          <div className="space-y-8">
+            {/* Opening Hook */}
+            <h2 className="text-4xl md:text-5xl font-playfair font-bold text-memopyk-navy leading-tight">
               {language === 'fr-FR' 
-                ? "Vos souvenirs dorment-ils dans vos téléphones ?"
-                : "Are your memories sleeping in your phones?"
+                ? "Tant de souvenirs précieux, perdus dans le chaos du quotidien."
+                : "So many precious memories, lost in the chaos of daily life."
               }
             </h2>
             
-            <p className="text-lg text-memopyk-dark-blue leading-relaxed">
-              {language === 'fr-FR' 
-                ? "Photos dispersées, vidéos perdues dans les dossiers, disques durs qui s'accumulent... Vos moments précieux méritent mieux qu'un stockage numérique anonyme."
-                : "Scattered photos, videos lost in folders, accumulating hard drives... Your precious moments deserve better than anonymous digital storage."
-              }
-            </p>
-
+            {/* Problem Description */}
             <div className="space-y-4">
-              <div className="flex items-start space-x-3">
-                <div className="w-2 h-2 rounded-full bg-memopyk-orange mt-3 flex-shrink-0"></div>
-                <p className="text-memopyk-dark-blue">
-                  {language === 'fr-FR' 
-                    ? "Milliers de photos et vidéos non organisées"
-                    : "Thousands of unorganized photos and videos"
-                  }
-                </p>
-              </div>
-              <div className="flex items-start space-x-3">
-                <div className="w-2 h-2 rounded-full bg-memopyk-orange mt-3 flex-shrink-0"></div>
-                <p className="text-memopyk-dark-blue">
-                  {language === 'fr-FR' 
-                    ? "Souvenirs inaccessibles aux proches"
-                    : "Memories inaccessible to loved ones"
-                  }
-                </p>
-              </div>
-              <div className="flex items-start space-x-3">
-                <div className="w-2 h-2 rounded-full bg-memopyk-orange mt-3 flex-shrink-0"></div>
-                <p className="text-memopyk-dark-blue">
-                  {language === 'fr-FR' 
-                    ? "Pas de narration cohérente de votre histoire"
-                    : "No coherent storytelling of your history"
-                  }
-                </p>
-              </div>
-            </div>
-
-            {/* Solution Promise */}
-            <div className="bg-white/80 backdrop-blur-sm p-6 rounded-xl border border-memopyk-sky-blue/30">
-              <h3 className="text-xl font-semibold text-memopyk-navy mb-3">
+              <p className="text-xl text-memopyk-dark-blue leading-relaxed font-light">
                 {language === 'fr-FR' 
-                  ? "Notre Solution MEMOPYK"
-                  : "Our MEMOPYK Solution"
-                }
-              </h3>
-              <p className="text-memopyk-dark-blue">
-                {language === 'fr-FR' 
-                  ? "Transformez le chaos numérique en films cinématographiques personnalisés. Nos artistes créent des narrations visuelles qui révèlent la beauté de votre histoire familiale."
-                  : "Let us rescue your photos and videos and transform them into a beautiful, personal film you'll truly treasure."
+                  ? "Enfouis dans des téléphones, oubliés sur des disques durs, entassés dans des cartons…"
+                  : "Buried in phones, forgotten on hard drives, piled up in boxes…"
                 }
               </p>
+              <p className="text-xl text-memopyk-dark-blue leading-relaxed font-medium">
+                {language === 'fr-FR' 
+                  ? "Vos souvenirs méritent mieux que ça, ils méritent une histoire."
+                  : "Your memories deserve better than that, they deserve a story."
+                }
+              </p>
+            </div>
+
+            {/* Solution Promise - Styled as elegant call-out */}
+            <div className="relative">
+              {/* Background accent */}
+              <div className="absolute inset-0 bg-gradient-to-r from-memopyk-orange/5 to-memopyk-sky-blue/5 rounded-2xl transform rotate-1"></div>
+              
+              <div className="relative bg-white/90 backdrop-blur-sm p-8 rounded-2xl border border-memopyk-orange/20 shadow-lg">
+                <p className="text-lg text-memopyk-dark-blue leading-relaxed mb-4">
+                  {language === 'fr-FR' 
+                    ? "Laissez-nous sauver vos photos et vidéos en les transformant en un film souvenir que vous garderez précieusement."
+                    : "Let us rescue your photos and videos by transforming them into a memory film you'll treasure forever."
+                  }
+                </p>
+                
+                {/* Elegant closing tagline */}
+                <div className="text-center pt-4 border-t border-memopyk-orange/20">
+                  <p className="text-lg font-playfair italic text-memopyk-navy">
+                    {language === 'fr-FR' 
+                      ? "Personnel, unique et émouvant."
+                      : "Personal, unique, and moving."
+                    }
+                  </p>
+                </div>
+              </div>
             </div>
           </div>
 
