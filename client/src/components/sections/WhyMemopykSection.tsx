@@ -6,20 +6,20 @@ export function WhyMemopykSection() {
 
   const benefits = [
     {
-      icon: Clock,
-      titleFr: "Gain de Temps",
-      titleEn: "Time Saving",
-      descriptionFr: "Aucune organisation de fichiers requise. Uploads collaboratifs, nous nous occupons de tout le tri et de l'organisation.",
-      descriptionEn: "No file organization required. Collaborative uploads, we handle all the sorting and organization.",
-      gradient: "from-memopyk-sky-blue/20 to-memopyk-blue-gray/10"
-    },
-    {
       icon: Zap,
       titleFr: "Simple",
       titleEn: "Simple", 
       descriptionFr: "Tous formats acceptés, détails techniques gérés professionnellement. Vous n'avez qu'à partager vos souvenirs.",
       descriptionEn: "All formats accepted, technical details handled professionally. You just need to share your memories.",
       gradient: "from-memopyk-orange/20 to-memopyk-cream/30"
+    },
+    {
+      icon: Clock,
+      titleFr: "Gain de Temps",
+      titleEn: "Time Saving",
+      descriptionFr: "Aucune organisation de fichiers requise. Uploads collaboratifs, nous nous occupons de tout le tri et de l'organisation.",
+      descriptionEn: "No file organization required. Collaborative uploads, we handle all the sorting and organization.",
+      gradient: "from-memopyk-sky-blue/20 to-memopyk-blue-gray/10"
     },
     {
       icon: Heart,
