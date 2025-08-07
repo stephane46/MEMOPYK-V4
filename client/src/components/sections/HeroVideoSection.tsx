@@ -48,7 +48,7 @@ export function HeroVideoSection() {
   // Fetch hero text settings - manual updates only via admin cache invalidation
   const { data: heroTextData = [] } = useQuery<HeroText[]>({
     queryKey: ['/api/hero-text', language],
-    staleTime: 24 * 60 * 60 * 1000, // 24 hours - no auto-refresh, manual updates only
+    staleTime: 0, // Immediate cache invalidation for testing
   });
 
   const activeVideos = heroVideos.filter(video => video.is_active)
@@ -240,31 +240,35 @@ export function HeroVideoSection() {
             })()}
           </h1>
           
-          <p 
-            className="mb-4 sm:mb-6 lg:mb-8 text-white/90 font-poppins leading-snug"
-            style={{ 
-              fontSize: `clamp(${Math.round(fontSizeMobile * 0.47)}px, ${Math.round(fontSizeTablet * 0.47)}px, ${Math.round(fontSizeDesktop * 0.47)}px)`,
-              textShadow: '1px 1px 2px rgba(0,0,0,0.8)' 
-            }}
-          >
-            {(() => {
-              const text = language === 'fr-FR' 
-                ? (activeHeroText?.subtitle_fr || "Redonnez vie à vos moments précieux\navec notre expertise cinématographique")
-                : (activeHeroText?.subtitle_en || "Bring your precious moments to life\nwith our cinematic expertise");
-              
-              // Handle multiple escaping scenarios: raw newlines, \n, \\n
-              let processedText = text;
-              if (processedText.includes('\\n')) {
-                processedText = processedText.replace(/\\n/g, '\n');
-              }
-              return processedText.split('\n').map((line, index) => (
-                <React.Fragment key={index}>
-                  {line}
-                  {index < processedText.split('\n').length - 1 && <br />}
-                </React.Fragment>
-              ));
-            })()}
-          </p>
+          {/* Only render subtitle if it exists and is not empty */}
+          {activeHeroText && ((language === 'fr-FR' && activeHeroText.subtitle_fr && activeHeroText.subtitle_fr.trim()) || 
+                              (language === 'en-US' && activeHeroText.subtitle_en && activeHeroText.subtitle_en.trim())) && (
+            <p 
+              className="mb-4 sm:mb-6 lg:mb-8 text-white/90 font-poppins leading-snug"
+              style={{ 
+                fontSize: `clamp(${Math.round(fontSizeMobile * 0.47)}px, ${Math.round(fontSizeTablet * 0.47)}px, ${Math.round(fontSizeDesktop * 0.47)}px)`,
+                textShadow: '1px 1px 2px rgba(0,0,0,0.8)' 
+              }}
+            >
+              {(() => {
+                const text = language === 'fr-FR' 
+                  ? activeHeroText.subtitle_fr
+                  : activeHeroText.subtitle_en;
+                
+                // Handle multiple escaping scenarios: raw newlines, \n, \\n
+                let processedText = text;
+                if (processedText.includes('\\n')) {
+                  processedText = processedText.replace(/\\n/g, '\n');
+                }
+                return processedText.split('\n').map((line, index) => (
+                  <React.Fragment key={index}>
+                    {line}
+                    {index < processedText.split('\n').length - 1 && <br />}
+                  </React.Fragment>
+                ));
+              })()}
+            </p>
+          )}
 
           <div className="flex justify-center items-center">
             <Button 
