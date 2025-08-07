@@ -66,11 +66,6 @@ export function Layout({ children }: LayoutProps) {
       type: 'anchor', 
       sectionId: 'cta' 
     },
-    { 
-      name: t('nav.appointment'), 
-      type: 'anchor', 
-      sectionId: 'cta' 
-    },
   ];
 
   const toggleLanguage = () => {
