@@ -567,8 +567,8 @@ export default function AdminPage() {
                   <button
                     onClick={() => setHeroTab('videos')}
                     className={`py-4 px-6 font-bold text-lg rounded-lg transition-all duration-300 transform hover:scale-105 ${
-                      heroTab === 'videos'
-                        ? 'bg-gradient-to-r from-orange-500 to-orange-600 text-white shadow-xl shadow-orange-300/50 border-2 border-orange-400'
+                      heroTab === 'videos' 
+                        ? 'bg-orange-500 text-white shadow-xl border-2 border-orange-400' 
                         : 'bg-white text-gray-700 border-2 border-gray-200 hover:border-orange-300 hover:bg-orange-50 hover:text-orange-700 shadow-md'
                     }`}
                   >
@@ -579,10 +579,13 @@ export default function AdminPage() {
                     onClick={() => setHeroTab('text')}
                     className={`py-4 px-6 font-bold text-lg rounded-lg transition-all duration-300 transform hover:scale-105 ${
                       heroTab === 'text'
-                        ? 'bg-gradient-to-r from-blue-500 to-blue-600 text-white shadow-xl shadow-blue-300/50 border-2 border-blue-400'
+                        ? 'bg-blue-500 text-white shadow-xl border-2 border-blue-400'
                         : 'bg-white text-gray-700 border-2 border-gray-200 hover:border-blue-300 hover:bg-blue-50 hover:text-blue-700 shadow-md'
                     }`}
                   >
+                    <Type className="inline-block h-4 w-4 mr-2" />
+                    Textes & Superpositions
+                  </button>
                     <Type className="inline-block h-4 w-4 mr-2" />
                     Textes & Superpositions
                   </button>
