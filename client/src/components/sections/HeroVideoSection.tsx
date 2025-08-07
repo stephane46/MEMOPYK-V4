@@ -295,15 +295,7 @@ export function HeroVideoSection() {
         </>
       )}
 
-      {/* Play/Pause Control */}
-      <Button
-        variant="ghost"
-        size="lg"
-        className="absolute bottom-4 sm:bottom-8 right-4 sm:right-8 text-white hover:text-white hover:bg-white/20 z-10"
-        onClick={togglePlayPause}
-      >
-        {isPlaying ? <Pause className="h-5 w-5 sm:h-6 sm:w-6" /> : <Play className="h-5 w-5 sm:h-6 sm:w-6" />}
-      </Button>
+
 
 
     </section>
