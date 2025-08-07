@@ -1371,13 +1371,19 @@ export default function AdminPage() {
                                             {(() => {
                                               const text = (selectedText.title_fr || '');
                                               
+                                              // DEBUG: Check what admin is getting from selectedText
+                                              console.log('🔍 Admin - selectedText object:', selectedText);
+                                              console.log('🔍 Admin - Raw title_fr:', JSON.stringify(selectedText.title_fr));
+                                              
                                               // Match public site processing exactly: Handle multiple escaping scenarios
                                               let processedText = text;
                                               if (processedText.includes('\\n')) {
                                                 processedText = processedText.replace(/\\n/g, '\n');
                                               }
                                               
+                                              console.log('🔍 Admin - Final processed:', JSON.stringify(processedText));
                                               const lines = processedText.split('\n');
+                                              console.log('🔍 Admin - Lines array:', lines);
                                               
                                               return lines.map((line: string, index: number) => (
                                                 <React.Fragment key={index}>
