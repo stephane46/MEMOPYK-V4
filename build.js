@@ -11,8 +11,16 @@ try {
   console.log('📦 Building frontend with Vite...');
   execSync('npx vite build', { stdio: 'inherit' });
   
-  // Step 2: Move files from dist/public to dist/ for Replit Deploy
-  console.log('📁 Moving files to Replit Deploy structure...');
+  // Step 2: Copy public assets and move built files to dist/ for Replit Deploy
+  console.log('📁 Copying public assets and organizing for deployment...');
+  
+  // Copy public assets (images, icons, etc.) to dist
+  if (fs.existsSync('public')) {
+    console.log('🖼️  Copying public assets to dist...');
+    execSync('cp -r public/* dist/', { stdio: 'inherit' });
+  }
+  
+  // Move built files from dist/public to dist/
   if (fs.existsSync('dist/public')) {
     // Copy all files from dist/public to dist
     execSync('cp -r dist/public/* dist/', { stdio: 'inherit' });
