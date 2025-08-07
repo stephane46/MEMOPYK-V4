@@ -1,6 +1,6 @@
 import { useLanguage } from '../../contexts/LanguageContext';
 // Using direct path to public asset
-const keyVisualImage = '/KeyVisualS.png';
+const keyVisualImage = '/KeyVisual_Hero.png';
 
 export function KeyVisualSection() {
   const { language } = useLanguage();
