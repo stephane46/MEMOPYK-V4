@@ -266,6 +266,9 @@ export const VideoCacheStatus: React.FC<VideoCacheStatusProps> = ({
       refetchUnified();
       queryClient.invalidateQueries({ queryKey: ['/api/video-cache/stats'] });
       queryClient.invalidateQueries({ queryKey: ['/api/unified-cache/stats'] });
+      
+      // Notify AdminPage that bulletproof cache is complete
+      window.dispatchEvent(new CustomEvent('bulletproofCacheComplete'));
     },
     onError: (error: Error & {response?: {data?: {details?: string}}}) => {
       toast({
@@ -273,6 +276,9 @@ export const VideoCacheStatus: React.FC<VideoCacheStatusProps> = ({
         description: `Failed to cache all media: ${error.response?.data?.details || error.message}`,
         variant: "destructive",
       });
+      
+      // Notify AdminPage that bulletproof cache failed
+      window.dispatchEvent(new CustomEvent('bulletproofCacheError'));
     }
   });
 

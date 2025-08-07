@@ -70,6 +70,26 @@ export default function AdminPage() {
     return () => clearTimeout(timeoutId);
   }, []);
 
+  // Handle bulletproof cache loading state
+  React.useEffect(() => {
+    const handleBulletproofComplete = () => {
+      setIsBulletproofCacheRunning(false);
+    };
+
+    const handleBulletproofError = () => {
+      setIsBulletproofCacheRunning(false);
+    };
+
+    // Listen for completion events from VideoCacheStatus component
+    window.addEventListener('bulletproofCacheComplete', handleBulletproofComplete);
+    window.addEventListener('bulletproofCacheError', handleBulletproofError);
+    
+    return () => {
+      window.removeEventListener('bulletproofCacheComplete', handleBulletproofComplete);
+      window.removeEventListener('bulletproofCacheError', handleBulletproofError);
+    };
+  }, []);
+
   // Handle page refresh (F5) and browser back/forward
   React.useEffect(() => {
     const handlePageLoad = () => {
@@ -168,6 +188,7 @@ export default function AdminPage() {
   const [editingTextId, setEditingTextId] = useState<number | null>(null);
   const [editFormData, setEditFormData] = useState({ title_fr: '', subtitle_fr: '', title_en: '', subtitle_en: '' });
   const [showNewTextForm, setShowNewTextForm] = useState(false);
+  const [isBulletproofCacheRunning, setIsBulletproofCacheRunning] = useState(false);
   const [newTextData, setNewTextData] = useState({ 
     title_fr: '', 
     subtitle_fr: '', 
@@ -1438,20 +1459,14 @@ export default function AdminPage() {
                         </div>
                       </div>
                       <div className="space-y-2">
-                        <div className="text-sm font-medium text-gray-700">Management</div>
+                        <div className="text-sm font-medium text-gray-700">Auto Cleanup</div>
                         <div className="flex items-center gap-2">
-                          <Button 
-                            size="sm" 
-                            variant="outline" 
-                            className="bg-blue-50 text-blue-700 border-blue-300 hover:bg-blue-100"
-                            onClick={() => {
-                              // Trigger intelligent cleanup event
-                              window.dispatchEvent(new CustomEvent('triggerClearCache'));
-                            }}
-                          >
-                            <Clock className="h-3 w-3 mr-1" />
-                            Smart Cleanup
-                          </Button>
+                          <Badge variant="outline" className="text-green-700 border-green-300 bg-green-50">
+                            {cacheStats.management?.maxCacheDays || 30} days
+                          </Badge>
+                          <Badge variant="secondary" className="text-xs">
+                            {cacheStats.management?.autoCleanup ? 'Enabled' : 'Disabled'}
+                          </Badge>
                         </div>
                       </div>
                       <div className="space-y-2">
@@ -1463,7 +1478,7 @@ export default function AdminPage() {
                       </div>
                     </div>
                     <div className="text-xs text-gray-600 mt-2">
-                      Smart Cleanup: Removes expired files (&gt;30 days) and orphaned cache. Active production cache preserved.
+                      Auto cleanup removes files older than {cacheStats.management?.maxCacheDays || 30} days. Manual cleanup available below.
                     </div>
                   </CardContent>
                 </Card>
@@ -1532,17 +1547,27 @@ export default function AdminPage() {
                     <Button
                       size="lg"
                       variant="default"
+                      disabled={isBulletproofCacheRunning}
                       onClick={() => {
+                        setIsBulletproofCacheRunning(true);
                         const event = new CustomEvent('triggerBulletproofCache');
                         window.dispatchEvent(event);
                       }}
-                      className="bg-purple-600 hover:bg-purple-700 text-white font-medium h-20 flex-col gap-2"
+                      className="bg-purple-600 hover:bg-purple-700 text-white font-medium h-20 flex-col gap-2 disabled:opacity-70"
                     >
                       <div className="flex items-center gap-2">
-                        <Zap className="h-5 w-5" />
-                        <span className="text-lg">🚀 BULLETPROOF All Media Cache</span>
+                        {isBulletproofCacheRunning ? (
+                          <RefreshCw className="h-5 w-5 animate-spin" />
+                        ) : (
+                          <Zap className="h-5 w-5" />
+                        )}
+                        <span className="text-lg">
+                          {isBulletproofCacheRunning ? '⚡ Processing All Media...' : '🚀 BULLETPROOF All Media Cache'}
+                        </span>
                       </div>
-                      <span className="text-sm opacity-90">Cache tous les médias avec vérification complète</span>
+                      <span className="text-sm opacity-90">
+                        {isBulletproofCacheRunning ? 'This will take 15-45 seconds...' : 'Cache tous les médias avec vérification complète'}
+                      </span>
                     </Button>
                     
                     <Button
