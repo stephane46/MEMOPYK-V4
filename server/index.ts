@@ -210,7 +210,7 @@ app.use((req, res, next) => {
       timeout: 10000,
     });
 
-    // Proxy non-API requests to Vite dev server with error handling
+    // Proxy non-API requests to Vite dev server with error handling  
     app.use((req, res, next) => {
       if (req.path.startsWith("/api") || req.path.startsWith("/images") || req.path === "/logo.svg") {
         return next(); // Skip proxy for API routes and static assets
