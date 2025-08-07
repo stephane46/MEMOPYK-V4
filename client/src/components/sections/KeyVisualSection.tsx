@@ -79,12 +79,12 @@ export function KeyVisualSection() {
               {language === 'fr-FR' ? (
                 <>
                   <p>Vos souvenirs méritent mieux que d'être simplement stockés,</p>
-                  <p>ils méritent une histoire</p>
+                  <p>ils méritent une histoire.</p>
                 </>
               ) : (
                 <>
                   <p>Your memories deserve better than just being stored,</p>
-                  <p>they deserve a story</p>
+                  <p>they deserve a story.</p>
                 </>
               )}
             </div>
