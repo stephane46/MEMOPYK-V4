@@ -561,15 +561,15 @@ export default function AdminPage() {
                 <p className="text-gray-600 dark:text-gray-400">Gérer les vidéos du carrousel héros avec support bilingue</p>
               </div>
               
-              {/* Hero Tabs */}
+              {/* Hero Tabs with Bold Orange Colors */}
               <div className="mb-6">
-                <nav className="flex space-x-8" aria-label="Tabs">
+                <nav className="flex space-x-2" aria-label="Tabs">
                   <button
                     onClick={() => setHeroTab('videos')}
-                    className={`py-3 px-4 border-b-3 font-semibold text-base rounded-t-lg transition-all duration-200 ${
+                    className={`py-4 px-6 font-bold text-lg rounded-lg transition-all duration-300 transform hover:scale-105 ${
                       heroTab === 'videos'
-                        ? 'border-orange-500 text-orange-600 bg-orange-50 dark:bg-orange-900/20 shadow-lg'
-                        : 'border-transparent text-gray-500 hover:text-orange-600 hover:border-orange-300 hover:bg-gray-50 dark:hover:bg-gray-800'
+                        ? 'bg-gradient-to-r from-orange-500 to-orange-600 text-white shadow-xl shadow-orange-300/50 border-2 border-orange-400'
+                        : 'bg-white text-gray-700 border-2 border-gray-200 hover:border-orange-300 hover:bg-orange-50 hover:text-orange-700 shadow-md'
                     }`}
                   >
                     <Video className="inline-block h-5 w-5 mr-2" />
@@ -577,10 +577,10 @@ export default function AdminPage() {
                   </button>
                   <button
                     onClick={() => setHeroTab('text')}
-                    className={`py-3 px-4 border-b-3 font-semibold text-base rounded-t-lg transition-all duration-200 ${
+                    className={`py-4 px-6 font-bold text-lg rounded-lg transition-all duration-300 transform hover:scale-105 ${
                       heroTab === 'text'
-                        ? 'border-orange-500 text-orange-600 bg-orange-50 dark:bg-orange-900/20 shadow-lg'
-                        : 'border-transparent text-gray-500 hover:text-orange-600 hover:border-orange-300 hover:bg-gray-50 dark:hover:bg-gray-800'
+                        ? 'bg-gradient-to-r from-blue-500 to-blue-600 text-white shadow-xl shadow-blue-300/50 border-2 border-blue-400'
+                        : 'bg-white text-gray-700 border-2 border-gray-200 hover:border-blue-300 hover:bg-blue-50 hover:text-blue-700 shadow-md'
                     }`}
                   >
                     <Type className="inline-block h-4 w-4 mr-2" />
@@ -1365,22 +1365,32 @@ export default function AdminPage() {
                                   </div>
                                 </div>
 
-                                {/* Language Toggle */}
-                                <div className="flex gap-2 mb-4">
-                                  <Button 
+                                {/* Language Toggle - Clear Design */}
+                                <div className="flex gap-1 mb-4 bg-gray-100 dark:bg-gray-800 p-1 rounded-lg">
+                                  <button
                                     onClick={() => setPreviewLanguage('fr-FR')}
-                                    variant={previewLanguage === 'fr-FR' ? 'default' : 'outline'}
-                                    size="sm"
+                                    className={`px-4 py-2 rounded-md font-semibold transition-all duration-200 flex items-center gap-2 ${
+                                      previewLanguage === 'fr-FR'
+                                        ? 'bg-blue-600 text-white shadow-md transform scale-105'
+                                        : 'text-gray-600 hover:text-blue-600 hover:bg-gray-200 dark:hover:bg-gray-700'
+                                    }`}
                                   >
-                                    🇫🇷 Français
-                                  </Button>
-                                  <Button 
+                                    🇫🇷
+                                    <span className="font-bold">FRANÇAIS</span>
+                                    {previewLanguage === 'fr-FR' && <div className="w-2 h-2 bg-white rounded-full"></div>}
+                                  </button>
+                                  <button
                                     onClick={() => setPreviewLanguage('en-US')}
-                                    variant={previewLanguage === 'en-US' ? 'default' : 'outline'}
-                                    size="sm"
+                                    className={`px-4 py-2 rounded-md font-semibold transition-all duration-200 flex items-center gap-2 ${
+                                      previewLanguage === 'en-US'
+                                        ? 'bg-blue-600 text-white shadow-md transform scale-105'
+                                        : 'text-gray-600 hover:text-blue-600 hover:bg-gray-200 dark:hover:bg-gray-700'
+                                    }`}
                                   >
-                                    🇺🇸 English
-                                  </Button>
+                                    🇺🇸
+                                    <span className="font-bold">ENGLISH</span>
+                                    {previewLanguage === 'en-US' && <div className="w-2 h-2 bg-white rounded-full"></div>}
+                                  </button>
                                 </div>
 
                                 {/* Live Preview - Full Width Like Public Site */}
