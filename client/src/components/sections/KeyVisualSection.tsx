@@ -6,113 +6,135 @@ export function KeyVisualSection() {
   const { language } = useLanguage();
 
   return (
-    <section className="min-h-screen bg-gradient-to-br from-memopyk-cream via-white to-memopyk-sky-blue/10">
-      <div className="container mx-auto px-4 py-16">
-        
-        {/* Central Hero Statement */}
-        <div className="text-center mb-16">
-          <h2 className="text-5xl md:text-7xl font-poppins font-black text-memopyk-navy mb-6 leading-none tracking-tight">
-            {language === 'fr-FR' 
-              ? "Vos Souvenirs"
-              : "Your Memories"
-            }
-          </h2>
-          <div className="w-32 h-1 bg-gradient-to-r from-memopyk-orange to-memopyk-sky-blue mx-auto mb-8"></div>
-          <p className="text-2xl md:text-3xl font-poppins text-memopyk-blue-gray max-w-4xl mx-auto">
-            {language === 'fr-FR' 
-              ? "méritent plus qu'un simple stockage numérique"
-              : "deserve more than digital storage chaos"
-            }
-          </p>
-        </div>
+    <section className="relative py-32 bg-white overflow-hidden">
+      {/* Floating background elements */}
+      <div className="absolute inset-0 overflow-hidden">
+        <div className="absolute top-10 left-10 w-64 h-64 bg-memopyk-sky-blue/5 rounded-full blur-3xl"></div>
+        <div className="absolute bottom-20 right-20 w-96 h-96 bg-memopyk-orange/5 rounded-full blur-3xl"></div>
+        <div className="absolute top-1/2 left-1/3 w-32 h-32 bg-memopyk-cream rounded-full blur-2xl"></div>
+      </div>
 
-        {/* Split Visual Storytelling */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-16">
+      <div className="container mx-auto px-4 relative z-10">
+        <div className="max-w-6xl mx-auto">
           
-          {/* The Problem */}
-          <div className="relative group">
-            <div className="bg-gradient-to-br from-gray-100 to-gray-200 p-8 rounded-3xl h-full border-2 border-dashed border-gray-300 transition-all duration-500 group-hover:scale-105">
-              <div className="text-center">
-                <div className="text-6xl mb-4 opacity-50">📱💻📦</div>
-                <h3 className="text-xl font-poppins font-bold text-gray-700 mb-4">
-                  {language === 'fr-FR' ? "Le Problème" : "The Problem"}
-                </h3>
-                <p className="text-gray-600 leading-relaxed">
-                  {language === 'fr-FR' 
-                    ? "Éparpillés, oubliés, perdus dans le chaos numérique de notre époque"
-                    : "Scattered, forgotten, lost in our digital age chaos"
-                  }
-                </p>
-              </div>
+          {/* Floating main content */}
+          <div className="text-center mb-20">
+            {/* Main statement - floating and minimal */}
+            <div className="inline-block relative">
+              <h2 className="text-6xl md:text-8xl font-poppins font-extralight text-memopyk-navy mb-8 leading-none tracking-wide">
+                {language === 'fr-FR' 
+                  ? "Vos souvenirs"
+                  : "Your memories"
+                }
+              </h2>
+              {/* Floating accent line */}
+              <div className="absolute -bottom-2 left-1/2 transform -translate-x-1/2 w-24 h-0.5 bg-gradient-to-r from-transparent via-memopyk-sky-blue to-transparent"></div>
+            </div>
+            
+            {/* Floating subtitle */}
+            <div className="mt-12">
+              <p className="text-2xl md:text-3xl font-poppins font-light text-memopyk-blue-gray/80 leading-relaxed">
+                {language === 'fr-FR' 
+                  ? "méritent plus que le chaos numérique"
+                  : "deserve more than digital chaos"
+                }
+              </p>
             </div>
           </div>
 
-          {/* The Transformation */}
-          <div className="relative group">
+          {/* Floating image container */}
+          <div className="flex justify-center mb-20">
+            <div className="relative group">
+              {/* Main floating image */}
+              <div className="relative bg-white p-8 rounded-2xl shadow-2xl transform rotate-1 transition-all duration-700 group-hover:rotate-0 group-hover:scale-105">
+                <img 
+                  src={keyVisualImage}
+                  alt={language === 'fr-FR' 
+                    ? "Chaos des souvenirs numériques"
+                    : "Digital memory chaos"
+                  }
+                  className="w-full max-w-md rounded-xl"
+                />
+              </div>
+              
+              {/* Floating accent elements */}
+              <div className="absolute -top-4 -left-4 w-12 h-12 bg-memopyk-orange/20 rounded-full blur-sm"></div>
+              <div className="absolute -bottom-6 -right-6 w-16 h-16 bg-memopyk-sky-blue/20 rounded-full blur-sm"></div>
+            </div>
+          </div>
+
+          {/* Floating text blocks */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-16 mb-20">
+            
+            {/* Problem statement - floating left */}
             <div className="relative">
-              <img 
-                src={keyVisualImage}
-                alt={language === 'fr-FR' 
-                  ? "Transformation MEMOPYK"
-                  : "MEMOPYK Transformation"
-                }
-                className="w-full h-full object-cover rounded-3xl shadow-2xl transition-all duration-500 group-hover:scale-105"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-memopyk-navy/80 via-transparent to-transparent rounded-3xl flex items-end p-8">
-                <div className="text-white">
-                  <h3 className="text-2xl font-poppins font-bold mb-2">
-                    {language === 'fr-FR' ? "La Transformation" : "The Transformation"}
+              <div className="bg-white/60 backdrop-blur-sm p-8 rounded-2xl shadow-lg border border-gray-100/50 transform -rotate-1 transition-all duration-500 hover:rotate-0">
+                <div className="space-y-4">
+                  <h3 className="text-xl font-poppins font-medium text-memopyk-navy">
+                    {language === 'fr-FR' ? "Le problème" : "The problem"}
                   </h3>
-                  <p className="text-white/90">
+                  <p className="text-memopyk-blue-gray leading-relaxed">
                     {language === 'fr-FR' 
-                      ? "Nous donnons vie à vos souvenirs"
-                      : "We bring your memories to life"
+                      ? "Éparpillés dans vos appareils, oubliés sur des disques durs, perdus dans le quotidien…"
+                      : "Scattered across devices, forgotten on hard drives, lost in daily routine…"
                     }
                   </p>
                 </div>
+                {/* Floating accent dot */}
+                <div className="absolute -top-2 right-8 w-4 h-4 bg-memopyk-sky-blue/30 rounded-full"></div>
+              </div>
+            </div>
+
+            {/* Solution statement - floating right */}
+            <div className="relative">
+              <div className="bg-white/60 backdrop-blur-sm p-8 rounded-2xl shadow-lg border border-gray-100/50 transform rotate-1 transition-all duration-500 hover:rotate-0">
+                <div className="space-y-4">
+                  <h3 className="text-xl font-poppins font-medium text-memopyk-navy">
+                    {language === 'fr-FR' ? "Notre solution" : "Our solution"}
+                  </h3>
+                  <p className="text-memopyk-blue-gray leading-relaxed">
+                    {language === 'fr-FR' 
+                      ? "Nous transformons cette collection en un film souvenir personnel et profondément émouvant."
+                      : "We transform this collection into a personal and deeply moving souvenir film."
+                    }
+                  </p>
+                </div>
+                {/* Floating accent dot */}
+                <div className="absolute -top-2 left-8 w-4 h-4 bg-memopyk-orange/30 rounded-full"></div>
               </div>
             </div>
           </div>
 
-          {/* The Result */}
-          <div className="relative group">
-            <div className="bg-gradient-to-br from-memopyk-orange/10 via-memopyk-sky-blue/10 to-memopyk-cream p-8 rounded-3xl h-full border-2 border-memopyk-orange/30 transition-all duration-500 group-hover:scale-105 group-hover:shadow-xl">
-              <div className="text-center">
-                <div className="text-6xl mb-4">🎬✨💕</div>
-                <h3 className="text-xl font-poppins font-bold text-memopyk-navy mb-4">
-                  {language === 'fr-FR' ? "Le Résultat" : "The Result"}
-                </h3>
-                <p className="text-memopyk-dark-blue leading-relaxed font-medium">
+          {/* Floating call to action */}
+          <div className="text-center">
+            <div className="inline-block relative">
+              {/* Main CTA text */}
+              <div className="bg-white/80 backdrop-blur-lg px-12 py-8 rounded-full shadow-xl border border-memopyk-sky-blue/10">
+                <p className="text-xl md:text-2xl font-poppins font-light text-memopyk-navy">
                   {language === 'fr-FR' 
-                    ? "Un film souvenir personnel, unique et profondément émouvant"
-                    : "A personal souvenir film, unique and deeply moving"
+                    ? "Chaque mémoire a une âme"
+                    : "Every memory has a soul"
                   }
                 </p>
               </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Call to Action Statement */}
-        <div className="text-center">
-          <div className="bg-white/80 backdrop-blur-lg p-12 rounded-3xl shadow-2xl max-w-4xl mx-auto border border-memopyk-sky-blue/20">
-            <p className="text-2xl md:text-3xl font-poppins font-light text-memopyk-navy leading-relaxed mb-6">
-              {language === 'fr-FR' 
-                ? "Transformons ensemble vos moments précieux en cinéma personnel"
-                : "Together, let's transform your precious moments into personal cinema"
-              }
-            </p>
-            <div className="inline-block">
-              <div className="bg-gradient-to-r from-memopyk-orange to-memopyk-sky-blue text-white px-8 py-4 rounded-full font-poppins font-medium text-lg shadow-lg">
-                {language === 'fr-FR' 
-                  ? "Chaque souvenir a sa propre magie"
-                  : "Every memory has its own magic"
-                }
+              
+              {/* Floating subtitle */}
+              <div className="mt-6">
+                <p className="text-memopyk-sky-blue font-poppins text-lg font-light italic">
+                  {language === 'fr-FR' 
+                    ? "Laissez-nous lui donner vie"
+                    : "Let us bring it to life"
+                  }
+                </p>
               </div>
+
+              {/* Floating decorative elements */}
+              <div className="absolute -top-3 left-6 w-2 h-2 bg-memopyk-orange rounded-full animate-pulse"></div>
+              <div className="absolute -bottom-3 right-6 w-2 h-2 bg-memopyk-sky-blue rounded-full animate-pulse"></div>
             </div>
           </div>
-        </div>
 
+        </div>
       </div>
     </section>
   );
