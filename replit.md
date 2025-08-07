@@ -41,7 +41,7 @@ Preferred communication style: Simple, everyday language.
 - **Real-time Analytics**: Backend system for tracking visitors, performance, and engagement with IP management.
 - **Direct Supabase Upload System**: Facilitates large file uploads by bypassing deployment limits.
 - **SEO Management System**: Comprehensive interface for page-level meta tags, keywords, redirects, image SEO, and global settings.
-- **Deployment Optimizations**: Includes fast health check endpoints, production video cache preloading for hero videos, comprehensive error handling, and routing priorities to prevent static file serving interference.
+- **Deployment Optimizations**: Includes fast health check endpoints, production video cache preloading for hero videos, comprehensive error handling, routing priorities to prevent static file serving interference, and automated public asset copying during build process to ensure all static images are available in production.
 
 ## External Dependencies
 
