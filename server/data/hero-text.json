@@ -1,8 +1,8 @@
 [
   {
     "id": "2",
-    "title_fr": "Nous transformons vos photos et vidéos personnelles\nen films souvenirs\ninoubliables",
-    "title_en": "We transform your personal photos and videos\ninto unforgettable souvenir\nfilms",
+    "title_fr": "Nous transformons vos photos et vidéos personnelles\nen films souvenirs inoubliables",
+    "title_en": "We transform your personal photos and videos\ninto unforgettable souvenir films",
     "subtitle_fr": "Vos souvenirs méritent mieux que d'être simplement stockés,\nils méritent une histoire",
     "subtitle_en": "Your memories deserve better than just being stored,\nthey deserve a story",
     "font_size": 48,
@@ -11,7 +11,7 @@
     "font_size_mobile": 32,
     "is_active": true,
     "created_at": "2025-08-01T13:00:00.000Z",
-    "updated_at": "2025-08-07T10:05:08.067Z"
+    "updated_at": "2025-08-07T12:49:13.884Z"
   },
   {
     "id": "1",
