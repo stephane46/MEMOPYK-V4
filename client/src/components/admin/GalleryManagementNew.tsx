@@ -2294,15 +2294,13 @@ export default function GalleryManagementNew() {
                     English <Badge className="text-xs bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200 ml-2">Toujours séparé</Badge>
                   </h4>
                   <div>
-                    <Label htmlFor="format_platform_en">Platform Line 1</Label>
+                    <Label htmlFor="format_platform_en">Line 1</Label>
                     <Select value={formData.format_platform_en} onValueChange={(value) => setFormData({ ...formData, format_platform_en: value })}>
                       <SelectTrigger className="bg-white dark:bg-gray-800">
                         <SelectValue placeholder="Select platform category" />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="Social Media">Social Media</SelectItem>
-                        <SelectItem value="Social Feed">Social Feed</SelectItem>
-                        <SelectItem value="Professional">Professional</SelectItem>
+                        <SelectItem value="Recommended Format">Recommended Format</SelectItem>
                         <SelectItem value="Custom">Custom...</SelectItem>
                       </SelectContent>
                     </Select>
@@ -2330,15 +2328,13 @@ export default function GalleryManagementNew() {
                     Français <Badge className="text-xs bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200 ml-2">Toujours séparé</Badge>
                   </h4>
                   <div>
-                    <Label htmlFor="format_platform_fr">Platform Line 1</Label>
+                    <Label htmlFor="format_platform_fr">Line 1</Label>
                     <Select value={formData.format_platform_fr} onValueChange={(value) => setFormData({ ...formData, format_platform_fr: value })}>
                       <SelectTrigger className="bg-white dark:bg-gray-800">
                         <SelectValue placeholder="Sélectionner catégorie plateforme" />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="Réseaux Sociaux">Réseaux Sociaux</SelectItem>
-                        <SelectItem value="Flux Social">Flux Social</SelectItem>
-                        <SelectItem value="Professionnel">Professionnel</SelectItem>
+                        <SelectItem value="Format Recommandé">Format Recommandé</SelectItem>
                         <SelectItem value="Personnalisé">Personnalisé...</SelectItem>
                       </SelectContent>
                     </Select>
