@@ -1219,9 +1219,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Create new CTA setting
   app.post("/api/cta", async (req, res) => {
     try {
-      const { id, buttonTextFr, buttonTextEn, buttonUrl, isActive } = req.body;
+      const { id, buttonTextFr, buttonTextEn, buttonUrlEn, buttonUrlFr, isActive } = req.body;
       
-      if (!id || !buttonTextFr || !buttonTextEn || !buttonUrl) {
+      if (!id || !buttonTextFr || !buttonTextEn || !buttonUrlEn || !buttonUrlFr) {
         return res.status(400).json({ error: "All fields required" });
       }
 
@@ -1229,7 +1229,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
         id,
         buttonTextFr,
         buttonTextEn,
-        buttonUrl,
+        buttonUrlEn,
+        buttonUrlFr,
         isActive: isActive || false
       });
       

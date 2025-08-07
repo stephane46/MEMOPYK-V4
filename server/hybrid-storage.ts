@@ -1419,7 +1419,8 @@ export class HybridStorage implements HybridStorageInterface {
             titleEn: item.titleEn,
             buttonTextFr: item.buttonTextFr,
             buttonTextEn: item.buttonTextEn,
-            buttonUrl: item.buttonUrl,
+            buttonUrlEn: item.buttonUrlEn,
+            buttonUrlFr: item.buttonUrlFr,
             isActive: item.isActive,
             createdAt: item.createdAt,
             updatedAt: item.updatedAt
@@ -1453,7 +1454,8 @@ export class HybridStorage implements HybridStorageInterface {
             id: ctaData.id,
             button_text_fr: ctaData.buttonTextFr,
             button_text_en: ctaData.buttonTextEn,
-            button_url: ctaData.buttonUrl,
+            button_url_en: ctaData.buttonUrlEn,
+            button_url_fr: ctaData.buttonUrlFr,
             is_active: ctaData.isActive
           })
           .select()
@@ -1467,7 +1469,8 @@ export class HybridStorage implements HybridStorageInterface {
             id: data.id,
             button_text_fr: data.button_text_fr,
             button_text_en: data.button_text_en,
-            button_url: data.button_url,
+            button_url_en: data.button_url_en,
+            button_url_fr: data.button_url_fr,
             is_active: data.is_active,
             created_at: data.created_at,
             updated_at: data.updated_at
@@ -1491,7 +1494,8 @@ export class HybridStorage implements HybridStorageInterface {
       id: ctaData.id,
       button_text_fr: ctaData.buttonTextFr,
       button_text_en: ctaData.buttonTextEn,
-      button_url: ctaData.buttonUrl,
+      button_url_en: ctaData.buttonUrlEn,
+      button_url_fr: ctaData.buttonUrlFr,
       is_active: ctaData.isActive,
       created_at: new Date().toISOString(),
       updated_at: new Date().toISOString()
@@ -1512,7 +1516,8 @@ export class HybridStorage implements HybridStorageInterface {
         if (updates.titleEn !== undefined) dbUpdates.titleEn = updates.titleEn;
         if (updates.buttonTextFr !== undefined) dbUpdates.buttonTextFr = updates.buttonTextFr;
         if (updates.buttonTextEn !== undefined) dbUpdates.buttonTextEn = updates.buttonTextEn;
-        if (updates.buttonUrl !== undefined) dbUpdates.buttonUrl = updates.buttonUrl;
+        if (updates.buttonUrlEn !== undefined) dbUpdates.buttonUrlEn = updates.buttonUrlEn;
+        if (updates.buttonUrlFr !== undefined) dbUpdates.buttonUrlFr = updates.buttonUrlFr;
         if (updates.isActive !== undefined) dbUpdates.isActive = updates.isActive;
         dbUpdates.updatedAt = new Date();
         
@@ -1532,7 +1537,8 @@ export class HybridStorage implements HybridStorageInterface {
             titleEn: updatedRecord.titleEn,
             buttonTextFr: updatedRecord.buttonTextFr,
             buttonTextEn: updatedRecord.buttonTextEn,
-            buttonUrl: updatedRecord.buttonUrl,
+            buttonUrlEn: updatedRecord.buttonUrlEn,
+            buttonUrlFr: updatedRecord.buttonUrlFr,
             isActive: updatedRecord.isActive,
             createdAt: updatedRecord.createdAt,
             updatedAt: updatedRecord.updatedAt

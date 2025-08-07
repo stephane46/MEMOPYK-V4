@@ -156,7 +156,8 @@ export const ctaSettings = pgTable("cta_settings", {
   id: varchar("id").primaryKey(),
   buttonTextFr: varchar("button_text_fr").notNull(),
   buttonTextEn: varchar("button_text_en").notNull(),
-  buttonUrl: varchar("button_url").notNull(),
+  buttonUrlEn: varchar("button_url_en").notNull(),
+  buttonUrlFr: varchar("button_url_fr").notNull(),
   isActive: boolean("is_active").notNull().default(false),
   createdAt: timestamp("created_at").defaultNow(),
   updatedAt: timestamp("updated_at").defaultNow()

@@ -74,7 +74,8 @@ export function CtaManagement() {
       id: '',
       buttonTextFr: '',
       buttonTextEn: '',
-      buttonUrl: '',
+      buttonUrlEn: '',
+      buttonUrlFr: '',
       isActive: false,
       createdAt: new Date(),
       updatedAt: new Date()
@@ -89,7 +90,8 @@ export function CtaManagement() {
         id: editingCta.id,
         buttonTextFr: editingCta.buttonTextFr,
         buttonTextEn: editingCta.buttonTextEn,
-        buttonUrl: editingCta.buttonUrl,
+        buttonUrlEn: editingCta.buttonUrlEn,
+        buttonUrlFr: editingCta.buttonUrlFr,
         isActive: editingCta.isActive
       });
     } else {
@@ -98,7 +100,8 @@ export function CtaManagement() {
         data: {
           buttonTextFr: editingCta.buttonTextFr,
           buttonTextEn: editingCta.buttonTextEn,
-          buttonUrl: editingCta.buttonUrl,
+          buttonUrlEn: editingCta.buttonUrlEn,
+          buttonUrlFr: editingCta.buttonUrlFr,
           isActive: editingCta.isActive
         }
       });
@@ -135,7 +138,7 @@ export function CtaManagement() {
               <CardTitle className="text-sm font-medium flex items-center gap-2">
                 {cta.id === 'book_call' && <Phone className="h-4 w-4" />}
                 {cta.id === 'quick_quote' && <Edit className="h-4 w-4" />}
-                {cta.id === 'book_call' ? 'Book Call Button' : 'Quick Quote Button'}
+                {cta.id === 'book_call' ? 'CALL' : 'QUOTE'}
               </CardTitle>
               <div className="flex items-center gap-2">
                 <Switch
@@ -167,7 +170,10 @@ export function CtaManagement() {
                   <strong>French Button:</strong> {cta.buttonTextFr}
                 </p>
                 <p className="text-sm text-gray-600">
-                  <strong>URL:</strong> {cta.buttonUrl}
+                  <strong>English URL:</strong> {cta.buttonUrlEn}
+                </p>
+                <p className="text-sm text-gray-600">
+                  <strong>French URL:</strong> {cta.buttonUrlFr}
                 </p>
                 <div className="flex items-center gap-2">
                   <span className={`px-2 py-1 rounded-full text-xs ${
@@ -193,29 +199,19 @@ export function CtaManagement() {
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
-            <div className="grid grid-cols-2 gap-4">
+            {/* Button ID - hidden from user, only for code */}
+            {isCreating && (
               <div>
-                <Label htmlFor="id">Button ID</Label>
+                <Label htmlFor="id">Button ID (for developers)</Label>
                 <Input
                   id="id"
                   value={editingCta.id}
                   onChange={(e) => setEditingCta({ ...editingCta, id: e.target.value })}
                   placeholder="e.g., book_call, quick_quote"
-                  disabled={!isCreating}
+                  className="text-xs font-mono"
                 />
               </div>
-              <div>
-                <Label htmlFor="buttonUrl">Button URL</Label>
-                <Input
-                  id="buttonUrl"
-                  value={editingCta.buttonUrl}
-                  onChange={(e) => setEditingCta({ ...editingCta, buttonUrl: e.target.value })}
-                  placeholder="https://example.com or tel:+123456789"
-                />
-              </div>
-            </div>
-
-
+            )}
 
             <div className="grid grid-cols-2 gap-4">
               <div>
@@ -224,7 +220,7 @@ export function CtaManagement() {
                   id="buttonTextEn"
                   value={editingCta.buttonTextEn}
                   onChange={(e) => setEditingCta({ ...editingCta, buttonTextEn: e.target.value })}
-                  placeholder="Book a Call"
+                  placeholder="QUOTE"
                 />
               </div>
               <div>
@@ -233,7 +229,28 @@ export function CtaManagement() {
                   id="buttonTextFr"
                   value={editingCta.buttonTextFr}
                   onChange={(e) => setEditingCta({ ...editingCta, buttonTextFr: e.target.value })}
-                  placeholder="Réserver un appel"
+                  placeholder="DEVIS"
+                />
+              </div>
+            </div>
+
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <Label htmlFor="buttonUrlEn">English URL</Label>
+                <Input
+                  id="buttonUrlEn"
+                  value={editingCta.buttonUrlEn}
+                  onChange={(e) => setEditingCta({ ...editingCta, buttonUrlEn: e.target.value })}
+                  placeholder="https://example.com/en or tel:+123456789"
+                />
+              </div>
+              <div>
+                <Label htmlFor="buttonUrlFr">French URL</Label>
+                <Input
+                  id="buttonUrlFr"
+                  value={editingCta.buttonUrlFr}
+                  onChange={(e) => setEditingCta({ ...editingCta, buttonUrlFr: e.target.value })}
+                  placeholder="https://example.com/fr or tel:+123456789"
                 />
               </div>
             </div>
