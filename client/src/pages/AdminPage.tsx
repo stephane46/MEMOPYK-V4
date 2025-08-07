@@ -1341,16 +1341,16 @@ export default function AdminPage() {
                                   </div>
                                 </div>
 
-                                {/* Live Preview */}
+                                {/* Live Preview - Full Width Like Public Site */}
                                 <div 
-                                  className="bg-black rounded-lg p-8 min-h-[200px] flex items-center justify-center relative overflow-hidden w-full"
+                                  className="bg-black rounded-lg p-4 sm:p-8 min-h-[300px] flex items-center justify-center relative overflow-hidden w-full"
                                   style={{
                                     backgroundImage: 'linear-gradient(45deg, #1a1a1a 25%, transparent 25%), linear-gradient(-45deg, #1a1a1a 25%, transparent 25%), linear-gradient(45deg, transparent 75%, #1a1a1a 75%), linear-gradient(-45deg, transparent 75%, #1a1a1a 75%)',
                                     backgroundSize: '20px 20px',
                                     backgroundPosition: '0 0, 0 10px, 10px -10px, -10px 0px'
                                   }}
                                 >
-                                  <div className="text-center text-white max-w-4xl mx-auto">
+                                  <div className="text-center text-white max-w-7xl w-full px-3 sm:px-6 lg:px-8">
                                     {selectedTextId ? (() => {
                                       const selectedText = heroTexts.find((t: any) => t.id === selectedTextId);
                                       return selectedText ? (
