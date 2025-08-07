@@ -570,21 +570,21 @@ export default function AdminPage() {
                 <nav className="flex space-x-8" aria-label="Tabs">
                   <button
                     onClick={() => setHeroTab('videos')}
-                    className={`py-2 px-1 border-b-2 font-medium text-sm ${
+                    className={`py-3 px-4 border-b-3 font-semibold text-base rounded-t-lg transition-all duration-200 ${
                       heroTab === 'videos'
-                        ? 'border-orange-500 text-orange-600'
-                        : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                        ? 'border-orange-500 text-orange-600 bg-orange-50 dark:bg-orange-900/20 shadow-lg'
+                        : 'border-transparent text-gray-500 hover:text-orange-600 hover:border-orange-300 hover:bg-gray-50 dark:hover:bg-gray-800'
                     }`}
                   >
-                    <Video className="inline-block h-4 w-4 mr-2" />
+                    <Video className="inline-block h-5 w-5 mr-2" />
                     Gestion Vidéos
                   </button>
                   <button
                     onClick={() => setHeroTab('text')}
-                    className={`py-2 px-1 border-b-2 font-medium text-sm ${
+                    className={`py-3 px-4 border-b-3 font-semibold text-base rounded-t-lg transition-all duration-200 ${
                       heroTab === 'text'
-                        ? 'border-orange-500 text-orange-600'
-                        : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                        ? 'border-orange-500 text-orange-600 bg-orange-50 dark:bg-orange-900/20 shadow-lg'
+                        : 'border-transparent text-gray-500 hover:text-orange-600 hover:border-orange-300 hover:bg-gray-50 dark:hover:bg-gray-800'
                     }`}
                   >
                     <Type className="inline-block h-4 w-4 mr-2" />
@@ -1371,19 +1371,13 @@ export default function AdminPage() {
                                             {(() => {
                                               const text = (selectedText.title_fr || '');
                                               
-                                              // DEBUG: Log what we're processing
-                                              console.log('🔍 Admin Preview - Raw text:', JSON.stringify(text));
-                                              
                                               // Match public site processing exactly: Handle multiple escaping scenarios
                                               let processedText = text;
                                               if (processedText.includes('\\n')) {
                                                 processedText = processedText.replace(/\\n/g, '\n');
                                               }
                                               
-                                              console.log('🔍 Admin Preview - Processed text:', JSON.stringify(processedText));
                                               const lines = processedText.split('\n');
-                                              console.log('🔍 Admin Preview - Lines:', lines);
-                                              
                                               return lines.map((line: string, index: number) => (
                                                 <React.Fragment key={index}>
                                                   {line}
