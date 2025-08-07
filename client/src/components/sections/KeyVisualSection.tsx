@@ -53,30 +53,30 @@ export function KeyVisualSection() {
             <div className="text-lg sm:text-xl text-memopyk-sky-blue leading-relaxed space-y-3 sm:space-y-2">
               {language === 'fr-FR' ? (
                 <>
-                  <div className="inline-flex items-center gap-3 bg-white/40 backdrop-blur-sm rounded-xl px-4 py-3 border border-white/30 shadow-sm">
+                  <div className="flex items-center gap-3 bg-white/40 backdrop-blur-sm rounded-xl px-4 py-3 border border-white/30 shadow-sm w-fit">
                     <Smartphone className="w-5 h-5 sm:w-6 sm:h-6 flex-shrink-0" />
                     <span>enfouis dans des téléphones...</span>
                   </div>
-                  <div className="inline-flex items-center gap-3 bg-white/40 backdrop-blur-sm rounded-xl px-4 py-3 border border-white/30 shadow-sm">
+                  <div className="flex items-center gap-3 bg-white/40 backdrop-blur-sm rounded-xl px-4 py-3 border border-white/30 shadow-sm w-fit">
                     <Laptop className="w-5 h-5 sm:w-6 sm:h-6 flex-shrink-0" />
                     <span>oubliés sur des disques durs...</span>
                   </div>
-                  <div className="inline-flex items-center gap-3 bg-white/40 backdrop-blur-sm rounded-xl px-4 py-3 border border-white/30 shadow-sm">
+                  <div className="flex items-center gap-3 bg-white/40 backdrop-blur-sm rounded-xl px-4 py-3 border border-white/30 shadow-sm w-fit">
                     <Package className="w-5 h-5 sm:w-6 sm:h-6 flex-shrink-0" />
                     <span>entassés dans des cartons...</span>
                   </div>
                 </>
               ) : (
                 <>
-                  <div className="inline-flex items-center gap-3 bg-white/40 backdrop-blur-sm rounded-xl px-4 py-3 border border-white/30 shadow-sm">
+                  <div className="flex items-center gap-3 bg-white/40 backdrop-blur-sm rounded-xl px-4 py-3 border border-white/30 shadow-sm w-fit">
                     <Smartphone className="w-5 h-5 sm:w-6 sm:h-6 flex-shrink-0" />
                     <span>buried in phones...</span>
                   </div>
-                  <div className="inline-flex items-center gap-3 bg-white/40 backdrop-blur-sm rounded-xl px-4 py-3 border border-white/30 shadow-sm">
+                  <div className="flex items-center gap-3 bg-white/40 backdrop-blur-sm rounded-xl px-4 py-3 border border-white/30 shadow-sm w-fit">
                     <Laptop className="w-5 h-5 sm:w-6 sm:h-6 flex-shrink-0" />
                     <span>forgotten on hard drives...</span>
                   </div>
-                  <div className="inline-flex items-center gap-3 bg-white/40 backdrop-blur-sm rounded-xl px-4 py-3 border border-white/30 shadow-sm">
+                  <div className="flex items-center gap-3 bg-white/40 backdrop-blur-sm rounded-xl px-4 py-3 border border-white/30 shadow-sm w-fit">
                     <Package className="w-5 h-5 sm:w-6 sm:h-6 flex-shrink-0" />
                     <span>piled in boxes...</span>
                   </div>
