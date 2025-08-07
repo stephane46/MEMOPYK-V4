@@ -45,11 +45,10 @@ export function HeroVideoSection() {
     staleTime: 5 * 60 * 1000,
   });
 
-  // Fetch hero text settings with reasonable cache for infrequent updates
+  // Fetch hero text settings - manual updates only via admin cache invalidation
   const { data: heroTextData = [] } = useQuery<HeroText[]>({
     queryKey: ['/api/hero-text', language],
-    staleTime: 5 * 60 * 1000, // 5 minutes - reasonable for infrequent content updates
-    refetchInterval: 10 * 60 * 1000, // Auto-refetch every 10 minutes (much more reasonable)
+    staleTime: 24 * 60 * 60 * 1000, // 24 hours - no auto-refresh, manual updates only
   });
 
   const activeVideos = heroVideos.filter(video => video.is_active)
