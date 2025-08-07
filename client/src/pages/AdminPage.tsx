@@ -411,7 +411,7 @@ export default function AdminPage() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['/api/hero-text'] });
       setShowNewTextForm(false);
-      setNewTextData({ title_fr: '', subtitle_fr: '', title_en: '', subtitle_en: '', font_size: 48 });
+      setNewTextData({ title_fr: '', subtitle_fr: '', title_en: '', subtitle_en: '', font_size_desktop: 60, font_size_tablet: 45, font_size_mobile: 36 });
       toast({ title: "Succès", description: "Nouveau texte créé avec succès" });
     },
     onError: () => {
@@ -989,13 +989,13 @@ export default function AdminPage() {
                                     </div>
                                   </div>
                                   <div>
-                                    <Label>Taille de Police par Défaut: {newTextData.font_size}px</Label>
+                                    <Label>Taille de Police Desktop: {newTextData.font_size_desktop}px</Label>
                                     <input
                                       type="range"
                                       min="20"
                                       max="120"
-                                      value={newTextData.font_size}
-                                      onChange={(e) => setNewTextData({ ...newTextData, font_size: Number(e.target.value) })}
+                                      value={newTextData.font_size_desktop}
+                                      onChange={(e) => setNewTextData({ ...newTextData, font_size_desktop: Number(e.target.value) })}
                                       className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer"
                                     />
                                   </div>
@@ -1011,7 +1011,7 @@ export default function AdminPage() {
                                       variant="outline"
                                       onClick={() => {
                                         setShowNewTextForm(false);
-                                        setNewTextData({ title_fr: '', subtitle_fr: '', title_en: '', subtitle_en: '', font_size: 48 });
+                                        setNewTextData({ title_fr: '', subtitle_fr: '', title_en: '', subtitle_en: '', font_size_desktop: 60, font_size_tablet: 45, font_size_mobile: 36 });
                                       }}
                                     >
                                       Annuler
