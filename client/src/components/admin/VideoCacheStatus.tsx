@@ -177,8 +177,21 @@ export const VideoCacheStatus: React.FC<VideoCacheStatusProps> = ({
     },
   });
 
-  // Environment safety check
-  const isProduction = window.location.hostname.endsWith('.replit.app') || window.location.hostname === 'memopyk.replit.app';
+  // Environment safety check with debug logging
+  const currentHostname = window.location.hostname;
+  const isProduction = currentHostname.includes('replit.app') || currentHostname.includes('memopyk');
+  
+  // Debug logging for hostname detection
+  React.useEffect(() => {
+    console.log('🌍 Environment Detection Debug:', {
+      hostname: currentHostname,
+      isProduction,
+      endsWithReplitApp: currentHostname.endsWith('.replit.app'),
+      equalsMemopykReplit: currentHostname === 'memopyk.replit.app',
+      includesReplit: currentHostname.includes('replit.app'),
+      includesMemopyk: currentHostname.includes('memopyk')
+    });
+  }, [currentHostname, isProduction]);
 
   // Manual cleanup mutation - removes outdated/orphaned cache files
   const clearCacheMutation = useMutation({
@@ -334,6 +347,10 @@ export const VideoCacheStatus: React.FC<VideoCacheStatusProps> = ({
               {title}
               <Badge className={`ml-2 text-xs ${isProduction ? 'bg-green-100 text-green-800' : 'bg-blue-100 text-blue-800'}`}>
                 {isProduction ? 'Production' : 'Development'} Server
+              </Badge>
+              {/* Debug badge for hostname */}
+              <Badge variant="outline" className="ml-1 text-xs">
+                {currentHostname}
               </Badge>
             </div>
             <div className="flex items-center gap-2">
