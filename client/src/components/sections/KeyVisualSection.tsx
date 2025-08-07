@@ -1,4 +1,5 @@
 import { useLanguage } from '../../contexts/LanguageContext';
+import { Smartphone, Laptop, Package } from 'lucide-react';
 // Using direct path to public asset
 const keyVisualImage = '/images/photos_video_organization_chaos.png';
 
@@ -38,19 +39,37 @@ export function KeyVisualSection() {
               }
             </h2>
             
-            {/* Three-line description */}
+            {/* Three-line description with icons */}
             <div className="text-xl text-memopyk-sky-blue leading-relaxed space-y-2">
               {language === 'fr-FR' ? (
                 <>
-                  <p>enfouis dans des téléphones...</p>
-                  <p>oubliés sur des disques durs...</p>
-                  <p>entassés dans des cartons...</p>
+                  <p className="flex items-center gap-3">
+                    <Smartphone className="w-6 h-6 flex-shrink-0" />
+                    enfouis dans des téléphones...
+                  </p>
+                  <p className="flex items-center gap-3">
+                    <Laptop className="w-6 h-6 flex-shrink-0" />
+                    oubliés sur des disques durs...
+                  </p>
+                  <p className="flex items-center gap-3">
+                    <Package className="w-6 h-6 flex-shrink-0" />
+                    entassés dans des cartons...
+                  </p>
                 </>
               ) : (
                 <>
-                  <p>buried in phones...</p>
-                  <p>forgotten on hard drives...</p>
-                  <p>piled in boxes...</p>
+                  <p className="flex items-center gap-3">
+                    <Smartphone className="w-6 h-6 flex-shrink-0" />
+                    buried in phones...
+                  </p>
+                  <p className="flex items-center gap-3">
+                    <Laptop className="w-6 h-6 flex-shrink-0" />
+                    forgotten on hard drives...
+                  </p>
+                  <p className="flex items-center gap-3">
+                    <Package className="w-6 h-6 flex-shrink-0" />
+                    piled in boxes...
+                  </p>
                 </>
               )}
             </div>
