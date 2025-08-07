@@ -59,6 +59,17 @@ export default function AdminPage() {
   const [uploadingFile, setUploadingFile] = useState(false);
   const [dragActive, setDragActive] = useState(false);
   const [selectedTextId, setSelectedTextId] = useState<number | null>(null);
+  const [currentPreviewDevice, setCurrentPreviewDevice] = useState<'desktop' | 'tablet' | 'mobile'>('desktop');
+  const [previewLanguage, setPreviewLanguage] = useState<'fr-FR' | 'en-US'>('fr-FR');
+  const [previewFontSizeDesktop, setPreviewFontSizeDesktop] = useState(60);
+  const [previewFontSizeTablet, setPreviewFontSizeTablet] = useState(45);
+  const [previewFontSizeMobile, setPreviewFontSizeMobile] = useState(32);
+  const [editingTextId, setEditingTextId] = useState<number | null>(null);
+  const [editFormData, setEditFormData] = useState({ title_fr: '', title_en: '', subtitle_fr: '', subtitle_en: '' });
+  const [showNewTextForm, setShowNewTextForm] = useState(false);
+  const [newTextData, setNewTextData] = useState({ title_fr: '', subtitle_fr: '', title_en: '', subtitle_en: '', font_size_desktop: 60, font_size_tablet: 45, font_size_mobile: 32 });
+  const [currentPreviewLanguage, setCurrentPreviewLanguage] = useState<'fr' | 'en'>('fr');
+  const [isBulletproofCacheRunning, setIsBulletproofCacheRunning] = useState(false);
 
   // Auto-scroll to top when admin page loads or refreshes
   React.useEffect(() => {
@@ -181,26 +192,11 @@ export default function AdminPage() {
       handleFileUpload(files[0]);
     }
   };
-  const [previewFontSizeDesktop, setPreviewFontSizeDesktop] = useState(60);
-  const [previewFontSizeTablet, setPreviewFontSizeTablet] = useState(45);
-  const [previewFontSizeMobile, setPreviewFontSizeMobile] = useState(32);
-  const [currentPreviewDevice, setCurrentPreviewDevice] = useState<'desktop' | 'tablet' | 'mobile'>('desktop');
-  const [textPreview, setTextPreview] = useState('');
-  const [editingTextId, setEditingTextId] = useState<number | null>(null);
-  const [editFormData, setEditFormData] = useState({ title_fr: '', subtitle_fr: '', title_en: '', subtitle_en: '' });
-  const [showNewTextForm, setShowNewTextForm] = useState(false);
-  const [isBulletproofCacheRunning, setIsBulletproofCacheRunning] = useState(false);
-  const [newTextData, setNewTextData] = useState({ 
-    title_fr: '', 
-    subtitle_fr: '', 
-    title_en: '', 
-    subtitle_en: '', 
-    font_size_desktop: 60,
-    font_size_tablet: 45,
-    font_size_mobile: 32
-  });
+  
   const { toast } = useToast();
   const queryClient = useQueryClient();
+  
+  // Queries and mutations are defined with the main queries section below
 
   // Add logout functionality
   const handleLogout = () => {
@@ -1252,6 +1248,35 @@ export default function AdminPage() {
                                       <Monitor className="h-5 w-5" />
                                       Responsive Font Size Controls
                                     </Label>
+                                    
+                                    {/* Language Selection for Preview */}
+                                    <div className="bg-gray-50 dark:bg-gray-800 p-3 rounded-lg border">
+                                      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                                        Langue d'aperçu / Preview Language
+                                      </label>
+                                      <div className="flex gap-2">
+                                        <button
+                                          onClick={() => setPreviewLanguage('fr-FR')}
+                                          className={`px-3 py-2 text-sm rounded-md transition-colors ${
+                                            previewLanguage === 'fr-FR'
+                                              ? 'bg-memopyk-orange text-white'
+                                              : 'bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-300 border border-gray-300 dark:border-gray-600'
+                                          }`}
+                                        >
+                                          🇫🇷 Français
+                                        </button>
+                                        <button
+                                          onClick={() => setPreviewLanguage('en-US')}
+                                          className={`px-3 py-2 text-sm rounded-md transition-colors ${
+                                            previewLanguage === 'en-US'
+                                              ? 'bg-memopyk-orange text-white'
+                                              : 'bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-300 border border-gray-300 dark:border-gray-600'
+                                          }`}
+                                        >
+                                          🇺🇸 English
+                                        </button>
+                                      </div>
+                                    </div>
                                     <div className="flex space-x-2 bg-gray-100 dark:bg-gray-800 p-1 rounded-lg">
                                       <button
                                         onClick={() => setCurrentPreviewDevice('desktop')}
@@ -1341,6 +1366,24 @@ export default function AdminPage() {
                                   </div>
                                 </div>
 
+                                {/* Language Toggle */}
+                                <div className="flex gap-2 mb-4">
+                                  <Button 
+                                    onClick={() => setPreviewLanguage('fr-FR')}
+                                    variant={previewLanguage === 'fr-FR' ? 'default' : 'outline'}
+                                    size="sm"
+                                  >
+                                    🇫🇷 Français
+                                  </Button>
+                                  <Button 
+                                    onClick={() => setPreviewLanguage('en-US')}
+                                    variant={previewLanguage === 'en-US' ? 'default' : 'outline'}
+                                    size="sm"
+                                  >
+                                    🇺🇸 English
+                                  </Button>
+                                </div>
+
                                 {/* Live Preview - Full Width Like Public Site */}
                                 <div 
                                   className="bg-black rounded-lg p-4 sm:p-8 min-h-[300px] flex items-center justify-center relative overflow-hidden w-full"
@@ -1351,7 +1394,7 @@ export default function AdminPage() {
                                   }}
                                 >
                                   <div className="text-center text-white max-w-7xl w-full px-3 sm:px-6 lg:px-8">
-                                    {selectedTextId ? (() => {
+                                    {selectedTextId && (() => {
                                       const selectedText = heroTexts.find((t: any) => t.id === selectedTextId);
                                       return selectedText ? (
                                         <div>
@@ -1367,7 +1410,9 @@ export default function AdminPage() {
                                             }}
                                           >
                                             {(() => {
-                                              const text = (selectedText.title_fr || "Transformez vos souvenirs\nen films cinématographiques");
+                                              const text = previewLanguage === 'fr-FR' 
+                                                ? (selectedText.title_fr || "Transformez vos souvenirs\nen films cinématographiques")
+                                                : (selectedText.title_en || "Transform your memories\ninto cinematic films");
                                               
                                               // Handle multiple escaping scenarios: raw newlines, \n, \\n
                                               let processedText = text;
@@ -1395,7 +1440,9 @@ export default function AdminPage() {
                                             }}
                                           >
                                             {(() => {
-                                              const text = (selectedText.subtitle_fr || "Redonnez vie à vos moments précieux\navec notre expertise cinématographique");
+                                              const text = previewLanguage === 'fr-FR'
+                                                ? (selectedText.subtitle_fr || "Redonnez vie à vos moments précieux\navec notre expertise cinématographique")
+                                                : (selectedText.subtitle_en || "Bring your precious moments to life\nwith our cinematic expertise");
                                               
                                               // Handle multiple escaping scenarios: raw newlines, \n, \\n
                                               let processedText = text;
