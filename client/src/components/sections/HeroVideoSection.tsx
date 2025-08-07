@@ -239,17 +239,16 @@ export function HeroVideoSection() {
             }
           </p>
 
-          <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 lg:gap-6 justify-center items-center">
+          <div className="flex justify-center items-center">
             <Button 
               size="lg" 
               className="bg-memopyk-orange hover:bg-memopyk-orange/90 text-white font-semibold px-4 sm:px-6 lg:px-8 py-2 sm:py-3 text-sm sm:text-base lg:text-lg w-full sm:w-auto min-w-[180px] sm:min-w-[200px]"
-            >
-              {language === 'fr-FR' ? 'Découvrir nos films' : 'Discover our films'}
-            </Button>
-            <Button 
-              variant="outline" 
-              size="lg"
-              className="border-2 border-white text-white hover:bg-white hover:text-memopyk-navy font-semibold px-4 sm:px-6 lg:px-8 py-2 sm:py-3 text-sm sm:text-base lg:text-lg w-full sm:w-auto min-w-[180px] sm:min-w-[200px]"
+              onClick={() => {
+                const element = document.getElementById('contact');
+                if (element) {
+                  element.scrollIntoView({ behavior: 'smooth' });
+                }
+              }}
             >
               {language === 'fr-FR' ? 'Commencer mon projet' : 'Start my project'}
             </Button>
@@ -264,7 +263,7 @@ export function HeroVideoSection() {
           <Button
             variant="ghost"
             size="lg"
-            className="hidden sm:flex absolute left-2 sm:left-4 top-1/2 -translate-y-1/2 text-white hover:text-white hover:bg-white/20 z-10"
+            className="hidden sm:flex absolute left-2 sm:left-4 top-1/2 -translate-y-1/2 text-memopyk-orange hover:text-memopyk-orange hover:bg-memopyk-orange/20 z-10"
             onClick={goToPrevious}
           >
             <ChevronLeft className="h-6 w-6 sm:h-8 sm:w-8" />
@@ -273,7 +272,7 @@ export function HeroVideoSection() {
           <Button
             variant="ghost"
             size="lg"
-            className="hidden sm:flex absolute right-2 sm:right-4 top-1/2 -translate-y-1/2 text-white hover:text-white hover:bg-white/20 z-10"
+            className="hidden sm:flex absolute right-2 sm:right-4 top-1/2 -translate-y-1/2 text-memopyk-orange hover:text-memopyk-orange hover:bg-memopyk-orange/20 z-10"
             onClick={goToNext}
           >
             <ChevronRight className="h-6 w-6 sm:h-8 sm:w-8" />
@@ -286,8 +285,8 @@ export function HeroVideoSection() {
                 key={index}
                 className={`w-2 h-2 sm:w-3 sm:h-3 rounded-full transition-all duration-300 ${
                   index === currentVideoIndex 
-                    ? 'bg-white scale-125' 
-                    : 'bg-white/50 hover:bg-white/80'
+                    ? 'bg-memopyk-orange scale-125' 
+                    : 'bg-memopyk-orange/50 hover:bg-memopyk-orange/80'
                 }`}
                 onClick={() => goToVideo(index)}
               />
