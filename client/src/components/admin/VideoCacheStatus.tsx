@@ -53,7 +53,7 @@ export const VideoCacheStatus: React.FC<VideoCacheStatusProps> = ({
 
   // Listen for global cache triggers
   React.useEffect(() => {
-    const handleBulletproofCache = () => {
+    const handleAllMediaCache = () => {
       forceAllMediaMutation.mutate();
     };
 
@@ -61,11 +61,11 @@ export const VideoCacheStatus: React.FC<VideoCacheStatusProps> = ({
       clearCacheMutation.mutate();
     };
 
-    window.addEventListener('triggerBulletproofCache', handleBulletproofCache);
+    window.addEventListener('triggerAllMediaCache', handleAllMediaCache);
     window.addEventListener('triggerClearCache', handleClearCache);
     
     return () => {
-      window.removeEventListener('triggerBulletproofCache', handleBulletproofCache);
+      window.removeEventListener('triggerAllMediaCache', handleAllMediaCache);
       window.removeEventListener('triggerClearCache', handleClearCache);
     };
   }, []);
@@ -160,7 +160,7 @@ export const VideoCacheStatus: React.FC<VideoCacheStatusProps> = ({
     onSuccess: (data) => {
       toast({
         title: "Gallery Videos Cached",
-        description: data.message || "All gallery videos are now cached for instant playback",
+        description: "All gallery videos are now cached for instant playback",
       });
       queryClient.invalidateQueries({ queryKey: ['/api/video-cache/status'] });
       queryClient.invalidateQueries({ queryKey: ['/api/video-cache/stats'] });
@@ -226,7 +226,7 @@ export const VideoCacheStatus: React.FC<VideoCacheStatusProps> = ({
     mutationFn: async () => {
       // Show immediate feedback
       toast({
-        title: "BULLETPROOF Cache Starting",
+        title: "All Media Cache Starting",
         description: "Processing all media files... This will take 15-45 seconds.",
       });
       
@@ -271,7 +271,7 @@ export const VideoCacheStatus: React.FC<VideoCacheStatusProps> = ({
       const processingTime = data.stats?.processingTime || '0s';
       
       toast({
-        title: "BULLETPROOF ALL MEDIA Complete",
+        title: "All Media Cache Complete",
         description: `Successfully cached ${videoCount} videos & ${imageCount} images in ${processingTime}`,
       });
       refetchStatus();
@@ -511,7 +511,7 @@ export const VideoCacheStatus: React.FC<VideoCacheStatusProps> = ({
         )}
 
         {/* Cache Management - Individual buttons provide all needed functionality */}
-        {/* Removed redundant "Smart Gallery Refresh" - use individual cache buttons or BULLETPROOF All Media Cache instead */}
+        {/* Removed redundant "Smart Gallery Refresh" - use individual cache buttons or All Media Cache instead */}
       </CardContent>
       </Card>
     </div>

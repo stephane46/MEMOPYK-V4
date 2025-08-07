@@ -1408,7 +1408,7 @@ export default function AdminPage() {
                                                 processedText = processedText.replace(/\\n/g, '\n');
                                               }
                                               const lines = processedText.split('\n');
-                                              return lines.map((line, index) => (
+                                              return lines.map((line: string, index: number) => (
                                                 <React.Fragment key={index}>
                                                   {line}
                                                   {index < lines.length - 1 && <br />}
@@ -1440,7 +1440,7 @@ export default function AdminPage() {
                                                 if (processedText.includes('\\n')) {
                                                   processedText = processedText.replace(/\\n/g, '\n');
                                                 }
-                                                return processedText.split('\n').map((line, index) => (
+                                                return processedText.split('\n').map((line: string, index: number) => (
                                                   <React.Fragment key={index}>
                                                     {line}
                                                     {index < processedText.split('\n').length - 1 && <br />}
@@ -1609,10 +1609,6 @@ export default function AdminPage() {
                       description="Critical videos for homepage carousel - preloaded for instant display"
                       videoFilenames={heroVideos.map(v => v.url_en).filter(Boolean)}
                       showForceAllButton={false}
-                      smartCacheRefreshMutation={{
-                        mutate: () => {},
-                        isPending: false
-                      }}
                     />
                   </CardContent>
                 </Card>
@@ -1631,10 +1627,6 @@ export default function AdminPage() {
                       description="Portfolio gallery videos - optimized for lightbox display"
                       videoFilenames={['PomGalleryC.mp4', 'VitaminSeaC.mp4', 'safari-1.mp4']}
                       showForceAllButton={false}
-                      smartCacheRefreshMutation={{
-                        mutate: () => {},
-                        isPending: false
-                      }}
                     />
                   </CardContent>
                 </Card>
@@ -1659,7 +1651,7 @@ export default function AdminPage() {
                       disabled={isBulletproofCacheRunning}
                       onClick={() => {
                         setIsBulletproofCacheRunning(true);
-                        const event = new CustomEvent('triggerBulletproofCache');
+                        const event = new CustomEvent('triggerAllMediaCache');
                         window.dispatchEvent(event);
                       }}
                       className="bg-purple-600 hover:bg-purple-700 text-white font-medium h-20 flex-col gap-2 disabled:opacity-70"
@@ -1671,7 +1663,7 @@ export default function AdminPage() {
                           <Zap className="h-5 w-5" />
                         )}
                         <span className="text-lg">
-                          {isBulletproofCacheRunning ? '⚡ Processing All Media...' : '🚀 BULLETPROOF All Media Cache'}
+                          {isBulletproofCacheRunning ? '⚡ Processing All Media...' : '🚀 All Media Cache'}
                         </span>
                       </div>
                       <span className="text-sm opacity-90">
