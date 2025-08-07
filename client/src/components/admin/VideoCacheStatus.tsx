@@ -329,6 +329,9 @@ export const VideoCacheStatus: React.FC<VideoCacheStatusProps> = ({
             <div className="flex items-center gap-2">
               <HardDrive className="h-5 w-5" />
               {title}
+              <Badge className={`ml-2 text-xs ${window.location.hostname.includes('.replit.app') ? 'bg-green-100 text-green-800' : 'bg-blue-100 text-blue-800'}`}>
+                {window.location.hostname.includes('.replit.app') ? 'Production' : 'Development'} Server
+              </Badge>
             </div>
             <div className="flex items-center gap-2">
               <Badge variant={cachedCount === totalCount ? "default" : "secondary"}>
