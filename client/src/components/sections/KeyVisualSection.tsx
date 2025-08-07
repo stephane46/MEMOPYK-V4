@@ -100,12 +100,14 @@ export function KeyVisualSection() {
             </div>
 
             {/* Solution statement */}
-            <p className="text-base sm:text-lg text-memopyk-dark-blue leading-relaxed">
-              {language === 'fr-FR' 
-                ? "Laissez-nous sauver vos photos et vidéos en les transformant en un film souvenir que vous garderez précieusement."
-                : "Let us rescue your photos and videos by transforming them into a souvenir film you'll treasure forever."
-              }
-            </p>
+            <div className="text-lg sm:text-xl text-memopyk-dark-blue leading-relaxed font-medium space-y-1">
+              <p>
+                {language === 'fr-FR' 
+                  ? "Laissez-nous sauver vos photos et vidéos en les transformant en un film souvenir que vous garderez précieusement."
+                  : "Let us rescue your photos and videos by transforming them into a souvenir film you'll treasure forever."
+                }
+              </p>
+            </div>
             
             {/* Centered tagline at bottom */}
             <div className="text-center pt-2 sm:pt-4">
