@@ -42,13 +42,13 @@ export function KeyVisualSection() {
             <div className="text-xl text-memopyk-sky-blue leading-relaxed space-y-2">
               {language === 'fr-FR' ? (
                 <>
-                  <p>Enfouis dans des téléphones...</p>
+                  <p>enfouis dans des téléphones...</p>
                   <p>oubliés sur des disques durs...</p>
                   <p>entassés dans des cartons...</p>
                 </>
               ) : (
                 <>
-                  <p>Buried in phones...</p>
+                  <p>buried in phones...</p>
                   <p>forgotten on hard drives...</p>
                   <p>piled in boxes...</p>
                 </>
