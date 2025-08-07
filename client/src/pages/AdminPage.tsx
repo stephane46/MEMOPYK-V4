@@ -1356,30 +1356,26 @@ export default function AdminPage() {
                                       return selectedText ? (
                                         <div>
                                           <h1 
-                                            className="font-bold mb-4 text-center"
+                                            className="font-playfair font-bold mb-2 sm:mb-4 lg:mb-6 leading-tight"
                                             style={{ 
                                               fontSize: `${
                                                 currentPreviewDevice === 'desktop' ? previewFontSizeDesktop :
                                                 currentPreviewDevice === 'tablet' ? previewFontSizeTablet :
                                                 previewFontSizeMobile
                                               }px`,
-                                              lineHeight: '1.2',
-                                              textShadow: '2px 2px 4px rgba(0,0,0,0.8)',
-                                              fontFamily: currentPreviewDevice === 'mobile' ? 'Poppins, sans-serif' : 'Playfair Display, serif'
+                                              textShadow: '2px 2px 4px rgba(0,0,0,0.8)'
                                             }}
                                           >
                                             {(() => {
-                                              const text = (selectedText.title_fr || '');
+                                              const text = (selectedText.title_fr || "Transformez vos souvenirs\nen films cinématographiques");
                                               
-                                              // Match public site processing exactly: Handle multiple escaping scenarios
+                                              // Handle multiple escaping scenarios: raw newlines, \n, \\n
                                               let processedText = text;
                                               if (processedText.includes('\\n')) {
                                                 processedText = processedText.replace(/\\n/g, '\n');
                                               }
-                                              
                                               const lines = processedText.split('\n');
-                                              
-                                              return lines.map((line: string, index: number) => (
+                                              return lines.map((line, index) => (
                                                 <React.Fragment key={index}>
                                                   {line}
                                                   {index < lines.length - 1 && <br />}
@@ -1388,26 +1384,25 @@ export default function AdminPage() {
                                             })()}
                                           </h1>
                                           <p 
-                                            className="opacity-90 text-center"
+                                            className="mb-4 sm:mb-6 lg:mb-8 text-white/90 font-poppins leading-snug"
                                             style={{ 
                                               fontSize: `${(
                                                 currentPreviewDevice === 'desktop' ? previewFontSizeDesktop :
                                                 currentPreviewDevice === 'tablet' ? previewFontSizeTablet :
                                                 previewFontSizeMobile
-                                              ) * 0.6}px`,
+                                              ) * 0.47}px`,
                                               textShadow: '1px 1px 2px rgba(0,0,0,0.8)'
                                             }}
                                           >
                                             {(() => {
-                                              const text = (selectedText.subtitle_fr || '');
+                                              const text = (selectedText.subtitle_fr || "Redonnez vie à vos moments précieux\navec notre expertise cinématographique");
                                               
-                                              // Match public site processing exactly: Handle multiple escaping scenarios
+                                              // Handle multiple escaping scenarios: raw newlines, \n, \\n
                                               let processedText = text;
                                               if (processedText.includes('\\n')) {
                                                 processedText = processedText.replace(/\\n/g, '\n');
                                               }
-                                              
-                                              return processedText.split('\n').map((line: string, index: number) => (
+                                              return processedText.split('\n').map((line, index) => (
                                                 <React.Fragment key={index}>
                                                   {line}
                                                   {index < processedText.split('\n').length - 1 && <br />}
