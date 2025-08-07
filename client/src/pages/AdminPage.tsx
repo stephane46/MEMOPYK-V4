@@ -4,6 +4,7 @@ import { apiRequest } from '@/lib/queryClient';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
 import { Badge } from '@/components/ui/badge';
@@ -978,34 +979,46 @@ export default function AdminPage() {
                                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                     <div>
                                       <Label>Titre (Français)</Label>
-                                      <Input
+                                      <small className="text-gray-500 block mb-1">Utilisez Entrée pour créer des sauts de ligne</small>
+                                      <Textarea
                                         value={newTextData.title_fr}
                                         onChange={(e) => setNewTextData({ ...newTextData, title_fr: e.target.value })}
-                                        placeholder="Ex: Transformez vos souvenirs..."
+                                        placeholder="Ex: Transformez vos souvenirs&#10;en films cinématographiques"
+                                        rows={3}
+                                        className="resize-none"
                                       />
                                     </div>
                                     <div>
                                       <Label>Titre (Anglais)</Label>
-                                      <Input
+                                      <small className="text-gray-500 block mb-1">Use Enter to create line breaks</small>
+                                      <Textarea
                                         value={newTextData.title_en}
                                         onChange={(e) => setNewTextData({ ...newTextData, title_en: e.target.value })}
-                                        placeholder="Ex: Transform your memories..."
+                                        placeholder="Ex: Transform your memories&#10;into cinematic films"
+                                        rows={3}
+                                        className="resize-none"
                                       />
                                     </div>
                                     <div>
                                       <Label>Sous-titre (Français)</Label>
-                                      <Input
+                                      <small className="text-gray-500 block mb-1">Utilisez Entrée pour créer des sauts de ligne</small>
+                                      <Textarea
                                         value={newTextData.subtitle_fr}
                                         onChange={(e) => setNewTextData({ ...newTextData, subtitle_fr: e.target.value })}
-                                        placeholder="Ex: Créez des vidéos professionnelles..."
+                                        placeholder="Ex: Créez des vidéos professionnelles&#10;avec notre expertise cinématographique"
+                                        rows={3}
+                                        className="resize-none"
                                       />
                                     </div>
                                     <div>
                                       <Label>Sous-titre (Anglais)</Label>
-                                      <Input
+                                      <small className="text-gray-500 block mb-1">Use Enter to create line breaks</small>
+                                      <Textarea
                                         value={newTextData.subtitle_en}
                                         onChange={(e) => setNewTextData({ ...newTextData, subtitle_en: e.target.value })}
-                                        placeholder="Ex: Create professional videos..."
+                                        placeholder="Ex: Create professional videos&#10;with our cinematic expertise"
+                                        rows={3}
+                                        className="resize-none"
                                       />
                                     </div>
                                   </div>
@@ -1054,34 +1067,42 @@ export default function AdminPage() {
                                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                           <div>
                                             <Label className="text-xs">Titre (Français)</Label>
-                                            <Input
+                                            <small className="text-gray-400 block text-xs">Entrée = saut de ligne</small>
+                                            <Textarea
                                               value={editFormData.title_fr}
                                               onChange={(e) => setEditFormData({ ...editFormData, title_fr: e.target.value })}
-                                              className="text-sm"
+                                              className="text-sm resize-none"
+                                              rows={2}
                                             />
                                           </div>
                                           <div>
                                             <Label className="text-xs">Titre (Anglais)</Label>
-                                            <Input
+                                            <small className="text-gray-400 block text-xs">Enter = line break</small>
+                                            <Textarea
                                               value={editFormData.title_en}
                                               onChange={(e) => setEditFormData({ ...editFormData, title_en: e.target.value })}
-                                              className="text-sm"
+                                              className="text-sm resize-none"
+                                              rows={2}
                                             />
                                           </div>
                                           <div>
                                             <Label className="text-xs">Sous-titre (Français)</Label>
-                                            <Input
+                                            <small className="text-gray-400 block text-xs">Entrée = saut de ligne</small>
+                                            <Textarea
                                               value={editFormData.subtitle_fr}
                                               onChange={(e) => setEditFormData({ ...editFormData, subtitle_fr: e.target.value })}
-                                              className="text-sm"
+                                              className="text-sm resize-none"
+                                              rows={2}
                                             />
                                           </div>
                                           <div>
                                             <Label className="text-xs">Sous-titre (Anglais)</Label>
-                                            <Input
+                                            <small className="text-gray-400 block text-xs">Enter = line break</small>
+                                            <Textarea
                                               value={editFormData.subtitle_en}
                                               onChange={(e) => setEditFormData({ ...editFormData, subtitle_en: e.target.value })}
-                                              className="text-sm"
+                                              className="text-sm resize-none"
+                                              rows={2}
                                             />
                                           </div>
                                         </div>

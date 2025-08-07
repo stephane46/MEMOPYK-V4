@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, useCallback } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { ChevronLeft, ChevronRight, Play, Pause } from 'lucide-react';
 import { useLanguage } from '../../contexts/LanguageContext';
@@ -220,10 +220,18 @@ export function HeroVideoSection() {
               textShadow: '2px 2px 4px rgba(0,0,0,0.8)'
             }}
           >
-            {language === 'fr-FR' 
-              ? (activeHeroText?.title_fr || "Transformez vos souvenirs en films cinématographiques")
-              : (activeHeroText?.title_en || "Transform your memories into cinematic films")
-            }
+            {(() => {
+              const text = language === 'fr-FR' 
+                ? (activeHeroText?.title_fr || "Transformez vos souvenirs\nen films cinématographiques")
+                : (activeHeroText?.title_en || "Transform your memories\ninto cinematic films");
+              
+              return text.split('\n').map((line, index) => (
+                <React.Fragment key={index}>
+                  {line}
+                  {index < text.split('\n').length - 1 && <br />}
+                </React.Fragment>
+              ));
+            })()}
           </h1>
           
           <p 
@@ -233,10 +241,18 @@ export function HeroVideoSection() {
               textShadow: '1px 1px 2px rgba(0,0,0,0.8)' 
             }}
           >
-            {language === 'fr-FR' 
-              ? (activeHeroText?.subtitle_fr || "Redonnez vie à vos moments précieux avec notre expertise cinématographique")
-              : (activeHeroText?.subtitle_en || "Bring your precious moments to life with our cinematic expertise")
-            }
+            {(() => {
+              const text = language === 'fr-FR' 
+                ? (activeHeroText?.subtitle_fr || "Redonnez vie à vos moments précieux\navec notre expertise cinématographique")
+                : (activeHeroText?.subtitle_en || "Bring your precious moments to life\nwith our cinematic expertise");
+              
+              return text.split('\n').map((line, index) => (
+                <React.Fragment key={index}>
+                  {line}
+                  {index < text.split('\n').length - 1 && <br />}
+                </React.Fragment>
+              ));
+            })()}
           </p>
 
           <div className="flex justify-center items-center">
