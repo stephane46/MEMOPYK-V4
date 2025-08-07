@@ -340,6 +340,17 @@ export const VideoCacheStatus: React.FC<VideoCacheStatusProps> = ({
     const diffHours = diffMinutes / 60;
     const diffDays = diffHours / 24;
     
+    // Debug logging for production cache status investigation
+    if (isProduction) {
+      console.log(`🔍 PRODUCTION Cache Debug for file:`, {
+        dateString,
+        parsedDate: date.toISOString(),
+        currentTime: now.toISOString(),
+        diffMinutes: Math.floor(diffMinutes),
+        environment: 'PRODUCTION'
+      });
+    }
+    
     if (diffMinutes < 5) return 'Just cached';
     if (diffMinutes < 60) return `${Math.floor(diffMinutes)}min ago`;
     if (diffHours < 24) return `${Math.floor(diffHours)}h ago`;
