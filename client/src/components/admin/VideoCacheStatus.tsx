@@ -382,6 +382,9 @@ export const VideoCacheStatus: React.FC<VideoCacheStatusProps> = ({
           {description && (
             <p className="text-sm text-muted-foreground mt-2">{description}</p>
           )}
+          <div className="text-xs text-muted-foreground mt-1 truncate">
+            Server: {currentHostname}
+          </div>
         </CardHeader>
       <CardContent>
         {/* Section-specific cache stats only */}
