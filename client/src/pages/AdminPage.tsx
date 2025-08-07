@@ -1369,11 +1369,15 @@ export default function AdminPage() {
                                             }}
                                           >
                                             {(() => {
-                                              let text = (selectedText.title_fr || '');
-                                              if (text.includes('\\n')) {
-                                                text = text.replace(/\\n/g, '\n');
+                                              const text = (selectedText.title_fr || '');
+                                              
+                                              // Match public site processing exactly: Handle multiple escaping scenarios
+                                              let processedText = text;
+                                              if (processedText.includes('\\n')) {
+                                                processedText = processedText.replace(/\\n/g, '\n');
                                               }
-                                              const lines = text.split('\n');
+                                              
+                                              const lines = processedText.split('\n');
                                               return lines.map((line: string, index: number) => (
                                                 <React.Fragment key={index}>
                                                   {line}
@@ -1394,15 +1398,18 @@ export default function AdminPage() {
                                             }}
                                           >
                                             {(() => {
-                                              let text = (selectedText.subtitle_fr || '');
-                                              if (text.includes('\\n')) {
-                                                text = text.replace(/\\n/g, '\n');
+                                              const text = (selectedText.subtitle_fr || '');
+                                              
+                                              // Match public site processing exactly: Handle multiple escaping scenarios
+                                              let processedText = text;
+                                              if (processedText.includes('\\n')) {
+                                                processedText = processedText.replace(/\\n/g, '\n');
                                               }
-                                              const lines = text.split('\n');
-                                              return lines.map((line: string, index: number) => (
+                                              
+                                              return processedText.split('\n').map((line: string, index: number) => (
                                                 <React.Fragment key={index}>
                                                   {line}
-                                                  {index < lines.length - 1 && <br />}
+                                                  {index < processedText.split('\n').length - 1 && <br />}
                                                 </React.Fragment>
                                               ));
                                             })()}
