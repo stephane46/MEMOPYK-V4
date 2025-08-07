@@ -1357,7 +1357,10 @@ export default function AdminPage() {
                                             }}
                                           >
                                             {(() => {
-                                              const text = (selectedText.title_fr || '').replace(/\\n/g, '\n');
+                                              let text = (selectedText.title_fr || '');
+                                              if (text.includes('\\n')) {
+                                                text = text.replace(/\\n/g, '\n');
+                                              }
                                               return text.split('\n').map((line: string, index: number) => (
                                                 <React.Fragment key={index}>
                                                   {line}
@@ -1378,7 +1381,10 @@ export default function AdminPage() {
                                             }}
                                           >
                                             {(() => {
-                                              const text = (selectedText.subtitle_fr || '').replace(/\\n/g, '\n');
+                                              let text = (selectedText.subtitle_fr || '');
+                                              if (text.includes('\\n')) {
+                                                text = text.replace(/\\n/g, '\n');
+                                              }
                                               return text.split('\n').map((line: string, index: number) => (
                                                 <React.Fragment key={index}>
                                                   {line}

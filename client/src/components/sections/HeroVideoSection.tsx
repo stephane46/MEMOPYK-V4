@@ -225,11 +225,17 @@ export function HeroVideoSection() {
                 ? (activeHeroText?.title_fr || "Transformez vos souvenirs\nen films cinématographiques")
                 : (activeHeroText?.title_en || "Transform your memories\ninto cinematic films");
               
-              const processedText = text.replace(/\\n/g, '\n');
-              return processedText.split('\n').map((line, index) => (
+              // Handle multiple escaping scenarios: raw newlines, \n, \\n
+              let processedText = text;
+              if (processedText.includes('\\n')) {
+                processedText = processedText.replace(/\\n/g, '\n');
+              }
+              
+              const lines = processedText.split('\n');
+              return lines.map((line, index) => (
                 <React.Fragment key={index}>
                   {line}
-                  {index < processedText.split('\n').length - 1 && <br />}
+                  {index < lines.length - 1 && <br />}
                 </React.Fragment>
               ));
             })()}
@@ -247,7 +253,11 @@ export function HeroVideoSection() {
                 ? (activeHeroText?.subtitle_fr || "Redonnez vie à vos moments précieux\navec notre expertise cinématographique")
                 : (activeHeroText?.subtitle_en || "Bring your precious moments to life\nwith our cinematic expertise");
               
-              const processedText = text.replace(/\\n/g, '\n');
+              // Handle multiple escaping scenarios: raw newlines, \n, \\n
+              let processedText = text;
+              if (processedText.includes('\\n')) {
+                processedText = processedText.replace(/\\n/g, '\n');
+              }
               return processedText.split('\n').map((line, index) => (
                 <React.Fragment key={index}>
                   {line}
