@@ -189,11 +189,6 @@ app.use((req, res, next) => {
 
   // 2) Frontend handling
   if (process.env.NODE_ENV !== "production") {
-    // — Dev mode: serve public static files first, then proxy to Vite
-    const publicPath = path.resolve(process.cwd(), "public");
-    app.use(express.static(publicPath));
-    console.log("📁 Serving static files from public directory:", publicPath);
-    
     // — Dev mode: spawn Vite and proxy to it
     const viteProc = spawn("npx", ["vite"], {
       stdio: "inherit",
@@ -211,7 +206,7 @@ app.use((req, res, next) => {
       timeout: 10000,
     });
 
-    // Proxy non-API requests to Vite dev server with error handling (but only after static files are checked)
+    // Proxy non-API requests to Vite dev server with error handling
     app.use((req, res, next) => {
       if (req.path.startsWith("/api")) {
         return next(); // Skip proxy for API routes only
