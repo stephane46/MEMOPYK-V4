@@ -1250,34 +1250,7 @@ export default function AdminPage() {
                                       Responsive Font Size Controls
                                     </Label>
                                     
-                                    {/* Language Selection for Preview */}
-                                    <div className="bg-gray-50 dark:bg-gray-800 p-3 rounded-lg border">
-                                      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                                        Langue d'aperçu / Preview Language
-                                      </label>
-                                      <div className="flex gap-2">
-                                        <button
-                                          onClick={() => setPreviewLanguage('fr-FR')}
-                                          className={`px-3 py-2 text-sm rounded-md transition-colors ${
-                                            previewLanguage === 'fr-FR'
-                                              ? 'bg-memopyk-orange text-white'
-                                              : 'bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-300 border border-gray-300 dark:border-gray-600'
-                                          }`}
-                                        >
-                                          🇫🇷 Français
-                                        </button>
-                                        <button
-                                          onClick={() => setPreviewLanguage('en-US')}
-                                          className={`px-3 py-2 text-sm rounded-md transition-colors ${
-                                            previewLanguage === 'en-US'
-                                              ? 'bg-memopyk-orange text-white'
-                                              : 'bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-300 border border-gray-300 dark:border-gray-600'
-                                          }`}
-                                        >
-                                          🇺🇸 English
-                                        </button>
-                                      </div>
-                                    </div>
+
                                     <div className="flex space-x-2 bg-gray-100 dark:bg-gray-800 p-1 rounded-lg">
                                       <button
                                         onClick={() => setCurrentPreviewDevice('desktop')}
