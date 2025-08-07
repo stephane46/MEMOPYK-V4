@@ -7,9 +7,9 @@ export function KeyVisualSection() {
   const { language } = useLanguage();
 
   return (
-    <section className="py-20 bg-gradient-cream">
+    <section className="py-12 sm:py-16 lg:py-20 bg-gradient-cream">
       <div className="container mx-auto px-4">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 sm:gap-10 lg:gap-12 items-center">
           {/* Left: Key Visual Illustration */}
           <div className="relative">
             <div className="relative group">
@@ -30,9 +30,9 @@ export function KeyVisualSection() {
           </div>
 
           {/* Right: Clean and Elegant Text */}
-          <div className="space-y-10">
+          <div className="space-y-6 sm:space-y-8 lg:space-y-10">
             {/* Main heading */}
-            <h2 className="text-4xl md:text-5xl font-poppins font-bold text-memopyk-navy leading-tight">
+            <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-poppins font-bold text-memopyk-navy leading-tight">
               {language === 'fr-FR' 
                 ? "Tant de souvenirs précieux, perdus dans le chaos du quotidien."
                 : "So many precious memories, lost in the chaos of daily life."
@@ -40,42 +40,42 @@ export function KeyVisualSection() {
             </h2>
             
             {/* Three-line description with icons */}
-            <div className="text-xl text-memopyk-sky-blue leading-relaxed space-y-2">
+            <div className="text-lg sm:text-xl text-memopyk-sky-blue leading-relaxed space-y-3 sm:space-y-2">
               {language === 'fr-FR' ? (
                 <>
                   <p className="flex items-center gap-3">
-                    <Smartphone className="w-6 h-6 flex-shrink-0" />
-                    enfouis dans des téléphones...
+                    <Smartphone className="w-5 h-5 sm:w-6 sm:h-6 flex-shrink-0" />
+                    <span>enfouis dans des téléphones...</span>
                   </p>
                   <p className="flex items-center gap-3">
-                    <Laptop className="w-6 h-6 flex-shrink-0" />
-                    oubliés sur des disques durs...
+                    <Laptop className="w-5 h-5 sm:w-6 sm:h-6 flex-shrink-0" />
+                    <span>oubliés sur des disques durs...</span>
                   </p>
                   <p className="flex items-center gap-3">
-                    <Package className="w-6 h-6 flex-shrink-0" />
-                    entassés dans des cartons...
+                    <Package className="w-5 h-5 sm:w-6 sm:h-6 flex-shrink-0" />
+                    <span>entassés dans des cartons...</span>
                   </p>
                 </>
               ) : (
                 <>
                   <p className="flex items-center gap-3">
-                    <Smartphone className="w-6 h-6 flex-shrink-0" />
-                    buried in phones...
+                    <Smartphone className="w-5 h-5 sm:w-6 sm:h-6 flex-shrink-0" />
+                    <span>buried in phones...</span>
                   </p>
                   <p className="flex items-center gap-3">
-                    <Laptop className="w-6 h-6 flex-shrink-0" />
-                    forgotten on hard drives...
+                    <Laptop className="w-5 h-5 sm:w-6 sm:h-6 flex-shrink-0" />
+                    <span>forgotten on hard drives...</span>
                   </p>
                   <p className="flex items-center gap-3">
-                    <Package className="w-6 h-6 flex-shrink-0" />
-                    piled in boxes...
+                    <Package className="w-5 h-5 sm:w-6 sm:h-6 flex-shrink-0" />
+                    <span>piled in boxes...</span>
                   </p>
                 </>
               )}
             </div>
 
             {/* Key message */}
-            <div className="text-xl text-memopyk-dark-blue leading-relaxed font-medium space-y-1">
+            <div className="text-lg sm:text-xl text-memopyk-dark-blue leading-relaxed font-medium space-y-1">
               {language === 'fr-FR' ? (
                 <>
                   <p>Vos souvenirs méritent mieux que d'être simplement stockés,</p>
@@ -90,7 +90,7 @@ export function KeyVisualSection() {
             </div>
 
             {/* Solution statement */}
-            <p className="text-lg text-memopyk-dark-blue leading-relaxed">
+            <p className="text-base sm:text-lg text-memopyk-dark-blue leading-relaxed">
               {language === 'fr-FR' 
                 ? "Laissez-nous sauver vos photos et vidéos en les transformant en un film souvenir que vous garderez précieusement."
                 : "Let us rescue your photos and videos by transforming them into a souvenir film you'll treasure forever."
@@ -98,8 +98,8 @@ export function KeyVisualSection() {
             </p>
             
             {/* Centered tagline at bottom */}
-            <div className="text-center pt-4">
-              <p className="text-xl font-poppins italic text-memopyk-sky-blue">
+            <div className="text-center pt-2 sm:pt-4">
+              <p className="text-lg sm:text-xl font-poppins italic text-memopyk-sky-blue">
                 {language === 'fr-FR' 
                   ? "Personnel, unique et émouvant."
                   : "Personal, unique and moving."
