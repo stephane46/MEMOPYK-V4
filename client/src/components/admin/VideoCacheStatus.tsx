@@ -181,17 +181,32 @@ export const VideoCacheStatus: React.FC<VideoCacheStatusProps> = ({
   const currentHostname = window.location.hostname;
   const isProduction = currentHostname.includes('replit.app') || currentHostname.includes('memopyk');
   
-  // Debug logging for hostname detection
+  // One-time cache investigation for production
   React.useEffect(() => {
-    console.log('🌍 Environment Detection Debug:', {
-      hostname: currentHostname,
-      isProduction,
-      endsWithReplitApp: currentHostname.endsWith('.replit.app'),
-      equalsMemopykReplit: currentHostname === 'memopyk.replit.app',
-      includesReplit: currentHostname.includes('replit.app'),
-      includesMemopyk: currentHostname.includes('memopyk')
-    });
-  }, [currentHostname, isProduction]);
+    console.log('🌍 Environment Detection:', { hostname: currentHostname, isProduction });
+    
+    // Detailed cache investigation for production (runs once when cache data loads)
+    if (isProduction && cacheStatusData && !window.cacheInvestigationDone) {
+      window.cacheInvestigationDone = true;
+      const status = (cacheStatusData as {status?: Record<string, CacheStatus>})?.status || {};
+      
+      console.log('🔍 PRODUCTION CACHE INVESTIGATION:', {
+        deploymentTime: new Date().toISOString(),
+        cachedFiles: Object.keys(status).length,
+        fileDetails: Object.entries(status).map(([filename, fileStatus]) => {
+          const date = new Date(fileStatus.lastModified);
+          const diffMinutes = (Date.now() - date.getTime()) / (1000 * 60);
+          return {
+            filename,
+            lastModified: fileStatus.lastModified,
+            ageMinutes: Math.floor(diffMinutes),
+            status: diffMinutes < 5 ? 'JUST_CACHED' : 'OLDER',
+            cached: fileStatus.cached
+          };
+        })
+      });
+    }
+  }, [currentHostname, isProduction, cacheStatusData]);
 
   // Manual cleanup mutation - removes outdated/orphaned cache files
   const clearCacheMutation = useMutation({
@@ -340,14 +355,14 @@ export const VideoCacheStatus: React.FC<VideoCacheStatusProps> = ({
     const diffHours = diffMinutes / 60;
     const diffDays = diffHours / 24;
     
-    // Debug logging for production cache status investigation
-    if (isProduction) {
-      console.log(`🔍 PRODUCTION Cache Debug for file:`, {
-        dateString,
+    // Debug logging for production cache status investigation (limited to prevent spam)
+    if (isProduction && Math.random() < 0.1) { // Only log 10% of calls to prevent spam
+      console.log(`🔍 PRODUCTION Cache Debug:`, {
+        file: dateString.substring(0, 20) + '...', // Truncate for readability
         parsedDate: date.toISOString(),
         currentTime: now.toISOString(),
         diffMinutes: Math.floor(diffMinutes),
-        environment: 'PRODUCTION'
+        status: diffMinutes < 5 ? 'Just cached' : `${Math.floor(diffMinutes)}min ago`
       });
     }
     
