@@ -566,22 +566,24 @@ export default function AdminPage() {
                 <nav className="flex space-x-2" aria-label="Tabs">
                   <button
                     onClick={() => setHeroTab('videos')}
-                    className={`py-4 px-6 font-bold text-lg rounded-lg transition-all duration-300 transform hover:scale-105 ${
-                      heroTab === 'videos' 
-                        ? '!bg-orange-500 !text-white shadow-xl !border-2 !border-orange-400' 
-                        : 'bg-white text-gray-700 border-2 border-gray-200 hover:border-orange-300 hover:bg-orange-50 hover:text-orange-700 shadow-md'
-                    }`}
+                    className="py-4 px-6 font-bold text-lg rounded-lg transition-all duration-300 transform hover:scale-105 shadow-xl border-2"
+                    style={{
+                      backgroundColor: heroTab === 'videos' ? '#f97316' : '#ffffff',
+                      color: heroTab === 'videos' ? '#ffffff' : '#374151',
+                      borderColor: heroTab === 'videos' ? '#ea580c' : '#e5e7eb'
+                    }}
                   >
                     <Video className="inline-block h-5 w-5 mr-2" />
                     Gestion Vidéos
                   </button>
                   <button
                     onClick={() => setHeroTab('text')}
-                    className={`py-4 px-6 font-bold text-lg rounded-lg transition-all duration-300 transform hover:scale-105 ${
-                      heroTab === 'text'
-                        ? '!bg-blue-500 !text-white shadow-xl !border-2 !border-blue-400'
-                        : 'bg-white text-gray-700 border-2 border-gray-200 hover:border-blue-300 hover:bg-blue-50 hover:text-blue-700 shadow-md'
-                    }`}
+                    className="py-4 px-6 font-bold text-lg rounded-lg transition-all duration-300 transform hover:scale-105 shadow-xl border-2"
+                    style={{
+                      backgroundColor: heroTab === 'text' ? '#3b82f6' : '#ffffff',
+                      color: heroTab === 'text' ? '#ffffff' : '#374151',
+                      borderColor: heroTab === 'text' ? '#2563eb' : '#e5e7eb'
+                    }}
                   >
                     <Type className="inline-block h-4 w-4 mr-2" />
                     Textes & Superpositions
