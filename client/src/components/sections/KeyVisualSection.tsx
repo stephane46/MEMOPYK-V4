@@ -40,7 +40,7 @@ export function KeyVisualSection() {
             
             {/* Problem Description */}
             <div className="space-y-4">
-              <p className="text-xl text-memopyk-dark-blue leading-relaxed font-light">
+              <p className="text-xl text-memopyk-sky-blue leading-relaxed font-light">
                 {language === 'fr-FR' 
                   ? "Enfouis dans des téléphones, oubliés sur des disques durs, entassés dans des cartons…"
                   : "Buried in phones, forgotten on hard drives, piled in boxes…"
@@ -68,8 +68,8 @@ export function KeyVisualSection() {
                 </p>
                 
                 {/* Elegant closing tagline */}
-                <div className="text-center pt-4 border-t border-memopyk-orange/20">
-                  <p className="text-lg font-poppins italic text-memopyk-navy">
+                <div className="text-center pt-4 border-t border-memopyk-sky-blue/30">
+                  <p className="text-lg font-poppins italic text-memopyk-sky-blue">
                     {language === 'fr-FR' 
                       ? "Personnel, unique et émouvant."
                       : "A personalized visual story, unique and touching."
