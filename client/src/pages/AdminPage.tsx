@@ -1591,7 +1591,7 @@ export default function AdminPage() {
                   <div className="mt-4 p-4 bg-muted rounded-lg">
                     <div className="text-sm text-muted-foreground space-y-1">
                       <div><strong>Contenu:</strong> 6 vidéos + 4 images (≈290MB total)</div>
-                      <div><strong>Temps de traitement:</strong> ≈14 secondes</div>
+
                       <div><strong>Usage:</strong> Recommandé après chaque déploiement en production</div>
                     </div>
                   </div>
