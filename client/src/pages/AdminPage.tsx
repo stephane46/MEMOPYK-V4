@@ -1416,35 +1416,39 @@ export default function AdminPage() {
                                               ));
                                             })()}
                                           </h1>
-                                          <p 
-                                            className="mb-4 sm:mb-6 lg:mb-8 text-white/90 font-poppins leading-snug"
-                                            style={{ 
-                                              fontSize: `${Math.round((
-                                                currentPreviewDevice === 'desktop' ? previewFontSizeDesktop :
-                                                currentPreviewDevice === 'tablet' ? previewFontSizeTablet :
-                                                previewFontSizeMobile
-                                              ) * 0.31)}px`,
-                                              textShadow: '1px 1px 2px rgba(0,0,0,0.8)'
-                                            }}
-                                          >
-                                            {(() => {
-                                              const text = previewLanguage === 'fr-FR'
-                                                ? (selectedText.subtitle_fr || "Redonnez vie à vos moments précieux\navec notre expertise cinématographique")
-                                                : (selectedText.subtitle_en || "Bring your precious moments to life\nwith our cinematic expertise");
-                                              
-                                              // Handle multiple escaping scenarios: raw newlines, \n, \\n
-                                              let processedText = text;
-                                              if (processedText.includes('\\n')) {
-                                                processedText = processedText.replace(/\\n/g, '\n');
-                                              }
-                                              return processedText.split('\n').map((line, index) => (
-                                                <React.Fragment key={index}>
-                                                  {line}
-                                                  {index < processedText.split('\n').length - 1 && <br />}
-                                                </React.Fragment>
-                                              ));
-                                            })()}
-                                          </p>
+                                          {/* Only render subtitle if it exists and is not empty */}
+                                          {((previewLanguage === 'fr-FR' && selectedText.subtitle_fr && selectedText.subtitle_fr.trim()) || 
+                                            (previewLanguage === 'en-US' && selectedText.subtitle_en && selectedText.subtitle_en.trim())) && (
+                                            <p 
+                                              className="mb-4 sm:mb-6 lg:mb-8 text-white/90 font-poppins leading-snug"
+                                              style={{ 
+                                                fontSize: `${Math.round((
+                                                  currentPreviewDevice === 'desktop' ? previewFontSizeDesktop :
+                                                  currentPreviewDevice === 'tablet' ? previewFontSizeTablet :
+                                                  previewFontSizeMobile
+                                                ) * 0.31)}px`,
+                                                textShadow: '1px 1px 2px rgba(0,0,0,0.8)'
+                                              }}
+                                            >
+                                              {(() => {
+                                                const text = previewLanguage === 'fr-FR'
+                                                  ? selectedText.subtitle_fr
+                                                  : selectedText.subtitle_en;
+                                                
+                                                // Handle multiple escaping scenarios: raw newlines, \n, \\n
+                                                let processedText = text;
+                                                if (processedText.includes('\\n')) {
+                                                  processedText = processedText.replace(/\\n/g, '\n');
+                                                }
+                                                return processedText.split('\n').map((line, index) => (
+                                                  <React.Fragment key={index}>
+                                                    {line}
+                                                    {index < processedText.split('\n').length - 1 && <br />}
+                                                  </React.Fragment>
+                                                ));
+                                              })()}
+                                            </p>
+                                          )}
                                         </div>
                                       ) : (
                                         <div className="text-gray-400">
