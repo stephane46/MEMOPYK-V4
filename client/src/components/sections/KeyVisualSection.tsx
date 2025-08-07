@@ -56,12 +56,19 @@ export function KeyVisualSection() {
             </div>
 
             {/* Key message */}
-            <p className="text-xl text-memopyk-dark-blue leading-relaxed font-medium">
-              {language === 'fr-FR' 
-                ? "Vos souvenirs méritent mieux que ça, ils méritent une histoire."
-                : "Your memories deserve more than that, they deserve a story."
-              }
-            </p>
+            <div className="text-xl text-memopyk-dark-blue leading-relaxed font-medium space-y-1">
+              {language === 'fr-FR' ? (
+                <>
+                  <p>Vos souvenirs méritent mieux que d'être simplement stockés,</p>
+                  <p>ils méritent une histoire</p>
+                </>
+              ) : (
+                <>
+                  <p>Your memories deserve better than just being stored,</p>
+                  <p>they deserve a story</p>
+                </>
+              )}
+            </div>
 
             {/* Solution statement */}
             <p className="text-lg text-memopyk-dark-blue leading-relaxed">
