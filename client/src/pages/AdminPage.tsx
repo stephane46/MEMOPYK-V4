@@ -1358,11 +1358,11 @@ export default function AdminPage() {
                                           <h1 
                                             className="font-playfair font-bold mb-2 sm:mb-4 lg:mb-6 leading-tight"
                                             style={{ 
-                                              fontSize: `${
+                                              fontSize: `${Math.round((
                                                 currentPreviewDevice === 'desktop' ? previewFontSizeDesktop :
                                                 currentPreviewDevice === 'tablet' ? previewFontSizeTablet :
                                                 previewFontSizeMobile
-                                              }px`,
+                                              ) * 0.65)}px`,
                                               textShadow: '2px 2px 4px rgba(0,0,0,0.8)'
                                             }}
                                           >
@@ -1386,11 +1386,11 @@ export default function AdminPage() {
                                           <p 
                                             className="mb-4 sm:mb-6 lg:mb-8 text-white/90 font-poppins leading-snug"
                                             style={{ 
-                                              fontSize: `${(
+                                              fontSize: `${Math.round((
                                                 currentPreviewDevice === 'desktop' ? previewFontSizeDesktop :
                                                 currentPreviewDevice === 'tablet' ? previewFontSizeTablet :
                                                 previewFontSizeMobile
-                                              ) * 0.47}px`,
+                                              ) * 0.31)}px`,
                                               textShadow: '1px 1px 2px rgba(0,0,0,0.8)'
                                             }}
                                           >
