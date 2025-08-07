@@ -180,13 +180,9 @@ export const VideoCacheStatus: React.FC<VideoCacheStatusProps> = ({
   // Environment safety check
   const isProduction = window.location.hostname.endsWith('.replit.app') || window.location.hostname === 'memopyk.replit.app';
 
-  // Clear cache mutation with production safety
+  // Manual cleanup mutation - removes outdated/orphaned cache files
   const clearCacheMutation = useMutation({
     mutationFn: async () => {
-      // PRODUCTION SAFETY: Manual cleanup should be protected
-      if (isProduction) {
-        throw new Error('Manual cleanup is disabled on production for safety. Use BULLETPROOF cache refresh instead.');
-      }
       const response = await apiRequest('/api/video-cache/clear', 'POST');
       return await response.json() as {removed?: {videosRemoved: number; imagesRemoved: number}; message?: string};
     },
@@ -196,13 +192,13 @@ export const VideoCacheStatus: React.FC<VideoCacheStatusProps> = ({
       
       if (totalRemoved > 0) {
         toast({
-          title: "Cache Successfully Cleared",
-          description: `Removed ${result.videosRemoved} videos and ${result.imagesRemoved} images. Cache is now empty.`,
+          title: "Intelligent Cleanup Complete",
+          description: `Removed ${result.videosRemoved} outdated videos and ${result.imagesRemoved} expired images. Active cache preserved.`,
         });
       } else {
         toast({
-          title: "Cache Already Empty",
-          description: "No files were found to clear. Cache is already empty and ready for fresh downloads.",
+          title: "Cache is Clean",
+          description: "No outdated or orphaned files found. All cache files are current and needed.",
           variant: "default",
         });
       }

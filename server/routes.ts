@@ -3787,23 +3787,23 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Clear cache endpoint - complete clear without immediate preload
+  // Intelligent cleanup endpoint - removes only outdated/orphaned files
   app.post("/api/video-cache/clear", async (req, res) => {
     try {
-      console.log('🗑️ Admin-triggered complete cache clear...');
+      console.log('🧹 Admin-triggered intelligent cache cleanup...');
       
-      const result = await videoCache.clearCacheCompletely();
+      const result = await videoCache.intelligentCleanup();
       const stats = await videoCache.getCacheStats();
       
       res.json({ 
         success: true,
-        message: `Cache completely cleared: ${result.videosRemoved} videos, ${result.imagesRemoved} images removed`,
+        message: `Intelligent cleanup complete: ${result.videosRemoved} videos, ${result.imagesRemoved} images removed`,
         removed: result,
         stats 
       });
     } catch (error) {
-      console.error('Cache clear error:', error);
-      res.status(500).json({ error: "Failed to clear video cache" });
+      console.error('Intelligent cleanup error:', error);
+      res.status(500).json({ error: "Failed to perform intelligent cleanup" });
     }
   });
 

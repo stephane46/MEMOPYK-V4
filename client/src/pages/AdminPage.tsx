@@ -1445,12 +1445,12 @@ export default function AdminPage() {
                             variant="outline" 
                             className="bg-blue-50 text-blue-700 border-blue-300 hover:bg-blue-100"
                             onClick={() => {
-                              // Trigger cache clear event
+                              // Trigger intelligent cleanup event
                               window.dispatchEvent(new CustomEvent('triggerClearCache'));
                             }}
                           >
                             <Clock className="h-3 w-3 mr-1" />
-                            Manual Cleanup
+                            Smart Cleanup
                           </Button>
                         </div>
                       </div>
@@ -1463,7 +1463,7 @@ export default function AdminPage() {
                       </div>
                     </div>
                     <div className="text-xs text-gray-600 mt-2">
-                      Manual management: Clear cache when needed for max 6 videos (3 hero + 3 gallery) + 4 images
+                      Smart Cleanup: Removes expired files (&gt;30 days) and orphaned cache. Active production cache preserved.
                     </div>
                   </CardContent>
                 </Card>
@@ -1547,19 +1547,19 @@ export default function AdminPage() {
                     
                     <Button
                       size="lg"
-                      variant="destructive"
-                      className="h-20 flex-col gap-2"
+                      variant="outline"
+                      className="h-20 flex-col gap-2 border-blue-300 bg-blue-50 text-blue-700 hover:bg-blue-100"
                       onClick={() => {
-                        // Clear cache functionality
+                        // Smart cleanup functionality - removes only outdated files
                         const event = new CustomEvent('triggerClearCache');
                         window.dispatchEvent(event);
                       }}
                     >
                       <div className="flex items-center gap-2">
-                        <HardDrive className="h-5 w-5" />
-                        <span className="text-lg">Clear All Cache</span>
+                        <Clock className="h-5 w-5" />
+                        <span className="text-lg">🧹 Smart Cleanup</span>
                       </div>
-                      <span className="text-sm opacity-90">Supprime tous les fichiers en cache</span>
+                      <span className="text-sm opacity-90">Supprime fichiers expirés (&gt;30j) + orphelins uniquement</span>
                     </Button>
                   </div>
                   

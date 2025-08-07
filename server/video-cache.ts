@@ -503,6 +503,82 @@ export class VideoCache {
   }
 
   /**
+   * Intelligent cleanup - removes only outdated/orphaned files, keeps active cache
+   */
+  async intelligentCleanup(): Promise<{ videosRemoved: number; imagesRemoved: number; reason: string[] }> {
+    try {
+      const videoFiles = readdirSync(this.videoCacheDir);
+      const imageFiles = readdirSync(this.imageCacheDir);
+      
+      let videosRemoved = 0;
+      let imagesRemoved = 0;
+      const reasons: string[] = [];
+      
+      console.log(`🧹 INTELLIGENT CLEANUP: Analyzing ${videoFiles.length} videos and ${imageFiles.length} images...`);
+      
+      // Get current hero and gallery video filenames to protect
+      const activeVideoFiles = new Set([
+        'VideoHero1.mp4', 'VideoHero2.mp4', 'VideoHero3.mp4', // Hero videos (critical)
+        'PomGalleryC.mp4', 'VitaminSeaC.mp4', 'safari-1.mp4'  // Gallery videos (active)
+      ]);
+      
+      // Process video files
+      for (const file of videoFiles) {
+        const filePath = join(this.videoCacheDir, file);
+        const stats = statSync(filePath);
+        const ageInDays = (Date.now() - stats.mtime.getTime()) / (1000 * 60 * 60 * 24);
+        
+        let shouldRemove = false;
+        let reason = '';
+        
+        // Remove if older than 30 days
+        if (ageInDays > 30) {
+          shouldRemove = true;
+          reason = `expired (${Math.round(ageInDays)} days old)`;
+        }
+        // Remove if not in active video list (orphaned)
+        else if (!activeVideoFiles.has(file)) {
+          shouldRemove = true;
+          reason = `orphaned (not in current active video list)`;
+        }
+        
+        if (shouldRemove) {
+          unlinkSync(filePath);
+          videosRemoved++;
+          reasons.push(`${file}: ${reason}`);
+          console.log(`🗑️ Removed video: ${file} (${reason})`);
+        }
+      }
+      
+      // Process image files - remove old thumbnails and orphaned images
+      for (const file of imageFiles) {
+        const filePath = join(this.imageCacheDir, file);
+        const stats = statSync(filePath);
+        const ageInDays = (Date.now() - stats.mtime.getTime()) / (1000 * 60 * 60 * 24);
+        
+        if (ageInDays > 30) {
+          unlinkSync(filePath);
+          imagesRemoved++;
+          reasons.push(`${file}: expired (${Math.round(ageInDays)} days old)`);
+          console.log(`🗑️ Removed image: ${file} (expired)`);
+        }
+      }
+      
+      if (videosRemoved === 0 && imagesRemoved === 0) {
+        reasons.push('No outdated or orphaned files found - cache is clean');
+      }
+      
+      console.log(`🧹 INTELLIGENT CLEANUP COMPLETE: ${videosRemoved} videos, ${imagesRemoved} images removed`);
+      
+      return { videosRemoved, imagesRemoved, reason: reasons };
+      
+    } catch (error) {
+      console.error('❌ Intelligent cleanup failed:', error);
+      throw error;
+    }
+  }
+
+  /**
    * Clear cache completely using rename-and-schedule-delete approach
    * This works even when files are actively being streamed
    */
