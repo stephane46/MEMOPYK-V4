@@ -7,7 +7,7 @@ export function KeyVisualSection() {
   const { language } = useLanguage();
 
   return (
-    <section className="py-12 sm:py-16 lg:py-20 bg-gradient-cream">
+    <section className="py-6 sm:py-8 lg:py-10 bg-gradient-cream">
       <div className="container mx-auto px-4">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 sm:gap-10 lg:gap-12 items-center border-4 border-red-500">
           {/* Left: Key Visual Illustration - Show on mobile */}
