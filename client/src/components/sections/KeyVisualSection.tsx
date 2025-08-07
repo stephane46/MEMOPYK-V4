@@ -10,27 +10,37 @@ export function KeyVisualSection() {
     <section className="py-12 sm:py-16 lg:py-20 bg-gradient-cream">
       <div className="container mx-auto px-4">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 sm:gap-10 lg:gap-12 items-center">
-          {/* Left: Key Visual Illustration */}
-          <div className="relative">
-            <div className="relative group">
+          {/* Left: Key Visual Illustration - Show on mobile */}
+          <div className="relative order-1 lg:order-none mb-8 sm:mb-0">
+            <div className="relative group min-h-[200px] sm:min-h-[300px] flex items-center justify-center">
               <img 
                 src={keyVisualImage}
                 alt={language === 'fr-FR' 
                   ? "Illustration MEMOPYK - Transformation des souvenirs"
                   : "MEMOPYK Illustration - Memory transformation"
                 }
-                className="w-full h-auto rounded-2xl shadow-2xl transition-transform duration-500 group-hover:scale-105"
+                className="w-full h-auto max-w-full rounded-2xl shadow-2xl transition-transform duration-500 group-hover:scale-105 block"
+                loading="eager"
+                style={{ maxWidth: '100%', height: 'auto', visibility: 'visible', minHeight: '200px', objectFit: 'contain' }}
+                onError={(e) => {
+                  console.error('KeyVisual image failed to load:', keyVisualImage);
+                  e.currentTarget.style.backgroundColor = '#f3f4f6';
+                  e.currentTarget.style.border = '2px dashed #d1d5db';
+                }}
+                onLoad={() => {
+                  console.log('KeyVisual image loaded successfully on mobile');
+                }}
               />
             </div>
 
-            {/* Background Pattern */}
-            <div className="absolute inset-0 -z-10 transform translate-x-8 translate-y-8">
+            {/* Background Pattern - Hidden on mobile for better performance */}
+            <div className="hidden sm:block absolute inset-0 -z-10 transform translate-x-8 translate-y-8">
               <div className="w-full h-full bg-gradient-to-br from-memopyk-sky-blue/20 to-memopyk-blue-gray/20 rounded-2xl"></div>
             </div>
           </div>
 
           {/* Right: Clean and Elegant Text */}
-          <div className="space-y-6 sm:space-y-8 lg:space-y-10">
+          <div className="space-y-6 sm:space-y-8 lg:space-y-10 order-2 lg:order-none">
             {/* Main heading */}
             <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-poppins font-bold text-memopyk-navy leading-tight">
               {language === 'fr-FR' 
