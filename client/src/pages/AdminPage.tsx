@@ -1394,7 +1394,7 @@ export default function AdminPage() {
                                   }}
                                 >
                                   <div className="text-center text-white max-w-7xl w-full px-3 sm:px-6 lg:px-8">
-                                    {selectedTextId && (() => {
+                                    {selectedTextId ? (() => {
                                       const selectedText = heroTexts.find((t: any) => t.id === selectedTextId);
                                       return selectedText ? (
                                         <div>
