@@ -247,33 +247,8 @@ export default function AdminPage() {
     refetchInterval: 5000, // Refresh every 5 seconds
   });
 
-  // Cache status tracking
-  const [cacheStatus, setCacheStatus] = useState<{[key: string]: boolean}>({});
+  // Cache statistics are now handled centrally in the "ALL MEDIA CACHE" section
 
-  // Helper function to create MD5 hash (same as server-side)
-  const createMD5Hash = (filename: string): string => {
-    return CryptoJS.MD5(filename).toString();
-  };
-
-  // Update cache status when stats change
-  React.useEffect(() => {
-    if (cacheStats && 'files' in cacheStats && Array.isArray((cacheStats as any).files)) {
-      const statusMap: {[key: string]: boolean} = {};
-      const cachedFiles = ((cacheStats as any).files) as string[];
-      
-      // Extract hashes from cached filenames (remove .mp4 extension)
-      const cachedHashes = cachedFiles.map(file => file.replace('.mp4', ''));
-      
-      // Check each hero video file
-      const heroVideoFiles = ['VideoHero1.mp4', 'VideoHero2.mp4', 'VideoHero3.mp4'];
-      heroVideoFiles.forEach(filename => {
-        const expectedHash = createMD5Hash(filename);
-        statusMap[filename] = cachedHashes.includes(expectedHash);
-      });
-      
-      setCacheStatus(statusMap);
-    }
-  }, [cacheStats]);
 
   // Video reordering mutation
   const reorderMutation = useMutation({
