@@ -347,39 +347,38 @@ export const VideoCacheStatus: React.FC<VideoCacheStatusProps> = ({
       {/* Section-Specific Cache Status */}
       <Card>
         <CardHeader>
-          <CardTitle className="flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <HardDrive className="h-5 w-5" />
-              {title}
-              <Badge className={`ml-2 text-xs ${isProduction ? 'bg-green-100 text-green-800' : 'bg-blue-100 text-blue-800'}`}>
-                {isProduction ? 'Production' : 'Development'} Server
-              </Badge>
-              {/* Debug badge for hostname */}
-              <Badge variant="outline" className="ml-1 text-xs">
-                {currentHostname}
-              </Badge>
+          <div className="space-y-2">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2 min-w-0 flex-1">
+                <HardDrive className="h-5 w-5 flex-shrink-0" />
+                <span className="font-semibold text-lg">{title}</span>
+              </div>
+              <div className="flex items-center gap-2 flex-shrink-0">
+                <Badge className={`text-xs ${isProduction ? 'bg-green-100 text-green-800' : 'bg-blue-100 text-blue-800'}`}>
+                  {isProduction ? 'Production' : 'Dev'}
+                </Badge>
+                <Badge variant={cachedCount === totalCount ? "default" : "secondary"} className="whitespace-nowrap text-xs">
+                  {cachedCount}/{totalCount}
+                </Badge>
+                {showForceAllButton && (
+                  <Button 
+                    size="sm" 
+                    variant="outline"
+                    onClick={() => forceAllMutation.mutate()}
+                    disabled={forceAllMutation.isPending}
+                    className="text-xs px-2 py-1 h-7"
+                  >
+                    {forceAllMutation.isPending ? (
+                      <RefreshCw className="h-3 w-3 animate-spin mr-1" />
+                    ) : (
+                      <Zap className="h-3 w-3 mr-1" />
+                    )}
+                    Force Cache
+                  </Button>
+                )}
+              </div>
             </div>
-            <div className="flex items-center gap-2">
-              <Badge variant={cachedCount === totalCount ? "default" : "secondary"}>
-                {cachedCount}/{totalCount} Cached
-              </Badge>
-              {showForceAllButton && (
-                <Button 
-                  size="sm" 
-                  variant="outline"
-                  onClick={() => forceAllMutation.mutate()}
-                  disabled={forceAllMutation.isPending}
-                >
-                  {forceAllMutation.isPending ? (
-                    <RefreshCw className="h-4 w-4 animate-spin mr-2" />
-                  ) : (
-                    <Zap className="h-4 w-4 mr-2" />
-                  )}
-                  Force Cache All
-                </Button>
-              )}
-            </div>
-          </CardTitle>
+          </div>
           {description && (
             <p className="text-sm text-muted-foreground mt-2">{description}</p>
           )}
