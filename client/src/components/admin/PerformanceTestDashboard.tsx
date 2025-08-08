@@ -137,9 +137,9 @@ export default function PerformanceTestDashboard() {
         if (refreshType === 'hard') {
           staticImageSource = 'vps'; // Hard refresh bypasses cache
         } else {
-          staticImageSource = staticImageTime < 100 ? 'cache' : 'vps'; // Increased threshold for better cache detection
+          staticImageSource = staticImageTime < 200 ? 'cache' : 'vps'; // Much higher threshold for static images - they should be very fast from cache
         }
-        console.log(`🖼️ Static image test: ${staticImageTime}ms from ${staticImageSource} (${refreshType} refresh)`);
+        console.log(`🖼️ Static image test: ${staticImageTime}ms from ${staticImageSource} (${refreshType} refresh) - threshold: <200ms for cache`);
       } catch (error) {
         staticImageTime = -1;
         staticImageSource = 'error';
