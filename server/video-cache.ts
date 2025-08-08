@@ -1298,10 +1298,21 @@ export class VideoCache {
       
       console.log(`📊 Checking ${galleryItems.length} gallery items for missing static images...`);
       
+      // Collect all unique static image URLs (both English and French)
+      const staticImageUrls = new Set<string>();
+      
       for (const item of galleryItems) {
-        const staticImageUrl = item.static_image_url_en;
-        if (!staticImageUrl) continue;
-        
+        if (item.static_image_url_en) {
+          staticImageUrls.add(item.static_image_url_en);
+        }
+        if (item.static_image_url_fr) {
+          staticImageUrls.add(item.static_image_url_fr);
+        }
+      }
+      
+      console.log(`📊 Found ${staticImageUrls.size} unique static image URLs to check...`);
+      
+      for (const staticImageUrl of staticImageUrls) {
         // Extract filename from URL
         const filename = staticImageUrl.split('/').pop();
         if (!filename) continue;
@@ -1342,7 +1353,7 @@ export class VideoCache {
       
       return {
         downloaded,
-        total: galleryItems.filter(item => item.static_image_url_en).length,
+        total: staticImageUrls.size,
         errors
       };
       
