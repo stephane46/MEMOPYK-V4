@@ -4293,6 +4293,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         res.setHeader('Pragma', 'no-cache');
         res.setHeader('Expires', '0');
         res.setHeader('ETag', `"${Date.now()}"`);
+        res.setHeader('X-Cache-Status', 'HIT'); // Indicate this came from local cache
         res.sendFile(cachedImagePath);
       } else {
         console.log(`🌐 Image not cached, downloading and caching: ${filename}`);
@@ -4314,6 +4315,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
           res.setHeader('Pragma', 'no-cache');
           res.setHeader('Expires', '0');
           res.setHeader('ETag', `"${Date.now()}"`);
+          res.setHeader('X-Cache-Status', 'MISS'); // Indicate this was downloaded from VPS
           res.sendFile(newCachedPath);
         } else {
           console.error(`❌ Failed to cache and serve image: ${filename}`);

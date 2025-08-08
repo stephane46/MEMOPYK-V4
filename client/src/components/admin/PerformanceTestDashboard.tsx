@@ -133,13 +133,14 @@ export default function PerformanceTestDashboard() {
         });
         staticImageTime = Math.round(performance.now() - imageStartTime);
         
-        // Determine source: Hard refresh forces VPS, normal refresh with fast response indicates cache
+        // Determine source: Check X-Cache-Status header for actual cache status
+        const cacheHeader = imageResponse.headers.get('X-Cache-Status');
         if (refreshType === 'hard') {
           staticImageSource = 'vps'; // Hard refresh bypasses cache
         } else {
-          staticImageSource = staticImageTime < 200 ? 'cache' : 'vps'; // Much higher threshold for static images - they should be very fast from cache
+          staticImageSource = cacheHeader === 'HIT' ? 'cache' : 'vps'; // Use actual cache status from server
         }
-        console.log(`🖼️ Static image test: ${staticImageTime}ms from ${staticImageSource} (${refreshType} refresh) - threshold: <200ms for cache`);
+        console.log(`🖼️ Static image test: ${staticImageTime}ms from ${staticImageSource} (${refreshType} refresh) - X-Cache-Status: ${cacheHeader}`);
       } catch (error) {
         staticImageTime = -1;
         staticImageSource = 'error';
