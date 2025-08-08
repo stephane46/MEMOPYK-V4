@@ -207,17 +207,25 @@ export default function GalleryManagement() {
   // Swap gallery items mutation
   const swapItemsMutation = useMutation({
     mutationFn: async ({ id1, id2 }: { id1: string; id2: string }) => {
-      return apiRequest(`/api/gallery/${id1}/swap/${id2}`, 'PATCH');
+      console.log('🔄 SWAP MUTATION START:', { id1, id2 });
+      const result = await apiRequest(`/api/gallery/${id1}/swap/${id2}`, 'PATCH');
+      console.log('🔄 SWAP MUTATION API RESULT:', result);
+      return result;
     },
-    onSuccess: () => {
+    onSuccess: (data, variables) => {
+      console.log('🔄 SWAP MUTATION SUCCESS - Invalidating cache...');
+      console.log('🔄 Variables that succeeded:', variables);
+      console.log('🔄 Data from successful swap:', data);
       queryClient.invalidateQueries({ queryKey: ['/api/gallery'] });
+      console.log('🔄 Query cache invalidated');
       toast({ 
         title: "✅ Succès", 
         description: "Ordre mis à jour!",
         className: "bg-green-50 dark:bg-green-900/20 border-green-200 dark:border-green-800 text-green-900 dark:text-green-100"
       });
     },
-    onError: () => {
+    onError: (error) => {
+      console.error('🔄 SWAP MUTATION ERROR:', error);
       toast({ title: "Erreur", description: "Échec du réordonnancement", variant: "destructive" });
     }
   });
@@ -241,17 +249,40 @@ export default function GalleryManagement() {
   });
 
   const handleReorder = (item: GalleryItem, direction: 'up' | 'down') => {
+    console.log('🔄 REORDER CLICKED:', { itemId: item.id, itemTitle: item.title_en, direction });
+    
     const sortedItems = [...galleryItems].sort((a, b) => a.order_index - b.order_index);
+    console.log('🔄 Current sorted items:', sortedItems.map(i => ({ id: i.id, title: i.title_en, order: i.order_index })));
+    
     const currentIndex = sortedItems.findIndex(i => i.id === item.id);
+    console.log('🔄 Current index:', currentIndex);
     
     if (direction === 'up' && currentIndex > 0) {
       const targetItem = sortedItems[currentIndex - 1];
-      console.log(`🔄 Moving item ${item.id} UP - swapping with ${targetItem.id}`);
+      console.log(`🔄 Moving item ${item.title_en} UP - swapping with ${targetItem.title_en}`);
+      console.log(`🔄 IDs: ${item.id} ↔ ${targetItem.id}`);
+      
+      // Prevent multiple rapid clicks
+      if (swapItemsMutation.isPending) {
+        console.log('🔄 Swap already in progress, ignoring click');
+        return;
+      }
+      
       swapItemsMutation.mutate({ id1: item.id, id2: targetItem.id });
     } else if (direction === 'down' && currentIndex < sortedItems.length - 1) {
       const targetItem = sortedItems[currentIndex + 1];
-      console.log(`🔄 Moving item ${item.id} DOWN - swapping with ${targetItem.id}`);
+      console.log(`🔄 Moving item ${item.title_en} DOWN - swapping with ${targetItem.title_en}`);
+      console.log(`🔄 IDs: ${item.id} ↔ ${targetItem.id}`);
+      
+      // Prevent multiple rapid clicks
+      if (swapItemsMutation.isPending) {
+        console.log('🔄 Swap already in progress, ignoring click');
+        return;
+      }
+      
       swapItemsMutation.mutate({ id1: item.id, id2: targetItem.id });
+    } else {
+      console.log('🔄 Cannot move:', direction === 'up' ? 'Already at top' : 'Already at bottom');
     }
   };
 
