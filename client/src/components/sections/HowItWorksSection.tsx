@@ -123,8 +123,8 @@ export function HowItWorksSection() {
             </p>
             <button className="bg-memopyk-orange hover:bg-memopyk-dark-blue text-white px-8 py-4 rounded-full font-semibold text-lg transition-all duration-300 transform hover:scale-105 shadow-lg">
               {language === 'fr-FR' 
-                ? "Commencer"
-                : "Get started"
+                ? "Commencer maintenant"
+                : "Start now"
               }
             </button>
           </div>
