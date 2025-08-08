@@ -28,8 +28,11 @@ interface PerformanceResult {
   timestamp: Date;
   refreshType: 'normal' | 'hard';
   heroVideoTime: number;
+  heroVideoSource: 'cache' | 'vps' | 'error';
   staticImageTime: number;
+  staticImageSource: 'cache' | 'vps' | 'error';
   galleryApiTime: number;
+  galleryApiSource: 'cache' | 'vps' | 'error';
   totalTime: number;
 }
 
@@ -73,8 +76,11 @@ export default function PerformanceTestDashboard() {
     
     const testId = `test_${Date.now()}`;
     let heroVideoTime = 0;
+    let heroVideoSource: 'cache' | 'vps' | 'error' = 'error';
     let staticImageTime = 0;
+    let staticImageSource: 'cache' | 'vps' | 'error' = 'error';
     let galleryApiTime = 0;
+    let galleryApiSource: 'cache' | 'vps' | 'error' = 'error';
 
     try {
       toast({
@@ -93,9 +99,13 @@ export default function PerformanceTestDashboard() {
           cache: refreshType === 'hard' ? 'no-cache' : 'default'
         });
         heroVideoTime = Math.round(performance.now() - heroStartTime);
-        console.log(`🎬 Hero video test: ${heroVideoTime}ms`);
+        
+        // Determine source based on response time (cache < 50ms typically)
+        heroVideoSource = heroVideoTime < 50 ? 'cache' : 'vps';
+        console.log(`🎬 Hero video test: ${heroVideoTime}ms from ${heroVideoSource}`);
       } catch (error) {
-        heroVideoTime = -1; // Error indicator
+        heroVideoTime = -1;
+        heroVideoSource = 'error';
         console.error('Hero video test failed:', error);
       }
 
@@ -110,9 +120,13 @@ export default function PerformanceTestDashboard() {
           cache: refreshType === 'hard' ? 'no-cache' : 'default'
         });
         staticImageTime = Math.round(performance.now() - imageStartTime);
-        console.log(`🖼️ Static image test: ${staticImageTime}ms`);
+        
+        // Determine source based on response time (cache < 20ms typically for images)
+        staticImageSource = staticImageTime < 20 ? 'cache' : 'vps';
+        console.log(`🖼️ Static image test: ${staticImageTime}ms from ${staticImageSource}`);
       } catch (error) {
-        staticImageTime = -1; // Error indicator
+        staticImageTime = -1;
+        staticImageSource = 'error';
         console.error('Static image test failed:', error);
       }
 
@@ -127,9 +141,13 @@ export default function PerformanceTestDashboard() {
         });
         await apiResponse.json();
         galleryApiTime = Math.round(performance.now() - apiStartTime);
-        console.log(`📊 Gallery API test: ${galleryApiTime}ms`);
+        
+        // Gallery API always hits database/VPS (designed for cross-environment sync)
+        galleryApiSource = 'vps';
+        console.log(`📊 Gallery API test: ${galleryApiTime}ms from ${galleryApiSource}`);
       } catch (error) {
-        galleryApiTime = -1; // Error indicator
+        galleryApiTime = -1;
+        galleryApiSource = 'error';
         console.error('Gallery API test failed:', error);
       }
 
@@ -143,8 +161,11 @@ export default function PerformanceTestDashboard() {
         timestamp: new Date(),
         refreshType,
         heroVideoTime,
+        heroVideoSource,
         staticImageTime,
+        staticImageSource,
         galleryApiTime,
+        galleryApiSource,
         totalTime
       };
 
@@ -210,6 +231,19 @@ export default function PerformanceTestDashboard() {
         return <Badge className="bg-gray-500 hover:bg-gray-600">Error</Badge>;
       default:
         return <Badge>Unknown</Badge>;
+    }
+  };
+
+  const getSourceBadge = (source: 'cache' | 'vps' | 'error') => {
+    switch (source) {
+      case 'cache':
+        return <Badge variant="secondary" className="bg-green-100 text-green-800 hover:bg-green-200">Cache</Badge>;
+      case 'vps':
+        return <Badge variant="secondary" className="bg-blue-100 text-blue-800 hover:bg-blue-200">VPS</Badge>;
+      case 'error':
+        return <Badge variant="secondary" className="bg-red-100 text-red-800 hover:bg-red-200">Error</Badge>;
+      default:
+        return <Badge variant="secondary">Unknown</Badge>;
     }
   };
 
@@ -305,6 +339,7 @@ export default function PerformanceTestDashboard() {
                 <div className="flex items-center gap-2">
                   <span className="text-lg font-bold">{averageResults.heroVideo}ms</span>
                   {getStatusBadge(getTimeStatus(averageResults.heroVideo, 'hero'))}
+                  <span className="text-xs text-muted-foreground">Cache</span>
                 </div>
               </div>
               
@@ -316,6 +351,7 @@ export default function PerformanceTestDashboard() {
                 <div className="flex items-center gap-2">
                   <span className="text-lg font-bold">{averageResults.staticImage}ms</span>
                   {getStatusBadge(getTimeStatus(averageResults.staticImage, 'image'))}
+                  <span className="text-xs text-muted-foreground">Cache</span>
                 </div>
               </div>
               
@@ -327,6 +363,7 @@ export default function PerformanceTestDashboard() {
                 <div className="flex items-center gap-2">
                   <span className="text-lg font-bold">{averageResults.galleryApi}ms</span>
                   {getStatusBadge(getTimeStatus(averageResults.galleryApi, 'api'))}
+                  <span className="text-xs text-muted-foreground">VPS</span>
                 </div>
               </div>
             </div>
@@ -378,6 +415,7 @@ export default function PerformanceTestDashboard() {
                       <div className="flex items-center gap-2">
                         <span className="font-semibold">{result.heroVideoTime > 0 ? result.heroVideoTime : 'Error'}ms</span>
                         {getStatusBadge(getTimeStatus(result.heroVideoTime, 'hero'))}
+                        {getSourceBadge(result.heroVideoSource)}
                       </div>
                     </div>
                     
@@ -389,6 +427,7 @@ export default function PerformanceTestDashboard() {
                       <div className="flex items-center gap-2">
                         <span className="font-semibold">{result.staticImageTime > 0 ? result.staticImageTime : 'Error'}ms</span>
                         {getStatusBadge(getTimeStatus(result.staticImageTime, 'image'))}
+                        {getSourceBadge(result.staticImageSource)}
                       </div>
                     </div>
                     
@@ -400,6 +439,7 @@ export default function PerformanceTestDashboard() {
                       <div className="flex items-center gap-2">
                         <span className="font-semibold">{result.galleryApiTime > 0 ? result.galleryApiTime : 'Error'}ms</span>
                         {getStatusBadge(getTimeStatus(result.galleryApiTime, 'api'))}
+                        {getSourceBadge(result.galleryApiSource)}
                       </div>
                     </div>
                   </div>

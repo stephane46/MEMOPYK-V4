@@ -21,6 +21,7 @@ import { AnalyticsDashboard } from '@/components/admin/AnalyticsDashboard';
 import VideoCacheStatus from '@/components/admin/VideoCacheStatus';
 import SeoManagement from '@/components/admin/SeoManagement';
 import SystemTestDashboard from '@/components/admin/SystemTestDashboard';
+import PerformanceTestDashboard from '@/components/admin/PerformanceTestDashboard';
 import DeploymentManagement from '@/components/admin/DeploymentManagement';
 import CryptoJS from 'crypto-js';
 
@@ -1693,9 +1694,10 @@ export default function AdminPage() {
           {activeSection === 'tests' && (
             <div className="space-y-6">
               <div className="mb-6">
-                <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Tests</h2>
-                <p className="text-gray-600 dark:text-gray-400">Tests système et validation</p>
+                <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Tests & Performance</h2>
+                <p className="text-gray-600 dark:text-gray-400">Tests système, performance et validation</p>
               </div>
+              <PerformanceTestDashboard />
               <SystemTestDashboard />
             </div>
           )}
