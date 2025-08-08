@@ -41,39 +41,22 @@ export function CtaSection() {
               .filter((cta: CtaSettings) => cta.isActive)
               .map((cta: CtaSettings) => {
                 const url = language === 'fr-FR' ? cta.buttonUrlFr : cta.buttonUrlEn;
-                console.log('🔗 CTA Button render:', { 
-                  id: cta.id, 
-                  language, 
-                  url,
-                  buttonText: language === 'fr-FR' ? cta.buttonTextFr : cta.buttonTextEn
-                });
+                console.log('🔗 CTA Button render:', cta.id, language, url, language === 'fr-FR' ? cta.buttonTextFr : cta.buttonTextEn);
                 return (
-                  <button
+                  <a
                     key={cta.id}
+                    href={url}
+                    target="_blank"
+                    rel="noopener noreferrer"
                     onClick={(e) => {
-                      console.log('🖱️ CTA Button clicked:', { id: cta.id, url });
-                      console.log('🌐 Opening URL in new window...');
-                      try {
-                        window.open(url, '_blank', 'noopener,noreferrer');
-                        console.log('✅ Window opened successfully');
-                      } catch (error) {
-                        console.error('❌ Failed to open window:', error);
-                        // Fallback: create a temporary link and click it
-                        const link = document.createElement('a');
-                        link.href = url;
-                        link.target = '_blank';
-                        link.rel = 'noopener noreferrer';
-                        document.body.appendChild(link);
-                        link.click();
-                        document.body.removeChild(link);
-                        console.log('🔗 Fallback link created and clicked');
-                      }
+                      console.log('🖱️🖱️🖱️ CTA LINK CLICKED!', cta.id, url);
+                      // Let the browser handle the link naturally
                     }}
-                    className="inline-flex items-center gap-3 bg-memopyk-orange hover:bg-memopyk-orange/90 text-white px-8 py-4 rounded-full font-semibold text-lg transition-all duration-300 transform hover:scale-105 shadow-lg cursor-pointer border-0"
+                    className="inline-flex items-center gap-3 bg-memopyk-orange hover:bg-memopyk-orange/90 text-white px-8 py-4 rounded-full font-semibold text-lg transition-all duration-300 transform hover:scale-105 shadow-lg cursor-pointer no-underline"
                   >
                     {cta.id === 'book_call' ? <Phone className="w-5 h-5" /> : <Edit className="w-5 h-5" />}
                     {language === 'fr-FR' ? cta.buttonTextFr : cta.buttonTextEn}
-                  </button>
+                  </a>
                 );
               })
             }
