@@ -281,7 +281,7 @@ export function HeroVideoSection() {
                 }
               }}
             >
-              {language === 'fr-FR' ? 'Commencer' : 'Get started'}
+              {language === 'fr-FR' ? 'Prêt à créer votre film souvenir ?' : 'Ready to make your souvenir film?'}
             </Button>
           </div>
         </div>

@@ -20,8 +20,8 @@ export function CtaSection() {
         <div className="text-center">
           <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
             {getText(
-              'Prêt à créer votre film souvenir ?',
-              'Ready to make your souvenir film?'
+              'Connectez-vous avec nous ou demandez un devis personnalisé.',
+              'Connect with us or request a personalized quote.'
             )}
           </h2>
           <p className="text-memopyk-cream/90 text-lg mb-8">
