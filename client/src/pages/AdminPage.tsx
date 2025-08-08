@@ -247,6 +247,12 @@ export default function AdminPage() {
     refetchInterval: 5000, // Refresh every 5 seconds
   });
 
+  // Fetch detailed cache breakdown
+  const { data: cacheBreakdown } = useQuery<any>({
+    queryKey: ['/api/cache/breakdown'],
+    refetchInterval: 5000, // Refresh every 5 seconds
+  });
+
   // Cache statistics are now handled centrally in the "ALL MEDIA CACHE" section
 
 
@@ -1607,7 +1613,12 @@ export default function AdminPage() {
                   
                   <div className="mt-4 p-4 bg-muted rounded-lg">
                     <div className="text-sm text-muted-foreground space-y-1">
-                      <div><strong>Contenu:</strong> 6 vidéos + 4 images (≈290MB total)</div>
+                      <div>
+                        <strong>Contenu:</strong> {cacheBreakdown ? 
+                          `${cacheBreakdown.heroVideos.count} Vidéos Hero + ${cacheBreakdown.galleryVideos.count} Vidéos Galerie + ${cacheBreakdown.galleryStaticImages.count} Images Statiques (≈${cacheBreakdown.total.sizeMB}MB total)` : 
+                          '6 vidéos + 4 images (≈290MB total)'
+                        }
+                      </div>
 
                       <div><strong>Usage:</strong> Recommandé après chaque déploiement en production</div>
                     </div>

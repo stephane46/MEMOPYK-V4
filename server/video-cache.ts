@@ -390,6 +390,74 @@ export class VideoCache {
   }
 
   /**
+   * Get detailed cache breakdown by content type
+   */
+  getDetailedCacheBreakdown(): {
+    heroVideos: { count: number; sizeMB: string; files: string[] };
+    galleryVideos: { count: number; sizeMB: string; files: string[] };
+    galleryStaticImages: { count: number; sizeMB: string; files: string[] };
+    total: { count: number; sizeMB: string };
+  } {
+    try {
+      const videoFiles = readdirSync(this.videoCacheDir);
+      const imageFiles = readdirSync(this.imageCacheDir);
+      
+      const heroVideoFiles = videoFiles.filter(f => f.startsWith('VideoHero'));
+      const galleryVideoFiles = videoFiles.filter(f => !f.startsWith('VideoHero'));
+      const staticImageFiles = imageFiles.filter(f => f.startsWith('static_auto_'));
+      
+      // Calculate sizes
+      const heroSize = heroVideoFiles.reduce((total, file) => {
+        const stats = statSync(join(this.videoCacheDir, file));
+        return total + stats.size;
+      }, 0);
+      
+      const galleryVideoSize = galleryVideoFiles.reduce((total, file) => {
+        const stats = statSync(join(this.videoCacheDir, file));
+        return total + stats.size;
+      }, 0);
+      
+      const staticImageSize = staticImageFiles.reduce((total, file) => {
+        const stats = statSync(join(this.imageCacheDir, file));
+        return total + stats.size;
+      }, 0);
+      
+      const totalSize = heroSize + galleryVideoSize + staticImageSize;
+      const totalCount = heroVideoFiles.length + galleryVideoFiles.length + staticImageFiles.length;
+      
+      return {
+        heroVideos: {
+          count: heroVideoFiles.length,
+          sizeMB: (heroSize / 1024 / 1024).toFixed(1),
+          files: heroVideoFiles
+        },
+        galleryVideos: {
+          count: galleryVideoFiles.length,
+          sizeMB: (galleryVideoSize / 1024 / 1024).toFixed(1),
+          files: galleryVideoFiles
+        },
+        galleryStaticImages: {
+          count: staticImageFiles.length,
+          sizeMB: (staticImageSize / 1024 / 1024).toFixed(1),
+          files: staticImageFiles
+        },
+        total: {
+          count: totalCount,
+          sizeMB: (totalSize / 1024 / 1024).toFixed(1)
+        }
+      };
+    } catch (error) {
+      console.error('Error getting detailed cache breakdown:', error);
+      return {
+        heroVideos: { count: 0, sizeMB: '0.0', files: [] },
+        galleryVideos: { count: 0, sizeMB: '0.0', files: [] },
+        galleryStaticImages: { count: 0, sizeMB: '0.0', files: [] },
+        total: { count: 0, sizeMB: '0.0' }
+      };
+    }
+  }
+
+  /**
    * Get unified cache statistics (videos + images) with storage management info
    */
   getUnifiedCacheStats(): { 

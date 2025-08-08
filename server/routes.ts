@@ -4130,6 +4130,18 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Get detailed cache breakdown by content type
+  app.get('/api/cache/breakdown', (req, res) => {
+    try {
+      const breakdown = videoCache.getDetailedCacheBreakdown();
+      console.log(`📊 Cache breakdown: ${breakdown.heroVideos.count} Hero Videos, ${breakdown.galleryVideos.count} Gallery Videos, ${breakdown.galleryStaticImages.count} Static Images`);
+      res.json(breakdown);
+    } catch (error) {
+      console.error('Cache breakdown error:', error);
+      res.status(500).json({ error: 'Failed to get cache breakdown' });
+    }
+  });
+
   // Image proxy endpoint for serving cached images
   app.get('/api/image-proxy', async (req, res) => {
     try {
