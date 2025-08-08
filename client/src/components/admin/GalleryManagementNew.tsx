@@ -1558,22 +1558,22 @@ export default function GalleryManagementNew() {
                     )}
                   </h4>
                   <div>
-                    <Label htmlFor="situation_en">Situation du client</Label>
-                    <Textarea
-                      id="situation_en"
-                      value={formData.situation_en}
-                      onChange={(e) => setFormData({ ...formData, situation_en: e.target.value })}
-                      placeholder="The Client is a wife..."
-                      className="bg-white dark:bg-gray-800 min-h-[80px]"
-                    />
-                  </div>
-                  <div>
                     <Label htmlFor="story_en">Histoire du film</Label>
                     <Textarea
                       id="story_en"
                       value={formData.story_en}
                       onChange={(e) => setFormData({ ...formData, story_en: e.target.value })}
                       placeholder="This film shows..."
+                      className="bg-white dark:bg-gray-800 min-h-[80px]"
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="situation_en">Situation du client</Label>
+                    <Textarea
+                      id="situation_en"
+                      value={formData.situation_en}
+                      onChange={(e) => setFormData({ ...formData, situation_en: e.target.value })}
+                      placeholder="The Client is a wife..."
                       className="bg-white dark:bg-gray-800 min-h-[80px]"
                     />
                   </div>
@@ -1599,22 +1599,22 @@ export default function GalleryManagementNew() {
                     )}
                   </h4>
                   <div>
-                    <Label htmlFor="situation_fr">Situation du client</Label>
-                    <Textarea
-                      id="situation_fr"
-                      value={formData.situation_fr}
-                      onChange={(e) => setFormData({ ...formData, situation_fr: e.target.value })}
-                      placeholder="Le client est une épouse..."
-                      className="bg-white dark:bg-gray-800 min-h-[80px]"
-                    />
-                  </div>
-                  <div>
                     <Label htmlFor="story_fr">Histoire du film</Label>
                     <Textarea
                       id="story_fr"
                       value={formData.story_fr}
                       onChange={(e) => setFormData({ ...formData, story_fr: e.target.value })}
                       placeholder="Ce film montre..."
+                      className="bg-white dark:bg-gray-800 min-h-[80px]"
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="situation_fr">Situation du client</Label>
+                    <Textarea
+                      id="situation_fr"
+                      value={formData.situation_fr}
+                      onChange={(e) => setFormData({ ...formData, situation_fr: e.target.value })}
+                      placeholder="Le client est une épouse..."
                       className="bg-white dark:bg-gray-800 min-h-[80px]"
                     />
                   </div>
