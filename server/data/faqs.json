@@ -1,21 +1,11 @@
 [
   {
-    "id": "1c146cf9-52e0-4861-a4dc-5fa4650bb4ee",
-    "section_id": "general",
-    "question_en": "I don’t have a clear idea or vision of how my film should be, is that a problem?",
-    "question_fr": "Je n’ai pas d’idée précise, est-ce un problème ?",
-    "answer_en": "Not at all. We will make recommendations, create the story arc that is best adapted to your photos and videos, and take care of every detail to avoid decision fatigue while delivering the most exciting result possible. We also recommend you book a session with one of our experts to guide you through the next steps.",
-    "answer_fr": "Aucun souci. Nous vous ferons des propositions adaptées, construirons une narration cohérente à partir de vos fichiers et prendrons en charge tous les détails pour éviter la fatigue décisionnelle. Nous vous recommandons aussi de prendre rendez-vous avec un expert MEMOPYK pour vous guider.",
-    "order_index": 0,
-    "is_active": true
-  },
-  {
-    "id": "a0cc7a21-f987-4e04-9791-72a2a87d6372",
-    "section_id": "general",
-    "question_en": "Can I give you specific requirements (music, titles, effects, ...)?",
-    "question_fr": "Puis-je donner des consignes (musique, titres, effets…) ?",
-    "answer_en": "<p>Of course! Our detailed questionnaire has a dedicated section for all your creative notes. We respect every request and advise where needed to ensure the best possible film.</p>",
-    "answer_fr": "<p>Bien sûr ! Le questionnaire détaillé vous permet d’ajouter toutes vos préférences créatives. Nous respectons chaque demande et vous conseillons si besoin pour obtenir le meilleur rendu. OUI</p>",
+    "id": "d70378b5-d49b-4d3a-82ff-32c3cf30db2d",
+    "section_id": "pricing",
+    "question_en": "How do I send you my photos and videos?",
+    "question_fr": "Comment vous envoyer mes photos et vidéos ?",
+    "answer_en": "<p><a href=\"https://memopyk.zohobookings.eu/#/memopyk1\" rel=\"noopener noreferrer\" target=\"_blank\">Book a session</a>&nbsp;or&nbsp;<a href=\"https://forms.zoho.eu/memopyk1/form/MemoryfilmQuestionnaire\" rel=\"noopener noreferrer\" target=\"_blank\">fill the questionnaire</a>; our system will then email you secure upload instructions immediately.</p>",
+    "answer_fr": "<p><a href=\"https://memopyk.zohobookings.eu/#/memopykfr\" rel=\"noopener noreferrer\" target=\"_blank\">Prenez rendez-vous</a>&nbsp;ou&nbsp;<a href=\"https://forms.zoho.eu/memopyk1/form/FicheClientBriefMEMOPYK\" rel=\"noopener noreferrer\" target=\"_blank\">complétez le questionnaire</a>&nbsp;; notre <a href=\"mailto:stephane@photall.com\" rel=\"noopener noreferrer\" target=\"_blank\">système </a>vous enverra immédiatement les instructions de téléversement sécurisé par email.</p>",
     "order_index": 0,
     "is_active": true
   },
@@ -30,12 +20,22 @@
     "is_active": false
   },
   {
-    "id": "d70378b5-d49b-4d3a-82ff-32c3cf30db2d",
-    "section_id": "pricing",
-    "question_en": "How do I send you my photos and videos?",
-    "question_fr": "Comment vous envoyer mes photos et vidéos ?",
-    "answer_en": "<p><a href=\"https://memopyk.zohobookings.eu/#/memopyk1\" rel=\"noopener noreferrer\" target=\"_blank\">Book a session</a>&nbsp;or&nbsp;<a href=\"https://forms.zoho.eu/memopyk1/form/MemoryfilmQuestionnaire\" rel=\"noopener noreferrer\" target=\"_blank\">fill the questionnaire</a>; our system will then email you secure upload instructions immediately.</p>",
-    "answer_fr": "<p><a href=\"https://memopyk.zohobookings.eu/#/memopykfr\" rel=\"noopener noreferrer\" target=\"_blank\">Prenez rendez-vous</a>&nbsp;ou&nbsp;<a href=\"https://forms.zoho.eu/memopyk1/form/FicheClientBriefMEMOPYK\" rel=\"noopener noreferrer\" target=\"_blank\">complétez le questionnaire</a>&nbsp;; notre <a href=\"mailto:stephane@photall.com\" rel=\"noopener noreferrer\" target=\"_blank\">système </a>vous enverra immédiatement les instructions de téléversement sécurisé par email.</p>",
+    "id": "a0cc7a21-f987-4e04-9791-72a2a87d6372",
+    "section_id": "general",
+    "question_en": "Can I give you specific requirements (music, titles, effects, ...)?",
+    "question_fr": "Puis-je donner des consignes (musique, titres, effets…) ?",
+    "answer_en": "<p>Of course! Our detailed questionnaire has a dedicated section for all your creative notes. We respect every request and advise where needed to ensure the best possible film.</p>",
+    "answer_fr": "<p>Bien sûr ! Le questionnaire détaillé vous permet d’ajouter toutes vos préférences créatives. Nous respectons chaque demande et vous conseillons si besoin pour obtenir le meilleur rendu. OUI</p>",
+    "order_index": 0,
+    "is_active": true
+  },
+  {
+    "id": "1c146cf9-52e0-4861-a4dc-5fa4650bb4ee",
+    "section_id": "general",
+    "question_en": "I don’t have a clear idea or vision of how my film should be, is that a problem?",
+    "question_fr": "Je n’ai pas d’idée précise, est-ce un problème ?",
+    "answer_en": "Not at all. We will make recommendations, create the story arc that is best adapted to your photos and videos, and take care of every detail to avoid decision fatigue while delivering the most exciting result possible. We also recommend you book a session with one of our experts to guide you through the next steps.",
+    "answer_fr": "Aucun souci. Nous vous ferons des propositions adaptées, construirons une narration cohérente à partir de vos fichiers et prendrons en charge tous les détails pour éviter la fatigue décisionnelle. Nous vous recommandons aussi de prendre rendez-vous avec un expert MEMOPYK pour vous guider.",
     "order_index": 0,
     "is_active": true
   },
@@ -110,22 +110,22 @@
     "is_active": true
   },
   {
-    "id": "af9e6454-fe0c-4370-8963-548ef56fec1b",
-    "section_id": "general",
-    "question_en": "Je crains que mes vidéos/photos ne soient pas de bonne qualité. Pouvez-vous encore réaliser un bon film ?",
-    "question_fr": "Mes vidéos/photos sont de mauvaise qualitést-ce un problème ?",
-    "answer_en": "<p>Fear not. We specialize in enhancing low-quality sources and using editing techniques to preserve the emotion, even if the files aren’t perfect.</p>",
-    "answer_fr": "<p>Ne craignez rien. Nous sommes spécialisés dans l'amélioration des sources de faible qualité et dans l'utilisation de techniques d'édition pour préserver l'émotion, même si les fichiers ne sont pas parfaits.</p>",
-    "order_index": 5,
-    "is_active": true
-  },
-  {
     "id": "0e866853-d4a4-44f8-ae6c-005223e7538d",
     "section_id": "pricing",
     "question_en": "How long do I have to review my film?",
     "question_fr": "Combien de temps ai-je pour visionner et donner mon retour ?",
     "answer_en": "<p>You have a two-week window from delivery to send feedback. Beyond that, a nominal weekly fee applies to cover storage and access.</p>",
     "answer_fr": "<p>Vous disposez d'un délai de deux semaines à compter de la livraison pour envoyer vos commentaires. Au-delà, des frais hebdomadaires minimes s'appliquent pour couvrir les frais de stockage et d'accès.</p>",
+    "order_index": 5,
+    "is_active": true
+  },
+  {
+    "id": "af9e6454-fe0c-4370-8963-548ef56fec1b",
+    "section_id": "general",
+    "question_en": "Je crains que mes vidéos/photos ne soient pas de bonne qualité. Pouvez-vous encore réaliser un bon film ?",
+    "question_fr": "Mes vidéos/photos sont de mauvaise qualitést-ce un problème ?",
+    "answer_en": "<p>Fear not. We specialize in enhancing low-quality sources and using editing techniques to preserve the emotion, even if the files aren’t perfect.</p>",
+    "answer_fr": "<p>Ne craignez rien. Nous sommes spécialisés dans l'amélioration des sources de faible qualité et dans l'utilisation de techniques d'édition pour préserver l'émotion, même si les fichiers ne sont pas parfaits.</p>",
     "order_index": 5,
     "is_active": true
   },
@@ -166,7 +166,7 @@
     "question_fr": "Vous vous demandez si nous utilisons l Intelligence Artificielle ?",
     "answer_en": "Each image is created by hand by our teams: no robots or AI.",
     "answer_fr": "Chaque image est réalisée à la main par nos équipes : pas de robots ni d IA.",
-    "order_index": 8,
+    "order_index": 9,
     "is_active": true
   },
   {
@@ -176,7 +176,7 @@
     "question_fr": "Qu’est-ce qu’un film souvenir MEMOPYK ?",
     "answer_en": "It is a customized video that MEMOPYK creates uniquely for you, by using your own personal photos and videos as “source materials.” Through professional editing techniques, the film tells a story of your choice and allows you to relive your cherished memories of your life or your loved one’s.",
     "answer_fr": "C’est une vidéo personnalisée créée spécialement pour vous par MEMOPYK, à partir de vos propres photos et vidéos. Grâce au montage, le film raconte une histoire autour d’un thème de votre choix et vous permet de revivre les souvenirs précieux de votre vie ou de celle d’un proche.",
-    "order_index": 9,
+    "order_index": 10,
     "is_active": true
   },
   {

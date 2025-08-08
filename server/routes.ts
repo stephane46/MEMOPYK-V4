@@ -4975,6 +4975,25 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Download missing static images endpoint
+  app.post('/api/cache/download-static-images', async (req, res) => {
+    try {
+      console.log('🚀 Manual static image download triggered');
+      const result = await videoCache.downloadMissingStaticImages();
+      res.json({
+        success: result.errors.length === 0,
+        message: `Downloaded ${result.downloaded} of ${result.total} static images`,
+        ...result
+      });
+    } catch (error) {
+      console.error('❌ Static image download failed:', error);
+      res.status(500).json({ 
+        success: false,
+        error: error.message 
+      });
+    }
+  });
+
   // Import test routes
   const testRouter = (await import('./test-routes')).default;
   app.use('/api', testRouter);

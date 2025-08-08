@@ -1,4 +1,4 @@
-import { existsSync, createWriteStream, statSync, unlinkSync, readdirSync, renameSync } from 'fs';
+import { existsSync, createWriteStream, statSync, unlinkSync, readdirSync, renameSync, writeFileSync } from 'fs';
 import { join } from 'path';
 import { createHash } from 'crypto';
 
@@ -404,7 +404,8 @@ export class VideoCache {
       
       const heroVideoFiles = videoFiles.filter(f => f.startsWith('VideoHero'));
       const galleryVideoFiles = videoFiles.filter(f => !f.startsWith('VideoHero'));
-      const staticImageFiles = imageFiles.filter(f => f.startsWith('static_auto_'));
+      // Get all image files, not just static_auto_ prefix
+      const staticImageFiles = imageFiles.filter(f => f.match(/\.(jpg|jpeg|png|webp)$/i));
       
       // Calculate sizes
       const heroSize = heroVideoFiles.reduce((total, file) => {
@@ -1281,6 +1282,75 @@ export class VideoCache {
       cached,
       errors
     };
+  }
+
+  /**
+   * Download missing static images for gallery items
+   */
+  async downloadMissingStaticImages(): Promise<{ downloaded: number; total: number; errors: string[] }> {
+    const errors: string[] = [];
+    let downloaded = 0;
+    
+    try {
+      // Get gallery items from hybrid storage
+      const { hybridStorage } = await import('./hybrid-storage');
+      const galleryItems = await hybridStorage.getGalleryItems();
+      
+      console.log(`📊 Checking ${galleryItems.length} gallery items for missing static images...`);
+      
+      for (const item of galleryItems) {
+        const staticImageUrl = item.static_image_url_en;
+        if (!staticImageUrl) continue;
+        
+        // Extract filename from URL
+        const filename = staticImageUrl.split('/').pop();
+        if (!filename) continue;
+        
+        const cachedPath = join(this.imageCacheDir, filename);
+        
+        // Check if already cached
+        if (existsSync(cachedPath)) {
+          console.log(`✅ Static image already cached: ${filename}`);
+          continue;
+        }
+        
+        console.log(`📥 Downloading missing static image: ${filename}`);
+        
+        try {
+          // Download the image
+          const response = await fetch(staticImageUrl);
+          if (!response.ok) {
+            throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+          }
+          
+          // Save to cache
+          const buffer = await response.arrayBuffer();
+          writeFileSync(cachedPath, new Uint8Array(buffer));
+          
+          const stats = statSync(cachedPath);
+          console.log(`✅ Downloaded static image: ${filename} (${(stats.size / 1024).toFixed(1)}KB)`);
+          downloaded++;
+          
+        } catch (error: any) {
+          const errorMsg = `Failed to download ${filename}: ${error.message}`;
+          console.error(`❌ ${errorMsg}`);
+          errors.push(errorMsg);
+        }
+      }
+      
+      console.log(`🎯 Static image download complete: ${downloaded} downloaded, ${errors.length} errors`);
+      
+      return {
+        downloaded,
+        total: galleryItems.filter(item => item.static_image_url_en).length,
+        errors
+      };
+      
+    } catch (error: any) {
+      console.error('❌ Failed to download missing static images:', error);
+      errors.push(error.message);
+      return { downloaded: 0, total: 0, errors };
+    }
   }
 }
 
