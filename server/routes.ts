@@ -9,6 +9,7 @@ import multer from 'multer';
 import { createClient } from '@supabase/supabase-js';
 import testRoutes from './test-routes';
 import { setCacheAndOriginHeaders } from './cache-origin-headers';
+import { createCacheHitHeaders, createCacheMissHeaders, getUpstreamSource, getCacheAge } from './cache-delivery-headers';
 
 // Contact form validation schema
 const contactFormSchema = z.object({
@@ -278,8 +279,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
         console.log(`📋 Gallery data served from cache (${Math.round((now - galleryCache.timestamp) / 1000)}s old)`);
         
         // Set cache headers for performance testing
-        res.setHeader('X-Cache-Status', 'HIT');
-        res.setHeader('X-Data-Source', 'memory');
+        const deliveryHeaders = createCacheHitHeaders('local');
+        res.setHeader('X-Delivery', deliveryHeaders['X-Delivery']);
+        res.setHeader('X-Upstream', deliveryHeaders['X-Upstream']);
+        res.setHeader('X-Storage', deliveryHeaders['X-Storage']);
         res.setHeader('X-Content-Bytes', String(JSON.stringify(galleryCache.data).length));
         
         return res.json(galleryCache.data);
@@ -291,8 +294,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
       console.log(`🔄 Gallery data fetched from database and cached`);
       
       // Set cache headers for performance testing
-      res.setHeader('X-Cache-Status', 'MISS');
-      res.setHeader('X-Data-Source', 'db');
+      const deliveryHeaders = createCacheMissHeaders('local');
+      res.setHeader('X-Delivery', deliveryHeaders['X-Delivery']);
+      res.setHeader('X-Upstream', deliveryHeaders['X-Upstream']);
+      res.setHeader('X-Storage', deliveryHeaders['X-Storage']);
       res.setHeader('X-Content-Bytes', String(JSON.stringify(items).length));
       
       res.json(items);
@@ -1993,13 +1998,15 @@ export async function registerRoutes(app: Express): Promise<Server> {
             const contentLength = response.headers.get('content-length');
             const acceptRanges = response.headers.get('accept-ranges');
             
+            const deliveryHeaders = createCacheMissHeaders('supabase');
             const headers: any = {
               'Content-Type': 'video/mp4',
               'Access-Control-Allow-Origin': '*',
               'Access-Control-Allow-Headers': 'range, content-type',
               'Cache-Control': 'public, max-age=3600',
-              'X-Cache-Status': 'MISS',
-              'X-Origin': 'supabase'
+              'X-Delivery': deliveryHeaders['X-Delivery'],
+              'X-Upstream': deliveryHeaders['X-Upstream'],
+              'X-Storage': deliveryHeaders['X-Storage']
             };
             
             if (contentRange) headers['Content-Range'] = contentRange;
@@ -2195,6 +2202,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
           // Set headers with comprehensive error handling
           console.log(`[PROXY] About to write headers for ${videoFilename}`);
           try {
+            const deliveryHeaders = bypassCache ? createCacheMissHeaders('supabase') : createCacheHitHeaders('supabase', getCacheAge(cachedVideo));
             res.writeHead(206, {
               'Content-Range': `bytes ${start}-${end}/${fileSize}`,
               'Accept-Ranges': 'bytes',
@@ -2203,8 +2211,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
               'Access-Control-Allow-Origin': '*',
               'Access-Control-Allow-Headers': 'range, content-type',
               'Cache-Control': 'public, max-age=86400',
-              'X-Cache-Status': bypassCache ? 'MISS' : 'HIT',
-              'X-Origin': 'local',
+              'X-Delivery': deliveryHeaders['X-Delivery'],
+              'X-Upstream': deliveryHeaders['X-Upstream'],
+              'X-Storage': deliveryHeaders['X-Storage'],
               'X-Content-Bytes': fileSize.toString()
             });
             console.log(`[PROXY] Headers written successfully for ${videoFilename}`);
@@ -2411,13 +2420,15 @@ export async function registerRoutes(app: Express): Promise<Server> {
           
           console.log(`[PROXY] About to write headers for full file ${videoFilename}`);
           try {
+            const deliveryHeaders = bypassCache ? createCacheMissHeaders('supabase') : createCacheHitHeaders('supabase', getCacheAge(cachedVideo));
             res.writeHead(200, {
               'Content-Length': fileSize,
               'Content-Type': 'video/mp4',
               'Access-Control-Allow-Origin': '*',
               'Cache-Control': 'public, max-age=86400',
-              'X-Cache-Status': bypassCache ? 'MISS' : 'HIT',
-              'X-Origin': 'local',
+              'X-Delivery': deliveryHeaders['X-Delivery'],
+              'X-Upstream': deliveryHeaders['X-Upstream'],
+              'X-Storage': deliveryHeaders['X-Storage'],
               'X-Content-Bytes': fileSize.toString()
             });
             console.log(`[PROXY] Headers written successfully for full file ${videoFilename}`);
@@ -4327,18 +4338,20 @@ export async function registerRoutes(app: Express): Promise<Server> {
         res.setHeader('ETag', `"${Date.now()}"`);
         // Performance test headers
         const stats = fs.statSync(cachedImagePath);
-        res.setHeader('X-Cache-Status', 'HIT'); // Indicate this came from local cache
-        res.setHeader('X-Data-Source', 'disk');
-        res.setHeader('X-Origin', 'local');
+        const deliveryHeaders = createCacheHitHeaders('supabase', getCacheAge(cachedImagePath));
+        res.setHeader('X-Delivery', deliveryHeaders['X-Delivery']);
+        res.setHeader('X-Upstream', deliveryHeaders['X-Upstream']);
+        res.setHeader('X-Storage', deliveryHeaders['X-Storage']);
         res.setHeader('X-Content-Bytes', stats.size.toString());
         res.sendFile(cachedImagePath);
       } else {
         console.log(`🌐 Image not cached, downloading and caching: ${filename}`);
         
         // Performance test headers for cache miss
-        res.setHeader('X-Cache-Status', 'MISS');
-        res.setHeader('X-Data-Source', 'upstream');
-        res.setHeader('X-Origin', 'supabase');
+        const deliveryHeaders = createCacheMissHeaders('supabase');
+        res.setHeader('X-Delivery', deliveryHeaders['X-Delivery']);
+        res.setHeader('X-Upstream', deliveryHeaders['X-Upstream']);
+        res.setHeader('X-Storage', deliveryHeaders['X-Storage']);
         
         // Download and cache the image
         await videoCache.downloadAndCacheImage(filename);
@@ -4357,7 +4370,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
           res.setHeader('Pragma', 'no-cache');
           res.setHeader('Expires', '0');
           res.setHeader('ETag', `"${Date.now()}"`);
-          res.setHeader('X-Cache-Status', 'MISS'); // Indicate this was downloaded from VPS
+          const deliveryHeaders = createCacheMissHeaders('supabase');
+          res.setHeader('X-Delivery', deliveryHeaders['X-Delivery']);
+          res.setHeader('X-Upstream', deliveryHeaders['X-Upstream']);
+          res.setHeader('X-Storage', deliveryHeaders['X-Storage']);
           res.sendFile(newCachedPath);
         } else {
           console.error(`❌ Failed to cache and serve image: ${filename}`);
