@@ -30,12 +30,15 @@ interface PerformanceResult {
   refreshType: 'normal' | 'hard';
   heroVideoTime: number;
   heroVideoSource: 'cache' | 'vps' | 'error';
+  heroVideoOrigin?: 'local' | 'supabase' | 'other';
   heroVideoSize?: number;
   staticImageTime: number;
   staticImageSource: 'cache' | 'vps' | 'error';
+  staticImageOrigin?: 'local' | 'supabase' | 'other';
   staticImageSize?: number;
   galleryVideoTime: number;
   galleryVideoSource: 'cache' | 'vps' | 'error';
+  galleryVideoOrigin?: 'local' | 'supabase' | 'other';
   galleryVideoSampleSize?: number;
   galleryVideoTotalSize?: number;
   galleryApiTime?: number; // Optional separate API timing
@@ -83,12 +86,15 @@ export default function PerformanceTestDashboard() {
     const testId = `test_${Date.now()}`;
     let heroVideoTime = 0;
     let heroVideoSource: 'cache' | 'vps' | 'error' = 'error';
+    let heroVideoOrigin: 'local' | 'supabase' | 'other' | undefined;
     let heroVideoSize = 0;
     let staticImageTime = 0;
     let staticImageSource: 'cache' | 'vps' | 'error' = 'error';
+    let staticImageOrigin: 'local' | 'supabase' | 'other' | undefined;
     let staticImageSize = 0;
     let galleryVideoTime = 0;
     let galleryVideoSource: 'cache' | 'vps' | 'error' = 'error';
+    let galleryVideoOrigin: 'local' | 'supabase' | 'other' | undefined;
     let galleryVideoSampleSize = 0;
     let galleryVideoTotalSize = 0;
     let galleryApiTime = 0;
@@ -125,6 +131,8 @@ export default function PerformanceTestDashboard() {
           // Fallback to time threshold
           heroVideoSource = refreshType === 'hard' ? 'vps' : (heroVideoTime < 100 ? 'cache' : 'vps');
         }
+        // Capture origin information
+        heroVideoOrigin = heroHeaders.origin as 'local' | 'supabase' | 'other';
         
         console.log(`🎬 Hero video test: ${heroVideoTime}ms • ${humanBytes(heroVideoSize)} from ${heroVideoSource} (${refreshType} refresh)`);
       } catch (error) {
@@ -159,6 +167,8 @@ export default function PerformanceTestDashboard() {
           // Fallback
           staticImageSource = refreshType === 'hard' ? 'vps' : 'cache';
         }
+        // Capture origin information
+        staticImageOrigin = imageHeaders.origin as 'local' | 'supabase' | 'other';
         
         console.log(`🖼️ Static image test: ${staticImageTime}ms • ${humanBytes(staticImageSize)} from ${staticImageSource} (${refreshType} refresh) - X-Cache-Status: ${imageHeaders.cache}`);
       } catch (error) {
@@ -247,6 +257,8 @@ export default function PerformanceTestDashboard() {
             (refreshType === 'hard' ? 'vps' : (galleryVideoTime < 100 ? 'cache' : 'vps')) : 
             'vps'; // Direct Supabase URLs are always VPS
         }
+        // Capture origin information
+        galleryVideoOrigin = videoHeaders.origin as 'local' | 'supabase' | 'other';
         
         console.log(`🎬 Gallery Video test: ${galleryVideoTime}ms • ${humanBytes(galleryVideoSampleSize)} sample • ${humanBytes(galleryVideoTotalSize)} total from ${galleryVideoSource} (${refreshType} refresh) • URL: ${videoUrl}`);
         
@@ -269,12 +281,15 @@ export default function PerformanceTestDashboard() {
         refreshType,
         heroVideoTime,
         heroVideoSource,
+        heroVideoOrigin,
         heroVideoSize,
         staticImageTime,
         staticImageSource,
+        staticImageOrigin,
         staticImageSize,
         galleryVideoTime,
         galleryVideoSource,
+        galleryVideoOrigin,
         galleryVideoSampleSize,
         galleryVideoTotalSize,
         galleryApiTime,
@@ -346,6 +361,21 @@ export default function PerformanceTestDashboard() {
     }
   };
 
+  const getOriginBadge = (origin?: 'local' | 'supabase' | 'other') => {
+    if (!origin) return null;
+    
+    switch (origin) {
+      case 'local':
+        return <Badge variant="outline" className="bg-gray-50 text-gray-700 border-gray-300">local</Badge>;
+      case 'supabase':
+        return <Badge variant="outline" className="bg-orange-50 text-orange-700 border-orange-300">supabase</Badge>;
+      case 'other':
+        return <Badge variant="outline" className="bg-blue-50 text-blue-700 border-blue-300">other</Badge>;
+      default:
+        return null;
+    }
+  };
+
   const averageResults = performanceResults.length > 0 ? {
     heroVideo: Math.round(performanceResults.reduce((sum, r) => sum + (r.heroVideoTime > 0 ? r.heroVideoTime : 0), 0) / performanceResults.length),
     staticImage: Math.round(performanceResults.reduce((sum, r) => sum + (r.staticImageTime > 0 ? r.staticImageTime : 0), 0) / performanceResults.length),
@@ -402,19 +432,37 @@ export default function PerformanceTestDashboard() {
             </div>
             
             <div className="mt-4 pt-3 border-t border-gray-200">
-              <h4 className="font-medium text-gray-700 mb-2">Source Indicators:</h4>
-              <div className="flex flex-wrap gap-3 text-xs items-center">
-                <div className="flex items-center gap-1">
-                  <span className="px-2 py-1 bg-green-100 text-green-700 rounded text-xs">Cache</span>
-                  <span className="text-gray-600">Local VPS storage</span>
+              <h4 className="font-medium text-gray-700 mb-2">Badge System:</h4>
+              <div className="space-y-2">
+                <div>
+                  <span className="font-medium text-gray-700 text-sm">Cache Status:</span>
+                  <div className="flex flex-wrap gap-3 text-xs items-center mt-1">
+                    <div className="flex items-center gap-1">
+                      <span className="px-2 py-1 bg-green-100 text-green-700 rounded text-xs">Cache</span>
+                      <span className="text-gray-600">Served from local cache</span>
+                    </div>
+                    <div className="flex items-center gap-1">
+                      <span className="px-2 py-1 bg-blue-100 text-blue-700 rounded text-xs">VPS</span>
+                      <span className="text-gray-600">Server processing/download</span>
+                    </div>
+                  </div>
                 </div>
-                <div className="flex items-center gap-1">
-                  <span className="px-2 py-1 bg-blue-100 text-blue-700 rounded text-xs">VPS</span>
-                  <span className="text-gray-600">Server processing</span>
-                </div>
-                <div className="flex items-center gap-1">
-                  <span className="px-2 py-1 bg-orange-100 text-orange-700 rounded text-xs">Database</span>
-                  <span className="text-gray-600">Direct CDN/Supabase</span>
+                <div>
+                  <span className="font-medium text-gray-700 text-sm">Origin Server:</span>
+                  <div className="flex flex-wrap gap-3 text-xs items-center mt-1">
+                    <div className="flex items-center gap-1">
+                      <span className="px-2 py-1 bg-gray-100 text-gray-700 rounded text-xs border border-gray-300">local</span>
+                      <span className="text-gray-600">VPS local storage</span>
+                    </div>
+                    <div className="flex items-center gap-1">
+                      <span className="px-2 py-1 bg-orange-100 text-orange-700 rounded text-xs border border-orange-300">supabase</span>
+                      <span className="text-gray-600">Supabase CDN</span>
+                    </div>
+                    <div className="flex items-center gap-1">
+                      <span className="px-2 py-1 bg-blue-100 text-blue-700 rounded text-xs border border-blue-300">other</span>
+                      <span className="text-gray-600">External source</span>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
@@ -600,9 +648,10 @@ export default function PerformanceTestDashboard() {
                         <span className="text-lg font-bold text-gray-900 dark:text-white">
                           {result.heroVideoTime > 0 ? result.heroVideoTime : 'Error'}ms • {humanBytes(result.heroVideoSize || 1024)}
                         </span>
-                        <div className="flex items-center gap-1">
+                        <div className="flex items-center gap-1 flex-wrap">
                           {getStatusBadge(getTimeStatus('hero', result.heroVideoTime))}
                           {getSourceBadge(result.heroVideoSource)}
+                          {getOriginBadge(result.heroVideoOrigin)}
                         </div>
                       </div>
                     </div>
@@ -616,9 +665,10 @@ export default function PerformanceTestDashboard() {
                         <span className="text-lg font-bold text-gray-900 dark:text-white">
                           {result.staticImageTime > 0 ? result.staticImageTime : 'Error'}ms • {humanBytes(result.staticImageSize || 50419)}
                         </span>
-                        <div className="flex items-center gap-1">
+                        <div className="flex items-center gap-1 flex-wrap">
                           {getStatusBadge(getTimeStatus('image', result.staticImageTime))}
                           {getSourceBadge(result.staticImageSource)}
+                          {getOriginBadge(result.staticImageOrigin)}
                         </div>
                       </div>
                     </div>
@@ -632,9 +682,10 @@ export default function PerformanceTestDashboard() {
                         <span className="text-lg font-bold text-gray-900 dark:text-white">
                           {result.galleryVideoTime > 0 ? result.galleryVideoTime : 'Error'}ms • {humanBytes(result.galleryVideoSampleSize || 1024)} • {humanBytes(result.galleryVideoTotalSize || 0)} total
                         </span>
-                        <div className="flex items-center gap-1">
+                        <div className="flex items-center gap-1 flex-wrap">
                           {getStatusBadge(getTimeStatus('hero', result.galleryVideoTime))}
                           {getSourceBadge(result.galleryVideoSource)}
+                          {getOriginBadge(result.galleryVideoOrigin)}
                         </div>
                       </div>
                     </div>

@@ -8,6 +8,7 @@ import path from 'path';
 import multer from 'multer';
 import { createClient } from '@supabase/supabase-js';
 import testRoutes from './test-routes';
+import { setCacheAndOriginHeaders } from './cache-origin-headers';
 
 // Contact form validation schema
 const contactFormSchema = z.object({
@@ -1997,7 +1998,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
               'Access-Control-Allow-Origin': '*',
               'Access-Control-Allow-Headers': 'range, content-type',
               'Cache-Control': 'public, max-age=3600',
-              'X-Cache-Status': bypassCache ? 'MISS' : 'MISS',
+              'X-Cache-Status': 'MISS',
               'X-Origin': 'supabase'
             };
             
@@ -2203,7 +2204,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
               'Access-Control-Allow-Headers': 'range, content-type',
               'Cache-Control': 'public, max-age=86400',
               'X-Cache-Status': bypassCache ? 'MISS' : 'HIT',
-              'X-Origin': 'vps-local'
+              'X-Origin': 'local',
+              'X-Content-Bytes': fileSize.toString()
             });
             console.log(`[PROXY] Headers written successfully for ${videoFilename}`);
           } catch (headerError: any) {
@@ -2413,7 +2415,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
               'Content-Length': fileSize,
               'Content-Type': 'video/mp4',
               'Access-Control-Allow-Origin': '*',
-              'Cache-Control': 'public, max-age=86400'
+              'Cache-Control': 'public, max-age=86400',
+              'X-Cache-Status': bypassCache ? 'MISS' : 'HIT',
+              'X-Origin': 'local',
+              'X-Content-Bytes': fileSize.toString()
             });
             console.log(`[PROXY] Headers written successfully for full file ${videoFilename}`);
           } catch (headerError: any) {
@@ -4324,8 +4329,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
         const stats = fs.statSync(cachedImagePath);
         res.setHeader('X-Cache-Status', 'HIT'); // Indicate this came from local cache
         res.setHeader('X-Data-Source', 'disk');
-        res.setHeader('X-Origin', 'vps-local');
-        res.setHeader('X-Content-Bytes', String(stats.size));
+        res.setHeader('X-Origin', 'local');
+        res.setHeader('X-Content-Bytes', stats.size.toString());
         res.sendFile(cachedImagePath);
       } else {
         console.log(`🌐 Image not cached, downloading and caching: ${filename}`);
