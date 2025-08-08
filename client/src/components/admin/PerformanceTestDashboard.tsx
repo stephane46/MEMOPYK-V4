@@ -178,15 +178,21 @@ export default function PerformanceTestDashboard() {
         const items = await metaResponse.json();
         
         // Find the first gallery item with a video
-        let item = items?.find((item: any) => item.videoUrlEn || item.filename?.endsWith('.mp4'));
+        let item = items?.find((item: any) => 
+          item.videoUrlEn || 
+          (item.filename && item.filename.includes('.mp4'))
+        );
         let videoUrl: string | null = null;
         
-        if (item?.filename && item.filename.endsWith('.mp4')) {
-          // Use proxy route for gallery videos
-          videoUrl = `/api/video-proxy?filename=${encodeURIComponent(item.filename)}`;
-        } else if (item?.videoUrlEn) {
-          // Direct Supabase URL
+        if (item?.videoUrlEn) {
+          // Direct Supabase URL - test this directly
           videoUrl = item.videoUrlEn;
+          console.log(`📹 Using gallery video from database: ${item.videoUrlEn}`);
+        } else if (item?.filename && item.filename.includes('.mp4')) {
+          // Extract filename from full URL for proxy
+          const filename = item.filename.split('/').pop();
+          videoUrl = `/api/video-proxy?filename=${encodeURIComponent(filename)}`;
+          console.log(`📹 Using gallery video via proxy: ${filename}`);
         } else {
           // Try fallback to known gallery videos from cache
           const knownGalleryVideos = ['safari-1.mp4', 'VitaminSeaC.mp4', 'PomGalleryC.mp4'];
