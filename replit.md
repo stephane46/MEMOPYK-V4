@@ -6,6 +6,8 @@ MEMOPYK is a full-stack memory film platform designed to transform personal phot
 ## Recent Changes
 - **Legal Document Spacing Fix (January 2025)**: Implemented custom CSS class `.legal-document-tight` with balanced spacing (line-height: 1.3, 0.2rem margins) to ensure published legal documents match admin interface formatting exactly. Removed automatic document titles from published pages for complete user control over content presentation.
 - **Cross-Page Navigation Fix (January 2025)**: Fixed navigation anchors so clicking header menu items (like "Galerie") from legal documents or other pages now properly navigates to homepage and scrolls to the correct section using sessionStorage for smooth transitions.
+- **FAQ Interactive Styling (January 2025)**: Updated FAQ section to use official MEMOPYK beige colors (bg-memopyk-cream, text-memopyk-navy) when questions are opened, with single-question behavior ensuring only one question displays special styling at a time.
+- **Rich Text Editor Fix (January 2025)**: Fixed Legal Documents editor toolbar positioning with sticky positioning (position: sticky, top: 0, z-index: 100) so formatting tools remain visible when scrolling through long content.
 
 ## User Preferences
 Preferred communication style: Simple, everyday language.
