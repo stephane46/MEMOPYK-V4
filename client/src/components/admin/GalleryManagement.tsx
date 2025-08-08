@@ -204,10 +204,10 @@ export default function GalleryManagement() {
     }
   });
 
-  // Reorder gallery item mutation
-  const reorderItemMutation = useMutation({
-    mutationFn: async ({ id, order_index }: { id: string; order_index: number }) => {
-      return apiRequest(`/api/gallery/${id}/reorder`, 'PATCH', { order_index });
+  // Swap gallery items mutation
+  const swapItemsMutation = useMutation({
+    mutationFn: async ({ id1, id2 }: { id1: string; id2: string }) => {
+      return apiRequest(`/api/gallery/${id1}/swap/${id2}`, 'PATCH');
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['/api/gallery'] });
@@ -245,11 +245,13 @@ export default function GalleryManagement() {
     const currentIndex = sortedItems.findIndex(i => i.id === item.id);
     
     if (direction === 'up' && currentIndex > 0) {
-      const newOrder = sortedItems[currentIndex - 1].order_index;
-      reorderItemMutation.mutate({ id: item.id, order_index: newOrder });
+      const targetItem = sortedItems[currentIndex - 1];
+      console.log(`🔄 Moving item ${item.id} UP - swapping with ${targetItem.id}`);
+      swapItemsMutation.mutate({ id1: item.id, id2: targetItem.id });
     } else if (direction === 'down' && currentIndex < sortedItems.length - 1) {
-      const newOrder = sortedItems[currentIndex + 1].order_index;
-      reorderItemMutation.mutate({ id: item.id, order_index: newOrder });
+      const targetItem = sortedItems[currentIndex + 1];
+      console.log(`🔄 Moving item ${item.id} DOWN - swapping with ${targetItem.id}`);
+      swapItemsMutation.mutate({ id1: item.id, id2: targetItem.id });
     }
   };
 
