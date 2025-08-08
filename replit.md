@@ -5,6 +5,7 @@ MEMOPYK is a full-stack memory film platform designed to transform personal phot
 
 ## User Preferences
 Preferred communication style: Simple, everyday language.
+Visual consistency priority: Extremely detail-oriented about spacing and formatting consistency between admin interface and published pages.
 
 ## System Architecture
 
