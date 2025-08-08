@@ -137,7 +137,7 @@ export default function PerformanceTestDashboard() {
         if (refreshType === 'hard') {
           staticImageSource = 'vps'; // Hard refresh bypasses cache
         } else {
-          staticImageSource = staticImageTime < 50 ? 'cache' : 'vps';
+          staticImageSource = staticImageTime < 100 ? 'cache' : 'vps'; // Increased threshold for better cache detection
         }
         console.log(`🖼️ Static image test: ${staticImageTime}ms from ${staticImageSource} (${refreshType} refresh)`);
       } catch (error) {
@@ -146,8 +146,8 @@ export default function PerformanceTestDashboard() {
         console.error('Static image test failed:', error);
       }
 
-      // Test 3: Gallery API Performance
-      setCurrentTest('Testing Gallery API Response...');
+      // Test 3: Gallery Data API Performance
+      setCurrentTest('Testing Gallery Data Loading...');
       setTestProgress(80);
       
       const apiStartTime = performance.now();
@@ -162,9 +162,9 @@ export default function PerformanceTestDashboard() {
         await apiResponse.json();
         galleryApiTime = Math.round(performance.now() - apiStartTime);
         
-        // Gallery API uses in-memory cache for recent requests, but always queries VPS database
-        galleryApiSource = galleryApiTime < 50 ? 'cache' : 'vps';
-        console.log(`📊 Gallery API test: ${galleryApiTime}ms from ${galleryApiSource} (${refreshType} refresh)`);
+        // Gallery data API uses in-memory cache for recent requests, but queries database
+        galleryApiSource = galleryApiTime < 50 ? 'cache' : 'database';
+        console.log(`📊 Gallery Data API test: ${galleryApiTime}ms from ${galleryApiSource} (${refreshType} refresh)`);
       } catch (error) {
         galleryApiTime = -1;
         galleryApiSource = 'error';
@@ -254,12 +254,14 @@ export default function PerformanceTestDashboard() {
     }
   };
 
-  const getSourceBadge = (source: 'cache' | 'vps' | 'error') => {
+  const getSourceBadge = (source: 'cache' | 'vps' | 'database' | 'error') => {
     switch (source) {
       case 'cache':
         return <Badge variant="secondary" className="bg-green-100 text-green-800 hover:bg-green-200">Cache</Badge>;
       case 'vps':
         return <Badge variant="secondary" className="bg-blue-100 text-blue-800 hover:bg-blue-200">VPS</Badge>;
+      case 'database':
+        return <Badge variant="secondary" className="bg-purple-100 text-purple-800 hover:bg-purple-200">Database</Badge>;
       case 'error':
         return <Badge variant="secondary" className="bg-red-100 text-red-800 hover:bg-red-200">Error</Badge>;
       default:
@@ -386,7 +388,7 @@ export default function PerformanceTestDashboard() {
               <div className="bg-gray-50 dark:bg-gray-800 rounded-lg p-4 border border-gray-200 dark:border-gray-700">
                 <div className="flex items-center gap-2 mb-3">
                   <Database className="h-4 w-4 text-blue-500" />
-                  <span className="text-sm font-semibold text-gray-900 dark:text-white">Gallery API</span>
+                  <span className="text-sm font-semibold text-gray-900 dark:text-white">Gallery Data</span>
                 </div>
                 <div className="space-y-2">
                   <div className="flex items-center justify-between">
@@ -474,7 +476,7 @@ export default function PerformanceTestDashboard() {
                     <div className="bg-gray-50 dark:bg-gray-800 rounded-lg p-3 border">
                       <div className="flex items-center gap-2 mb-2">
                         <Database className="h-4 w-4 text-blue-500" />
-                        <span className="text-sm font-semibold text-gray-900 dark:text-white">Gallery API</span>
+                        <span className="text-sm font-semibold text-gray-900 dark:text-white">Gallery Data</span>
                       </div>
                       <div className="flex items-center justify-between">
                         <span className="text-lg font-bold text-gray-900 dark:text-white">
