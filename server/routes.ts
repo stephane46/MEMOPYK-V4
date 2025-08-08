@@ -3,7 +3,7 @@ import { createServer, type Server } from "http";
 import { hybridStorage } from "./hybrid-storage";
 import { z } from "zod";
 import { videoCache } from "./video-cache";
-import fs, { createReadStream, existsSync, statSync, mkdirSync, openSync, closeSync } from 'fs';
+import fs, { createReadStream, existsSync, statSync, mkdirSync, openSync, closeSync, readdirSync, unlinkSync } from 'fs';
 import path from 'path';
 import multer from 'multer';
 import { createClient } from '@supabase/supabase-js';
@@ -4139,6 +4139,77 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error) {
       console.error('Cache breakdown error:', error);
       res.status(500).json({ error: 'Failed to get cache breakdown' });
+    }
+  });
+
+  // Cleanup orphaned static images
+  app.post('/api/cache/cleanup-orphaned-static-images', async (req, res) => {
+    try {
+      console.log('🧹 Starting orphaned static image cleanup...');
+      
+      // Get current gallery items to find referenced static images
+      const galleryItems = await hybridStorage.getGalleryItems();
+      console.log(`Found ${galleryItems.length} gallery items`);
+      
+      // Extract referenced static image filenames
+      const referencedStaticImages = new Set<string>();
+      galleryItems.forEach(item => {
+        if (item.static_image_url_en) {
+          const filename = item.static_image_url_en.split('/').pop();
+          if (filename) referencedStaticImages.add(filename);
+        }
+        if (item.static_image_url_fr) {
+          const filename = item.static_image_url_fr.split('/').pop();
+          if (filename) referencedStaticImages.add(filename);
+        }
+      });
+      
+      console.log('Referenced static images:', Array.from(referencedStaticImages));
+      
+      // Get all cached static images
+      const cacheImagesPath = path.join(__dirname, '../server/cache/images');
+      if (!existsSync(cacheImagesPath)) {
+        return res.json({ message: 'No image cache directory found', cleaned: 0 });
+      }
+      
+      const cachedImages = readdirSync(cacheImagesPath).filter(file => 
+        file.match(/\.(jpg|jpeg|png|webp)$/i)
+      );
+      
+      console.log('Cached images:', cachedImages);
+      
+      // Find orphaned images (cached but not referenced)
+      const orphanedImages = cachedImages.filter(filename => 
+        !referencedStaticImages.has(filename)
+      );
+      
+      console.log('Orphaned images to remove:', orphanedImages);
+      
+      // Remove orphaned images
+      let cleanedCount = 0;
+      for (const orphanedImage of orphanedImages) {
+        const imagePath = path.join(cacheImagesPath, orphanedImage);
+        try {
+          unlinkSync(imagePath);
+          console.log(`✅ Removed orphaned image: ${orphanedImage}`);
+          cleanedCount++;
+        } catch (error) {
+          console.error(`❌ Failed to remove ${orphanedImage}:`, error);
+        }
+      }
+      
+      console.log(`🧹 Cleanup complete: removed ${cleanedCount} orphaned images`);
+      
+      res.json({
+        message: `Successfully cleaned up ${cleanedCount} orphaned static images`,
+        cleaned: cleanedCount,
+        orphanedImages: orphanedImages,
+        referencedImages: Array.from(referencedStaticImages)
+      });
+      
+    } catch (error) {
+      console.error('Orphaned image cleanup error:', error);
+      res.status(500).json({ error: 'Failed to cleanup orphaned images' });
     }
   });
 

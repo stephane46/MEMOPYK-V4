@@ -1556,7 +1556,7 @@ export default function AdminPage() {
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                     <Button
                       size="lg"
                       variant="default"
@@ -1598,6 +1598,45 @@ export default function AdminPage() {
                         <span className="text-lg">🧹 Smart Cleanup</span>
                       </div>
                       <span className="text-sm opacity-90">Supprime fichiers expirés (&gt;30j) + orphelins uniquement</span>
+                    </Button>
+
+                    <Button
+                      size="lg"
+                      variant="outline"
+                      className="h-20 flex-col gap-2 border-orange-300 bg-orange-50 text-orange-700 hover:bg-orange-100"
+                      onClick={async () => {
+                        try {
+                          const response = await apiRequest('/api/cache/cleanup-orphaned-static-images', 'POST');
+                          const data = await response.json();
+                          
+                          if (data.cleaned > 0) {
+                            toast({
+                              title: "Images orphelines supprimées",
+                              description: `${data.cleaned} images orphelines supprimées. Cache maintenant: ${data.referencedImages.length} images pour ${data.referencedImages.length} galeries actives.`,
+                            });
+                          } else {
+                            toast({
+                              title: "Aucune image orpheline",
+                              description: "Toutes les images en cache sont utilisées par des galeries actives.",
+                            });
+                          }
+                          
+                          // Refresh cache stats
+                          queryClient.invalidateQueries({ queryKey: ['/api/cache/breakdown'] });
+                        } catch (error) {
+                          toast({
+                            title: "Erreur nettoyage",
+                            description: "Impossible de nettoyer les images orphelines.",
+                            variant: "destructive",
+                          });
+                        }
+                      }}
+                    >
+                      <div className="flex items-center gap-2">
+                        <Trash2 className="h-5 w-5" />
+                        <span className="text-lg">🗑️ Images Orphelines</span>
+                      </div>
+                      <span className="text-sm opacity-90">Supprime images inutilisées uniquement</span>
                     </Button>
                   </div>
                   
