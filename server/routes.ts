@@ -336,7 +336,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       // Special handling for "item not found" - this is actually success for deletion
       if (error.message === 'Gallery item not found') {
-        console.log(`✅ Item ${itemId} already deleted or never existed - treating as successful deletion`);
+        console.log(`✅ Item ${req.params.id} already deleted or never existed - treating as successful deletion`);
         return res.json({ 
           success: true, 
           message: 'Item was already deleted or does not exist',
