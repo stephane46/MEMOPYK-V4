@@ -576,79 +576,69 @@ export default function GalleryManagementNew() {
     }
   });
 
-  // Reorder gallery item mutation
-  const reorderItemMutation = useMutation({
-    mutationFn: async ({ id, order_index }: { id: string; order_index: number }) => {
-      return apiRequest(`/api/gallery/${id}/reorder`, 'PATCH', { order_index });
+  // Swap gallery items mutation
+  const swapItemsMutation = useMutation({
+    mutationFn: async ({ id1, id2 }: { id1: string; id2: string }) => {
+      console.log('🔄 SWAP MUTATION START:', { id1, id2 });
+      const result = await apiRequest(`/api/gallery/${id1}/swap/${id2}`, 'PATCH');
+      console.log('🔄 SWAP MUTATION API RESULT:', result);
+      return result;
     },
-    onSuccess: () => {
+    onSuccess: (data, variables) => {
+      console.log('🔄 SWAP MUTATION SUCCESS - Invalidating cache...');
+      console.log('🔄 Variables that succeeded:', variables);
+      console.log('🔄 Data from successful swap:', data);
       // Force immediate cache invalidation and refetch
       queryClient.removeQueries({ queryKey: ['/api/gallery'] });
       queryClient.invalidateQueries({ queryKey: ['/api/gallery'] });
-      queryClient.refetchQueries({ queryKey: ['/api/gallery'] });
-      
+      console.log('🔄 Query cache invalidated');
       toast({ 
         title: "✅ Succès", 
         description: "Ordre mis à jour!",
         className: "bg-green-50 dark:bg-green-900/20 border-green-200 dark:border-green-800 text-green-900 dark:text-green-100"
       });
     },
-    onError: () => {
+    onError: (error) => {
+      console.error('🔄 SWAP MUTATION ERROR:', error);
       toast({ title: "Erreur", description: "Échec du réordonnancement", variant: "destructive" });
     }
   });
 
-  const handleReorder = async (item: GalleryItem, direction: 'up' | 'down') => {
+  const handleReorder = (item: GalleryItem, direction: 'up' | 'down') => {
+    console.log('🔄 REORDER CLICKED:', { itemId: item.id, itemTitle: item.title_en, direction });
+    
     const sortedItems = [...galleryItems].sort((a, b) => a.order_index - b.order_index);
+    console.log('🔄 Current sorted items:', sortedItems.map(i => ({ id: i.id, title: i.title_en, order: i.order_index })));
+    
     const currentIndex = sortedItems.findIndex(i => i.id === item.id);
-    
-    console.log('🔄 REORDER DEBUG:', {
-      direction,
-      currentIndex,
-      totalItems: sortedItems.length,
-      sortedItems: sortedItems.map(i => ({ id: i.id, title: i.title_en, order: i.order_index }))
-    });
-    
-    let targetIndex = -1;
+    console.log('🔄 Current index:', currentIndex);
     
     if (direction === 'up' && currentIndex > 0) {
-      targetIndex = currentIndex - 1;
-    } else if (direction === 'down' && currentIndex < sortedItems.length - 1) {
-      targetIndex = currentIndex + 1;
-    }
-    
-    if (targetIndex >= 0) {
-      const targetItem = sortedItems[targetIndex];
+      const targetItem = sortedItems[currentIndex - 1];
+      console.log(`🔄 Moving item ${item.title_en} UP - swapping with ${targetItem.title_en}`);
+      console.log(`🔄 IDs: ${item.id} ↔ ${targetItem.id}`);
       
-      console.log('🔄 SWAPPING:', { 
-        current: { id: item.id, title: item.title_en, order: item.order_index }, 
-        target: { id: targetItem.id, title: targetItem.title_en, order: targetItem.order_index } 
-      });
-      
-      try {
-        // Use new swap API endpoint
-        const response = await apiRequest(`/api/gallery/${item.id}/swap/${targetItem.id}`, 'PATCH');
-        console.log('✅ SWAP COMPLETE:', response);
-        
-        // Force immediate UI refresh after swap
-        queryClient.removeQueries({ queryKey: ['/api/gallery'] });
-        queryClient.invalidateQueries({ queryKey: ['/api/gallery'] });
-        
-        // Wait a moment then refetch to ensure database changes are reflected
-        setTimeout(async () => {
-          await queryClient.refetchQueries({ queryKey: ['/api/gallery'] });
-          console.log('🔄 Forced gallery refetch after reorder');
-        }, 300);
-        
-        toast({ 
-          title: "✅ Succès", 
-          description: "Ordre mis à jour!",
-          className: "bg-green-50 dark:bg-green-900/20 border-green-200 dark:border-green-800 text-green-900 dark:text-green-100"
-        });
-      } catch (error) {
-        console.error('❌ Reorder error:', error);
-        toast({ title: "Erreur", description: "Échec du réordonnancement", variant: "destructive" });
+      // Prevent multiple rapid clicks
+      if (swapItemsMutation.isPending) {
+        console.log('🔄 Swap already in progress, ignoring click');
+        return;
       }
+      
+      swapItemsMutation.mutate({ id1: item.id, id2: targetItem.id });
+    } else if (direction === 'down' && currentIndex < sortedItems.length - 1) {
+      const targetItem = sortedItems[currentIndex + 1];
+      console.log(`🔄 Moving item ${item.title_en} DOWN - swapping with ${targetItem.title_en}`);
+      console.log(`🔄 IDs: ${item.id} ↔ ${targetItem.id}`);
+      
+      // Prevent multiple rapid clicks
+      if (swapItemsMutation.isPending) {
+        console.log('🔄 Swap already in progress, ignoring click');
+        return;
+      }
+      
+      swapItemsMutation.mutate({ id1: item.id, id2: targetItem.id });
+    } else {
+      console.log('🔄 Cannot move:', direction === 'up' ? 'Already at top' : 'Already at bottom');
     }
   };
 
@@ -840,7 +830,7 @@ export default function GalleryManagementNew() {
                     <>
                       <button
                         onClick={() => handleReorder(selectedItem, 'up')}
-                        disabled={reorderItemMutation.isPending || isFirst}
+                        disabled={swapItemsMutation.isPending || isFirst}
                         className="flex items-center gap-2 px-4 py-2 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md hover:bg-gray-50 dark:hover:bg-gray-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                       >
                         <div className="w-4 h-4 flex items-center justify-center">↑</div>
@@ -848,7 +838,7 @@ export default function GalleryManagementNew() {
                       </button>
                       <button
                         onClick={() => handleReorder(selectedItem, 'down')}
-                        disabled={reorderItemMutation.isPending || isLast}
+                        disabled={swapItemsMutation.isPending || isLast}
                         className="flex items-center gap-2 px-4 py-2 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md hover:bg-gray-50 dark:hover:bg-gray-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                       >
                         <div className="w-4 h-4 flex items-center justify-center">↓</div>
