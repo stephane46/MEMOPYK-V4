@@ -225,8 +225,8 @@ export function Layout({ children }: LayoutProps) {
               />
               <p className="text-gray-400 mb-4">
                 {language === 'fr-FR' 
-                  ? 'Créateur de films mémoire pour immortaliser vos moments précieux.'
-                  : 'Memory film creator to immortalize your precious moments.'
+                  ? 'Créateur de films souvenirs pour immortaliser vos moments précieux.'
+                  : 'Memory keepsake creator to immortalize your precious moments.'
                 }
               </p>
             </div>

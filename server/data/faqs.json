@@ -54,8 +54,8 @@
     "section_id": "pricing",
     "question_en": "What is your payment process?",
     "question_fr": "Comment se déroule le paiement ?",
-    "answer_en": "<ul><li>50% deposit on quotation approval (to start production)</li><li>Remaining 50% on final approval (to receive the watermark-free film)</li></ul>",
-    "answer_fr": "<ul><li>50 % d’acompte à la validation du devis (lancement de la production)</li><li>50 % restants à la validation finale (livraison sans filigrane)</li></ul>",
+    "answer_en": "<ul><li>50% deposit on quotation approval (we start to make your film)</li><li>Remaining 50% on final approval (delivery of the watermark-free version of your film)</li></ul>",
+    "answer_fr": "<ul><li>50 % d’acompte à la validation du devis (démarrage de la création de votre film)</li><li>50 % restants à la validation finale (livraison sans filigrane)</li></ul>",
     "order_index": 2,
     "is_active": true
   },

@@ -16,26 +16,26 @@ export const LanguageContext = createContext<LanguageContextType | undefined>(un
 // Basic translations for the app
 const translations: Record<Language, Record<string, string>> = {
   'fr-FR': {
-    'site.title': 'MEMOPYK - Films Mémoire',
+    'site.title': 'MEMOPYK - Films Souvenirs',
     'nav.how-it-works': 'Comment ça marche',
     'nav.gallery': 'Galerie',
     'nav.quote': 'Commencer',
     'nav.appointment': 'Rendez-vous',
     'nav.language': 'Langue',
-    'hero.title': 'Créateur de Films Mémoire',
+    'hero.title': 'Créateur de Films Souvenirs',
     'hero.subtitle': 'Transformez vos moments précieux en films cinématographiques',
     'loading': 'Chargement...',
     'error': 'Erreur',
     'welcome': 'Bienvenue sur MEMOPYK'
   },
   'en-US': {
-    'site.title': 'MEMOPYK - Memory Films',
+    'site.title': 'MEMOPYK - Memory Keepsakes',
     'nav.how-it-works': 'How it works',
     'nav.gallery': 'Gallery',
     'nav.quote': 'Get started',
     'nav.appointment': 'Appointment',
     'nav.language': 'Language',
-    'hero.title': 'Memory Film Creator',
+    'hero.title': 'Memory Keepsake Creator',
     'hero.subtitle': 'Transform your precious moments into cinematic films',
     'loading': 'Loading...',
     'error': 'Error',
