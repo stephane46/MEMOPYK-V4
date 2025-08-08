@@ -295,25 +295,21 @@ export function LegalDocumentManagement() {
                   </TabsTrigger>
                 </TabsList>
                 <TabsContent value="french" className="mt-4">
-                  <div className="border border-gray-200 dark:border-gray-700 rounded-lg overflow-visible">
-                    <div className="min-h-[400px] overflow-visible">
-                      <RichTextEditor
-                        value={formData.content_fr}
-                        onChange={(value) => setFormData({ ...formData, content_fr: value })}
-                        placeholder="Rédigez le contenu juridique en français..."
-                      />
-                    </div>
+                  <div className="rounded-lg" style={{ position: 'relative', height: '500px', overflow: 'auto' }}>
+                    <RichTextEditor
+                      value={formData.content_fr}
+                      onChange={(value) => setFormData({ ...formData, content_fr: value })}
+                      placeholder="Rédigez le contenu juridique en français..."
+                    />
                   </div>
                 </TabsContent>
                 <TabsContent value="english" className="mt-4">
-                  <div className="border border-gray-200 dark:border-gray-700 rounded-lg overflow-visible">
-                    <div className="min-h-[400px] overflow-visible">
-                      <RichTextEditor
-                        value={formData.content_en}
-                        onChange={(value) => setFormData({ ...formData, content_en: value })}
-                        placeholder="Write the legal content in English..."
-                      />
-                    </div>
+                  <div className="rounded-lg" style={{ position: 'relative', height: '500px', overflow: 'auto' }}>
+                    <RichTextEditor
+                      value={formData.content_en}
+                      onChange={(value) => setFormData({ ...formData, content_en: value })}
+                      placeholder="Write the legal content in English..."
+                    />
                   </div>
                 </TabsContent>
               </Tabs>
