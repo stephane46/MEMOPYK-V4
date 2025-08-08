@@ -236,13 +236,21 @@ export default function FAQSection() {
                           {/* Question Header - Mobile Optimized */}
                           <button
                             onClick={() => toggleQuestion(faq.id)}
-                            className="w-full text-left px-4 sm:px-6 py-3 sm:py-4 hover:bg-gray-50 transition-colors flex items-center justify-between touch-manipulation min-h-[44px]"
+                            className={`w-full text-left px-4 sm:px-6 py-3 sm:py-4 transition-colors flex items-center justify-between touch-manipulation min-h-[44px] ${
+                              openQuestions.has(faq.id) 
+                                ? 'bg-memopyk-cream' 
+                                : 'hover:bg-gray-50'
+                            }`}
                           >
-                            <h4 className="text-base sm:text-lg font-semibold text-gray-900 pr-2 sm:pr-4 leading-tight">
+                            <h4 className={`text-base sm:text-lg font-semibold pr-2 sm:pr-4 leading-tight ${
+                              openQuestions.has(faq.id) 
+                                ? 'text-memopyk-navy' 
+                                : 'text-gray-900'
+                            }`}>
                               {language === 'fr-FR' ? faq.question_fr : faq.question_en}
                             </h4>
                             {openQuestions.has(faq.id) ? (
-                              <ChevronUp className="h-4 w-4 sm:h-5 sm:w-5 text-gray-500 flex-shrink-0" />
+                              <ChevronUp className="h-4 w-4 sm:h-5 sm:w-5 text-memopyk-navy flex-shrink-0" />
                             ) : (
                               <ChevronDown className="h-4 w-4 sm:h-5 sm:w-5 text-gray-500 flex-shrink-0" />
                             )}
@@ -250,9 +258,9 @@ export default function FAQSection() {
 
                           {/* Answer Content - Mobile Optimized */}
                           {openQuestions.has(faq.id) && (
-                            <div className="px-4 sm:px-6 pb-3 sm:pb-4 pt-2 border-t border-gray-100 animate-in slide-in-from-top-2 duration-200">
+                            <div className="px-4 sm:px-6 pb-3 sm:pb-4 pt-2 border-t border-memopyk-cream bg-memopyk-cream animate-in slide-in-from-top-2 duration-200">
                               <div 
-                                className="text-gray-700 leading-relaxed prose prose-sm max-w-none text-sm sm:text-base"
+                                className="text-memopyk-navy leading-relaxed prose prose-sm max-w-none text-sm sm:text-base"
                                 dangerouslySetInnerHTML={{
                                   __html: htmlSanitizer.sanitize(language === 'fr-FR' ? faq.answer_fr : faq.answer_en)
                                 }}
