@@ -22,6 +22,7 @@ import {
   BarChart3
 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import { getTimeStatus, detectSourceFromHeaders, humanBytes, getPayloadSize, type PerfType } from '@/lib/performance-thresholds';
 
 interface PerformanceResult {
   id: string;
@@ -29,10 +30,13 @@ interface PerformanceResult {
   refreshType: 'normal' | 'hard';
   heroVideoTime: number;
   heroVideoSource: 'cache' | 'vps' | 'error';
+  heroVideoSize?: number;
   staticImageTime: number;
   staticImageSource: 'cache' | 'vps' | 'error';
+  staticImageSize?: number;
   galleryApiTime: number;
   galleryApiSource: 'cache' | 'vps' | 'error';
+  galleryApiSize?: number;
   totalTime: number;
 }
 
@@ -77,10 +81,13 @@ export default function PerformanceTestDashboard() {
     const testId = `test_${Date.now()}`;
     let heroVideoTime = 0;
     let heroVideoSource: 'cache' | 'vps' | 'error' = 'error';
+    let heroVideoSize = 0;
     let staticImageTime = 0;
     let staticImageSource: 'cache' | 'vps' | 'error' = 'error';
+    let staticImageSize = 0;
     let galleryApiTime = 0;
     let galleryApiSource: 'cache' | 'vps' | 'error' = 'error';
+    let galleryApiSize = 0;
 
     try {
       toast({
@@ -96,21 +103,26 @@ export default function PerformanceTestDashboard() {
       try {
         // Test hero video loading by fetching a video with cache-control based on refresh type
         const heroResponse = await fetch('/api/video-proxy?filename=VideoHero1.mp4&range=bytes=0-1023', {
-          cache: refreshType === 'hard' ? 'no-cache' : 'default',
+          cache: refreshType === 'hard' ? 'no-store' : 'default',
           headers: refreshType === 'hard' ? {
             'Cache-Control': 'no-cache, no-store, must-revalidate',
-            'Pragma': 'no-cache'
+            'Pragma': 'no-cache',
+            'X-Test-Bypass-Cache': '1'
           } : {}
         });
         heroVideoTime = Math.round(performance.now() - heroStartTime);
+        heroVideoSize = getPayloadSize(heroResponse) || 1024; // 1KB range request
         
-        // Determine source: Hard refresh forces VPS, normal refresh with fast response indicates cache
-        if (refreshType === 'hard') {
-          heroVideoSource = 'vps'; // Hard refresh bypasses cache
+        // Use header-based detection, fallback to time threshold
+        const heroHeaders = detectSourceFromHeaders(heroResponse);
+        if (heroHeaders.cache) {
+          heroVideoSource = heroHeaders.cache === 'HIT' ? 'cache' : 'vps';
         } else {
-          heroVideoSource = heroVideoTime < 100 ? 'cache' : 'vps';
+          // Fallback to time threshold
+          heroVideoSource = refreshType === 'hard' ? 'vps' : (heroVideoTime < 100 ? 'cache' : 'vps');
         }
-        console.log(`🎬 Hero video test: ${heroVideoTime}ms from ${heroVideoSource} (${refreshType} refresh)`);
+        
+        console.log(`🎬 Hero video test: ${heroVideoTime}ms • ${humanBytes(heroVideoSize)} from ${heroVideoSource} (${refreshType} refresh)`);
       } catch (error) {
         heroVideoTime = -1;
         heroVideoSource = 'error';
@@ -125,22 +137,26 @@ export default function PerformanceTestDashboard() {
       try {
         // Test static image loading with actual cached image
         const imageResponse = await fetch('/api/image-proxy?filename=static_auto_1754635504743.jpg', {
-          cache: refreshType === 'hard' ? 'no-cache' : 'default',
+          cache: refreshType === 'hard' ? 'no-store' : 'default',
           headers: refreshType === 'hard' ? {
             'Cache-Control': 'no-cache, no-store, must-revalidate',
-            'Pragma': 'no-cache'
+            'Pragma': 'no-cache',
+            'X-Test-Bypass-Cache': '1'
           } : {}
         });
         staticImageTime = Math.round(performance.now() - imageStartTime);
+        staticImageSize = getPayloadSize(imageResponse) || 50419; // ~50KB typical static image
         
-        // Determine source: Check X-Cache-Status header for actual cache status
-        const cacheHeader = imageResponse.headers.get('X-Cache-Status');
-        if (refreshType === 'hard') {
-          staticImageSource = 'vps'; // Hard refresh bypasses cache
+        // Use header-based detection
+        const imageHeaders = detectSourceFromHeaders(imageResponse);
+        if (imageHeaders.cache) {
+          staticImageSource = imageHeaders.cache === 'HIT' ? 'cache' : 'vps';
         } else {
-          staticImageSource = cacheHeader === 'HIT' ? 'cache' : 'vps'; // Use actual cache status from server
+          // Fallback
+          staticImageSource = refreshType === 'hard' ? 'vps' : 'cache';
         }
-        console.log(`🖼️ Static image test: ${staticImageTime}ms from ${staticImageSource} (${refreshType} refresh) - X-Cache-Status: ${cacheHeader}`);
+        
+        console.log(`🖼️ Static image test: ${staticImageTime}ms • ${humanBytes(staticImageSize)} from ${staticImageSource} (${refreshType} refresh) - X-Cache-Status: ${imageHeaders.cache}`);
       } catch (error) {
         staticImageTime = -1;
         staticImageSource = 'error';
@@ -154,18 +170,27 @@ export default function PerformanceTestDashboard() {
       const apiStartTime = performance.now();
       try {
         const apiResponse = await fetch('/api/gallery', {
-          cache: refreshType === 'hard' ? 'no-cache' : 'default',
+          cache: refreshType === 'hard' ? 'no-store' : 'default',
           headers: refreshType === 'hard' ? {
             'Cache-Control': 'no-cache, no-store, must-revalidate',
-            'Pragma': 'no-cache'
+            'Pragma': 'no-cache',
+            'X-Test-Bypass-Cache': '1'
           } : {}
         });
-        await apiResponse.json();
+        const apiData = await apiResponse.json();
         galleryApiTime = Math.round(performance.now() - apiStartTime);
+        galleryApiSize = getPayloadSize(apiResponse) || JSON.stringify(apiData).length;
         
-        // Gallery videos API uses in-memory cache for recent requests, but queries VPS
-        galleryApiSource = galleryApiTime < 50 ? 'cache' : 'vps';
-        console.log(`📊 Gallery Videos API test: ${galleryApiTime}ms from ${galleryApiSource} (${refreshType} refresh)`);
+        // Use header-based detection
+        const apiHeaders = detectSourceFromHeaders(apiResponse);
+        if (apiHeaders.cache) {
+          galleryApiSource = apiHeaders.cache === 'HIT' ? 'cache' : 'vps';
+        } else {
+          // Fallback to time threshold
+          galleryApiSource = galleryApiTime < 50 ? 'cache' : 'vps';
+        }
+        
+        console.log(`📊 Gallery Videos API test: ${galleryApiTime}ms • ${humanBytes(galleryApiSize)} from ${galleryApiSource} (${refreshType} refresh)`);
       } catch (error) {
         galleryApiTime = -1;
         galleryApiSource = 'error';
@@ -183,10 +208,13 @@ export default function PerformanceTestDashboard() {
         refreshType,
         heroVideoTime,
         heroVideoSource,
+        heroVideoSize,
         staticImageTime,
         staticImageSource,
+        staticImageSize,
         galleryApiTime,
         galleryApiSource,
+        galleryApiSize,
         totalTime
       };
 
@@ -197,7 +225,7 @@ export default function PerformanceTestDashboard() {
 
       toast({
         title: "Performance Test Complete",
-        description: `Total time: ${totalTime}ms (Hero: ${heroVideoTime}ms, Images: ${staticImageTime}ms, API: ${galleryApiTime}ms)`,
+        description: `Total time: ${totalTime}ms (Hero: ${heroVideoTime}ms • ${humanBytes(heroVideoSize)}, Images: ${staticImageTime}ms • ${humanBytes(staticImageSize)}, API: ${galleryApiTime}ms • ${humanBytes(galleryApiSize)})`,
       });
 
     } catch (error) {
@@ -223,36 +251,21 @@ export default function PerformanceTestDashboard() {
     });
   };
 
-  const getTimeStatus = (time: number, type: 'hero' | 'image' | 'api') => {
-    if (time === -1) return 'error';
-    
-    switch (type) {
-      case 'hero':
-        return time < 50 ? 'excellent' : time < 100 ? 'good' : time < 200 ? 'warning' : 'poor';
-      case 'image':
-        return time < 10 ? 'excellent' : time < 50 ? 'good' : time < 100 ? 'warning' : 'poor';
-      case 'api':
-        return time < 100 ? 'excellent' : time < 200 ? 'good' : time < 400 ? 'warning' : 'poor';
-      default:
-        return 'good';
-    }
-  };
+  // Removed old getTimeStatus - now using the one from performance-thresholds.ts
 
-  const getStatusBadge = (status: string) => {
-    switch (status) {
-      case 'excellent':
-        return <Badge className="bg-green-500 hover:bg-green-600">Excellent</Badge>;
-      case 'good':
-        return <Badge className="bg-blue-500 hover:bg-blue-600">Good</Badge>;
-      case 'warning':
-        return <Badge className="bg-yellow-500 hover:bg-yellow-600">Slow</Badge>;
-      case 'poor':
-        return <Badge className="bg-red-500 hover:bg-red-600">Poor</Badge>;
-      case 'error':
-        return <Badge className="bg-gray-500 hover:bg-gray-600">Error</Badge>;
-      default:
-        return <Badge>Unknown</Badge>;
-    }
+  // Get status badge color based on performance time  
+  const getStatusBadge = (status: { label: string; pill: string }) => {
+    const colorMap = {
+      'good': 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300',
+      'fair': 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-300', 
+      'poor': 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300'
+    };
+    
+    return (
+      <Badge className={`${colorMap[status.pill as keyof typeof colorMap]} text-xs px-2 py-1`}>
+        {status.label}
+      </Badge>
+    );
   };
 
   const getSourceBadge = (source: 'cache' | 'vps' | 'database' | 'error') => {
@@ -361,8 +374,8 @@ export default function PerformanceTestDashboard() {
                 </div>
                 <div className="space-y-2">
                   <div className="flex items-center justify-between">
-                    <span className="text-2xl font-bold text-gray-900 dark:text-white">{averageResults.heroVideo}ms</span>
-                    {getStatusBadge(getTimeStatus(averageResults.heroVideo, 'hero'))}
+                    <span className="text-2xl font-bold text-gray-900 dark:text-white">{averageResults.heroVideo}ms • ~1 KB</span>
+                    {getStatusBadge(getTimeStatus('hero', averageResults.heroVideo))}
                   </div>
                   <div className="text-xs text-gray-500 dark:text-gray-400">
                     Average from cache
@@ -377,8 +390,8 @@ export default function PerformanceTestDashboard() {
                 </div>
                 <div className="space-y-2">
                   <div className="flex items-center justify-between">
-                    <span className="text-2xl font-bold text-gray-900 dark:text-white">{averageResults.staticImage}ms</span>
-                    {getStatusBadge(getTimeStatus(averageResults.staticImage, 'image'))}
+                    <span className="text-2xl font-bold text-gray-900 dark:text-white">{averageResults.staticImage}ms • ~50 KB</span>
+                    {getStatusBadge(getTimeStatus('image', averageResults.staticImage))}
                   </div>
                   <div className="text-xs text-gray-500 dark:text-gray-400">
                     Average from cache
@@ -393,8 +406,8 @@ export default function PerformanceTestDashboard() {
                 </div>
                 <div className="space-y-2">
                   <div className="flex items-center justify-between">
-                    <span className="text-2xl font-bold text-gray-900 dark:text-white">{averageResults.galleryApi}ms</span>
-                    {getStatusBadge(getTimeStatus(averageResults.galleryApi, 'api'))}
+                    <span className="text-2xl font-bold text-gray-900 dark:text-white">{averageResults.galleryApi}ms • ~2 KB</span>
+                    {getStatusBadge(getTimeStatus('api', averageResults.galleryApi))}
                   </div>
                   <div className="text-xs text-gray-500 dark:text-gray-400">
                     Average from VPS
@@ -449,10 +462,10 @@ export default function PerformanceTestDashboard() {
                       </div>
                       <div className="flex items-center justify-between">
                         <span className="text-lg font-bold text-gray-900 dark:text-white">
-                          {result.heroVideoTime > 0 ? result.heroVideoTime : 'Error'}ms
+                          {result.heroVideoTime > 0 ? result.heroVideoTime : 'Error'}ms • {humanBytes(result.heroVideoSize || 1024)}
                         </span>
                         <div className="flex items-center gap-1">
-                          {getStatusBadge(getTimeStatus(result.heroVideoTime, 'hero'))}
+                          {getStatusBadge(getTimeStatus('hero', result.heroVideoTime))}
                           {getSourceBadge(result.heroVideoSource)}
                         </div>
                       </div>
@@ -465,10 +478,10 @@ export default function PerformanceTestDashboard() {
                       </div>
                       <div className="flex items-center justify-between">
                         <span className="text-lg font-bold text-gray-900 dark:text-white">
-                          {result.staticImageTime > 0 ? result.staticImageTime : 'Error'}ms
+                          {result.staticImageTime > 0 ? result.staticImageTime : 'Error'}ms • {humanBytes(result.staticImageSize || 50419)}
                         </span>
                         <div className="flex items-center gap-1">
-                          {getStatusBadge(getTimeStatus(result.staticImageTime, 'image'))}
+                          {getStatusBadge(getTimeStatus('image', result.staticImageTime))}
                           {getSourceBadge(result.staticImageSource)}
                         </div>
                       </div>
@@ -481,10 +494,10 @@ export default function PerformanceTestDashboard() {
                       </div>
                       <div className="flex items-center justify-between">
                         <span className="text-lg font-bold text-gray-900 dark:text-white">
-                          {result.galleryApiTime > 0 ? result.galleryApiTime : 'Error'}ms
+                          {result.galleryApiTime > 0 ? result.galleryApiTime : 'Error'}ms • {humanBytes(result.galleryApiSize || 2048)}
                         </span>
                         <div className="flex items-center gap-1">
-                          {getStatusBadge(getTimeStatus(result.galleryApiTime, 'api'))}
+                          {getStatusBadge(getTimeStatus('api', result.galleryApiTime))}
                           {getSourceBadge(result.galleryApiSource)}
                         </div>
                       </div>

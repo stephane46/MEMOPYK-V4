@@ -270,10 +270,17 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.get("/api/gallery", async (req, res) => {
     try {
       const now = Date.now();
+      const bypassCache = req.headers['x-test-bypass-cache'] === '1';
       
-      // Check if cache is valid
-      if (galleryCache && (now - galleryCache.timestamp) < GALLERY_CACHE_TTL) {
+      // Check if cache is valid and not bypassing
+      if (!bypassCache && galleryCache && (now - galleryCache.timestamp) < GALLERY_CACHE_TTL) {
         console.log(`📋 Gallery data served from cache (${Math.round((now - galleryCache.timestamp) / 1000)}s old)`);
+        
+        // Set cache headers for performance testing
+        res.setHeader('X-Cache-Status', 'HIT');
+        res.setHeader('X-Data-Source', 'memory');
+        res.setHeader('X-Content-Bytes', String(JSON.stringify(galleryCache.data).length));
+        
         return res.json(galleryCache.data);
       }
       
@@ -281,6 +288,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const items = await hybridStorage.getGalleryItems();
       galleryCache = { data: items, timestamp: now };
       console.log(`🔄 Gallery data fetched from database and cached`);
+      
+      // Set cache headers for performance testing
+      res.setHeader('X-Cache-Status', 'MISS');
+      res.setHeader('X-Data-Source', 'db');
+      res.setHeader('X-Content-Bytes', String(JSON.stringify(items).length));
+      
       res.json(items);
     } catch (error) {
       res.status(500).json({ error: "Failed to get gallery items" });
@@ -4293,10 +4306,20 @@ export async function registerRoutes(app: Express): Promise<Server> {
         res.setHeader('Pragma', 'no-cache');
         res.setHeader('Expires', '0');
         res.setHeader('ETag', `"${Date.now()}"`);
+        // Performance test headers
+        const stats = fs.statSync(cachedImagePath);
         res.setHeader('X-Cache-Status', 'HIT'); // Indicate this came from local cache
+        res.setHeader('X-Data-Source', 'disk');
+        res.setHeader('X-Origin', 'vps-local');
+        res.setHeader('X-Content-Bytes', String(stats.size));
         res.sendFile(cachedImagePath);
       } else {
         console.log(`🌐 Image not cached, downloading and caching: ${filename}`);
+        
+        // Performance test headers for cache miss
+        res.setHeader('X-Cache-Status', 'MISS');
+        res.setHeader('X-Data-Source', 'upstream');
+        res.setHeader('X-Origin', 'supabase');
         
         // Download and cache the image
         await videoCache.downloadAndCacheImage(filename);
