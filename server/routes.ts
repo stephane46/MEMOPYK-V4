@@ -402,6 +402,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const item = await hybridStorage.updateGalleryItemOrder(itemId, order_index);
       console.log(`✅ Successfully reordered gallery item ${itemId}`);
       
+      // Clear gallery cache after successful reorder
+      galleryCache = null;
+      console.log('🗑️ Gallery cache cleared due to reorder');
+      
       res.json(item);
     } catch (error: any) {
       console.error('Gallery reorder error:', error);
@@ -422,6 +426,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       const result = await hybridStorage.swapGalleryItemOrder(itemId1, itemId2);
       console.log(`✅ Successfully swapped gallery items`);
+      
+      // CRITICAL FIX: Clear gallery cache after successful swap
+      galleryCache = null;
+      console.log('🗑️ Gallery cache cleared due to successful swap - UI will show fresh order immediately');
       
       res.json(result);
     } catch (error: any) {
