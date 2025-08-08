@@ -23,8 +23,8 @@ export function HowItWorksSection() {
       titleEn: "We Curate & Edit",
       descriptionFr: "Nous passons en revue chaque fichier pour repérer les moments les plus marquants, puis établissons l'arc naratif le plus adapté, avec des suggestions de musique, de durée et de format — tout est pensé pour sublimer vos souvenirs.",
       descriptionEn: "We go through every file to identify the most meaningful moments, then establish a personalized storyline, suggest music, duration, and format — every details are tailored to your memories.",
-      subDescriptionFr: "Besoin d'en discuter ? Une consultation est toujours possible, gratuitement.",
-      subDescriptionEn: "Need to talk it through? A consultation is always available, free of charge.",
+      subDescriptionFr: "Bien entendu, votre brief initial et tout commentaire que vous pourriez avoir sont toujours respectés, à chaque étape du processus.",
+      subDescriptionEn: "Of course, your initial brief and any comment that you may have are always respected, each step of the way.",
       image: "/images/How_we_work_Step2.png"
     },
     {
