@@ -35,18 +35,31 @@ export function CtaSection() {
             {/* Filter and display only active CTA buttons */}
             {ctaSettings
               .filter((cta: CtaSettings) => cta.isActive)
-              .map((cta: CtaSettings) => (
-                <a
-                  key={cta.id}
-                  href={language === 'fr-FR' ? cta.buttonUrlFr : cta.buttonUrlEn}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex items-center gap-3 bg-memopyk-orange hover:bg-memopyk-orange/90 text-white px-8 py-4 rounded-full font-semibold text-lg transition-all duration-300 transform hover:scale-105 shadow-lg"
-                >
-                  {cta.id === 'book_call' ? <Phone className="w-5 h-5" /> : <Edit className="w-5 h-5" />}
-                  {language === 'fr-FR' ? cta.buttonTextFr : cta.buttonTextEn}
-                </a>
-              ))
+              .map((cta: CtaSettings) => {
+                const url = language === 'fr-FR' ? cta.buttonUrlFr : cta.buttonUrlEn;
+                console.log('🔗 CTA Button render:', { 
+                  id: cta.id, 
+                  language, 
+                  url,
+                  buttonText: language === 'fr-FR' ? cta.buttonTextFr : cta.buttonTextEn
+                });
+                return (
+                  <a
+                    key={cta.id}
+                    href={url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    onClick={(e) => {
+                      console.log('🖱️ CTA Button clicked:', { id: cta.id, url });
+                      // Allow normal link behavior
+                    }}
+                    className="inline-flex items-center gap-3 bg-memopyk-orange hover:bg-memopyk-orange/90 text-white px-8 py-4 rounded-full font-semibold text-lg transition-all duration-300 transform hover:scale-105 shadow-lg cursor-pointer"
+                  >
+                    {cta.id === 'book_call' ? <Phone className="w-5 h-5" /> : <Edit className="w-5 h-5" />}
+                    {language === 'fr-FR' ? cta.buttonTextFr : cta.buttonTextEn}
+                  </a>
+                );
+              })
             }
           </div>
         </div>
