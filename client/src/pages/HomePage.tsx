@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import { HeroVideoSection } from '../components/sections/HeroVideoSection';
 import { KeyVisualSection } from '../components/sections/KeyVisualSection';
 import { HowItWorksSection } from '../components/sections/HowItWorksSection';
@@ -8,9 +9,27 @@ import { CtaSection } from '../components/sections/CtaSection';
 import { MobileOptimizationIndicator } from '../components/mobile/MobileOptimizationIndicator';
 import { useLanguage } from '../contexts/LanguageContext';
 
-
 export function HomePage() {
   const { language } = useLanguage();
+  
+  // Handle scrolling to anchor after navigation from other pages
+  useEffect(() => {
+    const scrollToSection = sessionStorage.getItem('scrollToSection');
+    if (scrollToSection) {
+      // Clear the stored section
+      sessionStorage.removeItem('scrollToSection');
+      
+      // Wait for page to fully load and render
+      const timer = setTimeout(() => {
+        const element = document.getElementById(scrollToSection);
+        if (element) {
+          element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+      }, 1000); // Increased delay to ensure all components are rendered
+      
+      return () => clearTimeout(timer);
+    }
+  }, []);
   
   return (
     <div className="min-h-screen">

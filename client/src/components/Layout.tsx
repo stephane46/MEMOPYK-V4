@@ -35,13 +35,9 @@ export function Layout({ children }: LayoutProps) {
     // First navigate to home page if not already there
     const cleanLocation = location.replace(/^\/(fr-FR|en-US)/, '') || '/';
     if (cleanLocation !== '/') {
+      // Store the section ID in sessionStorage so we can scroll after navigation
+      sessionStorage.setItem('scrollToSection', sectionId);
       window.location.href = getLocalizedPath('/');
-      setTimeout(() => {
-        const element = document.getElementById(sectionId);
-        if (element) {
-          element.scrollIntoView({ behavior: 'smooth' });
-        }
-      }, 500);
     } else {
       const element = document.getElementById(sectionId);
       if (element) {
