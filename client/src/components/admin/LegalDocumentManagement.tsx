@@ -6,6 +6,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Switch } from '@/components/ui/switch';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useToast } from '@/hooks/use-toast';
 import { apiRequest } from '@/lib/queryClient';
 import { RichTextEditor } from '@/components/ui/rich-text-editor';
@@ -275,29 +276,37 @@ export function LegalDocumentManagement() {
               </div>
             </div>
 
-            {/* Content - Rich Text Editors */}
-            <div className="space-y-6">
-              <div className="space-y-2">
-                <Label>Contenu (Français)</Label>
-                <div className="border border-gray-200 dark:border-gray-700 rounded-lg">
-                  <RichTextEditor
-                    value={formData.content_fr}
-                    onChange={(value) => setFormData({ ...formData, content_fr: value })}
-                    placeholder="Rédigez le contenu juridique en français..."
-                  />
-                </div>
-              </div>
-
-              <div className="space-y-2">
-                <Label>Contenu (English)</Label>
-                <div className="border border-gray-200 dark:border-gray-700 rounded-lg">
-                  <RichTextEditor
-                    value={formData.content_en}
-                    onChange={(value) => setFormData({ ...formData, content_en: value })}
-                    placeholder="Write the legal content in English..."
-                  />
-                </div>
-              </div>
+            {/* Content - Single Tabbed Editor */}
+            <div className="space-y-2">
+              <Label>Contenu du Document</Label>
+              <Tabs defaultValue="french" className="w-full">
+                <TabsList className="grid w-full grid-cols-2">
+                  <TabsTrigger value="french">Français</TabsTrigger>
+                  <TabsTrigger value="english">English</TabsTrigger>
+                </TabsList>
+                <TabsContent value="french" className="mt-4">
+                  <div className="border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden">
+                    <div className="relative min-h-[400px]">
+                      <RichTextEditor
+                        value={formData.content_fr}
+                        onChange={(value) => setFormData({ ...formData, content_fr: value })}
+                        placeholder="Rédigez le contenu juridique en français..."
+                      />
+                    </div>
+                  </div>
+                </TabsContent>
+                <TabsContent value="english" className="mt-4">
+                  <div className="border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden">
+                    <div className="relative min-h-[400px]">
+                      <RichTextEditor
+                        value={formData.content_en}
+                        onChange={(value) => setFormData({ ...formData, content_en: value })}
+                        placeholder="Write the legal content in English..."
+                      />
+                    </div>
+                  </div>
+                </TabsContent>
+              </Tabs>
             </div>
 
             {/* Visibility Toggle */}
