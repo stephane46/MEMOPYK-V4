@@ -98,12 +98,14 @@ export default function FAQSection() {
   };
 
   const toggleQuestion = (questionId: string) => {
-    const newOpenQuestions = new Set(openQuestions);
-    const isOpening = !newOpenQuestions.has(questionId);
+    const isCurrentlyOpen = openQuestions.has(questionId);
     
-    if (isOpening) {
-      newOpenQuestions.add(questionId);
-      setOpenQuestions(newOpenQuestions);
+    if (isCurrentlyOpen) {
+      // Close the current question
+      setOpenQuestions(new Set());
+    } else {
+      // Close all questions and open only the selected one
+      setOpenQuestions(new Set([questionId]));
       
       // Wait for state update and DOM to render, then scroll to element
       setTimeout(() => {
@@ -119,9 +121,6 @@ export default function FAQSection() {
           });
         }
       }, 100);
-    } else {
-      newOpenQuestions.delete(questionId);
-      setOpenQuestions(newOpenQuestions);
     }
   };
 
