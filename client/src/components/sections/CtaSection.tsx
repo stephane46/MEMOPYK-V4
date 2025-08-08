@@ -44,20 +44,32 @@ export function CtaSection() {
                   buttonText: language === 'fr-FR' ? cta.buttonTextFr : cta.buttonTextEn
                 });
                 return (
-                  <a
+                  <button
                     key={cta.id}
-                    href={url}
-                    target="_blank"
-                    rel="noopener noreferrer"
                     onClick={(e) => {
                       console.log('🖱️ CTA Button clicked:', { id: cta.id, url });
-                      // Allow normal link behavior
+                      console.log('🌐 Opening URL in new window...');
+                      try {
+                        window.open(url, '_blank', 'noopener,noreferrer');
+                        console.log('✅ Window opened successfully');
+                      } catch (error) {
+                        console.error('❌ Failed to open window:', error);
+                        // Fallback: create a temporary link and click it
+                        const link = document.createElement('a');
+                        link.href = url;
+                        link.target = '_blank';
+                        link.rel = 'noopener noreferrer';
+                        document.body.appendChild(link);
+                        link.click();
+                        document.body.removeChild(link);
+                        console.log('🔗 Fallback link created and clicked');
+                      }
                     }}
-                    className="inline-flex items-center gap-3 bg-memopyk-orange hover:bg-memopyk-orange/90 text-white px-8 py-4 rounded-full font-semibold text-lg transition-all duration-300 transform hover:scale-105 shadow-lg cursor-pointer"
+                    className="inline-flex items-center gap-3 bg-memopyk-orange hover:bg-memopyk-orange/90 text-white px-8 py-4 rounded-full font-semibold text-lg transition-all duration-300 transform hover:scale-105 shadow-lg cursor-pointer border-0"
                   >
                     {cta.id === 'book_call' ? <Phone className="w-5 h-5" /> : <Edit className="w-5 h-5" />}
                     {language === 'fr-FR' ? cta.buttonTextFr : cta.buttonTextEn}
-                  </a>
+                  </button>
                 );
               })
             }
