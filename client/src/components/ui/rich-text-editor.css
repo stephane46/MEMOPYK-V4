@@ -105,12 +105,12 @@
   border-radius: 0 0 8px 8px;
   font-family: inherit;
   font-size: 14px;
-  min-height: 400px;
+  min-height: 200px;
   height: auto;
 }
 
 .rich-text-editor .ql-editor {
-  min-height: 400px;
+  min-height: 200px;
   padding: 16px;
   line-height: 1.6;
   height: auto;

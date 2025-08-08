@@ -233,26 +233,27 @@ export function LegalDocumentManagement() {
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-6">
-            {/* Document Type */}
-            <div className="space-y-2">
-              <Label htmlFor="type">Type de Document</Label>
-              <Select 
-                value={formData.type} 
-                onValueChange={(value) => setFormData({ ...formData, type: value })}
-                disabled={!!editingDocument} // Don't allow changing type when editing
-              >
-                <SelectTrigger>
-                  <SelectValue placeholder="Sélectionnez le type de document" />
-                </SelectTrigger>
-                <SelectContent>
-                  {DOCUMENT_TYPES.map((type) => (
-                    <SelectItem key={type.value} value={type.value}>
-                      {type.label}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
+            {/* Document Type - Only show when creating new document */}
+            {isCreating && (
+              <div className="space-y-2">
+                <Label htmlFor="type">Type de Document</Label>
+                <Select 
+                  value={formData.type} 
+                  onValueChange={(value) => setFormData({ ...formData, type: value })}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Sélectionnez le type de document" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {DOCUMENT_TYPES.map((type) => (
+                      <SelectItem key={type.value} value={type.value}>
+                        {type.label}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+            )}
 
             {/* Titles */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -295,7 +296,7 @@ export function LegalDocumentManagement() {
                   </TabsTrigger>
                 </TabsList>
                 <TabsContent value="french" className="mt-4">
-                  <div className="rounded-lg" style={{ position: 'relative', height: '500px', overflow: 'auto' }}>
+                  <div className="rounded-lg">
                     <RichTextEditor
                       value={formData.content_fr}
                       onChange={(value) => setFormData({ ...formData, content_fr: value })}
@@ -304,7 +305,7 @@ export function LegalDocumentManagement() {
                   </div>
                 </TabsContent>
                 <TabsContent value="english" className="mt-4">
-                  <div className="rounded-lg" style={{ position: 'relative', height: '500px', overflow: 'auto' }}>
+                  <div className="rounded-lg">
                     <RichTextEditor
                       value={formData.content_en}
                       onChange={(value) => setFormData({ ...formData, content_en: value })}
@@ -344,85 +345,85 @@ export function LegalDocumentManagement() {
         </Card>
       )}
 
-      {/* Documents List */}
-      <div className="space-y-4">
-        <h3 className="text-lg font-semibold">Documents Existants ({legalDocs.length})</h3>
-        
-        {legalDocs.length === 0 ? (
-          <Card>
-            <CardContent className="text-center py-8">
-              <FileText className="w-12 h-12 mx-auto text-gray-400 mb-4" />
-              <p className="text-gray-500">Aucun document juridique trouvé</p>
-              <Button onClick={startCreating} className="mt-4 bg-[#ea580c] hover:bg-[#dc2626]">
-                Créer le premier document
-              </Button>
-            </CardContent>
-          </Card>
-        ) : (
-          legalDocs.map((doc) => (
-            <Card key={doc.id} className="border-l-4 border-l-blue-500">
-              <CardContent className="p-6">
-                <div className="flex justify-between items-start mb-4">
-                  <div className="flex-1">
-                    <div className="flex items-center gap-2 mb-2">
-                      <h4 className="text-lg font-semibold">{doc.title_fr}</h4>
-                      <span className="text-sm text-gray-500">({doc.title_en})</span>
-                      {doc.is_active ? (
-                        <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                          <Eye className="w-3 h-3 mr-1" />
-                          Visible
-                        </span>
-                      ) : (
-                        <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-red-100 text-red-800">
-                          <EyeOff className="w-3 h-3 mr-1" />
-                          Masqué
-                        </span>
-                      )}
-                    </div>
-                    <p className="text-sm text-gray-600 mb-2">
-                      <strong>Type:</strong> {getDocumentTypeLabel(doc.type)}
-                    </p>
-                    <p className="text-sm text-gray-600">
-                      <strong>Dernière modification:</strong> {new Date(doc.updated_at).toLocaleDateString('fr-FR')}
-                    </p>
-                  </div>
-                  
-                  <div className="flex gap-2 ml-4">
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => toggleVisibilityMutation.mutate({ 
-                        id: doc.id, 
-                        is_active: !doc.is_active 
-                      })}
-                      disabled={toggleVisibilityMutation.isPending}
-                    >
-                      {doc.is_active ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-                    </Button>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => startEditing(doc)}
-                    >
-                      <Edit className="w-4 h-4" />
-                    </Button>
-                    <Button
-                      variant="destructive"
-                      size="sm"
-                      onClick={() => handleDelete(doc)}
-                      disabled={deleteMutation.isPending}
-                    >
-                      <Trash2 className="w-4 h-4" />
-                    </Button>
-                  </div>
-                </div>
-
-
+      {/* Documents List - Hide when editing/creating */}
+      {!isCreating && !editingDocument && (
+        <div className="space-y-4">
+          <h3 className="text-lg font-semibold">Documents Existants ({legalDocs.length})</h3>
+          
+          {legalDocs.length === 0 ? (
+            <Card>
+              <CardContent className="text-center py-8">
+                <FileText className="w-12 h-12 mx-auto text-gray-400 mb-4" />
+                <p className="text-gray-500">Aucun document juridique trouvé</p>
+                <Button onClick={startCreating} className="mt-4 bg-[#ea580c] hover:bg-[#dc2626]">
+                  Créer le premier document
+                </Button>
               </CardContent>
             </Card>
-          ))
-        )}
-      </div>
+          ) : (
+            legalDocs.map((doc) => (
+              <Card key={doc.id} className="border-l-4 border-l-[#F2EBDC] bg-[#F2EBDC]">
+                <CardContent className="p-6">
+                  <div className="flex justify-between items-start mb-4">
+                    <div className="flex-1">
+                      <div className="flex items-center gap-2 mb-2">
+                        <h4 className="text-lg font-semibold text-[#011526]">{doc.title_fr}</h4>
+                        <span className="text-sm text-gray-600">({doc.title_en})</span>
+                        {doc.is_active ? (
+                          <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                            <Eye className="w-3 h-3 mr-1" />
+                            Visible
+                          </span>
+                        ) : (
+                          <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-red-100 text-red-800">
+                            <EyeOff className="w-3 h-3 mr-1" />
+                            Masqué
+                          </span>
+                        )}
+                      </div>
+                      <p className="text-sm text-gray-700 mb-2">
+                        <strong>Type:</strong> {getDocumentTypeLabel(doc.type)}
+                      </p>
+                      <p className="text-sm text-gray-700">
+                        <strong>Dernière modification:</strong> {new Date(doc.updated_at).toLocaleDateString('fr-FR')}
+                      </p>
+                    </div>
+                    
+                    <div className="flex gap-2 ml-4">
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => toggleVisibilityMutation.mutate({ 
+                          id: doc.id, 
+                          is_active: !doc.is_active 
+                        })}
+                        disabled={toggleVisibilityMutation.isPending}
+                      >
+                        {doc.is_active ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                      </Button>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => startEditing(doc)}
+                      >
+                        <Edit className="w-4 h-4" />
+                      </Button>
+                      <Button
+                        variant="destructive"
+                        size="sm"
+                        onClick={() => handleDelete(doc)}
+                        disabled={deleteMutation.isPending}
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </Button>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            ))
+          )}
+        </div>
+      )}
     </div>
   );
 }
