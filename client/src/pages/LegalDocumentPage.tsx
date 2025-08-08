@@ -91,7 +91,7 @@ export function LegalDocumentPage() {
           <div className="bg-white rounded-lg shadow-sm p-8">
             <h1 className="text-3xl font-bold text-gray-900 mb-8">{title}</h1>
             
-            <div className="prose prose-lg max-w-none">
+            <div className="prose prose-sm max-w-none [&>*]:mb-2 [&>p]:mb-2 [&>h1]:mb-3 [&>h2]:mb-3 [&>h3]:mb-3 [&>h4]:mb-3 [&>h5]:mb-3 [&>h6]:mb-3 [&>ul]:mb-2 [&>ol]:mb-2 [&>blockquote]:mb-2">
               <div 
                 dangerouslySetInnerHTML={{ 
                   __html: htmlSanitizer.sanitize(content || '') 
