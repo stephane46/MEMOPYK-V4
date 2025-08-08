@@ -267,10 +267,9 @@ img, video, iframe, canvas, svg {
   animation: pulse-orange 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
 }
 
-/* 🔄 ALT+TAB SCROLL FIX v1.0.115 - Prevent unwanted scroll behaviors */
+/* 🔄 ALT+TAB SCROLL FIX v1.0.116 - Prevent unwanted scroll behaviors (targeted) */
 html, body {
   scroll-behavior: auto !important;
-  overflow-anchor: none !important;
 }
 
 /* Prevent React focus-related scroll jumps */
@@ -279,7 +278,7 @@ html, body {
   scroll-padding: 0 !important;
 }
 
-/* Disable smooth scrolling in admin areas to prevent Alt+Tab issues */
+/* Disable smooth scrolling and anchoring only in admin areas to prevent Alt+Tab issues */
 .admin-container * {
   scroll-behavior: auto !important;
   overflow-anchor: none !important;
