@@ -146,8 +146,8 @@ export default function PerformanceTestDashboard() {
         console.error('Static image test failed:', error);
       }
 
-      // Test 3: Gallery Data API Performance
-      setCurrentTest('Testing Gallery Data Loading...');
+      // Test 3: Gallery Videos API Performance
+      setCurrentTest('Testing Gallery Videos Loading...');
       setTestProgress(80);
       
       const apiStartTime = performance.now();
@@ -162,9 +162,9 @@ export default function PerformanceTestDashboard() {
         await apiResponse.json();
         galleryApiTime = Math.round(performance.now() - apiStartTime);
         
-        // Gallery data API uses in-memory cache for recent requests, but queries database
+        // Gallery videos API uses in-memory cache for recent requests, but queries database
         galleryApiSource = galleryApiTime < 50 ? 'cache' : 'database';
-        console.log(`📊 Gallery Data API test: ${galleryApiTime}ms from ${galleryApiSource} (${refreshType} refresh)`);
+        console.log(`📊 Gallery Videos API test: ${galleryApiTime}ms from ${galleryApiSource} (${refreshType} refresh)`);
       } catch (error) {
         galleryApiTime = -1;
         galleryApiSource = 'error';
@@ -387,8 +387,8 @@ export default function PerformanceTestDashboard() {
               
               <div className="bg-gray-50 dark:bg-gray-800 rounded-lg p-4 border border-gray-200 dark:border-gray-700">
                 <div className="flex items-center gap-2 mb-3">
-                  <Database className="h-4 w-4 text-blue-500" />
-                  <span className="text-sm font-semibold text-gray-900 dark:text-white">Gallery Data</span>
+                  <Video className="h-4 w-4 text-blue-500" />
+                  <span className="text-sm font-semibold text-gray-900 dark:text-white">Gallery Videos</span>
                 </div>
                 <div className="space-y-2">
                   <div className="flex items-center justify-between">
@@ -475,8 +475,8 @@ export default function PerformanceTestDashboard() {
                     
                     <div className="bg-gray-50 dark:bg-gray-800 rounded-lg p-3 border">
                       <div className="flex items-center gap-2 mb-2">
-                        <Database className="h-4 w-4 text-blue-500" />
-                        <span className="text-sm font-semibold text-gray-900 dark:text-white">Gallery Data</span>
+                        <Video className="h-4 w-4 text-blue-500" />
+                        <span className="text-sm font-semibold text-gray-900 dark:text-white">Gallery Videos</span>
                       </div>
                       <div className="flex items-center justify-between">
                         <span className="text-lg font-bold text-gray-900 dark:text-white">
