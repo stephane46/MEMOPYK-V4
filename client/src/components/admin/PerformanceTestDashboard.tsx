@@ -34,9 +34,11 @@ interface PerformanceResult {
   staticImageTime: number;
   staticImageSource: 'cache' | 'vps' | 'error';
   staticImageSize?: number;
-  galleryApiTime: number;
-  galleryApiSource: 'cache' | 'vps' | 'error';
-  galleryApiSize?: number;
+  galleryVideoTime: number;
+  galleryVideoSource: 'cache' | 'vps' | 'error';
+  galleryVideoSampleSize?: number;
+  galleryVideoTotalSize?: number;
+  galleryApiTime?: number; // Optional separate API timing
   totalTime: number;
 }
 
@@ -85,9 +87,11 @@ export default function PerformanceTestDashboard() {
     let staticImageTime = 0;
     let staticImageSource: 'cache' | 'vps' | 'error' = 'error';
     let staticImageSize = 0;
+    let galleryVideoTime = 0;
+    let galleryVideoSource: 'cache' | 'vps' | 'error' = 'error';
+    let galleryVideoSampleSize = 0;
+    let galleryVideoTotalSize = 0;
     let galleryApiTime = 0;
-    let galleryApiSource: 'cache' | 'vps' | 'error' = 'error';
-    let galleryApiSize = 0;
 
     try {
       toast({
@@ -163,44 +167,86 @@ export default function PerformanceTestDashboard() {
         console.error('Static image test failed:', error);
       }
 
-      // Test 3: Gallery Videos API Performance
-      setCurrentTest('Testing Gallery Videos Loading...');
+      // Test 3: Gallery Videos - Test actual MP4 delivery (not just API metadata)
+      setCurrentTest('Testing Gallery Video Delivery...');
       setTestProgress(80);
       
-      const apiStartTime = performance.now();
+      const galleryStartTime = performance.now();
       try {
-        const apiResponse = await fetch('/api/gallery', {
-          cache: refreshType === 'hard' ? 'no-store' : 'default',
-          headers: refreshType === 'hard' ? {
-            'Cache-Control': 'no-cache, no-store, must-revalidate',
-            'Pragma': 'no-cache',
-            'X-Test-Bypass-Cache': '1'
-          } : {}
-        });
-        const apiData = await apiResponse.json();
-        galleryApiTime = Math.round(performance.now() - apiStartTime);
-        galleryApiSize = getPayloadSize(apiResponse) || JSON.stringify(apiData).length;
+        // First, get gallery metadata to find a video to test
+        const metaResponse = await fetch('/api/gallery', { cache: 'default' });
+        const items = await metaResponse.json();
+        const item = items?.[0];
         
-        // Use header-based detection
-        const apiHeaders = detectSourceFromHeaders(apiResponse);
-        if (apiHeaders.cache) {
-          galleryApiSource = apiHeaders.cache === 'HIT' ? 'cache' : 'vps';
-        } else {
-          // Fallback to time threshold
-          galleryApiSource = galleryApiTime < 50 ? 'cache' : 'vps';
+        if (!item?.videoUrlEn && !item?.filename) {
+          throw new Error('No gallery video available for testing');
         }
         
-        console.log(`📊 Gallery Videos API test: ${galleryApiTime}ms • ${humanBytes(galleryApiSize)} from ${galleryApiSource} (${refreshType} refresh)`);
+        // Use the actual video URL that the player would use
+        let videoUrl: string;
+        if (item.filename && item.filename.endsWith('.mp4')) {
+          // Use proxy route for gallery videos
+          videoUrl = `/api/video-proxy?filename=${encodeURIComponent(item.filename)}`;
+        } else if (item.videoUrlEn) {
+          // Direct Supabase URL
+          videoUrl = item.videoUrlEn;
+        } else {
+          throw new Error('No valid video URL found');
+        }
+        
+        // Test with a small range request (first 1KB like hero videos)
+        const probeResponse = await fetch(videoUrl, {
+          method: 'GET',
+          headers: {
+            'Range': 'bytes=0-1023',
+            ...(refreshType === 'hard' ? {
+              'Cache-Control': 'no-cache, no-store, must-revalidate',
+              'Pragma': 'no-cache',
+              'X-Test-Bypass-Cache': '1'
+            } : {})
+          },
+          cache: refreshType === 'hard' ? 'no-store' : 'default'
+        });
+        
+        galleryVideoTime = Math.round(performance.now() - galleryStartTime);
+        galleryVideoSampleSize = 1024; // Range request size
+        
+        // Parse total size from Content-Range header
+        const contentRange = probeResponse.headers.get('content-range');
+        if (contentRange) {
+          const match = contentRange.match(/\/(\d+)$/);
+          galleryVideoTotalSize = match ? Number(match[1]) : 0;
+        }
+        
+        // Track separate API timing for debugging (minimal since we already fetched)
+        const requestStart = metaResponse.headers.get('x-request-start');
+        galleryApiTime = requestStart ? Math.round(performance.now() - Number(requestStart)) : 0;
+        
+        // Use header-based detection from video response
+        const videoHeaders = detectSourceFromHeaders(probeResponse);
+        if (videoHeaders.cache) {
+          galleryVideoSource = videoHeaders.cache === 'HIT' ? 'cache' : 'vps';
+        } else {
+          // Fallback based on proxy vs direct URL
+          galleryVideoSource = videoUrl.startsWith('/api/video-proxy') ? 
+            (refreshType === 'hard' ? 'vps' : (galleryVideoTime < 100 ? 'cache' : 'vps')) : 
+            'vps'; // Direct Supabase URLs are always VPS
+        }
+        
+        console.log(`🎬 Gallery Video test: ${galleryVideoTime}ms • ${humanBytes(galleryVideoSampleSize)} sample • ${humanBytes(galleryVideoTotalSize)} total from ${galleryVideoSource} (${refreshType} refresh)`);
+        
       } catch (error) {
-        galleryApiTime = -1;
-        galleryApiSource = 'error';
-        console.error('Gallery API test failed:', error);
+        console.error('Gallery video test failed:', error);
+        galleryVideoTime = -1;
+        galleryVideoSource = 'error';
+        galleryVideoSampleSize = 0;
+        galleryVideoTotalSize = 0;
       }
 
       setTestProgress(100);
       setCurrentTest('Test Complete!');
 
-      const totalTime = heroVideoTime + staticImageTime + galleryApiTime;
+      const totalTime = heroVideoTime + staticImageTime + galleryVideoTime;
       
       const newResult: PerformanceResult = {
         id: testId,
@@ -212,9 +258,11 @@ export default function PerformanceTestDashboard() {
         staticImageTime,
         staticImageSource,
         staticImageSize,
+        galleryVideoTime,
+        galleryVideoSource,
+        galleryVideoSampleSize,
+        galleryVideoTotalSize,
         galleryApiTime,
-        galleryApiSource,
-        galleryApiSize,
         totalTime
       };
 
@@ -225,7 +273,7 @@ export default function PerformanceTestDashboard() {
 
       toast({
         title: "Performance Test Complete",
-        description: `Total time: ${totalTime}ms (Hero: ${heroVideoTime}ms • ${humanBytes(heroVideoSize)}, Images: ${staticImageTime}ms • ${humanBytes(staticImageSize)}, API: ${galleryApiTime}ms • ${humanBytes(galleryApiSize)})`,
+        description: `Total time: ${totalTime}ms (Hero: ${heroVideoTime}ms • ${humanBytes(heroVideoSize)}, Images: ${staticImageTime}ms • ${humanBytes(staticImageSize)}, Gallery: ${galleryVideoTime}ms • ${humanBytes(galleryVideoSampleSize)} sample)`,
       });
 
     } catch (error) {
@@ -286,7 +334,7 @@ export default function PerformanceTestDashboard() {
   const averageResults = performanceResults.length > 0 ? {
     heroVideo: Math.round(performanceResults.reduce((sum, r) => sum + (r.heroVideoTime > 0 ? r.heroVideoTime : 0), 0) / performanceResults.length),
     staticImage: Math.round(performanceResults.reduce((sum, r) => sum + (r.staticImageTime > 0 ? r.staticImageTime : 0), 0) / performanceResults.length),
-    galleryApi: Math.round(performanceResults.reduce((sum, r) => sum + (r.galleryApiTime > 0 ? r.galleryApiTime : 0), 0) / performanceResults.length)
+    galleryVideo: Math.round(performanceResults.reduce((sum, r) => sum + (r.galleryVideoTime > 0 ? r.galleryVideoTime : 0), 0) / performanceResults.length)
   } : null;
 
   return (
@@ -406,11 +454,11 @@ export default function PerformanceTestDashboard() {
                 </div>
                 <div className="space-y-2">
                   <div className="flex items-center justify-between">
-                    <span className="text-2xl font-bold text-gray-900 dark:text-white">{averageResults.galleryApi}ms • ~2 KB</span>
-                    {getStatusBadge(getTimeStatus('api', averageResults.galleryApi))}
+                    <span className="text-2xl font-bold text-gray-900 dark:text-white">{averageResults.galleryVideo}ms • 1 KB sample</span>
+                    {getStatusBadge(getTimeStatus('hero', averageResults.galleryVideo))}
                   </div>
                   <div className="text-xs text-gray-500 dark:text-gray-400">
-                    Average from VPS
+                    Testing first gallery MP4 via proxy
                   </div>
                 </div>
               </div>
@@ -494,11 +542,11 @@ export default function PerformanceTestDashboard() {
                       </div>
                       <div className="flex items-center justify-between">
                         <span className="text-lg font-bold text-gray-900 dark:text-white">
-                          {result.galleryApiTime > 0 ? result.galleryApiTime : 'Error'}ms • {humanBytes(result.galleryApiSize || 2048)}
+                          {result.galleryVideoTime > 0 ? result.galleryVideoTime : 'Error'}ms • {humanBytes(result.galleryVideoSampleSize || 1024)} • {humanBytes(result.galleryVideoTotalSize || 0)} total
                         </span>
                         <div className="flex items-center gap-1">
-                          {getStatusBadge(getTimeStatus('api', result.galleryApiTime))}
-                          {getSourceBadge(result.galleryApiSource)}
+                          {getStatusBadge(getTimeStatus('hero', result.galleryVideoTime))}
+                          {getSourceBadge(result.galleryVideoSource)}
                         </div>
                       </div>
                     </div>

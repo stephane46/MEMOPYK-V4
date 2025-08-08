@@ -1922,11 +1922,18 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
       
       const range = req.headers.range;
+      
+      // Check for cache bypass header (for performance testing)
+      const bypassCache = req.headers['x-test-bypass-cache'] === '1';
+      if (bypassCache) {
+        console.log(`🔄 CACHE BYPASS REQUESTED for performance testing: ${videoFilename}`);
+      }
 
-      // Check if video exists in cache
-      let cachedVideo = videoCache.getCachedVideoPath(videoFilename);
+      // Check if video exists in cache (skip if bypassing)
+      let cachedVideo = bypassCache ? null : videoCache.getCachedVideoPath(videoFilename);
       console.log(`   - Cache path: "${cachedVideo}"`);
       console.log(`   - Cache exists: ${cachedVideo && existsSync(cachedVideo)}`);
+      console.log(`   - Cache bypass: ${bypassCache}`);
       
       // PRODUCTION PATH DEBUG: Log exact path resolution
       console.log(`🔍 PRODUCTION PATH DEBUG:`, {
@@ -1939,7 +1946,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
       });
       
       // UNIVERSAL VIDEO SERVING v1.0.40 - Try cache first, fallback if needed
-      if (!cachedVideo) {
+      if (!cachedVideo || bypassCache) {
+        if (bypassCache) {
+          console.log(`🔄 BYPASSING CACHE for performance test: ${videoFilename}`);
+        }
         console.log(`🚨 VIDEO NOT CACHED: ${videoFilename} - Attempting auto-download...`);
         
         try {
@@ -1986,7 +1996,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
               'Content-Type': 'video/mp4',
               'Access-Control-Allow-Origin': '*',
               'Access-Control-Allow-Headers': 'range, content-type',
-              'Cache-Control': 'public, max-age=3600'
+              'Cache-Control': 'public, max-age=3600',
+              'X-Cache-Status': bypassCache ? 'MISS' : 'MISS',
+              'X-Origin': 'supabase'
             };
             
             if (contentRange) headers['Content-Range'] = contentRange;
@@ -2189,7 +2201,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
               'Content-Type': 'video/mp4',
               'Access-Control-Allow-Origin': '*',
               'Access-Control-Allow-Headers': 'range, content-type',
-              'Cache-Control': 'public, max-age=86400'
+              'Cache-Control': 'public, max-age=86400',
+              'X-Cache-Status': bypassCache ? 'MISS' : 'HIT',
+              'X-Origin': 'vps-local'
             });
             console.log(`[PROXY] Headers written successfully for ${videoFilename}`);
           } catch (headerError: any) {
