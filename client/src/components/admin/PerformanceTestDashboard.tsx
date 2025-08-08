@@ -94,15 +94,23 @@ export default function PerformanceTestDashboard() {
       
       const heroStartTime = performance.now();
       try {
-        // Test hero video loading by fetching a video
+        // Test hero video loading by fetching a video with cache-control based on refresh type
         const heroResponse = await fetch('/api/video-proxy?filename=VideoHero1.mp4&range=bytes=0-1023', {
-          cache: refreshType === 'hard' ? 'no-cache' : 'default'
+          cache: refreshType === 'hard' ? 'no-cache' : 'default',
+          headers: refreshType === 'hard' ? {
+            'Cache-Control': 'no-cache, no-store, must-revalidate',
+            'Pragma': 'no-cache'
+          } : {}
         });
         heroVideoTime = Math.round(performance.now() - heroStartTime);
         
-        // Determine source based on response time (cache < 50ms typically)
-        heroVideoSource = heroVideoTime < 50 ? 'cache' : 'vps';
-        console.log(`🎬 Hero video test: ${heroVideoTime}ms from ${heroVideoSource}`);
+        // Determine source: Hard refresh forces VPS, normal refresh with fast response indicates cache
+        if (refreshType === 'hard') {
+          heroVideoSource = 'vps'; // Hard refresh bypasses cache
+        } else {
+          heroVideoSource = heroVideoTime < 100 ? 'cache' : 'vps';
+        }
+        console.log(`🎬 Hero video test: ${heroVideoTime}ms from ${heroVideoSource} (${refreshType} refresh)`);
       } catch (error) {
         heroVideoTime = -1;
         heroVideoSource = 'error';
@@ -115,15 +123,23 @@ export default function PerformanceTestDashboard() {
       
       const imageStartTime = performance.now();
       try {
-        // Test static image loading
-        const imageResponse = await fetch('/api/image-proxy?filename=static_image_1.jpg', {
-          cache: refreshType === 'hard' ? 'no-cache' : 'default'
+        // Test static image loading with actual cached image
+        const imageResponse = await fetch('/api/image-proxy?filename=static_auto_1754635504743.jpg', {
+          cache: refreshType === 'hard' ? 'no-cache' : 'default',
+          headers: refreshType === 'hard' ? {
+            'Cache-Control': 'no-cache, no-store, must-revalidate',
+            'Pragma': 'no-cache'
+          } : {}
         });
         staticImageTime = Math.round(performance.now() - imageStartTime);
         
-        // Determine source based on response time (cache < 20ms typically for images)
-        staticImageSource = staticImageTime < 20 ? 'cache' : 'vps';
-        console.log(`🖼️ Static image test: ${staticImageTime}ms from ${staticImageSource}`);
+        // Determine source: Hard refresh forces VPS, normal refresh with fast response indicates cache
+        if (refreshType === 'hard') {
+          staticImageSource = 'vps'; // Hard refresh bypasses cache
+        } else {
+          staticImageSource = staticImageTime < 50 ? 'cache' : 'vps';
+        }
+        console.log(`🖼️ Static image test: ${staticImageTime}ms from ${staticImageSource} (${refreshType} refresh)`);
       } catch (error) {
         staticImageTime = -1;
         staticImageSource = 'error';
@@ -137,14 +153,18 @@ export default function PerformanceTestDashboard() {
       const apiStartTime = performance.now();
       try {
         const apiResponse = await fetch('/api/gallery', {
-          cache: refreshType === 'hard' ? 'no-cache' : 'default'
+          cache: refreshType === 'hard' ? 'no-cache' : 'default',
+          headers: refreshType === 'hard' ? {
+            'Cache-Control': 'no-cache, no-store, must-revalidate',
+            'Pragma': 'no-cache'
+          } : {}
         });
         await apiResponse.json();
         galleryApiTime = Math.round(performance.now() - apiStartTime);
         
-        // Gallery API always hits database/VPS (designed for cross-environment sync)
-        galleryApiSource = 'vps';
-        console.log(`📊 Gallery API test: ${galleryApiTime}ms from ${galleryApiSource}`);
+        // Gallery API uses in-memory cache for recent requests, but always queries VPS database
+        galleryApiSource = galleryApiTime < 50 ? 'cache' : 'vps';
+        console.log(`📊 Gallery API test: ${galleryApiTime}ms from ${galleryApiSource} (${refreshType} refresh)`);
       } catch (error) {
         galleryApiTime = -1;
         galleryApiSource = 'error';
@@ -263,7 +283,7 @@ export default function PerformanceTestDashboard() {
             Performance Testing
           </CardTitle>
           <CardDescription>
-            Test site performance with F5 (normal refresh) or Ctrl+F5 (hard refresh)
+            Test site performance with F5 (normal refresh) or Ctrl+F5 (hard refresh). Cache indicates local server storage, VPS indicates live database/CDN requests.
           </CardDescription>
         </CardHeader>
         <CardContent>
