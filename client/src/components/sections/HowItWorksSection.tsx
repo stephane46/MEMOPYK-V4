@@ -21,8 +21,8 @@ export function HowItWorksSection() {
       icon: Edit,
       titleFr: "Sélection & Montage", 
       titleEn: "We Curate & Edit",
-      descriptionFr: "Nous passons en revue chaque fichier pour repérer les moments les plus marquants. Puis, nous vous proposons un scénario personnalisé, avec des suggestions de musique, de durée et de format — tout est pensé pour sublimer vos souvenirs.",
-      descriptionEn: "We go through every file to identify the most meaningful moments. Then we propose a personalized storyline, suggest music, duration, and format — everything tailored to your memories.",
+      descriptionFr: "Nous passons en revue chaque fichier pour repérer les moments les plus marquants, puis établissons l'arc naratif le plus adapté, avec des suggestions de musique, de durée et de format — tout est pensé pour sublimer vos souvenirs.",
+      descriptionEn: "We go through every file to identify the most meaningful moments, then establish a personalized storyline, suggest music, duration, and format — every details are tailored to your memories.",
       subDescriptionFr: "Besoin d'en discuter ? Une consultation est toujours possible, gratuitement.",
       subDescriptionEn: "Need to talk it through? A consultation is always available, free of charge.",
       image: "/images/How_we_work_Step2.png"
