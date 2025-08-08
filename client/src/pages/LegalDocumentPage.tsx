@@ -89,7 +89,7 @@ export function LegalDocumentPage() {
       <div className="container mx-auto px-4 py-12">
         <div className="max-w-4xl mx-auto">
           <div className="bg-white rounded-lg shadow-sm p-8">
-            <div className="prose prose-sm max-w-none [&>*]:mb-2 [&>p]:mb-2 [&>h1]:mb-3 [&>h2]:mb-3 [&>h3]:mb-3 [&>h4]:mb-3 [&>h5]:mb-3 [&>h6]:mb-3 [&>ul]:mb-2 [&>ol]:mb-2 [&>blockquote]:mb-2">
+            <div className="prose prose-sm max-w-none [&>*]:mb-1 [&>p]:mb-1 [&>p]:leading-tight [&>br]:leading-none [&>h1]:mb-2 [&>h2]:mb-2 [&>h3]:mb-2 [&>h4]:mb-2 [&>h5]:mb-2 [&>h6]:mb-2 [&>ul]:mb-1 [&>ol]:mb-1 [&>blockquote]:mb-1" style={{ lineHeight: '1.3' }}>
               <div 
                 dangerouslySetInnerHTML={{ 
                   __html: htmlSanitizer.sanitize(content || '') 
