@@ -6,11 +6,15 @@ import type { CtaSettings } from '@shared/schema';
 
 export function CtaSection() {
   const { language } = useLanguage();
+  
+  console.log('🚀 CTA SECTION COMPONENT LOADED!', { timestamp: Date.now() });
 
   // Fetch CTA settings from the API
   const { data: ctaSettings = [] } = useQuery<CtaSettings[]>({
     queryKey: ['/api/cta']
   });
+  
+  console.log('📋 CTA SETTINGS DATA:', { ctaSettings, count: ctaSettings.length });
 
   const getText = (fr: string, en: string) => language === 'fr-FR' ? fr : en;
 
