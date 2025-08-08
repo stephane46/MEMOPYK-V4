@@ -176,22 +176,27 @@ export default function PerformanceTestDashboard() {
         // First, get gallery metadata to find a video to test
         const metaResponse = await fetch('/api/gallery', { cache: 'default' });
         const items = await metaResponse.json();
-        const item = items?.[0];
         
-        if (!item?.videoUrlEn && !item?.filename) {
-          throw new Error('No gallery video available for testing');
-        }
+        // Find the first gallery item with a video
+        let item = items?.find((item: any) => item.videoUrlEn || item.filename?.endsWith('.mp4'));
+        let videoUrl: string | null = null;
         
-        // Use the actual video URL that the player would use
-        let videoUrl: string;
-        if (item.filename && item.filename.endsWith('.mp4')) {
+        if (item?.filename && item.filename.endsWith('.mp4')) {
           // Use proxy route for gallery videos
           videoUrl = `/api/video-proxy?filename=${encodeURIComponent(item.filename)}`;
-        } else if (item.videoUrlEn) {
+        } else if (item?.videoUrlEn) {
           // Direct Supabase URL
           videoUrl = item.videoUrlEn;
         } else {
-          throw new Error('No valid video URL found');
+          // Try fallback to known gallery videos from cache
+          const knownGalleryVideos = ['safari-1.mp4', 'VitaminSeaC.mp4', 'PomGalleryC.mp4'];
+          const fallbackVideo = knownGalleryVideos[0];
+          videoUrl = `/api/video-proxy?filename=${encodeURIComponent(fallbackVideo)}`;
+          console.log(`📹 No gallery videos in database, trying fallback: ${fallbackVideo}`);
+        }
+        
+        if (!videoUrl) {
+          throw new Error('No gallery video available for testing');
         }
         
         // Test with a small range request (first 1KB like hero videos)
@@ -207,6 +212,10 @@ export default function PerformanceTestDashboard() {
           },
           cache: refreshType === 'hard' ? 'no-store' : 'default'
         });
+        
+        if (!probeResponse.ok && probeResponse.status !== 206) {
+          throw new Error(`Video request failed: ${probeResponse.status} ${probeResponse.statusText}`);
+        }
         
         galleryVideoTime = Math.round(performance.now() - galleryStartTime);
         galleryVideoSampleSize = 1024; // Range request size
@@ -233,7 +242,7 @@ export default function PerformanceTestDashboard() {
             'vps'; // Direct Supabase URLs are always VPS
         }
         
-        console.log(`🎬 Gallery Video test: ${galleryVideoTime}ms • ${humanBytes(galleryVideoSampleSize)} sample • ${humanBytes(galleryVideoTotalSize)} total from ${galleryVideoSource} (${refreshType} refresh)`);
+        console.log(`🎬 Gallery Video test: ${galleryVideoTime}ms • ${humanBytes(galleryVideoSampleSize)} sample • ${humanBytes(galleryVideoTotalSize)} total from ${galleryVideoSource} (${refreshType} refresh) • URL: ${videoUrl}`);
         
       } catch (error) {
         console.error('Gallery video test failed:', error);
