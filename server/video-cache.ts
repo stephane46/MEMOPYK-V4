@@ -964,9 +964,15 @@ export class VideoCache {
         .map(item => (item.video_filename || item.video_url_en!).split('/').pop()!)
         .filter(filename => filename);
 
-      const galleryImageFilenames = galleryItems
-        .filter(item => item.static_image_url)
-        .map(item => item.static_image_url!.split('/').pop()!)
+      // Collect unique static image filenames from both EN and FR URLs
+      const staticImageUrls = new Set<string>();
+      galleryItems.forEach(item => {
+        if (item.static_image_url_en) staticImageUrls.add(item.static_image_url_en);
+        if (item.static_image_url_fr) staticImageUrls.add(item.static_image_url_fr);
+      });
+      
+      const galleryImageFilenames = Array.from(staticImageUrls)
+        .map(url => url.split('/').pop()!)
         .filter(filename => filename);
 
       const allVideoFilenames = Array.from(new Set([...heroVideoFilenames, ...galleryVideoFilenames]));
