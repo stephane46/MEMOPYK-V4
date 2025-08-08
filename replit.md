@@ -3,6 +3,9 @@
 ## Overview
 MEMOPYK is a full-stack memory film platform designed to transform personal photos and videos into cinematic memory films. Its core purpose is to offer a seamless and intuitive experience for creating and managing cherished memory films. Key capabilities include a bilingual (French/English) content management system, a professional video lightbox, robust gallery management with reliable video streaming, language-specific upload functionality, advanced image reframing tools, and real-time preview capabilities. The project aims to capture a market niche for personalized, high-quality video memories.
 
+## Recent Changes
+- **Legal Document Spacing Fix (January 2025)**: Implemented custom CSS class `.legal-document-tight` with balanced spacing (line-height: 1.3, 0.2rem margins) to ensure published legal documents match admin interface formatting exactly. Removed automatic document titles from published pages for complete user control over content presentation.
+
 ## User Preferences
 Preferred communication style: Simple, everyday language.
 Visual consistency priority: Extremely detail-oriented about spacing and formatting consistency between admin interface and published pages.
