@@ -950,13 +950,26 @@ export async function registerRoutes(app: Express): Promise<Server> {
         
         if (itemIndex !== -1) {
           const language = req.body.language || 'en'; // Get language from request body
-          const staticField = language === 'fr' ? 'static_image_url_fr' : 'static_image_url_en';
+          const useSameVideo = items[itemIndex].use_same_video;
           
-          console.log(`📝 Before update (${language}): ${items[itemIndex][staticField]}`);
-          items[itemIndex][staticField] = staticImageUrl; // Update language-specific field
+          console.log(`🔍 STATIC IMAGE UPDATE - use_same_video: ${useSameVideo}, language: ${language}`);
+          
+          if (useSameVideo) {
+            // When use_same_video is true, update BOTH language fields to use the same static image
+            console.log(`📝 Before update (shared): EN=${items[itemIndex].static_image_url_en}, FR=${items[itemIndex].static_image_url_fr}`);
+            items[itemIndex].static_image_url_en = staticImageUrl;
+            items[itemIndex].static_image_url_fr = staticImageUrl;
+            console.log(`📝 After update (shared): Both EN and FR set to: ${staticImageUrl}`);
+          } else {
+            // When use_same_video is false, only update the specific language field
+            const staticField = language === 'fr' ? 'static_image_url_fr' : 'static_image_url_en';
+            console.log(`📝 Before update (${language}): ${items[itemIndex][staticField]}`);
+            items[itemIndex][staticField] = staticImageUrl;
+            console.log(`📝 After update (${language}): ${items[itemIndex][staticField]}`);
+          }
+          
           items[itemIndex].crop_settings = cropSettings;
           items[itemIndex].updated_at = new Date().toISOString();
-          console.log(`📝 After update (${language}): ${items[itemIndex][staticField]}`);
           
           fs.writeFileSync(jsonPath, JSON.stringify(items, null, 2));
           console.log(`✅ File written successfully`);
@@ -978,9 +991,27 @@ export async function registerRoutes(app: Express): Promise<Server> {
       try {
         console.log(`🔄 Method 2: Hybrid storage backup`);
         const language = req.body.language || 'en';
-        const updateData = language === 'fr' 
-          ? { static_image_url_fr: staticImageUrl, crop_settings: cropSettings }
-          : { static_image_url_en: staticImageUrl, crop_settings: cropSettings };
+        
+        // Get current item to check use_same_video flag
+        const currentItem = items.find((item: any) => item.id.toString() === itemId.toString());
+        const useSameVideo = currentItem?.use_same_video;
+        
+        let updateData;
+        if (useSameVideo) {
+          // When use_same_video is true, update BOTH language fields
+          updateData = { 
+            static_image_url_en: staticImageUrl, 
+            static_image_url_fr: staticImageUrl, 
+            crop_settings: cropSettings 
+          };
+          console.log(`🔗 Hybrid storage: Setting both EN and FR to same URL (use_same_video: true)`);
+        } else {
+          // When use_same_video is false, only update the specific language field
+          updateData = language === 'fr' 
+            ? { static_image_url_fr: staticImageUrl, crop_settings: cropSettings }
+            : { static_image_url_en: staticImageUrl, crop_settings: cropSettings };
+          console.log(`🎯 Hybrid storage: Setting only ${language} field (use_same_video: false)`);
+        }
         
         await hybridStorage.updateGalleryItem(itemId, updateData);
         console.log(`✅ Hybrid storage update completed`);
