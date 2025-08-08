@@ -351,39 +351,51 @@ export default function PerformanceTestDashboard() {
           </CardHeader>
           <CardContent>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <div className="flex items-center justify-between p-3 rounded-lg border">
-                <div className="flex items-center gap-2">
+              <div className="bg-gray-50 dark:bg-gray-800 rounded-lg p-4 border border-gray-200 dark:border-gray-700">
+                <div className="flex items-center gap-2 mb-3">
                   <Video className="h-4 w-4 text-purple-500" />
-                  <span className="text-sm font-medium">Hero Videos</span>
+                  <span className="text-sm font-semibold text-gray-900 dark:text-white">Hero Videos</span>
                 </div>
-                <div className="flex items-center gap-2">
-                  <span className="text-lg font-bold">{averageResults.heroVideo}ms</span>
-                  {getStatusBadge(getTimeStatus(averageResults.heroVideo, 'hero'))}
-                  <span className="text-xs text-muted-foreground">Cache</span>
+                <div className="space-y-2">
+                  <div className="flex items-center justify-between">
+                    <span className="text-2xl font-bold text-gray-900 dark:text-white">{averageResults.heroVideo}ms</span>
+                    {getStatusBadge(getTimeStatus(averageResults.heroVideo, 'hero'))}
+                  </div>
+                  <div className="text-xs text-gray-500 dark:text-gray-400">
+                    Average from cache
+                  </div>
                 </div>
               </div>
               
-              <div className="flex items-center justify-between p-3 rounded-lg border">
-                <div className="flex items-center gap-2">
+              <div className="bg-gray-50 dark:bg-gray-800 rounded-lg p-4 border border-gray-200 dark:border-gray-700">
+                <div className="flex items-center gap-2 mb-3">
                   <Image className="h-4 w-4 text-green-500" />
-                  <span className="text-sm font-medium">Static Images</span>
+                  <span className="text-sm font-semibold text-gray-900 dark:text-white">Static Images</span>
                 </div>
-                <div className="flex items-center gap-2">
-                  <span className="text-lg font-bold">{averageResults.staticImage}ms</span>
-                  {getStatusBadge(getTimeStatus(averageResults.staticImage, 'image'))}
-                  <span className="text-xs text-muted-foreground">Cache</span>
+                <div className="space-y-2">
+                  <div className="flex items-center justify-between">
+                    <span className="text-2xl font-bold text-gray-900 dark:text-white">{averageResults.staticImage}ms</span>
+                    {getStatusBadge(getTimeStatus(averageResults.staticImage, 'image'))}
+                  </div>
+                  <div className="text-xs text-gray-500 dark:text-gray-400">
+                    Average from cache
+                  </div>
                 </div>
               </div>
               
-              <div className="flex items-center justify-between p-3 rounded-lg border">
-                <div className="flex items-center gap-2">
+              <div className="bg-gray-50 dark:bg-gray-800 rounded-lg p-4 border border-gray-200 dark:border-gray-700">
+                <div className="flex items-center gap-2 mb-3">
                   <Database className="h-4 w-4 text-blue-500" />
-                  <span className="text-sm font-medium">Gallery API</span>
+                  <span className="text-sm font-semibold text-gray-900 dark:text-white">Gallery API</span>
                 </div>
-                <div className="flex items-center gap-2">
-                  <span className="text-lg font-bold">{averageResults.galleryApi}ms</span>
-                  {getStatusBadge(getTimeStatus(averageResults.galleryApi, 'api'))}
-                  <span className="text-xs text-muted-foreground">VPS</span>
+                <div className="space-y-2">
+                  <div className="flex items-center justify-between">
+                    <span className="text-2xl font-bold text-gray-900 dark:text-white">{averageResults.galleryApi}ms</span>
+                    {getStatusBadge(getTimeStatus(averageResults.galleryApi, 'api'))}
+                  </div>
+                  <div className="text-xs text-gray-500 dark:text-gray-400">
+                    Average from database
+                  </div>
                 </div>
               </div>
             </div>
@@ -426,40 +438,52 @@ export default function PerformanceTestDashboard() {
                     </span>
                   </div>
                   
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-2">
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+                    <div className="bg-gray-50 dark:bg-gray-800 rounded-lg p-3 border">
+                      <div className="flex items-center gap-2 mb-2">
                         <Video className="h-4 w-4 text-purple-500" />
-                        <span className="text-sm">Hero Videos</span>
+                        <span className="text-sm font-semibold text-gray-900 dark:text-white">Hero Video</span>
                       </div>
-                      <div className="flex items-center gap-2">
-                        <span className="font-semibold">{result.heroVideoTime > 0 ? result.heroVideoTime : 'Error'}ms</span>
-                        {getStatusBadge(getTimeStatus(result.heroVideoTime, 'hero'))}
-                        {getSourceBadge(result.heroVideoSource)}
+                      <div className="flex items-center justify-between">
+                        <span className="text-lg font-bold text-gray-900 dark:text-white">
+                          {result.heroVideoTime > 0 ? result.heroVideoTime : 'Error'}ms
+                        </span>
+                        <div className="flex items-center gap-1">
+                          {getStatusBadge(getTimeStatus(result.heroVideoTime, 'hero'))}
+                          {getSourceBadge(result.heroVideoSource)}
+                        </div>
                       </div>
                     </div>
                     
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-2">
+                    <div className="bg-gray-50 dark:bg-gray-800 rounded-lg p-3 border">
+                      <div className="flex items-center gap-2 mb-2">
                         <Image className="h-4 w-4 text-green-500" />
-                        <span className="text-sm">Static Images</span>
+                        <span className="text-sm font-semibold text-gray-900 dark:text-white">Static Image</span>
                       </div>
-                      <div className="flex items-center gap-2">
-                        <span className="font-semibold">{result.staticImageTime > 0 ? result.staticImageTime : 'Error'}ms</span>
-                        {getStatusBadge(getTimeStatus(result.staticImageTime, 'image'))}
-                        {getSourceBadge(result.staticImageSource)}
+                      <div className="flex items-center justify-between">
+                        <span className="text-lg font-bold text-gray-900 dark:text-white">
+                          {result.staticImageTime > 0 ? result.staticImageTime : 'Error'}ms
+                        </span>
+                        <div className="flex items-center gap-1">
+                          {getStatusBadge(getTimeStatus(result.staticImageTime, 'image'))}
+                          {getSourceBadge(result.staticImageSource)}
+                        </div>
                       </div>
                     </div>
                     
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-2">
+                    <div className="bg-gray-50 dark:bg-gray-800 rounded-lg p-3 border">
+                      <div className="flex items-center gap-2 mb-2">
                         <Database className="h-4 w-4 text-blue-500" />
-                        <span className="text-sm">Gallery API</span>
+                        <span className="text-sm font-semibold text-gray-900 dark:text-white">Gallery API</span>
                       </div>
-                      <div className="flex items-center gap-2">
-                        <span className="font-semibold">{result.galleryApiTime > 0 ? result.galleryApiTime : 'Error'}ms</span>
-                        {getStatusBadge(getTimeStatus(result.galleryApiTime, 'api'))}
-                        {getSourceBadge(result.galleryApiSource)}
+                      <div className="flex items-center justify-between">
+                        <span className="text-lg font-bold text-gray-900 dark:text-white">
+                          {result.galleryApiTime > 0 ? result.galleryApiTime : 'Error'}ms
+                        </span>
+                        <div className="flex items-center gap-1">
+                          {getStatusBadge(getTimeStatus(result.galleryApiTime, 'api'))}
+                          {getSourceBadge(result.galleryApiSource)}
+                        </div>
                       </div>
                     </div>
                   </div>
