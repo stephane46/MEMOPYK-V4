@@ -417,27 +417,7 @@ export function LegalDocumentManagement() {
                   </div>
                 </div>
 
-                {/* Content Preview */}
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4 pt-4 border-t">
-                  <div>
-                    <h5 className="font-medium text-sm mb-2">Contenu (Français)</h5>
-                    <div 
-                      className="text-sm text-gray-600 max-h-32 overflow-y-auto prose prose-sm"
-                      dangerouslySetInnerHTML={{ 
-                        __html: htmlSanitizer.sanitize(doc.content_fr.substring(0, 200) + (doc.content_fr.length > 200 ? '...' : ''))
-                      }}
-                    />
-                  </div>
-                  <div>
-                    <h5 className="font-medium text-sm mb-2">Contenu (English)</h5>
-                    <div 
-                      className="text-sm text-gray-600 max-h-32 overflow-y-auto prose prose-sm"
-                      dangerouslySetInnerHTML={{ 
-                        __html: htmlSanitizer.sanitize(doc.content_en.substring(0, 200) + (doc.content_en.length > 200 ? '...' : ''))
-                      }}
-                    />
-                  </div>
-                </div>
+
               </CardContent>
             </Card>
           ))
