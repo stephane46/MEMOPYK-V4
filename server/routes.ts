@@ -264,9 +264,23 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Gallery Items - CRUD operations with file upload support
+  let galleryCache: { data: any[], timestamp: number } | null = null;
+  const GALLERY_CACHE_TTL = 30000; // 30 seconds cache
+  
   app.get("/api/gallery", async (req, res) => {
     try {
+      const now = Date.now();
+      
+      // Check if cache is valid
+      if (galleryCache && (now - galleryCache.timestamp) < GALLERY_CACHE_TTL) {
+        console.log(`📋 Gallery data served from cache (${Math.round((now - galleryCache.timestamp) / 1000)}s old)`);
+        return res.json(galleryCache.data);
+      }
+      
+      // Cache miss or expired - fetch fresh data
       const items = await hybridStorage.getGalleryItems();
+      galleryCache = { data: items, timestamp: now };
+      console.log(`🔄 Gallery data fetched from database and cached`);
       res.json(items);
     } catch (error) {
       res.status(500).json({ error: "Failed to get gallery items" });
@@ -276,6 +290,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.post("/api/gallery", async (req, res) => {
     try {
       const item = await hybridStorage.createGalleryItem(req.body);
+      // Clear gallery cache on creates
+      galleryCache = null;
+      console.log('🗑️ Gallery cache cleared due to creation');
       res.json(item);
     } catch (error) {
       res.status(500).json({ error: "Failed to create gallery item" });
@@ -310,6 +327,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       // CROSS-ENVIRONMENT SYNC: Notify other environments about the change
       console.log('🌍 CROSS-ENVIRONMENT: Gallery item updated in database - other environments will see changes after F5 refresh');
+      
+      // Clear gallery cache on updates
+      galleryCache = null;
+      console.log('🗑️ Gallery cache cleared due to update');
       
       res.json(item);
     } catch (error: any) {
