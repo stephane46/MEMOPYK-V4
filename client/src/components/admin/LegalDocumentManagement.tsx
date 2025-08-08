@@ -281,12 +281,22 @@ export function LegalDocumentManagement() {
               <Label>Contenu du Document</Label>
               <Tabs defaultValue="french" className="w-full">
                 <TabsList className="grid w-full grid-cols-2">
-                  <TabsTrigger value="french">Français</TabsTrigger>
-                  <TabsTrigger value="english">English</TabsTrigger>
+                  <TabsTrigger 
+                    value="french" 
+                    className="data-[state=active]:bg-[#ea580c] data-[state=active]:text-white"
+                  >
+                    Français
+                  </TabsTrigger>
+                  <TabsTrigger 
+                    value="english" 
+                    className="data-[state=active]:bg-[#ea580c] data-[state=active]:text-white"
+                  >
+                    English
+                  </TabsTrigger>
                 </TabsList>
                 <TabsContent value="french" className="mt-4">
-                  <div className="border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden">
-                    <div className="relative min-h-[400px]">
+                  <div className="border border-gray-200 dark:border-gray-700 rounded-lg overflow-visible">
+                    <div className="min-h-[400px] overflow-visible">
                       <RichTextEditor
                         value={formData.content_fr}
                         onChange={(value) => setFormData({ ...formData, content_fr: value })}
@@ -296,8 +306,8 @@ export function LegalDocumentManagement() {
                   </div>
                 </TabsContent>
                 <TabsContent value="english" className="mt-4">
-                  <div className="border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden">
-                    <div className="relative min-h-[400px]">
+                  <div className="border border-gray-200 dark:border-gray-700 rounded-lg overflow-visible">
+                    <div className="min-h-[400px] overflow-visible">
                       <RichTextEditor
                         value={formData.content_en}
                         onChange={(value) => setFormData({ ...formData, content_en: value })}

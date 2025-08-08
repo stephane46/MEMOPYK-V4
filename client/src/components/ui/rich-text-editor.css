@@ -81,17 +81,19 @@
   visibility: visible;
 }
 
-/* Toolbar styling - MEMOPYK orange theme with improved sticky positioning */
+/* Toolbar styling - MEMOPYK orange theme with proper sticky positioning */
 .rich-text-editor .ql-toolbar {
   border: 1px solid #e2e8f0;
   border-radius: 8px 8px 0 0;
-  background: #fafafa;
+  background: rgba(250, 250, 250, 0.95);
   padding: 12px;
+  position: -webkit-sticky;
   position: sticky;
-  top: 10px;
-  z-index: 1000;
+  top: 0;
+  z-index: 9999;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
   backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
 }
 
 /* Editor content area */
