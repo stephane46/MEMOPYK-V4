@@ -80,16 +80,6 @@
     "is_active": true
   },
   {
-    "id": "8312c30c-4de4-4863-b9fd-20481231fbae",
-    "section_id": "general",
-    "question_en": "What theme can my souvenir film be about?",
-    "question_fr": "Quels thèmes sont possibles pour mon film souvenir ?",
-    "answer_en": "<p>Our service adapts to any theme you choose. Think about all the photos and videos that you accumulate, and really feel what topics excite (or frustrate because it’s been so long that you wanted to do something about it!) you the most:</p><ul><li>a travel trip with your family or your friends</li><li>the first year of your baby, or of your pet</li><li>a special event such as a marriage, an anniversary celebration</li><li>the recap of someone’s life</li><li>the recap of a personal project such as a house renovation</li></ul>",
-    "answer_fr": "<p>Notre service s’adapte à tous les thèmes qui vous tiennent à cœur. Pensez à toutes les photos et vidéos que vous avez accumulées, et identifiez les sujets qui vous touchent (ou vous frustrent car vous rêvez de les valoriser depuis longtemps) :</p><ul><li>un voyage en famille ou entre amis</li><li>la première année de votre bébé ou de votre animal</li><li>un événement spécial comme un mariage ou un anniversaire</li><li>la rétrospective d’une vie</li><li>le suivi d’un projet personnel (ex. : rénovation de maison)</li></ul>",
-    "order_index": 4,
-    "is_active": true
-  },
-  {
     "id": "05b73a14-57dd-4ab0-b036-300da03696a3",
     "section_id": "pricing",
     "question_en": "I received my film but want changes. What’s your revision policy?",
@@ -100,13 +90,13 @@
     "is_active": true
   },
   {
-    "id": "a0cc7a21-f987-4e04-9791-72a2a87d6372",
+    "id": "8312c30c-4de4-4863-b9fd-20481231fbae",
     "section_id": "general",
-    "question_en": "Can I give you specific requirements (music, titles, effects, ...)?",
-    "question_fr": "Puis-je donner des consignes (musique, titres, effets…) ?",
-    "answer_en": "<p>Of course! Our detailed questionnaire has a dedicated section for all your creative notes. We respect every request and advise where needed to ensure the best possible film.</p>",
-    "answer_fr": "<p>Bien sûr ! Le questionnaire détaillé vous permet d’ajouter toutes vos préférences créatives. Nous respectons chaque demande et vous conseillons si besoin pour obtenir le meilleur rendu. OUI</p>",
-    "order_index": 5,
+    "question_en": "What theme can my souvenir film be about?",
+    "question_fr": "Quels thèmes sont possibles pour mon film souvenir ?",
+    "answer_en": "<p>Our service adapts to any theme you choose. Think about all the photos and videos that you accumulate, and really feel what topics excite (or frustrate because it’s been so long that you wanted to do something about it!) you the most:</p><ul><li>a travel trip with your family or your friends</li><li>the first year of your baby, or of your pet</li><li>a special event such as a marriage, an anniversary celebration</li><li>the recap of someone’s life</li><li>the recap of a personal project such as a house renovation</li></ul>",
+    "answer_fr": "<p>Notre service s’adapte à tous les thèmes qui vous tiennent à cœur. Pensez à toutes les photos et vidéos que vous avez accumulées, et identifiez les sujets qui vous touchent (ou vous frustrent car vous rêvez de les valoriser depuis longtemps) :</p><ul><li>un voyage en famille ou entre amis</li><li>la première année de votre bébé ou de votre animal</li><li>un événement spécial comme un mariage ou un anniversaire</li><li>la rétrospective d’une vie</li><li>le suivi d’un projet personnel (ex. : rénovation de maison)</li></ul>",
+    "order_index": 4,
     "is_active": true
   },
   {
@@ -114,8 +104,18 @@
     "section_id": "pricing",
     "question_en": "How long do I have to review my film?",
     "question_fr": "Combien de temps ai-je pour visionner et donner mon retour ?",
-    "answer_en": "<p>You have a two-week window from delivery to send feedback. Beyond that, a nominal weekly fee applies to cover storage and access.</p>",
-    "answer_fr": "<p>Vous disposez d'un délai de deux semaines à compter de la livraison pour envoyer vos commentaires. Au-delà, des frais hebdomadaires minimes s'appliquent pour couvrir les frais de stockage et d'accès.</p>",
+    "answer_en": "<p>From the day that we deliver you the film, you have a two-week window to send us your feedback if any. If you give us your feedback beyond that window, a nominal weekly fee applies to cover storage and access.</p>",
+    "answer_fr": "<p>A compter du jour de la livraison du film, vous disposez d'un délai de deux semaines pour nous faire parvenir vos commentaires. Si vos commentaires arrivent au-delà de ce délai, des frais hebdomadaires minimes s'appliquent pour couvrir les frais de stockage et d'accès.</p>",
+    "order_index": 5,
+    "is_active": true
+  },
+  {
+    "id": "a0cc7a21-f987-4e04-9791-72a2a87d6372",
+    "section_id": "general",
+    "question_en": "Can I give you specific requirements (music, titles, effects, ...)?",
+    "question_fr": "Puis-je donner des consignes (musique, titres, effets…) ?",
+    "answer_en": "<p>Of course! Our detailed questionnaire has a dedicated section for all your creative notes. We respect every request and advise where needed to ensure the best possible film.</p>",
+    "answer_fr": "<p>Bien sûr ! Le questionnaire détaillé vous permet d’ajouter toutes vos préférences créatives. Nous respectons chaque demande et vous conseillons si besoin pour obtenir le meilleur rendu. OUI</p>",
     "order_index": 5,
     "is_active": true
   },
