@@ -34,7 +34,7 @@ export function HowItWorksSection() {
       titleEn: "You Enjoy & Share", 
       descriptionFr: "Nous donnons vie à votre film de souvenirs. Vous recevez un résultat soigné en 1 à 3 semaines, avec 2 séries de retours incluses.",
       descriptionEn: "We bring your souvenir film to life. Expect a beautifully crafted result within 1-3 weeks, with 2 revision rounds included.",
-      subDescriptionFr: "You'll receive a high-quality, ready-to-share masterpiece — perfect for gifting or keeping.",
+      subDescriptionFr: "Vous obtenez un film souvenir prêt à partager — idéal pour offrir ou à conserver précieusement.",
       subDescriptionEn: "You'll receive a high-quality, ready-to-share masterpiece — perfect for gifting or keeping.",
       image: "/images/How_we_work_Step3.png"
     }
