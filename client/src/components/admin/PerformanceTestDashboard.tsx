@@ -349,6 +349,79 @@ export default function PerformanceTestDashboard() {
           <CardDescription>
             Test site performance with F5 (normal refresh) or Ctrl+F5 (hard refresh). Cache indicates local server storage, VPS indicates live database/CDN requests.
           </CardDescription>
+          
+          {/* Performance Testing Legend */}
+          <div className="mt-4 space-y-3 text-sm text-gray-600 bg-gray-50 rounded-lg p-4 border">
+            <h3 className="font-semibold text-gray-800 mb-2">What This Dashboard Measures</h3>
+            
+            <div className="space-y-3">
+              <div className="border-l-4 border-blue-400 pl-3">
+                <span className="font-medium text-blue-600">Hero Videos:</span> Tests the first 1KB of hero video delivery via local cache or VPS proxy. Measures actual video streaming performance that users experience during homepage video playback.
+              </div>
+              
+              <div className="border-l-4 border-green-400 pl-3">
+                <span className="font-medium text-green-600">Static Images:</span> Tests full thumbnail image loading (300x200 gallery thumbnails). Measures complete image delivery from local cache or Supabase CDN for gallery previews.
+              </div>
+              
+              <div className="border-l-4 border-purple-400 pl-3">
+                <span className="font-medium text-purple-600">Gallery Videos:</span> Tests the first 1KB of gallery video delivery using range requests on actual MP4 files. Measures video streaming performance for gallery video lightbox playback.
+              </div>
+            </div>
+            
+            <div className="mt-4 pt-3 border-t border-gray-200">
+              <h4 className="font-medium text-gray-700 mb-2">Test Modes:</h4>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs">
+                <div className="flex items-start gap-2">
+                  <RefreshCw className="h-4 w-4 text-blue-500 mt-0.5 flex-shrink-0" />
+                  <div>
+                    <span className="font-medium">Normal Refresh (F5):</span> Uses browser and server caches for typical performance measurement
+                  </div>
+                </div>
+                <div className="flex items-start gap-2">
+                  <RotateCcw className="h-4 w-4 text-red-500 mt-0.5 flex-shrink-0" />
+                  <div>
+                    <span className="font-medium">Hard Refresh (Ctrl+F5):</span> Bypasses all caches with X-Test-Bypass-Cache header for worst-case scenario testing
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            <div className="mt-4 pt-3 border-t border-gray-200">
+              <h4 className="font-medium text-gray-700 mb-2">Source Indicators:</h4>
+              <div className="flex flex-wrap gap-3 text-xs items-center">
+                <div className="flex items-center gap-1">
+                  <span className="px-2 py-1 bg-green-100 text-green-700 rounded text-xs">Cache</span>
+                  <span className="text-gray-600">Local VPS storage</span>
+                </div>
+                <div className="flex items-center gap-1">
+                  <span className="px-2 py-1 bg-blue-100 text-blue-700 rounded text-xs">VPS</span>
+                  <span className="text-gray-600">Server processing</span>
+                </div>
+                <div className="flex items-center gap-1">
+                  <span className="px-2 py-1 bg-orange-100 text-orange-700 rounded text-xs">Database</span>
+                  <span className="text-gray-600">Direct CDN/Supabase</span>
+                </div>
+              </div>
+            </div>
+            
+            <div className="mt-4 pt-3 border-t border-gray-200">
+              <h4 className="font-medium text-gray-700 mb-2">Performance Thresholds:</h4>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-3 text-xs">
+                <div className="flex items-center gap-2">
+                  <Badge className="bg-green-100 text-green-800 text-xs px-2 py-1">Good</Badge>
+                  <span className="text-gray-600">&lt; 50ms response times</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <Badge className="bg-yellow-100 text-yellow-800 text-xs px-2 py-1">Fair</Badge>
+                  <span className="text-gray-600">50-200ms response times</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <Badge className="bg-red-100 text-red-800 text-xs px-2 py-1">Poor</Badge>
+                  <span className="text-gray-600">&gt; 200ms response times</span>
+                </div>
+              </div>
+            </div>
+          </div>
         </CardHeader>
         <CardContent>
           <div className="flex items-center gap-4 mb-4">
