@@ -163,8 +163,8 @@ export default function PerformanceTestDashboard() {
         await apiResponse.json();
         galleryApiTime = Math.round(performance.now() - apiStartTime);
         
-        // Gallery videos API uses in-memory cache for recent requests, but queries database
-        galleryApiSource = galleryApiTime < 50 ? 'cache' : 'database';
+        // Gallery videos API uses in-memory cache for recent requests, but queries VPS
+        galleryApiSource = galleryApiTime < 50 ? 'cache' : 'vps';
         console.log(`📊 Gallery Videos API test: ${galleryApiTime}ms from ${galleryApiSource} (${refreshType} refresh)`);
       } catch (error) {
         galleryApiTime = -1;
@@ -397,7 +397,7 @@ export default function PerformanceTestDashboard() {
                     {getStatusBadge(getTimeStatus(averageResults.galleryApi, 'api'))}
                   </div>
                   <div className="text-xs text-gray-500 dark:text-gray-400">
-                    Average from database
+                    Average from VPS
                   </div>
                 </div>
               </div>
