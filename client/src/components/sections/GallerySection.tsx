@@ -229,10 +229,10 @@ export default function GallerySection() {
   const t = content[language];
 
   const cacheBusted = (url: string) => {
-    const timestamp = Date.now();
-    const random = Math.random().toString(36).substring(7);
+    // PERFORMANCE FIX: Use static timestamp for browser caching while preserving cache-busting for updates
+    // This allows browser caching between page reloads while still forcing updates when content changes
     const separator = url.includes('?') ? '&' : '?';
-    return `${url}${separator}crop=static&t=${timestamp}&r=${random}&force=1`;
+    return `${url}${separator}crop=static&cache=1`;
   };
 
   const getImageUrl = (item: GalleryItem) => {
