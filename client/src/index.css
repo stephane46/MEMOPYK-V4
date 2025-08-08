@@ -72,6 +72,39 @@ img, video, iframe, canvas, svg {
   font-family: 'Poppins', sans-serif;
 }
 
+/* Legal Document Tight Spacing Override */
+.legal-document-tight {
+  line-height: 1.2 !important;
+}
+
+.legal-document-tight p {
+  margin-bottom: 0.25rem !important;
+  line-height: 1.2 !important;
+}
+
+.legal-document-tight br {
+  line-height: 0 !important;
+}
+
+.legal-document-tight h1,
+.legal-document-tight h2,
+.legal-document-tight h3,
+.legal-document-tight h4,
+.legal-document-tight h5,
+.legal-document-tight h6 {
+  margin-bottom: 0.5rem !important;
+  line-height: 1.3 !important;
+}
+
+.legal-document-tight ul,
+.legal-document-tight ol {
+  margin-bottom: 0.25rem !important;
+}
+
+.legal-document-tight blockquote {
+  margin-bottom: 0.25rem !important;
+}
+
 /* MEMOPYK Animation */
 @keyframes pulse-elegant {
   0%, 100% { opacity: 0.9; }
