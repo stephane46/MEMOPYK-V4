@@ -81,12 +81,16 @@
   visibility: visible;
 }
 
-/* Toolbar styling - MEMOPYK orange theme */
+/* Toolbar styling - MEMOPYK orange theme with sticky positioning */
 .rich-text-editor .ql-toolbar {
   border: 1px solid #e2e8f0;
   border-radius: 8px 8px 0 0;
   background: #fafafa;
   padding: 12px;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 /* Editor content area */
