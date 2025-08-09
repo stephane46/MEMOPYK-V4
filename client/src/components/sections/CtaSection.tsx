@@ -34,8 +34,8 @@ export function CtaSection() {
           <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
             {/* Filter and display only active CTA buttons */}
             {ctaSettings
-              .filter((cta: CtaSettings) => cta.isActive)
-              .map((cta: CtaSettings) => {
+              .filter((cta: any) => cta.isActive)
+              .map((cta: any) => {
                 const url = language === 'fr-FR' ? cta.buttonUrlFr : cta.buttonUrlEn;
                 return (
                   <a
