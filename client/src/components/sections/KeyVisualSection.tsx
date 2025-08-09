@@ -176,7 +176,7 @@ export function KeyVisualSection() {
 
                 {/* Main solution text with enhanced typography */}
                 <div className="relative z-10 space-y-4">
-                  <p className="text-xl sm:text-2xl lg:text-3xl font-poppins font-bold text-memopyk-navy leading-relaxed text-center">
+                  <p className="text-xl sm:text-2xl lg:text-3xl font-poppins text-memopyk-navy leading-relaxed text-center">
                     {language === 'fr-FR' ? (
                       <>
                         <span>Laissez-nous sauver vos <span className="relative inline-block"><span>photos et vidéos</span><span className="absolute bottom-0.5 left-0 w-full h-0.5 bg-memopyk-orange"></span></span></span>
