@@ -201,9 +201,9 @@ export default function GallerySection() {
 
   const content = {
     'fr-FR': {
-      title: "Notre Galerie",
-      subtitle: "Découvrez nos créations de films souvenirs",
-      description: "Chaque film raconte une histoire unique. Explorez notre collection de créations personnalisées pour mariages, familles et événements spéciaux.",
+      title: "Galerie",
+      subtitle: "Chaque film souvenir est unique. Nous ne proposons donc pas de prix standard, et sommes seulement sur devis.",
+      description: "Les exemples ci-dessous sont donnés à titre indicatif uniquement. Veuillez nous contacter pour obtenir le devis exact pour votre film souvenir.",
       viewAll: "Voir Toute la Galerie",
       preview: "Aperçu",
       startingFrom: "À partir de",
@@ -213,9 +213,9 @@ export default function GallerySection() {
       image: "Image"
     },
     'en-US': {
-      title: "Our Gallery",
-      subtitle: "Discover our memory film creations",
-      description: "Every film tells a unique story. Explore our collection of personalized creations for weddings, families and special events.",
+      title: "Gallery",
+      subtitle: "Each souvenir film is unique. Therefore, we do not offer standard pricing and only provide customized quotation.",
+      description: "The examples below are for reference only. Please contact us to get the exact quotation for your souvenir film.",
       viewAll: "View Full Gallery",
       preview: "Preview",
       startingFrom: "Starting from",
