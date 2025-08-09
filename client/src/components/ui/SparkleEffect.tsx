@@ -27,6 +27,11 @@ export function SparkleEffect({
 }: SparkleEffectProps) {
   const [sparkles, setSparkles] = useState<Sparkle[]>([]);
   const [isActive, setIsActive] = useState(trigger === 'always');
+
+  // Debug effect to check if component is rendering
+  useEffect(() => {
+    console.log('SparkleEffect mounted with trigger:', trigger, 'intensity:', intensity, 'color:', color);
+  }, [trigger, intensity, color]);
   const [isInView, setIsInView] = useState(false);
 
   const sparkleCount = {
@@ -73,16 +78,17 @@ export function SparkleEffect({
   useEffect(() => {
     if (trigger !== 'scroll') return;
 
+    const currentElement = document.querySelector('[data-sparkle-trigger]');
+    if (!currentElement) return;
+
     const observer = new IntersectionObserver(
       ([entry]) => {
         setIsInView(entry.isIntersecting);
       },
-      { threshold: 0.3 }
+      { threshold: 0.1 }
     );
 
-    const element = document.getElementById(`sparkle-${Math.random()}`);
-    if (element) observer.observe(element);
-
+    observer.observe(currentElement);
     return () => observer.disconnect();
   }, [trigger]);
 
@@ -99,7 +105,7 @@ export function SparkleEffect({
       className={`relative ${className}`}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
-      id={trigger === 'scroll' ? `sparkle-${Math.random()}` : undefined}
+      data-sparkle-trigger={trigger === 'scroll' ? 'true' : undefined}
     >
       {children}
       
@@ -108,16 +114,17 @@ export function SparkleEffect({
         {sparkles.map((sparkle) => (
           <div
             key={sparkle.id}
-            className={`absolute ${colorClasses} opacity-0 animate-sparkle`}
+            className={`absolute ${colorClasses} animate-sparkle pointer-events-none`}
             style={{
               left: `${sparkle.x}%`,
               top: `${sparkle.y}%`,
               fontSize: `${sparkle.size}px`,
               animationDelay: `${sparkle.delay}s`,
-              animationDuration: `${sparkle.duration}s`
+              animationDuration: `${sparkle.duration}s`,
+              zIndex: 10
             }}
           >
-            <Sparkles className="drop-shadow-sm" />
+            <Sparkles className="drop-shadow-lg filter brightness-150" />
           </div>
         ))}
       </div>

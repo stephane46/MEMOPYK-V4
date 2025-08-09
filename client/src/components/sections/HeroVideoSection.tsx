@@ -215,9 +215,9 @@ export function HeroVideoSection() {
       <div className="absolute inset-0 flex items-center justify-center text-center text-white px-3 sm:px-6 lg:px-8">
         <div className="max-w-7xl w-full">
           <SparkleText 
-            trigger="scroll" 
-            intensity="low" 
-            color="white"
+            trigger="hover" 
+            intensity="medium" 
+            color="gold"
             className="font-playfair font-bold mb-2 sm:mb-4 lg:mb-6 leading-tight"
           >
             <h1 

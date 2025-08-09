@@ -47,8 +47,8 @@ export function HowItWorksSection() {
         {/* Section Header */}
         <div className="text-center mb-16">
           <SparkleText 
-            trigger="scroll" 
-            intensity="medium" 
+            trigger="always" 
+            intensity="high" 
             color="orange"
           >
             <h2 className="text-4xl md:text-5xl font-poppins font-bold text-memopyk-navy mb-6">
