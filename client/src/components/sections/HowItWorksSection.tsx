@@ -1,6 +1,5 @@
 import { useLanguage } from '../../contexts/LanguageContext';
 import { Upload, Edit, Heart } from 'lucide-react';
-import { SparkleText } from '../ui/SparkleEffect';
 
 export function HowItWorksSection() {
   const { language } = useLanguage();
@@ -46,18 +45,12 @@ export function HowItWorksSection() {
       <div className="container mx-auto px-4">
         {/* Section Header */}
         <div className="text-center mb-16">
-          <SparkleText 
-            trigger="always" 
-            intensity="high" 
-            color="orange"
-          >
-            <h2 className="text-4xl md:text-5xl font-poppins font-bold text-memopyk-navy mb-6">
-              {language === 'fr-FR' 
-                ? "Comment Ça Marche"
-                : "How It Works"
-              }
-            </h2>
-          </SparkleText>
+          <h2 className="text-4xl md:text-5xl font-poppins font-bold text-memopyk-navy mb-6">
+            {language === 'fr-FR' 
+              ? "Comment Ça Marche"
+              : "How It Works"
+            }
+          </h2>
           <p className="text-xl text-memopyk-dark-blue max-w-3xl mx-auto">
             {language === 'fr-FR' 
               ? "3 étapes faciles pour transformer vos photos et vidéos éparpillées en films souvenirs mémorables."
