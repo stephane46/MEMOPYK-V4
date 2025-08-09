@@ -161,9 +161,10 @@ export function KeyVisualSection() {
               {/* Elegant background card */}
               <div className="bg-gradient-to-br from-memopyk-cream/80 via-white to-memopyk-cream/60 backdrop-blur-sm border-2 border-memopyk-orange/30 rounded-2xl px-8 py-8 shadow-2xl relative overflow-hidden transform hover:scale-[1.02] transition-all duration-500">
                 
-                {/* Decorative corner elements */}
-                <div className="absolute top-0 left-0 w-20 h-20 bg-gradient-to-br from-memopyk-orange/20 to-transparent rounded-br-full"></div>
-                <div className="absolute bottom-0 right-0 w-24 h-24 bg-gradient-to-tl from-memopyk-sky-blue/15 to-transparent rounded-tl-full"></div>
+                {/* Decorative elements - floating orbs */}
+                <div className="absolute top-4 right-6 w-12 h-12 bg-gradient-to-br from-memopyk-orange/30 to-memopyk-orange/10 rounded-full blur-sm"></div>
+                <div className="absolute bottom-6 left-8 w-8 h-8 bg-gradient-to-tr from-memopyk-sky-blue/25 to-memopyk-sky-blue/5 rounded-full blur-sm"></div>
+                <div className="absolute top-1/2 left-4 w-4 h-4 bg-memopyk-orange/20 rounded-full"></div>
                 
                 {/* Subtle pattern overlay */}
                 <div className="absolute inset-0 opacity-5">
@@ -175,9 +176,9 @@ export function KeyVisualSection() {
                   <p className="text-xl sm:text-2xl lg:text-3xl font-poppins font-bold text-memopyk-navy leading-relaxed text-center">
                     {language === 'fr-FR' ? (
                       <>
-                        <span>Laissez-nous sauver vos photos et vidéos</span>
+                        <span>Laissez-nous sauver vos <span className="border-b-2 border-memopyk-orange">photos et vidéos</span></span>
                         <br />
-                        <span>en les transformant en un film souvenir</span>
+                        <span>en les transformant en un <span className="border-b-2 border-memopyk-orange">film souvenir</span></span>
                         <br />
                         <span>que vous garderez précieusement.</span>
                       </>
@@ -196,7 +197,7 @@ export function KeyVisualSection() {
                   {/* Elegant tagline */}
                   <p className="text-lg sm:text-xl lg:text-2xl font-playfair italic text-memopyk-sky-blue font-medium text-center tracking-wide">
                     {language === 'fr-FR' 
-                      ? "personnel - unique - émouvant."
+                      ? "personnel - unique - émouvant"
                       : "Personal, unique and moving."
                     }
                   </p>
