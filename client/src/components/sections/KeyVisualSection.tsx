@@ -156,11 +156,6 @@ export function KeyVisualSection() {
               {/* Decorative accent */}
               <div className="absolute top-0 right-0 w-16 h-16 bg-memopyk-orange/10 rounded-bl-full"></div>
               
-              {/* Solution label */}
-              <div className="text-sm font-bold text-memopyk-orange uppercase tracking-wide mb-3 relative z-10">
-                {language === 'fr-FR' ? "Notre Solution" : "Our Solution"}
-              </div>
-              
               {/* Main solution text */}
               <div className="text-lg sm:text-xl font-semibold text-memopyk-navy leading-relaxed mb-2 relative z-10">
                 {language === 'fr-FR' 
