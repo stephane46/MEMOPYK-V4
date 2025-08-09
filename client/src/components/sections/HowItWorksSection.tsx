@@ -10,8 +10,8 @@ export function HowItWorksSection() {
       icon: Upload,
       titleFr: "Téléversement",
       titleEn: "You Upload",
-      descriptionFr: "Envoyez-nous vos photos et vidéos telles qu'elles sont — inutile de trier, renommer ou organiser. Nous acceptons tous les formats, et proposons même des envois collaboratifs pour que la famille et les amis puissent contribuer.\nNous vous aidons pour la numérisation de vos éléments analogiques (photos imprimées, CD, cassette VHS,…).",
-      descriptionEn: "Give us your photos and videos exactly as they are — no need to sort, rename, or organize. \nWe accept all formats and even support collaborative uploads, so your family and friends can contribute.\nWe also support the digitization of your analog materials (printed old photos, CDs, VHS tapes,…).",
+      descriptionFr: "Envoyez-nous vos photos et vidéos telles qu'elles sont — inutile de trier, renommer ou organiser. Nous acceptons tous les formats, et proposons des envois collaboratifs pour que la famille / les amis puissant contribuer.\nNous vous aidons pour la numérisation de vos éléments analogiques (vieilles photos imprimées, CD, cassettes VHS,...).",
+      descriptionEn: "Give us your photos and videos as they are — no need to sort, rename, or organize.\nWe support collaborative uploads, so your family/friends can contribute.\nWe also help you with the digitization of your analog materials (printed old photos, CDs, VHS tapes,…).",
       subDescriptionFr: "Vous recevrez également un court questionnaire pour nous en dire plus sur votre histoire — qu'elle soit encore floue ou déjà bien construite.",
       subDescriptionEn: "You'll first fill in a short questionnaire, or have a consultation chat with us, to tell us more about what you have in mind — whether it's a vague or detailed vision.",
       image: "/images/How_we_work_Step1.png"
@@ -20,7 +20,7 @@ export function HowItWorksSection() {
       number: 2,
       icon: Edit,
       titleFr: "Sélection & Montage", 
-      titleEn: "We Curate & Edit",
+      titleEn: "We Create",
       descriptionFr: "Nous passons en revue chaque fichier pour repérer les moments les plus marquants, puis établissons l'arc naratif le plus adapté, avec des suggestions de musique, de durée et de format — tout est pensé pour sublimer vos souvenirs.",
       descriptionEn: "We go through every file to identify the most meaningful moments, then establish a personalized storyline, suggest music, duration, and format — every details are tailored to your memories.",
       subDescriptionFr: "Bien entendu, votre brief initial et tout commentaire que vous pourriez avoir sont toujours respectés, à chaque étape du processus.",
@@ -30,12 +30,12 @@ export function HowItWorksSection() {
     {
       number: 3,
       icon: Heart,
-      titleFr: "C'est prêt !",
+      titleFr: "C'est Prêt !",
       titleEn: "You Enjoy & Share", 
-      descriptionFr: "Nous donnons vie à votre film de souvenirs. Vous recevez un résultat soigné en 1 à 3 semaines, avec 2 séries de retours incluses.",
-      descriptionEn: "We bring your souvenir film to life. Expect a beautifully crafted result within 1-3 weeks, with 2 revision rounds included.",
-      subDescriptionFr: "Vous obtenez un film souvenir prêt à partager — idéal pour offrir ou à conserver précieusement.",
-      subDescriptionEn: "You'll receive a high-quality, ready-to-share masterpiece — perfect for gifting or keeping.",
+      descriptionFr: "Nous donnons vie à votre film de souvenirs. Vous recevez un résultat soigné en 1 à 3 semaines, avec 2 séries de retours incluses. Vous obtiendrez un film de haute qualité qui reflète fidèlement votre vision et vos souhaits.",
+      descriptionEn: "We bring your souvenir film to life. Expect a beautifully crafted result within 1-3 weeks, with 2 revision rounds included. You'll receive a high-quality visual story that truly reflects your vision and wishes.",
+      subDescriptionFr: "Le film est parfait pour être conservé simplement, offert à un être cher ou projeté lors d'un événement intime avec votre famille et vos amis.",
+      subDescriptionEn: "The film is perfect for simple keeping, gifting to a loved one, or showing at an intimate event with your family and friends.",
       image: "/images/How_we_work_Step3.png"
     }
   ];
