@@ -25,7 +25,7 @@ export function WhyMemopykSection() {
       icon: Users,
       titleFr: "Expertise",
       titleEn: "Expertise",
-      descriptionFr: "Ayant une grande expérience dans le domaine de l'image, nous sommes animés par l'efficacité de notre flux de travail, afin de vous offrir les meilleurs conseils et recommandations. Vous bénéficiez ainsi d'un résultat de grande qualité, et d'un rapport qualité-prix intéressant.",
+      descriptionFr: "Expérimenté dans le travail avec des supports visuels. Animé par l'efficacité de notre flux de travail, nous vous apportons les meilleurs conseils et orientations. Résultat de grande qualité, et d'un rapport qualité-prix intéressant.",
       descriptionEn: "Experienced in working with visual materials, we are driven by the efficiency of our workflow, to bring you the best advice and guidance. What you receive is high quality result with clear value added.",
       gradient: "from-memopyk-dark-blue/20 to-memopyk-navy/10"
     },
