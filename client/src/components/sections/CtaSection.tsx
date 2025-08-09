@@ -32,9 +32,10 @@ export function CtaSection() {
           </p>
           
           <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
-            {/* Filter and display only active CTA buttons */}
+            {/* Filter and display only active CTA buttons - Reversed order */}
             {ctaSettings
               .filter((cta: CtaSettings) => cta.isActive)
+              .reverse()
               .map((cta: CtaSettings) => {
                 const url = language === 'fr-FR' ? cta.buttonUrlFr : cta.buttonUrlEn;
                 return (
