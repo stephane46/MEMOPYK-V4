@@ -141,7 +141,7 @@ export function HeroVideoSection() {
 
   if (!currentVideo) {
     return (
-      <section className="relative h-[80vh] sm:h-[85vh] lg:h-screen bg-gradient-memopyk flex items-center justify-center">
+      <section className="relative h-[calc(100vh-4rem)] bg-gradient-memopyk flex items-center justify-center">
         <div className="text-center text-white">
           <h1 className="text-3xl sm:text-4xl lg:text-6xl font-playfair font-bold mb-4 sm:mb-6">
             Transformez vos souvenirs en films cinématographiques
@@ -165,7 +165,7 @@ export function HeroVideoSection() {
 
   return (
     <section 
-      className="relative h-[80vh] sm:h-[85vh] lg:h-screen overflow-hidden bg-gradient-to-br from-memopyk-navy to-memopyk-dark-blue"
+      className="relative h-[calc(100vh-4rem)] overflow-hidden bg-gradient-to-br from-memopyk-navy to-memopyk-dark-blue"
       onTouchStart={handleTouchStart}
       onTouchMove={handleTouchMove}
       onTouchEnd={handleTouchEnd}
