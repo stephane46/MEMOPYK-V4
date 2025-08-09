@@ -156,7 +156,7 @@ export function KeyVisualSection() {
         </div>
 
         {/* Solution statement centered across full width */}
-        <div className="mt-0 sm:mt-1 md:mt-1 lg:mt-1 xl:mt-1 text-center space-y-2">
+        <div className="mt-0 sm:mt-1 md:mt-1 lg:mt-1 xl:mt-1 text-center space-y-2 bg-red-500 border-4 border-yellow-400">
           {/* Decorative separator */}
           <div className="flex items-center justify-center space-x-4">
             <div className="h-px bg-gradient-to-r from-transparent via-memopyk-sky-blue to-transparent flex-1 max-w-20"></div>
