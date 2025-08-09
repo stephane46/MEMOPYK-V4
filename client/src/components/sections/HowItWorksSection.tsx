@@ -117,13 +117,13 @@ export function HowItWorksSection() {
           <div className="bg-gradient-to-r from-memopyk-cream to-white p-8 rounded-2xl shadow-lg">
             <p className="text-lg text-memopyk-dark-blue mb-6">
               {language === 'fr-FR' 
-                ? "Prêt à commencer votre film mémoire ?"
-                : "Ready to start your memory film?"
+                ? "Prêt à créer votre film souvenir ?"
+                : "Ready to make your souvenir film?"
               }
             </p>
             <button className="bg-memopyk-orange hover:bg-memopyk-dark-blue text-white px-8 py-4 rounded-full font-semibold text-lg transition-all duration-300 transform hover:scale-105 shadow-lg">
               {language === 'fr-FR' 
-                ? "Commencer maintenant"
+                ? "Commencer"
                 : "Start now"
               }
             </button>
