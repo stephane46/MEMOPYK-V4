@@ -105,21 +105,71 @@ export function HowItWorksSection() {
           })}
         </div>
 
-        {/* Call to Action */}
+        {/* Enhanced Call to Action */}
         <div className="text-center mt-4">
-          <div className="bg-gradient-to-r from-memopyk-cream to-white p-8 rounded-2xl shadow-lg">
-            <p className="text-lg text-memopyk-dark-blue mb-6">
-              {language === 'fr-FR' 
-                ? "Prêt à créer votre film souvenir ?"
-                : "Ready to make your souvenir film?"
-              }
-            </p>
-            <button className="bg-memopyk-orange hover:bg-memopyk-dark-blue text-white px-8 py-4 rounded-full font-semibold text-lg transition-all duration-300 transform hover:scale-105 shadow-lg">
-              {language === 'fr-FR' 
-                ? "Commencer"
-                : "Start now"
-              }
-            </button>
+          <div className="relative bg-gradient-to-br from-memopyk-dark-blue via-memopyk-navy to-memopyk-dark-blue p-10 rounded-3xl shadow-2xl border border-memopyk-orange/20 overflow-hidden">
+            {/* Decorative Elements */}
+            <div className="absolute top-0 right-0 w-32 h-32 bg-memopyk-orange/10 rounded-full blur-3xl"></div>
+            <div className="absolute bottom-0 left-0 w-24 h-24 bg-memopyk-sky-blue/10 rounded-full blur-2xl"></div>
+            
+            {/* Content */}
+            <div className="relative z-10">
+              {/* Main Headline */}
+              <h3 className="text-2xl md:text-3xl lg:text-4xl font-bold text-memopyk-cream mb-4">
+                {language === 'fr-FR' 
+                  ? "Transformez Vos Souvenirs en Film Cinématographique"
+                  : "Transform Your Memories Into a Cinematic Film"
+                }
+              </h3>
+              
+              {/* Compelling Subtitle */}
+              <p className="text-lg md:text-xl text-memopyk-cream/90 mb-6 max-w-3xl mx-auto leading-relaxed">
+                {language === 'fr-FR' 
+                  ? "Ne laissez plus vos moments précieux dormir dans vos téléphones. En seulement 1 à 3 semaines, recevez un film professionnel qui fera revivre vos plus beaux souvenirs pour toujours."
+                  : "Don't let your precious moments sleep in your phones anymore. In just 1-3 weeks, receive a professional film that will bring your most beautiful memories to life forever."
+                }
+              </p>
+
+              {/* Value Proposition */}
+              <div className="flex flex-wrap justify-center gap-4 mb-8 text-sm md:text-base">
+                <div className="flex items-center text-memopyk-cream/80">
+                  <div className="w-2 h-2 bg-memopyk-orange rounded-full mr-2"></div>
+                  {language === 'fr-FR' ? "Livraison 1-3 semaines" : "1-3 weeks delivery"}
+                </div>
+                <div className="flex items-center text-memopyk-cream/80">
+                  <div className="w-2 h-2 bg-memopyk-orange rounded-full mr-2"></div>
+                  {language === 'fr-FR' ? "2 séries de retours incluses" : "2 revision rounds included"}
+                </div>
+                <div className="flex items-center text-memopyk-cream/80">
+                  <div className="w-2 h-2 bg-memopyk-orange rounded-full mr-2"></div>
+                  {language === 'fr-FR' ? "Qualité cinématographique" : "Cinematic quality"}
+                </div>
+              </div>
+              
+              {/* Action Buttons */}
+              <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
+                <button className="bg-gradient-to-r from-memopyk-orange to-orange-500 hover:from-orange-500 hover:to-memopyk-orange text-white px-8 py-4 rounded-full font-bold text-lg transition-all duration-300 transform hover:scale-105 shadow-xl hover:shadow-2xl border-2 border-transparent hover:border-white/20">
+                  {language === 'fr-FR' 
+                    ? "Commencer Maintenant"
+                    : "Start Now"
+                  }
+                </button>
+                <button className="border-2 border-memopyk-cream text-memopyk-cream hover:bg-memopyk-cream hover:text-memopyk-dark-blue px-6 py-3 rounded-full font-semibold text-lg transition-all duration-300 transform hover:scale-105">
+                  {language === 'fr-FR' 
+                    ? "Consultation Gratuite"
+                    : "Free Consultation"
+                  }
+                </button>
+              </div>
+
+              {/* Urgency/Trust Element */}
+              <p className="text-sm text-memopyk-cream/70 mt-6 italic">
+                {language === 'fr-FR' 
+                  ? "✨ Plus de 100 familles nous ont déjà fait confiance"
+                  : "✨ Over 100 families have already trusted us"
+                }
+              </p>
+            </div>
           </div>
         </div>
       </div>
