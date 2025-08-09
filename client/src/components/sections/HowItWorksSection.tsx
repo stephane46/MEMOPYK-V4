@@ -41,7 +41,7 @@ export function HowItWorksSection() {
   ];
 
   return (
-    <section id="how-it-works" className="pt-8 pb-20 bg-gradient-to-br from-white to-memopyk-sky-blue/10">
+    <section id="how-it-works" className="pt-8 pb-8 bg-gradient-to-br from-white to-memopyk-sky-blue/10">
       <div className="container mx-auto px-4">
         {/* Section Header */}
         <div className="text-center mb-16">
@@ -106,7 +106,7 @@ export function HowItWorksSection() {
         </div>
 
         {/* Call to Action */}
-        <div className="text-center mt-16">
+        <div className="text-center mt-8">
           <div className="bg-gradient-to-r from-memopyk-cream to-white p-8 rounded-2xl shadow-lg">
             <p className="text-lg text-memopyk-dark-blue mb-6">
               {language === 'fr-FR' 
