@@ -40,8 +40,8 @@ export function WhyMemopykSection() {
   ];
 
   return (
-    <section className="py-10 bg-gradient-to-br from-memopyk-cream/30 to-white overflow-x-hidden">
-      <div className="container mx-auto px-4">
+    <section className="py-10 bg-gradient-to-br from-memopyk-cream/30 to-white overflow-hidden">
+      <div className="container mx-auto px-4 overflow-hidden">
         {/* Section Header */}
         <div className="text-center mb-16">
           <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-poppins font-bold text-memopyk-navy mb-6">
