@@ -199,9 +199,34 @@ export default function FAQSection() {
                     onClick={() => toggleSection(sectionKey)}
                     className="w-full text-left flex items-center justify-between hover:bg-gray-50 transition-colors p-2 sm:p-2 rounded touch-manipulation min-h-[44px]"
                   >
-                    <h3 className="text-lg sm:text-xl lg:text-2xl font-bold text-gray-900 pr-2">
-                      {language === 'fr-FR' ? section.title_fr : section.title_en}
-                    </h3>
+                    <div className="flex-1 pr-2">
+                      <h3 className="text-lg sm:text-xl lg:text-2xl font-bold text-gray-900 mb-1">
+                        {language === 'fr-FR' ? section.title_fr : section.title_en}
+                      </h3>
+                      {/* Section Description with Language-Specific Truncation */}
+                      {(section.description_fr || section.description_en) && (
+                        <p className="text-sm text-gray-600 leading-tight">
+                          {(() => {
+                            const description = language === 'fr-FR' ? section.description_fr : section.description_en;
+                            if (!description) return '';
+                            
+                            // Language-specific max length calculations
+                            const maxLength = language === 'fr-FR' ? 85 : 95; // French needs more characters typically
+                            
+                            if (description.length <= maxLength) {
+                              return description;
+                            }
+                            
+                            // Find the last space before the max length to avoid cutting words
+                            const truncated = description.substring(0, maxLength);
+                            const lastSpaceIndex = truncated.lastIndexOf(' ');
+                            const finalText = lastSpaceIndex > 0 ? truncated.substring(0, lastSpaceIndex) : truncated;
+                            
+                            return `${finalText}...`;
+                          })()}
+                        </p>
+                      )}
+                    </div>
                     {openSection === sectionKey ? (
                       <ChevronUp className="h-5 w-5 sm:h-6 sm:w-6 text-gray-500 flex-shrink-0" />
                     ) : (

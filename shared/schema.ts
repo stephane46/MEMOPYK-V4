@@ -101,6 +101,8 @@ export const faqSections = pgTable("faq_sections", {
   key: varchar("key").notNull(),
   nameEn: varchar("name_en").notNull(),
   nameFr: varchar("name_fr").notNull(),
+  descriptionEn: text("description_en").default(""),
+  descriptionFr: text("description_fr").default(""),
   orderIndex: integer("order_index").notNull().default(0),
   isActive: boolean("is_active").notNull().default(true),
   createdAt: timestamp("created_at").defaultNow(),
