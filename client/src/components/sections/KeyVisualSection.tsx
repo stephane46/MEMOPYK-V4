@@ -146,7 +146,7 @@ export function KeyVisualSection() {
             </div>
 
             {/* Key message */}
-            <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-poppins font-bold text-memopyk-navy leading-tight">
+            <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-poppins text-memopyk-navy leading-tight">
               {language === 'fr-FR' ? (
                 <>
                   <span>Vos photos et vidéos méritent mieux</span>
