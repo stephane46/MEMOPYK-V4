@@ -145,7 +145,7 @@ export function KeyVisualSection() {
             <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-poppins font-bold text-memopyk-navy leading-tight">
               {language === 'fr-FR' ? (
                 <>
-                  <span>Vos souvenirs méritent mieux</span>
+                  <span>Vos photos et vidéos méritent mieux</span>
                   <br />
                   <span>que d'être simplement stockés,</span>
                   <br />
