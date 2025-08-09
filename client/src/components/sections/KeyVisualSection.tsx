@@ -137,19 +137,12 @@ export function KeyVisualSection() {
             </div>
 
             {/* Key message */}
-            <div className="text-lg sm:text-xl text-memopyk-dark-blue leading-relaxed font-poppins font-bold space-y-1 mb-6">
-              {language === 'fr-FR' ? (
-                <>
-                  <p>Vos souvenirs méritent mieux que d'être simplement stockés,</p>
-                  <p>ils méritent une histoire.</p>
-                </>
-              ) : (
-                <>
-                  <p>Your memories deserve better than just being stored,</p>
-                  <p>they deserve a story.</p>
-                </>
-              )}
-            </div>
+            <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-poppins font-bold text-memopyk-navy leading-tight">
+              {language === 'fr-FR' 
+                ? "Vos souvenirs méritent mieux que d'être simplement stockés, ils méritent une histoire."
+                : "Your memories deserve better than just being stored, they deserve a story."
+              }
+            </h2>
 
             {/* THE ANSWER - Solution Statement */}
             <div className="bg-gradient-to-br from-memopyk-cream via-white to-memopyk-cream border-l-4 border-memopyk-orange rounded-r-xl px-6 py-5 shadow-lg relative overflow-hidden">
