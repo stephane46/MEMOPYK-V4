@@ -152,42 +152,41 @@ export function KeyVisualSection() {
               )}
             </div>
 
-            {/* Solution statement with enhanced styling */}
-            <div className="mt-8 sm:mt-12 space-y-6">
-              {/* Decorative separator */}
-              <div className="flex items-center justify-center space-x-4">
-                <div className="h-px bg-gradient-to-r from-transparent via-memopyk-sky-blue to-transparent flex-1 max-w-16"></div>
-                <div className="w-2 h-2 bg-memopyk-sky-blue rounded-full"></div>
-                <div className="h-px bg-gradient-to-r from-transparent via-memopyk-sky-blue to-transparent flex-1 max-w-16"></div>
-              </div>
-              
-              {/* Primary solution message */}
-              <div className="text-center">
-                <h3 className="text-xl sm:text-2xl lg:text-3xl font-poppins font-semibold text-memopyk-navy leading-relaxed">
-                  {language === 'fr-FR' 
-                    ? "Laissez-nous sauver vos photos et vidéos en les transformant en un film souvenir que vous garderez précieusement."
-                    : "Let us rescue your photos and videos by transforming them into a souvenir film you'll treasure forever."
-                  }
-                </h3>
-              </div>
+          </div>
+        </div>
 
-              {/* Elegant tagline */}
-              <div className="text-center">
-                <p className="text-xl sm:text-2xl lg:text-3xl font-playfair italic text-memopyk-sky-blue font-medium tracking-wide">
-                  {language === 'fr-FR' 
-                    ? "Personnel, unique et émouvant."
-                    : "Personal, unique and moving."
-                  }
-                </p>
-                
-                {/* Subtle underline accent */}
-                <div className="mt-3 flex justify-center">
-                  <div className="w-16 h-0.5 bg-gradient-to-r from-memopyk-sky-blue/30 via-memopyk-orange/50 to-memopyk-sky-blue/30 rounded-full"></div>
-                </div>
-              </div>
+        {/* Solution statement centered across full width */}
+        <div className="mt-12 sm:mt-16 lg:mt-20 text-center space-y-6">
+          {/* Decorative separator */}
+          <div className="flex items-center justify-center space-x-4">
+            <div className="h-px bg-gradient-to-r from-transparent via-memopyk-sky-blue to-transparent flex-1 max-w-20"></div>
+            <div className="w-2 h-2 bg-memopyk-sky-blue rounded-full"></div>
+            <div className="h-px bg-gradient-to-r from-transparent via-memopyk-sky-blue to-transparent flex-1 max-w-20"></div>
+          </div>
+          
+          {/* Primary solution message */}
+          <div className="max-w-4xl mx-auto">
+            <h3 className="text-xl sm:text-2xl lg:text-3xl font-poppins font-semibold text-memopyk-navy leading-relaxed">
+              {language === 'fr-FR' 
+                ? "Laissez-nous sauver vos photos et vidéos en les transformant en un film souvenir que vous garderez précieusement."
+                : "Let us rescue your photos and videos by transforming them into a souvenir film you'll treasure forever."
+              }
+            </h3>
+          </div>
+
+          {/* Elegant tagline */}
+          <div>
+            <p className="text-xl sm:text-2xl lg:text-3xl font-playfair italic text-memopyk-sky-blue font-medium tracking-wide">
+              {language === 'fr-FR' 
+                ? "Personnel, unique et émouvant."
+                : "Personal, unique and moving."
+              }
+            </p>
+            
+            {/* Subtle underline accent */}
+            <div className="mt-3 flex justify-center">
+              <div className="w-16 h-0.5 bg-gradient-to-r from-memopyk-sky-blue/30 via-memopyk-orange/50 to-memopyk-sky-blue/30 rounded-full"></div>
             </div>
-
-
           </div>
         </div>
       </div>
