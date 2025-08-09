@@ -172,7 +172,7 @@ export function KeyVisualSection() {
               <div className="bg-gradient-to-br from-memopyk-cream/80 via-white to-memopyk-cream/60 backdrop-blur-sm border-2 border-memopyk-orange/30 rounded-2xl px-8 py-8 shadow-2xl relative overflow-hidden transform hover:scale-[1.02] transition-all duration-500">
                 
                 {/* Orange to light blue gradient overlay */}
-                <div className="absolute inset-0 bg-gradient-to-r from-memopyk-orange/15 to-memopyk-sky-blue/15 rounded-2xl"></div>
+                <div className="absolute inset-0 bg-gradient-to-b from-memopyk-orange/15 to-memopyk-sky-blue/15 rounded-2xl"></div>
 
                 {/* Main solution text with enhanced typography */}
                 <div className="relative z-10 space-y-4">
