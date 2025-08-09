@@ -64,7 +64,7 @@ export function KeyVisualSection() {
           {/* Right: Clean and Elegant Text */}
           <div className="space-y-6 sm:space-y-8 lg:space-y-10 order-2 lg:order-none">
             {/* Main heading */}
-            <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-poppins font-bold text-memopyk-navy leading-relaxed">
+            <h2 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-poppins font-bold text-memopyk-navy leading-relaxed">
               {language === 'fr-FR' ? (
                 <>
                   <span>Ne laissez pas vos souvenirs</span>
@@ -81,7 +81,7 @@ export function KeyVisualSection() {
             </h2>
             
             {/* Animated Elements Coming from Left Image */}
-            <div className="text-xl sm:text-2xl lg:text-3xl text-memopyk-navy leading-relaxed space-y-3 sm:space-y-2">
+            <div className="text-lg sm:text-xl lg:text-2xl text-memopyk-navy leading-relaxed space-y-3 sm:space-y-2">
               {language === 'fr-FR' ? (
                 <>
                   <div 
@@ -146,7 +146,7 @@ export function KeyVisualSection() {
             </div>
 
             {/* Key message */}
-            <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-poppins font-bold text-memopyk-navy leading-relaxed">
+            <h2 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-poppins font-bold text-memopyk-navy leading-relaxed">
               {language === 'fr-FR' ? (
                 <>
                   <span>Vos photos et vidéos méritent mieux</span>
@@ -173,7 +173,7 @@ export function KeyVisualSection() {
 
                 {/* Main solution text with consistent typography */}
                 <div className="relative z-10">
-                  <p className="text-xl sm:text-2xl lg:text-3xl font-poppins text-memopyk-navy leading-relaxed text-center">
+                  <p className="text-lg sm:text-xl lg:text-2xl font-poppins text-memopyk-navy leading-relaxed text-center">
                     {language === 'fr-FR' ? (
                       <>
                         <span>Laissez-nous sauver vos <span className="font-bold">photos et vidéos</span></span>
