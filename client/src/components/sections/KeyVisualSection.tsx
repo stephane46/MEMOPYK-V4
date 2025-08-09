@@ -28,7 +28,7 @@ export function KeyVisualSection() {
 
   return (
     <section ref={sectionRef} className="py-0 bg-gradient-to-br from-memopyk-cream to-memopyk-cream/70">
-      <div className="container mx-auto px-4">
+      <div className="container mx-auto px-4 pb-0">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 sm:gap-10 lg:gap-12 items-center">
           {/* Left: Key Visual Illustration with Overlaid Animated Elements */}
           <div className="relative order-1 lg:order-none mb-8 sm:mb-0">
@@ -155,7 +155,7 @@ export function KeyVisualSection() {
         </div>
 
         {/* Solution statement centered across full width */}
-        <div className="-mt-8 sm:-mt-6 md:-mt-5 lg:-mt-4 xl:-mt-3 text-center space-y-2 bg-red-500 border-4 border-yellow-400">
+        <div className="-mt-2 text-center space-y-2 bg-red-500 border-4 border-yellow-400">
           {/* Decorative separator */}
           <div className="flex items-center justify-center space-x-4">
             <div className="h-px bg-gradient-to-r from-transparent via-memopyk-sky-blue to-transparent flex-1 max-w-20"></div>
