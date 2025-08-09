@@ -69,13 +69,13 @@ export function HowItWorksSection() {
             return (
               <div key={step.number} className="h-full">
                 {/* Step Card */}
-                <div className={`relative bg-memopyk-dark-blue rounded-3xl shadow-2xl text-center group hover:shadow-3xl transition-all duration-500 transform hover:-translate-y-2 z-10 h-full flex flex-col p-12 ${
+                <div className={`relative bg-memopyk-dark-blue rounded-3xl shadow-2xl text-center group hover:shadow-3xl transition-all duration-500 transform hover:-translate-y-2 z-10 h-full flex flex-col p-6 sm:p-8 lg:p-12 ${
                   isMiddleCard ? 'border-4 border-memopyk-orange' : ''
                 }`}>
                   
                   {/* Step Image */}
-                  <div className="mb-8 flex-shrink-0">
-                    <div className="w-64 h-64 mx-auto bg-memopyk-cream rounded-3xl p-6 shadow-lg">
+                  <div className="mb-6 sm:mb-8 flex-shrink-0">
+                    <div className="w-48 h-48 sm:w-56 sm:h-56 lg:w-64 lg:h-64 mx-auto bg-memopyk-cream rounded-3xl p-4 sm:p-6 shadow-lg">
                       <img 
                         src={step.image}
                         alt={language === 'fr-FR' ? step.titleFr : step.titleEn}
@@ -85,12 +85,12 @@ export function HowItWorksSection() {
                   </div>
 
                   {/* Step Title */}
-                  <h3 className="text-2xl font-bold text-memopyk-cream mb-6 flex-shrink-0">
+                  <h3 className="text-lg sm:text-xl lg:text-2xl font-bold text-memopyk-cream mb-4 sm:mb-6 flex-shrink-0">
                     {step.number}. {language === 'fr-FR' ? step.titleFr : step.titleEn}
                   </h3>
 
                   {/* Step Description - Takes available space */}
-                  <div className="text-memopyk-cream/90 leading-relaxed text-base mb-8 flex-grow">
+                  <div className="text-memopyk-cream/90 leading-relaxed text-sm sm:text-base mb-6 sm:mb-8 flex-grow">
                     {language === 'fr-FR' ? step.descriptionFr : step.descriptionEn}
                   </div>
                   

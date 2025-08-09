@@ -62,20 +62,20 @@ export function WhyMemopykSection() {
                 className="group relative h-full"
               >
                 {/* Benefit Card */}
-                <div className={`relative bg-gradient-to-br ${benefit.gradient} backdrop-blur-sm p-8 rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-2 border border-white/20 h-full flex flex-col`}>
+                <div className={`relative bg-gradient-to-br ${benefit.gradient} backdrop-blur-sm p-4 sm:p-6 lg:p-8 rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-2 border border-white/20 h-full flex flex-col`}>
                   
                   {/* Title with Icon */}
-                  <div className="flex items-center mb-6 flex-shrink-0">
-                    <div className="w-12 h-12 bg-white/80 backdrop-blur-sm rounded-full flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform duration-300 mr-4">
-                      <Icon className="w-6 h-6 text-memopyk-dark-blue" />
+                  <div className="flex items-center mb-4 sm:mb-6 flex-shrink-0">
+                    <div className="w-10 h-10 sm:w-12 sm:h-12 bg-white/80 backdrop-blur-sm rounded-full flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform duration-300 mr-3 sm:mr-4">
+                      <Icon className="w-5 h-5 sm:w-6 sm:h-6 text-memopyk-dark-blue" />
                     </div>
-                    <h3 className="text-2xl font-bold text-memopyk-navy">
+                    <h3 className="text-lg sm:text-xl lg:text-2xl font-bold text-memopyk-navy">
                       {language === 'fr-FR' ? benefit.titleFr : benefit.titleEn}
                     </h3>
                   </div>
 
                   {/* Description */}
-                  <p className="text-memopyk-dark-blue leading-relaxed flex-grow">
+                  <p className="text-memopyk-dark-blue leading-relaxed text-sm sm:text-base flex-grow">
                     {language === 'fr-FR' ? benefit.descriptionFr : benefit.descriptionEn}
                   </p>
                 </div>
