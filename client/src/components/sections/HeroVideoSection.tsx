@@ -165,7 +165,7 @@ export function HeroVideoSection() {
 
   return (
     <section 
-      className="relative h-[80vh] sm:h-[85vh] lg:h-screen overflow-hidden bg-black"
+      className="relative h-[80vh] sm:h-[85vh] lg:h-screen overflow-hidden bg-gradient-to-br from-memopyk-navy to-memopyk-dark-blue"
       onTouchStart={handleTouchStart}
       onTouchMove={handleTouchMove}
       onTouchEnd={handleTouchEnd}
