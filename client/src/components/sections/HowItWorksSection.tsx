@@ -51,12 +51,7 @@ export function HowItWorksSection() {
               : "How It Works"
             }
           </h2>
-          <p className="text-xl text-memopyk-dark-blue max-w-3xl mx-auto">
-            {language === 'fr-FR' 
-              ? "3 étapes faciles pour transformer vos photos et vidéos éparpillées en films souvenirs mémorables."
-              : "3 easy steps to turn scattered photos & videos into memorable souvenir films."
-            }
-          </p>
+
         </div>
 
         {/* Steps */}
