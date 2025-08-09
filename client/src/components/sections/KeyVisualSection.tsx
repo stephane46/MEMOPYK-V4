@@ -72,7 +72,11 @@ export function KeyVisualSection() {
                   <span>se perdre à jamais.</span>
                 </>
               ) : (
-                "Don't let your memories be lost forever."
+                <>
+                  <span>Don't let your memories</span>
+                  <br />
+                  <span>be lost forever.</span>
+                </>
               )}
             </h2>
             
@@ -87,7 +91,7 @@ export function KeyVisualSection() {
                     style={{ transitionDelay: '1200ms' }}
                   >
                     <Smartphone className="w-5 h-5 sm:w-6 sm:h-6 flex-shrink-0 text-memopyk-sky-blue transition-transform duration-300 hover:rotate-6" />
-                    <span className="text-memopyk-navy font-medium whitespace-nowrap">enfouis dans des téléphones...</span>
+                    <span className="text-memopyk-navy whitespace-nowrap">enfouis dans des téléphones...</span>
                   </div>
                   <div 
                     className={`flex items-center gap-3 bg-white/60 backdrop-blur-sm rounded-xl px-4 py-3 border border-memopyk-sky-blue/30 shadow-lg w-[420px] max-w-full transform transition-all duration-1000 hover:scale-105 hover:bg-white/80 hover:shadow-xl ${
@@ -96,7 +100,7 @@ export function KeyVisualSection() {
                     style={{ transitionDelay: '1600ms' }}
                   >
                     <Laptop className="w-5 h-5 sm:w-6 sm:h-6 flex-shrink-0 text-memopyk-sky-blue transition-transform duration-300 hover:rotate-6" />
-                    <span className="text-memopyk-navy font-medium whitespace-nowrap">oubliés sur des disques durs...</span>
+                    <span className="text-memopyk-navy whitespace-nowrap">oubliés sur des disques durs...</span>
                   </div>
                   <div 
                     className={`flex items-center gap-3 bg-white/60 backdrop-blur-sm rounded-xl px-4 py-3 border border-memopyk-sky-blue/30 shadow-lg w-[420px] max-w-full transform transition-all duration-1000 hover:scale-105 hover:bg-white/80 hover:shadow-xl ${
@@ -105,7 +109,7 @@ export function KeyVisualSection() {
                     style={{ transitionDelay: '2000ms' }}
                   >
                     <Package className="w-5 h-5 sm:w-6 sm:h-6 flex-shrink-0 text-memopyk-sky-blue transition-transform duration-300 hover:rotate-6" />
-                    <span className="text-memopyk-navy font-medium whitespace-nowrap">entassés dans des cartons...</span>
+                    <span className="text-memopyk-navy whitespace-nowrap">entassés dans des cartons...</span>
                   </div>
                 </>
               ) : (
@@ -117,7 +121,7 @@ export function KeyVisualSection() {
                     style={{ transitionDelay: '1200ms' }}
                   >
                     <Smartphone className="w-5 h-5 sm:w-6 sm:h-6 flex-shrink-0 text-memopyk-sky-blue transition-transform duration-300 hover:rotate-6" />
-                    <span className="text-memopyk-navy font-medium whitespace-nowrap">buried in phones...</span>
+                    <span className="text-memopyk-navy whitespace-nowrap">buried in phones...</span>
                   </div>
                   <div 
                     className={`flex items-center gap-3 bg-white/60 backdrop-blur-sm rounded-xl px-4 py-3 border border-memopyk-sky-blue/30 shadow-lg w-[320px] max-w-full transform transition-all duration-1000 hover:scale-105 hover:bg-white/80 hover:shadow-xl ${
@@ -126,7 +130,7 @@ export function KeyVisualSection() {
                     style={{ transitionDelay: '1600ms' }}
                   >
                     <Laptop className="w-5 h-5 sm:w-6 sm:h-6 flex-shrink-0 text-memopyk-sky-blue transition-transform duration-300 hover:rotate-6" />
-                    <span className="text-memopyk-navy font-medium whitespace-nowrap">forgotten on hard drives...</span>
+                    <span className="text-memopyk-navy whitespace-nowrap">forgotten on hard drives...</span>
                   </div>
                   <div 
                     className={`flex items-center gap-3 bg-white/60 backdrop-blur-sm rounded-xl px-4 py-3 border border-memopyk-sky-blue/30 shadow-lg w-[320px] max-w-full transform transition-all duration-1000 hover:scale-105 hover:bg-white/80 hover:shadow-xl ${
@@ -135,7 +139,7 @@ export function KeyVisualSection() {
                     style={{ transitionDelay: '2000ms' }}
                   >
                     <Package className="w-5 h-5 sm:w-6 sm:h-6 flex-shrink-0 text-memopyk-sky-blue transition-transform duration-300 hover:rotate-6" />
-                    <span className="text-memopyk-navy font-medium whitespace-nowrap">piled in boxes...</span>
+                    <span className="text-memopyk-navy whitespace-nowrap">piled in boxes...</span>
                   </div>
                 </>
               )}
@@ -152,7 +156,13 @@ export function KeyVisualSection() {
                   <span>ils méritent une histoire.</span>
                 </>
               ) : (
-                "Your memories deserve better than just being stored, they deserve a story."
+                <>
+                  <span>Your memories deserve better</span>
+                  <br />
+                  <span>than just being stored,</span>
+                  <br />
+                  <span>they deserve a story.</span>
+                </>
               )}
             </h2>
 
@@ -183,7 +193,13 @@ export function KeyVisualSection() {
                         <span>que vous garderez précieusement.</span>
                       </>
                     ) : (
-                      "Let us save your photos and videos by transforming them into a memory film you'll treasure forever."
+                      <>
+                        <span>Let us save your photos and videos</span>
+                        <br />
+                        <span>by transforming them into a memory film</span>
+                        <br />
+                        <span>you'll treasure forever.</span>
+                      </>
                     )}
                   </p>
                   
