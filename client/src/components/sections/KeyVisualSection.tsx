@@ -64,7 +64,7 @@ export function KeyVisualSection() {
           {/* Right: Clean and Elegant Text */}
           <div className="space-y-6 sm:space-y-8 lg:space-y-10 order-2 lg:order-none">
             {/* Main heading */}
-            <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-poppins font-bold text-memopyk-navy leading-tight">
+            <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-poppins font-bold text-memopyk-navy leading-relaxed">
               {language === 'fr-FR' ? (
                 <>
                   <span>Ne laissez pas vos souvenirs</span>
@@ -146,7 +146,7 @@ export function KeyVisualSection() {
             </div>
 
             {/* Key message */}
-            <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-poppins font-bold text-memopyk-navy leading-tight">
+            <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-poppins font-bold text-memopyk-navy leading-relaxed">
               {language === 'fr-FR' ? (
                 <>
                   <span>Vos photos et vidéos méritent mieux</span>
@@ -171,9 +171,9 @@ export function KeyVisualSection() {
               {/* Light blue background with dark blue outline */}
               <div className="bg-memopyk-sky-blue/20 border-2 border-memopyk-dark-blue rounded-xl px-6 py-5 shadow-lg relative overflow-hidden transform hover:scale-[1.02] transition-all duration-500">
 
-                {/* Main solution text with tighter spacing */}
+                {/* Main solution text with consistent typography */}
                 <div className="relative z-10">
-                  <p className="text-xl sm:text-2xl lg:text-3xl font-poppins text-memopyk-navy leading-tight text-center">
+                  <p className="text-xl sm:text-2xl lg:text-3xl font-poppins text-memopyk-navy leading-relaxed text-center">
                     {language === 'fr-FR' ? (
                       <>
                         <span>Laissez-nous sauver vos <span className="font-bold">photos et vidéos</span></span>
