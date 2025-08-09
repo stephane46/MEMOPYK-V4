@@ -31,6 +31,28 @@ export function Layout({ children }: LayoutProps) {
     };
   }, [isMobileMenuOpen]);
 
+  // Handle scroll to section after navigation
+  useEffect(() => {
+    const scrollToSection = sessionStorage.getItem('scrollToSection');
+    if (scrollToSection) {
+      sessionStorage.removeItem('scrollToSection');
+      // Use a small timeout to ensure the page is fully loaded
+      setTimeout(() => {
+        const element = document.getElementById(scrollToSection);
+        if (element) {
+          const headerHeight = 64; // Fixed header height (h-16 = 4rem = 64px)
+          const elementPosition = element.offsetTop;
+          const offsetPosition = elementPosition - headerHeight;
+
+          window.scrollTo({
+            top: offsetPosition,
+            behavior: 'smooth'
+          });
+        }
+      }, 100);
+    }
+  }, [location]);
+
   // Handle anchor scrolling
   const handleAnchorClick = (sectionId: string) => {
     // First navigate to home page if not already there
@@ -42,7 +64,14 @@ export function Layout({ children }: LayoutProps) {
     } else {
       const element = document.getElementById(sectionId);
       if (element) {
-        element.scrollIntoView({ behavior: 'smooth' });
+        const headerHeight = 64; // Fixed header height (h-16 = 4rem = 64px)
+        const elementPosition = element.offsetTop;
+        const offsetPosition = elementPosition - headerHeight;
+
+        window.scrollTo({
+          top: offsetPosition,
+          behavior: 'smooth'
+        });
       }
     }
   };
