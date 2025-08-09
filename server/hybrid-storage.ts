@@ -4348,41 +4348,23 @@ Allow: /contact`;
     try {
       console.log(`🔄 Recalculating historical completions with ${newThreshold}% threshold...`);
       
-      if (this.db) {
-        // Use PostgreSQL database through Drizzle ORM
-        const views = await this.db.select().from(analyticsViews);
+      // Primary: Use Supabase database
+      try {
+        console.log('🔍 Recalculation: Querying Supabase for analytics views...');
+        const { data: views, error } = await this.supabase
+          .from('analytics_views')
+          .select('*');
+        
+        if (error) {
+          console.error('⚠️ Recalculation: Supabase query error:', error);
+          throw error;
+        }
         
         let updated = 0;
         const total = views?.length || 0;
         
         if (views) {
-          for (const view of views) {
-            const completionPercentage = parseFloat(view.completionPercentage || '0');
-            const newWatchedToEnd = completionPercentage >= newThreshold;
-            
-            // Only update if the completion status would change
-            if (view.watchedToEnd !== newWatchedToEnd) {
-              await this.db
-                .update(analyticsViews)
-                .set({ watchedToEnd: newWatchedToEnd })
-                .where(eq(analyticsViews.id, view.id));
-              
-              updated++;
-            }
-          }
-        }
-        
-        console.log(`✅ Updated ${updated} out of ${total} historical video views`);
-        return { updated, total };
-      } else {
-        // JSON fallback implementation
-        const filePath = join(process.cwd(), 'server/data/analytics-views.json');
-        let views = [];
-        let updated = 0;
-        
-        if (existsSync(filePath)) {
-          const data = readFileSync(filePath, 'utf8');
-          views = JSON.parse(data);
+          console.log(`🔍 Processing ${total} analytics views for recalculation...`);
           
           for (const view of views) {
             const completionPercentage = parseFloat(view.completion_percentage || '0');
@@ -4390,19 +4372,53 @@ Allow: /contact`;
             
             // Only update if the completion status would change
             if (view.watched_to_end !== newWatchedToEnd) {
-              view.watched_to_end = newWatchedToEnd;
-              updated++;
+              const { error: updateError } = await this.supabase
+                .from('analytics_views')
+                .update({ watched_to_end: newWatchedToEnd })
+                .eq('id', view.id);
+              
+              if (!updateError) {
+                updated++;
+              } else {
+                console.error(`⚠️ Failed to update view ${view.id}:`, updateError);
+              }
             }
           }
-          
-          // Write updated data back to file
-          writeFileSync(filePath, JSON.stringify(views, null, 2));
         }
         
-        const total = views.length;
-        console.log(`✅ Updated ${updated} out of ${total} historical video views`);
+        console.log(`✅ Updated ${updated} out of ${total} historical video views in Supabase`);
         return { updated, total };
+      } catch (supabaseError) {
+        console.warn('⚠️ Recalculation: Supabase connection failed, using JSON fallback:', supabaseError);
       }
+      
+      // Fallback: Use JSON storage
+      const filePath = join(process.cwd(), 'server/data/analytics-views.json');
+      let views = [];
+      let updated = 0;
+      
+      if (existsSync(filePath)) {
+        const data = readFileSync(filePath, 'utf8');
+        views = JSON.parse(data);
+        
+        for (const view of views) {
+          const completionPercentage = parseFloat(view.completion_percentage || '0');
+          const newWatchedToEnd = completionPercentage >= newThreshold;
+          
+          // Only update if the completion status would change
+          if (view.watched_to_end !== newWatchedToEnd) {
+            view.watched_to_end = newWatchedToEnd;
+            updated++;
+          }
+        }
+        
+        // Write updated data back to file
+        writeFileSync(filePath, JSON.stringify(views, null, 2));
+      }
+      
+      const total = views.length;
+      console.log(`✅ Updated ${updated} out of ${total} historical video views in JSON fallback`);
+      return { updated, total };
     } catch (error) {
       console.error('❌ Error recalculating historical completions:', error);
       throw error;
