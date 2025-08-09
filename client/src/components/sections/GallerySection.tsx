@@ -471,17 +471,17 @@ export default function GallerySection() {
   }
 
   return (
-    <section id="gallery" className="py-8 bg-gray-50 dark:bg-gray-900">
+    <section id="gallery" className="py-8 bg-gradient-to-br from-memopyk-cream/30 to-white">
       <div className="container mx-auto px-4">
         {/* Header - Mobile Optimized */}
         <div className="text-center mb-8 sm:mb-12 lg:mb-16">
-          <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-gray-900 dark:text-white mb-3 sm:mb-4 lg:mb-6 px-2">
+          <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-memopyk-navy mb-3 sm:mb-4 lg:mb-6 px-2">
             {t.title}
           </h2>
-          <p className="text-lg sm:text-xl text-gray-600 dark:text-gray-300 mb-2 px-4">
+          <p className="text-lg sm:text-xl text-memopyk-dark-blue mb-2 px-4">
             {t.subtitle}
           </p>
-          <p className="text-sm sm:text-base text-gray-500 dark:text-gray-400 max-w-2xl mx-auto px-4">
+          <p className="text-sm sm:text-base text-memopyk-blue-gray max-w-2xl mx-auto px-4">
             {t.description}
           </p>
         </div>

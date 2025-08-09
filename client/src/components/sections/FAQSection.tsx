@@ -170,14 +170,14 @@ export default function FAQSection() {
   }
 
   return (
-    <section className="py-8 sm:py-12 lg:py-16 bg-gray-50">
+    <section className="py-8 sm:py-12 lg:py-16 bg-gradient-to-br from-memopyk-cream/50 to-white">
       <div className="max-w-4xl mx-auto px-4 sm:px-6">
         {/* Section Header - Mobile Optimized */}
         <div className="text-center mb-6 sm:mb-8 lg:mb-12">
-          <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-3 sm:mb-4 px-2">
+          <h2 className="text-2xl sm:text-3xl font-bold text-memopyk-navy mb-3 sm:mb-4 px-2">
             {language === 'fr-FR' ? 'Questions Fréquemment Posées' : 'Frequently Asked Questions'}
           </h2>
-          <p className="text-base sm:text-lg text-gray-600 max-w-2xl mx-auto px-4">
+          <p className="text-base sm:text-lg text-memopyk-dark-blue max-w-2xl mx-auto px-4">
             {language === 'fr-FR' 
               ? 'Trouvez les réponses aux questions les plus courantes sur nos services de films de mariage et de famille.'
               : 'Find answers to the most common questions about our wedding and family film services.'
@@ -199,7 +199,7 @@ export default function FAQSection() {
                 {/* Section Header - Mobile Optimized Accordion */}
                 <div 
                   ref={(el) => { sectionRefs.current[sectionKey] = el; }}
-                  className="border-l-4 border-orange-500 pl-3 sm:pl-4 mb-4 sm:mb-6"
+                  className="border-l-4 border-memopyk-orange pl-3 sm:pl-4 mb-4 sm:mb-6"
                 >
                   <button
                     onClick={() => toggleSection(sectionKey)}
