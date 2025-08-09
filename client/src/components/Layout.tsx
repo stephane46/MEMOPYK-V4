@@ -1,7 +1,8 @@
 import { ReactNode, useState, useEffect } from 'react';
 import { Link, useLocation } from 'wouter';
 import { useLanguage } from '../contexts/LanguageContext';
-import { Menu, X } from 'lucide-react';
+import { Menu, X, Mail, Phone } from 'lucide-react';
+import { FaWhatsapp } from 'react-icons/fa';
 
 interface LayoutProps {
   children: ReactNode;
@@ -297,8 +298,14 @@ export function Layout({ children }: LayoutProps) {
             <div>
               <h4 className="font-semibold mb-4">Contact</h4>
               <ul className="space-y-2 text-gray-400">
-                <li>contact@memopyk.com</li>
-                <li>+33 1 23 45 67 89</li>
+                <li className="flex items-center gap-2">
+                  <Mail className="w-4 h-4" />
+                  contact@memopyk.com
+                </li>
+                <li className="flex items-center gap-2">
+                  <FaWhatsapp className="w-4 h-4" />
+                  +33 1 23 45 67 89
+                </li>
               </ul>
             </div>
           </div>
