@@ -176,9 +176,9 @@ export function KeyVisualSection() {
                   <p className="text-xl sm:text-2xl lg:text-3xl font-poppins font-bold text-memopyk-navy leading-relaxed text-center">
                     {language === 'fr-FR' ? (
                       <>
-                        <span>Laissez-nous sauver vos <span className="border-b-2 border-memopyk-orange">photos et vidéos</span></span>
+                        <span>Laissez-nous sauver vos <span className="relative inline-block"><span>photos et vidéos</span><span className="absolute bottom-0.5 left-0 w-full h-0.5 bg-memopyk-orange"></span></span></span>
                         <br />
-                        <span>en les transformant en un <span className="border-b-2 border-memopyk-orange">film souvenir</span></span>
+                        <span>en les transformant en un <span className="relative inline-block"><span>film souvenir</span><span className="absolute bottom-0.5 left-0 w-full h-0.5 bg-memopyk-orange"></span></span></span>
                         <br />
                         <span>que vous garderez précieusement.</span>
                       </>
