@@ -91,7 +91,7 @@ export function KeyVisualSection() {
                     style={{ transitionDelay: '1200ms' }}
                   >
                     <Smartphone className="w-5 h-5 sm:w-6 sm:h-6 flex-shrink-0 text-memopyk-sky-blue transition-transform duration-300 hover:rotate-6" />
-                    <span className="text-memopyk-navy whitespace-nowrap">enfouis dans des téléphones...</span>
+                    <span className="font-poppins text-memopyk-navy whitespace-nowrap">enfouis dans des téléphones...</span>
                   </div>
                   <div 
                     className={`flex items-center gap-3 bg-white/60 backdrop-blur-sm rounded-xl px-4 py-3 border border-memopyk-sky-blue/30 shadow-lg w-[420px] max-w-full transform transition-all duration-1000 hover:scale-105 hover:bg-white/80 hover:shadow-xl ${
@@ -100,7 +100,7 @@ export function KeyVisualSection() {
                     style={{ transitionDelay: '1600ms' }}
                   >
                     <Laptop className="w-5 h-5 sm:w-6 sm:h-6 flex-shrink-0 text-memopyk-sky-blue transition-transform duration-300 hover:rotate-6" />
-                    <span className="text-memopyk-navy whitespace-nowrap">oubliés sur des disques durs...</span>
+                    <span className="font-poppins text-memopyk-navy whitespace-nowrap">oubliés sur des disques durs...</span>
                   </div>
                   <div 
                     className={`flex items-center gap-3 bg-white/60 backdrop-blur-sm rounded-xl px-4 py-3 border border-memopyk-sky-blue/30 shadow-lg w-[420px] max-w-full transform transition-all duration-1000 hover:scale-105 hover:bg-white/80 hover:shadow-xl ${
@@ -109,7 +109,7 @@ export function KeyVisualSection() {
                     style={{ transitionDelay: '2000ms' }}
                   >
                     <Package className="w-5 h-5 sm:w-6 sm:h-6 flex-shrink-0 text-memopyk-sky-blue transition-transform duration-300 hover:rotate-6" />
-                    <span className="text-memopyk-navy whitespace-nowrap">entassés dans des cartons...</span>
+                    <span className="font-poppins text-memopyk-navy whitespace-nowrap">entassés dans des cartons...</span>
                   </div>
                 </>
               ) : (
@@ -121,7 +121,7 @@ export function KeyVisualSection() {
                     style={{ transitionDelay: '1200ms' }}
                   >
                     <Smartphone className="w-5 h-5 sm:w-6 sm:h-6 flex-shrink-0 text-memopyk-sky-blue transition-transform duration-300 hover:rotate-6" />
-                    <span className="text-memopyk-navy whitespace-nowrap">buried in phones...</span>
+                    <span className="font-poppins text-memopyk-navy whitespace-nowrap">buried in phones...</span>
                   </div>
                   <div 
                     className={`flex items-center gap-3 bg-white/60 backdrop-blur-sm rounded-xl px-4 py-3 border border-memopyk-sky-blue/30 shadow-lg w-[320px] max-w-full transform transition-all duration-1000 hover:scale-105 hover:bg-white/80 hover:shadow-xl ${
@@ -130,7 +130,7 @@ export function KeyVisualSection() {
                     style={{ transitionDelay: '1600ms' }}
                   >
                     <Laptop className="w-5 h-5 sm:w-6 sm:h-6 flex-shrink-0 text-memopyk-sky-blue transition-transform duration-300 hover:rotate-6" />
-                    <span className="text-memopyk-navy whitespace-nowrap">forgotten on hard drives...</span>
+                    <span className="font-poppins text-memopyk-navy whitespace-nowrap">forgotten on hard drives...</span>
                   </div>
                   <div 
                     className={`flex items-center gap-3 bg-white/60 backdrop-blur-sm rounded-xl px-4 py-3 border border-memopyk-sky-blue/30 shadow-lg w-[320px] max-w-full transform transition-all duration-1000 hover:scale-105 hover:bg-white/80 hover:shadow-xl ${
@@ -139,7 +139,7 @@ export function KeyVisualSection() {
                     style={{ transitionDelay: '2000ms' }}
                   >
                     <Package className="w-5 h-5 sm:w-6 sm:h-6 flex-shrink-0 text-memopyk-sky-blue transition-transform duration-300 hover:rotate-6" />
-                    <span className="text-memopyk-navy whitespace-nowrap">piled in boxes...</span>
+                    <span className="font-poppins text-memopyk-navy whitespace-nowrap">piled in boxes...</span>
                   </div>
                 </>
               )}
@@ -171,8 +171,8 @@ export function KeyVisualSection() {
               {/* Elegant background card */}
               <div className="bg-gradient-to-br from-memopyk-cream/80 via-white to-memopyk-cream/60 backdrop-blur-sm border-2 border-memopyk-orange/30 rounded-2xl px-8 py-8 shadow-2xl relative overflow-hidden transform hover:scale-[1.02] transition-all duration-500">
                 
-                {/* Orange to light blue gradient overlay */}
-                <div className="absolute inset-0 bg-gradient-to-b from-memopyk-orange/15 to-memopyk-sky-blue/15 rounded-2xl"></div>
+                {/* Light orange overlay on top */}
+                <div className="absolute inset-0 bg-memopyk-orange/15 rounded-2xl"></div>
 
                 {/* Main solution text with enhanced typography */}
                 <div className="relative z-10 space-y-4">
@@ -196,20 +196,7 @@ export function KeyVisualSection() {
                     )}
                   </p>
                   
-                  {/* Decorative divider */}
-                  <div className="flex justify-center items-center space-x-3 py-2">
-                    <div className="w-8 h-px bg-gradient-to-r from-transparent to-memopyk-orange"></div>
-                    <div className="w-3 h-3 bg-memopyk-orange rounded-full shadow-lg"></div>
-                    <div className="w-8 h-px bg-gradient-to-l from-transparent to-memopyk-orange"></div>
-                  </div>
-                  
-                  {/* Elegant tagline */}
-                  <p className="text-lg sm:text-xl lg:text-2xl font-playfair italic text-memopyk-sky-blue font-medium text-center tracking-wide">
-                    {language === 'fr-FR' 
-                      ? "personnel - unique - émouvant"
-                      : "Personal, unique and moving."
-                    }
-                  </p>
+
                 </div>
 
                 {/* Subtle glow effect */}
