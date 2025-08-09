@@ -136,9 +136,8 @@ export function KeyVisualSection() {
               )}
             </div>
 
-
             {/* Key message */}
-            <div className="text-lg sm:text-xl text-memopyk-dark-blue leading-relaxed font-medium space-y-1">
+            <div className="text-lg sm:text-xl text-memopyk-dark-blue leading-relaxed font-medium space-y-1 mb-0">
               {language === 'fr-FR' ? (
                 <>
                   <p>Vos souvenirs méritent mieux que d'être simplement stockés,</p>
@@ -156,7 +155,7 @@ export function KeyVisualSection() {
         </div>
 
         {/* Solution statement centered across full width */}
-        <div className="mt-0 sm:mt-1 md:mt-1 lg:mt-1 xl:mt-1 text-center space-y-2 bg-red-500 border-4 border-yellow-400">
+        <div className="-mt-4 sm:-mt-3 md:-mt-2 lg:-mt-1 xl:-mt-1 text-center space-y-2 bg-red-500 border-4 border-yellow-400">
           {/* Decorative separator */}
           <div className="flex items-center justify-center space-x-4">
             <div className="h-px bg-gradient-to-r from-transparent via-memopyk-sky-blue to-transparent flex-1 max-w-20"></div>
