@@ -157,7 +157,7 @@ export function KeyVisualSection() {
                 </>
               ) : (
                 <>
-                  <span>Your memories deserve better</span>
+                  <span>Your photos & vidéos deserve better</span>
                   <br />
                   <span>than just being stored,</span>
                   <br />
