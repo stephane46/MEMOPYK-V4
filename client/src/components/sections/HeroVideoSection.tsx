@@ -4,6 +4,7 @@ import { ChevronLeft, ChevronRight, Play, Pause } from 'lucide-react';
 import { useLanguage } from '../../contexts/LanguageContext';
 import { useVideoAnalytics } from '../../hooks/useVideoAnalytics';
 import { Button } from '../ui/button';
+import { SparkleText } from '../ui/SparkleEffect';
 
 interface HeroVideo {
   id: number;
@@ -213,32 +214,38 @@ export function HeroVideoSection() {
       {/* Hero Text Content - Mobile Optimized for Better Fit */}
       <div className="absolute inset-0 flex items-center justify-center text-center text-white px-3 sm:px-6 lg:px-8">
         <div className="max-w-7xl w-full">
-          <h1 
+          <SparkleText 
+            trigger="scroll" 
+            intensity="low" 
+            color="white"
             className="font-playfair font-bold mb-2 sm:mb-4 lg:mb-6 leading-tight"
-            style={{ 
-              fontSize: responsiveFontSize,
-              textShadow: '2px 2px 4px rgba(0,0,0,0.8)'
-            }}
           >
-            {(() => {
-              const text = language === 'fr-FR' 
-                ? (activeHeroText?.title_fr || "Transformez vos souvenirs\nen films cinématographiques")
-                : (activeHeroText?.title_en || "Transform your memories\ninto cinematic films");
-              
-              // Handle multiple escaping scenarios: raw newlines, \n, \\n
-              let processedText = text;
-              if (processedText.includes('\\n')) {
-                processedText = processedText.replace(/\\n/g, '\n');
-              }
-              const lines = processedText.split('\n');
-              return lines.map((line, index) => (
-                <React.Fragment key={index}>
-                  {line}
-                  {index < lines.length - 1 && <br />}
-                </React.Fragment>
-              ));
-            })()}
-          </h1>
+            <h1 
+              style={{ 
+                fontSize: responsiveFontSize,
+                textShadow: '2px 2px 4px rgba(0,0,0,0.8)'
+              }}
+            >
+              {(() => {
+                const text = language === 'fr-FR' 
+                  ? (activeHeroText?.title_fr || "Transformez vos souvenirs\nen films cinématographiques")
+                  : (activeHeroText?.title_en || "Transform your memories\ninto cinematic films");
+                
+                // Handle multiple escaping scenarios: raw newlines, \n, \\n
+                let processedText = text;
+                if (processedText.includes('\\n')) {
+                  processedText = processedText.replace(/\\n/g, '\n');
+                }
+                const lines = processedText.split('\n');
+                return lines.map((line, index) => (
+                  <React.Fragment key={index}>
+                    {line}
+                    {index < lines.length - 1 && <br />}
+                  </React.Fragment>
+                ));
+              })()}
+            </h1>
+          </SparkleText>
           
           {/* Only render subtitle if it exists and is not empty */}
           {activeHeroText && ((language === 'fr-FR' && activeHeroText.subtitle_fr && activeHeroText.subtitle_fr.trim()) || 
