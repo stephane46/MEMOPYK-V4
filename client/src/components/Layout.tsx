@@ -290,14 +290,7 @@ export function Layout({ children }: LayoutProps) {
                     {t('nav.quote')}
                   </button>
                 </li>
-                <li>
-                  <button 
-                    onClick={() => handleAnchorClick('cta')}
-                    className="hover:text-white transition-colors"
-                  >
-                    {t('nav.appointment')}
-                  </button>
-                </li>
+
               </ul>
             </div>
             
