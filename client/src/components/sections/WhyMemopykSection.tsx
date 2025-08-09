@@ -1,6 +1,5 @@
 import { useLanguage } from '../../contexts/LanguageContext';
-import { Clock, Zap, Heart } from 'lucide-react';
-import { FaYinYang } from 'react-icons/fa';
+import { Clock, Zap, Users, Settings } from 'lucide-react';
 
 export function WhyMemopykSection() {
   const { language } = useLanguage();
@@ -8,34 +7,34 @@ export function WhyMemopykSection() {
   const benefits = [
     {
       icon: Zap,
-      titleFr: "Simple",
-      titleEn: "Simple", 
-      descriptionFr: "Tous formats acceptés, détails techniques gérés professionnellement. Vous n'avez qu'à partager vos souvenirs.",
-      descriptionEn: "All formats accepted, technical details handled professionally. You just need to share your memories.",
+      titleFr: "Simplicité",
+      titleEn: "Simplicity", 
+      descriptionFr: "Tous formats acceptés, détails techniques gérés professionnellement. Pas de tri ou d'organisation de fichiers source requis.",
+      descriptionEn: "All formats accepted. All technical details handled professionally. No source files organization nor sorting required.",
       gradient: "from-memopyk-orange/20 to-memopyk-cream/30"
     },
     {
       icon: Clock,
       titleFr: "Gain de Temps",
       titleEn: "Time Saving",
-      descriptionFr: "Aucune organisation de fichiers requise. Uploads collaboratifs, nous nous occupons de tout le tri et de l'organisation.",
-      descriptionEn: "No file organization required. Collaborative uploads, we handle all the sorting and organization.",
+      descriptionFr: "Équipe dédiée, processus clair, délais prévisibles. Nous gérons tout pour votre tranquillité.",
+      descriptionEn: "Dedicated team, clear process, predictable turnaround. We handle all the details for your peace of mind.",
       gradient: "from-memopyk-sky-blue/20 to-memopyk-blue-gray/10"
     },
     {
-      icon: Heart,
-      titleFr: "Personnalisé",
-      titleEn: "Personalized",
-      descriptionFr: "Propositions sur-mesure, touche humaine garantie. Pas d'IA ni de robots, que des artistes passionnés.",
-      descriptionEn: "Tailor-made proposals, human touch guaranteed. No AI or robots, only passionate artists.",
+      icon: Users,
+      titleFr: "Expertise",
+      titleEn: "Expertise",
+      descriptionFr: "Ayant une grande expérience dans le domaine de l'image, nous sommes animés par l'efficacité de notre flux de travail, afin de vous offrir les meilleurs conseils et recommandations. Vous bénéficiez ainsi d'un résultat de grande qualité, et d'un rapport qualité-prix intéressant.",
+      descriptionEn: "Experienced in working with visual materials, we are driven by the efficiency of our workflow, to bring you the best advice and guidance. What you receive is high quality result with clear value added.",
       gradient: "from-memopyk-dark-blue/20 to-memopyk-navy/10"
     },
     {
-      icon: FaYinYang,
-      titleFr: "Sans Stress",
-      titleEn: "Stress-Free",
-      descriptionFr: "Équipe dédiée, processus clair, délais prévisibles. Nous gérons tout de A à Z pour votre tranquillité.",
-      descriptionEn: "Dedicated team, clear process, predictable turnaround. We handle everything from A to Z for your peace of mind.",
+      icon: Settings,
+      titleFr: "Personnalisation",
+      titleEn: "Customization",
+      descriptionFr: "Chaque film souvenir est unique. Avec un esprit de collaboration, nous sommes à l'écoute, et respectons tous vos souhaits et vos consignes spécifiques, pour vous offrir le film souvenir qui raconte le mieux VOTRE histoire.",
+      descriptionEn: "Each souvenir film is unique. With the spirit of collaboration in mind, we listen and respect all your wishes and specific instructions, to bring you the souvenir film that best tells YOUR story.",
       gradient: "from-memopyk-cream/40 to-memopyk-sky-blue/20"
     }
   ];
