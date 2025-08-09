@@ -117,8 +117,8 @@ export function HowItWorksSection() {
               {/* Main Headline */}
               <h3 className="text-2xl md:text-3xl lg:text-4xl font-bold text-memopyk-cream mb-4">
                 {language === 'fr-FR' 
-                  ? "Transformez Vos Souvenirs en Film Cinématographique"
-                  : "Transform Your Memories Into a Cinematic Film"
+                  ? "Transformez Vos Photos et Vidéos en Histoire Émouvante"
+                  : "Turn Your Photos and Videos Into a Heartfelt Story"
                 }
               </h3>
               
