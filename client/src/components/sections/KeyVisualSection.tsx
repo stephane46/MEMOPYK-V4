@@ -152,24 +152,62 @@ export function KeyVisualSection() {
               )}
             </div>
 
-            {/* Solution statement */}
-            <div className="text-lg sm:text-xl text-memopyk-dark-blue leading-relaxed font-medium space-y-1">
-              <p>
-                {language === 'fr-FR' 
-                  ? "Laissez-nous sauver vos photos et vidéos en les transformant en un film souvenir que vous garderez précieusement."
-                  : "Let us rescue your photos and videos by transforming them into a souvenir film you'll treasure forever."
-                }
-              </p>
-            </div>
+
+          </div>
+        </div>
+
+        {/* Enhanced Solution Statement - Full Width Below */}
+        <div className="mt-12 sm:mt-16 lg:mt-20">
+          <div className="relative bg-gradient-to-r from-memopyk-cream/80 via-white/90 to-memopyk-cream/80 rounded-3xl p-8 sm:p-12 lg:p-16 shadow-2xl border border-memopyk-sky-blue/20">
+            {/* Decorative elements */}
+            <div className="absolute top-4 left-4 w-8 h-8 bg-memopyk-sky-blue/20 rounded-full"></div>
+            <div className="absolute top-8 right-8 w-6 h-6 bg-memopyk-orange/20 rounded-full"></div>
+            <div className="absolute bottom-4 left-8 w-4 h-4 bg-memopyk-sky-blue/30 rounded-full"></div>
+            <div className="absolute bottom-8 right-4 w-10 h-10 bg-memopyk-orange/10 rounded-full"></div>
             
-            {/* Centered tagline at bottom */}
-            <div className="text-center pt-2 sm:pt-4">
-              <p className="text-lg sm:text-xl font-poppins italic text-memopyk-sky-blue">
-                {language === 'fr-FR' 
-                  ? "Personnel, unique et émouvant."
-                  : "Personal, unique and moving."
-                }
-              </p>
+            {/* Main content */}
+            <div className="relative text-center space-y-6 sm:space-y-8">
+              {/* Primary message with decorative line */}
+              <div className="space-y-4">
+                <div className="flex items-center justify-center space-x-4">
+                  <div className="h-px bg-gradient-to-r from-transparent via-memopyk-sky-blue to-transparent flex-1 max-w-16"></div>
+                  <div className="w-3 h-3 bg-memopyk-sky-blue rounded-full"></div>
+                  <div className="h-px bg-gradient-to-r from-transparent via-memopyk-sky-blue to-transparent flex-1 max-w-16"></div>
+                </div>
+                
+                <h3 className="text-xl sm:text-2xl lg:text-3xl font-poppins font-semibold text-memopyk-navy leading-relaxed max-w-4xl mx-auto">
+                  {language === 'fr-FR' 
+                    ? "Laissez-nous sauver vos photos et vidéos en les transformant en un film souvenir que vous garderez précieusement."
+                    : "Let us rescue your photos and videos by transforming them into a souvenir film you'll treasure forever."
+                  }
+                </h3>
+              </div>
+
+              {/* Decorative separator with icons */}
+              <div className="flex items-center justify-center space-x-6 py-4">
+                <div className="w-12 h-px bg-gradient-to-r from-transparent to-memopyk-orange"></div>
+                <div className="flex space-x-2">
+                  <div className="w-2 h-2 bg-memopyk-orange rounded-full animate-pulse"></div>
+                  <div className="w-2 h-2 bg-memopyk-sky-blue rounded-full animate-pulse" style={{ animationDelay: '0.5s' }}></div>
+                  <div className="w-2 h-2 bg-memopyk-orange rounded-full animate-pulse" style={{ animationDelay: '1s' }}></div>
+                </div>
+                <div className="w-12 h-px bg-gradient-to-l from-transparent to-memopyk-orange"></div>
+              </div>
+
+              {/* Stylized tagline */}
+              <div className="relative">
+                <p className="text-2xl sm:text-3xl lg:text-4xl font-playfair italic text-memopyk-sky-blue font-medium tracking-wide">
+                  {language === 'fr-FR' 
+                    ? "Personnel, unique et émouvant."
+                    : "Personal, unique and moving."
+                  }
+                </p>
+                
+                {/* Subtle underline accent */}
+                <div className="mt-3 flex justify-center">
+                  <div className="w-24 h-1 bg-gradient-to-r from-memopyk-sky-blue/30 via-memopyk-orange/50 to-memopyk-sky-blue/30 rounded-full"></div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
