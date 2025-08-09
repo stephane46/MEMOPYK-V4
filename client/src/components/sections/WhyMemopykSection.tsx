@@ -53,7 +53,7 @@ export function WhyMemopykSection() {
         </div>
 
         {/* Benefits Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 pb-4" style={{ gridAutoRows: '1fr' }}>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 pb-4">
           {benefits.map((benefit, index) => {
             const Icon = benefit.icon;
             return (
@@ -62,10 +62,10 @@ export function WhyMemopykSection() {
                 className="group relative h-full"
               >
                 {/* Benefit Card */}
-                <div className={`relative bg-gradient-to-br ${benefit.gradient} backdrop-blur-sm p-8 rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-2 border border-white/20 h-full flex flex-col`}>
+                <div className={`relative bg-gradient-to-br ${benefit.gradient} backdrop-blur-sm p-6 rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-2 border border-white/20 h-full flex flex-col`}>
                   
                   {/* Title with Icon */}
-                  <div className="flex items-center mb-6 flex-shrink-0">
+                  <div className="flex items-center mb-4 flex-shrink-0">
                     <div className="w-12 h-12 bg-white/80 backdrop-blur-sm rounded-full flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform duration-300 mr-4">
                       <Icon className="w-6 h-6 text-memopyk-dark-blue" />
                     </div>
@@ -74,9 +74,26 @@ export function WhyMemopykSection() {
                     </h3>
                   </div>
 
-                  {/* Description */}
+                  {/* Description with Language-Specific Truncation */}
                   <p className="text-memopyk-dark-blue leading-relaxed flex-grow">
-                    {language === 'fr-FR' ? benefit.descriptionFr : benefit.descriptionEn}
+                    {(() => {
+                      const description = language === 'fr-FR' ? benefit.descriptionFr : benefit.descriptionEn;
+                      if (!description) return '';
+                      
+                      // Language-specific max length calculations
+                      const maxLength = language === 'fr-FR' ? 120 : 130; // French typically needs slightly more characters
+                      
+                      if (description.length <= maxLength) {
+                        return description;
+                      }
+                      
+                      // Find the last space before the max length to avoid cutting words
+                      const truncated = description.substring(0, maxLength);
+                      const lastSpaceIndex = truncated.lastIndexOf(' ');
+                      const finalText = lastSpaceIndex > 0 ? truncated.substring(0, lastSpaceIndex) : truncated;
+                      
+                      return `${finalText}...`;
+                    })()}
                   </p>
                 </div>
 
