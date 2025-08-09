@@ -27,9 +27,9 @@ export function KeyVisualSection() {
   }, []);
 
   return (
-    <section ref={sectionRef} className="py-0 bg-gradient-to-br from-memopyk-cream to-memopyk-cream/70">
-      <div className="container mx-auto px-4 pb-0">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 sm:gap-10 lg:gap-12 items-center">
+    <section ref={sectionRef} className="py-0 bg-gradient-to-br from-memopyk-cream to-memopyk-cream/70 overflow-hidden">
+      <div className="container mx-auto px-4 pb-0 overflow-hidden">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 sm:gap-10 lg:gap-12 items-center overflow-hidden">
           {/* Left: Key Visual Illustration with Overlaid Animated Elements */}
           <div className="relative order-1 lg:order-none mb-8 sm:mb-0">
             <div className="relative min-h-[200px] sm:min-h-[300px] flex items-center justify-center">
@@ -62,7 +62,7 @@ export function KeyVisualSection() {
           </div>
 
           {/* Right: Clean and Elegant Text */}
-          <div className="space-y-6 sm:space-y-8 lg:space-y-10 order-2 lg:order-none">
+          <div className="space-y-6 sm:space-y-8 lg:space-y-10 order-2 lg:order-none overflow-hidden">
             {/* Main heading */}
             <h2 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-poppins font-bold text-memopyk-navy leading-relaxed">
               {language === 'fr-FR' ? (
@@ -167,7 +167,7 @@ export function KeyVisualSection() {
             </h2>
 
             {/* THE ANSWER - Enhanced Solution Statement */}
-            <div className="relative mt-8">
+            <div className="relative mt-8 overflow-hidden">
               {/* Light blue background with dark blue outline */}
               <div className="bg-memopyk-sky-blue/20 border-2 border-memopyk-dark-blue rounded-xl px-5 py-5 shadow-lg relative overflow-hidden transform hover:scale-[1.02] transition-all duration-500 inline-block">
 
