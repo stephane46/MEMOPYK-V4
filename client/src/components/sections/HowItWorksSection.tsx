@@ -140,10 +140,6 @@ export function HowItWorksSection() {
                   <div className="w-2 h-2 bg-memopyk-orange rounded-full mr-2"></div>
                   {language === 'fr-FR' ? "2 séries de retours incluses" : "2 revision rounds included"}
                 </div>
-                <div className="flex items-center text-memopyk-cream/80">
-                  <div className="w-2 h-2 bg-memopyk-orange rounded-full mr-2"></div>
-                  {language === 'fr-FR' ? "Qualité cinématographique" : "Cinematic quality"}
-                </div>
               </div>
               
               {/* Action Buttons */}
