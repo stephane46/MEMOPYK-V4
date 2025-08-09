@@ -189,7 +189,7 @@ export function KeyVisualSection() {
                       <>
                         <span>Let us save your <span className="font-bold">photos and videos</span></span>
                         <br />
-                        <span>by transforming them into a <span className="font-bold">memory film</span></span>
+                        <span>by transforming them into a <span className="font-bold">souvenir film</span></span>
                         <br />
                         <span>you'll treasure forever.</span>
                       </>
