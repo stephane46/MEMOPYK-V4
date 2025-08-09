@@ -202,7 +202,7 @@ export default function GallerySection() {
   const content = {
     'fr-FR': {
       title: "Galerie",
-      subtitle: "Chaque film souvenir que nous créons est aussi unique que vos souvenirs.",
+      subtitle: "Chaque film que nous créons est aussi unique que vos souvenirs.",
       description: "Parce que chaque histoire est différente, nous réalisons un devis personnalisé adapté à votre projet. La galerie présente une sélection d'exemples de créations et des tarifs indicatifs. Pour donner vie à vos propres souvenirs, contactez-nous pour un devis fait rien que pour vous.",
       viewAll: "Voir Toute la Galerie",
       preview: "Aperçu",
@@ -214,7 +214,7 @@ export default function GallerySection() {
     },
     'en-US': {
       title: "Gallery",
-      subtitle: "Every souvenir film we create is as unique as your memories.",
+      subtitle: "Every film we create is as unique as your memories.",
       description: "Because each story is different, we craft a customized quotation tailored to your project. The gallery presents a selection of sample creations and indicative pricing. To bring your own memories to life, contact us for a quote designed just for you.",
       viewAll: "View Full Gallery",
       preview: "Preview",
