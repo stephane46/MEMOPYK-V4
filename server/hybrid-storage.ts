@@ -314,36 +314,44 @@ export class HybridStorage implements HybridStorageInterface {
   // Hero text settings operations - TRUE HYBRID STORAGE
   async getHeroTextSettings(language?: string): Promise<any[]> {
     try {
-      console.log('🔍 Hero Text: Fetching from PostgreSQL database...');
-      const result = await this.db.select().from(heroTextSettings).orderBy(desc(heroTextSettings.createdAt));
+      console.log('🔍 Hero Text: Fetching from Supabase database...');
+      const { data: result, error } = await this.supabase
+        .from('hero_text_settings')
+        .select('*')
+        .order('created_at', { ascending: false });
+      
+      if (error) {
+        console.error('⚠️ Hero Text: Supabase query error:', error);
+        throw error;
+      }
       
       if (result && result.length > 0) {
-        console.log(`✅ Hero Text: Found ${result.length} texts in PostgreSQL`);
+        console.log(`✅ Hero Text: Found ${result.length} texts in Supabase`);
         
-        // Convert camelCase to snake_case for frontend compatibility with responsive font sizes
+        // Convert snake_case to camelCase and add responsive font sizes
         const formattedResult = result.map((item: any) => ({
           id: item.id,
-          title_fr: item.titleFr,
-          title_en: item.titleEn,
-          subtitle_fr: item.subtitleFr,
-          subtitle_en: item.subtitleEn,
-          font_size: item.fontSize, // Legacy field for backward compatibility
-          font_size_desktop: item.fontSizeDesktop || item.fontSize || 60,
-          font_size_tablet: item.fontSizeTablet || Math.round((item.fontSize || 60) * 0.75),
-          font_size_mobile: item.fontSizeMobile || Math.round((item.fontSize || 60) * 0.53),
-          is_active: item.isActive,
-          created_at: item.createdAt,
-          updated_at: item.updatedAt
+          title_fr: item.title_fr,
+          title_en: item.title_en,
+          subtitle_fr: item.subtitle_fr,
+          subtitle_en: item.subtitle_en,
+          font_size: item.font_size, // Legacy field for backward compatibility
+          font_size_desktop: item.font_size_desktop || item.font_size || 60,
+          font_size_tablet: item.font_size_tablet || Math.round((item.font_size || 60) * 0.75),
+          font_size_mobile: item.font_size_mobile || Math.round((item.font_size || 60) * 0.53),
+          is_active: item.is_active,
+          created_at: item.created_at,
+          updated_at: item.updated_at
         }));
         
         // Save to JSON as backup (using converted format)
         this.saveJsonFile('hero-text.json', formattedResult);
         return formattedResult;
       } else {
-        console.log('⚠️ Hero Text: No data in PostgreSQL, checking JSON fallback...');
+        console.log('⚠️ Hero Text: No data in Supabase, checking JSON fallback...');
       }
     } catch (error) {
-      console.warn('⚠️ Hero Text: Database connection failed, using JSON fallback:', error);
+      console.warn('⚠️ Hero Text: Supabase connection failed, using JSON fallback:', error);
     }
     
     // Fallback to JSON
@@ -353,31 +361,43 @@ export class HybridStorage implements HybridStorageInterface {
 
   async createHeroText(text: any): Promise<any> {
     try {
-      console.log('🔍 Hero Text: Creating in PostgreSQL database...');
-      const [newText] = await this.db.insert(heroTextSettings)
-        .values({
+      console.log('🔍 Hero Text: Creating in Supabase database...');
+      const { data, error } = await this.supabase
+        .from('hero_text_settings')
+        .insert({
           id: String(Date.now()), // Generate string ID for varchar field
-          titleFr: text.title_fr,
-          titleEn: text.title_en,
-          subtitleFr: text.subtitle_fr || '',
-          subtitleEn: text.subtitle_en || '',
-          fontSize: text.font_size || 48,
-          isActive: text.is_active || false
+          title_fr: text.title_fr,
+          title_en: text.title_en,
+          subtitle_fr: text.subtitle_fr || '',
+          subtitle_en: text.subtitle_en || '',
+          font_size: text.font_size || 48,
+          font_size_desktop: text.font_size_desktop || text.font_size || 60,
+          font_size_tablet: text.font_size_tablet || Math.round((text.font_size || 60) * 0.75),
+          font_size_mobile: text.font_size_mobile || Math.round((text.font_size || 60) * 0.53),
+          is_active: text.is_active || false,
+          created_at: new Date().toISOString(),
+          updated_at: new Date().toISOString()
         })
-        .returning();
+        .select()
+        .single();
       
-      if (newText) {
-        console.log('✅ Hero Text: Created in PostgreSQL successfully');
+      if (error) {
+        console.error('⚠️ Hero Text: Supabase create error:', error);
+        throw error;
+      }
+      
+      if (data) {
+        console.log('✅ Hero Text: Created in Supabase successfully');
         
         // Update JSON backup
         const texts = this.loadJsonFile('hero-text.json');
-        texts.push(newText);
+        texts.push(data);
         this.saveJsonFile('hero-text.json', texts);
         
-        return newText;
+        return data;
       }
     } catch (error) {
-      console.warn('⚠️ Hero Text: Database connection failed, using JSON fallback:', error);
+      console.warn('⚠️ Hero Text: Supabase connection failed, using JSON fallback:', error);
     }
     
     // Fallback to JSON
@@ -394,38 +414,45 @@ export class HybridStorage implements HybridStorageInterface {
 
   async updateHeroText(textId: string, updateData: any): Promise<any> {
     try {
-      console.log(`🔍 Hero Text: Updating ID ${textId} in PostgreSQL database...`);
-      const [updatedText] = await this.db.update(heroTextSettings)
-        .set({
-          titleFr: updateData.title_fr,
-          titleEn: updateData.title_en, 
-          subtitleFr: updateData.subtitle_fr,
-          subtitleEn: updateData.subtitle_en,
-          fontSize: updateData.font_size, // Legacy field
-          fontSizeDesktop: updateData.font_size_desktop,
-          fontSizeTablet: updateData.font_size_tablet,
-          fontSizeMobile: updateData.font_size_mobile,
-          isActive: updateData.is_active,
-          updatedAt: new Date()
+      console.log(`🔍 Hero Text: Updating ID ${textId} in Supabase database...`);
+      const { data, error } = await this.supabase
+        .from('hero_text_settings')
+        .update({
+          title_fr: updateData.title_fr,
+          title_en: updateData.title_en, 
+          subtitle_fr: updateData.subtitle_fr,
+          subtitle_en: updateData.subtitle_en,
+          font_size: updateData.font_size, // Legacy field
+          font_size_desktop: updateData.font_size_desktop,
+          font_size_tablet: updateData.font_size_tablet,
+          font_size_mobile: updateData.font_size_mobile,
+          is_active: updateData.is_active,
+          updated_at: new Date().toISOString()
         })
-        .where(eq(heroTextSettings.id, textId))
-        .returning();
+        .eq('id', textId)
+        .select()
+        .single();
       
-      if (updatedText) {
-        console.log('✅ Hero Text: Updated in PostgreSQL successfully');
+      if (error) {
+        console.error('⚠️ Hero Text: Supabase update error:', error);
+        throw error;
+      }
+      
+      if (data) {
+        console.log('✅ Hero Text: Updated in Supabase successfully');
         
         // Update JSON backup
         const texts = this.loadJsonFile('hero-text.json');
         const textIndex = texts.findIndex((t: any) => t.id === textId);
         if (textIndex !== -1) {
-          texts[textIndex] = updatedText;
+          texts[textIndex] = data;
           this.saveJsonFile('hero-text.json', texts);
         }
         
-        return updatedText;
+        return data;
       }
     } catch (error) {
-      console.warn('⚠️ Hero Text: Database connection failed, using JSON fallback:', error);
+      console.warn('⚠️ Hero Text: Supabase connection failed, using JSON fallback:', error);
     }
     
     // Fallback to JSON
@@ -445,12 +472,21 @@ export class HybridStorage implements HybridStorageInterface {
 
   async deactivateAllHeroTexts(): Promise<void> {
     try {
-      console.log('🔍 Hero Text: Deactivating all texts in PostgreSQL database...');
-      await this.db.update(heroTextSettings)
-        .set({ isActive: false, updatedAt: new Date() })
-        .where(sql`1=1`); // Update all records
+      console.log('🔍 Hero Text: Deactivating all texts in Supabase database...');
+      const { error } = await this.supabase
+        .from('hero_text_settings')
+        .update({ 
+          is_active: false, 
+          updated_at: new Date().toISOString() 
+        })
+        .neq('id', ''); // Update all records
       
-      console.log('✅ Hero Text: All texts deactivated in PostgreSQL successfully');
+      if (error) {
+        console.error('⚠️ Hero Text: Supabase deactivate error:', error);
+        throw error;
+      }
+      
+      console.log('✅ Hero Text: All texts deactivated in Supabase successfully');
       
       // Update JSON backup
       const texts = this.loadJsonFile('hero-text.json');
@@ -458,7 +494,7 @@ export class HybridStorage implements HybridStorageInterface {
       this.saveJsonFile('hero-text.json', updatedTexts);
       return;
     } catch (error) {
-      console.warn('⚠️ Hero Text: Database connection failed, using JSON fallback:', error);
+      console.warn('⚠️ Hero Text: Supabase connection failed, using JSON fallback:', error);
     }
     
     // Fallback to JSON
@@ -469,13 +505,21 @@ export class HybridStorage implements HybridStorageInterface {
 
   async deleteHeroText(textId: string): Promise<any> {
     try {
-      console.log(`🔍 Hero Text: Deleting ID ${textId} from PostgreSQL database...`);
-      const [deletedText] = await this.db.delete(heroTextSettings)
-        .where(eq(heroTextSettings.id, textId))
-        .returning();
+      console.log(`🔍 Hero Text: Deleting ID ${textId} from Supabase database...`);
+      const { data, error } = await this.supabase
+        .from('hero_text_settings')
+        .delete()
+        .eq('id', textId)
+        .select()
+        .single();
       
-      if (deletedText) {
-        console.log('✅ Hero Text: Deleted from PostgreSQL successfully');
+      if (error) {
+        console.error('⚠️ Hero Text: Supabase delete error:', error);
+        throw error;
+      }
+      
+      if (data) {
+        console.log('✅ Hero Text: Deleted from Supabase successfully');
         
         // Update JSON backup
         const texts = this.loadJsonFile('hero-text.json');
@@ -485,7 +529,7 @@ export class HybridStorage implements HybridStorageInterface {
           this.saveJsonFile('hero-text.json', texts);
         }
         
-        return deletedText;
+        return data;
       }
     } catch (error) {
       console.warn('⚠️ Hero Text: Database connection failed, using JSON fallback:', error);
@@ -1398,43 +1442,40 @@ export class HybridStorage implements HybridStorageInterface {
   // CTA settings operations
   async getCtaSettings(language?: string): Promise<any[]> {
     try {
-      // Use direct database connection for CTA settings (Supabase API access issue)
-      if (this.db) {
-        console.log('🔍 CTA Settings: Querying database directly for cta_settings...');
+      console.log('🔍 CTA Settings: Querying Supabase database...');
+      const { data, error } = await this.supabase
+        .from('cta_settings')
+        .select('*')
+        .order('created_at');
+      
+      if (error) {
+        console.error('⚠️ CTA Settings: Supabase query error:', error);
+        throw error;
+      }
+      
+      if (data && data.length > 0) {
+        console.log('✅ CTA Settings retrieved from Supabase:', data.length, 'items');
         
-        const data = await this.db
-          .select()
-          .from(ctaSettings)
-          .orderBy(ctaSettings.createdAt);
+        // Convert snake_case to camelCase for frontend
+        const converted = data.map((item: any) => ({
+          id: item.id,
+          titleFr: item.title_fr,
+          titleEn: item.title_en,
+          buttonTextFr: item.button_text_fr,
+          buttonTextEn: item.button_text_en,
+          buttonUrlEn: item.button_url_en,
+          buttonUrlFr: item.button_url_fr,
+          isActive: item.is_active,
+          createdAt: item.created_at,
+          updatedAt: item.updated_at
+        }));
         
-        console.log('🔍 CTA Settings direct query result:', { count: data.length });
-        
-        if (data && data.length > 0) {
-          console.log('✅ CTA Settings retrieved from database:', data.length, 'items');
-          
-          // Convert database fields to frontend format
-          const converted = data.map((item: any) => ({
-            id: item.id,
-            titleFr: item.titleFr,
-            titleEn: item.titleEn,
-            buttonTextFr: item.buttonTextFr,
-            buttonTextEn: item.buttonTextEn,
-            buttonUrlEn: item.buttonUrlEn,
-            buttonUrlFr: item.buttonUrlFr,
-            isActive: item.isActive,
-            createdAt: item.createdAt,
-            updatedAt: item.updatedAt
-          }));
-          
-          return converted;
-        } else {
-          console.warn('⚠️ Database CTA query returned no data');
-        }
+        return converted;
       } else {
-        console.warn('⚠️ No database connection available');
+        console.warn('⚠️ Supabase CTA query returned no data');
       }
     } catch (error) {
-      console.warn('⚠️ Database get failed, using JSON fallback:', error);
+      console.warn('⚠️ CTA Settings: Supabase connection failed, using JSON fallback:', error);
     }
     
     // Fallback to JSON - return ALL settings for admin
@@ -1507,50 +1548,54 @@ export class HybridStorage implements HybridStorageInterface {
 
   async updateCtaSettings(ctaId: string, updates: any): Promise<any> {
     try {
-      console.log('🔄 Updating CTA setting in database:', ctaId, updates);
+      console.log('🔄 Updating CTA setting in Supabase:', ctaId, updates);
       
-      // Use direct database connection
-      if (this.db) {
-        const dbUpdates: any = {};
-        if (updates.titleFr !== undefined) dbUpdates.titleFr = updates.titleFr;
-        if (updates.titleEn !== undefined) dbUpdates.titleEn = updates.titleEn;
-        if (updates.buttonTextFr !== undefined) dbUpdates.buttonTextFr = updates.buttonTextFr;
-        if (updates.buttonTextEn !== undefined) dbUpdates.buttonTextEn = updates.buttonTextEn;
-        if (updates.buttonUrlEn !== undefined) dbUpdates.buttonUrlEn = updates.buttonUrlEn;
-        if (updates.buttonUrlFr !== undefined) dbUpdates.buttonUrlFr = updates.buttonUrlFr;
-        if (updates.isActive !== undefined) dbUpdates.isActive = updates.isActive;
-        dbUpdates.updatedAt = new Date();
+      // Convert camelCase to snake_case for Supabase
+      const dbUpdates: any = {};
+      if (updates.titleFr !== undefined) dbUpdates.title_fr = updates.titleFr;
+      if (updates.titleEn !== undefined) dbUpdates.title_en = updates.titleEn;
+      if (updates.buttonTextFr !== undefined) dbUpdates.button_text_fr = updates.buttonTextFr;
+      if (updates.buttonTextEn !== undefined) dbUpdates.button_text_en = updates.buttonTextEn;
+      if (updates.buttonUrlEn !== undefined) dbUpdates.button_url_en = updates.buttonUrlEn;
+      if (updates.buttonUrlFr !== undefined) dbUpdates.button_url_fr = updates.buttonUrlFr;
+      if (updates.isActive !== undefined) dbUpdates.is_active = updates.isActive;
+      dbUpdates.updated_at = new Date().toISOString();
+      
+      const { data, error } = await this.supabase
+        .from('cta_settings')
+        .update(dbUpdates)
+        .eq('id', ctaId)
+        .select()
+        .single();
+      
+      if (error) {
+        console.error('⚠️ CTA Settings: Supabase update error:', error);
+        throw error;
+      }
+      
+      if (data) {
+        console.log('✅ CTA setting updated in Supabase:', data);
         
-        const [updatedRecord] = await this.db
-          .update(ctaSettings)
-          .set(dbUpdates)
-          .where(eq(ctaSettings.id, ctaId))
-          .returning();
+        // Convert snake_case back to camelCase for frontend
+        const converted = {
+          id: data.id,
+          titleFr: data.title_fr,
+          titleEn: data.title_en,
+          buttonTextFr: data.button_text_fr,
+          buttonTextEn: data.button_text_en,
+          buttonUrlEn: data.button_url_en,
+          buttonUrlFr: data.button_url_fr,
+          isActive: data.is_active,
+          createdAt: data.created_at,
+          updatedAt: data.updated_at
+        };
         
-        if (updatedRecord) {
-          console.log('✅ CTA setting updated in database:', updatedRecord);
-          
-          // Convert to frontend format
-          const converted = {
-            id: updatedRecord.id,
-            titleFr: updatedRecord.titleFr,
-            titleEn: updatedRecord.titleEn,
-            buttonTextFr: updatedRecord.buttonTextFr,
-            buttonTextEn: updatedRecord.buttonTextEn,
-            buttonUrlEn: updatedRecord.buttonUrlEn,
-            buttonUrlFr: updatedRecord.buttonUrlFr,
-            isActive: updatedRecord.isActive,
-            createdAt: updatedRecord.createdAt,
-            updatedAt: updatedRecord.updatedAt
-          };
-          
-          return converted;
-        } else {
-          console.warn('⚠️ Database update returned no record');
-        }
+        return converted;
+      } else {
+        console.warn('⚠️ Supabase update returned no record');
       }
     } catch (error) {
-      console.warn('⚠️ Database update failed, using JSON fallback:', error);
+      console.warn('⚠️ CTA Settings: Supabase update failed, using JSON fallback:', error);
     }
     
     // Fallback to JSON only
