@@ -273,7 +273,7 @@ export function HeroVideoSection() {
           <div className="flex justify-center items-center">
             <Button 
               size="lg" 
-              className="inline-flex items-center gap-3 bg-memopyk-orange hover:bg-memopyk-orange/90 text-white px-8 py-4 rounded-full font-semibold text-lg transition-all duration-300 transform hover:scale-105 shadow-lg cursor-pointer"
+              className="inline-flex items-center gap-3 bg-memopyk-orange hover:bg-memopyk-orange/90 text-white px-8 py-4 rounded-full font-semibold text-lg transition-all duration-300 transform hover:scale-105 shadow-lg cursor-pointer no-underline"
               onClick={() => {
                 const element = document.getElementById('how-it-works');
                 if (element) {
