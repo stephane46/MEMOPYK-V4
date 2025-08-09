@@ -175,14 +175,8 @@ export default function FAQSection() {
         {/* Section Header - Mobile Optimized */}
         <div className="text-center mb-6 sm:mb-8 lg:mb-12">
           <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-poppins font-bold text-memopyk-navy mb-6 px-2">
-            {language === 'fr-FR' ? 'Questions Fréquemment Posées' : 'Frequently Asked Questions'}
+            {language === 'fr-FR' ? 'Foire aux Questions' : 'Frequently Asked Questions'}
           </h2>
-          <p className="text-base sm:text-lg text-memopyk-dark-blue max-w-2xl mx-auto px-4">
-            {language === 'fr-FR' 
-              ? 'Trouvez les réponses aux questions les plus courantes sur nos services de films de mariage et de famille.'
-              : 'Find answers to the most common questions about our wedding and family film services.'
-            }
-          </p>
         </div>
 
         {/* FAQ Content - Mobile Optimized */}
