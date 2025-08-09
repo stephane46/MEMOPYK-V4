@@ -30,7 +30,7 @@ export function KeyVisualSection() {
     <section ref={sectionRef} className="py-0 bg-gradient-to-br from-memopyk-cream to-memopyk-cream/70">
       <div className="container mx-auto px-4">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 sm:gap-10 lg:gap-12 items-center">
-          {/* Left: Key Visual Illustration - Show on mobile */}
+          {/* Left: Key Visual Illustration with Overlaid Animated Elements */}
           <div className="relative order-1 lg:order-none mb-8 sm:mb-0">
             <div className="relative min-h-[200px] sm:min-h-[300px] flex items-center justify-center">
               <img 
@@ -51,6 +51,71 @@ export function KeyVisualSection() {
                   console.log('KeyVisual image loaded successfully on mobile');
                 }}
               />
+
+              {/* Overlaid Animated Elements */}
+              <div className="absolute inset-0 flex flex-col justify-center gap-3 sm:gap-4 p-4 sm:p-6">
+                {language === 'fr-FR' ? (
+                  <>
+                    <div 
+                      className={`flex items-center gap-2 sm:gap-3 bg-white/70 backdrop-blur-sm rounded-lg px-3 py-2 sm:px-4 sm:py-3 border border-white/40 shadow-lg w-fit transform transition-all duration-700 hover:scale-105 hover:bg-white/80 hover:shadow-xl ${
+                        isVisible ? 'translate-x-0 opacity-100' : '-translate-x-12 opacity-0'
+                      }`}
+                      style={{ transitionDelay: '200ms' }}
+                    >
+                      <Smartphone className="w-4 h-4 sm:w-5 sm:h-5 flex-shrink-0 text-memopyk-orange transition-transform duration-300 hover:rotate-6" />
+                      <span className="text-sm sm:text-base text-memopyk-navy font-medium">enfouis dans des téléphones...</span>
+                    </div>
+                    <div 
+                      className={`flex items-center gap-2 sm:gap-3 bg-white/70 backdrop-blur-sm rounded-lg px-3 py-2 sm:px-4 sm:py-3 border border-white/40 shadow-lg w-fit ml-8 sm:ml-12 transform transition-all duration-700 hover:scale-105 hover:bg-white/80 hover:shadow-xl ${
+                        isVisible ? 'translate-x-0 opacity-100' : '-translate-x-12 opacity-0'
+                      }`}
+                      style={{ transitionDelay: '400ms' }}
+                    >
+                      <Laptop className="w-4 h-4 sm:w-5 sm:h-5 flex-shrink-0 text-memopyk-orange transition-transform duration-300 hover:rotate-6" />
+                      <span className="text-sm sm:text-base text-memopyk-navy font-medium">oubliés sur des disques durs...</span>
+                    </div>
+                    <div 
+                      className={`flex items-center gap-2 sm:gap-3 bg-white/70 backdrop-blur-sm rounded-lg px-3 py-2 sm:px-4 sm:py-3 border border-white/40 shadow-lg w-fit ml-4 sm:ml-6 transform transition-all duration-700 hover:scale-105 hover:bg-white/80 hover:shadow-xl ${
+                        isVisible ? 'translate-x-0 opacity-100' : '-translate-x-12 opacity-0'
+                      }`}
+                      style={{ transitionDelay: '600ms' }}
+                    >
+                      <Package className="w-4 h-4 sm:w-5 sm:h-5 flex-shrink-0 text-memopyk-orange transition-transform duration-300 hover:rotate-6" />
+                      <span className="text-sm sm:text-base text-memopyk-navy font-medium">entassés dans des cartons...</span>
+                    </div>
+                  </>
+                ) : (
+                  <>
+                    <div 
+                      className={`flex items-center gap-2 sm:gap-3 bg-white/70 backdrop-blur-sm rounded-lg px-3 py-2 sm:px-4 sm:py-3 border border-white/40 shadow-lg w-fit transform transition-all duration-700 hover:scale-105 hover:bg-white/80 hover:shadow-xl ${
+                        isVisible ? 'translate-x-0 opacity-100' : '-translate-x-12 opacity-0'
+                      }`}
+                      style={{ transitionDelay: '200ms' }}
+                    >
+                      <Smartphone className="w-4 h-4 sm:w-5 sm:h-5 flex-shrink-0 text-memopyk-orange transition-transform duration-300 hover:rotate-6" />
+                      <span className="text-sm sm:text-base text-memopyk-navy font-medium">buried in phones...</span>
+                    </div>
+                    <div 
+                      className={`flex items-center gap-2 sm:gap-3 bg-white/70 backdrop-blur-sm rounded-lg px-3 py-2 sm:px-4 sm:py-3 border border-white/40 shadow-lg w-fit ml-8 sm:ml-12 transform transition-all duration-700 hover:scale-105 hover:bg-white/80 hover:shadow-xl ${
+                        isVisible ? 'translate-x-0 opacity-100' : '-translate-x-12 opacity-0'
+                      }`}
+                      style={{ transitionDelay: '400ms' }}
+                    >
+                      <Laptop className="w-4 h-4 sm:w-5 sm:h-5 flex-shrink-0 text-memopyk-orange transition-transform duration-300 hover:rotate-6" />
+                      <span className="text-sm sm:text-base text-memopyk-navy font-medium">forgotten on hard drives...</span>
+                    </div>
+                    <div 
+                      className={`flex items-center gap-2 sm:gap-3 bg-white/70 backdrop-blur-sm rounded-lg px-3 py-2 sm:px-4 sm:py-3 border border-white/40 shadow-lg w-fit ml-4 sm:ml-6 transform transition-all duration-700 hover:scale-105 hover:bg-white/80 hover:shadow-xl ${
+                        isVisible ? 'translate-x-0 opacity-100' : '-translate-x-12 opacity-0'
+                      }`}
+                      style={{ transitionDelay: '600ms' }}
+                    >
+                      <Package className="w-4 h-4 sm:w-5 sm:h-5 flex-shrink-0 text-memopyk-orange transition-transform duration-300 hover:rotate-6" />
+                      <span className="text-sm sm:text-base text-memopyk-navy font-medium">piled in boxes...</span>
+                    </div>
+                  </>
+                )}
+              </div>
             </div>
 
             {/* Background Pattern - Hidden on mobile for better performance */}
@@ -69,70 +134,7 @@ export function KeyVisualSection() {
               }
             </h2>
             
-            {/* Three-line description with icons - Animated */}
-            <div className="text-lg sm:text-xl text-memopyk-sky-blue leading-relaxed space-y-3 sm:space-y-2">
-              {language === 'fr-FR' ? (
-                <>
-                  <div 
-                    className={`flex items-center gap-3 bg-white/40 backdrop-blur-sm rounded-xl px-4 py-3 border border-white/30 shadow-sm w-fit transform transition-all duration-700 hover:scale-105 hover:bg-white/60 hover:shadow-md ${
-                      isVisible ? 'translate-x-0 opacity-100' : '-translate-x-12 opacity-0'
-                    }`}
-                    style={{ transitionDelay: '200ms' }}
-                  >
-                    <Smartphone className="w-5 h-5 sm:w-6 sm:h-6 flex-shrink-0 transition-transform duration-300 hover:rotate-6" />
-                    <span>enfouis dans des téléphones...</span>
-                  </div>
-                  <div 
-                    className={`flex items-center gap-3 bg-white/40 backdrop-blur-sm rounded-xl px-4 py-3 border border-white/30 shadow-sm w-fit transform transition-all duration-700 hover:scale-105 hover:bg-white/60 hover:shadow-md ${
-                      isVisible ? 'translate-x-0 opacity-100' : '-translate-x-12 opacity-0'
-                    }`}
-                    style={{ transitionDelay: '400ms' }}
-                  >
-                    <Laptop className="w-5 h-5 sm:w-6 sm:h-6 flex-shrink-0 transition-transform duration-300 hover:rotate-6" />
-                    <span>oubliés sur des disques durs...</span>
-                  </div>
-                  <div 
-                    className={`flex items-center gap-3 bg-white/40 backdrop-blur-sm rounded-xl px-4 py-3 border border-white/30 shadow-sm w-fit transform transition-all duration-700 hover:scale-105 hover:bg-white/60 hover:shadow-md ${
-                      isVisible ? 'translate-x-0 opacity-100' : '-translate-x-12 opacity-0'
-                    }`}
-                    style={{ transitionDelay: '600ms' }}
-                  >
-                    <Package className="w-5 h-5 sm:w-6 sm:h-6 flex-shrink-0 transition-transform duration-300 hover:rotate-6" />
-                    <span>entassés dans des cartons...</span>
-                  </div>
-                </>
-              ) : (
-                <>
-                  <div 
-                    className={`flex items-center gap-3 bg-white/40 backdrop-blur-sm rounded-xl px-4 py-3 border border-white/30 shadow-sm w-fit transform transition-all duration-700 hover:scale-105 hover:bg-white/60 hover:shadow-md ${
-                      isVisible ? 'translate-x-0 opacity-100' : '-translate-x-12 opacity-0'
-                    }`}
-                    style={{ transitionDelay: '200ms' }}
-                  >
-                    <Smartphone className="w-5 h-5 sm:w-6 sm:h-6 flex-shrink-0 transition-transform duration-300 hover:rotate-6" />
-                    <span>buried in phones...</span>
-                  </div>
-                  <div 
-                    className={`flex items-center gap-3 bg-white/40 backdrop-blur-sm rounded-xl px-4 py-3 border border-white/30 shadow-sm w-fit transform transition-all duration-700 hover:scale-105 hover:bg-white/60 hover:shadow-md ${
-                      isVisible ? 'translate-x-0 opacity-100' : '-translate-x-12 opacity-0'
-                    }`}
-                    style={{ transitionDelay: '400ms' }}
-                  >
-                    <Laptop className="w-5 h-5 sm:w-6 sm:h-6 flex-shrink-0 transition-transform duration-300 hover:rotate-6" />
-                    <span>forgotten on hard drives...</span>
-                  </div>
-                  <div 
-                    className={`flex items-center gap-3 bg-white/40 backdrop-blur-sm rounded-xl px-4 py-3 border border-white/30 shadow-sm w-fit transform transition-all duration-700 hover:scale-105 hover:bg-white/60 hover:shadow-md ${
-                      isVisible ? 'translate-x-0 opacity-100' : '-translate-x-12 opacity-0'
-                    }`}
-                    style={{ transitionDelay: '600ms' }}
-                  >
-                    <Package className="w-5 h-5 sm:w-6 sm:h-6 flex-shrink-0 transition-transform duration-300 hover:rotate-6" />
-                    <span>piled in boxes...</span>
-                  </div>
-                </>
-              )}
-            </div>
+
 
             {/* Key message */}
             <div className="text-lg sm:text-xl text-memopyk-dark-blue leading-relaxed font-medium space-y-1">
