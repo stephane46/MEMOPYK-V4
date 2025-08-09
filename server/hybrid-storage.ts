@@ -3152,7 +3152,42 @@ Allow: /contact`;
   // Analytics methods implementation
   async getAnalyticsSessions(dateFrom?: string, dateTo?: string, language?: string): Promise<any[]> {
     try {
-      // Try database first (not implemented yet), fallback to JSON
+      console.log('🔍 Analytics Sessions: Querying Supabase database...');
+      
+      let query = this.supabase
+        .from('analytics_sessions')
+        .select('*')
+        .order('created_at', { ascending: false });
+
+      if (dateFrom) {
+        query = query.gte('created_at', dateFrom);
+      }
+      if (dateTo) {
+        query = query.lte('created_at', dateTo);
+      }
+      if (language) {
+        query = query.eq('language', language);
+      }
+
+      const { data, error } = await query;
+
+      if (error) {
+        console.error('⚠️ Analytics Sessions: Supabase query error:', error);
+        throw error;
+      }
+
+      if (data && data.length > 0) {
+        console.log(`✅ Analytics Sessions: Found ${data.length} sessions in Supabase`);
+        return data;
+      } else {
+        console.log('⚠️ Analytics Sessions: No data in Supabase, checking JSON fallback...');
+      }
+    } catch (error) {
+      console.warn('⚠️ Analytics Sessions: Supabase connection failed, using JSON fallback:', error);
+    }
+
+    // Fallback to JSON
+    try {
       const sessions = this.loadJsonFile('analytics-sessions.json');
       let filtered = sessions;
 
@@ -3168,14 +3203,51 @@ Allow: /contact`;
 
       return filtered;
     } catch (error) {
-      console.error('Error getting analytics sessions:', error);
+      console.error('Error getting analytics sessions from JSON:', error);
       return [];
     }
   }
 
   async getAnalyticsViews(dateFrom?: string, dateTo?: string, videoId?: string): Promise<any[]> {
     try {
-      // Try database first (not implemented yet), fallback to JSON
+      console.log('🔍 Analytics Views: Querying Supabase database...');
+      
+      let query = this.supabase
+        .from('analytics_views')
+        .select('*')
+        // Exclude hero videos from analytics (auto-play videos don't provide meaningful engagement data)
+        .not('video_filename', 'in', '("VideoHero1.mp4","VideoHero2.mp4","VideoHero3.mp4")')
+        .order('created_at', { ascending: false });
+
+      if (dateFrom) {
+        query = query.gte('created_at', dateFrom);
+      }
+      if (dateTo) {
+        query = query.lte('created_at', dateTo);
+      }
+      if (videoId) {
+        query = query.eq('video_id', videoId);
+      }
+
+      const { data, error } = await query;
+
+      if (error) {
+        console.error('⚠️ Analytics Views: Supabase query error:', error);
+        throw error;
+      }
+
+      if (data && data.length > 0) {
+        console.log(`✅ Analytics Views: Found ${data.length} views in Supabase`);
+        return data;
+      } else {
+        console.log('⚠️ Analytics Views: No data in Supabase, checking JSON fallback...');
+      }
+    } catch (error) {
+      console.warn('⚠️ Analytics Views: Supabase connection failed, using JSON fallback:', error);
+    }
+
+    // Fallback to JSON
+    try {
       const views = this.loadJsonFile('analytics-views.json');
       let filtered = views
         // Exclude hero videos from analytics (auto-play videos don't provide meaningful engagement data)
@@ -3193,20 +3265,46 @@ Allow: /contact`;
 
       return filtered;
     } catch (error) {
-      console.error('Error getting analytics views:', error);
+      console.error('Error getting analytics views from JSON:', error);
       return [];
     }
   }
 
   async getAnalyticsSettings(): Promise<any> {
     try {
+      console.log('🔍 Analytics Settings: Querying Supabase database...');
+      
+      const { data, error } = await this.supabase
+        .from('analytics_settings')
+        .select('*')
+        .order('created_at', { ascending: false })
+        .limit(1)
+        .single();
+
+      if (error && error.code !== 'PGRST116') { // PGRST116 = no rows found
+        console.error('⚠️ Analytics Settings: Supabase query error:', error);
+        throw error;
+      }
+
+      if (data) {
+        console.log('✅ Analytics Settings: Found settings in Supabase');
+        return data;
+      } else {
+        console.log('⚠️ Analytics Settings: No data in Supabase, checking JSON fallback...');
+      }
+    } catch (error) {
+      console.warn('⚠️ Analytics Settings: Supabase connection failed, using JSON fallback:', error);
+    }
+
+    // Fallback to JSON
+    try {
       const settings = this.loadJsonFile('analytics-settings.json');
       return Array.isArray(settings) ? settings[0] || {} : settings;
     } catch (error) {
-      console.error('Error getting analytics settings:', error);
+      console.error('Error getting analytics settings from JSON:', error);
       return {
         excludedIps: ["127.0.0.1", "::1"],
-        completionThreshold: 80,
+        completionThreshold: 50, // Updated to 50%
         trackingEnabled: true,
         dataRetentionDays: 90
       };
@@ -3215,9 +3313,7 @@ Allow: /contact`;
 
   async createAnalyticsSession(sessionData: any): Promise<any> {
     try {
-      const sessions = this.loadJsonFile('analytics-sessions.json');
-      
-      // Generate IP location data (simplified)
+      // Generate session data
       const sessionWithId = {
         id: `session_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
         session_id: sessionData.session_id || `session_${Date.now()}`,
@@ -3234,12 +3330,42 @@ Allow: /contact`;
         updated_at: new Date().toISOString()
       };
 
+      // Try Supabase first
+      console.log('🔍 Analytics Session: Creating in Supabase database...');
+      const { data, error } = await this.supabase
+        .from('analytics_sessions')
+        .insert(sessionWithId)
+        .select()
+        .single();
+
+      if (error) {
+        console.error('⚠️ Analytics Session: Supabase create error:', error);
+        throw error;
+      }
+
+      if (data) {
+        console.log('✅ Analytics Session: Created in Supabase successfully');
+        
+        // Update JSON backup
+        const sessions = this.loadJsonFile('analytics-sessions.json');
+        sessions.push(data);
+        this.saveJsonFile('analytics-sessions.json', sessions);
+        
+        return data;
+      }
+    } catch (error) {
+      console.warn('⚠️ Analytics Session: Supabase connection failed, using JSON fallback:', error);
+    }
+
+    // Fallback to JSON
+    try {
+      const sessions = this.loadJsonFile('analytics-sessions.json');
       sessions.push(sessionWithId);
       this.saveJsonFile('analytics-sessions.json', sessions);
       
       return sessionWithId;
     } catch (error) {
-      console.error('Error creating analytics session:', error);
+      console.error('Error creating analytics session in JSON:', error);
       throw error;
     }
   }
@@ -3273,6 +3399,41 @@ Allow: /contact`;
 
   async updateAnalyticsSettings(settings: any): Promise<any> {
     try {
+      console.log('🔍 Analytics Settings: Updating in Supabase database...');
+      
+      const updatedData = {
+        ...settings,
+        updated_at: new Date().toISOString()
+      };
+
+      // Try Supabase first - upsert operation
+      const { data, error } = await this.supabase
+        .from('analytics_settings')
+        .upsert(updatedData, { 
+          onConflict: 'id',
+          ignoreDuplicates: false 
+        })
+        .select()
+        .single();
+
+      if (error) {
+        console.error('⚠️ Analytics Settings: Supabase update error:', error);
+        throw error;
+      }
+
+      if (data) {
+        console.log('✅ Analytics Settings: Updated in Supabase successfully');
+        
+        // Update JSON backup
+        this.saveJsonFile('analytics-settings.json', data);
+        return data;
+      }
+    } catch (error) {
+      console.warn('⚠️ Analytics Settings: Supabase connection failed, using JSON fallback:', error);
+    }
+
+    // Fallback to JSON
+    try {
       const currentSettings = await this.getAnalyticsSettings();
       const updatedSettings = {
         ...currentSettings,
@@ -3283,7 +3444,7 @@ Allow: /contact`;
       this.saveJsonFile('analytics-settings.json', updatedSettings);
       return updatedSettings;
     } catch (error) {
-      console.error('Error updating analytics settings:', error);
+      console.error('Error updating analytics settings in JSON:', error);
       throw error;
     }
   }
