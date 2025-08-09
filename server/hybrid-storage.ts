@@ -3,7 +3,7 @@ import { join } from "path";
 import { createClient } from '@supabase/supabase-js';
 import { db } from './db';
 import { eq, and, desc, asc, sql } from 'drizzle-orm';
-import { ctaSettings, heroTextSettings } from '../shared/schema';
+import { ctaSettings, heroTextSettings, analyticsViews } from '../shared/schema';
 
 export interface HybridStorageInterface {
   // Hero videos
@@ -4348,32 +4348,26 @@ Allow: /contact`;
     try {
       console.log(`🔄 Recalculating historical completions with ${newThreshold}% threshold...`);
       
-      if (this.supabase) {
-        // Database implementation
-        const { data: views, error } = await this.supabase
-          .from('analytics_views')
-          .select('id, completion_percentage, watched_to_end');
-        
-        if (error) throw error;
+      if (this.db) {
+        // Use PostgreSQL database through Drizzle ORM
+        const views = await this.db.select().from(analyticsViews);
         
         let updated = 0;
         const total = views?.length || 0;
         
         if (views) {
           for (const view of views) {
-            const completionPercentage = parseFloat(view.completion_percentage || '0');
+            const completionPercentage = parseFloat(view.completionPercentage || '0');
             const newWatchedToEnd = completionPercentage >= newThreshold;
             
             // Only update if the completion status would change
-            if (view.watched_to_end !== newWatchedToEnd) {
-              const { error: updateError } = await this.supabase
-                .from('analytics_views')
-                .update({ watched_to_end: newWatchedToEnd })
-                .eq('id', view.id);
+            if (view.watchedToEnd !== newWatchedToEnd) {
+              await this.db
+                .update(analyticsViews)
+                .set({ watchedToEnd: newWatchedToEnd })
+                .where(eq(analyticsViews.id, view.id));
               
-              if (!updateError) {
-                updated++;
-              }
+              updated++;
             }
           }
         }
