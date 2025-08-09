@@ -76,61 +76,61 @@ export function KeyVisualSection() {
               {language === 'fr-FR' ? (
                 <>
                   <div 
-                    className={`flex items-center gap-3 bg-white/60 backdrop-blur-sm rounded-xl px-4 py-3 border border-memopyk-sky-blue/30 shadow-lg w-[350px] transform transition-all duration-1000 hover:scale-105 hover:bg-white/80 hover:shadow-xl ${
+                    className={`flex items-center gap-3 bg-white/60 backdrop-blur-sm rounded-xl px-4 py-3 border border-memopyk-sky-blue/30 shadow-lg w-[420px] transform transition-all duration-1000 hover:scale-105 hover:bg-white/80 hover:shadow-xl ${
                       isVisible ? 'translate-x-0 opacity-100' : '-translate-x-96 opacity-0'
                     }`}
                     style={{ transitionDelay: '400ms' }}
                   >
                     <Smartphone className="w-5 h-5 sm:w-6 sm:h-6 flex-shrink-0 text-memopyk-sky-blue transition-transform duration-300 hover:rotate-6" />
-                    <span className="text-memopyk-navy font-medium">enfouis dans des téléphones...</span>
+                    <span className="text-memopyk-navy font-medium whitespace-nowrap">enfouis dans des téléphones...</span>
                   </div>
                   <div 
-                    className={`flex items-center gap-3 bg-white/60 backdrop-blur-sm rounded-xl px-4 py-3 border border-memopyk-sky-blue/30 shadow-lg w-[350px] transform transition-all duration-1000 hover:scale-105 hover:bg-white/80 hover:shadow-xl ${
+                    className={`flex items-center gap-3 bg-white/60 backdrop-blur-sm rounded-xl px-4 py-3 border border-memopyk-sky-blue/30 shadow-lg w-[420px] transform transition-all duration-1000 hover:scale-105 hover:bg-white/80 hover:shadow-xl ${
                       isVisible ? 'translate-x-0 opacity-100' : '-translate-x-96 opacity-0'
                     }`}
                     style={{ transitionDelay: '700ms' }}
                   >
                     <Laptop className="w-5 h-5 sm:w-6 sm:h-6 flex-shrink-0 text-memopyk-sky-blue transition-transform duration-300 hover:rotate-6" />
-                    <span className="text-memopyk-navy font-medium">oubliés sur des disques durs...</span>
+                    <span className="text-memopyk-navy font-medium whitespace-nowrap">oubliés sur des disques durs...</span>
                   </div>
                   <div 
-                    className={`flex items-center gap-3 bg-white/60 backdrop-blur-sm rounded-xl px-4 py-3 border border-memopyk-sky-blue/30 shadow-lg w-[350px] transform transition-all duration-1000 hover:scale-105 hover:bg-white/80 hover:shadow-xl ${
+                    className={`flex items-center gap-3 bg-white/60 backdrop-blur-sm rounded-xl px-4 py-3 border border-memopyk-sky-blue/30 shadow-lg w-[420px] transform transition-all duration-1000 hover:scale-105 hover:bg-white/80 hover:shadow-xl ${
                       isVisible ? 'translate-x-0 opacity-100' : '-translate-x-96 opacity-0'
                     }`}
                     style={{ transitionDelay: '1000ms' }}
                   >
                     <Package className="w-5 h-5 sm:w-6 sm:h-6 flex-shrink-0 text-memopyk-sky-blue transition-transform duration-300 hover:rotate-6" />
-                    <span className="text-memopyk-navy font-medium">entassés dans des cartons...</span>
+                    <span className="text-memopyk-navy font-medium whitespace-nowrap">entassés dans des cartons...</span>
                   </div>
                 </>
               ) : (
                 <>
                   <div 
-                    className={`flex items-center gap-3 bg-white/60 backdrop-blur-sm rounded-xl px-4 py-3 border border-memopyk-sky-blue/30 shadow-lg w-[280px] transform transition-all duration-1000 hover:scale-105 hover:bg-white/80 hover:shadow-xl ${
+                    className={`flex items-center gap-3 bg-white/60 backdrop-blur-sm rounded-xl px-4 py-3 border border-memopyk-sky-blue/30 shadow-lg w-[320px] transform transition-all duration-1000 hover:scale-105 hover:bg-white/80 hover:shadow-xl ${
                       isVisible ? 'translate-x-0 opacity-100' : '-translate-x-96 opacity-0'
                     }`}
                     style={{ transitionDelay: '400ms' }}
                   >
                     <Smartphone className="w-5 h-5 sm:w-6 sm:h-6 flex-shrink-0 text-memopyk-sky-blue transition-transform duration-300 hover:rotate-6" />
-                    <span className="text-memopyk-navy font-medium">buried in phones...</span>
+                    <span className="text-memopyk-navy font-medium whitespace-nowrap">buried in phones...</span>
                   </div>
                   <div 
-                    className={`flex items-center gap-3 bg-white/60 backdrop-blur-sm rounded-xl px-4 py-3 border border-memopyk-sky-blue/30 shadow-lg w-[280px] transform transition-all duration-1000 hover:scale-105 hover:bg-white/80 hover:shadow-xl ${
+                    className={`flex items-center gap-3 bg-white/60 backdrop-blur-sm rounded-xl px-4 py-3 border border-memopyk-sky-blue/30 shadow-lg w-[320px] transform transition-all duration-1000 hover:scale-105 hover:bg-white/80 hover:shadow-xl ${
                       isVisible ? 'translate-x-0 opacity-100' : '-translate-x-96 opacity-0'
                     }`}
                     style={{ transitionDelay: '700ms' }}
                   >
                     <Laptop className="w-5 h-5 sm:w-6 sm:h-6 flex-shrink-0 text-memopyk-sky-blue transition-transform duration-300 hover:rotate-6" />
-                    <span className="text-memopyk-navy font-medium">forgotten on hard drives...</span>
+                    <span className="text-memopyk-navy font-medium whitespace-nowrap">forgotten on hard drives...</span>
                   </div>
                   <div 
-                    className={`flex items-center gap-3 bg-white/60 backdrop-blur-sm rounded-xl px-4 py-3 border border-memopyk-sky-blue/30 shadow-lg w-[280px] transform transition-all duration-1000 hover:scale-105 hover:bg-white/80 hover:shadow-xl ${
+                    className={`flex items-center gap-3 bg-white/60 backdrop-blur-sm rounded-xl px-4 py-3 border border-memopyk-sky-blue/30 shadow-lg w-[320px] transform transition-all duration-1000 hover:scale-105 hover:bg-white/80 hover:shadow-xl ${
                       isVisible ? 'translate-x-0 opacity-100' : '-translate-x-96 opacity-0'
                     }`}
                     style={{ transitionDelay: '1000ms' }}
                   >
                     <Package className="w-5 h-5 sm:w-6 sm:h-6 flex-shrink-0 text-memopyk-sky-blue transition-transform duration-300 hover:rotate-6" />
-                    <span className="text-memopyk-navy font-medium">piled in boxes...</span>
+                    <span className="text-memopyk-navy font-medium whitespace-nowrap">piled in boxes...</span>
                   </div>
                 </>
               )}
