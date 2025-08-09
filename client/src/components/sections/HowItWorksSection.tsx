@@ -62,9 +62,9 @@ export function HowItWorksSection() {
             return (
               <div key={step.number} className="relative">
                 {/* Step Card */}
-                <div className={`relative bg-memopyk-dark-blue rounded-3xl shadow-2xl text-center group hover:shadow-3xl transition-all duration-500 transform hover:-translate-y-2 z-10 h-[900px] p-12 ${
+                <div className={`relative bg-memopyk-dark-blue rounded-3xl shadow-2xl text-center group hover:shadow-3xl transition-all duration-500 transform hover:-translate-y-2 z-10 flex flex-col p-12 ${
                   isMiddleCard ? 'border-4 border-memopyk-orange' : ''
-                }`}>
+                }`} style={{ minHeight: '900px' }}>
                   
                   {/* Step Image */}
                   <div className="mb-8">
@@ -83,12 +83,12 @@ export function HowItWorksSection() {
                   </h3>
 
                   {/* Step Description */}
-                  <div className="text-memopyk-cream/90 leading-relaxed text-base mb-8">
+                  <div className="text-memopyk-cream/90 leading-relaxed text-base mb-8 flex-grow">
                     {language === 'fr-FR' ? step.descriptionFr : step.descriptionEn}
                   </div>
                   
-                  {/* Sub Description - Absolutely positioned at bottom */}
-                  <div className="absolute bottom-12 left-12 right-12 pt-4 border-t border-memopyk-cream/20">
+                  {/* Sub Description - Always at bottom */}
+                  <div className="mt-auto pt-4 border-t border-memopyk-cream/20">
                     <div className="flex items-start space-x-3">
                       <div className="w-6 h-6 rounded-full bg-memopyk-cream mt-1 flex-shrink-0 flex items-center justify-center">
                         <Icon className="w-3 h-3 text-memopyk-dark-blue" />
