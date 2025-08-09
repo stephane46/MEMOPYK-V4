@@ -10,7 +10,7 @@ export function HowItWorksSection() {
       icon: Upload,
       titleFr: "Téléversement",
       titleEn: "You Upload",
-      descriptionFr: "Envoyez-nous vos photos et vidéos telles qu'elles sont — inutile de trier, renommer ou organiser. Nous acceptons tous les formats, et proposons même des envois collaboratifs pour que la famille et les amis puissent contribuer.\nNous pouvons aussi vous aider pour la numérisation de vos éléments analogiques (vieilles photos imprimées, CD, cassettes VHS,…).",
+      descriptionFr: "Envoyez-nous vos photos et vidéos telles qu'elles sont — inutile de trier, renommer ou organiser. Nous acceptons tous les formats, et proposons même des envois collaboratifs pour que la famille et les amis puissent contribuer.\nNous vous aidons pour la numérisation de vos éléments analogiques (photos imprimées, CD, cassette VHS,…).",
       descriptionEn: "Give us your photos and videos exactly as they are — no need to sort, rename, or organize. \nWe accept all formats and even support collaborative uploads, so your family and friends can contribute.\nWe also support the digitization of your analog materials (printed old photos, CDs, VHS tapes,…).",
       subDescriptionFr: "Vous recevrez également un court questionnaire pour nous en dire plus sur votre histoire — qu'elle soit encore floue ou déjà bien construite.",
       subDescriptionEn: "You'll first fill in a short questionnaire, or have a consultation chat with us, to tell us more about what you have in mind — whether it's a vague or detailed vision.",
