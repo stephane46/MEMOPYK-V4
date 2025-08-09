@@ -323,7 +323,7 @@ export function Layout({ children }: LayoutProps) {
                 <li className="group">
                   <a 
                     href="mailto:contact@memopyk.com"
-                    className="flex items-center gap-3 hover:text-white transition-all duration-300 ease-in-out transform hover:translate-x-1 cursor-pointer p-2 -m-2 rounded-lg hover:bg-gray-800/50"
+                    className="flex items-center gap-3 hover:text-white transition-all duration-300 ease-in-out transform hover:translate-x-1 cursor-pointer p-2 -m-2 rounded-lg"
                   >
                     <Mail className="w-4 h-4 group-hover:text-memopyk-orange transition-colors duration-300" />
                     <span className="group-hover:underline">contact@memopyk.com</span>
@@ -334,7 +334,7 @@ export function Layout({ children }: LayoutProps) {
                     href="https://wa.me/33123456789"
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="flex items-center gap-3 hover:text-white transition-all duration-300 ease-in-out transform hover:translate-x-1 cursor-pointer p-2 -m-2 rounded-lg hover:bg-gray-800/50"
+                    className="flex items-center gap-3 hover:text-white transition-all duration-300 ease-in-out transform hover:translate-x-1 cursor-pointer p-2 -m-2 rounded-lg"
                   >
                     <FaWhatsapp className="w-4 h-4 group-hover:text-green-500 transition-colors duration-300" />
                     <span className="group-hover:underline">+33 1 23 45 67 89</span>
