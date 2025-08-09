@@ -79,7 +79,7 @@ export function KeyVisualSection() {
                     className={`flex items-center gap-3 bg-white/60 backdrop-blur-sm rounded-xl px-4 py-3 border border-memopyk-sky-blue/30 shadow-lg w-[420px] transform transition-all duration-1000 hover:scale-105 hover:bg-white/80 hover:shadow-xl ${
                       isVisible ? 'translate-x-0 opacity-100' : '-translate-x-96 opacity-0'
                     }`}
-                    style={{ transitionDelay: '400ms' }}
+                    style={{ transitionDelay: '1200ms' }}
                   >
                     <Smartphone className="w-5 h-5 sm:w-6 sm:h-6 flex-shrink-0 text-memopyk-sky-blue transition-transform duration-300 hover:rotate-6" />
                     <span className="text-memopyk-navy font-medium whitespace-nowrap">enfouis dans des téléphones...</span>
@@ -88,7 +88,7 @@ export function KeyVisualSection() {
                     className={`flex items-center gap-3 bg-white/60 backdrop-blur-sm rounded-xl px-4 py-3 border border-memopyk-sky-blue/30 shadow-lg w-[420px] transform transition-all duration-1000 hover:scale-105 hover:bg-white/80 hover:shadow-xl ${
                       isVisible ? 'translate-x-0 opacity-100' : '-translate-x-96 opacity-0'
                     }`}
-                    style={{ transitionDelay: '700ms' }}
+                    style={{ transitionDelay: '1600ms' }}
                   >
                     <Laptop className="w-5 h-5 sm:w-6 sm:h-6 flex-shrink-0 text-memopyk-sky-blue transition-transform duration-300 hover:rotate-6" />
                     <span className="text-memopyk-navy font-medium whitespace-nowrap">oubliés sur des disques durs...</span>
@@ -97,7 +97,7 @@ export function KeyVisualSection() {
                     className={`flex items-center gap-3 bg-white/60 backdrop-blur-sm rounded-xl px-4 py-3 border border-memopyk-sky-blue/30 shadow-lg w-[420px] transform transition-all duration-1000 hover:scale-105 hover:bg-white/80 hover:shadow-xl ${
                       isVisible ? 'translate-x-0 opacity-100' : '-translate-x-96 opacity-0'
                     }`}
-                    style={{ transitionDelay: '1000ms' }}
+                    style={{ transitionDelay: '2000ms' }}
                   >
                     <Package className="w-5 h-5 sm:w-6 sm:h-6 flex-shrink-0 text-memopyk-sky-blue transition-transform duration-300 hover:rotate-6" />
                     <span className="text-memopyk-navy font-medium whitespace-nowrap">entassés dans des cartons...</span>
@@ -109,7 +109,7 @@ export function KeyVisualSection() {
                     className={`flex items-center gap-3 bg-white/60 backdrop-blur-sm rounded-xl px-4 py-3 border border-memopyk-sky-blue/30 shadow-lg w-[320px] transform transition-all duration-1000 hover:scale-105 hover:bg-white/80 hover:shadow-xl ${
                       isVisible ? 'translate-x-0 opacity-100' : '-translate-x-96 opacity-0'
                     }`}
-                    style={{ transitionDelay: '400ms' }}
+                    style={{ transitionDelay: '1200ms' }}
                   >
                     <Smartphone className="w-5 h-5 sm:w-6 sm:h-6 flex-shrink-0 text-memopyk-sky-blue transition-transform duration-300 hover:rotate-6" />
                     <span className="text-memopyk-navy font-medium whitespace-nowrap">buried in phones...</span>
@@ -118,7 +118,7 @@ export function KeyVisualSection() {
                     className={`flex items-center gap-3 bg-white/60 backdrop-blur-sm rounded-xl px-4 py-3 border border-memopyk-sky-blue/30 shadow-lg w-[320px] transform transition-all duration-1000 hover:scale-105 hover:bg-white/80 hover:shadow-xl ${
                       isVisible ? 'translate-x-0 opacity-100' : '-translate-x-96 opacity-0'
                     }`}
-                    style={{ transitionDelay: '700ms' }}
+                    style={{ transitionDelay: '1600ms' }}
                   >
                     <Laptop className="w-5 h-5 sm:w-6 sm:h-6 flex-shrink-0 text-memopyk-sky-blue transition-transform duration-300 hover:rotate-6" />
                     <span className="text-memopyk-navy font-medium whitespace-nowrap">forgotten on hard drives...</span>
@@ -127,7 +127,7 @@ export function KeyVisualSection() {
                     className={`flex items-center gap-3 bg-white/60 backdrop-blur-sm rounded-xl px-4 py-3 border border-memopyk-sky-blue/30 shadow-lg w-[320px] transform transition-all duration-1000 hover:scale-105 hover:bg-white/80 hover:shadow-xl ${
                       isVisible ? 'translate-x-0 opacity-100' : '-translate-x-96 opacity-0'
                     }`}
-                    style={{ transitionDelay: '1000ms' }}
+                    style={{ transitionDelay: '2000ms' }}
                   >
                     <Package className="w-5 h-5 sm:w-6 sm:h-6 flex-shrink-0 text-memopyk-sky-blue transition-transform duration-300 hover:rotate-6" />
                     <span className="text-memopyk-navy font-medium whitespace-nowrap">piled in boxes...</span>
@@ -156,7 +156,7 @@ export function KeyVisualSection() {
         </div>
 
         {/* Solution statement centered across full width */}
-        <div className="mt-12 sm:mt-16 lg:mt-20 text-center space-y-6">
+        <div className="mt-6 sm:mt-8 text-center space-y-4">
           {/* Decorative separator */}
           <div className="flex items-center justify-center space-x-4">
             <div className="h-px bg-gradient-to-r from-transparent via-memopyk-sky-blue to-transparent flex-1 max-w-20"></div>
