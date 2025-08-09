@@ -1,8 +1,15 @@
 import { useLanguage } from '../../contexts/LanguageContext';
 import { Upload, Edit, Heart, Phone } from 'lucide-react';
+import { useQuery } from '@tanstack/react-query';
+import type { CtaSettings } from '@shared/schema';
 
 export function HowItWorksSection() {
   const { language } = useLanguage();
+  
+  // Fetch CTA settings from the API to use the same URLs as the main CTA section
+  const { data: ctaSettings = [] } = useQuery<CtaSettings[]>({
+    queryKey: ['/api/cta']
+  });
 
   const steps = [
     {
@@ -144,20 +151,25 @@ export function HowItWorksSection() {
               
               {/* Action Buttons */}
               <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
-                <button className="inline-flex items-center gap-3 bg-memopyk-orange hover:bg-memopyk-orange/90 text-white px-8 py-4 rounded-full font-semibold text-lg transition-all duration-300 transform hover:scale-105 shadow-lg cursor-pointer">
-                  <Phone className="w-5 h-5" />
-                  {language === 'fr-FR' 
-                    ? "Réserver une Consultation"
-                    : "Book an appointment"
-                  }
-                </button>
-                <button className="inline-flex items-center gap-3 bg-memopyk-orange hover:bg-memopyk-orange/90 text-white px-8 py-4 rounded-full font-semibold text-lg transition-all duration-300 transform hover:scale-105 shadow-lg cursor-pointer">
-                  <Edit className="w-5 h-5" />
-                  {language === 'fr-FR' 
-                    ? "Obtenir un Devis"
-                    : "Get a personalized quote"
-                  }
-                </button>
+                {/* Use the same CTA settings as the main CTA section */}
+                {ctaSettings
+                  .filter((cta: any) => cta.isActive)
+                  .map((cta: any) => {
+                    const url = language === 'fr-FR' ? cta.buttonUrlFr : cta.buttonUrlEn;
+                    return (
+                      <a
+                        key={cta.id}
+                        href={url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center gap-3 bg-memopyk-orange hover:bg-memopyk-orange/90 text-white px-8 py-4 rounded-full font-semibold text-lg transition-all duration-300 transform hover:scale-105 shadow-lg cursor-pointer no-underline"
+                      >
+                        {cta.id === 'book_call' ? <Phone className="w-5 h-5" /> : <Edit className="w-5 h-5" />}
+                        {language === 'fr-FR' ? cta.buttonTextFr : cta.buttonTextEn}
+                      </a>
+                    );
+                  })
+                }
               </div>
 
               {/* Trust Element */}
