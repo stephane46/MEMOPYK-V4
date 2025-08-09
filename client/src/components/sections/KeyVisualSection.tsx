@@ -65,10 +65,15 @@ export function KeyVisualSection() {
           <div className="space-y-6 sm:space-y-8 lg:space-y-10 order-2 lg:order-none">
             {/* Main heading */}
             <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-poppins font-bold text-memopyk-navy leading-tight">
-              {language === 'fr-FR' 
-                ? "Ne laissez pas vos souvenirs se perdre à jamais."
-                : "Don't let your memories be lost forever."
-              }
+              {language === 'fr-FR' ? (
+                <>
+                  <span>Ne laissez pas vos souvenirs</span>
+                  <br />
+                  <span>se perdre à jamais.</span>
+                </>
+              ) : (
+                "Don't let your memories be lost forever."
+              )}
             </h2>
             
             {/* Animated Elements Coming from Left Image */}
@@ -138,10 +143,17 @@ export function KeyVisualSection() {
 
             {/* Key message */}
             <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-poppins font-bold text-memopyk-navy leading-tight">
-              {language === 'fr-FR' 
-                ? "Vos souvenirs méritent mieux que d'être simplement stockés, ils méritent une histoire."
-                : "Your memories deserve better than just being stored, they deserve a story."
-              }
+              {language === 'fr-FR' ? (
+                <>
+                  <span>Vos souvenirs méritent mieux</span>
+                  <br />
+                  <span>que d'être simplement stockés,</span>
+                  <br />
+                  <span>ils méritent une histoire.</span>
+                </>
+              ) : (
+                "Your memories deserve better than just being stored, they deserve a story."
+              )}
             </h2>
 
             {/* THE ANSWER - Enhanced Solution Statement */}
