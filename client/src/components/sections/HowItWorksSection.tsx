@@ -83,7 +83,7 @@ export function HowItWorksSection() {
                   </h3>
 
                   {/* Step Description */}
-                  <div className="flex-grow min-h-[180px] flex flex-col justify-between">
+                  <div className="flex-grow min-h-[220px] flex flex-col justify-between">
                     <p className="text-memopyk-cream/90 leading-relaxed text-base mb-4">
                       {language === 'fr-FR' ? step.descriptionFr : step.descriptionEn}
                     </p>
