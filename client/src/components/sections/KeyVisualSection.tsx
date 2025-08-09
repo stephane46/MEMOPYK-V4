@@ -173,10 +173,17 @@ export function KeyVisualSection() {
                 {/* Main solution text with enhanced typography */}
                 <div className="relative z-10 space-y-4">
                   <p className="text-xl sm:text-2xl lg:text-3xl font-poppins font-bold text-memopyk-navy leading-relaxed text-center">
-                    {language === 'fr-FR' 
-                      ? "Laissez-nous sauver vos photos et vidéos en les transformant en un film souvenir que vous garderez précieusement."
-                      : "Let us save your photos and videos by transforming them into a memory film you'll treasure forever."
-                    }
+                    {language === 'fr-FR' ? (
+                      <>
+                        <span>Laissez-nous sauver vos photos et vidéos</span>
+                        <br />
+                        <span>en les transformant en un film souvenir</span>
+                        <br />
+                        <span>que vous garderez précieusement.</span>
+                      </>
+                    ) : (
+                      "Let us save your photos and videos by transforming them into a memory film you'll treasure forever."
+                    )}
                   </p>
                   
                   {/* Decorative divider */}
