@@ -144,25 +144,47 @@ export function KeyVisualSection() {
               }
             </h2>
 
-            {/* THE ANSWER - Solution Statement */}
-            <div className="bg-gradient-to-br from-memopyk-cream via-white to-memopyk-cream border-l-4 border-memopyk-orange rounded-r-xl px-6 py-5 shadow-lg relative overflow-hidden">
-              {/* Decorative accent */}
-              <div className="absolute top-0 right-0 w-16 h-16 bg-memopyk-orange/10 rounded-bl-full"></div>
-              
-              {/* Main solution text */}
-              <div className="text-lg sm:text-xl font-semibold text-memopyk-navy leading-relaxed mb-2 relative z-10">
-                {language === 'fr-FR' 
-                  ? "Laissez-nous sauver vos photos et vidéos en les transformant en un film souvenir que vous garderez précieusement."
-                  : "Let us save your photos and videos by transforming them into a memory film you'll treasure forever."
-                }
-              </div>
-              
-              {/* Tagline */}
-              <div className="text-base font-medium text-memopyk-sky-blue italic relative z-10">
-                {language === 'fr-FR' 
-                  ? "Personnel, unique et émouvant."
-                  : "Personal, unique and moving."
-                }
+            {/* THE ANSWER - Enhanced Solution Statement */}
+            <div className="relative mt-8">
+              {/* Elegant background card */}
+              <div className="bg-gradient-to-br from-memopyk-cream/80 via-white to-memopyk-cream/60 backdrop-blur-sm border-2 border-memopyk-orange/30 rounded-2xl px-8 py-8 shadow-2xl relative overflow-hidden transform hover:scale-[1.02] transition-all duration-500">
+                
+                {/* Decorative corner elements */}
+                <div className="absolute top-0 left-0 w-20 h-20 bg-gradient-to-br from-memopyk-orange/20 to-transparent rounded-br-full"></div>
+                <div className="absolute bottom-0 right-0 w-24 h-24 bg-gradient-to-tl from-memopyk-sky-blue/15 to-transparent rounded-tl-full"></div>
+                
+                {/* Subtle pattern overlay */}
+                <div className="absolute inset-0 opacity-5">
+                  <div className="w-full h-full bg-gradient-to-r from-transparent via-memopyk-orange/10 to-transparent transform rotate-45"></div>
+                </div>
+
+                {/* Main solution text with enhanced typography */}
+                <div className="relative z-10 space-y-4">
+                  <p className="text-xl sm:text-2xl lg:text-3xl font-poppins font-bold text-memopyk-navy leading-relaxed text-center">
+                    {language === 'fr-FR' 
+                      ? "Laissez-nous sauver vos photos et vidéos en les transformant en un film souvenir que vous garderez précieusement."
+                      : "Let us save your photos and videos by transforming them into a memory film you'll treasure forever."
+                    }
+                  </p>
+                  
+                  {/* Decorative divider */}
+                  <div className="flex justify-center items-center space-x-3 py-2">
+                    <div className="w-8 h-px bg-gradient-to-r from-transparent to-memopyk-orange"></div>
+                    <div className="w-3 h-3 bg-memopyk-orange rounded-full shadow-lg"></div>
+                    <div className="w-8 h-px bg-gradient-to-l from-transparent to-memopyk-orange"></div>
+                  </div>
+                  
+                  {/* Elegant tagline */}
+                  <p className="text-lg sm:text-xl lg:text-2xl font-playfair italic text-memopyk-sky-blue font-medium text-center tracking-wide">
+                    {language === 'fr-FR' 
+                      ? "Personnel, unique et émouvant."
+                      : "Personal, unique and moving."
+                    }
+                  </p>
+                </div>
+
+                {/* Subtle glow effect */}
+                <div className="absolute inset-0 rounded-2xl bg-gradient-to-r from-memopyk-orange/5 via-transparent to-memopyk-sky-blue/5 pointer-events-none"></div>
               </div>
             </div>
 
