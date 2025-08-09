@@ -171,15 +171,8 @@ export function KeyVisualSection() {
               {/* Elegant background card */}
               <div className="bg-gradient-to-br from-memopyk-cream/80 via-white to-memopyk-cream/60 backdrop-blur-sm border-2 border-memopyk-orange/30 rounded-2xl px-8 py-8 shadow-2xl relative overflow-hidden transform hover:scale-[1.02] transition-all duration-500">
                 
-                {/* Decorative elements - floating orbs */}
-                <div className="absolute top-4 right-6 w-12 h-12 bg-gradient-to-br from-memopyk-orange/30 to-memopyk-orange/10 rounded-full blur-sm"></div>
-                <div className="absolute bottom-6 left-8 w-8 h-8 bg-gradient-to-tr from-memopyk-sky-blue/25 to-memopyk-sky-blue/5 rounded-full blur-sm"></div>
-                <div className="absolute top-1/2 left-4 w-4 h-4 bg-memopyk-orange/20 rounded-full"></div>
-                
-                {/* Subtle pattern overlay */}
-                <div className="absolute inset-0 opacity-5">
-                  <div className="w-full h-full bg-gradient-to-r from-transparent via-memopyk-orange/10 to-transparent transform rotate-45"></div>
-                </div>
+                {/* Orange to light blue gradient overlay */}
+                <div className="absolute inset-0 bg-gradient-to-r from-memopyk-orange/15 to-memopyk-sky-blue/15 rounded-2xl"></div>
 
                 {/* Main solution text with enhanced typography */}
                 <div className="relative z-10 space-y-4">
