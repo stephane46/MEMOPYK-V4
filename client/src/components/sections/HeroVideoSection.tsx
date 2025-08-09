@@ -273,7 +273,7 @@ export function HeroVideoSection() {
           <div className="flex justify-center items-center">
             <Button 
               size="lg" 
-              className="bg-memopyk-orange hover:bg-memopyk-orange/90 text-white font-semibold px-4 sm:px-6 lg:px-8 py-2 sm:py-3 text-sm sm:text-base lg:text-lg w-full sm:w-auto min-w-[180px] sm:min-w-[200px]"
+              className="inline-flex items-center gap-3 bg-memopyk-orange hover:bg-memopyk-orange/90 text-white px-8 py-4 rounded-full font-semibold text-lg transition-all duration-300 transform hover:scale-105 shadow-lg cursor-pointer"
               onClick={() => {
                 const element = document.getElementById('contact');
                 if (element) {
