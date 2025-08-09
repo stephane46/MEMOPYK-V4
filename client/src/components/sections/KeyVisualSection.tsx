@@ -66,8 +66,8 @@ export function KeyVisualSection() {
             {/* Main heading */}
             <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-poppins font-bold text-memopyk-navy leading-tight">
               {language === 'fr-FR' 
-                ? "Tant de souvenirs précieux, perdus dans le chaos du quotidien."
-                : "So many precious memories, lost in the chaos of daily life."
+                ? "Ne laissez pas vos souvenirs se perdre à jamais."
+                : "Don't let your memories be lost forever."
               }
             </h2>
             
