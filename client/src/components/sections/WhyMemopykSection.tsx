@@ -59,38 +59,31 @@ export function WhyMemopykSection() {
         </div>
 
         {/* Benefits Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8" style={{ gridAutoRows: '1fr' }}>
           {benefits.map((benefit, index) => {
             const Icon = benefit.icon;
             return (
               <div 
                 key={index}
-                className="group relative"
+                className="group relative h-full"
               >
                 {/* Benefit Card */}
-                <div className={`relative bg-gradient-to-br ${benefit.gradient} backdrop-blur-sm p-8 rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-2 border border-white/20`}>
+                <div className={`relative bg-gradient-to-br ${benefit.gradient} backdrop-blur-sm p-8 rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-2 border border-white/20 h-full flex flex-col`}>
                   
-                  {/* Icon */}
-                  <div className="mb-6">
-                    <div className="w-16 h-16 bg-white/80 backdrop-blur-sm rounded-full flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform duration-300">
-                      <Icon className="w-8 h-8 text-memopyk-dark-blue" />
+                  {/* Title with Icon */}
+                  <div className="flex items-center mb-6 flex-shrink-0">
+                    <div className="w-12 h-12 bg-white/80 backdrop-blur-sm rounded-full flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform duration-300 mr-4">
+                      <Icon className="w-6 h-6 text-memopyk-dark-blue" />
                     </div>
+                    <h3 className="text-2xl font-bold text-memopyk-navy">
+                      {language === 'fr-FR' ? benefit.titleFr : benefit.titleEn}
+                    </h3>
                   </div>
-
-                  {/* Title */}
-                  <h3 className="text-2xl font-bold text-memopyk-navy mb-4">
-                    {language === 'fr-FR' ? benefit.titleFr : benefit.titleEn}
-                  </h3>
 
                   {/* Description */}
-                  <p className="text-memopyk-dark-blue leading-relaxed">
+                  <p className="text-memopyk-dark-blue leading-relaxed flex-grow">
                     {language === 'fr-FR' ? benefit.descriptionFr : benefit.descriptionEn}
                   </p>
-
-                  {/* Decorative Element */}
-                  <div className="absolute top-4 right-4 w-8 h-8 bg-memopyk-orange/20 rounded-full flex items-center justify-center">
-                    <div className="w-2 h-2 bg-memopyk-orange rounded-full animate-pulse-elegant"></div>
-                  </div>
                 </div>
 
                 {/* Background Pattern */}
