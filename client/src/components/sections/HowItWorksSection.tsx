@@ -83,21 +83,21 @@ export function HowItWorksSection() {
                   </h3>
 
                   {/* Step Description */}
-                  <div className="flex-grow">
+                  <div className="flex-grow min-h-[180px] flex flex-col justify-between">
                     <p className="text-memopyk-cream/90 leading-relaxed text-base mb-4">
                       {language === 'fr-FR' ? step.descriptionFr : step.descriptionEn}
                     </p>
-                  </div>
-
-                  {/* Sub Description */}
-                  <div className="mt-4 pt-4 border-t border-memopyk-cream/20">
-                    <div className="flex items-start space-x-3">
-                      <div className="w-6 h-6 rounded-full bg-memopyk-cream mt-1 flex-shrink-0 flex items-center justify-center">
-                        <Icon className="w-3 h-3 text-memopyk-dark-blue" />
+                    
+                    {/* Sub Description - Fixed position at bottom */}
+                    <div className="mt-auto pt-4 border-t border-memopyk-cream/20">
+                      <div className="flex items-start space-x-3">
+                        <div className="w-6 h-6 rounded-full bg-memopyk-cream mt-1 flex-shrink-0 flex items-center justify-center">
+                          <Icon className="w-3 h-3 text-memopyk-dark-blue" />
+                        </div>
+                        <p className="text-memopyk-cream/90 text-base leading-relaxed">
+                          {language === 'fr-FR' ? step.subDescriptionFr : step.subDescriptionEn}
+                        </p>
                       </div>
-                      <p className="text-memopyk-cream/90 text-base leading-relaxed">
-                        {language === 'fr-FR' ? step.subDescriptionFr : step.subDescriptionEn}
-                      </p>
                     </div>
                   </div>
 
