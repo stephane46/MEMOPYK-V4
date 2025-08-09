@@ -76,30 +76,30 @@ export function KeyVisualSection() {
               {language === 'fr-FR' ? (
                 <>
                   <div 
-                    className={`flex items-center gap-3 bg-white/60 backdrop-blur-sm rounded-xl px-4 py-3 border border-memopyk-orange/30 shadow-lg w-fit transform transition-all duration-1000 hover:scale-105 hover:bg-white/80 hover:shadow-xl ${
+                    className={`flex items-center gap-3 bg-white/60 backdrop-blur-sm rounded-xl px-4 py-3 border border-memopyk-sky-blue/30 shadow-lg w-fit transform transition-all duration-1000 hover:scale-105 hover:bg-white/80 hover:shadow-xl ${
                       isVisible ? 'translate-x-0 opacity-100' : '-translate-x-96 opacity-0'
                     }`}
-                    style={{ transitionDelay: '200ms' }}
+                    style={{ transitionDelay: '400ms' }}
                   >
-                    <Smartphone className="w-5 h-5 sm:w-6 sm:h-6 flex-shrink-0 text-memopyk-orange transition-transform duration-300 hover:rotate-6" />
+                    <Smartphone className="w-5 h-5 sm:w-6 sm:h-6 flex-shrink-0 text-memopyk-sky-blue transition-transform duration-300 hover:rotate-6" />
                     <span className="text-memopyk-navy font-medium">enfouis dans des téléphones...</span>
                   </div>
                   <div 
-                    className={`flex items-center gap-3 bg-white/60 backdrop-blur-sm rounded-xl px-4 py-3 border border-memopyk-orange/30 shadow-lg w-fit transform transition-all duration-1000 hover:scale-105 hover:bg-white/80 hover:shadow-xl ${
+                    className={`flex items-center gap-3 bg-white/60 backdrop-blur-sm rounded-xl px-4 py-3 border border-memopyk-sky-blue/30 shadow-lg w-fit transform transition-all duration-1000 hover:scale-105 hover:bg-white/80 hover:shadow-xl ${
                       isVisible ? 'translate-x-0 opacity-100' : '-translate-x-96 opacity-0'
                     }`}
-                    style={{ transitionDelay: '500ms' }}
+                    style={{ transitionDelay: '700ms' }}
                   >
-                    <Laptop className="w-5 h-5 sm:w-6 sm:h-6 flex-shrink-0 text-memopyk-orange transition-transform duration-300 hover:rotate-6" />
+                    <Laptop className="w-5 h-5 sm:w-6 sm:h-6 flex-shrink-0 text-memopyk-sky-blue transition-transform duration-300 hover:rotate-6" />
                     <span className="text-memopyk-navy font-medium">oubliés sur des disques durs...</span>
                   </div>
                   <div 
-                    className={`flex items-center gap-3 bg-white/60 backdrop-blur-sm rounded-xl px-4 py-3 border border-memopyk-orange/30 shadow-lg w-fit transform transition-all duration-1000 hover:scale-105 hover:bg-white/80 hover:shadow-xl ${
+                    className={`flex items-center gap-3 bg-white/60 backdrop-blur-sm rounded-xl px-4 py-3 border border-memopyk-sky-blue/30 shadow-lg w-fit transform transition-all duration-1000 hover:scale-105 hover:bg-white/80 hover:shadow-xl ${
                       isVisible ? 'translate-x-0 opacity-100' : '-translate-x-96 opacity-0'
                     }`}
-                    style={{ transitionDelay: '800ms' }}
+                    style={{ transitionDelay: '1000ms' }}
                   >
-                    <Package className="w-5 h-5 sm:w-6 sm:h-6 flex-shrink-0 text-memopyk-orange transition-transform duration-300 hover:rotate-6" />
+                    <Package className="w-5 h-5 sm:w-6 sm:h-6 flex-shrink-0 text-memopyk-sky-blue transition-transform duration-300 hover:rotate-6" />
                     <span className="text-memopyk-navy font-medium">entassés dans des cartons...</span>
                   </div>
                 </>
