@@ -1,5 +1,5 @@
 import { useLanguage } from '../../contexts/LanguageContext';
-import { Upload, Edit, Heart } from 'lucide-react';
+import { Upload, Edit, Heart, Phone } from 'lucide-react';
 
 export function HowItWorksSection() {
   const { language } = useLanguage();
@@ -148,25 +148,27 @@ export function HowItWorksSection() {
               
               {/* Action Buttons */}
               <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
-                <button className="bg-gradient-to-r from-memopyk-orange to-orange-500 hover:from-orange-500 hover:to-memopyk-orange text-white px-8 py-4 rounded-full font-bold text-lg transition-all duration-300 transform hover:scale-105 shadow-xl hover:shadow-2xl border-2 border-transparent hover:border-white/20">
+                <button className="inline-flex items-center gap-3 bg-memopyk-orange hover:bg-memopyk-orange/90 text-white px-8 py-4 rounded-full font-semibold text-lg transition-all duration-300 transform hover:scale-105 shadow-lg cursor-pointer">
+                  <Phone className="w-5 h-5" />
                   {language === 'fr-FR' 
-                    ? "Commencer Maintenant"
-                    : "Start Now"
+                    ? "Réserver une Consultation"
+                    : "Book an appointment"
                   }
                 </button>
-                <button className="border-2 border-memopyk-cream text-memopyk-cream hover:bg-memopyk-cream hover:text-memopyk-dark-blue px-6 py-3 rounded-full font-semibold text-lg transition-all duration-300 transform hover:scale-105">
+                <button className="inline-flex items-center gap-3 bg-memopyk-orange hover:bg-memopyk-orange/90 text-white px-8 py-4 rounded-full font-semibold text-lg transition-all duration-300 transform hover:scale-105 shadow-lg cursor-pointer">
+                  <Edit className="w-5 h-5" />
                   {language === 'fr-FR' 
-                    ? "Consultation Gratuite"
-                    : "Free Consultation"
+                    ? "Obtenir un Devis"
+                    : "Get a personalized quote"
                   }
                 </button>
               </div>
 
-              {/* Urgency/Trust Element */}
+              {/* Trust Element */}
               <p className="text-sm text-memopyk-cream/70 mt-6 italic">
                 {language === 'fr-FR' 
-                  ? "✨ Plus de 100 familles nous ont déjà fait confiance"
-                  : "✨ Over 100 families have already trusted us"
+                  ? "✨ Vos souvenirs, magnifiquement racontés — façonnés par l'expérience professionnelle et la passion du storytelling visuel."
+                  : "✨ Your memories, beautifully told — shaped by professional experience and a passion for visual storytelling."
                 }
               </p>
             </div>
