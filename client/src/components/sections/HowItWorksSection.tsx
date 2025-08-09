@@ -88,9 +88,9 @@ export function HowItWorksSection() {
                   </div>
                   
                   {/* Sub Description - Fixed at bottom with consistent height */}
-                  <div className="flex-shrink-0 pt-4 border-t border-memopyk-cream/20 h-[100px] flex items-center">
-                    <div className="flex items-start space-x-3 w-full">
-                      <div className="w-6 h-6 rounded-full bg-memopyk-cream mt-1 flex-shrink-0 flex items-center justify-center">
+                  <div className="flex-shrink-0 pt-4 border-t border-memopyk-cream/20 h-[100px] flex items-start">
+                    <div className="flex items-start space-x-3 w-full pt-4">
+                      <div className="w-6 h-6 rounded-full bg-memopyk-cream flex-shrink-0 flex items-center justify-center">
                         <Icon className="w-3 h-3 text-memopyk-dark-blue" />
                       </div>
                       <p className="text-memopyk-cream/90 text-base leading-relaxed">
