@@ -297,14 +297,26 @@ export function Layout({ children }: LayoutProps) {
             
             <div>
               <h4 className="font-semibold mb-4">Contact</h4>
-              <ul className="space-y-2 text-gray-400">
-                <li className="flex items-center gap-2">
-                  <Mail className="w-4 h-4" />
-                  contact@memopyk.com
+              <ul className="space-y-3 text-gray-400">
+                <li className="group">
+                  <a 
+                    href="mailto:contact@memopyk.com"
+                    className="flex items-center gap-3 hover:text-white transition-all duration-300 ease-in-out transform hover:translate-x-1 cursor-pointer p-2 -m-2 rounded-lg hover:bg-gray-800/50"
+                  >
+                    <Mail className="w-4 h-4 group-hover:text-memopyk-orange transition-colors duration-300" />
+                    <span className="group-hover:underline">contact@memopyk.com</span>
+                  </a>
                 </li>
-                <li className="flex items-center gap-2">
-                  <FaWhatsapp className="w-4 h-4" />
-                  +33 1 23 45 67 89
+                <li className="group">
+                  <a 
+                    href="https://wa.me/33123456789"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center gap-3 hover:text-white transition-all duration-300 ease-in-out transform hover:translate-x-1 cursor-pointer p-2 -m-2 rounded-lg hover:bg-gray-800/50"
+                  >
+                    <FaWhatsapp className="w-4 h-4 group-hover:text-green-500 transition-colors duration-300" />
+                    <span className="group-hover:underline">+33 1 23 45 67 89</span>
+                  </a>
                 </li>
               </ul>
             </div>
