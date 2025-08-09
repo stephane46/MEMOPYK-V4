@@ -50,12 +50,6 @@ export function WhyMemopykSection() {
               : "Why choose MEMOPYK?"
             }
           </h2>
-          <p className="text-xl text-memopyk-dark-blue max-w-3xl mx-auto">
-            {language === 'fr-FR' 
-              ? "Notre approche unique transforme vos souvenirs avec expertise et passion"
-              : "Our unique approach transforms your memories with expertise and passion"
-            }
-          </p>
         </div>
 
         {/* Benefits Grid */}
