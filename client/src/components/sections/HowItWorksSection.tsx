@@ -62,7 +62,7 @@ export function HowItWorksSection() {
             return (
               <div key={step.number} className="relative">
                 {/* Step Card */}
-                <div className={`relative bg-memopyk-dark-blue rounded-3xl shadow-2xl text-center group hover:shadow-3xl transition-all duration-500 transform hover:-translate-y-2 z-10 min-h-[800px] flex flex-col p-12 ${
+                <div className={`relative bg-memopyk-dark-blue rounded-3xl shadow-2xl text-center group hover:shadow-3xl transition-all duration-500 transform hover:-translate-y-2 z-10 h-[800px] p-12 ${
                   isMiddleCard ? 'border-4 border-memopyk-orange' : ''
                 }`}>
                   
@@ -82,22 +82,20 @@ export function HowItWorksSection() {
                     {step.number}. {language === 'fr-FR' ? step.titleFr : step.titleEn}
                   </h3>
 
-                  {/* Step Description - Flexible content area */}
-                  <div className="flex-grow flex flex-col justify-between">
-                    <p className="text-memopyk-cream/90 leading-relaxed text-base mb-4">
-                      {language === 'fr-FR' ? step.descriptionFr : step.descriptionEn}
-                    </p>
-                    
-                    {/* Sub Description - Always at bottom */}
-                    <div className="mt-auto pt-4 border-t border-memopyk-cream/20">
-                      <div className="flex items-start space-x-3">
-                        <div className="w-6 h-6 rounded-full bg-memopyk-cream mt-1 flex-shrink-0 flex items-center justify-center">
-                          <Icon className="w-3 h-3 text-memopyk-dark-blue" />
-                        </div>
-                        <p className="text-memopyk-cream/90 text-base leading-relaxed">
-                          {language === 'fr-FR' ? step.subDescriptionFr : step.subDescriptionEn}
-                        </p>
+                  {/* Step Description */}
+                  <div className="text-memopyk-cream/90 leading-relaxed text-base mb-4 h-[120px] overflow-hidden">
+                    {language === 'fr-FR' ? step.descriptionFr : step.descriptionEn}
+                  </div>
+                  
+                  {/* Sub Description - Absolutely positioned at bottom */}
+                  <div className="absolute bottom-12 left-12 right-12 pt-4 border-t border-memopyk-cream/20">
+                    <div className="flex items-start space-x-3">
+                      <div className="w-6 h-6 rounded-full bg-memopyk-cream mt-1 flex-shrink-0 flex items-center justify-center">
+                        <Icon className="w-3 h-3 text-memopyk-dark-blue" />
                       </div>
+                      <p className="text-memopyk-cream/90 text-base leading-relaxed">
+                        {language === 'fr-FR' ? step.subDescriptionFr : step.subDescriptionEn}
+                      </p>
                     </div>
                   </div>
 
