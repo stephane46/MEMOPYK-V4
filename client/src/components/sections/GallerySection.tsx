@@ -202,8 +202,8 @@ export default function GallerySection() {
   const content = {
     'fr-FR': {
       title: "Galerie",
-      subtitle: "Chaque film souvenir est unique. Nous ne proposons donc pas de prix standard, et sommes seulement sur devis.",
-      description: "Les exemples ci-dessous sont donnés à titre indicatif uniquement. Veuillez nous contacter pour obtenir le devis exact pour votre film souvenir.",
+      subtitle: "Chaque film souvenir que nous créons est aussi unique que vos souvenirs.",
+      description: "Parce que chaque histoire est différente, nous réalisons un devis personnalisé adapté à votre projet. La galerie présente une sélection d'exemples de créations et des tarifs indicatifs. Pour donner vie à vos propres souvenirs, contactez-nous pour un devis fait rien que pour vous.",
       viewAll: "Voir Toute la Galerie",
       preview: "Aperçu",
       startingFrom: "À partir de",
@@ -214,8 +214,8 @@ export default function GallerySection() {
     },
     'en-US': {
       title: "Gallery",
-      subtitle: "Each souvenir film is unique. Therefore, we do not offer standard pricing and only provide customized quotation.",
-      description: "The examples below are for reference only. Please contact us to get the exact quotation for your souvenir film.",
+      subtitle: "Every souvenir film we create is as unique as your memories.",
+      description: "Because each story is different, we craft a customized quotation tailored to your project. The gallery presents a selection of sample creations and indicative pricing. To bring your own memories to life, contact us for a quote designed just for you.",
       viewAll: "View Full Gallery",
       preview: "Preview",
       startingFrom: "Starting from",
