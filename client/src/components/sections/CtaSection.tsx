@@ -20,14 +20,14 @@ export function CtaSection() {
         <div className="text-center">
           <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
             {getText(
-              'Commençons à créer ensemble votre film souvenir.',
-              'Let\'s start to create your film souvenir together.'
+              'Dites-nous vos idées, ou demandez un devis personnalisé.',
+              'Let\'s create your film souvenir together.'
             )}
           </h2>
           <p className="text-memopyk-cream/90 text-lg mb-8">
             {getText(
-              'Dites-nous vos idées, ou demandez un devis personnalisé.',
-              'Tell us more about what you have in mind, or request a personalized quote.'
+              'Discutons de vos idées, ou demandez un devis personnalisé.',
+              'Discuss with us what you have in mind, or request a personalized quote.'
             )}
           </p>
           
