@@ -1,5 +1,6 @@
 import { useLanguage } from '../../contexts/LanguageContext';
-import { Clock, Zap, Heart, Shield } from 'lucide-react';
+import { Clock, Zap, Heart } from 'lucide-react';
+import { FaYinYang } from 'react-icons/fa';
 
 export function WhyMemopykSection() {
   const { language } = useLanguage();
@@ -30,7 +31,7 @@ export function WhyMemopykSection() {
       gradient: "from-memopyk-dark-blue/20 to-memopyk-navy/10"
     },
     {
-      icon: Shield,
+      icon: FaYinYang,
       titleFr: "Sans Stress",
       titleEn: "Stress-Free",
       descriptionFr: "Équipe dédiée, processus clair, délais prévisibles. Nous gérons tout de A à Z pour votre tranquillité.",
