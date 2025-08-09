@@ -137,7 +137,7 @@ export function KeyVisualSection() {
             </div>
 
             {/* Key message */}
-            <div className="text-lg sm:text-xl text-memopyk-dark-blue leading-relaxed font-medium space-y-1 mb-6">
+            <div className="text-lg sm:text-xl text-memopyk-dark-blue leading-relaxed font-poppins font-bold space-y-1 mb-6">
               {language === 'fr-FR' ? (
                 <>
                   <p>Vos souvenirs méritent mieux que d'être simplement stockés,</p>
