@@ -168,15 +168,12 @@ export function KeyVisualSection() {
 
             {/* THE ANSWER - Enhanced Solution Statement */}
             <div className="relative mt-8">
-              {/* Elegant background card */}
-              <div className="bg-gradient-to-br from-memopyk-cream/80 via-white to-memopyk-cream/60 backdrop-blur-sm border-2 border-memopyk-orange/30 rounded-2xl px-8 py-8 shadow-2xl relative overflow-hidden transform hover:scale-[1.02] transition-all duration-500">
-                
-                {/* Light orange overlay on top */}
-                <div className="absolute inset-0 bg-memopyk-orange/15 rounded-2xl"></div>
+              {/* Light blue background with dark blue outline */}
+              <div className="bg-memopyk-sky-blue/20 border-2 border-memopyk-dark-blue rounded-xl px-6 py-5 shadow-lg relative overflow-hidden transform hover:scale-[1.02] transition-all duration-500">
 
-                {/* Main solution text with enhanced typography */}
-                <div className="relative z-10 space-y-4">
-                  <p className="text-xl sm:text-2xl lg:text-3xl font-poppins text-memopyk-navy leading-relaxed text-center">
+                {/* Main solution text with tighter spacing */}
+                <div className="relative z-10">
+                  <p className="text-xl sm:text-2xl lg:text-3xl font-poppins text-memopyk-navy leading-tight text-center">
                     {language === 'fr-FR' ? (
                       <>
                         <span>Laissez-nous sauver vos <span className="font-bold">photos et vidéos</span></span>
@@ -195,12 +192,7 @@ export function KeyVisualSection() {
                       </>
                     )}
                   </p>
-                  
-
                 </div>
-
-                {/* Subtle glow effect */}
-                <div className="absolute inset-0 rounded-2xl bg-gradient-to-r from-memopyk-orange/5 via-transparent to-memopyk-sky-blue/5 pointer-events-none"></div>
               </div>
             </div>
 
