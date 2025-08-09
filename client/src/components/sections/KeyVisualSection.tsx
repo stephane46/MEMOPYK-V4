@@ -76,7 +76,7 @@ export function KeyVisualSection() {
               {language === 'fr-FR' ? (
                 <>
                   <div 
-                    className={`flex items-center gap-3 bg-white/60 backdrop-blur-sm rounded-xl px-4 py-3 border border-memopyk-sky-blue/30 shadow-lg w-fit transform transition-all duration-1000 hover:scale-105 hover:bg-white/80 hover:shadow-xl ${
+                    className={`flex items-center gap-3 bg-white/60 backdrop-blur-sm rounded-xl px-4 py-3 border border-memopyk-sky-blue/30 shadow-lg w-[350px] transform transition-all duration-1000 hover:scale-105 hover:bg-white/80 hover:shadow-xl ${
                       isVisible ? 'translate-x-0 opacity-100' : '-translate-x-96 opacity-0'
                     }`}
                     style={{ transitionDelay: '400ms' }}
@@ -85,7 +85,7 @@ export function KeyVisualSection() {
                     <span className="text-memopyk-navy font-medium">enfouis dans des téléphones...</span>
                   </div>
                   <div 
-                    className={`flex items-center gap-3 bg-white/60 backdrop-blur-sm rounded-xl px-4 py-3 border border-memopyk-sky-blue/30 shadow-lg w-fit transform transition-all duration-1000 hover:scale-105 hover:bg-white/80 hover:shadow-xl ${
+                    className={`flex items-center gap-3 bg-white/60 backdrop-blur-sm rounded-xl px-4 py-3 border border-memopyk-sky-blue/30 shadow-lg w-[350px] transform transition-all duration-1000 hover:scale-105 hover:bg-white/80 hover:shadow-xl ${
                       isVisible ? 'translate-x-0 opacity-100' : '-translate-x-96 opacity-0'
                     }`}
                     style={{ transitionDelay: '700ms' }}
@@ -94,7 +94,7 @@ export function KeyVisualSection() {
                     <span className="text-memopyk-navy font-medium">oubliés sur des disques durs...</span>
                   </div>
                   <div 
-                    className={`flex items-center gap-3 bg-white/60 backdrop-blur-sm rounded-xl px-4 py-3 border border-memopyk-sky-blue/30 shadow-lg w-fit transform transition-all duration-1000 hover:scale-105 hover:bg-white/80 hover:shadow-xl ${
+                    className={`flex items-center gap-3 bg-white/60 backdrop-blur-sm rounded-xl px-4 py-3 border border-memopyk-sky-blue/30 shadow-lg w-[350px] transform transition-all duration-1000 hover:scale-105 hover:bg-white/80 hover:shadow-xl ${
                       isVisible ? 'translate-x-0 opacity-100' : '-translate-x-96 opacity-0'
                     }`}
                     style={{ transitionDelay: '1000ms' }}
@@ -106,7 +106,7 @@ export function KeyVisualSection() {
               ) : (
                 <>
                   <div 
-                    className={`flex items-center gap-3 bg-white/60 backdrop-blur-sm rounded-xl px-4 py-3 border border-memopyk-sky-blue/30 shadow-lg w-fit transform transition-all duration-1000 hover:scale-105 hover:bg-white/80 hover:shadow-xl ${
+                    className={`flex items-center gap-3 bg-white/60 backdrop-blur-sm rounded-xl px-4 py-3 border border-memopyk-sky-blue/30 shadow-lg w-[280px] transform transition-all duration-1000 hover:scale-105 hover:bg-white/80 hover:shadow-xl ${
                       isVisible ? 'translate-x-0 opacity-100' : '-translate-x-96 opacity-0'
                     }`}
                     style={{ transitionDelay: '400ms' }}
@@ -115,7 +115,7 @@ export function KeyVisualSection() {
                     <span className="text-memopyk-navy font-medium">buried in phones...</span>
                   </div>
                   <div 
-                    className={`flex items-center gap-3 bg-white/60 backdrop-blur-sm rounded-xl px-4 py-3 border border-memopyk-sky-blue/30 shadow-lg w-fit transform transition-all duration-1000 hover:scale-105 hover:bg-white/80 hover:shadow-xl ${
+                    className={`flex items-center gap-3 bg-white/60 backdrop-blur-sm rounded-xl px-4 py-3 border border-memopyk-sky-blue/30 shadow-lg w-[280px] transform transition-all duration-1000 hover:scale-105 hover:bg-white/80 hover:shadow-xl ${
                       isVisible ? 'translate-x-0 opacity-100' : '-translate-x-96 opacity-0'
                     }`}
                     style={{ transitionDelay: '700ms' }}
@@ -124,7 +124,7 @@ export function KeyVisualSection() {
                     <span className="text-memopyk-navy font-medium">forgotten on hard drives...</span>
                   </div>
                   <div 
-                    className={`flex items-center gap-3 bg-white/60 backdrop-blur-sm rounded-xl px-4 py-3 border border-memopyk-sky-blue/30 shadow-lg w-fit transform transition-all duration-1000 hover:scale-105 hover:bg-white/80 hover:shadow-xl ${
+                    className={`flex items-center gap-3 bg-white/60 backdrop-blur-sm rounded-xl px-4 py-3 border border-memopyk-sky-blue/30 shadow-lg w-[280px] transform transition-all duration-1000 hover:scale-105 hover:bg-white/80 hover:shadow-xl ${
                       isVisible ? 'translate-x-0 opacity-100' : '-translate-x-96 opacity-0'
                     }`}
                     style={{ transitionDelay: '1000ms' }}
