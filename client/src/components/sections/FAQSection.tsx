@@ -174,7 +174,7 @@ export default function FAQSection() {
       <div className="max-w-4xl mx-auto px-4 sm:px-6">
         {/* Section Header - Mobile Optimized */}
         <div className="text-center mb-6 sm:mb-8 lg:mb-12">
-          <h2 className="text-2xl sm:text-3xl font-bold text-memopyk-navy mb-3 sm:mb-4 px-2">
+          <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-poppins font-bold text-memopyk-navy mb-6 px-2">
             {language === 'fr-FR' ? 'Questions Fréquemment Posées' : 'Frequently Asked Questions'}
           </h2>
           <p className="text-base sm:text-lg text-memopyk-dark-blue max-w-2xl mx-auto px-4">

@@ -475,7 +475,7 @@ export default function GallerySection() {
       <div className="container mx-auto px-4">
         {/* Header - Mobile Optimized */}
         <div className="text-center mb-8 sm:mb-12 lg:mb-16">
-          <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-memopyk-navy mb-3 sm:mb-4 lg:mb-6 px-2">
+          <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-poppins font-bold text-memopyk-navy mb-6 px-2">
             {t.title}
           </h2>
           <p className="text-lg sm:text-xl text-memopyk-dark-blue mb-2 px-4">
