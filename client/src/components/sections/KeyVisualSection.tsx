@@ -196,7 +196,7 @@ export function KeyVisualSection() {
                   {/* Elegant tagline */}
                   <p className="text-lg sm:text-xl lg:text-2xl font-playfair italic text-memopyk-sky-blue font-medium text-center tracking-wide">
                     {language === 'fr-FR' 
-                      ? "Personnel, unique et émouvant."
+                      ? "personnel - unique - émouvant."
                       : "Personal, unique and moving."
                     }
                   </p>
