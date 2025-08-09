@@ -163,8 +163,8 @@ export function HowItWorksSection() {
               {/* Trust Element */}
               <p className="text-sm text-memopyk-cream/70 mt-6 italic">
                 {language === 'fr-FR' 
-                  ? "✨ Vos souvenirs, magnifiquement racontés — façonnés par l'expérience professionnelle et la passion du storytelling visuel."
-                  : "✨ Your memories, beautifully told — shaped by professional experience and a passion for visual storytelling."
+                  ? "✨ Vos souvenirs, magnifiquement racontés — façonnés par l'expérience professionnelle et la passion du storytelling visuel.✨"
+                  : "✨ Your memories, beautifully told — shaped by professional experience and a passion for visual storytelling.✨"
                 }
               </p>
             </div>
