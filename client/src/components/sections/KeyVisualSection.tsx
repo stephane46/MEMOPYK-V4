@@ -179,17 +179,17 @@ export function KeyVisualSection() {
                   <p className="text-xl sm:text-2xl lg:text-3xl font-poppins text-memopyk-navy leading-relaxed text-center">
                     {language === 'fr-FR' ? (
                       <>
-                        <span>Laissez-nous sauver vos <span className="relative inline-block"><span>photos et vidéos</span><span className="absolute bottom-0.5 left-0 w-full h-0.5 bg-memopyk-orange"></span></span></span>
+                        <span>Laissez-nous sauver vos <span className="font-bold">photos et vidéos</span></span>
                         <br />
-                        <span>en les transformant en un <span className="relative inline-block"><span>film souvenir</span><span className="absolute bottom-0.5 left-0 w-full h-0.5 bg-memopyk-orange"></span></span></span>
+                        <span>en les transformant en un <span className="font-bold">film souvenir</span></span>
                         <br />
                         <span>que vous garderez précieusement.</span>
                       </>
                     ) : (
                       <>
-                        <span>Let us save your photos and videos</span>
+                        <span>Let us save your <span className="font-bold">photos and videos</span></span>
                         <br />
-                        <span>by transforming them into a memory film</span>
+                        <span>by transforming them into a <span className="font-bold">memory film</span></span>
                         <br />
                         <span>you'll treasure forever.</span>
                       </>
