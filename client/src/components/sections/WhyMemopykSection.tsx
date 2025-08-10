@@ -9,32 +9,32 @@ export function WhyMemopykSection() {
       icon: Zap,
       titleFr: "Simplicité",
       titleEn: "Simplicity", 
-      descriptionFr: "Tous formats acceptés, détails techniques gérés professionnellement. Pas de tri ou d'organisation de fichiers source requis.",
-      descriptionEn: "All formats accepted. All technical details handled professionally. No source files organization nor sorting required.",
+      descriptionFr: "Tous formats acceptés, détails techniques pris en charge professionnellement. Envoyez simplement vos photos et vidéos, inutile de trier ni d'organiser les fichiers : tout est simple pour vous. Profitez d'une expérience sans effort, du début à la livraison de votre film.",
+      descriptionEn: "All formats accepted, with technical details handled professionally. Just send your photos and videos—no need to sort or organize files; everything is made easy for you. Enjoy a seamless experience from start to finish.",
       gradient: "from-memopyk-dark-blue/20 to-memopyk-navy/10"
     },
     {
       icon: Clock,
       titleFr: "Gain de Temps",
       titleEn: "Time Saving",
-      descriptionFr: "Équipe dédiée, processus clair, délais prévisibles. Nous gérons tout pour votre tranquillité.",
-      descriptionEn: "Dedicated team, clear process, predictable turnaround. We handle all the details for your peace of mind.",
+      descriptionFr: "Trier, organiser ou monter soi-même ses souvenirs prend un temps considérable. Notre équipe dédiée prend tout en main avec un processus clair et des délais prévisibles. Vous gagnez des heures précieuses pendant que vos souvenirs se transforment sans effort.",
+      descriptionEn: "Sorting, organizing, or editing memories on your own takes considerable time. Our dedicated team handles everything with a clear process and predictable deadlines. You save precious hours while your memories are brought to life effortlessly.",
       gradient: "from-memopyk-sky-blue/20 to-memopyk-blue-gray/10"
     },
     {
       icon: Settings,
       titleFr: "Personnalisation",
-      titleEn: "Customization",
-      descriptionFr: "Chaque film souvenir est unique. Avec un esprit de collaboration, nous sommes à l'écoute, et respectons tous vos souhaits et vos consignes spécifiques, pour vous offrir le film souvenir qui raconte le mieux VOTRE histoire.",
-      descriptionEn: "Each souvenir film is unique. With the spirit of collaboration in mind, we listen and respect all your wishes and specific instructions, to bring you the souvenir film that best tells YOUR story.",
+      titleEn: "Personalization",
+      descriptionFr: "Chaque film souvenir est pensé pour être vraiment unique. Nous sommes à l'écoute de toutes vos envies et consignes spécifiques dans un esprit de collaboration. Votre histoire est racontée au plus proche de vos attentes grâce à une création sur mesure.",
+      descriptionEn: "Every memory film is designed to be truly unique. We listen to all your wishes and specific instructions in a spirit of collaboration. Your story is told exactly as you envision it thanks to a tailor-made creation.",
       gradient: "from-memopyk-cream/40 to-memopyk-sky-blue/20"
     },
     {
       icon: Users,
       titleFr: "Expertise",
       titleEn: "Expertise",
-      descriptionFr: "Des moments uniques mis en lumière dans vos photos et vidéos. Un processus efficace pour des conseils clairs et un accompagnement attentif à chaque étape. Des films mémorables, avec une véritable valeur ajoutée.",
-      descriptionEn: "Revealing the special moments in your photos and videos. Efficient workflow for clear advice and attentive support throughout. Memorable films with genuine added value.",
+      descriptionFr: "Vos moments forts sont mis en valeur dans vos photos et vidéos. Un processus efficace assure des conseils clairs et un suivi attentif à chaque étape. Le résultat : des films mémorables avec une véritable valeur ajoutée.",
+      descriptionEn: "Your most meaningful moments are highlighted in your photos and videos. An efficient process ensures clear advice and attentive follow-up at each step. The result: memorable films with genuine added value.",
       gradient: "from-memopyk-orange/20 to-memopyk-cream/30"
     }
   ];
