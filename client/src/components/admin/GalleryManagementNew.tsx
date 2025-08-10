@@ -761,7 +761,7 @@ export default function GalleryManagementNew() {
           <Button
             onClick={handleCreateNew}
             size="lg"
-            className="bg-gradient-to-r from-[#89BAD9] to-[#2A4759] hover:from-[#7AA8CC] hover:to-[#1e3340] text-white border-none shadow-lg font-bold text-lg px-8 py-4"
+            className="bg-gradient-to-r from-[#89BAD9] to-[#2A4759] hover:from-[#7AA8CC] hover:to-[#1e3340] text-white border-none shadow-lg font-bold text-sm sm:text-base lg:text-lg px-4 sm:px-6 lg:px-8 py-3 sm:py-4"
           >
             <Plus className="w-6 h-6 mr-2" />
             NOUVELLE VIDEO
@@ -815,7 +815,7 @@ export default function GalleryManagementNew() {
           {/* Change Display Order Section */}
           {!isCreateMode && selectedItem && (
             <div className="mt-4 p-4 bg-gray-50 dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-600">
-              <h3 className="text-lg font-semibold text-[#011526] dark:text-[#F2EBDC] mb-3 flex items-center gap-2">
+              <h3 className="text-sm sm:text-base lg:text-lg font-semibold text-[#011526] dark:text-[#F2EBDC] mb-3 flex items-center gap-2">
                 <div className="w-5 h-5 flex items-center justify-center">↕️</div>
                 Change Display Order
               </h3>
@@ -831,18 +831,18 @@ export default function GalleryManagementNew() {
                       <button
                         onClick={() => handleReorder(selectedItem, 'up')}
                         disabled={swapItemsMutation.isPending || isFirst}
-                        className="flex items-center gap-2 px-4 py-2 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md hover:bg-gray-50 dark:hover:bg-gray-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                        className="flex items-center gap-2 px-2 sm:px-3 lg:px-4 py-2 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md hover:bg-gray-50 dark:hover:bg-gray-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors text-xs sm:text-sm"
                       >
                         <div className="w-4 h-4 flex items-center justify-center">↑</div>
-                        Move Earlier
+                        <span className="whitespace-nowrap">Move Earlier</span>
                       </button>
                       <button
                         onClick={() => handleReorder(selectedItem, 'down')}
                         disabled={swapItemsMutation.isPending || isLast}
-                        className="flex items-center gap-2 px-4 py-2 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md hover:bg-gray-50 dark:hover:bg-gray-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                        className="flex items-center gap-2 px-2 sm:px-3 lg:px-4 py-2 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md hover:bg-gray-50 dark:hover:bg-gray-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors text-xs sm:text-sm"
                       >
                         <div className="w-4 h-4 flex items-center justify-center">↓</div>
-                        Move Later
+                        <span className="whitespace-nowrap">Move Later</span>
                       </button>
                     </>
                   );

@@ -29,9 +29,9 @@ export function KeyVisualSection() {
   return (
     <section ref={sectionRef} className="py-0 bg-gradient-to-br from-memopyk-cream to-memopyk-cream/70 overflow-hidden">
       <div className="container mx-auto px-4 pb-0 overflow-hidden">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-8 lg:gap-12 items-center overflow-hidden">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6 lg:gap-12 items-center overflow-hidden">
           {/* Left: Key Visual Illustration with Overlaid Animated Elements */}
-          <div className="relative order-1 lg:order-none mb-4 sm:mb-6 lg:mb-8">
+          <div className="relative order-1 lg:order-none mb-2 sm:mb-4 lg:mb-8">
             <div className="relative flex items-center justify-center">
               <img 
                 src={keyVisualImage}
