@@ -722,8 +722,8 @@ export default function GallerySection() {
               {/* Compelling Subtitle */}
               <p className="text-lg md:text-xl text-memopyk-cream/90 mb-6 max-w-3xl mx-auto leading-relaxed">
                 {language === 'fr-FR' 
-                  ? "✨ Vos souvenirs, magnifiquement racontés — façonnés par l'expérience professionnelle et la passion du storytelling visuel. ✨"
-                  : "✨ Your memories, beautifully told — shaped by professional experience and a passion for visual storytelling. ✨"
+                  ? "✨ Ne laissez pas vos souvenirs disparaître — révélez-les à travers un film personnel, unique et émouvant, créé grâce à une expertise professionnelle et une passion profonde pour la mise en valeur de vos plus beaux moments. ✨"
+                  : "✨ Don't let your memories disappear — reveal them through a personal, unique, and moving film, crafted with professional expertise and a deep passion for showcasing your most beautiful moments. ✨"
                 }
               </p>
 
@@ -762,13 +762,7 @@ export default function GallerySection() {
                 }
               </div>
 
-              {/* Trust Element */}
-              <p className="text-sm text-memopyk-cream/70 mt-6 italic">
-                {language === 'fr-FR' 
-                  ? "personnel - unique - émouvant"
-                  : "personal - unique - moving"
-                }
-              </p>
+
             </div>
           </div>
         </div>
