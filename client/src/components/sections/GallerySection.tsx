@@ -583,19 +583,19 @@ export default function GallerySection() {
                             </div>
                           )}
                           
-                          {/* Play Button - 3D Glass Effect to Match Desktop */}
+                          {/* Play Button - MEMOPYK Orange with Proper Contrast */}
                           <div className="absolute inset-0 flex items-center justify-center">
                             <div 
                               className="w-12 h-12 sm:w-16 sm:h-16 rounded-full flex items-center justify-center transition-all duration-300 hover:scale-110 cursor-pointer touch-manipulation"
                               onClick={(e) => handlePlayClick(item, e, index)}
                               style={{
-                                background: 'linear-gradient(135deg, rgba(255, 255, 255, 0.90) 0%, rgba(255, 255, 255, 0.80) 50%, rgba(255, 255, 255, 0.70) 100%) !important',
-                                boxShadow: 'inset 0 1px 0 rgba(255, 255, 255, 0.4), 0 4px 12px rgba(0, 0, 0, 0.3) !important',
-                                border: '1px solid rgba(255, 255, 255, 0.6)',
-                                color: 'rgb(31 41 55) !important'
+                                background: 'linear-gradient(135deg, #F2A365 0%, #D67C4A 50%, #B85A2F 100%) !important',
+                                boxShadow: '0 8px 16px rgba(214, 124, 74, 0.3), inset 0 2px 4px rgba(255, 255, 255, 0.3), inset 0 -2px 4px rgba(0, 0, 0, 0.2) !important',
+                                border: 'none',
+                                color: 'white !important'
                               }}
                             >
-                              <div className="text-lg sm:text-xl ml-0.5 sm:ml-1 drop-shadow-sm" style={{ color: 'rgb(31 41 55) !important' }}>
+                              <div className="text-white text-lg sm:text-xl ml-0.5 sm:ml-1 drop-shadow-sm" style={{ color: 'white !important' }}>
                                 ▶
                               </div>
                             </div>
