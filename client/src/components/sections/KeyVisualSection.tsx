@@ -149,19 +149,15 @@ export function KeyVisualSection() {
             <h2 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-poppins font-bold text-memopyk-navy leading-relaxed">
               {language === 'fr-FR' ? (
                 <>
-                  <span className="whitespace-nowrap">Vos photos et vidéos méritent mieux</span>
-                  <br />
-                  <span className="whitespace-nowrap">que d'être simplement stockées,</span>
-                  <br />
-                  <span className="whitespace-nowrap">elles méritent une histoire.</span>
+                  <span className="block">Vos photos et vidéos méritent mieux</span>
+                  <span className="block">que d'être simplement stockées,</span>
+                  <span className="block">elles méritent une histoire.</span>
                 </>
               ) : (
                 <>
-                  <span className="whitespace-nowrap">Your photos & videos deserve better</span>
-                  <br />
-                  <span className="whitespace-nowrap">than just being stored,</span>
-                  <br />
-                  <span className="whitespace-nowrap">they deserve a story.</span>
+                  <span className="block">Your photos & videos deserve better</span>
+                  <span className="block">than just being stored,</span>
+                  <span className="block">they deserve a story.</span>
                 </>
               )}
             </h2>
@@ -176,19 +172,15 @@ export function KeyVisualSection() {
                   <p className="text-lg sm:text-xl lg:text-2xl font-poppins text-memopyk-navy leading-relaxed text-center">
                     {language === 'fr-FR' ? (
                       <>
-                        <span className="whitespace-nowrap">Laissez-nous sauver vos <span className="font-bold">photos et vidéos</span></span>
-                        <br />
-                        <span className="whitespace-nowrap">en les transformant en un <span className="font-bold">film souvenir</span></span>
-                        <br />
-                        <span className="whitespace-nowrap">que vous garderez précieusement.</span>
+                        <span className="block">Laissez-nous sauver vos <span className="font-bold">photos et vidéos</span></span>
+                        <span className="block">en les transformant en un <span className="font-bold">film souvenir</span></span>
+                        <span className="block">que vous garderez précieusement.</span>
                       </>
                     ) : (
                       <>
-                        <span className="whitespace-nowrap">Let us save your <span className="font-bold">photos and videos</span></span>
-                        <br />
-                        <span className="whitespace-nowrap">by transforming them into a <span className="font-bold">souvenir film</span></span>
-                        <br />
-                        <span className="whitespace-nowrap">you'll treasure forever.</span>
+                        <span className="block">Let us save your <span className="font-bold">photos and videos</span></span>
+                        <span className="block">by transforming them into a <span className="font-bold">souvenir film</span></span>
+                        <span className="block">you'll treasure forever.</span>
                       </>
                     )}
                   </p>
