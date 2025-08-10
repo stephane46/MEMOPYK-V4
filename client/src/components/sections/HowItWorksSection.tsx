@@ -51,7 +51,7 @@ export function HowItWorksSection() {
     <section id="how-it-works" className="pt-8 pb-2 bg-gradient-to-br from-white to-memopyk-sky-blue/10">
       <div className="container mx-auto px-4">
         {/* Section Header */}
-        <div className="text-center mb-16">
+        <div className="text-center mb-8">
           <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-poppins font-bold text-memopyk-navy mb-6">
             {language === 'fr-FR' 
               ? "Comment Ça Marche"
@@ -69,13 +69,13 @@ export function HowItWorksSection() {
             return (
               <div key={step.number} className="h-full">
                 {/* Step Card */}
-                <div className={`relative bg-gradient-to-br from-memopyk-dark-blue via-memopyk-navy to-memopyk-dark-blue rounded-3xl shadow-2xl text-center group hover:shadow-3xl transition-all duration-500 transform hover:-translate-y-2 z-10 h-full flex flex-col p-6 sm:p-8 lg:p-12 ${
+                <div className={`relative bg-gradient-to-br from-memopyk-dark-blue via-memopyk-navy to-memopyk-dark-blue rounded-3xl shadow-2xl text-center group hover:shadow-3xl transition-all duration-500 transform hover:-translate-y-2 z-10 h-full flex flex-col p-4 sm:p-6 lg:p-8 ${
                   isMiddleCard ? 'border-4 border-memopyk-orange' : ''
                 }`}>
                   
                   {/* Step Image */}
                   <div className="mb-3 sm:mb-4 flex-shrink-0">
-                    <div className="w-64 h-64 sm:w-80 sm:h-80 lg:w-96 lg:h-96 mx-auto bg-memopyk-cream rounded-3xl p-2 sm:p-3 shadow-lg">
+                    <div className="w-48 h-48 sm:w-56 sm:h-56 lg:w-64 lg:h-64 mx-auto bg-memopyk-cream rounded-3xl p-2 sm:p-3 shadow-lg">
                       <img 
                         src={step.image}
                         alt={language === 'fr-FR' ? step.titleFr : step.titleEn}
