@@ -48,7 +48,7 @@ export function HowItWorksSection() {
   ];
 
   return (
-    <section id="how-it-works" className="pt-8 pb-2 bg-gradient-to-br from-white to-memopyk-sky-blue/10">
+    <section id="how-it-works" className="pt-2 pb-2 bg-gradient-to-br from-white to-memopyk-sky-blue/10">
       <div className="container mx-auto px-4">
         {/* Section Header */}
         <div className="text-center mb-8">
