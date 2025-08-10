@@ -583,9 +583,9 @@ export default function GallerySection() {
                             </div>
                           )}
                           
-                          {/* Desktop Orange Round Overlay + Play Button - Normal Size */}
+                          {/* Desktop Orange Play Button - Clean Simple Design */}
                           <div className="absolute inset-0 flex items-center justify-center">
-                            {/* Orange Round Overlay Background - Reduced Size */}
+                            {/* Orange Circle with White Play Triangle */}
                             <div 
                               className="w-14 h-14 sm:w-16 sm:h-16 rounded-full flex items-center justify-center transition-all duration-300 hover:scale-110 cursor-pointer"
                               onClick={(e) => handlePlayClick(item, e, index)}
@@ -596,18 +596,9 @@ export default function GallerySection() {
                                 backdropFilter: 'blur(2px)'
                               }}
                             >
-                              {/* White Play Button Inside - Smaller */}
-                              <div 
-                                className="w-8 h-8 sm:w-10 sm:h-10 rounded-full flex items-center justify-center"
-                                style={{
-                                  background: 'linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.85) 100%)',
-                                  boxShadow: 'inset 0 1px 1px rgba(255, 255, 255, 0.5), 0 1px 4px rgba(0, 0, 0, 0.15)',
-                                  border: '1px solid rgba(255, 255, 255, 0.8)'
-                                }}
-                              >
-                                <div className="text-sm sm:text-base ml-0.5" style={{ color: '#2A4759' }}>
-                                  ▶
-                                </div>
+                              {/* White Play Triangle Directly in Orange Circle */}
+                              <div className="text-lg sm:text-xl ml-0.5" style={{ color: 'white' }}>
+                                ▶
                               </div>
                             </div>
                           </div>
