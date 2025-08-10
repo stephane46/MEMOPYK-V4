@@ -155,13 +155,7 @@ export function HeroVideoSection() {
   }
 
   const videoUrl = language === 'fr-FR' ? currentVideo.url_fr : currentVideo.url_en;
-  // Generate responsive font sizes using device-specific values and CSS clamp
-  const fontSizeDesktop = activeHeroText?.font_size_desktop || activeHeroText?.font_size || 60;
-  const fontSizeTablet = activeHeroText?.font_size_tablet || Math.round(fontSizeDesktop * 0.6);
-  const fontSizeMobile = activeHeroText?.font_size_mobile || Math.round(fontSizeDesktop * 0.35);
-  
-  // CSS clamp function for responsive scaling: clamp(min, preferred, max)
-  const responsiveFontSize = `clamp(${fontSizeMobile}px, ${fontSizeTablet}px, ${fontSizeDesktop}px)`;
+
 
   return (
     <section 
@@ -214,9 +208,8 @@ export function HeroVideoSection() {
       <div className="absolute inset-0 flex items-center justify-center text-center text-white px-3 sm:px-6 lg:px-8">
         <div className="max-w-7xl w-full">
           <h1 
-            className="font-playfair font-bold mb-2 sm:mb-4 lg:mb-6 leading-tight"
+            className="font-playfair font-bold mb-2 sm:mb-4 lg:mb-6 leading-tight text-lg sm:text-2xl lg:text-5xl"
             style={{ 
-              fontSize: responsiveFontSize,
               textShadow: '2px 2px 4px rgba(0,0,0,0.8)'
             }}
           >
@@ -244,9 +237,8 @@ export function HeroVideoSection() {
           {activeHeroText && ((language === 'fr-FR' && activeHeroText.subtitle_fr && activeHeroText.subtitle_fr.trim()) || 
                               (language === 'en-US' && activeHeroText.subtitle_en && activeHeroText.subtitle_en.trim())) && (
             <p 
-              className="mb-4 sm:mb-6 lg:mb-8 text-white/90 font-poppins leading-snug"
+              className="mb-4 sm:mb-6 lg:mb-8 text-white/90 font-poppins leading-snug text-sm sm:text-base lg:text-xl"
               style={{ 
-                fontSize: `clamp(${Math.round(fontSizeMobile * 0.47)}px, ${Math.round(fontSizeTablet * 0.47)}px, ${Math.round(fontSizeDesktop * 0.47)}px)`,
                 textShadow: '1px 1px 2px rgba(0,0,0,0.8)' 
               }}
             >
