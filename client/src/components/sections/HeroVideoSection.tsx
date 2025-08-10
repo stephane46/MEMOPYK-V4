@@ -223,13 +223,55 @@ export function HeroVideoSection() {
               if (processedText.includes('\\n')) {
                 processedText = processedText.replace(/\\n/g, '\n');
               }
-              const lines = processedText.split('\n');
-              return lines.map((line, index) => (
-                <React.Fragment key={index}>
-                  {line}
-                  {index < lines.length - 1 && <br />}
-                </React.Fragment>
-              ));
+
+              // Create different line breaks for mobile vs desktop
+              const createResponsiveText = () => {
+                if (language === 'fr-FR') {
+                  // French text with responsive breaks
+                  return (
+                    <>
+                      {/* Mobile: 3 lines */}
+                      <span className="block sm:hidden">
+                        Nous transformons<br />
+                        vos photos et vidéos personnelles<br />
+                        en films souvenirs inoubliables
+                      </span>
+                      {/* Desktop: 2 lines (admin format) */}
+                      <span className="hidden sm:block">
+                        {processedText.split('\n').map((line, index) => (
+                          <React.Fragment key={index}>
+                            {line}
+                            {index < processedText.split('\n').length - 1 && <br />}
+                          </React.Fragment>
+                        ))}
+                      </span>
+                    </>
+                  );
+                } else {
+                  // English text with responsive breaks
+                  return (
+                    <>
+                      {/* Mobile: 3 lines */}
+                      <span className="block sm:hidden">
+                        We transform<br />
+                        your personal photos and videos<br />
+                        into unforgettable souvenir films
+                      </span>
+                      {/* Desktop: 2 lines (admin format) */}
+                      <span className="hidden sm:block">
+                        {processedText.split('\n').map((line, index) => (
+                          <React.Fragment key={index}>
+                            {line}
+                            {index < processedText.split('\n').length - 1 && <br />}
+                          </React.Fragment>
+                        ))}
+                      </span>
+                    </>
+                  );
+                }
+              };
+
+              return createResponsiveText();
             })()}
           </h1>
           
