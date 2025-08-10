@@ -46,12 +46,39 @@ const translations: Record<Language, Record<string, string>> = {
 export function LanguageProvider({ children }: { children: ReactNode }) {
   const [location] = useLocation();
   const [language, setLanguageState] = useState<Language>('fr-FR');
+  const [hasInitialized, setHasInitialized] = useState(false);
+
+  // Detect browser language preference
+  const detectBrowserLanguage = (): Language => {
+    // Check for stored preference first
+    const storedLanguage = localStorage.getItem('memopyk-language') as Language;
+    if (storedLanguage && ['fr-FR', 'en-US'].includes(storedLanguage)) {
+      return storedLanguage;
+    }
+
+    // Get browser language preferences
+    const browserLanguages = navigator.languages || [navigator.language];
+    
+    for (const lang of browserLanguages) {
+      // Check for French variants
+      if (lang.toLowerCase().startsWith('fr')) {
+        return 'fr-FR';
+      }
+      // Check for English variants
+      if (lang.toLowerCase().startsWith('en')) {
+        return 'en-US';
+      }
+    }
+    
+    // Default to French (MEMOPYK is a French company)
+    return 'fr-FR';
+  };
 
   // Extract language from URL path
-  const getLanguageFromPath = (path: string): Language => {
+  const getLanguageFromPath = (path: string): Language | null => {
     if (path.startsWith('/en-US')) return 'en-US';
     if (path.startsWith('/fr-FR')) return 'fr-FR';
-    return 'fr-FR'; // Default to French
+    return null; // No language in path - need to detect
   };
 
   const removeLanguageFromPath = (path: string): string => {
@@ -64,16 +91,37 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
   };
 
   useEffect(() => {
-    const currentLanguage = getLanguageFromPath(location);
-    setLanguageState(currentLanguage);
+    const pathLanguage = getLanguageFromPath(location);
     
-    // Set HTML lang attribute and meta tags for SEO
-    document.documentElement.lang = currentLanguage;
-    document.querySelector('meta[name="Content-Language"]')?.setAttribute('content', currentLanguage);
-    
-    // Store in localStorage for persistence
-    localStorage.setItem('memopyk-language', currentLanguage);
-  }, [location]);
+    if (pathLanguage) {
+      // URL contains a language prefix, use it
+      setLanguageState(pathLanguage);
+      
+      // Set HTML lang attribute and meta tags for SEO
+      document.documentElement.lang = pathLanguage;
+      document.querySelector('meta[name="Content-Language"]')?.setAttribute('content', pathLanguage);
+      
+      // Store in localStorage for persistence
+      localStorage.setItem('memopyk-language', pathLanguage);
+      setHasInitialized(true);
+    } else if (!hasInitialized) {
+      // No language in URL and first visit - detect browser language
+      const detectedLanguage = detectBrowserLanguage();
+      
+      // Redirect to language-specific URL
+      const currentPath = removeLanguageFromPath(location);
+      const newPath = `/${detectedLanguage}${currentPath === '/' ? '' : currentPath}`;
+      
+      // Use replace to avoid adding to browser history
+      window.history.replaceState({}, '', newPath);
+      
+      setLanguageState(detectedLanguage);
+      document.documentElement.lang = detectedLanguage;
+      document.querySelector('meta[name="Content-Language"]')?.setAttribute('content', detectedLanguage);
+      localStorage.setItem('memopyk-language', detectedLanguage);
+      setHasInitialized(true);
+    }
+  }, [location, hasInitialized]);
 
   const setLanguage = (lang: Language) => {
     const currentPath = removeLanguageFromPath(location);
