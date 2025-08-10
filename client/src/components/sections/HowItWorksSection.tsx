@@ -94,8 +94,8 @@ export function HowItWorksSection() {
                     {language === 'fr-FR' ? step.descriptionFr : step.descriptionEn}
                   </div>
                   
-                  {/* Sub Description - Fixed at bottom with consistent height */}
-                  <div className="flex-shrink-0 pt-4 border-t border-memopyk-cream/20 h-[120px] flex flex-col items-center">
+                  {/* Sub Description - Fixed at bottom with flexible height */}
+                  <div className="flex-shrink-0 pt-4 border-t border-memopyk-cream/20 min-h-[120px] flex flex-col items-center justify-start">
                     <div className="flex justify-center mb-3">
                       <div className="w-8 h-8 rounded-full bg-memopyk-cream flex items-center justify-center">
                         <Icon className="w-4 h-4 text-memopyk-dark-blue" />
