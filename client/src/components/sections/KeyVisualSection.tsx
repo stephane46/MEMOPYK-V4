@@ -169,7 +169,7 @@ export function KeyVisualSection() {
 
                 {/* Main solution text with consistent typography */}
                 <div className="relative z-10">
-                  <p className="text-base sm:text-lg md:text-xl lg:text-2xl font-poppins text-memopyk-navy leading-tight sm:leading-relaxed text-center">
+                  <p className="text-sm sm:text-base md:text-lg lg:text-xl xl:text-2xl font-poppins text-memopyk-navy leading-tight sm:leading-relaxed text-center">
                     {language === 'fr-FR' ? (
                       <>
                         <span className="block">Laissez-nous sauver vos <span className="font-bold">photos et vidéos</span></span>
