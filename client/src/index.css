@@ -309,6 +309,22 @@ img, video, iframe, canvas, svg {
   animation: pulse-orange 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
 }
 
+/* Slower mobile-specific pulse animation */
+@keyframes pulse-orange-mobile {
+  0%, 100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.85;
+    transform: scale(1.03);
+  }
+}
+
+.animate-pulse-orange-mobile {
+  animation: pulse-orange-mobile 4s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
 /* 🔄 ALT+TAB SCROLL FIX v1.0.116 - Prevent unwanted scroll behaviors (targeted) */
 html, body {
   scroll-behavior: auto !important;
