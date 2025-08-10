@@ -165,7 +165,7 @@ export function Layout({ children }: LayoutProps) {
                   <img 
                     src="https://flagcdn.com/w40/us.png" 
                     alt="English"
-                    className="w-8 h-6 object-cover rounded"
+                    className="w-8 h-5 object-cover rounded"
                   />
                 </button>
                 <button
@@ -180,7 +180,7 @@ export function Layout({ children }: LayoutProps) {
                   <img 
                     src="https://flagcdn.com/w40/fr.png" 
                     alt="French"
-                    className="w-8 h-6 object-cover rounded"
+                    className="w-8 h-5 object-cover rounded"
                   />
                 </button>
               </div>
