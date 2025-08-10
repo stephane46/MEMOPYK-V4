@@ -583,17 +583,19 @@ export default function GallerySection() {
                             </div>
                           )}
                           
-                          {/* Play Button - Mobile Optimized with Better Centering */}
-                          <div 
-                            className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-12 h-12 sm:w-16 sm:h-16 rounded-full flex items-center justify-center transition-all duration-300 hover:scale-110 shadow-lg cursor-pointer touch-manipulation"
-                            onClick={(e) => handlePlayClick(item, e, index)}
-                            style={{
-                              backgroundColor: itemHasVideo ? '#D67C4A' : '#ffffff', // Orange for video, white for flip
-                              border: itemHasVideo ? 'none' : '2px solid #d1d5db'
-                            }}
-                          >
-                            <div className={itemHasVideo ? "text-white text-lg sm:text-xl ml-0.5 sm:ml-1" : "text-gray-600 text-lg sm:text-xl ml-0.5 sm:ml-1"}>
-                              ▶
+                          {/* Play Button - Mobile Optimized */}
+                          <div className="absolute inset-0 flex items-center justify-center">
+                            <div 
+                              className="w-12 h-12 sm:w-16 sm:h-16 rounded-full flex items-center justify-center transition-all duration-300 hover:scale-110 shadow-lg cursor-pointer touch-manipulation"
+                              onClick={(e) => handlePlayClick(item, e, index)}
+                              style={{
+                                backgroundColor: itemHasVideo ? '#D67C4A' : '#ffffff', // Orange for video, white for flip
+                                border: itemHasVideo ? 'none' : '2px solid #d1d5db'
+                              }}
+                            >
+                              <div className={itemHasVideo ? "text-white text-lg sm:text-xl ml-0.5 sm:ml-1" : "text-gray-600 text-lg sm:text-xl ml-0.5 sm:ml-1"}>
+                                ▶
+                              </div>
                             </div>
                           </div>
                         </div>
