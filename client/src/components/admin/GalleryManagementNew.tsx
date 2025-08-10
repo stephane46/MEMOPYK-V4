@@ -624,7 +624,7 @@ export default function GalleryManagementNew() {
         return;
       }
       
-      swapItemsMutation.mutate({ id1: item.id, id2: targetItem.id });
+      swapItemsMutation.mutate({ id1: String(item.id), id2: String(targetItem.id) });
     } else if (direction === 'down' && currentIndex < sortedItems.length - 1) {
       const targetItem = sortedItems[currentIndex + 1];
       console.log(`🔄 Moving item ${item.title_en} DOWN - swapping with ${targetItem.title_en}`);
@@ -636,7 +636,7 @@ export default function GalleryManagementNew() {
         return;
       }
       
-      swapItemsMutation.mutate({ id1: item.id, id2: targetItem.id });
+      swapItemsMutation.mutate({ id1: String(item.id), id2: String(targetItem.id) });
     } else {
       console.log('🔄 Cannot move:', direction === 'up' ? 'Already at top' : 'Already at bottom');
     }
