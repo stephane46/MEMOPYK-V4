@@ -22,20 +22,20 @@ export function WhyMemopykSection() {
       gradient: "from-memopyk-sky-blue/20 to-memopyk-blue-gray/10"
     },
     {
-      icon: Users,
-      titleFr: "Expertise",
-      titleEn: "Expertise",
-      descriptionFr: "Des moments uniques mis en lumière dans vos photos et vidéos. Un processus efficace pour des conseils clairs et un accompagnement attentif à chaque étape. Des films mémorables, avec une véritable valeur ajoutée.",
-      descriptionEn: "Revealing the special moments in your photos and videos. Efficient workflow for clear advice and attentive support throughout. Memorable films with genuine added value.",
-      gradient: "from-memopyk-dark-blue/20 to-memopyk-navy/10"
-    },
-    {
       icon: Settings,
       titleFr: "Personnalisation",
       titleEn: "Customization",
       descriptionFr: "Chaque film souvenir est unique. Avec un esprit de collaboration, nous sommes à l'écoute, et respectons tous vos souhaits et vos consignes spécifiques, pour vous offrir le film souvenir qui raconte le mieux VOTRE histoire.",
       descriptionEn: "Each souvenir film is unique. With the spirit of collaboration in mind, we listen and respect all your wishes and specific instructions, to bring you the souvenir film that best tells YOUR story.",
       gradient: "from-memopyk-cream/40 to-memopyk-sky-blue/20"
+    },
+    {
+      icon: Users,
+      titleFr: "Expertise",
+      titleEn: "Expertise",
+      descriptionFr: "Des moments uniques mis en lumière dans vos photos et vidéos. Un processus efficace pour des conseils clairs et un accompagnement attentif à chaque étape. Des films mémorables, avec une véritable valeur ajoutée.",
+      descriptionEn: "Revealing the special moments in your photos and videos. Efficient workflow for clear advice and attentive support throughout. Memorable films with genuine added value.",
+      gradient: "from-memopyk-dark-blue/20 to-memopyk-navy/10"
     }
   ];
 
