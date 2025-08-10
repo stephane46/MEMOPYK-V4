@@ -25,8 +25,8 @@ export function WhyMemopykSection() {
       icon: Users,
       titleFr: "Expertise",
       titleEn: "Expertise",
-      descriptionFr: "Expérimenté dans le travail avec des supports visuels. Animé par l'efficacité de notre flux de travail, nous vous apportons les meilleurs conseils et orientations. Résultat de grande qualité, et d'un rapport qualité-prix intéressant.",
-      descriptionEn: "Experienced in working with visual materials, we are driven by the efficiency of our workflow, to bring you the best advice and guidance. What you receive is high quality result with clear value added.",
+      descriptionFr: "Des moments uniques mis en lumière dans vos photos et vidéos. Un processus efficace pour des conseils clairs et un accompagnement attentif à chaque étape. Des films mémorables, avec une véritable valeur ajoutée.",
+      descriptionEn: "Revealing the special moments in your photos and videos. Efficient workflow for clear advice and attentive support throughout. Memorable films with genuine added value.",
       gradient: "from-memopyk-dark-blue/20 to-memopyk-navy/10"
     },
     {
