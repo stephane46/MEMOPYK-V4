@@ -121,19 +121,11 @@ export function HowItWorksSection() {
             
             {/* Content */}
             <div className="relative z-10">
-              {/* Main Headline */}
-              <h3 className="text-2xl md:text-3xl lg:text-4xl font-bold text-memopyk-cream mb-4">
-                {language === 'fr-FR' 
-                  ? "Transformez Vos Photos et Vidéos en Histoire Émouvante"
-                  : "Turn Your Photos and Videos Into a Heartfelt Story"
-                }
-              </h3>
-              
               {/* Compelling Subtitle */}
               <p className="text-lg md:text-xl text-memopyk-cream/90 mb-6 max-w-3xl mx-auto leading-relaxed">
                 {language === 'fr-FR' 
-                  ? "Ne laissez plus vos moments précieux dormir dans vos téléphones. En seulement 1 à 3 semaines, recevez un film professionnel qui fera revivre vos plus beaux souvenirs pour toujours."
-                  : "Don't let your precious moments sleep in your phones anymore. In just 1-3 weeks, receive a professional film that will bring your most beautiful memories to life forever."
+                  ? "✨ Vos souvenirs, magnifiquement racontés — façonnés par l'expérience professionnelle et la passion du storytelling visuel. ✨"
+                  : "✨ Your memories, beautifully told — shaped by professional experience and a passion for visual storytelling. ✨"
                 }
               </p>
 
@@ -175,8 +167,8 @@ export function HowItWorksSection() {
               {/* Trust Element */}
               <p className="text-sm text-memopyk-cream/70 mt-6 italic">
                 {language === 'fr-FR' 
-                  ? "✨ Vos souvenirs, magnifiquement racontés — façonnés par l'expérience professionnelle et la passion du storytelling visuel. ✨"
-                  : "✨ Your memories, beautifully told — shaped by professional experience and a passion for visual storytelling. ✨"
+                  ? "personnel - unique - émouvant"
+                  : "personal - unique - moving"
                 }
               </p>
             </div>
