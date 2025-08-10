@@ -583,17 +583,23 @@ export default function GallerySection() {
                             </div>
                           )}
                           
-                          {/* Play Button - Mobile Optimized */}
+                          {/* Play Button - 3D Glass Effect to Match Desktop */}
                           <div className="absolute inset-0 flex items-center justify-center">
                             <div 
-                              className="w-12 h-12 sm:w-16 sm:h-16 rounded-full flex items-center justify-center transition-all duration-300 hover:scale-110 shadow-lg cursor-pointer touch-manipulation"
+                              className="w-12 h-12 sm:w-16 sm:h-16 rounded-full flex items-center justify-center transition-all duration-300 hover:scale-110 cursor-pointer touch-manipulation"
                               onClick={(e) => handlePlayClick(item, e, index)}
                               style={{
-                                backgroundColor: itemHasVideo ? '#D67C4A' : '#ffffff', // Orange for video, white for flip
-                                border: itemHasVideo ? 'none' : '2px solid #d1d5db'
+                                backgroundColor: '#D67C4A', // Always MEMOPYK orange
+                                background: 'linear-gradient(135deg, #F2A365 0%, #D67C4A 50%, #B85A2F 100%)', // 3D gradient effect
+                                boxShadow: `
+                                  0 8px 16px rgba(214, 124, 74, 0.3),
+                                  inset 0 2px 4px rgba(255, 255, 255, 0.3),
+                                  inset 0 -2px 4px rgba(0, 0, 0, 0.2)
+                                `, // Glass effect shadows
+                                border: 'none'
                               }}
                             >
-                              <div className={itemHasVideo ? "text-white text-lg sm:text-xl ml-0.5 sm:ml-1" : "text-gray-600 text-lg sm:text-xl ml-0.5 sm:ml-1"}>
+                              <div className="text-white text-lg sm:text-xl ml-0.5 sm:ml-1 drop-shadow-sm">
                                 ▶
                               </div>
                             </div>
