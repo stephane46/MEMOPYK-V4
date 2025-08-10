@@ -583,20 +583,31 @@ export default function GallerySection() {
                             </div>
                           )}
                           
-                          {/* Play Button - MEMOPYK Orange with Proper Contrast */}
+                          {/* Desktop Orange Round Overlay + Play Button */}
                           <div className="absolute inset-0 flex items-center justify-center">
+                            {/* Orange Round Overlay Background */}
                             <div 
-                              className="w-12 h-12 sm:w-16 sm:h-16 rounded-full flex items-center justify-center transition-all duration-300 hover:scale-110 cursor-pointer touch-manipulation"
+                              className="w-20 h-20 sm:w-24 sm:h-24 lg:w-28 lg:h-28 rounded-full flex items-center justify-center transition-all duration-300 hover:scale-110 cursor-pointer"
                               onClick={(e) => handlePlayClick(item, e, index)}
                               style={{
-                                background: 'linear-gradient(135deg, #F2A365 0%, #D67C4A 50%, #B85A2F 100%) !important',
-                                boxShadow: '0 8px 16px rgba(214, 124, 74, 0.3), inset 0 2px 4px rgba(255, 255, 255, 0.3), inset 0 -2px 4px rgba(0, 0, 0, 0.2) !important',
-                                border: 'none',
-                                color: 'white !important'
+                                background: 'linear-gradient(135deg, rgba(214, 124, 74, 0.95) 0%, rgba(214, 124, 74, 0.85) 50%, rgba(184, 90, 47, 0.95) 100%)',
+                                boxShadow: '0 8px 24px rgba(214, 124, 74, 0.4), inset 0 2px 4px rgba(255, 255, 255, 0.3)',
+                                border: '2px solid rgba(255, 255, 255, 0.3)',
+                                backdropFilter: 'blur(4px)'
                               }}
                             >
-                              <div className="text-white text-lg sm:text-xl ml-0.5 sm:ml-1 drop-shadow-sm" style={{ color: 'white !important' }}>
-                                ▶
+                              {/* White Play Button Inside */}
+                              <div 
+                                className="w-12 h-12 sm:w-16 sm:h-16 rounded-full flex items-center justify-center"
+                                style={{
+                                  background: 'linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.85) 100%)',
+                                  boxShadow: 'inset 0 1px 2px rgba(255, 255, 255, 0.5), 0 2px 8px rgba(0, 0, 0, 0.15)',
+                                  border: '1px solid rgba(255, 255, 255, 0.8)'
+                                }}
+                              >
+                                <div className="text-lg sm:text-xl ml-0.5 sm:ml-1" style={{ color: '#2A4759' }}>
+                                  ▶
+                                </div>
                               </div>
                             </div>
                           </div>
