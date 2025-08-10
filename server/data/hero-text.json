@@ -9,7 +9,7 @@
     "font_size_desktop": 60,
     "font_size_tablet": 45,
     "font_size_mobile": 32,
-    "is_active": false,
+    "is_active": true,
     "created_at": "2025-08-07T15:13:36.123Z",
     "updated_at": "2025-08-09T14:29:48.801Z"
   }
