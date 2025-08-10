@@ -37,6 +37,7 @@ Visual consistency priority: Extremely detail-oriented about spacing and formatt
 - **Image Proxy**: Handles image loading, resolves CORS issues, and prioritizes static cropped images.
 - **Cache Management**: Smart caching for hero videos (immediate preload) and direct CDN streaming for gallery videos.
 - **Bilingual Support**: Comprehensive French/English content management for UI, data, and SEO.
+- **Automatic Language Detection**: Browser language detection for new visitors - French browsers get French version, all other languages get English version.
 - **Modular API Design**: RESTful API for various content types (hero videos, gallery, FAQs, legal docs, analytics).
 - **Static Image Generation**: Automated Sharp-based cropping and generation of static images for gallery thumbnails upon upload.
 - **Real-time Analytics**: Backend system for tracking visitors, performance, and engagement with IP management.

@@ -60,18 +60,14 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
     const browserLanguages = navigator.languages || [navigator.language];
     
     for (const lang of browserLanguages) {
-      // Check for French variants
+      // Check for French variants - if French IS detected, show French
       if (lang.toLowerCase().startsWith('fr')) {
         return 'fr-FR';
       }
-      // Check for English variants
-      if (lang.toLowerCase().startsWith('en')) {
-        return 'en-US';
-      }
     }
     
-    // Default to French (MEMOPYK is a French company)
-    return 'fr-FR';
+    // If French is NOT detected, show English (all other languages get English)
+    return 'en-US';
   };
 
   // Extract language from URL path
