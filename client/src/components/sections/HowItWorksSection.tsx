@@ -112,13 +112,7 @@ export function HowItWorksSection() {
           })}
         </div>
 
-        {/* Trust Element */}
-        <p className="text-sm text-memopyk-cream/70 mt-6 italic text-center">
-          {language === 'fr-FR' 
-            ? "personnel - unique - émouvant"
-            : "personal - unique - moving"
-          }
-        </p>
+
       </div>
     </section>
   );
