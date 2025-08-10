@@ -152,7 +152,8 @@ export function Layout({ children }: LayoutProps) {
 
             {/* Language Toggle & Mobile Menu */}
             <div className="flex items-center space-x-4">
-              <div className="flex items-center space-x-2">
+              {/* Desktop Language Toggle - Hidden on mobile */}
+              <div className="hidden lg:flex items-center space-x-2">
                 <button
                   onClick={() => setLanguage('en-US')}
                   className={`p-2 rounded-md transition-all ${
@@ -210,6 +211,7 @@ export function Layout({ children }: LayoutProps) {
               : 'max-h-0 opacity-0'
           }`}>
             <div className="py-4 space-y-2">
+              {/* Navigation items */}
               {navigation.map((item, index) => {
                 if (item.type === 'anchor') {
                   return (
@@ -240,6 +242,53 @@ export function Layout({ children }: LayoutProps) {
                 }
                 return null;
               })}
+              
+              {/* Mobile Language Switcher */}
+              <div className="border-t border-gray-200 pt-4 mt-4">
+                <p className="px-4 text-sm font-medium text-gray-500 mb-3">
+                  {language === 'fr-FR' ? 'Langue' : 'Language'}
+                </p>
+                <div className="px-4 flex items-center space-x-3">
+                  <button
+                    onClick={() => {
+                      setLanguage('en-US');
+                      setIsMobileMenuOpen(false);
+                    }}
+                    className={`flex items-center space-x-2 p-2 rounded-md transition-all min-h-[44px] ${
+                      language === 'en-US' 
+                        ? 'border-2 border-memopyk-navy bg-memopyk-cream shadow-md' 
+                        : 'border-2 border-transparent hover:border-memopyk-blue-gray hover:bg-gray-50'
+                    }`}
+                    title="Switch to English"
+                  >
+                    <img 
+                      src="https://flagcdn.com/w40/us.png" 
+                      alt="English"
+                      className="w-8 h-5 object-cover rounded"
+                    />
+                    <span className="text-sm font-medium">English</span>
+                  </button>
+                  <button
+                    onClick={() => {
+                      setLanguage('fr-FR');
+                      setIsMobileMenuOpen(false);
+                    }}
+                    className={`flex items-center space-x-2 p-2 rounded-md transition-all min-h-[44px] ${
+                      language === 'fr-FR' 
+                        ? 'border-2 border-memopyk-navy bg-memopyk-cream shadow-md' 
+                        : 'border-2 border-transparent hover:border-memopyk-blue-gray hover:bg-gray-50'
+                    }`}
+                    title="Passer au français"
+                  >
+                    <img 
+                      src="https://flagcdn.com/w40/fr.png" 
+                      alt="French"
+                      className="w-8 h-5 object-cover rounded"
+                    />
+                    <span className="text-sm font-medium">Français</span>
+                  </button>
+                </div>
+              </div>
             </div>
           </div>
         </div>
