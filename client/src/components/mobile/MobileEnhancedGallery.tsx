@@ -190,31 +190,21 @@ export function MobileEnhancedGallery({
                       {/* Mobile-Optimized Overlays */}
                       <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
                       
-                      {/* Mobile Play Button - Match Desktop Design */}
-                      <div className="absolute inset-0 flex items-center justify-center">
-                        <div 
-                          className={`w-14 h-14 sm:w-16 sm:h-16 rounded-full flex items-center justify-center transition-all duration-300 hover:scale-110 cursor-pointer ${hasVideo ? 'animate-pulse-orange-mobile' : ''}`}
-                          onClick={() => hasVideo ? onVideoClick(item) : undefined}
-                          style={hasVideo ? {
-                            // Orange for items WITH video
-                            backgroundColor: '#D67C4A',
-                            border: '2px solid rgba(255, 255, 255, 0.3)',
-                            boxShadow: '0 4px 20px rgba(214, 124, 74, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.3)'
-                          } : {
-                            // White for items WITHOUT video
-                            backgroundColor: 'rgba(255, 255, 255, 0.95)',
-                            border: '2px solid rgba(255, 255, 255, 0.8)',
-                            boxShadow: '0 4px 15px rgba(0, 0, 0, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.5)'
+                      {/* Video Play Button - Enhanced for Mobile */}
+                      {hasVideo && (
+                        <Button
+                          onClick={() => onVideoClick(item)}
+                          className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full text-gray-800 border border-white/60 shadow-lg hover:shadow-xl backdrop-blur-sm transition-all duration-300 w-16 h-16 sm:w-20 sm:h-20 p-0 min-w-[44px] min-h-[44px]"
+                          style={{
+                            background: 'linear-gradient(135deg, rgba(255, 255, 255, 0.90) 0%, rgba(255, 255, 255, 0.80) 50%, rgba(255, 255, 255, 0.70) 100%) !important',
+                            boxShadow: 'inset 0 1px 0 rgba(255, 255, 255, 0.4), 0 4px 12px rgba(0, 0, 0, 0.3) !important',
+                            color: 'rgb(31 41 55) !important'
                           }}
-                          aria-label={hasVideo ? `Play video: ${title}` : `View details: ${title}`}
+                          aria-label={`Play video: ${title}`}
                         >
-                          <Play 
-                            className="w-6 h-6 sm:w-7 sm:h-7 ml-0.5" 
-                            fill={hasVideo ? 'white' : '#011526'} 
-                            style={{ color: hasVideo ? 'white' : '#011526' }}
-                          />
-                        </div>
-                      </div>
+                          <Play className="w-6 h-6 sm:w-8 sm:h-8 ml-1" fill="currentColor" />
+                        </Button>
+                      )}
 
                       {/* Device Type Indicator */}
                       <div className="absolute top-2 right-2">
@@ -236,6 +226,16 @@ export function MobileEnhancedGallery({
                       <h3 className="font-semibold text-memopyk-navy mb-2 text-sm sm:text-base line-clamp-2">
                         {title}
                       </h3>
+                      
+                      {/* Mobile-Optimized Action Button */}
+                      <Button
+                        onClick={() => onFlipCard(item.id)}
+                        variant="outline"
+                        size="sm"
+                        className="w-full min-h-[44px] text-xs sm:text-sm"
+                      >
+                        {language === 'fr-FR' ? 'Voir détails' : 'View details'}
+                      </Button>
                     </div>
                   </div>
                 </div>
