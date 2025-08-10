@@ -6,7 +6,7 @@ import { useState, useEffect } from "react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Play, Eye, Star, ArrowRight, Image as ImageIcon, Film, Users, Clock, Smartphone, Monitor, Instagram } from "lucide-react";
+import { Play, Eye, Star, ArrowRight, Image as ImageIcon, Film, Users, Clock, Smartphone, Monitor, Instagram, Phone, Edit } from "lucide-react";
 import { VideoOverlay } from "@/components/gallery/VideoOverlay";
 import { MobileEnhancedGallery } from "@/components/mobile/MobileEnhancedGallery";
 import { LazyImage } from "@/components/ui/LazyImage";
@@ -59,6 +59,12 @@ export default function GallerySection() {
   const [isMobile, setIsMobile] = useState(false);
   const networkStatus = useNetworkStatus();
   const { orientation } = useDeviceOrientation();
+
+  // Fetch CTA settings for the call-to-action section
+  const { data: ctaSettings = [] } = useQuery({
+    queryKey: ['/api/cta'],
+    staleTime: 1000 * 60 * 5, // 5 minutes
+  });
 
   // Detect mobile viewport - ALWAYS USE DESKTOP GALLERY FOR DEBUGGING
   useEffect(() => {
@@ -704,8 +710,68 @@ export default function GallerySection() {
           </div>
         )}
 
+        {/* Enhanced Call to Action - After Gallery */}
+        <div className="text-center mt-16">
+          <div className="relative bg-gradient-to-br from-memopyk-dark-blue via-memopyk-navy to-memopyk-dark-blue p-10 rounded-3xl shadow-2xl border border-memopyk-orange/20 overflow-hidden">
+            {/* Decorative Elements */}
+            <div className="absolute top-0 right-0 w-32 h-32 bg-memopyk-orange/10 rounded-full blur-3xl"></div>
+            <div className="absolute bottom-0 left-0 w-24 h-24 bg-memopyk-sky-blue/10 rounded-full blur-2xl"></div>
+            
+            {/* Content */}
+            <div className="relative z-10">
+              {/* Compelling Subtitle */}
+              <p className="text-lg md:text-xl text-memopyk-cream/90 mb-6 max-w-3xl mx-auto leading-relaxed">
+                {language === 'fr-FR' 
+                  ? "✨ Vos souvenirs, magnifiquement racontés — façonnés par l'expérience professionnelle et la passion du storytelling visuel. ✨"
+                  : "✨ Your memories, beautifully told — shaped by professional experience and a passion for visual storytelling. ✨"
+                }
+              </p>
 
+              {/* Value Proposition */}
+              <div className="flex flex-wrap justify-center gap-4 mb-8 text-sm md:text-base">
+                <div className="flex items-center text-memopyk-cream/80">
+                  <div className="w-2 h-2 bg-memopyk-orange rounded-full mr-2"></div>
+                  {language === 'fr-FR' ? "Livraison 1-3 semaines" : "1-3 weeks delivery"}
+                </div>
+                <div className="flex items-center text-memopyk-cream/80">
+                  <div className="w-2 h-2 bg-memopyk-orange rounded-full mr-2"></div>
+                  {language === 'fr-FR' ? "2 séries de retours incluses" : "2 revision rounds included"}
+                </div>
+              </div>
+              
+              {/* Action Buttons */}
+              <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
+                {/* Use the same CTA settings as the main CTA section */}
+                {(ctaSettings as any[])
+                  .filter((cta: any) => cta.isActive)
+                  .map((cta: any) => {
+                    const url = language === 'fr-FR' ? cta.buttonUrlFr : cta.buttonUrlEn;
+                    return (
+                      <a
+                        key={cta.id}
+                        href={url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center gap-3 bg-memopyk-orange hover:bg-memopyk-orange/90 text-white px-8 py-4 rounded-full font-semibold text-lg transition-all duration-300 transform hover:scale-105 shadow-lg cursor-pointer no-underline"
+                      >
+                        {cta.id === 'book_call' ? <Phone className="w-5 h-5" /> : <Edit className="w-5 h-5" />}
+                        {language === 'fr-FR' ? cta.buttonTextFr : cta.buttonTextEn}
+                      </a>
+                    );
+                  })
+                }
+              </div>
 
+              {/* Trust Element */}
+              <p className="text-sm text-memopyk-cream/70 mt-6 italic">
+                {language === 'fr-FR' 
+                  ? "personnel - unique - émouvant"
+                  : "personal - unique - moving"
+                }
+              </p>
+            </div>
+          </div>
+        </div>
 
       </div>
 
