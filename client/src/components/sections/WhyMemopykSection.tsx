@@ -11,7 +11,7 @@ export function WhyMemopykSection() {
       titleEn: "Simplicity", 
       descriptionFr: "Tous formats acceptés, détails techniques gérés professionnellement. Pas de tri ou d'organisation de fichiers source requis.",
       descriptionEn: "All formats accepted. All technical details handled professionally. No source files organization nor sorting required.",
-      gradient: "from-memopyk-orange/20 to-memopyk-cream/30"
+      gradient: "from-memopyk-dark-blue/20 to-memopyk-navy/10"
     },
     {
       icon: Clock,
@@ -35,7 +35,7 @@ export function WhyMemopykSection() {
       titleEn: "Expertise",
       descriptionFr: "Des moments uniques mis en lumière dans vos photos et vidéos. Un processus efficace pour des conseils clairs et un accompagnement attentif à chaque étape. Des films mémorables, avec une véritable valeur ajoutée.",
       descriptionEn: "Revealing the special moments in your photos and videos. Efficient workflow for clear advice and attentive support throughout. Memorable films with genuine added value.",
-      gradient: "from-memopyk-dark-blue/20 to-memopyk-navy/10"
+      gradient: "from-memopyk-orange/20 to-memopyk-cream/30"
     }
   ];
 
