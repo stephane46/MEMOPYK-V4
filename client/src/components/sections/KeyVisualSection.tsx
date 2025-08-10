@@ -31,7 +31,7 @@ export function KeyVisualSection() {
       <div className="container mx-auto px-4 pb-0 overflow-hidden">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-2 sm:gap-4 lg:gap-8 items-center overflow-hidden">
           {/* Left: Key Visual Illustration with Overlaid Animated Elements */}
-          <div className="relative order-1 lg:order-none mb-0 sm:mb-1 lg:mb-4">
+          <div className="relative order-1 lg:order-none mb-0 sm:mb-1 lg:mb-4 border-4 border-red-500">
             <div className="relative flex items-center justify-center">
               <img 
                 src={keyVisualImage}
@@ -62,7 +62,7 @@ export function KeyVisualSection() {
           </div>
 
           {/* Right: Clean and Elegant Text */}
-          <div className="space-y-4 sm:space-y-5 lg:space-y-6 order-2 lg:order-none overflow-hidden">
+          <div className="space-y-4 sm:space-y-5 lg:space-y-6 order-2 lg:order-none overflow-hidden border-4 border-green-500">
             {/* Main heading */}
             <h2 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-poppins font-bold text-memopyk-navy leading-relaxed">
               {language === 'fr-FR' ? (
