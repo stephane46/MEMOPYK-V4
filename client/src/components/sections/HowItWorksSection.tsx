@@ -100,7 +100,7 @@ export function HowItWorksSection() {
                       <div className="w-6 h-6 rounded-full bg-memopyk-cream flex-shrink-0 flex items-center justify-center">
                         <Icon className="w-3 h-3 text-memopyk-dark-blue" />
                       </div>
-                      <p className="text-memopyk-cream/90 text-base leading-relaxed">
+                      <p className="text-memopyk-cream/90 leading-relaxed text-sm sm:text-base">
                         {language === 'fr-FR' ? step.subDescriptionFr : step.subDescriptionEn}
                       </p>
                     </div>
