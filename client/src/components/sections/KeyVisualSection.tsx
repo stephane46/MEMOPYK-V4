@@ -151,9 +151,9 @@ export function KeyVisualSection() {
                 <>
                   <span>Vos photos et vidéos méritent mieux</span>
                   <br />
-                  <span>que d'être simplement stockés,</span>
+                  <span>que d'être simplement stockées,</span>
                   <br />
-                  <span>ils méritent une histoire.</span>
+                  <span>elles méritent une histoire.</span>
                 </>
               ) : (
                 <>
