@@ -28,8 +28,8 @@ export function HowItWorksSection() {
       icon: Edit,
       titleFr: "Sélection & Montage", 
       titleEn: "We Create",
-      descriptionFr: "Nous passons en revue chaque fichier pour repérer les moments les plus marquants, puis établissons l'arc naratif le plus adapté, avec des suggestions de musique, de durée et de format — tout est pensé pour sublimer vos souvenirs.",
-      descriptionEn: "We go through every file to identify the most meaningful moments, then establish a personalized storyline, suggest music, duration, and format — every details are tailored to your memories.",
+      descriptionFr: "Nous étudions chaque photo et chaque video pour repérer les moments les plus marquants, puis établissons l'arc naratif le plus adapté, avec des suggestions de musique, de durée et de format — tout est pensé pour sublimer vos souvenirs.",
+      descriptionEn: "We study each photo and each video to identify the most meaningful moments, then establish a personalized storyline, suggest music, duration, and format — every details are tailored to your memories.",
       subDescriptionFr: "Bien entendu, votre brief initial et tout commentaire que vous pourriez avoir sont toujours respectés, à chaque étape du processus.",
       subDescriptionEn: "Of course, your initial brief and any comment that you may have are always respected, each step of the way.",
       image: "/images/How_we_work_Step2.png"
@@ -41,8 +41,8 @@ export function HowItWorksSection() {
       titleEn: "You Enjoy & Share", 
       descriptionFr: "Nous donnons vie à votre film de souvenirs. Vous recevez un résultat soigné en 1 à 3 semaines, avec 2 séries de retours incluses. Vous obtiendrez un film de haute qualité qui reflète fidèlement votre vision et vos souhaits.",
       descriptionEn: "We bring your souvenir film to life. Expect a beautifully crafted result within 1-3 weeks, with 2 revision rounds included. You'll receive a high-quality visual story that truly reflects your vision and wishes.",
-      subDescriptionFr: "Ce film est parfait pour préserver vos souvenirs, offrir un cadeau plein d'émotion à un proche, ou partager un moment privilégié lors d'une réunion en famille ou entre amis.",
-      subDescriptionEn: "The film is ideal for cherishing memories, sharing a heartfelt gift with a loved one, or enjoying together at a special gathering with family and friends.",
+      subDescriptionFr: "Nous donnons vie à votre film, dans le format de votre choix, le mieux adapté par exemple pour le visionnage à la télévision ou sur Facebook",
+      subDescriptionEn: "We bring your film to life, in the format of you choice, best suited for example for TV viewing or for Facebook.",
       image: "/images/How_we_work_Step3.png"
     }
   ];
