@@ -66,9 +66,9 @@ export default function GallerySection() {
     staleTime: 1000 * 60 * 5, // 5 minutes
   });
 
-  // Detect mobile viewport
+  // Detect mobile viewport - ALWAYS USE DESKTOP GALLERY FOR DEBUGGING
   useEffect(() => {
-    const checkMobile = () => setIsMobile(window.innerWidth < 768);
+    const checkMobile = () => setIsMobile(false); // FORCE DESKTOP GALLERY
     checkMobile();
     window.addEventListener('resize', checkMobile);
     return () => window.removeEventListener('resize', checkMobile);
@@ -583,23 +583,19 @@ export default function GallerySection() {
                             </div>
                           )}
                           
-                          {/* Play Button - 3D Glass Effect to Match Desktop */}
+                          {/* Play Button - MEMOPYK Orange with Proper Contrast */}
                           <div className="absolute inset-0 flex items-center justify-center">
                             <div 
                               className="w-12 h-12 sm:w-16 sm:h-16 rounded-full flex items-center justify-center transition-all duration-300 hover:scale-110 cursor-pointer touch-manipulation"
                               onClick={(e) => handlePlayClick(item, e, index)}
                               style={{
-                                backgroundColor: '#D67C4A', // Always MEMOPYK orange
-                                background: 'linear-gradient(135deg, #F2A365 0%, #D67C4A 50%, #B85A2F 100%)', // 3D gradient effect
-                                boxShadow: `
-                                  0 8px 16px rgba(214, 124, 74, 0.3),
-                                  inset 0 2px 4px rgba(255, 255, 255, 0.3),
-                                  inset 0 -2px 4px rgba(0, 0, 0, 0.2)
-                                `, // Glass effect shadows
-                                border: 'none'
+                                background: 'linear-gradient(135deg, #F2A365 0%, #D67C4A 50%, #B85A2F 100%) !important',
+                                boxShadow: '0 8px 16px rgba(214, 124, 74, 0.3), inset 0 2px 4px rgba(255, 255, 255, 0.3), inset 0 -2px 4px rgba(0, 0, 0, 0.2) !important',
+                                border: 'none',
+                                color: 'white !important'
                               }}
                             >
-                              <div className="text-white text-lg sm:text-xl ml-0.5 sm:ml-1 drop-shadow-sm">
+                              <div className="text-white text-lg sm:text-xl ml-0.5 sm:ml-1 drop-shadow-sm" style={{ color: 'white !important' }}>
                                 ▶
                               </div>
                             </div>
