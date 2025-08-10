@@ -69,7 +69,7 @@ export function HowItWorksSection() {
             return (
               <div key={step.number} className="h-full">
                 {/* Step Card */}
-                <div className={`relative bg-memopyk-dark-blue rounded-3xl shadow-2xl text-center group hover:shadow-3xl transition-all duration-500 transform hover:-translate-y-2 z-10 h-full flex flex-col p-6 sm:p-8 lg:p-12 ${
+                <div className={`relative bg-gradient-to-br from-memopyk-dark-blue via-memopyk-navy to-memopyk-dark-blue rounded-3xl shadow-2xl text-center group hover:shadow-3xl transition-all duration-500 transform hover:-translate-y-2 z-10 h-full flex flex-col p-6 sm:p-8 lg:p-12 ${
                   isMiddleCard ? 'border-4 border-memopyk-orange' : ''
                 }`}>
                   
