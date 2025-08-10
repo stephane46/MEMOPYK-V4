@@ -194,7 +194,10 @@ export function MobileEnhancedGallery({
                       {hasVideo && (
                         <Button
                           onClick={() => onVideoClick(item)}
-                          className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full bg-white/20 backdrop-blur-sm hover:bg-white/30 text-white border-2 border-white/50 w-16 h-16 sm:w-20 sm:h-20 p-0 min-w-[44px] min-h-[44px]"
+                          className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full bg-gradient-to-br from-white/90 via-white/80 to-white/70 text-gray-800 border border-white/60 shadow-lg hover:shadow-xl hover:from-white/95 hover:via-white/85 hover:to-white/75 backdrop-blur-sm transition-all duration-300 w-16 h-16 sm:w-20 sm:h-20 p-0 min-w-[44px] min-h-[44px]"
+                          style={{
+                            boxShadow: 'inset 0 1px 0 rgba(255, 255, 255, 0.4), 0 4px 12px rgba(0, 0, 0, 0.3)'
+                          }}
                           aria-label={`Play video: ${title}`}
                         >
                           <Play className="w-6 h-6 sm:w-8 sm:h-8 ml-1" fill="currentColor" />
