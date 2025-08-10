@@ -15,7 +15,7 @@ export function CtaSection() {
   const getText = (fr: string, en: string) => language === 'fr-FR' ? fr : en;
 
   return (
-    <section id="cta" className="py-16 md:py-20 bg-memopyk-dark-blue">
+    <section id="cta" className="py-16 md:py-20 bg-gradient-to-br from-memopyk-dark-blue via-memopyk-navy to-memopyk-dark-blue">
       <div className="container mx-auto px-4">
         <div className="text-center">
           <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
