@@ -143,10 +143,10 @@ export function HeroVideoSection() {
     return (
       <section className="relative h-[calc(100vh-4rem)] bg-gradient-memopyk flex items-center justify-center">
         <div className="text-center text-white">
-          <h1 className="text-3xl sm:text-4xl lg:text-6xl font-playfair font-bold mb-4 sm:mb-6">
+          <h1 className="text-lg sm:text-2xl lg:text-6xl font-playfair font-bold mb-4 sm:mb-6">
             Transformez vos souvenirs en films cinématographiques
           </h1>
-          <p className="text-lg sm:text-xl lg:text-2xl text-white/90">
+          <p className="text-sm sm:text-lg lg:text-2xl text-white/90">
             Chargement de la galerie vidéo...
           </p>
         </div>
@@ -157,8 +157,8 @@ export function HeroVideoSection() {
   const videoUrl = language === 'fr-FR' ? currentVideo.url_fr : currentVideo.url_en;
   // Generate responsive font sizes using device-specific values and CSS clamp
   const fontSizeDesktop = activeHeroText?.font_size_desktop || activeHeroText?.font_size || 60;
-  const fontSizeTablet = activeHeroText?.font_size_tablet || Math.round(fontSizeDesktop * 0.75);
-  const fontSizeMobile = activeHeroText?.font_size_mobile || Math.round(fontSizeDesktop * 0.53);
+  const fontSizeTablet = activeHeroText?.font_size_tablet || Math.round(fontSizeDesktop * 0.6);
+  const fontSizeMobile = activeHeroText?.font_size_mobile || Math.round(fontSizeDesktop * 0.35);
   
   // CSS clamp function for responsive scaling: clamp(min, preferred, max)
   const responsiveFontSize = `clamp(${fontSizeMobile}px, ${fontSizeTablet}px, ${fontSizeDesktop}px)`;
