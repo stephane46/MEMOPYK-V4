@@ -26,7 +26,7 @@ export function WhyMemopykSection() {
       titleFr: "Personnalisation",
       titleEn: "Personalization",
       descriptionFr: "Chaque film souvenir est pensé pour être vraiment unique. Nous sommes à l'écoute de toutes vos envies et consignes spécifiques dans un esprit de collaboration. Votre histoire est racontée au plus proche de vos attentes grâce à une création sur mesure.",
-      descriptionEn: "Every memory film is designed to be truly unique. We listen to all your wishes and specific instructions in a spirit of collaboration. Your story is told exactly as you envision it thanks to a tailor-made creation.",
+      descriptionEn: "Every souvenir film is designed to be truly unique. We listen to all your wishes and specific instructions in a spirit of collaboration. Your story is told exactly as you envision it thanks to a tailor-made creation.",
       gradient: "from-memopyk-cream/40 to-memopyk-sky-blue/20"
     },
     {
