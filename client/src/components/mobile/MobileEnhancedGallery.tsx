@@ -236,16 +236,6 @@ export function MobileEnhancedGallery({
                       <h3 className="font-semibold text-memopyk-navy mb-2 text-sm sm:text-base line-clamp-2">
                         {title}
                       </h3>
-                      
-                      {/* Mobile-Optimized Action Button */}
-                      <Button
-                        onClick={() => onFlipCard(item.id)}
-                        variant="outline"
-                        size="sm"
-                        className="w-full min-h-[44px] text-xs sm:text-sm"
-                      >
-                        {language === 'fr-FR' ? 'Voir détails' : 'View details'}
-                      </Button>
                     </div>
                   </div>
                 </div>
