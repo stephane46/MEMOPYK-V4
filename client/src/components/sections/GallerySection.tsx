@@ -583,21 +583,30 @@ export default function GallerySection() {
                             </div>
                           )}
                           
-                          {/* Desktop Orange Play Button - Clean Simple Design */}
+                          {/* Desktop Play Button - Orange for Video, White for No Video */}
                           <div className="absolute inset-0 flex items-center justify-center">
-                            {/* Orange Circle with White Play Triangle */}
+                            {/* Dynamic Play Button Based on Video Availability */}
                             <div 
                               className="w-14 h-14 sm:w-16 sm:h-16 rounded-full flex items-center justify-center transition-all duration-300 hover:scale-110 cursor-pointer"
                               onClick={(e) => handlePlayClick(item, e, index)}
-                              style={{
+                              style={itemHasVideo ? {
+                                // Orange for items WITH video
                                 background: 'linear-gradient(135deg, rgba(214, 124, 74, 0.95) 0%, rgba(214, 124, 74, 0.85) 50%, rgba(184, 90, 47, 0.95) 100%)',
                                 boxShadow: '0 4px 12px rgba(214, 124, 74, 0.4), inset 0 1px 2px rgba(255, 255, 255, 0.3)',
                                 border: '1px solid rgba(255, 255, 255, 0.3)',
                                 backdropFilter: 'blur(2px)'
+                              } : {
+                                // White for items WITHOUT video
+                                background: 'linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.85) 100%)',
+                                boxShadow: '0 4px 12px rgba(0, 0, 0, 0.2), inset 0 1px 2px rgba(255, 255, 255, 0.8)',
+                                border: '1px solid rgba(0, 0, 0, 0.1)',
+                                backdropFilter: 'blur(2px)'
                               }}
                             >
-                              {/* White Play Triangle Directly in Orange Circle */}
-                              <div className="text-lg sm:text-xl ml-0.5" style={{ color: 'white' }}>
+                              {/* Play Triangle - White for Orange Button, Dark for White Button */}
+                              <div className="text-lg sm:text-xl ml-0.5" style={{ 
+                                color: itemHasVideo ? 'white' : '#2A4759' 
+                              }}>
                                 ▶
                               </div>
                             </div>
