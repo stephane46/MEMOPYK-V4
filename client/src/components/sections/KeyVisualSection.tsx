@@ -29,10 +29,10 @@ export function KeyVisualSection() {
   return (
     <section ref={sectionRef} className="py-0 bg-gradient-to-br from-memopyk-cream to-memopyk-cream/70 overflow-hidden">
       <div className="container mx-auto px-4 pb-0 overflow-hidden">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 sm:gap-10 lg:gap-12 items-center overflow-hidden">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-8 lg:gap-12 items-center overflow-hidden">
           {/* Left: Key Visual Illustration with Overlaid Animated Elements */}
-          <div className="relative order-1 lg:order-none mb-8 sm:mb-0">
-            <div className="relative min-h-[200px] sm:min-h-[300px] flex items-center justify-center">
+          <div className="relative order-1 lg:order-none mb-4 sm:mb-6 lg:mb-8">
+            <div className="relative flex items-center justify-center">
               <img 
                 src={keyVisualImage}
                 alt={language === 'fr-FR' 
@@ -41,7 +41,7 @@ export function KeyVisualSection() {
                 }
                 className="w-full h-auto max-w-full rounded-2xl block"
                 loading="eager"
-                style={{ maxWidth: '100%', height: 'auto', visibility: 'visible', minHeight: '200px', objectFit: 'contain' }}
+                style={{ maxWidth: '100%', height: 'auto', visibility: 'visible', objectFit: 'contain' }}
                 onError={(e) => {
                   console.error('KeyVisual image failed to load:', keyVisualImage);
                   e.currentTarget.style.backgroundColor = '#f3f4f6';
