@@ -587,7 +587,7 @@ export default function GallerySection() {
                           <div className="absolute inset-0 flex items-center justify-center">
                             {/* Dynamic Play Button Based on Video Availability */}
                             <div 
-                              className="w-14 h-14 sm:w-16 sm:h-16 rounded-full flex items-center justify-center transition-all duration-300 hover:scale-110 cursor-pointer"
+                              className={`w-14 h-14 sm:w-16 sm:h-16 rounded-full flex items-center justify-center transition-all duration-300 hover:scale-110 cursor-pointer ${itemHasVideo ? 'animate-pulse-orange' : ''}`}
                               onClick={(e) => handlePlayClick(item, e, index)}
                               style={itemHasVideo ? {
                                 // Orange for items WITH video
