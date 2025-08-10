@@ -208,7 +208,7 @@ export function HeroVideoSection() {
       <div className="absolute inset-0 flex items-center justify-center text-center text-white px-3 sm:px-6 lg:px-8">
         <div className="max-w-7xl w-full">
           <h1 
-            className="font-playfair font-bold mb-2 sm:mb-4 lg:mb-6 leading-tight text-lg sm:text-2xl lg:text-5xl"
+            className="font-playfair font-bold mb-4 sm:mb-6 lg:mb-8 leading-tight text-xl sm:text-3xl lg:text-6xl"
             style={{ 
               textShadow: '2px 2px 4px rgba(0,0,0,0.8)'
             }}
@@ -304,10 +304,10 @@ export function HeroVideoSection() {
             </p>
           )}
 
-          <div className="flex justify-center items-center">
+          <div className="flex justify-center items-center mt-4 sm:mt-6 lg:mt-8">
             <Button 
-              size="lg" 
-              className="inline-flex items-center gap-3 bg-memopyk-orange hover:bg-memopyk-dark-blue text-white px-8 py-4 rounded-full font-semibold text-lg transition-all duration-300 transform hover:scale-105 shadow-lg cursor-pointer"
+              size="default" 
+              className="inline-flex items-center gap-2 bg-memopyk-orange hover:bg-memopyk-dark-blue text-white px-6 py-3 rounded-full font-medium text-base transition-all duration-300 transform hover:scale-105 shadow-lg cursor-pointer"
               onClick={() => {
                 const element = document.getElementById('how-it-works');
                 if (element) {
