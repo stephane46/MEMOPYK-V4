@@ -62,7 +62,7 @@ export function KeyVisualSection() {
           </div>
 
           {/* Right: Clean and Elegant Text */}
-          <div className="space-y-4 sm:space-y-5 lg:space-y-6 order-2 lg:order-none overflow-hidden border-4 border-green-500">
+          <div className="space-y-4 sm:space-y-5 lg:space-y-6 order-2 lg:order-none overflow-hidden border-4 border-green-500 -mt-12 sm:-mt-8 lg:mt-0">
             {/* Main heading */}
             <h2 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-poppins font-bold text-memopyk-navy leading-relaxed">
               {language === 'fr-FR' ? (
