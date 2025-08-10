@@ -209,7 +209,7 @@ export default function GallerySection() {
     'fr-FR': {
       title: "Galerie",
       subtitle: "Chaque film que nous créons est aussi unique que vos souvenirs.",
-      description: "Parce que chaque histoire est différente, nous réalisons un devis personnalisé adapté à votre projet. La galerie présente une sélection d'exemples de créations et des tarifs indicatifs. Pour donner vie à vos propres souvenirs, contactez-nous pour un devis fait rien que pour vous.",
+      description: "Parce que chaque histoire est différente, nous réalisons un devis personnalisé adapté à votre film. La galerie présente une sélection d'exemples de créations et des tarifs indicatifs. Pour donner vie à vos propres souvenirs, contactez-nous pour un devis fait rien que pour vous.",
       viewAll: "Voir Toute la Galerie",
       preview: "Aperçu",
       startingFrom: "À partir de",
@@ -221,7 +221,7 @@ export default function GallerySection() {
     'en-US': {
       title: "Gallery",
       subtitle: "Every film we create is as unique as your memories.",
-      description: "Because each story is different, we craft a customized quotation tailored to your project. The gallery presents a selection of sample creations and indicative pricing. To bring your own memories to life, contact us for a quote designed just for you.",
+      description: "Because each story is different, we craft a customized quotation tailored to your film. The gallery presents a selection of sample creations and indicative pricing. To bring your own memories to life, contact us for a quote designed just for you.",
       viewAll: "View Full Gallery",
       preview: "Preview",
       startingFrom: "Starting from",
@@ -487,7 +487,7 @@ export default function GallerySection() {
           <p className="text-lg sm:text-xl text-memopyk-dark-blue mb-2 px-4">
             {t.subtitle}
           </p>
-          <p className="text-sm sm:text-base text-memopyk-blue-gray max-w-2xl mx-auto px-4">
+          <p className="text-sm sm:text-base text-memopyk-navy max-w-4xl mx-auto px-4">
             {t.description}
           </p>
         </div>
