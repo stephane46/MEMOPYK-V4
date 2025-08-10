@@ -562,8 +562,8 @@ export default function GallerySection() {
                           <div className="absolute top-2 sm:top-4 left-2 sm:left-4 right-2 sm:right-4 flex justify-between items-center gap-2">
                             {/* Source Overlay (1) - Mobile Optimized */}
                             {getItemSource(item) && (
-                              <div className="bg-black/70 text-white px-2 sm:px-3 py-1 sm:py-2 rounded-full text-xs sm:text-sm backdrop-blur-sm max-w-[140px] sm:max-w-none flex flex-col items-center justify-center min-h-[32px] sm:min-h-[36px]">
-                                <div className="font-medium leading-tight">{getItemSource(item)}</div>
+                              <div className="bg-black/70 text-white px-3 sm:px-3 py-1 sm:py-2 rounded-full text-xs sm:text-sm backdrop-blur-sm max-w-[180px] sm:max-w-none flex flex-col items-center justify-center min-h-[32px] sm:min-h-[36px]">
+                                <div className="font-medium leading-tight whitespace-nowrap">{getItemSource(item)}</div>
                                 <div className="text-xs text-gray-300 hidden sm:block">
                                   {language === 'fr-FR' ? 'fournies par Client' : 'provided by Client'}
                                 </div>
