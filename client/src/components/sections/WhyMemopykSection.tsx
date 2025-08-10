@@ -64,8 +64,8 @@ export function WhyMemopykSection() {
                 {/* Benefit Card */}
                 <div className={`relative bg-gradient-to-br ${benefit.gradient} backdrop-blur-sm p-4 sm:p-6 lg:p-8 rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-2 border border-white/20 h-full flex flex-col`}>
                   
-                  {/* Icon at Top Left */}
-                  <div className="flex justify-start mb-4 sm:mb-6 flex-shrink-0">
+                  {/* Icon at Top Center */}
+                  <div className="flex justify-center mb-4 sm:mb-6 flex-shrink-0">
                     <div className="w-16 h-16 sm:w-20 sm:h-20 lg:w-24 lg:h-24 bg-white/80 backdrop-blur-sm rounded-full flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform duration-300">
                       <Icon className="w-8 h-8 sm:w-10 sm:h-10 lg:w-12 lg:h-12 text-memopyk-dark-blue" />
                     </div>
@@ -73,7 +73,7 @@ export function WhyMemopykSection() {
 
                   {/* Title */}
                   <div className="mb-4 sm:mb-6 flex-shrink-0">
-                    <h3 className="text-lg sm:text-xl lg:text-2xl font-bold text-memopyk-navy text-left">
+                    <h3 className="text-lg sm:text-xl lg:text-2xl font-bold text-memopyk-navy text-center">
                       {language === 'fr-FR' ? benefit.titleFr : benefit.titleEn}
                     </h3>
                   </div>
