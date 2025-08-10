@@ -74,8 +74,8 @@ export function HowItWorksSection() {
                 }`}>
                   
                   {/* Step Image */}
-                  <div className="mb-4 sm:mb-6 flex-shrink-0">
-                    <div className="w-56 h-56 sm:w-72 sm:h-72 lg:w-80 lg:h-80 mx-auto bg-memopyk-cream rounded-3xl p-3 sm:p-4 shadow-lg">
+                  <div className="mb-3 sm:mb-4 flex-shrink-0">
+                    <div className="w-64 h-64 sm:w-80 sm:h-80 lg:w-96 lg:h-96 mx-auto bg-memopyk-cream rounded-3xl p-2 sm:p-3 shadow-lg">
                       <img 
                         src={step.image}
                         alt={language === 'fr-FR' ? step.titleFr : step.titleEn}
