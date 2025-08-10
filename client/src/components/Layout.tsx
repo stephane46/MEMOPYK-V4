@@ -105,11 +105,18 @@ export function Layout({ children }: LayoutProps) {
         <div className="container mx-auto px-4">
           <div className="flex justify-between items-center h-16">
             {/* Logo */}
-            <Link href={getLocalizedPath('/')} className="flex items-center">
+            <Link 
+              href={getLocalizedPath('/')} 
+              className="flex items-center"
+              onClick={() => {
+                // Always scroll to top when logo is clicked
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+              }}
+            >
               <img 
                 src="/logo.svg" 
                 alt="MEMOPYK" 
-                className="h-10 w-auto"
+                className="h-10 w-auto cursor-pointer"
               />
             </Link>
 
