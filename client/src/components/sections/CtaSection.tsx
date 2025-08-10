@@ -49,10 +49,10 @@ export function CtaSection() {
                     href={url}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="inline-flex items-center justify-center gap-3 bg-memopyk-orange hover:bg-memopyk-orange/90 text-white px-8 py-4 rounded-full font-semibold text-lg transition-all duration-300 transform hover:scale-105 shadow-lg cursor-pointer no-underline w-full sm:w-auto whitespace-nowrap"
+                    className="inline-flex items-center justify-center gap-3 bg-memopyk-orange hover:bg-memopyk-orange/90 text-white px-6 py-4 rounded-full font-semibold text-base sm:text-lg transition-all duration-300 transform hover:scale-105 shadow-lg cursor-pointer no-underline w-full sm:w-auto whitespace-nowrap min-w-0"
                   >
-                    {cta.id === 'book_call' ? <Phone className="w-5 h-5 flex-shrink-0" /> : <Edit className="w-5 h-5 flex-shrink-0" />}
-                    <span className="truncate">
+                    {cta.id === 'book_call' ? <Phone className="w-4 h-4 sm:w-5 sm:h-5 flex-shrink-0" /> : <Edit className="w-4 h-4 sm:w-5 sm:h-5 flex-shrink-0" />}
+                    <span className="block">
                       {language === 'fr-FR' ? cta.buttonTextFr : cta.buttonTextEn}
                     </span>
                   </a>
