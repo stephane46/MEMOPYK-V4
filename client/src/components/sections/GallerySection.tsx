@@ -583,29 +583,29 @@ export default function GallerySection() {
                             </div>
                           )}
                           
-                          {/* Desktop Orange Round Overlay + Play Button */}
+                          {/* Desktop Orange Round Overlay + Play Button - Normal Size */}
                           <div className="absolute inset-0 flex items-center justify-center">
-                            {/* Orange Round Overlay Background */}
+                            {/* Orange Round Overlay Background - Reduced Size */}
                             <div 
-                              className="w-20 h-20 sm:w-24 sm:h-24 lg:w-28 lg:h-28 rounded-full flex items-center justify-center transition-all duration-300 hover:scale-110 cursor-pointer"
+                              className="w-14 h-14 sm:w-16 sm:h-16 rounded-full flex items-center justify-center transition-all duration-300 hover:scale-110 cursor-pointer"
                               onClick={(e) => handlePlayClick(item, e, index)}
                               style={{
                                 background: 'linear-gradient(135deg, rgba(214, 124, 74, 0.95) 0%, rgba(214, 124, 74, 0.85) 50%, rgba(184, 90, 47, 0.95) 100%)',
-                                boxShadow: '0 8px 24px rgba(214, 124, 74, 0.4), inset 0 2px 4px rgba(255, 255, 255, 0.3)',
-                                border: '2px solid rgba(255, 255, 255, 0.3)',
-                                backdropFilter: 'blur(4px)'
+                                boxShadow: '0 4px 12px rgba(214, 124, 74, 0.4), inset 0 1px 2px rgba(255, 255, 255, 0.3)',
+                                border: '1px solid rgba(255, 255, 255, 0.3)',
+                                backdropFilter: 'blur(2px)'
                               }}
                             >
-                              {/* White Play Button Inside */}
+                              {/* White Play Button Inside - Smaller */}
                               <div 
-                                className="w-12 h-12 sm:w-16 sm:h-16 rounded-full flex items-center justify-center"
+                                className="w-8 h-8 sm:w-10 sm:h-10 rounded-full flex items-center justify-center"
                                 style={{
                                   background: 'linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.85) 100%)',
-                                  boxShadow: 'inset 0 1px 2px rgba(255, 255, 255, 0.5), 0 2px 8px rgba(0, 0, 0, 0.15)',
+                                  boxShadow: 'inset 0 1px 1px rgba(255, 255, 255, 0.5), 0 1px 4px rgba(0, 0, 0, 0.15)',
                                   border: '1px solid rgba(255, 255, 255, 0.8)'
                                 }}
                               >
-                                <div className="text-lg sm:text-xl ml-0.5 sm:ml-1" style={{ color: '#2A4759' }}>
+                                <div className="text-sm sm:text-base ml-0.5" style={{ color: '#2A4759' }}>
                                   ▶
                                 </div>
                               </div>
