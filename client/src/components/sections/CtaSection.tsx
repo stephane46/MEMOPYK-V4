@@ -15,9 +15,15 @@ export function CtaSection() {
   const getText = (fr: string, en: string) => language === 'fr-FR' ? fr : en;
 
   return (
-    <section id="cta" className="py-16 md:py-20 bg-gradient-to-br from-memopyk-dark-blue via-memopyk-navy to-memopyk-dark-blue">
+    <section id="cta" className="py-16 md:py-20 bg-gradient-to-br from-memopyk-cream/30 to-white">
       <div className="container mx-auto px-4">
-        <div className="text-center">
+        <div className="relative bg-gradient-to-br from-memopyk-dark-blue via-memopyk-navy to-memopyk-dark-blue p-10 rounded-3xl shadow-2xl border border-memopyk-orange/20 overflow-hidden">
+          {/* Decorative Elements */}
+          <div className="absolute top-0 right-0 w-32 h-32 bg-memopyk-orange/10 rounded-full blur-3xl"></div>
+          <div className="absolute bottom-0 left-0 w-24 h-24 bg-memopyk-sky-blue/10 rounded-full blur-2xl"></div>
+          
+          {/* Content */}
+          <div className="relative z-10 text-center">
           <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
             {getText(
               'Faites-nous part de vos envies, et imaginons ensemble votre film unique.',
@@ -51,6 +57,7 @@ export function CtaSection() {
                 );
               })
             }
+          </div>
           </div>
         </div>
       </div>
