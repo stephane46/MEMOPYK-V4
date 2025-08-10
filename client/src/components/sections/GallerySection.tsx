@@ -66,9 +66,9 @@ export default function GallerySection() {
     staleTime: 1000 * 60 * 5, // 5 minutes
   });
 
-  // Detect mobile viewport - ALWAYS USE DESKTOP GALLERY FOR DEBUGGING
+  // Detect mobile viewport
   useEffect(() => {
-    const checkMobile = () => setIsMobile(false); // FORCE DESKTOP GALLERY
+    const checkMobile = () => setIsMobile(window.innerWidth < 768);
     checkMobile();
     window.addEventListener('resize', checkMobile);
     return () => window.removeEventListener('resize', checkMobile);
