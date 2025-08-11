@@ -239,13 +239,6 @@ export default function GallerySection() {
 
   const t = content[language];
 
-  const cacheBusted = (url: string) => {
-    // PERFORMANCE FIX: Use static timestamp for browser caching while preserving cache-busting for updates
-    // This allows browser caching between page reloads while still forcing updates when content changes
-    const separator = url.includes('?') ? '&' : '?';
-    return `${url}${separator}crop=static&cache=1`;
-  };
-
   const getImageUrl = (item: GalleryItem) => {
     console.log("🖼 GallerySection#getImageUrl", item.id, {
       useSameVideo: item.useSameVideo,
@@ -263,14 +256,14 @@ export default function GallerySection() {
     console.log("→ chosen thumb:", thumb);
 
     if (thumb) {
-      console.log("✅ returning thumb URL");
+      console.log("✅ returning direct Supabase URL:", thumb);
       console.groupEnd();
-      return cacheBusted(thumb);
+      return thumb; // Use direct Supabase URL without proxy
     }
 
     console.log("🚨 falling back to original:", item.imageUrlEn);
     console.groupEnd();
-    return item.imageUrlEn ? cacheBusted(item.imageUrlEn) : "";
+    return item.imageUrlEn || "";
   };
 
   const getItemTitle = (item: GalleryItem) => {
@@ -897,8 +890,9 @@ export default function GallerySection() {
                   }
                 }}
                 onError={(e) => {
-                  console.error('❌ VIDEO PLAYBACK ERROR:', e);
-                  console.error('❌ Video source URL:', lightboxVideo.lightboxVideoUrl);
+                  console.error('❌ VIDEO LIGHTBOX ERROR:', e);
+                  const galleryProxyUrl = getVideoUrl(lightboxVideo, 0);
+                  console.error('❌ Gallery proxy URL:', galleryProxyUrl);
                   console.error('❌ Video filename:', lightboxVideo.videoFilename);
                   const video = e.target as HTMLVideoElement;
                   console.error('❌ Video error code:', video.error?.code);
@@ -906,18 +900,20 @@ export default function GallerySection() {
                   closeLightbox();
                 }}
                 onLoadStart={() => {
-                  console.log('🎬 Video load started:', lightboxVideo.lightboxVideoUrl);
+                  const galleryProxyUrl = getVideoUrl(lightboxVideo, 0);
+                  console.log('🎬 LIGHTBOX Video load started via gallery proxy:', galleryProxyUrl);
                 }}
                 onCanPlay={() => {
-                  console.log('✅ Video can play:', lightboxVideo.lightboxVideoUrl);
+                  const galleryProxyUrl = getVideoUrl(lightboxVideo, 0);
+                  console.log('✅ LIGHTBOX Video can play via gallery proxy:', galleryProxyUrl);
                 }}
                 onLoadedData={() => {
-                  console.log('✅ Video data loaded - using admin dimensions with 2/3 viewport scaling');
+                  console.log('✅ LIGHTBOX Video data loaded - using gallery proxy with cache fallback');
                 }}
                 style={{ backgroundColor: 'black' }}
               >
                 <source 
-                  src={lightboxVideo.lightboxVideoUrl} 
+                  src={getVideoUrl(lightboxVideo, 0)} 
                   type="video/mp4"
                 />
                 Your browser does not support the video tag.

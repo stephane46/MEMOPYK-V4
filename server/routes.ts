@@ -1596,6 +1596,25 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   // DUPLICATE FAQ ROUTES REMOVED - Using detailed routes above
 
+  // Analytics Dashboard - GET analytics data
+  app.get("/api/analytics", async (req, res) => {
+    try {
+      const { dateFrom, dateTo } = req.query;
+      console.log('📊 Analytics request:', { dateFrom, dateTo });
+      
+      const analytics = await hybridStorage.getAnalyticsDashboard(
+        dateFrom as string, 
+        dateTo as string
+      );
+      
+      console.log('✅ Analytics data retrieved successfully');
+      res.json(analytics);
+    } catch (error) {
+      console.error('❌ Analytics error:', error);
+      res.status(500).json({ error: "Failed to get analytics data" });
+    }
+  });
+
   // SHORT URL ALIAS SYSTEM - v1.0.20 INFRASTRUCTURE WORKAROUND
   app.all("/api/v/:id", async (req, res) => {
     try {
@@ -1621,8 +1640,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       console.log(`🔄 REDIRECTING ${videoId} → ${filename}`);
       
-      // Use simple redirect to video proxy - this bypasses internal forwarding issues
-      const targetUrl = `/api/video-proxy?filename=${encodeURIComponent(filename)}`;
+      // Use simple redirect to gallery video proxy - this bypasses internal forwarding issues
+      const targetUrl = `/api/gallery-video-proxy?filename=${encodeURIComponent(filename)}`;
       console.log(`📍 Redirecting to: ${targetUrl}`);
       return res.redirect(302, targetUrl);
       
@@ -2064,7 +2083,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         // Fall back to direct Supabase CDN streaming
         console.log(`⚠️ [GALLERY-PROXY] CACHE MISS - Streaming from Supabase CDN: ${videoFilename}`);
         
-        const supabaseUrl = `https://dcrfcrjjuynwtdwjglhm.supabase.co/storage/v1/object/public/gallery-videos/${videoFilename}`;
+        const supabaseUrl = `https://dcrfcrjjuynwtdwjglhm.supabase.co/storage/v1/object/public/memopyk-videos/${videoFilename}`;
         
         const response = await fetch(supabaseUrl, {
           headers: {

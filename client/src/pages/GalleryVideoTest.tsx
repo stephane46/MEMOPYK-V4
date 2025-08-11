@@ -118,7 +118,7 @@ export default function GalleryVideoTest() {
                     </h4>
                     <div className="relative">
                       <img
-                        src={`/api/image-proxy?filename=${imageFilename}&cache-bust=${Date.now()}`}
+                        src={`/api/image-proxy?filename=${imageFilename}`}
                         alt={item.title_en || 'Gallery Item'}
                         className="w-full h-32 object-cover rounded-lg"
                         onError={(e) => {
@@ -163,7 +163,7 @@ export default function GalleryVideoTest() {
                           }}
                         >
                           <source 
-                            src={`/api/video-proxy?filename=${videoFilename}&cache-bust=${Date.now()}`} 
+                            src={`/api/gallery-video-proxy?filename=${videoFilename}`} 
                             type="video/mp4" 
                           />
                           Your browser does not support the video tag.

@@ -11,7 +11,7 @@ export default function TestGalleryVideo() {
 
     try {
       // Test if GalleryVideo1.mp4 can be accessed through video proxy
-      const response = await fetch('/api/video-proxy?filename=GalleryVideo1.mp4', {
+      const response = await fetch('/api/gallery-video-proxy?filename=GalleryVideo1.mp4', {
         method: 'HEAD',
         headers: {
           'Range': 'bytes=0-'

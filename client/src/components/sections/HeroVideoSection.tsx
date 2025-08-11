@@ -180,7 +180,7 @@ export function HeroVideoSection() {
           onError={(e) => {
             console.error('🚨 Hero Video Error:', e);
             console.error('   - Video URL:', videoUrl);
-            console.error('   - Proxy URL:', `/api/video-proxy?filename=${videoUrl.split('/').pop()}`);
+            console.error('   - Gallery Proxy URL:', `/api/gallery-video-proxy?filename=${videoUrl}`);
             setIsLoading(false);
           }}
           onEnded={handleVideoEnded}
@@ -192,7 +192,7 @@ export function HeroVideoSection() {
             }
           }}
         >
-          <source src={`/api/video-proxy?filename=${videoUrl}&cache-bust=${Date.now()}`} type="video/mp4" />
+          <source src={`/api/gallery-video-proxy?filename=${videoUrl}`} type="video/mp4" />
         </video>
         
         {/* Video Overlay */}
