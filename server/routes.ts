@@ -1982,7 +1982,21 @@ export async function registerRoutes(app: Express): Promise<void> {
       res.writeHead(statusCode, headers);
       
       if (response.body) {
-        response.body.pipe(res);
+        const reader = response.body.getReader();
+        const pump = () => {
+          return reader.read().then(({ done, value }) => {
+            if (done) {
+              res.end();
+              return;
+            }
+            res.write(value);
+            return pump();
+          });
+        };
+        pump().catch(err => {
+          console.error('Video stream error:', err);
+          res.end();
+        });
       } else {
         res.end();
       }
@@ -2093,7 +2107,25 @@ export async function registerRoutes(app: Express): Promise<void> {
           'X-Image-Source': 'CDN'
         });
         
-        response.body?.pipe(res as any);
+        if (response.body) {
+          const reader = response.body.getReader();
+          const pump = () => {
+            return reader.read().then(({ done, value }) => {
+              if (done) {
+                res.end();
+                return;
+              }
+              res.write(value);
+              return pump();
+            });
+          };
+          pump().catch(err => {
+            console.error('Stream error:', err);
+            res.end();
+          });
+        } else {
+          res.end();
+        }
       } else {
         console.error(`Image not found in cache or CDN: ${filename}`);
         res.status(404).json({ error: 'Image not found' });
