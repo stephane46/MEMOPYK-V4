@@ -25,95 +25,136 @@ export const useVideoAnalytics = () => {
 
   const trackVideoView = useMutation({
     mutationFn: async (data: VideoViewData) => {
+      console.log('📊 PRODUCTION ANALYTICS: Making video view tracking request to /api/analytics/video-view');
       const response = await fetch('/api/analytics/video-view', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(data)
       });
-      if (!response.ok) throw new Error('Failed to track video view');
-      return response.json();
+      
+      console.log('📊 PRODUCTION ANALYTICS: Video view request response status:', response.status);
+      
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error('📊 PRODUCTION ANALYTICS: Video view tracking failed:', response.status, errorText);
+        throw new Error(`Failed to track video view: ${response.status} - ${errorText}`);
+      }
+      
+      const result = await response.json();
+      console.log('📊 PRODUCTION ANALYTICS: Video view tracked successfully:', result);
+      return result;
     },
-    onSuccess: () => {
+    onSuccess: (data) => {
+      console.log('📊 PRODUCTION ANALYTICS: Video view mutation success:', data);
       // Invalidate analytics queries to refresh data
       queryClient.invalidateQueries({ queryKey: ['/api/analytics'] });
     },
     onError: (error) => {
-      console.warn('Video view tracking failed:', error);
+      console.error('📊 PRODUCTION ANALYTICS: Video view tracking error:', error);
     },
   });
 
   const trackSession = useMutation({
     mutationFn: async (data: SessionData) => {
+      console.log('📊 PRODUCTION ANALYTICS: Making session tracking request to /api/analytics/session');
       const response = await fetch('/api/analytics/session', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(data)
       });
-      if (!response.ok) throw new Error('Failed to track session');
-      return response.json();
+      
+      console.log('📊 PRODUCTION ANALYTICS: Session request response status:', response.status);
+      
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error('📊 PRODUCTION ANALYTICS: Session tracking failed:', response.status, errorText);
+        throw new Error(`Failed to track session: ${response.status} - ${errorText}`);
+      }
+      
+      const result = await response.json();
+      console.log('📊 PRODUCTION ANALYTICS: Session tracked successfully:', result);
+      return result;
     },
-    onSuccess: () => {
+    onSuccess: (data) => {
+      console.log('📊 PRODUCTION ANALYTICS: Session mutation success:', data);
       queryClient.invalidateQueries({ queryKey: ['/api/analytics'] });
+    },
+    onError: (error) => {
+      console.error('📊 PRODUCTION ANALYTICS: Session tracking error:', error);
     },
   });
 
-  // Helper function to track video view with aggressive duplicate prevention
+  // Helper function to track video view with duplicate prevention (reduced for better production testing)
   const trackVideoViewWithDefaults = useCallback((videoId: string, durationWatched?: number, completed?: boolean) => {
     // Skip tracking for hero videos (auto-play videos don't provide meaningful engagement data)
     if (['VideoHero1.mp4', 'VideoHero2.mp4', 'VideoHero3.mp4'].includes(videoId)) {
-      console.log(`Skipping analytics tracking for hero video: ${videoId} (auto-play videos excluded from analytics)`);
+      console.log(`📊 PRODUCTION ANALYTICS: Skipping analytics tracking for hero video: ${videoId} (auto-play videos excluded from analytics)`);
       return;
     }
     
+    console.log(`📊 PRODUCTION ANALYTICS: Gallery video tracking requested for: ${videoId}`);
+    console.log('📊 PRODUCTION ANALYTICS: Video data:', { videoId, durationWatched, completed });
+    
     const language = localStorage.getItem('memopyk-language') as 'en' | 'fr' || 'fr';
     
-    // Very aggressive duplicate prevention - 30 second window
+    // Reduced duplicate prevention - 10 second window for better production testing
     const lastTracked = localStorage.getItem(`last-tracked-${videoId}`);
     const now = Date.now();
-    if (lastTracked && now - parseInt(lastTracked) < 30000) {
-      console.log(`Skipping duplicate video tracking for ${videoId} - last tracked ${Math.round((now - parseInt(lastTracked)) / 1000)}s ago`);
-      return; // Skip if tracked within last 30 seconds
+    if (lastTracked && now - parseInt(lastTracked) < 10000) {
+      console.log(`📊 PRODUCTION ANALYTICS: Skipping duplicate video tracking for ${videoId} - last tracked ${Math.round((now - parseInt(lastTracked)) / 1000)}s ago`);
+      return; // Skip if tracked within last 10 seconds
     }
     
-    console.log(`Tracking gallery video view for ${videoId}`);
+    console.log(`📊 PRODUCTION ANALYTICS: Tracking gallery video view for ${videoId}`);
     localStorage.setItem(`last-tracked-${videoId}`, now.toString());
     
-    trackVideoView.mutate({
+    const viewData = {
       video_id: videoId,
       duration_watched: durationWatched,
       completed: completed,
       language,
       page_url: window.location.href,
       referrer: document.referrer || undefined,
-    });
+    };
+    
+    console.log('📊 PRODUCTION ANALYTICS: Sending video view data:', viewData);
+    
+    trackVideoView.mutate(viewData);
   }, [trackVideoView]);
 
   // Helper function to track session with automatic data collection and deduplication
   const trackSessionWithDefaults = () => {
-    // CRITICAL FIX: Session deduplication to prevent analytics overload
+    // Session deduplication to prevent analytics overload (reduced from 1 hour to 10 minutes for better production tracking)
     const sessionKey = 'memopyk-session-tracked';
     const lastSessionTime = localStorage.getItem(sessionKey);
     const now = Date.now();
     
-    // Only track one session per hour to prevent overload
-    if (lastSessionTime && now - parseInt(lastSessionTime) < 3600000) {
-      console.log('⏭️ Skipping session tracking - already tracked within last hour');
+    // Only track one session per 10 minutes to prevent overload but allow better tracking
+    if (lastSessionTime && now - parseInt(lastSessionTime) < 600000) {
+      console.log(`⏭️ PRODUCTION ANALYTICS: Skipping session tracking - already tracked ${Math.round((now - parseInt(lastSessionTime)) / 60000)}min ago`);
       return;
     }
     
-    console.log('📊 Tracking new visitor session');
+    console.log('📊 PRODUCTION ANALYTICS: Tracking new visitor session');
+    console.log('📊 PRODUCTION ANALYTICS: Environment:', import.meta.env.NODE_ENV || 'production');
+    console.log('📊 PRODUCTION ANALYTICS: Current URL:', window.location.href);
+    
     localStorage.setItem(sessionKey, now.toString());
     
     const language = localStorage.getItem('memopyk-language') as 'en' | 'fr' || 'fr';
     
-    trackSession.mutate({
+    const sessionData = {
       language,
       page_url: window.location.href,
       user_agent: navigator.userAgent,
       screen_resolution: `${screen.width}x${screen.height}`,
       timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
       referrer: document.referrer || undefined,
-    });
+    };
+    
+    console.log('📊 PRODUCTION ANALYTICS: Sending session data:', sessionData);
+    
+    trackSession.mutate(sessionData);
   };
 
   return {
