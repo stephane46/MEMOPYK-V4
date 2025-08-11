@@ -104,8 +104,8 @@ export const VideoCacheStatus: React.FC<VideoCacheStatusProps> = ({
       refetchStats();
       refetchUnified();
       toast({
-        title: "Cache Status Refreshed",
-        description: `Updated cache information for ${videoFilenames.length} videos`,
+        title: "Status Updated",
+        description: `Updated cache timestamps for ${videoFilenames.length} videos`,
       });
     },
     onError: (error) => {
@@ -423,10 +423,10 @@ export const VideoCacheStatus: React.FC<VideoCacheStatusProps> = ({
                   onClick={() => refreshStatusMutation.mutate()}
                   disabled={refreshStatusMutation.isPending}
                   className="h-7 px-2 text-xs"
-                  title={`Refresh cache status for all ${videoFilenames.length} videos in this section`}
+                  title={`Update cache status timestamps for all ${videoFilenames.length} videos in this section`}
                 >
                   <RefreshCw className={`h-3 w-3 mr-1 ${refreshStatusMutation.isPending ? 'animate-spin' : ''}`} />
-                  Refresh Cache
+                  Update Status
                 </Button>
                 
                 {showForceAllButton && (
