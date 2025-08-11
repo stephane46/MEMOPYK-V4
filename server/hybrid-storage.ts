@@ -3608,14 +3608,8 @@ Allow: /contact`;
   async getAnalyticsDashboard(dateFrom?: string, dateTo?: string): Promise<any> {
     try {
       const sessions = await this.getAnalyticsSessions(dateFrom, dateTo);
-      // For dashboard overview, include all views (including test data with hero videos)
-      let views = this.loadJsonFile('analytics-views.json');
-      if (dateFrom) {
-        views = views.filter((view: any) => (view.created_at || view.timestamp) >= dateFrom);
-      }
-      if (dateTo) {
-        views = views.filter((view: any) => (view.created_at || view.timestamp) <= dateTo);
-      }
+      // Use filtered analytics views (excludes test data and hero videos automatically)
+      const views = await this.getAnalyticsViews(dateFrom, dateTo);
       
       // Calculate overview metrics
       const totalViews = views.length;
@@ -3647,10 +3641,9 @@ Allow: /contact`;
         .map(([language, views]) => ({ language, views }))
         .sort((a, b) => b.views - a.views);
 
-      // Video performance (Gallery videos only - but include test data which may not have video_type)
+      // Video performance (Gallery videos only - test data already filtered out)
       const galleryViews = views.filter((view: any) => 
-        view.video_type === 'gallery' || 
-        (view.test_data && view.video_filename && view.video_filename.includes('gallery'))
+        view.video_type === 'gallery'
       );
       const videoMap = new Map();
       galleryViews.forEach((view: any) => {
@@ -3698,8 +3691,8 @@ Allow: /contact`;
   // IP Management Methods
   async getActiveViewerIps(): Promise<any[]> {
     try {
-      // Get session data to analyze IP addresses
-      const sessions = this.loadJsonFile('analytics-sessions.json');
+      // Get filtered session data (excludes test data) to analyze IP addresses
+      const sessions = await this.getAnalyticsSessions();
       const ipMap = new Map();
 
       sessions.forEach((session: any) => {
