@@ -5,18 +5,18 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 
-// Gallery item type from the main gallery
+// Gallery item type from the main gallery (snake_case from API)
 interface GalleryItem {
   id: string;
-  titleEn: string;
-  titleFr: string;
-  videoUrlEn: string;
-  videoUrlFr: string;
-  imageUrlEn: string;
-  imageUrlFr: string;
-  staticImageUrlEn: string;
-  staticImageUrlFr: string;
-  isActive: boolean;
+  title_en: string;
+  title_fr: string;
+  video_url_en: string;
+  video_url_fr: string;
+  image_url_en: string;
+  image_url_fr: string;
+  static_image_url_en: string;
+  static_image_url_fr: string;
+  is_active: boolean;
 }
 
 export default function GalleryVideoTest() {
@@ -28,7 +28,7 @@ export default function GalleryVideoTest() {
     staleTime: 1000 * 60 * 5, // 5 minutes
   });
 
-  const activeItems = galleryItems.filter(item => item.isActive);
+  const activeItems = galleryItems.filter(item => item.is_active);
 
   const toggleVideo = (videoId: string) => {
     setPlayingVideos(prev => {
@@ -53,6 +53,18 @@ export default function GalleryVideoTest() {
     if (!imageUrl) return '';
     return imageUrl.includes('/') ? imageUrl.split('/').pop() || '' : imageUrl;
   };
+
+  console.log('🔍 Gallery Debug:', {
+    totalItems: galleryItems.length,
+    activeItems: activeItems.length,
+    firstItem: galleryItems[0] ? {
+      id: galleryItems[0].id,
+      is_active: galleryItems[0].is_active,
+      title_en: galleryItems[0].title_en,
+      video_url_en: galleryItems[0].video_url_en,
+      image_url_en: galleryItems[0].image_url_en
+    } : null
+  });
 
   if (isLoading) {
     return (
@@ -89,14 +101,14 @@ export default function GalleryVideoTest() {
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {activeItems.map((item) => {
-            const videoFilename = getVideoFilename(item.videoUrlEn);
-            const imageFilename = getImageFilename(item.staticImageUrlEn || item.imageUrlEn);
+            const videoFilename = getVideoFilename(item.video_url_en);
+            const imageFilename = getImageFilename(item.static_image_url_en || item.image_url_en);
             const isPlaying = playingVideos.has(item.id);
 
             return (
               <Card key={item.id} className="overflow-hidden">
                 <CardHeader>
-                  <CardTitle className="text-lg">{item.titleEn}</CardTitle>
+                  <CardTitle className="text-lg">{item.title_en || 'Untitled Gallery Item'}</CardTitle>
                 </CardHeader>
                 <CardContent>
                   {/* Image Test Section */}
@@ -107,12 +119,12 @@ export default function GalleryVideoTest() {
                     <div className="relative">
                       <img
                         src={`/api/image-proxy?filename=${imageFilename}&cache-bust=${Date.now()}`}
-                        alt={item.titleEn}
+                        alt={item.title_en || 'Gallery Item'}
                         className="w-full h-32 object-cover rounded-lg"
                         onError={(e) => {
                           console.error(`Image cache failed for ${imageFilename}`);
                           // Fallback to direct CDN
-                          (e.target as HTMLImageElement).src = item.staticImageUrlEn || item.imageUrlEn;
+                          (e.target as HTMLImageElement).src = item.static_image_url_en || item.image_url_en;
                         }}
                       />
                       <Badge className="absolute top-2 right-2 bg-green-600 text-white text-xs">
