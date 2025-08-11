@@ -1928,7 +1928,18 @@ export async function registerRoutes(app: Express): Promise<void> {
       if (cachedVideo && existsSync(cachedVideo)) {
         const videoType = filename.includes('VideoHero') || filename.includes('Hero') ? 'hero' : 'gallery';
         console.log(`📦 Serving ${videoType} video from cache: ${filename}`);
-        return serveVideoFromCache(cachedVideo, req, res);
+        console.log(`🎯 CALLING serveVideoFromCache with path: ${cachedVideo}`);
+        try {
+          console.log(`🔄 EXECUTING serveVideoFromCache function...`);
+          serveVideoFromCache(cachedVideo, req, res);
+          console.log(`✅ SUCCESSFULLY CALLED serveVideoFromCache`);
+          return;
+        } catch (cacheError) {
+          console.error(`❌ CACHE SERVE ERROR for ${filename}:`, cacheError);
+          console.error(`❌ Cache path: ${cachedVideo}`);
+          console.error(`❌ Error details:`, cacheError.message);
+          // Continue to CDN fallback
+        }
       } else {
         // If not cached, try to download and cache it
         console.log(`🚨 Video not cached, downloading: ${filename}`);
@@ -1982,9 +1993,8 @@ export async function registerRoutes(app: Express): Promise<void> {
       res.writeHead(statusCode, headers);
       
       if (response.body) {
-        // Use the exact same approach as working hero videos
-        const stream = createReadStream(response.body);
-        stream.pipe(res);
+        // Stream the response body directly to the client
+        response.body.pipe(res);
       } else {
         res.end();
       }
