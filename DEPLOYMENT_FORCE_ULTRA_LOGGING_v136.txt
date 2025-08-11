@@ -1,0 +1,23 @@
+URGENT DEPLOYMENT REQUIRED - v1.0.136 ULTRA DETAILED LOGGING
+
+CURRENT PRODUCTION VERSION: v1.0.1754927210.FIXED_BOTH_SOURCE (OUTDATED)
+REQUIRED PRODUCTION VERSION: v1.0.1754932191.ULTRA_DETAILED_LOGGING (READY)
+
+STATUS: Both frontend and backend now properly synchronized with ultra-detailed logging
+
+CHANGES CONFIRMED:
+✅ Backend: server/routes.ts VERSION = "v1.0.1754932191.ULTRA_DETAILED_LOGGING"
+✅ Frontend: SimpleVideoPlayer.tsx VERSION = "v1.0.1754932191.ULTRA_DETAILED_LOGGING"
+✅ Ultra-detailed console.error logging for production visibility
+✅ Complete hero vs gallery video comparison tracking
+✅ HEAD request support for browser compatibility
+
+CRITICAL ISSUE: Gallery videos return 500 errors in production while hero videos work perfectly
+SOLUTION: Ultra-detailed logging will reveal exact failure point
+
+DEPLOY IMMEDIATELY TO UPDATE PRODUCTION TO CORRECT VERSION.
+
+After deployment, production should show:
+"SIMPLE VIDEO PLAYER v1.0.1754932191.ULTRA_DETAILED_LOGGING - ULTRA DETAILED LOGGING FOR PRODUCTION DEBUG"
+
+Then production logs will capture complete diagnostic information for both video types.

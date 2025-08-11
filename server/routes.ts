@@ -1997,8 +1997,8 @@ export async function registerRoutes(app: Express): Promise<void> {
           console.error(`   - File Permissions: ${stats.mode.toString(8)}`);
           console.error(`   - Is File: ${stats.isFile()}`);
           console.error(`   - Is Directory: ${stats.isDirectory()}`);
-        } catch (statError) {
-          console.error(`   - Stat Error: ${statError.message}`);
+        } catch (statError: any) {
+          console.error(`   - Stat Error: ${statError.message || statError}`);
         }
         
         console.log(`📦 Serving video from cache: ${filename}`);

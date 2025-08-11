@@ -1,5 +1,5 @@
 export default function SimpleVideoPlayer() {
-  const VERSION = "v1.0.1754927210.FIXED_BOTH_SOURCE";
+  const VERSION = "v1.0.1754932191.ULTRA_DETAILED_LOGGING";
   
   console.log(`🎬 SIMPLE VIDEO PLAYER ${VERSION} - LOADED`);
   console.log('   - Hero Video URL: /api/video-proxy?filename=VideoHero1.mp4');
@@ -10,7 +10,7 @@ export default function SimpleVideoPlayer() {
     <div className="min-h-screen bg-gray-50">
       {/* Version Banner */}
       <div className="bg-red-500 text-white p-2 text-center text-sm font-bold">
-        SIMPLE VIDEO PLAYER {VERSION} - BOTH VIDEOS USE SAME SOURCE PATTERN
+        SIMPLE VIDEO PLAYER {VERSION} - ULTRA DETAILED LOGGING FOR PRODUCTION DEBUG
       </div>
       
       {/* Hero Video Section */}
@@ -45,11 +45,12 @@ export default function SimpleVideoPlayer() {
           onCanPlay={() => console.log('🎬 POM VIDEO: canplay event')}
           onError={(e) => {
             console.error('🎬 POM VIDEO ERROR:', e);
+            const target = e.target as HTMLVideoElement;
             console.error('🎬 POM VIDEO ERROR DETAILS:', {
-              error: e.target?.error,
-              networkState: e.target?.networkState,
-              readyState: e.target?.readyState,
-              currentSrc: e.target?.currentSrc
+              error: target?.error,
+              networkState: target?.networkState,
+              readyState: target?.readyState,
+              currentSrc: target?.currentSrc
             });
           }}
         >

@@ -137,7 +137,7 @@ export function Layout({ children }: LayoutProps) {
                   return (
                     <a
                       key={`nav-${index}`}
-                      href={item.href}
+                      href={item.href as string}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="text-sm font-medium transition-colors text-gray-600 hover:text-memopyk-navy"
@@ -230,7 +230,7 @@ export function Layout({ children }: LayoutProps) {
                   return (
                     <a
                       key={`mobile-nav-${index}`}
-                      href={item.href}
+                      href={item.href as string}
                       target="_blank"
                       rel="noopener noreferrer"
                       onClick={() => setIsMobileMenuOpen(false)}
