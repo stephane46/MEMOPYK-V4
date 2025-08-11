@@ -9,7 +9,7 @@ import { AdminRoute } from './components/AdminRoute';
 import { LanguageSelectionPage } from './pages/LanguageSelectionPage';
 import { LegalDocumentPage } from './pages/LegalDocumentPage';
 import TestGalleryVideo from './pages/TestGalleryVideo';
-import GalleryVideoTest from './pages/GalleryVideoTest';
+import SimpleVideoPlayer from './pages/SimpleVideoPlayer';
 import NotFoundPage from './pages/not-found';
 import { queryClient } from './lib/queryClient';
 import { Toaster } from '@/components/ui/toaster';
@@ -30,7 +30,7 @@ function App() {
             
             <Layout>
               {/* Test Routes - Handle these first, before redirects */}
-              <Route path="/gv" component={GalleryVideoTest} />
+              <Route path="/gv" component={SimpleVideoPlayer} />
               <Route path="/test-gallery-video" component={TestGalleryVideo} />
               
               {/* Root redirects - Handle these after test routes */}
@@ -54,8 +54,8 @@ function App() {
               <Route path="/en-US/contact" component={() => <div className="min-h-screen flex items-center justify-center"><div className="text-2xl text-gray-500">Contact Coming Soon</div></div>} />
               
               {/* Test Routes - Localized versions */}
-              <Route path="/fr-FR/gv" component={GalleryVideoTest} />
-              <Route path="/en-US/gv" component={GalleryVideoTest} />
+              <Route path="/fr-FR/gv" component={SimpleVideoPlayer} />
+              <Route path="/en-US/gv" component={SimpleVideoPlayer} />
               
 
               
