@@ -88,8 +88,22 @@ export const useVideoAnalytics = () => {
     });
   }, [trackVideoView]);
 
-  // Helper function to track session with automatic data collection
+  // Helper function to track session with automatic data collection and deduplication
   const trackSessionWithDefaults = () => {
+    // CRITICAL FIX: Session deduplication to prevent analytics overload
+    const sessionKey = 'memopyk-session-tracked';
+    const lastSessionTime = localStorage.getItem(sessionKey);
+    const now = Date.now();
+    
+    // Only track one session per hour to prevent overload
+    if (lastSessionTime && now - parseInt(lastSessionTime) < 3600000) {
+      console.log('⏭️ Skipping session tracking - already tracked within last hour');
+      return;
+    }
+    
+    console.log('📊 Tracking new visitor session');
+    localStorage.setItem(sessionKey, now.toString());
+    
     const language = localStorage.getItem('memopyk-language') as 'en' | 'fr' || 'fr';
     
     trackSession.mutate({
