@@ -1972,57 +1972,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
   }
 
   // Image serving endpoint for cached images
-            
-            const statusCode = response.status === 206 ? 206 : 200;
-            res.writeHead(statusCode, headers);
-            
-            if (response.body) {
-              response.body.pipe(res);
-            } else {
-              res.end();
-            }
-            return;
-            
-          } catch (streamError: any) {
-            console.error(`❌ DIRECT STREAM FAILED for ${decodedFilename}: ${streamError.message}`);
-            return res.status(500).json({ 
-              error: `Video not available - cache and stream both failed`,
-              filename: decodedFilename,
-              details: `Cache: ${downloadError.message}, Stream: ${streamError.message}`,
-              version: "v1.0.40-universal-fallback",
-              timestamp: Date.now()
-            });
-          }
-        }
-      }
-      
-      // At this point, video MUST be cached - serve only from local storage
-      if (cachedVideo && existsSync(cachedVideo)) {
-        console.log(`📦 Serving from LOCAL cache (MANDATORY): ${videoFilename}`);
-        
-        const stat = statSync(cachedVideo);
-        const fileSize = stat.size;
-        console.log(`   - File size: ${fileSize} bytes`);
-
-        if (range) {
-          console.log(`   - Processing range request: ${range}`);
-          const parts = range.replace(/bytes=/, "").split("-");
-          // CRITICAL FIX: Handle empty end range properly (e.g., "bytes=0-")
-          const start = parseInt(parts[0], 10) || 0;
-          let end = fileSize - 1;
-          
-          if (parts[1] && parts[1].trim()) {
-            const parsedEnd = parseInt(parts[1], 10);
-            if (!isNaN(parsedEnd)) {
-              end = parsedEnd;
-            }
-          }
-          
-          // PRODUCTION BUG FIX: Validate that we don't have NaN values or invalid ranges
-          if (isNaN(start) || isNaN(end) || start < 0 || end >= fileSize || start > end) {
-            console.error(`🚨 INVALID RANGE: start=${start}, end=${end}, range=${range}, fileSize=${fileSize}`);
-            return res.status(416).json({ 
-              error: "Invalid range request",
               debug: { start, end, range, fileSize },
               version: "v1.0.50-route-entry-debug"
             });
