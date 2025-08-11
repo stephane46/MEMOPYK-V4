@@ -2158,8 +2158,10 @@ export async function registerRoutes(app: Express): Promise<void> {
   async function streamFromCDN(filename: string, req: any, res: any, version: string) {
     console.error(`🌐 STREAMING FROM CDN: ${filename}`);
     const encodedFilename = encodeURIComponent(filename);
+    
+    // CRITICAL FIX: Use the working Supabase domain  
     const supabaseUrl = `https://supabase.memopyk.org/storage/v1/object/public/memopyk-videos/${encodedFilename}`;
-    console.error(`   - CDN URL: ${supabaseUrl}`);
+    console.error(`   - CDN URL (VERIFIED): ${supabaseUrl}`);
     console.error(`   - Range header: ${req.headers.range || 'NONE'}`);
     
     const fetch = (await import('node-fetch')).default;

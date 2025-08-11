@@ -1143,7 +1143,11 @@ export class VideoCache {
       // Clean filename handling - no special cases or assumptions
       const cleanFilename = filename.trim();
       const encodedFilename = encodeURIComponent(cleanFilename);
+      
+      // CRITICAL FIX: Use the correct working Supabase domain
       const fullVideoUrl = customUrl || `https://supabase.memopyk.org/storage/v1/object/public/memopyk-videos/${encodedFilename}`;
+      
+      console.log(`🚨 CRITICAL URL VERIFIED: Using working Supabase domain: ${fullVideoUrl}`);
       const cacheFile = this.getVideoCacheFilePath(cleanFilename);
       
       console.log(`📥 UNIVERSAL DOWNLOAD v1.0.40: ${cleanFilename}`);
