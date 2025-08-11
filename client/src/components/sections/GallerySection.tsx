@@ -319,17 +319,22 @@ export default function GallerySection() {
   };
 
   const getVideoUrl = (item: GalleryItem, index: number) => {
-    // DIRECT CDN IMPLEMENTATION: Bypass video proxy entirely to avoid infrastructure blocking
-    const filename = item.videoFilename || item.videoUrlEn || item.videoUrlFr;
+    // SIMPLIFIED GALLERY PROXY for /gv testing - uses new gallery-video-proxy endpoint
+    const filename = item.videoFilename || item.videoUrlEn || item.videoUrlFr || '';
     
-    // Fix URL duplication - if filename is already a full URL, use it directly
-    const directCdnUrl = filename.startsWith('https://') ? filename : `https://supabase.memopyk.org/storage/v1/object/public/memopyk-videos/${filename}`;
+    // Extract just the filename if it's a full URL
+    const cleanFilename = filename.startsWith('https://') 
+      ? filename.split('/').pop() || filename
+      : filename;
     
-    console.log(`🎬 DIRECT CDN STREAMING for item ${index}: ${filename}`);
-    console.log(`🔧 FIXED CDN URL: ${directCdnUrl}`);
-    console.log(`⚠️ Note: Direct CDN streaming (slower 1500ms) to avoid infrastructure blocking`);
+    // Use the new simplified gallery video proxy endpoint
+    const proxyUrl = `/api/gallery-video-proxy?filename=${encodeURIComponent(cleanFilename)}`;
     
-    return directCdnUrl;
+    console.log(`🎬 GALLERY PROXY for item ${index}: ${cleanFilename}`);
+    console.log(`🔧 PROXY URL: ${proxyUrl}`);
+    console.log(`✅ Using simplified gallery video proxy with cache fallback to CDN`);
+    
+    return proxyUrl;
   };
 
   // Get optimal viewing format info for marketing display - now using editable database fields
