@@ -1901,11 +1901,11 @@ export async function registerRoutes(app: Express): Promise<void> {
     });
   });
 
-  // SIMPLIFIED VIDEO PROXY - Fixed for Gallery Videos v1.0.51
+  // SIMPLIFIED VIDEO PROXY - Same logic for ALL videos v1.0.52
   app.get("/api/video-proxy", async (req, res) => {
     const filename = req.query.filename as string;
     
-    console.log(`🎬 VIDEO PROXY v1.0.51 - SIMPLIFIED APPROACH`);
+    console.log(`🎬 VIDEO PROXY v1.0.52 - UNIFIED APPROACH`);
     console.log(`   - Filename: "${filename}"`);
     console.log(`   - Range: "${req.headers.range}"`);
     
@@ -1915,45 +1915,33 @@ export async function registerRoutes(app: Express): Promise<void> {
     }
 
     try {
-      // Simple filename-based approach - direct Supabase streaming for gallery videos
-      const encodedFilename = encodeURIComponent(filename);
-      const supabaseUrl = `https://supabase.memopyk.org/storage/v1/object/public/memopyk-videos/${encodedFilename}`;
-      
-      // Try cache first for ALL videos (both hero and gallery)
+      // Check cache first for ALL videos
       console.log(`🔍 Cache check for: ${filename}`);
       let cachedVideo = videoCache.getCachedVideoPath(filename);
       console.log(`🔍 Cache path result: ${cachedVideo}`);
       console.log(`🔍 File exists check: ${cachedVideo ? existsSync(cachedVideo) : 'N/A'}`);
       
       if (cachedVideo && existsSync(cachedVideo)) {
-        const videoType = filename.includes('VideoHero') || filename.includes('Hero') ? 'hero' : 'gallery';
-        console.log(`📦 Serving ${videoType} video from cache: ${filename}`);
+        console.log(`📦 Serving video from cache: ${filename}`);
         console.log(`🎯 CALLING serveVideoFromCache with path: ${cachedVideo}`);
         try {
           console.log(`🔄 EXECUTING serveVideoFromCache function...`);
           serveVideoFromCache(cachedVideo, req, res);
           console.log(`✅ SUCCESSFULLY CALLED serveVideoFromCache`);
           return;
-        } catch (cacheError) {
+        } catch (cacheError: any) {
           console.error(`❌ CACHE SERVE ERROR for ${filename}:`, cacheError);
           console.error(`❌ Cache path: ${cachedVideo}`);
           console.error(`❌ Error details:`, cacheError.message);
           // Continue to CDN fallback
         }
-      } else {
-        // If not cached, try to download and cache it
-        console.log(`🚨 Video not cached, downloading: ${filename}`);
-        await videoCache.downloadAndCacheVideo(filename, supabaseUrl);
-        cachedVideo = videoCache.getCachedVideoPath(filename);
-        if (cachedVideo && existsSync(cachedVideo)) {
-          const videoType = filename.includes('VideoHero') || filename.includes('Hero') ? 'hero' : 'gallery';
-          console.log(`📦 Now serving ${videoType} video from cache after download: ${filename}`);
-          return serveVideoFromCache(cachedVideo, req, res);
-        }
       }
       
-      // Fallback to CDN streaming if cache fails  
-      console.log(`🌐 Cache failed, streaming directly from Supabase: ${filename}`);
+      // If not cached, stream directly from CDN (same approach for all videos)
+      console.log(`🌐 Video not cached, streaming directly from Supabase: ${filename}`);
+      const encodedFilename = encodeURIComponent(filename);
+      const supabaseUrl = `https://supabase.memopyk.org/storage/v1/object/public/memopyk-videos/${encodedFilename}`;
+      
       const fetch = (await import('node-fetch')).default;
       const response = await fetch(supabaseUrl, {
         headers: {
@@ -2005,7 +1993,7 @@ export async function registerRoutes(app: Express): Promise<void> {
         error: "Video proxy failed",
         filename,
         message: error.message,
-        version: "v1.0.51-simplified"
+        version: "v1.0.52-unified"
       });
     }
   });
