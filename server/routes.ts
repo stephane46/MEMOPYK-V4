@@ -1901,13 +1901,21 @@ export async function registerRoutes(app: Express): Promise<void> {
     });
   });
 
-  // SIMPLIFIED VIDEO PROXY - Same logic for ALL videos v1.0.52
+  // SIMPLIFIED VIDEO PROXY - Same logic for ALL videos v1.0.1754928116.DEBUG_500
   app.get("/api/video-proxy", async (req, res) => {
+    const VERSION = "v1.0.1754928116.DEBUG_500";
     const filename = req.query.filename as string;
     
-    console.log(`🎬 VIDEO PROXY v1.0.52 - UNIFIED APPROACH`);
+    console.log(`🎬 VIDEO PROXY ${VERSION} - UNIFIED APPROACH`);
     console.log(`   - Filename: "${filename}"`);
     console.log(`   - Range: "${req.headers.range}"`);
+    console.log(`   - User Agent: "${req.headers['user-agent']}"`);
+    console.log(`   - Referer: "${req.headers.referer}"`);
+    console.log(`   - Origin: "${req.headers.origin}"`);
+    console.log(`   - Accept: "${req.headers.accept}"`);
+    console.log(`   - Method: ${req.method}`);
+    console.log(`   - Full URL: ${req.url}`);
+    console.log(`   - Query: ${JSON.stringify(req.query)}`);
     
     if (!filename) {
       console.log(`❌ Missing filename parameter`);
@@ -1915,6 +1923,11 @@ export async function registerRoutes(app: Express): Promise<void> {
     }
 
     try {
+      console.log(`🔍 STARTING VIDEO PROXY PROCESSING FOR: ${filename}`);
+      console.log(`🔍 NODE VERSION: ${process.version}`);
+      console.log(`🔍 ENVIRONMENT: ${process.env.NODE_ENV}`);
+      console.log(`🔍 WORKING DIR: ${process.cwd()}`);
+      console.log(`🔍 __DIRNAME: ${__dirname}`);
       // Check cache first for ALL videos
       console.log(`🔍 Cache check for: ${filename}`);
       let cachedVideo = videoCache.getCachedVideoPath(filename);
@@ -1988,21 +2001,50 @@ export async function registerRoutes(app: Express): Promise<void> {
       }
       
     } catch (error: any) {
-      console.error(`❌ Video proxy error for ${filename}:`, error);
+      console.error(`❌ VIDEO PROXY ${VERSION} - CRITICAL ERROR for ${filename}:`);
+      console.error(`❌ Error message: ${error.message}`);
+      console.error(`❌ Error stack: ${error.stack}`);
+      console.error(`❌ Error type: ${error.constructor.name}`);
+      console.error(`❌ Request URL: ${req.url}`);
+      console.error(`❌ Request method: ${req.method}`);
+      console.error(`❌ Request headers:`, req.headers);
+      console.error(`❌ Filename: ${filename}`);
+      console.error(`❌ Range header: ${req.headers.range}`);
+      console.error(`❌ User agent: ${req.headers['user-agent']}`);
+      console.error(`❌ NODE_ENV: ${process.env.NODE_ENV}`);
+      console.error(`❌ Working directory: ${process.cwd()}`);
+      console.error(`❌ Full error object:`, error);
+      
       res.status(500).json({ 
         error: "Video proxy failed",
         filename,
         message: error.message,
-        version: "v1.0.52-unified"
+        version: VERSION,
+        stack: error.stack,
+        errorType: error.constructor.name,
+        timestamp: new Date().toISOString(),
+        requestUrl: req.url,
+        range: req.headers.range,
+        userAgent: req.headers['user-agent']
       });
     }
   });
   
   // Helper function to serve video from cache
   function serveVideoFromCache(cachedVideo: string, req: any, res: any) {
-    const stat = statSync(cachedVideo);
-    const fileSize = stat.size;
-    const range = req.headers.range;
+    console.log(`🔍 SERVE VIDEO FROM CACHE - DEBUG v1.0.1754928116:`);
+    console.log(`   - Cache path: ${cachedVideo}`);
+    console.log(`   - File exists: ${existsSync(cachedVideo)}`);
+    console.log(`   - Range header: ${req.headers.range}`);
+    
+    try {
+      const stat = statSync(cachedVideo);
+      const fileSize = stat.size;
+      const range = req.headers.range;
+      
+      console.log(`   - File size: ${fileSize} bytes`);
+      console.log(`   - File modified: ${stat.mtime}`);
+      console.log(`   - Processing range: ${range}`);
     
     if (range) {
       const parts = range.replace(/bytes=/, "").split("-");
@@ -2041,6 +2083,17 @@ export async function registerRoutes(app: Express): Promise<void> {
       
       const stream = createReadStream(cachedVideo);
       stream.pipe(res);
+    }
+    
+    } catch (cacheError: any) {
+      console.error(`❌ SERVE VIDEO FROM CACHE ERROR - DEBUG v1.0.1754928116:`);
+      console.error(`   - Cache path: ${cachedVideo}`);
+      console.error(`   - Error message: ${cacheError.message}`);
+      console.error(`   - Error stack: ${cacheError.stack}`);
+      console.error(`   - Error type: ${cacheError.constructor.name}`);
+      console.error(`   - Range header: ${req.headers.range}`);
+      console.error(`   - Full error object:`, cacheError);
+      throw cacheError; // Re-throw to be caught by main try-catch
     }
   }
 
