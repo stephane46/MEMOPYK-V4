@@ -1620,13 +1620,26 @@ export async function registerRoutes(app: Express): Promise<void> {
   });
 
   // Analytics Session Tracking - POST create session
-  app.post("/api/analytics-session", async (req, res) => {
+  // CRITICAL FIX: Analytics session endpoint with correct URL pattern
+  app.post("/api/analytics/session", async (req, res) => {
     try {
       console.log('📊 Analytics session creation:', req.body);
       const session = await hybridStorage.createAnalyticsSession(req.body);
       res.json({ success: true, session });
     } catch (error) {
       console.error('❌ Analytics session error:', error);
+      res.status(500).json({ error: "Failed to create analytics session" });
+    }
+  });
+
+  // Legacy endpoint for backward compatibility
+  app.post("/api/analytics-session", async (req, res) => {
+    try {
+      console.log('📊 Analytics session creation (legacy):', req.body);
+      const session = await hybridStorage.createAnalyticsSession(req.body);
+      res.json({ success: true, session });
+    } catch (error) {
+      console.error('❌ Analytics session error (legacy):', error);
       res.status(500).json({ error: "Failed to create analytics session" });
     }
   });

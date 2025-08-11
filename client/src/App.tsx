@@ -10,6 +10,7 @@ import { LanguageSelectionPage } from './pages/LanguageSelectionPage';
 import { LegalDocumentPage } from './pages/LegalDocumentPage';
 import TestGalleryVideo from './pages/TestGalleryVideo';
 import SimpleVideoPlayer from './pages/SimpleVideoPlayer';
+import GV2Page from './pages/GV2Page';
 import NotFoundPage from './pages/not-found';
 import { queryClient } from './lib/queryClient';
 import { Toaster } from '@/components/ui/toaster';
@@ -31,6 +32,7 @@ function App() {
             <Layout>
               {/* Test Routes - Handle these first, before redirects */}
               <Route path="/gv" component={SimpleVideoPlayer} />
+              <Route path="/gv2" component={GV2Page} />
               <Route path="/test-gallery-video" component={TestGalleryVideo} />
               
               {/* Root redirects - Handle these after test routes */}
@@ -56,6 +58,8 @@ function App() {
               {/* Test Routes - Localized versions */}
               <Route path="/fr-FR/gv" component={SimpleVideoPlayer} />
               <Route path="/en-US/gv" component={SimpleVideoPlayer} />
+              <Route path="/fr-FR/gv2" component={GV2Page} />
+              <Route path="/en-US/gv2" component={GV2Page} />
               
 
               
