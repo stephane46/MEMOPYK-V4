@@ -576,7 +576,15 @@ export default function GallerySection() {
                               </div>
                             )}
 
-
+                            {/* Video Source Debug Indicator - Only show for videos */}
+                            {itemHasVideo && (
+                              <div className="bg-white/90 backdrop-blur-sm rounded-lg p-2">
+                                <VideoSourceIndicator 
+                                  videoUrl={getVideoUrl(item, index)} 
+                                  filename={item.videoFilename || 'unknown'}
+                                />
+                              </div>
+                            )}
                           </div>
 
                           {/* Price Tag - Bottom Right (3) - Mobile Optimized */}
