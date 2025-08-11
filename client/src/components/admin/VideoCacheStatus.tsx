@@ -77,20 +77,20 @@ export const VideoCacheStatus: React.FC<VideoCacheStatusProps> = ({
       const response = await apiRequest('/api/video-cache/status', 'POST', { filenames: videoFilenames });
       return await response.json();
     },
-    enabled: videoFilenames.length > 0,
-    refetchInterval: 30000 // Refresh every 30 seconds
+    enabled: videoFilenames.length > 0
+    // Removed automatic refresh - use on-demand refresh buttons instead
   });
 
   // Query overall cache stats
   const { data: cacheStats, refetch: refetchStats } = useQuery<CacheStatsResponse>({
-    queryKey: ['/api/video-cache/stats'],
-    refetchInterval: 30000
+    queryKey: ['/api/video-cache/stats']
+    // Removed automatic refresh - use on-demand refresh buttons instead
   });
 
   // Query unified cache stats with storage management
   const { data: unifiedStats, refetch: refetchUnified } = useQuery<UnifiedCacheStats>({
-    queryKey: ['/api/unified-cache/stats'],
-    refetchInterval: 30000
+    queryKey: ['/api/unified-cache/stats']
+    // Removed automatic refresh - use on-demand refresh buttons instead
   });
 
   // Refresh cache status for single video
@@ -514,24 +514,25 @@ export const VideoCacheStatus: React.FC<VideoCacheStatusProps> = ({
                     )}
                     Cache Now
                   </Button>
-                )}
-                
-                {isCached && (
-                  <Button
-                    size="sm"
-                    variant="outline"
-                    onClick={() => forceCacheMutation.mutate(filename)}
-                    disabled={pendingVideos.has(filename)}
-                    className="text-orange-600 hover:text-orange-700"
-                  >
-                    {pendingVideos.has(filename) ? (
-                      <RefreshCw className="h-4 w-4 animate-spin mr-1" />
-                    ) : (
-                      <RefreshCw className="h-4 w-4 mr-1" />
-                    )}
-                    Refresh Cache
-                  </Button>
-                )}
+                  )}
+                  
+                  {isCached && (
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      onClick={() => forceCacheMutation.mutate(filename)}
+                      disabled={pendingVideos.has(filename)}
+                      className="text-orange-600 hover:text-orange-700"
+                    >
+                      {pendingVideos.has(filename) ? (
+                        <RefreshCw className="h-4 w-4 animate-spin mr-1" />
+                      ) : (
+                        <RefreshCw className="h-4 w-4 mr-1" />
+                      )}
+                      Refresh Cache
+                    </Button>
+                  )}
+                </div>
               </div>
             );
           })}
