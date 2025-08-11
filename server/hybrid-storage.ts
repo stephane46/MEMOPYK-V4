@@ -5119,107 +5119,13 @@ Allow: /contact`;
     try {
       console.log(`📈 Getting time-series analytics data from ${dateFrom || 'beginning'} to ${dateTo || 'now'}`);
       
-      if (this.supabase) {
-        console.log('📊 Using Supabase database for time-series data...');
-        // Database implementation - get daily aggregated data
-        let sessionQuery = this.supabase
-          .from('analytics_sessions')  
-          .select('created_at, country, language, session_id');
-        
-        let viewQuery = this.supabase
-          .from('analytics_views')
-          .select('created_at, session_id, video_id');
-
-        // Apply date filters if provided
-        if (dateFrom) {
-          sessionQuery = sessionQuery.gte('created_at', dateFrom);
-          viewQuery = viewQuery.gte('created_at', dateFrom);
-        }
-        if (dateTo) {
-          sessionQuery = sessionQuery.lte('created_at', dateTo);
-          viewQuery = viewQuery.lte('created_at', dateTo);
-        }
-
-        const [{ data: sessions }, { data: views }] = await Promise.all([
-          sessionQuery,
-          viewQuery
-        ]);
-
-        console.log(`📊 Database query results: sessions=${sessions?.length || 0}, views=${views?.length || 0}`);
-
-        // If no database data, fall back to JSON files (for test data)
-        if ((!sessions || sessions.length === 0) || (!views || views.length === 0)) {
-          console.log('📊 No database data found, falling back to JSON files...');
-          const sessionsPath = join(process.cwd(), 'server/data/analytics-sessions.json');
-          const viewsPath = join(process.cwd(), 'server/data/analytics-views.json');
-          
-          let jsonSessions = [];
-          let jsonViews = [];
-          
-          if (existsSync(sessionsPath)) {
-            jsonSessions = JSON.parse(readFileSync(sessionsPath, 'utf8'));
-          }
-          
-          if (existsSync(viewsPath)) {
-            jsonViews = JSON.parse(readFileSync(viewsPath, 'utf8'));
-          }
-
-          // Apply date filters for JSON data
-          if (dateFrom || dateTo) {
-            const fromDate = dateFrom ? new Date(dateFrom) : new Date('2000-01-01');
-            const toDate = dateTo ? new Date(dateTo) : new Date();
-            
-            jsonSessions = jsonSessions.filter((s: any) => {
-              const date = new Date(s.created_at || s.timestamp);
-              return date >= fromDate && date <= toDate;
-            });
-            
-            jsonViews = jsonViews.filter((v: any) => {
-              const date = new Date(v.created_at || v.timestamp);
-              return date >= fromDate && date <= toDate;
-            });
-          }
-
-          console.log(`📊 JSON fallback loaded: ${jsonSessions.length} sessions, ${jsonViews.length} views`);
-          return this.aggregateTimeSeriesData(jsonSessions, jsonViews);
-        }
-
-        return this.aggregateTimeSeriesData(sessions || [], views || []);
-      } else {
-        // JSON fallback implementation
-        const sessionsPath = join(process.cwd(), 'server/data/analytics-sessions.json');
-        const viewsPath = join(process.cwd(), 'server/data/analytics-views.json');
-        
-        let sessions = [];
-        let views = [];
-        
-        if (existsSync(sessionsPath)) {
-          sessions = JSON.parse(readFileSync(sessionsPath, 'utf8'));
-        }
-        
-        if (existsSync(viewsPath)) {
-          views = JSON.parse(readFileSync(viewsPath, 'utf8'));
-        }
-
-        // Apply date filters for JSON data
-        if (dateFrom || dateTo) {
-          const fromDate = dateFrom ? new Date(dateFrom) : new Date('2000-01-01');
-          const toDate = dateTo ? new Date(dateTo) : new Date();
-          
-          sessions = sessions.filter((s: any) => {
-            const date = new Date(s.created_at || s.timestamp);
-            return date >= fromDate && date <= toDate;
-          });
-          
-          views = views.filter((v: any) => {
-            const date = new Date(v.created_at || v.timestamp);
-            return date >= fromDate && date <= toDate;
-          });
-        }
-
-        console.log(`📊 JSON Data loaded: ${sessions.length} sessions, ${views.length} views`);
-        return this.aggregateTimeSeriesData(sessions, views);
-      }
+      // Use filtered analytics methods to exclude test data
+      const sessions = await this.getAnalyticsSessions(dateFrom, dateTo);
+      const views = await this.getAnalyticsViews(dateFrom, dateTo);
+      
+      console.log(`📊 Filtered data results: sessions=${sessions?.length || 0}, views=${views?.length || 0}`);
+      
+      return this.aggregateTimeSeriesData(sessions, views);
     } catch (error) {
       console.error('❌ Error fetching time-series data:', error);
       return [];
