@@ -1919,28 +1919,30 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const encodedFilename = encodeURIComponent(filename);
       const supabaseUrl = `https://supabase.memopyk.org/storage/v1/object/public/memopyk-videos/${encodedFilename}`;
       
-      // Check if this is a hero video that should use cache
-      const isHeroVideo = filename.includes('VideoHero') || filename.includes('Hero');
+      // Try cache first for ALL videos (both hero and gallery)
+      console.log(`🔍 Cache check for: ${filename}`);
+      let cachedVideo = videoCache.getCachedVideoPath(filename);
+      console.log(`🔍 Cache path result: ${cachedVideo}`);
+      console.log(`🔍 File exists check: ${cachedVideo ? existsSync(cachedVideo) : 'N/A'}`);
       
-      if (isHeroVideo) {
-        // Use existing cache logic for hero videos
-        let cachedVideo = videoCache.getCachedVideoPath(filename);
-        
+      if (cachedVideo && existsSync(cachedVideo)) {
+        const videoType = filename.includes('VideoHero') || filename.includes('Hero') ? 'hero' : 'gallery';
+        console.log(`📦 Serving ${videoType} video from cache: ${filename}`);
+        return serveVideoFromCache(cachedVideo, req, res);
+      } else {
+        // If not cached, try to download and cache it
+        console.log(`🚨 Video not cached, downloading: ${filename}`);
+        await videoCache.downloadAndCacheVideo(filename, supabaseUrl);
+        cachedVideo = videoCache.getCachedVideoPath(filename);
         if (cachedVideo && existsSync(cachedVideo)) {
-          console.log(`📦 Serving hero video from cache: ${filename}`);
+          const videoType = filename.includes('VideoHero') || filename.includes('Hero') ? 'hero' : 'gallery';
+          console.log(`📦 Now serving ${videoType} video from cache after download: ${filename}`);
           return serveVideoFromCache(cachedVideo, req, res);
-        } else {
-          console.log(`🚨 Hero video not cached, downloading: ${filename}`);
-          await videoCache.downloadAndCacheVideo(filename, supabaseUrl);
-          cachedVideo = videoCache.getCachedVideoPath(filename);
-          if (cachedVideo && existsSync(cachedVideo)) {
-            return serveVideoFromCache(cachedVideo, req, res);
-          }
         }
       }
       
-      // For gallery videos or if hero video cache fails, stream directly from Supabase
-      console.log(`🌐 Streaming directly from Supabase: ${filename}`);
+      // Fallback to CDN streaming if cache fails  
+      console.log(`🌐 Cache failed, streaming directly from Supabase: ${filename}`);
       const fetch = (await import('node-fetch')).default;
       const response = await fetch(supabaseUrl, {
         headers: {
