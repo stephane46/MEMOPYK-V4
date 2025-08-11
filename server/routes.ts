@@ -1982,9 +1982,9 @@ export async function registerRoutes(app: Express): Promise<void> {
       res.writeHead(statusCode, headers);
       
       if (response.body) {
-        const reader = response.body.getReader();
-        const pump = () => {
-          return reader.read().then(({ done, value }) => {
+        const reader = (response.body as any).getReader();
+        const pump = (): Promise<any> => {
+          return reader.read().then(({ done, value }: any) => {
             if (done) {
               res.end();
               return;
@@ -1993,7 +1993,7 @@ export async function registerRoutes(app: Express): Promise<void> {
             return pump();
           });
         };
-        pump().catch(err => {
+        pump().catch((err: any) => {
           console.error('Video stream error:', err);
           res.end();
         });
@@ -2108,9 +2108,9 @@ export async function registerRoutes(app: Express): Promise<void> {
         });
         
         if (response.body) {
-          const reader = response.body.getReader();
-          const pump = () => {
-            return reader.read().then(({ done, value }) => {
+          const reader = (response.body as any).getReader();
+          const pump = (): Promise<any> => {
+            return reader.read().then(({ done, value }: any) => {
               if (done) {
                 res.end();
                 return;
@@ -2119,7 +2119,7 @@ export async function registerRoutes(app: Express): Promise<void> {
               return pump();
             });
           };
-          pump().catch(err => {
+          pump().catch((err: any) => {
             console.error('Stream error:', err);
             res.end();
           });
