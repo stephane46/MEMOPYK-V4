@@ -1662,6 +1662,36 @@ export async function registerRoutes(app: Express): Promise<void> {
     }
   });
 
+  // Individual Video Cache Status Check - POST check specific videos
+  app.post("/api/video-cache/status", (req, res) => {
+    try {
+      const { videos } = req.body;
+      console.log('🔍 Individual video cache status check:', videos);
+      
+      if (!Array.isArray(videos)) {
+        return res.status(400).json({ error: "Videos array is required" });
+      }
+
+      const results = videos.map(video => {
+        const isCached = videoCache.isVideoCached(video.filename);
+        const estimatedLoadTime = isCached ? 50 : 1500; // Cached vs CDN
+        
+        return {
+          filename: video.filename,
+          cached: isCached,
+          loadTime: estimatedLoadTime,
+          type: video.type || 'unknown'
+        };
+      });
+
+      console.log('🎯 Cache status results:', results);
+      res.json({ videos: results, timestamp: new Date().toISOString() });
+    } catch (error) {
+      console.error('❌ Individual video cache status error:', error);
+      res.status(500).json({ error: "Failed to check individual video cache status" });
+    }
+  });
+
   app.get("/api/video-cache/stats", (req, res) => {
     try {
       const stats = videoCache.getCacheStats();
@@ -1902,7 +1932,21 @@ export async function registerRoutes(app: Express): Promise<void> {
     try {
       console.log('🔄 Refresh video cache status');
       const stats = videoCache.getCacheStats();
-      res.json({ success: true, stats, timestamp: new Date().toISOString() });
+      
+      // Also check individual hero video cache status for refresh
+      const heroVideos = ['VideoHero1.mp4', 'VideoHero2.mp4', 'VideoHero3.mp4'];
+      const heroStatus = heroVideos.map(filename => ({
+        filename,
+        cached: videoCache.isVideoCached(filename),
+        loadTime: videoCache.isVideoCached(filename) ? 50 : 1500
+      }));
+
+      res.json({ 
+        success: true, 
+        stats, 
+        heroVideos: heroStatus,
+        timestamp: new Date().toISOString() 
+      });
     } catch (error) {
       console.error('❌ Cache refresh error:', error);
       res.status(500).json({ error: "Failed to refresh cache" });

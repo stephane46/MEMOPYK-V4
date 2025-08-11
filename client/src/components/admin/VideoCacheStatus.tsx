@@ -74,7 +74,8 @@ export const VideoCacheStatus: React.FC<VideoCacheStatusProps> = ({
   const { data: cacheStatusData, isLoading: statusLoading, refetch: refetchStatus } = useQuery({
     queryKey: ['/api/video-cache/status', videoFilenames],
     queryFn: async () => {
-      const response = await apiRequest('/api/video-cache/status', 'POST', { filenames: videoFilenames });
+      const videos = videoFilenames.map(filename => ({ filename, type: 'hero' }));
+      const response = await apiRequest('/api/video-cache/status', 'POST', { videos });
       return await response.json();
     },
     enabled: videoFilenames.length > 0
@@ -96,7 +97,8 @@ export const VideoCacheStatus: React.FC<VideoCacheStatusProps> = ({
   // Refresh cache status for section (all videos in this component)
   const refreshStatusMutation = useMutation({
     mutationFn: async () => {
-      const response = await apiRequest('/api/video-cache/status', 'POST', { filenames: videoFilenames });
+      const videos = videoFilenames.map(filename => ({ filename, type: 'hero' }));
+      const response = await apiRequest('/api/video-cache/status', 'POST', { videos });
       return await response.json();
     },
     onSuccess: () => {
@@ -105,13 +107,13 @@ export const VideoCacheStatus: React.FC<VideoCacheStatusProps> = ({
       refetchUnified();
       toast({
         title: "Status Updated",
-        description: `Updated cache timestamps for ${videoFilenames.length} videos`,
+        description: `Updated cache status for ${videoFilenames.length} videos`,
       });
     },
     onError: (error) => {
       toast({
-        title: "Refresh Failed",
-        description: error.message,
+        title: "Refresh Failed", 
+        description: "Failed to refresh cache status",
         variant: "destructive"
       });
     }
@@ -335,7 +337,24 @@ export const VideoCacheStatus: React.FC<VideoCacheStatusProps> = ({
     }
   });
 
-  const cacheStatus: Record<string, CacheStatus> = (cacheStatusData as {status?: Record<string, CacheStatus>})?.status || {};
+  // Extract cache status from the API response structure
+  const cacheStatus: Record<string, CacheStatus> = React.useMemo(() => {
+    if (!cacheStatusData?.videos) {
+      return {};
+    }
+    
+    // Convert array response to object keyed by filename
+    const statusMap: Record<string, CacheStatus> = {};
+    cacheStatusData.videos.forEach((video: any) => {
+      statusMap[video.filename] = {
+        cached: video.cached,
+        size: video.size || 0,
+        lastModified: video.lastModified || new Date().toISOString(),
+        loadTime: video.loadTime || (video.cached ? 50 : 1500)
+      };
+    });
+    return statusMap;
+  }, [cacheStatusData]);
 
   const formatFileSize = (bytes: number): string => {
     const mb = bytes / (1024 * 1024);
@@ -489,8 +508,8 @@ export const VideoCacheStatus: React.FC<VideoCacheStatusProps> = ({
                         <div className="space-y-1">
                           <div className="text-green-600 font-medium">✅ Cached (~50ms)</div>
                           <div className="flex items-center gap-3 text-xs">
-                            {status.size && <span>Size: {formatFileSize(status.size)}</span>}
-                            {status.lastModified && (
+                            {status?.size && <span>Size: {formatFileSize(status.size)}</span>}
+                            {status?.lastModified && (
                               <span className={`flex items-center gap-1 ${getCacheAgeColor(status.lastModified)}`}>
                                 <Clock className="h-3 w-3" /> {formatLastModified(status.lastModified)}
                               </span>
@@ -512,13 +531,13 @@ export const VideoCacheStatus: React.FC<VideoCacheStatusProps> = ({
                       onClick={() => forceCacheMutation.mutate(filename)}
                       disabled={pendingVideos.has(filename)}
                     >
-                    {pendingVideos.has(filename) ? (
-                      <RefreshCw className="h-4 w-4 animate-spin mr-1" />
-                    ) : (
-                      <Download className="h-4 w-4 mr-1" />
-                    )}
-                    Cache Now
-                  </Button>
+                      {pendingVideos.has(filename) ? (
+                        <RefreshCw className="h-4 w-4 animate-spin mr-1" />
+                      ) : (
+                        <Download className="h-4 w-4 mr-1" />
+                      )}
+                      Cache Now
+                    </Button>
                   )}
                   
                   {isCached && (
