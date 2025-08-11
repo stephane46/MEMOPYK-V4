@@ -1672,6 +1672,31 @@ export async function registerRoutes(app: Express): Promise<void> {
     }
   });
 
+  app.post("/api/video-cache/force", async (req, res) => {
+    try {
+      const { filename } = req.body;
+      console.log(`🚀 Force cache individual video: ${filename}`);
+      
+      if (!filename) {
+        return res.status(400).json({ error: "Filename is required" });
+      }
+      
+      // Force cache the specific video
+      await videoCache.downloadAndCacheVideo(filename);
+      const isCached = videoCache.isVideoCached(filename);
+      
+      res.json({ 
+        success: true, 
+        filename,
+        cached: isCached,
+        message: `Video ${filename} ${isCached ? 'cached successfully' : 'cache attempt completed'}`
+      });
+    } catch (error) {
+      console.error('❌ Force cache individual video error:', error);
+      res.status(500).json({ error: "Failed to force cache video" });
+    }
+  });
+
   app.post("/api/video-cache/force-all-media", async (req, res) => {
     try {
       console.log('🚀 Force cache all media request received');
