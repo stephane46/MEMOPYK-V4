@@ -2698,6 +2698,109 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Image proxy endpoint for serving cached images (Gallery Video Test)
+  app.get("/api/image-proxy", async (req, res) => {
+    console.log(`🖼️ IMAGE PROXY ROUTE HIT! - ${new Date().toISOString()}`);
+    console.log(`🖼️ Raw request URL: ${req.url}`);
+    console.log(`🖼️ Filename param: ${req.query.filename}`);
+    
+    try {
+      const filename = req.query.filename as string;
+      if (!filename) {
+        return res.status(400).json({ error: "filename parameter required" });
+      }
+
+      // Clean filename of any query parameters or encoding
+      const cleanFilename = decodeURIComponent(filename).split('?')[0];
+      console.log(`🖼️ Processing image: ${cleanFilename}`);
+
+      // Check if image is cached
+      const cachedImagePath = videoCache.getCachedImagePath(cleanFilename);
+      
+      if (!cachedImagePath || !existsSync(cachedImagePath)) {
+        console.log(`🔄 Image not cached, attempting download: ${cleanFilename}`);
+        
+        try {
+          // Try to download and cache the image
+          await videoCache.downloadAndCacheImage(cleanFilename);
+          
+          // Get the newly cached path
+          const newCachedPath = videoCache.getCachedImagePath(cleanFilename);
+          if (!newCachedPath || !existsSync(newCachedPath)) {
+            throw new Error('Failed to cache image');
+          }
+          
+          console.log(`✅ Image successfully cached: ${cleanFilename}`);
+          return serveImageFromCache(newCachedPath, cleanFilename, res);
+          
+        } catch (downloadError: any) {
+          console.warn(`⚠️ Image download failed for ${cleanFilename}: ${downloadError.message}`);
+          
+          // Fallback to direct Supabase URL
+          const directUrl = `https://supabase.memopyk.org/storage/v1/object/public/memopyk-videos/${encodeURIComponent(cleanFilename)}`;
+          console.log(`🔄 FALLBACK: Redirecting to direct URL: ${directUrl}`);
+          
+          return res.redirect(directUrl);
+        }
+      }
+
+      // Serve from cache
+      console.log(`📦 Serving image from cache: ${cleanFilename}`);
+      return serveImageFromCache(cachedImagePath, cleanFilename, res);
+
+    } catch (error: any) {
+      console.error(`❌ Image proxy error:`, error);
+      res.status(500).json({ 
+        error: "Image proxy failed",
+        details: error.message,
+        version: "v1.0-image-proxy-test"
+      });
+    }
+  });
+
+  // Helper function to serve images from cache
+  function serveImageFromCache(imagePath: string, filename: string, res: any) {
+    try {
+      const stat = statSync(imagePath);
+      const fileSize = stat.size;
+      
+      // Determine content type based on file extension
+      const ext = filename.toLowerCase().split('.').pop();
+      let contentType = 'image/jpeg'; // default
+      if (ext === 'png') contentType = 'image/png';
+      else if (ext === 'gif') contentType = 'image/gif';
+      else if (ext === 'webp') contentType = 'image/webp';
+      
+      console.log(`🖼️ Serving ${filename} (${fileSize} bytes) as ${contentType}`);
+      
+      const stream = createReadStream(imagePath);
+      
+      res.writeHead(200, {
+        'Content-Type': contentType,
+        'Content-Length': fileSize,
+        'Access-Control-Allow-Origin': '*',
+        'Cache-Control': 'public, max-age=86400',
+        'X-Delivery': 'cache-hit',
+        'X-Upstream': 'vps-storage',
+        'X-Storage': 'local-cache',
+        'X-Content-Bytes': fileSize.toString()
+      });
+      
+      stream.on('error', (error) => {
+        console.error(`❌ Image stream error for ${filename}:`, error);
+        if (!res.headersSent) {
+          res.status(500).json({ error: 'Image stream failed' });
+        }
+      });
+      
+      stream.pipe(res);
+      
+    } catch (error: any) {
+      console.error(`❌ Serve image error for ${filename}:`, error);
+      res.status(500).json({ error: 'Failed to serve cached image' });
+    }
+  }
+
   // Video cache health endpoint
   app.get("/api/video-proxy/health", async (req, res) => {
     try {

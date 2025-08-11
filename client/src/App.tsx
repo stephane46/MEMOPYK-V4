@@ -9,6 +9,7 @@ import { AdminRoute } from './components/AdminRoute';
 import { LanguageSelectionPage } from './pages/LanguageSelectionPage';
 import { LegalDocumentPage } from './pages/LegalDocumentPage';
 import TestGalleryVideo from './pages/TestGalleryVideo';
+import GalleryVideoTest from './pages/GalleryVideoTest';
 import NotFoundPage from './pages/not-found';
 import { queryClient } from './lib/queryClient';
 import { Toaster } from '@/components/ui/toaster';
@@ -48,8 +49,9 @@ function App() {
               <Route path="/fr-FR/contact" component={() => <div className="min-h-screen flex items-center justify-center"><div className="text-2xl text-gray-500">Contact Bientôt Disponible</div></div>} />
               <Route path="/en-US/contact" component={() => <div className="min-h-screen flex items-center justify-center"><div className="text-2xl text-gray-500">Contact Coming Soon</div></div>} />
               
-              {/* Test Route */}
+              {/* Test Routes */}
               <Route path="/test-gallery-video" component={TestGalleryVideo} />
+              <Route path="/gv" component={GalleryVideoTest} />
               
               {/* Legal Document Routes */}
               <Route path="/fr-FR/legal/:docType" component={LegalDocumentPage} />
