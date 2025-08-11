@@ -46,13 +46,17 @@ Visual consistency priority: Extremely detail-oriented about spacing and formatt
 - **Deployment Optimizations**: Includes fast health check endpoints, production video cache preloading for hero videos, comprehensive error handling, routing priorities, and automated public asset copying.
 
 ## Recent Changes
+**August 11, 2025 - v1.0.147 Emergency Production Fixes:**
+- Fixed cache operation 500 errors: Extended timeout 60s→120s for heavy operations
+- Fixed gallery video performance regression: Changed preload="auto" for instant playback
+- Resolved race condition causing frontend 500 errors despite backend 200 success
+- Gallery videos now use video proxy correctly for optimal performance
+- TypeScript errors resolved in cache status interface
+
 **August 11, 2025 - v1.0.146 Cache Status Display Fix:**
 - Fixed critical cache status display bug in VideoCacheStatus.tsx
 - Cache buttons worked correctly but UI didn't show updated status
 - Corrected frontend data parsing to match API response format
-- Status now updates immediately after cache operations complete
-- All 24 API endpoints functional with proper UI integration
-- Complete admin interface ready for production deployment
 
 **August 11, 2025 - v1.0.145 Complete Endpoint Implementation:**
 - Added 24 missing API endpoints for cache and analytics functionality

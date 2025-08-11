@@ -39,6 +39,7 @@ interface CacheStatus {
   cached: boolean;
   size?: number;
   lastModified?: string;
+  loadTime?: number;
 }
 
 export const VideoCacheStatus: React.FC<VideoCacheStatusProps> = ({ 
@@ -253,13 +254,13 @@ export const VideoCacheStatus: React.FC<VideoCacheStatusProps> = ({
       // Show immediate feedback
       toast({
         title: "All Media Cache Starting",
-        description: "Processing all media files... This will take 15-45 seconds.",
+        description: "Processing all media files... This will take 30-60 seconds.",
       });
       
       try {
         // Use longer timeout for this heavy operation
         const controller = new AbortController();
-        const timeoutId = setTimeout(() => controller.abort(), 60000); // 60 second timeout
+        const timeoutId = setTimeout(() => controller.abort(), 120000); // 120 second timeout for heavy operations
         
         const response = await fetch('/api/video-cache/force-all-media', {
           method: 'POST',
@@ -350,7 +351,7 @@ export const VideoCacheStatus: React.FC<VideoCacheStatusProps> = ({
         cached: video.cached,
         size: video.size || 0,
         lastModified: video.lastModified || new Date().toISOString(),
-        loadTime: video.loadTime || (video.cached ? 50 : 1500)
+        loadTime: video.cached ? 50 : 1500
       };
     });
     return statusMap;

@@ -59,6 +59,7 @@ export default function GallerySection() {
   const [flippedCards, setFlippedCards] = useState<Set<string | number>>(new Set());
   const [lightboxVideo, setLightboxVideo] = useState<GalleryItem | null>(null);
   const [isMobile, setIsMobile] = useState(false);
+  const [preloadedVideos, setPreloadedVideos] = useState<Set<string>>(new Set());
   const networkStatus = useNetworkStatus();
   const { orientation } = useDeviceOrientation();
   
@@ -209,6 +210,70 @@ export default function GallerySection() {
       console.log(`🎬 Gallery videos available: ${galleryItems.length}`, galleryVideoFilenames);
     }
   }, [galleryItems.length, language]);
+
+  // 🚀 SMART PRELOADING SYSTEM - Progressive video chunk downloading for instant playback
+  useEffect(() => {
+    if (!galleryItems.length) return;
+
+    const preloadVideoChunk = async (videoUrl: string, filename: string) => {
+      if (preloadedVideos.has(filename)) return;
+
+      try {
+        console.log(`🎯 SMART PRELOAD: Starting chunk download for ${filename}`);
+        
+        // Download first 256KB for instant startup
+        const response = await fetch(videoUrl, {
+          headers: {
+            'Range': 'bytes=0-262143' // First 256KB
+          }
+        });
+        
+        if (response.ok) {
+          console.log(`✅ SMART PRELOAD: Chunk downloaded for ${filename} (${response.headers.get('content-length')} bytes)`);
+          setPreloadedVideos(prev => new Set([...prev, filename]));
+        }
+      } catch (error) {
+        console.warn(`⚠️ SMART PRELOAD: Failed for ${filename}:`, error);
+      }
+    };
+
+    // Intersection Observer for scroll-based preloading
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          const itemId = entry.target.getAttribute('data-video-id');
+          const item = galleryItems.find(item => item.id === itemId);
+          
+          if (item && hasVideo(item, 0)) {
+            const videoUrl = getVideoUrl(item, 0);
+            const filename = item.videoFilename?.split('/').pop() || '';
+            
+            if (filename && !preloadedVideos.has(filename)) {
+              console.log(`👀 VIDEO IN VIEW: Starting smart preload for ${filename}`);
+              preloadVideoChunk(videoUrl, filename);
+            }
+          }
+        }
+      });
+    }, {
+      rootMargin: '100px', // Start preloading 100px before video comes into view
+      threshold: 0.1
+    });
+
+    // Observe all gallery items
+    const observeItems = () => {
+      const galleryCards = document.querySelectorAll('[data-video-id]');
+      galleryCards.forEach(card => observer.observe(card));
+    };
+
+    // Delayed observation to ensure DOM is ready
+    const timeoutId = setTimeout(observeItems, 100);
+
+    return () => {
+      clearTimeout(timeoutId);
+      observer.disconnect();
+    };
+  }, [galleryItems, preloadedVideos]);
 
   const content = {
     'fr-FR': {
@@ -554,6 +619,7 @@ export default function GallerySection() {
             return (
               <div 
                 key={item.id} 
+                data-video-id={item.id}
                 className={`card-flip-container ${isFlipped ? 'flipped' : ''} rounded-2xl`}
               >
                 <div className="card-flip-inner">
