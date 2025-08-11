@@ -1,6 +1,0 @@
-{
-  "version": "v1.0.11",
-  "timestamp": "2025-07-27T22:55:25.621Z",
-  "fix": "Gallery video underscore-to-space conversion",
-  "critical": "Uses decodedFilename for Supabase URL to prevent double encoding"
-}
