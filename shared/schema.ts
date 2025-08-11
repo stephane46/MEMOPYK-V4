@@ -283,7 +283,8 @@ export const analyticsSessions = pgTable("analytics_sessions", {
   endedAt: timestamp("ended_at"),
   duration: integer("duration"), // in seconds
   pageViews: integer("page_views").default(0),
-  isBot: boolean("is_bot").default(false)
+  isBot: boolean("is_bot").default(false),
+  isTestData: boolean("is_test_data").default(false) // Flag to distinguish test data from real data
 });
 
 // Analytics video views table
@@ -297,7 +298,8 @@ export const analyticsViews = pgTable("analytics_views", {
   watchedToEnd: boolean("watched_to_end").default(false),
   createdAt: timestamp("created_at").defaultNow(),
   ipAddress: text("ip_address"),
-  userAgent: text("user_agent")
+  userAgent: text("user_agent"),
+  isTestData: boolean("is_test_data").default(false) // Flag to distinguish test data from real data
 });
 
 // Real-time visitor tracking table
@@ -311,7 +313,8 @@ export const realtimeVisitors = pgTable("realtime_visitors", {
   city: text("city"),
   isActive: boolean("is_active").default(true),
   lastSeen: timestamp("last_seen").defaultNow(),
-  createdAt: timestamp("created_at").defaultNow()
+  createdAt: timestamp("created_at").defaultNow(),
+  isTestData: boolean("is_test_data").default(false) // Flag to distinguish test data from real data
 });
 
 // Performance metrics table
@@ -325,7 +328,8 @@ export const performanceMetrics = pgTable("performance_metrics", {
   ipAddress: text("ip_address"),
   userAgent: text("user_agent"),
   metadata: jsonb("metadata"), // Additional context like video_id, page_url, error_details
-  createdAt: timestamp("created_at").defaultNow()
+  createdAt: timestamp("created_at").defaultNow(),
+  isTestData: boolean("is_test_data").default(false) // Flag to distinguish test data from real data
 });
 
 // User engagement heatmap data table
