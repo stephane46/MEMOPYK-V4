@@ -344,7 +344,8 @@ export const engagementHeatmap = pgTable("engagement_heatmap", {
   viewportWidth: integer("viewport_width"),
   viewportHeight: integer("viewport_height"),
   timestamp: timestamp("timestamp").defaultNow(),
-  duration: integer("duration") // for hover/focus events
+  duration: integer("duration"), // for hover/focus events
+  isTestData: boolean("is_test_data").default(false) // Flag to distinguish test data from real data
 });
 
 // Conversion funnel tracking table

@@ -3157,6 +3157,7 @@ Allow: /contact`;
       let query = this.supabase
         .from('analytics_sessions')
         .select('*')
+        .eq('is_test_data', false) // Filter out test data
         .order('created_at', { ascending: false });
 
       if (dateFrom) {
@@ -3189,7 +3190,7 @@ Allow: /contact`;
     // Fallback to JSON
     try {
       const sessions = this.loadJsonFile('analytics-sessions.json');
-      let filtered = sessions;
+      let filtered = sessions.filter((session: any) => !session.is_test_data); // Filter out test data
 
       if (dateFrom) {
         filtered = filtered.filter((session: any) => session.created_at >= dateFrom);
@@ -3215,6 +3216,7 @@ Allow: /contact`;
       let query = this.supabase
         .from('analytics_views')
         .select('*')
+        .eq('is_test_data', false) // Filter out test data
         // Exclude hero videos from analytics (auto-play videos don't provide meaningful engagement data)
         .not('video_filename', 'in', '("VideoHero1.mp4","VideoHero2.mp4","VideoHero3.mp4")')
         .order('created_at', { ascending: false });
@@ -3250,6 +3252,7 @@ Allow: /contact`;
     try {
       const views = this.loadJsonFile('analytics-views.json');
       let filtered = views
+        .filter((view: any) => !view.is_test_data) // Filter out test data
         // Exclude hero videos from analytics (auto-play videos don't provide meaningful engagement data)
         .filter((view: any) => !['VideoHero1.mp4', 'VideoHero2.mp4', 'VideoHero3.mp4'].includes(view.video_filename));
 
@@ -3312,6 +3315,41 @@ Allow: /contact`;
   }
 
   async createAnalyticsSession(sessionData: any): Promise<any> {
+    // Helper function to determine if this is test data
+    const isTestData = (data: any): boolean => {
+      const ip = data.ip_address || '0.0.0.0';
+      const pageUrl = data.page_url || '';
+      const referrer = data.referrer || '';
+      const userAgent = (data.user_agent || '').toLowerCase();
+      const country = data.country || 'Unknown';
+      const sessionId = data.session_id || '';
+
+      return (
+        // Development IP addresses
+        ip === '0.0.0.0' || 
+        ip.startsWith('127.') ||
+        ip.startsWith('192.168.') ||
+        // Development domains
+        pageUrl.includes('replit.dev') ||
+        pageUrl.includes('replit.app') ||
+        pageUrl.includes('localhost') ||
+        // Development referrers
+        referrer.includes('workspace_iframe') ||
+        referrer.includes('replit.dev') ||
+        // Bot/automated traffic
+        userAgent.includes('bot') ||
+        userAgent.includes('crawler') ||
+        userAgent.includes('spider') ||
+        userAgent.includes('automated') ||
+        userAgent.includes('test') ||
+        // Test session IDs
+        sessionId.startsWith('TEST_') ||
+        sessionId.startsWith('DEV_') ||
+        // Unknown/placeholder data consistently
+        country === 'Unknown'
+      );
+    };
+
     // Generate session data (move outside try block so it's accessible in JSON fallback)
     const sessionWithId = {
       id: `session_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
@@ -3325,6 +3363,7 @@ Allow: /contact`;
       page_url: sessionData.page_url || '',
       referrer: sessionData.referrer || '',
       ip_address: sessionData.ip_address || '0.0.0.0',
+      is_test_data: isTestData(sessionData), // Automatically flag test data
       created_at: new Date().toISOString(),
       updated_at: new Date().toISOString()
     };
@@ -3372,6 +3411,20 @@ Allow: /contact`;
   }
 
   async createAnalyticsView(viewData: any): Promise<any> {
+    // Helper function to determine if this is test data (same logic as sessions)
+    const isTestData = (data: any): boolean => {
+      const ip = data.ip_address || '0.0.0.0';
+      const sessionId = data.session_id || '';
+      
+      return (
+        ip === '0.0.0.0' || 
+        ip.startsWith('127.') ||
+        ip.startsWith('192.168.') ||
+        sessionId.startsWith('TEST_') ||
+        sessionId.startsWith('DEV_')
+      );
+    };
+
     try {
       const views = this.loadJsonFile('analytics-views.json');
       
@@ -3384,6 +3437,9 @@ Allow: /contact`;
         language: viewData.language || 'en-US',
         watch_time: viewData.watch_time || 0,
         completion_rate: viewData.completion_rate || 0,
+        ip_address: viewData.ip_address || '0.0.0.0',
+        user_agent: viewData.user_agent || '',
+        is_test_data: isTestData(viewData), // Automatically flag test data
         created_at: new Date().toISOString(),
         updated_at: new Date().toISOString()
       };
@@ -4036,6 +4092,7 @@ Allow: /contact`;
         .from('realtime_visitors')
         .select('*')
         .eq('isActive', true)
+        .eq('is_test_data', false) // Filter out test data
         .order('lastSeen', { ascending: false });
 
       if (visitors && visitors.length > 0) {
@@ -4044,11 +4101,11 @@ Allow: /contact`;
 
       // Fallback to JSON file
       const visitorData = this.loadJsonFile('realtime-visitors.json');
-      return visitorData.filter((v: any) => v.isActive);
+      return visitorData.filter((v: any) => v.isActive && !v.is_test_data);
     } catch (error) {
       console.warn('Database error, using JSON fallback for realtime visitors:', error);
       const visitorData = this.loadJsonFile('realtime-visitors.json');
-      return visitorData.filter((v: any) => v.isActive);
+      return visitorData.filter((v: any) => v.isActive && !v.is_test_data);
     }
   }
 
@@ -4111,6 +4168,22 @@ Allow: /contact`;
   }
 
   async createRealtimeVisitor(visitorData: any): Promise<any> {
+    // Helper function to determine if this is test data
+    const isTestData = (data: any): boolean => {
+      const ip = data.ipAddress || '0.0.0.0';
+      const sessionId = data.sessionId || '';
+      const userAgent = (data.userAgent || '').toLowerCase();
+      
+      return (
+        ip === '0.0.0.0' || 
+        ip.startsWith('127.') ||
+        ip.startsWith('192.168.') ||
+        sessionId.startsWith('TEST_') ||
+        sessionId.startsWith('DEV_') ||
+        userAgent.includes('test')
+      );
+    };
+
     try {
       const newVisitor = {
         sessionId: visitorData.sessionId,
@@ -4120,6 +4193,7 @@ Allow: /contact`;
         country: visitorData.country || null,
         city: visitorData.city || null,
         isActive: true,
+        is_test_data: isTestData(visitorData), // Flag test data
         lastSeen: new Date().toISOString(),
         createdAt: new Date().toISOString()
       };
@@ -4149,6 +4223,22 @@ Allow: /contact`;
 
   // Performance Monitoring Methods
   async recordPerformanceMetric(metricData: any): Promise<any> {
+    // Helper function to determine if this is test data
+    const isTestData = (data: any): boolean => {
+      const ip = data.ipAddress || '0.0.0.0';
+      const sessionId = data.sessionId || '';
+      const userAgent = (data.userAgent || '').toLowerCase();
+      
+      return (
+        ip === '0.0.0.0' || 
+        ip.startsWith('127.') ||
+        ip.startsWith('192.168.') ||
+        sessionId.startsWith('TEST_') ||
+        sessionId.startsWith('DEV_') ||
+        userAgent.includes('test')
+      );
+    };
+
     try {
       const newMetric = {
         metricType: metricData.metricType,
@@ -4159,6 +4249,7 @@ Allow: /contact`;
         ipAddress: metricData.ipAddress || null,
         userAgent: metricData.userAgent || null,
         metadata: metricData.metadata || {},
+        is_test_data: isTestData(metricData), // Flag test data
         createdAt: new Date().toISOString()
       };
 
@@ -4190,6 +4281,7 @@ Allow: /contact`;
       let query = this.supabase
         .from('performance_metrics')
         .select('*')
+        .eq('is_test_data', false) // Filter out test data
         .order('createdAt', { ascending: false });
 
       if (metricType) {
@@ -4208,7 +4300,7 @@ Allow: /contact`;
 
       // Fallback to JSON
       const metricsData = this.loadJsonFile('performance-metrics.json');
-      let filteredMetrics = metricsData;
+      let filteredMetrics = metricsData.filter((m: any) => !m.is_test_data); // Filter out test data
 
       if (metricType) {
         filteredMetrics = filteredMetrics.filter((m: any) => m.metricType === metricType);
@@ -4225,7 +4317,7 @@ Allow: /contact`;
     } catch (error) {
       console.warn('Database error, using JSON fallback for performance metrics:', error);
       const metricsData = this.loadJsonFile('performance-metrics.json');
-      return metricsData;
+      return metricsData.filter((m: any) => !m.is_test_data); // Filter out test data
     }
   }
 
