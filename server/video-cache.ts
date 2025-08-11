@@ -798,7 +798,7 @@ export class VideoCache {
         .filter(filename => filename && filename.endsWith('.mp4'));
       
       // ARCHITECTURE COMPLIANCE: Only cache hero videos, gallery uses direct CDN
-      const uniqueFilenames = [...new Set(heroVideoFilenames)]; // Remove duplicates
+      const uniqueFilenames = Array.from(new Set(heroVideoFilenames)); // Remove duplicates
       
       console.log(`📋 HERO-ONLY PRELOAD: Found ${uniqueFilenames.length} hero videos to cache`);
       console.log(`🎬 Hero video filenames:`, uniqueFilenames);
@@ -1143,8 +1143,7 @@ export class VideoCache {
         headers: { 
           'User-Agent': 'MEMOPYK-Universal-Cache/1.0',
           'Accept': 'video/mp4,video/*,*/*'
-        },
-        timeout: 30000 // 30 second timeout
+        }
       });
       
       if (!response.ok) {
@@ -1241,7 +1240,7 @@ export class VideoCache {
       console.log(`✅ HERO-ONLY PRELOAD COMPLETE v1.0.66! Cache: ${finalStats.fileCount} files, ${finalStats.sizeMB}MB`);
       console.log(`🎯 Hero videos: instant ~50ms performance from cache`);
       console.log(`🎯 Gallery videos: direct CDN streaming (slower but reliable in production)`);
-    } catch (error) {
+    } catch (error: any) {
       console.error('❌ HERO PRELOAD FAILED v1.0.66:', error);
       console.error('❌ Error details:', {
         message: error.message,
@@ -1318,7 +1317,7 @@ export class VideoCache {
       
       console.log(`📊 Found ${staticImageUrls.size} unique static image URLs to check...`);
       
-      for (const staticImageUrl of staticImageUrls) {
+      for (const staticImageUrl of Array.from(staticImageUrls)) {
         // Extract filename from URL
         const filename = staticImageUrl.split('/').pop();
         if (!filename) continue;
