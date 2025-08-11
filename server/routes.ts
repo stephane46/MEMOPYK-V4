@@ -1833,195 +1833,145 @@ export async function registerRoutes(app: Express): Promise<Server> {
     });
   });
 
-  // Video streaming proxy with TIMEOUT SAFEGUARD - v1.0.46
+  // SIMPLIFIED VIDEO PROXY - Fixed for Gallery Videos v1.0.51
   app.get("/api/video-proxy", async (req, res) => {
-    // CRITICAL DEBUG: Route entry detection
-    console.log(`🔥🔥🔥 VIDEO PROXY ROUTE HIT! v1.0.49 - ${new Date().toISOString()}`);
-    console.log(`🔥🔥🔥 Raw request URL: ${req.url}`);
-    console.log(`🔥🔥🔥 Filename param: ${req.query.filename}`);
-    
-    // GALLERY VIDEO DETECTION - Track all requests at entry point
     const filename = req.query.filename as string;
-    const isGalleryVideo = filename && (filename.includes('-') || filename.includes('1753'));
-    const isHeroVideo = filename && (filename.includes('VideoHero') || filename.includes('Hero'));
     
-    console.log(`🔥 VIDEO PROXY ENTRY v1.0.50-route-entry-debug - REQUEST RECEIVED:`);
-    console.log(`   - Raw URL: ${req.url}`);
+    console.log(`🎬 VIDEO PROXY v1.0.51 - SIMPLIFIED APPROACH`);
     console.log(`   - Filename: "${filename}"`);
-    console.log(`   - Is Gallery Video: ${isGalleryVideo}`);
-    console.log(`   - Is Hero Video: ${isHeroVideo}`);
-    console.log(`   - Method: ${req.method}`);
-    console.log(`   - User-Agent: ${req.headers['user-agent']?.substring(0, 100)}`);
+    console.log(`   - Range: "${req.headers.range}"`);
     
-    if (isGalleryVideo) {
-      console.log(`🎬 GALLERY VIDEO REQUEST DETECTED: ${filename}`);
-      console.log(`   - This should work identically to hero videos`);
-      console.log(`   - Gallery video should be cached and served from local storage`);
+    if (!filename) {
+      console.log(`❌ Missing filename parameter`);
+      return res.status(400).json({ error: "filename parameter is required" });
     }
-    
-    // EMERGENCY: Wrap everything in bulletproof error handling
-    const emergencyErrorHandler = (error: any) => {
-      console.error('🚨 EMERGENCY HANDLER - VIDEO PROXY ERROR:', error);
-      console.error(`   - Was Gallery Video: ${isGalleryVideo}`);
-      console.error(`   - Filename: ${filename}`);
-      if (!res.headersSent) {
-        res.status(500).json({ 
-          error: "Emergency error handler activated",
-          message: error.message,
-          isGalleryVideo,
-          filename,
-          version: "v1.0.45-final-stage-logging",
-          timestamp: new Date().toISOString()
-        });
-      }
-    };
-    
-    process.removeAllListeners('uncaughtException');
-    process.removeAllListeners('unhandledRejection');
-    process.on('uncaughtException', emergencyErrorHandler);
-    process.on('unhandledRejection', emergencyErrorHandler);
-    
+
     try {
-      const { url } = req.query;
+      // Simple filename-based approach - direct Supabase streaming for gallery videos
+      const encodedFilename = encodeURIComponent(filename);
+      const supabaseUrl = `https://supabase.memopyk.org/storage/v1/object/public/memopyk-videos/${encodedFilename}`;
       
-      console.log(`🎬 VIDEO PROXY REQUEST DEBUG v1.0.46:`);
-      console.log(`   - Filename: "${filename}"`);
-      console.log(`   - URL param: "${url}"`);
-      console.log(`   - Range header: "${req.headers.range}"`);
-      console.log(`   - User-Agent: "${req.headers['user-agent']}"`);
-      console.log(`   - Accept: "${req.headers.accept}"`);
+      // Check if this is a hero video that should use cache
+      const isHeroVideo = filename.includes('VideoHero') || filename.includes('Hero');
       
-      if (!filename) {
-        console.log(`❌ Missing filename parameter`);
-        return res.status(400).json({ error: "filename parameter is required" });
-      }
-
-      // TIMESTAMP PREFIX HANDLING - v1.0.30
-      const decodedFilename = filename as string;
-      const encodedFilename = encodeURIComponent(decodedFilename);
-      
-      // CRITICAL: Handle problematic characters that crash production
-      const sanitizedFilename = decodedFilename.replace(/[()]/g, '_');
-      
-      console.log(`   - Original filename: "${decodedFilename}"`);
-      console.log(`   - Encoded filename: "${encodedFilename}"`);
-      console.log(`   - Sanitized filename: "${sanitizedFilename}"`);
-      console.log(`   - TIMESTAMP PREFIX FIX v1.0.30 - ENHANCED ERROR DETECTION`);
-      
-      // CRITICAL FIX: Check for timestamp-prefixed gallery videos and ensure they cache properly
-      const isTimestampPrefixed = /^\d{13}-/.test(decodedFilename);
-      if (isTimestampPrefixed) {
-        console.log(`🚨 TIMESTAMP-PREFIXED VIDEO DETECTED: ${decodedFilename}`);
-        console.log(`   - This is a gallery video that requires special handling`);
-      }
-      
-      // Try multiple filename variations to find cached video
-      let videoFilename = decodedFilename;
-      
-      try {
-        if (videoCache.isVideoCached(decodedFilename)) {
-          console.log(`   - ✅ Found with decoded filename: "${decodedFilename}"`);
-        } else if (videoCache.isVideoCached(encodedFilename)) {
-          console.log(`   - ✅ Found with encoded filename: "${encodedFilename}"`);
-          videoFilename = encodedFilename;
-        } else if (videoCache.isVideoCached(sanitizedFilename)) {
-          console.log(`   - ✅ Found with sanitized filename: "${sanitizedFilename}"`);
-          videoFilename = sanitizedFilename;
+      if (isHeroVideo) {
+        // Use existing cache logic for hero videos
+        let cachedVideo = videoCache.getCachedVideoPath(filename);
+        
+        if (cachedVideo && existsSync(cachedVideo)) {
+          console.log(`📦 Serving hero video from cache: ${filename}`);
+          return serveVideoFromCache(cachedVideo, req, res);
         } else {
-          console.log(`   - ❌ Not found in cache - will try to download: "${decodedFilename}"`);
+          console.log(`🚨 Hero video not cached, downloading: ${filename}`);
+          await videoCache.downloadAndCacheVideo(filename, supabaseUrl);
+          cachedVideo = videoCache.getCachedVideoPath(filename);
+          if (cachedVideo && existsSync(cachedVideo)) {
+            return serveVideoFromCache(cachedVideo, req, res);
+          }
         }
-      } catch (cacheCheckError: any) {
-        console.error(`🚨 CACHE CHECK ERROR for ${decodedFilename}:`, cacheCheckError.message);
-        console.log(`   - Will proceed with download attempt despite cache check failure`);
       }
       
-      const range = req.headers.range;
-      
-      // Check for cache bypass header (for performance testing)
-      const bypassCache = req.headers['x-test-bypass-cache'] === '1';
-      if (bypassCache) {
-        console.log(`🔄 CACHE BYPASS REQUESTED for performance testing: ${videoFilename}`);
-      }
-
-      // Check if video exists in cache (skip if bypassing)
-      let cachedVideo = bypassCache ? null : videoCache.getCachedVideoPath(videoFilename);
-      console.log(`   - Cache path: "${cachedVideo}"`);
-      console.log(`   - Cache exists: ${cachedVideo && existsSync(cachedVideo)}`);
-      console.log(`   - Cache bypass: ${bypassCache}`);
-      
-      // PRODUCTION PATH DEBUG: Log exact path resolution
-      console.log(`🔍 PRODUCTION PATH DEBUG:`, {
-        requestedFilename: videoFilename,
-        computedCachePath: cachedVideo,
-        pathExists: cachedVideo ? existsSync(cachedVideo) : false,
-        currentWorkingDir: process.cwd(),
-        __dirname: __dirname,
-        nodeEnv: process.env.NODE_ENV
+      // For gallery videos or if hero video cache fails, stream directly from Supabase
+      console.log(`🌐 Streaming directly from Supabase: ${filename}`);
+      const fetch = (await import('node-fetch')).default;
+      const response = await fetch(supabaseUrl, {
+        headers: {
+          'Range': req.headers.range || 'bytes=0-',
+          'User-Agent': 'MEMOPYK-VideoProxy/1.0'
+        }
       });
       
-      // UNIVERSAL VIDEO SERVING v1.0.40 - Try cache first, fallback if needed
-      if (!cachedVideo || bypassCache) {
-        if (bypassCache) {
-          console.log(`🔄 BYPASSING CACHE for performance test: ${videoFilename}`);
+      if (!response.ok) {
+        console.error(`❌ Failed to fetch video from Supabase: ${response.status} ${response.statusText}`);
+        return res.status(500).json({ 
+          error: "Video not available",
+          filename,
+          status: response.status,
+          statusText: response.statusText
+        });
+      }
+      
+      // Forward response headers
+      const contentRange = response.headers.get('content-range');
+      const contentLength = response.headers.get('content-length');
+      const acceptRanges = response.headers.get('accept-ranges');
+      
+      const headers: any = {
+        'Content-Type': 'video/mp4',
+        'Access-Control-Allow-Origin': '*',
+        'Access-Control-Allow-Headers': 'range, content-type',
+        'Cache-Control': 'public, max-age=3600'
+      };
+      
+      if (contentRange) headers['Content-Range'] = contentRange;
+      if (contentLength) headers['Content-Length'] = contentLength;
+      if (acceptRanges) headers['Accept-Ranges'] = acceptRanges;
+      
+      const statusCode = response.status === 206 ? 206 : 200;
+      res.writeHead(statusCode, headers);
+      
+      if (response.body) {
+        response.body.pipe(res);
+      } else {
+        res.end();
+      }
+      
+    } catch (error: any) {
+      console.error(`❌ Video proxy error for ${filename}:`, error);
+      res.status(500).json({ 
+        error: "Video proxy failed",
+        filename,
+        message: error.message,
+        version: "v1.0.51-simplified"
+      });
+    }
+  });
+  
+  // Helper function to serve video from cache
+  function serveVideoFromCache(cachedVideo: string, req: any, res: any) {
+    const stat = statSync(cachedVideo);
+    const fileSize = stat.size;
+    const range = req.headers.range;
+    
+    if (range) {
+      const parts = range.replace(/bytes=/, "").split("-");
+      const start = parseInt(parts[0], 10) || 0;
+      let end = fileSize - 1;
+      
+      if (parts[1] && parts[1].trim()) {
+        const parsedEnd = parseInt(parts[1], 10);
+        if (!isNaN(parsedEnd)) {
+          end = parsedEnd;
         }
-        console.log(`🚨 VIDEO NOT CACHED: ${videoFilename} - Attempting auto-download...`);
-        
-        try {
-          // Clean download attempt
-          const encodedForDownload = encodeURIComponent(decodedFilename);
-          const supabaseUrl = `https://supabase.memopyk.org/storage/v1/object/public/memopyk-videos/${encodedForDownload}`;
-          console.log(`📥 UNIVERSAL AUTO-DOWNLOAD v1.0.40: ${decodedFilename}`);
-          console.log(`   - Supabase URL: ${supabaseUrl}`);
-          
-          await videoCache.downloadAndCacheVideo(decodedFilename, supabaseUrl);
-          cachedVideo = videoCache.getCachedVideoPath(decodedFilename);
-          videoFilename = decodedFilename;
-          
-          console.log(`✅ Auto-download successful for ${decodedFilename}`);
-        } catch (downloadError: any) {
-          console.warn(`⚠️ Auto-download failed for ${decodedFilename}: ${downloadError.message}`);
-          console.log(`🔄 FALLBACK: Attempting direct Supabase stream for ${decodedFilename}`);
-          
-          // FALLBACK: Direct Supabase streaming
-          try {
-            const encodedForStream = encodeURIComponent(decodedFilename);
-            const directUrl = `https://supabase.memopyk.org/storage/v1/object/public/memopyk-videos/${encodedForStream}`;
-            
-            const fetch = (await import('node-fetch')).default;
-            const response = await fetch(directUrl, {
-              headers: { 
-                'Range': req.headers.range || 'bytes=0-',
-                'User-Agent': 'MEMOPYK-DirectStream/1.0'
-              }
-            });
-            
-            if (!response.ok) {
-              throw new Error(`HTTP ${response.status} ${response.statusText}`);
-            }
-            
-            console.log(`🌐 DIRECT STREAM v1.0.40: Serving ${decodedFilename} directly from Supabase`);
-            
-            // Forward headers from Supabase
-            const contentRange = response.headers.get('content-range');
-            const contentLength = response.headers.get('content-length');
-            const acceptRanges = response.headers.get('accept-ranges');
-            
-            const deliveryHeaders = createCacheMissHeaders('supabase');
-            const headers: any = {
-              'Content-Type': 'video/mp4',
-              'Access-Control-Allow-Origin': '*',
-              'Access-Control-Allow-Headers': 'range, content-type',
-              'Cache-Control': 'no-cache, no-store, must-revalidate', // Force fresh requests
-              'Pragma': 'no-cache',
-              'Expires': '0',
-              'X-Delivery': deliveryHeaders['X-Delivery'],
-              'X-Upstream': deliveryHeaders['X-Upstream'],
-              'X-Storage': deliveryHeaders['X-Storage']
-            };
-            
-            if (contentRange) headers['Content-Range'] = contentRange;
-            if (contentLength) headers['Content-Length'] = contentLength;
-            if (acceptRanges) headers['Accept-Ranges'] = acceptRanges;
+      }
+      
+      const chunksize = (end - start) + 1;
+      const stream = createReadStream(cachedVideo, { start, end });
+      
+      res.writeHead(206, {
+        'Content-Range': `bytes ${start}-${end}/${fileSize}`,
+        'Accept-Ranges': 'bytes',
+        'Content-Length': chunksize,
+        'Content-Type': 'video/mp4',
+        'Access-Control-Allow-Origin': '*',
+        'Cache-Control': 'public, max-age=86400'
+      });
+      
+      stream.pipe(res);
+    } else {
+      res.writeHead(200, {
+        'Content-Length': fileSize,
+        'Content-Type': 'video/mp4',
+        'Access-Control-Allow-Origin': '*',
+        'Cache-Control': 'public, max-age=86400'
+      });
+      
+      const stream = createReadStream(cachedVideo);
+      stream.pipe(res);
+    }
+  }
+
+  // Image serving endpoint for cached images
             
             const statusCode = response.status === 206 ? 206 : 200;
             res.writeHead(statusCode, headers);
