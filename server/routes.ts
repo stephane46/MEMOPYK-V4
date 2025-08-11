@@ -147,7 +147,7 @@ const uploadImage = multer({
   }
 });
 
-export async function registerRoutes(app: Express): Promise<Server> {
+export async function registerRoutes(app: Express): Promise<void> {
   // MEMOPYK Platform Content API Routes
   
   // Hero Videos - Video carousel content
@@ -2220,6 +2220,140 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const serveTime = Date.now() - startTime;
       console.error(`❌ [GALLERY-PROXY] Error serving ${videoFilename} (${serveTime}ms):`, error);
       res.status(500).json({ error: 'Failed to serve video', source: 'PROXY_ERROR', serveTime: `${serveTime}ms` });
+    }
+  });
+
+  // Deployment Marker API Endpoints
+  
+  // Get deployment markers
+  app.get("/api/deployment/markers", async (req, res) => {
+    try {
+      const markersDir = path.join(process.cwd());
+      const markerFiles = readdirSync(markersDir)
+        .filter(file => file.startsWith('DEPLOYMENT_MARKER') && file.endsWith('.json'))
+        .map(file => {
+          try {
+            const fullPath = path.join(markersDir, file);
+            const content = JSON.parse(fs.readFileSync(fullPath, 'utf8'));
+            const stats = statSync(fullPath);
+            return {
+              filename: file,
+              description: content.fix || content.description || 'No description',
+              timestamp: content.timestamp || stats.mtime.toISOString(),
+              version: content.version || '1.0.0'
+            };
+          } catch (error) {
+            console.error(`Error reading deployment marker ${file}:`, error);
+            return null;
+          }
+        })
+        .filter(Boolean)
+        .sort((a, b) => new Date(b!.timestamp).getTime() - new Date(a!.timestamp).getTime());
+
+      res.json(markerFiles);
+    } catch (error) {
+      console.error('Error loading deployment markers:', error);
+      res.status(500).json({ error: 'Failed to load deployment markers' });
+    }
+  });
+
+  // Create deployment marker
+  app.post("/api/deployment/create-marker", async (req, res) => {
+    try {
+      const { description, keep } = req.body;
+      
+      if (!description) {
+        return res.status(400).json({ error: 'Description is required' });
+      }
+
+      // Generate unique filename with timestamp
+      const timestamp = Date.now();
+      const version = `1.0.${Math.floor(timestamp / 1000)}`;
+      const filename = `DEPLOYMENT_MARKER_v${version}.json`;
+      
+      // Create deployment marker object
+      const deploymentMarker = {
+        version,
+        timestamp: new Date().toISOString(),
+        fix: description,
+        description,
+        status: 'ADMIN_CREATED',
+        critical: false,
+        created_via: 'admin_panel'
+      };
+
+      // Write marker file
+      const filePath = path.join(process.cwd(), filename);
+      fs.writeFileSync(filePath, JSON.stringify(deploymentMarker, null, 2));
+      
+      console.log(`✅ Created deployment marker: ${filename}`);
+      console.log(`📋 Description: ${description}`);
+      
+      // Clean up old markers if keep count specified
+      if (keep && keep > 0) {
+        try {
+          const markersDir = process.cwd();
+          const existingMarkers = readdirSync(markersDir)
+            .filter(file => file.startsWith('DEPLOYMENT_MARKER') && file.endsWith('.json'))
+            .map(file => ({
+              file,
+              path: path.join(markersDir, file),
+              stats: statSync(path.join(markersDir, file))
+            }))
+            .sort((a, b) => b.stats.mtime.getTime() - a.stats.mtime.getTime());
+
+          if (existingMarkers.length > keep) {
+            const toDelete = existingMarkers.slice(keep);
+            toDelete.forEach(marker => {
+              try {
+                unlinkSync(marker.path);
+                console.log(`🗑️ Cleaned up old marker: ${marker.file}`);
+              } catch (error) {
+                console.error(`Failed to delete ${marker.file}:`, error);
+              }
+            });
+          }
+        } catch (error) {
+          console.warn('Error during marker cleanup:', error);
+        }
+      }
+
+      res.json({ 
+        success: true, 
+        filename,
+        version,
+        description,
+        timestamp: deploymentMarker.timestamp
+      });
+      
+    } catch (error) {
+      console.error('Error creating deployment marker:', error);
+      res.status(500).json({ error: 'Failed to create deployment marker' });
+    }
+  });
+
+  // Delete deployment marker
+  app.delete("/api/deployment/markers/:filename", async (req, res) => {
+    try {
+      const { filename } = req.params;
+      
+      if (!filename.startsWith('DEPLOYMENT_MARKER') || !filename.endsWith('.json')) {
+        return res.status(400).json({ error: 'Invalid marker filename' });
+      }
+
+      const filePath = path.join(process.cwd(), filename);
+      
+      if (!existsSync(filePath)) {
+        return res.status(404).json({ error: 'Marker not found' });
+      }
+
+      unlinkSync(filePath);
+      console.log(`🗑️ Deleted deployment marker: ${filename}`);
+      
+      res.json({ success: true, message: `Marker ${filename} deleted successfully` });
+    } catch (error) {
+      console.error('Error deleting deployment marker:', error);
+      res.status(500).json({ error: 'Failed to delete deployment marker' });
     }
   });
 }
