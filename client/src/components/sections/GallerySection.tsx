@@ -321,13 +321,13 @@ export default function GallerySection() {
       ? filename.split('/').pop() || filename
       : filename;
     
-    // Use the new simplified gallery video proxy endpoint
-    const proxyUrl = `/api/gallery-video-proxy?filename=${encodeURIComponent(cleanFilename)}`;
+    // Use the same working video proxy endpoint that hero videos use
+    const proxyUrl = `/api/video-proxy?filename=${encodeURIComponent(cleanFilename)}`;
     
     console.log(`🎬 GALLERY PROXY for item ${index}: ${cleanFilename}`);
     console.log(`🔧 PROXY URL: ${proxyUrl}`);
-    console.log(`✅ Using simplified gallery video proxy with cache fallback to CDN`);
-    console.log(`📊 Check browser Network tab for X-Video-Source header (CACHE or CDN)`);
+    console.log(`✅ Using working video proxy (same as hero videos) with Supabase fallback`);
+    console.log(`📊 Check browser Network tab for video source (CACHE or CDN)`);
     
     return proxyUrl;
   };

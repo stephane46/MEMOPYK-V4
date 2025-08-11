@@ -163,7 +163,7 @@ export default function GalleryVideoTest() {
                           }}
                         >
                           <source 
-                            src={`/api/gallery-video-proxy?filename=${videoFilename}`} 
+                            src={`/api/video-proxy?filename=${videoFilename}`} 
                             type="video/mp4" 
                           />
                           Your browser does not support the video tag.

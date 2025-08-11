@@ -158,5 +158,21 @@
     "is_test_data": true,
     "created_at": "2025-08-11T11:09:06.678Z",
     "updated_at": "2025-08-11T11:09:06.678Z"
+  },
+  {
+    "id": "session_1754910747264_95tt4quxv",
+    "session_id": "test_session_2",
+    "country": "USA",
+    "region": "Unknown",
+    "city": "Unknown",
+    "language": "en-US",
+    "user_agent": "",
+    "screen_resolution": "",
+    "page_url": "",
+    "referrer": "",
+    "ip_address": "0.0.0.0",
+    "is_test_data": true,
+    "created_at": "2025-08-11T11:12:27.265Z",
+    "updated_at": "2025-08-11T11:12:27.265Z"
   }
 ]
