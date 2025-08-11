@@ -341,6 +341,130 @@ export default function PerformanceTestDashboard() {
     });
   };
 
+  // Test /gv page directly to verify full user experience
+  const testGvPage = async () => {
+    setIsRunning(true);
+    setCurrentTest('Testing /gv Page Experience...');
+    setTestProgress(0);
+
+    try {
+      console.log('🚀 TESTING /GV PAGE - FULL USER EXPERIENCE');
+      
+      setTestProgress(20);
+      const testStart = performance.now();
+      
+      // Test page load
+      setCurrentTest('Loading /gv page...');
+      const pageResponse = await fetch('/gv', {
+        method: 'GET',
+        cache: 'no-cache'
+      });
+      
+      if (!pageResponse.ok) {
+        throw new Error(`/gv page failed to load: ${pageResponse.status}`);
+      }
+      
+      const pageLoadTime = Math.round(performance.now() - testStart);
+      console.log(`📄 /gv page loaded in ${pageLoadTime}ms`);
+      
+      setTestProgress(50);
+      setCurrentTest('Testing gallery API from /gv context...');
+      
+      // Test gallery API as if called from /gv page
+      const galleryApiStart = performance.now();
+      const galleryResponse = await fetch('/api/gallery', {
+        headers: {
+          'Referer': window.location.origin + '/gv',
+          'X-GV-Page-Test': '1'
+        },
+        cache: 'default'
+      });
+      
+      const galleryApiTime = Math.round(performance.now() - galleryApiStart);
+      const galleryData = await galleryResponse.json();
+      
+      console.log(`📋 Gallery API: ${galleryApiTime}ms • ${galleryData?.length || 0} items`);
+      
+      setTestProgress(80);
+      setCurrentTest('Testing video delivery from /gv...');
+      
+      // Test actual video requests as they would come from /gv
+      let videoTestResults: any[] = [];
+      const knownVideos = ['PomGalleryC.mp4', 'VitaminSeaC.mp4', 'safari-1.mp4'];
+      
+      for (const filename of knownVideos) {
+        const videoStart = performance.now();
+        try {
+          const videoResponse = await fetch(`/api/video-proxy?filename=${filename}`, {
+            method: 'HEAD',
+            headers: {
+              'Referer': window.location.origin + '/gv',
+              'X-GV-Video-Test': '1'
+            }
+          });
+          
+          const videoTime = Math.round(performance.now() - videoStart);
+          const videoSource = videoResponse.headers.get('X-Video-Source');
+          const contentLength = videoResponse.headers.get('Content-Length');
+          
+          videoTestResults.push({
+            filename,
+            time: videoTime,
+            source: videoSource,
+            size: contentLength ? Number(contentLength) : 0,
+            status: videoResponse.status
+          });
+          
+          console.log(`🎬 ${filename}: ${videoTime}ms • ${videoResponse.status} • Source: ${videoSource}`);
+          
+        } catch (error) {
+          console.error(`❌ ${filename} failed:`, error);
+          videoTestResults.push({
+            filename,
+            time: -1,
+            source: 'error',
+            size: 0,
+            status: 0
+          });
+        }
+      }
+      
+      setTestProgress(100);
+      const totalTime = Math.round(performance.now() - testStart);
+      
+      // Calculate results
+      const successfulVideos = videoTestResults.filter(v => v.time > 0);
+      const cachedVideos = successfulVideos.filter(v => v.source === 'cache');
+      const avgVideoTime = successfulVideos.length > 0 ? 
+        Math.round(successfulVideos.reduce((sum, v) => sum + v.time, 0) / successfulVideos.length) : -1;
+      
+      console.log(`✅ /GV PAGE TEST COMPLETE:`);
+      console.log(`   • Page Load: ${pageLoadTime}ms`);
+      console.log(`   • Gallery API: ${galleryApiTime}ms`);
+      console.log(`   • Videos: ${successfulVideos.length}/${knownVideos.length} working`);
+      console.log(`   • Cache: ${cachedVideos.length}/${successfulVideos.length} from cache`);
+      console.log(`   • Avg Video Time: ${avgVideoTime}ms`);
+      console.log(`   • Total Test Time: ${totalTime}ms`);
+      
+      toast({
+        title: "/gv Page Test Complete",
+        description: `Page: ${pageLoadTime}ms • API: ${galleryApiTime}ms • Videos: ${cachedVideos.length}/${knownVideos.length} from cache • Avg: ${avgVideoTime}ms`,
+      });
+      
+    } catch (error) {
+      console.error('❌ /GV PAGE TEST FAILED:', error);
+      toast({
+        title: "/gv Page Test Failed", 
+        description: error instanceof Error ? error.message : "Unknown error",
+        variant: "destructive"
+      });
+    } finally {
+      setIsRunning(false);
+      setCurrentTest('');
+      setTestProgress(0);
+    }
+  };
+
   // Removed old getTimeStatus - now using the one from performance-thresholds.ts
 
   // Get status badge color based on performance time  
@@ -404,7 +528,7 @@ export default function PerformanceTestDashboard() {
             Performance Testing
           </CardTitle>
           <CardDescription>
-            Tests API endpoints directly (not pages). Tests /api/video-proxy, /api/images, etc. to verify backend cache performance after deployment.
+            Two test modes: API Performance (tests endpoints directly) and /gv Page Test (tests full user experience). Use both after deployment to verify gallery video cache.
           </CardDescription>
           
           {/* Performance Testing Legend */}
@@ -413,15 +537,15 @@ export default function PerformanceTestDashboard() {
             
             <div className="space-y-3">
               <div className="border-l-4 border-blue-400 pl-3">
-                <span className="font-medium text-blue-600">Hero Videos:</span> Tests the first 1KB of hero video delivery via local cache or VPS proxy. Measures actual video streaming performance that users experience during homepage video playback.
-              </div>
-              
-              <div className="border-l-4 border-green-400 pl-3">
-                <span className="font-medium text-green-600">Static Images:</span> Tests full thumbnail image loading (300x200 gallery thumbnails). Measures complete image delivery from local cache or Supabase CDN for gallery previews.
+                <span className="font-medium text-blue-600">API Performance Test:</span> Tests endpoints directly (/api/video-proxy, /api/images) to verify backend cache. Fast but doesn't test user experience.
               </div>
               
               <div className="border-l-4 border-purple-400 pl-3">
-                <span className="font-medium text-purple-600">Gallery Videos API:</span> Tests /api/video-proxy endpoint with gallery videos (PomGalleryC.mp4, VitaminSeaC.mp4, safari-1.mp4). Verifies backend cache works after deployment - does NOT test /gv page directly.
+                <span className="font-medium text-purple-600">/gv Page Test:</span> Tests complete user experience on /gv page including page load, gallery API, and video delivery. Critical for deployment validation.
+              </div>
+              
+              <div className="border-l-4 border-green-400 pl-3">
+                <span className="font-medium text-green-600">Gallery Videos Tested:</span> PomGalleryC.mp4, VitaminSeaC.mp4, safari-1.mp4 - verifies X-Video-Source: CACHE headers after production deployment.
               </div>
             </div>
             
@@ -529,7 +653,17 @@ export default function PerformanceTestDashboard() {
               className="flex items-center gap-2"
             >
               <Activity className="h-4 w-4" />
-              {isRunning ? 'Running Test...' : 'Run Performance Test'}
+              {isRunning ? 'Running Test...' : 'API Performance Test'}
+            </Button>
+
+            <Button 
+              onClick={testGvPage} 
+              disabled={isRunning}
+              className="flex items-center gap-2"
+              variant="secondary"
+            >
+              <Video className="h-4 w-4" />
+              Test /gv Page
             </Button>
 
             <Button 
