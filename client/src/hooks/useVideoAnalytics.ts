@@ -129,8 +129,8 @@ export const useVideoAnalytics = () => {
     const lastSessionTime = localStorage.getItem(sessionKey);
     const now = Date.now();
     
-    // Only track one session per 10 minutes to prevent overload but allow better tracking
-    if (lastSessionTime && now - parseInt(lastSessionTime) < 600000) {
+    // Reduced to 2 minutes for better production testing and VPN IP testing
+    if (lastSessionTime && now - parseInt(lastSessionTime) < 120000) {
       console.log(`⏭️ PRODUCTION ANALYTICS: Skipping session tracking - already tracked ${Math.round((now - parseInt(lastSessionTime)) / 60000)}min ago`);
       return;
     }

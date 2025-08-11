@@ -12,6 +12,7 @@ import { MobileEnhancedGallery } from "@/components/mobile/MobileEnhancedGallery
 import { LazyImage } from "@/components/ui/LazyImage";
 import { useNetworkStatus } from "@/hooks/useNetworkStatus";
 import { useDeviceOrientation } from "@/hooks/useDeviceOrientation";
+import { useVideoAnalytics } from "@/hooks/useVideoAnalytics";
 // Gallery item interface using camelCase (transformed from API snake_case)
 interface GalleryItem {
   id: string | number;
@@ -59,6 +60,9 @@ export default function GallerySection() {
   const [isMobile, setIsMobile] = useState(false);
   const networkStatus = useNetworkStatus();
   const { orientation } = useDeviceOrientation();
+  
+  // 📊 Initialize video analytics for gallery video tracking
+  const { trackVideoView } = useVideoAnalytics();
 
   // Fetch CTA settings for the call-to-action section
   const { data: ctaSettings = [] } = useQuery({
@@ -408,6 +412,12 @@ export default function GallerySection() {
     });
     
     if (hasVideoResult) {
+      // Track video view analytics BEFORE opening lightbox
+      const videoFilename = item.videoFilename || '';
+      const cleanFilename = videoFilename.includes('/') ? videoFilename.split('/').pop() : videoFilename;
+      console.log(`📊 PRODUCTION ANALYTICS: Tracking gallery video view for: ${cleanFilename}`);
+      trackVideoView(cleanFilename || '');
+      
       // Open video in lightbox
       const videoUrl = getVideoUrl(item, index);
       console.log(`🎬 OPENING LIGHTBOX for ${item.videoFilename}`);
@@ -504,6 +514,12 @@ export default function GallerySection() {
             items={galleryItems}
             language={language}
             onVideoClick={(item) => {
+              // Track video view analytics for mobile gallery
+              const videoFilename = item.videoFilename || '';
+              const cleanFilename = videoFilename.includes('/') ? videoFilename.split('/').pop() : videoFilename;
+              console.log(`📊 PRODUCTION ANALYTICS: Mobile gallery video view for: ${cleanFilename}`);
+              trackVideoView(cleanFilename || '');
+              
               const videoUrl = getVideoUrl(item, 0);
               setLightboxVideo({...item, lightboxVideoUrl: videoUrl});
               document.body.style.overflow = 'hidden';
