@@ -1968,7 +1968,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
         'Content-Type': 'video/mp4',
         'Access-Control-Allow-Origin': '*',
         'Access-Control-Allow-Headers': 'range, content-type',
-        'Cache-Control': 'public, max-age=3600'
+        'Cache-Control': 'public, max-age=3600',
+        'X-Video-Source': 'CDN'
       };
       
       if (contentRange) headers['Content-Range'] = contentRange;
@@ -2022,7 +2023,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
         'Content-Length': chunksize,
         'Content-Type': 'video/mp4',
         'Access-Control-Allow-Origin': '*',
-        'Cache-Control': 'public, max-age=86400'
+        'Cache-Control': 'public, max-age=86400',
+        'X-Video-Source': 'CACHE'
       });
       
       stream.pipe(res);
@@ -2031,7 +2033,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
         'Content-Length': fileSize,
         'Content-Type': 'video/mp4',
         'Access-Control-Allow-Origin': '*',
-        'Cache-Control': 'public, max-age=86400'
+        'Cache-Control': 'public, max-age=86400',
+        'X-Video-Source': 'CACHE'
       });
       
       const stream = createReadStream(cachedVideo);
@@ -2039,7 +2042,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   }
 
-  // Image serving endpoint for cached images
+  // Image serving endpoint for cached images with Supabase fallback
   app.get("/api/image-proxy", async (req, res) => {
     const filename = req.query.filename as string;
     
@@ -2050,23 +2053,50 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       const imagePath = path.join(process.cwd(), 'server', 'cache', 'images', filename);
       
+      // Try cache first
       if (existsSync(imagePath)) {
         const stat = statSync(imagePath);
         const fileSize = stat.size;
         const contentType = filename.endsWith('.jpg') || filename.endsWith('.jpeg') ? 'image/jpeg' : 'image/png';
         
+        console.log(`📦 Serving image from cache: ${filename}`);
+        
         res.writeHead(200, {
           'Content-Type': contentType,
           'Content-Length': fileSize,
           'Access-Control-Allow-Origin': '*',
-          'Cache-Control': 'public, max-age=86400'
+          'Cache-Control': 'public, max-age=86400',
+          'X-Image-Source': 'CACHE'
         });
         
         const stream = createReadStream(imagePath);
         stream.pipe(res);
+        return;
+      }
+      
+      // Fallback to Supabase CDN
+      console.log(`🌐 Image cache miss, streaming from Supabase: ${filename}`);
+      
+      const supabaseUrl = `https://dcrfcrjjuynwtdwjglhm.supabase.co/storage/v1/object/public/memopyk-videos/${filename}`;
+      
+      const response = await fetch(supabaseUrl);
+      
+      if (response.ok) {
+        const contentType = response.headers.get('content-type') || 'image/jpeg';
+        
+        res.writeHead(200, {
+          'Content-Type': contentType,
+          'Access-Control-Allow-Origin': '*',
+          'Cache-Control': 'public, max-age=3600',
+          'X-Image-Source': 'CDN'
+        });
+        
+        response.body?.pipe(res as any);
       } else {
+        console.error(`Image not found in cache or CDN: ${filename}`);
         res.status(404).json({ error: 'Image not found' });
       }
+      
     } catch (error: any) {
       console.error(`Image proxy error for ${filename}:`, error);
       res.status(500).json({ error: 'Failed to serve image' });
