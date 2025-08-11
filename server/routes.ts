@@ -1615,6 +1615,55 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Analytics Session Tracking - POST create session
+  app.post("/api/analytics-session", async (req, res) => {
+    try {
+      console.log('📊 Analytics session creation:', req.body);
+      const session = await hybridStorage.createAnalyticsSession(req.body);
+      res.json({ success: true, session });
+    } catch (error) {
+      console.error('❌ Analytics session error:', error);
+      res.status(500).json({ error: "Failed to create analytics session" });
+    }
+  });
+
+  // Analytics View Tracking - POST create view
+  app.post("/api/analytics-view", async (req, res) => {
+    try {
+      console.log('📊 Analytics view creation:', req.body);
+      const view = await hybridStorage.createAnalyticsView(req.body);
+      res.json({ success: true, view });
+    } catch (error) {
+      console.error('❌ Analytics view error:', error);
+      res.status(500).json({ error: "Failed to create analytics view" });
+    }
+  });
+
+  // Video View Tracking - POST track video view
+  app.post("/api/track-video-view", async (req, res) => {
+    try {
+      const { filename, session_id, watch_time, completion_rate } = req.body;
+      console.log('📊 Video view tracking:', { filename, session_id, watch_time, completion_rate });
+      
+      const viewData = {
+        video_id: filename,
+        video_type: 'gallery',
+        session_id: session_id || `session_${Date.now()}`,
+        watch_time: watch_time || 0,
+        completion_rate: completion_rate || 0,
+        ip_address: req.ip || '0.0.0.0',
+        user_agent: req.get('User-Agent') || '',
+        language: req.get('Accept-Language')?.split(',')[0] || 'en-US'
+      };
+      
+      const view = await hybridStorage.createAnalyticsView(viewData);
+      res.json({ success: true, view });
+    } catch (error) {
+      console.error('❌ Video view tracking error:', error);
+      res.status(500).json({ error: "Failed to track video view" });
+    }
+  });
+
   // SHORT URL ALIAS SYSTEM - v1.0.20 INFRASTRUCTURE WORKAROUND
   app.all("/api/v/:id", async (req, res) => {
     try {
