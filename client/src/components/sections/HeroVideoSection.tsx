@@ -177,7 +177,12 @@ export function HeroVideoSection() {
           preload="metadata" // Smart Preloading: loads video info without downloading entire file
           crossOrigin="anonymous"
           onLoadedData={handleVideoLoad}
-          onError={() => setIsLoading(false)}
+          onError={(e) => {
+            console.error('🚨 Hero Video Error:', e);
+            console.error('   - Video URL:', videoUrl);
+            console.error('   - Proxy URL:', `/api/video-proxy?filename=${videoUrl.split('/').pop()}`);
+            setIsLoading(false);
+          }}
           onEnded={handleVideoEnded}
           onCanPlay={() => {
             // Ensure video starts playing for external preview
@@ -187,7 +192,7 @@ export function HeroVideoSection() {
             }
           }}
         >
-          <source src={`/api/video-proxy?filename=${videoUrl.split('/').pop()}`} type="video/mp4" />
+          <source src={`/api/video-proxy?filename=${videoUrl}&cache-bust=${Date.now()}`} type="video/mp4" />
         </video>
         
         {/* Video Overlay */}

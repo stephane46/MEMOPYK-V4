@@ -2011,7 +2011,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
               'Content-Type': 'video/mp4',
               'Access-Control-Allow-Origin': '*',
               'Access-Control-Allow-Headers': 'range, content-type',
-              'Cache-Control': 'public, max-age=3600',
+              'Cache-Control': 'no-cache, no-store, must-revalidate', // Force fresh requests
+              'Pragma': 'no-cache',
+              'Expires': '0',
               'X-Delivery': deliveryHeaders['X-Delivery'],
               'X-Upstream': deliveryHeaders['X-Upstream'],
               'X-Storage': deliveryHeaders['X-Storage']
