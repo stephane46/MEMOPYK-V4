@@ -1907,17 +1907,54 @@ export async function registerRoutes(app: Express): Promise<void> {
 
   // SIMPLIFIED VIDEO PROXY - Same logic for ALL videos v1.0.1754929638.HEAD_SUPPORT
   // Handle both GET and HEAD requests
+  // Add HEAD support for browser video loading and enhanced production logging
+  app.head("/api/video-proxy", async (req, res) => {
+    // FORCE PRODUCTION LOGGING - This MUST appear in production logs
+    console.error(`🚨 PRODUCTION FORCE LOG HEAD: Video proxy HEAD request for ${req.query.filename} at ${new Date().toISOString()}`);
+    await handleVideoProxy(req, res);
+  });
+
   app.get("/api/video-proxy", async (req, res) => {
+    // FORCE PRODUCTION LOGGING - This MUST appear in production logs
+    console.error(`🚨 PRODUCTION FORCE LOG GET: Video proxy GET request for ${req.query.filename} at ${new Date().toISOString()}`);
     await handleVideoProxy(req, res);
   });
   
-  app.head("/api/video-proxy", async (req, res) => {
-    await handleVideoProxy(req, res);
-  });
+
   
   async function handleVideoProxy(req: any, res: any) {
-    const VERSION = "v1.0.1754929638.HEAD_SUPPORT";
+    const VERSION = "v1.0.1754932191.ULTRA_DETAILED_LOGGING";
     const filename = req.query.filename as string;
+    
+    // ULTRA DETAILED LOGGING FOR PRODUCTION COMPARISON
+    console.error(`🚨🚨🚨 ULTRA DETAILED VIDEO PROXY LOG START - ${filename} 🚨🚨🚨`);
+    console.error(`📋 REQUEST METADATA:`);
+    console.error(`   - Timestamp: ${new Date().toISOString()}`);
+    console.error(`   - Version: ${VERSION}`);
+    console.error(`   - Filename: "${filename}"`);
+    console.error(`   - Method: ${req.method}`);
+    console.error(`   - Full URL: ${req.url}`);
+    console.error(`   - Query: ${JSON.stringify(req.query)}`);
+    
+    console.error(`📋 ENVIRONMENT DETAILS:`);
+    console.error(`   - NODE_ENV: ${process.env.NODE_ENV || 'undefined'}`);
+    console.error(`   - NODE_VERSION: ${process.version}`);
+    console.error(`   - Working Directory: ${process.cwd()}`);
+    console.error(`   - __dirname: ${__dirname}`);
+    console.error(`   - Platform: ${process.platform}`);
+    console.error(`   - Architecture: ${process.arch}`);
+    
+    console.error(`📋 REQUEST HEADERS (FULL):`);
+    Object.keys(req.headers).forEach(key => {
+      console.error(`   - ${key}: "${req.headers[key]}"`);
+    });
+    
+    console.error(`📋 VIDEO TYPE CLASSIFICATION:`);
+    const isHeroVideo = ['VideoHero1.mp4', 'VideoHero2.mp4', 'VideoHero3.mp4'].includes(filename);
+    const isGalleryVideo = !isHeroVideo && filename && filename.endsWith('.mp4');
+    console.error(`   - Is Hero Video: ${isHeroVideo}`);
+    console.error(`   - Is Gallery Video: ${isGalleryVideo}`);
+    console.error(`   - Video Category: ${isHeroVideo ? 'HERO' : isGalleryVideo ? 'GALLERY' : 'UNKNOWN'}`);
     
     console.log(`🎬 VIDEO PROXY ${VERSION} - UNIFIED APPROACH`);
     console.log(`   - Filename: "${filename}"`);
@@ -1941,34 +1978,67 @@ export async function registerRoutes(app: Express): Promise<void> {
       console.log(`🔍 ENVIRONMENT: ${process.env.NODE_ENV}`);
       console.log(`🔍 WORKING DIR: ${process.cwd()}`);
       console.log(`🔍 __DIRNAME: ${__dirname}`);
-      // Check cache first for ALL videos
+      // ULTRA DETAILED CACHE ANALYSIS
+      console.error(`📋 CACHE ANALYSIS FOR ${filename}:`);
       console.log(`🔍 Cache check for: ${filename}`);
       let cachedVideo = videoCache.getCachedVideoPath(filename);
       console.log(`🔍 Cache path result: ${cachedVideo}`);
-      console.log(`🔍 File exists check: ${cachedVideo ? existsSync(cachedVideo) : 'N/A'}`);
+      console.error(`   - Cache Path: ${cachedVideo || 'NULL'}`);
       
-      if (cachedVideo && existsSync(cachedVideo)) {
+      const fileExists = cachedVideo ? existsSync(cachedVideo) : false;
+      console.log(`🔍 File exists check: ${fileExists}`);
+      console.error(`   - File Exists: ${fileExists}`);
+      
+      if (cachedVideo && fileExists) {
+        try {
+          const stats = statSync(cachedVideo);
+          console.error(`   - File Size: ${stats.size} bytes`);
+          console.error(`   - File Modified: ${stats.mtime}`);
+          console.error(`   - File Permissions: ${stats.mode.toString(8)}`);
+          console.error(`   - Is File: ${stats.isFile()}`);
+          console.error(`   - Is Directory: ${stats.isDirectory()}`);
+        } catch (statError) {
+          console.error(`   - Stat Error: ${statError.message}`);
+        }
+        
         console.log(`📦 Serving video from cache: ${filename}`);
+        console.error(`📋 ATTEMPTING CACHE SERVE FOR ${filename}`);
         console.log(`🎯 CALLING serveVideoFromCache with path: ${cachedVideo}`);
         try {
           console.log(`🔄 EXECUTING serveVideoFromCache function...`);
+          console.error(`   - About to call serveVideoFromCache`);
           serveVideoFromCache(cachedVideo, req, res);
           console.log(`✅ SUCCESSFULLY CALLED serveVideoFromCache`);
+          console.error(`   - serveVideoFromCache called successfully`);
+          console.error(`🚨🚨🚨 ULTRA DETAILED VIDEO PROXY LOG END (CACHE SUCCESS) - ${filename} 🚨🚨🚨`);
           return;
         } catch (cacheError: any) {
           console.error(`❌ CACHE SERVE ERROR for ${filename}:`, cacheError);
           console.error(`❌ Cache path: ${cachedVideo}`);
           console.error(`❌ Error details:`, cacheError.message);
+          console.error(`❌ Error stack:`, cacheError.stack);
+          console.error(`❌ Error type:`, cacheError.constructor.name);
+          console.error(`📋 CACHE SERVE FAILED - FALLING BACK TO CDN`);
           // Continue to CDN fallback
         }
+      } else {
+        console.error(`📋 CACHE MISS - NO CACHED FILE FOR ${filename}`);
+        console.error(`   - Cache path was: ${cachedVideo || 'NULL'}`);
+        console.error(`   - File exists was: ${fileExists}`);
       }
       
-      // If not cached, stream directly from CDN (same approach for all videos)
+      // ULTRA DETAILED CDN FALLBACK
       console.log(`🌐 Video not cached, streaming directly from Supabase: ${filename}`);
+      console.error(`📋 CDN FALLBACK FOR ${filename}:`);
       const encodedFilename = encodeURIComponent(filename);
       const supabaseUrl = `https://supabase.memopyk.org/storage/v1/object/public/memopyk-videos/${encodedFilename}`;
+      console.error(`   - Original filename: ${filename}`);
+      console.error(`   - Encoded filename: ${encodedFilename}`);
+      console.error(`   - Supabase URL: ${supabaseUrl}`);
+      console.error(`   - Range header: ${req.headers.range || 'NONE'}`);
       
       const fetch = (await import('node-fetch')).default;
+      console.error(`   - About to fetch from Supabase...`);
       const response = await fetch(supabaseUrl, {
         headers: {
           'Range': req.headers.range || 'bytes=0-',
@@ -1976,8 +2046,17 @@ export async function registerRoutes(app: Express): Promise<void> {
         }
       });
       
+      console.error(`   - Supabase response status: ${response.status}`);
+      console.error(`   - Supabase response statusText: ${response.statusText}`);
+      console.error(`   - Supabase response ok: ${response.ok}`);
+      console.error(`   - Supabase response headers:`);
+      response.headers.forEach((value, key) => {
+        console.error(`     - ${key}: ${value}`);
+      });
+      
       if (!response.ok) {
         console.error(`❌ Failed to fetch video from Supabase: ${response.status} ${response.statusText}`);
+        console.error(`🚨🚨🚨 ULTRA DETAILED VIDEO PROXY LOG END (CDN FAILED) - ${filename} 🚨🚨🚨`);
         return res.status(500).json({ 
           error: "Video not available",
           filename,
@@ -2006,14 +2085,23 @@ export async function registerRoutes(app: Express): Promise<void> {
       const statusCode = response.status === 206 ? 206 : 200;
       res.writeHead(statusCode, headers);
       
+      console.error(`📋 CDN STREAMING FOR ${filename}:`);
+      console.error(`   - Response body exists: ${!!response.body}`);
+      console.error(`   - About to stream to client...`);
+      
       if (response.body) {
         // Stream the response body directly to the client
         response.body.pipe(res);
+        console.error(`   - Stream piped successfully`);
+        console.error(`🚨🚨🚨 ULTRA DETAILED VIDEO PROXY LOG END (CDN SUCCESS) - ${filename} 🚨🚨🚨`);
       } else {
+        console.error(`   - No response body, ending response`);
         res.end();
+        console.error(`🚨🚨🚨 ULTRA DETAILED VIDEO PROXY LOG END (NO BODY) - ${filename} 🚨🚨🚨`);
       }
       
     } catch (error: any) {
+      console.error(`🚨🚨🚨 CRITICAL ERROR IN VIDEO PROXY - ${filename} 🚨🚨🚨`);
       console.error(`❌ VIDEO PROXY ${VERSION} - CRITICAL ERROR for ${filename}:`);
       console.error(`❌ Error message: ${error.message}`);
       console.error(`❌ Error stack: ${error.stack}`);
@@ -2027,6 +2115,7 @@ export async function registerRoutes(app: Express): Promise<void> {
       console.error(`❌ NODE_ENV: ${process.env.NODE_ENV}`);
       console.error(`❌ Working directory: ${process.cwd()}`);
       console.error(`❌ Full error object:`, error);
+      console.error(`🚨🚨🚨 ULTRA DETAILED VIDEO PROXY LOG END (ERROR) - ${filename} 🚨🚨🚨`);
       
       res.status(500).json({ 
         error: "Video proxy failed",
