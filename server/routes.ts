@@ -1901,9 +1901,18 @@ export async function registerRoutes(app: Express): Promise<void> {
     });
   });
 
-  // SIMPLIFIED VIDEO PROXY - Same logic for ALL videos v1.0.1754928116.DEBUG_500
+  // SIMPLIFIED VIDEO PROXY - Same logic for ALL videos v1.0.1754929638.HEAD_SUPPORT
+  // Handle both GET and HEAD requests
   app.get("/api/video-proxy", async (req, res) => {
-    const VERSION = "v1.0.1754928116.DEBUG_500";
+    await handleVideoProxy(req, res);
+  });
+  
+  app.head("/api/video-proxy", async (req, res) => {
+    await handleVideoProxy(req, res);
+  });
+  
+  async function handleVideoProxy(req: any, res: any) {
+    const VERSION = "v1.0.1754929638.HEAD_SUPPORT";
     const filename = req.query.filename as string;
     
     console.log(`🎬 VIDEO PROXY ${VERSION} - UNIFIED APPROACH`);
@@ -2028,7 +2037,7 @@ export async function registerRoutes(app: Express): Promise<void> {
         userAgent: req.headers['user-agent']
       });
     }
-  });
+  }
   
   // Helper function to serve video from cache
   function serveVideoFromCache(cachedVideo: string, req: any, res: any) {
