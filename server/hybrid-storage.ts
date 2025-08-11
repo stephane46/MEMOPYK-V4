@@ -3830,7 +3830,9 @@ Allow: /contact`;
     
     for (let i = 0; i < count; i++) {
       const countryIndex = Math.floor(Math.random() * countries.length);
-      const sessionDate = new Date(Date.now() - Math.random() * 7 * 24 * 60 * 60 * 1000);
+      // Generate dates only within the last 7 days from today (current August dates)
+      const daysBack = Math.random() * 7; // 0-7 days back from now
+      const sessionDate = new Date(Date.now() - daysBack * 24 * 60 * 60 * 1000);
       
       sessions.push({
         id: `TEST_session_${(startOffset + i).toString().padStart(3, '0')}`,
@@ -3855,7 +3857,9 @@ Allow: /contact`;
     const videoFiles = ['VideoHero1.mp4', 'VideoHero2.mp4', 'VideoHero3.mp4', 'gallery_test_video.mp4'];
     
     for (let i = 0; i < count; i++) {
-      const viewDate = new Date(Date.now() - Math.random() * 7 * 24 * 60 * 60 * 1000);
+      // Generate dates only within the last 7 days from today (current August dates)
+      const daysBack = Math.random() * 7; // 0-7 days back from now
+      const viewDate = new Date(Date.now() - daysBack * 24 * 60 * 60 * 1000);
       
       views.push({
         id: `TEST_view_${(startOffset + i).toString().padStart(3, '0')}`,
@@ -3879,7 +3883,9 @@ Allow: /contact`;
     const metricTypes = ['page_load', 'api_response', 'video_load', 'server_health'];
     
     for (let i = 0; i < count; i++) {
-      const metricDate = new Date(Date.now() - Math.random() * 7 * 24 * 60 * 60 * 1000);
+      // Generate dates only within the last 7 days from today (current August dates)
+      const daysBack = Math.random() * 7; // 0-7 days back from now
+      const metricDate = new Date(Date.now() - daysBack * 24 * 60 * 60 * 1000);
       const metricType = metricTypes[Math.floor(Math.random() * metricTypes.length)];
       
       let value;
