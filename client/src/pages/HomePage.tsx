@@ -8,9 +8,17 @@ import FAQSection from '../components/sections/FAQSection';
 import { CtaSection } from '../components/sections/CtaSection';
 
 import { useLanguage } from '../contexts/LanguageContext';
+import { useVideoAnalytics } from '../hooks/useVideoAnalytics';
 
 export function HomePage() {
   const { language } = useLanguage();
+  const { trackSession } = useVideoAnalytics();
+  
+  // Track visitor session on page load
+  useEffect(() => {
+    console.log('📊 Tracking visitor session on HomePage load');
+    trackSession();
+  }, [trackSession]);
   
   // Handle scrolling to anchor after navigation from other pages
   useEffect(() => {
