@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { HeroVideoSection } from '../components/sections/HeroVideoSection';
+import { SimpleHeroVideoSection } from '../components/sections/SimpleHeroVideoSection';
 import { KeyVisualSection } from '../components/sections/KeyVisualSection';
 import { HowItWorksSection } from '../components/sections/HowItWorksSection';
 import { WhyMemopykSection } from '../components/sections/WhyMemopykSection';
@@ -41,8 +41,8 @@ export function HomePage() {
   
   return (
     <div className="min-h-screen">
-      {/* Hero Video Carousel Section */}
-      <HeroVideoSection />
+      {/* Simple Hero Video Section */}
+      <SimpleHeroVideoSection />
       
       {/* Key Visual Problem/Solution Section */}
       <KeyVisualSection />
