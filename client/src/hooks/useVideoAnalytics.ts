@@ -95,7 +95,7 @@ export const useVideoAnalytics = () => {
     console.log(`📊 PRODUCTION ANALYTICS: Gallery video tracking requested for: ${videoId}`);
     console.log('📊 PRODUCTION ANALYTICS: Video data:', { videoId, durationWatched, completed });
     
-    const language = localStorage.getItem('memopyk-language') as 'en' | 'fr' || 'fr';
+    const language = (localStorage.getItem('memopyk-language') as 'en-US' | 'fr-FR') || 'fr-FR';
     
     // Reduced duplicate prevention - 10 second window for better production testing
     const lastTracked = localStorage.getItem(`last-tracked-${videoId}`);
@@ -141,7 +141,7 @@ export const useVideoAnalytics = () => {
     
     localStorage.setItem(sessionKey, now.toString());
     
-    const language = localStorage.getItem('memopyk-language') as 'en' | 'fr' || 'fr';
+    const language = (localStorage.getItem('memopyk-language') as 'en-US' | 'fr-FR') || 'fr-FR';
     
     const sessionData = {
       language,

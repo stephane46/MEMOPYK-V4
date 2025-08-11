@@ -1,0 +1,10 @@
+FORCE DEPLOYMENT REQUIRED - v1.0.135
+
+CRITICAL GALLERY VIDEO 500 ERROR FIX
+
+This deployment contains the fix for gallery videos returning 500 errors in production.
+The fix ensures gallery videos use the same video proxy pattern as hero videos.
+
+DEPLOY IMMEDIATELY TO RESOLVE PRODUCTION ISSUE.
+
+Timestamp: 2025-08-11 16:53:00 UTC

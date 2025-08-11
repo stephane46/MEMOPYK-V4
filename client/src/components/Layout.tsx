@@ -133,7 +133,7 @@ export function Layout({ children }: LayoutProps) {
                       {item.name}
                     </button>
                   );
-                } else if (item.type === 'external') {
+                } else if (item.type === 'external' && 'href' in item) {
                   return (
                     <a
                       key={`nav-${index}`}
@@ -226,7 +226,7 @@ export function Layout({ children }: LayoutProps) {
                       {item.name}
                     </button>
                   );
-                } else if (item.type === 'external') {
+                } else if (item.type === 'external' && 'href' in item) {
                   return (
                     <a
                       key={`mobile-nav-${index}`}
