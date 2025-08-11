@@ -2048,7 +2048,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
 
     try {
-      const imagePath = path.join(process.cwd(), 'uploads', 'images', filename);
+      const imagePath = path.join(process.cwd(), 'server', 'cache', 'images', filename);
       
       if (existsSync(imagePath)) {
         const stat = statSync(imagePath);

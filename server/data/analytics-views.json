@@ -58,5 +58,20 @@
     "is_test_data": true,
     "created_at": "2025-08-11T11:12:36.398Z",
     "updated_at": "2025-08-11T11:12:36.398Z"
+  },
+  {
+    "id": "view_1754915394591_vaf5d49sl",
+    "video_id": "PomGalleryC.mp4",
+    "video_type": "gallery",
+    "video_title": "",
+    "session_id": "test_final",
+    "language": "en-US",
+    "watch_time": 30,
+    "completion_rate": 0,
+    "ip_address": "127.0.0.1",
+    "user_agent": "curl/8.14.1",
+    "is_test_data": true,
+    "created_at": "2025-08-11T12:29:54.591Z",
+    "updated_at": "2025-08-11T12:29:54.591Z"
   }
 ]
