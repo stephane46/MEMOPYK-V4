@@ -1982,10 +1982,9 @@ export async function registerRoutes(app: Express): Promise<void> {
       res.writeHead(statusCode, headers);
       
       if (response.body) {
-        // Use Node.js Readable stream conversion for better compatibility
-        const stream = require('stream');
-        const readable = stream.Readable.fromWeb(response.body);
-        readable.pipe(res);
+        // Use the exact same approach as working hero videos
+        const stream = createReadStream(response.body);
+        stream.pipe(res);
       } else {
         res.end();
       }
