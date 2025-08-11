@@ -53,6 +53,10 @@ function App() {
               <Route path="/fr-FR/contact" component={() => <div className="min-h-screen flex items-center justify-center"><div className="text-2xl text-gray-500">Contact Bientôt Disponible</div></div>} />
               <Route path="/en-US/contact" component={() => <div className="min-h-screen flex items-center justify-center"><div className="text-2xl text-gray-500">Contact Coming Soon</div></div>} />
               
+              {/* Test Routes - Localized versions */}
+              <Route path="/fr-FR/gv" component={GalleryVideoTest} />
+              <Route path="/en-US/gv" component={GalleryVideoTest} />
+              
 
               
               {/* Legal Document Routes */}
