@@ -404,7 +404,7 @@ export default function PerformanceTestDashboard() {
             Performance Testing
           </CardTitle>
           <CardDescription>
-            Test site performance with F5 (normal refresh) or Ctrl+F5 (hard refresh). Cache indicates local server storage, VPS indicates live database/CDN requests.
+            Tests API endpoints directly (not pages). Tests /api/video-proxy, /api/images, etc. to verify backend cache performance after deployment.
           </CardDescription>
           
           {/* Performance Testing Legend */}
@@ -421,7 +421,7 @@ export default function PerformanceTestDashboard() {
               </div>
               
               <div className="border-l-4 border-purple-400 pl-3">
-                <span className="font-medium text-purple-600">Gallery Videos (PRODUCTION):</span> Tests all 3 gallery videos (PomGalleryC.mp4, VitaminSeaC.mp4, safari-1.mp4) for cache deployment verification. Critical test for confirming gallery videos work from cache after deployment to production.
+                <span className="font-medium text-purple-600">Gallery Videos API:</span> Tests /api/video-proxy endpoint with gallery videos (PomGalleryC.mp4, VitaminSeaC.mp4, safari-1.mp4). Verifies backend cache works after deployment - does NOT test /gv page directly.
               </div>
             </div>
             
