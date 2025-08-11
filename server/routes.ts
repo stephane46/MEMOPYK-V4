@@ -1026,6 +1026,7 @@ export async function registerRoutes(app: Express): Promise<void> {
           const verifyData = fs.readFileSync(jsonPath, 'utf8');
           const verifyItems = JSON.parse(verifyData);
           const verifyItem = verifyItems.find((item: any) => item.id.toString() === itemId.toString());
+          const staticField = language === 'fr' ? 'static_image_url_fr' : 'static_image_url_en';
           console.log(`🔍 Verification - Updated URL (${language}): ${verifyItem?.[staticField]}`);
         } else {
           console.error(`❌ Item ${itemId} not found in ${items.length} items`);
@@ -1040,7 +1041,10 @@ export async function registerRoutes(app: Express): Promise<void> {
         console.log(`🔄 Method 2: Hybrid storage backup`);
         const language = req.body.language || 'en';
         
-        // Get current item to check use_same_video flag
+        // Get current item to check use_same_video flag  
+        const jsonPath = path.join(__dirname, '..', 'server', 'data', 'gallery.json');
+        const data = fs.readFileSync(jsonPath, 'utf8');
+        const items = JSON.parse(data);
         const currentItem = items.find((item: any) => item.id.toString() === itemId.toString());
         const useSameVideo = currentItem?.use_same_video;
         
