@@ -1814,6 +1814,101 @@ export async function registerRoutes(app: Express): Promise<void> {
     }
   });
 
+  // MISSING ANALYTICS ENDPOINTS - CRITICAL FOR DASHBOARD
+
+  // Analytics Reset - POST reset all analytics data
+  app.post("/api/analytics/reset", async (req, res) => {
+    try {
+      await hybridStorage.resetAnalyticsData();
+      res.json({ success: true, message: "All analytics data has been reset" });
+    } catch (error) {
+      console.error('❌ Analytics reset error:', error);
+      res.status(500).json({ error: "Failed to reset analytics data" });
+    }
+  });
+
+  // Analytics Test Data Status - GET test data status
+  app.get("/api/analytics/test-data/status", async (req, res) => {
+    try {
+      // Return test data status - implementation depends on hybridStorage
+      res.json({ testDataPresent: false, message: "No test data functionality implemented" });
+    } catch (error) {
+      console.error('❌ Test data status error:', error);
+      res.status(500).json({ error: "Failed to get test data status" });
+    }
+  });
+
+  // Analytics Clear Sessions - POST clear sessions data
+  app.post("/api/analytics/clear/sessions", async (req, res) => {
+    try {
+      await hybridStorage.clearAnalyticsSessions();
+      res.json({ success: true, message: "Sessions data cleared" });
+    } catch (error) {
+      console.error('❌ Clear sessions error:', error);
+      res.status(500).json({ error: "Failed to clear sessions" });
+    }
+  });
+
+  // Analytics Clear Views - POST clear views data
+  app.post("/api/analytics/clear/views", async (req, res) => {
+    try {
+      await hybridStorage.clearAnalyticsViews();
+      res.json({ success: true, message: "Views data cleared" });
+    } catch (error) {
+      console.error('❌ Clear views error:', error);
+      res.status(500).json({ error: "Failed to clear views" });
+    }
+  });
+
+  // Analytics Clear All - POST clear all analytics data
+  app.post("/api/analytics/clear/all", async (req, res) => {
+    try {
+      await hybridStorage.clearAllAnalyticsData();
+      res.json({ success: true, message: "All analytics data cleared" });
+    } catch (error) {
+      console.error('❌ Clear all analytics error:', error);
+      res.status(500).json({ error: "Failed to clear all analytics data" });
+    }
+  });
+
+  // MISSING VIDEO CACHE ENDPOINTS - CRITICAL FOR CACHE MANAGEMENT
+
+  // Video Cache Force All (alternative endpoint name)
+  app.post("/api/video-cache/force-all", async (req, res) => {
+    try {
+      console.log('🚀 Force cache all videos (alternative endpoint)');
+      const result = await videoCache.forceCacheAllMedia();
+      res.json(result);
+    } catch (error) {
+      console.error('❌ Force cache all error:', error);
+      res.status(500).json({ error: "Failed to force cache all videos" });
+    }
+  });
+
+  // Video Cache Clear - POST clear cache
+  app.post("/api/video-cache/clear", async (req, res) => {
+    try {
+      console.log('🧹 Clear video cache request');
+      const result = await videoCache.clearCacheCompletely();
+      res.json({ success: true, message: "Cache cleared", result });
+    } catch (error) {
+      console.error('❌ Clear cache error:', error);
+      res.status(500).json({ error: "Failed to clear cache" });
+    }
+  });
+
+  // Video Cache Refresh - POST refresh cache status  
+  app.post("/api/video-cache/refresh", async (req, res) => {
+    try {
+      console.log('🔄 Refresh video cache status');
+      const stats = videoCache.getCacheStats();
+      res.json({ success: true, stats, timestamp: new Date().toISOString() });
+    } catch (error) {
+      console.error('❌ Cache refresh error:', error);
+      res.status(500).json({ error: "Failed to refresh cache" });
+    }
+  });
+
   // Legacy endpoint for backward compatibility
   app.post("/api/analytics-session", async (req, res) => {
     try {
