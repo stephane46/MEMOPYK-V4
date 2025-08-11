@@ -13,7 +13,7 @@ import { LazyImage } from "@/components/ui/LazyImage";
 import { useNetworkStatus } from "@/hooks/useNetworkStatus";
 import { useDeviceOrientation } from "@/hooks/useDeviceOrientation";
 import { useVideoAnalytics } from "@/hooks/useVideoAnalytics";
-import { VideoSourceIndicator } from "@/components/debug/VideoSourceIndicator";
+
 // Gallery item interface using camelCase (transformed from API snake_case)
 interface GalleryItem {
   id: string | number;
@@ -586,15 +586,7 @@ export default function GallerySection() {
                               </div>
                             )}
 
-                            {/* Video Source Debug Indicator - Only show for videos */}
-                            {itemHasVideo && (
-                              <div className="bg-white/90 backdrop-blur-sm rounded-lg p-2">
-                                <VideoSourceIndicator 
-                                  videoUrl={getVideoUrl(item, index)} 
-                                  filename={item.videoFilename || 'unknown'}
-                                />
-                              </div>
-                            )}
+
                           </div>
 
                           {/* Price Tag - Bottom Right (3) - Mobile Optimized */}
