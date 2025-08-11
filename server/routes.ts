@@ -1982,21 +1982,10 @@ export async function registerRoutes(app: Express): Promise<void> {
       res.writeHead(statusCode, headers);
       
       if (response.body) {
-        const reader = (response.body as any).getReader();
-        const pump = (): Promise<any> => {
-          return reader.read().then(({ done, value }: any) => {
-            if (done) {
-              res.end();
-              return;
-            }
-            res.write(value);
-            return pump();
-          });
-        };
-        pump().catch((err: any) => {
-          console.error('Video stream error:', err);
-          res.end();
-        });
+        // Use Node.js Readable stream conversion for better compatibility
+        const stream = require('stream');
+        const readable = stream.Readable.fromWeb(response.body);
+        readable.pipe(res);
       } else {
         res.end();
       }
@@ -2108,21 +2097,10 @@ export async function registerRoutes(app: Express): Promise<void> {
         });
         
         if (response.body) {
-          const reader = (response.body as any).getReader();
-          const pump = (): Promise<any> => {
-            return reader.read().then(({ done, value }: any) => {
-              if (done) {
-                res.end();
-                return;
-              }
-              res.write(value);
-              return pump();
-            });
-          };
-          pump().catch((err: any) => {
-            console.error('Stream error:', err);
-            res.end();
-          });
+          // Use Node.js Readable stream conversion for better compatibility
+          const stream = require('stream');
+          const readable = stream.Readable.fromWeb(response.body);
+          readable.pipe(res);
         } else {
           res.end();
         }
