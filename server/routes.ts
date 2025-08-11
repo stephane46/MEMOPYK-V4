@@ -1619,6 +1619,96 @@ export async function registerRoutes(app: Express): Promise<void> {
     }
   });
 
+  // Missing cache management endpoints for production
+  app.get("/api/cache/breakdown", (req, res) => {
+    try {
+      const breakdown = videoCache.getDetailedCacheBreakdown();
+      res.json(breakdown);
+    } catch (error) {
+      console.error('❌ Cache breakdown error:', error);
+      res.status(500).json({ error: "Failed to get cache breakdown" });
+    }
+  });
+
+  app.get("/api/unified-cache/stats", (req, res) => {
+    try {
+      const videoStats = videoCache.getCacheStats();
+      const stats = {
+        video: videoStats,
+        image: videoCache.getImageCacheStats(),
+        total: videoStats.totalSize,
+        timestamp: new Date().toISOString()
+      };
+      res.json(stats);
+    } catch (error) {
+      console.error('❌ Unified cache stats error:', error);
+      res.status(500).json({ error: "Failed to get cache stats" });
+    }
+  });
+
+  app.get("/api/video-cache/status", (req, res) => {
+    try {
+      const cacheStats = videoCache.getCacheStats();
+      const status = {
+        cacheStats: cacheStats,
+        cacheSize: cacheStats.totalSize,
+        environment: process.env.NODE_ENV || 'development',
+        timestamp: new Date().toISOString()
+      };
+      res.json(status);
+    } catch (error) {
+      console.error('❌ Video cache status error:', error);
+      res.status(500).json({ error: "Failed to get video cache status" });
+    }
+  });
+
+  app.get("/api/video-cache/stats", (req, res) => {
+    try {
+      const stats = videoCache.getCacheStats();
+      res.json(stats);
+    } catch (error) {
+      console.error('❌ Video cache stats error:', error);
+      res.status(500).json({ error: "Failed to get video cache stats" });
+    }
+  });
+
+  app.post("/api/video-cache/force-all-media", async (req, res) => {
+    try {
+      console.log('🚀 Force cache all media request received');
+      const result = await videoCache.forceCacheAllMedia();
+      res.json(result);
+    } catch (error) {
+      console.error('❌ Force cache all media error:', error);
+      res.status(500).json({ error: "Failed to force cache all media" });
+    }
+  });
+
+  app.post("/api/analytics/video-view", async (req, res) => {
+    try {
+      const { filename, session_id, watch_time, completion_rate } = req.body;
+      console.log('📊 Video view tracking:', { filename, session_id, watch_time, completion_rate });
+      
+      const viewData = {
+        video_id: filename,
+        video_type: 'gallery',
+        session_id: session_id || `session_${Date.now()}`,
+        watch_time: watch_time || 0,
+        completion_rate: completion_rate || 0,
+        ip_address: req.ip || '0.0.0.0',
+        user_agent: req.get('User-Agent') || '',
+        language: req.get('Accept-Language')?.split(',')[0] || 'en-US'
+      };
+      
+      // Track video view - for now just log and return success
+      console.log('📊 Video view tracked:', viewData);
+      const result = { id: `view_${Date.now()}`, ...viewData };
+      res.json({ success: true, view: result });
+    } catch (error) {
+      console.error('❌ Video view tracking error:', error);
+      res.status(500).json({ error: "Failed to track video view" });
+    }
+  });
+
   // Analytics Session Tracking - POST create session
   // CRITICAL FIX: Analytics session endpoint with correct URL pattern
   app.post("/api/analytics/session", async (req, res) => {
