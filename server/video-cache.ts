@@ -318,10 +318,18 @@ export class VideoCache {
    */
   async downloadAndCacheImage(filename: string, customUrl?: string): Promise<void> {
     try {
+      console.log(`🖼️ PRODUCTION: Starting downloadAndCacheImage for: ${filename}`);
+      console.log(`🖼️ PRODUCTION: NODE_ENV: ${process.env.NODE_ENV}`);
+      console.log(`🖼️ PRODUCTION: Process CWD: ${process.cwd()}`);
+      console.log(`🖼️ PRODUCTION: Image cache dir: ${this.imageCacheDir}`);
+      
       // Ensure cache directory exists before downloading
       if (!existsSync(this.imageCacheDir)) {
+        console.log(`🖼️ PRODUCTION: Image cache directory does not exist, creating: ${this.imageCacheDir}`);
         require('fs').mkdirSync(this.imageCacheDir, { recursive: true });
-        console.log(`📁 Created image cache directory for download: ${this.imageCacheDir}`);
+        console.log(`📁 PRODUCTION: Created image cache directory for download: ${this.imageCacheDir}`);
+      } else {
+        console.log(`🖼️ PRODUCTION: Image cache directory exists: ${this.imageCacheDir}`);
       }
       
       // Remove query parameters from filename for clean display and caching
@@ -329,16 +337,22 @@ export class VideoCache {
       if (cleanFilename.includes('?')) {
         cleanFilename = cleanFilename.split('?')[0];
       }
+      console.log(`🖼️ PRODUCTION: Clean filename: ${cleanFilename}`);
       
       const fullImageUrl = customUrl || `https://supabase.memopyk.org/storage/v1/object/public/memopyk-videos/${filename}`;
       const cacheFile = this.getImageCacheFilePath(cleanFilename);
       
-      console.log(`📥 Downloading image ${cleanFilename} from Supabase...`);
+      console.log(`📥 PRODUCTION: Downloading image ${cleanFilename} from Supabase...`);
+      console.log(`📥 PRODUCTION: Full URL: ${fullImageUrl}`);
+      console.log(`📥 PRODUCTION: Target cache file: ${cacheFile}`);
       
       const fetch = (await import('node-fetch')).default;
       const response = await fetch(fullImageUrl, {
-        headers: { 'User-Agent': 'MEMOPYK-ImageCachePreloader/1.0' }
+        headers: { 'User-Agent': 'MEMOPYK-ImageCachePreloader/1.0-Production' }
       });
+      
+      console.log(`📥 PRODUCTION: Fetch response status: ${response.status} ${response.statusText}`);
+      console.log(`📥 PRODUCTION: Response headers:`, Object.fromEntries(response.headers.entries()));
       
       if (!response.ok) {
         throw new Error(`Failed to download image ${cleanFilename}: ${response.status} ${response.statusText}`);

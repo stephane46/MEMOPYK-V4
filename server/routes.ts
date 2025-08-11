@@ -2700,60 +2700,99 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   // Image proxy endpoint for serving cached images (Gallery Video Test)
   app.get("/api/image-proxy", async (req, res) => {
-    console.log(`🖼️ IMAGE PROXY ROUTE HIT! - ${new Date().toISOString()}`);
+    console.log(`🖼️ PRODUCTION IMAGE PROXY ROUTE HIT! - ${new Date().toISOString()}`);
     console.log(`🖼️ Raw request URL: ${req.url}`);
     console.log(`🖼️ Filename param: ${req.query.filename}`);
+    console.log(`🖼️ NODE_ENV: ${process.env.NODE_ENV}`);
+    console.log(`🖼️ User-Agent: ${req.headers['user-agent']}`);
+    console.log(`🖼️ Current working directory: ${process.cwd()}`);
     
     try {
       const filename = req.query.filename as string;
       if (!filename) {
+        console.log(`🖼️ PRODUCTION ERROR: Missing filename parameter`);
         return res.status(400).json({ error: "filename parameter required" });
       }
 
       // Clean filename of any query parameters or encoding
       const cleanFilename = decodeURIComponent(filename).split('?')[0];
-      console.log(`🖼️ Processing image: ${cleanFilename}`);
+      console.log(`🖼️ PRODUCTION: Processing image: ${cleanFilename}`);
+      console.log(`🖼️ PRODUCTION: Original filename: ${filename}`);
+      console.log(`🖼️ PRODUCTION: Clean filename: ${cleanFilename}`);
 
       // Check if image is cached
       const cachedImagePath = videoCache.getCachedImagePath(cleanFilename);
+      console.log(`🖼️ PRODUCTION: Expected cache path: ${cachedImagePath}`);
+      
+      // Check if cache directory exists
+      const cacheDir = require('path').join(process.cwd(), 'server/cache/images');
+      console.log(`🖼️ PRODUCTION: Cache directory path: ${cacheDir}`);
+      console.log(`🖼️ PRODUCTION: Cache directory exists: ${existsSync(cacheDir)}`);
+      
+      if (existsSync(cacheDir)) {
+        try {
+          const files = require('fs').readdirSync(cacheDir);
+          console.log(`🖼️ PRODUCTION: Cache directory contains ${files.length} files:`, files.slice(0, 10));
+        } catch (dirListError: any) {
+          console.log(`🖼️ PRODUCTION: Error listing cache directory:`, dirListError.message);
+        }
+      }
       
       if (!cachedImagePath || !existsSync(cachedImagePath)) {
-        console.log(`🔄 Image not cached, attempting download: ${cleanFilename}`);
+        console.log(`🔄 PRODUCTION: Image not cached, attempting download: ${cleanFilename}`);
+        console.log(`🔄 PRODUCTION: Cache path exists check: ${cachedImagePath ? existsSync(cachedImagePath) : 'null path'}`);
         
         try {
           // Try to download and cache the image
+          console.log(`📥 PRODUCTION: Starting download for: ${cleanFilename}`);
           await videoCache.downloadAndCacheImage(cleanFilename);
           
           // Get the newly cached path
           const newCachedPath = videoCache.getCachedImagePath(cleanFilename);
+          console.log(`📦 PRODUCTION: New cached path: ${newCachedPath}`);
+          console.log(`📦 PRODUCTION: New cached path exists: ${newCachedPath ? existsSync(newCachedPath) : 'null path'}`);
+          
           if (!newCachedPath || !existsSync(newCachedPath)) {
             throw new Error('Failed to cache image');
           }
           
-          console.log(`✅ Image successfully cached: ${cleanFilename}`);
+          console.log(`✅ PRODUCTION: Image successfully cached: ${cleanFilename}`);
           return serveImageFromCache(newCachedPath, cleanFilename, res);
           
         } catch (downloadError: any) {
-          console.warn(`⚠️ Image download failed for ${cleanFilename}: ${downloadError.message}`);
+          console.warn(`⚠️ PRODUCTION: Image download failed for ${cleanFilename}:`, downloadError.message);
+          console.warn(`⚠️ PRODUCTION: Download error stack:`, downloadError.stack);
           
           // Fallback to direct Supabase URL
           const directUrl = `https://supabase.memopyk.org/storage/v1/object/public/memopyk-videos/${encodeURIComponent(cleanFilename)}`;
-          console.log(`🔄 FALLBACK: Redirecting to direct URL: ${directUrl}`);
+          console.log(`🔄 PRODUCTION FALLBACK: Redirecting to direct URL: ${directUrl}`);
           
           return res.redirect(directUrl);
         }
       }
 
       // Serve from cache
-      console.log(`📦 Serving image from cache: ${cleanFilename}`);
+      console.log(`📦 PRODUCTION: Serving image from cache: ${cleanFilename}`);
+      console.log(`📦 PRODUCTION: Cache file path: ${cachedImagePath}`);
+      console.log(`📦 PRODUCTION: Cache file exists: ${existsSync(cachedImagePath)}`);
+      
+      if (existsSync(cachedImagePath)) {
+        const stats = require('fs').statSync(cachedImagePath);
+        console.log(`📦 PRODUCTION: Cache file size: ${stats.size} bytes`);
+        console.log(`📦 PRODUCTION: Cache file modified: ${stats.mtime}`);
+      }
+      
       return serveImageFromCache(cachedImagePath, cleanFilename, res);
 
     } catch (error: any) {
-      console.error(`❌ Image proxy error:`, error);
+      console.error(`❌ PRODUCTION IMAGE PROXY ERROR:`, error.message);
+      console.error(`❌ PRODUCTION ERROR STACK:`, error.stack);
       res.status(500).json({ 
         error: "Image proxy failed",
         details: error.message,
-        version: "v1.0-image-proxy-test"
+        version: "v1.0-production-debug",
+        environment: process.env.NODE_ENV,
+        timestamp: new Date().toISOString()
       });
     }
   });
@@ -2761,8 +2800,16 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Helper function to serve images from cache
   function serveImageFromCache(imagePath: string, filename: string, res: any) {
     try {
+      console.log(`🖼️ PRODUCTION: serveImageFromCache called`);
+      console.log(`🖼️ PRODUCTION: imagePath: ${imagePath}`);
+      console.log(`🖼️ PRODUCTION: filename: ${filename}`);
+      console.log(`🖼️ PRODUCTION: imagePath exists: ${existsSync(imagePath)}`);
+      
       const stat = statSync(imagePath);
       const fileSize = stat.size;
+      
+      console.log(`🖼️ PRODUCTION: File size: ${fileSize} bytes`);
+      console.log(`🖼️ PRODUCTION: File modified: ${stat.mtime}`);
       
       // Determine content type based on file extension
       const ext = filename.toLowerCase().split('.').pop();
@@ -2771,9 +2818,19 @@ export async function registerRoutes(app: Express): Promise<Server> {
       else if (ext === 'gif') contentType = 'image/gif';
       else if (ext === 'webp') contentType = 'image/webp';
       
-      console.log(`🖼️ Serving ${filename} (${fileSize} bytes) as ${contentType}`);
+      console.log(`🖼️ PRODUCTION: Content type: ${contentType}`);
+      console.log(`🖼️ PRODUCTION: Serving ${filename} (${fileSize} bytes) as ${contentType}`);
       
       const stream = createReadStream(imagePath);
+      
+      // Add error handling for stream
+      stream.on('error', (error) => {
+        console.error(`🖼️ PRODUCTION: Stream error for ${filename}:`, error);
+      });
+      
+      stream.on('open', () => {
+        console.log(`🖼️ PRODUCTION: Stream opened successfully for ${filename}`);
+      });
       
       res.writeHead(200, {
         'Content-Type': contentType,
@@ -2783,7 +2840,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
         'X-Delivery': 'cache-hit',
         'X-Upstream': 'vps-storage',
         'X-Storage': 'local-cache',
-        'X-Content-Bytes': fileSize.toString()
+        'X-Content-Bytes': fileSize.toString(),
+        'X-Production-Debug': 'v1.0',
+        'X-Cache-Path': imagePath
       });
       
       stream.on('error', (error) => {
