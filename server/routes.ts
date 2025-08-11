@@ -1956,7 +1956,16 @@ export async function registerRoutes(app: Express): Promise<void> {
     console.error(`   - Is Gallery Video: ${isGalleryVideo}`);
     console.error(`   - Video Category: ${isHeroVideo ? 'HERO' : isGalleryVideo ? 'GALLERY' : 'UNKNOWN'}`);
     
-    console.log(`🎬 VIDEO PROXY ${VERSION} - UNIFIED APPROACH`);
+    // CRITICAL: Gallery videos MUST bypass cache and stream from CDN
+    if (isGalleryVideo) {
+      console.error(`🚨 GALLERY VIDEO DETECTED: ${filename} - FORCING CDN STREAM (BYPASSING CACHE)`);
+      console.log(`🌐 GALLERY VIDEO: Bypassing cache, streaming directly from Supabase CDN`);
+      // Skip cache check and go directly to CDN streaming
+      await streamFromCDN(filename, req, res, VERSION);
+      return;
+    }
+    
+    console.log(`🎬 VIDEO PROXY ${VERSION} - HERO VIDEO CACHE APPROACH`);
     console.log(`   - Filename: "${filename}"`);
     console.log(`   - Range: "${req.headers.range}"`);
     console.log(`   - User Agent: "${req.headers['user-agent']}"`);
@@ -2130,6 +2139,66 @@ export async function registerRoutes(app: Express): Promise<void> {
         userAgent: req.headers['user-agent']
       });
     }
+  }
+  
+  // Helper function to stream gallery videos directly from CDN (bypassing cache)
+  async function streamFromCDN(filename: string, req: any, res: any, version: string) {
+    console.error(`🌐 STREAMING FROM CDN: ${filename}`);
+    const encodedFilename = encodeURIComponent(filename);
+    const supabaseUrl = `https://supabase.memopyk.org/storage/v1/object/public/memopyk-videos/${encodedFilename}`;
+    console.error(`   - CDN URL: ${supabaseUrl}`);
+    console.error(`   - Range header: ${req.headers.range || 'NONE'}`);
+    
+    const fetch = (await import('node-fetch')).default;
+    const response = await fetch(supabaseUrl, {
+      headers: {
+        'Range': req.headers.range || 'bytes=0-',
+        'User-Agent': 'MEMOPYK-GalleryProxy/1.0'
+      }
+    });
+    
+    console.error(`   - CDN response status: ${response.status}`);
+    console.error(`   - CDN response ok: ${response.ok}`);
+    
+    if (!response.ok) {
+      console.error(`❌ CDN STREAM FAILED: ${response.status} ${response.statusText}`);
+      console.error(`🚨🚨🚨 ULTRA DETAILED VIDEO PROXY LOG END (CDN FAILED) - ${filename} 🚨🚨🚨`);
+      return res.status(500).json({ 
+        error: "Gallery video not available",
+        filename,
+        status: response.status,
+        statusText: response.statusText,
+        type: 'GALLERY_CDN_ERROR'
+      });
+    }
+    
+    // Forward response headers
+    const contentRange = response.headers.get('content-range');
+    const contentLength = response.headers.get('content-length');
+    const acceptRanges = response.headers.get('accept-ranges');
+    
+    const headers: any = {
+      'Content-Type': 'video/mp4',
+      'Access-Control-Allow-Origin': '*',
+      'Access-Control-Allow-Headers': 'range, content-type',
+      'Cache-Control': 'public, max-age=3600',
+      'X-Video-Source': 'GALLERY_CDN'
+    };
+    
+    if (contentRange) headers['Content-Range'] = contentRange;
+    if (contentLength) headers['Content-Length'] = contentLength;
+    if (acceptRanges) headers['Accept-Ranges'] = acceptRanges;
+    
+    const statusCode = response.status === 206 ? 206 : 200;
+    res.writeHead(statusCode, headers);
+    
+    // Stream response
+    response.body!.pipe(res);
+    
+    response.body!.on('end', () => {
+      console.error(`✅ GALLERY CDN STREAM COMPLETE: ${filename}`);
+      console.error(`🚨🚨🚨 ULTRA DETAILED VIDEO PROXY LOG END (GALLERY CDN SUCCESS) - ${filename} 🚨🚨🚨`);
+    });
   }
   
   // Helper function to serve video from cache
