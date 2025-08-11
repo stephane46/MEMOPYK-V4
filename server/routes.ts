@@ -2008,19 +2008,21 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Simplified gallery video proxy endpoint for /gv testing
   app.get("/api/gallery-video-proxy", async (req, res) => {
     const videoFilename = req.query.filename as string;
+    const startTime = Date.now();
     
     if (!videoFilename) {
       return res.status(400).json({ error: "filename parameter is required" });
     }
 
     try {
-      console.log(`[GALLERY-PROXY] Request for video: ${videoFilename}`);
+      console.log(`🔍 [GALLERY-PROXY] Request for video: ${videoFilename}`);
       
       // Try local cache first
       const cachedVideo = path.join(process.cwd(), 'uploads', 'videos', videoFilename);
       
       if (existsSync(cachedVideo)) {
-        console.log(`[GALLERY-PROXY] Serving from local cache: ${videoFilename}`);
+        const serveTime = Date.now() - startTime;
+        console.log(`✅ [GALLERY-PROXY] CACHE HIT - Serving from local cache: ${videoFilename} (${serveTime}ms)`);
         
         const stat = statSync(cachedVideo);
         const fileSize = stat.size;
@@ -2038,7 +2040,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
             'Content-Length': chunksize,
             'Content-Type': 'video/mp4',
             'Access-Control-Allow-Origin': '*',
-            'Cache-Control': 'public, max-age=86400'
+            'Cache-Control': 'public, max-age=86400',
+            'X-Video-Source': 'LOCAL_CACHE',
+            'X-Serve-Time': `${serveTime}ms`
           });
           
           const stream = createReadStream(cachedVideo, { start, end });
@@ -2048,7 +2052,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
             'Content-Length': fileSize,
             'Content-Type': 'video/mp4',
             'Access-Control-Allow-Origin': '*',
-            'Cache-Control': 'public, max-age=86400'
+            'Cache-Control': 'public, max-age=86400',
+            'X-Video-Source': 'LOCAL_CACHE',
+            'X-Serve-Time': `${serveTime}ms`
           });
           
           const stream = createReadStream(cachedVideo);
@@ -2056,7 +2062,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         }
       } else {
         // Fall back to direct Supabase CDN streaming
-        console.log(`[GALLERY-PROXY] Cache miss, streaming from Supabase: ${videoFilename}`);
+        console.log(`⚠️ [GALLERY-PROXY] CACHE MISS - Streaming from Supabase CDN: ${videoFilename}`);
         
         const supabaseUrl = `https://dcrfcrjjuynwtdwjglhm.supabase.co/storage/v1/object/public/gallery-videos/${videoFilename}`;
         
@@ -2066,9 +2072,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
           }
         });
         
+        const serveTime = Date.now() - startTime;
+        
         if (!response.ok) {
+          console.log(`❌ [GALLERY-PROXY] CDN MISS - Video not found: ${videoFilename} (${serveTime}ms)`);
           return res.status(404).json({ error: 'Video not found in CDN' });
         }
+        
+        console.log(`🌐 [GALLERY-PROXY] CDN HIT - Streaming from Supabase: ${videoFilename} (${serveTime}ms)`);
         
         // Copy headers from Supabase response
         res.writeHead(response.status, {
@@ -2077,7 +2088,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
           'Content-Range': response.headers.get('Content-Range') || '',
           'Accept-Ranges': 'bytes',
           'Access-Control-Allow-Origin': '*',
-          'Cache-Control': 'public, max-age=86400'
+          'Cache-Control': 'public, max-age=86400',
+          'X-Video-Source': 'SUPABASE_CDN',
+          'X-Serve-Time': `${serveTime}ms`
         });
         
         // Stream the response body
@@ -2093,7 +2106,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
               }
               res.end();
             } catch (error) {
-              console.error(`[GALLERY-PROXY] Stream error for ${videoFilename}:`, error);
+              console.error(`❌ [GALLERY-PROXY] Stream error for ${videoFilename}:`, error);
               res.end();
             }
           };
@@ -2104,8 +2117,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
         }
       }
     } catch (error: any) {
-      console.error(`[GALLERY-PROXY] Error serving ${videoFilename}:`, error);
-      res.status(500).json({ error: 'Failed to serve video' });
+      const serveTime = Date.now() - startTime;
+      console.error(`❌ [GALLERY-PROXY] Error serving ${videoFilename} (${serveTime}ms):`, error);
+      res.status(500).json({ error: 'Failed to serve video', source: 'PROXY_ERROR', serveTime: `${serveTime}ms` });
     }
   });
 }
