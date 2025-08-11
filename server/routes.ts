@@ -282,7 +282,7 @@ export async function registerRoutes(app: Express): Promise<void> {
         const deliveryHeaders = createCacheHitHeaders('local');
         res.setHeader('X-Delivery', deliveryHeaders['X-Delivery']);
         res.setHeader('X-Upstream', deliveryHeaders['X-Upstream']);
-        res.setHeader('X-Storage', deliveryHeaders['X-Storage']);
+        res.setHeader('X-Storage', deliveryHeaders['X-Storage'] || 'unknown');
         res.setHeader('X-Content-Bytes', String(JSON.stringify(galleryCache.data).length));
         
         return res.json(galleryCache.data);
@@ -297,7 +297,7 @@ export async function registerRoutes(app: Express): Promise<void> {
       const deliveryHeaders = createCacheMissHeaders('local');
       res.setHeader('X-Delivery', deliveryHeaders['X-Delivery']);
       res.setHeader('X-Upstream', deliveryHeaders['X-Upstream']);
-      res.setHeader('X-Storage', deliveryHeaders['X-Storage']);
+      res.setHeader('X-Storage', deliveryHeaders['X-Storage'] || 'unknown');
       res.setHeader('X-Content-Bytes', String(JSON.stringify(items).length));
       
       res.json(items);
@@ -584,7 +584,7 @@ export async function registerRoutes(app: Express): Promise<void> {
           }
         } catch (autoGenError) {
           console.error(`❌ DIRECT UPLOAD AUTO-THUMBNAIL ERROR:`, autoGenError);
-          console.error(`❌ Sharp processing failed for direct upload:`, autoGenError.message, autoGenError.stack);
+          console.error(`❌ Sharp processing failed for direct upload:`, (autoGenError as any).message, (autoGenError as any).stack);
         }
       }
 
@@ -864,7 +864,7 @@ export async function registerRoutes(app: Express): Promise<void> {
         }
       } catch (autoGenError) {
         console.error(`❌ AUTO-THUMBNAIL ERROR:`, autoGenError);
-        console.error(`❌ Sharp processing failed:`, autoGenError.message, autoGenError.stack);
+        console.error(`❌ Sharp processing failed:`, (autoGenError as any).message, (autoGenError as any).stack);
       }
       
       // Clean up temporary file
@@ -1147,7 +1147,7 @@ export async function registerRoutes(app: Express): Promise<void> {
       const textId = parseInt(req.params.id);
       const updateData = req.body;
       
-      const updatedText = await hybridStorage.updateHeroText(textId, updateData);
+      const updatedText = await hybridStorage.updateHeroText(String(textId), updateData);
       res.json({ success: true, text: updatedText });
     } catch (error) {
       console.error('Update hero text error:', error);
@@ -1169,11 +1169,11 @@ export async function registerRoutes(app: Express): Promise<void> {
       };
       
       // Add responsive font sizes if provided
-      if (font_size_desktop) updateData.font_size_desktop = font_size_desktop;
-      if (font_size_tablet) updateData.font_size_tablet = font_size_tablet;
-      if (font_size_mobile) updateData.font_size_mobile = font_size_mobile;
+      if (font_size_desktop) updateData.font_size_desktop = Number(font_size_desktop);
+      if (font_size_tablet) updateData.font_size_tablet = Number(font_size_tablet);
+      if (font_size_mobile) updateData.font_size_mobile = Number(font_size_mobile);
       
-      const appliedText = await hybridStorage.updateHeroText(textId, updateData);
+      const appliedText = await hybridStorage.updateHeroText(String(textId), updateData);
       
       res.json({ success: true, text: appliedText });
     } catch (error) {
@@ -1187,7 +1187,7 @@ export async function registerRoutes(app: Express): Promise<void> {
     try {
       const textId = parseInt(req.params.id);
       
-      await hybridStorage.deleteHeroText(textId);
+      await hybridStorage.deleteHeroText(String(textId));
       res.json({ success: true, message: "Hero text deleted successfully" });
     } catch (error) {
       console.error('Delete hero text error:', error);
