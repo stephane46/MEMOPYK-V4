@@ -1,5 +1,6 @@
 import { useEffect } from 'react';
 import { SimpleHeroVideoSection } from '../components/sections/SimpleHeroVideoSection';
+import { SingleGalleryVideoSection } from '../components/sections/SingleGalleryVideoSection';
 import { KeyVisualSection } from '../components/sections/KeyVisualSection';
 import { HowItWorksSection } from '../components/sections/HowItWorksSection';
 import { WhyMemopykSection } from '../components/sections/WhyMemopykSection';
@@ -43,6 +44,9 @@ export function HomePage() {
     <div className="min-h-screen">
       {/* Simple Hero Video Section */}
       <SimpleHeroVideoSection />
+      
+      {/* Single Gallery Video Demo */}
+      <SingleGalleryVideoSection />
       
       {/* Key Visual Problem/Solution Section */}
       <KeyVisualSection />
