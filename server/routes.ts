@@ -1747,6 +1747,73 @@ export async function registerRoutes(app: Express): Promise<void> {
     }
   });
 
+  // Analytics Dashboard Data - GET analytics dashboard overview
+  app.get("/api/analytics/dashboard", async (req, res) => {
+    try {
+      const { dateFrom, dateTo } = req.query;
+      console.log('📊 Analytics dashboard request:', { dateFrom, dateTo });
+      
+      const dashboard = await hybridStorage.getAnalyticsDashboard(
+        dateFrom as string, 
+        dateTo as string
+      );
+      res.json(dashboard);
+    } catch (error) {
+      console.error('❌ Analytics dashboard error:', error);
+      res.status(500).json({ error: "Failed to get analytics dashboard" });
+    }
+  });
+
+  // Analytics Time Series - GET time series data
+  app.get("/api/analytics/time-series", async (req, res) => {
+    try {
+      const { dateFrom, dateTo } = req.query;
+      console.log('📊 Analytics time series request:', { dateFrom, dateTo });
+      
+      const timeSeries = await hybridStorage.getTimeSeriesData(
+        dateFrom as string, 
+        dateTo as string
+      );
+      res.json(timeSeries);
+    } catch (error) {
+      console.error('❌ Analytics time series error:', error);
+      res.status(500).json({ error: "Failed to get time series data" });
+    }
+  });
+
+  // Analytics Settings - GET analytics settings
+  app.get("/api/analytics/settings", async (req, res) => {
+    try {
+      const settings = await hybridStorage.getAnalyticsSettings();
+      res.json(settings);
+    } catch (error) {
+      console.error('❌ Analytics settings error:', error);
+      res.status(500).json({ error: "Failed to get analytics settings" });
+    }
+  });
+
+  // Analytics Settings - PUT update analytics settings
+  app.put("/api/analytics/settings", async (req, res) => {
+    try {
+      const settings = await hybridStorage.updateAnalyticsSettings(req.body);
+      res.json(settings);
+    } catch (error) {
+      console.error('❌ Analytics settings update error:', error);
+      res.status(500).json({ error: "Failed to update analytics settings" });
+    }
+  });
+
+  // Active Viewer IPs - GET active viewer IP addresses
+  app.get("/api/analytics/active-ips", async (req, res) => {
+    try {
+      const activeIps = await hybridStorage.getActiveViewerIps();
+      res.json(activeIps);
+    } catch (error) {
+      console.error('❌ Active viewer IPs error:', error);
+      res.status(500).json({ error: "Failed to get active viewer IPs" });
+    }
+  });
+
   // Legacy endpoint for backward compatibility
   app.post("/api/analytics-session", async (req, res) => {
     try {
