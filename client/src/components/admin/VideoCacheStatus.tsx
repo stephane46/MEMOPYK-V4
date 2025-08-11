@@ -93,17 +93,19 @@ export const VideoCacheStatus: React.FC<VideoCacheStatusProps> = ({
     // Removed automatic refresh - use on-demand refresh buttons instead
   });
 
-  // Refresh cache status for single video
+  // Refresh cache status for section (all videos in this component)
   const refreshStatusMutation = useMutation({
-    mutationFn: async (filename: string) => {
-      const response = await apiRequest('/api/video-cache/status', 'POST', { filenames: [filename] });
+    mutationFn: async () => {
+      const response = await apiRequest('/api/video-cache/status', 'POST', { filenames: videoFilenames });
       return await response.json();
     },
     onSuccess: () => {
       refetchStatus();
+      refetchStats();
+      refetchUnified();
       toast({
         title: "Cache Status Refreshed",
-        description: "Updated cache information from file system",
+        description: `Updated cache information for ${videoFilenames.length} videos`,
       });
     },
     onError: (error) => {
@@ -413,6 +415,20 @@ export const VideoCacheStatus: React.FC<VideoCacheStatusProps> = ({
                 <Badge variant={cachedCount === totalCount ? "default" : "secondary"} className="whitespace-nowrap text-xs">
                   {cachedCount}/{totalCount}
                 </Badge>
+                
+                {/* Section Refresh Button */}
+                <Button
+                  size="sm"
+                  variant="ghost"
+                  onClick={() => refreshStatusMutation.mutate()}
+                  disabled={refreshStatusMutation.isPending}
+                  className="h-7 px-2 text-xs"
+                  title={`Refresh cache status for all ${videoFilenames.length} videos in this section`}
+                >
+                  <RefreshCw className={`h-3 w-3 mr-1 ${refreshStatusMutation.isPending ? 'animate-spin' : ''}`} />
+                  Refresh Cache
+                </Button>
+                
                 {showForceAllButton && (
                   <Button 
                     size="sm" 
@@ -489,17 +505,6 @@ export const VideoCacheStatus: React.FC<VideoCacheStatusProps> = ({
                 </div>
                 
                 <div className="flex items-center gap-2">
-                  {/* Refresh cache status button */}
-                  <Button
-                    size="sm"
-                    variant="ghost"
-                    onClick={() => refreshStatusMutation.mutate(filename)}
-                    disabled={refreshStatusMutation.isPending}
-                    className="h-8 w-8 p-0"
-                  >
-                    <RefreshCw className={`h-3 w-3 ${refreshStatusMutation.isPending ? 'animate-spin' : ''}`} />
-                  </Button>
-                  
                   {!isCached && (
                     <Button
                       size="sm"
