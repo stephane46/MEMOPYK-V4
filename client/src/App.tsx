@@ -29,7 +29,11 @@ function App() {
             <Route path="/language" component={LanguageSelectionPage} />
             
             <Layout>
-              {/* Root redirects - Handle these first */}
+              {/* Test Routes - Handle these first, before redirects */}
+              <Route path="/gv" component={GalleryVideoTest} />
+              <Route path="/test-gallery-video" component={TestGalleryVideo} />
+              
+              {/* Root redirects - Handle these after test routes */}
               <Route path="/" component={() => { 
                 window.location.href = '/fr-FR'; 
                 return null; 
@@ -49,9 +53,7 @@ function App() {
               <Route path="/fr-FR/contact" component={() => <div className="min-h-screen flex items-center justify-center"><div className="text-2xl text-gray-500">Contact Bientôt Disponible</div></div>} />
               <Route path="/en-US/contact" component={() => <div className="min-h-screen flex items-center justify-center"><div className="text-2xl text-gray-500">Contact Coming Soon</div></div>} />
               
-              {/* Test Routes */}
-              <Route path="/test-gallery-video" component={TestGalleryVideo} />
-              <Route path="/gv" component={GalleryVideoTest} />
+
               
               {/* Legal Document Routes */}
               <Route path="/fr-FR/legal/:docType" component={LegalDocumentPage} />
