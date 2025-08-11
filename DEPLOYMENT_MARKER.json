@@ -1,5 +1,7 @@
 {
-  "timestamp": "2025-07-31T07:02:56.232Z",
-  "fix": "Enhanced stream error debugging for production gallery video diagnosis",
-  "commit": "Added comprehensive file reading and stream error logging - v1.0.43"
+  "timestamp": "2025-08-11T15:11:15.000Z",
+  "fix": "Unified video proxy approach for all videos - fixed 500 errors for gallery videos",
+  "commit": "Implemented unified video proxy v1.0.52 - same code path for hero and gallery videos, eliminated complex download/cache logic causing failures",
+  "version": "1.0.52",
+  "status": "VIDEO_PROXY_UNIFIED"
 }
