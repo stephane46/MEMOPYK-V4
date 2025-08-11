@@ -313,13 +313,23 @@ export default function GallerySection() {
   };
 
   const getVideoUrl = (item: GalleryItem, index: number) => {
-    // MAIN PRODUCTION PAGE: Use direct Supabase URLs (NOT proxy)
-    const videoUrl = language === 'fr-FR' ? item.videoUrlFr : item.videoUrlEn;
+    // FIXED v1.0.1754928443: USE SAME VIDEO PROXY AS HERO VIDEOS - EXTRACT FILENAME ONLY
+    let filename = item.videoFilename || '';
     
-    console.log(`🎬 MAIN PAGE - Direct Supabase for item ${index}: ${videoUrl}`);
-    console.log("🌐 Using direct Supabase URL (NOT proxy) for main production page");
+    // If it's a full URL, extract just the filename
+    if (filename.includes('/')) {
+      filename = filename.split('/').pop() || '';
+    }
     
-    return videoUrl;
+    const proxyUrl = `/api/video-proxy?filename=${encodeURIComponent(filename)}`;
+    
+    console.log(`🎬 GALLERY VIDEO PROXY v1.0.1754928443 - Item ${index}:`);
+    console.log(`   - Raw videoFilename: ${item.videoFilename}`);
+    console.log(`   - Extracted filename: ${filename}`);
+    console.log(`   - Proxy URL: ${proxyUrl}`);
+    console.log("✅ USING SAME VIDEO PROXY AS HERO VIDEOS (FILENAME ONLY)!");
+    
+    return proxyUrl;
   };
 
   // Get optimal viewing format info for marketing display - now using editable database fields
