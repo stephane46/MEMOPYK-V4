@@ -596,13 +596,15 @@ export function AnalyticsDashboard() {
             </Button>
             <Button 
               onClick={() => {
-                setDateFrom('2025-07-19');
-                setDateTo('2025-07-22');
+                const today = new Date();
+                const fourDaysAgo = new Date(Date.now() - 4 * 24 * 60 * 60 * 1000);
+                setDateFrom(fourDaysAgo.toISOString().split('T')[0]);
+                setDateTo(today.toISOString().split('T')[0]);
               }}
               variant="outline"
               size="sm"
             >
-              July 19-22
+              Last 4 Days
             </Button>
             <Button 
               onClick={() => {
