@@ -20,12 +20,13 @@ export default function SimpleVideoPlayer() {
       {/* Simple POM Video Player */}
       <div className="py-8 flex justify-center">
         <video
-          src="/api/video-proxy?filename=PomGalleryC.mp4"
           controls
           autoPlay
           muted
           style={{ width: '100%', maxWidth: '800px' }}
-        />
+        >
+          <source src="/api/video-proxy?filename=PomGalleryC.mp4" type="video/mp4" />
+        </video>
       </div>
     </div>
   );
