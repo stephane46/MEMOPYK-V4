@@ -3312,24 +3312,24 @@ Allow: /contact`;
   }
 
   async createAnalyticsSession(sessionData: any): Promise<any> {
-    try {
-      // Generate session data
-      const sessionWithId = {
-        id: `session_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
-        session_id: sessionData.session_id || `session_${Date.now()}`,
-        country: sessionData.country || 'Unknown',
-        region: sessionData.region || 'Unknown', 
-        city: sessionData.city || 'Unknown',
-        language: sessionData.language || 'en-US',
-        user_agent: sessionData.user_agent || '',
-        screen_resolution: sessionData.screen_resolution || '',
-        page_url: sessionData.page_url || '',
-        referrer: sessionData.referrer || '',
-        ip_address: sessionData.ip_address || '0.0.0.0',
-        created_at: new Date().toISOString(),
-        updated_at: new Date().toISOString()
-      };
+    // Generate session data (move outside try block so it's accessible in JSON fallback)
+    const sessionWithId = {
+      id: `session_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+      session_id: sessionData.session_id || `session_${Date.now()}`,
+      country: sessionData.country || 'Unknown',
+      region: sessionData.region || 'Unknown', 
+      city: sessionData.city || 'Unknown',
+      language: sessionData.language || 'en-US',
+      user_agent: sessionData.user_agent || '',
+      screen_resolution: sessionData.screen_resolution || '',
+      page_url: sessionData.page_url || '',
+      referrer: sessionData.referrer || '',
+      ip_address: sessionData.ip_address || '0.0.0.0',
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString()
+    };
 
+    try {
       // Try Supabase first
       console.log('🔍 Analytics Session: Creating in Supabase database...');
       const { data, error } = await this.supabase
@@ -3363,6 +3363,7 @@ Allow: /contact`;
       sessions.push(sessionWithId);
       this.saveJsonFile('analytics-sessions.json', sessions);
       
+      console.log('✅ Analytics Session: Created in JSON fallback successfully');
       return sessionWithId;
     } catch (error) {
       console.error('Error creating analytics session in JSON:', error);
