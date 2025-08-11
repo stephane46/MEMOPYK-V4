@@ -93,6 +93,28 @@ export const VideoCacheStatus: React.FC<VideoCacheStatusProps> = ({
     refetchInterval: 30000
   });
 
+  // Refresh cache status for single video
+  const refreshStatusMutation = useMutation({
+    mutationFn: async (filename: string) => {
+      const response = await apiRequest('/api/video-cache/status', 'POST', { filenames: [filename] });
+      return await response.json();
+    },
+    onSuccess: () => {
+      refetchStatus();
+      toast({
+        title: "Cache Status Refreshed",
+        description: "Updated cache information from file system",
+      });
+    },
+    onError: (error) => {
+      toast({
+        title: "Refresh Failed",
+        description: error.message,
+        variant: "destructive"
+      });
+    }
+  });
+
   // Force cache single video mutation
   const forceCacheMutation = useMutation({
     mutationFn: async (filename: string) => {
@@ -466,13 +488,25 @@ export const VideoCacheStatus: React.FC<VideoCacheStatusProps> = ({
                   </div>
                 </div>
                 
-                {!isCached && (
+                <div className="flex items-center gap-2">
+                  {/* Refresh cache status button */}
                   <Button
                     size="sm"
-                    variant="outline"
-                    onClick={() => forceCacheMutation.mutate(filename)}
-                    disabled={pendingVideos.has(filename)}
+                    variant="ghost"
+                    onClick={() => refreshStatusMutation.mutate(filename)}
+                    disabled={refreshStatusMutation.isPending}
+                    className="h-8 w-8 p-0"
                   >
+                    <RefreshCw className={`h-3 w-3 ${refreshStatusMutation.isPending ? 'animate-spin' : ''}`} />
+                  </Button>
+                  
+                  {!isCached && (
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      onClick={() => forceCacheMutation.mutate(filename)}
+                      disabled={pendingVideos.has(filename)}
+                    >
                     {pendingVideos.has(filename) ? (
                       <RefreshCw className="h-4 w-4 animate-spin mr-1" />
                     ) : (
