@@ -9,6 +9,8 @@ export default function GalleryVideoTest() {
           muted
           loop
           playsInline
+          onError={(e) => console.error('Hero video failed to load:', e)}
+          onLoadedData={() => console.log('Hero video loaded successfully')}
         >
           <source src="/api/video-proxy?filename=VideoHero1.mp4" type="video/mp4" />
         </video>
