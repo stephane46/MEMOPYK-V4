@@ -171,7 +171,7 @@ export function FlipCard({
           transformStyle: 'preserve-3d',
           transform: isFlipped ? 'rotateY(180deg)' : 'rotateY(0deg)',
           transition: 'transform 0.6s',
-          height: isFlipped ? '430px' : '126px',
+          height: isFlipped ? '600px' : '126px', // Increased height to cover full chart area
           backgroundColor: isFlipped ? 'hotpink' : 'gold',
           zIndex: isFlipped ? 1000 : 1
         }}
