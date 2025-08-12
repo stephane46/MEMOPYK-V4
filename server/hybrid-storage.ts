@@ -1233,13 +1233,20 @@ export class HybridStorage implements HybridStorageInterface {
 
   // Legal documents operations
   async getLegalDocuments(language?: string): Promise<any[]> {
+    // Define the correct order per user requirements:
+    // 1. Mentions légales (legal-notice)
+    // 2. Conditions générales d'utilisation (terms) 
+    // 3. Conditions générales de vente (terms-sale)
+    // 4. Politique de confidentialité (privacy)
+    // 5. Politique des cookies (cookies)
+    const documentOrder = ['legal-notice', 'terms', 'terms-sale', 'privacy', 'cookies'];
+    
     // Try Supabase first
     try {
       const { data, error } = await this.supabase
         .from('legal_documents')
         .select('*')
-        .eq('is_active', true)
-        .order('type');
+        .eq('is_active', true);
       
       if (!error && data) {
         console.log(`✅ Legal Documents: Found ${data.length} documents in Supabase`);
@@ -1255,9 +1262,21 @@ export class HybridStorage implements HybridStorageInterface {
           updated_at: doc.updated_at
         }));
         
+        // Sort by the correct order defined above
+        const sorted = converted.sort((a, b) => {
+          const indexA = documentOrder.indexOf(a.type);
+          const indexB = documentOrder.indexOf(b.type);
+          // Put documents not in the order array at the end
+          if (indexA === -1) return 1;
+          if (indexB === -1) return -1;
+          return indexA - indexB;
+        });
+        
+        console.log(`📋 Legal Documents ordered: ${sorted.map(d => d.type).join(' → ')}`);
+        
         // Save to JSON as backup
-        this.saveJsonFile('legal-documents.json', converted);
-        return converted;
+        this.saveJsonFile('legal-documents.json', sorted);
+        return sorted;
       } else {
         console.warn('⚠️ Legal Documents: Supabase error, falling back to JSON:', error);
       }
@@ -1265,9 +1284,17 @@ export class HybridStorage implements HybridStorageInterface {
       console.warn('⚠️ Legal Documents: Database connection failed, using JSON fallback:', error);
     }
     
-    // Fallback to JSON
+    // Fallback to JSON with same ordering
     const data = this.loadJsonFile('legal-documents.json');
-    return data.filter(doc => doc.is_active);
+    const active = data.filter(doc => doc.is_active);
+    
+    return active.sort((a, b) => {
+      const indexA = documentOrder.indexOf(a.type);
+      const indexB = documentOrder.indexOf(b.type);
+      if (indexA === -1) return 1;
+      if (indexB === -1) return -1;
+      return indexA - indexB;
+    });
   }
 
   async createLegalDocument(document: any): Promise<any> {

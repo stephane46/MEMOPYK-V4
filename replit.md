@@ -46,7 +46,15 @@ Visual consistency priority: Extremely detail-oriented about spacing and formatt
 - **Deployment Optimizations**: Includes fast health check endpoints, production video cache preloading for hero videos, comprehensive error handling, routing priorities, and automated public asset copying.
 
 ## Recent Changes
-**August 12, 2025 - v1.0.163 Recent Visitors Transparency Fix & Admin Legal Order Update (READY FOR DEPLOYMENT):**
+**August 12, 2025 - v1.0.164 Legal Documents Order Fix Complete (READY FOR DEPLOYMENT):**
+- CRITICAL FIX: Fixed legal documents ordering to match exact user requirements
+- DATABASE SYNC: Activated missing CGU document (was inactive) to display all 5 documents
+- API ORDERING: Updated getLegalDocuments function to return documents in correct sequence
+- FINAL ORDER: Mentions légales → CGU → CGV → Privacy → Cookies (matching public footer exactly)
+- BILINGUAL CONSISTENCY: Both French and English admin interfaces show identical document order
+- DATA PRESERVATION: All user content preserved during database updates and ordering fixes
+
+**August 12, 2025 - v1.0.163 Recent Visitors Transparency Fix & Admin Legal Order Update:**
 - CRITICAL UI FIX: Resolved persistent Recent Visitors transparency issue - chart bleeding through flip card
 - ROOT CAUSE SOLUTION: Completely replaced shadcn Badge component with pure inline-styled div to eliminate CSS inheritance
 - ADMIN CONSISTENCY: Reordered legal document types in admin interface to match public site order
