@@ -120,7 +120,10 @@ export function FlipCard({
           className="absolute inset-0 w-full h-full"
           style={{ 
             backfaceVisibility: 'hidden',
-            transform: 'rotateY(180deg)'
+            transform: 'rotateY(180deg)',
+            backgroundColor: '#ffffff',
+            background: '#ffffff',
+            backgroundImage: 'none'
           }}
         >
           <Card className="h-full" style={{ backgroundColor: '#ffffff', background: '#ffffff', backgroundImage: 'none' }}>
