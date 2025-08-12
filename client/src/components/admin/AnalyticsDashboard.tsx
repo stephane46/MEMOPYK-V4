@@ -1465,6 +1465,39 @@ export function AnalyticsDashboard() {
             </CardContent>
           </Card>
 
+          {/* Session Explanation */}
+          <Card className="mb-6 bg-gradient-to-r from-[#F2EBDC]/50 to-[#89BAD9]/10 border-[#2A4759]/20">
+            <CardContent className="pt-6">
+              <div className="flex items-start gap-4">
+                <div className="flex-shrink-0">
+                  <div className="w-12 h-12 bg-[#2A4759] rounded-full flex items-center justify-center">
+                    <Users className="h-6 w-6 text-white" />
+                  </div>
+                </div>
+                <div className="flex-1">
+                  <h3 className="text-lg font-semibold text-[#2A4759] mb-2">What is a Session?</h3>
+                  <p className="text-sm text-[#2A4759]/80 mb-3">
+                    A session represents one person's complete visit to your MEMOPYK site, from when they arrive until they leave.
+                  </p>
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
+                    <div className="flex items-center gap-2">
+                      <div className="w-2 h-2 bg-[#D67C4A] rounded-full"></div>
+                      <span className="text-[#2A4759]/70"><strong>Location:</strong> Detected from IP address</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <div className="w-2 h-2 bg-[#D67C4A] rounded-full"></div>
+                      <span className="text-[#2A4759]/70"><strong>Language:</strong> From browser settings</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <div className="w-2 h-2 bg-[#D67C4A] rounded-full"></div>
+                      <span className="text-[#2A4759]/70"><strong>Duration:</strong> Total time on site</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
           {/* Geographic and Language Data */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <Card>
