@@ -160,7 +160,7 @@ export function FlipCard({
             className="absolute inset-0 w-full bg-white dark:bg-white"
             style={{ backfaceVisibility: 'hidden' }}
           >
-            <Card className="h-full bg-white dark:bg-white shadow-none">
+            <Card className="h-full bg-white dark:bg-white shadow-none hover:shadow-lg transition-shadow duration-300">
               {frontContent}
             </Card>
           </div>
