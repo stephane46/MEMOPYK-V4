@@ -46,9 +46,13 @@ export function FlipCard({
   // ---- Step 2: AUTO-RESIZE CONTAINER TO VISIBLE FACE ----
   const measure = () => {
     const el = isFlipped ? backInnerRef.current : frontInnerRef.current;
-    if (!el) return;
+    if (!el) {
+      console.log('DEBUG: No element found for measurement', { isFlipped, frontInnerRef: frontInnerRef.current, backInnerRef: backInnerRef.current });
+      return;
+    }
     const h = el.getBoundingClientRect().height;
-    setContainerHeight(Math.ceil(h));
+    console.log('DEBUG: Measured height', { element: el, height: h, isFlipped });
+    setContainerHeight(Math.max(Math.ceil(h), 120)); // Minimum 120px
   };
 
   // Measure on mount/flip/content change
@@ -136,8 +140,11 @@ export function FlipCard({
       <div
         ref={heightShellRef}
         style={{
-          height: containerHeight ? `${containerHeight}px` : undefined,
-          transition: 'height 300ms ease'
+          height: containerHeight ? `${containerHeight}px` : 'auto',
+          minHeight: '120px',
+          transition: 'height 300ms ease',
+          backgroundColor: 'red',
+          border: '3px solid black'
         }}
       >
         {/* Rotator: unified white surface, rounded, clipped; avoids seams */}
