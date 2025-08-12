@@ -155,14 +155,13 @@ export function FlipCard({
           height: containerHeight ? `${containerHeight}px` : 'auto',
           minHeight: '120px',
           transition: 'height 300ms ease',
-          backgroundColor: 'red',
-          border: '3px solid black'
+          backgroundColor: 'transparent'
         }}
       >
         {/* Rotator: unified white surface, rounded, clipped; avoids seams */}
         <div
           ref={rotatorRef}
-          className="relative w-full cursor-pointer transition-transform duration-500 rounded-lg overflow-hidden bg-orange-300 dark:bg-orange-300"
+          className="relative w-full cursor-pointer transition-transform duration-500 rounded-lg overflow-hidden bg-white dark:bg-gray-800"
           onClick={(e) => {
             console.log('DEBUG: Rotator clicked directly', e.target, 'Current position:', e.clientX, e.clientY);
             e.preventDefault();
@@ -174,7 +173,7 @@ export function FlipCard({
           }}
           style={{
             transformStyle: 'preserve-3d',
-            transform: isFlipped ? 'rotateY(180deg)' : 'rotateY(0deg)',
+            transform: isFlipped ? 'rotateY(-180deg)' : 'rotateY(0deg)',
             willChange: 'transform',
             translate: '0',                 // promote to its own layer (helps against hairline gaps)
             isolation: 'isolate',
@@ -196,12 +195,12 @@ export function FlipCard({
           {/* FRONT FACE */}
           <div
             ref={frontRef}
-            className="absolute inset-0 w-full bg-white dark:bg-white pointer-events-none"
+            className="absolute inset-0 w-full bg-white dark:bg-gray-800 pointer-events-none"
             style={{ backfaceVisibility: 'hidden', WebkitBackfaceVisibility: 'hidden', transform: 'rotateY(0deg) translateZ(0)' }}
           >
             <div 
               ref={frontInnerRef} 
-              className="relative bg-green-200 border-4 border-red-500 p-2 pointer-events-auto cursor-pointer"
+              className="relative pointer-events-auto cursor-pointer"
               onClick={(e) => {
                 console.log('DEBUG: Front content clicked directly - CAPTURED!');
                 console.log('DEBUG: Event details:', e.type, e.target, e.currentTarget);
@@ -220,16 +219,16 @@ export function FlipCard({
           {/* BACK FACE */}
           <div
             ref={backRef}
-            className="absolute inset-0 w-full bg-pink-300 dark:bg-pink-300 pointer-events-none"
+            className="absolute inset-0 w-full bg-white dark:bg-gray-800 pointer-events-none"
             style={{
               backfaceVisibility: 'hidden',
               WebkitBackfaceVisibility: 'hidden',
-              transform: 'rotateY(180deg) translateZ(0)'
+              transform: 'rotateY(-180deg) translateZ(0)'
             }}
           >
             <div 
               ref={backInnerRef} 
-              className="relative bg-blue-200 border-4 border-purple-500 p-2 pointer-events-auto cursor-pointer"
+              className="relative pointer-events-auto cursor-pointer"
               onClick={(e) => {
                 e.stopPropagation();
                 console.log('DEBUG: Back content clicked directly');
@@ -237,12 +236,7 @@ export function FlipCard({
               }}
             >
               <div 
-                className="h-full w-full p-6 bg-yellow-300"
-                style={{
-                  backgroundColor: '#fef08a',
-                  position: 'relative',
-                  zIndex: 10
-                }}
+                className="h-full w-full p-6 bg-white dark:bg-gray-800"
               >
               <div className="flex items-center gap-2 text-lg font-semibold text-gray-900 mb-2">
                 <Users className="h-5 w-5 text-gray-700" />
