@@ -3425,31 +3425,61 @@ Allow: /contact`;
       );
     };
 
+    // Generate view data (move outside try block so it's accessible in JSON fallback)
+    const viewWithId = {
+      id: `view_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+      video_id: viewData.video_id,
+      video_type: viewData.video_type || 'gallery', // Focus on gallery videos
+      video_title: viewData.video_title || '',
+      session_id: viewData.session_id,
+      language: viewData.language || 'en-US',
+      watch_time: viewData.watch_time || 0,
+      completion_rate: viewData.completion_rate || 0,
+      ip_address: viewData.ip_address || '0.0.0.0',
+      user_agent: viewData.user_agent || '',
+      is_test_data: isTestData(viewData), // Automatically flag test data
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString()
+    };
+
+    try {
+      // Try Supabase first
+      console.log('🔍 Analytics View: Creating in Supabase database...');
+      const { data, error } = await this.supabase
+        .from('analytics_views')
+        .insert(viewWithId)
+        .select()
+        .single();
+
+      if (error) {
+        console.error('⚠️ Analytics View: Supabase insert error:', error);
+        throw error;
+      }
+
+      if (data) {
+        console.log('✅ Analytics View: Created in Supabase successfully');
+        
+        // Update JSON backup
+        const views = this.loadJsonFile('analytics-views.json');
+        views.push(data);
+        this.saveJsonFile('analytics-views.json', views);
+        
+        return data;
+      }
+    } catch (error) {
+      console.warn('⚠️ Analytics View: Supabase connection failed, using JSON fallback:', error);
+    }
+
+    // Fallback to JSON
     try {
       const views = this.loadJsonFile('analytics-views.json');
-      
-      const viewWithId = {
-        id: `view_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
-        video_id: viewData.video_id,
-        video_type: viewData.video_type || 'gallery', // Focus on gallery videos
-        video_title: viewData.video_title || '',
-        session_id: viewData.session_id,
-        language: viewData.language || 'en-US',
-        watch_time: viewData.watch_time || 0,
-        completion_rate: viewData.completion_rate || 0,
-        ip_address: viewData.ip_address || '0.0.0.0',
-        user_agent: viewData.user_agent || '',
-        is_test_data: isTestData(viewData), // Automatically flag test data
-        created_at: new Date().toISOString(),
-        updated_at: new Date().toISOString()
-      };
-
       views.push(viewWithId);
       this.saveJsonFile('analytics-views.json', views);
       
+      console.log('✅ Analytics View: Created in JSON fallback successfully');
       return viewWithId;
     } catch (error) {
-      console.error('Error creating analytics view:', error);
+      console.error('Error creating analytics view in JSON:', error);
       throw error;
     }
   }

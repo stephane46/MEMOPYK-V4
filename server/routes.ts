@@ -1754,9 +1754,9 @@ export async function registerRoutes(app: Express): Promise<void> {
         language: req.get('Accept-Language')?.split(',')[0] || 'en-US'
       };
       
-      // Track video view - for now just log and return success
-      console.log('📊 Video view tracked:', viewData);
-      const result = { id: `view_${Date.now()}`, ...viewData };
+      // CRITICAL FIX: Actually save to database using hybridStorage
+      const result = await hybridStorage.createAnalyticsView(viewData);
+      console.log('📊 Video view tracked and saved to database:', result);
       res.json({ success: true, view: result });
     } catch (error) {
       console.error('❌ Video view tracking error:', error);
