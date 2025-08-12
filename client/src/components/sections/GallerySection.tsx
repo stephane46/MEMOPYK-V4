@@ -50,6 +50,8 @@ interface GalleryItem {
   orderIndex: number;
   isActive: boolean;
   lightboxVideoUrl?: string; // Infrastructure workaround URL for lightbox display
+  isInstantReady?: boolean; // Indicates if video uses preloaded element for instant playback
+  preloadedElement?: HTMLVideoElement; // The actual preloaded video element
 }
 
 export default function GallerySection() {
@@ -428,14 +430,28 @@ export default function GallerySection() {
       if (preloadedVideo && preloadedVideo.readyState >= 3) {
         console.log(`⚡ INSTANT PLAYBACK: Using preloaded video element for ${filename}`);
         console.log(`📊 Video readyState: ${preloadedVideo.readyState}/4 - READY FOR INSTANT PLAY!`);
+        console.log(`🎯 TRANSFERRING PRELOADED ELEMENT: Setting currentTime to 0 and ready for instant play`);
         
-        // Clone the preloaded video URL since it's already loaded
-        const videoUrl = preloadedVideo.src;
-        setLightboxVideo({...item, lightboxVideoUrl: videoUrl});
+        // Reset the preloaded video to start and pause it
+        preloadedVideo.currentTime = 0;
+        preloadedVideo.pause();
+        
+        // Use the proxy URL but mark as instant ready so VideoOverlay knows to use preloaded data
+        const videoUrl = getVideoUrl(item, index);
+        setLightboxVideo({
+          ...item, 
+          lightboxVideoUrl: videoUrl,
+          isInstantReady: true,
+          preloadedElement: preloadedVideo
+        });
       } else {
         console.log(`⏳ FALLBACK: No preloaded video for ${filename}, using regular proxy`);
         const videoUrl = getVideoUrl(item, index);
-        setLightboxVideo({...item, lightboxVideoUrl: videoUrl});
+        setLightboxVideo({
+          ...item, 
+          lightboxVideoUrl: videoUrl,
+          isInstantReady: false
+        });
       }
       
       // Prevent body scrolling when lightbox is open
@@ -943,119 +959,16 @@ export default function GallerySection() {
 
       {/* Video Lightbox Modal */}
       {lightboxVideo && (
-        <div 
-          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm"
-          onClick={handleBackdropClick}
-        >
-          {/* Video Container - 80% screen width, centered */}
-          <div 
-            className="relative mx-auto bg-black rounded-lg overflow-hidden shadow-2xl"
-          >
-            {/* Video Player - FIXED: 2/3 viewport scaling with correct aspect ratio */}
-            <div 
-              className="relative bg-black"
-              ref={(containerRef) => {
-                if (containerRef && lightboxVideo) {
-                  console.log('🎬 80% VIEWPORT SCALING DEBUG v1.0.61 - Container created:');
-                  console.log('   - Video filename:', lightboxVideo.videoFilename);
-                  console.log('   - Admin dimensions: Width =', lightboxVideo.videoWidth, 'Height =', lightboxVideo.videoHeight);
-                  
-                  const adminWidth = lightboxVideo.videoWidth || 16;
-                  const adminHeight = lightboxVideo.videoHeight || 9;
-                  const aspectRatio = adminWidth / adminHeight;
-                  
-                  // Calculate 80% viewport scaling (updated from 2/3 = 66.66%)
-                  const viewportWidth = window.innerWidth;
-                  const viewportHeight = window.innerHeight;
-                  const maxWidth = (viewportWidth * 80) / 100;
-                  const maxHeight = (viewportHeight * 80) / 100;
-                  
-                  console.log('   - Viewport:', viewportWidth, 'x', viewportHeight);
-                  console.log('   - Max container (80%):', maxWidth, 'x', maxHeight);
-                  console.log('   - Video aspect ratio:', aspectRatio);
-                  
-                  // Scale based on largest dimension constraint
-                  let containerWidth, containerHeight;
-                  if (aspectRatio > 1) {
-                    // Landscape: width is larger, limit by width
-                    containerWidth = maxWidth;
-                    containerHeight = maxWidth / aspectRatio;
-                    if (containerHeight > maxHeight) {
-                      containerHeight = maxHeight;
-                      containerWidth = maxHeight * aspectRatio;
-                    }
-                  } else {
-                    // Portrait: height is larger, limit by height
-                    containerHeight = maxHeight;
-                    containerWidth = maxHeight * aspectRatio;
-                    if (containerWidth > maxWidth) {
-                      containerWidth = maxWidth;
-                      containerHeight = maxWidth / aspectRatio;
-                    }
-                  }
-                  
-                  console.log('   - Final container:', containerWidth, 'x', containerHeight);
-                  console.log('   - Scaling factor:', containerWidth / adminWidth);
-                  
-                  containerRef.style.width = `${containerWidth}px`;
-                  containerRef.style.height = `${containerHeight}px`;
-                  containerRef.style.aspectRatio = `${adminWidth} / ${adminHeight}`;
-                }
-              }}
-            >
-              <video
-                className="w-full h-full object-contain"
-                controls
-                autoPlay
-                controlsList="nodownload nofullscreen noremoteplayback noplaybackrate nopictureinpicture"
-                disablePictureInPicture
-                disableRemotePlayback
-                onContextMenu={(e) => e.preventDefault()}
-                onClick={(e) => {
-                  // Click-to-play/pause functionality
-                  const video = e.target as HTMLVideoElement;
-                  if (video.paused) {
-                    video.play();
-                    console.log('▶️ Video resumed via click');
-                  } else {
-                    video.pause();
-                    console.log('⏸️ Video paused via click');
-                  }
-                }}
-                onError={(e) => {
-                  console.error('❌ VIDEO LIGHTBOX ERROR:', e);
-                  const galleryProxyUrl = getVideoUrl(lightboxVideo, 0);
-                  console.error('❌ Gallery proxy URL:', galleryProxyUrl);
-                  console.error('❌ Video filename:', lightboxVideo.videoFilename);
-                  const video = e.target as HTMLVideoElement;
-                  console.error('❌ Video error code:', video.error?.code);
-                  console.error('❌ Video error message:', video.error?.message);
-                  closeLightbox();
-                }}
-                onLoadStart={() => {
-                  const galleryProxyUrl = getVideoUrl(lightboxVideo, 0);
-                  console.log('🎬 LIGHTBOX Video load started via gallery proxy:', galleryProxyUrl);
-                }}
-                onCanPlay={() => {
-                  const galleryProxyUrl = getVideoUrl(lightboxVideo, 0);
-                  console.log('✅ LIGHTBOX Video can play via gallery proxy:', galleryProxyUrl);
-                }}
-                onLoadedData={() => {
-                  console.log('✅ LIGHTBOX Video data loaded - using gallery proxy with cache fallback');
-                }}
-                style={{ backgroundColor: 'black' }}
-              >
-                <source 
-                  src={getVideoUrl(lightboxVideo, 0)} 
-                  type="video/mp4"
-                />
-                Your browser does not support the video tag.
-              </video>
-            </div>
-
-
-          </div>
-        </div>
+        <VideoOverlay
+          videoUrl={lightboxVideo.lightboxVideoUrl || getVideoUrl(lightboxVideo, 0)}
+          title={getItemTitle(lightboxVideo)}
+          width={lightboxVideo.videoWidth || 16}
+          height={lightboxVideo.videoHeight || 9}
+          orientation={lightboxVideo.videoWidth > lightboxVideo.videoHeight ? 'landscape' : 'portrait'}
+          onClose={closeLightbox}
+          isInstantReady={lightboxVideo.isInstantReady}
+          preloadedElement={lightboxVideo.preloadedElement}
+        />
       )}
     </section>
   );

@@ -9,9 +9,10 @@ interface VideoOverlayProps {
   orientation: 'landscape' | 'portrait';
   onClose: () => void;
   isInstantReady?: boolean;
+  preloadedElement?: HTMLVideoElement;
 }
 
-export function VideoOverlay({ videoUrl, title, width, height, orientation, onClose, isInstantReady = false }: VideoOverlayProps) {
+export function VideoOverlay({ videoUrl, title, width, height, orientation, onClose, isInstantReady = false, preloadedElement }: VideoOverlayProps) {
   const [isPlaying, setIsPlaying] = useState(true);
   const [isMuted, setIsMuted] = useState(false);
   const [showControls, setShowControls] = useState(true);
@@ -25,18 +26,30 @@ export function VideoOverlay({ videoUrl, title, width, height, orientation, onCl
 
   // VIDEO OVERLAY LOAD DEBUG with instant ready detection
   useEffect(() => {
-    if (isInstantReady) {
-      console.log('⚡ INSTANT READY VIDEO OVERLAY - v1.0.148:');
+    if (isInstantReady && preloadedElement) {
+      console.log('⚡ INSTANT READY VIDEO OVERLAY - v1.0.149:');
       console.log('   - Video URL:', videoUrl);
       console.log('   - Instant Ready:', isInstantReady);
+      console.log('   - Preloaded Element Available:', !!preloadedElement);
+      console.log('   - Preloaded ReadyState:', preloadedElement.readyState);
       console.log('   - Should play immediately without delay');
+      
+      // Transfer preloaded element properties to overlay video
+      const overlayVideo = videoRef.current;
+      if (overlayVideo) {
+        console.log('🎯 TRANSFERRING PRELOADED DATA to overlay video element');
+        overlayVideo.currentTime = 0;
+        overlayVideo.muted = false;
+        // The src will be set normally but the browser should use cached data
+      }
     } else {
-      console.log('⏳ REGULAR VIDEO OVERLAY LOAD - v1.0.148:');
+      console.log('⏳ REGULAR VIDEO OVERLAY LOAD - v1.0.149:');
       console.log('   - Video URL:', videoUrl);
       console.log('   - Instant Ready:', isInstantReady);
+      console.log('   - Preloaded Element:', !!preloadedElement);
       console.log('   - Will load normally (may have delay)');
     }
-  }, [videoUrl, title, isInstantReady]);
+  }, [videoUrl, title, isInstantReady, preloadedElement]);
 
   // Enhanced error handling
   const handleVideoError = useCallback((e: any) => {
