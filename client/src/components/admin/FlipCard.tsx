@@ -226,26 +226,14 @@ export function FlipCard({ frontContent, className = "", visitors = [] }: Visito
                       <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
                         <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                           <div style={{
+                            fontSize: '24px',
                             width: '32px',
                             height: '32px',
-                            borderRadius: '50%',
-                            backgroundColor: '#f3f4f6',
                             display: 'flex',
                             alignItems: 'center',
-                            justifyContent: 'center',
-                            fontSize: '18px'
+                            justifyContent: 'center'
                           }}>
                             {getCountryFlag(visitor.country)}
-                          </div>
-                          <div style={{
-                            fontSize: '12px',
-                            fontFamily: 'monospace',
-                            backgroundColor: '#e5e7eb',
-                            padding: '4px 8px',
-                            borderRadius: '4px',
-                            fontWeight: '500'
-                          }}>
-                            {visitor.language?.toUpperCase() || 'UN'}
                           </div>
                         </div>
                         <div>

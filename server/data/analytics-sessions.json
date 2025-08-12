@@ -1106,9 +1106,9 @@
   {
     "id": "session_1755004596977_l3dux5736",
     "session_id": "anonymous",
-    "duration": 15739,
+    "duration": 16347,
     "created_at": "2025-08-12T13:16:36.977Z",
-    "updated_at": "2025-08-12T17:40:14.538Z",
+    "updated_at": "2025-08-12T17:43:01.757Z",
     "is_test_data": false
   },
   {
@@ -1462,5 +1462,53 @@
     "is_test_data": false,
     "created_at": "2025-08-12T17:39:43.050Z",
     "updated_at": "2025-08-12T17:39:43.050Z"
+  },
+  {
+    "id": "session_1755020579454_by5fw5rvm",
+    "session_id": "session_1755020579454_tchv1hpmr",
+    "country": "Unknown",
+    "region": "Unknown",
+    "city": "Unknown",
+    "language": "en-US",
+    "user_agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/118.0.5993.88 Safari/537.36",
+    "screen_resolution": "1280x720",
+    "page_url": "http://127.0.0.1:5000/en-US",
+    "referrer": "",
+    "ip_address": "127.0.0.1",
+    "is_test_data": true,
+    "created_at": "2025-08-12T17:42:59.454Z",
+    "updated_at": "2025-08-12T17:42:59.454Z"
+  },
+  {
+    "id": "session_1755020581512_jtodxpl7l",
+    "session_id": "session_1755020581512_g7y8dcedc",
+    "country": "Unknown",
+    "region": "Unknown",
+    "city": "Unknown",
+    "language": "fr-FR",
+    "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36 Edg/138.0.0.0",
+    "screen_resolution": "2560x1440",
+    "page_url": "https://365df2cf-1884-444c-a9e8-235602456363-00-37q39xpqlgvdy.janeway.replit.dev/fr-FR",
+    "referrer": "https://365df2cf-1884-444c-a9e8-235602456363-00-37q39xpqlgvdy.janeway.replit.dev/__replco/workspace_iframe.html?initialPath=%2F&id=%3Ar181%3A",
+    "ip_address": "109.17.150.48",
+    "is_test_data": false,
+    "created_at": "2025-08-12T17:43:01.512Z",
+    "updated_at": "2025-08-12T17:43:01.512Z"
+  },
+  {
+    "id": "session_1755020636986_vtpzxoxeq",
+    "session_id": "session_1755020636986_fn0cohq9i",
+    "country": "Unknown",
+    "region": "Unknown",
+    "city": "Unknown",
+    "language": "fr-FR",
+    "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36 Edg/138.0.0.0",
+    "screen_resolution": "2560x1440",
+    "page_url": "https://365df2cf-1884-444c-a9e8-235602456363-00-37q39xpqlgvdy.janeway.replit.dev/fr-FR",
+    "referrer": "https://365df2cf-1884-444c-a9e8-235602456363-00-37q39xpqlgvdy.janeway.replit.dev/fr-FR",
+    "ip_address": "109.17.150.48",
+    "is_test_data": false,
+    "created_at": "2025-08-12T17:43:56.986Z",
+    "updated_at": "2025-08-12T17:43:56.986Z"
   }
 ]
