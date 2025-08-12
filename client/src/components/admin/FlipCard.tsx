@@ -35,6 +35,8 @@ export function FlipCard({
   const rotatorRef = useRef<HTMLDivElement>(null);     // the 3D-rotating element
   const frontRef = useRef<HTMLDivElement>(null);
   const backRef = useRef<HTMLDivElement>(null);
+  const frontInnerRef = useRef<HTMLDivElement>(null);
+  const backInnerRef = useRef<HTMLDivElement>(null);
 
   const [containerHeight, setContainerHeight] = useState<number>(0);
 
@@ -43,9 +45,10 @@ export function FlipCard({
 
   // ---- Step 2: AUTO-RESIZE CONTAINER TO VISIBLE FACE ----
   const measure = () => {
-    const faceEl = isFlipped ? backRef.current : frontRef.current;
-    if (!faceEl) return;
-    setContainerHeight(faceEl.scrollHeight);
+    const el = isFlipped ? backInnerRef.current : frontInnerRef.current;
+    if (!el) return;
+    const h = el.getBoundingClientRect().height;
+    setContainerHeight(Math.ceil(h));
   };
 
   // Measure on mount/flip/content change
@@ -59,10 +62,10 @@ export function FlipCard({
 
   // ResizeObserver + window resize + font load
   useEffect(() => {
-    const roFront = frontRef.current ? new ResizeObserver(measure) : null;
-    const roBack = backRef.current ? new ResizeObserver(measure) : null;
-    if (frontRef.current && roFront) roFront.observe(frontRef.current);
-    if (backRef.current && roBack) roBack.observe(backRef.current);
+    const roFront = frontInnerRef.current ? new ResizeObserver(measure) : null;
+    const roBack = backInnerRef.current ? new ResizeObserver(measure) : null;
+    if (frontInnerRef.current && roFront) roFront.observe(frontInnerRef.current);
+    if (backInnerRef.current && roBack) roBack.observe(backInnerRef.current);
 
     const onResize = () => measure();
     window.addEventListener('resize', onResize);
@@ -160,7 +163,9 @@ export function FlipCard({
             className="absolute inset-0 w-full bg-white dark:bg-white"
             style={{ backfaceVisibility: 'hidden', WebkitBackfaceVisibility: 'hidden', transform: 'rotateY(0deg) translateZ(0)' }}
           >
-            {frontContent}
+            <div ref={frontInnerRef} className="relative">
+              {frontContent}
+            </div>
           </div>
 
           {/* BACK FACE */}
@@ -173,15 +178,15 @@ export function FlipCard({
               transform: 'rotateY(180deg) translateZ(0)'
             }}
           >
-            {/* Keep edges simple—no extra rounded/border here (prevents seams). */}
-            <div 
-              className="h-full w-full p-6 bg-white"
-              style={{
-                backgroundColor: '#ffffff',
-                position: 'relative',
-                zIndex: 10
-              }}
-            >
+            <div ref={backInnerRef} className="relative">
+              <div 
+                className="h-full w-full p-6 bg-white"
+                style={{
+                  backgroundColor: '#ffffff',
+                  position: 'relative',
+                  zIndex: 10
+                }}
+              >
               <div className="flex items-center gap-2 text-lg font-semibold text-gray-900 mb-2">
                 <Users className="h-5 w-5 text-gray-700" />
                 Recent Visitors
@@ -239,6 +244,7 @@ export function FlipCard({
                     <p>No recent visitors found</p>
                   </div>
                 )}
+              </div>
               </div>
             </div>
           </div>
