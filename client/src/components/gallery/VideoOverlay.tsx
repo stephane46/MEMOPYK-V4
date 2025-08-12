@@ -42,17 +42,7 @@ export default function VideoOverlay({
   const controlsTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const videoStartTimeRef = useRef<number>(Date.now());
   
-  // Debug logging for thumbnail state
-  useEffect(() => {
-    console.log('🖼️ THUMBNAIL DEBUG:', {
-      thumbnailUrl,
-      showThumbnail,
-      hasThumbUrl: !!thumbnailUrl,
-      title,
-      sourceText,
-      durationText
-    });
-  }, [thumbnailUrl, showThumbnail, title, sourceText, durationText]);
+
   
   // Analytics tracking
   const { trackVideoView } = useVideoAnalytics();

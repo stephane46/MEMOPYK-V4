@@ -424,13 +424,7 @@ export default function GallerySection() {
       console.log(`🎯 INSTANT DISPLAY: Showing thumbnail immediately while video buffers`);
       console.log(`🌐 CDN BACKGROUND LOAD: ${cleanFilename} - buffering during thumbnail display`);
       
-      console.log(`🎯 SETTING LIGHTBOX VIDEO:`, {
-        videoUrl,
-        thumbnailUrl,
-        title: getItemTitle(item),
-        sourceText: getItemSource(item),
-        durationText: getItemDuration(item)
-      });
+
       
       setLightboxVideo({
         ...item, 
