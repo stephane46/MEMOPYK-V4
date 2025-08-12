@@ -33,7 +33,7 @@ export function HeroVideoSection() {
   const { trackVideoView } = useVideoAnalytics();
   const [currentVideoIndex, setCurrentVideoIndex] = useState(0);
   const [isPlaying, setIsPlaying] = useState(true);
-  const [isLoading, setIsLoading] = useState(true);
+
   const videoRef = useRef<HTMLVideoElement>(null);
 
   const touchStartX = useRef<number>(0);
@@ -80,7 +80,6 @@ export function HeroVideoSection() {
   const goToVideo = (index: number) => {
     console.log(`🎬 Manually switching to hero video ${index + 1} (${activeVideos[index]?.url_en})`);
     setCurrentVideoIndex(index);
-    setIsLoading(true);
   };
 
   const goToPrevious = () => {
@@ -106,7 +105,6 @@ export function HeroVideoSection() {
   };
 
   const handleVideoLoad = () => {
-    setIsLoading(false);
     const video = videoRef.current;
     if (video && isPlaying) {
       video.play().catch(() => {
@@ -174,7 +172,6 @@ export function HeroVideoSection() {
             console.error('🚨 Hero Video Error:', e);
             console.error('   - Video URL:', videoUrl);
             console.error('   - Video Proxy URL:', `/api/video-proxy?filename=${videoUrl}`);
-            setIsLoading(false);
           }}
           onEnded={handleVideoEnded}
           onCanPlay={() => {
