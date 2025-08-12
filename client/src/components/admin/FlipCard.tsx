@@ -149,87 +149,46 @@ export function FlipCard({
       className={cn('flip-card-container', className)}
       style={{ perspective: '1000px' }}
     >
-      {/* Height shell: grows/shrinks to match visible face */}
+      {/* Simple flip container */}
       <div
-        ref={heightShellRef}
+        onClick={handleCardClick}
+        className="relative cursor-pointer rounded-lg border-2 border-dashed border-blue-500"
         style={{
+          transformStyle: 'preserve-3d',
+          transform: isFlipped ? 'rotateY(180deg)' : 'rotateY(0deg)',
+          transition: 'transform 0.6s',
           height: containerHeight ? `${containerHeight}px` : 'auto',
           minHeight: '120px',
-          transition: 'height 300ms ease',
-          backgroundColor: 'transparent'
+          backgroundColor: isFlipped ? 'hotpink' : 'gold'
         }}
       >
-        {/* Rotator: unified white surface, rounded, clipped; avoids seams */}
+        {/* FRONT FACE */}
         <div
-          ref={rotatorRef}
-          className="relative w-full cursor-pointer transition-transform duration-500 rounded-lg overflow-hidden border-2 border-dashed border-blue-500"
-          onClick={(e) => {
-            handleCardClick();
-          }}
-          style={{
-            transformStyle: 'preserve-3d',
-            transform: isFlipped ? 'rotateY(180deg)' : 'rotateY(0deg)',
-            willChange: 'transform',
-            translate: '0',
-            isolation: 'isolate',
-            minHeight: '120px',
-            backgroundColor: isFlipped ? 'hotpink' : 'gold' // Visual state indicator
-          }}
-          role="button"
-          aria-pressed={isFlipped}
-          tabIndex={0}
-          onKeyDown={(e) => {
-            if (e.key === 'Enter' || e.key === ' ') {
-              e.preventDefault();
-              handleCardClick();
-            }
+          ref={frontRef}
+          className="absolute inset-0 rounded-lg"
+          style={{ 
+            backfaceVisibility: 'hidden',
+            backgroundColor: 'lightgreen',
+            padding: '1rem'
           }}
         >
-          {/* FRONT FACE */}
-          <div
-            ref={frontRef}
-            className="absolute inset-0 w-full pointer-events-none"
-            style={{ backfaceVisibility: 'hidden', WebkitBackfaceVisibility: 'hidden', transform: 'rotateY(0deg) translateZ(0)', backgroundColor: 'lightgreen' }}
-          >
-            <div 
-              ref={frontInnerRef} 
-              className="relative pointer-events-auto cursor-pointer"
-              onClick={(e) => {
-                e.preventDefault();
-                e.stopPropagation();
-                handleCardClick();
-              }}
-            >
-              <div style={{ backgroundColor: 'transparent' }}>
-                {frontContent}
-              </div>
-            </div>
+          <div ref={frontInnerRef}>
+            {frontContent}
           </div>
+        </div>
 
-          {/* BACK FACE */}
-          <div
-            ref={backRef}
-            className="absolute inset-0 w-full pointer-events-none"
-            style={{
-              backfaceVisibility: 'hidden',
-              WebkitBackfaceVisibility: 'hidden',
-              transform: 'rotateY(180deg) translateZ(0)',
-              backgroundColor: 'lightblue'
-            }}
-          >
-            <div 
-              ref={backInnerRef} 
-              className="relative pointer-events-auto cursor-pointer"
-              onClick={(e) => {
-                e.preventDefault();
-                e.stopPropagation();
-                handleCardClick();
-              }}
-            >
-              <div 
-                className="h-full w-full p-6"
-                style={{ backgroundColor: 'transparent' }}
-              >
+        {/* BACK FACE */}
+        <div
+          ref={backRef}
+          className="absolute inset-0 rounded-lg"
+          style={{
+            backfaceVisibility: 'hidden',
+            transform: 'rotateY(180deg)',
+            backgroundColor: 'lightblue',
+            padding: '1rem'
+          }}
+        >
+          <div ref={backInnerRef}>
               <div className="flex items-center gap-2 text-lg font-semibold text-gray-900 mb-2">
                 <Users className="h-5 w-5 text-gray-700" />
                 Recent Visitors
@@ -288,13 +247,9 @@ export function FlipCard({
                   </div>
                 )}
               </div>
-              </div>
-            </div>
           </div>
         </div>
-        {/* /rotator */}
       </div>
-      {/* /height shell */}
     </div>
   );
 }
