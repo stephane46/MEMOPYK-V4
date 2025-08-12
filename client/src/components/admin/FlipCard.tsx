@@ -98,54 +98,42 @@ export function FlipCard({
       style={{ perspective: '1000px' }}
     >
       <div 
-        className="w-full h-full relative transition-transform duration-700 cursor-pointer"
+        className="w-full h-full relative transition-transform duration-700 cursor-pointer rounded-lg overflow-hidden bg-white dark:bg-white"
         onClick={handleCardClick}
         style={{ 
           transformStyle: 'preserve-3d',
-          transform: isFlipped ? 'rotateY(180deg)' : 'rotateY(0deg)'
+          transform: isFlipped ? 'rotateY(180deg)' : 'rotateY(0deg)',
+          willChange: 'transform',
+          translate: '0',
+          backfaceVisibility: 'hidden'
         }}
       >
         {/* Front of card */}
         <div 
-          className="absolute inset-0 w-full h-full"
+          className="absolute inset-0 w-full h-full bg-white dark:bg-white"
           style={{ backfaceVisibility: 'hidden' }}
         >
-          <Card className="h-full hover:shadow-lg transition-shadow duration-300">
+          <Card className="h-full bg-white dark:bg-white shadow-none hover:shadow-lg transition-shadow duration-300">
             {frontContent}
           </Card>
         </div>
 
         {/* Back of card */}
         <div 
-          className="absolute inset-0 w-full h-full"
+          className="absolute inset-0 w-full h-full bg-white dark:bg-white"
           style={{ 
             backfaceVisibility: 'hidden',
-            transform: 'rotateY(180deg)',
-            backgroundColor: '#ffffff',
-            background: '#ffffff',
-            backgroundImage: 'none',
-            borderRadius: '0.5rem', // match front card radius
-            boxSizing: 'border-box'
+            transform: 'rotateY(180deg)'
           }}
         >
           <div 
-            className="h-full rounded-lg border border-gray-200 shadow-sm" 
+            className="h-full bg-white dark:bg-white p-6" 
             style={{ 
-              backgroundColor: '#ffffff', 
-              background: '#ffffff', 
-              backgroundImage: 'none',
               position: 'relative',
               zIndex: 10
             }}
           >
-            <div 
-              className="pb-4 p-6" 
-              style={{ 
-                backgroundColor: '#ffffff', 
-                background: '#ffffff', 
-                backgroundImage: 'none' 
-              }}
-            >
+            <div className="pb-4">
               <div className="flex items-center gap-2 text-lg font-semibold">
                 <Users className="h-5 w-5" />
                 Recent Visitors
@@ -155,11 +143,8 @@ export function FlipCard({
               </div>
             </div>
             <div 
-              className="rounded-lg p-4" 
+              className="p-4" 
               style={{ 
-                backgroundColor: '#ffffff', 
-                background: '#ffffff', 
-                backgroundImage: 'none',
                 gap: '12px',
                 display: 'flex',
                 flexDirection: 'column'
@@ -169,8 +154,7 @@ export function FlipCard({
                 recentVisitors.map((visitor, index) => (
                   <div 
                     key={visitor.ip_address + index}
-                    className="flex items-center justify-between p-3 rounded-lg border border-gray-200 dark:border-gray-700 shadow-sm"
-                    style={{ backgroundColor: '#ffffff', background: '#ffffff', backgroundImage: 'none' }}
+                    className="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-50"
                   >
                     <div className="flex items-center gap-3 flex-1 min-w-0">
                       <div className="flex items-center gap-1">
@@ -186,23 +170,9 @@ export function FlipCard({
                         </div>
                       </div>
                     </div>
-                    <div 
-                      className="text-right"
-                      style={{ backgroundColor: '#ffffff', background: '#ffffff' }}
-                    >
+                    <div className="text-right">
                       <div 
-                        style={{ 
-                          backgroundColor: '#ffffff', 
-                          background: '#ffffff',
-                          backgroundImage: 'none',
-                          border: '1px solid #e2e8f0',
-                          borderRadius: '6px',
-                          padding: '4px 8px',
-                          fontSize: '12px',
-                          display: 'inline-flex',
-                          alignItems: 'center',
-                          gap: '4px'
-                        }}
+                        className="bg-white dark:bg-white border border-gray-300 rounded px-2 py-1 text-xs inline-flex items-center gap-1"
                       >
                         <Clock className="h-3 w-3" />
                         {formatDate(visitor.last_visit)}
