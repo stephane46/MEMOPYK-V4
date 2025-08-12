@@ -11,15 +11,18 @@ interface VideoOverlayProps {
   onClose: () => void;
   isInstantReady?: boolean;
   preloadedElement?: HTMLVideoElement;
+  thumbnailUrl?: string; // For instant thumbnail display while video loads
 }
 
-export function VideoOverlay({ videoUrl, title, width, height, orientation, onClose, isInstantReady = false, preloadedElement }: VideoOverlayProps) {
+export function VideoOverlay({ videoUrl, title, width, height, orientation, onClose, isInstantReady = false, preloadedElement, thumbnailUrl }: VideoOverlayProps) {
   const [isPlaying, setIsPlaying] = useState(true);
   const [isMuted, setIsMuted] = useState(false);
   const [showControls, setShowControls] = useState(true);
   const [progress, setProgress] = useState(0);
   const [duration, setDuration] = useState(0);
   const [currentTime, setCurrentTime] = useState(0);
+  const [showThumbnail, setShowThumbnail] = useState(!!thumbnailUrl); // Show thumbnail initially
+  const [isVideoReady, setIsVideoReady] = useState(false);
   
   const videoRef = useRef<HTMLVideoElement>(null);
   const overlayRef = useRef<HTMLDivElement>(null);
@@ -38,38 +41,58 @@ export function VideoOverlay({ videoUrl, title, width, height, orientation, onCl
     return videoUrl.split('/').pop()?.split('?')[0] || 'unknown';
   }, [videoUrl]);
 
-  // VIDEO OVERLAY LOAD DEBUG with instant ready detection and analytics setup
+  // INSTANT THUMBNAIL-TO-VIDEO SYSTEM v1.0.168
   useEffect(() => {
     // Reset start time when video loads
     videoStartTimeRef.current = Date.now();
     
     const videoId = getVideoId();
-    console.log(`📊 ANALYTICS SETUP: Starting tracking for ${videoId}`);
+    console.log(`🎯 INSTANT THUMBNAIL-TO-VIDEO SYSTEM: Loading ${videoId}`);
     
-    if (isInstantReady && preloadedElement) {
-      console.log('⚡ INSTANT READY VIDEO OVERLAY - v1.0.149:');
+    if (thumbnailUrl) {
+      console.log('🖼️ INSTANT THUMBNAIL DISPLAY - v1.0.168:');
+      console.log('   - Thumbnail URL:', thumbnailUrl);
       console.log('   - Video URL:', videoUrl);
       console.log('   - Video ID:', videoId);
-      console.log('   - Instant Ready:', isInstantReady);
-      console.log('   - Preloaded Element Available:', !!preloadedElement);
-      console.log('   - Preloaded ReadyState:', preloadedElement.readyState);
-      console.log('   - Should play immediately without delay');
+      console.log('   - Strategy: Show thumbnail immediately, buffer video in background');
       
-      // Transfer preloaded element properties to overlay video
-      const overlayVideo = videoRef.current;
-      if (overlayVideo) {
-        console.log('🎯 TRANSFERRING PRELOADED DATA to overlay video element');
-        overlayVideo.currentTime = 0;
-        overlayVideo.muted = false;
-        // The src will be set normally but the browser should use cached data
+      // Set up video loading detection
+      const video = videoRef.current;
+      if (video) {
+        const handleCanPlayThrough = () => {
+          console.log('🎬 VIDEO READY: Can play through - transitioning from thumbnail');
+          setIsVideoReady(true);
+          setShowThumbnail(false); // Fade out thumbnail
+          video.play().catch(console.warn);
+        };
+
+        const handleLoadedData = () => {
+          console.log('🎬 VIDEO BUFFERING: First frame loaded');
+        };
+
+        video.addEventListener('canplaythrough', handleCanPlayThrough);
+        video.addEventListener('loadeddata', handleLoadedData);
+        
+        return () => {
+          video.removeEventListener('canplaythrough', handleCanPlayThrough);
+          video.removeEventListener('loadeddata', handleLoadedData);
+        };
       }
     } else {
-      console.log('⏳ REGULAR VIDEO OVERLAY LOAD - v1.0.149:');
+      console.log('⏳ STANDARD VIDEO OVERLAY LOAD - v1.0.168:');
       console.log('   - Video URL:', videoUrl);
       console.log('   - Video ID:', videoId);
-      console.log('   - Instant Ready:', isInstantReady);
-      console.log('   - Preloaded Element:', !!preloadedElement);
-      console.log('   - Will load normally (may have delay)');
+      console.log('   - No thumbnail - standard loading behavior');
+      
+      // Standard behavior for instant ready videos
+      if (isInstantReady && preloadedElement) {
+        const overlayVideo = videoRef.current;
+        if (overlayVideo) {
+          console.log('🎯 TRANSFERRING PRELOADED DATA to overlay video element');
+          overlayVideo.currentTime = 0;
+          overlayVideo.muted = false;
+        }
+      }
     }
     
     // Track video view start (partial view tracking)
@@ -280,12 +303,14 @@ export function VideoOverlay({ videoUrl, title, width, height, orientation, onCl
     document.addEventListener('keydown', handleKeyDown);
     document.body.style.overflow = 'hidden'; // Prevent background scroll
     
-    // Auto-play with sound
+    // Auto-play logic - depends on thumbnail system
     const video = videoRef.current;
-    if (video) {
+    if (video && !thumbnailUrl) {
+      // No thumbnail - play immediately (standard behavior)
       video.play().catch(console.warn);
       resetControlsTimer();
     }
+    // If thumbnail exists, video will auto-play when ready (handled in thumbnail system)
 
     return () => {
       document.removeEventListener('keydown', handleKeyDown);
@@ -317,6 +342,32 @@ export function VideoOverlay({ videoUrl, title, width, height, orientation, onCl
         }}
         onMouseMove={resetControlsTimer}
       >
+        {/* Instant Thumbnail Display - Shows immediately while video buffers */}
+        {showThumbnail && thumbnailUrl && (
+          <div 
+            className="absolute inset-0 z-10 bg-black flex items-center justify-center transition-opacity duration-500"
+            style={{
+              opacity: showThumbnail ? 1 : 0
+            }}
+          >
+            <img
+              src={thumbnailUrl}
+              alt="Loading..."
+              className="w-full h-full object-cover"
+              style={{
+                width: `${videoDimensions.width}px`,
+                height: `${videoDimensions.height}px`,
+              }}
+            />
+            {/* Loading indicator over thumbnail */}
+            <div className="absolute inset-0 flex items-center justify-center bg-black/30">
+              <div className="bg-white/20 backdrop-blur-sm rounded-full p-4">
+                <div className="animate-spin rounded-full h-8 w-8 border-2 border-white border-t-transparent"></div>
+              </div>
+            </div>
+          </div>
+        )}
+
         {/* Video Element - NO LETTERBOXING FIX: object-cover eliminates black bars */}
         <video
           ref={videoRef}

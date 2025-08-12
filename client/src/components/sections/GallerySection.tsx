@@ -404,7 +404,7 @@ export default function GallerySection() {
   };
 
   const handlePlayClick = (item: GalleryItem, e: React.MouseEvent, index: number) => {
-    console.log(`🎬 DIRECT CDN VIDEO LOAD: Clean loading without any preloading conflicts`);
+    console.log(`🎬 INSTANT THUMBNAIL-TO-VIDEO: Professional loading experience`);
     e.preventDefault();
     e.stopPropagation();
     
@@ -416,14 +416,18 @@ export default function GallerySection() {
       const cleanFilename = videoFilename.includes('/') ? videoFilename.split('/').pop() : videoFilename;
       trackVideoView(cleanFilename || '');
       
-      // Get video URL and load directly via CDN (no preloading conflicts)
+      // Get video URL and thumbnail for instant display
       const videoUrl = getVideoUrl(item, index);
-      console.log(`🌐 CDN DIRECT LOAD: ${cleanFilename} - should be fast and smooth`);
+      const thumbnailUrl = getImageUrl(item, index);
+      
+      console.log(`🎯 INSTANT DISPLAY: Showing thumbnail immediately while video buffers`);
+      console.log(`🌐 CDN BACKGROUND LOAD: ${cleanFilename} - buffering during thumbnail display`);
       
       setLightboxVideo({
         ...item, 
         lightboxVideoUrl: videoUrl,
-        isInstantReady: false // Always false - no preloading
+        thumbnailUrl: thumbnailUrl, // Add thumbnail for instant display
+        isInstantReady: false // Videos buffer during thumbnail display
       });
       
       // Prevent body scrolling when lightbox is open

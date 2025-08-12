@@ -130,9 +130,9 @@ export const useVideoAnalytics = () => {
     const lastSessionTime = localStorage.getItem(sessionKey);
     const now = Date.now();
     
-    // Reduced to 2 minutes for better production testing and VPN IP testing
-    if (lastSessionTime && now - parseInt(lastSessionTime) < 120000) {
-      console.log(`⏭️ PRODUCTION ANALYTICS: Skipping session tracking - already tracked ${Math.round((now - parseInt(lastSessionTime)) / 60000)}min ago`);
+    // Reduced to 30 seconds for better production testing and country change detection
+    if (lastSessionTime && now - parseInt(lastSessionTime) < 30000) {
+      console.log(`⏭️ PRODUCTION ANALYTICS: Skipping session tracking - already tracked ${Math.round((now - parseInt(lastSessionTime)) / 1000)}s ago`);
       return;
     }
     
