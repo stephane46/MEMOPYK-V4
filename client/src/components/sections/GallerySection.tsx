@@ -211,69 +211,7 @@ export default function GallerySection() {
     }
   }, [galleryItems.length, language]);
 
-  // 🚀 SMART PRELOADING SYSTEM - Progressive video chunk downloading for instant playback
-  useEffect(() => {
-    if (!galleryItems.length) return;
 
-    const preloadVideoChunk = async (videoUrl: string, filename: string) => {
-      if (preloadedVideos.has(filename)) return;
-
-      try {
-        console.log(`🎯 SMART PRELOAD: Starting chunk download for ${filename}`);
-        
-        // Download first 256KB for instant startup
-        const response = await fetch(videoUrl, {
-          headers: {
-            'Range': 'bytes=0-262143' // First 256KB
-          }
-        });
-        
-        if (response.ok) {
-          console.log(`✅ SMART PRELOAD: Chunk downloaded for ${filename} (${response.headers.get('content-length')} bytes)`);
-          setPreloadedVideos(prev => new Set([...prev, filename]));
-        }
-      } catch (error) {
-        console.warn(`⚠️ SMART PRELOAD: Failed for ${filename}:`, error);
-      }
-    };
-
-    // Intersection Observer for scroll-based preloading
-    const observer = new IntersectionObserver((entries) => {
-      entries.forEach(entry => {
-        if (entry.isIntersecting) {
-          const itemId = entry.target.getAttribute('data-video-id');
-          const item = galleryItems.find(item => item.id === itemId);
-          
-          if (item && hasVideo(item, 0)) {
-            const videoUrl = getVideoUrl(item, 0);
-            const filename = item.videoFilename?.split('/').pop() || '';
-            
-            if (filename && !preloadedVideos.has(filename)) {
-              console.log(`👀 VIDEO IN VIEW: Starting smart preload for ${filename}`);
-              preloadVideoChunk(videoUrl, filename);
-            }
-          }
-        }
-      });
-    }, {
-      rootMargin: '100px', // Start preloading 100px before video comes into view
-      threshold: 0.1
-    });
-
-    // Observe all gallery items
-    const observeItems = () => {
-      const galleryCards = document.querySelectorAll('[data-video-id]');
-      galleryCards.forEach(card => observer.observe(card));
-    };
-
-    // Delayed observation to ensure DOM is ready
-    const timeoutId = setTimeout(observeItems, 100);
-
-    return () => {
-      clearTimeout(timeoutId);
-      observer.disconnect();
-    };
-  }, [galleryItems, preloadedVideos]);
 
   const content = {
     'fr-FR': {
@@ -531,6 +469,87 @@ export default function GallerySection() {
       return () => document.removeEventListener('keydown', handleKeyDown);
     }
   }, [lightboxVideo]);
+
+  // 🚀 AGGRESSIVE PRELOADING SYSTEM - Preload ALL gallery videos for instant startup like before
+  useEffect(() => {
+    if (!galleryItems.length) return;
+
+    const aggressivePreloadVideo = async (videoUrl: string, filename: string) => {
+      if (preloadedVideos.has(filename)) return;
+
+      try {
+        console.log(`🎯 AGGRESSIVE PRELOAD: Starting full video download for ${filename}`);
+        
+        // Create hidden video element for aggressive preloading
+        const video = document.createElement('video');
+        video.src = videoUrl;
+        video.preload = 'auto';
+        video.style.display = 'none';
+        video.muted = true; // Ensure it can autoplay
+        
+        // Add to DOM temporarily to force download
+        document.body.appendChild(video);
+        
+        // Wait for sufficient data to be loaded
+        const loadPromise = new Promise<void>((resolve) => {
+          const handleCanPlay = () => {
+            console.log(`✅ AGGRESSIVE PRELOAD: Video ready for instant playback - ${filename}`);
+            setPreloadedVideos(prev => new Set(Array.from(prev).concat([filename])));
+            resolve();
+          };
+          
+          video.addEventListener('canplaythrough', handleCanPlay, { once: true });
+          video.addEventListener('loadeddata', handleCanPlay, { once: true });
+          
+          // Fallback timeout
+          setTimeout(() => {
+            handleCanPlay();
+          }, 3000);
+        });
+        
+        // Start loading
+        video.load();
+        await loadPromise;
+        
+        // Clean up after 5 seconds
+        setTimeout(() => {
+          if (document.body.contains(video)) {
+            document.body.removeChild(video);
+          }
+        }, 5000);
+        
+      } catch (error) {
+        console.warn(`⚠️ AGGRESSIVE PRELOAD: Failed for ${filename}:`, error);
+      }
+    };
+
+    // Preload ALL videos with video content immediately on page load
+    const preloadAllVideos = () => {
+      console.log(`🚀 STARTING AGGRESSIVE PRELOAD SYSTEM - ${galleryItems.length} items to check`);
+      
+      galleryItems.forEach((item, index) => {
+        if (hasVideo(item, index)) {
+          const videoUrl = getVideoUrl(item, index);
+          const filename = item.videoFilename?.split('/').pop() || '';
+          
+          if (filename && !preloadedVideos.has(filename)) {
+            console.log(`🚀 STARTING AGGRESSIVE PRELOAD: ${filename}`);
+            // Stagger preloads to avoid overwhelming the network
+            setTimeout(() => {
+              aggressivePreloadVideo(videoUrl, filename);
+            }, index * 500); // 500ms between each video start
+          }
+        }
+      });
+    };
+
+    // Start aggressive preloading immediately after functions are defined
+    const timeoutId = setTimeout(preloadAllVideos, 1000); // Wait 1 second for UI to settle
+
+    return () => {
+      clearTimeout(timeoutId);
+    };
+  }, [galleryItems, preloadedVideos, hasVideo, getVideoUrl]);
 
   if (isLoading) {
     return (

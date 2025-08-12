@@ -283,7 +283,7 @@ export function VideoOverlay({ videoUrl, title, width, height, orientation, onCl
           onCanPlayThrough={() => {
             console.log(`✅ VIDEO OVERLAY FINAL FIX (v1.0.16): canplaythrough - ${videoUrl}`);
           }}
-          preload="metadata"
+          preload="auto"
           playsInline
           disablePictureInPicture
           disableRemotePlayback
