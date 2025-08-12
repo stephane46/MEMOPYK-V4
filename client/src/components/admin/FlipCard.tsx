@@ -210,21 +210,31 @@ export function FlipCard({
             outline: 'none'
           }}
         >
-          {/* SOLID BLUE IMAGE BLOCKER - NOTHING CAN BLEED THROUGH */}
-          <img 
-            src="data:image/svg+xml,%3Csvg width='100' height='100' xmlns='http://www.w3.org/2000/svg'%3E%3Crect width='100%25' height='100%25' fill='%2389BAD9'/%3E%3C/svg%3E"
+          {/* CANVAS OVERLAY - COMPLETE BLOCKADE */}
+          <canvas
             style={{
               position: 'absolute',
               top: 0,
               left: 0,
               width: '100%',
               height: '100%',
-              objectFit: 'cover',
+              backgroundColor: '#89BAD9',
               zIndex: 10000,
               borderRadius: '8px',
-              border: '2px dashed #3b82f6'
+              border: '2px dashed #3b82f6',
+              pointerEvents: 'none'
             }}
-            alt=""
+            ref={(canvas) => {
+              if (canvas) {
+                const ctx = canvas.getContext('2d');
+                if (ctx) {
+                  canvas.width = canvas.offsetWidth;
+                  canvas.height = canvas.offsetHeight;
+                  ctx.fillStyle = '#89BAD9';
+                  ctx.fillRect(0, 0, canvas.width, canvas.height);
+                }
+              }
+            }}
           />
           
           {/* CONTENT LAYER */}

@@ -1914,6 +1914,37 @@ export async function registerRoutes(app: Express): Promise<void> {
     }
   });
 
+  // Missing Analytics Endpoints - Fixing 404s
+  app.get("/api/analytics/video-engagement", async (req, res) => {
+    try {
+      // Return empty array for now to prevent 404s
+      res.json([]);
+    } catch (error) {
+      console.error('❌ Video engagement error:', error);
+      res.status(500).json({ error: "Failed to get video engagement data" });
+    }
+  });
+
+  app.get("/api/analytics/unique-views", async (req, res) => {
+    try {
+      // Return empty array for now to prevent 404s
+      res.json([]);
+    } catch (error) {
+      console.error('❌ Unique views error:', error);
+      res.status(500).json({ error: "Failed to get unique views data" });
+    }
+  });
+
+  app.get("/api/analytics/re-engagement", async (req, res) => {
+    try {
+      // Return empty array for now to prevent 404s
+      res.json([]);
+    } catch (error) {
+      console.error('❌ Re-engagement error:', error);
+      res.status(500).json({ error: "Failed to get re-engagement data" });
+    }
+  });
+
   // Recent Visitors - GET last 10 visitor details for flip card
   app.get("/api/analytics/recent-visitors", async (req, res) => {
     try {
