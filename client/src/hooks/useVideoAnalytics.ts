@@ -126,6 +126,7 @@ export const useVideoAnalytics = () => {
   const trackSessionWithDefaults = () => {
     // Session deduplication to prevent analytics overload (reduced from 1 hour to 10 minutes for better production tracking)
     const sessionKey = 'memopyk-session-tracked';
+    const sessionStartKey = 'memopyk-session-start';
     const lastSessionTime = localStorage.getItem(sessionKey);
     const now = Date.now();
     
@@ -138,6 +139,12 @@ export const useVideoAnalytics = () => {
     console.log('📊 PRODUCTION ANALYTICS: Tracking new visitor session');
     console.log('📊 PRODUCTION ANALYTICS: Environment:', import.meta.env.NODE_ENV || 'production');
     console.log('📊 PRODUCTION ANALYTICS: Current URL:', window.location.href);
+    
+    // Store session start time for duration calculation
+    if (!localStorage.getItem(sessionStartKey)) {
+      localStorage.setItem(sessionStartKey, now.toString());
+      console.log('📊 SESSION DURATION: Session start time recorded');
+    }
     
     localStorage.setItem(sessionKey, now.toString());
     
@@ -155,6 +162,58 @@ export const useVideoAnalytics = () => {
     console.log('📊 PRODUCTION ANALYTICS: Sending session data:', sessionData);
     
     trackSession.mutate(sessionData);
+    
+    // Set up session duration tracking
+    setupSessionDurationTracking();
+  };
+
+  // Session duration tracking with page visibility API
+  const setupSessionDurationTracking = () => {
+    const sessionStartKey = 'memopyk-session-start';
+    
+    const updateSessionDuration = async () => {
+      const sessionStart = localStorage.getItem(sessionStartKey);
+      if (!sessionStart) return;
+      
+      const duration = Math.round((Date.now() - parseInt(sessionStart)) / 1000);
+      console.log(`📊 SESSION DURATION: Current session duration: ${duration}s`);
+      
+      // Send session duration update to backend
+      try {
+        await fetch('/api/analytics/session-update', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ duration })
+        });
+      } catch (error) {
+        console.warn('📊 SESSION DURATION: Failed to update session duration:', error);
+      }
+    };
+    
+    // Update session duration on page unload
+    const handleBeforeUnload = () => {
+      updateSessionDuration();
+      console.log('📊 SESSION DURATION: Session ending, final duration recorded');
+    };
+    
+    // Update session duration when page becomes hidden
+    const handleVisibilityChange = () => {
+      if (document.hidden) {
+        updateSessionDuration();
+        console.log('📊 SESSION DURATION: Page hidden, duration updated');
+      }
+    };
+    
+    // Set up event listeners if not already done
+    if (!window.memopykSessionListenersAdded) {
+      window.addEventListener('beforeunload', handleBeforeUnload);
+      document.addEventListener('visibilitychange', handleVisibilityChange);
+      window.memopykSessionListenersAdded = true;
+      
+      // Update duration every 30 seconds
+      setInterval(updateSessionDuration, 30000);
+      console.log('📊 SESSION DURATION: Tracking setup complete - updates every 30s');
+    }
   };
 
   return {

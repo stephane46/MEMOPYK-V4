@@ -1926,6 +1926,33 @@ export async function registerRoutes(app: Express): Promise<void> {
     }
   });
 
+  // Session Duration Update - POST update session duration
+  app.post("/api/analytics/session-update", async (req, res) => {
+    try {
+      const { duration } = req.body;
+      const sessionId = req.session?.id || 'anonymous';
+      
+      console.log(`📊 SESSION UPDATE: Duration ${duration}s for session ${sessionId}`);
+      
+      if (!duration || duration < 0) {
+        return res.status(400).json({ error: "Valid duration required" });
+      }
+      
+      // Update session duration in storage
+      await hybridStorage.updateSessionDuration(sessionId, duration);
+      
+      res.json({ 
+        success: true, 
+        sessionId,
+        duration,
+        message: "Session duration updated successfully" 
+      });
+    } catch (error) {
+      console.error('❌ Session update error:', error);
+      res.status(500).json({ error: "Failed to update session duration" });
+    }
+  });
+
   // Analytics Test Data Status - GET test data status
   app.get("/api/analytics/test-data/status", async (req, res) => {
     try {

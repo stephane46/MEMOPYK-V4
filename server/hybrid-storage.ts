@@ -3425,6 +3425,72 @@ Allow: /contact`;
     }
   }
 
+  async updateSessionDuration(sessionId: string, duration: number): Promise<any> {
+    console.log(`📊 SESSION DURATION UPDATE: ${sessionId} → ${duration}s`);
+    
+    try {
+      // Update in Supabase first
+      const { data, error } = await this.supabase
+        .from('analytics_sessions')
+        .update({ 
+          duration: duration,
+          updated_at: new Date().toISOString() 
+        })
+        .eq('session_id', sessionId)
+        .select()
+        .single();
+
+      if (data) {
+        console.log('✅ Session duration updated in Supabase');
+        
+        // Update JSON backup
+        const sessions = this.loadJsonFile('analytics-sessions.json');
+        const sessionIndex = sessions.findIndex((s: any) => s.session_id === sessionId);
+        if (sessionIndex !== -1) {
+          sessions[sessionIndex].duration = duration;
+          sessions[sessionIndex].updated_at = new Date().toISOString();
+          this.saveJsonFile('analytics-sessions.json', sessions);
+          console.log('✅ Session duration updated in JSON backup');
+        }
+        
+        return data;
+      }
+    } catch (error) {
+      console.warn('⚠️ Session duration: Supabase update failed, using JSON fallback:', error);
+    }
+
+    // Fallback to JSON only
+    try {
+      const sessions = this.loadJsonFile('analytics-sessions.json');
+      const sessionIndex = sessions.findIndex((s: any) => s.session_id === sessionId);
+      
+      if (sessionIndex !== -1) {
+        sessions[sessionIndex].duration = duration;
+        sessions[sessionIndex].updated_at = new Date().toISOString();
+        this.saveJsonFile('analytics-sessions.json', sessions);
+        
+        console.log('✅ Session duration updated in JSON fallback');
+        return sessions[sessionIndex];
+      } else {
+        console.log('⚠️ Session not found, creating new entry with duration');
+        const newSession = {
+          id: `session_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+          session_id: sessionId,
+          duration: duration,
+          created_at: new Date().toISOString(),
+          updated_at: new Date().toISOString(),
+          is_test_data: false
+        };
+        sessions.push(newSession);
+        this.saveJsonFile('analytics-sessions.json', sessions);
+        return newSession;
+      }
+    } catch (error) {
+      console.error('Error updating session duration in JSON:', error);
+      throw error;
+    }
+  }
+
   async createAnalyticsView(viewData: any): Promise<any> {
     // Helper function to determine if this is test data (same logic as sessions)
     const isTestData = (data: any): boolean => {

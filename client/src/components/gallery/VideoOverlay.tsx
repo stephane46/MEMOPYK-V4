@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect, useCallback } from 'react';
 import { Play, Pause, RotateCcw, Volume2, VolumeX } from 'lucide-react';
+import { useVideoAnalytics } from '@/hooks/useVideoAnalytics';
 
 interface VideoOverlayProps {
   videoUrl: string;
@@ -24,12 +25,31 @@ export function VideoOverlay({ videoUrl, title, width, height, orientation, onCl
   const overlayRef = useRef<HTMLDivElement>(null);
   const controlsTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const progressUpdateRef = useRef<number | null>(null);
+  const videoStartTimeRef = useRef<number>(Date.now());
+  
+  // Analytics tracking
+  const { trackVideoView } = useVideoAnalytics();
+  
+  // Extract video ID from URL
+  const getVideoId = useCallback(() => {
+    if (videoUrl.includes('filename=')) {
+      return videoUrl.split('filename=')[1].split('&')[0];
+    }
+    return videoUrl.split('/').pop()?.split('?')[0] || 'unknown';
+  }, [videoUrl]);
 
-  // VIDEO OVERLAY LOAD DEBUG with instant ready detection
+  // VIDEO OVERLAY LOAD DEBUG with instant ready detection and analytics setup
   useEffect(() => {
+    // Reset start time when video loads
+    videoStartTimeRef.current = Date.now();
+    
+    const videoId = getVideoId();
+    console.log(`📊 ANALYTICS SETUP: Starting tracking for ${videoId}`);
+    
     if (isInstantReady && preloadedElement) {
       console.log('⚡ INSTANT READY VIDEO OVERLAY - v1.0.149:');
       console.log('   - Video URL:', videoUrl);
+      console.log('   - Video ID:', videoId);
       console.log('   - Instant Ready:', isInstantReady);
       console.log('   - Preloaded Element Available:', !!preloadedElement);
       console.log('   - Preloaded ReadyState:', preloadedElement.readyState);
@@ -46,11 +66,15 @@ export function VideoOverlay({ videoUrl, title, width, height, orientation, onCl
     } else {
       console.log('⏳ REGULAR VIDEO OVERLAY LOAD - v1.0.149:');
       console.log('   - Video URL:', videoUrl);
+      console.log('   - Video ID:', videoId);
       console.log('   - Instant Ready:', isInstantReady);
       console.log('   - Preloaded Element:', !!preloadedElement);
       console.log('   - Will load normally (may have delay)');
     }
-  }, [videoUrl, title, isInstantReady, preloadedElement]);
+    
+    // Track video view start (partial view tracking)
+    trackVideoView(videoId, 0, false);
+  }, [videoUrl, title, isInstantReady, preloadedElement, getVideoId, trackVideoView]);
 
   // Enhanced error handling
   const handleVideoError = useCallback((e: any) => {
@@ -167,7 +191,13 @@ export function VideoOverlay({ videoUrl, title, width, height, orientation, onCl
   }, []);
 
   const handleEnded = useCallback(() => {
+    const videoId = getVideoId();
+    const watchTime = Date.now() - videoStartTimeRef.current;
+    const watchTimeSeconds = Math.round(watchTime / 1000);
+    
     console.log('🎬 VIDEO ENDED: Gallery video finished playing - closing overlay');
+    console.log(`📊 VIDEO COMPLETION: ${videoId} watched for ${watchTimeSeconds}s`);
+    
     setIsPlaying(false);
     setProgress(100);
     
@@ -176,18 +206,15 @@ export function VideoOverlay({ videoUrl, title, width, height, orientation, onCl
       cancelAnimationFrame(progressUpdateRef.current);
     }
     
-    // Track video completion analytics
-    if (videoId) {
-      console.log(`📊 VIDEO COMPLETION: Tracking finished video ${videoId}`);
-      // The analytics tracking would happen here
-    }
+    // Track video completion analytics with actual watch time
+    trackVideoView(videoId, watchTimeSeconds, true);
     
     // Close the video overlay and return to gallery after a brief delay
     setTimeout(() => {
       console.log('🔄 AUTO-CLOSE: Returning to video gallery');
       onClose();
     }, 800); // Brief pause to show completion, then close
-  }, [videoId, onClose]);
+  }, [getVideoId, trackVideoView, onClose]);
 
   // Control handlers
   const togglePlayPause = useCallback(() => {
