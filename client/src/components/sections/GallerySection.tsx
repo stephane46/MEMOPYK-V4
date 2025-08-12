@@ -50,6 +50,7 @@ interface GalleryItem {
   orderIndex: number;
   isActive: boolean;
   lightboxVideoUrl?: string; // Infrastructure workaround URL for lightbox display
+  thumbnailUrl?: string; // Thumbnail URL for instant display during video loading
   isInstantReady?: boolean; // Indicates if video uses preloaded element for instant playback
   preloadedElement?: HTMLVideoElement; // The actual preloaded video element
 }
@@ -418,7 +419,7 @@ export default function GallerySection() {
       
       // Get video URL and thumbnail for instant display
       const videoUrl = getVideoUrl(item, index);
-      const thumbnailUrl = getImageUrl(item, index);
+      const thumbnailUrl = getImageUrl(item.id, item);
       
       console.log(`🎯 INSTANT DISPLAY: Showing thumbnail immediately while video buffers`);
       console.log(`🌐 CDN BACKGROUND LOAD: ${cleanFilename} - buffering during thumbnail display`);
@@ -850,6 +851,7 @@ export default function GallerySection() {
           onClose={closeLightbox}
           isInstantReady={lightboxVideo.isInstantReady}
           preloadedElement={lightboxVideo.preloadedElement}
+          thumbnailUrl={lightboxVideo.thumbnailUrl}
         />
       )}
     </section>
