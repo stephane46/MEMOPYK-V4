@@ -17,7 +17,6 @@ interface HeroText {
 
 export function SimpleHeroVideoSection() {
   const { language } = useLanguage();
-  const [isLoading, setIsLoading] = useState(true);
   const videoRef = useRef<HTMLVideoElement>(null);
 
   // Fetch hero text settings for overlay
@@ -28,8 +27,7 @@ export function SimpleHeroVideoSection() {
 
   const activeHeroText = heroTextData.find(text => text.is_active);
 
-  const handleVideoLoad = () => {
-    setIsLoading(false);
+  const handleVideoCanPlay = () => {
     const video = videoRef.current;
     if (video) {
       video.play().catch(() => {
@@ -52,16 +50,9 @@ export function SimpleHeroVideoSection() {
         muted
         loop
         playsInline
-        preload="metadata"
-        onLoadedData={handleVideoLoad}
+        preload="auto"
+        onCanPlay={handleVideoCanPlay}
       />
-
-      {/* Loading overlay */}
-      {isLoading && (
-        <div className="absolute inset-0 bg-gray-900 flex items-center justify-center">
-          <div className="text-white text-xl">Loading...</div>
-        </div>
-      )}
 
       {/* Text overlay */}
       <div className="absolute inset-0 flex items-center justify-center text-center text-white px-3 sm:px-6 lg:px-8">

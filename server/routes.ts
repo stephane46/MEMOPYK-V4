@@ -1768,8 +1768,50 @@ export async function registerRoutes(app: Express): Promise<void> {
   // CRITICAL FIX: Analytics session endpoint with correct URL pattern
   app.post("/api/analytics/session", async (req, res) => {
     try {
-      console.log('📊 Analytics session creation:', req.body);
-      const session = await hybridStorage.createAnalyticsSession(req.body);
+      // Get real client IP (handle proxies, load balancers) 
+      let clientIp = '0.0.0.0';
+      
+      if (req.headers['x-forwarded-for']) {
+        clientIp = req.headers['x-forwarded-for'].toString().split(',')[0].trim();
+      } else if (req.ip) {
+        clientIp = req.ip;
+      } else if (req.connection?.remoteAddress) {
+        clientIp = req.connection.remoteAddress;
+      } else if (req.socket?.remoteAddress) {
+        clientIp = req.socket.remoteAddress;
+      }
+      
+      // Clean up IPv6 mapped IPv4 addresses
+      if (clientIp.startsWith('::ffff:')) {
+        clientIp = clientIp.substring(7);
+      }
+
+      // Get real client language from Accept-Language header
+      const acceptLanguage = req.headers['accept-language'] || '';
+      let detectedLanguage = 'en-US'; // Default
+      
+      if (acceptLanguage.includes('fr')) {
+        detectedLanguage = 'fr-FR';
+      } else if (acceptLanguage.includes('en')) {
+        detectedLanguage = 'en-US';
+      }
+
+      console.log('📊 Analytics session creation:', {
+        ...req.body,
+        server_detected_ip: clientIp,
+        server_detected_language: detectedLanguage
+      });
+
+      // Enhanced session data with server-side detection
+      const sessionData = {
+        ...req.body,
+        ip_address: clientIp,
+        language: detectedLanguage, // Use server-detected language, not client localStorage
+        user_agent: req.headers['user-agent'] || req.body.user_agent || '',
+        session_id: req.body.session_id || `session_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`
+      };
+
+      const session = await hybridStorage.createAnalyticsSession(sessionData);
       res.json({ success: true, session });
     } catch (error) {
       console.error('❌ Analytics session error:', error);
