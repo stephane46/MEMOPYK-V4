@@ -50,11 +50,11 @@ export default function VideoOverlay({
     return videoUrl.split('/').pop()?.split('?')[0] || 'unknown';
   }, [videoUrl]);
 
-  // OPTIMIZED THUMBNAIL-TO-VIDEO SYSTEM v1.0.172
+  // STABLE THUMBNAIL-TO-VIDEO SYSTEM v1.0.173
   useEffect(() => {
     videoStartTimeRef.current = Date.now();
     const videoId = getVideoId();
-    console.log(`🎯 OPTIMIZED THUMBNAIL SYSTEM v1.0.172: Loading ${videoId}`);
+    console.log(`🎯 STABLE THUMBNAIL SYSTEM v1.0.173: Loading ${videoId}`);
     
     // Start video buffering immediately for faster transition
     const video = videoRef.current;
@@ -64,7 +64,7 @@ export default function VideoOverlay({
     }
     
     trackVideoView(videoId, 0, false);
-  }, [videoUrl, getVideoId, trackVideoView, thumbnailUrl]);
+  }, [videoUrl]); // Simplified dependencies to prevent infinite loops
 
   // Enhanced error handling
   const handleVideoError = useCallback((e: any) => {
@@ -173,8 +173,10 @@ export default function VideoOverlay({
     }
   }, []);
 
-  // Optimized video ready handler
+  // Stable video ready handler
   const handleCanPlay = useCallback(() => {
+    if (!showThumbnail) return; // Prevent duplicate calls
+    
     console.log('🎬 VIDEO READY: Can play - instant transition from thumbnail');
     const video = videoRef.current;
     if (video) {
@@ -187,19 +189,19 @@ export default function VideoOverlay({
         videoHeight: video.videoHeight
       });
       
-      // Ensure video is visible before hiding thumbnail
-      setTimeout(() => {
-        setShowThumbnail(false);
-        video.play().catch(console.warn);
-      }, 100);
+      // Immediate transition without delay
+      setShowThumbnail(false);
+      video.play().catch(console.warn);
     }
-  }, []);
+  }, [showThumbnail]);
 
   // Handle when enough data is loaded for smooth playback
   const handleCanPlayThrough = useCallback(() => {
+    if (!showThumbnail) return; // Prevent duplicate calls
+    
     console.log('🎬 VIDEO BUFFERED: Full buffer ready for seamless playback');
     setShowThumbnail(false);
-  }, []);
+  }, [showThumbnail]);
 
   // Control handlers
   const handleVideoClick = useCallback(() => {
