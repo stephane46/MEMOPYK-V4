@@ -1284,10 +1284,10 @@ export function AnalyticsDashboard() {
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <TrendingUp className="h-5 w-5" />
-                Visitor & View Trends
+Session & View Trends
               </CardTitle>
               <CardDescription>
-                Daily visitor and view analytics over time
+Daily session and view analytics over time
                 {dateFrom || dateTo ? (
                   <span className="ml-2 text-sm font-medium text-orange-600">
                     • Filtered: {dateFrom || 'All time'} to {dateTo || 'Now'}
@@ -1311,7 +1311,7 @@ export function AnalyticsDashboard() {
                   <div>
                     <h4 className="text-sm font-medium mb-3 flex items-center gap-2">
                       <Users className="h-4 w-4" />
-                      Daily Visitors & Sessions
+                      Daily Sessions
                     </h4>
                     <div className="h-64">
                       <ResponsiveContainer width="100%" height="100%">
@@ -1332,7 +1332,7 @@ export function AnalyticsDashboard() {
                             })}
                             formatter={(value: number, name: string) => [
                               value,
-                              name === 'visitors' ? 'Visitors' : 'Sessions'
+                              name === 'visitors' ? 'Sessions' : 'Total Views'
                             ]}
                           />
                           <Area 
