@@ -712,5 +712,61 @@
     "is_test_data": false,
     "created_at": "2025-08-12T20:31:32.356Z",
     "updated_at": "2025-08-12T20:31:32.356Z"
+  },
+  {
+    "id": "view_1755030921908_axtqp8w87",
+    "video_type": "gallery",
+    "video_title": "",
+    "session_id": "session_1755030921908",
+    "language": "fr",
+    "watch_time": 0,
+    "completion_rate": 0,
+    "ip_address": "172.31.64.130",
+    "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36 Edg/138.0.0.0",
+    "is_test_data": false,
+    "created_at": "2025-08-12T20:35:21.908Z",
+    "updated_at": "2025-08-12T20:35:21.908Z"
+  },
+  {
+    "id": "view_1755030928400_x760vbvx0",
+    "video_type": "gallery",
+    "video_title": "",
+    "session_id": "session_1755030928400",
+    "language": "fr",
+    "watch_time": 0,
+    "completion_rate": 0,
+    "ip_address": "172.31.64.130",
+    "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36 Edg/138.0.0.0",
+    "is_test_data": false,
+    "created_at": "2025-08-12T20:35:28.400Z",
+    "updated_at": "2025-08-12T20:35:28.400Z"
+  },
+  {
+    "id": "view_1755030933673_u455rvvtd",
+    "video_type": "gallery",
+    "video_title": "",
+    "session_id": "session_1755030933672",
+    "language": "fr",
+    "watch_time": 0,
+    "completion_rate": 0,
+    "ip_address": "172.31.64.130",
+    "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36 Edg/138.0.0.0",
+    "is_test_data": false,
+    "created_at": "2025-08-12T20:35:33.673Z",
+    "updated_at": "2025-08-12T20:35:33.673Z"
+  },
+  {
+    "id": "view_1755030939783_abzpfvowy",
+    "video_type": "gallery",
+    "video_title": "",
+    "session_id": "session_1755030939783",
+    "language": "fr",
+    "watch_time": 0,
+    "completion_rate": 0,
+    "ip_address": "172.31.64.130",
+    "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36 Edg/138.0.0.0",
+    "is_test_data": false,
+    "created_at": "2025-08-12T20:35:39.783Z",
+    "updated_at": "2025-08-12T20:35:39.783Z"
   }
 ]

@@ -325,21 +325,21 @@ export default function VideoOverlay({
             
             {/* Centered animated overlays - all appear simultaneously */}
             <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-              <div className="text-center space-y-4 animate-fade-in">
+              <div className="text-center space-y-8 animate-fade-in">
                 {/* Source count (photos & videos) */}
                 {sourceText && (
                   <div className="flex justify-center">
-                    <div className="bg-black/70 backdrop-blur-sm text-white text-xs px-3 py-2 rounded-full flex items-center gap-2">
-                      <ImageIcon className="w-4 h-4" />
-                      <span className="font-medium">{sourceText}</span>
+                    <div className="bg-black/70 backdrop-blur-sm text-white text-base px-6 py-4 rounded-full flex items-center gap-3">
+                      <ImageIcon className="w-6 h-6" />
+                      <span className="font-medium">{sourceText} - fourni par le client / provided by client</span>
                     </div>
                   </div>
                 )}
                 
                 {/* Title */}
                 {title && (
-                  <div className="px-4">
-                    <h3 className="text-white font-bold text-xl leading-tight drop-shadow-lg text-center">
+                  <div className="px-8">
+                    <h3 className="text-white font-bold text-3xl leading-tight drop-shadow-lg text-center">
                       {title}
                     </h3>
                   </div>
@@ -348,8 +348,8 @@ export default function VideoOverlay({
                 {/* Duration */}
                 {durationText && (
                   <div className="flex justify-center">
-                    <div className="bg-black/70 backdrop-blur-sm text-white text-xs px-3 py-2 rounded-full flex items-center gap-2">
-                      <Clock className="w-4 h-4" />
+                    <div className="bg-black/70 backdrop-blur-sm text-white text-base px-6 py-4 rounded-full flex items-center gap-3">
+                      <Clock className="w-6 h-6" />
                       <span className="font-medium">{durationText}</span>
                     </div>
                   </div>
