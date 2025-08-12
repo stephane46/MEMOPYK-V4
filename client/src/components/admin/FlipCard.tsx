@@ -164,20 +164,34 @@ export function FlipCard({
           ref={rotatorRef}
           className="relative w-full cursor-pointer transition-transform duration-500 rounded-lg overflow-hidden bg-orange-300 dark:bg-orange-300"
           onClick={(e) => {
-            console.log('DEBUG: Rotator clicked directly', e.target);
+            console.log('DEBUG: Rotator clicked directly', e.target, 'Current position:', e.clientX, e.clientY);
+            e.preventDefault();
+            e.stopPropagation();
             handleCardClick();
+          }}
+          onMouseDown={(e) => {
+            console.log('DEBUG: Rotator mousedown', e.target);
           }}
           style={{
             transformStyle: 'preserve-3d',
             transform: isFlipped ? 'rotateY(180deg)' : 'rotateY(0deg)',
             willChange: 'transform',
             translate: '0',                 // promote to its own layer (helps against hairline gaps)
-            isolation: 'isolate'
+            isolation: 'isolate',
+            minHeight: '120px'
             // Optional polish to erase rare sub-pixel gaps on some GPUs:
             // outline: '1px solid white'
           }}
           role="button"
           aria-pressed={isFlipped}
+          tabIndex={0}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+              console.log('DEBUG: Keyboard trigger');
+              e.preventDefault();
+              handleCardClick();
+            }
+          }}
         >
           {/* FRONT FACE */}
           <div
@@ -189,9 +203,14 @@ export function FlipCard({
               ref={frontInnerRef} 
               className="relative bg-green-200 border-4 border-red-500 p-2 pointer-events-auto cursor-pointer"
               onClick={(e) => {
+                console.log('DEBUG: Front content clicked directly - CAPTURED!');
+                console.log('DEBUG: Event details:', e.type, e.target, e.currentTarget);
+                e.preventDefault();
                 e.stopPropagation();
-                console.log('DEBUG: Front content clicked directly');
                 handleCardClick();
+              }}
+              onMouseDown={(e) => {
+                console.log('DEBUG: Front mousedown - CAPTURED!');
               }}
             >
               {frontContent}
