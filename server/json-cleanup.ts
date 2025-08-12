@@ -10,37 +10,37 @@ interface CleanupConfig {
 export class JsonCleanupManager {
   private dataPath: string;
   
-  // Configuration for different data types
+  // SMART ROLLING CACHE: Keep only 1 week in JSON, everything else in Supabase
   private cleanupConfigs: Record<string, CleanupConfig> = {
     'analytics-sessions.json': {
-      maxRecords: 10000,      // Keep last 10k sessions
-      maxAgeInDays: 90,       // Keep last 90 days
-      maxFileSizeMB: 50       // Max 50MB per file
+      maxRecords: 99999,      // No record limit (age-based only)
+      maxAgeInDays: 7,        // Keep only last 7 days
+      maxFileSizeMB: 50       // Safety limit
     },
     'analytics-views.json': {
-      maxRecords: 50000,      // Keep last 50k video views
-      maxAgeInDays: 90,       // Keep last 90 days  
-      maxFileSizeMB: 100      // Max 100MB per file
+      maxRecords: 99999,      // No record limit (age-based only)
+      maxAgeInDays: 7,        // Keep only last 7 days
+      maxFileSizeMB: 100      // Safety limit
     },
     'performance-metrics.json': {
-      maxRecords: 5000,       // Keep last 5k performance records
-      maxAgeInDays: 30,       // Keep last 30 days
-      maxFileSizeMB: 10       // Max 10MB per file
+      maxRecords: 99999,      // No record limit (age-based only)
+      maxAgeInDays: 7,        // Keep only last 7 days
+      maxFileSizeMB: 10       // Safety limit
     },
     'realtime-visitors.json': {
-      maxRecords: 1000,       // Keep last 1k visitors
-      maxAgeInDays: 7,        // Keep last 7 days
-      maxFileSizeMB: 5        // Max 5MB per file
+      maxRecords: 99999,      // No record limit (age-based only)
+      maxAgeInDays: 7,        // Keep only last 7 days
+      maxFileSizeMB: 5        // Safety limit
     },
     'engagement-heatmap.json': {
-      maxRecords: 5000,       // Keep last 5k engagement events
-      maxAgeInDays: 30,       // Keep last 30 days
-      maxFileSizeMB: 20       // Max 20MB per file
+      maxRecords: 99999,      // No record limit (age-based only)
+      maxAgeInDays: 7,        // Keep only last 7 days
+      maxFileSizeMB: 20       // Safety limit
     },
     'conversion-funnel.json': {
-      maxRecords: 5000,       // Keep last 5k conversion events
-      maxAgeInDays: 60,       // Keep last 60 days
-      maxFileSizeMB: 15       // Max 15MB per file
+      maxRecords: 99999,      // No record limit (age-based only)
+      maxAgeInDays: 7,        // Keep only last 7 days
+      maxFileSizeMB: 15       // Safety limit
     }
   };
 
@@ -49,10 +49,12 @@ export class JsonCleanupManager {
   }
 
   /**
-   * Clean up all analytics JSON files based on their configurations
+   * Clean up all analytics JSON files - keep only last 7 days
+   * Older data automatically available from Supabase when needed
    */
   async cleanupAllAnalyticsFiles(): Promise<void> {
-    console.log('🧹 JSON CLEANUP MANAGER: Starting cleanup of analytics files...');
+    console.log('🧹 JSON ROLLING CACHE: Maintaining 7-day window in JSON files...');
+    console.log('📊 Older data automatically retrieved from Supabase when needed');
     
     for (const [filename, config] of Object.entries(this.cleanupConfigs)) {
       try {
@@ -62,7 +64,7 @@ export class JsonCleanupManager {
       }
     }
     
-    console.log('✅ JSON CLEANUP MANAGER: Cleanup complete');
+    console.log('✅ JSON ROLLING CACHE: 7-day window maintained');
   }
 
   /**

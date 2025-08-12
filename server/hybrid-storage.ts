@@ -3151,13 +3151,42 @@ Allow: /contact`;
 
   // Analytics methods implementation
   async getAnalyticsSessions(dateFrom?: string, dateTo?: string, language?: string): Promise<any[]> {
+    // SMART 7-DAY ROLLING CACHE STRATEGY
+    const sevenDaysAgo = new Date();
+    sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+    const isRecentQuery = !dateFrom || new Date(dateFrom) >= sevenDaysAgo;
+
+    // For recent data (last 7 days), use JSON cache for speed
+    if (isRecentQuery && !dateFrom?.startsWith('2024-')) { // Exclude obvious historical queries
+      console.log('📊 ANALYTICS SESSIONS: Using JSON cache for recent data (last 7 days)');
+      try {
+        const sessions = this.loadJsonFile('analytics-sessions.json');
+        let filtered = sessions.filter((session: any) => !session.is_test_data);
+
+        if (dateFrom) {
+          filtered = filtered.filter((session: any) => session.created_at >= dateFrom);
+        }
+        if (dateTo) {
+          filtered = filtered.filter((session: any) => session.created_at <= dateTo);
+        }
+        if (language) {
+          filtered = filtered.filter((session: any) => session.language === language);
+        }
+
+        console.log(`✅ JSON CACHE: Found ${filtered.length} recent sessions`);
+        return filtered;
+      } catch (error) {
+        console.warn('⚠️ JSON cache failed, falling back to Supabase:', error);
+      }
+    }
+
+    // For historical data (older than 7 days), query Supabase directly
+    console.log('📊 ANALYTICS SESSIONS: Querying Supabase for historical data');
     try {
-      console.log('🔍 Analytics Sessions: Querying Supabase database...');
-      
       let query = this.supabase
         .from('analytics_sessions')
         .select('*')
-        .eq('is_test_data', false) // Filter out test data
+        .eq('is_test_data', false)
         .order('created_at', { ascending: false });
 
       if (dateFrom) {
@@ -3178,33 +3207,14 @@ Allow: /contact`;
       }
 
       if (data && data.length > 0) {
-        console.log(`✅ Analytics Sessions: Found ${data.length} sessions in Supabase`);
+        console.log(`✅ SUPABASE: Found ${data.length} historical sessions`);
         return data;
       } else {
-        console.log('⚠️ Analytics Sessions: No data in Supabase, checking JSON fallback...');
+        console.log('⚠️ Analytics Sessions: No historical data found in Supabase');
+        return [];
       }
     } catch (error) {
-      console.warn('⚠️ Analytics Sessions: Supabase connection failed, using JSON fallback:', error);
-    }
-
-    // Fallback to JSON
-    try {
-      const sessions = this.loadJsonFile('analytics-sessions.json');
-      let filtered = sessions.filter((session: any) => !session.is_test_data); // Filter out test data
-
-      if (dateFrom) {
-        filtered = filtered.filter((session: any) => session.created_at >= dateFrom);
-      }
-      if (dateTo) {
-        filtered = filtered.filter((session: any) => session.created_at <= dateTo);
-      }
-      if (language) {
-        filtered = filtered.filter((session: any) => session.language === language);
-      }
-
-      return filtered;
-    } catch (error) {
-      console.error('Error getting analytics sessions from JSON:', error);
+      console.warn('⚠️ Analytics Sessions: Supabase connection failed for historical data:', error);
       return [];
     }
   }
