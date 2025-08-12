@@ -404,6 +404,7 @@ export default function GallerySection() {
   };
 
   const handlePlayClick = (item: GalleryItem, e: React.MouseEvent, index: number) => {
+    console.log(`🚨 EMERGENCY CLICK DEBUG: handlePlayClick triggered for item ${index}`);
     e.preventDefault();
     e.stopPropagation();
     
@@ -694,7 +695,12 @@ export default function GallerySection() {
             flippedCards={flippedCards}
           />
         ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 lg:gap-8 mb-8 sm:mb-12">
+          <div 
+            className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 lg:gap-8 mb-8 sm:mb-12"
+            onClick={(e) => {
+              console.log(`🚨 EMERGENCY: Gallery container clicked!`, e.target);
+            }}
+          >
           {galleryItems.map((item, index) => {
             const imageUrl = getImageUrl(item);
             const thumbnailUrl = imageUrl;
