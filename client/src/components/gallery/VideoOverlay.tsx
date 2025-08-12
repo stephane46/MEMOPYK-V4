@@ -18,6 +18,7 @@ export function VideoOverlay({ videoUrl, title, width, height, orientation, onCl
   const [showControls, setShowControls] = useState(true);
   const [progress, setProgress] = useState(0);
   const [duration, setDuration] = useState(0);
+  const [currentTime, setCurrentTime] = useState(0);
   
   const videoRef = useRef<HTMLVideoElement>(null);
   const overlayRef = useRef<HTMLDivElement>(null);
@@ -125,6 +126,7 @@ export function VideoOverlay({ videoUrl, title, width, height, orientation, onCl
   const updateProgress = useCallback(() => {
     const video = videoRef.current;
     if (video && !isNaN(video.duration)) {
+      setCurrentTime(video.currentTime);
       setProgress((video.currentTime / video.duration) * 100);
       if (video.currentTime < video.duration) {
         progressUpdateRef.current = requestAnimationFrame(updateProgress);
@@ -181,6 +183,13 @@ export function VideoOverlay({ videoUrl, title, width, height, orientation, onCl
       video.muted = !video.muted;
       setIsMuted(video.muted);
     }
+  }, []);
+
+  // Format time for display
+  const formatTime = useCallback((time: number) => {
+    const minutes = Math.floor(time / 60);
+    const seconds = Math.floor(time % 60);
+    return `${minutes}:${seconds.toString().padStart(2, '0')}`;
   }, []);
 
   // Keyboard and click handlers
@@ -306,6 +315,12 @@ export function VideoOverlay({ videoUrl, title, width, height, orientation, onCl
             showControls ? 'opacity-100' : 'opacity-0'
           }`}
         >
+          {/* Time Display */}
+          <div className="flex justify-between items-center text-white text-xs sm:text-sm mb-2">
+            <span>{formatTime(currentTime)}</span>
+            <span>{formatTime(duration)}</span>
+          </div>
+
           {/* Progress Bar - Mobile Touch-Friendly */}
           <div className="w-full bg-white/20 h-2 sm:h-1 rounded-full mb-3 sm:mb-4 touch-manipulation">
             <div
