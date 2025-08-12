@@ -1,5 +1,0 @@
-MEMOPYK FORCE DEPLOYMENT v1.0.2
-Generated: July 27, 2025 17:26 UTC
-
-Gallery Video Range Request Fix Deployed
-This file forces Replit Deploy to recognize new version
