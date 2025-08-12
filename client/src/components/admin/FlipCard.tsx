@@ -67,8 +67,6 @@ export function FlipCard({ frontContent, className = "", visitors = [] }: Visito
   };
 
   const getCountryFlag = (country: string) => {
-    console.log('🏴 getCountryFlag called with:', country);
-    
     // Map both country names and two-letter codes to flags
     const countryFlags: { [key: string]: string } = {
       // Full country names
@@ -133,14 +131,11 @@ export function FlipCard({ frontContent, className = "", visitors = [] }: Visito
     
     // Only show globe for truly unknown entries
     if (country === 'Unknown' || !country) {
-      console.log('🌍 Returning globe for unknown country');
       return '🌍';
     }
     
     // Return the flag if we have it, otherwise show a generic flag icon for unrecognized countries
-    const flag = countryFlags[country] || '🏴';
-    console.log('🏴 Returning flag:', flag, 'for country:', country);
-    return flag;
+    return countryFlags[country] || '🏴';
   };
 
   return (

@@ -424,36 +424,14 @@ export default function GallerySection() {
       console.log(`📊 PRODUCTION ANALYTICS: Tracking gallery video view for: ${cleanFilename}`);
       trackVideoView(cleanFilename || '');
       
-      // Check if we have a preloaded video element for instant playback
-      const filename = cleanFilename || '';
-      const preloadedVideo = preloadedVideoElements.get(filename);
-      
-      if (preloadedVideo && preloadedVideo.readyState >= 3) {
-        console.log(`⚡ INSTANT PLAYBACK: Using preloaded video element for ${filename}`);
-        console.log(`📊 Video readyState: ${preloadedVideo.readyState}/4 - READY FOR INSTANT PLAY!`);
-        console.log(`🎯 TRANSFERRING PRELOADED ELEMENT: Setting currentTime to 0 and ready for instant play`);
-        
-        // Reset the preloaded video to start and pause it
-        preloadedVideo.currentTime = 0;
-        preloadedVideo.pause();
-        
-        // Use the proxy URL but mark as instant ready so VideoOverlay knows to use preloaded data
-        const videoUrl = getVideoUrl(item, index);
-        setLightboxVideo({
-          ...item, 
-          lightboxVideoUrl: videoUrl,
-          isInstantReady: true,
-          preloadedElement: preloadedVideo
-        });
-      } else {
-        console.log(`⏳ FALLBACK: No preloaded video for ${filename}, using regular proxy`);
-        const videoUrl = getVideoUrl(item, index);
-        setLightboxVideo({
-          ...item, 
-          lightboxVideoUrl: videoUrl,
-          isInstantReady: false
-        });
-      }
+      // Load video normally without preloading conflicts  
+      console.log(`🎬 CLEAN VIDEO LOAD: No preloading conflicts, should play smoothly`);
+      const videoUrl = getVideoUrl(item, index);
+      setLightboxVideo({
+        ...item, 
+        lightboxVideoUrl: videoUrl,
+        isInstantReady: false
+      });
       
       // Prevent body scrolling when lightbox is open
       document.body.style.overflow = 'hidden';
@@ -502,111 +480,28 @@ export default function GallerySection() {
   // 🎯 INSTANT GALLERY VIDEO SYSTEM - Store preloaded video elements for instant reuse
   const [preloadedVideoElements, setPreloadedVideoElements] = useState<Map<string, HTMLVideoElement>>(new Map());
 
-  // 🚀 AGGRESSIVE PRELOADING SYSTEM - Create persistent video elements for instant startup
+  // 🚫 DISABLED PRELOADING SYSTEM - Prevents video playback conflicts and stuttering
   useEffect(() => {
     if (!galleryItems.length) return;
 
-    const createPreloadedVideo = async (videoUrl: string, filename: string) => {
-      if (preloadedVideoElements.has(filename)) return;
-
-      try {
-        console.log(`🎯 CREATING PERSISTENT VIDEO ELEMENT: ${filename}`);
-        
-        // Create persistent video element that stays ready
-        const video = document.createElement('video');
-        video.src = videoUrl;
-        video.preload = 'auto';
-        video.style.display = 'none';
-        video.muted = true;
-        video.playsInline = true;
-        
-        // Add unique ID for tracking
-        video.id = `preloaded-${filename}`;
-        
-        // Add to DOM and keep it there for instant access
-        document.body.appendChild(video);
-        
-        // Wait for video to be ready
-        const loadPromise = new Promise<void>((resolve) => {
-          const handleReady = () => {
-            console.log(`✅ INSTANT VIDEO READY: ${filename} - ${video.readyState}/4`);
-            
-            // Store the ready video element for instant reuse
-            setPreloadedVideoElements(prev => {
-              const newMap = new Map(prev);
-              newMap.set(filename, video);
-              return newMap;
-            });
-            
-            setPreloadedVideos(prev => new Set(Array.from(prev).concat([filename])));
-            resolve();
-          };
-          
-          // Multiple ready state checks for maximum compatibility
-          video.addEventListener('canplaythrough', handleReady, { once: true });
-          video.addEventListener('canplay', handleReady, { once: true });
-          video.addEventListener('loadeddata', handleReady, { once: true });
-          
-          // Immediate check if already loaded
-          if (video.readyState >= 3) { // HAVE_FUTURE_DATA or better
-            handleReady();
-          }
-          
-          // Fallback timeout
-          setTimeout(() => {
-            if (video.readyState >= 1) { // At least HAVE_METADATA
-              console.log(`⏰ FALLBACK READY: ${filename} - readyState: ${video.readyState}`);
-              handleReady();
-            }
-          }, 2000);
-        });
-        
-        // Force load immediately
-        video.load();
-        
-        // Add 500ms timeout to let console messages appear
-        setTimeout(() => {
-          console.log(`🎯 CREATING PERSISTENT VIDEO ELEMENT: ${filename} - Video loaded, readyState: ${video.readyState}`);
-        }, 500);
-        
-        await loadPromise;
-        
-      } catch (error) {
-        console.warn(`⚠️ PRELOAD FAILED: ${filename}:`, error);
-      }
-    };
-
-    // Start preloading ALL gallery videos immediately
-    const startPreloading = () => {
-      console.log(`🚀 INSTANT VIDEO SYSTEM: Preloading ${galleryItems.length} gallery items`);
-      
-      galleryItems.forEach((item, index) => {
-        if (hasVideo(item, index)) {
-          const videoUrl = getVideoUrl(item, index);
-          const filename = item.videoFilename?.split('/').pop() || '';
-          
-          if (filename && !preloadedVideoElements.has(filename)) {
-            console.log(`🚀 PRELOADING: ${filename}`);
-            // Stagger preloads to avoid network congestion
-            setTimeout(() => {
-              createPreloadedVideo(videoUrl, filename);
-            }, index * 200); // Reduced to 200ms for faster preloading
-          }
-        }
+    console.log(`🚫 PRELOADING SYSTEM DISABLED: Gallery videos will load normally to prevent playback conflicts`);
+    console.log(`📊 Gallery items available: ${galleryItems.length} (videos will load on-demand)`);
+    
+    // Cleanup any existing preloaded elements that might be causing conflicts
+    const cleanupPreloadedElements = () => {
+      preloadedVideoElements.forEach((video, filename) => {
+        console.log(`🧹 CLEANING UP: ${filename}`);
+        video.remove();
       });
+      setPreloadedVideoElements(new Map());
+      setPreloadedVideos(new Set());
     };
+    
+    cleanupPreloadedElements();
 
-    // Start immediately after component mounts
-    console.log(`🎯 SCHEDULING PRELOAD: Will start in 500ms`);
-    const timeoutId = setTimeout(() => {
-      console.log(`🎯 TIMEOUT TRIGGERED: Starting preload now`);
-      startPreloading();
-    }, 500);
-
-    return () => {
-      clearTimeout(timeoutId);
-    };
-  }, [galleryItems, preloadedVideoElements, hasVideo, getVideoUrl]);
+    // All preloading functionality disabled to prevent video conflicts
+    console.log(`🎯 PRELOADING SYSTEM: Completely disabled to fix gallery video playback issues`);
+  }, [galleryItems]);
 
   // Cleanup preloaded video elements on unmount
   useEffect(() => {
