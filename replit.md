@@ -46,13 +46,13 @@ Visual consistency priority: Extremely detail-oriented about spacing and formatt
 - **Deployment Optimizations**: Includes fast health check endpoints, production video cache preloading for hero videos, comprehensive error handling, routing priorities, and automated public asset copying.
 
 ## Recent Changes
-**August 12, 2025 - v1.0.153 Clean Gallery Click Reversion (READY FOR DEPLOYMENT):**
-- STABLE RELEASE: Reverted gallery to original single-click behavior per user feedback
-- Only play button clickable (removed emergency multiple click handlers)
-- Silent hero video loading (removed unnecessary loading message)
-- Maintained instant video playback through background preloading system
-- Clean, intentional user interaction design restored
-- All video functionality confirmed working: hero cache (~50ms) + gallery preload (<100ms)
+**August 12, 2025 - v1.0.154 Silent Hero Loading Fix (READY FOR DEPLOYMENT):**
+- CRITICAL FIX: Completely eliminated loading state from hero videos per user request
+- Removed all isLoading variable and setIsLoading references from HeroVideoSection
+- Hero videos now load silently with gradient background only (no spinner/loading text)
+- Fixed TypeScript compilation errors that were preventing clean deployment
+- Maintained gallery video preloading system for instant playback
+- Clean user experience: only play buttons clickable, silent hero loading
 
 **August 12, 2025 - v1.0.148 Persistent Video Element System (DEPLOYED):**
 - Implemented revolutionary persistent video element system for true instant gallery video startup  
