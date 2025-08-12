@@ -143,7 +143,7 @@ export function FlipCard({
         {/* Rotator: unified white surface, rounded, clipped; avoids seams */}
         <div
           ref={rotatorRef}
-          className="relative w-full cursor-pointer transition-transform duration-500 rounded-lg overflow-hidden bg-white dark:bg-white"
+          className="relative w-full cursor-pointer transition-transform duration-500 rounded-lg overflow-hidden bg-orange-300 dark:bg-orange-300"
           onClick={handleCardClick}
           style={{
             transformStyle: 'preserve-3d',
@@ -163,7 +163,7 @@ export function FlipCard({
             className="absolute inset-0 w-full bg-white dark:bg-white"
             style={{ backfaceVisibility: 'hidden', WebkitBackfaceVisibility: 'hidden', transform: 'rotateY(0deg) translateZ(0)' }}
           >
-            <div ref={frontInnerRef} className="relative">
+            <div ref={frontInnerRef} className="relative bg-green-200 border-4 border-red-500 p-2">
               {frontContent}
             </div>
           </div>
@@ -171,18 +171,18 @@ export function FlipCard({
           {/* BACK FACE */}
           <div
             ref={backRef}
-            className="absolute inset-0 w-full bg-white dark:bg-white"
+            className="absolute inset-0 w-full bg-pink-300 dark:bg-pink-300"
             style={{
               backfaceVisibility: 'hidden',
               WebkitBackfaceVisibility: 'hidden',
               transform: 'rotateY(180deg) translateZ(0)'
             }}
           >
-            <div ref={backInnerRef} className="relative">
+            <div ref={backInnerRef} className="relative bg-blue-200 border-4 border-purple-500 p-2">
               <div 
-                className="h-full w-full p-6 bg-white"
+                className="h-full w-full p-6 bg-yellow-300"
                 style={{
-                  backgroundColor: '#ffffff',
+                  backgroundColor: '#fef08a',
                   position: 'relative',
                   zIndex: 10
                 }}
