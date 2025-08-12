@@ -123,7 +123,7 @@ export function FlipCard({
             transform: 'rotateY(180deg)'
           }}
         >
-          <Card className="h-full bg-white dark:bg-gray-900 border-8 border-purple-500">
+          <Card className="h-full bg-white dark:bg-gray-900 border-8 border-purple-500" style={{ backgroundColor: 'white' }}>
             <CardHeader className="pb-4 border-4 border-orange-500 bg-white">
               <CardTitle className="flex items-center gap-2 text-lg">
                 <Users className="h-5 w-5" />
@@ -133,7 +133,7 @@ export function FlipCard({
                 Last {recentVisitors.length} unique visitors
               </CardDescription>
             </CardHeader>
-            <CardContent className="space-y-3 bg-white dark:bg-gray-900 rounded-lg p-4 border-4 border-yellow-500">
+            <CardContent className="space-y-3 bg-white dark:bg-gray-900 rounded-lg p-4 border-4 border-yellow-500" style={{ backgroundColor: 'white' }}>
               {recentVisitors.length > 0 ? (
                 recentVisitors.map((visitor, index) => (
                   <div 
