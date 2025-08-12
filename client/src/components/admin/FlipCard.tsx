@@ -126,17 +126,43 @@ export function FlipCard({
             backgroundImage: 'none'
           }}
         >
-          <Card className="h-full" style={{ backgroundColor: '#ffffff', background: '#ffffff', backgroundImage: 'none' }}>
-            <CardHeader className="pb-4 bg-white" style={{ backgroundColor: '#ffffff', background: '#ffffff' }}>
-              <CardTitle className="flex items-center gap-2 text-lg">
+          <div 
+            className="h-full rounded-lg border border-gray-200 shadow-sm" 
+            style={{ 
+              backgroundColor: '#ffffff', 
+              background: '#ffffff', 
+              backgroundImage: 'none',
+              position: 'relative',
+              zIndex: 10
+            }}
+          >
+            <div 
+              className="pb-4 p-6" 
+              style={{ 
+                backgroundColor: '#ffffff', 
+                background: '#ffffff', 
+                backgroundImage: 'none' 
+              }}
+            >
+              <div className="flex items-center gap-2 text-lg font-semibold">
                 <Users className="h-5 w-5" />
                 Recent Visitors
-              </CardTitle>
-              <CardDescription>
+              </div>
+              <div className="text-sm text-gray-600">
                 Last {recentVisitors.length} unique visitors
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-3 rounded-lg p-4" style={{ backgroundColor: '#ffffff', background: '#ffffff', backgroundImage: 'none' }}>
+              </div>
+            </div>
+            <div 
+              className="rounded-lg p-4" 
+              style={{ 
+                backgroundColor: '#ffffff', 
+                background: '#ffffff', 
+                backgroundImage: 'none',
+                gap: '12px',
+                display: 'flex',
+                flexDirection: 'column'
+              }}
+            >
               {recentVisitors.length > 0 ? (
                 recentVisitors.map((visitor, index) => (
                   <div 
@@ -175,8 +201,8 @@ export function FlipCard({
                   <p>No recent visitors found</p>
                 </div>
               )}
-            </CardContent>
-          </Card>
+            </div>
+          </div>
         </div>
       </div>
 
