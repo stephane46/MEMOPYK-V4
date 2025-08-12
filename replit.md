@@ -46,15 +46,23 @@ Visual consistency priority: Extremely detail-oriented about spacing and formatt
 - **Deployment Optimizations**: Includes fast health check endpoints, production video cache preloading for hero videos, comprehensive error handling, routing priorities, and automated public asset copying.
 
 ## Recent Changes
-**August 12, 2025 - v1.0.157 Analytics System & IP Detection Fix (READY FOR DEPLOYMENT):**
-- CRITICAL FIX: Complete analytics system overhaul with real IP and language detection
+**August 12, 2025 - v1.0.158 Video UX & Analytics Fixes (READY FOR DEPLOYMENT):**
+- UX FIX: Removed X close button from video overlay per user feedback - now only close by clicking outside video or ESC key
+- ANALYTICS FIX: Enhanced IP detection to properly capture Australian IP from X-Forwarded-For headers (first IP in chain)
+- ANALYTICS FIX: Improved language detection to only register primary browser language (French OR English, not both)
+- ADMIN FEATURE: Added "Clear All Test Data" button to analytics dashboard for easy testing cleanup
+- Enhanced console logging for IP and language detection debugging in analytics session endpoint
+- Video timeline functionality preserved and working correctly in bottom right corner
+- Maintained performance: Hero videos ~11ms cache, Gallery videos smooth CDN streaming, no loading states
+
+**August 12, 2025 - v1.0.157 Analytics System & IP Detection Fix (DEPLOYED):**
+- CRITICAL FIX: Complete analytics system overhaul with real IP and language detection  
 - Fixed IP address detection from X-Forwarded-For headers - now captures real visitor IPs (212.15.80.196)
 - Fixed language detection from Accept-Language headers - properly detects French vs English browsers
 - Enhanced session tracking with accurate geographic data collection from real client IPs
 - Video view tracking confirmed saving to database with proper engagement metrics (watch time, completion rates)
 - Analytics dashboard displays accurate visitor countries and languages based on real browser data
 - Video timeline display confirmed functional - shows progress bar and current time during playback
-- Maintained performance: Hero videos ~11ms cache, Gallery videos smooth CDN streaming, no loading states
 
 **August 12, 2025 - v1.0.155 Complete Loading & Timeline Fix (DEPLOYED):**
 - CRITICAL FIX: Eliminated ALL loading states from entire application per user feedback

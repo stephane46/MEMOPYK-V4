@@ -356,21 +356,7 @@ export function VideoOverlay({ videoUrl, title, width, height, orientation, onCl
             </button>
           </div>
           
-          {/* Close Button - Mobile Optimized */}
-          <div className="absolute top-2 sm:top-4 right-2 sm:right-4">
-            <button
-              onClick={onClose}
-              className="text-white hover:text-orange-400 transition-colors p-2 sm:p-2 rounded-full hover:bg-black/30 bg-black/20 backdrop-blur-sm touch-manipulation min-w-[44px] min-h-[44px] flex items-center justify-center"
-              aria-label="Close video"
-            >
-              <div className="w-4 h-4 sm:w-5 sm:h-5 relative">
-                <div className="absolute inset-0 flex items-center justify-center">
-                  <div className="w-3 h-0.5 sm:w-4 sm:h-0.5 bg-current rotate-45"></div>
-                  <div className="w-3 h-0.5 sm:w-4 sm:h-0.5 bg-current -rotate-45 absolute"></div>
-                </div>
-              </div>
-            </button>
-          </div>
+
         </div>
 
 

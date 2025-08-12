@@ -320,6 +320,27 @@ export function AnalyticsDashboard() {
     }
   });
 
+  const clearAllTestDataMutation = useMutation({
+    mutationFn: () => apiRequest('/api/analytics/reset', 'POST'),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['/api/analytics/dashboard'] });
+      queryClient.invalidateQueries({ queryKey: ['/api/analytics/test-data/status'] });
+      queryClient.invalidateQueries({ queryKey: ['/api/analytics/settings'] });
+      toast({
+        title: "All Test Data Cleared",
+        description: "All test analytics data has been completely cleared.",
+      });
+    },
+    onError: (error) => {
+      console.error('Clear all test data error:', error);
+      toast({
+        title: "Clear Failed",
+        description: "Failed to clear all test data.",
+        variant: "destructive",
+      });
+    }
+  });
+
   // Add excluded IP mutation
   const addExcludedIpMutation = useMutation({
     mutationFn: ({ ipAddress, comment }: { ipAddress: string; comment?: string }) => 
@@ -694,7 +715,7 @@ export function AnalyticsDashboard() {
                 Generate realistic test data for demos or clear test data while preserving real analytics
               </p>
               
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
                 <Button
                   onClick={() => generateTestDataMutation.mutate()}
                   variant="outline"
@@ -713,6 +734,16 @@ export function AnalyticsDashboard() {
                 >
                   <Trash2 className="h-4 w-4 mr-2" />
                   {clearTestDataMutation.isPending ? 'Clearing...' : 'Clear Test Data Only'}
+                </Button>
+                
+                <Button
+                  onClick={() => clearAllTestDataMutation.mutate()}
+                  variant="destructive"
+                  disabled={clearAllTestDataMutation.isPending}
+                  className="justify-start"
+                >
+                  <Ban className="h-4 w-4 mr-2" />
+                  {clearAllTestDataMutation.isPending ? 'Clearing All...' : 'Clear All Test Data'}
                 </Button>
               </div>
               

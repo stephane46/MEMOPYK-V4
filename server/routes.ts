@@ -1768,33 +1768,60 @@ export async function registerRoutes(app: Express): Promise<void> {
   // CRITICAL FIX: Analytics session endpoint with correct URL pattern
   app.post("/api/analytics/session", async (req, res) => {
     try {
-      // Get real client IP (handle proxies, load balancers) 
+      // ENHANCED IP DETECTION v1.0.158 - Fix for Australian IP not registering
       let clientIp = '0.0.0.0';
       
-      if (req.headers['x-forwarded-for']) {
-        clientIp = req.headers['x-forwarded-for'].toString().split(',')[0].trim();
+      // Check X-Forwarded-For first (for proxies/load balancers like Replit)
+      const forwardedFor = req.headers['x-forwarded-for'];
+      if (forwardedFor) {
+        // Take the FIRST IP (original client) from comma-separated list
+        const ips = forwardedFor.toString().split(',').map(ip => ip.trim());
+        clientIp = ips[0]; // This should be the real client IP (e.g., 109.17.150.48)
+        console.log('🌍 X-Forwarded-For found:', ips, 'Using first IP:', clientIp);
       } else if (req.ip) {
         clientIp = req.ip;
+        console.log('🌍 Using req.ip:', clientIp);
       } else if (req.connection?.remoteAddress) {
         clientIp = req.connection.remoteAddress;
+        console.log('🌍 Using connection.remoteAddress:', clientIp);
       } else if (req.socket?.remoteAddress) {
         clientIp = req.socket.remoteAddress;
+        console.log('🌍 Using socket.remoteAddress:', clientIp);
       }
       
       // Clean up IPv6 mapped IPv4 addresses
       if (clientIp.startsWith('::ffff:')) {
         clientIp = clientIp.substring(7);
+        console.log('🌍 Cleaned IPv6 mapped address to:', clientIp);
       }
+      
+      console.log('🌍 FINAL CLIENT IP DETECTED:', clientIp);
 
-      // Get real client language from Accept-Language header
+      // ENHANCED LANGUAGE DETECTION v1.0.158 - Fix French/English showing both
       const acceptLanguage = req.headers['accept-language'] || '';
       let detectedLanguage = 'en-US'; // Default
       
-      if (acceptLanguage.includes('fr')) {
-        detectedLanguage = 'fr-FR';
-      } else if (acceptLanguage.includes('en')) {
-        detectedLanguage = 'en-US';
+      console.log('🌍 RAW Accept-Language header:', acceptLanguage);
+      
+      // Parse Accept-Language more precisely - take FIRST preference only
+      if (acceptLanguage) {
+        const primaryLanguage = acceptLanguage.split(',')[0].trim().toLowerCase();
+        console.log('🌍 Primary language preference:', primaryLanguage);
+        
+        if (primaryLanguage.startsWith('fr')) {
+          detectedLanguage = 'fr-FR';
+          console.log('🌍 DETECTED: French browser');
+        } else if (primaryLanguage.startsWith('en')) {
+          detectedLanguage = 'en-US';
+          console.log('🌍 DETECTED: English browser');
+        } else {
+          // For other languages, default to English
+          detectedLanguage = 'en-US';
+          console.log('🌍 DETECTED: Other language, defaulting to English');
+        }
       }
+      
+      console.log('🌍 FINAL LANGUAGE DETECTED:', detectedLanguage);
 
       console.log('📊 Analytics session creation:', {
         ...req.body,
