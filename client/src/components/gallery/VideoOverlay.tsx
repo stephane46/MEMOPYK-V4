@@ -41,45 +41,56 @@ export function VideoOverlay({ videoUrl, title, width, height, orientation, onCl
     return videoUrl.split('/').pop()?.split('?')[0] || 'unknown';
   }, [videoUrl]);
 
-  // INSTANT THUMBNAIL-TO-VIDEO SYSTEM v1.0.168
+  // AGGRESSIVE INSTANT THUMBNAIL-TO-VIDEO SYSTEM v1.0.169
   useEffect(() => {
     // Reset start time when video loads
     videoStartTimeRef.current = Date.now();
     
     const videoId = getVideoId();
-    console.log(`🎯 INSTANT THUMBNAIL-TO-VIDEO SYSTEM: Loading ${videoId}`);
+    console.log(`🎯 AGGRESSIVE INSTANT SYSTEM v1.0.169: Loading ${videoId}`);
     
     if (thumbnailUrl) {
-      console.log('🖼️ INSTANT THUMBNAIL DISPLAY - v1.0.168:');
+      console.log('🖼️ AGGRESSIVE INSTANT DISPLAY - v1.0.169:');
       console.log('   - Thumbnail URL:', thumbnailUrl);
       console.log('   - Video URL:', videoUrl);
       console.log('   - Video ID:', videoId);
-      console.log('   - Strategy: Show thumbnail immediately, buffer video in background');
+      console.log('   - Strategy: Start video buffering IMMEDIATELY, show on first playable frame');
       
-      // Set up video loading detection
+      // Set up video loading detection with aggressive buffering
       const video = videoRef.current;
       if (video) {
-        const handleCanPlayThrough = () => {
-          console.log('🎬 VIDEO READY: Can play through - transitioning from thumbnail');
+        // AGGRESSIVE: Start loading immediately
+        video.preload = 'auto';
+        video.load(); // Force immediate loading
+        
+        const handleCanPlay = () => {
+          console.log('🎬 AGGRESSIVE READY: Can play (first frame ready) - immediate transition');
           setIsVideoReady(true);
-          setShowThumbnail(false); // Fade out thumbnail
+          setShowThumbnail(false); // Fade out thumbnail immediately
           video.play().catch(console.warn);
         };
 
         const handleLoadedData = () => {
-          console.log('🎬 VIDEO BUFFERING: First frame loaded');
+          console.log('🎬 AGGRESSIVE BUFFERING: Metadata loaded, starting aggressive preload');
         };
 
-        video.addEventListener('canplaythrough', handleCanPlayThrough);
+        const handleLoadStart = () => {
+          console.log('🎬 AGGRESSIVE START: Video loading initiated immediately');
+        };
+
+        // Use 'canplay' instead of 'canplaythrough' for faster response
+        video.addEventListener('canplay', handleCanPlay);
         video.addEventListener('loadeddata', handleLoadedData);
+        video.addEventListener('loadstart', handleLoadStart);
         
         return () => {
-          video.removeEventListener('canplaythrough', handleCanPlayThrough);
+          video.removeEventListener('canplay', handleCanPlay);
           video.removeEventListener('loadeddata', handleLoadedData);
+          video.removeEventListener('loadstart', handleLoadStart);
         };
       }
     } else {
-      console.log('⏳ STANDARD VIDEO OVERLAY LOAD - v1.0.168:');
+      console.log('⏳ STANDARD VIDEO OVERLAY LOAD - v1.0.169:');
       console.log('   - Video URL:', videoUrl);
       console.log('   - Video ID:', videoId);
       console.log('   - No thumbnail - standard loading behavior');
@@ -368,7 +379,7 @@ export function VideoOverlay({ videoUrl, title, width, height, orientation, onCl
           </div>
         )}
 
-        {/* Video Element - NO LETTERBOXING FIX: object-cover eliminates black bars */}
+        {/* Video Element - AGGRESSIVE BUFFERING: immediate loading for instant playback */}
         <video
           ref={videoRef}
           className="w-full h-full object-cover"
@@ -381,11 +392,11 @@ export function VideoOverlay({ videoUrl, title, width, height, orientation, onCl
             if (isInstantReady) {
               console.log('⚡ INSTANT READY: Auto-playing preloaded video');
             }
-            console.log(`✅ VIDEO OVERLAY FINAL FIX (v1.0.16): loadedmetadata - ${videoUrl}`);
+            console.log(`✅ AGGRESSIVE VIDEO v1.0.169: loadedmetadata - ${videoUrl}`);
           }}
           onError={handleVideoError}
           onLoadStart={() => {
-            console.log(`🎬 VIDEO OVERLAY 80% VIEWPORT SIZING (v1.0.62): loadstart - NO BROWSER CONTROLS`);
+            console.log(`🎬 AGGRESSIVE BUFFERING v1.0.169: loadstart - IMMEDIATE LOADING`);
             console.log(`   - Video URL: "${videoUrl}"`);
             console.log(`   - Title: "${title}"`);
             console.log(`   - Container: ${videoDimensions.width}x${videoDimensions.height}px`);
@@ -394,23 +405,23 @@ export function VideoOverlay({ videoUrl, title, width, height, orientation, onCl
             console.log(`   - Viewport Ratio: ${viewportRatio}% (updated from 66.66% to 80%)`);
             console.log(`   - Aspect Ratio: ${width}/${height} = ${(width/height).toFixed(3)}`);
             console.log(`   - Container Aspect Ratio: ${(videoDimensions.width/videoDimensions.height).toFixed(3)}`);
-            console.log(`   - Using 80% viewport scaling with object-cover for no black bars`);
-            console.log(`   - Browser controls disabled: controls={false}, no fullscreen, no download, no context menu`);
+            console.log(`   - AGGRESSIVE: preload=auto + immediate load() for zero-delay start`);
           }}
           onCanPlay={() => {
             if (isInstantReady) {
               console.log('⚡ INSTANT VIDEO: CanPlay event fired - ready for instant playback');
             }
-            console.log(`✅ VIDEO OVERLAY FINAL FIX (v1.0.16): canplay - ${videoUrl}`);
+            console.log(`✅ AGGRESSIVE v1.0.169: canplay - FIRST FRAME READY - ${videoUrl}`);
           }}
           onLoadedData={() => {
-            console.log(`✅ VIDEO OVERLAY FINAL FIX (v1.0.16): loadeddata - ${videoUrl}`);
+            console.log(`✅ AGGRESSIVE v1.0.169: loadeddata - METADATA LOADED - ${videoUrl}`);
           }}
           onCanPlayThrough={() => {
-            console.log(`✅ VIDEO OVERLAY FINAL FIX (v1.0.16): canplaythrough - ${videoUrl}`);
+            console.log(`✅ AGGRESSIVE v1.0.169: canplaythrough - FULL BUFFER READY - ${videoUrl}`);
           }}
           onEnded={handleEnded}
           preload="auto"
+          autoPlay={false}
           playsInline
           disablePictureInPicture
           disableRemotePlayback
