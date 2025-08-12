@@ -3731,15 +3731,24 @@ Allow: /contact`;
         ? sessions.reduce((sum: number, session: any) => sum + (session.duration || 0), 0) / sessions.length
         : 0;
 
-      // Top countries
+      // Top countries (with normalization)
       const countryMap = new Map();
       sessions.forEach((session: any) => {
-        const country = session.country || 'Unknown';
+        let country = session.country || 'Unknown';
+        
+        // Normalize country names to avoid duplicates
+        if (country === 'USA' || country === 'United States') {
+          country = 'United States';
+        }
+        if (country === 'UK' || country === 'United Kingdom') {
+          country = 'United Kingdom';
+        }
+        
         countryMap.set(country, (countryMap.get(country) || 0) + 1);
       });
       const topCountries = Array.from(countryMap.entries())
-        .map(([country, views]) => ({ country, views }))
-        .sort((a, b) => b.views - a.views)
+        .map(([country, sessions]) => ({ country, sessions }))
+        .sort((a, b) => b.sessions - a.sessions)
         .slice(0, 5);
 
       // Language breakdown
@@ -3749,8 +3758,8 @@ Allow: /contact`;
         languageMap.set(language, (languageMap.get(language) || 0) + 1);
       });
       const languageBreakdown = Array.from(languageMap.entries())
-        .map(([language, views]) => ({ language, views }))
-        .sort((a, b) => b.views - a.views);
+        .map(([language, sessions]) => ({ language, sessions }))
+        .sort((a, b) => b.sessions - a.sessions);
 
       // Video performance (Gallery videos only - test data already filtered out)
       const galleryViews = views.filter((view: any) => 

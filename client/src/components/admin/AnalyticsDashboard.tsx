@@ -1481,7 +1481,7 @@ export function AnalyticsDashboard() {
                       <div key={country.country} className="flex items-center justify-between">
                         <span className="font-medium">{country.country}</span>
                         <Badge variant="outline">
-                          {formatNumber(country.views)} visits
+                          {formatNumber(country.sessions)} sessions
                         </Badge>
                       </div>
                     ))}
@@ -1498,7 +1498,7 @@ export function AnalyticsDashboard() {
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <Activity className="h-5 w-5" />
-                  Language Breakdown
+                  Language
                 </CardTitle>
               </CardHeader>
               <CardContent>
@@ -1512,7 +1512,7 @@ export function AnalyticsDashboard() {
                            lang.language}
                         </span>
                         <Badge variant="outline">
-                          {formatNumber(lang.views)} sessions
+                          {formatNumber(lang.sessions)} sessions
                         </Badge>
                       </div>
                     ))}
