@@ -168,7 +168,7 @@ export function FlipCard({
           }}
           style={{
             transformStyle: 'preserve-3d',
-            transform: isFlipped ? 'rotateY(-180deg)' : 'rotateY(0deg)',
+            transform: isFlipped ? 'rotateY(180deg)' : 'rotateY(0deg)',
             willChange: 'transform',
             translate: '0',
             isolation: 'isolate',
@@ -200,7 +200,9 @@ export function FlipCard({
                 handleCardClick();
               }}
             >
-              {frontContent}
+              <div style={{ backgroundColor: 'transparent' }}>
+                {frontContent}
+              </div>
             </div>
           </div>
 
@@ -225,7 +227,8 @@ export function FlipCard({
               }}
             >
               <div 
-                className="h-full w-full p-6 bg-white dark:bg-gray-800"
+                className="h-full w-full p-6"
+                style={{ backgroundColor: 'transparent' }}
               >
               <div className="flex items-center gap-2 text-lg font-semibold text-gray-900 mb-2">
                 <Users className="h-5 w-5 text-gray-700" />
