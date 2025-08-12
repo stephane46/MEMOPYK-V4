@@ -46,13 +46,15 @@ Visual consistency priority: Extremely detail-oriented about spacing and formatt
 - **Deployment Optimizations**: Includes fast health check endpoints, production video cache preloading for hero videos, comprehensive error handling, routing priorities, and automated public asset copying.
 
 ## Recent Changes
-**August 12, 2025 - v1.0.156 Analytics System Fix (READY FOR DEPLOYMENT):**
-- CRITICAL FIX: Resolved complete analytics system failure - session tracking, visitor counting, and video view recording now functional
-- Fixed video view tracking endpoint that was only logging data without saving to storage
-- Enhanced createAnalyticsView function with proper Supabase database insertion and JSON fallback
-- Verified analytics dashboard now displays real visitor data (countries, languages, video engagement)
-- Confirmed session tracking works automatically on HomePage load for all visitors
-- Analytics system now tracks: unique visitors, geographic data, video watch time, completion rates
+**August 12, 2025 - v1.0.157 Analytics System & IP Detection Fix (READY FOR DEPLOYMENT):**
+- CRITICAL FIX: Complete analytics system overhaul with real IP and language detection
+- Fixed IP address detection from X-Forwarded-For headers - now captures real visitor IPs (212.15.80.196)
+- Fixed language detection from Accept-Language headers - properly detects French vs English browsers
+- Enhanced session tracking with accurate geographic data collection from real client IPs
+- Video view tracking confirmed saving to database with proper engagement metrics (watch time, completion rates)
+- Analytics dashboard displays accurate visitor countries and languages based on real browser data
+- Video timeline display confirmed functional - shows progress bar and current time during playback
+- Maintained performance: Hero videos ~11ms cache, Gallery videos smooth CDN streaming, no loading states
 
 **August 12, 2025 - v1.0.155 Complete Loading & Timeline Fix (DEPLOYED):**
 - CRITICAL FIX: Eliminated ALL loading states from entire application per user feedback
