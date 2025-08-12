@@ -162,7 +162,7 @@ export function FlipCard({
         {/* Rotator: unified white surface, rounded, clipped; avoids seams */}
         <div
           ref={rotatorRef}
-          className="relative w-full cursor-pointer transition-transform duration-500 rounded-lg overflow-hidden bg-white dark:bg-gray-800 border-2 border-dashed border-blue-500"
+          className="relative w-full cursor-pointer transition-transform duration-500 rounded-lg overflow-hidden border-2 border-dashed border-blue-500"
           onClick={(e) => {
             handleCardClick();
           }}
@@ -188,7 +188,7 @@ export function FlipCard({
           {/* FRONT FACE */}
           <div
             ref={frontRef}
-            className="absolute inset-0 w-full bg-white dark:bg-gray-800 pointer-events-none"
+            className="absolute inset-0 w-full pointer-events-none"
             style={{ backfaceVisibility: 'hidden', WebkitBackfaceVisibility: 'hidden', transform: 'rotateY(0deg) translateZ(0)', backgroundColor: 'lightgreen' }}
           >
             <div 
@@ -207,7 +207,7 @@ export function FlipCard({
           {/* BACK FACE */}
           <div
             ref={backRef}
-            className="absolute inset-0 w-full bg-white dark:bg-gray-800 pointer-events-none"
+            className="absolute inset-0 w-full pointer-events-none"
             style={{
               backfaceVisibility: 'hidden',
               WebkitBackfaceVisibility: 'hidden',
