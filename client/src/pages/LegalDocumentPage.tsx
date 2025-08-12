@@ -7,11 +7,11 @@ import { formatLegalDate } from '../lib/date-utils';
 import type { LegalDocument } from '@shared/schema';
 
 const documentTypeMap: Record<string, string> = {
-  'privacy-policy': 'politique-confidentialite',
-  'terms-of-service': 'cgu', 
-  'cookie-policy': 'politique-cookies',
-  'terms-of-sale': 'cgv',
-  'legal-notice': 'mentions-legales'
+  'privacy-policy': 'privacy',
+  'terms-of-service': 'terms', 
+  'cookie-policy': 'cookies',
+  'terms-of-sale': 'terms-sale',
+  'legal-notice': 'legal-notice'
 };
 
 export function LegalDocumentPage() {
