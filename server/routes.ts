@@ -1940,7 +1940,7 @@ export async function registerRoutes(app: Express): Promise<void> {
       // Convert to array and sort by most recent
       const recentVisitors = Array.from(visitorMap.values())
         .sort((a, b) => new Date(b.last_visit).getTime() - new Date(a.last_visit).getTime())
-        .slice(0, 10); // Take last 10 visitors
+        .slice(0, 5); // Take last 5 visitors to avoid scrolling
       
       console.log(`✅ Recent Visitors: Found ${recentVisitors.length} unique visitors`);
       res.json(recentVisitors);
