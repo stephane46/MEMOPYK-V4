@@ -149,12 +149,13 @@ export function FlipCard({
       className={cn('flip-card-container', className)}
       style={{ perspective: '1000px' }}
     >
-      {/* Front face placeholder - maintains layout space */}
+      {/* Static placeholder - maintains layout space */}
       <div 
         className="rounded-lg border-2 border-dashed border-blue-500"
         style={{
-          height: '126px', // Fixed height matching front content
-          backgroundColor: 'lightgreen'
+          height: '126px',
+          backgroundColor: 'lightgray',
+          visibility: isFlipped ? 'hidden' : 'visible' // Hide when flipped to avoid double content
         }}
       >
         <div className="p-4">
@@ -162,7 +163,7 @@ export function FlipCard({
         </div>
       </div>
       
-      {/* Flip container - absolutely positioned overlay */}
+      {/* 3D Flip container - absolutely positioned overlay */}
       <div
         onClick={handleCardClick}
         className="absolute top-0 left-0 w-full cursor-pointer rounded-lg border-2 border-dashed border-blue-500"
@@ -171,7 +172,6 @@ export function FlipCard({
           transform: isFlipped ? 'rotateY(180deg)' : 'rotateY(0deg)',
           transition: 'transform 0.6s',
           height: isFlipped ? '430px' : '126px',
-          overflow: 'hidden',
           backgroundColor: isFlipped ? 'hotpink' : 'gold',
           zIndex: isFlipped ? 1000 : 1
         }}
