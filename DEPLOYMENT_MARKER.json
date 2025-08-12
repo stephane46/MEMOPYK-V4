@@ -1,7 +1,0 @@
-{
-  "timestamp": "2025-08-11T15:11:15.000Z",
-  "fix": "Unified video proxy approach for all videos - fixed 500 errors for gallery videos",
-  "commit": "Implemented unified video proxy v1.0.52 - same code path for hero and gallery videos, eliminated complex download/cache logic causing failures",
-  "version": "1.0.52",
-  "status": "VIDEO_PROXY_UNIFIED"
-}
