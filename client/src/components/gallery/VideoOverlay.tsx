@@ -167,10 +167,9 @@ export function VideoOverlay({ videoUrl, title, width, height, orientation, onCl
   }, []);
 
   const handleEnded = useCallback(() => {
-    console.log('🎬 VIDEO ENDED: Gallery video finished playing');
+    console.log('🎬 VIDEO ENDED: Gallery video finished playing - closing overlay');
     setIsPlaying(false);
     setProgress(100);
-    setShowControls(true);
     
     // Cancel any ongoing progress updates
     if (progressUpdateRef.current) {
@@ -179,22 +178,16 @@ export function VideoOverlay({ videoUrl, title, width, height, orientation, onCl
     
     // Track video completion analytics
     if (videoId) {
-      // Track completion event
       console.log(`📊 VIDEO COMPLETION: Tracking finished video ${videoId}`);
       // The analytics tracking would happen here
     }
     
-    // Auto-restart for better UX - reset to beginning after a brief pause
+    // Close the video overlay and return to gallery after a brief delay
     setTimeout(() => {
-      const video = videoRef.current;
-      if (video) {
-        video.currentTime = 0;
-        setProgress(0);
-        setCurrentTime(0);
-        console.log('🔄 VIDEO RESET: Ready to replay from beginning');
-      }
-    }, 1500); // Wait 1.5 seconds before resetting
-  }, [videoId]);
+      console.log('🔄 AUTO-CLOSE: Returning to video gallery');
+      onClose();
+    }, 800); // Brief pause to show completion, then close
+  }, [videoId, onClose]);
 
   // Control handlers
   const togglePlayPause = useCallback(() => {
@@ -338,6 +331,7 @@ export function VideoOverlay({ videoUrl, title, width, height, orientation, onCl
           onCanPlayThrough={() => {
             console.log(`✅ VIDEO OVERLAY FINAL FIX (v1.0.16): canplaythrough - ${videoUrl}`);
           }}
+          onEnded={handleEnded}
           preload="auto"
           playsInline
           disablePictureInPicture
