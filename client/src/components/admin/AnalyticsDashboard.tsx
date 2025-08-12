@@ -11,6 +11,7 @@ import { Switch } from '@/components/ui/switch';
 import { useToast } from '@/hooks/use-toast';
 import { apiRequest } from '@/lib/queryClient';
 import { FlipCard } from './FlipCard';
+import { VideoPerformanceCard } from './VideoPerformanceCard';
 import { 
   LineChart, 
   Line, 
@@ -143,6 +144,20 @@ export function AnalyticsDashboard() {
     user_agent: string;
   }>>({
     queryKey: ['/api/analytics/recent-visitors'],
+    staleTime: 30000, // 30 seconds
+    refetchInterval: 60000, // Refresh every minute
+  });
+
+  // Fetch video performance data for video performance card
+  const { data: videoPerformanceData } = useQuery<Array<{
+    video_id: string;
+    total_views: number;
+    unique_viewers: number;
+    total_watch_time: number;
+    average_watch_time: number;
+    last_viewed: string;
+  }>>({
+    queryKey: ['/api/analytics/video-performance'],
     staleTime: 30000, // 30 seconds
     refetchInterval: 60000, // Refresh every minute
   });
@@ -1253,20 +1268,26 @@ export function AnalyticsDashboard() {
               className="h-full bg-white"
             />
 
-            <Card>
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">Gallery Views</CardTitle>
-                <Eye className="h-4 w-4 text-muted-foreground" />
-              </CardHeader>
-              <CardContent>
-                <div className="text-2xl font-bold">
-                  {formatNumber(dashboardData?.overview.totalViews || 0)}
-                </div>
-                <p className="text-xs text-muted-foreground">
-                  Videos clicked & watched
-                </p>
-              </CardContent>
-            </Card>
+            <VideoPerformanceCard
+              frontContent={
+                <Card className="h-full w-full bg-white shadow-md border border-gray-200 rounded-lg">
+                  <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                    <CardTitle className="text-sm font-medium text-gray-900">Gallery Views</CardTitle>
+                    <Eye className="h-4 w-4 text-gray-600" />
+                  </CardHeader>
+                  <CardContent className="pt-0">
+                    <div className="text-2xl font-bold text-gray-900">
+                      {formatNumber(dashboardData?.overview.totalViews || 0)}
+                    </div>
+                    <p className="text-xs text-gray-600">
+                      Videos clicked & watched
+                    </p>
+                  </CardContent>
+                </Card>
+              }
+              performanceData={videoPerformanceData ?? []}
+              className="h-full bg-white"
+            />
 
             <Card>
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">

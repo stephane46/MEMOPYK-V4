@@ -42,7 +42,8 @@ export default function VideoOverlay({
   const controlsTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const videoStartTimeRef = useRef<number>(Date.now());
   
-
+  // Language detection for source text
+  const language = localStorage.getItem('language') || 'en-US';
   
   // Analytics tracking
   const { trackVideoView } = useVideoAnalytics();
@@ -328,12 +329,17 @@ export default function VideoOverlay({
             {/* Centered animated overlays - all appear simultaneously */}
             <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
               <div className="text-center space-y-8 animate-fade-in">
-                {/* Source count (photos & videos) */}
+                {/* Source count (photos & videos) - Match gallery card format exactly */}
                 {sourceText && (
                   <div className="flex justify-center">
-                    <div className="bg-black/70 backdrop-blur-sm text-white text-base px-6 py-4 rounded-full flex items-center gap-3">
-                      <ImageIcon className="w-6 h-6" />
-                      <span className="font-medium">{sourceText} - fourni par le client / provided by client</span>
+                    <div className="bg-black/70 backdrop-blur-sm text-white text-base px-6 py-4 rounded-full flex flex-col items-center justify-center">
+                      <div className="font-medium leading-tight whitespace-nowrap flex items-center gap-3">
+                        <ImageIcon className="w-6 h-6" />
+                        <span>{sourceText}</span>
+                      </div>
+                      <div className="text-sm text-gray-300 mt-1">
+                        {language === 'fr-FR' ? 'fournies par Client' : 'provided by Client'}
+                      </div>
                     </div>
                   </div>
                 )}

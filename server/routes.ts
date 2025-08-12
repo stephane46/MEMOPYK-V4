@@ -2141,6 +2141,62 @@ export async function registerRoutes(app: Express): Promise<void> {
     }
   });
 
+  // Video Performance Analytics - GET video engagement data
+  app.get("/api/analytics/video-performance", async (req, res) => {
+    try {
+      console.log('📊 Video performance analytics request');
+      
+      // Get all video views from analytics
+      const views = await hybridStorage.getAnalyticsViews();
+      
+      // Group by video and calculate metrics
+      const videoStats = views.reduce((acc: any, view: any) => {
+        const videoId = view.video_id || view.filename || 'unknown';
+        
+        if (!acc[videoId]) {
+          acc[videoId] = {
+            video_id: videoId,
+            total_views: 0,
+            total_watch_time: 0,
+            average_completion_rate: 0,
+            unique_viewers: new Set(),
+            last_viewed: view.created_at
+          };
+        }
+        
+        acc[videoId].total_views++;
+        acc[videoId].total_watch_time += view.watch_time || 0;
+        acc[videoId].unique_viewers.add(view.ip_address || view.session_id);
+        
+        // Track most recent view
+        if (new Date(view.created_at) > new Date(acc[videoId].last_viewed)) {
+          acc[videoId].last_viewed = view.created_at;
+        }
+        
+        return acc;
+      }, {});
+      
+      // Convert to array and calculate final metrics
+      const performanceData = Object.values(videoStats).map((stats: any) => ({
+        video_id: stats.video_id,
+        total_views: stats.total_views,
+        unique_viewers: stats.unique_viewers.size,
+        total_watch_time: Math.round(stats.total_watch_time),
+        average_watch_time: stats.total_views > 0 ? Math.round(stats.total_watch_time / stats.total_views) : 0,
+        last_viewed: stats.last_viewed
+      }));
+      
+      // Sort by total views (most popular first)
+      performanceData.sort((a, b) => b.total_views - a.total_views);
+      
+      console.log(`✅ Video performance: Found data for ${performanceData.length} videos`);
+      res.json(performanceData);
+    } catch (error) {
+      console.error('❌ Video performance analytics error:', error);
+      res.status(500).json({ error: "Failed to get video performance data" });
+    }
+  });
+
   // Video View Tracking - POST track video view
   app.post("/api/track-video-view", async (req, res) => {
     try {
