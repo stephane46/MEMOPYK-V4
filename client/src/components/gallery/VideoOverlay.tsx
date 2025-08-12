@@ -221,40 +221,40 @@ export default function VideoOverlay({
   }, [onClose]);
 
   // Keyboard controls
+  const handleKeyDown = useCallback((e: KeyboardEvent) => {
+    const video = videoRef.current;
+    if (!video) return;
+
+    switch (e.key) {
+      case ' ':
+      case 'k':
+        e.preventDefault();
+        if (isPlaying) {
+          video.pause();
+        } else {
+          video.play().catch(console.warn);
+        }
+        break;
+      case 'm':
+        e.preventDefault();
+        toggleMute();
+        break;
+      case 'Escape':
+        e.preventDefault();
+        onClose();
+        break;
+      case 'ArrowLeft':
+        e.preventDefault();
+        video.currentTime = Math.max(0, video.currentTime - 10);
+        break;
+      case 'ArrowRight':
+        e.preventDefault();
+        video.currentTime = Math.min(video.duration, video.currentTime + 10);
+        break;
+    }
+  }, [isPlaying, toggleMute, onClose]);
+
   useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      const video = videoRef.current;
-      if (!video) return;
-
-      switch (e.key) {
-        case ' ':
-        case 'k':
-          e.preventDefault();
-          if (isPlaying) {
-            video.pause();
-          } else {
-            video.play().catch(console.warn);
-          }
-          break;
-        case 'm':
-          e.preventDefault();
-          toggleMute();
-          break;
-        case 'Escape':
-          e.preventDefault();
-          onClose();
-          break;
-        case 'ArrowLeft':
-          e.preventDefault();
-          video.currentTime = Math.max(0, video.currentTime - 10);
-          break;
-        case 'ArrowRight':
-          e.preventDefault();
-          video.currentTime = Math.min(video.duration, video.currentTime + 10);
-          break;
-      }
-    };
-
     document.addEventListener('keydown', handleKeyDown);
     return () => {
       document.removeEventListener('keydown', handleKeyDown);
@@ -265,7 +265,7 @@ export default function VideoOverlay({
         cancelAnimationFrame(progressUpdateRef.current);
       }
     };
-  }, [handleKeyDown, resetControlsTimer]);
+  }, [handleKeyDown]);
 
   return (
     <div
