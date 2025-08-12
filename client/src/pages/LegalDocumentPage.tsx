@@ -3,6 +3,7 @@ import { useRoute } from 'wouter';
 import { useEffect } from 'react';
 import { useLanguage } from '../contexts/LanguageContext';
 import { htmlSanitizer } from '../lib/sanitize-html';
+import { formatLegalDate } from '../lib/date-utils';
 import type { LegalDocument } from '@shared/schema';
 
 const documentTypeMap: Record<string, string> = {
@@ -100,8 +101,8 @@ export function LegalDocumentPage() {
             <div className="mt-12 pt-8 border-t border-gray-200">
               <p className="text-sm text-gray-500">
                 {language === 'fr-FR' 
-                  ? `Dernière mise à jour: ${document.updatedAt ? new Date(document.updatedAt).toLocaleDateString('fr-FR') : 'Date inconnue'}`
-                  : `Last updated: ${document.updatedAt ? new Date(document.updatedAt).toLocaleDateString('en-US') : 'Unknown date'}`
+                  ? `Dernière mise à jour: ${document.updatedAt ? formatLegalDate(document.updatedAt, 'fr') : 'Date inconnue'}`
+                  : `Last updated: ${document.updatedAt ? formatLegalDate(document.updatedAt, 'en') : 'Unknown date'}`
                 }
               </p>
             </div>

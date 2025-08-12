@@ -8,6 +8,11 @@ const monthNames = [
   'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
 ];
 
+const monthNamesFr = [
+  'janvier', 'février', 'mars', 'avril', 'mai', 'juin',
+  'juillet', 'août', 'septembre', 'octobre', 'novembre', 'décembre'
+];
+
 /**
  * Format date to "dd mmm yyyy" format (e.g., "29 Jul 2025")
  * @param date - Date object or ISO string
@@ -66,4 +71,28 @@ export function getRelativeTime(date: Date | string): string {
   if (diffDays < 30) return `${diffDays} days ago`;
   
   return formatDate(d);
+}
+
+/**
+ * Format date for legal documents in the required format (e.g., "08 August 2025" or "08 août 2025")
+ * @param date - Date object or ISO string
+ * @param language - Language code ('en' or 'fr')
+ * @returns Formatted date string
+ */
+export function formatLegalDate(date: Date | string, language: 'en' | 'fr' = 'en'): string {
+  const d = typeof date === 'string' ? new Date(date) : date;
+  
+  if (isNaN(d.getTime())) {
+    return language === 'fr' ? 'Date inconnue' : 'Unknown date';
+  }
+  
+  const day = d.getDate().toString().padStart(2, '0');
+  const monthNames_en = [
+    'January', 'February', 'March', 'April', 'May', 'June',
+    'July', 'August', 'September', 'October', 'November', 'December'
+  ];
+  const month = language === 'fr' ? monthNamesFr[d.getMonth()] : monthNames_en[d.getMonth()];
+  const year = d.getFullYear();
+  
+  return `${day} ${month} ${year}`;
 }

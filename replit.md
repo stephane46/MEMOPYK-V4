@@ -46,6 +46,13 @@ Visual consistency priority: Extremely detail-oriented about spacing and formatt
 - **Deployment Optimizations**: Includes fast health check endpoints, production video cache preloading for hero videos, comprehensive error handling, routing priorities, and automated public asset copying.
 
 ## Recent Changes
+**August 12, 2025 - v1.0.162 Footer Reordering & Legal Document Date Formatting (DEPLOYED):**
+- FOOTER UPDATE: Reordered legal documents per user request - Mentions légales → CGU → CGV → Privacy → Cookies
+- DATE FORMATTING: Enhanced legal document "last updated" field with proper language-specific formatting
+- BILINGUAL DATES: English format "08 August 2025", French format "08 août 2025" 
+- AUTOMATIC UPDATES: Date field updates automatically when documents are saved in admin interface
+- DATE UTILITY: Added formatLegalDate() function for consistent legal document date formatting across both languages
+
 **August 12, 2025 - v1.0.161 Universal 7-Day Rolling Cache System (READY FOR DEPLOYMENT):**
 - BREAKTHROUGH: Extended brilliant 7-day rolling cache strategy to ALL analytics data types (sessions, views, future metrics)
 - SMART DATA ROUTING: Recent queries (last 7 days) served instantly from JSON cache, historical queries automatically routed to Supabase
