@@ -109,7 +109,7 @@ export function FlipCard({
   }, [isFlipped]);
 
   const handleCardClick = () => {
-    console.log('DEBUG: Card clicked, flipping from', isFlipped, 'to', !isFlipped);
+    console.log('🔄 FLIP TEST: Card clicked, flipping from', isFlipped, 'to', !isFlipped);
     setIsFlipped(v => !v);
   };
 
@@ -161,7 +161,7 @@ export function FlipCard({
         {/* Rotator: unified white surface, rounded, clipped; avoids seams */}
         <div
           ref={rotatorRef}
-          className="relative w-full cursor-pointer transition-transform duration-500 rounded-lg overflow-hidden bg-white dark:bg-gray-800"
+          className="relative w-full cursor-pointer transition-transform duration-500 rounded-lg overflow-hidden bg-white dark:bg-gray-800 border-2 border-dashed border-blue-500"
           onClick={(e) => {
             handleCardClick();
           }}
@@ -189,7 +189,7 @@ export function FlipCard({
           <div
             ref={frontRef}
             className="absolute inset-0 w-full bg-white dark:bg-gray-800 pointer-events-none"
-            style={{ backfaceVisibility: 'hidden', WebkitBackfaceVisibility: 'hidden', transform: 'rotateY(0deg) translateZ(0)' }}
+            style={{ backfaceVisibility: 'hidden', WebkitBackfaceVisibility: 'hidden', transform: 'rotateY(0deg) translateZ(0)', backgroundColor: 'lightgreen' }}
           >
             <div 
               ref={frontInnerRef} 
@@ -211,7 +211,8 @@ export function FlipCard({
             style={{
               backfaceVisibility: 'hidden',
               WebkitBackfaceVisibility: 'hidden',
-              transform: 'rotateY(180deg) translateZ(0)'
+              transform: 'rotateY(180deg) translateZ(0)',
+              backgroundColor: 'lightblue'
             }}
           >
             <div 
