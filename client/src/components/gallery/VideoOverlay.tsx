@@ -323,36 +323,38 @@ export default function VideoOverlay({
               }}
             />
             
-            {/* Animated overlays matching video card format */}
-            <div className="absolute inset-0 pointer-events-none">
-              {/* Source count (photos & videos) - top left */}
-              {sourceText && (
-                <div className="absolute top-3 left-3 animate-slide-in-left animation-delay-100">
-                  <div className="bg-black/70 backdrop-blur-sm text-white text-xs px-2 py-1 rounded-full flex items-center gap-1.5">
-                    <ImageIcon className="w-3 h-3" />
-                    <span className="font-medium">{sourceText}</span>
+            {/* Centered animated overlays - all appear simultaneously */}
+            <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+              <div className="text-center space-y-4 animate-fade-in">
+                {/* Source count (photos & videos) */}
+                {sourceText && (
+                  <div className="flex justify-center">
+                    <div className="bg-black/70 backdrop-blur-sm text-white text-xs px-3 py-2 rounded-full flex items-center gap-2">
+                      <ImageIcon className="w-4 h-4" />
+                      <span className="font-medium">{sourceText}</span>
+                    </div>
                   </div>
-                </div>
-              )}
-              
-              {/* Title - bottom left */}
-              {title && (
-                <div className="absolute bottom-12 left-3 right-3 animate-slide-in-left animation-delay-200">
-                  <h3 className="text-white font-bold text-lg leading-tight drop-shadow-lg">
-                    {title}
-                  </h3>
-                </div>
-              )}
-              
-              {/* Duration - bottom right */}
-              {durationText && (
-                <div className="absolute bottom-3 right-3 animate-slide-in-right animation-delay-300">
-                  <div className="bg-black/70 backdrop-blur-sm text-white text-xs px-2 py-1 rounded-full flex items-center gap-1.5">
-                    <Clock className="w-3 h-3" />
-                    <span className="font-medium">{durationText}</span>
+                )}
+                
+                {/* Title */}
+                {title && (
+                  <div className="px-4">
+                    <h3 className="text-white font-bold text-xl leading-tight drop-shadow-lg text-center">
+                      {title}
+                    </h3>
                   </div>
-                </div>
-              )}
+                )}
+                
+                {/* Duration */}
+                {durationText && (
+                  <div className="flex justify-center">
+                    <div className="bg-black/70 backdrop-blur-sm text-white text-xs px-3 py-2 rounded-full flex items-center gap-2">
+                      <Clock className="w-4 h-4" />
+                      <span className="font-medium">{durationText}</span>
+                    </div>
+                  </div>
+                )}
+              </div>
             </div>
           </div>
         )}
@@ -445,13 +447,13 @@ export default function VideoOverlay({
           </div>
         </div>
 
-        {/* Close Button */}
+        {/* Close Button - Mobile Only */}
         <button
           onClick={onClose}
-          className="absolute top-2 right-2 sm:top-4 sm:right-4 text-white hover:text-white/80 transition-colors bg-black/50 rounded-full p-1 sm:p-2 z-30"
+          className="absolute top-2 right-2 sm:hidden text-white hover:text-white/80 transition-colors bg-black/50 rounded-full p-2 z-30"
           aria-label="Close video"
         >
-          <X size={20} className="sm:w-6 sm:h-6" />
+          <X size={20} />
         </button>
       </div>
     </div>
