@@ -1229,11 +1229,11 @@ export function AnalyticsDashboard() {
             <FlipCard
               frontContent={
                 <>
-                  <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                  <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2 border-4 border-red-500">
                     <CardTitle className="text-sm font-medium">Visitors</CardTitle>
                     <Users className="h-4 w-4 text-muted-foreground" />
                   </CardHeader>
-                  <CardContent>
+                  <CardContent className="border-4 border-blue-500">
                     <div className="text-2xl font-bold">
                       {formatNumber(dashboardData?.overview.uniqueVisitors || 0)}
                     </div>
@@ -1245,7 +1245,7 @@ export function AnalyticsDashboard() {
               }
               uniqueVisitors={dashboardData?.overview.uniqueVisitors || 0}
               recentVisitors={recentVisitors || []}
-              className="h-full bg-white"
+              className="h-full bg-white border-8 border-green-500"
             />
 
             <Card>

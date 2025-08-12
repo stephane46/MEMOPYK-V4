@@ -94,7 +94,7 @@ export function FlipCard({
   return (
     <div 
       ref={cardRef}
-      className={cn("flip-card-container", className)}
+      className={cn("flip-card-container border-8 border-cyan-500", className)}
       style={{ perspective: '1000px' }}
     >
       <div 
@@ -123,8 +123,8 @@ export function FlipCard({
             transform: 'rotateY(180deg)'
           }}
         >
-          <Card className="h-full bg-white dark:bg-gray-900 border-2 border-blue-200 dark:border-blue-800">
-            <CardHeader className="pb-4">
+          <Card className="h-full bg-white dark:bg-gray-900 border-8 border-purple-500">
+            <CardHeader className="pb-4 border-4 border-orange-500 bg-white">
               <CardTitle className="flex items-center gap-2 text-lg">
                 <Users className="h-5 w-5" />
                 Recent Visitors
@@ -133,12 +133,12 @@ export function FlipCard({
                 Last {recentVisitors.length} unique visitors
               </CardDescription>
             </CardHeader>
-            <CardContent className="space-y-3 bg-white dark:bg-gray-900 rounded-lg p-4">
+            <CardContent className="space-y-3 bg-white dark:bg-gray-900 rounded-lg p-4 border-4 border-yellow-500">
               {recentVisitors.length > 0 ? (
                 recentVisitors.map((visitor, index) => (
                   <div 
                     key={visitor.ip_address + index}
-                    className="flex items-center justify-between p-3 bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 shadow-sm"
+                    className="flex items-center justify-between p-3 bg-white dark:bg-gray-800 rounded-lg border-4 border-pink-500 shadow-sm"
                   >
                     <div className="flex items-center gap-3 flex-1 min-w-0">
                       <div className="flex items-center gap-1">
