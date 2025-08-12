@@ -1,10 +1,12 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react';
-import { Play, Pause, Volume2, VolumeX, X } from 'lucide-react';
+import { Play, Pause, Volume2, VolumeX, X, ImageIcon, Clock } from 'lucide-react';
 import { useVideoAnalytics } from '@/hooks/useVideoAnalytics';
 
 interface VideoOverlayProps {
   videoUrl: string;
   title: string;
+  sourceText: string;
+  durationText: string;
   onClose: () => void;
   orientation: 'portrait' | 'landscape';
   width: number;
@@ -17,6 +19,8 @@ interface VideoOverlayProps {
 export default function VideoOverlay({ 
   videoUrl, 
   title, 
+  sourceText,
+  durationText,
   onClose, 
   orientation, 
   width, 
@@ -331,6 +335,38 @@ export default function VideoOverlay({
                 height: `${videoDimensions.height}px`,
               }}
             />
+            
+            {/* Animated overlays matching video card format */}
+            <div className="absolute inset-0 pointer-events-none">
+              {/* Source count (photos & videos) - top left */}
+              {sourceText && (
+                <div className="absolute top-3 left-3 animate-slide-in-left animation-delay-100">
+                  <div className="bg-black/70 backdrop-blur-sm text-white text-xs px-2 py-1 rounded-full flex items-center gap-1.5">
+                    <ImageIcon className="w-3 h-3" />
+                    <span className="font-medium">{sourceText}</span>
+                  </div>
+                </div>
+              )}
+              
+              {/* Title - bottom left */}
+              {title && (
+                <div className="absolute bottom-12 left-3 right-3 animate-slide-in-left animation-delay-200">
+                  <h3 className="text-white font-bold text-lg leading-tight drop-shadow-lg">
+                    {title}
+                  </h3>
+                </div>
+              )}
+              
+              {/* Duration - bottom right */}
+              {durationText && (
+                <div className="absolute bottom-3 right-3 animate-slide-in-right animation-delay-300">
+                  <div className="bg-black/70 backdrop-blur-sm text-white text-xs px-2 py-1 rounded-full flex items-center gap-1.5">
+                    <Clock className="w-3 h-3" />
+                    <span className="font-medium">{durationText}</span>
+                  </div>
+                </div>
+              )}
+            </div>
           </div>
         )}
 

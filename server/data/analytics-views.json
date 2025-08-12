@@ -488,5 +488,33 @@
     "is_test_data": false,
     "created_at": "2025-08-12T20:14:20.309Z",
     "updated_at": "2025-08-12T20:14:20.309Z"
+  },
+  {
+    "id": "view_1755029829798_h0ia31nc5",
+    "video_type": "gallery",
+    "video_title": "",
+    "session_id": "session_1755029829798",
+    "language": "fr",
+    "watch_time": 0,
+    "completion_rate": 0,
+    "ip_address": "172.31.64.130",
+    "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36 Edg/138.0.0.0",
+    "is_test_data": false,
+    "created_at": "2025-08-12T20:17:09.798Z",
+    "updated_at": "2025-08-12T20:17:09.798Z"
+  },
+  {
+    "id": "view_1755029837597_qv0l054h2",
+    "video_type": "gallery",
+    "video_title": "",
+    "session_id": "session_1755029837596",
+    "language": "fr",
+    "watch_time": 0,
+    "completion_rate": 0,
+    "ip_address": "172.31.64.130",
+    "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36 Edg/138.0.0.0",
+    "is_test_data": false,
+    "created_at": "2025-08-12T20:17:17.597Z",
+    "updated_at": "2025-08-12T20:17:17.597Z"
   }
 ]

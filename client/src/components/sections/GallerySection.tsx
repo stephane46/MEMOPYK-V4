@@ -845,6 +845,8 @@ export default function GallerySection() {
         <VideoOverlay
           videoUrl={lightboxVideo.lightboxVideoUrl || getVideoUrl(lightboxVideo, 0)}
           title={getItemTitle(lightboxVideo)}
+          sourceText={getItemSource(lightboxVideo)}
+          durationText={getItemDuration(lightboxVideo)}
           width={lightboxVideo.videoWidth || 16}
           height={lightboxVideo.videoHeight || 9}
           orientation={lightboxVideo.videoWidth > lightboxVideo.videoHeight ? 'landscape' : 'portrait'}
