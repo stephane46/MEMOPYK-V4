@@ -403,35 +403,104 @@ export default function GallerySection() {
     }
   };
 
-  const handlePlayClick = (item: GalleryItem, e: React.MouseEvent, index: number) => {
-    console.log(`🚨 EMERGENCY CLICK DEBUG: handlePlayClick triggered for item ${index}`);
+  // 🚀 SMART ON-DEMAND PRELOADER - Creates single video element when needed
+  const preloadVideoOnDemand = async (videoUrl: string, filename: string): Promise<HTMLVideoElement | null> => {
+    try {
+      console.log(`⚡ ON-DEMAND PRELOAD: Creating instant-ready video for ${filename}`);
+      
+      const video = document.createElement('video');
+      video.src = videoUrl;
+      video.preload = 'auto';
+      video.style.display = 'none';
+      video.muted = true;
+      video.playsInline = true;
+      video.id = `instant-${filename}-${Date.now()}`;
+      
+      // Add to DOM temporarily for loading
+      document.body.appendChild(video);
+      
+      // Wait for video to be ready with timeout
+      return new Promise((resolve) => {
+        const cleanup = () => {
+          video.removeEventListener('canplaythrough', onReady);
+          video.removeEventListener('canplay', onReady);
+          video.removeEventListener('loadeddata', onReady);
+        };
+        
+        const onReady = () => {
+          cleanup();
+          console.log(`✅ INSTANT READY: ${filename} - readyState: ${video.readyState}/4`);
+          resolve(video);
+        };
+        
+        video.addEventListener('canplaythrough', onReady, { once: true });
+        video.addEventListener('canplay', onReady, { once: true });
+        video.addEventListener('loadeddata', onReady, { once: true });
+        
+        // Immediate check if already loaded
+        if (video.readyState >= 3) {
+          onReady();
+        }
+        
+        // Fallback timeout - return video even if not fully loaded for fast experience
+        setTimeout(() => {
+          if (video.readyState >= 1) {
+            cleanup();
+            console.log(`⚡ FAST FALLBACK: ${filename} - readyState: ${video.readyState}/4 (good enough for instant start)`);
+            resolve(video);
+          } else {
+            cleanup();
+            video.remove();
+            console.log(`⚠️ PRELOAD TIMEOUT: ${filename} - falling back to normal loading`);
+            resolve(null);
+          }
+        }, 1500); // 1.5 second timeout for very fast user experience
+        
+        video.load();
+      });
+      
+    } catch (error) {
+      console.warn(`⚠️ ON-DEMAND PRELOAD FAILED: ${filename}:`, error);
+      return null;
+    }
+  };
+
+  const handlePlayClick = async (item: GalleryItem, e: React.MouseEvent, index: number) => {
+    console.log(`🚀 SMART PLAYCLICK: Instant preload + play for item ${index}`);
     e.preventDefault();
     e.stopPropagation();
     
     const hasVideoResult = hasVideo(item, index);
-    console.log(`🎬 DIRECT CDN PLAYCLICK v1.0.51 - Item ${index}:`, {
-      hasVideoResult,
-      videoFilename: item.videoFilename,
-      willOpenLightbox: hasVideoResult,
-      willFlipCard: !hasVideoResult,
-      streamingMethod: 'Direct CDN (bypassing proxy)'
-    });
     
     if (hasVideoResult) {
-      // Track video view analytics BEFORE opening lightbox
+      // Track analytics
       const videoFilename = item.videoFilename || '';
       const cleanFilename = videoFilename.includes('/') ? videoFilename.split('/').pop() : videoFilename;
-      console.log(`📊 PRODUCTION ANALYTICS: Tracking gallery video view for: ${cleanFilename}`);
       trackVideoView(cleanFilename || '');
       
-      // Load video normally without preloading conflicts  
-      console.log(`🎬 CLEAN VIDEO LOAD: No preloading conflicts, should play smoothly`);
+      // Get video URL
       const videoUrl = getVideoUrl(item, index);
-      setLightboxVideo({
-        ...item, 
-        lightboxVideoUrl: videoUrl,
-        isInstantReady: false
-      });
+      
+      // Try on-demand preloading for instant start
+      console.log(`⚡ ATTEMPTING INSTANT PRELOAD: ${cleanFilename}`);
+      const preloadedVideo = await preloadVideoOnDemand(videoUrl, cleanFilename || '');
+      
+      if (preloadedVideo) {
+        console.log(`🚀 INSTANT VIDEO READY: Using preloaded element for immediate playback`);
+        setLightboxVideo({
+          ...item, 
+          lightboxVideoUrl: videoUrl,
+          isInstantReady: true,
+          preloadedElement: preloadedVideo
+        });
+      } else {
+        console.log(`⏳ FALLBACK: Using normal loading (still fast via CDN)`);
+        setLightboxVideo({
+          ...item, 
+          lightboxVideoUrl: videoUrl,
+          isInstantReady: false
+        });
+      }
       
       // Prevent body scrolling when lightbox is open
       document.body.style.overflow = 'hidden';
@@ -480,14 +549,14 @@ export default function GallerySection() {
   // 🎯 INSTANT GALLERY VIDEO SYSTEM - Store preloaded video elements for instant reuse
   const [preloadedVideoElements, setPreloadedVideoElements] = useState<Map<string, HTMLVideoElement>>(new Map());
 
-  // 🚫 DISABLED PRELOADING SYSTEM - Prevents video playback conflicts and stuttering
+  // 🎯 SMART ON-DEMAND PRELOADING - Fast loading without conflicts
   useEffect(() => {
     if (!galleryItems.length) return;
 
-    console.log(`🚫 PRELOADING SYSTEM DISABLED: Gallery videos will load normally to prevent playback conflicts`);
-    console.log(`📊 Gallery items available: ${galleryItems.length} (videos will load on-demand)`);
+    console.log(`🎯 SMART PRELOADING SYSTEM: On-demand video loading for instant playback without conflicts`);
+    console.log(`📊 Gallery items available: ${galleryItems.length} (videos preload on hover/click)`);
     
-    // Cleanup any existing preloaded elements that might be causing conflicts
+    // Cleanup any existing preloaded elements to start fresh
     const cleanupPreloadedElements = () => {
       preloadedVideoElements.forEach((video, filename) => {
         console.log(`🧹 CLEANING UP: ${filename}`);
@@ -498,9 +567,6 @@ export default function GallerySection() {
     };
     
     cleanupPreloadedElements();
-
-    // All preloading functionality disabled to prevent video conflicts
-    console.log(`🎯 PRELOADING SYSTEM: Completely disabled to fix gallery video playback issues`);
   }, [galleryItems]);
 
   // Cleanup preloaded video elements on unmount
