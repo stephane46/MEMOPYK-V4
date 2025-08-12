@@ -1,7 +1,7 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import React, { useEffect, useLayoutEffect, useRef, useState } from 'react';
+import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Users, MapPin, Globe, Clock } from 'lucide-react';
+import { Users, Clock } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 interface RecentVisitor {
@@ -20,41 +20,85 @@ interface FlipCardProps {
   recentVisitors?: RecentVisitor[];
 }
 
-export function FlipCard({ 
-  frontContent, 
-  backContent, 
-  className, 
-  uniqueVisitors, 
-  recentVisitors = [] 
+export function FlipCard({
+  frontContent,
+  backContent,
+  className,
+  uniqueVisitors,
+  recentVisitors = []
 }: FlipCardProps) {
   const [isFlipped, setIsFlipped] = useState(false);
-  const cardRef = useRef<HTMLDivElement>(null);
 
+  // Refs
+  const hostRef = useRef<HTMLDivElement>(null);        // outer host (with perspective)
+  const heightShellRef = useRef<HTMLDivElement>(null); // animates height
+  const rotatorRef = useRef<HTMLDivElement>(null);     // the 3D-rotating element
+  const frontRef = useRef<HTMLDivElement>(null);
+  const backRef = useRef<HTMLDivElement>(null);
+
+  const [containerHeight, setContainerHeight] = useState<number>(0);
+
+  // ---- Step 1: SOLID WHITE, CLIPPED, SEAM-FREE FLIP WRAPPER ----
+  // (Handled by classes/inline styles on rotator + faces below.)
+
+  // ---- Step 2: AUTO-RESIZE CONTAINER TO VISIBLE FACE ----
+  const measure = () => {
+    const faceEl = isFlipped ? backRef.current : frontRef.current;
+    if (!faceEl) return;
+    setContainerHeight(faceEl.scrollHeight);
+  };
+
+  // Measure on mount/flip/content change
+  useLayoutEffect(() => {
+    measure();
+    // re-measure next frame for font reflow
+    const id = requestAnimationFrame(measure);
+    return () => cancelAnimationFrame(id);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isFlipped, recentVisitors?.length]);
+
+  // ResizeObserver + window resize + font load
   useEffect(() => {
-    function handleClickOutside(event: MouseEvent) {
-      if (cardRef.current && !cardRef.current.contains(event.target as Node)) {
-        setIsFlipped(false);
-      }
-    }
+    const roFront = frontRef.current ? new ResizeObserver(measure) : null;
+    const roBack = backRef.current ? new ResizeObserver(measure) : null;
+    if (frontRef.current && roFront) roFront.observe(frontRef.current);
+    if (backRef.current && roBack) roBack.observe(backRef.current);
 
-    if (isFlipped) {
-      document.addEventListener('mousedown', handleClickOutside);
+    const onResize = () => measure();
+    window.addEventListener('resize', onResize);
+
+    // If custom web fonts load later, re-measure
+    if ((document as any).fonts?.ready) {
+      (document as any).fonts.ready.then(() => measure()).catch(() => {});
     }
 
     return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
+      window.removeEventListener('resize', onResize);
+      roFront?.disconnect();
+      roBack?.disconnect();
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  // Click outside to close
+  useEffect(() => {
+    const onDocDown = (e: MouseEvent) => {
+      if (!hostRef.current) return;
+      if (!hostRef.current.contains(e.target as Node)) {
+        setIsFlipped(false);
+      }
+    };
+    if (isFlipped) document.addEventListener('mousedown', onDocDown);
+    return () => document.removeEventListener('mousedown', onDocDown);
   }, [isFlipped]);
 
-  const handleCardClick = () => {
-    setIsFlipped(!isFlipped);
-  };
+  const handleCardClick = () => setIsFlipped(v => !v);
 
+  // Utilities for the sample back content
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
     const now = new Date();
     const diffInHours = Math.floor((now.getTime() - date.getTime()) / (1000 * 60 * 60));
-    
     if (diffInHours < 1) return 'Just now';
     if (diffInHours < 24) return `${diffInHours}h ago`;
     if (diffInHours < 48) return 'Yesterday';
@@ -62,136 +106,132 @@ export function FlipCard({
   };
 
   const getLanguageFlag = (language: string) => {
-    const langMap: { [key: string]: string } = {
-      'fr-FR': '🇫🇷',
-      'fr': '🇫🇷',
-      'en-US': '🇺🇸',
-      'en': '🇬🇧',
-      'en-GB': '🇬🇧',
-      'es': '🇪🇸',
-      'de': '🇩🇪',
-      'it': '🇮🇹'
+    const map: Record<string, string> = {
+      'fr-FR': '🇫🇷', 'fr': '🇫🇷',
+      'en-US': '🇺🇸', 'en-GB': '🇬🇧', 'en': '🇬🇧',
+      'es': '🇪🇸', 'de': '🇩🇪', 'it': '🇮🇹'
     };
-    return langMap[language] || '🌐';
+    return map[language] ?? '🌐';
   };
 
   const getCountryFlag = (country: string) => {
-    const countryMap: { [key: string]: string } = {
-      'France': '🇫🇷',
-      'United States': '🇺🇸',
-      'Canada': '🇨🇦',
-      'United Kingdom': '🇬🇧',
-      'Germany': '🇩🇪',
-      'Spain': '🇪🇸',
-      'Italy': '🇮🇹',
-      'Switzerland': '🇨🇭',
-      'Belgium': '🇧🇪',
-      'Netherlands': '🇳🇱'
+    const map: Record<string, string> = {
+      'France': '🇫🇷', 'United States': '🇺🇸', 'Canada': '🇨🇦',
+      'United Kingdom': '🇬🇧', 'Germany': '🇩🇪', 'Spain': '🇪🇸',
+      'Italy': '🇮🇹', 'Switzerland': '🇨🇭', 'Belgium': '🇧🇪', 'Netherlands': '🇳🇱'
     };
-    return countryMap[country] || '🌍';
+    return map[country] ?? '🌍';
   };
 
   return (
-    <div 
-      ref={cardRef}
-      className={cn("flip-card-container", className)}
+    <div
+      ref={hostRef}
+      className={cn('flip-card-container', className)}
       style={{ perspective: '1000px' }}
     >
-      <div 
-        className="w-full h-full relative transition-transform duration-700 cursor-pointer rounded-lg overflow-hidden bg-white dark:bg-white"
-        onClick={handleCardClick}
-        style={{ 
-          transformStyle: 'preserve-3d',
-          transform: isFlipped ? 'rotateY(180deg)' : 'rotateY(0deg)',
-          willChange: 'transform',
-          translate: '0',
-          backfaceVisibility: 'hidden'
+      {/* Height shell: grows/shrinks to match visible face */}
+      <div
+        ref={heightShellRef}
+        style={{
+          height: containerHeight ? `${containerHeight}px` : undefined,
+          transition: 'height 300ms ease'
         }}
       >
-        {/* Front of card */}
-        <div 
-          className="absolute inset-0 w-full h-full bg-white dark:bg-white"
-          style={{ backfaceVisibility: 'hidden' }}
-        >
-          <Card className="h-full bg-white dark:bg-white shadow-none hover:shadow-lg transition-shadow duration-300">
-            {frontContent}
-          </Card>
-        </div>
-
-        {/* Back of card */}
-        <div 
-          className="absolute inset-0 w-full h-full bg-white dark:bg-white"
-          style={{ 
+        {/* Rotator: unified white surface, rounded, clipped; avoids seams */}
+        <div
+          ref={rotatorRef}
+          className="relative w-full cursor-pointer transition-transform duration-700 rounded-lg overflow-hidden bg-white dark:bg-white"
+          onClick={handleCardClick}
+          style={{
+            transformStyle: 'preserve-3d',
+            transform: isFlipped ? 'rotateY(180deg)' : 'rotateY(0deg)',
+            willChange: 'transform',
+            translate: '0',                 // promote to its own layer (helps against hairline gaps)
             backfaceVisibility: 'hidden',
-            transform: 'rotateY(180deg)'
+            // Optional polish to erase rare sub-pixel gaps on some GPUs:
+            // outline: '1px solid white'
           }}
+          role="button"
+          aria-pressed={isFlipped}
         >
-          <div 
-            className="h-full bg-white dark:bg-white p-6" 
-            style={{ 
-              position: 'relative',
-              zIndex: 10
+          {/* FRONT FACE */}
+          <div
+            ref={frontRef}
+            className="absolute inset-0 w-full bg-white dark:bg-white"
+            style={{ backfaceVisibility: 'hidden' }}
+          >
+            <Card className="h-full bg-white dark:bg-white shadow-none">
+              {frontContent}
+            </Card>
+          </div>
+
+          {/* BACK FACE */}
+          <div
+            ref={backRef}
+            className="absolute inset-0 w-full bg-white dark:bg-white"
+            style={{
+              backfaceVisibility: 'hidden',
+              transform: 'rotateY(180deg)'
             }}
           >
-            <div className="pb-4">
-              <div className="flex items-center gap-2 text-lg font-semibold">
-                <Users className="h-5 w-5" />
-                Recent Visitors
-              </div>
-              <div className="text-sm text-gray-600">
-                Last {recentVisitors.length} unique visitors
-              </div>
-            </div>
-            <div 
-              className="p-4" 
-              style={{ 
-                gap: '12px',
-                display: 'flex',
-                flexDirection: 'column'
-              }}
-            >
-              {recentVisitors.length > 0 ? (
-                recentVisitors.map((visitor, index) => (
-                  <div 
-                    key={visitor.ip_address + index}
-                    className="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-50"
-                  >
-                    <div className="flex items-center gap-3 flex-1 min-w-0">
-                      <div className="flex items-center gap-1">
-                        <span className="text-lg">{getCountryFlag(visitor.country)}</span>
-                        <span className="text-sm">{getLanguageFlag(visitor.language)}</span>
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <div className="text-sm font-medium text-gray-900 dark:text-white truncate">
-                          {visitor.ip_address}
-                        </div>
-                        <div className="text-xs text-gray-600 dark:text-gray-300 truncate">
-                          {visitor.country} • {visitor.language}
-                        </div>
-                      </div>
-                    </div>
-                    <div className="text-right">
-                      <div 
-                        className="bg-white dark:bg-white border border-gray-300 rounded px-2 py-1 text-xs inline-flex items-center gap-1"
-                      >
-                        <Clock className="h-3 w-3" />
-                        {formatDate(visitor.last_visit)}
-                      </div>
-                    </div>
-                  </div>
-                ))
-              ) : (
-                <div className="text-center py-8 text-gray-600 dark:text-gray-300">
-                  <Users className="h-8 w-8 mx-auto mb-2 opacity-70" />
-                  <p>No recent visitors found</p>
+            {/* Keep edges simple—no extra rounded/border here (prevents seams). */}
+            {backContent ?? (
+              <div className="p-6">
+                <div className="flex items-center gap-2 text-lg font-semibold">
+                  <Users className="h-5 w-5" />
+                  Recent Visitors
                 </div>
-              )}
-            </div>
+                <div className="text-sm text-gray-600">
+                  Last {recentVisitors.length} unique visitors • Total: {uniqueVisitors}
+                </div>
+
+                <div className="mt-4 flex flex-col gap-3">
+                  {recentVisitors.length > 0 ? (
+                    recentVisitors.map((visitor, index) => (
+                      <div
+                        key={visitor.ip_address + index}
+                        className="flex items-center justify-between p-3 rounded-lg border border-gray-200 shadow-sm bg-white"
+                      >
+                        <div className="flex items-center gap-3 flex-1 min-w-0">
+                          <div className="flex items-center gap-1 shrink-0">
+                            <span className="text-lg">
+                              {getCountryFlag(visitor.country)}
+                            </span>
+                            <span className="text-sm">
+                              {getLanguageFlag(visitor.language)}
+                            </span>
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            <div className="text-sm font-medium text-gray-900 truncate">
+                              {visitor.ip_address}
+                            </div>
+                            <div className="text-xs text-gray-600 truncate">
+                              {visitor.country} • {visitor.language}
+                            </div>
+                          </div>
+                        </div>
+                        <div className="text-right shrink-0">
+                          <Badge variant="outline" className="text-xs">
+                            <Clock className="h-3 w-3 mr-1" />
+                            {formatDate(visitor.last_visit)}
+                          </Badge>
+                        </div>
+                      </div>
+                    ))
+                  ) : (
+                    <div className="text-center py-8 text-gray-600">
+                      <Users className="h-8 w-8 mx-auto mb-2 opacity-70" />
+                      <p>No recent visitors found</p>
+                    </div>
+                  )}
+                </div>
+              </div>
+            )}
           </div>
         </div>
+        {/* /rotator */}
       </div>
-
-
+      {/* /height shell */}
     </div>
   );
 }
