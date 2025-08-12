@@ -141,15 +141,8 @@ export function HeroVideoSection() {
 
   if (!currentVideo) {
     return (
-      <section className="relative h-[calc(100vh-4rem)] bg-gradient-memopyk flex items-center justify-center">
-        <div className="text-center text-white">
-          <h1 className="text-lg sm:text-2xl lg:text-6xl font-playfair font-bold mb-4 sm:mb-6">
-            {language === 'fr-FR' ? 'Chargement...' : 'Loading...'}
-          </h1>
-          <p className="text-sm sm:text-lg lg:text-2xl text-white/90">
-            {language === 'fr-FR' ? 'Chargement de la galerie vidéo...' : 'Loading video gallery...'}
-          </p>
-        </div>
+      <section className="relative h-[calc(100vh-4rem)] bg-gradient-memopyk">
+        {/* Silent loading - no message to avoid drawing attention to wait time */}
       </section>
     );
   }
