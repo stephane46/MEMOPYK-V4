@@ -3323,30 +3323,45 @@ Allow: /contact`;
       const userAgent = (data.user_agent || '').toLowerCase();
       const country = data.country || 'Unknown';
       const sessionId = data.session_id || '';
+      const screenRes = data.screen_resolution || '';
+
+      // More intelligent test data detection
+      // Don't flag real production traffic as test data
+      const isRealProduction = (
+        // Has real production domain patterns
+        (pageUrl.includes('replit.dev') && !pageUrl.includes('localhost')) ||
+        pageUrl.includes('replit.app') ||
+        // Has real browser user agent (not headless/bot)
+        (userAgent.includes('chrome') || userAgent.includes('firefox') || userAgent.includes('safari') || userAgent.includes('edge')) &&
+        !userAgent.includes('headless') &&
+        // Has realistic screen resolution
+        screenRes && screenRes !== '1280x720' && !screenRes.includes('x0')
+      );
+
+      // If it looks like real production traffic, don't flag as test
+      if (isRealProduction) {
+        return false;
+      }
 
       return (
-        // Development IP addresses
-        ip === '0.0.0.0' || 
+        // Clear development indicators
         ip.startsWith('127.') ||
         ip.startsWith('192.168.') ||
-        // Development domains
-        pageUrl.includes('replit.dev') ||
-        pageUrl.includes('replit.app') ||
         pageUrl.includes('localhost') ||
-        // Development referrers
+        // Development/test referrers
         referrer.includes('workspace_iframe') ||
-        referrer.includes('replit.dev') ||
-        // Bot/automated traffic
+        // Automated/bot traffic
+        userAgent.includes('headless') ||
         userAgent.includes('bot') ||
         userAgent.includes('crawler') ||
         userAgent.includes('spider') ||
         userAgent.includes('automated') ||
-        userAgent.includes('test') ||
-        // Test session IDs
+        // Explicit test identifiers
         sessionId.startsWith('TEST_') ||
         sessionId.startsWith('DEV_') ||
-        // Unknown/placeholder data consistently
-        country === 'Unknown'
+        sessionId === 'test_session' ||
+        country === 'Test' ||
+        userAgent.includes('test')
       );
     };
 
