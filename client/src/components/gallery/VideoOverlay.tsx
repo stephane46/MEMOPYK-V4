@@ -50,13 +50,21 @@ export default function VideoOverlay({
     return videoUrl.split('/').pop()?.split('?')[0] || 'unknown';
   }, [videoUrl]);
 
-  // SIMPLE THUMBNAIL-TO-VIDEO SYSTEM v1.0.171
+  // OPTIMIZED THUMBNAIL-TO-VIDEO SYSTEM v1.0.172
   useEffect(() => {
     videoStartTimeRef.current = Date.now();
     const videoId = getVideoId();
-    console.log(`🎯 SIMPLE THUMBNAIL SYSTEM v1.0.171: Loading ${videoId}`);
+    console.log(`🎯 OPTIMIZED THUMBNAIL SYSTEM v1.0.172: Loading ${videoId}`);
+    
+    // Start video buffering immediately for faster transition
+    const video = videoRef.current;
+    if (video && thumbnailUrl) {
+      console.log('🎬 IMMEDIATE BUFFERING: Starting video load while showing thumbnail');
+      video.load(); // Force immediate buffering
+    }
+    
     trackVideoView(videoId, 0, false);
-  }, [videoUrl, getVideoId, trackVideoView]);
+  }, [videoUrl, getVideoId, trackVideoView, thumbnailUrl]);
 
   // Enhanced error handling
   const handleVideoError = useCallback((e: any) => {
@@ -165,14 +173,20 @@ export default function VideoOverlay({
     }
   }, []);
 
-  // Simple video ready handler
+  // Optimized video ready handler
   const handleCanPlay = useCallback(() => {
-    console.log('🎬 VIDEO READY: Can play - transitioning from thumbnail');
+    console.log('🎬 VIDEO READY: Can play - instant transition from thumbnail');
     setShowThumbnail(false);
     const video = videoRef.current;
     if (video) {
       video.play().catch(console.warn);
     }
+  }, []);
+
+  // Handle when enough data is loaded for smooth playback
+  const handleCanPlayThrough = useCallback(() => {
+    console.log('🎬 VIDEO BUFFERED: Full buffer ready for seamless playback');
+    setShowThumbnail(false);
   }, []);
 
   // Control handlers
@@ -285,10 +299,10 @@ export default function VideoOverlay({
         }}
         onMouseMove={resetControlsTimer}
       >
-        {/* Thumbnail Display - Shows initially while video loads */}
+        {/* Thumbnail Display - Shows initially while video buffers */}
         {showThumbnail && thumbnailUrl && (
           <div 
-            className="absolute inset-0 z-10 bg-black flex items-center justify-center transition-opacity duration-500"
+            className="absolute inset-0 z-10 bg-black flex items-center justify-center transition-opacity duration-300"
             style={{
               opacity: showThumbnail ? 1 : 0
             }}
@@ -302,11 +316,9 @@ export default function VideoOverlay({
                 height: `${videoDimensions.height}px`,
               }}
             />
-            {/* Loading indicator over thumbnail */}
-            <div className="absolute inset-0 flex items-center justify-center bg-black/30">
-              <div className="bg-white/20 backdrop-blur-sm rounded-full p-4">
-                <div className="animate-spin rounded-full h-8 w-8 border-2 border-white border-t-transparent"></div>
-              </div>
+            {/* Subtle loading indicator - less prominent */}
+            <div className="absolute bottom-4 right-4 bg-black/50 rounded-full p-2">
+              <div className="animate-spin rounded-full h-4 w-4 border-2 border-white border-t-transparent"></div>
             </div>
           </div>
         )}
@@ -322,8 +334,9 @@ export default function VideoOverlay({
           onLoadedMetadata={handleLoadedMetadata}
           onError={handleVideoError}
           onCanPlay={handleCanPlay}
+          onCanPlayThrough={handleCanPlayThrough}
           onEnded={handleEnded}
-          preload="metadata"
+          preload="auto"
           playsInline
           disablePictureInPicture
           disableRemotePlayback
