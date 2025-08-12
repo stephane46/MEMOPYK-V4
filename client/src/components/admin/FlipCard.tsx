@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Users, Clock, X } from 'lucide-react';
 
 interface VisitorModalProps {
@@ -24,6 +24,30 @@ export function FlipCard({ frontContent, className = "", visitors = [] }: Visito
     setIsModalOpen(false);
   };
 
+  // ESC key handler
+  useEffect(() => {
+    const handleEscKey = (event: KeyboardEvent) => {
+      if (event.key === 'Escape' && isModalOpen) {
+        handleModalClose();
+      }
+    };
+
+    if (isModalOpen) {
+      document.addEventListener('keydown', handleEscKey);
+    }
+
+    return () => {
+      document.removeEventListener('keydown', handleEscKey);
+    };
+  }, [isModalOpen]);
+
+  // Click outside handler
+  const handleBackdropClick = (event: React.MouseEvent<HTMLDivElement>) => {
+    if (event.target === event.currentTarget) {
+      handleModalClose();
+    }
+  };
+
   const formatDate = (dateString: string) => {
     try {
       const date = new Date(dateString);
@@ -43,6 +67,7 @@ export function FlipCard({ frontContent, className = "", visitors = [] }: Visito
   };
 
   const getCountryFlag = (country: string) => {
+    // Return actual country flags when we know the country
     const countryFlags: { [key: string]: string } = {
       'France': '🇫🇷',
       'Canada': '🇨🇦',
@@ -56,9 +81,32 @@ export function FlipCard({ frontContent, className = "", visitors = [] }: Visito
       'Netherlands': '🇳🇱',
       'Belgium': '🇧🇪',
       'Switzerland': '🇨🇭',
-      'Unknown': '🌍'
+      'Austria': '🇦🇹',
+      'Portugal': '🇵🇹',
+      'Sweden': '🇸🇪',
+      'Norway': '🇳🇴',
+      'Denmark': '🇩🇰',
+      'Finland': '🇫🇮',
+      'Poland': '🇵🇱',
+      'Czech Republic': '🇨🇿',
+      'Australia': '🇦🇺',
+      'Japan': '🇯🇵',
+      'South Korea': '🇰🇷',
+      'Brazil': '🇧🇷',
+      'Mexico': '🇲🇽',
+      'Argentina': '🇦🇷',
+      'India': '🇮🇳',
+      'China': '🇨🇳',
+      'Russia': '🇷🇺'
     };
-    return countryFlags[country] || '🌍';
+    
+    // Only show globe for truly unknown entries
+    if (country === 'Unknown' || !country) {
+      return '🌍';
+    }
+    
+    // Return the flag if we have it, otherwise show a generic flag icon for unrecognized countries
+    return countryFlags[country] || '🏴';
   };
 
   return (
