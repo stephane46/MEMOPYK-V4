@@ -580,7 +580,11 @@ export default function GallerySection() {
     };
 
     // Start immediately after component mounts
-    const timeoutId = setTimeout(startPreloading, 500);
+    console.log(`🎯 SCHEDULING PRELOAD: Will start in 500ms`);
+    const timeoutId = setTimeout(() => {
+      console.log(`🎯 TIMEOUT TRIGGERED: Starting preload now`);
+      startPreloading();
+    }, 500);
 
     return () => {
       clearTimeout(timeoutId);
