@@ -101,8 +101,8 @@ export function LegalDocumentPage() {
             <div className="mt-12 pt-8 border-t border-gray-200">
               <p className="text-sm text-gray-500">
                 {language === 'fr-FR' 
-                  ? `Dernière mise à jour: ${document.updatedAt ? formatLegalDate(document.updatedAt, 'fr') : 'Date inconnue'}`
-                  : `Last updated: ${document.updatedAt ? formatLegalDate(document.updatedAt, 'en') : 'Unknown date'}`
+                  ? `Dernière mise à jour: ${(document.updatedAt || (document as any).updated_at) ? formatLegalDate((document.updatedAt || (document as any).updated_at), 'fr') : 'Date inconnue'}`
+                  : `Last updated: ${(document.updatedAt || (document as any).updated_at) ? formatLegalDate((document.updatedAt || (document as any).updated_at), 'en') : 'Unknown date'}`
                 }
               </p>
             </div>
