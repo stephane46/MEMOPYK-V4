@@ -42,6 +42,25 @@ export function FlipCard({ frontContent, className = "", visitors = [] }: Visito
     }
   };
 
+  const getCountryFlag = (country: string) => {
+    const countryFlags: { [key: string]: string } = {
+      'France': '🇫🇷',
+      'Canada': '🇨🇦',
+      'United States': '🇺🇸',
+      'USA': '🇺🇸',
+      'United Kingdom': '🇬🇧',
+      'UK': '🇬🇧',
+      'Germany': '🇩🇪',
+      'Spain': '🇪🇸',
+      'Italy': '🇮🇹',
+      'Netherlands': '🇳🇱',
+      'Belgium': '🇧🇪',
+      'Switzerland': '🇨🇭',
+      'Unknown': '🌍'
+    };
+    return countryFlags[country] || '🌍';
+  };
+
   return (
     <>
       {/* CLICKABLE CARD */}
@@ -162,13 +181,13 @@ export function FlipCard({ frontContent, className = "", visitors = [] }: Visito
                             width: '32px',
                             height: '32px',
                             borderRadius: '50%',
-                            backgroundColor: '#dbeafe',
+                            backgroundColor: '#f3f4f6',
                             display: 'flex',
                             alignItems: 'center',
                             justifyContent: 'center',
-                            fontSize: '16px'
+                            fontSize: '18px'
                           }}>
-                            🌍
+                            {getCountryFlag(visitor.country)}
                           </div>
                           <div style={{
                             fontSize: '12px',
