@@ -401,9 +401,22 @@ export default function VideoOverlay({
           Your browser does not support the video tag.
         </video>
 
+        {/* Center Play/Pause Overlay */}
+        {!isPlaying && !showThumbnail && (
+          <div className="absolute inset-0 flex items-center justify-center z-25">
+            <button
+              onClick={handleVideoClick}
+              className="bg-black/50 hover:bg-black/70 rounded-full p-4 transition-all duration-200 transform hover:scale-110"
+              aria-label="Play video"
+            >
+              <Play size={48} className="text-white ml-1" />
+            </button>
+          </div>
+        )}
+
         {/* Control Bar */}
         <div
-          className={`absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent p-2 sm:p-4 transition-opacity duration-300 ${
+          className={`absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent p-2 sm:p-4 transition-opacity duration-300 z-30 ${
             showControls ? 'opacity-100' : 'opacity-0'
           }`}
         >
@@ -447,7 +460,7 @@ export default function VideoOverlay({
         {/* Close Button */}
         <button
           onClick={onClose}
-          className="absolute top-2 right-2 sm:top-4 sm:right-4 text-white hover:text-white/80 transition-colors bg-black/50 rounded-full p-1 sm:p-2"
+          className="absolute top-2 right-2 sm:top-4 sm:right-4 text-white hover:text-white/80 transition-colors bg-black/50 rounded-full p-1 sm:p-2 z-30"
           aria-label="Close video"
         >
           <X size={20} className="sm:w-6 sm:h-6" />
