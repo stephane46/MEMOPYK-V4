@@ -192,15 +192,7 @@ export function HeroVideoSection() {
         <div className="absolute inset-0 bg-black/40"></div>
       </div>
 
-      {/* Loading State */}
-      {isLoading && (
-        <div className="absolute inset-0 bg-black/60 flex items-center justify-center">
-          <div className="text-white text-center">
-            <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-white mb-4 mx-auto"></div>
-            <p className="text-lg">Chargement du film...</p>
-          </div>
-        </div>
-      )}
+      {/* Silent loading - no visual indicator to avoid drawing attention to wait time */}
 
       {/* Hero Text Content - Mobile Optimized for Better Fit */}
       <div className="absolute inset-0 flex items-center justify-center text-center text-white px-3 sm:px-6 lg:px-8">
