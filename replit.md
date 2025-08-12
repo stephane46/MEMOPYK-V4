@@ -49,9 +49,10 @@ Visual consistency priority: Extremely detail-oriented about spacing and formatt
 **August 12, 2025 - v1.0.162 Footer Reordering & Legal Document Date Formatting (READY FOR DEPLOYMENT):**
 - FOOTER UPDATE: Reordered legal documents per user request - Mentions légales → CGU → CGV → Privacy → Cookies
 - DATE FORMATTING: Enhanced legal document "last updated" field with proper language-specific formatting
-- BILINGUAL DATES: English format "08 August 2025", French format "08 août 2025" 
+- BILINGUAL DATES: English format "12 August 2025", French format "12 août 2025" 
 - AUTOMATIC UPDATES: Date field updates automatically when documents are saved in admin interface
 - DATE UTILITY: Added formatLegalDate() function for consistent legal document date formatting across both languages
+- FIELD MAPPING FIX: Fixed field name mismatch between backend (updated_at) and frontend (updatedAt) for proper date display
 
 **August 12, 2025 - v1.0.161 Universal 7-Day Rolling Cache System (READY FOR DEPLOYMENT):**
 - BREAKTHROUGH: Extended brilliant 7-day rolling cache strategy to ALL analytics data types (sessions, views, future metrics)
