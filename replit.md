@@ -46,7 +46,15 @@ Visual consistency priority: Extremely detail-oriented about spacing and formatt
 - **Deployment Optimizations**: Includes fast health check endpoints, production video cache preloading for hero videos, comprehensive error handling, routing priorities, and automated public asset copying.
 
 ## Recent Changes
-**August 12, 2025 - v1.0.164 Legal Documents Order Fix Complete (READY FOR DEPLOYMENT):**
+**August 12, 2025 - v1.0.165 Legal Documents Frontend-Backend Integration Fix Complete (READY FOR DEPLOYMENT):**
+- CRITICAL FIX: Fixed legal documents data flow from backend to frontend
+- FRONTEND ROUTING: Updated document type mapping in LegalDocumentPage.tsx to match backend API
+- DATA INTEGRATION: Legal documents now display real content instead of "Document not available"
+- URL MAPPING: Fixed routing for all 5 document types (terms-of-service → terms, privacy-policy → privacy, etc.)
+- FIELD COMPATIBILITY: Handles both camelCase and snake_case field name formats
+- DEPLOYMENT READY: All legal documents accessible via proper URL routes with real content
+
+**August 12, 2025 - v1.0.164 Legal Documents Order Fix Complete:**
 - CRITICAL FIX: Fixed legal documents ordering to match exact user requirements
 - DATABASE SYNC: Activated missing CGU document (was inactive) to display all 5 documents
 - API ORDERING: Updated getLegalDocuments function to return documents in correct sequence
