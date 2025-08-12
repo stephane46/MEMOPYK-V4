@@ -138,7 +138,8 @@ export function FlipCard({
                 recentVisitors.map((visitor, index) => (
                   <div 
                     key={visitor.ip_address + index}
-                    className="flex items-center justify-between p-3 bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 shadow-sm"
+                    className="flex items-center justify-between p-3 rounded-lg border border-gray-200 dark:border-gray-700 shadow-sm"
+                    style={{ backgroundColor: '#ffffff', background: '#ffffff', backgroundImage: 'none' }}
                   >
                     <div className="flex items-center gap-3 flex-1 min-w-0">
                       <div className="flex items-center gap-1">
