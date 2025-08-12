@@ -10,6 +10,7 @@ import { createClient } from '@supabase/supabase-js';
 import testRoutes from './test-routes';
 import { setCacheAndOriginHeaders } from './cache-origin-headers';
 import { createCacheHitHeaders, createCacheMissHeaders, getUpstreamSource, getCacheAge } from './cache-delivery-headers';
+import { analyticsCleanupRoutes } from './routes-analytics-cache-cleanup';
 
 // Contact form validation schema
 const contactFormSchema = z.object({
@@ -1930,7 +1931,7 @@ export async function registerRoutes(app: Express): Promise<void> {
   app.post("/api/analytics/session-update", async (req, res) => {
     try {
       const { duration } = req.body;
-      const sessionId = req.session?.id || 'anonymous';
+      const sessionId = (req as any).session?.id || 'anonymous';
       
       console.log(`📊 SESSION UPDATE: Duration ${duration}s for session ${sessionId}`);
       
@@ -3019,6 +3020,12 @@ export async function registerRoutes(app: Express): Promise<void> {
       res.status(500).json({ error: 'Failed to delete deployment marker' });
     }
   });
+
+  // Analytics Cache Cleanup Routes
+  app.use(analyticsCleanupRoutes);
+
+  // Test Routes
+  app.use('/test', testRoutes);
 }
 
 export default registerRoutes;

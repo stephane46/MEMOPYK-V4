@@ -3220,14 +3220,28 @@ Allow: /contact`;
   }
 
   async getAnalyticsViews(dateFrom?: string, dateTo?: string, videoId?: string): Promise<any[]> {
+    // SMART 7-DAY ROLLING CACHE STRATEGY
+    const sevenDaysAgo = new Date();
+    sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+    const isRecentQuery = !dateFrom || new Date(dateFrom) >= sevenDaysAgo;
+
+    // For recent data (last 7 days), use JSON cache for speed
+    if (isRecentQuery && !dateFrom?.startsWith('2024-')) {
+      console.log('📊 ANALYTICS VIEWS: Using JSON cache for recent data (last 7 days)');
+      const recentViews = this.getRecentAnalyticsViews(dateFrom, dateTo, videoId);
+      if (recentViews.length > 0) {
+        console.log(`✅ JSON CACHE: Found ${recentViews.length} recent video views`);
+        return recentViews;
+      }
+    }
+
+    // For historical data (older than 7 days), query Supabase directly
+    console.log('📊 ANALYTICS VIEWS: Querying Supabase for historical data');
     try {
-      console.log('🔍 Analytics Views: Querying Supabase database...');
-      
       let query = this.supabase
         .from('analytics_views')
         .select('*')
-        .eq('is_test_data', false) // Filter out test data
-        // Exclude hero videos from analytics (auto-play videos don't provide meaningful engagement data)
+        .eq('is_test_data', false)
         .not('video_filename', 'in', '("VideoHero1.mp4","VideoHero2.mp4","VideoHero3.mp4")')
         .order('created_at', { ascending: false });
 
@@ -3249,21 +3263,24 @@ Allow: /contact`;
       }
 
       if (data && data.length > 0) {
-        console.log(`✅ Analytics Views: Found ${data.length} views in Supabase`);
+        console.log(`✅ SUPABASE: Found ${data.length} historical video views`);
         return data;
       } else {
-        console.log('⚠️ Analytics Views: No data in Supabase, checking JSON fallback...');
+        console.log('⚠️ Analytics Views: No historical data found in Supabase');
+        return [];
       }
     } catch (error) {
-      console.warn('⚠️ Analytics Views: Supabase connection failed, using JSON fallback:', error);
+      console.warn('⚠️ Analytics Views: Supabase connection failed for historical data:', error);
+      return [];
     }
+  }
 
-    // Fallback to JSON
+  // Private method for recent video views from JSON cache
+  private getRecentAnalyticsViews(dateFrom?: string, dateTo?: string, videoId?: string): any[] {
     try {
       const views = this.loadJsonFile('analytics-views.json');
       let filtered = views
-        .filter((view: any) => !view.is_test_data) // Filter out test data
-        // Exclude hero videos from analytics (auto-play videos don't provide meaningful engagement data)
+        .filter((view: any) => !view.is_test_data)
         .filter((view: any) => !['VideoHero1.mp4', 'VideoHero2.mp4', 'VideoHero3.mp4'].includes(view.video_filename));
 
       if (dateFrom) {
@@ -3278,7 +3295,7 @@ Allow: /contact`;
 
       return filtered;
     } catch (error) {
-      console.error('Error getting analytics views from JSON:', error);
+      console.error('Error getting recent analytics views from JSON:', error);
       return [];
     }
   }

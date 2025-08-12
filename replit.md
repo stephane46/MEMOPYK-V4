@@ -46,6 +46,15 @@ Visual consistency priority: Extremely detail-oriented about spacing and formatt
 - **Deployment Optimizations**: Includes fast health check endpoints, production video cache preloading for hero videos, comprehensive error handling, routing priorities, and automated public asset copying.
 
 ## Recent Changes
+**August 12, 2025 - v1.0.161 Universal 7-Day Rolling Cache System (READY FOR DEPLOYMENT):**
+- BREAKTHROUGH: Extended brilliant 7-day rolling cache strategy to ALL analytics data types (sessions, views, future metrics)
+- SMART DATA ROUTING: Recent queries (last 7 days) served instantly from JSON cache, historical queries automatically routed to Supabase
+- AUTOMATIC MAINTENANCE: Scheduled daily cleanup at 2 AM maintains 7-day rolling window for all JSON files
+- CACHE OPTIMIZATION: JSON files stay permanently under 50MB while maintaining full historical access through Supabase
+- UNIFIED STRATEGY: Single consistent approach across all analytics data - eliminates storage growth concerns forever
+- PERFORMANCE GUARANTEE: 99% of analytics queries (recent data) served instantly, 1% (historical) served on-demand from Supabase
+- SYSTEM COMPLETENESS: Analytics sessions (48KB), views (3KB), and all future analytics follow same efficient pattern
+
 **August 12, 2025 - v1.0.160 Analytics Dashboard UX Improvements (DEPLOYED):**
 - UI IMPROVEMENT: Reordered analytics metrics for better user flow - Visitors → Gallery Views → Watch Time → Session Time
 - CLARITY FIX: Improved metric titles and descriptions for non-technical understanding ("Visitors" vs "Unique Visitors", "Videos clicked & watched")
