@@ -2158,26 +2158,43 @@ export async function registerRoutes(app: Express): Promise<void> {
       // Create stats for all videos, starting with 0 views
       const videoStats: any = {};
       
-      // Since we know there are exactly 6 gallery videos from the codebase, initialize all known videos
-      const knownGalleryVideos = [
-        'PomGalleryC.mp4',
-        'VitaminSeaC.mp4', 
-        'safari-1.mp4',
-        'Gallery Video 4',
-        'Gallery Video 5',
-        'Gallery Video 6'
-      ];
-      
-      // Initialize all gallery videos with 0 stats
-      knownGalleryVideos.forEach((videoName, index) => {
-        videoStats[videoName] = {
-          video_id: videoName,
-          total_views: 0,
-          total_watch_time: 0,
-          unique_viewers: new Set(),
-          last_viewed: new Date().toISOString()
-        };
-        console.log(`📊 Initialized stats for video ${index + 1}: ${videoName}`);
+      // Initialize all gallery videos with 0 stats by extracting video info from gallery items
+      galleryItems.forEach((item: any, index: number) => {
+        // Extract video filename from various fields in the database
+        let videoName = null;
+        
+        // Check video_filename field first (preferred)
+        if (item.video_filename) {
+          videoName = item.video_filename;
+          // Extract just filename if it's a full URL
+          if (videoName.includes('/')) {
+            videoName = videoName.split('/').pop();
+          }
+        }
+        // Fallback to video URLs
+        else if (item.video_url_en || item.video_url_fr) {
+          const videoUrl = item.video_url_en || item.video_url_fr;
+          if (videoUrl && videoUrl.includes('.mp4')) {
+            videoName = videoUrl.split('/').pop();
+          }
+        }
+        
+        // If still no video found, create a placeholder based on title
+        if (!videoName) {
+          const title = item.title_en || item.title_fr || `Gallery Item ${index + 1}`;
+          videoName = title.replace(/[^a-zA-Z0-9]/g, '_');
+        }
+        
+        if (videoName) {
+          videoStats[videoName] = {
+            video_id: videoName,
+            total_views: 0,
+            total_watch_time: 0,
+            unique_viewers: new Set(),
+            last_viewed: item.updated_at || item.created_at || new Date().toISOString()
+          };
+          console.log(`📊 Initialized stats for item ${index + 1}: ${videoName} (from ${item.title_en || 'untitled'})`);
+        }
       });
       
       // Now add actual view data where available
