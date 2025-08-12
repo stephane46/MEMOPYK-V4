@@ -717,14 +717,7 @@ export default function GallerySection() {
               <div 
                 key={item.id} 
                 data-video-id={item.id}
-                className={`card-flip-container ${isFlipped ? 'flipped' : ''} rounded-2xl cursor-pointer`}
-                onClick={(e) => {
-                  console.log(`🚨 EMERGENCY CLICK DEBUG: Card container clicked for item ${index}`);
-                  // Only handle click if it's not from a child element
-                  if (e.target === e.currentTarget) {
-                    handlePlayClick(item, e, index);
-                  }
-                }}
+                className={`card-flip-container ${isFlipped ? 'flipped' : ''} rounded-2xl`}
               >
                 <div className="card-flip-inner">
                   {/* FRONT SIDE - Normal Gallery Card */}
@@ -738,15 +731,10 @@ export default function GallerySection() {
                           <LazyImage
                             src={thumbnailUrl}
                             alt={getItemTitle(item)}
-                            className="w-full h-full object-cover cursor-pointer"
+                            className="w-full h-full object-cover"
                             fallbackSrc="/placeholder-gallery.jpg"
                             onLoad={() => console.log(`🖼️ LazyImage loaded: ${thumbnailUrl}`)}
                             onError={() => console.log(`❌ LazyImage failed to load: ${thumbnailUrl}`)}
-                            onClick={(e) => {
-                              console.log(`🚨 EMERGENCY CLICK DEBUG: Image clicked for item ${index}`);
-                              e.stopPropagation();
-                              handlePlayClick(item, e, index);
-                            }}
                           />
                           
                           {/* Top overlays - Mobile Responsive */}
@@ -775,21 +763,11 @@ export default function GallerySection() {
                           )}
                           
                           {/* Desktop Play Button - Orange for Video, White for No Video */}
-                          <div 
-                            className="absolute inset-0 flex items-center justify-center cursor-pointer"
-                            onClick={(e) => {
-                              console.log(`🚨 EMERGENCY CLICK DEBUG: Container clicked for item ${index}`);
-                              handlePlayClick(item, e, index);
-                            }}
-                          >
+                          <div className="absolute inset-0 flex items-center justify-center">
                             {/* Dynamic Play Button Based on Video Availability */}
                             <div 
                               className={`w-14 h-14 sm:w-16 sm:h-16 rounded-full flex items-center justify-center transition-all duration-300 hover:scale-110 cursor-pointer ${itemHasVideo ? 'animate-pulse-orange' : ''}`}
-                              onClick={(e) => {
-                                console.log(`🚨 EMERGENCY CLICK DEBUG: Play button clicked for item ${index}`);
-                                e.stopPropagation(); // Prevent double handling
-                                handlePlayClick(item, e, index);
-                              }}
+                              onClick={(e) => handlePlayClick(item, e, index)}
                               style={itemHasVideo ? {
                                 // Orange for items WITH video
                                 background: 'linear-gradient(135deg, rgba(214, 124, 74, 0.95) 0%, rgba(214, 124, 74, 0.85) 50%, rgba(184, 90, 47, 0.95) 100%)',
