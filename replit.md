@@ -44,6 +44,7 @@ Visual consistency priority: Extremely detail-oriented about spacing and formatt
 - **SEO Management System**: Comprehensive interface for page-level meta tags, keywords, redirects, image SEO, and global settings.
 - **Deployment Optimizations**: Includes fast health check endpoints, production video cache preloading for hero videos, comprehensive error handling, routing priorities, and automated public asset copying.
 - **Silent Loading Experience**: Eliminated all loading states from the application; content loads seamlessly.
+- **Gallery Video Fix (v1.0.167)**: Resolved critical stuttering/restarting issues by removing preloading conflicts; implemented direct CDN streaming for reliable playback.
 
 ## External Dependencies
 
