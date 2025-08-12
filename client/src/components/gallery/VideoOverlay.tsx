@@ -166,6 +166,36 @@ export function VideoOverlay({ videoUrl, title, width, height, orientation, onCl
     }
   }, []);
 
+  const handleEnded = useCallback(() => {
+    console.log('🎬 VIDEO ENDED: Gallery video finished playing');
+    setIsPlaying(false);
+    setProgress(100);
+    setShowControls(true);
+    
+    // Cancel any ongoing progress updates
+    if (progressUpdateRef.current) {
+      cancelAnimationFrame(progressUpdateRef.current);
+    }
+    
+    // Track video completion analytics
+    if (videoId) {
+      // Track completion event
+      console.log(`📊 VIDEO COMPLETION: Tracking finished video ${videoId}`);
+      // The analytics tracking would happen here
+    }
+    
+    // Auto-restart for better UX - reset to beginning after a brief pause
+    setTimeout(() => {
+      const video = videoRef.current;
+      if (video) {
+        video.currentTime = 0;
+        setProgress(0);
+        setCurrentTime(0);
+        console.log('🔄 VIDEO RESET: Ready to replay from beginning');
+      }
+    }, 1500); // Wait 1.5 seconds before resetting
+  }, [videoId]);
+
   // Control handlers
   const togglePlayPause = useCallback(() => {
     const video = videoRef.current;
