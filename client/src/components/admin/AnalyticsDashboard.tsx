@@ -1234,20 +1234,20 @@ export function AnalyticsDashboard() {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             <FlipCard
               frontContent={
-                <div className="h-full w-full p-6 flex flex-col bg-white">
-                  <div className="flex flex-row items-center justify-between space-y-0 pb-2 flex-shrink-0">
-                    <h3 className="text-sm font-medium text-gray-900">Visitors</h3>
+                <Card className="h-full w-full bg-white shadow-md border border-gray-200 rounded-lg">
+                  <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                    <CardTitle className="text-sm font-medium text-gray-900">Visitors</CardTitle>
                     <Users className="h-4 w-4 text-gray-600" />
-                  </div>
-                  <div className="flex-1 flex flex-col justify-center">
+                  </CardHeader>
+                  <CardContent className="pt-0">
                     <div className="text-2xl font-bold text-gray-900">
                       {formatNumber(dashboardData?.overview.uniqueVisitors || 0)}
                     </div>
                     <p className="text-xs text-gray-600">
                       Unique people visited
                     </p>
-                  </div>
-                </div>
+                  </CardContent>
+                </Card>
               }
               uniqueVisitors={dashboardData?.overview.uniqueVisitors || 0}
               recentVisitors={recentVisitors ?? []}
