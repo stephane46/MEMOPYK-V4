@@ -123,7 +123,7 @@ export function FlipCard({
             transform: 'rotateY(180deg)'
           }}
         >
-          <Card className="h-full bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-blue-950 dark:to-indigo-900">
+          <Card className="h-full bg-gradient-to-br from-white to-blue-50 dark:from-gray-900 dark:to-blue-950 border-2 border-blue-200 dark:border-blue-800">
             <CardHeader className="pb-4">
               <CardTitle className="flex items-center gap-2 text-lg">
                 <Users className="h-5 w-5" />
@@ -133,12 +133,12 @@ export function FlipCard({
                 Last {recentVisitors.length} unique visitors
               </CardDescription>
             </CardHeader>
-            <CardContent className="space-y-3 max-h-64 overflow-y-auto">
+            <CardContent className="space-y-3 max-h-64 overflow-y-auto bg-gray-50/50 dark:bg-gray-900/50 rounded-lg">
               {recentVisitors.length > 0 ? (
                 recentVisitors.map((visitor, index) => (
                   <div 
                     key={visitor.ip_address + index}
-                    className="flex items-center justify-between p-3 bg-white/60 dark:bg-gray-800/60 rounded-lg backdrop-blur-sm"
+                    className="flex items-center justify-between p-3 bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 shadow-sm"
                   >
                     <div className="flex items-center gap-3 flex-1 min-w-0">
                       <div className="flex items-center gap-1">
@@ -146,10 +146,10 @@ export function FlipCard({
                         <span className="text-sm">{getLanguageFlag(visitor.language)}</span>
                       </div>
                       <div className="flex-1 min-w-0">
-                        <div className="text-sm font-medium text-gray-900 dark:text-gray-100 truncate">
+                        <div className="text-sm font-medium text-gray-900 dark:text-white truncate">
                           {visitor.ip_address}
                         </div>
-                        <div className="text-xs text-gray-500 dark:text-gray-400 truncate">
+                        <div className="text-xs text-gray-600 dark:text-gray-300 truncate">
                           {visitor.country} • {visitor.language}
                         </div>
                       </div>
@@ -166,8 +166,8 @@ export function FlipCard({
                   </div>
                 ))
               ) : (
-                <div className="text-center py-8 text-gray-500 dark:text-gray-400">
-                  <Users className="h-8 w-8 mx-auto mb-2 opacity-50" />
+                <div className="text-center py-8 text-gray-600 dark:text-gray-300">
+                  <Users className="h-8 w-8 mx-auto mb-2 opacity-70" />
                   <p>No recent visitors found</p>
                 </div>
               )}
