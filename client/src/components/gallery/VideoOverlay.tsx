@@ -128,7 +128,8 @@ export function VideoOverlay({ videoUrl, title, width, height, orientation, onCl
     if (video && !isNaN(video.duration)) {
       setCurrentTime(video.currentTime);
       setProgress((video.currentTime / video.duration) * 100);
-      if (video.currentTime < video.duration) {
+      // Continue animation if video is still playing and not ended
+      if (!video.paused && video.currentTime < video.duration) {
         progressUpdateRef.current = requestAnimationFrame(updateProgress);
       }
     }
@@ -138,8 +139,17 @@ export function VideoOverlay({ videoUrl, title, width, height, orientation, onCl
   const handlePlay = useCallback(() => {
     setIsPlaying(true);
     resetControlsTimer();
-    progressUpdateRef.current = requestAnimationFrame(updateProgress);
-  }, [resetControlsTimer, updateProgress]);
+    // Start continuous progress updates
+    const startProgressUpdates = () => {
+      const video = videoRef.current;
+      if (video && !isNaN(video.duration)) {
+        setCurrentTime(video.currentTime);
+        setProgress((video.currentTime / video.duration) * 100);
+        progressUpdateRef.current = requestAnimationFrame(startProgressUpdates);
+      }
+    };
+    startProgressUpdates();
+  }, [resetControlsTimer]);
 
   const handlePause = useCallback(() => {
     setIsPlaying(false);
