@@ -41,6 +41,11 @@ export default function VideoOverlay({
   const overlayRef = useRef<HTMLDivElement>(null);
   const controlsTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const videoStartTimeRef = useRef<number>(Date.now());
+  const thumbnailStartTimeRef = useRef<number>(Date.now());
+  const videoReadyRef = useRef<boolean>(false);
+  
+  // Minimum thumbnail display time (1.5 seconds)
+  const MINIMUM_THUMBNAIL_DISPLAY_TIME = 1500;
   
   // Language detection for source text
   const language = localStorage.getItem('language') || 'en-US';
@@ -56,11 +61,14 @@ export default function VideoOverlay({
     return videoUrl.split('/').pop()?.split('?')[0] || 'unknown';
   }, [videoUrl]);
 
-  // STABLE THUMBNAIL-TO-VIDEO SYSTEM v1.0.173
+  // ENHANCED THUMBNAIL-TO-VIDEO SYSTEM v1.0.174 with minimum display time
   useEffect(() => {
     videoStartTimeRef.current = Date.now();
+    thumbnailStartTimeRef.current = Date.now();
+    videoReadyRef.current = false;
+    
     const videoId = getVideoId();
-    console.log(`🎯 STABLE THUMBNAIL SYSTEM v1.0.173: Loading ${videoId}`);
+    console.log(`🎯 ENHANCED THUMBNAIL SYSTEM v1.0.174: Loading ${videoId} with ${MINIMUM_THUMBNAIL_DISPLAY_TIME}ms minimum display`);
     
     // Start video buffering immediately for faster transition
     const video = videoRef.current;
@@ -170,11 +178,48 @@ export default function VideoOverlay({
     }
   }, []);
 
-  // Stable video ready handler
+  // Helper function to check if minimum time has elapsed and video is ready
+  const checkThumbnailTransition = useCallback(() => {
+    if (!showThumbnail || !videoReadyRef.current) return;
+    
+    const timeElapsed = Date.now() - thumbnailStartTimeRef.current;
+    const minimumTimeMet = timeElapsed >= MINIMUM_THUMBNAIL_DISPLAY_TIME;
+    
+    console.log(`🎯 THUMBNAIL TRANSITION CHECK: Time elapsed: ${timeElapsed}ms, Minimum met: ${minimumTimeMet}, Video ready: ${videoReadyRef.current}`);
+    
+    if (minimumTimeMet) {
+      console.log('🎬 SMOOTH TRANSITION: Both conditions met - hiding thumbnail');
+      setShowThumbnail(false);
+      
+      // Start video playback
+      const video = videoRef.current;
+      if (video) {
+        video.play().catch(console.warn);
+      }
+    } else {
+      // Video is ready but minimum time hasn't elapsed - set timer for remaining time
+      const remainingTime = MINIMUM_THUMBNAIL_DISPLAY_TIME - timeElapsed;
+      console.log(`⏱️ WAITING: Video ready early, waiting ${remainingTime}ms more`);
+      
+      setTimeout(() => {
+        if (showThumbnail && videoReadyRef.current) {
+          console.log('🎬 DELAYED TRANSITION: Minimum time now met - hiding thumbnail');
+          setShowThumbnail(false);
+          
+          const video = videoRef.current;
+          if (video) {
+            video.play().catch(console.warn);
+          }
+        }
+      }, remainingTime);
+    }
+  }, [showThumbnail, MINIMUM_THUMBNAIL_DISPLAY_TIME]);
+
+  // Enhanced video ready handler with minimum display time
   const handleCanPlay = useCallback(() => {
     if (!showThumbnail) return; // Prevent duplicate calls
     
-    console.log('🎬 VIDEO READY: Can play - instant transition from thumbnail');
+    console.log('🎬 VIDEO READY: Can play - checking minimum display time');
     const video = videoRef.current;
     if (video) {
       console.log('🎬 VIDEO STATE CHECK:', {
@@ -186,19 +231,19 @@ export default function VideoOverlay({
         videoHeight: video.videoHeight
       });
       
-      // Immediate transition without delay
-      setShowThumbnail(false);
-      video.play().catch(console.warn);
+      videoReadyRef.current = true;
+      checkThumbnailTransition();
     }
-  }, [showThumbnail]);
+  }, [showThumbnail, checkThumbnailTransition]);
 
-  // Handle when enough data is loaded for smooth playback
+  // Handle when enough data is loaded for smooth playback with minimum display time
   const handleCanPlayThrough = useCallback(() => {
     if (!showThumbnail) return; // Prevent duplicate calls
     
-    console.log('🎬 VIDEO BUFFERED: Full buffer ready for seamless playback');
-    setShowThumbnail(false);
-  }, [showThumbnail]);
+    console.log('🎬 VIDEO BUFFERED: Full buffer ready - checking minimum display time');
+    videoReadyRef.current = true;
+    checkThumbnailTransition();
+  }, [showThumbnail, checkThumbnailTransition]);
 
   // Control handlers
   const handleVideoClick = useCallback(() => {
