@@ -116,7 +116,7 @@ export default function GallerySection() {
   // 🚨 CACHE SYNCHRONIZATION FIX v1.0.119 - Stable cache with forced refresh
   const [refreshKey, setRefreshKey] = useState(0);
   
-  const { data: rawData = [], isLoading, refetch } = useQuery<any[]>({
+  const { data: rawData = [], refetch } = useQuery<any[]>({
     queryKey: ['/api/gallery'], // 🚨 CACHE SYNC FIX v1.0.125 - Use same key as admin
     staleTime: 0, // No stale time - always fresh data
     gcTime: 0, // No garbage collection time - immediate cache clear
@@ -624,20 +624,7 @@ export default function GallerySection() {
     };
   }, [preloadedVideoElements]);
 
-  if (isLoading) {
-    return (
-      <section className="py-20 bg-gray-50 dark:bg-gray-900">
-        <div className="container mx-auto px-4">
-          <div className="text-center">
-            <div className="animate-pulse">
-              <div className="h-8 bg-gray-200 dark:bg-gray-700 rounded-lg w-64 mx-auto mb-4"></div>
-              <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-96 mx-auto"></div>
-            </div>
-          </div>
-        </div>
-      </section>
-    );
-  }
+
 
   if (galleryItems.length === 0) {
     return null; // Don't show section if no items
