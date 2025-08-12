@@ -46,7 +46,15 @@ Visual consistency priority: Extremely detail-oriented about spacing and formatt
 - **Deployment Optimizations**: Includes fast health check endpoints, production video cache preloading for hero videos, comprehensive error handling, routing priorities, and automated public asset copying.
 
 ## Recent Changes
-**August 12, 2025 - v1.0.162 Footer Reordering & Legal Document Date Formatting (READY FOR DEPLOYMENT):**
+**August 12, 2025 - v1.0.163 Recent Visitors Transparency Fix & Admin Legal Order Update (READY FOR DEPLOYMENT):**
+- CRITICAL UI FIX: Resolved persistent Recent Visitors transparency issue - chart bleeding through flip card
+- ROOT CAUSE SOLUTION: Completely replaced shadcn Badge component with pure inline-styled div to eliminate CSS inheritance
+- ADMIN CONSISTENCY: Reordered legal document types in admin interface to match public site order
+- LEGAL ORDER SYNC: Admin now shows Legal Notice/Mentions légales → CGU → CGV → Privacy → Cookies (matching footer)
+- TRANSPARENCY COMPLETE: Recent Visitors section now fully opaque with no chart bleed-through
+- UI RELIABILITY: Eliminated all shadcn component dependencies from flip card back to prevent future styling conflicts
+
+**August 12, 2025 - v1.0.162 Footer Reordering & Legal Document Date Formatting (DEPLOYED):**
 - FOOTER UPDATE: Reordered legal documents per user request - Mentions légales → CGU → CGV → Privacy → Cookies
 - DATE FORMATTING: Enhanced legal document "last updated" field with proper language-specific formatting
 - BILINGUAL DATES: English format "12 August 2025", French format "12 août 2025" 
