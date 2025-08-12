@@ -1145,6 +1145,77 @@ export function AnalyticsDashboard() {
         </div>
       ) : (
         <>
+          {/* Analytics Flow Explanation */}
+          <Card className="mb-6 bg-gradient-to-r from-[#F2EBDC] to-[#89BAD9]/20 border-[#89BAD9]/30">
+            <CardContent className="pt-6">
+              <div className="space-y-4">
+                <div className="text-center">
+                  <h3 className="text-lg font-semibold text-[#2A4759] mb-2">Analytics Flow</h3>
+                  <p className="text-sm text-[#2A4759]/80">Understanding your visitor journey through the metrics below</p>
+                </div>
+                
+                {/* Progress Bar Steps */}
+                <div className="relative">
+                  <div className="flex items-center justify-between">
+                    {/* Step 1 */}
+                    <div className="flex flex-col items-center flex-1">
+                      <div className="w-8 h-8 bg-[#2A4759] rounded-full flex items-center justify-center text-white text-sm font-bold mb-2">1</div>
+                      <div className="text-center">
+                        <p className="text-sm font-medium text-[#2A4759]">How many people visited</p>
+                        <p className="text-xs text-[#2A4759]/70">Unique visitors to your site</p>
+                      </div>
+                    </div>
+                    
+                    {/* Arrow 1 */}
+                    <div className="flex-shrink-0 mx-4">
+                      <div className="w-8 h-0.5 bg-[#D67C4A]"></div>
+                      <div className="w-0 h-0 border-l-4 border-l-[#D67C4A] border-t-2 border-t-transparent border-b-2 border-b-transparent ml-auto -mt-1"></div>
+                    </div>
+                    
+                    {/* Step 2 */}
+                    <div className="flex flex-col items-center flex-1">
+                      <div className="w-8 h-8 bg-[#2A4759] rounded-full flex items-center justify-center text-white text-sm font-bold mb-2">2</div>
+                      <div className="text-center">
+                        <p className="text-sm font-medium text-[#2A4759]">What they clicked</p>
+                        <p className="text-xs text-[#2A4759]/70">Gallery videos they watched</p>
+                      </div>
+                    </div>
+                    
+                    {/* Arrow 2 */}
+                    <div className="flex-shrink-0 mx-4">
+                      <div className="w-8 h-0.5 bg-[#D67C4A]"></div>
+                      <div className="w-0 h-0 border-l-4 border-l-[#D67C4A] border-t-2 border-t-transparent border-b-2 border-b-transparent ml-auto -mt-1"></div>
+                    </div>
+                    
+                    {/* Step 3 */}
+                    <div className="flex flex-col items-center flex-1">
+                      <div className="w-8 h-8 bg-[#2A4759] rounded-full flex items-center justify-center text-white text-sm font-bold mb-2">3</div>
+                      <div className="text-center">
+                        <p className="text-sm font-medium text-[#2A4759]">How long they watched</p>
+                        <p className="text-xs text-[#2A4759]/70">Total video engagement time</p>
+                      </div>
+                    </div>
+                    
+                    {/* Arrow 3 */}
+                    <div className="flex-shrink-0 mx-4">
+                      <div className="w-8 h-0.5 bg-[#D67C4A]"></div>
+                      <div className="w-0 h-0 border-l-4 border-l-[#D67C4A] border-t-2 border-t-transparent border-b-2 border-b-transparent ml-auto -mt-1"></div>
+                    </div>
+                    
+                    {/* Step 4 */}
+                    <div className="flex flex-col items-center flex-1">
+                      <div className="w-8 h-8 bg-[#2A4759] rounded-full flex items-center justify-center text-white text-sm font-bold mb-2">4</div>
+                      <div className="text-center">
+                        <p className="text-sm font-medium text-[#2A4759]">How long they stayed overall</p>
+                        <p className="text-xs text-[#2A4759]/70">Average visit duration</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
           {/* Overview Cards */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             <Card>
