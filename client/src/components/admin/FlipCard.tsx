@@ -173,7 +173,7 @@ export function FlipCard({
             translate: '0',
             isolation: 'isolate',
             minHeight: '120px',
-            backgroundColor: isFlipped ? 'pink' : 'yellow' // Visual state indicator
+            backgroundColor: isFlipped ? 'hotpink' : 'gold' // Visual state indicator
           }}
           role="button"
           aria-pressed={isFlipped}
