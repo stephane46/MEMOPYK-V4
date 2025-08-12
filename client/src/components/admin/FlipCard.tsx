@@ -123,7 +123,9 @@ export function FlipCard({
             transform: 'rotateY(180deg)',
             backgroundColor: '#ffffff',
             background: '#ffffff',
-            backgroundImage: 'none'
+            backgroundImage: 'none',
+            borderRadius: '0.5rem', // match front card radius
+            boxSizing: 'border-box'
           }}
         >
           <div 
