@@ -67,8 +67,11 @@ export function FlipCard({ frontContent, className = "", visitors = [] }: Visito
   };
 
   const getCountryFlag = (country: string) => {
-    // Return actual country flags when we know the country
+    console.log('🏴 getCountryFlag called with:', country);
+    
+    // Map both country names and two-letter codes to flags
     const countryFlags: { [key: string]: string } = {
+      // Full country names
       'France': '🇫🇷',
       'Canada': '🇨🇦',
       'United States': '🇺🇸',
@@ -97,16 +100,47 @@ export function FlipCard({ frontContent, className = "", visitors = [] }: Visito
       'Argentina': '🇦🇷',
       'India': '🇮🇳',
       'China': '🇨🇳',
-      'Russia': '🇷🇺'
+      'Russia': '🇷🇺',
+      // Two-letter country codes
+      'FR': '🇫🇷',
+      'CA': '🇨🇦',
+      'US': '🇺🇸',
+      'GB': '🇬🇧',
+      'DE': '🇩🇪',
+      'ES': '🇪🇸',
+      'IT': '🇮🇹',
+      'NL': '🇳🇱',
+      'BE': '🇧🇪',
+      'CH': '🇨🇭',
+      'AT': '🇦🇹',
+      'PT': '🇵🇹',
+      'SE': '🇸🇪',
+      'NO': '🇳🇴',
+      'DK': '🇩🇰',
+      'FI': '🇫🇮',
+      'PL': '🇵🇱',
+      'CZ': '🇨🇿',
+      'AU': '🇦🇺',
+      'JP': '🇯🇵',
+      'KR': '🇰🇷',
+      'BR': '🇧🇷',
+      'MX': '🇲🇽',
+      'AR': '🇦🇷',
+      'IN': '🇮🇳',
+      'CN': '🇨🇳',
+      'RU': '🇷🇺'
     };
     
     // Only show globe for truly unknown entries
     if (country === 'Unknown' || !country) {
+      console.log('🌍 Returning globe for unknown country');
       return '🌍';
     }
     
     // Return the flag if we have it, otherwise show a generic flag icon for unrecognized countries
-    return countryFlags[country] || '🏴';
+    const flag = countryFlags[country] || '🏴';
+    console.log('🏴 Returning flag:', flag, 'for country:', country);
+    return flag;
   };
 
   return (
