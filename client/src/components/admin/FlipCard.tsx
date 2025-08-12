@@ -147,7 +147,7 @@ export function FlipCard({
             transform: isFlipped ? 'rotateY(180deg)' : 'rotateY(0deg)',
             willChange: 'transform',
             translate: '0',                 // promote to its own layer (helps against hairline gaps)
-            backfaceVisibility: 'hidden',
+            isolation: 'isolate'
             // Optional polish to erase rare sub-pixel gaps on some GPUs:
             // outline: '1px solid white'
           }}
@@ -158,7 +158,7 @@ export function FlipCard({
           <div
             ref={frontRef}
             className="absolute inset-0 w-full bg-white dark:bg-white"
-            style={{ backfaceVisibility: 'hidden' }}
+            style={{ backfaceVisibility: 'hidden', WebkitBackfaceVisibility: 'hidden', transform: 'rotateY(0deg) translateZ(0)' }}
           >
             {frontContent}
           </div>
@@ -169,7 +169,8 @@ export function FlipCard({
             className="absolute inset-0 w-full bg-white dark:bg-white"
             style={{
               backfaceVisibility: 'hidden',
-              transform: 'rotateY(180deg)'
+              WebkitBackfaceVisibility: 'hidden',
+              transform: 'rotateY(180deg) translateZ(0)'
             }}
           >
             {/* Keep edges simple—no extra rounded/border here (prevents seams). */}
