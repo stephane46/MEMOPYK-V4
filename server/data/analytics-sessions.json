@@ -1206,5 +1206,21 @@
     "is_test_data": true,
     "created_at": "2025-08-12T17:00:57.862Z",
     "updated_at": "2025-08-12T17:00:57.862Z"
+  },
+  {
+    "id": "session_1755018201507_d4c1rxiwc",
+    "session_id": "session_1755018201507_opns2e9tf",
+    "country": "Unknown",
+    "region": "Unknown",
+    "city": "Unknown",
+    "language": "en-US",
+    "user_agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/118.0.5993.88 Safari/537.36",
+    "screen_resolution": "1280x720",
+    "page_url": "http://127.0.0.1:5000/fr-FR",
+    "referrer": "",
+    "ip_address": "127.0.0.1",
+    "is_test_data": true,
+    "created_at": "2025-08-12T17:03:21.507Z",
+    "updated_at": "2025-08-12T17:03:21.507Z"
   }
 ]
