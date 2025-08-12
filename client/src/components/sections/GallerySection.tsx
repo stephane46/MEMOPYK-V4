@@ -403,70 +403,8 @@ export default function GallerySection() {
     }
   };
 
-  // 🚀 SMART ON-DEMAND PRELOADER - Creates single video element when needed
-  const preloadVideoOnDemand = async (videoUrl: string, filename: string): Promise<HTMLVideoElement | null> => {
-    try {
-      console.log(`⚡ ON-DEMAND PRELOAD: Creating instant-ready video for ${filename}`);
-      
-      const video = document.createElement('video');
-      video.src = videoUrl;
-      video.preload = 'auto';
-      video.style.display = 'none';
-      video.muted = true;
-      video.playsInline = true;
-      video.id = `instant-${filename}-${Date.now()}`;
-      
-      // Add to DOM temporarily for loading
-      document.body.appendChild(video);
-      
-      // Wait for video to be ready with timeout
-      return new Promise((resolve) => {
-        const cleanup = () => {
-          video.removeEventListener('canplaythrough', onReady);
-          video.removeEventListener('canplay', onReady);
-          video.removeEventListener('loadeddata', onReady);
-        };
-        
-        const onReady = () => {
-          cleanup();
-          console.log(`✅ INSTANT READY: ${filename} - readyState: ${video.readyState}/4`);
-          resolve(video);
-        };
-        
-        video.addEventListener('canplaythrough', onReady, { once: true });
-        video.addEventListener('canplay', onReady, { once: true });
-        video.addEventListener('loadeddata', onReady, { once: true });
-        
-        // Immediate check if already loaded
-        if (video.readyState >= 3) {
-          onReady();
-        }
-        
-        // Fallback timeout - return video even if not fully loaded for fast experience
-        setTimeout(() => {
-          if (video.readyState >= 1) {
-            cleanup();
-            console.log(`⚡ FAST FALLBACK: ${filename} - readyState: ${video.readyState}/4 (good enough for instant start)`);
-            resolve(video);
-          } else {
-            cleanup();
-            video.remove();
-            console.log(`⚠️ PRELOAD TIMEOUT: ${filename} - falling back to normal loading`);
-            resolve(null);
-          }
-        }, 1500); // 1.5 second timeout for very fast user experience
-        
-        video.load();
-      });
-      
-    } catch (error) {
-      console.warn(`⚠️ ON-DEMAND PRELOAD FAILED: ${filename}:`, error);
-      return null;
-    }
-  };
-
-  const handlePlayClick = async (item: GalleryItem, e: React.MouseEvent, index: number) => {
-    console.log(`🚀 SMART PLAYCLICK: Instant preload + play for item ${index}`);
+  const handlePlayClick = (item: GalleryItem, e: React.MouseEvent, index: number) => {
+    console.log(`🎬 DIRECT CDN VIDEO LOAD: Clean loading without any preloading conflicts`);
     e.preventDefault();
     e.stopPropagation();
     
@@ -478,29 +416,15 @@ export default function GallerySection() {
       const cleanFilename = videoFilename.includes('/') ? videoFilename.split('/').pop() : videoFilename;
       trackVideoView(cleanFilename || '');
       
-      // Get video URL
+      // Get video URL and load directly via CDN (no preloading conflicts)
       const videoUrl = getVideoUrl(item, index);
+      console.log(`🌐 CDN DIRECT LOAD: ${cleanFilename} - should be fast and smooth`);
       
-      // Try on-demand preloading for instant start
-      console.log(`⚡ ATTEMPTING INSTANT PRELOAD: ${cleanFilename}`);
-      const preloadedVideo = await preloadVideoOnDemand(videoUrl, cleanFilename || '');
-      
-      if (preloadedVideo) {
-        console.log(`🚀 INSTANT VIDEO READY: Using preloaded element for immediate playback`);
-        setLightboxVideo({
-          ...item, 
-          lightboxVideoUrl: videoUrl,
-          isInstantReady: true,
-          preloadedElement: preloadedVideo
-        });
-      } else {
-        console.log(`⏳ FALLBACK: Using normal loading (still fast via CDN)`);
-        setLightboxVideo({
-          ...item, 
-          lightboxVideoUrl: videoUrl,
-          isInstantReady: false
-        });
-      }
+      setLightboxVideo({
+        ...item, 
+        lightboxVideoUrl: videoUrl,
+        isInstantReady: false // Always false - no preloading
+      });
       
       // Prevent body scrolling when lightbox is open
       document.body.style.overflow = 'hidden';
