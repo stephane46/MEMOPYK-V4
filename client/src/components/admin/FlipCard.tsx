@@ -39,6 +39,11 @@ export function FlipCard({
   const backInnerRef = useRef<HTMLDivElement>(null);
 
   const [containerHeight, setContainerHeight] = useState<number>(0);
+  
+  // Debug: Log when containerHeight changes
+  useEffect(() => {
+    console.log('DEBUG: containerHeight changed to:', containerHeight);
+  }, [containerHeight]);
 
   // ---- Step 1: SOLID WHITE, CLIPPED, SEAM-FREE FLIP WRAPPER ----
   // (Handled by classes/inline styles on rotator + faces below.)
@@ -57,9 +62,13 @@ export function FlipCard({
 
   // Measure on mount/flip/content change
   useLayoutEffect(() => {
+    console.log('DEBUG: useLayoutEffect triggered', { isFlipped, recentVisitorsLength: recentVisitors?.length });
     measure();
     // re-measure next frame for font reflow
-    const id = requestAnimationFrame(measure);
+    const id = requestAnimationFrame(() => {
+      console.log('DEBUG: requestAnimationFrame measure');
+      measure();
+    });
     return () => cancelAnimationFrame(id);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isFlipped, recentVisitors?.length]);
@@ -99,7 +108,10 @@ export function FlipCard({
     return () => document.removeEventListener('mousedown', onDocDown);
   }, [isFlipped]);
 
-  const handleCardClick = () => setIsFlipped(v => !v);
+  const handleCardClick = () => {
+    console.log('DEBUG: Card clicked, flipping from', isFlipped, 'to', !isFlipped);
+    setIsFlipped(v => !v);
+  };
 
   // Utilities for the sample back content
   const formatDate = (dateString: string) => {
