@@ -191,7 +191,7 @@ export function FlipCard({
           </div>
         </div>
 
-        {/* BACK FACE - TRANSPARENCY FIX */}
+        {/* BACK FACE - FORCED OPACITY FIX */}
         <div
           ref={backRef}
           style={{
@@ -202,15 +202,36 @@ export function FlipCard({
             bottom: 0,
             backfaceVisibility: 'hidden',
             transform: 'rotateY(180deg)',
-            backgroundColor: '#89BAD9',
-            opacity: 1,
-            zIndex: 1000,
+            zIndex: 9999,
             borderRadius: '8px',
-            padding: '16px',
-            border: '2px dashed #3b82f6'
+            padding: 0,
+            border: 'none',
+            margin: 0,
+            outline: 'none'
           }}
         >
-          <div ref={backInnerRef} style={{
+          {/* SOLID BACKGROUND BLOCKER - NO TRANSPARENCY */}
+          <div style={{
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            backgroundColor: '#89BAD9',
+            opacity: 1,
+            zIndex: 10000,
+            borderRadius: '8px',
+            border: '2px dashed #3b82f6'
+          }}></div>
+          
+          {/* CONTENT LAYER */}
+          <div style={{
+            position: 'relative',
+            zIndex: 10001,
+            padding: '16px',
+            backgroundColor: 'transparent'
+          }}>
+            <div ref={backInnerRef} style={{
             backgroundColor: '#89BAD9',
             opacity: 1,
             width: '100%',
@@ -346,6 +367,7 @@ export function FlipCard({
                   </div>
                 )}
               </div>
+            </div>
           </div>
         </div>
       </div>
