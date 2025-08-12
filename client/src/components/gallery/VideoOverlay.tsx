@@ -8,9 +8,10 @@ interface VideoOverlayProps {
   height: number;
   orientation: 'landscape' | 'portrait';
   onClose: () => void;
+  isInstantReady?: boolean;
 }
 
-export function VideoOverlay({ videoUrl, title, width, height, orientation, onClose }: VideoOverlayProps) {
+export function VideoOverlay({ videoUrl, title, width, height, orientation, onClose, isInstantReady = false }: VideoOverlayProps) {
   const [isPlaying, setIsPlaying] = useState(true);
   const [isMuted, setIsMuted] = useState(false);
   const [showControls, setShowControls] = useState(true);
@@ -22,34 +23,20 @@ export function VideoOverlay({ videoUrl, title, width, height, orientation, onCl
   const controlsTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const progressUpdateRef = useRef<number | null>(null);
 
-  // CODER DEBUG ENHANCED - v1.0.18
+  // VIDEO OVERLAY LOAD DEBUG with instant ready detection
   useEffect(() => {
-    console.log('🎬 CODER DEBUG - VIDEO OVERLAY LOAD START (v1.0.18):');
-    console.log('   - Video URL:', videoUrl);
-    console.log('   - Title:', title);
-    console.log('   - Element src:', videoRef.current?.src);
-    console.log('   - Source elements:', videoRef.current?.querySelectorAll('source').length);
-    console.log('   - Video element ready state:', videoRef.current?.readyState);
-    console.log('   - Video element network state:', videoRef.current?.networkState);
-    
-    // Test direct fetch to compare with video element behavior
-    console.log('🔍 TESTING DIRECT FETCH:', videoUrl);
-    fetch(videoUrl, { 
-      method: 'GET',
-      headers: { 
-        'Range': 'bytes=0-1023',
-        'Accept': 'video/mp4,video/*,*/*'
-      }
-    })
-    .then(response => {
-      console.log('✅ DIRECT FETCH RESULT:', response.status);
-      console.log('   - Headers:', Array.from(response.headers.entries()));
-      return response;
-    })
-    .catch(error => {
-      console.error('❌ DIRECT FETCH ERROR:', error);
-    });
-  }, [videoUrl, title]);
+    if (isInstantReady) {
+      console.log('⚡ INSTANT READY VIDEO OVERLAY - v1.0.148:');
+      console.log('   - Video URL:', videoUrl);
+      console.log('   - Instant Ready:', isInstantReady);
+      console.log('   - Should play immediately without delay');
+    } else {
+      console.log('⏳ REGULAR VIDEO OVERLAY LOAD - v1.0.148:');
+      console.log('   - Video URL:', videoUrl);
+      console.log('   - Instant Ready:', isInstantReady);
+      console.log('   - Will load normally (may have delay)');
+    }
+  }, [videoUrl, title, isInstantReady]);
 
   // Enhanced error handling
   const handleVideoError = useCallback((e: any) => {
@@ -258,6 +245,9 @@ export function VideoOverlay({ videoUrl, title, width, height, orientation, onCl
           onPause={handlePause}
           onLoadedMetadata={() => {
             handleLoadedMetadata();
+            if (isInstantReady) {
+              console.log('⚡ INSTANT READY: Auto-playing preloaded video');
+            }
             console.log(`✅ VIDEO OVERLAY FINAL FIX (v1.0.16): loadedmetadata - ${videoUrl}`);
           }}
           onError={handleVideoError}
@@ -275,6 +265,9 @@ export function VideoOverlay({ videoUrl, title, width, height, orientation, onCl
             console.log(`   - Browser controls disabled: controls={false}, no fullscreen, no download, no context menu`);
           }}
           onCanPlay={() => {
+            if (isInstantReady) {
+              console.log('⚡ INSTANT VIDEO: CanPlay event fired - ready for instant playback');
+            }
             console.log(`✅ VIDEO OVERLAY FINAL FIX (v1.0.16): canplay - ${videoUrl}`);
           }}
           onLoadedData={() => {

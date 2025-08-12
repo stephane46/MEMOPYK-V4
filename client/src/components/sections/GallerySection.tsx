@@ -421,11 +421,23 @@ export default function GallerySection() {
       console.log(`📊 PRODUCTION ANALYTICS: Tracking gallery video view for: ${cleanFilename}`);
       trackVideoView(cleanFilename || '');
       
-      // Open video in lightbox
-      const videoUrl = getVideoUrl(item, index);
-      console.log(`🎬 OPENING LIGHTBOX for ${item.videoFilename}`);
-      console.log(`✅ Using direct CDN streaming: ${videoUrl}`);
-      setLightboxVideo({...item, lightboxVideoUrl: videoUrl});
+      // Check if we have a preloaded video element for instant playback
+      const filename = cleanFilename || '';
+      const preloadedVideo = preloadedVideoElements.get(filename);
+      
+      if (preloadedVideo && preloadedVideo.readyState >= 3) {
+        console.log(`⚡ INSTANT PLAYBACK: Using preloaded video element for ${filename}`);
+        console.log(`📊 Video readyState: ${preloadedVideo.readyState}/4 - READY FOR INSTANT PLAY!`);
+        
+        // Clone the preloaded video URL since it's already loaded
+        const videoUrl = preloadedVideo.src;
+        setLightboxVideo({...item, lightboxVideoUrl: videoUrl});
+      } else {
+        console.log(`⏳ FALLBACK: No preloaded video for ${filename}, using regular proxy`);
+        const videoUrl = getVideoUrl(item, index);
+        setLightboxVideo({...item, lightboxVideoUrl: videoUrl});
+      }
+      
       // Prevent body scrolling when lightbox is open
       document.body.style.overflow = 'hidden';
     } else {
@@ -470,86 +482,126 @@ export default function GallerySection() {
     }
   }, [lightboxVideo]);
 
-  // 🚀 AGGRESSIVE PRELOADING SYSTEM - Preload ALL gallery videos for instant startup like before
+  // 🎯 INSTANT GALLERY VIDEO SYSTEM - Store preloaded video elements for instant reuse
+  const [preloadedVideoElements, setPreloadedVideoElements] = useState<Map<string, HTMLVideoElement>>(new Map());
+
+  // 🚀 AGGRESSIVE PRELOADING SYSTEM - Create persistent video elements for instant startup
   useEffect(() => {
     if (!galleryItems.length) return;
 
-    const aggressivePreloadVideo = async (videoUrl: string, filename: string) => {
-      if (preloadedVideos.has(filename)) return;
+    const createPreloadedVideo = async (videoUrl: string, filename: string) => {
+      if (preloadedVideoElements.has(filename)) return;
 
       try {
-        console.log(`🎯 AGGRESSIVE PRELOAD: Starting full video download for ${filename}`);
+        console.log(`🎯 CREATING PERSISTENT VIDEO ELEMENT: ${filename}`);
         
-        // Create hidden video element for aggressive preloading
+        // Create persistent video element that stays ready
         const video = document.createElement('video');
         video.src = videoUrl;
         video.preload = 'auto';
         video.style.display = 'none';
-        video.muted = true; // Ensure it can autoplay
+        video.muted = true;
+        video.playsInline = true;
         
-        // Add to DOM temporarily to force download
+        // Add unique ID for tracking
+        video.id = `preloaded-${filename}`;
+        
+        // Add to DOM and keep it there for instant access
         document.body.appendChild(video);
         
-        // Wait for sufficient data to be loaded
+        // Wait for video to be ready
         const loadPromise = new Promise<void>((resolve) => {
-          const handleCanPlay = () => {
-            console.log(`✅ AGGRESSIVE PRELOAD: Video ready for instant playback - ${filename}`);
+          const handleReady = () => {
+            console.log(`✅ INSTANT VIDEO READY: ${filename} - ${video.readyState}/4`);
+            
+            // Store the ready video element for instant reuse
+            setPreloadedVideoElements(prev => {
+              const newMap = new Map(prev);
+              newMap.set(filename, video);
+              return newMap;
+            });
+            
             setPreloadedVideos(prev => new Set(Array.from(prev).concat([filename])));
             resolve();
           };
           
-          video.addEventListener('canplaythrough', handleCanPlay, { once: true });
-          video.addEventListener('loadeddata', handleCanPlay, { once: true });
+          // Multiple ready state checks for maximum compatibility
+          video.addEventListener('canplaythrough', handleReady, { once: true });
+          video.addEventListener('canplay', handleReady, { once: true });
+          video.addEventListener('loadeddata', handleReady, { once: true });
+          
+          // Immediate check if already loaded
+          if (video.readyState >= 3) { // HAVE_FUTURE_DATA or better
+            handleReady();
+          }
           
           // Fallback timeout
           setTimeout(() => {
-            handleCanPlay();
-          }, 3000);
+            if (video.readyState >= 1) { // At least HAVE_METADATA
+              console.log(`⏰ FALLBACK READY: ${filename} - readyState: ${video.readyState}`);
+              handleReady();
+            }
+          }, 2000);
         });
         
-        // Start loading
+        // Force load immediately
         video.load();
+        
+        // Add 500ms timeout to let console messages appear
+        setTimeout(() => {
+          console.log(`🎯 CREATING PERSISTENT VIDEO ELEMENT: ${filename} - Video loaded, readyState: ${video.readyState}`);
+        }, 500);
+        
         await loadPromise;
         
-        // Clean up after 5 seconds
-        setTimeout(() => {
-          if (document.body.contains(video)) {
-            document.body.removeChild(video);
-          }
-        }, 5000);
-        
       } catch (error) {
-        console.warn(`⚠️ AGGRESSIVE PRELOAD: Failed for ${filename}:`, error);
+        console.warn(`⚠️ PRELOAD FAILED: ${filename}:`, error);
       }
     };
 
-    // Preload ALL videos with video content immediately on page load
-    const preloadAllVideos = () => {
-      console.log(`🚀 STARTING AGGRESSIVE PRELOAD SYSTEM - ${galleryItems.length} items to check`);
+    // Start preloading ALL gallery videos immediately
+    const startPreloading = () => {
+      console.log(`🚀 INSTANT VIDEO SYSTEM: Preloading ${galleryItems.length} gallery items`);
       
       galleryItems.forEach((item, index) => {
         if (hasVideo(item, index)) {
           const videoUrl = getVideoUrl(item, index);
           const filename = item.videoFilename?.split('/').pop() || '';
           
-          if (filename && !preloadedVideos.has(filename)) {
-            console.log(`🚀 STARTING AGGRESSIVE PRELOAD: ${filename}`);
-            // Stagger preloads to avoid overwhelming the network
+          if (filename && !preloadedVideoElements.has(filename)) {
+            console.log(`🚀 PRELOADING: ${filename}`);
+            // Stagger preloads to avoid network congestion
             setTimeout(() => {
-              aggressivePreloadVideo(videoUrl, filename);
-            }, index * 500); // 500ms between each video start
+              createPreloadedVideo(videoUrl, filename);
+            }, index * 200); // Reduced to 200ms for faster preloading
           }
         }
       });
     };
 
-    // Start aggressive preloading immediately after functions are defined
-    const timeoutId = setTimeout(preloadAllVideos, 1000); // Wait 1 second for UI to settle
+    // Start immediately after component mounts
+    const timeoutId = setTimeout(startPreloading, 500);
 
     return () => {
       clearTimeout(timeoutId);
     };
-  }, [galleryItems, preloadedVideos, hasVideo, getVideoUrl]);
+  }, [galleryItems, preloadedVideoElements, hasVideo, getVideoUrl]);
+
+  // Cleanup preloaded video elements on unmount
+  useEffect(() => {
+    return () => {
+      preloadedVideoElements.forEach((video, filename) => {
+        try {
+          if (document.body.contains(video)) {
+            console.log(`🧹 CLEANING UP: ${filename}`);
+            document.body.removeChild(video);
+          }
+        } catch (error) {
+          console.warn(`Cleanup warning for ${filename}:`, error);
+        }
+      });
+    };
+  }, [preloadedVideoElements]);
 
   if (isLoading) {
     return (
