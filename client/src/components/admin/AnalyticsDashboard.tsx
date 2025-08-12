@@ -135,7 +135,13 @@ export function AnalyticsDashboard() {
   });
 
   // Fetch recent visitors for flip card
-  const { data: recentVisitors } = useQuery({
+  const { data: recentVisitors } = useQuery<Array<{
+    ip_address: string;
+    country: string;
+    language: string;
+    last_visit: string;
+    user_agent: string;
+  }>>({
     queryKey: ['/api/analytics/recent-visitors'],
     staleTime: 30000, // 30 seconds
     refetchInterval: 60000, // Refresh every minute
@@ -1244,7 +1250,7 @@ export function AnalyticsDashboard() {
                 </>
               }
               uniqueVisitors={dashboardData?.overview.uniqueVisitors || 0}
-              recentVisitors={recentVisitors || []}
+              recentVisitors={recentVisitors ?? []}
               className="h-full bg-white"
             />
 
