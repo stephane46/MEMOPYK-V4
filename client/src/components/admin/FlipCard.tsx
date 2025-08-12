@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { Users, Clock, X } from 'lucide-react';
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 
 interface VisitorModalProps {
   frontContent: React.ReactNode;
@@ -19,6 +18,10 @@ export function FlipCard({ frontContent, className = "", visitors = [] }: Visito
 
   const handleCardClick = () => {
     setIsModalOpen(true);
+  };
+
+  const handleModalClose = () => {
+    setIsModalOpen(false);
   };
 
   const formatDate = (dateString: string) => {
@@ -49,62 +52,187 @@ export function FlipCard({ frontContent, className = "", visitors = [] }: Visito
         {frontContent}
       </div>
 
-      {/* VISITOR DETAILS MODAL */}
-      <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
-        <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto">
-          <DialogHeader>
-            <DialogTitle className="flex items-center gap-2 text-xl">
-              <Users className="h-6 w-6" />
-              Recent Visitors Details
-            </DialogTitle>
-          </DialogHeader>
-          
-          <div className="mt-4">
-            <div className="text-sm text-gray-600 mb-4">
-              Last 5 unique visitors • Total: {visitors.length}
+      {/* CUSTOM MODAL WITH ABSOLUTE POSITIONING */}
+      {isModalOpen && (
+        <div
+          style={{
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            backgroundColor: 'rgba(0, 0, 0, 0.8)',
+            zIndex: 999999,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            padding: '20px'
+          }}
+          onClick={handleModalClose}
+        >
+          {/* MODAL CONTENT WITH SOLID BACKGROUND */}
+          <div
+            style={{
+              backgroundColor: '#ffffff',
+              borderRadius: '12px',
+              maxWidth: '600px',
+              width: '100%',
+              maxHeight: '80vh',
+              overflowY: 'auto',
+              position: 'relative',
+              boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)',
+              border: '1px solid #e5e7eb'
+            }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* HEADER WITH CLOSE BUTTON */}
+            <div style={{
+              padding: '24px 24px 16px 24px',
+              borderBottom: '1px solid #e5e7eb',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between'
+            }}>
+              <div style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '8px',
+                fontSize: '20px',
+                fontWeight: '600',
+                color: '#111827'
+              }}>
+                <Users style={{ width: '24px', height: '24px' }} />
+                Recent Visitors Details
+              </div>
+              <button
+                onClick={handleModalClose}
+                style={{
+                  backgroundColor: 'transparent',
+                  border: 'none',
+                  padding: '8px',
+                  borderRadius: '6px',
+                  cursor: 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  color: '#6b7280',
+                  transition: 'all 0.2s'
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.backgroundColor = '#f3f4f6';
+                  e.currentTarget.style.color = '#374151';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.backgroundColor = 'transparent';
+                  e.currentTarget.style.color = '#6b7280';
+                }}
+              >
+                <X style={{ width: '20px', height: '20px' }} />
+              </button>
             </div>
             
-            <div className="space-y-3">
-              {visitors.length > 0 ? (
-                visitors.map((visitor, index) => (
-                  <div 
-                    key={index}
-                    className="flex items-center justify-between p-4 bg-gray-50 rounded-lg border"
-                  >
-                    <div className="flex items-center gap-3">
-                      <div className="flex items-center gap-2">
-                        <div className="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center">
-                          🌍
+            {/* MODAL BODY */}
+            <div style={{ padding: '24px' }}>
+              <div style={{
+                fontSize: '14px',
+                color: '#6b7280',
+                marginBottom: '16px'
+              }}>
+                Last 5 unique visitors • Total: {visitors.length}
+              </div>
+              
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                {visitors.length > 0 ? (
+                  visitors.map((visitor, index) => (
+                    <div 
+                      key={index}
+                      style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'space-between',
+                        padding: '16px',
+                        backgroundColor: '#f9fafb',
+                        borderRadius: '8px',
+                        border: '1px solid #e5e7eb'
+                      }}
+                    >
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                          <div style={{
+                            width: '32px',
+                            height: '32px',
+                            borderRadius: '50%',
+                            backgroundColor: '#dbeafe',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            fontSize: '16px'
+                          }}>
+                            🌍
+                          </div>
+                          <div style={{
+                            fontSize: '12px',
+                            fontFamily: 'monospace',
+                            backgroundColor: '#e5e7eb',
+                            padding: '4px 8px',
+                            borderRadius: '4px',
+                            fontWeight: '500'
+                          }}>
+                            {visitor.language?.toUpperCase() || 'UN'}
+                          </div>
                         </div>
-                        <div className="text-xs font-mono bg-gray-200 px-2 py-1 rounded">
-                          {visitor.language?.toUpperCase() || 'UN'}
+                        <div>
+                          <div style={{
+                            fontWeight: '500',
+                            color: '#111827',
+                            fontSize: '14px'
+                          }}>
+                            {visitor.ip_address || 'Unknown'}
+                          </div>
+                          <div style={{
+                            fontSize: '14px',
+                            color: '#6b7280'
+                          }}>
+                            {visitor.country || 'Unknown'} • {visitor.language || 'Unknown'}
+                          </div>
                         </div>
                       </div>
-                      <div>
-                        <div className="font-medium text-gray-900">
-                          {visitor.ip_address || 'Unknown'}
-                        </div>
-                        <div className="text-sm text-gray-600">
-                          {visitor.country || 'Unknown'} • {visitor.language || 'Unknown'}
-                        </div>
+                      <div style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '8px',
+                        fontSize: '14px',
+                        color: '#6b7280',
+                        backgroundColor: '#ffffff',
+                        padding: '6px 12px',
+                        borderRadius: '6px',
+                        border: '1px solid #e5e7eb'
+                      }}>
+                        <Clock style={{ width: '16px', height: '16px' }} />
+                        {formatDate(visitor.last_visit)}
                       </div>
                     </div>
-                    <div className="flex items-center gap-2 text-sm text-gray-500 bg-white px-3 py-1 rounded border">
-                      <Clock className="h-4 w-4" />
-                      {formatDate(visitor.last_visit)}
-                    </div>
+                  ))
+                ) : (
+                  <div style={{
+                    textAlign: 'center',
+                    padding: '32px',
+                    color: '#6b7280'
+                  }}>
+                    <Users style={{
+                      width: '48px',
+                      height: '48px',
+                      margin: '0 auto 12px auto',
+                      color: '#d1d5db'
+                    }} />
+                    <p style={{ margin: 0 }}>No recent visitors found</p>
                   </div>
-                ))
-              ) : (
-                <div className="text-center py-8 text-gray-500">
-                  <Users className="h-12 w-12 mx-auto mb-3 text-gray-300" />
-                  <p>No recent visitors found</p>
-                </div>
-              )}
+                )}
+              </div>
             </div>
           </div>
-        </DialogContent>
-      </Dialog>
+        </div>
+      )}
     </>
   );
 }
