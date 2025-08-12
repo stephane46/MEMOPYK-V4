@@ -419,7 +419,7 @@ export default function GallerySection() {
       
       // Get video URL and thumbnail for instant display
       const videoUrl = getVideoUrl(item, index);
-      const thumbnailUrl = getImageUrl(item.id, item);
+      const thumbnailUrl = getImageUrl(item);
       
       console.log(`🎯 INSTANT DISPLAY: Showing thumbnail immediately while video buffers`);
       console.log(`🌐 CDN BACKGROUND LOAD: ${cleanFilename} - buffering during thumbnail display`);
