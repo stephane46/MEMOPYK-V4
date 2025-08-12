@@ -322,17 +322,13 @@ export default function VideoOverlay({
           >
             <img
               src={thumbnailUrl}
-              alt="Loading..."
+              alt="Video preview"
               className="w-full h-full object-cover"
               style={{
                 width: `${videoDimensions.width}px`,
                 height: `${videoDimensions.height}px`,
               }}
             />
-            {/* Subtle loading indicator - less prominent */}
-            <div className="absolute bottom-4 right-4 bg-black/50 rounded-full p-2">
-              <div className="animate-spin rounded-full h-4 w-4 border-2 border-white border-t-transparent"></div>
-            </div>
           </div>
         )}
 
