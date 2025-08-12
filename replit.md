@@ -46,6 +46,14 @@ Visual consistency priority: Extremely detail-oriented about spacing and formatt
 - **Deployment Optimizations**: Includes fast health check endpoints, production video cache preloading for hero videos, comprehensive error handling, routing priorities, and automated public asset copying.
 
 ## Recent Changes
+**August 12, 2025 - v1.0.148 Aggressive Gallery Video Preloading (READY FOR DEPLOYMENT):**
+- Implemented aggressive preloading system for instant gallery video startup
+- Fixed 2-3 second delay issue with full video preloading using hidden video elements
+- Changed VideoOverlay preload from "metadata" to "auto" for faster loading
+- Added staggered preloading (500ms intervals) to prevent network overload
+- Automatic memory cleanup prevents browser bloat while maintaining performance
+- Gallery videos now start instantly matching original fast performance
+
 **August 11, 2025 - v1.0.147 Emergency Production Fixes (DEPLOYED):**
 - Fixed cache operation 500 errors: Extended timeout 60s→120s for heavy operations
 - Fixed gallery video performance regression: Restored smart preloading with progressive chunking
