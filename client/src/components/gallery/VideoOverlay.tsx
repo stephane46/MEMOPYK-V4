@@ -1,28 +1,37 @@
-import { useState, useRef, useEffect, useCallback } from 'react';
-import { Play, Pause, RotateCcw, Volume2, VolumeX } from 'lucide-react';
+import React, { useState, useRef, useEffect, useCallback } from 'react';
+import { Play, Pause, Volume2, VolumeX, X } from 'lucide-react';
 import { useVideoAnalytics } from '@/hooks/useVideoAnalytics';
 
 interface VideoOverlayProps {
   videoUrl: string;
   title: string;
+  onClose: () => void;
+  orientation: 'portrait' | 'landscape';
   width: number;
   height: number;
-  orientation: 'landscape' | 'portrait';
-  onClose: () => void;
   isInstantReady?: boolean;
-  preloadedElement?: HTMLVideoElement;
-  thumbnailUrl?: string; // For instant thumbnail display while video loads
+  preloadedElement?: HTMLVideoElement | null;
+  thumbnailUrl?: string;
 }
 
-export function VideoOverlay({ videoUrl, title, width, height, orientation, onClose, isInstantReady = false, preloadedElement, thumbnailUrl }: VideoOverlayProps) {
-  const [isPlaying, setIsPlaying] = useState(true);
+export default function VideoOverlay({ 
+  videoUrl, 
+  title, 
+  onClose, 
+  orientation, 
+  width, 
+  height, 
+  isInstantReady = false, 
+  preloadedElement = null,
+  thumbnailUrl 
+}: VideoOverlayProps) {
+  const [isPlaying, setIsPlaying] = useState(false);
   const [isMuted, setIsMuted] = useState(false);
   const [showControls, setShowControls] = useState(true);
   const [progress, setProgress] = useState(0);
   const [duration, setDuration] = useState(0);
   const [currentTime, setCurrentTime] = useState(0);
-  const [showThumbnail, setShowThumbnail] = useState(!!thumbnailUrl); // Show thumbnail initially
-  const [isVideoReady, setIsVideoReady] = useState(false);
+  const [showThumbnail, setShowThumbnail] = useState(!!thumbnailUrl);
   
   const videoRef = useRef<HTMLVideoElement>(null);
   const overlayRef = useRef<HTMLDivElement>(null);
@@ -41,106 +50,33 @@ export function VideoOverlay({ videoUrl, title, width, height, orientation, onCl
     return videoUrl.split('/').pop()?.split('?')[0] || 'unknown';
   }, [videoUrl]);
 
-  // AGGRESSIVE INSTANT THUMBNAIL-TO-VIDEO SYSTEM v1.0.169
+  // SIMPLE THUMBNAIL-TO-VIDEO SYSTEM v1.0.171
   useEffect(() => {
-    // Reset start time when video loads
     videoStartTimeRef.current = Date.now();
-    
     const videoId = getVideoId();
-    console.log(`🎯 AGGRESSIVE INSTANT SYSTEM v1.0.169: Loading ${videoId}`);
-    
-    if (thumbnailUrl) {
-      console.log('🖼️ AGGRESSIVE INSTANT DISPLAY - v1.0.169:');
-      console.log('   - Thumbnail URL:', thumbnailUrl);
-      console.log('   - Video URL:', videoUrl);
-      console.log('   - Video ID:', videoId);
-      console.log('   - Strategy: Start video buffering IMMEDIATELY, show on first playable frame');
-      
-      // Set up video loading detection with aggressive buffering
-      const video = videoRef.current;
-      if (video) {
-        // AGGRESSIVE: Start loading immediately
-        video.preload = 'auto';
-        video.load(); // Force immediate loading
-        
-        const handleCanPlay = () => {
-          console.log('🎬 AGGRESSIVE READY: Can play (first frame ready) - immediate transition');
-          setIsVideoReady(true);
-          setShowThumbnail(false); // Fade out thumbnail immediately
-          video.play().catch(console.warn);
-        };
-
-        const handleLoadedData = () => {
-          console.log('🎬 AGGRESSIVE BUFFERING: Metadata loaded, starting aggressive preload');
-        };
-
-        const handleLoadStart = () => {
-          console.log('🎬 AGGRESSIVE START: Video loading initiated immediately');
-        };
-
-        // Use 'canplay' instead of 'canplaythrough' for faster response
-        video.addEventListener('canplay', handleCanPlay);
-        video.addEventListener('loadeddata', handleLoadedData);
-        video.addEventListener('loadstart', handleLoadStart);
-        
-        return () => {
-          video.removeEventListener('canplay', handleCanPlay);
-          video.removeEventListener('loadeddata', handleLoadedData);
-          video.removeEventListener('loadstart', handleLoadStart);
-        };
-      }
-    } else {
-      console.log('⏳ STANDARD VIDEO OVERLAY LOAD - v1.0.169:');
-      console.log('   - Video URL:', videoUrl);
-      console.log('   - Video ID:', videoId);
-      console.log('   - No thumbnail - standard loading behavior');
-      
-      // Standard behavior for instant ready videos
-      if (isInstantReady && preloadedElement) {
-        const overlayVideo = videoRef.current;
-        if (overlayVideo) {
-          console.log('🎯 TRANSFERRING PRELOADED DATA to overlay video element');
-          overlayVideo.currentTime = 0;
-          overlayVideo.muted = false;
-        }
-      }
-    }
-    
-    // Track video view start (partial view tracking)
+    console.log(`🎯 SIMPLE THUMBNAIL SYSTEM v1.0.171: Loading ${videoId}`);
     trackVideoView(videoId, 0, false);
-  }, [videoUrl, title, isInstantReady, preloadedElement, getVideoId, trackVideoView]);
+  }, [videoUrl, getVideoId, trackVideoView]);
 
   // Enhanced error handling
   const handleVideoError = useCallback((e: any) => {
-    console.error(' ❌ VIDEO OVERLAY ERROR (v1.0.13-debug):');
+    console.error(' ❌ VIDEO OVERLAY ERROR:');
     console.error('    - Video URL:', videoUrl);
     console.error('    - Error event:', e);
     console.error('    - Error details:', e.target?.error);
-    console.error('    - Network state:', e.target?.networkState);
-    console.error('    - Ready state:', e.target?.readyState);
-    console.error('    - Current src:', e.target?.currentSrc);
-    console.error('    - Source elements:', e.target?.querySelectorAll('source'));
-    
-    // Additional network state analysis
-    const networkStates = ['NETWORK_EMPTY', 'NETWORK_IDLE', 'NETWORK_LOADING', 'NETWORK_NO_SOURCE'];
-    const readyStates = ['HAVE_NOTHING', 'HAVE_METADATA', 'HAVE_CURRENT_DATA', 'HAVE_FUTURE_DATA', 'HAVE_ENOUGH_DATA'];
-    console.error('    - Network state meaning:', networkStates[e.target?.networkState] || 'Unknown');
-    console.error('    - Ready state meaning:', readyStates[e.target?.readyState] || 'Unknown');
   }, [videoUrl]);
 
   // Mobile-responsive viewport sizing
-  const viewportRatio = 90; // Increased to 90% for mobile
+  const viewportRatio = 90;
 
-  // Calculate video container dimensions based on orientation - Mobile responsive scaling
+  // Calculate video container dimensions based on orientation
   const getVideoDimensions = useCallback(() => {
     if (orientation === 'portrait') {
-      // Portrait: height = 80% of viewport height, width = auto
       const containerHeight = (window.innerHeight * viewportRatio) / 100;
       const aspectRatio = width / height;
       const containerWidth = containerHeight * aspectRatio;
       return { width: containerWidth, height: containerHeight };
     } else {
-      // Landscape: width = 80% of viewport width, height = auto  
       const containerWidth = (window.innerWidth * viewportRatio) / 100;
       const aspectRatio = width / height;
       const containerHeight = containerWidth / aspectRatio;
@@ -184,30 +120,20 @@ export function VideoOverlay({ videoUrl, title, width, height, orientation, onCl
   const updateProgress = useCallback(() => {
     const video = videoRef.current;
     if (video && !isNaN(video.duration)) {
+      const progress = (video.currentTime / video.duration) * 100;
+      setProgress(progress);
       setCurrentTime(video.currentTime);
-      setProgress((video.currentTime / video.duration) * 100);
-      // Continue animation if video is still playing and not ended
-      if (!video.paused && video.currentTime < video.duration) {
-        progressUpdateRef.current = requestAnimationFrame(updateProgress);
-      }
+      setDuration(video.duration);
     }
+    progressUpdateRef.current = requestAnimationFrame(updateProgress);
   }, []);
 
   // Video event handlers
   const handlePlay = useCallback(() => {
     setIsPlaying(true);
     resetControlsTimer();
-    // Start continuous progress updates
-    const startProgressUpdates = () => {
-      const video = videoRef.current;
-      if (video && !isNaN(video.duration)) {
-        setCurrentTime(video.currentTime);
-        setProgress((video.currentTime / video.duration) * 100);
-        progressUpdateRef.current = requestAnimationFrame(startProgressUpdates);
-      }
-    };
-    startProgressUpdates();
-  }, [resetControlsTimer]);
+    updateProgress();
+  }, [resetControlsTimer, updateProgress]);
 
   const handlePause = useCallback(() => {
     setIsPlaying(false);
@@ -217,59 +143,49 @@ export function VideoOverlay({ videoUrl, title, width, height, orientation, onCl
     }
   }, []);
 
-  const handleLoadedMetadata = useCallback(() => {
-    const video = videoRef.current;
-    if (video) {
-      setDuration(video.duration);
-    }
-  }, []);
-
   const handleEnded = useCallback(() => {
-    const videoId = getVideoId();
-    const watchTime = Date.now() - videoStartTimeRef.current;
-    const watchTimeSeconds = Math.round(watchTime / 1000);
-    
-    console.log('🎬 VIDEO ENDED: Gallery video finished playing - closing overlay');
-    console.log(`📊 VIDEO COMPLETION: ${videoId} watched for ${watchTimeSeconds}s`);
-    
     setIsPlaying(false);
-    setProgress(100);
-    
-    // Cancel any ongoing progress updates
+    setProgress(0);
+    setCurrentTime(0);
+    setShowControls(true);
     if (progressUpdateRef.current) {
       cancelAnimationFrame(progressUpdateRef.current);
     }
     
-    // Track video completion analytics with actual watch time
-    trackVideoView(videoId, watchTimeSeconds, true);
-    
-    // Close the video overlay and return to gallery after a brief delay
-    setTimeout(() => {
-      console.log('🔄 AUTO-CLOSE: Returning to video gallery');
-      onClose();
-    }, 800); // Brief pause to show completion, then close
-  }, [getVideoId, trackVideoView, onClose]);
+    // Track video completion
+    const videoId = getVideoId();
+    trackVideoView(videoId, duration, true);
+  }, [duration, getVideoId, trackVideoView]);
 
-  // Control handlers
-  const togglePlayPause = useCallback(() => {
-    const video = videoRef.current;
-    if (!video) return;
-
-    if (isPlaying) {
-      video.pause();
-    } else {
-      video.play();
-    }
-  }, [isPlaying]);
-
-  const handleRestart = useCallback(() => {
+  const handleLoadedMetadata = useCallback(() => {
     const video = videoRef.current;
     if (video) {
-      video.currentTime = 0;
-      setProgress(0);
-      resetControlsTimer();
+      setDuration(video.duration);
+      console.log('✅ Video metadata loaded');
     }
-  }, [resetControlsTimer]);
+  }, []);
+
+  // Simple video ready handler
+  const handleCanPlay = useCallback(() => {
+    console.log('🎬 VIDEO READY: Can play - transitioning from thumbnail');
+    setShowThumbnail(false);
+    const video = videoRef.current;
+    if (video) {
+      video.play().catch(console.warn);
+    }
+  }, []);
+
+  // Control handlers
+  const handleVideoClick = useCallback(() => {
+    const video = videoRef.current;
+    if (video) {
+      if (isPlaying) {
+        video.pause();
+      } else {
+        video.play().catch(console.warn);
+      }
+    }
+  }, [isPlaying]);
 
   const toggleMute = useCallback(() => {
     const video = videoRef.current;
@@ -279,53 +195,69 @@ export function VideoOverlay({ videoUrl, title, width, height, orientation, onCl
     }
   }, []);
 
-  // Format time for display
-  const formatTime = useCallback((time: number) => {
+  const formatTime = (time: number) => {
     const minutes = Math.floor(time / 60);
     const seconds = Math.floor(time % 60);
     return `${minutes}:${seconds.toString().padStart(2, '0')}`;
+  };
+
+  const handleProgressClick = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
+    const video = videoRef.current;
+    if (video) {
+      const rect = e.currentTarget.getBoundingClientRect();
+      const clickX = e.clientX - rect.left;
+      const percentage = clickX / rect.width;
+      const newTime = percentage * video.duration;
+      video.currentTime = newTime;
+      setProgress(percentage * 100);
+      setCurrentTime(newTime);
+    }
   }, []);
 
-  // Keyboard and click handlers
-  const handleVideoClick = useCallback((e: React.MouseEvent) => {
-    e.stopPropagation();
-    togglePlayPause();
-    resetControlsTimer();
-  }, [togglePlayPause, resetControlsTimer]);
-
   const handleOverlayClick = useCallback((e: React.MouseEvent) => {
-    if (e.target === overlayRef.current) {
+    if (e.target === e.currentTarget) {
       onClose();
     }
   }, [onClose]);
 
-  const handleKeyDown = useCallback((e: KeyboardEvent) => {
-    if (e.code === 'Space') {
-      e.preventDefault();
-      togglePlayPause();
-      resetControlsTimer();
-    } else if (e.code === 'Escape') {
-      onClose();
-    }
-  }, [togglePlayPause, resetControlsTimer, onClose]);
-
-  // Setup and cleanup
+  // Keyboard controls
   useEffect(() => {
-    document.addEventListener('keydown', handleKeyDown);
-    document.body.style.overflow = 'hidden'; // Prevent background scroll
-    
-    // Auto-play logic - depends on thumbnail system
-    const video = videoRef.current;
-    if (video && !thumbnailUrl) {
-      // No thumbnail - play immediately (standard behavior)
-      video.play().catch(console.warn);
-      resetControlsTimer();
-    }
-    // If thumbnail exists, video will auto-play when ready (handled in thumbnail system)
+    const handleKeyDown = (e: KeyboardEvent) => {
+      const video = videoRef.current;
+      if (!video) return;
 
+      switch (e.key) {
+        case ' ':
+        case 'k':
+          e.preventDefault();
+          if (isPlaying) {
+            video.pause();
+          } else {
+            video.play().catch(console.warn);
+          }
+          break;
+        case 'm':
+          e.preventDefault();
+          toggleMute();
+          break;
+        case 'Escape':
+          e.preventDefault();
+          onClose();
+          break;
+        case 'ArrowLeft':
+          e.preventDefault();
+          video.currentTime = Math.max(0, video.currentTime - 10);
+          break;
+        case 'ArrowRight':
+          e.preventDefault();
+          video.currentTime = Math.min(video.duration, video.currentTime + 10);
+          break;
+      }
+    };
+
+    document.addEventListener('keydown', handleKeyDown);
     return () => {
       document.removeEventListener('keydown', handleKeyDown);
-      document.body.style.overflow = 'unset';
       if (controlsTimeoutRef.current) {
         clearTimeout(controlsTimeoutRef.current);
       }
@@ -353,7 +285,7 @@ export function VideoOverlay({ videoUrl, title, width, height, orientation, onCl
         }}
         onMouseMove={resetControlsTimer}
       >
-        {/* Instant Thumbnail Display - Shows immediately while video buffers */}
+        {/* Thumbnail Display - Shows initially while video loads */}
         {showThumbnail && thumbnailUrl && (
           <div 
             className="absolute inset-0 z-10 bg-black flex items-center justify-center transition-opacity duration-500"
@@ -379,7 +311,7 @@ export function VideoOverlay({ videoUrl, title, width, height, orientation, onCl
           </div>
         )}
 
-        {/* Video Element - AGGRESSIVE BUFFERING: immediate loading for instant playback */}
+        {/* Video Element */}
         <video
           ref={videoRef}
           className="w-full h-full object-cover"
@@ -387,41 +319,11 @@ export function VideoOverlay({ videoUrl, title, width, height, orientation, onCl
           onClick={handleVideoClick}
           onPlay={handlePlay}
           onPause={handlePause}
-          onLoadedMetadata={() => {
-            handleLoadedMetadata();
-            if (isInstantReady) {
-              console.log('⚡ INSTANT READY: Auto-playing preloaded video');
-            }
-            console.log(`✅ AGGRESSIVE VIDEO v1.0.169: loadedmetadata - ${videoUrl}`);
-          }}
+          onLoadedMetadata={handleLoadedMetadata}
           onError={handleVideoError}
-          onLoadStart={() => {
-            console.log(`🎬 AGGRESSIVE BUFFERING v1.0.169: loadstart - IMMEDIATE LOADING`);
-            console.log(`   - Video URL: "${videoUrl}"`);
-            console.log(`   - Title: "${title}"`);
-            console.log(`   - Container: ${videoDimensions.width}x${videoDimensions.height}px`);
-            console.log(`   - Video Dimensions: ${width}x${height}px`);
-            console.log(`   - Orientation: ${orientation}`);
-            console.log(`   - Viewport Ratio: ${viewportRatio}% (updated from 66.66% to 80%)`);
-            console.log(`   - Aspect Ratio: ${width}/${height} = ${(width/height).toFixed(3)}`);
-            console.log(`   - Container Aspect Ratio: ${(videoDimensions.width/videoDimensions.height).toFixed(3)}`);
-            console.log(`   - AGGRESSIVE: preload=auto + immediate load() for zero-delay start`);
-          }}
-          onCanPlay={() => {
-            if (isInstantReady) {
-              console.log('⚡ INSTANT VIDEO: CanPlay event fired - ready for instant playback');
-            }
-            console.log(`✅ AGGRESSIVE v1.0.169: canplay - FIRST FRAME READY - ${videoUrl}`);
-          }}
-          onLoadedData={() => {
-            console.log(`✅ AGGRESSIVE v1.0.169: loadeddata - METADATA LOADED - ${videoUrl}`);
-          }}
-          onCanPlayThrough={() => {
-            console.log(`✅ AGGRESSIVE v1.0.169: canplaythrough - FULL BUFFER READY - ${videoUrl}`);
-          }}
+          onCanPlay={handleCanPlay}
           onEnded={handleEnded}
-          preload="auto"
-          autoPlay={false}
+          preload="metadata"
           playsInline
           disablePictureInPicture
           disableRemotePlayback
@@ -432,7 +334,7 @@ export function VideoOverlay({ videoUrl, title, width, height, orientation, onCl
           Your browser does not support the video tag.
         </video>
 
-        {/* Control Bar - Mobile Optimized */}
+        {/* Control Bar */}
         <div
           className={`absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent p-2 sm:p-4 transition-opacity duration-300 ${
             showControls ? 'opacity-100' : 'opacity-0'
@@ -444,27 +346,22 @@ export function VideoOverlay({ videoUrl, title, width, height, orientation, onCl
             <span>{formatTime(duration)}</span>
           </div>
 
-          {/* Progress Bar - Mobile Touch-Friendly */}
-          <div className="w-full bg-white/20 h-2 sm:h-1 rounded-full mb-3 sm:mb-4 touch-manipulation">
+          {/* Progress Bar */}
+          <div
+            className="w-full bg-white/20 rounded-full h-1 sm:h-2 mb-2 sm:mb-4 cursor-pointer"
+            onClick={handleProgressClick}
+          >
             <div
-              className="h-full bg-white rounded-full transition-all duration-100"
+              className="bg-white rounded-full h-full transition-all duration-150"
               style={{ width: `${progress}%` }}
             />
           </div>
 
-          {/* Control Buttons - Mobile Optimized */}
-          <div className="flex items-center justify-center space-x-2 sm:space-x-4">
+          {/* Controls */}
+          <div className="flex items-center justify-between">
             <button
-              onClick={handleRestart}
-              className="text-white hover:text-orange-400 transition-colors p-2 sm:p-2 rounded-full hover:bg-white/10 touch-manipulation min-w-[44px] min-h-[44px] flex items-center justify-center"
-              aria-label="Restart video"
-            >
-              <RotateCcw size={16} className="sm:w-5 sm:h-5" />
-            </button>
-
-            <button
-              onClick={togglePlayPause}
-              className="text-white hover:text-orange-400 transition-colors p-2 sm:p-3 rounded-full hover:bg-white/10 touch-manipulation min-w-[48px] min-h-[48px] flex items-center justify-center"
+              onClick={handleVideoClick}
+              className="text-white hover:text-white/80 transition-colors p-1 sm:p-2"
               aria-label={isPlaying ? 'Pause video' : 'Play video'}
             >
               {isPlaying ? <Pause size={20} className="sm:w-6 sm:h-6" /> : <Play size={20} className="sm:w-6 sm:h-6" />}
@@ -472,17 +369,22 @@ export function VideoOverlay({ videoUrl, title, width, height, orientation, onCl
 
             <button
               onClick={toggleMute}
-              className="text-white hover:text-orange-400 transition-colors p-2 sm:p-2 rounded-full hover:bg-white/10 touch-manipulation min-w-[44px] min-h-[44px] flex items-center justify-center"
+              className="text-white hover:text-white/80 transition-colors p-1 sm:p-2"
               aria-label={isMuted ? 'Unmute video' : 'Mute video'}
             >
               {isMuted ? <VolumeX size={16} className="sm:w-5 sm:h-5" /> : <Volume2 size={16} className="sm:w-5 sm:h-5" />}
             </button>
           </div>
-          
-
         </div>
 
-
+        {/* Close Button */}
+        <button
+          onClick={onClose}
+          className="absolute top-2 right-2 sm:top-4 sm:right-4 text-white hover:text-white/80 transition-colors bg-black/50 rounded-full p-1 sm:p-2"
+          aria-label="Close video"
+        >
+          <X size={20} className="sm:w-6 sm:h-6" />
+        </button>
       </div>
     </div>
   );

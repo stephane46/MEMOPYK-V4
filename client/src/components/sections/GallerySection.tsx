@@ -7,7 +7,7 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Play, Eye, Star, ArrowRight, Image as ImageIcon, Film, Users, Clock, Smartphone, Monitor, Instagram, Phone, Edit } from "lucide-react";
-import { VideoOverlay } from "@/components/gallery/VideoOverlay";
+import VideoOverlay from "@/components/gallery/VideoOverlay";
 import { MobileEnhancedGallery } from "@/components/mobile/MobileEnhancedGallery";
 import { LazyImage } from "@/components/ui/LazyImage";
 import { useNetworkStatus } from "@/hooks/useNetworkStatus";
