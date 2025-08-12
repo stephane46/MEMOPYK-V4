@@ -1263,7 +1263,7 @@ export class HybridStorage implements HybridStorageInterface {
         }));
         
         // Sort by the correct order defined above
-        const sorted = converted.sort((a, b) => {
+        const sorted = converted.sort((a: any, b: any) => {
           const indexA = documentOrder.indexOf(a.type);
           const indexB = documentOrder.indexOf(b.type);
           // Put documents not in the order array at the end
@@ -1272,7 +1272,7 @@ export class HybridStorage implements HybridStorageInterface {
           return indexA - indexB;
         });
         
-        console.log(`📋 Legal Documents ordered: ${sorted.map(d => d.type).join(' → ')}`);
+        console.log(`📋 Legal Documents ordered: ${sorted.map((d: any) => d.type).join(' → ')}`);
         
         // Save to JSON as backup
         this.saveJsonFile('legal-documents.json', sorted);
@@ -1288,7 +1288,7 @@ export class HybridStorage implements HybridStorageInterface {
     const data = this.loadJsonFile('legal-documents.json');
     const active = data.filter(doc => doc.is_active);
     
-    return active.sort((a, b) => {
+    return active.sort((a: any, b: any) => {
       const indexA = documentOrder.indexOf(a.type);
       const indexB = documentOrder.indexOf(b.type);
       if (indexA === -1) return 1;
