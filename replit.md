@@ -46,13 +46,13 @@ Visual consistency priority: Extremely detail-oriented about spacing and formatt
 - **Deployment Optimizations**: Includes fast health check endpoints, production video cache preloading for hero videos, comprehensive error handling, routing priorities, and automated public asset copying.
 
 ## Recent Changes
-**August 12, 2025 - v1.0.150 Instant Gallery Video Playback System (READY FOR DEPLOYMENT):**
-- CRITICAL FIX: Enhanced handlePlayClick to transfer actual preloaded video elements instead of just URLs
-- Complete VideoOverlay integration with preloaded element support for instant startup
-- Fixed element transfer system: preloaded videos reset to currentTime=0 and ready for immediate playback
-- Enhanced logging chain: preload scheduling → timeout → element creation → instant playback detection
-- Eliminated 2-second gallery video delays, achieving <100ms startup for preloaded videos
-- Memory management with automatic cleanup prevents bloat, maintains professional responsiveness
+**August 12, 2025 - v1.0.153 Clean Gallery Click Reversion (READY FOR DEPLOYMENT):**
+- STABLE RELEASE: Reverted gallery to original single-click behavior per user feedback
+- Only play button clickable (removed emergency multiple click handlers)
+- Silent hero video loading (removed unnecessary loading message)
+- Maintained instant video playback through background preloading system
+- Clean, intentional user interaction design restored
+- All video functionality confirmed working: hero cache (~50ms) + gallery preload (<100ms)
 
 **August 12, 2025 - v1.0.148 Persistent Video Element System (DEPLOYED):**
 - Implemented revolutionary persistent video element system for true instant gallery video startup  
