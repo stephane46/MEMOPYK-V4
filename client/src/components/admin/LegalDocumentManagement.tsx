@@ -25,8 +25,10 @@ interface LegalDocument {
 }
 
 const DOCUMENT_TYPES = [
+  { value: 'legal-notice', label: 'Legal Notice / Mentions légales' },
+  { value: 'terms', label: 'Terms of Service / CGU' },
+  { value: 'terms-sale', label: 'Terms of Sale / CGV' },
   { value: 'privacy', label: 'Privacy Policy / Politique de confidentialité' },
-  { value: 'terms', label: 'Terms of Service / Conditions de service' },
   { value: 'cookies', label: 'Cookie Policy / Politique des cookies' },
   { value: 'refund', label: 'Refund Policy / Politique de remboursement' },
   { value: 'disclaimer', label: 'Disclaimer / Avis de non-responsabilité' }

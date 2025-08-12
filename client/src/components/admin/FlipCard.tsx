@@ -184,14 +184,27 @@ export function FlipCard({
                         </div>
                       </div>
                     </div>
-                    <div className="text-right">
-                      <Badge 
-                        variant="outline" 
-                        className="text-xs"
+                    <div 
+                      className="text-right"
+                      style={{ backgroundColor: '#ffffff', background: '#ffffff' }}
+                    >
+                      <div 
+                        style={{ 
+                          backgroundColor: '#ffffff', 
+                          background: '#ffffff',
+                          backgroundImage: 'none',
+                          border: '1px solid #e2e8f0',
+                          borderRadius: '6px',
+                          padding: '4px 8px',
+                          fontSize: '12px',
+                          display: 'inline-flex',
+                          alignItems: 'center',
+                          gap: '4px'
+                        }}
                       >
-                        <Clock className="h-3 w-3 mr-1" />
+                        <Clock className="h-3 w-3" />
                         {formatDate(visitor.last_visit)}
-                      </Badge>
+                      </div>
                     </div>
                   </div>
                 ))
