@@ -1481,7 +1481,7 @@ export function AnalyticsDashboard() {
                       <div key={country.country} className="flex items-center justify-between">
                         <span className="font-medium">{country.country}</span>
                         <Badge variant="outline">
-                          {formatNumber(country.sessions)} sessions
+                          {formatNumber(country.views)} sessions
                         </Badge>
                       </div>
                     ))}
@@ -1512,7 +1512,7 @@ export function AnalyticsDashboard() {
                            lang.language}
                         </span>
                         <Badge variant="outline">
-                          {formatNumber(lang.sessions)} sessions
+                          {formatNumber(lang.views)} sessions
                         </Badge>
                       </div>
                     ))}
