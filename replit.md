@@ -46,6 +46,15 @@ Visual consistency priority: Extremely detail-oriented about spacing and formatt
 - **Deployment Optimizations**: Includes fast health check endpoints, production video cache preloading for hero videos, comprehensive error handling, routing priorities, and automated public asset copying.
 
 ## Recent Changes
+**August 12, 2025 - v1.0.160 Analytics Dashboard UX Improvements (DEPLOYED):**
+- UI IMPROVEMENT: Reordered analytics metrics for better user flow - Visitors → Gallery Views → Watch Time → Session Time
+- CLARITY FIX: Improved metric titles and descriptions for non-technical understanding ("Visitors" vs "Unique Visitors", "Videos clicked & watched")
+- COMPREHENSIVE TRACKING: Added complete video analytics tracking in VideoOverlay component with gallery video view tracking
+- SESSION MONITORING: Implemented real-time session duration tracking with 30-second heartbeat updates and automatic page exit detection
+- BACKEND ENDPOINT: Added session update endpoint for continuous duration tracking throughout user visits
+- VIDEO ID EXTRACTION: Enhanced URL-based video identification for proper gallery video tracking (excludes hero videos as intended)
+- Analytics system now provides meaningful real-time insights for gallery engagement and user behavior patterns
+
 **August 12, 2025 - v1.0.159 CRITICAL Analytics Trust Restoration (READY FOR DEPLOYMENT):**
 - CRITICAL FIX: Resolved analytics system trust issue - fixed core problem where ALL real user sessions were incorrectly flagged as test data
 - ANALYTICS FIX: Corrected isTestData detection logic to properly distinguish real production traffic from test/development data

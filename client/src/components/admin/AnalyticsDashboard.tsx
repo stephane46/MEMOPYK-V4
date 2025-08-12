@@ -1149,22 +1149,7 @@ export function AnalyticsDashboard() {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             <Card>
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">Total Views</CardTitle>
-                <Eye className="h-4 w-4 text-muted-foreground" />
-              </CardHeader>
-              <CardContent>
-                <div className="text-2xl font-bold">
-                  {formatNumber(dashboardData?.overview.totalViews || 0)}
-                </div>
-                <p className="text-xs text-muted-foreground">
-                  Gallery video views
-                </p>
-              </CardContent>
-            </Card>
-
-            <Card>
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">Unique Visitors</CardTitle>
+                <CardTitle className="text-sm font-medium">Visitors</CardTitle>
                 <Users className="h-4 w-4 text-muted-foreground" />
               </CardHeader>
               <CardContent>
@@ -1172,14 +1157,29 @@ export function AnalyticsDashboard() {
                   {formatNumber(dashboardData?.overview.uniqueVisitors || 0)}
                 </div>
                 <p className="text-xs text-muted-foreground">
-                  Distinct IP addresses
+                  Unique people visited
                 </p>
               </CardContent>
             </Card>
 
             <Card>
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">Total Watch Time</CardTitle>
+                <CardTitle className="text-sm font-medium">Gallery Views</CardTitle>
+                <Eye className="h-4 w-4 text-muted-foreground" />
+              </CardHeader>
+              <CardContent>
+                <div className="text-2xl font-bold">
+                  {formatNumber(dashboardData?.overview.totalViews || 0)}
+                </div>
+                <p className="text-xs text-muted-foreground">
+                  Videos clicked & watched
+                </p>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                <CardTitle className="text-sm font-medium">Watch Time</CardTitle>
                 <Clock className="h-4 w-4 text-muted-foreground" />
               </CardHeader>
               <CardContent>
@@ -1187,14 +1187,14 @@ export function AnalyticsDashboard() {
                   {formatDuration(dashboardData?.overview.totalWatchTime || 0)}
                 </div>
                 <p className="text-xs text-muted-foreground">
-                  Total engagement time
+                  Total video engagement
                 </p>
               </CardContent>
             </Card>
 
             <Card>
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">Avg Session</CardTitle>
+                <CardTitle className="text-sm font-medium">Session Time</CardTitle>
                 <TrendingUp className="h-4 w-4 text-muted-foreground" />
               </CardHeader>
               <CardContent>
@@ -1202,7 +1202,7 @@ export function AnalyticsDashboard() {
                   {formatDuration(dashboardData?.overview.averageSessionDuration || 0)}
                 </div>
                 <p className="text-xs text-muted-foreground">
-                  Per visitor session
+                  Average visit duration
                 </p>
               </CardContent>
             </Card>
