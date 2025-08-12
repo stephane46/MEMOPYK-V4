@@ -110,6 +110,7 @@ export function FlipCard({
 
   const handleCardClick = () => {
     console.log('🔄 FLIP TEST: Card clicked, flipping from', isFlipped, 'to', !isFlipped);
+    console.log('🔄 FLIP TEST: Current transform will be:', !isFlipped ? 'rotateY(-180deg)' : 'rotateY(0deg)');
     setIsFlipped(v => !v);
   };
 
@@ -169,11 +170,10 @@ export function FlipCard({
             transformStyle: 'preserve-3d',
             transform: isFlipped ? 'rotateY(-180deg)' : 'rotateY(0deg)',
             willChange: 'transform',
-            translate: '0',                 // promote to its own layer (helps against hairline gaps)
+            translate: '0',
             isolation: 'isolate',
-            minHeight: '120px'
-            // Optional polish to erase rare sub-pixel gaps on some GPUs:
-            // outline: '1px solid white'
+            minHeight: '120px',
+            backgroundColor: isFlipped ? 'pink' : 'yellow' // Visual state indicator
           }}
           role="button"
           aria-pressed={isFlipped}
