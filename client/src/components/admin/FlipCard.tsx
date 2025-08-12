@@ -163,13 +163,7 @@ export function FlipCard({
           ref={rotatorRef}
           className="relative w-full cursor-pointer transition-transform duration-500 rounded-lg overflow-hidden bg-white dark:bg-gray-800"
           onClick={(e) => {
-            console.log('DEBUG: Rotator clicked directly', e.target, 'Current position:', e.clientX, e.clientY);
-            e.preventDefault();
-            e.stopPropagation();
             handleCardClick();
-          }}
-          onMouseDown={(e) => {
-            console.log('DEBUG: Rotator mousedown', e.target);
           }}
           style={{
             transformStyle: 'preserve-3d',
@@ -186,7 +180,6 @@ export function FlipCard({
           tabIndex={0}
           onKeyDown={(e) => {
             if (e.key === 'Enter' || e.key === ' ') {
-              console.log('DEBUG: Keyboard trigger');
               e.preventDefault();
               handleCardClick();
             }
@@ -202,14 +195,9 @@ export function FlipCard({
               ref={frontInnerRef} 
               className="relative pointer-events-auto cursor-pointer"
               onClick={(e) => {
-                console.log('DEBUG: Front content clicked directly - CAPTURED!');
-                console.log('DEBUG: Event details:', e.type, e.target, e.currentTarget);
                 e.preventDefault();
                 e.stopPropagation();
                 handleCardClick();
-              }}
-              onMouseDown={(e) => {
-                console.log('DEBUG: Front mousedown - CAPTURED!');
               }}
             >
               {frontContent}
@@ -223,15 +211,15 @@ export function FlipCard({
             style={{
               backfaceVisibility: 'hidden',
               WebkitBackfaceVisibility: 'hidden',
-              transform: 'rotateY(-180deg) translateZ(0)'
+              transform: 'rotateY(180deg) translateZ(0)'
             }}
           >
             <div 
               ref={backInnerRef} 
               className="relative pointer-events-auto cursor-pointer"
               onClick={(e) => {
+                e.preventDefault();
                 e.stopPropagation();
-                console.log('DEBUG: Back content clicked directly');
                 handleCardClick();
               }}
             >
