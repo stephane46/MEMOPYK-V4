@@ -140,7 +140,7 @@ export function FlipCard({
         {/* Rotator: unified white surface, rounded, clipped; avoids seams */}
         <div
           ref={rotatorRef}
-          className="relative w-full cursor-pointer transition-transform duration-700 rounded-lg overflow-hidden bg-white dark:bg-white"
+          className="relative w-full cursor-pointer transition-transform duration-500 rounded-lg overflow-hidden bg-white dark:bg-white"
           onClick={handleCardClick}
           style={{
             transformStyle: 'preserve-3d',
@@ -173,58 +173,73 @@ export function FlipCard({
             }}
           >
             {/* Keep edges simple—no extra rounded/border here (prevents seams). */}
-            {backContent ?? (
-              <div className="p-6">
-                <div className="flex items-center gap-2 text-lg font-semibold">
-                  <Users className="h-5 w-5" />
-                  Recent Visitors
-                </div>
-                <div className="text-sm text-gray-600">
-                  Last {recentVisitors.length} unique visitors • Total: {uniqueVisitors}
-                </div>
+            <div 
+              className="h-full w-full p-6 bg-white"
+              style={{
+                backgroundColor: '#ffffff',
+                position: 'relative',
+                zIndex: 10
+              }}
+            >
+              <div className="flex items-center gap-2 text-lg font-semibold text-gray-900 mb-2">
+                <Users className="h-5 w-5 text-gray-700" />
+                Recent Visitors
+              </div>
+              <div className="text-sm text-gray-700 mb-4">
+                Last {recentVisitors.length} unique visitors • Total: {uniqueVisitors}
+              </div>
 
-                <div className="mt-4 flex flex-col gap-3">
-                  {recentVisitors.length > 0 ? (
-                    recentVisitors.map((visitor, index) => (
-                      <div
-                        key={visitor.ip_address + index}
-                        className="flex items-center justify-between p-3 rounded-lg border border-gray-200 shadow-sm bg-white"
-                      >
-                        <div className="flex items-center gap-3 flex-1 min-w-0">
-                          <div className="flex items-center gap-1 shrink-0">
-                            <span className="text-lg">
-                              {getCountryFlag(visitor.country)}
-                            </span>
-                            <span className="text-sm">
-                              {getLanguageFlag(visitor.language)}
-                            </span>
-                          </div>
-                          <div className="flex-1 min-w-0">
-                            <div className="text-sm font-medium text-gray-900 truncate">
-                              {visitor.ip_address}
-                            </div>
-                            <div className="text-xs text-gray-600 truncate">
-                              {visitor.country} • {visitor.language}
-                            </div>
-                          </div>
+              <div className="flex flex-col gap-3">
+                {recentVisitors.length > 0 ? (
+                  recentVisitors.map((visitor, index) => (
+                    <div
+                      key={visitor.ip_address + index}
+                      className="flex items-center justify-between p-3 rounded-lg border-2 border-gray-300 bg-gray-50"
+                      style={{
+                        backgroundColor: '#f9fafb',
+                        border: '2px solid #d1d5db'
+                      }}
+                    >
+                      <div className="flex items-center gap-3 flex-1 min-w-0">
+                        <div className="flex items-center gap-1 shrink-0">
+                          <span className="text-lg">
+                            {getCountryFlag(visitor.country)}
+                          </span>
+                          <span className="text-sm">
+                            {getLanguageFlag(visitor.language)}
+                          </span>
                         </div>
-                        <div className="text-right shrink-0">
-                          <Badge variant="outline" className="text-xs">
-                            <Clock className="h-3 w-3 mr-1" />
-                            {formatDate(visitor.last_visit)}
-                          </Badge>
+                        <div className="flex-1 min-w-0">
+                          <div className="text-sm font-medium text-gray-900 truncate">
+                            {visitor.ip_address}
+                          </div>
+                          <div className="text-xs text-gray-700 truncate">
+                            {visitor.country} • {visitor.language}
+                          </div>
                         </div>
                       </div>
-                    ))
-                  ) : (
-                    <div className="text-center py-8 text-gray-600">
-                      <Users className="h-8 w-8 mx-auto mb-2 opacity-70" />
-                      <p>No recent visitors found</p>
+                      <div className="text-right shrink-0">
+                        <div 
+                          className="text-xs px-2 py-1 rounded border bg-white text-gray-700"
+                          style={{
+                            backgroundColor: '#ffffff',
+                            border: '1px solid #9ca3af'
+                          }}
+                        >
+                          <Clock className="h-3 w-3 mr-1 inline" />
+                          {formatDate(visitor.last_visit)}
+                        </div>
+                      </div>
                     </div>
-                  )}
-                </div>
+                  ))
+                ) : (
+                  <div className="text-center py-8 text-gray-700">
+                    <Users className="h-8 w-8 mx-auto mb-2 text-gray-500" />
+                    <p>No recent visitors found</p>
+                  </div>
+                )}
               </div>
-            )}
+            </div>
           </div>
         </div>
         {/* /rotator */}

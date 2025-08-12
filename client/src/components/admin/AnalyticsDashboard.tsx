@@ -1234,27 +1234,20 @@ export function AnalyticsDashboard() {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             <FlipCard
               frontContent={
-                <div 
-                  className="h-full w-full bg-red-500 border-4 border-black p-4 flex flex-col"
-                  style={{
-                    minHeight: '120px',
-                    backgroundColor: 'red',
-                    color: 'white',
-                    fontSize: '16px',
-                    fontWeight: 'bold'
-                  }}
-                >
-                  <div className="flex justify-between items-center mb-2">
-                    <span>DEBUG: VISITORS</span>
-                    <Users className="h-4 w-4" />
-                  </div>
-                  <div className="text-3xl font-bold">
-                    {dashboardData?.overview.uniqueVisitors || 'NO DATA'}
-                  </div>
-                  <div>
-                    Unique visitors test
-                  </div>
-                </div>
+                <Card className="h-full w-full bg-white shadow-md border border-gray-200 rounded-lg">
+                  <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                    <CardTitle className="text-sm font-medium text-gray-900">Visitors</CardTitle>
+                    <Users className="h-4 w-4 text-gray-600" />
+                  </CardHeader>
+                  <CardContent className="pt-0">
+                    <div className="text-2xl font-bold text-gray-900">
+                      {formatNumber(dashboardData?.overview.uniqueVisitors || 0)}
+                    </div>
+                    <p className="text-xs text-gray-600">
+                      Unique people visited
+                    </p>
+                  </CardContent>
+                </Card>
               }
               uniqueVisitors={dashboardData?.overview.uniqueVisitors || 0}
               recentVisitors={recentVisitors ?? []}
