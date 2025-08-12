@@ -191,73 +191,158 @@ export function FlipCard({
           </div>
         </div>
 
-        {/* BACK FACE */}
+        {/* BACK FACE - TRANSPARENCY FIX */}
         <div
           ref={backRef}
-          className="absolute inset-0 rounded-lg"
           style={{
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
             backfaceVisibility: 'hidden',
             transform: 'rotateY(180deg)',
-            backgroundColor: 'lightblue',
-            padding: '1rem'
+            backgroundColor: '#89BAD9',
+            opacity: 1,
+            zIndex: 1000,
+            borderRadius: '8px',
+            padding: '16px',
+            border: '2px dashed #3b82f6'
           }}
         >
-          <div ref={backInnerRef}>
-              <div className="flex items-center gap-2 text-lg font-semibold text-gray-900 mb-2">
-                <Users className="h-5 w-5 text-gray-700" />
+          <div ref={backInnerRef} style={{
+            backgroundColor: '#89BAD9',
+            opacity: 1,
+            width: '100%',
+            height: '100%'
+          }}>
+              <div style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '8px',
+                fontSize: '18px',
+                fontWeight: '600',
+                color: '#111827',
+                marginBottom: '8px',
+                backgroundColor: '#89BAD9',
+                opacity: 1
+              }}>
+                <Users style={{ height: '20px', width: '20px', color: '#374151' }} />
                 Recent Visitors
               </div>
-              <div className="text-sm text-gray-700 mb-4">
+              <div style={{
+                fontSize: '14px',
+                color: '#374151',
+                marginBottom: '16px',
+                backgroundColor: '#89BAD9',
+                opacity: 1
+              }}>
                 Last {recentVisitors.length} unique visitors • Total: {uniqueVisitors}
               </div>
 
-              <div className="flex flex-col gap-3">
+              <div style={{
+                display: 'flex',
+                flexDirection: 'column',
+                gap: '12px',
+                backgroundColor: '#89BAD9',
+                opacity: 1
+              }}>
                 {recentVisitors.length > 0 ? (
                   recentVisitors.map((visitor, index) => (
                     <div
                       key={visitor.ip_address + index}
-                      className="flex items-center justify-between p-3 rounded-lg border-2 border-gray-300 bg-gray-50"
                       style={{
-                        backgroundColor: '#f9fafb',
-                        border: '2px solid #d1d5db'
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'space-between',
+                        padding: '12px',
+                        borderRadius: '8px',
+                        backgroundColor: '#ffffff',
+                        border: '2px solid #d1d5db',
+                        opacity: 1
                       }}
                     >
-                      <div className="flex items-center gap-3 flex-1 min-w-0">
-                        <div className="flex items-center gap-1 shrink-0">
-                          <span className="text-lg">
+                      <div style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '12px',
+                        flex: '1',
+                        minWidth: 0,
+                        backgroundColor: '#ffffff',
+                        opacity: 1
+                      }}>
+                        <div style={{
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: '4px',
+                          flexShrink: 0,
+                          backgroundColor: '#ffffff',
+                          opacity: 1
+                        }}>
+                          <span style={{ fontSize: '18px', backgroundColor: '#ffffff', opacity: 1 }}>
                             {getCountryFlag(visitor.country)}
                           </span>
-                          <span className="text-sm">
+                          <span style={{ fontSize: '14px', backgroundColor: '#ffffff', opacity: 1 }}>
                             {getLanguageFlag(visitor.language)}
                           </span>
                         </div>
-                        <div className="flex-1 min-w-0">
-                          <div className="text-sm font-medium text-gray-900 truncate">
+                        <div style={{ flex: '1', minWidth: 0, backgroundColor: '#ffffff', opacity: 1 }}>
+                          <div style={{
+                            fontSize: '14px',
+                            fontWeight: '500',
+                            color: '#111827',
+                            overflow: 'hidden',
+                            textOverflow: 'ellipsis',
+                            whiteSpace: 'nowrap',
+                            backgroundColor: '#ffffff',
+                            opacity: 1
+                          }}>
                             {visitor.ip_address}
                           </div>
-                          <div className="text-xs text-gray-700 truncate">
+                          <div style={{
+                            fontSize: '12px',
+                            color: '#374151',
+                            overflow: 'hidden',
+                            textOverflow: 'ellipsis',
+                            whiteSpace: 'nowrap',
+                            backgroundColor: '#ffffff',
+                            opacity: 1
+                          }}>
                             {visitor.country} • {visitor.language}
                           </div>
                         </div>
                       </div>
-                      <div className="text-right shrink-0">
-                        <div 
-                          className="text-xs px-2 py-1 rounded border bg-white text-gray-700"
-                          style={{
-                            backgroundColor: '#ffffff',
-                            border: '1px solid #9ca3af'
-                          }}
-                        >
-                          <Clock className="h-3 w-3 mr-1 inline" />
+                      <div style={{
+                        textAlign: 'right',
+                        flexShrink: 0,
+                        backgroundColor: '#ffffff',
+                        opacity: 1
+                      }}>
+                        <div style={{
+                          fontSize: '12px',
+                          padding: '4px 8px',
+                          borderRadius: '4px',
+                          backgroundColor: '#ffffff',
+                          border: '1px solid #9ca3af',
+                          color: '#374151',
+                          opacity: 1
+                        }}>
+                          <Clock style={{ height: '12px', width: '12px', marginRight: '4px', display: 'inline' }} />
                           {formatDate(visitor.last_visit)}
                         </div>
                       </div>
                     </div>
                   ))
                 ) : (
-                  <div className="text-center py-8 text-gray-700">
-                    <Users className="h-8 w-8 mx-auto mb-2 text-gray-500" />
-                    <p>No recent visitors found</p>
+                  <div style={{
+                    textAlign: 'center',
+                    padding: '32px 0',
+                    color: '#374151',
+                    backgroundColor: '#89BAD9',
+                    opacity: 1
+                  }}>
+                    <Users style={{ height: '32px', width: '32px', margin: '0 auto 8px', color: '#6b7280' }} />
+                    <p style={{ backgroundColor: '#89BAD9', opacity: 1 }}>No recent visitors found</p>
                   </div>
                 )}
               </div>
