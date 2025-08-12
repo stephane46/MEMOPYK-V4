@@ -176,10 +176,22 @@ export default function VideoOverlay({
   // Optimized video ready handler
   const handleCanPlay = useCallback(() => {
     console.log('🎬 VIDEO READY: Can play - instant transition from thumbnail');
-    setShowThumbnail(false);
     const video = videoRef.current;
     if (video) {
-      video.play().catch(console.warn);
+      console.log('🎬 VIDEO STATE CHECK:', {
+        readyState: video.readyState,
+        networkState: video.networkState,
+        currentTime: video.currentTime,
+        duration: video.duration,
+        videoWidth: video.videoWidth,
+        videoHeight: video.videoHeight
+      });
+      
+      // Ensure video is visible before hiding thumbnail
+      setTimeout(() => {
+        setShowThumbnail(false);
+        video.play().catch(console.warn);
+      }, 100);
     }
   }, []);
 
@@ -302,9 +314,10 @@ export default function VideoOverlay({
         {/* Thumbnail Display - Shows initially while video buffers */}
         {showThumbnail && thumbnailUrl && (
           <div 
-            className="absolute inset-0 z-10 bg-black flex items-center justify-center transition-opacity duration-300"
+            className="absolute inset-0 z-20 bg-black flex items-center justify-center transition-opacity duration-300"
             style={{
-              opacity: showThumbnail ? 1 : 0
+              opacity: showThumbnail ? 1 : 0,
+              pointerEvents: showThumbnail ? 'auto' : 'none'
             }}
           >
             <img
@@ -327,6 +340,13 @@ export default function VideoOverlay({
         <video
           ref={videoRef}
           className="w-full h-full object-cover"
+          style={{
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            zIndex: 10,
+            backgroundColor: 'black'
+          }}
           controls={false}
           onClick={handleVideoClick}
           onPlay={handlePlay}
