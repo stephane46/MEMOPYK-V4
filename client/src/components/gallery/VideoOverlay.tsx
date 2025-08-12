@@ -40,7 +40,6 @@ export default function VideoOverlay({
   const videoRef = useRef<HTMLVideoElement>(null);
   const overlayRef = useRef<HTMLDivElement>(null);
   const controlsTimeoutRef = useRef<NodeJS.Timeout | null>(null);
-  const progressUpdateRef = useRef<number | null>(null);
   const videoStartTimeRef = useRef<number>(Date.now());
   
   // Analytics tracking
@@ -128,41 +127,32 @@ export default function VideoOverlay({
     }
   }, [isPlaying]);
 
-  // Progress tracking
+  // Progress tracking - using timeupdate event for reliability
   const updateProgress = useCallback(() => {
     const video = videoRef.current;
-    if (video && !isNaN(video.duration)) {
+    if (video && !isNaN(video.duration) && video.duration > 0) {
       const progress = (video.currentTime / video.duration) * 100;
       setProgress(progress);
       setCurrentTime(video.currentTime);
       setDuration(video.duration);
     }
-    progressUpdateRef.current = requestAnimationFrame(updateProgress);
   }, []);
 
   // Video event handlers
   const handlePlay = useCallback(() => {
     setIsPlaying(true);
     resetControlsTimer();
-    updateProgress();
-  }, [resetControlsTimer, updateProgress]);
+  }, [resetControlsTimer]);
 
   const handlePause = useCallback(() => {
     setIsPlaying(false);
     setShowControls(true);
-    if (progressUpdateRef.current) {
-      cancelAnimationFrame(progressUpdateRef.current);
-    }
   }, []);
 
   const handleEnded = useCallback(() => {
     setIsPlaying(false);
-    setProgress(0);
-    setCurrentTime(0);
+    setProgress(100);
     setShowControls(true);
-    if (progressUpdateRef.current) {
-      cancelAnimationFrame(progressUpdateRef.current);
-    }
     
     // Track video completion
     const videoId = getVideoId();
@@ -293,9 +283,6 @@ export default function VideoOverlay({
       if (controlsTimeoutRef.current) {
         clearTimeout(controlsTimeoutRef.current);
       }
-      if (progressUpdateRef.current) {
-        cancelAnimationFrame(progressUpdateRef.current);
-      }
     };
   }, [handleKeyDown]);
 
@@ -386,6 +373,7 @@ export default function VideoOverlay({
           onPlay={handlePlay}
           onPause={handlePause}
           onLoadedMetadata={handleLoadedMetadata}
+          onTimeUpdate={updateProgress}
           onError={handleVideoError}
           onCanPlay={handleCanPlay}
           onCanPlayThrough={handleCanPlayThrough}
