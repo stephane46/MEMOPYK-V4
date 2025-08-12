@@ -1249,8 +1249,7 @@ export function AnalyticsDashboard() {
                   </CardContent>
                 </Card>
               }
-              uniqueVisitors={dashboardData?.overview.uniqueVisitors || 0}
-              recentVisitors={recentVisitors ?? []}
+              visitors={recentVisitors ?? []}
               className="h-full bg-white"
             />
 
