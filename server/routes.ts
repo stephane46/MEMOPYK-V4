@@ -1914,6 +1914,42 @@ export async function registerRoutes(app: Express): Promise<void> {
     }
   });
 
+  // Recent Visitors - GET last 10 visitor details for flip card
+  app.get("/api/analytics/recent-visitors", async (req, res) => {
+    try {
+      console.log('👥 Recent Visitors: Fetching last 10 visitor details...');
+      
+      const sessions = await hybridStorage.getAnalyticsSessions();
+      
+      // Get unique visitors with their latest session info
+      const visitorMap = new Map();
+      
+      sessions.forEach(session => {
+        const ip = session.ip_address;
+        if (!visitorMap.has(ip) || new Date(session.created_at) > new Date(visitorMap.get(ip).created_at)) {
+          visitorMap.set(ip, {
+            ip_address: ip,
+            country: session.country || 'Unknown',
+            language: session.language || 'Unknown', 
+            last_visit: session.created_at,
+            user_agent: session.user_agent ? session.user_agent.substring(0, 50) + '...' : 'Unknown'
+          });
+        }
+      });
+      
+      // Convert to array and sort by most recent
+      const recentVisitors = Array.from(visitorMap.values())
+        .sort((a, b) => new Date(b.last_visit).getTime() - new Date(a.last_visit).getTime())
+        .slice(0, 10); // Take last 10 visitors
+      
+      console.log(`✅ Recent Visitors: Found ${recentVisitors.length} unique visitors`);
+      res.json(recentVisitors);
+    } catch (error) {
+      console.error('❌ Recent Visitors: Error fetching visitor details:', error);
+      res.status(500).json({ error: 'Failed to load recent visitors' });
+    }
+  });
+
   // MISSING ANALYTICS ENDPOINTS - CRITICAL FOR DASHBOARD
 
   // Analytics Reset - POST reset all analytics data

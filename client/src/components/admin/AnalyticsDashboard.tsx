@@ -10,6 +10,7 @@ import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
 import { useToast } from '@/hooks/use-toast';
 import { apiRequest } from '@/lib/queryClient';
+import { FlipCard } from './FlipCard';
 import { 
   LineChart, 
   Line, 
@@ -131,6 +132,13 @@ export function AnalyticsDashboard() {
   const { data: activeIps, isLoading: activeIpsLoading } = useQuery<ActiveViewerIp[]>({
     queryKey: ['/api/analytics/active-ips'],
     enabled: showIpManagement
+  });
+
+  // Fetch recent visitors for flip card
+  const { data: recentVisitors } = useQuery({
+    queryKey: ['/api/analytics/recent-visitors'],
+    staleTime: 30000, // 30 seconds
+    refetchInterval: 60000, // Refresh every minute
   });
 
   // Fetch time-series data for charts
@@ -1218,20 +1226,27 @@ export function AnalyticsDashboard() {
 
           {/* Overview Cards */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            <Card>
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">Visitors</CardTitle>
-                <Users className="h-4 w-4 text-muted-foreground" />
-              </CardHeader>
-              <CardContent>
-                <div className="text-2xl font-bold">
-                  {formatNumber(dashboardData?.overview.uniqueVisitors || 0)}
-                </div>
-                <p className="text-xs text-muted-foreground">
-                  Unique people visited
-                </p>
-              </CardContent>
-            </Card>
+            <FlipCard
+              frontContent={
+                <>
+                  <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                    <CardTitle className="text-sm font-medium">Visitors</CardTitle>
+                    <Users className="h-4 w-4 text-muted-foreground" />
+                  </CardHeader>
+                  <CardContent>
+                    <div className="text-2xl font-bold">
+                      {formatNumber(dashboardData?.overview.uniqueVisitors || 0)}
+                    </div>
+                    <p className="text-xs text-muted-foreground">
+                      Unique people visited
+                    </p>
+                  </CardContent>
+                </>
+              }
+              uniqueVisitors={dashboardData?.overview.uniqueVisitors || 0}
+              recentVisitors={recentVisitors || []}
+              className="h-full"
+            />
 
             <Card>
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
