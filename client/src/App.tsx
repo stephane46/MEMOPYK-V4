@@ -30,17 +30,23 @@ function App() {
         position: 'fixed',
         top: '0',
         left: '0',
-        width: '100%',
-        height: '100px',
-        backgroundColor: 'red',
-        zIndex: '999999999',
-        color: 'white',
-        fontSize: '30px',
+        right: '0',
+        width: '100vw',
+        height: '200px',
+        backgroundColor: '#ff0000',
+        zIndex: '2147483647',
+        color: '#ffffff',
+        fontSize: '40px',
+        fontWeight: 'bold',
         textAlign: 'center',
-        padding: '20px',
-        border: '10px solid yellow'
+        padding: '40px',
+        border: '20px solid #ffff00',
+        boxShadow: '0 0 50px rgba(255,0,0,0.8)',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center'
       }}>
-        🚨 NUCLEAR CACHE TEST - IF YOU SEE THIS, FRONTEND CHANGES ARE WORKING 🚨
+        🔴 EXTREME TEST - DO YOU SEE THIS MASSIVE RED BOX? 🔴
       </div>
       <QueryClientProvider client={queryClient}>
       <AuthProvider>
