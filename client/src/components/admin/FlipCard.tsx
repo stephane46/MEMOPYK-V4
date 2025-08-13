@@ -198,9 +198,7 @@ export function FlipCard({ frontContent, className = "", visitors = [] }: Visito
                             height: '32px',
                             display: 'flex',
                             alignItems: 'center',
-                            justifyContent: 'center',
-                            backgroundColor: 'lightblue', // DEBUG: Make visible
-                            border: '2px solid red' // DEBUG: Make visible
+                            justifyContent: 'center'
                           }}>
 
                             <CountryFlag country={visitor.country_code || visitor.country} size={24} />

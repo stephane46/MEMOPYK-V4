@@ -98,8 +98,6 @@ interface CountryFlagProps {
  * 3. Neutral placeholder only for invalid data
  */
 export function CountryFlag({ country, className = "", size = 20 }: CountryFlagProps) {
-  // DEBUG: Log every render to track what's happening
-  console.log('🏴 CountryFlag RENDER:', { country, className, size });
   
   const [countryCode, setCountryCode] = useState<string | null>(null);
   const [flagSvgExists, setFlagSvgExists] = useState<boolean>(false);
@@ -124,10 +122,15 @@ export function CountryFlag({ country, className = "", size = 20 }: CountryFlagP
     }
 
     function processCountry() {
-      if (!country) return;
+      if (!country || country === 'Unknown') {
+        setCountryCode(null);
+        setIsLoading(false);
+        return;
+      }
 
-      // Try direct ISO code first
+      // Try direct ISO code first - this should work for DK, FR, GB, IT, ES
       let code = country.toUpperCase();
+      
       if (code.length === 2) {
         setCountryCode(code);
         checkFlagExists(code);
@@ -155,11 +158,14 @@ export function CountryFlag({ country, className = "", size = 20 }: CountryFlagP
         return;
       }
 
+
       setCountryCode(null);
       setIsLoading(false);
     }
 
     function checkFlagExists(code: string) {
+      const flagPath = `/flags/${code.toLowerCase()}.svg`;
+      
       const img = new Image();
       img.onload = () => {
         setFlagSvgExists(true);
@@ -169,7 +175,7 @@ export function CountryFlag({ country, className = "", size = 20 }: CountryFlagP
         setFlagSvgExists(false);
         setIsLoading(false);
       };
-      img.src = `/flags/${code.toLowerCase()}.svg`;
+      img.src = flagPath;
     }
   }, [country]);
 
@@ -244,22 +250,19 @@ export function CountryFlag({ country, className = "", size = 20 }: CountryFlagP
     }
   }
 
-  // Final fallback - Show what's happening
-  console.log('🏴 FINAL FALLBACK reached for:', country, 'countryCode:', countryCode, 'flagExists:', flagSvgExists, 'loading:', isLoading);
+  // Final fallback - neutral globe icon (no country codes shown)
   
-  // TEMPORARY DEBUG: Return the country code as text to see if this is where it comes from
   return (
-    <div style={{
-      width: `${size}px`,
-      height: `${size}px`,
-      backgroundColor: 'yellow',
-      border: '2px solid purple',
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center',
-      fontSize: '8px'
-    }}>
-      {countryCode || country || '?'}
-    </div>
+    <svg 
+      width={size} 
+      height={size} 
+      viewBox="0 0 24 24" 
+      fill="none" 
+      xmlns="http://www.w3.org/2000/svg"
+      className={`inline-block ${className}`}
+    >
+      <circle cx="12" cy="12" r="10" stroke="#6B7280" strokeWidth="2"/>
+      <path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z" stroke="#6B7280" strokeWidth="2"/>
+    </svg>
   );
 }
