@@ -110,10 +110,13 @@ export function VideoPerformanceCard({ frontContent, className = "", performance
     <>
       {/* CLICKABLE CARD */}
       <div 
-        className={`cursor-pointer transition-transform duration-200 hover:scale-105 ${className}`}
+        className={`cursor-pointer transition-transform duration-200 hover:scale-105 ${className} border-4 border-red-500 bg-red-100 shadow-red-300 shadow-lg`}
         onClick={handleCardClick}
+        style={{ border: '4px solid red', backgroundColor: '#fee2e2', boxShadow: '0 0 20px rgba(255, 0, 0, 0.3)' }}
       >
-        {frontContent}
+        <div style={{ padding: '4px', border: '2px solid red', borderRadius: '8px' }}>
+          {frontContent}
+        </div>
       </div>
 
       {/* CUSTOM MODAL WITH ABSOLUTE POSITIONING */}
