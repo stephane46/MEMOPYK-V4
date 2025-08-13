@@ -77,6 +77,8 @@ export default function VideoOverlay({
       video.load(); // Force immediate buffering
     }
     
+    // Initial click tracking - we'll track actual duration on close/end
+    console.log(`📊 VIDEO OPENED: ${videoId} - will track actual duration on close/end`);
     trackVideoView(videoId, 0, false);
   }, [videoUrl]); // Simplified dependencies to prevent infinite loops
 
@@ -165,10 +167,15 @@ export default function VideoOverlay({
     setProgress(100);
     setShowControls(true);
     
-    // Track video completion
+    // Track analytics when video ends - full completion
     const videoId = getVideoId();
-    trackVideoView(videoId, duration, true);
-  }, [duration, getVideoId, trackVideoView]);
+    const watchedDuration = Math.round(currentTime);
+    const completionRate = duration > 0 ? Math.round((currentTime / duration) * 100) : 0;
+    const isCompleted = completionRate >= 90; // Consider 90%+ as completed
+    
+    console.log(`📊 VIDEO ENDED ANALYTICS: ${videoId} watched ${watchedDuration}s (${completionRate}% completion)`);
+    trackVideoView(videoId, watchedDuration, isCompleted);
+  }, [currentTime, duration, getVideoId, trackVideoView]);
 
   const handleLoadedMetadata = useCallback(() => {
     const video = videoRef.current;
@@ -284,11 +291,26 @@ export default function VideoOverlay({
     }
   }, []);
 
+  // Enhanced close handler with analytics tracking
+  const handleCloseWithAnalytics = useCallback(() => {
+    // Track analytics when user manually closes the video
+    const videoId = getVideoId();
+    const watchedDuration = Math.round(currentTime);
+    const completionRate = duration > 0 ? Math.round((currentTime / duration) * 100) : 0;
+    const isCompleted = completionRate >= 90; // Consider 90%+ as completed
+    
+    console.log(`📊 VIDEO CLOSED ANALYTICS: ${videoId} watched ${watchedDuration}s (${completionRate}% completion)`);
+    trackVideoView(videoId, watchedDuration, isCompleted);
+    
+    // Call original close function
+    onClose();
+  }, [currentTime, duration, getVideoId, trackVideoView, onClose]);
+
   const handleOverlayClick = useCallback((e: React.MouseEvent) => {
     if (e.target === e.currentTarget) {
-      onClose();
+      handleCloseWithAnalytics();
     }
-  }, [onClose]);
+  }, [handleCloseWithAnalytics]);
 
   // Keyboard controls
   const handleKeyDown = useCallback((e: KeyboardEvent) => {
@@ -311,7 +333,7 @@ export default function VideoOverlay({
         break;
       case 'Escape':
         e.preventDefault();
-        onClose();
+        handleCloseWithAnalytics();
         break;
       case 'ArrowLeft':
         e.preventDefault();
@@ -502,7 +524,7 @@ export default function VideoOverlay({
 
         {/* Close Button - Mobile Only */}
         <button
-          onClick={onClose}
+          onClick={handleCloseWithAnalytics}
           className="absolute top-2 right-2 sm:hidden text-white hover:text-white/80 transition-colors bg-black/50 rounded-full p-2 z-30"
           aria-label="Close video"
         >
