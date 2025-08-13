@@ -647,11 +647,14 @@ export default function GallerySection() {
                           )}
                           
                           {/* Desktop Play Button - Orange for Video, White for No Video */}
-                          <div className="absolute inset-0 flex items-center justify-center">
+                          <div className="absolute inset-0 flex items-center justify-center" style={{zIndex: 10}}>
                             {/* Dynamic Play Button Based on Video Availability */}
                             <div 
                               className={`w-14 h-14 sm:w-16 sm:h-16 rounded-full flex items-center justify-center transition-all duration-300 hover:scale-110 cursor-pointer ${itemHasVideo ? 'animate-pulse-orange' : ''}`}
-                              onClick={(e) => handlePlayClick(item, e, index)}
+                              onClick={(e) => {
+                                console.log('🚨 CRITICAL CLICK DEBUG: Play button clicked!', { item: item.id, index, hasVideo: itemHasVideo });
+                                handlePlayClick(item, e, index);
+                              }}
                               style={itemHasVideo ? {
                                 // Orange for items WITH video
                                 background: 'linear-gradient(135deg, rgba(214, 124, 74, 0.95) 0%, rgba(214, 124, 74, 0.85) 50%, rgba(184, 90, 47, 0.95) 100%)',
