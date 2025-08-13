@@ -717,7 +717,7 @@ export default function GallerySection() {
                       </div>
                       
                       {/* Story (6) - Mobile Optimized with content padding - 5 lines for mobile */}
-                      <div className="px-3 sm:px-4 lg:px-6 mb-2 sm:mb-3 h-20 sm:h-20 overflow-hidden">
+                      <div className="px-3 sm:px-4 lg:px-6 mb-2 sm:mb-3 min-h-20 sm:min-h-20">
                         <div className="flex items-start gap-1 sm:gap-2">
                           <Film className="w-3 h-3 sm:w-4 sm:h-4 flex-shrink-0" style={{ color: '#D67C4A' }} />
                           <div className="text-xs sm:text-sm leading-4" style={{ color: '#4B5563' }}>
@@ -727,7 +727,7 @@ export default function GallerySection() {
                       </div>
                       
                       {/* Situation (7) - Mobile Optimized with content padding - 5 lines for mobile */}
-                      <div className="px-3 sm:px-4 lg:px-6 h-20 sm:h-20 overflow-hidden">
+                      <div className="px-3 sm:px-4 lg:px-6 min-h-20 sm:min-h-20">
                         <div className="flex items-start gap-1 sm:gap-2">
                           <Users className="w-3 h-3 sm:w-4 sm:h-4 flex-shrink-0" style={{ color: '#D67C4A' }} />
                           <div className="text-xs sm:text-sm leading-4" style={{ color: '#4B5563' }}>
