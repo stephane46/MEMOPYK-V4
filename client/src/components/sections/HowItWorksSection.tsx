@@ -90,18 +90,18 @@ export function HowItWorksSection() {
                   </h3>
 
                   {/* Step Description - Takes available space */}
-                  <div className="text-memopyk-cream/90 text-sm sm:text-base mb-4 sm:mb-6 flex-grow" style={{ lineHeight: '1.4' }}>
+                  <div className="text-memopyk-cream/90 text-xs sm:text-sm mb-3 sm:mb-4 flex-grow" style={{ lineHeight: '1.2' }}>
                     {language === 'fr-FR' ? step.descriptionFr : step.descriptionEn}
                   </div>
                   
                   {/* Sub Description - Fixed at bottom with adaptive text */}
-                  <div className="flex-shrink-0 pt-4 border-t border-memopyk-cream/20 flex flex-col items-center justify-start">
-                    <div className="flex justify-center mb-3">
+                  <div className="flex-shrink-0 pt-3 border-t border-memopyk-cream/20 flex flex-col items-center justify-start">
+                    <div className="flex justify-center mb-2">
                       <div className="w-8 h-8 rounded-full bg-memopyk-cream flex items-center justify-center">
                         <Icon className="w-4 h-4 text-memopyk-dark-blue" />
                       </div>
                     </div>
-                    <div className="text-memopyk-cream/90 text-sm sm:text-base text-center px-2" style={{ lineHeight: '1.3' }}>
+                    <div className="text-memopyk-cream/90 text-xs sm:text-sm text-center px-2" style={{ lineHeight: '1.2' }}>
                       {language === 'fr-FR' ? step.subDescriptionFr : step.subDescriptionEn}
                     </div>
                   </div>
