@@ -1553,7 +1553,7 @@ Daily session and view analytics over time
                 {dashboardData?.topCountries?.length ? (
                   <div className="space-y-3">
                     {dashboardData.topCountries.map((country, index) => (
-                      <div key={country.country} className="flex items-center justify-between">
+                      <div key={`country-${country.country}-${index}`} className="flex items-center justify-between">
                         <div className="flex items-center gap-2">
                           <CountryFlag country={country.country} size={20} />
                           <span className="font-medium">{country.country}</span>
