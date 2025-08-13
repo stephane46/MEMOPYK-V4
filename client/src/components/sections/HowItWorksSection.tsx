@@ -91,7 +91,7 @@ export function HowItWorksSection() {
 
                   {/* Step Description - Scrollable container with explicit height */}
                   <div className="flex-grow flex flex-col" style={{ minHeight: '200px' }}>
-                    <div className="overflow-y-auto text-memopyk-cream/90 text-xs sm:text-sm mb-3 sm:mb-4 how-it-works-text pr-2" style={{ height: '140px', flexShrink: 0 }}>
+                    <div className="overflow-y-auto text-memopyk-cream/90 text-xs sm:text-sm leading-4 mb-3 sm:mb-4 how-it-works-text pr-2" style={{ height: '140px', flexShrink: 0 }}>
                       {language === 'fr-FR' ? step.descriptionFr : step.descriptionEn}
                     </div>
                     
@@ -102,7 +102,7 @@ export function HowItWorksSection() {
                           <Icon className="w-4 h-4 text-memopyk-dark-blue" />
                         </div>
                       </div>
-                      <div className="text-memopyk-cream/90 text-xs sm:text-sm text-center px-2 how-it-works-text overflow-y-auto pr-2" style={{ height: '60px', flexShrink: 0 }}>
+                      <div className="text-memopyk-cream/90 text-xs sm:text-sm leading-4 text-center px-2 how-it-works-text overflow-y-auto pr-2" style={{ height: '60px', flexShrink: 0 }}>
                         {language === 'fr-FR' ? step.subDescriptionFr : step.subDescriptionEn}
                       </div>
                     </div>
