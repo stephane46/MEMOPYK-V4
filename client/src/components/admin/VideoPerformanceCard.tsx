@@ -14,9 +14,11 @@ interface VideoPerformanceCardProps {
   frontContent: React.ReactNode;
   className?: string;
   performanceData?: VideoPerformanceData[];
+  dateFrom?: string;
+  dateTo?: string;
 }
 
-export function VideoPerformanceCard({ frontContent, className = "", performanceData = [] }: VideoPerformanceCardProps) {
+export function VideoPerformanceCard({ frontContent, className = "", performanceData = [], dateFrom, dateTo }: VideoPerformanceCardProps) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [freshData, setFreshData] = useState<VideoPerformanceData[]>([]);
 
@@ -25,7 +27,12 @@ export function VideoPerformanceCard({ frontContent, className = "", performance
     // NUCLEAR OPTION: Use completely new endpoint to bypass all caching
     try {
       const timestamp = Date.now();
-      const response = await fetch(`/api/analytics/fresh-video-data?t=${timestamp}&r=${Math.random()}`, {
+      
+      let url = `/api/analytics/fresh-video-data?t=${timestamp}&r=${Math.random()}`;
+      if (dateFrom) url += `&dateFrom=${encodeURIComponent(dateFrom)}`;
+      if (dateTo) url += `&dateTo=${encodeURIComponent(dateTo)}`;
+      
+      const response = await fetch(url, {
         method: 'GET',
         cache: 'no-cache',
         headers: {

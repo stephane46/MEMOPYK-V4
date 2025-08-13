@@ -147,7 +147,7 @@ export function AnalyticsDashboard() {
     last_visit: string;
     user_agent: string;
   }>>({
-    queryKey: ['/api/analytics/recent-visitors'],
+    queryKey: ['/api/analytics/recent-visitors', dateFrom, dateTo],
     staleTime: 30000, // 30 seconds
     refetchInterval: 60000, // Refresh every minute
   });
@@ -161,7 +161,7 @@ export function AnalyticsDashboard() {
     average_watch_time: number;
     last_viewed: string;
   }>>({
-    queryKey: ['/api/analytics/video-performance'],
+    queryKey: ['/api/analytics/video-performance', dateFrom, dateTo],
     staleTime: 0, // Always fetch fresh data
     gcTime: 0, // Don't cache
     refetchOnMount: true, // Always refetch on component mount
@@ -1281,6 +1281,8 @@ export function AnalyticsDashboard() {
             />
 
             <VideoPerformanceCard
+              dateFrom={dateFrom}
+              dateTo={dateTo}
               frontContent={
                 <Card className="h-full w-full bg-white shadow-md border border-gray-200 rounded-lg">
                   <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">

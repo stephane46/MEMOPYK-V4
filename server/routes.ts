@@ -1955,9 +1955,13 @@ export async function registerRoutes(app: Express): Promise<void> {
   // Recent Visitors - GET last 10 visitor details for flip card  
   app.get("/api/analytics/recent-visitors", async (req, res) => {
     try {
-      console.log('👥 Recent Visitors: Fetching last 10 visitor details...');
+      const { dateFrom, dateTo } = req.query;
+      console.log('👥 Recent Visitors: Fetching visitor details with date filters:', { dateFrom, dateTo });
       
-      const sessions = await hybridStorage.getAnalyticsSessions();
+      const sessions = await hybridStorage.getAnalyticsSessions(
+        dateFrom as string, 
+        dateTo as string
+      );
       
       // Filter out test data and invalid sessions BEFORE processing
       const realSessions = sessions.filter(session => {
@@ -2320,14 +2324,18 @@ export async function registerRoutes(app: Express): Promise<void> {
   // Video Performance Analytics - GET video engagement data (FIXED v1.0.186)
   app.get("/api/analytics/video-performance", async (req, res) => {
     try {
-      console.log('📊 Video performance analytics request - FIXED DATA QUALITY v1.0.186');
+      const { dateFrom, dateTo } = req.query;
+      console.log('📊 Video performance analytics request - FIXED DATA QUALITY v1.0.186 with date filters:', { dateFrom, dateTo });
       
       // Get all gallery videos first
       const galleryItems = await hybridStorage.getGalleryItems();
       console.log(`📊 Found ${galleryItems.length} gallery items in database`);
       
-      // Get all video views from analytics
-      const views = await hybridStorage.getAnalyticsViews();
+      // Get all video views from analytics with date filters
+      const views = await hybridStorage.getAnalyticsViews(
+        dateFrom as string, 
+        dateTo as string
+      );
       console.log(`📊 Found ${views.length} total analytics views`);
       
       // Create video filename mapping for better data integrity
@@ -2459,7 +2467,8 @@ export async function registerRoutes(app: Express): Promise<void> {
   // NUCLEAR CACHE-BUSTING VIDEO ANALYTICS - v1.0.187
   app.get("/api/analytics/fresh-video-data", async (req, res) => {
     try {
-      console.log('🚨 NUCLEAR CACHE BYPASS REQUEST - FRESH VIDEO DATA v1.0.187');
+      const { dateFrom, dateTo } = req.query;
+      console.log('🚨 NUCLEAR CACHE BYPASS REQUEST - FRESH VIDEO DATA v1.0.187 with date filters:', { dateFrom, dateTo });
       
       // Set aggressive no-cache headers
       res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
@@ -2471,8 +2480,11 @@ export async function registerRoutes(app: Express): Promise<void> {
       const galleryItems = await hybridStorage.getGalleryItems();
       console.log(`🚨 FRESH: Found ${galleryItems.length} gallery items in database`);
       
-      // Get all video views from analytics
-      const views = await hybridStorage.getAnalyticsViews();
+      // Get all video views from analytics with date filters
+      const views = await hybridStorage.getAnalyticsViews(
+        dateFrom as string, 
+        dateTo as string
+      );
       console.log(`🚨 FRESH: Found ${views.length} total analytics views`);
       
       // Create video filename mapping for better data integrity

@@ -38,8 +38,17 @@ export const getQueryFn: <T>(options: {
       for (let i = 1; i < queryKey.length; i++) {
         const param = queryKey[i] as string;
         // Skip version keys like 'v1.0.110' - only add real query parameters
-        if (param && !param.startsWith('v') && param.length > 10) {
-          params.set('lang', param);
+        if (param && !param.startsWith('v')) {
+          if (param.length > 10) {
+            params.set('lang', param);
+          } else if (param.includes('-') && param.length === 10) {
+            // Handle date parameters (YYYY-MM-DD format)
+            if (i === 1) {
+              params.set('dateFrom', param);
+            } else if (i === 2) {
+              params.set('dateTo', param);
+            }
+          }
         }
       }
       if (params.toString()) {
