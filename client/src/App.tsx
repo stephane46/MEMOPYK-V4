@@ -22,8 +22,27 @@ console.log("🔀 routes configured for /gallery");
 console.log("%c🚀 MEMOPYK LANGUAGE-SPECIFIC UPLOAD SYSTEM v1.0.82 - Force reload to fix English upload section visibility", "color: red; font-size: 16px; font-weight: bold;");
 
 function App() {
+  // 🔴🔴🔴 EXTREME CACHE TEST - NUCLEAR VISIBILITY CHECK 🔴🔴🔴
   return (
-    <QueryClientProvider client={queryClient}>
+    <>
+      {/* ABSOLUTE NUCLEAR TEST - THIS MUST BE VISIBLE */}
+      <div style={{
+        position: 'fixed',
+        top: '0',
+        left: '0',
+        width: '100%',
+        height: '100px',
+        backgroundColor: 'red',
+        zIndex: '999999999',
+        color: 'white',
+        fontSize: '30px',
+        textAlign: 'center',
+        padding: '20px',
+        border: '10px solid yellow'
+      }}>
+        🚨 NUCLEAR CACHE TEST - IF YOU SEE THIS, FRONTEND CHANGES ARE WORKING 🚨
+      </div>
+      <QueryClientProvider client={queryClient}>
       <AuthProvider>
         <LanguageProvider>
           <Router>
@@ -75,6 +94,7 @@ function App() {
       </AuthProvider>
       <Toaster />
     </QueryClientProvider>
+    </>
   );
 }
 
