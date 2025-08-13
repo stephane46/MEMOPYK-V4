@@ -25,32 +25,40 @@ export const useVideoAnalytics = () => {
 
   const trackVideoView = useMutation({
     mutationFn: async (data: VideoViewData) => {
-      console.log('📊 PRODUCTION ANALYTICS: Making video view tracking request to /api/analytics/video-view');
+      console.log('🚨 CRITICAL TRACKING MUTATION v1.0.190: Making video view tracking request to /api/analytics/video-view');
+      console.log('🚨 CRITICAL TRACKING MUTATION v1.0.190: Request data:', data);
+      
       const response = await fetch('/api/analytics/video-view', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(data)
       });
       
-      console.log('📊 PRODUCTION ANALYTICS: Video view request response status:', response.status);
+      console.log('🚨 CRITICAL TRACKING MUTATION v1.0.190: Response status:', response.status);
+      console.log('🚨 CRITICAL TRACKING MUTATION v1.0.190: Response headers:', response.headers);
       
       if (!response.ok) {
         const errorText = await response.text();
-        console.error('📊 PRODUCTION ANALYTICS: Video view tracking failed:', response.status, errorText);
+        console.error('🚨 CRITICAL TRACKING MUTATION v1.0.190: TRACKING FAILED:', response.status, errorText);
         throw new Error(`Failed to track video view: ${response.status} - ${errorText}`);
       }
       
       const result = await response.json();
-      console.log('📊 PRODUCTION ANALYTICS: Video view tracked successfully:', result);
+      console.log('🚨 CRITICAL TRACKING MUTATION v1.0.190: SUCCESS - Server response:', result);
       return result;
     },
     onSuccess: (data) => {
-      console.log('📊 PRODUCTION ANALYTICS: Video view mutation success:', data);
+      console.log('🚨 CRITICAL TRACKING MUTATION v1.0.190: MUTATION SUCCESS:', data);
       // Invalidate analytics queries to refresh data
       queryClient.invalidateQueries({ queryKey: ['/api/analytics'] });
     },
     onError: (error) => {
-      console.error('📊 PRODUCTION ANALYTICS: Video view tracking error:', error);
+      console.error('🚨 CRITICAL TRACKING MUTATION v1.0.190: MUTATION ERROR:', error);
+      console.error('🚨 CRITICAL TRACKING MUTATION v1.0.190: Error details:', {
+        message: error.message,
+        stack: error.stack,
+        name: error.name
+      });
     },
   });
 
@@ -92,20 +100,23 @@ export const useVideoAnalytics = () => {
       return;
     }
     
-    console.log(`📊 PRODUCTION ANALYTICS: Gallery video tracking requested for: ${videoId}`);
-    console.log('📊 PRODUCTION ANALYTICS: Video data:', { videoId, durationWatched, completed });
+    console.log(`🚨 CRITICAL VIDEO TRACKING DEBUG v1.0.190: Gallery video tracking requested for: ${videoId}`);
+    console.log('🚨 CRITICAL VIDEO TRACKING DEBUG v1.0.190: Video data:', { videoId, durationWatched, completed });
+    console.log('🚨 CRITICAL VIDEO TRACKING DEBUG v1.0.190: Current URL:', window.location.href);
+    console.log('🚨 CRITICAL VIDEO TRACKING DEBUG v1.0.190: User Agent:', navigator.userAgent);
     
     const language = (localStorage.getItem('memopyk-language') as 'en-US' | 'fr-FR') || 'fr-FR';
+    console.log('🚨 CRITICAL VIDEO TRACKING DEBUG v1.0.190: Language:', language);
     
     // Reduced duplicate prevention - 10 second window for better production testing
     const lastTracked = localStorage.getItem(`last-tracked-${videoId}`);
     const now = Date.now();
     if (lastTracked && now - parseInt(lastTracked) < 10000) {
-      console.log(`📊 PRODUCTION ANALYTICS: Skipping duplicate video tracking for ${videoId} - last tracked ${Math.round((now - parseInt(lastTracked)) / 1000)}s ago`);
+      console.log(`🚨 CRITICAL VIDEO TRACKING DEBUG v1.0.190: DUPLICATE BLOCKED - last tracked ${Math.round((now - parseInt(lastTracked)) / 1000)}s ago`);
       return; // Skip if tracked within last 10 seconds
     }
     
-    console.log(`📊 PRODUCTION ANALYTICS: Tracking gallery video view for ${videoId}`);
+    console.log(`🚨 CRITICAL VIDEO TRACKING DEBUG v1.0.190: PROCEEDING WITH TRACKING for ${videoId}`);
     localStorage.setItem(`last-tracked-${videoId}`, now.toString());
     
     const viewData = {
@@ -117,7 +128,8 @@ export const useVideoAnalytics = () => {
       referrer: document.referrer || undefined,
     };
     
-    console.log('📊 PRODUCTION ANALYTICS: Sending video view data:', viewData);
+    console.log('🚨 CRITICAL VIDEO TRACKING DEBUG v1.0.190: Final tracking data:', viewData);
+    console.log('🚨 CRITICAL VIDEO TRACKING DEBUG v1.0.190: Calling trackVideoView.mutate...');
     
     trackVideoView.mutate(viewData);
   }, [trackVideoView]);

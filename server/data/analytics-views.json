@@ -104,5 +104,21 @@
     "is_test_data": true,
     "created_at": "2025-08-13T17:25:35.123Z",
     "updated_at": "2025-08-13T17:25:35.123Z"
+  },
+  {
+    "id": "view_1755113608423_jhc445jnp",
+    "video_id": "VitaminSeaC.mp4",
+    "video_filename": "VitaminSeaC.mp4",
+    "video_type": "gallery",
+    "video_title": "",
+    "session_id": "session_1755113608422",
+    "language": "fr-FR",
+    "watch_time": 30,
+    "completion_rate": 0,
+    "ip_address": "127.0.0.1",
+    "user_agent": "curl/8.14.1",
+    "is_test_data": true,
+    "created_at": "2025-08-13T19:33:28.423Z",
+    "updated_at": "2025-08-13T19:33:28.423Z"
   }
 ]
