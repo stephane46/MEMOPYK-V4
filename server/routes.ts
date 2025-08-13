@@ -1978,7 +1978,7 @@ export async function registerRoutes(app: Express): Promise<void> {
       // Second pass: build visitor info with previous visit data
       visitorSessions.forEach((sessions, ip) => {
         // Sort sessions by date (newest first)
-        sessions.sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
+        sessions.sort((a: any, b: any) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
         
         const latestSession = sessions[0];
         const previousSession = sessions[1]; // Second most recent session
@@ -2031,6 +2031,92 @@ export async function registerRoutes(app: Express): Promise<void> {
 
   // MISSING ANALYTICS ENDPOINTS - CRITICAL FOR DASHBOARD
 
+  // IP Exclusion Management - POST exclude IP address  
+  app.post("/api/analytics/exclude-ip", async (req, res) => {
+    try {
+      const { ipAddress, comment } = req.body;
+      
+      if (!ipAddress) {
+        return res.status(400).json({ error: "IP address is required" });
+      }
+
+      console.log(`🚫 Excluding IP address: ${ipAddress} with comment: ${comment || 'No comment'}`);
+      
+      const settings = await hybridStorage.addExcludedIp(ipAddress, comment);
+      res.json({ 
+        success: true, 
+        message: `IP ${ipAddress} excluded successfully`,
+        excludedIps: settings.excludedIps 
+      });
+    } catch (error) {
+      console.error('❌ IP exclusion error:', error);
+      res.status(500).json({ error: "Failed to exclude IP address" });
+    }
+  });
+
+  // IP Exclusion Management - PATCH update comment for excluded IP
+  app.patch("/api/analytics/exclude-ip/:ipAddress/comment", async (req, res) => {
+    try {
+      const { ipAddress } = req.params;
+      const { comment } = req.body;
+      
+      if (!ipAddress) {
+        return res.status(400).json({ error: "IP address is required" });
+      }
+
+      console.log(`📝 Updating comment for IP: ${ipAddress} to: ${comment || 'No comment'}`);
+      
+      // First remove the IP, then re-add with new comment
+      await hybridStorage.removeExcludedIp(ipAddress);
+      const settings = await hybridStorage.addExcludedIp(ipAddress, comment);
+      
+      res.json({ 
+        success: true, 
+        message: `Comment updated for IP ${ipAddress}`,
+        excludedIps: settings.excludedIps 
+      });
+    } catch (error) {
+      console.error('❌ IP comment update error:', error);
+      res.status(500).json({ error: "Failed to update IP comment" });
+    }
+  });
+
+  // IP Exclusion Management - DELETE remove excluded IP
+  app.delete("/api/analytics/exclude-ip/:ipAddress", async (req, res) => {
+    try {
+      const { ipAddress } = req.params;
+      
+      if (!ipAddress) {
+        return res.status(400).json({ error: "IP address is required" });
+      }
+
+      console.log(`✅ Removing excluded IP: ${ipAddress}`);
+      
+      const settings = await hybridStorage.removeExcludedIp(ipAddress);
+      res.json({ 
+        success: true, 
+        message: `IP ${ipAddress} removed from exclusion list`,
+        excludedIps: settings.excludedIps 
+      });
+    } catch (error) {
+      console.error('❌ IP removal error:', error);
+      res.status(500).json({ error: "Failed to remove excluded IP" });
+    }
+  });
+
+  // IP Exclusion Management - GET list of excluded IPs
+  app.get("/api/analytics/exclude-ip", async (req, res) => {
+    try {
+      const settings = await hybridStorage.getAnalyticsSettings();
+      res.json({ 
+        excludedIps: settings.excludedIps || [] 
+      });
+    } catch (error) {
+      console.error('❌ Get excluded IPs error:', error);
+      res.status(500).json({ error: "Failed to get excluded IPs" });
+    }
+  });
+
   // Analytics Reset - POST reset all analytics data
   app.post("/api/analytics/reset", async (req, res) => {
     try {
@@ -2075,7 +2161,7 @@ export async function registerRoutes(app: Express): Promise<void> {
       console.log('🌍 Location Enrichment: Starting manual enrichment...');
       
       const sessions = await hybridStorage.getAnalyticsSessions();
-      const uniqueIPs = [...new Set(sessions.map(s => s.ip_address).filter(ip => ip && ip !== '0.0.0.0'))];
+      const uniqueIPs = Array.from(new Set(sessions.map(s => s.ip_address).filter(ip => ip && ip !== '0.0.0.0')));
       
       console.log(`🌍 Location Enrichment: Found ${uniqueIPs.length} unique IPs to enrich`);
       
