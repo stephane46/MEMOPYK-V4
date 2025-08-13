@@ -194,6 +194,13 @@ export function FlipCard({ frontContent, className = "", visitors = [] }: Visito
             <rect x="6.5" y="0" width="1" height="15" fill="#002868"/>
             <rect x="0" y="7" width="20" height="1" fill="#002868"/>
           </svg>
+        ),
+        'DK': (
+          <svg width="20" height="15" viewBox="0 0 20 15" xmlns="http://www.w3.org/2000/svg">
+            <rect width="20" height="15" fill="#C8102E"/>
+            <rect x="6" y="0" width="2" height="15" fill="#FFFFFF"/>
+            <rect x="0" y="6.5" width="20" height="2" fill="#FFFFFF"/>
+          </svg>
         )
       };
       return flags[countryCode];
@@ -218,6 +225,7 @@ export function FlipCard({ frontContent, className = "", visitors = [] }: Visito
       'Austria': 'AT',
       'Sweden': 'SE',
       'Norway': 'NO',
+      'Denmark': 'DK',
       // Two-letter codes
       'ES': 'ES',
       'IT': 'IT',
@@ -233,7 +241,8 @@ export function FlipCard({ frontContent, className = "", visitors = [] }: Visito
       'CH': 'CH',
       'AT': 'AT',
       'SE': 'SE',
-      'NO': 'NO'
+      'NO': 'NO',
+      'DK': 'DK'
     };
     
     // Only show globe icon for truly unknown entries
@@ -246,13 +255,42 @@ export function FlipCard({ frontContent, className = "", visitors = [] }: Visito
       );
     }
     
-    // Get the flag SVG for the country
-    const countryCode = countryToCode[country];
+    // First try to get the SVG flag for the country
+    const countryCode = countryToCode[country] || countryToCode[country?.toUpperCase()];
     if (countryCode) {
-      return getFlagSvg(countryCode);
+      const svgFlag = getFlagSvg(countryCode);
+      if (svgFlag) return svgFlag;
+    }
+
+    // Universal fallback: Convert any country code to Unicode flag emoji
+    const getUnicodeFlagEmoji = (code: string): string | null => {
+      if (code && code.length === 2) {
+        const codePoints = code.toUpperCase().split('').map(char => 
+          0x1F1E6 - 65 + char.charCodeAt(0)
+        );
+        return String.fromCodePoint(...codePoints);
+      }
+      return null;
+    };
+
+    // Try to get Unicode flag emoji for country code
+    const unicodeFlag = getUnicodeFlagEmoji(countryCode || country);
+    if (unicodeFlag) {
+      return (
+        <div style={{
+          fontSize: '20px',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          fontFamily: 'system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
+          lineHeight: '1'
+        }}>
+          {unicodeFlag}
+        </div>
+      );
     }
     
-    // Default flag icon for unrecognized countries
+    // Final fallback for truly unrecognized entries
     return (
       <svg width="20" height="15" viewBox="0 0 20 15" xmlns="http://www.w3.org/2000/svg">
         <rect width="20" height="15" fill="#E5E7EB" stroke="#9CA3AF" strokeWidth="1"/>
