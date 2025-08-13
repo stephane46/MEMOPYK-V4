@@ -1962,33 +1962,39 @@ export async function registerRoutes(app: Express): Promise<void> {
                !session.session_id?.includes('anonymous');
       });
       
-      // Get unique visitors with their latest session info, visit count, and session duration
+      // Get unique visitors with their latest session info, visit count, session duration, and previous visit
       const visitorMap = new Map();
+      const visitorSessions = new Map(); // Track all sessions per visitor for previous visit calculation
       
+      // First pass: collect all sessions per visitor
       realSessions.forEach(session => {
         const ip = session.ip_address;
-        if (!visitorMap.has(ip)) {
-          // First time seeing this visitor
-          visitorMap.set(ip, {
-            ip_address: ip,
-            country: session.country || 'Unknown',
-            region: session.region || 'Unknown',
-            city: session.city || 'Unknown',
-            language: session.language || 'Unknown', 
-            last_visit: session.created_at,
-            user_agent: session.user_agent ? session.user_agent.substring(0, 50) + '...' : 'Unknown',
-            visit_count: 1,
-            session_duration: session.session_duration || Math.floor(Math.random() * 300 + 30) // Mock duration between 30-330 seconds for demo
-          });
-        } else {
-          // Update if this session is more recent
-          const existing = visitorMap.get(ip);
-          if (new Date(session.created_at) > new Date(existing.last_visit)) {
-            existing.last_visit = session.created_at;
-            existing.session_duration = session.session_duration || Math.floor(Math.random() * 300 + 30);
-          }
-          existing.visit_count += 1;
+        if (!visitorSessions.has(ip)) {
+          visitorSessions.set(ip, []);
         }
+        visitorSessions.get(ip).push(session);
+      });
+      
+      // Second pass: build visitor info with previous visit data
+      visitorSessions.forEach((sessions, ip) => {
+        // Sort sessions by date (newest first)
+        sessions.sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
+        
+        const latestSession = sessions[0];
+        const previousSession = sessions[1]; // Second most recent session
+        
+        visitorMap.set(ip, {
+          ip_address: ip,
+          country: latestSession.country || 'Unknown',
+          region: latestSession.region || 'Unknown',
+          city: latestSession.city || 'Unknown',
+          language: latestSession.language || 'Unknown', 
+          last_visit: latestSession.created_at,
+          user_agent: latestSession.user_agent ? latestSession.user_agent.substring(0, 50) + '...' : 'Unknown',
+          visit_count: sessions.length,
+          session_duration: latestSession.session_duration || Math.floor(Math.random() * 300 + 30), // Mock duration between 30-330 seconds for demo
+          previous_visit: previousSession ? previousSession.created_at : null
+        });
       });
       
       // Convert to array and sort by most recent

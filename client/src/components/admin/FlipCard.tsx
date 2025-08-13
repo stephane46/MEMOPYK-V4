@@ -18,6 +18,7 @@ interface VisitorModalProps {
     user_agent: string;
     visit_count?: number;
     session_duration?: number;
+    previous_visit?: string;
   }>;
 }
 
@@ -247,6 +248,14 @@ export function FlipCard({ frontContent, className = "", visitors = [] }: Visito
                               </span>
                             )}
                           </div>
+                          <div style={{
+                            fontSize: '10px',
+                            color: '#9ca3af',
+                            marginTop: '2px',
+                            fontFamily: 'monospace'
+                          }}>
+                            {visitor.ip_address}
+                          </div>
                         </div>
                       </div>
                       <div style={{
@@ -260,7 +269,7 @@ export function FlipCard({ frontContent, className = "", visitors = [] }: Visito
                         padding: '8px 12px',
                         borderRadius: '6px',
                         border: '1px solid #e5e7eb',
-                        minWidth: '110px'
+                        minWidth: '120px'
                       }}>
                         <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
                           <Clock style={{ width: '14px', height: '14px' }} />
@@ -276,6 +285,15 @@ export function FlipCard({ frontContent, className = "", visitors = [] }: Visito
                           }}>
                             <span>⏱</span>
                             {formatDuration(visitor.session_duration)}
+                          </div>
+                        )}
+                        {visitor.previous_visit && (
+                          <div style={{ 
+                            fontSize: '10px', 
+                            color: '#9ca3af',
+                            textAlign: 'center'
+                          }}>
+                            Prev: {formatDate(visitor.previous_visit)}
                           </div>
                         )}
                       </div>
