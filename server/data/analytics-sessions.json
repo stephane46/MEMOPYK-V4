@@ -982,5 +982,53 @@
     "is_test_data": false,
     "created_at": "2025-08-13T13:44:07.012Z",
     "updated_at": "2025-08-13T13:44:07.056Z"
+  },
+  {
+    "id": "9bcd479c-4a8a-427d-a423-764186227d43",
+    "session_id": "session_1755092995230_h4hibeg0g",
+    "user_id": null,
+    "ip_address": "185.153.179.34",
+    "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36 Edg/138.0.0.0",
+    "referrer": "https://365df2cf-1884-444c-a9e8-235602456363-00-37q39xpqlgvdy.janeway.replit.dev/__replco/workspace_iframe.html?initialPath=%2F&id=%3Arah9%3A",
+    "language": "fr-FR",
+    "country": "Unknown",
+    "city": "Unknown",
+    "page_views": 0,
+    "is_bot": false,
+    "is_test_data": false,
+    "created_at": "2025-08-13T13:49:55.504Z",
+    "updated_at": "2025-08-13T13:49:55.547Z"
+  },
+  {
+    "id": "b811d07f-47c2-4954-8101-5e00b2b1b8ce",
+    "session_id": "session_1755093072471_qi0nvn5ep",
+    "user_id": null,
+    "ip_address": "185.153.179.34",
+    "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36 Edg/138.0.0.0",
+    "referrer": "https://365df2cf-1884-444c-a9e8-235602456363-00-37q39xpqlgvdy.janeway.replit.dev/__replco/workspace_iframe.html?initialPath=%2F&id=%3Araj7%3A",
+    "language": "fr-FR",
+    "country": "Unknown",
+    "city": "Unknown",
+    "page_views": 0,
+    "is_bot": false,
+    "is_test_data": false,
+    "created_at": "2025-08-13T13:51:12.738Z",
+    "updated_at": "2025-08-13T13:51:12.780Z"
+  },
+  {
+    "id": "93085d83-3ba9-486c-bf84-8a2e9d1addf2",
+    "session_id": "session_1755093075492_cbzyy4fv7",
+    "user_id": null,
+    "ip_address": "127.0.0.1",
+    "user_agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/118.0.5993.88 Safari/537.36",
+    "referrer": "",
+    "language": "en-US",
+    "country": "Unknown",
+    "city": "Unknown",
+    "page_views": 0,
+    "is_bot": false,
+    "is_test_data": true,
+    "created_at": "2025-08-13T13:51:15.525Z",
+    "updated_at": "2025-08-13T13:51:15.567Z"
   }
 ]
