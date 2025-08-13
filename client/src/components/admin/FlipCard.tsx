@@ -67,75 +67,87 @@ export function FlipCard({ frontContent, className = "", visitors = [] }: Visito
   };
 
   const getCountryFlag = (country: string) => {
-    // Map both country names and two-letter codes to flags
-    const countryFlags: { [key: string]: string } = {
-      // Full country names
-      'France': '🇫🇷',
-      'Canada': '🇨🇦',
-      'United States': '🇺🇸',
-      'USA': '🇺🇸',
-      'United Kingdom': '🇬🇧',
-      'UK': '🇬🇧',
-      'Germany': '🇩🇪',
-      'Spain': '🇪🇸',
-      'Italy': '🇮🇹',
-      'Netherlands': '🇳🇱',
-      'Belgium': '🇧🇪',
-      'Switzerland': '🇨🇭',
-      'Austria': '🇦🇹',
-      'Portugal': '🇵🇹',
-      'Sweden': '🇸🇪',
-      'Norway': '🇳🇴',
-      'Denmark': '🇩🇰',
-      'Finland': '🇫🇮',
-      'Poland': '🇵🇱',
-      'Czech Republic': '🇨🇿',
-      'Australia': '🇦🇺',
-      'Japan': '🇯🇵',
-      'South Korea': '🇰🇷',
-      'Brazil': '🇧🇷',
-      'Mexico': '🇲🇽',
-      'Argentina': '🇦🇷',
-      'India': '🇮🇳',
-      'China': '🇨🇳',
-      'Russia': '🇷🇺',
-      // Two-letter country codes
-      'FR': '🇫🇷',
-      'CA': '🇨🇦',
-      'US': '🇺🇸',
-      'GB': '🇬🇧',
-      'DE': '🇩🇪',
-      'ES': '🇪🇸',
-      'IT': '🇮🇹',
-      'NL': '🇳🇱',
-      'BE': '🇧🇪',
-      'CH': '🇨🇭',
-      'AT': '🇦🇹',
-      'PT': '🇵🇹',
-      'SE': '🇸🇪',
-      'NO': '🇳🇰',
-      'DK': '🇩🇰',
-      'FI': '🇫🇮',
-      'PL': '🇵🇱',
-      'CZ': '🇨🇿',
-      'AU': '🇦🇺',
-      'JP': '🇯🇵',
-      'KR': '🇰🇷',
-      'BR': '🇧🇷',
-      'MX': '🇲🇽',
-      'AR': '🇦🇷',
-      'IN': '🇮🇳',
-      'CN': '🇨🇳',
-      'RU': '🇷🇺'
+    // Map country names to flag SVG elements - actual flag images, not emojis
+    const getFlagSvg = (countryCode: string) => {
+      const flags: { [key: string]: React.ReactElement } = {
+        'ES': (
+          <svg width="20" height="15" viewBox="0 0 20 15" xmlns="http://www.w3.org/2000/svg">
+            <rect width="20" height="15" fill="#C60B1E"/>
+            <rect y="3.75" width="20" height="7.5" fill="#FFC400"/>
+          </svg>
+        ),
+        'IT': (
+          <svg width="20" height="15" viewBox="0 0 20 15" xmlns="http://www.w3.org/2000/svg">
+            <rect width="6.67" height="15" fill="#009246"/>
+            <rect x="6.67" width="6.67" height="15" fill="#FFFFFF"/>
+            <rect x="13.33" width="6.67" height="15" fill="#CE2B37"/>
+          </svg>
+        ),
+        'FR': (
+          <svg width="20" height="15" viewBox="0 0 20 15" xmlns="http://www.w3.org/2000/svg">
+            <rect width="6.67" height="15" fill="#002395"/>
+            <rect x="6.67" width="6.67" height="15" fill="#FFFFFF"/>
+            <rect x="13.33" width="6.67" height="15" fill="#ED2939"/>
+          </svg>
+        ),
+        'GB': (
+          <svg width="20" height="15" viewBox="0 0 20 15" xmlns="http://www.w3.org/2000/svg">
+            <rect width="20" height="15" fill="#012169"/>
+            <path d="M0 0l20 15M20 0L0 15" stroke="#FFFFFF" strokeWidth="2"/>
+            <path d="M0 0l20 15M20 0L0 15" stroke="#C8102E" strokeWidth="1.2"/>
+            <path d="M10 0v15M0 7.5h20" stroke="#FFFFFF" strokeWidth="3"/>
+            <path d="M10 0v15M0 7.5h20" stroke="#C8102E" strokeWidth="1.8"/>
+          </svg>
+        ),
+        'DE': (
+          <svg width="20" height="15" viewBox="0 0 20 15" xmlns="http://www.w3.org/2000/svg">
+            <rect width="20" height="5" fill="#000000"/>
+            <rect y="5" width="20" height="5" fill="#DD0000"/>
+            <rect y="10" width="20" height="5" fill="#FFCE00"/>
+          </svg>
+        )
+      };
+      return flags[countryCode];
+    };
+
+    // Map country names to country codes
+    const countryToCode: { [key: string]: string } = {
+      'Spain': 'ES',
+      'Italy': 'IT', 
+      'France': 'FR',
+      'United Kingdom': 'GB',
+      'UK': 'GB',
+      'Germany': 'DE',
+      'ES': 'ES',
+      'IT': 'IT',
+      'FR': 'FR',
+      'GB': 'GB',
+      'DE': 'DE'
     };
     
-    // Only show globe for truly unknown entries
+    // Only show globe icon for truly unknown entries
     if (country === 'Unknown' || !country) {
-      return '🌍';
+      return (
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="12" cy="12" r="10" stroke="#6B7280" strokeWidth="2"/>
+          <path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z" stroke="#6B7280" strokeWidth="2"/>
+        </svg>
+      );
     }
     
-    // Return the flag if we have it, otherwise show a generic flag icon for unrecognized countries
-    return countryFlags[country] || '🏴';
+    // Get the flag SVG for the country
+    const countryCode = countryToCode[country];
+    if (countryCode) {
+      return getFlagSvg(countryCode);
+    }
+    
+    // Default flag icon for unrecognized countries
+    return (
+      <svg width="20" height="15" viewBox="0 0 20 15" xmlns="http://www.w3.org/2000/svg">
+        <rect width="20" height="15" fill="#E5E7EB" stroke="#9CA3AF" strokeWidth="1"/>
+        <text x="10" y="9" textAnchor="middle" fontSize="8" fill="#6B7280">?</text>
+      </svg>
+    );
   };
 
   return (
@@ -265,13 +277,7 @@ export function FlipCard({ frontContent, className = "", visitors = [] }: Visito
                             lineHeight: '1',
                             textRendering: 'optimizeLegibility'
                           }}>
-                            <span style={{ 
-                              fontSize: '20px',
-                              display: 'inline-block',
-                              transform: 'scale(1.2)'
-                            }}>
-                              {getCountryFlag(visitor.country)}
-                            </span>
+{getCountryFlag(visitor.country)}
                           </div>
                         </div>
                         <div>
