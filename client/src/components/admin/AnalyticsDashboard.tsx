@@ -152,7 +152,7 @@ export function AnalyticsDashboard() {
     refetchInterval: 60000, // Refresh every minute
   });
 
-  // Fetch video performance data for video performance card
+  // Fetch video performance data for video performance card (FIXED v1.0.186 - Force fresh data)
   const { data: videoPerformanceData } = useQuery<Array<{
     video_id: string;
     total_views: number;
@@ -161,9 +161,10 @@ export function AnalyticsDashboard() {
     average_watch_time: number;
     last_viewed: string;
   }>>({
-    queryKey: ['/api/analytics/video-performance'],
-    staleTime: 30000, // 30 seconds
-    refetchInterval: 60000, // Refresh every minute
+    queryKey: ['/api/analytics/video-performance', `cache-bust-${Date.now()}`], // Force fresh fetch
+    staleTime: 0, // Always fetch fresh data
+    gcTime: 0, // Don't cache
+    refetchInterval: 30000, // Refresh every 30 seconds
   });
 
   // Fetch time-series data for charts
