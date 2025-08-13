@@ -281,27 +281,11 @@ export function VideoPerformanceCard({ frontContent, className = "", performance
                       key={video.video_id}
                       style={{
                         padding: '16px',
-                        backgroundColor: index === 0 ? '#fef3c7' : '#f9fafb',
-                        border: index === 0 ? '2px solid #f59e0b' : '1px solid #e5e7eb',
-                        borderRadius: '8px',
-                        position: 'relative'
+                        backgroundColor: '#f9fafb',
+                        border: '1px solid #e5e7eb',
+                        borderRadius: '8px'
                       }}
                     >
-                      {index === 0 && (
-                        <div style={{
-                          position: 'absolute',
-                          top: '-8px',
-                          left: '16px',
-                          backgroundColor: '#f59e0b',
-                          color: 'white',
-                          padding: '4px 8px',
-                          borderRadius: '4px',
-                          fontSize: '12px',
-                          fontWeight: '600'
-                        }}>
-                          #1 Most Watched
-                        </div>
-                      )}
                       
                       <div style={{
                         display: 'flex',
