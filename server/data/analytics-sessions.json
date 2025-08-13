@@ -2,9 +2,9 @@
   {
     "id": "session_1755073398429_8lk8b8tw4",
     "session_id": "anonymous",
-    "duration": 69710,
+    "duration": 70302,
     "created_at": "2025-08-13T08:23:18.429Z",
-    "updated_at": "2025-08-13T08:39:46.679Z",
+    "updated_at": "2025-08-13T08:49:38.758Z",
     "is_test_data": false
   },
   {
@@ -150,5 +150,53 @@
     "is_test_data": true,
     "created_at": "2025-08-13T08:40:08.703Z",
     "updated_at": "2025-08-13T08:40:08.750Z"
+  },
+  {
+    "id": "fa6a0d23-0c6d-43f6-8451-cb6a32d3b36d",
+    "session_id": "session_1755074467770_ecuvtswyb",
+    "user_id": null,
+    "ip_address": "185.214.97.27",
+    "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36 Edg/138.0.0.0",
+    "referrer": "https://365df2cf-1884-444c-a9e8-235602456363-00-37q39xpqlgvdy.janeway.replit.dev/fr-FR",
+    "language": "fr-FR",
+    "country": "Unknown",
+    "city": "Unknown",
+    "page_views": 0,
+    "is_bot": false,
+    "is_test_data": false,
+    "created_at": "2025-08-13T08:41:08.035Z",
+    "updated_at": "2025-08-13T08:41:08.078Z"
+  },
+  {
+    "id": "bb2d305e-ba39-4dfd-ae14-4461babd18f1",
+    "session_id": "session_1755074617817_huunlnied",
+    "user_id": null,
+    "ip_address": "185.81.127.61",
+    "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36 Edg/138.0.0.0",
+    "referrer": "https://365df2cf-1884-444c-a9e8-235602456363-00-37q39xpqlgvdy.janeway.replit.dev/fr-FR",
+    "language": "fr-FR",
+    "country": "Unknown",
+    "city": "Unknown",
+    "page_views": 0,
+    "is_bot": false,
+    "is_test_data": false,
+    "created_at": "2025-08-13T08:43:37.851Z",
+    "updated_at": "2025-08-13T08:43:37.895Z"
+  },
+  {
+    "id": "e6a28d00-0201-4ae9-8566-6353e9e329b7",
+    "session_id": "session_1755074682996_smrbgie7g",
+    "user_id": null,
+    "ip_address": "185.81.127.61",
+    "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36 Edg/138.0.0.0",
+    "referrer": "https://365df2cf-1884-444c-a9e8-235602456363-00-37q39xpqlgvdy.janeway.replit.dev/__replco/workspace_iframe.html?initialPath=%2F&id=%3Arrii%3A",
+    "language": "fr-FR",
+    "country": "Unknown",
+    "city": "Unknown",
+    "page_views": 0,
+    "is_bot": false,
+    "is_test_data": false,
+    "created_at": "2025-08-13T08:44:43.030Z",
+    "updated_at": "2025-08-13T08:44:43.074Z"
   }
 ]

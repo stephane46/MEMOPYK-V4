@@ -398,7 +398,7 @@ export function FlipCard({ frontContent, className = "", visitors = [] }: Visito
                             fontSize: '14px'
                           }}>
                             {visitor.city && visitor.region 
-                              ? `${visitor.city}, ${visitor.region}` 
+                              ? `${visitor.city} (${visitor.region})` 
                               : visitor.city || visitor.region || visitor.ip_address || 'Unknown'}
                           </div>
                           <div style={{

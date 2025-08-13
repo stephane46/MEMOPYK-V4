@@ -50,6 +50,7 @@ Visual consistency priority: Extremely detail-oriented about spacing and formatt
 - **Analytics Session Tracking Fix (v1.0.168)**: Resolved visitor counting issues; analytics now properly tracks unique visitors with 30-second deduplication window for accurate production monitoring.
 - **Critical Hybrid Storage Database Fix (v1.0.175)**: Fixed analytics data targeting mismatch where sessions were created in Supabase PostgreSQL (VPS) but delete functions targeted wrong database (Neon). Admin delete button now correctly clears analytics data from Supabase PostgreSQL ensuring data consistency between development and production environments.
 - **Video Performance Analytics Integration (v1.0.174)**: Implemented comprehensive video performance modal in analytics dashboard with dynamic video detection, showing all gallery videos with engagement metrics and watch statistics.
+- **Location Enrichment System (v1.0.176)**: Integrated ipapi.co API for visitor geolocation enrichment, displaying "Barcelona (Catalonia)" instead of raw IP addresses in analytics dashboard. Features automatic caching, rate limiting, and comprehensive location data including city, region, country, timezone, and organization details.
 
 ## External Dependencies
 
