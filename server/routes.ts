@@ -11,6 +11,7 @@ import testRoutes from './test-routes';
 import { setCacheAndOriginHeaders } from './cache-origin-headers';
 import { createCacheHitHeaders, createCacheMissHeaders, getUpstreamSource, getCacheAge } from './cache-delivery-headers';
 import { analyticsCleanupRoutes } from './routes-analytics-cache-cleanup';
+import { locationService } from './location-service';
 
 // Contact form validation schema
 const contactFormSchema = z.object({
@@ -1945,7 +1946,7 @@ export async function registerRoutes(app: Express): Promise<void> {
     }
   });
 
-  // Recent Visitors - GET last 10 visitor details for flip card
+  // Recent Visitors - GET last 10 visitor details for flip card  
   app.get("/api/analytics/recent-visitors", async (req, res) => {
     try {
       console.log('👥 Recent Visitors: Fetching last 10 visitor details...');
@@ -1970,6 +1971,8 @@ export async function registerRoutes(app: Express): Promise<void> {
           visitorMap.set(ip, {
             ip_address: ip,
             country: session.country || 'Unknown',
+            region: session.region || 'Unknown',
+            city: session.city || 'Unknown',
             language: session.language || 'Unknown', 
             last_visit: session.created_at,
             user_agent: session.user_agent ? session.user_agent.substring(0, 50) + '...' : 'Unknown'
@@ -1978,12 +1981,31 @@ export async function registerRoutes(app: Express): Promise<void> {
       });
       
       // Convert to array and sort by most recent
-      const recentVisitors = Array.from(visitorMap.values())
+      let recentVisitors = Array.from(visitorMap.values())
         .sort((a, b) => new Date(b.last_visit).getTime() - new Date(a.last_visit).getTime())
         .slice(0, 5); // Take last 5 visitors to avoid scrolling
+
+      // Enrich visitor data with location information from ipapi.co
+      const enrichedVisitors = await Promise.all(
+        recentVisitors.map(async (visitor) => {
+          const locationData = await locationService.getLocationData(visitor.ip_address);
+          if (locationData) {
+            return {
+              ...visitor,
+              city: locationData.city,
+              region: locationData.region,
+              country: locationData.country_name,
+              country_code: locationData.country_code,
+              timezone: locationData.timezone,
+              organization: locationData.organization
+            };
+          }
+          return visitor;
+        })
+      );
       
-      console.log(`✅ Recent Visitors: Found ${recentVisitors.length} unique visitors`);
-      res.json(recentVisitors);
+      console.log(`✅ Recent Visitors: Found ${enrichedVisitors.length} unique visitors (enriched with location data)`);
+      res.json(enrichedVisitors);
     } catch (error) {
       console.error('❌ Recent Visitors: Error fetching visitor details:', error);
       res.status(500).json({ error: 'Failed to load recent visitors' });
@@ -2027,6 +2049,42 @@ export async function registerRoutes(app: Express): Promise<void> {
     } catch (error) {
       console.error('❌ Session update error:', error);
       res.status(500).json({ error: "Failed to update session duration" });
+    }
+  });
+
+  // Location Enrichment - POST manually enrich visitor locations
+  app.post("/api/analytics/enrich-locations", async (req, res) => {
+    try {
+      console.log('🌍 Location Enrichment: Starting manual enrichment...');
+      
+      const sessions = await hybridStorage.getAnalyticsSessions();
+      const uniqueIPs = [...new Set(sessions.map(s => s.ip_address).filter(ip => ip && ip !== '0.0.0.0'))];
+      
+      console.log(`🌍 Location Enrichment: Found ${uniqueIPs.length} unique IPs to enrich`);
+      
+      let enrichedCount = 0;
+      for (const ip of uniqueIPs) {
+        const locationData = await locationService.getLocationData(ip);
+        if (locationData) {
+          enrichedCount++;
+          console.log(`✅ Enriched ${ip}: ${locationData.city}, ${locationData.region}, ${locationData.country_name}`);
+        }
+        // Small delay to respect rate limits
+        await new Promise(resolve => setTimeout(resolve, 300));
+      }
+      
+      const cacheStats = locationService.getCacheStats();
+      
+      res.json({
+        success: true,
+        total_ips: uniqueIPs.length,
+        enriched_count: enrichedCount,
+        cache_stats: cacheStats,
+        message: `Successfully enriched ${enrichedCount}/${uniqueIPs.length} IP addresses`
+      });
+    } catch (error) {
+      console.error('❌ Location Enrichment error:', error);
+      res.status(500).json({ error: 'Failed to enrich locations' });
     }
   });
 
