@@ -225,7 +225,7 @@ export function VideoPerformanceCard({ frontContent, className = "", performance
                   textAlign: 'center'
                 }}>
                   <div style={{ fontSize: '24px', fontWeight: '700', color: '#059669' }}>
-                    {(freshData.length > 0 ? freshData : performanceData).length}
+                    {(freshData.length > 0 ? freshData : performanceData).filter(video => video.total_views > 0).length}
                   </div>
                   <div style={{ fontSize: '14px', color: '#64748b', marginTop: '4px' }}>
                     Videos Watched
