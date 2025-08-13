@@ -3,7 +3,7 @@ import { join } from "path";
 import { createClient } from '@supabase/supabase-js';
 import { db } from './db';
 import { eq, and, desc, asc, sql } from 'drizzle-orm';
-import { ctaSettings, heroTextSettings, analyticsViews } from '../shared/schema';
+import { ctaSettings, heroTextSettings, analyticsViews, analyticsSessions } from '../shared/schema';
 
 export interface HybridStorageInterface {
   // Hero videos
@@ -3438,31 +3438,58 @@ Allow: /contact`;
     };
 
     try {
-      // Try Supabase first
-      console.log('🔍 Analytics Session: Creating in Supabase database...');
-      const { data, error } = await this.supabase
-        .from('analytics_sessions')
-        .insert(sessionWithId)
-        .select()
-        .single();
+      // Use PostgreSQL via Drizzle ORM first 
+      console.log('🔍 Analytics Session: Creating in PostgreSQL database...');
+      
+      const sessionToInsert = {
+        sessionId: sessionData.session_id || `session_${Date.now()}`,
+        userId: sessionData.user_id || null,
+        ipAddress: sessionData.ip_address || '0.0.0.0',
+        userAgent: sessionData.user_agent || '',
+        referrer: sessionData.referrer || '',
+        language: sessionData.language || 'en-US',
+        country: sessionData.country || 'Unknown',
+        city: sessionData.city || 'Unknown',
+        pageViews: sessionData.page_views || 0,
+        isBot: sessionData.is_bot || false,
+        isTestData: sessionWithId.is_test_data
+      };
+      
+      const [insertedSession] = await this.db
+        .insert(analyticsSessions)
+        .values(sessionToInsert)
+        .returning();
 
-      if (error) {
-        console.error('⚠️ Analytics Session: Supabase create error:', error);
-        throw error;
-      }
-
-      if (data) {
-        console.log('✅ Analytics Session: Created in Supabase successfully');
+      if (insertedSession) {
+        console.log('✅ Analytics Session: Created in PostgreSQL successfully');
+        
+        // Create compatible session object for JSON backup
+        const sessionForJson = {
+          id: insertedSession.id,
+          session_id: insertedSession.sessionId,
+          user_id: insertedSession.userId,
+          ip_address: insertedSession.ipAddress,
+          user_agent: insertedSession.userAgent,
+          referrer: insertedSession.referrer,
+          language: insertedSession.language,
+          country: insertedSession.country,
+          city: insertedSession.city,
+          page_views: insertedSession.pageViews,
+          is_bot: insertedSession.isBot,
+          is_test_data: insertedSession.isTestData,
+          created_at: insertedSession.createdAt?.toISOString(),
+          updated_at: new Date().toISOString()
+        };
         
         // Update JSON backup
         const sessions = this.loadJsonFile('analytics-sessions.json');
-        sessions.push(data);
+        sessions.push(sessionForJson);
         this.saveJsonFile('analytics-sessions.json', sessions);
         
-        return data;
+        return sessionForJson;
       }
     } catch (error) {
-      console.warn('⚠️ Analytics Session: Supabase connection failed, using JSON fallback:', error);
+      console.warn('⚠️ Analytics Session: PostgreSQL connection failed, using JSON fallback:', error);
     }
 
     // Fallback to JSON
@@ -3483,19 +3510,17 @@ Allow: /contact`;
     console.log(`📊 SESSION DURATION UPDATE: ${sessionId} → ${duration}s`);
     
     try {
-      // Update in Supabase first
-      const { data, error } = await this.supabase
-        .from('analytics_sessions')
-        .update({ 
-          duration: duration,
-          updated_at: new Date().toISOString() 
+      // Update in PostgreSQL first
+      const [updatedSession] = await this.db
+        .update(analyticsSessions)
+        .set({ 
+          duration: duration
         })
-        .eq('session_id', sessionId)
-        .select()
-        .single();
+        .where(eq(analyticsSessions.sessionId, sessionId))
+        .returning();
 
-      if (data) {
-        console.log('✅ Session duration updated in Supabase');
+      if (updatedSession) {
+        console.log('✅ Session duration updated in PostgreSQL');
         
         // Update JSON backup
         const sessions = this.loadJsonFile('analytics-sessions.json');
@@ -3507,10 +3532,16 @@ Allow: /contact`;
           console.log('✅ Session duration updated in JSON backup');
         }
         
-        return data;
+        // Return compatible format
+        return {
+          id: updatedSession.id,
+          session_id: updatedSession.sessionId,
+          duration: updatedSession.duration,
+          updated_at: new Date().toISOString()
+        };
       }
     } catch (error) {
-      console.warn('⚠️ Session duration: Supabase update failed, using JSON fallback:', error);
+      console.warn('⚠️ Session duration: PostgreSQL update failed, using JSON fallback:', error);
     }
 
     // Fallback to JSON only
