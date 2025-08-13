@@ -140,6 +140,9 @@ export function AnalyticsDashboard() {
   const { data: recentVisitors } = useQuery<Array<{
     ip_address: string;
     country: string;
+    country_code: string;
+    city?: string;
+    region?: string;
     language: string;
     last_visit: string;
     user_agent: string;

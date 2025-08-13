@@ -200,8 +200,16 @@ export function FlipCard({ frontContent, className = "", visitors = [] }: Visito
                             alignItems: 'center',
                             justifyContent: 'center'
                           }}>
-
-                            <CountryFlag country={visitor.country_code || visitor.country} size={24} />
+                            {(() => {
+                              const countryValue = visitor.country_code || visitor.country;
+                              console.log('🏁 FlipCard passing to CountryFlag:', {
+                                visitorIndex: index,
+                                country_code: visitor.country_code,
+                                country: visitor.country, 
+                                finalValue: countryValue
+                              });
+                              return <CountryFlag country={countryValue} size={24} />;
+                            })()}
                           </div>
                         </div>
                         <div>

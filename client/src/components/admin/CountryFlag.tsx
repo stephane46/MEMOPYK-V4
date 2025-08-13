@@ -184,6 +184,7 @@ export function CountryFlag({ country, className = "", size = 20 }: CountryFlagP
 
   // Show loading placeholder during flag detection
   if (isLoading && countryCode) {
+    console.log('🏴 RENDERING LOADING STATE FOR:', countryCode);
     return (
       <div 
         className={`inline-flex items-center justify-center ${className}`}
@@ -259,20 +260,27 @@ export function CountryFlag({ country, className = "", size = 20 }: CountryFlagP
   // Final fallback - but THIS SHOULD SHOW A GLOBE, NOT TEXT!
   console.log('🏴 FINAL FALLBACK FOR:', { country, countryCode, flagSvgExists, isLoading });
   
-  // TEMPORARY DEBUG: Show obvious debug to confirm this component is rendering
+  // CRITICAL: The fact that you see country codes as text means this return is being OVERWRITTEN
+  // by something else - this is NOT a CountryFlag component issue!
   return (
-    <div style={{
-      width: `${size}px`,
-      height: `${size}px`,
-      backgroundColor: 'red',
-      color: 'white',
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center',
-      fontSize: '8px',
-      fontWeight: 'bold'
-    }}>
-      DEBUG
+    <div 
+      id={`countryflag-${country}-${Date.now()}`}
+      style={{
+        width: `${size}px`,
+        height: `${size}px`,
+        backgroundColor: 'red',
+        color: 'white',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        fontSize: '8px',
+        fontWeight: 'bold',
+        border: '2px solid yellow',
+        position: 'relative',
+        zIndex: 1000
+      }}
+    >
+      {country}
     </div>
   );
 }
