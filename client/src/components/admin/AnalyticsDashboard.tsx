@@ -12,6 +12,7 @@ import { useToast } from '@/hooks/use-toast';
 import { apiRequest } from '@/lib/queryClient';
 import { FlipCard } from './FlipCard';
 import { VideoPerformanceCard } from './VideoPerformanceCard';
+import { CountryFlag } from './CountryFlag';
 import { 
   LineChart, 
   Line, 
@@ -1553,7 +1554,10 @@ Daily session and view analytics over time
                   <div className="space-y-3">
                     {dashboardData.topCountries.map((country, index) => (
                       <div key={country.country} className="flex items-center justify-between">
-                        <span className="font-medium">{country.country}</span>
+                        <div className="flex items-center gap-2">
+                          <CountryFlag country={country.country} size={20} />
+                          <span className="font-medium">{country.country}</span>
+                        </div>
                         <Badge variant="outline">
                           {formatNumber(country.views)} sessions
                         </Badge>
