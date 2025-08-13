@@ -3827,14 +3827,43 @@ Allow: /contact`;
     try {
       console.log('🗑️ Starting complete analytics data deletion...');
       
-      // Step 1: Clear PostgreSQL database tables
+      // Step 1: Clear Supabase PostgreSQL database tables (the primary database on VPS)
       try {
-        console.log('🗑️ Deleting from PostgreSQL tables...');
-        const deletedSessions = await this.db.delete(analyticsSessions);
-        const deletedViews = await this.db.delete(analyticsViews);
-        console.log(`✅ PostgreSQL analytics data deleted successfully: ${deletedSessions.rowCount || 0} sessions, ${deletedViews.rowCount || 0} views`);
+        console.log('🗑️ Deleting from Supabase PostgreSQL tables...');
+        
+        // Delete from Supabase (primary database)
+        const { error: sessionsError } = await this.supabase
+          .from('analytics_sessions')
+          .delete()
+          .neq('id', ''); // Delete all records
+        
+        const { error: viewsError } = await this.supabase
+          .from('analytics_views')
+          .delete()
+          .neq('id', ''); // Delete all records
+          
+        if (sessionsError) {
+          console.error('⚠️ Supabase sessions deletion error:', sessionsError);
+        }
+        if (viewsError) {
+          console.error('⚠️ Supabase views deletion error:', viewsError);
+        }
+        
+        if (!sessionsError && !viewsError) {
+          console.log('✅ Supabase PostgreSQL analytics data deleted successfully');
+        }
+        
+        // Also clear from development database (Neon) in case there's orphaned data
+        try {
+          const deletedSessions = await this.db.delete(analyticsSessions);
+          const deletedViews = await this.db.delete(analyticsViews);
+          console.log(`✅ Development database cleanup: ${deletedSessions.rowCount || 0} sessions, ${deletedViews.rowCount || 0} views removed`);
+        } catch (devDbError) {
+          console.warn('⚠️ Development database cleanup failed (this is normal):', devDbError);
+        }
+        
       } catch (dbError) {
-        console.warn('⚠️ PostgreSQL deletion failed, continuing with JSON cleanup:', dbError);
+        console.warn('⚠️ Database deletion failed, continuing with JSON cleanup:', dbError);
       }
       
       // Step 2: Clear all analytics-related JSON files
