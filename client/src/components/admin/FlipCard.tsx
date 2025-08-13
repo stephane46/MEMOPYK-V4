@@ -180,7 +180,7 @@ export function FlipCard({ frontContent, className = "", visitors = [] }: Visito
                 {visitors.length > 0 ? (
                   visitors.map((visitor, index) => (
                     <div 
-                      key={index}
+                      key={visitor.ip_address || `visitor-${index}`}
                       style={{
                         display: 'flex',
                         alignItems: 'center',
