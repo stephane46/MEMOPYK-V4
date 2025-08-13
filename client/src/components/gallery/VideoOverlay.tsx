@@ -44,8 +44,8 @@ export default function VideoOverlay({
   const thumbnailStartTimeRef = useRef<number>(Date.now());
   const videoReadyRef = useRef<boolean>(false);
   
-  // Minimum thumbnail display time (1.5 seconds)
-  const MINIMUM_THUMBNAIL_DISPLAY_TIME = 1500;
+  // Minimum thumbnail display time (2 seconds)
+  const MINIMUM_THUMBNAIL_DISPLAY_TIME = 2000;
   
   // Language detection for source text
   const language = localStorage.getItem('language') || 'en-US';
@@ -68,7 +68,7 @@ export default function VideoOverlay({
     videoReadyRef.current = false;
     
     const videoId = getVideoId();
-    console.log(`🎯 ENHANCED THUMBNAIL SYSTEM v1.0.174: Loading ${videoId} with ${MINIMUM_THUMBNAIL_DISPLAY_TIME}ms minimum display`);
+    console.log(`🎯 ENHANCED THUMBNAIL SYSTEM v1.0.177: Loading ${videoId} with ${MINIMUM_THUMBNAIL_DISPLAY_TIME}ms minimum display`);
     
     // Start video buffering immediately for faster transition
     const video = videoRef.current;
