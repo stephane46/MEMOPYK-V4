@@ -422,5 +422,21 @@
     "is_test_data": true,
     "created_at": "2025-08-13T09:27:27.026Z",
     "updated_at": "2025-08-13T09:27:27.072Z"
+  },
+  {
+    "id": "556a7404-e159-41df-9df7-ebfaed2b03e7",
+    "session_id": "session_1755077752801_jolxvhbkb",
+    "user_id": null,
+    "ip_address": "127.0.0.1",
+    "user_agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/118.0.5993.88 Safari/537.36",
+    "referrer": "",
+    "language": "en-US",
+    "country": "Unknown",
+    "city": "Unknown",
+    "page_views": 0,
+    "is_bot": false,
+    "is_test_data": true,
+    "created_at": "2025-08-13T09:35:53.088Z",
+    "updated_at": "2025-08-13T09:35:53.131Z"
   }
 ]
