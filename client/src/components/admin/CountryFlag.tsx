@@ -100,6 +100,7 @@ interface CountryFlagProps {
 export function CountryFlag({ country, className = "", size = 20 }: CountryFlagProps) {
   const [countryCode, setCountryCode] = useState<string | null>(null);
   const [flagSvgExists, setFlagSvgExists] = useState<boolean>(false);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
 
   useEffect(() => {
     // Load full country mapping if not loaded
@@ -152,18 +153,48 @@ export function CountryFlag({ country, className = "", size = 20 }: CountryFlagP
       }
 
       setCountryCode(null);
+      setIsLoading(false);
     }
 
     function checkFlagExists(code: string) {
       const img = new Image();
-      img.onload = () => setFlagSvgExists(true);
-      img.onerror = () => setFlagSvgExists(false);
+      img.onload = () => {
+        setFlagSvgExists(true);
+        setIsLoading(false);
+      };
+      img.onerror = () => {
+        setFlagSvgExists(false);
+        setIsLoading(false);
+      };
       img.src = `/flags/${code.toLowerCase()}.svg`;
     }
   }, [country]);
 
+  // Show loading placeholder during flag detection
+  if (isLoading && countryCode) {
+    return (
+      <div 
+        className={`inline-flex items-center justify-center ${className}`}
+        style={{
+          width: `${size}px`,
+          height: `${Math.round(size * 0.75)}px`,
+          backgroundColor: '#f3f4f6',
+          borderRadius: '2px',
+          border: '1px solid rgba(0,0,0,0.1)'
+        }}
+      >
+        <div style={{
+          width: '60%',
+          height: '60%',
+          backgroundColor: '#e5e7eb',
+          borderRadius: '1px'
+        }} />
+      </div>
+    );
+  }
+
   // Professional SVG flag (preferred)
-  if (countryCode && flagSvgExists) {
+  if (countryCode && flagSvgExists && !isLoading) {
     return (
       <img
         src={`/flags/${countryCode.toLowerCase()}.svg`}
@@ -181,7 +212,7 @@ export function CountryFlag({ country, className = "", size = 20 }: CountryFlagP
   }
 
   // Unicode flag emoji fallback
-  if (countryCode) {
+  if (countryCode && !isLoading) {
     const getUnicodeFlagEmoji = (code: string): string | null => {
       if (code && code.length === 2) {
         const codePoints = code.toUpperCase().split('').map(char => 
@@ -210,17 +241,18 @@ export function CountryFlag({ country, className = "", size = 20 }: CountryFlagP
     }
   }
 
-  // Final fallback for invalid data only
+  // Final fallback - neutral globe icon (no country codes shown)
   return (
     <svg 
       width={size} 
-      height={Math.round(size * 0.75)} 
-      viewBox="0 0 20 15" 
+      height={size} 
+      viewBox="0 0 24 24" 
+      fill="none" 
       xmlns="http://www.w3.org/2000/svg"
       className={`inline-block ${className}`}
     >
-      <rect width="20" height="15" fill="#E5E7EB" stroke="#9CA3AF" strokeWidth="1"/>
-      <text x="10" y="9" textAnchor="middle" fontSize="8" fill="#6B7280">?</text>
+      <circle cx="12" cy="12" r="10" stroke="#6B7280" strokeWidth="2"/>
+      <path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z" stroke="#6B7280" strokeWidth="2"/>
     </svg>
   );
 }
