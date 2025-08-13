@@ -22,20 +22,23 @@ export function VideoPerformanceCard({ frontContent, className = "", performance
 
   const handleCardClick = async () => {
     setIsModalOpen(true);
-    // FORCE FRESH DATA FETCH - Bypass all caching
+    // NUCLEAR OPTION: Use completely new endpoint to bypass all caching
     try {
-      const response = await fetch('/api/analytics/video-performance?' + Date.now(), {
+      const timestamp = Date.now();
+      const response = await fetch(`/api/analytics/fresh-video-data?t=${timestamp}&r=${Math.random()}`, {
         method: 'GET',
         cache: 'no-cache',
         headers: {
           'Cache-Control': 'no-cache, no-store, must-revalidate',
           'Pragma': 'no-cache',
-          'Expires': '0'
+          'Expires': '0',
+          'X-Requested-With': 'XMLHttpRequest',
+          'X-Cache-Bust': timestamp.toString()
         }
       });
       const data = await response.json();
       setFreshData(data);
-      console.log('🚨 FORCE FETCHED FRESH DATA:', data);
+      console.log('🚨 NUCLEAR CACHE BYPASS - FRESH DATA:', data);
     } catch (error) {
       console.error('Failed to fetch fresh data:', error);
     }

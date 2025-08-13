@@ -2450,6 +2450,140 @@ export async function registerRoutes(app: Express): Promise<void> {
     }
   });
 
+  // NUCLEAR CACHE-BUSTING VIDEO ANALYTICS - v1.0.187
+  app.get("/api/analytics/fresh-video-data", async (req, res) => {
+    try {
+      console.log('🚨 NUCLEAR CACHE BYPASS REQUEST - FRESH VIDEO DATA v1.0.187');
+      
+      // Set aggressive no-cache headers
+      res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
+      res.setHeader('Pragma', 'no-cache');
+      res.setHeader('Expires', '0');
+      res.setHeader('ETag', `fresh-${Date.now()}`);
+      
+      // Get all gallery videos first
+      const galleryItems = await hybridStorage.getGalleryItems();
+      console.log(`🚨 FRESH: Found ${galleryItems.length} gallery items in database`);
+      
+      // Get all video views from analytics
+      const views = await hybridStorage.getAnalyticsViews();
+      console.log(`🚨 FRESH: Found ${views.length} total analytics views`);
+      
+      // Create video filename mapping for better data integrity
+      const videoMapping: any = {};
+      const videoStats: any = {};
+      
+      // FIXED: Improved video name extraction and mapping
+      galleryItems.forEach((item: any, index: number) => {
+        let videoFilename = null;
+        let displayName = null;
+        
+        // Extract actual video filename - prioritize video_filename and URLs
+        if (item.video_filename && item.video_filename.trim()) {
+          videoFilename = item.video_filename.includes('/') 
+            ? item.video_filename.split('/').pop() 
+            : item.video_filename;
+        } else if (item.video_url_en && item.video_url_en.includes('.mp4')) {
+          videoFilename = item.video_url_en.split('/').pop();
+        } else if (item.video_url_fr && item.video_url_fr.includes('.mp4')) {
+          videoFilename = item.video_url_fr.split('/').pop();
+        } else if (item.filename && item.filename.includes('.mp4')) {
+          videoFilename = item.filename.includes('/') 
+            ? item.filename.split('/').pop() 
+            : item.filename;
+        }
+        
+        // Create display name from title for better user experience
+        displayName = item.title_en || item.title_fr || videoFilename || `Gallery Video ${index + 1}`;
+        
+        // Skip entries without actual video files
+        if (!videoFilename || !videoFilename.includes('.mp4')) {
+          console.log(`🚨 FRESH: Skipping item ${index + 1}: No video file found (${displayName})`);
+          return;
+        }
+        
+        // Store mapping between different possible video identifiers
+        videoMapping[videoFilename] = displayName;
+        if (item.video_url_en) videoMapping[item.video_url_en.split('/').pop()] = displayName;
+        if (item.video_url_fr) videoMapping[item.video_url_fr.split('/').pop()] = displayName;
+        
+        // Initialize stats with proper display name
+        videoStats[videoFilename] = {
+          video_id: displayName, // Use friendly display name
+          total_views: 0,
+          unique_viewers: new Set(),
+          total_watch_time: 0,
+          last_viewed: '1970-01-01T00:00:00.000Z'
+        };
+        
+        console.log(`🚨 FRESH: Initialized: ${videoFilename} → "${displayName}"`);
+      });
+      
+      // Process all view events and calculate stats
+      views.forEach((view: any) => {
+        let matchedVideoId = null;
+        
+        // Try to match view to video using different potential identifiers
+        const potentialIds = [
+          view.video_id,
+          view.video_filename,
+          view.filename,
+          typeof view.video_id === 'string' ? view.video_id.split('/').pop() : null,
+          typeof view.video_filename === 'string' ? view.video_filename.split('/').pop() : null
+        ].filter(Boolean);
+        
+        for (const id of potentialIds) {
+          if (videoStats[id]) {
+            matchedVideoId = id;
+            break;
+          }
+        }
+        
+        if (!matchedVideoId) {
+          console.log(`🚨 FRESH: Skipping unmatched view:`, Object.keys(view));
+          return;
+        }
+        
+        const stats = videoStats[matchedVideoId];
+        stats.total_views += 1;
+        stats.total_watch_time += Math.max(0, view.watch_time || 0); // Ensure non-negative
+        stats.unique_viewers.add(view.ip_address || view.session_id || 'anonymous');
+        
+        // Update most recent view timestamp
+        if (view.created_at && new Date(view.created_at) > new Date(stats.last_viewed)) {
+          stats.last_viewed = view.created_at;
+        }
+      });
+      
+      // FIXED: Better final data preparation with accurate calculations
+      const performanceData = Object.values(videoStats)
+        .map((stats: any) => ({
+          video_id: stats.video_id, // Friendly display name
+          total_views: stats.total_views,
+          unique_viewers: stats.unique_viewers.size,
+          total_watch_time: Math.max(0, Math.round(stats.total_watch_time)),
+          average_watch_time: stats.total_views > 0 
+            ? Math.max(0, Math.round(stats.total_watch_time / stats.total_views)) 
+            : 0,
+          last_viewed: stats.last_viewed
+        }))
+        .sort((a, b) => {
+          // Sort by total views, then by name for consistency
+          if (a.total_views !== b.total_views) {
+            return b.total_views - a.total_views;
+          }
+          return a.video_id.localeCompare(b.video_id);
+        });
+      
+      console.log(`🚨 FRESH: Video performance: Processed ${performanceData.length} videos with clean data`);
+      console.log('🚨 FRESH: Video display names:', performanceData.map(v => `"${v.video_id}": ${v.total_views} views`));
+      res.json(performanceData);
+    } catch (error) {
+      console.error('❌ Fresh video data error:', error);
+      res.status(500).json({ error: "Failed to get fresh video data" });
+    }
+  });
+
   // Video View Tracking - POST track video view
   app.post("/api/track-video-view", async (req, res) => {
     try {
