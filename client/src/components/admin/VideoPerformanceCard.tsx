@@ -145,7 +145,7 @@ export function VideoPerformanceCard({ frontContent, className = "", performance
               overflowY: 'auto',
               position: 'relative',
               boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)',
-              border: '1px solid #e5e7eb'
+              border: '8px solid red'
             }}
             onClick={(e) => e.stopPropagation()}
           >
@@ -163,10 +163,10 @@ export function VideoPerformanceCard({ frontContent, className = "", performance
                 gap: '8px',
                 fontSize: '20px',
                 fontWeight: '600',
-                color: '#111827'
+                color: 'red'
               }}>
-                <Play style={{ width: '24px', height: '24px' }} />
-                Video Performance Analytics
+                <Play style={{ width: '24px', height: '24px', color: 'red' }} />
+                🔴 Video Performance Analytics - RED BOX TEST 🔴
               </div>
               <button
                 onClick={handleModalClose}
