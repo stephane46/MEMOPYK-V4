@@ -62,14 +62,14 @@ export function HowItWorksSection() {
         </div>
 
         {/* Steps */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-12" style={{ gridAutoRows: '1fr' }}>
           {steps.map((step, index) => {
             const Icon = step.icon;
             const isMiddleCard = step.number === 2;
             return (
-              <div key={step.number}>
+              <div key={step.number} className="h-full">
                 {/* Step Card */}
-                <div className={`relative bg-gradient-to-br from-memopyk-dark-blue via-memopyk-navy to-memopyk-dark-blue rounded-3xl shadow-2xl text-center group hover:shadow-3xl transition-all duration-500 transform hover:-translate-y-2 z-10 flex flex-col p-4 sm:p-6 lg:p-8 ${
+                <div className={`relative bg-gradient-to-br from-memopyk-dark-blue via-memopyk-navy to-memopyk-dark-blue rounded-3xl shadow-2xl text-center group hover:shadow-3xl transition-all duration-500 transform hover:-translate-y-2 z-10 h-full flex flex-col p-4 sm:p-6 lg:p-8 ${
                   isMiddleCard ? 'border-4 border-memopyk-orange' : ''
                 }`}>
                   
@@ -89,19 +89,19 @@ export function HowItWorksSection() {
                     {step.number}. {language === 'fr-FR' ? step.titleFr : step.titleEn}
                   </h3>
 
-                  {/* Step Description */}
-                  <div className="text-memopyk-cream/90 leading-relaxed text-sm sm:text-base mb-4 sm:mb-6">
+                  {/* Step Description - Takes available space */}
+                  <div className="text-memopyk-cream/90 text-sm sm:text-base mb-4 sm:mb-6 flex-grow" style={{ lineHeight: '1.4' }}>
                     {language === 'fr-FR' ? step.descriptionFr : step.descriptionEn}
                   </div>
                   
-                  {/* Sub Description */}
-                  <div className="pt-4 border-t border-memopyk-cream/20 flex flex-col items-center justify-start">
+                  {/* Sub Description - Fixed at bottom with adaptive text */}
+                  <div className="flex-shrink-0 pt-4 border-t border-memopyk-cream/20 flex flex-col items-center justify-start">
                     <div className="flex justify-center mb-3">
                       <div className="w-8 h-8 rounded-full bg-memopyk-cream flex items-center justify-center">
                         <Icon className="w-4 h-4 text-memopyk-dark-blue" />
                       </div>
                     </div>
-                    <div className="text-memopyk-cream/90 leading-relaxed text-sm sm:text-base text-center px-2">
+                    <div className="text-memopyk-cream/90 text-sm sm:text-base text-center px-2" style={{ lineHeight: '1.3' }}>
                       {language === 'fr-FR' ? step.subDescriptionFr : step.subDescriptionEn}
                     </div>
                   </div>
