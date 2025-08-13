@@ -16,6 +16,8 @@ interface VisitorModalProps {
     language: string;
     last_visit: string;
     user_agent: string;
+    visit_count?: number;
+    session_duration?: number;
   }>;
 }
 
@@ -52,6 +54,12 @@ export function FlipCard({ frontContent, className = "", visitors = [] }: Visito
     if (event.target === event.currentTarget) {
       handleModalClose();
     }
+  };
+
+  const formatDuration = (seconds: number) => {
+    if (seconds < 60) return `${seconds}s`;
+    if (seconds < 3600) return `${Math.floor(seconds / 60)}m`;
+    return `${Math.floor(seconds / 3600)}h ${Math.floor((seconds % 3600) / 60)}m`;
   };
 
   const formatDate = (dateString: string | null) => {
@@ -200,40 +208,76 @@ export function FlipCard({ frontContent, className = "", visitors = [] }: Visito
                             alignItems: 'center',
                             justifyContent: 'center'
                           }}>
-                            <CountryFlag country={visitor.country_code || visitor.country} size={24} />
+                            <CountryFlag country={visitor.country_code || visitor.country} size={32} />
                           </div>
                         </div>
-                        <div>
+                        <div style={{ flex: 1 }}>
                           <div style={{
                             fontWeight: '500',
                             color: '#111827',
-                            fontSize: '14px'
+                            fontSize: '14px',
+                            marginBottom: '2px'
                           }}>
                             {visitor.city && visitor.region 
                               ? `${visitor.city} (${visitor.region})` 
                               : visitor.city || visitor.region || visitor.ip_address || 'Unknown'}
                           </div>
                           <div style={{
-                            fontSize: '14px',
-                            color: '#6b7280'
+                            fontSize: '12px',
+                            color: '#6b7280',
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: '8px',
+                            flexWrap: 'wrap'
                           }}>
-                            {visitor.language || 'Unknown'}
+                            <span>{visitor.language || 'Unknown'}</span>
+                            <span style={{ 
+                              backgroundColor: (visitor.visit_count || 1) > 1 ? '#dcfce7' : '#fef3c7',
+                              color: (visitor.visit_count || 1) > 1 ? '#166534' : '#92400e',
+                              padding: '2px 6px',
+                              borderRadius: '4px',
+                              fontSize: '11px',
+                              fontWeight: '500'
+                            }}>
+                              {(visitor.visit_count || 1) > 1 ? 'Returning' : 'New'}
+                            </span>
+                            {(visitor.visit_count || 1) > 1 && (
+                              <span style={{ fontSize: '11px', color: '#9ca3af' }}>
+                                {visitor.visit_count} visits
+                              </span>
+                            )}
                           </div>
                         </div>
                       </div>
                       <div style={{
                         display: 'flex',
+                        flexDirection: 'column',
                         alignItems: 'center',
-                        gap: '8px',
-                        fontSize: '14px',
+                        gap: '4px',
+                        fontSize: '12px',
                         color: '#6b7280',
                         backgroundColor: '#ffffff',
-                        padding: '6px 12px',
+                        padding: '8px 12px',
                         borderRadius: '6px',
-                        border: '1px solid #e5e7eb'
+                        border: '1px solid #e5e7eb',
+                        minWidth: '110px'
                       }}>
-                        <Clock style={{ width: '16px', height: '16px' }} />
-                        {formatDate(visitor.last_visit)}
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                          <Clock style={{ width: '14px', height: '14px' }} />
+                          {formatDate(visitor.last_visit)}
+                        </div>
+                        {visitor.session_duration && (
+                          <div style={{ 
+                            fontSize: '11px', 
+                            color: '#9ca3af',
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: '2px'
+                          }}>
+                            <span>⏱</span>
+                            {formatDuration(visitor.session_duration)}
+                          </div>
+                        )}
                       </div>
                     </div>
                   ))
