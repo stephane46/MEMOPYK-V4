@@ -48,13 +48,18 @@ export function FlipCard({ frontContent, className = "", visitors = [] }: Visito
     }
   };
 
-  const formatDate = (dateString: string) => {
+  const formatDate = (dateString: string | null) => {
+    if (!dateString) return 'Just now';
+    
     try {
       const date = new Date(dateString);
       const now = new Date();
-      const diffInHours = Math.floor((now.getTime() - date.getTime()) / (1000 * 60 * 60));
+      const diffInMinutes = Math.floor((now.getTime() - date.getTime()) / (1000 * 60));
       
-      if (diffInHours < 1) return 'Just now';
+      if (diffInMinutes < 5) return 'Just now';
+      if (diffInMinutes < 60) return `${diffInMinutes}m ago`;
+      
+      const diffInHours = Math.floor(diffInMinutes / 60);
       if (diffInHours < 24) return `${diffInHours}h ago`;
       
       const diffInDays = Math.floor(diffInHours / 24);
@@ -62,7 +67,7 @@ export function FlipCard({ frontContent, className = "", visitors = [] }: Visito
       
       return date.toLocaleDateString();
     } catch (error) {
-      return 'Unknown';
+      return 'Just now';
     }
   };
 
@@ -105,6 +110,85 @@ export function FlipCard({ frontContent, className = "", visitors = [] }: Visito
             <rect y="5" width="20" height="5" fill="#DD0000"/>
             <rect y="10" width="20" height="5" fill="#FFCE00"/>
           </svg>
+        ),
+        'US': (
+          <svg width="20" height="15" viewBox="0 0 20 15" xmlns="http://www.w3.org/2000/svg">
+            <rect width="20" height="15" fill="#B22234"/>
+            <rect y="1.15" width="20" height="1.15" fill="#FFFFFF"/>
+            <rect y="3.46" width="20" height="1.15" fill="#FFFFFF"/>
+            <rect y="5.77" width="20" height="1.15" fill="#FFFFFF"/>
+            <rect y="8.08" width="20" height="1.15" fill="#FFFFFF"/>
+            <rect y="10.38" width="20" height="1.15" fill="#FFFFFF"/>
+            <rect y="12.69" width="20" height="1.15" fill="#FFFFFF"/>
+            <rect width="8" height="8.08" fill="#3C3B6E"/>
+          </svg>
+        ),
+        'CA': (
+          <svg width="20" height="15" viewBox="0 0 20 15" xmlns="http://www.w3.org/2000/svg">
+            <rect width="6.67" height="15" fill="#FF0000"/>
+            <rect x="6.67" width="6.67" height="15" fill="#FFFFFF"/>
+            <rect x="13.33" width="6.67" height="15" fill="#FF0000"/>
+            <path d="M10 4l1 2h2l-1.5 1.5L12.5 10L10 8.5 7.5 10l1-2.5L7 6h2l1-2z" fill="#FF0000"/>
+          </svg>
+        ),
+        'BR': (
+          <svg width="20" height="15" viewBox="0 0 20 15" xmlns="http://www.w3.org/2000/svg">
+            <rect width="20" height="15" fill="#009739"/>
+            <path d="M10 2l8 5.5-8 5.5-8-5.5z" fill="#FEDD00"/>
+            <circle cx="10" cy="7.5" r="3" fill="#012169"/>
+          </svg>
+        ),
+        'AU': (
+          <svg width="20" height="15" viewBox="0 0 20 15" xmlns="http://www.w3.org/2000/svg">
+            <rect width="20" height="15" fill="#012169"/>
+            <rect width="10" height="7.5" fill="#012169"/>
+            <path d="M0 0l10 7.5M10 0L0 7.5" stroke="#FFFFFF" strokeWidth="1"/>
+            <path d="M5 0v7.5M0 3.75h10" stroke="#FFFFFF" strokeWidth="1.5"/>
+          </svg>
+        ),
+        'NL': (
+          <svg width="20" height="15" viewBox="0 0 20 15" xmlns="http://www.w3.org/2000/svg">
+            <rect width="20" height="5" fill="#AE1C28"/>
+            <rect y="5" width="20" height="5" fill="#FFFFFF"/>
+            <rect y="10" width="20" height="5" fill="#21468B"/>
+          </svg>
+        ),
+        'BE': (
+          <svg width="20" height="15" viewBox="0 0 20 15" xmlns="http://www.w3.org/2000/svg">
+            <rect width="6.67" height="15" fill="#000000"/>
+            <rect x="6.67" width="6.67" height="15" fill="#FFD700"/>
+            <rect x="13.33" width="6.67" height="15" fill="#ED2939"/>
+          </svg>
+        ),
+        'CH': (
+          <svg width="20" height="15" viewBox="0 0 20 15" xmlns="http://www.w3.org/2000/svg">
+            <rect width="20" height="15" fill="#FF0000"/>
+            <rect x="8" y="4" width="4" height="7" fill="#FFFFFF"/>
+            <rect x="6" y="6" width="8" height="3" fill="#FFFFFF"/>
+          </svg>
+        ),
+        'AT': (
+          <svg width="20" height="15" viewBox="0 0 20 15" xmlns="http://www.w3.org/2000/svg">
+            <rect width="20" height="5" fill="#ED2939"/>
+            <rect y="5" width="20" height="5" fill="#FFFFFF"/>
+            <rect y="10" width="20" height="5" fill="#ED2939"/>
+          </svg>
+        ),
+        'SE': (
+          <svg width="20" height="15" viewBox="0 0 20 15" xmlns="http://www.w3.org/2000/svg">
+            <rect width="20" height="15" fill="#006AA7"/>
+            <rect x="6" y="0" width="2" height="15" fill="#FECC00"/>
+            <rect x="0" y="6.5" width="20" height="2" fill="#FECC00"/>
+          </svg>
+        ),
+        'NO': (
+          <svg width="20" height="15" viewBox="0 0 20 15" xmlns="http://www.w3.org/2000/svg">
+            <rect width="20" height="15" fill="#EF2B2D"/>
+            <rect x="6" y="0" width="2" height="15" fill="#FFFFFF"/>
+            <rect x="0" y="6.5" width="20" height="2" fill="#FFFFFF"/>
+            <rect x="6.5" y="0" width="1" height="15" fill="#002868"/>
+            <rect x="0" y="7" width="20" height="1" fill="#002868"/>
+          </svg>
         )
       };
       return flags[countryCode];
@@ -118,11 +202,33 @@ export function FlipCard({ frontContent, className = "", visitors = [] }: Visito
       'United Kingdom': 'GB',
       'UK': 'GB',
       'Germany': 'DE',
+      'United States': 'US',
+      'USA': 'US',
+      'Canada': 'CA',
+      'Brazil': 'BR',
+      'Australia': 'AU',
+      'Netherlands': 'NL',
+      'Belgium': 'BE',
+      'Switzerland': 'CH',
+      'Austria': 'AT',
+      'Sweden': 'SE',
+      'Norway': 'NO',
+      // Two-letter codes
       'ES': 'ES',
       'IT': 'IT',
       'FR': 'FR',
       'GB': 'GB',
-      'DE': 'DE'
+      'DE': 'DE',
+      'US': 'US',
+      'CA': 'CA',
+      'BR': 'BR',
+      'AU': 'AU',
+      'NL': 'NL',
+      'BE': 'BE',
+      'CH': 'CH',
+      'AT': 'AT',
+      'SE': 'SE',
+      'NO': 'NO'
     };
     
     // Only show globe icon for truly unknown entries
