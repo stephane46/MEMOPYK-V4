@@ -1952,10 +1952,19 @@ export async function registerRoutes(app: Express): Promise<void> {
       
       const sessions = await hybridStorage.getAnalyticsSessions();
       
+      // Filter out test data and invalid sessions BEFORE processing
+      const realSessions = sessions.filter(session => {
+        return !session.is_test_data && 
+               session.ip_address && 
+               session.ip_address !== '0.0.0.0' &&
+               session.ip_address !== null &&
+               !session.session_id?.includes('anonymous');
+      });
+      
       // Get unique visitors with their latest session info
       const visitorMap = new Map();
       
-      sessions.forEach(session => {
+      realSessions.forEach(session => {
         const ip = session.ip_address;
         if (!visitorMap.has(ip) || new Date(session.created_at) > new Date(visitorMap.get(ip).created_at)) {
           visitorMap.set(ip, {
