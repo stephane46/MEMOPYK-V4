@@ -260,27 +260,18 @@ export function CountryFlag({ country, className = "", size = 20 }: CountryFlagP
   // Final fallback - but THIS SHOULD SHOW A GLOBE, NOT TEXT!
   console.log('🏴 FINAL FALLBACK FOR:', { country, countryCode, flagSvgExists, isLoading });
   
-  // CRITICAL: The fact that you see country codes as text means this return is being OVERWRITTEN
-  // by something else - this is NOT a CountryFlag component issue!
+  // Final fallback: Create a styled flag placeholder with country code
   return (
     <div 
-      id={`countryflag-${country}-${Date.now()}`}
+      className={`inline-flex items-center justify-center ${className} bg-gray-100 border border-gray-300 rounded text-xs font-medium text-gray-700`}
       style={{
         width: `${size}px`,
-        height: `${size}px`,
-        backgroundColor: 'red',
-        color: 'white',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        fontSize: '8px',
-        fontWeight: 'bold',
-        border: '2px solid yellow',
-        position: 'relative',
-        zIndex: 1000
+        height: `${Math.round(size * 0.75)}px`, // Flag aspect ratio
+        fontSize: `${Math.round(size * 0.3)}px`
       }}
+      title={`${country} (${countryCode || country})`}
     >
-      {country}
+      {(countryCode || country)?.substring(0, 2).toUpperCase()}
     </div>
   );
 }

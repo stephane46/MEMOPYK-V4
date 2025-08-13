@@ -201,6 +201,7 @@ app.use((req, res, next) => {
     // Serve static files before proxy (for images and other assets)
     app.use('/images', express.static(path.join(__dirname, '../public/images')));
     app.use('/logo.svg', express.static(path.join(__dirname, '../public/logo.svg')));
+    app.use('/flags', express.static(path.join(__dirname, '../public/flags')));
     
     // Create proxy for Vite dev server
     const proxy = createProxyMiddleware({
@@ -212,7 +213,7 @@ app.use((req, res, next) => {
 
     // Proxy non-API requests to Vite dev server with error handling  
     app.use((req, res, next) => {
-      if (req.path.startsWith("/api") || req.path.startsWith("/images") || req.path === "/logo.svg") {
+      if (req.path.startsWith("/api") || req.path.startsWith("/images") || req.path === "/logo.svg" || req.path.startsWith("/flags")) {
         return next(); // Skip proxy for API routes and static assets
       }
       
@@ -244,6 +245,9 @@ app.use((req, res, next) => {
       }
       express.static(clientDist, { index: false })(req, res, next);
     });
+    
+    // Serve flags from public directory in production
+    app.use('/flags', express.static(path.resolve(process.cwd(), 'public/flags')));
     
     // Serve index.html for all non-API routes (SPA fallback)
     app.get("*", (req: Request, res: Response, next) => {
