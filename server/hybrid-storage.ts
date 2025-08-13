@@ -3292,7 +3292,9 @@ Allow: /contact`;
       }
     } catch (error) {
       console.warn('⚠️ Analytics Sessions: Supabase connection failed for historical data:', error);
-      return [];
+      // Fallback to JSON cache when Supabase fails
+      console.log('📊 FALLBACK: Using JSON cache due to Supabase connection failure');
+      return this.getRecentAnalyticsSessions(dateFrom, dateTo, language);
     }
   }
 
@@ -3338,7 +3340,9 @@ Allow: /contact`;
 
       if (error) {
         console.error('⚠️ Analytics Views: Supabase query error:', error);
-        throw error;
+        // Don't throw error, fallback to JSON cache
+        console.log('📊 FALLBACK: Using JSON cache due to Supabase error');
+        return this.getRecentAnalyticsViews(dateFrom, dateTo, videoId);
       }
 
       if (data && data.length > 0) {
@@ -3350,6 +3354,34 @@ Allow: /contact`;
       }
     } catch (error) {
       console.warn('⚠️ Analytics Views: Supabase connection failed for historical data:', error);
+      // Fallback to JSON cache when Supabase fails
+      console.log('📊 FALLBACK: Using JSON cache due to Supabase connection failure');
+      return this.getRecentAnalyticsViews(dateFrom, dateTo, videoId);
+    }
+  }
+
+  // Private method for recent sessions from JSON cache
+  private getRecentAnalyticsSessions(dateFrom?: string, dateTo?: string, language?: string): any[] {
+    try {
+      const sessions = this.loadJsonFile('analytics-sessions.json');
+      let filtered = sessions
+        .filter((session: any) => !session.is_test_data);
+
+      if (dateFrom) {
+        filtered = filtered.filter((session: any) => session.created_at >= dateFrom);
+      }
+      if (dateTo) {
+        // Add end-of-day time to dateTo to include all records from that day
+        const dateToEndOfDay = dateTo.includes('T') ? dateTo : dateTo + 'T23:59:59.999Z';
+        filtered = filtered.filter((session: any) => session.created_at <= dateToEndOfDay);
+      }
+      if (language) {
+        filtered = filtered.filter((session: any) => session.language === language);
+      }
+
+      return filtered;
+    } catch (error) {
+      console.error('Error getting recent analytics sessions from JSON:', error);
       return [];
     }
   }
