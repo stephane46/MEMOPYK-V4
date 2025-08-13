@@ -602,6 +602,14 @@ export default function GallerySection() {
                 key={item.id} 
                 data-video-id={item.id}
                 className={`card-flip-container ${isFlipped ? 'flipped' : ''} rounded-2xl`}
+                onClick={(e) => {
+                  console.log('🚨 CARD CLICK TEST:', { 
+                    item: item.id, 
+                    hasVideo: itemHasVideo, 
+                    target: e.target,
+                    className: e.target?.className 
+                  });
+                }}
               >
                 <div className="card-flip-inner">
                   {/* FRONT SIDE - Normal Gallery Card */}
