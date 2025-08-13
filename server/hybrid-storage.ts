@@ -3220,7 +3220,9 @@ Allow: /contact`;
             }));
 
           if (dateTo) {
-            filtered = filtered.filter((session: any) => session.created_at <= dateTo);
+            // Add end-of-day time to dateTo to include all records from that day
+            const dateToEndOfDay = dateTo.includes('T') ? dateTo : dateTo + 'T23:59:59.999Z';
+            filtered = filtered.filter((session: any) => session.created_at <= dateToEndOfDay);
           }
           if (language) {
             filtered = filtered.filter((session: any) => session.language === language);
@@ -3324,7 +3326,9 @@ Allow: /contact`;
         query = query.gte('created_at', dateFrom);
       }
       if (dateTo) {
-        query = query.lte('created_at', dateTo);
+        // Add end-of-day time to dateTo to include all records from that day
+        const dateToEndOfDay = dateTo.includes('T') ? dateTo : dateTo + 'T23:59:59.999Z';
+        query = query.lte('created_at', dateToEndOfDay);
       }
       if (videoId) {
         query = query.eq('video_id', videoId);
@@ -3362,7 +3366,9 @@ Allow: /contact`;
         filtered = filtered.filter((view: any) => view.created_at >= dateFrom);
       }
       if (dateTo) {
-        filtered = filtered.filter((view: any) => view.created_at <= dateTo);
+        // Add end-of-day time to dateTo to include all records from that day
+        const dateToEndOfDay = dateTo.includes('T') ? dateTo : dateTo + 'T23:59:59.999Z';
+        filtered = filtered.filter((view: any) => view.created_at <= dateToEndOfDay);
       }
       if (videoId) {
         filtered = filtered.filter((view: any) => view.video_id === videoId);
