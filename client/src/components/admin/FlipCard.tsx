@@ -90,13 +90,10 @@ export function FlipCard({ frontContent, className = "", visitors = [] }: Visito
     <>
       {/* CLICKABLE CARD */}
       <div 
-        className={`cursor-pointer transition-transform hover:scale-105 ${className} border-4 border-green-500 bg-green-100 shadow-green-300 shadow-lg`}
+        className={`cursor-pointer transition-transform hover:scale-105 ${className}`}
         onClick={handleCardClick}
-        style={{ border: '4px solid green', backgroundColor: '#f0fdf4', boxShadow: '0 0 20px rgba(0, 255, 0, 0.3)' }}
       >
-        <div style={{ padding: '4px', border: '2px solid green', borderRadius: '8px' }}>
-          {frontContent}
-        </div>
+        {frontContent}
       </div>
 
       {/* CUSTOM MODAL WITH ABSOLUTE POSITIONING */}

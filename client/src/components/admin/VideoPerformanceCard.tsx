@@ -110,13 +110,10 @@ export function VideoPerformanceCard({ frontContent, className = "", performance
     <>
       {/* CLICKABLE CARD */}
       <div 
-        className={`cursor-pointer transition-transform duration-200 hover:scale-105 ${className} border-4 border-red-500 bg-red-100 shadow-red-300 shadow-lg`}
+        className={`cursor-pointer transition-transform duration-200 hover:scale-105 ${className}`}
         onClick={handleCardClick}
-        style={{ border: '4px solid red', backgroundColor: '#fee2e2', boxShadow: '0 0 20px rgba(255, 0, 0, 0.3)' }}
       >
-        <div style={{ padding: '4px', border: '2px solid red', borderRadius: '8px' }}>
-          {frontContent}
-        </div>
+        {frontContent}
       </div>
 
       {/* CUSTOM MODAL WITH ABSOLUTE POSITIONING */}
@@ -148,7 +145,7 @@ export function VideoPerformanceCard({ frontContent, className = "", performance
               overflowY: 'auto',
               position: 'relative',
               boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)',
-              border: '8px solid red'
+              border: '1px solid #e5e7eb'
             }}
             onClick={(e) => e.stopPropagation()}
           >
@@ -166,10 +163,10 @@ export function VideoPerformanceCard({ frontContent, className = "", performance
                 gap: '8px',
                 fontSize: '20px',
                 fontWeight: '600',
-                color: 'red'
+                color: '#111827'
               }}>
-                <Play style={{ width: '24px', height: '24px', color: 'red' }} />
-                🔴 Video Performance Analytics - RED BOX TEST 🔴
+                <Play style={{ width: '24px', height: '24px' }} />
+                Video Performance Analytics
               </div>
               <button
                 onClick={handleModalClose}
