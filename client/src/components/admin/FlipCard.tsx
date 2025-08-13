@@ -176,16 +176,16 @@ export function FlipCard({ frontContent, className = "", visitors = [] }: Visito
             </div>
             
             {/* MODAL BODY */}
-            <div style={{ padding: '24px' }}>
+            <div style={{ padding: '16px 20px' }}>
               <div style={{
                 fontSize: '14px',
                 color: '#6b7280',
-                marginBottom: '16px'
+                marginBottom: '12px'
               }}>
                 Last 5 unique visitors • Total: {visitors.length}
               </div>
               
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
                 {visitors.length > 0 ? (
                   visitors.map((visitor, index) => (
                     <div 
@@ -194,7 +194,7 @@ export function FlipCard({ frontContent, className = "", visitors = [] }: Visito
                         display: 'flex',
                         alignItems: 'center',
                         justifyContent: 'space-between',
-                        padding: '16px',
+                        padding: '10px 12px',
                         backgroundColor: '#f9fafb',
                         borderRadius: '8px',
                         border: '1px solid #e5e7eb'
