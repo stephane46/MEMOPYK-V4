@@ -98,13 +98,9 @@ interface CountryFlagProps {
  * 3. Neutral placeholder only for invalid data
  */
 export function CountryFlag({ country, className = "", size = 20 }: CountryFlagProps) {
-  console.log('🏴 CountryFlag RENDER START:', { country, className, size });
-  
   const [countryCode, setCountryCode] = useState<string | null>(null);
   const [flagSvgExists, setFlagSvgExists] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(true);
-
-  console.log('🏴 CountryFlag STATE:', { countryCode, flagSvgExists, isLoading });
 
   useEffect(() => {
     // Load full country mapping if not loaded
@@ -184,7 +180,7 @@ export function CountryFlag({ country, className = "", size = 20 }: CountryFlagP
 
   // Show loading placeholder during flag detection
   if (isLoading && countryCode) {
-    console.log('🏴 RENDERING LOADING STATE FOR:', countryCode);
+
     return (
       <div 
         className={`inline-flex items-center justify-center ${className}`}
@@ -208,7 +204,7 @@ export function CountryFlag({ country, className = "", size = 20 }: CountryFlagP
 
   // Professional SVG flag (preferred)
   if (countryCode && flagSvgExists && !isLoading) {
-    console.log('🏴 RENDERING SVG FLAG:', countryCode);
+
     return (
       <img
         src={`/flags/${countryCode.toLowerCase()}.svg`}
@@ -227,7 +223,7 @@ export function CountryFlag({ country, className = "", size = 20 }: CountryFlagP
 
   // Unicode flag emoji fallback
   if (countryCode && !isLoading) {
-    console.log('🏴 TRYING UNICODE FLAG FOR:', countryCode);
+
     const getUnicodeFlagEmoji = (code: string): string | null => {
       if (code && code.length === 2) {
         const codePoints = code.toUpperCase().split('').map(char => 
@@ -239,7 +235,7 @@ export function CountryFlag({ country, className = "", size = 20 }: CountryFlagP
     };
 
     const unicodeFlag = getUnicodeFlagEmoji(countryCode);
-    console.log('🏴 UNICODE FLAG RESULT:', unicodeFlag);
+
     if (unicodeFlag) {
       return (
         <div 
@@ -257,8 +253,7 @@ export function CountryFlag({ country, className = "", size = 20 }: CountryFlagP
     }
   }
 
-  // Final fallback - but THIS SHOULD SHOW A GLOBE, NOT TEXT!
-  console.log('🏴 FINAL FALLBACK FOR:', { country, countryCode, flagSvgExists, isLoading });
+  // Final fallback for invalid or unknown countries
   
   // Final fallback: Create a styled flag placeholder with country code
   return (
