@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Users, Clock, X } from 'lucide-react';
+import { CountryFlag } from './CountryFlag';
 
 interface VisitorModalProps {
   frontContent: React.ReactNode;
@@ -77,6 +78,22 @@ export function FlipCard({ frontContent, className = "", visitors = [] }: Visito
   };
 
   const getCountryFlag = (country: string) => {
+    // Handle truly unknown entries with globe icon
+    if (country === 'Unknown' || !country) {
+      return (
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="12" cy="12" r="10" stroke="#6B7280" strokeWidth="2"/>
+          <path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z" stroke="#6B7280" strokeWidth="2"/>
+        </svg>
+      );
+    }
+    
+    // Use professional flag component for all countries
+    return <CountryFlag country={country} size={20} />;
+  };
+
+  // Legacy function replaced by professional CountryFlag component above
+  const getCountryFlagLegacy = (country: string) => {
     // Map country names to flag SVG elements - actual flag images, not emojis
     const getFlagSvg = (countryCode: string) => {
       const flags: { [key: string]: React.ReactElement } = {
