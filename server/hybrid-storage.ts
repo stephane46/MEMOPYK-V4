@@ -3898,10 +3898,15 @@ Allow: /contact`;
       // Use filtered analytics views (excludes test data and hero videos automatically)
       const views = await this.getAnalyticsViews(dateFrom, dateTo);
       
-      // Calculate overview metrics
-      const totalViews = views.length;
+      // Calculate overview metrics - only count views that can be matched to videos
+      const galleryViews = views.filter((view: any) => 
+        view.video_type === 'gallery' && 
+        view.video_id && 
+        view.video_id.trim() !== ''
+      );
+      const totalViews = galleryViews.length;
       const uniqueVisitors = new Set(sessions.map((s: any) => s.ip_address)).size;
-      const totalWatchTime = views.reduce((sum: number, view: any) => 
+      const totalWatchTime = galleryViews.reduce((sum: number, view: any) => 
         sum + (parseInt(view.watch_time || view.duration_watched || view.view_duration || '0')), 0);
       const averageSessionDuration = sessions.length > 0 
         ? sessions.reduce((sum: number, session: any) => sum + (session.duration || 0), 0) / sessions.length
@@ -3938,11 +3943,11 @@ Allow: /contact`;
         .sort((a, b) => b.sessions - a.sessions);
 
       // Video performance (Gallery videos only - test data already filtered out)
-      const galleryViews = views.filter((view: any) => 
+      const filteredGalleryViews = views.filter((view: any) => 
         view.video_type === 'gallery'
       );
       const videoMap = new Map();
-      galleryViews.forEach((view: any) => {
+      filteredGalleryViews.forEach((view: any) => {
         const videoId = view.video_id;
         if (!videoMap.has(videoId)) {
           videoMap.set(videoId, {
