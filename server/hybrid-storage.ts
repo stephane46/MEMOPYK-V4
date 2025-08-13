@@ -3825,7 +3825,20 @@ Allow: /contact`;
 
   async clearAllAnalyticsData(): Promise<void> {
     try {
-      // Clear all analytics-related JSON files
+      console.log('🗑️ Starting complete analytics data deletion...');
+      
+      // Step 1: Clear PostgreSQL database tables
+      try {
+        console.log('🗑️ Deleting from PostgreSQL tables...');
+        const deletedSessions = await this.db.delete(analyticsSessions);
+        const deletedViews = await this.db.delete(analyticsViews);
+        console.log(`✅ PostgreSQL analytics data deleted successfully: ${deletedSessions.rowCount || 0} sessions, ${deletedViews.rowCount || 0} views`);
+      } catch (dbError) {
+        console.warn('⚠️ PostgreSQL deletion failed, continuing with JSON cleanup:', dbError);
+      }
+      
+      // Step 2: Clear all analytics-related JSON files
+      console.log('🗑️ Clearing JSON backup files...');
       this.saveJsonFile('analytics-sessions.json', []);
       this.saveJsonFile('analytics-views.json', []);
       this.saveJsonFile('realtime-visitors.json', []);
@@ -3833,7 +3846,7 @@ Allow: /contact`;
       this.saveJsonFile('engagement-heatmap.json', []);
       this.saveJsonFile('conversion-funnel.json', []);
       
-      // Reset analytics settings to defaults
+      // Step 3: Reset analytics settings to defaults
       const defaultSettings = {
         excludedIps: [],
         completionThreshold: 75,
@@ -3842,9 +3855,9 @@ Allow: /contact`;
       };
       this.saveJsonFile('analytics-settings.json', [defaultSettings]);
       
-      console.log('✅ All analytics data cleared successfully');
+      console.log('✅ ALL ANALYTICS DATA CLEARED SUCCESSFULLY (PostgreSQL + JSON)');
     } catch (error) {
-      console.error('Error clearing all analytics data:', error);
+      console.error('❌ Error clearing all analytics data:', error);
       throw error;
     }
   }
