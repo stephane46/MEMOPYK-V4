@@ -72,6 +72,18 @@ img, video, iframe, canvas, svg {
   font-family: 'Poppins', sans-serif;
 }
 
+/* How It Works Cards - Force text display without cutoff */
+.how-it-works-text {
+  overflow: visible !important;
+  height: auto !important;
+  max-height: none !important;
+  line-height: 1.1 !important;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  hyphens: auto;
+  white-space: normal;
+}
+
 /* Legal Document Tight Spacing Override - Balanced */
 .legal-document-tight * {
   line-height: 1.3 !important;
