@@ -2,7 +2,7 @@ import { readFileSync, writeFileSync, existsSync, unlinkSync } from "fs";
 import { join } from "path";
 import { createClient } from '@supabase/supabase-js';
 import { db } from './db';
-import { eq, and, desc, asc, sql } from 'drizzle-orm';
+import { eq, and, desc, asc, sql, gte } from 'drizzle-orm';
 import { ctaSettings, heroTextSettings, analyticsViews, analyticsSessions } from '../shared/schema';
 
 export interface HybridStorageInterface {
@@ -3185,7 +3185,55 @@ Allow: /contact`;
 
     // For recent data (last 7 days), use JSON cache for speed
     if (isRecentQuery && !dateFrom?.startsWith('2024-')) { // Exclude obvious historical queries
-      console.log('📊 ANALYTICS SESSIONS: Using JSON cache for recent data (last 7 days)');
+      console.log('📊 ANALYTICS SESSIONS: Using PostgreSQL for recent data (includes new sessions)');
+      try {
+        // Get sessions from PostgreSQL database
+        const dbSessions = await this.db
+          .select()
+          .from(analyticsSessions)
+          .where(
+            dateFrom 
+              ? gte(analyticsSessions.createdAt, new Date(dateFrom))
+              : gte(analyticsSessions.createdAt, sevenDaysAgo)
+          )
+          .orderBy(desc(analyticsSessions.createdAt));
+
+        if (dbSessions.length > 0) {
+          let filtered = dbSessions
+            .filter((session: any) => !session.isTestData)
+            .map((session: any) => ({
+              id: session.id,
+              session_id: session.sessionId,
+              user_id: session.userId,
+              ip_address: session.ipAddress,
+              user_agent: session.userAgent,
+              referrer: session.referrer,
+              language: session.language,
+              country: session.country,
+              city: session.city,
+              created_at: session.createdAt?.toISOString(),
+              ended_at: session.endedAt?.toISOString(),
+              duration: session.duration,
+              page_views: session.pageViews,
+              is_bot: session.isBot,
+              is_test_data: session.isTestData
+            }));
+
+          if (dateTo) {
+            filtered = filtered.filter((session: any) => session.created_at <= dateTo);
+          }
+          if (language) {
+            filtered = filtered.filter((session: any) => session.language === language);
+          }
+
+          console.log(`✅ POSTGRESQL: Found ${filtered.length} recent sessions`);
+          return filtered;
+        }
+      } catch (error) {
+        console.warn('⚠️ Analytics Sessions: PostgreSQL failed, falling back to JSON cache:', error);
+      }
+      
+      // Fallback to JSON cache if PostgreSQL fails
       try {
         const sessions = this.loadJsonFile('analytics-sessions.json');
         let filtered = sessions.filter((session: any) => !session.is_test_data);
@@ -3200,10 +3248,10 @@ Allow: /contact`;
           filtered = filtered.filter((session: any) => session.language === language);
         }
 
-        console.log(`✅ JSON CACHE: Found ${filtered.length} recent sessions`);
+        console.log(`✅ JSON CACHE FALLBACK: Found ${filtered.length} recent sessions`);
         return filtered;
       } catch (error) {
-        console.warn('⚠️ JSON cache failed, falling back to Supabase:', error);
+        console.warn('⚠️ Analytics Sessions: JSON cache also failed:', error);
       }
     }
 

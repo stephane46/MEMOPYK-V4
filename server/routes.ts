@@ -1833,8 +1833,8 @@ export async function registerRoutes(app: Express): Promise<void> {
       // Enhanced session data with server-side detection
       const sessionData = {
         ...req.body,
-        ip_address: clientIp,
-        language: detectedLanguage, // Use server-detected language, not client localStorage
+        ip_address: req.body.ip_address || clientIp, // Prioritize client-provided IP for testing
+        language: req.body.language || detectedLanguage, // Prioritize client-provided language for testing
         user_agent: req.headers['user-agent'] || req.body.user_agent || '',
         session_id: req.body.session_id || `session_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`
       };
