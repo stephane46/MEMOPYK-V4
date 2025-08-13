@@ -18,9 +18,27 @@ interface VideoPerformanceCardProps {
 
 export function VideoPerformanceCard({ frontContent, className = "", performanceData = [] }: VideoPerformanceCardProps) {
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [freshData, setFreshData] = useState<VideoPerformanceData[]>([]);
 
-  const handleCardClick = () => {
+  const handleCardClick = async () => {
     setIsModalOpen(true);
+    // FORCE FRESH DATA FETCH - Bypass all caching
+    try {
+      const response = await fetch('/api/analytics/video-performance?' + Date.now(), {
+        method: 'GET',
+        cache: 'no-cache',
+        headers: {
+          'Cache-Control': 'no-cache, no-store, must-revalidate',
+          'Pragma': 'no-cache',
+          'Expires': '0'
+        }
+      });
+      const data = await response.json();
+      setFreshData(data);
+      console.log('🚨 FORCE FETCHED FRESH DATA:', data);
+    } catch (error) {
+      console.error('Failed to fetch fresh data:', error);
+    }
   };
 
   const handleModalClose = () => {
@@ -190,7 +208,7 @@ export function VideoPerformanceCard({ frontContent, className = "", performance
                   textAlign: 'center'
                 }}>
                   <div style={{ fontSize: '24px', fontWeight: '700', color: '#2563eb' }}>
-                    {performanceData.reduce((sum, video) => sum + video.total_views, 0)}
+                    {(freshData.length > 0 ? freshData : performanceData).reduce((sum, video) => sum + video.total_views, 0)}
                   </div>
                   <div style={{ fontSize: '14px', color: '#64748b', marginTop: '4px' }}>
                     Total Views
@@ -204,7 +222,7 @@ export function VideoPerformanceCard({ frontContent, className = "", performance
                   textAlign: 'center'
                 }}>
                   <div style={{ fontSize: '24px', fontWeight: '700', color: '#059669' }}>
-                    {performanceData.length}
+                    {(freshData.length > 0 ? freshData : performanceData).length}
                   </div>
                   <div style={{ fontSize: '14px', color: '#64748b', marginTop: '4px' }}>
                     Videos Watched
@@ -218,7 +236,7 @@ export function VideoPerformanceCard({ frontContent, className = "", performance
                   textAlign: 'center'
                 }}>
                   <div style={{ fontSize: '24px', fontWeight: '700', color: '#dc2626' }}>
-                    {formatDuration(performanceData.reduce((sum, video) => sum + video.total_watch_time, 0))}
+                    {formatDuration((freshData.length > 0 ? freshData : performanceData).reduce((sum, video) => sum + video.total_watch_time, 0))}
                   </div>
                   <div style={{ fontSize: '14px', color: '#64748b', marginTop: '4px' }}>
                     Total Watch Time
@@ -236,7 +254,7 @@ export function VideoPerformanceCard({ frontContent, className = "", performance
                 Most Popular Videos
               </div>
 
-              {performanceData.length > 0 ? (
+              {(freshData.length > 0 ? freshData : performanceData).length > 0 ? (
                 <div style={{ 
                   display: 'flex', 
                   flexDirection: 'column', 
@@ -244,7 +262,7 @@ export function VideoPerformanceCard({ frontContent, className = "", performance
                   maxHeight: '400px',
                   overflowY: 'auto'
                 }}>
-                  {performanceData.map((video, index) => (
+                  {(freshData.length > 0 ? freshData : performanceData).map((video, index) => (
                     <div 
                       key={video.video_id}
                       style={{
