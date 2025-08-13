@@ -1224,7 +1224,7 @@ export function AnalyticsDashboard() {
                       <div className="w-8 h-8 bg-[#2A4759] rounded-full flex items-center justify-center text-white text-sm font-bold mb-2">1</div>
                       <div className="text-center">
                         <p className="text-sm font-medium text-[#2A4759]">How many people visited</p>
-                        <p className="text-xs text-[#2A4759]/70">Unique visitors to your site</p>
+                        <p className="text-xs text-[#2A4759]/70">Unique visitors to memopyk.com</p>
                       </div>
                     </div>
                     
