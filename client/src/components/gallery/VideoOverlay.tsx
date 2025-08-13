@@ -372,37 +372,37 @@ export default function VideoOverlay({
             />
             
             {/* Centered animated overlays - all appear simultaneously */}
-            <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-              <div className="text-center space-y-8 animate-fade-in">
-                {/* Source count (photos & videos) - Match gallery card format exactly */}
+            <div className="absolute inset-0 flex items-center justify-center pointer-events-none p-2 sm:p-4">
+              <div className="text-center space-y-3 sm:space-y-8 animate-fade-in max-w-full">
+                {/* Source count (photos & videos) - Mobile responsive */}
                 {sourceText && (
                   <div className="flex justify-center">
-                    <div className="bg-black/70 backdrop-blur-sm text-white text-base px-6 py-4 rounded-full flex flex-col items-center justify-center">
-                      <div className="font-medium leading-tight whitespace-nowrap flex items-center gap-3">
-                        <ImageIcon className="w-6 h-6" />
-                        <span>{sourceText}</span>
+                    <div className="bg-black/70 backdrop-blur-sm text-white text-xs sm:text-base px-3 sm:px-6 py-2 sm:py-4 rounded-full flex flex-col items-center justify-center max-w-full">
+                      <div className="font-medium leading-tight whitespace-nowrap flex items-center gap-2 sm:gap-3">
+                        <ImageIcon className="w-4 h-4 sm:w-6 sm:h-6 flex-shrink-0" />
+                        <span className="truncate">{sourceText}</span>
                       </div>
-                      <div className="text-sm text-gray-300 mt-1">
+                      <div className="text-xs sm:text-sm text-gray-300 mt-1">
                         {language === 'fr-FR' ? 'fournies par Client' : 'provided by Client'}
                       </div>
                     </div>
                   </div>
                 )}
                 
-                {/* Title */}
+                {/* Title - Mobile responsive */}
                 {title && (
-                  <div className="px-8">
-                    <h3 className="text-white font-bold text-3xl leading-tight drop-shadow-lg text-center">
+                  <div className="px-3 sm:px-8">
+                    <h3 className="text-white font-bold text-lg sm:text-3xl leading-tight drop-shadow-lg text-center break-words">
                       {title}
                     </h3>
                   </div>
                 )}
                 
-                {/* Duration */}
+                {/* Duration - Mobile responsive */}
                 {durationText && (
                   <div className="flex justify-center">
-                    <div className="bg-black/70 backdrop-blur-sm text-white text-base px-6 py-2 rounded-full flex items-center gap-3">
-                      <Clock className="w-6 h-6" />
+                    <div className="bg-black/70 backdrop-blur-sm text-white text-xs sm:text-base px-3 sm:px-6 py-2 rounded-full flex items-center gap-2 sm:gap-3">
+                      <Clock className="w-4 h-4 sm:w-6 sm:h-6 flex-shrink-0" />
                       <span className="font-medium">{durationText}</span>
                     </div>
                   </div>
