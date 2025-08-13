@@ -72,16 +72,37 @@ img, video, iframe, canvas, svg {
   font-family: 'Poppins', sans-serif;
 }
 
-/* How It Works Cards - Force text display without cutoff */
+/* How It Works Cards - Scrollable text areas with subtle styling */
 .how-it-works-text {
-  overflow: visible !important;
-  height: auto !important;
-  max-height: none !important;
-  line-height: 1.1 !important;
+  line-height: 1.2 !important;
   word-wrap: break-word;
   overflow-wrap: break-word;
   hyphens: auto;
   white-space: normal;
+}
+
+/* Custom scrollbar for How It Works text areas */
+.how-it-works-text::-webkit-scrollbar {
+  width: 3px;
+}
+
+.how-it-works-text::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.how-it-works-text::-webkit-scrollbar-thumb {
+  background: rgba(242, 235, 220, 0.3);
+  border-radius: 2px;
+}
+
+.how-it-works-text::-webkit-scrollbar-thumb:hover {
+  background: rgba(242, 235, 220, 0.5);
+}
+
+/* Firefox scrollbar styling */
+.how-it-works-text {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(242, 235, 220, 0.3) transparent;
 }
 
 /* Legal Document Tight Spacing Override - Balanced */
