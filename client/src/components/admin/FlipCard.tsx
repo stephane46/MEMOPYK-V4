@@ -233,16 +233,16 @@ export function FlipCard({ frontContent, className = "", visitors = [] }: Visito
                           }}>
                             <span>{visitor.language || 'Unknown'}</span>
                             <span style={{ 
-                              backgroundColor: (visitor.visit_count || 1) > 1 ? '#dcfce7' : '#fef3c7',
-                              color: (visitor.visit_count || 1) > 1 ? '#166534' : '#92400e',
+                              backgroundColor: visitor.previous_visit ? '#dcfce7' : '#fef3c7',
+                              color: visitor.previous_visit ? '#166534' : '#92400e',
                               padding: '2px 6px',
                               borderRadius: '4px',
                               fontSize: '11px',
                               fontWeight: '500'
                             }}>
-                              {(visitor.visit_count || 1) > 1 ? 'Returning' : 'New'}
+                              {visitor.previous_visit ? 'Returning' : 'New'}
                             </span>
-                            {(visitor.visit_count || 1) > 1 && (
+                            {visitor.previous_visit && (visitor.visit_count || 1) > 1 && (
                               <span style={{ fontSize: '11px', color: '#9ca3af' }}>
                                 {visitor.visit_count} visits
                               </span>

@@ -1831,6 +1831,24 @@ export async function registerRoutes(app: Express): Promise<void> {
       
       console.log('🌍 FINAL LANGUAGE DETECTED:', detectedLanguage);
 
+      // SESSION DEDUPLICATION: Prevent multiple sessions from same IP within 30 seconds
+      const finalIp = req.body.ip_address || clientIp;
+      const recentSessions = await hybridStorage.getRecentAnalyticsSessions();
+      const now = new Date();
+      const thirtySecondsAgo = new Date(now.getTime() - 30000);
+      
+      // Check for duplicate sessions from same IP in last 30 seconds
+      const duplicateSession = recentSessions.find((session: any) => 
+        session.ip_address === finalIp && 
+        new Date(session.created_at) > thirtySecondsAgo &&
+        !session.is_test_data
+      );
+      
+      if (duplicateSession) {
+        console.log(`🚫 DUPLICATE SESSION BLOCKED: IP ${finalIp} already has session from ${new Date(duplicateSession.created_at).toISOString()}`);
+        return res.json({ success: true, session: duplicateSession, deduplicated: true });
+      }
+
       console.log('📊 Analytics session creation:', {
         ...req.body,
         server_detected_ip: clientIp,
@@ -1840,13 +1858,14 @@ export async function registerRoutes(app: Express): Promise<void> {
       // Enhanced session data with server-side detection
       const sessionData = {
         ...req.body,
-        ip_address: req.body.ip_address || clientIp, // Prioritize client-provided IP for testing
+        ip_address: finalIp,
         language: req.body.language || detectedLanguage, // Prioritize client-provided language for testing
         user_agent: req.headers['user-agent'] || req.body.user_agent || '',
         session_id: req.body.session_id || `session_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`
       };
 
       const session = await hybridStorage.createAnalyticsSession(sessionData);
+      console.log(`✅ NEW SESSION CREATED: ${session.session_id} for IP ${finalIp}`);
       res.json({ success: true, session });
     } catch (error) {
       console.error('❌ Analytics session error:', error);
