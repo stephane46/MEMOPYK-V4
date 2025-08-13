@@ -89,20 +89,20 @@ export function HowItWorksSection() {
                     {step.number}. {language === 'fr-FR' ? step.titleFr : step.titleEn}
                   </h3>
 
-                  {/* Step Description - Scrollable container with explicit height */}
-                  <div className="flex-grow flex flex-col" style={{ minHeight: '200px' }}>
-                    <div className="overflow-y-auto text-memopyk-cream/90 text-xs sm:text-sm leading-4 mb-3 sm:mb-4 how-it-works-text pr-2" style={{ height: '140px', flexShrink: 0 }}>
+                  {/* Step Description - Natural text flow */}
+                  <div className="flex-grow flex flex-col">
+                    <div className="text-memopyk-cream/90 text-xs sm:text-sm leading-4 mb-3 how-it-works-text">
                       {language === 'fr-FR' ? step.descriptionFr : step.descriptionEn}
                     </div>
                     
                     {/* Sub Description - Fixed at bottom */}
-                    <div className="flex-shrink-0 pt-2 border-t border-memopyk-cream/20 flex flex-col items-center justify-start">
-                      <div className="flex justify-center mb-1">
+                    <div className="mt-auto pt-3 border-t border-memopyk-cream/20 flex flex-col items-center justify-center">
+                      <div className="flex justify-center mb-2">
                         <div className="w-8 h-8 rounded-full bg-memopyk-cream flex items-center justify-center">
                           <Icon className="w-4 h-4 text-memopyk-dark-blue" />
                         </div>
                       </div>
-                      <div className="text-memopyk-cream/90 text-xs sm:text-sm leading-4 text-center px-2 how-it-works-text overflow-y-auto pr-2" style={{ height: '60px', flexShrink: 0 }}>
+                      <div className="text-memopyk-cream/90 text-xs sm:text-sm leading-4 text-center px-2 how-it-works-text">
                         {language === 'fr-FR' ? step.subDescriptionFr : step.subDescriptionEn}
                       </div>
                     </div>
