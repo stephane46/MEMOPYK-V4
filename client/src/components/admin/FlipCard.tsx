@@ -221,7 +221,7 @@ export function FlipCard({ frontContent, className = "", visitors = [] }: Visito
                             fontSize: '14px',
                             color: '#6b7280'
                           }}>
-                            {visitor.country || 'Unknown'} • {visitor.language || 'Unknown'}
+                            {visitor.language || 'Unknown'}
                           </div>
                         </div>
                       </div>
