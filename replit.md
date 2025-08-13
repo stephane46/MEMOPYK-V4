@@ -28,7 +28,7 @@ Visual consistency priority: Extremely detail-oriented about spacing and formatt
 - **Runtime**: Node.js with Express.js.
 - **Language**: TypeScript with ES modules.
 - **Database ORM**: Drizzle ORM with PostgreSQL dialect.
-- **Database Provider**: Neon Database (serverless PostgreSQL).
+- **Database Provider**: Hybrid system with Supabase PostgreSQL (VPS) as primary and JSON fallback.
 - **Session Management**: Express sessions with PostgreSQL store.
 
 ### Key Architectural Decisions
@@ -53,8 +53,9 @@ Visual consistency priority: Extremely detail-oriented about spacing and formatt
 ## External Dependencies
 
 ### Database
-- **Neon Database**: Serverless PostgreSQL hosting.
-- **Supabase**: Used for video and image storage (CDN).
+- **Supabase PostgreSQL**: Primary database hosted on user's VPS (https://supabase.memopyk.org).
+- **Neon Database**: Development/staging database connection.
+- **Supabase Storage**: Used for video and image storage (CDN).
 
 ### UI Components
 - **Radix UI**: Unstyled, accessible component primitives.
