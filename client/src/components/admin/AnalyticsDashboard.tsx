@@ -153,7 +153,7 @@ export function AnalyticsDashboard() {
   });
 
   // Fetch video performance data for video performance card (FIXED v1.0.186 - Force fresh data)
-  const { data: videoPerformanceData } = useQuery<Array<{
+  const { data: videoPerformanceData, refetch: refetchVideoPerformance } = useQuery<Array<{
     video_id: string;
     total_views: number;
     unique_viewers: number;
@@ -161,11 +161,18 @@ export function AnalyticsDashboard() {
     average_watch_time: number;
     last_viewed: string;
   }>>({
-    queryKey: ['/api/analytics/video-performance', `cache-bust-${Date.now()}`], // Force fresh fetch
+    queryKey: ['/api/analytics/video-performance'],
     staleTime: 0, // Always fetch fresh data
     gcTime: 0, // Don't cache
-    refetchInterval: 30000, // Refresh every 30 seconds
+    refetchOnMount: true, // Always refetch on component mount
+    refetchOnWindowFocus: true, // Refetch when window gains focus
   });
+
+  // Force invalidate cache on component mount to ensure fresh data
+  useEffect(() => {
+    queryClient.invalidateQueries({ queryKey: ['/api/analytics/video-performance'] });
+    refetchVideoPerformance();
+  }, [queryClient, refetchVideoPerformance]);
 
   // Fetch time-series data for charts
   const { data: timeSeriesData, isLoading: timeSeriesLoading } = useQuery<TimeSeriesData[]>({
