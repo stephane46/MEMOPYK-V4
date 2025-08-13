@@ -2383,7 +2383,7 @@ export async function registerRoutes(app: Express): Promise<void> {
           total_views: 0,
           total_watch_time: 0,
           unique_viewers: new Set(),
-          last_viewed: item.updated_at || item.created_at || new Date().toISOString()
+          last_viewed: null // Use null instead of creation date for never-viewed videos
         };
         
         console.log(`📊 Initialized: ${videoFilename} → "${displayName}"`);
@@ -2531,7 +2531,7 @@ export async function registerRoutes(app: Express): Promise<void> {
           total_views: 0,
           unique_viewers: new Set(),
           total_watch_time: 0,
-          last_viewed: '1970-01-01T00:00:00.000Z'
+          last_viewed: null // Use null instead of 1970 epoch for never-viewed videos
         };
         
         console.log(`🚨 FRESH: Initialized: ${videoFilename} → "${displayName}"`);

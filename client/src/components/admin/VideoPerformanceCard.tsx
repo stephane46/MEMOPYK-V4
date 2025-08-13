@@ -7,7 +7,7 @@ interface VideoPerformanceData {
   unique_viewers: number;
   total_watch_time: number;
   average_watch_time: number;
-  last_viewed: string;
+  last_viewed: string | null;
 }
 
 interface VideoPerformanceCardProps {
@@ -79,7 +79,11 @@ export function VideoPerformanceCard({ frontContent, className = "", performance
     }
   };
 
-  const formatDate = (dateString: string) => {
+  const formatDate = (dateString: string | null) => {
+    if (!dateString) {
+      return 'Never viewed';
+    }
+    
     try {
       const date = new Date(dateString);
       const now = new Date();
@@ -93,7 +97,7 @@ export function VideoPerformanceCard({ frontContent, className = "", performance
       
       return date.toLocaleDateString();
     } catch (error) {
-      return 'Unknown';
+      return 'Never viewed';
     }
   };
 
