@@ -27,7 +27,7 @@ export function KeyVisualSection() {
   }, []);
 
   return (
-    <section ref={sectionRef} className="pt-8 sm:pt-12 lg:pt-16 pb-8 sm:pb-12 lg:pb-16 bg-gradient-to-br from-memopyk-cream to-memopyk-cream/70 overflow-hidden">
+    <section ref={sectionRef} className="pt-8 sm:pt-12 lg:pt-16 pb-8 sm:pb-12 lg:pb-8 xl:pb-6 bg-gradient-to-br from-memopyk-cream to-memopyk-cream/70 overflow-hidden">
       <div className="container mx-auto px-4 pb-0 overflow-hidden">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-2 sm:gap-4 lg:gap-8 items-center overflow-hidden">
           {/* Left: Key Visual Illustration with Overlaid Animated Elements */}
