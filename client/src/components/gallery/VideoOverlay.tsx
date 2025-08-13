@@ -401,7 +401,7 @@ export default function VideoOverlay({
                 {/* Duration */}
                 {durationText && (
                   <div className="flex justify-center">
-                    <div className="bg-black/70 backdrop-blur-sm text-white text-base px-6 py-4 rounded-full flex items-center gap-3">
+                    <div className="bg-black/70 backdrop-blur-sm text-white text-base px-6 py-2 rounded-full flex items-center gap-3">
                       <Clock className="w-6 h-6" />
                       <span className="font-medium">{durationText}</span>
                     </div>
