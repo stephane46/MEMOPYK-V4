@@ -7,6 +7,11 @@ interface VisitorModalProps {
   visitors?: Array<{
     ip_address: string;
     country: string;
+    region?: string;
+    city?: string;
+    country_code?: string;
+    timezone?: string;
+    organization?: string;
     language: string;
     last_visit: string;
     user_agent: string;
@@ -383,7 +388,7 @@ export function FlipCard({ frontContent, className = "", visitors = [] }: Visito
                             lineHeight: '1',
                             textRendering: 'optimizeLegibility'
                           }}>
-{getCountryFlag(visitor.country)}
+{getCountryFlag(visitor.country_code || visitor.country)}
                           </div>
                         </div>
                         <div>
@@ -392,7 +397,9 @@ export function FlipCard({ frontContent, className = "", visitors = [] }: Visito
                             color: '#111827',
                             fontSize: '14px'
                           }}>
-                            {visitor.ip_address || 'Unknown'}
+                            {visitor.city && visitor.region 
+                              ? `${visitor.city}, ${visitor.region}` 
+                              : visitor.city || visitor.region || visitor.ip_address || 'Unknown'}
                           </div>
                           <div style={{
                             fontSize: '14px',
