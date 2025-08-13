@@ -94,14 +94,14 @@ export function HowItWorksSection() {
                     {language === 'fr-FR' ? step.descriptionFr : step.descriptionEn}
                   </div>
                   
-                  {/* Sub Description - Fixed at bottom with responsive height */}
-                  <div className="flex-shrink-0 pt-4 border-t border-memopyk-cream/20 min-h-[100px] sm:min-h-[120px] lg:min-h-[140px] xl:min-h-[120px] flex flex-col items-center justify-start">
+                  {/* Sub Description - Auto height with proper spacing */}
+                  <div className="flex-shrink-0 pt-4 border-t border-memopyk-cream/20 flex flex-col items-center justify-start">
                     <div className="flex justify-center mb-3">
                       <div className="w-8 h-8 rounded-full bg-memopyk-cream flex items-center justify-center">
                         <Icon className="w-4 h-4 text-memopyk-dark-blue" />
                       </div>
                     </div>
-                    <p className="text-memopyk-cream/90 leading-relaxed text-sm sm:text-base text-center">
+                    <p className="text-memopyk-cream/90 leading-relaxed text-sm sm:text-base text-center px-2">
                       {language === 'fr-FR' ? step.subDescriptionFr : step.subDescriptionEn}
                     </p>
                   </div>
