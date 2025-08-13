@@ -83,20 +83,21 @@ img, video, iframe, canvas, svg {
 
 /* Custom scrollbar for How It Works text areas */
 .how-it-works-text::-webkit-scrollbar {
-  width: 3px;
+  width: 4px;
 }
 
 .how-it-works-text::-webkit-scrollbar-track {
-  background: transparent;
+  background: rgba(242, 235, 220, 0.1);
+  border-radius: 2px;
 }
 
 .how-it-works-text::-webkit-scrollbar-thumb {
-  background: rgba(242, 235, 220, 0.3);
+  background: rgba(242, 235, 220, 0.5);
   border-radius: 2px;
 }
 
 .how-it-works-text::-webkit-scrollbar-thumb:hover {
-  background: rgba(242, 235, 220, 0.5);
+  background: rgba(242, 235, 220, 0.7);
 }
 
 /* Firefox scrollbar styling */
