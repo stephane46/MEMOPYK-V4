@@ -2534,5 +2534,53 @@
     "is_test_data": true,
     "created_at": "2025-08-13T15:39:05.636Z",
     "updated_at": "2025-08-13T15:39:05.684Z"
+  },
+  {
+    "id": "39c66026-08a4-41cb-b479-6d94edb8abea",
+    "session_id": "session_1755099600292_4m5b0th8n",
+    "user_id": null,
+    "ip_address": "109.17.150.48",
+    "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+    "referrer": "https://365df2cf-1884-444c-a9e8-235602456363-00-37q39xpqlgvdy.janeway.replit.dev/fr-FR",
+    "language": "fr-FR",
+    "country": "Unknown",
+    "city": "Unknown",
+    "page_views": 0,
+    "is_bot": false,
+    "is_test_data": false,
+    "created_at": "2025-08-13T15:40:00.552Z",
+    "updated_at": "2025-08-13T15:40:00.594Z"
+  },
+  {
+    "id": "b5980bfa-ecdd-41bd-8ea8-128e502c054c",
+    "session_id": "session_1755099600586_z4ir4p29p",
+    "user_id": null,
+    "ip_address": "109.17.150.48",
+    "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36",
+    "referrer": "https://365df2cf-1884-444c-a9e8-235602456363-00-37q39xpqlgvdy.janeway.replit.dev/fr-FR",
+    "language": "fr-FR",
+    "country": "Unknown",
+    "city": "Unknown",
+    "page_views": 0,
+    "is_bot": false,
+    "is_test_data": false,
+    "created_at": "2025-08-13T15:40:00.851Z",
+    "updated_at": "2025-08-13T15:40:00.894Z"
+  },
+  {
+    "id": "7d5075ff-0b24-4ec0-82ab-d07bf0cb6a05",
+    "session_id": "session_1755099604876_2s3a7cbtm",
+    "user_id": null,
+    "ip_address": "94.156.149.243",
+    "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36 Edg/138.0.0.0",
+    "referrer": "https://365df2cf-1884-444c-a9e8-235602456363-00-37q39xpqlgvdy.janeway.replit.dev/fr-FR",
+    "language": "fr-FR",
+    "country": "Unknown",
+    "city": "Unknown",
+    "page_views": 0,
+    "is_bot": false,
+    "is_test_data": false,
+    "created_at": "2025-08-13T15:40:04.910Z",
+    "updated_at": "2025-08-13T15:40:04.953Z"
   }
 ]
