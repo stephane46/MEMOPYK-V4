@@ -1473,7 +1473,7 @@ Daily session and view analytics over time
               {dashboardData?.videoPerformance?.length ? (
                 <div className="space-y-4">
                   {dashboardData.videoPerformance.map((video, index) => (
-                    <div key={video.video_id} className="flex items-center justify-between p-4 border rounded-lg">
+                    <div key={`video-${video.video_id}-${index}`} className="flex items-center justify-between p-4 border rounded-lg">
                       <div className="flex-1">
                         <h4 className="font-medium">
                           {video.video_title || `Video ${video.video_id}`}

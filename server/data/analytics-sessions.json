@@ -2,9 +2,9 @@
   {
     "id": "session_1755073398429_8lk8b8tw4",
     "session_id": "anonymous",
-    "duration": 624,
+    "duration": 787,
     "created_at": "2025-08-13T08:23:18.429Z",
-    "updated_at": "2025-08-13T09:56:18.368Z",
+    "updated_at": "2025-08-13T09:59:00.862Z",
     "is_test_data": false
   },
   {
@@ -550,5 +550,21 @@
     "is_test_data": true,
     "created_at": "2025-08-13T09:56:18.303Z",
     "updated_at": "2025-08-13T09:56:18.348Z"
+  },
+  {
+    "id": "0080f1a0-93cb-42c6-a621-19c27b95f0e1",
+    "session_id": "session_1755079140526_i2vtrrpaa",
+    "user_id": null,
+    "ip_address": "127.0.0.1",
+    "user_agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/118.0.5993.88 Safari/537.36",
+    "referrer": "",
+    "language": "fr-FR",
+    "country": "Unknown",
+    "city": "Unknown",
+    "page_views": 0,
+    "is_bot": false,
+    "is_test_data": true,
+    "created_at": "2025-08-13T09:59:00.796Z",
+    "updated_at": "2025-08-13T09:59:00.840Z"
   }
 ]
