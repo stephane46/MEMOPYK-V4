@@ -1702,5 +1702,37 @@
     "is_test_data": false,
     "created_at": "2025-08-13T06:41:22.072Z",
     "updated_at": "2025-08-13T06:41:22.115Z"
+  },
+  {
+    "id": "abc96c30-e6ce-4436-a15e-ebef4297c1e0",
+    "session_id": "session_1755067529290_38hs4hxdr",
+    "user_id": null,
+    "ip_address": "127.0.0.1",
+    "user_agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/118.0.5993.88 Safari/537.36",
+    "referrer": "",
+    "language": "en-US",
+    "country": "Unknown",
+    "city": "Unknown",
+    "page_views": 0,
+    "is_bot": false,
+    "is_test_data": true,
+    "created_at": "2025-08-13T06:45:29.573Z",
+    "updated_at": "2025-08-13T06:45:29.622Z"
+  },
+  {
+    "id": "314c6769-3656-4472-9b20-711604f5559f",
+    "session_id": "session_1755067531010_poqeqevtw",
+    "user_id": null,
+    "ip_address": "185.214.97.27",
+    "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36 Edg/138.0.0.0",
+    "referrer": "https://365df2cf-1884-444c-a9e8-235602456363-00-37q39xpqlgvdy.janeway.replit.dev/__replco/workspace_iframe.html?initialPath=%2F&id=%3Arl9s%3A",
+    "language": "fr-FR",
+    "country": "Unknown",
+    "city": "Unknown",
+    "page_views": 0,
+    "is_bot": false,
+    "is_test_data": false,
+    "created_at": "2025-08-13T06:45:31.042Z",
+    "updated_at": "2025-08-13T06:45:31.091Z"
   }
 ]

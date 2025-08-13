@@ -67,6 +67,9 @@ export function FlipCard({ frontContent, className = "", visitors = [] }: Visito
   };
 
   const getCountryFlag = (country: string) => {
+    // Debug logging to troubleshoot flag display
+    console.log('🚩 Flag Debug - Country:', country, 'Type:', typeof country);
+    
     // Map both country names and two-letter codes to flags
     const countryFlags: { [key: string]: string } = {
       // Full country names
@@ -131,11 +134,15 @@ export function FlipCard({ frontContent, className = "", visitors = [] }: Visito
     
     // Only show globe for truly unknown entries
     if (country === 'Unknown' || !country) {
+      console.log('🌍 Flag Debug - Unknown country, returning globe');
       return '🌍';
     }
     
+    const flag = countryFlags[country] || '🏴';
+    console.log('🚩 Flag Debug - Result:', flag, 'for country:', country);
+    
     // Return the flag if we have it, otherwise show a generic flag icon for unrecognized countries
-    return countryFlags[country] || '🏴';
+    return flag;
   };
 
   return (
