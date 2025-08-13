@@ -604,7 +604,7 @@ export default function GallerySection() {
                     item: item.id, 
                     hasVideo: itemHasVideo, 
                     target: e.target,
-                    className: e.target?.className 
+                    className: (e.target as HTMLElement)?.className 
                   });
                 }}
               >

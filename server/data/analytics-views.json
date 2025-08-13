@@ -200,5 +200,21 @@
     "is_test_data": false,
     "created_at": "2025-08-13T20:05:12.306Z",
     "updated_at": "2025-08-13T20:05:12.306Z"
+  },
+  {
+    "id": "view_1755115617453_8x64ommvm",
+    "video_id": "VitaminSeaC.mp4",
+    "video_filename": "VitaminSeaC.mp4",
+    "video_type": "gallery",
+    "video_title": "",
+    "session_id": "session_1755115617453",
+    "language": "fr-FR",
+    "watch_time": 0,
+    "completion_rate": 0,
+    "ip_address": "172.31.90.98",
+    "user_agent": "Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Mobile Safari/537.36 Edg/138.0.0.0",
+    "is_test_data": false,
+    "created_at": "2025-08-13T20:06:57.454Z",
+    "updated_at": "2025-08-13T20:06:57.454Z"
   }
 ]
