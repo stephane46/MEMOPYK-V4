@@ -98,10 +98,13 @@ interface CountryFlagProps {
  * 3. Neutral placeholder only for invalid data
  */
 export function CountryFlag({ country, className = "", size = 20 }: CountryFlagProps) {
+  console.log('🏴 CountryFlag RENDER START:', { country, className, size });
   
   const [countryCode, setCountryCode] = useState<string | null>(null);
   const [flagSvgExists, setFlagSvgExists] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(true);
+
+  console.log('🏴 CountryFlag STATE:', { countryCode, flagSvgExists, isLoading });
 
   useEffect(() => {
     // Load full country mapping if not loaded
@@ -204,6 +207,7 @@ export function CountryFlag({ country, className = "", size = 20 }: CountryFlagP
 
   // Professional SVG flag (preferred)
   if (countryCode && flagSvgExists && !isLoading) {
+    console.log('🏴 RENDERING SVG FLAG:', countryCode);
     return (
       <img
         src={`/flags/${countryCode.toLowerCase()}.svg`}
@@ -222,6 +226,7 @@ export function CountryFlag({ country, className = "", size = 20 }: CountryFlagP
 
   // Unicode flag emoji fallback
   if (countryCode && !isLoading) {
+    console.log('🏴 TRYING UNICODE FLAG FOR:', countryCode);
     const getUnicodeFlagEmoji = (code: string): string | null => {
       if (code && code.length === 2) {
         const codePoints = code.toUpperCase().split('').map(char => 
@@ -233,6 +238,7 @@ export function CountryFlag({ country, className = "", size = 20 }: CountryFlagP
     };
 
     const unicodeFlag = getUnicodeFlagEmoji(countryCode);
+    console.log('🏴 UNICODE FLAG RESULT:', unicodeFlag);
     if (unicodeFlag) {
       return (
         <div 
@@ -250,19 +256,23 @@ export function CountryFlag({ country, className = "", size = 20 }: CountryFlagP
     }
   }
 
-  // Final fallback - neutral globe icon (no country codes shown)
+  // Final fallback - but THIS SHOULD SHOW A GLOBE, NOT TEXT!
+  console.log('🏴 FINAL FALLBACK FOR:', { country, countryCode, flagSvgExists, isLoading });
   
+  // TEMPORARY DEBUG: Show obvious debug to confirm this component is rendering
   return (
-    <svg 
-      width={size} 
-      height={size} 
-      viewBox="0 0 24 24" 
-      fill="none" 
-      xmlns="http://www.w3.org/2000/svg"
-      className={`inline-block ${className}`}
-    >
-      <circle cx="12" cy="12" r="10" stroke="#6B7280" strokeWidth="2"/>
-      <path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z" stroke="#6B7280" strokeWidth="2"/>
-    </svg>
+    <div style={{
+      width: `${size}px`,
+      height: `${size}px`,
+      backgroundColor: 'red',
+      color: 'white',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      fontSize: '8px',
+      fontWeight: 'bold'
+    }}>
+      DEBUG
+    </div>
   );
 }
