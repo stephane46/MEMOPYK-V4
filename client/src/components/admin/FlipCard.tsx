@@ -194,16 +194,15 @@ export function FlipCard({ frontContent, className = "", visitors = [] }: Visito
                       <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
                         <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                           <div style={{
-                            fontSize: '24px',
                             width: '32px',
                             height: '32px',
                             display: 'flex',
                             alignItems: 'center',
                             justifyContent: 'center',
-                            fontFamily: 'system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
-                            lineHeight: '1',
-                            textRendering: 'optimizeLegibility'
+                            backgroundColor: 'lightblue', // DEBUG: Make visible
+                            border: '2px solid red' // DEBUG: Make visible
                           }}>
+
                             <CountryFlag country={visitor.country_code || visitor.country} size={24} />
                           </div>
                         </div>

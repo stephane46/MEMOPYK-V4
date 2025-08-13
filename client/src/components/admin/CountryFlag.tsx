@@ -98,6 +98,9 @@ interface CountryFlagProps {
  * 3. Neutral placeholder only for invalid data
  */
 export function CountryFlag({ country, className = "", size = 20 }: CountryFlagProps) {
+  // DEBUG: Log every render to track what's happening
+  console.log('🏴 CountryFlag RENDER:', { country, className, size });
+  
   const [countryCode, setCountryCode] = useState<string | null>(null);
   const [flagSvgExists, setFlagSvgExists] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(true);
@@ -241,18 +244,22 @@ export function CountryFlag({ country, className = "", size = 20 }: CountryFlagP
     }
   }
 
-  // Final fallback - neutral globe icon (no country codes shown)
+  // Final fallback - Show what's happening
+  console.log('🏴 FINAL FALLBACK reached for:', country, 'countryCode:', countryCode, 'flagExists:', flagSvgExists, 'loading:', isLoading);
+  
+  // TEMPORARY DEBUG: Return the country code as text to see if this is where it comes from
   return (
-    <svg 
-      width={size} 
-      height={size} 
-      viewBox="0 0 24 24" 
-      fill="none" 
-      xmlns="http://www.w3.org/2000/svg"
-      className={`inline-block ${className}`}
-    >
-      <circle cx="12" cy="12" r="10" stroke="#6B7280" strokeWidth="2"/>
-      <path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z" stroke="#6B7280" strokeWidth="2"/>
-    </svg>
+    <div style={{
+      width: `${size}px`,
+      height: `${size}px`,
+      backgroundColor: 'yellow',
+      border: '2px solid purple',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      fontSize: '8px'
+    }}>
+      {countryCode || country || '?'}
+    </div>
   );
 }
