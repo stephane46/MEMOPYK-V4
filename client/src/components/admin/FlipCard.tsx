@@ -67,9 +67,6 @@ export function FlipCard({ frontContent, className = "", visitors = [] }: Visito
   };
 
   const getCountryFlag = (country: string) => {
-    // Debug logging to troubleshoot flag display
-    console.log('🚩 Flag Debug - Country:', country, 'Type:', typeof country);
-    
     // Map both country names and two-letter codes to flags
     const countryFlags: { [key: string]: string } = {
       // Full country names
@@ -116,7 +113,7 @@ export function FlipCard({ frontContent, className = "", visitors = [] }: Visito
       'AT': '🇦🇹',
       'PT': '🇵🇹',
       'SE': '🇸🇪',
-      'NO': '🇳🇴',
+      'NO': '🇳🇰',
       'DK': '🇩🇰',
       'FI': '🇫🇮',
       'PL': '🇵🇱',
@@ -134,15 +131,11 @@ export function FlipCard({ frontContent, className = "", visitors = [] }: Visito
     
     // Only show globe for truly unknown entries
     if (country === 'Unknown' || !country) {
-      console.log('🌍 Flag Debug - Unknown country, returning globe');
       return '🌍';
     }
     
-    const flag = countryFlags[country] || '🏴';
-    console.log('🚩 Flag Debug - Result:', flag, 'for country:', country);
-    
     // Return the flag if we have it, otherwise show a generic flag icon for unrecognized countries
-    return flag;
+    return countryFlags[country] || '🏴';
   };
 
   return (
@@ -267,9 +260,18 @@ export function FlipCard({ frontContent, className = "", visitors = [] }: Visito
                             height: '32px',
                             display: 'flex',
                             alignItems: 'center',
-                            justifyContent: 'center'
+                            justifyContent: 'center',
+                            fontFamily: 'system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
+                            lineHeight: '1',
+                            textRendering: 'optimizeLegibility'
                           }}>
-                            {getCountryFlag(visitor.country)}
+                            <span style={{ 
+                              fontSize: '20px',
+                              display: 'inline-block',
+                              transform: 'scale(1.2)'
+                            }}>
+                              {getCountryFlag(visitor.country)}
+                            </span>
                           </div>
                         </div>
                         <div>
