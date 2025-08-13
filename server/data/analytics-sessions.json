@@ -50,9 +50,9 @@
   {
     "id": "session_1755022769390_enxpkht9g",
     "session_id": "anonymous",
-    "duration": 65631,
+    "duration": 65889,
     "created_at": "2025-08-12T18:19:29.390Z",
-    "updated_at": "2025-08-13T07:31:47.372Z",
+    "updated_at": "2025-08-13T07:36:05.618Z",
     "is_test_data": false
   },
   {
@@ -1878,5 +1878,69 @@
     "is_test_data": false,
     "created_at": "2025-08-13T07:31:43.465Z",
     "updated_at": "2025-08-13T07:31:43.513Z"
+  },
+  {
+    "id": "3c1a7038-a155-4129-a288-661c92d3918d",
+    "session_id": "session_1755070445017_9uemk9hbt",
+    "user_id": null,
+    "ip_address": "185.214.97.27",
+    "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36 Edg/138.0.0.0",
+    "referrer": "https://365df2cf-1884-444c-a9e8-235602456363-00-37q39xpqlgvdy.janeway.replit.dev/fr-FR",
+    "language": "fr-FR",
+    "country": "Unknown",
+    "city": "Unknown",
+    "page_views": 0,
+    "is_bot": false,
+    "is_test_data": false,
+    "created_at": "2025-08-13T07:34:05.050Z",
+    "updated_at": "2025-08-13T07:34:05.096Z"
+  },
+  {
+    "id": "5d2bce2e-67dc-4dd6-8d18-f592fb1689f0",
+    "session_id": "test_spain_new",
+    "user_id": null,
+    "ip_address": "91.121.147.25",
+    "user_agent": "curl/8.14.1",
+    "referrer": "https://google.es",
+    "language": "es-ES",
+    "country": "Spain",
+    "city": "Barcelona",
+    "page_views": 0,
+    "is_bot": false,
+    "is_test_data": false,
+    "created_at": "2025-08-13T07:36:11.597Z",
+    "updated_at": "2025-08-13T07:36:11.643Z"
+  },
+  {
+    "id": "e5e88d06-6bbe-46a7-b090-bfb71bf97440",
+    "session_id": "test_france_new",
+    "user_id": null,
+    "ip_address": "88.191.250.50",
+    "user_agent": "curl/8.14.1",
+    "referrer": "https://google.fr",
+    "language": "fr-FR",
+    "country": "France",
+    "city": "Paris",
+    "page_views": 0,
+    "is_bot": false,
+    "is_test_data": false,
+    "created_at": "2025-08-13T07:36:13.452Z",
+    "updated_at": "2025-08-13T07:36:13.494Z"
+  },
+  {
+    "id": "cb233c62-148a-4397-b511-8f36cec0ea68",
+    "session_id": "test_usa_new",
+    "user_id": null,
+    "ip_address": "8.8.8.8",
+    "user_agent": "curl/8.14.1",
+    "referrer": "https://google.com",
+    "language": "en-US",
+    "country": "United States",
+    "city": "Mountain View",
+    "page_views": 0,
+    "is_bot": false,
+    "is_test_data": false,
+    "created_at": "2025-08-13T07:36:15.516Z",
+    "updated_at": "2025-08-13T07:36:15.559Z"
   }
 ]
