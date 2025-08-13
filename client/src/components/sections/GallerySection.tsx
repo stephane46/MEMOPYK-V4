@@ -415,7 +415,10 @@ export default function GallerySection() {
       // Track analytics
       const videoFilename = item.videoFilename || '';
       const cleanFilename = videoFilename.includes('/') ? videoFilename.split('/').pop() : videoFilename;
+      console.log('🚨 CRITICAL DEBUG v1.0.191: About to call trackVideoView with:', cleanFilename);
+      console.log('🚨 CRITICAL DEBUG v1.0.191: trackVideoView function exists:', typeof trackVideoView);
       trackVideoView(cleanFilename || '');
+      console.log('🚨 CRITICAL DEBUG v1.0.191: trackVideoView called successfully');
       
       // Get video URL and thumbnail for instant display
       const videoUrl = getVideoUrl(item, index);
@@ -553,8 +556,10 @@ export default function GallerySection() {
               // Track video view analytics for mobile gallery
               const videoFilename = item.videoFilename || '';
               const cleanFilename = videoFilename.includes('/') ? videoFilename.split('/').pop() : videoFilename;
-              console.log(`📊 PRODUCTION ANALYTICS: Mobile gallery video view for: ${cleanFilename}`);
+              console.log('🚨 CRITICAL DEBUG v1.0.191 MOBILE: About to call trackVideoView with:', cleanFilename);
+              console.log('🚨 CRITICAL DEBUG v1.0.191 MOBILE: trackVideoView function exists:', typeof trackVideoView);
               trackVideoView(cleanFilename || '');
+              console.log('🚨 CRITICAL DEBUG v1.0.191 MOBILE: trackVideoView called successfully');
               
               const videoUrl = getVideoUrl(item, 0);
               setLightboxVideo({...item, lightboxVideoUrl: videoUrl});
