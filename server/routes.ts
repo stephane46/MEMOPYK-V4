@@ -1742,18 +1742,24 @@ export async function registerRoutes(app: Express): Promise<void> {
 
   app.post("/api/analytics/video-view", async (req, res) => {
     try {
-      const { filename, session_id, watch_time, completion_rate } = req.body;
-      console.log('📊 Video view tracking:', { filename, session_id, watch_time, completion_rate });
+      const { video_id, filename, duration_watched, completed, language, session_id, watch_time, completion_rate } = req.body;
+      console.log('📊 Video view tracking - Full request body:', req.body);
+      console.log('📊 Video view tracking - Extracted fields:', { video_id, filename, duration_watched, completed, language });
+      
+      // Use video_id from frontend (new format) or fallback to filename (legacy format)
+      const videoIdentifier = video_id || filename;
       
       const viewData = {
-        video_id: filename,
+        video_id: videoIdentifier,
+        video_filename: videoIdentifier, // Store filename for better matching
         video_type: 'gallery',
+        video_title: '', // Will be populated later from gallery data
         session_id: session_id || `session_${Date.now()}`,
-        watch_time: watch_time || 0,
-        completion_rate: completion_rate || 0,
+        watch_time: duration_watched || watch_time || 0,
+        completion_rate: completed ? 100 : (completion_rate || 0),
         ip_address: req.ip || '0.0.0.0',
         user_agent: req.get('User-Agent') || '',
-        language: req.get('Accept-Language')?.split(',')[0] || 'en-US'
+        language: language || req.get('Accept-Language')?.split(',')[0] || 'en-US'
       };
       
       // CRITICAL FIX: Actually save to database using hybridStorage

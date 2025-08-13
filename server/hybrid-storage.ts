@@ -3643,6 +3643,7 @@ Allow: /contact`;
     const viewWithId = {
       id: `view_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
       video_id: viewData.video_id,
+      video_filename: viewData.video_filename || viewData.video_id, // Store filename for better matching
       video_type: viewData.video_type || 'gallery', // Focus on gallery videos
       video_title: viewData.video_title || '',
       session_id: viewData.session_id,
