@@ -646,10 +646,26 @@ export function AnalyticsDashboard() {
           <div className="flex gap-2">
             <Button 
               onClick={() => {
-                const today = new Date().toISOString().split('T')[0];
-                const lastWeek = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
-                setDateFrom(lastWeek);
-                setDateTo(today);
+                // Get today's date in France timezone (Europe/Paris)
+                const franceTodayDate = new Date().toLocaleDateString('en-CA', {
+                  timeZone: 'Europe/Paris',
+                  year: 'numeric',
+                  month: '2-digit',
+                  day: '2-digit'
+                });
+                
+                // Get date 7 days ago in France timezone
+                const sevenDaysAgo = new Date();
+                sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+                const franceWeekAgoDate = sevenDaysAgo.toLocaleDateString('en-CA', {
+                  timeZone: 'Europe/Paris',
+                  year: 'numeric',
+                  month: '2-digit',
+                  day: '2-digit'
+                });
+                
+                setDateFrom(franceWeekAgoDate);
+                setDateTo(franceTodayDate);
               }}
               variant="outline"
               size="sm"
@@ -658,15 +674,20 @@ export function AnalyticsDashboard() {
             </Button>
             <Button 
               onClick={() => {
-                const today = new Date();
-                const fourDaysAgo = new Date(Date.now() - 4 * 24 * 60 * 60 * 1000);
-                setDateFrom(fourDaysAgo.toISOString().split('T')[0]);
-                setDateTo(today.toISOString().split('T')[0]);
+                // Get today's date in France timezone (Europe/Paris)
+                const franceDate = new Date().toLocaleDateString('en-CA', {
+                  timeZone: 'Europe/Paris',
+                  year: 'numeric',
+                  month: '2-digit',
+                  day: '2-digit'
+                });
+                setDateFrom(franceDate);
+                setDateTo(franceDate);
               }}
               variant="outline"
               size="sm"
             >
-              Last 4 Days
+              Today
             </Button>
             <Button 
               onClick={() => {
