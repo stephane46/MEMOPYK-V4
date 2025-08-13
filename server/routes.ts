@@ -2311,112 +2311,138 @@ export async function registerRoutes(app: Express): Promise<void> {
     }
   });
 
-  // Video Performance Analytics - GET video engagement data
+  // Video Performance Analytics - GET video engagement data (FIXED v1.0.186)
   app.get("/api/analytics/video-performance", async (req, res) => {
     try {
-      console.log('📊 Video performance analytics request');
+      console.log('📊 Video performance analytics request - FIXED DATA QUALITY v1.0.186');
       
-      // Get all gallery videos first so we can show all 6
+      // Get all gallery videos first
       const galleryItems = await hybridStorage.getGalleryItems();
-      
       console.log(`📊 Found ${galleryItems.length} gallery items in database`);
       
       // Get all video views from analytics
       const views = await hybridStorage.getAnalyticsViews();
       console.log(`📊 Found ${views.length} total analytics views`);
       
-      // Create stats for all videos, starting with 0 views
+      // Create video filename mapping for better data integrity
+      const videoMapping: any = {};
       const videoStats: any = {};
       
-      // Initialize all gallery videos with 0 stats by extracting video info from gallery items
+      // FIXED: Improved video name extraction and mapping
       galleryItems.forEach((item: any, index: number) => {
-        // Extract video filename from various fields in the database
-        let videoName = null;
+        let videoFilename = null;
+        let displayName = null;
         
-        // Check video_filename field first (preferred)
-        if (item.video_filename) {
-          videoName = item.video_filename;
-          // Extract just filename if it's a full URL
-          if (videoName.includes('/')) {
-            videoName = videoName.split('/').pop();
-          }
-        }
-        // Fallback to video URLs
-        else if (item.video_url_en || item.video_url_fr) {
-          const videoUrl = item.video_url_en || item.video_url_fr;
-          if (videoUrl && videoUrl.includes('.mp4')) {
-            videoName = videoUrl.split('/').pop();
-          }
-        }
-        
-        // If still no video found, create a placeholder based on title
-        if (!videoName) {
-          const title = item.title_en || item.title_fr || `Gallery Item ${index + 1}`;
-          videoName = title.replace(/[^a-zA-Z0-9]/g, '_');
+        // Extract actual video filename - prioritize video_filename and URLs
+        if (item.video_filename && item.video_filename.trim()) {
+          videoFilename = item.video_filename.includes('/') 
+            ? item.video_filename.split('/').pop() 
+            : item.video_filename;
+        } else if (item.video_url_en && item.video_url_en.includes('.mp4')) {
+          videoFilename = item.video_url_en.split('/').pop();
+        } else if (item.video_url_fr && item.video_url_fr.includes('.mp4')) {
+          videoFilename = item.video_url_fr.split('/').pop();
+        } else if (item.filename && item.filename.includes('.mp4')) {
+          videoFilename = item.filename.includes('/') 
+            ? item.filename.split('/').pop() 
+            : item.filename;
         }
         
-        if (videoName) {
-          videoStats[videoName] = {
-            video_id: videoName,
-            total_views: 0,
-            total_watch_time: 0,
-            unique_viewers: new Set(),
-            last_viewed: item.updated_at || item.created_at || new Date().toISOString()
-          };
-          console.log(`📊 Initialized stats for item ${index + 1}: ${videoName} (from ${item.title_en || 'untitled'})`);
+        // Create display name from title for better user experience
+        displayName = item.title_en || item.title_fr || videoFilename || `Gallery Video ${index + 1}`;
+        
+        // Skip entries without actual video files
+        if (!videoFilename || !videoFilename.includes('.mp4')) {
+          console.log(`📊 Skipping item ${index + 1}: No video file found (${displayName})`);
+          return;
         }
+        
+        // Store mapping between different possible video identifiers
+        videoMapping[videoFilename] = displayName;
+        if (item.video_url_en) videoMapping[item.video_url_en.split('/').pop()] = displayName;
+        if (item.video_url_fr) videoMapping[item.video_url_fr.split('/').pop()] = displayName;
+        
+        // Initialize stats with proper display name
+        videoStats[videoFilename] = {
+          video_id: displayName, // Use friendly display name
+          filename: videoFilename, // Keep original filename for mapping
+          total_views: 0,
+          total_watch_time: 0,
+          unique_viewers: new Set(),
+          last_viewed: item.updated_at || item.created_at || new Date().toISOString()
+        };
+        
+        console.log(`📊 Initialized: ${videoFilename} → "${displayName}"`);
       });
       
-      // Now add actual view data where available
+      // FIXED: Improved analytics data processing with better video ID mapping
       views.forEach((view: any) => {
-        // Try multiple ways to get video ID from analytics data
-        let videoId = view.video_id || view.filename || view.video_filename;
+        let videoKey = null;
         
-        // If still unknown, this might be legacy data, so we'll count it as 'Unknown Views'
-        if (!videoId || videoId === 'unknown') {
-          videoId = 'Unknown Views';
+        // Try multiple ways to match video ID from analytics data
+        const possibleIds = [
+          view.video_id,
+          view.filename, 
+          view.video_filename,
+          view.video_name
+        ].filter(id => id && id.trim());
+        
+        // Find matching video in our stats
+        for (const id of possibleIds) {
+          if (videoStats[id]) {
+            videoKey = id;
+            break;
+          }
+          // Try partial matching for filenames
+          const matchingKey = Object.keys(videoStats).find(key => 
+            key.includes(id) || id.includes(key)
+          );
+          if (matchingKey) {
+            videoKey = matchingKey;
+            break;
+          }
         }
         
-        if (!videoStats[videoId]) {
-          videoStats[videoId] = {
-            video_id: videoId,
-            total_views: 0,
-            total_watch_time: 0,
-            unique_viewers: new Set(),
-            last_viewed: view.created_at
-          };
+        // FIXED: Skip unknown/legacy data instead of creating "Unknown Views"
+        if (!videoKey) {
+          console.log(`📊 Skipping unmatched view:`, possibleIds);
+          return;
         }
         
-        videoStats[videoId].total_views++;
-        videoStats[videoId].total_watch_time += view.watch_time || 0;
-        videoStats[videoId].unique_viewers.add(view.ip_address || view.session_id);
+        // Add view data to matched video
+        const stats = videoStats[videoKey];
+        stats.total_views++;
+        stats.total_watch_time += Math.max(0, view.watch_time || 0); // Ensure non-negative
+        stats.unique_viewers.add(view.ip_address || view.session_id || 'anonymous');
         
-        // Track most recent view
-        if (new Date(view.created_at) > new Date(videoStats[videoId].last_viewed)) {
-          videoStats[videoId].last_viewed = view.created_at;
+        // Update most recent view timestamp
+        if (view.created_at && new Date(view.created_at) > new Date(stats.last_viewed)) {
+          stats.last_viewed = view.created_at;
         }
       });
       
-      // Convert to array and calculate final metrics
-      const performanceData = Object.values(videoStats).map((stats: any) => ({
-        video_id: stats.video_id,
-        total_views: stats.total_views,
-        unique_viewers: stats.unique_viewers.size,
-        total_watch_time: Math.round(stats.total_watch_time),
-        average_watch_time: stats.total_views > 0 ? Math.round(stats.total_watch_time / stats.total_views) : 0,
-        last_viewed: stats.last_viewed
-      }));
+      // FIXED: Better final data preparation with accurate calculations
+      const performanceData = Object.values(videoStats)
+        .map((stats: any) => ({
+          video_id: stats.video_id, // Friendly display name
+          total_views: stats.total_views,
+          unique_viewers: stats.unique_viewers.size,
+          total_watch_time: Math.max(0, Math.round(stats.total_watch_time)),
+          average_watch_time: stats.total_views > 0 
+            ? Math.max(0, Math.round(stats.total_watch_time / stats.total_views)) 
+            : 0,
+          last_viewed: stats.last_viewed
+        }))
+        .sort((a, b) => {
+          // Sort by total views, then by name for consistency
+          if (a.total_views !== b.total_views) {
+            return b.total_views - a.total_views;
+          }
+          return a.video_id.localeCompare(b.video_id);
+        });
       
-      // Sort by total views (most popular first), but keep videos with 0 views at the bottom
-      performanceData.sort((a, b) => {
-        if (a.total_views === 0 && b.total_views === 0) return 0;
-        if (a.total_views === 0) return 1;
-        if (b.total_views === 0) return -1;
-        return b.total_views - a.total_views;
-      });
-      
-      console.log(`✅ Video performance: Showing data for ${performanceData.length} videos`);
-      console.log('📊 Video IDs:', performanceData.map(v => v.video_id));
+      console.log(`✅ Video performance: Processed ${performanceData.length} videos with clean data`);
+      console.log('📊 Video display names:', performanceData.map(v => `"${v.video_id}": ${v.total_views} views`));
       res.json(performanceData);
     } catch (error) {
       console.error('❌ Video performance analytics error:', error);
