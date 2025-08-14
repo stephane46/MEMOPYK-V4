@@ -2163,7 +2163,10 @@ export async function registerRoutes(app: Express): Promise<void> {
       const { duration, sessionId: clientSessionId } = req.body;
       
       // FIXED: Use client-provided session ID or create IP-based session ID
-      const clientIp = getClientIp(req);
+      const clientIp = req.headers['x-forwarded-for']?.toString().split(',')[0]?.trim() || 
+                       req.connection.remoteAddress || 
+                       req.socket.remoteAddress || 
+                       'unknown';
       const sessionId = clientSessionId || `ip_session_${clientIp?.replace(/\./g, '_')}` || 'anonymous';
       
       console.log(`📊 SESSION UPDATE: Duration ${duration}s for session ${sessionId} (IP: ${clientIp})`);
@@ -2173,7 +2176,7 @@ export async function registerRoutes(app: Express): Promise<void> {
       }
       
       // FIXED: Find or create session for this specific IP
-      const sessions = await hybridStorage.getRecentAnalyticsSessions();
+      const sessions = await hybridStorage.getAnalyticsSessions();
       const ipSession = sessions.find((s: any) => 
         s.ip_address === clientIp && 
         !s.is_test_data
