@@ -61,8 +61,7 @@ export const VideoPlayer = ({
 
     const handlePlay = () => {
       setIsPlaying(true);
-      // Track video view start
-      trackVideoView(videoId, 0, false);
+      // Analytics tracking removed - handled by VideoOverlay for actual watch time
     };
 
     const handlePause = () => {

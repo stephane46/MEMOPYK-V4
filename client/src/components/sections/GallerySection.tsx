@@ -412,13 +412,10 @@ export default function GallerySection() {
     const hasVideoResult = hasVideo(item, index);
     
     if (hasVideoResult) {
-      // Track analytics
+      // Analytics tracking moved to VideoOverlay - only track actual watch time, not clicks
       const videoFilename = item.videoFilename || '';
       const cleanFilename = videoFilename.includes('/') ? videoFilename.split('/').pop() : videoFilename;
-      console.log('🚨 CRITICAL DEBUG v1.0.191: About to call trackVideoView with:', cleanFilename);
-      console.log('🚨 CRITICAL DEBUG v1.0.191: trackVideoView function exists:', typeof trackVideoView);
-      trackVideoView(cleanFilename || '');
-      console.log('🚨 CRITICAL DEBUG v1.0.191: trackVideoView called successfully');
+      console.log('🎬 VIDEO LIGHTBOX OPENING:', cleanFilename, '- tracking moved to VideoOverlay for actual watch time');
       
       // Get video URL and thumbnail for instant display
       const videoUrl = getVideoUrl(item, index);
@@ -553,13 +550,10 @@ export default function GallerySection() {
             items={galleryItems}
             language={language}
             onVideoClick={(item) => {
-              // Track video view analytics for mobile gallery
+              // Analytics tracking moved to VideoOverlay - only track actual watch time, not clicks
               const videoFilename = item.videoFilename || '';
               const cleanFilename = videoFilename.includes('/') ? videoFilename.split('/').pop() : videoFilename;
-              console.log('🚨 CRITICAL DEBUG v1.0.191 MOBILE: About to call trackVideoView with:', cleanFilename);
-              console.log('🚨 CRITICAL DEBUG v1.0.191 MOBILE: trackVideoView function exists:', typeof trackVideoView);
-              trackVideoView(cleanFilename || '');
-              console.log('🚨 CRITICAL DEBUG v1.0.191 MOBILE: trackVideoView called successfully');
+              console.log('🎬 MOBILE VIDEO LIGHTBOX OPENING:', cleanFilename, '- tracking moved to VideoOverlay for actual watch time');
               
               const videoUrl = getVideoUrl(item, 0);
               setLightboxVideo({...item, lightboxVideoUrl: videoUrl});
