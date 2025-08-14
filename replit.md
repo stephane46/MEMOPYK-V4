@@ -42,7 +42,7 @@ Visual consistency priority: Extremely detail-oriented about spacing and formatt
 - **Modular API Design**: RESTful API for various content types (hero videos, gallery, FAQs, legal docs, analytics).
 - **Static Image Generation**: Automated Sharp-based cropping and generation of static images for gallery thumbnails upon upload.
 - **Real-time Analytics**: Backend system for tracking visitors, performance, and engagement with IP management and accurate session/view tracking, including IP exclusion and geolocation enrichment.
-- **Google Analytics Integration**: Comprehensive GA4 tracking with automatic page view monitoring, custom event tracking, and route change detection for enhanced user behavior analytics.
+- **Google Analytics Integration**: Pattern A dual implementation with static HTML tag (immediate load) and React SPA tracking (route changes). GA4 tracking with manual page_view control, custom event tracking, and comprehensive user behavior analytics. Successfully resolved timing issues with retry mechanism.
 - **Direct Supabase Upload System**: Facilitates large file uploads bypassing deployment limits.
 - **SEO Management System**: Comprehensive interface for page-level meta tags, keywords, redirects, image SEO, and global settings.
 - **Deployment Optimizations**: Fast health check endpoints, production video cache preloading, comprehensive error handling, routing priorities, and automated public asset copying.
