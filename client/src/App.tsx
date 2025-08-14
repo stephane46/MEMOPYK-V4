@@ -16,7 +16,6 @@ import { queryClient } from './lib/queryClient';
 import { Toaster } from '@/components/ui/toaster';
 import GallerySectionWrapper from './components/sections/GallerySectionWrapper';
 import { useEffect } from 'react';
-import { initGA } from '@/lib/analytics';
 import { useAnalytics } from '@/hooks/use-analytics';
 
 console.log("🔀 routes configured for /gallery");
@@ -78,29 +77,25 @@ function AnalyticsRouter() {
 }
 
 function App() {
-  // Initialize Google Analytics when app loads
+  // Send initial page view and test event after GA loads
   useEffect(() => {
-    // Verify required environment variable is present
-    if (!import.meta.env.VITE_GA_MEASUREMENT_ID) {
-      console.warn('Missing required Google Analytics key: VITE_GA_MEASUREMENT_ID');
-    } else {
-      console.log('📊 Initializing GA with ID:', import.meta.env.VITE_GA_MEASUREMENT_ID);
-      initGA();
-      console.log('📊 Google Analytics initialized');
-      
-      // Send test event after 3 seconds
-      setTimeout(() => {
-        if (window.gtag) {
-          window.gtag('event', 'ga_test_event', {
-            source: 'react_app_initialization',
-            timestamp: new Date().toISOString()
-          });
-          console.log('📊 GA test event sent');
-        } else {
-          console.error('📊 window.gtag not available');
-        }
-      }, 3000);
-    }
+    // Send initial page view manually since we disabled auto page_view
+    setTimeout(() => {
+      if (typeof window !== 'undefined' && window.gtag) {
+        window.gtag('event', 'page_view', {
+          page_location: window.location.href,
+          page_path: window.location.pathname + window.location.search,
+          page_title: document.title
+        });
+        
+        // Send a test event
+        window.gtag('event', 'test_event', {
+          event_category: 'test',
+          event_label: 'app_initialization'
+        });
+        console.log('📊 GA initial page_view and test event sent');
+      }
+    }, 1000);
   }, []);
 
   return (

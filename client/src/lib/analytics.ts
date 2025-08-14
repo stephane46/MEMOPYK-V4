@@ -6,43 +6,32 @@ declare global {
   }
 }
 
-// Initialize Google Analytics
-export const initGA = () => {
-  const measurementId = import.meta.env.VITE_GA_MEASUREMENT_ID;
+const MEASUREMENT_ID = "G-JLRWHE1HV4";
 
-  if (!measurementId) {
-    console.warn('Missing required Google Analytics key: VITE_GA_MEASUREMENT_ID');
-    return;
+// Call this on every route change
+export function sendPageView() {
+  const params = {
+    page_location: window.location.href,
+    page_path: window.location.pathname + window.location.search,
+    page_title: document.title,
+  };
+
+  // If gtag is ready, send immediately; otherwise queue until it appears
+  if (typeof window !== "undefined" && typeof (window as any).gtag === "function") {
+    (window as any).gtag("config", MEASUREMENT_ID, params);
+  } else {
+    // minimal retry to avoid missing the first hit after hydration
+    let tries = 0;
+    const t = setInterval(() => {
+      tries++;
+      if (typeof (window as any).gtag === "function") {
+        (window as any).gtag("config", MEASUREMENT_ID, params);
+        clearInterval(t);
+      }
+      if (tries > 20) clearInterval(t); // stop after ~10s
+    }, 500);
   }
-
-  // Add Google Analytics script to the head
-  const script1 = document.createElement('script');
-  script1.async = true;
-  script1.src = `https://www.googletagmanager.com/gtag/js?id=${measurementId}`;
-  document.head.appendChild(script1);
-
-  // Initialize gtag
-  const script2 = document.createElement('script');
-  script2.textContent = `
-    window.dataLayer = window.dataLayer || [];
-    function gtag(){dataLayer.push(arguments);}
-    gtag('js', new Date());
-    gtag('config', '${measurementId}');
-  `;
-  document.head.appendChild(script2);
-};
-
-// Track page views - useful for single-page applications
-export const trackPageView = (url: string) => {
-  if (typeof window === 'undefined' || !window.gtag) return;
-  
-  const measurementId = import.meta.env.VITE_GA_MEASUREMENT_ID;
-  if (!measurementId) return;
-  
-  window.gtag('config', measurementId, {
-    page_path: url
-  });
-};
+}
 
 // Track events
 export const trackEvent = (

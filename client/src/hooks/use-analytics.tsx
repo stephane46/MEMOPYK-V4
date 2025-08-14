@@ -1,15 +1,17 @@
 import { useEffect, useRef } from 'react';
 import { useLocation } from 'wouter';
-import { trackPageView } from '../lib/analytics';
+import { sendPageView } from '../lib/analytics';
 
 export const useAnalytics = () => {
   const [location] = useLocation();
-  const prevLocationRef = useRef<string>(location);
-  
+  const firstLoad = useRef(true);
+
   useEffect(() => {
-    if (location !== prevLocationRef.current) {
-      trackPageView(location);
-      prevLocationRef.current = location;
+    if (firstLoad.current) {
+      // Let GA's default first page_view happen from index.html
+      firstLoad.current = false;
+      return;
     }
+    sendPageView(); // fire on route changes
   }, [location]);
 };
