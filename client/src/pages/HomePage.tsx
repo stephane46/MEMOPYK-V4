@@ -18,9 +18,6 @@ export function HomePage() {
   useEffect(() => {
     console.log('📊 Tracking visitor session on HomePage load');
     trackSession();
-    
-    // Track page view in Google Analytics
-    trackEvent('page_view', 'navigation', 'home_page');
   }, [trackSession]);
   
   // Handle scrolling to anchor after navigation from other pages

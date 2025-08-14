@@ -16,8 +16,8 @@ import { queryClient } from './lib/queryClient';
 import { Toaster } from '@/components/ui/toaster';
 import GallerySectionWrapper from './components/sections/GallerySectionWrapper';
 import { useEffect } from 'react';
-import { initGA } from '../lib/analytics';
-import { useAnalytics } from '../hooks/use-analytics';
+import { initGA } from '@/lib/analytics';
+import { useAnalytics } from '@/hooks/use-analytics';
 
 console.log("🔀 routes configured for /gallery");
 
