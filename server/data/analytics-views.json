@@ -14,5 +14,53 @@
     "is_test_data": false,
     "created_at": "2025-08-14T04:48:18.210Z",
     "updated_at": "2025-08-14T04:48:18.210Z"
+  },
+  {
+    "id": "view_1755147590505_zy90m2n8u",
+    "video_id": "VitaminSeaC.mp4",
+    "video_filename": "VitaminSeaC.mp4",
+    "video_type": "gallery",
+    "video_title": "",
+    "session_id": "session_1755147590504",
+    "language": "fr-FR",
+    "watch_time": 30,
+    "completion_rate": 0,
+    "ip_address": "172.31.106.130",
+    "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36 Edg/138.0.0.0",
+    "is_test_data": false,
+    "created_at": "2025-08-14T04:59:50.505Z",
+    "updated_at": "2025-08-14T04:59:50.505Z"
+  },
+  {
+    "id": "view_1755147730335_xnhaponm5",
+    "video_id": "PomGalleryC.mp4",
+    "video_filename": "PomGalleryC.mp4",
+    "video_type": "gallery",
+    "video_title": "",
+    "session_id": "session_1755147730335",
+    "language": "fr-FR",
+    "watch_time": 43,
+    "completion_rate": 0,
+    "ip_address": "172.31.106.130",
+    "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36 Edg/138.0.0.0",
+    "is_test_data": false,
+    "created_at": "2025-08-14T05:02:10.335Z",
+    "updated_at": "2025-08-14T05:02:10.335Z"
+  },
+  {
+    "id": "view_1755147878395_7jv2j5lp2",
+    "video_id": "VitaminSeaC.mp4",
+    "video_filename": "VitaminSeaC.mp4",
+    "video_type": "gallery",
+    "video_title": "",
+    "session_id": "session_1755147878394",
+    "language": "fr-FR",
+    "watch_time": 83,
+    "completion_rate": 0,
+    "ip_address": "172.31.106.130",
+    "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36 Edg/138.0.0.0",
+    "is_test_data": false,
+    "created_at": "2025-08-14T05:04:38.395Z",
+    "updated_at": "2025-08-14T05:04:38.395Z"
   }
 ]
