@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Play, Clock, X, Eye } from 'lucide-react';
+import { Play, Clock, X, Eye, Users } from 'lucide-react';
 
 interface VideoPerformanceData {
   video_id: string;
@@ -329,19 +329,7 @@ export function VideoPerformanceCard({ frontContent, className = "", performance
                         </div>
 
                         <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                          <div style={{ 
-                            width: '16px', 
-                            height: '16px', 
-                            backgroundColor: '#6b7280',
-                            borderRadius: '50%',
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                            fontSize: '10px',
-                            color: 'white'
-                          }}>
-                            {video.unique_viewers}
-                          </div>
+                          <Users style={{ width: '16px', height: '16px', color: '#6b7280' }} />
                           <span style={{ color: '#374151' }}>
                             <strong>{video.unique_viewers}</strong> unique
                           </span>
