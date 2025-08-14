@@ -77,9 +77,8 @@ export default function VideoOverlay({
       video.load(); // Force immediate buffering
     }
     
-    // Initial click tracking - we'll track actual duration on close/end
-    console.log(`📊 VIDEO OPENED: ${videoId} - will track actual duration on close/end`);
-    trackVideoView(videoId, 0, false);
+    // Only track actual duration on close/end - no initial tracking
+    console.log(`📊 VIDEO OPENED: ${videoId} - tracking disabled, will only track actual duration on close/end`);
   }, [videoUrl]); // Simplified dependencies to prevent infinite loops
 
   // Enhanced error handling
