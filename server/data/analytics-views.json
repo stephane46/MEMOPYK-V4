@@ -1,1 +1,18 @@
-[]
+[
+  {
+    "id": "view_1755146898210_0a42kef7e",
+    "video_id": "PomGalleryC.mp4",
+    "video_filename": "PomGalleryC.mp4",
+    "video_type": "gallery",
+    "video_title": "",
+    "session_id": "session_1755146898209",
+    "language": "fr-FR",
+    "watch_time": 16,
+    "completion_rate": 0,
+    "ip_address": "172.31.106.130",
+    "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36 Edg/138.0.0.0",
+    "is_test_data": false,
+    "created_at": "2025-08-14T04:48:18.210Z",
+    "updated_at": "2025-08-14T04:48:18.210Z"
+  }
+]
