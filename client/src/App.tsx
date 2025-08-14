@@ -84,8 +84,22 @@ function App() {
     if (!import.meta.env.VITE_GA_MEASUREMENT_ID) {
       console.warn('Missing required Google Analytics key: VITE_GA_MEASUREMENT_ID');
     } else {
+      console.log('📊 Initializing GA with ID:', import.meta.env.VITE_GA_MEASUREMENT_ID);
       initGA();
       console.log('📊 Google Analytics initialized');
+      
+      // Send test event after 3 seconds
+      setTimeout(() => {
+        if (window.gtag) {
+          window.gtag('event', 'ga_test_event', {
+            source: 'react_app_initialization',
+            timestamp: new Date().toISOString()
+          });
+          console.log('📊 GA test event sent');
+        } else {
+          console.error('📊 window.gtag not available');
+        }
+      }, 3000);
     }
   }, []);
 
