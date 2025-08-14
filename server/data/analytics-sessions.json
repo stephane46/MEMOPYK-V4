@@ -18,9 +18,9 @@
   {
     "id": "session_1755146895471_v51lpymo4",
     "session_id": "anonymous",
-    "duration": 142281,
+    "duration": 142447,
     "created_at": "2025-08-14T04:48:15.471Z",
-    "updated_at": "2025-08-14T04:49:15.736Z",
+    "updated_at": "2025-08-14T04:52:01.735Z",
     "is_test_data": false
   },
   {
@@ -38,5 +38,53 @@
     "is_test_data": false,
     "created_at": "2025-08-14T04:48:52.949Z",
     "updated_at": "2025-08-14T04:48:52.990Z"
+  },
+  {
+    "id": "d74a40ca-e087-45d0-a5ad-147609308129",
+    "session_id": "session_1755147103452_p5elwihpy",
+    "user_id": null,
+    "ip_address": "31.222.254.152",
+    "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36 Edg/138.0.0.0",
+    "referrer": "https://365df2cf-1884-444c-a9e8-235602456363-00-37q39xpqlgvdy.janeway.replit.dev/fr-FR/admin",
+    "language": "fr-FR",
+    "country": "Unknown",
+    "city": "Unknown",
+    "page_views": 0,
+    "is_bot": false,
+    "is_test_data": false,
+    "created_at": "2025-08-14T04:51:43.710Z",
+    "updated_at": "2025-08-14T04:51:43.751Z"
+  },
+  {
+    "id": "c91075a6-1a63-4916-9f08-04c1a45e7ec2",
+    "session_id": "session_1755147103476_sym2uhxio",
+    "user_id": null,
+    "ip_address": "31.222.254.152",
+    "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36 Edg/138.0.0.0",
+    "referrer": "https://365df2cf-1884-444c-a9e8-235602456363-00-37q39xpqlgvdy.janeway.replit.dev/",
+    "language": "fr-FR",
+    "country": "Unknown",
+    "city": "Unknown",
+    "page_views": 0,
+    "is_bot": false,
+    "is_test_data": false,
+    "created_at": "2025-08-14T04:51:43.733Z",
+    "updated_at": "2025-08-14T04:51:43.775Z"
+  },
+  {
+    "id": "6a13e8dc-9f27-4358-81fd-6a805d4f6898",
+    "session_id": "session_1755147147807_ixsavilon",
+    "user_id": null,
+    "ip_address": "31.222.254.152",
+    "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36 Edg/138.0.0.0",
+    "referrer": "https://365df2cf-1884-444c-a9e8-235602456363-00-37q39xpqlgvdy.janeway.replit.dev/fr-FR",
+    "language": "fr-FR",
+    "country": "Unknown",
+    "city": "Unknown",
+    "page_views": 0,
+    "is_bot": false,
+    "is_test_data": false,
+    "created_at": "2025-08-14T04:52:28.213Z",
+    "updated_at": "2025-08-14T04:52:28.301Z"
   }
 ]

@@ -3490,6 +3490,9 @@ Allow: /contact`;
         pageUrl.includes('localhost') ||
         // Development/test referrers
         referrer.includes('workspace_iframe') ||
+        // Admin page exclusion - automatically exclude admin visits
+        pageUrl.includes('/admin') ||
+        pageUrl.endsWith('/admin') ||
         // Automated/bot traffic
         userAgent.includes('headless') ||
         userAgent.includes('bot') ||

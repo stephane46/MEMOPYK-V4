@@ -136,6 +136,12 @@ export const useVideoAnalytics = () => {
 
   // Helper function to track session with automatic data collection and deduplication
   const trackSessionWithDefaults = () => {
+    // Admin page exclusion - automatically exclude admin visits from analytics
+    if (window.location.pathname.includes('/admin') || window.location.pathname.endsWith('/admin')) {
+      console.log('📊 PRODUCTION ANALYTICS: Skipping session tracking - admin page detected');
+      return;
+    }
+    
     // Session deduplication to prevent analytics overload (reduced from 1 hour to 10 minutes for better production tracking)
     const sessionKey = 'memopyk-session-tracked';
     const sessionStartKey = 'memopyk-session-start';
