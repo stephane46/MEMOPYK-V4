@@ -73,6 +73,20 @@ app.use(express.urlencoded({
   parameterLimit: 50000
 }));
 
+// Configure CSP headers to allow Google Analytics
+app.use((req, res, next) => {
+  res.setHeader('Content-Security-Policy', 
+    "default-src 'self'; " +
+    "script-src 'self' 'unsafe-inline' https://www.googletagmanager.com https://replit.com; " +
+    "connect-src 'self' https://www.google-analytics.com https://analytics.google.com https://stats.g.doubleclick.net wss: ws:; " +
+    "img-src 'self' data: https://www.google-analytics.com https://www.googletagmanager.com; " +
+    "style-src 'self' 'unsafe-inline'; " +
+    "font-src 'self'; " +
+    "media-src 'self';"
+  );
+  next();
+});
+
 // 🔍 DIAGNOSTIC 2: Log ALL Proxy Requests (Before Any Route Logic) 
 app.use('/api/video-proxy', (req, res, next) => {
   console.log('🔍 RAW VIDEO PROXY ENTRY', req.originalUrl, req.query);
