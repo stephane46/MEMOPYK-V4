@@ -2160,21 +2160,46 @@ export async function registerRoutes(app: Express): Promise<void> {
   // Session Duration Update - POST update session duration
   app.post("/api/analytics/session-update", async (req, res) => {
     try {
-      const { duration } = req.body;
-      const sessionId = (req as any).session?.id || 'anonymous';
+      const { duration, sessionId: clientSessionId } = req.body;
       
-      console.log(`📊 SESSION UPDATE: Duration ${duration}s for session ${sessionId}`);
+      // FIXED: Use client-provided session ID or create IP-based session ID
+      const clientIp = getClientIp(req);
+      const sessionId = clientSessionId || `ip_session_${clientIp?.replace(/\./g, '_')}` || 'anonymous';
+      
+      console.log(`📊 SESSION UPDATE: Duration ${duration}s for session ${sessionId} (IP: ${clientIp})`);
       
       if (!duration || duration < 0) {
         return res.status(400).json({ error: "Valid duration required" });
       }
       
+      // FIXED: Find or create session for this specific IP
+      const sessions = await hybridStorage.getRecentAnalyticsSessions();
+      const ipSession = sessions.find((s: any) => 
+        s.ip_address === clientIp && 
+        !s.is_test_data
+      );
+      
+      let finalSessionId = sessionId;
+      if (ipSession) {
+        finalSessionId = ipSession.session_id;
+        console.log(`📊 SESSION UPDATE: Using existing session ${finalSessionId} for IP ${clientIp}`);
+      } else {
+        // FIXED: Prevent anonymous accumulation - skip if no valid session found
+        if (!clientSessionId && finalSessionId.includes('anonymous')) {
+          console.log(`🚫 SESSION UPDATE: Skipping anonymous session without client ID to prevent accumulation`);
+          return res.json({ 
+            success: false,
+            message: "No valid session found - anonymous accumulation prevented" 
+          });
+        }
+      }
+      
       // Update session duration in storage
-      await hybridStorage.updateSessionDuration(sessionId, duration);
+      await hybridStorage.updateSessionDuration(finalSessionId, duration);
       
       res.json({ 
         success: true, 
-        sessionId,
+        sessionId: finalSessionId,
         duration,
         message: "Session duration updated successfully" 
       });

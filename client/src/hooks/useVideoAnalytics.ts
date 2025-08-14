@@ -85,6 +85,13 @@ export const useVideoAnalytics = () => {
     },
     onSuccess: (data) => {
       console.log('📊 PRODUCTION ANALYTICS: Session mutation success:', data);
+      
+      // FIXED: Store the session ID for duration tracking
+      if (data?.session?.session_id) {
+        localStorage.setItem('memopyk-current-session-id', data.session.session_id);
+        console.log('📊 SESSION TRACKING: Stored session ID for duration tracking:', data.session.session_id);
+      }
+      
       queryClient.invalidateQueries({ queryKey: ['/api/analytics'] });
     },
     onError: (error) => {
@@ -188,20 +195,26 @@ export const useVideoAnalytics = () => {
   // Session duration tracking with page visibility API
   const setupSessionDurationTracking = () => {
     const sessionStartKey = 'memopyk-session-start';
+    const sessionIdKey = 'memopyk-current-session-id';
     
     const updateSessionDuration = async () => {
       const sessionStart = localStorage.getItem(sessionStartKey);
       if (!sessionStart) return;
       
       const duration = Math.round((Date.now() - parseInt(sessionStart)) / 1000);
-      console.log(`📊 SESSION DURATION: Current session duration: ${duration}s`);
+      const sessionId = localStorage.getItem(sessionIdKey);
       
-      // Send session duration update to backend
+      console.log(`📊 SESSION DURATION: Current session duration: ${duration}s for session: ${sessionId || 'none'}`);
+      
+      // Send session duration update to backend with session ID
       try {
         await fetch('/api/analytics/session-update', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ duration })
+          body: JSON.stringify({ 
+            duration,
+            sessionId: sessionId 
+          })
         });
       } catch (error) {
         console.warn('📊 SESSION DURATION: Failed to update session duration:', error);
