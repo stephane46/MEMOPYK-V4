@@ -512,8 +512,10 @@ export default function VideoOverlay({
             position: 'absolute',
             top: 0,
             left: 0,
-            zIndex: 10,
-            backgroundColor: 'black'
+            zIndex: 15,
+            backgroundColor: 'black',
+            opacity: 1,
+            visibility: 'visible'
           }}
           controls={false}
           onClick={handleVideoClick}
