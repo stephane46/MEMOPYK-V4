@@ -2214,5 +2214,39 @@
     "created_at": "2025-08-15T17:44:26.203Z",
     "updated_at": "2025-08-15T17:47:26.694Z",
     "duration": 275369
+  },
+  {
+    "id": "32c6e33d-0c4a-461e-932f-f2f6d2997f58",
+    "session_id": "session_1755280117740_4qfb5niiq",
+    "user_id": null,
+    "ip_address": "109.17.150.48",
+    "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36 Edg/139.0.0.0",
+    "referrer": "https://365df2cf-1884-444c-a9e8-235602456363-00-37q39xpqlgvdy.janeway.replit.dev/fr-FR",
+    "language": "fr-FR",
+    "country": "Unknown",
+    "city": "Unknown",
+    "page_views": 0,
+    "is_bot": false,
+    "is_test_data": false,
+    "created_at": "2025-08-15T17:48:38.075Z",
+    "updated_at": "2025-08-15T17:50:38.699Z",
+    "duration": 275561
+  },
+  {
+    "id": "4c0d3759-771c-46a6-945e-c021f563c99c",
+    "session_id": "session_1755280325323_s71o3qga7",
+    "user_id": null,
+    "ip_address": "109.17.150.48",
+    "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36 Edg/139.0.0.0",
+    "referrer": "https://365df2cf-1884-444c-a9e8-235602456363-00-37q39xpqlgvdy.janeway.replit.dev/fr-FR",
+    "language": "fr-FR",
+    "country": "Unknown",
+    "city": "Unknown",
+    "page_views": 0,
+    "is_bot": false,
+    "is_test_data": false,
+    "created_at": "2025-08-15T17:52:05.590Z",
+    "updated_at": "2025-08-15T17:52:35.698Z",
+    "duration": 275678
   }
 ]

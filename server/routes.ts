@@ -13,9 +13,15 @@ import { createCacheHitHeaders, createCacheMissHeaders, getUpstreamSource, getCa
 import { analyticsCleanupRoutes } from './routes-analytics-cache-cleanup';
 import { locationService } from './location-service';
 import {
-  qPlays, qCompletes, qWatchTimeTotal, qTopLocale,
-  qPlaysByVideo, qWatchTimeByVideo, qProgressByVideo,
-  qFunnel, qTrend
+  qPlays,
+  qCompletes,
+  qWatchTimeTotal,
+  qTopLocale,
+  qPlaysByVideo,
+  qWatchTimeByVideo,
+  qProgressByVideo,
+  qFunnel,
+  qTrend
 } from './ga4-service';
 
 // Contact form validation schema
@@ -3683,20 +3689,34 @@ export async function registerRoutes(app: Express): Promise<void> {
     return ga4Service;
   };
 
-  // GA4 Connection Test endpoint - verifies credentials and property access
+  // GA4 Connection Test endpoint - tests basic GA4 query functionality
   app.get("/api/ga4/test", async (req, res) => {
     try {
       console.log('🔍 GA4 connection test requested');
-      const service = initGA4();
-      const result = await service.testConnection();
+      
+      // Test basic query function with yesterday's data
+      const yesterday = new Date();
+      yesterday.setDate(yesterday.getDate() - 1);
+      const testDate = yesterday.toISOString().split('T')[0];
+      
+      console.log(`Testing qPlays function with date: ${testDate}`);
+      const plays = await qPlays(testDate, testDate, 'all');
+      console.log(`qPlays result: ${plays}`);
       
       console.log('✅ GA4 connection test successful');
-      res.json(result);
+      res.json({
+        success: true,
+        testDate,
+        testPlays: plays,
+        message: "GA4 query functions working correctly"
+      });
     } catch (error) {
       console.error('❌ GA4 connection test failed:', error);
+      console.error('Full error details:', JSON.stringify(error, null, 2));
       res.status(500).json({ 
         error: error instanceof Error ? error.message : 'GA4 connection test failed',
-        success: false 
+        success: false,
+        fullError: JSON.stringify(error, null, 2)
       });
     }
   });
@@ -3788,13 +3808,46 @@ export async function registerRoutes(app: Express): Promise<void> {
   app.get("/api/ga4/kpis", async (req, res, next) => {
     try {
       const { startDate, endDate, locale } = getParams(req);
+      console.log(`📊 GA4 KPIs request: ${startDate} to ${endDate}, locale: ${locale}`);
 
-      const [plays, completes, totalWatch, topLocale] = await Promise.all([
-        qPlays(startDate, endDate, locale),
-        qCompletes(startDate, endDate, locale),
-        qWatchTimeTotal(startDate, endDate, locale),
-        qTopLocale(startDate, endDate)
-      ]);
+      // Test each query individually to identify which is failing
+      let plays = 0, completes = 0, totalWatch = 0, topLocale = { locale: "n/a", plays: 0 };
+
+      try {
+        console.log('Testing qPlays...');
+        plays = await qPlays(startDate, endDate, locale);
+        console.log(`✅ qPlays: ${plays}`);
+      } catch (e) {
+        console.error('❌ qPlays failed:', (e as Error).message);
+        throw new Error(`qPlays failed: ${(e as Error).message}`);
+      }
+
+      try {
+        console.log('Testing qCompletes...');
+        completes = await qCompletes(startDate, endDate, locale);
+        console.log(`✅ qCompletes: ${completes}`);
+      } catch (e) {
+        console.error('❌ qCompletes failed:', (e as Error).message);
+        throw new Error(`qCompletes failed: ${(e as Error).message}`);
+      }
+
+      try {
+        console.log('Testing qWatchTimeTotal...');
+        totalWatch = await qWatchTimeTotal(startDate, endDate, locale);
+        console.log(`✅ qWatchTimeTotal: ${totalWatch}`);
+      } catch (e) {
+        console.error('❌ qWatchTimeTotal failed:', (e as Error).message);
+        throw new Error(`qWatchTimeTotal failed: ${(e as Error).message}`);
+      }
+
+      try {
+        console.log('Testing qTopLocale...');
+        topLocale = await qTopLocale(startDate, endDate);
+        console.log(`✅ qTopLocale:`, topLocale);
+      } catch (e) {
+        console.error('❌ qTopLocale failed:', (e as Error).message);
+        throw new Error(`qTopLocale failed: ${(e as Error).message}`);
+      }
 
       const avgWatchSeconds = plays > 0 ? Math.round(totalWatch / plays) : 0;
       const completionRate = plays > 0 ? (completes / plays) * 100 : 0;
@@ -3807,7 +3860,10 @@ export async function registerRoutes(app: Express): Promise<void> {
         completionRate,
         topLocale
       });
-    } catch (e) { next(e); }
+    } catch (e) { 
+      console.error('❌ GA4 KPIs error:', e);
+      res.status(500).json({ message: (e as Error).message });
+    }
   });
 
   // Top videos table endpoint - using your exact clean API structure
