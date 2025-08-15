@@ -2,6 +2,9 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useCallback } from 'react';
 import { apiRequest } from '../lib/queryClient';
 
+// Feature flag for video analytics - DISABLED per requirement to switch to GA4-only
+const VIDEO_ANALYTICS_ENABLED = import.meta.env.VITE_VIDEO_ANALYTICS_ENABLED === 'true' || false;
+
 interface VideoViewData {
   video_id: string;
   duration_watched?: number;
@@ -25,6 +28,12 @@ export const useVideoAnalytics = () => {
 
   const trackVideoView = useMutation({
     mutationFn: async (data: VideoViewData) => {
+      // VIDEO ANALYTICS DISABLED - Switch to GA4-only for video analytics
+      if (!VIDEO_ANALYTICS_ENABLED) {
+        console.log('📊 VIDEO ANALYTICS DISABLED: Custom video tracking paused, switching to GA4-only');
+        return { success: true, disabled: true };
+      }
+      
       console.log('🚨 CRITICAL TRACKING MUTATION v1.0.190: Making video view tracking request to /api/analytics/video-view');
       console.log('🚨 CRITICAL TRACKING MUTATION v1.0.190: Request data:', data);
       
@@ -236,10 +245,10 @@ export const useVideoAnalytics = () => {
     };
     
     // Set up event listeners if not already done
-    if (!window.memopykSessionListenersAdded) {
+    if (!(window as any).memopykSessionListenersAdded) {
       window.addEventListener('beforeunload', handleBeforeUnload);
       document.addEventListener('visibilitychange', handleVisibilityChange);
-      window.memopykSessionListenersAdded = true;
+      (window as any).memopykSessionListenersAdded = true;
       
       // Update duration every 30 seconds
       setInterval(updateSessionDuration, 30000);

@@ -1742,6 +1742,12 @@ export async function registerRoutes(app: Express): Promise<void> {
 
   app.post("/api/analytics/video-view", async (req, res) => {
     try {
+      // VIDEO ANALYTICS DISABLED - Switch to GA4-only for video analytics
+      if (process.env.VIDEO_ANALYTICS_ENABLED === 'false' || !process.env.VIDEO_ANALYTICS_ENABLED) {
+        console.log('📊 VIDEO ANALYTICS DISABLED: Custom video tracking paused, switching to GA4-only');
+        return res.status(204).send(); // Silent ignore
+      }
+      
       const { video_id, filename, duration_watched, completed, language, session_id, watch_time, completion_rate } = req.body;
       console.log('📊 Video view tracking - Full request body:', req.body);
       console.log('📊 Video view tracking - Extracted fields:', { video_id, filename, duration_watched, completed, language });
