@@ -54,8 +54,8 @@ export default function VideoOverlay({
   // Analytics tracking - DISABLED: Switch to GA4-only for video analytics
   const { trackVideoView } = useVideoAnalytics();
   
-  // GA4 Video Analytics - RE-ENABLED with stable reference pattern
-  const ga4Analytics = useGA4VideoAnalytics();
+  // GA4 Video Analytics - DISABLED: Dashboard analytics not needed for individual video playback
+  // const ga4Analytics = useGA4VideoAnalytics();
   
   // Feature flag for video analytics - DISABLED per requirement to switch to GA4-only
   const VIDEO_ANALYTICS_ENABLED = import.meta.env.VITE_VIDEO_ANALYTICS_ENABLED === 'true' || false;
@@ -84,8 +84,8 @@ export default function VideoOverlay({
       
     console.log(`🎯 ENHANCED THUMBNAIL SYSTEM v1.0.178: Loading ${videoId} with ${MINIMUM_THUMBNAIL_DISPLAY_TIME}ms minimum display - GA4 ENABLED`);
     
-    // GA4 Analytics: Track video open (modal/overlay opened)  
-    ga4Analytics.trackOpen(videoId, title);
+    // GA4 Analytics: DISABLED - Individual video tracking not needed for dashboard analytics
+    // ga4Analytics.trackOpen(videoId, title);
     
     // Start video buffering immediately for faster transition
     const video = videoRef.current;
@@ -94,13 +94,13 @@ export default function VideoOverlay({
       video.load(); // Force immediate buffering
     }
     
-    // Setup GA4 visibility tracking
-    const cleanupVisibilityTracking = ga4Analytics.setupVisibilityTracking();
+    // Setup GA4 visibility tracking - DISABLED
+    // const cleanupVisibilityTracking = ga4Analytics.setupVisibilityTracking();
     
     return () => {
       console.log('🔄 VIDEO OVERLAY CLEANUP - Component unmounting');
-      cleanupVisibilityTracking();
-      ga4Analytics.clearSession(videoId);
+      // cleanupVisibilityTracking();
+      // ga4Analytics.clearSession(videoId);
     };
   }, []); // Empty dependencies - mount once only
 
@@ -176,8 +176,8 @@ export default function VideoOverlay({
         ? videoUrl.split('filename=')[1].split('&')[0]
         : videoUrl.split('/').pop()?.split('?')[0] || 'unknown';
         
-      ga4Analytics.trackProgressMilestone(videoId, video.duration, video.currentTime, title);
-      ga4Analytics.trackCompletion(videoId, video.duration, video.currentTime, title);
+      // ga4Analytics.trackProgressMilestone(videoId, video.duration, video.currentTime, title);
+      // ga4Analytics.trackCompletion(videoId, video.duration, video.currentTime, title);
     }
   }, [title, videoUrl]);
 
@@ -192,8 +192,8 @@ export default function VideoOverlay({
       : videoUrl.split('/').pop()?.split('?')[0] || 'unknown';
       
     if (duration > 0) {
-      ga4Analytics.trackStart(videoId, duration, currentTime, title);
-      ga4Analytics.trackResume(videoId);
+      // ga4Analytics.trackStart(videoId, duration, currentTime, title);
+      // ga4Analytics.trackResume(videoId);
     }
   }, [resetControlsTimer, duration, currentTime, title, videoUrl]);
 
@@ -207,7 +207,7 @@ export default function VideoOverlay({
       : videoUrl.split('/').pop()?.split('?')[0] || 'unknown';
       
     if (duration > 0) {
-      ga4Analytics.trackPause(videoId, duration, currentTime, title);
+      // ga4Analytics.trackPause(videoId, duration, currentTime, title);
     }
   }, [duration, currentTime, title, videoUrl]);
 
