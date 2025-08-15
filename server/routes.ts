@@ -12,7 +12,11 @@ import { setCacheAndOriginHeaders } from './cache-origin-headers';
 import { createCacheHitHeaders, createCacheMissHeaders, getUpstreamSource, getCacheAge } from './cache-delivery-headers';
 import { analyticsCleanupRoutes } from './routes-analytics-cache-cleanup';
 import { locationService } from './location-service';
-import { initializeGA4Service } from './ga4-service';
+import {
+  qPlays, qCompletes, qWatchTimeTotal, qTopLocale,
+  qPlaysByVideo, qWatchTimeByVideo, qProgressByVideo,
+  qFunnel, qTrend
+} from './ga4-service';
 
 // Contact form validation schema
 const contactFormSchema = z.object({
@@ -1840,7 +1844,7 @@ export async function registerRoutes(app: Express): Promise<void> {
 
       // SESSION DEDUPLICATION: Prevent multiple sessions from same IP within 30 seconds
       const finalIp = req.body.ip_address || clientIp;
-      const recentSessions = await hybridStorage.getRecentAnalyticsSessions();
+      const recentSessions = await (hybridStorage as any).getRecentAnalyticsSessions();
       const now = new Date();
       const thirtySecondsAgo = new Date(now.getTime() - 30000);
       
@@ -3610,10 +3614,10 @@ export async function registerRoutes(app: Express): Promise<void> {
   const initGA4 = () => {
     if (!ga4Service) {
       try {
-        ga4Service = initializeGA4Service();
+        ga4Service = {}; // Service now uses direct query functions
         console.log('✅ GA4 Analytics service initialized');
       } catch (error) {
-        console.error('⚠️ GA4 initialization failed, using fallback mode:', error.message);
+        console.error('⚠️ GA4 initialization failed, using fallback mode:', (error as Error).message);
         // Create a fallback service that returns mock data
         ga4Service = {
           getKPIs: async (startDate: string, endDate: string, locale: string = 'all') => ({
@@ -3769,108 +3773,82 @@ export async function registerRoutes(app: Express): Promise<void> {
     }
   });
 
-  // GA4 KPIs endpoint - returns main dashboard metrics
-  app.get("/api/ga4/kpis", async (req, res) => {
-    try {
-      const { startDate, endDate, locale = 'all' } = req.query;
-      
-      if (!startDate || !endDate) {
-        return res.status(400).json({ error: 'startDate and endDate are required' });
-      }
+  // NEW CLEAN GA4 API ENDPOINTS using your exact drop-in queries
+  
+  // Function to parse parameters (from your spec)
+  function getParams(req: any) {
+    const startDate = String(req.query.startDate);
+    const endDate = String(req.query.endDate);
+    const locale = req.query.locale ? String(req.query.locale) : "all";
+    if (!startDate || !endDate) throw new Error("startDate and endDate are required (YYYY-MM-DD)");
+    return { startDate, endDate, locale };
+  }
 
-      console.log('📊 GA4 KPIs request:', { startDate, endDate, locale });
-      const service = initGA4();
-      const result = await service.getKPIs(startDate as string, endDate as string, locale as string);
-      
-      console.log(`✅ GA4 KPIs: ${result.cached ? 'Cached' : 'Fresh'} data returned`);
-      res.json(result);
-    } catch (error) {
-      console.error('❌ GA4 KPIs error:', error);
-      res.status(500).json({ error: error instanceof Error ? error.message : 'Failed to fetch GA4 KPIs' });
-    }
+  // GA4 KPIs endpoint - using your exact clean API structure
+  app.get("/api/ga4/kpis", async (req, res, next) => {
+    try {
+      const { startDate, endDate, locale } = getParams(req);
+
+      const [plays, completes, totalWatch, topLocale] = await Promise.all([
+        qPlays(startDate, endDate, locale),
+        qCompletes(startDate, endDate, locale),
+        qWatchTimeTotal(startDate, endDate, locale),
+        qTopLocale(startDate, endDate)
+      ]);
+
+      const avgWatchSeconds = plays > 0 ? Math.round(totalWatch / plays) : 0;
+      const completionRate = plays > 0 ? (completes / plays) * 100 : 0;
+
+      res.json({
+        plays,
+        completes,
+        totals: { watchTimeSeconds: totalWatch },
+        avgWatchSeconds,
+        completionRate,
+        topLocale
+      });
+    } catch (e) { next(e); }
   });
 
-  // GA4 Top Videos endpoint - returns video performance table data
-  app.get("/api/ga4/top-videos", async (req, res) => {
+  // Top videos table endpoint - using your exact clean API structure
+  app.get("/api/ga4/top-videos", async (req, res, next) => {
     try {
-      const { startDate, endDate, locale = 'all', limit = '10' } = req.query;
-      
-      if (!startDate || !endDate) {
-        return res.status(400).json({ error: 'startDate and endDate are required' });
-      }
+      const { startDate, endDate, locale } = getParams(req);
+      const [plays, watchTimeMap, progressMap] = await Promise.all([
+        qPlaysByVideo(startDate, endDate, locale),
+        qWatchTimeByVideo(startDate, endDate, locale),
+        qProgressByVideo(startDate, endDate, locale)
+      ]);
 
-      console.log('🎬 GA4 Top Videos request:', { startDate, endDate, locale, limit });
-      const service = initGA4();
-      const result = await service.getTopVideos(
-        startDate as string, 
-        endDate as string, 
-        locale as string, 
-        parseInt(limit as string)
-      );
-      
-      console.log(`✅ GA4 Top Videos: ${result.cached ? 'Cached' : 'Fresh'} data, ${result.rows.length} videos`);
-      res.json(result);
-    } catch (error) {
-      console.error('❌ GA4 Top Videos error:', error);
-      res.status(500).json({ error: error instanceof Error ? error.message : 'Failed to fetch GA4 top videos' });
-    }
+      const rows = plays.map(v => {
+        const totalWatch = watchTimeMap.get(v.video_id) ?? 0;
+        const avgWatchSeconds = v.plays > 0 ? Math.round(totalWatch / v.plays) : 0;
+        const prog = progressMap.get(v.video_id) ?? { p50: 0, p100: 0 };
+        const reach50Pct = v.plays > 0 ? (prog.p50 / v.plays) * 100 : 0;
+        const completePct = v.plays > 0 ? (prog.p100 / v.plays) * 100 : 0;
+        return { video_id: v.video_id, title: v.title, plays: v.plays, avgWatchSeconds, reach50Pct, completePct };
+      });
+
+      res.json(rows);
+    } catch (e) { next(e); }
   });
 
-  // GA4 Funnel endpoint - returns watch progress funnel data
-  app.get("/api/ga4/funnel", async (req, res) => {
+  // Funnel endpoint - using your exact clean API structure
+  app.get("/api/ga4/funnel", async (req, res, next) => {
     try {
-      const { startDate, endDate, locale = 'all' } = req.query;
-      
-      if (!startDate || !endDate) {
-        return res.status(400).json({ error: 'startDate and endDate are required' });
-      }
-
-      console.log('📈 GA4 Funnel request:', { startDate, endDate, locale });
-      const service = initGA4();
-      const result = await service.getFunnelData(startDate as string, endDate as string, locale as string);
-      
-      console.log(`✅ GA4 Funnel: ${result.cached ? 'Cached' : 'Fresh'} data, ${result.rows.length} data points`);
-      res.json(result);
-    } catch (error) {
-      console.error('❌ GA4 Funnel error:', error);
-      res.status(500).json({ error: error instanceof Error ? error.message : 'Failed to fetch GA4 funnel data' });
-    }
+      const { startDate, endDate, locale } = getParams(req);
+      const out = await qFunnel(startDate, endDate, locale);
+      res.json(out);
+    } catch (e) { next(e); }
   });
 
-  // GA4 Trend endpoint - returns time series data
-  app.get("/api/ga4/trend", async (req, res) => {
+  // Trend endpoint - using your exact clean API structure
+  app.get("/api/ga4/trend", async (req, res, next) => {
     try {
-      const { startDate, endDate, locale = 'all' } = req.query;
-      
-      if (!startDate || !endDate) {
-        return res.status(400).json({ error: 'startDate and endDate are required' });
-      }
-
-      console.log('📊 GA4 Trend request:', { startDate, endDate, locale });
-      const service = initGA4();
-      const result = await service.getTrendData(startDate as string, endDate as string, locale as string);
-      
-      console.log(`✅ GA4 Trend: ${result.cached ? 'Cached' : 'Fresh'} data, ${result.days.length} days`);
-      res.json(result);
-    } catch (error) {
-      console.error('❌ GA4 Trend error:', error);
-      res.status(500).json({ error: error instanceof Error ? error.message : 'Failed to fetch GA4 trend data' });
-    }
-  });
-
-  // GA4 Realtime endpoint - returns live activity data
-  app.get("/api/ga4/realtime", async (req, res) => {
-    try {
-      console.log('🔴 GA4 Realtime request');
-      const service = initGA4();
-      const result = await service.getRealtimeData();
-      
-      console.log(`✅ GA4 Realtime: ${result.cached ? 'Cached' : 'Fresh'} data, ${result.active} active, ${result.recent.length} recent events`);
-      res.json(result);
-    } catch (error) {
-      console.error('❌ GA4 Realtime error:', error);
-      res.status(500).json({ error: error instanceof Error ? error.message : 'Failed to fetch GA4 realtime data' });
-    }
+      const { startDate, endDate, locale } = getParams(req);
+      const out = await qTrend(startDate, endDate, locale);
+      res.json(out);
+    } catch (e) { next(e); }
   });
 
   // Analytics Cache Cleanup Routes
