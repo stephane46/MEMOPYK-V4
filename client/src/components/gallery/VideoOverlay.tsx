@@ -75,6 +75,9 @@ export default function VideoOverlay({
 
   // ENHANCED THUMBNAIL-TO-VIDEO SYSTEM v1.0.174 with minimum display time
   useEffect(() => {
+    console.log('🚨🚨🚨 VIDEO OVERLAY MOUNTED! 🚨🚨🚨');
+    console.log('🎬 Video URL:', videoUrl);
+    console.log('🖼️ Thumbnail URL:', thumbnailUrl);
     videoStartTimeRef.current = Date.now();
     thumbnailStartTimeRef.current = Date.now();
     videoReadyRef.current = false;
