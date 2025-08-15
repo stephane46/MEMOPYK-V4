@@ -254,7 +254,7 @@ export default function VideoOverlay({
     }
   }, []);
 
-  // Simple video ready handler
+  // Simple video ready handler with proper 2-second minimum display
   const handleCanPlay = useCallback(() => {
     console.log('🎬 VIDEO READY: Can play');
     const video = videoRef.current;
@@ -269,21 +269,35 @@ export default function VideoOverlay({
       });
       
       videoReadyRef.current = true;
-      // Start playback after short delay to show thumbnail briefly
-      setTimeout(startVideoPlayback, 1000);
+      
+      // Calculate time already elapsed since thumbnail started showing
+      const timeElapsed = Date.now() - thumbnailStartTimeRef.current;
+      const remainingTime = Math.max(0, MINIMUM_THUMBNAIL_DISPLAY_TIME - timeElapsed);
+      
+      console.log(`🎯 THUMBNAIL TIMING: ${timeElapsed}ms elapsed, waiting ${remainingTime}ms more for minimum ${MINIMUM_THUMBNAIL_DISPLAY_TIME}ms display`);
+      
+      // Start playback after ensuring minimum 2-second thumbnail display
+      setTimeout(startVideoPlayback, remainingTime);
     }
-  }, [startVideoPlayback, showThumbnail]);
+  }, [startVideoPlayback, showThumbnail, MINIMUM_THUMBNAIL_DISPLAY_TIME]);
 
-  // Handle when enough data is loaded for smooth playback
+  // Handle when enough data is loaded for smooth playback with proper timing
   const handleCanPlayThrough = useCallback(() => {
     console.log('🎬 VIDEO BUFFERED: Full buffer ready');
     const video = videoRef.current;
     if (video && showThumbnail) {
       videoReadyRef.current = true;
-      // Start playback immediately if video is fully buffered
-      setTimeout(startVideoPlayback, 500);
+      
+      // Calculate time already elapsed since thumbnail started showing
+      const timeElapsed = Date.now() - thumbnailStartTimeRef.current;
+      const remainingTime = Math.max(0, MINIMUM_THUMBNAIL_DISPLAY_TIME - timeElapsed);
+      
+      console.log(`🎯 BUFFERED TIMING: ${timeElapsed}ms elapsed, waiting ${remainingTime}ms more for minimum ${MINIMUM_THUMBNAIL_DISPLAY_TIME}ms display`);
+      
+      // Start playback after ensuring minimum 2-second thumbnail display
+      setTimeout(startVideoPlayback, remainingTime);
     }
-  }, [startVideoPlayback, showThumbnail]);
+  }, [startVideoPlayback, showThumbnail, MINIMUM_THUMBNAIL_DISPLAY_TIME]);
 
   // Control handlers
   const handleVideoClick = useCallback(() => {
