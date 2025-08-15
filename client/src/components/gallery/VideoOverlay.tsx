@@ -243,7 +243,7 @@ export default function VideoOverlay({
   // Simple function to start video after brief thumbnail display
   const startVideoPlayback = useCallback(() => {
     const video = videoRef.current;
-    if (video && showThumbnail) {
+    if (video) {
       console.log('🎬 STARTING VIDEO PLAYBACK');
       setShowThumbnail(false);
       video.play().then(() => {
@@ -252,13 +252,13 @@ export default function VideoOverlay({
         console.error('❌ Video play() failed:', error);
       });
     }
-  }, [showThumbnail]);
+  }, []);
 
   // Simple video ready handler
   const handleCanPlay = useCallback(() => {
     console.log('🎬 VIDEO READY: Can play');
     const video = videoRef.current;
-    if (video) {
+    if (video && showThumbnail) {
       console.log('🎬 VIDEO STATE CHECK:', {
         readyState: video.readyState,
         networkState: video.networkState,
@@ -272,15 +272,18 @@ export default function VideoOverlay({
       // Start playback after short delay to show thumbnail briefly
       setTimeout(startVideoPlayback, 1000);
     }
-  }, [startVideoPlayback]);
+  }, [startVideoPlayback, showThumbnail]);
 
   // Handle when enough data is loaded for smooth playback
   const handleCanPlayThrough = useCallback(() => {
     console.log('🎬 VIDEO BUFFERED: Full buffer ready');
-    videoReadyRef.current = true;
-    // Start playback immediately if video is fully buffered
-    setTimeout(startVideoPlayback, 500);
-  }, [startVideoPlayback]);
+    const video = videoRef.current;
+    if (video && showThumbnail) {
+      videoReadyRef.current = true;
+      // Start playback immediately if video is fully buffered
+      setTimeout(startVideoPlayback, 500);
+    }
+  }, [startVideoPlayback, showThumbnail]);
 
   // Control handlers
   const handleVideoClick = useCallback(() => {
