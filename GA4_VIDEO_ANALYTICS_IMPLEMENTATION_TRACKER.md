@@ -3,9 +3,10 @@
 ## Overview
 Migrating all video analytics to GA4 only (no custom backend writes). Implementing comprehensive video tracking for the Video Gallery with proper i18n support.
 
-## Step 1 - GA4 Event Schema + Admin Setup
-**Status**: 🔄 IN PROGRESS  
+## Step 1 - GA4 Event Schema + Code Implementation
+**Status**: ✅ COMPLETE  
 **Started**: 2025-08-15T08:58:00Z
+**Completed**: 2025-08-15T09:17:00Z
 
 ### Requirements Checklist
 - [x] **Event Implementation**: 6 video events (open, start, pause, progress, complete, watch_time)
@@ -82,11 +83,75 @@ All GA4 video events are now implemented:
 
 ---
 
-## Step 2 - TBD
-**Status**: ⏳ PENDING
+## Step 2 - Testing & Validation
+**Status**: 🔄 READY TO START  
+**Goal**: Verify all 6 video events fire correctly in test mode
 
-## Step 3 - TBD  
-**Status**: ⏳ PENDING
+### Testing Checklist (Dev/Test Mode)
+**Preparation:**
+- [ ] Use GA Developer Mode toggle (?ga_dev=1) to mark all test hits
+- [ ] Open GA4 → Realtime → verify debug_mode events are visible  
+- [ ] Have console open to see console.log confirmations
+
+**Test Each Event:**
+- [ ] **video_open**: Open gallery video overlay
+  - Expect: Console shows video_open with video_id and locale
+  - GA4 Realtime shows event under "Event name"
+- [ ] **video_start**: Click Play for first time in session
+  - Expect: Fires only once per video session
+  - Parameters: video_id, locale, current_time
+- [ ] **video_pause**: Pause at random point
+  - Expect: Shows current_time in seconds, fires on every pause
+- [ ] **video_progress**: Play past 25%, 50%, 75%, 100%
+  - Expect: Each milestone fires once per session
+  - Parameter: progress_percent
+- [ ] **video_complete**: Reach ≥90% or natural end
+  - Expect: One event per full view
+- [ ] **video_watch_time**: Pause or finish video
+  - Expect: watch_time_seconds is accurate
+
+**Cross-Language Test:**
+- [ ] Repeat all tests in /fr-FR path
+- [ ] Repeat all tests in /en-US path  
+- [ ] Confirm locale parameter matches path
+
+---
+
+## Step 3 - GA4 Admin Setup
+**Status**: ⏸️ PENDING (Manual Task)
+**Goal**: Create custom dimensions and metrics in GA4 Admin
+
+### Custom Dimensions to Create (scope = Event)
+**Location**: GA4 Admin → Custom definitions → Create custom dimensions
+- [ ] **video_id**: Stores filename or unique ID of video
+- [ ] **locale**: Stores language code (fr-FR, en-US)
+- [ ] **progress_percent**: Quartile milestone (25, 50, 75, 100)
+- [ ] **current_time**: Time position at pause/start (seconds)
+
+### Custom Metrics to Create (scope = Event)  
+**Location**: GA4 Admin → Custom definitions → Create custom metrics
+- [ ] **watch_time_seconds**: Total watch time per session (number)
+
+### Verification After Setup
+- [ ] Re-run tests in non-dev mode to ensure GA4 stores real data
+- [ ] Check GA4 → Explore → Create table with:
+  - Rows: video_id
+  - Columns: locale  
+  - Metrics: watch_time_seconds, count of video_complete
+  - Breakdown by progress_percent for milestone analysis
+
+---
+
+## Step 4 - Final Deployment
+**Status**: ⏸️ PENDING
+**Goal**: Deploy with confirmed GA4 video analytics
+
+### Final Checks
+- [ ] All events tested and verified in GA4 Realtime
+- [ ] Custom dimensions and metrics created and working
+- [ ] Cross-language functionality confirmed
+- [ ] Console logs clean (no errors)
+- [ ] Supabase video tracking remains disabled (feature flag OFF)
 
 ---
 
