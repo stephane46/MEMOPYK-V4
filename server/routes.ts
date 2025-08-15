@@ -3703,11 +3703,25 @@ export async function registerRoutes(app: Express): Promise<void> {
       const plays = await qPlays(testDate, testDate, 'all');
       console.log(`qPlays result: ${plays}`);
       
+      // Test simple qCompletes with just video_complete events
+      console.log('Testing simple qCompletes...');
+      const [simpleRes] = await ga4Service.client.runReport({
+        property: "properties/501023254",
+        dateRanges: [{ startDate: testDate, endDate: testDate }],
+        metrics: [{ name: "eventCount" }],
+        dimensionFilter: {
+          filter: { fieldName: "eventName", stringFilter: { value: "video_complete" } }
+        }
+      });
+      const simpleCompletes = Number(simpleRes.rows?.[0]?.metricValues?.[0]?.value ?? 0);
+      console.log(`Simple completes result: ${simpleCompletes}`);
+      
       console.log('✅ GA4 connection test successful');
       res.json({
         success: true,
         testDate,
         testPlays: plays,
+        simpleCompletes,
         message: "GA4 query functions working correctly"
       });
     } catch (error) {
