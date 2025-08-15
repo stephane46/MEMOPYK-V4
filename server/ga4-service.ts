@@ -247,6 +247,39 @@ export async function qProgressByVideo(start: string, end: string, locale?: stri
   return out;
 }
 
+export async function getTopVideosTable(start: string, end: string, locale?: string) {
+  const [plays, wt, prog] = await Promise.all([
+    qPlaysByVideo(start, end, locale),            // [{ video_id, title, plays }]
+    qWatchTimeByVideo(start, end, locale),        // [{ video_id, title, watch_time_seconds }]
+    qProgressByVideo(start, end, locale)          // Map<video_id, { title, p50, p100 }>
+  ]);
+
+  // Index watch time for quick lookup
+  const wtById = new Map<string, number>();
+  wt.forEach(r => wtById.set(r.video_id, r.watch_time_seconds ?? 0));
+
+  // Build rows off the plays spine (ensures stable ordering)
+  const rows = plays.map(p => {
+    const totalWatch = wtById.get(p.video_id) ?? 0;
+    const avgWatchSeconds = p.plays > 0 ? Math.round(totalWatch / p.plays) : 0;
+
+    const pr = prog.get(p.video_id) ?? { p50: 0, p100: 0, title: p.title };
+    const reach50Pct   = p.plays > 0 ? (pr.p50  / p.plays) * 100 : 0;
+    const completePct  = p.plays > 0 ? (pr.p100 / p.plays) * 100 : 0;
+
+    return {
+      video_id: p.video_id,
+      title: p.title,
+      plays: p.plays,
+      avgWatchSeconds,
+      reach50Pct,
+      completePct
+    };
+  });
+
+  return rows;
+}
+
 /* =============  FUNNEL & TREND  ============= */
 
 export async function qFunnel(start: string, end: string, locale?: string) {

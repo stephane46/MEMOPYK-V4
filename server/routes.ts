@@ -21,7 +21,8 @@ import {
   qWatchTimeByVideo,
   qProgressByVideo,
   qFunnel,
-  qTrend
+  qTrend,
+  getTopVideosTable
 } from './ga4-service';
 
 // Contact form validation schema
@@ -3924,50 +3925,7 @@ export async function registerRoutes(app: Express): Promise<void> {
       const { startDate, endDate, locale } = getParams(req);
       console.log(`📊 GA4 Top Videos request: ${startDate} to ${endDate}, locale: ${locale}`);
 
-      // Test each query individually to identify which is failing
-      let plays = [], watchTimeArray = [], progressMap = new Map();
-
-      try {
-        console.log('Testing qPlaysByVideo...');
-        plays = await qPlaysByVideo(startDate, endDate, locale);
-        console.log(`✅ qPlaysByVideo: ${plays.length} videos found`);
-      } catch (e) {
-        console.error('❌ qPlaysByVideo failed:', (e as Error).message);
-        throw new Error(`qPlaysByVideo failed: ${(e as Error).message}`);
-      }
-
-      try {
-        console.log('Testing qWatchTimeByVideo...');
-        watchTimeArray = await qWatchTimeByVideo(startDate, endDate, locale);
-        console.log(`✅ qWatchTimeByVideo: ${watchTimeArray.length} videos found`);
-      } catch (e) {
-        console.error('❌ qWatchTimeByVideo failed:', (e as Error).message);
-        throw new Error(`qWatchTimeByVideo failed: ${(e as Error).message}`);
-      }
-
-      try {
-        console.log('Testing qProgressByVideo...');
-        progressMap = await qProgressByVideo(startDate, endDate, locale);
-        console.log(`✅ qProgressByVideo: ${progressMap.size} videos found`);
-      } catch (e) {
-        console.error('❌ qProgressByVideo failed:', (e as Error).message);
-        throw new Error(`qProgressByVideo failed: ${(e as Error).message}`);
-      }
-
-      // Convert watchTimeArray to a map for easy lookup
-      const watchTimeMap = new Map(
-        watchTimeArray.map(w => [w.video_id, w.watch_time_seconds])
-      );
-
-      const rows = plays.map(v => {
-        const totalWatch = watchTimeMap.get(v.video_id) ?? 0;
-        const avgWatchSeconds = v.plays > 0 ? Math.round(totalWatch / v.plays) : 0;
-        const prog = progressMap.get(v.video_id) ?? { p50: 0, p100: 0 };
-        const reach50Pct = v.plays > 0 ? (prog.p50 / v.plays) * 100 : 0;
-        const completePct = v.plays > 0 ? (prog.p100 / v.plays) * 100 : 0;
-        return { video_id: v.video_id, title: v.title, plays: v.plays, avgWatchSeconds, reach50Pct, completePct };
-      });
-
+      const rows = await getTopVideosTable(startDate, endDate, locale);
       res.json(rows);
     } catch (e) { 
       console.error('❌ GA4 Top Videos error:', e);
