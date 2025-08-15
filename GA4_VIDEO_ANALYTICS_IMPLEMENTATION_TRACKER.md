@@ -112,7 +112,7 @@ The key insight: **Test mode must be activated BEFORE visiting the site** to avo
   - ✅ Console shows: `📹 GA4 Video: video_open` with correct parameters
   - ✅ Video ID: PomGalleryC.mp4, Locale: fr-FR, Title: "L'été de Pom"
   - ✅ Video overlay opened and is buffering
-- [🔄] **video_start**: Increased video size from 90% to 95% viewport - testing Play button
+- [🔄] **video_start**: Ready to test - please expand browser window and click Play button
   - Expect: Fires only once per video session
   - Parameters: video_id, locale, current_time
 - [ ] **video_pause**: Pause at random point
