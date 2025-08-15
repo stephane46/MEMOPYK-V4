@@ -243,16 +243,32 @@ export default function VideoOverlay({
   // Simple function to start video after brief thumbnail display
   const startVideoPlayback = useCallback(() => {
     const video = videoRef.current;
-    if (video) {
+    if (video && showThumbnail && !isPlaying) {
       console.log('🎬 STARTING VIDEO PLAYBACK');
       setShowThumbnail(false);
       video.play().then(() => {
         console.log('✅ Video play() succeeded');
+        setIsPlaying(true);
       }).catch((error) => {
         console.error('❌ Video play() failed:', error);
+        console.log('🔄 Retrying video playback in 500ms...');
+        // Retry once after a brief delay
+        setTimeout(() => {
+          if (video && !video.paused) return; // Don't retry if already playing
+          video.play().then(() => {
+            console.log('✅ Video play() retry succeeded');
+            setIsPlaying(true);
+          }).catch((retryError) => {
+            console.error('❌ Video play() retry also failed:', retryError);
+          });
+        }, 500);
       });
+    } else if (video && !showThumbnail) {
+      console.log('⏭️ Skipping startVideoPlayback - thumbnail already hidden');
+    } else if (video && isPlaying) {
+      console.log('⏭️ Skipping startVideoPlayback - video already playing');
     }
-  }, []);
+  }, [showThumbnail, isPlaying]);
 
   // Simple video ready handler with proper 2-second minimum display
   const handleCanPlay = useCallback(() => {
