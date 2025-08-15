@@ -1698,73 +1698,53 @@ export default function AdminPage() {
                 <p className="text-gray-600 dark:text-gray-400">Tests système, performance et validation</p>
               </div>
               
-              {/* GA4 Test Mode Bookmarks */}
-              <Card className="bg-blue-50 border-blue-200">
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2 text-blue-800">
-                    <TestTube className="h-5 w-5" />
-                    GA4 Test Mode - Bookmarkable Links
-                  </CardTitle>
-                  <CardDescription className="text-blue-700">
-                    Drag ces liens vers votre barre de signets pour activer/désactiver le mode test GA4 d'un clic
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-4">
-                    <div className="p-4 bg-white rounded-lg border border-blue-200">
-                      <h4 className="font-semibold text-sm text-blue-800 mb-2">Instructions:</h4>
-                      <ol className="text-sm text-blue-700 space-y-1 list-decimal list-inside">
-                        <li>Faites glisser chaque lien ci-dessous vers votre barre de signets</li>
-                        <li>Cliquez sur le signet pour activer/désactiver le mode test</li>
-                        <li>Le mode test marque votre trafic avec debug_mode=true</li>
-                        <li>Configurez le filtre "Developer traffic" dans GA4 pour exclure ces données</li>
-                      </ol>
-                    </div>
-                    
-                    <div className="p-6 bg-gradient-to-r from-orange-50 to-blue-50 border border-orange-200 rounded-lg">
-                      <div className="text-center">
-                        <h4 className="font-bold text-lg text-gray-800 mb-3">Single Toggle Bookmarklet</h4>
-                        <p className="text-sm text-gray-600 mb-4">Un seul clic pour activer/désactiver le mode test GA4 avec bannière visuelle</p>
-                        
-                        <a
-                          href="javascript:(function(){try{var k='ga_dev',b='ga-test-banner',on=localStorage.getItem(k)==='1';if(on){localStorage.removeItem(k);var e=document.getElementById(b);if(e)e.remove();if(typeof window.gtag==='function'){window.gtag('event','debug_toggle',{debug_mode:false,source:'bookmarklet'});}alert('GA Test Mode DISABLED');}else{localStorage.setItem(k,'1');var el=document.getElementById(b);if(!el){el=document.createElement('div');el.id=b;el.textContent='🧪 GA TEST MODE ACTIVE';el.style.cssText='position:fixed;bottom:12px;right:12px;background:#ff9800;color:#fff;padding:8px 12px;font:600 13px/1.2 system-ui,Segoe UI,Roboto,Arial;border-radius:6px;box-shadow:0 6px 18px rgba(0,0,0,.2);z-index:2147483647;';document.body.appendChild(el);}else{el.style.display='block';}if(typeof window.gtag==='function'){window.gtag('event','debug_toggle',{debug_mode:true,source:'bookmarklet'});}alert('GA Test Mode ENABLED');}}catch(err){alert('Toggle failed: '+err);})();"
-                          title="Toggle GA Test Mode"
-                          className="inline-block px-6 py-3 bg-white text-gray-800 border-2 border-orange-400 rounded-lg hover:bg-gray-50 transition-all duration-200 font-bold text-base shadow-lg transform hover:scale-105"
-                          draggable={true}
-                        >
-                          🔄 Toggle GA Test Mode
-                        </a>
-                        
-                        <div className="mt-4 p-3 bg-white rounded border">
-                          <p className="text-xs font-medium text-gray-700 mb-2">Fonctionnalités:</p>
-                          <ul className="text-xs text-gray-600 text-left space-y-1">
-                            <li>🟠 <strong>Mode Test ON:</strong> Bannière orange "🧪 GA TEST MODE ACTIVE"</li>
-                            <li>🔵 <strong>Mode Normal:</strong> Pas de bannière, tracking normal</li>
-                            <li>⚡ <strong>Toggle instantané:</strong> Pas de rechargement de page nécessaire</li>
-                            <li>📊 <strong>GA4 intégré:</strong> Envoie debug_mode=true/false automatiquement</li>
-                          </ul>
-                        </div>
-                        
-                        <div className="text-xs text-gray-600 mt-3 space-y-2">
-                          <p><strong>Instructions:</strong></p>
-                          <ol className="list-decimal list-inside space-y-1 text-left">
-                            <li>Assurez-vous que votre barre de signets est visible (Ctrl+Shift+B)</li>
-                            <li>Faites glisser le bouton vers votre barre de signets</li>
-                            <li>Cliquez sur le signet pour basculer entre les modes test et normal</li>
-                          </ol>
-                          <p className="text-center pt-2 text-green-700">
-                            <strong>Compatible:</strong> Chrome, Edge, Firefox, Safari et autres navigateurs modernes
-                          </p>
-                        </div>
+              {/* GA4 Developer Mode - Clean & Elegant */}
+              <Card className="bg-gradient-to-r from-blue-50 to-orange-50 border border-orange-200">
+                <CardContent className="p-6">
+                  <div className="flex items-center justify-between mb-4">
+                    <div className="flex items-center gap-3">
+                      <div className="w-10 h-10 bg-orange-100 rounded-lg flex items-center justify-center">
+                        🧪
+                      </div>
+                      <div>
+                        <h3 className="text-xl font-bold text-gray-900">GA4 Developer Mode</h3>
+                        <p className="text-gray-600">Test sans affecter les statistiques réelles</p>
                       </div>
                     </div>
-                    
-                    <div className="p-3 bg-yellow-50 border border-yellow-200 rounded-lg">
-                      <p className="text-xs text-yellow-800">
-                        <strong>Astuce:</strong> Vous pouvez aussi clic-droit → "Copier l'adresse du lien" → créer un nouveau signet manuellement
+                    <div className={`px-4 py-2 rounded-lg font-bold text-sm ${
+                      isDevMode ? 'bg-orange-200 text-orange-800' : 'bg-green-200 text-green-800'
+                    }`}>
+                      {isDevMode ? '🧪 MODE TEST' : '✅ MODE NORMAL'}
+                    </div>
+                  </div>
+
+                  <div className="flex flex-col items-center space-y-4">
+                    <a
+                      href="javascript:(function(){try{var k='ga_dev',b='ga-test-banner',on=localStorage.getItem(k)==='1';if(on){localStorage.removeItem(k);var e=document.getElementById(b);if(e)e.remove();if(typeof window.gtag==='function'){window.gtag('event','debug_toggle',{debug_mode:false,source:'bookmarklet'});}alert('GA Test Mode DISABLED');}else{localStorage.setItem(k,'1');var el=document.getElementById(b);if(!el){el=document.createElement('div');el.id=b;el.textContent='🧪 GA TEST MODE ACTIVE';el.style.cssText='position:fixed;bottom:12px;right:12px;background:#ff9800;color:#fff;padding:8px 12px;font:600 13px/1.2 system-ui,Segoe UI,Roboto,Arial;border-radius:6px;box-shadow:0 6px 18px rgba(0,0,0,.2);z-index:2147483647;';document.body.appendChild(el);}else{el.style.display='block';}if(typeof window.gtag==='function'){window.gtag('event','debug_toggle',{debug_mode:true,source:'bookmarklet'});}alert('GA Test Mode ENABLED');}}catch(err){alert('Toggle failed: '+err);})();"
+                      title="Toggle GA Test Mode"
+                      className="inline-flex items-center gap-2 px-8 py-4 bg-white text-gray-800 border-2 border-orange-400 rounded-xl hover:bg-gray-50 transition-all duration-200 font-bold text-lg shadow-lg hover:shadow-xl transform hover:scale-105"
+                      draggable={true}
+                    >
+                      🔄 Toggle GA Test Mode
+                    </a>
+
+                    <div className="text-center space-y-2">
+                      <p className="text-sm text-gray-700">
+                        <strong>Instructions:</strong> Affichez signets (Ctrl+Shift+B) • Glissez le bouton • Cliquez pour basculer
+                      </p>
+                      <p className="text-xs text-green-700 font-medium">
+                        Compatible: Chrome, Edge, Firefox, Safari
                       </p>
                     </div>
                   </div>
+
+                  {isDevMode && (
+                    <div className="mt-4 p-3 bg-orange-100 border border-orange-300 rounded-lg">
+                      <p className="text-sm text-orange-800 font-medium text-center">
+                        🚨 Vos actions sont marquées debug_mode=true - elles n'affectent pas les vraies statistiques
+                      </p>
+                    </div>
+                  )}
                 </CardContent>
               </Card>
               
