@@ -108,7 +108,7 @@ export default function VideoOverlay({
   }, [videoUrl]);
 
   // Mobile-responsive viewport sizing
-  const viewportRatio = 90;
+  const viewportRatio = 95; // Increased from 90% for better testing visibility
 
   // Calculate video container dimensions based on orientation
   const getVideoDimensions = useCallback(() => {
