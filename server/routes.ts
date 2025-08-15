@@ -3697,6 +3697,78 @@ export async function registerRoutes(app: Express): Promise<void> {
     }
   });
 
+  // GA4 Custom Parameters Test endpoint - finds correct dimension/metric names
+  app.get("/api/ga4/test-params", async (req, res) => {
+    try {
+      console.log('🔍 GA4 custom parameters test requested');
+      const service = initGA4();
+      const result = await service.testCustomParams();
+      
+      console.log('✅ GA4 custom parameters test completed');
+      res.json(result);
+    } catch (error) {
+      console.error('❌ GA4 custom parameters test failed:', error);
+      res.status(500).json({ 
+        error: error instanceof Error ? error.message : 'GA4 custom parameters test failed',
+        success: false 
+      });
+    }
+  });
+
+  // Test individual GA4 queries to isolate the issue
+  app.get("/api/ga4/test-individual", async (req, res) => {
+    try {
+      console.log('🔍 Testing individual GA4 queries');
+      const service = initGA4();
+      
+      const results: any = {};
+      
+      try {
+        console.log('Testing getPlays...');
+        results.plays = await service.getPlays('7daysAgo', 'today', 'all');
+        console.log('✅ getPlays works:', results.plays);
+      } catch (error: any) {
+        results.playsError = error.message;
+        console.log('❌ getPlays failed:', error.message);
+      }
+      
+      try {
+        console.log('Testing getCompletes...');
+        results.completes = await service.getCompletes('7daysAgo', 'today', 'all');
+        console.log('✅ getCompletes works:', results.completes);
+      } catch (error: any) {
+        results.completesError = error.message;
+        console.log('❌ getCompletes failed:', error.message);
+      }
+
+      try {
+        console.log('Testing getWatchTime...');
+        results.watchTime = await service.getWatchTime('7daysAgo', 'today', 'all');
+        console.log('✅ getWatchTime works:', results.watchTime);
+      } catch (error: any) {
+        results.watchTimeError = error.message;
+        console.log('❌ getWatchTime failed:', error.message);
+      }
+
+      try {
+        console.log('Testing getTopLocale...');
+        results.topLocale = await service.getTopLocale('7daysAgo', 'today');
+        console.log('✅ getTopLocale works:', results.topLocale);
+      } catch (error: any) {
+        results.topLocaleError = error.message;
+        console.log('❌ getTopLocale failed:', error.message);
+      }
+      
+      res.json(results);
+    } catch (error) {
+      console.error('❌ Individual test failed:', error);
+      res.status(500).json({ 
+        error: error instanceof Error ? error.message : 'Individual test failed',
+        success: false 
+      });
+    }
+  });
+
   // GA4 KPIs endpoint - returns main dashboard metrics
   app.get("/api/ga4/kpis", async (req, res) => {
     try {
