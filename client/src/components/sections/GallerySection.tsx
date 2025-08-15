@@ -406,6 +406,8 @@ export default function GallerySection() {
 
   const handlePlayClick = (item: GalleryItem, e: React.MouseEvent, index: number) => {
     console.log('🚨🚨🚨 HANDLE PLAY CLICK CALLED! 🚨🚨🚨');
+    console.log('🎬 Video URL being passed to overlay:', getVideoUrl(item, index));
+    console.log('🖼️ Thumbnail URL being passed:', getImageUrl(item));
     console.log(`🎬 INSTANT THUMBNAIL-TO-VIDEO: Professional loading experience`);
     e.preventDefault();
     e.stopPropagation();
