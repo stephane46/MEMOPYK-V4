@@ -405,6 +405,7 @@ export default function GallerySection() {
   };
 
   const handlePlayClick = (item: GalleryItem, e: React.MouseEvent, index: number) => {
+    console.log('🚨🚨🚨 HANDLE PLAY CLICK CALLED! 🚨🚨🚨');
     console.log(`🎬 INSTANT THUMBNAIL-TO-VIDEO: Professional loading experience`);
     e.preventDefault();
     e.stopPropagation();
@@ -594,12 +595,18 @@ export default function GallerySection() {
                 data-video-id={item.id}
                 className={`card-flip-container ${isFlipped ? 'flipped' : ''} rounded-2xl`}
                 onClick={(e) => {
+                  console.log('🚨🚨🚨 CARD CONTAINER CLICKED! 🚨🚨🚨');
                   console.log('🚨 CARD CLICK TEST:', { 
                     item: item.id, 
                     hasVideo: itemHasVideo, 
                     target: e.target,
                     className: (e.target as HTMLElement)?.className 
                   });
+                  // Try calling the play handler directly from card click
+                  if (itemHasVideo) {
+                    console.log('🚨 CARD HAS VIDEO - CALLING DIRECT PLAY HANDLER');
+                    handlePlayClick(item, e, index);
+                  }
                 }}
               >
                 <div className="card-flip-inner">
@@ -646,7 +653,7 @@ export default function GallerySection() {
                           )}
                           
                           {/* Desktop Play Button - Orange for Video, White for No Video */}
-                          <div className="absolute inset-0 flex items-center justify-center" style={{zIndex: 10}}>
+                          <div className="absolute inset-0 flex items-center justify-center" style={{zIndex: 999999, pointerEvents: 'auto'}}>
                             {/* Dynamic Play Button Based on Video Availability */}
                             <div 
                               className={`w-14 h-14 sm:w-16 sm:h-16 rounded-full flex items-center justify-center transition-all duration-300 hover:scale-110 cursor-pointer ${itemHasVideo ? 'animate-pulse-orange' : ''}`}
