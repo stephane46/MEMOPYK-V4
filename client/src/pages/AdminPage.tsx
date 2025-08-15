@@ -1721,31 +1721,34 @@ export default function AdminPage() {
                       </ol>
                     </div>
                     
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      <div className="p-4 bg-green-50 border border-green-200 rounded-lg">
-                        <h4 className="font-semibold text-green-800 mb-2">Activer le Mode Test</h4>
+                    <div className="p-6 bg-gradient-to-r from-orange-50 to-blue-50 border border-orange-200 rounded-lg">
+                      <div className="text-center">
+                        <h4 className="font-bold text-lg text-gray-800 mb-3">Single Toggle Bookmarklet</h4>
+                        <p className="text-sm text-gray-600 mb-4">Un seul clic pour activer/désactiver le mode test GA4 avec bannière visuelle</p>
+                        
                         <a
-                          href="javascript:(function(){try{localStorage.setItem('ga_dev','1');alert('GA Developer/Test Mode ENABLED');}catch(e){alert('Could not enable test mode: '+e);}})();"
-                          title="Enable GA Test Mode"
-                          className="inline-block px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors font-medium"
+                          href="javascript:(function(){try{var k='ga_dev',b='ga-test-banner',on=localStorage.getItem(k)==='1';if(on){localStorage.removeItem(k);var e=document.getElementById(b);if(e)e.remove();if(typeof window.gtag==='function'){window.gtag('event','debug_toggle',{debug_mode:false,source:'bookmarklet'});}alert('GA Test Mode DISABLED');}else{localStorage.setItem(k,'1');var el=document.getElementById(b);if(!el){el=document.createElement('div');el.id=b;el.textContent='🧪 GA TEST MODE ACTIVE';el.style.cssText='position:fixed;bottom:12px;right:12px;background:#ff9800;color:#fff;padding:8px 12px;font:600 13px/1.2 system-ui,Segoe UI,Roboto,Arial;border-radius:6px;box-shadow:0 6px 18px rgba(0,0,0,.2);z-index:2147483647;';document.body.appendChild(el);}else{el.style.display='block';}if(typeof window.gtag==='function'){window.gtag('event','debug_toggle',{debug_mode:true,source:'bookmarklet'});}alert('GA Test Mode ENABLED');}}catch(err){alert('Toggle failed: '+err);})();"
+                          title="Toggle GA Test Mode"
+                          className="inline-block px-6 py-3 bg-gradient-to-r from-orange-500 to-blue-500 text-white rounded-lg hover:from-orange-600 hover:to-blue-600 transition-all duration-200 font-bold text-base shadow-lg transform hover:scale-105"
                           draggable={true}
                         >
-                          📊 Enable GA Test Mode
+                          🔄 Toggle GA Test Mode
                         </a>
-                        <p className="text-xs text-green-700 mt-2">Glissez ce lien vers vos signets</p>
-                      </div>
-                      
-                      <div className="p-4 bg-red-50 border border-red-200 rounded-lg">
-                        <h4 className="font-semibold text-red-800 mb-2">Désactiver le Mode Test</h4>
-                        <a
-                          href="javascript:(function(){try{localStorage.removeItem('ga_dev');alert('GA Developer/Test Mode DISABLED');}catch(e){alert('Could not disable test mode: '+e);}})();"
-                          title="Disable GA Test Mode"
-                          className="inline-block px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors font-medium"
-                          draggable={true}
-                        >
-                          🚫 Disable GA Test Mode
-                        </a>
-                        <p className="text-xs text-red-700 mt-2">Glissez ce lien vers vos signets</p>
+                        
+                        <div className="mt-4 p-3 bg-white rounded border">
+                          <p className="text-xs font-medium text-gray-700 mb-2">Fonctionnalités:</p>
+                          <ul className="text-xs text-gray-600 text-left space-y-1">
+                            <li>🟠 <strong>Mode Test ON:</strong> Bannière orange "🧪 GA TEST MODE ACTIVE"</li>
+                            <li>🔵 <strong>Mode Normal:</strong> Pas de bannière, tracking normal</li>
+                            <li>⚡ <strong>Toggle instantané:</strong> Pas de rechargement de page nécessaire</li>
+                            <li>📊 <strong>GA4 intégré:</strong> Envoie debug_mode=true/false automatiquement</li>
+                          </ul>
+                        </div>
+                        
+                        <p className="text-xs text-gray-600 mt-3">
+                          <strong>Instructions:</strong> Faites glisser le bouton orange/bleu vers votre barre de signets, 
+                          puis cliquez dessus pour basculer entre les modes test et normal.
+                        </p>
                       </div>
                     </div>
                     

@@ -22,23 +22,12 @@
           debug_mode: isDev
         });
         
-        // Show visual indicator when in test mode
+        // Show visual indicator when in test mode - matches bookmarklet styling
         if (isDev) {
           var banner = document.createElement('div');
+          banner.id = 'ga-test-banner';
           banner.textContent = '🧪 GA TEST MODE ACTIVE';
-          banner.style.position = 'fixed';
-          banner.style.bottom = '10px';
-          banner.style.right = '10px';
-          banner.style.background = '#ff9800';
-          banner.style.color = '#fff';
-          banner.style.padding = '8px 12px';
-          banner.style.fontSize = '14px';
-          banner.style.fontWeight = 'bold';
-          banner.style.borderRadius = '6px';
-          banner.style.boxShadow = '0 2px 8px rgba(0,0,0,0.3)';
-          banner.style.zIndex = '10000';
-          banner.style.fontFamily = 'Arial, sans-serif';
-          banner.id = 'ga-test-mode-banner';
+          banner.style.cssText = 'position:fixed;bottom:12px;right:12px;background:#ff9800;color:#fff;padding:8px 12px;font:600 13px/1.2 system-ui,Segoe UI,Roboto,Arial;border-radius:6px;box-shadow:0 6px 18px rgba(0,0,0,.2);z-index:2147483647;';
           document.body.appendChild(banner);
         }
       })();
