@@ -3899,6 +3899,25 @@ export async function registerRoutes(app: Express): Promise<void> {
     }
   });
 
+  // Test the qWatchTimeByVideo function
+  app.get("/api/ga4/test-watch-time-by-video", async (req, res) => {
+    try {
+      const { startDate, endDate, locale } = getParams(req);
+      console.log(`📊 Testing qWatchTimeByVideo: ${startDate} to ${endDate}, locale: ${locale}`);
+      
+      const watchTime = await qWatchTimeByVideo(startDate, endDate, locale);
+      console.log(`✅ qWatchTimeByVideo result:`, watchTime);
+      
+      res.json(watchTime);
+    } catch (e) {
+      console.error('❌ qWatchTimeByVideo test failed:', e);
+      res.status(500).json({ 
+        error: (e as Error).message,
+        stack: (e as Error).stack 
+      });
+    }
+  });
+
   // Top videos table endpoint - using your exact clean API structure
   app.get("/api/ga4/top-videos", async (req, res, next) => {
     try {
@@ -3906,7 +3925,7 @@ export async function registerRoutes(app: Express): Promise<void> {
       console.log(`📊 GA4 Top Videos request: ${startDate} to ${endDate}, locale: ${locale}`);
 
       // Test each query individually to identify which is failing
-      let plays = [], watchTimeMap = new Map(), progressMap = new Map();
+      let plays = [], watchTimeArray = [], progressMap = new Map();
 
       try {
         console.log('Testing qPlaysByVideo...');
@@ -3919,8 +3938,8 @@ export async function registerRoutes(app: Express): Promise<void> {
 
       try {
         console.log('Testing qWatchTimeByVideo...');
-        watchTimeMap = await qWatchTimeByVideo(startDate, endDate, locale);
-        console.log(`✅ qWatchTimeByVideo: ${watchTimeMap.size} videos found`);
+        watchTimeArray = await qWatchTimeByVideo(startDate, endDate, locale);
+        console.log(`✅ qWatchTimeByVideo: ${watchTimeArray.length} videos found`);
       } catch (e) {
         console.error('❌ qWatchTimeByVideo failed:', (e as Error).message);
         throw new Error(`qWatchTimeByVideo failed: ${(e as Error).message}`);
@@ -3934,6 +3953,11 @@ export async function registerRoutes(app: Express): Promise<void> {
         console.error('❌ qProgressByVideo failed:', (e as Error).message);
         throw new Error(`qProgressByVideo failed: ${(e as Error).message}`);
       }
+
+      // Convert watchTimeArray to a map for easy lookup
+      const watchTimeMap = new Map(
+        watchTimeArray.map(w => [w.video_id, w.watch_time_seconds])
+      );
 
       const rows = plays.map(v => {
         const totalWatch = watchTimeMap.get(v.video_id) ?? 0;

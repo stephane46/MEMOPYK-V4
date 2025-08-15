@@ -175,7 +175,10 @@ export async function qWatchTimeByVideo(start: string, end: string, locale?: str
   const [res] = await client.runReport({
     property: PROPERTY, // "properties/501023254"
     dateRanges: [{ startDate: start, endDate: end }],
-    dimensions: [{ name: "customEvent:video_id" }],
+    dimensions: [
+      { name: "customEvent:video_id" },
+      { name: "customEvent:video_title" }
+    ],
     metrics: [{ name: "customEvent:watch_time_seconds" }],
     dimensionFilter: {
       andGroup: {
@@ -184,14 +187,16 @@ export async function qWatchTimeByVideo(start: string, end: string, locale?: str
           ...localeExpr
         ]
       }
-    }
+    },
+    orderBys: [{ metric: { metricName: "customEvent:watch_time_seconds" }, desc: true }],
+    limit: 100
   });
-  return new Map(
-    (res.rows ?? []).map(r => [
-      r.dimensionValues?.[0]?.value ?? "",
-      Number(r.metricValues?.[0]?.value ?? 0)
-    ])
-  );
+
+  return (res.rows ?? []).map(r => ({
+    video_id: r.dimensionValues?.[0]?.value ?? "",
+    title: r.dimensionValues?.[1]?.value ?? "",
+    watch_time_seconds: Number(r.metricValues?.[0]?.value ?? 0)
+  }));
 }
 
 export async function qProgressByVideo(start: string, end: string, locale?: string) {
