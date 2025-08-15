@@ -240,58 +240,23 @@ export default function VideoOverlay({
     }
   }, []);
 
-  // Helper function to check if minimum time has elapsed and video is ready
-  const checkThumbnailTransition = useCallback(() => {
-    if (!showThumbnail || !videoReadyRef.current) return;
-    
-    const timeElapsed = Date.now() - thumbnailStartTimeRef.current;
-    const minimumTimeMet = timeElapsed >= MINIMUM_THUMBNAIL_DISPLAY_TIME;
-    
-    console.log(`🎯 THUMBNAIL TRANSITION CHECK: Time elapsed: ${timeElapsed}ms, Minimum met: ${minimumTimeMet}, Video ready: ${videoReadyRef.current}`);
-    
-    if (minimumTimeMet) {
-      console.log('🎬 SMOOTH TRANSITION: Both conditions met - hiding thumbnail');
+  // Simple function to start video after brief thumbnail display
+  const startVideoPlayback = useCallback(() => {
+    const video = videoRef.current;
+    if (video && showThumbnail) {
+      console.log('🎬 STARTING VIDEO PLAYBACK');
       setShowThumbnail(false);
-      
-      // Start video playback
-      const video = videoRef.current;
-      if (video) {
-        console.log('🎬 STARTING VIDEO PLAYBACK after thumbnail hide');
-        video.play().then(() => {
-          console.log('✅ Video play() succeeded');
-        }).catch((error) => {
-          console.error('❌ Video play() failed:', error);
-        });
-      }
-    } else {
-      // Video is ready but minimum time hasn't elapsed - set timer for remaining time
-      const remainingTime = MINIMUM_THUMBNAIL_DISPLAY_TIME - timeElapsed;
-      console.log(`⏱️ WAITING: Video ready early, waiting ${remainingTime}ms more`);
-      
-      setTimeout(() => {
-        if (showThumbnail && videoReadyRef.current) {
-          console.log('🎬 DELAYED TRANSITION: Minimum time now met - hiding thumbnail');
-          setShowThumbnail(false);
-          
-          const video = videoRef.current;
-          if (video) {
-            console.log('🎬 STARTING VIDEO PLAYBACK after delay');
-            video.play().then(() => {
-              console.log('✅ Video play() succeeded after delay');
-            }).catch((error) => {
-              console.error('❌ Video play() failed after delay:', error);
-            });
-          }
-        }
-      }, remainingTime);
+      video.play().then(() => {
+        console.log('✅ Video play() succeeded');
+      }).catch((error) => {
+        console.error('❌ Video play() failed:', error);
+      });
     }
-  }, [showThumbnail, MINIMUM_THUMBNAIL_DISPLAY_TIME]);
+  }, [showThumbnail]);
 
-  // Enhanced video ready handler with minimum display time
+  // Simple video ready handler
   const handleCanPlay = useCallback(() => {
-    if (!showThumbnail) return; // Prevent duplicate calls
-    
-    console.log('🎬 VIDEO READY: Can play - checking minimum display time');
+    console.log('🎬 VIDEO READY: Can play');
     const video = videoRef.current;
     if (video) {
       console.log('🎬 VIDEO STATE CHECK:', {
@@ -304,18 +269,18 @@ export default function VideoOverlay({
       });
       
       videoReadyRef.current = true;
-      checkThumbnailTransition();
+      // Start playback after short delay to show thumbnail briefly
+      setTimeout(startVideoPlayback, 1000);
     }
-  }, [showThumbnail, checkThumbnailTransition]);
+  }, [startVideoPlayback]);
 
-  // Handle when enough data is loaded for smooth playback with minimum display time
+  // Handle when enough data is loaded for smooth playback
   const handleCanPlayThrough = useCallback(() => {
-    if (!showThumbnail) return; // Prevent duplicate calls
-    
-    console.log('🎬 VIDEO BUFFERED: Full buffer ready - checking minimum display time');
+    console.log('🎬 VIDEO BUFFERED: Full buffer ready');
     videoReadyRef.current = true;
-    checkThumbnailTransition();
-  }, [showThumbnail, checkThumbnailTransition]);
+    // Start playback immediately if video is fully buffered
+    setTimeout(startVideoPlayback, 500);
+  }, [startVideoPlayback]);
 
   // Control handlers
   const handleVideoClick = useCallback(() => {
