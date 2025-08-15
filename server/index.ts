@@ -73,13 +73,13 @@ app.use(express.urlencoded({
   parameterLimit: 50000
 }));
 
-// Configure CSP headers to allow Google Analytics, Supabase, and Google Fonts
+// Configure CSP headers to allow Google Analytics regional endpoints, Supabase, and Google Fonts
 app.use((req, res, next) => {
   res.setHeader('Content-Security-Policy', 
     "default-src 'self'; " +
     "script-src 'self' 'unsafe-inline' https://www.googletagmanager.com https://replit.com; " +
-    "connect-src 'self' https://www.google-analytics.com https://analytics.google.com https://stats.g.doubleclick.net wss: ws:; " +
-    "img-src 'self' data: https://www.google-analytics.com https://www.googletagmanager.com https://supabase.memopyk.org https://cdn.jsdelivr.net https://flagcdn.com; " +
+    "connect-src 'self' https://*.google-analytics.com https://analytics.google.com https://stats.g.doubleclick.net wss: ws:; " +
+    "img-src 'self' data: https://*.google-analytics.com https://www.googletagmanager.com https://supabase.memopyk.org https://cdn.jsdelivr.net https://flagcdn.com; " +
     "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; " +
     "font-src 'self' https://fonts.gstatic.com; " +
     "media-src 'self' https://supabase.memopyk.org;"
