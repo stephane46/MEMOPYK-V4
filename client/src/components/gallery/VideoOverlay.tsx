@@ -54,8 +54,13 @@ export default function VideoOverlay({
   // Analytics tracking - DISABLED: Switch to GA4-only for video analytics
   const { trackVideoView } = useVideoAnalytics();
   
-  // GA4 Video Analytics - NEW implementation for Step 1
-  const ga4Analytics = useGA4VideoAnalytics();
+  // GA4 Video Analytics - TEMPORARILY DISABLED for debugging
+  // const ga4Analytics = useGA4VideoAnalytics();
+  const ga4Analytics = {
+    trackOpen: () => console.log('📹 GA4 Video: video_open (DISABLED FOR DEBUG)'),
+    setupVisibilityTracking: () => () => {},
+    clearSession: () => {}
+  };
   
   // Feature flag for video analytics - DISABLED per requirement to switch to GA4-only
   const VIDEO_ANALYTICS_ENABLED = import.meta.env.VITE_VIDEO_ANALYTICS_ENABLED === 'true' || false;
