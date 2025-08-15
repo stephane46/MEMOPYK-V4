@@ -35,6 +35,166 @@ Migrating all video analytics to GA4 only (no custom backend writes). Implementi
 - All trigger points tested and validated with real user session
 - Analytics show "- ENABLED v2" indicating successful implementation
 
+## Step 4 - GA4 Analytics Dashboard v1 Implementation
+**Status**: 🔄 **IN PROGRESS** (August 15, 2025)
+**Started**: 2025-08-15T15:40:00Z
+
+### Dashboard Requirements
+**Data Source**: GA4 Data API v1 (runReport + realtime)
+**Gallery Filter**: Only gallery videos (customEvent:gallery == "Video Gallery")
+**Locale Filter**: all | fr-FR | en-US
+**Caching**: 10 minutes per unique query in Supabase/server memory
+
+### Backend API Endpoints to Implement
+
+#### 1. GET /admin/ga/kpis?start=YYYY-MM-DD&end=YYYY-MM-DD&locale=all|fr-FR|en-US
+**Purpose**: Top row KPIs
+**GA4 Queries**:
+- plays_unique_viewers: totalUsers where eventName == "video_start"
+- completers_unique_viewers: totalUsers where eventName == "video_complete"  
+- total_watch_time_seconds: customEvent:watch_time_seconds (sum)
+- plays_by_locale: dimensions [customEvent:locale] + totalUsers where eventName=="video_start"
+
+**Server-side Computations**:
+- avg_watch_time_sec = total_watch_time_seconds / max(plays_unique_viewers, 1)
+- completion_rate = completers_unique_viewers / max(plays_unique_viewers, 1)
+
+**Response Format**:
+```json
+{
+  "range": {"start":"2025-08-01","end":"2025-08-15","locale":"all"},
+  "kpis": {
+    "plays_unique_viewers": 1234,
+    "avg_watch_time_sec": 63.9,
+    "completion_rate": 0.37,
+    "plays_by_locale": [{"locale":"fr-FR","users":700},{"locale":"en-US","users":534}]
+  }
+}
+```
+
+#### 2. GET /admin/ga/top-videos?start=...&end=...&locale=...&limit=10
+**Purpose**: Table A — gallery videos only
+**GA4 Queries** (multiple calls, merge by video_id):
+- Dimensions: customEvent:video_id
+- Metrics: eventCount where eventName=="video_start" → plays
+- customEvent:watch_time_seconds (sum) → total_watch_time  
+- eventCount where eventName=="video_progress" + customEvent:percent==50 → reach50_count
+- eventCount where eventName=="video_progress" + percent==100 → reach100_count
+
+**Server-side Computations**:
+- avg_watch_time_sec = total_watch_time_seconds / max(plays,1)
+- reach50_pct = reach50_count / max(plays,1)  
+- complete100_pct = reach100_count / max(plays,1)
+
+**Response Format**:
+```json
+{
+  "rows":[
+    {"video_id":"PomGalleryC.mp4","plays":120,"avg_watch_time_sec":75.3,"reach50_pct":0.62,"complete100_pct":0.41}
+  ]
+}
+```
+
+#### 3. GET /admin/ga/funnel?start=...&end=...&locale=...
+**Purpose**: Section B — stacked bars 25/50/75/100 per video
+**GA4 Queries**:
+- Dimensions: customEvent:video_id, customEvent:percent
+- Metrics: eventCount where eventName=="video_progress"
+- Filter: gallery + (optional) locale
+- Return counts for percent ∈ {25,50,75,100} per video_id
+
+**Response Format**:
+```json
+{
+  "rows":[
+    {"video_id":"PomGalleryC.mp4","percent":25,"count":100},
+    {"video_id":"PomGalleryC.mp4","percent":50,"count":80},
+    {"video_id":"PomGalleryC.mp4","percent":75,"count":60},
+    {"video_id":"PomGalleryC.mp4","percent":100,"count":49}
+  ]
+}
+```
+
+#### 4. GET /admin/ga/trend?start=...&end=...&locale=...
+**Purpose**: Section C — daily plays + daily avg watch time
+**GA4 Queries**:
+- Daily plays: Dimensions date, Metrics eventCount where eventName=="video_start"
+- Daily watch time: Dimensions date, Metrics customEvent:watch_time_seconds  
+- Daily completers: eventName=="video_complete" (optional)
+
+**Server-side Computations**:
+- avg_watch_time_sec_per_day = watch_time_seconds / max(plays_per_day,1)
+
+**Response Format**:
+```json
+{
+  "days":[
+    {"date":"2025-08-10","plays":52,"avg_watch_time_sec":61.2},
+    {"date":"2025-08-11","plays":74,"avg_watch_time_sec":58.9}
+  ]
+}
+```
+
+#### 5. GET /admin/ga/realtime
+**Purpose**: Section D — Active viewers + last events
+**GA4 Queries**:
+- Active users: metric activeUsers (runRealtimeReport) or approximate via last 30m
+- Last events: query last N minutes where eventName IN ("video_open","video_start","video_progress","video_complete")
+
+**Response Format**:
+```json
+{
+  "active": 3,
+  "recent":[
+    {"ts":"2025-08-15T14:52:10Z","event":"video_start","video_id":"PomGalleryC.mp4","locale":"fr-FR"},
+    {"ts":"2025-08-15T14:51:50Z","event":"video_progress","video_id":"PomGalleryC.mp4","percent":50,"locale":"fr-FR"}
+  ]
+}
+```
+
+### Frontend Dashboard Structure
+
+#### Controls Section
+- Date range: Today/7d/28d/Custom (triggers API refetch)
+- Locale filter: All/fr-FR/en-US  
+- Refresh button
+
+#### KPIs Row (4 cards)
+- **Plays**: plays_unique_viewers
+- **Avg Watch Time**: avg_watch_time_sec (format as mm:ss)
+- **Completion Rate**: completion_rate (as percentage) 
+- **Top Locale**: Show locale badge from plays_by_locale
+
+#### Section A: Top Videos Table
+- Gallery videos only, sorted by Plays desc
+- Columns: Video | Plays | Avg Watch | 50% Reach % | 100% Complete %
+
+#### Section B: Watch Funnel Chart  
+- Stacked bars (25/50/75/100) for top N videos
+- Use recharts BarChart with stackId
+
+#### Section C: Trend Chart
+- Dual-axis LineChart (plays on left, avg watch time on right)
+- Daily data points
+
+#### Section D: Realtime Activity
+- Active viewers count (last 30 min)
+- Rolling list of recent events with timestamps
+
+### Implementation Notes
+- **Auth**: Service account + server-side GA Data API (no client credentials)
+- **Gallery Filter**: Always include customEvent:gallery == "Video Gallery"  
+- **Caching**: 10 minutes per unique query signature, include X-Cache header
+- **Error Handling**: Return proper error responses with cache status
+- **Admin Menu**: Add new "Analytics GA" section in sidebar
+
+### QA Requirements
+- [ ] Verify endpoints return data with real video plays
+- [ ] Locale filter changes results appropriately  
+- [ ] Gallery filter excludes non-gallery videos
+- [ ] Cache behavior works (X-Cache: hit on 2nd request within 10 min)
+- [ ] No GA4 credentials exposed in client code
+
 ## Step 1 - GA4 Event Schema + Code Implementation
 **Status**: ✅ COMPLETE  
 **Started**: 2025-08-15T08:58:00Z
