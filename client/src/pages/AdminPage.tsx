@@ -1730,7 +1730,7 @@ export default function AdminPage() {
                       </div>
                       <div>
                         <h3 className="text-xl font-bold text-gray-900">MEMOPYK Test</h3>
-                        <p className="text-gray-600">Clean testing environment without Analytics tracking</p>
+                        <p className="text-gray-600">GA4 debug mode for testing video analytics safely</p>
                       </div>
                     </div>
                     <div className={`px-4 py-2 rounded-lg font-bold text-sm ${
@@ -1750,10 +1750,17 @@ export default function AdminPage() {
                       🧪 MEMOPYK Test
                     </a>
 
-                    <div className="text-center space-y-2">
+                    <div className="text-center space-y-3">
                       <p className="text-sm text-gray-700">
-                        <strong>Instructions:</strong> Show bookmarks (Ctrl+Shift+B) • Drag button to bookmarks • Click to toggle
+                        <strong>Setup:</strong> Show bookmarks (Ctrl+Shift+B) • Drag button to bookmarks
                       </p>
+                      <div className="bg-amber-50 border border-amber-200 rounded-lg p-3">
+                        <p className="text-sm text-amber-800 font-semibold">⚠️ Critical: Enable test mode BEFORE visiting site</p>
+                        <p className="text-xs text-amber-700 mt-1">
+                          Method 1: Visit site with ?ga_dev=1 parameter<br/>
+                          Method 2: Click bookmarklet from external site, then navigate to MEMOPYK
+                        </p>
+                      </div>
                       <p className="text-xs text-green-700 font-medium">
                         Compatible: Chrome, Edge, Firefox, Safari
                       </p>
@@ -1761,9 +1768,15 @@ export default function AdminPage() {
                   </div>
 
                   {isDevMode && (
-                    <div className="mt-4 p-3 bg-orange-100 border border-orange-300 rounded-lg">
-                      <p className="text-sm text-orange-800 font-medium text-center">
-                        🧪 MEMOPYK TEST MODE ACTIVE - Actions marked debug_mode=true (no impact on production analytics)
+                    <div className="mt-4 p-4 bg-orange-100 border border-orange-300 rounded-lg space-y-2">
+                      <p className="text-sm text-orange-800 font-bold text-center">
+                        🧪 MEMOPYK TEST MODE ACTIVE
+                      </p>
+                      <p className="text-xs text-orange-700 text-center">
+                        All analytics marked debug_mode=true • Video events show 📹 GA4 Video prefix
+                      </p>
+                      <p className="text-xs text-orange-600 text-center">
+                        Check GA4 → Realtime → Debug View for test events
                       </p>
                     </div>
                   )}
