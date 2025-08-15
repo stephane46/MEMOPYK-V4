@@ -108,10 +108,11 @@ The key insight: **Test mode must be activated BEFORE visiting the site** to avo
 **Method**: URL parameter reinitializing after hard refresh
 
 **Test Each Event:**
-- [✅] **video_open**: User clicked "L'été de Pom" - testing now
-  - Expect: Console shows video_open with video_id and locale
-  - GA4 Realtime shows event under "Event name"
-- [ ] **video_start**: Click Play for first time in session
+- [✅] **video_open**: SUCCESS! Event fired correctly
+  - ✅ Console shows: `📹 GA4 Video: video_open` with correct parameters
+  - ✅ Video ID: PomGalleryC.mp4, Locale: fr-FR, Title: "L'été de Pom"
+  - ✅ Video overlay opened and is buffering
+- [🔄] **video_start**: Ready to test - please click Play button
   - Expect: Fires only once per video session
   - Parameters: video_id, locale, current_time
 - [ ] **video_pause**: Pause at random point
