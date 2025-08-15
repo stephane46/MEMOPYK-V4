@@ -1729,7 +1729,7 @@ export default function AdminPage() {
                         <a
                           href="javascript:(function(){try{var k='ga_dev',b='ga-test-banner',on=localStorage.getItem(k)==='1';if(on){localStorage.removeItem(k);var e=document.getElementById(b);if(e)e.remove();if(typeof window.gtag==='function'){window.gtag('event','debug_toggle',{debug_mode:false,source:'bookmarklet'});}alert('GA Test Mode DISABLED');}else{localStorage.setItem(k,'1');var el=document.getElementById(b);if(!el){el=document.createElement('div');el.id=b;el.textContent='🧪 GA TEST MODE ACTIVE';el.style.cssText='position:fixed;bottom:12px;right:12px;background:#ff9800;color:#fff;padding:8px 12px;font:600 13px/1.2 system-ui,Segoe UI,Roboto,Arial;border-radius:6px;box-shadow:0 6px 18px rgba(0,0,0,.2);z-index:2147483647;';document.body.appendChild(el);}else{el.style.display='block';}if(typeof window.gtag==='function'){window.gtag('event','debug_toggle',{debug_mode:true,source:'bookmarklet'});}alert('GA Test Mode ENABLED');}}catch(err){alert('Toggle failed: '+err);})();"
                           title="Toggle GA Test Mode"
-                          className="inline-block px-6 py-3 bg-gradient-to-r from-orange-500 to-blue-500 text-white rounded-lg hover:from-orange-600 hover:to-blue-600 transition-all duration-200 font-bold text-base shadow-lg transform hover:scale-105"
+                          className="inline-block px-6 py-3 bg-white text-gray-800 border-2 border-orange-400 rounded-lg hover:bg-gray-50 transition-all duration-200 font-bold text-base shadow-lg transform hover:scale-105"
                           draggable={true}
                         >
                           🔄 Toggle GA Test Mode
