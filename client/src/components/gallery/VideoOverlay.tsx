@@ -82,7 +82,7 @@ export default function VideoOverlay({
       ? videoUrl.split('filename=')[1].split('&')[0]
       : videoUrl.split('/').pop()?.split('?')[0] || 'unknown';
       
-    console.log(`🎯 ENHANCED THUMBNAIL SYSTEM v1.0.177: Loading ${videoId} with ${MINIMUM_THUMBNAIL_DISPLAY_TIME}ms minimum display`);
+    console.log(`🎯 ENHANCED THUMBNAIL SYSTEM v1.0.178: Loading ${videoId} with ${MINIMUM_THUMBNAIL_DISPLAY_TIME}ms minimum display - GA4 ENABLED`);
     
     // GA4 Analytics: Track video open (modal/overlay opened)  
     ga4Analytics.trackOpen(videoId, title);
