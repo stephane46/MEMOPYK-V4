@@ -54,19 +54,8 @@ export default function VideoOverlay({
   // Analytics tracking - DISABLED: Switch to GA4-only for video analytics
   const { trackVideoView } = useVideoAnalytics();
   
-  // GA4 Video Analytics - TEMPORARILY DISABLED for debugging
-  // const ga4Analytics = useGA4VideoAnalytics();
-  const ga4Analytics = {
-    trackOpen: (...args: any[]) => console.log('📹 GA4 Video: video_open (DISABLED FOR DEBUG)', args),
-    setupVisibilityTracking: (...args: any[]) => () => {},
-    clearSession: () => {},
-    trackProgressMilestone: (...args: any[]) => console.log('📹 GA4 Video: progress_milestone (DISABLED FOR DEBUG)', args),
-    trackCompletion: (...args: any[]) => console.log('📹 GA4 Video: completion (DISABLED FOR DEBUG)', args),
-    trackStart: (...args: any[]) => console.log('📹 GA4 Video: start (DISABLED FOR DEBUG)', args),
-    trackResume: (...args: any[]) => console.log('📹 GA4 Video: resume (DISABLED FOR DEBUG)', args),
-    trackPause: (...args: any[]) => console.log('📹 GA4 Video: pause (DISABLED FOR DEBUG)', args),
-    trackEnded: (...args: any[]) => console.log('📹 GA4 Video: ended (DISABLED FOR DEBUG)', args)
-  };
+  // GA4 Video Analytics - RE-ENABLED with stable reference pattern
+  const ga4Analytics = useGA4VideoAnalytics();
   
   // Feature flag for video analytics - DISABLED per requirement to switch to GA4-only
   const VIDEO_ANALYTICS_ENABLED = import.meta.env.VITE_VIDEO_ANALYTICS_ENABLED === 'true' || false;
@@ -95,8 +84,8 @@ export default function VideoOverlay({
       
     console.log(`🎯 ENHANCED THUMBNAIL SYSTEM v1.0.177: Loading ${videoId} with ${MINIMUM_THUMBNAIL_DISPLAY_TIME}ms minimum display`);
     
-    // GA4 Analytics: Track video open (modal/overlay opened) - disabled for debug
-    console.log('📹 GA4 Video: video_open (DISABLED FOR DEBUG)', [videoId, title]);
+    // GA4 Analytics: Track video open (modal/overlay opened)  
+    ga4Analytics.trackOpen(videoId, title);
     
     // Start video buffering immediately for faster transition
     const video = videoRef.current;
@@ -105,9 +94,13 @@ export default function VideoOverlay({
       video.load(); // Force immediate buffering
     }
     
-    // No cleanup needed since GA4 is disabled
+    // Setup GA4 visibility tracking
+    const cleanupVisibilityTracking = ga4Analytics.setupVisibilityTracking();
+    
     return () => {
       console.log('🔄 VIDEO OVERLAY CLEANUP - Component unmounting');
+      cleanupVisibilityTracking();
+      ga4Analytics.clearSession(videoId);
     };
   }, []); // Empty dependencies - mount once only
 
@@ -178,44 +171,56 @@ export default function VideoOverlay({
       setCurrentTime(video.currentTime);
       setDuration(video.duration);
       
-      // GA4 Analytics: Track progress milestones and completion
-      const videoId = getVideoId();
+      // GA4 Analytics: Extract data inside callback to avoid dependencies
+      const videoId = videoUrl.includes('filename=') 
+        ? videoUrl.split('filename=')[1].split('&')[0]
+        : videoUrl.split('/').pop()?.split('?')[0] || 'unknown';
+        
       ga4Analytics.trackProgressMilestone(videoId, video.duration, video.currentTime, title);
       ga4Analytics.trackCompletion(videoId, video.duration, video.currentTime, title);
     }
-  }, [getVideoId, title, ga4Analytics]);
+  }, [title, videoUrl]);
 
-  // Video event handlers
+  // Video event handlers - Following stable dependency pattern
   const handlePlay = useCallback(() => {
     setIsPlaying(true);
     resetControlsTimer();
     
-    // GA4 Analytics: Track video start (first play) or resume
-    const videoId = getVideoId();
+    // GA4 Analytics: Extract data inside callback to avoid dependencies
+    const videoId = videoUrl.includes('filename=') 
+      ? videoUrl.split('filename=')[1].split('&')[0]
+      : videoUrl.split('/').pop()?.split('?')[0] || 'unknown';
+      
     if (duration > 0) {
       ga4Analytics.trackStart(videoId, duration, currentTime, title);
       ga4Analytics.trackResume(videoId);
     }
-  }, [resetControlsTimer, getVideoId, duration, currentTime, title, ga4Analytics]);
+  }, [resetControlsTimer, duration, currentTime, title, videoUrl]);
 
   const handlePause = useCallback(() => {
     setIsPlaying(false);
     setShowControls(true);
     
-    // GA4 Analytics: Track video pause
-    const videoId = getVideoId();
+    // GA4 Analytics: Extract data inside callback to avoid dependencies
+    const videoId = videoUrl.includes('filename=') 
+      ? videoUrl.split('filename=')[1].split('&')[0]
+      : videoUrl.split('/').pop()?.split('?')[0] || 'unknown';
+      
     if (duration > 0) {
       ga4Analytics.trackPause(videoId, duration, currentTime, title);
     }
-  }, [getVideoId, duration, currentTime, title, ga4Analytics]);
+  }, [duration, currentTime, title, videoUrl]);
 
   const handleEnded = useCallback(() => {
     setIsPlaying(false);
     setProgress(100);
     setShowControls(true);
     
-    // GA4 Analytics: Track video ended
-    const videoId = getVideoId();
+    // GA4 Analytics: Extract data inside callback to avoid dependencies
+    const videoId = videoUrl.includes('filename=') 
+      ? videoUrl.split('filename=')[1].split('&')[0]
+      : videoUrl.split('/').pop()?.split('?')[0] || 'unknown';
+      
     if (duration > 0) {
       ga4Analytics.trackEnded(videoId, duration, title);
     }
@@ -228,7 +233,7 @@ export default function VideoOverlay({
       console.log(`📊 VIDEO ENDED ANALYTICS: ${videoId} watched ${watchedDuration}s (${completionRate}% completion)`);
       trackVideoView(videoId, watchedDuration, isCompleted);
     }
-  }, [currentTime, duration, getVideoId, trackVideoView, VIDEO_ANALYTICS_ENABLED, ga4Analytics, title]);
+  }, [currentTime, duration, trackVideoView, VIDEO_ANALYTICS_ENABLED, title, videoUrl]);
 
   const handleLoadedMetadata = useCallback(() => {
     const video = videoRef.current;
