@@ -7,6 +7,28 @@ MEMOPYK is a full-stack memory film platform designed to transform personal phot
 Preferred communication style: Simple, everyday language.
 Visual consistency priority: Extremely detail-oriented about spacing and formatting consistency between admin interface and published pages.
 
+### Critical Code Investigation Protocol (August 2025)
+**NEVER remove or modify existing code without understanding its purpose first.**
+
+**Required Investigation Process:**
+1. **Read and understand** existing code before making changes
+2. **Ask the user** if unsure about code purpose or if it seems redundant
+3. **Investigate git history** or documentation for context
+4. **Test functionality** before and after changes
+5. **Assume existing code exists for a reason** until proven otherwise
+
+**Examples of Required Questions:**
+- "I see this MINIMUM_THUMBNAIL_DISPLAY_TIME constant - should I keep the 2-second delay behavior?"
+- "This code appears to handle [specific case] - is this still needed?"
+- "Before removing this logic, can you confirm it's no longer required?"
+
+**Never assume code is:**
+- Redundant without investigation
+- Outdated without checking
+- Unnecessary without user confirmation
+
+This prevents breaking working functionality and ensures user intent is preserved.
+
 ## System Architecture
 
 ### Frontend
