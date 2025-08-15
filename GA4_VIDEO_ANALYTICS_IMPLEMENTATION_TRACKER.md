@@ -3,6 +3,38 @@
 ## Overview
 Migrating all video analytics to GA4 only (no custom backend writes). Implementing comprehensive video tracking for the Video Gallery with proper i18n support.
 
+## GA4 Video Analytics Trigger Points Summary
+
+### **Video Lifecycle Events:**
+1. **`video_open`** - When user clicks play button and video lightbox opens
+2. **`video_start`** - When video actually begins playing (first play only)
+3. **`video_resume`** - When video resumes after being paused
+
+### **Progress Milestones:**
+4. **`video_progress` at 25%** - When video reaches 25% of duration
+5. **`video_progress` at 50%** - When video reaches 50% of duration  
+6. **`video_progress` at 75%** - When video reaches 75% of duration
+7. **`video_progress` at 100%** - When video reaches 100% of duration
+
+### **Completion Events:**
+8. **`video_complete`** - Triggered when video reaches **90% OR more** of duration
+9. **`video_complete`** - Also triggered when HTML5 `ended` event fires (natural end)
+
+### **Session Management:**
+10. **Watch time batching** - Sends accumulated watch time when page becomes hidden
+11. **Session cleanup** - Clears tracking data when video lightbox closes
+
+### **Current Behavior (Validated August 15, 2025):**
+- **Stopping at 97%** (3 seconds before end) triggers both `video_complete` and `video_progress` at 100%
+- This happens because 97% exceeds the 90% completion threshold
+- Example tracking flow: open → start → 25% → 50% → 75% → complete → 100%
+- The 90% threshold ensures users who watch most content are counted as "completed"
+
+### **Status**: ✅ **FULLY OPERATIONAL** (August 15, 2025)
+- GA4 caching issue resolved with aggressive rebuild strategy
+- All trigger points tested and validated with real user session
+- Analytics show "- ENABLED v2" indicating successful implementation
+
 ## Step 1 - GA4 Event Schema + Code Implementation
 **Status**: ✅ COMPLETE  
 **Started**: 2025-08-15T08:58:00Z
