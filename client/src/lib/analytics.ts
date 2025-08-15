@@ -13,6 +13,21 @@ function isGaDev(): boolean {
   return /[?#&]ga_dev=1\b/.test(location.href) || localStorage.getItem('ga_dev') === '1';
 }
 
+// Initialize and display test mode branding
+export function initTestMode() {
+  // Check for test mode via URL parameter and save to localStorage
+  if (/[?#&]ga_dev=1\b/.test(location.href)) {
+    localStorage.setItem('ga_dev', '1');
+  }
+  
+  // Display test mode branding if active
+  if (isGaDev()) {
+    console.log('🧪 MEMOPYK Test');
+    return true;
+  }
+  return false;
+}
+
 // Track page views on route changes (SPA navigation)
 export function sendPageView() {
   if (typeof window === 'undefined' || !window.gtag) return;

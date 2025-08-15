@@ -98,9 +98,10 @@ The key insight: **Test mode must be activated BEFORE visiting the site** to avo
 - [x] **CRITICAL**: Activate test mode BEFORE visiting site to avoid production contamination
   - ✅ Using Method 1: Visit site with `?ga_dev=1` parameter
 - [x] Test mode activation verified via URL parameter detection
-- [ ] Verify test mode: Console shows "🧪 MEMOPYK Test" branding (testing in progress)
-- [ ] Open GA4 → Realtime → Debug View → verify debug_mode events appear
+- [x] Added initTestMode() to App.tsx for proper branding display
 - [x] Keep console open to see video event confirmations
+- [ ] Verify test mode: Console shows "🧪 MEMOPYK Test" branding
+- [ ] Open GA4 → Realtime → Debug View → verify debug_mode events appear
 
 **Test Each Event:**
 - [ ] **video_open**: Open gallery video overlay
