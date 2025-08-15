@@ -3993,6 +3993,27 @@ export async function registerRoutes(app: Express): Promise<void> {
     } catch (e) { next(e); }
   });
 
+  // Realtime endpoint - provides real-time activity data
+  app.get("/api/ga4/realtime", async (req, res, next) => {
+    try {
+      console.log('📊 GA4 Realtime request');
+      
+      // For now, return mock structure expected by dashboard
+      // In production, this would query GA4 Realtime Reporting API
+      const realtimeData = {
+        active: 0,
+        recent: [],
+        cached: false
+      };
+      
+      console.log('✅ GA4 Realtime data:', realtimeData);
+      res.json(realtimeData);
+    } catch (e) { 
+      console.error('❌ GA4 Realtime error:', e);
+      next(e); 
+    }
+  });
+
   // Analytics Cache Cleanup Routes
   app.use(analyticsCleanupRoutes);
 
