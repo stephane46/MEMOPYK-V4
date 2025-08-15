@@ -77,26 +77,6 @@ function AnalyticsRouter() {
 }
 
 function App() {
-  // Send initial page view and test event after GA loads
-  useEffect(() => {
-    // Send initial page view manually since we disabled auto page_view
-    setTimeout(() => {
-      if (typeof window !== 'undefined' && window.gtag) {
-        window.gtag('event', 'page_view', {
-          page_location: window.location.href,
-          page_path: window.location.pathname + window.location.search,
-          page_title: document.title
-        });
-        
-        // Send a test event
-        window.gtag('event', 'test_event', {
-          event_category: 'test',
-          event_label: 'app_initialization'
-        });
-        console.log('📊 GA initial page_view and test event sent');
-      }
-    }, 1000);
-  }, []);
 
   return (
     <QueryClientProvider client={queryClient}>
