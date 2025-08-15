@@ -1108,6 +1108,7 @@
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-15T06:20:21.654Z",
-    "updated_at": "2025-08-15T06:20:21.693Z"
+    "updated_at": "2025-08-15T06:24:35.065Z",
+    "duration": 234839
   }
 ]
