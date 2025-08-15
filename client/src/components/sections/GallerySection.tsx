@@ -651,8 +651,12 @@ export default function GallerySection() {
                             <div 
                               className={`w-14 h-14 sm:w-16 sm:h-16 rounded-full flex items-center justify-center transition-all duration-300 hover:scale-110 cursor-pointer ${itemHasVideo ? 'animate-pulse-orange' : ''}`}
                               onClick={(e) => {
+                                console.log('🚨🚨🚨 EMERGENCY CLICK HANDLER ACTIVATED! 🚨🚨🚨');
                                 console.log('🚨 CRITICAL CLICK DEBUG: Play button clicked!', { item: item.id, index, hasVideo: itemHasVideo });
+                                console.log('🚨 ITEM TITLE:', getItemTitle(item));
+                                console.log('🚨 CALLING handlePlayClick NOW...');
                                 handlePlayClick(item, e, index);
+                                console.log('🚨 handlePlayClick CALLED SUCCESSFULLY');
                               }}
                               style={itemHasVideo ? {
                                 // Orange for items WITH video
