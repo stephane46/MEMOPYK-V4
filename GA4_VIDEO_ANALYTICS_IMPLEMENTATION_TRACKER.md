@@ -87,11 +87,20 @@ All GA4 video events are now implemented:
 **Status**: 🔄 READY TO START  
 **Goal**: Verify all 6 video events fire correctly in test mode
 
+### External Test Mode Activation (CRITICAL)
+**Reference**: See `GA4_TEST_MODE_ACTIVATION_GUIDE.md` for detailed instructions
+
+The key insight: **Test mode must be activated BEFORE visiting the site** to avoid contaminating production analytics.
+
 ### Testing Checklist (Dev/Test Mode)
 **Preparation:**
-- [ ] Use GA Developer Mode toggle (?ga_dev=1) to mark all test hits
-- [ ] Open GA4 → Realtime → verify debug_mode events are visible  
-- [ ] Have console open to see console.log confirmations
+- [ ] **CRITICAL**: Activate test mode BEFORE visiting site to avoid production contamination
+  - Method 1: Visit `https://memopyk.com/?ga_dev=1` (URL parameter auto-activates)
+  - Method 2: Use bookmarklet from external site, then navigate to MEMOPYK
+  - Method 3: Set localStorage from external site console: `localStorage.setItem('ga_dev', '1')`
+- [ ] Verify test mode: Console shows "🧪 MEMOPYK Test" branding
+- [ ] Open GA4 → Realtime → Debug View → verify debug_mode events appear
+- [ ] Keep console open to see video event confirmations
 
 **Test Each Event:**
 - [ ] **video_open**: Open gallery video overlay
@@ -111,9 +120,14 @@ All GA4 video events are now implemented:
   - Expect: watch_time_seconds is accurate
 
 **Cross-Language Test:**
-- [ ] Repeat all tests in /fr-FR path
-- [ ] Repeat all tests in /en-US path  
-- [ ] Confirm locale parameter matches path
+- [ ] Test in French: `https://memopyk.com/fr-FR/?ga_dev=1`
+- [ ] Test in English: `https://memopyk.com/en-US/?ga_dev=1`  
+- [ ] Confirm locale parameter matches path (fr-FR vs en-US)
+
+**Important Notes:**
+- ⚠️ **URL Parameter Method**: Most reliable - test mode activates BEFORE analytics fire
+- ⚠️ **External Activation**: Never enable test mode while already on MEMOPYK site
+- ⚠️ **Production Safety**: Test mode persists in localStorage until manually disabled
 
 ---
 
