@@ -63,12 +63,10 @@ const GA4AnalyticsDashboard: React.FC = () => {
   };
 
   // Get top locale from KPIs data
-  const topLocale = kpis?.kpis.plays_by_locale.reduce((prev, current) => 
-    (prev.users > current.users) ? prev : current
-  );
+  const topLocale = kpis?.topLocale && kpis.topLocale.length > 0 ? kpis.topLocale[0] : null;
 
   // Simple funnel chart data processing
-  const funnelSteps = funnel?.rows.reduce((acc, row) => {
+  const funnelSteps = funnel?.reduce((acc: Record<number, number>, row: any) => {
     if (!acc[row.percent]) {
       acc[row.percent] = 0;
     }
@@ -213,7 +211,7 @@ const GA4AnalyticsDashboard: React.FC = () => {
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Video Plays</p>
-                  <p className="text-2xl font-bold">{formatNumber(kpis.kpis.plays_unique_viewers)}</p>
+                  <p className="text-2xl font-bold">{formatNumber(kpis.plays)}</p>
                 </div>
                 <Play className="h-8 w-8 text-blue-600" />
               </div>
@@ -225,7 +223,7 @@ const GA4AnalyticsDashboard: React.FC = () => {
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Avg Watch Time</p>
-                  <p className="text-2xl font-bold">{formatDuration(kpis.kpis.avg_watch_time_sec)}</p>
+                  <p className="text-2xl font-bold">{formatDuration(kpis.avgWatchSeconds)}</p>
                 </div>
                 <Clock className="h-8 w-8 text-green-600" />
               </div>
@@ -237,7 +235,7 @@ const GA4AnalyticsDashboard: React.FC = () => {
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Completion Rate</p>
-                  <p className="text-2xl font-bold">{formatPercent(kpis.kpis.completion_rate)}</p>
+                  <p className="text-2xl font-bold">{formatPercent(kpis.completionRate / 100)}</p>
                 </div>
                 <Target className="h-8 w-8 text-orange-600" />
               </div>
@@ -250,7 +248,7 @@ const GA4AnalyticsDashboard: React.FC = () => {
                 <div>
                   <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Top Locale</p>
                   <p className="text-2xl font-bold">{topLocale?.locale || 'N/A'}</p>
-                  <p className="text-sm text-gray-500">{topLocale ? `${formatNumber(topLocale.users)} plays` : ''}</p>
+                  <p className="text-sm text-gray-500">{topLocale ? `${formatNumber(topLocale.users)} users` : ''}</p>
                 </div>
                 <Trophy className="h-8 w-8 text-yellow-600" />
               </div>
@@ -268,7 +266,7 @@ const GA4AnalyticsDashboard: React.FC = () => {
               <CardTitle className="text-lg">A. Top Videos Performance</CardTitle>
             </CardHeader>
             <CardContent>
-              {topVideos?.rows.length ? (
+              {topVideos && topVideos.length ? (
                 <Table>
                   <TableHeader>
                     <TableRow>
@@ -280,7 +278,7 @@ const GA4AnalyticsDashboard: React.FC = () => {
                     </TableRow>
                   </TableHeader>
                   <TableBody>
-                    {topVideos.rows.slice(0, 10).map((video, index) => (
+                    {topVideos.slice(0, 10).map((video, index) => (
                       <TableRow key={video.video_id}>
                         <TableCell className="font-medium">
                           <div className="flex items-center gap-2">
@@ -344,10 +342,10 @@ const GA4AnalyticsDashboard: React.FC = () => {
               <CardTitle className="text-lg">C. Trend Over Time</CardTitle>
             </CardHeader>
             <CardContent>
-              {trend?.days.length ? (
+              {trend && Array.isArray(trend) && trend.length ? (
                 <div className="space-y-4">
                   <div className="grid grid-cols-7 gap-1">
-                    {trend.days.slice(-7).map((day) => (
+                    {trend.slice(-7).map((day: any) => (
                       <div key={day.date} className="text-center">
                         <div className="text-xs text-gray-500 mb-1">
                           {new Date(day.date).toLocaleDateString('en', { weekday: 'short' })}
@@ -356,7 +354,7 @@ const GA4AnalyticsDashboard: React.FC = () => {
                           <div
                             className="bg-gradient-to-t from-green-500 to-green-400 transition-all duration-500"
                             style={{ 
-                              height: `${Math.max(5, (day.plays / Math.max(...trend.days.map(d => d.plays))) * 100)}%` 
+                              height: `${Math.max(5, (day.plays / Math.max(...trend.map((d: any) => d.plays))) * 100)}%` 
                             }}
                           />
                         </div>

@@ -2,21 +2,13 @@ import { useQuery } from '@tanstack/react-query';
 import { useState } from 'react';
 
 export interface GA4KPIsData {
-  range: {
-    start: string;
-    end: string;
+  plays: number;
+  avgWatchSeconds: number;
+  completionRate: number;
+  topLocale: Array<{
     locale: string;
-  };
-  kpis: {
-    plays_unique_viewers: number;
-    avg_watch_time_sec: number;
-    completion_rate: number;
-    plays_by_locale: Array<{
-      locale: string;
-      users: number;
-    }>;
-  };
-  cached: boolean;
+    users: number;
+  }>;
 }
 
 export interface GA4TopVideo {
@@ -27,10 +19,7 @@ export interface GA4TopVideo {
   complete100_pct: number;
 }
 
-export interface GA4TopVideosData {
-  rows: GA4TopVideo[];
-  cached: boolean;
-}
+export type GA4TopVideosData = GA4TopVideo[];
 
 export interface GA4FunnelRow {
   video_id: string;
@@ -38,10 +27,7 @@ export interface GA4FunnelRow {
   count: number;
 }
 
-export interface GA4FunnelData {
-  rows: GA4FunnelRow[];
-  cached: boolean;
-}
+export type GA4FunnelData = GA4FunnelRow[];
 
 export interface GA4TrendDay {
   date: string;
@@ -49,10 +35,7 @@ export interface GA4TrendDay {
   avg_watch_time_sec: number;
 }
 
-export interface GA4TrendData {
-  days: GA4TrendDay[];
-  cached: boolean;
-}
+export type GA4TrendData = GA4TrendDay[];
 
 export interface GA4RealtimeEvent {
   ts: string;
@@ -185,9 +168,8 @@ export const useGA4VideoAnalytics = (params: UseGA4VideoAnalyticsParams) => {
   const error = kpisQuery.error || topVideosQuery.error || 
                funnelQuery.error || trendQuery.error || realtimeQuery.error;
 
-  // Check if all data is cached
-  const allCached = kpisQuery.data?.cached && topVideosQuery.data?.cached && 
-                   funnelQuery.data?.cached && trendQuery.data?.cached && realtimeQuery.data?.cached;
+  // Check if all data is cached - new API doesn't have cached property
+  const allCached = false; // Always fresh data with new direct API
 
   return {
     kpis: kpisQuery.data,
