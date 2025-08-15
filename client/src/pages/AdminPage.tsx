@@ -1745,10 +1745,17 @@ export default function AdminPage() {
                           </ul>
                         </div>
                         
-                        <p className="text-xs text-gray-600 mt-3">
-                          <strong>Instructions:</strong> Faites glisser le bouton orange/bleu vers votre barre de signets, 
-                          puis cliquez dessus pour basculer entre les modes test et normal.
-                        </p>
+                        <div className="text-xs text-gray-600 mt-3 space-y-2">
+                          <p><strong>Instructions:</strong></p>
+                          <ol className="list-decimal list-inside space-y-1 text-left">
+                            <li>Assurez-vous que votre barre de signets est visible (Ctrl+Shift+B)</li>
+                            <li>Faites glisser le bouton vers votre barre de signets</li>
+                            <li>Cliquez sur le signet pour basculer entre les modes test et normal</li>
+                          </ol>
+                          <p className="text-center pt-2 text-green-700">
+                            <strong>Compatible:</strong> Chrome, Edge, Firefox, Safari et autres navigateurs modernes
+                          </p>
+                        </div>
                       </div>
                     </div>
                     
