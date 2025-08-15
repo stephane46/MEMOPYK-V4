@@ -13,7 +13,15 @@
       function gtag(){dataLayer.push(arguments);}
       gtag('js', new Date());
 
-      gtag('config', 'G-JLRWHE1HV4', { send_page_view: true });
+      // Check for developer mode and mark traffic accordingly
+      (function () {
+        var isDev = /[?#&]ga_dev=1\b/.test(location.href) || localStorage.getItem('ga_dev') === '1';
+        window.GA_DEV = isDev;
+        gtag('config', 'G-JLRWHE1HV4', {
+          send_page_view: true,
+          debug_mode: isDev
+        });
+      })();
     </script>
 
   </head>
