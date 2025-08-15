@@ -79,7 +79,7 @@ export default function VideoOverlay({
     return videoUrl.split('/').pop()?.split('?')[0] || 'unknown';
   }, [videoUrl]);
 
-  // ENHANCED THUMBNAIL-TO-VIDEO SYSTEM v1.0.174 with minimum display time
+  // ENHANCED THUMBNAIL-TO-VIDEO SYSTEM v1.0.174 with minimum display time - MOUNT ONCE ONLY
   useEffect(() => {
     console.log('🚨🚨🚨 VIDEO OVERLAY MOUNTED! 🚨🚨🚨');
     console.log('🎬 Video URL:', videoUrl);
@@ -88,14 +88,15 @@ export default function VideoOverlay({
     thumbnailStartTimeRef.current = Date.now();
     videoReadyRef.current = false;
     
-    const videoId = getVideoId();
+    // Extract video ID directly to avoid dependency issues
+    const videoId = videoUrl.includes('filename=') 
+      ? videoUrl.split('filename=')[1].split('&')[0]
+      : videoUrl.split('/').pop()?.split('?')[0] || 'unknown';
+      
     console.log(`🎯 ENHANCED THUMBNAIL SYSTEM v1.0.177: Loading ${videoId} with ${MINIMUM_THUMBNAIL_DISPLAY_TIME}ms minimum display`);
     
-    // GA4 Analytics: Track video open (modal/overlay opened)
-    ga4Analytics.trackOpen(videoId, title);
-    
-    // Setup visibility tracking for watch time batching
-    const cleanupVisibilityTracking = ga4Analytics.setupVisibilityTracking();
+    // GA4 Analytics: Track video open (modal/overlay opened) - disabled for debug
+    console.log('📹 GA4 Video: video_open (DISABLED FOR DEBUG)', [videoId, title]);
     
     // Start video buffering immediately for faster transition
     const video = videoRef.current;
@@ -104,14 +105,11 @@ export default function VideoOverlay({
       video.load(); // Force immediate buffering
     }
     
-    // Return cleanup function
+    // No cleanup needed since GA4 is disabled
     return () => {
-      if (cleanupVisibilityTracking) {
-        cleanupVisibilityTracking();
-      }
-      ga4Analytics.clearSession(videoId);
+      console.log('🔄 VIDEO OVERLAY CLEANUP - Component unmounting');
     };
-  }, [videoUrl, getVideoId, title, ga4Analytics]); // Updated dependencies
+  }, []); // Empty dependencies - mount once only
 
   // Enhanced error handling
   const handleVideoError = useCallback((e: any) => {
