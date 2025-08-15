@@ -3880,15 +3880,60 @@ export async function registerRoutes(app: Express): Promise<void> {
     }
   });
 
+  // Test just the qPlaysByVideo function to isolate the issue
+  app.get("/api/ga4/test-plays-by-video", async (req, res) => {
+    try {
+      const { startDate, endDate, locale } = getParams(req);
+      console.log(`📊 Testing qPlaysByVideo: ${startDate} to ${endDate}, locale: ${locale}`);
+      
+      const plays = await qPlaysByVideo(startDate, endDate, locale);
+      console.log(`✅ qPlaysByVideo result:`, plays);
+      
+      res.json(plays);
+    } catch (e) {
+      console.error('❌ qPlaysByVideo test failed:', e);
+      res.status(500).json({ 
+        error: (e as Error).message,
+        stack: (e as Error).stack 
+      });
+    }
+  });
+
   // Top videos table endpoint - using your exact clean API structure
   app.get("/api/ga4/top-videos", async (req, res, next) => {
     try {
       const { startDate, endDate, locale } = getParams(req);
-      const [plays, watchTimeMap, progressMap] = await Promise.all([
-        qPlaysByVideo(startDate, endDate, locale),
-        qWatchTimeByVideo(startDate, endDate, locale),
-        qProgressByVideo(startDate, endDate, locale)
-      ]);
+      console.log(`📊 GA4 Top Videos request: ${startDate} to ${endDate}, locale: ${locale}`);
+
+      // Test each query individually to identify which is failing
+      let plays = [], watchTimeMap = new Map(), progressMap = new Map();
+
+      try {
+        console.log('Testing qPlaysByVideo...');
+        plays = await qPlaysByVideo(startDate, endDate, locale);
+        console.log(`✅ qPlaysByVideo: ${plays.length} videos found`);
+      } catch (e) {
+        console.error('❌ qPlaysByVideo failed:', (e as Error).message);
+        throw new Error(`qPlaysByVideo failed: ${(e as Error).message}`);
+      }
+
+      try {
+        console.log('Testing qWatchTimeByVideo...');
+        watchTimeMap = await qWatchTimeByVideo(startDate, endDate, locale);
+        console.log(`✅ qWatchTimeByVideo: ${watchTimeMap.size} videos found`);
+      } catch (e) {
+        console.error('❌ qWatchTimeByVideo failed:', (e as Error).message);
+        throw new Error(`qWatchTimeByVideo failed: ${(e as Error).message}`);
+      }
+
+      try {
+        console.log('Testing qProgressByVideo...');
+        progressMap = await qProgressByVideo(startDate, endDate, locale);
+        console.log(`✅ qProgressByVideo: ${progressMap.size} videos found`);
+      } catch (e) {
+        console.error('❌ qProgressByVideo failed:', (e as Error).message);
+        throw new Error(`qProgressByVideo failed: ${(e as Error).message}`);
+      }
 
       const rows = plays.map(v => {
         const totalWatch = watchTimeMap.get(v.video_id) ?? 0;
@@ -3900,7 +3945,10 @@ export async function registerRoutes(app: Express): Promise<void> {
       });
 
       res.json(rows);
-    } catch (e) { next(e); }
+    } catch (e) { 
+      console.error('❌ GA4 Top Videos error:', e);
+      res.status(500).json({ message: (e as Error).message });
+    }
   });
 
   // Funnel endpoint - using your exact clean API structure

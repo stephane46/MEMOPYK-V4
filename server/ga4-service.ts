@@ -132,42 +132,56 @@ export async function qTopLocale(start: string, end: string) {
 /* =============  TOP VIDEOS TABLE  ============= */
 
 export async function qPlaysByVideo(start: string, end: string, locale?: string) {
+  const localeExpr =
+    locale && locale !== "all"
+      ? [{ filter: { fieldName: "customEvent:locale", stringFilter: { value: locale } } }]
+      : [];
+
   const [res] = await client.runReport({
-    property: PROPERTY,
-    dateRanges: [range(start, end)],
-    dimensions: [{ name: "customEvent:video_id" }, { name: "customEvent:video_title" }],
+    property: PROPERTY, // "properties/501023254"
+    dateRanges: [{ startDate: start, endDate: end }],
+    dimensions: [
+      { name: "customEvent:video_id" },
+      { name: "customEvent:video_title" }
+    ],
     metrics: [{ name: "eventCount" }],
     dimensionFilter: {
       andGroup: {
         expressions: [
           { filter: { fieldName: "eventName", stringFilter: { value: "video_start" } } },
-          ...(localeFilter(locale) ? [localeFilter(locale)!] : [])
+          ...localeExpr
+          // (optional) if you later add a custom dimension "gallery" = "Video Gallery",
+          // add: { filter: { fieldName: "customEvent:gallery", stringFilter: { value: "Video Gallery" } } }
         ]
       }
     },
-    orderBys: [{ desc: true, metric: { metricName: "eventCount" } }],
+    orderBys: [{ metric: { metricName: "eventCount" }, desc: true }],
     limit: 100
   });
-  return (
-    res.rows?.map(r => ({
-      video_id: r.dimensionValues?.[0]?.value ?? "",
-      title: r.dimensionValues?.[1]?.value ?? "",
-      plays: Number(r.metricValues?.[0]?.value ?? 0)
-    })) ?? []
-  );
+
+  return (res.rows ?? []).map(r => ({
+    video_id: r.dimensionValues?.[0]?.value ?? "",
+    title: r.dimensionValues?.[1]?.value ?? "",
+    plays: Number(r.metricValues?.[0]?.value ?? 0)
+  }));
 }
 
 export async function qWatchTimeByVideo(start: string, end: string, locale?: string) {
+  const localeExpr =
+    locale && locale !== "all"
+      ? [{ filter: { fieldName: "customEvent:locale", stringFilter: { value: locale } } }]
+      : [];
+
   const [res] = await client.runReport({
-    property: PROPERTY,
-    dateRanges: [range(start, end)],
+    property: PROPERTY, // "properties/501023254"
+    dateRanges: [{ startDate: start, endDate: end }],
     dimensions: [{ name: "customEvent:video_id" }],
     metrics: [{ name: "customEvent:watch_time_seconds" }],
     dimensionFilter: {
       andGroup: {
         expressions: [
           { filter: { fieldName: "eventName", stringFilter: { value: "video_watch_time" } } },
-          ...(localeFilter(locale) ? [localeFilter(locale)!] : [])
+          ...localeExpr
         ]
       }
     }
@@ -181,17 +195,22 @@ export async function qWatchTimeByVideo(start: string, end: string, locale?: str
 }
 
 export async function qProgressByVideo(start: string, end: string, locale?: string) {
+  const localeExpr =
+    locale && locale !== "all"
+      ? [{ filter: { fieldName: "customEvent:locale", stringFilter: { value: locale } } }]
+      : [];
+
   const [res] = await client.runReport({
-    property: PROPERTY,
-    dateRanges: [range(start, end)],
-    dimensions: [{ name: "customEvent:video_id" }, { name: "customEvent:percent" }],
+    property: PROPERTY, // "properties/501023254"
+    dateRanges: [{ startDate: start, endDate: end }],
+    dimensions: [{ name: "customEvent:video_id" }, { name: "customEvent:progress_percent" }],
     metrics: [{ name: "eventCount" }],
     dimensionFilter: {
       andGroup: {
         expressions: [
           { filter: { fieldName: "eventName", stringFilter: { value: "video_progress" } } },
-          { filter: { fieldName: "customEvent:percent", inListFilter: { values: ["50", "100"] } } },
-          ...(localeFilter(locale) ? [localeFilter(locale)!] : [])
+          { filter: { fieldName: "customEvent:progress_percent", inListFilter: { values: ["50", "100"] } } },
+          ...localeExpr
         ]
       }
     }
