@@ -1697,6 +1697,67 @@ export default function AdminPage() {
                 <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Tests & Performance</h2>
                 <p className="text-gray-600 dark:text-gray-400">Tests système, performance et validation</p>
               </div>
+              
+              {/* GA4 Test Mode Bookmarks */}
+              <Card className="bg-blue-50 border-blue-200">
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2 text-blue-800">
+                    <TestTube className="h-5 w-5" />
+                    GA4 Test Mode - Bookmarkable Links
+                  </CardTitle>
+                  <CardDescription className="text-blue-700">
+                    Drag ces liens vers votre barre de signets pour activer/désactiver le mode test GA4 d'un clic
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-4">
+                    <div className="p-4 bg-white rounded-lg border border-blue-200">
+                      <h4 className="font-semibold text-sm text-blue-800 mb-2">Instructions:</h4>
+                      <ol className="text-sm text-blue-700 space-y-1 list-decimal list-inside">
+                        <li>Faites glisser chaque lien ci-dessous vers votre barre de signets</li>
+                        <li>Cliquez sur le signet pour activer/désactiver le mode test</li>
+                        <li>Le mode test marque votre trafic avec debug_mode=true</li>
+                        <li>Configurez le filtre "Developer traffic" dans GA4 pour exclure ces données</li>
+                      </ol>
+                    </div>
+                    
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div className="p-4 bg-green-50 border border-green-200 rounded-lg">
+                        <h4 className="font-semibold text-green-800 mb-2">Activer le Mode Test</h4>
+                        <a
+                          href="javascript:(function(){try{localStorage.setItem('ga_dev','1');alert('GA Developer/Test Mode ENABLED');}catch(e){alert('Could not enable test mode: '+e);}})();"
+                          title="Enable GA Test Mode"
+                          className="inline-block px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors font-medium"
+                          draggable={true}
+                        >
+                          📊 Enable GA Test Mode
+                        </a>
+                        <p className="text-xs text-green-700 mt-2">Glissez ce lien vers vos signets</p>
+                      </div>
+                      
+                      <div className="p-4 bg-red-50 border border-red-200 rounded-lg">
+                        <h4 className="font-semibold text-red-800 mb-2">Désactiver le Mode Test</h4>
+                        <a
+                          href="javascript:(function(){try{localStorage.removeItem('ga_dev');alert('GA Developer/Test Mode DISABLED');}catch(e){alert('Could not disable test mode: '+e);}})();"
+                          title="Disable GA Test Mode"
+                          className="inline-block px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors font-medium"
+                          draggable={true}
+                        >
+                          🚫 Disable GA Test Mode
+                        </a>
+                        <p className="text-xs text-red-700 mt-2">Glissez ce lien vers vos signets</p>
+                      </div>
+                    </div>
+                    
+                    <div className="p-3 bg-yellow-50 border border-yellow-200 rounded-lg">
+                      <p className="text-xs text-yellow-800">
+                        <strong>Astuce:</strong> Vous pouvez aussi clic-droit → "Copier l'adresse du lien" → créer un nouveau signet manuellement
+                      </p>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+              
               <PerformanceTestDashboard />
               <SystemTestDashboard />
             </div>
