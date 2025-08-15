@@ -188,7 +188,7 @@ export const trackVideoProgress = (videoId: string, percent: 25 | 50 | 75 | 100,
   }
   
   window.gtag('event', 'video_progress', eventParams);
-  console.log('📹 GA4 Video: video_progress', eventParams);
+  console.log('📹 GA4 Video: video_progress - ENABLED v2', eventParams);
 };
 
 export const trackVideoComplete = (videoId: string, durationSec: number, positionSec: number, videoTitle?: string) => {
@@ -212,7 +212,7 @@ export const trackVideoComplete = (videoId: string, durationSec: number, positio
   }
   
   window.gtag('event', 'video_complete', eventParams);
-  console.log('📹 GA4 Video: video_complete', eventParams);
+  console.log('📹 GA4 Video: video_complete - ENABLED v2', eventParams);
 };
 
 export const trackVideoWatchTime = (videoId: string, watchTimeSec: number, videoTitle?: string) => {
