@@ -54,8 +54,12 @@ export default function VideoOverlay({
   // Analytics tracking - DISABLED: Switch to GA4-only for video analytics
   const { trackVideoView } = useVideoAnalytics();
   
-  // GA4 Video Analytics - DISABLED: Dashboard analytics not needed for individual video playback
-  // const ga4Analytics = useGA4VideoAnalytics();
+  // GA4 Video Analytics - Using direct gtag for individual video tracking
+  const trackGA4VideoEvent = useCallback((eventName: string, parameters: any) => {
+    if (typeof window !== 'undefined' && window.gtag) {
+      window.gtag('event', eventName, parameters);
+    }
+  }, []);
   
   // Feature flag for video analytics - DISABLED per requirement to switch to GA4-only
   const VIDEO_ANALYTICS_ENABLED = import.meta.env.VITE_VIDEO_ANALYTICS_ENABLED === 'true' || false;
@@ -84,8 +88,12 @@ export default function VideoOverlay({
       
     console.log(`🎯 ENHANCED THUMBNAIL SYSTEM v1.0.178: Loading ${videoId} with ${MINIMUM_THUMBNAIL_DISPLAY_TIME}ms minimum display - GA4 ENABLED`);
     
-    // GA4 Analytics: DISABLED - Individual video tracking not needed for dashboard analytics
-    // ga4Analytics.trackOpen(videoId, title);
+    // GA4 Analytics: Track video open (modal/overlay opened)  
+    trackGA4VideoEvent('video_start', {
+      video_id: videoId,
+      video_title: title,
+      locale: language
+    });
     
     // Start video buffering immediately for faster transition
     const video = videoRef.current;
