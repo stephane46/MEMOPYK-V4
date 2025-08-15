@@ -1730,7 +1730,7 @@ export default function AdminPage() {
                       </div>
                       <div>
                         <h3 className="text-xl font-bold text-gray-900">MEMOPYK Test</h3>
-                        <p className="text-gray-600">Clean testing environment</p>
+                        <p className="text-gray-600">Clean testing environment without Analytics tracking</p>
                       </div>
                     </div>
                     <div className={`px-4 py-2 rounded-lg font-bold text-sm ${
