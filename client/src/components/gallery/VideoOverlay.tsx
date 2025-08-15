@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { Play, Pause, Volume2, VolumeX, X, ImageIcon, Clock } from 'lucide-react';
 import { useVideoAnalytics } from '@/hooks/useVideoAnalytics';
+import { useGA4VideoAnalytics } from '@/hooks/useGA4VideoAnalytics';
 
 interface VideoOverlayProps {
   videoUrl: string;
@@ -53,6 +54,9 @@ export default function VideoOverlay({
   // Analytics tracking - DISABLED: Switch to GA4-only for video analytics
   const { trackVideoView } = useVideoAnalytics();
   
+  // GA4 Video Analytics - NEW implementation for Step 1
+  const ga4Analytics = useGA4VideoAnalytics();
+  
   // Feature flag for video analytics - DISABLED per requirement to switch to GA4-only
   const VIDEO_ANALYTICS_ENABLED = import.meta.env.VITE_VIDEO_ANALYTICS_ENABLED === 'true' || false;
   
@@ -73,6 +77,12 @@ export default function VideoOverlay({
     const videoId = getVideoId();
     console.log(`🎯 ENHANCED THUMBNAIL SYSTEM v1.0.177: Loading ${videoId} with ${MINIMUM_THUMBNAIL_DISPLAY_TIME}ms minimum display`);
     
+    // GA4 Analytics: Track video open (modal/overlay opened)
+    ga4Analytics.trackOpen(videoId, title);
+    
+    // Setup visibility tracking for watch time batching
+    const cleanupVisibilityTracking = ga4Analytics.setupVisibilityTracking();
+    
     // Start video buffering immediately for faster transition
     const video = videoRef.current;
     if (video && thumbnailUrl) {
@@ -80,9 +90,14 @@ export default function VideoOverlay({
       video.load(); // Force immediate buffering
     }
     
-    // Only track actual duration on close/end - no initial tracking
-    console.log(`📊 VIDEO OPENED: ${videoId} - tracking disabled, will only track actual duration on close/end`);
-  }, [videoUrl]); // Simplified dependencies to prevent infinite loops
+    // Return cleanup function
+    return () => {
+      if (cleanupVisibilityTracking) {
+        cleanupVisibilityTracking();
+      }
+      ga4Analytics.clearSession(videoId);
+    };
+  }, [videoUrl, getVideoId, title, ga4Analytics]); // Updated dependencies
 
   // Enhanced error handling
   const handleVideoError = useCallback((e: any) => {
