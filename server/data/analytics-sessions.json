@@ -1538,7 +1538,24 @@
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-15T10:29:15.170Z",
-    "updated_at": "2025-08-15T10:32:16.226Z",
-    "duration": 249259
+    "updated_at": "2025-08-15T10:32:31.363Z",
+    "duration": 249275
+  },
+  {
+    "id": "923bb34e-1569-4165-81d5-074ec92e40f9",
+    "session_id": "session_1755253953161_j29ek1w6x",
+    "user_id": null,
+    "ip_address": "109.17.150.48",
+    "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36 Edg/139.0.0.0",
+    "referrer": "https://replit.com/",
+    "language": "fr-FR",
+    "country": "Unknown",
+    "city": "Unknown",
+    "page_views": 0,
+    "is_bot": false,
+    "is_test_data": false,
+    "created_at": "2025-08-15T10:32:33.195Z",
+    "updated_at": "2025-08-15T10:33:29.540Z",
+    "duration": 249333
   }
 ]
