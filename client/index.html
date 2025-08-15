@@ -21,6 +21,26 @@
           send_page_view: true,
           debug_mode: isDev
         });
+        
+        // Show visual indicator when in test mode
+        if (isDev) {
+          var banner = document.createElement('div');
+          banner.textContent = '🧪 GA TEST MODE ACTIVE';
+          banner.style.position = 'fixed';
+          banner.style.bottom = '10px';
+          banner.style.right = '10px';
+          banner.style.background = '#ff9800';
+          banner.style.color = '#fff';
+          banner.style.padding = '8px 12px';
+          banner.style.fontSize = '14px';
+          banner.style.fontWeight = 'bold';
+          banner.style.borderRadius = '6px';
+          banner.style.boxShadow = '0 2px 8px rgba(0,0,0,0.3)';
+          banner.style.zIndex = '10000';
+          banner.style.fontFamily = 'Arial, sans-serif';
+          banner.id = 'ga-test-mode-banner';
+          document.body.appendChild(banner);
+        }
       })();
     </script>
 
