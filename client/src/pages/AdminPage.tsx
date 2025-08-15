@@ -1729,7 +1729,7 @@ export default function AdminPage() {
                         🧪
                       </div>
                       <div>
-                        <h3 className="text-xl font-bold text-gray-900">GA4 Developer Mode</h3>
+                        <h3 className="text-xl font-bold text-gray-900">MEMOPYK Test</h3>
                         <p className="text-gray-600">Clean testing environment</p>
                       </div>
                     </div>
@@ -1742,12 +1742,12 @@ export default function AdminPage() {
 
                   <div className="flex flex-col items-center space-y-4">
                     <a
-                      href="javascript:(function(){try{var k='ga_dev',b='ga-test-banner',on=localStorage.getItem(k)==='1';if(on){localStorage.removeItem(k);var e=document.getElementById(b);if(e)e.remove();if(typeof window.gtag==='function'){window.gtag('event','debug_toggle',{debug_mode:false,source:'bookmarklet'});}alert('GA4 Developer Mode DISABLED');}else{localStorage.setItem(k,'1');var el=document.getElementById(b);if(!el){el=document.createElement('div');el.id=b;el.textContent='🧪 GA4 DEVELOPER MODE';el.style.cssText='position:fixed;bottom:12px;right:12px;background:#ff9800;color:#fff;padding:8px 12px;font:600 13px/1.2 system-ui,Segoe UI,Roboto,Arial;border-radius:6px;box-shadow:0 6px 18px rgba(0,0,0,.2);z-index:2147483647;';document.body.appendChild(el);}else{el.style.display='block';}if(typeof window.gtag==='function'){window.gtag('event','debug_toggle',{debug_mode:true,source:'bookmarklet'});}alert('GA4 Developer Mode ENABLED');}}catch(err){alert('Toggle failed: '+err);})();(function(){try{console.log('GA4 Developer Mode bookmarklet executed successfully');}catch(e){}})()"
-                      title="Toggle GA4 Developer Mode"
+                      href="javascript:(function(){try{var k='ga_dev',b='ga-test-banner',on=localStorage.getItem(k)==='1';if(on){localStorage.removeItem(k);var e=document.getElementById(b);if(e)e.remove();if(typeof window.gtag==='function'){window.gtag('event','debug_toggle',{debug_mode:false,source:'bookmarklet'});}alert('MEMOPYK Test Mode DISABLED');}else{localStorage.setItem(k,'1');var el=document.getElementById(b);if(!el){el=document.createElement('div');el.id=b;el.textContent='🧪 MEMOPYK TEST MODE';el.style.cssText='position:fixed;bottom:12px;right:12px;background:#ff9800;color:#fff;padding:8px 12px;font:600 13px/1.2 system-ui,Segoe UI,Roboto,Arial;border-radius:6px;box-shadow:0 6px 18px rgba(0,0,0,.2);z-index:2147483647;';document.body.appendChild(el);}else{el.style.display='block';}if(typeof window.gtag==='function'){window.gtag('event','debug_toggle',{debug_mode:true,source:'bookmarklet'});}alert('MEMOPYK Test Mode ENABLED');}}catch(err){alert('Toggle failed: '+err);}console.log('MEMOPYK Test bookmarklet executed successfully');})();"
+                      title="Toggle MEMOPYK Test Mode"
                       className="inline-flex items-center gap-2 px-8 py-4 bg-white text-gray-800 border-2 border-orange-400 rounded-xl hover:bg-gray-50 transition-all duration-200 font-bold text-lg shadow-lg hover:shadow-xl transform hover:scale-105"
                       draggable={true}
                     >
-                      🧪 GA4 Developer Mode
+                      🧪 MEMOPYK Test
                     </a>
 
                     <div className="text-center space-y-2">
@@ -1763,7 +1763,7 @@ export default function AdminPage() {
                   {isDevMode && (
                     <div className="mt-4 p-3 bg-orange-100 border border-orange-300 rounded-lg">
                       <p className="text-sm text-orange-800 font-medium text-center">
-                        🧪 DEVELOPER MODE ACTIVE - Actions marked debug_mode=true (no impact on production analytics)
+                        🧪 MEMOPYK TEST MODE ACTIVE - Actions marked debug_mode=true (no impact on production analytics)
                       </p>
                     </div>
                   )}
