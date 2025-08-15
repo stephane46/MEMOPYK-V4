@@ -44,6 +44,7 @@ export default function VideoOverlay({
   const videoStartTimeRef = useRef<number>(Date.now());
   const thumbnailStartTimeRef = useRef<number>(Date.now());
   const videoReadyRef = useRef<boolean>(false);
+  const playbackStartedRef = useRef<boolean>(false);
   
   // Minimum thumbnail display time (2 seconds)
   const MINIMUM_THUMBNAIL_DISPLAY_TIME = 2000;
@@ -240,12 +241,21 @@ export default function VideoOverlay({
     }
   }, []);
 
-  // Simple function to start video after brief thumbnail display
+  // Simple function to start video after brief thumbnail display with race condition prevention
   const startVideoPlayback = useCallback(() => {
     const video = videoRef.current;
+    
+    // Use ref-based flag to prevent race conditions from multiple mounts
+    if (playbackStartedRef.current) {
+      console.log('⏭️ Skipping startVideoPlayback - already started by another instance');
+      return;
+    }
+    
     if (video && showThumbnail && !isPlaying) {
       console.log('🎬 STARTING VIDEO PLAYBACK');
+      playbackStartedRef.current = true; // Set immediately to prevent duplicates
       setShowThumbnail(false);
+      
       video.play().then(() => {
         console.log('✅ Video play() succeeded');
         setIsPlaying(true);
