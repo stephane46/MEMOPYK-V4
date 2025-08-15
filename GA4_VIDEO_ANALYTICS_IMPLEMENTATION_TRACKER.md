@@ -8,11 +8,11 @@ Migrating all video analytics to GA4 only (no custom backend writes). Implementi
 **Started**: 2025-08-15T08:58:00Z
 
 ### Requirements Checklist
-- [ ] **Event Implementation**: 6 video events (open, start, pause, progress, complete, watch_time)
-- [ ] **Event Parameters**: All required parameters (video_id, locale, position_sec, etc.)
-- [ ] **Data Quality Rules**: Milestone dedupe, tolerance, batching, locale handling
-- [ ] **GA4 Custom Definitions**: Create custom dimensions and metrics in GA4 Admin
-- [ ] **Debug Mode Integration**: Use existing ga_dev toggle for debug_mode parameter
+- [x] **Event Implementation**: 6 video events (open, start, pause, progress, complete, watch_time)
+- [x] **Event Parameters**: All required parameters (video_id, locale, position_sec, etc.)
+- [x] **Data Quality Rules**: Milestone dedupe, tolerance, batching, locale handling
+- [ ] **GA4 Custom Definitions**: Create custom dimensions and metrics in GA4 Admin (Manual Task)
+- [x] **Debug Mode Integration**: Use existing ga_dev toggle for debug_mode parameter
 - [ ] **Testing**: Verify in GA4 Realtime/DebugView
 
 ### Event Schema to Implement
@@ -38,11 +38,11 @@ Migrating all video analytics to GA4 only (no custom backend writes). Implementi
 - `debug_mode` (boolean) - from ga_dev toggle
 
 ### Implementation Tasks
-- [ ] **Hook Integration**: Connect to existing video gallery components
-- [ ] **Event Logic**: Implement milestone tracking with deduplication
-- [ ] **Watch Time Batching**: Accumulate and send on pause/ended/visibility change
-- [ ] **Locale Detection**: Read from route (/fr-FR, /en-US) or localStorage
-- [ ] **Debug Mode**: Integrate with existing ga_dev system
+- [x] **Hook Integration**: Connected to VideoOverlay.tsx component
+- [x] **Event Logic**: Implemented milestone tracking with deduplication (±1% tolerance)
+- [x] **Watch Time Batching**: Accumulate and send on pause/ended/visibility change
+- [x] **Locale Detection**: Read from route (/fr-FR, /en-US) or localStorage fallback
+- [x] **Debug Mode**: Integrated with existing ga_dev system (debug_mode parameter)
 - [ ] **Testing Setup**: Verify events fire correctly in test mode
 
 ### GA4 Admin Setup (Manual Task)
@@ -65,11 +65,20 @@ Migrating all video analytics to GA4 only (no custom backend writes). Implementi
 - [ ] Milestone deduplication working (each fires once per session/video)
 - [ ] Watch time batching accumulates correctly
 
-### Files to Modify
-- `client/src/lib/analytics.ts` - Add video event functions
-- `client/src/hooks/useVideoAnalytics.ts` - Update/create video tracking hook
-- `client/src/components/gallery/VideoOverlay.tsx` - Add event firing
-- Video gallery components - Integrate tracking calls
+### Files Modified
+- [x] `client/src/lib/analytics.ts` - Added 6 GA4 video event functions
+- [x] `client/src/hooks/useGA4VideoAnalytics.ts` - Created new GA4 video tracking hook
+- [x] `client/src/components/gallery/VideoOverlay.tsx` - Integrated all video event tracking
+- Video gallery components - Main overlay component updated
+
+### Code Implementation Complete
+All GA4 video events are now implemented:
+- ✅ **video_open**: Tracks when modal/overlay opens
+- ✅ **video_start**: Tracks first playback (with deduplication)
+- ✅ **video_pause**: Tracks pause events with current position
+- ✅ **video_progress**: Tracks 25/50/75/100% milestones (once per session)
+- ✅ **video_complete**: Tracks completion at ≥90% or video end
+- ✅ **video_watch_time**: Batched watch time on pause/ended/page hide
 
 ---
 

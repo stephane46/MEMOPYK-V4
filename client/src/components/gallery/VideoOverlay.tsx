@@ -157,7 +157,7 @@ export default function VideoOverlay({
     }
   }, [isPlaying]);
 
-  // Progress tracking - using timeupdate event for reliability
+  // Progress tracking - using timeupdate event for reliability with GA4 analytics
   const updateProgress = useCallback(() => {
     const video = videoRef.current;
     if (video && !isNaN(video.duration) && video.duration > 0) {
@@ -165,39 +165,58 @@ export default function VideoOverlay({
       setProgress(progress);
       setCurrentTime(video.currentTime);
       setDuration(video.duration);
+      
+      // GA4 Analytics: Track progress milestones and completion
+      const videoId = getVideoId();
+      ga4Analytics.trackProgressMilestone(videoId, video.duration, video.currentTime, title);
+      ga4Analytics.trackCompletion(videoId, video.duration, video.currentTime, title);
     }
-  }, []);
+  }, [getVideoId, title, ga4Analytics]);
 
   // Video event handlers
   const handlePlay = useCallback(() => {
     setIsPlaying(true);
     resetControlsTimer();
-  }, [resetControlsTimer]);
+    
+    // GA4 Analytics: Track video start (first play) or resume
+    const videoId = getVideoId();
+    if (duration > 0) {
+      ga4Analytics.trackStart(videoId, duration, currentTime, title);
+      ga4Analytics.trackResume(videoId);
+    }
+  }, [resetControlsTimer, getVideoId, duration, currentTime, title, ga4Analytics]);
 
   const handlePause = useCallback(() => {
     setIsPlaying(false);
     setShowControls(true);
-  }, []);
+    
+    // GA4 Analytics: Track video pause
+    const videoId = getVideoId();
+    if (duration > 0) {
+      ga4Analytics.trackPause(videoId, duration, currentTime, title);
+    }
+  }, [getVideoId, duration, currentTime, title, ga4Analytics]);
 
   const handleEnded = useCallback(() => {
     setIsPlaying(false);
     setProgress(100);
     setShowControls(true);
     
-    // VIDEO ANALYTICS DISABLED - Switch to GA4-only for video analytics
+    // GA4 Analytics: Track video ended
+    const videoId = getVideoId();
+    if (duration > 0) {
+      ga4Analytics.trackEnded(videoId, duration, title);
+    }
+    
+    // Old VIDEO ANALYTICS DISABLED - Switch to GA4-only for video analytics
     if (VIDEO_ANALYTICS_ENABLED) {
-      // Track analytics when video ends - full completion
-      const videoId = getVideoId();
       const watchedDuration = Math.round(currentTime);
       const completionRate = duration > 0 ? Math.round((currentTime / duration) * 100) : 0;
-      const isCompleted = completionRate >= 90; // Consider 90%+ as completed
-      
+      const isCompleted = completionRate >= 90;
       console.log(`📊 VIDEO ENDED ANALYTICS: ${videoId} watched ${watchedDuration}s (${completionRate}% completion)`);
       trackVideoView(videoId, watchedDuration, isCompleted);
-    } else {
-      console.log('📊 VIDEO ANALYTICS DISABLED: Custom video tracking paused, switching to GA4-only');
     }
-  }, [currentTime, duration, getVideoId, trackVideoView, VIDEO_ANALYTICS_ENABLED]);
+  }, [currentTime, duration, getVideoId, trackVideoView, VIDEO_ANALYTICS_ENABLED, ga4Analytics, title]);
 
   const handleLoadedMetadata = useCallback(() => {
     const video = videoRef.current;
