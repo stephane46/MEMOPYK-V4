@@ -43,15 +43,44 @@ export async function qPlays(start: string, end: string, locale?: string) {
 }
 
 export async function qCompletes(start: string, end: string, locale?: string) {
-  // Test with minimal filter - just video_complete events, no locale filter
+  const localeExpr =
+    locale && locale !== "all"
+      ? [{ filter: { fieldName: "customEvent:locale", stringFilter: { value: locale } } }]
+      : [];
+
   const [res] = await client.runReport({
-    property: PROPERTY,
-    dateRanges: [range(start, end)],
+    property: PROPERTY, // "properties/501023254"
+    dateRanges: [{ startDate: start, endDate: end }],
     metrics: [{ name: "eventCount" }],
     dimensionFilter: {
-      filter: { fieldName: "eventName", stringFilter: { value: "video_complete" } }
+      andGroup: {
+        expressions: [
+          {
+            orGroup: {
+              expressions: [
+                // explicit completion event
+                { filter: { fieldName: "eventName", stringFilter: { value: "video_complete" } } },
+                // OR progress == 100
+                {
+                  andGroup: {
+                    expressions: [
+                      { filter: { fieldName: "eventName", stringFilter: { value: "video_progress" } } },
+                      // If progress_percent is STRING (most common):
+                      { filter: { fieldName: "customEvent:progress_percent", stringFilter: { value: "100" } } }
+                      // If it's NUMERIC instead, replace the line above with:
+                      // { filter: { fieldName: "customEvent:progress_percent", numericFilter: { operation: "EQUAL", value: { doubleValue: 100 } } } }
+                    ]
+                  }
+                }
+              ]
+            }
+          },
+          ...localeExpr
+        ]
+      }
     }
   });
+
   return Number(res.rows?.[0]?.metricValues?.[0]?.value ?? 0);
 }
 
