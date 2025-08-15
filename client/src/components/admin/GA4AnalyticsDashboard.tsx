@@ -6,6 +6,7 @@ import { Badge } from '@/components/ui/badge';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { TrendingUp, RefreshCw, Calendar, Globe, Play, Clock, Target, Trophy, Activity, BarChart3, AlertCircle } from 'lucide-react';
 import { useGA4VideoAnalytics } from '@/hooks/useGA4VideoAnalytics';
+import { TopVideosTable } from './TopVideosTable';
 
 // Calculate date range for the last 7 days by default
 const getDefaultDateRange = () => {
@@ -266,41 +267,11 @@ const GA4AnalyticsDashboard: React.FC = () => {
               <CardTitle className="text-lg">A. Top Videos Performance</CardTitle>
             </CardHeader>
             <CardContent>
-              {topVideos && topVideos.length ? (
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>Video ID</TableHead>
-                      <TableHead className="text-right">Plays</TableHead>
-                      <TableHead className="text-right">Avg Time</TableHead>
-                      <TableHead className="text-right">50%</TableHead>
-                      <TableHead className="text-right">Complete</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {topVideos.slice(0, 10).map((video, index) => (
-                      <TableRow key={video.video_id}>
-                        <TableCell className="font-medium">
-                          <div className="flex items-center gap-2">
-                            <Badge variant="outline" className="w-6 h-6 p-0 text-xs">
-                              {index + 1}
-                            </Badge>
-                            <span className="truncate max-w-24" title={video.video_id}>
-                              {video.video_id}
-                            </span>
-                          </div>
-                        </TableCell>
-                        <TableCell className="text-right">{formatNumber(video.plays)}</TableCell>
-                        <TableCell className="text-right">{formatDuration(video.avg_watch_time_sec)}</TableCell>
-                        <TableCell className="text-right">{formatPercent(video.reach50_pct)}</TableCell>
-                        <TableCell className="text-right">{formatPercent(video.complete100_pct)}</TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              ) : (
-                <div className="text-center py-4 text-gray-500">No video data available</div>
-              )}
+              <TopVideosTable 
+                startDate={startDate} 
+                endDate={endDate} 
+                locale={locale as "all"|"fr-FR"|"en-US"} 
+              />
             </CardContent>
           </Card>
 
