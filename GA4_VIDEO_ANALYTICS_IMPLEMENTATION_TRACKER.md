@@ -108,7 +108,7 @@ The key insight: **Test mode must be activated BEFORE visiting the site** to avo
 **Method**: URL parameter reinitializing after hard refresh
 
 **Test Each Event:**
-- [ ] **video_open**: Open gallery video overlay
+- [🔄] **video_open**: Opening gallery video overlay now...
   - Expect: Console shows video_open with video_id and locale
   - GA4 Realtime shows event under "Event name"
 - [ ] **video_start**: Click Play for first time in session
