@@ -44,7 +44,6 @@ export default function VideoOverlay({
   const videoStartTimeRef = useRef<number>(Date.now());
   const thumbnailStartTimeRef = useRef<number>(Date.now());
   const videoReadyRef = useRef<boolean>(false);
-  const playbackStartedRef = useRef<boolean>(false);
   
   // Minimum thumbnail display time (2 seconds)
   const MINIMUM_THUMBNAIL_DISPLAY_TIME = 2000;
@@ -241,44 +240,20 @@ export default function VideoOverlay({
     }
   }, []);
 
-  // Simple function to start video after brief thumbnail display with race condition prevention
+  // Simple function to start video after brief thumbnail display
   const startVideoPlayback = useCallback(() => {
     const video = videoRef.current;
-    
-    // Use ref-based flag to prevent race conditions from multiple mounts
-    if (playbackStartedRef.current) {
-      console.log('⏭️ Skipping startVideoPlayback - already started by another instance');
-      return;
-    }
-    
-    if (video && showThumbnail && !isPlaying) {
+    if (video) {
       console.log('🎬 STARTING VIDEO PLAYBACK');
-      playbackStartedRef.current = true; // Set immediately to prevent duplicates
       setShowThumbnail(false);
-      
       video.play().then(() => {
         console.log('✅ Video play() succeeded');
         setIsPlaying(true);
       }).catch((error) => {
         console.error('❌ Video play() failed:', error);
-        console.log('🔄 Retrying video playback in 500ms...');
-        // Retry once after a brief delay
-        setTimeout(() => {
-          if (video && !video.paused) return; // Don't retry if already playing
-          video.play().then(() => {
-            console.log('✅ Video play() retry succeeded');
-            setIsPlaying(true);
-          }).catch((retryError) => {
-            console.error('❌ Video play() retry also failed:', retryError);
-          });
-        }, 500);
       });
-    } else if (video && !showThumbnail) {
-      console.log('⏭️ Skipping startVideoPlayback - thumbnail already hidden');
-    } else if (video && isPlaying) {
-      console.log('⏭️ Skipping startVideoPlayback - video already playing');
     }
-  }, [showThumbnail, isPlaying]);
+  }, []);
 
   // Simple video ready handler with proper 2-second minimum display
   const handleCanPlay = useCallback(() => {

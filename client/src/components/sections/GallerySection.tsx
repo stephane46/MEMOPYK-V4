@@ -865,6 +865,7 @@ export default function GallerySection() {
       {/* Video Lightbox Modal */}
       {lightboxVideo && (
         <VideoOverlay
+          key={lightboxVideo.id} // Stable React key to prevent multiple mounts
           videoUrl={lightboxVideo.lightboxVideoUrl || getVideoUrl(lightboxVideo, 0)}
           title={getItemTitle(lightboxVideo)}
           sourceText={getItemSource(lightboxVideo)}
