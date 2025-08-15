@@ -12,6 +12,7 @@ import { setCacheAndOriginHeaders } from './cache-origin-headers';
 import { createCacheHitHeaders, createCacheMissHeaders, getUpstreamSource, getCacheAge } from './cache-delivery-headers';
 import { analyticsCleanupRoutes } from './routes-analytics-cache-cleanup';
 import { locationService } from './location-service';
+import { initializeGA4Service } from './ga4-service';
 
 // Contact form validation schema
 const contactFormSchema = z.object({
@@ -3599,6 +3600,127 @@ export async function registerRoutes(app: Express): Promise<void> {
     } catch (error) {
       console.error('Error deleting deployment marker:', error);
       res.status(500).json({ error: 'Failed to delete deployment marker' });
+    }
+  });
+
+  // ========== GA4 ANALYTICS ENDPOINTS ==========
+  let ga4Service: any = null;
+
+  // Initialize GA4 service function
+  const initGA4 = () => {
+    if (!ga4Service) {
+      try {
+        ga4Service = initializeGA4Service();
+        console.log('✅ GA4 Analytics service initialized');
+      } catch (error) {
+        console.error('❌ GA4 initialization failed:', error);
+        throw error;
+      }
+    }
+    return ga4Service;
+  };
+
+  // GA4 KPIs endpoint - returns main dashboard metrics
+  app.get("/api/ga4/kpis", async (req, res) => {
+    try {
+      const { startDate, endDate, locale = 'all' } = req.query;
+      
+      if (!startDate || !endDate) {
+        return res.status(400).json({ error: 'startDate and endDate are required' });
+      }
+
+      console.log('📊 GA4 KPIs request:', { startDate, endDate, locale });
+      const service = initGA4();
+      const result = await service.getKPIs(startDate as string, endDate as string, locale as string);
+      
+      console.log(`✅ GA4 KPIs: ${result.cached ? 'Cached' : 'Fresh'} data returned`);
+      res.json(result);
+    } catch (error) {
+      console.error('❌ GA4 KPIs error:', error);
+      res.status(500).json({ error: error instanceof Error ? error.message : 'Failed to fetch GA4 KPIs' });
+    }
+  });
+
+  // GA4 Top Videos endpoint - returns video performance table data
+  app.get("/api/ga4/top-videos", async (req, res) => {
+    try {
+      const { startDate, endDate, locale = 'all', limit = '10' } = req.query;
+      
+      if (!startDate || !endDate) {
+        return res.status(400).json({ error: 'startDate and endDate are required' });
+      }
+
+      console.log('🎬 GA4 Top Videos request:', { startDate, endDate, locale, limit });
+      const service = initGA4();
+      const result = await service.getTopVideos(
+        startDate as string, 
+        endDate as string, 
+        locale as string, 
+        parseInt(limit as string)
+      );
+      
+      console.log(`✅ GA4 Top Videos: ${result.cached ? 'Cached' : 'Fresh'} data, ${result.rows.length} videos`);
+      res.json(result);
+    } catch (error) {
+      console.error('❌ GA4 Top Videos error:', error);
+      res.status(500).json({ error: error instanceof Error ? error.message : 'Failed to fetch GA4 top videos' });
+    }
+  });
+
+  // GA4 Funnel endpoint - returns watch progress funnel data
+  app.get("/api/ga4/funnel", async (req, res) => {
+    try {
+      const { startDate, endDate, locale = 'all' } = req.query;
+      
+      if (!startDate || !endDate) {
+        return res.status(400).json({ error: 'startDate and endDate are required' });
+      }
+
+      console.log('📈 GA4 Funnel request:', { startDate, endDate, locale });
+      const service = initGA4();
+      const result = await service.getFunnelData(startDate as string, endDate as string, locale as string);
+      
+      console.log(`✅ GA4 Funnel: ${result.cached ? 'Cached' : 'Fresh'} data, ${result.rows.length} data points`);
+      res.json(result);
+    } catch (error) {
+      console.error('❌ GA4 Funnel error:', error);
+      res.status(500).json({ error: error instanceof Error ? error.message : 'Failed to fetch GA4 funnel data' });
+    }
+  });
+
+  // GA4 Trend endpoint - returns time series data
+  app.get("/api/ga4/trend", async (req, res) => {
+    try {
+      const { startDate, endDate, locale = 'all' } = req.query;
+      
+      if (!startDate || !endDate) {
+        return res.status(400).json({ error: 'startDate and endDate are required' });
+      }
+
+      console.log('📊 GA4 Trend request:', { startDate, endDate, locale });
+      const service = initGA4();
+      const result = await service.getTrendData(startDate as string, endDate as string, locale as string);
+      
+      console.log(`✅ GA4 Trend: ${result.cached ? 'Cached' : 'Fresh'} data, ${result.days.length} days`);
+      res.json(result);
+    } catch (error) {
+      console.error('❌ GA4 Trend error:', error);
+      res.status(500).json({ error: error instanceof Error ? error.message : 'Failed to fetch GA4 trend data' });
+    }
+  });
+
+  // GA4 Realtime endpoint - returns live activity data
+  app.get("/api/ga4/realtime", async (req, res) => {
+    try {
+      console.log('🔴 GA4 Realtime request');
+      const service = initGA4();
+      const result = await service.getRealtimeData();
+      
+      console.log(`✅ GA4 Realtime: ${result.cached ? 'Cached' : 'Fresh'} data, ${result.active} active, ${result.recent.length} recent events`);
+      res.json(result);
+    } catch (error) {
+      console.error('❌ GA4 Realtime error:', error);
+      res.status(500).json({ error: error instanceof Error ? error.message : 'Failed to fetch GA4 realtime data' });
     }
   });
 

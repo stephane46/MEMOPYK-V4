@@ -9,7 +9,7 @@ import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
 import { Badge } from '@/components/ui/badge';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
-import { ArrowUp, ArrowDown, Play, RefreshCw, BarChart3, Video, HardDrive, Users, MessageSquare, FileText, LogOut, TestTube, Rocket, X, Type, Save, Palette, ChevronUp, ChevronDown, Trash2, Eye, EyeOff, Upload, FileVideo, Database, Check, Zap, Search, Monitor, Tablet, Smartphone, Clock } from 'lucide-react';
+import { ArrowUp, ArrowDown, Play, RefreshCw, BarChart3, Video, HardDrive, Users, MessageSquare, FileText, LogOut, TestTube, Rocket, X, Type, Save, Palette, ChevronUp, ChevronDown, Trash2, Eye, EyeOff, Upload, FileVideo, Database, Check, Zap, Search, Monitor, Tablet, Smartphone, Clock, TrendingUp } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import GalleryManagementNew from '@/components/admin/GalleryManagementNew';
 import FormatBadgeManager from '@/components/admin/FormatBadgeManager';
@@ -18,6 +18,7 @@ import FAQManagementWorking from '@/components/admin/FAQManagementWorking';
 import { LegalDocumentManagement } from '@/components/admin/LegalDocumentManagement';
 import { CtaManagement } from '@/components/admin/CtaManagement';
 import { AnalyticsDashboard } from '@/components/admin/AnalyticsDashboard';
+import GA4AnalyticsDashboard from '@/components/admin/GA4AnalyticsDashboard';
 import VideoCacheStatus from '@/components/admin/VideoCacheStatus';
 import SeoManagement from '@/components/admin/SeoManagement';
 import SystemTestDashboard from '@/components/admin/SystemTestDashboard';
@@ -237,6 +238,7 @@ export default function AdminPage() {
     { id: 'legal-docs', label: 'Documents Légaux', icon: FileText },
     { id: 'seo-management', label: 'Gestion SEO', icon: Search },
     { id: 'analytics', label: 'Analytiques', icon: BarChart3 },
+    { id: 'analytics-ga', label: 'Analytics GA', icon: TrendingUp },
     { id: 'tests', label: 'Tests', icon: TestTube },
     { id: 'deployment', label: 'Déploiement', icon: Rocket },
   ];
@@ -1461,6 +1463,11 @@ export default function AdminPage() {
           {/* Analytics Dashboard */}
           {activeSection === 'analytics' && (
             <AnalyticsDashboard />
+          )}
+
+          {/* GA4 Analytics Dashboard */}
+          {activeSection === 'analytics-ga' && (
+            <GA4AnalyticsDashboard />
           )}
 
           {/* Gallery */}

@@ -1,450 +1,411 @@
-import React, { useState, useEffect } from 'react';
-import { useQuery } from '@tanstack/react-query';
-import { apiRequest } from '@/lib/queryClient';
+import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Badge } from '@/components/ui/badge';
-import { RefreshCw, Play, Clock, Target, Globe, Users, TrendingUp, Activity } from 'lucide-react';
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, LineChart, Line, ReferenceLine } from 'recharts';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { TrendingUp, RefreshCw, Calendar, Globe, Play, Clock, Target, Trophy, Activity, BarChart3, AlertCircle } from 'lucide-react';
+import { useGA4VideoAnalytics } from '@/hooks/useGA4VideoAnalytics';
 
-interface GA4VideoEvent {
-  video_id: string;
-  video_title: string;
-  event_name: string;
-  locale: string;
-  position_sec: number;
-  duration_sec: number;
-  percent?: number;
-  watch_time_sec?: number;
-  timestamp: string;
-}
-
-interface VideoStats {
-  video_id: string;
-  video_title: string;
-  plays: number;
-  avg_watch_time: number;
-  completion_rate: number;
-  progress_25: number;
-  progress_50: number;
-  progress_75: number;
-  progress_100: number;
-  locale_breakdown: { [key: string]: number };
-}
-
-interface KPIData {
-  total_plays: number;
-  avg_watch_time: number;
-  completion_rate: number;
-  top_locale: string;
-}
-
-interface FunnelData {
-  video_title: string;
-  progress_25: number;
-  progress_50: number;
-  progress_75: number;
-  progress_100: number;
-}
-
-interface TrendData {
-  date: string;
-  plays: number;
-  avg_watch_time: number;
-}
-
-interface RealtimeData {
-  active_viewers: number;
-  last_events: GA4VideoEvent[];
-}
+// Calculate date range for the last 7 days by default
+const getDefaultDateRange = () => {
+  const end = new Date();
+  const start = new Date();
+  start.setDate(start.getDate() - 6); // 7 days total including today
+  
+  return {
+    startDate: start.toISOString().split('T')[0],
+    endDate: end.toISOString().split('T')[0]
+  };
+};
 
 const GA4AnalyticsDashboard: React.FC = () => {
-  const [dateRange, setDateRange] = useState('7d');
-  const [localeFilter, setLocaleFilter] = useState('all');
-  const [lastRefresh, setLastRefresh] = useState<Date>(new Date());
+  const defaultRange = getDefaultDateRange();
+  const [startDate, setStartDate] = useState(defaultRange.startDate);
+  const [endDate, setEndDate] = useState(defaultRange.endDate);
+  const [locale, setLocale] = useState('all');
 
-  // Simulated data queries (will be replaced with real GA4 data)
-  const { data: kpiData, isLoading: kpiLoading, refetch: refetchKPI } = useQuery<KPIData>({
-    queryKey: ['ga4-kpi', dateRange, localeFilter],
-    queryFn: async () => {
-      // Placeholder for GA4 API call
-      return {
-        total_plays: 247,
-        avg_watch_time: 45.3,
-        completion_rate: 67.8,
-        top_locale: 'fr-FR'
-      };
+  const { kpis, topVideos, funnel, trend, realtime, isLoading, isRefreshing, error, allCached, refresh } = useGA4VideoAnalytics({
+    startDate,
+    endDate,
+    locale
+  });
+
+  // Date range presets
+  const applyDateRange = (days: number) => {
+    const end = new Date();
+    const start = new Date();
+    start.setDate(start.getDate() - (days - 1));
+    
+    setStartDate(start.toISOString().split('T')[0]);
+    setEndDate(end.toISOString().split('T')[0]);
+  };
+
+  // Format numbers for display
+  const formatNumber = (num: number): string => {
+    if (num >= 1000) {
+      return (num / 1000).toFixed(1) + 'k';
     }
-  });
+    return num.toString();
+  };
 
-  const { data: videoStats, isLoading: videoStatsLoading, refetch: refetchVideoStats } = useQuery<VideoStats[]>({
-    queryKey: ['ga4-video-stats', dateRange, localeFilter],
-    queryFn: async () => {
-      // Placeholder for GA4 API call
-      return [
-        {
-          video_id: 'PomGalleryC.mp4',
-          video_title: 'L\'été de Pom',
-          plays: 89,
-          avg_watch_time: 52.4,
-          completion_rate: 71.9,
-          progress_25: 95,
-          progress_50: 87,
-          progress_75: 78,
-          progress_100: 71,
-          locale_breakdown: { 'fr-FR': 67, 'en-US': 22 }
-        },
-        {
-          video_id: 'VitaminSeaC.mp4', 
-          video_title: 'Our Vitamin Sea',
-          plays: 156,
-          avg_watch_time: 41.2,
-          completion_rate: 64.7,
-          progress_25: 92,
-          progress_50: 84,
-          progress_75: 73,
-          progress_100: 64,
-          locale_breakdown: { 'fr-FR': 89, 'en-US': 67 }
-        },
-        {
-          video_id: 'safari-1.mp4',
-          video_title: 'Safari with friends', 
-          plays: 2,
-          avg_watch_time: 38.9,
-          completion_rate: 50.0,
-          progress_25: 100,
-          progress_50: 100,
-          progress_75: 50,
-          progress_100: 50,
-          locale_breakdown: { 'fr-FR': 1, 'en-US': 1 }
-        }
-      ];
-    }
-  });
-
-  const { data: funnelData, isLoading: funnelLoading } = useQuery<FunnelData[]>({
-    queryKey: ['ga4-funnel', dateRange, localeFilter],
-    queryFn: async () => {
-      return videoStats?.map(video => ({
-        video_title: video.video_title,
-        progress_25: video.progress_25,
-        progress_50: video.progress_50,
-        progress_75: video.progress_75,
-        progress_100: video.progress_100
-      })) || [];
-    },
-    enabled: !!videoStats
-  });
-
-  const { data: trendData, isLoading: trendLoading } = useQuery<TrendData[]>({
-    queryKey: ['ga4-trends', dateRange, localeFilter],
-    queryFn: async () => {
-      // Placeholder trend data
-      const dates = [];
-      for (let i = 6; i >= 0; i--) {
-        const date = new Date();
-        date.setDate(date.getDate() - i);
-        dates.push({
-          date: date.toISOString().split('T')[0],
-          plays: Math.floor(Math.random() * 50) + 20,
-          avg_watch_time: Math.floor(Math.random() * 20) + 35
-        });
-      }
-      return dates;
-    }
-  });
-
-  const { data: realtimeData, isLoading: realtimeLoading } = useQuery<RealtimeData>({
-    queryKey: ['ga4-realtime'],
-    queryFn: async () => {
-      return {
-        active_viewers: Math.floor(Math.random() * 8) + 2,
-        last_events: [
-          {
-            video_id: 'PomGalleryC.mp4',
-            video_title: 'L\'été de Pom',
-            event_name: 'video_progress',
-            locale: 'fr-FR',
-            position_sec: 34,
-            duration_sec: 67,
-            percent: 50,
-            timestamp: new Date(Date.now() - 2 * 60 * 1000).toISOString()
-          },
-          {
-            video_id: 'VitaminSeaC.mp4',
-            video_title: 'Our Vitamin Sea', 
-            event_name: 'video_complete',
-            locale: 'en-US',
-            position_sec: 58,
-            duration_sec: 64,
-            timestamp: new Date(Date.now() - 5 * 60 * 1000).toISOString()
-          },
-          {
-            video_id: 'PomGalleryC.mp4',
-            video_title: 'L\'été de Pom',
-            event_name: 'video_open',
-            locale: 'fr-FR', 
-            position_sec: 0,
-            duration_sec: 67,
-            timestamp: new Date(Date.now() - 8 * 60 * 1000).toISOString()
-          }
-        ]
-      };
-    },
-    refetchInterval: 30000 // Refresh every 30 seconds
-  });
-
-  const handleRefresh = () => {
-    refetchKPI();
-    refetchVideoStats();
-    setLastRefresh(new Date());
+  const formatPercent = (decimal: number): string => {
+    return `${(decimal * 100).toFixed(1)}%`;
   };
 
   const formatDuration = (seconds: number): string => {
-    const mins = Math.floor(seconds / 60);
-    const secs = Math.floor(seconds % 60);
-    return `${mins}:${secs.toString().padStart(2, '0')}`;
+    if (seconds < 60) {
+      return `${Math.round(seconds)}s`;
+    }
+    const minutes = Math.floor(seconds / 60);
+    const remainingSeconds = Math.round(seconds % 60);
+    return `${minutes}m ${remainingSeconds}s`;
   };
 
-  const formatTimeAgo = (timestamp: string): string => {
-    const diff = Date.now() - new Date(timestamp).getTime();
-    const minutes = Math.floor(diff / 60000);
-    if (minutes < 1) return 'À l\'instant';
-    if (minutes < 60) return `Il y a ${minutes} min`;
-    const hours = Math.floor(minutes / 60);
-    return `Il y a ${hours}h${minutes % 60}min`;
-  };
+  // Get top locale from KPIs data
+  const topLocale = kpis?.kpis.plays_by_locale.reduce((prev, current) => 
+    (prev.users > current.users) ? prev : current
+  );
+
+  // Simple funnel chart data processing
+  const funnelSteps = funnel?.rows.reduce((acc, row) => {
+    if (!acc[row.percent]) {
+      acc[row.percent] = 0;
+    }
+    acc[row.percent] += row.count;
+    return acc;
+  }, {} as Record<number, number>) || {};
+
+  const funnelData = [25, 50, 75, 100].map(percent => ({
+    label: `${percent}%`,
+    count: funnelSteps[percent] || 0
+  }));
 
   return (
-    <div className="space-y-6 p-6" data-testid="ga4-analytics-dashboard">
-      {/* Controls */}
-      <div className="flex items-center justify-between">
-        <h1 className="text-3xl font-bold">Analytics GA4</h1>
-        <div className="flex items-center space-x-4">
-          <Select value={dateRange} onValueChange={setDateRange}>
-            <SelectTrigger className="w-32">
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="24h">24 heures</SelectItem>
-              <SelectItem value="7d">7 jours</SelectItem>
-              <SelectItem value="30d">30 jours</SelectItem>
-              <SelectItem value="90d">90 jours</SelectItem>
-            </SelectContent>
-          </Select>
+    <div className="space-y-6">
+      <div className="mb-6">
+        <h2 className="text-2xl font-bold text-gray-900 dark:text-white flex items-center gap-2">
+          <TrendingUp className="h-6 w-6 text-orange-600" />
+          Analytics GA4 - Video Performance Dashboard
+        </h2>
+        <p className="text-gray-600 dark:text-gray-400">
+          Real-time video analytics from Google Analytics 4 Data API - Gallery videos only
+        </p>
+      </div>
 
-          <Select value={localeFilter} onValueChange={setLocaleFilter}>
-            <SelectTrigger className="w-32">
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">Toutes</SelectItem>
-              <SelectItem value="fr-FR">Français</SelectItem>
-              <SelectItem value="en-US">Anglais</SelectItem>
-            </SelectContent>
-          </Select>
+      {/* Controls Section */}
+      <Card>
+        <CardHeader className="pb-3">
+          <CardTitle className="text-lg">Dashboard Controls</CardTitle>
+        </CardHeader>
+        <CardContent className="flex flex-wrap items-center gap-4">
+          {/* Date Range Selector */}
+          <div className="flex items-center gap-2">
+            <Calendar className="h-4 w-4 text-gray-500" />
+            <span className="text-sm font-medium">Date Range:</span>
+            <div className="flex gap-2">
+              <Button
+                variant={startDate === getDefaultDateRange().startDate ? 'default' : 'outline'}
+                size="sm"
+                onClick={() => applyDateRange(7)}
+              >
+                Last 7 days
+              </Button>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => applyDateRange(14)}
+              >
+                Last 14 days
+              </Button>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => applyDateRange(30)}
+              >
+                Last 30 days
+              </Button>
+            </div>
+          </div>
 
-          <Button onClick={handleRefresh} variant="outline" size="sm" data-testid="refresh-button">
-            <RefreshCw className="h-4 w-4 mr-2" />
-            Actualiser
+          {/* Custom Date Inputs */}
+          <div className="flex items-center gap-2">
+            <input
+              type="date"
+              value={startDate}
+              onChange={(e) => setStartDate(e.target.value)}
+              className="px-2 py-1 border rounded text-sm"
+            />
+            <span className="text-sm text-gray-500">to</span>
+            <input
+              type="date"
+              value={endDate}
+              onChange={(e) => setEndDate(e.target.value)}
+              className="px-2 py-1 border rounded text-sm"
+            />
+          </div>
+
+          {/* Locale Selector */}
+          <div className="flex items-center gap-2">
+            <Globe className="h-4 w-4 text-gray-500" />
+            <span className="text-sm font-medium">Locale:</span>
+            <Select value={locale} onValueChange={setLocale}>
+              <SelectTrigger className="w-32">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All Locales</SelectItem>
+                <SelectItem value="fr-FR">French</SelectItem>
+                <SelectItem value="en-US">English</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+
+          {/* Refresh Button */}
+          <Button
+            onClick={refresh}
+            disabled={isRefreshing}
+            variant="outline"
+            size="sm"
+            className="flex items-center gap-2"
+          >
+            <RefreshCw className={`h-4 w-4 ${isRefreshing ? 'animate-spin' : ''}`} />
+            Refresh
           </Button>
+
+          {/* Cache Status */}
+          {allCached && (
+            <Badge variant="secondary" className="text-xs">
+              Cached Data
+            </Badge>
+          )}
+        </CardContent>
+      </Card>
+
+      {/* Error Display */}
+      {error && (
+        <Card className="border-red-200 bg-red-50">
+          <CardContent className="pt-4">
+            <div className="flex items-center gap-2 text-red-700">
+              <AlertCircle className="h-4 w-4" />
+              <span className="font-medium">Error loading GA4 data:</span>
+              <span>{error.message}</span>
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
+      {/* Loading State */}
+      {isLoading && (
+        <div className="flex items-center justify-center py-8">
+          <div className="flex items-center gap-2 text-gray-600">
+            <RefreshCw className="h-5 w-5 animate-spin" />
+            <span>Loading GA4 analytics data...</span>
+          </div>
         </div>
-      </div>
+      )}
 
-      {/* KPIs */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <Card data-testid="kpi-plays">
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Lectures</CardTitle>
-            <Play className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{kpiLoading ? '-' : kpiData?.total_plays}</div>
-            <p className="text-xs text-muted-foreground">Total des ouvertures vidéo</p>
-          </CardContent>
-        </Card>
-
-        <Card data-testid="kpi-watch-time">
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Temps Moyen</CardTitle>
-            <Clock className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">
-              {kpiLoading ? '-' : formatDuration(kpiData?.avg_watch_time || 0)}
-            </div>
-            <p className="text-xs text-muted-foreground">Durée moyenne de visionnage</p>
-          </CardContent>
-        </Card>
-
-        <Card data-testid="kpi-completion">
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Taux de Completion</CardTitle>
-            <Target className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">
-              {kpiLoading ? '-' : `${kpiData?.completion_rate}%`}
-            </div>
-            <p className="text-xs text-muted-foreground">Vidéos regardées à 90%+</p>
-          </CardContent>
-        </Card>
-
-        <Card data-testid="kpi-locale">
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Langue Principale</CardTitle>
-            <Globe className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">
-              {kpiLoading ? '-' : (kpiData?.top_locale === 'fr-FR' ? 'FR' : 'EN')}
-            </div>
-            <p className="text-xs text-muted-foreground">Langue la plus utilisée</p>
-          </CardContent>
-        </Card>
-      </div>
-
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* A) Top Videos Table */}
-        <Card data-testid="top-videos-table">
-          <CardHeader>
-            <CardTitle>Top Vidéos de la Galerie</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-4">
-              {videoStatsLoading ? (
-                <div className="text-center py-4">Chargement...</div>
-              ) : (
-                videoStats?.map((video) => (
-                  <div key={video.video_id} className="flex items-center justify-between p-3 border rounded-lg">
-                    <div className="flex-1">
-                      <h4 className="font-medium">{video.video_title}</h4>
-                      <div className="flex space-x-4 text-sm text-muted-foreground mt-1">
-                        <span>{video.plays} lectures</span>
-                        <span>{formatDuration(video.avg_watch_time)} moy</span>
-                        <span>{video.progress_50}% à 50%</span>
-                        <span>{video.progress_100}% complet</span>
-                      </div>
-                    </div>
-                    <div className="flex space-x-1">
-                      {Object.entries(video.locale_breakdown).map(([locale, count]) => (
-                        <Badge key={locale} variant="outline" className="text-xs">
-                          {locale === 'fr-FR' ? 'FR' : 'EN'}: {count}
-                        </Badge>
-                      ))}
-                    </div>
-                  </div>
-                ))
-              )}
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* B) Watch Funnel Chart */}
-        <Card data-testid="watch-funnel-chart">
-          <CardHeader>
-            <CardTitle>Entonnoir de Visionnage</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="h-64">
-              {funnelLoading ? (
-                <div className="flex items-center justify-center h-full">Chargement...</div>
-              ) : (
-                <ResponsiveContainer width="100%" height="100%">
-                  <BarChart data={funnelData}>
-                    <CartesianGrid strokeDasharray="3 3" />
-                    <XAxis dataKey="video_title" tick={false} />
-                    <YAxis />
-                    <Tooltip />
-                    <Bar dataKey="progress_25" stackId="a" fill="#22c55e" name="25%" />
-                    <Bar dataKey="progress_50" stackId="a" fill="#3b82f6" name="50%" />
-                    <Bar dataKey="progress_75" stackId="a" fill="#f59e0b" name="75%" />
-                    <Bar dataKey="progress_100" stackId="a" fill="#ef4444" name="100%" />
-                  </BarChart>
-                </ResponsiveContainer>
-              )}
-            </div>
-          </CardContent>
-        </Card>
-      </div>
-
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* C) Trend Over Time */}
-        <Card data-testid="trend-chart">
-          <CardHeader>
-            <CardTitle>Tendances Temporelles</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="h-64">
-              {trendLoading ? (
-                <div className="flex items-center justify-center h-full">Chargement...</div>
-              ) : (
-                <ResponsiveContainer width="100%" height="100%">
-                  <LineChart data={trendData}>
-                    <CartesianGrid strokeDasharray="3 3" />
-                    <XAxis dataKey="date" />
-                    <YAxis yAxisId="left" />
-                    <YAxis yAxisId="right" orientation="right" />
-                    <Tooltip />
-                    <Line yAxisId="left" type="monotone" dataKey="plays" stroke="#3b82f6" name="Lectures/jour" />
-                    <Line yAxisId="right" type="monotone" dataKey="avg_watch_time" stroke="#f59e0b" name="Temps moy/jour" />
-                  </LineChart>
-                </ResponsiveContainer>
-              )}
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* D) Realtime Activity */}
-        <Card data-testid="realtime-activity">
-          <CardHeader>
-            <CardTitle className="flex items-center space-x-2">
-              <Activity className="h-5 w-5" />
-              <span>Temps Réel</span>
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-4">
-              <div className="flex items-center space-x-2">
-                <Users className="h-4 w-4 text-green-500" />
-                <span className="text-sm">
-                  <strong>{realtimeData?.active_viewers || 0}</strong> utilisateurs actifs (30 min)
-                </span>
+      {/* KPIs Section */}
+      {kpis && !isLoading && (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+          <Card>
+            <CardContent className="pt-4">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Video Plays</p>
+                  <p className="text-2xl font-bold">{formatNumber(kpis.kpis.plays_unique_viewers)}</p>
+                </div>
+                <Play className="h-8 w-8 text-blue-600" />
               </div>
-              
-              <div className="space-y-2">
-                <h4 className="text-sm font-medium">Derniers événements:</h4>
-                {realtimeLoading ? (
-                  <div className="text-sm text-muted-foreground">Chargement...</div>
-                ) : (
-                  realtimeData?.last_events.map((event, idx) => (
-                    <div key={idx} className="flex items-center justify-between text-xs bg-muted p-2 rounded">
-                      <div>
-                        <span className="font-medium">{event.video_title}</span>
-                        <Badge variant="outline" className="ml-2 text-xs">
-                          {event.event_name === 'video_open' ? 'Ouvert' :
-                           event.event_name === 'video_start' ? 'Démarré' :
-                           event.event_name === 'video_progress' ? `${event.percent}%` :
-                           event.event_name === 'video_complete' ? 'Complet' : event.event_name}
-                        </Badge>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardContent className="pt-4">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Avg Watch Time</p>
+                  <p className="text-2xl font-bold">{formatDuration(kpis.kpis.avg_watch_time_sec)}</p>
+                </div>
+                <Clock className="h-8 w-8 text-green-600" />
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardContent className="pt-4">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Completion Rate</p>
+                  <p className="text-2xl font-bold">{formatPercent(kpis.kpis.completion_rate)}</p>
+                </div>
+                <Target className="h-8 w-8 text-orange-600" />
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardContent className="pt-4">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Top Locale</p>
+                  <p className="text-2xl font-bold">{topLocale?.locale || 'N/A'}</p>
+                  <p className="text-sm text-gray-500">{topLocale ? `${formatNumber(topLocale.users)} plays` : ''}</p>
+                </div>
+                <Trophy className="h-8 w-8 text-yellow-600" />
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+      )}
+
+      {/* Main Content Grid */}
+      {!isLoading && (
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          {/* Top Videos Table */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-lg">A. Top Videos Performance</CardTitle>
+            </CardHeader>
+            <CardContent>
+              {topVideos?.rows.length ? (
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>Video ID</TableHead>
+                      <TableHead className="text-right">Plays</TableHead>
+                      <TableHead className="text-right">Avg Time</TableHead>
+                      <TableHead className="text-right">50%</TableHead>
+                      <TableHead className="text-right">Complete</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {topVideos.rows.slice(0, 10).map((video, index) => (
+                      <TableRow key={video.video_id}>
+                        <TableCell className="font-medium">
+                          <div className="flex items-center gap-2">
+                            <Badge variant="outline" className="w-6 h-6 p-0 text-xs">
+                              {index + 1}
+                            </Badge>
+                            <span className="truncate max-w-24" title={video.video_id}>
+                              {video.video_id}
+                            </span>
+                          </div>
+                        </TableCell>
+                        <TableCell className="text-right">{formatNumber(video.plays)}</TableCell>
+                        <TableCell className="text-right">{formatDuration(video.avg_watch_time_sec)}</TableCell>
+                        <TableCell className="text-right">{formatPercent(video.reach50_pct)}</TableCell>
+                        <TableCell className="text-right">{formatPercent(video.complete100_pct)}</TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              ) : (
+                <div className="text-center py-4 text-gray-500">No video data available</div>
+              )}
+            </CardContent>
+          </Card>
+
+          {/* Watch Funnel Chart */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-lg">B. Watch Progress Funnel</CardTitle>
+            </CardHeader>
+            <CardContent>
+              {funnelData.some(d => d.count > 0) ? (
+                <div className="space-y-3">
+                  {funnelData.map((step, index) => {
+                    const maxCount = Math.max(...funnelData.map(d => d.count));
+                    const width = maxCount > 0 ? (step.count / maxCount) * 100 : 0;
+                    
+                    return (
+                      <div key={step.label} className="flex items-center gap-3">
+                        <div className="w-12 text-sm font-medium">{step.label}</div>
+                        <div className="flex-1 h-6 bg-gray-200 rounded-full overflow-hidden">
+                          <div
+                            className="h-full bg-gradient-to-r from-blue-500 to-blue-600 transition-all duration-500"
+                            style={{ width: `${width}%` }}
+                          />
+                        </div>
+                        <div className="w-16 text-sm text-right">{formatNumber(step.count)}</div>
                       </div>
-                      <span className="text-muted-foreground">{formatTimeAgo(event.timestamp)}</span>
-                    </div>
-                  ))
+                    );
+                  })}
+                </div>
+              ) : (
+                <div className="text-center py-4 text-gray-500">No funnel data available</div>
+              )}
+            </CardContent>
+          </Card>
+
+          {/* Trend Over Time */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-lg">C. Trend Over Time</CardTitle>
+            </CardHeader>
+            <CardContent>
+              {trend?.days.length ? (
+                <div className="space-y-4">
+                  <div className="grid grid-cols-7 gap-1">
+                    {trend.days.slice(-7).map((day) => (
+                      <div key={day.date} className="text-center">
+                        <div className="text-xs text-gray-500 mb-1">
+                          {new Date(day.date).toLocaleDateString('en', { weekday: 'short' })}
+                        </div>
+                        <div className="h-20 bg-gray-200 rounded flex flex-col justify-end overflow-hidden">
+                          <div
+                            className="bg-gradient-to-t from-green-500 to-green-400 transition-all duration-500"
+                            style={{ 
+                              height: `${Math.max(5, (day.plays / Math.max(...trend.days.map(d => d.plays))) * 100)}%` 
+                            }}
+                          />
+                        </div>
+                        <div className="text-xs font-medium mt-1">{formatNumber(day.plays)}</div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              ) : (
+                <div className="text-center py-4 text-gray-500">No trend data available</div>
+              )}
+            </CardContent>
+          </Card>
+
+          {/* Realtime Activity */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-lg flex items-center gap-2">
+                D. Realtime Activity
+                <Activity className="h-5 w-5 text-red-500" />
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-4">
+                <div className="flex items-center justify-between">
+                  <span className="text-sm font-medium">Active Users:</span>
+                  <Badge variant="default" className="bg-green-600">
+                    {realtime?.active || 0} live
+                  </Badge>
+                </div>
+                
+                {realtime?.recent.length ? (
+                  <div className="space-y-2 max-h-32 overflow-y-auto">
+                    <div className="text-sm font-medium text-gray-600">Recent Events:</div>
+                    {realtime.recent.slice(0, 5).map((event, index) => (
+                      <div key={index} className="text-xs bg-gray-50 p-2 rounded">
+                        <div className="font-medium">{event.video_id}</div>
+                        <div className="text-gray-500">{event.locale} • {event.event}</div>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <div className="text-sm text-gray-500">No recent activity</div>
                 )}
               </div>
-            </div>
-          </CardContent>
-        </Card>
-      </div>
-
-      <div className="flex justify-between items-center text-sm text-muted-foreground">
-        <span>Dernière actualisation: {lastRefresh.toLocaleTimeString()}</span>
-        <Badge variant="secondary">
-          GA4 - {dateRange} | {localeFilter === 'all' ? 'Toutes langues' : localeFilter}
-        </Badge>
-      </div>
+            </CardContent>
+          </Card>
+        </div>
+      )}
     </div>
   );
 };
