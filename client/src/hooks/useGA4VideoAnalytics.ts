@@ -18,6 +18,7 @@ interface VideoSession {
   hasCompleted: boolean;
 }
 
+// Force bundle regeneration to clear browser cache - August 15, 2025
 export const useGA4VideoAnalytics = () => {
   const sessionsRef = useRef<Map<string, VideoSession>>(new Map());
   const watchTimeIntervalRef = useRef<NodeJS.Timeout | null>(null);
