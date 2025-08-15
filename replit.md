@@ -43,6 +43,7 @@ Visual consistency priority: Extremely detail-oriented about spacing and formatt
 - **Static Image Generation**: Automated Sharp-based cropping and generation of static images for gallery thumbnails upon upload.
 - **Real-time Analytics**: Backend system for tracking visitors, performance, and engagement with IP management and accurate session/view tracking, including IP exclusion and geolocation enrichment.
 - **Google Analytics Integration**: Pattern A dual implementation with static HTML tag (immediate load) and React SPA tracking (route changes). GA4 tracking with manual page_view control, custom event tracking, and comprehensive user behavior analytics. Successfully resolved timing issues with retry mechanism and eliminated duplicate loading by removing dynamic script injection (August 2025).
+- **Bundle Optimization System**: Comprehensive dependency cleanup removing 74 unused packages (16MB reduction). Eliminated Uppy file upload components, Passport authentication, and unused Radix UI components while maintaining essential functionality. Bundle size reduced from 476MB to 460MB for faster deployments (August 2025).
 - **Direct Supabase Upload System**: Facilitates large file uploads bypassing deployment limits.
 - **SEO Management System**: Comprehensive interface for page-level meta tags, keywords, redirects, image SEO, and global settings.
 - **Deployment Optimizations**: Fast health check endpoints, production video cache preloading, comprehensive error handling, routing priorities, and automated public asset copying.
