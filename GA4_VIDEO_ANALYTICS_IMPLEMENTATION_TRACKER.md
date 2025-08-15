@@ -175,6 +175,91 @@ The key insight: **Test mode must be activated BEFORE visiting the site** to avo
 
 ---
 
+## CRITICAL: React useEffect Dependency Guidelines
+
+### What Broke the Video Gallery (August 15, 2025)
+
+**Root Cause**: When implementing GA4 video analytics, unstable dependencies were added to VideoOverlay's useEffect, causing multiple component mounts and black screen issues.
+
+**Specific Problem**: The useEffect had these unstable dependencies:
+```typescript
+// ❌ BROKEN - These change on every render
+useEffect(() => {
+  // ... analytics setup
+}, [videoUrl, getVideoId, title, ga4Analytics]); 
+```
+
+**Why This Breaks**:
+- `ga4Analytics` - Hook returns new object each render
+- `getVideoId` - Callback recreated when `videoUrl` changes  
+- `title`, `videoUrl` - Props changing trigger re-renders
+- Result: useEffect runs multiple times → multiple video elements → black screen
+
+### Prevention Rules for GA4 Implementation
+
+#### 1. **useEffect Dependencies - CRITICAL**
+```typescript
+// ✅ CORRECT - Mount once only for initialization
+useEffect(() => {
+  const videoId = extractVideoId(videoUrl); // Extract inline
+  ga4Analytics.trackOpen(videoId, title);
+  // ... setup logic
+}, []); // Empty dependencies
+
+// ✅ CORRECT - Memoized callbacks for event handlers  
+const handlePlay = useCallback(() => {
+  const videoId = extractVideoId(videoUrl);
+  ga4Analytics.trackStart(videoId);
+}, [videoUrl]); // Only stable dependencies
+```
+
+#### 2. **Hook Integration Guidelines**
+```typescript
+// ❌ WRONG - Hook recreates object
+const ga4Analytics = useGA4VideoAnalytics();
+
+// ✅ CORRECT - Memoized hook  
+const ga4Analytics = useMemo(() => useGA4VideoAnalytics(), []);
+
+// ✅ EVEN BETTER - Extract functions individually
+const { trackOpen, trackStart } = useGA4VideoAnalytics();
+```
+
+#### 3. **Stable Reference Patterns**
+```typescript
+// ✅ Extract data inside effect (not from dependencies)
+useEffect(() => {
+  const videoId = videoUrl.includes('filename=') 
+    ? videoUrl.split('filename=')[1].split('&')[0]
+    : videoUrl.split('/').pop()?.split('?')[0] || 'unknown';
+  
+  // Use extracted data immediately  
+}, []); // No dependencies needed
+```
+
+#### 4. **Testing Protocol**
+- **Before Integration**: Test without analytics first
+- **After Integration**: Verify single mount with console logs
+- **Console Check**: Look for multiple "MOUNTED!" messages
+- **Video Test**: Ensure no black screen on gallery videos
+
+#### 5. **Implementation Steps**
+1. **Phase 1**: Add analytics functions with empty useEffect `[]`
+2. **Phase 2**: Test video playback still works
+3. **Phase 3**: Add event handlers with stable callbacks
+4. **Phase 4**: Verify single mounting in console
+5. **Phase 5**: Deploy after confirming functionality
+
+### Emergency Rollback Indicators
+- Multiple "MOUNTED!" console messages
+- Black screen on video gallery
+- Videos not playing properly
+- Multiple video elements competing
+
+**Action**: Immediately set useEffect dependencies to `[]` and deploy
+
+---
+
 ## Notes
 - Site is i18n: fr-FR and en-US
 - Video Gallery has max 6 items, periodically updated
