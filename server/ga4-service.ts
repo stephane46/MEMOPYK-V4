@@ -85,19 +85,25 @@ export async function qCompletes(start: string, end: string, locale?: string) {
 }
 
 export async function qWatchTimeTotal(start: string, end: string, locale?: string) {
+  const localeExpr =
+    locale && locale !== "all"
+      ? [{ filter: { fieldName: "customEvent:locale", stringFilter: { value: locale } } }]
+      : [];
+
   const [res] = await client.runReport({
-    property: PROPERTY,
-    dateRanges: [range(start, end)],
+    property: PROPERTY, // "properties/501023254"
+    dateRanges: [{ startDate: start, endDate: end }],
     metrics: [{ name: "customEvent:watch_time_seconds" }],
     dimensionFilter: {
       andGroup: {
         expressions: [
           { filter: { fieldName: "eventName", stringFilter: { value: "video_watch_time" } } },
-          ...(localeFilter(locale) ? [localeFilter(locale)!] : [])
+          ...localeExpr
         ]
       }
     }
   });
+
   return Number(res.rows?.[0]?.metricValues?.[0]?.value ?? 0);
 }
 
