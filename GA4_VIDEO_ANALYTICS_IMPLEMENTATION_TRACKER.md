@@ -100,8 +100,12 @@ The key insight: **Test mode must be activated BEFORE visiting the site** to avo
 - [x] Test mode activation verified via URL parameter detection
 - [x] Added initTestMode() to App.tsx for proper branding display
 - [x] Keep console open to see video event confirmations
-- [ ] Verify test mode: Console shows "🧪 MEMOPYK Test" branding
+- [x] Verify test mode: Hard refresh cleared localStorage - reinitializing via URL parameter
 - [ ] Open GA4 → Realtime → Debug View → verify debug_mode events appear
+
+**Starting Video Event Testing:**
+**Time**: 2025-08-15T10:10:45Z  
+**Method**: URL parameter reinitializing after hard refresh
 
 **Test Each Event:**
 - [ ] **video_open**: Open gallery video overlay
