@@ -57,9 +57,15 @@ export default function VideoOverlay({
   // GA4 Video Analytics - TEMPORARILY DISABLED for debugging
   // const ga4Analytics = useGA4VideoAnalytics();
   const ga4Analytics = {
-    trackOpen: () => console.log('📹 GA4 Video: video_open (DISABLED FOR DEBUG)'),
-    setupVisibilityTracking: () => () => {},
-    clearSession: () => {}
+    trackOpen: (...args: any[]) => console.log('📹 GA4 Video: video_open (DISABLED FOR DEBUG)', args),
+    setupVisibilityTracking: (...args: any[]) => () => {},
+    clearSession: () => {},
+    trackProgressMilestone: (...args: any[]) => console.log('📹 GA4 Video: progress_milestone (DISABLED FOR DEBUG)', args),
+    trackCompletion: (...args: any[]) => console.log('📹 GA4 Video: completion (DISABLED FOR DEBUG)', args),
+    trackStart: (...args: any[]) => console.log('📹 GA4 Video: start (DISABLED FOR DEBUG)', args),
+    trackResume: (...args: any[]) => console.log('📹 GA4 Video: resume (DISABLED FOR DEBUG)', args),
+    trackPause: (...args: any[]) => console.log('📹 GA4 Video: pause (DISABLED FOR DEBUG)', args),
+    trackEnded: (...args: any[]) => console.log('📹 GA4 Video: ended (DISABLED FOR DEBUG)', args)
   };
   
   // Feature flag for video analytics - DISABLED per requirement to switch to GA4-only
@@ -250,7 +256,12 @@ export default function VideoOverlay({
       // Start video playback
       const video = videoRef.current;
       if (video) {
-        video.play().catch(console.warn);
+        console.log('🎬 STARTING VIDEO PLAYBACK after thumbnail hide');
+        video.play().then(() => {
+          console.log('✅ Video play() succeeded');
+        }).catch((error) => {
+          console.error('❌ Video play() failed:', error);
+        });
       }
     } else {
       // Video is ready but minimum time hasn't elapsed - set timer for remaining time
@@ -264,7 +275,12 @@ export default function VideoOverlay({
           
           const video = videoRef.current;
           if (video) {
-            video.play().catch(console.warn);
+            console.log('🎬 STARTING VIDEO PLAYBACK after delay');
+            video.play().then(() => {
+              console.log('✅ Video play() succeeded after delay');
+            }).catch((error) => {
+              console.error('❌ Video play() failed after delay:', error);
+            });
           }
         }
       }, remainingTime);
