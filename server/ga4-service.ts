@@ -109,19 +109,24 @@ export async function qWatchTimeTotal(start: string, end: string, locale?: strin
 
 export async function qTopLocale(start: string, end: string) {
   const [res] = await client.runReport({
-    property: PROPERTY,
-    dateRanges: [range(start, end)],
-    dimensions: [{ name: "customEvent:locale" }],
+    property: PROPERTY, // "properties/501023254"
+    dateRanges: [{ startDate: start, endDate: end }],
     metrics: [{ name: "eventCount" }],
-    dimensionFilter: { filter: { fieldName: "eventName", stringFilter: { value: "video_start" } } },
-    orderBys: [{ desc: true, metric: { metricName: "eventCount" } }],
+    dimensions: [{ name: "customEvent:locale" }],
+    dimensionFilter: {
+      filter: { fieldName: "eventName", stringFilter: { value: "video_start" } }
+    },
+    orderBys: [{ metric: { metricName: "eventCount" }, desc: true }],
     limit: 1
   });
-  const row = res.rows?.[0];
-  return {
-    locale: row?.dimensionValues?.[0]?.value ?? "n/a",
-    plays: Number(row?.metricValues?.[0]?.value ?? 0)
-  };
+
+  if (res.rows?.length) {
+    return {
+      locale: res.rows[0].dimensionValues?.[0]?.value ?? "n/a",
+      plays: Number(res.rows[0].metricValues?.[0]?.value ?? 0)
+    };
+  }
+  return { locale: "n/a", plays: 0 };
 }
 
 /* =============  TOP VIDEOS TABLE  ============= */
