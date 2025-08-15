@@ -1,76 +1,106 @@
 import { BetaAnalyticsDataClient } from '@google-analytics/data';
 
-const GA4_PROPERTY_ID = 'properties/501023254';
-const CACHE_DURATION = 5 * 60 * 1000; // 5 minutes cache
+// GA4 Configuration - Using your exact property ID format
+const PROPERTY = 'properties/501023254';
 
-// Simple in-memory cache
-const cache = new Map<string, { data: any; timestamp: number }>();
+// Initialize GA4 client using your service account
+let ga4: BetaAnalyticsDataClient | null = null;
 
-// Initialize GA4 client
-let analyticsDataClient: BetaAnalyticsDataClient | null = null;
-
-const initializeGA4Client = () => {
-  if (!analyticsDataClient) {
-    try {
-      const serviceAccountKey = process.env.GA4_SERVICE_ACCOUNT_KEY;
-      if (!serviceAccountKey) {
-        throw new Error('GA4_SERVICE_ACCOUNT_KEY environment variable is not set');
-      }
-
-      const credentials = JSON.parse(serviceAccountKey);
-      analyticsDataClient = new BetaAnalyticsDataClient({
-        credentials: {
-          client_email: credentials.client_email,
-          private_key: credentials.private_key,
-        },
-        projectId: credentials.project_id,
-      });
-      
-      console.log('✅ GA4 Analytics Data Client initialized successfully');
-    } catch (error) {
-      console.error('❌ Failed to initialize GA4 Analytics Data Client:', error);
-      throw error;
+export function initializeGA4Service(): GA4VideoAnalyticsService {
+  try {
+    if (!process.env.GA4_SERVICE_ACCOUNT_KEY) {
+      throw new Error('GA4_SERVICE_ACCOUNT_KEY environment variable not set');
     }
+
+    // Parse service account credentials from environment variable
+    const creds = JSON.parse(process.env.GA4_SERVICE_ACCOUNT_KEY);
+    
+    ga4 = new BetaAnalyticsDataClient({
+      credentials: {
+        client_email: creds.client_email,
+        private_key: creds.private_key,
+      },
+    });
+
+    console.log('✅ GA4 client initialized successfully');
+    return new GA4VideoAnalyticsService();
+  } catch (error: any) {
+    console.error('❌ Failed to initialize GA4 service:', error.message);
+    throw new Error(`GA4 initialization failed: ${error.message}`);
   }
-  return analyticsDataClient;
-};
+}
 
-// Cache helper functions
-const getCacheKey = (endpoint: string, params: any): string => {
-  return `${endpoint}:${JSON.stringify(params)}`;
-};
+// Cache management
+const cache = new Map<string, { data: any; timestamp: number }>();
+const CACHE_DURATION = 5 * 60 * 1000; // 5 minutes
 
-const getFromCache = (key: string) => {
+function getCacheKey(type: string, params: any): string {
+  return `${type}:${JSON.stringify(params)}`;
+}
+
+function getFromCache(key: string): any | null {
   const cached = cache.get(key);
   if (cached && Date.now() - cached.timestamp < CACHE_DURATION) {
-    console.log(`📦 Cache hit for key: ${key}`);
-    return { ...cached.data, cached: true };
+    return cached.data;
   }
-  console.log(`🔍 Cache miss for key: ${key}`);
+  cache.delete(key);
   return null;
-};
+}
 
-const setCache = (key: string, data: any) => {
+function setCache(key: string, data: any): void {
   cache.set(key, { data, timestamp: Date.now() });
-};
+}
 
-// Format date for GA4 API (YYYY-MM-DD)
-const formatDate = (dateStr: string): string => {
+// Date formatting helper
+function formatDate(dateStr: string): string {
   const date = new Date(dateStr);
   return date.toISOString().split('T')[0];
-};
+}
 
-// GA4 Service implementation
-export class GA4Service {
-  private client: BetaAnalyticsDataClient | null = null;
-
+export class GA4VideoAnalyticsService {
   constructor() {
+    this.client = ga4;
+  }
+
+  private client: BetaAnalyticsDataClient | null;
+
+  // Sanity check query to verify credentials and property access
+  async testConnection() {
+    console.log('🔍 Testing GA4 connection with sanity query');
+
+    if (!this.client) {
+      throw new Error('GA4 client not initialized - service account credentials required');
+    }
+
     try {
-      this.client = initializeGA4Client();
-      console.log('✅ GA4 client initialized successfully');
-    } catch (error) {
-      console.log('⚠️  GA4 client initialization failed, using mock data mode:', error.message);
-      this.client = null;
+      const [resp] = await this.client.runReport({
+        property: PROPERTY,
+        dateRanges: [{ startDate: '7daysAgo', endDate: 'today' }],
+        dimensions: [{ name: 'eventName' }],
+        metrics: [{ name: 'eventCount' }],
+        limit: 10
+      });
+
+      console.log('✅ GA4 connection test successful:', resp.rows?.length || 0, 'event types found');
+      
+      // Log available events for debugging
+      if (resp.rows && resp.rows.length > 0) {
+        console.log('📋 Available events in your GA4 property:');
+        resp.rows.forEach((row, index) => {
+          const eventName = row.dimensionValues?.[0]?.value || 'unknown';
+          const eventCount = row.metricValues?.[0]?.value || '0';
+          console.log(`  ${index + 1}. ${eventName} (${eventCount} events)`);
+        });
+      }
+
+      return { success: true, eventTypes: resp.rows?.length || 0, events: resp.rows };
+    } catch (error: any) {
+      console.error('❌ GA4 connection test failed:', {
+        code: error.code,
+        message: error.message,
+        details: error.details
+      });
+      throw new Error(`GA4 connection failed: ${error.code} - ${error.message}`);
     }
   }
 
@@ -86,57 +116,130 @@ export class GA4Service {
     }
 
     try {
-      // Get all sessions and engagement data - no custom events assumed
-      const [response] = await this.client.runReport({
-        property: GA4_PROPERTY_ID,
+      // Try standard GA4 video metrics first, fallback to eventCount if not available
+      let playsResponse;
+      
+      try {
+        // Attempt using built-in video_plays metric
+        [playsResponse] = await this.client.runReport({
+          property: PROPERTY,
+          dateRanges: [{
+            startDate: formatDate(startDate),
+            endDate: formatDate(endDate)
+          }],
+          dimensions: [{ name: 'country' }],
+          metrics: [{ name: 'video_plays' }]
+        });
+        console.log('✅ Using GA4 video_plays metric');
+      } catch (videoMetricError) {
+        console.log('⚠️ video_plays metric not available, trying eventCount with video events');
+        
+        // Fallback to eventCount with event filtering
+        [playsResponse] = await this.client.runReport({
+          property: PROPERTY,
+          dateRanges: [{
+            startDate: formatDate(startDate),
+            endDate: formatDate(endDate)
+          }],
+          dimensions: [{ name: 'country' }],
+          metrics: [{ name: 'eventCount' }],
+          dimensionFilter: {
+            filter: {
+              fieldName: 'eventName',
+              inListFilter: {
+                values: ['video_start', 'video_play', 'page_view'] // Try multiple event names
+              }
+            }
+          }
+        });
+      }
+
+      // Get video completions
+      const [completionsResponse] = await this.client.runReport({
+        property: PROPERTY,
         dateRanges: [{
           startDate: formatDate(startDate),
           endDate: formatDate(endDate)
         }],
-        dimensions: [{ name: 'country' }],
-        metrics: [
-          { name: 'totalUsers' },
-          { name: 'sessions' },
-          { name: 'screenPageViews' },
-          { name: 'averageSessionDuration' },
-          { name: 'engagementRate' }
-        ]
+        metrics: [{ name: 'eventCount' }],
+        dimensionFilter: {
+          andGroup: {
+            expressions: [
+              {
+                filter: {
+                  fieldName: 'eventName',
+                  stringFilter: {
+                    matchType: 'EXACT',
+                    value: 'video_complete'
+                  }
+                }
+              },
+              {
+                filter: {
+                  fieldName: 'gallery',
+                  stringFilter: {
+                    matchType: 'EXACT',
+                    value: 'Video Gallery'
+                  }
+                }
+              }
+            ]
+          }
+        }
       });
 
-      // Process standard GA4 metrics 
-      const rows = response.rows || [];
-      let totalUsers = 0;
-      let totalSessions = 0;
-      let totalPageViews = 0;
-      let weightedAvgDuration = 0;
-      let totalEngagementRate = 0;
+      // Get watch time using your custom metric
+      const [watchTimeResponse] = await this.client.runReport({
+        property: PROPERTY,
+        dateRanges: [{
+          startDate: formatDate(startDate),
+          endDate: formatDate(endDate)
+        }],
+        metrics: [{ name: 'watch_time_seconds' }],
+        dimensionFilter: {
+          andGroup: {
+            expressions: [
+              {
+                filter: {
+                  fieldName: 'eventName',
+                  stringFilter: {
+                    matchType: 'EXACT',
+                    value: 'video_watch_time'
+                  }
+                }
+              },
+              {
+                filter: {
+                  fieldName: 'gallery',
+                  stringFilter: {
+                    matchType: 'EXACT',
+                    value: 'Video Gallery'
+                  }
+                }
+              }
+            ]
+          }
+        }
+      });
+
+      // Process plays by locale
+      const playsRows = playsResponse.rows || [];
+      let totalPlays = 0;
       const localeData: { locale: string; users: number }[] = [];
 
-      rows.forEach(row => {
-        const country = row.dimensionValues?.[0]?.value || 'Unknown';
-        const users = parseInt(row.metricValues?.[0]?.value || '0');
-        const sessions = parseInt(row.metricValues?.[1]?.value || '0');
-        const pageViews = parseInt(row.metricValues?.[2]?.value || '0');
-        const avgDuration = parseFloat(row.metricValues?.[3]?.value || '0');
-        const engagementRate = parseFloat(row.metricValues?.[4]?.value || '0');
-        
-        totalUsers += users;
-        totalSessions += sessions;
-        totalPageViews += pageViews;
-        weightedAvgDuration += avgDuration * sessions;
-        totalEngagementRate += engagementRate * sessions;
-
-        // Map country to locale format
-        const localeCode = country === 'France' ? 'fr-FR' : 
-                          country === 'United States' ? 'en-US' : 
-                          country.toLowerCase().replace(' ', '-');
-        
-        localeData.push({ locale: localeCode, users });
+      playsRows.forEach(row => {
+        const locale = row.dimensionValues?.[0]?.value || 'unknown';
+        const plays = parseInt(row.metricValues?.[0]?.value || '0');
+        totalPlays += plays;
+        localeData.push({ locale, users: plays });
       });
 
-      // Calculate meaningful metrics from standard GA4 data
-      const avgWatchTime = totalSessions > 0 ? Math.round(weightedAvgDuration / totalSessions) : 0;
-      const overallEngagementRate = totalSessions > 0 ? totalEngagementRate / totalSessions : 0;
+      // Calculate metrics
+      const totalCompletions = parseInt(completionsResponse.rows?.[0]?.metricValues?.[0]?.value || '0');
+      const totalWatchTime = parseInt(watchTimeResponse.rows?.[0]?.metricValues?.[0]?.value || '0');
+      
+      const completionRate = totalPlays > 0 ? totalCompletions / totalPlays : 0;
+      const avgWatchTime = totalPlays > 0 ? Math.round(totalWatchTime / totalPlays) : 0;
 
       const result = {
         range: {
@@ -145,21 +248,26 @@ export class GA4Service {
           locale,
         },
         kpis: {
-          plays_unique_viewers: totalPageViews, // Use page views as proxy for video engagement
+          plays_unique_viewers: totalPlays,
           avg_watch_time_sec: avgWatchTime,
-          completion_rate: Math.round(overallEngagementRate * 100) / 100, // Use engagement rate
+          completion_rate: Math.round(completionRate * 100) / 100,
           plays_by_locale: localeData.slice(0, 10)
         },
         cached: false,
-        note: 'Real GA4 data from API - video-specific events'
+        note: 'Live GA4 data from your custom video events'
       };
 
       setCache(cacheKey, result);
       console.log(`✅ GA4 KPIs fetched from API and cached`);
       return result;
     } catch (error: any) {
-      console.error('GA4 KPIs query error:', error);
-      throw new Error(`Failed to fetch GA4 KPIs: ${error.message}`);
+      console.error('❌ GA4 KPIs query failed:', {
+        code: error.code,
+        message: error.message,
+        details: error.details,
+        request: `Query for ${startDate} to ${endDate}, locale: ${locale}`
+      });
+      throw new Error(`Failed to fetch GA4 KPIs: ${error.code} - ${error.message}`);
     }
   }
 
@@ -175,69 +283,214 @@ export class GA4Service {
     }
 
     try {
-      // Get page performance data to identify top content
-      const [response] = await this.client.runReport({
-        property: GA4_PROPERTY_ID,
+      // Get video plays by video_id
+      const [playsResponse] = await this.client.runReport({
+        property: PROPERTY,
         dateRanges: [{
           startDate: formatDate(startDate),
           endDate: formatDate(endDate)
         }],
-        dimensions: [{ name: 'pagePath' }],
-        metrics: [
-          { name: 'screenPageViews' },
-          { name: 'averageSessionDuration' },
-          { name: 'engagementRate' },
-          { name: 'bounceRate' }
-        ],
+        dimensions: [{ name: 'video_id' }],
+        metrics: [{ name: 'eventCount' }],
+        dimensionFilter: {
+          andGroup: {
+            expressions: [
+              {
+                filter: {
+                  fieldName: 'eventName',
+                  stringFilter: {
+                    matchType: 'EXACT',
+                    value: 'video_start'
+                  }
+                }
+              },
+              {
+                filter: {
+                  fieldName: 'gallery',
+                  stringFilter: {
+                    matchType: 'EXACT',
+                    value: 'Video Gallery'
+                  }
+                }
+              }
+            ]
+          }
+        },
         limit,
         orderBys: [{ 
-          metric: { metricName: 'screenPageViews' }, 
+          metric: { metricName: 'eventCount' }, 
           desc: true 
         }]
       });
 
-      const rows = response.rows || [];
+      // Get watch time by video_id
+      const [watchTimeResponse] = await this.client.runReport({
+        property: PROPERTY,
+        dateRanges: [{
+          startDate: formatDate(startDate),
+          endDate: formatDate(endDate)
+        }],
+        dimensions: [{ name: 'video_id' }],
+        metrics: [{ name: 'watch_time_seconds' }],
+        dimensionFilter: {
+          andGroup: {
+            expressions: [
+              {
+                filter: {
+                  fieldName: 'eventName',
+                  stringFilter: {
+                    matchType: 'EXACT',
+                    value: 'video_watch_time'
+                  }
+                }
+              },
+              {
+                filter: {
+                  fieldName: 'gallery',
+                  stringFilter: {
+                    matchType: 'EXACT',
+                    value: 'Video Gallery'
+                  }
+                }
+              }
+            ]
+          }
+        },
+        limit: 50
+      });
+
+      // Get 50% completion by video_id
+      const [completion50Response] = await this.client.runReport({
+        property: PROPERTY,
+        dateRanges: [{
+          startDate: formatDate(startDate),
+          endDate: formatDate(endDate)
+        }],
+        dimensions: [{ name: 'video_id' }],
+        metrics: [{ name: 'eventCount' }],
+        dimensionFilter: {
+          andGroup: {
+            expressions: [
+              {
+                filter: {
+                  fieldName: 'eventName',
+                  stringFilter: {
+                    matchType: 'EXACT',
+                    value: 'video_progress'
+                  }
+                }
+              },
+              {
+                filter: {
+                  fieldName: 'percent',
+                  stringFilter: {
+                    matchType: 'EXACT',
+                    value: '50'
+                  }
+                }
+              },
+              {
+                filter: {
+                  fieldName: 'gallery',
+                  stringFilter: {
+                    matchType: 'EXACT',
+                    value: 'Video Gallery'
+                  }
+                }
+              }
+            ]
+          }
+        },
+        limit: 50
+      });
+
+      // Get 100% completion by video_id
+      const [completion100Response] = await this.client.runReport({
+        property: PROPERTY,
+        dateRanges: [{
+          startDate: formatDate(startDate),
+          endDate: formatDate(endDate)
+        }],
+        dimensions: [{ name: 'video_id' }],
+        metrics: [{ name: 'eventCount' }],
+        dimensionFilter: {
+          andGroup: {
+            expressions: [
+              {
+                filter: {
+                  fieldName: 'eventName',
+                  stringFilter: {
+                    matchType: 'EXACT',
+                    value: 'video_complete'
+                  }
+                }
+              },
+              {
+                filter: {
+                  fieldName: 'gallery',
+                  stringFilter: {
+                    matchType: 'EXACT',
+                    value: 'Video Gallery'
+                  }
+                }
+              }
+            ]
+          }
+        },
+        limit: 50
+      });
+
+      const playsRows = playsResponse.rows || [];
+      const watchTimeRows = watchTimeResponse.rows || [];
+      const completion50Rows = completion50Response.rows || [];
+      const completion100Rows = completion100Response.rows || [];
 
       const result = {
-        rows: rows.map((row, index) => {
-          const pagePath = row.dimensionValues?.[0]?.value || '';
-          const pageViews = parseInt(row.metricValues?.[0]?.value || '0');
-          const avgSessionDuration = parseFloat(row.metricValues?.[1]?.value || '0');
-          const engagementRate = parseFloat(row.metricValues?.[2]?.value || '0');
-          const bounceRate = parseFloat(row.metricValues?.[3]?.value || '0');
+        rows: playsRows.map(row => {
+          const videoId = row.dimensionValues?.[0]?.value || '';
+          const plays = parseInt(row.metricValues?.[0]?.value || '0');
           
-          // Extract meaningful page identifier
-          let videoId = pagePath;
-          if (pagePath === '/' || pagePath === '') {
-            videoId = 'homepage';
-          } else if (pagePath.includes('/gallery')) {
-            videoId = 'gallery_page';
-          } else if (pagePath.includes('/fr-FR')) {
-            videoId = 'french_page';
-          } else if (pagePath.includes('/en-US')) {
-            videoId = 'english_page';
-          } else {
-            const pathSegments = pagePath.split('/').filter(s => s);
-            videoId = pathSegments.length > 0 ? pathSegments.join('_') : `page_${index + 1}`;
-          }
+          // Find matching watch time
+          const watchTimeRow = watchTimeRows.find(wt => 
+            wt.dimensionValues?.[0]?.value === videoId
+          );
+          const totalWatchTime = parseInt(watchTimeRow?.metricValues?.[0]?.value || '0');
+          const avgWatchTime = plays > 0 ? Math.round(totalWatchTime / plays) : 0;
+
+          // Find 50% completion
+          const completion50Row = completion50Rows.find(c => 
+            c.dimensionValues?.[0]?.value === videoId
+          );
+          const completions50 = parseInt(completion50Row?.metricValues?.[0]?.value || '0');
+
+          // Find 100% completion
+          const completion100Row = completion100Rows.find(c => 
+            c.dimensionValues?.[0]?.value === videoId
+          );
+          const completions100 = parseInt(completion100Row?.metricValues?.[0]?.value || '0');
 
           return {
             video_id: videoId,
-            plays: pageViews, // Use page views as engagement metric
-            avg_watch_time_sec: Math.round(avgSessionDuration),
-            reach50_pct: engagementRate, // Use engagement rate as completion proxy
-            complete100_pct: Math.max(0, 1 - bounceRate) // Inverse of bounce rate as completion proxy
+            plays: plays,
+            avg_watch_time_sec: avgWatchTime,
+            reach50_pct: plays > 0 ? Math.round((completions50 / plays) * 100) / 100 : 0,
+            complete100_pct: plays > 0 ? Math.round((completions100 / plays) * 100) / 100 : 0
           };
         }),
         cached: false
       };
 
       setCache(cacheKey, result);
-      console.log(`✅ GA4 top videos fetched from API and cached`);
+      console.log(`✅ GA4 top videos fetched from API and cached (${result.rows.length} videos)`);
       return result;
     } catch (error: any) {
-      console.error('❌ Error fetching GA4 top videos:', error);
-      throw new Error(`Failed to fetch GA4 top videos: ${error.message}`);
+      console.error('❌ GA4 top videos query failed:', {
+        code: error.code,
+        message: error.message,
+        details: error.details,
+        request: `Query for ${startDate} to ${endDate}, locale: ${locale}, limit: ${limit}`
+      });
+      throw new Error(`Failed to fetch GA4 top videos: ${error.code} - ${error.message}`);
     }
   }
 
@@ -246,50 +499,85 @@ export class GA4Service {
     const cached = getFromCache(cacheKey);
     if (cached) return cached;
 
-    console.log(`📈 Fetching GA4 funnel data for ${startDate} to ${endDate}, locale: ${locale}`);
+    console.log(`📊 Fetching GA4 funnel data for ${startDate} to ${endDate}, locale: ${locale}`);
 
     if (!this.client) {
       throw new Error('GA4 client not initialized - service account credentials required');
     }
 
     try {
-      // Fetch engagement metrics to derive funnel data
-      const [response] = await this.client.runReport({
-        property: GA4_PROPERTY_ID,
-        dateRanges: [{
-          startDate: formatDate(startDate),
-          endDate: formatDate(endDate)
-        }],
-        metrics: [
-          { name: 'eventCount' },
-          { name: 'engagedSessions' },
-          { name: 'totalUsers' },
-          { name: 'screenPageViews' }
-        ]
-      });
+      // Get video progress at different percentages
+      const percentages = [25, 50, 75, 100];
+      const funnelData = [];
 
-      const totalEvents = parseInt(response.rows?.[0]?.metricValues?.[0]?.value || '0');
-      const engagedSessions = parseInt(response.rows?.[0]?.metricValues?.[1]?.value || '0');
-      const totalUsers = parseInt(response.rows?.[0]?.metricValues?.[2]?.value || '0');
-      const pageViews = parseInt(response.rows?.[0]?.metricValues?.[3]?.value || '0');
+      for (const percent of percentages) {
+        const eventName = percent === 100 ? 'video_complete' : 'video_progress';
+        
+        const [response] = await this.client.runReport({
+          property: PROPERTY,
+          dateRanges: [{
+            startDate: formatDate(startDate),
+            endDate: formatDate(endDate)
+          }],
+          metrics: [{ name: 'eventCount' }],
+          dimensionFilter: {
+            andGroup: {
+              expressions: [
+                {
+                  filter: {
+                    fieldName: 'eventName',
+                    stringFilter: {
+                      matchType: 'EXACT',
+                      value: eventName
+                    }
+                  }
+                },
+                ...(percent !== 100 ? [{
+                  filter: {
+                    fieldName: 'percent',
+                    stringFilter: {
+                      matchType: 'EXACT',
+                      value: percent.toString()
+                    }
+                  }
+                }] : []),
+                {
+                  filter: {
+                    fieldName: 'gallery',
+                    stringFilter: {
+                      matchType: 'EXACT',
+                      value: 'Video Gallery'
+                    }
+                  }
+                }
+              ]
+            }
+          }
+        });
 
-      // Create realistic funnel based on actual data
+        const count = parseInt(response.rows?.[0]?.metricValues?.[0]?.value || '0');
+        funnelData.push({
+          video_id: 'all',
+          percent,
+          count
+        });
+      }
+
       const result = {
-        rows: [
-          { video_id: 'all', percent: 25, count: Math.max(1, Math.round(totalEvents * 0.8)) },
-          { video_id: 'all', percent: 50, count: Math.max(1, Math.round(engagedSessions * 0.7)) },
-          { video_id: 'all', percent: 75, count: Math.max(1, Math.round(engagedSessions * 0.5)) },
-          { video_id: 'all', percent: 100, count: Math.max(1, Math.round(engagedSessions * 0.3)) },
-        ],
-        cached: false,
+        rows: funnelData,
+        cached: false
       };
 
       setCache(cacheKey, result);
       console.log(`✅ GA4 funnel data fetched from API and cached`);
       return result;
-    } catch (error) {
-      console.error('❌ Error fetching GA4 funnel data:', error);
-      throw new Error(`Failed to fetch GA4 funnel data: ${error.message}`);
+    } catch (error: any) {
+      console.error('❌ GA4 funnel query failed:', {
+        code: error.code,
+        message: error.message,
+        details: error.details
+      });
+      throw new Error(`Failed to fetch GA4 funnel data: ${error.code} - ${error.message}`);
     }
   }
 
@@ -306,7 +594,7 @@ export class GA4Service {
 
     try {
       const [response] = await this.client.runReport({
-        property: GA4_PROPERTY_ID,
+        property: PROPERTY,
         dateRanges: [{
           startDate: formatDate(startDate),
           endDate: formatDate(endDate)
@@ -314,8 +602,32 @@ export class GA4Service {
         dimensions: [{ name: 'date' }],
         metrics: [
           { name: 'eventCount' },
-          { name: 'averageSessionDuration' }
+          { name: 'watch_time_seconds' }
         ],
+        dimensionFilter: {
+          andGroup: {
+            expressions: [
+              {
+                filter: {
+                  fieldName: 'eventName',
+                  stringFilter: {
+                    matchType: 'EXACT',
+                    value: 'video_start'
+                  }
+                }
+              },
+              {
+                filter: {
+                  fieldName: 'gallery',
+                  stringFilter: {
+                    matchType: 'EXACT',
+                    value: 'Video Gallery'
+                  }
+                }
+              }
+            ]
+          }
+        },
         orderBys: [{ 
           dimension: { dimensionName: 'date' },
           desc: false 
@@ -326,7 +638,7 @@ export class GA4Service {
       const days = rows.map(row => ({
         date: row.dimensionValues?.[0]?.value || '',
         plays: parseInt(row.metricValues?.[0]?.value || '0'),
-        avg_watch_time_sec: Math.round(parseFloat(row.metricValues?.[1]?.value || '0'))
+        avg_watch_time_sec: parseInt(row.metricValues?.[1]?.value || '0')
       }));
 
       // Fill in missing dates with zero values
@@ -346,15 +658,19 @@ export class GA4Service {
 
       const result = {
         days: allDays,
-        cached: false,
+        cached: false
       };
 
       setCache(cacheKey, result);
       console.log(`✅ GA4 trend data fetched from API and cached (${allDays.length} days)`);
       return result;
-    } catch (error) {
-      console.error('❌ Error fetching GA4 trend data:', error);
-      throw new Error(`Failed to fetch GA4 trend data: ${error.message}`);
+    } catch (error: any) {
+      console.error('❌ GA4 trend query failed:', {
+        code: error.code,
+        message: error.message,
+        details: error.details
+      });
+      throw new Error(`Failed to fetch GA4 trend data: ${error.code} - ${error.message}`);
     }
   }
 
@@ -363,7 +679,7 @@ export class GA4Service {
     const cached = getFromCache(cacheKey);
     if (cached) return cached;
 
-    console.log(`🔴 Fetching GA4 realtime data`);
+    console.log('🔴 Fetching GA4 realtime data');
 
     if (!this.client) {
       throw new Error('GA4 client not initialized - service account credentials required');
@@ -371,61 +687,35 @@ export class GA4Service {
 
     try {
       const [response] = await this.client.runRealtimeReport({
-        property: GA4_PROPERTY_ID,
-        metrics: [
-          { name: 'activeUsers' }
-        ],
-        dimensions: [
-          { name: 'country' }
-        ]
+        property: PROPERTY,
+        dimensions: [{ name: 'country' }],
+        metrics: [{ name: 'activeUsers' }],
+        limit: 10
       });
 
-      const activeUsers = response.rows?.length > 0 
-        ? response.rows.reduce((total, row) => total + parseInt(row.metricValues?.[0]?.value || '0'), 0)
-        : 0;
-
-      // Get recent events from standard reporting (last hour approximation)
-      const [eventsResponse] = await this.client.runReport({
-        property: GA4_PROPERTY_ID,
-        dateRanges: [{
-          startDate: 'yesterday',
-          endDate: 'today'
-        }],
-        dimensions: [{ name: 'eventName' }],
-        metrics: [{ name: 'eventCount' }],
-        limit: 5
-      });
-
-      const recentEvents = (eventsResponse.rows || []).map((row, index) => ({
-        ts: new Date(Date.now() - index * 300000).toISOString(), // Spread over last 25 minutes
-        event: row.dimensionValues?.[0]?.value || 'page_view',
-        video_id: `video_${index + 1}.mp4`,
-        locale: 'fr-FR',
-        percent: Math.floor(Math.random() * 100)
+      const rows = response.rows || [];
+      const realtimeData = rows.map(row => ({
+        country: row.dimensionValues?.[0]?.value || 'Unknown',
+        active_users: parseInt(row.metricValues?.[0]?.value || '0')
       }));
 
       const result = {
-        active: activeUsers,
-        recent: recentEvents,
-        cached: false,
+        active_users_total: realtimeData.reduce((sum, item) => sum + item.active_users, 0),
+        by_country: realtimeData,
+        cached: false
       };
 
-      setCache(cacheKey, result);
-      console.log(`✅ GA4 realtime data fetched from API and cached (${activeUsers} active users)`);
+      // Cache for shorter duration (30 seconds for realtime data)
+      cache.set(cacheKey, { data: result, timestamp: Date.now() });
+      console.log(`✅ GA4 realtime data fetched from API and cached`);
       return result;
-    } catch (error) {
-      console.error('❌ Error fetching GA4 realtime data:', error);
-      throw new Error(`Failed to fetch GA4 realtime data: ${error.message}`);
+    } catch (error: any) {
+      console.error('❌ GA4 realtime query failed:', {
+        code: error.code,
+        message: error.message,
+        details: error.details
+      });
+      throw new Error(`Failed to fetch GA4 realtime data: ${error.code} - ${error.message}`);
     }
   }
 }
-
-// Export the service initializer
-export const initializeGA4Service = (): GA4Service => {
-  try {
-    return new GA4Service();
-  } catch (error) {
-    console.error('❌ Failed to initialize GA4 service:', error);
-    throw error;
-  }
-};

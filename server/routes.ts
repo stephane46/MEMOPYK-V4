@@ -3679,6 +3679,24 @@ export async function registerRoutes(app: Express): Promise<void> {
     return ga4Service;
   };
 
+  // GA4 Connection Test endpoint - verifies credentials and property access
+  app.get("/api/ga4/test", async (req, res) => {
+    try {
+      console.log('🔍 GA4 connection test requested');
+      const service = initGA4();
+      const result = await service.testConnection();
+      
+      console.log('✅ GA4 connection test successful');
+      res.json(result);
+    } catch (error) {
+      console.error('❌ GA4 connection test failed:', error);
+      res.status(500).json({ 
+        error: error instanceof Error ? error.message : 'GA4 connection test failed',
+        success: false 
+      });
+    }
+  });
+
   // GA4 KPIs endpoint - returns main dashboard metrics
   app.get("/api/ga4/kpis", async (req, res) => {
     try {
