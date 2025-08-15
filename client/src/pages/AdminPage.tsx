@@ -1729,7 +1729,7 @@ export default function AdminPage() {
                         🧪
                       </div>
                       <div>
-                        <h3 className="text-xl font-bold text-gray-900">GA4 Developer Mode</h3>
+                        <h3 className="text-xl font-bold text-gray-900">Google Analytics Developer Mode</h3>
                         <p className="text-gray-600">Test sans affecter les statistiques réelles</p>
                       </div>
                     </div>
@@ -1743,11 +1743,11 @@ export default function AdminPage() {
                   <div className="flex flex-col items-center space-y-4">
                     <a
                       href="javascript:(function(){try{var k='ga_dev',b='ga-test-banner',on=localStorage.getItem(k)==='1';if(on){localStorage.removeItem(k);var e=document.getElementById(b);if(e)e.remove();if(typeof window.gtag==='function'){window.gtag('event','debug_toggle',{debug_mode:false,source:'bookmarklet'});}alert('GA Test Mode DISABLED');}else{localStorage.setItem(k,'1');var el=document.getElementById(b);if(!el){el=document.createElement('div');el.id=b;el.textContent='🧪 GA TEST MODE ACTIVE';el.style.cssText='position:fixed;bottom:12px;right:12px;background:#ff9800;color:#fff;padding:8px 12px;font:600 13px/1.2 system-ui,Segoe UI,Roboto,Arial;border-radius:6px;box-shadow:0 6px 18px rgba(0,0,0,.2);z-index:2147483647;';document.body.appendChild(el);}else{el.style.display='block';}if(typeof window.gtag==='function'){window.gtag('event','debug_toggle',{debug_mode:true,source:'bookmarklet'});}alert('GA Test Mode ENABLED');}}catch(err){alert('Toggle failed: '+err);})();"
-                      title="Toggle GA Test Mode"
+                      title="Toggle Google Analytics Test Mode"
                       className="inline-flex items-center gap-2 px-8 py-4 bg-white text-gray-800 border-2 border-orange-400 rounded-xl hover:bg-gray-50 transition-all duration-200 font-bold text-lg shadow-lg hover:shadow-xl transform hover:scale-105"
                       draggable={true}
                     >
-                      🔄 Toggle GA Test Mode
+                      🔄 Toggle Google Analytics Test Mode
                     </a>
 
                     <div className="text-center space-y-2">
