@@ -71,6 +71,28 @@ export default function AdminPage() {
   const [newTextData, setNewTextData] = useState({ title_fr: '', subtitle_fr: '', title_en: '', subtitle_en: '', font_size_desktop: 60, font_size_tablet: 45, font_size_mobile: 32 });
   const [currentPreviewLanguage, setCurrentPreviewLanguage] = useState<'fr' | 'en'>('fr');
   const [isBulletproofCacheRunning, setIsBulletproofCacheRunning] = useState(false);
+  const [isDevMode, setIsDevMode] = useState(false);
+
+  // Check GA dev mode on component mount and listen for storage changes
+  useEffect(() => {
+    const checkDevMode = () => {
+      setIsDevMode(localStorage.getItem('ga_dev') === '1');
+    };
+    
+    // Initial check
+    checkDevMode();
+    
+    // Listen for localStorage changes
+    window.addEventListener('storage', checkDevMode);
+    
+    // Check periodically in case bookmarklet was used on the same page
+    const interval = setInterval(checkDevMode, 1000);
+    
+    return () => {
+      window.removeEventListener('storage', checkDevMode);
+      clearInterval(interval);
+    };
+  }, []);
 
   // Auto-scroll to top when admin page loads or refreshes
   React.useEffect(() => {
