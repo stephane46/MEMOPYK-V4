@@ -208,25 +208,38 @@ export async function qProgressByVideo(start: string, end: string, locale?: stri
   const [res] = await client.runReport({
     property: PROPERTY, // "properties/501023254"
     dateRanges: [{ startDate: start, endDate: end }],
-    dimensions: [{ name: "customEvent:video_id" }, { name: "customEvent:progress_percent" }],
+    dimensions: [
+      { name: "customEvent:video_id" },
+      { name: "customEvent:video_title" },
+      { name: "customEvent:progress_percent" }
+    ],
     metrics: [{ name: "eventCount" }],
     dimensionFilter: {
       andGroup: {
         expressions: [
           { filter: { fieldName: "eventName", stringFilter: { value: "video_progress" } } },
-          { filter: { fieldName: "customEvent:progress_percent", inListFilter: { values: ["50", "100"] } } },
+          {
+            filter: {
+              fieldName: "customEvent:progress_percent",
+              inListFilter: { values: ["50", "100"] }
+            }
+          },
           ...localeExpr
         ]
       }
-    }
+    },
+    limit: 1000
   });
 
-  const out = new Map<string, { p50: number; p100: number }>();
+  // Map video_id -> { title, p50, p100 }
+  const out = new Map<string, { title: string; p50: number; p100: number }>();
   for (const row of res.rows ?? []) {
     const vid = row.dimensionValues?.[0]?.value ?? "";
-    const pct = row.dimensionValues?.[1]?.value ?? "";
+    const title = row.dimensionValues?.[1]?.value ?? "";
+    const pct = row.dimensionValues?.[2]?.value ?? "";
     const cnt = Number(row.metricValues?.[0]?.value ?? 0);
-    const cur = out.get(vid) ?? { p50: 0, p100: 0 };
+
+    const cur = out.get(vid) ?? { title, p50: 0, p100: 0 };
     if (pct === "50") cur.p50 += cnt;
     if (pct === "100") cur.p100 += cnt;
     out.set(vid, cur);

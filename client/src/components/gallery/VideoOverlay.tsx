@@ -184,8 +184,27 @@ export default function VideoOverlay({
         ? videoUrl.split('filename=')[1].split('&')[0]
         : videoUrl.split('/').pop()?.split('?')[0] || 'unknown';
         
-      // ga4Analytics.trackProgressMilestone(videoId, video.duration, video.currentTime, title);
-      // ga4Analytics.trackCompletion(videoId, video.duration, video.currentTime, title);
+      // Track progress milestones
+      const progressPercent = Math.round((video.currentTime / video.duration) * 100);
+      if (progressPercent % 25 === 0 && progressPercent > 0) {
+        trackGA4VideoEvent('video_progress', {
+          video_id: videoId,
+          video_title: title,
+          progress_percent: progressPercent,
+          watch_time_seconds: video.currentTime,
+          locale: language
+        });
+      }
+      
+      // Track completion
+      if (progressPercent >= 95) {
+        trackGA4VideoEvent('video_complete', {
+          video_id: videoId,
+          video_title: title,
+          watch_time_seconds: video.currentTime,
+          locale: language
+        });
+      }
     }
   }, [title, videoUrl]);
 
