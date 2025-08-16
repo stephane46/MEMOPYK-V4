@@ -21,10 +21,16 @@ export function useFunnel(params: { startDate: string; endDate: string; locale: 
       .then(r => (r.ok ? r.json() : Promise.reject(new Error(`HTTP ${r.status}`))))
       .then(data => { 
         console.log('useFunnel received data:', data);
+        console.log('useFunnel data type:', typeof data);
+        console.log('useFunnel data.plays:', data?.plays);
         if (alive) {
-          // Ensure we have valid data structure or null
-          setData(data && typeof data === 'object' ? data : null);
-          console.log('useFunnel set data to:', data);
+          console.log('useFunnel about to set data, alive=', alive);
+          setData(data);
+          console.log('useFunnel actually set data to:', data);
+          // Verify the state was actually updated
+          setTimeout(() => {
+            console.log('useFunnel verification - current data state should be updated');
+          }, 100);
         }
       })
       .catch(e => { 
