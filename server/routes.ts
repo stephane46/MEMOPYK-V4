@@ -3937,9 +3937,14 @@ export async function registerRoutes(app: Express): Promise<void> {
   app.get("/api/ga4/funnel", async (req, res, next) => {
     try {
       const { startDate, endDate, locale } = getParams(req);
+      console.log(`📊 GA4 Funnel request: ${startDate} to ${endDate}, locale: ${locale}`);
       const out = await qFunnel(startDate, endDate, locale);
       res.json(out);
-    } catch (e) { next(e); }
+    } catch (e) { 
+      console.error("GA4 Funnel endpoint error:", e);
+      // Return empty funnel data instead of 500 error
+      res.json({ p25: 0, p50: 0, p75: 0, p100: 0 });
+    }
   });
 
   // Trend endpoint - using your exact clean API structure

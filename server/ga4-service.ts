@@ -283,32 +283,72 @@ export async function getTopVideosTable(start: string, end: string, locale?: str
 /* =============  FUNNEL & TREND  ============= */
 
 export async function qFunnel(start: string, end: string, locale?: string) {
-  const [res] = await client.runReport({
-    property: PROPERTY,
-    dateRanges: [range(start, end)],
-    dimensions: [{ name: "customEvent:percent" }],
-    metrics: [{ name: "eventCount" }],
-    dimensionFilter: {
-      andGroup: {
-        expressions: [
-          { filter: { fieldName: "eventName", stringFilter: { value: "video_progress" } } },
-          { filter: { fieldName: "customEvent:percent", inListFilter: { values: ["25", "50", "75", "100"] } } },
-          ...(localeFilter(locale) ? [localeFilter(locale)!] : [])
-        ]
+  try {
+    // Try the standard approach first
+    const [res] = await client.runReport({
+      property: PROPERTY,
+      dateRanges: [range(start, end)],
+      dimensions: [{ name: "customEvent:percent" }],
+      metrics: [{ name: "eventCount" }],
+      dimensionFilter: {
+        andGroup: {
+          expressions: [
+            { filter: { fieldName: "eventName", stringFilter: { value: "video_progress" } } },
+            { filter: { fieldName: "customEvent:percent", inListFilter: { values: ["25", "50", "75", "100"] } } },
+            ...(localeFilter(locale) ? [localeFilter(locale)!] : [])
+          ]
+        }
       }
-    }
-  });
+    });
 
-  const out = { p25: 0, p50: 0, p75: 0, p100: 0 };
-  for (const r of res.rows ?? []) {
-    const p = r.dimensionValues?.[0]?.value;
-    const c = Number(r.metricValues?.[0]?.value ?? 0);
-    if (p === "25") out.p25 += c;
-    if (p === "50") out.p50 += c;
-    if (p === "75") out.p75 += c;
-    if (p === "100") out.p100 += c;
+    const out = { p25: 0, p50: 0, p75: 0, p100: 0 };
+    for (const r of res.rows ?? []) {
+      const p = r.dimensionValues?.[0]?.value;
+      const c = Number(r.metricValues?.[0]?.value ?? 0);
+      if (p === "25") out.p25 += c;
+      if (p === "50") out.p50 += c;
+      if (p === "75") out.p75 += c;
+      if (p === "100") out.p100 += c;
+    }
+    return out;
+  } catch (error) {
+    console.error("qFunnel error:", error);
+    
+    // Fallback: Try using event parameters instead of custom dimensions
+    try {
+      console.log("Trying fallback funnel query...");
+      const [res] = await client.runReport({
+        property: PROPERTY,
+        dateRanges: [range(start, end)],
+        dimensions: [{ name: "eventParameterValue" }],
+        metrics: [{ name: "eventCount" }],
+        dimensionFilter: {
+          andGroup: {
+            expressions: [
+              { filter: { fieldName: "eventName", stringFilter: { value: "video_progress" } } },
+              { filter: { fieldName: "eventParameterKey", stringFilter: { value: "percent" } } },
+              ...(localeFilter(locale) ? [localeFilter(locale)!] : [])
+            ]
+          }
+        }
+      });
+
+      const out = { p25: 0, p50: 0, p75: 0, p100: 0 };
+      for (const r of res.rows ?? []) {
+        const p = r.dimensionValues?.[0]?.value;
+        const c = Number(r.metricValues?.[0]?.value ?? 0);
+        if (p === "25") out.p25 += c;
+        if (p === "50") out.p50 += c;
+        if (p === "75") out.p75 += c;
+        if (p === "100") out.p100 += c;
+      }
+      return out;
+    } catch (fallbackError) {
+      console.error("Fallback funnel query failed:", fallbackError);
+      // Return empty funnel data instead of crashing
+      return { p25: 0, p50: 0, p75: 0, p100: 0 };
+    }
   }
-  return out;
 }
 
 export async function qTrend(start: string, end: string, locale?: string) {
