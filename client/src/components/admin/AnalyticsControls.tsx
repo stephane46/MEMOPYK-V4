@@ -14,6 +14,14 @@ export function AnalyticsControls() {
     setFilters({ startDate: toYMD(start), endDate: toYMD(end) });
   };
 
+  // Check if current date range matches a preset
+  const isActivePreset = (days: number) => {
+    const end = new Date();
+    const start = new Date(Date.now() - (days - 1) * 864e5);
+    const toYMD = (d: Date) => d.toISOString().slice(0, 10);
+    return startDate === toYMD(start) && endDate === toYMD(end);
+  };
+
   return (
     <div className="flex flex-wrap gap-4 items-center p-4 bg-gray-50 dark:bg-gray-900 rounded-lg">
       {/* Date Range */}
@@ -37,23 +45,26 @@ export function AnalyticsControls() {
       {/* Date Presets */}
       <div className="flex gap-2">
         <Button 
-          variant="outline" 
+          variant={isActivePreset(7) ? "default" : "outline"}
           size="sm" 
           onClick={() => handleDateRangePreset(7)}
+          className={isActivePreset(7) ? "bg-orange-600 hover:bg-orange-700 text-white" : ""}
         >
           7d
         </Button>
         <Button 
-          variant="outline" 
+          variant={isActivePreset(30) ? "default" : "outline"}
           size="sm" 
           onClick={() => handleDateRangePreset(30)}
+          className={isActivePreset(30) ? "bg-orange-600 hover:bg-orange-700 text-white" : ""}
         >
           30d
         </Button>
         <Button 
-          variant="outline" 
+          variant={isActivePreset(90) ? "default" : "outline"}
           size="sm" 
           onClick={() => handleDateRangePreset(90)}
+          className={isActivePreset(90) ? "bg-orange-600 hover:bg-orange-700 text-white" : ""}
         >
           90d
         </Button>
