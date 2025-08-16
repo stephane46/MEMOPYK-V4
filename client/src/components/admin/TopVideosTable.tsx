@@ -5,18 +5,22 @@ import { ExportTopVideosCSV } from "./ExportTopVideosCSV";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 
 export function TopVideosTable({ data = [] }: { data?: any[] }) {
+  // Ensure data is always an array, even if something else is passed
+  const safeData = Array.isArray(data) ? data : [];
   const [sortColumn, setSortColumn] = useState<string | null>(null);
   const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('desc');
 
   const sortedData = useMemo(() => {
-    if (!sortColumn || !data.length) return data;
+    // Use the safe data array
+    if (safeData.length === 0) return [];
+    if (!sortColumn) return safeData;
     
     const column = topVideosColumns.find(col => col.key === sortColumn);
-    if (!column?.sortFn) return data;
+    if (!column?.sortFn) return safeData;
     
-    const sorted = [...data].sort(column.sortFn);
+    const sorted = [...safeData].sort(column.sortFn);
     return sortDirection === 'desc' ? sorted.reverse() : sorted;
-  }, [data, sortColumn, sortDirection]);
+  }, [safeData, sortColumn, sortDirection]);
 
   const handleSort = (columnKey: string) => {
     if (sortColumn === columnKey) {
