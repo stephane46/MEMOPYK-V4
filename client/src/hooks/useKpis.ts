@@ -30,14 +30,7 @@ async function fetchKpis(startDate: string, endDate: string, locale: string, sig
   if (!res.ok) throw new Error(`HTTP ${res.status}`);
   
   const data = await res.json();
-  
-  // Validate the response structure - the data is valid, just return it
-  if (data && typeof data === 'object') {
-    return data;
-  } else {
-    console.error('Invalid KPI response structure:', data);
-    throw new Error('Invalid response: missing data');
-  }
+  return data;
 }
 
 export function useKpis(params: { startDate: string; endDate: string; locale: "all"|"fr-FR"|"en-US" }) {
