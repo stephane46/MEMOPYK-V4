@@ -42,13 +42,22 @@ const GA4AnalyticsDashboard: React.FC = () => {
   // Get top locale from KPIs data
   const topLocale = kpis?.topLocale && kpis.topLocale.length > 0 ? kpis.topLocale[0] : null;
 
-  // Simple funnel chart data processing - handle object format from API
-  const funnelSteps = funnel ? {
-    25: funnel.p25 || 0,
-    50: funnel.p50 || 0,
-    75: funnel.p75 || 0,
-    100: funnel.p100 || 0
-  } : {};
+  // Simple funnel chart data processing - handle both array and object formats
+  const funnelSteps = funnel ? 
+    Array.isArray(funnel) ? 
+      funnel.reduce((acc: Record<number, number>, row: any) => {
+        if (!acc[row.percent]) {
+          acc[row.percent] = 0;
+        }
+        acc[row.percent] += row.count;
+        return acc;
+      }, {}) :
+      {
+        25: funnel.p25 || 0,
+        50: funnel.p50 || 0,
+        75: funnel.p75 || 0,
+        100: funnel.p100 || 0
+      } : {};
 
   const funnelData = [25, 50, 75, 100].map(percent => ({
     label: `${percent}%`,

@@ -27,7 +27,7 @@ export interface GA4FunnelRow {
   count: number;
 }
 
-export type GA4FunnelData = GA4FunnelRow[];
+export type GA4FunnelData = GA4FunnelRow[] | { p25: number; p50: number; p75: number; p100: number; };
 
 export interface GA4TrendDay {
   date: string;
