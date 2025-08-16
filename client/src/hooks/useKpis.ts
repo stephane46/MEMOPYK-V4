@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState, useCallback } from "react";
+import { useEffect, useMemo, useState, useCallback, useRef } from "react";
 
 type Kpis = {
   plays: number;
@@ -20,40 +20,23 @@ function prevPeriod(startYmd: string, endYmd: string) {
   return { start: ymd(prevStart), end: ymd(prevEnd) };
 }
 
-async function fetchKpis(startDate: string, endDate: string, locale: string): Promise<Kpis> {
+async function fetchKpis(startDate: string, endDate: string, locale: string, signal?: AbortSignal): Promise<Kpis> {
   const url = new URL("/api/ga4/kpis", window.location.origin);
   url.searchParams.set("startDate", startDate);
   url.searchParams.set("endDate", endDate);
   url.searchParams.set("locale", locale);
   
-  console.log(`📡 Fetching KPIs: ${url.toString()}`);
-  const res = await fetch(url.toString());
+  const res = await fetch(url.toString(), { signal });
   if (!res.ok) throw new Error(`HTTP ${res.status}`);
   
-  // Check response headers and text first
-  const contentType = res.headers.get('content-type');
-  const responseText = await res.text();
-  console.log(`📥 Raw response for ${startDate}-${endDate}:`, responseText);
-  console.log(`📥 Content-Type:`, contentType);
+  const data = await res.json();
   
-  let data;
-  try {
-    // Handle both string and object responses
-    if (typeof responseText === 'string' && responseText.startsWith('"') && responseText.endsWith('"')) {
-      // Server returned a JSON string wrapped in quotes
-      data = JSON.parse(JSON.parse(responseText));
-    } else {
-      // Normal JSON response
-      data = JSON.parse(responseText);
-    }
-  } catch (parseError) {
-    console.error(`❌ JSON parse error for ${startDate}-${endDate}:`, parseError);
-    console.error(`❌ Raw response was:`, responseText);
-    throw new Error(`Failed to parse response: ${parseError.message}`);
+  // Validate the response structure
+  if (typeof data.plays !== 'number' || typeof data.completes !== 'number') {
+    console.error('Invalid KPI response structure:', data);
+    throw new Error('Invalid response: missing plays or completes data');
   }
   
-  console.log(`📥 Parsed KPI Response: plays=${data.plays}, completes=${data.completes} for ${startDate}-${endDate}`);
-  console.log(`📥 Full parsed data:`, data);
   return data;
 }
 
@@ -67,38 +50,45 @@ export function useKpis(params: { startDate: string; endDate: string; locale: "a
 
   const reload = useCallback(() => setBump(b => b + 1), []);
 
+  // Ref to store the current abort controller for request cancellation
+  const abortControllerRef = useRef<AbortController | null>(null);
+
   useEffect(() => {
+    // Cancel any ongoing request
+    if (abortControllerRef.current) {
+      abortControllerRef.current.abort();
+    }
+
+    // Create new abort controller for this request
+    const abortController = new AbortController();
+    abortControllerRef.current = abortController;
+
     let alive = true;
     setLoading(true);
     setError(null);
     
-    // Debug logging to track race conditions
-    const requestId = Math.random().toString(36).substr(2, 9);
-    console.log(`🔄 KPI Request ${requestId}: ${startDate} to ${endDate}, locale: ${locale}`);
-    
     const { start: ps, end: pe } = prevPeriod(startDate, endDate);
 
-    Promise.all([fetchKpis(startDate, endDate, locale), fetchKpis(ps, pe, locale)])
+    Promise.all([
+      fetchKpis(startDate, endDate, locale, abortController.signal), 
+      fetchKpis(ps, pe, locale, abortController.signal)
+    ])
       .then(([cur, prev]) => { 
-        if (alive) { 
-          console.log(`✅ KPI Response ${requestId}: plays=${cur.plays}, completes=${cur.completes}`);
+        if (alive && !abortController.signal.aborted) { 
           setCurrent(cur); 
           setPrevious(prev); 
-        } else {
-          console.log(`🚫 KPI Response ${requestId}: discarded (component unmounted)`);
         }
       })
       .catch(e => { 
-        if (alive) {
-          console.error(`❌ KPI Error ${requestId}:`, e.message);
+        if (alive && !abortController.signal.aborted && e.name !== 'AbortError') {
           setError(String(e.message || e)); 
         }
       })
-      .finally(() => { if (alive) setLoading(false); });
+      .finally(() => { if (alive && !abortController.signal.aborted) setLoading(false); });
 
     return () => { 
-      console.log(`🛑 KPI Cleanup ${requestId}: marking as dead`);
-      alive = false; 
+      alive = false;
+      abortController.abort();
     };
   }, [startDate, endDate, locale, bump]);
 
