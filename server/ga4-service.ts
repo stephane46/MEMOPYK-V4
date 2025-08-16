@@ -283,70 +283,56 @@ export async function getTopVideosTable(start: string, end: string, locale?: str
 /* =============  FUNNEL & TREND  ============= */
 
 export async function qFunnel(start: string, end: string, locale?: string) {
+  const plays = await qPlays(start, end, locale);
+  const completes = await qCompletes(start, end, locale);
+
+  // 50% progress
   try {
-    // Try the standard approach first
-    const [res] = await client.runReport({
+    const [halfRes] = await client.runReport({
       property: PROPERTY,
-      dateRanges: [range(start, end)],
-      dimensions: [{ name: "customEvent:percent" }],
+      dateRanges: [{ startDate: start, endDate: end }],
       metrics: [{ name: "eventCount" }],
       dimensionFilter: {
         andGroup: {
           expressions: [
             { filter: { fieldName: "eventName", stringFilter: { value: "video_progress" } } },
-            { filter: { fieldName: "customEvent:percent", inListFilter: { values: ["25", "50", "75", "100"] } } },
+            { filter: { fieldName: "customEvent:progress_percent", stringFilter: { value: "50" } } },
             ...(localeFilter(locale) ? [localeFilter(locale)!] : [])
           ]
         }
       }
     });
-
-    const out = { p25: 0, p50: 0, p75: 0, p100: 0 };
-    for (const r of res.rows ?? []) {
-      const p = r.dimensionValues?.[0]?.value;
-      const c = Number(r.metricValues?.[0]?.value ?? 0);
-      if (p === "25") out.p25 += c;
-      if (p === "50") out.p50 += c;
-      if (p === "75") out.p75 += c;
-      if (p === "100") out.p100 += c;
-    }
-    return out;
+    const half = Number(halfRes.rows?.[0]?.metricValues?.[0]?.value ?? 0);
+    
+    return { plays, half, completes };
   } catch (error) {
-    console.error("qFunnel error:", error);
+    console.error("qFunnel 50% progress error:", error);
     
     // Fallback: Try using event parameters instead of custom dimensions
     try {
-      console.log("Trying fallback funnel query...");
-      const [res] = await client.runReport({
+      console.log("Trying fallback 50% progress query...");
+      const [halfRes] = await client.runReport({
         property: PROPERTY,
-        dateRanges: [range(start, end)],
-        dimensions: [{ name: "eventParameterValue" }],
+        dateRanges: [{ startDate: start, endDate: end }],
         metrics: [{ name: "eventCount" }],
         dimensionFilter: {
           andGroup: {
             expressions: [
               { filter: { fieldName: "eventName", stringFilter: { value: "video_progress" } } },
-              { filter: { fieldName: "eventParameterKey", stringFilter: { value: "percent" } } },
+              { filter: { fieldName: "eventParameterKey", stringFilter: { value: "progress_percent" } } },
+              { filter: { fieldName: "eventParameterValue", stringFilter: { value: "50" } } },
               ...(localeFilter(locale) ? [localeFilter(locale)!] : [])
             ]
           }
         }
       });
-
-      const out = { p25: 0, p50: 0, p75: 0, p100: 0 };
-      for (const r of res.rows ?? []) {
-        const p = r.dimensionValues?.[0]?.value;
-        const c = Number(r.metricValues?.[0]?.value ?? 0);
-        if (p === "25") out.p25 += c;
-        if (p === "50") out.p50 += c;
-        if (p === "75") out.p75 += c;
-        if (p === "100") out.p100 += c;
-      }
-      return out;
+      const half = Number(halfRes.rows?.[0]?.metricValues?.[0]?.value ?? 0);
+      
+      return { plays, half, completes };
     } catch (fallbackError) {
-      console.error("Fallback funnel query failed:", fallbackError);
-      // Return empty funnel data instead of crashing
-      return { p25: 0, p50: 0, p75: 0, p100: 0 };
+      console.error("Fallback 50% progress query failed:", fallbackError);
+      // Return funnel data with 0 for half progress
+      return { plays, half: 0, completes };
     }
   }
 }
