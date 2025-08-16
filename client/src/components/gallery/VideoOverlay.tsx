@@ -233,10 +233,16 @@ export default function VideoOverlay({
       ? videoUrl.split('filename=')[1].split('&')[0]
       : videoUrl.split('/').pop()?.split('?')[0] || 'unknown';
       
-    if (duration > 0) {
-      // ga4Analytics.trackPause(videoId, duration, currentTime, title);
+    if (duration > 0 && currentTime > 0) {
+      // Track watch time when video is paused
+      trackGA4VideoEvent('video_watch_time', {
+        video_id: videoId,
+        video_title: title,
+        watch_time_sec: currentTime,
+        locale: language
+      });
     }
-  }, [duration, currentTime, title, videoUrl]);
+  }, [duration, currentTime, title, videoUrl, trackGA4VideoEvent, language]);
 
   const handleEnded = useCallback(() => {
     setIsPlaying(false);
@@ -249,7 +255,13 @@ export default function VideoOverlay({
       : videoUrl.split('/').pop()?.split('?')[0] || 'unknown';
       
     if (duration > 0) {
-      ga4Analytics.trackEnded(videoId, duration, title);
+      // Track final watch time when video ends
+      trackGA4VideoEvent('video_watch_time', {
+        video_id: videoId,
+        video_title: title,
+        watch_time_sec: duration, // Full duration when video ends
+        locale: language
+      });
     }
     
     // Old VIDEO ANALYTICS DISABLED - Switch to GA4-only for video analytics
@@ -260,7 +272,7 @@ export default function VideoOverlay({
       console.log(`📊 VIDEO ENDED ANALYTICS: ${videoId} watched ${watchedDuration}s (${completionRate}% completion)`);
       trackVideoView(videoId, watchedDuration, isCompleted);
     }
-  }, [currentTime, duration, trackVideoView, VIDEO_ANALYTICS_ENABLED, title, videoUrl]);
+  }, [currentTime, duration, trackVideoView, VIDEO_ANALYTICS_ENABLED, title, videoUrl, trackGA4VideoEvent, language]);
 
   const handleLoadedMetadata = useCallback(() => {
     const video = videoRef.current;
@@ -371,10 +383,21 @@ export default function VideoOverlay({
 
   // Enhanced close handler with analytics tracking
   const handleCloseWithAnalytics = useCallback(() => {
-    // VIDEO ANALYTICS DISABLED - Switch to GA4-only for video analytics
+    // GA4 Analytics: Track watch time when user closes video
+    const videoId = getVideoId();
+    if (duration > 0 && currentTime > 0) {
+      trackGA4VideoEvent('video_watch_time', {
+        video_id: videoId,
+        video_title: title,
+        watch_time_sec: currentTime, // How much was actually watched
+        locale: language
+      });
+      console.log(`📊 GA4 VIDEO CLOSE: ${videoId} watched ${currentTime}s`);
+    }
+    
+    // OLD VIDEO ANALYTICS DISABLED - Switch to GA4-only for video analytics
     if (VIDEO_ANALYTICS_ENABLED) {
       // Track analytics when user manually closes the video
-      const videoId = getVideoId();
       const watchedDuration = Math.round(currentTime);
       const completionRate = duration > 0 ? Math.round((currentTime / duration) * 100) : 0;
       const isCompleted = completionRate >= 90; // Consider 90%+ as completed
@@ -387,7 +410,7 @@ export default function VideoOverlay({
     
     // Call original close function
     onClose();
-  }, [currentTime, duration, getVideoId, trackVideoView, onClose, VIDEO_ANALYTICS_ENABLED]);
+  }, [currentTime, duration, getVideoId, trackVideoView, onClose, VIDEO_ANALYTICS_ENABLED, trackGA4VideoEvent, title, language]);
 
   const handleOverlayClick = useCallback((e: React.MouseEvent) => {
     if (e.target === e.currentTarget) {

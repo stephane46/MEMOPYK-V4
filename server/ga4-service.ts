@@ -93,7 +93,7 @@ export async function qWatchTimeTotal(start: string, end: string, locale?: strin
   const [res] = await client.runReport({
     property: PROPERTY, // "properties/501023254"
     dateRanges: [{ startDate: start, endDate: end }],
-    metrics: [{ name: "customEvent:watch_time_seconds" }], // Correct format confirmed working
+    metrics: [{ name: "customEvent:watch_time_sec" }], // Fixed to match client parameter name
     dimensionFilter: {
       andGroup: {
         expressions: [
