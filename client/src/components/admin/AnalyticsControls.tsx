@@ -19,7 +19,13 @@ export function AnalyticsControls() {
     const end = new Date();
     const start = new Date(Date.now() - (days - 1) * 864e5);
     const toYMD = (d: Date) => d.toISOString().slice(0, 10);
-    return startDate === toYMD(start) && endDate === toYMD(end);
+    const isActive = startDate === toYMD(start) && endDate === toYMD(end);
+    console.log(`Checking ${days}d preset:`, {
+      current: { startDate, endDate },
+      preset: { start: toYMD(start), end: toYMD(end) },
+      isActive
+    });
+    return isActive;
   };
 
   return (
@@ -44,30 +50,20 @@ export function AnalyticsControls() {
 
       {/* Date Presets */}
       <div className="flex gap-2">
-        <Button 
-          variant={isActivePreset(7) ? "default" : "outline"}
-          size="sm" 
-          onClick={() => handleDateRangePreset(7)}
-          className={isActivePreset(7) ? "bg-orange-600 hover:bg-orange-700 text-white" : ""}
-        >
-          7d
-        </Button>
-        <Button 
-          variant={isActivePreset(30) ? "default" : "outline"}
-          size="sm" 
-          onClick={() => handleDateRangePreset(30)}
-          className={isActivePreset(30) ? "bg-orange-600 hover:bg-orange-700 text-white" : ""}
-        >
-          30d
-        </Button>
-        <Button 
-          variant={isActivePreset(90) ? "default" : "outline"}
-          size="sm" 
-          onClick={() => handleDateRangePreset(90)}
-          className={isActivePreset(90) ? "bg-orange-600 hover:bg-orange-700 text-white" : ""}
-        >
-          90d
-        </Button>
+        {[7, 30, 90].map(days => {
+          const isActive = isActivePreset(days);
+          return (
+            <Button
+              key={days}
+              variant={isActive ? "default" : "outline"}
+              size="sm"
+              onClick={() => handleDateRangePreset(days)}
+              className={`${isActive ? "bg-orange-600 hover:bg-orange-700 text-white border-orange-600" : "hover:bg-orange-50 hover:border-orange-300"} transition-colors`}
+            >
+              {days}d
+            </Button>
+          );
+        })}
       </div>
 
       {/* Locale Selection */}
