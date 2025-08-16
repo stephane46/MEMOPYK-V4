@@ -67,9 +67,13 @@ export function useKpis(params: { startDate: string; endDate: string; locale: "a
       fetchKpis(ps, pe, locale, abortController.signal)
     ])
       .then(([cur, prev]) => { 
+        console.log('useKpis received current:', cur);
+        console.log('useKpis received previous:', prev);
         if (alive && !abortController.signal.aborted) { 
           setCurrent(cur); 
           setPrevious(prev); 
+          console.log('useKpis set current:', cur);
+          console.log('useKpis set previous:', prev);
         }
       })
       .catch(e => { 
@@ -86,12 +90,14 @@ export function useKpis(params: { startDate: string; endDate: string; locale: "a
   }, [startDate, endDate, locale, bump]);
 
   const withDeltas = useMemo(() => {
+    console.log('useKpis withDeltas - current:', current);
+    console.log('useKpis withDeltas - previous:', previous);
     if (!current || !previous) return null;
 
     const delta = (now: number, prev: number) =>
       prev === 0 ? (now > 0 ? 100 : 0) : ((now - prev) / prev) * 100;
 
-    return {
+    const result = {
       plays: { value: current.plays ?? 0, delta: delta(current.plays ?? 0, previous.plays ?? 0) },
       avgWatchSeconds: {
         value: current.avgWatchSeconds ?? 0,
@@ -107,6 +113,9 @@ export function useKpis(params: { startDate: string; endDate: string; locale: "a
         delta: delta(current.totals?.watchTimeSeconds ?? 0, previous.totals?.watchTimeSeconds ?? 0)
       }
     };
+    
+    console.log('useKpis withDeltas result:', result);
+    return result;
   }, [current, previous]);
 
   return { loading, error, data: withDeltas, reload };
