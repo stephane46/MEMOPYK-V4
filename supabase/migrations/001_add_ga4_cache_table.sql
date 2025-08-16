@@ -39,6 +39,24 @@ CREATE TRIGGER ga4_cache_auto_cleanup
     AFTER INSERT ON ga4_cache
     EXECUTE FUNCTION cleanup_old_ga4_cache();
 
+-- Additional cleanup function for scheduled maintenance (7-day retention)
+CREATE OR REPLACE FUNCTION cleanup_old_cache()
+RETURNS VOID
+LANGUAGE plpgsql
+AS $$
+BEGIN
+    DELETE FROM ga4_cache
+    WHERE expires_at < NOW() - INTERVAL '7 days';
+END;
+$$;
+
+-- Schedule daily cleanup at 3 AM UTC (uncomment in production)
+-- SELECT cron.schedule(
+--   'daily-cache-cleanup',
+--   '0 3 * * *',
+--   $$SELECT cleanup_old_cache();$$
+-- );
+
 -- Comments for documentation
 COMMENT ON TABLE ga4_cache IS 'Persistent cache for GA4 analytics endpoints with automatic expiry and cleanup';
 COMMENT ON COLUMN ga4_cache.key IS 'Unique cache key (e.g., ga4:realtime, ga4:kpis:2025-08-10:2025-08-16:all)';

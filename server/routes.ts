@@ -4137,6 +4137,57 @@ export async function registerRoutes(app: Express): Promise<void> {
     }
   });
 
+  // Clear All Cache Endpoint (admin only)
+  app.delete("/api/ga4/cache", async (req, res) => {
+    try {
+      const { getPgClient, getCacheEnvironmentInfo } = await import("./cache");
+      const envInfo = getCacheEnvironmentInfo();
+      const isDev = envInfo.environment === 'development';
+      
+      if (isDev) {
+        const pg = getPgClient();
+        if (!pg) {
+          return res.status(500).json({ ok: false, error: "PostgreSQL client not available" });
+        }
+        
+        const result = await pg`DELETE FROM ga4_cache RETURNING *`;
+        res.json({ 
+          ok: true, 
+          message: "Cache cleared", 
+          deletedEntries: result.length,
+          timestamp: new Date().toISOString()
+        });
+      } else {
+        // Production Supabase implementation
+        const { createClient } = await import("@supabase/supabase-js");
+        const supabase = createClient(
+          process.env.SUPABASE_URL!,
+          process.env.SUPABASE_SERVICE_KEY!
+        );
+        
+        const { data, error } = await supabase
+          .from("ga4_cache")
+          .delete()
+          .neq("key", "")  // Delete all entries
+          .select();
+        
+        if (error) {
+          return res.status(500).json({ ok: false, error: error.message });
+        }
+        
+        res.json({ 
+          ok: true, 
+          message: "Cache cleared", 
+          deletedEntries: data?.length || 0,
+          timestamp: new Date().toISOString()
+        });
+      }
+    } catch (error) {
+      console.error("Error clearing cache:", error);
+      res.status(500).json({ ok: false, error: String(error) });
+    }
+  });
+
   // Test Routes
   app.use('/test', testRoutes);
 }

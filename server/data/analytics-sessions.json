@@ -2810,5 +2810,21 @@
     "is_test_data": false,
     "created_at": "2025-08-16T16:11:34.558Z",
     "updated_at": "2025-08-16T16:11:34.597Z"
+  },
+  {
+    "id": "deaa225b-fc6f-4d7a-adbb-a41e6d796447",
+    "session_id": "session_1755361002013_3rcexybhm",
+    "user_id": null,
+    "ip_address": "127.0.0.1",
+    "user_agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/118.0.5993.88 Safari/537.36",
+    "referrer": "",
+    "language": "en-US",
+    "country": "Unknown",
+    "city": "Unknown",
+    "page_views": 0,
+    "is_bot": false,
+    "is_test_data": true,
+    "created_at": "2025-08-16T16:16:42.307Z",
+    "updated_at": "2025-08-16T16:16:42.360Z"
   }
 ]

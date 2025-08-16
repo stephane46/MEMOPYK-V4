@@ -9,6 +9,7 @@ import { KpiStrip } from './KpiStrip';
 import { FunnelChart } from './FunnelChart';
 import { TrendChart } from './TrendChart';
 import { RealtimePanel } from './RealtimePanel';
+import { ClearCacheButton } from './ClearCacheButton';
 
 const GA4AnalyticsDashboard: React.FC = () => {
   const { startDate, endDate, locale } = useDashboardFilters();
@@ -52,21 +53,26 @@ const GA4AnalyticsDashboard: React.FC = () => {
           <CardTitle className="text-lg">Dashboard Controls</CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="flex flex-wrap items-center gap-4">
-            <AnalyticsControls />
+          <div className="flex flex-wrap items-center justify-between gap-4">
+            <div className="flex flex-wrap items-center gap-4">
+              <AnalyticsControls />
+              
+              {/* Debug Link Button */}
+              <Button
+                onClick={handleCopyDebugLink}
+                variant="outline"
+                size="sm"
+                className="flex items-center gap-2"
+                data-testid="copy-debug-link"
+                title="Copy shareable link with current filters"
+              >
+                <Copy className="h-4 w-4" />
+                Copy Debug Link
+              </Button>
+            </div>
             
-            {/* Debug Link Button */}
-            <Button
-              onClick={handleCopyDebugLink}
-              variant="outline"
-              size="sm"
-              className="flex items-center gap-2"
-              data-testid="copy-debug-link"
-              title="Copy shareable link with current filters"
-            >
-              <Copy className="h-4 w-4" />
-              Copy Debug Link
-            </Button>
+            {/* Clear Cache Button */}
+            <ClearCacheButton />
           </div>
         </CardContent>
       </Card>
