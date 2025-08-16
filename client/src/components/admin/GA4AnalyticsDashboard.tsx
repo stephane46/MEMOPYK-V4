@@ -8,6 +8,7 @@ import { useGA4VideoAnalytics } from '@/hooks/useGA4VideoAnalytics';
 import { useDashboardFilters } from '@/analytics/FiltersContext';
 import { AnalyticsControls } from './AnalyticsControls';
 import { TopVideosSection } from './TopVideosSection';
+import { KpiStrip } from './KpiStrip';
 
 const GA4AnalyticsDashboard: React.FC = () => {
   const { startDate, endDate, locale } = useDashboardFilters();
@@ -130,59 +131,8 @@ const GA4AnalyticsDashboard: React.FC = () => {
         </div>
       )}
 
-      {/* KPIs Section */}
-      {kpis && !isLoading && (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-          <Card>
-            <CardContent className="pt-4">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Video Plays</p>
-                  <p className="text-2xl font-bold">{formatNumber(kpis.plays)}</p>
-                </div>
-                <Play className="h-8 w-8 text-blue-600" />
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardContent className="pt-4">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Avg Watch Time</p>
-                  <p className="text-2xl font-bold">{formatDuration(kpis.avgWatchSeconds)}</p>
-                </div>
-                <Clock className="h-8 w-8 text-green-600" />
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardContent className="pt-4">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Completion Rate</p>
-                  <p className="text-2xl font-bold">{formatPercent(kpis.completionRate / 100)}</p>
-                </div>
-                <Target className="h-8 w-8 text-orange-600" />
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardContent className="pt-4">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Top Locale</p>
-                  <p className="text-2xl font-bold">{topLocale?.locale || 'N/A'}</p>
-                  <p className="text-sm text-gray-500">{topLocale ? `${formatNumber(topLocale.users)} users` : ''}</p>
-                </div>
-                <Trophy className="h-8 w-8 text-yellow-600" />
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-      )}
+      {/* KPIs Section - New KpiStrip Component */}
+      <KpiStrip />
 
       {/* Main Content Grid */}
       {!isLoading && (
