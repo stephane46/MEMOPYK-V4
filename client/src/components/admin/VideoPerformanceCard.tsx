@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Play, Clock, X, Eye, Users } from 'lucide-react';
+import { formatFrenchDateTime } from '@/utils/date-format';
 
 interface VideoPerformanceData {
   video_id: string;
@@ -100,12 +101,7 @@ export function VideoPerformanceCard({ frontContent, className = "", performance
       const diffInDays = Math.floor(diffInHours / 24);
       if (diffInDays < 7) return `${diffInDays}d ago`;
       
-      return date.toLocaleDateString('fr-FR', { 
-        timeZone: 'Europe/Paris',
-        day: '2-digit', 
-        month: '2-digit', 
-        year: 'numeric' 
-      });
+      return formatFrenchDateTime(date);
     } catch (error) {
       console.error('Date formatting error:', error);
       return 'Never viewed';

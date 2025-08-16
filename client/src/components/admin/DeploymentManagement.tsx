@@ -6,6 +6,7 @@ import { Label } from '@/components/ui/label';
 import { Badge } from '@/components/ui/badge';
 import { useToast } from '@/hooks/use-toast';
 import { Rocket, Terminal, Clock, CheckCircle, AlertCircle, Trash2, RefreshCw, Settings } from 'lucide-react';
+import { formatFrenchDateTime } from '@/utils/date-format';
 
 interface DeploymentMarker {
   filename: string;
@@ -309,7 +310,7 @@ export default function DeploymentManagement() {
                     </div>
                   </div>
                   <div className="text-xs text-gray-500">
-                    {new Date(marker.timestamp).toLocaleString('fr-FR')}
+                    {formatFrenchDateTime(marker.timestamp)}
                   </div>
                 </div>
               ))}

@@ -48,6 +48,7 @@ import {
   X,
   TestTube
 } from 'lucide-react';
+import { formatFrenchDateTime } from '@/utils/date-format';
 
 interface AnalyticsDashboard {
   overview: {
@@ -832,7 +833,7 @@ export function AnalyticsDashboard() {
                       <div className="font-medium">Total: {(testDataStatus as any)?.status?.counts?.total || 0} records</div>
                       <div className="text-xs mt-2">
                         Generated: {(testDataStatus as any)?.status?.lastGenerated ? 
-                          new Date((testDataStatus as any).status.lastGenerated).toLocaleString() : 'Unknown'}
+                          formatFrenchDateTime((testDataStatus as any).status.lastGenerated) : 'Unknown'}
                       </div>
                       <div className="text-xs">All marked with TEST_ prefixes and test_data flags</div>
                     </div>
@@ -975,7 +976,7 @@ export function AnalyticsDashboard() {
                           {ip.country}, {ip.city} • {ip.session_count} sessions
                         </div>
                         <div className="text-xs text-muted-foreground">
-                          Last activity: {new Date(ip.last_activity).toLocaleDateString()}
+                          Last activity: {formatFrenchDateTime(ip.last_activity)}
                         </div>
                       </div>
                       <Button

@@ -3,6 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Database, Server, Clock, Trash2, Info } from 'lucide-react';
 import { ClearCacheButton } from '@/components/admin/ClearCacheButton';
 import { useQuery } from '@tanstack/react-query';
+import { formatFrenchDateTime } from '@/utils/date-format';
 
 interface CacheStatus {
   environment: string;
@@ -194,7 +195,7 @@ const CacheManagementPage: React.FC = () => {
       {/* Last Updated */}
       {cacheStatus?.timestamp && (
         <div className="text-xs text-gray-500 dark:text-gray-400 text-center">
-          Last updated: {new Date(cacheStatus.timestamp).toLocaleString()}
+          Last updated: {formatFrenchDateTime(cacheStatus.timestamp)}
         </div>
       )}
     </div>
