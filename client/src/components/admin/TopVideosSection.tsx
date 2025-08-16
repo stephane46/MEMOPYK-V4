@@ -3,21 +3,25 @@ import { useDashboardFilters } from "@/analytics/FiltersContext";
 import { TopVideosTable } from "./TopVideosTable";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { AsyncState } from "./AsyncState";
+import { ErrorBlock } from "./ErrorBlock";
+import { useTopVideos } from "@/hooks/useTopVideos";
 
-interface TopVideosSectionProps {
-  data?: any[];
-  isLoading?: boolean;
-  error?: string | null;
-  onRefresh?: () => void;
-}
-
-export function TopVideosSection({ 
-  data, 
-  isLoading = false, 
-  error = null, 
-  onRefresh 
-}: TopVideosSectionProps) {
+export function TopVideosSection() {
   const { startDate, endDate, locale } = useDashboardFilters();
+  const { data, loading, error, reload } = useTopVideos({ startDate, endDate, locale });
+
+  if (error) {
+    return (
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-lg">A. Top Videos Performance</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <ErrorBlock message={`Analytics temporarily unavailable: ${error}`} onRetry={reload} />
+        </CardContent>
+      </Card>
+    );
+  }
   
   return (
     <Card>
@@ -26,12 +30,11 @@ export function TopVideosSection({
       </CardHeader>
       <CardContent>
         <AsyncState
-          loading={isLoading}
-          error={error}
+          loading={loading}
+          error={null}
           hasData={!!data && data.length > 0}
           emptyText="No videos found for this date range."
           loadingText="Loading top videos…"
-          onRetry={onRefresh}
         >
           <TopVideosTable 
             data={data} 

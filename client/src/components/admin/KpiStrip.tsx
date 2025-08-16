@@ -1,13 +1,14 @@
 import { useDashboardFilters } from "@/analytics/FiltersContext";
 import { useKpis } from "@/hooks/useKpis";
+import { ErrorBlock } from "./ErrorBlock";
 import { formatInt, formatSeconds, formatPercent } from "@/utils/format";
 
 export function KpiStrip() {
   const { startDate, endDate, locale } = useDashboardFilters();
-  const { loading, error, data } = useKpis({ startDate, endDate, locale });
+  const { loading, error, data, reload } = useKpis({ startDate, endDate, locale });
 
   if (loading) return <div className="p-4 text-gray-500 text-sm">Loading KPIs…</div>;
-  if (error || !data) return <div className="p-4 text-red-600 text-sm">Error: {error || "No data"}</div>;
+  if (error || !data) return <ErrorBlock message={`KPI data temporarily unavailable: ${error || "No data"}`} onRetry={reload} compact />;
 
   const Card = ({ label, value, delta, fmt = (v:any)=>v }: {
     label: string;

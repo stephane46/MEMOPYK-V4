@@ -1,14 +1,15 @@
 import { FunnelChart as RC, Funnel, LabelList, Tooltip } from "recharts";
 import { useDashboardFilters } from "@/analytics/FiltersContext";
 import { useFunnel } from "@/hooks/useFunnel";
+import { ErrorBlock } from "./ErrorBlock";
 import { formatInt, formatPercent } from "@/utils/format";
 
 export function FunnelChart() {
   const { startDate, endDate, locale } = useDashboardFilters();
-  const { data, loading, error } = useFunnel({ startDate, endDate, locale });
+  const { data, loading, error, reload } = useFunnel({ startDate, endDate, locale });
 
   if (loading) return <div className="p-4 text-sm text-gray-500">Loading funnel…</div>;
-  if (error || !data) return <div className="p-4 text-sm text-red-600">Error: {error || "No data"}</div>;
+  if (error || !data) return <ErrorBlock message={`Funnel data temporarily unavailable: ${error || "No data"}`} onRetry={reload} compact />;
 
   const rows = [
     { stage: "Plays", value: data.plays },

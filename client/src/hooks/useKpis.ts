@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState, useCallback } from "react";
 
 type Kpis = {
   plays: number;
@@ -36,6 +36,9 @@ export function useKpis(params: { startDate: string; endDate: string; locale: "a
   const [previous, setPrevious] = useState<Kpis | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [bump, setBump] = useState(0); // trigger refetch
+
+  const reload = useCallback(() => setBump(b => b + 1), []);
 
   useEffect(() => {
     let alive = true;
@@ -49,7 +52,7 @@ export function useKpis(params: { startDate: string; endDate: string; locale: "a
       .finally(() => { if (alive) setLoading(false); });
 
     return () => { alive = false; };
-  }, [startDate, endDate, locale]);
+  }, [startDate, endDate, locale, bump]);
 
   const withDeltas = useMemo(() => {
     if (!current || !previous) return null;
@@ -75,5 +78,5 @@ export function useKpis(params: { startDate: string; endDate: string; locale: "a
     };
   }, [current, previous]);
 
-  return { loading, error, data: withDeltas };
+  return { loading, error, data: withDeltas, reload };
 }

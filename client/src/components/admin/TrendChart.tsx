@@ -1,14 +1,15 @@
 import { LineChart, Line, XAxis, YAxis, Tooltip, Legend, ResponsiveContainer } from "recharts";
 import { useDashboardFilters } from "@/analytics/FiltersContext";
 import { useTrend } from "@/hooks/useTrend";
+import { ErrorBlock } from "./ErrorBlock";
 import { formatInt, formatSeconds } from "@/utils/format";
 
 export function TrendChart() {
   const { startDate, endDate, locale } = useDashboardFilters();
-  const { data, loading, error } = useTrend({ startDate, endDate, locale });
+  const { data, loading, error, reload } = useTrend({ startDate, endDate, locale });
 
   if (loading) return <div className="p-4 text-sm text-gray-500">Loading trend…</div>;
-  if (error || !data) return <div className="p-4 text-sm text-red-600">Error: {error || "No data"}</div>;
+  if (error || !data) return <ErrorBlock message={`Trend data temporarily unavailable: ${error || "No data"}`} onRetry={reload} compact />;
 
   return (
     <div className="bg-white rounded-2xl shadow p-4">

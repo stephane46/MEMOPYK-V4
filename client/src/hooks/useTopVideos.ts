@@ -1,5 +1,5 @@
 // client/src/hooks/useTopVideos.ts
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 
 export type TopVideoRow = {
   video_id: string;
@@ -15,6 +15,9 @@ export function useTopVideos(params: { startDate: string; endDate: string; local
   const [data, setData] = useState<TopVideoRow[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [bump, setBump] = useState(0); // trigger refetch
+
+  const reload = useCallback(() => setBump(b => b + 1), []);
 
   useEffect(() => {
     let alive = true;
@@ -33,7 +36,7 @@ export function useTopVideos(params: { startDate: string; endDate: string; local
       .finally(() => { if (alive) setLoading(false); });
 
     return () => { alive = false; };
-  }, [startDate, endDate, locale]);
+  }, [startDate, endDate, locale, bump]);
 
-  return { data, loading, error };
+  return { data, loading, error, reload };
 }
