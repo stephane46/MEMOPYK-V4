@@ -26,7 +26,7 @@ import {
   qRealtime,
   getTopVideosTable
 } from './ga4-service';
-import { getCache, setCache, k } from './cache';
+import { getCache, setCache, k, getDbCache, setDbCache } from './cache';
 
 // Contact form validation schema
 const contactFormSchema = z.object({
@@ -3818,20 +3818,28 @@ export async function registerRoutes(app: Express): Promise<void> {
     const startDate = String(req.query.startDate);
     const endDate = String(req.query.endDate);
     const locale = req.query.locale ? String(req.query.locale) : "all";
+    const nocache = req.query.nocache === "1" || req.query.nocache === "true";
     if (!startDate || !endDate) throw new Error("startDate and endDate are required (YYYY-MM-DD)");
-    return { startDate, endDate, locale };
+    return { startDate, endDate, locale, nocache };
   }
 
   // GA4 KPIs endpoint - using your exact clean API structure
   app.get("/api/ga4/kpis", async (req, res, next) => {
     try {
-      const { startDate, endDate, locale } = getParams(req);
+      const { startDate, endDate, locale, nocache } = getParams(req);
       const key = k(`kpis:${startDate}:${endDate}:${locale}`);
 
-      const cached = getCache<any>(key);
-      if (cached) return res.json(cached);
+      // Check cache unless bypassed
+      if (!nocache) {
+        // Try persistent cache first, then memory cache
+        const dbCached = await getDbCache<any>(key);
+        if (dbCached) return res.json(dbCached);
 
-      console.log(`📊 GA4 KPIs request: ${startDate} to ${endDate}, locale: ${locale}`);
+        const memoryCached = getCache<any>(key);
+        if (memoryCached) return res.json(memoryCached);
+      }
+
+      console.log(`📊 GA4 KPIs request: ${startDate} to ${endDate}, locale: ${locale}${nocache ? ' (cache bypassed)' : ''}`);
 
       // Test each query individually to identify which is failing
       let plays = 0, completes = 0, totalWatch = 0, topLocale = { locale: "n/a", plays: 0 };
@@ -3884,6 +3892,8 @@ export async function registerRoutes(app: Express): Promise<void> {
         topLocale
       };
 
+      // Store in both persistent and memory cache
+      await setDbCache(key, data, 300);
       setCache(key, data, 300);
       res.json(data);
     } catch (e) { 
@@ -3933,15 +3943,25 @@ export async function registerRoutes(app: Express): Promise<void> {
   // Top videos table endpoint - using your exact clean API structure
   app.get("/api/ga4/top-videos", async (req, res, next) => {
     try {
-      const { startDate, endDate, locale } = getParams(req);
+      const { startDate, endDate, locale, nocache } = getParams(req);
       const key = k(`top:${startDate}:${endDate}:${locale}`);
 
-      const cached = getCache<any>(key);
-      if (cached) return res.json(cached);
+      // Check cache unless bypassed
+      if (!nocache) {
+        // Try persistent cache first, then memory cache
+        const dbCached = await getDbCache<any>(key);
+        if (dbCached) return res.json(dbCached);
 
-      console.log(`📊 GA4 Top Videos request: ${startDate} to ${endDate}, locale: ${locale}`);
+        const memoryCached = getCache<any>(key);
+        if (memoryCached) return res.json(memoryCached);
+      }
+
+      console.log(`📊 GA4 Top Videos request: ${startDate} to ${endDate}, locale: ${locale}${nocache ? ' (cache bypassed)' : ''}`);
 
       const data = await getTopVideosTable(startDate, endDate, locale);
+      
+      // Store in both persistent and memory cache
+      await setDbCache(key, data, 300);
       setCache(key, data, 300);
       res.json(data);
     } catch (e) { 
@@ -3953,16 +3973,29 @@ export async function registerRoutes(app: Express): Promise<void> {
   // Funnel endpoint - using your exact clean API structure
   app.get("/api/ga4/funnel", async (req, res) => {
     try {
-      const { startDate, endDate, locale } = req.query as any;
-      const key = k(`funnel:${startDate}:${endDate}:${locale || 'all'}`);
+      const { startDate, endDate, locale, nocache } = getParams(req);
+      const key = k(`funnel:${startDate}:${endDate}:${locale}`);
 
-      const cached = getCache<any>(key);
-      if (cached) return res.json(cached);
+      // Check cache unless bypassed
+      if (!nocache) {
+        // Try persistent cache first, then memory cache
+        const dbCached = await getDbCache<any>(key);
+        if (dbCached) return res.json(dbCached);
+
+        const memoryCached = getCache<any>(key);
+        if (memoryCached) return res.json(memoryCached);
+      }
+
+      console.log(`📊 GA4 Funnel request: ${startDate} to ${endDate}, locale: ${locale}${nocache ? ' (cache bypassed)' : ''}`);
 
       const data = await qFunnel(startDate, endDate, locale);
+      
+      // Store in both persistent and memory cache
+      await setDbCache(key, data, 300);
       setCache(key, data, 300);
       res.json(data);
     } catch (e) {
+      console.error('❌ GA4 Funnel error:', e);
       res.status(500).json({ error: String(e) });
     }
   });
@@ -3970,29 +4003,55 @@ export async function registerRoutes(app: Express): Promise<void> {
   // Trend endpoint - daily plays and avg watch time
   app.get("/api/ga4/trend", async (req, res) => {
     try {
-      const { startDate, endDate, locale } = req.query as any;
-      const key = k(`trend:${startDate}:${endDate}:${locale || 'all'}`);
+      const { startDate, endDate, locale, nocache } = getParams(req);
+      const key = k(`trend:${startDate}:${endDate}:${locale}`);
 
-      const cached = getCache<any>(key);
-      if (cached) return res.json(cached);
+      // Check cache unless bypassed
+      if (!nocache) {
+        // Try persistent cache first, then memory cache
+        const dbCached = await getDbCache<any>(key);
+        if (dbCached) return res.json(dbCached);
+
+        const memoryCached = getCache<any>(key);
+        if (memoryCached) return res.json(memoryCached);
+      }
+
+      console.log(`📊 GA4 Trend request: ${startDate} to ${endDate}, locale: ${locale}${nocache ? ' (cache bypassed)' : ''}`);
 
       const data = await qTrendDaily(startDate, endDate, locale);
-      setCache(key, data, 600); // 10 minutes TTL since trend can be heavier
+      
+      // Store in both persistent and memory cache (600s for trend - heavier query)
+      await setDbCache(key, data, 600);
+      setCache(key, data, 600);
       res.json(data);
     } catch (e) {
+      console.error('❌ GA4 Trend error:', e);
       res.status(500).json({ error: String(e) });
     }
   });
 
-  app.get("/api/ga4/realtime", async (_req, res) => {
+  app.get("/api/ga4/realtime", async (req, res) => {
     try {
+      const nocache = req.query.nocache === "1" || req.query.nocache === "true";
       const key = k('realtime');
 
-      const cached = getCache<any>(key);
-      if (cached) return res.json(cached);
+      // Check cache unless bypassed
+      if (!nocache) {
+        // Try persistent cache first, then memory cache
+        const dbCached = await getDbCache<any>(key);
+        if (dbCached) return res.json(dbCached);
+
+        const memoryCached = getCache<any>(key);
+        if (memoryCached) return res.json(memoryCached);
+      }
+
+      console.log(`📊 GA4 Realtime request${nocache ? ' (cache bypassed)' : ''}`);
 
       const data = await qRealtime();
-      setCache(key, data, 30); // 30 seconds TTL for realtime data
+      
+      // Store in both persistent and memory cache (30s for realtime)
+      await setDbCache(key, data, 30);
+      setCache(key, data, 30);
       res.json(data);
     } catch (error: any) {
       console.error("GA4 realtime error:", error);

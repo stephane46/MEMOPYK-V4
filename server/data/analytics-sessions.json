@@ -1859,9 +1859,9 @@
   {
     "id": "session_1755263689487_s8tcmaaup",
     "session_id": "ip_session_127_0_0_1",
-    "duration": 142,
+    "duration": 1,
     "created_at": "2025-08-15T13:14:49.487Z",
-    "updated_at": "2025-08-15T13:14:49.487Z",
+    "updated_at": "2025-08-16T15:58:25.811Z",
     "is_test_data": false
   },
   {
@@ -2666,5 +2666,53 @@
     "is_test_data": false,
     "created_at": "2025-08-16T06:56:12.113Z",
     "updated_at": "2025-08-16T06:56:12.154Z"
+  },
+  {
+    "id": "309bc08f-9a7c-42a9-ba1e-129dd4b0e68d",
+    "session_id": "session_1755359859281_htu8o6lkd",
+    "user_id": null,
+    "ip_address": "109.17.150.48",
+    "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36 Edg/139.0.0.0",
+    "referrer": "https://365df2cf-1884-444c-a9e8-235602456363-00-37q39xpqlgvdy.janeway.replit.dev/__replco/workspace_iframe.html?initialPath=%2F&id=%3Ar9bd%3A",
+    "language": "fr-FR",
+    "country": "Unknown",
+    "city": "Unknown",
+    "page_views": 0,
+    "is_bot": false,
+    "is_test_data": false,
+    "created_at": "2025-08-16T15:57:39.547Z",
+    "updated_at": "2025-08-16T15:57:39.587Z"
+  },
+  {
+    "id": "707979bc-35d9-4af5-a9ac-f2ba34f615a8",
+    "session_id": "session_1755359904913_0c9yfilgw",
+    "user_id": null,
+    "ip_address": "127.0.0.1",
+    "user_agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/118.0.5993.88 Safari/537.36",
+    "referrer": "",
+    "language": "en-US",
+    "country": "Unknown",
+    "city": "Unknown",
+    "page_views": 0,
+    "is_bot": false,
+    "is_test_data": true,
+    "created_at": "2025-08-16T15:58:25.303Z",
+    "updated_at": "2025-08-16T15:58:25.352Z"
+  },
+  {
+    "id": "c947a763-8f5f-4639-b5dc-6441e640e2a2",
+    "session_id": "session_1755359908956_mg0yykv2v",
+    "user_id": null,
+    "ip_address": "109.17.150.48",
+    "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36 Edg/139.0.0.0",
+    "referrer": "https://365df2cf-1884-444c-a9e8-235602456363-00-37q39xpqlgvdy.janeway.replit.dev/__replco/workspace_iframe.html?initialPath=%2F&id=%3Ar9d7%3A",
+    "language": "fr-FR",
+    "country": "Unknown",
+    "city": "Unknown",
+    "page_views": 0,
+    "is_bot": false,
+    "is_test_data": false,
+    "created_at": "2025-08-16T15:58:28.995Z",
+    "updated_at": "2025-08-16T15:58:29.038Z"
   }
 ]
