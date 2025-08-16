@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Users, Clock, X } from 'lucide-react';
 import { CountryFlag } from './CountryFlag';
+import { formatFrenchDateTime } from '@/utils/date-format';
 
 interface VisitorModalProps {
   frontContent: React.ReactNode;
@@ -80,7 +81,7 @@ export function FlipCard({ frontContent, className = "", visitors = [] }: Visito
       const diffInDays = Math.floor(diffInHours / 24);
       if (diffInDays < 7) return `${diffInDays}d ago`;
       
-      return date.toLocaleDateString();
+      return formatFrenchDateTime(date);
     } catch (error) {
       return 'Just now';
     }

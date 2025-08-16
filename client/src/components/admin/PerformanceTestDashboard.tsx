@@ -23,6 +23,7 @@ import {
 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { getTimeStatus, detectSourceFromHeaders, humanBytes, getPayloadSize, type PerfType } from '@/lib/performance-thresholds';
+import { formatFrenchDateTime } from '@/utils/date-format';
 
 interface PerformanceResult {
   id: string;
@@ -776,7 +777,7 @@ export default function PerformanceTestDashboard() {
                         {result.refreshType === 'hard' ? 'Ctrl+F5' : 'F5'}
                       </Badge>
                       <span className="text-sm text-muted-foreground">
-                        {result.timestamp.toLocaleDateString()} {result.timestamp.toLocaleTimeString()}
+                        {formatFrenchDateTime(result.timestamp)}
                       </span>
                     </div>
                     <span className="text-lg font-bold">

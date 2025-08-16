@@ -10,6 +10,7 @@ import { Switch } from '@/components/ui/switch';
 import { Badge } from '@/components/ui/badge';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { ArrowUp, ArrowDown, Play, RefreshCw, BarChart3, Video, HardDrive, Users, MessageSquare, FileText, LogOut, TestTube, Rocket, X, Type, Save, Palette, ChevronUp, ChevronDown, Trash2, Eye, EyeOff, Upload, FileVideo, Database, Check, Zap, Search, Monitor, Tablet, Smartphone, Clock, TrendingUp } from 'lucide-react';
+import { formatFrenchDateTime } from '@/utils/date-format';
 import { useToast } from '@/hooks/use-toast';
 import GalleryManagementNew from '@/components/admin/GalleryManagementNew';
 import FormatBadgeManager from '@/components/admin/FormatBadgeManager';
@@ -1097,7 +1098,7 @@ export default function AdminPage() {
                                             </div>
                                             <p className="text-sm text-gray-600">{text.subtitle_fr}</p>
                                             <div className="text-xs text-gray-500">
-                                              Taille: {text.font_size}px | Créé: {new Date(text.created_at).toLocaleDateString()}
+                                              Taille: {text.font_size}px | Créé: {formatFrenchDateTime(text.created_at)}
                                             </div>
                                           </div>
                                         </div>
