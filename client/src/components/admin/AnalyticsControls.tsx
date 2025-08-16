@@ -19,12 +19,17 @@ export function AnalyticsControls() {
     const end = new Date();
     const start = new Date(Date.now() - (days - 1) * 864e5);
     const toYMD = (d: Date) => d.toISOString().slice(0, 10);
-    const isActive = startDate === toYMD(start) && endDate === toYMD(end);
-    console.log(`Checking ${days}d preset:`, {
-      current: { startDate, endDate },
-      preset: { start: toYMD(start), end: toYMD(end) },
-      isActive
+    const presetStart = toYMD(start);
+    const presetEnd = toYMD(end);
+    const isActive = startDate === presetStart && endDate === presetEnd;
+    
+    // Debug logging
+    console.log(`Filter ${days}d check:`, {
+      current: `${startDate} to ${endDate}`,
+      preset: `${presetStart} to ${presetEnd}`,
+      matches: isActive
     });
+    
     return isActive;
   };
 
@@ -52,13 +57,17 @@ export function AnalyticsControls() {
       <div className="flex gap-2">
         {[7, 30, 90].map(days => {
           const isActive = isActivePreset(days);
+          console.log(`Rendering ${days}d button, active: ${isActive}`);
           return (
             <Button
-              key={days}
+              key={`preset-${days}`}
               variant={isActive ? "default" : "outline"}
               size="sm"
-              onClick={() => handleDateRangePreset(days)}
-              className={`${isActive ? "bg-orange-600 hover:bg-orange-700 text-white border-orange-600" : "hover:bg-orange-50 hover:border-orange-300"} transition-colors`}
+              onClick={() => {
+                console.log(`Clicked ${days}d preset`);
+                handleDateRangePreset(days);
+              }}
+              className={`min-w-[50px] ${isActive ? "bg-orange-600 hover:bg-orange-700 text-white border-orange-600" : "bg-white hover:bg-orange-50 hover:border-orange-300 border-gray-300"} transition-colors`}
             >
               {days}d
             </Button>
