@@ -93,7 +93,7 @@ export async function qWatchTimeTotal(start: string, end: string, locale?: strin
   const [res] = await client.runReport({
     property: PROPERTY, // "properties/501023254"
     dateRanges: [{ startDate: start, endDate: end }],
-    metrics: [{ name: "customEvent:watch_time_seconds" }],
+    metrics: [{ name: "customEvent:watch_time_seconds" }], // Correct format confirmed working
     dimensionFilter: {
       andGroup: {
         expressions: [
@@ -179,7 +179,7 @@ export async function qWatchTimeByVideo(start: string, end: string, locale?: str
       { name: "customEvent:video_id" },
       { name: "customEvent:video_title" }
     ],
-    metrics: [{ name: "customEvent:watch_time_seconds" }],
+    metrics: [{ name: "customEvent:watch_time_seconds" }], // Using correct format that works
     dimensionFilter: {
       andGroup: {
         expressions: [
@@ -371,7 +371,7 @@ export async function qTrend(start: string, end: string, locale?: string) {
     property: PROPERTY,
     dateRanges: [range(start, end)],
     dimensions: [{ name: "date" }],
-    metrics: [{ name: "customEvent:watch_time_seconds" }],
+    metrics: [{ name: "customEvent:watch_time_seconds" }], // Using correct format that works
     dimensionFilter: {
       andGroup: {
         expressions: [
