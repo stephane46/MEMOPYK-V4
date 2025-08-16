@@ -176,7 +176,12 @@ const GA4AnalyticsDashboard: React.FC = () => {
       {!isLoading && (
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {/* Top Videos Table */}
-          <TopVideosSection />
+          <TopVideosSection 
+            data={topVideos} 
+            isLoading={isLoading} 
+            error={error}
+            onRefresh={refresh}
+          />
 
           {/* Watch Funnel Chart - New Component */}
           <FunnelChart />
