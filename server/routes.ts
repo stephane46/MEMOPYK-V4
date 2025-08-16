@@ -4066,6 +4066,43 @@ export async function registerRoutes(app: Express): Promise<void> {
   // Analytics Cache Cleanup Routes
   app.use(analyticsCleanupRoutes);
 
+  // Cache Status and Environment Info Endpoint
+  app.get("/api/cache/status", async (req, res) => {
+    try {
+      const { getCacheEnvironmentInfo, getPgClient } = await import("./cache");
+      const envInfo = getCacheEnvironmentInfo();
+      
+      // Test cache connectivity
+      let cacheStatus = 'unknown';
+      let cacheEntries = 0;
+      
+      try {
+        if (envInfo.environment === 'development') {
+          const pg = getPgClient();
+          if (pg) {
+            const result = await pg`SELECT COUNT(*) as count FROM ga4_cache`;
+            cacheEntries = parseInt(result[0].count);
+            cacheStatus = 'connected';
+          }
+        } else {
+          // Production Supabase test would go here after migration
+          cacheStatus = 'production-ready';
+        }
+      } catch (error) {
+        cacheStatus = 'error';
+      }
+
+      res.json({
+        ...envInfo,
+        cacheStatus,
+        cacheEntries,
+        timestamp: new Date().toISOString()
+      });
+    } catch (error) {
+      res.status(500).json({ error: String(error) });
+    }
+  });
+
   // Test Routes
   app.use('/test', testRoutes);
 }

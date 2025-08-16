@@ -10,7 +10,7 @@ const isDevelopment = process.env.NODE_ENV === 'development';
 // PostgreSQL client for development
 let pgClient: ReturnType<typeof postgres> | null = null;
 
-function getPgClient() {
+export function getPgClient() {
   if (!pgClient && process.env.DATABASE_URL) {
     pgClient = postgres(process.env.DATABASE_URL);
   }
@@ -22,6 +22,15 @@ const supabase = isDevelopment ? null : createClient(
   process.env.SUPABASE_URL!,
   process.env.SUPABASE_SERVICE_KEY!
 );
+
+// Helper function to get current environment info
+export function getCacheEnvironmentInfo() {
+  return {
+    environment: isDevelopment ? 'development' : 'production',
+    database: isDevelopment ? 'PostgreSQL (Neon)' : 'Supabase',
+    connection: isDevelopment ? 'DATABASE_URL' : 'SUPABASE_URL'
+  };
+}
 
 export function k(key: string) { 
   return `ga4:${key}`; 
