@@ -28,8 +28,42 @@ export function getCacheEnvironmentInfo() {
   return {
     environment: isDevelopment ? 'development' : 'production',
     database: isDevelopment ? 'PostgreSQL (Neon)' : 'Supabase',
-    connection: isDevelopment ? 'DATABASE_URL' : 'SUPABASE_URL'
+    connection: isDevelopment ? 'DATABASE_URL' : 'SUPABASE_URL',
+    autoCleanup: 'Enabled (24h retention + TTL expiry)',
+    features: ['Persistent storage', 'Auto-cleanup trigger', 'TTL expiry', 'Admin bypass']
   };
+}
+
+// Manual cleanup function for administrative purposes
+export async function manualCacheCleanup(): Promise<{ deleted: number; error?: string }> {
+  try {
+    if (isDevelopment) {
+      const pg = getPgClient();
+      if (!pg) return { deleted: 0, error: 'PostgreSQL client not available' };
+
+      const result = await pg`
+        DELETE FROM ga4_cache 
+        WHERE expires_at < NOW() - INTERVAL '1 day'
+        RETURNING *
+      `;
+      
+      return { deleted: result.length };
+    } else {
+      if (!supabase) return { deleted: 0, error: 'Supabase client not available' };
+      
+      const oneDayAgo = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString();
+      const { data, error } = await supabase
+        .from("ga4_cache")
+        .delete()
+        .lt("expires_at", oneDayAgo)
+        .select();
+      
+      if (error) return { deleted: 0, error: error.message };
+      return { deleted: data?.length || 0 };
+    }
+  } catch (error) {
+    return { deleted: 0, error: String(error) };
+  }
 }
 
 export function k(key: string) { 

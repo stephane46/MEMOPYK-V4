@@ -12,7 +12,7 @@ CREATE TABLE IF NOT EXISTS ga4_cache (
 CREATE INDEX IF NOT EXISTS idx_ga4_cache_expires 
   ON ga4_cache (expires_at);
 
--- Optional: Add cleanup function for expired entries
+-- Automatic cleanup function for expired entries (TTL-based)
 CREATE OR REPLACE FUNCTION cleanup_expired_ga4_cache()
 RETURNS INTEGER AS $$
 DECLARE
@@ -24,8 +24,26 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
--- Comment for documentation
-COMMENT ON TABLE ga4_cache IS 'Persistent cache for GA4 analytics endpoints with automatic expiry';
+-- Automatic cleanup function for old entries (age-based, prevents infinite growth)
+CREATE OR REPLACE FUNCTION cleanup_old_ga4_cache() 
+RETURNS TRIGGER AS $$
+BEGIN
+    -- Delete cache entries older than 24 hours on each insert
+    DELETE FROM ga4_cache WHERE expires_at < NOW() - INTERVAL '1 day';
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+-- Trigger to automatically cleanup old cache entries
+CREATE TRIGGER ga4_cache_auto_cleanup
+    AFTER INSERT ON ga4_cache
+    EXECUTE FUNCTION cleanup_old_ga4_cache();
+
+-- Comments for documentation
+COMMENT ON TABLE ga4_cache IS 'Persistent cache for GA4 analytics endpoints with automatic expiry and cleanup';
 COMMENT ON COLUMN ga4_cache.key IS 'Unique cache key (e.g., ga4:realtime, ga4:kpis:2025-08-10:2025-08-16:all)';
 COMMENT ON COLUMN ga4_cache.value IS 'Cached JSON response from GA4 API';
-COMMENT ON COLUMN ga4_cache.expires_at IS 'Expiration timestamp for automatic cleanup';
+COMMENT ON COLUMN ga4_cache.expires_at IS 'Expiration timestamp for TTL-based and age-based cleanup';
+COMMENT ON FUNCTION cleanup_expired_ga4_cache() IS 'Manual cleanup function for expired cache entries';
+COMMENT ON FUNCTION cleanup_old_ga4_cache() IS 'Automatic cleanup function triggered on insert (24h retention)';
+COMMENT ON TRIGGER ga4_cache_auto_cleanup ON ga4_cache IS 'Auto-cleanup trigger to prevent infinite table growth';

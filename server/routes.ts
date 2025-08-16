@@ -4072,20 +4072,34 @@ export async function registerRoutes(app: Express): Promise<void> {
       const { getCacheEnvironmentInfo, getPgClient } = await import("./cache");
       const envInfo = getCacheEnvironmentInfo();
       
-      // Test cache connectivity
+      // Test cache connectivity and get detailed stats
       let cacheStatus = 'unknown';
-      let cacheEntries = 0;
+      let cacheStats = {
+        totalEntries: 0,
+        activeEntries: 0,
+        expiredEntries: 0
+      };
       
       try {
         if (envInfo.environment === 'development') {
           const pg = getPgClient();
           if (pg) {
-            const result = await pg`SELECT COUNT(*) as count FROM ga4_cache`;
-            cacheEntries = parseInt(result[0].count);
+            const result = await pg`
+              SELECT 
+                COUNT(*) as total,
+                COUNT(*) FILTER (WHERE expires_at > NOW()) as active,
+                COUNT(*) FILTER (WHERE expires_at <= NOW()) as expired
+              FROM ga4_cache
+            `;
+            
+            cacheStats = {
+              totalEntries: parseInt(result[0].total),
+              activeEntries: parseInt(result[0].active),
+              expiredEntries: parseInt(result[0].expired)
+            };
             cacheStatus = 'connected';
           }
         } else {
-          // Production Supabase test would go here after migration
           cacheStatus = 'production-ready';
         }
       } catch (error) {
@@ -4095,7 +4109,27 @@ export async function registerRoutes(app: Express): Promise<void> {
       res.json({
         ...envInfo,
         cacheStatus,
-        cacheEntries,
+        ...cacheStats,
+        timestamp: new Date().toISOString()
+      });
+    } catch (error) {
+      res.status(500).json({ error: String(error) });
+    }
+  });
+
+  // Manual Cache Cleanup Endpoint (admin only)
+  app.post("/api/cache/cleanup", async (req, res) => {
+    try {
+      const { manualCacheCleanup } = await import("./cache");
+      const result = await manualCacheCleanup();
+      
+      if (result.error) {
+        return res.status(500).json({ error: result.error });
+      }
+      
+      res.json({
+        message: `Cache cleanup completed`,
+        deletedEntries: result.deleted,
         timestamp: new Date().toISOString()
       });
     } catch (error) {
