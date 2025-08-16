@@ -18,9 +18,19 @@ export function useFunnel(params: { startDate: string; endDate: string; locale: 
 
     // Fetch funnel data directly - now returns {plays, half, completes} format
     fetch(`/api/ga4/funnel?startDate=${startDate}&endDate=${endDate}&locale=${locale}`)
-      .then(r => r.json())
-      .then(data => { if (alive) setData(data); })
-      .catch(e => { if (alive) setError(String(e)); })
+      .then(r => (r.ok ? r.json() : Promise.reject(new Error(`HTTP ${r.status}`))))
+      .then(data => { 
+        if (alive) {
+          // Ensure we have valid data structure or null
+          setData(data && typeof data === 'object' ? data : null);
+        }
+      })
+      .catch(e => { 
+        if (alive) {
+          setError(String(e.message || e));
+          setData(null); // Reset to null on error
+        }
+      })
       .finally(() => { if (alive) setLoading(false); });
 
     return () => { alive = false; };

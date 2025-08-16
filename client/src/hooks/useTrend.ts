@@ -18,9 +18,19 @@ export function useTrend(params: { startDate: string; endDate: string; locale: s
 
     // Fetch trend data from backend
     fetch(`/api/ga4/trend?startDate=${startDate}&endDate=${endDate}&locale=${locale}`)
-      .then(r => r.json())
-      .then(data => { if (alive) setData(data); })
-      .catch(e => { if (alive) setError(String(e)); })
+      .then(r => (r.ok ? r.json() : Promise.reject(new Error(`HTTP ${r.status}`))))
+      .then(data => { 
+        if (alive) {
+          // Ensure we always set an array, even if API returns something unexpected
+          setData(Array.isArray(data) ? data : []);
+        }
+      })
+      .catch(e => { 
+        if (alive) {
+          setError(String(e.message || e));
+          setData([]); // Reset to empty array on error
+        }
+      })
       .finally(() => { if (alive) setLoading(false); });
 
     return () => { alive = false; };

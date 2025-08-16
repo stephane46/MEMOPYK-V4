@@ -31,8 +31,18 @@ export function useTopVideos(params: { startDate: string; endDate: string; local
 
     fetch(url.toString())
       .then(r => (r.ok ? r.json() : Promise.reject(new Error(`HTTP ${r.status}`))))
-      .then((json) => { if (alive) setData(json); })
-      .catch((e) => { if (alive) setError(String(e.message || e)); })
+      .then((json) => { 
+        if (alive) {
+          // Ensure we always set an array, even if API returns something unexpected
+          setData(Array.isArray(json) ? json : []);
+        }
+      })
+      .catch((e) => { 
+        if (alive) {
+          setError(String(e.message || e));
+          setData([]); // Reset to empty array on error
+        }
+      })
       .finally(() => { if (alive) setLoading(false); });
 
     return () => { alive = false; };
