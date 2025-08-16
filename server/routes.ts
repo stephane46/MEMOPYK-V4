@@ -3902,6 +3902,72 @@ export async function registerRoutes(app: Express): Promise<void> {
     }
   });
 
+  // GA4 Schema diagnostic endpoint to understand available custom events
+  app.get("/api/ga4/debug-schema", async (req, res) => {
+    try {
+      const { startDate = '2025-08-10', endDate = '2025-08-16' } = req.query;
+      
+      // Import the client directly
+      const { BetaAnalyticsDataClient } = await import("@google-analytics/data");
+      const SA_KEY = process.env.GA4_SERVICE_ACCOUNT_KEY;
+      const client = new BetaAnalyticsDataClient(
+        SA_KEY ? { credentials: JSON.parse(SA_KEY) } : {}
+      );
+      
+      // Get all custom events for debugging
+      const [eventsRes] = await client.runReport({
+        property: `properties/${process.env.GA4_PROPERTY_ID || "501023254"}`,
+        dateRanges: [{ startDate: String(startDate), endDate: String(endDate) }],
+        dimensions: [{ name: "eventName" }],
+        metrics: [{ name: "eventCount" }],
+        limit: 100
+      });
+
+      const events = (eventsRes.rows ?? []).map(r => ({
+        eventName: r.dimensionValues?.[0]?.value ?? "",
+        count: Number(r.metricValues?.[0]?.value ?? 0)
+      }));
+
+      // Try to get custom parameters for video events
+      let customParameters = [];
+      try {
+        const [paramsRes] = await client.runReport({
+          property: `properties/${process.env.GA4_PROPERTY_ID || "501023254"}`,
+          dateRanges: [{ startDate: String(startDate), endDate: String(endDate) }],
+          dimensions: [
+            { name: "eventName" },
+            { name: "customEvent:video_id" },
+            { name: "customEvent:locale" }
+          ],
+          metrics: [{ name: "eventCount" }],
+          dimensionFilter: {
+            filter: { fieldName: "eventName", stringFilter: { matchType: "CONTAINS", value: "video" } }
+          },
+          limit: 50
+        });
+
+        customParameters = (paramsRes.rows ?? []).map(r => ({
+          eventName: r.dimensionValues?.[0]?.value ?? "",
+          videoId: r.dimensionValues?.[1]?.value ?? "",
+          locale: r.dimensionValues?.[2]?.value ?? "",
+          count: Number(r.metricValues?.[0]?.value ?? 0)
+        }));
+      } catch (paramError) {
+        console.error('Error getting custom parameters:', paramError);
+      }
+
+      res.json({
+        events,
+        customParameters,
+        dateRange: { startDate, endDate },
+        propertyId: process.env.GA4_PROPERTY_ID || "501023254"
+      });
+    } catch (error) {
+      console.error('GA4 schema debug error:', error);
+      res.status(500).json({ error: (error as Error).message });
+    }
+  });
+
   // Test just the qPlaysByVideo function to isolate the issue
   app.get("/api/ga4/test-plays-by-video", async (req, res) => {
     try {
