@@ -94,11 +94,12 @@ export function RealtimePanel() {
             </Badge>
           </div>
           
-          {data.lastEvents.length > 0 ? (
+          {/* 🚨 CRITICAL FIX: Ensure lastEvents is always an array before accessing .length */}
+          {(Array.isArray(data.lastEvents) ? data.lastEvents : []).length > 0 ? (
             <div className="space-y-2">
               <div className="text-sm font-medium text-gray-600">Recent Video Events:</div>
               <div className="space-y-1 max-h-32 overflow-y-auto">
-                {data.lastEvents.slice(0, 10).map((event, index) => (
+                {(Array.isArray(data.lastEvents) ? data.lastEvents : []).slice(0, 10).map((event, index) => (
                   <div key={index} className="flex justify-between border-b last:border-b-0 py-1 text-sm">
                     <span className="font-mono text-xs">{event.eventName}</span>
                     <span className="font-medium">{formatInt(event.count)}</span>

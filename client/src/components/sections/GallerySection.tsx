@@ -156,7 +156,11 @@ export default function GallerySection() {
     console.log('🔍 FIRST ITEM DETAILS:', rawData[0]);
     console.log('🔍 IS_ACTIVE STATUS:', rawData[0]?.is_active);
     
-    const filteredData = rawData
+    // 🚨 CRITICAL FIX: Ensure rawData is always an array before calling .filter()
+    const safeRawData = Array.isArray(rawData) ? rawData : [];
+    console.log('🔍 SAFE RAW DATA LENGTH:', safeRawData.length);
+    
+    const filteredData = safeRawData
       .filter((item: any) => {
         console.log(`🔍 FILTER CHECK: Item ${item.id} - is_active: ${item.is_active}`);
         return item.is_active;
@@ -205,14 +209,16 @@ export default function GallerySection() {
 
   // Add gallery video logging similar to hero videos
   useEffect(() => {
-    if (galleryItems.length > 0) {
-      const galleryVideoFilenames = galleryItems.map(item => {
+    // 🚨 CRITICAL FIX: Ensure galleryItems is always an array before calling .map()
+    const safeGalleryItems = Array.isArray(galleryItems) ? galleryItems : [];
+    if (safeGalleryItems.length > 0) {
+      const galleryVideoFilenames = safeGalleryItems.map(item => {
         const videoUrl = language === 'fr-FR' ? item.videoUrlFr : item.videoUrlEn;
         return videoUrl.includes('/') ? videoUrl.split('/').pop() : videoUrl;
       });
-      console.log(`🎬 Gallery videos available: ${galleryItems.length}`, galleryVideoFilenames);
+      console.log(`🎬 Gallery videos available: ${safeGalleryItems.length}`, galleryVideoFilenames);
     }
-  }, [galleryItems.length, language]);
+  }, [galleryItems, language]);
 
 
 
@@ -579,7 +585,8 @@ export default function GallerySection() {
           <div 
             className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 lg:gap-8 mb-8 sm:mb-12"
           >
-          {galleryItems.map((item, index) => {
+          {/* 🚨 CRITICAL FIX: Ensure galleryItems is always an array before calling .map() */}
+          {(Array.isArray(galleryItems) ? galleryItems : []).map((item, index) => {
             const imageUrl = getImageUrl(item);
             const thumbnailUrl = imageUrl;
 
@@ -833,7 +840,8 @@ export default function GallerySection() {
               {/* Action Buttons */}
               <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
                 {/* Use the same CTA settings as the main CTA section */}
-                {(ctaSettings as any[])
+                {/* 🚨 CRITICAL FIX: Ensure ctaSettings is always an array before calling .filter() and .map() */}
+                {(Array.isArray(ctaSettings) ? ctaSettings : [])
                   .filter((cta: any) => cta.isActive)
                   .map((cta: any) => {
                     const url = language === 'fr-FR' ? cta.buttonUrlFr : cta.buttonUrlEn;
