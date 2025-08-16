@@ -54,25 +54,52 @@ export function AnalyticsControls() {
       </div>
 
       {/* Date Presets */}
-      <div className="flex gap-2">
-        {[7, 30, 90].map(days => {
-          const isActive = isActivePreset(days);
-          console.log(`Rendering ${days}d button, active: ${isActive}`);
-          return (
-            <Button
-              key={`preset-${days}`}
-              variant={isActive ? "default" : "outline"}
-              size="sm"
-              onClick={() => {
-                console.log(`Clicked ${days}d preset`);
-                handleDateRangePreset(days);
-              }}
-              className={`min-w-[50px] ${isActive ? "bg-orange-600 hover:bg-orange-700 text-white border-orange-600" : "bg-white hover:bg-orange-50 hover:border-orange-300 border-gray-300"} transition-colors`}
-            >
-              {days}d
-            </Button>
-          );
-        })}
+      <div className="flex gap-2" style={{ display: 'flex', gap: '8px' }}>
+        <Button
+          variant={isActivePreset(7) ? "default" : "outline"}
+          size="sm"
+          onClick={() => handleDateRangePreset(7)}
+          style={{
+            minWidth: '50px',
+            backgroundColor: isActivePreset(7) ? '#D67C4A' : 'white',
+            borderColor: isActivePreset(7) ? '#D67C4A' : '#d1d5db',
+            color: isActivePreset(7) ? 'white' : '#374151',
+            display: 'inline-flex',
+            visibility: 'visible'
+          }}
+        >
+          7d
+        </Button>
+        <Button
+          variant={isActivePreset(30) ? "default" : "outline"}
+          size="sm"
+          onClick={() => handleDateRangePreset(30)}
+          style={{
+            minWidth: '50px',
+            backgroundColor: isActivePreset(30) ? '#D67C4A' : 'white',
+            borderColor: isActivePreset(30) ? '#D67C4A' : '#d1d5db',
+            color: isActivePreset(30) ? 'white' : '#374151',
+            display: 'inline-flex',
+            visibility: 'visible'
+          }}
+        >
+          30d
+        </Button>
+        <Button
+          variant={isActivePreset(90) ? "default" : "outline"}
+          size="sm"
+          onClick={() => handleDateRangePreset(90)}
+          style={{
+            minWidth: '50px',
+            backgroundColor: isActivePreset(90) ? '#D67C4A' : 'white',
+            borderColor: isActivePreset(90) ? '#D67C4A' : '#d1d5db',
+            color: isActivePreset(90) ? 'white' : '#374151',
+            display: 'inline-flex',
+            visibility: 'visible'
+          }}
+        >
+          90d
+        </Button>
       </div>
 
       {/* Locale Selection */}
