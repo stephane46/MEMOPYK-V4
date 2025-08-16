@@ -286,7 +286,12 @@ export async function qFunnel(start: string, end: string, locale?: string) {
   const plays = await qPlays(start, end, locale);
   const completes = await qCompletes(start, end, locale);
 
-  // 50% progress
+  // 50% progress milestone - use same structure as working functions
+  const localeExpr =
+    locale && locale !== "all"
+      ? [{ filter: { fieldName: "customEvent:locale", stringFilter: { value: locale } } }]
+      : [];
+
   try {
     const [halfRes] = await client.runReport({
       property: PROPERTY,
@@ -297,43 +302,18 @@ export async function qFunnel(start: string, end: string, locale?: string) {
           expressions: [
             { filter: { fieldName: "eventName", stringFilter: { value: "video_progress" } } },
             { filter: { fieldName: "customEvent:progress_percent", stringFilter: { value: "50" } } },
-            ...(localeFilter(locale) ? [localeFilter(locale)!] : [])
+            ...localeExpr
           ]
         }
       }
     });
     const half = Number(halfRes.rows?.[0]?.metricValues?.[0]?.value ?? 0);
-    
+
     return { plays, half, completes };
   } catch (error) {
     console.error("qFunnel 50% progress error:", error);
-    
-    // Fallback: Try using event parameters instead of custom dimensions
-    try {
-      console.log("Trying fallback 50% progress query...");
-      const [halfRes] = await client.runReport({
-        property: PROPERTY,
-        dateRanges: [{ startDate: start, endDate: end }],
-        metrics: [{ name: "eventCount" }],
-        dimensionFilter: {
-          andGroup: {
-            expressions: [
-              { filter: { fieldName: "eventName", stringFilter: { value: "video_progress" } } },
-              { filter: { fieldName: "eventParameterKey", stringFilter: { value: "progress_percent" } } },
-              { filter: { fieldName: "eventParameterValue", stringFilter: { value: "50" } } },
-              ...(localeFilter(locale) ? [localeFilter(locale)!] : [])
-            ]
-          }
-        }
-      });
-      const half = Number(halfRes.rows?.[0]?.metricValues?.[0]?.value ?? 0);
-      
-      return { plays, half, completes };
-    } catch (fallbackError) {
-      console.error("Fallback 50% progress query failed:", fallbackError);
-      // Return funnel data with 0 for half progress
-      return { plays, half: 0, completes };
-    }
+    // Return funnel data with 0 for half progress when query fails
+    return { plays, half: 0, completes };
   }
 }
 
