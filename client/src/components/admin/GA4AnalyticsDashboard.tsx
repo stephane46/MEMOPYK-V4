@@ -10,6 +10,7 @@ import { AnalyticsControls } from './AnalyticsControls';
 import { TopVideosSection } from './TopVideosSection';
 import { KpiStrip } from './KpiStrip';
 import { FunnelChart } from './FunnelChart';
+import { TrendChart } from './TrendChart';
 
 const GA4AnalyticsDashboard: React.FC = () => {
   const { startDate, endDate, locale } = useDashboardFilters();
@@ -144,38 +145,8 @@ const GA4AnalyticsDashboard: React.FC = () => {
           {/* Watch Funnel Chart - New Component */}
           <FunnelChart />
 
-          {/* Trend Over Time */}
-          <Card>
-            <CardHeader>
-              <CardTitle className="text-lg">C. Trend Over Time</CardTitle>
-            </CardHeader>
-            <CardContent>
-              {trend && Array.isArray(trend) && trend.length ? (
-                <div className="space-y-4">
-                  <div className="grid grid-cols-7 gap-1">
-                    {trend.slice(-7).map((day: any) => (
-                      <div key={day.date} className="text-center">
-                        <div className="text-xs text-gray-500 mb-1">
-                          {new Date(day.date).toLocaleDateString('en', { weekday: 'short' })}
-                        </div>
-                        <div className="h-20 bg-gray-200 rounded flex flex-col justify-end overflow-hidden">
-                          <div
-                            className="bg-gradient-to-t from-green-500 to-green-400 transition-all duration-500"
-                            style={{ 
-                              height: `${Math.max(5, (day.plays / Math.max(...trend.map((d: any) => d.plays))) * 100)}%` 
-                            }}
-                          />
-                        </div>
-                        <div className="text-xs font-medium mt-1">{formatNumber(day.plays)}</div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              ) : (
-                <div className="text-center py-4 text-gray-500">No trend data available</div>
-              )}
-            </CardContent>
-          </Card>
+          {/* Trend Over Time - New TrendChart Component */}
+          <TrendChart />
 
           {/* Realtime Activity */}
           <Card>

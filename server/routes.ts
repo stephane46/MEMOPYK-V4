@@ -22,6 +22,7 @@ import {
   qProgressByVideo,
   qFunnel,
   qTrend,
+  qTrendDaily,
   getTopVideosTable
 } from './ga4-service';
 
@@ -3938,6 +3939,17 @@ export async function registerRoutes(app: Express): Promise<void> {
     try {
       const { startDate, endDate, locale } = req.query as any;
       const data = await qFunnel(startDate, endDate, locale);
+      res.json(data);
+    } catch (e) {
+      res.status(500).json({ error: String(e) });
+    }
+  });
+
+  // Trend endpoint - daily plays and avg watch time
+  app.get("/api/ga4/trend", async (req, res) => {
+    try {
+      const { startDate, endDate, locale } = req.query as any;
+      const data = await qTrendDaily(startDate, endDate, locale);
       res.json(data);
     } catch (e) {
       res.status(500).json({ error: String(e) });

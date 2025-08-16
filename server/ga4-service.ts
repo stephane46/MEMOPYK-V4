@@ -317,6 +317,41 @@ export async function qFunnel(start: string, end: string, locale?: string) {
   }
 }
 
+export async function qTrendDaily(start: string, end: string, locale?: string) {
+  const localeExpr =
+    locale && locale !== "all"
+      ? [{ filter: { fieldName: "customEvent:locale", stringFilter: { value: locale } } }]
+      : [];
+
+  const [res] = await client.runReport({
+    property: PROPERTY,
+    dateRanges: [{ startDate: start, endDate: end }],
+    metrics: [
+      { name: "eventCount" },
+      { name: "customEvent:watch_time_seconds" }
+    ],
+    dimensions: [{ name: "date" }],
+    dimensionFilter: {
+      andGroup: {
+        expressions: [
+          { filter: { fieldName: "eventName", stringFilter: { value: "video_start" } } },
+          ...localeExpr
+        ]
+      }
+    }
+  });
+
+  return (res.rows ?? []).map(r => {
+    const plays = Number(r.metricValues?.[0]?.value ?? 0);
+    const watch = Number(r.metricValues?.[1]?.value ?? 0);
+    return {
+      date: r.dimensionValues?.[0]?.value,
+      plays,
+      avgWatch: plays > 0 ? watch / plays : 0
+    };
+  });
+}
+
 export async function qTrend(start: string, end: string, locale?: string) {
   const [p] = await client.runReport({
     property: PROPERTY,
