@@ -1,17 +1,27 @@
+import { createClient } from "@supabase/supabase-js";
 import postgres from "postgres";
 
 type Entry<T> = { value: T; expires: number };
 const store = new Map<string, Entry<any>>();
 
-// Database connection for persistent cache
-let dbClient: ReturnType<typeof postgres> | null = null;
+// Use PostgreSQL for development, Supabase for production
+const isDevelopment = process.env.NODE_ENV === 'development';
 
-function getDbClient() {
-  if (!dbClient && process.env.DATABASE_URL) {
-    dbClient = postgres(process.env.DATABASE_URL);
+// PostgreSQL client for development
+let pgClient: ReturnType<typeof postgres> | null = null;
+
+function getPgClient() {
+  if (!pgClient && process.env.DATABASE_URL) {
+    pgClient = postgres(process.env.DATABASE_URL);
   }
-  return dbClient;
+  return pgClient;
 }
+
+// Supabase client for production
+const supabase = isDevelopment ? null : createClient(
+  process.env.SUPABASE_URL!,
+  process.env.SUPABASE_SERVICE_KEY!
+);
 
 export function k(key: string) { 
   return `ga4:${key}`; 
@@ -35,47 +45,101 @@ export function setCache<T>(key: string, value: T, ttlSec = 300) {
 // Persistent cache functions (new)
 export async function getDbCache<T>(key: string): Promise<T | null> {
   try {
-    const db = getDbClient();
-    if (!db) return null;
+    console.log(`🔍 Getting cache: ${key}`);
+    
+    if (isDevelopment) {
+      // Use PostgreSQL in development
+      const pg = getPgClient();
+      if (!pg) return null;
 
-    const result = await db`
-      SELECT value, expires 
-      FROM ga4_cache 
-      WHERE key = ${key}
-    `;
+      const result = await pg`
+        SELECT value, expires_at 
+        FROM ga4_cache 
+        WHERE key = ${key}
+      `;
 
-    if (result.length === 0) return null;
+      if (result.length === 0) {
+        console.log(`❌ Cache miss: ${key} (no data)`);
+        return null;
+      }
 
-    const data = result[0];
-    if (new Date(data.expires).getTime() < Date.now()) {
-      // Clean up expired entry
-      await db`DELETE FROM ga4_cache WHERE key = ${key}`;
-      return null;
+      const data = result[0];
+      if (new Date(data.expires_at).getTime() < Date.now()) {
+        console.log(`⏰ Cache expired: ${key}`);
+        // Clean up expired entry
+        await pg`DELETE FROM ga4_cache WHERE key = ${key}`;
+        return null;
+      }
+
+      console.log(`✅ Cache hit: ${key}`);
+      return data.value as T;
+    } else {
+      // Use Supabase in production
+      if (!supabase) return null;
+      
+      const { data, error } = await supabase
+        .from("ga4_cache")
+        .select("value, expires_at")
+        .eq("key", key)
+        .single();
+
+      if (error || !data) {
+        console.log(`❌ Cache miss: ${key} (${error?.message || 'no data'})`);
+        return null;
+      }
+      
+      if (new Date(data.expires_at) < new Date()) {
+        console.log(`⏰ Cache expired: ${key}`);
+        // Clean up expired entry
+        await supabase.from("ga4_cache").delete().eq("key", key);
+        return null;
+      }
+
+      console.log(`✅ Cache hit: ${key}`);
+      return data.value as T;
     }
-
-    return data.value as T;
   } catch (error) {
-    console.error('getDbCache error:', error);
+    console.error('💥 getDbCache error:', error);
     return null;
   }
 }
 
 export async function setDbCache<T>(key: string, value: T, ttlSec = 300) {
   try {
-    const db = getDbClient();
-    if (!db) return;
-
-    const expires = new Date(Date.now() + ttlSec * 1000).toISOString();
+    const expires_at = new Date(Date.now() + ttlSec * 1000).toISOString();
     
-    await db`
-      INSERT INTO ga4_cache (key, value, expires)
-      VALUES (${key}, ${JSON.stringify(value)}, ${expires})
-      ON CONFLICT (key) 
-      DO UPDATE SET 
-        value = EXCLUDED.value,
-        expires = EXCLUDED.expires
-    `;
+    console.log(`💾 Setting cache: ${key} (TTL: ${ttlSec}s)`);
+    
+    if (isDevelopment) {
+      // Use PostgreSQL in development
+      const pg = getPgClient();
+      if (!pg) return;
+
+      await pg`
+        INSERT INTO ga4_cache (key, value, expires_at)
+        VALUES (${key}, ${JSON.stringify(value)}, ${expires_at})
+        ON CONFLICT (key) 
+        DO UPDATE SET 
+          value = EXCLUDED.value,
+          expires_at = EXCLUDED.expires_at
+      `;
+      
+      console.log(`✅ Cache set successfully: ${key}`);
+    } else {
+      // Use Supabase in production
+      if (!supabase) return;
+      
+      const { error } = await supabase
+        .from("ga4_cache")
+        .upsert({ key, value, expires_at }, { onConflict: "key" });
+      
+      if (error) {
+        console.error('💥 setDbCache error:', error);
+      } else {
+        console.log(`✅ Cache set successfully: ${key}`);
+      }
+    }
   } catch (error) {
-    console.error('setDbCache error:', error);
+    console.error('💥 setDbCache error:', error);
   }
 }
