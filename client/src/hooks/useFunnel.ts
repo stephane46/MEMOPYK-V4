@@ -20,9 +20,11 @@ export function useFunnel(params: { startDate: string; endDate: string; locale: 
     fetch(`/api/ga4/funnel?startDate=${startDate}&endDate=${endDate}&locale=${locale}`)
       .then(r => (r.ok ? r.json() : Promise.reject(new Error(`HTTP ${r.status}`))))
       .then(data => { 
+        console.log('useFunnel received data:', data);
         if (alive) {
           // Ensure we have valid data structure or null
           setData(data && typeof data === 'object' ? data : null);
+          console.log('useFunnel set data to:', data);
         }
       })
       .catch(e => { 
