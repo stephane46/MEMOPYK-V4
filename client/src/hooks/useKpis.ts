@@ -32,12 +32,14 @@ async function fetchKpis(startDate: string, endDate: string, locale: string, sig
   const data = await res.json();
   
   // Validate the response structure
-  if (typeof data.plays !== 'number' || typeof data.completes !== 'number') {
+  if (data && typeof data === 'object' && 
+      typeof data.plays === 'number' && 
+      typeof data.completes === 'number') {
+    return data;
+  } else {
     console.error('Invalid KPI response structure:', data);
     throw new Error('Invalid response: missing plays or completes data');
   }
-  
-  return data;
 }
 
 export function useKpis(params: { startDate: string; endDate: string; locale: "all"|"fr-FR"|"en-US" }) {
