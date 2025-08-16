@@ -29,8 +29,31 @@ async function fetchKpis(startDate: string, endDate: string, locale: string): Pr
   console.log(`📡 Fetching KPIs: ${url.toString()}`);
   const res = await fetch(url.toString());
   if (!res.ok) throw new Error(`HTTP ${res.status}`);
-  const data = await res.json();
-  console.log(`📥 KPI Response: plays=${data.plays}, completes=${data.completes} for ${startDate}-${endDate}`);
+  
+  // Check response headers and text first
+  const contentType = res.headers.get('content-type');
+  const responseText = await res.text();
+  console.log(`📥 Raw response for ${startDate}-${endDate}:`, responseText);
+  console.log(`📥 Content-Type:`, contentType);
+  
+  let data;
+  try {
+    // Handle both string and object responses
+    if (typeof responseText === 'string' && responseText.startsWith('"') && responseText.endsWith('"')) {
+      // Server returned a JSON string wrapped in quotes
+      data = JSON.parse(JSON.parse(responseText));
+    } else {
+      // Normal JSON response
+      data = JSON.parse(responseText);
+    }
+  } catch (parseError) {
+    console.error(`❌ JSON parse error for ${startDate}-${endDate}:`, parseError);
+    console.error(`❌ Raw response was:`, responseText);
+    throw new Error(`Failed to parse response: ${parseError.message}`);
+  }
+  
+  console.log(`📥 Parsed KPI Response: plays=${data.plays}, completes=${data.completes} for ${startDate}-${endDate}`);
+  console.log(`📥 Full parsed data:`, data);
   return data;
 }
 
