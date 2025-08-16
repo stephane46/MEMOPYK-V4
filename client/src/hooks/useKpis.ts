@@ -61,19 +61,19 @@ export function useKpis(params: { startDate: string; endDate: string; locale: "a
       prev === 0 ? (now > 0 ? 100 : 0) : ((now - prev) / prev) * 100;
 
     return {
-      plays: { value: current.plays, delta: delta(current.plays, previous.plays) },
+      plays: { value: current.plays ?? 0, delta: delta(current.plays ?? 0, previous.plays ?? 0) },
       avgWatchSeconds: {
-        value: current.avgWatchSeconds,
-        delta: delta(current.avgWatchSeconds, previous.avgWatchSeconds)
+        value: current.avgWatchSeconds ?? 0,
+        delta: delta(current.avgWatchSeconds ?? 0, previous.avgWatchSeconds ?? 0)
       },
       completionRate: {
-        value: current.completionRate,
-        delta: delta(current.completionRate, previous.completionRate)
+        value: current.completionRate ?? 0,
+        delta: delta(current.completionRate ?? 0, previous.completionRate ?? 0)
       },
-      topLocale: current.topLocale,
+      topLocale: current.topLocale ?? { locale: 'n/a', plays: 0 },
       watchTimeSeconds: {
-        value: current.totals.watchTimeSeconds,
-        delta: delta(current.totals.watchTimeSeconds, previous.totals.watchTimeSeconds)
+        value: current.totals?.watchTimeSeconds ?? 0,
+        delta: delta(current.totals?.watchTimeSeconds ?? 0, previous.totals?.watchTimeSeconds ?? 0)
       }
     };
   }, [current, previous]);
