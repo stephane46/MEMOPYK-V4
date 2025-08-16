@@ -19,6 +19,7 @@ import { LegalDocumentManagement } from '@/components/admin/LegalDocumentManagem
 import { CtaManagement } from '@/components/admin/CtaManagement';
 import { AnalyticsDashboard } from '@/components/admin/AnalyticsDashboard';
 import GA4AnalyticsDashboard from '@/components/admin/GA4AnalyticsDashboard';
+import CacheManagementPage from '@/pages/CacheManagementPage';
 import { FiltersProvider } from '@/analytics/FiltersContext';
 import VideoCacheStatus from '@/components/admin/VideoCacheStatus';
 import SeoManagement from '@/components/admin/SeoManagement';
@@ -240,6 +241,7 @@ export default function AdminPage() {
     { id: 'seo-management', label: 'Gestion SEO', icon: Search },
     { id: 'analytics', label: 'Analytiques', icon: BarChart3 },
     { id: 'analytics-ga', label: 'Analytics GA', icon: TrendingUp },
+    { id: 'cache-management', label: 'Cache GA4', icon: Database },
     { id: 'tests', label: 'Tests', icon: TestTube },
     { id: 'deployment', label: 'Déploiement', icon: Rocket },
   ];
@@ -1795,6 +1797,13 @@ export default function AdminPage() {
               
               <PerformanceTestDashboard />
               <SystemTestDashboard />
+            </div>
+          )}
+
+          {/* GA4 Cache Management */}
+          {activeSection === 'cache-management' && (
+            <div className="space-y-6">
+              <CacheManagementPage />
             </div>
           )}
 

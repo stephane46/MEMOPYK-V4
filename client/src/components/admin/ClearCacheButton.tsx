@@ -4,9 +4,10 @@ import { Trash2 } from "lucide-react";
 
 interface ClearCacheButtonProps {
   className?: string;
+  onCacheCleared?: () => void;
 }
 
-export function ClearCacheButton({ className }: ClearCacheButtonProps) {
+export function ClearCacheButton({ className, onCacheCleared }: ClearCacheButtonProps) {
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState<string | null>(null);
 
@@ -23,6 +24,9 @@ export function ClearCacheButton({ className }: ClearCacheButtonProps) {
       
       if (data.ok) {
         setMessage(`Cache cleared (${data.deletedEntries} entries)`);
+        
+        // Notify parent component
+        onCacheCleared?.();
         
         // Clear message after 3 seconds
         setTimeout(() => setMessage(null), 3000);

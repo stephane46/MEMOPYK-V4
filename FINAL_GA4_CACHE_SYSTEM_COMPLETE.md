@@ -152,11 +152,23 @@ curl "https://your-app.replit.app/api/cache/status"
 
 ## Admin Dashboard Integration
 
+### Dedicated Cache Management Page
+- **Location**: Admin sidebar → "Cache GA4" section
+- **URL**: `/admin#cache-management`
+- **Features**: 
+  - Real-time cache monitoring dashboard
+  - Complete cache statistics and metrics
+  - Manual cache clearing with instant feedback
+  - System information and auto-cleanup status
+  - Performance metrics and cache behavior explanations
+
 ### Clear Cache Button
-- **Location**: GA4 Analytics Dashboard controls section
+- **Primary Location**: Dedicated Cache Management Page
+- **Secondary Location**: GA4 Analytics Dashboard controls section
 - **Functionality**: One-click complete cache clearing
-- **Feedback**: Real-time success/error messages
+- **Feedback**: Real-time success/error messages with entry counts
 - **Visual Design**: Red destructive button with trash icon
+- **Auto-refresh**: Parent components update automatically after clearing
 
 ### User Experience
 1. Click "Clear Cache" button
