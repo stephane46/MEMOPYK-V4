@@ -395,3 +395,31 @@ export async function qTrend(start: string, end: string, locale?: string) {
     return { date, plays, avgWatchSeconds: avg };
   });
 }
+
+/* =============  REALTIME API  ============= */
+
+export async function qRealtime() {
+  // Active users now
+  const [users] = await client.runRealtimeReport({
+    property: PROPERTY,
+    metrics: [{ name: "activeUsers" }]
+  });
+
+  // Recent events breakdown (focusing on video events)
+  const [events] = await client.runRealtimeReport({
+    property: PROPERTY,
+    metrics: [{ name: "eventCount" }],
+    dimensions: [{ name: "eventName" }],
+    limit: 20
+  });
+
+  const activeUsers = Number(users.rows?.[0]?.metricValues?.[0]?.value ?? 0);
+  const lastEvents = (events.rows ?? [])
+    .map(r => ({
+      eventName: r.dimensionValues?.[0]?.value ?? "",
+      count: Number(r.metricValues?.[0]?.value ?? 0)
+    }))
+    .filter(e => e.eventName.startsWith("video_"));
+
+  return { activeUsers, lastEvents };
+}

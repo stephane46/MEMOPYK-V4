@@ -23,6 +23,7 @@ import {
   qFunnel,
   qTrend,
   qTrendDaily,
+  qRealtime,
   getTopVideosTable
 } from './ga4-service';
 
@@ -3953,6 +3954,16 @@ export async function registerRoutes(app: Express): Promise<void> {
       res.json(data);
     } catch (e) {
       res.status(500).json({ error: String(e) });
+    }
+  });
+
+  app.get("/api/ga4/realtime", async (_req, res) => {
+    try {
+      const data = await qRealtime();
+      res.json(data);
+    } catch (error: any) {
+      console.error("GA4 realtime error:", error);
+      res.status(500).json({ error: error.message || "Failed to fetch realtime data" });
     }
   });
 

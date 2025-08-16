@@ -11,6 +11,7 @@ import { TopVideosSection } from './TopVideosSection';
 import { KpiStrip } from './KpiStrip';
 import { FunnelChart } from './FunnelChart';
 import { TrendChart } from './TrendChart';
+import { RealtimePanel } from './RealtimePanel';
 
 const GA4AnalyticsDashboard: React.FC = () => {
   const { startDate, endDate, locale } = useDashboardFilters();
@@ -148,39 +149,8 @@ const GA4AnalyticsDashboard: React.FC = () => {
           {/* Trend Over Time - New TrendChart Component */}
           <TrendChart />
 
-          {/* Realtime Activity */}
-          <Card>
-            <CardHeader>
-              <CardTitle className="text-lg flex items-center gap-2">
-                D. Realtime Activity
-                <Activity className="h-5 w-5 text-red-500" />
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-4">
-                <div className="flex items-center justify-between">
-                  <span className="text-sm font-medium">Active Users:</span>
-                  <Badge variant="default" className="bg-green-600">
-                    {realtime?.active || 0} live
-                  </Badge>
-                </div>
-                
-                {realtime?.recent.length ? (
-                  <div className="space-y-2 max-h-32 overflow-y-auto">
-                    <div className="text-sm font-medium text-gray-600">Recent Events:</div>
-                    {realtime.recent.slice(0, 5).map((event, index) => (
-                      <div key={index} className="text-xs bg-gray-50 p-2 rounded">
-                        <div className="font-medium">{event.video_id}</div>
-                        <div className="text-gray-500">{event.locale} • {event.event}</div>
-                      </div>
-                    ))}
-                  </div>
-                ) : (
-                  <div className="text-sm text-gray-500">No recent activity</div>
-                )}
-              </div>
-            </CardContent>
-          </Card>
+          {/* Realtime Activity - New RealtimePanel Component */}
+          <RealtimePanel />
         </div>
       )}
     </div>
