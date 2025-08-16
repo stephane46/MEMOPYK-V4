@@ -9,6 +9,7 @@ import { useDashboardFilters } from '@/analytics/FiltersContext';
 import { AnalyticsControls } from './AnalyticsControls';
 import { TopVideosSection } from './TopVideosSection';
 import { KpiStrip } from './KpiStrip';
+import { FunnelChart } from './FunnelChart';
 
 const GA4AnalyticsDashboard: React.FC = () => {
   const { startDate, endDate, locale } = useDashboardFilters();
@@ -140,37 +141,8 @@ const GA4AnalyticsDashboard: React.FC = () => {
           {/* Top Videos Table */}
           <TopVideosSection />
 
-          {/* Watch Funnel Chart */}
-          <Card>
-            <CardHeader>
-              <CardTitle className="text-lg">B. Watch Progress Funnel</CardTitle>
-            </CardHeader>
-            <CardContent>
-              {funnelData.some(d => d.count > 0) ? (
-                <div className="space-y-3">
-                  {funnelData.map((step, index) => {
-                    const maxCount = Math.max(...funnelData.map(d => d.count));
-                    const width = maxCount > 0 ? (step.count / maxCount) * 100 : 0;
-                    
-                    return (
-                      <div key={step.label} className="flex items-center gap-3">
-                        <div className="w-12 text-sm font-medium">{step.label}</div>
-                        <div className="flex-1 h-6 bg-gray-200 rounded-full overflow-hidden">
-                          <div
-                            className="h-full bg-gradient-to-r from-blue-500 to-blue-600 transition-all duration-500"
-                            style={{ width: `${width}%` }}
-                          />
-                        </div>
-                        <div className="w-16 text-sm text-right">{formatNumber(step.count)}</div>
-                      </div>
-                    );
-                  })}
-                </div>
-              ) : (
-                <div className="text-center py-4 text-gray-500">No funnel data available</div>
-              )}
-            </CardContent>
-          </Card>
+          {/* Watch Funnel Chart - New Component */}
+          <FunnelChart />
 
           {/* Trend Over Time */}
           <Card>
