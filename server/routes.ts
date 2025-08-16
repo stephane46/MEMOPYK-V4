@@ -26,6 +26,7 @@ import {
   qRealtime,
   getTopVideosTable
 } from './ga4-service';
+import { getCache, setCache, k } from './cache';
 
 // Contact form validation schema
 const contactFormSchema = z.object({
@@ -3825,6 +3826,11 @@ export async function registerRoutes(app: Express): Promise<void> {
   app.get("/api/ga4/kpis", async (req, res, next) => {
     try {
       const { startDate, endDate, locale } = getParams(req);
+      const key = k(`kpis:${startDate}:${endDate}:${locale}`);
+
+      const cached = getCache<any>(key);
+      if (cached) return res.json(cached);
+
       console.log(`📊 GA4 KPIs request: ${startDate} to ${endDate}, locale: ${locale}`);
 
       // Test each query individually to identify which is failing
@@ -3869,14 +3875,17 @@ export async function registerRoutes(app: Express): Promise<void> {
       const avgWatchSeconds = plays > 0 ? Math.round(totalWatch / plays) : 0;
       const completionRate = plays > 0 ? (completes / plays) * 100 : 0;
 
-      res.json({
+      const data = {
         plays,
         completes,
         totals: { watchTimeSeconds: totalWatch },
         avgWatchSeconds,
         completionRate,
         topLocale
-      });
+      };
+
+      setCache(key, data, 300);
+      res.json(data);
     } catch (e) { 
       console.error('❌ GA4 KPIs error:', e);
       res.status(500).json({ message: (e as Error).message });
@@ -3925,10 +3934,16 @@ export async function registerRoutes(app: Express): Promise<void> {
   app.get("/api/ga4/top-videos", async (req, res, next) => {
     try {
       const { startDate, endDate, locale } = getParams(req);
+      const key = k(`top:${startDate}:${endDate}:${locale}`);
+
+      const cached = getCache<any>(key);
+      if (cached) return res.json(cached);
+
       console.log(`📊 GA4 Top Videos request: ${startDate} to ${endDate}, locale: ${locale}`);
 
-      const rows = await getTopVideosTable(startDate, endDate, locale);
-      res.json(rows);
+      const data = await getTopVideosTable(startDate, endDate, locale);
+      setCache(key, data, 300);
+      res.json(data);
     } catch (e) { 
       console.error('❌ GA4 Top Videos error:', e);
       res.status(500).json({ message: (e as Error).message });
@@ -3939,7 +3954,13 @@ export async function registerRoutes(app: Express): Promise<void> {
   app.get("/api/ga4/funnel", async (req, res) => {
     try {
       const { startDate, endDate, locale } = req.query as any;
+      const key = k(`funnel:${startDate}:${endDate}:${locale || 'all'}`);
+
+      const cached = getCache<any>(key);
+      if (cached) return res.json(cached);
+
       const data = await qFunnel(startDate, endDate, locale);
+      setCache(key, data, 300);
       res.json(data);
     } catch (e) {
       res.status(500).json({ error: String(e) });
@@ -3950,7 +3971,13 @@ export async function registerRoutes(app: Express): Promise<void> {
   app.get("/api/ga4/trend", async (req, res) => {
     try {
       const { startDate, endDate, locale } = req.query as any;
+      const key = k(`trend:${startDate}:${endDate}:${locale || 'all'}`);
+
+      const cached = getCache<any>(key);
+      if (cached) return res.json(cached);
+
       const data = await qTrendDaily(startDate, endDate, locale);
+      setCache(key, data, 600); // 10 minutes TTL since trend can be heavier
       res.json(data);
     } catch (e) {
       res.status(500).json({ error: String(e) });
@@ -3959,7 +3986,13 @@ export async function registerRoutes(app: Express): Promise<void> {
 
   app.get("/api/ga4/realtime", async (_req, res) => {
     try {
+      const key = k('realtime');
+
+      const cached = getCache<any>(key);
+      if (cached) return res.json(cached);
+
       const data = await qRealtime();
+      setCache(key, data, 30); // 30 seconds TTL for realtime data
       res.json(data);
     } catch (error: any) {
       console.error("GA4 realtime error:", error);
