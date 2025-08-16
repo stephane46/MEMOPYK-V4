@@ -8,6 +8,8 @@ export function FunnelChart() {
   const { startDate, endDate, locale } = useDashboardFilters();
   const { data, loading, error, reload } = useFunnel({ startDate, endDate, locale });
 
+  console.log('FunnelChart render:', { data, loading, error });
+
   if (loading) return <div className="p-4 text-sm text-gray-500">Loading funnel…</div>;
   if (error || !data) return <ErrorBlock message={`Funnel data temporarily unavailable: ${error || "No data"}`} onRetry={reload} compact />;
 
@@ -16,6 +18,8 @@ export function FunnelChart() {
     { stage: "50% Reached", value: data.half },
     { stage: "100% Completed", value: data.completes },
   ];
+
+  console.log('FunnelChart rows:', rows);
 
   return (
     <div className="bg-white rounded-2xl shadow p-4">
