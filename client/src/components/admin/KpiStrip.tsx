@@ -7,8 +7,12 @@ export function KpiStrip() {
   const { startDate, endDate, locale } = useDashboardFilters();
   const { loading, error, data, reload } = useKpis({ startDate, endDate, locale });
 
-  console.log('KpiStrip render - data:', JSON.stringify(data));
-  console.log('KpiStrip render - data.plays:', data?.plays);
+  // Debug: Check if data is properly structured
+  if (data && data.plays) {
+    console.log('✅ KpiStrip - PLAYS VALUE:', data.plays.value);
+  } else {
+    console.log('❌ KpiStrip - NO PLAYS DATA:', data);
+  }
 
   if (loading) return <div className="p-4 text-gray-500 text-sm">Loading KPIs…</div>;
   if (error || !data) return <ErrorBlock message={`KPI data temporarily unavailable: ${error || "No data"}`} onRetry={reload} compact />;
