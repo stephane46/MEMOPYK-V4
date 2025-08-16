@@ -19,6 +19,7 @@ import { LegalDocumentManagement } from '@/components/admin/LegalDocumentManagem
 import { CtaManagement } from '@/components/admin/CtaManagement';
 import { AnalyticsDashboard } from '@/components/admin/AnalyticsDashboard';
 import GA4AnalyticsDashboard from '@/components/admin/GA4AnalyticsDashboard';
+import { FiltersProvider } from '@/analytics/FiltersContext';
 import VideoCacheStatus from '@/components/admin/VideoCacheStatus';
 import SeoManagement from '@/components/admin/SeoManagement';
 import SystemTestDashboard from '@/components/admin/SystemTestDashboard';
@@ -1467,7 +1468,9 @@ export default function AdminPage() {
 
           {/* GA4 Analytics Dashboard */}
           {activeSection === 'analytics-ga' && (
-            <GA4AnalyticsDashboard />
+            <FiltersProvider>
+              <GA4AnalyticsDashboard />
+            </FiltersProvider>
           )}
 
           {/* Gallery */}

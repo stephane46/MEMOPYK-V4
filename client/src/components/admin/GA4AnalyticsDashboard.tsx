@@ -1,46 +1,22 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Badge } from '@/components/ui/badge';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { TrendingUp, RefreshCw, Calendar, Globe, Play, Clock, Target, Trophy, Activity, BarChart3, AlertCircle } from 'lucide-react';
+import { TrendingUp, RefreshCw, Play, Clock, Target, Trophy, Activity, BarChart3, AlertCircle } from 'lucide-react';
 import { useGA4VideoAnalytics } from '@/hooks/useGA4VideoAnalytics';
-import { TopVideosTable } from './TopVideosTable';
-
-// Calculate date range for the last 7 days by default
-const getDefaultDateRange = () => {
-  const end = new Date();
-  const start = new Date();
-  start.setDate(start.getDate() - 6); // 7 days total including today
-  
-  return {
-    startDate: start.toISOString().split('T')[0],
-    endDate: end.toISOString().split('T')[0]
-  };
-};
+import { useDashboardFilters } from '@/analytics/FiltersContext';
+import { AnalyticsControls } from './AnalyticsControls';
+import { TopVideosSection } from './TopVideosSection';
 
 const GA4AnalyticsDashboard: React.FC = () => {
-  const defaultRange = getDefaultDateRange();
-  const [startDate, setStartDate] = useState(defaultRange.startDate);
-  const [endDate, setEndDate] = useState(defaultRange.endDate);
-  const [locale, setLocale] = useState('all');
+  const { startDate, endDate, locale } = useDashboardFilters();
 
   const { kpis, topVideos, funnel, trend, realtime, isLoading, isRefreshing, error, allCached, refresh } = useGA4VideoAnalytics({
     startDate,
     endDate,
     locale
   });
-
-  // Date range presets
-  const applyDateRange = (days: number) => {
-    const end = new Date();
-    const start = new Date();
-    start.setDate(start.getDate() - (days - 1));
-    
-    setStartDate(start.toISOString().split('T')[0]);
-    setEndDate(end.toISOString().split('T')[0]);
-  };
 
   // Format numbers for display
   const formatNumber = (num: number): string => {
@@ -97,87 +73,29 @@ const GA4AnalyticsDashboard: React.FC = () => {
         <CardHeader className="pb-3">
           <CardTitle className="text-lg">Dashboard Controls</CardTitle>
         </CardHeader>
-        <CardContent className="flex flex-wrap items-center gap-4">
-          {/* Date Range Selector */}
-          <div className="flex items-center gap-2">
-            <Calendar className="h-4 w-4 text-gray-500" />
-            <span className="text-sm font-medium">Date Range:</span>
-            <div className="flex gap-2">
-              <Button
-                variant={startDate === getDefaultDateRange().startDate ? 'default' : 'outline'}
-                size="sm"
-                onClick={() => applyDateRange(7)}
-              >
-                Last 7 days
-              </Button>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => applyDateRange(14)}
-              >
-                Last 14 days
-              </Button>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => applyDateRange(30)}
-              >
-                Last 30 days
-              </Button>
-            </div>
+        <CardContent>
+          <div className="flex flex-wrap items-center gap-4">
+            <AnalyticsControls />
+            
+            {/* Refresh Button */}
+            <Button
+              onClick={refresh}
+              disabled={isRefreshing}
+              variant="outline"
+              size="sm"
+              className="flex items-center gap-2"
+            >
+              <RefreshCw className={`h-4 w-4 ${isRefreshing ? 'animate-spin' : ''}`} />
+              Refresh
+            </Button>
+
+            {/* Cache Status */}
+            {allCached && (
+              <Badge variant="secondary" className="text-xs">
+                Cached Data
+              </Badge>
+            )}
           </div>
-
-          {/* Custom Date Inputs */}
-          <div className="flex items-center gap-2">
-            <input
-              type="date"
-              value={startDate}
-              onChange={(e) => setStartDate(e.target.value)}
-              className="px-2 py-1 border rounded text-sm"
-            />
-            <span className="text-sm text-gray-500">to</span>
-            <input
-              type="date"
-              value={endDate}
-              onChange={(e) => setEndDate(e.target.value)}
-              className="px-2 py-1 border rounded text-sm"
-            />
-          </div>
-
-          {/* Locale Selector */}
-          <div className="flex items-center gap-2">
-            <Globe className="h-4 w-4 text-gray-500" />
-            <span className="text-sm font-medium">Locale:</span>
-            <Select value={locale} onValueChange={setLocale}>
-              <SelectTrigger className="w-32">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">All Locales</SelectItem>
-                <SelectItem value="fr-FR">French</SelectItem>
-                <SelectItem value="en-US">English</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-
-          {/* Refresh Button */}
-          <Button
-            onClick={refresh}
-            disabled={isRefreshing}
-            variant="outline"
-            size="sm"
-            className="flex items-center gap-2"
-          >
-            <RefreshCw className={`h-4 w-4 ${isRefreshing ? 'animate-spin' : ''}`} />
-            Refresh
-          </Button>
-
-          {/* Cache Status */}
-          {allCached && (
-            <Badge variant="secondary" className="text-xs">
-              Cached Data
-            </Badge>
-          )}
         </CardContent>
       </Card>
 
@@ -262,18 +180,7 @@ const GA4AnalyticsDashboard: React.FC = () => {
       {!isLoading && (
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {/* Top Videos Table */}
-          <Card>
-            <CardHeader>
-              <CardTitle className="text-lg">A. Top Videos Performance</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <TopVideosTable 
-                startDate={startDate} 
-                endDate={endDate} 
-                locale={locale as "all"|"fr-FR"|"en-US"} 
-              />
-            </CardContent>
-          </Card>
+          <TopVideosSection />
 
           {/* Watch Funnel Chart */}
           <Card>
