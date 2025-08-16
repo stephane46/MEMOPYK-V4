@@ -25,9 +25,13 @@ async function fetchKpis(startDate: string, endDate: string, locale: string): Pr
   url.searchParams.set("startDate", startDate);
   url.searchParams.set("endDate", endDate);
   url.searchParams.set("locale", locale);
+  
+  console.log(`📡 Fetching KPIs: ${url.toString()}`);
   const res = await fetch(url.toString());
   if (!res.ok) throw new Error(`HTTP ${res.status}`);
-  return res.json();
+  const data = await res.json();
+  console.log(`📥 KPI Response: plays=${data.plays}, completes=${data.completes} for ${startDate}-${endDate}`);
+  return data;
 }
 
 export function useKpis(params: { startDate: string; endDate: string; locale: "all"|"fr-FR"|"en-US" }) {
@@ -44,14 +48,35 @@ export function useKpis(params: { startDate: string; endDate: string; locale: "a
     let alive = true;
     setLoading(true);
     setError(null);
+    
+    // Debug logging to track race conditions
+    const requestId = Math.random().toString(36).substr(2, 9);
+    console.log(`🔄 KPI Request ${requestId}: ${startDate} to ${endDate}, locale: ${locale}`);
+    
     const { start: ps, end: pe } = prevPeriod(startDate, endDate);
 
     Promise.all([fetchKpis(startDate, endDate, locale), fetchKpis(ps, pe, locale)])
-      .then(([cur, prev]) => { if (alive) { setCurrent(cur); setPrevious(prev); } })
-      .catch(e => { if (alive) setError(String(e.message || e)); })
+      .then(([cur, prev]) => { 
+        if (alive) { 
+          console.log(`✅ KPI Response ${requestId}: plays=${cur.plays}, completes=${cur.completes}`);
+          setCurrent(cur); 
+          setPrevious(prev); 
+        } else {
+          console.log(`🚫 KPI Response ${requestId}: discarded (component unmounted)`);
+        }
+      })
+      .catch(e => { 
+        if (alive) {
+          console.error(`❌ KPI Error ${requestId}:`, e.message);
+          setError(String(e.message || e)); 
+        }
+      })
       .finally(() => { if (alive) setLoading(false); });
 
-    return () => { alive = false; };
+    return () => { 
+      console.log(`🛑 KPI Cleanup ${requestId}: marking as dead`);
+      alive = false; 
+    };
   }, [startDate, endDate, locale, bump]);
 
   const withDeltas = useMemo(() => {
