@@ -1,9 +1,10 @@
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
+import { Copy, AlertCircle } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { TrendingUp, RefreshCw, Play, Clock, Target, Trophy, Activity, BarChart3, AlertCircle } from 'lucide-react';
+import { TrendingUp, RefreshCw, Play, Clock, Target, Trophy, Activity, BarChart3 } from 'lucide-react';
 import { useGA4VideoAnalytics } from '@/hooks/useGA4VideoAnalytics';
 import { useDashboardFilters } from '@/analytics/FiltersContext';
 import { AnalyticsControls } from './AnalyticsControls';
@@ -41,6 +42,27 @@ const GA4AnalyticsDashboard: React.FC = () => {
     const minutes = Math.floor(seconds / 60);
     const remainingSeconds = Math.round(seconds % 60);
     return `${minutes}m ${remainingSeconds}s`;
+  };
+
+  // Debug Link functionality
+  const handleCopyDebugLink = () => {
+    const params = new URLSearchParams({
+      start: startDate,
+      end: endDate,
+      locale: locale || "all",
+    });
+    const url = `${window.location.origin}/fr-FR/admin?${params.toString()}`;
+    navigator.clipboard.writeText(url).then(() => {
+      // Simple success feedback
+      const btn = document.querySelector('[data-testid="copy-debug-link"]') as HTMLElement;
+      if (btn) {
+        const originalText = btn.textContent;
+        btn.textContent = "Copied!";
+        setTimeout(() => {
+          btn.textContent = originalText;
+        }, 2000);
+      }
+    });
   };
 
   // Get top locale from KPIs data
@@ -88,6 +110,19 @@ const GA4AnalyticsDashboard: React.FC = () => {
         <CardContent>
           <div className="flex flex-wrap items-center gap-4">
             <AnalyticsControls />
+            
+            {/* Debug Link Button */}
+            <Button
+              onClick={handleCopyDebugLink}
+              variant="outline"
+              size="sm"
+              className="flex items-center gap-2"
+              data-testid="copy-debug-link"
+              title="Copy shareable link with current filters"
+            >
+              <Copy className="h-4 w-4" />
+              Copy Debug Link
+            </Button>
             
             {/* Refresh Button */}
             <Button

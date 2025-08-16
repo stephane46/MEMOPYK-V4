@@ -13,6 +13,7 @@ export function RealtimePanel() {
   const [data, setData] = useState<RealtimeData | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [lastUpdated, setLastUpdated] = useState<string | null>(null);
 
   useEffect(() => {
     let alive = true;
@@ -25,6 +26,7 @@ export function RealtimePanel() {
             setData(j); 
             setError(null);
             setIsLoading(false);
+            setLastUpdated(new Date().toLocaleTimeString());
           }
         })
         .catch(e => { 
@@ -79,14 +81,16 @@ export function RealtimePanel() {
           Realtime Activity
           <Activity className="h-5 w-5 text-green-500" />
         </CardTitle>
-        <div className="text-xs text-gray-500">Auto-refresh 15s</div>
+        <div className="text-xs text-gray-500">
+          Auto-refresh 15s{lastUpdated && ` • Last updated: ${lastUpdated}`}
+        </div>
       </CardHeader>
       <CardContent>
         <div className="space-y-4">
           <div className="flex items-center justify-between">
             <span className="text-sm font-medium">Active Users:</span>
             <Badge variant="default" className="bg-green-600">
-              {formatInt(data.activeUsers)} live
+              {data.activeUsers === 0 ? "No active viewers" : `${formatInt(data.activeUsers)} live`}
             </Badge>
           </div>
           
