@@ -452,7 +452,7 @@ export async function qWatchTimeByVideoFallback(start: string, end: string, loca
       });
     }
 
-    // Calculate watch time using completion-based method with ACTUAL video durations
+    // Calculate watch time using REALISTIC completion-based method with ACTUAL video durations
     const result = playsData.map((video: any) => {
       const plays = video.plays;
       const key = `${video.video_id}:::${video.title}`;
@@ -464,24 +464,28 @@ export async function qWatchTimeByVideoFallback(start: string, end: string, loca
       let totalWatchTime = 0;
       
       if (completes > 0) {
-        // Realistic completion-based calculation using ACTUAL video duration
+        // REALISTIC completion-based calculation using ACTUAL video duration
         // Cap completes at plays to avoid impossible scenarios
         const actualCompletes = Math.min(completes, plays);
         const partialPlays = Math.max(0, plays - actualCompletes);
         
-        const completionWatchTime = actualCompletes * actualDuration;
-        const partialWatchTime = partialPlays * (actualDuration * 0.3); // 30% for partial views
+        // REALISTIC WATCH TIME CALCULATION:
+        // Complete views: assume 90% of duration (people drop off near end)
+        // Partial views: assume 40% of duration (more realistic than 30%)
+        const completionWatchTime = actualCompletes * (actualDuration * 0.9);
+        const partialWatchTime = partialPlays * (actualDuration * 0.4);
         totalWatchTime = completionWatchTime + partialWatchTime;
         
-        console.log(`🔍 DETAILED CALC - ${video.title}: ${plays} plays, ${completes} completes → capped to ${actualCompletes} completes + ${partialPlays} partial`);
-        console.log(`🔍 MATH CHECK - ${video.title}: (${actualCompletes} × ${actualDuration}s) + (${partialPlays} × ${actualDuration * 0.3}s) = ${Math.round(totalWatchTime)}s total`);
+        console.log(`🔍 REALISTIC CALC - ${video.title}: ${plays} plays, ${completes} completes → capped to ${actualCompletes} completes + ${partialPlays} partial`);
+        console.log(`🔍 REALISTIC MATH - ${video.title}: (${actualCompletes} × ${actualDuration * 0.9}s) + (${partialPlays} × ${actualDuration * 0.4}s) = ${Math.round(totalWatchTime)}s total`);
       } else if (plays > 0) {
-        // Play-based estimation when no completes available
-        totalWatchTime = plays * (actualDuration * 0.5); // 50% average watch time
-        console.log(`🔍 FALLBACK CALC - ${video.title}: ${plays} plays × ${actualDuration * 0.5}s = ${Math.round(totalWatchTime)}s total`);
+        // Play-based estimation when no completes available - more realistic average
+        totalWatchTime = plays * (actualDuration * 0.65); // 65% average watch time (more realistic)
+        console.log(`🔍 REALISTIC FALLBACK - ${video.title}: ${plays} plays × ${actualDuration * 0.65}s = ${Math.round(totalWatchTime)}s total`);
       }
 
-      console.log(`🔍 qWatchTimeByVideoFallback - ${video.title}: ${plays} plays, ${completes} completes, ${actualDuration}s duration → ${Math.round(totalWatchTime)}s total`);
+      const avgWatchTimePerPlay = plays > 0 ? totalWatchTime / plays : 0;
+      console.log(`🎯 FINAL REALISTIC RESULT - ${video.title}: ${Math.round(totalWatchTime)}s total ÷ ${plays} plays = ${Math.round(avgWatchTimePerPlay)}s avg per play`);
 
       return {
         video_id: video.video_id,
