@@ -115,7 +115,8 @@ export async function getDbCache<T>(key: string): Promise<T | null> {
       }
 
       console.log(`✅ Cache hit: ${key}`);
-      return data.value as T;
+      // Ensure we return parsed JSON if it's a string (PostgreSQL stores as JSON string)
+      return typeof data.value === 'string' ? JSON.parse(data.value) : data.value;
     } else {
       // Use Supabase in production
       if (!supabase) return null;
