@@ -55,9 +55,9 @@ export function TopVideosTable({ data = [] }: { data?: any[] }) {
           </TableHeader>
           <TableBody>
             {sortedData.map((row, index) => (
-              <TableRow key={row.video_id || index}>
+              <TableRow key={`${row.video_id || 'video'}-${index}-${row.video_filename || 'unknown'}`}>
                 {topVideosColumns.map((column) => (
-                  <TableCell key={column.key}>
+                  <TableCell key={`${column.key}-${index}`}>
                     {column.cell(row)}
                   </TableCell>
                 ))}

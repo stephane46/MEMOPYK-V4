@@ -14,8 +14,9 @@ export function KpiStrip() {
     console.log('❌ KpiStrip - NO PLAYS DATA:', data);
   }
 
-  if (loading) return <div className="p-4 text-gray-500 text-sm">Loading KPIs…</div>;
-  if (error || !data) return <ErrorBlock message={`KPI data temporarily unavailable: ${error || "No data"}`} onRetry={reload} compact />;
+  // Show loading state while data is being fetched
+  if (loading || !data) return <div className="p-4 text-gray-500 text-sm">Loading KPIs…</div>;
+  if (error) return <ErrorBlock message={`KPI data temporarily unavailable: ${error}`} onRetry={reload} compact />;
 
   const Card = ({ label, value, delta, fmt = (v:any)=>v }: {
     label: string;
