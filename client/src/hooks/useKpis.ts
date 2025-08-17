@@ -21,47 +21,19 @@ function prevPeriod(startYmd: string, endYmd: string) {
 }
 
 async function fetchKpis(startDate: string, endDate: string, locale: string, signal?: AbortSignal): Promise<Kpis> {
-  const url = new URL("/api/analytics/dashboard", window.location.origin);
-  url.searchParams.set("dateFrom", startDate);
-  url.searchParams.set("dateTo", endDate);
-  if (locale !== "all") {
-    url.searchParams.set("locale", locale);
-  }
+  // Use ONLY authentic GA4 data - no fallbacks, no estimations
+  const url = new URL("/api/ga4/kpis", window.location.origin);
+  url.searchParams.set("startDate", startDate);
+  url.searchParams.set("endDate", endDate);
+  url.searchParams.set("locale", locale);
   
   const res = await fetch(url.toString(), { signal });
   if (!res.ok) throw new Error(`HTTP ${res.status}`);
   
-  const dashboardData = await res.json();
+  const ga4Data = await res.json();
   
-  // Transform dashboard data to KPI format
-  const totalViews = dashboardData.overview?.totalViews || 0;
-  const totalWatchTime = dashboardData.overview?.totalWatchTime || 0;
-  const avgWatchTime = totalViews > 0 ? Math.round(totalWatchTime / totalViews) : 0;
-  
-  // Calculate completion rate from video performance data
-  const videoPerf = dashboardData.videoPerformance || [];
-  const completionRates = videoPerf.map((v: any) => v.average_completion_rate || 0);
-  const avgCompletionRate = completionRates.length > 0 
-    ? completionRates.reduce((a: number, b: number) => a + b, 0) / completionRates.length 
-    : 0;
-  
-  // Find top locale from language breakdown
-  const languages = dashboardData.languageBreakdown || [];
-  const topLanguage = languages.reduce((top: any, curr: any) => 
-    (curr.sessions > (top?.sessions || 0)) ? curr : top, null
-  );
-  
-  return {
-    plays: totalViews,
-    completes: videoPerf.filter((v: any) => v.average_completion_rate > 90).length,
-    totals: { watchTimeSeconds: totalWatchTime },
-    avgWatchSeconds: avgWatchTime,
-    completionRate: Math.round(avgCompletionRate),
-    topLocale: { 
-      locale: topLanguage?.language || 'Unknown', 
-      plays: topLanguage?.sessions || 0 
-    }
-  };
+  // Return authentic GA4 data directly - if it's 0, that's the real data
+  return ga4Data;
 }
 
 export function useKpis(params: { startDate: string; endDate: string; locale: "all"|"fr-FR"|"en-US" }) {

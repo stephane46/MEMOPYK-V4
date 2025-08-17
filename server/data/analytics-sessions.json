@@ -5446,5 +5446,21 @@
     "created_at": "2025-08-17T18:58:37.096Z",
     "updated_at": "2025-08-17T18:59:01.617Z",
     "region": "Mazovia"
+  },
+  {
+    "id": "3b29bf5d-b3e8-4857-8ccd-d5460aaec61c",
+    "session_id": "session_1755457726607_k1pwsm4kk",
+    "user_id": null,
+    "ip_address": "193.42.99.250",
+    "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36 Edg/139.0.0.0",
+    "referrer": "https://365df2cf-1884-444c-a9e8-235602456363-00-37q39xpqlgvdy.janeway.replit.dev/__replco/workspace_iframe.html?initialPath=%2F&id=%3Ar2ks%3A",
+    "language": "fr-FR",
+    "country": "Unknown",
+    "city": "Unknown",
+    "page_views": 0,
+    "is_bot": false,
+    "is_test_data": false,
+    "created_at": "2025-08-17T19:08:46.875Z",
+    "updated_at": "2025-08-17T19:08:46.916Z"
   }
 ]

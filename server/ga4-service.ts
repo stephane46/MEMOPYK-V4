@@ -94,75 +94,19 @@ export async function qCompletes(start: string, end: string, locale?: string) {
 }
 
 export async function qWatchTimeTotal(start: string, end: string, locale?: string, playsCount?: number, completesCount?: number) {
-  console.log(`🎯 qWatchTimeTotal CALLED: ${start} to ${end}, locale: ${locale || 'all'}`);
-  console.log(`🎯 qWatchTimeTotal - Received plays: ${playsCount}, completes: ${completesCount}`);
+  console.log(`🎯 qWatchTimeTotal CALLED: ${start} to ${end}, locale: ${locale || 'all'} - AUTHENTIC GA4 DATA ONLY`);
   
-  try {
-    // Use the REAL watch time data from GA4 position_sec
-    const watchTimeData = await qActualWatchTimeByVideo(start, end, locale);
-    
-    // Sum up all watch times from individual videos
-    const totalWatchTime = watchTimeData.reduce((sum: number, video: any) => sum + video.watch_time_seconds, 0);
-    
-    console.log(`🎯 qWatchTimeTotal - Using per-video calculation method`);
-    console.log(`🔍 qWatchTimeTotal - Aggregated ${watchTimeData.length} videos for total: ${totalWatchTime}s`);
-    console.log(`🎯 qWatchTimeTotal RESULT: ${Math.round(totalWatchTime)} seconds (method: per_video_aggregation)`);
-    
-    return Math.round(totalWatchTime);
-  } catch (error) {
-    console.warn('🚨 qWatchTimeTotal ERROR - falling back to plays/completes method:', error);
-    
-    // Fallback: use provided data if available
-    let plays = playsCount;
-    let completes = completesCount;
-    
-    if (plays === undefined || completes === undefined) {
-      console.log(`🔍 qWatchTimeTotal - Fetching missing data...`);
-      try {
-        if (plays === undefined) {
-          plays = await qPlays(start, end, locale);
-        }
-        if (completes === undefined) {
-          completes = await qCompletes(start, end, locale);
-        }
-      } catch (fetchError) {
-        console.warn(`⚠️ qWatchTimeTotal - Could not fetch data, using fallback estimation`);
-        plays = plays || 0;
-        completes = completes || 0;
-      }
-    }
-    
-    console.log(`🔍 qWatchTimeTotal - Working with fallback: plays=${plays}, completes=${completes}`);
-    
-    // Get actual video durations instead of hardcoded estimates
-    const videoDurations = getVideoDurations();
-    const avgDuration = Array.from(videoDurations.values()).reduce((sum, duration) => sum + duration, 0) / videoDurations.size || 180; // Default to 3 minutes if no durations
-    
-    let totalWatchTime = 0;
-    
-    if (completes! > 0) {
-      // Use actual average duration instead of hardcoded 90s
-      const completionWatchTime = completes! * avgDuration;
-      const partialWatchTime = Math.max(0, plays! - completes!) * (avgDuration * 0.3);
-      totalWatchTime = completionWatchTime + partialWatchTime;
-      
-      console.log(`🔍 qWatchTimeTotal - Completion calculation with actual durations:`);
-      console.log(`  - Average video duration: ${avgDuration}s (from database)`);
-      console.log(`  - Complete watches: ${completes} × ${avgDuration}s = ${completionWatchTime}s`);
-      console.log(`  - Partial watches: ${plays! - completes!} × ${avgDuration * 0.3}s = ${partialWatchTime}s`);
-    } else if (plays! > 0) {
-      // Use 50% of actual average duration instead of hardcoded 45s
-      totalWatchTime = plays! * (avgDuration * 0.5);
-      console.log(`🔍 qWatchTimeTotal - Play-based calculation: ${plays} × ${avgDuration * 0.5}s = ${totalWatchTime}s`);
-    } else {
-      // Use actual average duration as fallback
-      totalWatchTime = avgDuration;
-      console.log(`🔍 qWatchTimeTotal - No data available, using average duration: ${totalWatchTime}s`);
-    }
-
-    console.log(`🎯 qWatchTimeTotal FALLBACK RESULT: ${Math.round(totalWatchTime)} seconds (method: duration_based_fallback)`);
-    return Math.round(totalWatchTime);
-  }
+  // Use ONLY the authentic GA4 watch time data - no fallbacks
+  const watchTimeData = await qActualWatchTimeByVideo(start, end, locale);
+  
+  // Sum up all watch times from individual videos (authentic GA4 data)
+  const totalWatchTime = watchTimeData.reduce((sum: number, video: any) => sum + video.watch_time_seconds, 0);
+  
+  console.log(`🎯 qWatchTimeTotal - Using authentic GA4 data only`);
+  console.log(`🔍 qWatchTimeTotal - Aggregated ${watchTimeData.length} videos for total: ${totalWatchTime}s`);
+  console.log(`🎯 qWatchTimeTotal RESULT: ${Math.round(totalWatchTime)} seconds (authentic GA4 data)`);
+  
+  return Math.round(totalWatchTime);
 }
 
 export async function qTopLocale(start: string, end: string) {
@@ -371,138 +315,19 @@ export async function qActualWatchTimeByVideo(start: string, end: string, locale
         title: data.title,
         watch_time_seconds: Math.round(data.totalWatchTime)
       };
-    }).filter(video => video.watch_time_seconds > 0);
+    }); // Keep ALL authentic GA4 data, including 0 seconds
 
-    console.log(`🎯 qActualWatchTimeByVideo RESULT: ${result.length} videos with REAL watch time from GA4 watch_time_seconds`);
+    console.log(`🎯 qActualWatchTimeByVideo RESULT: ${result.length} videos with authentic GA4 watch_time_seconds (no filtering)`);
     console.log(`🎯 qActualWatchTimeByVideo SAMPLE DATA:`, result.slice(0, 2));
     
     return result;
   } catch (error) {
-    console.warn('🚨 qActualWatchTimeByVideo failed to get real seconds from GA4:', error);
-    
-    // Fallback to the old estimation method
-    console.log('🔄 Falling back to completion-based estimation...');
-    return qWatchTimeByVideoFallback(start, end, locale);
+    console.error('🚨 qActualWatchTimeByVideo failed to get authentic GA4 data:', error);
+    throw error; // Re-throw to prevent fallback usage - authentic data only
   }
 }
 
-// Keep the old method as fallback
-export async function qWatchTimeByVideoFallback(start: string, end: string, locale?: string) {
-  console.log(`🎯 qWatchTimeByVideoFallback CALLED: ${start} to ${end}, locale: ${locale || 'all'}`);
-  
-  try {
-    // Get plays data by video (this we know works)
-    const playsData = await qPlaysByVideo(start, end, locale);
-    console.log(`🔍 qWatchTimeByVideoFallback - Got ${playsData.length} videos with plays`);
-
-    // Get actual video durations from database
-    const videoDurations = getVideoDurations();
-
-    // Try to get completes by video, but if it fails, use total completes and distribute proportionally
-    let completesData: any[] = [];
-    let totalCompletes = 0;
-    let totalPlays = 0;
-    
-    try {
-      completesData = await qCompletesByVideo(start, end, locale);
-      console.log(`🔍 qWatchTimeByVideoFallback - Got ${completesData.length} videos with completes (per-video method)`);
-    } catch (completesError) {
-      console.warn('🔄 qCompletesByVideo failed, falling back to proportional distribution');
-      
-      // Get total plays and completes for proportional distribution
-      try {
-        const [totalPlaysValue, totalCompletesValue] = await Promise.all([
-          qPlays(start, end, locale),
-          qCompletes(start, end, locale)
-        ]);
-        
-        totalPlays = totalPlaysValue;
-        totalCompletes = totalCompletesValue;
-        
-        console.log(`🔍 qWatchTimeByVideoFallback - Using proportional distribution: ${totalCompletes} total completes across ${totalPlays} total plays`);
-      } catch (fallbackError) {
-        console.warn('🚨 Even fallback total data failed:', fallbackError);
-        // Use video play counts as total if everything else fails
-        totalPlays = playsData.reduce((sum: number, video: any) => sum + video.plays, 0);
-        totalCompletes = Math.round(totalPlays * 0.6); // 60% completion rate estimate based on KPI data
-        console.log(`🔍 qWatchTimeByVideoFallback - Using final fallback: ${totalCompletes} estimated completes for ${totalPlays} plays`);
-      }
-    }
-
-    // Index completes for quick lookup using video_id + title combination
-    const completesByKey = new Map<string, number>();
-    
-    if (completesData.length > 0) {
-      // Use per-video completes data if available, indexed by video_id + title for uniqueness
-      completesData.forEach((c: any) => {
-        const key = `${c.video_id}:::${c.title}`;
-        completesByKey.set(key, c.completes);
-        console.log(`🔍 Indexing completes: "${key}" → ${c.completes} completes`);
-      });
-    } else if (totalCompletes > 0 && totalPlays > 0) {
-      // Distribute total completes proportionally based on plays
-      playsData.forEach((video: any) => {
-        const proportionalCompletes = Math.round((video.plays / totalPlays) * totalCompletes);
-        const key = `${video.video_id}:::${video.title}`;
-        completesByKey.set(key, proportionalCompletes);
-        console.log(`🔍 qWatchTimeByVideoFallback - ${video.title}: ${video.plays} plays → ${proportionalCompletes} estimated completes`);
-      });
-    }
-
-    // Calculate watch time using REALISTIC completion-based method with ACTUAL video durations
-    const result = playsData.map((video: any) => {
-      const plays = video.plays;
-      const key = `${video.video_id}:::${video.title}`;
-      const completes = completesByKey.get(key) || 0;
-      
-      // Get actual video duration from database, fallback to 90 seconds
-      const actualDuration = videoDurations.get(video.video_id) || 90;
-      
-      let totalWatchTime = 0;
-      
-      if (completes > 0) {
-        // REALISTIC completion-based calculation using ACTUAL video duration
-        // Cap completes at plays to avoid impossible scenarios
-        const actualCompletes = Math.min(completes, plays);
-        const partialPlays = Math.max(0, plays - actualCompletes);
-        
-        // REALISTIC WATCH TIME CALCULATION:
-        // Complete views: assume 90% of duration (people drop off near end)
-        // Partial views: assume 40% of duration (more realistic than 30%)
-        const completionWatchTime = actualCompletes * (actualDuration * 0.9);
-        const partialWatchTime = partialPlays * (actualDuration * 0.4);
-        totalWatchTime = completionWatchTime + partialWatchTime;
-        
-        console.log(`🔍 REALISTIC CALC - ${video.title}: ${plays} plays, ${completes} completes → capped to ${actualCompletes} completes + ${partialPlays} partial`);
-        console.log(`🔍 REALISTIC MATH - ${video.title}: (${actualCompletes} × ${actualDuration * 0.9}s) + (${partialPlays} × ${actualDuration * 0.4}s) = ${Math.round(totalWatchTime)}s total`);
-      } else if (plays > 0) {
-        // Play-based estimation when no completes available - more realistic average
-        totalWatchTime = plays * (actualDuration * 0.65); // 65% average watch time (more realistic)
-        console.log(`🔍 REALISTIC FALLBACK - ${video.title}: ${plays} plays × ${actualDuration * 0.65}s = ${Math.round(totalWatchTime)}s total`);
-      }
-
-      const avgWatchTimePerPlay = plays > 0 ? totalWatchTime / plays : 0;
-      console.log(`🎯 FINAL REALISTIC RESULT - ${video.title}: ${Math.round(totalWatchTime)}s total ÷ ${plays} plays = ${Math.round(avgWatchTimePerPlay)}s avg per play`);
-
-      return {
-        video_id: video.video_id,
-        title: video.title,
-        watch_time_seconds: Math.round(totalWatchTime)
-      };
-    }).filter(video => video.watch_time_seconds > 0);
-
-    console.log(`🎯 qWatchTimeByVideoFallback RESULT: ${result.length} videos with watch time (completion-based calculation)`);
-    console.log(`🎯 qWatchTimeByVideoFallback SAMPLE DATA:`, result.slice(0, 2));
-    
-    return result;
-  } catch (error) {
-    console.warn('qWatchTimeByVideoFallback failed with completion-based approach, returning empty array:', error);
-    console.error('qWatchTimeByVideoFallback ERROR DETAILS:', error);
-    return [];
-  }
-}
-
-// Use the new real watch time method by default
+// Use ONLY the authentic GA4 watch time method - no fallbacks
 export const qWatchTimeByVideo = qActualWatchTimeByVideo;
 
 export async function qProgressByVideo(start: string, end: string, locale?: string) {
