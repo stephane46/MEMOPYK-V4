@@ -313,7 +313,7 @@ export async function qActualWatchTimeByVideo(start: string, end: string, locale
       : [];
 
   try {
-    // Query for video_play events using watch_time_seconds as CUSTOM METRIC (discovered via debug endpoint)
+    // Query for video_watch_time events using watch_time_seconds as CUSTOM METRIC (sent by trackVideoWatchTime function)
     const [res] = await client.runReport({
       property: PROPERTY,
       dateRanges: [{ startDate: start, endDate: end }],
@@ -328,7 +328,7 @@ export async function qActualWatchTimeByVideo(start: string, end: string, locale
       dimensionFilter: {
         andGroup: {
           expressions: [
-            { filter: { fieldName: "eventName", stringFilter: { value: "video_play" } } },  // BREAKTHROUGH: Real watch time data is in video_play events (discovered via debug endpoint)
+            { filter: { fieldName: "eventName", stringFilter: { value: "video_watch_time" } } },  // CORRECTED: Frontend sends video_watch_time events with watch_time_seconds parameter
             ...localeExpr
           ]
         }

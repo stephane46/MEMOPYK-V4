@@ -99,10 +99,19 @@ export default function VideoOverlay({
     
     return () => {
       console.log('🔄 VIDEO OVERLAY CLEANUP - Component unmounting');
+      
+      // Track final watch time on cleanup
+      const video = videoRef.current;
+      if (video && video.currentTime > 0) {
+        const finalWatchTime = Math.round(video.currentTime);
+        console.log(`📊 CLEANUP WATCH TIME TRACKING: ${videoId} - ${finalWatchTime}s`);
+        trackVideoWatchTime(videoId, finalWatchTime, title);
+      }
+      
       // cleanupVisibilityTracking();
       // ga4Analytics.clearSession(videoId);
     };
-  }, []); // Empty dependencies - mount once only
+  }, [title]); // Include title for cleanup tracking
 
   // Enhanced error handling
   const handleVideoError = useCallback((e: any) => {
@@ -381,13 +390,9 @@ export default function VideoOverlay({
     // GA4 Analytics: Track watch time when user closes video
     const videoId = getVideoId();
     if (duration > 0 && currentTime > 0) {
-      trackGA4VideoEvent('video_watch_time', {
-        video_id: videoId,
-        video_title: title,
-        watch_time_seconds: currentTime, // How much was actually watched
-        locale: language
-      });
-      console.log(`📊 GA4 VIDEO CLOSE: ${videoId} watched ${currentTime}s`);
+      const finalWatchTime = Math.round(currentTime);
+      console.log(`📊 GA4 VIDEO CLOSE: ${videoId} watched ${finalWatchTime}s`);
+      trackVideoWatchTime(videoId, finalWatchTime, title);
     }
     
     // OLD VIDEO ANALYTICS DISABLED - Switch to GA4-only for video analytics
