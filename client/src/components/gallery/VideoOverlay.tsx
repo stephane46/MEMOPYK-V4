@@ -402,7 +402,7 @@ export default function VideoOverlay({
       trackGA4VideoEvent('video_watch_time', {
         video_id: videoId,
         video_title: title,
-        watch_time_sec: currentTime, // How much was actually watched
+        watch_time_seconds: currentTime, // How much was actually watched
         locale: language
       });
       console.log(`📊 GA4 VIDEO CLOSE: ${videoId} watched ${currentTime}s`);

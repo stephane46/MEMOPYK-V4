@@ -311,27 +311,20 @@ export async function qActualWatchTimeByVideo(start: string, end: string, locale
       : [];
 
   try {
-    // Query for video pause/complete events with actual position_sec (watch time)
+    // Query for video_watch_time events with actual watch_time_seconds parameter  
     const [res] = await client.runReport({
       property: PROPERTY,
       dateRanges: [{ startDate: start, endDate: end }],
       dimensions: [
         { name: "customEvent:video_id" },
         { name: "customEvent:video_title" },
-        { name: "customEvent:position_sec" }  // This contains actual seconds watched
+        { name: "customEvent:watch_time_seconds" }  // FIXED: This matches what the client sends
       ],
       metrics: [{ name: "eventCount" }],
       dimensionFilter: {
         andGroup: {
           expressions: [
-            {
-              orGroup: {
-                expressions: [
-                  { filter: { fieldName: "eventName", stringFilter: { value: "video_pause" } } },
-                  { filter: { fieldName: "eventName", stringFilter: { value: "video_complete" } } }
-                ]
-              }
-            },
+            { filter: { fieldName: "eventName", stringFilter: { value: "video_watch_time" } } },
             ...localeExpr
           ]
         }
@@ -347,7 +340,7 @@ export async function qActualWatchTimeByVideo(start: string, end: string, locale
     (res.rows ?? []).forEach((row: any) => {
       const videoId = row.dimensionValues?.[0]?.value ?? "unknown";
       const title = row.dimensionValues?.[1]?.value ?? "Unknown Video";
-      const positionSec = parseFloat(row.dimensionValues?.[2]?.value ?? "0");
+      const watchTimeSeconds = parseFloat(row.dimensionValues?.[2]?.value ?? "0");
       const eventCount = parseInt(row.metricValues?.[0]?.value ?? "0");
       
       const key = `${videoId}:::${title}`;
@@ -357,11 +350,11 @@ export async function qActualWatchTimeByVideo(start: string, end: string, locale
       }
       
       const current = videoWatchTimeMap.get(key)!;
-      // Sum up all watch time (position_sec * eventCount for that position)
-      current.totalWatchTime += positionSec * eventCount;
+      // Sum up all watch time (watch_time_seconds * eventCount for that watch time)
+      current.totalWatchTime += watchTimeSeconds * eventCount;
       current.eventCount += eventCount;
       
-      console.log(`🔍 REAL WATCH TIME - ${title}: +${positionSec}s × ${eventCount} events = +${positionSec * eventCount}s total`);
+      console.log(`🔍 REAL WATCH TIME FROM GA4 - ${title}: +${watchTimeSeconds}s × ${eventCount} events = +${watchTimeSeconds * eventCount}s total`);
     });
 
     const result = Array.from(videoWatchTimeMap.entries()).map(([key, data]) => {
@@ -376,7 +369,7 @@ export async function qActualWatchTimeByVideo(start: string, end: string, locale
       };
     }).filter(video => video.watch_time_seconds > 0);
 
-    console.log(`🎯 qActualWatchTimeByVideo RESULT: ${result.length} videos with REAL watch time from GA4 position_sec`);
+    console.log(`🎯 qActualWatchTimeByVideo RESULT: ${result.length} videos with REAL watch time from GA4 watch_time_seconds`);
     console.log(`🎯 qActualWatchTimeByVideo SAMPLE DATA:`, result.slice(0, 2));
     
     return result;

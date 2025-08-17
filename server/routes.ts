@@ -4054,6 +4054,26 @@ export async function registerRoutes(app: Express): Promise<void> {
     }
   });
 
+  // Test the ACTUAL GA4 watch time function with real seconds
+  app.get("/api/ga4/test-actual-watch-time", async (req, res) => {
+    try {
+      const { startDate, endDate, locale } = getParams(req);
+      console.log(`📊 Testing qActualWatchTimeByVideo (REAL GA4 SECONDS): ${startDate} to ${endDate}, locale: ${locale}`);
+      
+      const { qActualWatchTimeByVideo } = await import('./ga4-service.js');
+      const watchTime = await qActualWatchTimeByVideo(startDate, endDate, locale);
+      console.log(`✅ qActualWatchTimeByVideo result:`, watchTime);
+      
+      res.json(watchTime);
+    } catch (e) {
+      console.error('❌ qActualWatchTimeByVideo test failed:', e);
+      res.status(500).json({ 
+        error: (e as Error).message,
+        stack: (e as Error).stack 
+      });
+    }
+  });
+
   // Top videos table endpoint - using your exact clean API structure
   app.get("/api/ga4/top-videos", async (req, res, next) => {
     try {
