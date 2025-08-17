@@ -37,32 +37,29 @@ export function RecentActivityPanel() {
       setIsLoading(true);
       console.log('🔍 RECENT ACTIVITY PANEL: Fetching recent sessions');
       
-      // Get sessions from last 2 hours for more activity
-      const twoHoursAgo = new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString().split('T')[0];
+      // Get recent sessions from production (shared Supabase database)
       const today = new Date().toISOString().split('T')[0];
+      const yesterday = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString().split('T')[0];
       
-      fetch(`/api/analytics/sessions?dateFrom=${twoHoursAgo}&dateTo=${today}`)
+      fetch(`/api/analytics/sessions?dateFrom=${yesterday}&dateTo=${today}`)
         .then(r => {
-          console.log('🔍 RECENT ACTIVITY PANEL: Response status:', r.status);
+          console.log('🔍 RECENT ACTIVITY PANEL: Fetching production sessions, status:', r.status);
           return r.ok ? r.json() : Promise.reject(new Error(`HTTP ${r.status}`));
         })
         .then(sessions => { 
-          // Filter to last 2 hours and active sessions
-          const twoHoursAgoTime = Date.now() - 2 * 60 * 60 * 1000;
-          const recentSessions = sessions.filter((session: SessionData) => {
-            const sessionTime = new Date(session.created_at).getTime();
-            const isRecent = sessionTime > twoHoursAgoTime;
-            console.log('🔍 Session filter:', {
-              session_id: session.session_id.slice(0, 20) + '...',
-              created_at: session.created_at,
-              sessionTime,
-              twoHoursAgoTime,
-              isRecent,
-              is_bot: session.is_bot,
-              passed: isRecent && !session.is_bot
-            });
-            return isRecent && !session.is_bot;
-          }).slice(0, 20); // Limit to 20 most recent
+          // Show recent active sessions from production (memopyk.com)
+          const sixHoursAgoTime = Date.now() - 6 * 60 * 60 * 1000;
+          const recentSessions = sessions
+            .filter((session: SessionData) => {
+              const sessionTime = new Date(session.created_at).getTime();
+              const isRecent = sessionTime > sixHoursAgoTime;
+              const hasActivity = session.duration && session.duration > 10000; // More than 10 seconds
+              return isRecent && !session.is_bot && hasActivity;
+            })
+            .sort((a: SessionData, b: SessionData) => 
+              new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+            )
+            .slice(0, 10); // Show top 10 most recent active sessions
           
           const activityData: ActivityData = {
             sessions: recentSessions,
@@ -70,7 +67,7 @@ export function RecentActivityPanel() {
             timestamp: new Date().toISOString()
           };
           
-          console.log('🔍 RECENT ACTIVITY PANEL: Found', recentSessions.length, 'recent sessions');
+          console.log('🔍 RECENT ACTIVITY PANEL: Found', recentSessions.length, 'active production sessions');
           if (alive) {
             setData(activityData); 
             setError(null);
@@ -146,7 +143,7 @@ export function RecentActivityPanel() {
 
           {data.sessions.length > 0 ? (
             <div className="space-y-2">
-              <div className="text-sm font-medium text-gray-600">Last 2 hours:</div>
+              <div className="text-sm font-medium text-gray-600">Recent production activity:</div>
               <div className="space-y-3 max-h-64 overflow-y-auto">
                 {data.sessions.map((session) => {
                   const timeAgo = getTimeAgo(session.created_at);
@@ -198,9 +195,9 @@ export function RecentActivityPanel() {
             </div>
           ) : (
             <div className="text-center text-gray-500 py-4">
-              No recent visitor activity
+              No recent production activity
               <div className="text-xs text-gray-400 mt-1">
-                Debug: {data.total} sessions found (check filtering)
+                Showing active sessions from memopyk.com
               </div>
             </div>
           )}
