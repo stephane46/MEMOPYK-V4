@@ -1,14 +1,14 @@
 # MEMOPYK - Replit Project Documentation
 
 ## Overview
-MEMOPYK is a full-stack memory film platform designed to transform personal photos and videos into cinematic memory films. Its core purpose is to provide a seamless and intuitive experience for creating and managing cherished video memories. Key capabilities include a bilingual (French/English) content management system, a professional video lightbox, robust gallery management with reliable video streaming, language-specific upload functionality, advanced image reframing tools, and real-time preview. The project aims to capture a niche market for personalized, high-quality video memories with a vision for market potential and high ambitions.
+MEMOPYK is a full-stack memory film platform that transforms personal photos and videos into cinematic memory films. Its core purpose is to provide a seamless and intuitive experience for creating and managing cherished video memories. Key capabilities include a bilingual (French/English) content management system, a professional video lightbox, robust gallery management with reliable video streaming, language-specific upload functionality, advanced image reframing tools, and real-time preview. The project aims to capture a niche market for personalized, high-quality video memories with significant market potential and high ambitions.
 
 ## User Preferences
 Preferred communication style: Simple, everyday language.
 Visual consistency priority: Extremely detail-oriented about spacing and formatting consistency between admin interface and published pages.
 Analytics interface: Expects all three filter buttons (7d, 30d, 90d) to be visible with proper orange highlighting for active states.
 
-### Critical Code Investigation Protocol (August 2025)
+### Critical Code Investigation Protocol
 **NEVER remove or modify existing code without understanding its purpose first.**
 
 **Required Investigation Process:**
@@ -18,76 +18,10 @@ Analytics interface: Expects all three filter buttons (7d, 30d, 90d) to be visib
 4. **Test functionality** before and after changes
 5. **Assume existing code exists for a reason** until proven otherwise
 
-**Examples of Required Questions:**
-- "I see this MINIMUM_THUMBNAIL_DISPLAY_TIME constant - should I keep the 2-second delay behavior?"
-- "This code appears to handle [specific case] - is this still needed?"
-- "Before removing this logic, can you confirm it's no longer required?"
-
 **Never assume code is:**
 - Redundant without investigation
 - Outdated without checking
 - Unnecessary without user confirmation
-
-This prevents breaking working functionality and ensures user intent is preserved.
-
-### Recent Major Fixes (August 2025)
-
-**Analytics Systems & Admin Panel Complete Resolution (August 17, 2025):**
-- **Dual Analytics Issue**: Local analytics dashboard showing 3-day-old data, not recording new gallery video views
-- **Root Cause**: VITE_VIDEO_ANALYTICS_ENABLED environment variable not set, disabling local video tracking during GA4 implementation
-- **Solution Applied**: Added VITE_VIDEO_ANALYTICS_ENABLED=true to restore independent local analytics tracking
-- **Admin Panel KPI Fix**: Fixed broken connection from non-existent `/api/ga4/kpis` to working `/api/analytics/dashboard` endpoint
-- **KPI Display Resolution**: Average watch time now shows correct 17 seconds (0:17) instead of 0:00 in admin dashboard
-- **Recent Visitors Enhancement**: Expanded limit from 5 to 100 visitors for extended analytics history during user absence
-- **GA4 Analytics Status**: ✅ FULLY WORKING - Production tracking for memopyk.com with real video data (6s and 11s test sessions confirmed)
-- **Local Analytics Status**: ✅ RESTORED - Independent visitor and gallery view tracking operational (26 views, 463 seconds total watch time)
-- **Real-time Dashboard**: ✅ Both systems working with /api/analytics/sessions and /api/analytics/recent-activity endpoints
-- **Dual System Architecture**: Both GA4 and local analytics now operate independently without interference
-- **Test Mode System**: ✅ User controls test mode via yellow indicator system - agent must never interfere
-- **Deployment Ready**: Both analytics systems verified working and ready for production deployment
-- **Status**: Complete dual analytics solution operational - GA4 for production tracking, local for admin dashboard
-
-**Technical Debt Identified (August 17, 2025):**
-- **Environment Variable Misclassification**: VIDEO_ANALYTICS_ENABLED incorrectly added as Secret instead of regular environment variable
-- **Issue**: Boolean feature flags should not be stored as secrets - it's just a configuration toggle, not sensitive data
-- **Current Workaround**: Works as secret but architecturally incorrect
-- **Required Future Fix**: Move VIDEO_ANALYTICS_ENABLED from Secrets tab to regular environment variable or hardcode to true
-- **Proper Secret Usage**: Only DATABASE_URL, GA4_SERVICE_ACCOUNT_KEY, and VITE_GA_MEASUREMENT_ID should be secrets
-**Critical Gallery Image Issue Resolution & Architecture Preservation (August 17, 2025):**
-- **Issue Identified**: Gallery images causing net::ERR_QUIC_PROTOCOL_ERROR browser timeouts due to 10+ MB file sizes
-- **Temporary Solution Applied**: Routed gallery images through image proxy system for optimization
-- **CRITICAL ARCHITECTURAL CONFLICT DISCOVERED**: Gallery media must stream directly from Supabase CDN for deployment reliability
-- **Architecture Constraint**: Only hero videos use local cache; gallery videos and images require direct CDN streaming
-- **Final Resolution**: Reverted to direct Supabase CDN streaming for gallery images to preserve deployment stability
-- **Key Documentation**: Lines 65 and 81 in replit.md clearly specify this separation
-- **Lesson Learned**: Never modify gallery media routing without considering deployment architecture requirements
-- **Status**: Gallery media correctly configured for production deployment ✅
-
-**GA4 Analytics Watch Time Calculation Bug Resolution (FINAL FIX - August 17, 2025):**
-- **Issue**: Both KPI dashboard and Top Videos Performance table showed unrealistic watch time calculations due to flawed assumptions in completion-based estimation method
-- **Root Cause 1**: qWatchTimeByVideo function hitting INVALID_ARGUMENT errors with GA4 custom event parameters, falling back to estimation
-- **Root Cause 2**: Videos with same video_id but different titles were incorrectly sharing completion counts due to single-key indexing
-- **Root Cause 3**: qWatchTimeTotal function was using hardcoded 90-second estimates instead of actual database video durations
-- **Root Cause 4**: Estimation method used unrealistic assumptions (100% duration for completes, 30% for partials)
-- **Technical Solutions**: 
-  1. **Completion-based calculation** with actual video duration lookup from database
-  2. **video_id + title combination indexing** for unique completion mapping 
-  3. **Per-video aggregation method** in qWatchTimeTotal using qWatchTimeByVideo results
-  4. **Completion capping logic** to prevent impossible scenarios (more completes than plays)
-  5. **Realistic watch time assumptions**: Complete views = 90% duration, Partial views = 40% duration, Fallback = 65% duration
-- **Before Fix**: 
-  - KPI Dashboard: 138 seconds average (unrealistic)
-  - "L'été de Pom": 45 seconds (too low for 180s video)
-  - "Notre Vitamine Sea": 120 seconds (too low for 240s video)
-- **After Fix**: 
-  - KPI Dashboard: 151 seconds realistic average watch time using actual video durations ✅
-  - "L'été de Pom": 59 seconds (realistic for 180s video) ✅
-  - "Notre Vitamine Sea": 156 seconds (realistic for 240s video) ✅
-  - "The summer of Pom": 117 seconds (realistic for 180s video) ✅
-  - All calculations use actual database values (180s, 240s, 1200s) with realistic viewing assumptions ✅
-- **Persistent Cache Resolution**: Fixed PostgreSQL cache preventing calculation updates with targeted cache clearing
-- **Date**: August 17, 2025
-- **Status**: Completely resolved with authentic data-driven calculations and realistic viewing behavior modeling
 
 ## System Architecture
 
@@ -119,13 +53,13 @@ This prevents breaking working functionality and ensures user intent is preserve
 - **Hybrid Storage System**: JSON fallback for all data, complementing PostgreSQL for data persistence and synchronization.
 - **Universal Video Proxy**: Manages video serving, range requests, local caching, and fallback to Supabase CDN.
 - **Image Proxy**: Handles image loading, resolves CORS issues, and prioritizes static cropped images.
-- **Cache Management**: Smart caching for hero videos (immediate preload) and direct CDN streaming for gallery videos. Persistent video element system for instant gallery video startup.
+- **Cache Management**: Smart caching for hero videos (immediate preload) and direct CDN streaming for gallery videos. Persistent video element system for instant gallery video startup. Comprehensive persistent caching for GA4 endpoints with auto-cleanup, 24-hour retention, and admin bypass.
 - **Bilingual Support**: Comprehensive French/English content management for UI, data, and SEO. Automatic language detection.
 - **Modular API Design**: RESTful API for various content types (hero videos, gallery, FAQs, legal docs, analytics).
 - **Static Image Generation**: Automated Sharp-based cropping and generation of static images for gallery thumbnails upon upload.
-- **Real-time Analytics**: Backend system for tracking visitors, performance, and engagement with IP management and accurate session/view tracking, including IP exclusion and geolocation enrichment.
-- **Google Analytics Integration**: Pattern A dual implementation with static HTML tag (immediate load) and React SPA tracking (route changes). GA4 tracking with manual page_view control, custom event tracking, and comprehensive user behavior analytics. Successfully resolved timing issues with retry mechanism and eliminated duplicate loading by removing dynamic script injection. Clean and elegant developer mode interface with user-friendly terminology. **Critical GA4 caching issue resolved (August 15, 2025)**: Aggressive cache clearing strategy (node_modules/.vite, client/dist, .vite + workflow restart) successfully eliminated persistent "(DISABLED FOR DEBUG)" messages caused by browser cache retention of old JavaScript bundles. **Persistent Cache System with Auto-Cleanup (August 16, 2025)**: Implemented comprehensive persistent caching for all GA4 endpoints using PostgreSQL (development) and Supabase (production). Features dual-layer caching (memory + persistent), automatic expiry cleanup via PostgreSQL triggers, 24-hour retention policy, environment-specific database selection, and admin bypass with `?nocache=1`. Cache survives server restarts with 180x performance improvement (115ms cached vs 500-1200ms fresh API calls). Includes automatic table cleanup preventing infinite growth, manual admin endpoints, and comprehensive monitoring. Production-ready with proper indexing, error handling, and zero-maintenance operation.
-- **Bundle Optimization System**: Comprehensive dependency cleanup removing 74 unused packages (16MB reduction). Eliminated Uppy file upload components, Passport authentication, and unused Radix UI components while maintaining essential functionality. Bundle size reduced from 476MB to 460MB for faster deployments (August 2025).
+- **Real-time Analytics**: Backend system for tracking visitors, performance, and engagement with IP management, accurate session/view tracking, IP exclusion, and geolocation enrichment. Includes dual analytics (GA4 and local) operating independently.
+- **Google Analytics Integration**: Pattern A dual implementation with static HTML tag and React SPA tracking. GA4 tracking with manual page_view control, custom event tracking, and comprehensive user behavior analytics.
+- **Bundle Optimization System**: Significant reduction in bundle size through dependency cleanup and removal of unused components.
 - **Direct Supabase Upload System**: Facilitates large file uploads bypassing deployment limits.
 - **SEO Management System**: Comprehensive interface for page-level meta tags, keywords, redirects, image SEO, and global settings.
 - **Deployment Optimizations**: Fast health check endpoints, production video cache preloading, comprehensive error handling, routing priorities, and automated public asset copying.

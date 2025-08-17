@@ -37,12 +37,14 @@ interface EnrichedLocationData {
 
 class LocationService {
   private cache = new Map<string, EnrichedLocationData>();
-  private rateLimitDelay = 1000; // 1 second between requests
+  private rateLimitDelay = 3000; // 3 seconds between requests to avoid 429 errors
   private lastRequestTime = 0;
+  private failedIPs = new Set<string>(); // Track failed IPs to avoid repeated attempts
+  private batchSize = 5; // Process only 5 IPs at a time
 
   /**
    * Get location data for an IP address
-   * Uses caching to avoid repeated API calls
+   * Uses caching and intelligent rate limiting to avoid API throttling
    */
   async getLocationData(ip: string): Promise<EnrichedLocationData | null> {
     // Return cached result if available
@@ -51,13 +53,13 @@ class LocationService {
       return this.cache.get(ip)!;
     }
 
-    // Skip invalid or local IPs
-    if (this.isLocalIP(ip) || ip === '0.0.0.0' || !ip) {
+    // Skip invalid, local IPs, or previously failed IPs
+    if (this.isLocalIP(ip) || ip === '0.0.0.0' || !ip || this.failedIPs.has(ip)) {
       return null;
     }
 
     try {
-      // Rate limiting
+      // Aggressive rate limiting to prevent 429 errors
       const now = Date.now();
       const timeSinceLastRequest = now - this.lastRequestTime;
       if (timeSinceLastRequest < this.rateLimitDelay) {
@@ -69,13 +71,21 @@ class LocationService {
       const response = await fetch(`https://ipapi.co/${ip}/json/`, {
         headers: {
           'User-Agent': 'MEMOPYK-Analytics/1.0'
-        }
+        },
+        timeout: 5000 // 5 second timeout
       });
 
       this.lastRequestTime = Date.now();
 
+      if (response.status === 429) {
+        console.warn(`🚫 Location Service: Rate limited for IP ${ip} - adding to failed list`);
+        this.failedIPs.add(ip);
+        return null;
+      }
+
       if (!response.ok) {
         console.warn(`⚠️ Location Service: API error ${response.status} for IP ${ip}`);
+        this.failedIPs.add(ip);
         return null;
       }
 
@@ -108,6 +118,7 @@ class LocationService {
 
     } catch (error) {
       console.error(`❌ Location Service: Error fetching data for IP ${ip}:`, error);
+      this.failedIPs.add(ip);
       return null;
     }
   }
