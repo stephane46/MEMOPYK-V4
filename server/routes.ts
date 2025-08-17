@@ -11,7 +11,7 @@ import testRoutes from './test-routes';
 import { setCacheAndOriginHeaders } from './cache-origin-headers';
 import { createCacheHitHeaders, createCacheMissHeaders, getUpstreamSource, getCacheAge } from './cache-delivery-headers';
 import { analyticsCleanupRoutes } from './routes-analytics-cache-cleanup';
-import { locationService } from './location-service';
+import { LocationService } from './location-service';
 import {
   qPlays,
   qCompletes,
@@ -165,6 +165,9 @@ const uploadImage = multer({
     }
   }
 });
+
+// Initialize location service
+const locationService = new LocationService(hybridStorage);
 
 export async function registerRoutes(app: Express): Promise<void> {
   // MEMOPYK Platform Content API Routes
