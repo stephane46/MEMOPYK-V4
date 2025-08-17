@@ -247,9 +247,9 @@ function getVideoDurations(): Map<string, number> {
   return durationMap;
 }
 
-// NEW APPROACH: Query actual watch time from GA4 position_sec parameter
+// RESTORED WORKING APPROACH: Use position_sec from video_progress events (was working 30 minutes ago)
 export async function qActualWatchTimeByVideo(start: string, end: string, locale?: string) {
-  console.log(`🎯 qActualWatchTimeByVideo CALLED: ${start} to ${end}, locale: ${locale || 'all'} - READING REAL SECONDS FROM GA4`);
+  console.log(`🎯 qActualWatchTimeByVideo CALLED: ${start} to ${end}, locale: ${locale || 'all'} - RESTORING WORKING METHOD FROM 30min AGO`);
   
   const localeExpr =
     locale && locale !== "all"
@@ -257,8 +257,8 @@ export async function qActualWatchTimeByVideo(start: string, end: string, locale
       : [];
 
   try {
-    // Query for video_watch_time events using watch_time_seconds as CUSTOM METRIC (sent by trackVideoWatchTime function)
-    const [res] = await client.runReport({
+    // APPROACH 1: Use video_progress events with position_sec (this was working in your screenshot)
+    const [progressRes] = await client.runReport({
       property: PROPERTY,
       dateRanges: [{ startDate: start, endDate: end }],
       dimensions: [
@@ -267,12 +267,12 @@ export async function qActualWatchTimeByVideo(start: string, end: string, locale
       ],
       metrics: [
         { name: "eventCount" },
-        { name: "customEvent:watch_time_seconds" }  // BREAKTHROUGH: Correct custom metric format
+        { name: "customEvent:position_sec" }  // Use position tracking from progress events
       ],
       dimensionFilter: {
         andGroup: {
           expressions: [
-            { filter: { fieldName: "eventName", stringFilter: { value: "video_watch_time" } } },  // CORRECTED: Frontend sends video_watch_time events with watch_time_seconds parameter
+            { filter: { fieldName: "eventName", stringFilter: { value: "video_progress" } } },
             ...localeExpr
           ]
         }
@@ -280,16 +280,42 @@ export async function qActualWatchTimeByVideo(start: string, end: string, locale
       limit: 100
     });
 
-    console.log(`🎯 qActualWatchTimeByVideo RAW API RESPONSE:`, JSON.stringify(res.rows?.slice(0, 3), null, 2));
+    console.log(`🎯 qActualWatchTimeByVideo PROGRESS RAW:`, JSON.stringify(progressRes.rows?.slice(0, 3), null, 2));
 
-    // Aggregate actual watch time by video using custom metric
+    // APPROACH 2: Also try video_complete events for completion tracking
+    const [completeRes] = await client.runReport({
+      property: PROPERTY,
+      dateRanges: [{ startDate: start, endDate: end }],
+      dimensions: [
+        { name: "customEvent:video_id" },
+        { name: "customEvent:video_title" }
+      ],
+      metrics: [
+        { name: "eventCount" },
+        { name: "customEvent:position_sec" }
+      ],
+      dimensionFilter: {
+        andGroup: {
+          expressions: [
+            { filter: { fieldName: "eventName", stringFilter: { value: "video_complete" } } },
+            ...localeExpr
+          ]
+        }
+      },
+      limit: 100
+    });
+
+    console.log(`🎯 qActualWatchTimeByVideo COMPLETE RAW:`, JSON.stringify(completeRes.rows?.slice(0, 3), null, 2));
+
+    // Aggregate watch time from both progress and complete events
     const videoWatchTimeMap = new Map<string, { title: string, totalWatchTime: number, eventCount: number }>();
     
-    (res.rows ?? []).forEach((row: any) => {
+    // Process progress events
+    (progressRes.rows ?? []).forEach((row: any) => {
       const videoId = row.dimensionValues?.[0]?.value ?? "unknown";
       const title = row.dimensionValues?.[1]?.value ?? "Unknown Video";
       const eventCount = parseInt(row.metricValues?.[0]?.value ?? "0");
-      const totalWatchTimeSeconds = parseFloat(row.metricValues?.[1]?.value ?? "0"); // Custom metric value
+      const positionSec = parseFloat(row.metricValues?.[1]?.value ?? "0");
       
       const key = `${videoId}:::${title}`;
       
@@ -298,32 +324,51 @@ export async function qActualWatchTimeByVideo(start: string, end: string, locale
       }
       
       const current = videoWatchTimeMap.get(key)!;
-      // Use the custom metric value directly (already aggregated by GA4)
-      current.totalWatchTime += totalWatchTimeSeconds;
+      current.totalWatchTime += positionSec; // Add position as watch time
       current.eventCount += eventCount;
       
-      console.log(`🔍 REAL WATCH TIME FROM GA4 CUSTOM METRIC - ${title}: ${totalWatchTimeSeconds}s from ${eventCount} events`);
+      console.log(`🔍 PROGRESS WATCH TIME - ${title}: +${positionSec}s from ${eventCount} progress events`);
+    });
+
+    // Process complete events (add completion watch time)
+    (completeRes.rows ?? []).forEach((row: any) => {
+      const videoId = row.dimensionValues?.[0]?.value ?? "unknown";
+      const title = row.dimensionValues?.[1]?.value ?? "Unknown Video";
+      const eventCount = parseInt(row.metricValues?.[0]?.value ?? "0");
+      const positionSec = parseFloat(row.metricValues?.[1]?.value ?? "0");
+      
+      const key = `${videoId}:::${title}`;
+      
+      if (!videoWatchTimeMap.has(key)) {
+        videoWatchTimeMap.set(key, { title, totalWatchTime: 0, eventCount: 0 });
+      }
+      
+      const current = videoWatchTimeMap.get(key)!;
+      current.totalWatchTime += positionSec; // Add completion position as watch time
+      current.eventCount += eventCount;
+      
+      console.log(`🔍 COMPLETE WATCH TIME - ${title}: +${positionSec}s from ${eventCount} complete events`);
     });
 
     const result = Array.from(videoWatchTimeMap.entries()).map(([key, data]) => {
       const [video_id] = key.split(':::');
       
-      console.log(`🎯 ACTUAL WATCH TIME - ${data.title}: ${Math.round(data.totalWatchTime)}s from ${data.eventCount} actual GA4 events`);
+      console.log(`🎯 RESTORED WORKING APPROACH - ${data.title}: ${Math.round(data.totalWatchTime)}s from ${data.eventCount} authentic GA4 events`);
       
       return {
         video_id,
         title: data.title,
         watch_time_seconds: Math.round(data.totalWatchTime)
       };
-    }); // Keep ALL authentic GA4 data, including 0 seconds
+    });
 
-    console.log(`🎯 qActualWatchTimeByVideo RESULT: ${result.length} videos with authentic GA4 watch_time_seconds (no filtering)`);
-    console.log(`🎯 qActualWatchTimeByVideo SAMPLE DATA:`, result.slice(0, 2));
+    console.log(`🎯 qActualWatchTimeByVideo RESTORED: ${result.length} videos with authentic GA4 position data`);
+    console.log(`🎯 qActualWatchTimeByVideo SAMPLE:`, result.slice(0, 2));
     
     return result;
   } catch (error) {
-    console.error('🚨 qActualWatchTimeByVideo failed to get authentic GA4 data:', error);
-    throw error; // Re-throw to prevent fallback usage - authentic data only
+    console.error('🚨 qActualWatchTimeByVideo failed - authentic GA4 data required:', error);
+    throw error; // Keep strict authentic data requirement
   }
 }
 
