@@ -367,8 +367,11 @@ export default function VideoOverlay({
 
   // Enhanced close handler with analytics tracking
   const handleCloseWithAnalytics = useCallback(() => {
+    console.log('🔥🔥🔥 HANDLECLOSEWITHANALYTICS CALLED! 🔥🔥🔥');
+    
     const video = videoRef.current;
     if (!video) {
+      console.log('🔥 NO VIDEO REF - CALLING onClose()');
       onClose();
       return;
     }
