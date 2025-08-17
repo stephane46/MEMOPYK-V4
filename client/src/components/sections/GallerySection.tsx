@@ -268,9 +268,13 @@ export default function GallerySection() {
     console.log("→ chosen thumb:", thumb);
 
     if (thumb) {
-      console.log("✅ returning direct Supabase URL:", thumb);
+      // 🔧 CRITICAL FIX: Route through image proxy to handle large images (10+ MB)
+      // Extract filename from Supabase URL for proxy routing
+      const filename = thumb.includes('/') ? thumb.split('/').pop() : thumb;
+      const proxyUrl = `/api/image-proxy?filename=${encodeURIComponent(filename || '')}`;
+      console.log("✅ routing through image proxy:", proxyUrl, "for file:", filename);
       console.groupEnd();
-      return thumb; // Use direct Supabase URL without proxy
+      return proxyUrl; // Route through optimized image proxy
     }
 
     console.log("🚨 falling back to original:", item.imageUrlEn);
