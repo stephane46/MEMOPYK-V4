@@ -268,13 +268,11 @@ export default function GallerySection() {
     console.log("→ chosen thumb:", thumb);
 
     if (thumb) {
-      // 🔧 CRITICAL FIX: Route through image proxy to handle large images (10+ MB)
-      // Extract filename from Supabase URL for proxy routing
-      const filename = thumb.includes('/') ? thumb.split('/').pop() : thumb;
-      const proxyUrl = `/api/image-proxy?filename=${encodeURIComponent(filename || '')}`;
-      console.log("✅ routing through image proxy:", proxyUrl, "for file:", filename);
+      // ✅ DEPLOYMENT ARCHITECTURE: Gallery images MUST stream from Supabase CDN
+      // This ensures production deployment reliability (hero videos = cache, gallery = CDN)
+      console.log("✅ serving gallery image directly from Supabase CDN:", thumb);
       console.groupEnd();
-      return proxyUrl; // Route through optimized image proxy
+      return thumb; // Direct CDN streaming as per deployment requirements
     }
 
     console.log("🚨 falling back to original:", item.imageUrlEn);

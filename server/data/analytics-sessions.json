@@ -3791,5 +3791,38 @@
     "is_test_data": true,
     "created_at": "2025-08-17T09:26:25.661Z",
     "updated_at": "2025-08-17T09:26:25.703Z"
+  },
+  {
+    "id": "f05f45e2-7ada-4978-8507-8a5e7541b704",
+    "session_id": "session_1755422802079_j8m53mpr4",
+    "user_id": null,
+    "ip_address": "193.176.127.188",
+    "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36 Edg/139.0.0.0",
+    "referrer": "https://365df2cf-1884-444c-a9e8-235602456363-00-37q39xpqlgvdy.janeway.replit.dev/__replco/workspace_iframe.html?initialPath=%2F&id=%3Arj1o%3A",
+    "language": "fr-FR",
+    "country": "Unknown",
+    "city": "Unknown",
+    "page_views": 0,
+    "is_bot": false,
+    "is_test_data": false,
+    "created_at": "2025-08-17T09:26:42.329Z",
+    "updated_at": "2025-08-17T09:27:28.739Z",
+    "duration": 2020
+  },
+  {
+    "id": "3e6b6f48-1cc4-4d2a-bc41-1f363c13002e",
+    "session_id": "session_1755423115447_9uia7glmo",
+    "user_id": null,
+    "ip_address": "127.0.0.1",
+    "user_agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/118.0.5993.88 Safari/537.36",
+    "referrer": "",
+    "language": "en-US",
+    "country": "Unknown",
+    "city": "Unknown",
+    "page_views": 0,
+    "is_bot": false,
+    "is_test_data": true,
+    "created_at": "2025-08-17T09:31:55.715Z",
+    "updated_at": "2025-08-17T09:31:55.759Z"
   }
 ]

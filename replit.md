@@ -31,6 +31,16 @@ Analytics interface: Expects all three filter buttons (7d, 30d, 90d) to be visib
 This prevents breaking working functionality and ensures user intent is preserved.
 
 ### Recent Major Fixes (August 2025)
+**Critical Gallery Image Issue Resolution & Architecture Preservation (August 17, 2025):**
+- **Issue Identified**: Gallery images causing net::ERR_QUIC_PROTOCOL_ERROR browser timeouts due to 10+ MB file sizes
+- **Temporary Solution Applied**: Routed gallery images through image proxy system for optimization
+- **CRITICAL ARCHITECTURAL CONFLICT DISCOVERED**: Gallery media must stream directly from Supabase CDN for deployment reliability
+- **Architecture Constraint**: Only hero videos use local cache; gallery videos and images require direct CDN streaming
+- **Final Resolution**: Reverted to direct Supabase CDN streaming for gallery images to preserve deployment stability
+- **Key Documentation**: Lines 65 and 81 in replit.md clearly specify this separation
+- **Lesson Learned**: Never modify gallery media routing without considering deployment architecture requirements
+- **Status**: Gallery media correctly configured for production deployment ✅
+
 **GA4 Analytics Watch Time Calculation Bug Resolution (FINAL FIX):**
 - **Issue**: Both KPI dashboard and Top Videos Performance table showed incorrect watch time calculations due to hardcoded duration estimates instead of actual video durations
 - **Root Cause 1**: qWatchTimeByVideo function hitting INVALID_ARGUMENT errors with GA4 custom event parameters
