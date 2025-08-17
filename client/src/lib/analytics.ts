@@ -13,6 +13,30 @@ function isGaDev(): boolean {
   return /[?#&]ga_dev=1\b/.test(location.href) || localStorage.getItem('ga_dev') === '1';
 }
 
+// Initialize Google Analytics
+export function initGA(): void {
+  if (typeof window === 'undefined') return;
+  
+  // Add gtag script
+  const gtagScript = document.createElement('script');
+  gtagScript.async = true;
+  gtagScript.src = `https://www.googletagmanager.com/gtag/js?id=${MEASUREMENT_ID}`;
+  document.head.appendChild(gtagScript);
+  
+  // Initialize gtag
+  window.dataLayer = window.dataLayer || [];
+  window.gtag = function gtag(...args: any[]) {
+    window.dataLayer.push(args);
+  };
+  
+  window.gtag('js', new Date());
+  window.gtag('config', MEASUREMENT_ID, {
+    send_page_view: false // We'll handle page views manually
+  });
+  
+  console.log('🚀 GA4 initialized with ID:', MEASUREMENT_ID);
+}
+
 // Initialize and display test mode branding
 export function initTestMode() {
   // Check for test mode via URL parameter and save to localStorage

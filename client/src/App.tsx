@@ -17,7 +17,7 @@ import { Toaster } from '@/components/ui/toaster';
 import GallerySectionWrapper from './components/sections/GallerySectionWrapper';
 import { useEffect } from 'react';
 import { useAnalytics } from '@/hooks/use-analytics';
-import { initTestMode } from '@/lib/analytics';
+import { initTestMode, initGA } from '@/lib/analytics';
 
 console.log("🔀 routes configured for /gallery");
 
@@ -78,8 +78,12 @@ function AnalyticsRouter() {
 }
 
 function App() {
-  // Initialize test mode on app load
+  // Initialize GA4 and test mode on app load
   useEffect(() => {
+    // Initialize GA4 first
+    initGA();
+    
+    // Then initialize test mode  
     const isTestMode = initTestMode();
     if (isTestMode) {
       console.log('🔍 Test mode active - all GA4 events will include debug_mode=true');
