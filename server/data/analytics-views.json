@@ -330,5 +330,53 @@
     "is_test_data": false,
     "created_at": "2025-08-17T16:05:04.529Z",
     "updated_at": "2025-08-17T16:05:04.529Z"
+  },
+  {
+    "id": "view_1755447459679_03gcxyqps",
+    "video_id": "PomGalleryC.mp4",
+    "video_filename": "PomGalleryC.mp4",
+    "video_type": "gallery",
+    "video_title": "",
+    "session_id": "session_1755447459678",
+    "language": "fr-FR",
+    "watch_time": 0,
+    "completion_rate": 0,
+    "ip_address": "172.31.100.162",
+    "user_agent": "Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Mobile Safari/537.36 Edg/139.0.0.0",
+    "is_test_data": false,
+    "created_at": "2025-08-17T16:17:39.679Z",
+    "updated_at": "2025-08-17T16:17:39.679Z"
+  },
+  {
+    "id": "view_1755447481490_q0i8atet6",
+    "video_id": "VitaminSeaC.mp4",
+    "video_filename": "VitaminSeaC.mp4",
+    "video_type": "gallery",
+    "video_title": "",
+    "session_id": "session_1755447481489",
+    "language": "fr-FR",
+    "watch_time": 0,
+    "completion_rate": 0,
+    "ip_address": "172.31.100.162",
+    "user_agent": "Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Mobile Safari/537.36 Edg/139.0.0.0",
+    "is_test_data": false,
+    "created_at": "2025-08-17T16:18:01.490Z",
+    "updated_at": "2025-08-17T16:18:01.490Z"
+  },
+  {
+    "id": "view_1755447498391_xd94deyli",
+    "video_id": "VitaminSeaC.mp4",
+    "video_filename": "VitaminSeaC.mp4",
+    "video_type": "gallery",
+    "video_title": "",
+    "session_id": "session_1755447498391",
+    "language": "fr-FR",
+    "watch_time": 17,
+    "completion_rate": 0,
+    "ip_address": "172.31.100.162",
+    "user_agent": "Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Mobile Safari/537.36 Edg/139.0.0.0",
+    "is_test_data": false,
+    "created_at": "2025-08-17T16:18:18.391Z",
+    "updated_at": "2025-08-17T16:18:18.391Z"
   }
 ]
