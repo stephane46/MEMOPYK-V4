@@ -421,7 +421,7 @@ export default function VideoOverlay({
     console.log('⌨️ Event details:', {
       key: e.key,
       code: e.code,
-      target: e.target?.tagName,
+      target: (e.target as HTMLElement)?.tagName,
       type: e.type,
       timestamp: Date.now()
     });
@@ -467,7 +467,17 @@ export default function VideoOverlay({
   }, [isPlaying, toggleMute, handleCloseWithAnalytics]);
 
   useEffect(() => {
-    console.log('🔥🔥🔥 KEYBOARD LISTENER SETUP - Adding keydown listener 🔥🔥🔥');
+    console.log('🔥🔥🔥 KEYBOARD LISTENER SETUP - Adding keydown listener to OVERLAY ELEMENT 🔥🔥🔥');
+    const overlayElement = overlayRef.current;
+    
+    if (overlayElement) {
+      // Focus the overlay element so it can receive keyboard events
+      overlayElement.focus();
+      overlayElement.addEventListener('keydown', handleKeyDown);
+      console.log('🔥🔥🔥 KEYBOARD LISTENER ATTACHED TO OVERLAY ELEMENT 🔥🔥🔥');
+    }
+    
+    // Also add to document as fallback
     document.addEventListener('keydown', handleKeyDown);
     
     // Test if document is ready
@@ -475,7 +485,10 @@ export default function VideoOverlay({
     console.log('🔥🔥🔥 ACTIVE ELEMENT:', document.activeElement?.tagName);
     
     return () => {
-      console.log('🔥🔥🔥 KEYBOARD LISTENER CLEANUP - Removing keydown listener 🔥🔥🔥');
+      console.log('🔥🔥🔥 KEYBOARD LISTENER CLEANUP 🔥🔥🔥');
+      if (overlayElement) {
+        overlayElement.removeEventListener('keydown', handleKeyDown);
+      }
       document.removeEventListener('keydown', handleKeyDown);
       if (controlsTimeoutRef.current) {
         clearTimeout(controlsTimeoutRef.current);
@@ -507,6 +520,9 @@ export default function VideoOverlay({
         '--viewport-ratio': `${viewportRatio}%`,
       } as React.CSSProperties}
       onClick={handleOverlayClick}
+      tabIndex={0}
+      role="dialog"
+      aria-label="Video player overlay"
     >
       {/* Video Container */}
       <div
