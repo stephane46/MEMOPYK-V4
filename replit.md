@@ -6,6 +6,7 @@ MEMOPYK is a full-stack memory film platform designed to transform personal phot
 ## User Preferences
 Preferred communication style: Simple, everyday language.
 Visual consistency priority: Extremely detail-oriented about spacing and formatting consistency between admin interface and published pages.
+Analytics interface: Expects all three filter buttons (7d, 30d, 90d) to be visible with proper orange highlighting for active states.
 
 ### Critical Code Investigation Protocol (August 2025)
 **NEVER remove or modify existing code without understanding its purpose first.**
