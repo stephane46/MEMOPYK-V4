@@ -186,5 +186,37 @@
     "is_test_data": true,
     "created_at": "2025-08-17T14:40:17.907Z",
     "updated_at": "2025-08-17T14:40:17.907Z"
+  },
+  {
+    "id": "view_1755441971168_3lj01sny7",
+    "video_id": "PomGalleryC.mp4",
+    "video_filename": "PomGalleryC.mp4",
+    "video_type": "gallery",
+    "video_title": "",
+    "session_id": "session_1755441971168",
+    "language": "fr-FR",
+    "watch_time": 0,
+    "completion_rate": 0,
+    "ip_address": "172.31.125.130",
+    "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36 Edg/139.0.0.0",
+    "is_test_data": false,
+    "created_at": "2025-08-17T14:46:11.168Z",
+    "updated_at": "2025-08-17T14:46:11.168Z"
+  },
+  {
+    "id": "view_1755442154311_amwg3ln9z",
+    "video_id": "PomGalleryC.mp4",
+    "video_filename": "PomGalleryC.mp4",
+    "video_type": "gallery",
+    "video_title": "",
+    "session_id": "session_1755442154311",
+    "language": "fr-FR",
+    "watch_time": 183,
+    "completion_rate": 100,
+    "ip_address": "172.31.125.130",
+    "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36 Edg/139.0.0.0",
+    "is_test_data": false,
+    "created_at": "2025-08-17T14:49:14.311Z",
+    "updated_at": "2025-08-17T14:49:14.311Z"
   }
 ]
