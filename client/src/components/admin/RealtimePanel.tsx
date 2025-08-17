@@ -6,7 +6,12 @@ import { formatInt } from "@/utils/format";
 
 type RealtimeData = { 
   activeUsers: number; 
-  lastEvents: { eventName: string; count: number }[] 
+  lastEvents: { eventName: string; count: number }[];
+  debug?: {
+    totalEvents: number;
+    allEvents: { eventName: string; count: number }[];
+  };
+  error?: string;
 };
 
 export function RealtimePanel() {
@@ -94,7 +99,14 @@ export function RealtimePanel() {
             </Badge>
           </div>
           
-          {/* 🚨 CRITICAL FIX: Ensure lastEvents is always an array before accessing .length */}
+          {/* Show error if present */}
+          {data.error && (
+            <div className="text-sm text-red-600 p-2 bg-red-50 rounded">
+              Realtime Error: {data.error}
+            </div>
+          )}
+
+          {/* Recent Video Events */}
           {(Array.isArray(data.lastEvents) ? data.lastEvents : []).length > 0 ? (
             <div className="space-y-2">
               <div className="text-sm font-medium text-gray-600">Recent Video Events:</div>
@@ -108,7 +120,26 @@ export function RealtimePanel() {
               </div>
             </div>
           ) : (
-            <div className="text-sm text-gray-500">No recent video activity</div>
+            <div className="space-y-2">
+              <div className="text-sm text-gray-500">No recent video activity</div>
+              
+              {/* Debug info - show if there are non-video events */}
+              {data.debug && data.debug.totalEvents > 0 && (
+                <details className="text-xs text-gray-400">
+                  <summary className="cursor-pointer hover:text-gray-600">
+                    Debug: {data.debug.totalEvents} total events (expand to see)
+                  </summary>
+                  <div className="mt-2 space-y-1 max-h-24 overflow-y-auto bg-gray-50 p-2 rounded">
+                    {data.debug.allEvents.map((event, index) => (
+                      <div key={index} className="flex justify-between text-xs">
+                        <span className="font-mono">{event.eventName}</span>
+                        <span>{formatInt(event.count)}</span>
+                      </div>
+                    ))}
+                  </div>
+                </details>
+              )}
+            </div>
           )}
         </div>
       </CardContent>

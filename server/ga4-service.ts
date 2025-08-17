@@ -473,27 +473,54 @@ export async function qTrend(start: string, end: string, locale?: string) {
 /* =============  REALTIME API  ============= */
 
 export async function qRealtime() {
-  // Active users now
-  const [users] = await client.runRealtimeReport({
-    property: PROPERTY,
-    metrics: [{ name: "activeUsers" }]
-  });
+  console.log(`🎯 qRealtime CALLED: fetching real-time GA4 data`);
+  
+  try {
+    // Active users now
+    const [users] = await client.runRealtimeReport({
+      property: PROPERTY,
+      metrics: [{ name: "activeUsers" }]
+    });
 
-  // Recent events breakdown (focusing on video events)
-  const [events] = await client.runRealtimeReport({
-    property: PROPERTY,
-    metrics: [{ name: "eventCount" }],
-    dimensions: [{ name: "eventName" }],
-    limit: 20
-  });
+    console.log(`🎯 qRealtime USERS RAW:`, JSON.stringify(users.rows?.slice(0, 2), null, 2));
 
-  const activeUsers = Number(users.rows?.[0]?.metricValues?.[0]?.value ?? 0);
-  const lastEvents = (events.rows ?? [])
-    .map(r => ({
-      eventName: r.dimensionValues?.[0]?.value ?? "",
-      count: Number(r.metricValues?.[0]?.value ?? 0)
-    }))
-    .filter(e => e.eventName.startsWith("video_"));
+    // Recent events breakdown (focusing on video events)
+    const [events] = await client.runRealtimeReport({
+      property: PROPERTY,
+      metrics: [{ name: "eventCount" }],
+      dimensions: [{ name: "eventName" }],
+      limit: 20
+    });
 
-  return { activeUsers, lastEvents };
+    console.log(`🎯 qRealtime EVENTS RAW:`, JSON.stringify(events.rows?.slice(0, 5), null, 2));
+
+    const activeUsers = Number(users.rows?.[0]?.metricValues?.[0]?.value ?? 0);
+    
+    // Get all events, not just video events, for better debugging
+    const allEvents = (events.rows ?? [])
+      .map(r => ({
+        eventName: r.dimensionValues?.[0]?.value ?? "",
+        count: Number(r.metricValues?.[0]?.value ?? 0)
+      }))
+      .filter(e => e.count > 0);
+
+    // Filter for video events specifically
+    const videoEvents = allEvents.filter(e => e.eventName.startsWith("video_"));
+
+    console.log(`🎯 qRealtime RESULT: ${activeUsers} active users, ${allEvents.length} total events, ${videoEvents.length} video events`);
+    console.log(`🎯 qRealtime ALL EVENTS:`, allEvents);
+    console.log(`🎯 qRealtime VIDEO EVENTS:`, videoEvents);
+
+    return { 
+      activeUsers, 
+      lastEvents: videoEvents,
+      debug: {
+        totalEvents: allEvents.length,
+        allEvents: allEvents.slice(0, 10) // Include first 10 events for debugging
+      }
+    };
+  } catch (error) {
+    console.error('qRealtime ERROR:', error);
+    return { activeUsers: 0, lastEvents: [], error: String(error) };
+  }
 }
