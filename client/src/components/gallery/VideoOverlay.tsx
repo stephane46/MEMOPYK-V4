@@ -185,27 +185,7 @@ export default function VideoOverlay({
         ? videoUrl.split('filename=')[1].split('&')[0]
         : videoUrl.split('/').pop()?.split('?')[0] || 'unknown';
         
-      // Track progress milestones
-      const progressPercent = Math.round((video.currentTime / video.duration) * 100);
-      if (progressPercent % 25 === 0 && progressPercent > 0) {
-        trackGA4VideoEvent('video_progress', {
-          video_id: videoId,
-          video_title: title,
-          progress_percent: progressPercent,
-          watch_time_seconds: video.currentTime,
-          locale: language
-        });
-      }
-      
-      // Track completion
-      if (progressPercent >= 95) {
-        trackGA4VideoEvent('video_complete', {
-          video_id: videoId,
-          video_title: title,
-          watch_time_seconds: video.currentTime,
-          locale: language
-        });
-      }
+      // Progress tracking simplified - focus on watch time at end
     }
   }, [title, videoUrl]);
 
@@ -276,7 +256,7 @@ export default function VideoOverlay({
       console.log(`📊 VIDEO ENDED ANALYTICS: ${videoId} watched ${watchedDuration}s (${completionRate}% completion)`);
       trackVideoView(videoId, watchedDuration, isCompleted);
     }
-  }, [currentTime, duration, trackVideoView, VIDEO_ANALYTICS_ENABLED, title, videoUrl, trackGA4VideoEvent, language]);
+  }, [currentTime, duration, trackVideoView, VIDEO_ANALYTICS_ENABLED, title, videoUrl, language]);
 
   const handleLoadedMetadata = useCallback(() => {
     const video = videoRef.current;
@@ -410,7 +390,7 @@ export default function VideoOverlay({
     
     // Call original close function
     onClose();
-  }, [currentTime, duration, getVideoId, trackVideoView, onClose, VIDEO_ANALYTICS_ENABLED, trackGA4VideoEvent, title, language]);
+  }, [currentTime, duration, getVideoId, trackVideoView, onClose, VIDEO_ANALYTICS_ENABLED, title, language]);
 
   const handleOverlayClick = useCallback((e: React.MouseEvent) => {
     if (e.target === e.currentTarget) {
