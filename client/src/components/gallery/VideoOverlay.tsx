@@ -417,12 +417,17 @@ export default function VideoOverlay({
 
   // Keyboard controls
   const handleKeyDown = useCallback((e: KeyboardEvent) => {
+    console.log('⌨️ KEYBOARD EVENT CAPTURED:', e.key);
     const video = videoRef.current;
-    if (!video) return;
+    if (!video) {
+      console.log('⌨️ NO VIDEO REF - ignoring keyboard event');
+      return;
+    }
 
     switch (e.key) {
       case ' ':
       case 'k':
+        console.log('⌨️ PLAY/PAUSE key pressed');
         e.preventDefault();
         if (isPlaying) {
           video.pause();
@@ -431,23 +436,27 @@ export default function VideoOverlay({
         }
         break;
       case 'm':
+        console.log('⌨️ MUTE key pressed');
         e.preventDefault();
         toggleMute();
         break;
       case 'Escape':
+        console.log('⌨️ ESC KEY PRESSED - calling handleCloseWithAnalytics');
         e.preventDefault();
         handleCloseWithAnalytics();
         break;
       case 'ArrowLeft':
+        console.log('⌨️ LEFT ARROW key pressed');
         e.preventDefault();
         video.currentTime = Math.max(0, video.currentTime - 10);
         break;
       case 'ArrowRight':
+        console.log('⌨️ RIGHT ARROW key pressed');
         e.preventDefault();
         video.currentTime = Math.min(video.duration, video.currentTime + 10);
         break;
     }
-  }, [isPlaying, toggleMute, onClose]);
+  }, [isPlaying, toggleMute, handleCloseWithAnalytics]);
 
   useEffect(() => {
     document.addEventListener('keydown', handleKeyDown);
