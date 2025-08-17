@@ -4152,6 +4152,62 @@ export async function registerRoutes(app: Express): Promise<void> {
     }
   });
 
+  // Recent Activity endpoint for realtime visitor tracking
+  app.get("/api/analytics/recent-activity", async (req, res) => {
+    try {
+      console.log('🎯 RECENT ACTIVITY REQUEST: Fetching recent visitor activity');
+      
+      // Get recent sessions from the last 30 minutes
+      const thirtyMinutesAgo = new Date(Date.now() - 30 * 60 * 1000);
+      
+      // Get recent sessions with video views
+      const recentSessions = await hybridStorage.getAnalyticsSessions({
+        since: thirtyMinutesAgo,
+        limit: 50,
+        includeVideoViews: true
+      });
+      
+      console.log(`📊 RECENT ACTIVITY: Found ${recentSessions.length} recent sessions`);
+      
+      // Transform sessions into activity format
+      const activities = recentSessions.map(session => ({
+        id: session.session_id,
+        timestamp: session.created_at,
+        ip: session.ip_address,
+        country: session.country,
+        city: session.city,
+        language: session.language,
+        page_url: session.page_url,
+        duration: session.duration || 0,
+        video_views: session.video_views || [],
+        user_agent: session.user_agent?.substring(0, 100) + '...',
+        is_active: session.updated_at ? 
+          (Date.now() - new Date(session.updated_at).getTime()) < 5 * 60 * 1000 : // active within last 5 minutes
+          false
+      }));
+      
+      // Sort by most recent first
+      activities.sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
+      
+      console.log(`🎯 RECENT ACTIVITY: Returning ${activities.length} activities`);
+      
+      res.json({
+        activities,
+        total: activities.length,
+        timestamp: new Date().toISOString()
+      });
+      
+    } catch (error) {
+      console.error('❌ RECENT ACTIVITY ERROR:', error);
+      res.status(500).json({ 
+        error: "Failed to fetch recent activity", 
+        message: error.message,
+        activities: [],
+        total: 0
+      });
+    }
+  });
+
 
 
 

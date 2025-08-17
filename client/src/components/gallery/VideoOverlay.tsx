@@ -61,8 +61,8 @@ export default function VideoOverlay({
     }
   }, []);
   
-  // Feature flag for video analytics - DISABLED per requirement to switch to GA4-only
-  const VIDEO_ANALYTICS_ENABLED = import.meta.env.VITE_VIDEO_ANALYTICS_ENABLED === 'true' || false;
+  // Feature flag for video analytics - ENABLED for proper tracking
+  const VIDEO_ANALYTICS_ENABLED = true;
   
   // Extract video ID from URL
   const getVideoId = useCallback(() => {
