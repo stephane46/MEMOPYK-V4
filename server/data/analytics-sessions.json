@@ -5414,5 +5414,37 @@
     "created_at": "2025-08-17T18:55:08.513Z",
     "updated_at": "2025-08-17T18:55:22.098Z",
     "duration": 36094
+  },
+  {
+    "id": "d3372900-6be6-4799-a83d-f3492660e334",
+    "session_id": "session_1755457114689_032chdz0a",
+    "user_id": null,
+    "ip_address": "127.0.0.1",
+    "user_agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/118.0.5993.88 Safari/537.36",
+    "referrer": "",
+    "language": "en-US",
+    "country": "Unknown",
+    "city": "Unknown",
+    "page_views": 0,
+    "is_bot": false,
+    "is_test_data": true,
+    "created_at": "2025-08-17T18:58:34.956Z",
+    "updated_at": "2025-08-17T18:58:34.998Z"
+  },
+  {
+    "id": "4100d98a-732e-4247-af6c-7b20a88cf4d1",
+    "session_id": "session_1755457117063_si0t1jceh",
+    "user_id": null,
+    "ip_address": "193.42.99.250",
+    "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36 Edg/139.0.0.0",
+    "referrer": "https://365df2cf-1884-444c-a9e8-235602456363-00-37q39xpqlgvdy.janeway.replit.dev/__replco/workspace_iframe.html?initialPath=%2F&id=%3Ar1q5%3A",
+    "language": "fr-FR",
+    "country": "Unknown",
+    "city": "Unknown",
+    "page_views": 0,
+    "is_bot": false,
+    "is_test_data": false,
+    "created_at": "2025-08-17T18:58:37.096Z",
+    "updated_at": "2025-08-17T18:58:37.135Z"
   }
 ]
