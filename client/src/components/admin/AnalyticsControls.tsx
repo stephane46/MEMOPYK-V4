@@ -30,13 +30,12 @@ export function AnalyticsControls() {
     const dayMatch = currentDays === days;
     const finalActive = isActive || (dayMatch && Math.abs(currentDays - days) <= 1);
     
-    console.log(`🔍 Filter ${days}d check:`, {
-      current: `${startDate} to ${endDate} (${currentDays} days)`,
-      preset: `${presetStart} to ${presetEnd} (${days} days)`,
-      exactMatch: isActive,
-      dayMatch: dayMatch,
-      finalActive: finalActive
-    });
+    console.log(`🔍 Filter ${days}d check:`);
+    console.log(`  Current range: ${startDate} to ${endDate} (${currentDays} days)`);
+    console.log(`  Preset range: ${presetStart} to ${presetEnd} (${days} days)`);
+    console.log(`  Exact match: ${isActive}`);
+    console.log(`  Day match: ${dayMatch}`);
+    console.log(`  Final active: ${finalActive}`);
     
     return finalActive;
   };

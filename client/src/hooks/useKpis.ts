@@ -68,12 +68,11 @@ export function useKpis(params: { startDate: string; endDate: string; locale: "a
     ])
       .then(([cur, prev]) => { 
         if (alive && !abortController.signal.aborted) { 
-          console.log('🔍 useKpis - RAW DATA:', {
-            current: cur,
-            previous: prev,
-            currentPlays: cur?.plays,
-            previousPlays: prev?.plays
-          });
+          console.log('🔍 useKpis - RAW DATA:');
+          console.log('  Current API response:', JSON.stringify(cur, null, 2));
+          console.log('  Previous API response:', JSON.stringify(prev, null, 2));
+          console.log('  Current plays value:', cur?.plays);
+          console.log('  Previous plays value:', prev?.plays);
           setCurrent(cur); 
           setPrevious(prev); 
         }
@@ -114,12 +113,11 @@ export function useKpis(params: { startDate: string; endDate: string; locale: "a
       }
     };
     
-    console.log('🔍 useKpis - PROCESSED DATA:', {
-      result,
-      playsValue: result.plays.value,
-      currentRaw: current.plays,
-      previousRaw: previous.plays
-    });
+    console.log('🔍 useKpis - PROCESSED DATA:');
+    console.log('  Final result plays:', result.plays.value);
+    console.log('  Raw current plays:', current.plays);
+    console.log('  Raw previous plays:', previous.plays);
+    console.log('  Complete result:', JSON.stringify(result, null, 2));
     
     return result;
   }, [current, previous]);
