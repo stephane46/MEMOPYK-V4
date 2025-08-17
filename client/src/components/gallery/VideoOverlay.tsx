@@ -220,15 +220,17 @@ export default function VideoOverlay({
       
     if (duration > 0) {
       // Track video start/resume with GA4
-      trackGA4VideoEvent('video_start', {
-        video_id: videoId,
-        video_title: title,
-        duration_sec: duration,
-        position_sec: currentTime,
-        locale: language
-      });
+      if (typeof window !== 'undefined' && window.gtag) {
+        window.gtag('event', 'video_start', {
+          video_id: videoId,
+          video_title: title,
+          duration_sec: duration,
+          position_sec: currentTime,
+          locale: language
+        });
+      }
     }
-  }, [resetControlsTimer, duration, currentTime, title, videoUrl, trackGA4VideoEvent, language]);
+  }, [resetControlsTimer]);
 
   const handlePause = useCallback(() => {
     setIsPlaying(false);
