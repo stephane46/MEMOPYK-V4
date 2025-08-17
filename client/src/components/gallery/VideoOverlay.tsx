@@ -417,7 +417,15 @@ export default function VideoOverlay({
 
   // Keyboard controls
   const handleKeyDown = useCallback((e: KeyboardEvent) => {
-    console.log('⌨️ KEYBOARD EVENT CAPTURED:', e.key);
+    console.log(`🔥🔥🔥 KEYBOARD EVENT CAPTURED: ${e.key} (code: ${e.code}) 🔥🔥🔥`);
+    console.log('⌨️ Event details:', {
+      key: e.key,
+      code: e.code,
+      target: e.target?.tagName,
+      type: e.type,
+      timestamp: Date.now()
+    });
+    
     const video = videoRef.current;
     if (!video) {
       console.log('⌨️ NO VIDEO REF - ignoring keyboard event');
@@ -459,8 +467,15 @@ export default function VideoOverlay({
   }, [isPlaying, toggleMute, handleCloseWithAnalytics]);
 
   useEffect(() => {
+    console.log('🔥🔥🔥 KEYBOARD LISTENER SETUP - Adding keydown listener 🔥🔥🔥');
     document.addEventListener('keydown', handleKeyDown);
+    
+    // Test if document is ready
+    console.log('🔥🔥🔥 DOCUMENT READY STATE:', document.readyState);
+    console.log('🔥🔥🔥 ACTIVE ELEMENT:', document.activeElement?.tagName);
+    
     return () => {
+      console.log('🔥🔥🔥 KEYBOARD LISTENER CLEANUP - Removing keydown listener 🔥🔥🔥');
       document.removeEventListener('keydown', handleKeyDown);
       if (controlsTimeoutRef.current) {
         clearTimeout(controlsTimeoutRef.current);
