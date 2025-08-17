@@ -223,7 +223,7 @@ export const trackVideoWatchTime = (videoId: string, watchTimeSec: number, video
     locale: getCurrentLocale(),
     gallery: 'Video Gallery',
     player: 'html5',
-    watch_time_sec: watchTimeSec
+    watch_time_seconds: watchTimeSec
   };
   
   if (videoTitle) {

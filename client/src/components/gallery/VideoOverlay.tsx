@@ -238,7 +238,7 @@ export default function VideoOverlay({
       trackGA4VideoEvent('video_watch_time', {
         video_id: videoId,
         video_title: title,
-        watch_time_sec: currentTime,
+        watch_time_seconds: currentTime,
         locale: language
       });
     }
@@ -259,7 +259,7 @@ export default function VideoOverlay({
       trackGA4VideoEvent('video_watch_time', {
         video_id: videoId,
         video_title: title,
-        watch_time_sec: duration, // Full duration when video ends
+        watch_time_seconds: duration, // Full duration when video ends
         locale: language
       });
     }
