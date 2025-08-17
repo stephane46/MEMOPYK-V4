@@ -7,8 +7,8 @@ import { trackVideoWatchTime, trackVideoStart } from '@/lib/analytics';
 interface VideoOverlayProps {
   videoUrl: string;
   title: string;
-  sourceText: string;
-  durationText: string;
+  sourceText?: string;
+  durationText?: string;
   onClose: () => void;
   orientation: 'portrait' | 'landscape';
   width: number;
@@ -31,6 +31,7 @@ export default function VideoOverlay({
   preloadedElement = null,
   thumbnailUrl 
 }: VideoOverlayProps) {
+  console.log('🎬🎬🎬 VideoOverlay MOUNTED! 🎬🎬🎬', { videoUrl, title, sourceText, durationText });
   const [isPlaying, setIsPlaying] = useState(false);
   const [isMuted, setIsMuted] = useState(false);
   const [showControls, setShowControls] = useState(true);
