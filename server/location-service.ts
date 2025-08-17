@@ -47,6 +47,11 @@ class LocationService {
    * Uses caching and intelligent rate limiting to avoid API throttling
    */
   async getLocationData(ip: string): Promise<EnrichedLocationData | null> {
+    // Skip API calls in development if rate limited (preserve production API quota)
+    if (process.env.NODE_ENV === 'development' && this.failedIPs.size > 10) {
+      console.log(`🚫 Location Service: Skipping API call in development mode (${this.failedIPs.size} failed IPs)`);
+      return null;
+    }
     // Return cached result if available
     if (this.cache.has(ip)) {
       console.log(`🌍 Location Service: Using cached data for ${ip}`);
