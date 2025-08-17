@@ -68,7 +68,12 @@ export function useKpis(params: { startDate: string; endDate: string; locale: "a
     ])
       .then(([cur, prev]) => { 
         if (alive && !abortController.signal.aborted) { 
-          // console.log('🔍 useKpis - RAW DATA:', { currentPlays: cur?.plays, previousPlays: prev?.plays });
+          console.log('🔍 useKpis - RAW DATA:', {
+            current: cur,
+            previous: prev,
+            currentPlays: cur?.plays,
+            previousPlays: prev?.plays
+          });
           setCurrent(cur); 
           setPrevious(prev); 
         }
@@ -109,7 +114,12 @@ export function useKpis(params: { startDate: string; endDate: string; locale: "a
       }
     };
     
-    // console.log('🔍 useKpis - PROCESSED DATA:', { playsValue: result.plays.value });
+    console.log('🔍 useKpis - PROCESSED DATA:', {
+      result,
+      playsValue: result.plays.value,
+      currentRaw: current.plays,
+      previousRaw: previous.plays
+    });
     
     return result;
   }, [current, previous]);

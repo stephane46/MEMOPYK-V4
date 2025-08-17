@@ -16,7 +16,11 @@ const readFromURL = (): Filters => {
   const endDate   = p.get("end")   || now.toISOString().slice(0,10);
   const locale    = (p.get("loc") as LocaleOpt) || "all";
   
-  // console.log('📅 FiltersContext - Default date range:', { startDate, endDate });
+  console.log('📅 FiltersContext - Default date range:', {
+    startDate, 
+    endDate, 
+    days: Math.round((new Date(endDate).getTime() - new Date(startDate).getTime()) / (1000 * 60 * 60 * 24)) + 1
+  });
   
   return { startDate, endDate, locale };
 };
