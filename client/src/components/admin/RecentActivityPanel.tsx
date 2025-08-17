@@ -51,7 +51,17 @@ export function RecentActivityPanel() {
           const twoHoursAgoTime = Date.now() - 2 * 60 * 60 * 1000;
           const recentSessions = sessions.filter((session: SessionData) => {
             const sessionTime = new Date(session.created_at).getTime();
-            return sessionTime > twoHoursAgoTime && !session.is_bot;
+            const isRecent = sessionTime > twoHoursAgoTime;
+            console.log('🔍 Session filter:', {
+              session_id: session.session_id.slice(0, 20) + '...',
+              created_at: session.created_at,
+              sessionTime,
+              twoHoursAgoTime,
+              isRecent,
+              is_bot: session.is_bot,
+              passed: isRecent && !session.is_bot
+            });
+            return isRecent && !session.is_bot;
           }).slice(0, 20); // Limit to 20 most recent
           
           const activityData: ActivityData = {
@@ -188,9 +198,9 @@ export function RecentActivityPanel() {
             </div>
           ) : (
             <div className="text-center text-gray-500 py-4">
-              No recent video activity
+              No recent visitor activity
               <div className="text-xs text-gray-400 mt-1">
-                Debug: {data.total} total events (expand to see)
+                Debug: {data.total} sessions found (check filtering)
               </div>
             </div>
           )}
