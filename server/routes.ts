@@ -4178,15 +4178,15 @@ export async function registerRoutes(app: Express): Promise<void> {
     try {
       console.log('🎯 RECENT ACTIVITY REQUEST: Fetching recent visitor activity');
       
-      // Get recent sessions from the last 30 minutes
-      const thirtyMinutesAgo = new Date(Date.now() - 30 * 60 * 1000);
+      // Get recent sessions from the last 10 minutes (more realistic for "active" users)
+      const tenMinutesAgo = new Date(Date.now() - 10 * 60 * 1000);
       
       // Get recent sessions with video views
       // **REPLIT PREVIEW PRODUCTION ANALYTICS**
       const shouldIncludeProduction = process.env.NODE_ENV === 'production' || req.headers.host?.includes('replit');
       
       const recentSessions = await hybridStorage.getAnalyticsSessions(
-        thirtyMinutesAgo.toISOString(),
+        tenMinutesAgo.toISOString(),
         new Date().toISOString(),
         undefined,
         shouldIncludeProduction
@@ -4195,21 +4195,28 @@ export async function registerRoutes(app: Express): Promise<void> {
       console.log(`📊 RECENT ACTIVITY: Found ${recentSessions.length} recent sessions`);
       
       // Transform sessions into activity format
-      const activities = recentSessions.map(session => ({
-        id: session.session_id,
-        timestamp: session.created_at,
-        ip: session.ip_address,
-        country: session.country,
-        city: session.city,
-        language: session.language,
-        page_url: session.page_url,
-        duration: session.duration || 0,
-        video_views: session.video_views || [],
-        user_agent: session.user_agent?.substring(0, 100) + '...',
-        is_active: session.updated_at ? 
-          (Date.now() - new Date(session.updated_at).getTime()) < 5 * 60 * 1000 : // active within last 5 minutes
-          false
-      }));
+      const activities = recentSessions.map(session => {
+        const now = Date.now();
+        const createdTime = new Date(session.created_at).getTime();
+        const timeSinceCreation = now - createdTime;
+        const minutesAgo = Math.floor(timeSinceCreation / (60 * 1000));
+        const isActive = timeSinceCreation < 10 * 60 * 1000; // 10 minutes (consider active for longer)
+        
+        
+        return {
+          id: session.session_id,
+          timestamp: session.created_at,
+          ip: session.ip_address,
+          country: session.country,
+          city: session.city,
+          language: session.language,
+          page_url: session.page_url,
+          duration: session.duration || 0,
+          video_views: session.video_views || [],
+          user_agent: session.user_agent?.substring(0, 100) + '...',
+          is_active: isActive
+        };
+      });
       
       // Sort by most recent first
       activities.sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
