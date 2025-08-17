@@ -229,7 +229,19 @@ export default function VideoOverlay({
       });
       console.log('📊 GA4 VIDEO START EVENT SENT:', { video_id: videoId, video_title: title, duration_sec: duration || 0, locale: language });
     }
-  }, [resetControlsTimer]);
+    
+    // LOCAL ANALYTICS: Track video view start - CRITICAL FIX
+    if (VIDEO_ANALYTICS_ENABLED) {
+      console.log(`📊 LOCAL ANALYTICS: Tracking video view start for ${videoId}`);
+      trackVideoView({
+        video_id: videoId,
+        duration_watched: 0, // Start of video
+        completed: false,
+        language: language as 'en-US' | 'fr-FR',
+        page_url: window.location.href
+      });
+    }
+  }, [resetControlsTimer, VIDEO_ANALYTICS_ENABLED, trackVideoView, title, videoUrl, duration, currentTime, language]);
 
   const handlePause = useCallback(() => {
     setIsPlaying(false);
