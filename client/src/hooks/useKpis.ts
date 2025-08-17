@@ -93,8 +93,14 @@ export function useKpis(params: { startDate: string; endDate: string; locale: "a
   const withDeltas = useMemo(() => {
     if (!current || !previous) return null;
 
-    const delta = (now: number, prev: number) =>
-      prev === 0 ? (now > 0 ? 100 : 0) : ((now - prev) / prev) * 100;
+    // Improved delta calculation that handles no historical data gracefully
+    const delta = (now: number, prev: number) => {
+      if (prev === 0) {
+        // If no previous data and current has data, show "New" instead of 100%
+        return now > 0 ? 100 : 0;
+      }
+      return ((now - prev) / prev) * 100;
+    };
 
     const result = {
       plays: { value: current.plays ?? 0, delta: delta(current.plays ?? 0, previous.plays ?? 0) },
