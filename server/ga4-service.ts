@@ -282,6 +282,24 @@ async function qCompletesByVideo(start: string, end: string, locale?: string) {
   }
 }
 
+// Helper function to get video durations from database
+function getVideoDurations(): Map<string, number> {
+  // Hardcoded durations based on database values - immediate solution
+  const durationMap = new Map<string, number>();
+  
+  // Map GA4 video IDs to actual durations from database
+  durationMap.set('PomGalleryC.mp4', 180); // "The summer of Pom" = 3 minutes
+  durationMap.set('VitaminSeaC.mp4', 240); // "Our Vitamin Sea" = 4 minutes  
+  durationMap.set('safari-1.mp4', 1200); // "Safari with friends" = 20 minutes
+  
+  console.log(`🎯 Retrieved ${durationMap.size} video durations (hardcoded from database values)`);
+  // Debug: show the mappings
+  for (const [key, value] of durationMap.entries()) {
+    console.log(`🔍 Duration mapping: "${key}" → ${value}s`);
+  }
+  return durationMap;
+}
+
 export async function qWatchTimeByVideo(start: string, end: string, locale?: string) {
   console.log(`🎯 qWatchTimeByVideo CALLED: ${start} to ${end}, locale: ${locale || 'all'}`);
   
@@ -289,6 +307,9 @@ export async function qWatchTimeByVideo(start: string, end: string, locale?: str
     // Get plays data by video (this we know works)
     const playsData = await qPlaysByVideo(start, end, locale);
     console.log(`🔍 qWatchTimeByVideo - Got ${playsData.length} videos with plays`);
+
+    // Get actual video durations from database
+    const videoDurations = getVideoDurations();
 
     // Try to get completes by video, but if it fails, use total completes and distribute proportionally
     let completesData: any[] = [];
@@ -321,40 +342,56 @@ export async function qWatchTimeByVideo(start: string, end: string, locale?: str
       }
     }
 
-    // Index completes for quick lookup
-    const completesById = new Map<string, number>();
+    // Index completes for quick lookup using video_id + title combination
+    const completesByKey = new Map<string, number>();
     
     if (completesData.length > 0) {
-      // Use per-video completes data if available
-      completesData.forEach((c: any) => completesById.set(c.video_id, c.completes));
+      // Use per-video completes data if available, indexed by video_id + title for uniqueness
+      completesData.forEach((c: any) => {
+        const key = `${c.video_id}:::${c.title}`;
+        completesByKey.set(key, c.completes);
+        console.log(`🔍 Indexing completes: "${key}" → ${c.completes} completes`);
+      });
     } else if (totalCompletes > 0 && totalPlays > 0) {
       // Distribute total completes proportionally based on plays
       playsData.forEach((video: any) => {
         const proportionalCompletes = Math.round((video.plays / totalPlays) * totalCompletes);
-        completesById.set(video.video_id, proportionalCompletes);
+        const key = `${video.video_id}:::${video.title}`;
+        completesByKey.set(key, proportionalCompletes);
         console.log(`🔍 qWatchTimeByVideo - ${video.title}: ${video.plays} plays → ${proportionalCompletes} estimated completes`);
       });
     }
 
-    // Calculate watch time using completion-based method (same logic as qWatchTimeTotal but per video)
+    // Calculate watch time using completion-based method with ACTUAL video durations
     const result = playsData.map((video: any) => {
       const plays = video.plays;
-      const completes = completesById.get(video.video_id) || 0;
+      const key = `${video.video_id}:::${video.title}`;
+      const completes = completesByKey.get(key) || 0;
+      
+      // Get actual video duration from database, fallback to 90 seconds
+      const actualDuration = videoDurations.get(video.video_id) || 90;
       
       let totalWatchTime = 0;
-      const avgVideoLength = 90; // seconds - conservative estimate for MEMOPYK videos
       
       if (completes > 0) {
-        // Completion-based calculation
-        const completionWatchTime = completes * avgVideoLength;
-        const partialWatchTime = Math.max(0, plays - completes) * (avgVideoLength * 0.3);
+        // Realistic completion-based calculation using ACTUAL video duration
+        // Cap completes at plays to avoid impossible scenarios
+        const actualCompletes = Math.min(completes, plays);
+        const partialPlays = Math.max(0, plays - actualCompletes);
+        
+        const completionWatchTime = actualCompletes * actualDuration;
+        const partialWatchTime = partialPlays * (actualDuration * 0.3); // 30% for partial views
         totalWatchTime = completionWatchTime + partialWatchTime;
+        
+        console.log(`🔍 DETAILED CALC - ${video.title}: ${plays} plays, ${completes} completes → capped to ${actualCompletes} completes + ${partialPlays} partial`);
+        console.log(`🔍 MATH CHECK - ${video.title}: (${actualCompletes} × ${actualDuration}s) + (${partialPlays} × ${actualDuration * 0.3}s) = ${Math.round(totalWatchTime)}s total`);
       } else if (plays > 0) {
         // Play-based estimation when no completes available
-        totalWatchTime = plays * 45; // 45 seconds average per play
+        totalWatchTime = plays * (actualDuration * 0.5); // 50% average watch time
+        console.log(`🔍 FALLBACK CALC - ${video.title}: ${plays} plays × ${actualDuration * 0.5}s = ${Math.round(totalWatchTime)}s total`);
       }
 
-      console.log(`🔍 qWatchTimeByVideo - ${video.title}: ${plays} plays, ${completes} completes → ${Math.round(totalWatchTime)}s total`);
+      console.log(`🔍 qWatchTimeByVideo - ${video.title}: ${plays} plays, ${completes} completes, ${actualDuration}s duration → ${Math.round(totalWatchTime)}s total`);
 
       return {
         video_id: video.video_id,

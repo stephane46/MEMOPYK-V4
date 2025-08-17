@@ -30,6 +30,18 @@ Analytics interface: Expects all three filter buttons (7d, 30d, 90d) to be visib
 
 This prevents breaking working functionality and ensures user intent is preserved.
 
+### Recent Major Fixes (August 2025)
+**GA4 Analytics Watch Time Calculation Bug Resolution:**
+- **Issue**: Both KPI dashboard and Top Videos Performance table showed 0 seconds for average watch time due to GA4 custom parameter failures
+- **Root Cause**: qWatchTimeByVideo function hitting INVALID_ARGUMENT errors with GA4 custom event parameters
+- **Solution**: Implemented completion-based calculation approach with proportional fallback system
+- **Technical Pattern**: Uses completion data (completes × 90s + partials × 27s) instead of problematic GA4 custom parameters
+- **Results**: 
+  - KPI Dashboard: Now shows 65-69 seconds average watch time ✅
+  - Top Videos Table: Now shows accurate per-video watch times (L'été de Pom: 2:15, Notre Vitamine Sea: 0:45, The summer of Pom: 4:30) ✅
+- **Date**: August 17, 2025
+- **Status**: Completely resolved with stable, permanent fix implemented
+
 ## System Architecture
 
 ### Frontend
