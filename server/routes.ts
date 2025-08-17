@@ -4208,6 +4208,25 @@ export async function registerRoutes(app: Express): Promise<void> {
     }
   });
 
+  // Analytics Sessions endpoint - GET analytics sessions  
+  app.get("/api/analytics/sessions", async (req, res) => {
+    try {
+      const { dateFrom, dateTo, language } = req.query;
+      console.log('📊 Analytics sessions request:', { dateFrom, dateTo, language });
+      
+      const sessions = await hybridStorage.getAnalyticsSessions(
+        dateFrom as string,
+        dateTo as string, 
+        language as string
+      );
+      
+      res.json(sessions);
+    } catch (error) {
+      console.error('❌ Analytics sessions error:', error);
+      res.status(500).json({ error: "Failed to get analytics sessions" });
+    }
+  });
+
 
 
 

@@ -61,8 +61,8 @@ export default function VideoOverlay({
     }
   }, []);
   
-  // Feature flag for video analytics - ENABLED for proper tracking
-  const VIDEO_ANALYTICS_ENABLED = true;
+  // Feature flag for video analytics - Use environment variable as intended
+  const VIDEO_ANALYTICS_ENABLED = import.meta.env.VITE_VIDEO_ANALYTICS_ENABLED === 'true' || false;
   
   // Extract video ID from URL
   const getVideoId = useCallback(() => {
