@@ -3177,7 +3177,7 @@ Allow: /contact`;
   }
 
   // Analytics methods implementation
-  async getAnalyticsSessions(dateFrom?: string, dateTo?: string, language?: string): Promise<any[]> {
+  async getAnalyticsSessions(dateFrom?: string, dateTo?: string, language?: string, includeProduction?: boolean): Promise<any[]> {
     // SMART 7-DAY ROLLING CACHE STRATEGY
     const sevenDaysAgo = new Date();
     sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
@@ -3199,8 +3199,10 @@ Allow: /contact`;
           .orderBy(desc(analyticsSessions.createdAt));
 
         if (dbSessions.length > 0) {
+          // **REPLIT PREVIEW PRODUCTION ANALYTICS**
+          // Include both development and production data when includeProduction is true
           let filtered = dbSessions
-            .filter((session: any) => !session.isTestData)
+            .filter((session: any) => includeProduction ? true : !session.isTestData)
             .map((session: any) => ({
               id: session.id,
               session_id: session.sessionId,
@@ -3238,7 +3240,9 @@ Allow: /contact`;
       // Fallback to JSON cache if PostgreSQL fails
       try {
         const sessions = this.loadJsonFile('analytics-sessions.json');
-        let filtered = sessions.filter((session: any) => !session.is_test_data);
+        // **REPLIT PREVIEW PRODUCTION ANALYTICS** 
+        // Include both development and production data when includeProduction is true
+        let filtered = sessions.filter((session: any) => includeProduction ? true : !session.is_test_data);
 
         if (dateFrom) {
           filtered = filtered.filter((session: any) => session.created_at >= dateFrom);
@@ -3263,8 +3267,13 @@ Allow: /contact`;
       let query = this.supabase
         .from('analytics_sessions')
         .select('*')
-        .eq('is_test_data', false)
         .order('created_at', { ascending: false });
+
+      // **REPLIT PREVIEW PRODUCTION ANALYTICS**
+      // Only filter test data when not including production data
+      if (!includeProduction) {
+        query = query.eq('is_test_data', false);
+      }
 
       if (dateFrom) {
         query = query.gte('created_at', dateFrom);

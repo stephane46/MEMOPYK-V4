@@ -1998,9 +1998,14 @@ export async function registerRoutes(app: Express): Promise<void> {
       const { dateFrom, dateTo } = req.query;
       console.log('👥 Recent Visitors: Fetching visitor details with date filters:', { dateFrom, dateTo });
       
+      // **REPLIT PREVIEW PRODUCTION ANALYTICS**
+      const shouldIncludeProduction = process.env.NODE_ENV === 'production' || req.headers.host?.includes('replit');
+      
       const sessions = await hybridStorage.getAnalyticsSessions(
         dateFrom as string, 
-        dateTo as string
+        dateTo as string,
+        undefined,
+        shouldIncludeProduction
       );
       
       // Filter out test data and invalid sessions BEFORE processing
@@ -2197,7 +2202,15 @@ export async function registerRoutes(app: Express): Promise<void> {
       }
       
       // FIXED: Find or create session for this specific IP
-      const sessions = await hybridStorage.getAnalyticsSessions();
+      // **REPLIT PREVIEW PRODUCTION ANALYTICS**
+      const shouldIncludeProduction = process.env.NODE_ENV === 'production' || req.headers.host?.includes('replit');
+      
+      const sessions = await hybridStorage.getAnalyticsSessions(
+        undefined,
+        undefined, 
+        undefined,
+        shouldIncludeProduction
+      );
       const ipSession = sessions.find((s: any) => 
         s.ip_address === clientIp && 
         !s.is_test_data
@@ -2238,7 +2251,15 @@ export async function registerRoutes(app: Express): Promise<void> {
     try {
       console.log('🌍 Location Enrichment: Starting manual enrichment...');
       
-      const sessions = await hybridStorage.getAnalyticsSessions();
+      // **REPLIT PREVIEW PRODUCTION ANALYTICS**
+      const shouldIncludeProduction = process.env.NODE_ENV === 'production' || req.headers.host?.includes('replit');
+      
+      const sessions = await hybridStorage.getAnalyticsSessions(
+        undefined,
+        undefined,
+        undefined, 
+        shouldIncludeProduction
+      );
       const uniqueIPs = Array.from(new Set(sessions.map(s => s.ip_address).filter(ip => ip && ip !== '0.0.0.0')));
       
       console.log(`🌍 Location Enrichment: Found ${uniqueIPs.length} unique IPs to enrich`);
@@ -4161,11 +4182,15 @@ export async function registerRoutes(app: Express): Promise<void> {
       const thirtyMinutesAgo = new Date(Date.now() - 30 * 60 * 1000);
       
       // Get recent sessions with video views
-      const recentSessions = await hybridStorage.getAnalyticsSessions({
-        since: thirtyMinutesAgo,
-        limit: 50,
-        includeVideoViews: true
-      });
+      // **REPLIT PREVIEW PRODUCTION ANALYTICS**
+      const shouldIncludeProduction = process.env.NODE_ENV === 'production' || req.headers.host?.includes('replit');
+      
+      const recentSessions = await hybridStorage.getAnalyticsSessions(
+        thirtyMinutesAgo.toISOString(),
+        new Date().toISOString(),
+        undefined,
+        shouldIncludeProduction
+      );
       
       console.log(`📊 RECENT ACTIVITY: Found ${recentSessions.length} recent sessions`);
       
@@ -4211,13 +4236,22 @@ export async function registerRoutes(app: Express): Promise<void> {
   // Analytics Sessions endpoint - GET analytics sessions  
   app.get("/api/analytics/sessions", async (req, res) => {
     try {
-      const { dateFrom, dateTo, language } = req.query;
-      console.log('📊 Analytics sessions request:', { dateFrom, dateTo, language });
+      const { dateFrom, dateTo, language, includeProduction } = req.query;
+      console.log('📊 Analytics sessions request:', { dateFrom, dateTo, language, includeProduction });
+      
+      // **REPLIT PREVIEW PRODUCTION ANALYTICS** 
+      // Always show production data in Replit preview dashboard
+      const shouldIncludeProduction = process.env.NODE_ENV === 'production' || req.headers.host?.includes('replit');
+      
+      if (shouldIncludeProduction) {
+        console.log('🌍 REPLIT PREVIEW: Including production analytics data');
+      }
       
       const sessions = await hybridStorage.getAnalyticsSessions(
         dateFrom as string,
         dateTo as string, 
-        language as string
+        language as string,
+        shouldIncludeProduction
       );
       
       res.json(sessions);
