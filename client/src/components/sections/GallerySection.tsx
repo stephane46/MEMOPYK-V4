@@ -252,31 +252,16 @@ export default function GallerySection() {
   const t = content[language];
 
   const getImageUrl = (item: GalleryItem) => {
-    console.log("🖼 GallerySection#getImageUrl", item.id, {
-      useSameVideo: item.useSameVideo,
-      staticImageUrlEn: item.staticImageUrlEn,
-      imageUrlEn: item.imageUrlEn
-    });
-    console.group(`🖼️ GallerySection#getImageUrl [id=${item.id}]`);
-    console.log("useSameVideo:",    item.useSameVideo);
-    console.log("staticImageUrlEn:", item.staticImageUrlEn);
-    console.log("imageUrlEn:",       item.imageUrlEn);
-
     const thumb = item.useSameVideo
       ? item.staticImageUrlEn
       : (language === 'fr-FR' ? item.staticImageUrlFr : item.staticImageUrlEn);
-    console.log("→ chosen thumb:", thumb);
 
     if (thumb) {
       // ✅ DEPLOYMENT ARCHITECTURE: Gallery images MUST stream from Supabase CDN
       // This ensures production deployment reliability (hero videos = cache, gallery = CDN)
-      console.log("✅ serving gallery image directly from Supabase CDN:", thumb);
-      console.groupEnd();
       return thumb; // Direct CDN streaming as per deployment requirements
     }
 
-    console.log("🚨 falling back to original:", item.imageUrlEn);
-    console.groupEnd();
     return item.imageUrlEn || "";
   };
 
@@ -313,15 +298,7 @@ export default function GallerySection() {
     const filename = item.videoFilename || item.videoUrlEn || item.videoUrlFr;
     const hasVideoResult = filename && filename.trim() !== '';
     
-    // PRODUCTION DEBUG: Log hasVideo results to identify the issue
-    console.log(`🎬 hasVideo check for item ${index}:`, {
-      id: item.id,
-      filename,
-      videoFilename: item.videoFilename,
-      videoUrlEn: item.videoUrlEn,
-      videoUrlFr: item.videoUrlFr,
-      hasVideoResult
-    });
+
     
     return hasVideoResult;
   };
@@ -337,11 +314,8 @@ export default function GallerySection() {
     
     const proxyUrl = `/api/video-proxy?filename=${encodeURIComponent(filename)}`;
     
-    console.log(`🎬 GALLERY VIDEO PROXY v1.0.1754928443 - Item ${index}:`);
-    console.log(`   - Raw videoFilename: ${item.videoFilename}`);
-    console.log(`   - Extracted filename: ${filename}`);
-    console.log(`   - Proxy URL: ${proxyUrl}`);
-    console.log("✅ USING SAME VIDEO PROXY AS HERO VIDEOS (FILENAME ONLY)!");
+
+
     
     return proxyUrl;
   };

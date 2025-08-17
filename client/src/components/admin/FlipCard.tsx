@@ -183,7 +183,7 @@ export function FlipCard({ frontContent, className = "", visitors = [] }: Visito
                 color: '#6b7280',
                 marginBottom: '12px'
               }}>
-                Last 5 unique visitors • Total: {visitors.length}
+                Last 100 unique visitors • Total: {visitors.length}
               </div>
               
               <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>

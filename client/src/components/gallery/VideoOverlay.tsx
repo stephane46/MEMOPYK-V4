@@ -31,7 +31,7 @@ export default function VideoOverlay({
   preloadedElement = null,
   thumbnailUrl 
 }: VideoOverlayProps) {
-  console.log('🎬🎬🎬 VideoOverlay MOUNTED! 🎬🎬🎬', { videoUrl, title, sourceText, durationText });
+  // VideoOverlay mounted
   const [isPlaying, setIsPlaying] = useState(false);
   const [isMuted, setIsMuted] = useState(false);
   const [showControls, setShowControls] = useState(true);
@@ -71,9 +71,6 @@ export default function VideoOverlay({
 
   // ENHANCED THUMBNAIL-TO-VIDEO SYSTEM v1.0.174 with minimum display time - MOUNT ONCE ONLY
   useEffect(() => {
-    console.log('🚨🚨🚨 VIDEO OVERLAY MOUNTED! 🚨🚨🚨');
-    console.log('🎬 Video URL:', videoUrl);
-    console.log('🖼️ Thumbnail URL:', thumbnailUrl);
     videoStartTimeRef.current = Date.now();
     thumbnailStartTimeRef.current = Date.now();
     videoReadyRef.current = false;
@@ -83,43 +80,28 @@ export default function VideoOverlay({
       ? videoUrl.split('filename=')[1].split('&')[0]
       : videoUrl.split('/').pop()?.split('?')[0] || 'unknown';
       
-    console.log(`🎯 ENHANCED THUMBNAIL SYSTEM v1.0.178: Loading ${videoId} with ${MINIMUM_THUMBNAIL_DISPLAY_TIME}ms minimum display - GA4 ENABLED`);
-    
     // GA4 Analytics: Track video open (modal/overlay opened) using proper analytics function
     trackVideoStart(videoId, 0, 0, title);
     
     // Start video buffering immediately for faster transition
     const video = videoRef.current;
     if (video && thumbnailUrl) {
-      console.log('🎬 IMMEDIATE BUFFERING: Starting video load while showing thumbnail');
       video.load(); // Force immediate buffering
     }
     
-    // Setup GA4 visibility tracking - DISABLED
-    // const cleanupVisibilityTracking = ga4Analytics.setupVisibilityTracking();
-    
     return () => {
-      console.log('🔄 VIDEO OVERLAY CLEANUP - Component unmounting');
-      
       // Track final watch time on cleanup
       const video = videoRef.current;
       if (video && video.currentTime > 0) {
         const finalWatchTime = Math.round(video.currentTime);
-        console.log(`📊 CLEANUP WATCH TIME TRACKING: ${videoId} - ${finalWatchTime}s`);
         trackVideoWatchTime(videoId, finalWatchTime, title);
       }
-      
-      // cleanupVisibilityTracking();
-      // ga4Analytics.clearSession(videoId);
     };
   }, [title]); // Include title for cleanup tracking
 
   // Enhanced error handling
   const handleVideoError = useCallback((e: any) => {
-    console.error(' ❌ VIDEO OVERLAY ERROR:');
-    console.error('    - Video URL:', videoUrl);
-    console.error('    - Error event:', e);
-    console.error('    - Error details:', e.target?.error);
+    console.error('VideoOverlay Error:', e.target?.error);
   }, [videoUrl]);
 
   // Mobile-responsive viewport sizing
@@ -254,7 +236,7 @@ export default function VideoOverlay({
       const watchedDuration = Math.round(currentTime);
       const completionRate = duration > 0 ? Math.round((currentTime / duration) * 100) : 0;
       const isCompleted = completionRate >= 90;
-      console.log(`📊 VIDEO ENDED ANALYTICS: ${videoId} watched ${watchedDuration}s (${completionRate}% completion)`);
+
       trackVideoView(videoId, watchedDuration, isCompleted);
     }
   }, [currentTime, duration, trackVideoView, VIDEO_ANALYTICS_ENABLED, title, videoUrl, language]);
@@ -263,7 +245,7 @@ export default function VideoOverlay({
     const video = videoRef.current;
     if (video) {
       setDuration(video.duration);
-      console.log('✅ Video metadata loaded');
+
     }
   }, []);
 
@@ -271,38 +253,26 @@ export default function VideoOverlay({
   const startVideoPlayback = useCallback(() => {
     const video = videoRef.current;
     if (video) {
-      console.log('🎬 STARTING VIDEO PLAYBACK');
+
       setShowThumbnail(false);
       video.play().then(() => {
-        console.log('✅ Video play() succeeded');
+
         setIsPlaying(true);
       }).catch((error) => {
-        console.error('❌ Video play() failed:', error);
+
       });
     }
   }, []);
 
   // Simple video ready handler with proper 2-second minimum display
   const handleCanPlay = useCallback(() => {
-    console.log('🎬 VIDEO READY: Can play');
     const video = videoRef.current;
     if (video && showThumbnail) {
-      console.log('🎬 VIDEO STATE CHECK:', {
-        readyState: video.readyState,
-        networkState: video.networkState,
-        currentTime: video.currentTime,
-        duration: video.duration,
-        videoWidth: video.videoWidth,
-        videoHeight: video.videoHeight
-      });
-      
       videoReadyRef.current = true;
       
       // Calculate time already elapsed since thumbnail started showing
       const timeElapsed = Date.now() - thumbnailStartTimeRef.current;
       const remainingTime = Math.max(0, MINIMUM_THUMBNAIL_DISPLAY_TIME - timeElapsed);
-      
-      console.log(`🎯 THUMBNAIL TIMING: ${timeElapsed}ms elapsed, waiting ${remainingTime}ms more for minimum ${MINIMUM_THUMBNAIL_DISPLAY_TIME}ms display`);
       
       // Start playback after ensuring minimum 2-second thumbnail display
       setTimeout(startVideoPlayback, remainingTime);
@@ -311,7 +281,6 @@ export default function VideoOverlay({
 
   // Handle when enough data is loaded for smooth playback with proper timing
   const handleCanPlayThrough = useCallback(() => {
-    console.log('🎬 VIDEO BUFFERED: Full buffer ready');
     const video = videoRef.current;
     if (video && showThumbnail) {
       videoReadyRef.current = true;
@@ -319,8 +288,6 @@ export default function VideoOverlay({
       // Calculate time already elapsed since thumbnail started showing
       const timeElapsed = Date.now() - thumbnailStartTimeRef.current;
       const remainingTime = Math.max(0, MINIMUM_THUMBNAIL_DISPLAY_TIME - timeElapsed);
-      
-      console.log(`🎯 BUFFERED TIMING: ${timeElapsed}ms elapsed, waiting ${remainingTime}ms more for minimum ${MINIMUM_THUMBNAIL_DISPLAY_TIME}ms display`);
       
       // Start playback after ensuring minimum 2-second thumbnail display
       setTimeout(startVideoPlayback, remainingTime);
