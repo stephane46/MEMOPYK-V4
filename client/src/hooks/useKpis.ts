@@ -22,8 +22,8 @@ function prevPeriod(startYmd: string, endYmd: string) {
 
 async function fetchKpis(startDate: string, endDate: string, locale: string, signal?: AbortSignal): Promise<Kpis> {
   const url = new URL("/api/ga4/kpis", window.location.origin);
-  url.searchParams.set("startDate", startDate);
-  url.searchParams.set("endDate", endDate);
+  url.searchParams.set("start", startDate);
+  url.searchParams.set("end", endDate);
   url.searchParams.set("locale", locale);
   
   const res = await fetch(url.toString(), { signal });
