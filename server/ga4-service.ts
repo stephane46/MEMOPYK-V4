@@ -97,7 +97,7 @@ export async function qWatchTimeTotal(start: string, end: string, locale?: strin
   console.log(`🎯 qWatchTimeTotal CALLED: ${start} to ${end}, locale: ${locale || 'all'} - AUTHENTIC GA4 DATA ONLY`);
   
   // Use ONLY the authentic GA4 watch time data - no fallbacks
-  const watchTimeData = await qActualWatchTimeByVideo(start, end, locale);
+  const watchTimeData = await qWatchTimeByVideo(start, end, locale);
   
   // Sum up all watch times from individual videos (authentic GA4 data)
   const totalWatchTime = watchTimeData.reduce((sum: number, video: any) => sum + video.watch_time_seconds, 0);
@@ -181,7 +181,7 @@ export async function qPlaysByVideo(start: string, end: string, locale?: string)
   }
 }
 
-async function qCompletesByVideo(start: string, end: string, locale?: string) {
+export async function qCompletesByVideo(start: string, end: string, locale?: string) {
   console.log(`🎯 qCompletesByVideo CALLED: ${start} to ${end}, locale: ${locale || 'all'}`);
   
   const localeExpr =
@@ -349,7 +349,58 @@ export async function qActualWatchTimeByVideo(start: string, end: string, locale
 }
 
 // Use ONLY the authentic GA4 watch time method - no fallbacks
-export const qWatchTimeByVideo = qActualWatchTimeByVideo;
+// CRITICAL FIX: Direct GA4 custom metric access using WORKING format from diagnostic
+export async function qWatchTimeByVideo(start: string, end: string, locale?: string) {
+  console.log(`🎯 qWatchTimeByVideo CALLED: ${start} to ${end}, locale: ${locale || 'all'} - Using authentic customEvent:watch_time_seconds`);
+  
+  const localeExpr =
+    locale && locale !== "all"
+      ? [{ filter: { fieldName: "customEvent:locale", stringFilter: { value: locale } } }]
+      : [];
+
+  try {
+    const [res] = await client.runReport({
+      property: PROPERTY,
+      dateRanges: [{ startDate: start, endDate: end }],
+      dimensions: [
+        { name: "customEvent:video_id" },
+        { name: "customEvent:video_title" }
+      ],
+      metrics: [
+        { name: "eventCount" },
+        { name: "customEvent:watch_time_seconds" } // WORKING format from diagnostic
+      ],
+      dimensionFilter: {
+        andGroup: {
+          expressions: [
+            { filter: { fieldName: "eventName", stringFilter: { value: "video_start" } } }, // Base on video_start events
+            ...localeExpr
+          ]
+        }
+      },
+      orderBys: [{ metric: { metricName: "eventCount" }, desc: true }],
+      limit: 100
+    });
+
+    console.log(`🎯 qWatchTimeByVideo RAW RESPONSE:`, JSON.stringify(res.rows?.slice(0, 2), null, 2));
+
+    const videoData = (res.rows ?? []).map((r: any) => ({
+      video_id: r.dimensionValues?.[0]?.value ?? "unknown",
+      title: r.dimensionValues?.[1]?.value ?? "Unknown Video", 
+      plays: Number(r.metricValues?.[0]?.value ?? 0),
+      watch_time_seconds: Number(r.metricValues?.[1]?.value ?? 0) // Authentic GA4 custom metric
+    })).filter((video: any) => video.plays > 0);
+
+    console.log(`🎯 qWatchTimeByVideo RESULT: ${videoData.length} videos with authentic watch time data`);
+    videoData.forEach(v => console.log(`🔍 ${v.title}: ${v.plays} plays, ${v.watch_time_seconds}s authentic watch time`));
+    
+    return videoData;
+  } catch (error) {
+    console.error('❌ qWatchTimeByVideo FAILED:', error);
+    console.error('ERROR DETAILS:', (error as Error).message);
+    return [];
+  }
+}
 
 export async function qProgressByVideo(start: string, end: string, locale?: string) {
   const localeExpr =
@@ -386,7 +437,7 @@ export async function getTopVideosTable(start: string, end: string, locale?: str
   try {
     // Get only authentic GA4 data - NO estimations or fallbacks allowed
     const plays = await qPlaysByVideo(start, end, locale);
-    const completes = await qCompletes(start, end, locale);
+    const completes = await qCompletesByVideo(start, end, locale);
     const watchTimes = await qWatchTimeByVideo(start, end, locale);
 
     console.log(`🎯 Top Videos Raw Data: ${plays.length} plays, ${completes.length} completes, ${watchTimes.length} watch times`);
