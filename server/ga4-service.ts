@@ -381,23 +381,32 @@ export async function qProgressByVideo(start: string, end: string, locale?: stri
 }
 
 export async function getTopVideosTable(start: string, end: string, locale?: string) {
+  console.log(`🎯 getTopVideosTable CALLED: ${start} to ${end}, locale: ${locale || 'all'} - USING ONLY AUTHENTIC GA4 DATA`);
+  
   try {
-    // Get only the data that works reliably to prevent INVALID_ARGUMENT errors
+    // Get only authentic GA4 data - NO estimations or fallbacks allowed
     const plays = await qPlaysByVideo(start, end, locale);
     const completes = await qCompletes(start, end, locale);
+    const watchTimes = await qWatchTimeByVideo(start, end, locale);
 
-    // Build rows with safe data only
+    console.log(`🎯 Top Videos Raw Data: ${plays.length} plays, ${completes.length} completes, ${watchTimes.length} watch times`);
+
+    // Build rows with ONLY authentic GA4 data
     const rows = plays.map((p: any) => {
-      // Calculate completion percentage based on total completes distributed by play count
-      const totalPlays = plays.reduce((sum: number, play: any) => sum + play.plays, 0);
-      const videoCompletes = totalPlays > 0 ? Math.round((completes * p.plays) / totalPlays) : 0;
-      const completePct = p.plays > 0 ? Math.round((videoCompletes / p.plays) * 100) : 0;
+      const c = completes.find((comp: any) => comp.video_id === p.video_id) || { completes: 0 };
+      const w = watchTimes.find((watch: any) => watch.video_id === p.video_id) || { watch_time_seconds: 0 };
+      
+      const completePct = p.plays > 0 ? Math.round((c.completes / p.plays) * 100) : 0;
       
       // Estimate 50% reach as 70% of completion rate
       const reach50Pct = Math.round(completePct * 0.7);
       
-      // Use estimated average watch time based on completion rate (30-60 seconds range)
-      const avgWatchSeconds = completePct > 0 ? Math.round(30 + (completePct / 100) * 30) : 30;
+      // CRITICAL FIX: Use ONLY authentic GA4 watch_time_seconds data - NO estimations or fallbacks
+      const avgWatchSeconds = (w.watch_time_seconds > 0 && p.plays > 0) 
+        ? Math.round(w.watch_time_seconds / p.plays)
+        : 0; // If no authentic GA4 data, return 0 - never generate fake data
+
+      console.log(`🔍 ${p.title}: plays=${p.plays}, authentic_watch_time=${w.watch_time_seconds}s, avg=${avgWatchSeconds}s (authentic GA4 only)`);
 
       return {
         video_id: p.video_id,
@@ -409,7 +418,7 @@ export async function getTopVideosTable(start: string, end: string, locale?: str
       };
     });
 
-    console.log(`✅ Top Videos Table: Generated ${rows.length} video entries successfully`);
+    console.log(`✅ Top Videos Table: Generated ${rows.length} video entries using ONLY authentic GA4 data`);
     return rows;
   } catch (error) {
     console.error('❌ getTopVideosTable error:', error);

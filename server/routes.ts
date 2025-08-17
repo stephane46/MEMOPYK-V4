@@ -3986,10 +3986,10 @@ export async function registerRoutes(app: Express): Promise<void> {
         console.log(`✅ qWatchTimeTotal: ${totalWatch}`);
       } catch (e) {
         console.error('❌ qWatchTimeTotal failed:', (e as Error).message);
-        // Don't throw error - use fallback value to keep the API working
-        console.log('🔄 Using fallback watch time calculation...');
-        totalWatch = Math.max(120, plays * 45); // Minimum 2 minutes or 45s per play
-        console.log(`✅ qWatchTimeTotal FALLBACK: ${totalWatch}`);
+        // CRITICAL FIX: Use ONLY authentic GA4 data - NO fallback calculations or estimations
+        console.log('🚨 AUTHENTIC GA4 DATA ONLY: No fallback calculations allowed');
+        totalWatch = 0; // If no authentic GA4 data available, return 0 - never generate fake data
+        console.log(`✅ qWatchTimeTotal AUTHENTIC GA4 ONLY: ${totalWatch}`);
       }
 
       try {
@@ -4001,7 +4001,8 @@ export async function registerRoutes(app: Express): Promise<void> {
         throw new Error(`qTopLocale failed: ${(e as Error).message}`);
       }
 
-      const avgWatchSeconds = plays > 0 ? Math.round(totalWatch / plays) : 0;
+      // CRITICAL FIX: Use ONLY authentic GA4 totalWatch data - NO estimations or calculations
+      const avgWatchSeconds = (totalWatch > 0 && plays > 0) ? Math.round(totalWatch / plays) : 0;
       const completionRate = plays > 0 ? (completes / plays) * 100 : 0;
 
       const data = {
