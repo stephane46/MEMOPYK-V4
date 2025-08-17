@@ -51,7 +51,7 @@ export default function VideoOverlay({
   // Language detection for source text
   const language = localStorage.getItem('language') || 'en-US';
   
-  // Analytics tracking - DISABLED: Switch to GA4-only for video analytics
+  // Analytics tracking - LOCAL ANALYTICS: Track gallery video views
   const { trackVideoView } = useVideoAnalytics();
   
   // GA4 Video Analytics - Using direct gtag for individual video tracking
@@ -231,15 +231,9 @@ export default function VideoOverlay({
     }
     
     // LOCAL ANALYTICS: Track video view start - CRITICAL FIX
-    if (VIDEO_ANALYTICS_ENABLED) {
+    if (VIDEO_ANALYTICS_ENABLED && trackVideoView) {
       console.log(`📊 LOCAL ANALYTICS: Tracking video view start for ${videoId}`);
-      trackVideoView.mutate({
-        video_id: videoId,
-        duration_watched: 0, // Start of video
-        completed: false,
-        language: language as 'en-US' | 'fr-FR',
-        page_url: window.location.href
-      });
+      trackVideoView(videoId, 0, false);
     }
   }, [resetControlsTimer, VIDEO_ANALYTICS_ENABLED, trackVideoView, title, videoUrl, duration, currentTime, language]);
 
