@@ -91,7 +91,18 @@ export function useKpis(params: { startDate: string; endDate: string; locale: "a
   }, [startDate, endDate, locale, bump]);
 
   const withDeltas = useMemo(() => {
-    if (!current || !previous) return null;
+    if (!current) return null;
+    if (!previous) {
+      // If we have current but no previous data, show current with 0% delta
+      const result = {
+        plays: { value: current.plays ?? 0, delta: 0 },
+        avgWatchSeconds: { value: current.avgWatchSeconds ?? 0, delta: 0 },
+        completionRate: { value: current.completionRate ?? 0, delta: 0 },
+        topLocale: current.topLocale ?? { locale: 'n/a', plays: 0 },
+        watchTimeSeconds: { value: current.totals?.watchTimeSeconds ?? 0, delta: 0 }
+      };
+      return result;
+    }
 
     // Improved delta calculation that handles no historical data gracefully
     const delta = (now: number, prev: number) => {
