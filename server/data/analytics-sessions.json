@@ -5677,6 +5677,7 @@
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-17T19:59:56.576Z",
-    "updated_at": "2025-08-17T19:59:56.617Z"
+    "updated_at": "2025-08-17T20:01:57.332Z",
+    "duration": 456684
   }
 ]
