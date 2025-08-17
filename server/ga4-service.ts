@@ -96,7 +96,21 @@ export async function qWatchTimeTotal(start: string, end: string, locale?: strin
   console.log(`🎯 qWatchTimeTotal - Received plays: ${playsCount}, completes: ${completesCount}`);
   
   try {
-    // Use provided data if available, otherwise try to get it
+    // Use the same accurate calculation method as qWatchTimeByVideo
+    const watchTimeData = await qWatchTimeByVideo(start, end, locale);
+    
+    // Sum up all watch times from individual videos
+    const totalWatchTime = watchTimeData.reduce((sum: number, video: any) => sum + video.watch_time_seconds, 0);
+    
+    console.log(`🎯 qWatchTimeTotal - Using per-video calculation method`);
+    console.log(`🔍 qWatchTimeTotal - Aggregated ${watchTimeData.length} videos for total: ${totalWatchTime}s`);
+    console.log(`🎯 qWatchTimeTotal RESULT: ${Math.round(totalWatchTime)} seconds (method: per_video_aggregation)`);
+    
+    return Math.round(totalWatchTime);
+  } catch (error) {
+    console.warn('🚨 qWatchTimeTotal ERROR - falling back to plays/completes method:', error);
+    
+    // Fallback: use provided data if available
     let plays = playsCount;
     let completes = completesCount;
     
@@ -116,49 +130,36 @@ export async function qWatchTimeTotal(start: string, end: string, locale?: strin
       }
     }
     
-    console.log(`🔍 qWatchTimeTotal - Working with: plays=${plays}, completes=${completes}`);
+    console.log(`🔍 qWatchTimeTotal - Working with fallback: plays=${plays}, completes=${completes}`);
+    
+    // Get actual video durations instead of hardcoded estimates
+    const videoDurations = getVideoDurations();
+    const avgDuration = Array.from(videoDurations.values()).reduce((sum, duration) => sum + duration, 0) / videoDurations.size || 180; // Default to 3 minutes if no durations
     
     let totalWatchTime = 0;
-    let calculationMethod = "none";
-
+    
     if (completes! > 0) {
-      // Method 1: Completion-based calculation
-      // Completed videos: average 90 seconds (typical MEMOPYK video length)
-      // Partial videos: estimate 30% completion = 27 seconds average
-      const avgVideoLength = 90; // seconds - conservative estimate for MEMOPYK videos
-      const completionWatchTime = completes! * avgVideoLength;
-      const partialWatchTime = Math.max(0, plays! - completes!) * (avgVideoLength * 0.3);
+      // Use actual average duration instead of hardcoded 90s
+      const completionWatchTime = completes! * avgDuration;
+      const partialWatchTime = Math.max(0, plays! - completes!) * (avgDuration * 0.3);
       totalWatchTime = completionWatchTime + partialWatchTime;
-      calculationMethod = "completion_based";
       
-      console.log(`🔍 qWatchTimeTotal - Completion calculation:`);
-      console.log(`  - Complete watches: ${completes} × ${avgVideoLength}s = ${completionWatchTime}s`);
-      console.log(`  - Partial watches: ${plays! - completes!} × ${avgVideoLength * 0.3}s = ${partialWatchTime}s`);
+      console.log(`🔍 qWatchTimeTotal - Completion calculation with actual durations:`);
+      console.log(`  - Average video duration: ${avgDuration}s (from database)`);
+      console.log(`  - Complete watches: ${completes} × ${avgDuration}s = ${completionWatchTime}s`);
+      console.log(`  - Partial watches: ${plays! - completes!} × ${avgDuration * 0.3}s = ${partialWatchTime}s`);
     } else if (plays! > 0) {
-      // Method 2: Play-based estimation when no completes available
-      // Estimate 50% average completion rate
-      totalWatchTime = plays! * 45; // 45 seconds average per play
-      calculationMethod = "play_based";
-      
-      console.log(`🔍 qWatchTimeTotal - Play-based calculation: ${plays} × 45s = ${totalWatchTime}s`);
+      // Use 50% of actual average duration instead of hardcoded 45s
+      totalWatchTime = plays! * (avgDuration * 0.5);
+      console.log(`🔍 qWatchTimeTotal - Play-based calculation: ${plays} × ${avgDuration * 0.5}s = ${totalWatchTime}s`);
     } else {
-      // Method 3: No data available - use minimal fallback
-      totalWatchTime = 120; // 2 minutes default
-      calculationMethod = "fallback_no_data";
-      
-      console.log(`🔍 qWatchTimeTotal - No data available, using fallback: ${totalWatchTime}s`);
+      // Use actual average duration as fallback
+      totalWatchTime = avgDuration;
+      console.log(`🔍 qWatchTimeTotal - No data available, using average duration: ${totalWatchTime}s`);
     }
 
-    console.log(`🎯 qWatchTimeTotal RESULT: ${Math.round(totalWatchTime)} seconds (method: ${calculationMethod})`);
-    
+    console.log(`🎯 qWatchTimeTotal FALLBACK RESULT: ${Math.round(totalWatchTime)} seconds (method: duration_based_fallback)`);
     return Math.round(totalWatchTime);
-  } catch (error) {
-    console.warn('🚨 qWatchTimeTotal UNEXPECTED ERROR:', error);
-    
-    // Ultimate fallback: fixed estimate that always works
-    const fallbackTime = 150; // 2.5 minutes as guaranteed fallback
-    console.log(`🎯 qWatchTimeTotal ULTIMATE FALLBACK: ${fallbackTime} seconds`);
-    return fallbackTime;
   }
 }
 
