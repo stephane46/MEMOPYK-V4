@@ -178,55 +178,116 @@ export async function qTopLocale(start: string, end: string) {
 /* =============  TOP VIDEOS TABLE  ============= */
 
 export async function qPlaysByVideo(start: string, end: string, locale?: string) {
-  // Simplified version without custom parameters that might not exist
-  try {
-    const [res] = await client.runReport({
-      property: PROPERTY,
-      dateRanges: [{ startDate: start, endDate: end }],
-      metrics: [{ name: "eventCount" }],
-      dimensionFilter: {
-        filter: { fieldName: "eventName", stringFilter: { value: "video_start" } }
-      },
-      orderBys: [{ metric: { metricName: "eventCount" }, desc: true }],
-      limit: 100
-    });
-
-    // Since we can't reliably get video_id, create a simple generic result
-    const totalPlays = Number(res.rows?.[0]?.metricValues?.[0]?.value ?? 0);
-    
-    if (totalPlays > 0) {
-      return [{
-        video_id: "all_videos",
-        title: "All Videos",
-        plays: totalPlays
-      }];
-    }
-    
-    return [];
-  } catch (error) {
-    console.warn('qPlaysByVideo failed, returning empty array:', error);
-    return [];
-  }
-}
-
-export async function qWatchTimeByVideo(start: string, end: string, locale?: string) {
+  console.log(`🎯 qPlaysByVideo CALLED: ${start} to ${end}, locale: ${locale || 'all'}`);
+  
   const localeExpr =
     locale && locale !== "all"
       ? [{ filter: { fieldName: "customEvent:locale", stringFilter: { value: locale } } }]
       : [];
 
-  // Simplified version that returns basic estimate
   try {
-    const plays = await qPlays(start, end, locale);
-    const avgWatchTime = 30; // Assume 30 seconds average per play
+    const [res] = await client.runReport({
+      property: PROPERTY,
+      dateRanges: [{ startDate: start, endDate: end }],
+      dimensions: [
+        { name: "customEvent:video_id" },
+        { name: "customEvent:video_title" }
+      ],
+      metrics: [{ name: "eventCount" }],
+      dimensionFilter: {
+        andGroup: {
+          expressions: [
+            { filter: { fieldName: "eventName", stringFilter: { value: "video_start" } } },
+            ...localeExpr
+          ]
+        }
+      },
+      orderBys: [{ metric: { metricName: "eventCount" }, desc: true }],
+      limit: 100
+    });
+
+    console.log(`🎯 qPlaysByVideo RAW API RESPONSE:`, JSON.stringify(res.rows?.slice(0, 3), null, 2));
+
+    const videoData = (res.rows ?? []).map(r => ({
+      video_id: r.dimensionValues?.[0]?.value ?? "unknown",
+      title: r.dimensionValues?.[1]?.value ?? "Unknown Video",
+      plays: Number(r.metricValues?.[0]?.value ?? 0)
+    })).filter(video => video.plays > 0);
+
+    console.log(`🎯 qPlaysByVideo RESULT: ${videoData.length} videos found`);
+    console.log(`🎯 qPlaysByVideo SAMPLE DATA:`, videoData.slice(0, 2));
     
-    return [{
-      video_id: "all_videos",
-      title: "All Videos",
-      watch_time_seconds: plays * avgWatchTime
-    }];
+    return videoData;
+  } catch (error) {
+    console.warn('qPlaysByVideo failed, returning empty array:', error);
+    console.error('qPlaysByVideo ERROR DETAILS:', error);
+    return [];
+  }
+}
+
+export async function qWatchTimeByVideo(start: string, end: string, locale?: string) {
+  console.log(`🎯 qWatchTimeByVideo CALLED: ${start} to ${end}, locale: ${locale || 'all'}`);
+  
+  const localeExpr =
+    locale && locale !== "all"
+      ? [{ filter: { fieldName: "customEvent:locale", stringFilter: { value: locale } } }]
+      : [];
+
+  try {
+    const [res] = await client.runReport({
+      property: PROPERTY,
+      dateRanges: [{ startDate: start, endDate: end }],
+      dimensions: [
+        { name: "customEvent:video_id" },
+        { name: "customEvent:video_title" },
+        { name: "customEvent:position_sec" }
+      ],
+      metrics: [{ name: "eventCount" }],
+      dimensionFilter: {
+        andGroup: {
+          expressions: [
+            { filter: { fieldName: "eventName", stringFilter: { value: "video_progress" } } },
+            ...localeExpr
+          ]
+        }
+      },
+      orderBys: [{ metric: { metricName: "eventCount" }, desc: true }],
+      limit: 100
+    });
+
+    console.log(`🎯 qWatchTimeByVideo RAW API RESPONSE:`, JSON.stringify(res.rows?.slice(0, 3), null, 2));
+
+    // Aggregate watch time by video
+    const videoWatchTime = new Map<string, { title: string; totalWatchTime: number }>();
+    
+    (res.rows ?? []).forEach(r => {
+      const videoId = r.dimensionValues?.[0]?.value ?? "unknown";
+      const videoTitle = r.dimensionValues?.[1]?.value ?? "Unknown Video";
+      const positionSec = Number(r.dimensionValues?.[2]?.value ?? 0);
+      const eventCount = Number(r.metricValues?.[0]?.value ?? 0);
+      
+      if (positionSec > 0) {
+        if (!videoWatchTime.has(videoId)) {
+          videoWatchTime.set(videoId, { title: videoTitle, totalWatchTime: 0 });
+        }
+        const existing = videoWatchTime.get(videoId)!;
+        existing.totalWatchTime += positionSec * eventCount;
+      }
+    });
+
+    const result = Array.from(videoWatchTime.entries()).map(([videoId, data]) => ({
+      video_id: videoId,
+      title: data.title,
+      watch_time_seconds: data.totalWatchTime
+    })).filter(video => video.watch_time_seconds > 0);
+
+    console.log(`🎯 qWatchTimeByVideo RESULT: ${result.length} videos with watch time`);
+    console.log(`🎯 qWatchTimeByVideo SAMPLE DATA:`, result.slice(0, 2));
+    
+    return result;
   } catch (error) {
     console.warn('qWatchTimeByVideo failed, returning empty array:', error);
+    console.error('qWatchTimeByVideo ERROR DETAILS:', error);
     return [];
   }
 }
