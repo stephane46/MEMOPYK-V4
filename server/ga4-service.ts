@@ -26,6 +26,8 @@ const localeFilter = (
 /* =============  KPI QUERIES  ============= */
 
 export async function qPlays(start: string, end: string, locale?: string) {
+  console.log(`🎯 qPlays CALLED: ${start} to ${end}, locale: ${locale || 'all'}`);
+  
   const [res] = await client.runReport({
     property: PROPERTY,
     dateRanges: [range(start, end)],
@@ -39,7 +41,12 @@ export async function qPlays(start: string, end: string, locale?: string) {
       }
     }
   });
-  return Number(res.rows?.[0]?.metricValues?.[0]?.value ?? 0);
+  
+  const plays = Number(res.rows?.[0]?.metricValues?.[0]?.value ?? 0);
+  console.log(`🎯 qPlays RESULT: ${plays} plays for ${start} to ${end}`);
+  console.log(`🎯 qPlays RAW API RESPONSE:`, JSON.stringify(res.rows?.slice(0, 2), null, 2));
+  
+  return plays;
 }
 
 export async function qCompletes(start: string, end: string, locale?: string) {

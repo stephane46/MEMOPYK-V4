@@ -3829,14 +3829,28 @@ export async function registerRoutes(app: Express): Promise<void> {
       const { startDate, endDate, locale, nocache } = getParams(req);
       const key = k(`kpis:${startDate}:${endDate}:${locale}`);
 
+      console.log(`🔍 GA4 KPIs REQUEST: ${startDate} to ${endDate}, locale: ${locale}, cache key: ${key}`);
+
       // Check cache unless bypassed
       if (!nocache) {
+        console.log(`🔍 Checking cache for key: ${key}`);
+        
         // Try persistent cache first, then memory cache
         const dbCached = await getDbCache<any>(key);
-        if (dbCached) return res.json(dbCached);
+        if (dbCached) {
+          console.log(`✅ CACHE HIT (DB): Returning cached data for ${key}:`, JSON.stringify(dbCached, null, 2));
+          return res.json(dbCached);
+        }
 
         const memoryCached = getCache<any>(key);
-        if (memoryCached) return res.json(memoryCached);
+        if (memoryCached) {
+          console.log(`✅ CACHE HIT (MEMORY): Returning cached data for ${key}:`, JSON.stringify(memoryCached, null, 2));
+          return res.json(memoryCached);
+        }
+        
+        console.log(`❌ CACHE MISS: No cached data found for ${key}`);
+      } else {
+        console.log(`🚫 CACHE BYPASSED for ${key}`);
       }
 
       console.log(`📊 GA4 KPIs request: ${startDate} to ${endDate}, locale: ${locale}${nocache ? ' (cache bypassed)' : ''}`);
@@ -3892,9 +3906,14 @@ export async function registerRoutes(app: Express): Promise<void> {
         topLocale
       };
 
+      console.log(`📊 FINAL GA4 KPIs DATA for ${key}:`, JSON.stringify(data, null, 2));
+
       // Store in both persistent and memory cache
+      console.log(`💾 Storing in cache with key: ${key}`);
       await setDbCache(key, data, 300);
       setCache(key, data, 300);
+      console.log(`✅ Data stored in cache for key: ${key}`);
+      
       res.json(data);
     } catch (e) { 
       console.error('❌ GA4 KPIs error:', e);
