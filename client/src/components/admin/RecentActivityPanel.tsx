@@ -3,29 +3,28 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Activity, MapPin, Clock, Globe, Monitor, Smartphone } from "lucide-react";
 
-interface SessionData {
+interface ActivitySession {
   id: string;
-  session_id: string;
-  ip_address: string;
-  user_agent: string;
-  language: string;
-  country: string;
-  city: string;
-  created_at: string;
-  duration: number | null;
-  page_views: number;
-  is_bot: boolean;
-  referrer?: string;
+  timestamp: string;
+  ip: string;
+  country?: string;
+  city?: string;
+  language?: string;
+  page_url?: string;
+  duration: number;
+  video_views: string[];
+  user_agent?: string;
+  is_active: boolean;
 }
 
-interface ActivityData {
-  sessions: SessionData[];
+interface RecentActivityData {
+  activities: ActivitySession[];
   total: number;
   timestamp: string;
 }
 
 export function RecentActivityPanel() {
-  const [data, setData] = useState<ActivityData | null>(null);
+  const [data, setData] = useState<RecentActivityData | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [lastUpdated, setLastUpdated] = useState<string | null>(null);
@@ -35,39 +34,21 @@ export function RecentActivityPanel() {
     
     const load = () => {
       setIsLoading(true);
-      console.log('🔍 RECENT ACTIVITY PANEL: Fetching recent sessions');
+      console.log('🔍 RECENT ACTIVITY PANEL: Fetching recent activity');
       
-      // Get recent sessions from production (shared Supabase database)
-      const today = new Date().toISOString().split('T')[0];
-      const yesterday = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString().split('T')[0];
-      
-      fetch(`/api/analytics/sessions?dateFrom=${yesterday}&dateTo=${today}`)
+      fetch('/api/analytics/recent-activity')
         .then(r => {
-          console.log('🔍 RECENT ACTIVITY PANEL: Fetching production sessions, status:', r.status);
+          console.log('🔍 RECENT ACTIVITY PANEL: Fetching recent activity, status:', r.status);
           return r.ok ? r.json() : Promise.reject(new Error(`HTTP ${r.status}`));
         })
-        .then(sessions => { 
-          // Show recent active sessions from production (memopyk.com)
-          const sixHoursAgoTime = Date.now() - 6 * 60 * 60 * 1000;
-          const recentSessions = sessions
-            .filter((session: SessionData) => {
-              const sessionTime = new Date(session.created_at).getTime();
-              const isRecent = sessionTime > sixHoursAgoTime;
-              const hasActivity = session.duration && session.duration > 10000; // More than 10 seconds
-              return isRecent && !session.is_bot && hasActivity;
-            })
-            .sort((a: SessionData, b: SessionData) => 
-              new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
-            )
-            .slice(0, 10); // Show top 10 most recent active sessions
-          
-          const activityData: ActivityData = {
-            sessions: recentSessions,
-            total: recentSessions.length,
+        .then(response => { 
+          const activityData: RecentActivityData = {
+            activities: response.activities || [],
+            total: response.activities ? response.activities.filter((a: ActivitySession) => a.is_active).length : 0,
             timestamp: new Date().toISOString()
           };
           
-          console.log('🔍 RECENT ACTIVITY PANEL: Found', recentSessions.length, 'active production sessions');
+          console.log('🔍 RECENT ACTIVITY PANEL: Found', activityData.total, 'active users');
           if (alive) {
             setData(activityData); 
             setError(null);
@@ -141,63 +122,65 @@ export function RecentActivityPanel() {
             </Badge>
           </div>
 
-          {data.sessions.length > 0 ? (
+          {data.activities.length > 0 ? (
             <div className="space-y-2">
-              <div className="text-sm font-medium text-gray-600">Recent production activity:</div>
+              <div className="text-sm font-medium text-gray-600">Live activity:</div>
               <div className="space-y-3 max-h-64 overflow-y-auto">
-                {data.sessions.map((session) => {
-                  const timeAgo = getTimeAgo(session.created_at);
-                  const duration = formatDuration(session.duration);
-                  const deviceType = getDeviceType(session.user_agent);
-                  const isActive = session.duration === null || (session.duration && session.duration > 30000);
-                  
-                  return (
-                    <div key={session.id} className="border-b last:border-b-0 pb-2 text-sm">
-                      <div className="flex items-center justify-between mb-1">
-                        <div className="flex items-center gap-2">
-                          <div className={`h-2 w-2 rounded-full ${isActive ? 'bg-green-500' : 'bg-gray-400'}`} />
-                          <MapPin className="h-3 w-3 text-gray-500" />
-                          <span className="font-medium">{session.country !== 'Unknown' ? session.country : 'Unknown Location'}</span>
-                          {session.city !== 'Unknown' && (
-                            <span className="text-gray-500">• {session.city}</span>
+                {data.activities
+                  .filter(session => session.is_active)
+                  .slice(0, 10)
+                  .map((session) => {
+                    const timeAgo = getTimeAgo(session.timestamp);
+                    const duration = formatDuration(session.duration);
+                    const deviceType = getDeviceType(session.user_agent || '');
+                    
+                    return (
+                      <div key={session.id} className="border-b last:border-b-0 pb-2 text-sm">
+                        <div className="flex items-center justify-between mb-1">
+                          <div className="flex items-center gap-2">
+                            <div className="h-2 w-2 rounded-full bg-green-500 animate-pulse" />
+                            <MapPin className="h-3 w-3 text-gray-500" />
+                            <span className="font-medium">{session.country || 'Unknown Location'}</span>
+                            {session.city && (
+                              <span className="text-gray-500">• {session.city}</span>
+                            )}
+                          </div>
+                          <div className="flex items-center gap-1">
+                            {deviceType === 'mobile' ? <Smartphone className="h-3 w-3" /> : <Monitor className="h-3 w-3" />}
+                          </div>
+                        </div>
+                        
+                        <div className="flex items-center gap-4 text-xs text-gray-600 ml-4">
+                          <div className="flex items-center gap-1">
+                            <Globe className="h-3 w-3" />
+                            <span>{session.language || 'Unknown'}</span>
+                          </div>
+                          <div className="flex items-center gap-1">
+                            <Clock className="h-3 w-3" />
+                            <span>{timeAgo}</span>
+                          </div>
+                          {session.duration > 0 && (
+                            <div className="flex items-center gap-1">
+                              <Activity className="h-3 w-3" />
+                              <span>on site {duration}</span>
+                            </div>
+                          )}
+                          {session.video_views.length > 0 && (
+                            <Badge variant="outline" className="text-xs px-1 py-0">
+                              {session.video_views.length} videos
+                            </Badge>
                           )}
                         </div>
-                        <div className="flex items-center gap-1">
-                          {deviceType === 'mobile' ? <Smartphone className="h-3 w-3" /> : <Monitor className="h-3 w-3" />}
-                        </div>
                       </div>
-                      
-                      <div className="flex items-center gap-4 text-xs text-gray-600 ml-4">
-                        <div className="flex items-center gap-1">
-                          <Globe className="h-3 w-3" />
-                          <span>{session.language}</span>
-                        </div>
-                        <div className="flex items-center gap-1">
-                          <Clock className="h-3 w-3" />
-                          <span>{timeAgo}</span>
-                        </div>
-                        {session.duration && (
-                          <div className="flex items-center gap-1">
-                            <Activity className="h-3 w-3" />
-                            <span>on site {duration}</span>
-                          </div>
-                        )}
-                        {session.page_views > 0 && (
-                          <Badge variant="outline" className="text-xs px-1 py-0">
-                            {session.page_views} views
-                          </Badge>
-                        )}
-                      </div>
-                    </div>
-                  );
-                })}
+                    );
+                  })}
               </div>
             </div>
           ) : (
             <div className="text-center text-gray-500 py-4">
-              No recent production activity
+              No active viewers
               <div className="text-xs text-gray-400 mt-1">
-                Showing active sessions from memopyk.com
+                No one is currently browsing the site
               </div>
             </div>
           )}
