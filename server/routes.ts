@@ -3813,13 +3813,17 @@ export async function registerRoutes(app: Express): Promise<void> {
 
   // NEW CLEAN GA4 API ENDPOINTS using your exact drop-in queries
   
-  // Function to parse parameters (from your spec)
+  // Function to parse parameters (from your spec) - handles both startDate/endDate and start/end formats
   function getParams(req: any) {
-    const startDate = String(req.query.startDate);
-    const endDate = String(req.query.endDate);
+    const startDate = String(req.query.startDate || req.query.start || '');
+    const endDate = String(req.query.endDate || req.query.end || '');
     const locale = req.query.locale ? String(req.query.locale) : "all";
     const nocache = req.query.nocache === "1" || req.query.nocache === "true";
-    if (!startDate || !endDate) throw new Error("startDate and endDate are required (YYYY-MM-DD)");
+    
+    if (!startDate || startDate === 'undefined' || !endDate || endDate === 'undefined') {
+      throw new Error("startDate/start and endDate/end are required (YYYY-MM-DD)");
+    }
+    
     return { startDate, endDate, locale, nocache };
   }
 
