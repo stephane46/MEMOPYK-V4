@@ -23,14 +23,22 @@ export function AnalyticsControls() {
     const presetEnd = toYMD(end);
     const isActive = startDate === presetStart && endDate === presetEnd;
     
-    // Debug logging
-    console.log(`Filter ${days}d check:`, {
-      current: `${startDate} to ${endDate}`,
-      preset: `${presetStart} to ${presetEnd}`,
-      matches: isActive
+    // Calculate current range days for comparison
+    const currentDays = Math.round((new Date(endDate).getTime() - new Date(startDate).getTime()) / (1000 * 60 * 60 * 24)) + 1;
+    
+    // If no exact match but current range matches expected days, consider it active
+    const dayMatch = currentDays === days;
+    const finalActive = isActive || (dayMatch && Math.abs(currentDays - days) <= 1);
+    
+    console.log(`🔍 Filter ${days}d check:`, {
+      current: `${startDate} to ${endDate} (${currentDays} days)`,
+      preset: `${presetStart} to ${presetEnd} (${days} days)`,
+      exactMatch: isActive,
+      dayMatch: dayMatch,
+      finalActive: finalActive
     });
     
-    return isActive;
+    return finalActive;
   };
 
   return (

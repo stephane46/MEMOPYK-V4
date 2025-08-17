@@ -9,9 +9,19 @@ const FiltersCtx = createContext<Ctx | null>(null);
 
 const readFromURL = (): Filters => {
   const p = new URLSearchParams(window.location.search);
-  const startDate = p.get("start") || new Date(Date.now()-6*864e5).toISOString().slice(0,10); // last 7d
-  const endDate   = p.get("end")   || new Date().toISOString().slice(0,10);
+  const now = new Date();
+  const sevenDaysAgo = new Date(Date.now() - 6*864e5); // 6 days back + today = 7 days
+  
+  const startDate = p.get("start") || sevenDaysAgo.toISOString().slice(0,10);
+  const endDate   = p.get("end")   || now.toISOString().slice(0,10);
   const locale    = (p.get("loc") as LocaleOpt) || "all";
+  
+  console.log('📅 FiltersContext - Default date range:', {
+    startDate, 
+    endDate, 
+    days: Math.round((new Date(endDate).getTime() - new Date(startDate).getTime()) / (1000 * 60 * 60 * 24)) + 1
+  });
+  
   return { startDate, endDate, locale };
 };
 
