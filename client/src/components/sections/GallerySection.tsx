@@ -411,42 +411,32 @@ export default function GallerySection() {
   };
 
   const handlePlayClick = (item: GalleryItem, e: React.MouseEvent, index: number) => {
-    console.log('🚨🚨🚨 HANDLE PLAY CLICK CALLED! 🚨🚨🚨');
-    console.log('🎬 Video URL being passed to overlay:', getVideoUrl(item, index));
-    console.log('🖼️ Thumbnail URL being passed:', getImageUrl(item));
-    console.log(`🎬 INSTANT THUMBNAIL-TO-VIDEO: Professional loading experience`);
     e.preventDefault();
     e.stopPropagation();
     
     const hasVideoResult = hasVideo(item, index);
     
     if (hasVideoResult) {
-      // Analytics tracking moved to VideoOverlay - only track actual watch time, not clicks
+      // Analytics tracking moved to VideoOverlay for actual watch time tracking
       const videoFilename = item.videoFilename || '';
       const cleanFilename = videoFilename.includes('/') ? videoFilename.split('/').pop() : videoFilename;
-      console.log('🎬 VIDEO LIGHTBOX OPENING:', cleanFilename, '- tracking moved to VideoOverlay for actual watch time');
+      console.log('🎬 Opening video lightbox:', cleanFilename);
       
       // Get video URL and thumbnail for instant display
       const videoUrl = getVideoUrl(item, index);
       const thumbnailUrl = getImageUrl(item);
       
-      console.log(`🎯 INSTANT DISPLAY: Showing thumbnail immediately while video buffers`);
-      console.log(`🌐 CDN BACKGROUND LOAD: ${cleanFilename} - buffering during thumbnail display`);
-      
-
-      
       setLightboxVideo({
         ...item, 
         lightboxVideoUrl: videoUrl,
-        thumbnailUrl: thumbnailUrl, // Add thumbnail for instant display
-        isInstantReady: false // Videos buffer during thumbnail display
+        thumbnailUrl: thumbnailUrl,
+        isInstantReady: false
       });
       
       // Prevent body scrolling when lightbox is open
       document.body.style.overflow = 'hidden';
     } else {
       // Flip card to show sorry message for items without video
-      console.log(`🎬 FLIPPING CARD for item without video`);
       setFlippedCards(prev => {
         const newSet = new Set(prev);
         if (newSet.has(item.id)) {
@@ -603,20 +593,8 @@ export default function GallerySection() {
                 key={item.id} 
                 data-video-id={item.id}
                 className={`card-flip-container ${isFlipped ? 'flipped' : ''} rounded-2xl`}
-                style={{ position: 'relative', zIndex: 1 }}
-                onMouseDown={() => console.log('🚨 MOUSE DOWN on card:', item.id)}
-                onMouseUp={() => console.log('🚨 MOUSE UP on card:', item.id)}
                 onClick={(e) => {
-                  console.log('🚨🚨🚨 CARD CONTAINER CLICKED! 🚨🚨🚨');
-                  console.log('🚨 CARD CLICK TEST:', { 
-                    item: item.id, 
-                    hasVideo: itemHasVideo, 
-                    target: e.target,
-                    className: (e.target as HTMLElement)?.className 
-                  });
-                  // Try calling the play handler directly from card click
                   if (itemHasVideo) {
-                    console.log('🚨 CARD HAS VIDEO - CALLING DIRECT PLAY HANDLER');
                     handlePlayClick(item, e, index);
                   }
                 }}
