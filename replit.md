@@ -32,17 +32,27 @@ This prevents breaking working functionality and ensures user intent is preserve
 
 ### Recent Major Fixes (August 2025)
 
-**Dual Analytics Systems Final Resolution (August 17, 2025):**
-- **Issue**: Local analytics dashboard showing 3-day-old data, not recording new gallery video views
+**Analytics Systems & Admin Panel Complete Resolution (August 17, 2025):**
+- **Dual Analytics Issue**: Local analytics dashboard showing 3-day-old data, not recording new gallery video views
 - **Root Cause**: VITE_VIDEO_ANALYTICS_ENABLED environment variable not set, disabling local video tracking during GA4 implementation
 - **Solution Applied**: Added VITE_VIDEO_ANALYTICS_ENABLED=true to restore independent local analytics tracking
-- **GA4 Analytics Status**: ✅ FULLY WORKING - Production tracking for memopyk.com with real video data
-- **Local Analytics Status**: ✅ RESTORED - Independent visitor and gallery view tracking operational
+- **Admin Panel KPI Fix**: Fixed broken connection from non-existent `/api/ga4/kpis` to working `/api/analytics/dashboard` endpoint
+- **KPI Display Resolution**: Average watch time now shows correct 17 seconds (0:17) instead of 0:00 in admin dashboard
+- **Recent Visitors Enhancement**: Expanded limit from 5 to 100 visitors for extended analytics history during user absence
+- **GA4 Analytics Status**: ✅ FULLY WORKING - Production tracking for memopyk.com with real video data (6s and 11s test sessions confirmed)
+- **Local Analytics Status**: ✅ RESTORED - Independent visitor and gallery view tracking operational (26 views, 463 seconds total watch time)
 - **Real-time Dashboard**: ✅ Both systems working with /api/analytics/sessions and /api/analytics/recent-activity endpoints
 - **Dual System Architecture**: Both GA4 and local analytics now operate independently without interference
 - **Test Mode System**: ✅ User controls test mode via yellow indicator system - agent must never interfere
 - **Deployment Ready**: Both analytics systems verified working and ready for production deployment
 - **Status**: Complete dual analytics solution operational - GA4 for production tracking, local for admin dashboard
+
+**Technical Debt Identified (August 17, 2025):**
+- **Environment Variable Misclassification**: VIDEO_ANALYTICS_ENABLED incorrectly added as Secret instead of regular environment variable
+- **Issue**: Boolean feature flags should not be stored as secrets - it's just a configuration toggle, not sensitive data
+- **Current Workaround**: Works as secret but architecturally incorrect
+- **Required Future Fix**: Move VIDEO_ANALYTICS_ENABLED from Secrets tab to regular environment variable or hardcode to true
+- **Proper Secret Usage**: Only DATABASE_URL, GA4_SERVICE_ACCOUNT_KEY, and VITE_GA_MEASUREMENT_ID should be secrets
 **Critical Gallery Image Issue Resolution & Architecture Preservation (August 17, 2025):**
 - **Issue Identified**: Gallery images causing net::ERR_QUIC_PROTOCOL_ERROR browser timeouts due to 10+ MB file sizes
 - **Temporary Solution Applied**: Routed gallery images through image proxy system for optimization
