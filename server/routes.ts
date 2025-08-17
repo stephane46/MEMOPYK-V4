@@ -2064,6 +2064,20 @@ export async function registerRoutes(app: Express): Promise<void> {
         recentVisitors.map(async (visitor) => {
           const locationData = await locationService.getLocationData(visitor.ip_address);
           if (locationData) {
+            // Update the session record with enriched location data if it was previously 'Unknown'
+            if (visitor.country === 'Unknown' || visitor.city === 'Unknown' || visitor.region === 'Unknown') {
+              try {
+                await hybridStorage.updateSessionLocation(visitor.ip_address, {
+                  country: locationData.country_name,
+                  region: locationData.region,
+                  city: locationData.city
+                });
+                console.log(`🌍 Location Update: Updated session location for IP ${visitor.ip_address}: ${locationData.city}, ${locationData.country_name}`);
+              } catch (error) {
+                console.error(`❌ Location Update: Failed to update session location for IP ${visitor.ip_address}:`, error);
+              }
+            }
+            
             return {
               ...visitor,
               city: locationData.city,

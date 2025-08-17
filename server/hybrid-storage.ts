@@ -3714,6 +3714,78 @@ Allow: /contact`;
     }
   }
 
+  async updateSessionLocation(ipAddress: string, locationData: { country: string, region: string, city: string }): Promise<any> {
+    console.log(`🌍 SESSION LOCATION UPDATE: IP ${ipAddress} → ${locationData.city}, ${locationData.country}`);
+    
+    try {
+      // Update all sessions for this IP address in PostgreSQL
+      const updatedSessions = await this.db
+        .update(analyticsSessions)
+        .set({ 
+          country: locationData.country,
+          region: locationData.region,
+          city: locationData.city
+        })
+        .where(eq(analyticsSessions.ipAddress, ipAddress))
+        .returning();
+
+      if (updatedSessions.length > 0) {
+        console.log(`✅ Updated ${updatedSessions.length} session(s) in PostgreSQL for IP ${ipAddress}`);
+        
+        // Update JSON backup
+        const sessions = this.loadJsonFile('analytics-sessions.json');
+        let updatedCount = 0;
+        
+        sessions.forEach((session: any) => {
+          if (session.ip_address === ipAddress) {
+            session.country = locationData.country;
+            session.region = locationData.region;
+            session.city = locationData.city;
+            session.updated_at = new Date().toISOString();
+            updatedCount++;
+          }
+        });
+        
+        if (updatedCount > 0) {
+          this.saveJsonFile('analytics-sessions.json', sessions);
+          console.log(`✅ Updated ${updatedCount} session(s) in JSON backup for IP ${ipAddress}`);
+        }
+        
+        return { updated: updatedSessions.length, ip: ipAddress };
+      }
+    } catch (error) {
+      console.warn('⚠️ Session location: PostgreSQL update failed, using JSON fallback:', error);
+    }
+
+    // Fallback to JSON only
+    try {
+      const sessions = this.loadJsonFile('analytics-sessions.json');
+      let updatedCount = 0;
+      
+      sessions.forEach((session: any) => {
+        if (session.ip_address === ipAddress) {
+          session.country = locationData.country;
+          session.region = locationData.region;
+          session.city = locationData.city;
+          session.updated_at = new Date().toISOString();
+          updatedCount++;
+        }
+      });
+      
+      if (updatedCount > 0) {
+        this.saveJsonFile('analytics-sessions.json', sessions);
+        console.log(`✅ Updated ${updatedCount} session(s) in JSON fallback for IP ${ipAddress}`);
+        return { updated: updatedCount, ip: ipAddress };
+      } else {
+        console.log(`ℹ️ No sessions found for IP ${ipAddress}`);
+        return { updated: 0, ip: ipAddress };
+      }
+    } catch (error) {
+      console.error(`❌ Session location: JSON fallback failed:`, error);
+      throw error;
+    }
+  }
+
   async createAnalyticsView(viewData: any): Promise<any> {
     // Helper function to determine if this is test data (same logic as sessions)
     const isTestData = (data: any): boolean => {
