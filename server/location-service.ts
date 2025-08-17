@@ -1,126 +1,154 @@
-/**
- * Location Service using ipapi.co API
- * Free tier: 30,000 requests per month
- * Provides city, region, country information from IP addresses
- */
+import type { HybridStorage } from './hybrid-storage';
 
-interface LocationData {
-  ip: string;
-  city: string;
+/**
+ * Enhanced location data with geolocation information
+ */
+export interface EnrichedLocationData {
+  country: string;
+  country_code: string;
   region: string;
   region_code: string;
-  country: string;
-  country_name: string;
-  country_code: string;
-  continent_code: string;
+  city: string;
   postal: string;
   latitude: number;
   longitude: number;
   timezone: string;
-  utc_offset: string;
-  asn: string;
   org: string;
 }
 
-interface EnrichedLocationData {
-  ip: string;
-  city: string;
-  region: string;
-  country: string;
-  country_name: string;
-  country_code: string;
-  timezone: string;
-  organization: string;
-  latitude?: number;
-  longitude?: number;
-}
-
-class LocationService {
+/**
+ * Service for enriching visitor data with geographical information
+ * Includes intelligent rate limiting and fallback API support
+ */
+export class LocationService {
+  private storage: HybridStorage;
   private cache = new Map<string, EnrichedLocationData>();
-  private rateLimitDelay = 3000; // 3 seconds between requests to avoid 429 errors
+  private cacheExpiry = new Map<string, number>();
+  private readonly CACHE_TTL = 24 * 60 * 60 * 1000; // 24 hours
+  private readonly RATE_LIMIT_DELAY = 3000; // 3 seconds between requests
+  private readonly BATCH_SIZE = 5; // Process 5 IPs at a time
   private lastRequestTime = 0;
   private failedIPs = new Set<string>(); // Track failed IPs to avoid repeated attempts
   private batchSize = 5; // Process only 5 IPs at a time
 
+  constructor(storage: HybridStorage) {
+    this.storage = storage;
+  }
+
   /**
-   * Get location data for an IP address
-   * Uses caching and intelligent rate limiting to avoid API throttling
+   * Get location data for an IP address with multiple API fallbacks
+   * Uses intelligent rate limiting and multiple providers to ensure reliability
    */
   async getLocationData(ip: string): Promise<EnrichedLocationData | null> {
-    // Skip API calls in development if rate limited (preserve production API quota)
-    if (process.env.NODE_ENV === 'development' && this.failedIPs.size > 10) {
+    // Skip API calls in development if heavily rate limited (preserve production API quota)
+    if (process.env.NODE_ENV === 'development' && this.failedIPs.size > 20) {
       console.log(`🚫 Location Service: Skipping API call in development mode (${this.failedIPs.size} failed IPs)`);
       return null;
     }
-    // Return cached result if available
-    if (this.cache.has(ip)) {
-      console.log(`🌍 Location Service: Using cached data for ${ip}`);
-      return this.cache.get(ip)!;
+
+    // Check cache first
+    const cached = this.getCachedData(ip);
+    if (cached) {
+      return cached;
     }
 
-    // Skip invalid, local IPs, or previously failed IPs
-    if (this.isLocalIP(ip) || ip === '0.0.0.0' || !ip || this.failedIPs.has(ip)) {
+    // Skip failed IPs to avoid repeated API failures
+    if (this.failedIPs.has(ip)) {
       return null;
     }
 
     try {
-      // Aggressive rate limiting to prevent 429 errors
+      // Intelligent rate limiting - wait between requests
       const now = Date.now();
       const timeSinceLastRequest = now - this.lastRequestTime;
-      if (timeSinceLastRequest < this.rateLimitDelay) {
-        await new Promise(resolve => setTimeout(resolve, this.rateLimitDelay - timeSinceLastRequest));
+      if (timeSinceLastRequest < this.RATE_LIMIT_DELAY) {
+        const waitTime = this.RATE_LIMIT_DELAY - timeSinceLastRequest;
+        await new Promise(resolve => setTimeout(resolve, waitTime));
       }
 
       console.log(`🌍 Location Service: Fetching data for IP ${ip}...`);
       
-      const response = await fetch(`https://ipapi.co/${ip}/json/`, {
-        headers: {
-          'User-Agent': 'MEMOPYK-Analytics/1.0'
-        },
-        timeout: 5000 // 5 second timeout
-      });
+      // Try primary API (ipapi.co) first, then fallback to ip-api.com
+      let response: Response;
+      let apiUsed = 'ipapi.co';
+      
+      try {
+        response = await fetch(`https://ipapi.co/${ip}/json/`, {
+          headers: {
+            'User-Agent': 'MEMOPYK-Analytics/1.0'
+          }
+        });
+        
+        // If rate limited, try fallback API
+        if (response.status === 429) {
+          console.log(`⚠️ Location Service: Primary API rate limited, trying fallback...`);
+          response = await fetch(`http://ip-api.com/json/${ip}`, {
+            headers: {
+              'User-Agent': 'MEMOPYK-Analytics/1.0'
+            }
+          });
+          apiUsed = 'ip-api.com';
+        }
+      } catch (error) {
+        console.log(`⚠️ Location Service: Primary API failed, trying fallback...`);
+        response = await fetch(`http://ip-api.com/json/${ip}`, {
+          headers: {
+            'User-Agent': 'MEMOPYK-Analytics/1.0'
+          }
+        });
+        apiUsed = 'ip-api.com';
+      }
 
       this.lastRequestTime = Date.now();
 
-      if (response.status === 429) {
-        console.warn(`🚫 Location Service: Rate limited for IP ${ip} - adding to failed list`);
-        this.failedIPs.add(ip);
-        return null;
-      }
-
       if (!response.ok) {
-        console.warn(`⚠️ Location Service: API error ${response.status} for IP ${ip}`);
-        this.failedIPs.add(ip);
+        if (response.status === 429) {
+          console.log(`⚠️ Location Service: API error ${response.status} for IP ${ip}`);
+          this.failedIPs.add(ip);
+        }
         return null;
       }
 
-      const data: LocationData = await response.json();
+      const data = await response.json();
+      console.log(`✅ Location Service: Successfully fetched data for IP ${ip} using ${apiUsed}`);
+
+      // Transform data based on API used
+      let locationData: EnrichedLocationData;
       
-      // Check for API errors
-      if ((data as any).error || !data.country) {
-        console.warn(`⚠️ Location Service: Invalid response for IP ${ip}:`, data);
-        return null;
+      if (apiUsed === 'ip-api.com') {
+        // Transform ip-api.com format to our standard format
+        locationData = {
+          country: data.country || 'Unknown',
+          country_code: data.countryCode || null,
+          region: data.regionName || 'Unknown',
+          region_code: data.region || null,
+          city: data.city || 'Unknown',
+          postal: data.zip || '',
+          latitude: data.lat || 0,
+          longitude: data.lon || 0,
+          timezone: data.timezone || '',
+          org: data.isp || ''
+        };
+      } else {
+        // ipapi.co format (our standard)
+        locationData = {
+          country: data.country_name || 'Unknown',
+          country_code: data.country_code || null,
+          region: data.region || 'Unknown',
+          region_code: data.region_code || null,
+          city: data.city || 'Unknown',
+          postal: data.postal || '',
+          latitude: data.latitude || 0,
+          longitude: data.longitude || 0,
+          timezone: data.timezone || '',
+          org: data.org || ''
+        };
       }
-
-      const enrichedData: EnrichedLocationData = {
-        ip: data.ip,
-        city: data.city || 'Unknown',
-        region: data.region || 'Unknown',
-        country: data.country || 'Unknown',
-        country_name: data.country_name || 'Unknown',
-        country_code: data.country_code || 'Unknown',
-        timezone: data.timezone || 'Unknown',
-        organization: data.org || 'Unknown',
-        latitude: data.latitude,
-        longitude: data.longitude
-      };
 
       // Cache the result
-      this.cache.set(ip, enrichedData);
-      
-      console.log(`✅ Location Service: Enriched data for ${ip}: ${enrichedData.city}, ${enrichedData.region}, ${enrichedData.country_name}`);
-      return enrichedData;
+      this.setCachedData(ip, locationData);
 
+      return locationData;
     } catch (error) {
       console.error(`❌ Location Service: Error fetching data for IP ${ip}:`, error);
       this.failedIPs.add(ip);
@@ -129,65 +157,102 @@ class LocationService {
   }
 
   /**
-   * Batch enrich multiple IPs (with rate limiting)
+   * Batch process multiple IP addresses with intelligent rate limiting
    */
-  async enrichMultipleIPs(ips: string[]): Promise<Map<string, EnrichedLocationData>> {
-    const results = new Map<string, EnrichedLocationData>();
-    const uniqueIPs = Array.from(new Set(ips)).filter(ip => ip && !this.isLocalIP(ip));
-
-    console.log(`🌍 Location Service: Enriching ${uniqueIPs.length} unique IPs...`);
-
-    for (const ip of uniqueIPs) {
-      const locationData = await this.getLocationData(ip);
-      if (locationData) {
-        results.set(ip, locationData);
-      }
+  async batchEnrichIPs(ips: string[]): Promise<Map<string, EnrichedLocationData | null>> {
+    const results = new Map<string, EnrichedLocationData | null>();
+    const uniqueIPs = [...new Set(ips)]; // Remove duplicates
+    
+    console.log(`🌍 Location Service: Processing ${uniqueIPs.length} unique IPs in batches of ${this.BATCH_SIZE}`);
+    
+    // Process in batches to avoid overwhelming the API
+    for (let i = 0; i < uniqueIPs.length; i += this.BATCH_SIZE) {
+      const batch = uniqueIPs.slice(i, i + this.BATCH_SIZE);
+      console.log(`🔄 Location Service: Processing batch ${Math.floor(i / this.BATCH_SIZE) + 1}/${Math.ceil(uniqueIPs.length / this.BATCH_SIZE)}`);
       
-      // Small delay between requests to be respectful
-      await new Promise(resolve => setTimeout(resolve, 200));
+      // Process batch in parallel but with rate limiting
+      const batchPromises = batch.map((ip, index) => 
+        // Add staggered delays within batch
+        new Promise(resolve => {
+          setTimeout(async () => {
+            const result = await this.getLocationData(ip);
+            results.set(ip, result);
+            resolve(result);
+          }, index * 1000); // 1 second between IPs in same batch
+        })
+      );
+      
+      await Promise.all(batchPromises);
+      
+      // Wait between batches (except for last batch)
+      if (i + this.BATCH_SIZE < uniqueIPs.length) {
+        console.log(`⏳ Location Service: Waiting 5 seconds before next batch...`);
+        await new Promise(resolve => setTimeout(resolve, 5000));
+      }
     }
-
+    
+    const successCount = Array.from(results.values()).filter(result => result !== null).length;
+    console.log(`✅ Location Service: Batch processing complete. Success rate: ${successCount}/${uniqueIPs.length} (${Math.round(successCount / uniqueIPs.length * 100)}%)`);
+    
     return results;
   }
 
-  /**
-   * Check if IP is local/private
-   */
-  private isLocalIP(ip: string): boolean {
-    return (
-      ip.startsWith('127.') ||
-      ip.startsWith('192.168.') ||
-      ip.startsWith('10.') ||
-      ip.startsWith('172.16.') ||
-      ip.startsWith('172.17.') ||
-      ip.startsWith('172.18.') ||
-      ip.startsWith('172.19.') ||
-      ip.startsWith('172.2') ||
-      ip.startsWith('172.30.') ||
-      ip.startsWith('172.31.') ||
-      ip === '::1' ||
-      ip === 'localhost'
-    );
+  private getCachedData(ip: string): EnrichedLocationData | null {
+    const expiry = this.cacheExpiry.get(ip);
+    if (!expiry || Date.now() > expiry) {
+      // Cache expired
+      this.cache.delete(ip);
+      this.cacheExpiry.delete(ip);
+      return null;
+    }
+    return this.cache.get(ip) || null;
+  }
+
+  private setCachedData(ip: string, data: EnrichedLocationData): void {
+    this.cache.set(ip, data);
+    this.cacheExpiry.set(ip, Date.now() + this.CACHE_TTL);
   }
 
   /**
-   * Get cache statistics
+   * Update session with location data when available
    */
-  getCacheStats() {
+  async updateSessionLocation(sessionId: string, ip: string): Promise<void> {
+    const locationData = await this.getLocationData(ip);
+    if (locationData) {
+      // Update session in storage
+      try {
+        const sessions = await this.storage.getAnalyticsSessions();
+        const sessionIndex = sessions.findIndex(s => s.session_id === sessionId);
+        
+        if (sessionIndex !== -1) {
+          sessions[sessionIndex] = {
+            ...sessions[sessionIndex],
+            country: locationData.country,
+            country_code: locationData.country_code,
+            region: locationData.region,
+            city: locationData.city,
+            timezone: locationData.timezone,
+            organization: locationData.org
+          };
+          
+          // Save updated sessions
+          await this.storage.saveAnalyticsSessions(sessions);
+          console.log(`✅ Location Service: Updated session ${sessionId} with location data`);
+        }
+      } catch (error) {
+        console.error(`❌ Location Service: Error updating session ${sessionId}:`, error);
+      }
+    }
+  }
+
+  /**
+   * Get statistics about location service performance
+   */
+  getStats() {
     return {
-      cached_ips: this.cache.size,
-      cache_keys: Array.from(this.cache.keys())
+      cacheSize: this.cache.size,
+      failedIPCount: this.failedIPs.size,
+      lastRequestTime: this.lastRequestTime
     };
   }
-
-  /**
-   * Clear cache
-   */
-  clearCache() {
-    this.cache.clear();
-    console.log('🗑️ Location Service: Cache cleared');
-  }
 }
-
-// Export singleton instance
-export const locationService = new LocationService();
