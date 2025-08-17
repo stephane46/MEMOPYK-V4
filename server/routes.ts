@@ -4194,14 +4194,37 @@ export async function registerRoutes(app: Express): Promise<void> {
       
       console.log(`📊 RECENT ACTIVITY: Found ${recentSessions.length} recent sessions`);
       
-      // Transform sessions into activity format
-      const activities = recentSessions.map(session => {
+      // CRITICAL FIX: Fetch video views for each session and link them
+      const activities = await Promise.all(recentSessions.map(async session => {
         const now = Date.now();
         const createdTime = new Date(session.created_at).getTime();
         const timeSinceCreation = now - createdTime;
         const minutesAgo = Math.floor(timeSinceCreation / (60 * 1000));
         const isActive = timeSinceCreation < 10 * 60 * 1000; // 10 minutes (consider active for longer)
         
+        // Fetch video views for this session
+        let videoViews = [];
+        try {
+          // Get all analytics views for this session ID from the last 10 minutes
+          const views = await hybridStorage.getAnalyticsViews({
+            session_id: session.session_id,
+            dateFrom: tenMinutesAgo.toISOString(),
+            dateTo: new Date().toISOString()
+          });
+          
+          videoViews = views.map(view => ({
+            video_id: view.video_id,
+            video_filename: view.video_filename || view.video_id,
+            video_type: view.video_type || 'gallery',
+            watch_time: view.watch_time || 0,
+            completion_rate: view.completion_rate || 0,
+            timestamp: view.created_at
+          }));
+          
+          console.log(`📹 SESSION ${session.session_id}: Found ${videoViews.length} video views`);
+        } catch (error) {
+          console.log(`⚠️ SESSION ${session.session_id}: No video views found (${error.message})`);
+        }
         
         return {
           id: session.session_id,
@@ -4212,20 +4235,22 @@ export async function registerRoutes(app: Express): Promise<void> {
           language: session.language,
           page_url: session.page_url,
           duration: session.duration || 0,
-          video_views: session.video_views || [],
+          video_views: videoViews,
           user_agent: session.user_agent?.substring(0, 100) + '...',
           is_active: isActive
         };
-      });
+      }));
       
       // Sort by most recent first
       activities.sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
       
-      console.log(`🎯 RECENT ACTIVITY: Returning ${activities.length} activities`);
+      const videoWatchersCount = activities.filter(activity => activity.is_active && activity.video_views.length > 0).length;
+      console.log(`🎯 RECENT ACTIVITY: Returning ${activities.length} activities, ${videoWatchersCount} active video watchers`);
       
       res.json({
         activities,
         total: activities.length,
+        video_watchers: videoWatchersCount,
         timestamp: new Date().toISOString()
       });
       

@@ -81,7 +81,7 @@ export interface HybridStorageInterface {
   
   // Analytics methods
   getAnalyticsSessions(dateFrom?: string, dateTo?: string, language?: string): Promise<any[]>;
-  getAnalyticsViews(dateFrom?: string, dateTo?: string, videoId?: string): Promise<any[]>;
+  getAnalyticsViews(options?: { dateFrom?: string, dateTo?: string, videoId?: string, session_id?: string }): Promise<any[]>;
   getAnalyticsSettings(): Promise<any>;
   createAnalyticsSession(sessionData: any): Promise<any>;
   createAnalyticsView(viewData: any): Promise<any>;
@@ -3307,7 +3307,9 @@ Allow: /contact`;
     }
   }
 
-  async getAnalyticsViews(dateFrom?: string, dateTo?: string, videoId?: string): Promise<any[]> {
+  async getAnalyticsViews(options?: { dateFrom?: string, dateTo?: string, videoId?: string, session_id?: string }): Promise<any[]> {
+    // Support both old function signature and new options object
+    const { dateFrom, dateTo, videoId, session_id } = options || {};
     // SMART 7-DAY ROLLING CACHE STRATEGY
     const sevenDaysAgo = new Date();
     sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
@@ -3316,7 +3318,7 @@ Allow: /contact`;
     // For recent data (last 7 days), use JSON cache for speed
     if (isRecentQuery && !dateFrom?.startsWith('2024-')) {
       console.log('📊 ANALYTICS VIEWS: Using JSON cache for recent data (last 7 days)');
-      const recentViews = this.getRecentAnalyticsViews(dateFrom, dateTo, videoId);
+      const recentViews = this.getRecentAnalyticsViews(dateFrom, dateTo, videoId, session_id);
       if (recentViews.length > 0) {
         console.log(`✅ JSON CACHE: Found ${recentViews.length} recent video views`);
         return recentViews;
@@ -3344,6 +3346,9 @@ Allow: /contact`;
       if (videoId) {
         query = query.eq('video_id', videoId);
       }
+      if (session_id) {
+        query = query.eq('session_id', session_id);
+      }
 
       const { data, error } = await query;
 
@@ -3351,7 +3356,7 @@ Allow: /contact`;
         console.error('⚠️ Analytics Views: Supabase query error:', error);
         // Don't throw error, fallback to JSON cache
         console.log('📊 FALLBACK: Using JSON cache due to Supabase error');
-        return this.getRecentAnalyticsViews(dateFrom, dateTo, videoId);
+        return this.getRecentAnalyticsViews(dateFrom, dateTo, videoId, session_id);
       }
 
       if (data && data.length > 0) {
@@ -3365,7 +3370,7 @@ Allow: /contact`;
       console.warn('⚠️ Analytics Views: Supabase connection failed for historical data:', error);
       // Fallback to JSON cache when Supabase fails
       console.log('📊 FALLBACK: Using JSON cache due to Supabase connection failure');
-      return this.getRecentAnalyticsViews(dateFrom, dateTo, videoId);
+      return this.getRecentAnalyticsViews(dateFrom, dateTo, videoId, session_id);
     }
   }
 
@@ -3396,25 +3401,60 @@ Allow: /contact`;
   }
 
   // Private method for recent video views from JSON cache
-  private getRecentAnalyticsViews(dateFrom?: string, dateTo?: string, videoId?: string): any[] {
+  private getRecentAnalyticsViews(dateFrom?: string, dateTo?: string, videoId?: string, session_id?: string): any[] {
     try {
       const views = this.loadJsonFile('analytics-views.json');
-      let filtered = views
-        .filter((view: any) => !view.is_test_data)
-        .filter((view: any) => !['VideoHero1.mp4', 'VideoHero2.mp4', 'VideoHero3.mp4'].includes(view.video_filename));
+      console.log(`🔍 RECENT VIEWS DEBUG: Loaded ${views.length} total views from JSON`);
+      if (session_id) {
+        console.log(`🔍 RECENT VIEWS DEBUG: Filtering for session_id: ${session_id}`);
+      }
+      console.log(`🔍 BEFORE FILTERING: ${views.length} total views`);
+      
+      let filtered = views.filter((view: any) => !view.is_test_data);
+      console.log(`🔍 AFTER is_test_data filter: ${filtered.length} views (removed ${views.length - filtered.length} test views)`);
+      
+      filtered = filtered.filter((view: any) => !['VideoHero1.mp4', 'VideoHero2.mp4', 'VideoHero3.mp4'].includes(view.video_filename));
+      console.log(`🔍 AFTER hero video filter: ${filtered.length} views (removed ${views.length - filtered.length} hero views)`);
+      console.log(`🔍 FINAL NON-TEST NON-HERO VIEWS: ${filtered.length}`);
 
       if (dateFrom) {
+        console.log(`🔍 DATE FILTER: dateFrom = ${dateFrom}`);
+        const beforeDateFilter = filtered.length;
         filtered = filtered.filter((view: any) => view.created_at >= dateFrom);
+        console.log(`🔍 DATE FILTER: ${beforeDateFilter} -> ${filtered.length} views (removed ${beforeDateFilter - filtered.length} views older than ${dateFrom})`);
+        if (filtered.length === 0 && beforeDateFilter > 0) {
+          console.log(`🔍 DATE FILTER: ALL VIEWS ELIMINATED! Check if dateFrom is too recent`);
+          console.log(`🔍 DATE FILTER: Sample view dates:`, views.slice(-3).map((v: any) => ({id: v.id, created_at: v.created_at})));
+        }
       }
       if (dateTo) {
         // Add end-of-day time to dateTo to include all records from that day
         const dateToEndOfDay = dateTo.includes('T') ? dateTo : dateTo + 'T23:59:59.999Z';
+        console.log(`🔍 DATE_TO FILTER: dateTo = ${dateTo} -> ${dateToEndOfDay}`);
+        const beforeDateToFilter = filtered.length;
         filtered = filtered.filter((view: any) => view.created_at <= dateToEndOfDay);
+        console.log(`🔍 DATE_TO FILTER: ${beforeDateToFilter} -> ${filtered.length} views`);
       }
       if (videoId) {
+        console.log(`🔍 VIDEO_ID FILTER: videoId = ${videoId}`);
+        const beforeVideoIdFilter = filtered.length;
         filtered = filtered.filter((view: any) => view.video_id === videoId);
+        console.log(`🔍 VIDEO_ID FILTER: ${beforeVideoIdFilter} -> ${filtered.length} views`);
       }
+      console.log(`🔍 DEBUG AFTER FILTERS: ${filtered.length} views remaining`);
+      console.log(`🔍 DEBUG SESSION IDs:`, filtered.map((v: any) => v.session_id));
 
+      if (session_id) {
+        const beforeSessionFilter = filtered.length;
+        filtered = filtered.filter((view: any) => view.session_id === session_id);
+        console.log(`🔍 SESSION FILTER: ${beforeSessionFilter} -> ${filtered.length} views`);
+        console.log(`🔍 RECENT VIEWS DEBUG: Found ${filtered.length} views for session ${session_id}`);
+        if (filtered.length > 0) {
+          console.log(`🔍 MATCHING VIEWS:`, filtered.map((v: any) => ({id: v.id, session_id: v.session_id, video_id: v.video_id})));
+        }
+      }
+      
+      console.log(`🔍 RECENT VIEWS DEBUG: Returning ${filtered.length} filtered views`);
       return filtered;
     } catch (error) {
       console.error('Error getting recent analytics views from JSON:', error);
@@ -3946,7 +3986,7 @@ Allow: /contact`;
     try {
       const sessions = await this.getAnalyticsSessions(dateFrom, dateTo);
       // Use filtered analytics views (excludes test data and hero videos automatically)
-      const views = await this.getAnalyticsViews(dateFrom, dateTo);
+      const views = await this.getAnalyticsViews({ dateFrom, dateTo });
       
       // Calculate overview metrics - only count views that can be matched to videos
       const galleryViews = views.filter((view: any) => 
@@ -5472,7 +5512,7 @@ Allow: /contact`;
       
       // Use filtered analytics methods to exclude test data
       const sessions = await this.getAnalyticsSessions(dateFrom, dateTo);
-      const views = await this.getAnalyticsViews(dateFrom, dateTo);
+      const views = await this.getAnalyticsViews({ dateFrom, dateTo });
       
       console.log(`📊 Filtered data results: sessions=${sessions?.length || 0}, views=${views?.length || 0}`);
       
