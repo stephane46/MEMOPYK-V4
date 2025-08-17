@@ -126,5 +126,21 @@
     "is_test_data": true,
     "created_at": "2025-08-17T11:06:15.119Z",
     "updated_at": "2025-08-17T11:06:15.119Z"
+  },
+  {
+    "id": "view_1755429674089_k4320jnl4",
+    "video_id": "Our Vitamin Sea",
+    "video_filename": "Our Vitamin Sea",
+    "video_type": "gallery",
+    "video_title": "",
+    "session_id": "session_1755429674089",
+    "language": "fr-FR",
+    "watch_time": 120,
+    "completion_rate": 100,
+    "ip_address": "127.0.0.1",
+    "user_agent": "curl/8.14.1",
+    "is_test_data": true,
+    "created_at": "2025-08-17T11:21:14.089Z",
+    "updated_at": "2025-08-17T11:21:14.089Z"
   }
 ]
