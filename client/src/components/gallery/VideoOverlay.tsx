@@ -219,10 +219,16 @@ export default function VideoOverlay({
       : videoUrl.split('/').pop()?.split('?')[0] || 'unknown';
       
     if (duration > 0) {
-      // ga4Analytics.trackStart(videoId, duration, currentTime, title);
-      // ga4Analytics.trackResume(videoId);
+      // Track video start/resume with GA4
+      trackGA4VideoEvent('video_start', {
+        video_id: videoId,
+        video_title: title,
+        duration_sec: duration,
+        position_sec: currentTime,
+        locale: language
+      });
     }
-  }, [resetControlsTimer, duration, currentTime, title, videoUrl]);
+  }, [resetControlsTimer, duration, currentTime, title, videoUrl, trackGA4VideoEvent, language]);
 
   const handlePause = useCallback(() => {
     setIsPlaying(false);
