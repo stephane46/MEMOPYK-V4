@@ -9,6 +9,7 @@ import { KpiStrip } from './KpiStrip';
 import { FunnelChart } from './FunnelChart';
 import { TrendChart } from './TrendChart';
 import { RealtimePanel } from './RealtimePanel';
+import { RecentActivityPanel } from './RecentActivityPanel';
 import { ClearCacheButton } from './ClearCacheButton';
 
 const GA4AnalyticsDashboard: React.FC = () => {
@@ -114,6 +115,12 @@ const GA4AnalyticsDashboard: React.FC = () => {
 
         {/* D. Realtime */}
         <RealtimePanel />
+      </div>
+
+      {/* Additional Activity Panel */}
+      <div className="grid gap-4 lg:grid-cols-2">
+        {/* Recent Activity from Database */}
+        <RecentActivityPanel />
       </div>
     </div>
   );
