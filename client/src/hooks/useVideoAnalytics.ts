@@ -28,9 +28,9 @@ export const useVideoAnalytics = () => {
 
   const trackVideoView = useMutation({
     mutationFn: async (data: VideoViewData) => {
-      // VIDEO ANALYTICS DISABLED - Switch to GA4-only for video analytics
+      // LOCAL ANALYTICS ENABLED - Independent dual tracking system (LOCAL + GA4)
       if (!VIDEO_ANALYTICS_ENABLED) {
-        console.log('📊 VIDEO ANALYTICS DISABLED: Custom video tracking paused, switching to GA4-only');
+        console.log('📊 VIDEO ANALYTICS DISABLED: VITE_VIDEO_ANALYTICS_ENABLED environment variable not set');
         return { success: true, disabled: true };
       }
       
