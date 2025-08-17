@@ -2057,7 +2057,7 @@ export async function registerRoutes(app: Express): Promise<void> {
       // Convert to array and sort by most recent
       let recentVisitors = Array.from(visitorMap.values())
         .sort((a, b) => new Date(b.last_visit).getTime() - new Date(a.last_visit).getTime())
-        .slice(0, 5); // Take last 5 visitors to avoid scrolling
+        .slice(0, 100); // Take last 100 visitors for extended history
 
       // Enrich visitor data with location information from ipapi.co
       const enrichedVisitors = await Promise.all(
