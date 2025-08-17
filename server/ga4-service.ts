@@ -6,11 +6,13 @@ const PROPERTY = `properties/${PROPERTY_ID}`;
 
 // Accepts the full JSON string of the service account
 const SA_KEY = process.env.GA4_SERVICE_ACCOUNT_KEY;
-const client = new BetaAnalyticsDataClient(
+export const client = new BetaAnalyticsDataClient(
   SA_KEY
     ? { credentials: JSON.parse(SA_KEY) }
     : {} // falls back to GOOGLE_APPLICATION_CREDENTIALS if set
 );
+
+export { PROPERTY };
 
 type DateRange = protos.google.analytics.data.v1beta.IDateRange;
 const range = (start: string, end: string): DateRange => ({ startDate: start, endDate: end });
@@ -295,9 +297,9 @@ function getVideoDurations(): Map<string, number> {
   
   console.log(`🎯 Retrieved ${durationMap.size} video durations (hardcoded from database values)`);
   // Debug: show the mappings
-  for (const [key, value] of durationMap.entries()) {
+  Array.from(durationMap.entries()).forEach(([key, value]) => {
     console.log(`🔍 Duration mapping: "${key}" → ${value}s`);
-  }
+  });
   return durationMap;
 }
 
@@ -311,20 +313,22 @@ export async function qActualWatchTimeByVideo(start: string, end: string, locale
       : [];
 
   try {
-    // Query for video_watch_time events with actual watch_time_seconds parameter  
+    // Query for video_play events using watch_time_seconds as CUSTOM METRIC (discovered via debug endpoint)
     const [res] = await client.runReport({
       property: PROPERTY,
       dateRanges: [{ startDate: start, endDate: end }],
       dimensions: [
         { name: "customEvent:video_id" },
-        { name: "customEvent:video_title" },
-        { name: "customEvent:watch_time_seconds" }  // FIXED: This matches what the client sends
+        { name: "customEvent:video_title" }
       ],
-      metrics: [{ name: "eventCount" }],
+      metrics: [
+        { name: "eventCount" },
+        { name: "customEvent:watch_time_seconds" }  // BREAKTHROUGH: Correct custom metric format
+      ],
       dimensionFilter: {
         andGroup: {
           expressions: [
-            { filter: { fieldName: "eventName", stringFilter: { value: "video_watch_time" } } },
+            { filter: { fieldName: "eventName", stringFilter: { value: "video_play" } } },  // BREAKTHROUGH: Real watch time data is in video_play events (discovered via debug endpoint)
             ...localeExpr
           ]
         }
@@ -334,14 +338,14 @@ export async function qActualWatchTimeByVideo(start: string, end: string, locale
 
     console.log(`🎯 qActualWatchTimeByVideo RAW API RESPONSE:`, JSON.stringify(res.rows?.slice(0, 3), null, 2));
 
-    // Aggregate actual watch time by video
+    // Aggregate actual watch time by video using custom metric
     const videoWatchTimeMap = new Map<string, { title: string, totalWatchTime: number, eventCount: number }>();
     
     (res.rows ?? []).forEach((row: any) => {
       const videoId = row.dimensionValues?.[0]?.value ?? "unknown";
       const title = row.dimensionValues?.[1]?.value ?? "Unknown Video";
-      const watchTimeSeconds = parseFloat(row.dimensionValues?.[2]?.value ?? "0");
       const eventCount = parseInt(row.metricValues?.[0]?.value ?? "0");
+      const totalWatchTimeSeconds = parseFloat(row.metricValues?.[1]?.value ?? "0"); // Custom metric value
       
       const key = `${videoId}:::${title}`;
       
@@ -350,11 +354,11 @@ export async function qActualWatchTimeByVideo(start: string, end: string, locale
       }
       
       const current = videoWatchTimeMap.get(key)!;
-      // Sum up all watch time (watch_time_seconds * eventCount for that watch time)
-      current.totalWatchTime += watchTimeSeconds * eventCount;
+      // Use the custom metric value directly (already aggregated by GA4)
+      current.totalWatchTime += totalWatchTimeSeconds;
       current.eventCount += eventCount;
       
-      console.log(`🔍 REAL WATCH TIME FROM GA4 - ${title}: +${watchTimeSeconds}s × ${eventCount} events = +${watchTimeSeconds * eventCount}s total`);
+      console.log(`🔍 REAL WATCH TIME FROM GA4 CUSTOM METRIC - ${title}: ${totalWatchTimeSeconds}s from ${eventCount} events`);
     });
 
     const result = Array.from(videoWatchTimeMap.entries()).map(([key, data]) => {

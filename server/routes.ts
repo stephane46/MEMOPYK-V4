@@ -24,7 +24,9 @@ import {
   qTrend,
   qTrendDaily,
   qRealtime,
-  getTopVideosTable
+  getTopVideosTable,
+  client as ga4Client,
+  PROPERTY as GA4_PROPERTY
 } from './ga4-service';
 import { getCache, setCache, k, getDbCache, setDbCache } from './cache';
 
@@ -3714,6 +3716,65 @@ export async function registerRoutes(app: Express): Promise<void> {
     return ga4Service;
   };
 
+  // GA4 Debug endpoint for watch time investigation
+  app.get('/api/ga4/debug-watch-time', async (req, res) => {
+    try {
+      const startDate = '2024-08-01';
+      const endDate = '2025-12-31';
+      
+      console.log('🔍 GA4 WATCH TIME DEBUG - Investigating all event types with custom metrics');
+      
+      // Query all events with custom metric watch_time_seconds - no event filter
+      const request = {
+        property: GA4_PROPERTY,
+        dateRanges: [{ startDate, endDate }],
+        dimensions: [
+          { name: "eventName" },
+          { name: "customEvent:video_id" },
+          { name: "customEvent:video_title" }
+        ],
+        metrics: [
+          { name: "eventCount" },
+          { name: "customEvent:watch_time_seconds" }
+        ],
+        orderBys: [
+          { metric: { metricName: "eventCount" }, desc: true }
+        ],
+        limit: 50
+      };
+
+      const [response] = await ga4Client.runReport(request);
+      
+      console.log('🔍 GA4 DEBUG RAW RESPONSE:', JSON.stringify(response.rows?.slice(0, 10), null, 2));
+      
+      const debugData = response.rows?.map(row => ({
+        eventName: row.dimensionValues?.[0]?.value || 'unknown',
+        video_id: row.dimensionValues?.[1]?.value || '(not set)',
+        video_title: row.dimensionValues?.[2]?.value || '(not set)',
+        eventCount: parseInt(row.metricValues?.[0]?.value || '0'),
+        watchTimeSeconds: parseInt(row.metricValues?.[1]?.value || '0')
+      })) || [];
+      
+      res.json({
+        success: true,
+        totalEvents: debugData.length,
+        debugData: debugData.slice(0, 20),
+        summary: {
+          totalWatchTimeAcrossAllEvents: debugData.reduce((sum, event) => sum + event.watchTimeSeconds, 0),
+          eventsWithWatchTime: debugData.filter(e => e.watchTimeSeconds > 0).length,
+          eventsWithVideoId: debugData.filter(e => e.video_id !== '(not set)').length
+        }
+      });
+      
+    } catch (error) {
+      console.error('❌ GA4 Debug error:', error);
+      res.status(500).json({ 
+        success: false, 
+        error: error instanceof Error ? error.message : 'Unknown error'
+      });
+    }
+  });
+
   // GA4 Connection Test endpoint - tests basic GA4 query functionality
   app.get("/api/ga4/test", async (req, res) => {
     try {
@@ -4073,6 +4134,103 @@ export async function registerRoutes(app: Express): Promise<void> {
       });
     }
   });
+
+  // Simple GA4 custom metric test endpoint
+  app.get("/api/ga4/debug-custom-metric", async (req, res) => {
+    try {
+      const { startDate, endDate } = getParams(req);
+      
+      console.log("🔍 GA4 CUSTOM METRIC DIAGNOSTIC - Testing custom metric access");
+      
+      const { client, PROPERTY } = await import('./ga4-service.js');
+      
+      // Test 1: Basic connectivity test with standard dimensions
+      console.log("🔍 Test 1: Basic GA4 connectivity test");
+      try {
+        const [response1] = await client.runReport({
+          property: PROPERTY,
+          dateRanges: [{ startDate: String(startDate), endDate: String(endDate) }],
+          dimensions: [{ name: "eventName" }],
+          metrics: [{ name: "eventCount" }],
+          limit: 5
+        });
+        
+        console.log("✅ Basic connectivity SUCCESS");
+        console.log("📊 Response rows:", response1.rows?.length || 0);
+        console.log("📊 Available events:", response1.rows?.map(r => r.dimensionValues?.[0]?.value).slice(0, 5));
+        
+        // Test 2: Try different custom metric naming conventions
+        console.log("🔍 Test 2: Testing different custom metric naming conventions");
+        
+        const customMetricTests = [
+          { name: "Direct name", metricName: "watch_time_seconds" },
+          { name: "With custom prefix", metricName: "customMetrics/watch_time_seconds" },
+          { name: "With custom metrics namespace", metricName: "custom/watch_time_seconds" },
+          { name: "Event-based metric", metricName: "customEvent:watch_time_seconds" }
+        ];
+        
+        for (const test of customMetricTests) {
+          console.log(`🔍 Testing custom metric format: ${test.name} (${test.metricName})`);
+          try {
+            const [response2] = await client.runReport({
+              property: PROPERTY,
+              dateRanges: [{ startDate: String(startDate), endDate: String(endDate) }],
+              dimensions: [
+                { name: "customEvent:video_id" },
+                { name: "customEvent:video_title" }
+              ],
+              metrics: [
+                { name: "eventCount" },
+                { name: test.metricName }
+              ],
+              limit: 3
+            });
+          
+            console.log(`✅ Custom metric SUCCESS with format: ${test.name}`);
+            res.json({
+              success: true,
+              approach: "custom_metric_found",
+              workingFormat: { name: test.name, metricName: test.metricName },
+              basicConnectivity: { rowCount: response1.rows?.length || 0 },
+              customMetric: { rowCount: response2.rows?.length || 0, firstRow: response2.rows?.[0] || null },
+              message: `GA4 custom metric works with format: ${test.name}`
+            });
+            return;
+          
+          } catch (testError: any) {
+            console.log(`❌ Format '${test.name}' failed: ${testError.message}`);
+          }
+        }
+        
+        // If all custom metric formats failed
+        console.log("❌ All custom metric formats failed but basic connectivity works");
+        res.json({
+          success: true,
+          approach: "basic_only", 
+          basicConnectivity: { rowCount: response1.rows?.length || 0, events: response1.rows?.map(r => r.dimensionValues?.[0]?.value).slice(0, 5) },
+          customMetricTests: customMetricTests.map(t => t.name),
+          message: "Basic GA4 works but none of the custom metric formats worked"
+        });
+        return;
+        
+      } catch (error1: any) {
+        console.log("❌ Even basic connectivity FAILED:", error1.message);
+        
+        res.json({
+          success: false,
+          basic_connectivity_failed: true,
+          error: { message: error1.message, code: error1.code },
+          message: "GA4 basic connectivity failed - check credentials and property ID"
+        });
+      }
+      
+    } catch (error) {
+      console.error("GA4 diagnostic error:", error);
+      res.status(500).json({ error: "Failed to run GA4 diagnostic" });
+    }
+  });
+
+
 
   // Top videos table endpoint - using your exact clean API structure
   app.get("/api/ga4/top-videos", async (req, res, next) => {

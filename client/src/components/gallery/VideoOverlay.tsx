@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { Play, Pause, Volume2, VolumeX, X, ImageIcon, Clock } from 'lucide-react';
 import { useVideoAnalytics } from '@/hooks/useVideoAnalytics';
 import { useGA4VideoAnalytics } from '@/hooks/useGA4VideoAnalytics';
+import { trackVideoWatchTime, trackVideoStart } from '@/lib/analytics';
 
 interface VideoOverlayProps {
   videoUrl: string;
@@ -54,12 +55,7 @@ export default function VideoOverlay({
   // Analytics tracking - LOCAL ANALYTICS: Track gallery video views
   const { trackVideoView } = useVideoAnalytics();
   
-  // GA4 Video Analytics - Using direct gtag for individual video tracking
-  const trackGA4VideoEvent = useCallback((eventName: string, parameters: any) => {
-    if (typeof window !== 'undefined' && window.gtag) {
-      window.gtag('event', eventName, parameters);
-    }
-  }, []);
+
   
   // Feature flag for video analytics - Use environment variable as intended
   const VIDEO_ANALYTICS_ENABLED = import.meta.env.VITE_VIDEO_ANALYTICS_ENABLED === 'true' || false;
@@ -88,12 +84,8 @@ export default function VideoOverlay({
       
     console.log(`🎯 ENHANCED THUMBNAIL SYSTEM v1.0.178: Loading ${videoId} with ${MINIMUM_THUMBNAIL_DISPLAY_TIME}ms minimum display - GA4 ENABLED`);
     
-    // GA4 Analytics: Track video open (modal/overlay opened)  
-    trackGA4VideoEvent('video_start', {
-      video_id: videoId,
-      video_title: title,
-      locale: language
-    });
+    // GA4 Analytics: Track video open (modal/overlay opened) using proper analytics function
+    trackVideoStart(videoId, 0, 0, title);
     
     // Start video buffering immediately for faster transition
     const video = videoRef.current;
@@ -247,15 +239,10 @@ export default function VideoOverlay({
       : videoUrl.split('/').pop()?.split('?')[0] || 'unknown';
       
     if (duration > 0 && currentTime > 0) {
-      // Track watch time when video is paused
-      trackGA4VideoEvent('video_watch_time', {
-        video_id: videoId,
-        video_title: title,
-        watch_time_seconds: currentTime,
-        locale: language
-      });
+      // Track watch time when video is paused using proper analytics function
+      trackVideoWatchTime(videoId, Math.round(currentTime), title);
     }
-  }, [duration, currentTime, title, videoUrl, trackGA4VideoEvent, language]);
+  }, [duration, currentTime, title, videoUrl, language]);
 
   const handleEnded = useCallback(() => {
     setIsPlaying(false);
@@ -268,13 +255,8 @@ export default function VideoOverlay({
       : videoUrl.split('/').pop()?.split('?')[0] || 'unknown';
       
     if (duration > 0) {
-      // Track final watch time when video ends
-      trackGA4VideoEvent('video_watch_time', {
-        video_id: videoId,
-        video_title: title,
-        watch_time_seconds: duration, // Full duration when video ends
-        locale: language
-      });
+      // Track final watch time when video ends using proper analytics function
+      trackVideoWatchTime(videoId, Math.round(duration), title);
     }
     
     // Old VIDEO ANALYTICS DISABLED - Switch to GA4-only for video analytics
