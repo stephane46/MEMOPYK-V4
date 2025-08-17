@@ -2488,7 +2488,7 @@ export async function registerRoutes(app: Express): Promise<void> {
           view.filename, 
           view.video_filename,
           view.video_name
-        ].filter(id => id && id.trim());
+        ].filter(id => id && String(id).trim());
         
         // Find matching video in our stats
         for (const id of possibleIds) {
@@ -2498,7 +2498,7 @@ export async function registerRoutes(app: Express): Promise<void> {
           }
           // Try partial matching for filenames
           const matchingKey = Object.keys(videoStats).find(key => 
-            key.includes(id) || id.includes(key)
+            String(key).includes(String(id)) || String(id).includes(String(key))
           );
           if (matchingKey) {
             videoKey = matchingKey;

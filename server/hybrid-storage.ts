@@ -3992,7 +3992,7 @@ Allow: /contact`;
       const galleryViews = views.filter((view: any) => 
         view.video_type === 'gallery' && 
         view.video_id && 
-        view.video_id.trim() !== ''
+        String(view.video_id).trim() !== ''
       );
       const totalViews = galleryViews.length;
       const uniqueVisitors = new Set(sessions.map((s: any) => s.ip_address)).size;
