@@ -44,11 +44,11 @@ export function RecentActivityPanel() {
         .then(response => { 
           const activityData: RecentActivityData = {
             activities: response.activities || [],
-            total: response.activities ? response.activities.filter((a: ActivitySession) => a.is_active).length : 0,
+            total: response.activities ? response.activities.filter((a: ActivitySession) => a.is_active && a.video_views.length > 0).length : 0,
             timestamp: new Date().toISOString()
           };
           
-          console.log('🔍 RECENT ACTIVITY PANEL: Found', activityData.total, 'active users');
+          console.log('🔍 RECENT ACTIVITY PANEL: Found', activityData.total, 'active video viewers');
           if (alive) {
             setData(activityData); 
             setError(null);
@@ -106,7 +106,7 @@ export function RecentActivityPanel() {
     <Card>
       <CardHeader>
         <CardTitle className="text-lg flex items-center gap-2">
-          Realtime Activity
+          Video Viewers
           <Activity className="h-5 w-5 text-green-500" />
         </CardTitle>
         <div className="text-xs text-gray-500">
@@ -116,7 +116,7 @@ export function RecentActivityPanel() {
       <CardContent>
         <div className="space-y-4">
           <div className="flex items-center justify-between">
-            <span className="text-sm font-medium">Active Users:</span>
+            <span className="text-sm font-medium">Video Viewers:</span>
             <Badge variant="default" className="bg-green-600">
               {data.total} live
             </Badge>
@@ -178,9 +178,9 @@ export function RecentActivityPanel() {
             </div>
           ) : (
             <div className="text-center text-gray-500 py-4">
-              No active viewers
+              No active video viewers
               <div className="text-xs text-gray-400 mt-1">
-                No one is currently browsing the site
+                No one is currently watching videos
               </div>
             </div>
           )}
