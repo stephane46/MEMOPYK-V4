@@ -218,17 +218,16 @@ export default function VideoOverlay({
       ? videoUrl.split('filename=')[1].split('&')[0]
       : videoUrl.split('/').pop()?.split('?')[0] || 'unknown';
       
-    if (duration > 0) {
-      // Track video start/resume with GA4
-      if (typeof window !== 'undefined' && window.gtag) {
-        window.gtag('event', 'video_start', {
-          video_id: videoId,
-          video_title: title,
-          duration_sec: duration,
-          position_sec: currentTime,
-          locale: language
-        });
-      }
+    // Track video start/resume with GA4 (don't wait for duration)
+    if (typeof window !== 'undefined' && window.gtag) {
+      window.gtag('event', 'video_start', {
+        video_id: videoId,
+        video_title: title,
+        duration_sec: duration || 0,
+        position_sec: currentTime || 0,
+        locale: language
+      });
+      console.log('📊 GA4 VIDEO START EVENT SENT:', { video_id: videoId, video_title: title, duration_sec: duration || 0, locale: language });
     }
   }, [resetControlsTimer]);
 
