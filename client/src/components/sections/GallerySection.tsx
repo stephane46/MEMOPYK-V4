@@ -603,6 +603,9 @@ export default function GallerySection() {
                 key={item.id} 
                 data-video-id={item.id}
                 className={`card-flip-container ${isFlipped ? 'flipped' : ''} rounded-2xl`}
+                style={{ position: 'relative', zIndex: 1 }}
+                onMouseDown={() => console.log('🚨 MOUSE DOWN on card:', item.id)}
+                onMouseUp={() => console.log('🚨 MOUSE UP on card:', item.id)}
                 onClick={(e) => {
                   console.log('🚨🚨🚨 CARD CONTAINER CLICKED! 🚨🚨🚨');
                   console.log('🚨 CARD CLICK TEST:', { 
