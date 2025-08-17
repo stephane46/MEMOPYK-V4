@@ -233,7 +233,7 @@ export default function VideoOverlay({
     // LOCAL ANALYTICS: Track video view start - CRITICAL FIX
     if (VIDEO_ANALYTICS_ENABLED) {
       console.log(`📊 LOCAL ANALYTICS: Tracking video view start for ${videoId}`);
-      trackVideoView({
+      trackVideoView.mutate({
         video_id: videoId,
         duration_watched: 0, // Start of video
         completed: false,
