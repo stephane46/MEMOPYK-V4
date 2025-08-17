@@ -92,21 +92,23 @@ export async function qCompletes(start: string, end: string, locale?: string) {
 }
 
 export async function qWatchTimeTotal(start: string, end: string, locale?: string) {
-  // Since the direct watch_time metric is failing, calculate from video_progress events
-  // These events should contain duration and progress information
+  console.log(`🎯 qWatchTimeTotal CALLED: ${start} to ${end}, locale: ${locale || 'all'}`);
+  
   const localeExpr =
     locale && locale !== "all"
       ? [{ filter: { fieldName: "customEvent:locale", stringFilter: { value: locale } } }]
       : [];
 
   try {
-    // Get total duration from video_progress events
+    // Get video progress events with duration and position data
     const [res] = await client.runReport({
       property: PROPERTY,
       dateRanges: [{ startDate: start, endDate: end }],
       dimensions: [
         { name: "customEvent:video_id" },
-        { name: "customEvent:progress_percent" }
+        { name: "customEvent:percent" },
+        { name: "customEvent:duration_sec" },
+        { name: "customEvent:position_sec" }
       ],
       metrics: [{ name: "eventCount" }],
       dimensionFilter: {
@@ -119,25 +121,34 @@ export async function qWatchTimeTotal(start: string, end: string, locale?: strin
       }
     });
 
-    // Calculate estimated total watch time based on progress events
+    console.log(`🎯 qWatchTimeTotal RAW API RESPONSE:`, JSON.stringify(res.rows?.slice(0, 5), null, 2));
+
+    // Calculate actual watch time based on progress milestones
     let totalWatchTime = 0;
     const progressData = (res.rows ?? []).map(r => ({
       video_id: r.dimensionValues?.[0]?.value ?? "",
-      progress_percent: Number(r.dimensionValues?.[1]?.value ?? 0),
+      percent: Number(r.dimensionValues?.[1]?.value ?? 0),
+      duration_sec: Number(r.dimensionValues?.[2]?.value ?? 0),
+      position_sec: Number(r.dimensionValues?.[3]?.value ?? 0),
       count: Number(r.metricValues?.[0]?.value ?? 0)
     }));
 
-    // Estimate watch time: assume each progress event represents ~10 seconds of viewing
-    // This is based on typical video progress tracking intervals
+    console.log(`🎯 qWatchTimeTotal PARSED DATA:`, progressData.slice(0, 3));
+
+    // Calculate watch time based on actual position data
+    // Each progress event represents watching to that specific position
     for (const data of progressData) {
-      if (data.progress_percent > 0) {
-        totalWatchTime += data.count * 10; // 10 seconds per progress event
+      if (data.position_sec > 0) {
+        // Use the actual position reached, multiplied by event count
+        totalWatchTime += data.position_sec * data.count;
       }
     }
 
+    console.log(`🎯 qWatchTimeTotal RESULT: ${totalWatchTime} seconds total watch time`);
     return totalWatchTime;
   } catch (error) {
     console.warn('Failed to get watch time from video_progress events:', error);
+    console.error('qWatchTimeTotal ERROR DETAILS:', error);
     return 0;
   }
 }
