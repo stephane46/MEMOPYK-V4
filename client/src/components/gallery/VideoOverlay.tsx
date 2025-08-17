@@ -378,6 +378,8 @@ export default function VideoOverlay({
     const actualCurrentTime = video.currentTime;
     const actualDuration = video.duration;
     
+    console.log(`📊 GA4 VIDEO CLOSE DEBUG: duration=${actualDuration}, currentTime=${actualCurrentTime}, videoId=${videoId}`);
+    
     if (!isNaN(actualDuration) && actualDuration > 0 && actualCurrentTime > 0) {
       const finalWatchTime = Math.round(actualCurrentTime);
       console.log(`📊 GA4 VIDEO CLOSE: ${videoId} watched ${finalWatchTime}s (from video.currentTime)`);
