@@ -38,13 +38,13 @@ function AnalyticsRouter() {
         <Route path="/gv2" component={GV2Page} />
         <Route path="/test-gallery-video" component={TestGalleryVideo} />
         
-        {/* Root redirects - Handle these after test routes */}
+        {/* Root redirects - Let LanguageContext handle browser detection */}
         <Route path="/" component={() => { 
-          window.location.href = '/fr-FR'; 
+          // LanguageContext will handle browser language detection and redirect
           return null; 
         }} />
         <Route path="/admin/*" component={() => { 
-          window.location.href = '/fr-FR/admin'; 
+          // LanguageContext will handle browser language detection and redirect to appropriate admin
           return null; 
         }} />
         
