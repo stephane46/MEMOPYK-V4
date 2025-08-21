@@ -7288,6 +7288,7 @@
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-21T11:06:14.043Z",
-    "updated_at": "2025-08-21T11:06:14.085Z"
+    "updated_at": "2025-08-21T11:08:15.159Z",
+    "duration": 770260
   }
 ]
