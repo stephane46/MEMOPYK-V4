@@ -60,6 +60,7 @@ export default function GallerySection() {
   
   console.log("📦 GallerySection render", { language });
   const [flippedCards, setFlippedCards] = useState<Set<string | number>>(new Set());
+  const [interactedCards, setInteractedCards] = useState<Set<string | number>>(new Set());
   const galleryRef = useRef<HTMLDivElement>(null);
   const [lightboxVideo, setLightboxVideo] = useState<GalleryItem | null>(null);
   const [isMobile, setIsMobile] = useState(false);
@@ -448,6 +449,9 @@ export default function GallerySection() {
       // Prevent body scrolling when lightbox is open
       document.body.style.overflow = 'hidden';
     } else {
+      // Mark card as interacted for smooth animation
+      setInteractedCards(prev => new Set(prev).add(item.id));
+      
       // Flip card to show sorry message for items without video
       setFlippedCards(prev => {
         const newSet = new Set(prev);
@@ -573,6 +577,9 @@ export default function GallerySection() {
               document.body.style.overflow = 'hidden';
             }}
             onFlipCard={(id) => {
+              // Mark card as interacted for smooth animation
+              setInteractedCards(prev => new Set(prev).add(id));
+              
               setFlippedCards(prev => {
                 const newSet = new Set(prev);
                 if (newSet.has(id)) {
@@ -607,7 +614,7 @@ export default function GallerySection() {
                 key={item.id} 
                 data-video-id={item.id}
                 data-gallery-card
-                className={`card-flip-container ${isFlipped ? 'flipped' : ''} rounded-2xl`}
+                className={`card-flip-container ${isFlipped ? 'flipped' : ''} ${interactedCards.has(item.id) ? 'can-flip' : ''} rounded-2xl`}
               >
                 <div className="card-flip-inner">
                   {/* FRONT SIDE - Normal Gallery Card */}
