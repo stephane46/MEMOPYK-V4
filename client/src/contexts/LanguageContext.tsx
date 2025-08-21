@@ -48,6 +48,24 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
   const [language, setLanguageState] = useState<Language>('fr-FR');
   const [hasInitialized, setHasInitialized] = useState(false);
 
+  // Add testing helper to window - available immediately
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      (window as any).testLanguageDetection = (testLanguages: string[]) => {
+        console.log('🧪 TESTING with languages:', testLanguages);
+        Object.defineProperty(navigator, 'languages', {
+          value: testLanguages,
+          configurable: true
+        });
+        const result = testLanguages[0]?.toLowerCase().startsWith('fr') ? 'fr-FR' : 'en-US';
+        console.log('🧪 TEST RESULT:', result);
+        console.log('🧪 To apply: localStorage.removeItem("memopyk-language"); location.reload();');
+        return result;
+      };
+      console.log('🧪 Testing function created: testLanguageDetection() is now available in console');
+    }
+  }, []);
+
   // Detect browser language preference - FIXED for overseas English users
   const detectBrowserLanguage = (): Language => {
     // Check for stored preference first
@@ -70,21 +88,6 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
         primaryLanguage,
         userAgent: navigator.userAgent.substring(0, 100)
       });
-
-      // Add testing helper to window for console testing
-      if (typeof window !== 'undefined') {
-        (window as any).testLanguageDetection = (testLanguages: string[]) => {
-          console.log('🧪 TESTING with languages:', testLanguages);
-          Object.defineProperty(navigator, 'languages', {
-            value: testLanguages,
-            configurable: true
-          });
-          const result = testLanguages[0].toLowerCase().startsWith('fr') ? 'fr-FR' : 'en-US';
-          console.log('🧪 TEST RESULT:', result);
-          console.log('🧪 To apply: localStorage.removeItem("memopyk-language"); location.reload();');
-          return result;
-        };
-      }
       
       // Check if primary language is French
       if (primaryLanguage.startsWith('fr')) {
