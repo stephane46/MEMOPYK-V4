@@ -48,47 +48,7 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
   const [language, setLanguageState] = useState<Language>('fr-FR');
   const [hasInitialized, setHasInitialized] = useState(false);
 
-  // Add testing helper to window - available immediately
-  useEffect(() => {
-    if (typeof window !== 'undefined') {
-      // Persistent testing function that uses localStorage
-      (window as any).testLanguageDetection = function(testLanguages: string[]) {
-        console.log('🧪 PERSISTENT TESTING FUNCTION CALLED with languages:', testLanguages);
-        console.log('🧪 Setting test language in localStorage for persistent override');
-        
-        try {
-          const testLanguage = testLanguages[0]?.toLowerCase().startsWith('fr') ? 'fr-FR' : 'en-US';
-          
-          // Set test language in localStorage to persist through reload
-          localStorage.setItem('memopyk-test-language', testLanguage);
-          console.log('✅ Test language stored in localStorage:', testLanguage);
-          
-          // Clear any existing language preference
-          localStorage.removeItem('memopyk-language');
-          console.log('✅ Cleared existing language preference');
-          
-          console.log('🧪 PERSISTENT OVERRIDE SET - Page will detect', testLanguage, 'on reload');
-          console.log('🧪 Ready to reload page for testing');
-          
-          return testLanguage;
-        } catch (error) {
-          console.error('🚨 TEST FUNCTION ERROR:', error);
-          return 'error';
-        }
-      };
-      
-      // Test the function availability immediately
-      const testFunctionExists = typeof (window as any).testLanguageDetection === 'function';
-      console.log('🧪 Persistent testing function created and verified:', testFunctionExists);
-      
-      if (testFunctionExists) {
-        console.log('🧪 Testing function created: testLanguageDetection() is now available in console');
-        console.log('🧪 PERSISTENT TEST: testLanguageDetection(["fr-FR"]); window.location.href = "/";');
-      } else {
-        console.error('❌ Failed to attach testing function to window');
-      }
-    }
-  }, []);
+
 
   // Detect browser language preference - FIXED for overseas English users
   const detectBrowserLanguage = (): Language => {
@@ -107,26 +67,15 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
     if (browserLanguages.length > 0) {
       const primaryLanguage = browserLanguages[0].toLowerCase().trim();
       
-      console.log('🌍 LANGUAGE DETECTION:', {
-        allLanguages: browserLanguages,
-        primaryLanguage,
-        userAgent: navigator.userAgent.substring(0, 100)
-      });
-      
       // Check if primary language is French
       if (primaryLanguage.startsWith('fr')) {
-        console.log('🇫🇷 PRIMARY language is French → Showing French');
         return 'fr-FR';
       }
       
       // Check if primary language is English
       if (primaryLanguage.startsWith('en')) {
-        console.log('🇺🇸 PRIMARY language is English → Showing English');
         return 'en-US';
       }
-      
-      // For other primary languages, default to English
-      console.log('🌍 OTHER primary language → Defaulting to English');
     }
     
     // Fallback for edge cases
