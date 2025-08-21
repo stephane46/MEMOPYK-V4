@@ -96,7 +96,7 @@ export function HowItWorksCondensed() {
             <p className="text-memopyk-cream/80 mb-6 text-lg">
               {language === 'fr-FR'
                 ? 'Découvrez tous les détails de notre méthode unique pour créer votre film de souvenirs'
-                : 'Discover all the details of our unique method to create your memory film'
+                : 'Discover all the details of our unique method to create your souvenir film'
               }
             </p>
             <Link href={howItWorksUrl}>
