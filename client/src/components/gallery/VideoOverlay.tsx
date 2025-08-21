@@ -104,11 +104,21 @@ export default function VideoOverlay({
     console.error('VideoOverlay Error:', e.target?.error);
   }, [videoUrl]);
 
-  // Mobile-responsive viewport sizing
-  const viewportRatio = 90;
+  // Mobile-responsive viewport sizing - Different ratios for portrait vs landscape
+  const getViewportRatio = useCallback(() => {
+    // Portrait videos: Use 90% of viewport height  
+    if (orientation === 'portrait') {
+      return 90;
+    } else {
+      // Landscape videos: Use 70% of viewport width to prevent being too tall
+      return 70;
+    }
+  }, [orientation]);
 
   // Calculate video container dimensions based on orientation
   const getVideoDimensions = useCallback(() => {
+    const viewportRatio = getViewportRatio();
+    
     if (orientation === 'portrait') {
       const containerHeight = (window.innerHeight * viewportRatio) / 100;
       const aspectRatio = width / height;
@@ -120,7 +130,7 @@ export default function VideoOverlay({
       const containerHeight = containerWidth / aspectRatio;
       return { width: containerWidth, height: containerHeight };
     }
-  }, [orientation, width, height, viewportRatio]);
+  }, [orientation, width, height, getViewportRatio]);
 
   const [videoDimensions, setVideoDimensions] = useState(() => getVideoDimensions());
 
