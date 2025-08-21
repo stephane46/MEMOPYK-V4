@@ -1081,7 +1081,7 @@ export async function registerRoutes(app: Express): Promise<void> {
         console.log(`📝 Method 1: Direct JSON file update`);
         const fs = require('fs');
         const path = require('path');
-        const jsonPath = path.join(__dirname, 'data', 'gallery-items.json');
+        const jsonPath = path.join(__dirname, 'storage', 'gallery-items.json');
         
         console.log(`📂 Reading file: ${jsonPath}`);
         const rawData = fs.readFileSync(jsonPath, 'utf8');
@@ -1111,7 +1111,7 @@ export async function registerRoutes(app: Express): Promise<void> {
             console.log(`📝 After update (${language}): ${items[itemIndex][staticField]}`);
           }
           
-          items[itemIndex].crop_settings = cropSettings;
+          items[itemIndex].cropSettings = cropSettings;
           items[itemIndex].updated_at = new Date().toISOString();
           
           fs.writeFileSync(jsonPath, JSON.stringify(items, null, 2));
@@ -1137,8 +1137,8 @@ export async function registerRoutes(app: Express): Promise<void> {
         const language = req.body.language || 'en';
         
         // Get current item to check use_same_video flag  
-        const jsonPath = path.join(__dirname, '..', 'server', 'data', 'gallery.json');
-        const data = fs.readFileSync(jsonPath, 'utf8');
+        const jsonPath2 = path.join(__dirname, 'storage', 'gallery-items.json');
+        const data = fs.readFileSync(jsonPath2, 'utf8');
         const items = JSON.parse(data);
         const currentItem = items.find((item: any) => item.id.toString() === itemId.toString());
         const useSameVideo = currentItem?.use_same_video;
@@ -1149,14 +1149,14 @@ export async function registerRoutes(app: Express): Promise<void> {
           updateData = { 
             static_image_url_en: staticImageUrl, 
             static_image_url_fr: staticImageUrl, 
-            crop_settings: cropSettings 
+            cropSettings: cropSettings 
           };
           console.log(`🔗 Hybrid storage: Setting both EN and FR to same URL (use_same_video: true)`);
         } else {
           // When use_same_video is false, only update the specific language field
           updateData = language === 'fr' 
-            ? { static_image_url_fr: staticImageUrl, crop_settings: cropSettings }
-            : { static_image_url_en: staticImageUrl, crop_settings: cropSettings };
+            ? { static_image_url_fr: staticImageUrl, cropSettings: cropSettings }
+            : { static_image_url_en: staticImageUrl, cropSettings: cropSettings };
           console.log(`🎯 Hybrid storage: Setting only ${language} field (use_same_video: false)`);
         }
         
