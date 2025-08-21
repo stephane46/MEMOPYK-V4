@@ -494,7 +494,7 @@ export default function VideoOverlay({
       ref={overlayRef}
       className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-md transition-all duration-300 ease-out"
       style={{
-        '--viewport-ratio': `${viewportRatio}%`,
+        '--viewport-ratio': `${getViewportRatio()}%`,
       } as React.CSSProperties}
       onClick={handleOverlayClick}
       tabIndex={0}

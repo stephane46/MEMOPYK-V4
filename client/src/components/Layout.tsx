@@ -138,6 +138,10 @@ export function Layout({ children }: LayoutProps) {
                     <Link
                       key={`nav-${index}`}
                       href={item.href as string}
+                      onClick={() => {
+                        // Scroll to top when navigating to "How it works" page
+                        setTimeout(() => window.scrollTo({ top: 0, behavior: 'smooth' }), 100);
+                      }}
                       className="text-sm font-medium transition-colors text-gray-600 hover:text-memopyk-navy"
                     >
                       {item.name}
@@ -241,7 +245,11 @@ export function Layout({ children }: LayoutProps) {
                     <Link
                       key={`mobile-nav-${index}`}
                       href={item.href as string}
-                      onClick={() => setIsMobileMenuOpen(false)}
+                      onClick={() => {
+                        setIsMobileMenuOpen(false);
+                        // Scroll to top when navigating to "How it works" page
+                        setTimeout(() => window.scrollTo({ top: 0, behavior: 'smooth' }), 100);
+                      }}
                       className="block px-4 py-3 rounded-md text-base font-medium transition-all duration-200 min-h-[44px] flex items-center text-gray-600 hover:text-memopyk-navy hover:bg-gray-50 hover:border-l-4 hover:border-memopyk-blue-gray"
                     >
                       {item.name}
