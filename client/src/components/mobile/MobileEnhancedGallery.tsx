@@ -206,9 +206,15 @@ export function MobileEnhancedGallery({
                               backdropFilter: 'blur(2px)'
                             }}
                           >
-                            <div className="text-white text-lg sm:text-xl ml-0.5">
-                              ▶
-                            </div>
+                            <svg 
+                              width="16" 
+                              height="16" 
+                              viewBox="0 0 24 24" 
+                              fill="white"
+                              className="ml-0.5"
+                            >
+                              <path d="M8 5v14l11-7z"/>
+                            </svg>
                           </div>
                         </div>
                       )}

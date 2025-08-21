@@ -720,18 +720,16 @@ export default function GallerySection() {
                                 backdropFilter: 'blur(2px)'
                               }}
                             >
-                              {/* Play Triangle - White for Orange Button, Dark for White Button - EXPLICIT NO BACKGROUND */}
-                              <div 
-                                className="text-xl sm:text-2xl ml-0.5" 
-                                style={{ 
-                                  color: itemHasVideo ? 'white' : '#2A4759',
-                                  background: 'transparent !important',
-                                  backgroundColor: 'transparent !important',
-                                  backgroundImage: 'none !important'
-                                }}
+                              {/* Play Triangle SVG - White for Orange Button, Dark for White Button */}
+                              <svg 
+                                width="16" 
+                                height="16" 
+                                viewBox="0 0 24 24" 
+                                fill={itemHasVideo ? 'white' : '#2A4759'}
+                                className="ml-0.5"
                               >
-                                ▶
-                              </div>
+                                <path d="M8 5v14l11-7z"/>
+                              </svg>
                             </div>
                           </div>
                         </div>
