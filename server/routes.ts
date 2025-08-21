@@ -511,7 +511,7 @@ export async function registerRoutes(app: Express): Promise<void> {
   });
 
   // Server-side upload fallback for when direct upload fails
-  app.post('/api/upload/server-side-upload', uploadImages.single('file'), async (req, res) => {
+  app.post('/api/upload/server-side-upload', uploadImage.single('file'), async (req, res) => {
     try {
       console.log('🔄 SERVER-SIDE UPLOAD FALLBACK initiated');
       
