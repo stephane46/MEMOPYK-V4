@@ -402,6 +402,9 @@ export default function GallerySection() {
     const hasVideoResult = hasVideo(item, index);
     
     if (hasVideoResult) {
+      // Close any flipped cards when opening a video
+      setFlippedCards(new Set());
+      
       // Analytics tracking moved to VideoOverlay for actual watch time tracking
       const videoFilename = item.videoFilename || '';
       const cleanFilename = videoFilename.includes('/') ? videoFilename.split('/').pop() : videoFilename;
@@ -427,6 +430,8 @@ export default function GallerySection() {
         if (newSet.has(item.id)) {
           newSet.delete(item.id);
         } else {
+          // Close other flipped cards and open this one
+          newSet.clear();
           newSet.add(item.id);
         }
         return newSet;
@@ -579,9 +584,8 @@ export default function GallerySection() {
                 data-video-id={item.id}
                 className={`card-flip-container ${isFlipped ? 'flipped' : ''} rounded-2xl`}
                 onClick={(e) => {
-                  if (itemHasVideo) {
-                    handlePlayClick(item, e, index);
-                  }
+                  // Handle click on card
+                  handlePlayClick(item, e, index);
                 }}
               >
                 <div className="card-flip-inner">
