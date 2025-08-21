@@ -104,15 +104,10 @@ export default function VideoOverlay({
     console.error('VideoOverlay Error:', e.target?.error);
   }, [videoUrl]);
 
-  // Mobile-responsive viewport sizing - Different ratios for portrait vs landscape
+  // Mobile-responsive viewport sizing - 90% max width/height for all orientations
   const getViewportRatio = useCallback(() => {
-    // Portrait videos: Use 90% of viewport height  
-    if (orientation === 'portrait') {
-      return 90;
-    } else {
-      // Landscape videos: Use 70% of viewport width to prevent being too tall
-      return 70;
-    }
+    // All videos: Use 90% of viewport for consistent sizing
+    return 90;
   }, [orientation]);
 
   // Calculate video container dimensions based on orientation
@@ -615,12 +610,13 @@ export default function VideoOverlay({
           </div>
         )}
 
-        {/* Control Bar */}
-        <div
-          className={`absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent p-2 sm:p-4 transition-opacity duration-300 z-30 ${
-            showControls ? 'opacity-100' : 'opacity-0'
-          }`}
-        >
+        {/* Control Bar - Only show after video starts playing (not during thumbnail) */}
+        {!showThumbnail && (
+          <div
+            className={`absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent p-2 sm:p-4 transition-opacity duration-300 z-30 ${
+              showControls ? 'opacity-100' : 'opacity-0'
+            }`}
+          >
           {/* Time Display */}
           <div className="flex justify-between items-center text-white text-xs sm:text-sm mb-2">
             <span>{formatTime(currentTime)}</span>
@@ -656,7 +652,8 @@ export default function VideoOverlay({
               {isMuted ? <VolumeX size={16} className="sm:w-5 sm:h-5" /> : <Volume2 size={16} className="sm:w-5 sm:h-5" />}
             </button>
           </div>
-        </div>
+          </div>
+        )}
 
         {/* Close Button - Mobile Only */}
         <button
