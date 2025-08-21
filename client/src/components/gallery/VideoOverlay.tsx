@@ -118,14 +118,41 @@ export default function VideoOverlay({
       const containerHeight = (window.innerHeight * viewportRatio) / 100;
       const aspectRatio = width / height;
       const containerWidth = containerHeight * aspectRatio;
+      
+      // DEBUG: Log dimensions for POM video troubleshooting
+      console.log(`🎬 PORTRAIT VIDEO DIMENSIONS DEBUG:`, {
+        title,
+        videoWidth: width,
+        videoHeight: height,
+        aspectRatio,
+        screenHeight: window.innerHeight,
+        viewportRatio,
+        containerHeight,
+        containerWidth,
+        willFitInScreen: containerWidth <= window.innerWidth
+      });
+      
       return { width: containerWidth, height: containerHeight };
     } else {
       const containerWidth = (window.innerWidth * viewportRatio) / 100;
       const aspectRatio = width / height;
       const containerHeight = containerWidth / aspectRatio;
+      
+      // DEBUG: Log dimensions for landscape videos
+      console.log(`🎬 LANDSCAPE VIDEO DIMENSIONS DEBUG:`, {
+        title,
+        videoWidth: width,
+        videoHeight: height,
+        aspectRatio,
+        screenWidth: window.innerWidth,
+        viewportRatio,
+        containerWidth,
+        containerHeight
+      });
+      
       return { width: containerWidth, height: containerHeight };
     }
-  }, [orientation, width, height, getViewportRatio]);
+  }, [orientation, width, height, getViewportRatio, title]);
 
   const [videoDimensions, setVideoDimensions] = useState(() => getVideoDimensions());
 

@@ -701,19 +701,17 @@ export default function GallerySection() {
                           <div className="absolute inset-0 flex items-center justify-center pointer-events-none" style={{zIndex: 999999}}>
                             {/* Dynamic Play Button Based on Video Availability - Reduced diameter by 1/3 */}
                             <div 
-                              className="w-14 h-14 sm:w-16 sm:h-16 rounded-full flex items-center justify-center transition-all duration-300 hover:scale-110 cursor-pointer pointer-events-auto"
+                              className={`w-14 h-14 sm:w-16 sm:h-16 rounded-full flex items-center justify-center transition-all duration-300 hover:scale-110 cursor-pointer pointer-events-auto ${itemHasVideo && !isMobile ? 'animate-pulse-orange' : ''}`}
                               onClick={(e) => {
                                 e.stopPropagation();
                                 handlePlayClick(item, e, index);
                               }}
                               style={itemHasVideo ? {
-                                // Orange for items WITH video
+                                // Orange for items WITH video - pulse only on desktop
                                 background: 'linear-gradient(135deg, rgba(214, 124, 74, 0.95) 0%, rgba(214, 124, 74, 0.85) 50%, rgba(184, 90, 47, 0.95) 100%)',
                                 boxShadow: '0 4px 12px rgba(214, 124, 74, 0.4), inset 0 1px 2px rgba(255, 255, 255, 0.3)',
                                 border: '1px solid rgba(255, 255, 255, 0.3)',
-                                backdropFilter: 'blur(2px)',
-                                animation: 'pulse-orange 2s cubic-bezier(0.4, 0, 0.6, 1) infinite',
-                                WebkitAnimation: 'pulse-orange 2s cubic-bezier(0.4, 0, 0.6, 1) infinite'
+                                backdropFilter: 'blur(2px)'
                               } : {
                                 // White for items WITHOUT video
                                 background: 'linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.85) 100%)',
@@ -722,10 +720,14 @@ export default function GallerySection() {
                                 backdropFilter: 'blur(2px)'
                               }}
                             >
-                              {/* Play Triangle - White for Orange Button, Dark for White Button - Increased size */}
-                              <div className="text-xl sm:text-2xl ml-0.5" style={{ 
-                                color: itemHasVideo ? 'white' : '#2A4759' 
-                              }}>
+                              {/* Play Triangle - White for Orange Button, Dark for White Button - NO BACKGROUND */}
+                              <div 
+                                className="text-xl sm:text-2xl ml-0.5" 
+                                style={{ 
+                                  color: itemHasVideo ? 'white' : '#2A4759',
+                                  background: 'transparent'
+                                }}
+                              >
                                 ▶
                               </div>
                             </div>
