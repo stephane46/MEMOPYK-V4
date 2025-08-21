@@ -59,11 +59,15 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
         });
         const result = testLanguages[0]?.toLowerCase().startsWith('fr') ? 'fr-FR' : 'en-US';
         console.log('🧪 TEST RESULT:', result);
-        console.log('🧪 To apply: localStorage.removeItem("memopyk-language"); location.reload();');
+        console.log('🧪 To apply test result:');
+        console.log('🧪 1. localStorage.removeItem("memopyk-language");');
+        console.log('🧪 2. window.location.href = "/";');
+        console.log('🧪 Or combined: localStorage.removeItem("memopyk-language"); window.location.href = "/";');
         return result;
       };
       console.log('🧪 Testing function created: testLanguageDetection() is now available in console');
       console.log('🧪 Quick test: testLanguageDetection(["en-US", "fr-CA"]) - should return en-US');
+      console.log('🧪 Apply test: localStorage.removeItem("memopyk-language"); window.location.href = "/";');
     }
   }, []);
 
