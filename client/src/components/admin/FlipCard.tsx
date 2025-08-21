@@ -115,7 +115,7 @@ export function FlipCard({ frontContent, className = "", visitors = [] }: Visito
           }}
           onClick={handleBackdropClick}
         >
-          {/* MODAL CONTENT WITH SOLID BACKGROUND */}
+          {/* MODAL CONTENT WITH PURE WHITE BACKGROUND */}
           <div
             style={{
               backgroundColor: '#ffffff',

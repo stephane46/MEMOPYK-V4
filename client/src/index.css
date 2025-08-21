@@ -187,16 +187,19 @@ img, video, iframe, canvas, svg {
   border: 1px solid rgba(255, 255, 255, 0.2);
 }
 
-/* Dialog Visibility Fix - Force solid backgrounds */
+/* Dialog Visibility Fix - Force solid backgrounds for most dialogs */
 [data-radix-dialog-overlay] {
   background-color: rgba(0, 0, 0, 0.5) !important;
 }
 
+/* Default white background for most dialog content */
 [data-radix-dialog-content] {
   background-color: white !important;
   border: 1px solid #e5e7eb !important;
   box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05) !important;
 }
+
+
 
 .dark [data-radix-dialog-content] {
   background-color: #111827 !important;
