@@ -654,9 +654,9 @@ export default function GallerySection() {
                           
                           {/* Desktop Play Button - Orange for Video, White for No Video */}
                           <div className="absolute inset-0 flex items-center justify-center pointer-events-none" style={{zIndex: 999999}}>
-                            {/* Dynamic Play Button Based on Video Availability - Larger clickable area */}
+                            {/* Dynamic Play Button Based on Video Availability - Reduced diameter by 1/3 */}
                             <div 
-                              className={`w-20 h-20 sm:w-24 sm:h-24 rounded-full flex items-center justify-center transition-all duration-300 hover:scale-110 cursor-pointer pointer-events-auto ${itemHasVideo ? 'animate-pulse-orange' : ''}`}
+                              className={`w-14 h-14 sm:w-16 sm:h-16 rounded-full flex items-center justify-center transition-all duration-300 hover:scale-110 cursor-pointer pointer-events-auto ${itemHasVideo ? 'animate-pulse-orange' : ''}`}
                               onClick={(e) => {
                                 e.stopPropagation();
                                 handlePlayClick(item, e, index);
@@ -675,8 +675,8 @@ export default function GallerySection() {
                                 backdropFilter: 'blur(2px)'
                               }}
                             >
-                              {/* Play Triangle - White for Orange Button, Dark for White Button */}
-                              <div className="text-lg sm:text-xl ml-0.5" style={{ 
+                              {/* Play Triangle - White for Orange Button, Dark for White Button - Increased size */}
+                              <div className="text-xl sm:text-2xl ml-0.5" style={{ 
                                 color: itemHasVideo ? 'white' : '#2A4759' 
                               }}>
                                 ▶
