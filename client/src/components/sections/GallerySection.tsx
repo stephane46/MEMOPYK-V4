@@ -428,11 +428,11 @@ export default function GallerySection() {
       ? videoFilename.split('/').pop() 
       : videoFilename;
 
-    // Authentic dimensions based on actual video files - UPDATED WITH CORRECT POM DIMENSIONS
+    // Authentic dimensions based on actual video files - UPDATED WITH ALL CORRECT DIMENSIONS
     const videoDimensionsMap: Record<string, { width: number; height: number; orientation: 'portrait' | 'landscape' }> = {
       'PomGalleryC.mp4': { width: 1080, height: 1350, orientation: 'portrait' },     // Updated: 1080x1350 portrait
-      'VitaminSeaC.mp4': { width: 1920, height: 1080, orientation: 'landscape' },    // 16:9 landscape  
-      'safari-1.mp4': { width: 1920, height: 1080, orientation: 'landscape' },       // 16:9 landscape
+      'VitaminSeaC.mp4': { width: 1080, height: 1920, orientation: 'portrait' },     // Updated: 1080x1920 portrait (9:16)
+      'safari-1.mp4': { width: 1920, height: 1080, orientation: 'landscape' },       // Updated: 1920x1080 landscape (16:9)
     };
 
     // Return authentic dimensions or fallback with warning
