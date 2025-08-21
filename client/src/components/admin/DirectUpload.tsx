@@ -106,17 +106,27 @@ export default function DirectUpload({
       // Step 2: Upload directly to Supabase
       setUploadState(prev => ({ ...prev, status: 'uploading', progress: 30 }));
 
+      console.log(`🔗 Uploading to signed URL: ${signedUrl.substring(0, 100)}...`);
+      
       const uploadResponse = await fetch(signedUrl, {
         method: 'PUT',
         body: file,
         headers: {
-          'Content-Type': file.type,
-          'x-amz-acl': 'public-read'
+          'Content-Type': file.type
+          // Remove x-amz-acl header as it may cause CORS issues with Supabase
         }
       });
 
+      console.log(`📤 Upload response status: ${uploadResponse.status} ${uploadResponse.statusText}`);
+      
       if (!uploadResponse.ok) {
-        throw new Error(`Upload failed: ${uploadResponse.status} ${uploadResponse.statusText}`);
+        const responseText = await uploadResponse.text().catch(() => 'Unable to read response');
+        console.error(`❌ Upload failed details:`, {
+          status: uploadResponse.status,
+          statusText: uploadResponse.statusText,
+          response: responseText
+        });
+        throw new Error(`Upload failed: ${uploadResponse.status} ${uploadResponse.statusText} - ${responseText}`);
       }
 
       console.log(`✅ File uploaded directly to Supabase: ${filename}`);
@@ -177,6 +187,8 @@ export default function DirectUpload({
 
     } catch (error) {
       console.error('❌ Direct upload failed:', error);
+      console.error('❌ Error type:', typeof error);
+      console.error('❌ Error stack:', error instanceof Error ? error.stack : 'No stack trace');
       const errorMessage = error instanceof Error ? error.message : 'Upload failed';
       
       setUploadState({

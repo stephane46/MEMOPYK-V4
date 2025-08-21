@@ -56,7 +56,8 @@ async function generateSignedUploadUrl(filename: string, bucket: string): Promis
     const { data: signedUrlData, error: signedError } = await supabase.storage
       .from(bucket)
       .createSignedUploadUrl(uniqueFilename, {
-        upsert: true // Allow overwriting existing files
+        upsert: true, // Allow overwriting existing files
+        expiresIn: 3600 // 1 hour expiration
       });
 
     if (signedError) {
@@ -463,15 +464,23 @@ export async function registerRoutes(app: Express): Promise<void> {
   // Generate signed upload URL for direct Supabase uploads (bypasses Replit infrastructure limit)
   app.post("/api/upload/generate-signed-url", async (req, res) => {
     try {
+      console.log("🔍 SIGNED URL REQUEST RECEIVED:", {
+        body: req.body,
+        headers: req.headers['content-type'],
+        method: req.method
+      });
+      
       const { filename, fileType, bucket } = req.body;
       
       if (!filename || !bucket) {
+        console.error("❌ Missing required fields:", { filename, fileType, bucket });
         return res.status(400).json({ error: "Filename and bucket are required" });
       }
 
       // Validate bucket name
       const allowedBuckets = ['memopyk-videos']; // Unified bucket for all media
       if (!allowedBuckets.includes(bucket)) {
+        console.error("❌ Invalid bucket:", bucket);
         return res.status(400).json({ error: "Invalid bucket name" });
       }
 
@@ -485,6 +494,8 @@ export async function registerRoutes(app: Express): Promise<void> {
       // Extract the actual filename from the public URL
       const actualFilename = publicUrl.split('/').pop();
       
+      console.log("✅ Signed URL generated successfully:", actualFilename);
+      
       res.json({
         success: true,
         signedUrl,
@@ -494,6 +505,7 @@ export async function registerRoutes(app: Express): Promise<void> {
 
     } catch (error) {
       console.error('❌ Failed to generate signed upload URL:', error);
+      console.error('❌ Error details:', (error as any).message, (error as any).stack);
       res.status(500).json({ error: "Failed to generate upload URL" });
     }
   });
@@ -4615,6 +4627,37 @@ export async function registerRoutes(app: Express): Promise<void> {
     } catch (error) {
       console.error("Error clearing cache:", error);
       res.status(500).json({ ok: false, error: String(error) });
+    }
+  });
+
+  // Debug endpoint for upload issues
+  app.post("/api/debug-upload", async (req, res) => {
+    try {
+      console.log("🔍 DEBUG UPLOAD TEST");
+      console.log("🔍 Supabase URL:", process.env.SUPABASE_URL ? "Set" : "Missing");
+      console.log("🔍 Supabase Key:", process.env.SUPABASE_SERVICE_KEY ? "Set" : "Missing");
+      
+      // Test Supabase connection
+      const { data, error } = await supabase.storage.listBuckets();
+      
+      if (error) {
+        console.error("❌ Supabase connection error:", error);
+        return res.status(500).json({ 
+          error: "Supabase connection failed", 
+          details: error.message 
+        });
+      }
+      
+      console.log("✅ Supabase connected, buckets:", data?.map(b => b.name));
+      res.json({ 
+        success: true, 
+        buckets: data?.map(b => b.name),
+        message: "Supabase connection working"
+      });
+      
+    } catch (error) {
+      console.error("❌ Debug upload error:", error);
+      res.status(500).json({ error: String(error) });
     }
   });
 
