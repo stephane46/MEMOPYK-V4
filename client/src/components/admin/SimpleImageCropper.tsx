@@ -70,7 +70,7 @@ export default function SimpleImageCropper({
     });
     
     // Use initial crop settings if provided, otherwise center
-    if (initialCropSettings?.position) {
+    if (initialCropSettings?.position && typeof initialCropSettings.position.y === 'number') {
       // NEW CONSISTENT LOGIC: Percentage is now always saved as natural-based
       const naturalCropY = (initialCropSettings.position.y / 100) * naturalHeight;
       const initialOffset = (naturalCropY / naturalHeight) * displayedHeight;
