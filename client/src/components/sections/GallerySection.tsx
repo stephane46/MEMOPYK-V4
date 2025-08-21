@@ -419,7 +419,7 @@ export default function GallerySection() {
     }
   };
 
-  // AUTHENTIC VIDEO DIMENSIONS MAPPING - Fixed video dimension bug
+  // AUTHENTIC VIDEO DIMENSIONS FROM DATABASE - Admin panel integration fixed
   const getAuthenticVideoDimensions = (item: GalleryItem) => {
     const videoFilename = item.videoFilename || '';
     
@@ -428,21 +428,36 @@ export default function GallerySection() {
       ? videoFilename.split('/').pop() 
       : videoFilename;
 
-    // Authentic dimensions based on actual video files - UPDATED WITH ALL CORRECT DIMENSIONS
+    // PRIORITY 1: Use database values if available (from admin panel updates)
+    if (item.videoWidth && item.videoHeight) {
+      const orientation = item.videoWidth > item.videoHeight ? 'landscape' : 'portrait';
+      console.log(`✅ DATABASE VIDEO DIMENSIONS for ${cleanFilename}:`, {
+        width: item.videoWidth,
+        height: item.videoHeight,
+        orientation
+      });
+      return {
+        width: item.videoWidth,
+        height: item.videoHeight,
+        orientation: orientation as 'portrait' | 'landscape'
+      };
+    }
+
+    // PRIORITY 2: Fallback to hardcoded mapping for legacy support
     const videoDimensionsMap: Record<string, { width: number; height: number; orientation: 'portrait' | 'landscape' }> = {
-      'PomGalleryC.mp4': { width: 1080, height: 1350, orientation: 'portrait' },     // Updated: 1080x1350 portrait
-      'VitaminSeaC.mp4': { width: 1080, height: 1920, orientation: 'portrait' },     // Updated: 1080x1920 portrait (9:16)
-      'safari-1.mp4': { width: 1920, height: 1080, orientation: 'landscape' },       // Updated: 1920x1080 landscape (16:9)
+      'PomGalleryC.mp4': { width: 1080, height: 1350, orientation: 'portrait' },
+      'VitaminSeaC.mp4': { width: 1080, height: 1920, orientation: 'portrait' },
+      'safari-1.mp4': { width: 1920, height: 1080, orientation: 'landscape' },
     };
 
-    // Return authentic dimensions or fallback with warning
     if (cleanFilename && videoDimensionsMap[cleanFilename]) {
-      console.log(`✅ AUTHENTIC VIDEO DIMENSIONS for ${cleanFilename}:`, videoDimensionsMap[cleanFilename]);
+      console.log(`✅ FALLBACK VIDEO DIMENSIONS for ${cleanFilename}:`, videoDimensionsMap[cleanFilename]);
       return videoDimensionsMap[cleanFilename];
-    } else {
-      console.warn(`⚠️ No authentic dimensions found for ${cleanFilename}, using 16:9 landscape fallback`);
-      return { width: 1920, height: 1080, orientation: 'landscape' as const };
     }
+
+    // PRIORITY 3: Final fallback
+    console.warn(`⚠️ No dimensions found for ${cleanFilename}, using 16:9 landscape fallback`);
+    return { width: 1920, height: 1080, orientation: 'landscape' as const };
   };
 
   const handlePlayClick = (item: GalleryItem, e: React.MouseEvent, index: number) => {
