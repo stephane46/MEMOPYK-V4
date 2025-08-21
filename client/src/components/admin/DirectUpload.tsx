@@ -106,49 +106,60 @@ export default function DirectUpload({
       // Step 2: Upload directly to Supabase
       setUploadState(prev => ({ ...prev, status: 'uploading', progress: 30 }));
 
-      console.log(`🔗 Uploading to signed URL: ${signedUrl.substring(0, 100)}...`);
+      console.log(`🔗 Attempting direct upload to Supabase signed URL...`);
       console.log(`📊 File details: ${file.name} (${file.size} bytes, ${file.type})`);
       
-      // Add timeout and better error handling for network issues
-      const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 30000); // 30 second timeout
+      // Try direct upload to Supabase first, fallback to server-side upload if failed
+      let uploadSuccess = false;
       
       try {
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 10000); // 10 second timeout for direct upload
+        
         const uploadResponse = await fetch(signedUrl, {
           method: 'PUT',
           body: file,
           headers: {
             'Content-Type': file.type
-            // Remove x-amz-acl header as it may cause CORS issues with Supabase
           },
           signal: controller.signal
         });
         
         clearTimeout(timeoutId);
-
-        console.log(`📤 Upload response status: ${uploadResponse.status} ${uploadResponse.statusText}`);
+        console.log(`📤 Direct upload response: ${uploadResponse.status} ${uploadResponse.statusText}`);
         
-        if (!uploadResponse.ok) {
-          const responseText = await uploadResponse.text().catch(() => 'Unable to read response');
-          console.error(`❌ Upload failed details:`, {
-            status: uploadResponse.status,
-            statusText: uploadResponse.statusText,
-            response: responseText,
-            url: signedUrl.substring(0, 100) + '...'
-          });
-          throw new Error(`Upload failed: ${uploadResponse.status} ${uploadResponse.statusText} - ${responseText}`);
+        if (uploadResponse.ok) {
+          console.log(`✅ Direct upload to Supabase successful: ${filename}`);
+          uploadSuccess = true;
+          setUploadState(prev => ({ ...prev, progress: 80 }));
+        } else {
+          throw new Error(`Direct upload failed: ${uploadResponse.status} ${uploadResponse.statusText}`);
         }
-
-        console.log(`✅ File uploaded directly to Supabase: ${filename}`);
+        
+      } catch (directUploadError) {
+        console.log(`⚠️ Direct upload failed, trying server-side upload fallback...`);
+        console.log(`Error: ${directUploadError.message}`);
+        
+        // Fallback: Upload through our server
+        const formData = new FormData();
+        formData.append('file', file);
+        formData.append('bucket', bucket);
+        formData.append('filename', filename);
+        
+        const serverUploadResponse = await fetch('/api/upload/server-side-upload', {
+          method: 'POST',
+          body: formData
+        });
+        
+        if (!serverUploadResponse.ok) {
+          const errorData = await serverUploadResponse.json();
+          throw new Error(errorData.error || 'Server-side upload failed');
+        }
+        
+        const serverResult = await serverUploadResponse.json();
+        console.log(`✅ Server-side upload successful: ${serverResult.filename}`);
+        uploadSuccess = true;
         setUploadState(prev => ({ ...prev, progress: 80 }));
-        
-      } catch (fetchError) {
-        clearTimeout(timeoutId);
-        if (fetchError.name === 'AbortError') {
-          console.error('❌ Upload timeout after 30 seconds');
-          throw new Error('Upload timeout - please try again with a smaller file or check your connection');
-        }
-        throw fetchError;
       }
 
       // Step 3: Complete the upload (for caching and database updates)

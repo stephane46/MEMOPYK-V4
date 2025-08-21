@@ -3,7 +3,7 @@ import { createServer, type Server } from "http";
 import { hybridStorage } from "./hybrid-storage";
 import { z } from "zod";
 import { videoCache } from "./video-cache";
-import fs, { createReadStream, existsSync, statSync, mkdirSync, openSync, closeSync, readdirSync, unlinkSync } from 'fs';
+import fs, { createReadStream, existsSync, statSync, mkdirSync, openSync, closeSync, readdirSync, unlinkSync, readFileSync } from 'fs';
 import path from 'path';
 import multer from 'multer';
 import { createClient } from '@supabase/supabase-js';
@@ -507,6 +507,67 @@ export async function registerRoutes(app: Express): Promise<void> {
       console.error('❌ Failed to generate signed upload URL:', error);
       console.error('❌ Error details:', (error as any).message, (error as any).stack);
       res.status(500).json({ error: "Failed to generate upload URL" });
+    }
+  });
+
+  // Server-side upload fallback for when direct upload fails
+  app.post('/api/upload/server-side-upload', uploadImages.single('file'), async (req, res) => {
+    try {
+      console.log('🔄 SERVER-SIDE UPLOAD FALLBACK initiated');
+      
+      const file = req.file;
+      const { bucket, filename } = req.body;
+
+      if (!file) {
+        return res.status(400).json({ error: 'No file provided' });
+      }
+
+      if (!bucket || !filename) {
+        return res.status(400).json({ error: 'Missing bucket or filename' });
+      }
+
+      console.log(`📁 Server uploading: ${filename} (${file.size} bytes) to bucket: ${bucket}`);
+
+      // Upload file to Supabase storage from server
+      const { data, error } = await supabase.storage
+        .from(bucket)
+        .upload(filename, readFileSync(file.path), {
+          contentType: file.mimetype,
+          upsert: true
+        });
+
+      // Clean up temporary file
+      try {
+        unlinkSync(file.path);
+      } catch (cleanupError) {
+        console.warn('Warning: Could not clean up temporary file:', cleanupError);
+      }
+
+      if (error) {
+        console.error('❌ Server-side upload failed:', error);
+        return res.status(500).json({ error: `Upload failed: ${error.message}` });
+      }
+
+      // Get public URL
+      const { data: publicUrlData } = supabase.storage
+        .from(bucket)
+        .getPublicUrl(filename);
+
+      console.log('✅ Server-side upload successful:', filename);
+
+      res.json({
+        success: true,
+        filename,
+        publicUrl: publicUrlData.publicUrl,
+        uploadPath: data.path
+      });
+
+    } catch (error) {
+      console.error('❌ Server-side upload error:', error);
+      res.status(500).json({ 
+        error: 'Server-side upload failed',
+        details: error instanceof Error ? error.message : 'Unknown error'
+      });
     }
   });
 
