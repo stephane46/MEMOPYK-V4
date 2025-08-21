@@ -129,9 +129,9 @@ export function FlipCard({ frontContent, className = "", visitors = [] }: Visito
               overflowY: 'auto',
               position: 'relative',
               boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)',
-              border: '3px solid red'
+              border: '1px solid #e5e7eb'
             }}
-            className="analytics-modal-content debug-modal"
+            className="analytics-modal-content"
             data-testid="analytics-visitor-modal"
             onClick={(e) => e.stopPropagation()}
           >

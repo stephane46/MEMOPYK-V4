@@ -272,25 +272,15 @@ div[style*="position: fixed"][style*="top: 0"][style*="left: 0"] > div[style*="b
   background: #ffffff !important;
 }
 
-/* Debug modal with bright red border to confirm it's visible */
-.debug-modal {
-  background-color: #ffffff !important;
-  background: #ffffff !important;
-  border: 3px solid red !important;
-}
-
-/* Force white background for analytics modal - override memopyk-cream */
-.analytics-modal-content.debug-modal,
+/* Analytics modal white background - transparency issue needs further investigation */
+.analytics-modal-content,
 div.analytics-modal-content,
 [data-testid="analytics-visitor-modal"] {
   background-color: rgba(255, 255, 255, 1.0) !important;
   background: rgba(255, 255, 255, 1.0) !important;
   background-image: none !important;
-  /* Remove any transparency */
   opacity: 1 !important;
-  /* Ensure fully opaque white */
   backdrop-filter: none !important;
-  color: #000000 !important;
 }
 
 [data-radix-popper-content-wrapper] > div {
