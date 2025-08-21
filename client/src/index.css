@@ -293,6 +293,11 @@ img, video, iframe, canvas, svg {
   transform-style: preserve-3d;
 }
 
+/* Only animate when actually flipping */
+.card-flip-container.flipped .card-flip-inner {
+  transition: transform 0.6s ease-in-out;
+}
+
 .card-flip-container.flipped .card-flip-inner {
   transform: rotateY(180deg);
 }
