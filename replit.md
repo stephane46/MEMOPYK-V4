@@ -3,6 +3,9 @@
 ## Overview
 MEMOPYK is a full-stack memory film platform that transforms personal photos and videos into cinematic memory films. Its core purpose is to provide a seamless and intuitive experience for creating and managing cherished video memories. Key capabilities include a bilingual (French/English) content management system, a professional video lightbox, robust gallery management with reliable video streaming, language-specific upload functionality, advanced image reframing tools, and real-time preview. The project aims to capture a niche market for personalized, high-quality video memories with significant market potential and high ambitions.
 
+## Recent Changes (August 2025)
+- **Language Detection Fix**: Successfully implemented and tested primary browser language detection to prevent overseas English users from seeing French content due to secondary language preferences. Console testing infrastructure added for immediate verification.
+
 ## User Preferences
 Preferred communication style: Simple, everyday language.
 Visual consistency priority: Extremely detail-oriented about spacing and formatting consistency between admin interface and published pages.
