@@ -118,47 +118,27 @@ export default function VideoOverlay({
   const getVideoDimensions = useCallback(() => {
     const viewportRatio = getViewportRatio();
     
-    if (orientation === 'portrait') {
-      // Portrait videos: constrained by WIDTH (90% of screen width)
-      const containerWidth = (window.innerWidth * viewportRatio) / 100;
-      const aspectRatio = width / height;
-      const containerHeight = containerWidth / aspectRatio;
-      
-      console.log(`🎬 PORTRAIT VIDEO - WIDTH CONSTRAINED:`, {
-        title,
-        orientation,
-        screenWidth: window.innerWidth,
-        screenHeight: window.innerHeight,
-        viewportRatio,
-        containerWidth,
-        containerHeight,
-        aspectRatio,
-        videoWidth: width,
-        videoHeight: height
-      });
-      
-      return { width: containerWidth, height: containerHeight };
-    } else {
-      // Landscape videos: constrained by HEIGHT (90% of screen height)
-      const containerHeight = (window.innerHeight * viewportRatio) / 100;
-      const aspectRatio = width / height;
-      const containerWidth = containerHeight * aspectRatio;
-      
-      console.log(`🎬 LANDSCAPE VIDEO - HEIGHT CONSTRAINED:`, {
-        title,
-        orientation,
-        screenWidth: window.innerWidth,
-        screenHeight: window.innerHeight,
-        viewportRatio,
-        containerWidth,
-        containerHeight,
-        aspectRatio,
-        videoWidth: width,
-        videoHeight: height
-      });
-      
-      return { width: containerWidth, height: containerHeight };
-    }
+    // CORRECTED CONSTRAINT LOGIC: All videos on mobile use WIDTH constraint (90% of screen width)
+    // This prevents landscape videos from becoming too wide for mobile screens
+    const containerWidth = (window.innerWidth * viewportRatio) / 100;
+    const aspectRatio = width / height;
+    const containerHeight = containerWidth / aspectRatio;
+    
+    console.log(`🎬 ${orientation.toUpperCase()} VIDEO - WIDTH CONSTRAINED (MOBILE-OPTIMIZED):`, {
+      title,
+      orientation,
+      screenWidth: window.innerWidth,
+      screenHeight: window.innerHeight,
+      viewportRatio,
+      containerWidth,
+      containerHeight,
+      aspectRatio,
+      videoWidth: width,
+      videoHeight: height,
+      constraint: 'width-based for mobile compatibility'
+    });
+    
+    return { width: containerWidth, height: containerHeight };
   }, [orientation, width, height, getViewportRatio, title]);
 
   const [videoDimensions, setVideoDimensions] = useState(() => getVideoDimensions());

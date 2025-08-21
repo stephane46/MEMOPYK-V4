@@ -272,6 +272,16 @@ img, video, iframe, canvas, svg {
   }
 }
 
+/* Fix grey square background behind play button arrow */
+button, .play-button, .play-icon {
+  background: transparent !important;
+}
+
+/* Ensure no background is applied to text/icon elements */
+.text-xl, .text-2xl, div[style*="color"] {
+  background: transparent !important;
+}
+
 /* Network-aware loading states */
 @media (prefers-reduced-motion: reduce) {
   * {
