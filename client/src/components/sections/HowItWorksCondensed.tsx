@@ -62,7 +62,7 @@ export function HowItWorksCondensed() {
                     className="w-full h-full object-contain bg-gray-50 group-hover:scale-105 transition-transform duration-300"
                   />
                   {/* Orange Number Circle - Top Left */}
-                  <div className="absolute -top-2 -left-2 w-10 h-10 bg-memopyk-orange rounded-full flex items-center justify-center group-hover:scale-110 transition-transform duration-300 shadow-lg">
+                  <div className="absolute top-2 left-2 w-10 h-10 bg-memopyk-orange rounded-full flex items-center justify-center group-hover:scale-110 transition-transform duration-300 shadow-lg">
                     <span className="text-lg font-bold text-white">{step.number}</span>
                   </div>
                 </div>
