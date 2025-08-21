@@ -120,15 +120,38 @@ export default function VideoOverlay({
     const isMobileDevice = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || window.innerWidth <= 768;
     
     if (orientation === 'portrait') {
+      // MOBILE FIX: For mobile devices, always use width-based calculation to enforce constraint
+      if (isMobileDevice) {
+        const containerWidth = (window.innerWidth * viewportRatio) / 100;
+        const aspectRatio = width / height;
+        const containerHeight = containerWidth / aspectRatio;
+        
+        console.log(`🚨 MOBILE PORTRAIT - WIDTH-BASED CALCULATION:`, {
+          title,
+          screenWidth: window.innerWidth,
+          screenHeight: window.innerHeight,
+          viewportRatio,
+          containerWidth,
+          containerHeight,
+          aspectRatio,
+          videoWidth: width,
+          videoHeight: height,
+          isMobileDevice: true
+        });
+        
+        return { width: containerWidth, height: containerHeight };
+      }
+      
+      // Desktop: Use height-based calculation
       const containerHeight = (window.innerHeight * viewportRatio) / 100;
       const aspectRatio = width / height;
       let containerWidth = containerHeight * aspectRatio;
       
-      // MOBILE FIX: Enforce maximum width constraint
+      // Desktop fallback width constraint
       const maxWidth = (window.innerWidth * viewportRatio) / 100;
       if (containerWidth > maxWidth) {
         containerWidth = maxWidth;
-        console.log(`🚨 MOBILE WIDTH CONSTRAINT APPLIED:`, {
+        console.log(`🚨 DESKTOP WIDTH CONSTRAINT APPLIED:`, {
           originalWidth: containerHeight * aspectRatio,
           constrainedWidth: containerWidth,
           maxAllowed: maxWidth,
@@ -136,8 +159,8 @@ export default function VideoOverlay({
         });
       }
       
-      // DEBUG: Log dimensions for POM video troubleshooting
-      console.log(`🎬 PORTRAIT VIDEO DIMENSIONS DEBUG:`, {
+      // DEBUG: Log dimensions for desktop portrait videos
+      console.log(`🎬 DESKTOP PORTRAIT VIDEO DIMENSIONS:`, {
         title,
         videoWidth: width,
         videoHeight: height,
@@ -147,13 +170,14 @@ export default function VideoOverlay({
         viewportRatio,
         containerHeight,
         containerWidth,
-        isMobileDevice,
+        isMobileDevice: false,
         maxWidthAllowed: maxWidth,
         willFitInScreen: containerWidth <= window.innerWidth
       });
       
       return { width: containerWidth, height: containerHeight };
     } else {
+      // Landscape videos: Use width-based calculation for all devices
       const containerWidth = (window.innerWidth * viewportRatio) / 100;
       const aspectRatio = width / height;
       const containerHeight = containerWidth / aspectRatio;
