@@ -521,6 +521,7 @@ export default function VideoOverlay({
               style={{
                 width: `${videoDimensions.width}px`,
                 height: `${videoDimensions.height}px`,
+                objectFit: 'contain'
               }}
             />
             
