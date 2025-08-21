@@ -55,23 +55,34 @@ export function Layout({ children }: LayoutProps) {
 
   // Handle anchor scrolling
   const handleAnchorClick = (sectionId: string) => {
+    console.log('🔗 ANCHOR CLICK DEBUG:', { sectionId, location });
+    
     // First navigate to home page if not already there
     const cleanLocation = location.replace(/^\/(fr-FR|en-US)/, '') || '/';
+    console.log('🔗 LOCATION CHECK:', { cleanLocation, isHome: cleanLocation === '/' });
+    
     if (cleanLocation !== '/') {
       // Store the section ID in sessionStorage so we can scroll after navigation
+      console.log('🔗 NOT ON HOME: Storing section and navigating', sectionId);
       sessionStorage.setItem('scrollToSection', sectionId);
       window.location.href = getLocalizedPath('/');
     } else {
+      console.log('🔗 ON HOME: Attempting to scroll to section', sectionId);
       const element = document.getElementById(sectionId);
+      console.log('🔗 ELEMENT FOUND:', { element, exists: !!element });
+      
       if (element) {
         const headerHeight = 64; // Fixed header height (h-16 = 4rem = 64px)
         const elementPosition = element.offsetTop;
         const offsetPosition = elementPosition - headerHeight;
-
+        
+        console.log('🔗 SCROLLING TO:', { elementPosition, offsetPosition });
         window.scrollTo({
           top: offsetPosition,
           behavior: 'smooth'
         });
+      } else {
+        console.error('🔗 ERROR: Element with ID not found:', sectionId);
       }
     }
   };
