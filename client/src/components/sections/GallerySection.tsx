@@ -701,7 +701,7 @@ export default function GallerySection() {
                           <div className="absolute inset-0 flex items-center justify-center pointer-events-none" style={{zIndex: 999999}}>
                             {/* Dynamic Play Button Based on Video Availability - Reduced diameter by 1/3 */}
                             <div 
-                              className={`w-14 h-14 sm:w-16 sm:h-16 rounded-full flex items-center justify-center transition-all duration-300 hover:scale-110 cursor-pointer pointer-events-auto ${itemHasVideo ? 'animate-pulse-orange' : ''}`}
+                              className="w-14 h-14 sm:w-16 sm:h-16 rounded-full flex items-center justify-center transition-all duration-300 hover:scale-110 cursor-pointer pointer-events-auto"
                               onClick={(e) => {
                                 e.stopPropagation();
                                 handlePlayClick(item, e, index);
@@ -711,7 +711,9 @@ export default function GallerySection() {
                                 background: 'linear-gradient(135deg, rgba(214, 124, 74, 0.95) 0%, rgba(214, 124, 74, 0.85) 50%, rgba(184, 90, 47, 0.95) 100%)',
                                 boxShadow: '0 4px 12px rgba(214, 124, 74, 0.4), inset 0 1px 2px rgba(255, 255, 255, 0.3)',
                                 border: '1px solid rgba(255, 255, 255, 0.3)',
-                                backdropFilter: 'blur(2px)'
+                                backdropFilter: 'blur(2px)',
+                                animation: 'pulse-orange 2s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                                WebkitAnimation: 'pulse-orange 2s cubic-bezier(0.4, 0, 0.6, 1) infinite'
                               } : {
                                 // White for items WITHOUT video
                                 background: 'linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.85) 100%)',
