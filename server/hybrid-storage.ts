@@ -567,6 +567,7 @@ export class HybridStorage implements HybridStorageInterface {
         console.log(`🌍 This data should be identical in both development and production!`);
         console.log('🔍 First item is_active value:', dbItems[0]?.isActive);
         console.log('🔍 First item cropSettings value:', JSON.stringify(dbItems[0]?.cropSettings));
+        
         return dbItems.map(item => ({
           // Convert database fields to expected format
           id: item.id,
@@ -592,9 +593,9 @@ export class HybridStorage implements HybridStorageInterface {
           video_url_fr: item.videoUrlFr,
           video_filename: item.videoFilename,
           use_same_video: item.useSameVideo,
-          video_width: item.videoWidth,
-          video_height: item.videoHeight,
-          video_orientation: item.videoOrientation,
+          videoWidth: item.videoWidth,
+          videoHeight: item.videoHeight,
+          videoOrientation: item.videoOrientation,
           image_url_en: item.imageUrlEn,
           image_url_fr: item.imageUrlFr,
           static_image_url: item.staticImageUrl,
