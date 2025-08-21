@@ -114,85 +114,47 @@ export default function VideoOverlay({
     return 90;
   }, [orientation]);
 
-  // Calculate video container dimensions based on orientation
+  // Calculate video container dimensions based on orientation - using established 90% constraint system
   const getVideoDimensions = useCallback(() => {
     const viewportRatio = getViewportRatio();
-    const isMobileDevice = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || window.innerWidth <= 768;
     
     if (orientation === 'portrait') {
-      // MOBILE FIX: For mobile devices, always use width-based calculation to enforce constraint
-      if (isMobileDevice) {
-        const containerWidth = (window.innerWidth * viewportRatio) / 100;
-        const aspectRatio = width / height;
-        const containerHeight = containerWidth / aspectRatio;
-        
-        console.log(`🚨 MOBILE PORTRAIT - WIDTH-BASED CALCULATION:`, {
-          title,
-          screenWidth: window.innerWidth,
-          screenHeight: window.innerHeight,
-          viewportRatio,
-          containerWidth,
-          containerHeight,
-          aspectRatio,
-          videoWidth: width,
-          videoHeight: height,
-          isMobileDevice: true
-        });
-        
-        return { width: containerWidth, height: containerHeight };
-      }
-      
-      // Desktop: Use height-based calculation
-      const containerHeight = (window.innerHeight * viewportRatio) / 100;
-      const aspectRatio = width / height;
-      let containerWidth = containerHeight * aspectRatio;
-      
-      // Desktop fallback width constraint
-      const maxWidth = (window.innerWidth * viewportRatio) / 100;
-      if (containerWidth > maxWidth) {
-        containerWidth = maxWidth;
-        console.log(`🚨 DESKTOP WIDTH CONSTRAINT APPLIED:`, {
-          originalWidth: containerHeight * aspectRatio,
-          constrainedWidth: containerWidth,
-          maxAllowed: maxWidth,
-          screenWidth: window.innerWidth
-        });
-      }
-      
-      // DEBUG: Log dimensions for desktop portrait videos
-      console.log(`🎬 DESKTOP PORTRAIT VIDEO DIMENSIONS:`, {
-        title,
-        videoWidth: width,
-        videoHeight: height,
-        aspectRatio,
-        screenHeight: window.innerHeight,
-        screenWidth: window.innerWidth,
-        viewportRatio,
-        containerHeight,
-        containerWidth,
-        isMobileDevice: false,
-        maxWidthAllowed: maxWidth,
-        willFitInScreen: containerWidth <= window.innerWidth
-      });
-      
-      return { width: containerWidth, height: containerHeight };
-    } else {
-      // Landscape videos: Use width-based calculation for all devices
+      // Portrait videos: constrained by WIDTH (90% of screen width)
       const containerWidth = (window.innerWidth * viewportRatio) / 100;
       const aspectRatio = width / height;
       const containerHeight = containerWidth / aspectRatio;
       
-      // DEBUG: Log dimensions for landscape videos
-      console.log(`🎬 LANDSCAPE VIDEO DIMENSIONS DEBUG:`, {
+      console.log(`🎬 PORTRAIT VIDEO - WIDTH CONSTRAINED:`, {
         title,
-        videoWidth: width,
-        videoHeight: height,
-        aspectRatio,
+        orientation,
         screenWidth: window.innerWidth,
+        screenHeight: window.innerHeight,
         viewportRatio,
         containerWidth,
         containerHeight,
-        isMobileDevice
+        aspectRatio,
+        videoWidth: width,
+        videoHeight: height
+      });
+      
+      return { width: containerWidth, height: containerHeight };
+    } else {
+      // Landscape videos: constrained by HEIGHT (90% of screen height)
+      const containerHeight = (window.innerHeight * viewportRatio) / 100;
+      const aspectRatio = width / height;
+      const containerWidth = containerHeight * aspectRatio;
+      
+      console.log(`🎬 LANDSCAPE VIDEO - HEIGHT CONSTRAINED:`, {
+        title,
+        orientation,
+        screenWidth: window.innerWidth,
+        screenHeight: window.innerHeight,
+        viewportRatio,
+        containerWidth,
+        containerHeight,
+        aspectRatio,
+        videoWidth: width,
+        videoHeight: height
       });
       
       return { width: containerWidth, height: containerHeight };
