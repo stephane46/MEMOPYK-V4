@@ -1,5 +1,5 @@
 import { useLanguage } from '../../contexts/LanguageContext';
-import { Upload, Edit, Heart, X } from 'lucide-react';
+import { Upload, Edit, Heart, X, ArrowRight } from 'lucide-react';
 import { useState } from 'react';
 
 export function HowItWorksCondensed() {
