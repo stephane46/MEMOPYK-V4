@@ -7,7 +7,7 @@ MEMOPYK is a full-stack memory film platform that transforms personal photos and
 Preferred communication style: Simple, everyday language.
 Visual consistency priority: Extremely detail-oriented about spacing and formatting consistency between admin interface and published pages.
 Analytics interface: Expects all three filter buttons (7d, 30d, 90d) to be visible with proper orange highlighting for active states.
-Language detection priority: Primary browser language takes precedence over secondary language preferences to prevent English users overseas from seeing French content.
+Language detection priority: Fixed primary browser language detection with console testing capability. Enhanced cross-device compatibility prevents English users overseas from seeing French content by checking ONLY the first browser language preference.
 
 ### Critical Code Investigation Protocol
 **NEVER remove or modify existing code without understanding its purpose first.**

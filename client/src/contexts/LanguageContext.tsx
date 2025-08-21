@@ -63,6 +63,7 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
         return result;
       };
       console.log('🧪 Testing function created: testLanguageDetection() is now available in console');
+      console.log('🧪 Quick test: testLanguageDetection(["en-US", "fr-CA"]) - should return en-US');
     }
   }, []);
 
