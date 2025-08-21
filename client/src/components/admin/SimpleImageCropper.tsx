@@ -159,7 +159,7 @@ export default function SimpleImageCropper({
         console.log("- Percentage saved:", naturalCropPercentage.toFixed(3) + "%");
 
         onSave(blob, settings);
-      }, "image/jpeg", 1.0);
+      }, "image/jpeg", 0.75);
 
     } catch (error: any) {
       console.error("❌ Error generating image:", error);

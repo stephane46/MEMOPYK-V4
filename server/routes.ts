@@ -847,7 +847,7 @@ export async function registerRoutes(app: Express): Promise<void> {
             position: 'center'
           })
           .flatten({ background: { r: 255, g: 255, b: 255 } })  // White background for transparency
-          .jpeg({ quality: 100, progressive: true })  // 100% quality as requested
+          .jpeg({ quality: 75, progressive: true, mozjpeg: true })  // Optimized quality for faster loading
           .toBuffer();
         
         // Upload auto-generated thumbnail
