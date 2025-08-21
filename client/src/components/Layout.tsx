@@ -79,8 +79,8 @@ export function Layout({ children }: LayoutProps) {
   const navigation = [
     { 
       name: t('nav.how-it-works'), 
-      type: 'link', 
-      href: language === 'fr-FR' ? '/fr-FR/comment-ca-marche' : '/en-US/how-it-works'
+      type: 'anchor', 
+      sectionId: 'how-it-works' 
     },
     { 
       name: t('nav.gallery'), 
@@ -352,12 +352,12 @@ export function Layout({ children }: LayoutProps) {
               </h4>
               <ul className="space-y-2 text-gray-400">
                 <li>
-                  <Link 
-                    href={language === 'fr-FR' ? '/fr-FR/comment-ca-marche' : '/en-US/how-it-works'}
+                  <button 
+                    onClick={() => handleAnchorClick('how-it-works')}
                     className="hover:text-white transition-colors"
                   >
                     {t('nav.how-it-works')}
-                  </Link>
+                  </button>
                 </li>
                 <li>
                   <button 

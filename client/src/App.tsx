@@ -5,7 +5,7 @@ import { LanguageProvider } from './contexts/LanguageContext';
 import { AuthProvider } from './contexts/AuthContext';
 import { Layout } from './components/Layout';
 import { HomePage } from './pages/HomePage';
-import { HowItWorksPage } from './pages/HowItWorksPage';
+
 import { AdminRoute } from './components/AdminRoute';
 import { LanguageSelectionPage } from './pages/LanguageSelectionPage';
 import { LegalDocumentPage } from './pages/LegalDocumentPage';
@@ -52,8 +52,7 @@ function AnalyticsRouter() {
         {/* Localized Routes */}
         <Route path="/fr-FR" component={HomePage} />
         <Route path="/en-US" component={HomePage} />
-        <Route path="/fr-FR/comment-ca-marche" component={HowItWorksPage} />
-        <Route path="/en-US/how-it-works" component={HowItWorksPage} />
+
         <Route path="/fr-FR/admin*" component={AdminRoute} />
         <Route path="/en-US/admin*" component={AdminRoute} />
         <Route path="/fr-FR/gallery" component={GallerySectionWrapper} />

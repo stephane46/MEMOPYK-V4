@@ -1,7 +1,5 @@
 import { useLanguage } from '../../contexts/LanguageContext';
-import { Upload, Edit, Heart, ArrowRight, X } from 'lucide-react';
-import { Link } from 'wouter';
-import { Button } from '@/components/ui/button';
+import { Upload, Edit, Heart, X } from 'lucide-react';
 import { useState } from 'react';
 
 export function HowItWorksCondensed() {
@@ -156,32 +154,7 @@ export function HowItWorksCondensed() {
           })}
         </div>
 
-        {/* Call to Action - "Want to know more" */}
-        <div className="text-center">
-          <div className="bg-gradient-to-r from-memopyk-dark-blue to-memopyk-navy p-8 rounded-2xl shadow-xl">
-            <h3 className="text-2xl font-semibold text-white mb-4">
-              {language === 'fr-FR' 
-                ? 'Vous voulez en savoir plus sur notre processus ?'
-                : 'Want to know more about how it works?'
-              }
-            </h3>
-            <p className="text-memopyk-cream/80 mb-6 text-lg">
-              {language === 'fr-FR'
-                ? 'Découvrez tous les détails de notre méthode unique pour créer votre film de souvenirs'
-                : 'Discover all the details of our unique method to create your souvenir film'
-              }
-            </p>
-            <Link href={howItWorksUrl}>
-              <Button 
-                size="lg"
-                className="bg-memopyk-orange hover:bg-memopyk-orange/90 text-white px-8 py-4 text-lg transition-all duration-300 shadow-lg hover:scale-105"
-              >
-                {language === 'fr-FR' ? 'En savoir plus' : 'Learn More'}
-                <ArrowRight className="w-5 h-5 ml-2" />
-              </Button>
-            </Link>
-          </div>
-        </div>
+
       </div>
     </section>
   );
