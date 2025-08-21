@@ -598,12 +598,12 @@ export default function GallerySection() {
 
 
 
-        {/* Gallery Grid - Conditional Rendering for Mobile Enhancement */}
+        {/* Gallery Grid - Original Design Always Displayed */}
         {(() => {
-          console.log(`📱 MOBILE DETECTION: isMobile=${isMobile}, showing ${isMobile ? 'MOBILE' : 'DESKTOP'} gallery`);
+          console.log(`📱 MOBILE DETECTION: isMobile=${isMobile}, showing DESKTOP gallery (MobileEnhancedGallery disabled)`);
           return null;
         })()}
-        {isMobile ? (
+        {false ? (
           <MobileEnhancedGallery
             items={galleryItems}
             language={language}
