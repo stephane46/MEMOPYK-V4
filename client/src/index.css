@@ -72,6 +72,19 @@ img, video, iframe, canvas, svg {
   font-family: 'Poppins', sans-serif;
 }
 
+/* Custom button for How It Works page - force dark blue background */
+.button-dark-blue-forced {
+  background-color: #2A4759 !important;
+  color: #ffffff !important;
+  border-color: #2A4759 !important;
+}
+
+.button-dark-blue-forced:hover {
+  background-color: #ffffff !important;
+  color: #2A4759 !important;
+  border-color: #2A4759 !important;
+}
+
 /* How It Works Cards - Scrollable text areas with subtle styling */
 .how-it-works-text {
   line-height: 1.2 !important;

@@ -40,22 +40,7 @@ export function HowItWorksPage() {
           <Link href={homeUrl}>
             <Button 
               size="lg"
-              className="font-bold px-8 py-4 text-lg transition-all duration-300 shadow-lg border-2 transform hover:scale-105 hover:shadow-xl"
-              style={{
-                backgroundColor: '#2A4759',
-                color: '#ffffff',
-                borderColor: '#2A4759'
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.backgroundColor = '#ffffff';
-                e.currentTarget.style.color = '#2A4759';
-                e.currentTarget.style.borderColor = '#2A4759';
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.backgroundColor = '#2A4759';
-                e.currentTarget.style.color = '#ffffff';
-                e.currentTarget.style.borderColor = '#2A4759';
-              }}
+              className="button-dark-blue-forced font-bold px-8 py-4 text-lg transition-all duration-300 shadow-lg border-2 transform hover:scale-105 hover:shadow-xl"
             >
               <Home className="w-5 h-5 mr-2" />
               {language === 'fr-FR' ? 'Retourner à l\'accueil' : 'Return to Home'}

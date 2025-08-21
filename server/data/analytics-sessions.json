@@ -8350,6 +8350,57 @@
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-21T16:54:33.095Z",
-    "updated_at": "2025-08-21T16:54:33.137Z"
+    "updated_at": "2025-08-21T16:55:04.302Z",
+    "duration": 791069
+  },
+  {
+    "id": "5378038b-0f18-4683-af73-d2b468459a02",
+    "session_id": "session_1755795306585_s34ct02ji",
+    "user_id": null,
+    "ip_address": "109.17.150.48",
+    "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36 Edg/139.0.0.0",
+    "referrer": "https://365df2cf-1884-444c-a9e8-235602456363-00-37q39xpqlgvdy.janeway.replit.dev/fr-FR/comment-ca-marche",
+    "language": "fr-FR",
+    "country": "Unknown",
+    "city": "Unknown",
+    "page_views": 0,
+    "is_bot": false,
+    "is_test_data": false,
+    "created_at": "2025-08-21T16:55:06.618Z",
+    "updated_at": "2025-08-21T16:55:42.252Z",
+    "duration": 791107
+  },
+  {
+    "id": "ae2a90f3-cf23-44a2-b77c-e8febb0561c7",
+    "session_id": "session_1755795353952_nh6ia9o1p",
+    "user_id": null,
+    "ip_address": "109.17.150.48",
+    "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36 Edg/139.0.0.0",
+    "referrer": "https://365df2cf-1884-444c-a9e8-235602456363-00-37q39xpqlgvdy.janeway.replit.dev/fr-FR/comment-ca-marche",
+    "language": "fr-FR",
+    "country": "Unknown",
+    "city": "Unknown",
+    "page_views": 0,
+    "is_bot": false,
+    "is_test_data": false,
+    "created_at": "2025-08-21T16:55:54.229Z",
+    "updated_at": "2025-08-21T16:55:54.270Z"
+  },
+  {
+    "id": "0db6fdd6-247b-4027-b220-64da14964d71",
+    "session_id": "session_1755795353963_mpq1qnpm9",
+    "user_id": null,
+    "ip_address": "109.17.150.48",
+    "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36 Edg/139.0.0.0",
+    "referrer": "https://365df2cf-1884-444c-a9e8-235602456363-00-37q39xpqlgvdy.janeway.replit.dev/__replco/workspace_iframe.html?initialPath=%2Ffr-FR%2Fcomment-ca-marche&id=%3Arcrq%3A",
+    "language": "fr-FR",
+    "country": "Unknown",
+    "city": "Unknown",
+    "page_views": 0,
+    "is_bot": false,
+    "is_test_data": false,
+    "created_at": "2025-08-21T16:55:54.294Z",
+    "updated_at": "2025-08-21T16:56:07.367Z",
+    "duration": 374538
   }
 ]
