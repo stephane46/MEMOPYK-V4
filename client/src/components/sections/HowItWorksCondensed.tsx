@@ -45,7 +45,7 @@ export function HowItWorksCondensed() {
   const howItWorksUrl = language === 'fr-FR' ? '/fr-FR/comment-ca-marche' : '/en-US/how-it-works';
 
   return (
-    <section className="py-20 bg-gradient-to-b from-memopyk-cream to-white">
+    <section id="how-it-works" className="py-20 bg-gradient-to-b from-memopyk-cream to-white">
       <div className="max-w-6xl mx-auto px-6">
         {/* Section Header */}
         <div className="text-center mb-16">
