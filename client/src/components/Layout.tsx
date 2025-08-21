@@ -79,8 +79,8 @@ export function Layout({ children }: LayoutProps) {
   const navigation = [
     { 
       name: t('nav.how-it-works'), 
-      type: 'anchor', 
-      sectionId: 'how-it-works' 
+      type: 'link', 
+      href: language === 'fr-FR' ? '/fr-FR/comment-ca-marche' : '/en-US/how-it-works'
     },
     { 
       name: t('nav.gallery'), 
@@ -132,6 +132,16 @@ export function Layout({ children }: LayoutProps) {
                     >
                       {item.name}
                     </button>
+                  );
+                } else if (item.type === 'link' && 'href' in item) {
+                  return (
+                    <Link
+                      key={`nav-${index}`}
+                      href={item.href as string}
+                      className="text-sm font-medium transition-colors text-gray-600 hover:text-memopyk-navy"
+                    >
+                      {item.name}
+                    </Link>
                   );
                 } else if (item.type === 'external' && 'href' in item) {
                   return (
@@ -225,6 +235,17 @@ export function Layout({ children }: LayoutProps) {
                     >
                       {item.name}
                     </button>
+                  );
+                } else if (item.type === 'link' && 'href' in item) {
+                  return (
+                    <Link
+                      key={`mobile-nav-${index}`}
+                      href={item.href as string}
+                      onClick={() => setIsMobileMenuOpen(false)}
+                      className="block px-4 py-3 rounded-md text-base font-medium transition-all duration-200 min-h-[44px] flex items-center text-gray-600 hover:text-memopyk-navy hover:bg-gray-50 hover:border-l-4 hover:border-memopyk-blue-gray"
+                    >
+                      {item.name}
+                    </Link>
                   );
                 } else if (item.type === 'external' && 'href' in item) {
                   return (
@@ -323,12 +344,12 @@ export function Layout({ children }: LayoutProps) {
               </h4>
               <ul className="space-y-2 text-gray-400">
                 <li>
-                  <button 
-                    onClick={() => handleAnchorClick('how-it-works')}
+                  <Link 
+                    href={language === 'fr-FR' ? '/fr-FR/comment-ca-marche' : '/en-US/how-it-works'}
                     className="hover:text-white transition-colors"
                   >
                     {t('nav.how-it-works')}
-                  </button>
+                  </Link>
                 </li>
                 <li>
                   <button 

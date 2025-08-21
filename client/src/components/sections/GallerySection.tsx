@@ -2,7 +2,7 @@ console.log("📦 GallerySection loaded");
 
 import React from "react";
 import { useQuery } from "@tanstack/react-query";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -60,6 +60,7 @@ export default function GallerySection() {
   
   console.log("📦 GallerySection render", { language });
   const [flippedCards, setFlippedCards] = useState<Set<string | number>>(new Set());
+  const galleryRef = useRef<HTMLDivElement>(null);
   const [lightboxVideo, setLightboxVideo] = useState<GalleryItem | null>(null);
   const [isMobile, setIsMobile] = useState(false);
   const [preloadedVideos, setPreloadedVideos] = useState<Set<string>>(new Set());
@@ -219,6 +220,23 @@ export default function GallerySection() {
       console.log(`🎬 Gallery videos available: ${safeGalleryItems.length}`, galleryVideoFilenames);
     }
   }, [galleryItems, language]);
+
+  // Add click-outside detection for flipped cards
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (galleryRef.current && !galleryRef.current.contains(event.target as Node)) {
+        if (flippedCards.size > 0) {
+          console.log('🔄 Clicking outside gallery - closing flipped cards');
+          setFlippedCards(new Set());
+        }
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [flippedCards]);
 
 
 
@@ -513,7 +531,7 @@ export default function GallerySection() {
 
   return (
     <section id="gallery" className="pt-4 pb-8 bg-gradient-to-br from-memopyk-cream/30 to-white">
-      <div className="container mx-auto px-4">
+      <div className="container mx-auto px-4" ref={galleryRef}>
         {/* Header - Mobile Optimized */}
         <div className="text-center mb-8 sm:mb-12 lg:mb-16">
           <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-poppins font-bold text-memopyk-navy mb-6 px-2">

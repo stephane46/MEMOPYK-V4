@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import { SimpleHeroVideoSection } from '../components/sections/SimpleHeroVideoSection';
 import { KeyVisualSection } from '../components/sections/KeyVisualSection';
-import { HowItWorksSection } from '../components/sections/HowItWorksSection';
+
 import { WhyMemopykSection } from '../components/sections/WhyMemopykSection';
 import GallerySection from '../components/sections/GallerySection';
 import FAQSection from '../components/sections/FAQSection';
@@ -47,8 +47,7 @@ export function HomePage() {
       {/* Key Visual Problem/Solution Section */}
       <KeyVisualSection />
 
-      {/* How It Works 3-Step Process */}
-      <HowItWorksSection />
+
 
       {/* Gallery Section - Moved above Why MEMOPYK */}
       <GallerySection />
