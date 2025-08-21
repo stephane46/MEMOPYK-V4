@@ -722,8 +722,8 @@ export default function GallerySection() {
                             >
                               {/* Play Triangle SVG - White for Orange Button, Dark for White Button */}
                               <svg 
-                                width="24" 
-                                height="24" 
+                                width="32" 
+                                height="32" 
                                 viewBox="0 0 24 24" 
                                 fill={itemHasVideo ? 'white' : '#2A4759'}
                                 className="ml-0.5"
