@@ -159,7 +159,7 @@ export default function SimpleImageCropper({
         console.log("- Percentage saved:", naturalCropPercentage.toFixed(3) + "%");
 
         onSave(blob, settings);
-      }, "image/jpeg", 0.75);
+      }, "image/jpeg", 0.85); // Increased quality to target 30-50KB like good examples
 
     } catch (error: any) {
       console.error("❌ Error generating image:", error);
