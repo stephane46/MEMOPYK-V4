@@ -388,7 +388,7 @@ img, video, iframe, canvas, svg {
   padding: 2rem;
 }
 
-/* Orange pulsing animation for video play buttons - slow 2-second cycle like desktop */
+/* Orange pulsing animation for video play buttons - slow 2-second cycle like desktop with -webkit prefix for iOS */
 @keyframes pulse-orange {
   0%, 100% {
     opacity: 1;
@@ -400,7 +400,21 @@ img, video, iframe, canvas, svg {
   }
 }
 
+@-webkit-keyframes pulse-orange {
+  0%, 100% {
+    opacity: 1;
+    -webkit-transform: scale(1);
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.8;
+    -webkit-transform: scale(1.05);
+    transform: scale(1.05);
+  }
+}
+
 .animate-pulse-orange {
+  -webkit-animation: pulse-orange 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
   animation: pulse-orange 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
 }
 
