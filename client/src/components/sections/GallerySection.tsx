@@ -611,7 +611,7 @@ export default function GallerySection() {
               >
                 <div className="card-flip-inner">
                   {/* FRONT SIDE - Normal Gallery Card */}
-                  <div className="card-front bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 shadow-lg hover:shadow-2xl transition-all duration-300 rounded-2xl overflow-hidden">
+                  <div className="card-front bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 shadow-lg hover:shadow-2xl rounded-2xl overflow-hidden">
                     {/* Image/Video with Overlays - Always 3:2 aspect ratio */}
                     <div className="aspect-[3/2] bg-gray-100 dark:bg-gray-700 relative overflow-hidden rounded-t-2xl">
                       {thumbnailUrl ? (
@@ -621,7 +621,7 @@ export default function GallerySection() {
                           <img
                             src={thumbnailUrl}
                             alt={getItemTitle(item)}
-                            className="w-full h-full object-cover transition-opacity duration-300"
+                            className="w-full h-full object-cover"
                             onLoad={() => console.log(`🖼️ Image loaded: ${thumbnailUrl}`)}
                             onError={() => console.log(`❌ Image failed to load: ${thumbnailUrl}`)}
                             loading="eager"
