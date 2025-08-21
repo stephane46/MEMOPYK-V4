@@ -151,7 +151,7 @@ export function MobileEnhancedGallery({
                         key={`${item.id}-${getImageUrl()}`} // Force remount when URL changes
                         src={getImageUrl()}
                         alt={title}
-                        className="w-full h-full object-contain"
+                        className="w-full h-full object-cover"
                         placeholderClassName="bg-gradient-to-r from-gray-200 via-gray-300 to-gray-200"
                         fallbackSrc="/placeholder-gallery.jpg"
                         onError={() => console.warn(`Failed to load image for ${title}`)}
@@ -190,18 +190,25 @@ export function MobileEnhancedGallery({
                       {/* Mobile-Optimized Overlays */}
                       <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
                       
-                      {/* Video Play Button - Clean white arrow without background */}
+                      {/* Video Play Button - Professional style with proper background */}
                       {hasVideo && (
                         <div
                           onClick={() => onVideoClick(item)}
                           className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 cursor-pointer transition-all duration-200 hover:scale-110"
                           aria-label={`Play video: ${title}`}
                         >
-                          <div className="text-white text-3xl sm:text-4xl ml-1" style={{
-                            filter: 'drop-shadow(0 2px 4px rgba(0, 0, 0, 0.5))',
-                            textShadow: '0 2px 4px rgba(0, 0, 0, 0.5)'
-                          }}>
-                            ▶
+                          <div 
+                            className="w-12 h-12 sm:w-14 sm:h-14 rounded-full flex items-center justify-center transition-all duration-300 animate-pulse-slow"
+                            style={{
+                              background: 'linear-gradient(135deg, rgba(214, 124, 74, 0.95) 0%, rgba(214, 124, 74, 0.85) 50%, rgba(184, 90, 47, 0.95) 100%)',
+                              boxShadow: '0 4px 12px rgba(214, 124, 74, 0.4), inset 0 1px 2px rgba(255, 255, 255, 0.3)',
+                              border: '1px solid rgba(255, 255, 255, 0.3)',
+                              backdropFilter: 'blur(2px)'
+                            }}
+                          >
+                            <div className="text-white text-lg sm:text-xl ml-0.5">
+                              ▶
+                            </div>
                           </div>
                         </div>
                       )}
