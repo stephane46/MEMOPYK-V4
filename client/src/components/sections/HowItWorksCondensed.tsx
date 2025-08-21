@@ -87,14 +87,14 @@ export function HowItWorksCondensed() {
                     </div>
 
                     {/* Desktop Hover Overlay */}
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-memopyk-dark-blue/90 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 hidden md:flex flex-col justify-end p-6">
-                      <div className="text-white drop-shadow-lg">
-                        <div className="text-sm leading-relaxed mb-3 font-medium">
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/80 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 hidden md:flex flex-col justify-end p-6">
+                      <div className="text-white drop-shadow-2xl">
+                        <div className="text-sm leading-relaxed mb-3 font-semibold text-white">
                           {(language === 'fr-FR' ? step.descriptionFr : step.descriptionEn).split('\n').map((paragraph, i) => (
-                            <p key={i} className="mb-2 last:mb-0">{paragraph}</p>
+                            <p key={i} className="mb-2 last:mb-0 drop-shadow-lg">{paragraph}</p>
                           ))}
                         </div>
-                        <div className="text-xs font-medium border-t border-white/30 pt-3">
+                        <div className="text-xs font-semibold border-t border-white/50 pt-3 text-white drop-shadow-lg">
                           {language === 'fr-FR' ? step.subDescriptionFr : step.subDescriptionEn}
                         </div>
                       </div>
