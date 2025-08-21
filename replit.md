@@ -5,6 +5,7 @@ MEMOPYK is a full-stack memory film platform that transforms personal photos and
 
 ## Recent Changes (August 2025)
 - **Language Detection Fix**: Successfully implemented, tested, and deployed primary browser language detection to prevent overseas English users from seeing French content due to secondary language preferences. Console testing infrastructure added for immediate verification. **Production verified working correctly** - system now properly prioritizes primary browser language over secondary preferences.
+- **Enhanced Testing System (v1.0.1755753952)**: Deployed comprehensive language detection testing system with improved console function `testLanguageDetection()`. Features direct window assignment for better browser compatibility, detailed debug logging, enhanced error handling, and simple test commands. English detection confirmed working in production; French detection ready for verification.
 
 ## User Preferences
 Preferred communication style: Simple, everyday language.
