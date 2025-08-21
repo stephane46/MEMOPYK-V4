@@ -1,10 +1,10 @@
 import { useLanguage } from '../../contexts/LanguageContext';
-import { Upload, Edit, Heart, X, ArrowRight } from 'lucide-react';
+import { Upload, Edit, Heart, Info } from 'lucide-react';
 import { useState } from 'react';
 
 export function HowItWorksCondensed() {
   const { language } = useLanguage();
-  const [expandedStep, setExpandedStep] = useState<number | null>(null);
+  const [flippedCards, setFlippedCards] = useState<Set<number>>(new Set());
   
   const steps = [
     {
@@ -42,8 +42,6 @@ export function HowItWorksCondensed() {
     }
   ];
 
-  const howItWorksUrl = language === 'fr-FR' ? '/fr-FR/comment-ca-marche' : '/en-US/how-it-works';
-
   return (
     <section id="how-it-works" className="py-20 bg-gradient-to-b from-memopyk-cream to-white">
       <div className="max-w-6xl mx-auto px-6">
@@ -60,101 +58,122 @@ export function HowItWorksCondensed() {
           </p>
         </div>
 
-        {/* Steps Grid */}
+        {/* Steps Grid with Flip Cards */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
-          {steps.map((step, index) => {
+          {steps.map((step) => {
             const Icon = step.icon;
-            const isExpanded = expandedStep === step.number;
+            const isFlipped = flippedCards.has(step.number);
+            
             return (
               <div key={step.number} className="text-center group">
-                {/* Interactive Step Container */}
-                <div 
-                  className="relative cursor-pointer"
-                  onClick={() => setExpandedStep(isExpanded ? null : step.number)}
-                >
-                  {/* Step Image with Number Overlay */}
-                  <div className="relative mb-6 overflow-hidden rounded-xl shadow-lg group-hover:shadow-xl transition-all duration-500 aspect-square">
-                    <img 
-                      src={step.image} 
-                      alt={language === 'fr-FR' ? step.titleFr : step.titleEn}
-                      className="w-full h-full object-contain bg-gray-50 group-hover:scale-105 transition-transform duration-500"
-                    />
-                    {/* Orange Number Circle - Top Left */}
-                    <div className="absolute top-2 left-2 w-8 h-8 bg-memopyk-orange rounded-full flex items-center justify-center group-hover:scale-110 transition-transform duration-300 shadow-lg">
-                      <span className="text-sm font-bold text-white">{step.number}</span>
-                    </div>
+                {/* Flip Card Container */}
+                <div className={`card-flip-container ${isFlipped ? 'flipped' : ''} rounded-2xl`}>
+                  <div className="card-flip-inner">
+                    
+                    {/* FRONT SIDE - Step Card */}
+                    <div className="card-front bg-white border border-gray-200 shadow-lg hover:shadow-2xl rounded-2xl overflow-hidden">
+                      {/* Clickable Area */}
+                      <div 
+                        className="relative cursor-pointer"
+                        onClick={() => {
+                          setFlippedCards(prev => {
+                            const newSet = new Set(prev);
+                            if (newSet.has(step.number)) {
+                              newSet.delete(step.number);
+                            } else {
+                              newSet.add(step.number);
+                            }
+                            return newSet;
+                          });
+                        }}
+                      >
+                        {/* Step Image with Info Button */}
+                        <div className="relative mb-6 overflow-hidden rounded-xl shadow-lg group-hover:shadow-xl transition-all duration-500 aspect-square">
+                          <img 
+                            src={step.image} 
+                            alt={language === 'fr-FR' ? step.titleFr : step.titleEn}
+                            className="w-full h-full object-contain bg-gray-50 transition-transform duration-500"
+                          />
+                          
+                          {/* Orange Number Circle - Top Left */}
+                          <div className="absolute top-2 left-2 w-8 h-8 bg-memopyk-orange rounded-full flex items-center justify-center transition-transform duration-300 shadow-lg">
+                            <span className="text-sm font-bold text-white">{step.number}</span>
+                          </div>
 
-                    {/* Desktop Hover Overlay */}
-                    <div className="absolute inset-0 bg-gradient-to-t from-memopyk-navy/95 via-memopyk-navy/85 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 hidden md:flex flex-col justify-end p-6">
-                      <div className="text-white drop-shadow-2xl">
-                        <div className="text-sm leading-relaxed mb-3 font-semibold text-white">
+                          {/* Info Button - Same style as gallery */}
+                          <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+                            <div 
+                              className="w-14 h-14 sm:w-16 sm:h-16 rounded-full flex items-center justify-center transition-all duration-300 hover:scale-110 cursor-pointer pointer-events-auto"
+                              style={{
+                                background: 'linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.85) 100%)',
+                                boxShadow: '0 4px 12px rgba(0, 0, 0, 0.2), inset 0 1px 2px rgba(255, 255, 255, 0.8)',
+                                border: '1px solid rgba(0, 0, 0, 0.1)',
+                                backdropFilter: 'blur(2px)'
+                              }}
+                            >
+                              <Info className="w-6 h-6" style={{ color: '#2A4759' }} />
+                            </div>
+                          </div>
+                        </div>
+
+                        {/* Step Title with Blue Icon */}
+                        <div className="flex items-center justify-center gap-3 mb-4">
+                          <div className="w-12 h-12 bg-memopyk-navy rounded-full flex items-center justify-center transition-transform duration-300">
+                            <Icon className="w-6 h-6 text-white" />
+                          </div>
+                          <h3 className="text-2xl font-semibold text-memopyk-navy transition-colors duration-300">
+                            {language === 'fr-FR' ? step.titleFr : step.titleEn}
+                          </h3>
+                        </div>
+                      </div>
+                    </div>
+                      
+                    {/* BACK SIDE - Detailed Information */}
+                    <div className="card-back">
+                      <div 
+                        className="h-full flex flex-col justify-center items-center text-center p-6 cursor-pointer"
+                        onClick={() => {
+                          setFlippedCards(prev => {
+                            const newSet = new Set(prev);
+                            newSet.delete(step.number);
+                            return newSet;
+                          });
+                        }}
+                      >
+                        {/* Step Number */}
+                        <div className="w-16 h-16 bg-white/20 rounded-full flex items-center justify-center mb-6">
+                          <span className="text-2xl font-bold text-white">{step.number}</span>
+                        </div>
+                        
+                        {/* Title */}
+                        <h3 className="text-2xl font-bold text-white mb-4">
+                          {language === 'fr-FR' ? step.titleFr : step.titleEn}
+                        </h3>
+                        
+                        {/* Description */}
+                        <div className="text-sm leading-relaxed mb-4 text-white/90">
                           {(language === 'fr-FR' ? step.descriptionFr : step.descriptionEn).split('\n').map((paragraph, i) => (
-                            <p key={i} className="mb-2 last:mb-0 drop-shadow-lg">{paragraph}</p>
+                            <p key={i} className="mb-2 last:mb-0">{paragraph}</p>
                           ))}
                         </div>
-                        <div className="text-xs font-semibold border-t border-white/60 pt-3 text-white drop-shadow-lg">
+                        
+                        {/* Sub Description */}
+                        <div className="text-xs text-white/75 border-t border-white/20 pt-4">
                           {language === 'fr-FR' ? step.subDescriptionFr : step.subDescriptionEn}
+                        </div>
+                        
+                        {/* Click to flip back hint */}
+                        <div className="absolute bottom-4 right-4 text-xs text-white/50">
+                          {language === 'fr-FR' ? 'Cliquer pour retourner' : 'Click to flip back'}
                         </div>
                       </div>
                     </div>
-
-                    {/* Mobile Tap Indicator */}
-                    <div className="absolute top-2 right-2 md:hidden bg-memopyk-navy/80 rounded-full p-2">
-                      <ArrowRight className="w-4 h-4 text-white" />
-                    </div>
-
-                    {/* Desktop Hover Hint */}
-                    <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 hidden md:block opacity-70 group-hover:opacity-0 transition-opacity duration-300">
-                      <div className="bg-memopyk-navy/80 text-white text-xs px-3 py-1 rounded-full">
-                        {language === 'fr-FR' ? 'Survolez pour plus de détails' : 'Hover for details'}
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Step Title with Blue Icon */}
-                  <div className="flex items-center justify-center gap-3 mb-4">
-                    <div className="w-12 h-12 bg-memopyk-navy rounded-full flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
-                      <Icon className="w-6 h-6 text-white" />
-                    </div>
-                    <h3 className="text-2xl font-semibold text-memopyk-navy group-hover:text-memopyk-orange transition-colors duration-300">
-                      {language === 'fr-FR' ? step.titleFr : step.titleEn}
-                    </h3>
                   </div>
                 </div>
-
-                {/* Mobile Expanded Content */}
-                <div className={`md:hidden overflow-hidden transition-all duration-500 ${isExpanded ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0'}`}>
-                  <div className="bg-gradient-to-br from-memopyk-navy to-memopyk-dark-blue rounded-xl p-6 text-white relative">
-                    {/* Close Button */}
-                    <button 
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        setExpandedStep(null);
-                      }}
-                      className="absolute top-4 right-4 w-8 h-8 bg-white/20 rounded-full flex items-center justify-center hover:bg-white/30 transition-colors"
-                    >
-                      <X className="w-4 h-4" />
-                    </button>
-                    
-                    <div className="text-sm leading-relaxed mb-4">
-                      {(language === 'fr-FR' ? step.descriptionFr : step.descriptionEn).split('\n').map((paragraph, i) => (
-                        <p key={i} className="mb-2 last:mb-0">{paragraph}</p>
-                      ))}
-                    </div>
-                    <div className="text-xs opacity-75 border-t border-white/20 pt-3">
-                      {language === 'fr-FR' ? step.subDescriptionFr : step.subDescriptionEn}
-                    </div>
-                  </div>
-                </div>
-
-                {/* Spacer */}
-                <div className="h-6"></div>
               </div>
             );
           })}
         </div>
-
-
       </div>
     </section>
   );
