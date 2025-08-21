@@ -608,10 +608,6 @@ export default function GallerySection() {
                 data-video-id={item.id}
                 data-gallery-card
                 className={`card-flip-container ${isFlipped ? 'flipped' : ''} rounded-2xl`}
-                onClick={(e) => {
-                  // Handle click on card
-                  handlePlayClick(item, e, index);
-                }}
               >
                 <div className="card-flip-inner">
                   {/* FRONT SIDE - Normal Gallery Card */}
@@ -622,13 +618,13 @@ export default function GallerySection() {
                         /* Static Image - Default display */
                         <div className="w-full h-full relative">
                           {/* Main Image */}
-                          <LazyImage
+                          <img
                             src={thumbnailUrl}
                             alt={getItemTitle(item)}
-                            className="w-full h-full object-cover"
-                            fallbackSrc="/placeholder-gallery.jpg"
-                            onLoad={() => console.log(`🖼️ LazyImage loaded: ${thumbnailUrl}`)}
-                            onError={() => console.log(`❌ LazyImage failed to load: ${thumbnailUrl}`)}
+                            className="w-full h-full object-cover transition-opacity duration-300"
+                            onLoad={() => console.log(`🖼️ Image loaded: ${thumbnailUrl}`)}
+                            onError={() => console.log(`❌ Image failed to load: ${thumbnailUrl}`)}
+                            loading="eager"
                           />
                           
                           {/* Top overlays - Mobile Responsive */}
@@ -657,17 +653,13 @@ export default function GallerySection() {
                           )}
                           
                           {/* Desktop Play Button - Orange for Video, White for No Video */}
-                          <div className="absolute inset-0 flex items-center justify-center" style={{zIndex: 999999, pointerEvents: 'auto'}}>
-                            {/* Dynamic Play Button Based on Video Availability */}
+                          <div className="absolute inset-0 flex items-center justify-center pointer-events-none" style={{zIndex: 999999}}>
+                            {/* Dynamic Play Button Based on Video Availability - Larger clickable area */}
                             <div 
-                              className={`w-14 h-14 sm:w-16 sm:h-16 rounded-full flex items-center justify-center transition-all duration-300 hover:scale-110 cursor-pointer ${itemHasVideo ? 'animate-pulse-orange' : ''}`}
+                              className={`w-20 h-20 sm:w-24 sm:h-24 rounded-full flex items-center justify-center transition-all duration-300 hover:scale-110 cursor-pointer pointer-events-auto ${itemHasVideo ? 'animate-pulse-orange' : ''}`}
                               onClick={(e) => {
-                                console.log('🚨🚨🚨 EMERGENCY CLICK HANDLER ACTIVATED! 🚨🚨🚨');
-                                console.log('🚨 CRITICAL CLICK DEBUG: Play button clicked!', { item: item.id, index, hasVideo: itemHasVideo });
-                                console.log('🚨 ITEM TITLE:', getItemTitle(item));
-                                console.log('🚨 CALLING handlePlayClick NOW...');
+                                e.stopPropagation();
                                 handlePlayClick(item, e, index);
-                                console.log('🚨 handlePlayClick CALLED SUCCESSFULLY');
                               }}
                               style={itemHasVideo ? {
                                 // Orange for items WITH video
