@@ -48,7 +48,7 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
   const [language, setLanguageState] = useState<Language>('fr-FR');
   const [hasInitialized, setHasInitialized] = useState(false);
 
-  // Detect browser language preference
+  // Detect browser language preference - FIXED for overseas English users
   const detectBrowserLanguage = (): Language => {
     // Check for stored preference first
     const storedLanguage = localStorage.getItem('memopyk-language') as Language;
@@ -56,17 +56,38 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
       return storedLanguage;
     }
 
-    // Get browser language preferences
-    const browserLanguages = navigator.languages || [navigator.language];
+    // Get browser language preferences - prioritize PRIMARY language only
+    const browserLanguages = navigator.languages || [navigator.language || 'en'];
     
-    for (const lang of browserLanguages) {
-      // Check for French variants - if French IS detected, show French
-      if (lang.toLowerCase().startsWith('fr')) {
+    // CRITICAL FIX: Check ONLY the first (primary) language preference
+    // This prevents overseas English users from seeing French when they have 
+    // secondary French preferences (like en-US, en-GB, fr-CA, fr)
+    if (browserLanguages.length > 0) {
+      const primaryLanguage = browserLanguages[0].toLowerCase().trim();
+      
+      console.log('🌍 LANGUAGE DETECTION:', {
+        allLanguages: browserLanguages,
+        primaryLanguage,
+        userAgent: navigator.userAgent.substring(0, 100)
+      });
+      
+      // Check if primary language is French
+      if (primaryLanguage.startsWith('fr')) {
+        console.log('🇫🇷 PRIMARY language is French → Showing French');
         return 'fr-FR';
       }
+      
+      // Check if primary language is English
+      if (primaryLanguage.startsWith('en')) {
+        console.log('🇺🇸 PRIMARY language is English → Showing English');
+        return 'en-US';
+      }
+      
+      // For other primary languages, default to English
+      console.log('🌍 OTHER primary language → Defaulting to English');
     }
     
-    // If French is NOT detected, show English (all other languages get English)
+    // Fallback for edge cases
     return 'en-US';
   };
 

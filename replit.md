@@ -7,6 +7,7 @@ MEMOPYK is a full-stack memory film platform that transforms personal photos and
 Preferred communication style: Simple, everyday language.
 Visual consistency priority: Extremely detail-oriented about spacing and formatting consistency between admin interface and published pages.
 Analytics interface: Expects all three filter buttons (7d, 30d, 90d) to be visible with proper orange highlighting for active states.
+Language detection priority: Primary browser language takes precedence over secondary language preferences to prevent English users overseas from seeing French content.
 
 ### Critical Code Investigation Protocol
 **NEVER remove or modify existing code without understanding its purpose first.**
@@ -54,7 +55,7 @@ Analytics interface: Expects all three filter buttons (7d, 30d, 90d) to be visib
 - **Universal Video Proxy**: Manages video serving, range requests, local caching, and fallback to Supabase CDN.
 - **Image Proxy**: Handles image loading, resolves CORS issues, and prioritizes static cropped images.
 - **Cache Management**: Smart caching for hero videos (immediate preload) and direct CDN streaming for gallery videos. Persistent video element system for instant gallery video startup. Comprehensive persistent caching for GA4 endpoints with auto-cleanup, 24-hour retention, and admin bypass.
-- **Bilingual Support**: Comprehensive French/English content management for UI, data, and SEO. Automatic language detection.
+- **Bilingual Support**: Comprehensive French/English content management for UI, data, and SEO. Primary-language-first detection system (fixed for overseas users).
 - **Modular API Design**: RESTful API for various content types (hero videos, gallery, FAQs, legal docs, analytics).
 - **Static Image Generation**: Automated Sharp-based cropping and generation of static images for gallery thumbnails upon upload.
 - **Real-time Analytics**: Backend system for tracking visitors, performance, and engagement with IP management, accurate session/view tracking, IP exclusion, and geolocation enrichment. Includes dual analytics (GA4 and local) operating independently.
