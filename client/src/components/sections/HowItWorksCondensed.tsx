@@ -85,27 +85,27 @@ export function HowItWorksCondensed() {
                     </div>
 
                     {/* Desktop Hover Overlay */}
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/80 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 hidden md:flex flex-col justify-end p-6">
+                    <div className="absolute inset-0 bg-gradient-to-t from-memopyk-navy/95 via-memopyk-navy/85 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 hidden md:flex flex-col justify-end p-6">
                       <div className="text-white drop-shadow-2xl">
                         <div className="text-sm leading-relaxed mb-3 font-semibold text-white">
                           {(language === 'fr-FR' ? step.descriptionFr : step.descriptionEn).split('\n').map((paragraph, i) => (
                             <p key={i} className="mb-2 last:mb-0 drop-shadow-lg">{paragraph}</p>
                           ))}
                         </div>
-                        <div className="text-xs font-semibold border-t border-white/50 pt-3 text-white drop-shadow-lg">
+                        <div className="text-xs font-semibold border-t border-white/60 pt-3 text-white drop-shadow-lg">
                           {language === 'fr-FR' ? step.subDescriptionFr : step.subDescriptionEn}
                         </div>
                       </div>
                     </div>
 
                     {/* Mobile Tap Indicator */}
-                    <div className="absolute top-2 right-2 md:hidden bg-memopyk-dark-blue/80 rounded-full p-2">
+                    <div className="absolute top-2 right-2 md:hidden bg-memopyk-navy/80 rounded-full p-2">
                       <ArrowRight className="w-4 h-4 text-white" />
                     </div>
 
                     {/* Desktop Hover Hint */}
                     <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 hidden md:block opacity-70 group-hover:opacity-0 transition-opacity duration-300">
-                      <div className="bg-memopyk-dark-blue/80 text-white text-xs px-3 py-1 rounded-full">
+                      <div className="bg-memopyk-navy/80 text-white text-xs px-3 py-1 rounded-full">
                         {language === 'fr-FR' ? 'Survolez pour plus de détails' : 'Hover for details'}
                       </div>
                     </div>
@@ -113,10 +113,10 @@ export function HowItWorksCondensed() {
 
                   {/* Step Title with Blue Icon */}
                   <div className="flex items-center justify-center gap-3 mb-4">
-                    <div className="w-12 h-12 bg-memopyk-dark-blue rounded-full flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+                    <div className="w-12 h-12 bg-memopyk-navy rounded-full flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
                       <Icon className="w-6 h-6 text-white" />
                     </div>
-                    <h3 className="text-2xl font-semibold text-memopyk-dark-blue group-hover:text-memopyk-orange transition-colors duration-300">
+                    <h3 className="text-2xl font-semibold text-memopyk-navy group-hover:text-memopyk-orange transition-colors duration-300">
                       {language === 'fr-FR' ? step.titleFr : step.titleEn}
                     </h3>
                   </div>
@@ -124,7 +124,7 @@ export function HowItWorksCondensed() {
 
                 {/* Mobile Expanded Content */}
                 <div className={`md:hidden overflow-hidden transition-all duration-500 ${isExpanded ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0'}`}>
-                  <div className="bg-gradient-to-br from-memopyk-dark-blue to-memopyk-navy rounded-xl p-6 text-white relative">
+                  <div className="bg-gradient-to-br from-memopyk-navy to-memopyk-dark-blue rounded-xl p-6 text-white relative">
                     {/* Close Button */}
                     <button 
                       onClick={(e) => {

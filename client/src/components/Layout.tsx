@@ -133,19 +133,15 @@ export function Layout({ children }: LayoutProps) {
                       {item.name}
                     </button>
                   );
-                } else if (item.type === 'link' && 'href' in item) {
+                } else if (item.type === 'link' && 'sectionId' in item) {
                   return (
-                    <Link
+                    <button
                       key={`nav-${index}`}
-                      href={item.href as string}
-                      onClick={() => {
-                        // Scroll to top when navigating to "How it works" page
-                        setTimeout(() => window.scrollTo({ top: 0, behavior: 'smooth' }), 100);
-                      }}
-                      className="text-sm font-medium transition-colors text-gray-600 hover:text-memopyk-navy"
+                      onClick={() => handleAnchorClick(item.sectionId)}
+                      className="text-sm font-medium transition-colors text-gray-600 hover:text-memopyk-navy cursor-pointer"
                     >
                       {item.name}
-                    </Link>
+                    </button>
                   );
                 } else if (item.type === 'external' && 'href' in item) {
                   return (
@@ -240,20 +236,18 @@ export function Layout({ children }: LayoutProps) {
                       {item.name}
                     </button>
                   );
-                } else if (item.type === 'link' && 'href' in item) {
+                } else if (item.type === 'link' && 'sectionId' in item) {
                   return (
-                    <Link
+                    <button
                       key={`mobile-nav-${index}`}
-                      href={item.href as string}
                       onClick={() => {
+                        handleAnchorClick(item.sectionId);
                         setIsMobileMenuOpen(false);
-                        // Scroll to top when navigating to "How it works" page
-                        setTimeout(() => window.scrollTo({ top: 0, behavior: 'smooth' }), 100);
                       }}
-                      className="block px-4 py-3 rounded-md text-base font-medium transition-all duration-200 min-h-[44px] flex items-center text-gray-600 hover:text-memopyk-navy hover:bg-gray-50 hover:border-l-4 hover:border-memopyk-blue-gray"
+                      className="block w-full text-left px-4 py-3 rounded-md text-base font-medium transition-all duration-200 min-h-[44px] flex items-center text-gray-600 hover:text-memopyk-navy hover:bg-gray-50 hover:border-l-4 hover:border-memopyk-blue-gray"
                     >
                       {item.name}
-                    </Link>
+                    </button>
                   );
                 } else if (item.type === 'external' && 'href' in item) {
                   return (
