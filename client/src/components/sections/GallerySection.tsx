@@ -252,23 +252,26 @@ export default function GallerySection() {
   const t = content[language];
 
   const getImageUrl = (item: GalleryItem) => {
-    // 🚀 COMPRESSION FIX: Always prioritize static_image_url (50KB static_auto_* files) over *-C files (4.6MB)
-    if (item.staticImageUrl) {
-      return item.staticImageUrl; // Fast 30-50KB optimized thumbnails
-    }
-    
-    // Fallback to language-specific static images (but these are the large -C files)
-    const thumb = item.useSameVideo
-      ? item.staticImageUrlEn
+    // 🎯 CROPPING FIX: Always prioritize language-specific cropped images over legacy staticImageUrl
+    const croppedThumb = item.useSameVideo
+      ? item.staticImageUrlEn  // Use English version for shared mode
       : (language === 'fr-FR' ? item.staticImageUrlFr : item.staticImageUrlEn);
 
-    if (thumb) {
-      // ✅ DEPLOYMENT ARCHITECTURE: Gallery images MUST stream from Supabase CDN
-      // This ensures production deployment reliability (hero videos = cache, gallery = CDN)
-      return thumb; // Direct CDN streaming as per deployment requirements
+    if (croppedThumb && croppedThumb.trim() !== '') {
+      console.log(`🔍 PUBLIC GALLERY: Using cropped image for ${language}: ${croppedThumb}`);
+      return croppedThumb; // Properly cropped user images
+    }
+    
+    // Legacy fallback for old items that only have staticImageUrl
+    if (item.staticImageUrl) {
+      console.log(`🔍 PUBLIC GALLERY: Using legacy staticImageUrl: ${item.staticImageUrl}`);
+      return item.staticImageUrl;
     }
 
-    return item.imageUrlEn || "";
+    // Final fallback to original images
+    const originalImage = item.imageUrlEn || "";
+    console.log(`🔍 PUBLIC GALLERY: Using original image fallback: ${originalImage}`);
+    return originalImage;
   };
 
   const getItemTitle = (item: GalleryItem) => {
