@@ -283,12 +283,13 @@ div[style*="position: fixed"][style*="top: 0"][style*="left: 0"] > div[style*="b
 .analytics-modal-content.debug-modal,
 div.analytics-modal-content,
 [data-testid="analytics-visitor-modal"] {
-  background-color: white !important;
-  background: white !important;
+  background-color: rgba(255, 255, 255, 1.0) !important;
+  background: rgba(255, 255, 255, 1.0) !important;
   background-image: none !important;
-  /* Override any inherited cream/beige colors */
-  background-color: #ffffff !important;
-  /* Ensure it's not inheriting memopyk-cream */
+  /* Remove any transparency */
+  opacity: 1 !important;
+  /* Ensure fully opaque white */
+  backdrop-filter: none !important;
   color: #000000 !important;
 }
 

@@ -118,9 +118,10 @@ export function FlipCard({ frontContent, className = "", visitors = [] }: Visito
           {/* MODAL CONTENT WITH PURE WHITE BACKGROUND */}
           <div
             style={{
-              backgroundColor: '#ffffff',
-              background: '#ffffff',
+              backgroundColor: 'rgba(255, 255, 255, 1.0)',
+              background: 'rgba(255, 255, 255, 1.0)',
               backgroundImage: 'none',
+              opacity: 1,
               borderRadius: '12px',
               maxWidth: '600px',
               width: '100%',
