@@ -89,10 +89,6 @@ export function HowItWorksCondensed() {
                     {/* Desktop Hover Overlay */}
                     <div className="absolute inset-0 bg-gradient-to-t from-memopyk-dark-blue/95 via-memopyk-dark-blue/85 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 hidden md:flex flex-col justify-end p-6">
                       <div className="text-white">
-                        <h4 className="font-bold text-lg mb-3 flex items-center gap-2">
-                          <Icon className="w-5 h-5" />
-                          {language === 'fr-FR' ? step.titleFr : step.titleEn}
-                        </h4>
                         <div className="text-sm leading-relaxed mb-3 opacity-90">
                           {(language === 'fr-FR' ? step.descriptionFr : step.descriptionEn).split('\n').map((paragraph, i) => (
                             <p key={i} className="mb-2 last:mb-0">{paragraph}</p>
