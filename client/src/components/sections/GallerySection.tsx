@@ -194,9 +194,9 @@ export default function GallerySection() {
       videoUrlEn: item.video_url_en,
       videoUrlFr: item.video_url_fr,
       videoFilename: item.video_filename || item.video_url_en || item.video_url_fr, // TIMESTAMP PREFIX FIX
-      videoWidth: item.video_width,
-      videoHeight: item.video_height,
-      videoOrientation: item.video_orientation,
+      videoWidth: item.videoWidth,
+      videoHeight: item.videoHeight,
+      videoOrientation: item.videoOrientation,
       imageUrlEn: item.image_url_en,
       imageUrlFr: item.image_url_fr,
       staticImageUrlEn: item.static_image_url_en,
