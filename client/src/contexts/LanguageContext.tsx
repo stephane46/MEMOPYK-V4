@@ -51,15 +51,18 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
   // Add testing helper to window - available immediately
   useEffect(() => {
     if (typeof window !== 'undefined') {
-      // Enhanced testing function with better error handling
-      (window as any).testLanguageDetection = (testLanguages: string[]) => {
+      // Direct window assignment for better compatibility
+      (window as any).testLanguageDetection = function(testLanguages) {
+        console.log('🧪 DIRECT TESTING FUNCTION CALLED with languages:', testLanguages);
+        console.log('🧪 Function type check:', typeof (window as any).testLanguageDetection);
+        
         try {
-          console.log('🧪 TESTING FUNCTION CALLED with languages:', testLanguages);
           console.log('🧪 Current navigator.languages before override:', navigator.languages);
           
           // Store original values for debugging
           const originalLanguages = [...(navigator.languages || [])];
           const originalLanguage = navigator.language;
+          console.log('🧪 Original values stored:', { originalLanguages, originalLanguage });
           
           // Override both navigator.languages and navigator.language with error handling
           try {
@@ -88,7 +91,6 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
           console.log('🧪 TEST RESULT calculated:', result);
           console.log('🧪 Navigator.languages after override:', navigator.languages);
           console.log('🧪 Navigator.language after override:', navigator.language);
-          console.log('🧪 Original values:', { originalLanguages, originalLanguage });
           console.log('🧪 OVERRIDE COMPLETE - Ready for page reload');
           
           return result;
@@ -98,13 +100,17 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
         }
       };
       
-      // Also add it directly to window for immediate access
-      if (!(window as any).testLanguageDetection) {
-        console.error('❌ Failed to attach testing function to window');
-      } else {
+      // Test the function availability immediately
+      const testFunctionExists = typeof (window as any).testLanguageDetection === 'function';
+      console.log('🧪 Testing function created and verified:', testFunctionExists);
+      
+      if (testFunctionExists) {
         console.log('🧪 Testing function created: testLanguageDetection() is now available in console');
         console.log('🧪 Quick test: testLanguageDetection(["en-US", "fr-CA"]) - should return en-US');
         console.log('🧪 Apply test: localStorage.removeItem("memopyk-language"); window.location.href = "/";');
+        console.log('🧪 SIMPLE TEST COMMAND: testLanguageDetection(["fr-FR"])');
+      } else {
+        console.error('❌ Failed to attach testing function to window');
       }
     }
   }, []);
