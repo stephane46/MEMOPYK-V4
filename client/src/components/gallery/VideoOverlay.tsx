@@ -263,13 +263,13 @@ export default function VideoOverlay({
   const startVideoPlayback = useCallback(() => {
     const video = videoRef.current;
     if (video) {
-
+      console.log('🎬 AUTO-STARTING VIDEO PLAYBACK');
       setShowThumbnail(false);
       video.play().then(() => {
-
+        console.log('✅ AUTO-PLAY SUCCESS');
         setIsPlaying(true);
       }).catch((error) => {
-
+        console.error('❌ AUTO-PLAY FAILED:', error);
       });
     }
   }, []);
@@ -573,7 +573,7 @@ export default function VideoOverlay({
         {/* Video Element */}
         <video
           ref={videoRef}
-          className="w-full h-full object-cover"
+          className="w-full h-full object-contain"
           style={{
             position: 'absolute',
             top: 0,
