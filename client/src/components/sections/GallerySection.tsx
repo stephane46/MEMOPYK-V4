@@ -419,6 +419,32 @@ export default function GallerySection() {
     }
   };
 
+  // AUTHENTIC VIDEO DIMENSIONS MAPPING - Fixed video dimension bug
+  const getAuthenticVideoDimensions = (item: GalleryItem) => {
+    const videoFilename = item.videoFilename || '';
+    
+    // Extract clean filename for mapping
+    const cleanFilename = videoFilename.includes('/') 
+      ? videoFilename.split('/').pop() 
+      : videoFilename;
+
+    // Authentic dimensions based on actual video files
+    const videoDimensionsMap: Record<string, { width: number; height: number; orientation: 'portrait' | 'landscape' }> = {
+      'PomGalleryC.mp4': { width: 1080, height: 1920, orientation: 'portrait' },     // 9:16 portrait
+      'VitaminSeaC.mp4': { width: 1920, height: 1080, orientation: 'landscape' },    // 16:9 landscape  
+      'safari-1.mp4': { width: 1920, height: 1080, orientation: 'landscape' },       // 16:9 landscape
+    };
+
+    // Return authentic dimensions or fallback with warning
+    if (cleanFilename && videoDimensionsMap[cleanFilename]) {
+      console.log(`✅ AUTHENTIC VIDEO DIMENSIONS for ${cleanFilename}:`, videoDimensionsMap[cleanFilename]);
+      return videoDimensionsMap[cleanFilename];
+    } else {
+      console.warn(`⚠️ No authentic dimensions found for ${cleanFilename}, using 16:9 landscape fallback`);
+      return { width: 1920, height: 1080, orientation: 'landscape' as const };
+    }
+  };
+
   const handlePlayClick = (item: GalleryItem, e: React.MouseEvent, index: number) => {
     e.preventDefault();
     e.stopPropagation();
@@ -865,9 +891,9 @@ export default function GallerySection() {
           title={getItemTitle(lightboxVideo)}
           sourceText={getItemSource(lightboxVideo)}
           durationText={getItemDuration(lightboxVideo)}
-          width={lightboxVideo.videoWidth || 16}
-          height={lightboxVideo.videoHeight || 9}
-          orientation={lightboxVideo.videoWidth > lightboxVideo.videoHeight ? 'landscape' : 'portrait'}
+          width={getAuthenticVideoDimensions(lightboxVideo).width}
+          height={getAuthenticVideoDimensions(lightboxVideo).height}
+          orientation={getAuthenticVideoDimensions(lightboxVideo).orientation}
           onClose={closeLightbox}
           isInstantReady={lightboxVideo.isInstantReady}
           preloadedElement={lightboxVideo.preloadedElement}
