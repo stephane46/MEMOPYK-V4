@@ -522,7 +522,7 @@ export default function VideoOverlay({
             <img
               src={thumbnailUrl}
               alt="Video preview"
-              className="w-full h-full object-cover"
+              className="w-full h-full object-contain"
               style={{
                 width: `${videoDimensions.width}px`,
                 height: `${videoDimensions.height}px`,
