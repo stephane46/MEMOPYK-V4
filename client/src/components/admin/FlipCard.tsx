@@ -119,6 +119,8 @@ export function FlipCard({ frontContent, className = "", visitors = [] }: Visito
           <div
             style={{
               backgroundColor: '#ffffff',
+              background: '#ffffff',
+              backgroundImage: 'none',
               borderRadius: '12px',
               maxWidth: '600px',
               width: '100%',
@@ -126,9 +128,10 @@ export function FlipCard({ frontContent, className = "", visitors = [] }: Visito
               overflowY: 'auto',
               position: 'relative',
               boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)',
-              border: '1px solid #e5e7eb'
+              border: '3px solid red'
             }}
-            className="analytics-modal-content"
+            className="analytics-modal-content debug-modal"
+            data-testid="analytics-visitor-modal"
             onClick={(e) => e.stopPropagation()}
           >
             {/* HEADER WITH CLOSE BUTTON */}

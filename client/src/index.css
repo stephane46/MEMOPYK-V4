@@ -258,6 +258,27 @@ img, video, iframe, canvas, svg {
   background: #ffffff !important;
 }
 
+/* Ultra-specific targeting for analytics modal white background */
+div[style*="backgroundColor: 'rgba(0, 0, 0, 0.8)"] > div.analytics-modal-content,
+div[style*="background-color: rgba(0, 0, 0, 0.8)"] > div.analytics-modal-content {
+  background-color: white !important;
+  background: white !important;
+  background-image: none !important;
+}
+
+/* Target the exact modal by its structure */
+div[style*="position: fixed"][style*="top: 0"][style*="left: 0"] > div[style*="borderRadius: '12px'"] {
+  background-color: #ffffff !important;
+  background: #ffffff !important;
+}
+
+/* Debug modal with bright red border to confirm it's visible */
+.debug-modal {
+  background-color: #ffffff !important;
+  background: #ffffff !important;
+  border: 3px solid red !important;
+}
+
 [data-radix-popper-content-wrapper] > div {
   background-color: white !important;
   border: 1px solid #e5e7eb !important;
