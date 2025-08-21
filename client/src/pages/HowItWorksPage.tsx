@@ -40,7 +40,7 @@ export function HowItWorksPage() {
           <Link href={homeUrl}>
             <Button 
               size="lg"
-              className="bg-white hover:bg-gray-50 text-memopyk-dark-blue font-bold px-8 py-4 text-lg transition-all duration-300 shadow-lg border-2 border-memopyk-orange hover:border-memopyk-orange/90 hover:shadow-xl"
+              className="bg-white hover:bg-gray-50 text-memopyk-dark-blue font-bold px-8 py-4 text-lg transition-all duration-300 shadow-lg border-2 border-memopyk-dark-blue hover:border-memopyk-dark-blue/80 hover:shadow-xl"
             >
               <Home className="w-5 h-5 mr-2" />
               {language === 'fr-FR' ? 'Retourner à l\'accueil' : 'Return to Home'}
