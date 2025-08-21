@@ -224,11 +224,17 @@ export default function GallerySection() {
   // Add click-outside detection for flipped cards
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (galleryRef.current && !galleryRef.current.contains(event.target as Node)) {
-        if (flippedCards.size > 0) {
-          console.log('🔄 Clicking outside gallery - closing flipped cards');
-          setFlippedCards(new Set());
-        }
+      const target = event.target as Element;
+      
+      // Check if click is outside gallery or on empty space within gallery grid
+      const isOutsideGallery = galleryRef.current && !galleryRef.current.contains(target);
+      const isOnCard = target.closest('[data-gallery-card]');
+      const isInGallery = galleryRef.current && galleryRef.current.contains(target);
+      
+      // Close flipped cards if clicking outside gallery OR clicking on empty space within gallery
+      if ((isOutsideGallery || (isInGallery && !isOnCard)) && flippedCards.size > 0) {
+        console.log('🔄 Clicking outside cards - closing flipped cards');
+        setFlippedCards(new Set());
       }
     };
 
@@ -600,6 +606,7 @@ export default function GallerySection() {
               <div 
                 key={item.id} 
                 data-video-id={item.id}
+                data-gallery-card
                 className={`card-flip-container ${isFlipped ? 'flipped' : ''} rounded-2xl`}
                 onClick={(e) => {
                   // Handle click on card

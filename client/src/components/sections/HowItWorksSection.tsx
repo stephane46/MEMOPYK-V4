@@ -48,10 +48,10 @@ export function HowItWorksSection() {
   ];
 
   return (
-    <section id="how-it-works" className="pt-2 pb-2 bg-gradient-to-br from-white to-memopyk-sky-blue/10">
+    <section id="how-it-works" className="pt-1 pb-1 bg-gradient-to-br from-white to-memopyk-sky-blue/10">
       <div className="container mx-auto px-4">
         {/* Section Header */}
-        <div className="text-center mb-8">
+        <div className="text-center mb-2">
           <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-poppins font-bold text-memopyk-navy mb-6">
             {language === 'fr-FR' 
               ? "Comment Ça Marche"
