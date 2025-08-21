@@ -594,7 +594,7 @@ export class HybridStorage implements HybridStorageInterface {
           use_same_video: item.useSameVideo,
           video_width: item.videoWidth,
           video_height: item.videoHeight,
-          videoOrientation: item.videoOrientation,
+          video_orientation: item.videoOrientation,
           image_url_en: item.imageUrlEn,
           image_url_fr: item.imageUrlFr,
           static_image_url: item.staticImageUrl,
