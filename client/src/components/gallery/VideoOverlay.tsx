@@ -106,18 +106,35 @@ export default function VideoOverlay({
 
   // Mobile-responsive viewport sizing - 90% max width/height for all orientations
   const getViewportRatio = useCallback(() => {
-    // All videos: Use 90% of viewport for consistent sizing
+    // MOBILE FIX: Detect mobile and force 90% constraint
+    const isMobileDevice = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || window.innerWidth <= 768;
+    console.log('🔍 MOBILE VIEWPORT DETECTION:', { isMobileDevice, innerWidth: window.innerWidth, userAgent: navigator.userAgent.substring(0, 50) });
+    
+    // All videos: Use 90% of viewport for consistent sizing, especially on mobile
     return 90;
   }, [orientation]);
 
   // Calculate video container dimensions based on orientation
   const getVideoDimensions = useCallback(() => {
     const viewportRatio = getViewportRatio();
+    const isMobileDevice = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || window.innerWidth <= 768;
     
     if (orientation === 'portrait') {
       const containerHeight = (window.innerHeight * viewportRatio) / 100;
       const aspectRatio = width / height;
-      const containerWidth = containerHeight * aspectRatio;
+      let containerWidth = containerHeight * aspectRatio;
+      
+      // MOBILE FIX: Enforce maximum width constraint
+      const maxWidth = (window.innerWidth * viewportRatio) / 100;
+      if (containerWidth > maxWidth) {
+        containerWidth = maxWidth;
+        console.log(`🚨 MOBILE WIDTH CONSTRAINT APPLIED:`, {
+          originalWidth: containerHeight * aspectRatio,
+          constrainedWidth: containerWidth,
+          maxAllowed: maxWidth,
+          screenWidth: window.innerWidth
+        });
+      }
       
       // DEBUG: Log dimensions for POM video troubleshooting
       console.log(`🎬 PORTRAIT VIDEO DIMENSIONS DEBUG:`, {
@@ -126,9 +143,12 @@ export default function VideoOverlay({
         videoHeight: height,
         aspectRatio,
         screenHeight: window.innerHeight,
+        screenWidth: window.innerWidth,
         viewportRatio,
         containerHeight,
         containerWidth,
+        isMobileDevice,
+        maxWidthAllowed: maxWidth,
         willFitInScreen: containerWidth <= window.innerWidth
       });
       
@@ -147,7 +167,8 @@ export default function VideoOverlay({
         screenWidth: window.innerWidth,
         viewportRatio,
         containerWidth,
-        containerHeight
+        containerHeight,
+        isMobileDevice
       });
       
       return { width: containerWidth, height: containerHeight };

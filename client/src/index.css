@@ -415,8 +415,8 @@ img, video, iframe, canvas, svg {
   }
 
   .animate-pulse-orange {
-    -webkit-animation: pulse-orange 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
-    animation: pulse-orange 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+    -webkit-animation: pulse-orange 4s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+    animation: pulse-orange 4s cubic-bezier(0.4, 0, 0.6, 1) infinite;
   }
 }
 
