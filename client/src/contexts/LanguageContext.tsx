@@ -51,33 +51,61 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
   // Add testing helper to window - available immediately
   useEffect(() => {
     if (typeof window !== 'undefined') {
+      // Enhanced testing function with better error handling
       (window as any).testLanguageDetection = (testLanguages: string[]) => {
-        console.log('🧪 TESTING with languages:', testLanguages);
-        
-        // Override both navigator.languages and navigator.language
-        Object.defineProperty(navigator, 'languages', {
-          value: testLanguages,
-          configurable: true,
-          writable: true
-        });
-        Object.defineProperty(navigator, 'language', {
-          value: testLanguages[0] || 'en-US',
-          configurable: true,
-          writable: true
-        });
-        
-        const result = testLanguages[0]?.toLowerCase().startsWith('fr') ? 'fr-FR' : 'en-US';
-        console.log('🧪 TEST RESULT:', result);
-        console.log('🧪 Navigator override complete - languages now:', navigator.languages);
-        console.log('🧪 To apply test result:');
-        console.log('🧪 1. localStorage.removeItem("memopyk-language");');
-        console.log('🧪 2. window.location.href = "/";');
-        console.log('🧪 Or combined: localStorage.removeItem("memopyk-language"); window.location.href = "/";');
-        return result;
+        try {
+          console.log('🧪 TESTING FUNCTION CALLED with languages:', testLanguages);
+          console.log('🧪 Current navigator.languages before override:', navigator.languages);
+          
+          // Store original values for debugging
+          const originalLanguages = [...(navigator.languages || [])];
+          const originalLanguage = navigator.language;
+          
+          // Override both navigator.languages and navigator.language with error handling
+          try {
+            Object.defineProperty(navigator, 'languages', {
+              value: testLanguages,
+              configurable: true,
+              writable: true
+            });
+            console.log('✅ navigator.languages override successful');
+          } catch (e) {
+            console.error('❌ Failed to override navigator.languages:', e);
+          }
+          
+          try {
+            Object.defineProperty(navigator, 'language', {
+              value: testLanguages[0] || 'en-US',
+              configurable: true,
+              writable: true
+            });
+            console.log('✅ navigator.language override successful');
+          } catch (e) {
+            console.error('❌ Failed to override navigator.language:', e);
+          }
+          
+          const result = testLanguages[0]?.toLowerCase().startsWith('fr') ? 'fr-FR' : 'en-US';
+          console.log('🧪 TEST RESULT calculated:', result);
+          console.log('🧪 Navigator.languages after override:', navigator.languages);
+          console.log('🧪 Navigator.language after override:', navigator.language);
+          console.log('🧪 Original values:', { originalLanguages, originalLanguage });
+          console.log('🧪 OVERRIDE COMPLETE - Ready for page reload');
+          
+          return result;
+        } catch (error) {
+          console.error('🚨 TEST FUNCTION ERROR:', error);
+          return 'error';
+        }
       };
-      console.log('🧪 Testing function created: testLanguageDetection() is now available in console');
-      console.log('🧪 Quick test: testLanguageDetection(["en-US", "fr-CA"]) - should return en-US');
-      console.log('🧪 Apply test: localStorage.removeItem("memopyk-language"); window.location.href = "/";');
+      
+      // Also add it directly to window for immediate access
+      if (!(window as any).testLanguageDetection) {
+        console.error('❌ Failed to attach testing function to window');
+      } else {
+        console.log('🧪 Testing function created: testLanguageDetection() is now available in console');
+        console.log('🧪 Quick test: testLanguageDetection(["en-US", "fr-CA"]) - should return en-US');
+        console.log('🧪 Apply test: localStorage.removeItem("memopyk-language"); window.location.href = "/";');
+      }
     }
   }, []);
 
