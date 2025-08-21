@@ -53,12 +53,22 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
     if (typeof window !== 'undefined') {
       (window as any).testLanguageDetection = (testLanguages: string[]) => {
         console.log('🧪 TESTING with languages:', testLanguages);
+        
+        // Override both navigator.languages and navigator.language
         Object.defineProperty(navigator, 'languages', {
           value: testLanguages,
-          configurable: true
+          configurable: true,
+          writable: true
         });
+        Object.defineProperty(navigator, 'language', {
+          value: testLanguages[0] || 'en-US',
+          configurable: true,
+          writable: true
+        });
+        
         const result = testLanguages[0]?.toLowerCase().startsWith('fr') ? 'fr-FR' : 'en-US';
         console.log('🧪 TEST RESULT:', result);
+        console.log('🧪 Navigator override complete - languages now:', navigator.languages);
         console.log('🧪 To apply test result:');
         console.log('🧪 1. localStorage.removeItem("memopyk-language");');
         console.log('🧪 2. window.location.href = "/";');
