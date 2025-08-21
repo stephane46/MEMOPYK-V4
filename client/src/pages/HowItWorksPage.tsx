@@ -31,22 +31,6 @@ export function HowItWorksPage() {
   
   return (
     <div className="min-h-screen">
-      {/* Back to Home Button - Top of page */}
-      <div className="bg-memopyk-cream py-6">
-        <div className="max-w-6xl mx-auto px-6">
-          <Link href={homeUrl}>
-            <Button 
-              variant="outline" 
-              size="lg"
-              className="bg-white hover:bg-memopyk-orange hover:text-white border-memopyk-orange text-memopyk-orange transition-all duration-300"
-            >
-              <ArrowLeft className="w-5 h-5 mr-2" />
-              {language === 'fr-FR' ? 'Retour à l\'accueil' : 'Back to Home'}
-            </Button>
-          </Link>
-        </div>
-      </div>
-
       {/* How It Works 3-Step Process */}
       <HowItWorksSection />
 

@@ -56,20 +56,20 @@ export function HowItWorksCondensed() {
               <div key={step.number} className="text-center group">
                 {/* Step Number and Icon */}
                 <div className="flex flex-col items-center mb-6">
-                  <div className="w-20 h-20 bg-memopyk-orange rounded-full flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300">
-                    <span className="text-3xl font-bold text-white">{step.number}</span>
+                  <div className="w-12 h-12 bg-memopyk-orange rounded-full flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300">
+                    <span className="text-lg font-bold text-white">{step.number}</span>
                   </div>
                   <div className="w-16 h-16 bg-memopyk-dark-blue rounded-full flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
                     <Icon className="w-8 h-8 text-white" />
                   </div>
                 </div>
 
-                {/* Step Image */}
-                <div className="mb-6 overflow-hidden rounded-xl shadow-lg group-hover:shadow-xl transition-shadow duration-300">
+                {/* Step Image - Square aspect ratio, no cropping */}
+                <div className="mb-6 overflow-hidden rounded-xl shadow-lg group-hover:shadow-xl transition-shadow duration-300 aspect-square">
                   <img 
                     src={step.image} 
                     alt={language === 'fr-FR' ? step.titleFr : step.titleEn}
-                    className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300"
+                    className="w-full h-full object-contain bg-gray-50 group-hover:scale-105 transition-transform duration-300"
                   />
                 </div>
 
