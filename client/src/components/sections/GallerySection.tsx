@@ -252,6 +252,12 @@ export default function GallerySection() {
   const t = content[language];
 
   const getImageUrl = (item: GalleryItem) => {
+    // 🚀 COMPRESSION FIX: Always prioritize static_image_url (50KB static_auto_* files) over *-C files (4.6MB)
+    if (item.staticImageUrl) {
+      return item.staticImageUrl; // Fast 30-50KB optimized thumbnails
+    }
+    
+    // Fallback to language-specific static images (but these are the large -C files)
     const thumb = item.useSameVideo
       ? item.staticImageUrlEn
       : (language === 'fr-FR' ? item.staticImageUrlFr : item.staticImageUrlEn);
