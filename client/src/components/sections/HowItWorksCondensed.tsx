@@ -54,29 +54,28 @@ export function HowItWorksCondensed() {
             const Icon = step.icon;
             return (
               <div key={step.number} className="text-center group">
-                {/* Step Number and Icon */}
-                <div className="flex flex-col items-center mb-6">
-                  <div className="w-12 h-12 bg-memopyk-orange rounded-full flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300">
-                    <span className="text-lg font-bold text-white">{step.number}</span>
-                  </div>
-                  <div className="w-16 h-16 bg-memopyk-dark-blue rounded-full flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
-                    <Icon className="w-8 h-8 text-white" />
-                  </div>
-                </div>
-
-                {/* Step Image - Square aspect ratio, no cropping */}
-                <div className="mb-6 overflow-hidden rounded-xl shadow-lg group-hover:shadow-xl transition-shadow duration-300 aspect-square">
+                {/* Step Image with Number Overlay */}
+                <div className="relative mb-6 overflow-hidden rounded-xl shadow-lg group-hover:shadow-xl transition-shadow duration-300 aspect-square">
                   <img 
                     src={step.image} 
                     alt={language === 'fr-FR' ? step.titleFr : step.titleEn}
                     className="w-full h-full object-contain bg-gray-50 group-hover:scale-105 transition-transform duration-300"
                   />
+                  {/* Orange Number Circle - Top Left */}
+                  <div className="absolute top-4 left-4 w-12 h-12 bg-memopyk-orange rounded-full flex items-center justify-center group-hover:scale-110 transition-transform duration-300 shadow-lg">
+                    <span className="text-lg font-bold text-white">{step.number}</span>
+                  </div>
                 </div>
 
-                {/* Step Title */}
-                <h3 className="text-2xl font-semibold text-memopyk-dark-blue group-hover:text-memopyk-orange transition-colors duration-300">
-                  {language === 'fr-FR' ? step.titleFr : step.titleEn}
-                </h3>
+                {/* Step Title with Blue Icon */}
+                <div className="flex items-center justify-center gap-3">
+                  <div className="w-12 h-12 bg-memopyk-dark-blue rounded-full flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+                    <Icon className="w-6 h-6 text-white" />
+                  </div>
+                  <h3 className="text-2xl font-semibold text-memopyk-dark-blue group-hover:text-memopyk-orange transition-colors duration-300">
+                    {language === 'fr-FR' ? step.titleFr : step.titleEn}
+                  </h3>
+                </div>
 
                 {/* Spacer matching the design requirement - same space as between thumbnail and card edge */}
                 <div className="h-6"></div>
