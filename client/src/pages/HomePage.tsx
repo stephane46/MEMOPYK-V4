@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import { SimpleHeroVideoSection } from '../components/sections/SimpleHeroVideoSection';
 import { KeyVisualSection } from '../components/sections/KeyVisualSection';
-
+import { HowItWorksCondensed } from '../components/sections/HowItWorksCondensed';
 import { WhyMemopykSection } from '../components/sections/WhyMemopykSection';
 import GallerySection from '../components/sections/GallerySection';
 import FAQSection from '../components/sections/FAQSection';
@@ -47,7 +47,8 @@ export function HomePage() {
       {/* Key Visual Problem/Solution Section */}
       <KeyVisualSection />
 
-
+      {/* How It Works Condensed - Before Gallery */}
+      <HowItWorksCondensed />
 
       {/* Gallery Section - Moved above Why MEMOPYK */}
       <GallerySection />
