@@ -67,7 +67,7 @@ export function HowItWorksCondensed() {
             return (
               <div key={step.number} className="text-center group">
                 {/* Flip Card Container - Only for the image area */}
-                <div className={`card-flip-container ${isFlipped ? 'flipped' : ''} rounded-2xl mb-6`}>
+                <div className={`card-flip-container ${isFlipped ? 'flipped' : ''} rounded-2xl mb-4`}>
                   <div className="card-flip-inner">
                     
                     {/* FRONT SIDE - Step Card */}
@@ -88,7 +88,7 @@ export function HowItWorksCondensed() {
                         }}
                       >
                         {/* Step Image with Info Button */}
-                        <div className="relative mb-6 overflow-hidden rounded-xl shadow-lg group-hover:shadow-xl transition-all duration-500 aspect-square">
+                        <div className="relative overflow-hidden rounded-xl shadow-lg group-hover:shadow-xl transition-all duration-500 aspect-square">
                           <img 
                             src={step.image} 
                             alt={language === 'fr-FR' ? step.titleFr : step.titleEn}
