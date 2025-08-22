@@ -155,7 +155,7 @@ export function HowItWorksCondensed() {
                       }}
                     >
                       <div 
-                        className="h-full flex flex-col cursor-pointer relative px-2 py-2"
+                        className="h-full flex flex-col cursor-pointer relative px-2 pt-1 pb-2"
                         onClick={() => {
                           setFlippedCards(prev => {
                             const newSet = new Set(prev);
@@ -166,7 +166,7 @@ export function HowItWorksCondensed() {
                       >
                         
                         {/* Top Section - Main Description - EXACT HEIGHT FOR ALL CARDS */}
-                        <div className="text-center h-72 flex flex-col justify-between pt-1 pb-2">
+                        <div className="text-center h-72 flex flex-col justify-between pb-2">
                           <div className="text-sm leading-normal text-white w-full">
                             {(language === 'fr-FR' ? step.descriptionFr : step.descriptionEn).split('\n').map((paragraph, i) => (
                               <p key={i} className="mb-2 last:mb-0">{paragraph}</p>
