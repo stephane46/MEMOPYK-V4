@@ -161,6 +161,20 @@ img, video, iframe, canvas, svg {
   cursor: not-allowed !important;
 }
 
+/* Fix modal/dialog backgrounds - force solid white */
+[data-radix-dialog-content] {
+  background-color: #ffffff !important;
+  backdrop-filter: none !important;
+}
+
+.dialog-content {
+  background-color: #ffffff !important;
+}
+
+[data-radix-dialog-overlay] {
+  background-color: rgba(0, 0, 0, 0.8) !important;
+}
+
 /* Custom button for How It Works page - force dark blue background */
 .button-dark-blue-forced {
   background-color: #2A4759 !important;

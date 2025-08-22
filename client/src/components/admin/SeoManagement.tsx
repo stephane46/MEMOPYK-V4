@@ -930,7 +930,7 @@ const SeoManagement: React.FC = () => {
 
       {/* Preview Dialog */}
       <Dialog open={showPreview} onOpenChange={setShowPreview}>
-        <DialogContent className="max-w-4xl max-h-[80vh] overflow-auto">
+        <DialogContent className="max-w-4xl max-h-[80vh] overflow-auto dialog-content" style={{ backgroundColor: '#ffffff' }}>
           <DialogHeader>
             <DialogTitle>SEO Preview - {currentLang}</DialogTitle>
             <DialogDescription>
@@ -947,7 +947,7 @@ const SeoManagement: React.FC = () => {
 
       {/* History Dialog */}
       <Dialog open={showHistory} onOpenChange={setShowHistory}>
-        <DialogContent className="max-w-2xl max-h-[80vh] overflow-auto">
+        <DialogContent className="max-w-2xl max-h-[80vh] overflow-auto dialog-content" style={{ backgroundColor: '#ffffff' }}>
           <DialogHeader>
             <DialogTitle>SEO History - {currentLang}</DialogTitle>
             <DialogDescription>
