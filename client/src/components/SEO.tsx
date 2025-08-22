@@ -10,28 +10,36 @@ interface SEOProps {
 export function SEO({ page = 'homepage' }: SEOProps) {
   const { language } = useLanguage();
   
-  // Fetch SEO settings from admin panel
-  const { data: seoSettings } = useQuery({
-    queryKey: ['/api/seo/settings', page],
-    queryFn: () => apiRequest(`/api/seo/settings?page=${page}`, 'GET'),
+  // Fetch SEO settings from admin panel - using the correct API endpoint
+  const { data: seoData } = useQuery({
+    queryKey: ['/api/seo'],
+    queryFn: () => apiRequest('/api/seo', 'GET'),
   });
 
-  // Fetch global SEO settings
-  const { data: globalSettings } = useQuery({
-    queryKey: ['/api/seo/global-settings'],
-    queryFn: () => apiRequest('/api/seo/global-settings', 'GET'),
-  });
+  // Find the settings for the current page
+  const seoSettings = Array.isArray(seoData) ? 
+    seoData.find((item: any) => item.page === page) : 
+    null;
 
-  if (!seoSettings && !globalSettings) {
+  // If no data is available, don't render anything yet (loading state)
+  if (!seoData) {
     return null;
   }
 
   const isEnglish = language === 'en-US';
   const langCode = isEnglish ? 'En' : 'Fr';
   
-  // Get content based on language
-  const title = seoSettings?.[`metaTitle${langCode}`] || globalSettings?.defaultMetaTitle || 'MEMOPYK';
-  const description = seoSettings?.[`metaDescription${langCode}`] || globalSettings?.defaultMetaDescription || '';
+  // Default fallback values
+  const defaultTitle = isEnglish ? 
+    'MEMOPYK – Unique memory films & albums from your photos and videos' :
+    'MEMOPYK – Films & albums souvenirs à partir de vos photos et vidéos';
+  const defaultDescription = isEnglish ?
+    'MEMOPYK turns your photos and videos into unique souvenir films and albums. A fully human, creative, and inspiring service.' :
+    'MEMOPYK transforme vos photos et vidéos en albums et films souvenirs uniques. Un service 100 % humain, créatif et inspirant.';
+  
+  // Get content based on language from the actual API response
+  const title = seoSettings?.[`metaTitle${langCode}`] || defaultTitle;
+  const description = seoSettings?.[`metaDescription${langCode}`] || defaultDescription;
   const keywords = seoSettings?.[`metaKeywords${langCode}`] || '';
   const ogTitle = seoSettings?.[`ogTitle${langCode}`] || title;
   const ogDescription = seoSettings?.[`ogDescription${langCode}`] || description;
