@@ -343,46 +343,62 @@ const SeoManagement: React.FC = () => {
               </p>
             </div>
 
-            {/* Search Engine Controls - SIMPLE CHECKBOXES */}
-            <div className="space-y-4">
+            {/* Search Engine Controls - WORKING CHECKBOXES */}
+            <div className="space-y-4" key={`checkboxes-${formState.robotsIndex}-${formState.robotsFollow}`}>
               <div className="border rounded-lg p-4">
-                <label className="flex items-center space-x-3 cursor-pointer">
+                <div className="flex items-center space-x-3">
                   <input
                     type="checkbox"
+                    id="robotsIndex"
                     checked={formState.robotsIndex}
                     onChange={(e) => {
                       console.log('Index checkbox changed:', e.target.checked);
-                      setFormState(prev => ({ ...prev, robotsIndex: e.target.checked }));
+                      const newValue = e.target.checked;
+                      setFormState(prev => {
+                        const updated = { ...prev, robotsIndex: newValue };
+                        console.log('Updated state:', updated);
+                        return updated;
+                      });
                     }}
-                    className="w-4 h-4 text-orange-500 rounded focus:ring-orange-500"
+                    className="w-4 h-4 text-orange-500 rounded focus:ring-orange-500 focus:ring-2"
                   />
-                  <div>
+                  <label htmlFor="robotsIndex" className="cursor-pointer flex-1">
                     <div className="font-medium">Allow search engine indexing</div>
                     <div className="text-sm text-gray-600">
-                      {formState.robotsIndex ? 'Search engines will index this page' : 'Search engines will NOT index this page'}
+                      Status: <span className="font-semibold">
+                        {formState.robotsIndex ? 'ENABLED - Search engines will index this page' : 'DISABLED - Search engines will NOT index this page'}
+                      </span>
                     </div>
-                  </div>
-                </label>
+                  </label>
+                </div>
               </div>
               
               <div className="border rounded-lg p-4">
-                <label className="flex items-center space-x-3 cursor-pointer">
+                <div className="flex items-center space-x-3">
                   <input
                     type="checkbox"
+                    id="robotsFollow"
                     checked={formState.robotsFollow}
                     onChange={(e) => {
                       console.log('Follow checkbox changed:', e.target.checked);
-                      setFormState(prev => ({ ...prev, robotsFollow: e.target.checked }));
+                      const newValue = e.target.checked;
+                      setFormState(prev => {
+                        const updated = { ...prev, robotsFollow: newValue };
+                        console.log('Updated state:', updated);
+                        return updated;
+                      });
                     }}
-                    className="w-4 h-4 text-orange-500 rounded focus:ring-orange-500"
+                    className="w-4 h-4 text-orange-500 rounded focus:ring-orange-500 focus:ring-2"
                   />
-                  <div>
+                  <label htmlFor="robotsFollow" className="cursor-pointer flex-1">
                     <div className="font-medium">Allow link following</div>
                     <div className="text-sm text-gray-600">
-                      {formState.robotsFollow ? 'Search engines will follow links on this page' : 'Search engines will NOT follow links on this page'}
+                      Status: <span className="font-semibold">
+                        {formState.robotsFollow ? 'ENABLED - Search engines will follow links on this page' : 'DISABLED - Search engines will NOT follow links on this page'}
+                      </span>
                     </div>
-                  </div>
-                </label>
+                  </label>
+                </div>
               </div>
             </div>
           </div>
