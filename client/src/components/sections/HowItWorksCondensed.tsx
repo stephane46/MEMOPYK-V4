@@ -88,7 +88,7 @@ export function HowItWorksCondensed() {
                         }}
                       >
                         {/* Step Image with Info Button */}
-                        <div className="relative overflow-hidden rounded-xl shadow-lg group-hover:shadow-xl transition-all duration-500 aspect-square">
+                        <div className="relative overflow-hidden rounded-xl transition-all duration-500 aspect-square">
                           <img 
                             src={step.image} 
                             alt={language === 'fr-FR' ? step.titleFr : step.titleEn}
