@@ -153,38 +153,16 @@ export class SeoService {
    */
   async getSeoSettings(lang: 'fr-FR' | 'en-US'): Promise<SeoData | null> {
     try {
-      // For now, return fallback data until database is set up
-      return this.getFallbackSeoData(lang);
-      
-      /*
-      const settings = await db
-        .select()
-        .from(seoSettings)
-        .where(eq(seoSettings.lang, lang))
-        .orderBy(desc(seoSettings.updatedAt))
-        .limit(1);*/
-
-      if (settings.length === 0) {
-        return null;
+      // First try to load from most recent JSON backup
+      const backupData = await this.getLatestBackup(lang);
+      if (backupData) {
+        return backupData;
       }
 
-      const setting = settings[0];
-      return {
-        lang,
-        title: setting.title || undefined,
-        description: setting.description || undefined,
-        canonical: setting.canonical || undefined,
-        keywords: setting.keywords || undefined,
-        robotsIndex: setting.robotsIndex,
-        robotsFollow: setting.robotsFollow,
-        robotsNoArchive: setting.robotsNoArchive,
-        robotsNoSnippet: setting.robotsNoSnippet,
-        jsonLd: setting.jsonLd || undefined,
-        openGraph: setting.openGraph as any,
-        twitter: setting.twitter as any,
-        hreflang: setting.hreflang as any,
-        extras: setting.extras as any
-      };
+      // Fallback to default data if no backup exists
+      return this.getFallbackSeoData(lang);
+      
+      // Database code commented out - using JSON backup instead
     } catch (error) {
       console.error('Error fetching SEO settings:', error);
       return this.getFallbackSeoData(lang);
@@ -287,7 +265,7 @@ export class SeoService {
   /**
    * Calculate differences between two SEO data objects
    */
-  private calculateDiff(previous: SeoData | null, current: SeoData): Record<string, any> {
+  private calculateDiff(previous: SeoData | null | undefined, current: SeoData): Record<string, any> {
     if (!previous) return { action: 'created', changes: current };
 
     const changes: Record<string, { from: any; to: any }> = {};
@@ -527,6 +505,35 @@ export class SeoService {
       await fs.writeFile(filepath, JSON.stringify(backupData, null, 2));
     } catch (error) {
       console.error('Error creating backup:', error);
+    }
+  }
+
+  /**
+   * Get the most recent backup for a language
+   */
+  async getLatestBackup(lang: 'fr-FR' | 'en-US'): Promise<SeoData | null> {
+    try {
+      const files = await fs.readdir(this.BACKUP_DIR);
+      const langFiles = files
+        .filter(file => file.startsWith(`seo-backup-${lang}-`) && file.endsWith('.json'))
+        .sort()
+        .reverse(); // Most recent first
+      
+      if (langFiles.length === 0) {
+        return null;
+      }
+      
+      const latestFile = path.join(this.BACKUP_DIR, langFiles[0]);
+      const content = await fs.readFile(latestFile, 'utf-8');
+      const backupData = JSON.parse(content);
+      
+      // Remove backup metadata from the returned data
+      const { backupCreatedAt, backupCreatedBy, ...seoData } = backupData;
+      return seoData as SeoData;
+      
+    } catch (error) {
+      console.error(`Error loading latest backup for ${lang}:`, error);
+      return null;
     }
   }
 
