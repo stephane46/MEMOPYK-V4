@@ -169,7 +169,7 @@ export function HeroVideoSection() {
           className="w-full h-full object-cover"
           autoPlay
           muted
-          loop={activeVideos.length === 1}
+          loop={false}
           playsInline
           preload="metadata" // Smart Preloading: loads video info without downloading entire file
           crossOrigin="anonymous"
@@ -359,7 +359,7 @@ export function HeroVideoSection() {
                 key={index}
                 className={`w-4 h-4 sm:w-5 sm:h-5 rounded-full transition-all duration-300 border-2 border-memopyk-orange ${
                   index === currentVideoIndex 
-                    ? 'bg-memopyk-orange scale-125 shadow-lg' 
+                    ? 'bg-memopyk-orange shadow-lg' 
                     : 'bg-transparent hover:bg-memopyk-orange/30'
                 }`}
                 onClick={() => goToVideo(index)}
