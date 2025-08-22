@@ -350,11 +350,8 @@ const SeoManagement: React.FC = () => {
                 variant="ghost"
                 size="sm"
                 onClick={() => setCurrentLang('fr-FR')}
-                className={`rounded-none border-0 px-4 py-2 font-semibold transition-all duration-200 ${
-                  currentLang === 'fr-FR'
-                    ? 'bg-orange-500 text-white hover:bg-orange-600'
-                    : 'bg-white text-gray-700 hover:bg-gray-100'
-                }`}
+                className={currentLang === 'fr-FR' ? 'seo-language-btn-active' : 'seo-language-btn-inactive'}
+                style={{ borderRadius: '0', border: '0', padding: '8px 16px' }}
               >
                 🇫🇷 French
               </Button>
@@ -362,11 +359,8 @@ const SeoManagement: React.FC = () => {
                 variant="ghost"
                 size="sm"
                 onClick={() => setCurrentLang('en-US')}
-                className={`rounded-none border-0 px-4 py-2 font-semibold transition-all duration-200 ${
-                  currentLang === 'en-US'
-                    ? 'bg-orange-500 text-white hover:bg-orange-600'
-                    : 'bg-white text-gray-700 hover:bg-gray-100'
-                }`}
+                className={currentLang === 'en-US' ? 'seo-language-btn-active' : 'seo-language-btn-inactive'}
+                style={{ borderRadius: '0', border: '0', padding: '8px 16px' }}
               >
                 🇺🇸 English
               </Button>
@@ -377,7 +371,7 @@ const SeoManagement: React.FC = () => {
             onClick={generatePreview}
             variant="outline"
             size="sm"
-            className="border-2 border-blue-300 text-blue-700 hover:bg-blue-100 hover:border-blue-400 active:bg-blue-200 transition-all duration-200"
+            className="seo-btn-preview"
             data-testid="button-preview-seo"
           >
             <Eye className="w-4 h-4 mr-2" />
@@ -388,7 +382,7 @@ const SeoManagement: React.FC = () => {
             onClick={loadHistory}
             variant="outline"
             size="sm"
-            className="border-2 border-purple-300 text-purple-700 hover:bg-purple-100 hover:border-purple-400 active:bg-purple-200 transition-all duration-200"
+            className="seo-btn-history"
             data-testid="button-history-seo"
           >
             <History className="w-4 h-4 mr-2" />
@@ -398,7 +392,7 @@ const SeoManagement: React.FC = () => {
           <Button
             onClick={publishSettings}
             size="sm"
-            className="bg-green-600 text-white hover:bg-green-700 active:bg-green-800 border-2 border-green-600 hover:border-green-700 transition-all duration-200"
+            className="seo-btn-publish"
             data-testid="button-publish-seo"
           >
             <Globe className="w-4 h-4 mr-2" />
@@ -409,34 +403,34 @@ const SeoManagement: React.FC = () => {
 
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
         <Tabs defaultValue="basic" className="w-full">
-          <TabsList className="grid w-full grid-cols-5 bg-gray-100 p-1 rounded-lg">
+          <TabsList style={{ display: 'grid', width: '100%', gridTemplateColumns: 'repeat(5, 1fr)', backgroundColor: '#f3f4f6', padding: '4px', borderRadius: '8px' }}>
             <TabsTrigger 
               value="basic"
-              className="data-[state=active]:bg-orange-500 data-[state=active]:text-white data-[state=active]:shadow-md transition-all duration-200 font-semibold"
+              className="seo-tab"
             >
               Basic SEO
             </TabsTrigger>
             <TabsTrigger 
               value="robots"
-              className="data-[state=active]:bg-orange-500 data-[state=active]:text-white data-[state=active]:shadow-md transition-all duration-200 font-semibold"
+              className="seo-tab"
             >
               Robots
             </TabsTrigger>
             <TabsTrigger 
               value="social"
-              className="data-[state=active]:bg-orange-500 data-[state=active]:text-white data-[state=active]:shadow-md transition-all duration-200 font-semibold"
+              className="seo-tab"
             >
               Social Media
             </TabsTrigger>
             <TabsTrigger 
               value="advanced"
-              className="data-[state=active]:bg-orange-500 data-[state=active]:text-white data-[state=active]:shadow-md transition-all duration-200 font-semibold"
+              className="seo-tab"
             >
               Advanced
             </TabsTrigger>
             <TabsTrigger 
               value="preview-tab"
-              className="data-[state=active]:bg-orange-500 data-[state=active]:text-white data-[state=active]:shadow-md transition-all duration-200 font-semibold"
+              className="seo-tab"
             >
               Live Preview
             </TabsTrigger>
@@ -916,12 +910,7 @@ const SeoManagement: React.FC = () => {
           <Button
             type="submit"
             disabled={saving}
-            size="lg"
-            className={`px-8 py-3 font-bold text-lg transition-all duration-300 border-2 ${
-              saving 
-                ? 'bg-gray-400 border-gray-400 cursor-not-allowed' 
-                : 'bg-orange-500 hover:bg-orange-600 active:bg-orange-700 border-orange-500 hover:border-orange-600 text-white shadow-lg hover:shadow-xl'
-            }`}
+            className="seo-btn-save"
             data-testid="button-save-seo"
           >
             {saving ? (

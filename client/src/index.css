@@ -72,6 +72,95 @@ img, video, iframe, canvas, svg {
   font-family: 'Poppins', sans-serif;
 }
 
+/* SEO Management Admin Styles - Force active states with !important */
+.seo-language-btn-active {
+  background-color: #D67C4A !important;
+  color: white !important;
+  font-weight: 600 !important;
+}
+
+.seo-language-btn-inactive {
+  background-color: white !important;
+  color: #374151 !important;
+  font-weight: 600 !important;
+}
+
+.seo-language-btn-inactive:hover {
+  background-color: #f3f4f6 !important;
+}
+
+/* Tab active states */
+.seo-tab[data-state="active"] {
+  background-color: #D67C4A !important;
+  color: white !important;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06) !important;
+}
+
+.seo-tab[data-state="inactive"] {
+  background-color: transparent !important;
+  color: #374151 !important;
+}
+
+.seo-tab[data-state="inactive"]:hover {
+  background-color: #e5e7eb !important;
+}
+
+/* Action button styles */
+.seo-btn-preview {
+  border: 2px solid #93c5fd !important;
+  color: #1d4ed8 !important;
+  background-color: white !important;
+}
+
+.seo-btn-preview:hover {
+  background-color: #dbeafe !important;
+  border-color: #60a5fa !important;
+}
+
+.seo-btn-history {
+  border: 2px solid #c4b5fd !important;
+  color: #7c3aed !important;
+  background-color: white !important;
+}
+
+.seo-btn-history:hover {
+  background-color: #ede9fe !important;
+  border-color: #a78bfa !important;
+}
+
+.seo-btn-publish {
+  background-color: #16a34a !important;
+  color: white !important;
+  border: 2px solid #16a34a !important;
+}
+
+.seo-btn-publish:hover {
+  background-color: #15803d !important;
+  border-color: #15803d !important;
+}
+
+.seo-btn-save {
+  background-color: #D67C4A !important;
+  color: white !important;
+  border: 2px solid #D67C4A !important;
+  font-weight: 700 !important;
+  font-size: 18px !important;
+  padding: 12px 32px !important;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05) !important;
+}
+
+.seo-btn-save:hover:not(:disabled) {
+  background-color: #c2693c !important;
+  border-color: #c2693c !important;
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04) !important;
+}
+
+.seo-btn-save:disabled {
+  background-color: #9ca3af !important;
+  border-color: #9ca3af !important;
+  cursor: not-allowed !important;
+}
+
 /* Custom button for How It Works page - force dark blue background */
 .button-dark-blue-forced {
   background-color: #2A4759 !important;
