@@ -370,12 +370,7 @@ export function HeroVideoSection() {
         </>
       )}
 
-      {/* Debug info */}
-      {activeVideos.length > 1 && (
-        <div className="absolute top-4 left-4 text-white text-sm bg-black/50 px-2 py-1 rounded z-20">
-          Video {currentVideoIndex + 1} of {activeVideos.length}
-        </div>
-      )}
+
 
 
 
