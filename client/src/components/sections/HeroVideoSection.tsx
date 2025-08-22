@@ -59,8 +59,13 @@ export function HeroVideoSection() {
 
   // Auto-advance to next video when current video ends
   const handleVideoEnded = () => {
+    console.log(`🎬 handleVideoEnded called - activeVideos.length: ${activeVideos.length}, currentIndex: ${currentVideoIndex}`);
     if (activeVideos.length > 1) {
-      setCurrentVideoIndex(prev => (prev + 1) % activeVideos.length);
+      const nextIndex = (currentVideoIndex + 1) % activeVideos.length;
+      console.log(`🎬 Advancing to next hero video: ${currentVideoIndex} → ${nextIndex}`);
+      setCurrentVideoIndex(nextIndex);
+    } else {
+      console.log(`🎬 Only one hero video, not advancing`);
     }
   };
 
@@ -173,13 +178,22 @@ export function HeroVideoSection() {
             console.error('   - Video URL:', videoUrl);
             console.error('   - Video Proxy URL:', `/api/video-proxy?filename=${videoUrl}`);
           }}
-          onEnded={handleVideoEnded}
+          onEnded={() => {
+            console.log(`🎬 Hero video ended: ${videoUrl} (${currentVideoIndex + 1}/${activeVideos.length})`);
+            handleVideoEnded();
+          }}
           onCanPlay={() => {
             // Ensure video starts playing for external preview
             const video = videoRef.current;
             if (video && isPlaying) {
               video.play().catch(console.warn);
             }
+          }}
+          onLoadStart={() => {
+            console.log(`🎬 Hero video loading: ${videoUrl} (${currentVideoIndex + 1}/${activeVideos.length})`);
+          }}
+          onPlay={() => {
+            console.log(`🎬 Hero video playing: ${videoUrl} (${currentVideoIndex + 1}/${activeVideos.length})`);
           }}
         >
           <source src={`/api/video-proxy?filename=${videoUrl}`} type="video/mp4" />
