@@ -114,31 +114,67 @@ export default function VideoOverlay({
     return 90;
   }, [orientation]);
 
-  // Calculate video container dimensions based on orientation - using established 90% constraint system
+  // Calculate video container dimensions based on orientation - FIXED for desktop 90% viewport
   const getVideoDimensions = useCallback(() => {
     const viewportRatio = getViewportRatio();
+    const isMobileDevice = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || window.innerWidth <= 768;
     
-    // CORRECTED CONSTRAINT LOGIC: All videos on mobile use WIDTH constraint (90% of screen width)
-    // This prevents landscape videos from becoming too wide for mobile screens
-    const containerWidth = (window.innerWidth * viewportRatio) / 100;
-    const aspectRatio = width / height;
-    const containerHeight = containerWidth / aspectRatio;
-    
-    console.log(`🎬 ${orientation.toUpperCase()} VIDEO - WIDTH CONSTRAINED (MOBILE-OPTIMIZED):`, {
-      title,
-      orientation,
-      screenWidth: window.innerWidth,
-      screenHeight: window.innerHeight,
-      viewportRatio,
-      containerWidth,
-      containerHeight,
-      aspectRatio,
-      videoWidth: width,
-      videoHeight: height,
-      constraint: 'width-based for mobile compatibility'
-    });
-    
-    return { width: containerWidth, height: containerHeight };
+    // CRITICAL FIX: Different logic for mobile vs desktop
+    if (isMobileDevice) {
+      // MOBILE: Use WIDTH constraint (90% of screen width) to prevent landscape videos from being too wide
+      const containerWidth = (window.innerWidth * viewportRatio) / 100;
+      const aspectRatio = width / height;
+      const containerHeight = containerWidth / aspectRatio;
+      
+      console.log(`🎬 ${orientation.toUpperCase()} VIDEO - MOBILE WIDTH CONSTRAINED:`, {
+        title,
+        orientation,
+        screenWidth: window.innerWidth,
+        screenHeight: window.innerHeight,
+        viewportRatio,
+        containerWidth,
+        containerHeight,
+        aspectRatio,
+        videoWidth: width,
+        videoHeight: height,
+        constraint: 'mobile width-based'
+      });
+      
+      return { width: containerWidth, height: containerHeight };
+    } else {
+      // DESKTOP: Use the larger dimension constraint (90% of viewport) for better viewing
+      const maxWidth = (window.innerWidth * viewportRatio) / 100;
+      const maxHeight = (window.innerHeight * viewportRatio) / 100;
+      const aspectRatio = width / height;
+      
+      // Calculate dimensions that fit within both constraints
+      let containerWidth = maxWidth;
+      let containerHeight = containerWidth / aspectRatio;
+      
+      // If height exceeds limit, constrain by height instead
+      if (containerHeight > maxHeight) {
+        containerHeight = maxHeight;
+        containerWidth = containerHeight * aspectRatio;
+      }
+      
+      console.log(`🎬 ${orientation.toUpperCase()} VIDEO - DESKTOP OPTIMIZED (90% VIEWPORT):`, {
+        title,
+        orientation,
+        screenWidth: window.innerWidth,
+        screenHeight: window.innerHeight,
+        viewportRatio,
+        maxWidth,
+        maxHeight,
+        containerWidth,
+        containerHeight,
+        aspectRatio,
+        videoWidth: width,
+        videoHeight: height,
+        constraint: 'desktop dual-constraint (90% of both width and height)'
+      });
+      
+      return { width: containerWidth, height: containerHeight };
+    }
   }, [orientation, width, height, getViewportRatio, title]);
 
   const [videoDimensions, setVideoDimensions] = useState(() => getVideoDimensions());
