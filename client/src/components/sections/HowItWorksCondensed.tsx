@@ -155,7 +155,7 @@ export function HowItWorksCondensed() {
                       }}
                     >
                       <div 
-                        className="h-full flex flex-col justify-between p-4 cursor-pointer relative"
+                        className="h-full flex flex-col justify-between p-2 cursor-pointer relative"
                         onClick={() => {
                           setFlippedCards(prev => {
                             const newSet = new Set(prev);
@@ -166,8 +166,8 @@ export function HowItWorksCondensed() {
                       >
                         
                         {/* Top Section - Description */}
-                        <div className="text-center">
-                          <div className="text-sm leading-relaxed text-white w-full">
+                        <div className="text-center flex-1">
+                          <div className="text-sm leading-relaxed text-white w-full px-1">
                             {(language === 'fr-FR' ? step.descriptionFr : step.descriptionEn).split('\n').map((paragraph, i) => (
                               <p key={i} className="mb-3 last:mb-0">{paragraph}</p>
                             ))}
@@ -176,8 +176,8 @@ export function HowItWorksCondensed() {
                         
                         {/* Bottom Section - Sub Description with consistent separator */}
                         <div className="text-center">
-                          <div className="border-t border-white/40 pt-4 mb-4">
-                            <div className="text-xs text-white leading-relaxed">
+                          <div className="border-t border-white/40 pt-3 pb-2">
+                            <div className="text-xs text-white leading-relaxed px-1">
                               {language === 'fr-FR' ? step.subDescriptionFr : step.subDescriptionEn}
                             </div>
                           </div>
