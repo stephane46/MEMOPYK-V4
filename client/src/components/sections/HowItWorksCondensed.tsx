@@ -165,8 +165,8 @@ export function HowItWorksCondensed() {
                         }}
                       >
                         
-                        {/* Top Section - Description */}
-                        <div className="text-center flex-1 flex items-start">
+                        {/* Top Section - Description with fixed height */}
+                        <div className="text-center h-72 flex items-start">
                           <div className="text-sm leading-relaxed text-white w-full">
                             {(language === 'fr-FR' ? step.descriptionFr : step.descriptionEn).split('\n').map((paragraph, i) => (
                               <p key={i} className="mb-3 last:mb-0">{paragraph}</p>
