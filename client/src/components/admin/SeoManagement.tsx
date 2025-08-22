@@ -230,45 +230,39 @@ export default function SeoManagement() {
         <p className="text-gray-800 dark:text-gray-200">Optimize your website's search engine visibility with comprehensive SEO tools</p>
       </div>
 
-      {/* Language Switcher - Moved to top */}
-      <Card className="border-2 border-orange-200">
-        <CardHeader>
-          <CardTitle className="text-lg">Multilingual</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="flex space-x-1 bg-gray-100 dark:bg-gray-800 rounded-lg p-1 mb-4">
+      {/* Compact Language Switcher */}
+      <div className="flex items-center justify-between mb-6">
+        <div className="flex items-center space-x-4">
+          <h3 className="text-lg font-medium text-gray-900 dark:text-white">Language:</h3>
+          <div className="flex bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-lg shadow-sm">
             <button
               onClick={() => setCurrentLanguage('fr')}
-              className={`flex-1 py-3 px-4 rounded-md text-sm font-medium transition-all duration-200 ${
+              className={`px-4 py-2 text-sm font-medium rounded-l-lg transition-colors ${
                 currentLanguage === 'fr'
-                  ? 'bg-orange-500 text-white shadow-lg transform scale-105'
-                  : 'text-gray-700 dark:text-gray-300 hover:bg-white hover:shadow-sm'
+                  ? 'bg-orange-500 text-white border-orange-500'
+                  : 'text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700'
               }`}
             >
               FR /fr
             </button>
             <button
               onClick={() => setCurrentLanguage('en')}
-              className={`flex-1 py-3 px-4 rounded-md text-sm font-medium transition-all duration-200 ${
+              className={`px-4 py-2 text-sm font-medium rounded-r-lg border-l transition-colors ${
                 currentLanguage === 'en'
-                  ? 'bg-orange-500 text-white shadow-lg transform scale-105'
-                  : 'text-gray-700 dark:text-gray-300 hover:bg-white hover:shadow-sm'
+                  ? 'bg-orange-500 text-white border-orange-500'
+                  : 'text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700 border-gray-300 dark:border-gray-600'
               }`}
             >
               US /en
             </button>
           </div>
-          
-          <div className="flex items-center justify-between">
-            <span className="text-sm text-gray-800 dark:text-gray-200">Language versions</span>
-            <span className="text-xs text-orange-600 font-medium">Switch between French and English content</span>
-          </div>
-        </CardContent>
-      </Card>
+        </div>
+        <span className="text-sm text-orange-600 font-medium">Switch content language</span>
+      </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 xl:grid-cols-4 lg:grid-cols-3 gap-6">
         {/* Left Column - Page Details */}
-        <div className="lg:col-span-1 space-y-6">
+        <div className="xl:col-span-1 lg:col-span-1 space-y-6">
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
@@ -404,7 +398,7 @@ export default function SeoManagement() {
         </div>
 
         {/* Right Column - SEO Preview & Tools */}
-        <div className="lg:col-span-2 space-y-6">
+        <div className="xl:col-span-3 lg:col-span-2 space-y-6">
           {/* SEO Preview */}
           <Card>
             <CardHeader>
