@@ -350,16 +350,24 @@ export default function SeoManagement() {
                 <div className="flex items-start space-x-3 p-3 border rounded-lg">
                   <div className="flex-shrink-0 mt-1">
                     <Switch
+                      key={`index-switch-${formState.robotsIndex}`}
                       checked={formState.robotsIndex}
                       onCheckedChange={(checked) => {
                         console.log('Index switch clicked:', checked);
-                        setFormState(prev => ({ ...prev, robotsIndex: checked }));
+                        console.log('Current state before:', formState.robotsIndex);
+                        setFormState(prev => {
+                          const newState = { ...prev, robotsIndex: checked };
+                          console.log('New state after:', newState.robotsIndex);
+                          return newState;
+                        });
                       }}
-                      className="seo-switch"
+                      className={`seo-switch ${formState.robotsIndex ? 'checked-switch' : 'unchecked-switch'}`}
                       data-state={formState.robotsIndex ? "checked" : "unchecked"}
                       style={{
-                        backgroundColor: formState.robotsIndex ? '#f97316' : '#d1d5db',
-                        borderColor: formState.robotsIndex ? '#f97316' : '#9ca3af'
+                        backgroundColor: formState.robotsIndex ? '#f97316' : '#6b7280',
+                        borderColor: formState.robotsIndex ? '#f97316' : '#4b5563',
+                        opacity: 1,
+                        transform: 'none'
                       }}
                     />
                   </div>
@@ -389,16 +397,24 @@ export default function SeoManagement() {
                 <div className="flex items-start space-x-3 p-3 border rounded-lg">
                   <div className="flex-shrink-0 mt-1">
                     <Switch
+                      key={`follow-switch-${formState.robotsFollow}`}
                       checked={formState.robotsFollow}
                       onCheckedChange={(checked) => {
                         console.log('Follow switch clicked:', checked);
-                        setFormState(prev => ({ ...prev, robotsFollow: checked }));
+                        console.log('Current state before:', formState.robotsFollow);
+                        setFormState(prev => {
+                          const newState = { ...prev, robotsFollow: checked };
+                          console.log('New state after:', newState.robotsFollow);
+                          return newState;
+                        });
                       }}
-                      className="seo-switch"
+                      className={`seo-switch ${formState.robotsFollow ? 'checked-switch' : 'unchecked-switch'}`}
                       data-state={formState.robotsFollow ? "checked" : "unchecked"}
                       style={{
-                        backgroundColor: formState.robotsFollow ? '#f97316' : '#d1d5db',
-                        borderColor: formState.robotsFollow ? '#f97316' : '#9ca3af'
+                        backgroundColor: formState.robotsFollow ? '#f97316' : '#6b7280',
+                        borderColor: formState.robotsFollow ? '#f97316' : '#4b5563',
+                        opacity: 1,
+                        transform: 'none'
                       }}
                     />
                   </div>
