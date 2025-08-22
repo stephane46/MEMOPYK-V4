@@ -122,14 +122,14 @@ export function HowItWorksCondensed() {
                     <div 
                       className="card-back shadow-lg hover:shadow-2xl rounded-2xl overflow-hidden border border-gray-200"
                       style={{
-                        backgroundImage: `linear-gradient(135deg, rgba(214, 124, 74, 0.85) 0%, rgba(42, 71, 89, 0.85) 100%), url(${step.image})`,
+                        backgroundImage: `linear-gradient(135deg, rgba(214, 124, 74, 0.92) 0%, rgba(42, 71, 89, 0.92) 100%), url(${step.image})`,
                         backgroundSize: 'cover',
                         backgroundPosition: 'center',
                         backgroundRepeat: 'no-repeat'
                       }}
                     >
                       <div 
-                        className="h-full flex flex-col justify-center items-center text-center p-4 cursor-pointer relative"
+                        className="h-full flex flex-col justify-between p-6 cursor-pointer relative"
                         onClick={() => {
                           setFlippedCards(prev => {
                             const newSet = new Set(prev);
@@ -139,21 +139,31 @@ export function HowItWorksCondensed() {
                         }}
                       >
                         
-                        {/* Description */}
-                        <div className="text-sm leading-relaxed mb-6 text-white/95 w-full">
-                          {(language === 'fr-FR' ? step.descriptionFr : step.descriptionEn).split('\n').map((paragraph, i) => (
-                            <p key={i} className="mb-3 last:mb-0">{paragraph}</p>
-                          ))}
+                        {/* Top Section - Description */}
+                        <div className="text-center">
+                          <div className="text-sm leading-relaxed text-white w-full">
+                            {(language === 'fr-FR' ? step.descriptionFr : step.descriptionEn).split('\n').map((paragraph, i) => (
+                              <p key={i} className="mb-3 last:mb-0">{paragraph}</p>
+                            ))}
+                          </div>
                         </div>
                         
-                        {/* Sub Description */}
-                        <div className="text-xs text-white/80 border-t border-white/20 pt-4 w-full">
-                          {language === 'fr-FR' ? step.subDescriptionFr : step.subDescriptionEn}
-                        </div>
-                        
-                        {/* Click to flip back hint */}
-                        <div className="absolute bottom-4 right-4 text-xs text-white/60 bg-white/10 px-2 py-1 rounded">
-                          {language === 'fr-FR' ? 'Cliquer pour retourner' : 'Click to flip back'}
+                        {/* Bottom Section - Sub Description with consistent separator */}
+                        <div className="text-center">
+                          <div className="border-t border-white/40 pt-4 mb-4">
+                            <div className="text-xs text-white leading-relaxed">
+                              {language === 'fr-FR' ? step.subDescriptionFr : step.subDescriptionEn}
+                            </div>
+                          </div>
+                          
+                          {/* Return arrow */}
+                          <div className="flex justify-center">
+                            <div className="w-8 h-8 bg-white/20 rounded-full flex items-center justify-center hover:bg-white/30 transition-colors">
+                              <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                              </svg>
+                            </div>
+                          </div>
                         </div>
                       </div>
                     </div>
