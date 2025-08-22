@@ -140,14 +140,14 @@ export function HowItWorksCondensed() {
                       >
                         
                         {/* Description */}
-                        <div className="text-sm leading-relaxed mb-6 text-white/95 w-full px-2">
+                        <div className="text-sm leading-relaxed mb-6 text-white/95 w-full">
                           {(language === 'fr-FR' ? step.descriptionFr : step.descriptionEn).split('\n').map((paragraph, i) => (
                             <p key={i} className="mb-3 last:mb-0">{paragraph}</p>
                           ))}
                         </div>
                         
                         {/* Sub Description */}
-                        <div className="text-xs text-white/80 border-t border-white/20 pt-4 w-full px-2">
+                        <div className="text-xs text-white/80 border-t border-white/20 pt-4 w-full">
                           {language === 'fr-FR' ? step.subDescriptionFr : step.subDescriptionEn}
                         </div>
                         
