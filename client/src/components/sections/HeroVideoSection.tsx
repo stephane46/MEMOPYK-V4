@@ -333,11 +333,11 @@ export function HeroVideoSection() {
       {/* Video Controls - Always show when multiple videos available */}
       {activeVideos.length > 1 && (
         <>
-          {/* Navigation Arrows - Large without circles */}
+          {/* Navigation Arrows - Large orange arrows */}
           <Button
             variant="ghost"
             size="lg"
-            className="hidden sm:flex absolute left-4 lg:left-8 top-1/2 -translate-y-1/2 text-white hover:text-memopyk-orange z-20 p-0 bg-transparent hover:bg-transparent"
+            className="hidden sm:flex absolute left-4 lg:left-8 top-1/2 -translate-y-1/2 text-memopyk-orange hover:text-memopyk-orange/80 z-20 p-0 bg-transparent hover:bg-transparent"
             onClick={goToPrevious}
           >
             <ChevronLeft className="h-16 w-16 lg:h-24 lg:w-24 drop-shadow-lg" />
@@ -346,7 +346,7 @@ export function HeroVideoSection() {
           <Button
             variant="ghost"
             size="lg"
-            className="hidden sm:flex absolute right-4 lg:right-8 top-1/2 -translate-y-1/2 text-white hover:text-memopyk-orange z-20 p-0 bg-transparent hover:bg-transparent"
+            className="hidden sm:flex absolute right-4 lg:right-8 top-1/2 -translate-y-1/2 text-memopyk-orange hover:text-memopyk-orange/80 z-20 p-0 bg-transparent hover:bg-transparent"
             onClick={goToNext}
           >
             <ChevronRight className="h-16 w-16 lg:h-24 lg:w-24 drop-shadow-lg" />
