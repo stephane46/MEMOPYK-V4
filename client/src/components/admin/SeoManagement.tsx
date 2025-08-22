@@ -145,8 +145,8 @@ export default function SeoManagement() {
     metaTitleFr: '',
     metaDescriptionEn: '',
     metaDescriptionFr: '',
-    urlSlugEn: '',
-    urlSlugFr: '',
+    urlSlugEn: '/en-US',
+    urlSlugFr: '/fr-FR',
     robotsIndex: true,
     robotsFollow: true
   });
@@ -159,8 +159,8 @@ export default function SeoManagement() {
         metaTitleFr: currentSettings.metaTitleFr || '',
         metaDescriptionEn: currentSettings.metaDescriptionEn || '',
         metaDescriptionFr: currentSettings.metaDescriptionFr || '',
-        urlSlugEn: currentSettings.urlSlugEn || '',
-        urlSlugFr: currentSettings.urlSlugFr || '',
+        urlSlugEn: currentSettings.urlSlugEn || '/en-US',
+        urlSlugFr: currentSettings.urlSlugFr || '/fr-FR',
         robotsIndex: currentSettings.robotsIndex !== false,
         robotsFollow: currentSettings.robotsFollow !== false
       });
@@ -322,6 +322,14 @@ export default function SeoManagement() {
                   }}
                   placeholder={currentLanguage === 'fr' ? '/fr-FR' : '/en-US'}
                 />
+                <p className="text-xs text-gray-600 dark:text-gray-400">
+                  Current route: <span className="font-mono text-orange-600">
+                    {currentLanguage === 'fr' 
+                      ? (formState.urlSlugFr || '/fr-FR') 
+                      : (formState.urlSlugEn || '/en-US')
+                    }
+                  </span>
+                </p>
               </div>
 
               {/* Search Engine Controls */}
