@@ -349,14 +349,22 @@ export default function SeoManagement() {
               <div className="space-y-4" key={`controls-${formState.robotsIndex}-${formState.robotsFollow}`}>
                 <div className="flex items-start space-x-3 p-3 border rounded-lg">
                   <div className="flex-shrink-0 mt-1">
-                    <Switch
-                      checked={formState.robotsIndex}
-                      onCheckedChange={(checked) => {
-                        console.log('Index switch clicked:', checked);
-                        setFormState(prev => ({ ...prev, robotsIndex: checked }));
+                    <button
+                      type="button"
+                      onClick={() => {
+                        console.log('Index switch clicked:', !formState.robotsIndex);
+                        setFormState(prev => ({ ...prev, robotsIndex: !prev.robotsIndex }));
                       }}
-                      className="data-[state=checked]:bg-orange-500 data-[state=unchecked]:bg-gray-400"
-                    />
+                      className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2 ${
+                        formState.robotsIndex ? 'bg-orange-500' : 'bg-gray-400'
+                      }`}
+                    >
+                      <span
+                        className={`inline-block h-4 w-4 transform rounded-full bg-white shadow transition-transform duration-200 ${
+                          formState.robotsIndex ? 'translate-x-6' : 'translate-x-1'
+                        }`}
+                      />
+                    </button>
                   </div>
                   <div className="space-y-1 flex-1">
                     <Label className="text-sm font-medium cursor-pointer" onClick={() => {
@@ -383,14 +391,22 @@ export default function SeoManagement() {
                 
                 <div className="flex items-start space-x-3 p-3 border rounded-lg">
                   <div className="flex-shrink-0 mt-1">
-                    <Switch
-                      checked={formState.robotsFollow}
-                      onCheckedChange={(checked) => {
-                        console.log('Follow switch clicked:', checked);
-                        setFormState(prev => ({ ...prev, robotsFollow: checked }));
+                    <button
+                      type="button"
+                      onClick={() => {
+                        console.log('Follow switch clicked:', !formState.robotsFollow);
+                        setFormState(prev => ({ ...prev, robotsFollow: !prev.robotsFollow }));
                       }}
-                      className="data-[state=checked]:bg-orange-500 data-[state=unchecked]:bg-gray-400"
-                    />
+                      className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2 ${
+                        formState.robotsFollow ? 'bg-orange-500' : 'bg-gray-400'
+                      }`}
+                    >
+                      <span
+                        className={`inline-block h-4 w-4 transform rounded-full bg-white shadow transition-transform duration-200 ${
+                          formState.robotsFollow ? 'translate-x-6' : 'translate-x-1'
+                        }`}
+                      />
+                    </button>
                   </div>
                   <div className="space-y-1 flex-1">
                     <Label className="text-sm font-medium cursor-pointer" onClick={() => {
