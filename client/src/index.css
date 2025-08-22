@@ -372,18 +372,15 @@ button, .play-button, .play-icon {
   border-radius: 1rem;
 }
 
-.card-flip-container .card-front {
-  position: relative;
-  z-index: 2;
-}
-
+.card-flip-container .card-front,
 .card-flip-container .card-back {
   position: absolute;
   top: 0;
   left: 0;
-  height: 100%;
   width: 100%;
-  z-index: 1;
+  height: 100%;
+  backface-visibility: hidden;
+  border-radius: 1rem;
 }
 
 /* Sliding animations for thumbnail overlays */
