@@ -165,18 +165,17 @@ export function HowItWorksCondensed() {
                         }}
                       >
                         
-                        {/* Top Section - Fixed at exactly 300px from card top */}
-                        <div className="text-center flex flex-col justify-between" style={{ height: '296px' }}>
-                          <div className="text-sm leading-normal text-white w-full">
+                        {/* Top Section - Text content area */}
+                        <div className="text-center flex flex-col" style={{ height: '350px', position: 'relative' }}>
+                          <div className="text-sm leading-normal text-white w-full pt-2">
                             {(language === 'fr-FR' ? step.descriptionFr : step.descriptionEn).split('\n').map((paragraph, i) => (
                               <p key={i} className="mb-2 last:mb-0">{paragraph}</p>
                             ))}
                           </div>
-                          <div></div>
+                          
+                          {/* Separator Line - EXACTLY 300px FROM TOP */}
+                          <div className="absolute border-t border-white/40 mx-2 left-2 right-2" style={{ top: '296px' }}></div>
                         </div>
-                        
-                        {/* Separator Line - EXACTLY 300px FROM TOP */}
-                        <div className="border-t border-white/40 mx-2"></div>
                         
                         {/* Bottom Section - Sub Description - FIXED HEIGHT */}
                         <div className="text-center pt-1 h-20 flex items-start mb-12">
