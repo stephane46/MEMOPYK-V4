@@ -178,16 +178,16 @@ export function HowItWorksCondensed() {
                         <div className="border-t border-white/40 mx-2"></div>
                         
                         {/* Bottom Section - Sub Description - FIXED HEIGHT */}
-                        <div className="text-center pt-3 h-20 flex items-start">
+                        <div className="text-center pt-3 h-16 flex items-start pb-10">
                           <div className="text-xs text-white leading-relaxed w-full">
                             {language === 'fr-FR' ? step.subDescriptionFr : step.subDescriptionEn}
                           </div>
                         </div>
                         
-                        {/* Return arrow - Bottom left corner */}
-                        <div className="absolute bottom-1 left-1">
-                          <div className="w-8 h-8 bg-white/20 rounded-full flex items-center justify-center hover:bg-white/30 transition-colors">
-                            <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        {/* Return arrow - Very bottom left corner, outside text */}
+                        <div className="absolute -bottom-1 -left-1">
+                          <div className="w-7 h-7 bg-white/20 rounded-full flex items-center justify-center hover:bg-white/30 transition-colors">
+                            <svg className="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
                             </svg>
                           </div>
