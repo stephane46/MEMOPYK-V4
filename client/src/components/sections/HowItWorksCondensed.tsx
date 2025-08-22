@@ -100,8 +100,8 @@ export function HowItWorksCondensed() {
                             <span className="text-sm font-bold text-white">{step.number}</span>
                           </div>
 
-                          {/* Info Button - Moved to bottom area */}
-                          <div className="absolute bottom-2 left-1/2 transform -translate-x-1/2 pointer-events-none">
+                          {/* Info Button - Bottom right */}
+                          <div className="absolute bottom-2 right-2 pointer-events-none">
                             <div 
                               className="w-10 h-10 rounded-full flex items-center justify-center transition-all duration-300 hover:scale-110 cursor-pointer pointer-events-auto"
                               style={{
