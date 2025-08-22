@@ -6,6 +6,7 @@ import { WhyMemopykSection } from '../components/sections/WhyMemopykSection';
 import GallerySection from '../components/sections/GallerySection';
 import FAQSection from '../components/sections/FAQSection';
 import { CtaSection } from '../components/sections/CtaSection';
+import { SEO } from '../components/SEO';
 
 import { useLanguage } from '../contexts/LanguageContext';
 import { useVideoAnalytics } from '../hooks/useVideoAnalytics';
@@ -41,6 +42,9 @@ export function HomePage() {
   
   return (
     <div className="min-h-screen">
+      {/* SEO Meta Tags */}
+      <SEO page="homepage" />
+      
       {/* Simple Hero Video Section */}
       <SimpleHeroVideoSection />
       
