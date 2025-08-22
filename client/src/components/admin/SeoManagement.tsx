@@ -367,16 +367,7 @@ const SeoManagement: React.FC = () => {
             </div>
           </div>
 
-          <Button
-            onClick={generatePreview}
-            variant="outline"
-            size="sm"
-            className="seo-btn-preview"
-            data-testid="button-preview-seo"
-          >
-            <Eye className="w-4 h-4 mr-2" />
-            Preview
-          </Button>
+
 
           <Button
             onClick={loadHistory}
