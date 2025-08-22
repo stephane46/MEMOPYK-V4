@@ -349,26 +349,14 @@ export default function SeoManagement() {
               <div className="space-y-4" key={`controls-${formState.robotsIndex}-${formState.robotsFollow}`}>
                 <div className="flex items-start space-x-3 p-3 border rounded-lg">
                   <div className="flex-shrink-0 mt-1">
-                    <div 
-                      className={`inline-block w-11 h-6 rounded-full cursor-pointer transition-colors duration-200 ${
-                        formState.robotsIndex ? 'bg-orange-500' : 'bg-gray-400'
-                      }`}
-                      onClick={() => {
-                        console.log('Index switch clicked:', !formState.robotsIndex);
-                        console.log('Current state before:', formState.robotsIndex);
-                        setFormState(prev => {
-                          const newState = { ...prev, robotsIndex: !prev.robotsIndex };
-                          console.log('New state after:', newState.robotsIndex);
-                          return newState;
-                        });
+                    <Switch
+                      checked={formState.robotsIndex}
+                      onCheckedChange={(checked) => {
+                        console.log('Index switch clicked:', checked);
+                        setFormState(prev => ({ ...prev, robotsIndex: checked }));
                       }}
-                    >
-                      <div 
-                        className={`w-5 h-5 bg-white rounded-full shadow-md transform transition-transform duration-200 mt-0.5 ${
-                          formState.robotsIndex ? 'translate-x-5' : 'translate-x-0.5'
-                        }`}
-                      />
-                    </div>
+                      className="data-[state=checked]:bg-orange-500 data-[state=unchecked]:bg-gray-400"
+                    />
                   </div>
                   <div className="space-y-1 flex-1">
                     <Label className="text-sm font-medium cursor-pointer" onClick={() => {
@@ -395,26 +383,14 @@ export default function SeoManagement() {
                 
                 <div className="flex items-start space-x-3 p-3 border rounded-lg">
                   <div className="flex-shrink-0 mt-1">
-                    <div 
-                      className={`inline-block w-11 h-6 rounded-full cursor-pointer transition-colors duration-200 ${
-                        formState.robotsFollow ? 'bg-orange-500' : 'bg-gray-400'
-                      }`}
-                      onClick={() => {
-                        console.log('Follow switch clicked:', !formState.robotsFollow);
-                        console.log('Current state before:', formState.robotsFollow);
-                        setFormState(prev => {
-                          const newState = { ...prev, robotsFollow: !prev.robotsFollow };
-                          console.log('New state after:', newState.robotsFollow);
-                          return newState;
-                        });
+                    <Switch
+                      checked={formState.robotsFollow}
+                      onCheckedChange={(checked) => {
+                        console.log('Follow switch clicked:', checked);
+                        setFormState(prev => ({ ...prev, robotsFollow: checked }));
                       }}
-                    >
-                      <div 
-                        className={`w-5 h-5 bg-white rounded-full shadow-md transform transition-transform duration-200 mt-0.5 ${
-                          formState.robotsFollow ? 'translate-x-5' : 'translate-x-0.5'
-                        }`}
-                      />
-                    </div>
+                      className="data-[state=checked]:bg-orange-500 data-[state=unchecked]:bg-gray-400"
+                    />
                   </div>
                   <div className="space-y-1 flex-1">
                     <Label className="text-sm font-medium cursor-pointer" onClick={() => {

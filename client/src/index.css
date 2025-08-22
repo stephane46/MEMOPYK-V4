@@ -111,68 +111,7 @@ img, video, iframe, canvas, svg {
   border: 2px solid #f97316 !important;
 }
 
-/* Switch component forced styles for better visibility */
-.checked-switch {
-  background-color: #f97316 !important;
-  border-color: #f97316 !important;
-}
-
-.unchecked-switch {
-  background-color: #6b7280 !important;
-  border-color: #4b5563 !important;
-}
-
-.seo-switch {
-  pointer-events: auto !important;
-  cursor: pointer !important;
-  position: relative !important;
-  z-index: 10 !important;
-  transition: all 0.3s ease !important;
-  width: 44px !important;
-  height: 24px !important;
-  border-radius: 24px !important;
-  border: 2px solid transparent !important;
-}
-
-.seo-switch * {
-  pointer-events: none !important;
-}
-
-/* Force thumb styling with better specificity */
-.checked-switch [data-state="checked"] {
-  transform: translateX(20px) !important;
-  background-color: white !important;
-  width: 16px !important;
-  height: 16px !important;
-  border-radius: 50% !important;
-}
-
-.unchecked-switch [data-state="unchecked"] {
-  transform: translateX(2px) !important;
-  background-color: white !important;
-  width: 16px !important;
-  height: 16px !important;
-  border-radius: 50% !important;
-}
-
-.seo-switch [role="switch"] {
-  background-color: inherit !important;
-}
-
-/* Target the actual switch thumb */
-button[role="switch"] > span {
-  background-color: white !important;
-  border-radius: 50% !important;
-  transition: transform 0.3s ease !important;
-}
-
-button[role="switch"][data-state="checked"] > span {
-  transform: translateX(20px) !important;
-}
-
-button[role="switch"][data-state="unchecked"] > span {
-  transform: translateX(2px) !important;
-}
+/* Clear switch styles - remove conflicting CSS completely */
 
 /* How It Works Cards - Scrollable text areas with subtle styling */
 .how-it-works-text {
