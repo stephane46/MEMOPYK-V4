@@ -309,7 +309,7 @@ export function HeroVideoSection() {
           <div className="flex justify-center items-center mt-4 sm:mt-6 lg:mt-8">
             <Button 
               size="default" 
-              className="relative inline-flex items-center gap-2 bg-memopyk-orange hover:bg-memopyk-dark-blue text-white px-8 py-4 rounded-full font-semibold text-lg transition-all duration-300 transform hover:scale-105 shadow-2xl cursor-pointer border-2 border-white/20 backdrop-blur-sm overflow-hidden group"
+              className="relative inline-flex items-center gap-2 bg-memopyk-orange hover:bg-memopyk-dark-blue text-white px-4 py-2 sm:px-8 sm:py-4 rounded-full font-semibold text-sm sm:text-lg transition-all duration-300 transform hover:scale-105 shadow-lg sm:shadow-2xl cursor-pointer border-2 border-white/20 backdrop-blur-sm overflow-hidden group"
               onClick={() => {
                 const element = document.getElementById('how-it-works');
                 if (element) {
