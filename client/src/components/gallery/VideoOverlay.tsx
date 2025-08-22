@@ -122,16 +122,7 @@ export default function VideoOverlay({
     // Calculate aspect ratio from video dimensions
     const aspectRatio = width / height;
     
-    console.log('🔍 DEVICE DETECTION v2.0 - CRITICAL FIX:', {
-      isMobileDevice,
-      screenWidth: window.innerWidth,
-      screenHeight: window.innerHeight,
-      videoTitle: title,
-      videoDims: `${width}x${height}`,
-      aspectRatio: aspectRatio.toFixed(2),
-      mobileThreshold: 640,
-      isReallyMobile: window.innerWidth <= 640
-    });
+
     
     // CRITICAL FIX: Use viewport-based sizing for both mobile and desktop
     if (isMobileDevice) {
@@ -335,10 +326,8 @@ export default function VideoOverlay({
   const startVideoPlayback = useCallback(() => {
     const video = videoRef.current;
     if (video) {
-      console.log('🎬 AUTO-STARTING VIDEO PLAYBACK');
       setShowThumbnail(false);
       video.play().then(() => {
-        console.log('✅ AUTO-PLAY SUCCESS');
         setIsPlaying(true);
       }).catch((error) => {
         console.error('❌ AUTO-PLAY FAILED:', error);
@@ -466,25 +455,13 @@ export default function VideoOverlay({
 
   // Keyboard controls
   const handleKeyDown = useCallback((e: KeyboardEvent) => {
-    console.log(`🔥🔥🔥 KEYBOARD EVENT CAPTURED: ${e.key} (code: ${e.code}) 🔥🔥🔥`);
-    console.log('⌨️ Event details:', {
-      key: e.key,
-      code: e.code,
-      target: (e.target as HTMLElement)?.tagName,
-      type: e.type,
-      timestamp: Date.now()
-    });
     
     const video = videoRef.current;
-    if (!video) {
-      console.log('⌨️ NO VIDEO REF - ignoring keyboard event');
-      return;
-    }
+    if (!video) return;
 
     switch (e.key) {
       case ' ':
       case 'k':
-        console.log('⌨️ PLAY/PAUSE key pressed');
         e.preventDefault();
         if (isPlaying) {
           video.pause();
@@ -493,22 +470,18 @@ export default function VideoOverlay({
         }
         break;
       case 'm':
-        console.log('⌨️ MUTE key pressed');
         e.preventDefault();
         toggleMute();
         break;
       case 'Escape':
-        console.log('⌨️ ESC KEY PRESSED - calling handleCloseWithAnalytics');
         e.preventDefault();
         handleCloseWithAnalytics();
         break;
       case 'ArrowLeft':
-        console.log('⌨️ LEFT ARROW key pressed');
         e.preventDefault();
         video.currentTime = Math.max(0, video.currentTime - 10);
         break;
       case 'ArrowRight':
-        console.log('⌨️ RIGHT ARROW key pressed');
         e.preventDefault();
         video.currentTime = Math.min(video.duration, video.currentTime + 10);
         break;
@@ -516,25 +489,16 @@ export default function VideoOverlay({
   }, [isPlaying, toggleMute, handleCloseWithAnalytics]);
 
   useEffect(() => {
-    console.log('🔥🔥🔥 KEYBOARD LISTENER SETUP - Adding keydown listener to OVERLAY ELEMENT 🔥🔥🔥');
     const overlayElement = overlayRef.current;
     
     if (overlayElement) {
-      // Focus the overlay element so it can receive keyboard events
       overlayElement.focus();
       overlayElement.addEventListener('keydown', handleKeyDown);
-      console.log('🔥🔥🔥 KEYBOARD LISTENER ATTACHED TO OVERLAY ELEMENT 🔥🔥🔥');
     }
     
-    // Also add to document as fallback
     document.addEventListener('keydown', handleKeyDown);
     
-    // Test if document is ready
-    console.log('🔥🔥🔥 DOCUMENT READY STATE:', document.readyState);
-    console.log('🔥🔥🔥 ACTIVE ELEMENT:', document.activeElement?.tagName);
-    
     return () => {
-      console.log('🔥🔥🔥 KEYBOARD LISTENER CLEANUP 🔥🔥🔥');
       if (overlayElement) {
         overlayElement.removeEventListener('keydown', handleKeyDown);
       }
