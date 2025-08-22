@@ -3,7 +3,16 @@ import DOMPurify from "dompurify";
 import { JSDOM } from "jsdom";
 import fs from 'fs/promises';
 import path from 'path';
-import { sql } from "drizzle-orm";
+import { sql, eq, desc } from "drizzle-orm";
+import { createClient } from '@supabase/supabase-js';
+import { db } from "./db";
+import { seoSettings, seoAuditLogs } from "@shared/schema";
+
+// Initialize Supabase client
+const supabase = createClient(
+  process.env.SUPABASE_URL!,
+  process.env.SUPABASE_SERVICE_KEY!
+);
 
 // Initialize DOMPurify for server-side use
 const window = new JSDOM('').window;
@@ -153,18 +162,66 @@ export class SeoService {
    */
   async getSeoSettings(lang: 'fr-FR' | 'en-US'): Promise<SeoData | null> {
     try {
-      // First try to load from most recent JSON backup
+      // First try to load from Supabase database
+      const settings = await db
+        .select()
+        .from(seoSettings)
+        .where(eq(seoSettings.page, 'home')) // Assuming 'home' page for now
+        .limit(1);
+
+      if (settings.length > 0) {
+        const setting = settings[0];
+        // Extract data based on language
+        const langSuffix = lang === 'fr-FR' ? 'Fr' : 'En';
+        
+        return {
+          lang,
+          title: setting[`metaTitle${langSuffix}` as keyof typeof setting] as string || undefined,
+          description: setting[`metaDescription${langSuffix}` as keyof typeof setting] as string || undefined,
+          canonical: setting.canonicalUrl || undefined,
+          keywords: setting[`metaKeywords${langSuffix}` as keyof typeof setting] as string || undefined,
+          robotsIndex: setting.robotsIndex,
+          robotsFollow: setting.robotsFollow,
+          robotsNoArchive: setting.robotsNoArchive,
+          robotsNoSnippet: setting.robotsNoSnippet,
+          jsonLd: setting.jsonLd ? JSON.stringify(setting.jsonLd) : undefined,
+          openGraph: {
+            title: setting[`ogTitle${langSuffix}` as keyof typeof setting] as string || undefined,
+            description: setting[`ogDescription${langSuffix}` as keyof typeof setting] as string || undefined,
+            image: setting.ogImageUrl || undefined,
+            type: setting.ogType || 'website',
+            url: setting.canonicalUrl || undefined
+          },
+          twitter: {
+            card: setting.twitterCard || 'summary_large_image',
+            title: setting[`twitterTitle${langSuffix}` as keyof typeof setting] as string || undefined,
+            description: setting[`twitterDescription${langSuffix}` as keyof typeof setting] as string || undefined,
+            image: setting.twitterImageUrl || undefined
+          }
+        };
+      }
+
+      // Fallback to JSON backup if no database record
       const backupData = await this.getLatestBackup(lang);
       if (backupData) {
         return backupData;
       }
 
-      // Fallback to default data if no backup exists
+      // Final fallback to default data
       return this.getFallbackSeoData(lang);
       
-      // Database code commented out - using JSON backup instead
     } catch (error) {
-      console.error('Error fetching SEO settings:', error);
+      console.error('Error fetching SEO settings from database:', error);
+      // Fallback to JSON backup on database error
+      try {
+        const backupData = await this.getLatestBackup(lang);
+        if (backupData) {
+          return backupData;
+        }
+      } catch (backupError) {
+        console.error('Error loading JSON backup:', backupError);
+      }
+      
       return this.getFallbackSeoData(lang);
     }
   }
@@ -178,61 +235,63 @@ export class SeoService {
     const sanitizedData = this.sanitizeData(validatedData);
 
     try {
-      // For now, save to JSON backup file until database is set up
+      // Create JSON backup first (for immediate fallback)
       await this.createBackup(sanitizedData, adminUser);
       
-      console.log(`✅ SEO settings saved for ${sanitizedData.lang} by ${adminUser}`);
-      
-      /*
       // Get current settings for diff calculation
       const currentSettings = await this.getSeoSettings(sanitizedData.lang);
 
-      // Insert or update settings
+      // Prepare data for database
       const now = new Date();
+      const langSuffix = sanitizedData.lang === 'fr-FR' ? 'Fr' : 'En';
+      
       const settingsData = {
-        lang: sanitizedData.lang,
-        title: sanitizedData.title || null,
-        description: sanitizedData.description || null,
-        canonical: sanitizedData.canonical || null,
-        keywords: sanitizedData.keywords || null,
+        page: 'home', // Default to home page
+        [`metaTitle${langSuffix}`]: sanitizedData.title || null,
+        [`metaDescription${langSuffix}`]: sanitizedData.description || null,
+        [`metaKeywords${langSuffix}`]: sanitizedData.keywords || null,
+        [`ogTitle${langSuffix}`]: sanitizedData.openGraph?.title || null,
+        [`ogDescription${langSuffix}`]: sanitizedData.openGraph?.description || null,
+        [`twitterTitle${langSuffix}`]: sanitizedData.twitter?.title || null,
+        [`twitterDescription${langSuffix}`]: sanitizedData.twitter?.description || null,
+        canonicalUrl: sanitizedData.canonical || null,
         robotsIndex: sanitizedData.robotsIndex,
         robotsFollow: sanitizedData.robotsFollow,
         robotsNoArchive: sanitizedData.robotsNoArchive,
         robotsNoSnippet: sanitizedData.robotsNoSnippet,
-        jsonLd: sanitizedData.jsonLd || null,
-        openGraph: sanitizedData.openGraph || null,
-        twitter: sanitizedData.twitter || null,
-        hreflang: sanitizedData.hreflang || null,
-        extras: sanitizedData.extras || null,
-        createdBy: adminUser,
+        ogImageUrl: sanitizedData.openGraph?.image || null,
+        ogType: sanitizedData.openGraph?.type || 'website',
+        twitterCard: sanitizedData.twitter?.card || 'summary_large_image',
+        twitterImageUrl: sanitizedData.twitter?.image || null,
+        jsonLd: sanitizedData.jsonLd ? JSON.parse(sanitizedData.jsonLd) : null,
         updatedAt: now
       };
 
-      // Save to database
+      // Insert or update in database
       const result = await db
         .insert(seoSettings)
-        .values(settingsData)
+        .values(settingsData as any)
         .onConflictDoUpdate({
-          target: seoSettings.lang,
+          target: seoSettings.page,
           set: {
             ...settingsData,
-            version: sql`${seoSettings.version} + 1`,
             updatedAt: now
           }
         })
         .returning();
 
-      // Save to history
+      console.log(`✅ SEO settings saved to database for ${sanitizedData.lang} by ${adminUser}`);
+
+      // Save to history/audit log
       await this.saveToHistory(result[0].id, sanitizedData, adminUser, changeReason, currentSettings);
 
-      // Clean up old history
-      await this.cleanupHistory(sanitizedData.lang);
-      */
-
     } catch (error) {
-      console.error('Error saving SEO settings:', error);
-      throw new Error('Failed to save SEO settings');
+      console.error('Error saving SEO settings to database:', error);
+      // If database save fails, at least we have the JSON backup
+      console.log(`⚠️ Database save failed, but JSON backup created for ${sanitizedData.lang}`);
+      throw new Error('Failed to save SEO settings to database');
     }
+  }
   }
 
   /**
