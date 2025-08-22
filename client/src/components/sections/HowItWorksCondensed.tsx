@@ -175,12 +175,12 @@ export function HowItWorksCondensed() {
                           
                           {/* Separator Line - EXACTLY 250px FROM TOP */}
                           <div className="absolute border-t border-white/40 mx-2 left-2 right-2" style={{ top: '246px' }}></div>
-                        </div>
-                        
-                        {/* Bottom Section - Sub Description - FIXED HEIGHT */}
-                        <div className="text-center pt-1 h-20 flex items-start mb-12">
-                          <div className="text-xs text-white leading-relaxed w-full">
-                            {language === 'fr-FR' ? step.subDescriptionFr : step.subDescriptionEn}
+                          
+                          {/* Bottom Section - Sub Description - EXACTLY 260px FROM TOP */}
+                          <div className="absolute text-center left-2 right-2" style={{ top: '256px' }}>
+                            <div className="text-xs text-white leading-relaxed w-full">
+                              {language === 'fr-FR' ? step.subDescriptionFr : step.subDescriptionEn}
+                            </div>
                           </div>
                         </div>
                         
