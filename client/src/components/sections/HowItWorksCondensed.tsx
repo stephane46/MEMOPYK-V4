@@ -173,8 +173,8 @@ export function HowItWorksCondensed() {
                             ))}
                           </div>
                           
-                          {/* Separator Line - EXACTLY 300px FROM TOP */}
-                          <div className="absolute border-t border-white/40 mx-2 left-2 right-2" style={{ top: '296px' }}></div>
+                          {/* Separator Line - EXACTLY 250px FROM TOP */}
+                          <div className="absolute border-t border-white/40 mx-2 left-2 right-2" style={{ top: '246px' }}></div>
                         </div>
                         
                         {/* Bottom Section - Sub Description - FIXED HEIGHT */}
