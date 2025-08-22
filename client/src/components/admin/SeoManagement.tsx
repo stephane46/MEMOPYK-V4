@@ -124,11 +124,12 @@ const SeoManagement: React.FC = () => {
       }
 
       const data = await response.json();
+      console.log('🔍 SEO LOAD DEBUG - Raw API Response:', data);
       setSeoData(data);
       
       // Populate form with data
       if (data) {
-        form.reset({
+        const formData = {
           title: data.title || '',
           description: data.description || '',
           canonical: data.canonical || '',
@@ -147,7 +148,19 @@ const SeoManagement: React.FC = () => {
           'twitter.title': data.twitter?.title || '',
           'twitter.description': data.twitter?.description || '',
           'twitter.image': data.twitter?.image || '',
-        });
+        };
+        
+        console.log('🔍 SEO LOAD DEBUG - Form Data Before Reset:', formData);
+        form.reset(formData);
+        
+        // Additional debug after reset
+        setTimeout(() => {
+          console.log('🔍 SEO LOAD DEBUG - Form Values After Reset:', {
+            title: form.getValues('title'),
+            description: form.getValues('description'),
+            keywords: form.getValues('keywords')
+          });
+        }, 100);
 
         setHreflangList(data.hreflang || []);
         setExtrasList(data.extras || []);
@@ -166,6 +179,7 @@ const SeoManagement: React.FC = () => {
 
   // Save SEO data
   const onSubmit = async (data: SeoFormData) => {
+    console.log('🔍 SEO SAVE DEBUG - Form Data Submitted:', data);
     setSaving(true);
     try {
       const payload = {
