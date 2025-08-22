@@ -200,7 +200,7 @@ export default function VideoOverlay({
       
       return { width: containerWidth, height: containerHeight };
     }
-  }, [orientation, width, height, getViewportRatio, title]);
+  }, [orientation, width, height, getViewportRatio, getIsMobile, title]);
 
   const [videoDimensions, setVideoDimensions] = useState(() => getVideoDimensions());
 
