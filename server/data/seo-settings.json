@@ -39,10 +39,10 @@
     "page": "homepage",
     "urlSlugEn": null,
     "urlSlugFr": null,
-    "metaTitleEn": "Test Title EN",
-    "metaTitleFr": "Test Title FR",
-    "metaDescriptionEn": "Test Description EN",
-    "metaDescriptionFr": "Test Description FR",
+    "metaTitleEn": "MEMOPYK – Unique memory films & albums from your photos and videos",
+    "metaTitleFr": "MEMOPYK – Films & albums souvenirs à partir de vos photos et vidéos",
+    "metaDescriptionEn": "MEMOPYK turns your photos and videos into unique souvenir films and albums. A fully human, creative, and inspiring service.",
+    "metaDescriptionFr": "MEMOPYK transforme vos photos et vidéos en albums et films souvenirs uniques. Un service 100 % humain, créatif et inspirant.",
     "metaKeywordsEn": null,
     "metaKeywordsFr": null,
     "ogTitleEn": null,
@@ -70,6 +70,6 @@
     "isActive": true,
     "jsonLd": null,
     "createdAt": "2025-07-29T15:14:48.175Z",
-    "updatedAt": "2025-07-29T15:14:48.175Z"
+    "updatedAt": "2025-08-22T13:34:38.334Z"
   }
 ]
