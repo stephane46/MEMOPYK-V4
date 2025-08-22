@@ -210,14 +210,14 @@ export default function SeoManagement() {
 
   const getCurrentTitle = () => {
     return currentLanguage === 'fr' 
-      ? currentSettings.metaTitleFr || 'Memopyk | Capture memories'
-      : currentSettings.metaTitleEn || 'Memopyk | Capture memories';
+      ? currentSettings.metaTitleFr || 'MEMOPYK – Films & albums souvenirs à partir de vos photos et vidéos'
+      : currentSettings.metaTitleEn || 'MEMOPYK – Unique memory films & albums from your photos and videos';
   };
 
   const getCurrentDescription = () => {
     return currentLanguage === 'fr'
-      ? currentSettings.metaDescriptionFr || 'Create photo & video stories'
-      : currentSettings.metaDescriptionEn || 'Create photo & video stories';
+      ? currentSettings.metaDescriptionFr || 'MEMOPYK transforme vos photos et vidéos en albums et films souvenirs uniques. Un service 100 % humain, créatif et inspirant.'
+      : currentSettings.metaDescriptionEn || 'MEMOPYK turns your photos and videos into unique souvenir films and albums. A fully human, creative, and inspiring service.';
   };
 
   return (
@@ -264,7 +264,7 @@ export default function SeoManagement() {
                     const field = currentLanguage === 'fr' ? 'metaTitleFr' : 'metaTitleEn';
                     setFormState(prev => ({ ...prev, [field]: e.target.value }));
                   }}
-                  placeholder="Memopyk | Capture memories"
+                  placeholder={currentLanguage === 'fr' ? 'MEMOPYK – Films & albums souvenirs à partir de vos photos et vidéos' : 'MEMOPYK – Unique memory films & albums from your photos and videos'}
                 />
               </div>
 
@@ -277,7 +277,7 @@ export default function SeoManagement() {
                     const field = currentLanguage === 'fr' ? 'metaDescriptionFr' : 'metaDescriptionEn';
                     setFormState(prev => ({ ...prev, [field]: e.target.value }));
                   }}
-                  placeholder="Create photo & video stories"
+                  placeholder={currentLanguage === 'fr' ? 'MEMOPYK transforme vos photos et vidéos en albums et films souvenirs uniques. Un service 100 % humain, créatif et inspirant.' : 'MEMOPYK turns your photos and videos into unique souvenir films and albums. A fully human, creative, and inspiring service.'}
                   rows={3}
                 />
               </div>
@@ -291,7 +291,7 @@ export default function SeoManagement() {
                     const field = currentLanguage === 'fr' ? 'urlSlugFr' : 'urlSlugEn';
                     setFormState(prev => ({ ...prev, [field]: e.target.value }));
                   }}
-                  placeholder="/page-slug"
+                  placeholder={currentLanguage === 'fr' ? '/fr-FR' : '/en-US'}
                 />
               </div>
 
@@ -324,7 +324,7 @@ export default function SeoManagement() {
               <Textarea
                 value={customMetaTags}
                 onChange={(e) => setCustomMetaTags(e.target.value)}
-                placeholder='<meta property="og:image" value="Oper:/>&#10;<meta robots="noarchive"'
+                placeholder='<meta property="og:image" content="https://memopyk.com/logo.svg"/>&#10;<meta property="og:site_name" content="MEMOPYK"/>&#10;<meta name="author" content="MEMOPYK"/>'
                 rows={4}
                 className="font-mono text-sm"
               />

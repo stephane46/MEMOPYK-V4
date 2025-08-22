@@ -1533,6 +1533,34 @@ export async function registerRoutes(app: Express): Promise<void> {
     }
   });
 
+  // Create SEO settings
+  app.post("/api/seo", async (req, res) => {
+    try {
+      const seoData = req.body;
+      const newSeo = await hybridStorage.createSeoSettings(seoData);
+      res.status(201).json(newSeo);
+    } catch (error) {
+      console.error('Create SEO settings error:', error);
+      res.status(500).json({ error: "Failed to create SEO settings" });
+    }
+  });
+
+  // Update SEO settings
+  app.patch("/api/seo/:id", async (req, res) => {
+    try {
+      const seoId = req.params.id;
+      const updates = req.body;
+      const updatedSeo = await hybridStorage.updateSeoSettings(seoId, updates);
+      if (!updatedSeo) {
+        return res.status(404).json({ error: "SEO settings not found" });
+      }
+      res.json(updatedSeo);
+    } catch (error) {
+      console.error('Update SEO settings error:', error);
+      res.status(500).json({ error: "Failed to update SEO settings" });
+    }
+  });
+
   // FAQ Sections - GET all sections (KEEP ONLY THIS ONE)
   app.get("/api/faq-sections", async (req, res) => {
     try {
