@@ -177,15 +177,15 @@ export function HowItWorksCondensed() {
                         {/* Separator Line - IDENTICAL POSITION FOR ALL CARDS */}
                         <div className="border-t border-white/40 mx-2"></div>
                         
-                        {/* Bottom Section - Sub Description with proper spacing */}
-                        <div className="text-center pt-3 flex-1 flex items-start mb-12">
+                        {/* Bottom Section - Sub Description with reduced top padding */}
+                        <div className="text-center pt-2 flex-1 flex items-start mb-12">
                           <div className="text-xs text-white leading-relaxed w-full">
                             {language === 'fr-FR' ? step.subDescriptionFr : step.subDescriptionEn}
                           </div>
                         </div>
                         
-                        {/* Return arrow - Far outside card boundary */}
-                        <div className="absolute -bottom-8 -left-6">
+                        {/* Return arrow - Positioned with equal spacing */}
+                        <div className="absolute -bottom-6 -left-6">
                           <div className="w-10 h-10 bg-white/80 rounded-full flex items-center justify-center hover:bg-white transition-colors shadow-lg">
                             <svg className="w-5 h-5 text-memopyk-dark-blue" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
