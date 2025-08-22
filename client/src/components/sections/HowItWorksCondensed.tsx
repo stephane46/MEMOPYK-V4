@@ -184,11 +184,11 @@ export function HowItWorksCondensed() {
                           </div>
                         </div>
                         
-                        {/* Return arrow - Very bottom left corner, outside text */}
-                        <div className="absolute -bottom-1 -left-1">
-                          <div className="w-7 h-7 bg-white/20 rounded-full flex items-center justify-center hover:bg-white/30 transition-colors">
-                            <svg className="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                        {/* Return arrow - Further down and left with high contrast */}
+                        <div className="absolute -bottom-3 -left-3">
+                          <div className="w-10 h-10 bg-white/80 rounded-full flex items-center justify-center hover:bg-white transition-colors shadow-lg">
+                            <svg className="w-5 h-5 text-memopyk-dark-blue" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
                             </svg>
                           </div>
                         </div>
