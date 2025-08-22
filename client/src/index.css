@@ -111,6 +111,27 @@ img, video, iframe, canvas, svg {
   border: 2px solid #f97316 !important;
 }
 
+/* Switch component forced styles for better visibility */
+.seo-switch[data-state="checked"] {
+  background-color: #f97316 !important;
+  border-color: #f97316 !important;
+}
+
+.seo-switch[data-state="unchecked"] {
+  background-color: #e5e7eb !important;
+  border-color: #d1d5db !important;
+}
+
+.seo-switch[data-state="checked"] .seo-switch-thumb {
+  background-color: #ffffff !important;
+  transform: translateX(20px) !important;
+}
+
+.seo-switch[data-state="unchecked"] .seo-switch-thumb {
+  background-color: #ffffff !important;
+  transform: translateX(0px) !important;
+}
+
 /* How It Works Cards - Scrollable text areas with subtle styling */
 .how-it-works-text {
   line-height: 1.2 !important;

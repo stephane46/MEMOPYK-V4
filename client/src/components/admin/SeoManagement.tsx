@@ -338,11 +338,26 @@ export default function SeoManagement() {
                   <Switch
                     checked={formState.robotsIndex}
                     onCheckedChange={(checked) => setFormState(prev => ({ ...prev, robotsIndex: checked }))}
-                    className="mt-1"
+                    className="mt-1 seo-switch"
+                    data-state={formState.robotsIndex ? "checked" : "unchecked"}
                   />
                   <div className="space-y-1">
-                    <Label className="text-sm font-medium">Allow search engine indexing</Label>
-                    <p className="text-xs text-gray-700 dark:text-gray-300">Let Google, Bing, and other search engines find and display this page in search results</p>
+                    <Label className="text-sm font-medium">
+                      Allow search engine indexing 
+                      <span className={`ml-2 text-xs px-2 py-1 rounded ${
+                        formState.robotsIndex 
+                          ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200' 
+                          : 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200'
+                      }`}>
+                        {formState.robotsIndex ? 'INDEX' : 'NOINDEX'}
+                      </span>
+                    </Label>
+                    <p className="text-xs text-gray-700 dark:text-gray-300">
+                      {formState.robotsIndex 
+                        ? 'Search engines will include this page in search results' 
+                        : 'Search engines will NOT show this page in search results'
+                      }
+                    </p>
                   </div>
                 </div>
                 
@@ -350,11 +365,26 @@ export default function SeoManagement() {
                   <Switch
                     checked={formState.robotsFollow}
                     onCheckedChange={(checked) => setFormState(prev => ({ ...prev, robotsFollow: checked }))}
-                    className="mt-1"
+                    className="mt-1 seo-switch"
+                    data-state={formState.robotsFollow ? "checked" : "unchecked"}
                   />
                   <div className="space-y-1">
-                    <Label className="text-sm font-medium">Allow link following</Label>
-                    <p className="text-xs text-gray-700 dark:text-gray-300">Let search engines follow links on this page to discover other pages on your site</p>
+                    <Label className="text-sm font-medium">
+                      Allow link following
+                      <span className={`ml-2 text-xs px-2 py-1 rounded ${
+                        formState.robotsFollow 
+                          ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200' 
+                          : 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200'
+                      }`}>
+                        {formState.robotsFollow ? 'FOLLOW' : 'NOFOLLOW'}
+                      </span>
+                    </Label>
+                    <p className="text-xs text-gray-700 dark:text-gray-300">
+                      {formState.robotsFollow 
+                        ? 'Search engines will follow links on this page to discover other pages' 
+                        : 'Search engines will NOT follow links on this page'
+                      }
+                    </p>
                   </div>
                 </div>
                 
