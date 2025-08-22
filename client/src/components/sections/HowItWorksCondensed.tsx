@@ -66,8 +66,8 @@ export function HowItWorksCondensed() {
             
             return (
               <div key={step.number} className="text-center group">
-                {/* Flip Card Container */}
-                <div className={`card-flip-container ${isFlipped ? 'flipped' : ''} rounded-2xl`}>
+                {/* Flip Card Container - Only for the image area */}
+                <div className={`card-flip-container ${isFlipped ? 'flipped' : ''} rounded-2xl mb-6`}>
                   <div className="card-flip-inner">
                     
                     {/* FRONT SIDE - Step Card */}
@@ -115,16 +115,6 @@ export function HowItWorksCondensed() {
                             </div>
                           </div>
                         </div>
-
-                        {/* Step Title with Blue Icon */}
-                        <div className="flex items-center justify-center gap-3 mb-4">
-                          <div className="w-12 h-12 bg-memopyk-navy rounded-full flex items-center justify-center transition-transform duration-300">
-                            <Icon className="w-6 h-6 text-white" />
-                          </div>
-                          <h3 className="text-2xl font-semibold text-memopyk-navy transition-colors duration-300">
-                            {language === 'fr-FR' ? step.titleFr : step.titleEn}
-                          </h3>
-                        </div>
                       </div>
                     </div>
                       
@@ -148,20 +138,6 @@ export function HowItWorksCondensed() {
                           });
                         }}
                       >
-                        {/* Step Number */}
-                        <div className="w-16 h-16 bg-white/20 rounded-full flex items-center justify-center mb-6 transition-transform duration-300 hover:scale-110">
-                          <span className="text-2xl font-bold text-white">{step.number}</span>
-                        </div>
-                        
-                        {/* Title with Icon */}
-                        <div className="flex items-center justify-center gap-3 mb-6">
-                          <div className="w-10 h-10 bg-white/30 rounded-full flex items-center justify-center">
-                            <Icon className="w-5 h-5 text-white" />
-                          </div>
-                          <h3 className="text-xl font-bold text-white">
-                            {language === 'fr-FR' ? step.titleFr : step.titleEn}
-                          </h3>
-                        </div>
                         
                         {/* Description */}
                         <div className="text-sm leading-relaxed mb-6 text-white/95 max-w-sm">
@@ -182,6 +158,16 @@ export function HowItWorksCondensed() {
                       </div>
                     </div>
                   </div>
+                </div>
+
+                {/* Static Title with Blue Icon - Always Visible */}
+                <div className="flex items-center justify-center gap-3">
+                  <div className="w-12 h-12 bg-memopyk-navy rounded-full flex items-center justify-center transition-transform duration-300">
+                    <Icon className="w-6 h-6 text-white" />
+                  </div>
+                  <h3 className="text-2xl font-semibold text-memopyk-navy transition-colors duration-300">
+                    {language === 'fr-FR' ? step.titleFr : step.titleEn}
+                  </h3>
                 </div>
               </div>
             );
