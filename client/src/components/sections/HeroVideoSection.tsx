@@ -359,7 +359,7 @@ export function HeroVideoSection() {
                 key={index}
                 className={`w-4 h-4 sm:w-5 sm:h-5 rounded-full transition-all duration-300 border-2 border-memopyk-orange ${
                   index === currentVideoIndex 
-                    ? 'bg-memopyk-orange shadow-lg' 
+                    ? 'bg-memopyk-orange shadow-lg !bg-memopyk-orange' 
                     : 'bg-transparent hover:bg-memopyk-orange/30'
                 }`}
                 onClick={() => goToVideo(index)}
