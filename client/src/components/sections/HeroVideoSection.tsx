@@ -172,10 +172,7 @@ export function HeroVideoSection() {
             console.error('   - Video URL:', videoUrl);
             console.error('   - Video Proxy URL:', `/api/video-proxy?filename=${videoUrl}`);
           }}
-          onEnded={() => {
-            console.log(`🎬 Hero video ended: ${videoUrl} (${currentVideoIndex + 1}/${activeVideos.length})`);
-            handleVideoEnded();
-          }}
+          onEnded={handleVideoEnded}
           onCanPlay={() => {
             // Ensure video starts playing for external preview
             const video = videoRef.current;
