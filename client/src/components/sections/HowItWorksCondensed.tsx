@@ -166,12 +166,13 @@ export function HowItWorksCondensed() {
                       >
                         
                         {/* Top Section - Fixed at exactly 300px from card top */}
-                        <div className="text-center flex flex-col justify-start" style={{ height: '296px' }}>
+                        <div className="text-center flex flex-col justify-between" style={{ height: '296px' }}>
                           <div className="text-sm leading-normal text-white w-full">
                             {(language === 'fr-FR' ? step.descriptionFr : step.descriptionEn).split('\n').map((paragraph, i) => (
                               <p key={i} className="mb-2 last:mb-0">{paragraph}</p>
                             ))}
                           </div>
+                          <div></div>
                         </div>
                         
                         {/* Separator Line - EXACTLY 300px FROM TOP */}
