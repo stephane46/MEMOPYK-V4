@@ -662,7 +662,7 @@
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-14T11:00:41.406Z",
-    "updated_at": "2025-08-21T04:08:09.498Z",
+    "updated_at": "2025-08-22T06:09:26.727Z",
     "duration": 168367,
     "region": "Occitanie"
   },
@@ -695,7 +695,7 @@
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-14T12:58:04.891Z",
-    "updated_at": "2025-08-21T04:08:09.498Z",
+    "updated_at": "2025-08-22T06:09:26.727Z",
     "region": "Occitanie"
   },
   {
@@ -711,7 +711,7 @@
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-14T12:58:35.259Z",
-    "updated_at": "2025-08-21T04:08:09.498Z",
+    "updated_at": "2025-08-22T06:09:26.727Z",
     "duration": 172107,
     "region": "Occitanie"
   },
@@ -728,7 +728,7 @@
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-14T12:59:21.463Z",
-    "updated_at": "2025-08-21T04:08:09.498Z",
+    "updated_at": "2025-08-22T06:09:26.727Z",
     "duration": 172157,
     "region": "Occitanie"
   },
@@ -745,7 +745,7 @@
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-14T13:01:07.505Z",
-    "updated_at": "2025-08-21T04:08:09.498Z",
+    "updated_at": "2025-08-22T06:09:26.727Z",
     "region": "Occitanie"
   },
   {
@@ -761,7 +761,7 @@
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-14T13:03:02.452Z",
-    "updated_at": "2025-08-21T04:08:09.498Z",
+    "updated_at": "2025-08-22T06:09:26.727Z",
     "region": "Occitanie"
   },
   {
@@ -777,7 +777,7 @@
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-14T13:03:38.752Z",
-    "updated_at": "2025-08-21T04:08:09.498Z",
+    "updated_at": "2025-08-22T06:09:26.727Z",
     "duration": 172689,
     "region": "Occitanie"
   },
@@ -794,7 +794,7 @@
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-14T13:14:10.816Z",
-    "updated_at": "2025-08-21T04:08:09.498Z",
+    "updated_at": "2025-08-22T06:09:26.727Z",
     "duration": 173894,
     "region": "Occitanie"
   },
@@ -811,7 +811,7 @@
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-14T13:36:28.158Z",
-    "updated_at": "2025-08-21T04:08:09.498Z",
+    "updated_at": "2025-08-22T06:09:26.727Z",
     "duration": 174378,
     "region": "Occitanie"
   },
@@ -828,7 +828,7 @@
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-14T13:52:53.086Z",
-    "updated_at": "2025-08-21T04:08:09.498Z",
+    "updated_at": "2025-08-22T06:09:26.727Z",
     "region": "Occitanie"
   },
   {
@@ -844,7 +844,7 @@
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-14T16:21:19.214Z",
-    "updated_at": "2025-08-21T04:08:09.498Z",
+    "updated_at": "2025-08-22T06:09:26.727Z",
     "duration": 187094,
     "region": "Occitanie"
   },
@@ -877,7 +877,7 @@
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-14T17:09:52.084Z",
-    "updated_at": "2025-08-21T04:08:09.498Z",
+    "updated_at": "2025-08-22T06:09:26.727Z",
     "duration": 187469,
     "region": "Occitanie"
   },
@@ -894,7 +894,7 @@
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-14T17:17:38.266Z",
-    "updated_at": "2025-08-21T04:08:09.498Z",
+    "updated_at": "2025-08-22T06:09:26.727Z",
     "duration": 187747,
     "region": "Occitanie"
   },
@@ -911,7 +911,7 @@
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-14T19:52:25.953Z",
-    "updated_at": "2025-08-21T04:08:09.498Z",
+    "updated_at": "2025-08-22T06:09:26.727Z",
     "duration": 197168,
     "region": "Occitanie"
   },
@@ -928,7 +928,7 @@
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-14T19:56:45.547Z",
-    "updated_at": "2025-08-21T04:08:09.498Z",
+    "updated_at": "2025-08-22T06:09:26.727Z",
     "region": "Occitanie"
   },
   {
@@ -944,7 +944,7 @@
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-14T19:57:23.408Z",
-    "updated_at": "2025-08-21T04:08:09.498Z",
+    "updated_at": "2025-08-22T06:09:26.727Z",
     "duration": 197215,
     "region": "Occitanie"
   },
@@ -977,7 +977,7 @@
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-14T20:01:16.772Z",
-    "updated_at": "2025-08-21T04:08:09.498Z",
+    "updated_at": "2025-08-22T06:09:26.727Z",
     "region": "Occitanie"
   },
   {
@@ -993,7 +993,7 @@
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-15T05:06:33.453Z",
-    "updated_at": "2025-08-21T04:08:09.498Z",
+    "updated_at": "2025-08-22T06:09:26.727Z",
     "region": "Occitanie"
   },
   {
@@ -1025,7 +1025,7 @@
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-15T05:07:35.384Z",
-    "updated_at": "2025-08-21T04:08:09.498Z",
+    "updated_at": "2025-08-22T06:09:26.727Z",
     "region": "Occitanie"
   },
   {
@@ -1041,7 +1041,7 @@
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-15T05:12:08.170Z",
-    "updated_at": "2025-08-21T04:08:09.498Z",
+    "updated_at": "2025-08-22T06:09:26.727Z",
     "region": "Occitanie"
   },
   {
@@ -1057,7 +1057,7 @@
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-15T05:31:54.600Z",
-    "updated_at": "2025-08-21T04:08:09.498Z",
+    "updated_at": "2025-08-22T06:09:26.727Z",
     "region": "Occitanie"
   },
   {
@@ -1073,7 +1073,7 @@
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-15T05:42:24.469Z",
-    "updated_at": "2025-08-21T04:08:09.498Z",
+    "updated_at": "2025-08-22T06:09:26.727Z",
     "duration": 234088,
     "region": "Occitanie"
   },
@@ -1090,7 +1090,7 @@
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-15T06:19:47.585Z",
-    "updated_at": "2025-08-21T04:08:09.498Z",
+    "updated_at": "2025-08-22T06:09:26.727Z",
     "duration": 234582,
     "region": "Occitanie"
   },
@@ -1107,7 +1107,7 @@
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-15T06:20:21.654Z",
-    "updated_at": "2025-08-21T04:08:09.498Z",
+    "updated_at": "2025-08-22T06:09:26.727Z",
     "duration": 234839,
     "region": "Occitanie"
   },
@@ -1140,7 +1140,7 @@
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-15T07:04:57.838Z",
-    "updated_at": "2025-08-21T04:08:09.498Z",
+    "updated_at": "2025-08-22T06:09:26.727Z",
     "region": "Occitanie"
   },
   {
@@ -1156,7 +1156,7 @@
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-15T07:05:48.801Z",
-    "updated_at": "2025-08-21T04:08:09.498Z",
+    "updated_at": "2025-08-22T06:09:26.727Z",
     "duration": 237343,
     "region": "Occitanie"
   },
@@ -1189,7 +1189,7 @@
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-15T07:49:28.219Z",
-    "updated_at": "2025-08-21T04:08:09.498Z",
+    "updated_at": "2025-08-22T06:09:26.727Z",
     "region": "Occitanie"
   },
   {
@@ -1221,7 +1221,7 @@
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-15T09:35:40.273Z",
-    "updated_at": "2025-08-21T04:08:09.498Z",
+    "updated_at": "2025-08-22T06:09:26.727Z",
     "region": "Occitanie"
   },
   {
@@ -1237,7 +1237,7 @@
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-15T09:46:47.640Z",
-    "updated_at": "2025-08-21T04:08:09.498Z",
+    "updated_at": "2025-08-22T06:09:26.727Z",
     "duration": 247087,
     "region": "Occitanie"
   },
@@ -1254,7 +1254,7 @@
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-15T09:56:40.865Z",
-    "updated_at": "2025-08-21T04:08:09.498Z",
+    "updated_at": "2025-08-22T06:09:26.727Z",
     "region": "Occitanie"
   },
   {
@@ -1270,7 +1270,7 @@
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-15T09:56:40.879Z",
-    "updated_at": "2025-08-21T04:08:09.498Z",
+    "updated_at": "2025-08-22T06:09:26.727Z",
     "duration": 247596,
     "region": "Occitanie"
   },
@@ -1287,7 +1287,7 @@
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-15T09:57:11.869Z",
-    "updated_at": "2025-08-21T04:08:09.498Z",
+    "updated_at": "2025-08-22T06:09:26.727Z",
     "region": "Occitanie"
   },
   {
@@ -1303,7 +1303,7 @@
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-15T09:58:33.535Z",
-    "updated_at": "2025-08-21T04:08:09.498Z",
+    "updated_at": "2025-08-22T06:09:26.727Z",
     "duration": 247687,
     "region": "Occitanie"
   },
@@ -1320,7 +1320,7 @@
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-15T10:09:29.107Z",
-    "updated_at": "2025-08-21T04:08:09.498Z",
+    "updated_at": "2025-08-22T06:09:26.727Z",
     "duration": 247983,
     "region": "Occitanie"
   },
@@ -1337,7 +1337,7 @@
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-15T10:11:25.279Z",
-    "updated_at": "2025-08-21T04:08:09.498Z",
+    "updated_at": "2025-08-22T06:09:26.727Z",
     "region": "Occitanie"
   },
   {
@@ -1353,7 +1353,7 @@
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-15T10:12:11.638Z",
-    "updated_at": "2025-08-21T04:08:09.498Z",
+    "updated_at": "2025-08-22T06:09:26.727Z",
     "duration": 248154,
     "region": "Occitanie"
   },
@@ -1370,7 +1370,7 @@
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-15T10:14:16.347Z",
-    "updated_at": "2025-08-21T04:08:09.498Z",
+    "updated_at": "2025-08-22T06:09:26.727Z",
     "region": "Occitanie"
   },
   {
@@ -1386,7 +1386,7 @@
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-15T10:15:19.872Z",
-    "updated_at": "2025-08-21T04:08:09.498Z",
+    "updated_at": "2025-08-22T06:09:26.727Z",
     "region": "Occitanie"
   },
   {
@@ -1402,7 +1402,7 @@
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-15T10:16:16.983Z",
-    "updated_at": "2025-08-21T04:08:09.498Z",
+    "updated_at": "2025-08-22T06:09:26.727Z",
     "duration": 248331,
     "region": "Occitanie"
   },
@@ -1419,7 +1419,7 @@
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-15T10:17:12.682Z",
-    "updated_at": "2025-08-21T04:08:09.498Z",
+    "updated_at": "2025-08-22T06:09:26.727Z",
     "region": "Occitanie"
   },
   {
@@ -1435,7 +1435,7 @@
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-15T10:18:04.591Z",
-    "updated_at": "2025-08-21T04:08:09.498Z",
+    "updated_at": "2025-08-22T06:09:26.727Z",
     "duration": 248423,
     "region": "Occitanie"
   },
@@ -1452,7 +1452,7 @@
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-15T10:18:40.425Z",
-    "updated_at": "2025-08-21T04:08:09.498Z",
+    "updated_at": "2025-08-22T06:09:26.727Z",
     "duration": 248503,
     "region": "Occitanie"
   },
@@ -1469,7 +1469,7 @@
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-15T10:19:45.673Z",
-    "updated_at": "2025-08-21T04:08:09.498Z",
+    "updated_at": "2025-08-22T06:09:26.727Z",
     "duration": 248619,
     "region": "Occitanie"
   },
@@ -1486,7 +1486,7 @@
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-15T10:21:39.599Z",
-    "updated_at": "2025-08-21T04:08:09.498Z",
+    "updated_at": "2025-08-22T06:09:26.727Z",
     "duration": 248653,
     "region": "Occitanie"
   },
@@ -1503,7 +1503,7 @@
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-15T10:23:45.250Z",
-    "updated_at": "2025-08-21T04:08:09.498Z",
+    "updated_at": "2025-08-22T06:09:26.727Z",
     "duration": 248772,
     "region": "Occitanie"
   },
@@ -1520,7 +1520,7 @@
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-15T10:26:10.418Z",
-    "updated_at": "2025-08-21T04:08:09.498Z",
+    "updated_at": "2025-08-22T06:09:26.727Z",
     "duration": 249076,
     "region": "Occitanie"
   },
@@ -1537,7 +1537,7 @@
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-15T10:29:15.170Z",
-    "updated_at": "2025-08-21T04:08:09.498Z",
+    "updated_at": "2025-08-22T06:09:26.727Z",
     "duration": 249275,
     "region": "Occitanie"
   },
@@ -1554,7 +1554,7 @@
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-15T10:32:33.195Z",
-    "updated_at": "2025-08-21T04:08:09.498Z",
+    "updated_at": "2025-08-22T06:09:26.727Z",
     "duration": 249427,
     "region": "Occitanie"
   },
@@ -1571,7 +1571,7 @@
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-15T10:35:20.064Z",
-    "updated_at": "2025-08-21T04:08:09.498Z",
+    "updated_at": "2025-08-22T06:09:26.727Z",
     "duration": 249638,
     "region": "Occitanie"
   },
@@ -1588,7 +1588,7 @@
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-15T10:38:38.111Z",
-    "updated_at": "2025-08-21T04:08:09.498Z",
+    "updated_at": "2025-08-22T06:09:26.727Z",
     "duration": 249857,
     "region": "Occitanie"
   },
@@ -1605,7 +1605,7 @@
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-15T10:42:16.180Z",
-    "updated_at": "2025-08-21T04:08:09.498Z",
+    "updated_at": "2025-08-22T06:09:26.727Z",
     "duration": 249950,
     "region": "Occitanie"
   },
@@ -1622,7 +1622,7 @@
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-15T10:44:01.827Z",
-    "updated_at": "2025-08-21T04:08:09.498Z",
+    "updated_at": "2025-08-22T06:09:26.727Z",
     "region": "Occitanie"
   },
   {
@@ -1638,7 +1638,7 @@
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-15T10:44:58.645Z",
-    "updated_at": "2025-08-21T04:08:09.498Z",
+    "updated_at": "2025-08-22T06:09:26.727Z",
     "duration": 250073,
     "region": "Occitanie"
   },
@@ -1655,7 +1655,7 @@
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-15T10:45:51.312Z",
-    "updated_at": "2025-08-21T04:08:09.498Z",
+    "updated_at": "2025-08-22T06:09:26.727Z",
     "duration": 250163,
     "region": "Occitanie"
   },
@@ -1672,7 +1672,7 @@
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-15T10:47:23.213Z",
-    "updated_at": "2025-08-21T04:08:09.498Z",
+    "updated_at": "2025-08-22T06:09:26.727Z",
     "duration": 250390,
     "region": "Occitanie"
   },
@@ -1689,7 +1689,7 @@
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-15T10:51:08.896Z",
-    "updated_at": "2025-08-21T04:08:09.498Z",
+    "updated_at": "2025-08-22T06:09:26.727Z",
     "duration": 250513,
     "region": "Occitanie"
   },
@@ -1722,7 +1722,7 @@
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-15T10:53:21.193Z",
-    "updated_at": "2025-08-21T04:08:09.498Z",
+    "updated_at": "2025-08-22T06:09:26.727Z",
     "region": "Occitanie"
   },
   {
@@ -1738,7 +1738,7 @@
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-15T10:53:57.739Z",
-    "updated_at": "2025-08-21T04:08:09.498Z",
+    "updated_at": "2025-08-22T06:09:26.727Z",
     "duration": 250582,
     "region": "Occitanie"
   },
@@ -1771,7 +1771,7 @@
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-15T11:12:10.828Z",
-    "updated_at": "2025-08-21T04:08:09.498Z",
+    "updated_at": "2025-08-22T06:09:26.727Z",
     "region": "Occitanie"
   },
   {
@@ -1787,7 +1787,7 @@
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-15T11:13:05.641Z",
-    "updated_at": "2025-08-21T04:08:09.498Z",
+    "updated_at": "2025-08-22T06:09:26.727Z",
     "duration": 251947,
     "region": "Occitanie"
   },
@@ -1804,7 +1804,7 @@
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-15T11:58:04.819Z",
-    "updated_at": "2025-08-21T04:08:09.498Z",
+    "updated_at": "2025-08-22T06:09:26.727Z",
     "duration": 254527,
     "region": "Occitanie"
   },
@@ -1821,7 +1821,7 @@
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-15T13:12:21.833Z",
-    "updated_at": "2025-08-21T04:08:09.498Z",
+    "updated_at": "2025-08-22T06:09:26.727Z",
     "region": "Occitanie"
   },
   {
@@ -1877,7 +1877,7 @@
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-15T13:22:30.418Z",
-    "updated_at": "2025-08-21T04:08:09.498Z",
+    "updated_at": "2025-08-22T06:09:26.727Z",
     "duration": 260125,
     "region": "Occitanie"
   },
@@ -1910,7 +1910,7 @@
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-15T13:30:31.167Z",
-    "updated_at": "2025-08-21T04:08:09.498Z",
+    "updated_at": "2025-08-22T06:09:26.727Z",
     "region": "Occitanie"
   },
   {
@@ -1926,7 +1926,7 @@
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-15T13:32:47.316Z",
-    "updated_at": "2025-08-21T04:08:09.498Z",
+    "updated_at": "2025-08-22T06:09:26.727Z",
     "duration": 261247,
     "region": "Occitanie"
   },
@@ -1943,7 +1943,7 @@
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-15T14:38:15.190Z",
-    "updated_at": "2025-08-21T04:08:09.498Z",
+    "updated_at": "2025-08-22T06:09:26.727Z",
     "duration": 264301,
     "region": "Occitanie"
   },
@@ -1960,7 +1960,7 @@
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-15T14:57:45.717Z",
-    "updated_at": "2025-08-21T04:08:09.498Z",
+    "updated_at": "2025-08-22T06:09:26.727Z",
     "duration": 266488,
     "region": "Occitanie"
   },
@@ -1977,7 +1977,7 @@
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-15T16:39:24.544Z",
-    "updated_at": "2025-08-21T04:08:09.498Z",
+    "updated_at": "2025-08-22T06:09:26.727Z",
     "duration": 271687,
     "region": "Occitanie"
   },
@@ -1994,7 +1994,7 @@
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-15T16:46:22.268Z",
-    "updated_at": "2025-08-21T04:08:09.498Z",
+    "updated_at": "2025-08-22T06:09:26.727Z",
     "region": "Occitanie"
   },
   {
@@ -2010,7 +2010,7 @@
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-15T16:47:19.555Z",
-    "updated_at": "2025-08-21T04:08:09.498Z",
+    "updated_at": "2025-08-22T06:09:26.727Z",
     "duration": 272107,
     "region": "Occitanie"
   },
@@ -2027,7 +2027,7 @@
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-15T16:54:19.451Z",
-    "updated_at": "2025-08-21T04:08:09.498Z",
+    "updated_at": "2025-08-22T06:09:26.727Z",
     "duration": 272467,
     "region": "Occitanie"
   },
@@ -2060,7 +2060,7 @@
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-15T17:00:18.104Z",
-    "updated_at": "2025-08-21T04:08:09.498Z",
+    "updated_at": "2025-08-22T06:09:26.727Z",
     "duration": 272661,
     "region": "Occitanie"
   },
@@ -2077,7 +2077,7 @@
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-15T17:04:33.137Z",
-    "updated_at": "2025-08-21T04:08:09.498Z",
+    "updated_at": "2025-08-22T06:09:26.727Z",
     "duration": 272856,
     "region": "Occitanie"
   },
@@ -2094,7 +2094,7 @@
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-15T17:06:02.298Z",
-    "updated_at": "2025-08-21T04:08:09.498Z",
+    "updated_at": "2025-08-22T06:09:26.727Z",
     "region": "Occitanie"
   },
   {
@@ -2110,7 +2110,7 @@
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-15T17:06:59.337Z",
-    "updated_at": "2025-08-21T04:08:09.498Z",
+    "updated_at": "2025-08-22T06:09:26.727Z",
     "duration": 273062,
     "region": "Occitanie"
   },
@@ -2127,7 +2127,7 @@
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-15T17:10:18.477Z",
-    "updated_at": "2025-08-21T04:08:09.498Z",
+    "updated_at": "2025-08-22T06:09:26.727Z",
     "duration": 273487,
     "region": "Occitanie"
   },
@@ -2144,7 +2144,7 @@
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-15T17:17:11.367Z",
-    "updated_at": "2025-08-21T04:08:09.498Z",
+    "updated_at": "2025-08-22T06:09:26.727Z",
     "region": "Occitanie"
   },
   {
@@ -2160,7 +2160,7 @@
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-15T17:18:28.133Z",
-    "updated_at": "2025-08-21T04:08:09.498Z",
+    "updated_at": "2025-08-22T06:09:26.727Z",
     "duration": 273721,
     "region": "Occitanie"
   },
@@ -2177,7 +2177,7 @@
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-15T17:21:05.812Z",
-    "updated_at": "2025-08-21T04:08:09.498Z",
+    "updated_at": "2025-08-22T06:09:26.727Z",
     "duration": 273819,
     "region": "Occitanie"
   },
@@ -2194,7 +2194,7 @@
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-15T17:22:57.989Z",
-    "updated_at": "2025-08-21T04:08:09.498Z",
+    "updated_at": "2025-08-22T06:09:26.727Z",
     "duration": 275047,
     "region": "Occitanie"
   },
@@ -2211,7 +2211,7 @@
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-15T17:44:26.203Z",
-    "updated_at": "2025-08-21T04:08:09.498Z",
+    "updated_at": "2025-08-22T06:09:26.727Z",
     "duration": 275369,
     "region": "Occitanie"
   },
@@ -2228,7 +2228,7 @@
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-15T17:48:38.075Z",
-    "updated_at": "2025-08-21T04:08:09.498Z",
+    "updated_at": "2025-08-22T06:09:26.727Z",
     "duration": 275561,
     "region": "Occitanie"
   },
@@ -2245,7 +2245,7 @@
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-15T17:52:05.590Z",
-    "updated_at": "2025-08-21T04:08:09.498Z",
+    "updated_at": "2025-08-22T06:09:26.727Z",
     "duration": 275678,
     "region": "Occitanie"
   },
@@ -2262,7 +2262,7 @@
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-15T17:54:03.613Z",
-    "updated_at": "2025-08-21T04:08:09.498Z",
+    "updated_at": "2025-08-22T06:09:26.727Z",
     "duration": 284184,
     "region": "Occitanie"
   },
@@ -2279,7 +2279,7 @@
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-15T20:14:23.525Z",
-    "updated_at": "2025-08-21T04:08:09.498Z",
+    "updated_at": "2025-08-22T06:09:26.727Z",
     "duration": 285307,
     "region": "Occitanie"
   },
@@ -2296,7 +2296,7 @@
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-15T20:34:51.458Z",
-    "updated_at": "2025-08-21T04:08:09.498Z",
+    "updated_at": "2025-08-22T06:09:26.727Z",
     "duration": 285594,
     "region": "Occitanie"
   },
@@ -2313,7 +2313,7 @@
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-15T20:39:06.472Z",
-    "updated_at": "2025-08-21T04:08:09.498Z",
+    "updated_at": "2025-08-22T06:09:26.727Z",
     "duration": 286629,
     "region": "Occitanie"
   },
@@ -2330,7 +2330,7 @@
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-15T20:56:52.333Z",
-    "updated_at": "2025-08-21T04:08:09.498Z",
+    "updated_at": "2025-08-22T06:09:26.727Z",
     "duration": 286836,
     "region": "Occitanie"
   },
@@ -2347,7 +2347,7 @@
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-15T20:58:35.575Z",
-    "updated_at": "2025-08-21T04:08:09.498Z",
+    "updated_at": "2025-08-22T06:09:26.727Z",
     "duration": 286859,
     "region": "Occitanie"
   },
@@ -2364,7 +2364,7 @@
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-15T21:00:14.780Z",
-    "updated_at": "2025-08-21T04:08:09.498Z",
+    "updated_at": "2025-08-22T06:09:26.727Z",
     "duration": 287109,
     "region": "Occitanie"
   },
@@ -2381,7 +2381,7 @@
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-15T21:03:08.338Z",
-    "updated_at": "2025-08-21T04:08:09.498Z",
+    "updated_at": "2025-08-22T06:09:26.727Z",
     "duration": 287173,
     "region": "Occitanie"
   },
@@ -2398,7 +2398,7 @@
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-15T21:05:18.101Z",
-    "updated_at": "2025-08-21T04:08:09.498Z",
+    "updated_at": "2025-08-22T06:09:26.727Z",
     "duration": 287584,
     "region": "Occitanie"
   },
@@ -2415,7 +2415,7 @@
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-15T21:10:59.620Z",
-    "updated_at": "2025-08-21T04:08:09.498Z",
+    "updated_at": "2025-08-22T06:09:26.727Z",
     "duration": 287951,
     "region": "Occitanie"
   },
@@ -2432,7 +2432,7 @@
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-15T21:18:28.508Z",
-    "updated_at": "2025-08-21T04:08:09.498Z",
+    "updated_at": "2025-08-22T06:09:26.727Z",
     "duration": 288491,
     "region": "Occitanie"
   },
@@ -2449,7 +2449,7 @@
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-15T21:26:59.531Z",
-    "updated_at": "2025-08-21T04:08:09.498Z",
+    "updated_at": "2025-08-22T06:09:26.727Z",
     "duration": 288971,
     "region": "Occitanie"
   },
@@ -2466,7 +2466,7 @@
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-15T21:36:04.903Z",
-    "updated_at": "2025-08-21T04:08:09.498Z",
+    "updated_at": "2025-08-22T06:09:26.727Z",
     "duration": 289466,
     "region": "Occitanie"
   },
@@ -2483,7 +2483,7 @@
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-15T21:42:21.556Z",
-    "updated_at": "2025-08-21T04:08:09.498Z",
+    "updated_at": "2025-08-22T06:09:26.727Z",
     "duration": 293051,
     "region": "Occitanie"
   },
@@ -2500,7 +2500,7 @@
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-16T05:27:25.799Z",
-    "updated_at": "2025-08-21T04:08:09.498Z",
+    "updated_at": "2025-08-22T06:09:26.727Z",
     "duration": 317508,
     "region": "Occitanie"
   },
@@ -2517,7 +2517,7 @@
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-16T05:29:46.568Z",
-    "updated_at": "2025-08-21T04:08:09.498Z",
+    "updated_at": "2025-08-22T06:09:26.727Z",
     "duration": 317663,
     "region": "Occitanie"
   },
@@ -2534,7 +2534,7 @@
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-16T05:33:33.061Z",
-    "updated_at": "2025-08-21T04:08:09.498Z",
+    "updated_at": "2025-08-22T06:09:26.727Z",
     "duration": 317799,
     "region": "Occitanie"
   },
@@ -2551,7 +2551,7 @@
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-16T05:35:38.326Z",
-    "updated_at": "2025-08-21T04:08:09.498Z",
+    "updated_at": "2025-08-22T06:09:26.727Z",
     "duration": 318371,
     "region": "Occitanie"
   },
@@ -2584,7 +2584,7 @@
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-16T06:01:13.664Z",
-    "updated_at": "2025-08-21T04:08:09.498Z",
+    "updated_at": "2025-08-22T06:09:26.727Z",
     "region": "Occitanie"
   },
   {
@@ -2648,7 +2648,7 @@
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-16T06:52:51.302Z",
-    "updated_at": "2025-08-21T04:08:09.498Z",
+    "updated_at": "2025-08-22T06:09:26.727Z",
     "region": "Occitanie"
   },
   {
@@ -2664,7 +2664,7 @@
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-16T06:56:12.113Z",
-    "updated_at": "2025-08-21T04:08:09.498Z",
+    "updated_at": "2025-08-22T06:09:26.727Z",
     "region": "Occitanie"
   },
   {
@@ -2680,7 +2680,7 @@
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-16T15:57:39.547Z",
-    "updated_at": "2025-08-21T04:08:09.498Z",
+    "updated_at": "2025-08-22T06:09:26.727Z",
     "region": "Occitanie"
   },
   {
@@ -2712,7 +2712,7 @@
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-16T15:58:28.995Z",
-    "updated_at": "2025-08-21T04:08:09.498Z",
+    "updated_at": "2025-08-22T06:09:26.727Z",
     "region": "Occitanie"
   },
   {
@@ -2728,7 +2728,7 @@
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-16T16:01:05.334Z",
-    "updated_at": "2025-08-21T04:08:09.498Z",
+    "updated_at": "2025-08-22T06:09:26.727Z",
     "region": "Occitanie"
   },
   {
@@ -2760,7 +2760,7 @@
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-16T16:05:02.126Z",
-    "updated_at": "2025-08-21T04:08:09.498Z",
+    "updated_at": "2025-08-22T06:09:26.727Z",
     "region": "Occitanie"
   },
   {
@@ -2776,7 +2776,7 @@
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-16T16:10:14.361Z",
-    "updated_at": "2025-08-21T04:08:09.498Z",
+    "updated_at": "2025-08-22T06:09:26.727Z",
     "region": "Occitanie"
   },
   {
@@ -2808,7 +2808,7 @@
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-16T16:11:34.558Z",
-    "updated_at": "2025-08-21T04:08:09.498Z",
+    "updated_at": "2025-08-22T06:09:26.727Z",
     "region": "Occitanie"
   },
   {
@@ -2888,7 +2888,7 @@
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-16T16:52:43.193Z",
-    "updated_at": "2025-08-21T04:08:09.498Z",
+    "updated_at": "2025-08-22T06:09:26.727Z",
     "region": "Occitanie"
   },
   {
@@ -2920,7 +2920,7 @@
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-16T16:58:49.851Z",
-    "updated_at": "2025-08-21T04:08:09.498Z",
+    "updated_at": "2025-08-22T06:09:26.727Z",
     "region": "Occitanie"
   },
   {
@@ -2952,7 +2952,7 @@
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-16T17:10:43.522Z",
-    "updated_at": "2025-08-21T04:08:09.498Z",
+    "updated_at": "2025-08-22T06:09:26.727Z",
     "duration": 359629,
     "region": "Occitanie"
   },
@@ -2969,8 +2969,8 @@
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-16T20:24:10.498Z",
-    "updated_at": "2025-08-21T04:08:08.917Z",
-    "region": "Sao Paulo"
+    "updated_at": "2025-08-22T06:09:26.905Z",
+    "region": "Amazonas"
   },
   {
     "id": "e6c0ff9e-5bd1-4d27-b62f-a3b6382c8c4a",
@@ -2985,7 +2985,7 @@
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-16T21:29:27.504Z",
-    "updated_at": "2025-08-21T04:08:09.498Z",
+    "updated_at": "2025-08-22T06:09:26.727Z",
     "region": "Occitanie"
   },
   {
@@ -3017,8 +3017,8 @@
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-17T06:27:08.092Z",
-    "updated_at": "2025-08-21T04:08:08.917Z",
-    "region": "Sao Paulo"
+    "updated_at": "2025-08-22T06:09:26.905Z",
+    "region": "Amazonas"
   },
   {
     "id": "fbaaad67-5e17-4dfb-939a-67ba6af7096c",
@@ -3033,8 +3033,8 @@
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-17T06:34:17.531Z",
-    "updated_at": "2025-08-21T04:08:08.917Z",
-    "region": "Sao Paulo"
+    "updated_at": "2025-08-22T06:09:26.905Z",
+    "region": "Amazonas"
   },
   {
     "id": "af370a17-5ff1-430a-9c18-ddb1991e3a48",
@@ -3065,7 +3065,7 @@
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-17T06:36:22.388Z",
-    "updated_at": "2025-08-21T04:08:09.498Z",
+    "updated_at": "2025-08-22T06:09:26.727Z",
     "region": "Occitanie"
   },
   {
@@ -3081,7 +3081,7 @@
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-17T06:58:51.378Z",
-    "updated_at": "2025-08-21T04:08:09.498Z",
+    "updated_at": "2025-08-22T06:09:26.727Z",
     "region": "Occitanie"
   },
   {
@@ -3097,7 +3097,7 @@
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-17T07:09:42.975Z",
-    "updated_at": "2025-08-21T04:08:09.498Z",
+    "updated_at": "2025-08-22T06:09:26.727Z",
     "region": "Occitanie"
   },
   {
@@ -3113,8 +3113,8 @@
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-17T07:09:55.843Z",
-    "updated_at": "2025-08-21T04:08:08.917Z",
-    "region": "Sao Paulo"
+    "updated_at": "2025-08-22T06:09:26.905Z",
+    "region": "Amazonas"
   },
   {
     "id": "56128c8a-00fe-4673-aa68-f3018bdcfa1f",
@@ -3129,8 +3129,8 @@
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-17T07:10:51.567Z",
-    "updated_at": "2025-08-21T04:08:08.917Z",
-    "region": "Sao Paulo"
+    "updated_at": "2025-08-22T06:09:26.905Z",
+    "region": "Amazonas"
   },
   {
     "id": "bbb66910-f522-4068-8d24-e0457f44a93c",
@@ -3161,8 +3161,8 @@
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-17T07:11:28.194Z",
-    "updated_at": "2025-08-21T04:08:08.917Z",
-    "region": "Sao Paulo"
+    "updated_at": "2025-08-22T06:09:26.905Z",
+    "region": "Amazonas"
   },
   {
     "id": "5ad054e0-0522-4252-be80-8a8beafaabaa",
@@ -3177,9 +3177,9 @@
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-17T07:20:48.433Z",
-    "updated_at": "2025-08-21T04:08:08.917Z",
+    "updated_at": "2025-08-22T06:09:26.905Z",
     "duration": 410784,
-    "region": "Sao Paulo"
+    "region": "Amazonas"
   },
   {
     "id": "fe5e55d6-1f9e-4db5-8a97-da0e2bff0299",
@@ -3194,8 +3194,8 @@
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-17T07:25:00.874Z",
-    "updated_at": "2025-08-21T04:08:08.917Z",
-    "region": "Sao Paulo"
+    "updated_at": "2025-08-22T06:09:26.905Z",
+    "region": "Amazonas"
   },
   {
     "id": "0849a029-0fa8-45fa-8ba7-60394920b801",
@@ -3226,9 +3226,9 @@
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-17T07:25:32.709Z",
-    "updated_at": "2025-08-21T04:08:08.917Z",
+    "updated_at": "2025-08-22T06:09:26.905Z",
     "duration": 411509,
-    "region": "Sao Paulo"
+    "region": "Amazonas"
   },
   {
     "id": "52f131f7-dc8a-4935-ac37-b03281877759",
@@ -3275,8 +3275,8 @@
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-17T07:34:39.215Z",
-    "updated_at": "2025-08-21T04:08:08.917Z",
-    "region": "Sao Paulo"
+    "updated_at": "2025-08-22T06:09:26.905Z",
+    "region": "Amazonas"
   },
   {
     "id": "6842db52-8459-426a-a623-7e2370b88fdd",
@@ -3323,8 +3323,8 @@
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-17T08:08:52.230Z",
-    "updated_at": "2025-08-21T04:08:08.917Z",
-    "region": "Sao Paulo"
+    "updated_at": "2025-08-22T06:09:26.905Z",
+    "region": "Amazonas"
   },
   {
     "id": "b437d888-e03b-42c5-a468-5479f821b987",
@@ -3355,9 +3355,9 @@
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-17T08:21:01.050Z",
-    "updated_at": "2025-08-21T04:08:08.917Z",
+    "updated_at": "2025-08-22T06:09:26.905Z",
     "duration": 414807,
-    "region": "Sao Paulo"
+    "region": "Amazonas"
   },
   {
     "id": "6a2fda70-8cab-4bcf-a057-d9b3a265da0b",
@@ -3372,8 +3372,8 @@
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-17T08:24:18.565Z",
-    "updated_at": "2025-08-21T04:08:08.917Z",
-    "region": "Sao Paulo"
+    "updated_at": "2025-08-22T06:09:26.905Z",
+    "region": "Amazonas"
   },
   {
     "id": "93478450-01d0-41bf-b6d3-74c783a0c23a",
@@ -3388,9 +3388,9 @@
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-17T08:29:15.947Z",
-    "updated_at": "2025-08-21T04:08:08.917Z",
+    "updated_at": "2025-08-22T06:09:26.905Z",
     "duration": 415346,
-    "region": "Sao Paulo"
+    "region": "Amazonas"
   },
   {
     "id": "f6d66734-0918-4606-8959-0dd38c5e6aff",
@@ -3405,9 +3405,9 @@
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-17T08:33:21.325Z",
-    "updated_at": "2025-08-21T04:08:08.917Z",
+    "updated_at": "2025-08-22T06:09:26.905Z",
     "duration": 415426,
-    "region": "Sao Paulo"
+    "region": "Amazonas"
   },
   {
     "id": "f4779843-6965-4e41-84db-9ad563f639bc",
@@ -3438,8 +3438,8 @@
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-17T08:34:49.235Z",
-    "updated_at": "2025-08-21T04:08:08.917Z",
-    "region": "Sao Paulo"
+    "updated_at": "2025-08-22T06:09:26.905Z",
+    "region": "Amazonas"
   },
   {
     "id": "c0f4e229-416c-4472-84a5-661519a56bf5",
@@ -3454,9 +3454,9 @@
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-17T08:35:43.963Z",
-    "updated_at": "2025-08-21T04:08:08.917Z",
+    "updated_at": "2025-08-22T06:09:26.905Z",
     "duration": 415333,
-    "region": "Sao Paulo"
+    "region": "Amazonas"
   },
   {
     "id": "59e7ac9e-134d-40a2-902e-1f9ac517f6f2",
@@ -3471,9 +3471,9 @@
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-17T08:40:14.247Z",
-    "updated_at": "2025-08-21T04:08:08.917Z",
+    "updated_at": "2025-08-22T06:09:26.905Z",
     "duration": 415361,
-    "region": "Sao Paulo"
+    "region": "Amazonas"
   },
   {
     "id": "71d47af2-61ec-4645-a61f-faaa30311bfb",
@@ -3504,9 +3504,9 @@
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-17T08:41:49.652Z",
-    "updated_at": "2025-08-21T04:08:08.917Z",
+    "updated_at": "2025-08-22T06:09:26.905Z",
     "duration": 415512,
-    "region": "Sao Paulo"
+    "region": "Amazonas"
   },
   {
     "id": "85af05d6-fcf4-4a3b-8b2f-50a0773c8141",
@@ -3521,9 +3521,9 @@
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-17T08:43:20.105Z",
-    "updated_at": "2025-08-21T04:08:08.917Z",
+    "updated_at": "2025-08-22T06:09:26.905Z",
     "duration": 415685,
-    "region": "Sao Paulo"
+    "region": "Amazonas"
   },
   {
     "id": "8c7820e1-74c2-4176-905c-409254492ebe",
@@ -3538,9 +3538,9 @@
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-17T08:46:13.857Z",
-    "updated_at": "2025-08-21T04:08:08.917Z",
+    "updated_at": "2025-08-22T06:09:26.905Z",
     "duration": 415852,
-    "region": "Sao Paulo"
+    "region": "Amazonas"
   },
   {
     "id": "f0646b51-caaf-498f-8d13-63d1e6fc2e5d",
@@ -3555,9 +3555,9 @@
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-17T08:49:00.952Z",
-    "updated_at": "2025-08-21T04:08:08.917Z",
+    "updated_at": "2025-08-22T06:09:26.905Z",
     "duration": 7,
-    "region": "Sao Paulo"
+    "region": "Amazonas"
   },
   {
     "id": "e66ab67f-4453-4344-b94b-d7e01b966464",
@@ -3572,9 +3572,9 @@
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-17T08:53:48.494Z",
-    "updated_at": "2025-08-21T04:08:08.917Z",
+    "updated_at": "2025-08-22T06:09:26.905Z",
     "duration": 19,
-    "region": "Sao Paulo"
+    "region": "Amazonas"
   },
   {
     "id": "719e3356-5203-411e-8aa3-4de3b4d8659d",
@@ -3605,8 +3605,8 @@
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-17T08:54:25.436Z",
-    "updated_at": "2025-08-21T04:08:08.917Z",
-    "region": "Sao Paulo"
+    "updated_at": "2025-08-22T06:09:26.905Z",
+    "region": "Amazonas"
   },
   {
     "id": "5342f0e3-3192-473a-ad06-5461c59332d7",
@@ -3621,9 +3621,9 @@
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-17T08:55:17.579Z",
-    "updated_at": "2025-08-21T04:08:08.917Z",
+    "updated_at": "2025-08-22T06:09:26.905Z",
     "duration": 472,
-    "region": "Sao Paulo"
+    "region": "Amazonas"
   },
   {
     "id": "52c73f76-2175-453d-9ff5-ef72611eefa4",
@@ -3638,9 +3638,9 @@
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-17T09:01:55.398Z",
-    "updated_at": "2025-08-21T04:08:08.917Z",
+    "updated_at": "2025-08-22T06:09:26.905Z",
     "duration": 717,
-    "region": "Sao Paulo"
+    "region": "Amazonas"
   },
   {
     "id": "9e5728f0-a5bd-4aa6-ad4f-f5f4b0793ebf",
@@ -3655,9 +3655,9 @@
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-17T09:05:59.585Z",
-    "updated_at": "2025-08-21T04:08:08.917Z",
+    "updated_at": "2025-08-22T06:09:26.905Z",
     "duration": 840,
-    "region": "Sao Paulo"
+    "region": "Amazonas"
   },
   {
     "id": "a67fc918-1ea1-41f2-8d85-a5224274f643",
@@ -3672,9 +3672,9 @@
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-17T09:08:01.095Z",
-    "updated_at": "2025-08-21T04:08:08.917Z",
+    "updated_at": "2025-08-22T06:09:26.905Z",
     "duration": 949,
-    "region": "Sao Paulo"
+    "region": "Amazonas"
   },
   {
     "id": "274035bf-e558-4831-b330-ef9eaa83dfda",
@@ -3689,9 +3689,9 @@
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-17T09:10:01.264Z",
-    "updated_at": "2025-08-21T04:08:08.917Z",
+    "updated_at": "2025-08-22T06:09:26.905Z",
     "duration": 1102,
-    "region": "Sao Paulo"
+    "region": "Amazonas"
   },
   {
     "id": "62d30339-5be1-4420-b5a9-e043adac8e61",
@@ -3706,9 +3706,9 @@
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-17T09:12:25.885Z",
-    "updated_at": "2025-08-21T04:08:08.917Z",
+    "updated_at": "2025-08-22T06:09:26.905Z",
     "duration": 1321,
-    "region": "Sao Paulo"
+    "region": "Amazonas"
   },
   {
     "id": "062dd2b5-db05-400b-8421-199745868c73",
@@ -3723,9 +3723,9 @@
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-17T09:16:03.564Z",
-    "updated_at": "2025-08-21T04:08:08.917Z",
+    "updated_at": "2025-08-22T06:09:26.905Z",
     "duration": 1516,
-    "region": "Sao Paulo"
+    "region": "Amazonas"
   },
   {
     "id": "ed2df7b8-147e-440f-9bf7-d7554a42f886",
@@ -3756,9 +3756,9 @@
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-17T09:20:33.308Z",
-    "updated_at": "2025-08-21T04:08:08.917Z",
+    "updated_at": "2025-08-22T06:09:26.905Z",
     "duration": 1879,
-    "region": "Sao Paulo"
+    "region": "Amazonas"
   },
   {
     "id": "db6866b1-23fb-40b5-9722-fd2144131803",
@@ -3773,8 +3773,8 @@
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-17T09:25:59.216Z",
-    "updated_at": "2025-08-21T04:08:08.917Z",
-    "region": "Sao Paulo"
+    "updated_at": "2025-08-22T06:09:26.905Z",
+    "region": "Amazonas"
   },
   {
     "id": "f3729936-6b7d-4628-a4dc-5cdacb54f193",
@@ -3805,9 +3805,9 @@
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-17T09:26:42.329Z",
-    "updated_at": "2025-08-21T04:08:08.917Z",
+    "updated_at": "2025-08-22T06:09:26.905Z",
     "duration": 2020,
-    "region": "Sao Paulo"
+    "region": "Amazonas"
   },
   {
     "id": "3e6b6f48-1cc4-4d2a-bc41-1f363c13002e",
@@ -3838,9 +3838,9 @@
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-17T09:32:56.697Z",
-    "updated_at": "2025-08-21T04:08:08.917Z",
+    "updated_at": "2025-08-22T06:09:26.905Z",
     "duration": 2589,
-    "region": "Sao Paulo"
+    "region": "Amazonas"
   },
   {
     "id": "325d23f2-a82b-4dcc-b5c5-5fa74ae07b00",
@@ -3855,9 +3855,9 @@
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-17T09:37:12.624Z",
-    "updated_at": "2025-08-21T04:08:08.917Z",
+    "updated_at": "2025-08-22T06:09:26.905Z",
     "duration": 2838,
-    "region": "Sao Paulo"
+    "region": "Amazonas"
   },
   {
     "id": "a7a31440-3b7a-4f75-8df4-74eef0942a6a",
@@ -3872,8 +3872,8 @@
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-17T09:41:21.579Z",
-    "updated_at": "2025-08-21T04:08:08.917Z",
-    "region": "Sao Paulo"
+    "updated_at": "2025-08-22T06:09:26.905Z",
+    "region": "Amazonas"
   },
   {
     "id": "a602b321-f04a-4fc0-af92-3b62f76bca4f",
@@ -3888,8 +3888,8 @@
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-17T09:56:39.364Z",
-    "updated_at": "2025-08-21T04:08:08.917Z",
-    "region": "Sao Paulo"
+    "updated_at": "2025-08-22T06:09:26.905Z",
+    "region": "Amazonas"
   },
   {
     "id": "58c499af-c8cb-4be0-8dc2-850a052a463c",
@@ -3936,9 +3936,9 @@
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-17T10:24:20.147Z",
-    "updated_at": "2025-08-21T04:08:08.917Z",
+    "updated_at": "2025-08-22T06:09:26.905Z",
     "duration": 422326,
-    "region": "Sao Paulo"
+    "region": "Amazonas"
   },
   {
     "id": "e25cc7e1-fd16-449d-8208-ebde61171472",
@@ -3953,7 +3953,7 @@
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-17T10:30:13.576Z",
-    "updated_at": "2025-08-21T04:08:09.156Z",
+    "updated_at": "2025-08-22T06:09:26.715Z",
     "region": "Algiers"
   },
   {
@@ -3969,7 +3969,7 @@
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-17T10:58:39.966Z",
-    "updated_at": "2025-08-21T04:08:09.156Z",
+    "updated_at": "2025-08-22T06:09:26.715Z",
     "region": "Algiers"
   },
   {
@@ -3985,7 +3985,7 @@
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-17T10:59:47.764Z",
-    "updated_at": "2025-08-21T04:08:09.156Z",
+    "updated_at": "2025-08-22T06:09:26.715Z",
     "duration": 7650,
     "region": "Algiers"
   },
@@ -4002,7 +4002,7 @@
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-17T11:02:45.913Z",
-    "updated_at": "2025-08-21T04:08:09.156Z",
+    "updated_at": "2025-08-22T06:09:26.715Z",
     "region": "Algiers"
   },
   {
@@ -4018,7 +4018,7 @@
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-17T11:03:53.004Z",
-    "updated_at": "2025-08-21T04:08:09.156Z",
+    "updated_at": "2025-08-22T06:09:26.715Z",
     "duration": 7865,
     "region": "Algiers"
   },
@@ -4035,7 +4035,7 @@
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-17T11:06:16.792Z",
-    "updated_at": "2025-08-21T04:08:09.156Z",
+    "updated_at": "2025-08-22T06:09:26.715Z",
     "region": "Algiers"
   },
   {
@@ -4051,7 +4051,7 @@
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-17T11:07:40.706Z",
-    "updated_at": "2025-08-21T04:08:09.156Z",
+    "updated_at": "2025-08-22T06:09:26.715Z",
     "region": "Algiers"
   },
   {
@@ -4067,7 +4067,7 @@
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-17T11:08:57.953Z",
-    "updated_at": "2025-08-21T04:08:09.156Z",
+    "updated_at": "2025-08-22T06:09:26.715Z",
     "region": "Algiers"
   },
   {
@@ -4083,7 +4083,7 @@
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-17T11:10:05.774Z",
-    "updated_at": "2025-08-21T04:08:09.156Z",
+    "updated_at": "2025-08-22T06:09:26.715Z",
     "duration": 8208,
     "region": "Algiers"
   },
@@ -4100,7 +4100,7 @@
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-17T11:11:43.667Z",
-    "updated_at": "2025-08-21T04:08:09.156Z",
+    "updated_at": "2025-08-22T06:09:26.715Z",
     "duration": 8305,
     "region": "Algiers"
   },
@@ -4117,7 +4117,7 @@
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-17T11:13:25.841Z",
-    "updated_at": "2025-08-21T04:08:09.156Z",
+    "updated_at": "2025-08-22T06:09:26.715Z",
     "region": "Algiers"
   },
   {
@@ -4133,7 +4133,7 @@
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-17T11:14:55.182Z",
-    "updated_at": "2025-08-21T04:08:09.156Z",
+    "updated_at": "2025-08-22T06:09:26.715Z",
     "duration": 8497,
     "region": "Algiers"
   },
@@ -4150,7 +4150,7 @@
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-17T11:16:41.461Z",
-    "updated_at": "2025-08-21T04:08:09.156Z",
+    "updated_at": "2025-08-22T06:09:26.715Z",
     "region": "Algiers"
   },
   {
@@ -4166,7 +4166,7 @@
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-17T11:18:15.812Z",
-    "updated_at": "2025-08-21T04:08:09.156Z",
+    "updated_at": "2025-08-22T06:09:26.715Z",
     "duration": 8818,
     "region": "Algiers"
   },
@@ -4183,7 +4183,7 @@
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-17T11:22:08.067Z",
-    "updated_at": "2025-08-21T04:08:09.156Z",
+    "updated_at": "2025-08-22T06:09:26.715Z",
     "duration": 9079,
     "region": "Algiers"
   },
@@ -4200,7 +4200,7 @@
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-17T11:26:11.349Z",
-    "updated_at": "2025-08-21T04:08:09.156Z",
+    "updated_at": "2025-08-22T06:09:26.715Z",
     "duration": 9439,
     "region": "Algiers"
   },
@@ -4217,7 +4217,7 @@
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-17T11:31:12.675Z",
-    "updated_at": "2025-08-21T04:08:09.156Z",
+    "updated_at": "2025-08-22T06:09:26.715Z",
     "duration": 9739,
     "region": "Algiers"
   },
@@ -4234,7 +4234,7 @@
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-17T11:36:12.728Z",
-    "updated_at": "2025-08-21T04:08:09.156Z",
+    "updated_at": "2025-08-22T06:09:26.715Z",
     "duration": 10099,
     "region": "Algiers"
   },
@@ -4251,7 +4251,7 @@
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-17T11:42:12.692Z",
-    "updated_at": "2025-08-21T04:08:09.156Z",
+    "updated_at": "2025-08-22T06:09:26.715Z",
     "duration": 10400,
     "region": "Algiers"
   },
@@ -4268,7 +4268,7 @@
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-17T11:47:12.769Z",
-    "updated_at": "2025-08-21T04:08:09.156Z",
+    "updated_at": "2025-08-22T06:09:26.715Z",
     "duration": 10759,
     "region": "Algiers"
   },
@@ -4285,7 +4285,7 @@
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-17T11:53:12.771Z",
-    "updated_at": "2025-08-21T04:08:09.156Z",
+    "updated_at": "2025-08-22T06:09:26.715Z",
     "duration": 11059,
     "region": "Algiers"
   },
@@ -4302,7 +4302,7 @@
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-17T11:58:12.700Z",
-    "updated_at": "2025-08-21T04:08:09.156Z",
+    "updated_at": "2025-08-22T06:09:26.715Z",
     "duration": 11359,
     "region": "Algiers"
   },
@@ -4319,7 +4319,7 @@
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-17T12:03:10.883Z",
-    "updated_at": "2025-08-21T04:08:09.156Z",
+    "updated_at": "2025-08-22T06:09:26.715Z",
     "duration": 11659,
     "region": "Algiers"
   },
@@ -4336,7 +4336,7 @@
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-17T12:08:10.991Z",
-    "updated_at": "2025-08-21T04:08:09.156Z",
+    "updated_at": "2025-08-22T06:09:26.715Z",
     "duration": 12019,
     "region": "Algiers"
   },
@@ -4353,7 +4353,7 @@
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-17T12:14:10.935Z",
-    "updated_at": "2025-08-21T04:08:09.156Z",
+    "updated_at": "2025-08-22T06:09:26.715Z",
     "duration": 12173,
     "region": "Algiers"
   },
@@ -4370,7 +4370,7 @@
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-17T14:22:20.572Z",
-    "updated_at": "2025-08-21T04:08:09.156Z",
+    "updated_at": "2025-08-22T06:09:26.715Z",
     "duration": 19742,
     "region": "Algiers"
   },
@@ -4403,7 +4403,7 @@
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-17T14:24:01.685Z",
-    "updated_at": "2025-08-21T04:08:09.156Z",
+    "updated_at": "2025-08-22T06:09:26.715Z",
     "duration": 19934,
     "region": "Algiers"
   },
@@ -4420,7 +4420,7 @@
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-17T14:26:06.074Z",
-    "updated_at": "2025-08-21T04:08:09.156Z",
+    "updated_at": "2025-08-22T06:09:26.715Z",
     "duration": 20057,
     "region": "Algiers"
   },
@@ -4437,7 +4437,7 @@
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-17T14:28:46.164Z",
-    "updated_at": "2025-08-21T04:08:09.156Z",
+    "updated_at": "2025-08-22T06:09:26.715Z",
     "region": "Algiers"
   },
   {
@@ -4453,7 +4453,7 @@
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-17T14:30:40.149Z",
-    "updated_at": "2025-08-21T04:08:09.156Z",
+    "updated_at": "2025-08-22T06:09:26.715Z",
     "duration": 20392,
     "region": "Algiers"
   },
@@ -4470,7 +4470,7 @@
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-17T14:34:47.251Z",
-    "updated_at": "2025-08-21T04:08:09.156Z",
+    "updated_at": "2025-08-22T06:09:26.715Z",
     "region": "Algiers"
   },
   {
@@ -4502,7 +4502,7 @@
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-17T14:36:05.667Z",
-    "updated_at": "2025-08-21T04:08:09.156Z",
+    "updated_at": "2025-08-22T06:09:26.715Z",
     "duration": 20772,
     "region": "Algiers"
   },
@@ -4519,7 +4519,7 @@
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-17T14:40:04.080Z",
-    "updated_at": "2025-08-21T04:08:09.156Z",
+    "updated_at": "2025-08-22T06:09:26.715Z",
     "duration": 20936,
     "region": "Algiers"
   },
@@ -4536,7 +4536,7 @@
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-17T14:42:47.746Z",
-    "updated_at": "2025-08-21T04:08:09.156Z",
+    "updated_at": "2025-08-22T06:09:26.715Z",
     "duration": 21060,
     "region": "Algiers"
   },
@@ -4553,7 +4553,7 @@
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-17T14:45:19.578Z",
-    "updated_at": "2025-08-21T04:08:09.156Z",
+    "updated_at": "2025-08-22T06:09:26.715Z",
     "region": "Algiers"
   },
   {
@@ -4585,7 +4585,7 @@
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-17T14:46:01.533Z",
-    "updated_at": "2025-08-21T04:08:09.156Z",
+    "updated_at": "2025-08-22T06:09:26.715Z",
     "duration": 21611,
     "region": "Algiers"
   },
@@ -4602,7 +4602,7 @@
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-17T14:54:02.470Z",
-    "updated_at": "2025-08-21T04:08:09.156Z",
+    "updated_at": "2025-08-22T06:09:26.715Z",
     "duration": 21764,
     "region": "Algiers"
   },
@@ -4619,7 +4619,7 @@
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-17T14:57:49.924Z",
-    "updated_at": "2025-08-21T04:08:09.156Z",
+    "updated_at": "2025-08-22T06:09:26.715Z",
     "duration": 22279,
     "region": "Algiers"
   },
@@ -4636,7 +4636,7 @@
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-17T15:05:11.169Z",
-    "updated_at": "2025-08-21T04:08:09.156Z",
+    "updated_at": "2025-08-22T06:09:26.715Z",
     "duration": 22313,
     "region": "Algiers"
   },
@@ -4653,7 +4653,7 @@
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-17T15:06:23.073Z",
-    "updated_at": "2025-08-21T04:08:09.156Z",
+    "updated_at": "2025-08-22T06:09:26.715Z",
     "region": "Algiers"
   },
   {
@@ -4669,7 +4669,7 @@
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-17T15:08:18.259Z",
-    "updated_at": "2025-08-21T04:08:09.156Z",
+    "updated_at": "2025-08-22T06:09:26.715Z",
     "duration": 22589,
     "region": "Algiers"
   },
@@ -4686,7 +4686,7 @@
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-17T15:10:58.736Z",
-    "updated_at": "2025-08-21T04:08:09.156Z",
+    "updated_at": "2025-08-22T06:09:26.715Z",
     "region": "Algiers"
   },
   {
@@ -4702,7 +4702,7 @@
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-17T15:11:54.278Z",
-    "updated_at": "2025-08-21T04:08:09.156Z",
+    "updated_at": "2025-08-22T06:09:26.715Z",
     "duration": 22866,
     "region": "Algiers"
   },
@@ -4719,7 +4719,7 @@
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-17T15:15:56.261Z",
-    "updated_at": "2025-08-21T04:08:09.156Z",
+    "updated_at": "2025-08-22T06:09:26.715Z",
     "region": "Algiers"
   },
   {
@@ -4735,7 +4735,7 @@
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-17T15:30:00.959Z",
-    "updated_at": "2025-08-21T04:08:09.156Z",
+    "updated_at": "2025-08-22T06:09:26.715Z",
     "region": "Algiers"
   },
   {
@@ -4767,7 +4767,7 @@
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-17T15:37:21.516Z",
-    "updated_at": "2025-08-21T04:08:09.156Z",
+    "updated_at": "2025-08-22T06:09:26.715Z",
     "duration": 440807,
     "region": "Algiers"
   },
@@ -4800,7 +4800,7 @@
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-17T15:48:33.357Z",
-    "updated_at": "2025-08-21T04:08:09.156Z",
+    "updated_at": "2025-08-22T06:09:26.715Z",
     "duration": 24927,
     "region": "Algiers"
   },
@@ -4817,7 +4817,7 @@
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-17T15:49:18.395Z",
-    "updated_at": "2025-08-21T04:08:09.156Z",
+    "updated_at": "2025-08-22T06:09:26.715Z",
     "duration": 24960,
     "region": "Algiers"
   },
@@ -4850,7 +4850,7 @@
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-17T15:50:03.970Z",
-    "updated_at": "2025-08-21T04:08:09.156Z",
+    "updated_at": "2025-08-22T06:09:26.715Z",
     "region": "Algiers"
   },
   {
@@ -4866,7 +4866,7 @@
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-17T15:50:45.302Z",
-    "updated_at": "2025-08-21T04:08:09.156Z",
+    "updated_at": "2025-08-22T06:09:26.715Z",
     "region": "Algiers"
   },
   {
@@ -4898,7 +4898,7 @@
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-17T15:53:15.015Z",
-    "updated_at": "2025-08-21T04:08:09.156Z",
+    "updated_at": "2025-08-22T06:09:26.715Z",
     "region": "Algiers"
   },
   {
@@ -4914,7 +4914,7 @@
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-17T15:54:15.511Z",
-    "updated_at": "2025-08-21T04:08:09.156Z",
+    "updated_at": "2025-08-22T06:09:26.715Z",
     "duration": 25259,
     "region": "Algiers"
   },
@@ -4947,7 +4947,7 @@
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-17T15:54:50.645Z",
-    "updated_at": "2025-08-21T04:08:09.156Z",
+    "updated_at": "2025-08-22T06:09:26.715Z",
     "duration": 25352,
     "region": "Algiers"
   },
@@ -4980,7 +4980,7 @@
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-17T15:57:00.272Z",
-    "updated_at": "2025-08-21T04:08:09.156Z",
+    "updated_at": "2025-08-22T06:09:26.715Z",
     "region": "Algiers"
   },
   {
@@ -4996,7 +4996,7 @@
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-17T15:57:57.193Z",
-    "updated_at": "2025-08-21T04:08:09.156Z",
+    "updated_at": "2025-08-22T06:09:26.715Z",
     "duration": 25685,
     "region": "Algiers"
   },
@@ -5013,7 +5013,7 @@
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-17T16:01:58.303Z",
-    "updated_at": "2025-08-21T04:08:09.156Z",
+    "updated_at": "2025-08-22T06:09:26.715Z",
     "duration": 25694,
     "region": "Algiers"
   },
@@ -5046,7 +5046,7 @@
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-17T16:04:11.235Z",
-    "updated_at": "2025-08-21T04:08:09.156Z",
+    "updated_at": "2025-08-22T06:09:26.715Z",
     "region": "Algiers"
   },
   {
@@ -5062,7 +5062,7 @@
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-17T16:04:51.087Z",
-    "updated_at": "2025-08-21T04:08:09.156Z",
+    "updated_at": "2025-08-22T06:09:26.715Z",
     "duration": 26012,
     "region": "Algiers"
   },
@@ -5095,7 +5095,7 @@
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-17T16:07:39.878Z",
-    "updated_at": "2025-08-21T04:08:09.156Z",
+    "updated_at": "2025-08-22T06:09:26.715Z",
     "region": "Algiers"
   },
   {
@@ -5111,7 +5111,7 @@
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-17T16:08:36.551Z",
-    "updated_at": "2025-08-21T04:08:09.156Z",
+    "updated_at": "2025-08-22T06:09:26.715Z",
     "duration": 26360,
     "region": "Algiers"
   },
@@ -5128,7 +5128,7 @@
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-17T16:13:15.202Z",
-    "updated_at": "2025-08-21T04:08:09.156Z",
+    "updated_at": "2025-08-22T06:09:26.715Z",
     "duration": 26547,
     "region": "Algiers"
   },
@@ -5161,7 +5161,7 @@
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-17T16:17:28.241Z",
-    "updated_at": "2025-08-21T04:08:09.156Z",
+    "updated_at": "2025-08-22T06:09:26.715Z",
     "duration": 26907,
     "region": "Algiers"
   },
@@ -5178,7 +5178,7 @@
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-17T16:22:20.316Z",
-    "updated_at": "2025-08-21T04:08:09.156Z",
+    "updated_at": "2025-08-22T06:09:26.715Z",
     "duration": 26924,
     "region": "Algiers"
   },
@@ -5195,7 +5195,7 @@
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-17T16:26:35.517Z",
-    "updated_at": "2025-08-21T04:08:09.156Z",
+    "updated_at": "2025-08-22T06:09:26.715Z",
     "duration": 27497,
     "region": "Algiers"
   },
@@ -5212,7 +5212,7 @@
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-17T16:32:36.501Z",
-    "updated_at": "2025-08-21T04:08:09.156Z",
+    "updated_at": "2025-08-22T06:09:26.715Z",
     "region": "Algiers"
   },
   {
@@ -5228,7 +5228,7 @@
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-17T16:33:30.675Z",
-    "updated_at": "2025-08-21T04:08:09.156Z",
+    "updated_at": "2025-08-22T06:09:26.715Z",
     "duration": 27860,
     "region": "Algiers"
   },
@@ -5245,7 +5245,7 @@
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-17T16:38:13.215Z",
-    "updated_at": "2025-08-21T04:08:09.156Z",
+    "updated_at": "2025-08-22T06:09:26.715Z",
     "duration": 28219,
     "region": "Algiers"
   },
@@ -5262,7 +5262,7 @@
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-17T16:44:11.241Z",
-    "updated_at": "2025-08-21T04:08:09.156Z",
+    "updated_at": "2025-08-22T06:09:26.715Z",
     "duration": 28373,
     "region": "Algiers"
   },
@@ -5295,7 +5295,7 @@
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-17T17:02:19.160Z",
-    "updated_at": "2025-08-21T04:08:09.159Z",
+    "updated_at": "2025-08-22T06:09:26.919Z",
     "duration": 29880,
     "region": "Capital Region"
   },
@@ -5312,7 +5312,7 @@
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-17T17:14:59.909Z",
-    "updated_at": "2025-08-21T04:08:09.087Z",
+    "updated_at": "2025-08-22T06:09:26.983Z",
     "region": "Hesse"
   },
   {
@@ -5328,7 +5328,7 @@
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-17T17:18:22.175Z",
-    "updated_at": "2025-08-21T04:08:09.087Z",
+    "updated_at": "2025-08-22T06:09:26.983Z",
     "duration": 30500,
     "region": "Hesse"
   },
@@ -5345,7 +5345,7 @@
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-17T17:22:10.602Z",
-    "updated_at": "2025-08-21T04:08:09.087Z",
+    "updated_at": "2025-08-22T06:09:26.983Z",
     "duration": 447215,
     "region": "Hesse"
   },
@@ -5362,7 +5362,7 @@
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-17T17:31:28.933Z",
-    "updated_at": "2025-08-21T04:08:09.087Z",
+    "updated_at": "2025-08-22T06:09:26.983Z",
     "duration": 31241,
     "region": "Hesse"
   },
@@ -5395,7 +5395,7 @@
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-17T18:48:54.019Z",
-    "updated_at": "2025-08-21T04:08:09.355Z",
+    "updated_at": "2025-08-22T06:09:26.444Z",
     "region": "Mazovia"
   },
   {
@@ -5411,7 +5411,7 @@
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-17T18:55:08.513Z",
-    "updated_at": "2025-08-21T04:08:09.355Z",
+    "updated_at": "2025-08-22T06:09:26.444Z",
     "duration": 36094,
     "region": "Mazovia"
   },
@@ -5444,7 +5444,7 @@
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-17T18:58:37.096Z",
-    "updated_at": "2025-08-21T04:08:09.355Z",
+    "updated_at": "2025-08-22T06:09:26.444Z",
     "region": "Mazovia"
   },
   {
@@ -5460,7 +5460,7 @@
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-17T19:08:46.875Z",
-    "updated_at": "2025-08-21T04:08:09.355Z",
+    "updated_at": "2025-08-22T06:09:26.444Z",
     "region": "Mazovia"
   },
   {
@@ -5476,7 +5476,7 @@
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-17T19:24:11.621Z",
-    "updated_at": "2025-08-21T04:08:09.355Z",
+    "updated_at": "2025-08-22T06:09:26.444Z",
     "region": "Mazovia"
   },
   {
@@ -5492,7 +5492,7 @@
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-17T19:28:47.512Z",
-    "updated_at": "2025-08-21T04:08:09.355Z",
+    "updated_at": "2025-08-22T06:09:26.444Z",
     "region": "Mazovia"
   },
   {
@@ -5524,7 +5524,7 @@
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-17T19:29:25.400Z",
-    "updated_at": "2025-08-21T04:08:09.355Z",
+    "updated_at": "2025-08-22T06:09:26.444Z",
     "duration": 454858,
     "region": "Mazovia"
   },
@@ -5541,7 +5541,7 @@
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-17T19:31:36.163Z",
-    "updated_at": "2025-08-21T04:08:09.355Z",
+    "updated_at": "2025-08-22T06:09:26.444Z",
     "duration": 454923,
     "region": "Mazovia"
   },
@@ -5558,7 +5558,7 @@
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-17T19:32:44.003Z",
-    "updated_at": "2025-08-21T04:08:09.355Z",
+    "updated_at": "2025-08-22T06:09:26.444Z",
     "duration": 455134,
     "region": "Mazovia"
   },
@@ -5575,7 +5575,7 @@
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-17T19:36:31.159Z",
-    "updated_at": "2025-08-21T04:08:09.355Z",
+    "updated_at": "2025-08-22T06:09:26.444Z",
     "duration": 455269,
     "region": "Mazovia"
   },
@@ -5592,7 +5592,7 @@
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-17T19:38:27.867Z",
-    "updated_at": "2025-08-21T04:08:09.355Z",
+    "updated_at": "2025-08-22T06:09:26.444Z",
     "duration": 456175,
     "region": "Mazovia"
   },
@@ -5609,7 +5609,7 @@
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-17T19:53:49.923Z",
-    "updated_at": "2025-08-21T04:08:09.355Z",
+    "updated_at": "2025-08-22T06:09:26.444Z",
     "duration": 456384,
     "region": "Mazovia"
   },
@@ -5626,7 +5626,7 @@
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-17T19:57:30.492Z",
-    "updated_at": "2025-08-21T04:08:09.355Z",
+    "updated_at": "2025-08-22T06:09:26.444Z",
     "duration": 456466,
     "region": "Mazovia"
   },
@@ -5643,7 +5643,7 @@
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-17T19:58:48.758Z",
-    "updated_at": "2025-08-21T04:08:09.355Z",
+    "updated_at": "2025-08-22T06:09:26.444Z",
     "duration": 456526,
     "region": "Mazovia"
   },
@@ -5676,7 +5676,7 @@
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-17T19:59:56.576Z",
-    "updated_at": "2025-08-21T04:08:09.355Z",
+    "updated_at": "2025-08-22T06:09:26.444Z",
     "duration": 456954,
     "region": "Mazovia"
   },
@@ -5693,7 +5693,7 @@
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-17T20:07:34.316Z",
-    "updated_at": "2025-08-21T04:08:09.381Z",
+    "updated_at": "2025-08-22T06:09:27.066Z",
     "duration": 457043,
     "region": "Attica"
   },
@@ -5710,7 +5710,7 @@
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-17T20:08:45.633Z",
-    "updated_at": "2025-08-21T04:08:09.498Z",
+    "updated_at": "2025-08-22T06:09:26.727Z",
     "duration": 477695,
     "region": "Occitanie"
   },
@@ -5727,7 +5727,7 @@
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-21T03:58:38.456Z",
-    "updated_at": "2025-08-21T04:08:09.498Z",
+    "updated_at": "2025-08-22T06:09:26.727Z",
     "duration": 744724,
     "region": "Occitanie"
   },
@@ -5744,7 +5744,7 @@
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-21T04:02:53.238Z",
-    "updated_at": "2025-08-21T04:08:09.498Z",
+    "updated_at": "2025-08-22T06:09:26.727Z",
     "duration": 744784,
     "region": "Occitanie"
   },
@@ -5777,7 +5777,7 @@
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-21T04:03:58.891Z",
-    "updated_at": "2025-08-21T04:08:09.498Z",
+    "updated_at": "2025-08-22T06:09:26.727Z",
     "duration": 745016,
     "region": "Occitanie"
   },
@@ -5794,7 +5794,7 @@
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-21T04:07:39.708Z",
-    "updated_at": "2025-08-21T04:13:29.323Z",
+    "updated_at": "2025-08-22T06:09:26.727Z",
     "duration": 745375,
     "region": "Occitanie"
   },
@@ -5806,14 +5806,14 @@
     "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36 Edg/139.0.0.0",
     "referrer": "https://365df2cf-1884-444c-a9e8-235602456363-00-37q39xpqlgvdy.janeway.replit.dev/__replco/workspace_iframe.html?initialPath=%2F&id=%3Ar16f%3A",
     "language": "fr-FR",
-    "country": "Unknown",
-    "city": "Unknown",
+    "city": "Figeac",
     "page_views": 0,
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-21T04:25:28.288Z",
-    "updated_at": "2025-08-21T04:26:29.354Z",
-    "duration": 746155
+    "updated_at": "2025-08-22T06:09:26.727Z",
+    "duration": 746155,
+    "region": "Occitanie"
   },
   {
     "id": "494c7ac8-1b41-4ba1-91bc-2c4176e89dd6",
@@ -5823,14 +5823,14 @@
     "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36 Edg/139.0.0.0",
     "referrer": "https://365df2cf-1884-444c-a9e8-235602456363-00-37q39xpqlgvdy.janeway.replit.dev/__replco/workspace_iframe.html?initialPath=%2F&id=%3Ar16f%3A",
     "language": "fr-FR",
-    "country": "Unknown",
-    "city": "Unknown",
+    "city": "Figeac",
     "page_views": 0,
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-21T04:26:32.324Z",
-    "updated_at": "2025-08-21T04:27:14.608Z",
-    "duration": 329606
+    "updated_at": "2025-08-22T06:09:26.727Z",
+    "duration": 329606,
+    "region": "Occitanie"
   },
   {
     "id": "72ad24d0-4595-49e4-b313-37abcf6e9494",
@@ -5840,14 +5840,14 @@
     "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36 Edg/139.0.0.0",
     "referrer": "https://365df2cf-1884-444c-a9e8-235602456363-00-37q39xpqlgvdy.janeway.replit.dev/__replco/workspace_iframe.html?initialPath=%2F&id=%3Ar37s%3A",
     "language": "fr-FR",
-    "country": "Unknown",
-    "city": "Unknown",
+    "city": "Figeac",
     "page_views": 0,
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-21T04:27:35.398Z",
-    "updated_at": "2025-08-21T04:33:26.016Z",
-    "duration": 746571
+    "updated_at": "2025-08-22T06:09:26.727Z",
+    "duration": 746571,
+    "region": "Occitanie"
   },
   {
     "id": "118e3a99-3c82-4d2b-af68-268af7849a10",
@@ -5857,14 +5857,14 @@
     "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36 Edg/139.0.0.0",
     "referrer": "https://365df2cf-1884-444c-a9e8-235602456363-00-37q39xpqlgvdy.janeway.replit.dev/__replco/workspace_iframe.html?initialPath=%2F&id=%3Ar37s%3A",
     "language": "fr-FR",
-    "country": "Unknown",
-    "city": "Unknown",
+    "city": "Figeac",
     "page_views": 0,
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-21T04:34:48.462Z",
-    "updated_at": "2025-08-21T04:48:49.167Z",
-    "duration": 747495
+    "updated_at": "2025-08-22T06:09:26.727Z",
+    "duration": 747495,
+    "region": "Occitanie"
   },
   {
     "id": "c090702e-49c5-49f2-9eba-75b8ddb5e371",
@@ -5874,14 +5874,14 @@
     "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36 Edg/139.0.0.0",
     "referrer": "https://365df2cf-1884-444c-a9e8-235602456363-00-37q39xpqlgvdy.janeway.replit.dev/__replco/workspace_iframe.html?initialPath=%2F&id=%3Ar37s%3A",
     "language": "fr-FR",
-    "country": "Unknown",
-    "city": "Unknown",
+    "city": "Figeac",
     "page_views": 0,
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-21T04:55:31.062Z",
-    "updated_at": "2025-08-21T05:01:19.137Z",
-    "duration": 748245
+    "updated_at": "2025-08-22T06:09:26.727Z",
+    "duration": 748245,
+    "region": "Occitanie"
   },
   {
     "id": "8e37aa0c-6356-4ced-9a0e-0066c28d6dec",
@@ -5907,14 +5907,14 @@
     "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36 Edg/139.0.0.0",
     "referrer": "https://365df2cf-1884-444c-a9e8-235602456363-00-37q39xpqlgvdy.janeway.replit.dev/__replco/workspace_iframe.html?initialPath=%2F&id=%3Ar694%3A",
     "language": "fr-FR",
-    "country": "Unknown",
-    "city": "Unknown",
+    "city": "Figeac",
     "page_views": 0,
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-21T05:04:43.184Z",
-    "updated_at": "2025-08-21T05:05:38.156Z",
-    "duration": 748504
+    "updated_at": "2025-08-22T06:09:26.727Z",
+    "duration": 748504,
+    "region": "Occitanie"
   },
   {
     "id": "c99ca792-733f-4f08-a7ac-6370da5f19b8",
@@ -5924,14 +5924,14 @@
     "user_agent": "Mozilla/5.0 (iPhone; CPU iPhone OS 18_6_1 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148 Replit-Bonsai/2.147.2 (iOS 18.6.1)",
     "referrer": "",
     "language": "fr-FR",
-    "country": "Unknown",
-    "city": "Unknown",
+    "city": "Figeac",
     "page_views": 0,
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-21T05:10:31.946Z",
-    "updated_at": "2025-08-21T05:10:43.401Z",
-    "duration": 748809
+    "updated_at": "2025-08-22T06:09:26.727Z",
+    "duration": 748809,
+    "region": "Occitanie"
   },
   {
     "id": "b674922b-51ed-4346-bcde-8ddb44cfe670",
@@ -5941,13 +5941,13 @@
     "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36 Edg/139.0.0.0",
     "referrer": "https://365df2cf-1884-444c-a9e8-235602456363-00-37q39xpqlgvdy.janeway.replit.dev/__replco/workspace_iframe.html?initialPath=%2F&id=%3Ar694%3A",
     "language": "fr-FR",
-    "country": "Unknown",
-    "city": "Unknown",
+    "city": "Figeac",
     "page_views": 0,
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-21T05:11:48.150Z",
-    "updated_at": "2025-08-21T05:11:48.190Z"
+    "updated_at": "2025-08-22T06:09:26.727Z",
+    "region": "Occitanie"
   },
   {
     "id": "b6326507-9e8e-49af-baf7-ac73e0cf850f",
@@ -5973,14 +5973,14 @@
     "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36 Edg/139.0.0.0",
     "referrer": "https://365df2cf-1884-444c-a9e8-235602456363-00-37q39xpqlgvdy.janeway.replit.dev/__replco/workspace_iframe.html?initialPath=%2F&id=%3Ar7cs%3A",
     "language": "fr-FR",
-    "country": "Unknown",
-    "city": "Unknown",
+    "city": "Figeac",
     "page_views": 0,
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-21T05:13:18.627Z",
-    "updated_at": "2025-08-21T05:18:48.413Z",
-    "duration": 749294
+    "updated_at": "2025-08-22T06:09:26.727Z",
+    "duration": 749294,
+    "region": "Occitanie"
   },
   {
     "id": "2da32d4d-b05e-4020-9132-9a7a57bfa94d",
@@ -5990,14 +5990,14 @@
     "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36 Edg/139.0.0.0",
     "referrer": "https://365df2cf-1884-444c-a9e8-235602456363-00-37q39xpqlgvdy.janeway.replit.dev/__replco/workspace_iframe.html?initialPath=%2F&id=%3Ar7cs%3A",
     "language": "fr-FR",
-    "country": "Unknown",
-    "city": "Unknown",
+    "city": "Figeac",
     "page_views": 0,
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-21T05:24:29.080Z",
-    "updated_at": "2025-08-21T05:35:18.677Z",
-    "duration": 750284
+    "updated_at": "2025-08-22T06:09:26.727Z",
+    "duration": 750284,
+    "region": "Occitanie"
   },
   {
     "id": "1d5166ed-4daf-43b6-b1e3-29bb6cf65625",
@@ -6023,14 +6023,14 @@
     "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36 Edg/139.0.0.0",
     "referrer": "https://365df2cf-1884-444c-a9e8-235602456363-00-37q39xpqlgvdy.janeway.replit.dev/__replco/workspace_iframe.html?initialPath=%2F&id=%3Ar9dk%3A",
     "language": "fr-FR",
-    "country": "Unknown",
-    "city": "Unknown",
+    "city": "Figeac",
     "page_views": 0,
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-21T05:35:52.298Z",
-    "updated_at": "2025-08-21T05:38:04.925Z",
-    "duration": 750450
+    "updated_at": "2025-08-22T06:09:26.727Z",
+    "duration": 750450,
+    "region": "Occitanie"
   },
   {
     "id": "add7cead-62e3-4061-982b-87619515d65a",
@@ -6040,14 +6040,14 @@
     "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36 Edg/139.0.0.0",
     "referrer": "https://365df2cf-1884-444c-a9e8-235602456363-00-37q39xpqlgvdy.janeway.replit.dev/__replco/workspace_iframe.html?initialPath=%2F&id=%3Ar9dk%3A",
     "language": "fr-FR",
-    "country": "Unknown",
-    "city": "Unknown",
+    "city": "Figeac",
     "page_views": 0,
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-21T05:42:39.150Z",
-    "updated_at": "2025-08-21T05:43:10.482Z",
-    "duration": 750756
+    "updated_at": "2025-08-22T06:09:26.727Z",
+    "duration": 750756,
+    "region": "Occitanie"
   },
   {
     "id": "ccb82b8e-a9b3-4d6c-9904-984aa421fd2f",
@@ -6057,14 +6057,14 @@
     "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36 Edg/139.0.0.0",
     "referrer": "https://365df2cf-1884-444c-a9e8-235602456363-00-37q39xpqlgvdy.janeway.replit.dev/__replco/workspace_iframe.html?initialPath=%2F&id=%3Ar9dk%3A",
     "language": "fr-FR",
-    "country": "Unknown",
-    "city": "Unknown",
+    "city": "Figeac",
     "page_views": 0,
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-21T05:43:13.212Z",
-    "updated_at": "2025-08-21T05:44:37.952Z",
-    "duration": 750843
+    "updated_at": "2025-08-22T06:09:26.727Z",
+    "duration": 750843,
+    "region": "Occitanie"
   },
   {
     "id": "87231d3f-cdb0-4873-bcfa-7f4e4f315b0d",
@@ -6090,14 +6090,14 @@
     "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36 Edg/139.0.0.0",
     "referrer": "https://365df2cf-1884-444c-a9e8-235602456363-00-37q39xpqlgvdy.janeway.replit.dev/__replco/workspace_iframe.html?initialPath=%2F&id=%3Arb3g%3A",
     "language": "fr-FR",
-    "country": "Unknown",
-    "city": "Unknown",
+    "city": "Figeac",
     "page_views": 0,
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-21T05:45:02.038Z",
-    "updated_at": "2025-08-21T05:46:02.472Z",
-    "duration": 750928
+    "updated_at": "2025-08-22T06:09:26.727Z",
+    "duration": 750928,
+    "region": "Occitanie"
   },
   {
     "id": "c02deaa9-7a54-485f-8347-31c224ebb358",
@@ -6107,14 +6107,14 @@
     "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36 Edg/139.0.0.0",
     "referrer": "https://365df2cf-1884-444c-a9e8-235602456363-00-37q39xpqlgvdy.janeway.replit.dev/__replco/workspace_iframe.html?initialPath=%2F&id=%3Arb3g%3A",
     "language": "fr-FR",
-    "country": "Unknown",
-    "city": "Unknown",
+    "city": "Figeac",
     "page_views": 0,
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-21T05:46:17.448Z",
-    "updated_at": "2025-08-21T06:01:02.578Z",
-    "duration": 751828
+    "updated_at": "2025-08-22T06:09:26.727Z",
+    "duration": 751828,
+    "region": "Occitanie"
   },
   {
     "id": "e7f937e3-bbe9-4aa4-a2f9-b26d597faeb2",
@@ -6140,14 +6140,14 @@
     "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36 Edg/139.0.0.0",
     "referrer": "https://365df2cf-1884-444c-a9e8-235602456363-00-37q39xpqlgvdy.janeway.replit.dev/__replco/workspace_iframe.html?initialPath=%2F&id=%3Ardne%3A",
     "language": "fr-FR",
-    "country": "Unknown",
-    "city": "Unknown",
+    "city": "Figeac",
     "page_views": 0,
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-21T06:01:20.843Z",
-    "updated_at": "2025-08-21T06:01:57.697Z",
-    "duration": 751883
+    "updated_at": "2025-08-22T06:09:26.727Z",
+    "duration": 751883,
+    "region": "Occitanie"
   },
   {
     "id": "7d8473a8-286a-4e90-bcbc-9676a2020e5c",
@@ -6157,14 +6157,14 @@
     "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36 Edg/139.0.0.0",
     "referrer": "https://365df2cf-1884-444c-a9e8-235602456363-00-37q39xpqlgvdy.janeway.replit.dev/fr-FR/admin?start=2025-08-15&end=2025-08-21&loc=all",
     "language": "fr-FR",
-    "country": "Unknown",
-    "city": "Unknown",
+    "city": "Figeac",
     "page_views": 0,
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-21T06:02:08.864Z",
-    "updated_at": "2025-08-21T06:05:51.323Z",
-    "duration": 752117
+    "updated_at": "2025-08-22T06:09:26.727Z",
+    "duration": 752117,
+    "region": "Occitanie"
   },
   {
     "id": "270c7e5e-8dec-4681-ace3-64dbeeb94bc2",
@@ -6174,14 +6174,14 @@
     "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36 Edg/139.0.0.0",
     "referrer": "https://365df2cf-1884-444c-a9e8-235602456363-00-37q39xpqlgvdy.janeway.replit.dev/__replco/workspace_iframe.html?initialPath=%2F&id=%3Areqs%3A",
     "language": "fr-FR",
-    "country": "Unknown",
-    "city": "Unknown",
+    "city": "Figeac",
     "page_views": 0,
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-21T06:17:38.600Z",
-    "updated_at": "2025-08-21T06:18:08.612Z",
-    "duration": 752854
+    "updated_at": "2025-08-22T06:09:26.727Z",
+    "duration": 752854,
+    "region": "Occitanie"
   },
   {
     "id": "c9b4bbd9-2ee4-460c-896d-6ee6f7c27539",
@@ -6191,14 +6191,14 @@
     "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36 Edg/139.0.0.0",
     "referrer": "https://365df2cf-1884-444c-a9e8-235602456363-00-37q39xpqlgvdy.janeway.replit.dev/fr-FR",
     "language": "fr-FR",
-    "country": "Unknown",
-    "city": "Unknown",
+    "city": "Figeac",
     "page_views": 0,
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-21T06:18:29.198Z",
-    "updated_at": "2025-08-21T06:28:29.169Z",
-    "duration": 753475
+    "updated_at": "2025-08-22T06:09:26.727Z",
+    "duration": 753475,
+    "region": "Occitanie"
   },
   {
     "id": "60d6fe57-5e06-498c-8ab2-e6be91d0eef1",
@@ -6208,14 +6208,14 @@
     "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36 Edg/139.0.0.0",
     "referrer": "https://365df2cf-1884-444c-a9e8-235602456363-00-37q39xpqlgvdy.janeway.replit.dev/__replco/workspace_iframe.html?initialPath=%2F&id=%3Argh3%3A",
     "language": "fr-FR",
-    "country": "Unknown",
-    "city": "Unknown",
+    "city": "Figeac",
     "page_views": 0,
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-21T06:30:41.962Z",
-    "updated_at": "2025-08-21T06:31:12.351Z",
-    "duration": 753638
+    "updated_at": "2025-08-22T06:09:26.727Z",
+    "duration": 753638,
+    "region": "Occitanie"
   },
   {
     "id": "e4ca9725-3f8c-486f-b58e-d284e6e061bf",
@@ -6225,14 +6225,14 @@
     "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36 Edg/139.0.0.0",
     "referrer": "https://365df2cf-1884-444c-a9e8-235602456363-00-37q39xpqlgvdy.janeway.replit.dev/fr-FR",
     "language": "fr-FR",
-    "country": "Unknown",
-    "city": "Unknown",
+    "city": "Figeac",
     "page_views": 0,
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-21T06:31:34.477Z",
-    "updated_at": "2025-08-21T06:53:21.007Z",
-    "duration": 338372
+    "updated_at": "2025-08-22T06:09:26.727Z",
+    "duration": 338372,
+    "region": "Occitanie"
   },
   {
     "id": "79f55a84-73e2-455a-8432-20d45cdcd856",
@@ -6242,14 +6242,14 @@
     "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36 Edg/139.0.0.0",
     "referrer": "https://365df2cf-1884-444c-a9e8-235602456363-00-37q39xpqlgvdy.janeway.replit.dev/__replco/workspace_iframe.html?initialPath=%2F&id=%3Arih7%3A",
     "language": "fr-FR",
-    "country": "Unknown",
-    "city": "Unknown",
+    "city": "Figeac",
     "page_views": 0,
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-21T07:01:07.377Z",
-    "updated_at": "2025-08-21T07:05:07.778Z",
-    "duration": 755673
+    "updated_at": "2025-08-22T06:09:26.727Z",
+    "duration": 755673,
+    "region": "Occitanie"
   },
   {
     "id": "438c77bb-aeb5-432a-a0f9-7e29d52c167c",
@@ -6259,14 +6259,14 @@
     "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36 Edg/139.0.0.0",
     "referrer": "https://365df2cf-1884-444c-a9e8-235602456363-00-37q39xpqlgvdy.janeway.replit.dev/__replco/workspace_iframe.html?initialPath=%2F&id=%3Ariuh%3A",
     "language": "fr-FR",
-    "country": "Unknown",
-    "city": "Unknown",
+    "city": "Figeac",
     "page_views": 0,
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-21T07:05:41.422Z",
-    "updated_at": "2025-08-21T07:13:14.394Z",
-    "duration": 756160
+    "updated_at": "2025-08-22T06:09:26.727Z",
+    "duration": 756160,
+    "region": "Occitanie"
   },
   {
     "id": "2e74a1cb-d9e5-4d1c-a321-0577f60daf4c",
@@ -6276,14 +6276,14 @@
     "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36 Edg/139.0.0.0",
     "referrer": "https://365df2cf-1884-444c-a9e8-235602456363-00-37q39xpqlgvdy.janeway.replit.dev/__replco/workspace_iframe.html?initialPath=%2F&id=%3Arjn7%3A",
     "language": "fr-FR",
-    "country": "Unknown",
-    "city": "Unknown",
+    "city": "Figeac",
     "page_views": 0,
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-21T07:13:54.198Z",
-    "updated_at": "2025-08-21T08:11:54.925Z",
-    "duration": 759680
+    "updated_at": "2025-08-22T06:09:26.727Z",
+    "duration": 759680,
+    "region": "Occitanie"
   },
   {
     "id": "0586e8fb-c885-4e21-832d-f4e359411dbb",
@@ -6293,14 +6293,14 @@
     "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36 Edg/139.0.0.0",
     "referrer": "https://365df2cf-1884-444c-a9e8-235602456363-00-37q39xpqlgvdy.janeway.replit.dev/fr-FR/admin",
     "language": "fr-FR",
-    "country": "Unknown",
-    "city": "Unknown",
+    "city": "Figeac",
     "page_views": 0,
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-21T08:12:16.840Z",
-    "updated_at": "2025-08-21T08:17:06.879Z",
-    "duration": 343398
+    "updated_at": "2025-08-22T06:09:26.727Z",
+    "duration": 343398,
+    "region": "Occitanie"
   },
   {
     "id": "d18ef8a8-4e1a-4ab0-bba9-cc2441b2d130",
@@ -6310,14 +6310,14 @@
     "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36 Edg/139.0.0.0",
     "referrer": "https://365df2cf-1884-444c-a9e8-235602456363-00-37q39xpqlgvdy.janeway.replit.dev/fr-FR/admin",
     "language": "fr-FR",
-    "country": "Unknown",
-    "city": "Unknown",
+    "city": "Figeac",
     "page_views": 0,
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-21T08:17:09.215Z",
-    "updated_at": "2025-08-21T08:17:39.646Z",
-    "duration": 343431
+    "updated_at": "2025-08-22T06:09:26.727Z",
+    "duration": 343431,
+    "region": "Occitanie"
   },
   {
     "id": "1ed26677-5866-467c-8261-d890e07d8cca",
@@ -6343,14 +6343,14 @@
     "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36 Edg/139.0.0.0",
     "referrer": "https://365df2cf-1884-444c-a9e8-235602456363-00-37q39xpqlgvdy.janeway.replit.dev/__replco/workspace_iframe.html?initialPath=%2F&id=%3Arkne%3A",
     "language": "fr-FR",
-    "country": "Unknown",
-    "city": "Unknown",
+    "city": "Figeac",
     "page_views": 0,
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-21T08:18:08.222Z",
-    "updated_at": "2025-08-21T08:18:39.021Z",
-    "duration": 760084
+    "updated_at": "2025-08-22T06:09:26.727Z",
+    "duration": 760084,
+    "region": "Occitanie"
   },
   {
     "id": "47335b99-a465-45e7-869f-34d7ab90e559",
@@ -6360,14 +6360,14 @@
     "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36 Edg/139.0.0.0",
     "referrer": "https://365df2cf-1884-444c-a9e8-235602456363-00-37q39xpqlgvdy.janeway.replit.dev/fr-FR",
     "language": "fr-FR",
-    "country": "Unknown",
-    "city": "Unknown",
+    "city": "Figeac",
     "page_views": 0,
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-21T08:18:58.354Z",
-    "updated_at": "2025-08-21T08:26:14.989Z",
-    "duration": 343946
+    "updated_at": "2025-08-22T06:09:26.727Z",
+    "duration": 343946,
+    "region": "Occitanie"
   },
   {
     "id": "61349db6-fb9e-432e-ad70-7d40628e47ed",
@@ -6377,13 +6377,13 @@
     "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36 Edg/139.0.0.0",
     "referrer": "https://365df2cf-1884-444c-a9e8-235602456363-00-37q39xpqlgvdy.janeway.replit.dev/__replco/workspace_iframe.html?initialPath=%2F&id=%3Arl3p%3A",
     "language": "fr-FR",
-    "country": "Unknown",
-    "city": "Unknown",
+    "city": "Figeac",
     "page_views": 0,
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-21T08:27:26.131Z",
-    "updated_at": "2025-08-21T08:27:26.171Z"
+    "updated_at": "2025-08-22T06:09:26.727Z",
+    "region": "Occitanie"
   },
   {
     "id": "0293ea3f-6111-4028-ba72-8dbe37f204aa",
@@ -6409,14 +6409,14 @@
     "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36 Edg/139.0.0.0",
     "referrer": "https://365df2cf-1884-444c-a9e8-235602456363-00-37q39xpqlgvdy.janeway.replit.dev/fr-FR",
     "language": "fr-FR",
-    "country": "Unknown",
-    "city": "Unknown",
+    "city": "Figeac",
     "page_views": 0,
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-21T08:28:19.224Z",
-    "updated_at": "2025-08-21T08:30:18.354Z",
-    "duration": 344189
+    "updated_at": "2025-08-22T06:09:26.727Z",
+    "duration": 344189,
+    "region": "Occitanie"
   },
   {
     "id": "587328d9-bab3-4aac-8c5c-437b11ceeb8e",
@@ -6426,14 +6426,14 @@
     "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36 Edg/139.0.0.0",
     "referrer": "https://365df2cf-1884-444c-a9e8-235602456363-00-37q39xpqlgvdy.janeway.replit.dev/fr-FR",
     "language": "fr-FR",
-    "country": "Unknown",
-    "city": "Unknown",
+    "city": "Figeac",
     "page_views": 0,
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-21T08:30:22.592Z",
-    "updated_at": "2025-08-21T08:35:59.345Z",
-    "duration": 344530
+    "updated_at": "2025-08-22T06:09:26.727Z",
+    "duration": 344530,
+    "region": "Occitanie"
   },
   {
     "id": "79115793-519d-44fd-810c-077bce208603",
@@ -6443,14 +6443,14 @@
     "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36 Edg/139.0.0.0",
     "referrer": "https://365df2cf-1884-444c-a9e8-235602456363-00-37q39xpqlgvdy.janeway.replit.dev/fr-FR",
     "language": "fr-FR",
-    "country": "Unknown",
-    "city": "Unknown",
+    "city": "Figeac",
     "page_views": 0,
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-21T08:36:01.563Z",
-    "updated_at": "2025-08-21T08:38:02.656Z",
-    "duration": 344654
+    "updated_at": "2025-08-22T06:09:26.727Z",
+    "duration": 344654,
+    "region": "Occitanie"
   },
   {
     "id": "3ae9698d-268e-4d91-a5f0-b3e967dd0af5",
@@ -6460,13 +6460,13 @@
     "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36 Edg/139.0.0.0",
     "referrer": "https://365df2cf-1884-444c-a9e8-235602456363-00-37q39xpqlgvdy.janeway.replit.dev/fr-FR",
     "language": "fr-FR",
-    "country": "Unknown",
-    "city": "Unknown",
+    "city": "Figeac",
     "page_views": 0,
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-21T08:38:23.688Z",
-    "updated_at": "2025-08-21T08:38:23.739Z"
+    "updated_at": "2025-08-22T06:09:26.727Z",
+    "region": "Occitanie"
   },
   {
     "id": "17964ad0-4fc8-4332-9069-353341836f6d",
@@ -6476,14 +6476,14 @@
     "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36 Edg/139.0.0.0",
     "referrer": "https://365df2cf-1884-444c-a9e8-235602456363-00-37q39xpqlgvdy.janeway.replit.dev/__replco/workspace_iframe.html?initialPath=%2F&id=%3Arl5b%3A",
     "language": "fr-FR",
-    "country": "Unknown",
-    "city": "Unknown",
+    "city": "Figeac",
     "page_views": 0,
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-21T08:38:23.942Z",
-    "updated_at": "2025-08-21T08:38:54.742Z",
-    "duration": 761300
+    "updated_at": "2025-08-22T06:09:26.727Z",
+    "duration": 761300,
+    "region": "Occitanie"
   },
   {
     "id": "530bbd49-b8fa-4af7-b72a-2d1ba71629e7",
@@ -6493,14 +6493,14 @@
     "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36 Edg/139.0.0.0",
     "referrer": "https://365df2cf-1884-444c-a9e8-235602456363-00-37q39xpqlgvdy.janeway.replit.dev/__replco/workspace_iframe.html?initialPath=%2F&id=%3Arl5b%3A",
     "language": "fr-FR",
-    "country": "Unknown",
-    "city": "Unknown",
+    "city": "Figeac",
     "page_views": 0,
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-21T08:38:56.392Z",
-    "updated_at": "2025-08-21T08:39:03.349Z",
-    "duration": 761309
+    "updated_at": "2025-08-22T06:09:26.727Z",
+    "duration": 761309,
+    "region": "Occitanie"
   },
   {
     "id": "e5caa53b-3d90-4b51-b1be-58ac88c01c4f",
@@ -6510,14 +6510,14 @@
     "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36 Edg/139.0.0.0",
     "referrer": "https://365df2cf-1884-444c-a9e8-235602456363-00-37q39xpqlgvdy.janeway.replit.dev/__replco/workspace_iframe.html?initialPath=%2F&id=%3Arlrq%3A",
     "language": "fr-FR",
-    "country": "Unknown",
-    "city": "Unknown",
+    "city": "Figeac",
     "page_views": 0,
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-21T08:39:32.292Z",
-    "updated_at": "2025-08-21T08:40:13.556Z",
-    "duration": 761379
+    "updated_at": "2025-08-22T06:09:26.727Z",
+    "duration": 761379,
+    "region": "Occitanie"
   },
   {
     "id": "a456b58e-861c-46d5-974b-5f5fd8bc6361",
@@ -6543,14 +6543,14 @@
     "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36 Edg/139.0.0.0",
     "referrer": "https://365df2cf-1884-444c-a9e8-235602456363-00-37q39xpqlgvdy.janeway.replit.dev/__replco/workspace_iframe.html?initialPath=%2F&id=%3Arltm%3A",
     "language": "fr-FR",
-    "country": "Unknown",
-    "city": "Unknown",
+    "city": "Figeac",
     "page_views": 0,
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-21T08:40:46.913Z",
-    "updated_at": "2025-08-21T08:43:59.556Z",
-    "duration": 761605
+    "updated_at": "2025-08-22T06:09:26.727Z",
+    "duration": 761605,
+    "region": "Occitanie"
   },
   {
     "id": "fef11515-df69-4c0b-8c37-80216c062ff3",
@@ -6560,14 +6560,14 @@
     "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36 Edg/139.0.0.0",
     "referrer": "https://365df2cf-1884-444c-a9e8-235602456363-00-37q39xpqlgvdy.janeway.replit.dev/fr-FR/admin",
     "language": "fr-FR",
-    "country": "Unknown",
-    "city": "Unknown",
+    "city": "Figeac",
     "page_views": 0,
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-21T08:44:03.709Z",
-    "updated_at": "2025-08-21T08:44:49.528Z",
-    "duration": 761655
+    "updated_at": "2025-08-22T06:09:26.727Z",
+    "duration": 761655,
+    "region": "Occitanie"
   },
   {
     "id": "29ee8c7a-ff1a-424e-9194-c2bf8d52d862",
@@ -6577,14 +6577,14 @@
     "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36 Edg/139.0.0.0",
     "referrer": "https://365df2cf-1884-444c-a9e8-235602456363-00-37q39xpqlgvdy.janeway.replit.dev/fr-FR/admin",
     "language": "fr-FR",
-    "country": "Unknown",
-    "city": "Unknown",
+    "city": "Figeac",
     "page_views": 0,
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-21T08:44:50.864Z",
-    "updated_at": "2025-08-21T08:47:40.640Z",
-    "duration": 761826
+    "updated_at": "2025-08-22T06:09:26.727Z",
+    "duration": 761826,
+    "region": "Occitanie"
   },
   {
     "id": "9c2abcfc-d7d9-4a53-93b1-2502fa8a206a",
@@ -6610,14 +6610,14 @@
     "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36 Edg/139.0.0.0",
     "referrer": "https://365df2cf-1884-444c-a9e8-235602456363-00-37q39xpqlgvdy.janeway.replit.dev/__replco/workspace_iframe.html?initialPath=%2Ffr-FR&id=%3Armk7%3A",
     "language": "fr-FR",
-    "country": "Unknown",
-    "city": "Unknown",
+    "city": "Figeac",
     "page_views": 0,
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-21T08:47:58.641Z",
-    "updated_at": "2025-08-21T08:48:29.066Z",
-    "duration": 761874
+    "updated_at": "2025-08-22T06:09:26.727Z",
+    "duration": 761874,
+    "region": "Occitanie"
   },
   {
     "id": "a857e728-bf3d-48ab-8912-67be271df8e8",
@@ -6627,14 +6627,14 @@
     "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36 Edg/139.0.0.0",
     "referrer": "https://365df2cf-1884-444c-a9e8-235602456363-00-37q39xpqlgvdy.janeway.replit.dev/fr-FR",
     "language": "fr-FR",
-    "country": "Unknown",
-    "city": "Unknown",
+    "city": "Figeac",
     "page_views": 0,
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-21T08:48:46.323Z",
-    "updated_at": "2025-08-21T08:51:12.282Z",
-    "duration": 345443
+    "updated_at": "2025-08-22T06:09:26.727Z",
+    "duration": 345443,
+    "region": "Occitanie"
   },
   {
     "id": "eaf191e8-beaf-4cee-848c-9f7933c0e483",
@@ -6644,14 +6644,14 @@
     "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36 Edg/139.0.0.0",
     "referrer": "https://365df2cf-1884-444c-a9e8-235602456363-00-37q39xpqlgvdy.janeway.replit.dev/fr-FR",
     "language": "fr-FR",
-    "country": "Unknown",
-    "city": "Unknown",
+    "city": "Figeac",
     "page_views": 0,
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-21T08:51:14.195Z",
-    "updated_at": "2025-08-21T08:53:58.692Z",
-    "duration": 762204
+    "updated_at": "2025-08-22T06:09:26.727Z",
+    "duration": 762204,
+    "region": "Occitanie"
   },
   {
     "id": "9623a347-04fb-4477-92e9-aa67ce6bcf38",
@@ -6677,14 +6677,14 @@
     "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36 Edg/139.0.0.0",
     "referrer": "https://365df2cf-1884-444c-a9e8-235602456363-00-37q39xpqlgvdy.janeway.replit.dev/__replco/workspace_iframe.html?initialPath=%2Ffr-FR&id=%3Arn0s%3A",
     "language": "fr-FR",
-    "country": "Unknown",
-    "city": "Unknown",
+    "city": "Figeac",
     "page_views": 0,
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-21T08:54:31.627Z",
-    "updated_at": "2025-08-21T08:55:01.993Z",
-    "duration": 762267
+    "updated_at": "2025-08-22T06:09:26.727Z",
+    "duration": 762267,
+    "region": "Occitanie"
   },
   {
     "id": "21b622d7-c1fb-4dd7-8b62-e675bf2a39d1",
@@ -6694,14 +6694,14 @@
     "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36 Edg/139.0.0.0",
     "referrer": "https://365df2cf-1884-444c-a9e8-235602456363-00-37q39xpqlgvdy.janeway.replit.dev/fr-FR",
     "language": "fr-FR",
-    "country": "Unknown",
-    "city": "Unknown",
+    "city": "Figeac",
     "page_views": 0,
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-21T08:55:18.354Z",
-    "updated_at": "2025-08-21T08:56:35.875Z",
-    "duration": 762361
+    "updated_at": "2025-08-22T06:09:26.727Z",
+    "duration": 762361,
+    "region": "Occitanie"
   },
   {
     "id": "ae25e83b-16bf-43b2-af98-7ae996baaeff",
@@ -6727,14 +6727,14 @@
     "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36 Edg/139.0.0.0",
     "referrer": "https://365df2cf-1884-444c-a9e8-235602456363-00-37q39xpqlgvdy.janeway.replit.dev/__replco/workspace_iframe.html?initialPath=%2Ffr-FR&id=%3Arncq%3A",
     "language": "fr-FR",
-    "country": "Unknown",
-    "city": "Unknown",
+    "city": "Figeac",
     "page_views": 0,
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-21T08:57:17.360Z",
-    "updated_at": "2025-08-21T08:57:48.094Z",
-    "duration": 762433
+    "updated_at": "2025-08-22T06:09:26.727Z",
+    "duration": 762433,
+    "region": "Occitanie"
   },
   {
     "id": "ef879785-ec66-49af-abeb-79174bc19a1c",
@@ -6744,14 +6744,14 @@
     "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36 Edg/139.0.0.0",
     "referrer": "https://365df2cf-1884-444c-a9e8-235602456363-00-37q39xpqlgvdy.janeway.replit.dev/fr-FR",
     "language": "fr-FR",
-    "country": "Unknown",
-    "city": "Unknown",
+    "city": "Figeac",
     "page_views": 0,
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-21T08:58:04.258Z",
-    "updated_at": "2025-08-21T08:58:47.983Z",
-    "duration": 762493
+    "updated_at": "2025-08-22T06:09:26.727Z",
+    "duration": 762493,
+    "region": "Occitanie"
   },
   {
     "id": "406e6920-57ce-4a69-9664-df098477ad08",
@@ -6777,14 +6777,14 @@
     "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36 Edg/139.0.0.0",
     "referrer": "https://365df2cf-1884-444c-a9e8-235602456363-00-37q39xpqlgvdy.janeway.replit.dev/__replco/workspace_iframe.html?initialPath=%2Ffr-FR&id=%3Aro2g%3A",
     "language": "fr-FR",
-    "country": "Unknown",
-    "city": "Unknown",
+    "city": "Figeac",
     "page_views": 0,
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-21T08:59:22.798Z",
-    "updated_at": "2025-08-21T08:59:54.018Z",
-    "duration": 762559
+    "updated_at": "2025-08-22T06:09:26.727Z",
+    "duration": 762559,
+    "region": "Occitanie"
   },
   {
     "id": "91c2dc06-3f81-4323-9f1f-08267101f945",
@@ -6794,14 +6794,14 @@
     "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36 Edg/139.0.0.0",
     "referrer": "https://365df2cf-1884-444c-a9e8-235602456363-00-37q39xpqlgvdy.janeway.replit.dev/fr-FR",
     "language": "fr-FR",
-    "country": "Unknown",
-    "city": "Unknown",
+    "city": "Figeac",
     "page_views": 0,
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-21T09:00:11.148Z",
-    "updated_at": "2025-08-21T09:01:45.867Z",
-    "duration": 346077
+    "updated_at": "2025-08-22T06:09:26.727Z",
+    "duration": 346077,
+    "region": "Occitanie"
   },
   {
     "id": "260220a4-a371-40a1-9be0-b225e7567de1",
@@ -6811,14 +6811,14 @@
     "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36 Edg/139.0.0.0",
     "referrer": "https://365df2cf-1884-444c-a9e8-235602456363-00-37q39xpqlgvdy.janeway.replit.dev/fr-FR",
     "language": "fr-FR",
-    "country": "Unknown",
-    "city": "Unknown",
+    "city": "Figeac",
     "page_views": 0,
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-21T09:01:48.124Z",
-    "updated_at": "2025-08-21T09:05:06.981Z",
-    "duration": 346278
+    "updated_at": "2025-08-22T06:09:26.727Z",
+    "duration": 346278,
+    "region": "Occitanie"
   },
   {
     "id": "ca431774-220c-4132-8b67-d55e266258bf",
@@ -6828,14 +6828,14 @@
     "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36 Edg/139.0.0.0",
     "referrer": "https://365df2cf-1884-444c-a9e8-235602456363-00-37q39xpqlgvdy.janeway.replit.dev/fr-FR",
     "language": "fr-FR",
-    "country": "Unknown",
-    "city": "Unknown",
+    "city": "Figeac",
     "page_views": 0,
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-21T09:05:09.103Z",
-    "updated_at": "2025-08-21T09:06:09.673Z",
-    "duration": 346340
+    "updated_at": "2025-08-22T06:09:26.727Z",
+    "duration": 346340,
+    "region": "Occitanie"
   },
   {
     "id": "21b79c00-9ba7-42c9-b524-aa320275bb7e",
@@ -6861,14 +6861,14 @@
     "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36 Edg/139.0.0.0",
     "referrer": "https://365df2cf-1884-444c-a9e8-235602456363-00-37q39xpqlgvdy.janeway.replit.dev/__replco/workspace_iframe.html?initialPath=%2Ffr-FR&id=%3Aroel%3A",
     "language": "fr-FR",
-    "country": "Unknown",
-    "city": "Unknown",
+    "city": "Figeac",
     "page_views": 0,
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-21T09:06:27.971Z",
-    "updated_at": "2025-08-21T09:06:59.011Z",
-    "duration": 762984
+    "updated_at": "2025-08-22T06:09:26.727Z",
+    "duration": 762984,
+    "region": "Occitanie"
   },
   {
     "id": "11fed9c3-ba7a-4b31-b8ea-8b10e60eb37f",
@@ -6878,14 +6878,14 @@
     "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36 Edg/139.0.0.0",
     "referrer": "https://365df2cf-1884-444c-a9e8-235602456363-00-37q39xpqlgvdy.janeway.replit.dev/fr-FR",
     "language": "fr-FR",
-    "country": "Unknown",
-    "city": "Unknown",
+    "city": "Figeac",
     "page_views": 0,
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-21T09:07:18.672Z",
-    "updated_at": "2025-08-21T09:07:53.837Z",
-    "duration": 346445
+    "updated_at": "2025-08-22T06:09:26.727Z",
+    "duration": 346445,
+    "region": "Occitanie"
   },
   {
     "id": "7329e07c-1432-4744-8c4c-4062c56cd8c4",
@@ -6895,14 +6895,14 @@
     "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36 Edg/139.0.0.0",
     "referrer": "https://365df2cf-1884-444c-a9e8-235602456363-00-37q39xpqlgvdy.janeway.replit.dev/fr-FR",
     "language": "fr-FR",
-    "country": "Unknown",
-    "city": "Unknown",
+    "city": "Figeac",
     "page_views": 0,
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-21T09:07:56.015Z",
-    "updated_at": "2025-08-21T09:10:28.793Z",
-    "duration": 763194
+    "updated_at": "2025-08-22T06:09:26.727Z",
+    "duration": 763194,
+    "region": "Occitanie"
   },
   {
     "id": "38079ed6-617a-4c4e-960f-92fd0d4ac830",
@@ -6928,14 +6928,14 @@
     "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36 Edg/139.0.0.0",
     "referrer": "https://365df2cf-1884-444c-a9e8-235602456363-00-37q39xpqlgvdy.janeway.replit.dev/__replco/workspace_iframe.html?initialPath=%2Ffr-FR&id=%3Aroqm%3A",
     "language": "fr-FR",
-    "country": "Unknown",
-    "city": "Unknown",
+    "city": "Figeac",
     "page_views": 0,
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-21T09:10:48.006Z",
-    "updated_at": "2025-08-21T09:11:23.256Z",
-    "duration": 763248
+    "updated_at": "2025-08-22T06:09:26.727Z",
+    "duration": 763248,
+    "region": "Occitanie"
   },
   {
     "id": "0b0b186c-7843-44d8-bad2-dbfa2ceadee1",
@@ -6945,14 +6945,14 @@
     "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36 Edg/139.0.0.0",
     "referrer": "https://365df2cf-1884-444c-a9e8-235602456363-00-37q39xpqlgvdy.janeway.replit.dev/fr-FR",
     "language": "fr-FR",
-    "country": "Unknown",
-    "city": "Unknown",
+    "city": "Figeac",
     "page_views": 0,
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-21T09:11:23.164Z",
-    "updated_at": "2025-08-21T09:19:48.356Z",
-    "duration": 763753
+    "updated_at": "2025-08-22T06:09:26.727Z",
+    "duration": 763753,
+    "region": "Occitanie"
   },
   {
     "id": "b2a930c2-5756-455b-9e75-b0d78ac4b9fc",
@@ -6962,14 +6962,14 @@
     "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36 Edg/139.0.0.0",
     "referrer": "https://365df2cf-1884-444c-a9e8-235602456363-00-37q39xpqlgvdy.janeway.replit.dev/__replco/workspace_iframe.html?initialPath=%2Ffr-FR&id=%3Arqh0%3A",
     "language": "fr-FR",
-    "country": "Unknown",
-    "city": "Unknown",
+    "city": "Figeac",
     "page_views": 0,
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-21T09:20:28.303Z",
-    "updated_at": "2025-08-21T09:24:52.139Z",
-    "duration": 764057
+    "updated_at": "2025-08-22T06:09:26.727Z",
+    "duration": 764057,
+    "region": "Occitanie"
   },
   {
     "id": "1edc58ce-a261-41c3-8275-b3773a4f892f",
@@ -6979,14 +6979,14 @@
     "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36 Edg/139.0.0.0",
     "referrer": "https://365df2cf-1884-444c-a9e8-235602456363-00-37q39xpqlgvdy.janeway.replit.dev/fr-FR/admin",
     "language": "fr-FR",
-    "country": "Unknown",
-    "city": "Unknown",
+    "city": "Figeac",
     "page_views": 0,
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-21T09:24:58.276Z",
-    "updated_at": "2025-08-21T09:25:51.023Z",
-    "duration": 764116
+    "updated_at": "2025-08-22T06:09:26.727Z",
+    "duration": 764116,
+    "region": "Occitanie"
   },
   {
     "id": "6d192e96-b28e-475e-a6f2-99559b66c326",
@@ -6996,14 +6996,14 @@
     "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36 Edg/139.0.0.0",
     "referrer": "https://365df2cf-1884-444c-a9e8-235602456363-00-37q39xpqlgvdy.janeway.replit.dev/__replco/workspace_iframe.html?initialPath=%2Ffr-FR&id=%3Arqtb%3A",
     "language": "fr-FR",
-    "country": "Unknown",
-    "city": "Unknown",
+    "city": "Figeac",
     "page_views": 0,
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-21T09:26:05.771Z",
-    "updated_at": "2025-08-21T09:26:56.373Z",
-    "duration": 764182
+    "updated_at": "2025-08-22T06:09:26.727Z",
+    "duration": 764182,
+    "region": "Occitanie"
   },
   {
     "id": "f72255b9-5a35-4fc1-9170-86846107394c",
@@ -7013,14 +7013,14 @@
     "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36 Edg/139.0.0.0",
     "referrer": "https://365df2cf-1884-444c-a9e8-235602456363-00-37q39xpqlgvdy.janeway.replit.dev/fr-FR",
     "language": "fr-FR",
-    "country": "Unknown",
-    "city": "Unknown",
+    "city": "Figeac",
     "page_views": 0,
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-21T09:26:56.619Z",
-    "updated_at": "2025-08-21T09:28:58.037Z",
-    "duration": 347709
+    "updated_at": "2025-08-22T06:09:26.727Z",
+    "duration": 347709,
+    "region": "Occitanie"
   },
   {
     "id": "9c8ad7ec-1193-481e-8f0b-f104f8bfb8f4",
@@ -7030,14 +7030,14 @@
     "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36 Edg/139.0.0.0",
     "referrer": "https://365df2cf-1884-444c-a9e8-235602456363-00-37q39xpqlgvdy.janeway.replit.dev/__replco/workspace_iframe.html?initialPath=%2Ffr-FR&id=%3Arqv7%3A",
     "language": "fr-FR",
-    "country": "Unknown",
-    "city": "Unknown",
+    "city": "Figeac",
     "page_views": 0,
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-21T09:29:17.080Z",
-    "updated_at": "2025-08-21T09:29:48.067Z",
-    "duration": 764353
+    "updated_at": "2025-08-22T06:09:26.727Z",
+    "duration": 764353,
+    "region": "Occitanie"
   },
   {
     "id": "1b972e91-0398-4c04-9843-0889445ed634",
@@ -7047,14 +7047,14 @@
     "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36 Edg/139.0.0.0",
     "referrer": "https://365df2cf-1884-444c-a9e8-235602456363-00-37q39xpqlgvdy.janeway.replit.dev/fr-FR",
     "language": "fr-FR",
-    "country": "Unknown",
-    "city": "Unknown",
+    "city": "Figeac",
     "page_views": 0,
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-21T09:30:08.868Z",
-    "updated_at": "2025-08-21T09:31:05.155Z",
-    "duration": 347836
+    "updated_at": "2025-08-22T06:09:26.727Z",
+    "duration": 347836,
+    "region": "Occitanie"
   },
   {
     "id": "c6a2a407-7dec-42d1-91ef-645b815a0fc8",
@@ -7064,14 +7064,14 @@
     "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36 Edg/139.0.0.0",
     "referrer": "https://365df2cf-1884-444c-a9e8-235602456363-00-37q39xpqlgvdy.janeway.replit.dev/fr-FR",
     "language": "fr-FR",
-    "country": "Unknown",
-    "city": "Unknown",
+    "city": "Figeac",
     "page_views": 0,
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-21T09:31:07.599Z",
-    "updated_at": "2025-08-21T09:32:47.802Z",
-    "duration": 764533
+    "updated_at": "2025-08-22T06:09:26.727Z",
+    "duration": 764533,
+    "region": "Occitanie"
   },
   {
     "id": "84a677b4-e933-457e-ab37-38eaf2875ed6",
@@ -7097,14 +7097,14 @@
     "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36 Edg/139.0.0.0",
     "referrer": "https://365df2cf-1884-444c-a9e8-235602456363-00-37q39xpqlgvdy.janeway.replit.dev/__replco/workspace_iframe.html?initialPath=%2Ffr-FR&id=%3Arrbk%3A",
     "language": "fr-FR",
-    "country": "Unknown",
-    "city": "Unknown",
+    "city": "Figeac",
     "page_views": 0,
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-21T09:33:15.778Z",
-    "updated_at": "2025-08-21T09:35:07.047Z",
-    "duration": 348078
+    "updated_at": "2025-08-22T06:09:26.727Z",
+    "duration": 348078,
+    "region": "Occitanie"
   },
   {
     "id": "563a80d2-17fe-42e1-86d1-8caac5e355cb",
@@ -7114,14 +7114,14 @@
     "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36 Edg/139.0.0.0",
     "referrer": "https://365df2cf-1884-444c-a9e8-235602456363-00-37q39xpqlgvdy.janeway.replit.dev/__replco/workspace_iframe.html?initialPath=%2F&id=%3Arsql%3A",
     "language": "fr-FR",
-    "country": "Unknown",
-    "city": "Unknown",
+    "city": "Figeac",
     "page_views": 0,
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-21T09:52:16.682Z",
-    "updated_at": "2025-08-21T10:00:15.089Z",
-    "duration": 766180
+    "updated_at": "2025-08-22T06:09:26.727Z",
+    "duration": 766180,
+    "region": "Occitanie"
   },
   {
     "id": "53420323-739f-465f-85bc-f880d02db949",
@@ -7131,14 +7131,14 @@
     "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36 Edg/139.0.0.0",
     "referrer": "https://replit.com/",
     "language": "fr-FR",
-    "country": "Unknown",
-    "city": "Unknown",
+    "city": "Figeac",
     "page_views": 0,
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-21T10:11:15.054Z",
-    "updated_at": "2025-08-21T10:17:16.850Z",
-    "duration": 767202
+    "updated_at": "2025-08-22T06:09:26.727Z",
+    "duration": 767202,
+    "region": "Occitanie"
   },
   {
     "id": "cf97bd27-a177-405f-b7c4-1c22ad7b23fa",
@@ -7165,14 +7165,14 @@
     "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36 Edg/139.0.0.0",
     "referrer": "https://365df2cf-1884-444c-a9e8-235602456363-00-37q39xpqlgvdy.janeway.replit.dev/__replco/workspace_iframe.html?initialPath=%2F&id=%3Aruhb%3A",
     "language": "fr-FR",
-    "country": "Unknown",
-    "city": "Unknown",
+    "city": "Figeac",
     "page_views": 0,
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-21T10:17:50.149Z",
-    "updated_at": "2025-08-21T10:18:20.685Z",
-    "duration": 767266
+    "updated_at": "2025-08-22T06:09:26.727Z",
+    "duration": 767266,
+    "region": "Occitanie"
   },
   {
     "id": "db4e70dd-5643-438d-9ea0-54cc8e6db8fa",
@@ -7182,14 +7182,14 @@
     "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36 Edg/139.0.0.0",
     "referrer": "https://365df2cf-1884-444c-a9e8-235602456363-00-37q39xpqlgvdy.janeway.replit.dev/fr-FR",
     "language": "fr-FR",
-    "country": "Unknown",
-    "city": "Unknown",
+    "city": "Figeac",
     "page_views": 0,
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-21T10:18:46.630Z",
-    "updated_at": "2025-08-21T10:24:54.138Z",
-    "duration": 351065
+    "updated_at": "2025-08-22T06:09:26.727Z",
+    "duration": 351065,
+    "region": "Occitanie"
   },
   {
     "id": "c26bab26-cdfa-4636-acdf-e8515768f97d",
@@ -7199,14 +7199,14 @@
     "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36 Edg/139.0.0.0",
     "referrer": "https://365df2cf-1884-444c-a9e8-235602456363-00-37q39xpqlgvdy.janeway.replit.dev/fr-FR",
     "language": "fr-FR",
-    "country": "Unknown",
-    "city": "Unknown",
+    "city": "Figeac",
     "page_views": 0,
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-21T10:24:56.239Z",
-    "updated_at": "2025-08-21T10:31:20.661Z",
-    "duration": 768046
+    "updated_at": "2025-08-22T06:09:26.727Z",
+    "duration": 768046,
+    "region": "Occitanie"
   },
   {
     "id": "c25f034e-1476-4a78-9bc7-9e33da78724e",
@@ -7216,14 +7216,14 @@
     "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36 Edg/139.0.0.0",
     "referrer": "https://365df2cf-1884-444c-a9e8-235602456363-00-37q39xpqlgvdy.janeway.replit.dev/__replco/workspace_iframe.html?initialPath=%2F&id=%3Ar106d%3A",
     "language": "fr-FR",
-    "country": "Unknown",
-    "city": "Unknown",
+    "city": "Figeac",
     "page_views": 0,
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-21T10:31:50.762Z",
-    "updated_at": "2025-08-21T10:36:50.816Z",
-    "duration": 768376
+    "updated_at": "2025-08-22T06:09:26.727Z",
+    "duration": 768376,
+    "region": "Occitanie"
   },
   {
     "id": "b9ac6cc4-5f8b-4260-8e2b-26790c7679e0",
@@ -7249,14 +7249,14 @@
     "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36 Edg/139.0.0.0",
     "referrer": "https://365df2cf-1884-444c-a9e8-235602456363-00-37q39xpqlgvdy.janeway.replit.dev/__replco/workspace_iframe.html?initialPath=%2F&id=%3Ar10is%3A",
     "language": "fr-FR",
-    "country": "Unknown",
-    "city": "Unknown",
+    "city": "Figeac",
     "page_views": 0,
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-21T10:37:26.173Z",
-    "updated_at": "2025-08-21T11:05:57.148Z",
-    "duration": 770122
+    "updated_at": "2025-08-22T06:09:26.727Z",
+    "duration": 770122,
+    "region": "Occitanie"
   },
   {
     "id": "83a97e57-77ad-413e-9c78-218efaadd96d",
@@ -7282,14 +7282,14 @@
     "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36 Edg/139.0.0.0",
     "referrer": "https://365df2cf-1884-444c-a9e8-235602456363-00-37q39xpqlgvdy.janeway.replit.dev/__replco/workspace_iframe.html?initialPath=%2F&id=%3Ar10v6%3A",
     "language": "fr-FR",
-    "country": "Unknown",
-    "city": "Unknown",
+    "city": "Figeac",
     "page_views": 0,
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-21T11:06:14.043Z",
-    "updated_at": "2025-08-21T11:09:44.920Z",
-    "duration": 770350
+    "updated_at": "2025-08-22T06:09:26.727Z",
+    "duration": 770350,
+    "region": "Occitanie"
   },
   {
     "id": "74e3c298-9456-4ae5-9600-acdf62077798",
@@ -7299,14 +7299,14 @@
     "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36 Edg/139.0.0.0",
     "referrer": "https://365df2cf-1884-444c-a9e8-235602456363-00-37q39xpqlgvdy.janeway.replit.dev/fr-FR/admin",
     "language": "fr-FR",
-    "country": "Unknown",
-    "city": "Unknown",
+    "city": "Figeac",
     "page_views": 0,
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-21T11:09:55.507Z",
-    "updated_at": "2025-08-21T11:12:26.163Z",
-    "duration": 353917
+    "updated_at": "2025-08-22T06:09:26.727Z",
+    "duration": 353917,
+    "region": "Occitanie"
   },
   {
     "id": "8328e0d9-f27b-4865-b6d9-bd7d549efcd0",
@@ -7316,14 +7316,14 @@
     "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36 Edg/139.0.0.0",
     "referrer": "https://365df2cf-1884-444c-a9e8-235602456363-00-37q39xpqlgvdy.janeway.replit.dev/__replco/workspace_iframe.html?initialPath=%2F&id=%3Ar120g%3A",
     "language": "fr-FR",
-    "country": "Unknown",
-    "city": "Unknown",
+    "city": "Figeac",
     "page_views": 0,
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-21T11:12:58.988Z",
-    "updated_at": "2025-08-21T11:13:30.164Z",
-    "duration": 770575
+    "updated_at": "2025-08-22T06:09:26.727Z",
+    "duration": 770575,
+    "region": "Occitanie"
   },
   {
     "id": "1abdceed-4651-4b14-9290-1907b3efa440",
@@ -7333,14 +7333,14 @@
     "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36 Edg/139.0.0.0",
     "referrer": "https://365df2cf-1884-444c-a9e8-235602456363-00-37q39xpqlgvdy.janeway.replit.dev/fr-FR",
     "language": "fr-FR",
-    "country": "Unknown",
-    "city": "Unknown",
+    "city": "Figeac",
     "page_views": 0,
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-21T11:13:48.561Z",
-    "updated_at": "2025-08-21T11:20:18.680Z",
-    "duration": 354389
+    "updated_at": "2025-08-22T06:09:26.727Z",
+    "duration": 354389,
+    "region": "Occitanie"
   },
   {
     "id": "7a954c14-4df4-4a40-aa18-ec658bd04c33",
@@ -7350,14 +7350,14 @@
     "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36 Edg/139.0.0.0",
     "referrer": "https://365df2cf-1884-444c-a9e8-235602456363-00-37q39xpqlgvdy.janeway.replit.dev/fr-FR",
     "language": "fr-FR",
-    "country": "Unknown",
-    "city": "Unknown",
+    "city": "Figeac",
     "page_views": 0,
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-21T13:13:37.529Z",
-    "updated_at": "2025-08-21T13:23:49.045Z",
-    "duration": 361799
+    "updated_at": "2025-08-22T06:09:26.727Z",
+    "duration": 361799,
+    "region": "Occitanie"
   },
   {
     "id": "3c0e9dd7-ea97-44d5-8163-d59cffd790b3",
@@ -7383,14 +7383,14 @@
     "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36 Edg/139.0.0.0",
     "referrer": "https://365df2cf-1884-444c-a9e8-235602456363-00-37q39xpqlgvdy.janeway.replit.dev/__replco/workspace_iframe.html?initialPath=%2F&id=%3Ar12oe%3A",
     "language": "fr-FR",
-    "country": "Unknown",
-    "city": "Unknown",
+    "city": "Figeac",
     "page_views": 0,
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-21T13:41:09.508Z",
-    "updated_at": "2025-08-21T13:41:39.665Z",
-    "duration": 779464
+    "updated_at": "2025-08-22T06:09:26.727Z",
+    "duration": 779464,
+    "region": "Occitanie"
   },
   {
     "id": "f56ee6d3-2828-46cf-b7d0-b059860a4e6a",
@@ -7400,14 +7400,14 @@
     "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36 Edg/139.0.0.0",
     "referrer": "https://365df2cf-1884-444c-a9e8-235602456363-00-37q39xpqlgvdy.janeway.replit.dev/fr-FR",
     "language": "fr-FR",
-    "country": "Unknown",
-    "city": "Unknown",
+    "city": "Figeac",
     "page_views": 0,
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-21T13:41:59.855Z",
-    "updated_at": "2025-08-21T13:43:00.334Z",
-    "duration": 362951
+    "updated_at": "2025-08-22T06:09:26.727Z",
+    "duration": 362951,
+    "region": "Occitanie"
   },
   {
     "id": "c1b125d8-439d-4f3e-8732-4aa0a248c2db",
@@ -7433,14 +7433,14 @@
     "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36 Edg/139.0.0.0",
     "referrer": "https://365df2cf-1884-444c-a9e8-235602456363-00-37q39xpqlgvdy.janeway.replit.dev/__replco/workspace_iframe.html?initialPath=%2F&id=%3Ar134n%3A",
     "language": "fr-FR",
-    "country": "Unknown",
-    "city": "Unknown",
+    "city": "Figeac",
     "page_views": 0,
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-21T13:43:14.521Z",
-    "updated_at": "2025-08-21T13:43:45.042Z",
-    "duration": 779590
+    "updated_at": "2025-08-22T06:09:26.727Z",
+    "duration": 779590,
+    "region": "Occitanie"
   },
   {
     "id": "f538ba7a-220b-456c-919c-4385291ef8ed",
@@ -7450,14 +7450,14 @@
     "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36 Edg/139.0.0.0",
     "referrer": "https://365df2cf-1884-444c-a9e8-235602456363-00-37q39xpqlgvdy.janeway.replit.dev/fr-FR",
     "language": "fr-FR",
-    "country": "Unknown",
-    "city": "Unknown",
+    "city": "Figeac",
     "page_views": 0,
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-21T13:44:06.578Z",
-    "updated_at": "2025-08-21T13:51:57.088Z",
-    "duration": 780082
+    "updated_at": "2025-08-22T06:09:26.727Z",
+    "duration": 780082,
+    "region": "Occitanie"
   },
   {
     "id": "dbfe0305-cf46-4775-b8bb-a89a74ec6399",
@@ -7467,14 +7467,14 @@
     "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36 Edg/139.0.0.0",
     "referrer": "https://365df2cf-1884-444c-a9e8-235602456363-00-37q39xpqlgvdy.janeway.replit.dev/__replco/workspace_iframe.html?initialPath=%2F&id=%3Ar1498%3A",
     "language": "fr-FR",
-    "country": "Unknown",
-    "city": "Unknown",
+    "city": "Figeac",
     "page_views": 0,
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-21T13:52:28.074Z",
-    "updated_at": "2025-08-21T13:52:58.347Z",
-    "duration": 780143
+    "updated_at": "2025-08-22T06:09:26.727Z",
+    "duration": 780143,
+    "region": "Occitanie"
   },
   {
     "id": "508c3a24-8b26-4421-9f5f-001262c7ee58",
@@ -7484,14 +7484,14 @@
     "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36 Edg/139.0.0.0",
     "referrer": "https://365df2cf-1884-444c-a9e8-235602456363-00-37q39xpqlgvdy.janeway.replit.dev/fr-FR",
     "language": "fr-FR",
-    "country": "Unknown",
-    "city": "Unknown",
+    "city": "Figeac",
     "page_views": 0,
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-21T13:53:17.709Z",
-    "updated_at": "2025-08-21T13:58:50.982Z",
-    "duration": 780496
+    "updated_at": "2025-08-22T06:09:26.727Z",
+    "duration": 780496,
+    "region": "Occitanie"
   },
   {
     "id": "96c32f15-78fa-4e65-97c1-5d553794b22e",
@@ -7501,14 +7501,14 @@
     "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36 Edg/139.0.0.0",
     "referrer": "https://365df2cf-1884-444c-a9e8-235602456363-00-37q39xpqlgvdy.janeway.replit.dev/__replco/workspace_iframe.html?initialPath=%2Ffr-FR&id=%3Ar1498%3A",
     "language": "fr-FR",
-    "country": "Unknown",
-    "city": "Unknown",
+    "city": "Figeac",
     "page_views": 0,
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-21T13:58:53.751Z",
-    "updated_at": "2025-08-21T14:09:24.162Z",
-    "duration": 781129
+    "updated_at": "2025-08-22T06:09:26.727Z",
+    "duration": 781129,
+    "region": "Occitanie"
   },
   {
     "id": "019f63a3-2d7a-4a8a-960b-c288c8300b2d",
@@ -7518,14 +7518,14 @@
     "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36 Edg/139.0.0.0",
     "referrer": "https://365df2cf-1884-444c-a9e8-235602456363-00-37q39xpqlgvdy.janeway.replit.dev/__replco/workspace_iframe.html?initialPath=%2F&id=%3Ar15k6%3A",
     "language": "fr-FR",
-    "country": "Unknown",
-    "city": "Unknown",
+    "city": "Figeac",
     "page_views": 0,
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-21T14:09:50.751Z",
-    "updated_at": "2025-08-21T14:10:21.397Z",
-    "duration": 781186
+    "updated_at": "2025-08-22T06:09:26.727Z",
+    "duration": 781186,
+    "region": "Occitanie"
   },
   {
     "id": "0524a5fc-9642-4e51-a101-bc3f4d17c313",
@@ -7535,14 +7535,14 @@
     "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36 Edg/139.0.0.0",
     "referrer": "https://365df2cf-1884-444c-a9e8-235602456363-00-37q39xpqlgvdy.janeway.replit.dev/fr-FR",
     "language": "fr-FR",
-    "country": "Unknown",
-    "city": "Unknown",
+    "city": "Figeac",
     "page_views": 0,
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-21T14:10:42.773Z",
-    "updated_at": "2025-08-21T14:15:15.416Z",
-    "duration": 364886
+    "updated_at": "2025-08-22T06:09:26.727Z",
+    "duration": 364886,
+    "region": "Occitanie"
   },
   {
     "id": "e6426062-1e88-4911-806d-8af847c9c047",
@@ -7552,14 +7552,14 @@
     "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36 Edg/139.0.0.0",
     "referrer": "https://365df2cf-1884-444c-a9e8-235602456363-00-37q39xpqlgvdy.janeway.replit.dev/__replco/workspace_iframe.html?initialPath=%2Ffr-FR&id=%3Ar15k6%3A",
     "language": "fr-FR",
-    "country": "Unknown",
-    "city": "Unknown",
+    "city": "Figeac",
     "page_views": 0,
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-21T14:18:58.599Z",
-    "updated_at": "2025-08-21T14:35:15.428Z",
-    "duration": 366086
+    "updated_at": "2025-08-22T06:09:26.727Z",
+    "duration": 366086,
+    "region": "Occitanie"
   },
   {
     "id": "31077e65-8277-4788-8093-7f9ba117bcab",
@@ -7569,14 +7569,14 @@
     "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36 Edg/139.0.0.0",
     "referrer": "https://365df2cf-1884-444c-a9e8-235602456363-00-37q39xpqlgvdy.janeway.replit.dev/__replco/workspace_iframe.html?initialPath=%2F&id=%3Ar6k%3A",
     "language": "fr-FR",
-    "country": "Unknown",
-    "city": "Unknown",
+    "city": "Figeac",
     "page_views": 0,
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-21T14:38:37.636Z",
-    "updated_at": "2025-08-21T14:42:08.183Z",
-    "duration": 783093
+    "updated_at": "2025-08-22T06:09:26.727Z",
+    "duration": 783093,
+    "region": "Occitanie"
   },
   {
     "id": "3bb11c6b-141a-4bf9-84ab-a6fa8de80cbf",
@@ -7586,13 +7586,13 @@
     "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36 Edg/139.0.0.0",
     "referrer": "https://365df2cf-1884-444c-a9e8-235602456363-00-37q39xpqlgvdy.janeway.replit.dev/__replco/workspace_iframe.html?initialPath=%2F&id=%3Aru2%3A",
     "language": "fr-FR",
-    "country": "Unknown",
-    "city": "Unknown",
+    "city": "Figeac",
     "page_views": 0,
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-21T14:44:23.121Z",
-    "updated_at": "2025-08-21T14:44:23.163Z"
+    "updated_at": "2025-08-22T06:09:26.727Z",
+    "region": "Occitanie"
   },
   {
     "id": "90a17c4a-6fa2-4a2a-a735-c459f9bc0035",
@@ -7602,14 +7602,14 @@
     "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36 Edg/139.0.0.0",
     "referrer": "https://365df2cf-1884-444c-a9e8-235602456363-00-37q39xpqlgvdy.janeway.replit.dev/__replco/workspace_iframe.html?initialPath=%2Ffr-FR&id=%3Aru2%3A",
     "language": "fr-FR",
-    "country": "Unknown",
-    "city": "Unknown",
+    "city": "Figeac",
     "page_views": 0,
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-21T14:52:27.188Z",
-    "updated_at": "2025-08-21T14:52:39.568Z",
-    "duration": 783724
+    "updated_at": "2025-08-22T06:09:26.727Z",
+    "duration": 783724,
+    "region": "Occitanie"
   },
   {
     "id": "b1cb221d-1ecb-4052-bc4b-52e923aff613",
@@ -7619,14 +7619,14 @@
     "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36 Edg/139.0.0.0",
     "referrer": "https://365df2cf-1884-444c-a9e8-235602456363-00-37q39xpqlgvdy.janeway.replit.dev/fr-FR",
     "language": "fr-FR",
-    "country": "Unknown",
-    "city": "Unknown",
+    "city": "Figeac",
     "page_views": 0,
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-21T14:59:48.634Z",
-    "updated_at": "2025-08-21T15:00:49.438Z",
-    "duration": 367620
+    "updated_at": "2025-08-22T06:09:26.727Z",
+    "duration": 367620,
+    "region": "Occitanie"
   },
   {
     "id": "fdeb98ba-5a3b-4a48-8458-338c0073cdb8",
@@ -7636,14 +7636,14 @@
     "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36 Edg/139.0.0.0",
     "referrer": "https://365df2cf-1884-444c-a9e8-235602456363-00-37q39xpqlgvdy.janeway.replit.dev/__replco/workspace_iframe.html?initialPath=%2Ffr-FR&id=%3Aru2%3A",
     "language": "fr-FR",
-    "country": "Unknown",
-    "city": "Unknown",
+    "city": "Figeac",
     "page_views": 0,
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-21T15:01:15.830Z",
-    "updated_at": "2025-08-21T15:02:03.486Z",
-    "duration": 367694
+    "updated_at": "2025-08-22T06:09:26.727Z",
+    "duration": 367694,
+    "region": "Occitanie"
   },
   {
     "id": "7b55a934-fede-478b-9754-02806f2523ac",
@@ -7653,14 +7653,14 @@
     "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36 Edg/139.0.0.0",
     "referrer": "https://365df2cf-1884-444c-a9e8-235602456363-00-37q39xpqlgvdy.janeway.replit.dev/fr-FR",
     "language": "fr-FR",
-    "country": "Unknown",
-    "city": "Unknown",
+    "city": "Figeac",
     "page_views": 0,
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-21T15:02:05.721Z",
-    "updated_at": "2025-08-21T15:02:54.342Z",
-    "duration": 784339
+    "updated_at": "2025-08-22T06:09:26.727Z",
+    "duration": 784339,
+    "region": "Occitanie"
   },
   {
     "id": "54a0cf58-c03d-490d-926e-496440909933",
@@ -7670,14 +7670,14 @@
     "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36 Edg/139.0.0.0",
     "referrer": "https://365df2cf-1884-444c-a9e8-235602456363-00-37q39xpqlgvdy.janeway.replit.dev/fr-FR",
     "language": "fr-FR",
-    "country": "Unknown",
-    "city": "Unknown",
+    "city": "Figeac",
     "page_views": 0,
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-21T15:03:01.162Z",
-    "updated_at": "2025-08-21T15:04:26.281Z",
-    "duration": 784431
+    "updated_at": "2025-08-22T06:09:26.727Z",
+    "duration": 784431,
+    "region": "Occitanie"
   },
   {
     "id": "8e4262b4-bb6c-4309-963b-54d40ead2d5d",
@@ -7687,14 +7687,14 @@
     "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36 Edg/139.0.0.0",
     "referrer": "https://365df2cf-1884-444c-a9e8-235602456363-00-37q39xpqlgvdy.janeway.replit.dev/fr-FR",
     "language": "en-US",
-    "country": "Unknown",
-    "city": "Unknown",
+    "city": "Figeac",
     "page_views": 0,
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-21T15:04:29.538Z",
-    "updated_at": "2025-08-21T15:05:13.227Z",
-    "duration": 784478
+    "updated_at": "2025-08-22T06:09:26.727Z",
+    "duration": 784478,
+    "region": "Occitanie"
   },
   {
     "id": "b2cc39b0-b854-44b8-bfa6-d6ac92951d94",
@@ -7704,14 +7704,14 @@
     "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36 Edg/139.0.0.0",
     "referrer": "https://365df2cf-1884-444c-a9e8-235602456363-00-37q39xpqlgvdy.janeway.replit.dev/fr-FR",
     "language": "fr-FR",
-    "country": "Unknown",
-    "city": "Unknown",
+    "city": "Figeac",
     "page_views": 0,
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-21T15:05:15.826Z",
-    "updated_at": "2025-08-21T15:07:17.447Z",
-    "duration": 368008
+    "updated_at": "2025-08-22T06:09:26.727Z",
+    "duration": 368008,
+    "region": "Occitanie"
   },
   {
     "id": "2f5b9823-5dae-4368-8d40-88ed9df088ec",
@@ -7721,14 +7721,14 @@
     "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36 Edg/139.0.0.0",
     "referrer": "https://365df2cf-1884-444c-a9e8-235602456363-00-37q39xpqlgvdy.janeway.replit.dev/fr-FR",
     "language": "fr-FR",
-    "country": "Unknown",
-    "city": "Unknown",
+    "city": "Figeac",
     "page_views": 0,
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-21T15:07:19.806Z",
-    "updated_at": "2025-08-21T15:14:17.213Z",
-    "duration": 785022
+    "updated_at": "2025-08-22T06:09:26.727Z",
+    "duration": 785022,
+    "region": "Occitanie"
   },
   {
     "id": "6be61a2f-e0b7-4a90-ba08-2b3262fa8bea",
@@ -7738,13 +7738,13 @@
     "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36 Edg/139.0.0.0",
     "referrer": "https://365df2cf-1884-444c-a9e8-235602456363-00-37q39xpqlgvdy.janeway.replit.dev/__replco/workspace_iframe.html?initialPath=%2F&id=%3Ar38d%3A",
     "language": "fr-FR",
-    "country": "Unknown",
-    "city": "Unknown",
+    "city": "Figeac",
     "page_views": 0,
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-21T15:26:01.491Z",
-    "updated_at": "2025-08-21T15:26:01.532Z"
+    "updated_at": "2025-08-22T06:09:26.727Z",
+    "region": "Occitanie"
   },
   {
     "id": "168cc5fe-4386-44a8-b2bd-b88c6412fba6",
@@ -7770,14 +7770,14 @@
     "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36 Edg/139.0.0.0",
     "referrer": "https://365df2cf-1884-444c-a9e8-235602456363-00-37q39xpqlgvdy.janeway.replit.dev/fr-FR",
     "language": "fr-FR",
-    "country": "Unknown",
-    "city": "Unknown",
+    "city": "Figeac",
     "page_views": 0,
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-21T15:26:46.970Z",
-    "updated_at": "2025-08-21T15:45:04.733Z",
-    "duration": 370275
+    "updated_at": "2025-08-22T06:09:26.727Z",
+    "duration": 370275,
+    "region": "Occitanie"
   },
   {
     "id": "d00b6bda-47fe-4d1e-8d48-a1c3689ce737",
@@ -7787,14 +7787,14 @@
     "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36 Edg/139.0.0.0",
     "referrer": "https://365df2cf-1884-444c-a9e8-235602456363-00-37q39xpqlgvdy.janeway.replit.dev/fr-FR",
     "language": "en-US",
-    "country": "Unknown",
-    "city": "Unknown",
+    "city": "Figeac",
     "page_views": 0,
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-21T15:45:07.383Z",
-    "updated_at": "2025-08-21T15:47:17.052Z",
-    "duration": 370407
+    "updated_at": "2025-08-22T06:09:26.727Z",
+    "duration": 370407,
+    "region": "Occitanie"
   },
   {
     "id": "c6c4a6c5-8787-4d6f-b06b-a87b17e0797b",
@@ -7804,14 +7804,14 @@
     "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36 Edg/139.0.0.0",
     "referrer": "",
     "language": "en-US",
-    "country": "Unknown",
-    "city": "Unknown",
+    "city": "Figeac",
     "page_views": 0,
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-21T15:48:23.970Z",
-    "updated_at": "2025-08-21T15:48:31.953Z",
-    "duration": 175
+    "updated_at": "2025-08-22T06:09:26.727Z",
+    "duration": 175,
+    "region": "Occitanie"
   },
   {
     "id": "6ce13a26-0c8c-417d-b776-22c5cae3b953",
@@ -7837,14 +7837,14 @@
     "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36 Edg/139.0.0.0",
     "referrer": "https://365df2cf-1884-444c-a9e8-235602456363-00-37q39xpqlgvdy.janeway.replit.dev/__replco/workspace_iframe.html?initialPath=%2F&id=%3Ar4v8%3A",
     "language": "fr-FR",
-    "country": "Unknown",
-    "city": "Unknown",
+    "city": "Figeac",
     "page_views": 0,
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-21T15:57:55.073Z",
-    "updated_at": "2025-08-21T15:58:25.704Z",
-    "duration": 787670
+    "updated_at": "2025-08-22T06:09:26.727Z",
+    "duration": 787670,
+    "region": "Occitanie"
   },
   {
     "id": "d052081b-591f-4613-bb1c-76d326c693fe",
@@ -7854,13 +7854,13 @@
     "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36 Edg/139.0.0.0",
     "referrer": "https://365df2cf-1884-444c-a9e8-235602456363-00-37q39xpqlgvdy.janeway.replit.dev/en-US",
     "language": "en-US",
-    "country": "Unknown",
-    "city": "Unknown",
+    "city": "Figeac",
     "page_views": 0,
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-21T15:58:42.972Z",
-    "updated_at": "2025-08-21T15:58:43.011Z"
+    "updated_at": "2025-08-22T06:09:26.727Z",
+    "region": "Occitanie"
   },
   {
     "id": "2d33908d-bcce-48e7-b738-96a9391e1793",
@@ -7870,14 +7870,14 @@
     "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36 Edg/139.0.0.0",
     "referrer": "https://365df2cf-1884-444c-a9e8-235602456363-00-37q39xpqlgvdy.janeway.replit.dev/en-US",
     "language": "en-US",
-    "country": "Unknown",
-    "city": "Unknown",
+    "city": "Figeac",
     "page_views": 0,
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-21T15:58:43.166Z",
-    "updated_at": "2025-08-21T16:01:55.723Z",
-    "duration": 787880
+    "updated_at": "2025-08-22T06:09:26.727Z",
+    "duration": 787880,
+    "region": "Occitanie"
   },
   {
     "id": "94146228-c19f-40f5-bdae-6f9ff72d026d",
@@ -7887,14 +7887,14 @@
     "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36 Edg/139.0.0.0",
     "referrer": "https://365df2cf-1884-444c-a9e8-235602456363-00-37q39xpqlgvdy.janeway.replit.dev/en-US",
     "language": "en-US",
-    "country": "Unknown",
-    "city": "Unknown",
+    "city": "Figeac",
     "page_views": 0,
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-21T16:15:11.331Z",
-    "updated_at": "2025-08-21T16:19:15.560Z",
-    "duration": 372326
+    "updated_at": "2025-08-22T06:09:26.727Z",
+    "duration": 372326,
+    "region": "Occitanie"
   },
   {
     "id": "622e5fe6-186a-41af-b596-71155c7e00e8",
@@ -7920,14 +7920,14 @@
     "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36 Edg/139.0.0.0",
     "referrer": "https://365df2cf-1884-444c-a9e8-235602456363-00-37q39xpqlgvdy.janeway.replit.dev/__replco/workspace_iframe.html?initialPath=%2F&id=%3Ar6c0%3A",
     "language": "fr-FR",
-    "country": "Unknown",
-    "city": "Unknown",
+    "city": "Figeac",
     "page_views": 0,
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-21T16:19:46.079Z",
-    "updated_at": "2025-08-21T16:20:17.311Z",
-    "duration": 788982
+    "updated_at": "2025-08-22T06:09:26.727Z",
+    "duration": 788982,
+    "region": "Occitanie"
   },
   {
     "id": "69b5a920-3fb3-4f2f-b2df-093340858b48",
@@ -7937,14 +7937,14 @@
     "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36 Edg/139.0.0.0",
     "referrer": "https://365df2cf-1884-444c-a9e8-235602456363-00-37q39xpqlgvdy.janeway.replit.dev/en-US",
     "language": "en-US",
-    "country": "Unknown",
-    "city": "Unknown",
+    "city": "Figeac",
     "page_views": 0,
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-21T16:20:40.108Z",
-    "updated_at": "2025-08-21T16:21:20.210Z",
-    "duration": 789045
+    "updated_at": "2025-08-22T06:09:26.727Z",
+    "duration": 789045,
+    "region": "Occitanie"
   },
   {
     "id": "6e5ad493-4752-42ae-8cac-ae933e91fe06",
@@ -7954,14 +7954,14 @@
     "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36 Edg/139.0.0.0",
     "referrer": "https://365df2cf-1884-444c-a9e8-235602456363-00-37q39xpqlgvdy.janeway.replit.dev/en-US/admin",
     "language": "en-US",
-    "country": "Unknown",
-    "city": "Unknown",
+    "city": "Figeac",
     "page_views": 0,
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-21T16:21:21.983Z",
-    "updated_at": "2025-08-21T16:22:50.076Z",
-    "duration": 789135
+    "updated_at": "2025-08-22T06:09:26.727Z",
+    "duration": 789135,
+    "region": "Occitanie"
   },
   {
     "id": "78df0943-0edd-40d6-8012-9874abd5434d",
@@ -7971,14 +7971,14 @@
     "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36 Edg/139.0.0.0",
     "referrer": "https://365df2cf-1884-444c-a9e8-235602456363-00-37q39xpqlgvdy.janeway.replit.dev/en-US/admin",
     "language": "en-US",
-    "country": "Unknown",
-    "city": "Unknown",
+    "city": "Figeac",
     "page_views": 0,
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-21T16:22:54.179Z",
-    "updated_at": "2025-08-21T16:23:40.537Z",
-    "duration": 2283
+    "updated_at": "2025-08-22T06:09:26.727Z",
+    "duration": 2283,
+    "region": "Occitanie"
   },
   {
     "id": "652502de-2686-4ae3-b1cb-481cc63be984",
@@ -7988,14 +7988,14 @@
     "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36 Edg/139.0.0.0",
     "referrer": "https://365df2cf-1884-444c-a9e8-235602456363-00-37q39xpqlgvdy.janeway.replit.dev/en-US/admin",
     "language": "en-US",
-    "country": "Unknown",
-    "city": "Unknown",
+    "city": "Figeac",
     "page_views": 0,
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-21T16:23:42.184Z",
-    "updated_at": "2025-08-21T16:27:52.904Z",
-    "duration": 372843
+    "updated_at": "2025-08-22T06:09:26.727Z",
+    "duration": 372843,
+    "region": "Occitanie"
   },
   {
     "id": "d5baf776-f4bd-496f-9e81-68eb4436c3b5",
@@ -8005,14 +8005,14 @@
     "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36 Edg/139.0.0.0",
     "referrer": "https://365df2cf-1884-444c-a9e8-235602456363-00-37q39xpqlgvdy.janeway.replit.dev/en-US/admin",
     "language": "en-US",
-    "country": "Unknown",
-    "city": "Unknown",
+    "city": "Figeac",
     "page_views": 0,
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-21T16:27:55.080Z",
-    "updated_at": "2025-08-21T16:35:55.395Z",
-    "duration": 373326
+    "updated_at": "2025-08-22T06:09:26.727Z",
+    "duration": 373326,
+    "region": "Occitanie"
   },
   {
     "id": "4d76bfc9-02c6-47dc-9fa9-8c46abd576f0",
@@ -8022,14 +8022,14 @@
     "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36 Edg/139.0.0.0",
     "referrer": "https://365df2cf-1884-444c-a9e8-235602456363-00-37q39xpqlgvdy.janeway.replit.dev/en-US/admin",
     "language": "en-US",
-    "country": "Unknown",
-    "city": "Unknown",
+    "city": "Figeac",
     "page_views": 0,
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-21T16:35:56.842Z",
-    "updated_at": "2025-08-21T16:36:29.700Z",
-    "duration": 373360
+    "updated_at": "2025-08-22T06:09:26.727Z",
+    "duration": 373360,
+    "region": "Occitanie"
   },
   {
     "id": "84a2dd92-120f-4ea9-9280-59dc6952c0b8",
@@ -8039,14 +8039,14 @@
     "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36 Edg/139.0.0.0",
     "referrer": "https://365df2cf-1884-444c-a9e8-235602456363-00-37q39xpqlgvdy.janeway.replit.dev/en-US/admin",
     "language": "fr-FR",
-    "country": "Unknown",
-    "city": "Unknown",
+    "city": "Figeac",
     "page_views": 0,
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-21T16:36:37.614Z",
-    "updated_at": "2025-08-21T16:37:03.872Z",
-    "duration": 789988
+    "updated_at": "2025-08-22T06:09:26.727Z",
+    "duration": 789988,
+    "region": "Occitanie"
   },
   {
     "id": "647cfeee-242f-4a3e-89a0-ecfc4d7b3916",
@@ -8056,14 +8056,14 @@
     "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36 Edg/139.0.0.0",
     "referrer": "https://365df2cf-1884-444c-a9e8-235602456363-00-37q39xpqlgvdy.janeway.replit.dev/en-US/admin",
     "language": "fr-FR",
-    "country": "Unknown",
-    "city": "Unknown",
+    "city": "Figeac",
     "page_views": 0,
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-21T16:37:08.017Z",
-    "updated_at": "2025-08-21T16:40:17.345Z",
-    "duration": 790182
+    "updated_at": "2025-08-22T06:09:26.727Z",
+    "duration": 790182,
+    "region": "Occitanie"
   },
   {
     "id": "0fb7fc84-c0ff-4c92-aafe-33eab544b099",
@@ -8073,14 +8073,14 @@
     "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36 Edg/139.0.0.0",
     "referrer": "https://365df2cf-1884-444c-a9e8-235602456363-00-37q39xpqlgvdy.janeway.replit.dev/__replco/workspace_iframe.html?initialPath=%2F&id=%3Ar9vo%3A",
     "language": "fr-FR",
-    "country": "Unknown",
-    "city": "Unknown",
+    "city": "Figeac",
     "page_views": 0,
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-21T16:40:31.535Z",
-    "updated_at": "2025-08-21T16:41:26.329Z",
-    "duration": 373657
+    "updated_at": "2025-08-22T06:09:26.727Z",
+    "duration": 373657,
+    "region": "Occitanie"
   },
   {
     "id": "6a0bfbaf-aa7e-49a6-91f9-b2664192c68c",
@@ -8090,14 +8090,14 @@
     "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36 Edg/139.0.0.0",
     "referrer": "https://365df2cf-1884-444c-a9e8-235602456363-00-37q39xpqlgvdy.janeway.replit.dev/en-US",
     "language": "en-US",
-    "country": "Unknown",
-    "city": "Unknown",
+    "city": "Figeac",
     "page_views": 0,
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-21T16:41:27.222Z",
-    "updated_at": "2025-08-21T16:43:01.681Z",
-    "duration": 790346
+    "updated_at": "2025-08-22T06:09:26.727Z",
+    "duration": 790346,
+    "region": "Occitanie"
   },
   {
     "id": "52b51a39-d52e-46ab-813c-e0169cd4cf49",
@@ -8107,14 +8107,14 @@
     "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36 Edg/139.0.0.0",
     "referrer": "https://365df2cf-1884-444c-a9e8-235602456363-00-37q39xpqlgvdy.janeway.replit.dev/fr-FR",
     "language": "fr-FR",
-    "country": "Unknown",
-    "city": "Unknown",
+    "city": "Figeac",
     "page_views": 0,
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-21T16:43:12.265Z",
-    "updated_at": "2025-08-21T16:43:45.915Z",
-    "duration": 790390
+    "updated_at": "2025-08-22T06:09:26.727Z",
+    "duration": 790390,
+    "region": "Occitanie"
   },
   {
     "id": "5299cbac-15ca-4b86-8bbb-69e75a6bafa3",
@@ -8124,14 +8124,14 @@
     "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36 Edg/139.0.0.0",
     "referrer": "https://365df2cf-1884-444c-a9e8-235602456363-00-37q39xpqlgvdy.janeway.replit.dev/fr-FR",
     "language": "fr-FR",
-    "country": "Unknown",
-    "city": "Unknown",
+    "city": "Figeac",
     "page_views": 0,
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-21T16:43:52.982Z",
-    "updated_at": "2025-08-21T16:44:40.208Z",
-    "duration": 373850
+    "updated_at": "2025-08-22T06:09:26.727Z",
+    "duration": 373850,
+    "region": "Occitanie"
   },
   {
     "id": "b37d48dc-34e1-4433-be21-0d838608765e",
@@ -8141,14 +8141,14 @@
     "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36 Edg/139.0.0.0",
     "referrer": "https://365df2cf-1884-444c-a9e8-235602456363-00-37q39xpqlgvdy.janeway.replit.dev/fr-FR",
     "language": "fr-FR",
-    "country": "Unknown",
-    "city": "Unknown",
+    "city": "Figeac",
     "page_views": 0,
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-21T16:44:42.309Z",
-    "updated_at": "2025-08-21T16:46:15.353Z",
-    "duration": 3638
+    "updated_at": "2025-08-22T06:09:26.727Z",
+    "duration": 3638,
+    "region": "Occitanie"
   },
   {
     "id": "d114093b-8e60-4954-8eff-3728d12baaba",
@@ -8158,14 +8158,14 @@
     "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36 Edg/139.0.0.0",
     "referrer": "https://365df2cf-1884-444c-a9e8-235602456363-00-37q39xpqlgvdy.janeway.replit.dev/fr-FR",
     "language": "fr-FR",
-    "country": "Unknown",
-    "city": "Unknown",
+    "city": "Figeac",
     "page_views": 0,
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-21T16:46:15.147Z",
-    "updated_at": "2025-08-21T16:46:46.588Z",
-    "duration": 373977
+    "updated_at": "2025-08-22T06:09:26.727Z",
+    "duration": 373977,
+    "region": "Occitanie"
   },
   {
     "id": "963c378c-bff8-44f6-b41c-806435a578fc",
@@ -8175,14 +8175,14 @@
     "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36 Edg/139.0.0.0",
     "referrer": "https://365df2cf-1884-444c-a9e8-235602456363-00-37q39xpqlgvdy.janeway.replit.dev/fr-FR",
     "language": "fr-FR",
-    "country": "Unknown",
-    "city": "Unknown",
+    "city": "Figeac",
     "page_views": 0,
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-21T16:46:49.974Z",
-    "updated_at": "2025-08-21T16:48:31.011Z",
-    "duration": 790676
+    "updated_at": "2025-08-22T06:09:26.727Z",
+    "duration": 790676,
+    "region": "Occitanie"
   },
   {
     "id": "56588cc2-90d6-4dda-9799-776c6c6b3d1d",
@@ -8192,14 +8192,14 @@
     "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36 Edg/139.0.0.0",
     "referrer": "https://365df2cf-1884-444c-a9e8-235602456363-00-37q39xpqlgvdy.janeway.replit.dev/fr-FR",
     "language": "fr-FR",
-    "country": "Unknown",
-    "city": "Unknown",
+    "city": "Figeac",
     "page_views": 0,
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-21T16:48:31.808Z",
-    "updated_at": "2025-08-21T16:49:21.170Z",
-    "duration": 790726
+    "updated_at": "2025-08-22T06:09:26.727Z",
+    "duration": 790726,
+    "region": "Occitanie"
   },
   {
     "id": "3b039fc7-ba98-4ac5-a1dc-ed57923afe93",
@@ -8209,14 +8209,14 @@
     "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36 Edg/139.0.0.0",
     "referrer": "https://365df2cf-1884-444c-a9e8-235602456363-00-37q39xpqlgvdy.janeway.replit.dev/fr-FR",
     "language": "fr-FR",
-    "country": "Unknown",
-    "city": "Unknown",
+    "city": "Figeac",
     "page_views": 0,
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-21T16:49:26.326Z",
-    "updated_at": "2025-08-21T16:49:48.764Z",
-    "duration": 374159
+    "updated_at": "2025-08-22T06:09:26.727Z",
+    "duration": 374159,
+    "region": "Occitanie"
   },
   {
     "id": "26b07fb0-2927-4763-affe-b843f07dee3d",
@@ -8226,14 +8226,14 @@
     "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36 Edg/139.0.0.0",
     "referrer": "https://365df2cf-1884-444c-a9e8-235602456363-00-37q39xpqlgvdy.janeway.replit.dev/fr-FR",
     "language": "fr-FR",
-    "country": "Unknown",
-    "city": "Unknown",
+    "city": "Figeac",
     "page_views": 0,
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-21T16:50:00.196Z",
-    "updated_at": "2025-08-21T16:50:43.984Z",
-    "duration": 374214
+    "updated_at": "2025-08-22T06:09:26.727Z",
+    "duration": 374214,
+    "region": "Occitanie"
   },
   {
     "id": "8a75ebcc-5192-4be5-99b7-5c095504c255",
@@ -8243,14 +8243,14 @@
     "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36 Edg/139.0.0.0",
     "referrer": "https://365df2cf-1884-444c-a9e8-235602456363-00-37q39xpqlgvdy.janeway.replit.dev/fr-FR",
     "language": "fr-FR",
-    "country": "Unknown",
-    "city": "Unknown",
+    "city": "Figeac",
     "page_views": 0,
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-21T16:50:46.203Z",
-    "updated_at": "2025-08-21T16:51:22.547Z",
-    "duration": 374253
+    "updated_at": "2025-08-22T06:09:26.727Z",
+    "duration": 374253,
+    "region": "Occitanie"
   },
   {
     "id": "3c6707f3-73b7-4ce8-8a9c-246d8cc5ef35",
@@ -8260,14 +8260,14 @@
     "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36 Edg/139.0.0.0",
     "referrer": "https://365df2cf-1884-444c-a9e8-235602456363-00-37q39xpqlgvdy.janeway.replit.dev/fr-FR",
     "language": "fr-FR",
-    "country": "Unknown",
-    "city": "Unknown",
+    "city": "Figeac",
     "page_views": 0,
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-21T16:51:26.874Z",
-    "updated_at": "2025-08-21T16:52:02.370Z",
-    "duration": 790887
+    "updated_at": "2025-08-22T06:09:26.727Z",
+    "duration": 790887,
+    "region": "Occitanie"
   },
   {
     "id": "c0dc2835-780f-4feb-9552-a864ca76ec9e",
@@ -8277,14 +8277,14 @@
     "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36 Edg/139.0.0.0",
     "referrer": "https://365df2cf-1884-444c-a9e8-235602456363-00-37q39xpqlgvdy.janeway.replit.dev/fr-FR",
     "language": "fr-FR",
-    "country": "Unknown",
-    "city": "Unknown",
+    "city": "Figeac",
     "page_views": 0,
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-21T16:52:18.734Z",
-    "updated_at": "2025-08-21T16:53:02.359Z",
-    "duration": 790947
+    "updated_at": "2025-08-22T06:09:26.727Z",
+    "duration": 790947,
+    "region": "Occitanie"
   },
   {
     "id": "f952d9e0-e687-4570-94b8-8c18d12c3ab2",
@@ -8294,14 +8294,14 @@
     "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36 Edg/139.0.0.0",
     "referrer": "https://365df2cf-1884-444c-a9e8-235602456363-00-37q39xpqlgvdy.janeway.replit.dev/fr-FR",
     "language": "fr-FR",
-    "country": "Unknown",
-    "city": "Unknown",
+    "city": "Figeac",
     "page_views": 0,
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-21T16:53:14.201Z",
-    "updated_at": "2025-08-21T16:53:35.913Z",
-    "duration": 374386
+    "updated_at": "2025-08-22T06:09:26.727Z",
+    "duration": 374386,
+    "region": "Occitanie"
   },
   {
     "id": "09179279-8595-49f5-b756-e871d9291111",
@@ -8311,14 +8311,14 @@
     "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36 Edg/139.0.0.0",
     "referrer": "https://365df2cf-1884-444c-a9e8-235602456363-00-37q39xpqlgvdy.janeway.replit.dev/fr-FR",
     "language": "fr-FR",
-    "country": "Unknown",
-    "city": "Unknown",
+    "city": "Figeac",
     "page_views": 0,
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-21T16:53:46.271Z",
-    "updated_at": "2025-08-21T16:54:09.723Z",
-    "duration": 791014
+    "updated_at": "2025-08-22T06:09:26.727Z",
+    "duration": 791014,
+    "region": "Occitanie"
   },
   {
     "id": "904bc93a-b28a-4a35-a107-f7c83919b771",
@@ -8344,14 +8344,14 @@
     "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36 Edg/139.0.0.0",
     "referrer": "https://365df2cf-1884-444c-a9e8-235602456363-00-37q39xpqlgvdy.janeway.replit.dev/__replco/workspace_iframe.html?initialPath=%2Ffr-FR%2Fcomment-ca-marche&id=%3Arcrq%3A",
     "language": "fr-FR",
-    "country": "Unknown",
-    "city": "Unknown",
+    "city": "Figeac",
     "page_views": 0,
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-21T16:54:33.095Z",
-    "updated_at": "2025-08-21T16:55:04.302Z",
-    "duration": 791069
+    "updated_at": "2025-08-22T06:09:26.727Z",
+    "duration": 791069,
+    "region": "Occitanie"
   },
   {
     "id": "5378038b-0f18-4683-af73-d2b468459a02",
@@ -8361,14 +8361,14 @@
     "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36 Edg/139.0.0.0",
     "referrer": "https://365df2cf-1884-444c-a9e8-235602456363-00-37q39xpqlgvdy.janeway.replit.dev/fr-FR/comment-ca-marche",
     "language": "fr-FR",
-    "country": "Unknown",
-    "city": "Unknown",
+    "city": "Figeac",
     "page_views": 0,
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-21T16:55:06.618Z",
-    "updated_at": "2025-08-21T16:55:42.252Z",
-    "duration": 791107
+    "updated_at": "2025-08-22T06:09:26.727Z",
+    "duration": 791107,
+    "region": "Occitanie"
   },
   {
     "id": "ae2a90f3-cf23-44a2-b77c-e8febb0561c7",
@@ -8378,13 +8378,13 @@
     "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36 Edg/139.0.0.0",
     "referrer": "https://365df2cf-1884-444c-a9e8-235602456363-00-37q39xpqlgvdy.janeway.replit.dev/fr-FR/comment-ca-marche",
     "language": "fr-FR",
-    "country": "Unknown",
-    "city": "Unknown",
+    "city": "Figeac",
     "page_views": 0,
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-21T16:55:54.229Z",
-    "updated_at": "2025-08-21T16:55:54.270Z"
+    "updated_at": "2025-08-22T06:09:26.727Z",
+    "region": "Occitanie"
   },
   {
     "id": "0db6fdd6-247b-4027-b220-64da14964d71",
@@ -8394,14 +8394,14 @@
     "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36 Edg/139.0.0.0",
     "referrer": "https://365df2cf-1884-444c-a9e8-235602456363-00-37q39xpqlgvdy.janeway.replit.dev/__replco/workspace_iframe.html?initialPath=%2Ffr-FR%2Fcomment-ca-marche&id=%3Arcrq%3A",
     "language": "fr-FR",
-    "country": "Unknown",
-    "city": "Unknown",
+    "city": "Figeac",
     "page_views": 0,
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-21T16:55:54.294Z",
-    "updated_at": "2025-08-21T17:05:34.631Z",
-    "duration": 791699
+    "updated_at": "2025-08-22T06:09:26.727Z",
+    "duration": 791699,
+    "region": "Occitanie"
   },
   {
     "id": "d8e2a614-1cf9-41b0-856a-557def38ed5a",
@@ -8411,14 +8411,14 @@
     "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36 Edg/139.0.0.0",
     "referrer": "https://365df2cf-1884-444c-a9e8-235602456363-00-37q39xpqlgvdy.janeway.replit.dev/fr-FR/comment-ca-marche",
     "language": "fr-FR",
-    "country": "Unknown",
-    "city": "Unknown",
+    "city": "Figeac",
     "page_views": 0,
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-21T17:22:58.647Z",
-    "updated_at": "2025-08-21T17:27:09.835Z",
-    "duration": 792994
+    "updated_at": "2025-08-22T06:09:26.727Z",
+    "duration": 792994,
+    "region": "Occitanie"
   },
   {
     "id": "a6a1223c-b7db-49e6-a95e-02a952e50dee",
@@ -8428,14 +8428,14 @@
     "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36 Edg/139.0.0.0",
     "referrer": "https://365df2cf-1884-444c-a9e8-235602456363-00-37q39xpqlgvdy.janeway.replit.dev/fr-FR/comment-ca-marche",
     "language": "en-US",
-    "country": "Unknown",
-    "city": "Unknown",
+    "city": "Figeac",
     "page_views": 0,
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-21T17:27:24.324Z",
-    "updated_at": "2025-08-21T17:28:18.386Z",
-    "duration": 793063
+    "updated_at": "2025-08-22T06:09:26.727Z",
+    "duration": 793063,
+    "region": "Occitanie"
   },
   {
     "id": "3ebbb39b-d94a-4568-928a-30753ebf43e0",
@@ -8445,14 +8445,14 @@
     "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36 Edg/139.0.0.0",
     "referrer": "https://365df2cf-1884-444c-a9e8-235602456363-00-37q39xpqlgvdy.janeway.replit.dev/en-US",
     "language": "en-US",
-    "country": "Unknown",
-    "city": "Unknown",
+    "city": "Figeac",
     "page_views": 0,
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-21T17:28:23.085Z",
-    "updated_at": "2025-08-21T17:28:55.896Z",
-    "duration": 376506
+    "updated_at": "2025-08-22T06:09:26.727Z",
+    "duration": 376506,
+    "region": "Occitanie"
   },
   {
     "id": "f3de5899-41ae-4878-a3af-f5a319adb183",
@@ -8462,14 +8462,14 @@
     "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36 Edg/139.0.0.0",
     "referrer": "https://365df2cf-1884-444c-a9e8-235602456363-00-37q39xpqlgvdy.janeway.replit.dev/en-US",
     "language": "en-US",
-    "country": "Unknown",
-    "city": "Unknown",
+    "city": "Figeac",
     "page_views": 0,
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-21T17:28:57.958Z",
-    "updated_at": "2025-08-21T17:29:28.465Z",
-    "duration": 376538
+    "updated_at": "2025-08-22T06:09:26.727Z",
+    "duration": 376538,
+    "region": "Occitanie"
   },
   {
     "id": "d54a23eb-4d2d-45e1-9d04-e2a69f689223",
@@ -8479,14 +8479,14 @@
     "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36 Edg/139.0.0.0",
     "referrer": "https://365df2cf-1884-444c-a9e8-235602456363-00-37q39xpqlgvdy.janeway.replit.dev/en-US",
     "language": "fr-FR",
-    "country": "Unknown",
-    "city": "Unknown",
+    "city": "Figeac",
     "page_views": 0,
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-21T17:29:37.526Z",
-    "updated_at": "2025-08-21T17:31:09.672Z",
-    "duration": 376640
+    "updated_at": "2025-08-22T06:09:26.727Z",
+    "duration": 376640,
+    "region": "Occitanie"
   },
   {
     "id": "c7bb8709-ac6d-4d72-97f0-f47014910fc4",
@@ -8496,14 +8496,14 @@
     "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36 Edg/139.0.0.0",
     "referrer": "https://365df2cf-1884-444c-a9e8-235602456363-00-37q39xpqlgvdy.janeway.replit.dev/en-US",
     "language": "fr-FR",
-    "country": "Unknown",
-    "city": "Unknown",
+    "city": "Figeac",
     "page_views": 0,
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-21T17:31:12.133Z",
-    "updated_at": "2025-08-21T17:33:29.288Z",
-    "duration": 793374
+    "updated_at": "2025-08-22T06:09:26.727Z",
+    "duration": 793374,
+    "region": "Occitanie"
   },
   {
     "id": "ece4135e-9786-4a3a-b170-648960e0b437",
@@ -8513,14 +8513,14 @@
     "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36 Edg/139.0.0.0",
     "referrer": "https://365df2cf-1884-444c-a9e8-235602456363-00-37q39xpqlgvdy.janeway.replit.dev/en-US",
     "language": "fr-FR",
-    "country": "Unknown",
-    "city": "Unknown",
+    "city": "Figeac",
     "page_views": 0,
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-21T17:33:33.769Z",
-    "updated_at": "2025-08-21T17:34:12.639Z",
-    "duration": 376823
+    "updated_at": "2025-08-22T06:09:26.727Z",
+    "duration": 376823,
+    "region": "Occitanie"
   },
   {
     "id": "0ce7a115-0cea-42e5-b91c-9c467ba8abc1",
@@ -8530,14 +8530,14 @@
     "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36 Edg/139.0.0.0",
     "referrer": "https://365df2cf-1884-444c-a9e8-235602456363-00-37q39xpqlgvdy.janeway.replit.dev/en-US",
     "language": "fr-FR",
-    "country": "Unknown",
-    "city": "Unknown",
+    "city": "Figeac",
     "page_views": 0,
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-21T17:34:17.019Z",
-    "updated_at": "2025-08-21T17:37:42.803Z",
-    "duration": 793627
+    "updated_at": "2025-08-22T06:09:26.727Z",
+    "duration": 793627,
+    "region": "Occitanie"
   },
   {
     "id": "2b800165-8443-4b6b-be7f-faafe794a242",
@@ -8547,14 +8547,14 @@
     "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36 Edg/139.0.0.0",
     "referrer": "https://365df2cf-1884-444c-a9e8-235602456363-00-37q39xpqlgvdy.janeway.replit.dev/fr-FR",
     "language": "fr-FR",
-    "country": "Unknown",
-    "city": "Unknown",
+    "city": "Figeac",
     "page_views": 0,
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-21T17:37:43.687Z",
-    "updated_at": "2025-08-21T17:39:13.239Z",
-    "duration": 377123
+    "updated_at": "2025-08-22T06:09:26.727Z",
+    "duration": 377123,
+    "region": "Occitanie"
   },
   {
     "id": "2b29b7a6-ddf9-454c-8ced-34f6ae08392a",
@@ -8564,14 +8564,14 @@
     "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36 Edg/139.0.0.0",
     "referrer": "https://365df2cf-1884-444c-a9e8-235602456363-00-37q39xpqlgvdy.janeway.replit.dev/fr-FR",
     "language": "fr-FR",
-    "country": "Unknown",
-    "city": "Unknown",
+    "city": "Figeac",
     "page_views": 0,
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-21T17:39:15.344Z",
-    "updated_at": "2025-08-21T17:40:46.398Z",
-    "duration": 377217
+    "updated_at": "2025-08-22T06:09:26.727Z",
+    "duration": 377217,
+    "region": "Occitanie"
   },
   {
     "id": "0411ab37-63ef-4073-9541-08bad03b543f",
@@ -8581,14 +8581,14 @@
     "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36 Edg/139.0.0.0",
     "referrer": "https://365df2cf-1884-444c-a9e8-235602456363-00-37q39xpqlgvdy.janeway.replit.dev/en-US",
     "language": "en-US",
-    "country": "Unknown",
-    "city": "Unknown",
+    "city": "Figeac",
     "page_views": 0,
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-21T17:42:07.933Z",
-    "updated_at": "2025-08-21T17:45:47.538Z",
-    "duration": 377518
+    "updated_at": "2025-08-22T06:09:26.727Z",
+    "duration": 377518,
+    "region": "Occitanie"
   },
   {
     "id": "cf10ff92-7a3a-4c47-8b98-40ae297dfff2",
@@ -8598,14 +8598,14 @@
     "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36 Edg/139.0.0.0",
     "referrer": "https://365df2cf-1884-444c-a9e8-235602456363-00-37q39xpqlgvdy.janeway.replit.dev/en-US",
     "language": "en-US",
-    "country": "Unknown",
-    "city": "Unknown",
+    "city": "Figeac",
     "page_views": 0,
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-21T17:45:49.610Z",
-    "updated_at": "2025-08-21T17:46:27.978Z",
-    "duration": 377558
+    "updated_at": "2025-08-22T06:09:26.727Z",
+    "duration": 377558,
+    "region": "Occitanie"
   },
   {
     "id": "88be9c2c-0354-445a-b1d6-4876bbe020df",
@@ -8615,14 +8615,14 @@
     "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36 Edg/139.0.0.0",
     "referrer": "https://365df2cf-1884-444c-a9e8-235602456363-00-37q39xpqlgvdy.janeway.replit.dev/en-US",
     "language": "fr-FR",
-    "country": "Unknown",
-    "city": "Unknown",
+    "city": "Figeac",
     "page_views": 0,
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-21T17:46:40.695Z",
-    "updated_at": "2025-08-21T17:48:20.684Z",
-    "duration": 377671
+    "updated_at": "2025-08-22T06:09:26.727Z",
+    "duration": 377671,
+    "region": "Occitanie"
   },
   {
     "id": "6df9f5c5-bcfc-4710-9b62-44cf1d5840ee",
@@ -8648,14 +8648,14 @@
     "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36 Edg/139.0.0.0",
     "referrer": "https://365df2cf-1884-444c-a9e8-235602456363-00-37q39xpqlgvdy.janeway.replit.dev/__replco/workspace_iframe.html?initialPath=%2F&id=%3Arh0p%3A",
     "language": "fr-FR",
-    "country": "Unknown",
-    "city": "Unknown",
+    "city": "Figeac",
     "page_views": 0,
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-21T17:48:37.836Z",
-    "updated_at": "2025-08-21T17:49:20.284Z",
-    "duration": 794325
+    "updated_at": "2025-08-22T06:09:26.727Z",
+    "duration": 794325,
+    "region": "Occitanie"
   },
   {
     "id": "cb023988-f73e-42e2-990f-2a1bf172529e",
@@ -8665,14 +8665,14 @@
     "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36 Edg/139.0.0.0",
     "referrer": "https://365df2cf-1884-444c-a9e8-235602456363-00-37q39xpqlgvdy.janeway.replit.dev/fr-FR",
     "language": "fr-FR",
-    "country": "Unknown",
-    "city": "Unknown",
+    "city": "Figeac",
     "page_views": 0,
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-21T17:49:23.586Z",
-    "updated_at": "2025-08-21T17:50:38.656Z",
-    "duration": 794403
+    "updated_at": "2025-08-22T06:09:26.727Z",
+    "duration": 794403,
+    "region": "Occitanie"
   },
   {
     "id": "bb91ff2c-0413-4f27-aae8-49f1f296b847",
@@ -8698,14 +8698,14 @@
     "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36 Edg/139.0.0.0",
     "referrer": "https://365df2cf-1884-444c-a9e8-235602456363-00-37q39xpqlgvdy.janeway.replit.dev/__replco/workspace_iframe.html?initialPath=%2F&id=%3Arhcn%3A",
     "language": "fr-FR",
-    "country": "Unknown",
-    "city": "Unknown",
+    "city": "Figeac",
     "page_views": 0,
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-21T17:51:08.263Z",
-    "updated_at": "2025-08-21T17:51:51.068Z",
-    "duration": 794475
+    "updated_at": "2025-08-22T06:09:26.727Z",
+    "duration": 794475,
+    "region": "Occitanie"
   },
   {
     "id": "8aff2a6f-2807-49e5-b349-8d143c6a9f43",
@@ -8715,14 +8715,14 @@
     "user_agent": "Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Mobile Safari/537.36 Edg/139.0.0.0",
     "referrer": "https://365df2cf-1884-444c-a9e8-235602456363-00-37q39xpqlgvdy.janeway.replit.dev/fr-FR",
     "language": "fr-FR",
-    "country": "Unknown",
-    "city": "Unknown",
+    "city": "Figeac",
     "page_views": 0,
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-21T17:51:56.024Z",
-    "updated_at": "2025-08-21T17:53:39.654Z",
-    "duration": 794584
+    "updated_at": "2025-08-22T06:09:26.727Z",
+    "duration": 794584,
+    "region": "Occitanie"
   },
   {
     "id": "7bd5f28e-1aa9-4251-b628-1cad60b03442",
@@ -8748,14 +8748,14 @@
     "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36 Edg/139.0.0.0",
     "referrer": "https://365df2cf-1884-444c-a9e8-235602456363-00-37q39xpqlgvdy.janeway.replit.dev/__replco/workspace_iframe.html?initialPath=%2F&id=%3Arhop%3A",
     "language": "fr-FR",
-    "country": "Unknown",
-    "city": "Unknown",
+    "city": "Figeac",
     "page_views": 0,
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-21T17:53:56.340Z",
-    "updated_at": "2025-08-21T18:03:26.457Z",
-    "duration": 795171
+    "updated_at": "2025-08-22T06:09:26.727Z",
+    "duration": 795171,
+    "region": "Occitanie"
   },
   {
     "id": "7e1f000b-2bd2-43c9-896c-64b8a9ddb02a",
@@ -8765,14 +8765,14 @@
     "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36 Edg/139.0.0.0",
     "referrer": "https://365df2cf-1884-444c-a9e8-235602456363-00-37q39xpqlgvdy.janeway.replit.dev/__replco/workspace_iframe.html?initialPath=%2F&id=%3Arj4u%3A",
     "language": "fr-FR",
-    "country": "Unknown",
-    "city": "Unknown",
+    "city": "Figeac",
     "page_views": 0,
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-21T18:29:39.591Z",
-    "updated_at": "2025-08-21T18:55:31.219Z",
-    "duration": 381701
+    "updated_at": "2025-08-22T06:09:26.727Z",
+    "duration": 381701,
+    "region": "Occitanie"
   },
   {
     "id": "81a49392-a4ab-466f-94d5-ba08cb74d591",
@@ -8782,14 +8782,14 @@
     "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36 Edg/139.0.0.0",
     "referrer": "https://365df2cf-1884-444c-a9e8-235602456363-00-37q39xpqlgvdy.janeway.replit.dev/fr-FR",
     "language": "fr-FR",
-    "country": "Unknown",
-    "city": "Unknown",
+    "city": "Figeac",
     "page_views": 0,
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-21T18:55:33.770Z",
-    "updated_at": "2025-08-21T20:07:50.902Z",
-    "duration": 386043
+    "updated_at": "2025-08-22T06:09:26.727Z",
+    "duration": 386043,
+    "region": "Occitanie"
   },
   {
     "id": "69adc1e5-1971-4001-b2df-32f358221aee",
@@ -8799,14 +8799,14 @@
     "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36 Edg/139.0.0.0",
     "referrer": "https://365df2cf-1884-444c-a9e8-235602456363-00-37q39xpqlgvdy.janeway.replit.dev/__replco/workspace_iframe.html?initialPath=%2F&id=%3Arj4u%3A",
     "language": "fr-FR",
-    "country": "Unknown",
-    "city": "Unknown",
+    "city": "Figeac",
     "page_views": 0,
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-21T20:08:34.889Z",
-    "updated_at": "2025-08-21T20:08:40.396Z",
-    "duration": 802687
+    "updated_at": "2025-08-22T06:09:26.727Z",
+    "duration": 802687,
+    "region": "Occitanie"
   },
   {
     "id": "5c4e339f-5173-4e04-976d-410c7ef2cc37",
@@ -8832,14 +8832,14 @@
     "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36 Edg/139.0.0.0",
     "referrer": "https://365df2cf-1884-444c-a9e8-235602456363-00-37q39xpqlgvdy.janeway.replit.dev/fr-FR",
     "language": "fr-FR",
-    "country": "Unknown",
-    "city": "Unknown",
+    "city": "Figeac",
     "page_views": 0,
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-21T20:09:21.333Z",
-    "updated_at": "2025-08-21T20:13:15.933Z",
-    "duration": 386367
+    "updated_at": "2025-08-22T06:09:26.727Z",
+    "duration": 386367,
+    "region": "Occitanie"
   },
   {
     "id": "93d49156-b513-4aaf-96e5-e5a617f92323",
@@ -8849,14 +8849,14 @@
     "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36 Edg/139.0.0.0",
     "referrer": "https://365df2cf-1884-444c-a9e8-235602456363-00-37q39xpqlgvdy.janeway.replit.dev/",
     "language": "fr-FR",
-    "country": "Unknown",
-    "city": "Unknown",
+    "city": "Figeac",
     "page_views": 0,
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-21T20:13:59.039Z",
-    "updated_at": "2025-08-21T20:17:27.857Z",
-    "duration": 386619
+    "updated_at": "2025-08-22T06:09:26.727Z",
+    "duration": 386619,
+    "region": "Occitanie"
   },
   {
     "id": "26863188-3a5d-4136-aeb8-453091475352",
@@ -8898,14 +8898,14 @@
     "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36 Edg/139.0.0.0",
     "referrer": "https://365df2cf-1884-444c-a9e8-235602456363-00-37q39xpqlgvdy.janeway.replit.dev/__replco/workspace_iframe.html?initialPath=%2F&id=%3Arlk5%3A",
     "language": "fr-FR",
-    "country": "Unknown",
-    "city": "Unknown",
+    "city": "Figeac",
     "page_views": 0,
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-21T20:18:18.296Z",
-    "updated_at": "2025-08-21T20:18:48.887Z",
-    "duration": 803295
+    "updated_at": "2025-08-22T06:09:26.727Z",
+    "duration": 803295,
+    "region": "Occitanie"
   },
   {
     "id": "8d3f7976-627f-4be2-80f9-18843b150b5e",
@@ -8915,14 +8915,14 @@
     "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36 Edg/139.0.0.0",
     "referrer": "https://365df2cf-1884-444c-a9e8-235602456363-00-37q39xpqlgvdy.janeway.replit.dev/fr-FR",
     "language": "fr-FR",
-    "country": "Unknown",
-    "city": "Unknown",
+    "city": "Figeac",
     "page_views": 0,
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-21T20:19:03.222Z",
-    "updated_at": "2025-08-21T20:23:18.622Z",
-    "duration": 803565
+    "updated_at": "2025-08-22T06:09:26.727Z",
+    "duration": 803565,
+    "region": "Occitanie"
   },
   {
     "id": "9ef6874d-916f-4129-a286-6b20a2bdf209",
@@ -8932,14 +8932,14 @@
     "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36 Edg/139.0.0.0",
     "referrer": "https://365df2cf-1884-444c-a9e8-235602456363-00-37q39xpqlgvdy.janeway.replit.dev/__replco/workspace_iframe.html?initialPath=%2F&id=%3Armle%3A",
     "language": "fr-FR",
-    "country": "Unknown",
-    "city": "Unknown",
+    "city": "Figeac",
     "page_views": 0,
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-21T20:23:41.141Z",
-    "updated_at": "2025-08-21T20:29:42.045Z",
-    "duration": 803948
+    "updated_at": "2025-08-22T06:09:26.727Z",
+    "duration": 803948,
+    "region": "Occitanie"
   },
   {
     "id": "2e91ae31-8452-4f3d-800e-bb2feab6c863",
@@ -8949,14 +8949,14 @@
     "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36 Edg/139.0.0.0",
     "referrer": "https://365df2cf-1884-444c-a9e8-235602456363-00-37q39xpqlgvdy.janeway.replit.dev/fr-FR",
     "language": "fr-FR",
-    "country": "Unknown",
-    "city": "Unknown",
+    "city": "Figeac",
     "page_views": 0,
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-21T20:30:57.393Z",
-    "updated_at": "2025-08-21T20:40:15.662Z",
-    "duration": 387987
+    "updated_at": "2025-08-22T06:09:26.727Z",
+    "duration": 387987,
+    "region": "Occitanie"
   },
   {
     "id": "8ce02dda-1af6-4e8b-b606-ccb5a6866e59",
@@ -8966,14 +8966,14 @@
     "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36 Edg/139.0.0.0",
     "referrer": "https://365df2cf-1884-444c-a9e8-235602456363-00-37q39xpqlgvdy.janeway.replit.dev/__replco/workspace_iframe.html?initialPath=%2F&id=%3Arnmh%3A",
     "language": "fr-FR",
-    "country": "Unknown",
-    "city": "Unknown",
+    "city": "Figeac",
     "page_views": 0,
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-21T21:01:22.196Z",
-    "updated_at": "2025-08-21T21:01:52.510Z",
-    "duration": 805878
+    "updated_at": "2025-08-22T06:09:26.727Z",
+    "duration": 805878,
+    "region": "Occitanie"
   },
   {
     "id": "97fd6f25-f41d-4160-b5ed-ecc3b42375d2",
@@ -8983,14 +8983,14 @@
     "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36 Edg/139.0.0.0",
     "referrer": "https://365df2cf-1884-444c-a9e8-235602456363-00-37q39xpqlgvdy.janeway.replit.dev/fr-FR",
     "language": "fr-FR",
-    "country": "Unknown",
-    "city": "Unknown",
+    "city": "Figeac",
     "page_views": 0,
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-21T21:02:18.444Z",
-    "updated_at": "2025-08-21T23:23:22.588Z",
-    "duration": 814368
+    "updated_at": "2025-08-22T06:09:26.727Z",
+    "duration": 814368,
+    "region": "Occitanie"
   },
   {
     "id": "ba35e9d5-6f20-4062-a1d2-0e1dd9faf7ec",
@@ -9000,14 +9000,14 @@
     "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36 Edg/139.0.0.0",
     "referrer": "https://365df2cf-1884-444c-a9e8-235602456363-00-37q39xpqlgvdy.janeway.replit.dev/__replco/workspace_iframe.html?initialPath=%2F&id=%3Arnom%3A",
     "language": "fr-FR",
-    "country": "Unknown",
-    "city": "Unknown",
+    "city": "Figeac",
     "page_views": 0,
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-21T23:43:55.477Z",
-    "updated_at": "2025-08-22T05:57:56.352Z",
-    "duration": 838042
+    "updated_at": "2025-08-22T06:09:26.727Z",
+    "duration": 838042,
+    "region": "Occitanie"
   },
   {
     "id": "504327b0-8eab-4e9d-9342-c53351a25364",
@@ -9024,5 +9024,39 @@
     "is_test_data": true,
     "created_at": "2025-08-22T05:59:22.653Z",
     "updated_at": "2025-08-22T05:59:22.695Z"
+  },
+  {
+    "id": "29883567-22c0-45b3-a26c-844ef7a7be10",
+    "session_id": "session_1755842934297_7ahnnu61o",
+    "user_id": null,
+    "ip_address": "109.17.150.48",
+    "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36 Edg/139.0.0.0",
+    "referrer": "https://365df2cf-1884-444c-a9e8-235602456363-00-37q39xpqlgvdy.janeway.replit.dev/__replco/workspace_iframe.html?initialPath=%2F&id=%3Arnu4%3A",
+    "language": "fr-FR",
+    "city": "Figeac",
+    "page_views": 0,
+    "is_bot": false,
+    "is_test_data": false,
+    "created_at": "2025-08-22T06:08:54.589Z",
+    "updated_at": "2025-08-22T06:10:08.585Z",
+    "duration": 422179,
+    "region": "Occitanie"
+  },
+  {
+    "id": "1bf3f716-dd5b-4706-a7f8-52a6a1db7526",
+    "session_id": "session_1755843022381_iag5rha0b",
+    "user_id": null,
+    "ip_address": "109.17.150.48",
+    "user_agent": "Mozilla/5.0 (iPhone; CPU iPhone OS 18_6_1 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148 Replit-Bonsai/2.147.2 (iOS 18.6.1)",
+    "referrer": "",
+    "language": "fr-FR",
+    "country": "Unknown",
+    "city": "Unknown",
+    "page_views": 0,
+    "is_bot": false,
+    "is_test_data": false,
+    "created_at": "2025-08-22T06:10:22.414Z",
+    "updated_at": "2025-08-22T06:10:24.725Z",
+    "duration": 838790
   }
 ]
