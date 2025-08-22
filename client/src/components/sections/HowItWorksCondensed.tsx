@@ -155,7 +155,7 @@ export function HowItWorksCondensed() {
                       }}
                     >
                       <div 
-                        className="h-full flex flex-col cursor-pointer relative px-2 pt-1 pb-2"
+                        className="h-full flex flex-col cursor-pointer relative px-2 pt-2 pb-2"
                         onClick={() => {
                           setFlippedCards(prev => {
                             const newSet = new Set(prev);
@@ -167,7 +167,7 @@ export function HowItWorksCondensed() {
                         
                         {/* Top Section - Text content area */}
                         <div className="text-center flex flex-col" style={{ height: '350px', position: 'relative' }}>
-                          <div className="text-sm leading-normal text-white w-full pt-2">
+                          <div className="text-sm leading-normal text-white w-full">
                             {(language === 'fr-FR' ? step.descriptionFr : step.descriptionEn).split('\n').map((paragraph, i) => (
                               <p key={i} className="mb-2 last:mb-0">{paragraph}</p>
                             ))}
