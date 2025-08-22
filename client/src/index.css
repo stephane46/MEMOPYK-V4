@@ -456,6 +456,13 @@ button, .play-button, .play-icon {
   padding: 2rem;
 }
 
+/* Orange price badge - force orange background */
+.price-badge-orange {
+  background-color: #D67C4A !important;
+  background: #D67C4A !important;
+  color: white !important;
+}
+
 /* Orange pulsing animation for video play buttons - DESKTOP ONLY */
 @media (min-width: 768px) {
   @keyframes pulse-orange {
