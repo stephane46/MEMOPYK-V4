@@ -465,6 +465,18 @@ button, .play-button, .play-icon {
   color: white !important;
 }
 
+/* Force zero spacing for flip card text */
+.flip-card-text-zero-spacing p {
+  margin: 0 !important;
+  padding: 0 !important;
+  line-height: 1.4 !important;
+}
+
+.flip-card-text-zero-spacing {
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
 /* Orange pulsing animation for video play buttons - DESKTOP ONLY */
 @media (min-width: 768px) {
   @keyframes pulse-orange {
