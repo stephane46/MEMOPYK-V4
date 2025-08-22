@@ -161,8 +161,9 @@ img, video, iframe, canvas, svg {
   cursor: not-allowed !important;
 }
 
-/* Target ONLY modal content, NOT overlay/backdrop */
-[data-radix-dialog-content] {
+/* Target ALL modal content elements, NOT overlay/backdrop */
+[data-radix-dialog-content],
+[role="dialog"] {
   background: white !important;
   background-color: white !important;
   background-image: none !important;
