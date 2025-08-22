@@ -161,16 +161,8 @@ img, video, iframe, canvas, svg {
   cursor: not-allowed !important;
 }
 
-/* NUCLEAR OPTION: Force all modal elements to white background */
-[data-radix-dialog-content],
-[data-radix-dialog-content] *:not(.bg-gray-900),
-div[role="dialog"],
-div[role="dialog"] *:not(.bg-gray-900),
-.dialog-content,
-.dialog-content *:not(.bg-gray-900),
-[data-state="open"][data-radix-dialog-content],
-.fixed.z-50.gap-4.bg-background,
-.grid.gap-4.py-4 {
+/* Target ONLY modal content, NOT overlay/backdrop */
+[data-radix-dialog-content] {
   background: white !important;
   background-color: white !important;
   background-image: none !important;
@@ -178,19 +170,10 @@ div[role="dialog"] *:not(.bg-gray-900),
   --tw-bg-opacity: 1 !important;
 }
 
-/* Ensure dialog overlay is properly opaque */
+/* Ensure dialog overlay stays dark */
 [data-radix-dialog-overlay] {
   background-color: rgba(0, 0, 0, 0.8) !important;
   backdrop-filter: blur(0px) !important;
-}
-
-/* FORCE white on any element that might be in the modal */
-.fixed[style*="left"],
-.fixed[style*="top"],
-.fixed.inset-0,
-.relative.z-50 {
-  background: white !important;
-  background-color: white !important;
 }
 
 /* Keep code sections with dark theme - be very specific */
@@ -208,20 +191,16 @@ div[role="dialog"] *:not(.bg-gray-900),
   background-color: white !important;
 }
 
-/* FINAL NUCLEAR ATTEMPT - custom class with maximum specificity */
-.modal-force-white,
-.modal-force-white *,
-.modal-force-white > *,
-.modal-force-white > * > *,
-.modal-force-white > * > * > * {
+/* Custom modal content class - precise targeting */
+.modal-force-white {
   background: #ffffff !important;
   background-color: #ffffff !important;
   background-image: none !important;
-  backdrop-filter: none !important;
   opacity: 1 !important;
   --tw-bg-opacity: 1 !important;
 }
 
+/* Preserve dark theme for code sections */
 .modal-force-white .bg-gray-900 {
   background: #111827 !important;
   background-color: #111827 !important;
