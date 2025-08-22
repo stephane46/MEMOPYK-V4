@@ -78,8 +78,8 @@ export function HowItWorksCondensed() {
           </h2>
           <p className="text-xl text-memopyk-dark-blue/70 max-w-3xl mx-auto">
             {language === 'fr-FR' 
-              ? '3 étapes pour transformer vos photos et vidéos en films personnalisés'
-              : 'Discover our simple 3-step process to transform your memories into exceptional films'
+              ? '3 étapes pour transformer vos photos et vidéos en films passionnants'
+              : '3 steps to turn your photos and videos into captivating movies'
             }
           </p>
         </div>
