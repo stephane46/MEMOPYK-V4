@@ -4750,6 +4750,190 @@ export async function registerRoutes(app: Express): Promise<void> {
     }
   });
 
+  // SEO Management API - Admin Authentication Required
+  const { seoService } = await import('./seo-service');
+  
+  // Simple admin authentication middleware
+  const requireAdmin = (req: any, res: any, next: any) => {
+    // For now, simple token check - can be enhanced later
+    const authHeader = req.headers.authorization;
+    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+      return res.status(401).json({ error: 'Authentication required' });
+    }
+    
+    // Simple check - in production this would validate against database
+    const token = authHeader.replace('Bearer ', '');
+    if (token !== 'admin-token-temp') {
+      return res.status(401).json({ error: 'Invalid authentication token' });
+    }
+    
+    req.adminUser = 'admin'; // Set admin user identifier
+    next();
+  };
+
+  // GET /api/admin/seo?lang=fr-FR|en-US → returns current SEO object
+  app.get("/api/admin/seo", requireAdmin, async (req, res) => {
+    try {
+      const lang = req.query.lang as 'fr-FR' | 'en-US';
+      
+      if (!lang || !['fr-FR', 'en-US'].includes(lang)) {
+        return res.status(400).json({ error: 'Invalid or missing lang parameter. Use fr-FR or en-US' });
+      }
+
+      const seoData = await seoService.getSeoSettings(lang);
+      res.json(seoData || {});
+      
+    } catch (error) {
+      console.error('Error fetching SEO settings:', error);
+      res.status(500).json({ error: 'Failed to fetch SEO settings' });
+    }
+  });
+
+  // POST /api/admin/seo → accepts SEO data and saves with validation
+  app.post("/api/admin/seo", requireAdmin, async (req, res) => {
+    try {
+      const { lang, changeReason, ...seoData } = req.body;
+      
+      if (!lang || !['fr-FR', 'en-US'].includes(lang)) {
+        return res.status(400).json({ error: 'Invalid or missing lang parameter. Use fr-FR or en-US' });
+      }
+
+      const dataToSave = { lang, ...seoData };
+      await seoService.saveSeoSettings(dataToSave, req.adminUser, changeReason);
+      
+      res.json({ 
+        success: true, 
+        message: 'SEO settings saved successfully',
+        lang,
+        savedBy: req.adminUser
+      });
+      
+    } catch (error: any) {
+      console.error('Error saving SEO settings:', error);
+      
+      if (error.name === 'ZodError') {
+        return res.status(400).json({ 
+          error: 'Validation failed', 
+          details: error.errors 
+        });
+      }
+      
+      res.status(500).json({ 
+        error: error.message || 'Failed to save SEO settings' 
+      });
+    }
+  });
+
+  // GET /api/admin/seo/preview?lang= → returns the raw head snippet as the server will inject it
+  app.get("/api/admin/seo/preview", requireAdmin, async (req, res) => {
+    try {
+      const lang = req.query.lang as 'fr-FR' | 'en-US';
+      
+      if (!lang || !['fr-FR', 'en-US'].includes(lang)) {
+        return res.status(400).json({ error: 'Invalid or missing lang parameter. Use fr-FR or en-US' });
+      }
+
+      const headHtml = await seoService.generateHeadPreview(lang);
+      
+      res.json({
+        lang,
+        headHtml,
+        generatedAt: new Date().toISOString()
+      });
+      
+    } catch (error) {
+      console.error('Error generating SEO preview:', error);
+      res.status(500).json({ error: 'Failed to generate SEO preview' });
+    }
+  });
+
+  // GET /api/admin/seo/history?lang= → returns version history
+  app.get("/api/admin/seo/history", requireAdmin, async (req, res) => {
+    try {
+      const lang = req.query.lang as 'fr-FR' | 'en-US';
+      
+      if (!lang || !['fr-FR', 'en-US'].includes(lang)) {
+        return res.status(400).json({ error: 'Invalid or missing lang parameter. Use fr-FR or en-US' });
+      }
+
+      const history = await seoService.getSeoHistory(lang);
+      
+      res.json({
+        lang,
+        history,
+        count: history.length
+      });
+      
+    } catch (error) {
+      console.error('Error fetching SEO history:', error);
+      res.status(500).json({ error: 'Failed to fetch SEO history' });
+    }
+  });
+
+  // POST /api/admin/seo/rollback → rollback to previous version
+  app.post("/api/admin/seo/rollback", requireAdmin, async (req, res) => {
+    try {
+      const { lang, version } = req.body;
+      
+      if (!lang || !['fr-FR', 'en-US'].includes(lang)) {
+        return res.status(400).json({ error: 'Invalid or missing lang parameter. Use fr-FR or en-US' });
+      }
+
+      if (!version || typeof version !== 'number') {
+        return res.status(400).json({ error: 'Invalid or missing version number' });
+      }
+
+      await seoService.rollbackToVersion(lang, version, req.adminUser);
+      
+      res.json({ 
+        success: true, 
+        message: `Rolled back to version ${version}`,
+        lang,
+        version,
+        rolledBackBy: req.adminUser
+      });
+      
+    } catch (error: any) {
+      console.error('Error rolling back SEO settings:', error);
+      res.status(500).json({ 
+        error: error.message || 'Failed to rollback SEO settings' 
+      });
+    }
+  });
+
+  // POST /api/admin/seo/publish?lang= → optional: generate/flush server template for that locale
+  app.post("/api/admin/seo/publish", requireAdmin, async (req, res) => {
+    try {
+      const lang = req.query.lang as 'fr-FR' | 'en-US';
+      
+      if (!lang || !['fr-FR', 'en-US'].includes(lang)) {
+        return res.status(400).json({ error: 'Invalid or missing lang parameter. Use fr-FR or en-US' });
+      }
+
+      // Generate preview to validate current settings
+      const headHtml = await seoService.generateHeadPreview(lang);
+      
+      // Create backup
+      const seoData = await seoService.getSeoSettings(lang);
+      if (seoData) {
+        await seoService.createBackup(seoData, req.adminUser);
+      }
+      
+      res.json({ 
+        success: true, 
+        message: 'SEO settings published successfully',
+        lang,
+        headHtml,
+        publishedBy: req.adminUser,
+        publishedAt: new Date().toISOString()
+      });
+      
+    } catch (error) {
+      console.error('Error publishing SEO settings:', error);
+      res.status(500).json({ error: 'Failed to publish SEO settings' });
+    }
+  });
+
   // Test Routes
   app.use('/test', testRoutes);
 }

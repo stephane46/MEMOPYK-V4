@@ -95,6 +95,7 @@ export const galleryItems = pgTable("gallery_items", {
   updatedAt: timestamp("updated_at").defaultNow()
 });
 
+
 // FAQ sections table - bilingual structure
 export const faqSections = pgTable("faq_sections", {
   id: varchar("id").primaryKey(),

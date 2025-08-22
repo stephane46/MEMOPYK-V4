@@ -9,11 +9,12 @@ import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
 import { Badge } from '@/components/ui/badge';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
-import { ArrowUp, ArrowDown, Play, RefreshCw, BarChart3, Video, HardDrive, Users, MessageSquare, FileText, LogOut, TestTube, Rocket, X, Type, Save, Palette, ChevronUp, ChevronDown, Trash2, Eye, EyeOff, Upload, FileVideo, Database, Check, Zap, Search, Monitor, Tablet, Smartphone, Clock, TrendingUp } from 'lucide-react';
+import { ArrowUp, ArrowDown, Play, RefreshCw, BarChart3, Video, HardDrive, Users, MessageSquare, FileText, LogOut, TestTube, Rocket, X, Type, Save, Palette, ChevronUp, ChevronDown, Trash2, Eye, EyeOff, Upload, FileVideo, Database, Check, Zap, Search, Monitor, Tablet, Smartphone, Clock, TrendingUp, Globe } from 'lucide-react';
 import { formatFrenchDateTime } from '@/utils/date-format';
 import { useToast } from '@/hooks/use-toast';
 import GalleryManagementNew from '@/components/admin/GalleryManagementNew';
 import FormatBadgeManager from '@/components/admin/FormatBadgeManager';
+import SeoManagement from '@/components/admin/SeoManagement';
 
 import FAQManagementWorking from '@/components/admin/FAQManagementWorking';
 import { LegalDocumentManagement } from '@/components/admin/LegalDocumentManagement';
@@ -235,6 +236,7 @@ export default function AdminPage() {
     { id: 'hero-management', label: 'Vidéos Hero', icon: Video },
     { id: 'gallery', label: 'Galerie Vidéos', icon: Play },
     { id: 'cache', label: 'Cache', icon: HardDrive },
+    { id: 'seo', label: 'SEO Management', icon: Globe },
     { id: 'faq', label: 'FAQ', icon: MessageSquare },
     { id: 'cta', label: 'Boutons CTA', icon: Zap },
     { id: 'legal-docs', label: 'Documents Légaux', icon: FileText },
@@ -1694,6 +1696,13 @@ export default function AdminPage() {
 
 
 
+
+          {/* SEO Management */}
+          {activeSection === 'seo' && (
+            <div className="space-y-6">
+              <SeoManagement />
+            </div>
+          )}
 
           {/* FAQ */}
           {activeSection === 'faq' && (
