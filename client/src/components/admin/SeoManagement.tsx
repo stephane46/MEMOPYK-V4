@@ -335,14 +335,22 @@ export default function SeoManagement() {
               {/* Search Engine Controls */}
               <div className="space-y-4">
                 <div className="flex items-start space-x-3 p-3 border rounded-lg">
-                  <Switch
-                    checked={formState.robotsIndex}
-                    onCheckedChange={(checked) => setFormState(prev => ({ ...prev, robotsIndex: checked }))}
-                    className="mt-1 seo-switch"
-                    data-state={formState.robotsIndex ? "checked" : "unchecked"}
-                  />
-                  <div className="space-y-1">
-                    <Label className="text-sm font-medium">
+                  <div className="flex-shrink-0 mt-1">
+                    <Switch
+                      checked={formState.robotsIndex}
+                      onCheckedChange={(checked) => {
+                        console.log('Index switch clicked:', checked);
+                        setFormState(prev => ({ ...prev, robotsIndex: checked }));
+                      }}
+                      className="seo-switch"
+                      data-state={formState.robotsIndex ? "checked" : "unchecked"}
+                    />
+                  </div>
+                  <div className="space-y-1 flex-1">
+                    <Label className="text-sm font-medium cursor-pointer" onClick={() => {
+                      console.log('Index label clicked');
+                      setFormState(prev => ({ ...prev, robotsIndex: !prev.robotsIndex }));
+                    }}>
                       Allow search engine indexing 
                       <span className={`ml-2 text-xs px-2 py-1 rounded ${
                         formState.robotsIndex 
@@ -362,14 +370,22 @@ export default function SeoManagement() {
                 </div>
                 
                 <div className="flex items-start space-x-3 p-3 border rounded-lg">
-                  <Switch
-                    checked={formState.robotsFollow}
-                    onCheckedChange={(checked) => setFormState(prev => ({ ...prev, robotsFollow: checked }))}
-                    className="mt-1 seo-switch"
-                    data-state={formState.robotsFollow ? "checked" : "unchecked"}
-                  />
-                  <div className="space-y-1">
-                    <Label className="text-sm font-medium">
+                  <div className="flex-shrink-0 mt-1">
+                    <Switch
+                      checked={formState.robotsFollow}
+                      onCheckedChange={(checked) => {
+                        console.log('Follow switch clicked:', checked);
+                        setFormState(prev => ({ ...prev, robotsFollow: checked }));
+                      }}
+                      className="seo-switch"
+                      data-state={formState.robotsFollow ? "checked" : "unchecked"}
+                    />
+                  </div>
+                  <div className="space-y-1 flex-1">
+                    <Label className="text-sm font-medium cursor-pointer" onClick={() => {
+                      console.log('Follow label clicked');
+                      setFormState(prev => ({ ...prev, robotsFollow: !prev.robotsFollow }));
+                    }}>
                       Allow link following
                       <span className={`ml-2 text-xs px-2 py-1 rounded ${
                         formState.robotsFollow 
