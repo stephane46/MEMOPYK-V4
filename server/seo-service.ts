@@ -172,30 +172,30 @@ export class SeoService {
       if (settings.length > 0) {
         const setting = settings[0];
         // Extract data based on language
-        const langSuffix = lang === 'fr-FR' ? 'Fr' : 'En';
+        const isFrench = lang === 'fr-FR';
         
         return {
           lang,
-          title: setting[`metaTitle${langSuffix}` as keyof typeof setting] as string || undefined,
-          description: setting[`metaDescription${langSuffix}` as keyof typeof setting] as string || undefined,
+          title: (isFrench ? setting.metaTitleFr : setting.metaTitleEn) || undefined,
+          description: (isFrench ? setting.metaDescriptionFr : setting.metaDescriptionEn) || undefined,
           canonical: setting.canonicalUrl || undefined,
-          keywords: setting[`metaKeywords${langSuffix}` as keyof typeof setting] as string || undefined,
+          keywords: (isFrench ? setting.metaKeywordsFr : setting.metaKeywordsEn) || undefined,
           robotsIndex: setting.robotsIndex ?? true,
           robotsFollow: setting.robotsFollow ?? true,
           robotsNoArchive: setting.robotsNoArchive ?? false,
           robotsNoSnippet: setting.robotsNoSnippet ?? false,
           jsonLd: setting.jsonLd ? JSON.stringify(setting.jsonLd) : undefined,
           openGraph: {
-            title: setting[`ogTitle${langSuffix}` as keyof typeof setting] as string || undefined,
-            description: setting[`ogDescription${langSuffix}` as keyof typeof setting] as string || undefined,
+            title: (isFrench ? setting.ogTitleFr : setting.ogTitleEn) || undefined,
+            description: (isFrench ? setting.ogDescriptionFr : setting.ogDescriptionEn) || undefined,
             image: setting.ogImageUrl || undefined,
             type: setting.ogType || 'website',
             url: setting.canonicalUrl || undefined
           },
           twitter: {
             card: setting.twitterCard || 'summary_large_image',
-            title: setting[`twitterTitle${langSuffix}` as keyof typeof setting] as string || undefined,
-            description: setting[`twitterDescription${langSuffix}` as keyof typeof setting] as string || undefined,
+            title: (isFrench ? setting.twitterTitleFr : setting.twitterTitleEn) || undefined,
+            description: (isFrench ? setting.twitterDescriptionFr : setting.twitterDescriptionEn) || undefined,
             image: setting.twitterImageUrl || undefined
           }
         };
@@ -243,17 +243,10 @@ export class SeoService {
 
       // Prepare data for database
       const now = new Date();
-      const langSuffix = sanitizedData.lang === 'fr-FR' ? 'Fr' : 'En';
       
-      const settingsData = {
+      // Create base settings object
+      const settingsData: any = {
         page: 'home', // Default to home page
-        [`metaTitle${langSuffix}`]: sanitizedData.title || null,
-        [`metaDescription${langSuffix}`]: sanitizedData.description || null,
-        [`metaKeywords${langSuffix}`]: sanitizedData.keywords || null,
-        [`ogTitle${langSuffix}`]: sanitizedData.openGraph?.title || null,
-        [`ogDescription${langSuffix}`]: sanitizedData.openGraph?.description || null,
-        [`twitterTitle${langSuffix}`]: sanitizedData.twitter?.title || null,
-        [`twitterDescription${langSuffix}`]: sanitizedData.twitter?.description || null,
         canonicalUrl: sanitizedData.canonical || null,
         robotsIndex: sanitizedData.robotsIndex,
         robotsFollow: sanitizedData.robotsFollow,
@@ -266,6 +259,25 @@ export class SeoService {
         jsonLd: sanitizedData.jsonLd ? JSON.parse(sanitizedData.jsonLd) : null,
         updatedAt: now
       };
+
+      // Set language-specific fields
+      if (sanitizedData.lang === 'fr-FR') {
+        settingsData.metaTitleFr = sanitizedData.title || null;
+        settingsData.metaDescriptionFr = sanitizedData.description || null;
+        settingsData.metaKeywordsFr = sanitizedData.keywords || null;
+        settingsData.ogTitleFr = sanitizedData.openGraph?.title || null;
+        settingsData.ogDescriptionFr = sanitizedData.openGraph?.description || null;
+        settingsData.twitterTitleFr = sanitizedData.twitter?.title || null;
+        settingsData.twitterDescriptionFr = sanitizedData.twitter?.description || null;
+      } else {
+        settingsData.metaTitleEn = sanitizedData.title || null;
+        settingsData.metaDescriptionEn = sanitizedData.description || null;
+        settingsData.metaKeywordsEn = sanitizedData.keywords || null;
+        settingsData.ogTitleEn = sanitizedData.openGraph?.title || null;
+        settingsData.ogDescriptionEn = sanitizedData.openGraph?.description || null;
+        settingsData.twitterTitleEn = sanitizedData.twitter?.title || null;
+        settingsData.twitterDescriptionEn = sanitizedData.twitter?.description || null;
+      }
 
       // Check if record exists for this page
       const existingRecord = await db
