@@ -161,11 +161,21 @@ img, video, iframe, canvas, svg {
   cursor: not-allowed !important;
 }
 
-/* Fix modal/dialog backgrounds - ensure entire modal is solid white */
-[data-radix-dialog-content] {
+/* NUCLEAR OPTION: Force all modal elements to white background */
+[data-radix-dialog-content],
+[data-radix-dialog-content] *:not(.bg-gray-900),
+div[role="dialog"],
+div[role="dialog"] *:not(.bg-gray-900),
+.dialog-content,
+.dialog-content *:not(.bg-gray-900),
+[data-state="open"][data-radix-dialog-content],
+.fixed.z-50.gap-4.bg-background,
+.grid.gap-4.py-4 {
   background: white !important;
   background-color: white !important;
+  background-image: none !important;
   opacity: 1 !important;
+  --tw-bg-opacity: 1 !important;
 }
 
 /* Ensure dialog overlay is properly opaque */
@@ -174,19 +184,46 @@ img, video, iframe, canvas, svg {
   backdrop-filter: blur(0px) !important;
 }
 
-/* Target all possible dialog content variations */
-div[role="dialog"] {
-  background-color: #ffffff !important;
-  background: #ffffff !important;
+/* FORCE white on any element that might be in the modal */
+.fixed[style*="left"],
+.fixed[style*="top"],
+.fixed.inset-0,
+.relative.z-50 {
+  background: white !important;
+  background-color: white !important;
 }
 
-.dialog-content {
-  background-color: #ffffff !important;
-  background: #ffffff !important;
+/* Keep code sections with dark theme - be very specific */
+.bg-gray-900,
+.bg-gray-900.text-green-400 {
+  background-color: #111827 !important;
+  background: #111827 !important;
 }
 
-/* Keep code sections with dark theme */
-.bg-gray-900 {
+/* Override any potential shadcn/ui dialog styling */
+.bg-background,
+.bg-card,
+.bg-popover {
+  background: white !important;
+  background-color: white !important;
+}
+
+/* FINAL NUCLEAR ATTEMPT - custom class with maximum specificity */
+.modal-force-white,
+.modal-force-white *,
+.modal-force-white > *,
+.modal-force-white > * > *,
+.modal-force-white > * > * > * {
+  background: #ffffff !important;
+  background-color: #ffffff !important;
+  background-image: none !important;
+  backdrop-filter: none !important;
+  opacity: 1 !important;
+  --tw-bg-opacity: 1 !important;
+}
+
+.modal-force-white .bg-gray-900 {
+  background: #111827 !important;
   background-color: #111827 !important;
 }
 

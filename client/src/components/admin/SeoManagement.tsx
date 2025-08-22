@@ -930,7 +930,14 @@ const SeoManagement: React.FC = () => {
 
       {/* Preview Dialog */}
       <Dialog open={showPreview} onOpenChange={setShowPreview}>
-        <DialogContent className="max-w-4xl max-h-[80vh] overflow-auto dialog-content" style={{ backgroundColor: '#ffffff' }}>
+        <DialogContent 
+          className="max-w-4xl max-h-[80vh] overflow-auto dialog-content modal-force-white" 
+          style={{ 
+            backgroundColor: '#ffffff',
+            background: '#ffffff',
+            opacity: '1'
+          }}
+        >
           <DialogHeader>
             <DialogTitle>SEO Preview - {currentLang}</DialogTitle>
             <DialogDescription>
