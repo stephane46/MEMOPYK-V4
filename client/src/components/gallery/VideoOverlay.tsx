@@ -142,35 +142,25 @@ export default function VideoOverlay({
       
       return { width: containerWidth, height: containerHeight };
     } else {
-      // DESKTOP: Use the larger dimension constraint (90% of viewport) for better viewing
-      const maxWidth = (window.innerWidth * viewportRatio) / 100;
+      // DESKTOP: Constrain by HEIGHT (90% of viewport height) since desktop screens are landscape
       const maxHeight = (window.innerHeight * viewportRatio) / 100;
       const aspectRatio = width / height;
+      const containerHeight = maxHeight;
+      const containerWidth = containerHeight * aspectRatio;
       
-      // Calculate dimensions that fit within both constraints
-      let containerWidth = maxWidth;
-      let containerHeight = containerWidth / aspectRatio;
-      
-      // If height exceeds limit, constrain by height instead
-      if (containerHeight > maxHeight) {
-        containerHeight = maxHeight;
-        containerWidth = containerHeight * aspectRatio;
-      }
-      
-      console.log(`🎬 ${orientation.toUpperCase()} VIDEO - DESKTOP OPTIMIZED (90% VIEWPORT):`, {
+      console.log(`🎬 ${orientation.toUpperCase()} VIDEO - DESKTOP HEIGHT CONSTRAINED (90% VIEWPORT):`, {
         title,
         orientation,
         screenWidth: window.innerWidth,
         screenHeight: window.innerHeight,
         viewportRatio,
-        maxWidth,
         maxHeight,
         containerWidth,
         containerHeight,
         aspectRatio,
         videoWidth: width,
         videoHeight: height,
-        constraint: 'desktop dual-constraint (90% of both width and height)'
+        constraint: 'desktop height-based (90% of viewport height)'
       });
       
       return { width: containerWidth, height: containerHeight };
