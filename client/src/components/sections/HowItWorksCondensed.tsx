@@ -129,12 +129,18 @@ export function HowItWorksCondensed() {
                     </div>
                       
                     {/* BACK SIDE - Detailed Information */}
-                    <div className="card-back shadow-lg hover:shadow-2xl rounded-2xl overflow-hidden border border-gray-200" style={{
-                      backgroundImage: `linear-gradient(135deg, rgba(214, 124, 74, 0.85) 0%, rgba(42, 71, 89, 0.85) 100%), url(${step.image})`,
-                      backgroundSize: 'cover',
-                      backgroundPosition: 'center',
-                      backgroundRepeat: 'no-repeat'
-                    }}>
+                    <div 
+                      className="card-back shadow-lg hover:shadow-2xl rounded-2xl overflow-hidden border border-gray-200"
+                      style={{
+                        // Mobile-specific styling: add image background to match desktop
+                        backgroundImage: window.innerWidth <= 768 ? 
+                          `linear-gradient(135deg, rgba(214, 124, 74, 0.85) 0%, rgba(42, 71, 89, 0.85) 100%), url(${step.image})` : 
+                          undefined,
+                        backgroundSize: window.innerWidth <= 768 ? 'cover' : undefined,
+                        backgroundPosition: window.innerWidth <= 768 ? 'center' : undefined,
+                        backgroundRepeat: window.innerWidth <= 768 ? 'no-repeat' : undefined
+                      }}
+                    >
                       <div 
                         className="h-full flex flex-col justify-center items-center text-center p-8 cursor-pointer relative"
                         onClick={() => {
