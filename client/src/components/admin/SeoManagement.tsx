@@ -90,12 +90,24 @@ const SeoManagement: React.FC = () => {
   const form = useForm<SeoFormData>({
     resolver: zodResolver(seoFormSchema),
     defaultValues: {
+      title: '',
+      description: '',
+      canonical: '',
+      keywords: '',
       robotsIndex: true,
       robotsFollow: true,
       robotsNoArchive: false,
       robotsNoSnippet: false,
+      jsonLd: '',
+      'openGraph.title': '',
+      'openGraph.description': '',
+      'openGraph.image': '',
       'openGraph.type': 'website',
+      'openGraph.url': '',
       'twitter.card': 'summary_large_image',
+      'twitter.title': '',
+      'twitter.description': '',
+      'twitter.image': '',
     },
   });
 
@@ -151,14 +163,22 @@ const SeoManagement: React.FC = () => {
         };
         
         console.log('🔍 SEO LOAD DEBUG - Form Data Before Reset:', formData);
-        form.reset(formData);
+        
+        // Use form.reset() with keepDefaultValues: false to force complete reset
+        form.reset(formData, { keepDefaultValues: false });
         
         // Additional debug after reset
         setTimeout(() => {
-          console.log('🔍 SEO LOAD DEBUG - Form Values After Reset:', {
+          const afterResetValues = {
             title: form.getValues('title'),
             description: form.getValues('description'),
             keywords: form.getValues('keywords')
+          };
+          console.log('🔍 SEO LOAD DEBUG - Form Values After Reset:', afterResetValues);
+          console.log('🔍 SEO LOAD DEBUG - Form Watch Values:', {
+            title: form.watch('title'),
+            description: form.watch('description'),
+            keywords: form.watch('keywords')
           });
         }, 100);
 
