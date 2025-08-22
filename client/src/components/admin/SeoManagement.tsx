@@ -945,7 +945,14 @@ const SeoManagement: React.FC = () => {
 
       {/* History Dialog */}
       <Dialog open={showHistory} onOpenChange={setShowHistory}>
-        <DialogContent className="max-w-2xl max-h-[80vh] overflow-auto dialog-content" style={{ backgroundColor: '#ffffff' }}>
+        <DialogContent 
+          className="max-w-2xl max-h-[80vh] overflow-auto dialog-content modal-force-white" 
+          style={{ 
+            backgroundColor: '#ffffff',
+            background: '#ffffff',
+            opacity: '1'
+          }}
+        >
           <DialogHeader>
             <DialogTitle>SEO History - {currentLang}</DialogTitle>
             <DialogDescription>
