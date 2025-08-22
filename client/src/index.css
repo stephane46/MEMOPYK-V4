@@ -85,6 +85,30 @@ img, video, iframe, canvas, svg {
   border-color: #2A4759 !important;
 }
 
+/* Language Switcher Forced Styles - Override everything */
+.language-button-active {
+  background-color: #f97316 !important;
+  color: #ffffff !important;
+  border: none !important;
+  opacity: 1 !important;
+  font-weight: bold !important;
+  text-decoration: none !important;
+}
+
+.language-button-inactive {
+  background-color: #ffffff !important;
+  color: #000000 !important;
+  border: none !important;
+  opacity: 1 !important;
+  font-weight: bold !important;
+  text-decoration: none !important;
+}
+
+.language-button-inactive:hover {
+  background-color: #f5f5f5 !important;
+  color: #000000 !important;
+}
+
 /* How It Works Cards - Scrollable text areas with subtle styling */
 .how-it-works-text {
   line-height: 1.2 !important;

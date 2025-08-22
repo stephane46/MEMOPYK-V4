@@ -237,27 +237,17 @@ export default function SeoManagement() {
           <div className="inline-flex rounded-lg border border-gray-300 dark:border-gray-600 overflow-hidden">
             <button
               onClick={() => setCurrentLanguage('fr')}
-              className="px-4 py-2 text-sm font-bold border-none"
-              style={{
-                backgroundColor: currentLanguage === 'fr' ? '#f97316' : '#ffffff',
-                color: currentLanguage === 'fr' ? '#ffffff' : '#000000',
-                borderColor: 'transparent',
-                textDecoration: 'none',
-                opacity: 1
-              } as React.CSSProperties}
+              className={`px-4 py-2 text-sm rounded-l-lg ${
+                currentLanguage === 'fr' ? 'language-button-active' : 'language-button-inactive'
+              }`}
             >
               FR /fr
             </button>
             <button
               onClick={() => setCurrentLanguage('en')}
-              className="px-4 py-2 text-sm font-bold border-none border-l border-gray-300"
-              style={{
-                backgroundColor: currentLanguage === 'en' ? '#f97316' : '#ffffff',
-                color: currentLanguage === 'en' ? '#ffffff' : '#000000',
-                borderColor: 'transparent',
-                textDecoration: 'none',
-                opacity: 1
-              } as React.CSSProperties}
+              className={`px-4 py-2 text-sm rounded-r-lg border-l border-gray-300 ${
+                currentLanguage === 'en' ? 'language-button-active' : 'language-button-inactive'
+              }`}
             >
               US /en
             </button>
