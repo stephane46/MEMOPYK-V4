@@ -272,15 +272,23 @@ div[style*="position: fixed"][style*="top: 0"][style*="left: 0"] > div[style*="b
   background: #ffffff !important;
 }
 
-/* Analytics modal white background - transparency issue needs further investigation */
+/* FORCE OPAQUE WHITE BACKGROUND FOR ANALYTICS MODAL */
 .analytics-modal-content,
 div.analytics-modal-content,
 [data-testid="analytics-visitor-modal"] {
-  background-color: rgba(255, 255, 255, 1.0) !important;
-  background: rgba(255, 255, 255, 1.0) !important;
+  background-color: #ffffff !important;
+  background: #ffffff !important;
   background-image: none !important;
   opacity: 1 !important;
   backdrop-filter: none !important;
+  filter: none !important;
+  transform: none !important;
+  isolation: isolate !important;
+  will-change: auto !important;
+  /* Force the element to be on its own layer */
+  backface-visibility: hidden !important;
+  /* Prevent any inheritance of transparency */
+  mix-blend-mode: normal !important;
 }
 
 [data-radix-popper-content-wrapper] > div {

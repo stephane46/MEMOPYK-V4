@@ -118,10 +118,10 @@ export function FlipCard({ frontContent, className = "", visitors = [] }: Visito
           {/* MODAL CONTENT WITH PURE WHITE BACKGROUND */}
           <div
             style={{
-              backgroundColor: 'rgba(255, 255, 255, 1.0)',
-              background: 'rgba(255, 255, 255, 1.0)',
+              backgroundColor: '#ffffff',
+              background: '#ffffff',
               backgroundImage: 'none',
-              opacity: 1,
+              opacity: '1',
               borderRadius: '12px',
               maxWidth: '600px',
               width: '100%',
@@ -129,7 +129,13 @@ export function FlipCard({ frontContent, className = "", visitors = [] }: Visito
               overflowY: 'auto',
               position: 'relative',
               boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)',
-              border: '1px solid #e5e7eb'
+              border: '1px solid #e5e7eb',
+              transform: 'none',
+              filter: 'none',
+              isolation: 'isolate',
+              willChange: 'auto',
+              backfaceVisibility: 'hidden',
+              mixBlendMode: 'normal'
             }}
             className="analytics-modal-content"
             data-testid="analytics-visitor-modal"
