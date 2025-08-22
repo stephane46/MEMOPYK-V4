@@ -59,13 +59,9 @@ export function HeroVideoSection() {
 
   // Auto-advance to next video when current video ends
   const handleVideoEnded = () => {
-    console.log(`🎬 handleVideoEnded called - activeVideos.length: ${activeVideos.length}, currentIndex: ${currentVideoIndex}`);
     if (activeVideos.length > 1) {
       const nextIndex = (currentVideoIndex + 1) % activeVideos.length;
-      console.log(`🎬 Advancing to next hero video: ${currentVideoIndex} → ${nextIndex}`);
       setCurrentVideoIndex(nextIndex);
-    } else {
-      console.log(`🎬 Only one hero video, not advancing`);
     }
   };
 
@@ -73,8 +69,6 @@ export function HeroVideoSection() {
 
   // Reset video index when videos change
   useEffect(() => {
-    console.log(`🎬 HERO CAROUSEL: Found ${activeVideos.length} active videos`, activeVideos.map(v => v.url_en));
-    console.log(`🎬 HERO CAROUSEL: Navigation controls will ${activeVideos.length > 1 ? 'show' : 'be hidden'}`);
     setCurrentVideoIndex(0);
   }, [activeVideos.length]);
 
@@ -84,7 +78,6 @@ export function HeroVideoSection() {
 
   // Handle video navigation
   const goToVideo = (index: number) => {
-    console.log(`🎬 Manually switching to hero video ${index + 1} (${activeVideos[index]?.url_en})`);
     setCurrentVideoIndex(index);
   };
 
@@ -191,10 +184,10 @@ export function HeroVideoSection() {
             }
           }}
           onLoadStart={() => {
-            console.log(`🎬 Hero video loading: ${videoUrl} (${currentVideoIndex + 1}/${activeVideos.length})`);
+            // Video loading started
           }}
           onPlay={() => {
-            console.log(`🎬 Hero video playing: ${videoUrl} (${currentVideoIndex + 1}/${activeVideos.length})`);
+            // Video playback started
           }}
         >
           <source src={`/api/video-proxy?filename=${videoUrl}`} type="video/mp4" />
