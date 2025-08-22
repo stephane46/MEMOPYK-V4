@@ -166,7 +166,7 @@ export function HowItWorksCondensed() {
                       >
                         
                         {/* Top Section - Main Description - EXACT HEIGHT FOR ALL CARDS */}
-                        <div className="text-center h-72 flex flex-col justify-between pt-2 pb-2">
+                        <div className="text-center h-72 flex flex-col justify-between pt-1 pb-2">
                           <div className="text-sm leading-normal text-white w-full">
                             {(language === 'fr-FR' ? step.descriptionFr : step.descriptionEn).split('\n').map((paragraph, i) => (
                               <p key={i} className="mb-2 last:mb-0">{paragraph}</p>
