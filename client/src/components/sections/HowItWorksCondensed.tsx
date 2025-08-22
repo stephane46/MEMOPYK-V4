@@ -129,7 +129,9 @@ export function HowItWorksCondensed() {
                     </div>
                       
                     {/* BACK SIDE - Detailed Information */}
-                    <div className="card-back shadow-lg hover:shadow-2xl rounded-2xl overflow-hidden border border-gray-200">
+                    <div className="card-back shadow-lg hover:shadow-2xl rounded-2xl overflow-hidden border border-gray-200" style={{
+                      background: 'linear-gradient(135deg, #D67C4A 0%, #2A4759 100%)'
+                    }}>
                       <div 
                         className="h-full flex flex-col justify-center items-center text-center p-8 cursor-pointer relative"
                         onClick={() => {
