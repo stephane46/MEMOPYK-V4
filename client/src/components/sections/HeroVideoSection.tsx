@@ -309,7 +309,7 @@ export function HeroVideoSection() {
           <div className="flex justify-center items-center mt-4 sm:mt-6 lg:mt-8">
             <Button 
               size="default" 
-              className="inline-flex items-center gap-2 bg-memopyk-orange hover:bg-memopyk-dark-blue text-white px-6 py-3 rounded-full font-medium text-base transition-all duration-300 transform hover:scale-105 shadow-lg cursor-pointer"
+              className="relative inline-flex items-center gap-2 bg-memopyk-orange hover:bg-memopyk-dark-blue text-white px-8 py-4 rounded-full font-semibold text-lg transition-all duration-300 transform hover:scale-105 shadow-2xl cursor-pointer border-2 border-white/20 backdrop-blur-sm overflow-hidden group"
               onClick={() => {
                 const element = document.getElementById('how-it-works');
                 if (element) {
@@ -324,7 +324,17 @@ export function HeroVideoSection() {
                 }
               }}
             >
-{language === 'fr-FR' ? 'Comment ça marche' : 'How it works'}
+              {/* Orange pill overlay effect */}
+              <div className="absolute inset-0 bg-gradient-to-r from-memopyk-orange via-memopyk-orange to-orange-400 opacity-90 rounded-full"></div>
+              <div className="absolute inset-0 bg-white/10 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+              
+              {/* Button content */}
+              <span className="relative z-10 font-semibold tracking-wide">
+                {language === 'fr-FR' ? 'Comment ça marche' : 'How it works'}
+              </span>
+              
+              {/* Animated shine effect */}
+              <div className="absolute inset-0 -translate-x-full group-hover:translate-x-full transition-transform duration-1000 bg-gradient-to-r from-transparent via-white/20 to-transparent rounded-full"></div>
             </Button>
           </div>
         </div>
