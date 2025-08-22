@@ -75,8 +75,13 @@ export default function SeoManagement() {
 
   // Fetch SEO settings for selected page - FIXED: using correct API endpoint
   const { data: seoSettings, isLoading: settingsLoading } = useQuery({
-    queryKey: ['/api/seo', selectedPage, Date.now()],
-    queryFn: () => apiRequest('/api/seo', 'GET')
+    queryKey: ['/api/seo'],
+    queryFn: () => apiRequest('/api/seo', 'GET'),
+    staleTime: 30000, // Cache for 30 seconds
+    refetchInterval: false,
+    refetchOnWindowFocus: false,
+    refetchOnMount: false,
+    refetchOnReconnect: false
   });
 
   // Note: Global SEO settings will be implemented when needed
@@ -151,10 +156,10 @@ export default function SeoManagement() {
     robotsFollow: true
   });
 
-  // Update form state when settings change
+  // Update form state when settings change - but only when they actually change
   React.useEffect(() => {
-    if (currentSettings) {
-      setFormState({
+    if (currentSettings && selectedPage) {
+      const newFormState = {
         metaTitleEn: currentSettings.metaTitleEn || '',
         metaTitleFr: currentSettings.metaTitleFr || '',
         metaDescriptionEn: currentSettings.metaDescriptionEn || '',
@@ -163,9 +168,17 @@ export default function SeoManagement() {
         urlSlugFr: currentSettings.urlSlugFr || '/fr-FR',
         robotsIndex: currentSettings.robotsIndex !== false,
         robotsFollow: currentSettings.robotsFollow !== false
+      };
+      
+      // Only update if there's an actual change to prevent infinite loops
+      setFormState(prev => {
+        const hasChanged = Object.keys(newFormState).some(key => 
+          prev[key] !== newFormState[key]
+        );
+        return hasChanged ? newFormState : prev;
       });
     }
-  }, [currentSettings]);
+  }, [currentSettings, selectedPage]);
 
   const handleSave = () => {
     saveSeoMutation.mutate(formState);
