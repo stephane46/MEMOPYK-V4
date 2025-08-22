@@ -325,7 +325,7 @@ export function HeroVideoSection() {
               }}
             >
               {/* Orange pill overlay effect */}
-              <div className="absolute inset-0 bg-gradient-to-r from-memopyk-orange via-memopyk-orange to-orange-400 opacity-90 rounded-full"></div>
+              <div className="absolute inset-0 bg-memopyk-orange rounded-full"></div>
               <div className="absolute inset-0 bg-white/10 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
               
               {/* Button content */}
@@ -334,7 +334,7 @@ export function HeroVideoSection() {
               </span>
               
               {/* Animated shine effect */}
-              <div className="absolute inset-0 -translate-x-full group-hover:translate-x-full transition-transform duration-1000 bg-gradient-to-r from-transparent via-white/20 to-transparent rounded-full"></div>
+              <div className="absolute inset-0 -translate-x-full group-hover:translate-x-full transition-transform duration-1000 bg-white/20 rounded-full"></div>
             </Button>
           </div>
         </div>
