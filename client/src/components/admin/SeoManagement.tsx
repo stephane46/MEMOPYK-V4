@@ -227,7 +227,7 @@ export default function SeoManagement() {
     <div className="space-y-6">
       <div className="mb-6">
         <h2 className="text-2xl font-bold text-gray-900 dark:text-white">SEO Management</h2>
-        <p className="text-gray-600 dark:text-gray-400">Optimize your website's search engine visibility with comprehensive SEO tools</p>
+        <p className="text-gray-800 dark:text-gray-200">Optimize your website's search engine visibility with comprehensive SEO tools</p>
       </div>
 
       {/* Language Switcher - Moved to top */}
@@ -242,7 +242,7 @@ export default function SeoManagement() {
               className={`flex-1 py-3 px-4 rounded-md text-sm font-medium transition-all duration-200 ${
                 currentLanguage === 'fr'
                   ? 'bg-orange-500 text-white shadow-lg transform scale-105'
-                  : 'text-gray-600 dark:text-gray-400 hover:bg-white hover:shadow-sm'
+                  : 'text-gray-700 dark:text-gray-300 hover:bg-white hover:shadow-sm'
               }`}
             >
               FR /fr
@@ -252,7 +252,7 @@ export default function SeoManagement() {
               className={`flex-1 py-3 px-4 rounded-md text-sm font-medium transition-all duration-200 ${
                 currentLanguage === 'en'
                   ? 'bg-orange-500 text-white shadow-lg transform scale-105'
-                  : 'text-gray-600 dark:text-gray-400 hover:bg-white hover:shadow-sm'
+                  : 'text-gray-700 dark:text-gray-300 hover:bg-white hover:shadow-sm'
               }`}
             >
               US /en
@@ -260,7 +260,7 @@ export default function SeoManagement() {
           </div>
           
           <div className="flex items-center justify-between">
-            <span className="text-sm text-gray-600">Language versions</span>
+            <span className="text-sm text-gray-800 dark:text-gray-200">Language versions</span>
             <span className="text-xs text-orange-600 font-medium">Switch between French and English content</span>
           </div>
         </CardContent>
@@ -344,7 +344,7 @@ export default function SeoManagement() {
                   />
                   <div className="space-y-1">
                     <Label className="text-sm font-medium">Allow search engine indexing</Label>
-                    <p className="text-xs text-gray-500">Let Google, Bing, and other search engines find and display this page in search results</p>
+                    <p className="text-xs text-gray-700 dark:text-gray-300">Let Google, Bing, and other search engines find and display this page in search results</p>
                   </div>
                 </div>
                 
@@ -356,7 +356,7 @@ export default function SeoManagement() {
                   />
                   <div className="space-y-1">
                     <Label className="text-sm font-medium">Allow link following</Label>
-                    <p className="text-xs text-gray-500">Let search engines follow links on this page to discover other pages on your site</p>
+                    <p className="text-xs text-gray-700 dark:text-gray-300">Let search engines follow links on this page to discover other pages on your site</p>
                   </div>
                 </div>
                 
@@ -433,7 +433,7 @@ export default function SeoManagement() {
                     <p className="text-gray-600 text-sm">
                       {getCurrentDescription()}
                     </p>
-                    <div className="text-xs text-gray-500">
+                    <div className="text-xs text-gray-700 dark:text-gray-300">
                       💡 Title &gt; 60 characters
                     </div>
                   </div>

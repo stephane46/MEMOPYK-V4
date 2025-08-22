@@ -8,6 +8,7 @@ Preferred communication style: Simple, everyday language.
 Visual consistency priority: Extremely detail-oriented about spacing and formatting consistency between admin interface and published pages.
 Analytics interface: Expects all three filter buttons (7d, 30d, 90d) to be visible with proper orange highlighting for active states.
 Language detection priority: Fixed primary browser language detection with console testing capability. Enhanced cross-device compatibility prevents English users overseas from seeing French content by checking ONLY the first browser language preference.
+Accessibility priority: High contrast text is essential - white text on gray backgrounds is completely unreadable and must be avoided throughout admin interface.
 
 ### Critical Code Investigation Protocol
 **NEVER remove or modify existing code without understanding its purpose first.**
