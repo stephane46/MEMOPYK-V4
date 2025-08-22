@@ -161,18 +161,40 @@ img, video, iframe, canvas, svg {
   cursor: not-allowed !important;
 }
 
-/* Fix modal/dialog backgrounds - force solid white */
-[data-radix-dialog-content] {
+/* Fix modal/dialog backgrounds - force solid white with aggressive overrides */
+[data-radix-dialog-content],
+[data-radix-dialog-content] *,
+.dialog-content,
+.dialog-content * {
   background-color: #ffffff !important;
   backdrop-filter: none !important;
+  background: #ffffff !important;
 }
 
-.dialog-content {
-  background-color: #ffffff !important;
-}
-
+/* Ensure dialog overlay is properly opaque */
 [data-radix-dialog-overlay] {
   background-color: rgba(0, 0, 0, 0.8) !important;
+  backdrop-filter: blur(0px) !important;
+}
+
+/* Target all possible dialog content variations */
+div[role="dialog"],
+div[role="dialog"] > div {
+  background-color: #ffffff !important;
+  background: #ffffff !important;
+}
+
+/* Force white background on all dialog children */
+[data-radix-dialog-content] > *,
+[data-radix-dialog-content] > * > * {
+  background-color: transparent !important;
+}
+
+/* Specific fix for modal content wrapper */
+[data-radix-dialog-content] {
+  background: white !important;
+  background-color: white !important;
+  opacity: 1 !important;
 }
 
 /* Custom button for How It Works page - force dark blue background */

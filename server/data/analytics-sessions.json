@@ -11607,6 +11607,23 @@
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-22T15:24:36.297Z",
-    "updated_at": "2025-08-22T15:24:36.361Z"
+    "updated_at": "2025-08-22T15:27:06.845Z",
+    "duration": 872191
+  },
+  {
+    "id": "f6202968-e20b-4633-a810-d21ba0dd1a4c",
+    "session_id": "session_1755876463727_mvc20whs4",
+    "user_id": null,
+    "ip_address": "127.0.0.1",
+    "user_agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/118.0.5993.88 Safari/537.36",
+    "referrer": "",
+    "language": "en-US",
+    "country": "Unknown",
+    "city": "Unknown",
+    "page_views": 0,
+    "is_bot": false,
+    "is_test_data": true,
+    "created_at": "2025-08-22T15:27:43.761Z",
+    "updated_at": "2025-08-22T15:27:43.807Z"
   }
 ]
