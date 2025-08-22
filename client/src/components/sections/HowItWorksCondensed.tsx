@@ -1,10 +1,20 @@
 import { useLanguage } from '../../contexts/LanguageContext';
 import { Upload, Edit, Heart, Info } from 'lucide-react';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 export function HowItWorksCondensed() {
   const { language } = useLanguage();
   const [flippedCards, setFlippedCards] = useState<Set<number>>(new Set());
+  const [isMobile, setIsMobile] = useState(false);
+  
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth <= 768);
+    };
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
   
   const steps = [
     {
@@ -116,30 +126,18 @@ export function HowItWorksCondensed() {
                           </div>
                         </div>
 
-                        {/* Step Title with Blue Icon */}
-                        <div className="flex items-center justify-center gap-3 mb-4">
-                          <div className="w-12 h-12 bg-memopyk-navy rounded-full flex items-center justify-center transition-transform duration-300">
-                            <Icon className="w-6 h-6 text-white" />
-                          </div>
-                          <h3 className="text-2xl font-semibold text-memopyk-navy transition-colors duration-300">
-                            {language === 'fr-FR' ? step.titleFr : step.titleEn}
-                          </h3>
-                        </div>
                       </div>
                     </div>
                       
                     {/* BACK SIDE - Detailed Information */}
                     <div 
                       className="card-back shadow-lg hover:shadow-2xl rounded-2xl overflow-hidden border border-gray-200"
-                      style={{
-                        // Mobile-specific styling: add image background to match desktop
-                        backgroundImage: window.innerWidth <= 768 ? 
-                          `linear-gradient(135deg, rgba(214, 124, 74, 0.85) 0%, rgba(42, 71, 89, 0.85) 100%), url(${step.image})` : 
-                          undefined,
-                        backgroundSize: window.innerWidth <= 768 ? 'cover' : undefined,
-                        backgroundPosition: window.innerWidth <= 768 ? 'center' : undefined,
-                        backgroundRepeat: window.innerWidth <= 768 ? 'no-repeat' : undefined
-                      }}
+                      style={isMobile ? {
+                        backgroundImage: `linear-gradient(135deg, rgba(214, 124, 74, 0.85) 0%, rgba(42, 71, 89, 0.85) 100%), url(${step.image})`,
+                        backgroundSize: 'cover',
+                        backgroundPosition: 'center',
+                        backgroundRepeat: 'no-repeat'
+                      } : {}}
                     >
                       <div 
                         className="h-full flex flex-col justify-center items-center text-center p-8 cursor-pointer relative"
@@ -184,6 +182,16 @@ export function HowItWorksCondensed() {
                         </div>
                       </div>
                     </div>
+                  </div>
+
+                  {/* Step Title with Blue Icon - OUTSIDE flip card container */}
+                  <div className="flex items-center justify-center gap-3 mt-6">
+                    <div className="w-12 h-12 bg-memopyk-navy rounded-full flex items-center justify-center transition-transform duration-300">
+                      <Icon className="w-6 h-6 text-white" />
+                    </div>
+                    <h3 className="text-2xl font-semibold text-memopyk-navy transition-colors duration-300">
+                      {language === 'fr-FR' ? step.titleFr : step.titleEn}
+                    </h3>
                   </div>
                 </div>
               </div>
