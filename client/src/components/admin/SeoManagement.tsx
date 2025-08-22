@@ -351,8 +351,15 @@ const SeoManagement: React.FC = () => {
 
   // Load data when language changes
   useEffect(() => {
+    console.log('🔍 SEO MANAGEMENT COMPONENT - Language changed to:', currentLang);
     loadSeoData();
   }, [currentLang]);
+
+  // Component mount debug
+  useEffect(() => {
+    console.log('🔍 SEO MANAGEMENT COMPONENT - Component mounted');
+    return () => console.log('🔍 SEO MANAGEMENT COMPONENT - Component unmounted');
+  }, []);
 
   if (loading) {
     return (
