@@ -333,34 +333,34 @@ export function HeroVideoSection() {
       {/* Video Controls - Always show when multiple videos available */}
       {activeVideos.length > 1 && (
         <>
-          {/* Navigation Arrows - Large and prominent */}
+          {/* Navigation Arrows - Large without circles */}
           <Button
             variant="ghost"
             size="lg"
-            className="hidden sm:flex absolute left-4 lg:left-8 top-1/2 -translate-y-1/2 text-white hover:text-memopyk-orange hover:bg-black/30 z-20 w-16 h-16 lg:w-20 lg:h-20 rounded-full bg-black/20 backdrop-blur-sm border border-white/20"
+            className="hidden sm:flex absolute left-4 lg:left-8 top-1/2 -translate-y-1/2 text-white hover:text-memopyk-orange z-20 p-0 bg-transparent hover:bg-transparent"
             onClick={goToPrevious}
           >
-            <ChevronLeft className="h-8 w-8 lg:h-12 lg:w-12" />
+            <ChevronLeft className="h-16 w-16 lg:h-24 lg:w-24 drop-shadow-lg" />
           </Button>
 
           <Button
             variant="ghost"
             size="lg"
-            className="hidden sm:flex absolute right-4 lg:right-8 top-1/2 -translate-y-1/2 text-white hover:text-memopyk-orange hover:bg-black/30 z-20 w-16 h-16 lg:w-20 lg:h-20 rounded-full bg-black/20 backdrop-blur-sm border border-white/20"
+            className="hidden sm:flex absolute right-4 lg:right-8 top-1/2 -translate-y-1/2 text-white hover:text-memopyk-orange z-20 p-0 bg-transparent hover:bg-transparent"
             onClick={goToNext}
           >
-            <ChevronRight className="h-8 w-8 lg:h-12 lg:w-12" />
+            <ChevronRight className="h-16 w-16 lg:h-24 lg:w-24 drop-shadow-lg" />
           </Button>
 
-          {/* Video Indicators - Always visible */}
+          {/* Video Indicators - Orange outlines and fills */}
           <div className="absolute bottom-6 sm:bottom-12 left-1/2 -translate-x-1/2 flex space-x-3 sm:space-x-4 z-20">
             {activeVideos.map((_, index) => (
               <button
                 key={index}
-                className={`w-3 h-3 sm:w-4 sm:h-4 rounded-full transition-all duration-300 border-2 ${
+                className={`w-4 h-4 sm:w-5 sm:h-5 rounded-full transition-all duration-300 border-2 border-memopyk-orange ${
                   index === currentVideoIndex 
-                    ? 'bg-memopyk-orange border-memopyk-orange scale-125 shadow-lg' 
-                    : 'bg-white/30 border-white/60 hover:bg-white/50 hover:border-white/80'
+                    ? 'bg-memopyk-orange scale-125 shadow-lg' 
+                    : 'bg-transparent hover:bg-memopyk-orange/30'
                 }`}
                 onClick={() => goToVideo(index)}
                 aria-label={`Go to video ${index + 1}`}
