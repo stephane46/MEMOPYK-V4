@@ -177,8 +177,8 @@ export function HowItWorksCondensed() {
                         {/* Separator Line - IDENTICAL POSITION FOR ALL CARDS */}
                         <div className="border-t border-white/40 mx-2"></div>
                         
-                        {/* Bottom Section - Sub Description with reduced top padding */}
-                        <div className="text-center pt-2 flex-1 flex items-start mb-12">
+                        {/* Bottom Section - Sub Description - FIXED HEIGHT */}
+                        <div className="text-center pt-2 h-20 flex items-start mb-12">
                           <div className="text-xs text-white leading-relaxed w-full">
                             {language === 'fr-FR' ? step.subDescriptionFr : step.subDescriptionEn}
                           </div>
