@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { SimpleHeroVideoSection } from '../components/sections/SimpleHeroVideoSection';
+import { HeroVideoSection } from '../components/sections/HeroVideoSection';
 import { KeyVisualSection } from '../components/sections/KeyVisualSection';
 import { HowItWorksCondensed } from '../components/sections/HowItWorksCondensed';
 import { WhyMemopykSection } from '../components/sections/WhyMemopykSection';
@@ -45,8 +45,8 @@ export function HomePage() {
       {/* SEO Meta Tags */}
       <SEO page="homepage" />
       
-      {/* Simple Hero Video Section */}
-      <SimpleHeroVideoSection />
+      {/* Hero Video Section with Full Carousel */}
+      <HeroVideoSection />
       
       {/* Key Visual Problem/Solution Section */}
       <KeyVisualSection />

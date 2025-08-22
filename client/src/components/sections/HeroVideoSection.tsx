@@ -73,7 +73,8 @@ export function HeroVideoSection() {
 
   // Reset video index when videos change
   useEffect(() => {
-    console.log(`🎬 Hero videos available: ${activeVideos.length}`, activeVideos.map(v => v.url_en));
+    console.log(`🎬 HERO CAROUSEL: Found ${activeVideos.length} active videos`, activeVideos.map(v => v.url_en));
+    console.log(`🎬 HERO CAROUSEL: Navigation controls will ${activeVideos.length > 1 ? 'show' : 'be hidden'}`);
     setCurrentVideoIndex(0);
   }, [activeVideos.length]);
 
