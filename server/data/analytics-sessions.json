@@ -12089,8 +12089,8 @@
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-22T17:50:51.222Z",
-    "updated_at": "2025-08-22T17:59:51.241Z",
-    "duration": 881358
+    "updated_at": "2025-08-22T19:27:51.363Z",
+    "duration": 886638
   },
   {
     "id": "5aa7e410-0db0-4593-8a1d-c6a1253dc6bf",
@@ -12107,5 +12107,54 @@
     "is_test_data": true,
     "created_at": "2025-08-22T17:50:59.535Z",
     "updated_at": "2025-08-22T17:50:59.575Z"
+  },
+  {
+    "id": "b423ab4c-0c87-4044-841a-ab13a1203660",
+    "session_id": "session_1755893363149_cyeurke06",
+    "user_id": null,
+    "ip_address": "109.17.150.48",
+    "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36 Edg/139.0.0.0",
+    "referrer": "https://365df2cf-1884-444c-a9e8-235602456363-00-37q39xpqlgvdy.janeway.replit.dev/__replco/workspace_iframe.html?initialPath=%2F&id=%3Arh3h%3A",
+    "language": "fr-FR",
+    "country": "Unknown",
+    "city": "Unknown",
+    "page_views": 0,
+    "is_bot": false,
+    "is_test_data": false,
+    "created_at": "2025-08-22T20:09:23.184Z",
+    "updated_at": "2025-08-22T20:09:53.156Z",
+    "duration": 889159
+  },
+  {
+    "id": "0a264dac-bc90-4a9f-b7c4-22a5db98e1e3",
+    "session_id": "session_1755893412561_nx7b52jki",
+    "user_id": null,
+    "ip_address": "127.0.0.1",
+    "user_agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/118.0.5993.88 Safari/537.36",
+    "referrer": "",
+    "language": "en-US",
+    "country": "Unknown",
+    "city": "Unknown",
+    "page_views": 0,
+    "is_bot": false,
+    "is_test_data": true,
+    "created_at": "2025-08-22T20:10:12.821Z",
+    "updated_at": "2025-08-22T20:10:12.862Z"
+  },
+  {
+    "id": "04c60be7-53a9-4460-981f-691964d74beb",
+    "session_id": "session_1755893413880_fdxto92ok",
+    "user_id": null,
+    "ip_address": "109.17.150.48",
+    "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36 Edg/139.0.0.0",
+    "referrer": "https://365df2cf-1884-444c-a9e8-235602456363-00-37q39xpqlgvdy.janeway.replit.dev/__replco/workspace_iframe.html?initialPath=%2F&id=%3Arh5p%3A",
+    "language": "fr-FR",
+    "country": "Unknown",
+    "city": "Unknown",
+    "page_views": 0,
+    "is_bot": false,
+    "is_test_data": false,
+    "created_at": "2025-08-22T20:10:13.913Z",
+    "updated_at": "2025-08-22T20:10:13.953Z"
   }
 ]
