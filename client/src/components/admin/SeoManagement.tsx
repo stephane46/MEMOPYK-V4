@@ -73,29 +73,27 @@ export default function SeoManagement() {
     { value: 'homepage', label: 'Page d\'accueil / Homepage' }
   ];
 
-  // Fetch SEO settings for selected page
+  // Fetch SEO settings for selected page - FIXED: using correct API endpoint
   const { data: seoSettings, isLoading: settingsLoading } = useQuery({
-    queryKey: ['/api/seo/settings', selectedPage],
-    queryFn: () => apiRequest(`/api/seo/settings?page=${selectedPage}`, 'GET')
+    queryKey: ['/api/seo'],
+    queryFn: () => apiRequest('/api/seo', 'GET')
   });
 
-  // Fetch global SEO settings
-  const { data: globalSettings, isLoading: globalLoading } = useQuery({
-    queryKey: ['/api/seo/global-settings'],
-    queryFn: () => apiRequest('/api/seo/global-settings', 'GET')
-  });
+  // Note: Global SEO settings will be implemented when needed
+  const globalSettings = null;
+  const globalLoading = false;
 
-  // Save SEO settings mutation
+  // Save SEO settings mutation - FIXED: using correct API endpoint
   const saveSeoMutation = useMutation({
     mutationFn: async (data: Partial<SeoSettings>) => {
       if (currentSettings?.id) {
-        return apiRequest(`/api/seo/settings/${currentSettings.id}`, 'PATCH', data);
+        return apiRequest(`/api/seo/${currentSettings.id}`, 'PATCH', data);
       } else {
-        return apiRequest('/api/seo/settings', 'POST', { ...data, page: selectedPage });
+        return apiRequest('/api/seo', 'POST', { ...data, page: selectedPage });
       }
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['/api/seo/settings'] });
+      queryClient.invalidateQueries({ queryKey: ['/api/seo'] });
       toast({ title: "Success", description: "SEO settings saved successfully" });
     },
     onError: (error: any) => {
@@ -133,8 +131,11 @@ export default function SeoManagement() {
     }
   });
 
-  const currentSettings = (seoSettings as any)?.settings?.[0] || {};
-  const currentGlobal = (globalSettings as any)?.settings || {};
+  // Find the settings for the selected page - FIXED: handle array response correctly
+  const currentSettings = Array.isArray(seoSettings) 
+    ? seoSettings.find((item: any) => item.page === selectedPage) || {}
+    : {};
+  const currentGlobal = {}; // Will be implemented when global settings are added
 
   const [formState, setFormState] = useState({
     metaTitleEn: '',
@@ -197,7 +198,7 @@ export default function SeoManagement() {
       setShowRobotsDialog(true);
     } catch (error) {
       // Fallback to default content if API fails
-      setRobotsContent(currentGlobal?.robotsTxt || 'User-agent: *\nDisallow: /admin\nAllow: /\n\nSitemap: https://memopyk.com/sitemap.xml');
+      setRobotsContent('User-agent: *\nDisallow: /admin\nAllow: /\n\nSitemap: https://memopyk.com/sitemap.xml');
       setShowRobotsDialog(true);
       toast({ 
         title: "Avertissement", 
@@ -345,7 +346,7 @@ export default function SeoManagement() {
                       : 'text-gray-600 dark:text-gray-400'
                   }`}
                 >
-                  🇫🇷 /fr
+                  FR /fr
                 </button>
                 <button
                   onClick={() => setCurrentLanguage('en')}
@@ -355,17 +356,14 @@ export default function SeoManagement() {
                       : 'text-gray-600 dark:text-gray-400'
                   }`}
                 >
-                  🇬🇧 /en
+                  US /en
                 </button>
               </div>
               
               <div className="mt-4 space-y-2">
                 <div className="flex items-center justify-between">
-                  <span className="text-sm">Multilingual versions</span>
-                  <Button size="sm" variant="outline">
-                    <Plus className="h-4 w-4 mr-1" />
-                    Add language
-                  </Button>
+                  <span className="text-sm text-gray-600">Language versions</span>
+                  <span className="text-xs text-gray-500">Switch between French and English content</span>
                 </div>
               </div>
             </CardContent>
