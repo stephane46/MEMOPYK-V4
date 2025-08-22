@@ -75,5 +75,16 @@
     "adminUser": "system",
     "changeReason": "New SEO page created",
     "createdAt": "2025-08-22T17:48:13.436Z"
+  },
+  {
+    "id": 11,
+    "pageId": "83502cc6-179b-4303-9bee-bae1ebf0b8f2",
+    "action": "created",
+    "field": "all",
+    "oldValue": null,
+    "newValue": "SEO settings created",
+    "adminUser": "system",
+    "changeReason": "New SEO page created",
+    "createdAt": "2025-08-22T17:49:24.072Z"
   }
 ]
