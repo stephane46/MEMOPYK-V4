@@ -1,10 +1,36 @@
 import { useLanguage } from '../../contexts/LanguageContext';
 import { Upload, Edit, Heart, Info } from 'lucide-react';
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 
 export function HowItWorksCondensed() {
   const { language } = useLanguage();
   const [flippedCards, setFlippedCards] = useState<Set<number>>(new Set());
+  const sectionRef = useRef<HTMLElement>(null);
+
+  // Reset flipped cards when section is not visible
+  useEffect(() => {
+    const section = sectionRef.current;
+    if (!section) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          // If section is not visible (less than 50% visible), reset all cards
+          if (!entry.isIntersecting || entry.intersectionRatio < 0.5) {
+            setFlippedCards(new Set());
+          }
+        });
+      },
+      {
+        threshold: 0.5, // Trigger when 50% of section is visible/hidden
+        rootMargin: '0px 0px -50px 0px' // Add some margin for smoother triggering
+      }
+    );
+
+    observer.observe(section);
+
+    return () => observer.disconnect();
+  }, []);
   
   const steps = [
     {
@@ -43,7 +69,7 @@ export function HowItWorksCondensed() {
   ];
 
   return (
-    <section id="how-it-works" className="py-20 bg-gradient-to-b from-memopyk-cream to-white">
+    <section id="how-it-works" className="py-20 bg-gradient-to-b from-memopyk-cream to-white" ref={sectionRef}>
       <div className="max-w-6xl mx-auto px-6">
         {/* Section Header */}
         <div className="text-center mb-16">
