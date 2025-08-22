@@ -357,6 +357,10 @@ export default function SeoManagement() {
                       }}
                       className="seo-switch"
                       data-state={formState.robotsIndex ? "checked" : "unchecked"}
+                      style={{
+                        backgroundColor: formState.robotsIndex ? '#f97316' : '#d1d5db',
+                        borderColor: formState.robotsIndex ? '#f97316' : '#9ca3af'
+                      }}
                     />
                   </div>
                   <div className="space-y-1 flex-1">
@@ -392,6 +396,10 @@ export default function SeoManagement() {
                       }}
                       className="seo-switch"
                       data-state={formState.robotsFollow ? "checked" : "unchecked"}
+                      style={{
+                        backgroundColor: formState.robotsFollow ? '#f97316' : '#d1d5db',
+                        borderColor: formState.robotsFollow ? '#f97316' : '#9ca3af'
+                      }}
                     />
                   </div>
                   <div className="space-y-1 flex-1">

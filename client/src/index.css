@@ -120,8 +120,8 @@ img, video, iframe, canvas, svg {
 }
 
 .seo-switch[data-state="unchecked"] {
-  background-color: #e5e7eb !important;
-  border-color: #d1d5db !important;
+  background-color: #d1d5db !important;
+  border-color: #9ca3af !important;
   pointer-events: auto !important;
   cursor: pointer !important;
 }
@@ -131,10 +131,22 @@ img, video, iframe, canvas, svg {
   cursor: pointer !important;
   position: relative !important;
   z-index: 10 !important;
+  transition: all 0.2s ease !important;
 }
 
 .seo-switch * {
   pointer-events: none !important;
+}
+
+/* Force thumb styling */
+.seo-switch[data-state="checked"] span {
+  transform: translateX(20px) !important;
+  background-color: white !important;
+}
+
+.seo-switch[data-state="unchecked"] span {
+  transform: translateX(0px) !important;
+  background-color: white !important;
 }
 
 /* How It Works Cards - Scrollable text areas with subtle styling */
