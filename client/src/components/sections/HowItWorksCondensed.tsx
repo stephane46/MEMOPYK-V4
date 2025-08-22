@@ -38,7 +38,7 @@ export function HowItWorksCondensed() {
       icon: Upload,
       titleFr: "Téléversement",
       titleEn: "You Upload",
-      descriptionFr: "Envoyez-nous vos photos et vidéos telles qu'elles sont — inutile de trier, renommer ou organiser. Nous acceptons tous les formats, et proposons des envois collaboratifs pour que la famille / les amis puissant contribuer.\nNous vous aidons pour la numérisation de vos éléments analogiques (vieilles photos imprimées, CD, cassettes VHS,...).",
+      descriptionFr: "Envoyez-nous vos photos et vidéos telles qu'elles sont — inutile de trier, renommer ou organiser. Nous acceptons tous les formats, et proposons des envois collaboratifs pour que la famille et les amis puissent contribuer.\nNous vous aidons pour la numérisation de vos éléments analogiques (vieilles photos imprimées, CD, cassettes VHS,...).",
       descriptionEn: "Give us your photos and videos as they are — no need to sort, rename, or organize.\nWe support collaborative uploads, so your family/friends can contribute.\nWe also help you with the digitization of your analog materials (printed old photos, CDs, VHS tapes,…).",
       subDescriptionFr: "Vous recevrez également un court questionnaire pour nous en dire plus sur votre histoire — qu'elle soit encore floue ou déjà bien construite.",
       subDescriptionEn: "You'll first fill in a short questionnaire, or have a consultation chat with us, to tell us more about what you have in mind — whether it's a vague or detailed vision.",
@@ -165,8 +165,8 @@ export function HowItWorksCondensed() {
                         }}
                       >
                         
-                        {/* Top Section - Description with improved readability */}
-                        <div className="text-center flex-1 flex items-start">
+                        {/* Top Section - Description with fixed height for alignment */}
+                        <div className="text-center h-64 flex items-start">
                           <div className="text-sm leading-relaxed text-white w-full">
                             {(language === 'fr-FR' ? step.descriptionFr : step.descriptionEn).split('\n').map((paragraph, i) => (
                               <p key={i} className="mb-3 last:mb-0">{paragraph}</p>
@@ -175,15 +175,15 @@ export function HowItWorksCondensed() {
                         </div>
                         
                         {/* Bottom Section - Sub Description with consistent separator */}
-                        <div className="text-center">
+                        <div className="text-center mt-auto">
                           <div className="border-t border-white/40 pt-3 mb-4">
                             <div className="text-xs text-white leading-relaxed min-h-[2.5rem] flex items-center justify-center text-center">
                               {language === 'fr-FR' ? step.subDescriptionFr : step.subDescriptionEn}
                             </div>
                           </div>
                           
-                          {/* Return arrow - At bottom with minimal margin */}
-                          <div className="absolute bottom-2 left-1/2 transform -translate-x-1/2">
+                          {/* Return arrow - At bottom left */}
+                          <div className="absolute bottom-3 left-3">
                             <div className="w-8 h-8 bg-white/20 rounded-full flex items-center justify-center hover:bg-white/30 transition-colors">
                               <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
