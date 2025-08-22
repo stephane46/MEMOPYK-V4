@@ -692,8 +692,8 @@ export default function GallerySection() {
                             <div 
                               className="absolute bottom-2 sm:bottom-4 right-2 sm:right-4 text-white px-2 sm:px-4 py-1 sm:py-2 rounded-full text-xs sm:text-sm font-bold shadow-lg"
                               style={{ 
-                                backgroundColor: '#D67C4A',
-                                backgroundImage: 'linear-gradient(135deg, #D67C4A 0%, #D67C4A 100%)',
+                                backgroundColor: '#D67C4A !important',
+                                backgroundImage: 'linear-gradient(135deg, #D67C4A 0%, #D67C4A 100%) !important',
                                 border: '1px solid rgba(255, 255, 255, 0.2)',
                                 backdropFilter: 'blur(2px)'
                               }}
