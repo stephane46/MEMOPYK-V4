@@ -104,23 +104,32 @@ export default function VideoOverlay({
     console.error('VideoOverlay Error:', e.target?.error);
   }, [videoUrl]);
 
-  // Mobile-responsive viewport sizing - 90% max width/height for all orientations
+  // Mobile detection - same logic as GallerySection
+  const getIsMobile = useCallback(() => {
+    return window.innerWidth <= 640; // Matches GallerySection mobile detection
+  }, []);
+
+  // Viewport sizing ratio
   const getViewportRatio = useCallback(() => {
-    // MOBILE FIX: Detect mobile and force 90% constraint
-    const isMobileDevice = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || window.innerWidth <= 768;
-    console.log('🔍 MOBILE VIEWPORT DETECTION:', { isMobileDevice, innerWidth: window.innerWidth, userAgent: navigator.userAgent.substring(0, 50) });
-    
-    // All videos: Use 90% of viewport for consistent sizing, especially on mobile
-    return 90;
-  }, [orientation]);
+    return 90; // 90% of viewport for all devices
+  }, []);
 
   // Calculate video container dimensions - FIXED to use proper viewport constraints
   const getVideoDimensions = useCallback(() => {
     const viewportRatio = getViewportRatio();
-    const isMobileDevice = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || window.innerWidth <= 768;
+    const isMobileDevice = getIsMobile();
     
     // Calculate aspect ratio from video dimensions
     const aspectRatio = width / height;
+    
+    console.log('🔍 DEVICE DETECTION:', {
+      isMobileDevice,
+      screenWidth: window.innerWidth,
+      screenHeight: window.innerHeight,
+      videoTitle: title,
+      videoDims: `${width}x${height}`,
+      aspectRatio: aspectRatio.toFixed(2)
+    });
     
     // CRITICAL FIX: Use viewport-based sizing for both mobile and desktop
     if (isMobileDevice) {
