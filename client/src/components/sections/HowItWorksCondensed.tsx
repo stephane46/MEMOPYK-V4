@@ -176,14 +176,14 @@ export function HowItWorksCondensed() {
                         
                         {/* Bottom Section - Sub Description with consistent separator */}
                         <div className="text-center">
-                          <div className="border-t border-white/40 pt-2 mb-2">
+                          <div className="border-t border-white/40 pt-2 mb-3">
                             <div className="text-xs text-white leading-tight min-h-[2.5rem] flex items-center justify-center text-center">
                               {language === 'fr-FR' ? step.subDescriptionFr : step.subDescriptionEn}
                             </div>
                           </div>
                           
-                          {/* Return arrow - Properly positioned */}
-                          <div className="flex justify-center mb-1">
+                          {/* Return arrow - At very bottom */}
+                          <div className="flex justify-center">
                             <div className="w-8 h-8 bg-white/20 rounded-full flex items-center justify-center hover:bg-white/30 transition-colors">
                               <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
