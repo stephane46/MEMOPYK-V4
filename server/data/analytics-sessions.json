@@ -12022,7 +12022,56 @@
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-22T17:45:43.129Z",
-    "updated_at": "2025-08-22T17:46:13.630Z",
-    "duration": 880540
+    "updated_at": "2025-08-22T17:46:36.875Z",
+    "duration": 880563
+  },
+  {
+    "id": "89bd37d1-3198-43ff-a6d4-af6e63b3b6b6",
+    "session_id": "session_1755884801159_8vbccjmoj",
+    "user_id": null,
+    "ip_address": "109.17.150.48",
+    "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36 Edg/139.0.0.0",
+    "referrer": "https://replit.com/",
+    "language": "fr-FR",
+    "country": "Unknown",
+    "city": "Unknown",
+    "page_views": 0,
+    "is_bot": false,
+    "is_test_data": false,
+    "created_at": "2025-08-22T17:46:41.193Z",
+    "updated_at": "2025-08-22T17:48:14.377Z",
+    "duration": 464066
+  },
+  {
+    "id": "986ebaaf-fb6b-4e61-aac9-448e71c049d5",
+    "session_id": "session_1755884918590_88x0ebd38",
+    "user_id": null,
+    "ip_address": "127.0.0.1",
+    "user_agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/118.0.5993.88 Safari/537.36",
+    "referrer": "",
+    "language": "en-US",
+    "country": "Unknown",
+    "city": "Unknown",
+    "page_views": 0,
+    "is_bot": false,
+    "is_test_data": true,
+    "created_at": "2025-08-22T17:48:38.871Z",
+    "updated_at": "2025-08-22T17:48:38.911Z"
+  },
+  {
+    "id": "5482a5cc-5c1e-48a1-9f9e-58346995c325",
+    "session_id": "session_1755884924104_pjmf50mdw",
+    "user_id": null,
+    "ip_address": "109.17.150.48",
+    "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36 Edg/139.0.0.0",
+    "referrer": "https://365df2cf-1884-444c-a9e8-235602456363-00-37q39xpqlgvdy.janeway.replit.dev/__replco/workspace_iframe.html?initialPath=%2F&id=%3Arfj0%3A",
+    "language": "fr-FR",
+    "country": "Unknown",
+    "city": "Unknown",
+    "page_views": 0,
+    "is_bot": false,
+    "is_test_data": false,
+    "created_at": "2025-08-22T17:48:44.137Z",
+    "updated_at": "2025-08-22T17:48:44.178Z"
   }
 ]
