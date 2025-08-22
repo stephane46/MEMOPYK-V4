@@ -129,9 +129,9 @@ export function HowItWorksCondensed() {
                     </div>
                       
                     {/* BACK SIDE - Detailed Information */}
-                    <div className="card-back">
+                    <div className="card-back shadow-lg hover:shadow-2xl rounded-2xl overflow-hidden border border-gray-200">
                       <div 
-                        className="h-full flex flex-col justify-center items-center text-center p-6 cursor-pointer"
+                        className="h-full flex flex-col justify-center items-center text-center p-6 cursor-pointer relative"
                         onClick={() => {
                           setFlippedCards(prev => {
                             const newSet = new Set(prev);
@@ -140,9 +140,14 @@ export function HowItWorksCondensed() {
                           });
                         }}
                       >
-                        {/* Step Number */}
-                        <div className="w-16 h-16 bg-white/20 rounded-full flex items-center justify-center mb-6">
+                        {/* Step Number with Icon */}
+                        <div className="w-16 h-16 bg-white/20 rounded-full flex items-center justify-center mb-4 transition-transform duration-300 hover:scale-110">
                           <span className="text-2xl font-bold text-white">{step.number}</span>
+                        </div>
+                        
+                        {/* Icon */}
+                        <div className="w-12 h-12 bg-white/30 rounded-full flex items-center justify-center mb-4 transition-transform duration-300">
+                          <Icon className="w-6 h-6 text-white" />
                         </div>
                         
                         {/* Title */}

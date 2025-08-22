@@ -9058,5 +9058,22 @@
     "created_at": "2025-08-22T06:10:22.414Z",
     "updated_at": "2025-08-22T06:10:24.725Z",
     "duration": 838790
+  },
+  {
+    "id": "2c0644af-0fd6-417a-9152-2d71d09723af",
+    "session_id": "session_1755843174339_u3faiysgz",
+    "user_id": null,
+    "ip_address": "109.17.150.48",
+    "user_agent": "Mozilla/5.0 (iPhone; CPU iPhone OS 18_6_1 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148 Replit-Bonsai/2.147.2 (iOS 18.6.1)",
+    "referrer": "",
+    "language": "fr-FR",
+    "country": "Unknown",
+    "city": "Unknown",
+    "page_views": 0,
+    "is_bot": false,
+    "is_test_data": false,
+    "created_at": "2025-08-22T06:12:54.609Z",
+    "updated_at": "2025-08-22T06:14:24.752Z",
+    "duration": 839030
   }
 ]
