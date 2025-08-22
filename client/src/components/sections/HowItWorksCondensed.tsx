@@ -129,7 +129,7 @@ export function HowItWorksCondensed() {
                       }}
                     >
                       <div 
-                        className="h-full flex flex-col justify-between p-6 cursor-pointer relative"
+                        className="h-full flex flex-col justify-between p-4 cursor-pointer relative"
                         onClick={() => {
                           setFlippedCards(prev => {
                             const newSet = new Set(prev);
