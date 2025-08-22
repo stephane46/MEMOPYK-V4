@@ -155,7 +155,7 @@ export function HowItWorksCondensed() {
                       }}
                     >
                       <div 
-                        className="h-full flex flex-col justify-between p-3 cursor-pointer relative"
+                        className="h-full flex flex-col cursor-pointer relative px-2 py-2"
                         onClick={() => {
                           setFlippedCards(prev => {
                             const newSet = new Set(prev);
@@ -165,8 +165,8 @@ export function HowItWorksCondensed() {
                         }}
                       >
                         
-                        {/* Top Section - Description with fixed height for alignment */}
-                        <div className="text-center h-64 flex items-start">
+                        {/* Top Section - Main Description - EXACT HEIGHT FOR ALL CARDS */}
+                        <div className="text-center h-72 flex items-start pt-1">
                           <div className="text-sm leading-relaxed text-white w-full">
                             {(language === 'fr-FR' ? step.descriptionFr : step.descriptionEn).split('\n').map((paragraph, i) => (
                               <p key={i} className="mb-3 last:mb-0">{paragraph}</p>
@@ -174,21 +174,22 @@ export function HowItWorksCondensed() {
                           </div>
                         </div>
                         
-                        {/* Bottom Section - Sub Description with consistent separator */}
-                        <div className="text-center mt-auto">
-                          <div className="border-t border-white/40 pt-3 mb-4">
-                            <div className="text-xs text-white leading-relaxed min-h-[2.5rem] flex items-center justify-center text-center">
-                              {language === 'fr-FR' ? step.subDescriptionFr : step.subDescriptionEn}
-                            </div>
+                        {/* Separator Line - IDENTICAL POSITION FOR ALL CARDS */}
+                        <div className="border-t border-white/40 mx-2"></div>
+                        
+                        {/* Bottom Section - Sub Description - FIXED HEIGHT */}
+                        <div className="text-center pt-3 h-20 flex items-start">
+                          <div className="text-xs text-white leading-relaxed w-full">
+                            {language === 'fr-FR' ? step.subDescriptionFr : step.subDescriptionEn}
                           </div>
-                          
-                          {/* Return arrow - At bottom left */}
-                          <div className="absolute bottom-3 left-3">
-                            <div className="w-8 h-8 bg-white/20 rounded-full flex items-center justify-center hover:bg-white/30 transition-colors">
-                              <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
-                              </svg>
-                            </div>
+                        </div>
+                        
+                        {/* Return arrow - Bottom left corner */}
+                        <div className="absolute bottom-1 left-1">
+                          <div className="w-8 h-8 bg-white/20 rounded-full flex items-center justify-center hover:bg-white/30 transition-colors">
+                            <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                            </svg>
                           </div>
                         </div>
                       </div>
