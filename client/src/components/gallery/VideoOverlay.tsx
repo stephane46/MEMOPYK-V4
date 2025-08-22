@@ -114,16 +114,19 @@ export default function VideoOverlay({
     return 90;
   }, [orientation]);
 
-  // Calculate video container dimensions based on orientation - FIXED for desktop 90% viewport
+  // Calculate video container dimensions - FIXED to use proper viewport constraints
   const getVideoDimensions = useCallback(() => {
     const viewportRatio = getViewportRatio();
     const isMobileDevice = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || window.innerWidth <= 768;
     
-    // CRITICAL FIX: Different logic for mobile vs desktop
+    // Calculate aspect ratio from video dimensions
+    const aspectRatio = width / height;
+    
+    // CRITICAL FIX: Use viewport-based sizing for both mobile and desktop
     if (isMobileDevice) {
       // MOBILE: Use WIDTH constraint (90% of screen width) to prevent landscape videos from being too wide
-      const containerWidth = (window.innerWidth * viewportRatio) / 100;
-      const aspectRatio = width / height;
+      const maxWidth = (window.innerWidth * viewportRatio) / 100;
+      const containerWidth = maxWidth;
       const containerHeight = containerWidth / aspectRatio;
       
       console.log(`🎬 ${orientation.toUpperCase()} VIDEO - MOBILE WIDTH CONSTRAINED:`, {
@@ -132,35 +135,58 @@ export default function VideoOverlay({
         screenWidth: window.innerWidth,
         screenHeight: window.innerHeight,
         viewportRatio,
+        maxWidth,
         containerWidth,
         containerHeight,
         aspectRatio,
         videoWidth: width,
         videoHeight: height,
-        constraint: 'mobile width-based'
+        constraint: 'mobile width-based (90% viewport)'
       });
       
       return { width: containerWidth, height: containerHeight };
     } else {
-      // DESKTOP: Constrain by HEIGHT (90% of viewport height) since desktop screens are landscape
+      // DESKTOP: Use both width AND height constraints, pick the smaller result
+      const maxWidth = (window.innerWidth * viewportRatio) / 100;
       const maxHeight = (window.innerHeight * viewportRatio) / 100;
-      const aspectRatio = width / height;
-      const containerHeight = maxHeight;
-      const containerWidth = containerHeight * aspectRatio;
       
-      console.log(`🎬 ${orientation.toUpperCase()} VIDEO - DESKTOP HEIGHT CONSTRAINED (90% VIEWPORT):`, {
+      // Calculate dimensions for both constraints
+      const widthConstrainedWidth = maxWidth;
+      const widthConstrainedHeight = maxWidth / aspectRatio;
+      
+      const heightConstrainedHeight = maxHeight;
+      const heightConstrainedWidth = maxHeight * aspectRatio;
+      
+      // Use whichever constraint results in smaller dimensions (fits in viewport)
+      let containerWidth, containerHeight, activeConstraint;
+      
+      if (widthConstrainedHeight <= maxHeight) {
+        // Width constraint works - video fits height-wise
+        containerWidth = widthConstrainedWidth;
+        containerHeight = widthConstrainedHeight;
+        activeConstraint = 'width-constrained';
+      } else {
+        // Height constraint needed - video would be too tall
+        containerWidth = heightConstrainedWidth;
+        containerHeight = heightConstrainedHeight;
+        activeConstraint = 'height-constrained';
+      }
+      
+      console.log(`🎬 ${orientation.toUpperCase()} VIDEO - DESKTOP DUAL CONSTRAINT (90% VIEWPORT):`, {
         title,
         orientation,
         screenWidth: window.innerWidth,
         screenHeight: window.innerHeight,
         viewportRatio,
+        maxWidth,
         maxHeight,
-        containerWidth,
-        containerHeight,
         aspectRatio,
+        widthConstrainedDims: `${widthConstrainedWidth}x${widthConstrainedHeight}`,
+        heightConstrainedDims: `${heightConstrainedWidth}x${heightConstrainedHeight}`,
+        finalDims: `${containerWidth}x${containerHeight}`,
+        activeConstraint,
         videoWidth: width,
-        videoHeight: height,
-        constraint: 'desktop height-based (90% of viewport height)'
+        videoHeight: height
       });
       
       return { width: containerWidth, height: containerHeight };
