@@ -155,7 +155,7 @@ export function HowItWorksCondensed() {
                       }}
                     >
                       <div 
-                        className="h-full flex flex-col cursor-pointer relative px-2 pt-2 pb-2"
+                        className="h-full flex flex-col cursor-pointer relative px-2 pt-0 pb-2"
                         onClick={() => {
                           setFlippedCards(prev => {
                             const newSet = new Set(prev);
