@@ -9,6 +9,7 @@ Visual consistency priority: Extremely detail-oriented about spacing and formatt
 Analytics interface: Expects all three filter buttons (7d, 30d, 90d) to be visible with proper orange highlighting for active states.
 Language detection priority: Fixed primary browser language detection with console testing capability. Enhanced cross-device compatibility prevents English users overseas from seeing French content by checking ONLY the first browser language preference.
 Accessibility priority: High contrast text is essential - white text on gray backgrounds is completely unreadable and must be avoided throughout admin interface.
+Modal styling: Requires solid white modal backgrounds with dark overlays for proper floating appearance. Framework components like Radix UI need precise CSS targeting to avoid affecting backdrop elements.
 
 ### Critical Code Investigation Protocol
 **NEVER remove or modify existing code without understanding its purpose first.**
