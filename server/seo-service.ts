@@ -180,10 +180,10 @@ export class SeoService {
           description: setting[`metaDescription${langSuffix}` as keyof typeof setting] as string || undefined,
           canonical: setting.canonicalUrl || undefined,
           keywords: setting[`metaKeywords${langSuffix}` as keyof typeof setting] as string || undefined,
-          robotsIndex: setting.robotsIndex,
-          robotsFollow: setting.robotsFollow,
-          robotsNoArchive: setting.robotsNoArchive,
-          robotsNoSnippet: setting.robotsNoSnippet,
+          robotsIndex: setting.robotsIndex ?? true,
+          robotsFollow: setting.robotsFollow ?? true,
+          robotsNoArchive: setting.robotsNoArchive ?? false,
+          robotsNoSnippet: setting.robotsNoSnippet ?? false,
           jsonLd: setting.jsonLd ? JSON.stringify(setting.jsonLd) : undefined,
           openGraph: {
             title: setting[`ogTitle${langSuffix}` as keyof typeof setting] as string || undefined,
@@ -267,18 +267,31 @@ export class SeoService {
         updatedAt: now
       };
 
-      // Insert or update in database
-      const result = await db
-        .insert(seoSettings)
-        .values(settingsData as any)
-        .onConflictDoUpdate({
-          target: seoSettings.page,
-          set: {
+      // Check if record exists for this page
+      const existingRecord = await db
+        .select()
+        .from(seoSettings)
+        .where(eq(seoSettings.page, 'home'))
+        .limit(1);
+
+      let result;
+      if (existingRecord.length > 0) {
+        // Update existing record
+        result = await db
+          .update(seoSettings)
+          .set({
             ...settingsData,
             updatedAt: now
-          }
-        })
-        .returning();
+          })
+          .where(eq(seoSettings.id, existingRecord[0].id))
+          .returning();
+      } else {
+        // Insert new record
+        result = await db
+          .insert(seoSettings)
+          .values(settingsData as any)
+          .returning();
+      }
 
       console.log(`✅ SEO settings saved to database for ${sanitizedData.lang} by ${adminUser}`);
 
@@ -292,7 +305,6 @@ export class SeoService {
       throw new Error('Failed to save SEO settings to database');
     }
   }
-  }
 
   /**
    * Save version to history
@@ -304,21 +316,26 @@ export class SeoService {
     changeReason?: string,
     previousData?: SeoData | null
   ): Promise<void> {
-    // For now, just log the history until database is set up
-    const diff = this.calculateDiff(previousData, data);
-    console.log(`📝 SEO History: ${data.lang} changed by ${adminUser}:`, diff);
-    
-    /*
-    await db.insert(seoHistory).values({
-      seoId,
-      lang: data.lang,
-      version: 1, // Will be updated by trigger
-      data: data as any,
-      diff: diff as any,
-      changeReason: changeReason || null,
-      createdBy: adminUser
-    });
-    */
+    try {
+      // Calculate diff for audit log
+      const diff = this.calculateDiff(previousData, data);
+      
+      // Save to audit log table
+      await db.insert(seoAuditLogs).values({
+        pageId: seoId,
+        action: previousData ? 'updated' : 'created',
+        field: 'all_fields',
+        oldValue: previousData ? JSON.stringify(previousData) : null,
+        newValue: JSON.stringify(data),
+        adminUser,
+        changeReason: changeReason || null
+      });
+      
+      console.log(`📝 SEO History: ${data.lang} changed by ${adminUser}`);
+    } catch (error) {
+      console.error('Error saving SEO history:', error);
+      // Don't fail the main operation for history issues
+    }
   }
 
   /**
