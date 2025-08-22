@@ -87,7 +87,7 @@ export function HowItWorksCondensed() {
                           });
                         }}
                       >
-                        {/* Step Image with Info Button */}
+                        {/* Step Image */}
                         <div className="relative overflow-hidden rounded-xl transition-all duration-500 aspect-square">
                           <img 
                             src={step.image} 
@@ -99,20 +99,20 @@ export function HowItWorksCondensed() {
                           <div className="absolute top-2 left-2 w-8 h-8 bg-memopyk-orange rounded-full flex items-center justify-center transition-transform duration-300 shadow-lg">
                             <span className="text-sm font-bold text-white">{step.number}</span>
                           </div>
-
-                          {/* Info Button - Bottom center */}
-                          <div className="absolute bottom-2 left-1/2 transform -translate-x-1/2 pointer-events-none">
-                            <div 
-                              className="w-10 h-10 rounded-full flex items-center justify-center transition-all duration-300 hover:scale-110 cursor-pointer pointer-events-auto"
-                              style={{
-                                background: 'linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.85) 100%)',
-                                boxShadow: '0 4px 12px rgba(0, 0, 0, 0.2), inset 0 1px 2px rgba(255, 255, 255, 0.8)',
-                                border: '1px solid rgba(0, 0, 0, 0.1)',
-                                backdropFilter: 'blur(2px)'
-                              }}
-                            >
-                              <Info className="w-5 h-5" style={{ color: '#2A4759' }} />
-                            </div>
+                        </div>
+                        
+                        {/* Info Button - Below image in white space */}
+                        <div className="flex justify-center mt-3 mb-2">
+                          <div 
+                            className="w-12 h-12 rounded-full flex items-center justify-center transition-all duration-300 hover:scale-110 cursor-pointer"
+                            style={{
+                              background: 'linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.85) 100%)',
+                              boxShadow: '0 4px 12px rgba(0, 0, 0, 0.2), inset 0 1px 2px rgba(255, 255, 255, 0.8)',
+                              border: '1px solid rgba(0, 0, 0, 0.1)',
+                              backdropFilter: 'blur(2px)'
+                            }}
+                          >
+                            <Info className="w-6 h-6" style={{ color: '#2A4759' }} />
                           </div>
                         </div>
                       </div>
