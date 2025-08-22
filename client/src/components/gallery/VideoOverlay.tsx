@@ -214,7 +214,7 @@ export default function VideoOverlay({
     };
   }, [getVideoDimensions]);
 
-  // Auto-hide controls after 3 seconds
+  // Auto-hide controls after 2 seconds
   const resetControlsTimer = useCallback(() => {
     setShowControls(true);
     if (controlsTimeoutRef.current) {
@@ -223,7 +223,7 @@ export default function VideoOverlay({
     if (isPlaying) {
       controlsTimeoutRef.current = setTimeout(() => {
         setShowControls(false);
-      }, 3000);
+      }, 2000);
     }
   }, [isPlaying]);
 
@@ -621,6 +621,7 @@ export default function VideoOverlay({
           }}
           controls={false}
           onClick={handleVideoClick}
+          onMouseMove={resetControlsTimer}
           onPlay={handlePlay}
           onPause={handlePause}
           onLoadedMetadata={handleLoadedMetadata}
