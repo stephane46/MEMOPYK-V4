@@ -237,20 +237,20 @@ export default function SeoManagement() {
           <div className="flex bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-lg shadow-sm">
             <button
               onClick={() => setCurrentLanguage('fr')}
-              className={`px-4 py-2 text-sm font-medium rounded-l-lg transition-colors ${
+              className={`px-4 py-2 text-sm font-bold rounded-l-lg transition-colors ${
                 currentLanguage === 'fr'
                   ? 'bg-orange-500 text-white border-orange-500'
-                  : 'text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700'
+                  : 'text-gray-900 dark:text-gray-100 bg-white dark:bg-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600'
               }`}
             >
               FR /fr
             </button>
             <button
               onClick={() => setCurrentLanguage('en')}
-              className={`px-4 py-2 text-sm font-medium rounded-r-lg border-l transition-colors ${
+              className={`px-4 py-2 text-sm font-bold rounded-r-lg border-l transition-colors ${
                 currentLanguage === 'en'
                   ? 'bg-orange-500 text-white border-orange-500'
-                  : 'text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700 border-gray-300 dark:border-gray-600'
+                  : 'text-gray-900 dark:text-gray-100 bg-white dark:bg-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 border-gray-300 dark:border-gray-600'
               }`}
             >
               US /en
