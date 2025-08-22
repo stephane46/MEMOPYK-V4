@@ -75,7 +75,7 @@ export default function SeoManagement() {
 
   // Fetch SEO settings for selected page - FIXED: using correct API endpoint
   const { data: seoSettings, isLoading: settingsLoading } = useQuery({
-    queryKey: ['/api/seo'],
+    queryKey: ['/api/seo', selectedPage, Date.now()],
     queryFn: () => apiRequest('/api/seo', 'GET')
   });
 
@@ -94,7 +94,10 @@ export default function SeoManagement() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['/api/seo'] });
+      queryClient.refetchQueries({ queryKey: ['/api/seo'] });
       toast({ title: "Success", description: "SEO settings saved successfully" });
+      // Force page reload to clear cache
+      setTimeout(() => window.location.reload(), 1000);
     },
     onError: (error: any) => {
       console.error('SEO Save Error:', error);
