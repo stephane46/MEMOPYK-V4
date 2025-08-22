@@ -334,21 +334,36 @@ export default function SeoManagement() {
                 />
               </div>
 
-              {/* Checkboxes */}
-              <div className="space-y-3">
-                <div className="flex items-center space-x-2">
+              {/* Search Engine Controls */}
+              <div className="space-y-4">
+                <div className="flex items-start space-x-3 p-3 border rounded-lg">
                   <Switch
                     checked={formState.robotsIndex}
                     onCheckedChange={(checked) => setFormState(prev => ({ ...prev, robotsIndex: checked }))}
+                    className="mt-1"
                   />
-                  <Label>Index on search engines</Label>
+                  <div className="space-y-1">
+                    <Label className="text-sm font-medium">Allow search engine indexing</Label>
+                    <p className="text-xs text-gray-500">Let Google, Bing, and other search engines find and display this page in search results</p>
+                  </div>
                 </div>
-                <div className="flex items-center space-x-2">
+                
+                <div className="flex items-start space-x-3 p-3 border rounded-lg">
                   <Switch
                     checked={formState.robotsFollow}
                     onCheckedChange={(checked) => setFormState(prev => ({ ...prev, robotsFollow: checked }))}
+                    className="mt-1"
                   />
-                  <Label>Multilingual content</Label>
+                  <div className="space-y-1">
+                    <Label className="text-sm font-medium">Allow link following</Label>
+                    <p className="text-xs text-gray-500">Let search engines follow links on this page to discover other pages on your site</p>
+                  </div>
+                </div>
+                
+                <div className="bg-blue-50 dark:bg-blue-900/20 p-3 rounded-lg border border-blue-200 dark:border-blue-800">
+                  <p className="text-xs text-blue-700 dark:text-blue-300">
+                    <strong>Tip:</strong> Keep both options enabled for maximum search visibility. Only disable if you want to hide this page from search engines.
+                  </p>
                 </div>
               </div>
             </CardContent>
