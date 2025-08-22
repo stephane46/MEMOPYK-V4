@@ -234,24 +234,30 @@ export default function SeoManagement() {
       <div className="flex items-center justify-between mb-6">
         <div className="flex items-center space-x-4">
           <h3 className="text-lg font-medium text-gray-900 dark:text-white">Language:</h3>
-          <div className="flex bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-lg shadow-sm">
+          <div className="inline-flex rounded-lg border border-gray-300 dark:border-gray-600 overflow-hidden">
             <button
               onClick={() => setCurrentLanguage('fr')}
-              className={`px-4 py-2 text-sm font-bold rounded-l-lg transition-colors ${
-                currentLanguage === 'fr'
-                  ? 'bg-orange-500 text-white border-orange-500'
-                  : 'text-gray-900 dark:text-gray-100 bg-white dark:bg-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600'
-              }`}
+              className={currentLanguage === 'fr' 
+                ? 'px-4 py-2 text-sm font-bold bg-orange-500 text-white border-none' 
+                : 'px-4 py-2 text-sm font-bold bg-white text-black border-none hover:bg-gray-100 dark:bg-gray-700 dark:text-white dark:hover:bg-gray-600'
+              }
+              style={currentLanguage === 'fr' 
+                ? { backgroundColor: '#f97316', color: '#ffffff' } 
+                : { backgroundColor: '#ffffff', color: '#000000' }
+              }
             >
               FR /fr
             </button>
             <button
               onClick={() => setCurrentLanguage('en')}
-              className={`px-4 py-2 text-sm font-bold rounded-r-lg border-l transition-colors ${
-                currentLanguage === 'en'
-                  ? 'bg-orange-500 text-white border-orange-500'
-                  : 'text-gray-900 dark:text-gray-100 bg-white dark:bg-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 border-gray-300 dark:border-gray-600'
-              }`}
+              className={currentLanguage === 'en' 
+                ? 'px-4 py-2 text-sm font-bold bg-orange-500 text-white border-none border-l border-gray-300' 
+                : 'px-4 py-2 text-sm font-bold bg-white text-black border-none border-l border-gray-300 hover:bg-gray-100 dark:bg-gray-700 dark:text-white dark:hover:bg-gray-600'
+              }
+              style={currentLanguage === 'en' 
+                ? { backgroundColor: '#f97316', color: '#ffffff' } 
+                : { backgroundColor: '#ffffff', color: '#000000' }
+              }
             >
               US /en
             </button>
