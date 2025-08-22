@@ -166,7 +166,7 @@ export function HowItWorksCondensed() {
                       >
                         
                         {/* Top Section - Main Description - EXACT HEIGHT FOR ALL CARDS */}
-                        <div className="text-center h-72 flex items-start pt-1">
+                        <div className="text-center h-72 flex items-start">
                           <div className="text-sm leading-relaxed text-white w-full">
                             {(language === 'fr-FR' ? step.descriptionFr : step.descriptionEn).split('\n').map((paragraph, i) => (
                               <p key={i} className="mb-3 last:mb-0">{paragraph}</p>
@@ -178,7 +178,7 @@ export function HowItWorksCondensed() {
                         <div className="border-t border-white/40 mx-2"></div>
                         
                         {/* Bottom Section - Sub Description - FIXED HEIGHT */}
-                        <div className="text-center pt-2 h-20 flex items-start mb-12">
+                        <div className="text-center pt-1 h-20 flex items-start mb-12">
                           <div className="text-xs text-white leading-relaxed w-full">
                             {language === 'fr-FR' ? step.subDescriptionFr : step.subDescriptionEn}
                           </div>
