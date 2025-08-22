@@ -100,10 +100,10 @@ export function HowItWorksCondensed() {
                             <span className="text-sm font-bold text-white">{step.number}</span>
                           </div>
 
-                          {/* Info Button - Same style as gallery */}
-                          <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+                          {/* Info Button - Moved to bottom area */}
+                          <div className="absolute bottom-2 left-1/2 transform -translate-x-1/2 pointer-events-none">
                             <div 
-                              className="w-14 h-14 sm:w-16 sm:h-16 rounded-full flex items-center justify-center transition-all duration-300 hover:scale-110 cursor-pointer pointer-events-auto"
+                              className="w-10 h-10 rounded-full flex items-center justify-center transition-all duration-300 hover:scale-110 cursor-pointer pointer-events-auto"
                               style={{
                                 background: 'linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.85) 100%)',
                                 boxShadow: '0 4px 12px rgba(0, 0, 0, 0.2), inset 0 1px 2px rgba(255, 255, 255, 0.8)',
@@ -111,7 +111,7 @@ export function HowItWorksCondensed() {
                                 backdropFilter: 'blur(2px)'
                               }}
                             >
-                              <Info className="w-6 h-6" style={{ color: '#2A4759' }} />
+                              <Info className="w-5 h-5" style={{ color: '#2A4759' }} />
                             </div>
                           </div>
                         </div>
