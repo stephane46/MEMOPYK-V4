@@ -122,13 +122,15 @@ export default function VideoOverlay({
     // Calculate aspect ratio from video dimensions
     const aspectRatio = width / height;
     
-    console.log('🔍 DEVICE DETECTION:', {
+    console.log('🔍 DEVICE DETECTION v2.0 - CRITICAL FIX:', {
       isMobileDevice,
       screenWidth: window.innerWidth,
       screenHeight: window.innerHeight,
       videoTitle: title,
       videoDims: `${width}x${height}`,
-      aspectRatio: aspectRatio.toFixed(2)
+      aspectRatio: aspectRatio.toFixed(2),
+      mobileThreshold: 640,
+      isReallyMobile: window.innerWidth <= 640
     });
     
     // CRITICAL FIX: Use viewport-based sizing for both mobile and desktop
