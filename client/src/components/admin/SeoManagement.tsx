@@ -140,21 +140,10 @@ const SeoManagement: React.FC = () => {
   const currentSettings = allSettings.find((s: SeoSettings) => s.page === selectedPage) || {};
   const currentGlobal = {}; // Will be implemented when global settings are added
 
-  const [formState, setFormState] = useState({
-    metaTitleEn: '',
-    metaTitleFr: '',
-    metaDescriptionEn: '',
-    metaDescriptionFr: '',
-    urlSlugEn: '/en-US',
-    urlSlugFr: '/fr-FR',
-    robotsIndex: true,
-    robotsFollow: true
-  });
-
-  // Update form state when settings change - but only when they actually change
-  React.useEffect(() => {
-    if (currentSettings && selectedPage) {
-      const newFormState = {
+  // Initialize form state directly from settings with useMemo
+  const formState = React.useMemo(() => {
+    if (currentSettings) {
+      return {
         metaTitleEn: currentSettings.metaTitleEn || '',
         metaTitleFr: currentSettings.metaTitleFr || '',
         metaDescriptionEn: currentSettings.metaDescriptionEn || '',
@@ -164,19 +153,29 @@ const SeoManagement: React.FC = () => {
         robotsIndex: currentSettings.robotsIndex !== false,
         robotsFollow: currentSettings.robotsFollow !== false
       };
-      
-      // Only update if there's an actual change to prevent infinite loops
-      setFormState(prev => {
-        const hasChanged = Object.keys(newFormState).some(key => 
-          prev[key as keyof typeof prev] !== newFormState[key as keyof typeof newFormState]
-        );
-        return hasChanged ? newFormState : prev;
-      });
     }
+    return {
+      metaTitleEn: '',
+      metaTitleFr: '',
+      metaDescriptionEn: '',
+      metaDescriptionFr: '',
+      urlSlugEn: '/en-US',
+      urlSlugFr: '/fr-FR',
+      robotsIndex: true,
+      robotsFollow: true
+    };
   }, [currentSettings, selectedPage]);
 
+  // Separate local state for form interactions
+  const [localState, setLocalState] = useState(formState);
+
+  // Update local state when form state changes
+  React.useEffect(() => {
+    setLocalState(formState);
+  }, [formState]);
+
   const handleSave = () => {
-    saveSeoMutation.mutate(formState);
+    saveSeoMutation.mutate(localState);
   };
 
   const saveRobotsTxt = () => {
@@ -294,10 +293,10 @@ const SeoManagement: React.FC = () => {
             <div className="space-y-2">
               <Label>Meta Title</Label>
               <Input
-                value={currentLanguage === 'fr' ? formState.metaTitleFr : formState.metaTitleEn}
+                value={currentLanguage === 'fr' ? localState.metaTitleFr : localState.metaTitleEn}
                 onChange={(e) => {
                   const field = currentLanguage === 'fr' ? 'metaTitleFr' : 'metaTitleEn';
-                  setFormState(prev => ({ ...prev, [field]: e.target.value }));
+                  setLocalState(prev => ({ ...prev, [field]: e.target.value }));
                 }}
                 placeholder={`Meta title in ${currentLanguage === 'fr' ? 'French' : 'English'}`}
                 maxLength={60}
@@ -311,10 +310,10 @@ const SeoManagement: React.FC = () => {
             <div className="space-y-2">
               <Label>Meta Description</Label>
               <Textarea
-                value={currentLanguage === 'fr' ? formState.metaDescriptionFr : formState.metaDescriptionEn}
+                value={currentLanguage === 'fr' ? localState.metaDescriptionFr : localState.metaDescriptionEn}
                 onChange={(e) => {
                   const field = currentLanguage === 'fr' ? 'metaDescriptionFr' : 'metaDescriptionEn';
-                  setFormState(prev => ({ ...prev, [field]: e.target.value }));
+                  setLocalState(prev => ({ ...prev, [field]: e.target.value }));
                 }}
                 placeholder={`Meta description in ${currentLanguage === 'fr' ? 'French' : 'English'}`}
                 maxLength={155}
@@ -326,35 +325,35 @@ const SeoManagement: React.FC = () => {
             <div className="space-y-2">
               <Label>Slug</Label>
               <Input
-                value={currentLanguage === 'fr' ? formState.urlSlugFr : formState.urlSlugEn}
+                value={currentLanguage === 'fr' ? localState.urlSlugFr : localState.urlSlugEn}
                 onChange={(e) => {
                   const field = currentLanguage === 'fr' ? 'urlSlugFr' : 'urlSlugEn';
-                  setFormState(prev => ({ ...prev, [field]: e.target.value }));
+                  setLocalState(prev => ({ ...prev, [field]: e.target.value }));
                 }}
                 placeholder={currentLanguage === 'fr' ? '/fr-FR' : '/en-US'}
               />
               <p className="text-xs text-gray-600 dark:text-gray-400">
                 Current route: <span className="font-mono text-orange-600">
                   {currentLanguage === 'fr' 
-                    ? (formState.urlSlugFr || '/fr-FR') 
-                    : (formState.urlSlugEn || '/en-US')
+                    ? (localState.urlSlugFr || '/fr-FR') 
+                    : (localState.urlSlugEn || '/en-US')
                   }
                 </span>
               </p>
             </div>
 
             {/* Search Engine Controls - WORKING CHECKBOXES */}
-            <div className="space-y-4" key={`checkboxes-${formState.robotsIndex}-${formState.robotsFollow}`}>
+            <div className="space-y-4" key={`checkboxes-${localState.robotsIndex}-${localState.robotsFollow}`}>
               <div className="border rounded-lg p-4">
                 <div className="flex items-center space-x-3">
                   <input
                     type="checkbox"
                     id="robotsIndex"
-                    checked={formState.robotsIndex}
+                    checked={localState.robotsIndex}
                     onChange={(e) => {
                       console.log('Index checkbox changed:', e.target.checked);
                       const newValue = e.target.checked;
-                      setFormState(prev => {
+                      setLocalState(prev => {
                         const updated = { ...prev, robotsIndex: newValue };
                         console.log('Updated state:', updated);
                         return updated;
@@ -366,7 +365,7 @@ const SeoManagement: React.FC = () => {
                     <div className="font-medium">Allow search engine indexing</div>
                     <div className="text-sm text-gray-600">
                       Status: <span className="font-semibold">
-                        {formState.robotsIndex ? 'ENABLED - Search engines will index this page' : 'DISABLED - Search engines will NOT index this page'}
+                        {localState.robotsIndex ? 'ENABLED - Search engines will index this page' : 'DISABLED - Search engines will NOT index this page'}
                       </span>
                     </div>
                   </label>
@@ -378,11 +377,11 @@ const SeoManagement: React.FC = () => {
                   <input
                     type="checkbox"
                     id="robotsFollow"
-                    checked={formState.robotsFollow}
+                    checked={localState.robotsFollow}
                     onChange={(e) => {
                       console.log('Follow checkbox changed:', e.target.checked);
                       const newValue = e.target.checked;
-                      setFormState(prev => {
+                      setLocalState(prev => {
                         const updated = { ...prev, robotsFollow: newValue };
                         console.log('Updated state:', updated);
                         return updated;
@@ -394,7 +393,7 @@ const SeoManagement: React.FC = () => {
                     <div className="font-medium">Allow link following</div>
                     <div className="text-sm text-gray-600">
                       Status: <span className="font-semibold">
-                        {formState.robotsFollow ? 'ENABLED - Search engines will follow links on this page' : 'DISABLED - Search engines will NOT follow links on this page'}
+                        {localState.robotsFollow ? 'ENABLED - Search engines will follow links on this page' : 'DISABLED - Search engines will NOT follow links on this page'}
                       </span>
                     </div>
                   </label>
