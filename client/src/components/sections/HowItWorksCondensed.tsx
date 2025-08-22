@@ -155,7 +155,7 @@ export function HowItWorksCondensed() {
                       }}
                     >
                       <div 
-                        className="h-full flex flex-col cursor-pointer relative"
+                        className="h-full flex flex-col justify-between p-3 cursor-pointer relative"
                         onClick={() => {
                           setFlippedCards(prev => {
                             const newSet = new Set(prev);
@@ -165,9 +165,9 @@ export function HowItWorksCondensed() {
                         }}
                       >
                         
-                        {/* Top Section - Description with fixed height and improved readability */}
-                        <div className="text-center h-52 flex items-start p-2 pt-3">
-                          <div className="text-base leading-normal text-white w-full">
+                        {/* Top Section - Description with improved readability */}
+                        <div className="text-center flex-1 flex items-start">
+                          <div className="text-sm leading-relaxed text-white w-full">
                             {(language === 'fr-FR' ? step.descriptionFr : step.descriptionEn).split('\n').map((paragraph, i) => (
                               <p key={i} className="mb-3 last:mb-0">{paragraph}</p>
                             ))}
@@ -175,15 +175,15 @@ export function HowItWorksCondensed() {
                         </div>
                         
                         {/* Bottom Section - Sub Description with consistent separator */}
-                        <div className="text-center px-2 flex-1 flex flex-col">
-                          <div className="border-t border-white/40 pt-2 mb-2 flex-1">
-                            <div className="text-sm text-white leading-normal min-h-[2.5rem] flex items-center justify-center text-center">
+                        <div className="text-center">
+                          <div className="border-t border-white/40 pt-3 mb-4">
+                            <div className="text-xs text-white leading-relaxed min-h-[2.5rem] flex items-center justify-center text-center">
                               {language === 'fr-FR' ? step.subDescriptionFr : step.subDescriptionEn}
                             </div>
                           </div>
                           
-                          {/* Return arrow - Absolutely at bottom edge */}
-                          <div className="flex justify-center pb-2">
+                          {/* Return arrow - At bottom with minimal margin */}
+                          <div className="absolute bottom-2 left-1/2 transform -translate-x-1/2">
                             <div className="w-8 h-8 bg-white/20 rounded-full flex items-center justify-center hover:bg-white/30 transition-colors">
                               <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
