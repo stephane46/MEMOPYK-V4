@@ -131,7 +131,7 @@ export function HowItWorksCondensed() {
                     {/* BACK SIDE - Detailed Information */}
                     <div className="card-back shadow-lg hover:shadow-2xl rounded-2xl overflow-hidden border border-gray-200">
                       <div 
-                        className="h-full flex flex-col justify-center items-center text-center p-6 cursor-pointer relative"
+                        className="h-full flex flex-col justify-center items-center text-center p-8 cursor-pointer relative"
                         onClick={() => {
                           setFlippedCards(prev => {
                             const newSet = new Set(prev);
@@ -140,35 +140,35 @@ export function HowItWorksCondensed() {
                           });
                         }}
                       >
-                        {/* Step Number with Icon */}
-                        <div className="w-16 h-16 bg-white/20 rounded-full flex items-center justify-center mb-4 transition-transform duration-300 hover:scale-110">
+                        {/* Step Number */}
+                        <div className="w-16 h-16 bg-white/20 rounded-full flex items-center justify-center mb-6 transition-transform duration-300 hover:scale-110">
                           <span className="text-2xl font-bold text-white">{step.number}</span>
                         </div>
                         
-                        {/* Icon */}
-                        <div className="w-12 h-12 bg-white/30 rounded-full flex items-center justify-center mb-4 transition-transform duration-300">
-                          <Icon className="w-6 h-6 text-white" />
+                        {/* Title with Icon */}
+                        <div className="flex items-center justify-center gap-3 mb-6">
+                          <div className="w-10 h-10 bg-white/30 rounded-full flex items-center justify-center">
+                            <Icon className="w-5 h-5 text-white" />
+                          </div>
+                          <h3 className="text-xl font-bold text-white">
+                            {language === 'fr-FR' ? step.titleFr : step.titleEn}
+                          </h3>
                         </div>
                         
-                        {/* Title */}
-                        <h3 className="text-2xl font-bold text-white mb-4">
-                          {language === 'fr-FR' ? step.titleFr : step.titleEn}
-                        </h3>
-                        
                         {/* Description */}
-                        <div className="text-sm leading-relaxed mb-4 text-white/90">
+                        <div className="text-sm leading-relaxed mb-6 text-white/95 max-w-sm">
                           {(language === 'fr-FR' ? step.descriptionFr : step.descriptionEn).split('\n').map((paragraph, i) => (
-                            <p key={i} className="mb-2 last:mb-0">{paragraph}</p>
+                            <p key={i} className="mb-3 last:mb-0">{paragraph}</p>
                           ))}
                         </div>
                         
                         {/* Sub Description */}
-                        <div className="text-xs text-white/75 border-t border-white/20 pt-4">
+                        <div className="text-xs text-white/80 border-t border-white/20 pt-4 max-w-sm">
                           {language === 'fr-FR' ? step.subDescriptionFr : step.subDescriptionEn}
                         </div>
                         
                         {/* Click to flip back hint */}
-                        <div className="absolute bottom-4 right-4 text-xs text-white/50">
+                        <div className="absolute bottom-4 right-4 text-xs text-white/60 bg-white/10 px-2 py-1 rounded">
                           {language === 'fr-FR' ? 'Cliquer pour retourner' : 'Click to flip back'}
                         </div>
                       </div>
