@@ -115,13 +115,13 @@ export function WhyMemopykSection() {
 
             {/* Card 2: Visual Image Card */}
             <div className="group relative h-full">
-              <div className="relative bg-gradient-to-br from-memopyk-cream/40 to-memopyk-sky-blue/20 backdrop-blur-sm rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-2 border border-white/20 h-full overflow-hidden">
+              <div className="relative bg-gradient-to-br from-memopyk-cream/40 to-memopyk-sky-blue/20 backdrop-blur-sm p-4 sm:p-6 lg:p-8 rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-2 border border-white/20 h-full flex items-center justify-center">
                 
                 {/* Image Only */}
                 <img 
                   src={memoryOverwhelmedImage}
                   alt=""
-                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                  className="max-h-full max-w-full object-contain group-hover:scale-105 transition-transform duration-300 rounded-xl"
                 />
               </div>
 
