@@ -248,6 +248,50 @@ export default function GallerySection() {
     };
   }, [flippedCards]);
 
+  // Add scroll-out-of-view detection for flipped cards
+  useEffect(() => {
+    if (flippedCards.size === 0) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (!entry.isIntersecting) {
+            // Card is out of view, check if it's flipped
+            const cardElement = entry.target as HTMLElement;
+            const cardId = cardElement.getAttribute('data-card-id');
+            
+            if (cardId && flippedCards.has(cardId)) {
+              console.log('🔄 Card scrolled out of view - closing flipped card:', cardId);
+              setFlippedCards(prev => {
+                const newSet = new Set(prev);
+                newSet.delete(cardId);
+                return newSet;
+              });
+            }
+          }
+        });
+      },
+      {
+        // Trigger when card is completely out of viewport
+        threshold: 0,
+        // Add some margin to trigger before card is completely out
+        rootMargin: '-50px 0px -50px 0px'
+      }
+    );
+
+    // Observe all flipped cards
+    flippedCards.forEach(cardId => {
+      const cardElement = document.querySelector(`[data-card-id="${cardId}"]`);
+      if (cardElement) {
+        observer.observe(cardElement);
+      }
+    });
+
+    return () => {
+      observer.disconnect();
+    };
+  }, [flippedCards]);
+
 
 
   const content = {
@@ -651,6 +695,7 @@ export default function GallerySection() {
               <div 
                 key={item.id} 
                 data-video-id={item.id}
+                data-card-id={item.id}
                 data-gallery-card
                 className={`card-flip-container ${isFlipped ? 'flipped' : ''} rounded-2xl`}
               >
