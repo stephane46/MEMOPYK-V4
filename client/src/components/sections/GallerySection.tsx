@@ -625,7 +625,7 @@ export default function GallerySection() {
   }
 
   return (
-    <section id="gallery" className="py-16 bg-gradient-to-br from-memopyk-cream/30 to-white">
+    <section id="gallery" className="py-12 bg-gradient-to-br from-memopyk-cream/30 to-white">
       <div className="container mx-auto px-4" ref={galleryRef}>
         {/* Header - Mobile Optimized */}
         <div className="text-center mb-8 sm:mb-12 lg:mb-16">

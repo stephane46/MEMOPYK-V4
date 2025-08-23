@@ -15,7 +15,7 @@ export function CtaSection() {
   const getText = (fr: string, en: string) => language === 'fr-FR' ? fr : en;
 
   return (
-    <section id="cta" className="py-16 bg-gradient-to-br from-memopyk-cream/30 to-white">
+    <section id="cta" className="py-12 bg-gradient-to-br from-memopyk-cream/30 to-white">
       <div className="container mx-auto px-4">
         <div className="relative bg-gradient-to-br from-memopyk-dark-blue via-memopyk-navy to-memopyk-dark-blue p-10 rounded-3xl shadow-2xl border border-memopyk-orange/20 overflow-hidden">
           {/* Decorative Elements */}

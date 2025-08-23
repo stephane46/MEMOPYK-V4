@@ -170,7 +170,7 @@ export default function FAQSection() {
   }
 
   return (
-    <section id="faq" className="py-16 bg-gradient-to-br from-memopyk-cream/50 to-white">
+    <section id="faq" className="py-12 bg-gradient-to-br from-memopyk-cream/50 to-white">
       <div className="max-w-4xl mx-auto px-4 sm:px-6">
         {/* Section Header - Mobile Optimized */}
         <div className="text-center mb-6 sm:mb-8 lg:mb-12">
