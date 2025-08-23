@@ -122,7 +122,7 @@ export function WhyMemopykSection() {
                   <img 
                     src={memoryOverwhelmedImage}
                     alt=""
-                    className="w-full h-full object-contain rounded-xl group-hover:scale-105 transition-transform duration-300"
+                    className="w-32 h-32 sm:w-40 sm:h-40 lg:w-48 lg:h-48 object-contain rounded-xl group-hover:scale-105 transition-transform duration-300"
                   />
                 </div>
               </div>
