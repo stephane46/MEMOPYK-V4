@@ -51,14 +51,14 @@ export function HomePage() {
       {/* Key Visual Problem/Solution Section */}
       <KeyVisualSection />
 
-      {/* How It Works Condensed - Before Gallery */}
-      <HowItWorksCondensed />
+      {/* Why MEMOPYK Benefits Section - Moved before Gallery */}
+      <WhyMemopykSection />
 
-      {/* Gallery Section - Moved above Why MEMOPYK */}
+      {/* Gallery Section */}
       <GallerySection />
 
-      {/* Why MEMOPYK Benefits Section */}
-      <WhyMemopykSection />
+      {/* How It Works Condensed - After Gallery */}
+      <HowItWorksCondensed />
 
       {/* Call to Action Section */}
       <CtaSection />
