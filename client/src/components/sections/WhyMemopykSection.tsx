@@ -1,6 +1,6 @@
 import { useLanguage } from '../../contexts/LanguageContext';
 import { Clock, Zap, Users, Settings, Shield } from 'lucide-react';
-import filmstripImage from "@assets/MEMOPYK_filmstrip_1755941608793.png";
+import filmstripImage from "@assets/souvenir_film_1755960575328.png";
 
 export function WhyMemopykSection() {
   const { language } = useLanguage();
