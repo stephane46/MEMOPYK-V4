@@ -165,9 +165,9 @@ export function KeyVisualSection() {
             </h2>
 
             {/* THE ANSWER - Enhanced Solution Statement */}
-            <div className="relative mt-8 overflow-hidden">
+            <div className="relative mt-8 overflow-hidden transform hover:scale-[1.02] transition-all duration-500 inline-block">
               {/* Light blue background with dark blue outline */}
-              <div className="bg-memopyk-sky-blue/20 border-2 border-memopyk-dark-blue rounded-xl px-5 py-5 shadow-lg relative overflow-hidden transform hover:scale-[1.02] transition-all duration-500 inline-block">
+              <div className="bg-memopyk-sky-blue/20 border-2 border-memopyk-dark-blue rounded-xl px-5 py-5 shadow-lg relative overflow-hidden">
 
                 {/* Main solution text with consistent typography */}
                 <div className="relative z-10">
