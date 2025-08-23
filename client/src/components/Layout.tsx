@@ -78,9 +78,14 @@ export function Layout({ children }: LayoutProps) {
 
   const navigation = [
     { 
-      name: t('nav.how-it-works'), 
+      name: t('nav.our-service'), 
       type: 'anchor', 
       sectionId: 'how-it-works' 
+    },
+    { 
+      name: t('nav.why-choose-us'), 
+      type: 'anchor', 
+      sectionId: 'why-memopyk' 
     },
     { 
       name: t('nav.gallery'), 
@@ -88,7 +93,17 @@ export function Layout({ children }: LayoutProps) {
       sectionId: 'gallery' 
     },
     { 
-      name: t('nav.quote'), 
+      name: t('nav.faq'), 
+      type: 'anchor', 
+      sectionId: 'faq' 
+    },
+    { 
+      name: t('nav.quotation'), 
+      type: 'anchor', 
+      sectionId: 'cta' 
+    },
+    { 
+      name: t('nav.contact'), 
       type: 'anchor', 
       sectionId: 'cta' 
     },
