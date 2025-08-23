@@ -117,7 +117,7 @@ export function WhyMemopykSection() {
             <img 
               src={filmstripImage}
               alt=""
-              className="w-full h-64 sm:h-72 lg:h-80 object-cover rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-2"
+              className="w-full h-64 sm:h-72 lg:h-80 object-contain rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-2"
             />
 
             {/* Card 3: Gain de Temps */}
