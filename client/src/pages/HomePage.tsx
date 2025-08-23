@@ -57,11 +57,14 @@ export function HomePage() {
       {/* Gallery Section */}
       <GallerySection />
 
-      {/* Call to Action Section - First CTA after Gallery */}
+      {/* First Call to Action Section */}
       <CtaSection />
 
-      {/* How It Works Condensed - After CTA */}
+      {/* How It Works Condensed - Between the two CTA sections */}
       <HowItWorksCondensed />
+
+      {/* Second Call to Action Section */}
+      <CtaSection />
 
       {/* FAQ Section */}
       <FAQSection />

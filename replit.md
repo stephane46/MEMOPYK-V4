@@ -37,7 +37,7 @@ Modal styling: Requires solid white modal backgrounds with dark overlays for pro
 
 **Key Visual Section Hover Effect Optimization (Aug 2025)**: Resolved hover scaling issue in Key Visual section where the call-to-action element grew properly but the border appeared "erased" due to improper transform origin. Fixed by restructuring the hover effect with `origin-left` transform origin, allowing the element to scale from its left anchor point and expand rightward into available space. This prevents left-side clipping while maintaining perfect alignment and preserving the interactive hover effect users appreciate.
 
-**Homepage Section Reorganization (Aug 2025)**: Swapped positions of "Comment ça marche" (How It Works) and "Pourquoi choisir MEMOPYK" (Why Choose MEMOPYK) sections for improved user flow. The benefits section now appears before the gallery, while the process explanation follows after, creating a more logical customer journey from value proposition to examples to methodology.
+**Homepage Section Reorganization (Aug 2025)**: Enhanced user flow by positioning "Comment ça marche" (How It Works) section between two Call-to-Action sections. This creates an optimal customer journey: Gallery → First CTA → Process Explanation → Second CTA → FAQ, maximizing conversion opportunities through strategic placement of actionable elements around educational content.
 
 ## System Architecture
 
