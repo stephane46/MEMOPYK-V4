@@ -8,6 +8,7 @@ export function KeyVisualSection() {
   const { language } = useLanguage();
   const [isVisible, setIsVisible] = useState(false);
   const sectionRef = useRef<HTMLDivElement>(null);
+  const textRefs = useRef<(HTMLSpanElement | null)[]>([]);
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -25,6 +26,29 @@ export function KeyVisualSection() {
 
     return () => observer.disconnect();
   }, []);
+
+  // Measure text widths for proper sizing
+  useEffect(() => {
+    if (isVisible && textRefs.current.length > 0) {
+      const measurements = textRefs.current.map((ref, index) => {
+        if (ref) {
+          const width = ref.getBoundingClientRect().width;
+          const text = ref.textContent;
+          return { index, text, width };
+        }
+        return null;
+      }).filter(Boolean);
+      
+      if (measurements.length > 0) {
+        const maxWidth = Math.max(...measurements.map(m => m!.width));
+        const recommendedWidth = Math.ceil(maxWidth) + 20; // Add 20px padding
+        
+        console.log(`📏 TEXT MEASUREMENTS for ${language}:`, measurements);
+        console.log(`📐 Maximum text width: ${maxWidth.toFixed(1)}px`);
+        console.log(`💡 Recommended container width: ${recommendedWidth}px`);
+      }
+    }
+  }, [isVisible, language]);
 
   return (
     <section ref={sectionRef} className="pt-8 sm:pt-12 lg:pt-16 pb-8 sm:pb-12 lg:pb-6 xl:pb-4 bg-gradient-to-br from-memopyk-cream to-memopyk-cream/70 overflow-hidden">
@@ -91,7 +115,7 @@ export function KeyVisualSection() {
                     style={{ transitionDelay: '1200ms' }}
                   >
                     <Smartphone className="w-5 h-5 sm:w-6 sm:h-6 flex-shrink-0 text-memopyk-sky-blue transition-transform duration-300 hover:rotate-6" />
-                    <span className="font-poppins text-memopyk-navy text-sm sm:text-base lg:text-lg">enfouis dans des téléphones...</span>
+                    <span ref={(el) => { textRefs.current[0] = el; }} className="font-poppins text-memopyk-navy text-sm sm:text-base lg:text-lg">enfouis dans des téléphones...</span>
                   </div>
                   <div 
                     className={`flex items-center gap-3 bg-white/60 backdrop-blur-sm rounded-xl px-4 py-3 border border-memopyk-sky-blue/30 shadow-lg max-w-[240px] sm:max-w-sm md:max-w-md transform transition-all duration-1000 hover:scale-105 hover:bg-white/80 hover:shadow-xl ${
@@ -100,7 +124,7 @@ export function KeyVisualSection() {
                     style={{ transitionDelay: '1600ms' }}
                   >
                     <Laptop className="w-5 h-5 sm:w-6 sm:h-6 flex-shrink-0 text-memopyk-sky-blue transition-transform duration-300 hover:rotate-6" />
-                    <span className="font-poppins text-memopyk-navy text-sm sm:text-base lg:text-lg">oubliés sur des disques durs...</span>
+                    <span ref={(el) => { textRefs.current[1] = el; }} className="font-poppins text-memopyk-navy text-sm sm:text-base lg:text-lg">oubliés sur des disques durs...</span>
                   </div>
                   <div 
                     className={`flex items-center gap-3 bg-white/60 backdrop-blur-sm rounded-xl px-4 py-3 border border-memopyk-sky-blue/30 shadow-lg max-w-[240px] sm:max-w-sm md:max-w-md transform transition-all duration-1000 hover:scale-105 hover:bg-white/80 hover:shadow-xl ${
@@ -109,7 +133,7 @@ export function KeyVisualSection() {
                     style={{ transitionDelay: '2000ms' }}
                   >
                     <Package className="w-5 h-5 sm:w-6 sm:h-6 flex-shrink-0 text-memopyk-sky-blue transition-transform duration-300 hover:rotate-6" />
-                    <span className="font-poppins text-memopyk-navy text-sm sm:text-base lg:text-lg">entassés dans des cartons...</span>
+                    <span ref={(el) => { textRefs.current[2] = el; }} className="font-poppins text-memopyk-navy text-sm sm:text-base lg:text-lg">entassés dans des cartons...</span>
                   </div>
                 </>
               ) : (
@@ -121,7 +145,7 @@ export function KeyVisualSection() {
                     style={{ transitionDelay: '1200ms' }}
                   >
                     <Smartphone className="w-5 h-5 sm:w-6 sm:h-6 flex-shrink-0 text-memopyk-sky-blue transition-transform duration-300 hover:rotate-6" />
-                    <span className="font-poppins text-memopyk-navy text-sm sm:text-base lg:text-lg">buried in phones...</span>
+                    <span ref={(el) => { textRefs.current[3] = el; }} className="font-poppins text-memopyk-navy text-sm sm:text-base lg:text-lg">buried in phones...</span>
                   </div>
                   <div 
                     className={`flex items-center gap-3 bg-white/60 backdrop-blur-sm rounded-xl px-4 py-3 border border-memopyk-sky-blue/30 shadow-lg max-w-[200px] sm:max-w-sm md:max-w-md transform transition-all duration-1000 hover:scale-105 hover:bg-white/80 hover:shadow-xl ${
@@ -130,7 +154,7 @@ export function KeyVisualSection() {
                     style={{ transitionDelay: '1600ms' }}
                   >
                     <Laptop className="w-5 h-5 sm:w-6 sm:h-6 flex-shrink-0 text-memopyk-sky-blue transition-transform duration-300 hover:rotate-6" />
-                    <span className="font-poppins text-memopyk-navy text-sm sm:text-base lg:text-lg">forgotten on hard drives...</span>
+                    <span ref={(el) => { textRefs.current[4] = el; }} className="font-poppins text-memopyk-navy text-sm sm:text-base lg:text-lg">forgotten on hard drives...</span>
                   </div>
                   <div 
                     className={`flex items-center gap-3 bg-white/60 backdrop-blur-sm rounded-xl px-4 py-3 border border-memopyk-sky-blue/30 shadow-lg max-w-[200px] sm:max-w-sm md:max-w-md transform transition-all duration-1000 hover:scale-105 hover:bg-white/80 hover:shadow-xl ${
@@ -139,7 +163,7 @@ export function KeyVisualSection() {
                     style={{ transitionDelay: '2000ms' }}
                   >
                     <Package className="w-5 h-5 sm:w-6 sm:h-6 flex-shrink-0 text-memopyk-sky-blue transition-transform duration-300 hover:rotate-6" />
-                    <span className="font-poppins text-memopyk-navy text-sm sm:text-base lg:text-lg">piled in boxes...</span>
+                    <span ref={(el) => { textRefs.current[5] = el; }} className="font-poppins text-memopyk-navy text-sm sm:text-base lg:text-lg">piled in boxes...</span>
                   </div>
                 </>
               )}
