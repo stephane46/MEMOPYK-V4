@@ -1,5 +1,6 @@
 import { useLanguage } from '../../contexts/LanguageContext';
 import { Clock, Zap, Users, Settings, Shield } from 'lucide-react';
+import memoryOverwhelmedImage from "@assets/ChatGPT Image 23 août 2025, 10_13_07_1755936822777.png";
 
 export function WhyMemopykSection() {
   const { language } = useLanguage();
@@ -112,36 +113,12 @@ export function WhyMemopykSection() {
               );
             })()}
 
-            {/* Card 2: Simplicité (Mobile) / Image Card */}
-            {(() => {
-              const benefit = benefits[0]; // Simplicité
-              return (
-                <div className="group relative h-full">
-                  <div className="relative bg-gradient-to-br from-memopyk-cream/40 to-memopyk-sky-blue/20 backdrop-blur-sm p-4 sm:p-6 lg:p-8 rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-2 border border-white/20 h-full">
-                    
-                    {/* Icon */}
-                    <div className="flex items-center justify-center w-12 h-12 sm:w-16 sm:h-16 bg-white/20 rounded-full mb-3 sm:mb-4 lg:mb-6 mx-auto">
-                      <benefit.icon className="w-6 h-6 sm:w-8 sm:h-8 text-memopyk-blue-gray" />
-                    </div>
-
-                    {/* Content */}
-                    <div className="text-center">
-                      <h3 className="text-base sm:text-lg lg:text-xl font-bold text-memopyk-blue-gray mb-2 sm:mb-3 lg:mb-4">
-                        {language === 'fr-FR' ? benefit.title_fr : benefit.title_en}
-                      </h3>
-                      <p className="text-xs sm:text-sm lg:text-base text-memopyk-blue-gray/80 leading-relaxed">
-                        {language === 'fr-FR' ? benefit.description_fr : benefit.description_en}
-                      </p>
-                    </div>
-                  </div>
-
-                  {/* Background Pattern */}
-                  <div className="absolute inset-0 -z-10 transform translate-x-2 translate-y-2">
-                    <div className="w-full h-full bg-gradient-to-br from-memopyk-sky-blue/10 to-memopyk-blue-gray/10 rounded-2xl"></div>
-                  </div>
-                </div>
-              );
-            })()}
+            {/* Raw Image - No Card */}
+            <img 
+              src={memoryOverwhelmedImage}
+              alt=""
+              className="w-full h-full object-cover rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-2"
+            />
 
             {/* Card 3: Gain de Temps */}
             {(() => {
