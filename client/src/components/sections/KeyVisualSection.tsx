@@ -41,9 +41,14 @@ export function KeyVisualSection() {
                   ? "Illustration MEMOPYK - Transformation des souvenirs"
                   : "MEMOPYK Illustration - Memory transformation"
                 }
-                className="w-full h-auto max-w-full rounded-2xl block"
+                className="w-full rounded-2xl block"
                 loading="eager"
-                style={{ maxWidth: '100%', height: 'auto', visibility: 'visible', objectFit: 'contain' }}
+                style={{ 
+                  height: '300px', 
+                  objectFit: 'cover', 
+                  objectPosition: 'center center',
+                  visibility: 'visible' 
+                }}
                 onError={(e) => {
                   console.error('KeyVisual image failed to load:', keyVisualImage);
                   e.currentTarget.style.backgroundColor = '#f3f4f6';
