@@ -410,7 +410,15 @@ export function Layout({ children }: LayoutProps) {
                     onClick={() => handleAnchorClick('how-it-works')}
                     className="hover:text-white transition-colors"
                   >
-                    {t('nav.how-it-works')}
+                    {t('nav.our-service')}
+                  </button>
+                </li>
+                <li>
+                  <button 
+                    onClick={() => handleAnchorClick('why-memopyk')}
+                    className="hover:text-white transition-colors"
+                  >
+                    {t('nav.why-choose-us')}
                   </button>
                 </li>
                 <li>
@@ -423,13 +431,28 @@ export function Layout({ children }: LayoutProps) {
                 </li>
                 <li>
                   <button 
+                    onClick={() => handleAnchorClick('faq')}
+                    className="hover:text-white transition-colors"
+                  >
+                    {t('nav.faq')}
+                  </button>
+                </li>
+                <li>
+                  <button 
                     onClick={() => handleAnchorClick('cta')}
                     className="hover:text-white transition-colors"
                   >
-                    {t('nav.quote')}
+                    {t('nav.quotation')}
                   </button>
                 </li>
-
+                <li>
+                  <button 
+                    onClick={() => handleAnchorClick('footer', 'footer-email-text')}
+                    className="hover:text-white transition-colors"
+                  >
+                    {t('nav.contact')}
+                  </button>
+                </li>
               </ul>
             </div>
             
