@@ -1,5 +1,3 @@
-console.log("📦 GallerySection loaded");
-
 import React from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useState, useEffect, useRef } from "react";
@@ -58,7 +56,6 @@ interface GalleryItem {
 export default function GallerySection() {
   const { language } = useLanguage();
   
-  console.log("📦 GallerySection render", { language });
   const [flippedCards, setFlippedCards] = useState<Set<string | number>>(new Set());
   const galleryRef = useRef<HTMLDivElement>(null);
   const [lightboxVideo, setLightboxVideo] = useState<GalleryItem | null>(null);
