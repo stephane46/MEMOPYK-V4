@@ -1,6 +1,6 @@
 import { useLanguage } from '../../contexts/LanguageContext';
 import { Clock, Zap, Users, Settings, Shield } from 'lucide-react';
-import memoryOverwhelmedImage from "@assets/ChatGPT Image 23 août 2025, 10_13_07_1755936822777.png";
+import filmstripImage from "@assets/filmstrip.png";
 
 export function WhyMemopykSection() {
   const { language } = useLanguage();
@@ -115,7 +115,7 @@ export function WhyMemopykSection() {
 
             {/* Raw Image - No Card */}
             <img 
-              src={memoryOverwhelmedImage}
+              src={filmstripImage}
               alt=""
               className="w-full h-64 sm:h-72 lg:h-80 object-cover rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-2"
             />
