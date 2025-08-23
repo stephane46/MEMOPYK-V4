@@ -201,7 +201,7 @@ export function HeroVideoSection() {
         {/* Semi-transparent background for optimal text contrast across all lighting conditions */}
         <div className="bg-black/40 backdrop-blur-sm rounded-2xl px-6 py-2 sm:px-10 sm:py-3 max-w-7xl w-full border border-white/10">
           <h1 
-            className="font-playfair font-bold mb-4 sm:mb-6 lg:mb-8 text-lg sm:text-2xl lg:text-5xl"
+            className="font-playfair font-bold mb-0 text-lg sm:text-2xl lg:text-5xl"
             style={{ 
               textShadow: '3px 3px 6px rgba(0,0,0,0.9)',
               lineHeight: '1.4'
