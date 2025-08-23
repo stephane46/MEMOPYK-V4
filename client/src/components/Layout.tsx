@@ -59,11 +59,11 @@ export function Layout({ children }: LayoutProps) {
               const animateElementNode = document.getElementById(animateElement);
               if (animateElementNode) {
                 // Add animation classes
-                animateElementNode.classList.add('animate-bounce', 'ring-4', 'ring-memopyk-orange', 'ring-opacity-50');
-                // Remove animation after 2 seconds
+                animateElementNode.classList.add('animate-bounce', 'ring-2', 'ring-memopyk-orange', 'ring-opacity-50');
+                // Remove animation after 1 second
                 setTimeout(() => {
-                  animateElementNode.classList.remove('animate-bounce', 'ring-4', 'ring-memopyk-orange', 'ring-opacity-50');
-                }, 2000);
+                  animateElementNode.classList.remove('animate-bounce', 'ring-2', 'ring-memopyk-orange', 'ring-opacity-50');
+                }, 1000);
               }
             }, 800); // Wait for scroll to complete
           }
@@ -101,11 +101,11 @@ export function Layout({ children }: LayoutProps) {
             const animateElement = document.getElementById(animateElementId);
             if (animateElement) {
               // Add animation classes
-              animateElement.classList.add('animate-bounce', 'ring-4', 'ring-memopyk-orange', 'ring-opacity-50');
-              // Remove animation after 2 seconds
+              animateElement.classList.add('animate-bounce', 'ring-2', 'ring-memopyk-orange', 'ring-opacity-50');
+              // Remove animation after 1 second
               setTimeout(() => {
-                animateElement.classList.remove('animate-bounce', 'ring-4', 'ring-memopyk-orange', 'ring-opacity-50');
-              }, 2000);
+                animateElement.classList.remove('animate-bounce', 'ring-2', 'ring-memopyk-orange', 'ring-opacity-50');
+              }, 1000);
             }
           }, 800); // Wait for scroll to complete
         }
