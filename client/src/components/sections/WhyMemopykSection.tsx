@@ -114,27 +114,15 @@ export function WhyMemopykSection() {
 
             {/* Card 2: Visual Image Card */}
             <div className="group relative h-full">
-              <div className="relative bg-gradient-to-br from-memopyk-cream/40 to-memopyk-sky-blue/20 backdrop-blur-sm p-4 sm:p-6 lg:p-8 rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-2 border border-white/20 h-full flex flex-col items-center justify-center">
+              <div className="relative bg-gradient-to-br from-memopyk-cream/40 to-memopyk-sky-blue/20 backdrop-blur-sm p-4 sm:p-6 lg:p-8 rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-2 border border-white/20 h-full flex items-center justify-center">
                 
-                {/* Image */}
-                <div className="flex justify-center mb-4 sm:mb-6 flex-shrink-0">
-                  <div className="w-full max-w-[200px] sm:max-w-[240px] lg:max-w-[280px] rounded-xl overflow-hidden shadow-lg group-hover:scale-105 transition-transform duration-300">
-                    <img 
-                      src="/attached_assets/ChatGPT Image 23 août 2025, 10_13_07_1755936822777.png"
-                      alt={language === 'fr-FR' ? "Simplifiez vos souvenirs avec MEMOPYK" : "Simplify your memories with MEMOPYK"}
-                      className="w-full h-auto object-cover"
-                    />
-                  </div>
-                </div>
-
-                {/* Optional subtitle */}
-                <div className="text-center">
-                  <p className="text-memopyk-dark-blue/80 text-sm sm:text-base italic font-medium">
-                    {language === 'fr-FR' 
-                      ? "De la complexité à la simplicité" 
-                      : "From complexity to simplicity"
-                    }
-                  </p>
+                {/* Image Only */}
+                <div className="w-full h-full flex items-center justify-center">
+                  <img 
+                    src="https://i.imgur.com/FqXvQhR.png"
+                    alt=""
+                    className="w-full h-full object-contain rounded-xl group-hover:scale-105 transition-transform duration-300"
+                  />
                 </div>
               </div>
 
