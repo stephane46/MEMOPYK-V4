@@ -12490,7 +12490,41 @@
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-23T05:24:05.758Z",
-    "updated_at": "2025-08-23T05:24:36.351Z",
-    "duration": 922442
+    "updated_at": "2025-08-23T05:25:17.246Z",
+    "duration": 922482
+  },
+  {
+    "id": "06c8c220-27d1-4600-9bc3-24fd3d5aaffe",
+    "session_id": "session_1755926719931_kjl23iuzj",
+    "user_id": null,
+    "ip_address": "109.17.150.48",
+    "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36 Edg/139.0.0.0",
+    "referrer": "https://replit.com/",
+    "language": "fr-FR",
+    "country": "Unknown",
+    "city": "Unknown",
+    "page_views": 0,
+    "is_bot": false,
+    "is_test_data": false,
+    "created_at": "2025-08-23T05:25:19.964Z",
+    "updated_at": "2025-08-23T05:27:21.303Z",
+    "duration": 506012
+  },
+  {
+    "id": "9bb50693-8818-4b3c-8374-2832f8dc55d0",
+    "session_id": "session_1755926855328_fc23z8s8d",
+    "user_id": null,
+    "ip_address": "109.17.150.48",
+    "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36 Edg/139.0.0.0",
+    "referrer": "https://replit.com/",
+    "language": "en-US",
+    "country": "Unknown",
+    "city": "Unknown",
+    "page_views": 0,
+    "is_bot": false,
+    "is_test_data": false,
+    "created_at": "2025-08-23T05:27:35.363Z",
+    "updated_at": "2025-08-23T05:27:50.270Z",
+    "duration": 506041
   }
 ]
