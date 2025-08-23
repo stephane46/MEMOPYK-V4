@@ -83,7 +83,7 @@ export function KeyVisualSection() {
             </h2>
             
             {/* Animated Elements Coming from Left Image */}
-            <div className="text-lg sm:text-xl lg:text-2xl text-memopyk-navy leading-relaxed space-y-3 sm:space-y-2 overflow-hidden">
+            <div className="text-lg sm:text-xl lg:text-2xl text-memopyk-navy leading-relaxed space-y-3 sm:space-y-2 overflow-visible w-fit max-w-none">
               {language === 'fr-FR' ? (
                 <>
                   <div 
