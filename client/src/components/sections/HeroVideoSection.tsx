@@ -209,8 +209,8 @@ export function HeroVideoSection() {
           >
             {(() => {
               const text = language === 'fr-FR' 
-                ? (activeHeroText?.title_fr || "Transformez vos souvenirs\nen films cinématographiques")
-                : (activeHeroText?.title_en || "Transform your memories\ninto cinematic films");
+                ? (activeHeroText?.title_fr || "Nous transformons vos photos et vidéos personnelles\nen films souvenirs inoubliables")
+                : (activeHeroText?.title_en || "We transform your personal photos and videos\ninto unforgettable souvenir films");
               
               // Handle multiple escaping scenarios: raw newlines, \n, \\n
               let processedText = text;
