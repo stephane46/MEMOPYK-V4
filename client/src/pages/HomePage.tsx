@@ -57,11 +57,11 @@ export function HomePage() {
       {/* Gallery Section */}
       <GallerySection />
 
-      {/* How It Works Condensed - After Gallery */}
-      <HowItWorksCondensed />
-
-      {/* Call to Action Section */}
+      {/* Call to Action Section - First CTA after Gallery */}
       <CtaSection />
+
+      {/* How It Works Condensed - After CTA */}
+      <HowItWorksCondensed />
 
       {/* FAQ Section */}
       <FAQSection />
