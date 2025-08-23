@@ -199,7 +199,7 @@ export function HeroVideoSection() {
       {/* Hero Text Content - Mobile Optimized for Better Fit */}
       <div className="absolute inset-0 flex flex-col items-center justify-center text-center text-white px-3 sm:px-6 lg:px-8">
         {/* Semi-transparent background for optimal text contrast across all lighting conditions */}
-        <div className="bg-black/40 backdrop-blur-sm rounded-2xl p-2 sm:p-3 max-w-7xl w-full border border-white/10">
+        <div className={`bg-black/40 backdrop-blur-sm rounded-2xl p-2 sm:p-3 w-full border border-white/10 ${language.startsWith('fr') ? 'max-w-7xl' : 'max-w-5xl'}`}>
           <h1 
             className="font-playfair font-bold mb-0 text-lg sm:text-2xl lg:text-5xl"
             style={{ 
