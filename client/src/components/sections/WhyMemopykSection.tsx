@@ -1,5 +1,6 @@
 import { useLanguage } from '../../contexts/LanguageContext';
 import { Clock, Zap, Users, Settings, Shield } from 'lucide-react';
+import memoryOverwhelmedImage from "@assets/ChatGPT Image 23 août 2025, 10_13_07_1755936822777.png";
 
 export function WhyMemopykSection() {
   const { language } = useLanguage();
@@ -119,7 +120,7 @@ export function WhyMemopykSection() {
                 {/* Image Only */}
                 <div className="w-full h-full flex items-center justify-center">
                   <img 
-                    src="/attached_assets/ChatGPT Image 23 août 2025, 10_13_07_1755936822777.png"
+                    src={memoryOverwhelmedImage}
                     alt=""
                     className="w-full h-full object-contain rounded-xl group-hover:scale-105 transition-transform duration-300"
                   />
