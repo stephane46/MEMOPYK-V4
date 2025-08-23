@@ -112,41 +112,37 @@ export function WhyMemopykSection() {
               );
             })()}
 
-            {/* Card 2: Qualité Premium */}
-            {(() => {
-              const benefit = benefits[4]; // Qualité Premium
-              const Icon = benefit.icon;
-              return (
-                <div className="group relative h-full">
-                  <div className={`relative bg-gradient-to-br ${benefit.gradient} backdrop-blur-sm p-4 sm:p-6 lg:p-8 rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-2 border border-white/20 h-full flex flex-col`}>
-                    
-                    {/* Icon at Top */}
-                    <div className="flex justify-center mb-4 sm:mb-6 flex-shrink-0">
-                      <div className="w-16 h-16 sm:w-20 sm:h-20 lg:w-24 lg:h-24 bg-white/80 backdrop-blur-sm rounded-full flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform duration-300">
-                        <Icon className="w-8 h-8 sm:w-10 sm:h-10 lg:w-12 lg:h-12 text-memopyk-dark-blue" />
-                      </div>
-                    </div>
-
-                    {/* Title */}
-                    <div className="mb-4 sm:mb-6 flex-shrink-0">
-                      <h3 className="text-lg sm:text-xl lg:text-2xl font-bold text-memopyk-navy text-center">
-                        {language === 'fr-FR' ? benefit.titleFr : benefit.titleEn}
-                      </h3>
-                    </div>
-
-                    {/* Description */}
-                    <p className="text-memopyk-dark-blue leading-relaxed text-sm sm:text-base flex-grow">
-                      {language === 'fr-FR' ? benefit.descriptionFr : benefit.descriptionEn}
-                    </p>
-                  </div>
-
-                  {/* Background Pattern */}
-                  <div className="absolute inset-0 -z-10 transform translate-x-2 translate-y-2">
-                    <div className="w-full h-full bg-gradient-to-br from-memopyk-sky-blue/10 to-memopyk-blue-gray/10 rounded-2xl"></div>
+            {/* Card 2: Visual Image Card */}
+            <div className="group relative h-full">
+              <div className="relative bg-gradient-to-br from-memopyk-cream/40 to-memopyk-sky-blue/20 backdrop-blur-sm p-4 sm:p-6 lg:p-8 rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-2 border border-white/20 h-full flex flex-col items-center justify-center">
+                
+                {/* Image */}
+                <div className="flex justify-center mb-4 sm:mb-6 flex-shrink-0">
+                  <div className="w-full max-w-[200px] sm:max-w-[240px] lg:max-w-[280px] rounded-xl overflow-hidden shadow-lg group-hover:scale-105 transition-transform duration-300">
+                    <img 
+                      src="/attached_assets/ChatGPT Image 23 août 2025, 10_13_07_1755936822777.png"
+                      alt={language === 'fr-FR' ? "Simplifiez vos souvenirs avec MEMOPYK" : "Simplify your memories with MEMOPYK"}
+                      className="w-full h-auto object-cover"
+                    />
                   </div>
                 </div>
-              );
-            })()}
+
+                {/* Optional subtitle */}
+                <div className="text-center">
+                  <p className="text-memopyk-dark-blue/80 text-sm sm:text-base italic font-medium">
+                    {language === 'fr-FR' 
+                      ? "De la complexité à la simplicité" 
+                      : "From complexity to simplicity"
+                    }
+                  </p>
+                </div>
+              </div>
+
+              {/* Background Pattern */}
+              <div className="absolute inset-0 -z-10 transform translate-x-2 translate-y-2">
+                <div className="w-full h-full bg-gradient-to-br from-memopyk-sky-blue/10 to-memopyk-blue-gray/10 rounded-2xl"></div>
+              </div>
+            </div>
 
             {/* Card 3: Gain de Temps */}
             {(() => {
