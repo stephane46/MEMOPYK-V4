@@ -100,7 +100,7 @@ export function WhyMemopykSection() {
                     </div>
 
                     {/* Description */}
-                    <p className="text-memopyk-dark-blue leading-relaxed text-sm sm:text-base flex-grow">
+                    <p className="text-memopyk-dark-blue leading-relaxed text-sm sm:text-base flex-grow text-center">
                       {language === 'fr-FR' ? benefit.descriptionFr : benefit.descriptionEn}
                     </p>
                   </div>
@@ -143,7 +143,7 @@ export function WhyMemopykSection() {
                     </div>
 
                     {/* Description */}
-                    <p className="text-memopyk-dark-blue leading-relaxed text-sm sm:text-base flex-grow">
+                    <p className="text-memopyk-dark-blue leading-relaxed text-sm sm:text-base flex-grow text-center">
                       {language === 'fr-FR' ? benefit.descriptionFr : benefit.descriptionEn}
                     </p>
                   </div>
@@ -183,7 +183,7 @@ export function WhyMemopykSection() {
                     </div>
 
                     {/* Description */}
-                    <p className="text-memopyk-dark-blue leading-relaxed text-sm sm:text-base flex-grow">
+                    <p className="text-memopyk-dark-blue leading-relaxed text-sm sm:text-base flex-grow text-center">
                       {language === 'fr-FR' ? benefit.descriptionFr : benefit.descriptionEn}
                     </p>
                   </div>
@@ -219,7 +219,7 @@ export function WhyMemopykSection() {
                     </div>
 
                     {/* Description */}
-                    <p className="text-memopyk-dark-blue leading-relaxed text-sm sm:text-base flex-grow">
+                    <p className="text-memopyk-dark-blue leading-relaxed text-sm sm:text-base flex-grow text-center">
                       {language === 'fr-FR' ? benefit.descriptionFr : benefit.descriptionEn}
                     </p>
                   </div>
