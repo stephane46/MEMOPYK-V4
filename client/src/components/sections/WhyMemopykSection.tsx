@@ -8,7 +8,7 @@ export function WhyMemopykSection() {
   const securityCard = {
     icon: Shield,
     titleFr: "Sécurité Totale",
-    titleEn: "Total Security",
+    titleEn: "Security",
     descriptionFr: "Vos données personnelles sont entièrement protégées. Stockage sécurisé, transferts chiffrés et suppression après livraison garantissent la confidentialité absolue de vos souvenirs.",
     descriptionEn: "Your personal data is fully protected. Secure storage, encrypted transfers, and deletion after delivery guarantee absolute confidentiality of your memories.",
     gradient: "from-memopyk-navy/30 to-memopyk-dark-blue/20"
