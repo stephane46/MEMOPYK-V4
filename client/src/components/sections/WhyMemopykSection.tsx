@@ -119,7 +119,7 @@ export function WhyMemopykSection() {
                 {/* Image Only */}
                 <div className="w-full h-full flex items-center justify-center">
                   <img 
-                    src="https://i.imgur.com/FqXvQhR.png"
+                    src="/attached_assets/ChatGPT Image 23 août 2025, 10_13_07_1755936822777.png"
                     alt=""
                     className="w-full h-full object-contain rounded-xl group-hover:scale-105 transition-transform duration-300"
                   />
