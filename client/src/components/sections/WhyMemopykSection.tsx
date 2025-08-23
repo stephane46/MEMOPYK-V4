@@ -4,11 +4,14 @@ import { Clock, Zap, Users, Settings, Shield } from 'lucide-react';
 export function WhyMemopykSection() {
   const { language } = useLanguage();
 
-  // Special title card (first position)
-  const titleCard = {
-    titleFr: "Les avantages MEMOPYK",
-    titleEn: "MEMOPYK advantages",
-    isSpecial: true
+  // Security card (first position)
+  const securityCard = {
+    icon: Shield,
+    titleFr: "Sécurité Totale",
+    titleEn: "Total Security",
+    descriptionFr: "Vos données personnelles sont entièrement protégées. Stockage sécurisé, transferts chiffrés et suppression automatique après livraison garantissent la confidentialité absolue de vos souvenirs.",
+    descriptionEn: "Your personal data is fully protected. Secure storage, encrypted transfers, and automatic deletion after delivery guarantee absolute confidentiality of your memories.",
+    gradient: "from-memopyk-navy/30 to-memopyk-dark-blue/20"
   };
 
   const benefits = [
@@ -73,13 +76,30 @@ export function WhyMemopykSection() {
           {/* First Row: Special title card + 2 benefit cards */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             
-            {/* Special Title Card */}
+            {/* Security Card */}
             <div className="group relative h-full">
-              <div className="relative bg-gradient-to-br from-memopyk-orange/30 to-memopyk-navy/20 backdrop-blur-sm p-8 sm:p-10 lg:p-12 rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-2 border border-white/20 h-full flex items-center justify-center">
-                <h3 className="text-xl sm:text-2xl lg:text-3xl xl:text-4xl font-bold text-memopyk-navy text-center leading-tight">
-                  {language === 'fr-FR' ? titleCard.titleFr : titleCard.titleEn}
-                </h3>
+              <div className={`relative bg-gradient-to-br ${securityCard.gradient} backdrop-blur-sm p-4 sm:p-6 lg:p-8 rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-2 border border-white/20 h-full flex flex-col`}>
+                
+                {/* Icon at Top */}
+                <div className="flex justify-center mb-4 sm:mb-6 flex-shrink-0">
+                  <div className="w-16 h-16 sm:w-20 sm:h-20 lg:w-24 lg:h-24 bg-white/80 backdrop-blur-sm rounded-full flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform duration-300">
+                    <Shield className="w-8 h-8 sm:w-10 sm:h-10 lg:w-12 lg:h-12 text-memopyk-dark-blue" />
+                  </div>
+                </div>
+
+                {/* Title */}
+                <div className="mb-4 sm:mb-6 flex-shrink-0">
+                  <h3 className="text-lg sm:text-xl lg:text-2xl font-bold text-memopyk-navy text-center">
+                    {language === 'fr-FR' ? securityCard.titleFr : securityCard.titleEn}
+                  </h3>
+                </div>
+
+                {/* Description */}
+                <p className="text-memopyk-dark-blue leading-relaxed text-sm sm:text-base flex-grow">
+                  {language === 'fr-FR' ? securityCard.descriptionFr : securityCard.descriptionEn}
+                </p>
               </div>
+
               {/* Background Pattern */}
               <div className="absolute inset-0 -z-10 transform translate-x-2 translate-y-2">
                 <div className="w-full h-full bg-gradient-to-br from-memopyk-sky-blue/10 to-memopyk-blue-gray/10 rounded-2xl"></div>
