@@ -58,11 +58,15 @@ export function Layout({ children }: LayoutProps) {
             setTimeout(() => {
               const animateElementNode = document.getElementById(animateElement);
               if (animateElementNode) {
-                // Add animation classes
-                animateElementNode.classList.add('animate-bounce', 'ring-2', 'ring-memopyk-orange', 'ring-opacity-50');
+                // Add animation classes with tight outline
+                animateElementNode.classList.add('animate-bounce');
+                animateElementNode.style.outline = '2px solid rgb(214, 124, 74)';
+                animateElementNode.style.outlineOffset = '2px';
                 // Remove animation after 1 second
                 setTimeout(() => {
-                  animateElementNode.classList.remove('animate-bounce', 'ring-2', 'ring-memopyk-orange', 'ring-opacity-50');
+                  animateElementNode.classList.remove('animate-bounce');
+                  animateElementNode.style.outline = '';
+                  animateElementNode.style.outlineOffset = '';
                 }, 1000);
               }
             }, 800); // Wait for scroll to complete
@@ -100,11 +104,15 @@ export function Layout({ children }: LayoutProps) {
           setTimeout(() => {
             const animateElement = document.getElementById(animateElementId);
             if (animateElement) {
-              // Add animation classes
-              animateElement.classList.add('animate-bounce', 'ring-2', 'ring-memopyk-orange', 'ring-opacity-50');
+              // Add animation classes with tight outline
+              animateElement.classList.add('animate-bounce');
+              animateElement.style.outline = '2px solid rgb(214, 124, 74)';
+              animateElement.style.outlineOffset = '2px';
               // Remove animation after 1 second
               setTimeout(() => {
-                animateElement.classList.remove('animate-bounce', 'ring-2', 'ring-memopyk-orange', 'ring-opacity-50');
+                animateElement.classList.remove('animate-bounce');
+                animateElement.style.outline = '';
+                animateElement.style.outlineOffset = '';
               }, 1000);
             }
           }, 800); // Wait for scroll to complete
@@ -179,7 +187,7 @@ export function Layout({ children }: LayoutProps) {
                   return (
                     <button
                       key={`nav-${index}`}
-                      onClick={() => handleAnchorClick(item.sectionId, item.sectionId === 'footer' ? 'footer-email' : undefined)}
+                      onClick={() => handleAnchorClick(item.sectionId, item.sectionId === 'footer' ? 'footer-email' : (item.sectionId === 'cta' ? 'cta-questionnaire' : undefined))}
                       className="text-sm font-medium transition-colors text-gray-600 hover:text-memopyk-navy cursor-pointer"
                     >
                       {item.name}
@@ -189,7 +197,7 @@ export function Layout({ children }: LayoutProps) {
                   return (
                     <button
                       key={`nav-${index}`}
-                      onClick={() => handleAnchorClick(item.sectionId, item.sectionId === 'footer' ? 'footer-email' : undefined)}
+                      onClick={() => handleAnchorClick(item.sectionId, item.sectionId === 'footer' ? 'footer-email' : (item.sectionId === 'cta' ? 'cta-questionnaire' : undefined))}
                       className="text-sm font-medium transition-colors text-gray-600 hover:text-memopyk-navy cursor-pointer"
                     >
                       {item.name}
@@ -280,7 +288,7 @@ export function Layout({ children }: LayoutProps) {
                     <button
                       key={`mobile-nav-${index}`}
                       onClick={() => {
-                        handleAnchorClick(item.sectionId, item.sectionId === 'footer' ? 'footer-email' : undefined);
+                        handleAnchorClick(item.sectionId, item.sectionId === 'footer' ? 'footer-email' : (item.sectionId === 'cta' ? 'cta-questionnaire' : undefined));
                         setIsMobileMenuOpen(false);
                       }}
                       className="block w-full text-left px-4 py-3 rounded-md text-base font-medium transition-all duration-200 min-h-[44px] flex items-center text-gray-600 hover:text-memopyk-navy hover:bg-gray-50 hover:border-l-4 hover:border-memopyk-blue-gray"
@@ -293,7 +301,7 @@ export function Layout({ children }: LayoutProps) {
                     <button
                       key={`mobile-nav-${index}`}
                       onClick={() => {
-                        handleAnchorClick(item.sectionId, item.sectionId === 'footer' ? 'footer-email' : undefined);
+                        handleAnchorClick(item.sectionId, item.sectionId === 'footer' ? 'footer-email' : (item.sectionId === 'cta' ? 'cta-questionnaire' : undefined));
                         setIsMobileMenuOpen(false);
                       }}
                       className="block w-full text-left px-4 py-3 rounded-md text-base font-medium transition-all duration-200 min-h-[44px] flex items-center text-gray-600 hover:text-memopyk-navy hover:bg-gray-50 hover:border-l-4 hover:border-memopyk-blue-gray"
