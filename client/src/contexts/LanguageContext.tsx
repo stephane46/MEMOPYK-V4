@@ -18,7 +18,7 @@ const translations: Record<Language, Record<string, string>> = {
   'fr-FR': {
     'site.title': 'MEMOPYK - Films Souvenirs',
     'nav.our-service': 'Notre service',
-    'nav.why-choose-us': 'Pourquoi nous choisir',
+    'nav.why-choose-us': 'Pourquoi MEMOPYK',
     'nav.gallery': 'Galerie',
     'nav.faq': 'FAQ',
     'nav.quotation': 'Devis',
@@ -36,7 +36,7 @@ const translations: Record<Language, Record<string, string>> = {
   'en-US': {
     'site.title': 'MEMOPYK - Memory Keepsakes',
     'nav.our-service': 'Our service',
-    'nav.why-choose-us': 'Why choose us',
+    'nav.why-choose-us': 'Why MEMOPYK',
     'nav.gallery': 'Gallery',
     'nav.faq': 'FAQ',
     'nav.quotation': 'Quotation',

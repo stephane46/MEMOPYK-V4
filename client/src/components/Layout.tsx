@@ -439,7 +439,7 @@ export function Layout({ children }: LayoutProps) {
                 </li>
                 <li>
                   <button 
-                    onClick={() => handleAnchorClick('cta')}
+                    onClick={() => handleAnchorClick('cta', 'cta-questionnaire')}
                     className="hover:text-white transition-colors"
                   >
                     {t('nav.quotation')}
