@@ -46,8 +46,8 @@ export function WhyMemopykSection() {
         <div className="text-center mb-16">
           <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-poppins font-bold text-memopyk-navy mb-6">
             {language === 'fr-FR' 
-              ? "Pourquoi choisir MEMOPYK ?"
-              : "Why choose MEMOPYK?"
+              ? "Pourquoi choisir MEMOPYK"
+              : "Why choose MEMOPYK"
             }
           </h2>
         </div>
