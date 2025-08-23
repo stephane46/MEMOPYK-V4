@@ -34,8 +34,12 @@ export function Layout({ children }: LayoutProps) {
   // Handle scroll to section after navigation
   useEffect(() => {
     const scrollToSection = sessionStorage.getItem('scrollToSection');
+    const animateElement = sessionStorage.getItem('animateElement');
     if (scrollToSection) {
       sessionStorage.removeItem('scrollToSection');
+      if (animateElement) {
+        sessionStorage.removeItem('animateElement');
+      }
       // Use a small timeout to ensure the page is fully loaded
       setTimeout(() => {
         const element = document.getElementById(scrollToSection);
@@ -48,18 +52,36 @@ export function Layout({ children }: LayoutProps) {
             top: offsetPosition,
             behavior: 'smooth'
           });
+          
+          // If there's an element to animate, do it after scrolling
+          if (animateElement) {
+            setTimeout(() => {
+              const animateElementNode = document.getElementById(animateElement);
+              if (animateElementNode) {
+                // Add animation classes
+                animateElementNode.classList.add('animate-bounce', 'ring-4', 'ring-memopyk-orange', 'ring-opacity-50');
+                // Remove animation after 2 seconds
+                setTimeout(() => {
+                  animateElementNode.classList.remove('animate-bounce', 'ring-4', 'ring-memopyk-orange', 'ring-opacity-50');
+                }, 2000);
+              }
+            }, 800); // Wait for scroll to complete
+          }
         }
       }, 100);
     }
   }, [location]);
 
   // Handle anchor scrolling
-  const handleAnchorClick = (sectionId: string) => {
+  const handleAnchorClick = (sectionId: string, animateElementId?: string) => {
     // First navigate to home page if not already there
     const cleanLocation = location.replace(/^\/(fr-FR|en-US)/, '') || '/';
     if (cleanLocation !== '/') {
       // Store the section ID in sessionStorage so we can scroll after navigation
       sessionStorage.setItem('scrollToSection', sectionId);
+      if (animateElementId) {
+        sessionStorage.setItem('animateElement', animateElementId);
+      }
       window.location.href = getLocalizedPath('/');
     } else {
       const element = document.getElementById(sectionId);
@@ -72,6 +94,21 @@ export function Layout({ children }: LayoutProps) {
           top: offsetPosition,
           behavior: 'smooth'
         });
+        
+        // If there's an element to animate, do it after scrolling
+        if (animateElementId) {
+          setTimeout(() => {
+            const animateElement = document.getElementById(animateElementId);
+            if (animateElement) {
+              // Add animation classes
+              animateElement.classList.add('animate-bounce', 'ring-4', 'ring-memopyk-orange', 'ring-opacity-50');
+              // Remove animation after 2 seconds
+              setTimeout(() => {
+                animateElement.classList.remove('animate-bounce', 'ring-4', 'ring-memopyk-orange', 'ring-opacity-50');
+              }, 2000);
+            }
+          }, 800); // Wait for scroll to complete
+        }
       }
     }
   };
@@ -105,7 +142,7 @@ export function Layout({ children }: LayoutProps) {
     { 
       name: t('nav.contact'), 
       type: 'anchor', 
-      sectionId: 'cta' 
+      sectionId: 'footer' 
     },
   ];
 
@@ -142,7 +179,7 @@ export function Layout({ children }: LayoutProps) {
                   return (
                     <button
                       key={`nav-${index}`}
-                      onClick={() => handleAnchorClick(item.sectionId)}
+                      onClick={() => handleAnchorClick(item.sectionId, item.sectionId === 'footer' ? 'footer-email' : undefined)}
                       className="text-sm font-medium transition-colors text-gray-600 hover:text-memopyk-navy cursor-pointer"
                     >
                       {item.name}
@@ -152,7 +189,7 @@ export function Layout({ children }: LayoutProps) {
                   return (
                     <button
                       key={`nav-${index}`}
-                      onClick={() => handleAnchorClick(item.sectionId)}
+                      onClick={() => handleAnchorClick(item.sectionId, item.sectionId === 'footer' ? 'footer-email' : undefined)}
                       className="text-sm font-medium transition-colors text-gray-600 hover:text-memopyk-navy cursor-pointer"
                     >
                       {item.name}
@@ -243,7 +280,7 @@ export function Layout({ children }: LayoutProps) {
                     <button
                       key={`mobile-nav-${index}`}
                       onClick={() => {
-                        handleAnchorClick(item.sectionId);
+                        handleAnchorClick(item.sectionId, item.sectionId === 'footer' ? 'footer-email' : undefined);
                         setIsMobileMenuOpen(false);
                       }}
                       className="block w-full text-left px-4 py-3 rounded-md text-base font-medium transition-all duration-200 min-h-[44px] flex items-center text-gray-600 hover:text-memopyk-navy hover:bg-gray-50 hover:border-l-4 hover:border-memopyk-blue-gray"
@@ -256,7 +293,7 @@ export function Layout({ children }: LayoutProps) {
                     <button
                       key={`mobile-nav-${index}`}
                       onClick={() => {
-                        handleAnchorClick(item.sectionId);
+                        handleAnchorClick(item.sectionId, item.sectionId === 'footer' ? 'footer-email' : undefined);
                         setIsMobileMenuOpen(false);
                       }}
                       className="block w-full text-left px-4 py-3 rounded-md text-base font-medium transition-all duration-200 min-h-[44px] flex items-center text-gray-600 hover:text-memopyk-navy hover:bg-gray-50 hover:border-l-4 hover:border-memopyk-blue-gray"
@@ -338,7 +375,7 @@ export function Layout({ children }: LayoutProps) {
       </main>
 
       {/* Footer */}
-      <footer className="bg-gray-900 text-white">
+      <footer id="footer" className="bg-gray-900 text-white">
         <div className="container mx-auto px-4 py-12">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
             <div className="col-span-1 lg:col-span-1">
@@ -416,6 +453,7 @@ export function Layout({ children }: LayoutProps) {
               <ul className="space-y-3 text-gray-400">
                 <li className="group">
                   <a 
+                    id="footer-email"
                     href="mailto:contact@memopyk.com"
                     className="flex items-center gap-3 hover:text-white transition-all duration-300 ease-in-out transform hover:translate-x-1 cursor-pointer p-2 -m-2 rounded-lg"
                   >
