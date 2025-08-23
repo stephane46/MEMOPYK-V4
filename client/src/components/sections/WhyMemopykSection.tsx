@@ -113,12 +113,21 @@ export function WhyMemopykSection() {
               );
             })()}
 
-            {/* Standalone Image */}
-            <img 
-              src={filmstripImage}
-              alt=""
-              className="w-full h-64 sm:h-72 lg:h-80 object-contain"
-            />
+            {/* Image Card */}
+            <div className="group relative h-full">
+              <div className="relative bg-gradient-to-br from-memopyk-cream/20 to-memopyk-sky-blue/10 backdrop-blur-sm rounded-2xl shadow-lg hover:shadow-2xl transition-[transform,shadow] duration-300 transform hover:-translate-y-2 border border-white/20 h-full overflow-hidden">
+                <img 
+                  src={filmstripImage}
+                  alt=""
+                  className="w-full h-full object-cover"
+                />
+              </div>
+
+              {/* Background Pattern */}
+              <div className="absolute inset-0 -z-10 transform translate-x-2 translate-y-2">
+                <div className="w-full h-full bg-gradient-to-br from-memopyk-sky-blue/10 to-memopyk-blue-gray/10 rounded-2xl"></div>
+              </div>
+            </div>
 
             {/* Card 3: Gain de Temps */}
             {(() => {
