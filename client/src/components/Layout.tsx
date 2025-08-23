@@ -187,7 +187,7 @@ export function Layout({ children }: LayoutProps) {
                   return (
                     <button
                       key={`nav-${index}`}
-                      onClick={() => handleAnchorClick(item.sectionId, item.sectionId === 'footer' ? 'footer-email' : (item.sectionId === 'cta' ? 'cta-questionnaire' : undefined))}
+                      onClick={() => handleAnchorClick(item.sectionId, item.sectionId === 'footer' ? 'footer-email-text' : (item.sectionId === 'cta' ? 'cta-questionnaire' : undefined))}
                       className="text-sm font-medium transition-colors text-gray-600 hover:text-memopyk-navy cursor-pointer"
                     >
                       {item.name}
@@ -197,7 +197,7 @@ export function Layout({ children }: LayoutProps) {
                   return (
                     <button
                       key={`nav-${index}`}
-                      onClick={() => handleAnchorClick(item.sectionId, item.sectionId === 'footer' ? 'footer-email' : (item.sectionId === 'cta' ? 'cta-questionnaire' : undefined))}
+                      onClick={() => handleAnchorClick(item.sectionId, item.sectionId === 'footer' ? 'footer-email-text' : (item.sectionId === 'cta' ? 'cta-questionnaire' : undefined))}
                       className="text-sm font-medium transition-colors text-gray-600 hover:text-memopyk-navy cursor-pointer"
                     >
                       {item.name}
@@ -466,7 +466,7 @@ export function Layout({ children }: LayoutProps) {
                     className="flex items-center gap-3 hover:text-white transition-all duration-300 ease-in-out transform hover:translate-x-1 cursor-pointer p-2 -m-2 rounded-lg"
                   >
                     <Mail className="w-4 h-4 group-hover:text-memopyk-orange transition-colors duration-300" />
-                    <span className="group-hover:underline">contact@memopyk.com</span>
+                    <span id="footer-email-text" className="group-hover:underline">contact@memopyk.com</span>
                   </a>
                 </li>
                 <li className="group">
