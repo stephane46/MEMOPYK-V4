@@ -69,7 +69,7 @@ export function HowItWorksCondensed() {
   ];
 
   return (
-    <section id="how-it-works" className="py-20 bg-gradient-to-b from-memopyk-cream to-white" ref={sectionRef}>
+    <section id="how-it-works" className="py-16 bg-gradient-to-b from-memopyk-cream to-white" ref={sectionRef}>
       <div className="max-w-6xl mx-auto px-6">
         {/* Section Header */}
         <div className="text-center mb-16">
