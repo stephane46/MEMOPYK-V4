@@ -46,13 +46,30 @@ try {
   packageJson.scripts.start = 'NODE_ENV=production tsx server/index.ts';
   fs.writeFileSync('package.json', JSON.stringify(packageJson, null, 2));
   
+  // Clean up old deployment markers (keep only 10 most recent)
+  console.log('🧹 Cleaning up old deployment markers...');
+  const markerFiles = fs.readdirSync('.')
+    .filter(file => file.startsWith('DEPLOYMENT_MARKER') && file.endsWith('.json'))
+    .map(file => ({
+      name: file,
+      mtime: fs.statSync(file).mtime
+    }))
+    .sort((a, b) => b.mtime - a.mtime); // Sort by modification time, newest first
+
+  // Keep only the 9 most recent markers (plus the new one we're about to create = 10 total)
+  const markersToDelete = markerFiles.slice(9);
+  markersToDelete.forEach(marker => {
+    fs.unlinkSync(marker.name);
+    console.log(`   🗑️  Removed old marker: ${marker.name}`);
+  });
+
   // Create deployment marker with timestamp to force fresh deployment
   const deploymentMarker = {
     timestamp: new Date().toISOString(),
-    fix: 'Complete cropping system success - database persistence, loading spinner, cross-environment sync verified',
-    commit: 'Fixed hybrid-storage database import, created missing JSON file, implemented user-requested loading feedback - v1.0.127',
-    version: '1.0.127',
-    status: 'CROPPING_SYSTEM_COMPLETE'
+    fix: 'Updated WhyMemopyk image card with rounded effects and proper scaling',
+    commit: 'Replaced filmstrip image with souvenir film image in card format - production ready',
+    version: '1.0.128',
+    status: 'IMAGE_CARD_UPDATE_COMPLETE'
   };
   fs.writeFileSync('DEPLOYMENT_MARKER.json', JSON.stringify(deploymentMarker, null, 2));
   
