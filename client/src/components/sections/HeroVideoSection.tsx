@@ -198,11 +198,12 @@ export function HeroVideoSection() {
 
       {/* Hero Text Content - Mobile Optimized for Better Fit */}
       <div className="absolute inset-0 flex items-center justify-center text-center text-white px-3 sm:px-6 lg:px-8">
-        <div className="max-w-7xl w-full">
+        {/* Semi-transparent background for optimal text contrast across all lighting conditions */}
+        <div className="bg-black/40 backdrop-blur-sm rounded-2xl px-6 py-8 sm:px-10 sm:py-12 max-w-4xl w-full border border-white/10">
           <h1 
             className="font-playfair font-bold mb-4 sm:mb-6 lg:mb-8 leading-tight text-lg sm:text-2xl lg:text-5xl"
             style={{ 
-              textShadow: '2px 2px 4px rgba(0,0,0,0.8)'
+              textShadow: '3px 3px 6px rgba(0,0,0,0.9)'
             }}
           >
             {(() => {
@@ -271,9 +272,9 @@ export function HeroVideoSection() {
           {activeHeroText && ((language === 'fr-FR' && activeHeroText.subtitle_fr && activeHeroText.subtitle_fr.trim()) || 
                               (language === 'en-US' && activeHeroText.subtitle_en && activeHeroText.subtitle_en.trim())) && (
             <p 
-              className="mb-4 sm:mb-6 lg:mb-8 text-white/90 font-poppins leading-snug text-sm sm:text-base lg:text-xl"
+              className="mb-4 sm:mb-6 lg:mb-8 text-white/95 font-poppins leading-snug text-sm sm:text-base lg:text-xl"
               style={{ 
-                textShadow: '1px 1px 2px rgba(0,0,0,0.8)' 
+                textShadow: '2px 2px 4px rgba(0,0,0,0.9)' 
               }}
             >
               {(() => {
