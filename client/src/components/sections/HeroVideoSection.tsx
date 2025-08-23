@@ -199,7 +199,7 @@ export function HeroVideoSection() {
       {/* Hero Text Content - Mobile Optimized for Better Fit */}
       <div className="absolute inset-0 flex items-center justify-center text-center text-white px-3 sm:px-6 lg:px-8">
         {/* Semi-transparent background for optimal text contrast across all lighting conditions */}
-        <div className="bg-black/40 backdrop-blur-sm rounded-2xl px-6 py-8 sm:px-10 sm:py-12 max-w-4xl w-full border border-white/10">
+        <div className="bg-black/40 backdrop-blur-sm rounded-2xl px-6 py-8 sm:px-10 sm:py-12 max-w-6xl w-full border border-white/10">
           <h1 
             className="font-playfair font-bold mb-4 sm:mb-6 lg:mb-8 leading-tight text-lg sm:text-2xl lg:text-5xl"
             style={{ 
