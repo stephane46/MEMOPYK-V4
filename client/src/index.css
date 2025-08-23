@@ -705,5 +705,31 @@ html, body {
   overflow-anchor: none !important;
 }
 
+/* Double Bounce Animation - Exactly 2 bounces for navigation highlights */
+@keyframes double-bounce {
+  0%, 20%, 53%, 80%, 100% {
+    transform: translateY(0);
+  }
+  10% {
+    transform: translateY(-8px);
+  }
+  30% {
+    transform: translateY(-4px);
+  }
+  40% {
+    transform: translateY(-2px);
+  }
+  63% {
+    transform: translateY(-6px);
+  }
+  76% {
+    transform: translateY(-3px);
+  }
+}
+
+.animate-double-bounce {
+  animation: double-bounce 1s ease-in-out;
+}
+
 
 

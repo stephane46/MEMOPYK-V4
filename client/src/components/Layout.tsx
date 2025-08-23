@@ -58,13 +58,13 @@ export function Layout({ children }: LayoutProps) {
             setTimeout(() => {
               const animateElementNode = document.getElementById(animateElement);
               if (animateElementNode) {
-                // Add animation classes with tight outline
-                animateElementNode.classList.add('animate-bounce');
+                // Add animation classes with tight outline - exactly 2 bounces
+                animateElementNode.classList.add('animate-double-bounce');
                 animateElementNode.style.outline = '2px solid rgb(214, 124, 74)';
                 animateElementNode.style.outlineOffset = '2px';
                 // Remove animation after 1 second
                 setTimeout(() => {
-                  animateElementNode.classList.remove('animate-bounce');
+                  animateElementNode.classList.remove('animate-double-bounce');
                   animateElementNode.style.outline = '';
                   animateElementNode.style.outlineOffset = '';
                 }, 1000);
@@ -104,13 +104,13 @@ export function Layout({ children }: LayoutProps) {
           setTimeout(() => {
             const animateElement = document.getElementById(animateElementId);
             if (animateElement) {
-              // Add animation classes with tight outline
-              animateElement.classList.add('animate-bounce');
+              // Add animation classes with tight outline - exactly 2 bounces
+              animateElement.classList.add('animate-double-bounce');
               animateElement.style.outline = '2px solid rgb(214, 124, 74)';
               animateElement.style.outlineOffset = '2px';
               // Remove animation after 1 second
               setTimeout(() => {
-                animateElement.classList.remove('animate-bounce');
+                animateElement.classList.remove('animate-double-bounce');
                 animateElement.style.outline = '';
                 animateElement.style.outlineOffset = '';
               }, 1000);
