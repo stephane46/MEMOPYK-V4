@@ -30,11 +30,15 @@ export function KeyVisualSection() {
   // Measure text widths for proper sizing
   useEffect(() => {
     if (isVisible && textRefs.current.length > 0) {
-      const measurements = textRefs.current.map((ref, index) => {
+      // Get the correct refs based on language
+      const startIndex = language === 'fr-FR' ? 0 : 3; // French: 0,1,2 | English: 3,4,5
+      const endIndex = startIndex + 3;
+      
+      const measurements = textRefs.current.slice(startIndex, endIndex).map((ref, relativeIndex) => {
         if (ref) {
           const width = ref.getBoundingClientRect().width;
           const text = ref.textContent;
-          return { index, text, width };
+          return { index: startIndex + relativeIndex, text, width };
         }
         return null;
       }).filter(Boolean);
