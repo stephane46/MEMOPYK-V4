@@ -74,20 +74,20 @@ export function WhyMemopykSection() {
         {/* Benefits Grid - 2 rows of 3 cards */}
         <div className="space-y-8">
           
-          {/* First Row: Simplicité + Qualité Premium + Gain de Temps */}
+          {/* First Row: Simplicité + Image + Gain de Temps */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             
-            {/* Card 1: Simplicité */}
+            {/* Card 1: Simplicité - Desktop order 1, Mobile order 2 */}
             {(() => {
               const benefit = benefits[0]; // Simplicité
               const Icon = benefit.icon;
               return (
-                <div className="group relative h-full">
-                  <div className={`relative bg-gradient-to-br ${benefit.gradient} backdrop-blur-sm p-4 sm:p-6 lg:p-8 rounded-2xl shadow-lg hover:shadow-2xl transition-[transform,shadow] duration-300 transform hover:-translate-y-2 border border-white/20 h-full flex flex-col`}>
+                <div className="group relative h-full order-2 md:order-1">
+                  <div className={`relative bg-gradient-to-br ${benefit.gradient} backdrop-blur-sm p-4 sm:p-6 lg:p-8 rounded-2xl shadow-lg md:hover:shadow-2xl transition-[transform,shadow] duration-300 md:transform md:hover:-translate-y-2 border border-white/20 h-full flex flex-col`}>
                     
                     {/* Icon at Top */}
                     <div className="flex justify-center mb-4 sm:mb-6 flex-shrink-0">
-                      <div className="w-16 h-16 sm:w-20 sm:h-20 lg:w-24 lg:h-24 bg-white/80 backdrop-blur-sm rounded-full flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform duration-300">
+                      <div className="w-16 h-16 sm:w-20 sm:h-20 lg:w-24 lg:h-24 bg-white/80 backdrop-blur-sm rounded-full flex items-center justify-center shadow-lg md:group-hover:scale-110 transition-transform duration-300">
                         <Icon className="w-8 h-8 sm:w-10 sm:h-10 lg:w-12 lg:h-12 text-memopyk-dark-blue" />
                       </div>
                     </div>
@@ -113,9 +113,9 @@ export function WhyMemopykSection() {
               );
             })()}
 
-            {/* Image Card */}
-            <div className="group relative h-full">
-              <div className="relative bg-gradient-to-br from-memopyk-cream/20 to-memopyk-sky-blue/10 backdrop-blur-sm rounded-2xl shadow-lg hover:shadow-2xl transition-[transform,shadow] duration-300 transform hover:-translate-y-2 border border-white/20 h-full overflow-hidden">
+            {/* Image Card - Desktop order 2, Mobile order 1 */}
+            <div className="group relative h-full order-1 md:order-2">
+              <div className="relative bg-gradient-to-br from-memopyk-cream/20 to-memopyk-sky-blue/10 backdrop-blur-sm rounded-2xl shadow-lg md:hover:shadow-2xl transition-[transform,shadow] duration-300 md:transform md:hover:-translate-y-2 border border-white/20 h-full overflow-hidden">
                 <img 
                   src={filmstripImage}
                   alt=""
@@ -129,17 +129,17 @@ export function WhyMemopykSection() {
               </div>
             </div>
 
-            {/* Card 3: Gain de Temps */}
+            {/* Card 3: Gain de Temps - Desktop order 3, Mobile order 3 */}
             {(() => {
               const benefit = benefits[1]; // Gain de Temps
               const Icon = benefit.icon;
               return (
-                <div className="group relative h-full">
-                  <div className={`relative bg-gradient-to-br ${benefit.gradient} backdrop-blur-sm p-4 sm:p-6 lg:p-8 rounded-2xl shadow-lg hover:shadow-2xl transition-[transform,shadow] duration-300 transform hover:-translate-y-2 border border-white/20 h-full flex flex-col`}>
+                <div className="group relative h-full order-3 md:order-3">
+                  <div className={`relative bg-gradient-to-br ${benefit.gradient} backdrop-blur-sm p-4 sm:p-6 lg:p-8 rounded-2xl shadow-lg md:hover:shadow-2xl transition-[transform,shadow] duration-300 md:transform md:hover:-translate-y-2 border border-white/20 h-full flex flex-col`}>
                     
                     {/* Icon at Top */}
                     <div className="flex justify-center mb-4 sm:mb-6 flex-shrink-0">
-                      <div className="w-16 h-16 sm:w-20 sm:h-20 lg:w-24 lg:h-24 bg-white/80 backdrop-blur-sm rounded-full flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform duration-300">
+                      <div className="w-16 h-16 sm:w-20 sm:h-20 lg:w-24 lg:h-24 bg-white/80 backdrop-blur-sm rounded-full flex items-center justify-center shadow-lg md:group-hover:scale-110 transition-transform duration-300">
                         <Icon className="w-8 h-8 sm:w-10 sm:h-10 lg:w-12 lg:h-12 text-memopyk-dark-blue" />
                       </div>
                     </div>
@@ -175,11 +175,11 @@ export function WhyMemopykSection() {
               const Icon = benefit.icon;
               return (
                 <div className="group relative h-full">
-                  <div className={`relative bg-gradient-to-br ${benefit.gradient} backdrop-blur-sm p-4 sm:p-6 lg:p-8 rounded-2xl shadow-lg hover:shadow-2xl transition-[transform,shadow] duration-300 transform hover:-translate-y-2 border border-white/20 h-full flex flex-col`}>
+                  <div className={`relative bg-gradient-to-br ${benefit.gradient} backdrop-blur-sm p-4 sm:p-6 lg:p-8 rounded-2xl shadow-lg md:hover:shadow-2xl transition-[transform,shadow] duration-300 md:transform md:hover:-translate-y-2 border border-white/20 h-full flex flex-col`}>
                     
                     {/* Icon at Top */}
                     <div className="flex justify-center mb-4 sm:mb-6 flex-shrink-0">
-                      <div className="w-16 h-16 sm:w-20 sm:h-20 lg:w-24 lg:h-24 bg-white/80 backdrop-blur-sm rounded-full flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform duration-300">
+                      <div className="w-16 h-16 sm:w-20 sm:h-20 lg:w-24 lg:h-24 bg-white/80 backdrop-blur-sm rounded-full flex items-center justify-center shadow-lg md:group-hover:scale-110 transition-transform duration-300">
                         <Icon className="w-8 h-8 sm:w-10 sm:h-10 lg:w-12 lg:h-12 text-memopyk-dark-blue" />
                       </div>
                     </div>
@@ -211,11 +211,11 @@ export function WhyMemopykSection() {
               const Icon = benefit.icon;
               return (
                 <div className="group relative h-full">
-                  <div className={`relative bg-gradient-to-br ${benefit.gradient} backdrop-blur-sm p-4 sm:p-6 lg:p-8 rounded-2xl shadow-lg hover:shadow-2xl transition-[transform,shadow] duration-300 transform hover:-translate-y-2 border border-white/20 h-full flex flex-col`}>
+                  <div className={`relative bg-gradient-to-br ${benefit.gradient} backdrop-blur-sm p-4 sm:p-6 lg:p-8 rounded-2xl shadow-lg md:hover:shadow-2xl transition-[transform,shadow] duration-300 md:transform md:hover:-translate-y-2 border border-white/20 h-full flex flex-col`}>
                     
                     {/* Icon at Top */}
                     <div className="flex justify-center mb-4 sm:mb-6 flex-shrink-0">
-                      <div className="w-16 h-16 sm:w-20 sm:h-20 lg:w-24 lg:h-24 bg-white/80 backdrop-blur-sm rounded-full flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform duration-300">
+                      <div className="w-16 h-16 sm:w-20 sm:h-20 lg:w-24 lg:h-24 bg-white/80 backdrop-blur-sm rounded-full flex items-center justify-center shadow-lg md:group-hover:scale-110 transition-transform duration-300">
                         <Icon className="w-8 h-8 sm:w-10 sm:h-10 lg:w-12 lg:h-12 text-memopyk-dark-blue" />
                       </div>
                     </div>
@@ -243,11 +243,11 @@ export function WhyMemopykSection() {
 
             {/* Card 6: Sécurité Totale */}
             <div className="group relative h-full">
-              <div className={`relative bg-gradient-to-br ${securityCard.gradient} backdrop-blur-sm p-4 sm:p-6 lg:p-8 rounded-2xl shadow-lg hover:shadow-2xl transition-[transform,shadow] duration-300 transform hover:-translate-y-2 border border-white/20 h-full flex flex-col`}>
+              <div className={`relative bg-gradient-to-br ${securityCard.gradient} backdrop-blur-sm p-4 sm:p-6 lg:p-8 rounded-2xl shadow-lg md:hover:shadow-2xl transition-[transform,shadow] duration-300 md:transform md:hover:-translate-y-2 border border-white/20 h-full flex flex-col`}>
                 
                 {/* Icon at Top */}
                 <div className="flex justify-center mb-4 sm:mb-6 flex-shrink-0">
-                  <div className="w-16 h-16 sm:w-20 sm:h-20 lg:w-24 lg:h-24 bg-white/80 backdrop-blur-sm rounded-full flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform duration-300">
+                  <div className="w-16 h-16 sm:w-20 sm:h-20 lg:w-24 lg:h-24 bg-white/80 backdrop-blur-sm rounded-full flex items-center justify-center shadow-lg md:group-hover:scale-110 transition-transform duration-300">
                     <Shield className="w-8 h-8 sm:w-10 sm:h-10 lg:w-12 lg:h-12 text-memopyk-dark-blue" />
                   </div>
                 </div>
