@@ -567,8 +567,8 @@ export default function AdminPage() {
           {activeSection === 'hero-management' && (
             <div className="space-y-6">
               <div className="mb-6">
-                <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Gestion Hero</h2>
-                <p className="text-gray-600 dark:text-gray-400">Gérer les vidéos du carrousel héros avec support bilingue</p>
+                <h2 className="text-2xl font-bold text-black">Gestion Hero</h2>
+                <p className="text-gray-800">Gérer les vidéos du carrousel héros avec support bilingue</p>
               </div>
               
               {/* Hero Tabs with Bold Orange Colors */}
