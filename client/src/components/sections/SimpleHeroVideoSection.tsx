@@ -65,9 +65,10 @@ export function SimpleHeroVideoSection() {
 >
   {(() => {
     // sourceText: prefer DB text, otherwise fallback multi-line literal
+    // EMERGENCY: Force ultra-short text for mobile
     const sourceText = language === 'fr-FR'
-      ? (activeHeroText?.title_fr || "Nous transformons\nvos photos et vidéos personnelles\nen films souvenirs inoubliables")
-      : (activeHeroText?.title_en || "We transform\nyour personal photos and videos\ninto unforgettable souvenir films");
+      ? (window.innerWidth < 640 ? "Nous transformons\nvos photos\nen films" : (activeHeroText?.title_fr || "Nous transformons\nvos photos et vidéos personnelles\nen films souvenirs inoubliables"))
+      : (window.innerWidth < 640 ? "We transform\nyour photos\ninto films" : (activeHeroText?.title_en || "We transform\nyour personal photos and videos\ninto unforgettable souvenir films"));
 
     // Normalize -> array of lines (split on newline)
     const lines = sourceText.split(/\r?\n/).map(s => s.trim()).filter(Boolean);
