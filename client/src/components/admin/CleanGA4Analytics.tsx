@@ -6,23 +6,43 @@ import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { BarChart3, TrendingUp, Play, Users, Clock, RefreshCw } from 'lucide-react';
+import { BarChart3, TrendingUp, Play, Users, Clock, RefreshCw, Globe, Eye, UserCheck, MapPin, Languages, MousePointer } from 'lucide-react';
 
 interface GA4MetricsResponse {
+  // Visitor Analytics
+  totalViews: number;
+  uniqueVisitors: number;
+  returnVisitors: number;
+  averageSessionDuration: number;
+  activeVisitors: number;
+  // Video Analytics  
   totalVideoStarts: number;
   totalCompletions: number;
   totalWatchTimeSeconds: number;
   averageWatchTimeSeconds: number;
   completionRate: number;
+  // Geographic Data
+  topCountries: Array<{
+    country: string;
+    visitors: number;
+    flag: string;
+  }>;
+  // Language & Traffic
+  languageBreakdown: Array<{
+    language: string;
+    visitors: number;
+    percentage: number;
+  }>;
+  topReferrers: Array<{
+    referrer: string;
+    visitors: number;
+  }>;
+  // Video Performance
   topVideos: Array<{
     videoId: string;
     videoTitle: string;
     plays: number;
     completions: number;
-  }>;
-  localeBreakdown: Array<{
-    locale: string;
-    plays: number;
   }>;
 }
 
@@ -31,23 +51,23 @@ export default function CleanGA4Analytics() {
   const [locale, setLocale] = useState('all');
   const [isRefreshing, setIsRefreshing] = useState(false);
 
-  // Simple, clean GA4 data fetch
+  // Comprehensive GA4 + visitor analytics data fetch
   const { data: ga4Data, isLoading, error, refetch } = useQuery<GA4MetricsResponse>({
-    queryKey: ['ga4-clean-metrics', dateRange, locale],
+    queryKey: ['ga4-clean-comprehensive', dateRange, locale],
     queryFn: async () => {
       const params = new URLSearchParams({
         range: dateRange,
         locale: locale
       });
       
-      const response = await fetch(`/api/ga4/clean-metrics?${params}`);
+      const response = await fetch(`/api/ga4/clean-comprehensive?${params}`);
       if (!response.ok) {
         throw new Error(`GA4 API error: ${response.status}`);
       }
       return response.json();
     },
-    staleTime: 5 * 60 * 1000, // 5 minutes
-    refetchInterval: 10 * 60 * 1000, // 10 minutes
+    staleTime: 2 * 60 * 1000, // 2 minutes for real-time data
+    refetchInterval: 5 * 60 * 1000, // 5 minutes auto-refresh
   });
 
   const handleRefresh = async () => {
@@ -70,10 +90,10 @@ export default function CleanGA4Analytics() {
       <div className="flex items-center justify-between">
         <div>
           <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
-            GA4 Video Analytics (Clean)
+            Comprehensive Analytics (Clean)
           </h2>
           <p className="text-gray-600 dark:text-gray-400">
-            Simple, reliable Google Analytics 4 video tracking
+            Visitor analytics, video engagement, and geographic insights
           </p>
         </div>
         
@@ -147,9 +167,64 @@ export default function CleanGA4Analytics() {
         </Card>
       )}
 
-      {/* Main Metrics */}
+      {/* Visitor Overview Metrics */}
       {ga4Data && (
         <>
+          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+            <Card>
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                <CardTitle className="text-sm font-medium">Total Views</CardTitle>
+                <Eye className="h-4 w-4 text-blue-600" />
+              </CardHeader>
+              <CardContent>
+                <div className="text-2xl font-bold">{ga4Data.totalViews.toLocaleString()}</div>
+                <p className="text-xs text-gray-600 dark:text-gray-400">
+                  Page views across site
+                </p>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                <CardTitle className="text-sm font-medium">Unique Visitors</CardTitle>
+                <Users className="h-4 w-4 text-green-600" />
+              </CardHeader>
+              <CardContent>
+                <div className="text-2xl font-bold">{ga4Data.uniqueVisitors.toLocaleString()}</div>
+                <p className="text-xs text-gray-600 dark:text-gray-400">
+                  Distinct visitors (IP-based)
+                </p>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                <CardTitle className="text-sm font-medium">Return Visitors</CardTitle>
+                <UserCheck className="h-4 w-4 text-purple-600" />
+              </CardHeader>
+              <CardContent>
+                <div className="text-2xl font-bold">{ga4Data.returnVisitors.toLocaleString()}</div>
+                <p className="text-xs text-gray-600 dark:text-gray-400">
+                  Returning visitors
+                </p>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                <CardTitle className="text-sm font-medium">Active Now</CardTitle>
+                <MousePointer className="h-4 w-4 text-orange-600" />
+              </CardHeader>
+              <CardContent>
+                <div className="text-2xl font-bold">{ga4Data.activeVisitors.toLocaleString()}</div>
+                <p className="text-xs text-gray-600 dark:text-gray-400">
+                  Currently browsing
+                </p>
+              </CardContent>
+            </Card>
+          </div>
+
+          {/* Video Performance Metrics */}
           <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
             <Card>
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
@@ -166,28 +241,28 @@ export default function CleanGA4Analytics() {
 
             <Card>
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">Completions</CardTitle>
-                <TrendingUp className="h-4 w-4 text-green-600" />
+                <CardTitle className="text-sm font-medium">Avg. Session</CardTitle>
+                <Clock className="h-4 w-4 text-green-600" />
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold">{ga4Data.totalCompletions.toLocaleString()}</div>
+                <div className="text-2xl font-bold">
+                  {formatDuration(ga4Data.averageSessionDuration)}
+                </div>
                 <p className="text-xs text-gray-600 dark:text-gray-400">
-                  Videos completed
+                  Time on site
                 </p>
               </CardContent>
             </Card>
 
             <Card>
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">Avg. Watch Time</CardTitle>
-                <Clock className="h-4 w-4 text-orange-600" />
+                <CardTitle className="text-sm font-medium">Video Completions</CardTitle>
+                <TrendingUp className="h-4 w-4 text-purple-600" />
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold">
-                  {formatDuration(ga4Data.averageWatchTimeSeconds)}
-                </div>
+                <div className="text-2xl font-bold">{ga4Data.totalCompletions.toLocaleString()}</div>
                 <p className="text-xs text-gray-600 dark:text-gray-400">
-                  Per video session
+                  Videos finished
                 </p>
               </CardContent>
             </Card>
@@ -195,40 +270,100 @@ export default function CleanGA4Analytics() {
             <Card>
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                 <CardTitle className="text-sm font-medium">Completion Rate</CardTitle>
-                <BarChart3 className="h-4 w-4 text-purple-600" />
+                <BarChart3 className="h-4 w-4 text-orange-600" />
               </CardHeader>
               <CardContent>
                 <div className="text-2xl font-bold">
                   {formatPercentage(ga4Data.completionRate)}
                 </div>
                 <p className="text-xs text-gray-600 dark:text-gray-400">
-                  Videos finished
+                  Video engagement
                 </p>
               </CardContent>
             </Card>
           </div>
 
-          {/* Language Breakdown */}
+          {/* Geographic Distribution */}
           <Card>
             <CardHeader>
-              <CardTitle>Language Distribution</CardTitle>
-              <CardDescription>Video plays by language preference</CardDescription>
+              <CardTitle className="flex items-center space-x-2">
+                <Globe className="h-5 w-5" />
+                <span>Top Countries</span>
+              </CardTitle>
+              <CardDescription>Where your visitors come from</CardDescription>
             </CardHeader>
             <CardContent>
               <div className="space-y-3">
-                {ga4Data.localeBreakdown.map((item) => (
-                  <div key={item.locale} className="flex items-center justify-between">
+                {ga4Data.topCountries?.map((country, index) => (
+                  <div key={country.country} className="flex items-center justify-between">
                     <div className="flex items-center space-x-3">
-                      <Badge variant={item.locale === 'fr-FR' ? 'default' : 'secondary'}>
-                        {item.locale === 'fr-FR' ? '🇫🇷 Français' : '🇺🇸 English'}
-                      </Badge>
+                      <div className="flex items-center justify-center w-6 h-6 bg-gray-100 dark:bg-gray-800 rounded-full text-xs font-bold">
+                        {index + 1}
+                      </div>
+                      <span className="text-lg">{country.flag}</span>
+                      <span className="font-medium">{country.country}</span>
                     </div>
-                    <div className="font-semibold">{item.plays.toLocaleString()}</div>
+                    <div className="font-semibold">{country.visitors.toLocaleString()}</div>
                   </div>
-                ))}
+                )) || <p className="text-gray-500">No geographic data available</p>}
               </div>
             </CardContent>
           </Card>
+
+          {/* Language & Traffic Sources */}
+          <div className="grid gap-4 md:grid-cols-2">
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center space-x-2">
+                  <Languages className="h-5 w-5" />
+                  <span>Language Breakdown</span>
+                </CardTitle>
+                <CardDescription>Visitor language preferences</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-3">
+                  {ga4Data.languageBreakdown?.map((lang) => (
+                    <div key={lang.language} className="flex items-center justify-between">
+                      <div className="flex items-center space-x-3">
+                        <Badge variant={lang.language.includes('fr') ? 'default' : 'secondary'}>
+                          {lang.language.includes('fr') ? '🇫🇷 Français' : '🇺🇸 English'}
+                        </Badge>
+                        <span className="text-sm text-gray-600">{lang.percentage.toFixed(1)}%</span>
+                      </div>
+                      <div className="font-semibold">{lang.visitors.toLocaleString()}</div>
+                    </div>
+                  )) || <p className="text-gray-500">No language data available</p>}
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center space-x-2">
+                  <MapPin className="h-5 w-5" />
+                  <span>Traffic Sources</span>
+                </CardTitle>
+                <CardDescription>How visitors found your site</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-3">
+                  {ga4Data.topReferrers?.map((ref, index) => (
+                    <div key={ref.referrer || 'direct'} className="flex items-center justify-between">
+                      <div className="flex items-center space-x-3">
+                        <div className="flex items-center justify-center w-6 h-6 bg-blue-100 dark:bg-blue-900 rounded-full text-xs font-bold text-blue-600 dark:text-blue-400">
+                          {index + 1}
+                        </div>
+                        <span className="font-medium truncate max-w-[200px]">
+                          {ref.referrer || 'Direct Traffic'}
+                        </span>
+                      </div>
+                      <div className="font-semibold">{ref.visitors.toLocaleString()}</div>
+                    </div>
+                  )) || <p className="text-gray-500">No referrer data available</p>}
+                </div>
+              </CardContent>
+            </Card>
+          </div>
 
           {/* Top Videos */}
           <Card>

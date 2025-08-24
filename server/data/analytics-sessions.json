@@ -16064,6 +16064,56 @@
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-24T20:22:59.339Z",
-    "updated_at": "2025-08-24T20:22:59.379Z"
+    "updated_at": "2025-08-24T20:23:29.705Z",
+    "duration": 1062776
+  },
+  {
+    "id": "22b3217e-79de-43b4-8c93-05d8ce4072b5",
+    "session_id": "session_1756067026085_vp23gjg98",
+    "user_id": null,
+    "ip_address": "109.17.150.48",
+    "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36 Edg/139.0.0.0",
+    "referrer": "https://365df2cf-1884-444c-a9e8-235602456363-00-37q39xpqlgvdy.janeway.replit.dev/en-US",
+    "language": "en-US",
+    "country": "Unknown",
+    "city": "Unknown",
+    "page_views": 0,
+    "is_bot": false,
+    "is_test_data": false,
+    "created_at": "2025-08-24T20:23:46.118Z",
+    "updated_at": "2025-08-24T20:27:30.038Z",
+    "duration": 1063016
+  },
+  {
+    "id": "eefe548f-516f-4b28-b320-970ade0cd6dc",
+    "session_id": "session_1756067263070_k4lqjf9gj",
+    "user_id": null,
+    "ip_address": "127.0.0.1",
+    "user_agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/118.0.5993.88 Safari/537.36",
+    "referrer": "",
+    "language": "en-US",
+    "country": "Unknown",
+    "city": "Unknown",
+    "page_views": 0,
+    "is_bot": false,
+    "is_test_data": true,
+    "created_at": "2025-08-24T20:27:43.334Z",
+    "updated_at": "2025-08-24T20:27:43.373Z"
+  },
+  {
+    "id": "84974018-aa9e-486e-923b-604fe5a993c6",
+    "session_id": "session_1756067268357_ly8qa23gn",
+    "user_id": null,
+    "ip_address": "109.17.150.48",
+    "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36 Edg/139.0.0.0",
+    "referrer": "https://365df2cf-1884-444c-a9e8-235602456363-00-37q39xpqlgvdy.janeway.replit.dev/__replco/workspace_iframe.html?initialPath=%2F&id=%3Ar100q%3A",
+    "language": "en-US",
+    "country": "Unknown",
+    "city": "Unknown",
+    "page_views": 0,
+    "is_bot": false,
+    "is_test_data": false,
+    "created_at": "2025-08-24T20:27:48.391Z",
+    "updated_at": "2025-08-24T20:27:48.430Z"
   }
 ]

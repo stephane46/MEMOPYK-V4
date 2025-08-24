@@ -4258,6 +4258,141 @@ export async function registerRoutes(app: Express): Promise<void> {
 
 
 
+  // Comprehensive GA4 + Visitor Analytics endpoint
+  app.get("/api/ga4/clean-comprehensive", async (req, res) => {
+    try {
+      const range = req.query.range as string || '7d';
+      const locale = req.query.locale as string || 'all';
+      
+      console.log(`🔍 COMPREHENSIVE ANALYTICS: ${range}, locale: ${locale}`);
+
+      // Simple cache key
+      const cacheKey = k(`comprehensive:${range}:${locale}`);
+      
+      // Check cache first (shorter cache for real-time data)
+      const cached = await getCache(cacheKey);
+      if (cached) {
+        console.log('✅ COMPREHENSIVE: Using cached data');
+        return res.json(cached);
+      }
+
+      // Calculate date range
+      const rangeDays = parseInt(range.replace('d', ''));
+      const dateFrom = new Date(Date.now() - (rangeDays * 24 * 60 * 60 * 1000)).toISOString();
+      const dateTo = new Date().toISOString();
+
+      // Fetch visitor analytics from PostgreSQL (your trusted system!)
+      const dashboardResponse = await fetch(`${req.protocol}://${req.get('host')}/api/analytics/dashboard?dateFrom=${dateFrom}&dateTo=${dateTo}`);
+      const dashboardData = dashboardResponse.ok ? await dashboardResponse.json() : {};
+
+      // Fetch recent activity for active visitors
+      const activityResponse = await fetch(`${req.protocol}://${req.get('host')}/api/analytics/recent-activity`);
+      const activityData = activityResponse.ok ? await activityResponse.json() : { activities: [] };
+
+      // Convert range to GA4 date strings
+      const endDate = new Date().toISOString().split('T')[0];
+      const startDate = new Date(Date.now() - (rangeDays * 24 * 60 * 60 * 1000))
+        .toISOString().split('T')[0];
+
+      // Fetch GA4 video metrics in parallel
+      const [plays, completions, watchTimeSeconds, topVideos, localeData] = await Promise.all([
+        qPlays(startDate, endDate, locale),
+        qCompletes(startDate, endDate, locale), 
+        qWatchTimeTotal(startDate, endDate, locale),
+        qPlaysByVideo(startDate, endDate, locale),
+        qTopLocale(startDate, endDate)
+      ]);
+
+      // Process visitor analytics
+      const totalViews = dashboardData.totalViews || 0;
+      const uniqueVisitors = dashboardData.uniqueVisitors || 0;
+      const returnVisitors = dashboardData.returningVisitors || 0;
+      const averageSessionDuration = dashboardData.averageSessionDuration || 0;
+      const activeVisitors = activityData.activities?.filter(a => Date.now() - new Date(a.lastActivity).getTime() < 5 * 60 * 1000).length || 0;
+
+      // Process geographic data from dashboard
+      const topCountries = (dashboardData.topCountries || []).slice(0, 8).map((country: any) => ({
+        country: country.country,
+        visitors: country.sessions,
+        flag: country.flag || '🌍'
+      }));
+
+      // Process language breakdown
+      const languageBreakdown = [];
+      if (dashboardData.languageBreakdown) {
+        const totalLangVisitors = Object.values(dashboardData.languageBreakdown).reduce((sum: number, count: any) => sum + count, 0);
+        for (const [lang, count] of Object.entries(dashboardData.languageBreakdown)) {
+          languageBreakdown.push({
+            language: lang,
+            visitors: count as number,
+            percentage: totalLangVisitors > 0 ? (count as number / totalLangVisitors) * 100 : 0
+          });
+        }
+      }
+
+      // Process top referrers
+      const topReferrers = (dashboardData.topReferrers || []).slice(0, 5).map((ref: any) => ({
+        referrer: ref.referrer === '(direct)' ? null : ref.referrer,
+        visitors: ref.count
+      }));
+
+      // Calculate GA4 video metrics
+      const completionRate = plays > 0 ? completions / plays : 0;
+      const averageWatchTimeSeconds = plays > 0 ? watchTimeSeconds / plays : 0;
+
+      // Format top videos (limit to top 5)
+      const topVideosFormatted = Object.entries(topVideos || {})
+        .map(([videoId, data]: [string, any]) => ({
+          videoId,
+          videoTitle: data.title || videoId,
+          plays: data.plays || 0,
+          completions: data.completions || 0
+        }))
+        .sort((a, b) => b.plays - a.plays)
+        .slice(0, 5);
+
+      const result = {
+        // Visitor Analytics (from PostgreSQL - your trusted system!)
+        totalViews,
+        uniqueVisitors,
+        returnVisitors,
+        averageSessionDuration: Math.round(averageSessionDuration || 0),
+        activeVisitors,
+        // Geographic & Demographic Data
+        topCountries,
+        languageBreakdown,
+        topReferrers,
+        // Video Analytics (from GA4)
+        totalVideoStarts: plays || 0,
+        totalCompletions: completions || 0,
+        totalWatchTimeSeconds: watchTimeSeconds || 0,
+        averageWatchTimeSeconds: Math.round(averageWatchTimeSeconds || 0),
+        completionRate: Math.round(completionRate * 100) / 100,
+        topVideos: topVideosFormatted,
+      };
+
+      console.log('✅ COMPREHENSIVE RESULT:', {
+        totalViews: result.totalViews,
+        uniqueVisitors: result.uniqueVisitors,
+        activeVisitors: result.activeVisitors,
+        videoPlays: result.totalVideoStarts,
+        countries: result.topCountries.length,
+        languages: result.languageBreakdown.length
+      });
+      
+      // Cache for 2 minutes (shorter for real-time data)
+      await setCache(cacheKey, result, 120);
+      
+      res.json(result);
+    } catch (error) {
+      console.error('❌ COMPREHENSIVE ANALYTICS ERROR:', error);
+      res.status(500).json({ 
+        error: 'Failed to fetch comprehensive analytics', 
+        details: error instanceof Error ? error.message : 'Unknown error' 
+      });
+    }
+  });
+
   // Clean GA4 metrics endpoint - simple, reliable GA4 data
   app.get("/api/ga4/clean-metrics", async (req, res) => {
     try {
