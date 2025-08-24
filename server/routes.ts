@@ -1215,31 +1215,32 @@ export async function registerRoutes(app: Express): Promise<void> {
   app.post("/api/hero-text", async (req, res) => {
     try {
       const { 
-        title_fr, 
-        title_en, 
-        subtitle_fr, 
-        subtitle_en, 
         title_mobile_fr,
         title_mobile_en,
         title_desktop_fr,
         title_desktop_en,
-        font_size 
+        font_size_desktop,
+        font_size_tablet,
+        font_size_mobile
       } = req.body;
       
-      if (!title_fr || !title_en) {
-        return res.status(400).json({ error: "French and English titles are required" });
+      if (!title_desktop_fr || !title_desktop_en || !title_mobile_fr || !title_mobile_en) {
+        return res.status(400).json({ error: "Desktop and mobile titles are required in both languages" });
       }
       
       const newText = await hybridStorage.createHeroText({
-        title_fr,
-        title_en,
-        subtitle_fr: subtitle_fr || '',
-        subtitle_en: subtitle_en || '',
-        title_mobile_fr: title_mobile_fr || title_fr,
-        title_mobile_en: title_mobile_en || title_en,
-        title_desktop_fr: title_desktop_fr || title_fr,
-        title_desktop_en: title_desktop_en || title_en,
-        font_size: font_size || 48,
+        title_fr: title_desktop_fr, // Use desktop French as main title
+        title_en: title_desktop_en, // Use desktop English as main title
+        subtitle_fr: '',
+        subtitle_en: '',
+        title_mobile_fr,
+        title_mobile_en,
+        title_desktop_fr,
+        title_desktop_en,
+        font_size: font_size_desktop || 48,
+        font_size_desktop: font_size_desktop || 60,
+        font_size_tablet: font_size_tablet || 45,
+        font_size_mobile: font_size_mobile || 32,
         is_active: false
       });
       
