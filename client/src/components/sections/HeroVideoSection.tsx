@@ -33,11 +33,30 @@ export function HeroVideoSection() {
   const { trackVideoView } = useVideoAnalytics();
   const [currentVideoIndex, setCurrentVideoIndex] = useState(0);
   const [isPlaying, setIsPlaying] = useState(true);
+  const [screenSize, setScreenSize] = useState<'mobile' | 'tablet' | 'desktop'>('mobile');
 
   const videoRef = useRef<HTMLVideoElement>(null);
 
   const touchStartX = useRef<number>(0);
   const touchEndX = useRef<number>(0);
+
+  // Detect screen size on mount and resize
+  useEffect(() => {
+    const updateScreenSize = () => {
+      const width = window.innerWidth;
+      if (width < 640) {
+        setScreenSize('mobile');
+      } else if (width < 1024) {
+        setScreenSize('tablet');
+      } else {
+        setScreenSize('desktop');
+      }
+    };
+    
+    updateScreenSize(); // Set initial size
+    window.addEventListener('resize', updateScreenSize);
+    return () => window.removeEventListener('resize', updateScreenSize);
+  }, []);
 
   // Fetch hero videos
   const { data: heroVideos = [] } = useQuery<HeroVideo[]>({
@@ -205,7 +224,11 @@ export function HeroVideoSection() {
             style={{ 
               textShadow: '3px 3px 6px rgba(0,0,0,0.9)',
               lineHeight: '1.4',
-              fontSize: `clamp(${activeHeroText?.font_size_mobile || 20}px, ${activeHeroText?.font_size_tablet || 40}px, ${activeHeroText?.font_size_desktop || 60}px)`
+              fontSize: screenSize === 'mobile' 
+                ? `${activeHeroText?.font_size_mobile || 20}px`
+                : screenSize === 'tablet'
+                ? `${activeHeroText?.font_size_tablet || 40}px`
+                : `${activeHeroText?.font_size_desktop || 60}px`
             }}
           >
             {(() => {
