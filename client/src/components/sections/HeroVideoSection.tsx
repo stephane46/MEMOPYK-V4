@@ -205,7 +205,7 @@ export function HeroVideoSection() {
             style={{ 
               textShadow: '3px 3px 6px rgba(0,0,0,0.9)',
               lineHeight: '1.4',
-              fontSize: `clamp(${activeHeroText?.font_size_mobile || 32}px, ${activeHeroText?.font_size_tablet || 45}px, ${activeHeroText?.font_size_desktop || 60}px)`
+              fontSize: `clamp(${activeHeroText?.font_size_mobile || 24}px, ${activeHeroText?.font_size_tablet || 40}px, ${activeHeroText?.font_size_desktop || 60}px)`
             }}
           >
             {(() => {
