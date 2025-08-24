@@ -226,7 +226,8 @@ export function HeroVideoSection() {
                     <>
                       {/* Mobile: 2 lines */}
                       <span className="block sm:hidden">
-                        Nous transformons vos photos et vidéos personnelles<br />
+                        Nous transformons<br />
+                        vos photos et vidéos personnelles<br />
                         en films souvenirs inoubliables
                       </span>
                       {/* Desktop: 2 lines (admin format) */}
@@ -246,7 +247,8 @@ export function HeroVideoSection() {
                     <>
                       {/* Mobile: 2 lines */}
                       <span className="block sm:hidden">
-                        We transform your personal photos and videos<br />
+                        We transform<br />
+                        your personal photos and videos<br />
                         into unforgettable souvenir films
                       </span>
                       {/* Desktop: 2 lines (admin format) */}
