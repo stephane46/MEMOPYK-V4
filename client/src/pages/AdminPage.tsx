@@ -502,7 +502,7 @@ export default function AdminPage() {
             </div>
             <div>
               <h1 className="text-lg font-bold">MEMOPYK</h1>
-              <p className="text-xs text-gray-400">Panel d'administration</p>
+              <p className="text-xs text-gray-700">Panel d'administration</p>
             </div>
           </div>
         </div>
@@ -511,7 +511,7 @@ export default function AdminPage() {
         <nav className="flex-1 p-4 overflow-y-auto">
           {/* Section Title */}
           <div className="mb-4 px-2">
-            <h3 className="text-xs font-semibold text-gray-400 uppercase tracking-wider">Sections</h3>
+            <h3 className="text-xs font-semibold text-gray-700 uppercase tracking-wider">Sections</h3>
           </div>
           
           <div className="space-y-1">
@@ -534,7 +534,7 @@ export default function AdminPage() {
                     className={`p-2 rounded-md ${isActive ? '' : 'group-hover:bg-gray-700'}`}
                     style={isActive ? { backgroundColor: 'rgba(255,255,255,0.2)' } : {}}
                   >
-                    <Icon className={`h-4 w-4 ${isActive ? 'text-white' : 'text-gray-400 group-hover:text-white'}`} />
+                    <Icon className={`h-4 w-4 ${isActive ? 'text-white' : 'text-gray-700 group-hover:text-white'}`} />
                   </div>
                   
                   {/* Label */}
@@ -623,10 +623,10 @@ export default function AdminPage() {
                         <CardContent className="p-6">
                           <div className="text-center">
                             <div className="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-gray-100 dark:bg-gray-800">
-                              <Video className="h-6 w-6 text-gray-400" />
+                              <Video className="h-6 w-6 text-gray-700" />
                             </div>
                             <h3 className="mt-2 text-sm font-medium text-gray-900 dark:text-white">Add New Hero Video</h3>
-                            <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">Upload a new video to the hero carousel</p>
+                            <p className="mt-1 text-sm text-gray-500 dark:text-gray-700">Upload a new video to the hero carousel</p>
                             <div className="mt-6">
                               <input
                                 type="file"
@@ -737,7 +737,7 @@ export default function AdminPage() {
                                         Plays {!video.order_index ? '1st' : video.order_index === 1 ? '1st' : video.order_index === 2 ? '2nd' : video.order_index === 3 ? '3rd' : `${video.order_index}th`}
                                       </div>
                                     </div>
-                                    <p className="text-center text-sm text-gray-600 dark:text-gray-400">
+                                    <p className="text-center text-sm text-gray-600 dark:text-gray-700">
                                       Order videos appear on your website
                                     </p>
                                     
@@ -1070,7 +1070,7 @@ export default function AdminPage() {
                                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                           <div>
                                             <Label className="text-xs">Titre (Français)</Label>
-                                            <small className="text-gray-400 block text-xs">Entrée = saut de ligne</small>
+                                            <small className="text-gray-700 block text-xs">Entrée = saut de ligne</small>
                                             <Textarea
                                               value={editFormData.title_fr}
                                               onChange={(e) => setEditFormData({ ...editFormData, title_fr: e.target.value })}
@@ -1080,7 +1080,7 @@ export default function AdminPage() {
                                           </div>
                                           <div>
                                             <Label className="text-xs">Titre (Anglais)</Label>
-                                            <small className="text-gray-400 block text-xs">Enter = line break</small>
+                                            <small className="text-gray-700 block text-xs">Enter = line break</small>
                                             <Textarea
                                               value={editFormData.title_en}
                                               onChange={(e) => setEditFormData({ ...editFormData, title_en: e.target.value })}
@@ -1090,7 +1090,7 @@ export default function AdminPage() {
                                           </div>
                                           <div>
                                             <Label className="text-xs">Sous-titre (Français)</Label>
-                                            <small className="text-gray-400 block text-xs">Entrée = saut de ligne</small>
+                                            <small className="text-gray-700 block text-xs">Entrée = saut de ligne</small>
                                             <Textarea
                                               value={editFormData.subtitle_fr}
                                               onChange={(e) => setEditFormData({ ...editFormData, subtitle_fr: e.target.value })}
@@ -1100,7 +1100,7 @@ export default function AdminPage() {
                                           </div>
                                           <div>
                                             <Label className="text-xs">Sous-titre (Anglais)</Label>
-                                            <small className="text-gray-400 block text-xs">Enter = line break</small>
+                                            <small className="text-gray-700 block text-xs">Enter = line break</small>
                                             <Textarea
                                               value={editFormData.subtitle_en}
                                               onChange={(e) => setEditFormData({ ...editFormData, subtitle_en: e.target.value })}
@@ -1372,7 +1372,7 @@ export default function AdminPage() {
                                         ) - 16) / 104 * 100}%)`
                                       }}
                                     />
-                                    <div className="text-sm text-gray-600 dark:text-gray-400 space-y-1">
+                                    <div className="text-sm text-gray-600 dark:text-gray-700 space-y-1">
                                       <div className="flex justify-between">
                                         <span>Ordinateur: {previewFontSizeDesktop}px</span>
                                         <span>Tablette: {previewFontSizeTablet}px</span>
@@ -1496,12 +1496,12 @@ export default function AdminPage() {
                                           )}
                                         </div>
                                       ) : (
-                                        <div className="text-gray-400">
+                                        <div className="text-gray-700">
                                           <p>Texte non trouvé pour l'ID: {selectedTextId}</p>
                                         </div>
                                       );
                                     })() : (
-                                      <div className="text-gray-400">
+                                      <div className="text-gray-700">
                                         <p>Cliquez sur "Prévisualiser" pour voir le texte ici</p>
                                       </div>
                                     )}
@@ -1585,7 +1585,7 @@ export default function AdminPage() {
             <div className="space-y-6">
               <div className="mb-6">
                 <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Galerie</h2>
-                <p className="text-gray-600 dark:text-gray-400">Gestion des éléments de galerie portfolio - Interface améliorée</p>
+                <p className="text-gray-600 dark:text-gray-700">Gestion des éléments de galerie portfolio - Interface améliorée</p>
               </div>
               <GalleryManagementNew key="gallery-v1.0.88" />
             </div>
@@ -1596,7 +1596,7 @@ export default function AdminPage() {
             <div className="space-y-6">
               <div className="mb-6">
                 <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Gestion du Cache</h2>
-                <p className="text-gray-600 dark:text-gray-400">Gestion complète du cache pour tous les médias (Vidéos Hero, Vidéos Galerie, Images)</p>
+                <p className="text-gray-600 dark:text-gray-700">Gestion complète du cache pour tous les médias (Vidéos Hero, Vidéos Galerie, Images)</p>
               </div>
               
               {/* Storage Management Overview */}
@@ -1836,7 +1836,7 @@ export default function AdminPage() {
             <div className="space-y-6">
               <div className="mb-6">
                 <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Tests & Performance</h2>
-                <p className="text-gray-600 dark:text-gray-400">Tests système, performance et validation</p>
+                <p className="text-gray-600 dark:text-gray-700">Tests système, performance et validation</p>
               </div>
               
               {/* GA4 Developer Mode - Clean & Elegant */}
@@ -1919,7 +1919,7 @@ export default function AdminPage() {
             <div className="space-y-6">
               <div className="mb-6">
                 <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Déploiement</h2>
-                <p className="text-gray-600 dark:text-gray-400">Gestion du déploiement et de la production</p>
+                <p className="text-gray-600 dark:text-gray-700">Gestion du déploiement et de la production</p>
               </div>
               <DeploymentManagement />
             </div>
@@ -2079,12 +2079,12 @@ export default function AdminPage() {
                       onDragOver={handleDrag}
                       onDrop={handleDrop}
                     >
-                      <FileVideo className="mx-auto h-12 w-12 text-gray-400 mb-4" />
+                      <FileVideo className="mx-auto h-12 w-12 text-gray-700 mb-4" />
                       <div className="space-y-2">
                         <p className="text-lg font-medium text-gray-900 dark:text-white">
                           {editVideoData.url_en ? 'Remplacer la vidéo' : 'Drop your video here'}
                         </p>
-                        <p className="text-sm text-gray-500 dark:text-gray-400">
+                        <p className="text-sm text-gray-500 dark:text-gray-700">
                           {editVideoData.url_en ? 'ou cliquez pour parcourir les fichiers' : 'or click to browse files'}
                         </p>
                         <input
@@ -2130,7 +2130,7 @@ export default function AdminPage() {
                     
                     {/* Manual filename input */}
                     <div className="space-y-2">
-                      <Label className="text-xs text-gray-600 dark:text-gray-400">
+                      <Label className="text-xs text-gray-600 dark:text-gray-700">
                         Or enter filename manually:
                       </Label>
                       <Input
@@ -2166,7 +2166,7 @@ export default function AdminPage() {
                           }
                         }}
                       >
-                        <FileVideo className="mx-auto h-8 w-8 text-gray-400 mb-2" />
+                        <FileVideo className="mx-auto h-8 w-8 text-gray-700 mb-2" />
                         <input
                           type="file"
                           accept="video/*"
@@ -2226,7 +2226,7 @@ export default function AdminPage() {
                           }
                         }}
                       >
-                        <FileVideo className="mx-auto h-8 w-8 text-gray-400 mb-2" />
+                        <FileVideo className="mx-auto h-8 w-8 text-gray-700 mb-2" />
                         <input
                           type="file"
                           accept="video/*"
