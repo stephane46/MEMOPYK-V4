@@ -58,22 +58,21 @@ export function SimpleHeroVideoSection() {
       <div className="absolute inset-0 flex items-center justify-center text-center text-white px-3 sm:px-6 lg:px-8">
         <div className="max-w-7xl w-full">
           <h1 
-            className="font-playfair font-bold mb-4 sm:mb-6 lg:mb-8 leading-tight mx-auto hero-text-mobile"
+            className="font-playfair font-bold mb-4 sm:mb-6 lg:mb-8 leading-tight mx-auto hero-text-mobile text-2xl sm:text-4xl lg:text-5xl"
             style={{ 
-              textShadow: '2px 2px 4px rgba(0,0,0,0.8)',
-              whiteSpace: 'pre-line'
+              textShadow: '2px 2px 4px rgba(0,0,0,0.8)'
             }}
           >
-            {/* Mobile: Force exact line breaks with spans, Desktop: Use pre-line */}
+            {/* Desktop: Use database content with \n breaks */}
             <span className="hidden sm:inline">
               {language === 'fr-FR' 
-                ? (activeHeroText?.title_fr || "Transformez vos souvenirs\nen films cinématographiques")
-                : (activeHeroText?.title_en || "Transform your memories\ninto cinematic films")
+                ? (activeHeroText?.title_fr || "Nous transformons\nvos photos et vidéos personnelles\nen films souvenirs inoubliables")
+                : (activeHeroText?.title_en || "We transform\nyour personal photos and videos\ninto unforgettable souvenir films")
               }
             </span>
             
-            {/* Mobile-only: Force exact 3-line structure */}
-            <span className="sm:hidden flex flex-col items-center">
+            {/* Mobile: Force exact 3-line structure */}
+            <span className="sm:hidden">
               {language === 'fr-FR' ? (
                 <>
                   <span>Nous transformons</span>
