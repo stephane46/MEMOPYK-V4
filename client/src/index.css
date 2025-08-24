@@ -740,10 +740,13 @@ html, body {
 }
 
 .hero-text-mobile .hero-line {
-  display: block;
-  width: 100%;
-  text-align: center;
-  margin: 0;
+  display: block !important;
+  width: 100% !important;
+  text-align: center !important;
+  margin: 0 !important;
+  word-break: keep-all !important;
+  overflow-wrap: normal !important;
+  white-space: nowrap !important;
 }
 
 /* Desktop (Tailwind "sm" and above, i.e. min-width:640px) */
