@@ -426,10 +426,8 @@ export class HybridStorage implements HybridStorageInterface {
           title_en: updateData.title_en, 
           subtitle_fr: updateData.subtitle_fr,
           subtitle_en: updateData.subtitle_en,
-          font_size: updateData.font_size, // Legacy field
-          font_size_desktop: updateData.font_size_desktop,
-          font_size_tablet: updateData.font_size_tablet,
-          font_size_mobile: updateData.font_size_mobile,
+          font_size: updateData.font_size || updateData.font_size_desktop || 60, // Use desktop size as legacy fallback
+          // Skip responsive font size columns for now (database schema mismatch)
           is_active: updateData.is_active,
           updated_at: new Date().toISOString()
         })
@@ -447,7 +445,7 @@ export class HybridStorage implements HybridStorageInterface {
         
         // Update JSON backup
         const texts = this.loadJsonFile('hero-text.json');
-        const textIndex = texts.findIndex((t: any) => t.id === textId);
+        const textIndex = texts.findIndex((t: any) => t.id == textId); // Use == for type coercion (string vs number)
         if (textIndex !== -1) {
           texts[textIndex] = data;
           this.saveJsonFile('hero-text.json', texts);
@@ -461,7 +459,7 @@ export class HybridStorage implements HybridStorageInterface {
     
     // Fallback to JSON
     const texts = this.loadJsonFile('hero-text.json');
-    const textIndex = texts.findIndex((t: any) => t.id === textId);
+    const textIndex = texts.findIndex((t: any) => t.id == textId); // Use == for type coercion (string vs number)
     
     if (textIndex === -1) {
       throw new Error('Hero text not found');
@@ -527,7 +525,7 @@ export class HybridStorage implements HybridStorageInterface {
         
         // Update JSON backup
         const texts = this.loadJsonFile('hero-text.json');
-        const textIndex = texts.findIndex((t: any) => t.id === textId);
+        const textIndex = texts.findIndex((t: any) => t.id == textId); // Use == for type coercion (string vs number)
         if (textIndex !== -1) {
           texts.splice(textIndex, 1);
           this.saveJsonFile('hero-text.json', texts);
@@ -541,7 +539,7 @@ export class HybridStorage implements HybridStorageInterface {
     
     // Fallback to JSON
     const texts = this.loadJsonFile('hero-text.json');
-    const textIndex = texts.findIndex((t: any) => t.id === textId);
+    const textIndex = texts.findIndex((t: any) => t.id == textId); // Use == for type coercion (string vs number)
     
     if (textIndex === -1) {
       throw new Error('Hero text not found');
