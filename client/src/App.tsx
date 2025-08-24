@@ -80,15 +80,21 @@ function AnalyticsRouter() {
 }
 
 function App() {
-  // Initialize GA4 and test mode on app load
+  // Initialize GA4 and test mode on app load (EXCLUDE admin pages)
   useEffect(() => {
-    // Initialize GA4 first
-    initGA();
+    const isAdminPage = window.location.pathname.includes('/admin');
     
-    // Then initialize test mode  
-    const isTestMode = initTestMode();
-    if (isTestMode) {
-      console.log('🔍 Test mode active - all GA4 events will include debug_mode=true');
+    if (!isAdminPage) {
+      // Initialize GA4 only for public pages
+      initGA();
+      
+      // Then initialize test mode  
+      const isTestMode = initTestMode();
+      if (isTestMode) {
+        console.log('🔍 Test mode active - all GA4 events will include debug_mode=true');
+      }
+    } else {
+      console.log('🚫 Admin page detected - GA4 tracking disabled');
     }
   }, []);
 
