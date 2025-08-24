@@ -189,7 +189,7 @@ app.use((req, res, next) => {
 
 (async () => {
   // 1) Register API routes FIRST - before any static file handling
-  registerRoutes(app);
+  await registerRoutes(app);
   
   // Add health check endpoint after API routes for better organization
   app.get('/health', (req: Request, res: Response) => {
