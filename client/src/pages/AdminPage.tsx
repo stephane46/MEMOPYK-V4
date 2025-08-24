@@ -567,8 +567,8 @@ export default function AdminPage() {
           {activeSection === 'hero-management' && (
             <div className="space-y-6">
               <div className="mb-6">
-                <h2 className="text-2xl font-bold" style={{ color: '#374151' }}>Gestion Hero</h2>
-                <p style={{ color: '#374151' }}>Gérer les vidéos du carrousel héros avec support bilingue</p>
+                <h2 className="text-2xl font-bold seo-tab" data-state="inactive">Gestion Hero</h2>
+                <p className="seo-tab" data-state="inactive">Gérer les vidéos du carrousel héros avec support bilingue</p>
               </div>
               
               {/* Hero Tabs with Bold Orange Colors */}
@@ -1109,6 +1109,54 @@ export default function AdminPage() {
                                             />
                                           </div>
                                         </div>
+                                        
+                                        {/* Mobile/Desktop Specific Titles for Edit Mode */}
+                                        <div className="border-t pt-4 mt-4">
+                                          <h4 className="font-semibold text-gray-700 mb-3 text-sm">📱 💻 Titres Spécifiques Mobile/Desktop</h4>
+                                          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                            <div>
+                                              <Label className="text-xs">Titre Mobile (Français) - 3 lignes</Label>
+                                              <small className="text-blue-600 block text-xs">Version mobile - Entrée = saut de ligne</small>
+                                              <Textarea
+                                                value={editFormData.title_mobile_fr}
+                                                onChange={(e) => setEditFormData({ ...editFormData, title_mobile_fr: e.target.value })}
+                                                className="text-sm resize-none"
+                                                rows={3}
+                                              />
+                                            </div>
+                                            <div>
+                                              <Label className="text-xs">Titre Mobile (Anglais) - 3 lignes</Label>
+                                              <small className="text-blue-600 block text-xs">Mobile version - Enter = line break</small>
+                                              <Textarea
+                                                value={editFormData.title_mobile_en}
+                                                onChange={(e) => setEditFormData({ ...editFormData, title_mobile_en: e.target.value })}
+                                                className="text-sm resize-none"
+                                                rows={3}
+                                              />
+                                            </div>
+                                            <div>
+                                              <Label className="text-xs">Titre Desktop (Français) - 2 lignes</Label>
+                                              <small className="text-green-600 block text-xs">Version desktop - Entrée = saut de ligne</small>
+                                              <Textarea
+                                                value={editFormData.title_desktop_fr}
+                                                onChange={(e) => setEditFormData({ ...editFormData, title_desktop_fr: e.target.value })}
+                                                className="text-sm resize-none"
+                                                rows={2}
+                                              />
+                                            </div>
+                                            <div>
+                                              <Label className="text-xs">Titre Desktop (Anglais) - 2 lignes</Label>
+                                              <small className="text-green-600 block text-xs">Desktop version - Enter = line break</small>
+                                              <Textarea
+                                                value={editFormData.title_desktop_en}
+                                                onChange={(e) => setEditFormData({ ...editFormData, title_desktop_en: e.target.value })}
+                                                className="text-sm resize-none"
+                                                rows={2}
+                                              />
+                                            </div>
+                                          </div>
+                                        </div>
+
                                         <div className="flex gap-2">
                                           <Button
                                             size="sm"
