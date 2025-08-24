@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { useLanguage } from '../../contexts/LanguageContext';
 
@@ -18,6 +18,18 @@ interface HeroText {
 export function SimpleHeroVideoSection() {
   const { language } = useLanguage();
   const videoRef = useRef<HTMLVideoElement>(null);
+  
+  // Force mobile detection in React state
+  const [isMobileSize, setIsMobileSize] = useState(false);
+
+  useEffect(() => {
+    const checkSize = () => {
+      setIsMobileSize(window.innerWidth < 640);
+    };
+    checkSize();
+    window.addEventListener('resize', checkSize);
+    return () => window.removeEventListener('resize', checkSize);
+  }, []);
 
   // Fetch hero text settings for overlay
   const { data: heroTextData = [] } = useQuery<HeroText[]>({
@@ -65,19 +77,13 @@ export function SimpleHeroVideoSection() {
 >
   {(() => {
     // sourceText: prefer DB text, otherwise fallback multi-line literal
-    // DEBUG: Check screen width and force ultra-short text
-    const isMobile = window.innerWidth < 640;
-    console.log('🚨 DEBUG: Screen width:', window.innerWidth, 'Is mobile:', isMobile);
-    
+    // FORCE: Ultra-short text on mobile using React state
     const sourceText = language === 'fr-FR'
-      ? (isMobile ? "Nous\ntransformons\nvos films" : (activeHeroText?.title_fr || "Nous transformons\nvos photos et vidéos personnelles\nen films souvenirs inoubliables"))
-      : (isMobile ? "We\ntransform\nyour films" : (activeHeroText?.title_en || "We transform\nyour personal photos and videos\ninto unforgettable souvenir films"));
-
-    console.log('🚨 DEBUG: Source text:', JSON.stringify(sourceText));
+      ? (isMobileSize ? "Films\nsouvenirs" : (activeHeroText?.title_fr || "Nous transformons\nvos photos et vidéos personnelles\nen films souvenirs inoubliables"))
+      : (isMobileSize ? "Memory\nfilms" : (activeHeroText?.title_en || "We transform\nyour personal photos and videos\ninto unforgettable souvenir films"));
     
     // Normalize -> array of lines (split on newline)
     const lines = sourceText.split(/\r?\n/).map(s => s.trim()).filter(Boolean);
-    console.log('🚨 DEBUG: Lines array:', lines, 'Count:', lines.length);
 
     // Clean production text rendering
 
@@ -92,8 +98,8 @@ export function SimpleHeroVideoSection() {
           textAlign: 'center',
           margin: 0,
           padding: 0,
-          fontSize: 'inherit',
-          lineHeight: 'inherit'
+          fontSize: isMobileSize ? '8px' : 'inherit',
+          lineHeight: isMobileSize ? '1.0' : 'inherit'
         }}
       >
         {line}
