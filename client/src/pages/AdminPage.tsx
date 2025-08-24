@@ -1150,16 +1150,6 @@ export default function AdminPage() {
                                             size="sm"
                                             variant="outline"
                                             onClick={() => {
-                                              setSelectedTextId(text.id);
-                                            }}
-                                          >
-                                            <Eye className="h-3 w-3 mr-1" />
-                                            Prévisualiser
-                                          </Button>
-                                          <Button
-                                            size="sm"
-                                            variant="outline"
-                                            onClick={() => {
                                               console.log('🔍 EDIT CLICKED for ID:', text.id);
                                               console.log('🔍 Mobile FR data:', text.title_mobile_fr);
                                               console.log('🔍 Desktop FR data:', text.title_desktop_fr);
