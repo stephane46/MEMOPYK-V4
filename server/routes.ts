@@ -1292,7 +1292,8 @@ export async function registerRoutes(app: Express): Promise<void> {
       res.json({ success: true, text: appliedText });
     } catch (error) {
       console.error('❌ Apply hero text error:', error);
-      res.status(500).json({ error: "Failed to apply hero text", details: error.message });
+      const message = error instanceof Error ? error.message : 'Unknown error';
+      res.status(500).json({ error: "Failed to apply hero text", details: message });
     }
   });
 
