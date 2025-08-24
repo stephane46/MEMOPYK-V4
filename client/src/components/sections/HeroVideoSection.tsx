@@ -223,7 +223,7 @@ export function HeroVideoSection() {
             className="font-playfair font-bold mb-0"
             style={{ 
               textShadow: '3px 3px 6px rgba(0,0,0,0.9)',
-              lineHeight: '1.4',
+              lineHeight: screenSize === 'mobile' ? '1.5' : '1.4',
               fontSize: screenSize === 'mobile' 
                 ? `${activeHeroText?.font_size_mobile || 20}px`
                 : screenSize === 'tablet'
