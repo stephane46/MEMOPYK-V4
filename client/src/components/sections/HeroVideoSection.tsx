@@ -218,13 +218,43 @@ export function HeroVideoSection() {
                 processedText = processedText.replace(/\\n/g, '\n');
               }
 
-              // Use database content for both mobile and desktop - fully database-driven
-              return processedText.split('\n').map((line, index) => (
-                <React.Fragment key={index}>
-                  {line}
-                  {index < processedText.split('\n').length - 1 && <br />}
-                </React.Fragment>
-              ));
+              // Responsive line breaking: database-driven but formatted differently for mobile vs desktop
+              const lines = processedText.split('\n');
+              
+              return (
+                <>
+                  {/* Mobile: 3 lines (database format) */}
+                  <span className="block sm:hidden">
+                    {lines.map((line, index) => (
+                      <React.Fragment key={index}>
+                        {line}
+                        {index < lines.length - 1 && <br />}
+                      </React.Fragment>
+                    ))}
+                  </span>
+                  {/* Desktop: 2 lines (combine first two lines) */}
+                  <span className="hidden sm:block">
+                    {lines.length >= 2 ? (
+                      <>
+                        {lines[0]} {lines[1]}
+                        {lines.length > 2 && (
+                          <>
+                            <br />
+                            {lines.slice(2).join(' ')}
+                          </>
+                        )}
+                      </>
+                    ) : (
+                      lines.map((line, index) => (
+                        <React.Fragment key={index}>
+                          {line}
+                          {index < lines.length - 1 && <br />}
+                        </React.Fragment>
+                      ))
+                    )}
+                  </span>
+                </>
+              );
             })()}
           </h1>
           
