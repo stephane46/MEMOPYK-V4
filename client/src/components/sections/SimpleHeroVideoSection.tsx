@@ -60,7 +60,7 @@ export function SimpleHeroVideoSection() {
           {/* === Deterministic hero title (unified desktop/mobile rendering) === */}
 {/* Deterministic title rendering (same across breakpoints) */}
 <h1
-  className="font-playfair font-bold mb-4 sm:mb-6 lg:mb-8 leading-tight mx-auto hero-text-mobile text-2xl sm:text-4xl lg:text-5xl"
+  className="font-playfair font-bold mb-4 sm:mb-6 lg:mb-8 mx-auto hero-text-mobile"
   style={{ textShadow: '2px 2px 4px rgba(0,0,0,0.8)' }}
 >
   {(() => {
@@ -76,7 +76,7 @@ export function SimpleHeroVideoSection() {
     // optionally provide a fallback lines array here. For now we use split result.
     return lines.map((line, idx) => (
       // explicit block display; don't rely on external CSS to flip inline->block
-      <span key={idx} className="hero-line block text-center">
+      <span key={idx} className="hero-line">
         {line}
       </span>
     ));
