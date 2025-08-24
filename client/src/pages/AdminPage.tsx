@@ -1301,8 +1301,8 @@ export default function AdminPage() {
                                         onClick={() => setCurrentPreviewDevice('desktop')}
                                         className={`flex-1 px-4 py-2 rounded-md text-sm font-medium transition-all flex items-center justify-center gap-2 ${
                                           currentPreviewDevice === 'desktop'
-                                            ? 'bg-white dark:bg-gray-700 text-gray-900 dark:text-white shadow-sm'
-                                            : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white'
+                                            ? 'bg-orange-500 text-white shadow-sm'
+                                            : 'bg-white text-gray-700 hover:bg-gray-100'
                                         }`}
                                       >
                                         <Monitor className="h-4 w-4" />
@@ -1312,8 +1312,8 @@ export default function AdminPage() {
                                         onClick={() => setCurrentPreviewDevice('tablet')}
                                         className={`flex-1 px-4 py-2 rounded-md text-sm font-medium transition-all flex items-center justify-center gap-2 ${
                                           currentPreviewDevice === 'tablet'
-                                            ? 'bg-white dark:bg-gray-700 text-gray-900 dark:text-white shadow-sm'
-                                            : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white'
+                                            ? 'bg-orange-500 text-white shadow-sm'
+                                            : 'bg-white text-gray-700 hover:bg-gray-100'
                                         }`}
                                       >
                                         <Tablet className="h-4 w-4" />
@@ -1323,8 +1323,8 @@ export default function AdminPage() {
                                         onClick={() => setCurrentPreviewDevice('mobile')}
                                         className={`flex-1 px-4 py-2 rounded-md text-sm font-medium transition-all flex items-center justify-center gap-2 ${
                                           currentPreviewDevice === 'mobile'
-                                            ? 'bg-white dark:bg-gray-700 text-gray-900 dark:text-white shadow-sm'
-                                            : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white'
+                                            ? 'bg-orange-500 text-white shadow-sm'
+                                            : 'bg-white text-gray-700 hover:bg-gray-100'
                                         }`}
                                       >
                                         <Smartphone className="h-4 w-4" />
