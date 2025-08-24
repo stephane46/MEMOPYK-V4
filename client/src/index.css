@@ -757,16 +757,19 @@ html, body {
   }
 }
 
-/* MOBILE: Ultra small font for 3 lines */
+/* MOBILE: EXTREME FORCE - Nuclear approach */
 @media (max-width: 639px) {
-  .hero-text-mobile {
-    font-size: 10px !important;
-  }
-
-  .hero-text-mobile .hero-line {
-    font-size: 10px !important;
+  .hero-text-mobile,
+  .hero-text-mobile *,
+  .hero-text-mobile .hero-line,
+  h1.hero-text-mobile,
+  h1.hero-text-mobile .hero-line {
+    font-size: 8px !important;
     line-height: 1.0 !important;
-    padding: 1px 0 !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    max-width: 100% !important;
+    word-break: break-word !important;
   }
 }
 

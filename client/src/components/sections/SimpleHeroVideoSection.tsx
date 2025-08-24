@@ -65,13 +65,19 @@ export function SimpleHeroVideoSection() {
 >
   {(() => {
     // sourceText: prefer DB text, otherwise fallback multi-line literal
-    // EMERGENCY: Force ultra-short text for mobile
+    // DEBUG: Check screen width and force ultra-short text
+    const isMobile = window.innerWidth < 640;
+    console.log('🚨 DEBUG: Screen width:', window.innerWidth, 'Is mobile:', isMobile);
+    
     const sourceText = language === 'fr-FR'
-      ? (window.innerWidth < 640 ? "Nous transformons\nvos photos\nen films" : (activeHeroText?.title_fr || "Nous transformons\nvos photos et vidéos personnelles\nen films souvenirs inoubliables"))
-      : (window.innerWidth < 640 ? "We transform\nyour photos\ninto films" : (activeHeroText?.title_en || "We transform\nyour personal photos and videos\ninto unforgettable souvenir films"));
+      ? (isMobile ? "Nous\ntransformons\nvos films" : (activeHeroText?.title_fr || "Nous transformons\nvos photos et vidéos personnelles\nen films souvenirs inoubliables"))
+      : (isMobile ? "We\ntransform\nyour films" : (activeHeroText?.title_en || "We transform\nyour personal photos and videos\ninto unforgettable souvenir films"));
 
+    console.log('🚨 DEBUG: Source text:', JSON.stringify(sourceText));
+    
     // Normalize -> array of lines (split on newline)
     const lines = sourceText.split(/\r?\n/).map(s => s.trim()).filter(Boolean);
+    console.log('🚨 DEBUG: Lines array:', lines, 'Count:', lines.length);
 
     // Clean production text rendering
 
