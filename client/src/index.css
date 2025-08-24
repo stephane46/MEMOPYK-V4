@@ -733,7 +733,7 @@ html, body {
 /* === MEMOPYK HERO: deterministic line breaks (FORCE OVERRIDE ALL CONFLICTS) === */
 
 .hero-text-mobile {
-  font-size: clamp(1.5rem, 5vw, 4rem) !important;
+  font-size: clamp(0.6rem, 3vw, 4rem) !important;
   max-width: 100% !important;
   line-height: 1.2 !important;
   white-space: normal !important;    /* default: don't rely on DB \n unless desktop allows it */
@@ -761,7 +761,7 @@ html, body {
   .hero-text-mobile {
     display: block !important;
     line-height: 1.05 !important;
-    font-size: 0.95rem !important;
+    font-size: 0.6rem !important;
     max-width: 95vw !important;
     word-break: keep-all !important;
     hyphens: none !important;
