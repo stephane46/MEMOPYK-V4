@@ -85,8 +85,8 @@ export function SimpleHeroVideoSection() {
           textAlign: 'center',
           margin: 0,
           padding: 0,
-          fontSize: window.innerWidth < 640 ? '1.25rem' : 'clamp(1.5rem, 5vw, 4rem)',
-          lineHeight: window.innerWidth < 640 ? '1.15' : '1.2'
+          fontSize: window.innerWidth < 640 ? '0.9rem' : 'clamp(1.5rem, 5vw, 4rem)',
+          lineHeight: window.innerWidth < 640 ? '1.1' : '1.2'
         }}
       >
         {line}
