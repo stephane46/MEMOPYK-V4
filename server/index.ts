@@ -191,6 +191,20 @@ app.use((req, res, next) => {
   // 1) Register API routes FIRST - before any static file handling
   await registerRoutes(app);
   
+  // --- BEGIN: correct content types for sitemap/robots ---
+  const root = process.cwd();
+  
+  app.get("/sitemap.xml", (req: Request, res: Response) => {
+    res.type("application/xml");
+    res.sendFile(path.join(root, "public", "sitemap.xml"));
+  });
+
+  app.get("/robots.txt", (req: Request, res: Response) => {
+    res.type("text/plain");
+    res.sendFile(path.join(root, "public", "robots.txt"));
+  });
+  // --- END ---
+  
   // Add health check endpoint after API routes for better organization
   app.get('/health', (req: Request, res: Response) => {
     res.status(200).json({ 
