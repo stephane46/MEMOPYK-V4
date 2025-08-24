@@ -64,10 +64,30 @@ export function SimpleHeroVideoSection() {
               whiteSpace: 'pre-line'
             }}
           >
-            {language === 'fr-FR' 
-              ? (activeHeroText?.title_fr || "Transformez vos souvenirs\nen films cinématographiques")
-              : (activeHeroText?.title_en || "Transform your memories\ninto cinematic films")
-            }
+            {/* Mobile: Force exact line breaks with spans, Desktop: Use pre-line */}
+            <span className="hidden sm:inline">
+              {language === 'fr-FR' 
+                ? (activeHeroText?.title_fr || "Transformez vos souvenirs\nen films cinématographiques")
+                : (activeHeroText?.title_en || "Transform your memories\ninto cinematic films")
+              }
+            </span>
+            
+            {/* Mobile-only: Force exact 3-line structure */}
+            <span className="sm:hidden flex flex-col items-center">
+              {language === 'fr-FR' ? (
+                <>
+                  <span>Nous transformons</span>
+                  <span>vos photos et vidéos personnelles</span>
+                  <span>en films souvenirs inoubliables</span>
+                </>
+              ) : (
+                <>
+                  <span>We transform</span>
+                  <span>your personal photos and videos</span>
+                  <span>into unforgettable souvenir films</span>
+                </>
+              )}
+            </span>
           </h1>
           
           {activeHeroText && (

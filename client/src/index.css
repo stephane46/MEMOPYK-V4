@@ -759,5 +759,25 @@ html, body {
   animation: double-bounce 1s ease-out;
 }
 
+/* MOBILE HERO TEXT FORCED LINE BREAKS - Mathematical precision */
+.hero-text-mobile {
+  white-space: pre-line;
+}
+
+@media (max-width: 767px) {
+  .hero-text-mobile {
+    white-space: normal !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    line-height: 1.1 !important;
+  }
+  
+  .hero-text-mobile span {
+    display: block !important;
+    text-align: center !important;
+  }
+}
+
 
 
