@@ -192,9 +192,9 @@ img, video, iframe, canvas, svg {
   cursor: not-allowed !important;
 }
 
-/* Target ALL modal content elements, NOT overlay/backdrop */
+/* Target ONLY Radix UI dialog content elements, NOT custom VideoOverlay */
 [data-radix-dialog-content],
-[role="dialog"] {
+.modal-force-white {
   background: white !important;
   background-color: white !important;
   background-image: none !important;
