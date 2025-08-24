@@ -76,7 +76,7 @@ export function SimpleHeroVideoSection() {
     // optionally provide a fallback lines array here. For now we use split result.
     return lines.map((line, idx) => (
       // explicit block display; don't rely on external CSS to flip inline->block
-      <span key={idx} className="block text-center">
+      <span key={idx} className="hero-line block text-center">
         {line}
       </span>
     ));
