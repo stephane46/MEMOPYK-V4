@@ -54,14 +54,7 @@ app.get('/api/health-check', (req: Request, res: Response) => {
 
 // 🔍 ABSOLUTE FIRST MIDDLEWARE: Log EVERY request that reaches Express
 app.use((req, res, next) => {
-  console.log(`🚨 ABSOLUTE REQUEST INTERCEPTOR v1.0.50: ${req.method} ${req.url}`);
-  if (req.url.includes('PomGalleryC.mp4') || req.url.includes('video-proxy')) {
-    console.log(`🎯 CRITICAL REQUEST DETECTED: ${req.url}`);
-    console.log(`   - Method: ${req.method}`);
-    console.log(`   - Path: ${req.path}`);
-    console.log(`   - Query: ${JSON.stringify(req.query)}`);
-    console.log(`   - User-Agent: ${req.headers['user-agent']?.slice(0, 100)}`);
-  }
+  // Debug logging disabled for production build performance
   next();
 });
 
@@ -89,74 +82,19 @@ app.use((req, res, next) => {
 
 // 🔍 DIAGNOSTIC 2: Log ALL Proxy Requests (Before Any Route Logic) 
 app.use('/api/video-proxy', (req, res, next) => {
-  console.log('🔍 RAW VIDEO PROXY ENTRY', req.originalUrl, req.query);
-  console.log('🔍 FILENAME REQUESTED:', req.query.filename);
-  console.log('🔍 USER-AGENT:', req.headers['user-agent']);
-  console.log('🔍 IF THIS LOG APPEARS FOR BLOCKED FILES, THEY REACH EXPRESS');
+  // Debug logging disabled for production build performance
   next();
 });
 
 // ULTIMATE REQUEST INTERCEPTOR: Capture ALL requests before ANY processing
 app.use((req, res, next) => {
-  // Log EVERY video-proxy request, no matter what
-  if (req.url.includes('video-proxy')) {
-    console.log(`🔥 ULTIMATE INTERCEPTOR - RAW REQUEST CAPTURED:`);
-    console.log(`   - Raw URL: ${req.url}`);
-    console.log(`   - Method: ${req.method}`);
-    console.log(`   - Path: ${req.path}`);
-    console.log(`   - Raw query string: "${req.url.split('?')[1] || 'NO_QUERY'}"`);
-    console.log(`   - Parsed query object:`, req.query);
-    console.log(`   - URL length: ${req.url.length} characters`);
-    console.log(`   - User-Agent: ${req.headers['user-agent']?.slice(0, 100)}`);
-    
-    // Check if this is any gallery video (updated for current filenames)
-    const galleryVideoPatterns = [
-      'VitaminSeaC.mp4',
-      'PomGalleryC.mp4', 
-      'safari-1.mp4'
-    ];
-    
-    const isGalleryVideo = galleryVideoPatterns.some(pattern => req.url.includes(pattern));
-    
-    if (isGalleryVideo) {
-      console.log(`🎯 GALLERY VIDEO REQUEST INTERCEPTED - v1.0.35 ENHANCED DEBUG!`);
-      console.log(`   - Full raw URL: ${req.url}`);
-      console.log(`   - URL breakdown:`);
-      console.log(`     - Base: ${req.url.split('?')[0]}`);
-      console.log(`     - Query: ${req.url.split('?')[1] || 'NONE'}`);
-      console.log(`   - Headers:`, JSON.stringify({
-        range: req.headers.range,
-        accept: req.headers.accept,
-        'user-agent': req.headers['user-agent']?.slice(0, 50),
-        'accept-encoding': req.headers['accept-encoding']
-      }, null, 2));
-      console.log(`🚨 CRITICAL: If you see this log, gallery requests ARE reaching the server!`);
-    }
-  }
+  // Debug logging disabled for production build performance
   next();
 });
 
 // EMERGENCY: Log ALL requests to diagnose production routing
 app.use((req, res, next) => {
-  if (req.path.includes('/api/video-proxy') || req.path.includes('/api/debug-gallery-video')) {
-    console.log(`🚨 EMERGENCY REQUEST LOG: ${req.method} ${req.path} from ${req.headers['user-agent']?.slice(0, 50)}`);
-    console.log(`   - Query params:`, req.query);
-    console.log(`   - Headers:`, { range: req.headers.range, accept: req.headers.accept });
-    
-    // STEP 1: COMPREHENSIVE PRODUCTION 500 DEBUGGING - FULL HEADER CONTEXT
-    console.log(`📋 PRODUCTION 500 DEBUG - COMPLETE REQUEST CONTEXT v1.0.18:`);
-    console.log(`   - Accept-Encoding: "${req.headers['accept-encoding']}"`);
-    console.log(`   - sec-ch-ua-mobile: "${req.headers['sec-ch-ua-mobile']}"`);
-    console.log(`   - sec-ch-ua-platform: "${req.headers['sec-ch-ua-platform']}"`);
-    console.log(`   - Connection: "${req.headers.connection}"`);
-    console.log(`   - Cache-Control: "${req.headers['cache-control']}"`);
-    console.log(`   - Pragma: "${req.headers.pragma}"`);
-    console.log(`   - Priority: "${req.headers.priority}"`);
-    console.log(`   - sec-fetch-dest: "${req.headers['sec-fetch-dest']}"`);
-    console.log(`   - sec-fetch-mode: "${req.headers['sec-fetch-mode']}"`);
-    console.log(`   - sec-fetch-site: "${req.headers['sec-fetch-site']}"`);
-    console.log(`📋 FULL REQ.HEADERS OBJECT:`, JSON.stringify(req.headers, null, 2));
-  }
+  // Emergency debug logging disabled for production build performance
   next();
 });
 
