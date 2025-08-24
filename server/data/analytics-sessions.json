@@ -14660,7 +14660,24 @@
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-24T07:45:29.427Z",
-    "updated_at": "2025-08-24T07:47:00.315Z",
-    "duration": 600791
+    "updated_at": "2025-08-24T07:58:29.834Z",
+    "duration": 1018075
+  },
+  {
+    "id": "7e3d1964-26aa-4ee5-b4c6-d103a9728b98",
+    "session_id": "session_1756022338919_da4szt0kp",
+    "user_id": null,
+    "ip_address": "109.17.150.48",
+    "user_agent": "Mozilla/5.0 (iPhone; CPU iPhone OS 18_6_2 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148 Replit-Bonsai/2.147.2 (iOS 18.6.2)",
+    "referrer": "https://365df2cf-1884-444c-a9e8-235602456363-00-37q39xpqlgvdy.janeway.replit.dev/fr-FR",
+    "language": "fr-FR",
+    "country": "Unknown",
+    "city": "Unknown",
+    "page_views": 0,
+    "is_bot": false,
+    "is_test_data": false,
+    "created_at": "2025-08-24T07:58:58.932Z",
+    "updated_at": "2025-08-24T07:59:20.709Z",
+    "duration": 601531
   }
 ]
