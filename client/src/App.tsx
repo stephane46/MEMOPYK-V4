@@ -20,10 +20,8 @@ import { useEffect } from 'react';
 import { useAnalytics } from '@/hooks/use-analytics';
 import { initTestMode, initGA } from '@/lib/analytics';
 
-console.log("🔀 routes configured for /gallery");
-
-// TIMEOUT SAFEGUARD SYSTEM v1.0.46 - SILENT STREAM FAILURE DETECTION
-console.log("%c🚀 MEMOPYK LANGUAGE-SPECIFIC UPLOAD SYSTEM v1.0.82 - Force reload to fix English upload section visibility", "color: red; font-size: 16px; font-weight: bold;");
+// Routes configured for gallery
+// Language-specific upload system v1.0.82 ready
 
 function AnalyticsRouter() {
   // Track page views when routes change

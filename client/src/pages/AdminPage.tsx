@@ -1264,13 +1264,28 @@ export default function AdminPage() {
                                             size="sm"
                                             variant="outline"
                                             onClick={() => {
-                                              console.log('🔍 EDIT CLICKED - Complete text object:', JSON.stringify(text, null, 2));
+                                              console.log('🔍 EDIT CLICKED for ID:', text.id);
+                                              console.log('🔍 Mobile FR data:', text.title_mobile_fr);
+                                              console.log('🔍 Desktop FR data:', text.title_desktop_fr);
                                               
-                                              setEditingTextId(text.id);
+                                              // Clear any existing edit state first
+                                              setEditingTextId(null);
+                                              setEditFormData({
+                                                title_fr: '',
+                                                title_en: '',
+                                                subtitle_fr: '',
+                                                subtitle_en: '',
+                                                title_mobile_fr: '',
+                                                title_mobile_en: '',
+                                                title_desktop_fr: '',
+                                                title_desktop_en: ''
+                                              });
                                               
-                                              // Force immediate state update with timeout to ensure React processes it
+                                              // Set editing state after a brief delay to force re-render
                                               setTimeout(() => {
-                                                setEditFormData({
+                                                setEditingTextId(text.id);
+                                                
+                                                const formData = {
                                                   title_fr: text.title_fr || '',
                                                   title_en: text.title_en || '',
                                                   subtitle_fr: text.subtitle_fr || '',
@@ -1279,9 +1294,11 @@ export default function AdminPage() {
                                                   title_mobile_en: text.title_mobile_en || text.title_en || '',
                                                   title_desktop_fr: text.title_desktop_fr || text.title_fr || '',
                                                   title_desktop_en: text.title_desktop_en || text.title_en || ''
-                                                });
-                                                console.log('🔍 Form data set after timeout');
-                                              }, 50);
+                                                };
+                                                
+                                                console.log('🔍 Setting form data:', formData);
+                                                setEditFormData(formData);
+                                              }, 100);
                                             }}
                                           >
                                             <Type className="h-3 w-3 mr-1" />
