@@ -1214,6 +1214,8 @@ export async function registerRoutes(app: Express): Promise<void> {
   // Create new hero text
   app.post("/api/hero-text", async (req, res) => {
     try {
+      console.log('🔍 CREATE HERO TEXT - Request body:', JSON.stringify(req.body, null, 2));
+      
       const { 
         title_mobile_fr,
         title_mobile_en,
@@ -1224,7 +1226,23 @@ export async function registerRoutes(app: Express): Promise<void> {
         font_size_mobile
       } = req.body;
       
+      console.log('🔍 CREATE HERO TEXT - Extracted fields:', {
+        title_desktop_fr,
+        title_desktop_en,
+        title_mobile_fr,
+        title_mobile_en,
+        font_size_desktop,
+        font_size_tablet,
+        font_size_mobile
+      });
+      
       if (!title_desktop_fr || !title_desktop_en || !title_mobile_fr || !title_mobile_en) {
+        console.log('❌ CREATE HERO TEXT - Validation failed:', {
+          title_desktop_fr: !!title_desktop_fr,
+          title_desktop_en: !!title_desktop_en,
+          title_mobile_fr: !!title_mobile_fr,
+          title_mobile_en: !!title_mobile_en
+        });
         return res.status(400).json({ error: "Desktop and mobile titles are required in both languages" });
       }
       
