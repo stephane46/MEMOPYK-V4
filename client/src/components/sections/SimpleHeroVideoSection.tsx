@@ -74,11 +74,23 @@ export function SimpleHeroVideoSection() {
 
     // If DB gave a single long line and you still want exact 3 lines on mobile,
     // optionally provide a fallback lines array here. For now we use split result.
+    // FORCE EXPLICIT LINE BREAKS - NUCLEAR APPROACH
     return lines.map((line, idx) => (
-      // explicit block display; don't rely on external CSS to flip inline->block
-      <span key={idx} className="hero-line">
+      <div 
+        key={idx} 
+        className="hero-line"
+        style={{
+          display: 'block',
+          width: '100%',
+          textAlign: 'center',
+          margin: 0,
+          padding: 0,
+          fontSize: window.innerWidth < 640 ? '0.95rem' : 'clamp(1.5rem, 5vw, 4rem)',
+          lineHeight: window.innerWidth < 640 ? '1.05' : '1.2'
+        }}
+      >
         {line}
-      </span>
+      </div>
     ));
   })()}
 </h1>
