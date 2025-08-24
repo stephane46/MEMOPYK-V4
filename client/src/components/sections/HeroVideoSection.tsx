@@ -201,10 +201,11 @@ export function HeroVideoSection() {
         {/* Semi-transparent background for optimal text contrast across all lighting conditions */}
         <div className={`bg-black/40 backdrop-blur-sm rounded-2xl pt-1.5 pb-2 px-2 sm:pt-2 sm:pb-3 sm:px-3 w-full border border-white/10 ${language.startsWith('fr') ? 'max-w-7xl' : 'max-w-6xl'}`}>
           <h1 
-            className="font-playfair font-bold mb-0 text-lg sm:text-2xl lg:text-5xl"
+            className="font-playfair font-bold mb-0"
             style={{ 
               textShadow: '3px 3px 6px rgba(0,0,0,0.9)',
-              lineHeight: '1.4'
+              lineHeight: '1.4',
+              fontSize: `clamp(${activeHeroText?.font_size_mobile || 32}px, ${activeHeroText?.font_size_tablet || 45}px, ${activeHeroText?.font_size_desktop || 60}px)`
             }}
           >
             {(() => {
