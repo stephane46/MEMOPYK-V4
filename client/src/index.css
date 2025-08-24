@@ -734,9 +734,9 @@ html, body {
 .hero-text-mobile {
   font-size: clamp(1.5rem, 5vw, 4rem);
   max-width: 100%;
-  line-height: 1.2;
+  line-height: 1.2 !important;  /* Override Tailwind leading-tight */
   white-space: normal;    /* default: don't rely on DB \n unless desktop allows it */
-  text-align: center;
+  text-align: center !important;  /* Ensure text centering works */
 }
 
 .hero-text-mobile .hero-line {

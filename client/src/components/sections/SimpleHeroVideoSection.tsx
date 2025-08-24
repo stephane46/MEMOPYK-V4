@@ -59,7 +59,7 @@ export function SimpleHeroVideoSection() {
         <div className="max-w-7xl w-full">
           {/* === Deterministic hero title (unified desktop/mobile rendering) === */}
           <h1
-            className="font-playfair font-bold mb-4 sm:mb-6 lg:mb-8 leading-tight mx-auto hero-text-mobile text-2xl sm:text-4xl lg:text-5xl"
+            className="font-playfair font-bold mb-4 sm:mb-6 lg:mb-8 mx-auto hero-text-mobile text-2xl sm:text-4xl lg:text-5xl"
             style={{ textShadow: '2px 2px 4px rgba(0,0,0,0.8)' }}
           >
             {(() => {
