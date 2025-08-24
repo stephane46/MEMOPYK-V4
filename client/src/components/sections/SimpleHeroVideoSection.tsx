@@ -58,9 +58,10 @@ export function SimpleHeroVideoSection() {
       <div className="absolute inset-0 flex items-center justify-center text-center text-white px-3 sm:px-6 lg:px-8">
         <div className="max-w-7xl w-full">
           <h1 
-            className="font-playfair font-bold mb-4 sm:mb-6 lg:mb-8 leading-tight text-xl sm:text-3xl lg:text-6xl"
+            className="font-playfair font-bold mb-4 sm:mb-6 lg:mb-8 leading-tight text-lg sm:text-3xl lg:text-6xl max-w-xs sm:max-w-none mx-auto"
             style={{ 
-              textShadow: '2px 2px 4px rgba(0,0,0,0.8)'
+              textShadow: '2px 2px 4px rgba(0,0,0,0.8)',
+              whiteSpace: 'pre-line'
             }}
           >
             {language === 'fr-FR' 
