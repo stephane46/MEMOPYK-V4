@@ -256,6 +256,7 @@ img, video, iframe, canvas, svg {
   overflow-wrap: break-word;
   hyphens: auto;
   white-space: normal;
+  /* NOTE: .hero-text-mobile uses !important to override this global rule */
 }
 
 /* Custom scrollbar for How It Works text areas */
@@ -729,44 +730,50 @@ html, body {
   animation: double-bounce 1s ease-out;
 }
 
-/* === MEMOPYK HERO: deterministic line breaks === */
+/* === MEMOPYK HERO: deterministic line breaks (FORCE OVERRIDE ALL CONFLICTS) === */
 
 .hero-text-mobile {
-  font-size: clamp(1.5rem, 5vw, 4rem);
-  max-width: 100%;
-  line-height: 1.2;
-  white-space: normal;    /* default: don't rely on DB \n unless desktop allows it */
-  text-align: center;
+  font-size: clamp(1.5rem, 5vw, 4rem) !important;
+  max-width: 100% !important;
+  line-height: 1.2 !important;
+  white-space: normal !important;    /* default: don't rely on DB \n unless desktop allows it */
+  text-align: center !important;
+  display: block !important;
 }
 
 .hero-text-mobile .hero-line {
-  display: block;
-  width: 100%;
-  text-align: center;
-  margin: 0;
+  display: block !important;
+  width: 100% !important;
+  text-align: center !important;
+  margin: 0 !important;
 }
 
 /* Desktop (Tailwind "sm" and above, i.e. min-width:640px) */
 @media (min-width: 640px) {
   .hero-text-mobile {
-    white-space: pre-line; /* allow DB \n to be honored on desktop only */
-    line-height: 1.25;
+    white-space: pre-line !important; /* allow DB \n to be honored on desktop only */
+    line-height: 1.25 !important;
   }
 }
 
-/* Mobile: normal document flow, no flex, no !important */
+/* Mobile: FORCE EXACT 3 LINES */
 @media (max-width: 639px) {
   .hero-text-mobile {
-    display: block;
-    line-height: 1.05;
-    font-size: 0.95rem;
-    max-width: 95vw;
-    word-break: keep-all;
-    hyphens: none;
+    display: block !important;
+    line-height: 1.05 !important;
+    font-size: 0.95rem !important;
+    max-width: 95vw !important;
+    word-break: keep-all !important;
+    hyphens: none !important;
+    white-space: normal !important;
   }
 
   .hero-text-mobile .hero-line {
-    text-align: center;
+    display: block !important;
+    text-align: center !important;
+    width: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
   }
 }
 
