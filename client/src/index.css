@@ -72,6 +72,37 @@ img, video, iframe, canvas, svg {
   font-family: 'Poppins', sans-serif;
 }
 
+/* Hero Text Mobile Optimization - Force 2-line layout */
+.hero-text-mobile {
+  font-size: clamp(1.5rem, 5vw, 4rem);
+  max-width: 100%;
+  line-height: 1.2;
+}
+
+@media (max-width: 639px) {
+  .hero-text-mobile {
+    font-size: 0.85rem !important;
+    max-width: 95vw !important;
+    line-height: 1.25 !important;
+    word-break: keep-all;
+    hyphens: none;
+  }
+}
+
+@media (min-width: 640px) and (max-width: 1023px) {
+  .hero-text-mobile {
+    font-size: 2rem !important;
+    max-width: 85vw !important;
+  }
+}
+
+@media (min-width: 1024px) {
+  .hero-text-mobile {
+    font-size: clamp(3rem, 4vw, 4rem) !important;
+    max-width: 100% !important;
+  }
+}
+
 /* SEO Management Admin Styles - Force active states with !important */
 .seo-language-btn-active {
   background-color: #D67C4A !important;
