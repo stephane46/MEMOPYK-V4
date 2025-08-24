@@ -31,7 +31,11 @@ export interface IStorage {
   
   // Hero text settings operations
   getHeroTextSettings(language?: string): Promise<HeroTextSettings[]>;
+  createHeroText(text: InsertHeroTextSettings): Promise<HeroTextSettings>;
+  updateHeroText(id: string, updates: Partial<InsertHeroTextSettings>): Promise<HeroTextSettings | undefined>;
   updateHeroTextSettings(id: number, updates: Partial<InsertHeroTextSettings>): Promise<HeroTextSettings | undefined>;
+  deleteHeroText(id: string): Promise<boolean>;
+  deactivateAllHeroTexts(): Promise<void>;
   
   // Gallery operations
   getGalleryItems(): Promise<GalleryItem[]>;
@@ -256,6 +260,47 @@ export class MemStorage implements IStorage {
   async getHeroTextSettings(language?: string): Promise<HeroTextSettings[]> {
     const settings = Array.from(this.heroTextSettings.values());
     return language ? settings.filter(s => s.language === language) : settings;
+  }
+
+  async createHeroText(text: InsertHeroTextSettings): Promise<HeroTextSettings> {
+    const id = Math.max(0, ...Array.from(this.heroTextSettings.keys())) + 1;
+    const newText: HeroTextSettings = {
+      id,
+      ...text,
+      createdAt: new Date(),
+      updatedAt: new Date()
+    };
+    this.heroTextSettings.set(id, newText);
+    return newText;
+  }
+
+  async updateHeroText(id: string, updates: Partial<InsertHeroTextSettings>): Promise<HeroTextSettings | undefined> {
+    const numId = parseInt(id);
+    const text = this.heroTextSettings.get(numId);
+    if (!text) return undefined;
+
+    const updatedText: HeroTextSettings = {
+      ...text,
+      ...updates,
+      updatedAt: new Date()
+    };
+    this.heroTextSettings.set(numId, updatedText);
+    return updatedText;
+  }
+
+  async deleteHeroText(id: string): Promise<boolean> {
+    const numId = parseInt(id);
+    return this.heroTextSettings.delete(numId);
+  }
+
+  async deactivateAllHeroTexts(): Promise<void> {
+    for (const [id, text] of this.heroTextSettings) {
+      this.heroTextSettings.set(id, {
+        ...text,
+        is_active: false,
+        updatedAt: new Date()
+      });
+    }
   }
 
   async updateHeroTextSettings(id: number, updates: Partial<InsertHeroTextSettings>): Promise<HeroTextSettings | undefined> {

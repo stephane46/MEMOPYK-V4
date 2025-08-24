@@ -70,9 +70,9 @@ export default function AdminPage() {
   const [previewFontSizeTablet, setPreviewFontSizeTablet] = useState(45);
   const [previewFontSizeMobile, setPreviewFontSizeMobile] = useState(32);
   const [editingTextId, setEditingTextId] = useState<number | null>(null);
-  const [editFormData, setEditFormData] = useState({ title_fr: '', title_en: '', subtitle_fr: '', subtitle_en: '' });
+  const [editFormData, setEditFormData] = useState({ title_fr: '', title_en: '', subtitle_fr: '', subtitle_en: '', title_mobile_fr: '', title_mobile_en: '', title_desktop_fr: '', title_desktop_en: '' });
   const [showNewTextForm, setShowNewTextForm] = useState(false);
-  const [newTextData, setNewTextData] = useState({ title_fr: '', subtitle_fr: '', title_en: '', subtitle_en: '', font_size_desktop: 60, font_size_tablet: 45, font_size_mobile: 32 });
+  const [newTextData, setNewTextData] = useState({ title_fr: '', subtitle_fr: '', title_en: '', subtitle_en: '', title_mobile_fr: '', title_mobile_en: '', title_desktop_fr: '', title_desktop_en: '', font_size_desktop: 60, font_size_tablet: 45, font_size_mobile: 32 });
   const [currentPreviewLanguage, setCurrentPreviewLanguage] = useState<'fr' | 'en'>('fr');
   const [isBulletproofCacheRunning, setIsBulletproofCacheRunning] = useState(false);
   const [isDevMode, setIsDevMode] = useState(false);
@@ -448,7 +448,7 @@ export default function AdminPage() {
       queryClient.invalidateQueries({ queryKey: ['/api/hero-text', 'fr-FR'] });
       queryClient.invalidateQueries({ queryKey: ['/api/hero-text', 'en-US'] });
       setShowNewTextForm(false);
-      setNewTextData({ title_fr: '', subtitle_fr: '', title_en: '', subtitle_en: '', font_size_desktop: 60, font_size_tablet: 45, font_size_mobile: 36 });
+      setNewTextData({ title_fr: '', subtitle_fr: '', title_en: '', subtitle_en: '', title_mobile_fr: '', title_mobile_en: '', title_desktop_fr: '', title_desktop_en: '', font_size_desktop: 60, font_size_tablet: 45, font_size_mobile: 36 });
       toast({ title: "Succès", description: "Nouveau texte créé avec succès" });
     },
     onError: () => {
@@ -973,6 +973,58 @@ export default function AdminPage() {
                                       />
                                     </div>
                                   </div>
+                                  
+                                  {/* Mobile/Desktop Specific Titles */}
+                                  <div className="border-t pt-4 mt-4">
+                                    <h4 className="font-semibold text-gray-700 mb-3">📱 💻 Titres Spécifiques Mobile/Desktop</h4>
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                      <div>
+                                        <Label>Titre Mobile (Français) - 3 lignes</Label>
+                                        <small className="text-blue-600 block mb-1">Version mobile - Entrée = saut de ligne</small>
+                                        <Textarea
+                                          value={newTextData.title_mobile_fr}
+                                          onChange={(e) => setNewTextData({ ...newTextData, title_mobile_fr: e.target.value })}
+                                          placeholder="Ex: Transformez vos&#10;souvenirs en films&#10;cinématographiques"
+                                          rows={3}
+                                          className="resize-none"
+                                        />
+                                      </div>
+                                      <div>
+                                        <Label>Titre Mobile (Anglais) - 3 lignes</Label>
+                                        <small className="text-blue-600 block mb-1">Mobile version - Enter = line break</small>
+                                        <Textarea
+                                          value={newTextData.title_mobile_en}
+                                          onChange={(e) => setNewTextData({ ...newTextData, title_mobile_en: e.target.value })}
+                                          placeholder="Ex: Transform your&#10;memories into&#10;cinematic films"
+                                          rows={3}
+                                          className="resize-none"
+                                        />
+                                      </div>
+                                      <div>
+                                        <Label>Titre Desktop (Français) - 2 lignes</Label>
+                                        <small className="text-green-600 block mb-1">Version desktop - Entrée = saut de ligne</small>
+                                        <Textarea
+                                          value={newTextData.title_desktop_fr}
+                                          onChange={(e) => setNewTextData({ ...newTextData, title_desktop_fr: e.target.value })}
+                                          placeholder="Ex: Transformez vos souvenirs&#10;en films cinématographiques"
+                                          rows={2}
+                                          className="resize-none"
+                                        />
+                                      </div>
+                                      <div>
+                                        <Label>Titre Desktop (Anglais) - 2 lignes</Label>
+                                        <small className="text-green-600 block mb-1">Desktop version - Enter = line break</small>
+                                        <Textarea
+                                          value={newTextData.title_desktop_en}
+                                          onChange={(e) => setNewTextData({ ...newTextData, title_desktop_en: e.target.value })}
+                                          placeholder="Ex: Transform your memories&#10;into cinematic films"
+                                          rows={2}
+                                          className="resize-none"
+                                        />
+                                      </div>
+                                    </div>
+                                  </div>
+                                  
                                   <div>
                                     <Label>Taille de Police Desktop: {newTextData.font_size_desktop}px</Label>
                                     <input
@@ -996,7 +1048,7 @@ export default function AdminPage() {
                                       variant="outline"
                                       onClick={() => {
                                         setShowNewTextForm(false);
-                                        setNewTextData({ title_fr: '', subtitle_fr: '', title_en: '', subtitle_en: '', font_size_desktop: 60, font_size_tablet: 45, font_size_mobile: 36 });
+                                        setNewTextData({ title_fr: '', subtitle_fr: '', title_en: '', subtitle_en: '', title_mobile_fr: '', title_mobile_en: '', title_desktop_fr: '', title_desktop_en: '', font_size_desktop: 60, font_size_tablet: 45, font_size_mobile: 36 });
                                       }}
                                     >
                                       Annuler
@@ -1102,6 +1154,54 @@ export default function AdminPage() {
                                             </div>
                                           </div>
                                         </div>
+                                        
+                                        {/* Mobile/Desktop Specific Titles for Edit Mode */}
+                                        <div className="border-t pt-4 mt-4">
+                                          <h4 className="font-semibold text-gray-700 mb-3 text-sm">📱 💻 Titres Spécifiques Mobile/Desktop</h4>
+                                          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                            <div>
+                                              <Label className="text-xs">Titre Mobile (Français) - 3 lignes</Label>
+                                              <small className="text-blue-600 block text-xs">Version mobile - Entrée = saut de ligne</small>
+                                              <Textarea
+                                                value={editFormData.title_mobile_fr}
+                                                onChange={(e) => setEditFormData({ ...editFormData, title_mobile_fr: e.target.value })}
+                                                className="text-sm resize-none"
+                                                rows={3}
+                                              />
+                                            </div>
+                                            <div>
+                                              <Label className="text-xs">Titre Mobile (Anglais) - 3 lignes</Label>
+                                              <small className="text-blue-600 block text-xs">Mobile version - Enter = line break</small>
+                                              <Textarea
+                                                value={editFormData.title_mobile_en}
+                                                onChange={(e) => setEditFormData({ ...editFormData, title_mobile_en: e.target.value })}
+                                                className="text-sm resize-none"
+                                                rows={3}
+                                              />
+                                            </div>
+                                            <div>
+                                              <Label className="text-xs">Titre Desktop (Français) - 2 lignes</Label>
+                                              <small className="text-green-600 block text-xs">Version desktop - Entrée = saut de ligne</small>
+                                              <Textarea
+                                                value={editFormData.title_desktop_fr}
+                                                onChange={(e) => setEditFormData({ ...editFormData, title_desktop_fr: e.target.value })}
+                                                className="text-sm resize-none"
+                                                rows={2}
+                                              />
+                                            </div>
+                                            <div>
+                                              <Label className="text-xs">Titre Desktop (Anglais) - 2 lignes</Label>
+                                              <small className="text-green-600 block text-xs">Desktop version - Enter = line break</small>
+                                              <Textarea
+                                                value={editFormData.title_desktop_en}
+                                                onChange={(e) => setEditFormData({ ...editFormData, title_desktop_en: e.target.value })}
+                                                className="text-sm resize-none"
+                                                rows={2}
+                                              />
+                                            </div>
+                                          </div>
+                                        </div>
+                                        
                                         <div className="flex items-center gap-2 pt-2 border-t">
                                           <Button
                                             size="sm"
@@ -1125,7 +1225,11 @@ export default function AdminPage() {
                                                 title_fr: text.title_fr,
                                                 title_en: text.title_en,
                                                 subtitle_fr: text.subtitle_fr,
-                                                subtitle_en: text.subtitle_en
+                                                subtitle_en: text.subtitle_en,
+                                title_mobile_fr: text.title_mobile_fr || text.title_fr,
+                                title_mobile_en: text.title_mobile_en || text.title_en,
+                                title_desktop_fr: text.title_desktop_fr || text.title_fr,
+                                title_desktop_en: text.title_desktop_en || text.title_en
                                               });
                                             }}
                                           >

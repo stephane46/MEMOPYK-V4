@@ -23,11 +23,16 @@ export const heroVideos = pgTable("hero_videos", {
   updatedAt: timestamp("updated_at").defaultNow()
 });
 
-// Hero text settings table - bilingual structure with responsive font sizes  
+// Hero text settings table - bilingual structure with responsive font sizes and separate mobile/desktop fields
 export const heroTextSettings = pgTable("hero_text_settings", {
   id: varchar("id").primaryKey(),
   titleFr: varchar("title_fr").notNull(),
   titleEn: varchar("title_en").notNull(),
+  // Separate mobile and desktop title fields for responsive line breaking
+  titleMobileFr: varchar("title_mobile_fr"),
+  titleMobileEn: varchar("title_mobile_en"),
+  titleDesktopFr: varchar("title_desktop_fr"),
+  titleDesktopEn: varchar("title_desktop_en"),
   subtitleFr: varchar("subtitle_fr"),
   subtitleEn: varchar("subtitle_en"),
   isActive: boolean("is_active").notNull().default(false),

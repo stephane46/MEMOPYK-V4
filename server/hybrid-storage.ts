@@ -14,6 +14,10 @@ export interface HybridStorageInterface {
   
   // Hero text settings  
   getHeroTextSettings(language?: string): Promise<any[]>;
+  createHeroText(text: any): Promise<any>;
+  updateHeroText(textId: string, updates: any): Promise<any>;
+  deleteHeroText(textId: string): Promise<any>;
+  deactivateAllHeroTexts(): Promise<void>;
   
   // Gallery items
   getGalleryItems(): Promise<any[]>;

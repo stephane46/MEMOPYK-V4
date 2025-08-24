@@ -1214,7 +1214,17 @@ export async function registerRoutes(app: Express): Promise<void> {
   // Create new hero text
   app.post("/api/hero-text", async (req, res) => {
     try {
-      const { title_fr, title_en, subtitle_fr, subtitle_en, font_size } = req.body;
+      const { 
+        title_fr, 
+        title_en, 
+        subtitle_fr, 
+        subtitle_en, 
+        title_mobile_fr,
+        title_mobile_en,
+        title_desktop_fr,
+        title_desktop_en,
+        font_size 
+      } = req.body;
       
       if (!title_fr || !title_en) {
         return res.status(400).json({ error: "French and English titles are required" });
@@ -1225,6 +1235,10 @@ export async function registerRoutes(app: Express): Promise<void> {
         title_en,
         subtitle_fr: subtitle_fr || '',
         subtitle_en: subtitle_en || '',
+        title_mobile_fr: title_mobile_fr || title_fr,
+        title_mobile_en: title_mobile_en || title_en,
+        title_desktop_fr: title_desktop_fr || title_fr,
+        title_desktop_en: title_desktop_en || title_en,
         font_size: font_size || 48,
         is_active: false
       });

@@ -208,50 +208,46 @@ export function HeroVideoSection() {
             }}
           >
             {(() => {
-              const text = language === 'fr-FR' 
-                ? (activeHeroText?.title_fr || "Nous transformons vos photos et vidéos personnelles\nen films souvenirs inoubliables")
-                : (activeHeroText?.title_en || "We transform your personal photos and videos\ninto unforgettable souvenir films");
+              // Use separate mobile and desktop fields for responsive display
+              const mobileText = language === 'fr-FR' 
+                ? (activeHeroText?.title_mobile_fr || activeHeroText?.title_fr || "Nous transformons\nvos photos et vidéos personnelles\nen films souvenirs inoubliables")
+                : (activeHeroText?.title_mobile_en || activeHeroText?.title_en || "We transform\nyour personal photos and videos\ninto unforgettable souvenir films");
+                
+              const desktopText = language === 'fr-FR' 
+                ? (activeHeroText?.title_desktop_fr || activeHeroText?.title_fr || "Nous transformons vos photos et vidéos personnelles\nen films souvenirs inoubliables")
+                : (activeHeroText?.title_desktop_en || activeHeroText?.title_en || "We transform your personal photos and videos\ninto unforgettable souvenir films");
               
-              // Handle multiple escaping scenarios: raw newlines, \n, \\n
-              let processedText = text;
-              if (processedText.includes('\\n')) {
-                processedText = processedText.replace(/\\n/g, '\n');
+              // Process mobile text
+              let processedMobileText = mobileText;
+              if (processedMobileText.includes('\\n')) {
+                processedMobileText = processedMobileText.replace(/\\n/g, '\n');
               }
-
-              // Responsive line breaking: database-driven but formatted differently for mobile vs desktop
-              const lines = processedText.split('\n');
+              
+              // Process desktop text
+              let processedDesktopText = desktopText;
+              if (processedDesktopText.includes('\\n')) {
+                processedDesktopText = processedDesktopText.replace(/\\n/g, '\n');
+              }
               
               return (
                 <>
-                  {/* Mobile: 3 lines (database format) */}
+                  {/* Mobile: Use mobile-specific text */}
                   <span className="block sm:hidden">
-                    {lines.map((line, index) => (
+                    {processedMobileText.split('\n').map((line, index) => (
                       <React.Fragment key={index}>
                         {line}
-                        {index < lines.length - 1 && <br />}
+                        {index < processedMobileText.split('\n').length - 1 && <br />}
                       </React.Fragment>
                     ))}
                   </span>
-                  {/* Desktop: 2 lines (combine first two lines) */}
+                  {/* Desktop: Use desktop-specific text */}
                   <span className="hidden sm:block">
-                    {lines.length >= 2 ? (
-                      <>
-                        {lines[0]} {lines[1]}
-                        {lines.length > 2 && (
-                          <>
-                            <br />
-                            {lines.slice(2).join(' ')}
-                          </>
-                        )}
-                      </>
-                    ) : (
-                      lines.map((line, index) => (
-                        <React.Fragment key={index}>
-                          {line}
-                          {index < lines.length - 1 && <br />}
-                        </React.Fragment>
-                      ))
-                    )}
+                    {processedDesktopText.split('\n').map((line, index) => (
+                      <React.Fragment key={index}>
+                        {line}
+                        {index < processedDesktopText.split('\n').length - 1 && <br />}
+                      </React.Fragment>
+                    ))}
                   </span>
                 </>
               );
