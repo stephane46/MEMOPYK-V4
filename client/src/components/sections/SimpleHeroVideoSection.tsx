@@ -58,34 +58,30 @@ export function SimpleHeroVideoSection() {
       <div className="absolute inset-0 flex items-center justify-center text-center text-white px-3 sm:px-6 lg:px-8">
         <div className="max-w-7xl w-full">
           {/* === Deterministic hero title (unified desktop/mobile rendering) === */}
-          <h1
-            className="font-playfair font-bold mb-4 sm:mb-6 lg:mb-8 mx-auto hero-text-mobile text-2xl sm:text-4xl lg:text-5xl"
-            style={{ textShadow: '2px 2px 4px rgba(0,0,0,0.8)' }}
-          >
-{activeHeroText?.title_fr && language === 'fr-FR' 
-              ? activeHeroText.title_fr.split('\n').map((line, index) => (
-                  <span key={index} className="hero-line block text-center">
-                    {line.trim()}
-                  </span>
-                ))
-              : activeHeroText?.title_en && language === 'en-US'
-              ? activeHeroText.title_en.split('\n').map((line, index) => (
-                  <span key={index} className="hero-line block text-center">
-                    {line.trim()}
-                  </span>
-                ))
-              : language === 'fr-FR'
-              ? "Nous transformons\nvos photos et vidéos personnelles\nen films souvenirs inoubliables".split('\n').map((line, index) => (
-                  <span key={index} className="hero-line block text-center">
-                    {line.trim()}
-                  </span>
-                ))
-              : "We transform\nyour personal photos and videos\ninto unforgettable souvenir films".split('\n').map((line, index) => (
-                  <span key={index} className="hero-line block text-center">
-                    {line.trim()}
-                  </span>
-                ))}
-          </h1>
+{/* Deterministic title rendering (same across breakpoints) */}
+<h1
+  className="font-playfair font-bold mb-4 sm:mb-6 lg:mb-8 leading-tight mx-auto hero-text-mobile text-2xl sm:text-4xl lg:text-5xl"
+  style={{ textShadow: '2px 2px 4px rgba(0,0,0,0.8)' }}
+>
+  {(() => {
+    // sourceText: prefer DB text, otherwise fallback multi-line literal
+    const sourceText = language === 'fr-FR'
+      ? (activeHeroText?.title_fr || "Nous transformons\nvos photos et vidéos personnelles\nen films souvenirs inoubliables")
+      : (activeHeroText?.title_en || "We transform\nyour personal photos and videos\ninto unforgettable souvenir films");
+
+    // Normalize -> array of lines (split on newline)
+    const lines = sourceText.split(/\r?\n/).map(s => s.trim()).filter(Boolean);
+
+    // If DB gave a single long line and you still want exact 3 lines on mobile,
+    // optionally provide a fallback lines array here. For now we use split result.
+    return lines.map((line, idx) => (
+      // explicit block display; don't rely on external CSS to flip inline->block
+      <span key={idx} className="block text-center">
+        {line}
+      </span>
+    ));
+  })()}
+</h1>
           
           {activeHeroText && (
             <p 
