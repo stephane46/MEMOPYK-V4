@@ -64,10 +64,16 @@ export default function AdminPage() {
   const [uploadingFile, setUploadingFile] = useState(false);
   const [dragActive, setDragActive] = useState(false);
   const [selectedTextId, setSelectedTextId] = useState<number | null>(null);
+  const [currentPreviewDevice, setCurrentPreviewDevice] = useState<'desktop' | 'tablet' | 'mobile'>('desktop');
+  const [previewLanguage, setPreviewLanguage] = useState<'fr-FR' | 'en-US'>('fr-FR');
+  const [previewFontSizeDesktop, setPreviewFontSizeDesktop] = useState(60);
+  const [previewFontSizeTablet, setPreviewFontSizeTablet] = useState(45);
+  const [previewFontSizeMobile, setPreviewFontSizeMobile] = useState(32);
   const [editingTextId, setEditingTextId] = useState<number | null>(null);
   const [editFormData, setEditFormData] = useState({ title_fr: '', title_en: '', subtitle_fr: '', subtitle_en: '', title_mobile_fr: '', title_mobile_en: '', title_desktop_fr: '', title_desktop_en: '' });
   const [showNewTextForm, setShowNewTextForm] = useState(false);
-  const [newTextData, setNewTextData] = useState({ title_fr: '', subtitle_fr: '', title_en: '', subtitle_en: '', title_mobile_fr: '', title_mobile_en: '', title_desktop_fr: '', title_desktop_en: '' });
+  const [newTextData, setNewTextData] = useState({ title_fr: '', subtitle_fr: '', title_en: '', subtitle_en: '', title_mobile_fr: '', title_mobile_en: '', title_desktop_fr: '', title_desktop_en: '', font_size_desktop: 60, font_size_tablet: 45, font_size_mobile: 32 });
+  const [currentPreviewLanguage, setCurrentPreviewLanguage] = useState<'fr' | 'en'>('fr');
   const [isBulletproofCacheRunning, setIsBulletproofCacheRunning] = useState(false);
   const [isDevMode, setIsDevMode] = useState(false);
 
@@ -251,6 +257,18 @@ export default function AdminPage() {
     queryKey: ['/api/hero-text'],
   });
 
+  // Sync responsive font sizes when a text is selected
+  useEffect(() => {
+    if (selectedTextId && heroTexts.length > 0) {
+      const selectedText = heroTexts.find((t: any) => t.id === selectedTextId);
+      if (selectedText) {
+        // Use responsive font sizes from database if available, otherwise use defaults
+        setPreviewFontSizeDesktop(selectedText.font_size_desktop || selectedText.font_size || 60);
+        setPreviewFontSizeTablet(selectedText.font_size_tablet || Math.round((selectedText.font_size || 60) * 0.75));
+        setPreviewFontSizeMobile(selectedText.font_size_mobile || Math.round((selectedText.font_size || 60) * 0.53));
+      }
+    }
+  }, [selectedTextId, heroTexts]);
 
   // Fetch cache statistics
   const { data: cacheStats, isLoading: cacheLoading } = useQuery<any>({
@@ -388,8 +406,20 @@ export default function AdminPage() {
 
   // Apply text to site mutation
   const applyTextMutation = useMutation({
-    mutationFn: async ({ textId }: { textId: number }) => {
+    mutationFn: async ({ textId, fontSizes }: { 
+      textId: number; 
+      fontSizes: { 
+        desktop: number; 
+        tablet: number; 
+        mobile: number; 
+        legacy?: number;
+      } 
+    }) => {
       const response = await apiRequest(`/api/hero-text/${textId}/apply`, 'PATCH', { 
+        font_size: fontSizes.legacy || fontSizes.desktop, // Keep legacy compatibility
+        font_size_desktop: fontSizes.desktop,
+        font_size_tablet: fontSizes.tablet,
+        font_size_mobile: fontSizes.mobile,
         is_active: true 
       });
       return await response.json();
@@ -1014,7 +1044,7 @@ export default function AdminPage() {
                                       variant="outline"
                                       onClick={() => {
                                         setShowNewTextForm(false);
-                                        setNewTextData({ title_fr: '', subtitle_fr: '', title_en: '', subtitle_en: '', title_mobile_fr: '', title_mobile_en: '', title_desktop_fr: '', title_desktop_en: '' });
+                                        setNewTextData({ title_fr: '', subtitle_fr: '', title_en: '', subtitle_en: '', title_mobile_fr: '', title_mobile_en: '', title_desktop_fr: '', title_desktop_en: '', font_size_desktop: 60, font_size_tablet: 45, font_size_mobile: 36 });
                                       }}
                                     >
                                       Annuler
@@ -1031,22 +1061,54 @@ export default function AdminPage() {
                                 } ${text.is_active ? 'border-green-500 bg-green-50' : ''}`}>
                                   <CardContent className="p-4">
                                     {editingTextId === text.id ? (
-                                      // Edit Mode - Mobile/Desktop Only
+                                      // Edit Mode
                                       <div className="space-y-4">
-                                        {/* Breakpoint Information */}
-                                        <div className="bg-blue-50 border border-blue-200 rounded-lg p-3">
-                                          <div className="flex items-center gap-2 mb-2">
-                                            <Monitor className="h-4 w-4 text-blue-600" />
-                                            <span className="font-semibold text-sm text-blue-900">Configuration d'Affichage Responsive</span>
+                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                          <div>
+                                            <Label className="text-xs">Titre (Français)</Label>
+                                            <small className="text-gray-700 block text-xs">Entrée = saut de ligne</small>
+                                            <Textarea
+                                              value={editFormData.title_fr}
+                                              onChange={(e) => setEditFormData({ ...editFormData, title_fr: e.target.value })}
+                                              className="text-sm resize-none"
+                                              rows={2}
+                                            />
                                           </div>
-                                          <div className="text-xs text-blue-700 space-y-1">
-                                            <div>📱 <strong>Mobile:</strong> 0px - 768px (smartphones, petites tablettes)</div>
-                                            <div>🖥️ <strong>Desktop:</strong> 768px+ (tablettes, ordinateurs portables, écrans)</div>
+                                          <div>
+                                            <Label className="text-xs">Titre (Anglais)</Label>
+                                            <small className="text-gray-700 block text-xs">Enter = line break</small>
+                                            <Textarea
+                                              value={editFormData.title_en}
+                                              onChange={(e) => setEditFormData({ ...editFormData, title_en: e.target.value })}
+                                              className="text-sm resize-none"
+                                              rows={2}
+                                            />
+                                          </div>
+                                          <div>
+                                            <Label className="text-xs">Sous-titre (Français)</Label>
+                                            <small className="text-gray-700 block text-xs">Entrée = saut de ligne</small>
+                                            <Textarea
+                                              value={editFormData.subtitle_fr}
+                                              onChange={(e) => setEditFormData({ ...editFormData, subtitle_fr: e.target.value })}
+                                              className="text-sm resize-none"
+                                              rows={2}
+                                            />
+                                          </div>
+                                          <div>
+                                            <Label className="text-xs">Sous-titre (Anglais)</Label>
+                                            <small className="text-gray-700 block text-xs">Enter = line break</small>
+                                            <Textarea
+                                              value={editFormData.subtitle_en}
+                                              onChange={(e) => setEditFormData({ ...editFormData, subtitle_en: e.target.value })}
+                                              className="text-sm resize-none"
+                                              rows={2}
+                                            />
                                           </div>
                                         </div>
                                         
-                                        {/* Mobile/Desktop Specific Titles */}
-                                        <div className="space-y-4">
+                                        {/* Mobile/Desktop Specific Titles for Edit Mode */}
+                                        <div className="border-t pt-4 mt-4">
+                                          <h4 className="font-semibold text-gray-700 mb-3 text-sm">📱 💻 Titres Spécifiques Mobile/Desktop</h4>
                                           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                             <div>
                                               <Label className="text-xs">Titre Mobile (Français) - 3 lignes</Label>
@@ -1282,6 +1344,20 @@ export default function AdminPage() {
                             </div>
                           </div>
 
+                          {/* Font Size Control & Preview */}
+                          {selectedTextId && (
+                            <Card className="border-orange-200">
+                              <CardHeader>
+                                <CardTitle className="flex items-center gap-2">
+                                  <Palette className="h-5 w-5" />
+                                  Prévisualisation & Contrôles
+                                </CardTitle>
+                              </CardHeader>
+                              <CardContent className="space-y-6">
+                                {/* Responsive Font Size Controls */}
+                                <div className="space-y-6">
+                                  {/* Device Preview Selector */}
+                                  <div className="space-y-3">
                                     <Label className="text-lg font-semibold text-gray-900 dark:text-white flex items-center gap-2">
                                       <Monitor className="h-5 w-5" />
                                       Contrôles de Taille de Police Responsive
