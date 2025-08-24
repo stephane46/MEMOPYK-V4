@@ -1002,84 +1002,8 @@ export default function AdminPage() {
                                   selectedTextId === text.id ? 'ring-2 ring-orange-500' : ''
                                 } ${text.is_active ? 'border-green-500 bg-green-50' : ''}`}>
                                   <CardContent className="p-4">
-                                    {editingTextId === text.id ? (
-                                      // Edit Mode
-                                      <div className="space-y-4">
-                                        {/* Mobile/Desktop Specific Titles for Edit Mode */}
-                                        <div>
-                                          <h4 className="font-semibold text-gray-700 mb-3 text-sm">📱 💻 Titres Spécifiques Mobile/Desktop</h4>
-                                          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                            <div>
-                                              <Label className="text-xs">Titre Mobile (Français) - 3 lignes</Label>
-                                              <small className="text-blue-600 block text-xs">Version mobile - Entrée = saut de ligne</small>
-                                              <Textarea
-                                                value={editFormData.title_mobile_fr}
-                                                onChange={(e) => setEditFormData({ ...editFormData, title_mobile_fr: e.target.value })}
-                                                className="text-sm resize-none"
-                                                rows={3}
-                                              />
-                                            </div>
-                                            <div>
-                                              <Label className="text-xs">Titre Mobile (Anglais) - 3 lignes</Label>
-                                              <small className="text-blue-600 block text-xs">Mobile version - Enter = line break</small>
-                                              <Textarea
-                                                value={editFormData.title_mobile_en}
-                                                onChange={(e) => setEditFormData({ ...editFormData, title_mobile_en: e.target.value })}
-                                                className="text-sm resize-none"
-                                                rows={3}
-                                              />
-                                            </div>
-                                            <div>
-                                              <Label className="text-xs">Titre Desktop (Français) - 2 lignes</Label>
-                                              <small className="text-green-600 block text-xs">Version desktop - Entrée = saut de ligne</small>
-                                              <Textarea
-                                                value={editFormData.title_desktop_fr}
-                                                onChange={(e) => setEditFormData({ ...editFormData, title_desktop_fr: e.target.value })}
-                                                className="text-sm resize-none"
-                                                rows={2}
-                                              />
-                                            </div>
-                                            <div>
-                                              <Label className="text-xs">Titre Desktop (Anglais) - 2 lignes</Label>
-                                              <small className="text-green-600 block text-xs">Desktop version - Enter = line break</small>
-                                              <Textarea
-                                                value={editFormData.title_desktop_en}
-                                                onChange={(e) => setEditFormData({ ...editFormData, title_desktop_en: e.target.value })}
-                                                className="text-sm resize-none"
-                                                rows={2}
-                                              />
-                                            </div>
-                                          </div>
-                                        </div>
-
-                                        <div className="flex gap-2">
-                                          <Button
-                                            size="sm"
-                                            onClick={() => {
-                                              updateTextMutation.mutate({
-                                                textId: text.id,
-                                                data: editFormData
-                                              });
-                                              setEditingTextId(null);
-                                            }}
-                                            disabled={updateTextMutation.isPending}
-                                            className="bg-green-600 hover:bg-green-700"
-                                          >
-                                            <Save className="h-3 w-3 mr-1" />
-                                            Sauvegarder
-                                          </Button>
-                                          <Button
-                                            size="sm"
-                                            variant="outline"
-                                            onClick={() => setEditingTextId(null)}
-                                          >
-                                            Annuler
-                                          </Button>
-                                        </div>
-                                      </div>
-                                    ) : (
-                                      // View Mode
-                                      <div className="space-y-3">
+                                    {/* Always Show View Mode - Inline Editing */}
+                                    <div className="space-y-3">
                                         <div className="flex items-start justify-between">
                                           <div 
                                             className="space-y-2 flex-1 cursor-pointer" 
@@ -1265,7 +1189,7 @@ export default function AdminPage() {
                                           </Button>
                                         </div>
                                       </div>
-                                    )}
+                                    </div>
                                   </CardContent>
                                 </Card>
                               ))}
