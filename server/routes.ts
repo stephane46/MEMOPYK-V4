@@ -1253,11 +1253,9 @@ export async function registerRoutes(app: Express): Promise<void> {
 
   // Update hero text
   app.patch("/api/hero-text/:id", async (req, res) => {
-    console.log('🚨 PATCH /api/hero-text/:id HIT!');
     try {
       const textId = parseInt(req.params.id);
       const updateData = req.body;
-      console.log('🔍 UPDATE HERO TEXT - Request:', { textId, updateData });
       
       const updatedText = await hybridStorage.updateHeroText(String(textId), updateData);
       res.json({ success: true, text: updatedText });
@@ -1269,11 +1267,9 @@ export async function registerRoutes(app: Express): Promise<void> {
 
   // Apply hero text to site (set as active)
   app.patch("/api/hero-text/:id/apply", async (req, res) => {
-    console.log('🚨 PATCH /api/hero-text/:id/apply HIT!');
     try {
-      const textId = req.params.id; // Keep as string, let hybrid storage handle type coercion
+      const textId = req.params.id;
       const { font_size, font_size_desktop, font_size_tablet, font_size_mobile } = req.body;
-      console.log('🔍 APPLY HERO TEXT - Request:', { textId, body: req.body });
       
       await hybridStorage.deactivateAllHeroTexts();
       
@@ -1291,7 +1287,7 @@ export async function registerRoutes(app: Express): Promise<void> {
       
       res.json({ success: true, text: appliedText });
     } catch (error) {
-      console.error('❌ Apply hero text error:', error);
+      console.error('Apply hero text error:', error);
       const message = error instanceof Error ? error.message : 'Unknown error';
       res.status(500).json({ error: "Failed to apply hero text", details: message });
     }
