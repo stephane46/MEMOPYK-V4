@@ -9,7 +9,7 @@ import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
 import { Badge } from '@/components/ui/badge';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
-import { ArrowUp, ArrowDown, Play, RefreshCw, BarChart3, Video, HardDrive, Users, MessageSquare, FileText, LogOut, TestTube, Rocket, X, Type, Save, ChevronUp, ChevronDown, Trash2, Eye, EyeOff, Upload, FileVideo, Database, Check, Zap, Search, Clock, TrendingUp, Globe } from 'lucide-react';
+import { ArrowUp, ArrowDown, Play, RefreshCw, BarChart3, Video, HardDrive, Users, MessageSquare, FileText, LogOut, TestTube, Rocket, X, Type, Save, ChevronUp, ChevronDown, Trash2, Eye, EyeOff, Upload, FileVideo, Database, Check, Zap, Search, Clock, TrendingUp, Globe, Sparkles } from 'lucide-react';
 import { formatFrenchDateTime } from '@/utils/date-format';
 import { useToast } from '@/hooks/use-toast';
 import GalleryManagementNew from '@/components/admin/GalleryManagementNew';
@@ -21,6 +21,7 @@ import { LegalDocumentManagement } from '@/components/admin/LegalDocumentManagem
 import { CtaManagement } from '@/components/admin/CtaManagement';
 import { AnalyticsDashboard } from '@/components/admin/AnalyticsDashboard';
 import GA4AnalyticsDashboard from '@/components/admin/GA4AnalyticsDashboard';
+import CleanGA4Analytics from '@/components/admin/CleanGA4Analytics';
 import CacheManagementPage from '@/pages/CacheManagementPage';
 import { FiltersProvider } from '@/analytics/FiltersContext';
 import VideoCacheStatus from '@/components/admin/VideoCacheStatus';
@@ -237,6 +238,7 @@ export default function AdminPage() {
     { id: 'legal-docs', label: 'Documents Légaux', icon: FileText },
     { id: 'analytics', label: 'Analytiques', icon: BarChart3 },
     { id: 'analytics-ga', label: 'Analytics GA', icon: TrendingUp },
+    { id: 'analytics-ga-clean', label: 'GA4 Clean', icon: Sparkles },
     { id: 'cache-management', label: 'Cache GA4', icon: Database },
     { id: 'tests', label: 'Tests', icon: TestTube },
     { id: 'deployment', label: 'Déploiement', icon: Rocket },
@@ -1223,6 +1225,11 @@ export default function AdminPage() {
             <FiltersProvider>
               <GA4AnalyticsDashboard />
             </FiltersProvider>
+          )}
+
+          {/* Clean GA4 Analytics Dashboard */}
+          {activeSection === 'analytics-ga-clean' && (
+            <CleanGA4Analytics />
           )}
 
           {/* Gallery */}

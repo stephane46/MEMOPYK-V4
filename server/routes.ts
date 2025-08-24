@@ -4258,6 +4258,86 @@ export async function registerRoutes(app: Express): Promise<void> {
 
 
 
+  // Clean GA4 metrics endpoint - simple, reliable GA4 data
+  app.get("/api/ga4/clean-metrics", async (req, res) => {
+    try {
+      const range = req.query.range as string || '7d';
+      const locale = req.query.locale as string || 'all';
+      
+      // Convert range to date strings
+      const endDate = new Date().toISOString().split('T')[0];
+      const startDate = new Date(Date.now() - (parseInt(range.replace('d', '')) * 24 * 60 * 60 * 1000))
+        .toISOString().split('T')[0];
+
+      console.log(`🔍 CLEAN GA4 METRICS: ${startDate} to ${endDate}, locale: ${locale}`);
+
+      // Simple cache key
+      const cacheKey = k(`clean:${startDate}:${endDate}:${locale}`);
+      
+      // Check cache first
+      const cached = await getCache(cacheKey);
+      if (cached) {
+        console.log('✅ CLEAN GA4: Using cached data');
+        return res.json(cached);
+      }
+
+      // Fetch core metrics using existing GA4 functions
+      const [plays, completions, watchTimeSeconds, topVideos] = await Promise.all([
+        qPlays(startDate, endDate, locale),
+        qCompletes(startDate, endDate, locale), 
+        qWatchTimeTotal(startDate, endDate, locale),
+        qPlaysByVideo(startDate, endDate, locale)
+      ]);
+
+      // Get locale breakdown
+      const localeData = await qTopLocale(startDate, endDate);
+
+      // Calculate completion rate and average watch time
+      const completionRate = plays > 0 ? completions / plays : 0;
+      const averageWatchTimeSeconds = plays > 0 ? watchTimeSeconds / plays : 0;
+
+      // Format top videos (limit to top 5)
+      const topVideosFormatted = Object.entries(topVideos || {})
+        .map(([videoId, data]: [string, any]) => ({
+          videoId,
+          videoTitle: data.title || videoId,
+          plays: data.plays || 0,
+          completions: data.completions || 0
+        }))
+        .sort((a, b) => b.plays - a.plays)
+        .slice(0, 5);
+
+      // Format locale breakdown
+      const localeBreakdown = [
+        { locale: 'fr-FR', plays: localeData?.locale === 'fr-FR' ? localeData.plays : 0 },
+        { locale: 'en-US', plays: localeData?.locale === 'en-US' ? localeData.plays : 0 }
+      ].filter(item => item.plays > 0);
+
+      const result = {
+        totalVideoStarts: plays || 0,
+        totalCompletions: completions || 0,
+        totalWatchTimeSeconds: watchTimeSeconds || 0,
+        averageWatchTimeSeconds: Math.round(averageWatchTimeSeconds || 0),
+        completionRate: Math.round(completionRate * 100) / 100, // Round to 2 decimal places
+        topVideos: topVideosFormatted,
+        localeBreakdown
+      };
+
+      console.log('✅ CLEAN GA4 RESULT:', JSON.stringify(result, null, 2));
+      
+      // Cache for 5 minutes
+      await setCache(cacheKey, result, 300);
+      
+      res.json(result);
+    } catch (error) {
+      console.error('❌ CLEAN GA4 ERROR:', error);
+      res.status(500).json({ 
+        error: 'Failed to fetch GA4 metrics', 
+        details: error instanceof Error ? error.message : 'Unknown error' 
+      });
+    }
+  });
+
   // Top videos table endpoint - using your exact clean API structure
   app.get("/api/ga4/top-videos", async (req, res, next) => {
     try {
