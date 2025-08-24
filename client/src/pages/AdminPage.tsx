@@ -428,7 +428,14 @@ export default function AdminPage() {
   // Create new text mutation
   const createTextMutation = useMutation({
     mutationFn: async (data: any) => {
+      console.log('🚀 MUTATION - Sending data to server:', JSON.stringify(data, null, 2));
       const response = await apiRequest('/api/hero-text', 'POST', data);
+      console.log('📝 MUTATION - Server response status:', response.status);
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.log('❌ MUTATION - Server error response:', errorText);
+        throw new Error(`Server error: ${response.status} - ${errorText}`);
+      }
       return await response.json();
     },
     onSuccess: () => {

@@ -1213,6 +1213,7 @@ export async function registerRoutes(app: Express): Promise<void> {
 
   // Create new hero text
   app.post("/api/hero-text", async (req, res) => {
+    console.log('🚨 POST /api/hero-text HIT!');
     try {
       console.log('🔍 CREATE HERO TEXT - Request body:', JSON.stringify(req.body, null, 2));
       
