@@ -218,7 +218,7 @@ export function HeroVideoSection() {
       {/* Hero Text Content - Mobile Optimized for Better Fit */}
       <div className="absolute inset-0 flex flex-col items-center justify-center text-center text-white px-3 sm:px-6 lg:px-8">
         {/* Semi-transparent background for optimal text contrast across all lighting conditions */}
-        <div className={`bg-black/40 backdrop-blur-sm rounded-2xl pt-1.5 pb-2 px-2 sm:pt-2 sm:pb-3 sm:px-3 w-full border border-white/10 ${language.startsWith('fr') ? 'max-w-4xl' : 'max-w-3xl'}`}>
+        <div className={`bg-black/40 backdrop-blur-sm rounded-2xl pt-1.5 pb-2 px-2 sm:pt-2 sm:pb-3 sm:px-3 w-full border border-white/10 ${language.startsWith('fr') ? 'max-w-5xl' : 'max-w-4xl'}`}>
           <h1 
             className="font-playfair font-bold mb-0"
             style={{ 
