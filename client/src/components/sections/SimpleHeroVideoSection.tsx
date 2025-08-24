@@ -72,18 +72,9 @@ export function SimpleHeroVideoSection() {
     // Normalize -> array of lines (split on newline)
     const lines = sourceText.split(/\r?\n/).map(s => s.trim()).filter(Boolean);
 
-    // EMERGENCY DEBUG: Log everything to find the real issue
-    console.log('🚨 HERO TEXT DEBUG:');
-    console.log('- Database text exists:', !!activeHeroText);
-    console.log('- Source text:', JSON.stringify(sourceText));
-    console.log('- Lines array:', lines);
-    console.log('- Lines count:', lines.length);
-    console.log('- Screen width:', window.innerWidth);
-    console.log('- Is mobile:', window.innerWidth < 640);
+    // Clean production text rendering
 
-    // If DB gave a single long line and you still want exact 3 lines on mobile,
-    // optionally provide a fallback lines array here. For now we use split result.
-    // FORCE EXPLICIT LINE BREAKS - NUCLEAR APPROACH
+    // Render each line as a separate div for proper line breaks
     return lines.map((line, idx) => (
       <div 
         key={idx} 
@@ -94,8 +85,8 @@ export function SimpleHeroVideoSection() {
           textAlign: 'center',
           margin: 0,
           padding: 0,
-          fontSize: window.innerWidth < 640 ? '0.95rem' : 'clamp(1.5rem, 5vw, 4rem)',
-          lineHeight: window.innerWidth < 640 ? '1.05' : '1.2'
+          fontSize: window.innerWidth < 640 ? '1.25rem' : 'clamp(1.5rem, 5vw, 4rem)',
+          lineHeight: window.innerWidth < 640 ? '1.15' : '1.2'
         }}
       >
         {line}
