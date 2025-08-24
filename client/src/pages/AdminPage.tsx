@@ -1061,54 +1061,22 @@ export default function AdminPage() {
                                 } ${text.is_active ? 'border-green-500 bg-green-50' : ''}`}>
                                   <CardContent className="p-4">
                                     {editingTextId === text.id ? (
-                                      // Edit Mode
+                                      // Edit Mode - Mobile/Desktop Only
                                       <div className="space-y-4">
-                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                          <div>
-                                            <Label className="text-xs">Titre (Français)</Label>
-                                            <small className="text-gray-700 block text-xs">Entrée = saut de ligne</small>
-                                            <Textarea
-                                              value={editFormData.title_fr}
-                                              onChange={(e) => setEditFormData({ ...editFormData, title_fr: e.target.value })}
-                                              className="text-sm resize-none"
-                                              rows={2}
-                                            />
+                                        {/* Breakpoint Information */}
+                                        <div className="bg-blue-50 border border-blue-200 rounded-lg p-3">
+                                          <div className="flex items-center gap-2 mb-2">
+                                            <Monitor className="h-4 w-4 text-blue-600" />
+                                            <span className="font-semibold text-sm text-blue-900">Configuration d'Affichage Responsive</span>
                                           </div>
-                                          <div>
-                                            <Label className="text-xs">Titre (Anglais)</Label>
-                                            <small className="text-gray-700 block text-xs">Enter = line break</small>
-                                            <Textarea
-                                              value={editFormData.title_en}
-                                              onChange={(e) => setEditFormData({ ...editFormData, title_en: e.target.value })}
-                                              className="text-sm resize-none"
-                                              rows={2}
-                                            />
-                                          </div>
-                                          <div>
-                                            <Label className="text-xs">Sous-titre (Français)</Label>
-                                            <small className="text-gray-700 block text-xs">Entrée = saut de ligne</small>
-                                            <Textarea
-                                              value={editFormData.subtitle_fr}
-                                              onChange={(e) => setEditFormData({ ...editFormData, subtitle_fr: e.target.value })}
-                                              className="text-sm resize-none"
-                                              rows={2}
-                                            />
-                                          </div>
-                                          <div>
-                                            <Label className="text-xs">Sous-titre (Anglais)</Label>
-                                            <small className="text-gray-700 block text-xs">Enter = line break</small>
-                                            <Textarea
-                                              value={editFormData.subtitle_en}
-                                              onChange={(e) => setEditFormData({ ...editFormData, subtitle_en: e.target.value })}
-                                              className="text-sm resize-none"
-                                              rows={2}
-                                            />
+                                          <div className="text-xs text-blue-700 space-y-1">
+                                            <div>📱 <strong>Mobile:</strong> 0px - 768px (smartphones, petites tablettes)</div>
+                                            <div>🖥️ <strong>Desktop:</strong> 768px+ (tablettes, ordinateurs portables, écrans)</div>
                                           </div>
                                         </div>
                                         
-                                        {/* Mobile/Desktop Specific Titles for Edit Mode */}
-                                        <div className="border-t pt-4 mt-4">
-                                          <h4 className="font-semibold text-gray-700 mb-3 text-sm">📱 💻 Titres Spécifiques Mobile/Desktop</h4>
+                                        {/* Mobile/Desktop Specific Titles */}
+                                        <div className="space-y-4">
                                           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                             <div>
                                               <Label className="text-xs">Titre Mobile (Français) - 3 lignes</Label>
