@@ -912,35 +912,13 @@ export default function AdminPage() {
                                   <CardTitle>Créer un Nouveau Texte</CardTitle>
                                 </CardHeader>
                                 <CardContent className="space-y-4">
-                                  {/* Mobile/Desktop Specific Titles */}
+                                  {/* Desktop/Mobile Specific Titles */}
                                   <div>
-                                    <h4 className="font-semibold text-gray-700 mb-3">📱 💻 Titres Spécifiques Mobile/Desktop</h4>
+                                    <h4 className="font-semibold text-gray-700 mb-3">💻 📱 Titres Spécifiques Desktop/Mobile</h4>
                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                       <div>
-                                        <Label>Titre Mobile (Français) - 3 lignes</Label>
-                                        <small className="text-blue-600 block mb-1">Version mobile - Entrée = saut de ligne</small>
-                                        <Textarea
-                                          value={newTextData.title_mobile_fr}
-                                          onChange={(e) => setNewTextData({ ...newTextData, title_mobile_fr: e.target.value })}
-                                          placeholder="Ex: Transformez vos&#10;souvenirs en films&#10;cinématographiques"
-                                          rows={3}
-                                          className="resize-none"
-                                        />
-                                      </div>
-                                      <div>
-                                        <Label>Titre Mobile (Anglais) - 3 lignes</Label>
-                                        <small className="text-blue-600 block mb-1">Mobile version - Enter = line break</small>
-                                        <Textarea
-                                          value={newTextData.title_mobile_en}
-                                          onChange={(e) => setNewTextData({ ...newTextData, title_mobile_en: e.target.value })}
-                                          placeholder="Ex: Transform your&#10;memories into&#10;cinematic films"
-                                          rows={3}
-                                          className="resize-none"
-                                        />
-                                      </div>
-                                      <div>
                                         <Label>Titre Desktop (Français) - 2 lignes</Label>
-                                        <small className="text-green-600 block mb-1">Version desktop - Entrée = saut de ligne</small>
+                                        <small className="text-green-600 block mb-1">≥768px - Version desktop - Entrée = saut de ligne</small>
                                         <Textarea
                                           value={newTextData.title_desktop_fr}
                                           onChange={(e) => setNewTextData({ ...newTextData, title_desktop_fr: e.target.value })}
@@ -951,12 +929,34 @@ export default function AdminPage() {
                                       </div>
                                       <div>
                                         <Label>Titre Desktop (Anglais) - 2 lignes</Label>
-                                        <small className="text-green-600 block mb-1">Desktop version - Enter = line break</small>
+                                        <small className="text-green-600 block mb-1">≥768px - Desktop version - Enter = line break</small>
                                         <Textarea
                                           value={newTextData.title_desktop_en}
                                           onChange={(e) => setNewTextData({ ...newTextData, title_desktop_en: e.target.value })}
                                           placeholder="Ex: Transform your memories&#10;into cinematic films"
                                           rows={2}
+                                          className="resize-none"
+                                        />
+                                      </div>
+                                      <div>
+                                        <Label>Titre Mobile (Français) - 3 lignes</Label>
+                                        <small className="text-blue-600 block mb-1">&lt;768px - Version mobile - Entrée = saut de ligne</small>
+                                        <Textarea
+                                          value={newTextData.title_mobile_fr}
+                                          onChange={(e) => setNewTextData({ ...newTextData, title_mobile_fr: e.target.value })}
+                                          placeholder="Ex: Transformez vos&#10;souvenirs en films&#10;cinématographiques"
+                                          rows={3}
+                                          className="resize-none"
+                                        />
+                                      </div>
+                                      <div>
+                                        <Label>Titre Mobile (Anglais) - 3 lignes</Label>
+                                        <small className="text-blue-600 block mb-1">&lt;768px - Mobile version - Enter = line break</small>
+                                        <Textarea
+                                          value={newTextData.title_mobile_en}
+                                          onChange={(e) => setNewTextData({ ...newTextData, title_mobile_en: e.target.value })}
+                                          placeholder="Ex: Transform your&#10;memories into&#10;cinematic films"
+                                          rows={3}
                                           className="resize-none"
                                         />
                                       </div>
