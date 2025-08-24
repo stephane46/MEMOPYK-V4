@@ -729,24 +729,44 @@ html, body {
   animation: double-bounce 1s ease-out;
 }
 
-/* CLEAN HERO TEXT - Single definition, consistent 640px breakpoint */
+/* === MEMOPYK HERO: deterministic line breaks === */
+
 .hero-text-mobile {
-  white-space: pre-line;
+  font-size: clamp(1.5rem, 5vw, 4rem);
+  max-width: 100%;
   line-height: 1.2;
+  white-space: normal;    /* default: don't rely on DB \n unless desktop allows it */
+  text-align: center;
 }
 
+.hero-text-mobile .hero-line {
+  display: block;
+  width: 100%;
+  text-align: center;
+  margin: 0;
+}
+
+/* Desktop (Tailwind "sm" and above, i.e. min-width:640px) */
+@media (min-width: 640px) {
+  .hero-text-mobile {
+    white-space: pre-line; /* allow DB \n to be honored on desktop only */
+    line-height: 1.25;
+  }
+}
+
+/* Mobile: normal document flow, no flex, no !important */
 @media (max-width: 639px) {
   .hero-text-mobile {
-    white-space: normal !important;
-    display: flex !important;
-    flex-direction: column !important;
-    align-items: center !important;
-    line-height: 1.1 !important;
+    display: block;
+    line-height: 1.05;
+    font-size: 0.95rem;
+    max-width: 95vw;
+    word-break: keep-all;
+    hyphens: none;
   }
-  
-  .hero-text-mobile span {
-    display: block !important;
-    text-align: center !important;
+
+  .hero-text-mobile .hero-line {
+    text-align: center;
   }
 }
 

@@ -57,36 +57,31 @@ export function SimpleHeroVideoSection() {
       {/* Text overlay */}
       <div className="absolute inset-0 flex items-center justify-center text-center text-white px-3 sm:px-6 lg:px-8">
         <div className="max-w-7xl w-full">
-          <h1 
+          {/* === Deterministic hero title (unified desktop/mobile rendering) === */}
+          <h1
             className="font-playfair font-bold mb-4 sm:mb-6 lg:mb-8 leading-tight mx-auto hero-text-mobile text-2xl sm:text-4xl lg:text-5xl"
-            style={{ 
-              textShadow: '2px 2px 4px rgba(0,0,0,0.8)'
-            }}
+            style={{ textShadow: '2px 2px 4px rgba(0,0,0,0.8)' }}
           >
-            {/* Desktop: Use database content with \n breaks */}
-            <span className="hidden sm:inline">
-              {language === 'fr-FR' 
+            {(() => {
+              // Choose source text (DB preferred, otherwise safe fallback)
+              const sourceText = language === 'fr-FR'
                 ? (activeHeroText?.title_fr || "Nous transformons\nvos photos et vidéos personnelles\nen films souvenirs inoubliables")
-                : (activeHeroText?.title_en || "We transform\nyour personal photos and videos\ninto unforgettable souvenir films")
-              }
-            </span>
-            
-            {/* Mobile: Force exact 3-line structure */}
-            <span className="sm:hidden">
-              {language === 'fr-FR' ? (
-                <>
-                  <span>Nous transformons</span>
-                  <span>vos photos et vidéos personnelles</span>
-                  <span>en films souvenirs inoubliables</span>
-                </>
-              ) : (
-                <>
-                  <span>We transform</span>
-                  <span>your personal photos and videos</span>
-                  <span>into unforgettable souvenir films</span>
-                </>
-              )}
-            </span>
+                : (activeHeroText?.title_en || "We transform\nyour personal photos and videos\ninto unforgettable souvenir films");
+
+              // Normalize possible <br> tags and split on newline characters
+              const normalized = sourceText
+                .replace(/<br\s*\/?>/gi, '\n')   // convert HTML breaks to \n if any
+                .replace(/\\n/g, '\n');         // convert escaped \n to real newline if needed
+
+              const lines = normalized.split(/\r?\n/).map(s => s.trim()).filter(Boolean);
+
+              // Render each line as a block-level span with an explicit class (hero-line)
+              return lines.map((line, idx) => (
+                <span key={idx} className="hero-line block text-center">
+                  {line}
+                </span>
+              ));
+            })()}
           </h1>
           
           {activeHeroText && (
