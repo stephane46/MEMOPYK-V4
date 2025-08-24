@@ -277,7 +277,7 @@ export function Layout({ children }: LayoutProps) {
           {/* Enhanced Mobile Navigation - Slide Down Animation */}
           <div className={`lg:hidden transition-all duration-300 ease-in-out overflow-hidden ${
             isMobileMenuOpen 
-              ? 'max-h-96 opacity-100 border-t border-gray-200 bg-white' 
+              ? 'max-h-[32rem] opacity-100 border-t border-gray-200 bg-white' 
               : 'max-h-0 opacity-0'
           }`}>
             <div className="py-4 space-y-2">
