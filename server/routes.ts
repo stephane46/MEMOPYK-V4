@@ -4266,28 +4266,59 @@ export async function registerRoutes(app: Express): Promise<void> {
       
       console.log(`🔍 COMPREHENSIVE ANALYTICS: ${range}, locale: ${locale}`);
 
-      // Simple cache key
-      const cacheKey = k(`comprehensive:${range}:${locale}`);
-      
-      // Check cache first (shorter cache for real-time data)
-      const cached = await getCache(cacheKey);
-      if (cached) {
-        console.log('✅ COMPREHENSIVE: Using cached data');
-        return res.json(cached);
-      }
+      // Temporarily disable cache to test real data connection
+      console.log('🔍 COMPREHENSIVE: Cache disabled - fetching fresh data from PostgreSQL');
 
       // Calculate date range
       const rangeDays = parseInt(range.replace('d', ''));
       const dateFrom = new Date(Date.now() - (rangeDays * 24 * 60 * 60 * 1000)).toISOString();
       const dateTo = new Date().toISOString();
 
-      // Fetch visitor analytics from PostgreSQL (your trusted system!)
-      const dashboardResponse = await fetch(`${req.protocol}://${req.get('host')}/api/analytics/dashboard?dateFrom=${dateFrom}&dateTo=${dateTo}`);
-      const dashboardData = dashboardResponse.ok ? await dashboardResponse.json() : {};
+      // Call the REAL analytics functions directly (same ones your dashboard uses!)
+      let dashboardData = {};
+      let activityData = { activities: [] };
+      
+      try {
+        console.log(`🔍 COMPREHENSIVE: Calling real analytics functions for ${dateFrom} to ${dateTo}`);
+        
+        // Call the REAL analytics functions - same ones your dashboard uses!
+        const realDashboardData = await hybridStorage.getAnalyticsDashboard(dateFrom, dateTo);
+        
+        // Get recent sessions for activity data (last 10 minutes like your dashboard)
+        const tenMinutesAgo = new Date(Date.now() - 10 * 60 * 1000);
+        const recentSessions = await hybridStorage.getAnalyticsSessions(tenMinutesAgo.toISOString(), new Date().toISOString());
+        
+        // Format activity data similar to your recent-activity endpoint
+        const realActivityData = {
+          activities: (recentSessions || []).map((session: any) => ({
+            id: session.session_id,
+            lastActivity: session.updated_at || session.created_at
+          }))
+        };
 
-      // Fetch recent activity for active visitors
-      const activityResponse = await fetch(`${req.protocol}://${req.get('host')}/api/analytics/recent-activity`);
-      const activityData = activityResponse.ok ? await activityResponse.json() : { activities: [] };
+        dashboardData = realDashboardData || {};
+        activityData = realActivityData || { activities: [] };
+
+        console.log('✅ COMPREHENSIVE: Got REAL dashboard data from PostgreSQL:', {
+          totalViews: dashboardData.overview?.totalViews || dashboardData.totalViews,
+          uniqueVisitors: dashboardData.overview?.uniqueVisitors || dashboardData.uniqueVisitors,  
+          countries: dashboardData.topCountries?.length || 0,
+          languages: Array.isArray(dashboardData.languageBreakdown) ? dashboardData.languageBreakdown.length : Object.keys(dashboardData.languageBreakdown || {}).length,
+          referrers: dashboardData.topReferrers?.length || 0,
+          structure: Object.keys(dashboardData)
+        });
+        
+        // Debug the exact structure of languageBreakdown
+        console.log('🔍 DEBUG: languageBreakdown structure:', JSON.stringify(dashboardData.languageBreakdown, null, 2));
+        
+        console.log('✅ COMPREHENSIVE: Got REAL activity data:', activityData.activities?.length || 0, 'recent activities');
+        
+      } catch (error) {
+        console.error('❌ COMPREHENSIVE: Failed to get real analytics data:', error.message);
+        // Show the error but don't use fake fallback data
+        dashboardData = {};
+        activityData = { activities: [] };
+      }
 
       // Convert range to GA4 date strings
       const endDate = new Date().toISOString().split('T')[0];
@@ -4303,11 +4334,11 @@ export async function registerRoutes(app: Express): Promise<void> {
         qTopLocale(startDate, endDate)
       ]);
 
-      // Process visitor analytics
-      const totalViews = dashboardData.totalViews || 0;
-      const uniqueVisitors = dashboardData.uniqueVisitors || 0;
-      const returnVisitors = dashboardData.returningVisitors || 0;
-      const averageSessionDuration = dashboardData.averageSessionDuration || 0;
+      // Process visitor analytics - handle nested data structure
+      const totalViews = dashboardData.overview?.totalViews || dashboardData.totalViews || 0;
+      const uniqueVisitors = dashboardData.overview?.uniqueVisitors || dashboardData.uniqueVisitors || 0;  
+      const returnVisitors = dashboardData.overview?.returningVisitors || dashboardData.returningVisitors || 0;
+      const averageSessionDuration = dashboardData.overview?.averageSessionDuration || dashboardData.averageSessionDuration || 0;
       const activeVisitors = activityData.activities?.filter(a => Date.now() - new Date(a.lastActivity).getTime() < 5 * 60 * 1000).length || 0;
 
       // Process geographic data from dashboard
@@ -4317,16 +4348,36 @@ export async function registerRoutes(app: Express): Promise<void> {
         flag: country.flag || '🌍'
       }));
 
-      // Process language breakdown
+      // Process language breakdown - handle both object and array formats
       const languageBreakdown = [];
       if (dashboardData.languageBreakdown) {
-        const totalLangVisitors = Object.values(dashboardData.languageBreakdown).reduce((sum: number, count: any) => sum + count, 0);
-        for (const [lang, count] of Object.entries(dashboardData.languageBreakdown)) {
-          languageBreakdown.push({
-            language: lang,
-            visitors: count as number,
-            percentage: totalLangVisitors > 0 ? (count as number / totalLangVisitors) * 100 : 0
-          });
+        let languageData = dashboardData.languageBreakdown;
+        
+        // Handle array format (from some analytics responses)
+        if (Array.isArray(languageData)) {
+          const totalLangVisitors = languageData.reduce((sum: number, item: any) => sum + (item.sessions || 0), 0);
+          for (const item of languageData) {
+            if (item.language && typeof item.sessions === 'number') {
+              languageBreakdown.push({
+                language: item.language,
+                visitors: item.sessions,
+                percentage: totalLangVisitors > 0 ? (item.sessions / totalLangVisitors) * 100 : 0
+              });
+            }
+          }
+        } 
+        // Handle object format
+        else if (typeof languageData === 'object') {
+          const totalLangVisitors = Object.values(languageData).reduce((sum: number, count: any) => sum + (typeof count === 'number' ? count : 0), 0);
+          for (const [lang, count] of Object.entries(languageData)) {
+            if (typeof count === 'number') {
+              languageBreakdown.push({
+                language: lang,
+                visitors: count,
+                percentage: totalLangVisitors > 0 ? (count / totalLangVisitors) * 100 : 0
+              });
+            }
+          }
         }
       }
 
@@ -4380,8 +4431,7 @@ export async function registerRoutes(app: Express): Promise<void> {
         languages: result.languageBreakdown.length
       });
       
-      // Cache for 2 minutes (shorter for real-time data)
-      await setCache(cacheKey, result, 120);
+      // Cache disabled for testing real data connection
       
       res.json(result);
     } catch (error) {
