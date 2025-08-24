@@ -255,13 +255,7 @@ export default function AdminPage() {
   // Sync responsive font sizes when a text is selected
   useEffect(() => {
     if (selectedTextId && heroTexts.length > 0) {
-      const selectedText = heroTexts.find((t: any) => t.id === selectedTextId);
-      if (selectedText) {
-        // Use responsive font sizes from database if available, otherwise use defaults
-        setPreviewFontSizeDesktop(selectedText.font_size_desktop || selectedText.font_size || 60);
-        setPreviewFontSizeTablet(selectedText.font_size_tablet || Math.round((selectedText.font_size || 60) * 0.75));
-        setPreviewFontSizeMobile(selectedText.font_size_mobile || Math.round((selectedText.font_size || 60) * 0.53));
-      }
+      // Preview functionality removed - interface simplified
     }
   }, [selectedTextId, heroTexts]);
 
@@ -1157,9 +1151,6 @@ export default function AdminPage() {
                                             variant="outline"
                                             onClick={() => {
                                               setSelectedTextId(text.id);
-                                              setPreviewFontSizeDesktop(text.font_size_desktop || text.font_size || 60);
-                                              setPreviewFontSizeTablet(text.font_size_tablet || Math.round((text.font_size || 60) * 0.75));
-                                              setPreviewFontSizeMobile(text.font_size_mobile || Math.round((text.font_size || 60) * 0.53));
                                             }}
                                           >
                                             <Eye className="h-3 w-3 mr-1" />
