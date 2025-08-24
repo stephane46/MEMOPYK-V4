@@ -567,8 +567,8 @@ export default function AdminPage() {
           {activeSection === 'hero-management' && (
             <div className="space-y-6">
               <div className="mb-6">
-                <h2 className="text-2xl font-bold" style={{ color: '#000000' }}>Gestion Hero</h2>
-                <p style={{ color: '#374151' }}>Gérer les vidéos du carrousel héros avec support bilingue</p>
+                <h2 className="text-2xl font-bold seo-language-btn-inactive">Gestion Hero</h2>
+                <p className="seo-language-btn-inactive">Gérer les vidéos du carrousel héros avec support bilingue</p>
               </div>
               
               {/* Hero Tabs with Bold Orange Colors */}
@@ -1268,26 +1268,24 @@ export default function AdminPage() {
                                             size="sm"
                                             variant="outline"
                                             onClick={() => {
-                                              console.log('🔍 EDIT BUTTON CLICKED - Text Object:', text);
-                                              console.log('🔍 Mobile FR:', text.title_mobile_fr);
-                                              console.log('🔍 Mobile EN:', text.title_mobile_en);
-                                              console.log('🔍 Desktop FR:', text.title_desktop_fr);
-                                              console.log('🔍 Desktop EN:', text.title_desktop_en);
+                                              console.log('🔍 EDIT CLICKED - Complete text object:', JSON.stringify(text, null, 2));
                                               
-                                              const formData = {
-                                                title_fr: text.title_fr || '',
-                                                title_en: text.title_en || '',
-                                                subtitle_fr: text.subtitle_fr || '',
-                                                subtitle_en: text.subtitle_en || '',
-                                                title_mobile_fr: text.title_mobile_fr || text.title_fr || '',
-                                                title_mobile_en: text.title_mobile_en || text.title_en || '',
-                                                title_desktop_fr: text.title_desktop_fr || text.title_fr || '',
-                                                title_desktop_en: text.title_desktop_en || text.title_en || ''
-                                              };
-                                              
-                                              console.log('🔍 SETTING FORM DATA:', formData);
-                                              setEditFormData(formData);
                                               setEditingTextId(text.id);
+                                              
+                                              // Force immediate state update with timeout to ensure React processes it
+                                              setTimeout(() => {
+                                                setEditFormData({
+                                                  title_fr: text.title_fr || '',
+                                                  title_en: text.title_en || '',
+                                                  subtitle_fr: text.subtitle_fr || '',
+                                                  subtitle_en: text.subtitle_en || '',
+                                                  title_mobile_fr: text.title_mobile_fr || text.title_fr || '',
+                                                  title_mobile_en: text.title_mobile_en || text.title_en || '',
+                                                  title_desktop_fr: text.title_desktop_fr || text.title_fr || '',
+                                                  title_desktop_en: text.title_desktop_en || text.title_en || ''
+                                                });
+                                                console.log('🔍 Form data set after timeout');
+                                              }, 50);
                                             }}
                                           >
                                             <Type className="h-3 w-3 mr-1" />
