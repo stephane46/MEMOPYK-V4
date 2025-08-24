@@ -15085,5 +15085,22 @@
     "updated_at": "2025-08-24T14:56:31.413Z",
     "duration": 1042798,
     "region": "Occitanie"
+  },
+  {
+    "id": "b6f1c2e9-68fb-4907-8533-d25810e7ccbe",
+    "session_id": "session_1756048425832_am44zwmss",
+    "user_id": null,
+    "ip_address": "109.17.150.48",
+    "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36 Edg/139.0.0.0",
+    "referrer": "https://365df2cf-1884-444c-a9e8-235602456363-00-37q39xpqlgvdy.janeway.replit.dev/__replco/workspace_iframe.html?initialPath=%2F&id=%3Arcot%3A",
+    "language": "fr-FR",
+    "country": "Unknown",
+    "city": "Unknown",
+    "page_views": 0,
+    "is_bot": false,
+    "is_test_data": false,
+    "created_at": "2025-08-24T15:13:45.868Z",
+    "updated_at": "2025-08-24T15:13:48.824Z",
+    "duration": 1044193
   }
 ]
