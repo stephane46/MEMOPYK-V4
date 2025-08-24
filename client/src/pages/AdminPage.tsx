@@ -1226,7 +1226,17 @@ export default function AdminPage() {
                                             size="sm"
                                             variant="default"
                                             className="bg-orange-500 hover:bg-orange-600"
-                                            onClick={() => {
+                                            onClick={async () => {
+                                              // If there are unsaved edits, save them first
+                                              if (editingTextId === text.id) {
+                                                await updateTextMutation.mutateAsync({
+                                                  textId: text.id,
+                                                  data: editFormData
+                                                });
+                                                setEditingTextId(null);
+                                              }
+                                              
+                                              // Then apply to site
                                               applyTextMutation.mutate({ 
                                                 textId: text.id, 
                                                 fontSizes: {
@@ -1237,9 +1247,9 @@ export default function AdminPage() {
                                                 }
                                               });
                                             }}
-                                            disabled={applyTextMutation.isPending}
+                                            disabled={applyTextMutation.isPending || updateTextMutation.isPending}
                                           >
-                                            Appliquer au Site
+                                            {editingTextId === text.id ? 'Sauvegarder & Appliquer au Site' : 'Appliquer au Site'}
                                           </Button>
                                           <Button
                                             size="sm"
