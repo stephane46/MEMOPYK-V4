@@ -64,16 +64,10 @@ export default function AdminPage() {
   const [uploadingFile, setUploadingFile] = useState(false);
   const [dragActive, setDragActive] = useState(false);
   const [selectedTextId, setSelectedTextId] = useState<number | null>(null);
-  const [currentPreviewDevice, setCurrentPreviewDevice] = useState<'desktop' | 'tablet' | 'mobile'>('desktop');
-  const [previewLanguage, setPreviewLanguage] = useState<'fr-FR' | 'en-US'>('fr-FR');
-  const [previewFontSizeDesktop, setPreviewFontSizeDesktop] = useState(60);
-  const [previewFontSizeTablet, setPreviewFontSizeTablet] = useState(45);
-  const [previewFontSizeMobile, setPreviewFontSizeMobile] = useState(32);
   const [editingTextId, setEditingTextId] = useState<number | null>(null);
   const [editFormData, setEditFormData] = useState({ title_fr: '', title_en: '', subtitle_fr: '', subtitle_en: '', title_mobile_fr: '', title_mobile_en: '', title_desktop_fr: '', title_desktop_en: '' });
   const [showNewTextForm, setShowNewTextForm] = useState(false);
-  const [newTextData, setNewTextData] = useState({ title_fr: '', subtitle_fr: '', title_en: '', subtitle_en: '', title_mobile_fr: '', title_mobile_en: '', title_desktop_fr: '', title_desktop_en: '', font_size_desktop: 60, font_size_tablet: 45, font_size_mobile: 32 });
-  const [currentPreviewLanguage, setCurrentPreviewLanguage] = useState<'fr' | 'en'>('fr');
+  const [newTextData, setNewTextData] = useState({ title_fr: '', subtitle_fr: '', title_en: '', subtitle_en: '', title_mobile_fr: '', title_mobile_en: '', title_desktop_fr: '', title_desktop_en: '' });
   const [isBulletproofCacheRunning, setIsBulletproofCacheRunning] = useState(false);
   const [isDevMode, setIsDevMode] = useState(false);
 
@@ -257,18 +251,6 @@ export default function AdminPage() {
     queryKey: ['/api/hero-text'],
   });
 
-  // Sync responsive font sizes when a text is selected
-  useEffect(() => {
-    if (selectedTextId && heroTexts.length > 0) {
-      const selectedText = heroTexts.find((t: any) => t.id === selectedTextId);
-      if (selectedText) {
-        // Use responsive font sizes from database if available, otherwise use defaults
-        setPreviewFontSizeDesktop(selectedText.font_size_desktop || selectedText.font_size || 60);
-        setPreviewFontSizeTablet(selectedText.font_size_tablet || Math.round((selectedText.font_size || 60) * 0.75));
-        setPreviewFontSizeMobile(selectedText.font_size_mobile || Math.round((selectedText.font_size || 60) * 0.53));
-      }
-    }
-  }, [selectedTextId, heroTexts]);
 
   // Fetch cache statistics
   const { data: cacheStats, isLoading: cacheLoading } = useQuery<any>({
@@ -406,20 +388,8 @@ export default function AdminPage() {
 
   // Apply text to site mutation
   const applyTextMutation = useMutation({
-    mutationFn: async ({ textId, fontSizes }: { 
-      textId: number; 
-      fontSizes: { 
-        desktop: number; 
-        tablet: number; 
-        mobile: number; 
-        legacy?: number;
-      } 
-    }) => {
+    mutationFn: async ({ textId }: { textId: number }) => {
       const response = await apiRequest(`/api/hero-text/${textId}/apply`, 'PATCH', { 
-        font_size: fontSizes.legacy || fontSizes.desktop, // Keep legacy compatibility
-        font_size_desktop: fontSizes.desktop,
-        font_size_tablet: fontSizes.tablet,
-        font_size_mobile: fontSizes.mobile,
         is_active: true 
       });
       return await response.json();
@@ -1044,7 +1014,7 @@ export default function AdminPage() {
                                       variant="outline"
                                       onClick={() => {
                                         setShowNewTextForm(false);
-                                        setNewTextData({ title_fr: '', subtitle_fr: '', title_en: '', subtitle_en: '', title_mobile_fr: '', title_mobile_en: '', title_desktop_fr: '', title_desktop_en: '', font_size_desktop: 60, font_size_tablet: 45, font_size_mobile: 36 });
+                                        setNewTextData({ title_fr: '', subtitle_fr: '', title_en: '', subtitle_en: '', title_mobile_fr: '', title_mobile_en: '', title_desktop_fr: '', title_desktop_en: '' });
                                       }}
                                     >
                                       Annuler
@@ -1312,20 +1282,6 @@ export default function AdminPage() {
                             </div>
                           </div>
 
-                          {/* Font Size Control & Preview */}
-                          {selectedTextId && (
-                            <Card className="border-orange-200">
-                              <CardHeader>
-                                <CardTitle className="flex items-center gap-2">
-                                  <Palette className="h-5 w-5" />
-                                  Prévisualisation & Contrôles
-                                </CardTitle>
-                              </CardHeader>
-                              <CardContent className="space-y-6">
-                                {/* Responsive Font Size Controls */}
-                                <div className="space-y-6">
-                                  {/* Device Preview Selector */}
-                                  <div className="space-y-3">
                                     <Label className="text-lg font-semibold text-gray-900 dark:text-white flex items-center gap-2">
                                       <Monitor className="h-5 w-5" />
                                       Contrôles de Taille de Police Responsive
