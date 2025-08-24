@@ -326,17 +326,19 @@ export class HybridStorage implements HybridStorageInterface {
       
       if (error) {
         console.error('⚠️ Hero Text: Supabase query error:', error);
-        throw error;
-      }
-      
-      if (result && result.length > 0) {
-        console.log(`✅ Hero Text: Found ${result.length} texts in Supabase`);
+        console.log('⚠️ Hero Text: Database error, using JSON fallback...');
+      } else if (result && result.length > 0) {
+        console.log(`✅ Hero Text: Found ${result.length} texts in Supabase - DATABASE PRIORITY`);
         
         // Convert snake_case to camelCase and add responsive font sizes
         const formattedResult = result.map((item: any) => ({
           id: item.id,
           title_fr: item.title_fr,
           title_en: item.title_en,
+          title_mobile_fr: item.title_mobile_fr,
+          title_mobile_en: item.title_mobile_en,
+          title_desktop_fr: item.title_desktop_fr,
+          title_desktop_en: item.title_desktop_en,
           subtitle_fr: item.subtitle_fr,
           subtitle_en: item.subtitle_en,
           font_size: item.font_size, // Legacy field for backward compatibility
@@ -348,17 +350,19 @@ export class HybridStorage implements HybridStorageInterface {
           updated_at: item.updated_at
         }));
         
-        // Save to JSON as backup (using converted format)
+        // **CRITICAL FIX: Only save to JSON if we got fresh data from database**
+        console.log('💾 Hero Text: Updating JSON backup with fresh database data');
         this.saveJsonFile('hero-text.json', formattedResult);
         return formattedResult;
       } else {
-        console.log('⚠️ Hero Text: No data in Supabase, checking JSON fallback...');
+        console.log('⚠️ Hero Text: Database empty (not error), checking JSON fallback...');
       }
     } catch (error) {
-      console.warn('⚠️ Hero Text: Supabase connection failed, using JSON fallback:', error);
+      console.warn('⚠️ Hero Text: Database connection failed, using JSON fallback:', error);
     }
     
-    // Fallback to JSON
+    // Fallback to JSON only when database fails or is empty
+    console.log('📄 Hero Text: Loading from JSON fallback');
     const data = this.loadJsonFile('hero-text.json');
     return data; // Return all texts for admin management
   }
