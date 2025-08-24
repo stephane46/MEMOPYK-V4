@@ -65,9 +65,9 @@ export default function AdminPage() {
   const [dragActive, setDragActive] = useState(false);
   const [selectedTextId, setSelectedTextId] = useState<number | null>(null);
   const [editingTextId, setEditingTextId] = useState<number | null>(null);
-  const [editFormData, setEditFormData] = useState({ title_fr: '', title_en: '', subtitle_fr: '', subtitle_en: '', title_mobile_fr: '', title_mobile_en: '', title_desktop_fr: '', title_desktop_en: '' });
+  const [editFormData, setEditFormData] = useState({ title_mobile_fr: '', title_mobile_en: '', title_desktop_fr: '', title_desktop_en: '' });
   const [showNewTextForm, setShowNewTextForm] = useState(false);
-  const [newTextData, setNewTextData] = useState({ title_fr: '', subtitle_fr: '', title_en: '', subtitle_en: '', title_mobile_fr: '', title_mobile_en: '', title_desktop_fr: '', title_desktop_en: '', font_size_desktop: 60, font_size_tablet: 45, font_size_mobile: 32 });
+  const [newTextData, setNewTextData] = useState({ title_mobile_fr: '', title_mobile_en: '', title_desktop_fr: '', title_desktop_en: '', font_size_desktop: 60, font_size_tablet: 45, font_size_mobile: 32 });
   const [currentPreviewLanguage, setCurrentPreviewLanguage] = useState<'fr' | 'en'>('fr');
   const [isBulletproofCacheRunning, setIsBulletproofCacheRunning] = useState(false);
   const [isDevMode, setIsDevMode] = useState(false);
@@ -443,7 +443,7 @@ export default function AdminPage() {
       queryClient.invalidateQueries({ queryKey: ['/api/hero-text', 'fr-FR'] });
       queryClient.invalidateQueries({ queryKey: ['/api/hero-text', 'en-US'] });
       setShowNewTextForm(false);
-      setNewTextData({ title_fr: '', subtitle_fr: '', title_en: '', subtitle_en: '', title_mobile_fr: '', title_mobile_en: '', title_desktop_fr: '', title_desktop_en: '', font_size_desktop: 60, font_size_tablet: 45, font_size_mobile: 36 });
+      setNewTextData({ title_mobile_fr: '', title_mobile_en: '', title_desktop_fr: '', title_desktop_en: '', font_size_desktop: 60, font_size_tablet: 45, font_size_mobile: 36 });
       toast({ title: "Succès", description: "Nouveau texte créé avec succès" });
     },
     onError: () => {
@@ -918,55 +918,8 @@ export default function AdminPage() {
                                   <CardTitle>Créer un Nouveau Texte</CardTitle>
                                 </CardHeader>
                                 <CardContent className="space-y-4">
-                                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                    <div>
-                                      <Label>Titre (Français)</Label>
-                                      <small className="text-gray-500 block mb-1">Utilisez Entrée pour créer des sauts de ligne</small>
-                                      <Textarea
-                                        value={newTextData.title_fr}
-                                        onChange={(e) => setNewTextData({ ...newTextData, title_fr: e.target.value })}
-                                        placeholder="Ex: Transformez vos souvenirs&#10;en films cinématographiques"
-                                        rows={3}
-                                        className="resize-none"
-                                      />
-                                    </div>
-                                    <div>
-                                      <Label>Titre (Anglais)</Label>
-                                      <small className="text-gray-500 block mb-1">Use Enter to create line breaks</small>
-                                      <Textarea
-                                        value={newTextData.title_en}
-                                        onChange={(e) => setNewTextData({ ...newTextData, title_en: e.target.value })}
-                                        placeholder="Ex: Transform your memories&#10;into cinematic films"
-                                        rows={3}
-                                        className="resize-none"
-                                      />
-                                    </div>
-                                    <div>
-                                      <Label>Sous-titre (Français)</Label>
-                                      <small className="text-gray-500 block mb-1">Utilisez Entrée pour créer des sauts de ligne</small>
-                                      <Textarea
-                                        value={newTextData.subtitle_fr}
-                                        onChange={(e) => setNewTextData({ ...newTextData, subtitle_fr: e.target.value })}
-                                        placeholder="Ex: Créez des vidéos professionnelles&#10;avec notre expertise cinématographique"
-                                        rows={3}
-                                        className="resize-none"
-                                      />
-                                    </div>
-                                    <div>
-                                      <Label>Sous-titre (Anglais)</Label>
-                                      <small className="text-gray-500 block mb-1">Use Enter to create line breaks</small>
-                                      <Textarea
-                                        value={newTextData.subtitle_en}
-                                        onChange={(e) => setNewTextData({ ...newTextData, subtitle_en: e.target.value })}
-                                        placeholder="Ex: Create professional videos&#10;with our cinematic expertise"
-                                        rows={3}
-                                        className="resize-none"
-                                      />
-                                    </div>
-                                  </div>
-                                  
                                   {/* Mobile/Desktop Specific Titles */}
-                                  <div className="border-t pt-4 mt-4">
+                                  <div>
                                     <h4 className="font-semibold text-gray-700 mb-3">📱 💻 Titres Spécifiques Mobile/Desktop</h4>
                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                       <div>
@@ -1030,7 +983,7 @@ export default function AdminPage() {
                                   <div className="flex gap-3">
                                     <Button
                                       onClick={() => createTextMutation.mutate(newTextData)}
-                                      disabled={createTextMutation.isPending || !newTextData.title_fr || !newTextData.title_en}
+                                      disabled={createTextMutation.isPending || !newTextData.title_mobile_fr || !newTextData.title_mobile_en || !newTextData.title_desktop_fr || !newTextData.title_desktop_en}
                                       className="bg-green-600 hover:bg-green-700"
                                     >
                                       Créer le Texte
@@ -1039,7 +992,7 @@ export default function AdminPage() {
                                       variant="outline"
                                       onClick={() => {
                                         setShowNewTextForm(false);
-                                        setNewTextData({ title_fr: '', subtitle_fr: '', title_en: '', subtitle_en: '', title_mobile_fr: '', title_mobile_en: '', title_desktop_fr: '', title_desktop_en: '', font_size_desktop: 60, font_size_tablet: 45, font_size_mobile: 36 });
+                                        setNewTextData({ title_mobile_fr: '', title_mobile_en: '', title_desktop_fr: '', title_desktop_en: '', font_size_desktop: 60, font_size_tablet: 45, font_size_mobile: 36 });
                                       }}
                                     >
                                       Annuler
@@ -1058,51 +1011,8 @@ export default function AdminPage() {
                                     {editingTextId === text.id ? (
                                       // Edit Mode
                                       <div className="space-y-4">
-                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                          <div>
-                                            <Label className="text-xs">Titre (Français)</Label>
-                                            <small className="text-gray-700 block text-xs">Entrée = saut de ligne</small>
-                                            <Textarea
-                                              value={editFormData.title_fr}
-                                              onChange={(e) => setEditFormData({ ...editFormData, title_fr: e.target.value })}
-                                              className="text-sm resize-none"
-                                              rows={2}
-                                            />
-                                          </div>
-                                          <div>
-                                            <Label className="text-xs">Titre (Anglais)</Label>
-                                            <small className="text-gray-700 block text-xs">Enter = line break</small>
-                                            <Textarea
-                                              value={editFormData.title_en}
-                                              onChange={(e) => setEditFormData({ ...editFormData, title_en: e.target.value })}
-                                              className="text-sm resize-none"
-                                              rows={2}
-                                            />
-                                          </div>
-                                          <div>
-                                            <Label className="text-xs">Sous-titre (Français)</Label>
-                                            <small className="text-gray-700 block text-xs">Entrée = saut de ligne</small>
-                                            <Textarea
-                                              value={editFormData.subtitle_fr}
-                                              onChange={(e) => setEditFormData({ ...editFormData, subtitle_fr: e.target.value })}
-                                              className="text-sm resize-none"
-                                              rows={2}
-                                            />
-                                          </div>
-                                          <div>
-                                            <Label className="text-xs">Sous-titre (Anglais)</Label>
-                                            <small className="text-gray-700 block text-xs">Enter = line break</small>
-                                            <Textarea
-                                              value={editFormData.subtitle_en}
-                                              onChange={(e) => setEditFormData({ ...editFormData, subtitle_en: e.target.value })}
-                                              className="text-sm resize-none"
-                                              rows={2}
-                                            />
-                                          </div>
-                                        </div>
-                                        
                                         {/* Mobile/Desktop Specific Titles for Edit Mode */}
-                                        <div className="border-t pt-4 mt-4">
+                                        <div>
                                           <h4 className="font-semibold text-gray-700 mb-3 text-sm">📱 💻 Titres Spécifiques Mobile/Desktop</h4>
                                           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                             <div>
@@ -1266,10 +1176,6 @@ export default function AdminPage() {
                                               // Clear any existing edit state first
                                               setEditingTextId(null);
                                               setEditFormData({
-                                                title_fr: '',
-                                                title_en: '',
-                                                subtitle_fr: '',
-                                                subtitle_en: '',
                                                 title_mobile_fr: '',
                                                 title_mobile_en: '',
                                                 title_desktop_fr: '',
@@ -1281,14 +1187,10 @@ export default function AdminPage() {
                                                 setEditingTextId(text.id);
                                                 
                                                 const formData = {
-                                                  title_fr: text.title_fr || '',
-                                                  title_en: text.title_en || '',
-                                                  subtitle_fr: text.subtitle_fr || '',
-                                                  subtitle_en: text.subtitle_en || '',
-                                                  title_mobile_fr: text.title_mobile_fr || text.title_fr || '',
-                                                  title_mobile_en: text.title_mobile_en || text.title_en || '',
-                                                  title_desktop_fr: text.title_desktop_fr || text.title_fr || '',
-                                                  title_desktop_en: text.title_desktop_en || text.title_en || ''
+                                                  title_mobile_fr: text.title_mobile_fr || '',
+                                                  title_mobile_en: text.title_mobile_en || '',
+                                                  title_desktop_fr: text.title_desktop_fr || '',
+                                                  title_desktop_en: text.title_desktop_en || ''
                                                 };
                                                 
                                                 console.log('🔍 Setting form data:', formData);
@@ -1322,7 +1224,7 @@ export default function AdminPage() {
                                             size="sm"
                                             variant="destructive"
                                             onClick={() => {
-                                              if (confirm(`Êtes-vous sûr de vouloir supprimer "${text.title_fr}" ?`)) {
+                                              if (confirm(`Êtes-vous sûr de vouloir supprimer "${text.title_mobile_fr || text.title_desktop_fr || 'ce texte'}" ?`)) {
                                                 deleteTextMutation.mutate(text.id);
                                               }
                                             }}
