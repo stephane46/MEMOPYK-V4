@@ -749,7 +749,6 @@ html, body {
 /* Desktop (Tailwind "sm" and above, i.e. min-width:640px) */
 @media (min-width: 640px) {
   .hero-text-mobile {
-    white-space: pre-line; /* allow DB \n to be honored on desktop only */
     line-height: 1.25;
   }
 }

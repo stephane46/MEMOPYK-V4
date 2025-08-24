@@ -62,26 +62,29 @@ export function SimpleHeroVideoSection() {
             className="font-playfair font-bold mb-4 sm:mb-6 lg:mb-8 mx-auto hero-text-mobile text-2xl sm:text-4xl lg:text-5xl"
             style={{ textShadow: '2px 2px 4px rgba(0,0,0,0.8)' }}
           >
-            {(() => {
-              // Choose source text (DB preferred, otherwise safe fallback)
-              const sourceText = language === 'fr-FR'
-                ? (activeHeroText?.title_fr || "Nous transformons\nvos photos et vidéos personnelles\nen films souvenirs inoubliables")
-                : (activeHeroText?.title_en || "We transform\nyour personal photos and videos\ninto unforgettable souvenir films");
-
-              // Normalize possible <br> tags and split on newline characters
-              const normalized = sourceText
-                .replace(/<br\s*\/?>/gi, '\n')   // convert HTML breaks to \n if any
-                .replace(/\\n/g, '\n');         // convert escaped \n to real newline if needed
-
-              const lines = normalized.split(/\r?\n/).map(s => s.trim()).filter(Boolean);
-
-              // Render each line as a block-level span with an explicit class (hero-line)
-              return lines.map((line, idx) => (
-                <span key={idx} className="hero-line block text-center">
-                  {line}
-                </span>
-              ));
-            })()}
+{activeHeroText?.title_fr && language === 'fr-FR' 
+              ? activeHeroText.title_fr.split('\n').map((line, index) => (
+                  <span key={index} className="hero-line block text-center">
+                    {line.trim()}
+                  </span>
+                ))
+              : activeHeroText?.title_en && language === 'en-US'
+              ? activeHeroText.title_en.split('\n').map((line, index) => (
+                  <span key={index} className="hero-line block text-center">
+                    {line.trim()}
+                  </span>
+                ))
+              : language === 'fr-FR'
+              ? "Nous transformons\nvos photos et vidéos personnelles\nen films souvenirs inoubliables".split('\n').map((line, index) => (
+                  <span key={index} className="hero-line block text-center">
+                    {line.trim()}
+                  </span>
+                ))
+              : "We transform\nyour personal photos and videos\ninto unforgettable souvenir films".split('\n').map((line, index) => (
+                  <span key={index} className="hero-line block text-center">
+                    {line.trim()}
+                  </span>
+                ))}
           </h1>
           
           {activeHeroText && (
