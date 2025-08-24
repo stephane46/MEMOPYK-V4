@@ -1106,126 +1106,122 @@ export default function AdminPage() {
                                               <Label className="text-xs">Titre Mobile (Français) - 3 lignes</Label>
                                               <small className="text-blue-600 block text-xs">Version mobile - Entrée = saut de ligne</small>
                                               <Textarea
-                                                value={text.title_mobile_fr || ''}
+                                                value={editingTextId === text.id ? editFormData.title_mobile_fr : (text.title_mobile_fr || '')}
                                                 onChange={(e) => {
-                                                  updateTextMutation.mutate({
-                                                    textId: text.id,
-                                                    data: {
+                                                  if (editingTextId !== text.id) {
+                                                    setEditingTextId(text.id);
+                                                    setEditFormData({
                                                       title_mobile_fr: e.target.value,
                                                       title_mobile_en: text.title_mobile_en || '',
                                                       title_desktop_fr: text.title_desktop_fr || '',
                                                       title_desktop_en: text.title_desktop_en || ''
-                                                    }
-                                                  });
+                                                    });
+                                                  } else {
+                                                    setEditFormData({ ...editFormData, title_mobile_fr: e.target.value });
+                                                  }
                                                 }}
                                                 className="text-sm resize-none"
                                                 rows={3}
-
                                               />
                                             </div>
                                             <div>
                                               <Label className="text-xs">Titre Mobile (Anglais) - 3 lignes</Label>
                                               <small className="text-blue-600 block text-xs">Mobile version - Enter = line break</small>
                                               <Textarea
-                                                value={text.title_mobile_en || ''}
+                                                value={editingTextId === text.id ? editFormData.title_mobile_en : (text.title_mobile_en || '')}
                                                 onChange={(e) => {
-                                                  updateTextMutation.mutate({
-                                                    textId: text.id,
-                                                    data: {
+                                                  if (editingTextId !== text.id) {
+                                                    setEditingTextId(text.id);
+                                                    setEditFormData({
                                                       title_mobile_fr: text.title_mobile_fr || '',
                                                       title_mobile_en: e.target.value,
                                                       title_desktop_fr: text.title_desktop_fr || '',
                                                       title_desktop_en: text.title_desktop_en || ''
-                                                    }
-                                                  });
+                                                    });
+                                                  } else {
+                                                    setEditFormData({ ...editFormData, title_mobile_en: e.target.value });
+                                                  }
                                                 }}
                                                 className="text-sm resize-none"
                                                 rows={3}
-
                                               />
                                             </div>
                                             <div>
                                               <Label className="text-xs">Titre Desktop (Français) - 2 lignes</Label>
                                               <small className="text-green-600 block text-xs">Version desktop - Entrée = saut de ligne</small>
                                               <Textarea
-                                                value={text.title_desktop_fr || ''}
+                                                value={editingTextId === text.id ? editFormData.title_desktop_fr : (text.title_desktop_fr || '')}
                                                 onChange={(e) => {
-                                                  updateTextMutation.mutate({
-                                                    textId: text.id,
-                                                    data: {
+                                                  if (editingTextId !== text.id) {
+                                                    setEditingTextId(text.id);
+                                                    setEditFormData({
                                                       title_mobile_fr: text.title_mobile_fr || '',
                                                       title_mobile_en: text.title_mobile_en || '',
                                                       title_desktop_fr: e.target.value,
                                                       title_desktop_en: text.title_desktop_en || ''
-                                                    }
-                                                  });
+                                                    });
+                                                  } else {
+                                                    setEditFormData({ ...editFormData, title_desktop_fr: e.target.value });
+                                                  }
                                                 }}
                                                 className="text-sm resize-none"
                                                 rows={2}
-
                                               />
                                             </div>
                                             <div>
                                               <Label className="text-xs">Titre Desktop (Anglais) - 2 lignes</Label>
                                               <small className="text-green-600 block text-xs">Desktop version - Enter = line break</small>
                                               <Textarea
-                                                value={text.title_desktop_en || ''}
+                                                value={editingTextId === text.id ? editFormData.title_desktop_en : (text.title_desktop_en || '')}
                                                 onChange={(e) => {
-                                                  updateTextMutation.mutate({
-                                                    textId: text.id,
-                                                    data: {
+                                                  if (editingTextId !== text.id) {
+                                                    setEditingTextId(text.id);
+                                                    setEditFormData({
                                                       title_mobile_fr: text.title_mobile_fr || '',
                                                       title_mobile_en: text.title_mobile_en || '',
                                                       title_desktop_fr: text.title_desktop_fr || '',
                                                       title_desktop_en: e.target.value
-                                                    }
-                                                  });
+                                                    });
+                                                  } else {
+                                                    setEditFormData({ ...editFormData, title_desktop_en: e.target.value });
+                                                  }
                                                 }}
                                                 className="text-sm resize-none"
                                                 rows={2}
-
                                               />
                                             </div>
                                           </div>
                                         </div>
                                         
                                         <div className="flex items-center gap-2 pt-2 border-t">
-                                          <Button
-                                            size="sm"
-                                            variant="outline"
-                                            onClick={() => {
-                                              console.log('🔍 EDIT CLICKED for ID:', text.id);
-                                              console.log('🔍 Mobile FR data:', text.title_mobile_fr);
-                                              console.log('🔍 Desktop FR data:', text.title_desktop_fr);
-                                              
-                                              // Clear any existing edit state first
-                                              setEditingTextId(null);
-                                              setEditFormData({
-                                                title_mobile_fr: '',
-                                                title_mobile_en: '',
-                                                title_desktop_fr: '',
-                                                title_desktop_en: ''
-                                              });
-                                              
-                                              // Set editing state after a brief delay to force re-render
-                                              setTimeout(() => {
-                                                setEditingTextId(text.id);
-                                                
-                                                const formData = {
-                                                  title_mobile_fr: text.title_mobile_fr || '',
-                                                  title_mobile_en: text.title_mobile_en || '',
-                                                  title_desktop_fr: text.title_desktop_fr || '',
-                                                  title_desktop_en: text.title_desktop_en || ''
-                                                };
-                                                
-                                                console.log('🔍 Setting form data:', formData);
-                                                setEditFormData(formData);
-                                              }, 100);
-                                            }}
-                                          >
-                                            <Type className="h-3 w-3 mr-1" />
-                                            Modifier
-                                          </Button>
+                                          {/* Save/Cancel buttons - only show when editing */}
+                                          {editingTextId === text.id && (
+                                            <>
+                                              <Button
+                                                size="sm"
+                                                onClick={() => {
+                                                  updateTextMutation.mutate({
+                                                    textId: text.id,
+                                                    data: editFormData
+                                                  });
+                                                  setEditingTextId(null);
+                                                }}
+                                                disabled={updateTextMutation.isPending}
+                                                className="bg-green-600 hover:bg-green-700"
+                                              >
+                                                <Save className="h-3 w-3 mr-1" />
+                                                Sauvegarder
+                                              </Button>
+                                              <Button
+                                                size="sm"
+                                                variant="outline"
+                                                onClick={() => setEditingTextId(null)}
+                                              >
+                                                Annuler
+                                              </Button>
+                                            </>
+                                          )}
+                                          
                                           <Button
                                             size="sm"
                                             variant="default"
