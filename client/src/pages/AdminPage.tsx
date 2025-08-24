@@ -428,17 +428,15 @@ export default function AdminPage() {
   // Create new text mutation
   const createTextMutation = useMutation({
     mutationFn: async (data: any) => {
-      console.log('🚀 MUTATION - Sending data to server:', JSON.stringify(data, null, 2));
       const response = await apiRequest('/api/hero-text', 'POST', data);
-      console.log('📝 MUTATION - Server response status:', response.status);
       if (!response.ok) {
         const errorText = await response.text();
-        console.log('❌ MUTATION - Server error response:', errorText);
         throw new Error(`Server error: ${response.status} - ${errorText}`);
       }
       return await response.json();
     },
-    onSuccess: () => {
+    onSuccess: (data) => {
+      // Close the form and refresh the text list
       // Invalidate all hero-text queries (admin and public site with language variants)
       queryClient.invalidateQueries({ queryKey: ['/api/hero-text'] });
       queryClient.invalidateQueries({ queryKey: ['/api/hero-text', 'fr-FR'] });
@@ -983,18 +981,7 @@ export default function AdminPage() {
                                   </div>
                                   <div className="flex gap-3">
                                     <Button
-                                      onClick={() => {
-                                        console.log('🔍 CREATE TEXT - Button clicked');
-                                        console.log('🔍 CREATE TEXT - newTextData:', newTextData);
-                                        console.log('🔍 CREATE TEXT - Field validation:', {
-                                          title_mobile_fr: !!newTextData.title_mobile_fr,
-                                          title_mobile_en: !!newTextData.title_mobile_en,
-                                          title_desktop_fr: !!newTextData.title_desktop_fr,
-                                          title_desktop_en: !!newTextData.title_desktop_en
-                                        });
-                                        console.log('🔍 CREATE TEXT - Button disabled?', createTextMutation.isPending || !newTextData.title_mobile_fr || !newTextData.title_mobile_en || !newTextData.title_desktop_fr || !newTextData.title_desktop_en);
-                                        createTextMutation.mutate(newTextData);
-                                      }}
+                                      onClick={() => createTextMutation.mutate(newTextData)}
                                       disabled={createTextMutation.isPending || !newTextData.title_mobile_fr || !newTextData.title_mobile_en || !newTextData.title_desktop_fr || !newTextData.title_desktop_en}
                                       className="bg-green-600 hover:bg-green-700"
                                     >
