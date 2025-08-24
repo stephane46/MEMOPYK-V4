@@ -3,17 +3,17 @@
     "id": "1754579616088",
     "title_fr": "Nous transformons\nvos photos et vidéos personnelles\nen films souvenirs inoubliables",
     "title_en": "We transform\nyour personal photos and videos\ninto unforgettable souvenir films",
-    "title_mobile_fr": "Nous transformons\nvos photos et vidéos personnelles\nen films souvenirs inoubliables",
-    "title_mobile_en": "We transform\nyour personal photos and videos\ninto unforgettable souvenir film",
-    "title_desktop_fr": "Nous transformons vos photos et vidéos personnelles\nen films souvenirs inoubliables",
-    "title_desktop_en": "We transform your personal photos and videos\ninto unforgettable souvenir films",
+    "title_mobile_fr": "Nous transformons\nvos photos et vidéos personnelles\nen films souvenirs inoubliables!",
+    "title_mobile_en": "We transform\nyour personal photos and videos\ninto unforgettable souvenir film!",
+    "title_desktop_fr": "Nous transformons vos photos et vidéos personnelles\nen films souvenirs inoubliables!",
+    "title_desktop_en": "We transform your personal photos and videos\ninto unforgettable souvenir films!",
     "subtitle_fr": "",
     "subtitle_en": "",
     "font_size": 60,
     "font_size_desktop": 60,
     "font_size_tablet": 45,
     "font_size_mobile": 32,
-    "is_active": false,
+    "is_active": true,
     "created_at": "2025-08-07T15:13:36.123Z",
     "updated_at": "2025-08-09T14:29:48.801Z"
   },
@@ -31,7 +31,7 @@
     "font_size_desktop": 60,
     "font_size_tablet": 45,
     "font_size_mobile": 32,
-    "is_active": true,
+    "is_active": false,
     "created_at": "2025-08-24T15:04:50.074Z"
   }
 ]
