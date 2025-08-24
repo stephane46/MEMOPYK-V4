@@ -228,7 +228,7 @@ export function HeroVideoSection() {
                 ? `${activeHeroText?.font_size_mobile || 20}px`
                 : screenSize === 'tablet'
                 ? `${activeHeroText?.font_size_tablet || 40}px`
-                : `${activeHeroText?.font_size_desktop || 60}px`
+                : `${activeHeroText?.font_size_desktop || 45}px`
             }}
           >
             {(() => {
