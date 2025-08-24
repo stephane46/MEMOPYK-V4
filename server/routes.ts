@@ -1271,7 +1271,7 @@ export async function registerRoutes(app: Express): Promise<void> {
   app.patch("/api/hero-text/:id/apply", async (req, res) => {
     console.log('🚨 PATCH /api/hero-text/:id/apply HIT!');
     try {
-      const textId = parseInt(req.params.id);
+      const textId = req.params.id; // Keep as string, let hybrid storage handle type coercion
       const { font_size, font_size_desktop, font_size_tablet, font_size_mobile } = req.body;
       console.log('🔍 APPLY HERO TEXT - Request:', { textId, body: req.body });
       
@@ -1287,7 +1287,7 @@ export async function registerRoutes(app: Express): Promise<void> {
       if (font_size_tablet) updateData.font_size_tablet = Number(font_size_tablet);
       if (font_size_mobile) updateData.font_size_mobile = Number(font_size_mobile);
       
-      const appliedText = await hybridStorage.updateHeroText(String(textId), updateData);
+      const appliedText = await hybridStorage.updateHeroText(textId, updateData);
       
       res.json({ success: true, text: appliedText });
     } catch (error) {
