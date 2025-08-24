@@ -567,38 +567,34 @@ export default function AdminPage() {
           {activeSection === 'hero-management' && (
             <div className="space-y-6">
               <div className="mb-6">
-                <h2 className="text-2xl font-bold seo-language-btn-inactive">Gestion Hero</h2>
-                <p className="seo-language-btn-inactive">Gérer les vidéos du carrousel héros avec support bilingue</p>
+                <h2 className="text-2xl font-bold">Gestion Hero</h2>
+                <p className="text-muted-foreground">Gérer les vidéos du carrousel héros avec support bilingue</p>
               </div>
               
-              {/* Hero Tabs with Bold Orange Colors */}
+              {/* Hero Tabs - SEO Management Style */}
               <div className="mb-6">
-                <nav className="flex space-x-2" aria-label="Tabs">
-                  <button
+                <div className="flex rounded-lg border-2 border-gray-300 overflow-hidden">
+                  <Button
+                    variant="ghost"
+                    size="sm"
                     onClick={() => setHeroTab('videos')}
-                    className="py-4 px-6 font-bold text-lg rounded-lg transition-all duration-300 transform hover:scale-105 shadow-xl border-2"
-                    style={{
-                      backgroundColor: heroTab === 'videos' ? '#f97316' : '#ffffff',
-                      color: heroTab === 'videos' ? '#ffffff' : '#374151',
-                      borderColor: heroTab === 'videos' ? '#ea580c' : '#e5e7eb'
-                    }}
+                    className={heroTab === 'videos' ? 'seo-language-btn-active' : 'seo-language-btn-inactive'}
+                    style={{ borderRadius: '0', border: '0', padding: '12px 24px' }}
                   >
-                    <Video className="inline-block h-5 w-5 mr-2" />
+                    <Video className="h-4 w-4 mr-2" />
                     Gestion Vidéos
-                  </button>
-                  <button
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    size="sm"
                     onClick={() => setHeroTab('text')}
-                    className="py-4 px-6 font-bold text-lg rounded-lg transition-all duration-300 transform hover:scale-105 shadow-xl border-2"
-                    style={{
-                      backgroundColor: heroTab === 'text' ? '#f97316' : '#ffffff',
-                      color: heroTab === 'text' ? '#ffffff' : '#374151',
-                      borderColor: heroTab === 'text' ? '#ea580c' : '#e5e7eb'
-                    }}
+                    className={heroTab === 'text' ? 'seo-language-btn-active' : 'seo-language-btn-inactive'}
+                    style={{ borderRadius: '0', border: '0', padding: '12px 24px' }}
                   >
-                    <Type className="inline-block h-4 w-4 mr-2" />
+                    <Type className="h-4 w-4 mr-2" />
                     Textes & Superpositions
-                  </button>
-                </nav>
+                  </Button>
+                </div>
               </div>
 
               {/* Videos Tab */}
