@@ -1098,7 +1098,7 @@ export default function AdminPage() {
                                           </div>
                                         </div>
                                         
-                                        {/* Mobile/Desktop Specific Titles for Edit Mode */}
+                                        {/* Mobile/Desktop Specific Titles - Always Show Real Data */}
                                         <div className="border-t pt-4 mt-4">
                                           <h4 className="font-semibold text-gray-700 mb-3 text-sm">📱 💻 Titres Spécifiques Mobile/Desktop</h4>
                                           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -1106,40 +1106,84 @@ export default function AdminPage() {
                                               <Label className="text-xs">Titre Mobile (Français) - 3 lignes</Label>
                                               <small className="text-blue-600 block text-xs">Version mobile - Entrée = saut de ligne</small>
                                               <Textarea
-                                                value={editFormData.title_mobile_fr}
-                                                onChange={(e) => setEditFormData({ ...editFormData, title_mobile_fr: e.target.value })}
+                                                value={text.title_mobile_fr || ''}
+                                                onChange={(e) => {
+                                                  updateTextMutation.mutate({
+                                                    textId: text.id,
+                                                    data: {
+                                                      title_mobile_fr: e.target.value,
+                                                      title_mobile_en: text.title_mobile_en || '',
+                                                      title_desktop_fr: text.title_desktop_fr || '',
+                                                      title_desktop_en: text.title_desktop_en || ''
+                                                    }
+                                                  });
+                                                }}
                                                 className="text-sm resize-none"
                                                 rows={3}
+
                                               />
                                             </div>
                                             <div>
                                               <Label className="text-xs">Titre Mobile (Anglais) - 3 lignes</Label>
                                               <small className="text-blue-600 block text-xs">Mobile version - Enter = line break</small>
                                               <Textarea
-                                                value={editFormData.title_mobile_en}
-                                                onChange={(e) => setEditFormData({ ...editFormData, title_mobile_en: e.target.value })}
+                                                value={text.title_mobile_en || ''}
+                                                onChange={(e) => {
+                                                  updateTextMutation.mutate({
+                                                    textId: text.id,
+                                                    data: {
+                                                      title_mobile_fr: text.title_mobile_fr || '',
+                                                      title_mobile_en: e.target.value,
+                                                      title_desktop_fr: text.title_desktop_fr || '',
+                                                      title_desktop_en: text.title_desktop_en || ''
+                                                    }
+                                                  });
+                                                }}
                                                 className="text-sm resize-none"
                                                 rows={3}
+
                                               />
                                             </div>
                                             <div>
                                               <Label className="text-xs">Titre Desktop (Français) - 2 lignes</Label>
                                               <small className="text-green-600 block text-xs">Version desktop - Entrée = saut de ligne</small>
                                               <Textarea
-                                                value={editFormData.title_desktop_fr}
-                                                onChange={(e) => setEditFormData({ ...editFormData, title_desktop_fr: e.target.value })}
+                                                value={text.title_desktop_fr || ''}
+                                                onChange={(e) => {
+                                                  updateTextMutation.mutate({
+                                                    textId: text.id,
+                                                    data: {
+                                                      title_mobile_fr: text.title_mobile_fr || '',
+                                                      title_mobile_en: text.title_mobile_en || '',
+                                                      title_desktop_fr: e.target.value,
+                                                      title_desktop_en: text.title_desktop_en || ''
+                                                    }
+                                                  });
+                                                }}
                                                 className="text-sm resize-none"
                                                 rows={2}
+
                                               />
                                             </div>
                                             <div>
                                               <Label className="text-xs">Titre Desktop (Anglais) - 2 lignes</Label>
                                               <small className="text-green-600 block text-xs">Desktop version - Enter = line break</small>
                                               <Textarea
-                                                value={editFormData.title_desktop_en}
-                                                onChange={(e) => setEditFormData({ ...editFormData, title_desktop_en: e.target.value })}
+                                                value={text.title_desktop_en || ''}
+                                                onChange={(e) => {
+                                                  updateTextMutation.mutate({
+                                                    textId: text.id,
+                                                    data: {
+                                                      title_mobile_fr: text.title_mobile_fr || '',
+                                                      title_mobile_en: text.title_mobile_en || '',
+                                                      title_desktop_fr: text.title_desktop_fr || '',
+                                                      title_desktop_en: e.target.value
+                                                    }
+                                                  });
+                                                }}
                                                 className="text-sm resize-none"
                                                 rows={2}
+
                                               />
                                             </div>
                                           </div>
