@@ -71,7 +71,7 @@ export function SimpleHeroVideoSection() {
           
           {activeHeroText && (
             <p 
-              className="text-base sm:text-lg lg:text-xl max-w-4xl mx-auto opacity-90"
+              className="text-sm sm:text-lg lg:text-xl max-w-sm sm:max-w-4xl mx-auto opacity-90 leading-snug sm:leading-normal"
               style={{ 
                 textShadow: '1px 1px 2px rgba(0,0,0,0.8)'
               }}
