@@ -10,101 +10,131 @@ import { BarChart3, TrendingUp, Play, Users, Clock, RefreshCw, Globe, Eye, UserC
 import { CountryFlag } from './CountryFlag';
 import { formatFrenchDateTime } from '@/utils/date-format';
 
-// Language formatting utility
+// Comprehensive language mapping with flags for 100+ languages
+const LANGUAGE_MAP: Record<string, { display: string; flag: string }> = {
+  // Major languages
+  'en': { display: 'English', flag: '🇺🇸' },
+  'fr': { display: 'Français', flag: '🇫🇷' },
+  'es': { display: 'Español', flag: '🇪🇸' },
+  'de': { display: 'Deutsch', flag: '🇩🇪' },
+  'it': { display: 'Italiano', flag: '🇮🇹' },
+  'pt': { display: 'Português', flag: '🇵🇹' },
+  'ru': { display: 'Русский', flag: '🇷🇺' },
+  'zh': { display: '中文', flag: '🇨🇳' },
+  'ja': { display: '日本語', flag: '🇯🇵' },
+  'ko': { display: '한국어', flag: '🇰🇷' },
+  'ar': { display: 'العربية', flag: '🇸🇦' },
+  'hi': { display: 'हिन्दी', flag: '🇮🇳' },
+  
+  // European languages
+  'no': { display: 'Norwegian', flag: '🇳🇴' },
+  'nb': { display: 'Norwegian', flag: '🇳🇴' },
+  'nn': { display: 'Norwegian', flag: '🇳🇴' },
+  'sv': { display: 'Svenska', flag: '🇸🇪' },
+  'da': { display: 'Dansk', flag: '🇩🇰' },
+  'nl': { display: 'Nederlands', flag: '🇳🇱' },
+  'fi': { display: 'Suomi', flag: '🇫🇮' },
+  'pl': { display: 'Polski', flag: '🇵🇱' },
+  'cs': { display: 'Čeština', flag: '🇨🇿' },
+  'sk': { display: 'Slovenčina', flag: '🇸🇰' },
+  'hu': { display: 'Magyar', flag: '🇭🇺' },
+  'ro': { display: 'Română', flag: '🇷🇴' },
+  'bg': { display: 'Български', flag: '🇧🇬' },
+  'hr': { display: 'Hrvatski', flag: '🇭🇷' },
+  'sr': { display: 'Српски', flag: '🇷🇸' },
+  'sl': { display: 'Slovenščina', flag: '🇸🇮' },
+  'et': { display: 'Eesti', flag: '🇪🇪' },
+  'lv': { display: 'Latviešu', flag: '🇱🇻' },
+  'lt': { display: 'Lietuvių', flag: '🇱🇹' },
+  'el': { display: 'Ελληνικά', flag: '🇬🇷' },
+  'tr': { display: 'Türkçe', flag: '🇹🇷' },
+  'uk': { display: 'Українська', flag: '🇺🇦' },
+  'be': { display: 'Беларуская', flag: '🇧🇾' },
+  'is': { display: 'Íslenska', flag: '🇮🇸' },
+  'mt': { display: 'Malti', flag: '🇲🇹' },
+  'ga': { display: 'Gaeilge', flag: '🇮🇪' },
+  'cy': { display: 'Cymraeg', flag: '🏴󠁧󠁢󠁷󠁬󠁳󠁿' },
+  'eu': { display: 'Euskera', flag: '🇪🇸' },
+  'ca': { display: 'Català', flag: '🇪🇸' },
+  'gl': { display: 'Galego', flag: '🇪🇸' },
+  
+  // Asian languages
+  'th': { display: 'ไทย', flag: '🇹🇭' },
+  'vi': { display: 'Tiếng Việt', flag: '🇻🇳' },
+  'id': { display: 'Bahasa Indonesia', flag: '🇮🇩' },
+  'ms': { display: 'Bahasa Melayu', flag: '🇲🇾' },
+  'tl': { display: 'Filipino', flag: '🇵🇭' },
+  'my': { display: 'မြန်မာ', flag: '🇲🇲' },
+  'km': { display: 'ខ្មែរ', flag: '🇰🇭' },
+  'lo': { display: 'ລາວ', flag: '🇱🇦' },
+  'ka': { display: 'ქართული', flag: '🇬🇪' },
+  'hy': { display: 'Հայերեն', flag: '🇦🇲' },
+  'az': { display: 'Azərbaycan', flag: '🇦🇿' },
+  'kk': { display: 'Қазақ', flag: '🇰🇿' },
+  'ky': { display: 'Кыргыз', flag: '🇰🇬' },
+  'uz': { display: 'Oʻzbek', flag: '🇺🇿' },
+  'tk': { display: 'Türkmen', flag: '🇹🇲' },
+  'tg': { display: 'Тоҷикӣ', flag: '🇹🇯' },
+  'mn': { display: 'Монгол', flag: '🇲🇳' },
+  'ne': { display: 'नेपाली', flag: '🇳🇵' },
+  'si': { display: 'සිංහල', flag: '🇱🇰' },
+  'bn': { display: 'বাংলা', flag: '🇧🇩' },
+  'ur': { display: 'اردو', flag: '🇵🇰' },
+  'fa': { display: 'فارسی', flag: '🇮🇷' },
+  'ps': { display: 'پښتو', flag: '🇦🇫' },
+  'he': { display: 'עברית', flag: '🇮🇱' },
+  
+  // African languages
+  'sw': { display: 'Kiswahili', flag: '🇰🇪' },
+  'am': { display: 'አማርኛ', flag: '🇪🇹' },
+  'ha': { display: 'Hausa', flag: '🇳🇬' },
+  'yo': { display: 'Yorùbá', flag: '🇳🇬' },
+  'ig': { display: 'Igbo', flag: '🇳🇬' },
+  'zu': { display: 'isiZulu', flag: '🇿🇦' },
+  'xh': { display: 'isiXhosa', flag: '🇿🇦' },
+  'af': { display: 'Afrikaans', flag: '🇿🇦' },
+  
+  // American languages
+  'qu': { display: 'Quechua', flag: '🇵🇪' },
+  'gn': { display: 'Guaraní', flag: '🇵🇾' },
+  
+  // Others
+  'eo': { display: 'Esperanto', flag: '🌍' },
+  'la': { display: 'Latin', flag: '🇻🇦' },
+  'jv': { display: 'Basa Jawa', flag: '🇮🇩' },
+  'su': { display: 'Basa Sunda', flag: '🇮🇩' },
+  'ceb': { display: 'Cebuano', flag: '🇵🇭' },
+  'mg': { display: 'Malagasy', flag: '🇲🇬' },
+  'haw': { display: 'ʻŌlelo Hawaiʻi', flag: '🇺🇸' },
+  'mi': { display: 'Te Reo Māori', flag: '🇳🇿' },
+  'sm': { display: 'Gagana Samoa', flag: '🇼🇸' },
+  'to': { display: 'Lea Fakatonga', flag: '🇹🇴' },
+  'fj': { display: 'Vosa Vakaviti', flag: '🇫🇯' }
+};
+
+// Language formatting utility with comprehensive mapping
 const formatLanguage = (langCode: string): { display: string; flag: string; variant: 'default' | 'secondary' } => {
   if (!langCode) return { display: 'Unknown', flag: '🌐', variant: 'secondary' };
   
-  const code = langCode.toLowerCase();
+  const code = langCode.toLowerCase().split(/[-_]/)[0]; // Get base language code
   
-  // Handle French variants
-  if (code.includes('fr')) {
-    return { display: 'Français', flag: '🇫🇷', variant: 'default' };
+  // Check comprehensive mapping first
+  const mapped = LANGUAGE_MAP[code];
+  if (mapped) {
+    const variant = code === 'fr' ? 'default' : 'secondary';
+    return { ...mapped, variant };
   }
   
-  // Handle English variants
-  if (code.includes('en')) {
-    return { display: 'English', flag: '🇺🇸', variant: 'secondary' };
-  }
-  
-  // Handle Spanish
-  if (code.includes('es')) {
-    return { display: 'Español', flag: '🇪🇸', variant: 'secondary' };
-  }
-  
-  // Handle German
-  if (code.includes('de')) {
-    return { display: 'Deutsch', flag: '🇩🇪', variant: 'secondary' };
-  }
-  
-  // Handle Italian
-  if (code.includes('it')) {
-    return { display: 'Italiano', flag: '🇮🇹', variant: 'secondary' };
-  }
-  
-  // Handle Portuguese
-  if (code.includes('pt')) {
-    return { display: 'Português', flag: '🇵🇹', variant: 'secondary' };
-  }
-  
-  // Handle Chinese
-  if (code.includes('zh')) {
-    return { display: '中文', flag: '🇨🇳', variant: 'secondary' };
-  }
-  
-  // Handle Japanese
-  if (code.includes('ja')) {
-    return { display: '日本語', flag: '🇯🇵', variant: 'secondary' };
-  }
-  
-  // Handle Russian
-  if (code.includes('ru')) {
-    return { display: 'Русский', flag: '🇷🇺', variant: 'secondary' };
-  }
-  
-  // Handle Arabic
-  if (code.includes('ar')) {
-    return { display: 'العربية', flag: '🇸🇦', variant: 'secondary' };
-  }
-  
-  // Handle Norwegian
-  if (code.includes('no') || code.includes('nb') || code.includes('nn')) {
-    return { display: 'Norwegian', flag: '🇳🇴', variant: 'secondary' };
-  }
-  
-  // Handle Dutch
-  if (code.includes('nl')) {
-    return { display: 'Nederlands', flag: '🇳🇱', variant: 'secondary' };
-  }
-  
-  // Handle Swedish
-  if (code.includes('sv')) {
-    return { display: 'Svenska', flag: '🇸🇪', variant: 'secondary' };
-  }
-  
-  // Handle Danish
-  if (code.includes('da')) {
-    return { display: 'Dansk', flag: '🇩🇰', variant: 'secondary' };
-  }
-  
-  // Handle Polish
-  if (code.includes('pl')) {
-    return { display: 'Polski', flag: '🇵🇱', variant: 'secondary' };
-  }
-  
-  // Handle Korean
-  if (code.includes('ko')) {
-    return { display: '한국어', flag: '🇰🇷', variant: 'secondary' };
-  }
-  
-  // Handle Finnish
-  if (code.includes('fi')) {
-    return { display: 'Suomi', flag: '🇫🇮', variant: 'secondary' };
-  }
-  
-  // Fallback: capitalize and clean up the language code
+  // Fallback for unmapped languages
   const cleaned = langCode.replace(/[-_].*/, '').toLowerCase();
   const capitalized = cleaned.charAt(0).toUpperCase() + cleaned.slice(1);
   return { display: capitalized, flag: '🌐', variant: 'secondary' };
+};
+
+// Site language utility (only French or English)
+const formatSiteLanguage = (langCode: string): { display: string; flag: string } => {
+  if (langCode.includes('fr')) return { display: 'Français', flag: '🇫🇷' };
+  return { display: 'English', flag: '🇺🇸' };
 };
 
 interface GA4MetricsResponse {
@@ -507,26 +537,61 @@ export default function CleanGA4Analytics() {
               <CardHeader>
                 <CardTitle className="flex items-center space-x-2">
                   <Languages className="h-5 w-5" />
-                  <span>Language Breakdown</span>
+                  <span>Language Analysis</span>
                 </CardTitle>
-                <CardDescription>Visitor language preferences</CardDescription>
+                <CardDescription>Site language choice vs browser language</CardDescription>
               </CardHeader>
               <CardContent>
-                <div className="space-y-3">
-                  {ga4Data.languageBreakdown?.map((lang) => {
-                    const langInfo = formatLanguage(lang.language);
-                    return (
-                      <div key={lang.language} className="flex items-center justify-between">
-                        <div className="flex items-center space-x-3">
-                          <Badge variant={langInfo.variant}>
-                            {langInfo.flag} {langInfo.display}
-                          </Badge>
-                          <span className="text-sm text-gray-600">{lang.percentage.toFixed(1)}%</span>
-                        </div>
-                        <div className="font-semibold">{(lang.visitors || 0).toLocaleString()}</div>
-                      </div>
-                    );
-                  }) || <p className="text-gray-500">No language data available</p>}
+                <div className="grid gap-6 md:grid-cols-2">
+                  {/* Column 1: Site Language */}
+                  <div>
+                    <h4 className="font-medium text-sm text-gray-900 dark:text-white mb-3">
+                      Site Language Choice
+                    </h4>
+                    <p className="text-xs text-gray-500 mb-3">Which MEMOPYK version they chose</p>
+                    <div className="space-y-2">
+                      {ga4Data.languageBreakdown?.filter(lang => 
+                        lang.language.includes('fr') || lang.language.includes('en')
+                      ).map((lang) => {
+                        const siteInfo = formatSiteLanguage(lang.language);
+                        return (
+                          <div key={`site-${lang.language}`} className="flex items-center justify-between">
+                            <div className="flex items-center space-x-2">
+                              <Badge variant={lang.language.includes('fr') ? 'default' : 'secondary'}>
+                                {siteInfo.flag} {siteInfo.display}
+                              </Badge>
+                              <span className="text-xs text-gray-600">{lang.percentage.toFixed(1)}%</span>
+                            </div>
+                            <div className="text-sm font-semibold">{(lang.visitors || 0).toLocaleString()}</div>
+                          </div>
+                        );
+                      }) || <p className="text-xs text-gray-500">No site language data</p>}
+                    </div>
+                  </div>
+
+                  {/* Column 2: Browser Language */}
+                  <div>
+                    <h4 className="font-medium text-sm text-gray-900 dark:text-white mb-3">
+                      Browser Language
+                    </h4>
+                    <p className="text-xs text-gray-500 mb-3">Visitor's browser language setting</p>
+                    <div className="space-y-2">
+                      {ga4Data.languageBreakdown?.map((lang) => {
+                        const browserInfo = formatLanguage(lang.language);
+                        return (
+                          <div key={`browser-${lang.language}`} className="flex items-center justify-between">
+                            <div className="flex items-center space-x-2">
+                              <Badge variant={browserInfo.variant}>
+                                {browserInfo.flag} {browserInfo.display}
+                              </Badge>
+                              <span className="text-xs text-gray-600">{lang.percentage.toFixed(1)}%</span>
+                            </div>
+                            <div className="text-sm font-semibold">{(lang.visitors || 0).toLocaleString()}</div>
+                          </div>
+                        );
+                      }) || <p className="text-xs text-gray-500">No browser language data</p>}
+                    </div>
+                  </div>
                 </div>
               </CardContent>
             </Card>

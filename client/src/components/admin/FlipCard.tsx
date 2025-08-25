@@ -3,45 +3,138 @@ import { Users, Clock, X } from 'lucide-react';
 import { CountryFlag } from './CountryFlag';
 import { formatFrenchDateTime } from '@/utils/date-format';
 
-// Language formatting utility (copied from CleanGA4Analytics)
+// Comprehensive language mapping with flags (matches CleanGA4Analytics)
+const LANGUAGE_MAP: Record<string, { display: string; flag: string }> = {
+  // Major languages
+  'en': { display: 'English', flag: '🇺🇸' },
+  'english': { display: 'English', flag: '🇺🇸' },
+  'fr': { display: 'Français', flag: '🇫🇷' },
+  'french': { display: 'Français', flag: '🇫🇷' },
+  'es': { display: 'Español', flag: '🇪🇸' },
+  'spanish': { display: 'Español', flag: '🇪🇸' },
+  'de': { display: 'Deutsch', flag: '🇩🇪' },
+  'german': { display: 'Deutsch', flag: '🇩🇪' },
+  'it': { display: 'Italiano', flag: '🇮🇹' },
+  'italian': { display: 'Italiano', flag: '🇮🇹' },
+  'pt': { display: 'Português', flag: '🇵🇹' },
+  'portuguese': { display: 'Português', flag: '🇵🇹' },
+  'ru': { display: 'Русский', flag: '🇷🇺' },
+  'russian': { display: 'Русский', flag: '🇷🇺' },
+  'zh': { display: '中文', flag: '🇨🇳' },
+  'chinese': { display: '中文', flag: '🇨🇳' },
+  'ja': { display: '日本語', flag: '🇯🇵' },
+  'japanese': { display: '日本語', flag: '🇯🇵' },
+  'ko': { display: '한국어', flag: '🇰🇷' },
+  'korean': { display: '한국어', flag: '🇰🇷' },
+  'ar': { display: 'العربية', flag: '🇸🇦' },
+  'arabic': { display: 'العربية', flag: '🇸🇦' },
+  'hi': { display: 'हिन्दी', flag: '🇮🇳' },
+  'hindi': { display: 'हिन्दी', flag: '🇮🇳' },
+  
+  // European languages
+  'no': { display: 'Norwegian', flag: '🇳🇴' },
+  'norwegian': { display: 'Norwegian', flag: '🇳🇴' },
+  'nb': { display: 'Norwegian', flag: '🇳🇴' },
+  'nn': { display: 'Norwegian', flag: '🇳🇴' },
+  'sv': { display: 'Svenska', flag: '🇸🇪' },
+  'swedish': { display: 'Svenska', flag: '🇸🇪' },
+  'da': { display: 'Dansk', flag: '🇩🇰' },
+  'danish': { display: 'Dansk', flag: '🇩🇰' },
+  'nl': { display: 'Nederlands', flag: '🇳🇱' },
+  'dutch': { display: 'Nederlands', flag: '🇳🇱' },
+  'fi': { display: 'Suomi', flag: '🇫🇮' },
+  'finnish': { display: 'Suomi', flag: '🇫🇮' },
+  'pl': { display: 'Polski', flag: '🇵🇱' },
+  'polish': { display: 'Polski', flag: '🇵🇱' },
+  'cs': { display: 'Čeština', flag: '🇨🇿' },
+  'czech': { display: 'Čeština', flag: '🇨🇿' },
+  'sk': { display: 'Slovenčina', flag: '🇸🇰' },
+  'slovak': { display: 'Slovenčina', flag: '🇸🇰' },
+  'hu': { display: 'Magyar', flag: '🇭🇺' },
+  'hungarian': { display: 'Magyar', flag: '🇭🇺' },
+  'ro': { display: 'Română', flag: '🇷🇴' },
+  'romanian': { display: 'Română', flag: '🇷🇴' },
+  'bg': { display: 'Български', flag: '🇧🇬' },
+  'bulgarian': { display: 'Български', flag: '🇧🇬' },
+  'hr': { display: 'Hrvatski', flag: '🇭🇷' },
+  'croatian': { display: 'Hrvatski', flag: '🇭🇷' },
+  'sr': { display: 'Српски', flag: '🇷🇸' },
+  'serbian': { display: 'Српски', flag: '🇷🇸' },
+  'sl': { display: 'Slovenščina', flag: '🇸🇮' },
+  'slovenian': { display: 'Slovenščina', flag: '🇸🇮' },
+  'et': { display: 'Eesti', flag: '🇪🇪' },
+  'estonian': { display: 'Eesti', flag: '🇪🇪' },
+  'lv': { display: 'Latviešu', flag: '🇱🇻' },
+  'latvian': { display: 'Latviešu', flag: '🇱🇻' },
+  'lt': { display: 'Lietuvių', flag: '🇱🇹' },
+  'lithuanian': { display: 'Lietuvių', flag: '🇱🇹' },
+  'el': { display: 'Ελληνικά', flag: '🇬🇷' },
+  'greek': { display: 'Ελληνικά', flag: '🇬🇷' },
+  'tr': { display: 'Türkçe', flag: '🇹🇷' },
+  'turkish': { display: 'Türkçe', flag: '🇹🇷' },
+  'uk': { display: 'Українська', flag: '🇺🇦' },
+  'ukrainian': { display: 'Українська', flag: '🇺🇦' },
+  'be': { display: 'Беларуская', flag: '🇧🇾' },
+  'belarusian': { display: 'Беларуская', flag: '🇧🇾' },
+  'is': { display: 'Íslenska', flag: '🇮🇸' },
+  'icelandic': { display: 'Íslenska', flag: '🇮🇸' },
+  
+  // Asian languages  
+  'th': { display: 'ไทย', flag: '🇹🇭' },
+  'thai': { display: 'ไทย', flag: '🇹🇭' },
+  'vi': { display: 'Tiếng Việt', flag: '🇻🇳' },
+  'vietnamese': { display: 'Tiếng Việt', flag: '🇻🇳' },
+  'id': { display: 'Bahasa Indonesia', flag: '🇮🇩' },
+  'indonesian': { display: 'Bahasa Indonesia', flag: '🇮🇩' },
+  'ms': { display: 'Bahasa Melayu', flag: '🇲🇾' },
+  'malay': { display: 'Bahasa Melayu', flag: '🇲🇾' },
+  'tl': { display: 'Filipino', flag: '🇵🇭' },
+  'filipino': { display: 'Filipino', flag: '🇵🇭' },
+  'my': { display: 'မြန်မာ', flag: '🇲🇲' },
+  'burmese': { display: 'မြန်မာ', flag: '🇲🇲' },
+  'km': { display: 'ខ្មែរ', flag: '🇰🇭' },
+  'khmer': { display: 'ខ្មែរ', flag: '🇰🇭' },
+  'lo': { display: 'ລາວ', flag: '🇱🇦' },
+  'lao': { display: 'ລາວ', flag: '🇱🇦' },
+  
+  // African languages
+  'sw': { display: 'Kiswahili', flag: '🇰🇪' },
+  'swahili': { display: 'Kiswahili', flag: '🇰🇪' },
+  'am': { display: 'አማርኛ', flag: '🇪🇹' },
+  'amharic': { display: 'አማርኛ', flag: '🇪🇹' },
+  'ha': { display: 'Hausa', flag: '🇳🇬' },
+  'hausa': { display: 'Hausa', flag: '🇳🇬' },
+  'yo': { display: 'Yorùbá', flag: '🇳🇬' },
+  'yoruba': { display: 'Yorùbá', flag: '🇳🇬' },
+  'zu': { display: 'isiZulu', flag: '🇿🇦' },
+  'zulu': { display: 'isiZulu', flag: '🇿🇦' },
+  'af': { display: 'Afrikaans', flag: '🇿🇦' },
+  'afrikaans': { display: 'Afrikaans', flag: '🇿🇦' },
+  
+  // Others
+  'he': { display: 'עברית', flag: '🇮🇱' },
+  'hebrew': { display: 'עברית', flag: '🇮🇱' },
+  'fa': { display: 'فارسی', flag: '🇮🇷' },
+  'persian': { display: 'فارسی', flag: '🇮🇷' },
+  'ur': { display: 'اردو', flag: '🇵🇰' },
+  'urdu': { display: 'اردو', flag: '🇵🇰' },
+  'bn': { display: 'বাংলা', flag: '🇧🇩' },
+  'bengali': { display: 'বাংলা', flag: '🇧🇩' }
+};
+
+// Language formatting utility with comprehensive mapping
 const formatLanguage = (langCode: string): { display: string; flag: string } => {
   if (!langCode) return { display: 'Unknown', flag: '🌐' };
   
-  const code = langCode.toLowerCase();
+  const code = langCode.toLowerCase().split(/[-_]/)[0]; // Get base language code
   
-  if (code.includes('fr')) return { display: 'Français', flag: '🇫🇷' };
-  if (code.includes('en')) return { display: 'English', flag: '🇺🇸' };
-  if (code.includes('es')) return { display: 'Español', flag: '🇪🇸' };
-  if (code.includes('de')) return { display: 'Deutsch', flag: '🇩🇪' };
-  if (code.includes('it')) return { display: 'Italiano', flag: '🇮🇹' };
-  if (code.includes('pt')) return { display: 'Português', flag: '🇵🇹' };
-  if (code.includes('zh')) return { display: '中文', flag: '🇨🇳' };
-  if (code.includes('ja')) return { display: '日本語', flag: '🇯🇵' };
-  if (code.includes('ru')) return { display: 'Русский', flag: '🇷🇺' };
-  if (code.includes('ar')) return { display: 'العربية', flag: '🇸🇦' };
+  // Check both language code and full name
+  const mapped = LANGUAGE_MAP[code] || LANGUAGE_MAP[langCode.toLowerCase()];
+  if (mapped) {
+    return mapped;
+  }
   
-  // Handle Norwegian
-  if (code.includes('no') || code.includes('nb') || code.includes('nn')) return { display: 'Norwegian', flag: '🇳🇴' };
-  
-  // Handle Dutch
-  if (code.includes('nl')) return { display: 'Nederlands', flag: '🇳🇱' };
-  
-  // Handle Swedish
-  if (code.includes('sv')) return { display: 'Svenska', flag: '🇸🇪' };
-  
-  // Handle Danish
-  if (code.includes('da')) return { display: 'Dansk', flag: '🇩🇰' };
-  
-  // Handle Polish
-  if (code.includes('pl')) return { display: 'Polski', flag: '🇵🇱' };
-  
-  // Handle Korean
-  if (code.includes('ko')) return { display: '한국어', flag: '🇰🇷' };
-  
-  // Handle Finnish
-  if (code.includes('fi')) return { display: 'Suomi', flag: '🇫🇮' };
-  
-  // Fallback
+  // Fallback for unmapped languages
   const cleaned = langCode.replace(/[-_].*/, '').toLowerCase();
   const capitalized = cleaned.charAt(0).toUpperCase() + cleaned.slice(1);
   return { display: capitalized, flag: '🌐' };
