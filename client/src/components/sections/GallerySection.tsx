@@ -295,7 +295,7 @@ export default function GallerySection() {
     'fr-FR': {
       title: "Galerie",
       subtitle: "Chaque film que nous créons est aussi unique que vos souvenirs.",
-      description: "La galerie présente une sélection de créations échantillons et de prix indicatifs.",
+      description: "La galerie présente une sélection d'échantillons de créations et des prix indicatifs.",
       viewAll: "Voir Toute la Galerie",
       preview: "Aperçu",
       startingFrom: "À partir de",
