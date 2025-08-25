@@ -132,8 +132,9 @@ const formatLanguage = (langCode: string): { display: string; flag: string; vari
 };
 
 // Site language utility (only French or English)
-const formatSiteLanguage = (langCode: string): { display: string; flag: string } => {
-  if (langCode.includes('fr')) return { display: 'Français', flag: '🇫🇷' };
+const formatSiteLanguage = (langName: string): { display: string; flag: string } => {
+  const name = langName.toLowerCase();
+  if (name === 'french' || name.includes('fr')) return { display: 'Français', flag: '🇫🇷' };
   return { display: 'English', flag: '🇺🇸' };
 };
 
@@ -550,14 +551,18 @@ export default function CleanGA4Analytics() {
                     </h4>
                     <p className="text-xs text-gray-500 mb-3">Which MEMOPYK version they chose</p>
                     <div className="space-y-2">
-                      {ga4Data.languageBreakdown?.filter(lang => 
-                        lang.language.includes('fr') || lang.language.includes('en')
-                      ).map((lang) => {
+                      {ga4Data.languageBreakdown?.filter(lang => {
+                        const langName = lang.language.toLowerCase();
+                        // Match GA4 language names: "English", "French" 
+                        return langName === 'english' || langName === 'french' || 
+                               langName.includes('fr') || langName.includes('en');
+                      }).map((lang) => {
                         const siteInfo = formatSiteLanguage(lang.language);
+                        const isFrench = lang.language.toLowerCase() === 'french' || lang.language.toLowerCase().includes('fr');
                         return (
                           <div key={`site-${lang.language}`} className="flex items-center justify-between">
                             <div className="flex items-center space-x-2">
-                              <Badge variant={lang.language.includes('fr') ? 'default' : 'secondary'}>
+                              <Badge variant={isFrench ? 'default' : 'secondary'}>
                                 {siteInfo.flag} {siteInfo.display}
                               </Badge>
                               <span className="text-xs text-gray-600">{lang.percentage.toFixed(1)}%</span>
