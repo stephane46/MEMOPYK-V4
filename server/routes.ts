@@ -4371,36 +4371,41 @@ export async function registerRoutes(app: Express): Promise<void> {
         flag: country.flag || '🌍'
       }));
 
-      // Process language breakdown - handle both object and array formats
+      // Process language breakdown - use GA4 language data directly 
       const languageBreakdown = [];
-      if (dashboardData.languageBreakdown) {
-        let languageData = dashboardData.languageBreakdown;
+      
+      // Use the GA4 language data (localeData) instead of dashboardData.languageBreakdown
+      if (localeData && typeof localeData === 'object') {
+        // localeData should be: { locale: 'fr-FR', plays: 4 } or similar
+        if (localeData.locale && localeData.plays) {
+          const totalVisitors = uniqueVisitors || 1; // Use the total unique visitors as base
+          languageBreakdown.push({
+            language: localeData.locale,
+            visitors: localeData.plays, // This represents locale-specific activity
+            percentage: totalVisitors > 0 ? (localeData.plays / totalVisitors) * 100 : 0
+          });
+        }
+      }
+      
+      // If no GA4 language data, derive from countries as fallback
+      if (languageBreakdown.length === 0 && topCountries.length > 0) {
+        const franceVisitors = topCountries.find(c => c.country === 'France')?.visitors || 0;
+        const otherVisitors = uniqueVisitors - franceVisitors;
         
-        // Handle array format (from some analytics responses)
-        if (Array.isArray(languageData)) {
-          const totalLangVisitors = languageData.reduce((sum: number, item: any) => sum + (item.sessions || 0), 0);
-          for (const item of languageData) {
-            if (item.language && typeof item.sessions === 'number') {
-              languageBreakdown.push({
-                language: item.language,
-                visitors: item.sessions,
-                percentage: totalLangVisitors > 0 ? (item.sessions / totalLangVisitors) * 100 : 0
-              });
-            }
-          }
-        } 
-        // Handle object format
-        else if (typeof languageData === 'object') {
-          const totalLangVisitors = Object.values(languageData).reduce((sum: number, count: any) => sum + (typeof count === 'number' ? count : 0), 0);
-          for (const [lang, count] of Object.entries(languageData)) {
-            if (typeof count === 'number') {
-              languageBreakdown.push({
-                language: lang,
-                visitors: count,
-                percentage: totalLangVisitors > 0 ? (count / totalLangVisitors) * 100 : 0
-              });
-            }
-          }
+        if (franceVisitors > 0) {
+          languageBreakdown.push({
+            language: 'fr-FR',
+            visitors: franceVisitors,
+            percentage: uniqueVisitors > 0 ? (franceVisitors / uniqueVisitors) * 100 : 0
+          });
+        }
+        
+        if (otherVisitors > 0) {
+          languageBreakdown.push({
+            language: 'en-US',
+            visitors: otherVisitors,
+            percentage: uniqueVisitors > 0 ? (otherVisitors / uniqueVisitors) * 100 : 0
+          });
         }
       }
 

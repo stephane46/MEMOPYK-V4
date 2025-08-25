@@ -47,7 +47,7 @@ interface GA4MetricsResponse {
 }
 
 export default function CleanGA4Analytics() {
-  const [dateRange, setDateRange] = useState('7d');
+  const [dateRange, setDateRange] = useState('90d'); // Match the filter default
   const [locale, setLocale] = useState('all');
   const [isRefreshing, setIsRefreshing] = useState(false);
 
