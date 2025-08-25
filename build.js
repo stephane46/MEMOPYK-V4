@@ -15,8 +15,11 @@ try {
   // Step 2: Move Vite build output from dist/public to dist
   console.log('📁 Moving build output to correct location...');
   if (fs.existsSync('dist/public')) {
-    execSync('mv dist/public/* dist/ 2>/dev/null || true', { stdio: 'pipe' });
-    execSync('rmdir dist/public 2>/dev/null || true', { stdio: 'pipe' });
+    // Copy everything from dist/public/* to dist/
+    execSync('cp -r dist/public/* dist/ 2>/dev/null || true', { stdio: 'pipe' });
+    // Remove the now-empty dist/public directory
+    execSync('rm -rf dist/public', { stdio: 'pipe' });
+    console.log('   ✅ Vite build output moved to dist/');
   }
   
   // Step 3: Copy public assets to dist (but preserve built index.html)
