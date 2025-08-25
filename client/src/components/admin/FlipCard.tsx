@@ -1,7 +1,29 @@
 import React, { useState, useEffect } from 'react';
 import { Users, Clock, X } from 'lucide-react';
 import { CountryFlag } from './CountryFlag';
-import { formatFrenchDateTime } from '@/utils/date-format';
+
+// Language formatting utility (copied from CleanGA4Analytics)
+const formatLanguage = (langCode: string): { display: string; flag: string } => {
+  if (!langCode) return { display: 'Unknown', flag: '🌐' };
+  
+  const code = langCode.toLowerCase();
+  
+  if (code.includes('fr')) return { display: 'Français', flag: '🇫🇷' };
+  if (code.includes('en')) return { display: 'English', flag: '🇺🇸' };
+  if (code.includes('es')) return { display: 'Español', flag: '🇪🇸' };
+  if (code.includes('de')) return { display: 'Deutsch', flag: '🇩🇪' };
+  if (code.includes('it')) return { display: 'Italiano', flag: '🇮🇹' };
+  if (code.includes('pt')) return { display: 'Português', flag: '🇵🇹' };
+  if (code.includes('zh')) return { display: '中文', flag: '🇨🇳' };
+  if (code.includes('ja')) return { display: '日本語', flag: '🇯🇵' };
+  if (code.includes('ru')) return { display: 'Русский', flag: '🇷🇺' };
+  if (code.includes('ar')) return { display: 'العربية', flag: '🇸🇦' };
+  
+  // Fallback
+  const cleaned = langCode.replace(/[-_].*/, '').toLowerCase();
+  const capitalized = cleaned.charAt(0).toUpperCase() + cleaned.slice(1);
+  return { display: capitalized, flag: '🌐' };
+};
 
 interface VisitorModalProps {
   frontContent: React.ReactNode;
@@ -243,7 +265,15 @@ export function FlipCard({ frontContent, className = "", visitors = [] }: Visito
                             gap: '8px',
                             flexWrap: 'wrap'
                           }}>
-                            <span>{visitor.language || 'Unknown'}</span>
+                            <span>
+                              {visitor.language ? (
+                                <>
+                                  {formatLanguage(visitor.language).flag} {formatLanguage(visitor.language).display}
+                                </>
+                              ) : (
+                                '🌐 Unknown'
+                              )}
+                            </span>
                             <span style={{ 
                               backgroundColor: visitor.previous_visit ? '#dcfce7' : '#fef3c7',
                               color: visitor.previous_visit ? '#166534' : '#92400e',

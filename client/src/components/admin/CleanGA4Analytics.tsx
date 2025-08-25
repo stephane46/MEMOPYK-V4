@@ -10,6 +10,68 @@ import { BarChart3, TrendingUp, Play, Users, Clock, RefreshCw, Globe, Eye, UserC
 import { CountryFlag } from './CountryFlag';
 import { formatFrenchDateTime } from '@/utils/date-format';
 
+// Language formatting utility
+const formatLanguage = (langCode: string): { display: string; flag: string; variant: 'default' | 'secondary' } => {
+  if (!langCode) return { display: 'Unknown', flag: '🌐', variant: 'secondary' };
+  
+  const code = langCode.toLowerCase();
+  
+  // Handle French variants
+  if (code.includes('fr')) {
+    return { display: 'Français', flag: '🇫🇷', variant: 'default' };
+  }
+  
+  // Handle English variants
+  if (code.includes('en')) {
+    return { display: 'English', flag: '🇺🇸', variant: 'secondary' };
+  }
+  
+  // Handle Spanish
+  if (code.includes('es')) {
+    return { display: 'Español', flag: '🇪🇸', variant: 'secondary' };
+  }
+  
+  // Handle German
+  if (code.includes('de')) {
+    return { display: 'Deutsch', flag: '🇩🇪', variant: 'secondary' };
+  }
+  
+  // Handle Italian
+  if (code.includes('it')) {
+    return { display: 'Italiano', flag: '🇮🇹', variant: 'secondary' };
+  }
+  
+  // Handle Portuguese
+  if (code.includes('pt')) {
+    return { display: 'Português', flag: '🇵🇹', variant: 'secondary' };
+  }
+  
+  // Handle Chinese
+  if (code.includes('zh')) {
+    return { display: '中文', flag: '🇨🇳', variant: 'secondary' };
+  }
+  
+  // Handle Japanese
+  if (code.includes('ja')) {
+    return { display: '日本語', flag: '🇯🇵', variant: 'secondary' };
+  }
+  
+  // Handle Russian
+  if (code.includes('ru')) {
+    return { display: 'Русский', flag: '🇷🇺', variant: 'secondary' };
+  }
+  
+  // Handle Arabic
+  if (code.includes('ar')) {
+    return { display: 'العربية', flag: '🇸🇦', variant: 'secondary' };
+  }
+  
+  // Fallback: capitalize and clean up the language code
+  const cleaned = langCode.replace(/[-_].*/, '').toLowerCase();
+  const capitalized = cleaned.charAt(0).toUpperCase() + cleaned.slice(1);
+  return { display: capitalized, flag: '🌐', variant: 'secondary' };
+};
+
 interface GA4MetricsResponse {
   // Visitor Analytics
   totalViews: number;
@@ -416,17 +478,20 @@ export default function CleanGA4Analytics() {
               </CardHeader>
               <CardContent>
                 <div className="space-y-3">
-                  {ga4Data.languageBreakdown?.map((lang) => (
-                    <div key={lang.language} className="flex items-center justify-between">
-                      <div className="flex items-center space-x-3">
-                        <Badge variant={lang.language.includes('fr') ? 'default' : 'secondary'}>
-                          {lang.language.includes('fr') ? '🇫🇷 Français' : '🇺🇸 English'}
-                        </Badge>
-                        <span className="text-sm text-gray-600">{lang.percentage.toFixed(1)}%</span>
+                  {ga4Data.languageBreakdown?.map((lang) => {
+                    const langInfo = formatLanguage(lang.language);
+                    return (
+                      <div key={lang.language} className="flex items-center justify-between">
+                        <div className="flex items-center space-x-3">
+                          <Badge variant={langInfo.variant}>
+                            {langInfo.flag} {langInfo.display}
+                          </Badge>
+                          <span className="text-sm text-gray-600">{lang.percentage.toFixed(1)}%</span>
+                        </div>
+                        <div className="font-semibold">{(lang.visitors || 0).toLocaleString()}</div>
                       </div>
-                      <div className="font-semibold">{(lang.visitors || 0).toLocaleString()}</div>
-                    </div>
-                  )) || <p className="text-gray-500">No language data available</p>}
+                    );
+                  }) || <p className="text-gray-500">No language data available</p>}
                 </div>
               </CardContent>
             </Card>
@@ -573,7 +638,9 @@ export default function CleanGA4Analytics() {
                             <Languages className="h-4 w-4 text-green-600" />
                             <span className="font-medium text-gray-900 dark:text-white">Language</span>
                           </div>
-                          <Badge variant="outline">{visitor.language}</Badge>
+                          <Badge variant="outline">
+                            {formatLanguage(visitor.language).flag} {formatLanguage(visitor.language).display}
+                          </Badge>
                         </div>
 
                         <div>
@@ -704,7 +771,9 @@ export default function CleanGA4Analytics() {
                             <Languages className="h-4 w-4 text-green-600" />
                             <span className="font-medium text-gray-900 dark:text-white">Language</span>
                           </div>
-                          <Badge variant="outline">{visitor.language}</Badge>
+                          <Badge variant="outline">
+                            {formatLanguage(visitor.language).flag} {formatLanguage(visitor.language).display}
+                          </Badge>
                         </div>
 
                         <div>

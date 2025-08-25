@@ -16637,8 +16637,24 @@
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-25T08:26:05.084Z",
-    "updated_at": "2025-08-25T08:40:01.620Z",
-    "duration": 1106967,
+    "updated_at": "2025-08-25T08:42:31.934Z",
+    "duration": 1107117,
     "region": "Occitanie"
+  },
+  {
+    "id": "d6d4c03d-aa61-4938-9763-6f0b30a7c055",
+    "session_id": "session_1756111390630_lq50f5z9x",
+    "user_id": null,
+    "ip_address": "109.17.150.48",
+    "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36 Edg/139.0.0.0",
+    "referrer": "https://365df2cf-1884-444c-a9e8-235602456363-00-37q39xpqlgvdy.janeway.replit.dev/__replco/workspace_iframe.html?initialPath=%2F&id=%3Ar8mt%3A",
+    "language": "en-US",
+    "country": "Unknown",
+    "city": "Unknown",
+    "page_views": 0,
+    "is_bot": false,
+    "is_test_data": false,
+    "created_at": "2025-08-25T08:43:10.904Z",
+    "updated_at": "2025-08-25T08:43:10.947Z"
   }
 ]
