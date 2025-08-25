@@ -530,9 +530,9 @@ export default function CleanGA4Analytics() {
         <CardContent className="space-y-6">
           {/* Modern Filter Controls */}
           <div className="bg-white dark:bg-slate-800 rounded-2xl p-6 shadow-sm border border-slate-200 dark:border-slate-700">
-            <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-end">
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 items-end">
               {/* Date Range Section */}
-              <div className="lg:col-span-6 space-y-4">
+              <div className="lg:col-span-4 space-y-4">
                 <div className="flex items-center gap-2 mb-3">
                   <Calendar className="h-4 w-4 text-blue-600" />
                   <span className="font-medium text-slate-700 dark:text-slate-300">Date Range</span>
@@ -566,7 +566,7 @@ export default function CleanGA4Analytics() {
               </div>
 
               {/* Language Filter Section */}
-              <div className="lg:col-span-3 space-y-2">
+              <div className="lg:col-span-2 space-y-2">
                 <Label htmlFor="locale" className="text-xs font-medium text-slate-600 dark:text-slate-400 uppercase tracking-wide">
                   Language Filter
                 </Label>
@@ -598,7 +598,7 @@ export default function CleanGA4Analytics() {
               </div>
 
               {/* Action Button */}
-              <div className="lg:col-span-3">
+              <div className="lg:col-span-2">
                 <Button 
                   onClick={handleApplyCustomRange}
                   disabled={!customDateFrom || !customDateTo}
