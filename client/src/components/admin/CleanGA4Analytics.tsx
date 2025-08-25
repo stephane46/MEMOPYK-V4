@@ -530,7 +530,7 @@ export default function CleanGA4Analytics() {
                 type="date"
                 value={customDateFrom}
                 onChange={(e) => setCustomDateFrom(e.target.value)}
-                className="w-full"
+                className="w-36"
               />
             </div>
             <div className="space-y-2">
@@ -540,7 +540,7 @@ export default function CleanGA4Analytics() {
                 type="date"
                 value={customDateTo}
                 onChange={(e) => setCustomDateTo(e.target.value)}
-                className="w-full"
+                className="w-36"
               />
             </div>
             <div className="space-y-2">
@@ -557,13 +557,13 @@ export default function CleanGA4Analytics() {
               </Select>
             </div>
             <div className="space-y-2">
-              <Label>Quick Apply</Label>
+              <Label>Apply Custom Period</Label>
               <Button 
                 onClick={handleApplyCustomRange}
                 disabled={!customDateFrom || !customDateTo}
-                className="w-full bg-orange-500 hover:bg-orange-600 text-white"
+                className="w-full bg-orange-500 hover:bg-orange-600 text-white disabled:bg-gray-400 disabled:cursor-not-allowed"
               >
-                Apply Range
+                Apply Date Range
               </Button>
             </div>
           </div>
@@ -586,13 +586,12 @@ export default function CleanGA4Analytics() {
                 <Button
                   key={filter.value}
                   onClick={() => handleQuickFilter(filter.value)}
-                  variant="outline"
                   size="sm"
-                  className={`${
+                  className={`border transition-colors duration-200 ${
                     dateRange === filter.value
                       ? 'bg-orange-500 text-white border-orange-500 hover:bg-orange-600 font-medium'
-                      : 'hover:bg-gray-100 dark:hover:bg-gray-800'
-                  } transition-colors duration-200`}
+                      : 'bg-white border-gray-300 text-gray-700 hover:bg-gray-50 dark:bg-gray-800 dark:border-gray-600 dark:text-white dark:hover:bg-gray-700'
+                  }`}
                   title={filter.description}
                 >
                   {filter.label}
