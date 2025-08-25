@@ -556,7 +556,7 @@ export default function CleanGA4Analytics() {
                             <span className="font-medium text-gray-900 dark:text-white">Location</span>
                           </div>
                           <div className="flex items-center gap-2">
-                            <CountryFlag country={visitor.country} size={20} />
+                            <CountryFlag country={visitor.country_code || visitor.country} size={20} />
                             <div>
                               <div className="text-sm font-medium">{visitor.country}</div>
                               {visitor.city && visitor.region && (
@@ -687,7 +687,7 @@ export default function CleanGA4Analytics() {
                             <span className="font-medium text-gray-900 dark:text-white">Location</span>
                           </div>
                           <div className="flex items-center gap-2">
-                            <CountryFlag country={visitor.country} size={20} />
+                            <CountryFlag country={visitor.country_code || visitor.country} size={20} />
                             <div>
                               <div className="text-sm font-medium">{visitor.country}</div>
                               {visitor.city && visitor.region && (

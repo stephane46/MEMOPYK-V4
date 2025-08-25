@@ -304,13 +304,10 @@ export function CountryFlag({ country, className = "", size = 20 }: CountryFlagP
         return;
       }
 
-      console.log(`🏁 CountryFlag: Processing country "${country}"`);
-
       // Try direct ISO code first - this should work for FR, US, GB, IT, ES from GA4
       let code = country.toUpperCase();
       
       if (code.length === 2) {
-        console.log(`🏁 CountryFlag: Using direct ISO code "${code}"`);
         setCountryCode(code);
         checkFlagExists(code);
         return;
@@ -319,7 +316,6 @@ export function CountryFlag({ country, className = "", size = 20 }: CountryFlagP
       // Try country name mapping
       code = countryNameToCode[country] || countryNameToCode[country.toLowerCase()];
       if (code) {
-        console.log(`🏁 CountryFlag: Mapped "${country}" to "${code}"`);
         setCountryCode(code);
         checkFlagExists(code);
         return;
@@ -333,29 +329,24 @@ export function CountryFlag({ country, className = "", size = 20 }: CountryFlagP
       
       if (fuzzyMatch) {
         code = countryNameToCode[fuzzyMatch];
-        console.log(`🏁 CountryFlag: Fuzzy matched "${country}" via "${fuzzyMatch}" to "${code}"`);
         setCountryCode(code);
         checkFlagExists(code);
         return;
       }
 
-      console.log(`🏁 CountryFlag: No mapping found for "${country}"`);
       setCountryCode(null);
       setIsLoading(false);
     }
 
     function checkFlagExists(code: string) {
       const flagPath = `/flags/${code.toLowerCase()}.svg`;
-      console.log(`🏁 CountryFlag: Checking flag exists at "${flagPath}"`);
       
       const img = new Image();
       img.onload = () => {
-        console.log(`🏁 CountryFlag: ✅ Flag found for "${code}"`);
         setFlagSvgExists(true);
         setIsLoading(false);
       };
       img.onerror = () => {
-        console.log(`🏁 CountryFlag: ❌ Flag NOT found for "${code}"`);
         setFlagSvgExists(false);
         setIsLoading(false);
       };
