@@ -471,32 +471,24 @@ export function WhyMemopykManagement() {
                   </div>
                 )}
 
-                {/* Action Buttons - ALWAYS VISIBLE AND PROMINENT */}
-                <div className="sticky bottom-0 bg-white p-4 border-t-2 border-memopyk-orange rounded-b-lg">
-                  <div className="flex justify-end space-x-2">
-                    <Button variant="outline" onClick={handleCancel}>
-                      Cancel
-                    </Button>
-                    <Button 
-                      onClick={handleSaveCard}
-                      disabled={!formData.titleFr || !formData.titleEn}
-                      className="bg-memopyk-orange hover:bg-memopyk-orange/90 text-white min-w-[140px] h-12 text-lg font-semibold shadow-lg"
-                      style={{ display: 'flex !important', visibility: 'visible !important' }}
-                    >
-                      💾 {editingCard ? 'UPDATE CARD' : 'CREATE CARD'}
-                    </Button>
-                  </div>
+                {/* Action Buttons */}
+                <div className="flex justify-end space-x-3 pt-6 border-t border-gray-200">
+                  <Button 
+                    variant="outline" 
+                    onClick={handleCancel}
+                    className="px-6"
+                  >
+                    Cancel
+                  </Button>
+                  <Button 
+                    onClick={handleSaveCard}
+                    disabled={!formData.titleFr || !formData.titleEn}
+                    className="bg-memopyk-orange hover:bg-memopyk-orange/90 text-white px-6"
+                  >
+                    {editingCard ? 'Update Card' : 'Create Card'}
+                  </Button>
                 </div>
 
-                {/* Debug info - Always visible for debugging */}
-                <div className="mt-4 p-2 bg-gray-100 rounded text-xs text-gray-600">
-                  Form state: {isCreating ? 'Creating' : editingCard ? 'Editing' : 'None'} | 
-                  isCreating: {isCreating.toString()} | 
-                  editingCard: {editingCard ? editingCard.id : 'null'} |
-                  formData keys: {Object.keys(formData).join(', ')} |
-                  Show form: {(isCreating || editingCard) ? 'YES' : 'NO'} |
-                  Button enabled: {(!formData.titleFr || !formData.titleEn) ? 'NO' : 'YES'}
-                </div>
               </CardContent>
             </Card>
           )}
