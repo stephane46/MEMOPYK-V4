@@ -620,12 +620,12 @@ export default function CleanGA4Analytics() {
               </div>
               <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3">
                 {[
-                  { value: '1d', label: 'Today', description: 'Last 24 hours', icon: '📅' },
-                  { value: '7d', label: '7 Days', description: 'Past week', icon: '📊' },
-                  { value: '30d', label: '30 Days', description: 'Past month', icon: '📈' },
-                  { value: '90d', label: '90 Days', description: 'Past quarter', icon: '📉' },
-                  { value: '365d', label: '1 Year', description: 'Past 12 months', icon: '📋' },
-                  { value: 'custom', label: 'Custom', description: 'User-defined period', icon: '⚙️' }
+                  { value: '1d', label: 'Today', description: 'Last 24 hours', visual: '1D' },
+                  { value: '7d', label: '7 Days', description: 'Past week', visual: '7D' },
+                  { value: '30d', label: '30 Days', description: 'Past month', visual: '30D' },
+                  { value: '90d', label: '90 Days', description: 'Past quarter', visual: '90D' },
+                  { value: '365d', label: '1 Year', description: 'Past 12 months', visual: '1Y' },
+                  { value: 'custom', label: 'Custom', description: 'User-defined period', visual: '••' }
                 ].map((filter) => (
                   <Button
                     key={filter.value}
@@ -638,7 +638,7 @@ export default function CleanGA4Analytics() {
                     }`}
                     title={filter.description}
                   >
-                    <span className="text-lg">{filter.icon}</span>
+                    <span className="text-lg font-bold text-slate-600 dark:text-slate-400">{filter.visual}</span>
                     <span className="text-xs font-medium">{filter.label}</span>
                   </Button>
                 ))}
