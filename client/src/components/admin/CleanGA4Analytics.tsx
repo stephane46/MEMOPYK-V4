@@ -1355,7 +1355,7 @@ export default function CleanGA4Analytics() {
               </CardHeader>
               <CardContent className="space-y-6">
                 {/* Current Admin IP Detection */}
-                {currentAdminIp && (
+                {currentAdminIp && currentAdminIp !== "0.0.0.0" ? (
                   <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-4">
                     <div className="flex items-center justify-between mb-2">
                       <div className="flex items-center gap-2">
@@ -1405,6 +1405,42 @@ export default function CleanGA4Analytics() {
                     </div>
                     <p className="text-xs text-blue-600 dark:text-blue-400">
                       Click "Exclude Current IP" to immediately exclude this IP, or "Quick Exclude" to pre-fill the form below.
+                    </p>
+                  </div>
+                ) : (
+                  <div className="bg-orange-50 dark:bg-orange-900/20 border border-orange-200 dark:border-orange-800 rounded-lg p-4">
+                    <div className="flex items-center justify-between mb-2">
+                      <div className="flex items-center gap-2">
+                        <Settings className="h-4 w-4 text-orange-600" />
+                        <span className="font-medium text-orange-900 dark:text-orange-300">Current IP Detection</span>
+                      </div>
+                      <Button
+                        size="sm"
+                        variant="destructive"
+                        onClick={() => {
+                          const ipToExclude = "109.17.150.48"; // Your known IP from session logs
+                          addExcludedIpMutation.mutate({ 
+                            ipAddress: ipToExclude, 
+                            comment: "Admin - My Current IP (Manual)" 
+                          });
+                        }}
+                        disabled={addExcludedIpMutation.isPending}
+                        className="bg-red-600 hover:bg-red-700 text-white"
+                        data-testid="button-exclude-current-ip-manual"
+                      >
+                        {addExcludedIpMutation.isPending ? (
+                          <RefreshCw className="h-3 w-3 animate-spin mr-1" />
+                        ) : (
+                          <Ban className="h-3 w-3 mr-1" />
+                        )}
+                        Exclude My IP (109.17.150.48)
+                      </Button>
+                    </div>
+                    <div className="font-mono text-sm text-orange-800 dark:text-orange-400 mb-2">
+                      Auto-detection: {currentAdminIp || "Failed"} → Using known IP: 109.17.150.48
+                    </div>
+                    <p className="text-xs text-orange-600 dark:text-orange-400">
+                      IP auto-detection isn't working, but you can still exclude your known IP address from the session logs.
                     </p>
                   </div>
                 )}

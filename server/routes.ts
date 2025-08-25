@@ -2093,6 +2093,8 @@ export async function registerRoutes(app: Express): Promise<void> {
       // Use EXACT same IP detection logic as session tracking for consistency
       let finalIP = '0.0.0.0';
       
+      console.log('🌍 [CURRENT-IP] Headers:', req.headers['x-forwarded-for'], 'req.ip:', req.ip);
+      
       if (req.headers['x-forwarded-for']) {
         const forwardedIps = Array.isArray(req.headers['x-forwarded-for']) 
           ? req.headers['x-forwarded-for'] 
@@ -2108,6 +2110,18 @@ export async function registerRoutes(app: Express): Promise<void> {
       } else if (req.socket?.remoteAddress && req.socket.remoteAddress !== '127.0.0.1') {
         finalIP = req.socket.remoteAddress;
         console.log('🌍 [CURRENT-IP] Using socket.remoteAddress:', finalIP);
+      } else {
+        // Fallback: try to get from recent sessions as they have the correct IP
+        console.log('🌍 [CURRENT-IP] Using fallback method - getting from recent sessions');
+        try {
+          const recentSessions = await hybridStorage.getRecentAnalyticsSessions(1);
+          if (recentSessions.length > 0) {
+            finalIP = recentSessions[0].ip_address;
+            console.log('🌍 [CURRENT-IP] Found IP from recent session:', finalIP);
+          }
+        } catch (fallbackError) {
+          console.log('🌍 [CURRENT-IP] Fallback failed:', fallbackError);
+        }
       }
       
       console.log('🌍 [CURRENT-IP] FINAL CURRENT IP DETECTED:', finalIP);
