@@ -105,7 +105,7 @@ export function SimpleHeroVideoSection() {
           textAlign: 'center',
           margin: 0,
           padding: 0,
-          fontSize: isMobileSize ? '20px' : 'inherit', // Use consistent size
+          fontSize: isMobileSize ? '28px' : 'inherit', // Larger mobile font
           lineHeight: isMobileSize ? '1.0' : 'inherit'
         }}
       >
