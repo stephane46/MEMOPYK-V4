@@ -230,9 +230,11 @@ export function WhyMemopykManagement() {
   };
 
   const handleEditCard = (card: WhyMemopykCard) => {
+    console.log('🖊️ Editing card:', card);
     setEditingCard(card);
     setIsCreating(false);
     setFormData({ ...card });
+    console.log('📝 Form data set for editing:', { ...card });
   };
 
   const handleCancel = () => {
@@ -484,15 +486,15 @@ export function WhyMemopykManagement() {
                   </Button>
                 </div>
 
-                {/* Debug info */}
-                {(isCreating || editingCard) && (
-                  <div className="mt-4 p-2 bg-gray-100 rounded text-xs text-gray-600">
-                    Form state: {isCreating ? 'Creating' : 'Editing'} | 
-                    TitleFr: {formData.titleFr ? '✓' : '✗'} | 
-                    TitleEn: {formData.titleEn ? '✓' : '✗'} |
-                    Button: {(!formData.titleFr || !formData.titleEn) ? 'Disabled' : 'Enabled'}
-                  </div>
-                )}
+                {/* Debug info - Always visible for debugging */}
+                <div className="mt-4 p-2 bg-gray-100 rounded text-xs text-gray-600">
+                  Form state: {isCreating ? 'Creating' : editingCard ? 'Editing' : 'None'} | 
+                  isCreating: {isCreating.toString()} | 
+                  editingCard: {editingCard ? editingCard.id : 'null'} |
+                  formData keys: {Object.keys(formData).join(', ')} |
+                  Show form: {(isCreating || editingCard) ? 'YES' : 'NO'} |
+                  Button enabled: {(!formData.titleFr || !formData.titleEn) ? 'NO' : 'YES'}
+                </div>
               </CardContent>
             </Card>
           )}
