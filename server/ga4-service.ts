@@ -134,6 +134,33 @@ export async function qTopLanguages(start: string, end: string) {
   return languages;
 }
 
+export async function qReturningUsers(start: string, end: string) {
+  console.log(`🎯 qReturningUsers CALLED: ${start} to ${end} - Getting returning visitor count`);
+  
+  const [res] = await client.runReport({
+    property: PROPERTY,
+    dateRanges: [{ startDate: start, endDate: end }],
+    metrics: [{ name: "activeUsers" }],
+    dimensions: [{ name: "newVsReturning" }]
+  });
+
+  console.log(`🎯 qReturningUsers RAW RESPONSE:`, JSON.stringify(res.rows, null, 2));
+
+  let returningUsers = 0;
+  for (const row of res.rows || []) {
+    const userType = row.dimensionValues?.[0]?.value;
+    const count = Number(row.metricValues?.[0]?.value || 0);
+    
+    if (userType === 'returning') {
+      returningUsers = count;
+      break;
+    }
+  }
+
+  console.log(`🎯 qReturningUsers RESULT: ${returningUsers} returning users`);
+  return returningUsers;
+}
+
 /* =============  TOP VIDEOS TABLE  ============= */
 
 export async function qPlaysByVideo(start: string, end: string, locale?: string) {

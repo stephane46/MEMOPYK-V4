@@ -17,6 +17,7 @@ import {
   qCompletes,
   qWatchTimeTotal,
   qTopLanguages,
+  qReturningUsers,
   qPlaysByVideo,
   qWatchTimeByVideo,
   qProgressByVideo,
@@ -4348,19 +4349,20 @@ export async function registerRoutes(app: Express): Promise<void> {
       // Use the same date variables from above (already defined in try block)
       // const endDate and startDate already defined above
 
-      // Fetch GA4 video metrics in parallel
-      const [plays, completions, watchTimeSeconds, topVideos, languageData] = await Promise.all([
+      // Fetch GA4 video metrics and returning users in parallel
+      const [plays, completions, watchTimeSeconds, topVideos, languageData, ga4ReturningUsers] = await Promise.all([
         qPlays(startDate, endDate, locale),
         qCompletes(startDate, endDate, locale), 
         qWatchTimeTotal(startDate, endDate, locale),
         qPlaysByVideo(startDate, endDate, locale),
-        qTopLanguages(startDate, endDate)
+        qTopLanguages(startDate, endDate),
+        qReturningUsers(startDate, endDate)
       ]);
 
       // Process visitor analytics - handle nested data structure
       const totalViews = dashboardData.overview?.totalViews || dashboardData.totalViews || 0;
       const uniqueVisitors = dashboardData.overview?.uniqueVisitors || dashboardData.uniqueVisitors || 0;  
-      const returnVisitors = dashboardData.overview?.returningVisitors || dashboardData.returningVisitors || 0;
+      const returnVisitors = ga4ReturningUsers || dashboardData.overview?.returningVisitors || dashboardData.returningVisitors || 0;
       const averageSessionDuration = dashboardData.overview?.averageSessionDuration || dashboardData.averageSessionDuration || 0;
       const activeVisitors = activityData.activities?.filter(a => Date.now() - new Date(a.lastActivity).getTime() < 5 * 60 * 1000).length || 0;
 
