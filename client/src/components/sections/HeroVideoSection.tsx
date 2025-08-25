@@ -247,12 +247,12 @@ export function HeroVideoSection() {
             {(() => {
               // Use separate mobile and desktop fields for responsive display
               const mobileText = language === 'fr-FR' 
-                ? (activeHeroText?.title_mobile_fr || activeHeroText?.title_fr || "Nous transformons\nvos photos et vidéos personnelles\nen films souvenirs inoubliables!!")
-                : (activeHeroText?.title_mobile_en || activeHeroText?.title_en || "We transform\nyour personal photos and videos\ninto unforgettable souvenir film!!");
+                ? (activeHeroText?.title_mobile_fr || activeHeroText?.title_fr || "Nous transformons\nvos photos et vidéos personnelles\nen films souvenirs inoubliables")
+                : (activeHeroText?.title_mobile_en || activeHeroText?.title_en || "We transform\nyour personal photos and videos\ninto unforgettable souvenir film");
                 
               const desktopText = language === 'fr-FR' 
-                ? (activeHeroText?.title_desktop_fr || activeHeroText?.title_fr || "Nous transformons vos photos et vidéos personnelles\nen films souvenirs inoubliables!!")
-                : (activeHeroText?.title_desktop_en || activeHeroText?.title_en || "We transform your personal photos and videos\ninto unforgettable souvenir films!!");
+                ? (activeHeroText?.title_desktop_fr || activeHeroText?.title_fr || "Nous transformons vos photos et vidéos personnelles\nen films souvenirs inoubliables")
+                : (activeHeroText?.title_desktop_en || activeHeroText?.title_en || "We transform your personal photos and videos\ninto unforgettable souvenir films");
               
               // Process mobile text
               let processedMobileText = mobileText;
