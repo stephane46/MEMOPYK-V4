@@ -9,10 +9,10 @@ import { log } from "./vite";
 import { testDatabaseConnection } from "./database";
 import { VideoCache } from "./video-cache";
 
-console.log("=== MEMOPYK Server Starting v1.0.50-route-entry-debug ===");
-console.log("🔧 ROUTE DEBUGGING: Comprehensive request interception v1.0.50");
-console.log("🎬 Gallery video routing debug active - every request logged");
+const VERSION = "1.0.52-deploy-fix";
+console.log(`=== MEMOPYK Server Starting ${VERSION} ===`);
 console.log("NODE_ENV:", process.env.NODE_ENV);
+console.log("PORT:", process.env.PORT || "5000");
 console.log(
   "DATABASE_URL:",
   process.env.DATABASE_URL ? "✅ Available" : "❌ Missing"
@@ -22,11 +22,16 @@ console.log(
   process.env.SUPABASE_URL ? "✅ Available" : "❌ Missing"
 );
 
-// Test database connection
+// Initialize video cache system for production gallery video support
+console.log("🎬 Initializing video cache system...");
+const videoCache = new VideoCache();
+console.log("✅ Video cache system initialized");
+
+// Test database connection (non-blocking)
 testDatabaseConnection()
   .then((success) => {
     if (success) {
-      console.log("✅ Database connectivity confirmed - Phase 2.2 complete");
+      console.log("✅ Database connectivity confirmed");
     } else {
       console.log("❌ Database connection test failed");
     }
@@ -34,11 +39,6 @@ testDatabaseConnection()
   .catch((err) => {
     console.error("❌ Database test error:", err);
   });
-
-// Initialize video cache system for production gallery video support
-console.log("🎬 ROUTE DEBUGGING v1.0.50 - Initializing video cache system...");
-const videoCache = new VideoCache();
-console.log("✅ Video cache system initialized - comprehensive request logging active");
 
 const app = express();
 const server = createServer(app);
@@ -245,13 +245,24 @@ app.use((req, res, next) => {
   server.keepAliveTimeout = 5000; // Keep alive timeout
   
   server.listen(port, "0.0.0.0", () => {
-    log(`MEMOPYK Server running on port ${port}`);
-    log(`Health check: http://localhost:${port}/`);
-    log(`API endpoints: http://localhost:${port}/api`);
+    console.log(`🚀 MEMOPYK Server running on port ${port}`);
+    console.log(`📡 Health check: http://localhost:${port}/health`);
+    console.log(`🔗 API endpoints: http://localhost:${port}/api`);
     if (process.env.NODE_ENV !== "production") {
-      log(`Dev frontend: http://localhost:${port} (proxied to Vite)`);
+      console.log(`🔄 Dev frontend: http://localhost:${port} (proxied to Vite)`);
     } else {
-      log(`Frontend: http://localhost:${port}`);
+      console.log(`📦 Frontend: http://localhost:${port}`);
     }
+    console.log(`✅ ${VERSION} deployment ready!`);
+  });
+  
+  // Handle deployment errors gracefully
+  server.on('error', (err: any) => {
+    if (err.code === 'EADDRINUSE') {
+      console.error(`❌ Port ${port} is already in use`);
+    } else {
+      console.error('❌ Server error:', err);
+    }
+    process.exit(1);
   });
 })();
