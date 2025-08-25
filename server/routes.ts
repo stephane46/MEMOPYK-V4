@@ -4273,6 +4273,10 @@ export async function registerRoutes(app: Express): Promise<void> {
       const rangeDays = parseInt(range.replace('d', ''));
       const dateFrom = new Date(Date.now() - (rangeDays * 24 * 60 * 60 * 1000)).toISOString();
       const dateTo = new Date().toISOString();
+      
+      // Convert to GA4 date format (YYYY-MM-DD) for all functions
+      const startDate = dateFrom.split('T')[0];
+      const endDate = dateTo.split('T')[0];
 
       // Call the REAL analytics functions directly (same ones your dashboard uses!)
       let dashboardData = {};
@@ -4289,8 +4293,6 @@ export async function registerRoutes(app: Express): Promise<void> {
         
         // Get real GA4 data from memopyk.com (using available functions)
         // Fix: Convert ISO dates to YYYY-MM-DD format for GA4
-        const startDate = dateFrom.split('T')[0];
-        const endDate = dateTo.split('T')[0];
         
         const [ga4Users, ga4PageViews, ga4Countries, ga4Languages] = await Promise.all([
           qUniqueUsers(startDate, endDate, locale).catch((e: any) => { console.log('GA4 users error:', e.message); return 0; }),
@@ -4333,17 +4335,16 @@ export async function registerRoutes(app: Express): Promise<void> {
         
         console.log('✅ COMPREHENSIVE: Got REAL activity data:', activityData.activities?.length || 0, 'recent activities');
         
-      } catch (error) {
+      } catch (error: any) {
         console.error('❌ COMPREHENSIVE: Failed to get real analytics data:', error.message);
+        console.error('❌ COMPREHENSIVE: Full error stack:', error);
         // Show the error but don't use fake fallback data
         dashboardData = {};
         activityData = { activities: [] };
       }
 
-      // Convert range to GA4 date strings
-      const endDate = new Date().toISOString().split('T')[0];
-      const startDate = new Date(Date.now() - (rangeDays * 24 * 60 * 60 * 1000))
-        .toISOString().split('T')[0];
+      // Use the same date variables from above (already defined in try block)
+      // const endDate and startDate already defined above
 
       // Fetch GA4 video metrics in parallel
       const [plays, completions, watchTimeSeconds, topVideos, localeData] = await Promise.all([
