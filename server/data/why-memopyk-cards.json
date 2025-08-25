@@ -53,15 +53,15 @@
   },
   {
     "id": "security",
-    "title_en": "Security",
-    "title_fr": "Sécurité",
-    "description_en": "Your personal data is fully protected. Secure storage, encrypted transfers, and deletion after delivery guarantee absolute confidentiality of your memories.",
-    "description_fr": "Vos données personnelles sont entièrement protégées. Stockage sécurisé, transferts chiffrés et suppression après livraison garantissent la confidentialité absolue de vos souvenirs.",
+    "title_en": "EXPERTISE",
+    "title_fr": "EXPERTISE",
+    "description_en": "<p><strong>Creating your film is our line of work, executed with passion</strong></p><ul><li>Experienced in handling all types of visual media</li><li>Advice and guidance</li><li>xxx</li></ul><p><br></p>",
+    "description_fr": "<p><strong>Créer votre film est notre métier, exercé avec passion</strong></p><ul><li>Expérimenté dans le travail avec tous supports visuels</li><li>Conseils et orientations dans la création du film</li><li>Xxx</li></ul><p><br></p>",
     "icon_name": "Shield",
     "gradient": "from-memopyk-navy/30 to-memopyk-dark-blue/20",
     "order_index": 4,
     "is_active": true,
     "created_at": "2025-08-25T14:39:07.739Z",
-    "updated_at": "2025-08-25T14:39:07.739Z"
+    "updated_at": "2025-08-25T16:02:30.417Z"
   }
 ]

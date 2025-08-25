@@ -18243,8 +18243,8 @@
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-25T15:55:20.197Z",
-    "updated_at": "2025-08-25T16:00:48.597Z",
-    "duration": 1133413
+    "updated_at": "2025-08-25T16:02:48.946Z",
+    "duration": 1133533
   },
   {
     "id": "837fbc63-db3a-425c-a6de-0ae3d00010f7",
@@ -18276,8 +18276,8 @@
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-25T15:56:19.439Z",
-    "updated_at": "2025-08-25T16:00:20.599Z",
-    "duration": 716791
+    "updated_at": "2025-08-25T16:02:22.643Z",
+    "duration": 716913
   },
   {
     "id": "a106525e-b2f7-4d7d-a19c-e0e45bd6b82a",
@@ -18293,7 +18293,23 @@
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-25T15:58:02.340Z",
-    "updated_at": "2025-08-25T16:00:33.820Z",
-    "duration": 1038278
+    "updated_at": "2025-08-25T16:02:34.877Z",
+    "duration": 1038399
+  },
+  {
+    "id": "7ec01c73-13c0-4ece-bf0e-0d55645254e5",
+    "session_id": "session_1756137756773_i2syj02oa",
+    "user_id": null,
+    "ip_address": "109.17.150.48",
+    "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36",
+    "referrer": "",
+    "language": "fr-FR",
+    "country": "Unknown",
+    "city": "Unknown",
+    "page_views": 0,
+    "is_bot": false,
+    "is_test_data": false,
+    "created_at": "2025-08-25T16:02:36.807Z",
+    "updated_at": "2025-08-25T16:02:36.850Z"
   }
 ]
