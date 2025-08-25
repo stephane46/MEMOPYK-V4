@@ -17600,5 +17600,22 @@
     "created_at": "2025-08-25T13:24:09.349Z",
     "updated_at": "2025-08-25T13:36:22.936Z",
     "duration": 708153
+  },
+  {
+    "id": "a89668b2-650f-4d19-b0c1-a66491575669",
+    "session_id": "session_1756129077420_yz5tegw88",
+    "user_id": null,
+    "ip_address": "109.17.150.48",
+    "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36 Edg/139.0.0.0",
+    "referrer": "https://365df2cf-1884-444c-a9e8-235602456363-00-37q39xpqlgvdy.janeway.replit.dev/en-US",
+    "language": "en-US",
+    "country": "Unknown",
+    "city": "Unknown",
+    "page_views": 0,
+    "is_bot": false,
+    "is_test_data": false,
+    "created_at": "2025-08-25T13:37:57.456Z",
+    "updated_at": "2025-08-25T13:40:27.871Z",
+    "duration": 708398
   }
 ]
