@@ -173,12 +173,12 @@ export async function qSiteLanguageChoice(start: string, end: string) {
       {
         language: "French",
         visitors: frenchViews,
-        percentage: totalViews > 0 ? (frenchViews / totalViews) * 100 : 0
+        percentage: totalViews > 0 ? Math.round((frenchViews / totalViews) * 100) : 0
       },
       {
         language: "English", 
         visitors: englishViews,
-        percentage: totalViews > 0 ? (englishViews / totalViews) * 100 : 0
+        percentage: totalViews > 0 ? Math.round((englishViews / totalViews) * 100) : 0
       }
     ].filter((lang: any) => lang.visitors > 0);
 
