@@ -733,7 +733,7 @@ export default function CleanGA4Analytics() {
         <Card>
           <CardContent className="flex items-center justify-center py-8">
             <RefreshCw className="h-6 w-6 animate-spin mr-2" />
-            <span>Loading GA4 data...</span>
+            <span>Loading...</span>
           </CardContent>
         </Card>
       )}
@@ -1105,7 +1105,7 @@ export default function CleanGA4Analytics() {
                   color: '#ffffff'
                 }}>
                   <Users style={{ width: '24px', height: '24px' }} />
-                  Recent Visitors Details
+                  Unique Visitors
                 </div>
                 <button
                   onClick={handleModalClose}
@@ -1238,7 +1238,7 @@ export default function CleanGA4Analytics() {
                   color: '#ffffff'
                 }}>
                   <UserCheck style={{ width: '24px', height: '24px' }} />
-                  Returning Visitors Details
+                  Return Visitors
                 </div>
                 <button
                   onClick={handleReturningModalClose}
@@ -1492,7 +1492,7 @@ export default function CleanGA4Analytics() {
                   {settingsLoading ? (
                     <div className="text-center py-4">
                       <RefreshCw className="h-6 w-6 animate-spin mx-auto mb-2" />
-                      <span>Loading excluded IPs...</span>
+                      <span>Loading...</span>
                     </div>
                   ) : settings?.excludedIps && settings.excludedIps.length > 0 ? (
                     <div className="space-y-3">
@@ -1596,7 +1596,7 @@ export default function CleanGA4Analytics() {
                   {activeIpsLoading ? (
                     <div className="text-center py-4">
                       <RefreshCw className="h-6 w-6 animate-spin mx-auto mb-2" />
-                      <span>Loading active IPs...</span>
+                      <span>Loading...</span>
                     </div>
                   ) : activeIps && activeIps.length > 0 ? (
                     <div className="space-y-3">

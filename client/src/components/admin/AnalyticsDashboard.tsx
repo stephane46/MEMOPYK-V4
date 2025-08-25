@@ -965,7 +965,7 @@ export function AnalyticsDashboard() {
             <div>
               <h4 className="font-medium mb-4">Active Viewer IPs</h4>
               {activeIpsLoading ? (
-                <div className="text-center py-4">Loading...</div>
+                <div className="text-center py-4">Loading active IPs...</div>
               ) : activeIps?.length ? (
                 <div className="space-y-2 max-h-60 overflow-y-auto">
                   {activeIps.map((ip) => (
@@ -1051,7 +1051,7 @@ export function AnalyticsDashboard() {
                 </div>
               ) : (
                 <div className="p-4 border rounded-lg bg-gray-50">
-                  <p className="text-sm text-muted-foreground">Loading...</p>
+                  <p className="text-sm text-muted-foreground">Loading current IP...</p>
                 </div>
               )}
             </div>
@@ -1096,7 +1096,7 @@ export function AnalyticsDashboard() {
             <div>
               <h4 className="font-medium mb-4">Excluded IPs</h4>
               {settingsLoading ? (
-                <div className="text-center py-4">Loading...</div>
+                <div className="text-center py-4">Loading excluded IPs...</div>
               ) : settings?.excludedIps?.length ? (
                 <div className="space-y-3">
                   {settings.excludedIps.map((item: any, index: number) => {
