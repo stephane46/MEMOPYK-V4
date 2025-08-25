@@ -295,7 +295,7 @@ export default function GallerySection() {
     'fr-FR': {
       title: "Galerie",
       subtitle: "Chaque film que nous créons est aussi unique que vos souvenirs.",
-      description: "Ne laissez pas vos souvenirs disparaître ; révélez-les à travers un film personnel, unique et émouvant, créé grâce à une expertise professionnelle et une passion pour la mise en valeur de vos plus beaux moments.",
+      description: "La galerie présente une sélection de créations échantillons et de prix indicatifs.",
       viewAll: "Voir Toute la Galerie",
       preview: "Aperçu",
       startingFrom: "À partir de",
@@ -307,7 +307,7 @@ export default function GallerySection() {
     'en-US': {
       title: "Gallery",
       subtitle: "Every film we create is as unique as your memories.",
-      description: "Don't let your memories disappear; reveal them through a personal, unique, and moving film, crafted with professional expertise and a passion for showcasing your most beautiful moments.",
+      description: "The gallery presents a selection of sample creations and indicative pricing.",
       viewAll: "View Full Gallery",
       preview: "Preview",
       startingFrom: "Starting from",
