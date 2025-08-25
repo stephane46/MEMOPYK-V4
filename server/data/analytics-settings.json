@@ -17,12 +17,12 @@
     },
     {
       "ip": "109.17.150.48",
-      "comment": "Current admin session",
-      "added_at": "2025-08-25T12:29:01.348Z"
+      "comment": "Notre IP à Capdenac",
+      "added_at": "2025-08-25T12:37:57.753Z"
     }
   ],
   "completionThreshold": 75,
   "trackingEnabled": true,
   "dataRetentionDays": 90,
-  "updated_at": "2025-08-25T12:29:01.747Z"
+  "updated_at": "2025-08-25T12:37:57.961Z"
 }

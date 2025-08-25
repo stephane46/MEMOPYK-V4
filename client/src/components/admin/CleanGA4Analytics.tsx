@@ -372,6 +372,7 @@ export default function CleanGA4Analytics() {
       apiRequest(`/api/analytics/exclude-ip/${encodeURIComponent(ipAddress)}/comment`, 'PATCH', { comment }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['/api/analytics/settings'] });
+      refetchSettings();
       setEditingComment(null);
       setTempComment('');
       toast({
@@ -1578,7 +1579,20 @@ export default function CleanGA4Analytics() {
 
                 {/* Active Viewer IPs */}
                 <div className="space-y-4">
-                  <h3 className="text-lg font-semibold">Active Viewer IPs</h3>
+                  <div className="flex items-center justify-between">
+                    <h3 className="text-lg font-semibold">Active Viewer IPs</h3>
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      onClick={() => {
+                        refetchActiveIps();
+                      }}
+                      className="flex items-center gap-1"
+                    >
+                      <RefreshCw className="h-3 w-3" />
+                      Refresh Active IPs
+                    </Button>
+                  </div>
                   {activeIpsLoading ? (
                     <div className="text-center py-4">
                       <RefreshCw className="h-6 w-6 animate-spin mx-auto mb-2" />

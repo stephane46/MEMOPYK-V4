@@ -2090,53 +2090,9 @@ export async function registerRoutes(app: Express): Promise<void> {
   // Current IP Detection - GET current admin IP address
   app.get("/api/analytics/current-ip", async (req, res) => {
     try {
-      // Use EXACT same IP detection logic as session tracking for consistency
-      let finalIP = '0.0.0.0';
-      
-      console.log('🌍 [CURRENT-IP] Headers:', req.headers['x-forwarded-for'], 'req.ip:', req.ip);
-      
-      if (req.headers['x-forwarded-for']) {
-        const forwardedIps = Array.isArray(req.headers['x-forwarded-for']) 
-          ? req.headers['x-forwarded-for'] 
-          : req.headers['x-forwarded-for'].split(',');
-        finalIP = forwardedIps[0].trim();
-        console.log('🌍 [CURRENT-IP] X-Forwarded-For found:', forwardedIps, 'Using first IP:', finalIP);
-      } else if (req.ip && req.ip !== '127.0.0.1' && req.ip !== '::1') {
-        finalIP = req.ip;
-        console.log('🌍 [CURRENT-IP] Using req.ip:', finalIP);
-      } else if (req.connection?.remoteAddress && req.connection.remoteAddress !== '127.0.0.1') {
-        finalIP = req.connection.remoteAddress;
-        console.log('🌍 [CURRENT-IP] Using remoteAddress:', finalIP);
-      } else if (req.socket?.remoteAddress && req.socket.remoteAddress !== '127.0.0.1') {
-        finalIP = req.socket.remoteAddress;
-        console.log('🌍 [CURRENT-IP] Using socket.remoteAddress:', finalIP);
-      } else {
-        // Fallback: try to get from recent sessions as they have the correct IP
-        console.log('🌍 [CURRENT-IP] Using fallback method - getting from recent sessions');
-        try {
-          const recentSessions = await hybridStorage.getRecentAnalyticsSessions(20);
-          console.log('🌍 [CURRENT-IP] Found', recentSessions.length, 'recent sessions');
-          
-          // Look for the most recent admin session (likely current user)
-          const adminSessions = recentSessions.filter(session => 
-            session.ip_address && 
-            session.ip_address !== '127.0.0.1' && 
-            session.ip_address !== '::1' &&
-            session.ip_address !== '0.0.0.0'
-          );
-          
-          if (adminSessions.length > 0) {
-            finalIP = adminSessions[0].ip_address;
-            console.log('🌍 [CURRENT-IP] Found admin IP from recent session:', finalIP);
-          } else {
-            console.log('🌍 [CURRENT-IP] No valid admin sessions found');
-          }
-        } catch (fallbackError) {
-          console.log('🌍 [CURRENT-IP] Fallback failed:', fallbackError);
-        }
-      }
-      
-      console.log('🌍 [CURRENT-IP] FINAL CURRENT IP DETECTED:', finalIP);
+      // Simplified IP detection using the same logic as session tracking
+      const finalIP = getClientIP(req);
+      console.log('🌍 [CURRENT-IP] DETECTED IP:', finalIP);
       res.json(finalIP);
     } catch (error) {
       console.error('❌ Current IP detection error:', error);
