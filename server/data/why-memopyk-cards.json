@@ -1,16 +1,16 @@
 [
   {
     "id": "simplicity",
-    "title_en": "Simplicity",
-    "title_fr": "Simplicité",
-    "description_en": "<p>All formats accepted, with technical details handled professionally. Just send your photos and videos—no need to sort or organize files; everything is made easy for you.</p>",
-    "description_fr": "<p>Tous formats acceptés, détails techniques pris en charge professionnellement. Envoyez simplement vos photos et vidéos, inutile de trier ni d'organiser les fichiers : tout est simple pour vous.</p>",
+    "title_en": "SIMPLICITY",
+    "title_fr": "SIMPLICITÉ",
+    "description_en": "<p><strong>Just send us your files as they are</strong></p><ul><li>No sorting or organizing required</li><li>All formats accepted</li><li>All technical issues analyzed and managed</li></ul><p><br></p>",
+    "description_fr": "<p><strong>Il suffit de nous déposer vos fichiers tels qu'ils sont</strong></p><ul><li>Pas de tri ni d'organisation nécessaire</li><li>Tous formats acceptés</li><li>Tous difficultés techniques analysées et gérées&nbsp;</li></ul><p><br></p>",
     "icon_name": "Zap",
     "gradient": "from-memopyk-dark-blue/20 to-memopyk-navy/10",
     "order_index": 0,
     "is_active": true,
     "created_at": "2025-08-25T14:39:07.739Z",
-    "updated_at": "2025-08-25T15:25:23.744Z"
+    "updated_at": "2025-08-25T15:50:31.638Z"
   },
   {
     "id": "time-saving",
