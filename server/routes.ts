@@ -2114,10 +2114,22 @@ export async function registerRoutes(app: Express): Promise<void> {
         // Fallback: try to get from recent sessions as they have the correct IP
         console.log('🌍 [CURRENT-IP] Using fallback method - getting from recent sessions');
         try {
-          const recentSessions = await hybridStorage.getRecentAnalyticsSessions(1);
-          if (recentSessions.length > 0) {
-            finalIP = recentSessions[0].ip_address;
-            console.log('🌍 [CURRENT-IP] Found IP from recent session:', finalIP);
+          const recentSessions = await hybridStorage.getRecentAnalyticsSessions(20);
+          console.log('🌍 [CURRENT-IP] Found', recentSessions.length, 'recent sessions');
+          
+          // Look for the most recent admin session (likely current user)
+          const adminSessions = recentSessions.filter(session => 
+            session.ip_address && 
+            session.ip_address !== '127.0.0.1' && 
+            session.ip_address !== '::1' &&
+            session.ip_address !== '0.0.0.0'
+          );
+          
+          if (adminSessions.length > 0) {
+            finalIP = adminSessions[0].ip_address;
+            console.log('🌍 [CURRENT-IP] Found admin IP from recent session:', finalIP);
+          } else {
+            console.log('🌍 [CURRENT-IP] No valid admin sessions found');
           }
         } catch (fallbackError) {
           console.log('🌍 [CURRENT-IP] Fallback failed:', fallbackError);
