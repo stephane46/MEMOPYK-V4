@@ -19003,8 +19003,8 @@
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-25T18:37:44.449Z",
-    "updated_at": "2025-08-25T19:02:44.970Z",
-    "duration": 1144331
+    "updated_at": "2025-08-25T19:06:14.746Z",
+    "duration": 1144541
   },
   {
     "id": "893ee596-acbb-47bd-a1d6-7a8009c272a4",
@@ -19020,8 +19020,8 @@
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-25T18:38:18.766Z",
-    "updated_at": "2025-08-25T19:02:23.078Z",
-    "duration": 727714
+    "updated_at": "2025-08-25T19:06:23.045Z",
+    "duration": 727954
   },
   {
     "id": "dab5fbe5-1b1c-44bb-9146-670148337d0e",
@@ -19054,7 +19054,7 @@
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-25T19:00:30.394Z",
-    "updated_at": "2025-08-25T19:02:30.863Z",
-    "duration": 1124609
+    "updated_at": "2025-08-25T19:06:01.457Z",
+    "duration": 1124819
   }
 ]
