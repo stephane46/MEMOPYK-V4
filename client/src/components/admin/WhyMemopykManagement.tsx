@@ -4,9 +4,9 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Switch } from "@/components/ui/switch";
 import { Separator } from "@/components/ui/separator";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { 
   Trash2, 
   Plus, 
@@ -19,7 +19,8 @@ import {
   Settings,
   Users,
   Shield,
-  Star
+  Star,
+  X
 } from "lucide-react";
 import { RichTextEditor } from "@/components/ui/rich-text-editor";
 import { useToast } from "@/hooks/use-toast";
@@ -63,6 +64,7 @@ export function WhyMemopykManagement() {
   const [loading, setLoading] = useState(true);
   const [editingCard, setEditingCard] = useState<WhyMemopykCard | null>(null);
   const [isCreating, setIsCreating] = useState(false);
+  const [formData, setFormData] = useState<Partial<WhyMemopykCard>>({});
   const { toast } = useToast();
 
   useEffect(() => {
@@ -71,15 +73,17 @@ export function WhyMemopykManagement() {
 
   const loadCards = async () => {
     try {
+      console.log('🔄 Loading Why MEMOPYK cards...');
       const response = await fetch('/api/why-memopyk-cards');
       const data = await response.json();
       if (response.ok) {
         setCards(data.sort((a: WhyMemopykCard, b: WhyMemopykCard) => a.orderIndex - b.orderIndex));
+        console.log('✅ Loaded', data.length, 'cards');
       } else {
         throw new Error(data.error || 'Failed to load cards');
       }
     } catch (error) {
-      console.error('Error loading cards:', error);
+      console.error('❌ Error loading cards:', error);
       toast({
         title: "Error",
         description: "Failed to load Why MEMOPYK cards",
@@ -90,7 +94,7 @@ export function WhyMemopykManagement() {
     }
   };
 
-  const handleSaveCard = async (cardData: Partial<WhyMemopykCard>) => {
+  const handleSaveCard = async () => {
     try {
       const url = editingCard 
         ? `/api/why-memopyk-cards/${editingCard.id}`
@@ -99,21 +103,23 @@ export function WhyMemopykManagement() {
       const method = editingCard ? 'PATCH' : 'POST';
       
       // Generate ID for new cards
-      if (!editingCard && !cardData.id) {
-        cardData.id = `card-${Date.now()}`;
+      if (!editingCard && !formData.id) {
+        formData.id = `card-${Date.now()}`;
       }
       
       // Set order index for new cards
       if (!editingCard) {
-        cardData.orderIndex = cards.length;
+        formData.orderIndex = cards.length;
       }
+
+      console.log('💾 Saving card:', method, url, formData);
 
       const response = await fetch(url, {
         method,
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(cardData),
+        body: JSON.stringify(formData),
       });
 
       const data = await response.json();
@@ -124,14 +130,16 @@ export function WhyMemopykManagement() {
           description: editingCard ? "Card updated successfully" : "Card created successfully",
         });
         
+        // Clear form and reload data
         setEditingCard(null);
         setIsCreating(false);
-        await loadCards();
+        setFormData({});
+        await loadCards(); // Ensure we reload to see the changes
       } else {
         throw new Error(data.error || 'Failed to save card');
       }
     } catch (error) {
-      console.error('Error saving card:', error);
+      console.error('❌ Error saving card:', error);
       toast({
         title: "Error", 
         description: "Failed to save card",
@@ -144,6 +152,7 @@ export function WhyMemopykManagement() {
     if (!confirm('Are you sure you want to delete this card?')) return;
     
     try {
+      console.log('🗑️ Deleting card:', id);
       const response = await fetch(`/api/why-memopyk-cards/${id}`, {
         method: 'DELETE',
       });
@@ -153,12 +162,12 @@ export function WhyMemopykManagement() {
           title: "Success",
           description: "Card deleted successfully",
         });
-        await loadCards();
+        await loadCards(); // Reload to reflect changes
       } else {
         throw new Error('Failed to delete card');
       }
     } catch (error) {
-      console.error('Error deleting card:', error);
+      console.error('❌ Error deleting card:', error);
       toast({
         title: "Error",
         description: "Failed to delete card",
@@ -173,318 +182,320 @@ export function WhyMemopykManagement() {
     
     const newIndex = direction === 'up' ? currentIndex - 1 : currentIndex + 1;
     if (newIndex < 0 || newIndex >= cards.length) return;
-    
-    const updatedCards = [...cards];
-    const [movedCard] = updatedCards.splice(currentIndex, 1);
-    updatedCards.splice(newIndex, 0, movedCard);
-    
-    // Update order indices
-    for (let i = 0; i < updatedCards.length; i++) {
-      updatedCards[i].orderIndex = i;
-    }
-    
-    setCards(updatedCards);
-    
-    // Save the new order
+
     try {
-      await Promise.all(
-        updatedCards.map(card =>
-          fetch(`/api/why-memopyk-cards/${card.id}`, {
-            method: 'PATCH',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ orderIndex: card.orderIndex }),
-          })
-        )
-      );
+      console.log('🔄 Moving card:', cardId, direction);
       
-      toast({
-        title: "Success",
-        description: "Card order updated successfully",
+      // Swap order indices
+      const currentCard = cards[currentIndex];
+      const targetCard = cards[newIndex];
+      
+      // Update current card
+      await fetch(`/api/why-memopyk-cards/${currentCard.id}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ orderIndex: targetCard.orderIndex }),
       });
+      
+      // Update target card
+      await fetch(`/api/why-memopyk-cards/${targetCard.id}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ orderIndex: currentCard.orderIndex }),
+      });
+      
+      await loadCards(); // Reload to reflect changes
     } catch (error) {
-      console.error('Error updating card order:', error);
+      console.error('❌ Error moving card:', error);
       toast({
         title: "Error",
-        description: "Failed to update card order",
+        description: "Failed to move card",
         variant: "destructive",
       });
-      // Reload to restore correct order
-      await loadCards();
     }
   };
 
-  const renderIcon = (iconName: string) => {
-    const Icon = ICON_MAP[iconName as keyof typeof ICON_MAP] || Star;
-    return <Icon className="w-6 h-6" />;
+  const handleNewCard = () => {
+    setIsCreating(true);
+    setEditingCard(null);
+    setFormData({
+      titleFr: '',
+      titleEn: '',
+      descriptionFr: '',
+      descriptionEn: '',
+      iconName: 'Star',
+      gradient: GRADIENT_OPTIONS[0].value,
+      isActive: true
+    });
+  };
+
+  const handleEditCard = (card: WhyMemopykCard) => {
+    setEditingCard(card);
+    setIsCreating(false);
+    setFormData({ ...card });
+  };
+
+  const handleCancel = () => {
+    setEditingCard(null);
+    setIsCreating(false);
+    setFormData({});
+  };
+
+  const getIcon = (iconName: string) => {
+    const IconComponent = ICON_MAP[iconName as keyof typeof ICON_MAP] || Star;
+    return <IconComponent className="w-5 h-5" />;
   };
 
   if (loading) {
     return (
-      <div className="flex justify-center items-center h-64">
-        <div className="text-lg">Loading cards...</div>
+      <div className="flex items-center justify-center h-64">
+        <div className="text-gray-500">Loading Why MEMOPYK cards...</div>
       </div>
     );
   }
 
   return (
     <div className="space-y-6">
-      <div className="flex justify-between items-center">
+      <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-2xl font-bold">Why MEMOPYK Cards</h2>
-          <p className="text-gray-600">Manage benefit cards with bilingual content and rich text editing</p>
+          <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Pourquoi MEMOPYK</h2>
+          <p className="text-gray-600 dark:text-gray-400">Manage the benefit cards section</p>
         </div>
-        
-        <Button onClick={() => setIsCreating(true)} disabled={isCreating || !!editingCard}>
-          <Plus className="w-4 h-4 mr-2" />
-          Add Card
-        </Button>
       </div>
 
-      {/* Create/Edit Form */}
-      {(isCreating || editingCard) && (
-        <Card>
-          <CardHeader>
-            <CardTitle>{editingCard ? 'Edit Card' : 'Create New Card'}</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <CardForm
-              card={editingCard}
-              onSave={handleSaveCard}
-              onCancel={() => {
-                setEditingCard(null);
-                setIsCreating(false);
-              }}
-            />
-          </CardContent>
-        </Card>
-      )}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        {/* Left Column - Cards List */}
+        <div className="space-y-6">
+          <div className="flex items-center justify-between">
+            <h3 className="text-lg font-semibold">Cartes Why MEMOPYK ({cards.length})</h3>
+            <Button onClick={handleNewCard} className="bg-memopyk-orange hover:bg-memopyk-orange/90 text-white">
+              <Plus className="w-4 h-4 mr-2" />
+              Nouvelle Carte
+            </Button>
+          </div>
 
-      {/* Cards List */}
-      <div className="grid gap-4">
-        {cards.map((card, index) => (
-          <Card key={card.id} className={cn(
-            "border-l-4",
-            card.isActive ? "border-l-green-500" : "border-l-gray-300"
-          )}>
-            <CardContent className="p-6">
-              <div className="flex items-start justify-between">
-                <div className="flex items-start space-x-4 flex-1">
-                  {/* Icon Preview */}
-                  <div className={`w-12 h-12 rounded-full bg-gradient-to-br ${card.gradient} flex items-center justify-center`}>
-                    {renderIcon(card.iconName)}
+          {cards.length === 0 ? (
+            <div className="text-center py-8 text-gray-500">
+              No cards found. Create your first card!
+            </div>
+          ) : (
+            <div className="space-y-3">
+              {cards.map((card, index) => (
+                <Card key={card.id} className="border border-gray-200">
+                  <CardContent className="p-4">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center space-x-3 flex-1">
+                        <div className={cn("p-2 rounded-lg bg-gradient-to-br", card.gradient)}>
+                          {getIcon(card.iconName)}
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center space-x-2">
+                            <h4 className="font-medium text-gray-900 truncate">{card.titleFr}</h4>
+                            <Badge variant={card.isActive ? "default" : "secondary"}>
+                              {card.isActive ? "Active" : "Inactive"}
+                            </Badge>
+                          </div>
+                          <p className="text-sm text-gray-600 truncate">{card.titleEn}</p>
+                        </div>
+                      </div>
+                      
+                      <div className="flex items-center space-x-1">
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => moveCard(card.id, 'up')}
+                          disabled={index === 0}
+                        >
+                          <ChevronUp className="w-4 h-4" />
+                        </Button>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => moveCard(card.id, 'down')}
+                          disabled={index === cards.length - 1}
+                        >
+                          <ChevronDown className="w-4 h-4" />
+                        </Button>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => handleEditCard(card)}
+                        >
+                          <Edit3 className="w-4 h-4" />
+                        </Button>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => handleDeleteCard(card.id)}
+                        >
+                          <Trash2 className="w-4 h-4 text-red-500" />
+                        </Button>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          )}
+        </div>
+
+        {/* Right Column - Form */}
+        <div className="space-y-6">
+          {(isCreating || editingCard) && (
+            <Card>
+              <CardHeader>
+                <div className="flex items-center justify-between">
+                  <CardTitle>{editingCard ? 'Modifier la Carte' : 'Nouvelle Carte'}</CardTitle>
+                  <Button variant="ghost" size="sm" onClick={handleCancel}>
+                    <X className="w-4 h-4" />
+                  </Button>
+                </div>
+              </CardHeader>
+              <CardContent className="space-y-6">
+                {/* Title - French and English columns */}
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="title-fr">Titre (Français)</Label>
+                    <Input
+                      id="title-fr"
+                      value={formData.titleFr || ''}
+                      onChange={(e) => setFormData(prev => ({ ...prev, titleFr: e.target.value }))}
+                      placeholder="Titre en français"
+                    />
                   </div>
-                  
-                  {/* Content Preview */}
-                  <div className="flex-1">
-                    <div className="flex items-center gap-2 mb-2">
-                      <h3 className="font-medium text-lg">{card.titleEn} / {card.titleFr}</h3>
-                      <Badge variant={card.isActive ? "default" : "secondary"}>
-                        {card.isActive ? "Active" : "Inactive"}
-                      </Badge>
-                    </div>
-                    <div className="text-sm text-gray-600 space-y-1">
-                      <div>
-                        <strong>EN:</strong> {card.descriptionEn.slice(0, 100)}...
-                      </div>
-                      <div>
-                        <strong>FR:</strong> {card.descriptionFr.slice(0, 100)}...
-                      </div>
-                    </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="title-en">Title (English)</Label>
+                    <Input
+                      id="title-en"
+                      value={formData.titleEn || ''}
+                      onChange={(e) => setFormData(prev => ({ ...prev, titleEn: e.target.value }))}
+                      placeholder="Title in English"
+                    />
                   </div>
                 </div>
-                
-                {/* Actions */}
+
+                {/* Description - French and English columns */}
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="desc-fr">Description (Français)</Label>
+                    <RichTextEditor
+                      value={formData.descriptionFr || ''}
+                      onChange={(value) => setFormData(prev => ({ ...prev, descriptionFr: value }))}
+                      placeholder="Description en français"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="desc-en">Description (English)</Label>
+                    <RichTextEditor
+                      value={formData.descriptionEn || ''}
+                      onChange={(value) => setFormData(prev => ({ ...prev, descriptionEn: value }))}
+                      placeholder="Description in English"
+                    />
+                  </div>
+                </div>
+
+                <Separator />
+
+                {/* Icon and Gradient */}
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label>Icon</Label>
+                    <Select
+                      value={formData.iconName || 'Star'}
+                      onValueChange={(value) => setFormData(prev => ({ ...prev, iconName: value }))}
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select icon" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {Object.keys(ICON_MAP).map(iconName => (
+                          <SelectItem key={iconName} value={iconName}>
+                            <div className="flex items-center space-x-2">
+                              {getIcon(iconName)}
+                              <span>{iconName}</span>
+                            </div>
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  
+                  <div className="space-y-2">
+                    <Label>Gradient</Label>
+                    <Select
+                      value={formData.gradient || GRADIENT_OPTIONS[0].value}
+                      onValueChange={(value) => setFormData(prev => ({ ...prev, gradient: value }))}
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select gradient" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {GRADIENT_OPTIONS.map(option => (
+                          <SelectItem key={option.value} value={option.value}>
+                            <div className="flex items-center space-x-2">
+                              <div className={cn("w-4 h-4 rounded bg-gradient-to-br", option.value)} />
+                              <span>{option.label}</span>
+                            </div>
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </div>
+
+                {/* Active Status */}
                 <div className="flex items-center space-x-2">
-                  {/* Reordering buttons */}
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => moveCard(card.id, 'up')}
-                    disabled={index === 0}
-                    data-testid={`move-up-${card.id}`}
-                  >
-                    <ChevronUp className="w-4 h-4" />
+                  <Switch
+                    id="active"
+                    checked={formData.isActive !== false}
+                    onCheckedChange={(checked) => setFormData(prev => ({ ...prev, isActive: checked }))}
+                  />
+                  <Label htmlFor="active">Active</Label>
+                </div>
+
+                {/* Preview */}
+                {formData.titleFr && (
+                  <div className="space-y-2">
+                    <Label>Preview</Label>
+                    <div className={cn("p-4 rounded-lg bg-gradient-to-br", formData.gradient || GRADIENT_OPTIONS[0].value)}>
+                      <div className="flex items-center space-x-3 text-gray-800">
+                        {getIcon(formData.iconName || 'Star')}
+                        <div>
+                          <h4 className="font-medium">{formData.titleFr}</h4>
+                          <p className="text-sm opacity-80">{formData.titleEn}</p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                {/* Action Buttons */}
+                <div className="flex justify-end space-x-2 pt-4">
+                  <Button variant="outline" onClick={handleCancel}>
+                    Cancel
                   </Button>
-                  
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => moveCard(card.id, 'down')}
-                    disabled={index === cards.length - 1}
-                    data-testid={`move-down-${card.id}`}
+                  <Button 
+                    onClick={handleSaveCard}
+                    disabled={!formData.titleFr || !formData.titleEn || !formData.descriptionFr || !formData.descriptionEn}
+                    className="bg-memopyk-orange hover:bg-memopyk-orange/90 text-white"
                   >
-                    <ChevronDown className="w-4 h-4" />
-                  </Button>
-                  
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => setEditingCard(card)}
-                    disabled={isCreating || !!editingCard}
-                    data-testid={`edit-${card.id}`}
-                  >
-                    <Edit3 className="w-4 h-4" />
-                  </Button>
-                  
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => handleDeleteCard(card.id)}
-                    disabled={isCreating || !!editingCard}
-                    data-testid={`delete-${card.id}`}
-                  >
-                    <Trash2 className="w-4 h-4" />
+                    <Save className="w-4 h-4 mr-2" />
+                    {editingCard ? 'Update' : 'Create'}
                   </Button>
                 </div>
-              </div>
-            </CardContent>
-          </Card>
-        ))}
+              </CardContent>
+            </Card>
+          )}
+
+          {!isCreating && !editingCard && (
+            <Card>
+              <CardContent className="p-6 text-center text-gray-500">
+                <p>Select a card to edit or create a new one</p>
+              </CardContent>
+            </Card>
+          )}
+        </div>
       </div>
     </div>
-  );
-}
-
-interface CardFormProps {
-  card: WhyMemopykCard | null;
-  onSave: (card: Partial<WhyMemopykCard>) => void;
-  onCancel: () => void;
-}
-
-function CardForm({ card, onSave, onCancel }: CardFormProps) {
-  const [formData, setFormData] = useState<Partial<WhyMemopykCard>>({
-    titleEn: card?.titleEn || '',
-    titleFr: card?.titleFr || '',
-    descriptionEn: card?.descriptionEn || '',
-    descriptionFr: card?.descriptionFr || '',
-    iconName: card?.iconName || 'Star',
-    gradient: card?.gradient || 'from-memopyk-dark-blue/20 to-memopyk-navy/10',
-    isActive: card?.isActive ?? true,
-  });
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    
-    if (!formData.titleEn || !formData.titleFr || !formData.descriptionEn || !formData.descriptionFr) {
-      alert('Please fill in all required fields');
-      return;
-    }
-    
-    onSave(formData);
-  };
-
-  return (
-    <form onSubmit={handleSubmit} className="space-y-6">
-      <Tabs defaultValue="english" className="w-full">
-        <TabsList className="grid w-full grid-cols-2">
-          <TabsTrigger value="english">English</TabsTrigger>
-          <TabsTrigger value="french">Français</TabsTrigger>
-        </TabsList>
-        
-        <TabsContent value="english" className="space-y-4">
-          <div>
-            <Label htmlFor="titleEn">Title (English) *</Label>
-            <Input
-              id="titleEn"
-              value={formData.titleEn}
-              onChange={(e) => setFormData({ ...formData, titleEn: e.target.value })}
-              placeholder="Enter English title"
-              required
-              data-testid="input-title-en"
-            />
-          </div>
-          
-          <div>
-            <Label htmlFor="descriptionEn">Description (English) *</Label>
-            <RichTextEditor
-              value={formData.descriptionEn || ''}
-              onChange={(value) => setFormData({ ...formData, descriptionEn: value })}
-              placeholder="Enter English description"
-              data-testid="editor-description-en"
-            />
-          </div>
-        </TabsContent>
-        
-        <TabsContent value="french" className="space-y-4">
-          <div>
-            <Label htmlFor="titleFr">Titre (Français) *</Label>
-            <Input
-              id="titleFr"
-              value={formData.titleFr}
-              onChange={(e) => setFormData({ ...formData, titleFr: e.target.value })}
-              placeholder="Entrez le titre français"
-              required
-              data-testid="input-title-fr"
-            />
-          </div>
-          
-          <div>
-            <Label htmlFor="descriptionFr">Description (Français) *</Label>
-            <RichTextEditor
-              value={formData.descriptionFr || ''}
-              onChange={(value) => setFormData({ ...formData, descriptionFr: value })}
-              placeholder="Entrez la description française"
-              data-testid="editor-description-fr"
-            />
-          </div>
-        </TabsContent>
-      </Tabs>
-
-      <Separator />
-
-      {/* Settings */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div>
-          <Label htmlFor="iconName">Icon</Label>
-          <select
-            id="iconName"
-            value={formData.iconName}
-            onChange={(e) => setFormData({ ...formData, iconName: e.target.value })}
-            className="w-full p-2 border border-gray-300 rounded-md"
-            data-testid="select-icon"
-          >
-            {Object.keys(ICON_MAP).map(iconName => (
-              <option key={iconName} value={iconName}>{iconName}</option>
-            ))}
-          </select>
-        </div>
-        
-        <div>
-          <Label htmlFor="gradient">Gradient Style</Label>
-          <select
-            id="gradient"
-            value={formData.gradient}
-            onChange={(e) => setFormData({ ...formData, gradient: e.target.value })}
-            className="w-full p-2 border border-gray-300 rounded-md"
-            data-testid="select-gradient"
-          >
-            {GRADIENT_OPTIONS.map(option => (
-              <option key={option.value} value={option.value}>{option.label}</option>
-            ))}
-          </select>
-        </div>
-      </div>
-
-      <div className="flex items-center space-x-2">
-        <Switch
-          id="isActive"
-          checked={formData.isActive}
-          onCheckedChange={(checked) => setFormData({ ...formData, isActive: checked })}
-          data-testid="switch-active"
-        />
-        <Label htmlFor="isActive">Active</Label>
-      </div>
-
-      {/* Actions */}
-      <div className="flex justify-end space-x-3">
-        <Button type="button" variant="outline" onClick={onCancel} data-testid="button-cancel">
-          Cancel
-        </Button>
-        <Button type="submit" data-testid="button-save">
-          <Save className="w-4 h-4 mr-2" />
-          Save Card
-        </Button>
-      </div>
-    </form>
   );
 }
