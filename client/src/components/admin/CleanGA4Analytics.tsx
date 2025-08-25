@@ -226,7 +226,7 @@ interface ActiveViewerIp {
 
 interface AnalyticsSettings {
   excludedIps: Array<{
-    ip_address: string;
+    ip: string;
     comment?: string;
     added_at: string;
   }>;
@@ -1395,15 +1395,15 @@ export default function CleanGA4Analytics() {
                   ) : settings?.excludedIps && settings.excludedIps.length > 0 ? (
                     <div className="space-y-3">
                       {settings.excludedIps.map((excludedIp) => (
-                        <div key={excludedIp.ip_address} className="bg-gray-50 dark:bg-gray-800 rounded-lg p-4 border">
+                        <div key={excludedIp.ip} className="bg-gray-50 dark:bg-gray-800 rounded-lg p-4 border">
                           <div className="flex items-center justify-between">
                             <div className="flex-1">
                               <div className="font-mono text-sm font-medium">
-                                {excludedIp.ip_address}
+                                {excludedIp.ip}
                               </div>
                               {excludedIp.comment && (
                                 <div className="text-sm text-gray-600 dark:text-gray-400 mt-1">
-                                  {editingComment === excludedIp.ip_address ? (
+                                  {editingComment === excludedIp.ip ? (
                                     <div className="flex items-center gap-2">
                                       <Input
                                         value={tempComment}
@@ -1415,7 +1415,7 @@ export default function CleanGA4Analytics() {
                                         size="sm"
                                         variant="ghost"
                                         onClick={() => updateIpCommentMutation.mutate({ 
-                                          ipAddress: excludedIp.ip_address, 
+                                          ipAddress: excludedIp.ip, 
                                           comment: tempComment 
                                         })}
                                       >
@@ -1446,7 +1446,7 @@ export default function CleanGA4Analytics() {
                                 size="sm"
                                 variant="ghost"
                                 onClick={() => {
-                                  setEditingComment(excludedIp.ip_address);
+                                  setEditingComment(excludedIp.ip);
                                   setTempComment(excludedIp.comment || '');
                                 }}
                               >
@@ -1455,7 +1455,7 @@ export default function CleanGA4Analytics() {
                               <Button
                                 size="sm"
                                 variant="ghost"
-                                onClick={() => removeExcludedIpMutation.mutate(excludedIp.ip_address)}
+                                onClick={() => removeExcludedIpMutation.mutate(excludedIp.ip)}
                                 className="text-red-600 hover:text-red-700"
                               >
                                 <Trash2 className="h-3 w-3" />

@@ -1,8 +1,23 @@
-[
-  {
-    "excludedIps": [],
-    "completionThreshold": 75,
-    "trackingEnabled": true,
-    "dataRetentionDays": 90
-  }
-]
+{
+  "excludedIps": [
+    {
+      "ip": "192.168.1.100",
+      "comment": "Test IP exclusion",
+      "added_at": "2025-08-25T10:00:05.530Z"
+    },
+    {
+      "ip": "192.168.1.200",
+      "comment": "Test IP 2",
+      "added_at": "2025-08-25T10:00:49.201Z"
+    },
+    {
+      "ip": "192.168.1.250",
+      "comment": "Frontend test",
+      "added_at": "2025-08-25T10:02:00.095Z"
+    }
+  ],
+  "completionThreshold": 75,
+  "trackingEnabled": true,
+  "dataRetentionDays": 90,
+  "updated_at": "2025-08-25T10:02:00.477Z"
+}
