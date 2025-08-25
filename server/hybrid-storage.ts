@@ -1812,8 +1812,8 @@ export class HybridStorage implements HybridStorageInterface {
       }));
     }
     
-    // FORCE FRESH DATA - Add debugging to see what's being returned
-    const converted = cards.map((card: any) => ({
+    // Convert snake_case to camelCase for frontend
+    return cards.map((card: any) => ({
       id: card.id,
       titleEn: card.title_en,
       titleFr: card.title_fr,
@@ -1826,11 +1826,6 @@ export class HybridStorage implements HybridStorageInterface {
       createdAt: card.created_at,
       updatedAt: card.updated_at
     }));
-    
-    console.log('📤 Returning Why MEMOPYK cards to frontend:', converted.length, 'items');
-    console.log('📤 First card sample:', converted[0] ? { id: converted[0].id, titleEn: converted[0].titleEn, updatedAt: converted[0].updatedAt } : 'No cards');
-    
-    return converted;
   }
 
   async createWhyMemopykCard(cardData: any): Promise<any> {
@@ -1985,7 +1980,6 @@ export class HybridStorage implements HybridStorageInterface {
     };
     
     this.saveJsonFile('why-memopyk-cards.json', cards);
-    console.log('✅ Why MEMOPYK card updated in JSON:', cards[index]);
     
     return cards[index];
   }

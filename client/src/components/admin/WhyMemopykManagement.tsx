@@ -471,22 +471,12 @@ export function WhyMemopykManagement() {
                   </div>
                 )}
 
-                {/* EMERGENCY DEBUG */}
-                <div className="p-4 bg-red-100 border border-red-300 rounded mb-4">
-                  <p className="text-sm text-red-800">🚨 BUTTON DEBUG:</p>
-                  <p className="text-xs">editingCard: {editingCard ? editingCard.id : 'null'}</p>
-                  <p className="text-xs">isCreating: {isCreating.toString()}</p>
-                  <p className="text-xs">formData.titleFr: {formData.titleFr || 'empty'}</p>
-                  <p className="text-xs">formData.titleEn: {formData.titleEn || 'empty'}</p>
-                  <p className="text-xs">showForm: {(isCreating || editingCard) ? 'YES' : 'NO'}</p>
-                </div>
-
                 {/* Action Buttons */}
-                <div className="flex justify-end space-x-3 pt-6 border-t border-gray-200 bg-yellow-50 p-4">
+                <div className="flex justify-end space-x-3 pt-6 border-t border-gray-200">
                   <Button 
                     variant="outline" 
                     onClick={handleCancel}
-                    className="px-6 bg-white"
+                    className="px-6"
                   >
                     Cancel
                   </Button>
