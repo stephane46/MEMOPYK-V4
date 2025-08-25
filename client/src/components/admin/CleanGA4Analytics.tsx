@@ -512,118 +512,178 @@ export default function CleanGA4Analytics() {
         </Button>
       </div>
 
-      {/* Advanced Date Range Filter */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="text-lg flex items-center gap-2">
-            <BarChart3 className="h-5 w-5" />
-            Date Range Filter
+      {/* Professional Date Range Filter */}
+      <Card className="border-0 shadow-lg bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-800 dark:to-slate-900">
+        <CardHeader className="pb-4">
+          <CardTitle className="text-xl font-semibold flex items-center gap-3 text-slate-800 dark:text-slate-100">
+            <div className="flex items-center justify-center w-10 h-10 rounded-xl bg-gradient-to-br from-blue-500 to-blue-600 shadow-md">
+              <BarChart3 className="h-5 w-5 text-white" />
+            </div>
+            Analytics Filters
           </CardTitle>
+          <p className="text-sm text-slate-600 dark:text-slate-400 mt-1">
+            Select date range and language to filter analytics data
+          </p>
         </CardHeader>
         <CardContent className="space-y-6">
-          {/* Custom Date Range Inputs */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-            <div className="space-y-2">
-              <Label htmlFor="date-from">From:</Label>
-              <Input
-                id="date-from"
-                type="date"
-                value={customDateFrom}
-                onChange={(e) => setCustomDateFrom(e.target.value)}
-                className="w-36"
-              />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="date-to">To:</Label>
-              <Input
-                id="date-to"
-                type="date"
-                value={customDateTo}
-                onChange={(e) => setCustomDateTo(e.target.value)}
-                className="w-36"
-              />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="locale">Language Filter</Label>
-              <Select value={locale} onValueChange={setLocale}>
-                <SelectTrigger className="w-full">
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">All Languages</SelectItem>
-                  <SelectItem value="fr-FR">Français</SelectItem>
-                  <SelectItem value="en-US">English</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-            <div className="space-y-2">
-              <Label>Apply Custom Period</Label>
-              <Button 
-                onClick={handleApplyCustomRange}
-                disabled={!customDateFrom || !customDateTo}
-                className="w-full bg-orange-500 hover:bg-orange-600 text-white disabled:bg-gray-400 disabled:cursor-not-allowed"
-              >
-                Apply Date Range
-              </Button>
-            </div>
-          </div>
-
-          {/* Quick Filter Buttons */}
-          <div className="space-y-3">
-            <div className="flex items-center gap-2">
-              <Calendar className="h-4 w-4 text-gray-600" />
-              <span className="font-medium text-sm">Quick Filters:</span>
-            </div>
-            <div className="flex flex-wrap gap-2">
-              {[
-                { value: '1d', label: 'Today', description: 'Last 24 hours' },
-                { value: '7d', label: 'Last 7 Days', description: 'Past week' },
-                { value: '30d', label: 'Last 30 Days', description: 'Past month' },
-                { value: '90d', label: 'Last 90 Days', description: 'Past quarter' },
-                { value: '365d', label: 'Last Year', description: 'Past 12 months' },
-                { value: 'custom', label: 'Custom Range', description: 'User-defined period' }
-              ].map((filter) => (
-                <Button
-                  key={filter.value}
-                  onClick={() => handleQuickFilter(filter.value)}
-                  size="sm"
-                  className={`border transition-colors duration-200 ${
-                    dateRange === filter.value
-                      ? 'bg-orange-500 text-white border-orange-500 hover:bg-orange-600 font-medium'
-                      : 'bg-white border-gray-300 text-gray-700 hover:bg-gray-50 dark:bg-gray-800 dark:border-gray-600 dark:text-white dark:hover:bg-gray-700'
-                  }`}
-                  title={filter.description}
-                >
-                  {filter.label}
-                </Button>
-              ))}
-              <Button
-                onClick={handleClearFilters}
-                variant="outline"
-                size="sm"
-                className="hover:bg-red-50 hover:text-red-600 hover:border-red-300 dark:hover:bg-red-900/20"
-              >
-                Clear Filters
-              </Button>
-            </div>
-          </div>
-
-          {/* Active Filter Summary */}
-          <div className="bg-gray-50 dark:bg-gray-800 rounded-lg p-3 border">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-2">
-                <span className="text-sm font-medium text-gray-900 dark:text-white">Active Filters:</span>
-                <Badge variant="secondary" className="text-xs">
-                  {getFilterSummary()}
-                </Badge>
-                {locale !== 'all' && (
-                  <Badge variant="secondary" className="text-xs">
-                    Language: {locale === 'fr-FR' ? 'Français' : 'English'}
-                  </Badge>
-                )}
+          {/* Modern Filter Controls */}
+          <div className="bg-white dark:bg-slate-800 rounded-2xl p-6 shadow-sm border border-slate-200 dark:border-slate-700">
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-end">
+              {/* Date Range Section */}
+              <div className="lg:col-span-6 space-y-4">
+                <div className="flex items-center gap-2 mb-3">
+                  <Calendar className="h-4 w-4 text-blue-600" />
+                  <span className="font-medium text-slate-700 dark:text-slate-300">Date Range</span>
+                </div>
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="date-from" className="text-xs font-medium text-slate-600 dark:text-slate-400 uppercase tracking-wide">
+                      From Date
+                    </Label>
+                    <Input
+                      id="date-from"
+                      type="date"
+                      value={customDateFrom}
+                      onChange={(e) => setCustomDateFrom(e.target.value)}
+                      className="h-11 border-slate-300 dark:border-slate-600 focus:border-blue-500 focus:ring-blue-500 rounded-xl font-medium text-slate-700 dark:text-slate-300"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="date-to" className="text-xs font-medium text-slate-600 dark:text-slate-400 uppercase tracking-wide">
+                      To Date
+                    </Label>
+                    <Input
+                      id="date-to"
+                      type="date"
+                      value={customDateTo}
+                      onChange={(e) => setCustomDateTo(e.target.value)}
+                      className="h-11 border-slate-300 dark:border-slate-600 focus:border-blue-500 focus:ring-blue-500 rounded-xl font-medium text-slate-700 dark:text-slate-300"
+                    />
+                  </div>
+                </div>
               </div>
-              <div className="text-xs text-gray-500">
-                Data auto-refreshes every 5 minutes
+
+              {/* Language Filter Section */}
+              <div className="lg:col-span-3 space-y-2">
+                <Label htmlFor="locale" className="text-xs font-medium text-slate-600 dark:text-slate-400 uppercase tracking-wide">
+                  Language Filter
+                </Label>
+                <Select value={locale} onValueChange={setLocale}>
+                  <SelectTrigger className="h-11 border-slate-300 dark:border-slate-600 focus:border-blue-500 focus:ring-blue-500 rounded-xl font-medium text-slate-700 dark:text-slate-300">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent className="rounded-xl">
+                    <SelectItem value="all" className="rounded-lg">
+                      <div className="flex items-center gap-2">
+                        <Globe className="h-4 w-4" />
+                        All Languages
+                      </div>
+                    </SelectItem>
+                    <SelectItem value="fr-FR" className="rounded-lg">
+                      <div className="flex items-center gap-2">
+                        <span>🇫🇷</span>
+                        Français
+                      </div>
+                    </SelectItem>
+                    <SelectItem value="en-US" className="rounded-lg">
+                      <div className="flex items-center gap-2">
+                        <span>🇺🇸</span>
+                        English
+                      </div>
+                    </SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
+              {/* Action Button */}
+              <div className="lg:col-span-3">
+                <Button 
+                  onClick={handleApplyCustomRange}
+                  disabled={!customDateFrom || !customDateTo}
+                  className="w-full h-11 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white font-medium rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 disabled:from-slate-400 disabled:to-slate-500 disabled:cursor-not-allowed disabled:shadow-none"
+                >
+                  <BarChart3 className="h-4 w-4 mr-2" />
+                  Apply Filters
+                </Button>
+              </div>
+            </div>
+          </div>
+
+          {/* Professional Quick Filters */}
+          <div className="bg-white dark:bg-slate-800 rounded-2xl p-6 shadow-sm border border-slate-200 dark:border-slate-700">
+            <div className="space-y-4">
+              <div className="flex items-center gap-2">
+                <Clock className="h-4 w-4 text-blue-600" />
+                <span className="font-medium text-slate-700 dark:text-slate-300">Quick Time Ranges</span>
+              </div>
+              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3">
+                {[
+                  { value: '1d', label: 'Today', description: 'Last 24 hours', icon: '📅' },
+                  { value: '7d', label: '7 Days', description: 'Past week', icon: '📊' },
+                  { value: '30d', label: '30 Days', description: 'Past month', icon: '📈' },
+                  { value: '90d', label: '90 Days', description: 'Past quarter', icon: '📉' },
+                  { value: '365d', label: '1 Year', description: 'Past 12 months', icon: '📋' },
+                  { value: 'custom', label: 'Custom', description: 'User-defined period', icon: '⚙️' }
+                ].map((filter) => (
+                  <Button
+                    key={filter.value}
+                    onClick={() => handleQuickFilter(filter.value)}
+                    variant="outline"
+                    className={`h-16 flex flex-col items-center justify-center gap-1 rounded-xl border-2 transition-all duration-200 group ${
+                      dateRange === filter.value
+                        ? 'bg-gradient-to-br from-blue-50 to-blue-100 border-blue-500 text-blue-700 dark:from-blue-900/40 dark:to-blue-800/40 dark:border-blue-400 dark:text-blue-300 shadow-md'
+                        : 'border-slate-300 hover:border-blue-300 hover:bg-blue-50 dark:border-slate-600 dark:hover:border-blue-500 dark:hover:bg-blue-900/20'
+                    }`}
+                    title={filter.description}
+                  >
+                    <span className="text-lg">{filter.icon}</span>
+                    <span className="text-xs font-medium">{filter.label}</span>
+                  </Button>
+                ))}
+              </div>
+              
+              {/* Clear Filters Button */}
+              <div className="flex justify-end pt-2">
+                <Button
+                  onClick={handleClearFilters}
+                  variant="outline"
+                  size="sm"
+                  className="text-red-600 border-red-300 hover:bg-red-50 hover:border-red-400 dark:text-red-400 dark:border-red-600 dark:hover:bg-red-900/20 rounded-lg"
+                >
+                  <X className="h-3 w-3 mr-1" />
+                  Reset Filters
+                </Button>
+              </div>
+            </div>
+          </div>
+
+          {/* Modern Active Filter Summary */}
+          <div className="bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 rounded-2xl p-4 border border-blue-200 dark:border-blue-800">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-blue-100 dark:bg-blue-800">
+                  <BarChart3 className="h-4 w-4 text-blue-600 dark:text-blue-400" />
+                </div>
+                <div>
+                  <div className="flex items-center gap-2">
+                    <span className="text-sm font-semibold text-slate-800 dark:text-slate-200">Active Filters</span>
+                    <Badge variant="secondary" className="bg-white dark:bg-slate-700 text-blue-700 dark:text-blue-300 border border-blue-200 dark:border-blue-600 text-xs font-medium">
+                      {getFilterSummary()}
+                    </Badge>
+                    {locale !== 'all' && (
+                      <Badge variant="secondary" className="bg-white dark:bg-slate-700 text-purple-700 dark:text-purple-300 border border-purple-200 dark:border-purple-600 text-xs font-medium">
+                        {locale === 'fr-FR' ? '🇫🇷 Français' : '🇺🇸 English'}
+                      </Badge>
+                    )}
+                  </div>
+                  <p className="text-xs text-slate-600 dark:text-slate-400 mt-1">
+                    Data refreshes automatically every 5 minutes
+                  </p>
+                </div>
+              </div>
+              <div className="flex items-center gap-1 text-xs text-slate-500 dark:text-slate-400">
+                <RefreshCw className="h-3 w-3" />
+                <span>Live Data</span>
               </div>
             </div>
           </div>
