@@ -73,21 +73,26 @@ export function SimpleHeroVideoSection() {
 {/* Deterministic title rendering (same across breakpoints) */}
 <h1
   className="font-playfair font-bold mb-4 sm:mb-6 lg:mb-8 mx-auto hero-text-mobile"
-  style={{ textShadow: '2px 2px 4px rgba(0,0,0,0.8)' }}
+  style={{ 
+    textShadow: '2px 2px 4px rgba(0,0,0,0.8)',
+    minHeight: isMobileSize ? '40px' : '160px', // Pre-allocate space to prevent jumping
+    display: 'flex',
+    flexDirection: 'column',
+    justifyContent: 'center'
+  }}
 >
-  {!heroTextLoading && (() => {
-    // Only render text after data is loaded to prevent flickering
-    const sourceText = language === 'fr-FR'
-      ? (isMobileSize ? "Films\nsouvenirs" : (activeHeroText?.title_fr || ""))
-      : (isMobileSize ? "Memory\nfilms" : (activeHeroText?.title_en || ""));
+  {(() => {
+    // Always show text to prevent container size changes
+    const sourceText = heroTextLoading 
+      ? (language === 'fr-FR' 
+          ? (isMobileSize ? "Films\nsouvenirs" : "Nous transformons vos photos et vidéos personnelles\nen films souvenirs inoubliables")
+          : (isMobileSize ? "Memory\nfilms" : "We transform your personal photos and videos\ninto unforgettable souvenir films"))
+      : (language === 'fr-FR'
+          ? (isMobileSize ? "Films\nsouvenirs" : (activeHeroText?.title_fr || ""))
+          : (isMobileSize ? "Memory\nfilms" : (activeHeroText?.title_en || "")));
     
-    // Skip rendering if no text to prevent empty flicker
-    if (!sourceText.trim()) return null;
-    
-    // Normalize -> array of lines (split on newline)
+    // Normalize → array of lines (split on newline)
     const lines = sourceText.split(/\r?\n/).map(s => s.trim()).filter(Boolean);
-
-    // Clean production text rendering without flicker
 
     // Render each line as a separate div for proper line breaks
     return lines.map((line, idx) => (
@@ -100,7 +105,7 @@ export function SimpleHeroVideoSection() {
           textAlign: 'center',
           margin: 0,
           padding: 0,
-          fontSize: isMobileSize ? '8px' : 'inherit',
+          fontSize: isMobileSize ? '20px' : 'inherit', // Use consistent size
           lineHeight: isMobileSize ? '1.0' : 'inherit'
         }}
       >
