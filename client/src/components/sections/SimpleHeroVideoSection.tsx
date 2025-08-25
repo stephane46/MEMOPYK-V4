@@ -6,6 +6,10 @@ interface HeroText {
   id: number;
   title_fr: string;
   title_en: string;
+  title_mobile_fr?: string;
+  title_mobile_en?: string;
+  title_desktop_fr?: string;
+  title_desktop_en?: string;
   subtitle_fr: string;
   subtitle_en: string;
   font_size: number;
@@ -31,13 +35,24 @@ export function SimpleHeroVideoSection() {
     return () => window.removeEventListener('resize', checkSize);
   }, []);
 
-  // Fetch hero text settings for overlay
+  // Fetch hero text settings for overlay with proper loading states
   const { data: heroTextData = [], isLoading: heroTextLoading } = useQuery<HeroText[]>({
     queryKey: ['/api/hero-text', language],
     staleTime: 5 * 60 * 1000,
   });
 
   const activeHeroText = heroTextData.find(text => text.is_active);
+  
+  // Prevent flicker by not showing content until data is loaded
+  const [isTextReady, setIsTextReady] = useState(false);
+  
+  useEffect(() => {
+    if (!heroTextLoading && heroTextData.length > 0) {
+      // Add a small delay to ensure smooth transition
+      const timer = setTimeout(() => setIsTextReady(true), 100);
+      return () => clearTimeout(timer);
+    }
+  }, [heroTextLoading, heroTextData]);
 
   const handleVideoCanPlay = () => {
     const video = videoRef.current;
@@ -66,40 +81,53 @@ export function SimpleHeroVideoSection() {
         onCanPlay={handleVideoCanPlay}
       />
 
-      {/* Text overlay */}
+      {/* Text overlay with anti-flicker loading */}
       <div className="absolute inset-0 flex items-center justify-center text-center text-white px-3 sm:px-6 lg:px-8">
         <div className="max-w-7xl w-full">
-          {/* === Deterministic hero title (unified desktop/mobile rendering) === */}
-{/* Deterministic title rendering (same across breakpoints) */}
+          {/* === Anti-flicker hero title with smooth loading === */}
 <h1
-  className={`font-playfair font-bold mb-4 sm:mb-6 lg:mb-8 mx-auto ${isMobileSize ? 'hero-text-mobile' : 'hero-text-desktop'}`}
+  className={`font-playfair font-bold mb-4 sm:mb-6 lg:mb-8 mx-auto transition-opacity duration-300 ${
+    isTextReady ? 'opacity-100' : 'opacity-90'
+  } ${isMobileSize ? 'hero-text-mobile' : 'hero-text-desktop'}`}
   style={{ 
     textShadow: '2px 2px 4px rgba(0,0,0,0.8)',
-    minHeight: isMobileSize ? '55px' : '120px', // Adjusted for 18px mobile font
+    minHeight: isMobileSize ? '55px' : '120px',
     display: 'flex',
     flexDirection: 'column',
     justifyContent: 'center',
-    fontSize: isMobileSize ? '18px' : '40px', // Updated admin config: mobile 18px
+    fontSize: isMobileSize ? '18px' : '40px',
     lineHeight: isMobileSize ? '1.0' : '1.1'
   }}
 >
   {(() => {
-    // Use actual loaded text or exact placeholder to prevent size jumps
-    const loadedText = language === 'fr-FR' 
-      ? (activeHeroText?.title_fr || "") 
-      : (activeHeroText?.title_en || "");
+    // Get loaded text from API - prioritize desktop/mobile specific fields
+    const getLoadedText = () => {
+      if (!activeHeroText) return "";
+      
+      if (isMobileSize) {
+        return language === 'fr-FR' 
+          ? (activeHeroText.title_mobile_fr || activeHeroText.title_fr || "")
+          : (activeHeroText.title_mobile_en || activeHeroText.title_en || "");
+      } else {
+        return language === 'fr-FR' 
+          ? (activeHeroText.title_desktop_fr || activeHeroText.title_fr || "")
+          : (activeHeroText.title_desktop_en || activeHeroText.title_en || "");
+      }
+    };
     
-    const sourceText = heroTextLoading || !loadedText.trim()
-      ? (language === 'fr-FR' 
+    const loadedText = getLoadedText();
+    
+    // Use loaded text if available and ready, otherwise show minimal placeholder
+    const sourceText = isTextReady && loadedText.trim()
+      ? loadedText
+      : (language === 'fr-FR' 
           ? (isMobileSize ? "Films\nsouvenirs" : "Nous transformons\nvos photos et vidéos personnelles\nen films souvenirs inoubliables")
-          : (isMobileSize ? "Memory\nfilms" : "We transform\nyour personal photos and videos\ninto unforgettable souvenir films"))
-      : (isMobileSize ? (language === 'fr-FR' ? "Films\nsouvenirs" : "Memory\nfilms") : loadedText);
+          : (isMobileSize ? "Memory\nfilms" : "We transform\nyour personal photos and videos\ninto unforgettable souvenir films"));
     
-    // Normalize → array of lines (split on newline)
-    const lines = sourceText.split(/\r?\n/).map(s => s.trim()).filter(Boolean);
+    // Split into lines for proper rendering
+    const lines = sourceText.split(/\r?\n/).map((s: string) => s.trim()).filter(Boolean);
 
-    // Render each line as a separate div for proper line breaks
-    return lines.map((line, idx) => (
+    return lines.map((line: string, idx: number) => (
       <div 
         key={idx} 
         className="hero-line"

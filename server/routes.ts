@@ -5413,6 +5413,87 @@ export async function registerRoutes(app: Express): Promise<void> {
     }
   });
 
+  // SYNC ENDPOINTS - Transfer JSON data to Supabase for cross-environment sync
+  app.post('/api/sync/hero-text', async (req, res) => {
+    try {
+      console.log('🔄 SYNC: Starting hero text sync from JSON to Supabase...');
+      
+      // Load current JSON data
+      const jsonData = hybridStorage.loadJsonFile('hero-text.json');
+      console.log(`📄 Found ${jsonData.length} hero text items in JSON`);
+      
+      // Insert each item into database
+      let synced = 0;
+      for (const item of jsonData) {
+        try {
+          await hybridStorage.createHeroText({
+            title_fr: item.title_fr,
+            title_en: item.title_en,
+            title_mobile_fr: item.title_mobile_fr,
+            title_mobile_en: item.title_mobile_en,
+            title_desktop_fr: item.title_desktop_fr,
+            title_desktop_en: item.title_desktop_en,
+            subtitle_fr: item.subtitle_fr || '',
+            subtitle_en: item.subtitle_en || '',
+            font_size: item.font_size || 60,
+            font_size_desktop: item.font_size_desktop || 40,
+            font_size_tablet: item.font_size_tablet || 45,
+            font_size_mobile: item.font_size_mobile || 18,
+            is_active: item.is_active || false
+          });
+          synced++;
+          console.log(`✅ Synced hero text: ${item.id}`);
+        } catch (error) {
+          console.warn(`⚠️ Skipped duplicate hero text: ${item.id}`);
+        }
+      }
+      
+      console.log(`🎉 SYNC COMPLETE: ${synced}/${jsonData.length} hero texts synced to Supabase`);
+      res.json({ success: true, synced, total: jsonData.length });
+    } catch (error) {
+      console.error('❌ Hero text sync failed:', error);
+      res.status(500).json({ error: 'Sync failed' });
+    }
+  });
+
+  app.post('/api/sync/why-memopyk-cards', async (req, res) => {
+    try {
+      console.log('🔄 SYNC: Starting Why MEMOPYK cards sync from JSON to Supabase...');
+      
+      // Load current JSON data  
+      const jsonData = hybridStorage.loadJsonFile('why-memopyk-cards.json');
+      console.log(`📄 Found ${jsonData.length} Why MEMOPYK cards in JSON`);
+      
+      // Insert each item into database
+      let synced = 0;
+      for (const item of jsonData) {
+        try {
+          await hybridStorage.createWhyMemopykCard({
+            id: item.id,
+            title_en: item.title_en,
+            title_fr: item.title_fr,
+            description_en: item.description_en,
+            description_fr: item.description_fr,
+            icon_name: item.icon_name,
+            gradient: item.gradient,
+            order_index: item.order_index || 0,
+            is_active: item.is_active !== false
+          });
+          synced++;
+          console.log(`✅ Synced Why MEMOPYK card: ${item.id}`);
+        } catch (error) {
+          console.warn(`⚠️ Skipped duplicate card: ${item.id}`);
+        }
+      }
+      
+      console.log(`🎉 SYNC COMPLETE: ${synced}/${jsonData.length} Why MEMOPYK cards synced to Supabase`);
+      res.json({ success: true, synced, total: jsonData.length });
+    } catch (error) {
+      console.error('❌ Why MEMOPYK cards sync failed:', error);
+      res.status(500).json({ error: 'Sync failed' });
+    }
+  });
+
   // Test Routes
   app.use('/test', testRoutes);
 }
