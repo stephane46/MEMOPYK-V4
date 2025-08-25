@@ -288,16 +288,7 @@ export default function CleanGA4Analytics() {
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center space-x-2">
-                <div className="flex items-center space-x-1">
-                  {ga4Data?.topCountries?.slice(0, 3).map((country, index) => (
-                    <CountryFlag 
-                      key={index}
-                      country={country.country} 
-                      size={20}
-                      className="opacity-80"
-                    />
-                  ))}
-                </div>
+                <Globe className="h-5 w-5" />
                 <span>Top Countries</span>
               </CardTitle>
               <CardDescription>Where your visitors come from</CardDescription>
