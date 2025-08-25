@@ -7,6 +7,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { BarChart3, TrendingUp, Play, Users, Clock, RefreshCw, Globe, Eye, UserCheck, MapPin, Languages, MousePointer } from 'lucide-react';
+import { CountryFlag } from './CountryFlag';
 
 interface GA4MetricsResponse {
   // Visitor Analytics
@@ -287,7 +288,16 @@ export default function CleanGA4Analytics() {
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center space-x-2">
-                <Globe className="h-5 w-5" />
+                <div className="flex items-center space-x-1">
+                  {ga4Data?.topCountries?.slice(0, 3).map((country, index) => (
+                    <CountryFlag 
+                      key={index}
+                      country={country.country} 
+                      size={20}
+                      className="opacity-80"
+                    />
+                  ))}
+                </div>
                 <span>Top Countries</span>
               </CardTitle>
               <CardDescription>Where your visitors come from</CardDescription>
@@ -300,7 +310,7 @@ export default function CleanGA4Analytics() {
                       <div className="flex items-center justify-center w-6 h-6 bg-gray-100 dark:bg-gray-800 rounded-full text-xs font-bold">
                         {index + 1}
                       </div>
-                      <span className="text-lg">{country.flag}</span>
+                      <CountryFlag country={country.country} size={24} />
                       <span className="font-medium">{country.country}</span>
                     </div>
                     <div className="font-semibold">{(country.visitors || 0).toLocaleString()}</div>
