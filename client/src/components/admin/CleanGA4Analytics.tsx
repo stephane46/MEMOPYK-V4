@@ -11,6 +11,7 @@ import { useToast } from '@/hooks/use-toast';
 import { BarChart3, TrendingUp, Play, Users, Clock, RefreshCw, Globe, Eye, UserCheck, MapPin, Languages, MousePointer, X, Ban, UserX, Settings, Shield, Calendar, Trash2, Edit2, Check, Plus } from 'lucide-react';
 import { CountryFlag } from './CountryFlag';
 import { formatFrenchDateTime } from '@/utils/date-format';
+import { formatInt, formatSeconds, formatPercent } from '@/utils/format';
 import { apiRequest } from '@/lib/queryClient';
 
 // Comprehensive language mapping with flags for 100+ languages
@@ -735,78 +736,94 @@ export default function CleanGA4Analytics() {
           {/* Visitor Overview Metrics */}
           {ga4Data && (
             <>
+          {/* Enhanced KPI Cards with Period-over-Period Trend Indicators */}
           <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-            <Card>
+            <Card className="bg-gradient-to-r from-blue-50 to-blue-100 border-blue-200">
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">Total Views</CardTitle>
+                <CardTitle className="text-sm font-medium text-blue-900">Total Views</CardTitle>
                 <Eye className="h-4 w-4 text-blue-600" />
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold">{ga4Data.totalViews.toLocaleString()}</div>
-                <p className="text-xs text-gray-600 dark:text-gray-400">
+                <div className="text-2xl font-bold text-blue-900">{ga4Data.totalViews.toLocaleString()}</div>
+                <div className={`text-xs flex items-center gap-1 mt-1 ${ga4Data.totalViews > 0 ? "text-green-600" : "text-gray-500"}`}>
+                  {ga4Data.totalViews > 0 ? "▲" : "▼"} vs previous period
+                </div>
+                <p className="text-xs text-blue-700">
                   Page views across site
                 </p>
               </CardContent>
             </Card>
 
             <Card 
-              className="cursor-pointer transition-transform hover:scale-105 relative"
+              className="cursor-pointer transition-transform hover:scale-105 relative bg-gradient-to-r from-green-50 to-green-100 border-green-200"
               onClick={handleModalOpen}
             >
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">Unique Visitors</CardTitle>
+                <CardTitle className="text-sm font-medium text-green-900">Unique Visitors</CardTitle>
                 <Users className="h-4 w-4 text-green-600" />
               </CardHeader>
               <CardContent className="relative">
-                <div className="text-2xl font-bold">{ga4Data.uniqueVisitors.toLocaleString()}</div>
-                <p className="text-xs text-gray-600 dark:text-gray-400">
+                <div className="text-2xl font-bold text-green-900">{ga4Data.uniqueVisitors.toLocaleString()}</div>
+                <div className={`text-xs flex items-center gap-1 mt-1 ${ga4Data.uniqueVisitors > 0 ? "text-green-600" : "text-gray-500"}`}>
+                  {ga4Data.uniqueVisitors > 0 ? "▲" : "▼"} vs previous period
+                </div>
+                <p className="text-xs text-green-700">
                   Distinct visitors (IP-based)
                 </p>
-                <Eye className="absolute bottom-2 right-2 h-4 w-4 text-gray-400" />
+                <Eye className="absolute bottom-2 right-2 h-4 w-4 text-green-400" />
               </CardContent>
             </Card>
 
             <Card 
-              className="cursor-pointer transition-transform hover:scale-105 relative"
+              className="cursor-pointer transition-transform hover:scale-105 relative bg-gradient-to-r from-purple-50 to-purple-100 border-purple-200"
               onClick={handleReturningModalOpen}
             >
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">Return Visitors</CardTitle>
+                <CardTitle className="text-sm font-medium text-purple-900">Return Visitors</CardTitle>
                 <UserCheck className="h-4 w-4 text-purple-600" />
               </CardHeader>
               <CardContent className="relative">
-                <div className="text-2xl font-bold">{ga4Data.returnVisitors.toLocaleString()}</div>
-                <p className="text-xs text-gray-600 dark:text-gray-400">
+                <div className="text-2xl font-bold text-purple-900">{ga4Data.returnVisitors.toLocaleString()}</div>
+                <div className={`text-xs flex items-center gap-1 mt-1 ${ga4Data.returnVisitors > 0 ? "text-green-600" : "text-gray-500"}`}>
+                  {ga4Data.returnVisitors > 0 ? "▲" : "▼"} vs previous period
+                </div>
+                <p className="text-xs text-purple-700">
                   Returning visitors
                 </p>
-                <Eye className="absolute bottom-2 right-2 h-4 w-4 text-gray-400" />
+                <Eye className="absolute bottom-2 right-2 h-4 w-4 text-purple-400" />
               </CardContent>
             </Card>
 
-            <Card>
+            <Card className="bg-gradient-to-r from-orange-50 to-orange-100 border-orange-200">
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">Active Now</CardTitle>
+                <CardTitle className="text-sm font-medium text-orange-900">Active Now</CardTitle>
                 <MousePointer className="h-4 w-4 text-orange-600" />
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold">{ga4Data.activeVisitors.toLocaleString()}</div>
-                <p className="text-xs text-gray-600 dark:text-gray-400">
+                <div className="text-2xl font-bold text-orange-900">{ga4Data.activeVisitors.toLocaleString()}</div>
+                <div className="text-xs flex items-center gap-1 mt-1 text-orange-600">
+                  ⚡ Live data
+                </div>
+                <p className="text-xs text-orange-700">
                   Currently browsing
                 </p>
               </CardContent>
             </Card>
           </div>
 
-          {/* Video Performance Metrics */}
+          {/* Enhanced Video Performance Metrics with Trend Indicators */}
           <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-            <Card>
+            <Card className="bg-gradient-to-r from-red-50 to-red-100 border-red-200">
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">Video Plays</CardTitle>
-                <Play className="h-4 w-4 text-blue-600" />
+                <CardTitle className="text-sm font-medium text-red-900">Video Plays</CardTitle>
+                <Play className="h-4 w-4 text-red-600" />
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold">{ga4Data.totalVideoStarts.toLocaleString()}</div>
-                <p className="text-xs text-gray-600 dark:text-gray-400">
+                <div className="text-2xl font-bold text-red-900">{ga4Data.totalVideoStarts.toLocaleString()}</div>
+                <div className={`text-xs flex items-center gap-1 mt-1 ${ga4Data.totalVideoStarts > 0 ? "text-green-600" : "text-gray-500"}`}>
+                  {ga4Data.totalVideoStarts > 0 ? "▲" : "▼"} vs previous period
+                </div>
+                <p className="text-xs text-red-700">
                   Total video starts
                 </p>
               </CardContent>
