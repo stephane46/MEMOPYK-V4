@@ -273,6 +273,13 @@ export function CountryFlag({ country, className = "", size = 20 }: CountryFlagP
   const [isLoading, setIsLoading] = useState<boolean>(true);
 
   useEffect(() => {
+    // Handle "(not set)" entries with globe icon
+    if (country === '(not set)') {
+      setCountryCode('globe');
+      setIsLoading(false);
+      return;
+    }
+
     // Load full country mapping if not loaded
     if (Object.keys(fullCountryMapping).length === 0) {
       fetch('/flags/countries.json')
@@ -388,6 +395,22 @@ export function CountryFlag({ country, className = "", size = 20 }: CountryFlagP
           borderRadius: '2px'
         }}
       />
+    );
+  }
+
+  // Special handling for "(not set)" entries with globe icon
+  if (countryCode === 'globe' && !isLoading) {
+    return (
+      <div 
+        className={`inline-flex items-center justify-center ${className} text-gray-500`}
+        style={{
+          fontSize: `${Math.round(size * 0.8)}px`,
+          lineHeight: '1'
+        }}
+        title="Location not determined"
+      >
+        🌍
+      </div>
     );
   }
 

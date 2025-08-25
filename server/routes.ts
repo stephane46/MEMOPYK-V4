@@ -4366,15 +4366,12 @@ export async function registerRoutes(app: Express): Promise<void> {
       const averageSessionDuration = dashboardData.overview?.averageSessionDuration || dashboardData.averageSessionDuration || 0;
       const activeVisitors = activityData.activities?.filter(a => Date.now() - new Date(a.lastActivity).getTime() < 5 * 60 * 1000).length || 0;
 
-      // Process geographic data from dashboard - filter out "(not set)" entries
-      const topCountries = (dashboardData.topCountries || [])
-        .filter((country: any) => country.country && country.country !== '(not set)')
-        .slice(0, 8)
-        .map((country: any) => ({
-          country: country.country,
-          visitors: country.visitors || country.sessions || 0, // GA4 uses 'visitors', fallback to 'sessions' 
-          flag: country.flag || '🌍'
-        }));
+      // Process geographic data from dashboard
+      const topCountries = (dashboardData.topCountries || []).slice(0, 8).map((country: any) => ({
+        country: country.country,
+        visitors: country.visitors || country.sessions || 0, // GA4 uses 'visitors', fallback to 'sessions' 
+        flag: country.flag || '🌍'
+      }));
 
       // Process language breakdown - use GA4 browser language data
       const languageBreakdown = [];
