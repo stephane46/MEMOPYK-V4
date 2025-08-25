@@ -4506,9 +4506,9 @@ export async function registerRoutes(app: Express): Promise<void> {
       // const endDate and startDate already defined above
 
       // Fetch GA4 video metrics, language data, and returning users in parallel
-      // Include previous period data for video metrics
+      // Include previous period data for all key metrics
       const [plays, completions, watchTimeSeconds, topVideos, browserLanguageData, siteLanguageData, ga4ReturningUsers,
-             prevPlays, prevCompletions, prevWatchTimeSeconds, prevGA4ReturningUsers] = await Promise.all([
+             prevPlays, prevCompletions, prevWatchTimeSeconds, prevGA4ReturningUsers, prevGA4PageViews, prevGA4Users] = await Promise.all([
         qPlays(startDate, endDate, locale),
         qCompletes(startDate, endDate, locale), 
         qWatchTimeTotal(startDate, endDate, locale),
@@ -4516,11 +4516,13 @@ export async function registerRoutes(app: Express): Promise<void> {
         qTopLanguages(startDate, endDate),
         qSiteLanguageChoice(startDate, endDate),
         qReturningUsers(startDate, endDate),
-        // Previous period video metrics
+        // Previous period data for all metrics
         qPlays(prevStartDate, prevEndDate, locale),
         qCompletes(prevStartDate, prevEndDate, locale), 
         qWatchTimeTotal(prevStartDate, prevEndDate, locale),
-        qReturningUsers(prevStartDate, prevEndDate)
+        qReturningUsers(prevStartDate, prevEndDate),
+        qPageViews(prevStartDate, prevEndDate),
+        qUniqueUsers(prevStartDate, prevEndDate)
       ]);
 
       // Process visitor analytics - handle nested data structure
@@ -4578,7 +4580,7 @@ export async function registerRoutes(app: Express): Promise<void> {
         .sort((a, b) => b.plays - a.plays)
         .slice(0, 5);
 
-      // Calculate period-over-period comparisons
+      // Calculate period-over-period comparisons  
       const totalViewsChange = calculatePercentageChange(totalViews, prevGA4PageViews || 0);
       const uniqueVisitorsChange = calculatePercentageChange(uniqueVisitors, prevGA4Users || 0);
       const returnVisitorsChange = calculatePercentageChange(returnVisitors, prevGA4ReturningUsers || 0);

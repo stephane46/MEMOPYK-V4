@@ -553,6 +553,8 @@ export default function CleanGA4Analytics() {
                       value={customDateFrom}
                       onChange={(e) => setCustomDateFrom(e.target.value)}
                       className="h-11 border-slate-300 dark:border-slate-600 focus:border-blue-500 focus:ring-blue-500 rounded-xl font-medium text-slate-700 dark:text-slate-300"
+                      lang="en-GB"
+                      placeholder="dd/mm/yyyy"
                     />
                   </div>
                   <div className="space-y-2">
@@ -565,6 +567,8 @@ export default function CleanGA4Analytics() {
                       value={customDateTo}
                       onChange={(e) => setCustomDateTo(e.target.value)}
                       className="h-11 border-slate-300 dark:border-slate-600 focus:border-blue-500 focus:ring-blue-500 rounded-xl font-medium text-slate-700 dark:text-slate-300"
+                      lang="en-GB"
+                      placeholder="dd/mm/yyyy"
                     />
                   </div>
                 </div>
