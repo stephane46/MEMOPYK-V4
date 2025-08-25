@@ -25,6 +25,10 @@ interface HeroText {
   font_size_desktop?: number;
   font_size_tablet?: number;
   font_size_mobile?: number;
+  title_mobile_fr?: string;
+  title_mobile_en?: string;
+  title_desktop_fr?: string;
+  title_desktop_en?: string;
   is_active: boolean;
 }
 
@@ -33,7 +37,16 @@ export function HeroVideoSection() {
   const { trackVideoView } = useVideoAnalytics();
   const [currentVideoIndex, setCurrentVideoIndex] = useState(0);
   const [isPlaying, setIsPlaying] = useState(true);
-  const [screenSize, setScreenSize] = useState<'mobile' | 'tablet' | 'desktop'>('mobile');
+  const [screenSize, setScreenSize] = useState<'mobile' | 'tablet' | 'desktop'>(() => {
+    // Initialize with correct screen size to prevent flash
+    if (typeof window !== 'undefined') {
+      const width = window.innerWidth;
+      if (width < 640) return 'mobile';
+      if (width < 1024) return 'tablet';
+      return 'desktop';
+    }
+    return 'mobile';
+  });
 
   const videoRef = useRef<HTMLVideoElement>(null);
 
@@ -225,7 +238,7 @@ export function HeroVideoSection() {
               textShadow: '3px 3px 6px rgba(0,0,0,0.9)',
               lineHeight: screenSize === 'mobile' ? '1.5' : '1.4',
               fontSize: screenSize === 'mobile' 
-                ? `${activeHeroText?.font_size_mobile || 20}px`
+                ? `${activeHeroText?.font_size_mobile || 18}px`
                 : screenSize === 'tablet'
                 ? `${activeHeroText?.font_size_tablet || 40}px`
                 : `${activeHeroText?.font_size_desktop || 45}px`
@@ -234,12 +247,12 @@ export function HeroVideoSection() {
             {(() => {
               // Use separate mobile and desktop fields for responsive display
               const mobileText = language === 'fr-FR' 
-                ? (activeHeroText?.title_mobile_fr || activeHeroText?.title_fr || "Nous transformons\nvos photos et vidéos personnelles\nen films souvenirs inoubliables")
-                : (activeHeroText?.title_mobile_en || activeHeroText?.title_en || "We transform\nyour personal photos and videos\ninto unforgettable souvenir films");
+                ? (activeHeroText?.title_mobile_fr || activeHeroText?.title_fr || "Nous transformons\nvos photos et vidéos personnelles\nen films souvenirs inoubliables!!")
+                : (activeHeroText?.title_mobile_en || activeHeroText?.title_en || "We transform\nyour personal photos and videos\ninto unforgettable souvenir film!!");
                 
               const desktopText = language === 'fr-FR' 
-                ? (activeHeroText?.title_desktop_fr || activeHeroText?.title_fr || "Nous transformons vos photos et vidéos personnelles\nen films souvenirs inoubliables")
-                : (activeHeroText?.title_desktop_en || activeHeroText?.title_en || "We transform your personal photos and videos\ninto unforgettable souvenir films");
+                ? (activeHeroText?.title_desktop_fr || activeHeroText?.title_fr || "Nous transformons vos photos et vidéos personnelles\nen films souvenirs inoubliables!!")
+                : (activeHeroText?.title_desktop_en || activeHeroText?.title_en || "We transform your personal photos and videos\ninto unforgettable souvenir films!!");
               
               // Process mobile text
               let processedMobileText = mobileText;
@@ -257,7 +270,7 @@ export function HeroVideoSection() {
                 <>
                   {/* Mobile: Use mobile-specific text */}
                   <span className="block sm:hidden">
-                    {processedMobileText.split('\n').map((line, index) => (
+                    {processedMobileText.split('\n').map((line: string, index: number) => (
                       <React.Fragment key={index}>
                         {line}
                         {index < processedMobileText.split('\n').length - 1 && <br />}
@@ -266,7 +279,7 @@ export function HeroVideoSection() {
                   </span>
                   {/* Desktop: Use desktop-specific text */}
                   <span className="hidden sm:block">
-                    {processedDesktopText.split('\n').map((line, index) => (
+                    {processedDesktopText.split('\n').map((line: string, index: number) => (
                       <React.Fragment key={index}>
                         {line}
                         {index < processedDesktopText.split('\n').length - 1 && <br />}
