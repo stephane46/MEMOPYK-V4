@@ -82,7 +82,7 @@ export function WhyMemopykSection() {
 
                     {/* Description */}
                     <div 
-                      className="text-memopyk-dark-blue leading-relaxed text-sm sm:text-base flex-grow text-center [&_ul]:list-disc [&_ul]:list-inside [&_ul]:text-left [&_ul]:space-y-1 [&_ul]:mt-3 [&_li]:leading-relaxed [&_strong]:font-semibold"
+                      className="text-memopyk-dark-blue leading-relaxed text-sm sm:text-base flex-grow text-center [&_ul]:list-disc [&_ul]:list-outside [&_ul]:text-left [&_ul]:space-y-1 [&_ul]:mt-3 [&_ul]:pl-4 [&_li]:leading-relaxed [&_strong]:font-semibold"
                       dangerouslySetInnerHTML={{ 
                         __html: language === 'fr-FR' ? benefit.descriptionFr : benefit.descriptionEn 
                       }}
@@ -137,7 +137,7 @@ export function WhyMemopykSection() {
 
                     {/* Description */}
                     <div 
-                      className="text-memopyk-dark-blue leading-relaxed text-sm sm:text-base flex-grow text-center [&_ul]:list-disc [&_ul]:list-inside [&_ul]:text-left [&_ul]:space-y-1 [&_ul]:mt-3 [&_li]:leading-relaxed [&_strong]:font-semibold"
+                      className="text-memopyk-dark-blue leading-relaxed text-sm sm:text-base flex-grow text-center [&_ul]:list-disc [&_ul]:list-outside [&_ul]:text-left [&_ul]:space-y-1 [&_ul]:mt-3 [&_ul]:pl-4 [&_li]:leading-relaxed [&_strong]:font-semibold"
                       dangerouslySetInnerHTML={{ 
                         __html: language === 'fr-FR' ? benefit.descriptionFr : benefit.descriptionEn 
                       }}
@@ -180,7 +180,7 @@ export function WhyMemopykSection() {
 
                     {/* Description */}
                     <div 
-                      className="text-memopyk-dark-blue leading-relaxed text-sm sm:text-base flex-grow text-center [&_ul]:list-disc [&_ul]:list-inside [&_ul]:text-left [&_ul]:space-y-1 [&_ul]:mt-3 [&_li]:leading-relaxed [&_strong]:font-semibold"
+                      className="text-memopyk-dark-blue leading-relaxed text-sm sm:text-base flex-grow text-center [&_ul]:list-disc [&_ul]:list-outside [&_ul]:text-left [&_ul]:space-y-1 [&_ul]:mt-3 [&_ul]:pl-4 [&_li]:leading-relaxed [&_strong]:font-semibold"
                       dangerouslySetInnerHTML={{ 
                         __html: language === 'fr-FR' ? benefit.descriptionFr : benefit.descriptionEn 
                       }}
@@ -219,7 +219,7 @@ export function WhyMemopykSection() {
 
                     {/* Description */}
                     <div 
-                      className="text-memopyk-dark-blue leading-relaxed text-sm sm:text-base flex-grow text-center [&_ul]:list-disc [&_ul]:list-inside [&_ul]:text-left [&_ul]:space-y-1 [&_ul]:mt-3 [&_li]:leading-relaxed [&_strong]:font-semibold"
+                      className="text-memopyk-dark-blue leading-relaxed text-sm sm:text-base flex-grow text-center [&_ul]:list-disc [&_ul]:list-outside [&_ul]:text-left [&_ul]:space-y-1 [&_ul]:mt-3 [&_ul]:pl-4 [&_li]:leading-relaxed [&_strong]:font-semibold"
                       dangerouslySetInnerHTML={{ 
                         __html: language === 'fr-FR' ? benefit.descriptionFr : benefit.descriptionEn 
                       }}
@@ -257,7 +257,7 @@ export function WhyMemopykSection() {
 
                     {/* Description */}
                     <div 
-                      className="text-memopyk-dark-blue leading-relaxed text-sm sm:text-base flex-grow text-center [&_ul]:list-disc [&_ul]:list-inside [&_ul]:text-left [&_ul]:space-y-1 [&_ul]:mt-3 [&_li]:leading-relaxed [&_strong]:font-semibold"
+                      className="text-memopyk-dark-blue leading-relaxed text-sm sm:text-base flex-grow text-center [&_ul]:list-disc [&_ul]:list-outside [&_ul]:text-left [&_ul]:space-y-1 [&_ul]:mt-3 [&_ul]:pl-4 [&_li]:leading-relaxed [&_strong]:font-semibold"
                       dangerouslySetInnerHTML={{ 
                         __html: language === 'fr-FR' ? benefit.descriptionFr : benefit.descriptionEn 
                       }}
