@@ -1,14 +1,17 @@
 import React, { useState, useEffect } from 'react';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { BarChart3, TrendingUp, Play, Users, Clock, RefreshCw, Globe, Eye, UserCheck, MapPin, Languages, MousePointer, X } from 'lucide-react';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { useToast } from '@/hooks/use-toast';
+import { BarChart3, TrendingUp, Play, Users, Clock, RefreshCw, Globe, Eye, UserCheck, MapPin, Languages, MousePointer, X, Ban, UserX, Settings, Shield } from 'lucide-react';
 import { CountryFlag } from './CountryFlag';
 import { formatFrenchDateTime } from '@/utils/date-format';
+import { apiRequest } from '@/lib/queryClient';
 
 // Comprehensive language mapping with flags for 100+ languages
 const LANGUAGE_MAP: Record<string, { display: string; flag: string }> = {
@@ -112,6 +115,20 @@ const LANGUAGE_MAP: Record<string, { display: string; flag: string }> = {
   'fj': { display: 'Vosa Vakaviti', flag: '🇫🇯' }
 };
 
+// Types for IP Management
+interface ActiveViewerIp {
+  ip_address: string;
+  country: string;
+  city: string;
+  first_seen: string;
+  last_activity: string;
+  session_count: number;
+}
+
+interface AnalyticsSettings {
+  excludedIps: Array<{ ip: string; comment?: string } | string>;
+}
+
 // Language formatting utility with comprehensive mapping
 const formatLanguage = (langCode: string): { display: string; flag: string; variant: 'default' | 'secondary' } => {
   if (!langCode) return { display: 'Unknown', flag: '🌐', variant: 'secondary' };
@@ -195,12 +212,42 @@ interface RecentVisitor {
   previous_visit?: string;
 }
 
+interface ActiveViewerIp {
+  ip_address: string;
+  country: string;
+  country_code?: string;
+  city?: string;
+  region?: string;
+  last_visit: string;
+  user_agent: string;
+  visit_count: number;
+  session_duration?: number;
+}
+
+interface AnalyticsSettings {
+  excludedIps: Array<{
+    ip_address: string;
+    comment?: string;
+    added_at: string;
+  }>;
+}
+
 export default function CleanGA4Analytics() {
   const [dateRange, setDateRange] = useState('90d'); // Match the filter default
   const [locale, setLocale] = useState('all');
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isReturningModalOpen, setIsReturningModalOpen] = useState(false);
+  
+  // IP Management state
+  const [showIpManagement, setShowIpManagement] = useState(false);
+  const [newExcludedIp, setNewExcludedIp] = useState('');
+  const [newIpComment, setNewIpComment] = useState('');
+  const [editingComment, setEditingComment] = useState<string | null>(null);
+  const [tempComment, setTempComment] = useState('');
+  
+  const queryClient = useQueryClient();
+  const { toast } = useToast();
 
   // Comprehensive GA4 + visitor analytics data fetch
   const { data: ga4Data, isLoading, error, refetch } = useQuery<GA4MetricsResponse>({
@@ -235,6 +282,90 @@ export default function CleanGA4Analytics() {
     staleTime: 30000, // 30 seconds
     refetchInterval: 60000, // 1 minute
     enabled: isReturningModalOpen, // Only fetch when modal is open
+  });
+
+  // IP Management queries
+  const { data: activeIps, isLoading: activeIpsLoading } = useQuery<ActiveViewerIp[]>({
+    queryKey: ['/api/analytics/active-ips'],
+    enabled: showIpManagement
+  });
+
+  const { data: settings, isLoading: settingsLoading } = useQuery<AnalyticsSettings>({
+    queryKey: ['/api/analytics/settings'],
+    enabled: showIpManagement
+  });
+
+  // Detect current admin IP
+  const { data: currentAdminIp } = useQuery<string>({
+    queryKey: ['/api/analytics/current-ip'],
+    enabled: showIpManagement
+  });
+
+  // IP Management mutations
+  const addExcludedIpMutation = useMutation({
+    mutationFn: ({ ipAddress, comment }: { ipAddress: string; comment?: string }) => 
+      apiRequest('/api/analytics/exclude-ip', 'POST', { ipAddress, comment }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['/api/analytics/settings'] });
+      queryClient.invalidateQueries({ queryKey: ['/api/analytics/active-ips'] });
+      setNewExcludedIp('');
+      setNewIpComment('');
+      toast({
+        title: "IP Excluded",
+        description: "IP address has been excluded from tracking.",
+      });
+    },
+    onError: (error) => {
+      console.error('Exclude IP error:', error);
+      toast({
+        title: "Exclusion Failed",
+        description: "Failed to exclude IP address.",
+        variant: "destructive",
+      });
+    }
+  });
+
+  const updateIpCommentMutation = useMutation({
+    mutationFn: ({ ipAddress, comment }: { ipAddress: string; comment: string }) => 
+      apiRequest(`/api/analytics/exclude-ip/${encodeURIComponent(ipAddress)}/comment`, 'PATCH', { comment }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['/api/analytics/settings'] });
+      setEditingComment(null);
+      setTempComment('');
+      toast({
+        title: "Comment Updated",
+        description: "IP comment has been updated.",
+      });
+    },
+    onError: (error) => {
+      console.error('Update IP comment error:', error);
+      toast({
+        title: "Update Failed",
+        description: "Failed to update IP comment.",
+        variant: "destructive",
+      });
+    }
+  });
+
+  const removeExcludedIpMutation = useMutation({
+    mutationFn: (ipAddress: string) => 
+      apiRequest(`/api/analytics/exclude-ip/${encodeURIComponent(ipAddress)}`, 'DELETE'),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['/api/analytics/settings'] });
+      queryClient.invalidateQueries({ queryKey: ['/api/analytics/active-ips'] });
+      toast({
+        title: "IP Restored",
+        description: "IP address has been restored to tracking.",
+      });
+    },
+    onError: (error) => {
+      console.error('Remove excluded IP error:', error);
+      toast({
+        title: "Restore Failed",
+        description: "Failed to restore IP address.",
+        variant: "destructive",
+      });
+    }
   });
 
   const handleRefresh = async () => {
@@ -388,9 +519,23 @@ export default function CleanGA4Analytics() {
         </Card>
       )}
 
-      {/* Visitor Overview Metrics */}
-      {ga4Data && (
-        <>
+      {/* Main Dashboard Tabs */}
+      <Tabs defaultValue="analytics" className="w-full">
+        <TabsList className="grid w-full grid-cols-2">
+          <TabsTrigger value="analytics" className="flex items-center gap-2">
+            <BarChart3 className="h-4 w-4" />
+            Analytics Dashboard
+          </TabsTrigger>
+          <TabsTrigger value="ip-management" className="flex items-center gap-2">
+            <Shield className="h-4 w-4" />
+            IP Management
+          </TabsTrigger>
+        </TabsList>
+
+        <TabsContent value="analytics" className="space-y-6">
+          {/* Visitor Overview Metrics */}
+          {ga4Data && (
+            <>
           <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
             <Card>
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
@@ -960,6 +1105,222 @@ export default function CleanGA4Analytics() {
           </div>
         </div>
       )}
+          </TabsContent>
+
+          <TabsContent value="ip-management" className="space-y-6">
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Shield className="h-5 w-5" />
+                  IP Management
+                </CardTitle>
+                <CardDescription>
+                  Manage IP addresses excluded from analytics tracking
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-6">
+                {/* Current Admin IP Detection */}
+                {currentAdminIp && (
+                  <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-4">
+                    <div className="flex items-center gap-2 mb-2">
+                      <Settings className="h-4 w-4 text-blue-600" />
+                      <span className="font-medium text-blue-900 dark:text-blue-300">Your Current IP</span>
+                    </div>
+                    <div className="font-mono text-sm text-blue-800 dark:text-blue-400">
+                      {currentAdminIp}
+                    </div>
+                  </div>
+                )}
+
+                {/* Add New Excluded IP */}
+                <div className="space-y-4">
+                  <h3 className="text-lg font-semibold">Exclude New IP Address</h3>
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div className="space-y-2">
+                      <Label htmlFor="new-ip">IP Address</Label>
+                      <Input
+                        id="new-ip"
+                        placeholder="192.168.1.1"
+                        value={newExcludedIp}
+                        onChange={(e) => setNewExcludedIp(e.target.value)}
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="ip-comment">Comment (Optional)</Label>
+                      <Input
+                        id="ip-comment"
+                        placeholder="Admin office, My home IP..."
+                        value={newIpComment}
+                        onChange={(e) => setNewIpComment(e.target.value)}
+                      />
+                    </div>
+                    <div className="flex items-end">
+                      <Button 
+                        onClick={() => addExcludedIpMutation.mutate({ ipAddress: newExcludedIp, comment: newIpComment })}
+                        disabled={!newExcludedIp || addExcludedIpMutation.isPending}
+                        className="w-full"
+                      >
+                        Exclude IP
+                      </Button>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Currently Excluded IPs */}
+                <div className="space-y-4">
+                  <h3 className="text-lg font-semibold">Currently Excluded IPs</h3>
+                  {settingsLoading ? (
+                    <div className="text-center py-4">
+                      <RefreshCw className="h-6 w-6 animate-spin mx-auto mb-2" />
+                      <span>Loading excluded IPs...</span>
+                    </div>
+                  ) : settings?.excludedIps && settings.excludedIps.length > 0 ? (
+                    <div className="space-y-3">
+                      {settings.excludedIps.map((excludedIp) => (
+                        <div key={excludedIp.ip_address} className="bg-gray-50 dark:bg-gray-800 rounded-lg p-4 border">
+                          <div className="flex items-center justify-between">
+                            <div className="flex-1">
+                              <div className="font-mono text-sm font-medium">
+                                {excludedIp.ip_address}
+                              </div>
+                              {excludedIp.comment && (
+                                <div className="text-sm text-gray-600 dark:text-gray-400 mt-1">
+                                  {editingComment === excludedIp.ip_address ? (
+                                    <div className="flex items-center gap-2">
+                                      <Input
+                                        value={tempComment}
+                                        onChange={(e) => setTempComment(e.target.value)}
+                                        className="text-xs"
+                                        placeholder="Comment..."
+                                      />
+                                      <Button
+                                        size="sm"
+                                        variant="ghost"
+                                        onClick={() => updateIpCommentMutation.mutate({ 
+                                          ipAddress: excludedIp.ip_address, 
+                                          comment: tempComment 
+                                        })}
+                                      >
+                                        <Check className="h-3 w-3" />
+                                      </Button>
+                                      <Button
+                                        size="sm"
+                                        variant="ghost"
+                                        onClick={() => {
+                                          setEditingComment(null);
+                                          setTempComment('');
+                                        }}
+                                      >
+                                        <X className="h-3 w-3" />
+                                      </Button>
+                                    </div>
+                                  ) : (
+                                    <span>{excludedIp.comment}</span>
+                                  )}
+                                </div>
+                              )}
+                              <div className="text-xs text-gray-500 mt-1">
+                                Added: {formatFrenchDateTime(new Date(excludedIp.added_at))}
+                              </div>
+                            </div>
+                            <div className="flex items-center gap-2 ml-4">
+                              <Button
+                                size="sm"
+                                variant="ghost"
+                                onClick={() => {
+                                  setEditingComment(excludedIp.ip_address);
+                                  setTempComment(excludedIp.comment || '');
+                                }}
+                              >
+                                <Edit2 className="h-3 w-3" />
+                              </Button>
+                              <Button
+                                size="sm"
+                                variant="ghost"
+                                onClick={() => removeExcludedIpMutation.mutate(excludedIp.ip_address)}
+                                className="text-red-600 hover:text-red-700"
+                              >
+                                <Trash2 className="h-3 w-3" />
+                              </Button>
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <div className="text-center py-8 text-gray-500">
+                      No excluded IP addresses
+                    </div>
+                  )}
+                </div>
+
+                {/* Active Viewer IPs */}
+                <div className="space-y-4">
+                  <h3 className="text-lg font-semibold">Active Viewer IPs</h3>
+                  {activeIpsLoading ? (
+                    <div className="text-center py-4">
+                      <RefreshCw className="h-6 w-6 animate-spin mx-auto mb-2" />
+                      <span>Loading active IPs...</span>
+                    </div>
+                  ) : activeIps && activeIps.length > 0 ? (
+                    <div className="space-y-3">
+                      {activeIps.map((ip) => (
+                        <div key={ip.ip_address} className="bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-lg p-4">
+                          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                            <div>
+                              <div className="flex items-center gap-2 mb-1">
+                                <Globe className="h-4 w-4 text-green-600" />
+                                <span className="font-medium text-sm">IP & Location</span>
+                              </div>
+                              <div className="font-mono text-sm">{ip.ip_address}</div>
+                              <div className="text-xs text-gray-600 dark:text-gray-400">
+                                <CountryFlag countryCode={ip.country_code} />
+                                {ip.city && ` ${ip.city}`}
+                                {ip.region && `, ${ip.region}`}
+                              </div>
+                            </div>
+                            <div>
+                              <div className="flex items-center gap-2 mb-1">
+                                <Clock className="h-4 w-4 text-green-600" />
+                                <span className="font-medium text-sm">Last Visit</span>
+                              </div>
+                              <div className="text-sm">{formatFrenchDateTime(new Date(ip.last_visit))}</div>
+                            </div>
+                            <div>
+                              <div className="flex items-center gap-2 mb-1">
+                                <Users className="h-4 w-4 text-green-600" />
+                                <span className="font-medium text-sm">Visits</span>
+                              </div>
+                              <div className="text-sm">{ip.visit_count} visits</div>
+                            </div>
+                            <div>
+                              <Button
+                                size="sm"
+                                variant="outline"
+                                onClick={() => {
+                                  setNewExcludedIp(ip.ip_address);
+                                  setNewIpComment(`Active visitor from ${ip.country}`);
+                                }}
+                                className="w-full"
+                              >
+                                <Ban className="h-3 w-3 mr-1" />
+                                Exclude
+                              </Button>
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <div className="text-center py-8 text-gray-500">
+                      No active viewer IPs found
+                    </div>
+                  )}
+                </div>
+              </CardContent>
+            </Card>
+          </TabsContent>
+        </Tabs>
     </div>
   );
 }
