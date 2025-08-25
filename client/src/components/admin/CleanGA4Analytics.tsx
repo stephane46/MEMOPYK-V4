@@ -655,11 +655,17 @@ export default function CleanGA4Analytics() {
       {/* Main Dashboard Tabs */}
       <Tabs defaultValue="analytics" className="w-full">
         <TabsList className="grid w-full grid-cols-2">
-          <TabsTrigger value="analytics" className="flex items-center gap-2">
+          <TabsTrigger 
+            value="analytics" 
+            className="flex items-center gap-2 data-[state=active]:bg-blue-50 data-[state=active]:text-blue-700 data-[state=active]:border-blue-200 data-[state=active]:shadow-sm dark:data-[state=active]:bg-blue-950 dark:data-[state=active]:text-blue-300 dark:data-[state=active]:border-blue-800"
+          >
             <BarChart3 className="h-4 w-4" />
             Analytics Dashboard
           </TabsTrigger>
-          <TabsTrigger value="ip-management" className="flex items-center gap-2">
+          <TabsTrigger 
+            value="ip-management" 
+            className="flex items-center gap-2 data-[state=active]:bg-blue-50 data-[state=active]:text-blue-700 data-[state=active]:border-blue-200 data-[state=active]:shadow-sm dark:data-[state=active]:bg-blue-950 dark:data-[state=active]:text-blue-300 dark:data-[state=active]:border-blue-800"
+          >
             <Shield className="h-4 w-4" />
             IP Management
           </TabsTrigger>
