@@ -295,7 +295,7 @@ export default function GallerySection() {
     'fr-FR': {
       title: "Galerie",
       subtitle: "Chaque film que nous créons est aussi unique que vos souvenirs.",
-      description: "Parce que chaque histoire est différente, nous réalisons un devis personnalisé adapté à votre film. La galerie présente une sélection d'exemples de créations et des tarifs indicatifs. Pour donner vie à vos propres souvenirs, contactez-nous pour un devis fait rien que pour vous.",
+      description: "Ne laissez pas vos souvenirs disparaître ; révélez-les à travers un film personnel, unique et émouvant, créé grâce à une expertise professionnelle et une passion pour la mise en valeur de vos plus beaux moments.",
       viewAll: "Voir Toute la Galerie",
       preview: "Aperçu",
       startingFrom: "À partir de",
@@ -307,7 +307,7 @@ export default function GallerySection() {
     'en-US': {
       title: "Gallery",
       subtitle: "Every film we create is as unique as your memories.",
-      description: "Because each story is different, we craft a customized quotation tailored to your film. The gallery presents a selection of sample creations and indicative pricing. To bring your own memories to life, contact us for a quote designed just for you.",
+      description: "Don't let your memories disappear; reveal them through a personal, unique, and moving film, crafted with professional expertise and a passion for showcasing your most beautiful moments.",
       viewAll: "View Full Gallery",
       preview: "Preview",
       startingFrom: "Starting from",
@@ -895,8 +895,8 @@ export default function GallerySection() {
               {/* Compelling Subtitle */}
               <p className="text-lg md:text-xl text-memopyk-cream/90 mb-6 max-w-3xl mx-auto leading-relaxed">
                 {language === 'fr-FR' 
-                  ? "✨ Ne laissez pas vos souvenirs disparaître — révélez-les à travers un film personnel, unique et émouvant, créé grâce à une expertise professionnelle et une passion pour la mise en valeur de vos plus beaux moments. ✨"
-                  : "✨ Don't let your memories disappear — reveal them through a personal, unique, and moving film, crafted with professional expertise and a passion for showcasing your most beautiful moments. ✨"
+                  ? "✨ Parce que chaque histoire est différente, nous réalisons un devis personnalisé adapté à votre film. Pour donner vie à vos propres souvenirs, contactez-nous pour un devis fait rien que pour vous. ✨"
+                  : "✨ Because each story is different, we craft a customized quotation tailored to your film. To bring your own memories to life, contact us for a quote designed just for you. ✨"
                 }
               </p>
 
