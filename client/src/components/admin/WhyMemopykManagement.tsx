@@ -270,9 +270,17 @@ export function WhyMemopykManagement() {
         <div className="space-y-6">
           <div className="flex items-center justify-between">
             <h3 className="text-lg font-semibold">Cartes Why MEMOPYK ({cards.length})</h3>
-            <Button onClick={handleNewCard} className="bg-memopyk-orange hover:bg-memopyk-orange/90 text-white">
-              <Plus className="w-4 h-4 mr-2" />
-              Nouvelle Carte
+            <Button 
+              onClick={handleNewCard} 
+              className=""
+              style={{
+                backgroundColor: '#D67C4A !important',
+                color: '#ffffff !important',
+                border: '1px solid #D67C4A !important'
+              }}
+            >
+              <Plus className="w-4 h-4 mr-2" style={{ color: '#ffffff !important' }} />
+              <span style={{ color: '#ffffff !important', fontWeight: 'bold' }}>Nouvelle Carte</span>
             </Button>
           </div>
 
@@ -483,14 +491,17 @@ export function WhyMemopykManagement() {
                   <Button 
                     onClick={handleSaveCard}
                     disabled={!formData.titleFr || !formData.titleEn}
-                    className="bg-memopyk-orange hover:bg-memopyk-orange/90 px-6"
+                    className="px-6"
                     style={{
-                      backgroundColor: '#D67C4A',
-                      color: '#ffffff',
-                      border: '1px solid #D67C4A'
+                      backgroundColor: '#D67C4A !important',
+                      color: '#ffffff !important',
+                      border: '1px solid #D67C4A !important',
+                      fontWeight: 'bold !important'
                     }}
                   >
-                    {editingCard ? 'Update Card' : 'Create Card'}
+                    <span style={{ color: '#ffffff !important', fontWeight: 'bold' }}>
+                      {editingCard ? 'Update Card' : 'Create Card'}
+                    </span>
                   </Button>
                 </div>
 
