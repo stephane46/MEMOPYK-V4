@@ -133,7 +133,7 @@ export function AnalyticsDashboard() {
 
   // Fetch active viewer IPs
   const { data: activeIps, isLoading: activeIpsLoading } = useQuery<ActiveViewerIp[]>({
-    queryKey: ['/api/analytics/active-ips'],
+    queryKey: ['/api/analytics/active-ips', dateFrom, dateTo],
     enabled: showIpManagement
   });
 
@@ -954,7 +954,7 @@ export function AnalyticsDashboard() {
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <Shield className="h-5 w-5" />
-              IP Address Management
+              Active Viewers
             </CardTitle>
             <CardDescription>
               Manage viewer IP addresses and tracking exclusions
@@ -965,7 +965,7 @@ export function AnalyticsDashboard() {
             <div>
               <h4 className="font-medium mb-4">Active Viewer IPs</h4>
               {activeIpsLoading ? (
-                <div className="text-center py-4">Loading active IPs...</div>
+                <div className="text-center py-4">Loading...</div>
               ) : activeIps?.length ? (
                 <div className="space-y-2 max-h-60 overflow-y-auto">
                   {activeIps.map((ip) => (
@@ -1051,7 +1051,7 @@ export function AnalyticsDashboard() {
                 </div>
               ) : (
                 <div className="p-4 border rounded-lg bg-gray-50">
-                  <p className="text-sm text-muted-foreground">Loading your IP address...</p>
+                  <p className="text-sm text-muted-foreground">Loading...</p>
                 </div>
               )}
             </div>
@@ -1096,7 +1096,7 @@ export function AnalyticsDashboard() {
             <div>
               <h4 className="font-medium mb-4">Excluded IPs</h4>
               {settingsLoading ? (
-                <div className="text-center py-4">Loading excluded IPs...</div>
+                <div className="text-center py-4">Loading...</div>
               ) : settings?.excludedIps?.length ? (
                 <div className="space-y-3">
                   {settings.excludedIps.map((item: any, index: number) => {

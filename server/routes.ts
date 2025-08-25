@@ -2178,7 +2178,13 @@ export async function registerRoutes(app: Express): Promise<void> {
   // Active Viewer IPs - GET active viewer IP addresses
   app.get("/api/analytics/active-ips", async (req, res) => {
     try {
-      const activeIps = await hybridStorage.getActiveViewerIps();
+      const { dateFrom, dateTo } = req.query;
+      console.log('👥 Active Viewer IPs: Fetching with date filters:', { dateFrom, dateTo });
+      
+      const activeIps = await hybridStorage.getActiveViewerIps(
+        dateFrom as string, 
+        dateTo as string
+      );
       res.json(activeIps);
     } catch (error) {
       console.error('❌ Active viewer IPs error:', error);

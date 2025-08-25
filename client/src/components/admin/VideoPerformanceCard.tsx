@@ -25,6 +25,7 @@ export function VideoPerformanceCard({ frontContent, className = "", performance
 
   const handleCardClick = async () => {
     setIsModalOpen(true);
+    setFreshData([]); // Reset data to show loading state
     // NUCLEAR OPTION: Use completely new endpoint to bypass all caching
     try {
       const timestamp = Date.now();
@@ -184,7 +185,7 @@ export function VideoPerformanceCard({ frontContent, className = "", performance
                 color: '#111827'
               }}>
                 <Play style={{ width: '24px', height: '24px' }} />
-                Video Performance Analytics
+                Gallery Views
               </div>
               <button
                 onClick={handleModalClose}
@@ -275,7 +276,11 @@ export function VideoPerformanceCard({ frontContent, className = "", performance
                 Most Popular Videos
               </div>
 
-              {(freshData.length > 0 ? freshData : performanceData).length > 0 ? (
+              {freshData.length === 0 && isModalOpen && !(freshData.length > 0 ? freshData : performanceData).length ? (
+                <div style={{ textAlign: 'center', padding: '40px', color: '#6b7280' }}>
+                  Loading...
+                </div>
+              ) : (freshData.length > 0 ? freshData : performanceData).length > 0 ? (
                 <div style={{ 
                   display: 'flex', 
                   flexDirection: 'column', 
