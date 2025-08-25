@@ -160,7 +160,7 @@ export async function qSiteLanguageChoice(start: string, end: string) {
     let englishViews = 0;
 
     pageViews.forEach((page: any) => {
-      if (page.pagePath.includes('/fr/')) {
+      if (page.pagePath.includes('/fr-FR') || page.pagePath.includes('/fr/')) {
         frenchViews += page.views;
       } else if (page.pagePath.includes('/en-US/')) {
         englishViews += page.views;
