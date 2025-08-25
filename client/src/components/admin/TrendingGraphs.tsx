@@ -92,11 +92,7 @@ export function TrendingGraphs({ dateFrom, dateTo }: TrendingGraphsProps) {
     refetchInterval: 5 * 60 * 1000, // 5 minutes
   });
 
-  // Fetch time series data for trend charts
-  const { data: timeSeriesData, isLoading: timeSeriesLoading } = useQuery<TimeSeriesData[]>({
-    queryKey: ['/api/analytics/time-series', dateFrom, dateTo],
-    staleTime: 1000 * 60 * 5, // Cache for 5 minutes
-  });
+  // Note: Removed time series data fetching as we now use period comparison
 
   // Fetch dashboard data for video performance
   const { data: dashboardData, isLoading: dashboardLoading } = useQuery({
@@ -104,7 +100,7 @@ export function TrendingGraphs({ dateFrom, dateTo }: TrendingGraphsProps) {
     enabled: true
   });
 
-  const isLoading = ga4Loading || timeSeriesLoading || dashboardLoading;
+  const isLoading = ga4Loading || dashboardLoading;
 
   if (isLoading) {
     return (
@@ -148,60 +144,107 @@ export function TrendingGraphs({ dateFrom, dateTo }: TrendingGraphsProps) {
     );
   };
 
-  // Visitor trends chart
-  const VisitorTrendsChart = () => {
-    if (!timeSeriesData?.length) {
+  // Period comparison chart
+  const PeriodComparisonChart = () => {
+    if (!ga4Data) {
       return (
         <div className="h-80 flex items-center justify-center text-muted-foreground">
           <div className="text-center">
             <TrendingUp className="h-12 w-12 mx-auto mb-4 opacity-50" />
-            <p>No trend data available</p>
+            <p>No comparison data available</p>
           </div>
         </div>
       );
     }
 
+    // Create period comparison data
+    const comparisonData = [
+      {
+        metric: 'Page Views',
+        current: ga4Data.totalViews,
+        previous: Math.round(ga4Data.totalViews / (1 + (ga4Data.viewsChange || 0) / 100)),
+        change: ga4Data.viewsChange || 0
+      },
+      {
+        metric: 'Unique Visitors', 
+        current: ga4Data.uniqueVisitors,
+        previous: Math.round(ga4Data.uniqueVisitors / (1 + (ga4Data.uniqueVisitorsChange || 0) / 100)),
+        change: ga4Data.uniqueVisitorsChange || 0
+      },
+      {
+        metric: 'Return Visitors',
+        current: ga4Data.returnVisitors,
+        previous: Math.round(ga4Data.returnVisitors / (1 + (ga4Data.returnVisitorsChange || 0) / 100)),
+        change: ga4Data.returnVisitorsChange || 0
+      },
+      {
+        metric: 'Video Plays',
+        current: ga4Data.totalVideoStarts,
+        previous: Math.round(ga4Data.totalVideoStarts / (1 + (ga4Data.videoStartsChange || 0) / 100)),
+        change: ga4Data.videoStartsChange || 0
+      }
+    ];
+
     return (
-      <ResponsiveContainer width="100%" height={320}>
-        <ComposedChart data={timeSeriesData} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
-          <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
-          <XAxis 
-            dataKey="date" 
-            fontSize={12}
-            tickFormatter={(value) => new Date(value).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
-          />
-          <YAxis yAxisId="left" fontSize={12} />
-          <YAxis yAxisId="right" orientation="right" fontSize={12} />
-          <Tooltip 
-            content={<CustomTooltip 
-              formatter={(value: number, name: string) => [
-                name.includes('Views') ? formatInt(value) : formatInt(value),
-                name
-              ]}
-            />}
-          />
-          <Legend />
-          <Area
-            yAxisId="left"
-            type="monotone"
-            dataKey="visitors"
-            fill={COLORS.primary}
-            fillOpacity={0.3}
-            stroke={COLORS.primary}
-            strokeWidth={2}
-            name="Daily Visitors"
-          />
-          <Line
-            yAxisId="right"
-            type="monotone"
-            dataKey="totalViews"
-            stroke={COLORS.secondary}
-            strokeWidth={3}
-            name="Total Views"
-            dot={{ fill: COLORS.secondary, r: 4 }}
-          />
-        </ComposedChart>
-      </ResponsiveContainer>
+      <div className="space-y-6">
+        <ResponsiveContainer width="100%" height={320}>
+          <BarChart data={comparisonData} margin={{ top: 20, right: 30, left: 20, bottom: 60 }}>
+            <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
+            <XAxis 
+              dataKey="metric" 
+              fontSize={11}
+              angle={-45}
+              textAnchor="end"
+              height={80}
+            />
+            <YAxis fontSize={12} />
+            <Tooltip 
+              content={<CustomTooltip 
+                formatter={(value: number, name: string) => [formatInt(value), name]}
+              />}
+            />
+            <Legend />
+            <Bar 
+              dataKey="current" 
+              fill={COLORS.primary}
+              name="Current Period"
+              radius={[4, 4, 0, 0]}
+            />
+            <Bar 
+              dataKey="previous" 
+              fill={COLORS.secondary}
+              name="Previous Period"
+              radius={[4, 4, 0, 0]}
+            />
+          </BarChart>
+        </ResponsiveContainer>
+        
+        {/* Period comparison summary */}
+        <div className="grid grid-cols-2 gap-4">
+          {comparisonData.map((item) => (
+            <div key={item.metric} className="p-4 bg-gray-50 rounded-lg">
+              <div className="flex items-center justify-between mb-2">
+                <h4 className="font-medium text-sm">{item.metric}</h4>
+                <div className={`flex items-center gap-1 text-xs ${
+                  item.change >= 0 ? "text-green-600" : "text-red-600"
+                }`}>
+                  {item.change >= 0 ? "▲" : "▼"} {Math.abs(item.change)}%
+                </div>
+              </div>
+              <div className="flex items-center justify-between text-sm">
+                <div>
+                  <span className="text-muted-foreground">Current: </span>
+                  <span className="font-semibold">{formatInt(item.current)}</span>
+                </div>
+                <div>
+                  <span className="text-muted-foreground">Previous: </span>
+                  <span>{formatInt(item.previous)}</span>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
     );
   };
 
@@ -453,10 +496,10 @@ export function TrendingGraphs({ dateFrom, dateTo }: TrendingGraphsProps) {
               Trending Analytics
             </CardTitle>
             <CardDescription>
-              Interactive charts showing visitor trends, geographic distribution, and engagement metrics
+              Period comparison charts showing current vs previous period performance
               {dateFrom && dateTo && (
                 <span className="ml-2 text-sm font-medium text-orange-600">
-                  • {dateFrom} to {dateTo}
+                  • {dateFrom} to {dateTo} vs previous period
                 </span>
               )}
             </CardDescription>
@@ -472,7 +515,7 @@ export function TrendingGraphs({ dateFrom, dateTo }: TrendingGraphsProps) {
           <TabsList className="grid w-full grid-cols-5">
             <TabsTrigger value="overview" className="flex items-center gap-1">
               <TrendingUp className="h-4 w-4" />
-              Trends
+              Comparison
             </TabsTrigger>
             <TabsTrigger value="geographic" className="flex items-center gap-1">
               <Globe className="h-4 w-4" />
@@ -494,10 +537,10 @@ export function TrendingGraphs({ dateFrom, dateTo }: TrendingGraphsProps) {
 
           <TabsContent value="overview" className="space-y-4">
             <div className="flex items-center justify-between">
-              <h3 className="text-lg font-semibold">Visitor & Views Trends</h3>
-              <Badge variant="secondary">Daily Data</Badge>
+              <h3 className="text-lg font-semibold">Period Comparison</h3>
+              <Badge variant="secondary">Current vs Previous Period</Badge>
             </div>
-            <VisitorTrendsChart />
+            <PeriodComparisonChart />
           </TabsContent>
 
           <TabsContent value="geographic" className="space-y-4">
