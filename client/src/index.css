@@ -778,7 +778,7 @@ html, body {
 
 /* DESKTOP: Fixed hero text styling */
 .hero-text-desktop {
-  font-size: 3.5rem !important;
+  font-size: 40px !important;
   line-height: 1.1 !important;
   white-space: normal;
   text-align: center;
@@ -802,7 +802,7 @@ html, body {
   .hero-text-mobile .hero-line,
   h1.hero-text-mobile,
   h1.hero-text-mobile .hero-line {
-    font-size: 18px !important; /* Optimal for 3 lines on iPhone 8 */
+    font-size: 20px !important; /* Use admin config mobile value */
     line-height: 1.0 !important;
     padding: 0 !important;
     margin: 0 !important;

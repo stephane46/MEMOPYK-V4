@@ -75,11 +75,11 @@ export function SimpleHeroVideoSection() {
   className={`font-playfair font-bold mb-4 sm:mb-6 lg:mb-8 mx-auto ${isMobileSize ? 'hero-text-mobile' : 'hero-text-desktop'}`}
   style={{ 
     textShadow: '2px 2px 4px rgba(0,0,0,0.8)',
-    minHeight: isMobileSize ? '55px' : '200px', // Adjusted for 18px font
+    minHeight: isMobileSize ? '60px' : '120px', // Adjusted for admin config sizes
     display: 'flex',
     flexDirection: 'column',
     justifyContent: 'center',
-    fontSize: isMobileSize ? '18px' : '3.5rem', // 18px to keep 3 lines on iPhone 8
+    fontSize: isMobileSize ? '20px' : '40px', // Use actual admin config values
     lineHeight: isMobileSize ? '1.0' : '1.1'
   }}
 >
