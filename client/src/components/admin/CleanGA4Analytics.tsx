@@ -1353,6 +1353,7 @@ export default function CleanGA4Analytics() {
                           document.getElementById('new-ip')?.focus();
                         }}
                         className="bg-white hover:bg-blue-50 border-blue-300 text-blue-700 hover:text-blue-800"
+                        data-testid="button-quick-exclude-ip"
                       >
                         <Plus className="h-3 w-3 mr-1" />
                         Quick Exclude
@@ -1393,9 +1394,20 @@ export default function CleanGA4Analytics() {
                       <Button 
                         onClick={() => addExcludedIpMutation.mutate({ ipAddress: newExcludedIp, comment: newIpComment })}
                         disabled={!newExcludedIp || addExcludedIpMutation.isPending}
-                        className="w-full"
+                        className="w-full bg-red-600 hover:bg-red-700 text-white"
+                        data-testid="button-exclude-ip"
                       >
-                        Exclude IP
+                        {addExcludedIpMutation.isPending ? (
+                          <>
+                            <RefreshCw className="h-4 w-4 animate-spin mr-2" />
+                            Excluding...
+                          </>
+                        ) : (
+                          <>
+                            <Ban className="h-4 w-4 mr-2" />
+                            Exclude IP
+                          </>
+                        )}
                       </Button>
                     </div>
                   </div>
