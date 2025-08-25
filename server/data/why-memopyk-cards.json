@@ -14,16 +14,16 @@
   },
   {
     "id": "time-saving",
-    "title_en": "Time Saving",
-    "title_fr": "Gain de Temps",
-    "description_en": "Our dedicated team handles everything with a clear process and predictable deadlines. You save precious hours while your memories are brought to life effortlessly.",
-    "description_fr": "Notre équipe dédiée prend tout en main avec un processus clair et des délais prévisibles. Vous gagnez des heures précieuses pendant que vos souvenirs se transforment sans effort.",
+    "title_en": "TIME SAVING",
+    "title_fr": "GAIN DE TEMPS",
+    "description_en": "<p><strong>Because your time is valuable, let an expert do the work</strong></p><ul><li>Dedicated team, clear process</li><li>Efficient workflow</li><li>Clear deadlines</li></ul><p><br></p>",
+    "description_fr": "<p><strong>Car votre temps est précieux, faites travailler un expert</strong></p><ul><li>Équipe dédiée, processus clair</li><li>Flux de travail efficace</li><li>Délais clairs</li></ul><p><br></p>",
     "icon_name": "Clock",
     "gradient": "from-memopyk-sky-blue/20 to-memopyk-blue-gray/10",
     "order_index": 1,
     "is_active": true,
     "created_at": "2025-08-25T14:39:07.739Z",
-    "updated_at": "2025-08-25T15:25:23.537Z"
+    "updated_at": "2025-08-25T15:54:27.075Z"
   },
   {
     "id": "personalization",
