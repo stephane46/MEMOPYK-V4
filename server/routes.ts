@@ -4441,42 +4441,68 @@ export async function registerRoutes(app: Express): Promise<void> {
     try {
       const range = req.query.range as string || '7d';
       const locale = req.query.locale as string || 'all';
+      const customStartDate = req.query.startDate as string;
+      const customEndDate = req.query.endDate as string;
       
       console.log(`🔍 COMPREHENSIVE ANALYTICS: ${range}, locale: ${locale}`);
+      if (customStartDate && customEndDate) {
+        console.log(`🔍 CUSTOM DATE RANGE: ${customStartDate} to ${customEndDate}`);
+      }
 
       // Temporarily disable cache to test real data connection
       console.log('🔍 COMPREHENSIVE: Cache disabled - fetching fresh data from PostgreSQL');
 
-      // Calculate date range using start of day for proper filtering
-      const rangeDays = parseInt(range.replace('d', ''));
-      
-      // Current period: Start from beginning of the day X days ago
-      const startOfRangeDay = new Date();
-      startOfRangeDay.setDate(startOfRangeDay.getDate() - rangeDays);
-      startOfRangeDay.setHours(0, 0, 0, 0); // Start of day
-      const dateFrom = startOfRangeDay.toISOString();
-      
-      // End at the end of today
-      const endOfToday = new Date();
-      endOfToday.setHours(23, 59, 59, 999); // End of day
-      const dateTo = endOfToday.toISOString();
-      
-      // Previous period: Same length, ending just before current period starts
-      const prevStartOfRangeDay = new Date();
-      prevStartOfRangeDay.setDate(prevStartOfRangeDay.getDate() - (rangeDays * 2));
-      prevStartOfRangeDay.setHours(0, 0, 0, 0);
-      const prevDateFrom = prevStartOfRangeDay.toISOString();
-      
-      const prevEndOfRangeDay = new Date();
-      prevEndOfRangeDay.setDate(prevEndOfRangeDay.getDate() - rangeDays - 1);
-      prevEndOfRangeDay.setHours(23, 59, 59, 999);
-      const prevDateTo = prevEndOfRangeDay.toISOString();
-      
-      // Convert to GA4 date format (YYYY-MM-DD) for all functions
-      const startDate = dateFrom.split('T')[0];
-      const endDate = dateTo.split('T')[0];
-      const prevStartDate = prevDateFrom.split('T')[0];
-      const prevEndDate = prevDateTo.split('T')[0];
+      let startDate: string, endDate: string, prevStartDate: string, prevEndDate: string;
+
+      if (customStartDate && customEndDate) {
+        // Use custom date range
+        startDate = customStartDate;
+        endDate = customEndDate;
+        
+        // Calculate previous period with same length
+        const startDateObj = new Date(customStartDate);
+        const endDateObj = new Date(customEndDate);
+        const rangeDays = Math.ceil((endDateObj.getTime() - startDateObj.getTime()) / (1000 * 60 * 60 * 24));
+        
+        const prevStartDateObj = new Date(startDateObj);
+        prevStartDateObj.setDate(prevStartDateObj.getDate() - rangeDays);
+        const prevEndDateObj = new Date(endDateObj);
+        prevEndDateObj.setDate(prevEndDateObj.getDate() - rangeDays);
+        
+        prevStartDate = prevStartDateObj.toISOString().split('T')[0];
+        prevEndDate = prevEndDateObj.toISOString().split('T')[0];
+      } else {
+        // Use predefined range
+        const rangeDays = parseInt(range.replace('d', ''));
+        
+        // Current period: Start from beginning of the day X days ago
+        const startOfRangeDay = new Date();
+        startOfRangeDay.setDate(startOfRangeDay.getDate() - rangeDays);
+        startOfRangeDay.setHours(0, 0, 0, 0); // Start of day
+        const dateFrom = startOfRangeDay.toISOString();
+        
+        // End at the end of today
+        const endOfToday = new Date();
+        endOfToday.setHours(23, 59, 59, 999); // End of day
+        const dateTo = endOfToday.toISOString();
+        
+        // Previous period: Same length, ending just before current period starts
+        const prevStartOfRangeDay = new Date();
+        prevStartOfRangeDay.setDate(prevStartOfRangeDay.getDate() - (rangeDays * 2));
+        prevStartOfRangeDay.setHours(0, 0, 0, 0);
+        const prevDateFrom = prevStartOfRangeDay.toISOString();
+        
+        const prevEndOfRangeDay = new Date();
+        prevEndOfRangeDay.setDate(prevEndOfRangeDay.getDate() - rangeDays - 1);
+        prevEndOfRangeDay.setHours(23, 59, 59, 999);
+        const prevDateTo = prevEndOfRangeDay.toISOString();
+        
+        // Convert to GA4 date format (YYYY-MM-DD) for all functions
+        startDate = dateFrom.split('T')[0];
+        endDate = dateTo.split('T')[0];
+        prevStartDate = prevDateFrom.split('T')[0];
+        prevEndDate = prevDateTo.split('T')[0];
+      }
       
       console.log(`🔍 PERIOD COMPARISON: Current ${startDate} to ${endDate}, Previous ${prevStartDate} to ${prevEndDate}`);
 
