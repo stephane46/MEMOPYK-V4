@@ -310,12 +310,14 @@ export default function CleanGA4Analytics() {
   });
 
   // IP Management queries
-  const { data: activeIps, isLoading: activeIpsLoading } = useQuery<ActiveViewerIp[]>({
+  const { data: activeIps, isLoading: activeIpsLoading, refetch: refetchActiveIps } = useQuery<ActiveViewerIp[]>({
     queryKey: ['/api/analytics/active-ips'],
-    enabled: showIpManagement
+    enabled: showIpManagement,
+    staleTime: 30000,
+    refetchInterval: showIpManagement ? 60000 : false
   });
 
-  const { data: settings, isLoading: settingsLoading } = useQuery<{
+  const { data: settings, isLoading: settingsLoading, refetch: refetchSettings } = useQuery<{
     excludedIps: Array<{ ip: string; comment?: string; added_at?: string; }>;
     trackingEnabled?: boolean;
     retentionDays?: number;
@@ -327,13 +329,16 @@ export default function CleanGA4Analytics() {
     languages?: string[];
   }>({
     queryKey: ['/api/analytics/settings'],
-    enabled: showIpManagement
+    enabled: showIpManagement,
+    staleTime: 30000,
+    refetchInterval: showIpManagement ? 60000 : false
   });
 
   // Detect current admin IP
   const { data: currentAdminIp } = useQuery<string>({
     queryKey: ['/api/analytics/current-ip'],
-    enabled: showIpManagement
+    enabled: showIpManagement,
+    staleTime: 30000
   });
 
   // IP Management mutations
@@ -343,6 +348,8 @@ export default function CleanGA4Analytics() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['/api/analytics/settings'] });
       queryClient.invalidateQueries({ queryKey: ['/api/analytics/active-ips'] });
+      refetchSettings();
+      refetchActiveIps();
       setNewExcludedIp('');
       setNewIpComment('');
       toast({
@@ -1376,27 +1383,41 @@ export default function CleanGA4Analytics() {
                       <Settings className="h-4 w-4 text-orange-600" />
                       <span className="font-medium text-orange-900 dark:text-orange-300">Exclude Current IP</span>
                     </div>
-                    <Button
-                      size="sm"
-                      variant="destructive"
-                      onClick={() => {
-                        const ipToExclude = "109.17.150.48";
-                        addExcludedIpMutation.mutate({ 
-                          ipAddress: ipToExclude, 
-                          comment: "Admin - My Current IP (Manual)" 
-                        });
-                      }}
-                      disabled={addExcludedIpMutation.isPending}
-                      className="bg-red-600 hover:bg-red-700 text-white"
-                      data-testid="button-exclude-current-ip-manual"
-                    >
-                      {addExcludedIpMutation.isPending ? (
-                        <RefreshCw className="h-3 w-3 animate-spin mr-1" />
-                      ) : (
-                        <Ban className="h-3 w-3 mr-1" />
-                      )}
-                      Exclude My IP (109.17.150.48)
-                    </Button>
+                    <div className="flex items-center gap-2">
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        onClick={() => {
+                          refetchSettings();
+                          refetchActiveIps();
+                        }}
+                        className="flex items-center gap-1"
+                      >
+                        <RefreshCw className="h-3 w-3" />
+                        Refresh
+                      </Button>
+                      <Button
+                        size="sm"
+                        variant="destructive"
+                        onClick={() => {
+                          const ipToExclude = "109.17.150.48";
+                          addExcludedIpMutation.mutate({ 
+                            ipAddress: ipToExclude, 
+                            comment: "Admin - My Current IP (Manual)" 
+                          });
+                        }}
+                        disabled={addExcludedIpMutation.isPending}
+                        className="bg-red-600 hover:bg-red-700 text-white"
+                        data-testid="button-exclude-current-ip-manual"
+                      >
+                        {addExcludedIpMutation.isPending ? (
+                          <RefreshCw className="h-3 w-3 animate-spin mr-1" />
+                        ) : (
+                          <Ban className="h-3 w-3 mr-1" />
+                        )}
+                        Exclude My IP (109.17.150.48)
+                      </Button>
+                    </div>
                   </div>
                   <div className="font-mono text-sm text-orange-800 dark:text-orange-400 mb-2">
                     Auto-detection: {currentAdminIp || "Failed"} → Using known IP: 109.17.150.48
@@ -1453,7 +1474,20 @@ export default function CleanGA4Analytics() {
 
                 {/* Currently Excluded IPs */}
                 <div className="space-y-4">
-                  <h3 className="text-lg font-semibold">Currently Excluded IPs</h3>
+                  <div className="flex items-center justify-between">
+                    <h3 className="text-lg font-semibold">Currently Excluded IPs</h3>
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      onClick={() => {
+                        refetchSettings();
+                      }}
+                      className="flex items-center gap-1"
+                    >
+                      <RefreshCw className="h-3 w-3" />
+                      Refresh List
+                    </Button>
+                  </div>
                   {settingsLoading ? (
                     <div className="text-center py-4">
                       <RefreshCw className="h-6 w-6 animate-spin mx-auto mb-2" />
