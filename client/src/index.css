@@ -776,6 +776,25 @@ html, body {
   }
 }
 
+/* DESKTOP: Fixed hero text styling */
+.hero-text-desktop {
+  font-size: 3.5rem !important;
+  line-height: 1.1 !important;
+  white-space: normal;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.hero-text-desktop .hero-line {
+  display: block;
+  width: 100%;
+  text-align: center;
+  margin: 0;
+  padding: 0;
+}
+
 /* MOBILE: EXTREME FORCE - Nuclear approach */
 @media (max-width: 639px) {
   .hero-text-mobile,
