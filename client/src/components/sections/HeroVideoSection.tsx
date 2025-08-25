@@ -57,19 +57,26 @@ export function HeroVideoSection() {
   useEffect(() => {
     const updateScreenSize = () => {
       const width = window.innerWidth;
+      const previousSize = screenSize;
+      let newSize: 'mobile' | 'tablet' | 'desktop';
+      
       if (width < 640) {
-        setScreenSize('mobile');
+        newSize = 'mobile';
       } else if (width < 1024) {
-        setScreenSize('tablet');
+        newSize = 'tablet';
       } else {
-        setScreenSize('desktop');
+        newSize = 'desktop';
+      }
+      
+      if (previousSize !== newSize) {
+        setScreenSize(newSize);
       }
     };
     
     updateScreenSize(); // Set initial size
     window.addEventListener('resize', updateScreenSize);
     return () => window.removeEventListener('resize', updateScreenSize);
-  }, []);
+  }, [screenSize]);
 
   // Fetch hero videos
   const { data: heroVideos = [] } = useQuery<HeroVideo[]>({
@@ -77,16 +84,19 @@ export function HeroVideoSection() {
     staleTime: 5 * 60 * 1000,
   });
 
-  // Fetch hero text settings - manual updates only via admin cache invalidation
+  // Fetch hero text settings - stable caching to prevent flickering
   const { data: heroTextData = [] } = useQuery<HeroText[]>({
     queryKey: ['/api/hero-text', language],
-    staleTime: 0, // Immediate cache invalidation for testing
+    staleTime: 5 * 60 * 1000, // Cache for 5 minutes to prevent constant refetching
+    gcTime: 10 * 60 * 1000, // Keep in cache for 10 minutes (was cacheTime in v4)
   });
 
-  const activeVideos = heroVideos.filter(video => video.is_active)
-    .sort((a, b) => a.order_index - b.order_index);
+  // Debug logging removed - anti-flickering solution implemented
+
+  const activeVideos = heroVideos.filter((video: HeroVideo) => video.is_active)
+    .sort((a: HeroVideo, b: HeroVideo) => a.order_index - b.order_index);
   
-  const activeHeroText = heroTextData.find(text => text.is_active);
+  const activeHeroText = heroTextData.find((text: HeroText) => text.is_active);
   const currentVideo = activeVideos[currentVideoIndex];
 
   // Auto-advance to next video when current video ends
@@ -233,15 +243,13 @@ export function HeroVideoSection() {
         {/* Semi-transparent background for optimal text contrast across all lighting conditions */}
         <div className="bg-black/40 backdrop-blur-sm rounded-2xl pt-1.5 pb-2 px-4 sm:pt-2 sm:pb-3 sm:px-6 border border-white/10 inline-block max-w-[90vw]">
           <h1 
-            className="font-playfair font-bold mb-0"
+            className="font-playfair font-bold mb-0 
+                       text-lg sm:text-2xl md:text-3xl lg:text-4xl xl:text-5xl
+                       transition-none" 
             style={{ 
               textShadow: '3px 3px 6px rgba(0,0,0,0.9)',
-              lineHeight: screenSize === 'mobile' ? '1.5' : '1.4',
-              fontSize: screenSize === 'mobile' 
-                ? `${activeHeroText?.font_size_mobile || 18}px`
-                : screenSize === 'tablet'
-                ? `${activeHeroText?.font_size_tablet || 40}px`
-                : `${activeHeroText?.font_size_desktop || 45}px`
+              lineHeight: '1.4',
+              // CSS responsive typography - no JavaScript font switching to prevent flickering
             }}
           >
             {(() => {
@@ -270,7 +278,7 @@ export function HeroVideoSection() {
                 <>
                   {/* Mobile: Use mobile-specific text */}
                   <span className="block sm:hidden">
-                    {processedMobileText.split('\n').map((line: string, index: number) => (
+                    {processedMobileText.split('\n').map((line, index) => (
                       <React.Fragment key={index}>
                         {line}
                         {index < processedMobileText.split('\n').length - 1 && <br />}
@@ -279,7 +287,7 @@ export function HeroVideoSection() {
                   </span>
                   {/* Desktop: Use desktop-specific text */}
                   <span className="hidden sm:block">
-                    {processedDesktopText.split('\n').map((line: string, index: number) => (
+                    {processedDesktopText.split('\n').map((line, index) => (
                       <React.Fragment key={index}>
                         {line}
                         {index < processedDesktopText.split('\n').length - 1 && <br />}
