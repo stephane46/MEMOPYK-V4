@@ -19441,8 +19441,8 @@
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-25T20:38:33.928Z",
-    "updated_at": "2025-08-25T20:40:04.217Z",
-    "duration": 1150170
+    "updated_at": "2025-08-25T20:43:04.074Z",
+    "duration": 1150350
   },
   {
     "id": "2ee615bc-7cc6-49da-bb68-38ed650b8156",
@@ -19458,7 +19458,40 @@
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-25T20:39:25.029Z",
-    "updated_at": "2025-08-25T20:39:55.437Z",
-    "duration": 733566
+    "updated_at": "2025-08-25T20:40:25.362Z",
+    "duration": 733596
+  },
+  {
+    "id": "22a2630e-08b7-4e64-9236-cded6f2a6483",
+    "session_id": "session_1756154429420_q0pby7q19",
+    "user_id": null,
+    "ip_address": "109.17.150.48",
+    "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36 Edg/139.0.0.0",
+    "referrer": "https://365df2cf-1884-444c-a9e8-235602456363-00-37q39xpqlgvdy.janeway.replit.dev/fr-FR",
+    "language": "fr-FR",
+    "country": "Unknown",
+    "city": "Unknown",
+    "page_views": 0,
+    "is_bot": false,
+    "is_test_data": false,
+    "created_at": "2025-08-25T20:40:29.455Z",
+    "updated_at": "2025-08-25T20:43:00.490Z",
+    "duration": 733751
+  },
+  {
+    "id": "session_1756154643116_3f8wqmeh8",
+    "session_id": "session_1756154643116_0rcjwuefg",
+    "country": "Unknown",
+    "region": "Unknown",
+    "city": "Unknown",
+    "language": "fr-FR",
+    "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36 Edg/139.0.0.0",
+    "screen_resolution": "2560x1440",
+    "page_url": "https://365df2cf-1884-444c-a9e8-235602456363-00-37q39xpqlgvdy.janeway.replit.dev/fr-FR",
+    "referrer": "https://365df2cf-1884-444c-a9e8-235602456363-00-37q39xpqlgvdy.janeway.replit.dev/__replco/workspace_iframe.html?initialPath=%2F&id=%3Aru95%3A",
+    "ip_address": "109.17.150.48",
+    "is_test_data": false,
+    "created_at": "2025-08-25T20:44:03.116Z",
+    "updated_at": "2025-08-25T20:44:03.116Z"
   }
 ]

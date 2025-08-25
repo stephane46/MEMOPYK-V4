@@ -15,8 +15,8 @@ console.log("NODE_ENV:", process.env.NODE_ENV);
 console.log("🚨 DEPLOYMENT CHECK: NODE_ENV must be 'production' for correct HTML serving");
 console.log("PORT:", process.env.PORT || "5000");
 console.log(
-  "DATABASE_URL:",
-  process.env.DATABASE_URL ? "✅ Available" : "❌ Missing"
+  "🚫 DATABASE_URL (Neon):",
+  "DISABLED - Using Supabase VPS only"
 );
 console.log(
   "SUPABASE_URL:",

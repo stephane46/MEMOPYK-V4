@@ -4,31 +4,33 @@ import postgres from "postgres";
 type Entry<T> = { value: T; expires: number };
 const store = new Map<string, Entry<any>>();
 
-// Use PostgreSQL for development, Supabase for production
-const isDevelopment = process.env.NODE_ENV === 'development';
-
-// PostgreSQL client for development
+// Use Supabase VPS for all environments (no Neon)
 let pgClient: ReturnType<typeof postgres> | null = null;
 
 export function getPgClient() {
-  if (!pgClient && process.env.DATABASE_URL) {
-    pgClient = postgres(process.env.DATABASE_URL);
+  if (!pgClient && process.env.SUPABASE_URL) {
+    // Build PostgreSQL connection from Supabase URL
+    const supabaseUrl = process.env.SUPABASE_URL;
+    const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_ANON_KEY;
+    const host = supabaseUrl.replace('https://', '').replace('http://', '');
+    const connectionString = `postgresql://postgres:${supabaseKey}@${host}:5432/postgres?sslmode=require`;
+    pgClient = postgres(connectionString);
   }
   return pgClient;
 }
 
-// Supabase client for production
-const supabase = isDevelopment ? null : createClient(
+// Supabase client for REST API
+const supabase = createClient(
   process.env.SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_KEY!
+  process.env.SUPABASE_SERVICE_KEY || process.env.SUPABASE_ANON_KEY!
 );
 
 // Helper function to get current environment info
 export function getCacheEnvironmentInfo() {
   return {
-    environment: isDevelopment ? 'development' : 'production',
-    database: isDevelopment ? 'PostgreSQL (Neon)' : 'Supabase',
-    connection: isDevelopment ? 'DATABASE_URL' : 'SUPABASE_URL',
+    environment: process.env.NODE_ENV || 'development',
+    database: 'Supabase VPS (PostgreSQL)',
+    connection: 'SUPABASE_URL',
     autoCleanup: 'Enabled (24h retention + TTL expiry)',
     features: ['Persistent storage', 'Auto-cleanup trigger', 'TTL expiry', 'Admin bypass']
   };
@@ -37,31 +39,18 @@ export function getCacheEnvironmentInfo() {
 // Manual cleanup function for administrative purposes
 export async function manualCacheCleanup(): Promise<{ deleted: number; error?: string }> {
   try {
-    if (isDevelopment) {
-      const pg = getPgClient();
-      if (!pg) return { deleted: 0, error: 'PostgreSQL client not available' };
+    const pg = getPgClient();
+    if (!pg) return { deleted: 0, error: 'Supabase PostgreSQL client not available' };
 
-      const result = await pg`
-        DELETE FROM ga4_cache 
-        WHERE expires_at < NOW() - INTERVAL '1 day'
-        RETURNING *
-      `;
-      
-      return { deleted: result.length };
-    } else {
-      if (!supabase) return { deleted: 0, error: 'Supabase client not available' };
-      
-      const oneDayAgo = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString();
-      const { data, error } = await supabase
-        .from("ga4_cache")
-        .delete()
-        .lt("expires_at", oneDayAgo)
-        .select();
-      
-      if (error) return { deleted: 0, error: error.message };
-      return { deleted: data?.length || 0 };
-    }
+    const result = await pg`
+      DELETE FROM ga4_cache 
+      WHERE expires_at < NOW() - INTERVAL '1 day'
+      RETURNING *
+    `;
+    
+    return { deleted: result.length };
   } catch (error) {
+    console.error('Manual cache cleanup error:', error);
     return { deleted: 0, error: String(error) };
   }
 }
@@ -90,7 +79,8 @@ export async function getDbCache<T>(key: string): Promise<T | null> {
   try {
     console.log(`🔍 Getting cache: ${key}`);
     
-    if (isDevelopment) {
+    // Use Supabase VPS for all environments
+    if (true) {
       // Use PostgreSQL in development
       const pg = getPgClient();
       if (!pg) return null;
@@ -154,7 +144,8 @@ export async function setDbCache<T>(key: string, value: T, ttlSec = 300) {
     
     console.log(`💾 Setting cache: ${key} (TTL: ${ttlSec}s)`);
     
-    if (isDevelopment) {
+    // Use Supabase VPS for all environments
+    if (true) {
       // Use PostgreSQL in development
       const pg = getPgClient();
       if (!pg) return;
