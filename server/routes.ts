@@ -4393,7 +4393,7 @@ export async function registerRoutes(app: Express): Promise<void> {
       // Calculate date range using start of day for proper filtering
       const rangeDays = parseInt(range.replace('d', ''));
       
-      // Start from beginning of the day X days ago
+      // Current period: Start from beginning of the day X days ago
       const startOfRangeDay = new Date();
       startOfRangeDay.setDate(startOfRangeDay.getDate() - rangeDays);
       startOfRangeDay.setHours(0, 0, 0, 0); // Start of day
@@ -4404,9 +4404,30 @@ export async function registerRoutes(app: Express): Promise<void> {
       endOfToday.setHours(23, 59, 59, 999); // End of day
       const dateTo = endOfToday.toISOString();
       
+      // Previous period: Same length, ending just before current period starts
+      const prevStartOfRangeDay = new Date();
+      prevStartOfRangeDay.setDate(prevStartOfRangeDay.getDate() - (rangeDays * 2));
+      prevStartOfRangeDay.setHours(0, 0, 0, 0);
+      const prevDateFrom = prevStartOfRangeDay.toISOString();
+      
+      const prevEndOfRangeDay = new Date();
+      prevEndOfRangeDay.setDate(prevEndOfRangeDay.getDate() - rangeDays - 1);
+      prevEndOfRangeDay.setHours(23, 59, 59, 999);
+      const prevDateTo = prevEndOfRangeDay.toISOString();
+      
       // Convert to GA4 date format (YYYY-MM-DD) for all functions
       const startDate = dateFrom.split('T')[0];
       const endDate = dateTo.split('T')[0];
+      const prevStartDate = prevDateFrom.split('T')[0];
+      const prevEndDate = prevDateTo.split('T')[0];
+      
+      console.log(`🔍 PERIOD COMPARISON: Current ${startDate} to ${endDate}, Previous ${prevStartDate} to ${prevEndDate}`);
+
+      // Helper function to calculate percentage change
+      const calculatePercentageChange = (current: number, previous: number): number => {
+        if (previous === 0) return current > 0 ? 100 : 0;
+        return Math.round(((current - previous) / previous) * 100);
+      };
 
       // Call the REAL analytics functions directly (same ones your dashboard uses!)
       let dashboardData = {};
@@ -4424,12 +4445,17 @@ export async function registerRoutes(app: Express): Promise<void> {
         // Get real GA4 data from memopyk.com (using available functions)
         // Fix: Convert ISO dates to YYYY-MM-DD format for GA4
         
-        const [ga4Users, ga4PageViews, ga4Countries, ga4Languages, ga4Referrers] = await Promise.all([
+        // Fetch current and previous period data for comparison
+        const [ga4Users, ga4PageViews, ga4Countries, ga4Languages, ga4Referrers, 
+               prevGA4Users, prevGA4PageViews] = await Promise.all([
           qUniqueUsers(startDate, endDate, locale).catch((e: any) => { console.log('GA4 users error:', e.message); return 0; }),
           qPageViews(startDate, endDate, locale).catch((e: any) => { console.log('GA4 pageviews error:', e.message); return 0; }),
           qTopCountries(startDate, endDate).catch((e: any) => { console.log('GA4 countries error:', e.message); return []; }),
           qTopLanguages(startDate, endDate).catch((e: any) => { console.log('GA4 languages error:', e.message); return []; }),
-          qTopReferrers(startDate, endDate).catch((e: any) => { console.log('GA4 referrers error:', e.message); return []; })
+          qTopReferrers(startDate, endDate).catch((e: any) => { console.log('GA4 referrers error:', e.message); return []; }),
+          // Previous period data for comparison
+          qUniqueUsers(prevStartDate, prevEndDate, locale).catch((e: any) => { console.log('GA4 prev users error:', e.message); return 0; }),
+          qPageViews(prevStartDate, prevEndDate, locale).catch((e: any) => { console.log('GA4 prev pageviews error:', e.message); return 0; })
         ]);
         
         console.log('✅ GA4 DATA RETRIEVED from memopyk.com:', { users: ga4Users, pageViews: ga4PageViews, countries: ga4Countries?.length, languages: ga4Languages?.length });
@@ -4480,14 +4506,21 @@ export async function registerRoutes(app: Express): Promise<void> {
       // const endDate and startDate already defined above
 
       // Fetch GA4 video metrics, language data, and returning users in parallel
-      const [plays, completions, watchTimeSeconds, topVideos, browserLanguageData, siteLanguageData, ga4ReturningUsers] = await Promise.all([
+      // Include previous period data for video metrics
+      const [plays, completions, watchTimeSeconds, topVideos, browserLanguageData, siteLanguageData, ga4ReturningUsers,
+             prevPlays, prevCompletions, prevWatchTimeSeconds, prevGA4ReturningUsers] = await Promise.all([
         qPlays(startDate, endDate, locale),
         qCompletes(startDate, endDate, locale), 
         qWatchTimeTotal(startDate, endDate, locale),
         qPlaysByVideo(startDate, endDate, locale),
         qTopLanguages(startDate, endDate),
         qSiteLanguageChoice(startDate, endDate),
-        qReturningUsers(startDate, endDate)
+        qReturningUsers(startDate, endDate),
+        // Previous period video metrics
+        qPlays(prevStartDate, prevEndDate, locale),
+        qCompletes(prevStartDate, prevEndDate, locale), 
+        qWatchTimeTotal(prevStartDate, prevEndDate, locale),
+        qReturningUsers(prevStartDate, prevEndDate)
       ]);
 
       // Process visitor analytics - handle nested data structure
@@ -4545,6 +4578,14 @@ export async function registerRoutes(app: Express): Promise<void> {
         .sort((a, b) => b.plays - a.plays)
         .slice(0, 5);
 
+      // Calculate period-over-period comparisons
+      const totalViewsChange = calculatePercentageChange(totalViews, prevGA4PageViews || 0);
+      const uniqueVisitorsChange = calculatePercentageChange(uniqueVisitors, prevGA4Users || 0);
+      const returnVisitorsChange = calculatePercentageChange(returnVisitors, prevGA4ReturningUsers || 0);
+      const videoStartsChange = calculatePercentageChange(plays || 0, prevPlays || 0);
+      
+      console.log(`🔍 PERIOD COMPARISONS: Views ${totalViewsChange}%, Visitors ${uniqueVisitorsChange}%, Returns ${returnVisitorsChange}%, Videos ${videoStartsChange}%`);
+
       const result = {
         // Visitor Analytics (from PostgreSQL - your trusted system!)
         totalViews,
@@ -4552,6 +4593,11 @@ export async function registerRoutes(app: Express): Promise<void> {
         returnVisitors,
         averageSessionDuration: Math.round(averageSessionDuration || 0),
         activeVisitors,
+        // Period-over-period comparisons
+        totalViewsChange,
+        uniqueVisitorsChange,
+        returnVisitorsChange,
+        videoStartsChange,
         // Geographic & Demographic Data
         topCountries,
         languageBreakdown, // Browser language preferences (GA4 language dimension)

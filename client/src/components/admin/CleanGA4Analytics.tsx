@@ -164,6 +164,11 @@ interface GA4MetricsResponse {
   returnVisitors: number;
   averageSessionDuration: number;
   activeVisitors: number;
+  // Period-over-period comparisons
+  totalViewsChange?: number;
+  uniqueVisitorsChange?: number;
+  returnVisitorsChange?: number;
+  videoStartsChange?: number;
   // Video Analytics  
   totalVideoStarts: number;
   totalCompletions: number;
@@ -746,8 +751,10 @@ export default function CleanGA4Analytics() {
               </CardHeader>
               <CardContent>
                 <div className="text-2xl font-bold text-blue-900">{ga4Data.totalViews.toLocaleString()}</div>
-                <div className={`text-xs flex items-center gap-1 mt-1 ${ga4Data.totalViews > 0 ? "text-green-600" : "text-gray-500"}`}>
-                  {ga4Data.totalViews > 0 ? "▲" : "▼"} vs previous period
+                <div className={`text-xs flex items-center gap-1 mt-1 ${
+                  (ga4Data.totalViewsChange || 0) >= 0 ? "text-green-600" : "text-red-600"
+                }`}>
+                  {(ga4Data.totalViewsChange || 0) >= 0 ? "▲" : "▼"} {Math.abs(ga4Data.totalViewsChange || 0)}% vs previous period
                 </div>
                 <p className="text-xs text-blue-700">
                   Page views across site
@@ -765,8 +772,10 @@ export default function CleanGA4Analytics() {
               </CardHeader>
               <CardContent className="relative">
                 <div className="text-2xl font-bold text-green-900">{ga4Data.uniqueVisitors.toLocaleString()}</div>
-                <div className={`text-xs flex items-center gap-1 mt-1 ${ga4Data.uniqueVisitors > 0 ? "text-green-600" : "text-gray-500"}`}>
-                  {ga4Data.uniqueVisitors > 0 ? "▲" : "▼"} vs previous period
+                <div className={`text-xs flex items-center gap-1 mt-1 ${
+                  (ga4Data.uniqueVisitorsChange || 0) >= 0 ? "text-green-600" : "text-red-600"
+                }`}>
+                  {(ga4Data.uniqueVisitorsChange || 0) >= 0 ? "▲" : "▼"} {Math.abs(ga4Data.uniqueVisitorsChange || 0)}% vs previous period
                 </div>
                 <p className="text-xs text-green-700">
                   Distinct visitors (IP-based)
@@ -785,8 +794,10 @@ export default function CleanGA4Analytics() {
               </CardHeader>
               <CardContent className="relative">
                 <div className="text-2xl font-bold text-purple-900">{ga4Data.returnVisitors.toLocaleString()}</div>
-                <div className={`text-xs flex items-center gap-1 mt-1 ${ga4Data.returnVisitors > 0 ? "text-green-600" : "text-gray-500"}`}>
-                  {ga4Data.returnVisitors > 0 ? "▲" : "▼"} vs previous period
+                <div className={`text-xs flex items-center gap-1 mt-1 ${
+                  (ga4Data.returnVisitorsChange || 0) >= 0 ? "text-green-600" : "text-red-600"
+                }`}>
+                  {(ga4Data.returnVisitorsChange || 0) >= 0 ? "▲" : "▼"} {Math.abs(ga4Data.returnVisitorsChange || 0)}% vs previous period
                 </div>
                 <p className="text-xs text-purple-700">
                   Returning visitors
@@ -821,8 +832,10 @@ export default function CleanGA4Analytics() {
               </CardHeader>
               <CardContent>
                 <div className="text-2xl font-bold text-red-900">{ga4Data.totalVideoStarts.toLocaleString()}</div>
-                <div className={`text-xs flex items-center gap-1 mt-1 ${ga4Data.totalVideoStarts > 0 ? "text-green-600" : "text-gray-500"}`}>
-                  {ga4Data.totalVideoStarts > 0 ? "▲" : "▼"} vs previous period
+                <div className={`text-xs flex items-center gap-1 mt-1 ${
+                  (ga4Data.videoStartsChange || 0) >= 0 ? "text-green-600" : "text-red-600"
+                }`}>
+                  {(ga4Data.videoStartsChange || 0) >= 0 ? "▲" : "▼"} {Math.abs(ga4Data.videoStartsChange || 0)}% vs previous period
                 </div>
                 <p className="text-xs text-red-700">
                   Total video starts
