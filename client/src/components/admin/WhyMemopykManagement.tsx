@@ -480,10 +480,10 @@ export function WhyMemopykManagement() {
                     <Button 
                       onClick={handleSaveCard}
                       disabled={!formData.titleFr || !formData.titleEn}
-                      className="bg-memopyk-orange hover:bg-memopyk-orange/90 text-white min-w-[140px] h-12 text-lg font-semibold"
+                      className="bg-memopyk-orange hover:bg-memopyk-orange/90 text-white min-w-[140px] h-12 text-lg font-semibold shadow-lg"
+                      style={{ display: 'flex !important', visibility: 'visible !important' }}
                     >
-                      <Save className="w-5 h-5 mr-2" />
-                      {editingCard ? 'UPDATE CARD' : 'CREATE CARD'}
+                      💾 {editingCard ? 'UPDATE CARD' : 'CREATE CARD'}
                     </Button>
                   </div>
                 </div>
