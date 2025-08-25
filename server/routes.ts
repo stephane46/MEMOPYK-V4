@@ -1475,6 +1475,81 @@ export async function registerRoutes(app: Express): Promise<void> {
     }
   });
 
+  // Why MEMOPYK cards routes
+  app.get("/api/why-memopyk-cards", async (req, res) => {
+    try {
+      const cards = await hybridStorage.getWhyMemopykCards();
+      res.json(cards);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to get Why MEMOPYK cards" });
+    }
+  });
+
+  // Create new Why MEMOPYK card
+  app.post("/api/why-memopyk-cards", async (req, res) => {
+    try {
+      const { id, titleEn, titleFr, descriptionEn, descriptionFr, iconName, gradient, orderIndex, isActive } = req.body;
+      
+      if (!id || !titleEn || !titleFr || !descriptionEn || !descriptionFr || !iconName || !gradient) {
+        return res.status(400).json({ error: "All fields required" });
+      }
+
+      const newCard = await hybridStorage.createWhyMemopykCard({
+        id,
+        titleEn,
+        titleFr,
+        descriptionEn,
+        descriptionFr,
+        iconName,
+        gradient,
+        orderIndex: orderIndex || 0,
+        isActive: isActive !== false
+      });
+      
+      res.json(newCard);
+    } catch (error) {
+      console.error('Create Why MEMOPYK card error:', error);
+      res.status(500).json({ error: "Failed to create Why MEMOPYK card" });
+    }
+  });
+
+  // Update Why MEMOPYK card
+  app.patch("/api/why-memopyk-cards/:id", async (req, res) => {
+    try {
+      const cardId = req.params.id;
+      const updates = req.body;
+      
+      const updatedCard = await hybridStorage.updateWhyMemopykCard(cardId, updates);
+      
+      if (!updatedCard) {
+        return res.status(404).json({ error: "Why MEMOPYK card not found" });
+      }
+      
+      res.json(updatedCard);
+    } catch (error) {
+      console.error('Update Why MEMOPYK card error:', error);
+      res.status(500).json({ error: "Failed to update Why MEMOPYK card" });
+    }
+  });
+
+  // Delete Why MEMOPYK card
+  app.delete("/api/why-memopyk-cards/:id", async (req, res) => {
+    try {
+      const cardId = req.params.id;
+      
+      const deleted = await hybridStorage.deleteWhyMemopykCard(cardId);
+      
+      if (!deleted) {
+        return res.status(404).json({ error: "Why MEMOPYK card not found" });
+      }
+      
+      res.json({ success: true });
+    } catch (error) {
+      console.error('Delete Why MEMOPYK card error:', error);
+      res.status(500).json({ error: "Failed to delete Why MEMOPYK card" });
+    }
+  });
+
   // Legal Documents - Terms, privacy policy, etc.
   app.get("/api/legal", async (req, res) => {
     try {

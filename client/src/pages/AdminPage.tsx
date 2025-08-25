@@ -19,6 +19,7 @@ import SeoManagement from '@/components/admin/SeoManagement';
 import FAQManagementWorking from '@/components/admin/FAQManagementWorking';
 import { LegalDocumentManagement } from '@/components/admin/LegalDocumentManagement';
 import { CtaManagement } from '@/components/admin/CtaManagement';
+import { WhyMemopykManagement } from '@/components/admin/WhyMemopykManagement';
 import { AnalyticsDashboard } from '@/components/admin/AnalyticsDashboard';
 import GA4AnalyticsDashboard from '@/components/admin/GA4AnalyticsDashboard';
 import CleanGA4Analytics from '@/components/admin/CleanGA4Analytics';
@@ -235,6 +236,7 @@ export default function AdminPage() {
     { id: 'seo', label: 'SEO Management', icon: Globe },
     { id: 'faq', label: 'FAQ', icon: MessageSquare },
     { id: 'cta', label: 'Boutons CTA', icon: Zap },
+    { id: 'why-memopyk', label: 'Pourquoi MEMOPYK', icon: Users },
     { id: 'legal-docs', label: 'Documents Légaux', icon: FileText },
     { id: 'analytics', label: '(Analytics)', icon: BarChart3 },
     { id: 'analytics-ga', label: '(Analytics GA)', icon: TrendingUp },
@@ -1473,6 +1475,13 @@ export default function AdminPage() {
           {activeSection === 'cta' && (
             <div className="space-y-6">
               <CtaManagement />
+            </div>
+          )}
+
+          {/* Why MEMOPYK Cards */}
+          {activeSection === 'why-memopyk' && (
+            <div className="space-y-6">
+              <WhyMemopykManagement />
             </div>
           )}
 

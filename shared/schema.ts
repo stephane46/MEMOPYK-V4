@@ -169,6 +169,21 @@ export const ctaSettings = pgTable("cta_settings", {
   updatedAt: timestamp("updated_at").defaultNow()
 });
 
+// Why choose MEMOPYK benefit cards - bilingual structure
+export const whyMemopykCards = pgTable("why_memopyk_cards", {
+  id: varchar("id").primaryKey(),
+  titleEn: text("title_en").notNull(),
+  titleFr: text("title_fr").notNull(),
+  descriptionEn: text("description_en").notNull(),
+  descriptionFr: text("description_fr").notNull(),
+  iconName: varchar("icon_name").notNull(), // lucide icon name like "Zap", "Clock", etc.
+  gradient: varchar("gradient").notNull(), // tailwind gradient classes
+  orderIndex: integer("order_index").default(0),
+  isActive: boolean("is_active").default(true),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow()
+});
+
 // SEO settings table - comprehensive SEO management
 export const seoSettings = pgTable("seo_settings", {
   id: uuid("id").primaryKey().defaultRandom(),
@@ -394,6 +409,7 @@ export const insertSeoAuditLogSchema = createInsertSchema(seoAuditLogs).omit({ i
 export const insertSeoImageMetaSchema = createInsertSchema(seoImageMeta).omit({ id: true, createdAt: true, updatedAt: true });
 export const insertSeoGlobalSettingsSchema = createInsertSchema(seoGlobalSettings).omit({ id: true, createdAt: true, updatedAt: true });
 export const insertDeploymentHistorySchema = createInsertSchema(deploymentHistory).omit({ id: true, createdAt: true });
+export const insertWhyMemopykCardsSchema = createInsertSchema(whyMemopykCards).omit({ createdAt: true, updatedAt: true });
 export const insertAnalyticsSessionSchema = createInsertSchema(analyticsSessions).omit({ id: true, createdAt: true });
 export const insertAnalyticsViewSchema = createInsertSchema(analyticsViews).omit({ id: true, createdAt: true });
 export const insertRealtimeVisitorSchema = createInsertSchema(realtimeVisitors).omit({ id: true, createdAt: true, lastSeen: true });
@@ -423,6 +439,7 @@ export type RealtimeVisitor = typeof realtimeVisitors.$inferSelect;
 export type PerformanceMetric = typeof performanceMetrics.$inferSelect;
 export type EngagementHeatmap = typeof engagementHeatmap.$inferSelect;
 export type ConversionFunnel = typeof conversionFunnel.$inferSelect;
+export type WhyMemopykCards = typeof whyMemopykCards.$inferSelect;
 
 // Insert types for all tables
 export type InsertUser = z.infer<typeof insertUserSchema>;
@@ -446,3 +463,4 @@ export type InsertRealtimeVisitor = z.infer<typeof insertRealtimeVisitorSchema>;
 export type InsertPerformanceMetric = z.infer<typeof insertPerformanceMetricSchema>;
 export type InsertEngagementHeatmap = z.infer<typeof insertEngagementHeatmapSchema>;
 export type InsertConversionFunnel = z.infer<typeof insertConversionFunnelSchema>;
+export type InsertWhyMemopykCards = z.infer<typeof insertWhyMemopykCardsSchema>;

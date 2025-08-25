@@ -3,7 +3,7 @@ import { join } from "path";
 import { createClient } from '@supabase/supabase-js';
 import { db } from './db';
 import { eq, and, desc, asc, sql, gte } from 'drizzle-orm';
-import { ctaSettings, heroTextSettings, analyticsViews, analyticsSessions } from '../shared/schema';
+import { ctaSettings, heroTextSettings, analyticsViews, analyticsSessions, whyMemopykCards } from '../shared/schema';
 
 export interface HybridStorageInterface {
   // Hero videos
@@ -48,6 +48,12 @@ export interface HybridStorageInterface {
   createCtaSettings(ctaData: any): Promise<any>;
   updateCtaSettings(ctaId: string, updates: any): Promise<any>;
   deleteCtaSettings(ctaId: string): Promise<any>;
+  
+  // Why MEMOPYK cards
+  getWhyMemopykCards(): Promise<any[]>;
+  createWhyMemopykCard(cardData: any): Promise<any>;
+  updateWhyMemopykCard(cardId: string, updates: any): Promise<any>;
+  deleteWhyMemopykCard(cardId: string): Promise<any>;
   
   // SEO settings - comprehensive management
   getSeoSettings(page?: string, language?: string): Promise<any[]>;
@@ -1673,6 +1679,345 @@ export class HybridStorage implements HybridStorageInterface {
     
     settings.splice(index, 1);
     this.saveJsonFile('cta-settings.json', settings);
+    return true;
+  }
+
+  // Why MEMOPYK cards methods
+  async getWhyMemopykCards(): Promise<any[]> {
+    try {
+      console.log('🔍 Why MEMOPYK Cards: Querying Supabase database...');
+      const { data, error } = await this.supabase
+        .from('why_memopyk_cards')
+        .select('*')
+        .order('order_index');
+      
+      if (error) {
+        console.error('⚠️ Why MEMOPYK Cards: Supabase query error:', error);
+        throw error;
+      }
+      
+      if (data && data.length > 0) {
+        console.log('✅ Why MEMOPYK Cards retrieved from Supabase:', data.length, 'items');
+        
+        // Convert snake_case to camelCase for frontend
+        const converted = data.map((item: any) => ({
+          id: item.id,
+          titleEn: item.title_en,
+          titleFr: item.title_fr,
+          descriptionEn: item.description_en,
+          descriptionFr: item.description_fr,
+          iconName: item.icon_name,
+          gradient: item.gradient,
+          orderIndex: item.order_index,
+          isActive: item.is_active,
+          createdAt: item.created_at,
+          updatedAt: item.updated_at
+        }));
+        
+        return converted;
+      } else {
+        console.log('⚠️ Why MEMOPYK Cards: Supabase query returned no data');
+      }
+    } catch (error) {
+      console.warn('⚠️ Why MEMOPYK Cards: Supabase connection failed, using JSON fallback:', error);
+    }
+    
+    // Fallback to JSON
+    console.log('📄 Why MEMOPYK Cards: Loading from JSON fallback');
+    const cards = this.loadJsonFile('why-memopyk-cards.json');
+    
+    // Initialize with default data if empty
+    if (cards.length === 0) {
+      const defaultCards = [
+        {
+          id: "simplicity",
+          title_en: "Simplicity",
+          title_fr: "Simplicité",
+          description_en: "All formats accepted, with technical details handled professionally. Just send your photos and videos—no need to sort or organize files; everything is made easy for you.",
+          description_fr: "Tous formats acceptés, détails techniques pris en charge professionnellement. Envoyez simplement vos photos et vidéos, inutile de trier ni d'organiser les fichiers : tout est simple pour vous.",
+          icon_name: "Zap",
+          gradient: "from-memopyk-dark-blue/20 to-memopyk-navy/10",
+          order_index: 0,
+          is_active: true,
+          created_at: new Date().toISOString(),
+          updated_at: new Date().toISOString()
+        },
+        {
+          id: "time-saving",
+          title_en: "Time Saving",
+          title_fr: "Gain de Temps",
+          description_en: "Our dedicated team handles everything with a clear process and predictable deadlines. You save precious hours while your memories are brought to life effortlessly.",
+          description_fr: "Notre équipe dédiée prend tout en main avec un processus clair et des délais prévisibles. Vous gagnez des heures précieuses pendant que vos souvenirs se transforment sans effort.",
+          icon_name: "Clock",
+          gradient: "from-memopyk-sky-blue/20 to-memopyk-blue-gray/10",
+          order_index: 1,
+          is_active: true,
+          created_at: new Date().toISOString(),
+          updated_at: new Date().toISOString()
+        },
+        {
+          id: "personalization",
+          title_en: "Personalization",
+          title_fr: "Personnalisation",
+          description_en: "Every souvenir film is designed to be truly unique. We listen to all your wishes and specific instructions in a spirit of collaboration.",
+          description_fr: "Chaque film souvenir est pensé pour être vraiment unique. Nous sommes à l'écoute de toutes vos envies et consignes spécifiques dans un esprit de collaboration.",
+          icon_name: "Settings",
+          gradient: "from-memopyk-cream/40 to-memopyk-sky-blue/20",
+          order_index: 2,
+          is_active: true,
+          created_at: new Date().toISOString(),
+          updated_at: new Date().toISOString()
+        },
+        {
+          id: "expertise",
+          title_en: "Expertise",
+          title_fr: "Expertise",
+          description_en: "An efficient process ensures clear advice and attentive follow-up at each step. The result: memorable films with genuine added value.",
+          description_fr: "Un processus efficace assure des conseils clairs et un suivi attentif à chaque étape. Le résultat : des films mémorables avec une véritable valeur ajoutée.",
+          icon_name: "Users",
+          gradient: "from-memopyk-orange/20 to-memopyk-cream/30",
+          order_index: 3,
+          is_active: true,
+          created_at: new Date().toISOString(),
+          updated_at: new Date().toISOString()
+        },
+        {
+          id: "security",
+          title_en: "Security",
+          title_fr: "Sécurité",
+          description_en: "Your personal data is fully protected. Secure storage, encrypted transfers, and deletion after delivery guarantee absolute confidentiality of your memories.",
+          description_fr: "Vos données personnelles sont entièrement protégées. Stockage sécurisé, transferts chiffrés et suppression après livraison garantissent la confidentialité absolue de vos souvenirs.",
+          icon_name: "Shield",
+          gradient: "from-memopyk-navy/30 to-memopyk-dark-blue/20",
+          order_index: 4,
+          is_active: true,
+          created_at: new Date().toISOString(),
+          updated_at: new Date().toISOString()
+        }
+      ];
+      
+      this.saveJsonFile('why-memopyk-cards.json', defaultCards);
+      return defaultCards.map(card => ({
+        id: card.id,
+        titleEn: card.title_en,
+        titleFr: card.title_fr,
+        descriptionEn: card.description_en,
+        descriptionFr: card.description_fr,
+        iconName: card.icon_name,
+        gradient: card.gradient,
+        orderIndex: card.order_index,
+        isActive: card.is_active,
+        createdAt: card.created_at,
+        updatedAt: card.updated_at
+      }));
+    }
+    
+    return cards.map((card: any) => ({
+      id: card.id,
+      titleEn: card.title_en,
+      titleFr: card.title_fr,
+      descriptionEn: card.description_en,
+      descriptionFr: card.description_fr,
+      iconName: card.icon_name,
+      gradient: card.gradient,
+      orderIndex: card.order_index,
+      isActive: card.is_active,
+      createdAt: card.created_at,
+      updatedAt: card.updated_at
+    }));
+  }
+
+  async createWhyMemopykCard(cardData: any): Promise<any> {
+    try {
+      console.log('🆕 Creating Why MEMOPYK card:', cardData);
+      
+      // Try database first
+      if (this.supabase) {
+        const { data, error } = await this.supabase
+          .from('why_memopyk_cards')
+          .insert({
+            id: cardData.id,
+            title_en: cardData.titleEn,
+            title_fr: cardData.titleFr,
+            description_en: cardData.descriptionEn,
+            description_fr: cardData.descriptionFr,
+            icon_name: cardData.iconName,
+            gradient: cardData.gradient,
+            order_index: cardData.orderIndex,
+            is_active: cardData.isActive
+          })
+          .select()
+          .single();
+        
+        if (!error && data) {
+          console.log('✅ Why MEMOPYK card created in Supabase:', data);
+          
+          // Convert back and update JSON backup
+          const converted = {
+            id: data.id,
+            title_en: data.title_en,
+            title_fr: data.title_fr,
+            description_en: data.description_en,
+            description_fr: data.description_fr,
+            icon_name: data.icon_name,
+            gradient: data.gradient,
+            order_index: data.order_index,
+            is_active: data.is_active,
+            created_at: data.created_at,
+            updated_at: data.updated_at
+          };
+          
+          // Update JSON backup
+          const cards = this.loadJsonFile('why-memopyk-cards.json');
+          cards.push(converted);
+          this.saveJsonFile('why-memopyk-cards.json', cards);
+          
+          return converted;
+        }
+      }
+    } catch (error) {
+      console.warn('⚠️ Database create failed, using JSON fallback:', error);
+    }
+    
+    // Fallback to JSON only
+    const cards = this.loadJsonFile('why-memopyk-cards.json');
+    const newCard = {
+      id: cardData.id,
+      title_en: cardData.titleEn,
+      title_fr: cardData.titleFr,
+      description_en: cardData.descriptionEn,
+      description_fr: cardData.descriptionFr,
+      icon_name: cardData.iconName,
+      gradient: cardData.gradient,
+      order_index: cardData.orderIndex,
+      is_active: cardData.isActive,
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString()
+    };
+    
+    cards.push(newCard);
+    this.saveJsonFile('why-memopyk-cards.json', cards);
+    
+    return newCard;
+  }
+
+  async updateWhyMemopykCard(cardId: string, updates: any): Promise<any> {
+    try {
+      console.log('🔄 Updating Why MEMOPYK card:', cardId, updates);
+      
+      // Try database first
+      if (this.supabase) {
+        const updateData: any = {};
+        if (updates.titleEn !== undefined) updateData.title_en = updates.titleEn;
+        if (updates.titleFr !== undefined) updateData.title_fr = updates.titleFr;
+        if (updates.descriptionEn !== undefined) updateData.description_en = updates.descriptionEn;
+        if (updates.descriptionFr !== undefined) updateData.description_fr = updates.descriptionFr;
+        if (updates.iconName !== undefined) updateData.icon_name = updates.iconName;
+        if (updates.gradient !== undefined) updateData.gradient = updates.gradient;
+        if (updates.orderIndex !== undefined) updateData.order_index = updates.orderIndex;
+        if (updates.isActive !== undefined) updateData.is_active = updates.isActive;
+        
+        const { data, error } = await this.supabase
+          .from('why_memopyk_cards')
+          .update(updateData)
+          .eq('id', cardId)
+          .select()
+          .single();
+        
+        if (!error && data) {
+          console.log('✅ Why MEMOPYK card updated in Supabase:', data);
+          
+          // Update JSON backup
+          const cards = this.loadJsonFile('why-memopyk-cards.json');
+          const index = cards.findIndex((card: any) => card.id === cardId);
+          if (index !== -1) {
+            cards[index] = {
+              ...cards[index],
+              title_en: data.title_en,
+              title_fr: data.title_fr,
+              description_en: data.description_en,
+              description_fr: data.description_fr,
+              icon_name: data.icon_name,
+              gradient: data.gradient,
+              order_index: data.order_index,
+              is_active: data.is_active,
+              updated_at: data.updated_at
+            };
+            this.saveJsonFile('why-memopyk-cards.json', cards);
+          }
+          
+          return data;
+        }
+      }
+    } catch (error) {
+      console.warn('⚠️ Database update failed, using JSON fallback:', error);
+    }
+    
+    // Fallback to JSON only
+    const cards = this.loadJsonFile('why-memopyk-cards.json');
+    const index = cards.findIndex((card: any) => card.id === cardId);
+    
+    if (index === -1) {
+      return null;
+    }
+    
+    // Update fields
+    const updateData: any = {};
+    if (updates.titleEn !== undefined) updateData.title_en = updates.titleEn;
+    if (updates.titleFr !== undefined) updateData.title_fr = updates.titleFr;
+    if (updates.descriptionEn !== undefined) updateData.description_en = updates.descriptionEn;
+    if (updates.descriptionFr !== undefined) updateData.description_fr = updates.descriptionFr;
+    if (updates.iconName !== undefined) updateData.icon_name = updates.iconName;
+    if (updates.gradient !== undefined) updateData.gradient = updates.gradient;
+    if (updates.orderIndex !== undefined) updateData.order_index = updates.orderIndex;
+    if (updates.isActive !== undefined) updateData.is_active = updates.isActive;
+    
+    cards[index] = {
+      ...cards[index],
+      ...updateData,
+      updated_at: new Date().toISOString()
+    };
+    
+    this.saveJsonFile('why-memopyk-cards.json', cards);
+    
+    return cards[index];
+  }
+
+  async deleteWhyMemopykCard(cardId: string): Promise<boolean> {
+    try {
+      console.log('🗑️ Deleting Why MEMOPYK card:', cardId);
+      
+      // Try database first
+      if (this.supabase) {
+        const { error } = await this.supabase
+          .from('why_memopyk_cards')
+          .delete()
+          .eq('id', cardId);
+        
+        if (!error) {
+          console.log('✅ Why MEMOPYK card deleted from Supabase');
+          
+          // Update JSON backup
+          const cards = this.loadJsonFile('why-memopyk-cards.json');
+          const filteredCards = cards.filter((card: any) => card.id !== cardId);
+          this.saveJsonFile('why-memopyk-cards.json', filteredCards);
+          
+          return true;
+        }
+      }
+    } catch (error) {
+      console.warn('⚠️ Database delete failed, using JSON fallback:', error);
+    }
+    
+    // Fallback to JSON only
+    const cards = this.loadJsonFile('why-memopyk-cards.json');
+    const filteredCards = cards.filter((card: any) => card.id !== cardId);
+    
+    if (filteredCards.length === cards.length) {
+      return false; // Not found
+    }
+    
+    this.saveJsonFile('why-memopyk-cards.json', filteredCards);
     return true;
   }
 
