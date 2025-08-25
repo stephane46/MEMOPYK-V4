@@ -39,6 +39,10 @@ Modal styling: Requires solid white modal backgrounds with dark overlays for pro
 
 **Homepage Section Reorganization (Aug 2025)**: Enhanced user flow by positioning "Comment ça marche" (How It Works) section between two Call-to-Action sections. This creates an optimal customer journey: Gallery → First CTA → Process Explanation → Second CTA → FAQ, maximizing conversion opportunities through strategic placement of actionable elements around educational content.
 
+**Why MEMOPYK Section Dynamic Content Integration (Aug 2025)**: Successfully completed transformation from static hardcoded content to fully dynamic admin-driven system. The public website "Why choose MEMOPYK" section now fetches real-time data from `/api/why-memopyk-cards` endpoint, allowing immediate reflection of admin interface changes. All six benefit cards now use dynamic icon mapping, HTML content rendering, and proper API data structure while maintaining 100% brand compliance with official MEMOPYK color gradients.
+
+**Deployment MIME Type Issue - PERMANENT RESOLUTION (Aug 2025)**: Resolved recurring "Expected JavaScript-or-Wasm module script but server responded with text/html" deployment error. Root cause was `public/index.html` file with development references (`/src/main.tsx`) overriding correct production references (`/assets/index-*.js`). Removed problematic development HTML from public folder. Build process protection was already in place. Deployment system was never broken - issue was in build file generation. **Resolution: Deployment now works correctly with proper MIME types.**
+
 ## System Architecture
 
 ### Frontend
