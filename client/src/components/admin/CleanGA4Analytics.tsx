@@ -235,8 +235,16 @@ interface AnalyticsSettings {
   excludedIps: Array<{
     ip: string;
     comment?: string;
-    added_at: string;
+    added_at?: string;
   }>;
+  trackingEnabled?: boolean;
+  retentionDays?: number;
+  anonymizeIPs?: boolean;
+  trackVideoViews?: boolean;
+  trackPageViews?: boolean;
+  trackFormSubmissions?: boolean;
+  excludeBots?: boolean;
+  languages?: string[];
 }
 
 export default function CleanGA4Analytics() {
@@ -1500,16 +1508,18 @@ export default function CleanGA4Analytics() {
                     </div>
                   ) : settings?.excludedIps && settings.excludedIps.length > 0 ? (
                     <div className="space-y-3">
-                      {settings.excludedIps.map((excludedIp) => (
-                        <div key={excludedIp.ip} className="bg-gray-50 dark:bg-gray-800 rounded-lg p-4 border">
+                      {settings.excludedIps.map((excludedIp) => {
+                        const ipObj = excludedIp as { ip: string; comment?: string; added_at?: string };
+                        return (
+                        <div key={ipObj.ip} className="bg-gray-50 dark:bg-gray-800 rounded-lg p-4 border">
                           <div className="flex items-center justify-between">
                             <div className="flex-1">
                               <div className="font-mono text-sm font-medium">
-                                {excludedIp.ip}
+                                {ipObj.ip}
                               </div>
-                              {excludedIp.comment && (
+                              {ipObj.comment && (
                                 <div className="text-sm text-gray-600 dark:text-gray-400 mt-1">
-                                  {editingComment === excludedIp.ip ? (
+                                  {editingComment === ipObj.ip ? (
                                     <div className="flex items-center gap-2">
                                       <Input
                                         value={tempComment}
@@ -1521,7 +1531,7 @@ export default function CleanGA4Analytics() {
                                         size="sm"
                                         variant="ghost"
                                         onClick={() => updateIpCommentMutation.mutate({ 
-                                          ipAddress: excludedIp.ip, 
+                                          ipAddress: ipObj.ip, 
                                           comment: tempComment 
                                         })}
                                       >
@@ -1539,12 +1549,12 @@ export default function CleanGA4Analytics() {
                                       </Button>
                                     </div>
                                   ) : (
-                                    <span>{excludedIp.comment}</span>
+                                    <span>{ipObj.comment}</span>
                                   )}
                                 </div>
                               )}
                               <div className="text-xs text-gray-500 mt-1">
-                                Added: {formatFrenchDateTime(new Date(excludedIp.added_at))}
+                                Added: {ipObj.added_at ? formatFrenchDateTime(new Date(ipObj.added_at)) : 'Unknown'}
                               </div>
                             </div>
                             <div className="flex items-center gap-2 ml-4">
@@ -1552,8 +1562,8 @@ export default function CleanGA4Analytics() {
                                 size="sm"
                                 variant="ghost"
                                 onClick={() => {
-                                  setEditingComment(excludedIp.ip);
-                                  setTempComment(excludedIp.comment || '');
+                                  setEditingComment(ipObj.ip);
+                                  setTempComment(ipObj.comment || '');
                                 }}
                               >
                                 <Edit2 className="h-3 w-3" />
@@ -1561,7 +1571,7 @@ export default function CleanGA4Analytics() {
                               <Button
                                 size="sm"
                                 variant="ghost"
-                                onClick={() => removeExcludedIpMutation.mutate(excludedIp.ip)}
+                                onClick={() => removeExcludedIpMutation.mutate(ipObj.ip)}
                                 className="text-red-600 hover:text-red-700"
                               >
                                 <Trash2 className="h-3 w-3" />
@@ -1569,7 +1579,8 @@ export default function CleanGA4Analytics() {
                             </div>
                           </div>
                         </div>
-                      ))}
+                        );
+                      })}
                     </div>
                   ) : (
                     <div className="text-center py-8 text-gray-500">
@@ -1598,7 +1609,7 @@ export default function CleanGA4Analytics() {
                               </div>
                               <div className="font-mono text-sm">{ip.ip_address}</div>
                               <div className="text-xs text-gray-600 dark:text-gray-400">
-                                <CountryFlag countryCode={ip.country_code} />
+                                <CountryFlag country={ip.country_code || 'Unknown'} />
                                 {ip.city && ` ${ip.city}`}
                                 {ip.region && `, ${ip.region}`}
                               </div>
