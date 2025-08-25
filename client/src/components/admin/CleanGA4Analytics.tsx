@@ -67,6 +67,7 @@ export default function CleanGA4Analytics() {
   const [locale, setLocale] = useState('all');
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isReturningModalOpen, setIsReturningModalOpen] = useState(false);
 
   // Comprehensive GA4 + visitor analytics data fetch
   const { data: ga4Data, isLoading, error, refetch } = useQuery<GA4MetricsResponse>({
@@ -95,6 +96,14 @@ export default function CleanGA4Analytics() {
     enabled: isModalOpen, // Only fetch when modal is open
   });
 
+  // Fetch returning visitors for modal
+  const { data: returningVisitors } = useQuery<RecentVisitor[]>({
+    queryKey: ['/api/analytics/returning-visitors'],
+    staleTime: 30000, // 30 seconds
+    refetchInterval: 60000, // 1 minute
+    enabled: isReturningModalOpen, // Only fetch when modal is open
+  });
+
   const handleRefresh = async () => {
     setIsRefreshing(true);
     await refetch();
@@ -113,23 +122,26 @@ export default function CleanGA4Analytics() {
   // Modal handling
   const handleModalOpen = () => setIsModalOpen(true);
   const handleModalClose = () => setIsModalOpen(false);
+  const handleReturningModalOpen = () => setIsReturningModalOpen(true);
+  const handleReturningModalClose = () => setIsReturningModalOpen(false);
 
-  // ESC key handler for modal
+  // ESC key handler for modals
   useEffect(() => {
     const handleEscKey = (event: KeyboardEvent) => {
-      if (event.key === 'Escape' && isModalOpen) {
-        handleModalClose();
+      if (event.key === 'Escape') {
+        if (isModalOpen) handleModalClose();
+        if (isReturningModalOpen) handleReturningModalClose();
       }
     };
 
-    if (isModalOpen) {
+    if (isModalOpen || isReturningModalOpen) {
       document.addEventListener('keydown', handleEscKey);
     }
 
     return () => {
       document.removeEventListener('keydown', handleEscKey);
     };
-  }, [isModalOpen]);
+  }, [isModalOpen, isReturningModalOpen]);
 
   // Helper functions for visitor data
   const formatDate = (dateString: string | null) => {
@@ -261,31 +273,36 @@ export default function CleanGA4Analytics() {
             </Card>
 
             <Card 
-              className="cursor-pointer transition-transform hover:scale-105"
+              className="cursor-pointer transition-transform hover:scale-105 relative"
               onClick={handleModalOpen}
             >
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                 <CardTitle className="text-sm font-medium">Unique Visitors</CardTitle>
                 <Users className="h-4 w-4 text-green-600" />
               </CardHeader>
-              <CardContent>
+              <CardContent className="relative">
                 <div className="text-2xl font-bold">{ga4Data.uniqueVisitors.toLocaleString()}</div>
                 <p className="text-xs text-gray-600 dark:text-gray-400">
-                  Distinct visitors (IP-based) • Click for details
+                  Distinct visitors (IP-based)
                 </p>
+                <Eye className="absolute bottom-2 right-2 h-4 w-4 text-gray-400" />
               </CardContent>
             </Card>
 
-            <Card>
+            <Card 
+              className="cursor-pointer transition-transform hover:scale-105 relative"
+              onClick={handleReturningModalOpen}
+            >
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                 <CardTitle className="text-sm font-medium">Return Visitors</CardTitle>
                 <UserCheck className="h-4 w-4 text-purple-600" />
               </CardHeader>
-              <CardContent>
+              <CardContent className="relative">
                 <div className="text-2xl font-bold">{ga4Data.returnVisitors.toLocaleString()}</div>
                 <p className="text-xs text-gray-600 dark:text-gray-400">
                   Returning visitors
                 </p>
+                <Eye className="absolute bottom-2 right-2 h-4 w-4 text-gray-400" />
               </CardContent>
             </Card>
 
@@ -618,6 +635,149 @@ export default function CleanGA4Analytics() {
                       color: '#d1d5db'
                     }} />
                     <p style={{ margin: 0 }}>No recent visitors found</p>
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Returning Visitors Details Modal */}
+      {isReturningModalOpen && (
+        <div 
+          className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
+          onClick={(e) => e.target === e.currentTarget && handleReturningModalClose()}
+        >
+          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-xl max-w-4xl max-h-[90vh] overflow-hidden relative">
+            <div 
+              className="p-6 border-b border-gray-200 dark:border-gray-700"
+              style={{
+                background: 'linear-gradient(135deg, #2A4759 0%, #89BAD9 100%)',
+                color: '#ffffff'
+              }}
+            >
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-3" style={{
+                  color: '#ffffff'
+                }}>
+                  <UserCheck style={{ width: '24px', height: '24px' }} />
+                  Returning Visitors Details
+                </div>
+                <button
+                  onClick={handleReturningModalClose}
+                  className="text-white hover:text-gray-200 transition-colors"
+                  style={{ color: '#ffffff' }}
+                >
+                  <X size={24} />
+                </button>
+              </div>
+            </div>
+
+            <div className="p-6 overflow-y-auto max-h-[70vh]">
+              {returningVisitors && returningVisitors.length > 0 ? (
+                <div className="space-y-4">
+                  {returningVisitors.map((visitor, index) => (
+                    <div 
+                      key={`${visitor.ip_address}-${index}`}
+                      className="bg-gray-50 dark:bg-gray-700 rounded-lg p-4 border border-gray-200 dark:border-gray-600"
+                    >
+                      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                        <div>
+                          <div className="flex items-center gap-2 mb-2">
+                            <MapPin className="h-4 w-4 text-blue-600" />
+                            <span className="font-medium text-gray-900 dark:text-white">Location</span>
+                          </div>
+                          <div className="flex items-center gap-2">
+                            <CountryFlag country={visitor.country} size={20} />
+                            <div>
+                              <div className="text-sm font-medium">{visitor.country}</div>
+                              {visitor.city && visitor.region && (
+                                <div className="text-xs text-gray-600 dark:text-gray-400">
+                                  {visitor.city}, {visitor.region}
+                                </div>
+                              )}
+                            </div>
+                          </div>
+                        </div>
+
+                        <div>
+                          <div className="flex items-center gap-2 mb-2">
+                            <Languages className="h-4 w-4 text-green-600" />
+                            <span className="font-medium text-gray-900 dark:text-white">Language</span>
+                          </div>
+                          <Badge variant="outline">{visitor.language}</Badge>
+                        </div>
+
+                        <div>
+                          <div className="flex items-center gap-2 mb-2">
+                            <Clock className="h-4 w-4 text-orange-600" />
+                            <span className="font-medium text-gray-900 dark:text-white">Last Visit</span>
+                          </div>
+                          <div className="text-sm text-gray-600 dark:text-gray-400">
+                            {formatDate(visitor.last_visit)}
+                          </div>
+                        </div>
+
+                        {visitor.session_duration && (
+                          <div>
+                            <div className="flex items-center gap-2 mb-2">
+                              <Clock className="h-4 w-4 text-purple-600" />
+                              <span className="font-medium text-gray-900 dark:text-white">Session</span>
+                            </div>
+                            <div className="text-sm text-gray-600 dark:text-gray-400">
+                              {formatSessionDuration(visitor.session_duration)}
+                            </div>
+                          </div>
+                        )}
+
+                        {visitor.visit_count && visitor.visit_count > 1 && (
+                          <div>
+                            <div className="flex items-center gap-2 mb-2">
+                              <UserCheck className="h-4 w-4 text-indigo-600" />
+                              <span className="font-medium text-gray-900 dark:text-white">Return Visits</span>
+                            </div>
+                            <Badge variant="secondary">{visitor.visit_count} times</Badge>
+                          </div>
+                        )}
+
+                        {visitor.previous_visit && (
+                          <div>
+                            <div className="flex items-center gap-2 mb-2">
+                              <Clock className="h-4 w-4 text-gray-600" />
+                              <span className="font-medium text-gray-900 dark:text-white">Previous Visit</span>
+                            </div>
+                            <div className="text-sm text-gray-600 dark:text-gray-400">
+                              {formatDate(visitor.previous_visit)}
+                            </div>
+                          </div>
+                        )}
+
+                        <div className="lg:col-span-3">
+                          <div className="flex items-center gap-2 mb-2">
+                            <MousePointer className="h-4 w-4 text-gray-600" />
+                            <span className="font-medium text-gray-900 dark:text-white">IP & Browser</span>
+                          </div>
+                          <div className="text-sm text-gray-600 dark:text-gray-400">
+                            <div className="font-mono">{visitor.ip_address}</div>
+                            <div className="text-xs mt-1 truncate" title={visitor.user_agent}>
+                              {visitor.user_agent}
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <div className="text-center py-8">
+                  <div className="flex flex-col items-center gap-3">
+                    <UserCheck style={{ 
+                      width: '48px', 
+                      height: '48px',
+                      color: '#d1d5db'
+                    }} />
+                    <p style={{ margin: 0 }}>No returning visitors found</p>
                   </div>
                 </div>
               )}

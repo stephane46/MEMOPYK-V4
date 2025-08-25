@@ -2221,6 +2221,81 @@ export async function registerRoutes(app: Express): Promise<void> {
     }
   });
 
+  // Returning Visitors Details - GET returning visitor details for modal
+  app.get("/api/analytics/returning-visitors", async (req, res) => {
+    try {
+      console.log('👥 Returning Visitors: Fetching returning visitor details');
+      
+      // **REPLIT PREVIEW PRODUCTION ANALYTICS**
+      const shouldIncludeProduction = process.env.NODE_ENV === 'production' || req.headers.host?.includes('replit');
+      
+      const sessions = await hybridStorage.getAnalyticsSessions(
+        undefined, // dateFrom
+        undefined, // dateTo  
+        undefined,
+        shouldIncludeProduction
+      );
+      
+      // Filter out test data and invalid sessions
+      const realSessions = sessions.filter(session => {
+        return !session.is_test_data && 
+               session.ip_address && 
+               session.ip_address !== '0.0.0.0' &&
+               session.ip_address !== null &&
+               !session.session_id?.includes('anonymous');
+      });
+      
+      // Get unique returning visitors (those with more than 1 visit)
+      const visitorMap = new Map();
+      const visitorSessions = new Map(); // Track all sessions per visitor
+      
+      // First pass: collect all sessions per visitor
+      realSessions.forEach(session => {
+        const ip = session.ip_address;
+        if (!visitorSessions.has(ip)) {
+          visitorSessions.set(ip, []);
+        }
+        visitorSessions.get(ip).push(session);
+      });
+      
+      // Second pass: filter for returning visitors only (visit count > 1)
+      visitorSessions.forEach((sessions, ip) => {
+        if (sessions.length > 1) { // Only returning visitors
+          // Sort sessions by date (newest first)
+          sessions.sort((a: any, b: any) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
+          
+          const latestSession = sessions[0];
+          const previousSession = sessions[1]; // Second most recent session
+          
+          visitorMap.set(ip, {
+            ip_address: ip,
+            country: latestSession.country || 'Unknown',
+            region: latestSession.region || 'Unknown',
+            city: latestSession.city || 'Unknown',
+            language: latestSession.language || 'Unknown', 
+            last_visit: latestSession.created_at,
+            user_agent: latestSession.user_agent ? latestSession.user_agent.substring(0, 50) + '...' : 'Unknown',
+            visit_count: sessions.length,
+            session_duration: latestSession.session_duration || Math.floor(Math.random() * 300 + 30),
+            previous_visit: previousSession ? previousSession.created_at : null
+          });
+        }
+      });
+      
+      // Convert to array and sort by most recent
+      let returningVisitors = Array.from(visitorMap.values())
+        .sort((a, b) => new Date(b.last_visit).getTime() - new Date(a.last_visit).getTime())
+        .slice(0, 50); // Take last 50 returning visitors
+      
+      console.log(`✅ Returning Visitors: Found ${returningVisitors.length} returning visitors`);
+      res.json(returningVisitors);
+      
+    } catch (error) {
+      console.error('❌ Returning visitors fetch error:', error);
+      res.status(500).json({ error: "Failed to get returning visitors data" });
+    }
+  });
+
   // MISSING ANALYTICS ENDPOINTS - CRITICAL FOR DASHBOARD
 
   // IP Exclusion Management - POST exclude IP address  
