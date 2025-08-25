@@ -846,9 +846,9 @@ export default function CleanGA4Analytics() {
                               <Badge variant={isFrench ? 'default' : 'secondary'}>
                                 {siteInfo.flag} {siteInfo.display}
                               </Badge>
-                              <span className="text-xs text-gray-600">{lang.percentage.toFixed(1)}%</span>
+                              <span className="text-xs text-gray-600">{Math.ceil(lang.percentage)}%</span>
                             </div>
-                            <div className="text-sm font-semibold">{(lang.visitors || 0).toLocaleString()}</div>
+                            <div className="text-sm font-semibold text-right min-w-[3rem]">{(lang.visitors || 0).toLocaleString()}</div>
                           </div>
                         );
                       }) || <p className="text-xs text-gray-500">No site language data</p>}
@@ -870,9 +870,9 @@ export default function CleanGA4Analytics() {
                               <Badge variant={browserInfo.variant}>
                                 {browserInfo.flag} {browserInfo.display}
                               </Badge>
-                              <span className="text-xs text-gray-600">{lang.percentage.toFixed(1)}%</span>
+                              <span className="text-xs text-gray-600">{Math.ceil(lang.percentage)}%</span>
                             </div>
-                            <div className="text-sm font-semibold">{(lang.visitors || 0).toLocaleString()}</div>
+                            <div className="text-sm font-semibold text-right min-w-[3rem]">{(lang.visitors || 0).toLocaleString()}</div>
                           </div>
                         );
                       }) || <p className="text-xs text-gray-500">No browser language data</p>}
