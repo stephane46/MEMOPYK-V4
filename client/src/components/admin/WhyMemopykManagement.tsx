@@ -469,20 +469,30 @@ export function WhyMemopykManagement() {
                   </div>
                 )}
 
-                {/* Action Buttons */}
-                <div className="flex justify-end space-x-2 pt-4">
+                {/* Action Buttons - Always visible and prominent */}
+                <div className="flex justify-end space-x-2 pt-6 border-t">
                   <Button variant="outline" onClick={handleCancel}>
                     Cancel
                   </Button>
                   <Button 
                     onClick={handleSaveCard}
-                    disabled={!formData.titleFr || !formData.titleEn || !formData.descriptionFr || !formData.descriptionEn}
-                    className="bg-memopyk-orange hover:bg-memopyk-orange/90 text-white"
+                    disabled={!formData.titleFr || !formData.titleEn}
+                    className="bg-memopyk-orange hover:bg-memopyk-orange/90 text-white min-w-[120px]"
                   >
                     <Save className="w-4 h-4 mr-2" />
-                    {editingCard ? 'Update' : 'Create'}
+                    {editingCard ? 'Update Card' : 'Create Card'}
                   </Button>
                 </div>
+
+                {/* Debug info */}
+                {(isCreating || editingCard) && (
+                  <div className="mt-4 p-2 bg-gray-100 rounded text-xs text-gray-600">
+                    Form state: {isCreating ? 'Creating' : 'Editing'} | 
+                    TitleFr: {formData.titleFr ? '✓' : '✗'} | 
+                    TitleEn: {formData.titleEn ? '✓' : '✗'} |
+                    Button: {(!formData.titleFr || !formData.titleEn) ? 'Disabled' : 'Enabled'}
+                  </div>
+                )}
               </CardContent>
             </Card>
           )}
