@@ -557,7 +557,10 @@ export default function CleanGA4Analytics() {
                         return langName === 'english' || langName === 'french' || 
                                langName.includes('fr') || langName.includes('en');
                       }).map((lang) => {
+                        // Debug: Log the original language data
+                        console.log('🔍 SITE LANGUAGE DEBUG:', lang.language);
                         const siteInfo = formatSiteLanguage(lang.language);
+                        console.log('🔍 SITE LANGUAGE FORMAT RESULT:', siteInfo);
                         const isFrench = lang.language.toLowerCase() === 'french' || lang.language.toLowerCase().includes('fr');
                         return (
                           <div key={`site-${lang.language}`} className="flex items-center justify-between">
