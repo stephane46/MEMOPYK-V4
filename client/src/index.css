@@ -752,7 +752,7 @@ html, body {
 /* === MEMOPYK HERO: Clean mobile text solution === */
 
 .hero-text-mobile {
-  font-size: clamp(1.5rem, 5vw, 4rem);
+  font-size: 40px; /* Match JSON fallback desktop size exactly */
   max-width: 100%;
   line-height: 1.2;
   white-space: normal;
@@ -772,7 +772,7 @@ html, body {
   .hero-text-mobile {
     white-space: pre-line;
     line-height: 1.25;
-    font-size: clamp(1.5rem, 5vw, 4rem);
+    font-size: 40px; /* Match JSON desktop size exactly */
   }
 }
 
@@ -783,7 +783,7 @@ html, body {
   .hero-text-mobile .hero-line,
   h1.hero-text-mobile,
   h1.hero-text-mobile .hero-line {
-    font-size: 8px !important;
+    font-size: 20px !important; /* Match JSON mobile size exactly */
     line-height: 1.0 !important;
     padding: 0 !important;
     margin: 0 !important;
