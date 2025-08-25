@@ -79,8 +79,8 @@ export function SimpleHeroVideoSection() {
     // sourceText: prefer DB text, otherwise fallback multi-line literal
     // FORCE: Ultra-short text on mobile using React state
     const sourceText = language === 'fr-FR'
-      ? (isMobileSize ? "Films\nsouvenirs" : (activeHeroText?.title_fr || "Nous transformons\nvos photos et vidéos personnelles\nen films souvenirs inoubliables"))
-      : (isMobileSize ? "Memory\nfilms" : (activeHeroText?.title_en || "We transform\nyour personal photos and videos\ninto unforgettable souvenir films"));
+      ? (isMobileSize ? "Films\nsouvenirs" : (activeHeroText?.title_fr || ""))
+      : (isMobileSize ? "Memory\nfilms" : (activeHeroText?.title_en || ""));
     
     // Normalize -> array of lines (split on newline)
     const lines = sourceText.split(/\r?\n/).map(s => s.trim()).filter(Boolean);
