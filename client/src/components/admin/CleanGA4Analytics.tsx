@@ -163,6 +163,11 @@ interface GA4MetricsResponse {
     visitors: number;
     percentage: number;
   }>;
+  siteLanguageChoice: Array<{
+    language: string;
+    visitors: number;
+    percentage: number;
+  }>;
   topReferrers: Array<{
     referrer: string;
     visitors: number;
@@ -551,14 +556,9 @@ export default function CleanGA4Analytics() {
                     </h4>
                     <p className="text-xs text-gray-500 mb-3">Which MEMOPYK version they chose</p>
                     <div className="space-y-2">
-                      {ga4Data.languageBreakdown?.filter(lang => {
-                        const langName = lang.language.toLowerCase();
-                        // Match GA4 language names: "English", "French" 
-                        return langName === 'english' || langName === 'french' || 
-                               langName.includes('fr') || langName.includes('en');
-                      }).map((lang) => {
-                        // Debug: Log the original language data
-                        console.log('🔍 SITE LANGUAGE DEBUG:', lang.language);
+                      {ga4Data.siteLanguageChoice?.map((lang) => {
+                        // Debug: Log the site language choice data
+                        console.log('🔍 SITE LANGUAGE CHOICE DEBUG:', lang);
                         const siteInfo = formatSiteLanguage(lang.language);
                         console.log('🔍 SITE LANGUAGE FORMAT RESULT:', siteInfo);
                         const isFrench = lang.language.toLowerCase() === 'french' || lang.language.toLowerCase().includes('fr');

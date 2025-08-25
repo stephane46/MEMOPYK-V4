@@ -17,6 +17,7 @@ import {
   qCompletes,
   qWatchTimeTotal,
   qTopLanguages,
+  qSiteLanguageChoice,
   qReturningUsers,
   qPlaysByVideo,
   qWatchTimeByVideo,
@@ -4424,13 +4425,14 @@ export async function registerRoutes(app: Express): Promise<void> {
       // Use the same date variables from above (already defined in try block)
       // const endDate and startDate already defined above
 
-      // Fetch GA4 video metrics and returning users in parallel
-      const [plays, completions, watchTimeSeconds, topVideos, languageData, ga4ReturningUsers] = await Promise.all([
+      // Fetch GA4 video metrics, language data, and returning users in parallel
+      const [plays, completions, watchTimeSeconds, topVideos, browserLanguageData, siteLanguageData, ga4ReturningUsers] = await Promise.all([
         qPlays(startDate, endDate, locale),
         qCompletes(startDate, endDate, locale), 
         qWatchTimeTotal(startDate, endDate, locale),
         qPlaysByVideo(startDate, endDate, locale),
         qTopLanguages(startDate, endDate),
+        qSiteLanguageChoice(startDate, endDate),
         qReturningUsers(startDate, endDate)
       ]);
 
@@ -4451,10 +4453,10 @@ export async function registerRoutes(app: Express): Promise<void> {
       // Process language breakdown - use GA4 browser language data
       const languageBreakdown = [];
       
-      if (languageData && Array.isArray(languageData)) {
-        const totalLanguageVisitors = languageData.reduce((sum, lang) => sum + lang.visitors, 0);
+      if (browserLanguageData && Array.isArray(browserLanguageData)) {
+        const totalLanguageVisitors = browserLanguageData.reduce((sum, lang) => sum + lang.visitors, 0);
         
-        for (const lang of languageData) {
+        for (const lang of browserLanguageData) {
           if (lang.language && lang.visitors > 0) {
             languageBreakdown.push({
               language: lang.language,
@@ -4464,6 +4466,9 @@ export async function registerRoutes(app: Express): Promise<void> {
           }
         }
       }
+
+      // Process site language choice - URL path-based tracking (should total 100%)
+      const siteLanguageChoice = Array.isArray(siteLanguageData) ? siteLanguageData : [];
 
       // Process top referrers
       const topReferrers = (dashboardData.topReferrers || []).slice(0, 5).map((ref: any) => ({
@@ -4495,7 +4500,8 @@ export async function registerRoutes(app: Express): Promise<void> {
         activeVisitors,
         // Geographic & Demographic Data
         topCountries,
-        languageBreakdown,
+        languageBreakdown, // Browser language preferences (GA4 language dimension)
+        siteLanguageChoice, // Site language choice (URL path-based: /fr/ vs /en-US/)
         topReferrers,
         // Video Analytics (from GA4)
         totalVideoStarts: plays || 0,

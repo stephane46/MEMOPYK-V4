@@ -134,6 +134,65 @@ export async function qTopLanguages(start: string, end: string) {
   return languages;
 }
 
+// NEW: Track actual site language choice based on URL paths (/fr/ vs /en-US/)
+export async function qSiteLanguageChoice(start: string, end: string) {
+  console.log(`🎯 qSiteLanguageChoice CALLED: ${start} to ${end} - URL path-based tracking`);
+  
+  try {
+    const [res] = await client.runReport({
+      property: PROPERTY,
+      dateRanges: [{ startDate: start, endDate: end }],
+      dimensions: [{ name: "pagePath" }],
+      metrics: [{ name: "screenPageViews" }],
+      orderBys: [{ metric: { metricName: "screenPageViews" }, desc: true }],
+      limit: 1000 // Get all page paths to filter by language
+    });
+
+    console.log(`🎯 qSiteLanguageChoice RAW RESPONSE (first 5):`, JSON.stringify(res.rows?.slice(0, 5), null, 2));
+
+    const pageViews = (res.rows ?? []).map((r: any) => ({
+      pagePath: r.dimensionValues?.[0]?.value ?? "",
+      views: Number(r.metricValues?.[0]?.value ?? 0)
+    })).filter((page: any) => page.views > 0);
+
+    // Categorize by URL path
+    let frenchViews = 0;
+    let englishViews = 0;
+
+    pageViews.forEach((page: any) => {
+      if (page.pagePath.includes('/fr/')) {
+        frenchViews += page.views;
+      } else if (page.pagePath.includes('/en-US/')) {
+        englishViews += page.views;
+      }
+    });
+
+    const totalViews = frenchViews + englishViews;
+    
+    const siteLanguageData = [
+      {
+        language: "French",
+        visitors: frenchViews,
+        percentage: totalViews > 0 ? (frenchViews / totalViews) * 100 : 0
+      },
+      {
+        language: "English", 
+        visitors: englishViews,
+        percentage: totalViews > 0 ? (englishViews / totalViews) * 100 : 0
+      }
+    ].filter((lang: any) => lang.visitors > 0);
+
+    console.log(`🎯 qSiteLanguageChoice RESULT: French=${frenchViews}, English=${englishViews}, Total=${totalViews}`);
+    console.log(`🎯 qSiteLanguageChoice DATA:`, siteLanguageData);
+    
+    return siteLanguageData;
+  } catch (error) {
+    console.warn('qSiteLanguageChoice failed, returning empty array:', error);
+    console.error('qSiteLanguageChoice ERROR DETAILS:', error);
+    return [];
+  }
+}
+
 export async function qReturningUsers(start: string, end: string) {
   console.log(`🎯 qReturningUsers CALLED: ${start} to ${end} - Getting returning visitor count`);
   
