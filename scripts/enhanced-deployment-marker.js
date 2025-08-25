@@ -19,6 +19,24 @@ function generateCacheBusters() {
   };
 }
 
+// Verify build script is fixed for MIME type issues
+function verifyBuildScript() {
+  const buildScriptPath = path.join(__dirname, '..', 'build.js');
+  if (fs.existsSync(buildScriptPath)) {
+    const buildContent = fs.readFileSync(buildScriptPath, 'utf8');
+    
+    // Check for the critical fix
+    if (buildContent.includes('cp -r dist/public/* dist/') && buildContent.includes('rm -rf dist/public')) {
+      console.log('✅ Build script MIME type fix verified');
+      return true;
+    } else {
+      console.log('⚠️ Warning: Build script may need MIME type fix');
+      return false;
+    }
+  }
+  return false;
+}
+
 // Parse command line arguments
 const args = process.argv.slice(2);
 const flags = {};
@@ -59,6 +77,10 @@ const keepCount = parseInt(flags.keep) || 10;
 const description = flags.description;
 const aggressive = flags.aggressive || false;
 const verify = flags.verify || false;
+
+// Verify build script has MIME type fix
+console.log('\n🔍 Verifying deployment readiness...');
+verifyBuildScript();
 
 if (!description) {
   console.error('❌ Error: --description is required');
