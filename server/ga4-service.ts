@@ -600,6 +600,60 @@ export async function qTrend(start: string, end: string, locale?: string) {
   });
 }
 
+/* =============  CORE ANALYTICS FUNCTIONS  ============= */
+
+export async function qUniqueUsers(start: string, end: string, locale?: string) {
+  console.log(`🎯 qUniqueUsers CALLED: ${start} to ${end}, locale: ${locale || 'all'}`);
+  
+  const [res] = await client.runReport({
+    property: PROPERTY,
+    dateRanges: [range(start, end)],
+    metrics: [{ name: "activeUsers" }],
+    ...(localeFilter(locale) ? { dimensionFilter: localeFilter(locale) } : {})
+  });
+  
+  const users = Number(res.rows?.[0]?.metricValues?.[0]?.value ?? 0);
+  console.log(`🎯 qUniqueUsers RESULT: ${users} unique users`);
+  return users;
+}
+
+export async function qPageViews(start: string, end: string, locale?: string) {
+  console.log(`🎯 qPageViews CALLED: ${start} to ${end}, locale: ${locale || 'all'}`);
+  
+  const [res] = await client.runReport({
+    property: PROPERTY,
+    dateRanges: [range(start, end)],
+    metrics: [{ name: "screenPageViews" }],
+    ...(localeFilter(locale) ? { dimensionFilter: localeFilter(locale) } : {})
+  });
+  
+  const pageViews = Number(res.rows?.[0]?.metricValues?.[0]?.value ?? 0);
+  console.log(`🎯 qPageViews RESULT: ${pageViews} page views`);
+  return pageViews;
+}
+
+export async function qTopCountries(start: string, end: string) {
+  console.log(`🎯 qTopCountries CALLED: ${start} to ${end}`);
+  
+  const [res] = await client.runReport({
+    property: PROPERTY,
+    dateRanges: [range(start, end)],
+    dimensions: [{ name: "country" }],
+    metrics: [{ name: "activeUsers" }],
+    orderBys: [{ metric: { metricName: "activeUsers" }, desc: true }],
+    limit: 10
+  });
+  
+  const countries = (res.rows ?? []).map(r => ({
+    country: r.dimensionValues?.[0]?.value ?? "Unknown",
+    visitors: Number(r.metricValues?.[0]?.value ?? 0),
+    flag: "🌍" // Default flag, could be enhanced with country code mapping
+  }));
+  
+  console.log(`🎯 qTopCountries RESULT: ${countries.length} countries`);
+  return countries;
+}
+
 /* =============  REALTIME API  ============= */
 
 export async function qRealtime() {
