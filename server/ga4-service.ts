@@ -135,6 +135,37 @@ export async function qTopLanguages(start: string, end: string) {
 }
 
 // NEW: Track actual site language choice based on URL paths (/fr/ vs /en-US/)
+export async function qTopReferrers(start: string, end: string) {
+  console.log(`🎯 qTopReferrers CALLED: ${start} to ${end} - Getting traffic sources`);
+  
+  try {
+    const [res] = await client.runReport({
+      property: PROPERTY,
+      dateRanges: [{ startDate: start, endDate: end }],
+      dimensions: [{ name: "sessionSource" }],
+      metrics: [{ name: "sessions" }],
+      orderBys: [{ metric: { metricName: "sessions" }, desc: true }],
+      limit: 10 // Get top 10 referrers
+    });
+
+    console.log(`🎯 qTopReferrers RAW RESPONSE (first 5):`, JSON.stringify(res.rows?.slice(0, 5), null, 2));
+
+    const referrers = (res.rows ?? []).map((r: any) => ({
+      referrer: r.dimensionValues?.[0]?.value ?? "Unknown",
+      visitors: Number(r.metricValues?.[0]?.value ?? 0)
+    })).filter((ref: any) => ref.visitors > 0);
+
+    console.log(`🎯 qTopReferrers RESULT: ${referrers.length} referrers found`);
+    console.log(`🎯 qTopReferrers SAMPLE DATA:`, referrers.slice(0, 3));
+    
+    return referrers;
+  } catch (error) {
+    console.warn('qTopReferrers failed, returning empty array:', error);
+    console.error('qTopReferrers ERROR DETAILS:', error);
+    return [];
+  }
+}
+
 export async function qSiteLanguageChoice(start: string, end: string) {
   console.log(`🎯 qSiteLanguageChoice CALLED: ${start} to ${end} - URL path-based tracking`);
   

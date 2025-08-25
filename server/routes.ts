@@ -17,6 +17,7 @@ import {
   qCompletes,
   qWatchTimeTotal,
   qTopLanguages,
+  qTopReferrers,
   qSiteLanguageChoice,
   qReturningUsers,
   qPlaysByVideo,
@@ -4366,16 +4367,17 @@ export async function registerRoutes(app: Express): Promise<void> {
         console.log('🔗 CONNECTING TO MEMOPYK.COM GA4 DATA...');
         
         // Import available GA4 service functions for memopyk.com data
-        const { qUniqueUsers, qPageViews, qTopCountries, qTopLanguages } = await import('./ga4-service.js');
+        const { qUniqueUsers, qPageViews, qTopCountries, qTopLanguages, qTopReferrers } = await import('./ga4-service.js');
         
         // Get real GA4 data from memopyk.com (using available functions)
         // Fix: Convert ISO dates to YYYY-MM-DD format for GA4
         
-        const [ga4Users, ga4PageViews, ga4Countries, ga4Languages] = await Promise.all([
+        const [ga4Users, ga4PageViews, ga4Countries, ga4Languages, ga4Referrers] = await Promise.all([
           qUniqueUsers(startDate, endDate, locale).catch((e: any) => { console.log('GA4 users error:', e.message); return 0; }),
           qPageViews(startDate, endDate, locale).catch((e: any) => { console.log('GA4 pageviews error:', e.message); return 0; }),
           qTopCountries(startDate, endDate).catch((e: any) => { console.log('GA4 countries error:', e.message); return []; }),
-          qTopLanguages(startDate, endDate).catch((e: any) => { console.log('GA4 languages error:', e.message); return []; })
+          qTopLanguages(startDate, endDate).catch((e: any) => { console.log('GA4 languages error:', e.message); return []; }),
+          qTopReferrers(startDate, endDate).catch((e: any) => { console.log('GA4 referrers error:', e.message); return []; })
         ]);
         
         console.log('✅ GA4 DATA RETRIEVED from memopyk.com:', { users: ga4Users, pageViews: ga4PageViews, countries: ga4Countries?.length, languages: ga4Languages?.length });
@@ -4390,7 +4392,7 @@ export async function registerRoutes(app: Express): Promise<void> {
           },
           topCountries: ga4Countries || [],
           languageBreakdown: ga4Languages || [],
-          topReferrers: [] // Not available in current GA4 service
+          topReferrers: ga4Referrers || []
         };
         
         console.log('✅ COMPREHENSIVE: GA4 countries data:', JSON.stringify(ga4Countries?.slice(0, 2), null, 2));
