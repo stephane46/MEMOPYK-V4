@@ -19,10 +19,19 @@ try {
     execSync('rmdir dist/public 2>/dev/null || true', { stdio: 'pipe' });
   }
   
-  // Step 3: Copy public assets to dist
+  // Step 3: Copy public assets to dist (but preserve built index.html)
   console.log('📁 Copying public assets...');
   if (fs.existsSync('public')) {
+    // Backup the built index.html
+    if (fs.existsSync('dist/index.html')) {
+      execSync('cp dist/index.html dist/index.built.html', { stdio: 'pipe' });
+    }
     execSync('cp -r public/* dist/ 2>/dev/null || true', { stdio: 'pipe' });
+    // Restore the built index.html (it has correct asset references)
+    if (fs.existsSync('dist/index.built.html')) {
+      execSync('mv dist/index.built.html dist/index.html', { stdio: 'pipe' });
+      console.log('   ✅ Built index.html preserved');
+    }
   }
   
   // Step 4: Ensure cache directories exist
