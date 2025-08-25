@@ -4378,10 +4378,19 @@ export async function registerRoutes(app: Express): Promise<void> {
       // Temporarily disable cache to test real data connection
       console.log('🔍 COMPREHENSIVE: Cache disabled - fetching fresh data from PostgreSQL');
 
-      // Calculate date range
+      // Calculate date range using start of day for proper filtering
       const rangeDays = parseInt(range.replace('d', ''));
-      const dateFrom = new Date(Date.now() - (rangeDays * 24 * 60 * 60 * 1000)).toISOString();
-      const dateTo = new Date().toISOString();
+      
+      // Start from beginning of the day X days ago
+      const startOfRangeDay = new Date();
+      startOfRangeDay.setDate(startOfRangeDay.getDate() - rangeDays);
+      startOfRangeDay.setHours(0, 0, 0, 0); // Start of day
+      const dateFrom = startOfRangeDay.toISOString();
+      
+      // End at the end of today
+      const endOfToday = new Date();
+      endOfToday.setHours(23, 59, 59, 999); // End of day
+      const dateTo = endOfToday.toISOString();
       
       // Convert to GA4 date format (YYYY-MM-DD) for all functions
       const startDate = dateFrom.split('T')[0];
