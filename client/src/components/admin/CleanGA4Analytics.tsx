@@ -329,9 +329,9 @@ export default function CleanGA4Analytics() {
     languages?: string[];
   }>({
     queryKey: ['/api/analytics/settings'],
-    enabled: showIpManagement,
+    enabled: true, // Always load settings for IP management
     staleTime: 30000,
-    refetchInterval: showIpManagement ? 60000 : false
+    refetchInterval: 60000 // Consistent refresh interval
   });
 
   // Detect current admin IP

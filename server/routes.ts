@@ -4449,6 +4449,12 @@ export async function registerRoutes(app: Express): Promise<void> {
 
   // Comprehensive GA4 + Visitor Analytics endpoint
   app.get("/api/ga4/clean-comprehensive", async (req, res) => {
+    // Initialize variables at function scope
+    let currentGA4Users = 0;
+    let currentGA4PageViews = 0;
+    let prevGA4Users = 0;
+    let prevGA4PageViews = 0;
+
     try {
       const range = req.query.range as string || '7d';
       const locale = req.query.locale as string || 'all';
@@ -4540,8 +4546,8 @@ export async function registerRoutes(app: Express): Promise<void> {
         // Fix: Convert ISO dates to YYYY-MM-DD format for GA4
         
         // Fetch current and previous period data for comparison
-        const [ga4Users, ga4PageViews, ga4Countries, ga4Languages, ga4Referrers, 
-               prevGA4Users, prevGA4PageViews] = await Promise.all([
+        const [ga4UsersResult, ga4PageViewsResult, ga4Countries, ga4Languages, ga4Referrers, 
+               prevGA4UsersResult, prevGA4PageViewsResult] = await Promise.all([
           qUniqueUsers(startDate, endDate, locale).catch((e: any) => { console.log('GA4 users error:', e.message); return 0; }),
           qPageViews(startDate, endDate, locale).catch((e: any) => { console.log('GA4 pageviews error:', e.message); return 0; }),
           qTopCountries(startDate, endDate).catch((e: any) => { console.log('GA4 countries error:', e.message); return []; }),
@@ -4552,13 +4558,19 @@ export async function registerRoutes(app: Express): Promise<void> {
           qPageViews(prevStartDate, prevEndDate, locale).catch((e: any) => { console.log('GA4 prev pageviews error:', e.message); return 0; })
         ]);
         
-        console.log('✅ GA4 DATA RETRIEVED from memopyk.com:', { users: ga4Users, pageViews: ga4PageViews, countries: ga4Countries?.length, languages: ga4Languages?.length });
+        // Assign to function-scoped variables
+        currentGA4Users = ga4UsersResult;
+        currentGA4PageViews = ga4PageViewsResult;
+        prevGA4Users = prevGA4UsersResult;
+        prevGA4PageViews = prevGA4PageViewsResult;
+        
+        console.log('✅ GA4 DATA RETRIEVED from memopyk.com:', { users: currentGA4Users, pageViews: currentGA4PageViews, countries: ga4Countries?.length, languages: ga4Languages?.length });
         
         // Use GA4 data instead of PostgreSQL
         dashboardData = {
           overview: {
-            totalViews: ga4PageViews || 0,
-            uniqueVisitors: ga4Users || 0,
+            totalViews: currentGA4PageViews || 0,
+            uniqueVisitors: currentGA4Users || 0,
             returningVisitors: 0, // Calculate if needed
             averageSessionDuration: 0 // Calculate if needed
           },
@@ -4630,9 +4642,14 @@ export async function registerRoutes(app: Express): Promise<void> {
       ]);
 
       // Process visitor analytics - handle nested data structure
-      const totalViews = dashboardData.overview?.totalViews || dashboardData.totalViews || 0;
-      const uniqueVisitors = dashboardData.overview?.uniqueVisitors || dashboardData.uniqueVisitors || 0;  
-      const returnVisitors = ga4ReturningUsers || dashboardData.overview?.returningVisitors || dashboardData.returningVisitors || 0;
+      // CONSISTENCY FIX: Use same data source (GA4) for all visitor metrics to prevent impossible combinations
+      const totalViews = currentGA4PageViews || dashboardData.overview?.totalViews || dashboardData.totalViews || 0;
+      const uniqueVisitors = currentGA4Users || dashboardData.overview?.uniqueVisitors || dashboardData.uniqueVisitors || 0;  
+      const returnVisitors = ga4ReturningUsers || 0;
+      
+      // LOGIC VALIDATION: If we have return visitors, we must have at least that many unique visitors
+      const correctedUniqueVisitors = Math.max(uniqueVisitors, returnVisitors);
+      const correctedTotalViews = Math.max(totalViews, correctedUniqueVisitors);
       const averageSessionDuration = dashboardData.overview?.averageSessionDuration || dashboardData.averageSessionDuration || 0;
       const activeVisitors = activityData.activities?.filter(a => Date.now() - new Date(a.lastActivity).getTime() < 5 * 60 * 1000).length || 0;
 
@@ -4695,9 +4712,9 @@ export async function registerRoutes(app: Express): Promise<void> {
         .sort((a, b) => b.plays - a.plays)
         .slice(0, 5);
 
-      // Calculate period-over-period comparisons  
-      const totalViewsChange = calculatePercentageChange(totalViews, prevGA4PageViews || 0);
-      const uniqueVisitorsChange = calculatePercentageChange(uniqueVisitors, prevGA4Users || 0);
+      // Calculate period-over-period comparisons using corrected values
+      const totalViewsChange = calculatePercentageChange(correctedTotalViews, prevGA4PageViews || 0);
+      const uniqueVisitorsChange = calculatePercentageChange(correctedUniqueVisitors, prevGA4Users || 0);
       const returnVisitorsChange = calculatePercentageChange(returnVisitors, prevGA4ReturningUsers || 0);
       const videoStartsChange = calculatePercentageChange(plays || 0, prevPlays || 0);
       
@@ -4705,8 +4722,8 @@ export async function registerRoutes(app: Express): Promise<void> {
 
       const result = {
         // Visitor Analytics (from PostgreSQL - your trusted system!)
-        totalViews,
-        uniqueVisitors,
+        totalViews: correctedTotalViews,
+        uniqueVisitors: correctedUniqueVisitors,
         returnVisitors,
         averageSessionDuration: Math.round(averageSessionDuration || 0),
         activeVisitors,
