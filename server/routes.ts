@@ -3745,15 +3745,15 @@ export async function registerRoutes(app: Express): Promise<void> {
 
   // Create deployment marker - FIXED TO USE ENHANCED SCRIPT
   app.post("/api/deployment/create-marker", async (req, res) => {
-    try {
-      const { description, keep } = req.body;
-      
-      if (!description) {
-        return res.status(400).json({ error: 'Description is required' });
-      }
+    const { description, keep } = req.body;
+    
+    if (!description) {
+      return res.status(400).json({ error: 'Description is required' });
+    }
 
-      console.log(`🚀 ADMIN: Creating enhanced deployment marker for: ${description}`);
-      
+    console.log(`🚀 ADMIN: Creating enhanced deployment marker for: ${description}`);
+    
+    try {
       // Call the ENHANCED deployment marker script (the one from the troubleshooting guide)
       const { spawn } = require('child_process');
       const scriptPath = path.join(process.cwd(), 'scripts', 'enhanced-deployment-marker.js');
@@ -3771,6 +3771,7 @@ export async function registerRoutes(app: Express): Promise<void> {
       
       let stdout = '';
       let stderr = '';
+      let responseHandled = false;
       
       child.stdout.on('data', (data) => {
         stdout += data.toString();
@@ -3781,17 +3782,20 @@ export async function registerRoutes(app: Express): Promise<void> {
       });
       
       child.on('close', (code) => {
+        if (responseHandled) return; // Prevent double response
+        responseHandled = true;
+        
         if (code === 0) {
           console.log(`✅ Enhanced deployment marker created successfully`);
           console.log(stdout);
           
           // Extract filename from stdout
           const filenameMatch = stdout.match(/Created enhanced force clean marker: (.+)/);
-          const filename = filenameMatch ? filenameMatch[1] : 'ENHANCED_DEPLOYMENT_MARKER.txt';
+          const markerFilename = filenameMatch ? filenameMatch[1] : 'ENHANCED_DEPLOYMENT_MARKER.txt';
           
           res.json({ 
             success: true, 
-            filename,
+            filename: markerFilename,
             message: 'Enhanced deployment marker created with aggressive cache-busting',
             output: stdout
           });
@@ -3806,6 +3810,9 @@ export async function registerRoutes(app: Express): Promise<void> {
       });
       
       child.on('error', (error) => {
+        if (responseHandled) return; // Prevent double response
+        responseHandled = true;
+        
         console.error(`❌ Failed to spawn enhanced deployment marker script:`, error);
         res.status(500).json({ 
           error: 'Failed to execute enhanced deployment marker script',
