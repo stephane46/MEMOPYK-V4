@@ -3184,6 +3184,20 @@ Allow: /contact`;
 
   // Analytics methods implementation
   async getAnalyticsSessions(dateFrom?: string, dateTo?: string, language?: string, includeProduction?: boolean): Promise<any[]> {
+    // Load excluded IPs for filtering
+    let excludedIpsList: string[] = [];
+    try {
+      const settings = await this.getAnalyticsSettings();
+      if (settings.excludedIps && Array.isArray(settings.excludedIps)) {
+        excludedIpsList = settings.excludedIps.map((item: any) => 
+          typeof item === 'string' ? item : item.ip
+        );
+        console.log(`🚫 IP FILTER: Loaded ${excludedIpsList.length} excluded IPs for filtering`);
+      }
+    } catch (error) {
+      console.warn('⚠️ IP FILTER: Failed to load excluded IPs, continuing without filtering:', error);
+    }
+
     // SMART 7-DAY ROLLING CACHE STRATEGY
     const sevenDaysAgo = new Date();
     sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
@@ -3227,6 +3241,13 @@ Allow: /contact`;
               is_test_data: session.isTestData
             }));
 
+          // **IP EXCLUSION FILTER - RETROACTIVE HISTORICAL DATA FILTERING**
+          if (excludedIpsList.length > 0) {
+            const beforeFiltering = filtered.length;
+            filtered = filtered.filter((session: any) => !excludedIpsList.includes(session.ip_address));
+            console.log(`🚫 IP FILTER: Excluded ${beforeFiltering - filtered.length} sessions from ${excludedIpsList.length} IPs`);
+          }
+
           if (dateTo) {
             // Add end-of-day time to dateTo to include all records from that day
             const dateToEndOfDay = dateTo.includes('T') ? dateTo : dateTo + 'T23:59:59.999Z';
@@ -3249,6 +3270,13 @@ Allow: /contact`;
         // **REPLIT PREVIEW PRODUCTION ANALYTICS** 
         // Include both development and production data when includeProduction is true
         let filtered = sessions.filter((session: any) => includeProduction ? true : !session.is_test_data);
+
+        // **IP EXCLUSION FILTER - RETROACTIVE HISTORICAL DATA FILTERING**
+        if (excludedIpsList.length > 0) {
+          const beforeFiltering = filtered.length;
+          filtered = filtered.filter((session: any) => !excludedIpsList.includes(session.ip_address));
+          console.log(`🚫 IP FILTER (JSON): Excluded ${beforeFiltering - filtered.length} sessions from ${excludedIpsList.length} IPs`);
+        }
 
         if (dateFrom) {
           filtered = filtered.filter((session: any) => session.created_at >= dateFrom);
@@ -3299,8 +3327,16 @@ Allow: /contact`;
       }
 
       if (data && data.length > 0) {
-        console.log(`✅ SUPABASE: Found ${data.length} historical sessions`);
-        return data;
+        // **IP EXCLUSION FILTER - RETROACTIVE HISTORICAL DATA FILTERING**
+        let filtered = data;
+        if (excludedIpsList.length > 0) {
+          const beforeFiltering = filtered.length;
+          filtered = data.filter((session: any) => !excludedIpsList.includes(session.ip_address));
+          console.log(`🚫 IP FILTER (SUPABASE): Excluded ${beforeFiltering - filtered.length} sessions from ${excludedIpsList.length} IPs`);
+        }
+        
+        console.log(`✅ SUPABASE: Found ${filtered.length} historical sessions`);
+        return filtered;
       } else {
         console.log('⚠️ Analytics Sessions: No historical data found in Supabase');
         return [];
