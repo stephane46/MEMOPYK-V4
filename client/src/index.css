@@ -802,7 +802,7 @@ html, body {
   .hero-text-mobile .hero-line,
   h1.hero-text-mobile,
   h1.hero-text-mobile .hero-line {
-    font-size: 28px !important; /* Larger mobile font size */
+    font-size: 18px !important; /* Optimal for 3 lines on iPhone 8 */
     line-height: 1.0 !important;
     padding: 0 !important;
     margin: 0 !important;
