@@ -3743,7 +3743,7 @@ export async function registerRoutes(app: Express): Promise<void> {
     }
   });
 
-  // Create deployment marker
+  // Create deployment marker - FIXED TO USE ENHANCED SCRIPT
   app.post("/api/deployment/create-marker", async (req, res) => {
     try {
       const { description, keep } = req.body;
@@ -3752,69 +3752,73 @@ export async function registerRoutes(app: Express): Promise<void> {
         return res.status(400).json({ error: 'Description is required' });
       }
 
-      // Generate unique filename with timestamp
-      const timestamp = Date.now();
-      const version = `1.0.${Math.floor(timestamp / 1000)}`;
-      const filename = `DEPLOYMENT_MARKER_v${version}.json`;
+      console.log(`🚀 ADMIN: Creating enhanced deployment marker for: ${description}`);
       
-      // Create deployment marker object
-      const deploymentMarker = {
-        version,
-        timestamp: new Date().toISOString(),
-        fix: description,
-        description,
-        status: 'ADMIN_CREATED',
-        critical: false,
-        created_via: 'admin_panel'
-      };
-
-      // Write marker file
-      const filePath = path.join(process.cwd(), filename);
-      fs.writeFileSync(filePath, JSON.stringify(deploymentMarker, null, 2));
+      // Call the ENHANCED deployment marker script (the one from the troubleshooting guide)
+      const { spawn } = require('child_process');
+      const scriptPath = path.join(process.cwd(), 'scripts', 'enhanced-deployment-marker.js');
       
-      console.log(`✅ Created deployment marker: ${filename}`);
-      console.log(`📋 Description: ${description}`);
+      const args = [
+        `--description=${description}`,
+        `--keep=${keep || 10}`,
+        '--aggressive'  // Use aggressive cache-busting for admin-created markers
+      ];
       
-      // Clean up old markers if keep count specified
-      if (keep && keep > 0) {
-        try {
-          const markersDir = process.cwd();
-          const existingMarkers = readdirSync(markersDir)
-            .filter(file => file.startsWith('DEPLOYMENT_MARKER') && file.endsWith('.json'))
-            .map(file => ({
-              file,
-              path: path.join(markersDir, file),
-              stats: statSync(path.join(markersDir, file))
-            }))
-            .sort((a, b) => b.stats.mtime.getTime() - a.stats.mtime.getTime());
-
-          if (existingMarkers.length > keep) {
-            const toDelete = existingMarkers.slice(keep);
-            toDelete.forEach(marker => {
-              try {
-                unlinkSync(marker.path);
-                console.log(`🗑️ Cleaned up old marker: ${marker.file}`);
-              } catch (error) {
-                console.error(`Failed to delete ${marker.file}:`, error);
-              }
-            });
-          }
-        } catch (error) {
-          console.warn('Error during marker cleanup:', error);
+      const child = spawn('node', [scriptPath, ...args], {
+        stdio: ['pipe', 'pipe', 'pipe'],
+        cwd: process.cwd()
+      });
+      
+      let stdout = '';
+      let stderr = '';
+      
+      child.stdout.on('data', (data) => {
+        stdout += data.toString();
+      });
+      
+      child.stderr.on('data', (data) => {
+        stderr += data.toString();
+      });
+      
+      child.on('close', (code) => {
+        if (code === 0) {
+          console.log(`✅ Enhanced deployment marker created successfully`);
+          console.log(stdout);
+          
+          // Extract filename from stdout
+          const filenameMatch = stdout.match(/Created enhanced force clean marker: (.+)/);
+          const filename = filenameMatch ? filenameMatch[1] : 'ENHANCED_DEPLOYMENT_MARKER.txt';
+          
+          res.json({ 
+            success: true, 
+            filename,
+            message: 'Enhanced deployment marker created with aggressive cache-busting',
+            output: stdout
+          });
+        } else {
+          console.error(`❌ Enhanced deployment marker script failed with code ${code}`);
+          console.error('STDERR:', stderr);
+          res.status(500).json({ 
+            error: 'Failed to create enhanced deployment marker',
+            details: stderr || 'Script execution failed'
+          });
         }
-      }
-
-      res.json({ 
-        success: true, 
-        filename,
-        version,
-        description,
-        timestamp: deploymentMarker.timestamp
+      });
+      
+      child.on('error', (error) => {
+        console.error(`❌ Failed to spawn enhanced deployment marker script:`, error);
+        res.status(500).json({ 
+          error: 'Failed to execute enhanced deployment marker script',
+          details: error.message
+        });
       });
       
     } catch (error) {
-      console.error('Error creating deployment marker:', error);
-      res.status(500).json({ error: 'Failed to create deployment marker' });
+      console.error('❌ Failed to create enhanced deployment marker:', error);
+      res.status(500).json({ 
+        error: 'Failed to create enhanced deployment marker',
+        details: error.message 
+      });
     }
   });
 
