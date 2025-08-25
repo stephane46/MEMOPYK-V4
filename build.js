@@ -12,13 +12,20 @@ try {
   process.env.NODE_ENV = 'production';
   execSync('npx vite build --mode production', { stdio: 'inherit' });
   
-  // Step 2: Copy public assets to dist
+  // Step 2: Move Vite build output from dist/public to dist
+  console.log('📁 Moving build output to correct location...');
+  if (fs.existsSync('dist/public')) {
+    execSync('mv dist/public/* dist/ 2>/dev/null || true', { stdio: 'pipe' });
+    execSync('rmdir dist/public 2>/dev/null || true', { stdio: 'pipe' });
+  }
+  
+  // Step 3: Copy public assets to dist
   console.log('📁 Copying public assets...');
   if (fs.existsSync('public')) {
     execSync('cp -r public/* dist/ 2>/dev/null || true', { stdio: 'pipe' });
   }
   
-  // Step 3: Ensure cache directories exist
+  // Step 4: Ensure cache directories exist
   console.log('📋 Setting up cache directories...');
   fs.mkdirSync('server/cache/videos', { recursive: true });
   fs.mkdirSync('server/cache/images', { recursive: true });
