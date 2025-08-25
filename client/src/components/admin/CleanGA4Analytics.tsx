@@ -611,10 +611,11 @@ export default function CleanGA4Analytics() {
                 <Button 
                   onClick={handleApplyCustomRange}
                   disabled={!customDateFrom || !customDateTo}
-                  className="w-full h-11 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white font-medium rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 disabled:from-slate-400 disabled:to-slate-500 disabled:cursor-not-allowed disabled:shadow-none"
+                  className="w-full h-11 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 disabled:from-slate-400 disabled:to-slate-500 disabled:cursor-not-allowed disabled:shadow-none border-0"
+                  style={{ color: '#ffffff !important' }}
                 >
-                  <BarChart3 className="h-4 w-4 mr-2" />
-                  Apply Filters
+                  <BarChart3 className="h-4 w-4 mr-2 text-white" />
+                  <span className="text-white font-semibold">Apply Filters</span>
                 </Button>
               </div>
             </div>
