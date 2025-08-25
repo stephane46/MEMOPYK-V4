@@ -389,17 +389,15 @@ export default function CleanGA4Analytics() {
               <CardDescription>Where your visitors come from</CardDescription>
             </CardHeader>
             <CardContent>
-              <div className="space-y-3">
+              <div className="space-y-3 max-w-md">
                 {ga4Data.topCountries?.map((country, index) => (
-                  <div key={country.country} className="flex items-center justify-between">
-                    <div className="flex items-center space-x-3">
-                      <div className="flex items-center justify-center w-6 h-6 bg-gray-100 dark:bg-gray-800 rounded-full text-xs font-bold">
-                        {index + 1}
-                      </div>
-                      <CountryFlag country={country.country} size={24} />
-                      <span className="font-medium">{country.country}</span>
+                  <div key={country.country} className="flex items-center space-x-3">
+                    <div className="flex items-center justify-center w-6 h-6 bg-gray-100 dark:bg-gray-800 rounded-full text-xs font-bold">
+                      {index + 1}
                     </div>
-                    <div className="font-semibold">{(country.visitors || 0).toLocaleString()}</div>
+                    <CountryFlag country={country.country} size={24} />
+                    <span className="font-medium flex-1">{country.country}</span>
+                    <div className="font-semibold text-right min-w-[3rem]">{(country.visitors || 0).toLocaleString()}</div>
                   </div>
                 )) || <p className="text-gray-500">No geographic data available</p>}
               </div>
