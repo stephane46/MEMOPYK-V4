@@ -128,7 +128,7 @@ interface ActiveViewerIp {
 }
 
 interface AnalyticsSettings {
-  excludedIps: Array<{ ip: string; comment?: string } | string>;
+  excludedIps: Array<{ ip: string; comment?: string; added_at?: string; }>;
 }
 
 // Language formatting utility with comprehensive mapping
@@ -315,7 +315,17 @@ export default function CleanGA4Analytics() {
     enabled: showIpManagement
   });
 
-  const { data: settings, isLoading: settingsLoading } = useQuery<AnalyticsSettings>({
+  const { data: settings, isLoading: settingsLoading } = useQuery<{
+    excludedIps: Array<{ ip: string; comment?: string; added_at?: string; }>;
+    trackingEnabled?: boolean;
+    retentionDays?: number;
+    anonymizeIPs?: boolean;
+    trackVideoViews?: boolean;
+    trackPageViews?: boolean;
+    trackFormSubmissions?: boolean;
+    excludeBots?: boolean;
+    languages?: string[];
+  }>({
     queryKey: ['/api/analytics/settings'],
     enabled: showIpManagement
   });
@@ -945,10 +955,7 @@ export default function CleanGA4Analytics() {
                     <p className="text-xs text-gray-500 mb-3">Which MEMOPYK version they chose</p>
                     <div className="space-y-2">
                       {ga4Data.siteLanguageChoice?.map((lang) => {
-                        // Debug: Log the site language choice data
-                        console.log('🔍 SITE LANGUAGE CHOICE DEBUG:', lang);
                         const siteInfo = formatSiteLanguage(lang.language);
-                        console.log('🔍 SITE LANGUAGE FORMAT RESULT:', siteInfo);
                         const isFrench = lang.language.toLowerCase() === 'french' || lang.language.toLowerCase().includes('fr');
                         return (
                           <div key={`site-${lang.language}`} className="flex items-center justify-between">

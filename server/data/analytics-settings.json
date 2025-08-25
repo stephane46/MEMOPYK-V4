@@ -14,10 +14,15 @@
       "ip": "192.168.1.250",
       "comment": "Frontend test",
       "added_at": "2025-08-25T10:02:00.095Z"
+    },
+    {
+      "ip": "109.17.150.48",
+      "comment": "Current admin session",
+      "added_at": "2025-08-25T12:29:01.348Z"
     }
   ],
   "completionThreshold": 75,
   "trackingEnabled": true,
   "dataRetentionDays": 90,
-  "updated_at": "2025-08-25T10:02:00.477Z"
+  "updated_at": "2025-08-25T12:29:01.747Z"
 }
