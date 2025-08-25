@@ -4288,6 +4288,10 @@ export async function registerRoutes(app: Express): Promise<void> {
         const { qUniqueUsers, qPageViews, qTopCountries, qTopLocale } = await import('./ga4-service.js');
         
         // Get real GA4 data from memopyk.com (using available functions)
+        // Fix: Convert ISO dates to YYYY-MM-DD format for GA4
+        const startDate = dateFrom.split('T')[0];
+        const endDate = dateTo.split('T')[0];
+        
         const [ga4Users, ga4PageViews, ga4Countries, ga4Languages] = await Promise.all([
           qUniqueUsers(startDate, endDate, locale).catch((e: any) => { console.log('GA4 users error:', e.message); return 0; }),
           qPageViews(startDate, endDate, locale).catch((e: any) => { console.log('GA4 pageviews error:', e.message); return 0; }),
