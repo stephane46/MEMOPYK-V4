@@ -32,7 +32,7 @@ export function SimpleHeroVideoSection() {
   }, []);
 
   // Fetch hero text settings for overlay
-  const { data: heroTextData = [] } = useQuery<HeroText[]>({
+  const { data: heroTextData = [], isLoading: heroTextLoading } = useQuery<HeroText[]>({
     queryKey: ['/api/hero-text', language],
     staleTime: 5 * 60 * 1000,
   });
@@ -75,17 +75,19 @@ export function SimpleHeroVideoSection() {
   className="font-playfair font-bold mb-4 sm:mb-6 lg:mb-8 mx-auto hero-text-mobile"
   style={{ textShadow: '2px 2px 4px rgba(0,0,0,0.8)' }}
 >
-  {(() => {
-    // sourceText: prefer DB text, otherwise fallback multi-line literal
-    // FORCE: Ultra-short text on mobile using React state
+  {!heroTextLoading && (() => {
+    // Only render text after data is loaded to prevent flickering
     const sourceText = language === 'fr-FR'
       ? (isMobileSize ? "Films\nsouvenirs" : (activeHeroText?.title_fr || ""))
       : (isMobileSize ? "Memory\nfilms" : (activeHeroText?.title_en || ""));
     
+    // Skip rendering if no text to prevent empty flicker
+    if (!sourceText.trim()) return null;
+    
     // Normalize -> array of lines (split on newline)
     const lines = sourceText.split(/\r?\n/).map(s => s.trim()).filter(Boolean);
 
-    // Clean production text rendering
+    // Clean production text rendering without flicker
 
     // Render each line as a separate div for proper line breaks
     return lines.map((line, idx) => (
