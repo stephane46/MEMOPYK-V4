@@ -109,26 +109,29 @@ export async function qWatchTimeTotal(start: string, end: string, locale?: strin
   return Math.round(totalWatchTime);
 }
 
-export async function qTopLocale(start: string, end: string) {
+export async function qTopLanguages(start: string, end: string) {
+  console.log(`🎯 qTopLanguages CALLED: ${start} to ${end} - Using browser language preferences`);
+  
   const [res] = await client.runReport({
-    property: PROPERTY, // "properties/501023254"
+    property: PROPERTY,
     dateRanges: [{ startDate: start, endDate: end }],
-    metrics: [{ name: "eventCount" }],
-    dimensions: [{ name: "customEvent:locale" }],
-    dimensionFilter: {
-      filter: { fieldName: "eventName", stringFilter: { value: "video_start" } }
-    },
-    orderBys: [{ metric: { metricName: "eventCount" }, desc: true }],
-    limit: 1
+    metrics: [{ name: "activeUsers" }],
+    dimensions: [{ name: "language" }], // Browser language, not custom video locale
+    orderBys: [{ metric: { metricName: "activeUsers" }, desc: true }],
+    limit: 10 // Get top 10 languages
   });
 
-  if (res.rows?.length) {
-    return {
-      locale: res.rows[0].dimensionValues?.[0]?.value ?? "n/a",
-      plays: Number(res.rows[0].metricValues?.[0]?.value ?? 0)
-    };
-  }
-  return { locale: "n/a", plays: 0 };
+  console.log(`🎯 qTopLanguages RAW RESPONSE:`, JSON.stringify(res.rows, null, 2));
+
+  const languages = (res.rows || []).map(row => ({
+    language: row.dimensionValues?.[0]?.value || 'unknown',
+    visitors: Number(row.metricValues?.[0]?.value || 0)
+  }));
+
+  console.log(`🎯 qTopLanguages RESULT: ${languages.length} languages found`);
+  console.log(`🎯 qTopLanguages SAMPLE DATA:`, languages.slice(0, 3));
+
+  return languages;
 }
 
 /* =============  TOP VIDEOS TABLE  ============= */

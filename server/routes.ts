@@ -16,7 +16,7 @@ import {
   qPlays,
   qCompletes,
   qWatchTimeTotal,
-  qTopLocale,
+  qTopLanguages,
   qPlaysByVideo,
   qWatchTimeByVideo,
   qProgressByVideo,
@@ -4001,12 +4001,12 @@ export async function registerRoutes(app: Express): Promise<void> {
       }
 
       try {
-        console.log('Testing qTopLocale...');
-        topLocale = await qTopLocale(startDate, endDate);
-        console.log(`✅ qTopLocale:`, topLocale);
+        console.log('Testing qTopLanguages...');
+        topLocale = await qTopLanguages(startDate, endDate);
+        console.log(`✅ qTopLanguages:`, topLocale);
       } catch (e) {
-        console.error('❌ qTopLocale failed:', (e as Error).message);
-        throw new Error(`qTopLocale failed: ${(e as Error).message}`);
+        console.error('❌ qTopLanguages failed:', (e as Error).message);
+        throw new Error(`qTopLanguages failed: ${(e as Error).message}`);
       }
 
       // CRITICAL FIX: Use ONLY authentic GA4 totalWatch data - NO estimations or calculations
@@ -4289,7 +4289,7 @@ export async function registerRoutes(app: Express): Promise<void> {
         console.log('🔗 CONNECTING TO MEMOPYK.COM GA4 DATA...');
         
         // Import available GA4 service functions for memopyk.com data
-        const { qUniqueUsers, qPageViews, qTopCountries, qTopLocale } = await import('./ga4-service.js');
+        const { qUniqueUsers, qPageViews, qTopCountries, qTopLanguages } = await import('./ga4-service.js');
         
         // Get real GA4 data from memopyk.com (using available functions)
         // Fix: Convert ISO dates to YYYY-MM-DD format for GA4
@@ -4298,7 +4298,7 @@ export async function registerRoutes(app: Express): Promise<void> {
           qUniqueUsers(startDate, endDate, locale).catch((e: any) => { console.log('GA4 users error:', e.message); return 0; }),
           qPageViews(startDate, endDate, locale).catch((e: any) => { console.log('GA4 pageviews error:', e.message); return 0; }),
           qTopCountries(startDate, endDate).catch((e: any) => { console.log('GA4 countries error:', e.message); return []; }),
-          qTopLocale(startDate, endDate).catch((e: any) => { console.log('GA4 locales error:', e.message); return []; })
+          qTopLanguages(startDate, endDate).catch((e: any) => { console.log('GA4 languages error:', e.message); return []; })
         ]);
         
         console.log('✅ GA4 DATA RETRIEVED from memopyk.com:', { users: ga4Users, pageViews: ga4PageViews, countries: ga4Countries?.length, languages: ga4Languages?.length });
@@ -4349,12 +4349,12 @@ export async function registerRoutes(app: Express): Promise<void> {
       // const endDate and startDate already defined above
 
       // Fetch GA4 video metrics in parallel
-      const [plays, completions, watchTimeSeconds, topVideos, localeData] = await Promise.all([
+      const [plays, completions, watchTimeSeconds, topVideos, languageData] = await Promise.all([
         qPlays(startDate, endDate, locale),
         qCompletes(startDate, endDate, locale), 
         qWatchTimeTotal(startDate, endDate, locale),
         qPlaysByVideo(startDate, endDate, locale),
-        qTopLocale(startDate, endDate)
+        qTopLanguages(startDate, endDate)
       ]);
 
       // Process visitor analytics - handle nested data structure
@@ -4371,41 +4371,20 @@ export async function registerRoutes(app: Express): Promise<void> {
         flag: country.flag || '🌍'
       }));
 
-      // Process language breakdown - use GA4 language data directly 
+      // Process language breakdown - use GA4 browser language data
       const languageBreakdown = [];
       
-      // Use the GA4 language data (localeData) instead of dashboardData.languageBreakdown
-      if (localeData && typeof localeData === 'object') {
-        // localeData should be: { locale: 'fr-FR', plays: 4 } or similar
-        if (localeData.locale && localeData.plays) {
-          const totalVisitors = uniqueVisitors || 1; // Use the total unique visitors as base
-          languageBreakdown.push({
-            language: localeData.locale,
-            visitors: localeData.plays, // This represents locale-specific activity
-            percentage: totalVisitors > 0 ? (localeData.plays / totalVisitors) * 100 : 0
-          });
-        }
-      }
-      
-      // If no GA4 language data, derive from countries as fallback
-      if (languageBreakdown.length === 0 && topCountries.length > 0) {
-        const franceVisitors = topCountries.find(c => c.country === 'France')?.visitors || 0;
-        const otherVisitors = uniqueVisitors - franceVisitors;
+      if (languageData && Array.isArray(languageData)) {
+        const totalLanguageVisitors = languageData.reduce((sum, lang) => sum + lang.visitors, 0);
         
-        if (franceVisitors > 0) {
-          languageBreakdown.push({
-            language: 'fr-FR',
-            visitors: franceVisitors,
-            percentage: uniqueVisitors > 0 ? (franceVisitors / uniqueVisitors) * 100 : 0
-          });
-        }
-        
-        if (otherVisitors > 0) {
-          languageBreakdown.push({
-            language: 'en-US',
-            visitors: otherVisitors,
-            percentage: uniqueVisitors > 0 ? (otherVisitors / uniqueVisitors) * 100 : 0
-          });
+        for (const lang of languageData) {
+          if (lang.language && lang.visitors > 0) {
+            languageBreakdown.push({
+              language: lang.language,
+              visitors: lang.visitors,
+              percentage: totalLanguageVisitors > 0 ? (lang.visitors / totalLanguageVisitors) * 100 : 0
+            });
+          }
         }
       }
 
@@ -4503,7 +4482,7 @@ export async function registerRoutes(app: Express): Promise<void> {
       ]);
 
       // Get locale breakdown
-      const localeData = await qTopLocale(startDate, endDate);
+      const languageData = await qTopLanguages(startDate, endDate);
 
       // Calculate completion rate and average watch time
       const completionRate = plays > 0 ? completions / plays : 0;
