@@ -239,6 +239,10 @@ export default function CleanGA4Analytics() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isReturningModalOpen, setIsReturningModalOpen] = useState(false);
   
+  // Advanced Date Range Filter state
+  const [customDateFrom, setCustomDateFrom] = useState('');
+  const [customDateTo, setCustomDateTo] = useState('');
+  
   // IP Management state
   const [showIpManagement, setShowIpManagement] = useState(false);
   const [newExcludedIp, setNewExcludedIp] = useState('');
@@ -251,12 +255,18 @@ export default function CleanGA4Analytics() {
 
   // Comprehensive GA4 + visitor analytics data fetch
   const { data: ga4Data, isLoading, error, refetch } = useQuery<GA4MetricsResponse>({
-    queryKey: ['ga4-clean-comprehensive', dateRange, locale],
+    queryKey: ['ga4-clean-comprehensive', dateRange, locale, customDateFrom, customDateTo],
     queryFn: async () => {
       const params = new URLSearchParams({
         range: dateRange,
         locale: locale
       });
+      
+      // Add custom date range if applicable
+      if (dateRange === 'custom' && customDateFrom && customDateTo) {
+        params.set('startDate', customDateFrom);
+        params.set('endDate', customDateTo);
+      }
       
       const response = await fetch(`/api/ga4/clean-comprehensive?${params}`);
       if (!response.ok) {
@@ -374,6 +384,48 @@ export default function CleanGA4Analytics() {
     setIsRefreshing(false);
   };
 
+  // Advanced Filter Handlers
+  const handleQuickFilter = (filterValue: string) => {
+    setDateRange(filterValue);
+    if (filterValue === 'custom') {
+      // Keep custom dates as they are
+      return;
+    }
+    // Clear custom dates for preset filters
+    setCustomDateFrom('');
+    setCustomDateTo('');
+  };
+
+  const handleApplyCustomRange = () => {
+    if (customDateFrom && customDateTo) {
+      setDateRange('custom');
+      // The GA4 query will use custom dates when dateRange is 'custom'
+    }
+  };
+
+  const handleClearFilters = () => {
+    setDateRange('90d');
+    setLocale('all');
+    setCustomDateFrom('');
+    setCustomDateTo('');
+  };
+
+  const getFilterSummary = () => {
+    if (dateRange === 'custom' && customDateFrom && customDateTo) {
+      return `${customDateFrom} to ${customDateTo}`;
+    }
+    
+    const filterLabels: Record<string, string> = {
+      '1d': 'Today',
+      '7d': 'Last 7 Days', 
+      '30d': 'Last 30 Days',
+      '90d': 'Last 90 Days',
+      '365d': 'Last Year'
+    };
+    
+    return filterLabels[dateRange] || 'Custom Period';
+  };
+
   const formatDuration = (seconds: number) => {
     if (seconds < 60) return `${Math.round(seconds)}s`;
     const minutes = Math.floor(seconds / 60);
@@ -460,39 +512,121 @@ export default function CleanGA4Analytics() {
         </Button>
       </div>
 
-      {/* Filters */}
+      {/* Advanced Date Range Filter */}
       <Card>
         <CardHeader>
-          <CardTitle className="text-lg">Filters</CardTitle>
+          <CardTitle className="text-lg flex items-center gap-2">
+            <BarChart3 className="h-5 w-5" />
+            Date Range Filter
+          </CardTitle>
         </CardHeader>
-        <CardContent className="flex gap-4">
-          <div className="space-y-2">
-            <Label htmlFor="dateRange">Time Period</Label>
-            <Select value={dateRange} onValueChange={setDateRange}>
-              <SelectTrigger className="w-[140px]">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="1d">Last 24h</SelectItem>
-                <SelectItem value="7d">Last 7 days</SelectItem>
-                <SelectItem value="30d">Last 30 days</SelectItem>
-                <SelectItem value="90d">Last 90 days</SelectItem>
-              </SelectContent>
-            </Select>
+        <CardContent className="space-y-6">
+          {/* Custom Date Range Inputs */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+            <div className="space-y-2">
+              <Label htmlFor="date-from">From:</Label>
+              <Input
+                id="date-from"
+                type="date"
+                value={customDateFrom}
+                onChange={(e) => setCustomDateFrom(e.target.value)}
+                className="w-full"
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="date-to">To:</Label>
+              <Input
+                id="date-to"
+                type="date"
+                value={customDateTo}
+                onChange={(e) => setCustomDateTo(e.target.value)}
+                className="w-full"
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="locale">Language Filter</Label>
+              <Select value={locale} onValueChange={setLocale}>
+                <SelectTrigger className="w-full">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All Languages</SelectItem>
+                  <SelectItem value="fr-FR">Français</SelectItem>
+                  <SelectItem value="en-US">English</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="space-y-2">
+              <Label>Quick Apply</Label>
+              <Button 
+                onClick={handleApplyCustomRange}
+                disabled={!customDateFrom || !customDateTo}
+                className="w-full bg-orange-500 hover:bg-orange-600 text-white"
+              >
+                Apply Range
+              </Button>
+            </div>
           </div>
-          
-          <div className="space-y-2">
-            <Label htmlFor="locale">Language</Label>
-            <Select value={locale} onValueChange={setLocale}>
-              <SelectTrigger className="w-[120px]">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">All</SelectItem>
-                <SelectItem value="fr-FR">Français</SelectItem>
-                <SelectItem value="en-US">English</SelectItem>
-              </SelectContent>
-            </Select>
+
+          {/* Quick Filter Buttons */}
+          <div className="space-y-3">
+            <div className="flex items-center gap-2">
+              <Calendar className="h-4 w-4 text-gray-600" />
+              <span className="font-medium text-sm">Quick Filters:</span>
+            </div>
+            <div className="flex flex-wrap gap-2">
+              {[
+                { value: '1d', label: 'Today', description: 'Last 24 hours' },
+                { value: '7d', label: 'Last 7 Days', description: 'Past week' },
+                { value: '30d', label: 'Last 30 Days', description: 'Past month' },
+                { value: '90d', label: 'Last 90 Days', description: 'Past quarter' },
+                { value: '365d', label: 'Last Year', description: 'Past 12 months' },
+                { value: 'custom', label: 'Custom Range', description: 'User-defined period' }
+              ].map((filter) => (
+                <Button
+                  key={filter.value}
+                  onClick={() => handleQuickFilter(filter.value)}
+                  variant="outline"
+                  size="sm"
+                  className={`${
+                    dateRange === filter.value
+                      ? 'bg-orange-500 text-white border-orange-500 hover:bg-orange-600 font-medium'
+                      : 'hover:bg-gray-100 dark:hover:bg-gray-800'
+                  } transition-colors duration-200`}
+                  title={filter.description}
+                >
+                  {filter.label}
+                </Button>
+              ))}
+              <Button
+                onClick={handleClearFilters}
+                variant="outline"
+                size="sm"
+                className="hover:bg-red-50 hover:text-red-600 hover:border-red-300 dark:hover:bg-red-900/20"
+              >
+                Clear Filters
+              </Button>
+            </div>
+          </div>
+
+          {/* Active Filter Summary */}
+          <div className="bg-gray-50 dark:bg-gray-800 rounded-lg p-3 border">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <span className="text-sm font-medium text-gray-900 dark:text-white">Active Filters:</span>
+                <Badge variant="secondary" className="text-xs">
+                  {getFilterSummary()}
+                </Badge>
+                {locale !== 'all' && (
+                  <Badge variant="secondary" className="text-xs">
+                    Language: {locale === 'fr-FR' ? 'Français' : 'English'}
+                  </Badge>
+                )}
+              </div>
+              <div className="text-xs text-gray-500">
+                Data auto-refreshes every 5 minutes
+              </div>
+            </div>
           </div>
         </CardContent>
       </Card>
@@ -769,7 +903,7 @@ export default function CleanGA4Analytics() {
                           {ref.referrer || 'Direct Traffic'}
                         </span>
                       </div>
-                      <div className="font-semibold">{ref.visitors.toLocaleString()}</div>
+                      <div className="font-semibold">{ref.visitors?.toLocaleString() || 0}</div>
                     </div>
                   )) || <p className="text-gray-500">No referrer data available</p>}
                 </div>
