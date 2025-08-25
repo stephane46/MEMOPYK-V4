@@ -1,62 +1,43 @@
 import { useLanguage } from '../../contexts/LanguageContext';
-import { Clock, Zap, Users, Settings, Shield } from 'lucide-react';
+import { Clock, Zap, Users, Settings, Shield, Star, Heart, CheckCircle, Target } from 'lucide-react';
+import { useQuery } from '@tanstack/react-query';
 import filmstripImage from "@assets/souvenir_film_1755960575328.png";
 
 export function WhyMemopykSection() {
   const { language } = useLanguage();
 
-  // Security card (first position)
-  const securityCard = {
-    icon: Shield,
-    titleFr: "Sécurité",
-    titleEn: "Security",
-    descriptionFr: "Vos données personnelles sont entièrement protégées. Stockage sécurisé, transferts chiffrés et suppression après livraison garantissent la confidentialité absolue de vos souvenirs.",
-    descriptionEn: "Your personal data is fully protected. Secure storage, encrypted transfers, and deletion after delivery guarantee absolute confidentiality of your memories.",
-    gradient: "from-memopyk-navy/30 to-memopyk-dark-blue/20"
+  // Icon mapping
+  const ICON_MAP = {
+    Zap, Clock, Users, Settings, Shield, Star, Heart, CheckCircle, Target
   };
 
-  const benefits = [
-    {
-      icon: Zap,
-      titleFr: "Simplicité",
-      titleEn: "Simplicity", 
-      descriptionFr: "Tous formats acceptés, détails techniques pris en charge professionnellement. Envoyez simplement vos photos et vidéos, inutile de trier ni d'organiser les fichiers : tout est simple pour vous.",
-      descriptionEn: "All formats accepted, with technical details handled professionally. Just send your photos and videos—no need to sort or organize files; everything is made easy for you.",
-      gradient: "from-memopyk-dark-blue/20 to-memopyk-navy/10"
-    },
-    {
-      icon: Clock,
-      titleFr: "Gain de Temps",
-      titleEn: "Time Saving",
-      descriptionFr: "Notre équipe dédiée prend tout en main avec un processus clair et des délais prévisibles. Vous gagnez des heures précieuses pendant que vos souvenirs se transforment sans effort.",
-      descriptionEn: "Our dedicated team handles everything with a clear process and predictable deadlines. You save precious hours while your memories are brought to life effortlessly.",
-      gradient: "from-memopyk-sky-blue/20 to-memopyk-blue-gray/10"
-    },
-    {
-      icon: Settings,
-      titleFr: "Personnalisation",
-      titleEn: "Personalization",
-      descriptionFr: "Chaque film souvenir est pensé pour être vraiment unique. Nous sommes à l'écoute de toutes vos envies et consignes spécifiques dans un esprit de collaboration.",
-      descriptionEn: "Every souvenir film is designed to be truly unique. We listen to all your wishes and specific instructions in a spirit of collaboration.",
-      gradient: "from-memopyk-cream/40 to-memopyk-sky-blue/20"
-    },
-    {
-      icon: Users,
-      titleFr: "Expertise",
-      titleEn: "Expertise",
-      descriptionFr: "Un processus efficace assure des conseils clairs et un suivi attentif à chaque étape. Le résultat : des films mémorables avec une véritable valeur ajoutée.",
-      descriptionEn: "An efficient process ensures clear advice and attentive follow-up at each step. The result: memorable films with genuine added value.",
-      gradient: "from-memopyk-orange/20 to-memopyk-cream/30"
-    },
-    {
-      icon: Shield,
-      titleFr: "Qualité Premium",
-      titleEn: "Premium Quality",
-      descriptionFr: "Tous nos films sont produits en haute définition avec une attention particulière aux détails visuels et sonores pour un rendu professionnel exceptionnel.",
-      descriptionEn: "All our films are produced in high definition with special attention to visual and audio details for exceptional professional rendering.",
-      gradient: "from-memopyk-navy/20 to-memopyk-dark-blue/10"
+  // Fetch benefits from API
+  const { data: benefits = [], isLoading } = useQuery({
+    queryKey: ['/api/why-memopyk-cards'],
+    queryFn: async () => {
+      const response = await fetch('/api/why-memopyk-cards');
+      if (!response.ok) throw new Error('Failed to fetch benefits');
+      const data = await response.json();
+      return data.filter((card: any) => card.isActive).sort((a: any, b: any) => a.orderIndex - b.orderIndex);
     }
-  ];
+  });
+
+  const getIcon = (iconName: string) => {
+    const IconComponent = ICON_MAP[iconName as keyof typeof ICON_MAP] || Star;
+    return IconComponent;
+  };
+
+  if (isLoading) {
+    return (
+      <section id="why-memopyk" className="py-12 scroll-mt-20 bg-gradient-to-br from-memopyk-cream/30 to-white overflow-x-hidden">
+        <div className="container mx-auto px-4">
+          <div className="text-center">
+            <div className="text-gray-500">Loading benefits...</div>
+          </div>
+        </div>
+      </section>
+    );
+  }
 
   return (
     <section id="why-memopyk" className="py-12 scroll-mt-20 bg-gradient-to-br from-memopyk-cream/30 to-white overflow-x-hidden">
@@ -77,10 +58,10 @@ export function WhyMemopykSection() {
           {/* First Row: Simplicité + Image + Gain de Temps */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             
-            {/* Card 1: Simplicité - Desktop order 1, Mobile order 2 */}
-            {(() => {
-              const benefit = benefits[0]; // Simplicité
-              const Icon = benefit.icon;
+            {/* Card 1 - Dynamic from API */}
+            {benefits[0] && (() => {
+              const benefit = benefits[0];
+              const Icon = getIcon(benefit.iconName);
               return (
                 <div className="group relative h-full order-2 md:order-1">
                   <div className={`relative bg-gradient-to-br ${benefit.gradient} backdrop-blur-sm p-4 sm:p-6 lg:p-8 rounded-2xl shadow-lg md:hover:shadow-2xl transition-[transform,shadow] duration-300 md:transform md:hover:-translate-y-2 border border-white/20 h-full flex flex-col`}>
@@ -100,9 +81,12 @@ export function WhyMemopykSection() {
                     </div>
 
                     {/* Description */}
-                    <p className="text-memopyk-dark-blue leading-relaxed text-sm sm:text-base flex-grow text-center">
-                      {language === 'fr-FR' ? benefit.descriptionFr : benefit.descriptionEn}
-                    </p>
+                    <div 
+                      className="text-memopyk-dark-blue leading-relaxed text-sm sm:text-base flex-grow text-center"
+                      dangerouslySetInnerHTML={{ 
+                        __html: language === 'fr-FR' ? benefit.descriptionFr : benefit.descriptionEn 
+                      }}
+                    />
                   </div>
 
                   {/* Background Pattern */}
@@ -129,10 +113,10 @@ export function WhyMemopykSection() {
               </div>
             </div>
 
-            {/* Card 3: Gain de Temps - Desktop order 3, Mobile order 3 */}
-            {(() => {
-              const benefit = benefits[1]; // Gain de Temps
-              const Icon = benefit.icon;
+            {/* Card 3 - Dynamic from API */}
+            {benefits[1] && (() => {
+              const benefit = benefits[1];
+              const Icon = getIcon(benefit.iconName);
               return (
                 <div className="group relative h-full order-3 md:order-3">
                   <div className={`relative bg-gradient-to-br ${benefit.gradient} backdrop-blur-sm p-4 sm:p-6 lg:p-8 rounded-2xl shadow-lg md:hover:shadow-2xl transition-[transform,shadow] duration-300 md:transform md:hover:-translate-y-2 border border-white/20 h-full flex flex-col`}>
@@ -152,9 +136,12 @@ export function WhyMemopykSection() {
                     </div>
 
                     {/* Description */}
-                    <p className="text-memopyk-dark-blue leading-relaxed text-sm sm:text-base flex-grow text-center">
-                      {language === 'fr-FR' ? benefit.descriptionFr : benefit.descriptionEn}
-                    </p>
+                    <div 
+                      className="text-memopyk-dark-blue leading-relaxed text-sm sm:text-base flex-grow text-center"
+                      dangerouslySetInnerHTML={{ 
+                        __html: language === 'fr-FR' ? benefit.descriptionFr : benefit.descriptionEn 
+                      }}
+                    />
                   </div>
 
                   {/* Background Pattern */}
@@ -169,10 +156,10 @@ export function WhyMemopykSection() {
           {/* Second Row: Personnalisation + Expertise + Sécurité Totale */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             
-            {/* Card 4: Personnalisation */}
-            {(() => {
-              const benefit = benefits[2]; // Personnalisation
-              const Icon = benefit.icon;
+            {/* Card 4 - Dynamic from API */}
+            {benefits[2] && (() => {
+              const benefit = benefits[2];
+              const Icon = getIcon(benefit.iconName);
               return (
                 <div className="group relative h-full">
                   <div className={`relative bg-gradient-to-br ${benefit.gradient} backdrop-blur-sm p-4 sm:p-6 lg:p-8 rounded-2xl shadow-lg md:hover:shadow-2xl transition-[transform,shadow] duration-300 md:transform md:hover:-translate-y-2 border border-white/20 h-full flex flex-col`}>
@@ -192,9 +179,12 @@ export function WhyMemopykSection() {
                     </div>
 
                     {/* Description */}
-                    <p className="text-memopyk-dark-blue leading-relaxed text-sm sm:text-base flex-grow text-center">
-                      {language === 'fr-FR' ? benefit.descriptionFr : benefit.descriptionEn}
-                    </p>
+                    <div 
+                      className="text-memopyk-dark-blue leading-relaxed text-sm sm:text-base flex-grow text-center"
+                      dangerouslySetInnerHTML={{ 
+                        __html: language === 'fr-FR' ? benefit.descriptionFr : benefit.descriptionEn 
+                      }}
+                    />
                   </div>
 
                   {/* Background Pattern */}
@@ -205,10 +195,10 @@ export function WhyMemopykSection() {
               );
             })()}
 
-            {/* Card 5: Expertise */}
-            {(() => {
-              const benefit = benefits[3]; // Expertise
-              const Icon = benefit.icon;
+            {/* Card 5 - Dynamic from API */}
+            {benefits[3] && (() => {
+              const benefit = benefits[3];
+              const Icon = getIcon(benefit.iconName);
               return (
                 <div className="group relative h-full">
                   <div className={`relative bg-gradient-to-br ${benefit.gradient} backdrop-blur-sm p-4 sm:p-6 lg:p-8 rounded-2xl shadow-lg md:hover:shadow-2xl transition-[transform,shadow] duration-300 md:transform md:hover:-translate-y-2 border border-white/20 h-full flex flex-col`}>
@@ -228,9 +218,12 @@ export function WhyMemopykSection() {
                     </div>
 
                     {/* Description */}
-                    <p className="text-memopyk-dark-blue leading-relaxed text-sm sm:text-base flex-grow text-center">
-                      {language === 'fr-FR' ? benefit.descriptionFr : benefit.descriptionEn}
-                    </p>
+                    <div 
+                      className="text-memopyk-dark-blue leading-relaxed text-sm sm:text-base flex-grow text-center"
+                      dangerouslySetInnerHTML={{ 
+                        __html: language === 'fr-FR' ? benefit.descriptionFr : benefit.descriptionEn 
+                      }}
+                    />
                   </div>
 
                   {/* Background Pattern */}
@@ -241,35 +234,43 @@ export function WhyMemopykSection() {
               );
             })()}
 
-            {/* Card 6: Sécurité Totale */}
-            <div className="group relative h-full">
-              <div className={`relative bg-gradient-to-br ${securityCard.gradient} backdrop-blur-sm p-4 sm:p-6 lg:p-8 rounded-2xl shadow-lg md:hover:shadow-2xl transition-[transform,shadow] duration-300 md:transform md:hover:-translate-y-2 border border-white/20 h-full flex flex-col`}>
-                
-                {/* Icon at Top */}
-                <div className="flex justify-center mb-4 sm:mb-6 flex-shrink-0">
-                  <div className="w-16 h-16 sm:w-20 sm:h-20 lg:w-24 lg:h-24 bg-white/80 backdrop-blur-sm rounded-full flex items-center justify-center shadow-lg md:group-hover:scale-110 transition-transform duration-300">
-                    <Shield className="w-8 h-8 sm:w-10 sm:h-10 lg:w-12 lg:h-12 text-memopyk-dark-blue" />
+            {benefits[4] && (() => {
+              const benefit = benefits[4];
+              const Icon = getIcon(benefit.iconName);
+              return (
+                <div className="group relative h-full">
+                  <div className={`relative bg-gradient-to-br ${benefit.gradient} backdrop-blur-sm p-4 sm:p-6 lg:p-8 rounded-2xl shadow-lg md:hover:shadow-2xl transition-[transform,shadow] duration-300 md:transform md:hover:-translate-y-2 border border-white/20 h-full flex flex-col`}>
+                    
+                    {/* Icon at Top */}
+                    <div className="flex justify-center mb-4 sm:mb-6 flex-shrink-0">
+                      <div className="w-16 h-16 sm:w-20 sm:h-20 lg:w-24 lg:h-24 bg-white/80 backdrop-blur-sm rounded-full flex items-center justify-center shadow-lg md:group-hover:scale-110 transition-transform duration-300">
+                        <Icon className="w-8 h-8 sm:w-10 sm:h-10 lg:w-12 lg:h-12 text-memopyk-dark-blue" />
+                      </div>
+                    </div>
+
+                    {/* Title */}
+                    <div className="mb-4 sm:mb-6 flex-shrink-0">
+                      <h3 className="text-lg sm:text-xl lg:text-2xl font-bold text-memopyk-navy text-center">
+                        {language === 'fr-FR' ? benefit.titleFr : benefit.titleEn}
+                      </h3>
+                    </div>
+
+                    {/* Description */}
+                    <div 
+                      className="text-memopyk-dark-blue leading-relaxed text-sm sm:text-base flex-grow text-center"
+                      dangerouslySetInnerHTML={{ 
+                        __html: language === 'fr-FR' ? benefit.descriptionFr : benefit.descriptionEn 
+                      }}
+                    />
+                  </div>
+
+                  {/* Background Pattern */}
+                  <div className="absolute inset-0 -z-10 transform translate-x-2 translate-y-2">
+                    <div className="w-full h-full bg-gradient-to-br from-memopyk-sky-blue/10 to-memopyk-blue-gray/10 rounded-2xl"></div>
                   </div>
                 </div>
-
-                {/* Title */}
-                <div className="mb-4 sm:mb-6 flex-shrink-0">
-                  <h3 className="text-lg sm:text-xl lg:text-2xl font-bold text-memopyk-navy text-center">
-                    {language === 'fr-FR' ? securityCard.titleFr : securityCard.titleEn}
-                  </h3>
-                </div>
-
-                {/* Description */}
-                <p className="text-memopyk-dark-blue leading-relaxed text-sm sm:text-base flex-grow">
-                  {language === 'fr-FR' ? securityCard.descriptionFr : securityCard.descriptionEn}
-                </p>
-              </div>
-
-              {/* Background Pattern */}
-              <div className="absolute inset-0 -z-10 transform translate-x-2 translate-y-2">
-                <div className="w-full h-full bg-gradient-to-br from-memopyk-sky-blue/10 to-memopyk-blue-gray/10 rounded-2xl"></div>
-              </div>
-            </div>
+              );
+            })()}
           </div>
         </div>
 
