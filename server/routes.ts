@@ -2090,28 +2090,28 @@ export async function registerRoutes(app: Express): Promise<void> {
   // Current IP Detection - GET current admin IP address
   app.get("/api/analytics/current-ip", async (req, res) => {
     try {
-      // Detect current client IP using the same logic as session tracking
-      let clientIp = '0.0.0.0';
+      // Use EXACT same IP detection logic as session tracking for consistency
+      let finalIP = '0.0.0.0';
       
-      // Check X-Forwarded-For first (for proxies/load balancers like Replit)
-      const xForwardedFor = req.headers['x-forwarded-for'];
-      if (xForwardedFor) {
-        const ips = Array.isArray(xForwardedFor) ? xForwardedFor[0] : xForwardedFor;
-        clientIp = ips.split(',')[0].trim();
-        console.log('🌍 X-Forwarded-For found:', ips, 'Using first IP:', clientIp);
-      } else if (req.ip) {
-        clientIp = req.ip;
-        console.log('🌍 Using req.ip:', clientIp);
-      } else if (req.connection && req.connection.remoteAddress) {
-        clientIp = req.connection.remoteAddress;
-        console.log('🌍 Using req.connection.remoteAddress:', clientIp);
-      } else if (req.socket && req.socket.remoteAddress) {
-        clientIp = req.socket.remoteAddress;
-        console.log('🌍 Using req.socket.remoteAddress:', clientIp);
+      if (req.headers['x-forwarded-for']) {
+        const forwardedIps = Array.isArray(req.headers['x-forwarded-for']) 
+          ? req.headers['x-forwarded-for'] 
+          : req.headers['x-forwarded-for'].split(',');
+        finalIP = forwardedIps[0].trim();
+        console.log('🌍 [CURRENT-IP] X-Forwarded-For found:', forwardedIps, 'Using first IP:', finalIP);
+      } else if (req.ip && req.ip !== '127.0.0.1' && req.ip !== '::1') {
+        finalIP = req.ip;
+        console.log('🌍 [CURRENT-IP] Using req.ip:', finalIP);
+      } else if (req.connection?.remoteAddress && req.connection.remoteAddress !== '127.0.0.1') {
+        finalIP = req.connection.remoteAddress;
+        console.log('🌍 [CURRENT-IP] Using remoteAddress:', finalIP);
+      } else if (req.socket?.remoteAddress && req.socket.remoteAddress !== '127.0.0.1') {
+        finalIP = req.socket.remoteAddress;
+        console.log('🌍 [CURRENT-IP] Using socket.remoteAddress:', finalIP);
       }
       
-      console.log('🌍 CURRENT IP DETECTED:', clientIp);
-      res.json(clientIp);
+      console.log('🌍 [CURRENT-IP] FINAL CURRENT IP DETECTED:', finalIP);
+      res.json(finalIP);
     } catch (error) {
       console.error('❌ Current IP detection error:', error);
       res.status(500).json({ error: "Failed to detect current IP" });

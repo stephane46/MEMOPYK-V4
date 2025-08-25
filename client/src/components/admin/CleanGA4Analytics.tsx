@@ -1362,27 +1362,49 @@ export default function CleanGA4Analytics() {
                         <Settings className="h-4 w-4 text-blue-600" />
                         <span className="font-medium text-blue-900 dark:text-blue-300">Your Current IP</span>
                       </div>
-                      <Button
-                        size="sm"
-                        variant="outline"
-                        onClick={() => {
-                          setNewExcludedIp(currentAdminIp);
-                          setNewIpComment("Admin - My Current IP");
-                          // Scroll to the form
-                          document.getElementById('new-ip')?.focus();
-                        }}
-                        className="bg-white hover:bg-blue-50 border-blue-300 text-blue-700 hover:text-blue-800"
-                        data-testid="button-quick-exclude-ip"
-                      >
-                        <Plus className="h-3 w-3 mr-1" />
-                        Quick Exclude
-                      </Button>
+                      <div className="flex gap-2">
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          onClick={() => {
+                            setNewExcludedIp(currentAdminIp);
+                            setNewIpComment("Admin - My Current IP");
+                            // Scroll to the form
+                            document.getElementById('new-ip')?.focus();
+                          }}
+                          className="bg-white hover:bg-blue-50 border-blue-300 text-blue-700 hover:text-blue-800"
+                          data-testid="button-quick-exclude-ip"
+                        >
+                          <Plus className="h-3 w-3 mr-1" />
+                          Quick Exclude
+                        </Button>
+                        <Button
+                          size="sm"
+                          variant="destructive"
+                          onClick={() => {
+                            addExcludedIpMutation.mutate({ 
+                              ipAddress: currentAdminIp, 
+                              comment: "Admin - Current IP (Direct Exclude)" 
+                            });
+                          }}
+                          disabled={addExcludedIpMutation.isPending}
+                          className="bg-red-600 hover:bg-red-700 text-white"
+                          data-testid="button-exclude-current-ip"
+                        >
+                          {addExcludedIpMutation.isPending ? (
+                            <RefreshCw className="h-3 w-3 animate-spin mr-1" />
+                          ) : (
+                            <Ban className="h-3 w-3 mr-1" />
+                          )}
+                          Exclude Current IP
+                        </Button>
+                      </div>
                     </div>
                     <div className="font-mono text-sm text-blue-800 dark:text-blue-400 mb-2">
                       {currentAdminIp}
                     </div>
                     <p className="text-xs text-blue-600 dark:text-blue-400">
-                      Click "Quick Exclude" to easily add this IP to your excluded list with a pre-filled comment.
+                      Click "Exclude Current IP" to immediately exclude this IP, or "Quick Exclude" to pre-fill the form below.
                     </p>
                   </div>
                 )}
