@@ -679,9 +679,34 @@ export async function qTopCountries(start: string, end: string) {
     visitors: Number(r.metricValues?.[0]?.value ?? 0),
     flag: "🌍" // Default flag, could be enhanced with country code mapping
   }));
+
+  // Add "(not set)" entry if we have any visitors with undetermined location
+  // Check if any returning users data has "(not set)" entries and include them
+  try {
+    const [returningRes] = await client.runReport({
+      property: PROPERTY,
+      dateRanges: [range(start, end)],
+      dimensions: [{ name: "newVsReturning" }],
+      metrics: [{ name: "activeUsers" }]
+    });
+
+    const notSetEntry = returningRes.rows?.find(r => 
+      r.dimensionValues?.[0]?.value === "(not set)"
+    );
+
+    if (notSetEntry && Number(notSetEntry.metricValues?.[0]?.value) > 0) {
+      countries.push({
+        country: "(not set)",
+        visitors: Number(notSetEntry.metricValues?.[0]?.value),
+        flag: "🌍"
+      });
+    }
+  } catch (error) {
+    console.log('Note: Could not check for (not set) location entries');
+  }
   
-  console.log(`🎯 qTopCountries RESULT: ${countries.length} countries`);
-  console.log(`🎯 qTopCountries SAMPLE DATA:`, countries.slice(0, 2));
+  console.log(`🎯 qTopCountries RESULT: ${countries.length} countries (including any not set)`);
+  console.log(`🎯 qTopCountries SAMPLE DATA:`, countries.slice(0, 3));
   return countries;
 }
 

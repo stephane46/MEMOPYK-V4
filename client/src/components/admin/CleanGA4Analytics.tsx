@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -6,8 +6,9 @@ import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { BarChart3, TrendingUp, Play, Users, Clock, RefreshCw, Globe, Eye, UserCheck, MapPin, Languages, MousePointer } from 'lucide-react';
+import { BarChart3, TrendingUp, Play, Users, Clock, RefreshCw, Globe, Eye, UserCheck, MapPin, Languages, MousePointer, X } from 'lucide-react';
 import { CountryFlag } from './CountryFlag';
+import { formatFrenchDateTime } from '@/utils/date-format';
 
 interface GA4MetricsResponse {
   // Visitor Analytics
@@ -47,10 +48,25 @@ interface GA4MetricsResponse {
   }>;
 }
 
+interface RecentVisitor {
+  ip_address: string;
+  country: string;
+  country_code?: string;
+  city?: string;
+  region?: string;
+  language: string;
+  last_visit: string;
+  user_agent: string;
+  visit_count?: number;
+  session_duration?: number;
+  previous_visit?: string;
+}
+
 export default function CleanGA4Analytics() {
   const [dateRange, setDateRange] = useState('90d'); // Match the filter default
   const [locale, setLocale] = useState('all');
   const [isRefreshing, setIsRefreshing] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   // Comprehensive GA4 + visitor analytics data fetch
   const { data: ga4Data, isLoading, error, refetch } = useQuery<GA4MetricsResponse>({
@@ -71,6 +87,14 @@ export default function CleanGA4Analytics() {
     refetchInterval: 5 * 60 * 1000, // 5 minutes auto-refresh
   });
 
+  // Fetch recent visitors for modal
+  const { data: recentVisitors } = useQuery<RecentVisitor[]>({
+    queryKey: ['/api/analytics/recent-visitors'],
+    staleTime: 30000, // 30 seconds
+    refetchInterval: 60000, // 1 minute
+    enabled: isModalOpen, // Only fetch when modal is open
+  });
+
   const handleRefresh = async () => {
     setIsRefreshing(true);
     await refetch();
@@ -85,6 +109,57 @@ export default function CleanGA4Analytics() {
   };
 
   const formatPercentage = (rate: number) => `${Math.round(rate * 100)}%`;
+
+  // Modal handling
+  const handleModalOpen = () => setIsModalOpen(true);
+  const handleModalClose = () => setIsModalOpen(false);
+
+  // ESC key handler for modal
+  useEffect(() => {
+    const handleEscKey = (event: KeyboardEvent) => {
+      if (event.key === 'Escape' && isModalOpen) {
+        handleModalClose();
+      }
+    };
+
+    if (isModalOpen) {
+      document.addEventListener('keydown', handleEscKey);
+    }
+
+    return () => {
+      document.removeEventListener('keydown', handleEscKey);
+    };
+  }, [isModalOpen]);
+
+  // Helper functions for visitor data
+  const formatDate = (dateString: string | null) => {
+    if (!dateString) return 'Just now';
+    
+    try {
+      const date = new Date(dateString);
+      const now = new Date();
+      const diffInMinutes = Math.floor((now.getTime() - date.getTime()) / (1000 * 60));
+      
+      if (diffInMinutes < 5) return 'Just now';
+      if (diffInMinutes < 60) return `${diffInMinutes}m ago`;
+      
+      const diffInHours = Math.floor(diffInMinutes / 60);
+      if (diffInHours < 24) return `${diffInHours}h ago`;
+      
+      const diffInDays = Math.floor(diffInHours / 24);
+      if (diffInDays < 7) return `${diffInDays}d ago`;
+      
+      return formatFrenchDateTime(date);
+    } catch (error) {
+      return 'Just now';
+    }
+  };
+
+  const formatSessionDuration = (seconds: number) => {
+    if (seconds < 60) return `${seconds}s`;
+    if (seconds < 3600) return `${Math.floor(seconds / 60)}m`;
+    return `${Math.floor(seconds / 3600)}h ${Math.floor((seconds % 3600) / 60)}m`;
+  };
 
   return (
     <div className="space-y-6">
@@ -185,7 +260,10 @@ export default function CleanGA4Analytics() {
               </CardContent>
             </Card>
 
-            <Card>
+            <Card 
+              className="cursor-pointer transition-transform hover:scale-105"
+              onClick={handleModalOpen}
+            >
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                 <CardTitle className="text-sm font-medium">Unique Visitors</CardTitle>
                 <Users className="h-4 w-4 text-green-600" />
@@ -193,7 +271,7 @@ export default function CleanGA4Analytics() {
               <CardContent>
                 <div className="text-2xl font-bold">{ga4Data.uniqueVisitors.toLocaleString()}</div>
                 <p className="text-xs text-gray-600 dark:text-gray-400">
-                  Distinct visitors (IP-based)
+                  Distinct visitors (IP-based) • Click for details
                 </p>
               </CardContent>
             </Card>
@@ -415,6 +493,137 @@ export default function CleanGA4Analytics() {
             </CardContent>
           </Card>
         </>
+      )}
+
+      {/* Recent Visitors Details Modal */}
+      {isModalOpen && (
+        <div 
+          className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
+          onClick={(e) => e.target === e.currentTarget && handleModalClose()}
+        >
+          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-xl max-w-4xl max-h-[90vh] overflow-hidden relative">
+            <div 
+              className="p-6 border-b border-gray-200 dark:border-gray-700"
+              style={{
+                background: 'linear-gradient(135deg, #2A4759 0%, #89BAD9 100%)',
+                color: '#ffffff'
+              }}
+            >
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-3" style={{
+                  color: '#ffffff'
+                }}>
+                  <Users style={{ width: '24px', height: '24px' }} />
+                  Recent Visitors Details
+                </div>
+                <button
+                  onClick={handleModalClose}
+                  className="text-white hover:text-gray-200 transition-colors"
+                  style={{ color: '#ffffff' }}
+                >
+                  <X size={24} />
+                </button>
+              </div>
+            </div>
+
+            <div className="p-6 overflow-y-auto max-h-[70vh]">
+              {recentVisitors && recentVisitors.length > 0 ? (
+                <div className="space-y-4">
+                  {recentVisitors.map((visitor, index) => (
+                    <div 
+                      key={`${visitor.ip_address}-${index}`}
+                      className="bg-gray-50 dark:bg-gray-700 rounded-lg p-4 border border-gray-200 dark:border-gray-600"
+                    >
+                      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                        <div>
+                          <div className="flex items-center gap-2 mb-2">
+                            <MapPin className="h-4 w-4 text-blue-600" />
+                            <span className="font-medium text-gray-900 dark:text-white">Location</span>
+                          </div>
+                          <div className="flex items-center gap-2">
+                            <CountryFlag country={visitor.country} size={20} />
+                            <div>
+                              <div className="text-sm font-medium">{visitor.country}</div>
+                              {visitor.city && visitor.region && (
+                                <div className="text-xs text-gray-600 dark:text-gray-400">
+                                  {visitor.city}, {visitor.region}
+                                </div>
+                              )}
+                            </div>
+                          </div>
+                        </div>
+
+                        <div>
+                          <div className="flex items-center gap-2 mb-2">
+                            <Languages className="h-4 w-4 text-green-600" />
+                            <span className="font-medium text-gray-900 dark:text-white">Language</span>
+                          </div>
+                          <Badge variant="outline">{visitor.language}</Badge>
+                        </div>
+
+                        <div>
+                          <div className="flex items-center gap-2 mb-2">
+                            <Clock className="h-4 w-4 text-orange-600" />
+                            <span className="font-medium text-gray-900 dark:text-white">Last Visit</span>
+                          </div>
+                          <div className="text-sm text-gray-600 dark:text-gray-400">
+                            {formatDate(visitor.last_visit)}
+                          </div>
+                        </div>
+
+                        {visitor.session_duration && (
+                          <div>
+                            <div className="flex items-center gap-2 mb-2">
+                              <Clock className="h-4 w-4 text-purple-600" />
+                              <span className="font-medium text-gray-900 dark:text-white">Session</span>
+                            </div>
+                            <div className="text-sm text-gray-600 dark:text-gray-400">
+                              {formatSessionDuration(visitor.session_duration)}
+                            </div>
+                          </div>
+                        )}
+
+                        {visitor.visit_count && visitor.visit_count > 1 && (
+                          <div>
+                            <div className="flex items-center gap-2 mb-2">
+                              <UserCheck className="h-4 w-4 text-indigo-600" />
+                              <span className="font-medium text-gray-900 dark:text-white">Visits</span>
+                            </div>
+                            <Badge variant="secondary">{visitor.visit_count} visits</Badge>
+                          </div>
+                        )}
+
+                        <div className="lg:col-span-3">
+                          <div className="flex items-center gap-2 mb-2">
+                            <MousePointer className="h-4 w-4 text-gray-600" />
+                            <span className="font-medium text-gray-900 dark:text-white">IP & Browser</span>
+                          </div>
+                          <div className="text-sm text-gray-600 dark:text-gray-400">
+                            <div className="font-mono">{visitor.ip_address}</div>
+                            <div className="text-xs mt-1 truncate" title={visitor.user_agent}>
+                              {visitor.user_agent}
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <div className="text-center py-8">
+                  <div className="flex flex-col items-center gap-3">
+                    <Users style={{ 
+                      width: '48px', 
+                      height: '48px',
+                      color: '#d1d5db'
+                    }} />
+                    <p style={{ margin: 0 }}>No recent visitors found</p>
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
       )}
     </div>
   );
