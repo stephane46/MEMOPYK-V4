@@ -106,6 +106,25 @@ img, video, iframe, canvas, svg {
   background-color: #e5e7eb !important;
 }
 
+/* Analytics Dashboard Tab States - Subtle blue styling */
+.analytics-tab[data-state="active"] {
+  background-color: #dbeafe !important;
+  color: #1e40af !important;
+  border-color: #93c5fd !important;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06) !important;
+}
+
+.analytics-tab[data-state="inactive"] {
+  background-color: transparent !important;
+  color: #6b7280 !important;
+  border-color: transparent !important;
+}
+
+.analytics-tab[data-state="inactive"]:hover {
+  background-color: #f9fafb !important;
+  color: #374151 !important;
+}
+
 /* Action button styles */
 .seo-btn-preview {
   border: 2px solid #93c5fd !important;

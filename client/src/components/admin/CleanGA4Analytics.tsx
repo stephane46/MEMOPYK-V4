@@ -8,7 +8,7 @@ import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useToast } from '@/hooks/use-toast';
-import { BarChart3, TrendingUp, Play, Users, Clock, RefreshCw, Globe, Eye, UserCheck, MapPin, Languages, MousePointer, X, Ban, UserX, Settings, Shield, Calendar, Trash2, Edit2, Check } from 'lucide-react';
+import { BarChart3, TrendingUp, Play, Users, Clock, RefreshCw, Globe, Eye, UserCheck, MapPin, Languages, MousePointer, X, Ban, UserX, Settings, Shield, Calendar, Trash2, Edit2, Check, Plus } from 'lucide-react';
 import { CountryFlag } from './CountryFlag';
 import { formatFrenchDateTime } from '@/utils/date-format';
 import { apiRequest } from '@/lib/queryClient';
@@ -657,14 +657,14 @@ export default function CleanGA4Analytics() {
         <TabsList className="grid w-full grid-cols-2">
           <TabsTrigger 
             value="analytics" 
-            className="flex items-center gap-2 data-[state=active]:bg-blue-50 data-[state=active]:text-blue-700 data-[state=active]:border-blue-200 data-[state=active]:shadow-sm dark:data-[state=active]:bg-blue-950 dark:data-[state=active]:text-blue-300 dark:data-[state=active]:border-blue-800"
+            className="flex items-center gap-2 analytics-tab"
           >
             <BarChart3 className="h-4 w-4" />
             Analytics Dashboard
           </TabsTrigger>
           <TabsTrigger 
             value="ip-management" 
-            className="flex items-center gap-2 data-[state=active]:bg-blue-50 data-[state=active]:text-blue-700 data-[state=active]:border-blue-200 data-[state=active]:shadow-sm dark:data-[state=active]:bg-blue-950 dark:data-[state=active]:text-blue-300 dark:data-[state=active]:border-blue-800"
+            className="flex items-center gap-2 analytics-tab"
           >
             <Shield className="h-4 w-4" />
             IP Management
@@ -1261,13 +1261,32 @@ export default function CleanGA4Analytics() {
                 {/* Current Admin IP Detection */}
                 {currentAdminIp && (
                   <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-4">
-                    <div className="flex items-center gap-2 mb-2">
-                      <Settings className="h-4 w-4 text-blue-600" />
-                      <span className="font-medium text-blue-900 dark:text-blue-300">Your Current IP</span>
+                    <div className="flex items-center justify-between mb-2">
+                      <div className="flex items-center gap-2">
+                        <Settings className="h-4 w-4 text-blue-600" />
+                        <span className="font-medium text-blue-900 dark:text-blue-300">Your Current IP</span>
+                      </div>
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        onClick={() => {
+                          setNewExcludedIp(currentAdminIp);
+                          setNewIpComment("Admin - My Current IP");
+                          // Scroll to the form
+                          document.getElementById('new-ip')?.focus();
+                        }}
+                        className="bg-white hover:bg-blue-50 border-blue-300 text-blue-700 hover:text-blue-800"
+                      >
+                        <Plus className="h-3 w-3 mr-1" />
+                        Quick Exclude
+                      </Button>
                     </div>
-                    <div className="font-mono text-sm text-blue-800 dark:text-blue-400">
+                    <div className="font-mono text-sm text-blue-800 dark:text-blue-400 mb-2">
                       {currentAdminIp}
                     </div>
+                    <p className="text-xs text-blue-600 dark:text-blue-400">
+                      Click "Quick Exclude" to easily add this IP to your excluded list with a pre-filled comment.
+                    </p>
                   </div>
                 )}
 
