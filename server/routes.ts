@@ -4429,6 +4429,9 @@ export async function registerRoutes(app: Express): Promise<void> {
         return Math.round(((current - previous) / previous) * 100);
       };
 
+      // Import available GA4 service functions for memopyk.com data FIRST (before any try-catch)
+      const { qUniqueUsers, qPageViews, qTopCountries, qTopLanguages, qTopReferrers, qPlays, qCompletes, qWatchTimeTotal, qPlaysByVideo, qReturningUsers, qSiteLanguageChoice } = await import('./ga4-service.js');
+
       // Call the REAL analytics functions directly (same ones your dashboard uses!)
       let dashboardData = {};
       let activityData = { activities: [] };
@@ -4438,9 +4441,6 @@ export async function registerRoutes(app: Express): Promise<void> {
         
         // SWITCH TO REAL GA4 DATA from memopyk.com (Property: 501023254)
         console.log('🔗 CONNECTING TO MEMOPYK.COM GA4 DATA...');
-        
-        // Import available GA4 service functions for memopyk.com data
-        const { qUniqueUsers, qPageViews, qTopCountries, qTopLanguages, qTopReferrers } = await import('./ga4-service.js');
         
         // Get real GA4 data from memopyk.com (using available functions)
         // Fix: Convert ISO dates to YYYY-MM-DD format for GA4
@@ -4497,8 +4497,18 @@ export async function registerRoutes(app: Express): Promise<void> {
       } catch (error: any) {
         console.error('❌ COMPREHENSIVE: Failed to get real analytics data:', error.message);
         console.error('❌ COMPREHENSIVE: Full error stack:', error);
-        // Show the error but don't use fake fallback data
-        dashboardData = {};
+        // Use basic fallback data structure instead of empty object
+        dashboardData = {
+          overview: {
+            totalViews: 0,
+            uniqueVisitors: 0,
+            returningVisitors: 0,
+            averageSessionDuration: 0
+          },
+          topCountries: [],
+          languageBreakdown: [],
+          topReferrers: []
+        };
         activityData = { activities: [] };
       }
 
@@ -4521,8 +4531,8 @@ export async function registerRoutes(app: Express): Promise<void> {
         qCompletes(prevStartDate, prevEndDate, locale), 
         qWatchTimeTotal(prevStartDate, prevEndDate, locale),
         qReturningUsers(prevStartDate, prevEndDate),
-        qPageViews(prevStartDate, prevEndDate),
-        qUniqueUsers(prevStartDate, prevEndDate)
+        qPageViews(prevStartDate, prevEndDate, locale),
+        qUniqueUsers(prevStartDate, prevEndDate, locale)
       ]);
 
       // Process visitor analytics - handle nested data structure
@@ -4532,38 +4542,49 @@ export async function registerRoutes(app: Express): Promise<void> {
       const averageSessionDuration = dashboardData.overview?.averageSessionDuration || dashboardData.averageSessionDuration || 0;
       const activeVisitors = activityData.activities?.filter(a => Date.now() - new Date(a.lastActivity).getTime() < 5 * 60 * 1000).length || 0;
 
-      // Process geographic data from dashboard
+      // Process geographic data from dashboard  
+      console.log('🔍 COUNTRIES DEBUG: dashboardData.topCountries:', JSON.stringify(dashboardData.topCountries, null, 2));
       const topCountries = (dashboardData.topCountries || []).slice(0, 8).map((country: any) => ({
         country: country.country,
         visitors: country.visitors || country.sessions || 0, // GA4 uses 'visitors', fallback to 'sessions' 
         flag: country.flag || '🌍'
       }));
+      console.log('🔍 COUNTRIES DEBUG: Processed topCountries:', JSON.stringify(topCountries, null, 2));
 
       // Process language breakdown - use GA4 browser language data
       const languageBreakdown = [];
       
+      console.log('🔍 LANGUAGE DEBUG: browserLanguageData:', JSON.stringify(browserLanguageData, null, 2));
+      
       if (browserLanguageData && Array.isArray(browserLanguageData)) {
         const totalLanguageVisitors = browserLanguageData.reduce((sum, lang) => sum + lang.visitors, 0);
+        console.log('🔍 LANGUAGE DEBUG: totalLanguageVisitors:', totalLanguageVisitors);
         
         for (const lang of browserLanguageData) {
           if (lang.language && lang.visitors > 0) {
-            languageBreakdown.push({
+            const langItem = {
               language: lang.language,
               visitors: lang.visitors,
-              percentage: totalLanguageVisitors > 0 ? (lang.visitors / totalLanguageVisitors) * 100 : 0
-            });
+              percentage: totalLanguageVisitors > 0 ? Math.round((lang.visitors / totalLanguageVisitors) * 100) : 0
+            };
+            languageBreakdown.push(langItem);
+            console.log('🔍 LANGUAGE DEBUG: Added language:', langItem);
           }
         }
+      } else {
+        console.log('🔍 LANGUAGE DEBUG: browserLanguageData is not valid array:', typeof browserLanguageData, browserLanguageData);
       }
 
       // Process site language choice - URL path-based tracking (should total 100%)
       const siteLanguageChoice = Array.isArray(siteLanguageData) ? siteLanguageData : [];
 
       // Process top referrers
+      console.log('🔍 REFERRERS DEBUG: dashboardData.topReferrers:', JSON.stringify(dashboardData.topReferrers, null, 2));
       const topReferrers = (dashboardData.topReferrers || []).slice(0, 5).map((ref: any) => ({
         referrer: ref.referrer === '(direct)' ? null : ref.referrer,
-        visitors: ref.count
+        visitors: ref.count || ref.visitors || 0
       }));
+      console.log('🔍 REFERRERS DEBUG: Processed topReferrers:', JSON.stringify(topReferrers, null, 2));
 
       // Calculate GA4 video metrics
       const completionRate = plays > 0 ? completions / plays : 0;
