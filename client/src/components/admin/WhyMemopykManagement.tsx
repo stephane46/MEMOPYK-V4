@@ -483,23 +483,15 @@ export function WhyMemopykManagement() {
                   <Button 
                     onClick={handleSaveCard}
                     disabled={!formData.titleFr || !formData.titleEn}
-                    className="bg-red-500 hover:bg-red-600 text-white px-6 border-4 border-yellow-400 !opacity-100 !visible !block !relative z-50"
-                    data-testid="save-card-button"
+                    className="bg-memopyk-orange hover:bg-memopyk-orange/90 px-6"
                     style={{
-                      backgroundColor: '#ff0000 !important',
-                      color: '#ffffff !important',
-                      display: 'block !important',
-                      visibility: 'visible !important',
-                      opacity: '1 !important',
-                      zIndex: '9999 !important'
+                      backgroundColor: '#D67C4A',
+                      color: '#ffffff',
+                      border: '1px solid #D67C4A'
                     }}
                   >
                     {editingCard ? 'Update Card' : 'Create Card'}
                   </Button>
-                  {/* DEBUG: Button state */}
-                  <div className="text-xs text-red-600 absolute mt-12">
-                    DEBUG: editingCard={editingCard?.id || 'null'}, titleFr='{formData.titleFr}', titleEn='{formData.titleEn}', disabled={(!formData.titleFr || !formData.titleEn).toString()}
-                  </div>
                 </div>
 
               </CardContent>
