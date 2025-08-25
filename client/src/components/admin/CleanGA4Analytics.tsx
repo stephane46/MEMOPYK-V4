@@ -66,6 +66,41 @@ const formatLanguage = (langCode: string): { display: string; flag: string; vari
     return { display: 'العربية', flag: '🇸🇦', variant: 'secondary' };
   }
   
+  // Handle Norwegian
+  if (code.includes('no') || code.includes('nb') || code.includes('nn')) {
+    return { display: 'Norwegian', flag: '🇳🇴', variant: 'secondary' };
+  }
+  
+  // Handle Dutch
+  if (code.includes('nl')) {
+    return { display: 'Nederlands', flag: '🇳🇱', variant: 'secondary' };
+  }
+  
+  // Handle Swedish
+  if (code.includes('sv')) {
+    return { display: 'Svenska', flag: '🇸🇪', variant: 'secondary' };
+  }
+  
+  // Handle Danish
+  if (code.includes('da')) {
+    return { display: 'Dansk', flag: '🇩🇰', variant: 'secondary' };
+  }
+  
+  // Handle Polish
+  if (code.includes('pl')) {
+    return { display: 'Polski', flag: '🇵🇱', variant: 'secondary' };
+  }
+  
+  // Handle Korean
+  if (code.includes('ko')) {
+    return { display: '한국어', flag: '🇰🇷', variant: 'secondary' };
+  }
+  
+  // Handle Finnish
+  if (code.includes('fi')) {
+    return { display: 'Suomi', flag: '🇫🇮', variant: 'secondary' };
+  }
+  
   // Fallback: capitalize and clean up the language code
   const cleaned = langCode.replace(/[-_].*/, '').toLowerCase();
   const capitalized = cleaned.charAt(0).toUpperCase() + cleaned.slice(1);

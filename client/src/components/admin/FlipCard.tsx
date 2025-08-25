@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Users, Clock, X } from 'lucide-react';
 import { CountryFlag } from './CountryFlag';
+import { formatFrenchDateTime } from '@/utils/date-format';
 
 // Language formatting utility (copied from CleanGA4Analytics)
 const formatLanguage = (langCode: string): { display: string; flag: string } => {
@@ -18,6 +19,27 @@ const formatLanguage = (langCode: string): { display: string; flag: string } => 
   if (code.includes('ja')) return { display: '日本語', flag: '🇯🇵' };
   if (code.includes('ru')) return { display: 'Русский', flag: '🇷🇺' };
   if (code.includes('ar')) return { display: 'العربية', flag: '🇸🇦' };
+  
+  // Handle Norwegian
+  if (code.includes('no') || code.includes('nb') || code.includes('nn')) return { display: 'Norwegian', flag: '🇳🇴' };
+  
+  // Handle Dutch
+  if (code.includes('nl')) return { display: 'Nederlands', flag: '🇳🇱' };
+  
+  // Handle Swedish
+  if (code.includes('sv')) return { display: 'Svenska', flag: '🇸🇪' };
+  
+  // Handle Danish
+  if (code.includes('da')) return { display: 'Dansk', flag: '🇩🇰' };
+  
+  // Handle Polish
+  if (code.includes('pl')) return { display: 'Polski', flag: '🇵🇱' };
+  
+  // Handle Korean
+  if (code.includes('ko')) return { display: '한국어', flag: '🇰🇷' };
+  
+  // Handle Finnish
+  if (code.includes('fi')) return { display: 'Suomi', flag: '🇫🇮' };
   
   // Fallback
   const cleaned = langCode.replace(/[-_].*/, '').toLowerCase();
