@@ -9,6 +9,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useToast } from '@/hooks/use-toast';
 import { BarChart3, TrendingUp, Play, Users, Clock, RefreshCw, Globe, Eye, UserCheck, MapPin, Languages, MousePointer, X, Ban, UserX, Settings, Shield, Calendar, Trash2, Edit2, Check, Plus } from 'lucide-react';
+import { TrendingGraphs } from './TrendingGraphs';
 import { CountryFlag } from './CountryFlag';
 import { formatFrenchDateTime } from '@/utils/date-format';
 import { formatInt, formatSeconds, formatPercent } from '@/utils/format';
@@ -1568,6 +1569,12 @@ export default function CleanGA4Analytics() {
             </Card>
           </TabsContent>
         </Tabs>
+
+        {/* Trending Graphs Section */}
+        <TrendingGraphs 
+          dateFrom={customDateFrom || (dateRange !== 'custom' ? undefined : customDateFrom)}
+          dateTo={customDateTo || (dateRange !== 'custom' ? undefined : customDateTo)}
+        />
     </div>
   );
 }
