@@ -651,6 +651,7 @@ export async function qTopCountries(start: string, end: string) {
   }));
   
   console.log(`🎯 qTopCountries RESULT: ${countries.length} countries`);
+  console.log(`🎯 qTopCountries SAMPLE DATA:`, countries.slice(0, 2));
   return countries;
 }
 

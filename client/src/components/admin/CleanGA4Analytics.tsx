@@ -303,7 +303,7 @@ export default function CleanGA4Analytics() {
                       <span className="text-lg">{country.flag}</span>
                       <span className="font-medium">{country.country}</span>
                     </div>
-                    <div className="font-semibold">{country.visitors.toLocaleString()}</div>
+                    <div className="font-semibold">{(country.visitors || 0).toLocaleString()}</div>
                   </div>
                 )) || <p className="text-gray-500">No geographic data available</p>}
               </div>
@@ -330,7 +330,7 @@ export default function CleanGA4Analytics() {
                         </Badge>
                         <span className="text-sm text-gray-600">{lang.percentage.toFixed(1)}%</span>
                       </div>
-                      <div className="font-semibold">{lang.visitors.toLocaleString()}</div>
+                      <div className="font-semibold">{(lang.visitors || 0).toLocaleString()}</div>
                     </div>
                   )) || <p className="text-gray-500">No language data available</p>}
                 </div>

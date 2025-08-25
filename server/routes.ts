@@ -4316,6 +4316,8 @@ export async function registerRoutes(app: Express): Promise<void> {
           topReferrers: [] // Not available in current GA4 service
         };
         
+        console.log('✅ COMPREHENSIVE: GA4 countries data:', JSON.stringify(ga4Countries?.slice(0, 2), null, 2));
+        
         // Activity data from GA4 active users
         activityData = {
           activities: []  // GA4 doesn't have real-time session tracking like PostgreSQL
@@ -4365,7 +4367,7 @@ export async function registerRoutes(app: Express): Promise<void> {
       // Process geographic data from dashboard
       const topCountries = (dashboardData.topCountries || []).slice(0, 8).map((country: any) => ({
         country: country.country,
-        visitors: country.sessions,
+        visitors: country.visitors || country.sessions || 0, // GA4 uses 'visitors', fallback to 'sessions' 
         flag: country.flag || '🌍'
       }));
 
