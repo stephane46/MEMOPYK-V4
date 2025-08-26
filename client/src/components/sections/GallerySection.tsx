@@ -675,18 +675,7 @@ export default function GallerySection() {
   return (
     <section id="gallery" className="py-12 bg-gradient-to-br from-memopyk-cream/30 to-white">
       <div className="container mx-auto px-4" ref={galleryRef}>
-        {/* Header - Mobile Optimized */}
-        <div className="text-center mb-8 sm:mb-12 lg:mb-16">
-          <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-poppins font-bold text-memopyk-navy mb-6 px-2">
-            {t.title}
-          </h2>
-          <p className="text-lg sm:text-xl text-memopyk-dark-blue mb-2 px-4">
-            {t.subtitle}
-          </p>
-          <p className="text-sm sm:text-base text-memopyk-navy max-w-4xl mx-auto px-4">
-            {t.description}
-          </p>
-        </div>
+        {/* Gallery title removed - using animated text messages instead */}
 
 
 
