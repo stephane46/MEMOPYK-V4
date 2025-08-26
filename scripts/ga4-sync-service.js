@@ -45,7 +45,7 @@ assertEnv("GA4_PROJECT_ID");
 assertEnv("GA4_DATASET");
 assertEnv("GA4_SERVICE_ACCOUNT_KEY");
 assertEnv("SUPABASE_URL");
-assertEnv("SERVICE_SUPABASESERVICE_KEY");
+assertEnv("SUPABASE_SERVICE_KEY");
 
 const SERVICE_KEY = JSON.parse(process.env.GA4_SERVICE_ACCOUNT_KEY);
 const bigquery = new BigQuery({
@@ -58,7 +58,7 @@ const bigquery = new BigQuery({
 
 const supabase = createClient(
   process.env.SUPABASE_URL,
-  process.env.SERVICE_SUPABASESERVICE_KEY,
+  process.env.SUPABASE_SERVICE_KEY,
   { auth: { persistSession: false } }
 );
 
