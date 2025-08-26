@@ -4546,64 +4546,74 @@ export async function registerRoutes(app: Express): Promise<void> {
         return Math.round(((current - previous) / previous) * 100);
       };
 
-      // Import available GA4 service functions for memopyk.com data FIRST (before any try-catch)
-      const { qUniqueUsers, qPageViews, qTopCountries, qTopLanguages, qTopReferrers, qPlays, qCompletes, qWatchTimeTotal, qPlaysByVideo, qReturningUsers, qSiteLanguageChoice } = await import('./ga4-service.js');
-
-      // Call the REAL analytics functions directly (same ones your dashboard uses!)
+      // FIXED: Use Supabase VPS database directly instead of broken GA4 API calls
+      console.log('🔗 CONNECTING TO SUPABASE VPS DATABASE...');
+      
+      // Get REAL analytics data from YOUR Supabase VPS database
       let dashboardData = {};
       let activityData = { activities: [] };
+      let dashboardJson: any = { overview: {}, topCountries: [], languageBreakdown: [], topReferrers: [] };
+      let prevDashboardJson: any = { overview: {}, topCountries: [], languageBreakdown: [], topReferrers: [] };
       
       try {
-        console.log(`🔍 COMPREHENSIVE: Calling real analytics functions for ${dateFrom} to ${dateTo}`);
+        console.log(`🔍 COMPREHENSIVE: Getting REAL data from Supabase VPS for ${startDate} to ${endDate}`);
         
-        // SWITCH TO REAL GA4 DATA from memopyk.com (Property: 501023254)
-        console.log('🔗 CONNECTING TO MEMOPYK.COM GA4 DATA...');
+        // Convert dates to ISO format for database queries
+        const dateFromISO = startDate + 'T00:00:00.000Z';
+        const dateToISO = endDate + 'T23:59:59.999Z';
+        const prevDateFromISO = prevStartDate + 'T00:00:00.000Z';
+        const prevDateToISO = prevEndDate + 'T23:59:59.999Z';
         
-        // Get real GA4 data from memopyk.com (using available functions)
-        // Fix: Convert ISO dates to YYYY-MM-DD format for GA4
+        console.log(`🔍 DATABASE QUERY: Current period ${dateFromISO} to ${dateToISO}`);
+        console.log(`🔍 DATABASE QUERY: Previous period ${prevDateFromISO} to ${prevDateToISO}`);
         
-        // Fetch current and previous period data for comparison
-        const [ga4UsersResult, ga4PageViewsResult, ga4Countries, ga4Languages, ga4Referrers, 
-               prevGA4UsersResult, prevGA4PageViewsResult] = await Promise.all([
-          qUniqueUsers(startDate, endDate, locale).catch((e: any) => { console.log('GA4 users error:', e.message); return 0; }),
-          qPageViews(startDate, endDate, locale).catch((e: any) => { console.log('GA4 pageviews error:', e.message); return 0; }),
-          qTopCountries(startDate, endDate).catch((e: any) => { console.log('GA4 countries error:', e.message); return []; }),
-          qTopLanguages(startDate, endDate).catch((e: any) => { console.log('GA4 languages error:', e.message); return []; }),
-          qTopReferrers(startDate, endDate).catch((e: any) => { console.log('GA4 referrers error:', e.message); return []; }),
-          // Previous period data for comparison
-          qUniqueUsers(prevStartDate, prevEndDate, locale).catch((e: any) => { console.log('GA4 prev users error:', e.message); return 0; }),
-          qPageViews(prevStartDate, prevEndDate, locale).catch((e: any) => { console.log('GA4 prev pageviews error:', e.message); return 0; })
-        ]);
+        // Get current period data from YOUR working /api/analytics/dashboard endpoint
+        const dashboardResponse = await fetch(`http://localhost:5000/api/analytics/dashboard?dateFrom=${dateFromISO}&dateTo=${dateToISO}`);
+        dashboardJson = await dashboardResponse.json();
         
-        // Assign to function-scoped variables
-        currentGA4Users = ga4UsersResult;
-        currentGA4PageViews = ga4PageViewsResult;
-        prevGA4Users = prevGA4UsersResult;
-        prevGA4PageViews = prevGA4PageViewsResult;
+        // Get previous period data for comparison
+        const prevDashboardResponse = await fetch(`http://localhost:5000/api/analytics/dashboard?dateFrom=${prevDateFromISO}&dateTo=${prevDateToISO}`);
+        prevDashboardJson = await prevDashboardResponse.json();
         
-        console.log('✅ GA4 DATA RETRIEVED from memopyk.com:', { users: currentGA4Users, pageViews: currentGA4PageViews, countries: ga4Countries?.length, languages: ga4Languages?.length });
+        console.log('✅ SUPABASE VPS DATA RETRIEVED:', { 
+          current: {
+            totalViews: dashboardJson.overview?.totalViews || 0,
+            uniqueVisitors: dashboardJson.overview?.uniqueVisitors || 0,
+            countries: dashboardJson.topCountries?.length || 0
+          },
+          previous: {
+            totalViews: prevDashboardJson.overview?.totalViews || 0,
+            uniqueVisitors: prevDashboardJson.overview?.uniqueVisitors || 0
+          }
+        });
         
-        // Use GA4 data instead of PostgreSQL
+        // Assign to function-scoped variables (REAL data from Supabase VPS)
+        currentGA4Users = dashboardJson.overview?.uniqueVisitors || 0;
+        currentGA4PageViews = dashboardJson.overview?.totalViews || 0;
+        prevGA4Users = prevDashboardJson.overview?.uniqueVisitors || 0;
+        prevGA4PageViews = prevDashboardJson.overview?.totalViews || 0;
+        
+        // Use YOUR Supabase VPS data
         dashboardData = {
           overview: {
-            totalViews: currentGA4PageViews || 0,
-            uniqueVisitors: currentGA4Users || 0,
-            returningVisitors: 0, // Calculate if needed
-            averageSessionDuration: 0 // Calculate if needed
+            totalViews: currentGA4PageViews,
+            uniqueVisitors: currentGA4Users,
+            returningVisitors: dashboardJson.overview?.returningVisitors || 0,
+            averageSessionDuration: dashboardJson.overview?.averageSessionDuration || 0
           },
-          topCountries: ga4Countries || [],
-          languageBreakdown: ga4Languages || [],
-          topReferrers: ga4Referrers || []
+          topCountries: dashboardJson.topCountries || [],
+          languageBreakdown: dashboardJson.languageBreakdown || [],
+          topReferrers: dashboardJson.topReferrers || []
         };
         
-        console.log('✅ COMPREHENSIVE: GA4 countries data:', JSON.stringify(ga4Countries?.slice(0, 2), null, 2));
+        console.log('✅ COMPREHENSIVE: Supabase VPS countries data:', JSON.stringify(dashboardData.topCountries?.slice(0, 2), null, 2));
         
-        // Activity data from GA4 active users
+        // Activity data from your real-time visitors system
         activityData = {
-          activities: []  // GA4 doesn't have real-time session tracking like PostgreSQL
+          activities: dashboardJson.activities || []
         };
 
-        console.log('✅ COMPREHENSIVE: Got REAL dashboard data from PostgreSQL:', {
+        console.log('✅ COMPREHENSIVE: Got REAL dashboard data from Supabase VPS:', {
           totalViews: dashboardData.overview?.totalViews || dashboardData.totalViews,
           uniqueVisitors: dashboardData.overview?.uniqueVisitors || dashboardData.uniqueVisitors,  
           countries: dashboardData.topCountries?.length || 0,
@@ -4612,10 +4622,7 @@ export async function registerRoutes(app: Express): Promise<void> {
           structure: Object.keys(dashboardData)
         });
         
-        // Debug the exact structure of languageBreakdown
-        console.log('🔍 DEBUG: languageBreakdown structure:', JSON.stringify(dashboardData.languageBreakdown, null, 2));
-        
-        console.log('✅ COMPREHENSIVE: Got REAL activity data:', activityData.activities?.length || 0, 'recent activities');
+        console.log('✅ COMPREHENSIVE: Got REAL activity data from Supabase VPS:', activityData.activities?.length || 0, 'recent activities');
         
       } catch (error: any) {
         console.error('❌ COMPREHENSIVE: Failed to get real analytics data:', error.message);
@@ -4638,28 +4645,33 @@ export async function registerRoutes(app: Express): Promise<void> {
       // Use the same date variables from above (already defined in try block)
       // const endDate and startDate already defined above
 
-      // Fetch GA4 video metrics, language data, and returning users in parallel
-      // Include previous period data for all key metrics
-      const [plays, completions, watchTimeSeconds, topVideos, browserLanguageData, siteLanguageData, ga4ReturningUsers,
-             prevPlays, prevCompletions, prevWatchTimeSeconds, prevGA4ReturningUsers, prevGA4PageViews, prevGA4Users] = await Promise.all([
-        qPlays(startDate, endDate, locale),
-        qCompletes(startDate, endDate, locale), 
-        qWatchTimeTotal(startDate, endDate, locale),
-        qPlaysByVideo(startDate, endDate, locale),
-        qTopLanguages(startDate, endDate),
-        qSiteLanguageChoice(startDate, endDate),
-        qReturningUsers(startDate, endDate),
-        // Previous period data for all metrics
-        qPlays(prevStartDate, prevEndDate, locale),
-        qCompletes(prevStartDate, prevEndDate, locale), 
-        qWatchTimeTotal(prevStartDate, prevEndDate, locale),
-        qReturningUsers(prevStartDate, prevEndDate),
-        qPageViews(prevStartDate, prevEndDate, locale),
-        qUniqueUsers(prevStartDate, prevEndDate, locale)
-      ]);
+      // FIXED: Get video metrics from Supabase VPS database instead of broken GA4 API
+      console.log('🔍 GETTING VIDEO METRICS FROM SUPABASE VPS...');
+      
+      // Calculate video metrics from your Supabase VPS data
+      const plays = dashboardJson.videoPlays || 0;
+      const completions = dashboardJson.videoCompletions || 0; 
+      const watchTimeSeconds = dashboardJson.totalWatchTime || 0;
+      const topVideos = dashboardJson.topVideos || {};
+      const browserLanguageData = dashboardJson.languageBreakdown || [];
+      const siteLanguageData = dashboardJson.siteLanguageChoice || [];
+      const ga4ReturningUsers = dashboardJson.overview?.returningVisitors || 0;
+      
+      // Previous period video metrics from Supabase VPS
+      const prevPlays = prevDashboardJson.videoPlays || 0;
+      const prevCompletions = prevDashboardJson.videoCompletions || 0;
+      const prevWatchTimeSeconds = prevDashboardJson.totalWatchTime || 0;
+      const prevGA4ReturningUsers = prevDashboardJson.overview?.returningVisitors || 0;
+      
+      console.log('✅ VIDEO METRICS FROM SUPABASE VPS:', {
+        currentPlays: plays,
+        currentCompletions: completions,
+        currentWatchTime: watchTimeSeconds,
+        returningUsers: ga4ReturningUsers
+      });
 
-      // Process visitor analytics - handle nested data structure
-      // CONSISTENCY FIX: Use same data source (GA4) for all visitor metrics to prevent impossible combinations
+      // Process visitor analytics - handle nested data structure  
+      // CONSISTENCY FIX: Use Supabase VPS data for all visitor metrics
       const totalViews = currentGA4PageViews || dashboardData.overview?.totalViews || dashboardData.totalViews || 0;
       const uniqueVisitors = currentGA4Users || dashboardData.overview?.uniqueVisitors || dashboardData.uniqueVisitors || 0;  
       const returnVisitors = ga4ReturningUsers || 0;
