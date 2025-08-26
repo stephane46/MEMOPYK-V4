@@ -591,8 +591,8 @@ export class HybridStorage implements HybridStorageInterface {
           price_fr: item.price_fr,
           source_en: item.source_en,
           source_fr: item.source_fr,
-          duration_en: "2:30", // Default duration since not in your current schema
-          duration_fr: "2:30", // Default duration since not in your current schema
+          duration_en: item.duration_en || "A 3-minute film", // Read actual duration from database
+          duration_fr: item.duration_fr || "Un film de 3 minutes", // Read actual duration from database
           situation_en: item.situation_en,
           situation_fr: item.situation_fr,
           story_en: item.story_en,
