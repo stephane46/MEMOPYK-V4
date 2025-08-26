@@ -65,12 +65,8 @@ export default function GallerySection() {
   const { orientation } = useDeviceOrientation();
   
   // Animation state for scroll-triggered animations
-  const [animationStates, setAnimationStates] = useState({
-    firstSection: false,
-    secondSection: false
-  });
-  const firstSectionRef = useRef<HTMLDivElement>(null);
-  const secondSectionRef = useRef<HTMLDivElement>(null);
+  const [isAnimated, setIsAnimated] = useState(false);
+  const animatedSectionRef = useRef<HTMLDivElement>(null);
   
   // 📊 Initialize video analytics for gallery video tracking
   const { trackVideoView } = useVideoAnalytics();
@@ -93,48 +89,26 @@ export default function GallerySection() {
     return () => window.removeEventListener('resize', checkMobile);
   }, []);
   
-  // 🎬 Scroll-triggered animations for gallery text sections
+  // 🎬 Scroll-triggered animations - Using Key Visual pattern that works
   useEffect(() => {
-    const observerOptions = {
-      threshold: 0.2,
-      rootMargin: '0px 0px -100px 0px'
-    };
-
-    const observer = new IntersectionObserver((entries) => {
-      entries.forEach((entry) => {
-        console.log(`🎬 Observer: element intersecting = ${entry.isIntersecting}`);
-        
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        console.log(`🎬 Gallery animation observer: intersecting = ${entry.isIntersecting}`);
         if (entry.isIntersecting) {
-          const target = entry.target;
-          
-          if (target === firstSectionRef.current) {
-            console.log('🎬 → First section animation START');
-            setAnimationStates(prev => ({ ...prev, firstSection: true }));
-          } else if (target === secondSectionRef.current) {
-            console.log('🎬 → Second section animation START');
-            setAnimationStates(prev => ({ ...prev, secondSection: true }));
-          }
+          console.log('🎬 → Gallery animation triggered!');
+          setIsAnimated(true);
         }
-      });
-    }, observerOptions);
+      },
+      { threshold: 0.3 } // Same as Key Visual
+    );
 
-    // Wait for DOM and start observing
-    const timer = setTimeout(() => {
-      if (firstSectionRef.current) {
-        console.log('🎬 Observing first section element');
-        observer.observe(firstSectionRef.current);
-      }
-      if (secondSectionRef.current) {
-        console.log('🎬 Observing second section element');
-        observer.observe(secondSectionRef.current);
-      }
-    }, 300); // Longer delay to ensure everything is rendered
+    if (animatedSectionRef.current) {
+      console.log('🎬 Starting to observe gallery animation element');
+      observer.observe(animatedSectionRef.current);
+    }
 
-    return () => {
-      clearTimeout(timer);
-      observer.disconnect();
-    };
-  }, [language]);
+    return () => observer.disconnect();
+  }, []);
 
   // 🚨 CACHE SYNCHRONIZATION FIX v1.0.111 - Browser storage cache busting
   useEffect(() => {
@@ -679,7 +653,39 @@ export default function GallerySection() {
 
 
 
-        {/* Gallery Grid - Original Design Always Displayed */}
+        {/* Introduction Text - Static */}
+        <div className="text-center mb-8 sm:mb-12">
+          <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-memopyk-navy mb-4">
+            {language === 'fr-FR' 
+              ? "Chaque film que nous créons est aussi unique que vos souvenirs"
+              : "Every film we create is as unique as your memories"
+            }
+          </h2>
+          <p className="text-lg sm:text-xl text-memopyk-dark-blue max-w-3xl mx-auto leading-relaxed">
+            {language === 'fr-FR' 
+              ? "De petits et moyens formats pour des moments spéciaux du quotidien..."
+              : "From short and medium formats, for collections of special moments..."
+            }
+          </p>
+        </div>
+
+        {/* Animated Text - Slide in from left */}
+        <div className="text-center mb-8 sm:mb-12" ref={animatedSectionRef}>
+          <div className={`transition-all duration-1000 ease-out ${
+            isAnimated 
+              ? 'opacity-100 transform translate-x-0' 
+              : 'opacity-0 transform -translate-x-12'
+          }`}>
+            <h3 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-memopyk-orange">
+              {language === 'fr-FR' 
+                ? "...au grands formats que mérite un grand thème"
+                : "...to long formats that a major theme deserves"
+              }
+            </h3>
+          </div>
+        </div>
+
+        {/* Gallery Grid */}
         {(() => {
           console.log(`📱 MOBILE DETECTION: isMobile=${isMobile}, showing DESKTOP gallery (MobileEnhancedGallery disabled)`);
           return null;
@@ -713,27 +719,6 @@ export default function GallerySection() {
           />
         ) : (
           <>
-          {/* Text before first 3 videos - Slide in from left */}
-          <div className="text-center mb-8 sm:mb-12" ref={firstSectionRef}>
-            <div className={`transition-all duration-1000 ease-out ${
-              animationStates.firstSection 
-                ? 'opacity-100 transform translate-x-0' 
-                : 'opacity-0 transform -translate-x-12'
-            }`}>
-              <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-900 dark:text-white mb-4">
-                {language === 'fr-FR' 
-                  ? "Des histoires assez simples, petites collections de moments spéciaux..."
-                  : "From fairly simple stories, little collections of special moments..."
-                }
-              </h2>
-              <p className="text-lg sm:text-xl text-gray-600 dark:text-gray-400 max-w-3xl mx-auto leading-relaxed">
-                {language === 'fr-FR' 
-                  ? "Un voyage de week-end, un assortiment mensuel."
-                  : "A weekend trip, a monthly assortment."
-                }
-              </p>
-            </div>
-          </div>
 
           {/* First 3 videos grid */}
           <div 
@@ -929,27 +914,7 @@ export default function GallerySection() {
           })}
           </div>
 
-          {/* Text before last 3 videos - Slide in from right */}
-          <div className="text-center mb-8 sm:mb-12" ref={secondSectionRef}>
-            <div className={`transition-all duration-1000 ease-out ${
-              animationStates.secondSection 
-                ? 'opacity-100 transform translate-x-0' 
-                : 'opacity-0 transform translate-x-12'
-            }`}>
-              <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-900 dark:text-white mb-4">
-                {language === 'fr-FR' 
-                  ? "...à un film majeur, grands thèmes - Recommandé"
-                  : "...to a major film, big themes - Recommended"
-                }
-              </h2>
-              <p className="text-lg sm:text-xl text-gray-600 dark:text-gray-400 max-w-3xl mx-auto leading-relaxed">
-                {language === 'fr-FR' 
-                  ? 'Grand "photos dump" d\'un long voyage, événements/étapes importantes, un cadeau spécial à quelqu\'un de spécial.'
-                  : 'Large "photos dump" of a long voyage, important events/milestones, a special gift to a special someone.'
-                }
-              </p>
-            </div>
-          </div>
+          {/* Second Animated Text - This should be removed as we already have it above */}
 
           {/* Last 3 videos grid */}
           <div 
