@@ -294,8 +294,8 @@ export default function GallerySection() {
   const content = {
     'fr-FR': {
       title: "Galerie",
-      subtitle: "Chaque film que nous créons est aussi unique que vos souvenirs.",
-      description: "La galerie présente une sélection d'échantillons de créations et des prix indicatifs.",
+      subtitle: "",
+      description: "",
       viewAll: "Voir Toute la Galerie",
       preview: "Aperçu",
       startingFrom: "À partir de",
@@ -306,8 +306,8 @@ export default function GallerySection() {
     },
     'en-US': {
       title: "Gallery",
-      subtitle: "Every film we create is as unique as your memories.",
-      description: "The gallery presents a selection of sample creations and indicative pricing.",
+      subtitle: "",
+      description: "",
       viewAll: "View Full Gallery",
       preview: "Preview",
       startingFrom: "Starting from",
@@ -675,10 +675,16 @@ export default function GallerySection() {
           <>
           {/* Text before first 3 videos */}
           <div className="text-center mb-8 sm:mb-12">
-            <p className="text-lg sm:text-xl text-gray-700 dark:text-gray-300 max-w-3xl mx-auto leading-relaxed">
+            <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-900 dark:text-white mb-4">
               {language === 'fr-FR' 
-                ? "Des histoires assez simples, petites collections de moments spéciaux...\nUn voyage de week-end, un assortiment mensuel."
-                : "From fairly simple stories, little collections of special moments...\nA weekend trip, a monthly assortment."
+                ? "Des histoires assez simples, petites collections de moments spéciaux..."
+                : "From fairly simple stories, little collections of special moments..."
+              }
+            </h2>
+            <p className="text-lg sm:text-xl text-gray-600 dark:text-gray-400 max-w-3xl mx-auto leading-relaxed">
+              {language === 'fr-FR' 
+                ? "Un voyage de week-end, un assortiment mensuel."
+                : "A weekend trip, a monthly assortment."
               }
             </p>
           </div>
@@ -879,10 +885,16 @@ export default function GallerySection() {
 
           {/* Text before last 3 videos */}
           <div className="text-center mb-8 sm:mb-12">
-            <p className="text-lg sm:text-xl text-gray-700 dark:text-gray-300 max-w-3xl mx-auto leading-relaxed whitespace-pre-line">
+            <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-900 dark:text-white mb-4">
               {language === 'fr-FR' 
-                ? <>...à un film majeur, grands thèmes - <strong>Recommandé</strong>{'\n'}Grand "photos dump" d'un long voyage, événements/étapes importantes, un cadeau spécial à quelqu'un de spécial.</>
-                : <>...to a major film, big themes - <strong>Recommended</strong>{'\n'}Large "photos dump" of a long voyage, important events/milestones, a special gift to a special someone.</>
+                ? "...à un film majeur, grands thèmes - Recommandé"
+                : "...to a major film, big themes - Recommended"
+              }
+            </h2>
+            <p className="text-lg sm:text-xl text-gray-600 dark:text-gray-400 max-w-3xl mx-auto leading-relaxed">
+              {language === 'fr-FR' 
+                ? 'Grand "photos dump" d\'un long voyage, événements/étapes importantes, un cadeau spécial à quelqu\'un de spécial.'
+                : 'Large "photos dump" of a long voyage, important events/milestones, a special gift to a special someone.'
               }
             </p>
           </div>
