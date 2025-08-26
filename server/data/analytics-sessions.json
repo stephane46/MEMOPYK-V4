@@ -20541,8 +20541,8 @@
     "ip_address": "109.17.150.48",
     "is_test_data": false,
     "created_at": "2025-08-26T09:36:01.792Z",
-    "updated_at": "2025-08-26T09:43:24.702Z",
-    "duration": 1197170
+    "updated_at": "2025-08-26T09:47:08.765Z",
+    "duration": 1197393
   },
   {
     "id": "session_1756201011599_wpa39zz1u",
@@ -20558,7 +20558,24 @@
     "ip_address": "109.17.150.48",
     "is_test_data": false,
     "created_at": "2025-08-26T09:36:51.599Z",
-    "updated_at": "2025-08-26T09:43:26.166Z",
-    "duration": 780577
+    "updated_at": "2025-08-26T09:44:11.448Z",
+    "duration": 780622
+  },
+  {
+    "id": "session_1756201455093_ecwqivzxm",
+    "session_id": "session_1756201455093_wymkwaa5s",
+    "country": "Unknown",
+    "region": "Unknown",
+    "city": "Unknown",
+    "language": "en-US",
+    "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36 Edg/139.0.0.0",
+    "screen_resolution": "2560x1440",
+    "page_url": "https://365df2cf-1884-444c-a9e8-235602456363-00-37q39xpqlgvdy.janeway.replit.dev/en-US",
+    "referrer": "https://365df2cf-1884-444c-a9e8-235602456363-00-37q39xpqlgvdy.janeway.replit.dev/en-US",
+    "ip_address": "109.17.150.48",
+    "is_test_data": false,
+    "created_at": "2025-08-26T09:44:15.093Z",
+    "updated_at": "2025-08-26T09:44:20.770Z",
+    "duration": 780628
   }
 ]

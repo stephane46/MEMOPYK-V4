@@ -1128,12 +1128,23 @@ export default function GallerySection() {
             {/* Content */}
             <div className="relative z-10">
               {/* Compelling Subtitle */}
-              <p className="text-lg md:text-xl text-memopyk-cream/90 mb-6 max-w-3xl mx-auto leading-relaxed">
-                {language === 'fr-FR' 
-                  ? "✨ Parce que chaque histoire est différente, nous réalisons un devis personnalisé adapté à votre film. Pour donner vie à vos propres souvenirs, contactez-nous pour un devis fait rien que pour vous. ✨"
-                  : "✨ Because each story is different, we craft a customized quotation tailored to your film. To bring your own memories to life, contact us for a quote designed just for you. ✨"
-                }
-              </p>
+              <div className="text-center mb-6">
+                <h3 className="text-xl md:text-2xl font-bold text-memopyk-cream mb-4">
+                  {language === 'fr-FR' ? "NOUS SOMMES 100% SUR DEVIS" : "WE ARE 100% QUOTE-BASED"}
+                </h3>
+                <p className="text-lg md:text-xl text-memopyk-cream/90 max-w-3xl mx-auto leading-relaxed">
+                  {language === 'fr-FR' 
+                    ? "Parce que chaque histoire est différente, nous réalisons un devis adapté à votre film. Le devis est né de la prise en compte de toutes les particularités de votre demande, qui varient du nombre et de la qualité des éléments déposés ainsi que de la durée totale des vidéos, à l'analyse et le montage de l'histoire, sans exclure toutes demandes spéciales / supplémentaires."
+                    : "Because each story is different, we craft a customized quotation tailored to your film. The quote takes into account all the specific details of your request, which vary from the number and quality of uploaded elements and total video duration, to story analysis and editing, without excluding any special/additional requests."
+                  }
+                </p>
+                <p className="text-lg font-semibold text-memopyk-orange mt-4">
+                  {language === 'fr-FR' 
+                    ? "Contactez-nous pour obtenir le devis de votre film !"
+                    : "Contact us to get your film quote!"
+                  }
+                </p>
+              </div>
 
               {/* Value Proposition */}
               <div className="flex flex-wrap justify-center gap-4 mb-8 text-sm md:text-base">
