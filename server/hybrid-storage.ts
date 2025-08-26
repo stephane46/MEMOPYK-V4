@@ -564,24 +564,21 @@ export class HybridStorage implements HybridStorageInterface {
 
   // Gallery operations - PRIMARY DATABASE ACCESS WITH EMERGENCY JSON FALLBACK
   async getGalleryItems(): Promise<any[]> {
-    console.log(`🎬 GALLERY: Fetching items directly from Supabase VPS database (emergency JSON fallback available)`);
+    console.log(`🎬 GALLERY: Fetching items directly from development database (emergency JSON fallback available)`);
     
     try {
-      // Gallery data comes DIRECTLY from Supabase VPS database  
-      const response = await fetch('https://supabase.memopyk.org/rest/v1/gallery_items', {
-        headers: {
-          'apikey': process.env.SUPABASE_SERVICE_KEY || '',
-          'Authorization': `Bearer ${process.env.SUPABASE_SERVICE_KEY || ''}`,
-          'Content-Type': 'application/json'
-        }
-      });
+      // Import database connection
+      const { pool } = await import('./db');
       
-      if (!response.ok) {
-        throw new Error(`Supabase API error: ${response.status}`);
-      }
+      // Query gallery items directly from development database using SQL with timeout handling
+      const dbItems = await Promise.race([
+        pool`SELECT * FROM gallery_items ORDER BY order_index ASC`,
+        new Promise((_, reject) => 
+          setTimeout(() => reject(new Error('Database query timeout')), 5000)
+        )
+      ]) as any[];
       
-      const dbItems = await response.json();
-      console.log(`✅ GALLERY: Retrieved ${dbItems.length} items from Supabase VPS database`);
+      console.log(`✅ GALLERY: Retrieved ${dbItems.length} items from development database`);
       
       // Sync to JSON backup when database is available
       if (dbItems.length > 0) {
