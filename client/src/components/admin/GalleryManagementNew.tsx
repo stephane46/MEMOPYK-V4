@@ -327,8 +327,10 @@ export default function GalleryManagementNew() {
     const random = Math.random().toString(36).substring(7);
     const componentKey = forceRefreshKey;
     
+    // FIX: Properly handle URLs that already have query parameters
     if (filename.includes('http')) {
-      return `${filename}?bustCache=${timestamp}&version=${random}&refresh=${componentKey}&nocache=1&_=${Date.now()}`;
+      const separator = filename.includes('?') ? '&' : '?';
+      return `${filename}${separator}bustCache=${timestamp}&version=${random}&refresh=${componentKey}&nocache=1&_=${Date.now()}`;
     }
     return `https://supabase.memopyk.org/storage/v1/object/public/memopyk-videos/${encodeURIComponent(filename)}?bustCache=${timestamp}&version=${random}&refresh=${componentKey}&nocache=1&_=${Date.now()}`;
   };
