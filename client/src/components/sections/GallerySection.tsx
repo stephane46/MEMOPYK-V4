@@ -697,29 +697,20 @@ export default function GallerySection() {
 
 
 
-        {/* Static Title + Animated Subtitle */}
+        {/* Animated First Text - slides from LEFT */}
         <div className="text-center mb-8 sm:mb-12">
-          {/* Static title - never animates */}
-          <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-memopyk-navy mb-4">
-            {language === 'fr-FR' 
-              ? "Chaque film que nous créons est aussi unique que vos souvenirs"
-              : "Every film we create is as unique as your memories"
-            }
-          </h2>
-          
-          {/* Animated subtitle - slides from LEFT */}
           <div ref={firstTextRef}>
             <div className={`transition-all duration-1000 ease-out ${
               animationStates.firstText 
                 ? 'opacity-100 transform translate-x-0' 
                 : 'opacity-0 transform -translate-x-12'
             }`}>
-              <p className="text-lg sm:text-xl text-memopyk-dark-blue max-w-3xl mx-auto leading-relaxed">
+              <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-memopyk-dark-blue max-w-4xl mx-auto leading-relaxed">
                 {language === 'fr-FR' 
                   ? "De petits et moyens formats pour des moments spéciaux du quotidien..."
                   : "From short and medium formats, for collections of special moments..."
                 }
-              </p>
+              </h2>
             </div>
           </div>
         </div>
@@ -962,12 +953,12 @@ export default function GallerySection() {
                 ? 'opacity-100 transform translate-x-0' 
                 : 'opacity-0 transform translate-x-12'
             }`}>
-              <h3 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-memopyk-orange">
+              <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-memopyk-dark-blue max-w-4xl mx-auto leading-relaxed">
                 {language === 'fr-FR' 
                   ? "...au grands formats que méritent un grand thème"
                   : "...to long formats that a major theme deserves"
                 }
-              </h3>
+              </h2>
             </div>
           </div>
 
