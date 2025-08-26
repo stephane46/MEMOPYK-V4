@@ -87,14 +87,14 @@
     "order_index": 2,
     "is_active": true,
     "created_at": "2025-07-23T22:57:01.117Z",
-    "updated_at": "2025-08-26T18:02:10.483Z",
+    "updated_at": "2025-08-26T18:02:24.178Z",
     "cropSettings": {
       "format": "JPEG",
       "method": "triple-layer-white-bg",
       "quality": 1,
       "position": {
         "x": 50,
-        "y": 0
+        "y": 11.111111111111105
       },
       "dimensions": {
         "width": 4032,
