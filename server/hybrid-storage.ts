@@ -1780,8 +1780,23 @@ export class HybridStorage implements HybridStorageInterface {
     console.log('📄 Why MEMOPYK Cards: Loading from JSON fallback');
     const cards = this.loadJsonFile('why-memopyk-cards.json');
     
+    // Handle both camelCase (production format) and snake_case (internal format)
+    const convertedCards = cards.map((card: any) => ({
+      id: card.id,
+      titleEn: card.titleEn || card.title_en,
+      titleFr: card.titleFr || card.title_fr,
+      descriptionEn: card.descriptionEn || card.description_en,
+      descriptionFr: card.descriptionFr || card.description_fr,
+      iconName: card.iconName || card.icon_name,
+      gradient: card.gradient,
+      orderIndex: card.orderIndex !== undefined ? card.orderIndex : card.order_index,
+      isActive: card.isActive !== undefined ? card.isActive : card.is_active,
+      createdAt: card.createdAt || card.created_at,
+      updatedAt: card.updatedAt || card.updated_at
+    }));
+    
     // Initialize with default data if empty
-    if (cards.length === 0) {
+    if (convertedCards.length === 0) {
       const defaultCards = [
         {
           id: "simplicity",
@@ -1866,20 +1881,8 @@ export class HybridStorage implements HybridStorageInterface {
       }));
     }
     
-    // Convert snake_case to camelCase for frontend
-    return cards.map((card: any) => ({
-      id: card.id,
-      titleEn: card.title_en,
-      titleFr: card.title_fr,
-      descriptionEn: card.description_en,
-      descriptionFr: card.description_fr,
-      iconName: card.icon_name,
-      gradient: card.gradient,
-      orderIndex: card.order_index,
-      isActive: card.is_active,
-      createdAt: card.created_at,
-      updatedAt: card.updated_at
-    }));
+    // Return the properly converted cards (sorted by orderIndex)
+    return convertedCards.sort((a: any, b: any) => (a.orderIndex || 0) - (b.orderIndex || 0));
   }
 
   async createWhyMemopykCard(cardData: any): Promise<any> {
