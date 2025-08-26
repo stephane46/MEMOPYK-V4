@@ -95,73 +95,46 @@ export default function GallerySection() {
   
   // 🎬 Scroll-triggered animations for gallery text sections
   useEffect(() => {
-    // Add delay to ensure DOM is fully rendered
-    const setupObserver = () => {
-      const observerOptions = {
-        threshold: 0.1, // Lower threshold for better detection
-        rootMargin: '50px 0px -50px 0px' // More generous margins
-      };
-
-      const observer = new IntersectionObserver((entries) => {
-        entries.forEach((entry) => {
-          console.log(`🎬 Animation Observer: ${entry.target.className}, intersecting: ${entry.isIntersecting}`);
-          
-          if (entry.isIntersecting) {
-            const target = entry.target;
-            
-            if (target === firstSectionRef.current) {
-              console.log('🎬 First section animation triggered');
-              setAnimationStates(prev => ({ ...prev, firstSection: true }));
-            } else if (target === secondSectionRef.current) {
-              console.log('🎬 Second section animation triggered');
-              setAnimationStates(prev => ({ ...prev, secondSection: true }));
-            }
-          } else {
-            // Reset animations when out of view so they can trigger again
-            const target = entry.target;
-            
-            if (target === firstSectionRef.current) {
-              setAnimationStates(prev => ({ ...prev, firstSection: false }));
-            } else if (target === secondSectionRef.current) {
-              setAnimationStates(prev => ({ ...prev, secondSection: false }));
-            }
-          }
-        });
-      }, observerOptions);
-
-      // Start observing the text sections with retry logic
-      const startObserving = () => {
-        if (firstSectionRef.current) {
-          console.log('🎬 Starting to observe first section');
-          observer.observe(firstSectionRef.current);
-        } else {
-          console.warn('🎬 First section ref not ready');
-        }
-        if (secondSectionRef.current) {
-          console.log('🎬 Starting to observe second section');
-          observer.observe(secondSectionRef.current);
-        } else {
-          console.warn('🎬 Second section ref not ready');
-        }
-      };
-
-      // Immediate attempt
-      startObserving();
-      
-      // Retry after a delay to ensure DOM is ready
-      const retryTimeout = setTimeout(() => {
-        observer.disconnect();
-        startObserving();
-      }, 100);
-
-      return () => {
-        clearTimeout(retryTimeout);
-        observer.disconnect();
-      };
+    const observerOptions = {
+      threshold: 0.2,
+      rootMargin: '0px 0px -100px 0px'
     };
 
-    return setupObserver();
-  }, [language, animationStates.firstSection, animationStates.secondSection]); // Re-run when language changes or after state updates
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        console.log(`🎬 Observer: element intersecting = ${entry.isIntersecting}`);
+        
+        if (entry.isIntersecting) {
+          const target = entry.target;
+          
+          if (target === firstSectionRef.current) {
+            console.log('🎬 → First section animation START');
+            setAnimationStates(prev => ({ ...prev, firstSection: true }));
+          } else if (target === secondSectionRef.current) {
+            console.log('🎬 → Second section animation START');
+            setAnimationStates(prev => ({ ...prev, secondSection: true }));
+          }
+        }
+      });
+    }, observerOptions);
+
+    // Wait for DOM and start observing
+    const timer = setTimeout(() => {
+      if (firstSectionRef.current) {
+        console.log('🎬 Observing first section element');
+        observer.observe(firstSectionRef.current);
+      }
+      if (secondSectionRef.current) {
+        console.log('🎬 Observing second section element');
+        observer.observe(secondSectionRef.current);
+      }
+    }, 300); // Longer delay to ensure everything is rendered
+
+    return () => {
+      clearTimeout(timer);
+      observer.disconnect();
+    };
+  }, [language]);
 
   // 🚨 CACHE SYNCHRONIZATION FIX v1.0.111 - Browser storage cache busting
   useEffect(() => {
