@@ -445,6 +445,14 @@ export function Layout({ children }: LayoutProps) {
                     {t('nav.quotation')}
                   </button>
                 </li>
+                <li>
+                  <button 
+                    onClick={() => handleAnchorClick('footer', 'footer-contact-title')}
+                    className="hover:text-white transition-colors"
+                  >
+                    {t('nav.contact')}
+                  </button>
+                </li>
               </ul>
             </div>
             
@@ -472,7 +480,7 @@ export function Layout({ children }: LayoutProps) {
             </div>
             
             <div>
-              <h4 className="font-semibold mb-4 cursor-pointer transition-all duration-300 ease-in-out transform hover:translate-x-1 hover:text-memopyk-orange hover:font-bold">Contact</h4>
+              <h4 id="footer-contact-title" className="font-semibold mb-4 cursor-pointer transition-all duration-300 ease-in-out transform hover:translate-x-1 hover:text-memopyk-orange hover:font-bold">Contact</h4>
               <ul className="space-y-3 text-gray-400">
                 <li>
                   <a 

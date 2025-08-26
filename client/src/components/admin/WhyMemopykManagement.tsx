@@ -135,6 +135,10 @@ export function WhyMemopykManagement() {
         setIsCreating(false);
         setFormData({});
         await loadCards(); // Ensure we reload to see the changes
+        
+        // 🚨 CRITICAL: Trigger event for public site cache refresh
+        window.dispatchEvent(new CustomEvent('why-memopyk-updated'));
+        console.log('📡 why-memopyk-updated event dispatched for cache refresh');
       } else {
         throw new Error(data.error || 'Failed to save card');
       }
@@ -163,6 +167,10 @@ export function WhyMemopykManagement() {
           description: "Card deleted successfully",
         });
         await loadCards(); // Reload to reflect changes
+        
+        // 🚨 CRITICAL: Trigger event for public site cache refresh
+        window.dispatchEvent(new CustomEvent('why-memopyk-updated'));
+        console.log('📡 why-memopyk-updated event dispatched for cache refresh');
       } else {
         throw new Error('Failed to delete card');
       }
@@ -205,6 +213,10 @@ export function WhyMemopykManagement() {
       });
       
       await loadCards(); // Reload to reflect changes
+      
+      // 🚨 CRITICAL: Trigger event for public site cache refresh
+      window.dispatchEvent(new CustomEvent('why-memopyk-updated'));
+      console.log('📡 why-memopyk-updated event dispatched for cache refresh');
     } catch (error) {
       console.error('❌ Error moving card:', error);
       toast({
