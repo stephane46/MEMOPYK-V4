@@ -20068,8 +20068,8 @@
     "ip_address": "109.17.150.48",
     "is_test_data": false,
     "created_at": "2025-08-26T08:40:11.921Z",
-    "updated_at": "2025-08-26T08:43:42.414Z",
-    "duration": 1193587
+    "updated_at": "2025-08-26T08:44:42.384Z",
+    "duration": 1193647
   },
   {
     "id": "session_1756197664515_nrilur66c",
@@ -20085,7 +20085,41 @@
     "ip_address": "109.17.150.48",
     "is_test_data": false,
     "created_at": "2025-08-26T08:41:04.515Z",
-    "updated_at": "2025-08-26T08:43:35.243Z",
-    "duration": 776985
+    "updated_at": "2025-08-26T08:44:05.226Z",
+    "duration": 777015
+  },
+  {
+    "id": "session_1756197913239_1c6xu4ojq",
+    "session_id": "session_1756197913238_tpz8frvq8",
+    "country": "Unknown",
+    "region": "Unknown",
+    "city": "Unknown",
+    "language": "fr-FR",
+    "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36 Edg/139.0.0.0",
+    "screen_resolution": "2560x1440",
+    "page_url": "https://365df2cf-1884-444c-a9e8-235602456363-00-37q39xpqlgvdy.janeway.replit.dev/fr-FR",
+    "referrer": "https://365df2cf-1884-444c-a9e8-235602456363-00-37q39xpqlgvdy.janeway.replit.dev/__replco/workspace_iframe.html?initialPath=%2F&id=%3Ar8qm%3A",
+    "ip_address": "109.17.150.48",
+    "is_test_data": false,
+    "created_at": "2025-08-26T08:45:13.239Z",
+    "updated_at": "2025-08-26T08:47:13.684Z",
+    "duration": 1193798
+  },
+  {
+    "id": "session_1756197966370_ctp7gtpsc",
+    "session_id": "session_1756197966370_5r6ixmmi1",
+    "country": "Unknown",
+    "region": "Unknown",
+    "city": "Unknown",
+    "language": "en-US",
+    "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36 Edg/139.0.0.0",
+    "screen_resolution": "2560x1440",
+    "page_url": "https://365df2cf-1884-444c-a9e8-235602456363-00-37q39xpqlgvdy.janeway.replit.dev/en-US",
+    "referrer": "https://365df2cf-1884-444c-a9e8-235602456363-00-37q39xpqlgvdy.janeway.replit.dev/en-US",
+    "ip_address": "109.17.150.48",
+    "is_test_data": false,
+    "created_at": "2025-08-26T08:46:06.370Z",
+    "updated_at": "2025-08-26T08:47:07.196Z",
+    "duration": 777197
   }
 ]
