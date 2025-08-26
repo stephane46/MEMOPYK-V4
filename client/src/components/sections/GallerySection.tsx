@@ -119,13 +119,13 @@ export default function GallerySection() {
   // 🚨 CACHE SYNCHRONIZATION FIX v1.0.119 - Stable cache with forced refresh
   const [refreshKey, setRefreshKey] = useState(0);
   
-  const { data: rawData = [], refetch } = useQuery<any[]>({
+  const { data: rawData = [], isLoading, refetch } = useQuery<any[]>({
     queryKey: ['/api/gallery'], // 🚨 CACHE SYNC FIX v1.0.125 - Use same key as admin
-    staleTime: 0, // No stale time - always fresh data
-    gcTime: 0, // No garbage collection time - immediate cache clear
-    refetchOnMount: 'always', // Always refetch on mount
-    refetchOnWindowFocus: true, // Refetch when window regains focus
-    refetchInterval: 5000, // 🚨 Poll every 5 seconds in production for cache sync
+    staleTime: 30000, // Cache for 30 seconds to prevent flickering
+    gcTime: 300000, // Keep cache for 5 minutes
+    refetchOnMount: true, // Refetch on mount but not 'always'
+    refetchOnWindowFocus: false, // Disable constant refetching on focus
+    refetchInterval: false, // Disable polling to prevent flickering
     retry: 2, // Retry on failure
   });
   
