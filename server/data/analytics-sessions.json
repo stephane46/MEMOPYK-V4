@@ -19831,8 +19831,8 @@
     "ip_address": "109.17.150.48",
     "is_test_data": false,
     "created_at": "2025-08-26T06:58:41.561Z",
-    "updated_at": "2025-08-26T06:59:26.677Z",
-    "duration": 1187332
+    "updated_at": "2025-08-26T07:00:11.863Z",
+    "duration": 1187377
   },
   {
     "id": "session_1756191570850_zu8qrfxsh",
@@ -19848,6 +19848,7 @@
     "ip_address": "109.17.150.48",
     "is_test_data": false,
     "created_at": "2025-08-26T06:59:30.850Z",
-    "updated_at": "2025-08-26T06:59:30.850Z"
+    "updated_at": "2025-08-26T07:00:17.576Z",
+    "duration": 770788
   }
 ]
