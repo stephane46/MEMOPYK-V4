@@ -87,10 +87,10 @@ export default function GallerySection() {
   
   // 🚨 CACHE SYNCHRONIZATION FIX v1.0.111 - Browser storage cache busting
   useEffect(() => {
-    console.log("🚨 CACHE SYNCHRONIZATION FIX v1.0.112");
-    console.log("✅ Cache properly configured for F5 refresh synchronization");
-    console.log("📋 Data refreshes on page load and window focus");
-    console.log("🎯 Efficient caching with 5-minute staleness");
+    console.log("🚨 CACHE OPTIMIZATION v1.0.113 - Company Presentation Mode");
+    console.log("✅ Infinite cache - no automatic reloading");
+    console.log("📋 Perfect for company gallery that changes every few months");
+    console.log("🎯 Maximum performance - zero unnecessary network requests");
     
     // Clear any browser-cached gallery data on component mount
     const clearBrowserCache = () => {
@@ -121,11 +121,11 @@ export default function GallerySection() {
   
   const { data: rawData = [], isLoading, refetch } = useQuery<any[]>({
     queryKey: ['/api/gallery'], // 🚨 CACHE SYNC FIX v1.0.125 - Use same key as admin
-    staleTime: 30000, // Cache for 30 seconds to prevent flickering
-    gcTime: 300000, // Keep cache for 5 minutes
-    refetchOnMount: true, // Refetch on mount but not 'always'
-    refetchOnWindowFocus: false, // Disable constant refetching on focus
-    refetchInterval: false, // Disable polling to prevent flickering
+    staleTime: Infinity, // Never consider data stale - this is a company presentation, not YouTube
+    gcTime: Infinity, // Keep cache forever until manual refresh
+    refetchOnMount: false, // Don't refetch on mount - use cached data
+    refetchOnWindowFocus: false, // Never refetch on focus
+    refetchInterval: false, // No automatic polling
     retry: 2, // Retry on failure
   });
   
