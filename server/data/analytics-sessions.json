@@ -21101,8 +21101,8 @@
     "ip_address": "109.17.150.48",
     "is_test_data": false,
     "created_at": "2025-08-26T10:35:48.373Z",
-    "updated_at": "2025-08-26T10:38:45.875Z",
-    "duration": 1200490
+    "updated_at": "2025-08-26T10:40:46.872Z",
+    "duration": 1200611
   },
   {
     "id": "session_1756204588073_ttbonn4l5",
@@ -21118,7 +21118,7 @@
     "ip_address": "109.17.150.48",
     "is_test_data": false,
     "created_at": "2025-08-26T10:36:28.073Z",
-    "updated_at": "2025-08-26T10:38:59.326Z",
-    "duration": 783909
+    "updated_at": "2025-08-26T10:41:00.055Z",
+    "duration": 784030
   }
 ]
