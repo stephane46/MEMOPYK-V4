@@ -45,7 +45,7 @@ assertEnv("GA4_PROJECT_ID");
 assertEnv("GA4_DATASET");
 assertEnv("GA4_SERVICE_ACCOUNT_KEY");
 assertEnv("SUPABASE_URL");
-assertEnv("SUPABASE_SERVICE_ROLE_KEY");
+assertEnv("SERVICE_SUPABASESERVICE_KEY");
 
 const SERVICE_KEY = JSON.parse(process.env.GA4_SERVICE_ACCOUNT_KEY);
 const bigquery = new BigQuery({
@@ -58,7 +58,7 @@ const bigquery = new BigQuery({
 
 const supabase = createClient(
   process.env.SUPABASE_URL,
-  process.env.SUPABASE_SERVICE_ROLE_KEY,
+  process.env.SERVICE_SUPABASESERVICE_KEY,
   { auth: { persistSession: false } }
 );
 
@@ -309,19 +309,19 @@ async function markReturningUsers(asOfISO) {
 (async () => {
   try {
     // 1) Sessions
-    const [sessRows] = await bigquery.query({ query: qSessions, location: "EU" /* or your region */ });
+    const [sessRows] = await bigquery.query({ query: qSessions, location: "US" });
     await upsertSessions(sessRows);
 
     // 2) Pageviews
-    const [pvRows] = await bigquery.query({ query: qPageviews, location: "EU" });
+    const [pvRows] = await bigquery.query({ query: qPageviews, location: "US" });
     await upsertPageviews(pvRows);
 
     // 3) Video events
-    const [veRows] = await bigquery.query({ query: qVideoEvents, location: "EU" });
+    const [veRows] = await bigquery.query({ query: qVideoEvents, location: "US" });
     await upsertVideoEvents(veRows);
 
     // 4) CTA clicks
-    const [ctaRows] = await bigquery.query({ query: qCtaClicks, location: "EU" });
+    const [ctaRows] = await bigquery.query({ query: qCtaClicks, location: "US" });
     await upsertCtaClicks(ctaRows);
 
     // 5) Returning users flag (optional, via SQL func)
