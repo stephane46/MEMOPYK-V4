@@ -8,11 +8,10 @@ const store = new Map<string, Entry<any>>();
 let pgClient: ReturnType<typeof postgres> | null = null;
 
 export function getPgClient() {
-  if (!pgClient && process.env.SUPABASE_SERVICE_KEY) {
-    // Build PostgreSQL connection via localhost (post-nginx fix)
-    const supabaseKey = process.env.SUPABASE_SERVICE_KEY;
-    const connectionString = `postgresql://postgres:${supabaseKey}@127.0.0.1:5432/postgres?sslmode=disable`;
-    pgClient = postgres(connectionString);
+  if (!pgClient && process.env.DATABASE_URL) {
+    // Use DATABASE_URL for direct localhost connection (post-nginx fix)
+    console.log('🔄 Cache: Using DATABASE_URL for direct connection...');
+    pgClient = postgres(process.env.DATABASE_URL);
   }
   return pgClient;
 }

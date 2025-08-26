@@ -2,26 +2,23 @@ import { drizzle } from 'drizzle-orm/postgres-js';
 import postgres from 'postgres';
 import * as schema from "@shared/schema";
 
-// EXCLUSIVELY use Supabase VPS - NO other database providers allowed
-if (!process.env.SUPABASE_URL) {
+// Use DATABASE_URL for direct localhost connection (post-nginx fix)
+if (!process.env.DATABASE_URL) {
   throw new Error(
-    "SUPABASE_URL must be set. Supabase VPS connection required.",
+    "DATABASE_URL must be set for direct database connection.",
   );
 }
 
-// ALWAYS build connection string from SUPABASE_URL only - ignore DATABASE_URL completely
-console.log('🔄 Building connection EXCLUSIVELY from SUPABASE_URL...');
-
-const supabaseKey = process.env.SUPABASE_SERVICE_KEY;
-
-if (!supabaseKey) {
-  throw new Error("SUPABASE_SERVICE_KEY must be set for database connection.");
+// Ensure SSH tunneling is disabled by checking for SSH variables
+if (process.env.SSH_PASSWORD || process.env.SSH_PRIVATE_KEY) {
+  console.warn('⚠️ SSH variables detected - these should be unset to avoid tunneling');
 }
 
-// Use localhost connection with SSL disabled per VPS infrastructure fix
-const connectionString = `postgresql://postgres:${supabaseKey}@127.0.0.1:5432/postgres?sslmode=disable`;
+console.log('🔄 Using DATABASE_URL for direct localhost connection...');
 
-console.log('🔗 Connecting to Supabase VPS database via localhost (post-nginx fix)');
+const connectionString = process.env.DATABASE_URL;
+
+console.log('🔗 Connecting to PostgreSQL via direct localhost connection (post-nginx fix)');
 
 export const pool = postgres(connectionString);
 export const db = drizzle(pool, { schema });
