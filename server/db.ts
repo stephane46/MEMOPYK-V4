@@ -19,7 +19,8 @@ if (!supabaseKey) {
 
 // Extract host from Supabase URL
 const host = supabaseUrl.replace('https://', '').replace('http://', '');
-const connectionString = `postgresql://postgres:${process.env.SUPABASE_SERVICE_ROLE_KEY || supabaseKey}@${host}:5432/postgres?sslmode=require`;
+const serviceKey = process.env.SUPABASE_SERVICE_KEY || process.env.SERVICE_SUPABASESERVICE_KEY || supabaseKey;
+const connectionString = `postgresql://postgres:${serviceKey}@${host}:5432/postgres?sslmode=require`;
 
 console.log('🔗 Connecting to Supabase VPS database:', host);
 
