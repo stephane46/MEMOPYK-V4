@@ -1178,6 +1178,10 @@ export async function registerRoutes(app: Express): Promise<void> {
         
         await hybridStorage.updateGalleryItem(itemId, updateData);
         console.log(`✅ Hybrid storage update completed`);
+        
+        // CRITICAL: Clear backend gallery cache to force immediate refresh
+        galleryCache = null;
+        console.log(`🗑️ Gallery cache cleared - fresh data will be served on next request`);
       } catch (hybridError) {
         console.error('❌ Hybrid storage failed:', hybridError);
       }
