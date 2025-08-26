@@ -9,9 +9,11 @@ if (!process.env.DATABASE_URL) {
   );
 }
 
-// Force direct connection - explicitly disable SSH tunneling for database
+// Skip SSH tunnel logic unless SSH credentials are set (empty = no tunnel)
 if (process.env.SSH_PASSWORD || process.env.SSH_PRIVATE_KEY) {
   console.log('🔒 SSH keys available but using direct database connection (no tunneling)');
+} else {
+  console.log('🔗 Direct database connection - no SSH tunnel needed');
 }
 
 console.log('🔄 Using DATABASE_URL for direct localhost connection...');

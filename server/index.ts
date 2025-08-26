@@ -13,7 +13,7 @@ const VERSION = "1.0.52-deploy-fix";
 console.log(`=== MEMOPYK Server Starting ${VERSION} ===`);
 console.log("NODE_ENV:", process.env.NODE_ENV);
 console.log("🚨 DEPLOYMENT CHECK: NODE_ENV must be 'production' for correct HTML serving");
-console.log("PORT:", process.env.PORT || "5000");
+console.log("PORT:", process.env.PORT || 5000);
 console.log(
   "🚫 DATABASE_URL (Neon):",
   "DISABLED - Using Supabase VPS only"
