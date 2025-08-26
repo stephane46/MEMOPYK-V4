@@ -267,7 +267,7 @@ export default function GallerySection() {
     if (safeGalleryItems.length > 0) {
       const galleryVideoFilenames = safeGalleryItems.map(item => {
         const videoUrl = language === 'fr-FR' ? item.videoUrlFr : item.videoUrlEn;
-        return videoUrl.includes('/') ? videoUrl.split('/').pop() : videoUrl;
+        return videoUrl && videoUrl.includes('/') ? videoUrl.split('/').pop() : (videoUrl || 'no-video');
       });
       console.log(`🎬 Gallery videos available: ${safeGalleryItems.length}`, galleryVideoFilenames);
     }
