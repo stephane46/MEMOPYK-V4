@@ -9,11 +9,9 @@ let pgClient: ReturnType<typeof postgres> | null = null;
 
 export function getPgClient() {
   if (!pgClient && process.env.SUPABASE_URL) {
-    // Build PostgreSQL connection from Supabase URL
-    const supabaseUrl = process.env.SUPABASE_URL;
+    // Build PostgreSQL connection via localhost (post-nginx fix)
     const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_ANON_KEY;
-    const host = supabaseUrl.replace('https://', '').replace('http://', '');
-    const connectionString = `postgresql://postgres:${supabaseKey}@${host}:5432/postgres?sslmode=require`;
+    const connectionString = `postgresql://postgres:${supabaseKey}@127.0.0.1:5432/postgres?sslmode=disable`;
     pgClient = postgres(connectionString);
   }
   return pgClient;

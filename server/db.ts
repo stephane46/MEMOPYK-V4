@@ -19,11 +19,10 @@ if (!supabaseKey) {
   throw new Error("SUPABASE_SERVICE_KEY must be set for database connection.");
 }
 
-// Extract host from Supabase URL  
-const host = supabaseUrl.replace('https://', '').replace('http://', '');
-const connectionString = `postgresql://postgres:${supabaseKey}@${host}:5432/postgres?sslmode=require`;
+// Use localhost connection with SSL disabled per VPS infrastructure fix
+const connectionString = `postgresql://postgres:${supabaseKey}@127.0.0.1:5432/postgres?sslmode=disable`;
 
-console.log('🔗 Connecting EXCLUSIVELY to Supabase VPS database:', host);
+console.log('🔗 Connecting to Supabase VPS database via localhost (post-nginx fix)');
 
 export const pool = postgres(connectionString);
 export const db = drizzle(pool, { schema });

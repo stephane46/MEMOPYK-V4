@@ -6,7 +6,7 @@ let db: ReturnType<typeof drizzle> | null = null;
 
 export async function testDatabaseConnection(): Promise<boolean> {
   try {
-    console.log("Testing Supabase VPS PostgreSQL connection...");
+    console.log("Testing Supabase VPS PostgreSQL connection via localhost (post-nginx fix)...");
     
     if (!process.env.SUPABASE_URL) {
       console.error("❌ SUPABASE_URL not found in environment");
@@ -22,9 +22,8 @@ export async function testDatabaseConnection(): Promise<boolean> {
       return false;
     }
     
-    // Extract host and build PostgreSQL connection
-    const host = supabaseUrl.replace('https://', '').replace('http://', '');
-    const connectionString = `postgresql://postgres:${process.env.SUPABASE_SERVICE_ROLE_KEY || supabaseKey}@${host}:5432/postgres?sslmode=require`;
+    // Use localhost connection with SSL disabled per VPS infrastructure fix
+    const connectionString = `postgresql://postgres:${process.env.SUPABASE_SERVICE_ROLE_KEY || supabaseKey}@127.0.0.1:5432/postgres?sslmode=disable`;
     
     // Create connection
     const client = postgres(connectionString);
