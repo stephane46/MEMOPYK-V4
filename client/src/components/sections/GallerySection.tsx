@@ -93,33 +93,45 @@ export default function GallerySection() {
     return () => window.removeEventListener('resize', checkMobile);
   }, []);
   
-  // 🎬 Animation observers for both texts
+  // 🎬 Two separate observers - EXACTLY like Key Visual pattern
   useEffect(() => {
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            if (entry.target === firstTextRef.current) {
-              console.log('🎬 ← First text animation (slide from LEFT)');
-              setAnimationStates(prev => ({ ...prev, firstText: true }));
-            } else if (entry.target === secondTextRef.current) {
-              console.log('🎬 → Second text animation (slide from RIGHT)');
-              setAnimationStates(prev => ({ ...prev, secondText: true }));
-            }
-          }
-        });
+    const firstObserver = new IntersectionObserver(
+      ([entry]) => {
+        console.log(`🎬 FIRST observer: ${entry.isIntersecting}`);
+        if (entry.isIntersecting) {
+          console.log('🎬 ← FIRST TEXT TRIGGERED (LEFT slide)');
+          setAnimationStates(prev => ({ ...prev, firstText: true }));
+        }
       },
-      { threshold: 0.2, rootMargin: '0px' }
+      { threshold: 0.3 }
     );
 
     if (firstTextRef.current) {
-      observer.observe(firstTextRef.current);
-    }
-    if (secondTextRef.current) {
-      observer.observe(secondTextRef.current);
+      console.log('🎬 First observer attached');
+      firstObserver.observe(firstTextRef.current);
     }
 
-    return () => observer.disconnect();
+    return () => firstObserver.disconnect();
+  }, []);
+
+  useEffect(() => {
+    const secondObserver = new IntersectionObserver(
+      ([entry]) => {
+        console.log(`🎬 SECOND observer: ${entry.isIntersecting}`);
+        if (entry.isIntersecting) {
+          console.log('🎬 → SECOND TEXT TRIGGERED (RIGHT slide)');
+          setAnimationStates(prev => ({ ...prev, secondText: true }));
+        }
+      },
+      { threshold: 0.3 }
+    );
+
+    if (secondTextRef.current) {
+      console.log('🎬 Second observer attached');
+      secondObserver.observe(secondTextRef.current);
+    }
+
+    return () => secondObserver.disconnect();
   }, []);
 
   // 🚨 CACHE SYNCHRONIZATION FIX v1.0.111 - Browser storage cache busting
@@ -665,25 +677,30 @@ export default function GallerySection() {
 
 
 
-        {/* First Text - Slide from LEFT */}
-        <div className="text-center mb-8 sm:mb-12" ref={firstTextRef}>
-          <div className={`transition-all duration-1000 ease-out ${
-            animationStates.firstText 
-              ? 'opacity-100 transform translate-x-0' 
-              : 'opacity-0 transform -translate-x-12'
-          }`}>
-            <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-memopyk-navy mb-4">
-              {language === 'fr-FR' 
-                ? "Chaque film que nous créons est aussi unique que vos souvenirs"
-                : "Every film we create is as unique as your memories"
-              }
-            </h2>
-            <p className="text-lg sm:text-xl text-memopyk-dark-blue max-w-3xl mx-auto leading-relaxed">
-              {language === 'fr-FR' 
-                ? "De petits et moyens formats pour des moments spéciaux du quotidien..."
-                : "From short and medium formats, for collections of special moments..."
-              }
-            </p>
+        {/* Static Title + Animated Subtitle */}
+        <div className="text-center mb-8 sm:mb-12">
+          {/* Static title - never animates */}
+          <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-memopyk-navy mb-4">
+            {language === 'fr-FR' 
+              ? "Chaque film que nous créons est aussi unique que vos souvenirs"
+              : "Every film we create is as unique as your memories"
+            }
+          </h2>
+          
+          {/* Animated subtitle - slides from LEFT */}
+          <div ref={firstTextRef}>
+            <div className={`transition-all duration-1000 ease-out ${
+              animationStates.firstText 
+                ? 'opacity-100 transform translate-x-0' 
+                : 'opacity-0 transform -translate-x-12'
+            }`}>
+              <p className="text-lg sm:text-xl text-memopyk-dark-blue max-w-3xl mx-auto leading-relaxed">
+                {language === 'fr-FR' 
+                  ? "De petits et moyens formats pour des moments spéciaux du quotidien..."
+                  : "From short and medium formats, for collections of special moments..."
+                }
+              </p>
+            </div>
           </div>
         </div>
 
