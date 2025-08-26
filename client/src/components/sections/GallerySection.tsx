@@ -795,7 +795,9 @@ export default function GallerySection() {
                             {getItemSource(item) && (
                               <div className="bg-black/70 text-white px-3 sm:px-3 py-1 sm:py-2 rounded-full text-xs sm:text-sm backdrop-blur-sm max-w-[180px] sm:max-w-none flex flex-col items-center justify-center min-h-[32px] sm:min-h-[36px]">
                                 <div className="font-medium leading-tight whitespace-nowrap">{getItemSource(item)}</div>
-
+                                <div className="text-xs text-gray-300 hidden sm:block">
+                                  {language === 'fr-FR' ? 'fournies par Client' : 'provided by Client'}
+                                </div>
                               </div>
                             )}
 
@@ -1008,7 +1010,9 @@ export default function GallerySection() {
                             {getItemSource(item) && (
                               <div className="bg-black/70 text-white px-3 sm:px-3 py-1 sm:py-2 rounded-full text-xs sm:text-sm backdrop-blur-sm max-w-[180px] sm:max-w-none flex flex-col items-center justify-center min-h-[32px] sm:min-h-[36px]">
                                 <div className="font-medium leading-tight whitespace-nowrap">{getItemSource(item)}</div>
-
+                                <div className="text-xs text-gray-300 hidden sm:block">
+                                  {language === 'fr-FR' ? 'fournies par Client' : 'provided by Client'}
+                                </div>
                               </div>
                             )}
 
