@@ -26,7 +26,11 @@ Modal styling: Requires solid white modal backgrounds with dark overlays for pro
 - Outdated without checking
 - Unnecessary without user confirmation
 
+**CRITICAL: Always read replit.md documentation FIRST before making any changes to understand the existing architecture and avoid breaking working systems.**
+
 ### Recent Critical Fixes
+
+**Gallery Data Architecture Incident (Aug 2025)**: CRITICAL LEARNING - Nearly broke gallery system by misunderstanding architecture. Gallery data comes DIRECTLY from Supabase VPS database with NO JSON fallback (unlike other data types). Incorrectly attempted to create JSON fallback and switch to DATABASE_URL when Supabase connection appeared to fail. Root cause was temporary network issues, not missing keys. **LESSON: Always read replit.md FIRST and understand existing architecture before making changes.** Gallery system restored successfully with all 6 items.
 **SEO System Field Mapping Issue (Aug 2025)**: Resolved critical bug where dynamic property assignment with bracket notation was failing in TypeScript. Replaced with explicit field assignments for proper database field mapping. All SEO fields (title, description, keywords, etc.) now save and retrieve correctly from Supabase database.
 
 **Meta Description Display Issue (Aug 2025)**: Fixed React Hook Form persistence bug where Meta Description field wasn't displaying saved values after form reset. Issue was caused by undefined default values in form configuration. Resolved by providing complete default values for all form fields and improving form reset logic with `keepDefaultValues: false`. Meta Description field now properly displays saved content in SEO Management interface.
@@ -70,7 +74,7 @@ Modal styling: Requires solid white modal backgrounds with dark overlays for pro
 - **Session Management**: Express sessions with PostgreSQL store.
 
 ### Key Architectural Decisions
-- **Hybrid Storage System**: JSON fallback for all data, complementing PostgreSQL for data persistence and synchronization.
+- **Hybrid Storage System**: JSON fallback for MOST data (hero text, why memopyk cards, etc.), complementing PostgreSQL for data persistence and synchronization. **CRITICAL EXCEPTION: Gallery data comes DIRECTLY from Supabase VPS database with NO JSON fallback.**
 - **Universal Video Proxy**: Manages video serving, range requests, local caching, and fallback to Supabase CDN.
 - **Image Proxy**: Handles image loading, resolves CORS issues, and prioritizes static cropped images.
 - **Cache Management**: Smart caching for hero videos (immediate preload) and direct CDN streaming for gallery videos. Persistent video element system for instant gallery video startup. Comprehensive persistent caching for GA4 endpoints with auto-cleanup, 24-hour retention, and admin bypass.
