@@ -789,9 +789,9 @@ export class HybridStorage implements HybridStorageInterface {
     };
     
     // Add to JSON file for backup/fallback
-    const items = this.loadJsonFile('gallery-items.json');
+    const items = this.loadJsonFile('gallery.json');
     items.push(newItem);
-    this.saveJsonFile('gallery-items.json', items);
+    this.saveJsonFile('gallery.json', items);
     
     console.log(`🎯 HYBRID STORAGE SUCCESS: Created gallery item "${item.title_en}" with ID ${newItemId}`);
     return newItem;
@@ -868,7 +868,7 @@ export class HybridStorage implements HybridStorageInterface {
     }
 
     // Update JSON file as backup/fallback
-    const items = this.loadJsonFile('gallery-items.json');
+    const items = this.loadJsonFile('gallery.json');
     
     const itemIndex = items.findIndex((item: any) => {
       return item.id.toString() === itemId.toString();
@@ -932,11 +932,11 @@ export class HybridStorage implements HybridStorageInterface {
     // 🚨 CRITICAL CACHE SYNC: Always update JSON, but handle differently based on database success
     if (!dbUpdateSuccessful) {
       console.log('⚠️ Database failed, updating JSON as primary storage');
-      this.saveJsonFile('gallery-items.json', items);
+      this.saveJsonFile('gallery.json', items);
       console.log(`✅ JSON FALLBACK SUCCESS: Updated gallery item "${updatedItem.title_en || 'Unknown'}" with ID ${itemId}`);
     } else {
       console.log('✅ Database update successful, updating JSON as backup');
-      this.saveJsonFile('gallery-items.json', items);
+      this.saveJsonFile('gallery.json', items);
     }
     
     // CRITICAL: Return database result if successful for consistency across environments
@@ -1021,7 +1021,7 @@ export class HybridStorage implements HybridStorageInterface {
     
     // Update JSON file as backup/fallback
     try {
-      const items = this.loadJsonFile('gallery-items.json');
+      const items = this.loadJsonFile('gallery.json');
       const itemIndex = items.findIndex((item: any) => item.id.toString() === itemId.toString());
       
       if (itemIndex !== -1) {
@@ -1031,7 +1031,7 @@ export class HybridStorage implements HybridStorageInterface {
         item.order_index = newOrder;
         item.updated_at = new Date().toISOString();
         
-        this.saveJsonFile('gallery-items.json', items);
+        this.saveJsonFile('gallery.json', items);
         console.log(`✅ JSON UPDATE SUCCESS: ${item.title_en} now at position ${newOrder}`);
         
         // Return updated item (prefer database result if available)
@@ -1106,7 +1106,7 @@ export class HybridStorage implements HybridStorageInterface {
     // Update JSON file as backup/fallback - BUT only if database failed
     let jsonSwapSuccessful = false;
     try {
-      const items = this.loadJsonFile('gallery-items.json');
+      const items = this.loadJsonFile('gallery.json');
       const item1Index = items.findIndex((item: any) => item.id.toString() === itemId1.toString());
       const item2Index = items.findIndex((item: any) => item.id.toString() === itemId2.toString());
       
@@ -1137,7 +1137,7 @@ export class HybridStorage implements HybridStorageInterface {
       item1.updated_at = now;
       item2.updated_at = now;
       
-      this.saveJsonFile('gallery-items.json', items);
+      this.saveJsonFile('gallery.json', items);
       jsonSwapSuccessful = true;
       
       console.log(`✅ HYBRID SWAP COMPLETE: ${item1.title_en} now at ${order2}, ${item2.title_en} now at ${order1}`);
@@ -1155,7 +1155,7 @@ export class HybridStorage implements HybridStorageInterface {
   }
 
   async deleteGalleryItem(itemId: string | number): Promise<any> {
-    const items = this.loadJsonFile('gallery-items.json');
+    const items = this.loadJsonFile('gallery.json');
     const itemIndex = items.findIndex((item: any) => item.id.toString() === itemId.toString());
     
     if (itemIndex === -1) {
@@ -1168,7 +1168,7 @@ export class HybridStorage implements HybridStorageInterface {
     await this.cleanupVideoFiles(deletedItem, 'gallery');
     
     items.splice(itemIndex, 1);
-    this.saveJsonFile('gallery-items.json', items);
+    this.saveJsonFile('gallery.json', items);
     
     return deletedItem;
   }
