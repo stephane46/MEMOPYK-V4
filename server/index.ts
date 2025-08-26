@@ -73,10 +73,10 @@ app.use((req, res, next) => {
     "default-src 'self'; " +
     "script-src 'self' 'unsafe-inline' https://www.googletagmanager.com https://replit.com; " +
     "connect-src 'self' https://*.google-analytics.com https://analytics.google.com https://stats.g.doubleclick.net wss: ws:; " +
-    "img-src 'self' data: https://*.google-analytics.com https://www.googletagmanager.com https://supabase.memopyk.org https://cdn.jsdelivr.net https://flagcdn.com; " +
+    "img-src 'self' data: https://*.google-analytics.com https://www.googletagmanager.com https://supabase.memopyk.org http://supabase.memopyk.org:8001 https://cdn.jsdelivr.net https://flagcdn.com; " +
     "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; " +
     "font-src 'self' https://fonts.gstatic.com; " +
-    "media-src 'self' https://supabase.memopyk.org;"
+    "media-src 'self' https://supabase.memopyk.org http://supabase.memopyk.org:8001;"
   );
   next();
 });

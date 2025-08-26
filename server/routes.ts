@@ -344,6 +344,19 @@ export async function registerRoutes(app: Express): Promise<void> {
     }
   });
 
+  // Admin Gallery endpoint - for admin interface with cache bypass
+  app.get("/api/admin/gallery", async (req, res) => {
+    try {
+      // Always bypass cache for admin to get fresh data
+      const items = await hybridStorage.getGalleryItems();
+      console.log(`🔄 Admin gallery data fetched directly (bypassing cache)`);
+      res.json(items);
+    } catch (error) {
+      console.error('Admin gallery fetch error:', error);
+      res.status(500).json({ error: "Failed to get admin gallery items" });
+    }
+  });
+
   app.patch("/api/gallery/:id", async (req, res) => {
     try {
       const itemId = req.params.id;
