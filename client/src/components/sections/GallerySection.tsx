@@ -673,20 +673,22 @@ export default function GallerySection() {
           />
         ) : (
           <>
-          {/* Text before first 3 videos */}
+          {/* Text before first 3 videos - Slide in from left */}
           <div className="text-center mb-8 sm:mb-12">
-            <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-900 dark:text-white mb-4">
-              {language === 'fr-FR' 
-                ? "Des histoires assez simples, petites collections de moments spéciaux..."
-                : "From fairly simple stories, little collections of special moments..."
-              }
-            </h2>
-            <p className="text-lg sm:text-xl text-gray-600 dark:text-gray-400 max-w-3xl mx-auto leading-relaxed">
-              {language === 'fr-FR' 
-                ? "Un voyage de week-end, un assortiment mensuel."
-                : "A weekend trip, a monthly assortment."
-              }
-            </p>
+            <div className="animate-[slideInLeft_1s_ease-out_forwards] opacity-0 translate-x-[-50px]">
+              <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-900 dark:text-white mb-4">
+                {language === 'fr-FR' 
+                  ? "Des histoires assez simples, petites collections de moments spéciaux..."
+                  : "From fairly simple stories, little collections of special moments..."
+                }
+              </h2>
+              <p className="text-lg sm:text-xl text-gray-600 dark:text-gray-400 max-w-3xl mx-auto leading-relaxed">
+                {language === 'fr-FR' 
+                  ? "Un voyage de week-end, un assortiment mensuel."
+                  : "A weekend trip, a monthly assortment."
+                }
+              </p>
+            </div>
           </div>
 
           {/* First 3 videos grid */}
@@ -883,20 +885,22 @@ export default function GallerySection() {
           })}
           </div>
 
-          {/* Text before last 3 videos */}
+          {/* Text before last 3 videos - Slide in from right with delay */}
           <div className="text-center mb-8 sm:mb-12">
-            <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-900 dark:text-white mb-4">
-              {language === 'fr-FR' 
-                ? "...à un film majeur, grands thèmes - Recommandé"
-                : "...to a major film, big themes - Recommended"
-              }
-            </h2>
-            <p className="text-lg sm:text-xl text-gray-600 dark:text-gray-400 max-w-3xl mx-auto leading-relaxed">
-              {language === 'fr-FR' 
-                ? 'Grand "photos dump" d\'un long voyage, événements/étapes importantes, un cadeau spécial à quelqu\'un de spécial.'
-                : 'Large "photos dump" of a long voyage, important events/milestones, a special gift to a special someone.'
-              }
-            </p>
+            <div className="animate-[slideInRight_1s_ease-out_1.5s_forwards] opacity-0 translate-x-[50px]">
+              <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-900 dark:text-white mb-4">
+                {language === 'fr-FR' 
+                  ? "...à un film majeur, grands thèmes - Recommandé"
+                  : "...to a major film, big themes - Recommended"
+                }
+              </h2>
+              <p className="text-lg sm:text-xl text-gray-600 dark:text-gray-400 max-w-3xl mx-auto leading-relaxed">
+                {language === 'fr-FR' 
+                  ? 'Grand "photos dump" d\'un long voyage, événements/étapes importantes, un cadeau spécial à quelqu\'un de spécial.'
+                  : 'Large "photos dump" of a long voyage, important events/milestones, a special gift to a special someone.'
+                }
+              </p>
+            </div>
           </div>
 
           {/* Last 3 videos grid */}

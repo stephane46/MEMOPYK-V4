@@ -72,6 +72,29 @@ img, video, iframe, canvas, svg {
   font-family: 'Poppins', sans-serif;
 }
 
+/* Gallery Section Slide-in Animations */
+@keyframes slideInLeft {
+  0% {
+    opacity: 0;
+    transform: translateX(-50px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes slideInRight {
+  0% {
+    opacity: 0;
+    transform: translateX(50px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
 
 /* SEO Management Admin Styles - Force active states with !important */
 .seo-language-btn-active {
