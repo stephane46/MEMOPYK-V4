@@ -105,7 +105,7 @@ export function WhyMemopykSection() {
                     </div>
 
                     {/* Title */}
-                    <div className="mb-4 sm:mb-6 flex-shrink-0">
+                    <div className="mb-2 sm:mb-3 flex-shrink-0">
                       <h3 className="text-lg sm:text-xl lg:text-2xl font-bold text-memopyk-navy text-center">
                         {language === 'fr-FR' ? benefit.titleFr : benefit.titleEn}
                       </h3>
@@ -160,7 +160,7 @@ export function WhyMemopykSection() {
                     </div>
 
                     {/* Title */}
-                    <div className="mb-4 sm:mb-6 flex-shrink-0">
+                    <div className="mb-2 sm:mb-3 flex-shrink-0">
                       <h3 className="text-lg sm:text-xl lg:text-2xl font-bold text-memopyk-navy text-center">
                         {language === 'fr-FR' ? benefit.titleFr : benefit.titleEn}
                       </h3>
@@ -203,7 +203,7 @@ export function WhyMemopykSection() {
                     </div>
 
                     {/* Title */}
-                    <div className="mb-4 sm:mb-6 flex-shrink-0">
+                    <div className="mb-2 sm:mb-3 flex-shrink-0">
                       <h3 className="text-lg sm:text-xl lg:text-2xl font-bold text-memopyk-navy text-center">
                         {language === 'fr-FR' ? benefit.titleFr : benefit.titleEn}
                       </h3>
@@ -242,7 +242,7 @@ export function WhyMemopykSection() {
                     </div>
 
                     {/* Title */}
-                    <div className="mb-4 sm:mb-6 flex-shrink-0">
+                    <div className="mb-2 sm:mb-3 flex-shrink-0">
                       <h3 className="text-lg sm:text-xl lg:text-2xl font-bold text-memopyk-navy text-center">
                         {language === 'fr-FR' ? benefit.titleFr : benefit.titleEn}
                       </h3>
@@ -280,7 +280,7 @@ export function WhyMemopykSection() {
                     </div>
 
                     {/* Title */}
-                    <div className="mb-4 sm:mb-6 flex-shrink-0">
+                    <div className="mb-2 sm:mb-3 flex-shrink-0">
                       <h3 className="text-lg sm:text-xl lg:text-2xl font-bold text-memopyk-navy text-center">
                         {language === 'fr-FR' ? benefit.titleFr : benefit.titleEn}
                       </h3>
