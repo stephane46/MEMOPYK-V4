@@ -2502,13 +2502,18 @@ export default function GalleryManagementNew() {
                   // AGGRESSIVE CACHE REFRESH - Force admin preview to show cropped image
                   console.log('🔄 STARTING AGGRESSIVE CACHE REFRESH...');
                   
-                  // Immediate cache invalidation
-                  queryClient.invalidateQueries({ queryKey: ['/api/gallery'] });
+                  // SEQUENTIAL: First invalidate cache, then update refresh key
+                  console.log('🔄 STEP 1: Invalidating gallery cache...');
+                  await queryClient.invalidateQueries({ queryKey: ['/api/gallery'] });
                   
-                  // Force refresh key update (used in cache busting)
+                  // STEP 2: Wait for refetch to complete, then update refresh key
+                  console.log('🔄 STEP 2: Waiting for refetch to complete...');
+                  await queryClient.refetchQueries({ queryKey: ['/api/gallery'] });
+                  
+                  // STEP 3: Now update refresh key with fresh data
                   const newRefreshKey = Date.now();
                   setForceRefreshKey(newRefreshKey);
-                  console.log('🔄 Updated forceRefreshKey to:', newRefreshKey);
+                  console.log('🔄 STEP 3: Updated forceRefreshKey to:', newRefreshKey);
                   
                   // Dispatch global gallery update event
                   window.dispatchEvent(new CustomEvent('gallery-updated'));
