@@ -89,25 +89,33 @@ export default function GallerySection() {
     return () => window.removeEventListener('resize', checkMobile);
   }, []);
   
-  // 🎬 Scroll-triggered animations - Using Key Visual pattern that works
+  // 🎬 Animation observer - simple and direct
   useEffect(() => {
     const observer = new IntersectionObserver(
-      ([entry]) => {
-        console.log(`🎬 Gallery animation observer: intersecting = ${entry.isIntersecting}`);
-        if (entry.isIntersecting) {
-          console.log('🎬 → Gallery animation triggered!');
-          setIsAnimated(true);
-        }
+      (entries) => {
+        entries.forEach((entry) => {
+          console.log(`🎬 Animation trigger: ${entry.isIntersecting}`);
+          if (entry.isIntersecting) {
+            console.log('🎬 ✓ ANIMATION START');
+            setIsAnimated(true);
+          }
+        });
       },
-      { threshold: 0.3 } // Same as Key Visual
+      { threshold: 0.1, rootMargin: '0px' }
     );
 
-    if (animatedSectionRef.current) {
-      console.log('🎬 Starting to observe gallery animation element');
-      observer.observe(animatedSectionRef.current);
+    const currentRef = animatedSectionRef.current;
+    if (currentRef) {
+      console.log('🎬 Observer attached to element');
+      observer.observe(currentRef);
     }
 
-    return () => observer.disconnect();
+    return () => {
+      if (currentRef) {
+        observer.unobserve(currentRef);
+      }
+      observer.disconnect();
+    };
   }, []);
 
   // 🚨 CACHE SYNCHRONIZATION FIX v1.0.111 - Browser storage cache busting
@@ -669,21 +677,7 @@ export default function GallerySection() {
           </p>
         </div>
 
-        {/* Animated Text - Slide in from left */}
-        <div className="text-center mb-8 sm:mb-12" ref={animatedSectionRef}>
-          <div className={`transition-all duration-1000 ease-out ${
-            isAnimated 
-              ? 'opacity-100 transform translate-x-0' 
-              : 'opacity-0 transform -translate-x-12'
-          }`}>
-            <h3 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-memopyk-orange">
-              {language === 'fr-FR' 
-                ? "...au grands formats que mérite un grand thème"
-                : "...to long formats that a major theme deserves"
-              }
-            </h3>
-          </div>
-        </div>
+        {/* Remove animated text from here - will be placed between video grids */}
 
         {/* Gallery Grid */}
         {(() => {
@@ -914,7 +908,21 @@ export default function GallerySection() {
           })}
           </div>
 
-          {/* Second Animated Text - This should be removed as we already have it above */}
+          {/* Animated Text - Slide in from left - BETWEEN video grids */}
+          <div className="text-center mb-8 sm:mb-12" ref={animatedSectionRef}>
+            <div className={`transition-all duration-1000 ease-out ${
+              isAnimated 
+                ? 'opacity-100 transform translate-x-0' 
+                : 'opacity-0 transform -translate-x-12'
+            }`}>
+              <h3 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-memopyk-orange">
+                {language === 'fr-FR' 
+                  ? "...au grands formats que méritent un grand thème"
+                  : "...to long formats that a major theme deserves"
+                }
+              </h3>
+            </div>
+          </div>
 
           {/* Last 3 videos grid */}
           <div 
