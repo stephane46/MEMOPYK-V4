@@ -705,7 +705,7 @@ export default function GallerySection() {
                 ? 'opacity-100 transform translate-x-0' 
                 : 'opacity-0 transform -translate-x-12'
             }`}>
-              <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-memopyk-dark-blue mx-auto leading-relaxed">
+              <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-memopyk-orange mx-auto leading-relaxed">
                 {language === 'fr-FR' 
                   ? "De petits et moyens formats pour des moments spéciaux du quotidien..."
                   : "From short and medium formats, for collections of special moments..."
@@ -953,7 +953,7 @@ export default function GallerySection() {
                 ? 'opacity-100 transform translate-x-0' 
                 : 'opacity-0 transform translate-x-12'
             }`}>
-              <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-memopyk-dark-blue mx-auto leading-relaxed">
+              <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-memopyk-orange mx-auto leading-relaxed">
                 {language === 'fr-FR' 
                   ? "...aux grands formats qui méritent un grand thème"
                   : "...to long formats that are suitable for major themes"
