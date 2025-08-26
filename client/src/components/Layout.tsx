@@ -479,28 +479,28 @@ export function Layout({ children }: LayoutProps) {
               </ul>
             </div>
             
-            <div>
-              <h4 className="font-semibold mb-4">Contact</h4>
+            <div className="group">
+              <h4 className="font-semibold mb-4 cursor-pointer transition-all duration-300 ease-in-out transform group-hover:translate-x-1 group-hover:text-memopyk-orange">Contact</h4>
               <ul className="space-y-3 text-gray-400">
-                <li className="group">
+                <li>
                   <a 
                     id="footer-email"
                     href="mailto:contact@memopyk.com"
-                    className="flex items-center gap-3 hover:text-white transition-all duration-300 ease-in-out transform hover:translate-x-1 cursor-pointer p-2 -m-2 rounded-lg"
+                    className="flex items-center gap-3 hover:text-white transition-colors cursor-pointer p-2 -m-2 rounded-lg"
                   >
-                    <Mail className="w-4 h-4 group-hover:text-memopyk-orange transition-colors duration-300" />
-                    <span id="footer-email-text" className="group-hover:underline">contact@memopyk.com</span>
+                    <Mail className="w-4 h-4" />
+                    <span id="footer-email-text">contact@memopyk.com</span>
                   </a>
                 </li>
-                <li className="group">
+                <li>
                   <a 
                     href="https://wa.me/33745843821"
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="flex items-center gap-3 hover:text-white transition-all duration-300 ease-in-out transform hover:translate-x-1 cursor-pointer p-2 -m-2 rounded-lg"
+                    className="flex items-center gap-3 hover:text-white transition-colors cursor-pointer p-2 -m-2 rounded-lg"
                   >
-                    <FaWhatsapp className="w-4 h-4 group-hover:text-green-500 transition-colors duration-300" />
-                    <span className="group-hover:underline">(+33) 07 45 84 38 21</span>
+                    <FaWhatsapp className="w-4 h-4" />
+                    <span>(+33) 07 45 84 38 21</span>
                   </a>
                 </li>
               </ul>
