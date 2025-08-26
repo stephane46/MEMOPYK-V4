@@ -64,6 +64,14 @@ export default function GallerySection() {
   const networkStatus = useNetworkStatus();
   const { orientation } = useDeviceOrientation();
   
+  // Animation state for scroll-triggered animations
+  const [animationStates, setAnimationStates] = useState({
+    firstSection: false,
+    secondSection: false
+  });
+  const firstSectionRef = useRef<HTMLDivElement>(null);
+  const secondSectionRef = useRef<HTMLDivElement>(null);
+  
   // 📊 Initialize video analytics for gallery video tracking
   const { trackVideoView } = useVideoAnalytics();
 
@@ -85,6 +93,49 @@ export default function GallerySection() {
     return () => window.removeEventListener('resize', checkMobile);
   }, []);
   
+  // 🎬 Scroll-triggered animations for gallery text sections
+  useEffect(() => {
+    const observerOptions = {
+      threshold: 0.3, // Trigger when 30% of element is visible
+      rootMargin: '0px 0px -100px 0px' // Trigger a bit earlier
+    };
+
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          const target = entry.target;
+          
+          if (target === firstSectionRef.current) {
+            setAnimationStates(prev => ({ ...prev, firstSection: true }));
+          } else if (target === secondSectionRef.current) {
+            setAnimationStates(prev => ({ ...prev, secondSection: true }));
+          }
+        } else {
+          // Reset animations when out of view so they can trigger again
+          const target = entry.target;
+          
+          if (target === firstSectionRef.current) {
+            setAnimationStates(prev => ({ ...prev, firstSection: false }));
+          } else if (target === secondSectionRef.current) {
+            setAnimationStates(prev => ({ ...prev, secondSection: false }));
+          }
+        }
+      });
+    }, observerOptions);
+
+    // Start observing the text sections
+    if (firstSectionRef.current) {
+      observer.observe(firstSectionRef.current);
+    }
+    if (secondSectionRef.current) {
+      observer.observe(secondSectionRef.current);
+    }
+
+    return () => {
+      observer.disconnect();
+    };
+  }, []);
+
   // 🚨 CACHE SYNCHRONIZATION FIX v1.0.111 - Browser storage cache busting
   useEffect(() => {
     console.log("🚨 CACHE OPTIMIZATION v1.0.113 - Company Presentation Mode");
@@ -674,8 +725,12 @@ export default function GallerySection() {
         ) : (
           <>
           {/* Text before first 3 videos - Slide in from left */}
-          <div className="text-center mb-8 sm:mb-12">
-            <div className="animate-slideInLeft">
+          <div className="text-center mb-8 sm:mb-12" ref={firstSectionRef}>
+            <div className={`transition-all duration-1000 ease-out ${
+              animationStates.firstSection 
+                ? 'opacity-100 transform translate-x-0' 
+                : 'opacity-0 transform -translate-x-12'
+            }`}>
               <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-900 dark:text-white mb-4">
                 {language === 'fr-FR' 
                   ? "Des histoires assez simples, petites collections de moments spéciaux..."
@@ -885,9 +940,13 @@ export default function GallerySection() {
           })}
           </div>
 
-          {/* Text before last 3 videos - Slide in from right with delay */}
-          <div className="text-center mb-8 sm:mb-12">
-            <div className="animate-slideInRight">
+          {/* Text before last 3 videos - Slide in from right */}
+          <div className="text-center mb-8 sm:mb-12" ref={secondSectionRef}>
+            <div className={`transition-all duration-1000 ease-out ${
+              animationStates.secondSection 
+                ? 'opacity-100 transform translate-x-0' 
+                : 'opacity-0 transform translate-x-12'
+            }`}>
               <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-900 dark:text-white mb-4">
                 {language === 'fr-FR' 
                   ? "...à un film majeur, grands thèmes - Recommandé"
