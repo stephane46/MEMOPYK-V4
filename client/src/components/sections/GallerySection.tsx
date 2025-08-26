@@ -955,7 +955,7 @@ export default function GallerySection() {
             }`}>
               <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-memopyk-dark-blue mx-auto leading-relaxed">
                 {language === 'fr-FR' 
-                  ? "...au grands formats que méritent un grand thème"
+                  ? "...aux grands formats qui méritent un grand thème"
                   : "...to long formats that are suitable for major themes"
                 }
               </h2>
