@@ -19054,8 +19054,8 @@
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-25T19:00:30.394Z",
-    "updated_at": "2025-08-25T19:06:38.557Z",
-    "duration": 1124857
+    "updated_at": "2025-08-26T07:52:04.386Z",
+    "duration": 1170782
   },
   {
     "id": "5e6c6e49-22d7-4400-9369-59599479cc74",
@@ -19882,7 +19882,40 @@
     "ip_address": "109.17.150.48",
     "is_test_data": false,
     "created_at": "2025-08-26T07:47:37.968Z",
-    "updated_at": "2025-08-26T07:50:08.449Z",
-    "duration": 1190373
+    "updated_at": "2025-08-26T07:54:08.663Z",
+    "duration": 1190614
+  },
+  {
+    "id": "session_1756194723267_tpkuns5ao",
+    "session_id": "session_1756194723267_sedl4pinm",
+    "country": "Unknown",
+    "region": "Unknown",
+    "city": "Unknown",
+    "language": "fr-FR",
+    "user_agent": "Mozilla/5.0 (iPhone; CPU iPhone OS 18_6_2 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148 Replit-Bonsai/2.147.2 (iOS 18.6.2)",
+    "screen_resolution": "393x852",
+    "page_url": "https://365df2cf-1884-444c-a9e8-235602456363-00-37q39xpqlgvdy.janeway.replit.dev/fr-FR",
+    "referrer": "",
+    "ip_address": "109.17.150.48",
+    "is_test_data": false,
+    "created_at": "2025-08-26T07:52:03.267Z",
+    "updated_at": "2025-08-26T07:52:03.267Z"
+  },
+  {
+    "id": "session_1756194766810_8wijk1lni",
+    "session_id": "session_1756194766810_iiic7j06e",
+    "country": "Unknown",
+    "region": "Unknown",
+    "city": "Unknown",
+    "language": "fr-FR",
+    "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36 Edg/139.0.0.0",
+    "screen_resolution": "2560x1440",
+    "page_url": "https://365df2cf-1884-444c-a9e8-235602456363-00-37q39xpqlgvdy.janeway.replit.dev/fr-FR",
+    "referrer": "https://replit.com/",
+    "ip_address": "109.17.150.48",
+    "is_test_data": false,
+    "created_at": "2025-08-26T07:52:46.810Z",
+    "updated_at": "2025-08-26T07:52:53.929Z",
+    "duration": 773944
   }
 ]
