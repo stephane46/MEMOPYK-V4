@@ -707,8 +707,8 @@ export default function GallerySection() {
             }`}>
               <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-memopyk-orange mx-auto leading-relaxed">
                 {language === 'fr-FR' 
-                  ? "De petits et moyens formats pour des moments spéciaux du quotidien..."
-                  : "From short and medium formats, for collections of special moments..."
+                  ? "De petits et moyens projets pour des moments spéciaux du quotidien…"
+                  : "From small and medium-sized projects for special moments in everyday life..."
                 }
               </h2>
             </div>
@@ -955,8 +955,8 @@ export default function GallerySection() {
             }`}>
               <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-memopyk-orange mx-auto leading-relaxed">
                 {language === 'fr-FR' 
-                  ? "...aux grands formats qui méritent un grand thème"
-                  : "...to long formats that are suitable for major themes"
+                  ? "… aux projets les plus ambitieux"
+                  : "...to the most ambitious projects"
                 }
               </h2>
             </div>

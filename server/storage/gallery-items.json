@@ -87,7 +87,7 @@
     "order_index": 2,
     "is_active": true,
     "created_at": "2025-07-23T22:57:01.117Z",
-    "updated_at": "2025-08-08T07:51:28.374Z",
+    "updated_at": "2025-08-26T18:02:10.483Z",
     "cropSettings": {
       "format": "JPEG",
       "method": "triple-layer-white-bg",
@@ -100,11 +100,11 @@
         "width": 4032,
         "height": 3024
       },
+      "devicePixelRatio": 2.25,
       "outputSize": {
         "width": 4032,
         "height": 2688
-      },
-      "devicePixelRatio": 2.25
+      }
     }
   },
   {
