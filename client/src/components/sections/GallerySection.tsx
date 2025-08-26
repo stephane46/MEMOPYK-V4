@@ -93,65 +93,6 @@ export default function GallerySection() {
     return () => window.removeEventListener('resize', checkMobile);
   }, []);
   
-  // 🎬 Animation observers - WAIT for gallery data to load first!
-  useEffect(() => {
-    // Only set up observers AFTER gallery items are loaded
-    if (galleryItems.length === 0) {
-      console.log('🎬 ⏳ Waiting for gallery data to load before setting up observers...');
-      return;
-    }
-
-    console.log('🎬 ========== SETTING UP OBSERVERS AFTER DATA LOAD ==========');
-    console.log('🎬 Gallery items loaded:', galleryItems.length);
-    console.log('🎬 First text ref exists:', !!firstTextRef.current);
-    console.log('🎬 Second text ref exists:', !!secondTextRef.current);
-    
-    const firstObserver = new IntersectionObserver(
-      ([entry]) => {
-        console.log('🎬 ⬅ FIRST OBSERVER FIRED!', entry.isIntersecting);
-        if (entry.isIntersecting) {
-          console.log('🎬 ⬅ ✅ FIRST TEXT TRIGGERED!');
-          setAnimationStates(prev => ({ ...prev, firstText: true }));
-        }
-      },
-      { threshold: 0.2 }
-    );
-
-    const secondObserver = new IntersectionObserver(
-      ([entry]) => {
-        console.log('🎬 ➡ SECOND OBSERVER FIRED!', entry.isIntersecting);
-        if (entry.isIntersecting) {
-          console.log('🎬 ➡ ✅ SECOND TEXT TRIGGERED!');
-          setAnimationStates(prev => ({ ...prev, secondText: true }));
-        }
-      },
-      { threshold: 0.2 }
-    );
-
-    // Set up observers with timeout to ensure DOM is ready
-    const timer = setTimeout(() => {
-      if (firstTextRef.current) {
-        console.log('🎬 ⬅ First observer attached successfully');
-        firstObserver.observe(firstTextRef.current);
-      } else {
-        console.error('🎬 ⬅ ❌ STILL NO FIRST TEXT ELEMENT!');
-      }
-
-      if (secondTextRef.current) {
-        console.log('🎬 ➡ Second observer attached successfully'); 
-        secondObserver.observe(secondTextRef.current);
-      } else {
-        console.error('🎬 ➡ ❌ STILL NO SECOND TEXT ELEMENT!');
-      }
-    }, 100);
-
-    return () => {
-      clearTimeout(timer);
-      firstObserver.disconnect();
-      secondObserver.disconnect();
-      console.log('🎬 🧹 Observers cleaned up');
-    };
-  }, [galleryItems]); // Trigger when gallery data loads
 
   // 🚨 CACHE SYNCHRONIZATION FIX v1.0.111 - Browser storage cache busting
   useEffect(() => {
@@ -276,6 +217,66 @@ export default function GallerySection() {
       isActive: item.is_active
     }));
   }, [rawData]);
+
+  // 🎬 Animation observers - AFTER galleryItems is defined!
+  useEffect(() => {
+    // Only set up observers AFTER gallery items are loaded
+    if (galleryItems.length === 0) {
+      console.log('🎬 ⏳ Waiting for gallery data to load before setting up observers...');
+      return;
+    }
+
+    console.log('🎬 ========== SETTING UP OBSERVERS AFTER DATA LOAD ==========');
+    console.log('🎬 Gallery items loaded:', galleryItems.length);
+    console.log('🎬 First text ref exists:', !!firstTextRef.current);
+    console.log('🎬 Second text ref exists:', !!secondTextRef.current);
+    
+    const firstObserver = new IntersectionObserver(
+      ([entry]) => {
+        console.log('🎬 ⬅ FIRST OBSERVER FIRED!', entry.isIntersecting);
+        if (entry.isIntersecting) {
+          console.log('🎬 ⬅ ✅ FIRST TEXT TRIGGERED!');
+          setAnimationStates(prev => ({ ...prev, firstText: true }));
+        }
+      },
+      { threshold: 0.2 }
+    );
+
+    const secondObserver = new IntersectionObserver(
+      ([entry]) => {
+        console.log('🎬 ➡ SECOND OBSERVER FIRED!', entry.isIntersecting);
+        if (entry.isIntersecting) {
+          console.log('🎬 ➡ ✅ SECOND TEXT TRIGGERED!');
+          setAnimationStates(prev => ({ ...prev, secondText: true }));
+        }
+      },
+      { threshold: 0.2 }
+    );
+
+    // Set up observers with timeout to ensure DOM is ready
+    const timer = setTimeout(() => {
+      if (firstTextRef.current) {
+        console.log('🎬 ⬅ First observer attached successfully');
+        firstObserver.observe(firstTextRef.current);
+      } else {
+        console.error('🎬 ⬅ ❌ STILL NO FIRST TEXT ELEMENT!');
+      }
+
+      if (secondTextRef.current) {
+        console.log('🎬 ➡ Second observer attached successfully'); 
+        secondObserver.observe(secondTextRef.current);
+      } else {
+        console.error('🎬 ➡ ❌ STILL NO SECOND TEXT ELEMENT!');
+      }
+    }, 100);
+
+    return () => {
+      clearTimeout(timer);
+      firstObserver.disconnect();
+      secondObserver.disconnect();
+      console.log('🎬 🧹 Observers cleaned up');
+    };
+  }, [galleryItems]); // Trigger when gallery data loads
 
   // Add gallery video logging similar to hero videos
   useEffect(() => {
