@@ -33,7 +33,7 @@
     "order_index": 1,
     "is_active": true,
     "created_at": "2025-08-04T04:44:25.590Z",
-    "updated_at": "2025-08-26T17:03:59.216Z",
+    "updated_at": "2025-08-26T17:10:18.565Z",
     "cropSettings": {
       "format": "JPEG",
       "method": "triple-layer-white-bg",

@@ -988,12 +988,13 @@ export default function GalleryManagementNew() {
                           <>
                             <img 
                               src={(() => {
-                                // HYBRID LOGIC: Always show cropped for existing items, formData for new uploads
+                                // SIMPLIFIED LOGIC: Single cache-busting method
                                 if (pendingPreviews.image_url_fr) {
                                   return pendingPreviews.image_url_fr; // Priority 1: Fresh uploads
                                 }
                                 if (selectedItem) {
-                                  return getImageUrlWithCacheBust(getThumbnailUrl(selectedItem, 'fr')); // Priority 2: Cropped thumbnails
+                                  const baseUrl = getThumbnailUrl(selectedItem, 'fr');
+                                  return baseUrl; // Single cache-busting only
                                 }
                                 return formData.image_url_fr; // Priority 3: New items only
                               })()}
@@ -1235,14 +1236,15 @@ export default function GalleryManagementNew() {
                         {(selectedItem || isCreateMode) && (pendingPreviews.image_url_en || selectedItem || formData.image_url_en) ? (
                           <>
                             <img 
-                              key={`en-${selectedItem?.id || 'new'}-${Date.now()}`}
+                              key={`en-${selectedItem?.id || 'new'}`}
                               src={(() => {
-                                // HYBRID LOGIC: Always show cropped for existing items, formData for new uploads
+                                // SIMPLIFIED LOGIC: Single cache-busting method
                                 if (pendingPreviews.image_url_en) {
                                   return pendingPreviews.image_url_en; // Priority 1: Fresh uploads
                                 }
                                 if (selectedItem) {
-                                  return getImageUrlWithCacheBust(getThumbnailUrl(selectedItem, 'en')); // Priority 2: Cropped thumbnails
+                                  const baseUrl = getThumbnailUrl(selectedItem, 'en');
+                                  return baseUrl; // Single cache-busting only
                                 }
                                 return formData.image_url_en; // Priority 3: New items only
                               })()} 
@@ -2511,34 +2513,8 @@ export default function GalleryManagementNew() {
                   // Dispatch global gallery update event
                   window.dispatchEvent(new CustomEvent('gallery-updated'));
                   
-                  // CRITICAL: Force image elements to reload by clearing src and setting again
-                  setTimeout(() => {
-                    console.log('🔄 FORCING IMAGE ELEMENT RELOAD...');
-                    
-                    // Find all admin preview images and force reload
-                    const previewImages = document.querySelectorAll('img[alt*="Aperçu"], img[alt*="Preview"]');
-                    previewImages.forEach((img: any) => {
-                      const originalSrc = img.src;
-                      console.log('🔄 Forcing reload of image:', originalSrc);
-                      img.src = ''; // Clear source
-                      setTimeout(() => {
-                        // Add aggressive cache busting
-                        const cacheBustSrc = originalSrc.includes('?') 
-                          ? `${originalSrc}&force=${newRefreshKey}&reload=${Date.now()}`
-                          : `${originalSrc}?force=${newRefreshKey}&reload=${Date.now()}`;
-                        img.src = cacheBustSrc;
-                        console.log('🔄 Reloaded image with cache busting:', cacheBustSrc);
-                      }, 50);
-                    });
-                    
-                    // Also force selected item refresh
-                    const currentId = selectedItem.id;
-                    setSelectedVideoId(null);
-                    setTimeout(() => {
-                      setSelectedVideoId(currentId);
-                      console.log('✅ FORCED ADMIN PREVIEW REFRESH COMPLETE');
-                    }, 200);
-                  }, 100);
+                  // SIMPLIFIED: Let React handle re-rendering with updated forceRefreshKey
+                  console.log('✅ CACHE REFRESH COMPLETE - Images will update automatically');
                   
                   // Close modal immediately
                   setCropperOpen(false);
