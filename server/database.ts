@@ -8,22 +8,15 @@ export async function testDatabaseConnection(): Promise<boolean> {
   try {
     console.log("Testing Supabase VPS PostgreSQL connection via localhost (post-nginx fix)...");
     
-    if (!process.env.SUPABASE_URL) {
-      console.error("❌ SUPABASE_URL not found in environment");
-      return false;
-    }
-    
-    // Build connection string from Supabase URL  
-    const supabaseUrl = process.env.SUPABASE_URL;
-    const supabaseKey = process.env.SUPABASE_ANON_KEY;
+    const supabaseKey = process.env.SUPABASE_SERVICE_KEY;
     
     if (!supabaseKey) {
-      console.error("❌ SUPABASE_ANON_KEY not found in environment");
+      console.error("❌ SUPABASE_SERVICE_KEY not found in environment");
       return false;
     }
     
     // Use localhost connection with SSL disabled per VPS infrastructure fix
-    const connectionString = `postgresql://postgres:${process.env.SUPABASE_SERVICE_ROLE_KEY || supabaseKey}@127.0.0.1:5432/postgres?sslmode=disable`;
+    const connectionString = `postgresql://postgres:${supabaseKey}@127.0.0.1:5432/postgres?sslmode=disable`;
     
     // Create connection
     const client = postgres(connectionString);

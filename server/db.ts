@@ -12,7 +12,6 @@ if (!process.env.SUPABASE_URL) {
 // ALWAYS build connection string from SUPABASE_URL only - ignore DATABASE_URL completely
 console.log('🔄 Building connection EXCLUSIVELY from SUPABASE_URL...');
 
-const supabaseUrl = process.env.SUPABASE_URL;
 const supabaseKey = process.env.SUPABASE_SERVICE_KEY;
 
 if (!supabaseKey) {
