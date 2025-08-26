@@ -22,10 +22,10 @@ export function WhyMemopykSection() {
       const data = await response.json();
       return data.filter((card: any) => card.isActive).sort((a: any, b: any) => a.orderIndex - b.orderIndex);
     },
-    staleTime: Infinity, // Never consider data stale - this is a company presentation
-    gcTime: Infinity, // Keep cache forever until manual refresh
-    refetchOnMount: false, // Don't refetch on mount - use cached data
-    refetchOnWindowFocus: false, // Never refetch on focus
+    staleTime: 0, // Always consider data stale to fetch fresh from Supabase
+    gcTime: 5 * 60 * 1000, // Keep cache for 5 minutes only
+    refetchOnMount: true, // Refetch on mount (F5) to get fresh data
+    refetchOnWindowFocus: true, // Refetch when window gains focus
     refetchInterval: false, // No automatic polling
     retry: 2, // Retry on failure
   });
