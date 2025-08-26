@@ -562,85 +562,115 @@ export class HybridStorage implements HybridStorageInterface {
     return deletedText;
   }
 
-  // Gallery operations
+  // Gallery operations - DIRECT DATABASE ACCESS ONLY (NO JSON FALLBACK)
   async getGalleryItems(): Promise<any[]> {
-    console.log(`🌍 CROSS-ENVIRONMENT SYNC - getGalleryItems in ${process.env.NODE_ENV || 'development'} environment`);
+    console.log(`🎬 GALLERY: Fetching items directly from Supabase VPS database (no JSON fallback)`);
     
     try {
-      console.log('🔍 ATTEMPTING DATABASE READ for cross-environment sync...');
-      // Try to get data from database first (most up-to-date)
+      // Gallery data comes DIRECTLY from Supabase VPS database
       const { galleryItems } = await import('../shared/schema');
-      console.log('🔍 Schema imported successfully');
       const dbItems = await db.select().from(galleryItems).orderBy(galleryItems.orderIndex);
-      console.log(`🔍 Database query completed, found ${dbItems.length} items`);
+      console.log(`✅ GALLERY: Retrieved ${dbItems.length} items from Supabase VPS database`);
       
-      if (dbItems.length > 0) {
-        console.log(`✅ SUCCESS: Retrieved ${dbItems.length} items from SHARED DATABASE`);
-        console.log(`🌍 This data should be identical in both development and production!`);
-
-        
-        return dbItems.map(item => ({
-          // Convert database fields to expected format
-          id: item.id,
-          title_en: item.titleEn,
-          title_fr: item.titleFr,
-          price_en: item.priceEn,
-          price_fr: item.priceFr,
-          source_en: item.sourceEn,
-          source_fr: item.sourceFr,
-          duration_en: item.durationEn,
-          duration_fr: item.durationFr,
-          situation_en: item.situationEn,
-          situation_fr: item.situationFr,
-          story_en: item.storyEn,
-          story_fr: item.storyFr,
-          sorry_message_en: item.sorryMessageEn,
-          sorry_message_fr: item.sorryMessageFr,
-          format_platform_en: item.formatPlatformEn,
-          format_platform_fr: item.formatPlatformFr,
-          format_type_en: item.formatTypeEn,
-          format_type_fr: item.formatTypeFr,
-          video_url_en: item.videoUrlEn,
-          video_url_fr: item.videoUrlFr,
-          video_filename: item.videoFilename,
-          use_same_video: item.useSameVideo,
-          video_width: item.videoWidth,
-          video_height: item.videoHeight,
-          video_orientation: item.videoOrientation,
-          image_url_en: item.imageUrlEn,
-          image_url_fr: item.imageUrlFr,
-          static_image_url: item.staticImageUrl,
-          static_image_url_en: item.staticImageUrlEn,
-          static_image_url_fr: item.staticImageUrlFr,
-          // Note: alt_text fields not in current database schema - remove if needed
-          // alt_text_en: item.altTextEn,
-          // alt_text_fr: item.altTextFr,
-          order_index: item.orderIndex,
-          is_active: item.isActive, // CRITICAL: This will have the correct database value
-          created_at: item.createdAt,
-          updated_at: item.updatedAt,
-          cropSettings: item.cropSettings
-        }));
-      } else {
-        console.log(`⚠️ DATABASE IS EMPTY - This could explain sync issues!`);
-      }
+      return dbItems.map(item => ({
+        // Convert database fields to expected format
+        id: item.id,
+        title_en: item.titleEn,
+        title_fr: item.titleFr,
+        price_en: item.priceEn,
+        price_fr: item.priceFr,
+        source_en: item.sourceEn,
+        source_fr: item.sourceFr,
+        duration_en: item.durationEn,
+        duration_fr: item.durationFr,
+        situation_en: item.situationEn,
+        situation_fr: item.situationFr,
+        story_en: item.storyEn,
+        story_fr: item.storyFr,
+        sorry_message_en: item.sorryMessageEn,
+        sorry_message_fr: item.sorryMessageFr,
+        format_platform_en: item.formatPlatformEn,
+        format_platform_fr: item.formatPlatformFr,
+        format_type_en: item.formatTypeEn,
+        format_type_fr: item.formatTypeFr,
+        video_url_en: item.videoUrlEn,
+        video_url_fr: item.videoUrlFr,
+        video_filename: item.videoFilename,
+        use_same_video: item.useSameVideo,
+        video_width: item.videoWidth,
+        video_height: item.videoHeight,
+        video_orientation: item.videoOrientation,
+        image_url_en: item.imageUrlEn,
+        image_url_fr: item.imageUrlFr,
+        static_image_url: item.staticImageUrl,
+        static_image_url_en: item.staticImageUrlEn,
+        static_image_url_fr: item.staticImageUrlFr,
+        order_index: item.orderIndex,
+        is_active: item.isActive,
+        created_at: item.createdAt,
+        updated_at: item.updatedAt,
+        cropSettings: item.cropSettings
+      }));
     } catch (error: any) {
-      console.error(`❌ DATABASE CONNECTION FAILED - This prevents cross-environment sync:`);
-      console.error(`❌ Error details:`, error?.message || error);
-      console.error(`❌ If you see this error, database connectivity is broken and changes won't sync between dev/production`);
+      console.error(`❌ GALLERY: Supabase VPS database connection failed:`, error?.message || error);
+      console.error(`❌ GALLERY: Cannot access gallery items without database connection`);
+      throw new Error('Gallery data unavailable - Supabase VPS database connection required');
     }
-
-    // Fallback to JSON file if database is unavailable
-    const data = this.loadJsonFile('gallery-items.json');
-    console.log(`📁 FALLBACK: Retrieved ${data.length} items from LOCAL JSON file`);
-    console.log(`⚠️ USING LOCAL DATA - Changes will NOT sync between environments!`);
-    return data; // Return all items for admin management
   }
 
   async getGalleryItemById(itemId: string | number): Promise<any> {
-    const items = this.loadJsonFile('gallery-items.json');
-    const item = items.find((item: any) => item.id.toString() === itemId.toString());
-    return item;
+    console.log(`🎬 GALLERY: Fetching item ${itemId} directly from Supabase database`);
+    
+    try {
+      const { galleryItems } = await import('../shared/schema');
+      const [dbItem] = await db.select().from(galleryItems).where(eq(galleryItems.id, String(itemId)));
+      
+      if (!dbItem) {
+        return null;
+      }
+      
+      return {
+        id: dbItem.id,
+        title_en: dbItem.titleEn,
+        title_fr: dbItem.titleFr,
+        price_en: dbItem.priceEn,
+        price_fr: dbItem.priceFr,
+        source_en: dbItem.sourceEn,
+        source_fr: dbItem.sourceFr,
+        duration_en: dbItem.durationEn,
+        duration_fr: dbItem.durationFr,
+        situation_en: dbItem.situationEn,
+        situation_fr: dbItem.situationFr,
+        story_en: dbItem.storyEn,
+        story_fr: dbItem.storyFr,
+        sorry_message_en: dbItem.sorryMessageEn,
+        sorry_message_fr: dbItem.sorryMessageFr,
+        format_platform_en: dbItem.formatPlatformEn,
+        format_platform_fr: dbItem.formatPlatformFr,
+        format_type_en: dbItem.formatTypeEn,
+        format_type_fr: dbItem.formatTypeFr,
+        video_url_en: dbItem.videoUrlEn,
+        video_url_fr: dbItem.videoUrlFr,
+        video_filename: dbItem.videoFilename,
+        use_same_video: dbItem.useSameVideo,
+        video_width: dbItem.videoWidth,
+        video_height: dbItem.videoHeight,
+        video_orientation: dbItem.videoOrientation,
+        image_url_en: dbItem.imageUrlEn,
+        image_url_fr: dbItem.imageUrlFr,
+        static_image_url: dbItem.staticImageUrl,
+        static_image_url_en: dbItem.staticImageUrlEn,
+        static_image_url_fr: dbItem.staticImageUrlFr,
+        order_index: dbItem.orderIndex,
+        is_active: dbItem.isActive,
+        created_at: dbItem.createdAt,
+        updated_at: dbItem.updatedAt,
+        cropSettings: dbItem.cropSettings
+      };
+    } catch (error: any) {
+      console.error(`❌ GALLERY: Failed to fetch item ${itemId}:`, error?.message || error);
+      throw new Error('Gallery item unavailable - database connection required');
+    }
   }
 
   async createGalleryItem(item: any): Promise<any> {
