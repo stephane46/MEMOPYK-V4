@@ -20491,8 +20491,8 @@
     "ip_address": "109.17.150.48",
     "is_test_data": false,
     "created_at": "2025-08-26T09:30:22.514Z",
-    "updated_at": "2025-08-26T09:31:23.698Z",
-    "duration": 1196448
+    "updated_at": "2025-08-26T09:35:37.966Z",
+    "duration": 1196703
   },
   {
     "id": "session_1756200673305_vuykwcqkx",
@@ -20508,7 +20508,39 @@
     "ip_address": "109.17.150.48",
     "is_test_data": false,
     "created_at": "2025-08-26T09:31:13.305Z",
-    "updated_at": "2025-08-26T09:31:44.295Z",
-    "duration": 779874
+    "updated_at": "2025-08-26T09:35:24.055Z",
+    "duration": 780094
+  },
+  {
+    "id": "session_1756200961292_u76xw83av",
+    "session_id": "session_1756200961292_kgcpbsbi0",
+    "country": "Unknown",
+    "region": "Unknown",
+    "city": "Unknown",
+    "language": "en-US",
+    "user_agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/118.0.5993.88 Safari/537.36",
+    "screen_resolution": "1280x720",
+    "page_url": "http://127.0.0.1:5000/en-US",
+    "referrer": "",
+    "ip_address": "127.0.0.1",
+    "is_test_data": true,
+    "created_at": "2025-08-26T09:36:01.292Z",
+    "updated_at": "2025-08-26T09:36:01.292Z"
+  },
+  {
+    "id": "session_1756200961792_sk2ysg3t6",
+    "session_id": "session_1756200961792_fo5ihrq61",
+    "country": "Unknown",
+    "region": "Unknown",
+    "city": "Unknown",
+    "language": "fr-FR",
+    "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36 Edg/139.0.0.0",
+    "screen_resolution": "2560x1440",
+    "page_url": "https://365df2cf-1884-444c-a9e8-235602456363-00-37q39xpqlgvdy.janeway.replit.dev/fr-FR",
+    "referrer": "https://365df2cf-1884-444c-a9e8-235602456363-00-37q39xpqlgvdy.janeway.replit.dev/__replco/workspace_iframe.html?initialPath=%2F&id=%3Arcvc%3A",
+    "ip_address": "109.17.150.48",
+    "is_test_data": false,
+    "created_at": "2025-08-26T09:36:01.792Z",
+    "updated_at": "2025-08-26T09:36:01.792Z"
   }
 ]
