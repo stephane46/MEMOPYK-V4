@@ -562,9 +562,9 @@ export class HybridStorage implements HybridStorageInterface {
     return deletedText;
   }
 
-  // Gallery operations - DIRECT DATABASE ACCESS ONLY (NO JSON FALLBACK)
+  // Gallery operations - PRIMARY DATABASE ACCESS WITH EMERGENCY JSON FALLBACK
   async getGalleryItems(): Promise<any[]> {
-    console.log(`🎬 GALLERY: Fetching items directly from Supabase VPS database (no JSON fallback)`);
+    console.log(`🎬 GALLERY: Fetching items directly from Supabase VPS database (emergency JSON fallback available)`);
     
     try {
       // Gallery data comes DIRECTLY from Supabase VPS database
@@ -572,49 +572,73 @@ export class HybridStorage implements HybridStorageInterface {
       const dbItems = await db.select().from(galleryItems).orderBy(galleryItems.orderIndex);
       console.log(`✅ GALLERY: Retrieved ${dbItems.length} items from Supabase VPS database`);
       
-      return dbItems.map(item => ({
-        // Convert database fields to expected format
-        id: item.id,
-        title_en: item.titleEn,
-        title_fr: item.titleFr,
-        price_en: item.priceEn,
-        price_fr: item.priceFr,
-        source_en: item.sourceEn,
-        source_fr: item.sourceFr,
-        duration_en: item.durationEn,
-        duration_fr: item.durationFr,
-        situation_en: item.situationEn,
-        situation_fr: item.situationFr,
-        story_en: item.storyEn,
-        story_fr: item.storyFr,
-        sorry_message_en: item.sorryMessageEn,
-        sorry_message_fr: item.sorryMessageFr,
-        format_platform_en: item.formatPlatformEn,
-        format_platform_fr: item.formatPlatformFr,
-        format_type_en: item.formatTypeEn,
-        format_type_fr: item.formatTypeFr,
-        video_url_en: item.videoUrlEn,
-        video_url_fr: item.videoUrlFr,
-        video_filename: item.videoFilename,
-        use_same_video: item.useSameVideo,
-        video_width: item.videoWidth,
-        video_height: item.videoHeight,
-        video_orientation: item.videoOrientation,
-        image_url_en: item.imageUrlEn,
-        image_url_fr: item.imageUrlFr,
-        static_image_url: item.staticImageUrl,
-        static_image_url_en: item.staticImageUrlEn,
-        static_image_url_fr: item.staticImageUrlFr,
-        order_index: item.orderIndex,
-        is_active: item.isActive,
-        created_at: item.createdAt,
-        updated_at: item.updatedAt,
-        cropSettings: item.cropSettings
-      }));
+      // Sync to JSON backup when database is available
+      if (dbItems.length > 0) {
+        const backupData = dbItems.map(item => ({
+          // Convert database fields to expected format
+          id: item.id,
+          title_en: item.titleEn,
+          title_fr: item.titleFr,
+          price_en: item.priceEn,
+          price_fr: item.priceFr,
+          source_en: item.sourceEn,
+          source_fr: item.sourceFr,
+          duration_en: item.durationEn,
+          duration_fr: item.durationFr,
+          situation_en: item.situationEn,
+          situation_fr: item.situationFr,
+          story_en: item.storyEn,
+          story_fr: item.storyFr,
+          sorry_message_en: item.sorryMessageEn,
+          sorry_message_fr: item.sorryMessageFr,
+          format_platform_en: item.formatPlatformEn,
+          format_platform_fr: item.formatPlatformFr,
+          format_type_en: item.formatTypeEn,
+          format_type_fr: item.formatTypeFr,
+          video_url_en: item.videoUrlEn,
+          video_url_fr: item.videoUrlFr,
+          video_filename: item.videoFilename,
+          use_same_video: item.useSameVideo,
+          video_width: item.videoWidth,
+          video_height: item.videoHeight,
+          video_orientation: item.videoOrientation,
+          image_url_en: item.imageUrlEn,
+          image_url_fr: item.imageUrlFr,
+          static_image_url: item.staticImageUrl,
+          static_image_url_en: item.staticImageUrlEn,
+          static_image_url_fr: item.staticImageUrlFr,
+          order_index: item.orderIndex,
+          is_active: item.isActive,
+          created_at: item.createdAt,
+          updated_at: item.updatedAt,
+          cropSettings: item.cropSettings
+        }));
+        
+        // Save to JSON backup for emergency fallback
+        try {
+          this.saveJsonFile('gallery.json', backupData);
+          console.log(`💾 GALLERY: Synced ${backupData.length} items to JSON backup`);
+        } catch (syncError) {
+          console.warn(`⚠️ GALLERY: Failed to sync JSON backup:`, syncError);
+        }
+        
+        return backupData;
+      }
+      
+      return [];
     } catch (error: any) {
       console.error(`❌ GALLERY: Supabase VPS database connection failed:`, error?.message || error);
-      console.error(`❌ GALLERY: Cannot access gallery items without database connection`);
-      throw new Error('Gallery data unavailable - Supabase VPS database connection required');
+      console.warn(`🚨 GALLERY: EMERGENCY - Using JSON fallback due to database connection failure`);
+      
+      // EMERGENCY FALLBACK: Use JSON backup
+      try {
+        const fallbackItems = this.loadJsonFile('gallery.json');
+        console.log(`🚨 GALLERY EMERGENCY FALLBACK: Retrieved ${fallbackItems.length} items from JSON backup`);
+        return fallbackItems.filter((item: any) => item.is_active === true);
+      } catch (fallbackError) {
+        console.error(`❌ GALLERY EMERGENCY FALLBACK FAILED:`, fallbackError);
+        return [];
+      }
     }
   }
 
