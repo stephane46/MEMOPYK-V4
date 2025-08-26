@@ -672,11 +672,23 @@ export default function GallerySection() {
             flippedCards={flippedCards}
           />
         ) : (
+          <>
+          {/* Text before first 3 videos */}
+          <div className="text-center mb-8 sm:mb-12">
+            <p className="text-lg sm:text-xl text-gray-700 dark:text-gray-300 max-w-3xl mx-auto leading-relaxed">
+              {language === 'fr-FR' 
+                ? "Des histoires assez simples, petites collections de moments spéciaux...\nUn voyage de week-end, un assortiment mensuel."
+                : "From fairly simple stories, little collections of special moments...\nA weekend trip, a monthly assortment."
+              }
+            </p>
+          </div>
+
+          {/* First 3 videos grid */}
           <div 
             className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 lg:gap-8 mb-8 sm:mb-12"
           >
           {/* 🚨 CRITICAL FIX: Ensure galleryItems is always an array before calling .map() */}
-          {(Array.isArray(galleryItems) ? galleryItems : []).map((item, index) => {
+          {(Array.isArray(galleryItems) ? galleryItems : []).slice(0, 3).map((item, index) => {
             const imageUrl = getImageUrl(item);
             const thumbnailUrl = imageUrl;
 
@@ -864,6 +876,217 @@ export default function GallerySection() {
             );
           })}
           </div>
+
+          {/* Text before last 3 videos */}
+          <div className="text-center mb-8 sm:mb-12">
+            <p className="text-lg sm:text-xl text-gray-700 dark:text-gray-300 max-w-3xl mx-auto leading-relaxed whitespace-pre-line">
+              {language === 'fr-FR' 
+                ? <>...à un film majeur, grands thèmes - <strong>Recommandé</strong>{'\n'}Grand "photos dump" d'un long voyage, événements/étapes importantes, un cadeau spécial à quelqu'un de spécial.</>
+                : <>...to a major film, big themes - <strong>Recommended</strong>{'\n'}Large "photos dump" of a long voyage, important events/milestones, a special gift to a special someone.</>
+              }
+            </p>
+          </div>
+
+          {/* Last 3 videos grid */}
+          <div 
+            className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 lg:gap-8 mb-8 sm:mb-12"
+          >
+          {/* Last 3 videos */}
+          {(Array.isArray(galleryItems) ? galleryItems : []).slice(3, 6).map((item, index) => {
+            const actualIndex = index + 3; // Adjust index for proper video handling
+            const imageUrl = getImageUrl(item);
+            const thumbnailUrl = imageUrl;
+
+            const itemHasVideo = hasVideo(item, actualIndex);
+            
+            // CRITICAL FIX: Cards with videos should NEVER be flipped by default
+            // Only flip if explicitly flipped AND has no video
+            const isFlipped = flippedCards.has(item.id) && !itemHasVideo;
+            
+            return (
+              <div 
+                key={item.id} 
+                data-video-id={item.id}
+                data-card-id={item.id}
+                data-gallery-card
+                className={`card-flip-container ${isFlipped ? 'flipped' : ''} rounded-2xl`}
+              >
+                <div className="card-flip-inner">
+                  {/* FRONT SIDE - Normal Gallery Card */}
+                  <div className="card-front bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 shadow-lg hover:shadow-2xl rounded-2xl overflow-hidden">
+                    {/* Image/Video with Overlays - Always 3:2 aspect ratio */}
+                    <div className="aspect-[3/2] bg-gray-100 dark:bg-gray-700 relative overflow-hidden rounded-t-2xl">
+                      {thumbnailUrl ? (
+                        /* Static Image - Default display */
+                        <div className="w-full h-full relative">
+                          {/* Main Image */}
+                          <img
+                            src={thumbnailUrl}
+                            alt={getItemTitle(item)}
+                            className="w-full h-full object-cover"
+                            onLoad={() => console.log(`🖼️ Image loaded: ${thumbnailUrl}`)}
+                            onError={() => console.log(`❌ Image failed to load: ${thumbnailUrl}`)}
+                            loading="eager"
+                          />
+                          
+                          {/* Top overlays - Mobile Responsive */}
+                          <div className="absolute top-2 sm:top-4 left-2 sm:left-4 right-2 sm:right-4 flex justify-between items-center gap-2">
+                            {/* Source Overlay (1) - Mobile Optimized */}
+                            {getItemSource(item) && (
+                              <div className="bg-black/70 text-white px-3 sm:px-3 py-1 sm:py-2 rounded-full text-xs sm:text-sm backdrop-blur-sm max-w-[180px] sm:max-w-none flex flex-col items-center justify-center min-h-[32px] sm:min-h-[36px]">
+                                <div className="font-medium leading-tight whitespace-nowrap">{getItemSource(item)}</div>
+                                <div className="text-xs text-gray-300 hidden sm:block">
+                                  {language === 'fr-FR' ? 'fournies par Client' : 'provided by Client'}
+                                </div>
+                              </div>
+                            )}
+
+                          </div>
+
+                          {/* Price Tag - Bottom Right (3) - Mobile Optimized */}
+                          {getItemPrice(item) && (
+                            <div className="price-badge-orange absolute bottom-2 sm:bottom-4 right-2 sm:right-4 text-white px-2 sm:px-4 py-1 sm:py-2 rounded-full text-xs sm:text-sm font-bold shadow-lg">
+                              {getItemPrice(item)}
+                            </div>
+                          )}
+                          
+                          {/* Desktop Play Button - Orange for Video, White for No Video */}
+                          <div className="absolute inset-0 flex items-center justify-center pointer-events-none" style={{zIndex: 999999}}>
+                            {/* Dynamic Play Button Based on Video Availability - Reduced diameter by 1/3 */}
+                            <div 
+                              className={`w-14 h-14 sm:w-16 sm:h-16 rounded-full flex items-center justify-center transition-all duration-300 hover:scale-110 cursor-pointer pointer-events-auto ${itemHasVideo && !isMobile ? 'animate-pulse-orange' : ''}`}
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                handlePlayClick(item, e, actualIndex);
+                              }}
+                              style={itemHasVideo ? {
+                                // Orange for items WITH video - pulse only on desktop
+                                background: 'linear-gradient(135deg, rgba(214, 124, 74, 0.95) 0%, rgba(214, 124, 74, 0.85) 50%, rgba(184, 90, 47, 0.95) 100%)',
+                                boxShadow: '0 4px 12px rgba(214, 124, 74, 0.4), inset 0 1px 2px rgba(255, 255, 255, 0.3)',
+                                border: '1px solid rgba(255, 255, 255, 0.3)',
+                                backdropFilter: 'blur(2px)'
+                              } : {
+                                // White for items WITHOUT video
+                                background: 'linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.85) 100%)',
+                                boxShadow: '0 4px 12px rgba(0, 0, 0, 0.2), inset 0 1px 2px rgba(255, 255, 255, 0.8)',
+                                border: '1px solid rgba(0, 0, 0, 0.1)',
+                                backdropFilter: 'blur(2px)'
+                              }}
+                            >
+                              {/* Play Triangle SVG - White for Orange Button, Dark for White Button */}
+                              <svg 
+                                width="32" 
+                                height="32" 
+                                viewBox="0 0 24 24" 
+                                fill={itemHasVideo ? 'white' : '#2A4759'}
+                                className="ml-0.5"
+                              >
+                                <path d="M8 5v14l11-7z"/>
+                              </svg>
+                            </div>
+                          </div>
+                        </div>
+                      ) : (
+                        <div className="w-full h-full flex items-center justify-center text-gray-400">
+                          No image available
+                        </div>
+                      )}
+                    </div>
+
+                    {/* Card Content - Mobile Optimized with balanced spacing */}
+                    <div className="pt-1 pb-3 sm:pb-4 lg:pb-6">
+                      {/* Title and Social Media Badge Row - Same line with responsive spacing */}
+                      <div className="mb-1 sm:mb-1">
+                        <div className="px-3 sm:px-4 lg:px-6 flex justify-between items-start gap-2">
+                          <h3 className="text-lg sm:text-xl font-bold text-gray-900 dark:text-white h-6 sm:h-8 overflow-hidden leading-6 sm:leading-8 flex-1">
+                            {getItemTitle(item)}
+                          </h3>
+                        </div>
+                        
+                        {/* Social Media Badge positioned with overlay spacing */}
+                        <div className="absolute right-2 sm:right-4 -mt-6 sm:-mt-8">
+                          {/* Social Media Badge - Positioned to match price badge overlay spacing */}
+                          {(() => {
+                            const format = getViewingFormat(item);
+                            const IconComponent = format.icon;
+                            // Standardized labels
+                            const standardPlatform = language === 'fr-FR' ? 'Format Recommandé' : 'Recommended Format';
+                            return (
+                              <div className="bg-gray-500 text-white px-2 py-1 rounded-full text-xs font-medium flex items-center gap-1 shadow-sm flex-shrink-0 h-6 sm:h-8">
+                                <IconComponent className="w-2.5 h-2.5 flex-shrink-0" />
+                                <div className="min-w-0 flex flex-col justify-center items-center text-center">
+                                  <div className="opacity-60 leading-tight truncate" style={{ fontSize: '8px' }}>{standardPlatform}</div>
+                                  <div className="font-semibold leading-tight truncate" style={{ fontSize: '10px' }}>{format.type}</div>
+                                </div>
+                              </div>
+                            );
+                          })()}
+                        </div>
+                      </div>
+                          
+                      {/* Duration (5) - Mobile Optimized with content padding */}
+                      <div className="px-3 sm:px-4 lg:px-6 mb-2 sm:mb-3 h-5 sm:h-6 overflow-hidden flex items-center">
+                        <Clock className="w-3 h-3 sm:w-4 sm:h-4 flex-shrink-0" style={{ color: '#D67C4A' }} />
+                        <div className="text-xs sm:text-sm leading-4 ml-1 sm:ml-2" style={{ color: '#4B5563' }}>
+                          {getItemDuration(item) || <div className="h-4"></div>}
+                        </div>
+                      </div>
+                      
+                      {/* Story (6) - Mobile Optimized with content padding - 5 lines for mobile */}
+                      <div className="px-3 sm:px-4 lg:px-6 mb-2 sm:mb-3 min-h-20 sm:min-h-20">
+                        <div className="flex items-start gap-1 sm:gap-2">
+                          <Film className="w-3 h-3 sm:w-4 sm:h-4 flex-shrink-0" style={{ color: '#D67C4A' }} />
+                          <div className="text-xs sm:text-sm leading-4" style={{ color: '#4B5563' }}>
+                            {getItemStory(item) || <div className="h-4"></div>}
+                          </div>
+                        </div>
+                      </div>
+                      
+                      {/* Situation (7) - Mobile Optimized with content padding - 5 lines for mobile */}
+                      <div className="px-3 sm:px-4 lg:px-6 min-h-20 sm:min-h-20">
+                        <div className="flex items-start gap-1 sm:gap-2">
+                          <Users className="w-3 h-3 sm:w-4 sm:h-4 flex-shrink-0" style={{ color: '#D67C4A' }} />
+                          <div className="text-xs sm:text-sm leading-4" style={{ color: '#4B5563' }}>
+                            {getItemSituation(item) || <div className="h-4"></div>}
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* BACK SIDE - Sorry Message */}
+                  <div className="card-back">
+                    <div className="text-center text-white">
+                      <div className="text-2xl font-bold mb-4">
+                        {language === 'fr-FR' ? 'Vidéo Non Disponible' : 'Video Not Available'}
+                      </div>
+                      <div className="text-lg">
+                        {getItemSorryMessage(item)}
+                      </div>
+                      <button
+                        onClick={(e) => handlePlayClick(item, e, actualIndex)}
+                        className="mt-6 bg-white text-gray-800 px-6 py-2 rounded-lg hover:bg-gray-100 transition-colors"
+                      >
+                        {language === 'fr-FR' ? 'Retour' : 'Back'}
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            );
+          })}
+          </div>
+
+          {/* Footnote under last 3 videos */}
+          <div className="text-center mb-8 sm:mb-12">
+            <p className="text-sm text-gray-500 dark:text-gray-400">
+              {language === 'fr-FR' 
+                ? "*Tous les prix indiqués sont donnés à titre indicatif uniquement"
+                : "*All prices shown are for reference only"
+              }
+            </p>
+          </div>
+          </>
         )}
 
 
