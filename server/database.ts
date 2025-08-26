@@ -13,9 +13,9 @@ export async function testDatabaseConnection(): Promise<boolean> {
       return false;
     }
     
-    // Check for SSH variables that should be disabled
+    // Force direct connection - explicitly disable SSH tunneling for database
     if (process.env.SSH_PASSWORD || process.env.SSH_PRIVATE_KEY) {
-      console.warn('⚠️ SSH variables detected - these should be unset to avoid tunneling');
+      console.log('🔒 SSH keys available but using direct database connection (no tunneling)');
     }
     
     // Use DATABASE_URL for direct localhost connection
