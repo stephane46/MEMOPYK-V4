@@ -69,7 +69,7 @@ export function sendPageView() {
   window.gtag('config', MEASUREMENT_ID, params);
 }
 
-// Track events
+// Track events (legacy)
 export const trackEvent = (
   action: string, 
   category?: string, 
@@ -92,172 +92,94 @@ export const trackEvent = (
   window.gtag('event', action, eventParams);
 };
 
+// GA4 Standardized Video Events for BigQuery Export
+export const trackVideoStart = (videoId: string, videoTitle?: string, locale?: string) => {
+  if (typeof window === 'undefined' || !window.gtag) return;
+  
+  window.gtag('event', 'video_start', {
+    video_id: videoId,
+    video_title: videoTitle || videoId,
+    gallery: 'main',
+    player: 'custom',
+    locale: locale || 'fr-FR',
+    debug_mode: isGaDev()
+  });
+};
+
+export const trackVideoProgress = (videoId: string, progressPercent: number, currentTimeSeconds: number, videoTitle?: string, locale?: string) => {
+  if (typeof window === 'undefined' || !window.gtag) return;
+  
+  window.gtag('event', 'video_progress', {
+    video_id: videoId,
+    video_title: videoTitle || videoId,
+    gallery: 'main',
+    player: 'custom',
+    locale: locale || 'fr-FR',
+    current_time: currentTimeSeconds,
+    progress_percent: progressPercent,
+    debug_mode: isGaDev()
+  });
+};
+
+export const trackVideoComplete = (videoId: string, watchTimeSeconds: number, videoTitle?: string, locale?: string) => {
+  if (typeof window === 'undefined' || !window.gtag) return;
+  
+  window.gtag('event', 'video_complete', {
+    video_id: videoId,
+    video_title: videoTitle || videoId,
+    gallery: 'main',
+    player: 'custom',
+    locale: locale || 'fr-FR',
+    watch_time_seconds: watchTimeSeconds,
+    progress_percent: 100,
+    debug_mode: isGaDev()
+  });
+};
+
+export const trackVideoPause = (videoId: string, progressPercent: number, currentTimeSeconds: number, videoTitle?: string, locale?: string) => {
+  if (typeof window === 'undefined' || !window.gtag) return;
+  
+  window.gtag('event', 'video_pause', {
+    video_id: videoId,
+    video_title: videoTitle || videoId,
+    gallery: 'main',
+    player: 'custom',
+    locale: locale || 'fr-FR',
+    current_time: currentTimeSeconds,
+    progress_percent: progressPercent,
+    debug_mode: isGaDev()
+  });
+};
+
+// GA4 Standardized CTA Click Events for BigQuery Export
+export const trackCtaClick = (ctaId: string, pagePath?: string, locale?: string) => {
+  if (typeof window === 'undefined' || !window.gtag) return;
+  
+  window.gtag('event', 'cta_click', {
+    cta_id: ctaId,
+    page_path: pagePath || window.location.pathname,
+    locale: locale || 'fr-FR',
+    debug_mode: isGaDev()
+  });
+};
+
 // Helper functions for managing developer mode
 export function enableDeveloperMode() {
   localStorage.setItem('ga_dev', '1');
-  console.log('🔧 GA4 Developer mode enabled. Your traffic will be excluded from analytics.');
+  console.log('🧪 GA4 Developer mode enabled - add ?ga_dev=1 to URLs for testing');
 }
 
 export function disableDeveloperMode() {
   localStorage.removeItem('ga_dev');
-  console.log('📊 GA4 Developer mode disabled. Your traffic will be included in analytics.');
+  console.log('🔒 GA4 Developer mode disabled');
 }
 
-export function isDeveloperMode(): boolean {
-  return isGaDev();
-}
-
-// Helper function to get current locale
-function getCurrentLocale(): string {
-  const path = window.location.pathname;
-  if (path.startsWith('/fr-FR') || path.startsWith('/fr')) {
-    return 'fr-FR';
-  } else if (path.startsWith('/en-US') || path.startsWith('/en')) {
-    return 'en-US';
-  }
-  // Fallback to localStorage or default
+// Helper to get current stored language
+function getStoredLanguage(): string {
   return localStorage.getItem('memopyk-language') || 'fr-FR';
 }
 
-// GA4 Video Analytics Events
-export const trackVideoOpen = (videoId: string, videoTitle?: string) => {
-  if (typeof window === 'undefined' || !window.gtag) return;
-  
-  const eventParams: any = {
-    video_id: videoId,
-    locale: getCurrentLocale(),
-    gallery: 'Video Gallery',
-    player: 'html5'
-  };
-  
-  if (videoTitle) {
-    eventParams.video_title = videoTitle;
-  }
-  
-  if (isGaDev()) {
-    eventParams.debug_mode = true;
-  }
-  
-  window.gtag('event', 'video_open', eventParams);
-  console.log('📹 GA4 Video: video_open', eventParams);
-};
-
-export const trackVideoStart = (videoId: string, durationSec: number, positionSec: number = 0, videoTitle?: string) => {
-  if (typeof window === 'undefined' || !window.gtag) return;
-  
-  const eventParams: any = {
-    video_id: videoId,
-    locale: getCurrentLocale(),
-    gallery: 'Video Gallery',
-    player: 'html5',
-    position_sec: positionSec,
-    duration_sec: durationSec
-  };
-  
-  if (videoTitle) {
-    eventParams.video_title = videoTitle;
-  }
-  
-  if (isGaDev()) {
-    eventParams.debug_mode = true;
-  }
-  
-  window.gtag('event', 'video_start', eventParams);
-  console.log('📹 GA4 Video: video_start', eventParams);
-};
-
-export const trackVideoPause = (videoId: string, durationSec: number, positionSec: number, videoTitle?: string) => {
-  if (typeof window === 'undefined' || !window.gtag) return;
-  
-  const eventParams: any = {
-    video_id: videoId,
-    locale: getCurrentLocale(),
-    gallery: 'Video Gallery',
-    player: 'html5',
-    position_sec: positionSec,
-    duration_sec: durationSec
-  };
-  
-  if (videoTitle) {
-    eventParams.video_title = videoTitle;
-  }
-  
-  if (isGaDev()) {
-    eventParams.debug_mode = true;
-  }
-  
-  window.gtag('event', 'video_pause', eventParams);
-  console.log('📹 GA4 Video: video_pause', eventParams);
-};
-
-export const trackVideoProgress = (videoId: string, percent: 25 | 50 | 75 | 100, durationSec: number, positionSec: number, videoTitle?: string) => {
-  if (typeof window === 'undefined' || !window.gtag) return;
-  
-  const eventParams: any = {
-    video_id: videoId,
-    locale: getCurrentLocale(),
-    gallery: 'Video Gallery',
-    player: 'html5',
-    percent: percent,
-    position_sec: positionSec,
-    duration_sec: durationSec
-  };
-  
-  if (videoTitle) {
-    eventParams.video_title = videoTitle;
-  }
-  
-  if (isGaDev()) {
-    eventParams.debug_mode = true;
-  }
-  
-  window.gtag('event', 'video_progress', eventParams);
-  console.log('📹 GA4 Video: video_progress - ENABLED v2', eventParams);
-};
-
-export const trackVideoComplete = (videoId: string, durationSec: number, positionSec: number, videoTitle?: string) => {
-  if (typeof window === 'undefined' || !window.gtag) return;
-  
-  const eventParams: any = {
-    video_id: videoId,
-    locale: getCurrentLocale(),
-    gallery: 'Video Gallery',
-    player: 'html5',
-    position_sec: positionSec,
-    duration_sec: durationSec
-  };
-  
-  if (videoTitle) {
-    eventParams.video_title = videoTitle;
-  }
-  
-  if (isGaDev()) {
-    eventParams.debug_mode = true;
-  }
-  
-  window.gtag('event', 'video_complete', eventParams);
-  console.log('📹 GA4 Video: video_complete - ENABLED v2', eventParams);
-};
-
-export const trackVideoWatchTime = (videoId: string, watchTimeSec: number, videoTitle?: string) => {
-  if (typeof window === 'undefined' || !window.gtag) return;
-  
-  const eventParams: any = {
-    video_id: videoId,
-    locale: getCurrentLocale(),
-    gallery: 'Video Gallery',
-    player: 'html5',
-    watch_time_seconds: watchTimeSec
-  };
-  
-  if (videoTitle) {
-    eventParams.video_title = videoTitle;
-  }
-  
-  if (isGaDev()) {
-    eventParams.debug_mode = true;
-  }
-  
-  window.gtag('event', 'video_watch_time', eventParams);
-  console.log('📹 GA4 Video: video_watch_time', eventParams);
-};
+// Get current locale for GA4 events
+function getCurrentLocale(): string {
+  return getStoredLanguage();
+}
