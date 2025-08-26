@@ -675,7 +675,7 @@ export default function GallerySection() {
           <>
           {/* Text before first 3 videos - Slide in from left */}
           <div className="text-center mb-8 sm:mb-12">
-            <div className="animate-[slideInLeft_1s_ease-out_forwards] opacity-0 translate-x-[-50px]">
+            <div className="animate-slideInLeft">
               <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-900 dark:text-white mb-4">
                 {language === 'fr-FR' 
                   ? "Des histoires assez simples, petites collections de moments spéciaux..."
@@ -887,7 +887,7 @@ export default function GallerySection() {
 
           {/* Text before last 3 videos - Slide in from right with delay */}
           <div className="text-center mb-8 sm:mb-12">
-            <div className="animate-[slideInRight_1s_ease-out_1.5s_forwards] opacity-0 translate-x-[50px]">
+            <div className="animate-slideInRight">
               <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-900 dark:text-white mb-4">
                 {language === 'fr-FR' 
                   ? "...à un film majeur, grands thèmes - Recommandé"

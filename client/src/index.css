@@ -95,6 +95,16 @@ img, video, iframe, canvas, svg {
   }
 }
 
+/* Tailwind animation utilities */
+.animate-slideInLeft {
+  animation: slideInLeft 1s ease-out forwards;
+}
+
+.animate-slideInRight {
+  animation: slideInRight 1s ease-out 1.5s forwards;
+  opacity: 0; /* Start hidden for delayed animation */
+}
+
 
 /* SEO Management Admin Styles - Force active states with !important */
 .seo-language-btn-active {
