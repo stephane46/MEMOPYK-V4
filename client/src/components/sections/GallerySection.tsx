@@ -65,8 +65,12 @@ export default function GallerySection() {
   const { orientation } = useDeviceOrientation();
   
   // Animation state for scroll-triggered animations
-  const [isAnimated, setIsAnimated] = useState(false);
-  const animatedSectionRef = useRef<HTMLDivElement>(null);
+  const [animationStates, setAnimationStates] = useState({
+    firstText: false,
+    secondText: false
+  });
+  const firstTextRef = useRef<HTMLDivElement>(null);
+  const secondTextRef = useRef<HTMLDivElement>(null);
   
   // 📊 Initialize video analytics for gallery video tracking
   const { trackVideoView } = useVideoAnalytics();
@@ -89,33 +93,33 @@ export default function GallerySection() {
     return () => window.removeEventListener('resize', checkMobile);
   }, []);
   
-  // 🎬 Animation observer - simple and direct
+  // 🎬 Animation observers for both texts
   useEffect(() => {
     const observer = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
-          console.log(`🎬 Animation trigger: ${entry.isIntersecting}`);
           if (entry.isIntersecting) {
-            console.log('🎬 ✓ ANIMATION START');
-            setIsAnimated(true);
+            if (entry.target === firstTextRef.current) {
+              console.log('🎬 ← First text animation (slide from LEFT)');
+              setAnimationStates(prev => ({ ...prev, firstText: true }));
+            } else if (entry.target === secondTextRef.current) {
+              console.log('🎬 → Second text animation (slide from RIGHT)');
+              setAnimationStates(prev => ({ ...prev, secondText: true }));
+            }
           }
         });
       },
-      { threshold: 0.1, rootMargin: '0px' }
+      { threshold: 0.2, rootMargin: '0px' }
     );
 
-    const currentRef = animatedSectionRef.current;
-    if (currentRef) {
-      console.log('🎬 Observer attached to element');
-      observer.observe(currentRef);
+    if (firstTextRef.current) {
+      observer.observe(firstTextRef.current);
+    }
+    if (secondTextRef.current) {
+      observer.observe(secondTextRef.current);
     }
 
-    return () => {
-      if (currentRef) {
-        observer.unobserve(currentRef);
-      }
-      observer.disconnect();
-    };
+    return () => observer.disconnect();
   }, []);
 
   // 🚨 CACHE SYNCHRONIZATION FIX v1.0.111 - Browser storage cache busting
@@ -661,20 +665,26 @@ export default function GallerySection() {
 
 
 
-        {/* Introduction Text - Static */}
-        <div className="text-center mb-8 sm:mb-12">
-          <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-memopyk-navy mb-4">
-            {language === 'fr-FR' 
-              ? "Chaque film que nous créons est aussi unique que vos souvenirs"
-              : "Every film we create is as unique as your memories"
-            }
-          </h2>
-          <p className="text-lg sm:text-xl text-memopyk-dark-blue max-w-3xl mx-auto leading-relaxed">
-            {language === 'fr-FR' 
-              ? "De petits et moyens formats pour des moments spéciaux du quotidien..."
-              : "From short and medium formats, for collections of special moments..."
-            }
-          </p>
+        {/* First Text - Slide from LEFT */}
+        <div className="text-center mb-8 sm:mb-12" ref={firstTextRef}>
+          <div className={`transition-all duration-1000 ease-out ${
+            animationStates.firstText 
+              ? 'opacity-100 transform translate-x-0' 
+              : 'opacity-0 transform -translate-x-12'
+          }`}>
+            <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-memopyk-navy mb-4">
+              {language === 'fr-FR' 
+                ? "Chaque film que nous créons est aussi unique que vos souvenirs"
+                : "Every film we create is as unique as your memories"
+              }
+            </h2>
+            <p className="text-lg sm:text-xl text-memopyk-dark-blue max-w-3xl mx-auto leading-relaxed">
+              {language === 'fr-FR' 
+                ? "De petits et moyens formats pour des moments spéciaux du quotidien..."
+                : "From short and medium formats, for collections of special moments..."
+              }
+            </p>
+          </div>
         </div>
 
         {/* Remove animated text from here - will be placed between video grids */}
@@ -908,12 +918,12 @@ export default function GallerySection() {
           })}
           </div>
 
-          {/* Animated Text - Slide in from left - BETWEEN video grids */}
-          <div className="text-center mb-8 sm:mb-12" ref={animatedSectionRef}>
+          {/* Second Text - Slide from RIGHT - BETWEEN video grids */}
+          <div className="text-center mb-8 sm:mb-12" ref={secondTextRef}>
             <div className={`transition-all duration-1000 ease-out ${
-              isAnimated 
+              animationStates.secondText 
                 ? 'opacity-100 transform translate-x-0' 
-                : 'opacity-0 transform -translate-x-12'
+                : 'opacity-0 transform translate-x-12'
             }`}>
               <h3 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-memopyk-orange">
                 {language === 'fr-FR' 
