@@ -2,9 +2,11 @@ import { useLanguage } from '../../contexts/LanguageContext';
 import { Clock, Zap, Users, Settings, Shield, Star, Heart, CheckCircle, Target } from 'lucide-react';
 import { useQuery } from '@tanstack/react-query';
 import filmstripImage from "@assets/souvenir_film_1755960575328.png";
+import { useState, useEffect } from 'react';
 
 export function WhyMemopykSection() {
   const { language } = useLanguage();
+  const [refreshKey, setRefreshKey] = useState(0);
 
   // Icon mapping
   const ICON_MAP = {
@@ -13,14 +15,43 @@ export function WhyMemopykSection() {
 
   // Fetch benefits from API
   const { data: benefits = [], isLoading } = useQuery({
-    queryKey: ['/api/why-memopyk-cards'],
+    queryKey: ['/api/why-memopyk-cards', refreshKey],
     queryFn: async () => {
       const response = await fetch('/api/why-memopyk-cards');
       if (!response.ok) throw new Error('Failed to fetch benefits');
       const data = await response.json();
       return data.filter((card: any) => card.isActive).sort((a: any, b: any) => a.orderIndex - b.orderIndex);
-    }
+    },
+    staleTime: Infinity, // Never consider data stale - this is a company presentation
+    gcTime: Infinity, // Keep cache forever until manual refresh
+    refetchOnMount: false, // Don't refetch on mount - use cached data
+    refetchOnWindowFocus: false, // Never refetch on focus
+    refetchInterval: false, // No automatic polling
+    retry: 2, // Retry on failure
   });
+
+  // Force refresh mechanism for admin updates
+  useEffect(() => {
+    const handleStorageChange = () => {
+      console.log("🔄 Storage change detected - refreshing Why MEMOPYK cards");
+      setRefreshKey(prev => prev + 1);
+    };
+    
+    window.addEventListener('storage', handleStorageChange);
+    
+    // Listen for custom admin update events
+    const handleAdminUpdate = () => {
+      console.log("🔄 Admin update event - refreshing Why MEMOPYK cards");
+      setRefreshKey(prev => prev + 1);
+    };
+    
+    window.addEventListener('why-memopyk-updated', handleAdminUpdate);
+    
+    return () => {
+      window.removeEventListener('storage', handleStorageChange);
+      window.removeEventListener('why-memopyk-updated', handleAdminUpdate);
+    };
+  }, []);
 
   const getIcon = (iconName: string) => {
     const IconComponent = ICON_MAP[iconName as keyof typeof ICON_MAP] || Star;

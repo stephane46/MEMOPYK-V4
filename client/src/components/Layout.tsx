@@ -472,7 +472,7 @@ export function Layout({ children }: LayoutProps) {
             </div>
             
             <div>
-              <h4 className="font-semibold mb-4 cursor-pointer transition-all duration-300 ease-in-out transform hover:translate-x-1 hover:text-memopyk-orange">Contact</h4>
+              <h4 className="font-semibold mb-4 cursor-pointer transition-all duration-300 ease-in-out transform hover:translate-x-1 hover:text-memopyk-orange hover:font-bold">Contact</h4>
               <ul className="space-y-3 text-gray-400">
                 <li>
                   <a 
