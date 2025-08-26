@@ -567,51 +567,62 @@ export class HybridStorage implements HybridStorageInterface {
     console.log(`🎬 GALLERY: Fetching items directly from Supabase VPS database (emergency JSON fallback available)`);
     
     try {
-      // Gallery data comes DIRECTLY from Supabase VPS database
-      const { galleryItems } = await import('../shared/schema');
-      const dbItems = await db.select().from(galleryItems).orderBy(galleryItems.orderIndex);
+      // Gallery data comes DIRECTLY from Supabase VPS database  
+      const response = await fetch('https://supabase.memopyk.org/rest/v1/gallery_items', {
+        headers: {
+          'apikey': process.env.SUPABASE_SERVICE_KEY || '',
+          'Authorization': `Bearer ${process.env.SUPABASE_SERVICE_KEY || ''}`,
+          'Content-Type': 'application/json'
+        }
+      });
+      
+      if (!response.ok) {
+        throw new Error(`Supabase API error: ${response.status}`);
+      }
+      
+      const dbItems = await response.json();
       console.log(`✅ GALLERY: Retrieved ${dbItems.length} items from Supabase VPS database`);
       
       // Sync to JSON backup when database is available
       if (dbItems.length > 0) {
         const backupData = dbItems.map(item => ({
-          // Convert database fields to expected format
+          // Convert your actual database fields to expected format
           id: item.id,
-          title_en: item.titleEn,
-          title_fr: item.titleFr,
-          price_en: item.priceEn,
-          price_fr: item.priceFr,
-          source_en: item.sourceEn,
-          source_fr: item.sourceFr,
-          duration_en: item.durationEn,
-          duration_fr: item.durationFr,
-          situation_en: item.situationEn,
-          situation_fr: item.situationFr,
-          story_en: item.storyEn,
-          story_fr: item.storyFr,
-          sorry_message_en: item.sorryMessageEn,
-          sorry_message_fr: item.sorryMessageFr,
-          format_platform_en: item.formatPlatformEn,
-          format_platform_fr: item.formatPlatformFr,
-          format_type_en: item.formatTypeEn,
-          format_type_fr: item.formatTypeFr,
-          video_url_en: item.videoUrlEn,
-          video_url_fr: item.videoUrlFr,
-          video_filename: item.videoFilename,
-          use_same_video: item.useSameVideo,
-          video_width: item.videoWidth,
-          video_height: item.videoHeight,
-          video_orientation: item.videoOrientation,
-          image_url_en: item.imageUrlEn,
-          image_url_fr: item.imageUrlFr,
-          static_image_url: item.staticImageUrl,
-          static_image_url_en: item.staticImageUrlEn,
-          static_image_url_fr: item.staticImageUrlFr,
-          order_index: item.orderIndex,
-          is_active: item.isActive,
-          created_at: item.createdAt,
-          updated_at: item.updatedAt,
-          cropSettings: item.cropSettings
+          title_en: item.title_en,
+          title_fr: item.title_fr,
+          price_en: item.price_en,
+          price_fr: item.price_fr,
+          source_en: item.additional_info_en,
+          source_fr: item.additional_info_fr,
+          duration_en: "2:30", // Default duration since not in your current schema
+          duration_fr: "2:30", // Default duration since not in your current schema
+          situation_en: item.description_en,
+          situation_fr: item.description_fr,
+          story_en: item.description_en,
+          story_fr: item.description_fr,
+          sorry_message_en: "Sorry, this video is not available at the moment.",
+          sorry_message_fr: "Désolé, cette vidéo n'est pas disponible pour le moment.",
+          format_platform_en: "Instagram",
+          format_platform_fr: "Instagram",
+          format_type_en: "Vertical",
+          format_type_fr: "Vertical",
+          video_url_en: item.video_url_en,
+          video_url_fr: item.video_url_fr,
+          video_filename: item.video_url_en?.split('/').pop() || '',
+          use_same_video: item.use_same_video,
+          video_width: item.video_width,
+          video_height: item.video_height,
+          video_orientation: item.video_orientation,
+          image_url_en: item.image_url_en,
+          image_url_fr: item.image_url_fr,
+          static_image_url: item.static_image_url,
+          static_image_url_en: item.static_image_url,
+          static_image_url_fr: item.static_image_url,
+          order_index: item.order_index,
+          is_active: item.is_active,
+          created_at: item.created_at,
+          updated_at: item.updated_at,
+          cropSettings: item.crop_settings
         }));
         
         // Save to JSON backup for emergency fallback
