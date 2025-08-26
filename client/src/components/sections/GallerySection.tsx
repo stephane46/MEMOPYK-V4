@@ -151,7 +151,7 @@ export default function GallerySection() {
       secondObserver.disconnect();
       console.log('🎬 🧹 Observers cleaned up');
     };
-  }, [galleryItems.length]); // Trigger when gallery data loads
+  }, [galleryItems]); // Trigger when gallery data loads
 
   // 🚨 CACHE SYNCHRONIZATION FIX v1.0.111 - Browser storage cache busting
   useEffect(() => {
