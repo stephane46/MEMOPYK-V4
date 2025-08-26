@@ -856,6 +856,7 @@ export class HybridStorage implements HybridStorageInterface {
     } catch (error) {
       console.error(`❌ DATABASE UPDATE FAILED:`, error);
       console.log(`⚠️ FALLBACK: Updating JSON only - changes will NOT sync between environments`);
+      // Continue with JSON fallback - don't throw error here
     }
 
     // Update JSON file as backup/fallback
@@ -920,24 +921,14 @@ export class HybridStorage implements HybridStorageInterface {
     
     console.log(`🔍 JSON UPDATE - is_active: ${updatedItem.is_active}`);
     
-    // 🚨 CRITICAL CACHE SYNC: Only update JSON if database update failed
+    // 🚨 CRITICAL CACHE SYNC: Always update JSON, but handle differently based on database success
     if (!dbUpdateSuccessful) {
-      console.log('⚠️ Database failed, updating JSON as fallback');
+      console.log('⚠️ Database failed, updating JSON as primary storage');
       this.saveJsonFile('gallery-items.json', items);
+      console.log(`✅ JSON FALLBACK SUCCESS: Updated gallery item "${updatedItem.title_en || 'Unknown'}" with ID ${itemId}`);
     } else {
-      console.log('✅ Database update successful, skipping JSON cache to prevent conflicts');
-      // Delete JSON cache to ensure fresh reads from database
-      try {
-        const fs = await import('fs');
-        const path = await import('path');
-        const cacheFilePath = path.join(__dirname, 'data', 'gallery-items.json');
-        if (fs.existsSync(cacheFilePath)) {
-          fs.unlinkSync(cacheFilePath);
-          console.log('🗑️ JSON cache cleared - forcing fresh database reads');
-        }
-      } catch (error) {
-        console.warn('⚠️ Cache clearing failed:', error);
-      }
+      console.log('✅ Database update successful, updating JSON as backup');
+      this.saveJsonFile('gallery-items.json', items);
     }
     
     // CRITICAL: Return database result if successful for consistency across environments
@@ -984,6 +975,8 @@ export class HybridStorage implements HybridStorageInterface {
       };
     }
     
+    // If database failed, return JSON result
+    console.log(`📋 RETURNING JSON FALLBACK RESULT: Updated gallery item "${updatedItem.title_en || 'Unknown'}" with ID ${itemId}`);
     return updatedItem;
   }
 

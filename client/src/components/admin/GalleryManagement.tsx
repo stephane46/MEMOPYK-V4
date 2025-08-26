@@ -199,8 +199,13 @@ export default function GalleryManagement() {
         className: "bg-green-50 dark:bg-green-900/20 border-green-200 dark:border-green-800 text-green-900 dark:text-green-100"
       });
     },
-    onError: () => {
-      toast({ title: "Erreur", description: "Échec de la mise à jour", variant: "destructive" });
+    onError: (error: any) => {
+      console.error('❌ Gallery update error:', error);
+      toast({ 
+        title: "❌ Erreur", 
+        description: "Erreur lors de la mise à jour de l'élément. La modification a peut-être été sauvegardée localement.", 
+        variant: "destructive" 
+      });
     }
   });
 
