@@ -1,400 +1,75 @@
 import { useLanguage } from '../../contexts/LanguageContext';
-import { Upload, Edit, Heart } from 'lucide-react';
+import { Upload, Edit, Heart, Info } from 'lucide-react';
 import { useState, useEffect, useRef } from 'react';
-import { motion, useReducedMotion } from 'framer-motion';
 
 export function HowItWorksCondensed() {
   const { language } = useLanguage();
   const [flippedCards, setFlippedCards] = useState<Set<number>>(new Set());
-  const [animatingCards, setAnimatingCards] = useState<Set<number>>(new Set());
   const sectionRef = useRef<HTMLElement>(null);
-  const shouldReduceMotion = useReducedMotion();
 
-  // Single source of truth for the back face background (used by BackFace and BackPeek)
-  const backFaceGradient =
-    'linear-gradient(135deg, rgba(214, 124, 74, 0.95) 0%, rgba(42, 71, 89, 0.95) 100%)';
+  // Reset flipped cards when section is not visible
+  useEffect(() => {
+    const section = sectionRef.current;
+    if (!section) return;
 
-  // --- Interaction helpers ---
-  const handleCardClick = (
-    cardNumber: number,
-    event?: React.PointerEvent | React.KeyboardEvent
-  ) => {
-    // Prevent rapid toggles while animating
-    if (animatingCards.has(cardNumber)) return;
-
-    // On pointer events, avoid treating scroll/drag as tap
-    if (event && 'pointerId' in event) {
-      const pe = event as React.PointerEvent;
-      if (Math.abs(pe.movementX) > 8 || Math.abs(pe.movementY) > 8) return;
-    }
-
-    setAnimatingCards(prev => new Set(prev).add(cardNumber));
-
-    setFlippedCards(prev => {
-      const next = new Set(prev);
-      if (next.has(cardNumber)) next.delete(cardNumber);
-      else next.add(cardNumber);
-      return next;
-    });
-
-    // Safety cooldown (will also be cleared on animationComplete)
-    window.setTimeout(() => {
-      setAnimatingCards(prev => {
-        const next = new Set(prev);
-        next.delete(cardNumber);
-        return next;
-      });
-    }, 500);
-  };
-
-  const handleKeyDown = (cardNumber: number, event: React.KeyboardEvent) => {
-    if (event.key === 'Enter' || event.key === ' ') {
-      event.preventDefault();
-      handleCardClick(cardNumber, event);
-    } else if (event.key === 'Escape' && flippedCards.has(cardNumber)) {
-      event.preventDefault();
-      handleCardClick(cardNumber, event);
-    }
-  };
-
-  // ---- Folded-corner system (BackPeek + CornerPeel + Highlight band) ----
-  // Uses CSS variables --cornerSize and --peekSize defined on the card frame.
-  const MotionCornerSystem = ({
-    backFaceGradient,
-  }: {
-    backFaceGradient: string;
-  }) => {
-    return (
-      <motion.div
-        className="absolute bottom-0 right-0 pointer-events-none"
-        initial="idle"
-        whileHover="hovered"
-        style={{ overflow: 'visible' }}
-      >
-        {/* BackPeek - always visible sliver that matches the back face */}
-        <motion.div
-          className="absolute bottom-0 right-0"
-          style={{
-            width: 'var(--peekSize)',
-            height: 'var(--peekSize)',
-            background: backFaceGradient,
-            clipPath: 'polygon(0 100%, 100% 0, 100% 100%)',
-            zIndex: 1,
-          }}
-          variants={{
-            idle: { scale: 1, opacity: 0.85 },
-            hovered: shouldReduceMotion
-              ? { scale: 1, opacity: 0.9 }
-              : {
-                  scale: 1.12,
-                  opacity: 0.95,
-                  transition: { type: 'spring', stiffness: 280, damping: 22 },
-                },
-          }}
-        />
-
-        {/* Seam shadow layer (under the fold) – animate opacity only */}
-        <motion.div
-          className="absolute bottom-0 right-0"
-          style={{
-            width: 'var(--cornerSize)',
-            height: 'var(--cornerSize)',
-            // pre-baked soft seam shadow via radial gradient (no blur animation)
-            background:
-              'radial-gradient(120% 120% at 100% 100%, rgba(0,0,0,0.18) 0%, rgba(0,0,0,0.12) 40%, rgba(0,0,0,0) 60%)',
-            clipPath: 'polygon(0 100%, 100% 0, 100% 100%)',
-            zIndex: 2,
-          }}
-          variants={{
-            idle: { opacity: 0.18 },
-            hovered: { opacity: 0.3 },
-          }}
-          transition={{ duration: 0.18 }}
-        />
-
-        {/* CornerPeel – proportional triangle that lifts */}
-        <motion.div
-          className="absolute bottom-0 right-0"
-          style={{
-            width: 0,
-            height: 0,
-            borderLeft: 'var(--cornerSize) solid transparent',
-            borderBottom: 'var(--cornerSize) solid white', // match front bg if not white
-            transformOrigin: 'bottom right',
-            zIndex: 3,
-            willChange: 'transform, filter',
-          }}
-          variants={{
-            idle: {
-              rotate: 0,
-              x: 0,
-              y: 0,
-              filter: 'drop-shadow(-1px -1px 2px rgba(0,0,0,0.15))',
-            },
-            hovered: shouldReduceMotion
-              ? { rotate: 0, x: 0, y: 0, filter: 'drop-shadow(-1px -1px 2px rgba(0,0,0,0.15))' }
-              : {
-                  rotate: 5,
-                  x: -4,
-                  y: -3,
-                  filter:
-                    'drop-shadow(-3px -3px 6px rgba(0,0,0,0.28)) drop-shadow(-1px -1px 2px rgba(0,0,0,0.15))',
-                  transition: { type: 'spring', stiffness: 280, damping: 22 },
-                },
-          }}
-        />
-
-        {/* Specular highlight band */}
-        <motion.div
-          className="absolute bottom-0 right-0 pointer-events-none"
-          style={{
-            width: 'var(--cornerSize)',
-            height: 'var(--cornerSize)',
-            background:
-              'linear-gradient(135deg, transparent 47%, rgba(255,255,255,0.6) 49%, rgba(255,255,255,0.2) 51%, transparent 53%)',
-            zIndex: 4,
-          }}
-          variants={{
-            idle: { opacity: 0.45 },
-            hovered: { opacity: 0.8 },
-          }}
-          transition={{ duration: 0.18 }}
-        />
-      </motion.div>
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          // If section is not visible (less than 50% visible), reset all cards
+          if (!entry.isIntersecting || entry.intersectionRatio < 0.5) {
+            setFlippedCards(new Set());
+          }
+        });
+      },
+      {
+        threshold: 0.5, // Trigger when 50% of section is visible/hidden
+        rootMargin: '0px 0px -50px 0px' // Add some margin for smoother triggering
+      }
     );
-  };
 
-  // ---- Single rotating inner wrapper for a rock-solid flip ----
-  const MotionFlipCard = ({
-    step,
-    isFlipped,
-    onCardClick,
-    onKeyDown,
-  }: {
-    step: any;
-    isFlipped: boolean;
-    onCardClick: (e: React.PointerEvent<HTMLDivElement>) => void;
-    onKeyDown: (e: React.KeyboardEvent) => void;
-  }) => {
-    return (
-      <div className="text-center group">
-        {/* Interactive outer wrapper (button semantics live here) */}
-        <div
-          className="relative rounded-2xl mb-4 cursor-pointer outline-none"
-          role="button"
-          tabIndex={0}
-          aria-expanded={isFlipped}
-          aria-label={`${
-            language === 'fr-FR' ? step.titleFr : step.titleEn
-          } - ${language === 'fr-FR' ? "Cliquer pour plus d'informations" : 'Click for more information'}`}
-          onClick={onCardClick}
-          onKeyDown={onKeyDown}
-          // 3D perspective on the container
-          style={{ perspective: shouldReduceMotion ? 'none' : '1000px' }}
-        >
-          {/* Hover/Focus controller for the corner (no React state needed) */}
-          <motion.div initial="idle" whileHover="hovered">
-            {/* Fixed-size 1:1 frame using the padding-top trick + CSS vars for corner sizes */}
-            <div
-              className="relative w-full rounded-2xl"
-              style={{
-                ['--cornerSize' as any]: 'clamp(32px, 14%, 80px)',
-                ['--peekSize' as any]: 'calc(var(--cornerSize) * 0.92)',
-              }}
-            >
-              <div className="pt-[100%]" aria-hidden="true" />
+    observer.observe(section);
 
-              {/* Rotating inner wrapper (the only thing that rotates) */}
-              <motion.div
-                className="absolute inset-0 rounded-2xl"
-                style={{
-                  transformStyle: shouldReduceMotion ? 'flat' : 'preserve-3d',
-                  willChange: 'transform',
-                }}
-                animate={
-                  shouldReduceMotion
-                    ? { rotateY: 0 }
-                    : { rotateY: isFlipped ? 180 : 0 }
-                }
-                transition={
-                  shouldReduceMotion
-                    ? { duration: 0.25, ease: 'easeInOut' }
-                    : { type: 'spring', stiffness: 260, damping: 22 }
-                }
-                onAnimationComplete={() => {
-                  if (animatingCards.has(step.number)) {
-                    setAnimatingCards(prev => {
-                      const next = new Set(prev);
-                      next.delete(step.number);
-                      return next;
-                    });
-                  }
-                }}
-              >
-                {/* FRONT FACE */}
-                <div
-                  className="absolute inset-0 bg-white border border-gray-200 shadow-lg rounded-2xl overflow-hidden"
-                  style={{
-                    backfaceVisibility: shouldReduceMotion ? 'visible' : 'hidden',
-                    transform: 'rotateY(0deg) translateZ(0)',
-                    zIndex: isFlipped ? 1 : 2,
-                    pointerEvents: isFlipped ? 'none' : 'auto',
-                  }}
-                >
-                  <div className="relative h-full w-full">
-                    {/* Step Image */}
-                    <div className="relative overflow-visible rounded-xl transition-all duration-500 h-full w-full">
-                      <img
-                        src={step.image}
-                        alt={language === 'fr-FR' ? step.titleFr : step.titleEn}
-                        className="w-full h-full object-contain bg-gray-50 transition-transform duration-500"
-                      />
-
-                      {/* Orange Number Circle - Top Left */}
-                      <div className="absolute top-2 left-2 w-8 h-8 bg-memopyk-orange rounded-full flex items-center justify-center transition-transform duration-300 shadow-lg">
-                        <span className="text-sm font-bold text-white">{step.number}</span>
-                      </div>
-                    </div>
-
-                    {/* Folded corner system (front only) */}
-                    {!isFlipped && <MotionCornerSystem backFaceGradient={backFaceGradient} />}
-                  </div>
-                </div>
-
-                {/* BACK FACE */}
-                <div
-                  className="absolute inset-0 rounded-2xl overflow-hidden shadow-lg text-white"
-                  style={{
-                    background: backFaceGradient,
-                    backfaceVisibility: shouldReduceMotion ? 'visible' : 'hidden',
-                    transform: 'rotateY(180deg) translateZ(0)',
-                    zIndex: isFlipped ? 2 : 1,
-                    pointerEvents: isFlipped ? 'auto' : 'none',
-                  }}
-                >
-                  <div className="p-6 h-full w-full flex flex-col">
-                    {/* Header with close button */}
-                    <div className="flex justify-between items-start mb-4">
-                      <div className="flex items-center space-x-3">
-                        <div className="w-8 h-8 bg-white/20 rounded-full flex items-center justify-center">
-                          <span className="text-sm font-bold">{step.number}</span>
-                        </div>
-                        <h3 className="text-lg font-bold">
-                          {language === 'fr-FR' ? step.titleFr : step.titleEn}
-                        </h3>
-                      </div>
-                      <button
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          onCardClick(e as unknown as React.PointerEvent<HTMLDivElement>);
-                        }}
-                        className="text-white/80 hover:text-white transition-colors p-1 rounded-full hover:bg-white/10"
-                        aria-label={language === 'fr-FR' ? 'Fermer' : 'Close'}
-                      >
-                        <svg
-                          width="20"
-                          height="20"
-                          viewBox="0 0 24 24"
-                          fill="none"
-                          stroke="currentColor"
-                          strokeWidth="2"
-                        >
-                          <line x1="18" y1="6" x2="6" y2="18"></line>
-                          <line x1="6" y1="6" x2="18" y2="18"></line>
-                        </svg>
-                      </button>
-                    </div>
-
-                    {/* Scrollable content to avoid size jumps */}
-                    <div className="flex-1 overflow-auto">
-                      <p className="text-sm leading-relaxed whitespace-pre-line">
-                        {language === 'fr-FR' ? step.descriptionFr : step.descriptionEn}
-                      </p>
-                      {(step.subDescriptionFr || step.subDescriptionEn) && (
-                        <p className="text-sm leading-relaxed mt-3 opacity-90 whitespace-pre-line">
-                          {language === 'fr-FR' ? step.subDescriptionFr : step.subDescriptionEn}
-                        </p>
-                      )}
-                    </div>
-
-                    {/* Footer hint */}
-                    <div className="text-xs text-white/70 text-center mt-4 border-t border-white/20 pt-3">
-                      {language === 'fr-FR' ? 'Cliquer pour revenir' : 'Click to go back'}
-                    </div>
-                  </div>
-                </div>
-              </motion.div>
-            </div>
-          </motion.div>
-        </div>
-
-        {/* Title and Icon below card */}
-        <div className="flex flex-col items-center space-y-3">
-          <div className="w-12 h-12 bg-memopyk-orange/10 rounded-full flex items-center justify-center group-hover:bg-memopyk-orange/20 transition-colors duration-300">
-            <step.icon className="w-6 h-6 text-memopyk-orange" />
-          </div>
-          <h3 className="text-xl font-bold text-memopyk-dark-blue">
-            {language === 'fr-FR' ? step.titleFr : step.titleEn}
-          </h3>
-        </div>
-      </div>
-    );
-  };
-
+    return () => observer.disconnect();
+  }, []);
+  
   const steps = [
     {
       number: 1,
       icon: Upload,
-      titleFr: 'Nous écoutons et rassemblons',
-      titleEn: 'We Listen & Gather',
-      descriptionFr:
-        "Envoyez-nous simplement vos photos et vidéos, sans avoir à les trier ou les retoucher. Faites-nous part de votre vision et de ce qui compte le plus pour vous, soit en remplissant notre formulaire en ligne, soit en échangeant vos idées avec nous lors d'un appel téléphonique gratuit et convivial.",
-      descriptionEn:
-        "Simply send us your photos and videos—no need to organize or edit anything beforehand. Share your vision and what matters most to you, either by filling out our easy online form or by discussing your ideas with us during a free, friendly phone call.",
-      subDescriptionFr:
-        "Commencer est un jeu d'enfant : apportez-nous simplement vos souvenirs et vos envies, nous nous occupons du reste avec soin et créativité.",
-      subDescriptionEn:
-        "Getting started is effortless: just bring us your memories and ideas, and we'll handle everything else with care and creativity.",
-      image: '/images/How_we_work_Step1.png',
+      titleFr: "Téléversement",
+      titleEn: "You Upload",
+      descriptionFr: "Envoyez-nous vos photos et vidéos telles qu'elles sont — inutile de trier, renommer ou organiser. Nous acceptons tous les formats, et proposons des envois collaboratifs pour que la famille et les amis puissent contribuer.\nNous vous aidons pour la numérisation de vos éléments analogiques (vieilles photos imprimées, CD, cassettes VHS,...).",
+      descriptionEn: "Give us your photos and videos as they are — no need to sort, rename, or organize.\nWe support collaborative uploads, so your family/friends can contribute.\nWe also help you with the digitization of your analog materials (printed old photos, CDs, VHS tapes,…).",
+      subDescriptionFr: "Vous recevrez également un court questionnaire pour nous en dire plus sur votre histoire — qu'elle soit encore floue ou déjà bien construite.",
+      subDescriptionEn: "You'll first fill in a short questionnaire, or have a consultation chat with us, to tell us more about what you have in mind — whether it's a vague or detailed vision.",
+      image: "/images/How_we_work_Step1.png"
     },
     {
       number: 2,
       icon: Edit,
-      titleFr: 'Nous analysons',
-      titleEn: 'We Analyze',
-      descriptionFr:
-        "Nous examinons chaque détail avec attention et sélectionnons les plus beaux moments pour créer une histoire unique, selon vos préférences, avec la musique idéale, le bon rythme et le format qui vous convient. Vous recevez un devis précis et personnalisé avant toute étape, sans aucune mauvaise surprise.",
-      descriptionEn:
-        "We carefully review every detail and handpick the most beautiful scenes to craft a unique, engaging story that fits your preferences, including perfect music, optimal timing, and the best format for your needs. You'll receive a clear, custom quote before we begin, so there are no surprises.",
-      subDescriptionFr:
-        "Vos souvenirs deviennent un film sur-mesure, réalisé avec un souci du détail exceptionnel et une totale transparence à chaque étape.",
-      subDescriptionEn:
-        "Your memories become a one-of-a-kind film, created with meticulous attention to detail and total transparency at every step.",
-      image: '/images/How_we_work_Step2.png',
+      titleFr: "Sélection & Montage", 
+      titleEn: "We Create",
+      descriptionFr: "Nous étudions chaque photo et chaque video pour repérer les moments les plus marquants, puis établissons l'arc naratif le plus adapté, avec des suggestions de musique, de durée et de format — tout est pensé pour sublimer vos souvenirs.",
+      descriptionEn: "We study each photo and each video to identify the most meaningful moments, then establish a personalized storyline, suggest music, duration, and format — every details are tailored to your memories.",
+      subDescriptionFr: "Bien entendu, votre brief initial et tout commentaire que vous pourriez avoir sont toujours respectés, à chaque étape du processus.",
+      subDescriptionEn: "Of course, your initial brief and any comment that you may have are always respected, each step of the way.",
+      image: "/images/How_we_work_Step2.png"
     },
     {
       number: 3,
       icon: Heart,
-      titleFr: 'Nous créons',
-      titleEn: 'We create',
-      descriptionFr:
-        "Vous recevez la première version de votre film-souvenir personnalisé sous une à trois semaines, soigneusement monté et prêt à vous émouvoir. Deux séries de retours sont incluses pour affiner le montage jusqu'à ce qu'il corresponde parfaitement à vos attentes.",
-      descriptionEn:
-        "You'll receive the first version of your personalized souvenir film within one to three weeks, carefully edited and ready to impress. Our process includes two full rounds of feedback, making it easy to fine-tune your movie until it's exactly right.",
-      subDescriptionFr:
-        "Le résultat : un souvenir rien qu'à vous, livré rapidement et peaufiné selon vos envies jusqu'à la perfection.",
-      subDescriptionEn:
-        "The result is a keepsake entirely your own, delivered quickly and refined with your input until it's just perfect.",
-      image: '/images/How_we_work_Step3.png',
-    },
+      titleFr: "C'est prêt !",
+      titleEn: "You Enjoy & Share", 
+      descriptionFr: "Nous donnons vie à votre film, dans le format de votre choix, le mieux adapté par exemple pour le visionnage à la télévision ou sur Facebook. Vous recevez un résultat soigné en 1 à 3 semaines, avec 2 séries de retours incluses. Vous obtiendrez un film de haute qualité qui reflète fidèlement votre vision et vos souhaits.",
+      descriptionEn: "We bring your film to life, in the format of you choice, best suited for example for TV viewing or for Facebook. Expect a beautifully crafted result within 1-3 weeks, with 2 revision rounds included. You'll receive a high-quality visual story that truly reflects your vision and wishes.",
+      subDescriptionFr: "Ce film est parfait pour préserver vos souvenirs, offrir un cadeau plein d'émotion à un proche, ou partager un moment privilégié en famille ou entre amis.",
+      subDescriptionEn: "The film is ideal for cherishing memories, sharing a heartfelt gift with a loved one, or enjoying together with family and friends.",
+      image: "/images/How_we_work_Step3.png"
+    }
   ];
 
   return (
-    <section
-      id="how-it-works"
-      className="py-12 bg-gradient-to-b from-memopyk-cream to-white"
-      ref={sectionRef}
-    >
+    <section id="how-it-works" className="py-12 bg-gradient-to-b from-memopyk-cream to-white" ref={sectionRef}>
       <div className="max-w-6xl mx-auto px-6">
         {/* Section Header */}
         <div className="text-center mb-16">
@@ -402,26 +77,136 @@ export function HowItWorksCondensed() {
             {language === 'fr-FR' ? 'Comment ça marche' : 'How It Works'}
           </h2>
           <p className="text-xl text-memopyk-dark-blue/70 max-w-3xl mx-auto">
-            {language === 'fr-FR'
+            {language === 'fr-FR' 
               ? '3 étapes pour transformer vos photos et vidéos en films passionnants'
-              : '3 steps to turn your photos and videos into captivating movies'}
+              : '3 steps to turn your photos and videos into captivating movies'
+            }
           </p>
         </div>
 
-        {/* Steps Grid */}
+        {/* Steps Grid with Flip Cards */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
           {steps.map((step) => {
+            const Icon = step.icon;
             const isFlipped = flippedCards.has(step.number);
+            
             return (
-              <MotionFlipCard
-                key={step.number}
-                step={step}
-                isFlipped={isFlipped}
-                onCardClick={(e: React.PointerEvent<HTMLDivElement>) =>
-                  handleCardClick(step.number, e)
-                }
-                onKeyDown={(e: React.KeyboardEvent) => handleKeyDown(step.number, e)}
-              />
+              <div key={step.number} className="text-center group">
+                {/* Flip Card Container - Only for the image area */}
+                <div className={`card-flip-container ${isFlipped ? 'flipped' : ''} rounded-2xl mb-4`}>
+                  <div className="card-flip-inner">
+                    
+                    {/* FRONT SIDE - Step Card */}
+                    <div className="card-front bg-white border border-gray-200 shadow-lg hover:shadow-2xl rounded-2xl overflow-hidden">
+                      {/* Clickable Area */}
+                      <div 
+                        className="relative cursor-pointer"
+                        onClick={() => {
+                          setFlippedCards(prev => {
+                            const newSet = new Set(prev);
+                            if (newSet.has(step.number)) {
+                              newSet.delete(step.number);
+                            } else {
+                              newSet.add(step.number);
+                            }
+                            return newSet;
+                          });
+                        }}
+                      >
+                        {/* Step Image */}
+                        <div className="relative overflow-hidden rounded-xl transition-all duration-500 aspect-square">
+                          <img 
+                            src={step.image} 
+                            alt={language === 'fr-FR' ? step.titleFr : step.titleEn}
+                            className="w-full h-full object-contain bg-gray-50 transition-transform duration-500"
+                          />
+                          
+                          {/* Orange Number Circle - Top Left */}
+                          <div className="absolute top-2 left-2 w-8 h-8 bg-memopyk-orange rounded-full flex items-center justify-center transition-transform duration-300 shadow-lg">
+                            <span className="text-sm font-bold text-white">{step.number}</span>
+                          </div>
+                        </div>
+                        
+                        {/* Info Button - Below image in white space */}
+                        <div className="flex justify-center mt-3 mb-2">
+                          <div 
+                            className="w-12 h-12 rounded-full flex items-center justify-center transition-all duration-300 hover:scale-110 cursor-pointer"
+                            style={{
+                              background: 'linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.85) 100%)',
+                              boxShadow: '0 4px 12px rgba(0, 0, 0, 0.2), inset 0 1px 2px rgba(255, 255, 255, 0.8)',
+                              border: '1px solid rgba(0, 0, 0, 0.1)',
+                              backdropFilter: 'blur(2px)'
+                            }}
+                          >
+                            <Info className="w-6 h-6" style={{ color: '#2A4759' }} />
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                      
+                    {/* BACK SIDE - Detailed Information */}
+                    <div 
+                      className="card-back shadow-lg hover:shadow-2xl rounded-2xl overflow-hidden border border-gray-200"
+                      style={{
+                        backgroundImage: `linear-gradient(135deg, rgba(214, 124, 74, 0.92) 0%, rgba(42, 71, 89, 0.92) 100%), url(${step.image})`,
+                        backgroundSize: 'cover',
+                        backgroundPosition: 'center',
+                        backgroundRepeat: 'no-repeat'
+                      }}
+                    >
+                      <div 
+                        className="h-full flex flex-col cursor-pointer relative px-2 pt-0 pb-2"
+                        onClick={() => {
+                          setFlippedCards(prev => {
+                            const newSet = new Set(prev);
+                            newSet.delete(step.number);
+                            return newSet;
+                          });
+                        }}
+                      >
+                        
+                        {/* Top Section - Text content area */}
+                        <div className="text-center flex flex-col" style={{ height: '350px', position: 'relative' }}>
+                          <div className="text-sm leading-normal text-white w-full flip-card-text-zero-spacing">
+                            {(language === 'fr-FR' ? step.descriptionFr : step.descriptionEn).split('\n').map((paragraph, i) => (
+                              <p key={i} className="m-0 p-0">{paragraph}</p>
+                            ))}
+                          </div>
+                          
+                          {/* Separator Line - EXACTLY 250px FROM TOP */}
+                          <div className="absolute border-t border-white/40 mx-2 left-2 right-2" style={{ top: '246px' }}></div>
+                          
+                          {/* Bottom Section - Sub Description - EXACTLY 260px FROM TOP */}
+                          <div className="absolute text-center left-2 right-2" style={{ top: '256px' }}>
+                            <div className="text-xs text-white leading-relaxed w-full">
+                              {language === 'fr-FR' ? step.subDescriptionFr : step.subDescriptionEn}
+                            </div>
+                          </div>
+                        </div>
+                        
+                        {/* Return arrow - Positioned with equal spacing */}
+                        <div className="absolute -bottom-6 -left-6">
+                          <div className="w-10 h-10 bg-white/80 rounded-full flex items-center justify-center hover:bg-white transition-colors shadow-lg">
+                            <svg className="w-5 h-5 text-memopyk-dark-blue" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                            </svg>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Static Title with Blue Icon - Always Visible */}
+                <div className="flex items-center justify-center gap-3">
+                  <div className="w-12 h-12 bg-memopyk-navy rounded-full flex items-center justify-center transition-transform duration-300">
+                    <Icon className="w-6 h-6 text-white" />
+                  </div>
+                  <h3 className="text-2xl font-semibold text-memopyk-navy transition-colors duration-300">
+                    {language === 'fr-FR' ? step.titleFr : step.titleEn}
+                  </h3>
+                </div>
+              </div>
             );
           })}
         </div>
