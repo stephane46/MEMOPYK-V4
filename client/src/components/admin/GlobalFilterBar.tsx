@@ -18,8 +18,8 @@ function applyPresetDays(days: number) {
 
 export default function GlobalFilterBar() {
   const { filters, setFilters, comparison, setComparison, periodComparison, setPeriodComparison } = React.useContext(GlobalFilterContext);
-  const [from, setFrom] = React.useState(filters.range.from);
-  const [to, setTo] = React.useState(filters.range.to);
+  const [from, setFrom] = React.useState(filters.range?.from);
+  const [to, setTo] = React.useState(filters.range?.to);
   const [language, setLanguage] = React.useState(filters.language ?? "");
   const [source, setSource] = React.useState(filters.source ?? "");
   const [device, setDevice] = React.useState(filters.device ?? "");
