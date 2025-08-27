@@ -1,6 +1,7 @@
 import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { hybridStorage } from "./hybrid-storage";
+import { pool } from "./db";
 import { z } from "zod";
 import { videoCache } from "./video-cache";
 import PDFDocument from "pdfkit";
@@ -2979,55 +2980,146 @@ export async function registerRoutes(app: Express): Promise<void> {
     }
   });
 
-  // Geo Distribution Analytics - PostgreSQL-based with country filtering and comparison support
+  // Geo Distribution Analytics - ISO-3 based with PostgreSQL filtering and comparison support
   app.get("/api/analytics/geo", async (req, res) => {
     try {
       const { compare, periodMode = "week" } = req.query as Record<string, string | undefined>;
       const limit = Math.max(1, Math.min(parseInt(String(req.query.limit || "50"), 10) || 50, 500));
-      const countryFilter = (req.query.country as string | undefined)?.trim();
-      
-      console.log(`📊 PostgreSQL Geo analytics request (limit: ${limit})`, { 
-        compare, periodMode, countryFilter, 
-        filters: { from: req.query.from, to: req.query.to, lang: req.query.lang, source: req.query.source, device: req.query.device }
+      const iso3 = (req.query.countryIso3 as string | undefined)?.trim()?.toUpperCase();
+
+      // Build WHERE against sessions table (alias s)
+      const baseSpec = {
+        alias: "s",
+        dateCol: "first_seen_at",
+        localeCol: "language",
+        refCol: "referrer",
+        deviceCol: "device_category",
+      } as const;
+
+      const sqlCountries = (whereSql: string, params: any[]) => ({
+        text: `
+          SELECT
+            s.country_iso3 AS iso3,
+            MAX(s.country) AS country_name,
+            COUNT(DISTINCT s.session_id) AS sessions,
+            COUNT(DISTINCT s.ip_address) AS visitors
+          FROM analytics_sessions s
+          ${whereSql}
+          GROUP BY s.country_iso3
+          HAVING s.country_iso3 IS NOT NULL
+          ORDER BY sessions DESC
+          LIMIT ${limit}
+        `,
+        values: params,
       });
 
-      // Helper to build WHERE clause for analytics_sessions
-      const buildWhere = (reqObj: any, includeCountry = false) => {
-        const conditions: string[] = [];
-        const params: any[] = [];
-        let paramIndex = 0;
+      const sqlCities = (whereSql: string, params: any[]) => ({
+        text: `
+          SELECT
+            s.country_iso3 AS iso3,
+            MAX(s.country) AS country_name,
+            s.city,
+            COUNT(DISTINCT s.session_id) AS sessions,
+            COUNT(DISTINCT s.ip_address) AS visitors
+          FROM analytics_sessions s
+          ${whereSql}
+          GROUP BY s.country_iso3, s.city
+          HAVING s.country_iso3 IS NOT NULL
+          ORDER BY sessions DESC
+          LIMIT ${Math.max(50, limit)}
+        `,
+        values: params,
+      });
 
-        if (reqObj.query.from) {
-          conditions.push(`s.first_seen_at >= $${++paramIndex}::timestamp`);
-          params.push(reqObj.query.from);
-        }
-        if (reqObj.query.to) {
-          conditions.push(`s.first_seen_at <= $${++paramIndex}::timestamp`);
-          params.push(reqObj.query.to);
-        }
-        if (reqObj.query.lang) {
-          conditions.push(`s.language = $${++paramIndex}`);
-          params.push(reqObj.query.lang);
-        }
-        if (reqObj.query.source) {
-          conditions.push(`s.referrer ILIKE $${++paramIndex}`);
-          params.push(`%${reqObj.query.source}%`);
-        }
-        if (reqObj.query.device) {
-          conditions.push(`s.user_agent ILIKE $${++paramIndex}`);
-          params.push(`%${reqObj.query.device}%`);
-        }
-        if (includeCountry && countryFilter) {
-          conditions.push(`s.country = $${++paramIndex}`);
-          params.push(countryFilter);
-        }
-
-        const sql = conditions.length > 0 ? ` WHERE ${conditions.join(' AND ')}` : '';
-        return { sql, params };
+      // Append iso3 filter to WHERE if provided
+      const addIso3 = (whereSql: string, params: any[]) => {
+        if (!iso3) return { whereSql, params };
+        const glue = whereSql ? " AND " : " WHERE ";
+        params.push(iso3);
+        return { whereSql: `${whereSql}${glue}s.country_iso3 = $${params.length}`, params };
       };
 
-      // Helper to compute period ranges for comparison
-      const computePeriods = (options: { mode: string; from?: string; to?: string }) => {
+      // Single-period mode
+      if (compare !== "period") {
+        // Build dynamic WHERE clauses for postgres.js  
+        let whereClause = ' WHERE s.is_test_data = false';
+        const queryParams: any[] = [];
+
+        if (req.query.from) {
+          queryParams.push(req.query.from);
+          whereClause += ` AND s.first_seen_at >= $${queryParams.length}::timestamp`;
+        }
+        if (req.query.to) {
+          queryParams.push(req.query.to);
+          whereClause += ` AND s.first_seen_at <= $${queryParams.length}::timestamp`;
+        }
+        if (req.query.lang) {
+          queryParams.push(req.query.lang);
+          whereClause += ` AND s.language = $${queryParams.length}`;
+        }
+        if (req.query.source) {
+          queryParams.push(`%${req.query.source}%`);
+          whereClause += ` AND s.referrer ILIKE $${queryParams.length}`;
+        }
+        if (req.query.device) {
+          queryParams.push(`%${req.query.device}%`);
+          whereClause += ` AND s.user_agent ILIKE $${queryParams.length}`;
+        }
+
+        // Countries query
+        const countriesQuery = `
+          SELECT
+            s.country_iso3 AS iso3,
+            MAX(s.country) AS country_name,
+            COUNT(DISTINCT s.session_id) AS sessions,
+            COUNT(DISTINCT s.ip_address) AS visitors
+          FROM analytics_sessions s
+          ${whereClause}
+          GROUP BY s.country_iso3
+          HAVING s.country_iso3 IS NOT NULL
+          ORDER BY sessions DESC
+          LIMIT $${queryParams.length + 1}
+        `;
+        
+        const countries = await pool.unsafe(countriesQuery, [...queryParams, limit]);
+
+        // Cities query with potential ISO-3 filter
+        let citiesWhere = whereClause;
+        let citiesParams = [...queryParams];
+        if (iso3) {
+          citiesParams.push(iso3);
+          citiesWhere += ` AND s.country_iso3 = $${citiesParams.length}`;
+        }
+
+        const citiesQuery = `
+          SELECT
+            s.country_iso3 AS iso3,
+            MAX(s.country) AS country_name,
+            s.city,
+            COUNT(DISTINCT s.session_id) AS sessions,
+            COUNT(DISTINCT s.ip_address) AS visitors
+          FROM analytics_sessions s
+          ${citiesWhere}
+          GROUP BY s.country_iso3, s.city
+          HAVING s.country_iso3 IS NOT NULL
+          ORDER BY sessions DESC
+          LIMIT $${citiesParams.length + 1}
+        `;
+
+        const cities = await pool.unsafe(citiesQuery, [...citiesParams, Math.max(50, limit)]);
+
+        return res.json({
+          countries: countries.map((r: any) => ({
+            iso3: r.iso3, country: r.country_name, sessions: Number(r.sessions), visitors: Number(r.visitors),
+          })),
+          cities: cities.map((r: any) => ({
+            iso3: r.iso3, country: r.country_name, city: r.city, sessions: Number(r.sessions), visitors: Number(r.visitors),
+          })),
+        });
+      }
+
+      // Comparison mode
+      const computePeriods = (params: { mode: string; from?: string; to?: string }) => {
         const now = new Date();
         const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
         
@@ -3037,14 +3129,12 @@ export async function registerRoutes(app: Express): Promise<void> {
         let comparisonEnd: Date;
 
         if (req.query.from && req.query.to) {
-          // Custom range
           baselineStart = new Date(req.query.from as string);
           const diffMs = baselineEnd.getTime() - baselineStart.getTime();
-          comparisonEnd = new Date(baselineStart.getTime() - 24 * 60 * 60 * 1000); // day before baseline
+          comparisonEnd = new Date(baselineStart.getTime() - 24 * 60 * 60 * 1000);
           comparisonStart = new Date(comparisonEnd.getTime() - diffMs);
         } else {
-          // Predefined periods
-          const days = options.mode === 'month' ? 30 : 7; // week = 7 days
+          const days = params.mode === 'month' ? 30 : 7;
           baselineStart = new Date(baselineEnd.getTime() - days * 24 * 60 * 60 * 1000);
           comparisonEnd = new Date(baselineStart.getTime() - 24 * 60 * 60 * 1000);
           comparisonStart = new Date(comparisonEnd.getTime() - days * 24 * 60 * 60 * 1000);
@@ -3062,92 +3152,94 @@ export async function registerRoutes(app: Express): Promise<void> {
         };
       };
 
-      const sqlCountries = (whereSql: string, params: any[]) => ({
-        text: `
-          SELECT s.country,
-                 COUNT(DISTINCT s.session_id) AS sessions,
-                 COUNT(DISTINCT s.user_pseudo_id) AS visitors
-          FROM analytics_sessions s
-          ${whereSql}
-          GROUP BY s.country
-          ORDER BY sessions DESC
-          LIMIT ${limit}
-        `,
-        values: params,
-      });
-
-      const sqlCities = (whereSql: string, params: any[]) => ({
-        text: `
-          SELECT s.country,
-                 s.city,
-                 COUNT(DISTINCT s.session_id) AS sessions,
-                 COUNT(DISTINCT s.user_pseudo_id) AS visitors
-          FROM analytics_sessions s
-          ${whereSql}
-          GROUP BY s.country, s.city
-          ORDER BY sessions DESC
-          LIMIT ${Math.max(50, limit)}
-        `,
-        values: params,
-      });
-
-      // Normal (single) mode
-      if (compare !== "period") {
-        // Countries query
-        const w1 = buildWhere(req);
-        const q1 = sqlCountries(w1.sql, w1.params);
-        const { rows: countries } = await pool.query(q1);
-
-        // Cities query (optionally restricted to country)
-        const w2 = buildWhere(req, true);
-        const q2 = sqlCities(w2.sql, w2.params);
-        const { rows: cities } = await pool.query(q2);
-
-        return res.json({ countries, cities });
-      }
-
-      // Comparison mode: compute two ranges, then query twice
       const { baseline, comparison } = computePeriods({
-        mode: periodMode || "week",
+        mode: (periodMode as any) || "week",
         from: req.query.from as string | undefined,
         to: req.query.to as string | undefined,
       });
 
-      const runSet = async (range: { from: string; to: string }) => {
-        // Create fake req with range for buildWhere
-        const fakeReq: any = { 
-          ...req, 
-          query: { ...req.query, from: range.from, to: range.to } 
+      async function runSet(range: { from: string; to: string }) {
+        // Build WHERE clause for comparison period
+        let whereClause = ' WHERE s.is_test_data = false';
+        const queryParams: any[] = [];
+
+        // Always include the range dates for comparison
+        queryParams.push(range.from);
+        whereClause += ` AND s.first_seen_at >= $${queryParams.length}::timestamp`;
+        queryParams.push(range.to);
+        whereClause += ` AND s.first_seen_at <= $${queryParams.length}::timestamp`;
+
+        // Add other filters from original request
+        if (req.query.lang) {
+          queryParams.push(req.query.lang);
+          whereClause += ` AND s.language = $${queryParams.length}`;
+        }
+        if (req.query.source) {
+          queryParams.push(`%${req.query.source}%`);
+          whereClause += ` AND s.referrer ILIKE $${queryParams.length}`;
+        }
+        if (req.query.device) {
+          queryParams.push(`%${req.query.device}%`);
+          whereClause += ` AND s.user_agent ILIKE $${queryParams.length}`;
+        }
+
+        // Countries query
+        const countriesQuery = `
+          SELECT
+            s.country_iso3 AS iso3,
+            MAX(s.country) AS country_name,
+            COUNT(DISTINCT s.session_id) AS sessions,
+            COUNT(DISTINCT s.ip_address) AS visitors
+          FROM analytics_sessions s
+          ${whereClause}
+          GROUP BY s.country_iso3
+          HAVING s.country_iso3 IS NOT NULL
+          ORDER BY sessions DESC
+          LIMIT $${queryParams.length + 1}
+        `;
+        
+        const countries = await pool.unsafe(countriesQuery, [...queryParams, limit]);
+
+        // Cities query with potential ISO-3 filter
+        let citiesWhere = whereClause;
+        let citiesParams = [...queryParams];
+        if (iso3) {
+          citiesParams.push(iso3);
+          citiesWhere += ` AND s.country_iso3 = $${citiesParams.length}`;
+        }
+
+        const citiesQuery = `
+          SELECT
+            s.country_iso3 AS iso3,
+            MAX(s.country) AS country_name,
+            s.city,
+            COUNT(DISTINCT s.session_id) AS sessions,
+            COUNT(DISTINCT s.ip_address) AS visitors
+          FROM analytics_sessions s
+          ${citiesWhere}
+          GROUP BY s.country_iso3, s.city
+          HAVING s.country_iso3 IS NOT NULL
+          ORDER BY sessions DESC
+          LIMIT $${citiesParams.length + 1}
+        `;
+
+        const cities = await pool.unsafe(citiesQuery, [...citiesParams, Math.max(50, limit)]);
+
+        return {
+          countries: countries.map((r: any) => ({
+            iso3: r.iso3, country: r.country_name, sessions: Number(r.sessions), visitors: Number(r.visitors),
+          })),
+          cities: cities.map((r: any) => ({
+            iso3: r.iso3, country: r.country_name, city: r.city, sessions: Number(r.sessions), visitors: Number(r.visitors),
+          })),
         };
+      }
 
-        // Countries
-        const w1 = buildWhere(fakeReq);
-        const q1 = sqlCountries(w1.sql, w1.params);
-        const { rows: countries } = await pool.query(q1);
-
-        // Cities (maybe restricted to ?country=)
-        const w2 = buildWhere(fakeReq, true);
-        const q2 = sqlCities(w2.sql, w2.params);
-        const { rows: cities } = await pool.query(q2);
-
-        return { countries, cities };
-      };
-
-      const [baseSet, cmpSet] = await Promise.all([
-        runSet(baseline), 
-        runSet(comparison)
-      ]);
-      
-      return res.json({ 
-        baseline: baseSet, 
-        comparison: cmpSet, 
-        baseline_range: `${baseline.from} to ${baseline.to}`,
-        comparison_range: `${comparison.from} to ${comparison.to}`
-      });
-
-    } catch (error: any) {
-      console.error('❌ PostgreSQL Geo analytics error:', error);
-      res.status(500).json({ error: "Failed to get geo distribution data", details: error.message });
+      const [baseSet, cmpSet] = await Promise.all([runSet(baseline), runSet(comparison)]);
+      return res.json({ baseline: baseSet, comparison: cmpSet, baseline_range: baseline, comparison_range: comparison });
+    } catch (err: any) {
+      console.error("[GET /api/analytics/geo] error:", err);
+      res.status(500).json({ error: "geo endpoint failed", details: err.message });
     }
   });
 
@@ -5906,8 +5998,8 @@ export async function registerRoutes(app: Express): Promise<void> {
   // ---------- GET /api/analytics/export/csv ----------
   app.get("/api/analytics/export/csv", async (req, res) => {
     try {
-      const { report = "overview", from, to, lang, source, device } = req.query as Record<string, string | undefined>;
-      console.log('📊 CSV export request with filters:', { report, from, to, lang, source, device });
+      const { report = "overview", from, to, lang, source, device, countryIso3 } = req.query as Record<string, string | undefined>;
+      console.log('📊 CSV export request with filters:', { report, from, to, lang, source, device, countryIso3 });
       
       let mockData: any[] = [];
       let filename = `analytics_${report}.csv`;
@@ -5917,7 +6009,7 @@ export async function registerRoutes(app: Express): Promise<void> {
       
       switch (report) {
         case "overview": {
-          // Simulated: SELECT DATE_TRUNC('day', s.first_seen_at)::date AS day, COUNT(DISTINCT s.session_id) AS sessions, COUNT(DISTINCT s.user_pseudo_id) AS unique_visitors, AVG(COALESCE(s.session_duration,0)) AS avg_session_duration FROM analytics_sessions s WHERE ... GROUP BY 1 ORDER BY 1 ASC
+          // Simulated: SELECT DATE_TRUNC('day', s.first_seen_at)::date AS day, COUNT(DISTINCT s.session_id) AS sessions, COUNT(DISTINCT s.ip_address) AS unique_visitors, AVG(COALESCE(s.session_duration,0)) AS avg_session_duration FROM analytics_sessions s WHERE ... GROUP BY 1 ORDER BY 1 ASC
           mockData = [
             { day: "2025-08-01", sessions: 150, unique_visitors: 120, avg_session_duration: 180 },
             { day: "2025-08-02", sessions: 175, unique_visitors: 140, avg_session_duration: 195 },
@@ -5945,12 +6037,12 @@ export async function registerRoutes(app: Express): Promise<void> {
           break;
         }
         case "geo": {
-          // Simulated: SELECT s.country, COUNT(DISTINCT s.session_id) AS sessions, COUNT(DISTINCT s.user_pseudo_id) AS visitors FROM analytics_sessions s WHERE ... GROUP BY s.country ORDER BY sessions DESC
+          // Simulated: SELECT s.country_iso3 AS iso3, MAX(s.country) AS country, COUNT(DISTINCT s.session_id) AS sessions, COUNT(DISTINCT s.ip_address) AS visitors FROM analytics_sessions s WHERE ... AND s.country_iso3 = $n GROUP BY s.country_iso3 ORDER BY sessions DESC
           mockData = [
-            { country: "France", sessions: 245, visitors: 198 },
-            { country: "Belgium", sessions: 85, visitors: 72 },
-            { country: "Switzerland", sessions: 42, visitors: 38 },
-            { country: "Canada", sessions: 35, visitors: 32 }
+            { iso3: "FRA", country: "France", sessions: 245, visitors: 198 },
+            { iso3: "BEL", country: "Belgium", sessions: 85, visitors: 72 },
+            { iso3: "CHE", country: "Switzerland", sessions: 42, visitors: 38 },
+            { iso3: "CAN", country: "Canada", sessions: 35, visitors: 32 }
           ];
           break;
         }
@@ -5963,7 +6055,7 @@ export async function registerRoutes(app: Express): Promise<void> {
       switch (report) {
         case "overview": {
           const w = buildWhere(req, { alias: "s", dateCol: "first_seen_at", localeCol: "language", refCol: "referrer", deviceCol: "device_category" }, true);
-          const sql = `SELECT DATE_TRUNC('day', s.first_seen_at)::date AS day, COUNT(DISTINCT s.session_id) AS sessions, COUNT(DISTINCT s.user_pseudo_id) AS unique_visitors, AVG(COALESCE(s.session_duration,0)) AS avg_session_duration FROM analytics_sessions s ${w.sql} GROUP BY 1 ORDER BY 1 ASC`;
+          const sql = `SELECT DATE_TRUNC('day', s.first_seen_at)::date AS day, COUNT(DISTINCT s.session_id) AS sessions, COUNT(DISTINCT s.ip_address) AS unique_visitors, AVG(COALESCE(s.session_duration,0)) AS avg_session_duration FROM analytics_sessions s ${w.sql} GROUP BY 1 ORDER BY 1 ASC`;
           const { rows } = await pool.query(sql, w.params);
           mockData = rows;
           break;
@@ -5984,8 +6076,16 @@ export async function registerRoutes(app: Express): Promise<void> {
         }
         case "geo": {
           const w = buildWhere(req, { alias: "s", dateCol: "first_seen_at", localeCol: "language", refCol: "referrer", deviceCol: "device_category" }, true);
-          const sql = `SELECT s.country, COUNT(DISTINCT s.session_id) AS sessions, COUNT(DISTINCT s.user_pseudo_id) AS visitors FROM analytics_sessions s ${w.sql} GROUP BY s.country ORDER BY sessions DESC`;
-          const { rows } = await pool.query(sql, w.params);
+          // Add ISO-3 country filter if provided
+          let sql = `SELECT s.country_iso3 AS iso3, MAX(s.country) AS country, COUNT(DISTINCT s.session_id) AS sessions, COUNT(DISTINCT s.ip_address) AS visitors FROM analytics_sessions s ${w.sql}`;
+          let params = [...w.params];
+          if (countryIso3) {
+            const glue = w.sql ? " AND " : " WHERE ";
+            params.push(countryIso3.toUpperCase());
+            sql += `${glue}s.country_iso3 = $${params.length}`;
+          }
+          sql += ` GROUP BY s.country_iso3 HAVING s.country_iso3 IS NOT NULL ORDER BY sessions DESC`;
+          const { rows } = await pool.query(sql, params);
           mockData = rows;
           break;
         }
@@ -6068,7 +6168,7 @@ export async function registerRoutes(app: Express): Promise<void> {
       /* 
       // Real database queries would be:
       const ovWhere = buildWhere(req, { alias: "s", dateCol: "first_seen_at", localeCol: "language", refCol: "referrer", deviceCol: "device_category" }, true);
-      const ovSql = `SELECT DATE_TRUNC('day', s.first_seen_at)::date AS day, COUNT(DISTINCT s.session_id) AS sessions, COUNT(DISTINCT s.user_pseudo_id) AS unique_visitors, AVG(COALESCE(s.session_duration, 0)) AS avg_session_duration FROM analytics_sessions s ${ovWhere.sql} GROUP BY 1 ORDER BY 1 ASC`;
+      const ovSql = `SELECT DATE_TRUNC('day', s.first_seen_at)::date AS day, COUNT(DISTINCT s.session_id) AS sessions, COUNT(DISTINCT s.ip_address) AS unique_visitors, AVG(COALESCE(s.session_duration, 0)) AS avg_session_duration FROM analytics_sessions s ${ovWhere.sql} GROUP BY 1 ORDER BY 1 ASC`;
       const ov = await pool.query(ovSql, ovWhere.params);
       */
 
