@@ -136,28 +136,43 @@ export default function AnalyticsWorldMapCard() {
                   >
                     <Geographies geography={geoUrl}>
                       {({ geographies }) => {
-                        // Debug: Always log to understand the mapping issue
-                        console.log("🗺️ WORLD MAP DEBUG: Geographies loaded:", geographies.length);
+                        // AGGRESSIVE DEBUG: Find the property mapping issue
+                        console.log("🗺️ WORLD MAP DEBUG: START ==================");
+                        console.log("🗺️ Geographies loaded:", geographies.length);
+                        console.log("🗺️ Analytics countries:", baselineCountries.length);
+                        
                         if (geographies.length > 0) {
                           const firstGeo = geographies[0]?.properties;
-                          console.log("🗺️ WORLD MAP DEBUG: First geography properties:", firstGeo);
-                          console.log("🗺️ WORLD MAP DEBUG: Available property keys:", Object.keys(firstGeo || {}));
-                          console.log("🗺️ WORLD MAP DEBUG: Property values:", Object.entries(firstGeo || {}));
-                          console.log("🗺️ WORLD MAP DEBUG: Our analytics ISO3 codes sample:", Array.from(baselineMap.keys()).slice(0, 10));
-                          console.log("🗺️ WORLD MAP DEBUG: Analytics data size:", baselineCountries.length, "countries");
+                          console.log("🗺️ First geo properties (RAW):", firstGeo);
+                          console.log("🗺️ Property keys:", Object.keys(firstGeo || {}));
+                          console.log("🗺️ Property values:", Object.entries(firstGeo || {}));
+                          console.log("🗺️ Analytics ISO3 sample:", Array.from(baselineMap.keys()));
+                          
+                          // Check a few more countries to understand the pattern
+                          const sampleCountries = geographies.slice(0, 5).map(geo => ({
+                            props: geo.properties,
+                            keys: Object.keys(geo.properties || {})
+                          }));
+                          console.log("🗺️ Sample of 5 countries:", sampleCountries);
                         }
+                        console.log("🗺️ WORLD MAP DEBUG: END ==================");
                         return geographies.map((geo) => {
-                          // Try multiple possible ISO3 property names from the geography data
-                          const iso3 = geo.properties.ISO_A3 || geo.properties.ADM0_A3 || geo.properties.ISO3 || geo.properties.iso3;
-                          // Additional debug for mapping issues
-                          if (geo.properties.NAME === "France" || geo.properties.NAME_EN === "France") {
-                            console.log("🇫🇷 FRANCE DEBUG:", {
-                              ISO_A3: geo.properties.ISO_A3,
-                              ADM0_A3: geo.properties.ADM0_A3,
-                              NAME: geo.properties.NAME,
-                              final_iso3: iso3,
-                              has_analytics_data: baselineMap.has(iso3)
-                            });
+                          // EMERGENCY FIX: Try every possible property
+                          const props = geo.properties || {};
+                          const allValues = Object.values(props);
+                          
+                          // Try to find ISO3 in ANY property value that looks like a 3-letter code
+                          let iso3 = null;
+                          for (const [key, value] of Object.entries(props)) {
+                            if (typeof value === 'string' && value.length === 3 && /^[A-Z]{3}$/.test(value)) {
+                              iso3 = value;
+                              break;
+                            }
+                          }
+                          
+                          // Fallback to traditional property names if pattern matching failed
+                          if (!iso3) {
+                            iso3 = props.ISO_A3 || props.ADM0_A3 || props.ISO3 || props.iso3 || props.id || props.name;
                           }
                           const base = baselineMap.get(iso3);
                           const cmp = comparisonMap.get(iso3);
