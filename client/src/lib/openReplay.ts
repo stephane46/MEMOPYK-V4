@@ -16,16 +16,7 @@ export function initOpenReplay(opts: InitOptions = {}) {
   const enabledFlag = import.meta.env.VITE_VIDEO_ANALYTICS_ENABLED;
   if (enabledFlag !== "true") return null;
   
-  // Disable OpenReplay in development to prevent "Failed to fetch" runtime errors
-  // It works properly only in production deployment
-  const isDevelopment = window.location.hostname.includes('replit.dev') || 
-                       window.location.hostname === 'localhost' ||
-                       window.location.hostname === '127.0.0.1';
-  
-  if (isDevelopment) {
-    console.log("🎬 OpenReplay disabled in development - will work in production deployment");
-    return null;
-  }
+  // Allow OpenReplay to run on all environments - handle connection errors gracefully instead of disabling
   
   if (tracker) return tracker; // already started
 
@@ -50,14 +41,18 @@ export function initOpenReplay(opts: InitOptions = {}) {
     // Start tracking with comprehensive error handling - prevent unhandled rejections
     const startPromise = tracker.start();
     if (startPromise && typeof startPromise.catch === 'function') {
-      startPromise.catch((error) => {
-        console.warn("🚫 OpenReplay start failed (network/connectivity issue):", error);
-        // Explicitly handle the rejection to prevent unhandled promise rejection
-        return null;
-      });
+      startPromise
+        .then(() => {
+          console.log("🎬 OpenReplay session recording started successfully");
+        })
+        .catch((error) => {
+          console.warn("🚫 OpenReplay connection issue (expected in dev) - will work in production:", error);
+          // Explicitly handle the rejection to prevent unhandled promise rejection
+          return null;
+        });
     }
     
-    console.log("🎬 OpenReplay tracker created and started");
+    console.log("🎬 OpenReplay tracker initialized - attempting connection...");
   } catch (error) {
     console.error("🚫 OpenReplay initialization failed:", error);
     return null;
