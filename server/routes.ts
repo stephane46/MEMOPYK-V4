@@ -2132,9 +2132,9 @@ export async function registerRoutes(app: Express): Promise<void> {
   // Analytics Daily Overview - GET daily overview data for charts
   app.get("/api/analytics/overview", async (req, res) => {
     try {
-      const { days } = req.query;
+      const { days, from, to, lang, source, device } = req.query;
       const daysNum = parseInt(days as string || '30');
-      console.log(`📊 Analytics daily overview request for ${daysNum} days`);
+      console.log(`📊 Analytics daily overview request for ${daysNum} days with filters:`, { from, to, lang, source, device });
       
       // For now, return mock data structure that matches the expected format
       // This will be replaced with actual Supabase analytics_daily_overview view query
@@ -2784,9 +2784,9 @@ export async function registerRoutes(app: Express): Promise<void> {
   // Video Performance Analytics - GET comprehensive video engagement with milestones
   app.get("/api/analytics/video-performance", async (req, res) => {
     try {
-      const { days } = req.query;
+      const { days, from, to, lang, source, device } = req.query;
       const daysNum = parseInt(days as string || '30');
-      console.log(`📊 Video performance analytics request for ${daysNum} days with milestone tracking`);
+      console.log(`📊 Video performance analytics request for ${daysNum} days with filters:`, { from, to, lang, source, device });
       
       // For now, return mock data structure that matches the expected format
       // This will be replaced with actual analytics_video_performance view query
@@ -2875,7 +2875,8 @@ export async function registerRoutes(app: Express): Promise<void> {
   // CTA Performance Analytics - GET clicks by CTA ID and CTR per page
   app.get("/api/analytics/cta-performance", async (req, res) => {
     try {
-      console.log('📊 CTA performance analytics request');
+      const { from, to, lang, source, device } = req.query;
+      console.log('📊 CTA performance analytics request with filters:', { from, to, lang, source, device });
       
       // Mock data structure for CTA performance
       const mockData = {
@@ -2907,8 +2908,8 @@ export async function registerRoutes(app: Express): Promise<void> {
   // Geo Distribution Analytics - GET countries and cities
   app.get("/api/analytics/geo", async (req, res) => {
     try {
-      const { limit = 50 } = req.query;
-      console.log(`📊 Geo distribution analytics request (limit: ${limit})`);
+      const { limit = 50, from, to, lang, source, device } = req.query;
+      console.log(`📊 Geo distribution analytics request (limit: ${limit}) with filters:`, { from, to, lang, source, device });
       
       // Mock data structure for geographic distribution
       const mockData = {

@@ -24,11 +24,20 @@ export default function GlobalFilterBar() {
   return (
     <div className="flex flex-wrap items-center gap-3">
       {/* Preset */}
-      <Select onValueChange={(v) => setFilters({ ...filters, range: applyPresetDays(Number(v)), language, source, device })}>
+      <Select onValueChange={(v) => {
+        if (v === "yesterday") {
+          const end = new Date(); end.setUTCHours(0, 0, 0, 0);
+          const start = new Date(end); start.setUTCDate(start.getUTCDate() - 1);
+          setFilters({ ...filters, range: { from: toIsoDate(start), to: toIsoDate(start) }, language, source, device });
+        } else {
+          setFilters({ ...filters, range: applyPresetDays(Number(v)), language, source, device });
+        }
+      }}>
         <SelectTrigger className="h-9 w-[120px]">
           <SelectValue placeholder="Presets" />
         </SelectTrigger>
         <SelectContent>
+          <SelectItem value="yesterday">Yesterday</SelectItem>
           <SelectItem value="7">Last 7 days</SelectItem>
           <SelectItem value="30">Last 30 days</SelectItem>
           <SelectItem value="90">Last 90 days</SelectItem>
