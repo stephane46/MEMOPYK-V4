@@ -40,7 +40,13 @@ export const GlobalFilterContext = React.createContext<{
 export function GlobalFilterProvider({ children }: { children: React.ReactNode }) {
   const [filters, setFilters] = React.useState<GlobalFilter>(() => {
     try {
-      return JSON.parse(localStorage.getItem("global-filters") || "{}");
+      const saved = JSON.parse(localStorage.getItem("global-filters") || "{}");
+      return {
+        range: saved.range || {},
+        language: saved.language,
+        source: saved.source,
+        device: saved.device
+      };
     } catch {
       return { range: {} };
     }
