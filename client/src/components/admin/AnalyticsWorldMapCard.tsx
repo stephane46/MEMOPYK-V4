@@ -45,19 +45,10 @@ export default function AnalyticsWorldMapCard() {
   const [tooltip, setTooltip] = React.useState<{ visible: boolean; x: number; y: number; iso3?: string; country?: string; sessions?: number; visitors?: number; delta?: number | null }>({ visible: false, x: 0, y: 0 });
   const [tooltipLocked, setTooltipLocked] = React.useState(false);
 
-  // Calculate optimal map centering for responsive design
-  const getOptimalMapCenter = React.useCallback(() => {
-    // Mathematics for proper world map centering:
-    // World longitude: [-180, 180], latitude: [-90, 90]
-    // For visual balance, center slightly east and north of (0,0)
-    // This positions major population centers (Europe, Asia, North America) well
-    return {
-      coordinates: [10, 15] as [number, number], // Longitude, Latitude  
-      zoom: 1.1
-    };
-  }, []);
-  
-  const [position, setPosition] = React.useState<{ coordinates: [number, number]; zoom: number }>(getOptimalMapCenter());
+  const [position, setPosition] = React.useState<{ coordinates: [number, number]; zoom: number }>({ 
+    coordinates: [0, 10], // Longitude: 0 (Greenwich), Latitude: 10 (slightly north)
+    zoom: 1 
+  });
   const [selectedIso3, setSelectedIso3] = React.useState<string | null>(null);
   const [selectedCountryName, setSelectedCountryName] = React.useState<string | null>(null);
   const [countryCities, setCountryCities] = React.useState<CityRow[] | null>(null);
