@@ -45,7 +45,7 @@ export default function AnalyticsWorldMapCard() {
   const [tooltip, setTooltip] = React.useState<{ visible: boolean; x: number; y: number; iso3?: string; country?: string; sessions?: number; visitors?: number; delta?: number | null }>({ visible: false, x: 0, y: 0 });
   const [tooltipLocked, setTooltipLocked] = React.useState(false);
 
-  const [position, setPosition] = React.useState<{ coordinates: [number, number]; zoom: number }>({ coordinates: [2, 20], zoom: 1.2 }); // Centered on France, higher up
+  const [position, setPosition] = React.useState<{ coordinates: [number, number]; zoom: number }>({ coordinates: [2, -10], zoom: 1.2 }); // Centered on France, much higher up
   const [selectedIso3, setSelectedIso3] = React.useState<string | null>(null);
   const [selectedCountryName, setSelectedCountryName] = React.useState<string | null>(null);
   const [countryCities, setCountryCities] = React.useState<CityRow[] | null>(null);
