@@ -7,9 +7,9 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
 console.log('🕐 GA4 Analytics Scheduler starting...');
-console.log('⏰ Scheduled for 00:15 UTC daily');
+console.log('⏰ Scheduled for 00:15 Paris time daily');
 
-// Schedule GA4 sync to run daily at 00:15 UTC
+// Schedule GA4 sync to run daily at 00:15 Paris time
 cron.schedule('15 0 * * *', () => {
   console.log('🚀 Starting GA4 → Supabase sync at', new Date().toISOString());
   
@@ -31,7 +31,7 @@ cron.schedule('15 0 * * *', () => {
     console.error('❌ GA4 sync error:', error);
   });
 }, {
-  timezone: 'UTC'
+  timezone: 'Europe/Paris'
 });
 
 console.log('✅ GA4 Analytics Scheduler active');
