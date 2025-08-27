@@ -10,6 +10,7 @@ import path from 'path';
 import multer from 'multer';
 import { createClient } from '@supabase/supabase-js';
 import testRoutes from './test-routes';
+import adminCountryNames from './routes/adminCountryNames';
 import { setCacheAndOriginHeaders } from './cache-origin-headers';
 import { createCacheHitHeaders, createCacheMissHeaders, getUpstreamSource, getCacheAge } from './cache-delivery-headers';
 import { analyticsCleanupRoutes } from './routes-analytics-cache-cleanup';
@@ -6238,6 +6239,9 @@ export async function registerRoutes(app: Express): Promise<void> {
     }
   });
 
+  // Admin Routes
+  app.use(adminCountryNames);
+  
   // Test Routes
   app.use('/test', testRoutes);
 }
