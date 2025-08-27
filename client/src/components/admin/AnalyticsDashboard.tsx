@@ -7,6 +7,7 @@ import AnalyticsDailyOverviewCard from "./AnalyticsDailyOverviewCard";
 import { AnalyticsVideoPerformanceCard } from "./AnalyticsVideoPerformanceCard";
 import AnalyticsCtaPerformanceCard from "./AnalyticsCtaPerformanceCard";
 import AnalyticsGeoDistributionCard from "./AnalyticsGeoDistributionCard";
+import AnalyticsWorldMapCard from "./AnalyticsWorldMapCard";
 
 export function AnalyticsDashboard() {
   return (
@@ -25,6 +26,7 @@ export function AnalyticsDashboard() {
           <div><AnalyticsCtaPerformanceCard /></div>
           <div className="md:col-span-2 xl:col-span-2"><AnalyticsVideoPerformanceCard /></div>
           <div><AnalyticsGeoDistributionCard /></div>
+          <div className="md:col-span-2 xl:col-span-2"><AnalyticsWorldMapCard /></div>
         </div>
       </div>
     </GlobalFilterProvider>
