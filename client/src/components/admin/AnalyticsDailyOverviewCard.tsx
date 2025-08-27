@@ -3,8 +3,8 @@ import { Card, CardHeader, CardTitle, CardContent, CardFooter } from "@/componen
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Skeleton } from "@/components/ui/skeleton";
-import { RefreshCcw, FileDown } from "lucide-react";
-import { downloadFile } from "@/utils/downloadFile";
+import { RefreshCcw } from "lucide-react";
+import ExportRangeControls from "./ExportRangeControls";
 import {
   LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer,
 } from "recharts";
@@ -95,15 +95,9 @@ export default function AnalyticsDailyOverviewCard() {
             <RefreshCcw className={`h-4 w-4 ${loading ? "animate-spin" : ""}`} />
             Refresh
           </Button>
-          <Button
-            size="sm"
-            variant="outline"
-            onClick={() => downloadFile(`/api/analytics/export/csv?report=overview`, "analytics_overview.csv")}
-            className="gap-2"
-          >
-            <FileDown className="h-4 w-4" />
-            Export CSV
-          </Button>
+
+          {/* New: range-based export */}
+          <ExportRangeControls report="overview" />
         </div>
       </CardHeader>
 
