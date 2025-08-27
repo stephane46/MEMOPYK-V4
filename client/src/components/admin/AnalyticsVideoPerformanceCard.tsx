@@ -1,10 +1,12 @@
 import { useEffect, useState } from "react";
+import * as React from "react";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Play, Clock, TrendingUp, BarChart3, RefreshCcw } from "lucide-react";
 import ExportRangeControls from "./ExportRangeControls";
+import { GlobalFilterContext } from "./GlobalFilterContext";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
 
 interface VideoPerformanceData {
@@ -36,7 +38,16 @@ interface AnalyticsVideoPerformanceCardProps {
   dateRange?: string;
 }
 
+// Helper function to append global range to API URLs
+function withRange(url: string, range: {from?: string; to?: string}) {
+  const u = new URL(url, window.location.origin);
+  if (range.from) u.searchParams.set("from", range.from);
+  if (range.to) u.searchParams.set("to", range.to);
+  return u.pathname + u.search; // relative
+}
+
 export const AnalyticsVideoPerformanceCard = ({ dateRange = "30" }: AnalyticsVideoPerformanceCardProps) => {
+  const { range } = React.useContext(GlobalFilterContext);
   const [data, setData] = useState<VideoPerformanceData[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -48,7 +59,7 @@ export const AnalyticsVideoPerformanceCard = ({ dateRange = "30" }: AnalyticsVid
         setLoading(true);
         setError(null);
         
-        const response = await fetch(`/api/analytics/video-performance?days=${dateRange}`);
+        const response = await fetch(withRange("/api/analytics/video-performance", range));
         if (!response.ok) {
           throw new Error('Failed to fetch video performance data');
         }
@@ -64,42 +75,26 @@ export const AnalyticsVideoPerformanceCard = ({ dateRange = "30" }: AnalyticsVid
     };
 
     fetchVideoPerformance();
-  }, [dateRange]);
+  }, [range]);
 
-  const handleExportCSV = async () => {
-    setExporting(true);
+  const handleRefresh = async () => {
     try {
-      const filename = `video_performance_${dateRange}d_${formatDateForFilename()}.csv`;
-      await downloadCSV(`/api/analytics/export/csv?report=video&days=${dateRange}`, filename);
-    } catch (error) {
-      console.error('Export failed:', error);
-    } finally {
-      setExporting(false);
-    }
-  };
-
-  const handleRefresh = () => {
-    const fetchVideoPerformance = async () => {
-      try {
-        setLoading(true);
-        setError(null);
-        
-        const response = await fetch(`/api/analytics/video-performance?days=${dateRange}`);
-        if (!response.ok) {
-          throw new Error('Failed to fetch video performance data');
-        }
-        
-        const result = await response.json();
-        setData(result);
-      } catch (err) {
-        console.error('Video performance fetch error:', err);
-        setError(err instanceof Error ? err.message : 'Unknown error occurred');
-      } finally {
-        setLoading(false);
+      setLoading(true);
+      setError(null);
+      
+      const response = await fetch(withRange("/api/analytics/video-performance", range));
+      if (!response.ok) {
+        throw new Error('Failed to fetch video performance data');
       }
-    };
-    
-    fetchVideoPerformance();
+      
+      const result = await response.json();
+      setData(result);
+    } catch (err) {
+      console.error('Video performance fetch error:', err);
+      setError(err instanceof Error ? err.message : 'Unknown error occurred');
+    } finally {
+      setLoading(false);
+    }
   };
 
   // Prepare chart data for percent milestones

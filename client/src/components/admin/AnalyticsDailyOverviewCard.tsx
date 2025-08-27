@@ -5,7 +5,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Skeleton } from "@/components/ui/skeleton";
 import { RefreshCcw } from "lucide-react";
 import ExportRangeControls from "./ExportRangeControls";
-import { RangeContext } from "./RangeContext";
+import { GlobalFilterContext } from "./GlobalFilterContext";
 import {
   LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer,
 } from "recharts";
@@ -47,8 +47,16 @@ function rangeFromDays(days: number): { from?: string; to?: string } {
   return { from, to };
 }
 
+// Helper function to append global range to API URLs
+function withRange(url: string, range: {from?: string; to?: string}) {
+  const u = new URL(url, window.location.origin);
+  if (range.from) u.searchParams.set("from", range.from);
+  if (range.to) u.searchParams.set("to", range.to);
+  return u.pathname + u.search; // relative
+}
+
 export default function AnalyticsDailyOverviewCard() {
-  const { setRange } = React.useContext(RangeContext);
+  const { range } = React.useContext(GlobalFilterContext);
   const [days, setDays] = React.useState<number>(30);
   const [loading, setLoading] = React.useState<boolean>(true);
   const [data, setData] = React.useState<any[]>([]);
@@ -58,10 +66,12 @@ export default function AnalyticsDailyOverviewCard() {
     setLoading(true);
     setError(null);
     try {
-      const rows = await fetchOverview(days);
+      const res = await fetch(withRange(`/api/analytics/overview?days=${days}`, range));
+      if (!res.ok) throw new Error(`Overview fetch failed: ${res.status}`);
+      const rows = await res.json();
       // Normalize data for chart
       const chartData = rows
-        .map((r) => ({
+        .map((r: any) => ({
           day: r.day, // ISO date (YYYY-MM-DD)
           label: formatDayLabel(r.day),
           sessions: Number(r.sessions ?? 0),
@@ -71,7 +81,7 @@ export default function AnalyticsDailyOverviewCard() {
             (r.avg_session_duration ?? r.avgSessionDuration) ?? 0
           ),
         }))
-        .sort((a, b) => (a.day < b.day ? -1 : 1));
+        .sort((a: any, b: any) => (a.day < b.day ? -1 : 1));
       setData(chartData);
     } catch (e: any) {
       setError(e?.message || "Failed to load daily overview.");
@@ -84,10 +94,6 @@ export default function AnalyticsDailyOverviewCard() {
     load();
   }, [load]);
 
-  // whenever `days` changes (including Yesterday=1), update the shared range
-  React.useEffect(() => {
-    setRange(rangeFromDays(days));
-  }, [days, setRange]);
 
 
   const latest = data.length ? data[data.length - 1] : null;

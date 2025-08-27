@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { RefreshCcw } from "lucide-react";
 import ExportRangeControls from "./ExportRangeControls";
+import { GlobalFilterContext } from "./GlobalFilterContext";
 import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer,
 } from "recharts";
@@ -12,8 +13,16 @@ type CtaSummary = { cta_id: string; total_clicks: number; unique_users: number }
 type CtaByPage = { cta_id: string; page_path: string; clicks: number; impressions?: number | null; ctr?: number | null };
 type ApiResponse = { summary: CtaSummary[]; by_page: CtaByPage[] };
 
-async function fetchCtaPerformance(): Promise<ApiResponse> {
-  const res = await fetch("/api/analytics/cta-performance");
+// Helper function to append global range to API URLs
+function withRange(url: string, range: {from?: string; to?: string}) {
+  const u = new URL(url, window.location.origin);
+  if (range.from) u.searchParams.set("from", range.from);
+  if (range.to) u.searchParams.set("to", range.to);
+  return u.pathname + u.search; // relative
+}
+
+async function fetchCtaPerformance(range: {from?: string; to?: string}): Promise<ApiResponse> {
+  const res = await fetch(withRange("/api/analytics/cta-performance", range));
   if (!res.ok) throw new Error(`CTA performance fetch failed: ${res.status}`);
   return res.json();
 }
@@ -24,6 +33,7 @@ function pct(n?: number | null) {
 }
 
 export default function AnalyticsCtaPerformanceCard() {
+  const { range } = React.useContext(GlobalFilterContext);
   const [loading, setLoading] = React.useState(true);
   const [error, setError] = React.useState<string | null>(null);
   const [summary, setSummary] = React.useState<CtaSummary[]>([]);
@@ -33,7 +43,7 @@ export default function AnalyticsCtaPerformanceCard() {
     setLoading(true);
     setError(null);
     try {
-      const data = await fetchCtaPerformance();
+      const data = await fetchCtaPerformance(range);
       setSummary((data.summary || []).sort((a,b) => (b.total_clicks ?? 0) - (a.total_clicks ?? 0)));
       setByPage(data.by_page || []);
     } catch (e: any) {
@@ -41,7 +51,7 @@ export default function AnalyticsCtaPerformanceCard() {
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [range]);
 
   React.useEffect(() => {
     load();
