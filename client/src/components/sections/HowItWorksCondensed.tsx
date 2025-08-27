@@ -165,82 +165,79 @@ export function HowItWorksCondensed() {
                           </div>
                         </div>
                         
-                        {/* Folded Corner Overlay - Bottom Right */}
-                        <div 
-                          className="absolute bottom-0 right-0 overflow-hidden pointer-events-none"
-                          style={{
-                            width: 'min(14%, 64px)',
-                            height: 'min(14%, 64px)',
-                            minWidth: '44px',
-                            minHeight: '44px'
-                          }}
-                        >
-                          {/* Back Preview (behind the fold) - Shows gradient preview */}
+                        {/* Realistic Folded Paper Corner */}
+                        <div className="absolute bottom-0 right-0 w-20 h-20 overflow-hidden pointer-events-none">
+                          {/* The "back" content that shows when corner is peeled */}
                           <div 
-                            className="absolute inset-0 rounded-tl-full"
+                            className="absolute -bottom-1 -right-1 w-24 h-24 rounded-tl-3xl"
                             style={{
-                              backgroundImage: `linear-gradient(135deg, rgba(214, 124, 74, 0.85) 0%, rgba(42, 71, 89, 0.85) 100%)`,
-                              transform: hoveredCard === step.number ? 'scale(1.05)' : 'scale(1)',
-                              opacity: hoveredCard === step.number ? 0.9 : 0.7,
-                              transition: 'all 200ms ease-out'
+                              background: `linear-gradient(135deg, 
+                                rgba(214, 124, 74, 0.95) 0%, 
+                                rgba(214, 124, 74, 0.9) 30%, 
+                                rgba(42, 71, 89, 0.9) 70%, 
+                                rgba(42, 71, 89, 0.95) 100%)`,
+                              transform: hoveredCard === step.number 
+                                ? 'scale(1.1) rotate(-1deg)' 
+                                : 'scale(1) rotate(0deg)',
+                              opacity: hoveredCard === step.number ? 0.95 : 0.8,
+                              transition: 'all 300ms cubic-bezier(0.4, 0, 0.2, 1)',
+                              zIndex: 1
                             }}
                           >
-                            {/* Subtle back content hint */}
-                            <div 
-                              className="absolute inset-0 flex items-center justify-center text-white text-xs font-medium opacity-60"
-                              style={{
-                                fontSize: 'clamp(8px, 2vw, 10px)',
-                                filter: 'blur(0.5px)'
-                              }}
-                            >
-                              {language === 'fr-FR' ? 'Plus' : 'More'}
+                            {/* Back content preview text */}
+                            <div className="absolute inset-0 flex items-center justify-center">
+                              <span 
+                                className="text-white font-medium opacity-70"
+                                style={{
+                                  fontSize: '11px',
+                                  textShadow: '0 1px 2px rgba(0,0,0,0.3)',
+                                  transform: 'rotate(-45deg)'
+                                }}
+                              >
+                                {language === 'fr-FR' ? 'Détails' : 'Details'}
+                              </span>
                             </div>
                           </div>
                           
-                          {/* Folded Corner Triangle */}
+                          {/* The paper fold/peel effect */}
                           <div 
                             className="absolute bottom-0 right-0"
                             style={{
                               width: 0,
                               height: 0,
-                              borderLeft: 'min(14vw, 64px) solid transparent',
-                              borderBottom: 'min(14vw, 64px) solid white',
+                              borderLeft: '80px solid white',
+                              borderTop: '80px solid transparent',
                               filter: hoveredCard === step.number 
-                                ? 'drop-shadow(0 6px 12px rgba(0,0,0,0.25)) drop-shadow(0 2px 4px rgba(0,0,0,0.1))' 
-                                : 'drop-shadow(0 3px 6px rgba(0,0,0,0.15))',
+                                ? 'drop-shadow(-4px -4px 8px rgba(0,0,0,0.15)) drop-shadow(-1px -1px 3px rgba(0,0,0,0.1))' 
+                                : 'drop-shadow(-2px -2px 4px rgba(0,0,0,0.1))',
                               transform: hoveredCard === step.number 
-                                ? 'rotate(-3deg) translateY(-3px) translateX(1px)' 
-                                : 'rotate(0deg) translateY(0px) translateX(0px)',
-                              transition: 'all 200ms ease-out',
-                              transformOrigin: 'bottom right'
+                                ? 'rotate(5deg) translate(2px, 2px)' 
+                                : 'rotate(0deg) translate(0px, 0px)',
+                              transition: 'all 300ms cubic-bezier(0.4, 0, 0.2, 1)',
+                              transformOrigin: 'bottom right',
+                              zIndex: 3
                             }}
                           />
                           
-                          {/* Fold Line Shadow */}
+                          {/* Inner shadow for depth */}
                           <div 
-                            className="absolute bottom-0 right-0 pointer-events-none"
+                            className="absolute bottom-0 right-0 w-20 h-20 pointer-events-none"
                             style={{
-                              width: 'min(14%, 64px)',
-                              height: 'min(14%, 64px)',
-                              minWidth: '44px',
-                              minHeight: '44px',
-                              background: 'linear-gradient(135deg, transparent 48%, rgba(0,0,0,0.1) 50%, transparent 52%)',
-                              opacity: hoveredCard === step.number ? 0.4 : 0.2,
-                              transition: 'opacity 200ms ease-out'
+                              background: 'linear-gradient(135deg, transparent 60%, rgba(0,0,0,0.1) 75%, rgba(0,0,0,0.05) 85%, transparent 100%)',
+                              opacity: hoveredCard === step.number ? 0.7 : 0.4,
+                              transition: 'opacity 300ms ease-out',
+                              zIndex: 2
                             }}
                           />
                           
-                          {/* Highlight on fold edge */}
+                          {/* Highlight along the fold */}
                           <div 
-                            className="absolute bottom-0 right-0 pointer-events-none"
+                            className="absolute bottom-0 right-0 w-20 h-20 pointer-events-none"
                             style={{
-                              width: 'min(14%, 64px)',
-                              height: 'min(14%, 64px)',
-                              minWidth: '44px',
-                              minHeight: '44px',
-                              background: 'linear-gradient(135deg, transparent 47%, rgba(255,255,255,0.3) 49%, rgba(255,255,255,0.1) 51%, transparent 53%)',
-                              opacity: hoveredCard === step.number ? 0.8 : 0.4,
-                              transition: 'opacity 200ms ease-out'
+                              background: 'linear-gradient(135deg, transparent 58%, rgba(255,255,255,0.4) 62%, rgba(255,255,255,0.1) 66%, transparent 70%)',
+                              opacity: hoveredCard === step.number ? 0.9 : 0.5,
+                              transition: 'opacity 300ms ease-out',
+                              zIndex: 2
                             }}
                           />
                         </div>
