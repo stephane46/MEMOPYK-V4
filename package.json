@@ -246,6 +246,7 @@
     "path-scurry": "^1.11.1",
     "path-to-regexp": "^0.1.12",
     "pause": "^0.0.1",
+    "pdfkit": "^0.13.0",
     "pg": "^8.16.3",
     "pg-cloudflare": "^1.2.7",
     "pg-connection-string": "^2.9.1",

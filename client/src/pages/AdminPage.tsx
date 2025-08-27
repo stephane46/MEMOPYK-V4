@@ -1217,9 +1217,9 @@ export default function AdminPage() {
 
 
 
-          {/* Analytics Dashboard */}
+          {/* Legacy Analytics Dashboard */}
           {activeSection === 'analytics' && (
-            <AnalyticsDashboard />
+            <CleanGA4Analytics />
           )}
 
           {/* GA4 Analytics Dashboard */}
@@ -1229,9 +1229,9 @@ export default function AdminPage() {
             </FiltersProvider>
           )}
 
-          {/* Clean GA4 Analytics Dashboard */}
+          {/* New Analytics Dashboard */}
           {activeSection === 'analytics-ga-clean' && (
-            <CleanGA4Analytics />
+            <AnalyticsDashboard />
           )}
 
           {/* Gallery */}

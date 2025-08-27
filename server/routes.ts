@@ -3,6 +3,7 @@ import { createServer, type Server } from "http";
 import { hybridStorage } from "./hybrid-storage";
 import { z } from "zod";
 import { videoCache } from "./video-cache";
+import PDFDocument from "pdfkit";
 import fs, { createReadStream, existsSync, statSync, mkdirSync, openSync, closeSync, readdirSync, unlinkSync, readFileSync } from 'fs';
 import path from 'path';
 import multer from 'multer';
@@ -5671,6 +5672,168 @@ export async function registerRoutes(app: Express): Promise<void> {
         error: "Unexpected server error", 
         details: err.message 
       });
+    }
+  });
+
+  // ---------- CSV helper function ----------
+  function sendCsv(res: any, filename: string, rows: any[]) {
+    if (!rows || rows.length === 0) {
+      res.setHeader("Content-Type", "text/csv; charset=utf-8");
+      res.setHeader("Content-Disposition", `attachment; filename="${filename}"`);
+      return res.send("no_data\n");
+    }
+    const headers = Object.keys(rows[0]);
+    const escape = (v: any) => {
+      if (v == null) return "";
+      const s = String(v).replace(/"/g, '""');
+      return /[",\n]/.test(s) ? `"${s}"` : s;
+    };
+    const lines = [
+      headers.join(","),
+      ...rows.map((r) => headers.map((h) => escape((r as any)[h])).join(",")),
+    ];
+    const csv = lines.join("\n");
+    res.setHeader("Content-Type", "text/csv; charset=utf-8");
+    res.setHeader("Content-Disposition", `attachment; filename="${filename}"`);
+    res.send(csv);
+  }
+
+  // ---------- GET /api/analytics/export/csv ----------
+  app.get("/api/analytics/export/csv", async (req, res) => {
+    try {
+      const { report = "overview", from, to } = req.query as Record<string, string | undefined>;
+      console.log(`📊 CSV export request: report=${report}, from=${from}, to=${to}`);
+      
+      // Mock data for now - will be replaced with actual GA4 data later
+      let mockData: any[] = [];
+      let filename = `analytics_${report}.csv`;
+
+      switch (report) {
+        case "overview":
+          mockData = [
+            { day: "2025-08-01", sessions: 150, unique_visitors: 120, avg_session_duration: 180 },
+            { day: "2025-08-02", sessions: 175, unique_visitors: 140, avg_session_duration: 195 },
+            { day: "2025-08-03", sessions: 200, unique_visitors: 160, avg_session_duration: 210 }
+          ];
+          break;
+        case "video":
+          mockData = [
+            { video_id: "PomGalleryC.mp4", starts: 45, completed_90: 32, avg_watch_time: 85, median_watch_time: 78 },
+            { video_id: "VitaminSeaC.mp4", starts: 38, completed_90: 25, avg_watch_time: 72, median_watch_time: 65 },
+            { video_id: "safari-1.mp4", starts: 22, completed_90: 15, avg_watch_time: 58, median_watch_time: 52 }
+          ];
+          break;
+        case "cta":
+          mockData = [
+            { cta_id: "contact", total_clicks: 85, unique_users: 72 },
+            { cta_id: "book_call", total_clicks: 64, unique_users: 58 },
+            { cta_id: "hero_cta", total_clicks: 45, unique_users: 42 },
+            { cta_id: "gallery_cta", total_clicks: 38, unique_users: 35 }
+          ];
+          break;
+        case "geo":
+          mockData = [
+            { country: "France", sessions: 245, visitors: 198 },
+            { country: "Belgium", sessions: 85, visitors: 72 },
+            { country: "Switzerland", sessions: 42, visitors: 38 },
+            { country: "Canada", sessions: 35, visitors: 32 }
+          ];
+          break;
+        default:
+          return res.status(400).json({ error: "Unknown report param" });
+      }
+
+      sendCsv(res, filename, mockData);
+    } catch (err: any) {
+      console.error("[export/csv] error:", err);
+      res.status(500).json({ error: "CSV export failed", details: err.message });
+    }
+  });
+
+  // ---------- GET /api/analytics/export/pdf ----------
+  app.get("/api/analytics/export/pdf", async (req, res) => {
+    try {
+      const { from, to } = req.query as Record<string, string | undefined>;
+      console.log(`📊 PDF export request: from=${from}, to=${to}`);
+
+      // Mock data for comprehensive PDF report
+      const overviewData = [
+        { day: "2025-08-25", sessions: 180, unique_visitors: 145, avg_session_duration: 195 },
+        { day: "2025-08-26", sessions: 165, unique_visitors: 132, avg_session_duration: 178 },
+        { day: "2025-08-27", sessions: 220, unique_visitors: 175, avg_session_duration: 215 }
+      ];
+      
+      const videoData = [
+        { video_id: "PomGalleryC.mp4", video_title: "Pom Gallery Video", starts: 45, completed_90: 32, avg_watch_time: 85, median_watch_time: 78 },
+        { video_id: "VitaminSeaC.mp4", video_title: "VitaminSea Video", starts: 38, completed_90: 25, avg_watch_time: 72, median_watch_time: 65 },
+        { video_id: "safari-1.mp4", video_title: "Safari Video", starts: 22, completed_90: 15, avg_watch_time: 58, median_watch_time: 52 }
+      ];
+      
+      const ctaData = [
+        { cta_id: "contact", total_clicks: 85, unique_users: 72 },
+        { cta_id: "book_call", total_clicks: 64, unique_users: 58 },
+        { cta_id: "hero_cta", total_clicks: 45, unique_users: 42 }
+      ];
+      
+      const geoData = [
+        { country: "France", sessions: 245, visitors: 198 },
+        { country: "Belgium", sessions: 85, visitors: 72 },
+        { country: "Switzerland", sessions: 42, visitors: 38 }
+      ];
+
+      // Stream the PDF
+      res.setHeader("Content-Type", "application/pdf");
+      res.setHeader("Content-Disposition", `attachment; filename="analytics_report.pdf"`);
+
+      const doc = new PDFDocument({ margin: 40 });
+      doc.pipe(res);
+
+      const title = "MEMOPYK Analytics Report";
+      doc.fontSize(18).text(title, { align: "center" });
+      const rangeText = (from || to) ? `Range: ${from ?? "…"} → ${to ?? "…"} (UTC)` : "Range: full dataset";
+      doc.moveDown(0.5).fontSize(10).fillColor("#666").text(rangeText, { align: "center" });
+      doc.fillColor("#000").moveDown();
+
+      // Section: Overview
+      doc.fontSize(14).text("Daily Overview", { underline: true });
+      doc.moveDown(0.5).fontSize(10);
+      overviewData.slice(-14).forEach((r: any) => {
+        doc.text(
+          `${r.day}: sessions=${r.sessions}, visitors=${r.unique_visitors}, avg_session=${Math.round(r.avg_session_duration ?? 0)}s`
+        );
+      });
+      doc.moveDown();
+
+      // Section: Top Videos
+      doc.fontSize(14).text("Top Videos (starts)", { underline: true });
+      doc.moveDown(0.5).fontSize(10);
+      videoData.slice(0, 10).forEach((v: any) => {
+        doc.text(
+          `${v.video_title || v.video_id}: starts=${v.starts}, completed_90=${v.completed_90}, ` +
+          `avg=${Math.round(v.avg_watch_time ?? 0)}s, median=${Math.round(v.median_watch_time ?? 0)}s`
+        );
+      });
+      doc.moveDown();
+
+      // Section: Top CTAs
+      doc.fontSize(14).text("Top CTAs (clicks)", { underline: true });
+      doc.moveDown(0.5).fontSize(10);
+      ctaData.slice(0, 10).forEach((c: any) => {
+        doc.text(`${c.cta_id}: clicks=${c.total_clicks}, unique_users=${c.unique_users}`);
+      });
+      doc.moveDown();
+
+      // Section: Countries
+      doc.fontSize(14).text("Top Countries (sessions)", { underline: true });
+      doc.moveDown(0.5).fontSize(10);
+      geoData.forEach((g: any) => {
+        doc.text(`${g.country || "—"}: sessions=${g.sessions}, visitors=${g.visitors}`);
+      });
+
+      doc.end();
+    } catch (err: any) {
+      console.error("[export/pdf] error:", err);
+      res.status(500).json({ error: "PDF export failed", details: err.message });
     }
   });
 
