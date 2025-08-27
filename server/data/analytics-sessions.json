@@ -24266,8 +24266,8 @@
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-27T20:30:28.314Z",
-    "updated_at": "2025-08-27T20:30:45.075Z",
-    "duration": 1322409
+    "updated_at": "2025-08-27T20:31:21.739Z",
+    "duration": 905851
   },
   {
     "id": "a578eab2-0bb1-41dc-bc4c-59a2a193cc39",
@@ -24284,5 +24284,54 @@
     "is_test_data": true,
     "created_at": "2025-08-27T20:30:57.773Z",
     "updated_at": "2025-08-27T20:30:57.890Z"
+  },
+  {
+    "id": "31523404-af5c-4dc4-8745-699cc9793b1c",
+    "session_id": "session_1756326680696_eavyi30ji",
+    "user_id": null,
+    "ip_address": "109.17.150.48",
+    "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36 Edg/139.0.0.0",
+    "referrer": "https://365df2cf-1884-444c-a9e8-235602456363-00-37q39xpqlgvdy.janeway.replit.dev/en-US",
+    "language": "en-US",
+    "country": "Unknown",
+    "city": "Unknown",
+    "page_views": 0,
+    "is_bot": false,
+    "is_test_data": false,
+    "created_at": "2025-08-27T20:31:20.737Z",
+    "updated_at": "2025-08-27T20:34:22.399Z",
+    "duration": 906032
+  },
+  {
+    "id": "3ee61edd-41fa-4889-a0ee-f382fd729e07",
+    "session_id": "session_1756326885684_u9ia7k35w",
+    "user_id": null,
+    "ip_address": "127.0.0.1",
+    "user_agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/118.0.5993.88 Safari/537.36",
+    "referrer": "",
+    "language": "en-US",
+    "country": "Unknown",
+    "city": "Unknown",
+    "page_views": 0,
+    "is_bot": false,
+    "is_test_data": true,
+    "created_at": "2025-08-27T20:34:46.338Z",
+    "updated_at": "2025-08-27T20:34:46.452Z"
+  },
+  {
+    "id": "51238b9a-0564-4591-a4b3-20d111b468e9",
+    "session_id": "session_1756326892159_3d0mx2xfg",
+    "user_id": null,
+    "ip_address": "109.17.150.48",
+    "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36 Edg/139.0.0.0",
+    "referrer": "https://365df2cf-1884-444c-a9e8-235602456363-00-37q39xpqlgvdy.janeway.replit.dev/__replco/workspace_iframe.html?initialPath=%2F&id=%3Arn5h%3A",
+    "language": "fr-FR",
+    "country": "Unknown",
+    "city": "Unknown",
+    "page_views": 0,
+    "is_bot": false,
+    "is_test_data": false,
+    "created_at": "2025-08-27T20:34:52.192Z",
+    "updated_at": "2025-08-27T20:34:52.309Z"
   }
 ]

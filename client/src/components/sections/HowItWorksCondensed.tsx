@@ -98,23 +98,16 @@ export function HowItWorksCondensed() {
   }) => {
     return (
       <motion.div 
-        style={{ 
-          position: 'absolute',
-          bottom: 0,
-          right: 0,
-          pointerEvents: 'none',
-          overflow: 'visible'
-        }}
+        className="absolute bottom-0 right-0 pointer-events-none" 
+        style={{ overflow: 'visible' }}
         initial="idle"
         animate="idle"
         whileHover="hovered"
       >
         {/* BackPeek - always visible slip */}
         <motion.div
+          className="absolute bottom-0 right-0"
           style={{
-            position: 'absolute',
-            bottom: 0,
-            right: 0,
             width: 'var(--peekSize)',
             height: 'var(--peekSize)',
             background: backFaceGradient,
@@ -132,19 +125,8 @@ export function HowItWorksCondensed() {
           }}
         >
           <div
-            style={{ 
-              position: 'absolute',
-              inset: 0,
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              color: 'white',
-              fontSize: '8px',
-              fontWeight: 500,
-              opacity: 0.6,
-              filter: 'blur(0.5px)', 
-              transform: 'rotate(-45deg)' 
-            }}
+            className="absolute inset-0 flex items-center justify-center text-white text-[8px] font-medium opacity-60"
+            style={{ filter: 'blur(0.5px)', transform: 'rotate(-45deg)' }}
           >
             ...
           </div>
@@ -152,10 +134,8 @@ export function HowItWorksCondensed() {
 
         {/* CornerPeel - the lifting corner */}
         <motion.div
+          className="absolute bottom-0 right-0"
           style={{
-            position: 'absolute',
-            bottom: 0,
-            right: 0,
             width: 0,
             height: 0,
             borderLeft: 'var(--cornerSize) solid transparent',
@@ -188,11 +168,8 @@ export function HowItWorksCondensed() {
 
         {/* Highlight line along fold axis */}
         <motion.div
+          className="absolute bottom-0 right-0 pointer-events-none"
           style={{
-            position: 'absolute',
-            bottom: 0,
-            right: 0,
-            pointerEvents: 'none',
             width: 'var(--cornerSize)',
             height: 'var(--cornerSize)',
             background:
@@ -247,15 +224,9 @@ export function HowItWorksCondensed() {
     };
 
     return (
-      <div style={{ perspective: '1000px', width: '100%', height: '100%' }}>
+      <div className="group">
         <div
-          style={{ 
-            cursor: 'pointer',
-            paddingTop: '100%',
-            position: 'relative',
-            borderRadius: '16px',
-            overflow: 'visible'
-          }}
+          className="cursor-pointer pt-[100%] relative rounded-2xl overflow-visible"
           onClick={onCardClick}
           onKeyDown={onKeyDown}
           tabIndex={0}
@@ -265,14 +236,13 @@ export function HowItWorksCondensed() {
               ? (language === 'fr-FR' ? 'Fermer les détails' : 'Close details')
               : (language === 'fr-FR' ? 'Voir les détails' : 'View details')
           }
+          style={{ perspective: '1000px' }}
         >
-          <div style={{ position: 'absolute', inset: 0 }}>
+          <div className="absolute inset-0">
             {/* MOTION WRAPPER: Single rotating inner container */}
             <motion.div
+              className="absolute inset-0 rounded-2xl"
               style={{
-                position: 'absolute',
-                inset: 0,
-                borderRadius: '16px',
                 transformStyle: shouldReduceMotion ? 'flat' : 'preserve-3d',
                 willChange: 'transform',
               }}
@@ -288,50 +258,26 @@ export function HowItWorksCondensed() {
             >
               {/* FRONT FACE */}
               <div
+                className="absolute inset-0 rounded-2xl overflow-hidden shadow-lg bg-white"
                 style={{
-                  position: 'absolute',
-                  inset: 0,
-                  borderRadius: '16px',
-                  overflow: 'hidden',
-                  boxShadow: '0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)',
-                  backgroundColor: 'white',
                   backfaceVisibility: shouldReduceMotion ? 'visible' : 'hidden',
                   transform: 'translateZ(0)',
                   zIndex: isFlipped ? 1 : 2,
                   pointerEvents: isFlipped ? 'none' : 'auto',
                 }}
               >
-                <div style={{ position: 'relative', width: '100%', height: '100%', overflow: 'hidden' }}>
+                <div className="relative w-full h-full overflow-hidden">
                   {/* Card Image */}
-                  <div style={{ position: 'relative', width: '100%', height: '100%' }}>
+                  <div className="relative w-full h-full">
                     <img
                       src={step.image}
                       alt={language === 'fr-FR' ? step.titleFr : step.titleEn}
-                      style={{ 
-                        width: '100%', 
-                        height: '100%', 
-                        objectFit: 'contain', 
-                        backgroundColor: '#f9fafb',
-                        transition: 'transform 500ms'
-                      }}
+                      className="w-full h-full object-contain bg-gray-50 transition-transform duration-500"
                     />
 
                     {/* Orange Number Circle - Top Left */}
-                    <div style={{ 
-                      position: 'absolute',
-                      top: '8px',
-                      left: '8px',
-                      width: '32px',
-                      height: '32px',
-                      backgroundColor: '#D67C4A',
-                      borderRadius: '50%',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      transition: 'transform 300ms',
-                      boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)'
-                    }}>
-                      <span style={{ fontSize: '14px', fontWeight: 'bold', color: 'white' }}>{step.number}</span>
+                    <div className="absolute top-2 left-2 w-8 h-8 bg-memopyk-orange rounded-full flex items-center justify-center transition-transform duration-300 shadow-lg">
+                      <span className="text-sm font-bold text-white">{step.number}</span>
                     </div>
                   </div>
 
@@ -349,36 +295,22 @@ export function HowItWorksCondensed() {
 
               {/* BACK FACE */}
               <div
+                className="absolute inset-0 rounded-2xl overflow-hidden shadow-lg bg-gradient-to-br from-memopyk-orange/95 to-memopyk-dark-blue/95 text-white"
                 style={{
-                  position: 'absolute',
-                  inset: 0,
-                  borderRadius: '16px',
-                  overflow: 'hidden',
-                  boxShadow: '0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)',
-                  background: 'linear-gradient(135deg, rgba(214, 124, 74, 0.95) 0%, rgba(42, 71, 89, 0.95) 100%)',
-                  color: 'white',
                   backfaceVisibility: shouldReduceMotion ? 'visible' : 'hidden',
                   transform: 'rotateY(180deg) translateZ(0)',
                   zIndex: isFlipped ? 2 : 1,
                   pointerEvents: isFlipped ? 'auto' : 'none',
                 }}
               >
-                <div style={{ padding: '24px', height: '100%', width: '100%', display: 'flex', flexDirection: 'column' }}>
+                <div className="p-6 h-full w-full flex flex-col">
                   {/* Header with close button */}
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '16px' }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                      <div style={{ 
-                        width: '32px', 
-                        height: '32px',
-                        backgroundColor: 'rgba(255, 255, 255, 0.2)',
-                        borderRadius: '50%',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center'
-                      }}>
-                        <span style={{ fontSize: '14px', fontWeight: 'bold' }}>{step.number}</span>
+                  <div className="flex justify-between items-start mb-4">
+                    <div className="flex items-center space-x-3">
+                      <div className="w-8 h-8 bg-white/20 rounded-full flex items-center justify-center">
+                        <span className="text-sm font-bold">{step.number}</span>
                       </div>
-                      <h3 style={{ fontSize: '18px', fontWeight: 'bold', margin: 0 }}>
+                      <h3 className="text-lg font-bold">
                         {language === 'fr-FR' ? step.titleFr : step.titleEn}
                       </h3>
                     </div>
@@ -387,23 +319,7 @@ export function HowItWorksCondensed() {
                         e.stopPropagation();
                         onCardClick(e as unknown as React.PointerEvent<HTMLDivElement>);
                       }}
-                      style={{
-                        color: 'rgba(255, 255, 255, 0.7)',
-                        background: 'none',
-                        border: 'none',
-                        cursor: 'pointer',
-                        padding: '4px',
-                        borderRadius: '50%',
-                        transition: 'all 0.2s',
-                      }}
-                      onMouseEnter={(e) => {
-                        e.currentTarget.style.color = 'white';
-                        e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.1)';
-                      }}
-                      onMouseLeave={(e) => {
-                        e.currentTarget.style.color = 'rgba(255, 255, 255, 0.7)';
-                        e.currentTarget.style.backgroundColor = 'transparent';
-                      }}
+                      className="text-white/70 hover:text-white transition-colors p-1 rounded-full hover:bg-white/10"
                       aria-label={language === 'fr-FR' ? 'Fermer' : 'Close'}
                     >
                       <svg
@@ -421,26 +337,19 @@ export function HowItWorksCondensed() {
                   </div>
 
                   {/* Scrollable content area to avoid size jumps */}
-                  <div style={{ flex: 1, overflowY: 'auto' }}>
-                    <p style={{ fontSize: '14px', lineHeight: '1.5', whiteSpace: 'pre-line', margin: 0 }}>
+                  <div className="flex-1 overflow-auto">
+                    <p className="text-sm leading-relaxed whitespace-pre-line">
                       {language === 'fr-FR' ? step.descriptionFr : step.descriptionEn}
                     </p>
                     {(step.subDescriptionFr || step.subDescriptionEn) && (
-                      <p style={{ fontSize: '14px', lineHeight: '1.5', marginTop: '12px', opacity: 0.9, whiteSpace: 'pre-line', margin: '12px 0 0 0' }}>
+                      <p className="text-sm leading-relaxed mt-3 opacity-90 whitespace-pre-line">
                         {language === 'fr-FR' ? step.subDescriptionFr : step.subDescriptionEn}
                       </p>
                     )}
                   </div>
 
                   {/* Footer hint */}
-                  <div style={{ 
-                    fontSize: '12px',
-                    color: 'rgba(255, 255, 255, 0.6)',
-                    textAlign: 'center',
-                    marginTop: '16px',
-                    borderTop: '1px solid rgba(255, 255, 255, 0.2)',
-                    paddingTop: '12px'
-                  }}>
+                  <div className="text-xs text-white/60 text-center mt-4 border-t border-white/20 pt-3">
                     {language === 'fr-FR' ? 'Cliquer pour revenir' : 'Click to go back'}
                   </div>
                 </div>
@@ -450,26 +359,11 @@ export function HowItWorksCondensed() {
         </div>
 
         {/* Title and Icon below card */}
-        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '12px' }}>
-          <div style={{ 
-            width: '48px',
-            height: '48px',
-            backgroundColor: 'rgba(214, 124, 74, 0.1)',
-            borderRadius: '50%',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            transition: 'background-color 300ms'
-          }}
-          onMouseEnter={(e) => {
-            e.currentTarget.style.backgroundColor = 'rgba(214, 124, 74, 0.2)';
-          }}
-          onMouseLeave={(e) => {
-            e.currentTarget.style.backgroundColor = 'rgba(214, 124, 74, 0.1)';
-          }}>
-            <step.icon style={{ width: '24px', height: '24px', color: '#D67C4A' }} />
+        <div className="flex flex-col items-center space-y-3">
+          <div className="w-12 h-12 bg-memopyk-orange/10 rounded-full flex items-center justify-center group-hover:bg-memopyk-orange/20 transition-colors duration-300">
+            <step.icon className="w-6 h-6 text-memopyk-orange" />
           </div>
-          <h3 style={{ fontSize: '20px', fontWeight: 'bold', color: '#2A4759', margin: 0 }}>
+          <h3 className="text-xl font-bold text-memopyk-dark-blue">
             {language === 'fr-FR' ? step.titleFr : step.titleEn}
           </h3>
         </div>
@@ -528,30 +422,16 @@ export function HowItWorksCondensed() {
   return (
     <section
       id="how-it-works"
-      style={{
-        padding: '48px 0',
-        background: 'linear-gradient(180deg, #F2EBDC 0%, white 100%)'
-      }}
+      className="py-12 bg-gradient-to-b from-memopyk-cream to-white"
       ref={sectionRef}
     >
-      <div style={{ maxWidth: '1152px', margin: '0 auto', padding: '0 24px' }}>
+      <div className="max-w-6xl mx-auto px-6">
         {/* Section Header */}
-        <div style={{ textAlign: 'center', marginBottom: '64px' }}>
-          <h2 style={{ 
-            fontSize: 'clamp(2.25rem, 5vw, 3rem)',
-            fontWeight: 'bold',
-            color: '#2A4759',
-            marginBottom: '16px',
-            margin: '0 0 16px 0'
-          }}>
+        <div className="text-center mb-16">
+          <h2 className="text-4xl md:text-5xl font-bold text-memopyk-dark-blue mb-4">
             {language === 'fr-FR' ? 'Comment ça marche' : 'How It Works'}
           </h2>
-          <p style={{ 
-            fontSize: '20px',
-            color: 'rgba(42, 71, 89, 0.7)',
-            maxWidth: '768px',
-            margin: '0 auto'
-          }}>
+          <p className="text-xl text-memopyk-dark-blue/70 max-w-3xl mx-auto">
             {language === 'fr-FR'
               ? '3 étapes pour transformer vos photos et vidéos en films passionnants'
               : '3 steps to turn your photos and videos into captivating movies'}
@@ -559,12 +439,7 @@ export function HowItWorksCondensed() {
         </div>
 
         {/* Steps Grid */}
-        <div style={{ 
-          display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
-          gap: '32px',
-          marginBottom: '48px'
-        }}>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
           {steps.map((step) => {
             const isFlipped = flippedCards.has(step.number);
 
