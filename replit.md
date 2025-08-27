@@ -1,7 +1,7 @@
 # MEMOPYK - Replit Project Documentation
 
 ## Overview
-MEMOPYK is a full-stack memory film platform that transforms personal photos and videos into cinematic memory films. Its core purpose is to provide a seamless and intuitive experience for creating and managing cherished video memories. Key capabilities include a bilingual (French/English) content management system, a professional video lightbox, robust gallery management with reliable video streaming, language-specific upload functionality, advanced image reframing tools, and real-time preview. The project aims to capture a niche market for personalized, high-quality video memories with significant market potential and high ambitions.
+MEMOPYK is a full-stack memory film platform that transforms personal photos and videos into cinematic memory films. Its core purpose is to provide a seamless and intuitive experience for creating and managing cherished video memories. Key capabilities include a bilingual (French/English) content management system, a professional video lightbox, robust gallery management with reliable video streaming, language-specific upload functionality, advanced image reframing tools, and real-time preview. The project aims to capture a niche market for personalized, high-quality video memories with significant market potential.
 
 ## User Preferences
 Preferred communication style: Simple, everyday language.
@@ -27,27 +27,6 @@ Modal styling: Requires solid white modal backgrounds with dark overlays for pro
 - Unnecessary without user confirmation
 
 **CRITICAL: Always read replit.md documentation FIRST before making any changes to understand the existing architecture and avoid breaking working systems.**
-
-### Recent Critical Fixes
-
-**Gallery Data Architecture Incident (Aug 2025)**: CRITICAL LEARNING - Nearly broke gallery system by misunderstanding architecture. Gallery data comes DIRECTLY from Supabase VPS database with NO JSON fallback (unlike other data types). Incorrectly attempted to create JSON fallback and switch to DATABASE_URL when Supabase connection appeared to fail. Root cause was temporary network issues, not missing keys. **LESSON: Always read replit.md FIRST and understand existing architecture before making changes.** Gallery system restored successfully with all 6 items.
-**SEO System Field Mapping Issue (Aug 2025)**: Resolved critical bug where dynamic property assignment with bracket notation was failing in TypeScript. Replaced with explicit field assignments for proper database field mapping. All SEO fields (title, description, keywords, etc.) now save and retrieve correctly from Supabase database.
-
-**Meta Description Display Issue (Aug 2025)**: Fixed React Hook Form persistence bug where Meta Description field wasn't displaying saved values after form reset. Issue was caused by undefined default values in form configuration. Resolved by providing complete default values for all form fields and improving form reset logic with `keepDefaultValues: false`. Meta Description field now properly displays saved content in SEO Management interface.
-
-**Production Deployment Preparation (Aug 2025)**: Completed comprehensive deployment readiness verification. All critical systems tested and operational: SEO management with hybrid storage, video streaming platform, analytics tracking, and admin interface. Build system optimized (2623 modules transformed), all API endpoints functional, and database connections verified. Project ready for production deployment.
-
-**Hero Video Debug Final Cleanup (Aug 2025)**: Completely eliminated all debug messages from hero video carousel system, including visual debug text overlay showing "Video X of Y" counter. Hero videos now provide a completely silent, professional transition experience between all 3 videos on both desktop and mobile platforms. All carousel functionality preserved including navigation arrows, indicator dots, and touch gestures.
-
-**Key Visual Section Hover Effect Optimization (Aug 2025)**: Resolved hover scaling issue in Key Visual section where the call-to-action element grew properly but the border appeared "erased" due to improper transform origin. Fixed by restructuring the hover effect with `origin-left` transform origin, allowing the element to scale from its left anchor point and expand rightward into available space. This prevents left-side clipping while maintaining perfect alignment and preserving the interactive hover effect users appreciate.
-
-**Homepage Section Reorganization (Aug 2025)**: Enhanced user flow by positioning "Comment ça marche" (How It Works) section between two Call-to-Action sections. This creates an optimal customer journey: Gallery → First CTA → Process Explanation → Second CTA → FAQ, maximizing conversion opportunities through strategic placement of actionable elements around educational content.
-
-**Why MEMOPYK Section Dynamic Content Integration (Aug 2025)**: Successfully completed transformation from static hardcoded content to fully dynamic admin-driven system. The public website "Why choose MEMOPYK" section now fetches real-time data from `/api/why-memopyk-cards` endpoint, allowing immediate reflection of admin interface changes. All six benefit cards now use dynamic icon mapping, HTML content rendering, and proper API data structure while maintaining 100% brand compliance with official MEMOPYK color gradients.
-
-**Deployment MIME Type Issue - PERMANENT RESOLUTION (Aug 2025)**: Resolved recurring "Expected JavaScript-or-Wasm module script but server responded with text/html" deployment error. Root cause was build script incorrectly handling Vite output - files built to `dist/public/assets/` but HTML referenced `/assets/`, causing 404s for JavaScript files. Fixed by correcting build script to properly move Vite build output from `dist/public/*` to `dist/` using `cp -r` and `rm -rf`. Build process now places all assets in correct locations. **Resolution: Deployment now works correctly with proper file structure.** Emergency troubleshooting guide created at `DEPLOYMENT_TROUBLESHOOTING_GUIDE.md` for future reference. Admin deployment script updated with automatic build verification.
-
-**OpenReplay Session Recording & Heatmaps Integration (Aug 2025)**: Successfully integrated comprehensive session recording and user behavior analytics using OpenReplay SDK. Features include automatic session recording on all public pages (admin pages excluded for privacy), real-time user interaction tracking (mouse movements, clicks, scrolls, navigation), privacy-compliant input masking, and GA4 cross-reference integration for unified analytics. Technical implementation includes OpenReplay tracker initialization in App.tsx, custom metadata integration (language, country, session linking), admin dashboard Session Replays card with direct links to OpenReplay Cloud, and comprehensive error handling. The system captures detailed user behavior data complementing existing GA4 analytics with visual session replays and interaction heatmaps. Note: Full functionality requires production deployment due to network connectivity requirements between Replit environment and OpenReplay cloud servers.
 
 ## System Architecture
 
@@ -76,7 +55,7 @@ Modal styling: Requires solid white modal backgrounds with dark overlays for pro
 - **Session Management**: Express sessions with PostgreSQL store.
 
 ### Key Architectural Decisions
-- **Hybrid Storage System**: JSON fallback for MOST data (hero text, why memopyk cards, etc.), complementing PostgreSQL for data persistence and synchronization. **CRITICAL EXCEPTION: Gallery data comes DIRECTLY from Supabase VPS database with NO JSON fallback.**
+- **Hybrid Storage System**: JSON fallback for most data, complementing PostgreSQL for data persistence and synchronization. Gallery data comes DIRECTLY from Supabase VPS database with NO JSON fallback.
 - **Universal Video Proxy**: Manages video serving, range requests, local caching, and fallback to Supabase CDN.
 - **Image Proxy**: Handles image loading, resolves CORS issues, and prioritizes static cropped images.
 - **Cache Management**: Smart caching for hero videos (immediate preload) and direct CDN streaming for gallery videos. Persistent video element system for instant gallery video startup. Comprehensive persistent caching for GA4 endpoints with auto-cleanup, 24-hour retention, and admin bypass.
@@ -91,6 +70,7 @@ Modal styling: Requires solid white modal backgrounds with dark overlays for pro
 - **Deployment Optimizations**: Fast health check endpoints, production video cache preloading, comprehensive error handling, routing priorities, and automated public asset copying.
 - **Visitor Classification & Analytics Accuracy**: Implemented 30-second session deduplication and proper classification logic for new/returning visitors. Video analytics precisely track watch duration and completion metrics, excluding admin page visits.
 - **Professional Flag System**: Comprehensive 255-country solution using SVG flags with dynamic country mapping and a three-tier fallback system.
+- **OpenReplay Integration**: Comprehensive session recording and user behavior analytics using OpenReplay SDK (disabled in dev for mobile compatibility).
 
 ## External Dependencies
 
