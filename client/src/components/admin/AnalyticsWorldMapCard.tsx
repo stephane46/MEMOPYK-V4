@@ -142,6 +142,7 @@ export default function AnalyticsWorldMapCard() {
                           const firstGeo = geographies[0]?.properties;
                           console.log("🗺️ WORLD MAP DEBUG: First geography properties:", firstGeo);
                           console.log("🗺️ WORLD MAP DEBUG: Available property keys:", Object.keys(firstGeo || {}));
+                          console.log("🗺️ WORLD MAP DEBUG: Property values:", Object.entries(firstGeo || {}));
                           console.log("🗺️ WORLD MAP DEBUG: Our analytics ISO3 codes sample:", Array.from(baselineMap.keys()).slice(0, 10));
                           console.log("🗺️ WORLD MAP DEBUG: Analytics data size:", baselineCountries.length, "countries");
                         }
