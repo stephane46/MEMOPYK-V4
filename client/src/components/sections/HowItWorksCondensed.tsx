@@ -6,74 +6,47 @@ import { motion, useReducedMotion } from 'framer-motion';
 export function HowItWorksCondensed() {
   const { language } = useLanguage();
   const [flippedCards, setFlippedCards] = useState<Set<number>>(new Set());
-  const [hasAnimated, setHasAnimated] = useState<Set<number>>(new Set());
   const [animatingCards, setAnimatingCards] = useState<Set<number>>(new Set());
   const sectionRef = useRef<HTMLElement>(null);
   const shouldReduceMotion = useReducedMotion();
 
-  // Design token for back face background (single source of truth)
+  // Single source of truth for the back face background (used by BackFace and BackPeek)
   const backFaceGradient =
     'linear-gradient(135deg, rgba(214, 124, 74, 0.95) 0%, rgba(42, 71, 89, 0.95) 100%)';
 
-  // Reset flipped cards when section is not visible (nudge will be handled by animation controls)
-  useEffect(() => {
-    const section = sectionRef.current;
-    if (!section) return;
-
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          // If section is not visible (less than 50% visible), reset all cards
-          if (!entry.isIntersecting || entry.intersectionRatio < 0.5) {
-            setFlippedCards(new Set());
-          }
-          // Note: Nudge animation will be handled via Framer Motion controls, not state
-        });
-      },
-      {
-        threshold: [0.5],
-        rootMargin: '0px 0px -50px 0px',
-      }
-    );
-
-    observer.observe(section);
-    return () => observer.disconnect();
-  }, []);
-
-  // Enhanced tap detection with debouncing
+  // --- Interaction helpers ---
   const handleCardClick = (
     cardNumber: number,
     event?: React.PointerEvent | React.KeyboardEvent
   ) => {
+    // Prevent rapid toggles while animating
     if (animatingCards.has(cardNumber)) return;
 
-    // For pointer events, validate it's a tap (not scroll)
+    // On pointer events, avoid treating scroll/drag as tap
     if (event && 'pointerId' in event) {
       const pe = event as React.PointerEvent;
       if (Math.abs(pe.movementX) > 8 || Math.abs(pe.movementY) > 8) return;
     }
 
-    // Lock during animation
-    setAnimatingCards((prev) => new Set(Array.from(prev).concat([cardNumber])));
+    setAnimatingCards(prev => new Set(prev).add(cardNumber));
 
-    setFlippedCards((prev) => {
+    setFlippedCards(prev => {
       const next = new Set(prev);
       if (next.has(cardNumber)) next.delete(cardNumber);
       else next.add(cardNumber);
       return next;
     });
 
-    // Cooldown (also cleared on animationComplete)
-    setTimeout(() => {
-      setAnimatingCards((prev) => {
+    // Safety cooldown (will also be cleared on animationComplete)
+    window.setTimeout(() => {
+      setAnimatingCards(prev => {
         const next = new Set(prev);
         next.delete(cardNumber);
         return next;
       });
-    }, 450);
+    }, 500);
   };
 
-  // Keyboard handler
   const handleKeyDown = (cardNumber: number, event: React.KeyboardEvent) => {
     if (event.key === 'Enter' || event.key === ' ') {
       event.preventDefault();
@@ -84,27 +57,21 @@ export function HowItWorksCondensed() {
     }
   };
 
-  // ---- Folded-corner system using direct Framer hover ----
+  // ---- Folded-corner system (BackPeek + CornerPeel + Highlight band) ----
+  // Uses CSS variables --cornerSize and --peekSize defined on the card frame.
   const MotionCornerSystem = ({
-    cardNumber,
-    isFlipped,
     backFaceGradient,
-    shouldReduceMotion,
   }: {
-    cardNumber: number;
-    isFlipped: boolean;
     backFaceGradient: string;
-    shouldReduceMotion: boolean | null;
   }) => {
     return (
-      <motion.div 
-        className="absolute bottom-0 right-0 pointer-events-none" 
-        style={{ overflow: 'visible' }}
+      <motion.div
+        className="absolute bottom-0 right-0 pointer-events-none"
         initial="idle"
-        animate="idle"
         whileHover="hovered"
+        style={{ overflow: 'visible' }}
       >
-        {/* BackPeek - always visible slip */}
+        {/* BackPeek - always visible sliver that matches the back face */}
         <motion.div
           className="absolute bottom-0 right-0"
           style={{
@@ -114,38 +81,49 @@ export function HowItWorksCondensed() {
             clipPath: 'polygon(0 100%, 100% 0, 100% 100%)',
             zIndex: 1,
           }}
-          layout={false}
           variants={{
             idle: { scale: 1, opacity: 0.85 },
-            hovered: {
-              scale: shouldReduceMotion ? 1 : 1.12,
-              opacity: 0.95,
-              transition: { type: 'spring', stiffness: 280, damping: 22 },
-            },
+            hovered: shouldReduceMotion
+              ? { scale: 1, opacity: 0.9 }
+              : {
+                  scale: 1.12,
+                  opacity: 0.95,
+                  transition: { type: 'spring', stiffness: 280, damping: 22 },
+                },
           }}
-        >
-          <div
-            className="absolute inset-0 flex items-center justify-center text-white text-[8px] font-medium opacity-60"
-            style={{ filter: 'blur(0.5px)', transform: 'rotate(-45deg)' }}
-          >
-            ...
-          </div>
-        </motion.div>
+        />
 
-        {/* CornerPeel - the lifting corner */}
+        {/* Seam shadow layer (under the fold) – animate opacity only */}
+        <motion.div
+          className="absolute bottom-0 right-0"
+          style={{
+            width: 'var(--cornerSize)',
+            height: 'var(--cornerSize)',
+            // pre-baked soft seam shadow via radial gradient (no blur animation)
+            background:
+              'radial-gradient(120% 120% at 100% 100%, rgba(0,0,0,0.18) 0%, rgba(0,0,0,0.12) 40%, rgba(0,0,0,0) 60%)',
+            clipPath: 'polygon(0 100%, 100% 0, 100% 100%)',
+            zIndex: 2,
+          }}
+          variants={{
+            idle: { opacity: 0.18 },
+            hovered: { opacity: 0.3 },
+          }}
+          transition={{ duration: 0.18 }}
+        />
+
+        {/* CornerPeel – proportional triangle that lifts */}
         <motion.div
           className="absolute bottom-0 right-0"
           style={{
             width: 0,
             height: 0,
             borderLeft: 'var(--cornerSize) solid transparent',
-            borderBottom: 'var(--cornerSize) solid white',
+            borderBottom: 'var(--cornerSize) solid white', // match front bg if not white
             transformOrigin: 'bottom right',
-            background:
-              'linear-gradient(135deg, rgba(255,255,255,1) 0%, rgba(248,248,248,1) 100%)',
             zIndex: 3,
+            willChange: 'transform, filter',
           }}
-          layout={false}
           variants={{
             idle: {
               rotate: 0,
@@ -154,7 +132,7 @@ export function HowItWorksCondensed() {
               filter: 'drop-shadow(-1px -1px 2px rgba(0,0,0,0.15))',
             },
             hovered: shouldReduceMotion
-              ? { rotate: 0, x: 0, y: 0 }
+              ? { rotate: 0, x: 0, y: 0, filter: 'drop-shadow(-1px -1px 2px rgba(0,0,0,0.15))' }
               : {
                   rotate: 5,
                   x: -4,
@@ -166,7 +144,7 @@ export function HowItWorksCondensed() {
           }}
         />
 
-        {/* Highlight line along fold axis */}
+        {/* Specular highlight band */}
         <motion.div
           className="absolute bottom-0 right-0 pointer-events-none"
           style={{
@@ -174,19 +152,19 @@ export function HowItWorksCondensed() {
             height: 'var(--cornerSize)',
             background:
               'linear-gradient(135deg, transparent 47%, rgba(255,255,255,0.6) 49%, rgba(255,255,255,0.2) 51%, transparent 53%)',
-            zIndex: 2,
+            zIndex: 4,
           }}
-          layout={false}
           variants={{
             idle: { opacity: 0.45 },
-            hovered: { opacity: 0.8, transition: { type: 'spring', stiffness: 280, damping: 22 } },
+            hovered: { opacity: 0.8 },
           }}
+          transition={{ duration: 0.18 }}
         />
       </motion.div>
     );
   };
 
-  // ---- Framer Motion Card Flip (rewired): single rotating inner wrapper ----
+  // ---- Single rotating inner wrapper for a rock-solid flip ----
   const MotionFlipCard = ({
     step,
     isFlipped,
@@ -198,164 +176,156 @@ export function HowItWorksCondensed() {
     onCardClick: (e: React.PointerEvent<HTMLDivElement>) => void;
     onKeyDown: (e: React.KeyboardEvent) => void;
   }) => {
-    const cardState = isFlipped ? 'back' : 'front';
-
-    const cardVariants = {
-      front: {
-        rotateY: 0,
-        transition: {
-          type: shouldReduceMotion ? 'tween' : 'spring',
-          stiffness: shouldReduceMotion ? undefined : 260,
-          damping: shouldReduceMotion ? undefined : 20,
-          duration: shouldReduceMotion ? 0.3 : undefined,
-          ease: shouldReduceMotion ? 'easeInOut' : undefined,
-        },
-      },
-      back: {
-        rotateY: shouldReduceMotion ? 0 : 180,
-        transition: {
-          type: shouldReduceMotion ? 'tween' : 'spring',
-          stiffness: shouldReduceMotion ? undefined : 260,
-          damping: shouldReduceMotion ? undefined : 20,
-          duration: shouldReduceMotion ? 0.3 : undefined,
-          ease: shouldReduceMotion ? 'easeInOut' : undefined,
-        },
-      },
-    };
-
     return (
-      <div className="group">
+      <div className="text-center group">
+        {/* Interactive outer wrapper (button semantics live here) */}
         <div
-          className="cursor-pointer pt-[100%] relative rounded-2xl overflow-visible"
+          className="relative rounded-2xl mb-4 cursor-pointer outline-none"
+          role="button"
+          tabIndex={0}
+          aria-expanded={isFlipped}
+          aria-label={`${
+            language === 'fr-FR' ? step.titleFr : step.titleEn
+          } - ${language === 'fr-FR' ? "Cliquer pour plus d'informations" : 'Click for more information'}`}
           onClick={onCardClick}
           onKeyDown={onKeyDown}
-          tabIndex={0}
-          role="button"
-          aria-label={
-            isFlipped
-              ? (language === 'fr-FR' ? 'Fermer les détails' : 'Close details')
-              : (language === 'fr-FR' ? 'Voir les détails' : 'View details')
-          }
-          style={{ perspective: '1000px' }}
+          // 3D perspective on the container
+          style={{ perspective: shouldReduceMotion ? 'none' : '1000px' }}
         >
-          <div className="absolute inset-0">
-            {/* MOTION WRAPPER: Single rotating inner container */}
-            <motion.div
-              className="absolute inset-0 rounded-2xl"
+          {/* Hover/Focus controller for the corner (no React state needed) */}
+          <motion.div initial="idle" whileHover="hovered">
+            {/* Fixed-size 1:1 frame using the padding-top trick + CSS vars for corner sizes */}
+            <div
+              className="relative w-full rounded-2xl"
               style={{
-                transformStyle: shouldReduceMotion ? 'flat' : 'preserve-3d',
-                willChange: 'transform',
-              }}
-              variants={cardVariants}
-              animate={cardState}
-              onAnimationComplete={() => {
-                setAnimatingCards((prev) => {
-                  const next = new Set(prev);
-                  next.delete(step.number);
-                  return next;
-                });
+                ['--cornerSize' as any]: 'clamp(32px, 14%, 80px)',
+                ['--peekSize' as any]: 'calc(var(--cornerSize) * 0.92)',
               }}
             >
-              {/* FRONT FACE */}
-              <div
-                className="absolute inset-0 rounded-2xl overflow-hidden shadow-lg bg-white"
+              <div className="pt-[100%]" aria-hidden="true" />
+
+              {/* Rotating inner wrapper (the only thing that rotates) */}
+              <motion.div
+                className="absolute inset-0 rounded-2xl"
                 style={{
-                  backfaceVisibility: shouldReduceMotion ? 'visible' : 'hidden',
-                  transform: 'translateZ(0)',
-                  zIndex: isFlipped ? 1 : 2,
-                  pointerEvents: isFlipped ? 'none' : 'auto',
+                  transformStyle: shouldReduceMotion ? 'flat' : 'preserve-3d',
+                  willChange: 'transform',
+                }}
+                animate={
+                  shouldReduceMotion
+                    ? { rotateY: 0 }
+                    : { rotateY: isFlipped ? 180 : 0 }
+                }
+                transition={
+                  shouldReduceMotion
+                    ? { duration: 0.25, ease: 'easeInOut' }
+                    : { type: 'spring', stiffness: 260, damping: 22 }
+                }
+                onAnimationComplete={() => {
+                  if (animatingCards.has(step.number)) {
+                    setAnimatingCards(prev => {
+                      const next = new Set(prev);
+                      next.delete(step.number);
+                      return next;
+                    });
+                  }
                 }}
               >
-                <div className="relative w-full h-full overflow-hidden">
-                  {/* Card Image */}
-                  <div className="relative w-full h-full">
-                    <img
-                      src={step.image}
-                      alt={language === 'fr-FR' ? step.titleFr : step.titleEn}
-                      className="w-full h-full object-contain bg-gray-50 transition-transform duration-500"
-                    />
+                {/* FRONT FACE */}
+                <div
+                  className="absolute inset-0 bg-white border border-gray-200 shadow-lg rounded-2xl overflow-hidden"
+                  style={{
+                    backfaceVisibility: shouldReduceMotion ? 'visible' : 'hidden',
+                    transform: 'rotateY(0deg) translateZ(0)',
+                    zIndex: isFlipped ? 1 : 2,
+                    pointerEvents: isFlipped ? 'none' : 'auto',
+                  }}
+                >
+                  <div className="relative h-full w-full">
+                    {/* Step Image */}
+                    <div className="relative overflow-visible rounded-xl transition-all duration-500 h-full w-full">
+                      <img
+                        src={step.image}
+                        alt={language === 'fr-FR' ? step.titleFr : step.titleEn}
+                        className="w-full h-full object-contain bg-gray-50 transition-transform duration-500"
+                      />
 
-                    {/* Orange Number Circle - Top Left */}
-                    <div className="absolute top-2 left-2 w-8 h-8 bg-memopyk-orange rounded-full flex items-center justify-center transition-transform duration-300 shadow-lg">
-                      <span className="text-sm font-bold text-white">{step.number}</span>
-                    </div>
-                  </div>
-
-                  {/* Folded corner only on front & only when not flipped */}
-                  {!isFlipped && (
-                    <MotionCornerSystem
-                      cardNumber={step.number}
-                      isFlipped={isFlipped}
-                      backFaceGradient={backFaceGradient}
-                      shouldReduceMotion={shouldReduceMotion}
-                    />
-                  )}
-                </div>
-              </div>
-
-              {/* BACK FACE */}
-              <div
-                className="absolute inset-0 rounded-2xl overflow-hidden shadow-lg bg-gradient-to-br from-memopyk-orange/95 to-memopyk-dark-blue/95 text-white"
-                style={{
-                  backfaceVisibility: shouldReduceMotion ? 'visible' : 'hidden',
-                  transform: 'rotateY(180deg) translateZ(0)',
-                  zIndex: isFlipped ? 2 : 1,
-                  pointerEvents: isFlipped ? 'auto' : 'none',
-                }}
-              >
-                <div className="p-6 h-full w-full flex flex-col">
-                  {/* Header with close button */}
-                  <div className="flex justify-between items-start mb-4">
-                    <div className="flex items-center space-x-3">
-                      <div className="w-8 h-8 bg-white/20 rounded-full flex items-center justify-center">
-                        <span className="text-sm font-bold">{step.number}</span>
+                      {/* Orange Number Circle - Top Left */}
+                      <div className="absolute top-2 left-2 w-8 h-8 bg-memopyk-orange rounded-full flex items-center justify-center transition-transform duration-300 shadow-lg">
+                        <span className="text-sm font-bold text-white">{step.number}</span>
                       </div>
-                      <h3 className="text-lg font-bold">
-                        {language === 'fr-FR' ? step.titleFr : step.titleEn}
-                      </h3>
                     </div>
-                    <button
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        onCardClick(e as unknown as React.PointerEvent<HTMLDivElement>);
-                      }}
-                      className="text-white/70 hover:text-white transition-colors p-1 rounded-full hover:bg-white/10"
-                      aria-label={language === 'fr-FR' ? 'Fermer' : 'Close'}
-                    >
-                      <svg
-                        width="20"
-                        height="20"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        strokeWidth="2"
-                      >
-                        <line x1="18" y1="6" x2="6" y2="18"></line>
-                        <line x1="6" y1="6" x2="18" y2="18"></line>
-                      </svg>
-                    </button>
-                  </div>
 
-                  {/* Scrollable content area to avoid size jumps */}
-                  <div className="flex-1 overflow-auto">
-                    <p className="text-sm leading-relaxed whitespace-pre-line">
-                      {language === 'fr-FR' ? step.descriptionFr : step.descriptionEn}
-                    </p>
-                    {(step.subDescriptionFr || step.subDescriptionEn) && (
-                      <p className="text-sm leading-relaxed mt-3 opacity-90 whitespace-pre-line">
-                        {language === 'fr-FR' ? step.subDescriptionFr : step.subDescriptionEn}
-                      </p>
-                    )}
-                  </div>
-
-                  {/* Footer hint */}
-                  <div className="text-xs text-white/60 text-center mt-4 border-t border-white/20 pt-3">
-                    {language === 'fr-FR' ? 'Cliquer pour revenir' : 'Click to go back'}
+                    {/* Folded corner system (front only) */}
+                    {!isFlipped && <MotionCornerSystem backFaceGradient={backFaceGradient} />}
                   </div>
                 </div>
-              </div>
-            </motion.div>
-          </div>
+
+                {/* BACK FACE */}
+                <div
+                  className="absolute inset-0 rounded-2xl overflow-hidden shadow-lg text-white"
+                  style={{
+                    background: backFaceGradient,
+                    backfaceVisibility: shouldReduceMotion ? 'visible' : 'hidden',
+                    transform: 'rotateY(180deg) translateZ(0)',
+                    zIndex: isFlipped ? 2 : 1,
+                    pointerEvents: isFlipped ? 'auto' : 'none',
+                  }}
+                >
+                  <div className="p-6 h-full w-full flex flex-col">
+                    {/* Header with close button */}
+                    <div className="flex justify-between items-start mb-4">
+                      <div className="flex items-center space-x-3">
+                        <div className="w-8 h-8 bg-white/20 rounded-full flex items-center justify-center">
+                          <span className="text-sm font-bold">{step.number}</span>
+                        </div>
+                        <h3 className="text-lg font-bold">
+                          {language === 'fr-FR' ? step.titleFr : step.titleEn}
+                        </h3>
+                      </div>
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          onCardClick(e as unknown as React.PointerEvent<HTMLDivElement>);
+                        }}
+                        className="text-white/80 hover:text-white transition-colors p-1 rounded-full hover:bg-white/10"
+                        aria-label={language === 'fr-FR' ? 'Fermer' : 'Close'}
+                      >
+                        <svg
+                          width="20"
+                          height="20"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="currentColor"
+                          strokeWidth="2"
+                        >
+                          <line x1="18" y1="6" x2="6" y2="18"></line>
+                          <line x1="6" y1="6" x2="18" y2="18"></line>
+                        </svg>
+                      </button>
+                    </div>
+
+                    {/* Scrollable content to avoid size jumps */}
+                    <div className="flex-1 overflow-auto">
+                      <p className="text-sm leading-relaxed whitespace-pre-line">
+                        {language === 'fr-FR' ? step.descriptionFr : step.descriptionEn}
+                      </p>
+                      {(step.subDescriptionFr || step.subDescriptionEn) && (
+                        <p className="text-sm leading-relaxed mt-3 opacity-90 whitespace-pre-line">
+                          {language === 'fr-FR' ? step.subDescriptionFr : step.subDescriptionEn}
+                        </p>
+                      )}
+                    </div>
+
+                    {/* Footer hint */}
+                    <div className="text-xs text-white/70 text-center mt-4 border-t border-white/20 pt-3">
+                      {language === 'fr-FR' ? 'Cliquer pour revenir' : 'Click to go back'}
+                    </div>
+                  </div>
+                </div>
+              </motion.div>
+            </div>
+          </motion.div>
         </div>
 
         {/* Title and Icon below card */}
@@ -380,7 +350,7 @@ export function HowItWorksCondensed() {
       descriptionFr:
         "Envoyez-nous simplement vos photos et vidéos, sans avoir à les trier ou les retoucher. Faites-nous part de votre vision et de ce qui compte le plus pour vous, soit en remplissant notre formulaire en ligne, soit en échangeant vos idées avec nous lors d'un appel téléphonique gratuit et convivial.",
       descriptionEn:
-        'Simply send us your photos and videos without worrying about editing or organizing them first. Share your vision and what matters most to you, either by completing our online form or through a friendly, free phone conversation where we discuss your ideas.',
+        "Simply send us your photos and videos—no need to organize or edit anything beforehand. Share your vision and what matters most to you, either by filling out our easy online form or by discussing your ideas with us during a free, friendly phone call.",
       subDescriptionFr:
         "Commencer est un jeu d'enfant : apportez-nous simplement vos souvenirs et vos envies, nous nous occupons du reste avec soin et créativité.",
       subDescriptionEn:
@@ -442,7 +412,6 @@ export function HowItWorksCondensed() {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
           {steps.map((step) => {
             const isFlipped = flippedCards.has(step.number);
-
             return (
               <MotionFlipCard
                 key={step.number}
