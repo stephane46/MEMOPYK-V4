@@ -134,11 +134,12 @@ export default function AnalyticsWorldMapCard() {
                 <ComposableMap 
                   projection="geoNaturalEarth1"
                   projectionConfig={{ 
-                    scale: 180,
+                    scale: 160,
                     center: [0, 0] 
                   }}
-                  width={800} 
-                  height={420}
+                  width="100%" 
+                  height="100%"
+                  style={{ width: '100%', height: '100%' }}
                 >
                   <ZoomableGroup
                     zoom={position.zoom}
@@ -295,38 +296,40 @@ export default function AnalyticsWorldMapCard() {
                         
                         if (maxCountry) {
                           return (
-                            <button 
-                              onClick={() => {
-                                // Simplified: use predefined coordinates for major countries
-                                const countryCoordinates: Record<string, [number, number]> = {
-                                  'FRA': [2.0, 46.0],  // France
-                                  'USA': [-98.0, 39.0], // United States
-                                  'DEU': [10.0, 51.0],  // Germany
-                                  'GBR': [-2.0, 54.0],  // United Kingdom
-                                  'CAN': [-106.0, 60.0], // Canada
-                                  'AUS': [133.0, -25.0], // Australia
-                                  'JPN': [138.0, 36.0],  // Japan
-                                  'CHN': [104.0, 35.0],  // China
-                                  'IND': [78.0, 20.0],   // India
-                                  'BRA': [-55.0, -10.0], // Brazil
-                                  'RUS': [105.0, 61.0],  // Russia
-                                  'ESP': [-4.0, 40.0],   // Spain
-                                  'ITA': [12.0, 42.0],   // Italy
-                                  'NLD': [5.0, 52.0],    // Netherlands
-                                };
-                                
-                                const coords = countryCoordinates[maxCountry.iso3];
-                                if (coords) {
-                                  setPosition({ coordinates: coords, zoom: 3 });
-                                  setSelectedIso3(maxCountry.iso3);
-                                  setSelectedCountryName(maxCountry.country);
-                                  loadCountryCities(maxCountry.iso3);
-                                }
-                              }}
-                              className="ml-1 text-blue-600 hover:text-blue-800 underline cursor-pointer"
-                            >
-                              ({maxCountry.country})
-                            </button>
+                            <span className="ml-1">
+                              (<button 
+                                onClick={() => {
+                                  // Simplified: use predefined coordinates for major countries
+                                  const countryCoordinates: Record<string, [number, number]> = {
+                                    'FRA': [2.0, 46.0],  // France
+                                    'USA': [-98.0, 39.0], // United States
+                                    'DEU': [10.0, 51.0],  // Germany
+                                    'GBR': [-2.0, 54.0],  // United Kingdom
+                                    'CAN': [-106.0, 60.0], // Canada
+                                    'AUS': [133.0, -25.0], // Australia
+                                    'JPN': [138.0, 36.0],  // Japan
+                                    'CHN': [104.0, 35.0],  // China
+                                    'IND': [78.0, 20.0],   // India
+                                    'BRA': [-55.0, -10.0], // Brazil
+                                    'RUS': [105.0, 61.0],  // Russia
+                                    'ESP': [-4.0, 40.0],   // Spain
+                                    'ITA': [12.0, 42.0],   // Italy
+                                    'NLD': [5.0, 52.0],    // Netherlands
+                                  };
+                                  
+                                  const coords = countryCoordinates[maxCountry.iso3];
+                                  if (coords) {
+                                    setPosition({ coordinates: coords, zoom: 3 });
+                                    setSelectedIso3(maxCountry.iso3);
+                                    setSelectedCountryName(maxCountry.country);
+                                    loadCountryCities(maxCountry.iso3);
+                                  }
+                                }}
+                                className="text-blue-600 hover:text-blue-800 underline cursor-pointer bg-transparent border-none p-0 font-inherit"
+                              >
+                                {maxCountry.country}
+                              </button>)
+                            </span>
                           );
                         }
                         return null;
