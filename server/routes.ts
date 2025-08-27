@@ -5540,6 +5540,78 @@ export async function registerRoutes(app: Express): Promise<void> {
     }
   });
 
+  // Analytics cleanup API route
+  app.post('/api/analytics/cleanup', async (req, res) => {
+    try {
+      const { months } = req.body;
+      
+      if (!months || isNaN(months) || months < 1) {
+        return res.status(400).json({ error: "Invalid 'months' parameter. Must be a positive number." });
+      }
+
+      console.log(`🧹 ANALYTICS CLEANUP: Starting cleanup for data older than ${months} months`);
+      
+      // Call the PostgreSQL function to cleanup old analytics data
+      const { error } = await supabase.rpc('cleanup_old_analytics_data', { months });
+
+      if (error) {
+        console.error('🧹 ANALYTICS CLEANUP: RPC error:', error);
+        return res.status(500).json({ 
+          error: "Cleanup RPC failed", 
+          details: error.message 
+        });
+      }
+
+      console.log(`🧹 ANALYTICS CLEANUP: Successfully cleaned data older than ${months} months`);
+      return res.status(200).json({ 
+        success: true, 
+        message: `Analytics cleanup completed for data older than ${months} months.` 
+      });
+    } catch (err: any) {
+      console.error('🧹 ANALYTICS CLEANUP: Exception:', err);
+      return res.status(500).json({ 
+        error: "Unexpected server error", 
+        details: err.message 
+      });
+    }
+  });
+
+  // Get last cleanup status from maintenance log
+  app.get('/api/analytics/cleanup/status', async (req, res) => {
+    try {
+      console.log('🧹 ANALYTICS CLEANUP: Fetching last cleanup status');
+      
+      // Query the maintenance log for the last cleanup
+      const { data, error } = await supabase
+        .from('analytics_maintenance_log')
+        .select('*')
+        .eq('operation_type', 'cleanup')
+        .order('created_at', { ascending: false })
+        .limit(1);
+
+      if (error) {
+        console.error('🧹 ANALYTICS CLEANUP: Error fetching status:', error);
+        return res.status(500).json({ 
+          error: "Failed to fetch cleanup status", 
+          details: error.message 
+        });
+      }
+
+      const lastCleanup = data && data.length > 0 ? data[0] : null;
+      
+      return res.status(200).json({ 
+        success: true, 
+        lastCleanup 
+      });
+    } catch (err: any) {
+      console.error('🧹 ANALYTICS CLEANUP: Exception fetching status:', err);
+      return res.status(500).json({ 
+        error: "Unexpected server error", 
+        details: err.message 
+      });
+    }
+  });
+
   // Test Routes
   app.use('/test', testRoutes);
 }

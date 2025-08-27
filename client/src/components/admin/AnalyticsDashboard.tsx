@@ -13,6 +13,7 @@ import { apiRequest } from '@/lib/queryClient';
 import { FlipCard } from './FlipCard';
 import { VideoPerformanceCard } from './VideoPerformanceCard';
 import { CountryFlag } from './CountryFlag';
+import { AnalyticsCleanupCard } from './AnalyticsCleanupCard';
 import { 
   LineChart, 
   Line, 
@@ -852,6 +853,11 @@ export function AnalyticsDashboard() {
                 </div>
               )}
             </div>
+
+            <Separator className="my-6" />
+
+            {/* Analytics Cleanup Section */}
+            <AnalyticsCleanupCard />
 
             <Separator className="my-6" />
 
