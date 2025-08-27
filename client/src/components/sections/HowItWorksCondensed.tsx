@@ -112,62 +112,7 @@ export function HowItWorksCondensed() {
     backFaceGradient: string;
     shouldReduceMotion: boolean | null;
   }) => {
-    const peekVariants = {
-      idle: { scale: 1, opacity: 0.8 },
-      hovered: {
-        scale: shouldReduceMotion ? 1 : 1.15,
-        opacity: 0.9,
-        transition: { type: 'spring', stiffness: 300, damping: 20 },
-      },
-    };
-
-    const cornerVariants = {
-      idle: {
-        rotate: 0,
-        x: 0,
-        y: 0,
-        filter: 'drop-shadow(-1px -1px 2px rgba(0,0,0,0.15))',
-      },
-      hovered: shouldReduceMotion
-        ? {
-            rotate: 0,
-            x: 0,
-            y: 0,
-            filter: 'drop-shadow(-1px -1px 2px rgba(0,0,0,0.15))',
-          }
-        : {
-            rotate: 4,
-            x: -3,
-            y: -2,
-            filter:
-              'drop-shadow(-2px -2px 4px rgba(0,0,0,0.3)) drop-shadow(-1px -1px 2px rgba(0,0,0,0.15))',
-            transition: { type: 'spring', stiffness: 300, damping: 25 },
-          },
-      nudge: shouldReduceMotion
-        ? {
-            rotate: 0,
-            x: 0,
-            y: 0,
-            filter: 'drop-shadow(-1px -1px 2px rgba(0,0,0,0.15))',
-          }
-        : {
-            rotate: 6,
-            x: -4,
-            y: -3,
-            filter:
-              'drop-shadow(-3px -3px 6px rgba(0,0,0,0.4)) drop-shadow(-1px -1px 2px rgba(0,0,0,0.2))',
-            transition: { type: 'spring', stiffness: 250, damping: 20, duration: 0.2 },
-          },
-    };
-
-    const currentVariant =
-      hasAnimated.has(cardNumber) && !isFlipped
-        ? isHovered
-          ? 'hovered'
-          : 'idle'
-        : !hasAnimated.has(cardNumber) && isHovered
-        ? 'nudge'
-        : 'idle';
+    // Note: Variants now defined inline for each element
 
     return (
       <div className="absolute bottom-0 right-0 pointer-events-none" style={{ overflow: 'visible' }}>
@@ -175,13 +120,20 @@ export function HowItWorksCondensed() {
         <motion.div
           className="absolute bottom-0 right-0"
           style={{
-            width: '14px',
-            height: '14px',
+            width: 'var(--peekSize)',
+            height: 'var(--peekSize)',
             background: backFaceGradient,
             clipPath: 'polygon(0 100%, 100% 0, 100% 100%)',
             zIndex: 1,
           }}
-          variants={peekVariants}
+          variants={{
+            idle: { scale: 1, opacity: 0.85 },
+            hovered: {
+              scale: shouldReduceMotion ? 1 : 1.12,
+              opacity: 0.95,
+              transition: { type: 'spring', stiffness: 280, damping: 22 },
+            },
+          }}
           animate={isHovered ? 'hovered' : 'idle'}
         >
           <div
@@ -198,27 +150,46 @@ export function HowItWorksCondensed() {
           style={{
             width: 0,
             height: 0,
-            borderLeft: '16px solid transparent',
-            borderBottom: '16px solid white',
+            borderLeft: 'var(--cornerSize) solid transparent',
+            borderBottom: 'var(--cornerSize) solid white',
             transformOrigin: 'bottom right',
             background:
-              'linear-gradient(135deg, rgba(255,255,255,1) 0%, rgba(250,250,250,1) 100%)',
+              'linear-gradient(135deg, rgba(255,255,255,1) 0%, rgba(248,248,248,1) 100%)',
             zIndex: 3,
             willChange: isHovered ? 'transform, filter' : 'auto',
           }}
-          variants={cornerVariants}
-          animate={currentVariant}
+          variants={{
+            idle: {
+              rotate: 0,
+              x: 0,
+              y: 0,
+              filter: 'drop-shadow(-1px -1px 2px rgba(0,0,0,0.15))',
+            },
+            hovered: shouldReduceMotion
+              ? { rotate: 0, x: 0, y: 0 }
+              : {
+                  rotate: 5,
+                  x: -4,
+                  y: -3,
+                  filter:
+                    'drop-shadow(-3px -3px 6px rgba(0,0,0,0.28)) drop-shadow(-1px -1px 2px rgba(0,0,0,0.15))',
+                  transition: { type: 'spring', stiffness: 280, damping: 22 },
+                },
+          }}
+          animate={isHovered ? 'hovered' : 'idle'}
         />
 
         {/* Highlight line along fold axis */}
         <motion.div
-          className="absolute bottom-0 right-0 w-4 h-4 pointer-events-none"
+          className="absolute bottom-0 right-0 pointer-events-none"
           style={{
+            width: 'var(--cornerSize)',
+            height: 'var(--cornerSize)',
             background:
               'linear-gradient(135deg, transparent 47%, rgba(255,255,255,0.6) 49%, rgba(255,255,255,0.2) 51%, transparent 53%)',
             zIndex: 2,
           }}
-          animate={{ opacity: isHovered ? 0.8 : 0.4 }}
+          animate={{ opacity: isHovered ? 0.8 : 0.45 }}
           transition={{ duration: 0.18, ease: 'easeOut' }}
         />
       </div>
@@ -292,7 +263,15 @@ export function HowItWorksCondensed() {
           style={{ perspective: shouldReduceMotion ? 'none' : '1000px' }}
         >
           {/* Fixed-size frame to keep both faces identical (no more size jumps) */}
-          <div className="relative w-full aspect-square rounded-2xl">
+          <div 
+            className="relative w-full aspect-square rounded-2xl"
+            style={{
+              // Size tokens for corner + peek
+              // ➜ min 32px, target 14% of card width, max 80px
+              ['--cornerSize' as any]: 'clamp(32px, 14%, 80px)',
+              ['--peekSize' as any]: 'calc(var(--cornerSize) * 0.92)',
+            }}
+          >
             {/* Rotating inner wrapper (the only thing that rotates) */}
             <motion.div
               className="absolute inset-0 rounded-2xl"
