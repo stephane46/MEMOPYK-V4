@@ -45,7 +45,19 @@ export default function AnalyticsWorldMapCard() {
   const [tooltip, setTooltip] = React.useState<{ visible: boolean; x: number; y: number; iso3?: string; country?: string; sessions?: number; visitors?: number; delta?: number | null }>({ visible: false, x: 0, y: 0 });
   const [tooltipLocked, setTooltipLocked] = React.useState(false);
 
-  const [position, setPosition] = React.useState<{ coordinates: [number, number]; zoom: number }>({ coordinates: [2, -10], zoom: 1.2 }); // Centered on France, much higher up
+  // Calculate optimal map centering for responsive design
+  const getOptimalMapCenter = React.useCallback(() => {
+    // Mathematics for proper world map centering:
+    // World longitude: [-180, 180], latitude: [-90, 90]
+    // For visual balance, center slightly east and north of (0,0)
+    // This positions major population centers (Europe, Asia, North America) well
+    return {
+      coordinates: [10, 15] as [number, number], // Longitude, Latitude  
+      zoom: 1.1
+    };
+  }, []);
+  
+  const [position, setPosition] = React.useState<{ coordinates: [number, number]; zoom: number }>(getOptimalMapCenter());
   const [selectedIso3, setSelectedIso3] = React.useState<string | null>(null);
   const [selectedCountryName, setSelectedCountryName] = React.useState<string | null>(null);
   const [countryCities, setCountryCities] = React.useState<CityRow[] | null>(null);
@@ -136,62 +148,77 @@ export default function AnalyticsWorldMapCard() {
                   >
                     <Geographies geography={geoUrl}>
                       {({ geographies }) => {
-                        // AGGRESSIVE DEBUG: Find the property mapping issue
-                        console.log("🗺️ WORLD MAP DEBUG: START ==================");
-                        console.log("🗺️ Geographies loaded:", geographies.length);
-                        console.log("🗺️ Analytics countries:", baselineCountries.length);
-                        
-                        if (geographies.length > 0) {
-                          const firstGeo = geographies[0]?.properties;
-                          console.log("🗺️ First geo properties (RAW):", firstGeo);
-                          console.log("🗺️ Property keys:", Object.keys(firstGeo || {}));
-                          console.log("🗺️ Property values:", Object.entries(firstGeo || {}));
-                          console.log("🗺️ Analytics ISO3 codes:", [...baselineMap.keys()]);
-                          
-                          // Show actual property structure
-                          const propEntries = Object.entries(firstGeo || {});
-                          propEntries.forEach(([key, value]) => {
-                            console.log(`🗺️ Property ${key}:`, value);
-                          });
-                          
-                          // Check a few more countries to understand the pattern
-                          const sampleCountries = geographies.slice(0, 5).map(geo => ({
-                            props: geo.properties,
-                            keys: Object.keys(geo.properties || {})
-                          }));
-                          console.log("🗺️ Sample of 5 countries:", sampleCountries);
+                        // Clean initialization - log only once
+                        if (!window.worldMapInitialized && geographies.length > 0) {
+                          window.worldMapInitialized = true;
+                          console.log(`🗺️ World map loaded: ${geographies.length} countries, ${baselineCountries.length} with analytics data`);
                         }
-                        console.log("🗺️ WORLD MAP DEBUG: END ==================");
                         return geographies.map((geo) => {
-                          // BREAKTHROUGH: Geography has country NAMES, analytics has ISO3 codes
-                          // We need to map country names to ISO3 codes
+                          // Map geography country names to ISO3 codes for analytics lookup
                           const props = geo.properties || {};
-                          const countryName = Object.values(props)[0] as string; // The single property is the country name
+                          const countryName = Object.values(props)[0] as string;
                           
-                          // Map country names to ISO3 codes
-                          const nameToISO3: Record<string, string> = {
-                            'France': 'FRA',
-                            'United States of America': 'USA',
-                            'United States': 'USA',
-                            'Brazil': 'BRA',
-                            'Australia': 'AUS',
-                            'Germany': 'DEU',
-                            'United Kingdom': 'GBR',
-                            'Canada': 'CAN',
-                            'Italy': 'ITA',
-                            'Spain': 'ESP',
-                            'Netherlands': 'NLD',
-                            'Belgium': 'BEL',
-                            'Switzerland': 'CHE',
-                            'Austria': 'AUT',
-                            'Portugal': 'PRT',
-                            'Japan': 'JPN',
-                            'China': 'CHN',
-                            'India': 'IND',
-                            'Russia': 'RUS'
+                          // Comprehensive country mapping for better analytics coverage
+                          const getISO3Code = (name: string): string | null => {
+                            const countryMap: Record<string, string> = {
+                              // Major countries with common variations
+                              'France': 'FRA',
+                              'United States of America': 'USA',
+                              'United States': 'USA',
+                              'Brazil': 'BRA',
+                              'Australia': 'AUS',
+                              'Germany': 'DEU',
+                              'United Kingdom': 'GBR',
+                              'Canada': 'CAN',
+                              'Italy': 'ITA',
+                              'Spain': 'ESP',
+                              'Netherlands': 'NLD',
+                              'Belgium': 'BEL',
+                              'Switzerland': 'CHE',
+                              'Austria': 'AUT',
+                              'Portugal': 'PRT',
+                              'Japan': 'JPN',
+                              'China': 'CHN',
+                              'India': 'IND',
+                              'Russia': 'RUS',
+                              'Mexico': 'MEX',
+                              'Argentina': 'ARG',
+                              'Chile': 'CHL',
+                              'Colombia': 'COL',
+                              'Peru': 'PER',
+                              'Venezuela': 'VEN',
+                              'Norway': 'NOR',
+                              'Sweden': 'SWE',
+                              'Denmark': 'DNK',
+                              'Finland': 'FIN',
+                              'Ireland': 'IRL',
+                              'Poland': 'POL',
+                              'Czech Republic': 'CZE',
+                              'Hungary': 'HUN',
+                              'Romania': 'ROU',
+                              'Greece': 'GRC',
+                              'Turkey': 'TUR',
+                              'South Africa': 'ZAF',
+                              'Egypt': 'EGY',
+                              'Morocco': 'MAR',
+                              'Nigeria': 'NGA',
+                              'South Korea': 'KOR',
+                              'Thailand': 'THA',
+                              'Vietnam': 'VNM',
+                              'Indonesia': 'IDN',
+                              'Philippines': 'PHL',
+                              'Malaysia': 'MYS',
+                              'Singapore': 'SGP',
+                              'New Zealand': 'NZL',
+                              'Israel': 'ISR',
+                              'Saudi Arabia': 'SAU',
+                              'United Arab Emirates': 'ARE',
+                              'Ukraine': 'UKR'
+                            };
+                            return countryMap[name] || null;
                           };
                           
-                          const iso3 = nameToISO3[countryName] || null;
+                          const iso3 = getISO3Code(countryName);
                           const base = baselineMap.get(iso3);
                           const cmp = comparisonMap.get(iso3);
                           const sessions = base?.sessions ?? 0;
