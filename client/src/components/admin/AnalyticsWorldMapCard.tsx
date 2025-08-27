@@ -45,7 +45,7 @@ export default function AnalyticsWorldMapCard() {
   const [tooltip, setTooltip] = React.useState<{ visible: boolean; x: number; y: number; iso3?: string; country?: string; sessions?: number; visitors?: number; delta?: number | null }>({ visible: false, x: 0, y: 0 });
   const [tooltipLocked, setTooltipLocked] = React.useState(false);
 
-  const [position, setPosition] = React.useState<{ coordinates: [number, number]; zoom: number }>({ coordinates: [0, 20], zoom: 1 });
+  const [position, setPosition] = React.useState<{ coordinates: [number, number]; zoom: number }>({ coordinates: [2, 46.5], zoom: 1.2 }); // Centered on France
   const [selectedIso3, setSelectedIso3] = React.useState<string | null>(null);
   const [selectedCountryName, setSelectedCountryName] = React.useState<string | null>(null);
   const [countryCities, setCountryCities] = React.useState<CityRow[] | null>(null);
@@ -146,7 +146,13 @@ export default function AnalyticsWorldMapCard() {
                           console.log("🗺️ First geo properties (RAW):", firstGeo);
                           console.log("🗺️ Property keys:", Object.keys(firstGeo || {}));
                           console.log("🗺️ Property values:", Object.entries(firstGeo || {}));
-                          console.log("🗺️ Analytics ISO3 sample:", Array.from(baselineMap.keys()));
+                          console.log("🗺️ Analytics ISO3 codes:", [...baselineMap.keys()]);
+                          
+                          // Show actual property structure
+                          const propEntries = Object.entries(firstGeo || {});
+                          propEntries.forEach(([key, value]) => {
+                            console.log(`🗺️ Property ${key}:`, value);
+                          });
                           
                           // Check a few more countries to understand the pattern
                           const sampleCountries = geographies.slice(0, 5).map(geo => ({
