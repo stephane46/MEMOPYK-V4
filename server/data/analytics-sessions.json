@@ -23945,7 +23945,56 @@
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-27T17:09:13.832Z",
-    "updated_at": "2025-08-27T17:09:17.082Z",
-    "duration": 1310321
+    "updated_at": "2025-08-27T17:10:10.630Z",
+    "duration": 1310375
+  },
+  {
+    "id": "b438f367-ddf1-43d7-a107-d616fdf83eab",
+    "session_id": "session_1756314587953_y7h28ht0y",
+    "user_id": null,
+    "ip_address": "109.17.150.48",
+    "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36 Edg/139.0.0.0",
+    "referrer": "https://365df2cf-1884-444c-a9e8-235602456363-00-37q39xpqlgvdy.janeway.replit.dev/fr-FR",
+    "language": "en-US",
+    "country": "Unknown",
+    "city": "Unknown",
+    "page_views": 0,
+    "is_bot": false,
+    "is_test_data": false,
+    "created_at": "2025-08-27T17:09:47.996Z",
+    "updated_at": "2025-08-27T17:11:09.262Z",
+    "duration": 1310433
+  },
+  {
+    "id": "a6505f7f-2279-43c5-b0bf-96d32e26f293",
+    "session_id": "session_1756314669172_emi96c0f6",
+    "user_id": null,
+    "ip_address": "109.17.150.48",
+    "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36 Edg/139.0.0.0",
+    "referrer": "https://365df2cf-1884-444c-a9e8-235602456363-00-37q39xpqlgvdy.janeway.replit.dev/fr-FR",
+    "language": "en-US",
+    "country": "Unknown",
+    "city": "Unknown",
+    "page_views": 0,
+    "is_bot": false,
+    "is_test_data": false,
+    "created_at": "2025-08-27T17:11:09.207Z",
+    "updated_at": "2025-08-27T17:11:09.322Z"
+  },
+  {
+    "id": "ef3bb690-89a6-47de-b1d7-7eeb01b8177a",
+    "session_id": "session_1756314689785_li7ys2gr0",
+    "user_id": null,
+    "ip_address": "127.0.0.1",
+    "user_agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/118.0.5993.88 Safari/537.36",
+    "referrer": "",
+    "language": "en-US",
+    "country": "Unknown",
+    "city": "Unknown",
+    "page_views": 0,
+    "is_bot": false,
+    "is_test_data": true,
+    "created_at": "2025-08-27T17:11:29.820Z",
+    "updated_at": "2025-08-27T17:11:29.933Z"
   }
 ]

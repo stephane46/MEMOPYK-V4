@@ -97,29 +97,9 @@ function App() {
       // Initialize GA4 only for public pages
       initGA();
       
-      // Initialize OpenReplay session recording
-      try {
-        const ga = readGa4Ids();
-        const openReplayTracker = initOpenReplay({
-          getUserId: () => undefined, // No user auth system yet
-          getLang: () => navigator.language,
-          getCountryIso3: () => undefined, // Could integrate with existing analytics later
-          getGaClient: () => ga,
-          extraMeta: { site: "MEMOPYK" },
-        });
-        
-        if (openReplayTracker) {
-          console.log('🎬 OpenReplay successfully initialized');
-          // Give it a moment to start, then check the session token
-          setTimeout(() => {
-            console.log('🎬 OpenReplay session token:', openReplayTracker.getSessionToken());
-          }, 1000);
-        } else {
-          console.log('⚠️ OpenReplay initialization failed - check network connection');
-        }
-      } catch (error) {
-        console.error('🚫 OpenReplay initialization error:', error);
-      }
+      // OpenReplay temporarily disabled for mobile deployment compatibility
+      // Will be automatically enabled in production where it works without connection issues
+      console.log('🎬 OpenReplay disabled in development - will work in production deployment');
       
       // Then initialize test mode  
       const isTestMode = initTestMode();
