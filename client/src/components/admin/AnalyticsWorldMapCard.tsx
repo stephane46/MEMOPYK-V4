@@ -131,7 +131,15 @@ export default function AnalyticsWorldMapCard() {
             {/* Map */}
             <div className={`w-full ${selectedIso3 ? "lg:w-2/3" : ""}`}>
               <div className="h-[420px] w-full overflow-hidden border border-gray-200 rounded-lg">
-                <ComposableMap projectionConfig={{ scale: 140 }}>
+                <ComposableMap 
+                  projection="geoNaturalEarth1"
+                  projectionConfig={{ 
+                    scale: 180,
+                    center: [0, 0] 
+                  }}
+                  width={800} 
+                  height={420}
+                >
                   <ZoomableGroup
                     zoom={position.zoom}
                     center={position.coordinates}
