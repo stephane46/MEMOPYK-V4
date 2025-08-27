@@ -2,8 +2,8 @@ import * as React from "react";
 import { Card, CardHeader, CardTitle, CardContent, CardFooter } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
-import { RefreshCcw, FileDown } from "lucide-react";
-import { downloadFile } from "@/utils/downloadFile";
+import { RefreshCcw } from "lucide-react";
+import ExportRangeControls from "./ExportRangeControls";
 import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer,
 } from "recharts";
@@ -56,15 +56,8 @@ export default function AnalyticsGeoDistributionCard() {
             <RefreshCcw className={`h-4 w-4 ${loading ? "animate-spin" : ""}`} />
             Refresh
           </Button>
-          <Button
-            size="sm"
-            variant="outline"
-            onClick={() => downloadFile(`/api/analytics/export/csv?report=geo`, "analytics_geo.csv")}
-            className="gap-2"
-          >
-            <FileDown className="h-4 w-4" />
-            Export CSV
-          </Button>
+          {/* NEW: range CSV export */}
+          <ExportRangeControls report="geo" />
         </div>
       </CardHeader>
 
