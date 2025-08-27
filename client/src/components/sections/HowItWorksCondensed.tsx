@@ -365,11 +365,11 @@ export function HowItWorksCondensed() {
       descriptionFr:
         "Nous examinons chaque détail avec attention et sélectionnons les plus beaux moments pour créer une histoire unique, selon vos préférences, avec la musique idéale, le bon rythme et le format qui vous convient. Vous recevez un devis précis et personnalisé avant toute étape, sans aucune mauvaise surprise.",
       descriptionEn:
-        'We carefully review every detail and handpick the most beautiful scenes to craft a unique, engaging story that fits your preferences, including perfect music, optimal timing, and the best format for your needs. You\'ll receive a clear, custom quote before we begin, so there are no surprises.',
+        "We carefully review every detail and handpick the most beautiful scenes to craft a unique, engaging story that fits your preferences, including perfect music, optimal timing, and the best format for your needs. You'll receive a clear, custom quote before we begin, so there are no surprises.",
       subDescriptionFr:
-        'Vos souvenirs deviennent un film sur-mesure, réalisé avec un souci du détail exceptionnel et une totale transparence à chaque étape.',
+        "Vos souvenirs deviennent un film sur-mesure, réalisé avec un souci du détail exceptionnel et une totale transparence à chaque étape.",
       subDescriptionEn:
-        'Your memories become a one-of-a-kind film, created with meticulous attention to detail and total transparency at every step.',
+        "Your memories become a one-of-a-kind film, created with meticulous attention to detail and total transparency at every step.",
       image: '/images/How_we_work_Step2.png',
     },
     {
