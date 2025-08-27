@@ -94,6 +94,12 @@ export default function AdminCountryNamesCard() {
     }
   }
 
+  function download(lang: "en" | "fr") {
+    const url = `/api/admin/country-names/download?lang=${lang}`;
+    // open in a new tab to trigger the file download
+    window.open(url, "_blank");
+  }
+
   return (
     <Card className="w-full">
       <CardHeader>
@@ -185,7 +191,7 @@ export default function AdminCountryNamesCard() {
         )}
       </CardContent>
 
-      <CardFooter className="flex items-center gap-2">
+      <CardFooter className="flex flex-wrap items-center gap-2">
         <Button
           onClick={() => upload("en")}
           disabled={uploading !== false}
@@ -194,6 +200,7 @@ export default function AdminCountryNamesCard() {
           {uploading === "en" ? <Loader2 className="h-4 w-4 animate-spin" /> : <Upload className="h-4 w-4" />}
           Import EN
         </Button>
+
         <Button
           variant="secondary"
           onClick={() => upload("fr")}
@@ -203,6 +210,25 @@ export default function AdminCountryNamesCard() {
           {uploading === "fr" ? <Loader2 className="h-4 w-4 animate-spin" /> : <Upload className="h-4 w-4" />}
           Importer FR
         </Button>
+
+        {/* NEW: Download buttons */}
+        <div className="mx-2 h-6 w-px bg-muted hidden sm:block" />
+
+        <Button
+          variant="outline"
+          onClick={() => download("en")}
+          disabled={uploading !== false}
+        >
+          Download EN
+        </Button>
+        <Button
+          variant="outline"
+          onClick={() => download("fr")}
+          disabled={uploading !== false}
+        >
+          Télécharger FR
+        </Button>
+
         <div className="ml-auto text-xs text-muted-foreground">
           Max file size: 2 MB · Expected headers: <code>iso3,display_name</code>
         </div>
