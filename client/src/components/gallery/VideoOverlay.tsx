@@ -2,7 +2,7 @@ import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { Play, Pause, Volume2, VolumeX, X, ImageIcon, Clock } from 'lucide-react';
 import { useVideoAnalytics } from '@/hooks/useVideoAnalytics';
 import { useGA4VideoAnalytics } from '@/hooks/useGA4VideoAnalytics';
-import { trackVideoComplete, trackVideoStart } from '@/lib/analytics';
+import { trackVideoComplete, trackVideoStart, trackVideoProgress } from '@/lib/analytics';
 
 interface VideoOverlayProps {
   videoUrl: string;
@@ -46,6 +46,7 @@ export default function VideoOverlay({
   const videoStartTimeRef = useRef<number>(Date.now());
   const thumbnailStartTimeRef = useRef<number>(Date.now());
   const videoReadyRef = useRef<boolean>(false);
+  const milestonesTrackedRef = useRef<Set<number>>(new Set());
   
   // Minimum thumbnail display time (2 seconds)
   const MINIMUM_THUMBNAIL_DISPLAY_TIME = 2000;
@@ -74,6 +75,7 @@ export default function VideoOverlay({
     videoStartTimeRef.current = Date.now();
     thumbnailStartTimeRef.current = Date.now();
     videoReadyRef.current = false;
+    milestonesTrackedRef.current.clear(); // Reset milestones for new video
     
     // Extract video ID directly to avoid dependency issues
     const videoId = videoUrl.includes('filename=') 
@@ -241,7 +243,15 @@ export default function VideoOverlay({
         ? videoUrl.split('filename=')[1].split('&')[0]
         : videoUrl.split('/').pop()?.split('?')[0] || 'unknown';
         
-      // Progress tracking simplified - focus on watch time at end
+      // Milestone tracking - Track progress at 10%, 25%, 50%, 75%, 90%
+      const milestones = [10, 25, 50, 75, 90];
+      for (const milestone of milestones) {
+        if (progress >= milestone && !milestonesTrackedRef.current.has(milestone)) {
+          milestonesTrackedRef.current.add(milestone);
+          trackVideoProgress(videoId, milestone, video.currentTime, title);
+          console.log(`📊 GA4 VIDEO PROGRESS: ${videoId} reached ${milestone}% (${Math.round(video.currentTime)}s)`);
+        }
+      }
     }
   }, [title, videoUrl]);
 
