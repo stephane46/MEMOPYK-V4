@@ -5,6 +5,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Skeleton } from "@/components/ui/skeleton";
 import { RefreshCcw } from "lucide-react";
 import ExportRangeControls from "./ExportRangeControls";
+import { RangeContext } from "./RangeContext";
 import {
   LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer,
 } from "recharts";
@@ -36,7 +37,18 @@ function secondsToHMS(sec?: number) {
   return `${r}s`;
 }
 
+// helper to convert "days" -> [from,to] (UTC, inclusive)
+function rangeFromDays(days: number): { from?: string; to?: string } {
+  if (days <= 0) return {};
+  const end = new Date(); end.setUTCHours(0,0,0,0);
+  const start = new Date(end); start.setUTCDate(start.getUTCDate() - days + 1);
+  const to = end.toISOString().slice(0,10);
+  const from = start.toISOString().slice(0,10);
+  return { from, to };
+}
+
 export default function AnalyticsDailyOverviewCard() {
+  const { setRange } = React.useContext(RangeContext);
   const [days, setDays] = React.useState<number>(30);
   const [loading, setLoading] = React.useState<boolean>(true);
   const [data, setData] = React.useState<any[]>([]);
@@ -71,6 +83,11 @@ export default function AnalyticsDailyOverviewCard() {
   React.useEffect(() => {
     load();
   }, [load]);
+
+  // whenever `days` changes (including Yesterday=1), update the shared range
+  React.useEffect(() => {
+    setRange(rangeFromDays(days));
+  }, [days, setRange]);
 
 
   const latest = data.length ? data[data.length - 1] : null;

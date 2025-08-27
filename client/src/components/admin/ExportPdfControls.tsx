@@ -5,6 +5,7 @@ import { FileDown } from "lucide-react";
 import {
   Select, SelectContent, SelectItem, SelectTrigger, SelectValue
 } from "@/components/ui/select";
+import { RangeContext } from "./RangeContext";
 
 async function downloadFile(url: string, filename: string) {
   const res = await fetch(url);
@@ -23,20 +24,24 @@ function toIsoDate(d: Date) {
 
 export default function ExportPdfControls() {
   const storageKey = "export-range-pdf";
+  const { range } = React.useContext(RangeContext);
   const [from, setFrom] = React.useState<string | undefined>();
   const [to, setTo] = React.useState<string | undefined>();
 
+  // load remembered
   React.useEffect(() => {
     const saved = localStorage.getItem(storageKey);
     if (saved) {
-      try {
-        const { from, to } = JSON.parse(saved);
-        setFrom(from);
-        setTo(to);
-      } catch {}
+      try { const j = JSON.parse(saved); setFrom(j.from); setTo(j.to); } catch {}
     }
   }, []);
 
+  // when Overview updates shared range, prefer it (but don't overwrite manual edits mid-session)
+  React.useEffect(() => {
+    if (range.from || range.to) { setFrom(range.from); setTo(range.to); }
+  }, [range.from, range.to]);
+
+  // persist
   React.useEffect(() => {
     localStorage.setItem(storageKey, JSON.stringify({ from, to }));
   }, [from, to]);
