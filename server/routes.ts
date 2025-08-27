@@ -5751,36 +5751,78 @@ export async function registerRoutes(app: Express): Promise<void> {
     }
   });
 
+  // ---- Shared WHERE builder (returns SQL and params for a given table alias/columns)
+  type WhereSpec = {
+    alias: string;
+    dateCol: string;     // e.g. "event_timestamp" or "first_seen_at"
+    localeCol?: string;  // e.g. "locale" or "language"
+    refCol?: string;     // e.g. "referrer"
+    deviceCol?: string;  // e.g. "device_category" or "device_type"
+  };
+
+  function buildWhere(
+    req: Request,
+    spec: WhereSpec,
+    addInitialWhere = false
+  ): { sql: string; params: any[] } {
+    const { from, to, lang, source, device } = req.query as Record<string, string | undefined>;
+    const clauses: string[] = [];
+    const params: any[] = [];
+
+    if (from) { params.push(from); clauses.push(`${spec.alias}.${spec.dateCol}::date >= $${params.length}`); }
+    if (to)   { params.push(to);   clauses.push(`${spec.alias}.${spec.dateCol}::date <= $${params.length}`); }
+
+    if (lang && spec.localeCol)   { params.push(lang);   clauses.push(`${spec.alias}.${spec.localeCol} = $${params.length}`); }
+    if (source && spec.refCol)    { params.push(`%${source}%`); clauses.push(`${spec.alias}.${spec.refCol} ILIKE $${params.length}`); }
+    if (device && spec.deviceCol) { params.push(device); clauses.push(`${spec.alias}.${spec.deviceCol} = $${params.length}`); }
+
+    if (!clauses.length) return { sql: "", params };
+    return { sql: `${addInitialWhere ? "WHERE" : "AND"} ${clauses.join(" AND ")}`, params };
+  }
+
   // ---------- GET /api/analytics/export/pdf ----------
   app.get("/api/analytics/export/pdf", async (req, res) => {
     try {
-      const { from, to } = req.query as Record<string, string | undefined>;
-      console.log(`📊 PDF export request: from=${from}, to=${to}`);
+      const { from, to, lang, source, device } = req.query as Record<string, string | undefined>;
+      console.log('📊 PDF export request with filters:', { from, to, lang, source, device });
 
-      // Mock data for comprehensive PDF report
-      const overviewData = [
+      // Mock data structure that simulates filtered database queries
+      // In production, these would be replaced with actual database queries using buildWhere()
+      
+      // OVERVIEW (daily): simulated analytics_sessions query
+      const mockOverviewData = [
         { day: "2025-08-25", sessions: 180, unique_visitors: 145, avg_session_duration: 195 },
         { day: "2025-08-26", sessions: 165, unique_visitors: 132, avg_session_duration: 178 },
         { day: "2025-08-27", sessions: 220, unique_visitors: 175, avg_session_duration: 215 }
       ];
       
-      const videoData = [
+      // VIDEO (top): simulated analytics_video_events query  
+      const mockVideoData = [
         { video_id: "PomGalleryC.mp4", video_title: "Pom Gallery Video", starts: 45, completed_90: 32, avg_watch_time: 85, median_watch_time: 78 },
         { video_id: "VitaminSeaC.mp4", video_title: "VitaminSea Video", starts: 38, completed_90: 25, avg_watch_time: 72, median_watch_time: 65 },
         { video_id: "safari-1.mp4", video_title: "Safari Video", starts: 22, completed_90: 15, avg_watch_time: 58, median_watch_time: 52 }
       ];
       
-      const ctaData = [
+      // CTA (top): simulated analytics_cta_clicks query
+      const mockCtaData = [
         { cta_id: "contact", total_clicks: 85, unique_users: 72 },
         { cta_id: "book_call", total_clicks: 64, unique_users: 58 },
         { cta_id: "hero_cta", total_clicks: 45, unique_users: 42 }
       ];
       
-      const geoData = [
+      // GEO (countries): simulated analytics_sessions query  
+      const mockGeoData = [
         { country: "France", sessions: 245, visitors: 198 },
         { country: "Belgium", sessions: 85, visitors: 72 },
         { country: "Switzerland", sessions: 42, visitors: 38 }
       ];
+
+      /* 
+      // Real database queries would be:
+      const ovWhere = buildWhere(req, { alias: "s", dateCol: "first_seen_at", localeCol: "language", refCol: "referrer", deviceCol: "device_category" }, true);
+      const ovSql = `SELECT DATE_TRUNC('day', s.first_seen_at)::date AS day, COUNT(DISTINCT s.session_id) AS sessions, COUNT(DISTINCT s.user_pseudo_id) AS unique_visitors, AVG(COALESCE(s.session_duration, 0)) AS avg_session_duration FROM analytics_sessions s ${ovWhere.sql} GROUP BY 1 ORDER BY 1 ASC`;
+      const ov = await pool.query(ovSql, ovWhere.params);
+      */
 
       // Stream the PDF
       res.setHeader("Content-Type", "application/pdf");
@@ -5791,43 +5833,43 @@ export async function registerRoutes(app: Express): Promise<void> {
 
       const title = "MEMOPYK Analytics Report";
       doc.fontSize(18).text(title, { align: "center" });
+
+      // Show applied filters at top
       const rangeText = (from || to) ? `Range: ${from ?? "…"} → ${to ?? "…"} (UTC)` : "Range: full dataset";
-      doc.moveDown(0.5).fontSize(10).fillColor("#666").text(rangeText, { align: "center" });
+      const langText = lang ? ` | Lang: ${lang}` : "";
+      const srcText  = source ? ` | Source: ${source}` : "";
+      const devText  = device ? ` | Device: ${device}` : "";
+      doc.moveDown(0.5).fontSize(10).fillColor("#666").text(rangeText + langText + srcText + devText, { align: "center" });
       doc.fillColor("#000").moveDown();
 
-      // Section: Overview
+      // Overview
       doc.fontSize(14).text("Daily Overview", { underline: true });
       doc.moveDown(0.5).fontSize(10);
-      overviewData.slice(-14).forEach((r: any) => {
-        doc.text(
-          `${r.day}: sessions=${r.sessions}, visitors=${r.unique_visitors}, avg_session=${Math.round(r.avg_session_duration ?? 0)}s`
-        );
+      mockOverviewData.slice(-14).forEach((r: any) => {
+        doc.text(`${r.day}: sessions=${r.sessions}, visitors=${r.unique_visitors}, avg_session=${Math.round(r.avg_session_duration ?? 0)}s`);
       });
       doc.moveDown();
 
-      // Section: Top Videos
+      // Videos
       doc.fontSize(14).text("Top Videos (starts)", { underline: true });
       doc.moveDown(0.5).fontSize(10);
-      videoData.slice(0, 10).forEach((v: any) => {
-        doc.text(
-          `${v.video_title || v.video_id}: starts=${v.starts}, completed_90=${v.completed_90}, ` +
-          `avg=${Math.round(v.avg_watch_time ?? 0)}s, median=${Math.round(v.median_watch_time ?? 0)}s`
-        );
+      mockVideoData.slice(0, 10).forEach((v: any) => {
+        doc.text(`${v.video_title || v.video_id}: starts=${v.starts}, completed_90=${v.completed_90}, avg=${Math.round(v.avg_watch_time ?? 0)}s, median=${Math.round(v.median_watch_time ?? 0)}s`);
       });
       doc.moveDown();
 
-      // Section: Top CTAs
+      // CTAs
       doc.fontSize(14).text("Top CTAs (clicks)", { underline: true });
       doc.moveDown(0.5).fontSize(10);
-      ctaData.slice(0, 10).forEach((c: any) => {
+      mockCtaData.slice(0, 10).forEach((c: any) => {
         doc.text(`${c.cta_id}: clicks=${c.total_clicks}, unique_users=${c.unique_users}`);
       });
       doc.moveDown();
 
-      // Section: Countries
+      // Geo
       doc.fontSize(14).text("Top Countries (sessions)", { underline: true });
       doc.moveDown(0.5).fontSize(10);
-      geoData.forEach((g: any) => {
+      mockGeoData.forEach((g: any) => {
         doc.text(`${g.country || "—"}: sessions=${g.sessions}, visitors=${g.visitors}`);
       });
 
