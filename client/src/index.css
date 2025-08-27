@@ -51,6 +51,12 @@ html, body {
   box-sizing: border-box;
 }
 
+/* Performance optimization for react-simple-maps event handling */
+.rsm-geography, .rsm-geographies, .rsm-zoomable-group {
+  touch-action: manipulation;
+  will-change: transform;
+}
+
 /* Ensure all containers respect viewport width */
 .container {
   max-width: 100%;

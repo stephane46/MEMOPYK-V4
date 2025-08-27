@@ -9,6 +9,13 @@ import { scaleSequential, scaleLinear, scaleDiverging } from "d3-scale";
 import { interpolateBlues, interpolateRdYlGn } from "d3-scale-chromatic";
 import { geoCentroid } from "d3-geo";
 
+// Extend Window interface for worldMapInitialized flag
+declare global {
+  interface Window {
+    worldMapInitialized?: boolean;
+  }
+}
+
 type CountryRow = { iso3: string; country: string; sessions: number; visitors: number };
 type CityRow = { iso3: string; country: string; city: string; sessions: number; visitors: number };
 type GeoResp =
@@ -137,14 +144,22 @@ export default function AnalyticsWorldMapCard() {
                     scale: 160,
                     center: [0, 0] 
                   }}
-                  width="100%" 
-                  height="100%"
+                  width={800} 
+                  height={420}
                   style={{ width: '100%', height: '100%' }}
                 >
                   <ZoomableGroup
                     zoom={position.zoom}
                     center={position.coordinates}
                     onMoveEnd={(pos) => setPosition({ coordinates: pos.coordinates as [number, number], zoom: pos.zoom })}
+                    filterZoomEvent={(evt) => {
+                      // Optimize event handling for better performance
+                      if (evt.type === 'wheel') {
+                        evt.preventDefault?.();
+                        return evt;
+                      }
+                      return evt;
+                    }}
                   >
                     <Geographies geography={geoUrl}>
                       {({ geographies }) => {
@@ -219,6 +234,7 @@ export default function AnalyticsWorldMapCard() {
                           };
                           
                           const iso3 = getISO3Code(countryName);
+                          if (!iso3) return null;
                           const base = baselineMap.get(iso3);
                           const cmp = comparisonMap.get(iso3);
                           const sessions = base?.sessions ?? 0;
@@ -238,13 +254,13 @@ export default function AnalyticsWorldMapCard() {
                               style={{ default: { outline: "none", cursor: "grab" }, hover: { outline: "none", cursor: "pointer" }, pressed: { outline: "none", cursor: "grabbing" } }}
                               onMouseEnter={(evt) => {
                                 if (tooltipLocked) return;
-                                setTooltip({ visible: true, x: evt.clientX, y: evt.clientY, iso3, country: base?.country, sessions, visitors, delta });
+                                setTooltip({ visible: true, x: evt.clientX, y: evt.clientY, iso3: iso3 || '', country: base?.country, sessions, visitors, delta });
                               }}
                               onMouseMove={(evt) => { if (tooltipLocked) setTooltip((t) => ({ ...t, x: evt.clientX, y: evt.clientY })); }}
                               onMouseLeave={() => { if (!tooltipLocked) setTooltip((t) => ({ ...t, visible: false })); }}
                               onClick={() => {
                                 setTooltipLocked(!tooltipLocked);
-                                setTooltip((t) => ({ ...t, iso3, country: base?.country, sessions, visitors, delta }));
+                                setTooltip((t) => ({ ...t, iso3: iso3 || '', country: base?.country, sessions, visitors, delta }));
                                 const [cx, cy] = geoCentroid(geo as any) as [number, number];
                                 setPosition({ coordinates: [cx, cy], zoom: 2.5 });
                                 setSelectedIso3(iso3);
