@@ -857,5 +857,87 @@ html, body {
   }
 }
 
+/* === SOPHISTICATED FOLDED CORNER FLIP CARDS === */
+
+/* Folded Corner Animation - Sophisticated Motion */
+.folded-corner-triangle {
+  transition: all 200ms cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.folded-corner-preview {
+  transition: all 200ms cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.folded-corner-shadow {
+  transition: opacity 200ms cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.folded-corner-highlight {
+  transition: opacity 200ms cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+/* Reduced Motion Support - Accessibility First */
+@media (prefers-reduced-motion: reduce) {
+  .flip-card {
+    transition: transform 0.15s ease-in-out !important;
+  }
+  
+  /* Disable subtle hover animations for reduced motion users */
+  .folded-corner-triangle,
+  .folded-corner-preview,
+  .folded-corner-shadow,
+  .folded-corner-highlight {
+    transition: none !important;
+  }
+  
+  /* Ensure static states for reduced motion */
+  .card-front:hover .folded-corner-triangle,
+  .card-front:focus .folded-corner-triangle {
+    transform: rotate(0deg) translateY(0px) translateX(0px) !important;
+    filter: drop-shadow(0 3px 6px rgba(0,0,0,0.15)) !important;
+  }
+  
+  .card-front:hover .folded-corner-preview,
+  .card-front:focus .folded-corner-preview {
+    transform: scale(1) !important;
+    opacity: 0.7 !important;
+  }
+}
+
+/* Enhanced Focus States for Better Accessibility */
+.card-front:focus-visible,
+.card-back:focus-visible {
+  outline: 3px solid #D67C4A !important;
+  outline-offset: 4px !important;
+  border-radius: 1rem !important;
+  box-shadow: 0 0 0 6px rgba(214, 124, 74, 0.2) !important;
+}
+
+/* Touch/Mobile Optimization */
+@media (hover: none) and (pointer: coarse) {
+  .card-front {
+    cursor: default;
+  }
+  
+  /* Slightly larger corner for better touch targets */
+  .folded-corner-container {
+    min-width: 56px !important;
+    min-height: 56px !important;
+  }
+}
+
+/* High-contrast mode support */
+@media (prefers-contrast: high) {
+  .card-front:focus-visible,
+  .card-back:focus-visible {
+    outline: 4px solid #D67C4A !important;
+    outline-offset: 2px !important;
+  }
+  
+  .folded-corner-preview {
+    filter: contrast(1.2) !important;
+  }
+}
+
 
 

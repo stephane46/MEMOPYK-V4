@@ -113,11 +113,30 @@ export function HowItWorksCondensed() {
                   <div className="card-flip-inner">
                     
                     {/* FRONT SIDE - Step Card */}
-                    <div className="card-front bg-white border border-gray-200 shadow-lg hover:shadow-2xl rounded-2xl overflow-hidden">
-                      {/* Clickable Area */}
-                      <div 
-                        className="relative cursor-pointer"
-                        onClick={() => {
+                    <div 
+                      className="card-front bg-white border border-gray-200 shadow-lg hover:shadow-2xl rounded-2xl overflow-hidden transition-all duration-200 cursor-pointer"
+                      role="button"
+                      tabIndex={0}
+                      aria-expanded={isFlipped}
+                      aria-label={`${language === 'fr-FR' ? step.titleFr : step.titleEn} - ${language === 'fr-FR' ? 'Cliquer pour plus d\'informations' : 'Click for more information'}`}
+                      onMouseEnter={() => setHoveredCard(step.number)}
+                      onMouseLeave={() => setHoveredCard(null)}
+                      onFocus={() => setHoveredCard(step.number)}
+                      onBlur={() => setHoveredCard(null)}
+                      onClick={() => {
+                        setFlippedCards(prev => {
+                          const newSet = new Set(prev);
+                          if (newSet.has(step.number)) {
+                            newSet.delete(step.number);
+                          } else {
+                            newSet.add(step.number);
+                          }
+                          return newSet;
+                        });
+                      }}
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter' || e.key === ' ') {
+                          e.preventDefault();
                           setFlippedCards(prev => {
                             const newSet = new Set(prev);
                             if (newSet.has(step.number)) {
@@ -127,8 +146,11 @@ export function HowItWorksCondensed() {
                             }
                             return newSet;
                           });
-                        }}
-                      >
+                        }
+                      }}
+                    >
+                      {/* Main Card Content */}
+                      <div className="relative">
                         {/* Step Image */}
                         <div className="relative overflow-hidden rounded-xl transition-all duration-500 aspect-square">
                           <img 
@@ -143,43 +165,119 @@ export function HowItWorksCondensed() {
                           </div>
                         </div>
                         
-                        {/* Info Button - Below image in white space */}
-                        <div className="flex justify-center mt-3 mb-2">
+                        {/* Folded Corner Overlay - Bottom Right */}
+                        <div 
+                          className="absolute bottom-0 right-0 overflow-hidden pointer-events-none"
+                          style={{
+                            width: 'min(14%, 64px)',
+                            height: 'min(14%, 64px)',
+                            minWidth: '44px',
+                            minHeight: '44px'
+                          }}
+                        >
+                          {/* Back Preview (behind the fold) - Shows gradient preview */}
                           <div 
-                            className="w-12 h-12 rounded-full flex items-center justify-center transition-all duration-300 hover:scale-110 cursor-pointer"
+                            className="absolute inset-0 rounded-tl-full"
                             style={{
-                              background: 'linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.85) 100%)',
-                              boxShadow: '0 4px 12px rgba(0, 0, 0, 0.2), inset 0 1px 2px rgba(255, 255, 255, 0.8)',
-                              border: '1px solid rgba(0, 0, 0, 0.1)',
-                              backdropFilter: 'blur(2px)'
+                              backgroundImage: `linear-gradient(135deg, rgba(214, 124, 74, 0.85) 0%, rgba(42, 71, 89, 0.85) 100%)`,
+                              transform: hoveredCard === step.number ? 'scale(1.05)' : 'scale(1)',
+                              opacity: hoveredCard === step.number ? 0.9 : 0.7,
+                              transition: 'all 200ms ease-out'
                             }}
                           >
-                            <Info className="w-6 h-6" style={{ color: '#2A4759' }} />
+                            {/* Subtle back content hint */}
+                            <div 
+                              className="absolute inset-0 flex items-center justify-center text-white text-xs font-medium opacity-60"
+                              style={{
+                                fontSize: 'clamp(8px, 2vw, 10px)',
+                                filter: 'blur(0.5px)'
+                              }}
+                            >
+                              {language === 'fr-FR' ? 'Plus' : 'More'}
+                            </div>
                           </div>
+                          
+                          {/* Folded Corner Triangle */}
+                          <div 
+                            className="absolute bottom-0 right-0"
+                            style={{
+                              width: 0,
+                              height: 0,
+                              borderLeft: 'min(14vw, 64px) solid transparent',
+                              borderBottom: 'min(14vw, 64px) solid white',
+                              filter: hoveredCard === step.number 
+                                ? 'drop-shadow(0 6px 12px rgba(0,0,0,0.25)) drop-shadow(0 2px 4px rgba(0,0,0,0.1))' 
+                                : 'drop-shadow(0 3px 6px rgba(0,0,0,0.15))',
+                              transform: hoveredCard === step.number 
+                                ? 'rotate(-3deg) translateY(-3px) translateX(1px)' 
+                                : 'rotate(0deg) translateY(0px) translateX(0px)',
+                              transition: 'all 200ms ease-out',
+                              transformOrigin: 'bottom right'
+                            }}
+                          />
+                          
+                          {/* Fold Line Shadow */}
+                          <div 
+                            className="absolute bottom-0 right-0 pointer-events-none"
+                            style={{
+                              width: 'min(14%, 64px)',
+                              height: 'min(14%, 64px)',
+                              minWidth: '44px',
+                              minHeight: '44px',
+                              background: 'linear-gradient(135deg, transparent 48%, rgba(0,0,0,0.1) 50%, transparent 52%)',
+                              opacity: hoveredCard === step.number ? 0.4 : 0.2,
+                              transition: 'opacity 200ms ease-out'
+                            }}
+                          />
+                          
+                          {/* Highlight on fold edge */}
+                          <div 
+                            className="absolute bottom-0 right-0 pointer-events-none"
+                            style={{
+                              width: 'min(14%, 64px)',
+                              height: 'min(14%, 64px)',
+                              minWidth: '44px',
+                              minHeight: '44px',
+                              background: 'linear-gradient(135deg, transparent 47%, rgba(255,255,255,0.3) 49%, rgba(255,255,255,0.1) 51%, transparent 53%)',
+                              opacity: hoveredCard === step.number ? 0.8 : 0.4,
+                              transition: 'opacity 200ms ease-out'
+                            }}
+                          />
                         </div>
                       </div>
                     </div>
                       
                     {/* BACK SIDE - Detailed Information */}
                     <div 
-                      className="card-back shadow-lg hover:shadow-2xl rounded-2xl overflow-hidden border border-gray-200"
+                      className="card-back shadow-lg hover:shadow-2xl rounded-2xl overflow-hidden border border-gray-200 cursor-pointer transition-all duration-200"
+                      role="button"
+                      tabIndex={0}
+                      aria-label={`${language === 'fr-FR' ? 'Fermer les détails' : 'Close details'}`}
                       style={{
                         backgroundImage: `linear-gradient(135deg, rgba(214, 124, 74, 0.92) 0%, rgba(42, 71, 89, 0.92) 100%), url(${step.image})`,
                         backgroundSize: 'cover',
                         backgroundPosition: 'center',
                         backgroundRepeat: 'no-repeat'
                       }}
-                    >
-                      <div 
-                        className="h-full flex flex-col cursor-pointer relative px-2 pt-0 pb-2"
-                        onClick={() => {
+                      onClick={() => {
+                        setFlippedCards(prev => {
+                          const newSet = new Set(prev);
+                          newSet.delete(step.number);
+                          return newSet;
+                        });
+                      }}
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter' || e.key === ' ') {
+                          e.preventDefault();
                           setFlippedCards(prev => {
                             const newSet = new Set(prev);
                             newSet.delete(step.number);
                             return newSet;
                           });
-                        }}
-                      >
+                        }
+                      }}
+                    >
+                      <div className="h-full flex flex-col relative px-2 pt-0 pb-2">
                         
                         {/* Top Section - Text content area */}
                         <div className="text-center flex flex-col" style={{ height: '350px', position: 'relative' }}>
@@ -202,7 +300,10 @@ export function HowItWorksCondensed() {
                         
                         {/* Return arrow - Positioned with equal spacing */}
                         <div className="absolute -bottom-6 -left-6">
-                          <div className="w-10 h-10 bg-white/80 rounded-full flex items-center justify-center hover:bg-white transition-colors shadow-lg">
+                          <div 
+                            className="w-10 h-10 bg-white/80 rounded-full flex items-center justify-center hover:bg-white transition-colors shadow-lg"
+                            aria-label={language === 'fr-FR' ? 'Retour' : 'Back'}
+                          >
                             <svg className="w-5 h-5 text-memopyk-dark-blue" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
                             </svg>
