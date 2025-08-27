@@ -7,6 +7,7 @@ export type GlobalFilter = {
   language?: string;
   source?: string;
   device?: string;
+  country?: string;
 };
 
 export type ComparisonConfig = {
@@ -45,7 +46,8 @@ export function GlobalFilterProvider({ children }: { children: React.ReactNode }
         range: saved.range || {},
         language: saved.language,
         source: saved.source,
-        device: saved.device
+        device: saved.device,
+        country: saved.country
       };
     } catch {
       return { range: {} };
