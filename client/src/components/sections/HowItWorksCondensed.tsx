@@ -1,13 +1,15 @@
 import { useLanguage } from '../../contexts/LanguageContext';
-import { Upload, Edit, Heart, Info } from 'lucide-react';
+import { Upload, Edit, Heart } from 'lucide-react';
 import { useState, useEffect, useRef } from 'react';
 
 export function HowItWorksCondensed() {
   const { language } = useLanguage();
   const [flippedCards, setFlippedCards] = useState<Set<number>>(new Set());
+  const [hoveredCard, setHoveredCard] = useState<number | null>(null);
+  const [hasAnimated, setHasAnimated] = useState<Set<number>>(new Set());
   const sectionRef = useRef<HTMLElement>(null);
 
-  // Reset flipped cards when section is not visible
+  // Reset flipped cards when section is not visible and handle first-load nudge
   useEffect(() => {
     const section = sectionRef.current;
     if (!section) return;
@@ -18,19 +20,33 @@ export function HowItWorksCondensed() {
           // If section is not visible (less than 50% visible), reset all cards
           if (!entry.isIntersecting || entry.intersectionRatio < 0.5) {
             setFlippedCards(new Set());
+            setHoveredCard(null);
+          } else if (entry.isIntersecting && entry.intersectionRatio >= 0.7) {
+            // First-load nudge animation for each card
+            steps.forEach((step, index) => {
+              if (!hasAnimated.has(step.number)) {
+                setTimeout(() => {
+                  setHoveredCard(step.number);
+                  setTimeout(() => {
+                    setHoveredCard(null);
+                    setHasAnimated(prev => new Set(prev).add(step.number));
+                  }, 200);
+                }, index * 150);
+              }
+            });
           }
         });
       },
       {
-        threshold: 0.5, // Trigger when 50% of section is visible/hidden
-        rootMargin: '0px 0px -50px 0px' // Add some margin for smoother triggering
+        threshold: [0.5, 0.7], // Multiple thresholds for different behaviors
+        rootMargin: '0px 0px -50px 0px'
       }
     );
 
     observer.observe(section);
 
     return () => observer.disconnect();
-  }, []);
+  }, [hasAnimated]);
   
   const steps = [
     {
