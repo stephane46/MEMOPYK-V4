@@ -22484,8 +22484,8 @@
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-27T07:03:25.427Z",
-    "updated_at": "2025-08-27T07:05:10.046Z",
-    "duration": 1274075
+    "updated_at": "2025-08-27T07:05:36.740Z",
+    "duration": 1274102
   },
   {
     "id": "7f0e57d1-38c2-4ab2-8e23-cb3ac72e46f5",
@@ -22502,5 +22502,22 @@
     "is_test_data": true,
     "created_at": "2025-08-27T07:03:29.138Z",
     "updated_at": "2025-08-27T07:03:29.251Z"
+  },
+  {
+    "id": "565f6c74-e7fe-46a3-ade7-a853641ab2c2",
+    "session_id": "session_1756278355223_kuvyo43ij",
+    "user_id": null,
+    "ip_address": "109.17.150.48",
+    "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36 Edg/139.0.0.0",
+    "referrer": "https://365df2cf-1884-444c-a9e8-235602456363-00-37q39xpqlgvdy.janeway.replit.dev/__replco/workspace_iframe.html?initialPath=%2F&id=%3Ar1plo%3A",
+    "language": "fr-FR",
+    "country": "Unknown",
+    "city": "Unknown",
+    "page_views": 0,
+    "is_bot": false,
+    "is_test_data": false,
+    "created_at": "2025-08-27T07:05:55.836Z",
+    "updated_at": "2025-08-27T07:06:07.073Z",
+    "duration": 1274132
   }
 ]
