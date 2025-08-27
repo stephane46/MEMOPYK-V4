@@ -301,7 +301,7 @@
     "read-cache": "^1.0.0",
     "readable-stream": "^3.6.2",
     "readdirp": "^3.6.0",
-    "recharts": "^2.15.4",
+    "recharts": "^2.12.7",
     "recharts-scale": "^0.4.5",
     "regenerator-runtime": "^0.14.1",
     "regexp.prototype.flags": "^1.5.4",
