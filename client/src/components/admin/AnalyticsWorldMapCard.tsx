@@ -134,8 +134,14 @@ export default function AnalyticsWorldMapCard() {
                     onMoveEnd={(pos) => setPosition({ coordinates: pos.coordinates as [number, number], zoom: pos.zoom })}
                   >
                     <Geographies geography={geoUrl}>
-                      {({ geographies }) =>
-                        geographies.map((geo) => {
+                      {({ geographies }) => {
+                        // Debug: Log the first few geographies to see what properties are available
+                        if (geographies.length > 0) {
+                          console.log("🗺️ DEBUG: First geography properties:", geographies[0]?.properties);
+                          console.log("🗺️ DEBUG: Sample of available properties:", Object.keys(geographies[0]?.properties || {}));
+                          console.log("🗺️ DEBUG: Our data ISO3 codes:", Array.from(baselineMap.keys()));
+                        }
+                        return geographies.map((geo) => {
                           const iso3 = geo.properties.ISO_A3;
                           const base = baselineMap.get(iso3);
                           const cmp = comparisonMap.get(iso3);
@@ -174,8 +180,8 @@ export default function AnalyticsWorldMapCard() {
                               }}
                             />
                           );
-                        })
-                      }
+                        });
+                      }}
                     </Geographies>
                   </ZoomableGroup>
                 </ComposableMap>
