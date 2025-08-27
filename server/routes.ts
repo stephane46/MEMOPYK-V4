@@ -3066,16 +3066,20 @@ export async function registerRoutes(app: Express): Promise<void> {
           whereClause += ` AND s.user_agent ILIKE $${queryParams.length}`;
         }
 
-        // Countries query
+        // Countries query with localized names
+        const language = req.query.lang as string;
+        const countryNameCol = language?.startsWith('fr') ? 'cn.name_fr' : 'cn.name_en';
+        
         const countriesQuery = `
           SELECT
             s.country_iso3 AS iso3,
-            MAX(s.country) AS country_name,
+            COALESCE(${countryNameCol}, MAX(s.country)) AS country_name,
             COUNT(DISTINCT s.session_id) AS sessions,
             COUNT(DISTINCT s.ip_address) AS visitors
           FROM analytics_sessions s
+          LEFT JOIN v_country_names cn ON s.country_iso3 = cn.iso3
           ${whereClause}
-          GROUP BY s.country_iso3
+          GROUP BY s.country_iso3, ${countryNameCol}
           HAVING s.country_iso3 IS NOT NULL
           ORDER BY sessions DESC
           LIMIT $${queryParams.length + 1}
@@ -3094,13 +3098,14 @@ export async function registerRoutes(app: Express): Promise<void> {
         const citiesQuery = `
           SELECT
             s.country_iso3 AS iso3,
-            MAX(s.country) AS country_name,
+            COALESCE(${countryNameCol}, MAX(s.country)) AS country_name,
             s.city,
             COUNT(DISTINCT s.session_id) AS sessions,
             COUNT(DISTINCT s.ip_address) AS visitors
           FROM analytics_sessions s
+          LEFT JOIN v_country_names cn ON s.country_iso3 = cn.iso3
           ${citiesWhere}
-          GROUP BY s.country_iso3, s.city
+          GROUP BY s.country_iso3, s.city, ${countryNameCol}
           HAVING s.country_iso3 IS NOT NULL
           ORDER BY sessions DESC
           LIMIT $${citiesParams.length + 1}
@@ -3183,16 +3188,20 @@ export async function registerRoutes(app: Express): Promise<void> {
           whereClause += ` AND s.user_agent ILIKE $${queryParams.length}`;
         }
 
-        // Countries query
+        // Countries query with localized names
+        const language = req.query.lang as string;
+        const countryNameCol = language?.startsWith('fr') ? 'cn.name_fr' : 'cn.name_en';
+        
         const countriesQuery = `
           SELECT
             s.country_iso3 AS iso3,
-            MAX(s.country) AS country_name,
+            COALESCE(${countryNameCol}, MAX(s.country)) AS country_name,
             COUNT(DISTINCT s.session_id) AS sessions,
             COUNT(DISTINCT s.ip_address) AS visitors
           FROM analytics_sessions s
+          LEFT JOIN v_country_names cn ON s.country_iso3 = cn.iso3
           ${whereClause}
-          GROUP BY s.country_iso3
+          GROUP BY s.country_iso3, ${countryNameCol}
           HAVING s.country_iso3 IS NOT NULL
           ORDER BY sessions DESC
           LIMIT $${queryParams.length + 1}
@@ -3211,13 +3220,14 @@ export async function registerRoutes(app: Express): Promise<void> {
         const citiesQuery = `
           SELECT
             s.country_iso3 AS iso3,
-            MAX(s.country) AS country_name,
+            COALESCE(${countryNameCol}, MAX(s.country)) AS country_name,
             s.city,
             COUNT(DISTINCT s.session_id) AS sessions,
             COUNT(DISTINCT s.ip_address) AS visitors
           FROM analytics_sessions s
+          LEFT JOIN v_country_names cn ON s.country_iso3 = cn.iso3
           ${citiesWhere}
-          GROUP BY s.country_iso3, s.city
+          GROUP BY s.country_iso3, s.city, ${countryNameCol}
           HAVING s.country_iso3 IS NOT NULL
           ORDER BY sessions DESC
           LIMIT $${citiesParams.length + 1}

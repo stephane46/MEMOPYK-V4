@@ -395,6 +395,16 @@ export const deploymentHistory = pgTable("deployment_history", {
   createdAt: timestamp("created_at").defaultNow()
 });
 
+// Country names lookup table for localization
+export const countryNames = pgTable("country_names", {
+  iso3: varchar("iso3", { length: 3 }).primaryKey(),
+  displayName: text("display_name"), // Legacy field for backward compatibility
+  displayNameEn: text("display_name_en"),
+  displayNameFr: text("display_name_fr"),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow()
+});
+
 // Insert schemas for all tables
 export const insertUserSchema = createInsertSchema(users).omit({ id: true });
 export const insertHeroVideoSchema = createInsertSchema(heroVideos).omit({ id: true, createdAt: true, updatedAt: true });
@@ -411,6 +421,7 @@ export const insertSeoAuditLogSchema = createInsertSchema(seoAuditLogs).omit({ i
 export const insertSeoImageMetaSchema = createInsertSchema(seoImageMeta).omit({ id: true, createdAt: true, updatedAt: true });
 export const insertSeoGlobalSettingsSchema = createInsertSchema(seoGlobalSettings).omit({ id: true, createdAt: true, updatedAt: true });
 export const insertDeploymentHistorySchema = createInsertSchema(deploymentHistory).omit({ id: true, createdAt: true });
+export const insertCountryNamesSchema = createInsertSchema(countryNames).omit({ createdAt: true, updatedAt: true });
 export const insertWhyMemopykCardsSchema = createInsertSchema(whyMemopykCards).omit({ createdAt: true, updatedAt: true });
 export const insertAnalyticsSessionSchema = createInsertSchema(analyticsSessions).omit({ id: true, createdAt: true });
 export const insertAnalyticsViewSchema = createInsertSchema(analyticsViews).omit({ id: true, createdAt: true });
@@ -435,6 +446,7 @@ export type SeoAuditLog = typeof seoAuditLogs.$inferSelect;
 export type SeoImageMeta = typeof seoImageMeta.$inferSelect;
 export type SeoGlobalSettings = typeof seoGlobalSettings.$inferSelect;
 export type DeploymentHistory = typeof deploymentHistory.$inferSelect;
+export type CountryNames = typeof countryNames.$inferSelect;
 export type AnalyticsSession = typeof analyticsSessions.$inferSelect;
 export type AnalyticsView = typeof analyticsViews.$inferSelect;
 export type RealtimeVisitor = typeof realtimeVisitors.$inferSelect;
@@ -459,6 +471,7 @@ export type InsertSeoAuditLog = z.infer<typeof insertSeoAuditLogSchema>;
 export type InsertSeoImageMeta = z.infer<typeof insertSeoImageMetaSchema>;
 export type InsertSeoGlobalSettings = z.infer<typeof insertSeoGlobalSettingsSchema>;
 export type InsertDeploymentHistory = z.infer<typeof insertDeploymentHistorySchema>;
+export type InsertCountryNames = z.infer<typeof insertCountryNamesSchema>;
 export type InsertAnalyticsSession = z.infer<typeof insertAnalyticsSessionSchema>;
 export type InsertAnalyticsView = z.infer<typeof insertAnalyticsViewSchema>;
 export type InsertRealtimeVisitor = z.infer<typeof insertRealtimeVisitorSchema>;
