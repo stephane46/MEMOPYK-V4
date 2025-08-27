@@ -24,20 +24,27 @@ export function initOpenReplay(opts: InitOptions = {}) {
     return null;
   }
 
-  tracker = new Tracker({
-    projectKey,
-    // PRIVACY defaults (GDPR friendly)
-    defaultInputMode: 2, // 2 = mask inputs by default
-    obscureTextNumbers: false,
-    obscureTextEmails: true,
-    // respectDNT: true, // Not available in current version
-  });
+  try {
+    tracker = new Tracker({
+      projectKey,
+      // PRIVACY defaults (GDPR friendly)
+      defaultInputMode: 2, // 2 = mask inputs by default
+      obscureTextNumbers: false,
+      obscureTextEmails: true,
+      // respectDNT: true, // Not available in current version
+    });
 
-  // Plugins
-  tracker.use(trackerAssist()); // optional co-browsing/chat later
+    // Plugins
+    tracker.use(trackerAssist()); // optional co-browsing/chat later
 
-  // Start tracking
-  tracker.start();
+    // Start tracking
+    tracker.start();
+    
+    console.log("🎬 OpenReplay tracker started successfully");
+  } catch (error) {
+    console.error("🚫 OpenReplay initialization failed:", error);
+    return null;
+  }
 
   // Identify user (optional, recommended if you have a stable ID)
   const uid = opts.getUserId?.();
@@ -65,6 +72,15 @@ export function initOpenReplay(opts: InitOptions = {}) {
   // Expose tracker globally for testing
   if (typeof window !== 'undefined') {
     (window as any).OpenReplay = tracker;
+    // Add a debug helper
+    (window as any).debugOpenReplay = () => {
+      console.log('🔍 OpenReplay Debug Info:');
+      console.log('- Tracker exists:', !!tracker);
+      console.log('- Project Key:', projectKey);
+      console.log('- Video Analytics Enabled:', import.meta.env.VITE_VIDEO_ANALYTICS_ENABLED);
+      console.log('- Session Token:', tracker?.getSessionToken?.());
+      console.log('- Tracker:', tracker);
+    };
   }
 
   console.log("🎬 OpenReplay session recording initialized for MEMOPYK");
