@@ -24,7 +24,7 @@ export default function ExportPdfControls() {
   }
 
   const filename = React.useMemo(() => {
-    const rangeDesc = filters.range.from && filters.range.to 
+    const rangeDesc = filters.range?.from && filters.range?.to 
       ? `${filters.range.from}_to_${filters.range.to}`
       : 'current_range';
     const langDesc = filters.language ? `_${filters.language}` : '';
