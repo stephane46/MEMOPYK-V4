@@ -8,6 +8,7 @@ import { registerRoutes } from "./routes";
 import { log } from "./vite";           
 import { testDatabaseConnection } from "./database";
 import { VideoCache } from "./video-cache";
+import "./ga4-scheduler.js";
 
 const VERSION = "1.0.52-deploy-fix";
 console.log(`=== MEMOPYK Server Starting ${VERSION} ===`);
