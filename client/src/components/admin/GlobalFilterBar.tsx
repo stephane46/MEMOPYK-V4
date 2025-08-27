@@ -55,10 +55,10 @@ export default function GlobalFilterBar() {
       <input type="date" value={to ?? ""} onChange={(e) => setTo(e.target.value || undefined)} className="h-9 rounded-md border px-2 text-sm" />
 
       {/* Language filter */}
-      <Select value={language} onValueChange={(v) => setLanguage(v)}>
+      <Select value={language || "all"} onValueChange={(v) => setLanguage(v === "all" ? "" : v)}>
         <SelectTrigger className="h-9 w-[100px]"><SelectValue placeholder="Lang" /></SelectTrigger>
         <SelectContent>
-          <SelectItem value="">All</SelectItem>
+          <SelectItem value="all">All</SelectItem>
           <SelectItem value="fr-FR">fr-FR</SelectItem>
           <SelectItem value="en-US">en-US</SelectItem>
         </SelectContent>
@@ -68,10 +68,10 @@ export default function GlobalFilterBar() {
       <input type="text" placeholder="Source/referrer" value={source} onChange={(e) => setSource(e.target.value)} className="h-9 rounded-md border px-2 text-sm" />
 
       {/* Device filter */}
-      <Select value={device} onValueChange={(v) => setDevice(v)}>
+      <Select value={device || "all"} onValueChange={(v) => setDevice(v === "all" ? "" : v)}>
         <SelectTrigger className="h-9 w-[110px]"><SelectValue placeholder="Device" /></SelectTrigger>
         <SelectContent>
-          <SelectItem value="">All</SelectItem>
+          <SelectItem value="all">All</SelectItem>
           <SelectItem value="mobile">Mobile</SelectItem>
           <SelectItem value="desktop">Desktop</SelectItem>
           <SelectItem value="tablet">Tablet</SelectItem>
