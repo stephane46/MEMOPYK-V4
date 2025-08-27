@@ -2982,8 +2982,8 @@ export async function registerRoutes(app: Express): Promise<void> {
   // Geo Distribution Analytics - GET countries and cities
   app.get("/api/analytics/geo", async (req, res) => {
     try {
-      const { limit = 50, from, to, lang, source, device, country } = req.query;
-      console.log(`📊 Geo distribution analytics request (limit: ${limit}) with filters:`, { from, to, lang, source, device, country });
+      const { limit = 50, from, to, lang, source, device, country, compare, periodMode } = req.query;
+      console.log(`📊 Geo distribution analytics request (limit: ${limit}) with filters:`, { from, to, lang, source, device, country, compare, periodMode });
       
       // Mock data structure for geographic distribution
       const allCountries = [
@@ -3023,30 +3023,111 @@ export async function registerRoutes(app: Express): Promise<void> {
         { country: "Spain", city: "Barcelona", sessions: 1, visitors: 1 }
       ];
 
-      // If country parameter is provided, filter cities for that country
+      // Mock comparison data (previous period with ~15% variance)
+      const comparisonCountries = [
+        { country: "France", sessions: 38, visitors: 32 },
+        { country: "United States", sessions: 17, visitors: 15 },
+        { country: "Canada", sessions: 10, visitors: 9 },
+        { country: "Belgium", sessions: 9, visitors: 8 },
+        { country: "Switzerland", sessions: 7, visitors: 6 },
+        { country: "Germany", sessions: 4, visitors: 3 },
+        { country: "United Kingdom", sessions: 5, visitors: 5 },
+        { country: "Spain", sessions: 2, visitors: 2 }
+      ];
+
+      const comparisonCities = [
+        { country: "France", city: "Paris", sessions: 19, visitors: 17 },
+        { country: "France", city: "Lyon", sessions: 9, visitors: 8 },
+        { country: "France", city: "Marseille", sessions: 5, visitors: 4 },
+        { country: "France", city: "Toulouse", sessions: 3, visitors: 2 },
+        { country: "France", city: "Nice", sessions: 2, visitors: 1 },
+        { country: "United States", city: "New York", sessions: 7, visitors: 6 },
+        { country: "United States", city: "Los Angeles", sessions: 5, visitors: 5 },
+        { country: "United States", city: "Chicago", sessions: 3, visitors: 2 },
+        { country: "United States", city: "Miami", sessions: 2, visitors: 2 },
+        { country: "Canada", city: "Toronto", sessions: 4, visitors: 4 },
+        { country: "Canada", city: "Montreal", sessions: 3, visitors: 2 },
+        { country: "Canada", city: "Vancouver", sessions: 3, visitors: 3 },
+        { country: "Belgium", city: "Brussels", sessions: 6, visitors: 5 },
+        { country: "Belgium", city: "Antwerp", sessions: 3, visitors: 3 },
+        { country: "Switzerland", city: "Zurich", sessions: 4, visitors: 3 },
+        { country: "Switzerland", city: "Geneva", sessions: 3, visitors: 3 },
+        { country: "Germany", city: "Berlin", sessions: 2, visitors: 2 },
+        { country: "Germany", city: "Munich", sessions: 1, visitors: 1 },
+        { country: "Germany", city: "Hamburg", sessions: 1, visitors: 0 },
+        { country: "United Kingdom", city: "London", sessions: 4, visitors: 4 },
+        { country: "United Kingdom", city: "Manchester", sessions: 1, visitors: 1 },
+        { country: "Spain", city: "Madrid", sessions: 1, visitors: 1 },
+        { country: "Spain", city: "Barcelona", sessions: 1, visitors: 1 }
+      ];
+
+      // Filter by country if specified
+      let countries = allCountries;
+      let cities = allCities;
+      let compCountries = comparisonCountries;
+      let compCities = comparisonCities;
+
       if (country) {
-        const filteredCities = allCities.filter(city => 
+        cities = allCities.filter(city => 
           city.country.toLowerCase() === (country as string).toLowerCase()
         );
-        
+        compCities = comparisonCities.filter(city => 
+          city.country.toLowerCase() === (country as string).toLowerCase()
+        );
+      }
+
+      // Return comparison mode if requested
+      if (compare === 'period') {
         const mockData = {
-          countries: allCountries,
-          cities: filteredCities
+          baseline: { countries, cities },
+          comparison: { countries: compCountries, cities: compCities },
+          baseline_range: "Current Period",
+          comparison_range: "Previous Period"
         };
-        
         res.json(mockData);
       } else {
-        // Return all data
-        const mockData = {
-          countries: allCountries,
-          cities: allCities
-        };
-        
+        // Return normal single dataset
+        const mockData = { countries, cities };
         res.json(mockData);
       }
     } catch (error) {
       console.error('❌ Geo distribution analytics error:', error);
       res.status(500).json({ error: "Failed to get geo distribution data" });
+    }
+  });
+
+  // CSV Export for Analytics
+  app.get("/api/analytics/export/csv", async (req, res) => {
+    try {
+      const { report, country, from, to, lang, source, device } = req.query;
+      console.log(`📊 CSV Export request for report: ${report}`, { country, from, to, lang, source, device });
+      
+      if (report === 'geo' && country) {
+        // Export geo data for specific country
+        const mockCityData = [
+          { city: "Paris", sessions: 22, visitors: 20 },
+          { city: "Lyon", sessions: 8, visitors: 7 },
+          { city: "Marseille", sessions: 6, visitors: 5 },
+          { city: "Toulouse", sessions: 4, visitors: 3 },
+          { city: "Nice", sessions: 3, visitors: 2 }
+        ];
+        
+        // Create CSV content
+        const headers = ['City', 'Sessions', 'Visitors'];
+        const csvContent = [
+          headers.join(','),
+          ...mockCityData.map(row => `"${row.city}",${row.sessions},${row.visitors}`)
+        ].join('\n');
+        
+        res.setHeader('Content-Type', 'text/csv');
+        res.setHeader('Content-Disposition', `attachment; filename="${country}_analytics.csv"`);
+        res.send(csvContent);
+      } else {
+        res.status(400).json({ error: "Invalid export parameters" });
+      }
+    } catch (error) {
+      console.error('❌ CSV Export error:', error);
+      res.status(500).json({ error: "Failed to export CSV data" });
     }
   });
 
