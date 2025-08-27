@@ -2132,36 +2132,102 @@ export async function registerRoutes(app: Express): Promise<void> {
   // Analytics Daily Overview - GET daily overview data for charts
   app.get("/api/analytics/overview", async (req, res) => {
     try {
-      const { days, from, to, lang, source, device } = req.query;
+      const { days, from, to, lang, source, device, compare, compareMode } = req.query;
       const daysNum = parseInt(days as string || '30');
-      console.log(`📊 Analytics daily overview request for ${daysNum} days with filters:`, { from, to, lang, source, device });
+      console.log(`📊 Analytics daily overview request for ${daysNum} days with filters:`, { from, to, lang, source, device, compare, compareMode });
       
-      // For now, return mock data structure that matches the expected format
-      // This will be replaced with actual Supabase analytics_daily_overview view query
-      const mockData = [];
-      const today = new Date();
-      
-      for (let i = daysNum - 1; i >= 0; i--) {
-        const date = new Date(today);
-        date.setDate(date.getDate() - i);
-        const dayStr = date.toISOString().split('T')[0]; // YYYY-MM-DD format
+      // Helper function to generate mock data for a date range
+      function generateMockData(fromDate: Date, toDate: Date, label: string = "baseline") {
+        const mockData = [];
+        const days = Math.ceil((toDate.getTime() - fromDate.getTime()) / (1000 * 60 * 60 * 24));
         
-        // Generate realistic mock data
-        const sessions = Math.floor(Math.random() * 50) + 50; // 50-100 sessions
-        const uniqueVisitors = Math.floor(sessions * 0.8); // 80% of sessions are unique
-        const returningVisitors = Math.floor(uniqueVisitors * 0.2); // 20% returning
-        const avgSessionDuration = Math.floor(Math.random() * 300) + 300; // 5-10 minutes
-        
-        mockData.push({
-          day: dayStr,
-          sessions,
-          unique_visitors: uniqueVisitors,
-          returning_visitors: returningVisitors,
-          avg_session_duration: avgSessionDuration
-        });
+        for (let i = 0; i <= days; i++) {
+          const date = new Date(fromDate);
+          date.setDate(date.getDate() + i);
+          const dayStr = date.toISOString().split('T')[0];
+          
+          // Vary data slightly based on label for comparison
+          const baseMultiplier = label === "comparison" ? 0.85 : 1.0;
+          const sessions = Math.floor((Math.random() * 50 + 50) * baseMultiplier);
+          const uniqueVisitors = Math.floor(sessions * 0.8);
+          const returningVisitors = Math.floor(uniqueVisitors * 0.2);
+          const avgSessionDuration = Math.floor((Math.random() * 300 + 300) * baseMultiplier);
+          
+          mockData.push({
+            day: dayStr,
+            sessions,
+            unique_visitors: uniqueVisitors,
+            returning_visitors: returningVisitors,
+            avg_session_duration: avgSessionDuration
+          });
+        }
+        return mockData;
       }
-      
-      res.json(mockData);
+
+      // Check if comparison mode is enabled
+      if (compare === "true" && compareMode) {
+        let baselineData, comparisonData;
+        
+        switch (compareMode) {
+          case "period": {
+            // Compare current period vs previous period
+            const currentStart = from ? new Date(from as string) : new Date(Date.now() - daysNum * 24 * 60 * 60 * 1000);
+            const currentEnd = to ? new Date(to as string) : new Date();
+            const periodLength = Math.ceil((currentEnd.getTime() - currentStart.getTime()) / (1000 * 60 * 60 * 24));
+            
+            const previousStart = new Date(currentStart);
+            previousStart.setDate(previousStart.getDate() - periodLength);
+            const previousEnd = new Date(currentEnd);
+            previousEnd.setDate(previousEnd.getDate() - periodLength);
+            
+            baselineData = generateMockData(currentStart, currentEnd, "baseline");
+            comparisonData = generateMockData(previousStart, previousEnd, "comparison");
+            break;
+          }
+          case "language": {
+            // Compare FR vs EN
+            const startDate = from ? new Date(from as string) : new Date(Date.now() - daysNum * 24 * 60 * 60 * 1000);
+            const endDate = to ? new Date(to as string) : new Date();
+            
+            baselineData = generateMockData(startDate, endDate, "fr-FR");
+            comparisonData = generateMockData(startDate, endDate, "en-US");
+            break;
+          }
+          case "device": {
+            // Compare mobile vs desktop
+            const startDate = from ? new Date(from as string) : new Date(Date.now() - daysNum * 24 * 60 * 60 * 1000);
+            const endDate = to ? new Date(to as string) : new Date();
+            
+            baselineData = generateMockData(startDate, endDate, "mobile");
+            comparisonData = generateMockData(startDate, endDate, "desktop");
+            break;
+          }
+          case "source": {
+            // Compare google vs direct
+            const startDate = from ? new Date(from as string) : new Date(Date.now() - daysNum * 24 * 60 * 60 * 1000);
+            const endDate = to ? new Date(to as string) : new Date();
+            
+            baselineData = generateMockData(startDate, endDate, "google");
+            comparisonData = generateMockData(startDate, endDate, "direct");
+            break;
+          }
+          default:
+            throw new Error(`Unknown comparison mode: ${compareMode}`);
+        }
+
+        res.json({
+          baseline: baselineData,
+          comparison: comparisonData,
+          compareMode
+        });
+      } else {
+        // Normal single dataset mode
+        const startDate = from ? new Date(from as string) : new Date(Date.now() - daysNum * 24 * 60 * 60 * 1000);
+        const endDate = to ? new Date(to as string) : new Date();
+        const mockData = generateMockData(startDate, endDate);
+        
+        res.json(mockData);
+      }
     } catch (error) {
       console.error('❌ Analytics overview error:', error);
       res.status(500).json({ error: "Failed to get analytics overview" });

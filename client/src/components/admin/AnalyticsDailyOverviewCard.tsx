@@ -49,39 +49,60 @@ function rangeFromDays(days: number): { from?: string; to?: string } {
 }
 
 export default function AnalyticsDailyOverviewCard() {
-  const { filters } = React.useContext(GlobalFilterContext);
+  const { filters, comparison } = React.useContext(GlobalFilterContext);
   const [days, setDays] = React.useState<number>(30);
   const [loading, setLoading] = React.useState<boolean>(true);
   const [data, setData] = React.useState<any[]>([]);
+  const [comparisonData, setComparisonData] = React.useState<any[]>([]);
+  const [isComparisonMode, setIsComparisonMode] = React.useState<boolean>(false);
   const [error, setError] = React.useState<string | null>(null);
 
   const load = React.useCallback(async () => {
     setLoading(true);
     setError(null);
     try {
-      const res = await fetch(withFilters(`/api/analytics/overview?days=${days}`, filters));
+      // Add comparison parameters if enabled
+      let url = withFilters(`/api/analytics/overview?days=${days}`, filters);
+      if (comparison.enabled) {
+        url += `&compare=true&compareMode=${comparison.mode}`;
+      }
+      
+      const res = await fetch(url);
       if (!res.ok) throw new Error(`Overview fetch failed: ${res.status}`);
-      const rows = await res.json();
-      // Normalize data for chart
-      const chartData = rows
-        .map((r: any) => ({
-          day: r.day, // ISO date (YYYY-MM-DD)
-          label: formatDayLabel(r.day),
-          sessions: Number(r.sessions ?? 0),
-          uniqueVisitors: Number((r.unique_visitors ?? r.uniqueVisitors) ?? 0),
-          returningVisitors: Number((r.returning_visitors ?? r.returningVisitors) ?? 0),
-          avgSessionDuration: Number(
-            (r.avg_session_duration ?? r.avgSessionDuration) ?? 0
-          ),
-        }))
-        .sort((a: any, b: any) => (a.day < b.day ? -1 : 1));
-      setData(chartData);
+      const result = await res.json();
+      
+      function normalizeData(rows: any[]) {
+        return rows
+          .map((r: any) => ({
+            day: r.day, // ISO date (YYYY-MM-DD)
+            label: formatDayLabel(r.day),
+            sessions: Number(r.sessions ?? 0),
+            uniqueVisitors: Number((r.unique_visitors ?? r.uniqueVisitors) ?? 0),
+            returningVisitors: Number((r.returning_visitors ?? r.returningVisitors) ?? 0),
+            avgSessionDuration: Number(
+              (r.avg_session_duration ?? r.avgSessionDuration) ?? 0
+            ),
+          }))
+          .sort((a: any, b: any) => (a.day < b.day ? -1 : 1));
+      }
+      
+      if (result.baseline && result.comparison) {
+        // Comparison mode response
+        setData(normalizeData(result.baseline));
+        setComparisonData(normalizeData(result.comparison));
+        setIsComparisonMode(true);
+      } else {
+        // Normal single dataset response
+        setData(normalizeData(result));
+        setComparisonData([]);
+        setIsComparisonMode(false);
+      }
     } catch (e: any) {
       setError(e?.message || "Failed to load daily overview.");
     } finally {
       setLoading(false);
     }
-  }, [days]);
+  }, [days, filters, comparison]);
 
   React.useEffect(() => {
     load();
@@ -90,6 +111,27 @@ export default function AnalyticsDailyOverviewCard() {
 
 
   const latest = data.length ? data[data.length - 1] : null;
+  const latestComparison = comparisonData.length ? comparisonData[comparisonData.length - 1] : null;
+
+  // Helper function to calculate percentage delta
+  function calculateDelta(current: number, previous: number): { value: number; isPositive: boolean } | null {
+    if (!previous || previous === 0) return null;
+    const delta = ((current - previous) / previous) * 100;
+    return { value: Math.abs(delta), isPositive: delta >= 0 };
+  }
+
+  // Get comparison labels
+  function getComparisonLabels() {
+    switch (comparison.mode) {
+      case "period": return ["Current", "Previous"];
+      case "language": return ["French", "English"];
+      case "device": return ["Mobile", "Desktop"];
+      case "source": return ["Google", "Direct"];
+      default: return ["Baseline", "Comparison"];
+    }
+  }
+
+  const [baselineLabel, comparisonLabel] = getComparisonLabels();
 
   return (
     <Card className="w-full">
@@ -133,20 +175,72 @@ export default function AnalyticsDailyOverviewCard() {
             <div className="rounded-md border p-3">
               <div className="text-muted-foreground">Sessions</div>
               <div className="text-xl font-semibold">{latest?.sessions ?? "—"}</div>
+              {isComparisonMode && latestComparison && (
+                <div className="text-xs text-muted-foreground mt-1">
+                  vs {comparisonLabel}: {latestComparison.sessions}
+                  {(() => {
+                    const delta = calculateDelta(latest?.sessions || 0, latestComparison.sessions);
+                    return delta ? (
+                      <span className={`ml-1 ${delta.isPositive ? 'text-green-600' : 'text-red-600'}`}>
+                        {delta.isPositive ? '▲' : '▼'} {delta.value.toFixed(1)}%
+                      </span>
+                    ) : null;
+                  })()}
+                </div>
+              )}
             </div>
             <div className="rounded-md border p-3">
               <div className="text-muted-foreground">Unique Visitors</div>
               <div className="text-xl font-semibold">{latest?.uniqueVisitors ?? "—"}</div>
+              {isComparisonMode && latestComparison && (
+                <div className="text-xs text-muted-foreground mt-1">
+                  vs {comparisonLabel}: {latestComparison.uniqueVisitors}
+                  {(() => {
+                    const delta = calculateDelta(latest?.uniqueVisitors || 0, latestComparison.uniqueVisitors);
+                    return delta ? (
+                      <span className={`ml-1 ${delta.isPositive ? 'text-green-600' : 'text-red-600'}`}>
+                        {delta.isPositive ? '▲' : '▼'} {delta.value.toFixed(1)}%
+                      </span>
+                    ) : null;
+                  })()}
+                </div>
+              )}
             </div>
             <div className="rounded-md border p-3">
               <div className="text-muted-foreground">Returning Visitors</div>
               <div className="text-xl font-semibold">{latest?.returningVisitors ?? "—"}</div>
+              {isComparisonMode && latestComparison && (
+                <div className="text-xs text-muted-foreground mt-1">
+                  vs {comparisonLabel}: {latestComparison.returningVisitors}
+                  {(() => {
+                    const delta = calculateDelta(latest?.returningVisitors || 0, latestComparison.returningVisitors);
+                    return delta ? (
+                      <span className={`ml-1 ${delta.isPositive ? 'text-green-600' : 'text-red-600'}`}>
+                        {delta.isPositive ? '▲' : '▼'} {delta.value.toFixed(1)}%
+                      </span>
+                    ) : null;
+                  })()}
+                </div>
+              )}
             </div>
             <div className="rounded-md border p-3">
               <div className="text-muted-foreground">Avg. Session Duration</div>
               <div className="text-xl font-semibold">
                 {secondsToHMS(latest?.avgSessionDuration)}
               </div>
+              {isComparisonMode && latestComparison && (
+                <div className="text-xs text-muted-foreground mt-1">
+                  vs {comparisonLabel}: {secondsToHMS(latestComparison.avgSessionDuration)}
+                  {(() => {
+                    const delta = calculateDelta(latest?.avgSessionDuration || 0, latestComparison.avgSessionDuration);
+                    return delta ? (
+                      <span className={`ml-1 ${delta.isPositive ? 'text-green-600' : 'text-red-600'}`}>
+                        {delta.isPositive ? '▲' : '▼'} {delta.value.toFixed(1)}%
+                      </span>
+                    ) : null;
+                  })()}
+                </div>
+              )}
             </div>
           </div>
         ) : (
@@ -175,29 +269,96 @@ export default function AnalyticsDailyOverviewCard() {
 
             <div className="h-[300px] w-full">
               <ResponsiveContainer width="100%" height="100%">
-                <LineChart data={data} margin={{ top: 10, right: 24, left: 0, bottom: 0 }}>
-                  <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="label" />
-                  <YAxis yAxisId="left" />
-                  <Tooltip />
-                  <Legend />
-                  <Line
-                    yAxisId="left"
-                    type="monotone"
-                    dataKey="sessions"
-                    name="Sessions"
-                    dot={false}
-                    strokeWidth={2}
-                  />
-                  <Line
-                    yAxisId="left"
-                    type="monotone"
-                    dataKey="uniqueVisitors"
-                    name="Unique visitors"
-                    dot={false}
-                    strokeWidth={2}
-                  />
-                </LineChart>
+                {isComparisonMode ? (
+                  // Comparison mode: merge both datasets for side-by-side comparison
+                  <LineChart 
+                    data={data.map((d, i) => ({
+                      ...d,
+                      baselineSessions: d.sessions,
+                      baselineVisitors: d.uniqueVisitors,
+                      comparisonSessions: comparisonData[i]?.sessions || 0,
+                      comparisonVisitors: comparisonData[i]?.uniqueVisitors || 0,
+                    }))} 
+                    margin={{ top: 10, right: 24, left: 0, bottom: 0 }}
+                  >
+                    <CartesianGrid strokeDasharray="3 3" />
+                    <XAxis dataKey="label" />
+                    <YAxis yAxisId="left" />
+                    <Tooltip 
+                      formatter={(value, name) => {
+                        if (name.includes('baseline')) return [value, `${baselineLabel} ${name.replace('baseline', '').toLowerCase()}`];
+                        if (name.includes('comparison')) return [value, `${comparisonLabel} ${name.replace('comparison', '').toLowerCase()}`];
+                        return [value, name];
+                      }}
+                    />
+                    <Legend />
+                    <Line
+                      yAxisId="left"
+                      type="monotone"
+                      dataKey="baselineSessions"
+                      name={`${baselineLabel} Sessions`}
+                      stroke="#2563eb"
+                      dot={false}
+                      strokeWidth={2}
+                    />
+                    <Line
+                      yAxisId="left"
+                      type="monotone"
+                      dataKey="comparisonSessions"
+                      name={`${comparisonLabel} Sessions`}
+                      stroke="#f97316"
+                      dot={false}
+                      strokeWidth={2}
+                    />
+                    <Line
+                      yAxisId="left"
+                      type="monotone"
+                      dataKey="baselineVisitors"
+                      name={`${baselineLabel} Visitors`}
+                      stroke="#2563eb"
+                      strokeDasharray="5 5"
+                      dot={false}
+                      strokeWidth={2}
+                    />
+                    <Line
+                      yAxisId="left"
+                      type="monotone"
+                      dataKey="comparisonVisitors"
+                      name={`${comparisonLabel} Visitors`}
+                      stroke="#f97316"
+                      strokeDasharray="5 5"
+                      dot={false}
+                      strokeWidth={2}
+                    />
+                  </LineChart>
+                ) : (
+                  // Normal single dataset mode
+                  <LineChart data={data} margin={{ top: 10, right: 24, left: 0, bottom: 0 }}>
+                    <CartesianGrid strokeDasharray="3 3" />
+                    <XAxis dataKey="label" />
+                    <YAxis yAxisId="left" />
+                    <Tooltip />
+                    <Legend />
+                    <Line
+                      yAxisId="left"
+                      type="monotone"
+                      dataKey="sessions"
+                      name="Sessions"
+                      stroke="#2563eb"
+                      dot={false}
+                      strokeWidth={2}
+                    />
+                    <Line
+                      yAxisId="left"
+                      type="monotone"
+                      dataKey="uniqueVisitors"
+                      name="Unique visitors"
+                      stroke="#2563eb"
+                      dot={false}
+                      strokeWidth={2}
+                    />
+                  </LineChart>
+                )}
               </ResponsiveContainer>
             </div>
           </>

@@ -5,6 +5,8 @@ import { Button } from "@/components/ui/button";
 import {
   Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
 } from "@/components/ui/select";
+import { Switch } from "@/components/ui/switch";
+import { Label } from "@/components/ui/label";
 
 function toIsoDate(d: Date) { return d.toISOString().slice(0, 10); }
 function applyPresetDays(days: number) {
@@ -14,7 +16,7 @@ function applyPresetDays(days: number) {
 }
 
 export default function GlobalFilterBar() {
-  const { filters, setFilters } = React.useContext(GlobalFilterContext);
+  const { filters, setFilters, comparison, setComparison } = React.useContext(GlobalFilterContext);
   const [from, setFrom] = React.useState(filters.range.from);
   const [to, setTo] = React.useState(filters.range.to);
   const [language, setLanguage] = React.useState(filters.language ?? "");
@@ -22,7 +24,9 @@ export default function GlobalFilterBar() {
   const [device, setDevice] = React.useState(filters.device ?? "");
 
   return (
-    <div className="flex flex-wrap items-center gap-3">
+    <div className="space-y-3">
+      {/* Main filters row */}
+      <div className="flex flex-wrap items-center gap-3">
       {/* Preset */}
       <Select onValueChange={(v) => {
         if (v === "yesterday") {
@@ -73,14 +77,46 @@ export default function GlobalFilterBar() {
         </SelectContent>
       </Select>
 
-      {/* Apply */}
-      <Button
-        size="sm"
-        variant="secondary"
-        onClick={() => setFilters({ range: { from, to }, language, source, device })}
-      >
-        Apply
-      </Button>
+        {/* Apply */}
+        <Button
+          size="sm"
+          variant="secondary"
+          onClick={() => setFilters({ range: { from, to }, language, source, device })}
+        >
+          Apply
+        </Button>
+      </div>
+
+      {/* Comparison controls row */}
+      <div className="flex flex-wrap items-center gap-3 pt-2 border-t">
+        <div className="flex items-center space-x-2">
+          <Switch 
+            id="comparison-mode"
+            checked={comparison.enabled} 
+            onCheckedChange={(v) => setComparison({ ...comparison, enabled: v })} 
+          />
+          <Label htmlFor="comparison-mode" className="text-sm font-medium">
+            Compare
+          </Label>
+        </div>
+
+        {comparison.enabled && (
+          <Select 
+            value={comparison.mode} 
+            onValueChange={(m) => setComparison({ ...comparison, mode: m as any })}
+          >
+            <SelectTrigger className="h-9 w-[180px]">
+              <SelectValue placeholder="Compare by…" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="period">Previous Period</SelectItem>
+              <SelectItem value="language">Language (FR vs EN)</SelectItem>
+              <SelectItem value="device">Device (Mobile vs Desktop)</SelectItem>
+              <SelectItem value="source">Source (Google vs Direct)</SelectItem>
+            </SelectContent>
+          </Select>
+        )}
+      </div>
     </div>
   );
 }
