@@ -12,6 +12,7 @@ import { BarChart3, TrendingUp, Play, Users, Clock, RefreshCw, Globe, Eye, UserC
 import { TrendingGraphs } from './TrendingGraphs';
 import { CountryFlag } from './CountryFlag';
 import AdminCountryNamesCard from './AdminCountryNamesCard';
+import SessionReplaysCard from './SessionReplaysCard';
 import { formatFrenchDateTime } from '@/utils/date-format';
 import { formatInt, formatSeconds, formatPercent } from '@/utils/format';
 import { apiRequest } from '@/lib/queryClient';
@@ -1661,6 +1662,16 @@ export default function CleanGA4Analytics() {
             </Card>
           </TabsContent>
         </Tabs>
+
+        {/* Session Replays & Heatmaps Section */}
+        <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
+          <div className="md:col-span-2 xl:col-span-2">
+            <SessionReplaysCard />
+          </div>
+          <div>
+            <AdminCountryNamesCard />
+          </div>
+        </div>
 
         {/* Trending Graphs Section */}
         <TrendingGraphs 

@@ -19,6 +19,8 @@ import GallerySectionWrapper from './components/sections/GallerySectionWrapper';
 import { useEffect } from 'react';
 import { useAnalytics } from '@/hooks/use-analytics';
 import { initTestMode, initGA } from '@/lib/analytics';
+import { initOpenReplay } from '@/lib/openReplay';
+import { readGa4Ids } from '@/lib/readGa4';
 
 // Routes configured for gallery
 // Language-specific upload system v1.0.82 ready
@@ -78,7 +80,7 @@ function AnalyticsRouter() {
 }
 
 function App() {
-  // Initialize GA4 and test mode on app load (EXCLUDE admin pages)
+  // Initialize GA4, OpenReplay and test mode on app load (EXCLUDE admin pages)
   useEffect(() => {
     const isAdminPage = window.location.pathname.includes('/admin');
     
@@ -86,13 +88,23 @@ function App() {
       // Initialize GA4 only for public pages
       initGA();
       
+      // Initialize OpenReplay session recording
+      const ga = readGa4Ids();
+      initOpenReplay({
+        getUserId: () => undefined, // No user auth system yet
+        getLang: () => navigator.language,
+        getCountryIso3: () => undefined, // Could integrate with existing analytics later
+        getGaClient: () => ga,
+        extraMeta: { site: "MEMOPYK" },
+      });
+      
       // Then initialize test mode  
       const isTestMode = initTestMode();
       if (isTestMode) {
         console.log('🔍 Test mode active - all GA4 events will include debug_mode=true');
       }
     } else {
-      console.log('🚫 Admin page detected - GA4 tracking disabled');
+      console.log('🚫 Admin page detected - GA4 and OpenReplay tracking disabled');
     }
   }, []);
 
