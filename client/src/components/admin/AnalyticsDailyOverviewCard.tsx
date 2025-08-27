@@ -245,8 +245,19 @@ export default function AnalyticsDailyOverviewCard() {
               <ResponsiveContainer width="100%" height="100%">
                 <LineChart data={chartData} margin={{ top: 10, right: 24, left: 0, bottom: 0 }}>
                   <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="label" />
-                  <YAxis />
+                  <XAxis 
+                    dataKey="label" 
+                    axisLine={true}
+                    tickLine={true}
+                    tick={{ fontSize: 12 }}
+                    height={60}
+                  />
+                  <YAxis 
+                    axisLine={true}
+                    tickLine={true}
+                    tick={{ fontSize: 12 }}
+                    width={60}
+                  />
                   <Tooltip />
                   <Legend />
                   <Line yAxisId={0} type="monotone" dataKey="sessions" name="Sessions (Current)" stroke="#011526" dot={false} strokeWidth={2} />
