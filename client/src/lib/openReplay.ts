@@ -27,20 +27,19 @@ export function initOpenReplay(opts: InitOptions = {}) {
   try {
     tracker = new Tracker({
       projectKey,
-      // PRIVACY defaults (GDPR friendly)
-      defaultInputMode: 2, // 2 = mask inputs by default
+      // Minimal configuration for better compatibility
+      defaultInputMode: 0, // 0 = plain (less restrictive for testing)
       obscureTextNumbers: false,
       obscureTextEmails: true,
-      // respectDNT: true, // Not available in current version
     });
 
-    // Plugins
-    tracker.use(trackerAssist()); // optional co-browsing/chat later
+    // Add plugins
+    tracker.use(trackerAssist());
 
-    // Start tracking
+    // Start tracking with error handling
     tracker.start();
     
-    console.log("🎬 OpenReplay tracker started successfully");
+    console.log("🎬 OpenReplay tracker created and started");
   } catch (error) {
     console.error("🚫 OpenReplay initialization failed:", error);
     return null;

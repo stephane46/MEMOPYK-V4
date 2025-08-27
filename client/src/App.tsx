@@ -89,14 +89,28 @@ function App() {
       initGA();
       
       // Initialize OpenReplay session recording
-      const ga = readGa4Ids();
-      initOpenReplay({
-        getUserId: () => undefined, // No user auth system yet
-        getLang: () => navigator.language,
-        getCountryIso3: () => undefined, // Could integrate with existing analytics later
-        getGaClient: () => ga,
-        extraMeta: { site: "MEMOPYK" },
-      });
+      try {
+        const ga = readGa4Ids();
+        const openReplayTracker = initOpenReplay({
+          getUserId: () => undefined, // No user auth system yet
+          getLang: () => navigator.language,
+          getCountryIso3: () => undefined, // Could integrate with existing analytics later
+          getGaClient: () => ga,
+          extraMeta: { site: "MEMOPYK" },
+        });
+        
+        if (openReplayTracker) {
+          console.log('🎬 OpenReplay successfully initialized');
+          // Give it a moment to start, then check the session token
+          setTimeout(() => {
+            console.log('🎬 OpenReplay session token:', openReplayTracker.getSessionToken());
+          }, 1000);
+        } else {
+          console.log('⚠️ OpenReplay initialization failed - check network connection');
+        }
+      } catch (error) {
+        console.error('🚫 OpenReplay initialization error:', error);
+      }
       
       // Then initialize test mode  
       const isTestMode = initTestMode();
