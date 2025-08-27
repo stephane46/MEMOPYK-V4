@@ -45,7 +45,7 @@ export default function AnalyticsWorldMapCard() {
   const [tooltip, setTooltip] = React.useState<{ visible: boolean; x: number; y: number; iso3?: string; country?: string; sessions?: number; visitors?: number; delta?: number | null }>({ visible: false, x: 0, y: 0 });
   const [tooltipLocked, setTooltipLocked] = React.useState(false);
 
-  const [position, setPosition] = React.useState<{ coordinates: [number, number]; zoom: number }>({ coordinates: [2, 46.5], zoom: 1.2 }); // Centered on France
+  const [position, setPosition] = React.useState<{ coordinates: [number, number]; zoom: number }>({ coordinates: [2, 20], zoom: 1.2 }); // Centered on France, higher up
   const [selectedIso3, setSelectedIso3] = React.useState<string | null>(null);
   const [selectedCountryName, setSelectedCountryName] = React.useState<string | null>(null);
   const [countryCities, setCountryCities] = React.useState<CityRow[] | null>(null);
@@ -163,23 +163,35 @@ export default function AnalyticsWorldMapCard() {
                         }
                         console.log("🗺️ WORLD MAP DEBUG: END ==================");
                         return geographies.map((geo) => {
-                          // EMERGENCY FIX: Try every possible property
+                          // BREAKTHROUGH: Geography has country NAMES, analytics has ISO3 codes
+                          // We need to map country names to ISO3 codes
                           const props = geo.properties || {};
-                          const allValues = Object.values(props);
+                          const countryName = Object.values(props)[0] as string; // The single property is the country name
                           
-                          // Try to find ISO3 in ANY property value that looks like a 3-letter code
-                          let iso3 = null;
-                          for (const [key, value] of Object.entries(props)) {
-                            if (typeof value === 'string' && value.length === 3 && /^[A-Z]{3}$/.test(value)) {
-                              iso3 = value;
-                              break;
-                            }
-                          }
+                          // Map country names to ISO3 codes
+                          const nameToISO3: Record<string, string> = {
+                            'France': 'FRA',
+                            'United States of America': 'USA',
+                            'United States': 'USA',
+                            'Brazil': 'BRA',
+                            'Australia': 'AUS',
+                            'Germany': 'DEU',
+                            'United Kingdom': 'GBR',
+                            'Canada': 'CAN',
+                            'Italy': 'ITA',
+                            'Spain': 'ESP',
+                            'Netherlands': 'NLD',
+                            'Belgium': 'BEL',
+                            'Switzerland': 'CHE',
+                            'Austria': 'AUT',
+                            'Portugal': 'PRT',
+                            'Japan': 'JPN',
+                            'China': 'CHN',
+                            'India': 'IND',
+                            'Russia': 'RUS'
+                          };
                           
-                          // Fallback to traditional property names if pattern matching failed
-                          if (!iso3) {
-                            iso3 = props.ISO_A3 || props.ADM0_A3 || props.ISO3 || props.iso3 || props.id || props.name;
-                          }
+                          const iso3 = nameToISO3[countryName] || null;
                           const base = baselineMap.get(iso3);
                           const cmp = comparisonMap.get(iso3);
                           const sessions = base?.sessions ?? 0;
