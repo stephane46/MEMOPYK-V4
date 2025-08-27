@@ -3,7 +3,8 @@ import { Card, CardHeader, CardTitle, CardContent, CardFooter } from "@/componen
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Skeleton } from "@/components/ui/skeleton";
-import { RefreshCcw } from "lucide-react";
+import { RefreshCcw, Download } from "lucide-react";
+import { downloadCSV, formatDateForFilename } from "@/lib/export-utils";
 import {
   LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer,
 } from "recharts";
@@ -40,6 +41,7 @@ export default function AnalyticsDailyOverviewCard() {
   const [loading, setLoading] = React.useState<boolean>(true);
   const [data, setData] = React.useState<any[]>([]);
   const [error, setError] = React.useState<string | null>(null);
+  const [exporting, setExporting] = React.useState<boolean>(false);
 
   const load = React.useCallback(async () => {
     setLoading(true);
@@ -71,6 +73,18 @@ export default function AnalyticsDailyOverviewCard() {
     load();
   }, [load]);
 
+  const handleExportCSV = React.useCallback(async () => {
+    setExporting(true);
+    try {
+      const filename = `daily_overview_${days}d_${formatDateForFilename()}.csv`;
+      await downloadCSV(`/api/analytics/export/csv?report=overview&days=${days}`, filename);
+    } catch (error) {
+      console.error('Export failed:', error);
+    } finally {
+      setExporting(false);
+    }
+  }, [days]);
+
   const latest = data.length ? data[data.length - 1] : null;
 
   return (
@@ -92,6 +106,16 @@ export default function AnalyticsDailyOverviewCard() {
           <Button size="sm" variant="secondary" onClick={load} disabled={loading} className="gap-2">
             <RefreshCcw className={`h-4 w-4 ${loading ? "animate-spin" : ""}`} />
             Refresh
+          </Button>
+          <Button 
+            size="sm" 
+            variant="outline" 
+            onClick={handleExportCSV} 
+            disabled={exporting || loading}
+            className="gap-2"
+          >
+            <Download className={`h-4 w-4 ${exporting ? "animate-pulse" : ""}`} />
+            Export CSV
           </Button>
         </div>
       </CardHeader>

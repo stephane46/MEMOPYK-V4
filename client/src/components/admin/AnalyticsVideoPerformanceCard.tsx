@@ -1,8 +1,10 @@
 import { useEffect, useState } from "react";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Play, Clock, TrendingUp, BarChart3 } from "lucide-react";
+import { Play, Clock, TrendingUp, BarChart3, Download, RefreshCcw } from "lucide-react";
+import { downloadCSV, formatDateForFilename } from "@/lib/export-utils";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
 
 interface VideoPerformanceData {
@@ -38,6 +40,7 @@ export const AnalyticsVideoPerformanceCard = ({ dateRange = "30" }: AnalyticsVid
   const [data, setData] = useState<VideoPerformanceData[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [exporting, setExporting] = useState(false);
 
   useEffect(() => {
     const fetchVideoPerformance = async () => {
@@ -62,6 +65,42 @@ export const AnalyticsVideoPerformanceCard = ({ dateRange = "30" }: AnalyticsVid
 
     fetchVideoPerformance();
   }, [dateRange]);
+
+  const handleExportCSV = async () => {
+    setExporting(true);
+    try {
+      const filename = `video_performance_${dateRange}d_${formatDateForFilename()}.csv`;
+      await downloadCSV(`/api/analytics/export/csv?report=video&days=${dateRange}`, filename);
+    } catch (error) {
+      console.error('Export failed:', error);
+    } finally {
+      setExporting(false);
+    }
+  };
+
+  const handleRefresh = () => {
+    const fetchVideoPerformance = async () => {
+      try {
+        setLoading(true);
+        setError(null);
+        
+        const response = await fetch(`/api/analytics/video-performance?days=${dateRange}`);
+        if (!response.ok) {
+          throw new Error('Failed to fetch video performance data');
+        }
+        
+        const result = await response.json();
+        setData(result);
+      } catch (err) {
+        console.error('Video performance fetch error:', err);
+        setError(err instanceof Error ? err.message : 'Unknown error occurred');
+      } finally {
+        setLoading(false);
+      }
+    };
+    
+    fetchVideoPerformance();
+  };
 
   // Prepare chart data for percent milestones
   const preparePercentData = (video: VideoPerformanceData) => [
@@ -151,10 +190,28 @@ export const AnalyticsVideoPerformanceCard = ({ dateRange = "30" }: AnalyticsVid
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="flex items-center gap-2">
-          <Play className="h-5 w-5" />
-          Performance Vidéo ({data.length} vidéos)
-        </CardTitle>
+        <div className="flex items-center justify-between">
+          <CardTitle className="flex items-center gap-2">
+            <Play className="h-5 w-5" />
+            Performance Vidéo ({data.length} vidéos)
+          </CardTitle>
+          <div className="flex items-center gap-2">
+            <Button size="sm" variant="secondary" onClick={handleRefresh} disabled={loading} className="gap-2">
+              <RefreshCcw className={`h-4 w-4 ${loading ? "animate-spin" : ""}`} />
+              Refresh
+            </Button>
+            <Button 
+              size="sm" 
+              variant="outline" 
+              onClick={handleExportCSV} 
+              disabled={exporting || loading}
+              className="gap-2"
+            >
+              <Download className={`h-4 w-4 ${exporting ? "animate-pulse" : ""}`} />
+              Export CSV
+            </Button>
+          </div>
+        </div>
       </CardHeader>
       <CardContent className="space-y-6">
         {data.map((video, index) => (
