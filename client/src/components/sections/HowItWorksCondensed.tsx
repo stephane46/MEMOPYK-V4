@@ -1,13 +1,19 @@
 import { useLanguage } from '../../contexts/LanguageContext';
 import { Upload, Edit, Heart } from 'lucide-react';
 import { useState, useEffect, useRef } from 'react';
+import { motion, useReducedMotion, AnimatePresence } from 'framer-motion';
 
 export function HowItWorksCondensed() {
   const { language } = useLanguage();
   const [flippedCards, setFlippedCards] = useState<Set<number>>(new Set());
   const [hoveredCard, setHoveredCard] = useState<number | null>(null);
   const [hasAnimated, setHasAnimated] = useState<Set<number>>(new Set());
+  const [animatingCards, setAnimatingCards] = useState<Set<number>>(new Set());
   const sectionRef = useRef<HTMLElement>(null);
+  const shouldReduceMotion = useReducedMotion();
+  
+  // Design token for back face background (single source of truth)
+  const backFaceGradient = 'linear-gradient(135deg, rgba(214, 124, 74, 0.95) 0%, rgba(42, 71, 89, 0.95) 100%)';
 
   // Reset flipped cards when section is not visible and handle first-load nudge
   useEffect(() => {
@@ -47,6 +53,396 @@ export function HowItWorksCondensed() {
 
     return () => observer.disconnect();
   }, [hasAnimated]);
+
+  // Enhanced tap detection with debouncing
+  const handleCardClick = (cardNumber: number, event?: React.PointerEvent | React.KeyboardEvent) => {
+    // Check if card is currently animating
+    if (animatingCards.has(cardNumber)) return;
+
+    // For pointer events, validate it's a tap (not scroll)
+    if (event && 'pointerId' in event) {
+      // Simple tap validation - more sophisticated logic could be added
+      if (Math.abs((event as React.PointerEvent).movementX) > 8 || Math.abs((event as React.PointerEvent).movementY) > 8) {
+        return; // User is likely scrolling
+      }
+    }
+
+    // Set animation lock
+    setAnimatingCards(prev => new Set([...prev, cardNumber]));
+
+    // Toggle flip state
+    setFlippedCards(prev => {
+      const newSet = new Set(prev);
+      if (newSet.has(cardNumber)) {
+        newSet.delete(cardNumber);
+      } else {
+        newSet.add(cardNumber);
+      }
+      return newSet;
+    });
+
+    // Remove animation lock after cooldown
+    setTimeout(() => {
+      setAnimatingCards(prev => {
+        const newSet = new Set(prev);
+        newSet.delete(cardNumber);
+        return newSet;
+      });
+    }, 400); // 400ms cooldown as per spec
+  };
+
+  // Keyboard handler
+  const handleKeyDown = (cardNumber: number, event: React.KeyboardEvent) => {
+    if (event.key === 'Enter' || event.key === ' ') {
+      event.preventDefault();
+      handleCardClick(cardNumber, event);
+    } else if (event.key === 'Escape' && flippedCards.has(cardNumber)) {
+      event.preventDefault();
+      handleCardClick(cardNumber, event);
+    }
+  };
+
+  // Framer Motion Corner System Component
+  const MotionCornerSystem = ({ 
+    cardNumber, 
+    isHovered, 
+    isFlipped, 
+    backFaceGradient, 
+    shouldReduceMotion 
+  }: {
+    cardNumber: number;
+    isHovered: boolean;
+    isFlipped: boolean;
+    backFaceGradient: string;
+    shouldReduceMotion: boolean | null;
+  }) => {
+    // Animation variants
+    const peekVariants = {
+      idle: { 
+        scale: 1, 
+        opacity: 0.8 
+      },
+      hovered: { 
+        scale: shouldReduceMotion ? 1 : 1.15, 
+        opacity: 0.9,
+        transition: { type: "spring", stiffness: 300, damping: 20 }
+      }
+    };
+
+    const cornerVariants = {
+      idle: { 
+        rotate: 0, 
+        x: 0, 
+        y: 0,
+        filter: "drop-shadow(-1px -1px 2px rgba(0,0,0,0.15))"
+      },
+      hovered: shouldReduceMotion ? {
+        rotate: 0,
+        x: 0, 
+        y: 0,
+        filter: "drop-shadow(-1px -1px 2px rgba(0,0,0,0.15))"
+      } : {
+        rotate: 4,
+        x: -3, 
+        y: -2,
+        filter: "drop-shadow(-2px -2px 4px rgba(0,0,0,0.3)) drop-shadow(-1px -1px 2px rgba(0,0,0,0.15))",
+        transition: { type: "spring", stiffness: 300, damping: 25 }
+      },
+      nudge: shouldReduceMotion ? {
+        rotate: 0,
+        x: 0, 
+        y: 0,
+        filter: "drop-shadow(-1px -1px 2px rgba(0,0,0,0.15))"
+      } : {
+        rotate: 6,
+        x: -4,
+        y: -3,
+        filter: "drop-shadow(-3px -3px 6px rgba(0,0,0,0.4)) drop-shadow(-1px -1px 2px rgba(0,0,0,0.2))",
+        transition: { type: "spring", stiffness: 250, damping: 20, duration: 0.2 }
+      }
+    };
+
+    // Trigger nudge animation when first animated
+    const currentVariant = hasAnimated.has(cardNumber) && !isFlipped
+      ? (isHovered ? 'hovered' : 'idle')
+      : (!hasAnimated.has(cardNumber) && isHovered ? 'nudge' : 'idle');
+
+    return (
+      <div 
+        className="absolute bottom-0 right-0 pointer-events-none"
+        style={{ overflow: 'visible' }}
+      >
+        {/* BackPeek - always visible slip */}
+        <motion.div 
+          className="absolute bottom-0 right-0"
+          style={{
+            width: '14px',
+            height: '14px',
+            background: backFaceGradient,
+            clipPath: 'polygon(0 100%, 100% 0, 100% 100%)',
+            zIndex: 1
+          }}
+          variants={peekVariants}
+          animate={isHovered ? 'hovered' : 'idle'}
+        >
+          {/* Blurred back content hint */}
+          <div 
+            className="absolute inset-0 flex items-center justify-center text-white text-[8px] font-medium opacity-60"
+            style={{ 
+              filter: 'blur(0.5px)',
+              transform: 'rotate(-45deg)'
+            }}
+          >
+            ...
+          </div>
+        </motion.div>
+        
+        {/* CornerPeel - the lifting corner */}
+        <motion.div 
+          className="absolute bottom-0 right-0"
+          style={{
+            width: 0,
+            height: 0,
+            borderLeft: '16px solid transparent',
+            borderBottom: '16px solid white',
+            transformOrigin: 'bottom right',
+            background: 'linear-gradient(135deg, rgba(255,255,255,1) 0%, rgba(250,250,250,1) 100%)',
+            zIndex: 3,
+            willChange: isHovered ? 'transform, filter' : 'auto'
+          }}
+          variants={cornerVariants}
+          animate={currentVariant}
+        />
+        
+        {/* Highlight line along fold axis */}
+        <motion.div 
+          className="absolute bottom-0 right-0 w-4 h-4 pointer-events-none"
+          style={{
+            background: 'linear-gradient(135deg, transparent 47%, rgba(255,255,255,0.6) 49%, rgba(255,255,255,0.2) 51%, transparent 53%)',
+            zIndex: 2
+          }}
+          animate={{
+            opacity: isHovered ? 0.8 : 0.4
+          }}
+          transition={{ duration: 0.18, ease: "easeOut" }}
+        />
+      </div>
+    );
+  };
+
+  // Framer Motion Card Flip Component
+  const MotionFlipCard = ({ 
+    step, 
+    isFlipped, 
+    isHovered, 
+    onCardClick, 
+    onKeyDown,
+    onMouseEnter,
+    onMouseLeave,
+    onFocus,
+    onBlur 
+  }: {
+    step: any;
+    isFlipped: boolean;
+    isHovered: boolean;
+    onCardClick: (e: React.PointerEvent<HTMLDivElement>) => void;
+    onKeyDown: (e: React.KeyboardEvent) => void;
+    onMouseEnter: () => void;
+    onMouseLeave: () => void;
+    onFocus: () => void;
+    onBlur: () => void;
+  }) => {
+    const flipVariants = {
+      front: {
+        rotateY: 0,
+        opacity: 1,
+        scale: 1,
+        transition: { 
+          type: shouldReduceMotion ? "tween" : "spring",
+          stiffness: shouldReduceMotion ? undefined : 260,
+          damping: shouldReduceMotion ? undefined : 20,
+          duration: shouldReduceMotion ? 0.3 : undefined,
+          ease: shouldReduceMotion ? "easeInOut" : undefined
+        }
+      },
+      back: {
+        rotateY: shouldReduceMotion ? 0 : 180,
+        opacity: shouldReduceMotion ? 0.8 : 1,
+        scale: 1,
+        transition: { 
+          type: shouldReduceMotion ? "tween" : "spring",
+          stiffness: shouldReduceMotion ? undefined : 260,
+          damping: shouldReduceMotion ? undefined : 20,
+          duration: shouldReduceMotion ? 0.3 : undefined,
+          ease: shouldReduceMotion ? "easeInOut" : undefined
+        }
+      }
+    };
+
+    const backVariants = {
+      front: {
+        rotateY: shouldReduceMotion ? 0 : -180,
+        opacity: shouldReduceMotion ? 0 : 1,
+        scale: 1,
+        transition: { 
+          type: shouldReduceMotion ? "tween" : "spring",
+          stiffness: shouldReduceMotion ? undefined : 260,
+          damping: shouldReduceMotion ? undefined : 20,
+          duration: shouldReduceMotion ? 0.3 : undefined,
+          ease: shouldReduceMotion ? "easeInOut" : undefined
+        }
+      },
+      back: {
+        rotateY: 0,
+        opacity: 1,
+        scale: 1,
+        transition: { 
+          type: shouldReduceMotion ? "tween" : "spring",
+          stiffness: shouldReduceMotion ? undefined : 260,
+          damping: shouldReduceMotion ? undefined : 20,
+          duration: shouldReduceMotion ? 0.3 : undefined,
+          ease: shouldReduceMotion ? "easeInOut" : undefined
+        }
+      }
+    };
+
+    return (
+      <div className="text-center group">
+        {/* Motion Card Container */}
+        <div 
+          className="relative rounded-2xl mb-4"
+          style={{ 
+            perspective: shouldReduceMotion ? 'none' : '1000px',
+            transformStyle: shouldReduceMotion ? 'flat' : 'preserve-3d'
+          }}
+        >
+          {/* FRONT FACE */}
+          <motion.div
+            className="card-front bg-white border border-gray-200 shadow-lg hover:shadow-2xl rounded-2xl overflow-hidden transition-shadow duration-200 cursor-pointer"
+            role="button"
+            tabIndex={0}
+            aria-expanded={isFlipped}
+            aria-label={`${language === 'fr-FR' ? step.titleFr : step.titleEn} - ${language === 'fr-FR' ? 'Cliquer pour plus d\'informations' : 'Click for more information'}`}
+            onMouseEnter={onMouseEnter}
+            onMouseLeave={onMouseLeave}
+            onFocus={onFocus}
+            onBlur={onBlur}
+            onClick={onCardClick}
+            onKeyDown={onKeyDown}
+            variants={flipVariants}
+            animate={isFlipped ? 'back' : 'front'}
+            style={{
+              backfaceVisibility: shouldReduceMotion ? 'visible' : 'hidden',
+              position: isFlipped && !shouldReduceMotion ? 'absolute' : 'relative',
+              width: '100%',
+              zIndex: isFlipped ? 1 : 2
+            }}
+            onAnimationComplete={() => {
+              // Remove animation lock when flip completes
+              if (animatingCards.has(step.number)) {
+                setAnimatingCards(prev => {
+                  const newSet = new Set(prev);
+                  newSet.delete(step.number);
+                  return newSet;
+                });
+              }
+            }}
+          >
+            {/* Main Card Content */}
+            <div className="relative">
+              {/* Step Image */}
+              <div className="relative overflow-visible rounded-xl transition-all duration-500 aspect-square">
+                <img 
+                  src={step.image} 
+                  alt={language === 'fr-FR' ? step.titleFr : step.titleEn}
+                  className="w-full h-full object-contain bg-gray-50 transition-transform duration-500"
+                />
+                
+                {/* Orange Number Circle - Top Left */}
+                <div className="absolute top-2 left-2 w-8 h-8 bg-memopyk-orange rounded-full flex items-center justify-center transition-transform duration-300 shadow-lg">
+                  <span className="text-sm font-bold text-white">{step.number}</span>
+                </div>
+              </div>
+              
+              {/* Framer Motion Corner System */}
+              <MotionCornerSystem 
+                cardNumber={step.number}
+                isHovered={isHovered}
+                isFlipped={isFlipped}
+                backFaceGradient={backFaceGradient}
+                shouldReduceMotion={shouldReduceMotion}
+              />
+            </div>
+          </motion.div>
+            
+          {/* BACK FACE */}
+          <motion.div
+            className="card-back bg-gradient-to-br from-memopyk-orange/95 to-memopyk-dark-blue/95 text-white rounded-2xl overflow-hidden shadow-lg"
+            variants={backVariants}
+            animate={isFlipped ? 'back' : 'front'}
+            style={{
+              backfaceVisibility: shouldReduceMotion ? 'visible' : 'hidden',
+              position: !isFlipped && !shouldReduceMotion ? 'absolute' : 'relative',
+              width: '100%',
+              minHeight: '400px',
+              zIndex: isFlipped ? 2 : 1
+            }}
+          >
+            <div className="p-6 h-full flex flex-col justify-between">
+              {/* Header with close button */}
+              <div className="flex justify-between items-start mb-4">
+                <div className="flex items-center space-x-3">
+                  <div className="w-8 h-8 bg-white/20 rounded-full flex items-center justify-center">
+                    <span className="text-sm font-bold">{step.number}</span>
+                  </div>
+                  <h3 className="text-lg font-bold">
+                    {language === 'fr-FR' ? step.titleFr : step.titleEn}
+                  </h3>
+                </div>
+                <button
+                  onClick={onCardClick}
+                  className="text-white/70 hover:text-white transition-colors p-1 rounded-full hover:bg-white/10"
+                  aria-label={language === 'fr-FR' ? 'Fermer' : 'Close'}
+                >
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <line x1="18" y1="6" x2="6" y2="18"></line>
+                    <line x1="6" y1="6" x2="18" y2="18"></line>
+                  </svg>
+                </button>
+              </div>
+
+              {/* Content */}
+              <div className="flex-grow">
+                <p className="text-sm leading-relaxed whitespace-pre-line">
+                  {language === 'fr-FR' ? step.descriptionFr : step.descriptionEn}
+                </p>
+                {(step.subDescriptionFr || step.subDescriptionEn) && (
+                  <p className="text-sm leading-relaxed mt-3 opacity-90 whitespace-pre-line">
+                    {language === 'fr-FR' ? step.subDescriptionFr : step.subDescriptionEn}
+                  </p>
+                )}
+              </div>
+
+              {/* Footer hint */}
+              <div className="text-xs text-white/60 text-center mt-4 border-t border-white/20 pt-3">
+                {language === 'fr-FR' ? 'Cliquer pour revenir' : 'Click to go back'}
+              </div>
+            </div>
+          </motion.div>
+        </div>
+
+        {/* Title and Icon below card */}
+        <div className="flex flex-col items-center space-y-3">
+          <div className="w-12 h-12 bg-memopyk-orange/10 rounded-full flex items-center justify-center group-hover:bg-memopyk-orange/20 transition-colors duration-300">
+            <step.icon className="w-6 h-6 text-memopyk-orange" />
+          </div>
+          <h3 className="text-xl font-bold text-memopyk-dark-blue">
+            {language === 'fr-FR' ? step.titleFr : step.titleEn}
+          </h3>
+        </div>
+      </div>
+    );
+  };
   
   const steps = [
     {
@@ -100,221 +496,25 @@ export function HowItWorksCondensed() {
           </p>
         </div>
 
-        {/* Steps Grid with Flip Cards */}
+        {/* Steps Grid with Framer Motion Flip Cards */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
           {steps.map((step) => {
-            const Icon = step.icon;
             const isFlipped = flippedCards.has(step.number);
+            const isHovered = hoveredCard === step.number;
             
             return (
-              <div key={step.number} className="text-center group">
-                {/* Flip Card Container - Only for the image area */}
-                <div className={`card-flip-container ${isFlipped ? 'flipped' : ''} rounded-2xl mb-4`}>
-                  <div className="card-flip-inner">
-                    
-                    {/* FRONT SIDE - Step Card */}
-                    <div 
-                      className="card-front bg-white border border-gray-200 shadow-lg hover:shadow-2xl rounded-2xl overflow-hidden transition-all duration-200 cursor-pointer"
-                      role="button"
-                      tabIndex={0}
-                      aria-expanded={isFlipped}
-                      aria-label={`${language === 'fr-FR' ? step.titleFr : step.titleEn} - ${language === 'fr-FR' ? 'Cliquer pour plus d\'informations' : 'Click for more information'}`}
-                      onMouseEnter={() => setHoveredCard(step.number)}
-                      onMouseLeave={() => setHoveredCard(null)}
-                      onFocus={() => setHoveredCard(step.number)}
-                      onBlur={() => setHoveredCard(null)}
-                      onClick={() => {
-                        setFlippedCards(prev => {
-                          const newSet = new Set(prev);
-                          if (newSet.has(step.number)) {
-                            newSet.delete(step.number);
-                          } else {
-                            newSet.add(step.number);
-                          }
-                          return newSet;
-                        });
-                      }}
-                      onKeyDown={(e) => {
-                        if (e.key === 'Enter' || e.key === ' ') {
-                          e.preventDefault();
-                          setFlippedCards(prev => {
-                            const newSet = new Set(prev);
-                            if (newSet.has(step.number)) {
-                              newSet.delete(step.number);
-                            } else {
-                              newSet.add(step.number);
-                            }
-                            return newSet;
-                          });
-                        }
-                      }}
-                    >
-                      {/* Main Card Content */}
-                      <div className="relative">
-                        {/* Step Image */}
-                        <div className="relative overflow-hidden rounded-xl transition-all duration-500 aspect-square">
-                          <img 
-                            src={step.image} 
-                            alt={language === 'fr-FR' ? step.titleFr : step.titleEn}
-                            className="w-full h-full object-contain bg-gray-50 transition-transform duration-500"
-                          />
-                          
-                          {/* Orange Number Circle - Top Left */}
-                          <div className="absolute top-2 left-2 w-8 h-8 bg-memopyk-orange rounded-full flex items-center justify-center transition-transform duration-300 shadow-lg">
-                            <span className="text-sm font-bold text-white">{step.number}</span>
-                          </div>
-                        </div>
-                        
-                        {/* STEP 1: Back-preview layer (always visible) */}
-                        <div 
-                          className="absolute bottom-0 right-0 pointer-events-none"
-                          style={{ overflow: 'visible' }}
-                        >
-                          {/* Back-peek strip - matches the back face design */}
-                          <div 
-                            className="absolute bottom-0 right-0"
-                            style={{
-                              width: '14px',
-                              height: '14px',
-                              background: `linear-gradient(135deg, 
-                                rgba(214, 124, 74, 0.95) 0%, 
-                                rgba(42, 71, 89, 0.95) 100%)`,
-                              clipPath: 'polygon(0 100%, 100% 0, 100% 100%)',
-                              transform: hoveredCard === step.number 
-                                ? 'scale(1.15)' 
-                                : 'scale(1)',
-                              opacity: hoveredCard === step.number ? 0.9 : 0.8,
-                              transition: 'all 180ms ease-out',
-                              zIndex: 1
-                            }}
-                          >
-                            {/* Blurred back content hint */}
-                            <div 
-                              className="absolute inset-0 flex items-center justify-center text-white text-[8px] font-medium opacity-60"
-                              style={{ 
-                                filter: 'blur(0.5px)',
-                                transform: 'rotate(-45deg)'
-                              }}
-                            >
-                              {language === 'fr-FR' ? '...' : '...'}
-                            </div>
-                          </div>
-                          
-                          {/* STEP 2: Fold overlay with smooth animation */}
-                          <div 
-                            className="absolute bottom-0 right-0"
-                            style={{
-                              width: 0,
-                              height: 0,
-                              borderLeft: '16px solid transparent',
-                              borderBottom: '16px solid white',
-                              transformOrigin: 'bottom right',
-                              transform: hoveredCard === step.number 
-                                ? 'rotate(4deg) translate(-3px, -2px)' 
-                                : 'rotate(0deg) translate(0px, 0px)',
-                              // STEP 2: Two-shadow system for depth
-                              filter: hoveredCard === step.number
-                                ? 'drop-shadow(-2px -2px 4px rgba(0,0,0,0.3)) drop-shadow(-1px -1px 2px rgba(0,0,0,0.15))'
-                                : 'drop-shadow(-1px -1px 2px rgba(0,0,0,0.15))',
-                              transition: 'all 180ms ease-out',
-                              zIndex: 3,
-                              // STEP 4: Diagonal gradient for realism
-                              background: 'linear-gradient(135deg, rgba(255,255,255,1) 0%, rgba(250,250,250,1) 100%)',
-                              willChange: hoveredCard === step.number ? 'transform, filter' : 'auto'
-                            }}
-                          />
-                          
-                          {/* STEP 4: Highlight line along fold axis */}
-                          <div 
-                            className="absolute bottom-0 right-0 w-4 h-4 pointer-events-none"
-                            style={{
-                              background: 'linear-gradient(135deg, transparent 47%, rgba(255,255,255,0.6) 49%, rgba(255,255,255,0.2) 51%, transparent 53%)',
-                              opacity: hoveredCard === step.number ? 0.8 : 0.4,
-                              transition: 'opacity 180ms ease-out',
-                              zIndex: 2
-                            }}
-                          />
-                        </div>
-                      </div>
-                    </div>
-                      
-                    {/* BACK SIDE - Detailed Information */}
-                    <div 
-                      className="card-back shadow-lg hover:shadow-2xl rounded-2xl overflow-hidden border border-gray-200 cursor-pointer transition-all duration-200"
-                      role="button"
-                      tabIndex={0}
-                      aria-label={`${language === 'fr-FR' ? 'Fermer les détails' : 'Close details'}`}
-                      style={{
-                        backgroundImage: `linear-gradient(135deg, rgba(214, 124, 74, 0.92) 0%, rgba(42, 71, 89, 0.92) 100%), url(${step.image})`,
-                        backgroundSize: 'cover',
-                        backgroundPosition: 'center',
-                        backgroundRepeat: 'no-repeat'
-                      }}
-                      onClick={() => {
-                        setFlippedCards(prev => {
-                          const newSet = new Set(prev);
-                          newSet.delete(step.number);
-                          return newSet;
-                        });
-                      }}
-                      onKeyDown={(e) => {
-                        if (e.key === 'Enter' || e.key === ' ') {
-                          e.preventDefault();
-                          setFlippedCards(prev => {
-                            const newSet = new Set(prev);
-                            newSet.delete(step.number);
-                            return newSet;
-                          });
-                        }
-                      }}
-                    >
-                      <div className="h-full flex flex-col relative px-2 pt-0 pb-2">
-                        
-                        {/* Top Section - Text content area */}
-                        <div className="text-center flex flex-col" style={{ height: '350px', position: 'relative' }}>
-                          <div className="text-sm leading-normal text-white w-full flip-card-text-zero-spacing">
-                            {(language === 'fr-FR' ? step.descriptionFr : step.descriptionEn).split('\n').map((paragraph, i) => (
-                              <p key={i} className="m-0 p-0">{paragraph}</p>
-                            ))}
-                          </div>
-                          
-                          {/* Separator Line - EXACTLY 250px FROM TOP */}
-                          <div className="absolute border-t border-white/40 mx-2 left-2 right-2" style={{ top: '246px' }}></div>
-                          
-                          {/* Bottom Section - Sub Description - EXACTLY 260px FROM TOP */}
-                          <div className="absolute text-center left-2 right-2" style={{ top: '256px' }}>
-                            <div className="text-xs text-white leading-relaxed w-full">
-                              {language === 'fr-FR' ? step.subDescriptionFr : step.subDescriptionEn}
-                            </div>
-                          </div>
-                        </div>
-                        
-                        {/* Return arrow - Positioned with equal spacing */}
-                        <div className="absolute -bottom-6 -left-6">
-                          <div 
-                            className="w-10 h-10 bg-white/80 rounded-full flex items-center justify-center hover:bg-white transition-colors shadow-lg"
-                            aria-label={language === 'fr-FR' ? 'Retour' : 'Back'}
-                          >
-                            <svg className="w-5 h-5 text-memopyk-dark-blue" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
-                            </svg>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Static Title with Blue Icon - Always Visible */}
-                <div className="flex items-center justify-center gap-3">
-                  <div className="w-12 h-12 bg-memopyk-navy rounded-full flex items-center justify-center transition-transform duration-300">
-                    <Icon className="w-6 h-6 text-white" />
-                  </div>
-                  <h3 className="text-2xl font-semibold text-memopyk-navy transition-colors duration-300">
-                    {language === 'fr-FR' ? step.titleFr : step.titleEn}
-                  </h3>
-                </div>
-              </div>
+              <MotionFlipCard
+                key={step.number}
+                step={step}
+                isFlipped={isFlipped}
+                isHovered={isHovered}
+                onCardClick={(e: React.PointerEvent<HTMLDivElement>) => handleCardClick(step.number, e)}
+                onKeyDown={(e: React.KeyboardEvent) => handleKeyDown(step.number, e)}
+                onMouseEnter={() => setHoveredCard(step.number)}
+                onMouseLeave={() => setHoveredCard(null)}
+                onFocus={() => setHoveredCard(step.number)}
+                onBlur={() => setHoveredCard(null)}
+              />
             );
           })}
         </div>
