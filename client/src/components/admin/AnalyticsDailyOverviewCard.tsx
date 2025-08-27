@@ -6,6 +6,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { RefreshCcw } from "lucide-react";
 import ExportRangeControls from "./ExportRangeControls";
 import { GlobalFilterContext } from "./GlobalFilterContext";
+import { withFilters } from "@/lib/withFilters";
 import {
   LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer,
 } from "recharts";
@@ -47,16 +48,8 @@ function rangeFromDays(days: number): { from?: string; to?: string } {
   return { from, to };
 }
 
-// Helper function to append global range to API URLs
-function withRange(url: string, range: {from?: string; to?: string}) {
-  const u = new URL(url, window.location.origin);
-  if (range.from) u.searchParams.set("from", range.from);
-  if (range.to) u.searchParams.set("to", range.to);
-  return u.pathname + u.search; // relative
-}
-
 export default function AnalyticsDailyOverviewCard() {
-  const { range } = React.useContext(GlobalFilterContext);
+  const { filters } = React.useContext(GlobalFilterContext);
   const [days, setDays] = React.useState<number>(30);
   const [loading, setLoading] = React.useState<boolean>(true);
   const [data, setData] = React.useState<any[]>([]);
@@ -66,7 +59,7 @@ export default function AnalyticsDailyOverviewCard() {
     setLoading(true);
     setError(null);
     try {
-      const res = await fetch(withRange(`/api/analytics/overview?days=${days}`, range));
+      const res = await fetch(withFilters(`/api/analytics/overview?days=${days}`, filters));
       if (!res.ok) throw new Error(`Overview fetch failed: ${res.status}`);
       const rows = await res.json();
       // Normalize data for chart

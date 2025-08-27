@@ -1,24 +1,37 @@
 // client/src/components/admin/GlobalFilterContext.tsx
 import * as React from "react";
+
 export type DateRange = { from?: string; to?: string };
+export type GlobalFilter = {
+  range: DateRange;
+  language?: string;
+  source?: string;
+  device?: string;
+};
 
 export const GlobalFilterContext = React.createContext<{
-  range: DateRange;
-  setRange: (r: DateRange) => void;
-}>({ range: {}, setRange: () => {} });
+  filters: GlobalFilter;
+  setFilters: (f: GlobalFilter) => void;
+}>({
+  filters: { range: {} },
+  setFilters: () => {},
+});
 
 export function GlobalFilterProvider({ children }: { children: React.ReactNode }) {
-  const [range, setRange] = React.useState<DateRange>(() => {
-    // restore last range
-    try { return JSON.parse(localStorage.getItem("global-range") || "{}"); } catch { return {}; }
+  const [filters, setFilters] = React.useState<GlobalFilter>(() => {
+    try {
+      return JSON.parse(localStorage.getItem("global-filters") || "{}");
+    } catch {
+      return { range: {} };
+    }
   });
 
   React.useEffect(() => {
-    localStorage.setItem("global-range", JSON.stringify(range));
-  }, [range]);
+    localStorage.setItem("global-filters", JSON.stringify(filters));
+  }, [filters]);
 
   return (
-    <GlobalFilterContext.Provider value={{ range, setRange }}>
+    <GlobalFilterContext.Provider value={{ filters, setFilters }}>
       {children}
     </GlobalFilterContext.Provider>
   );

@@ -5,6 +5,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { RefreshCcw } from "lucide-react";
 import ExportRangeControls from "./ExportRangeControls";
 import { GlobalFilterContext } from "./GlobalFilterContext";
+import { withFilters } from "@/lib/withFilters";
 import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer,
 } from "recharts";
@@ -13,22 +14,14 @@ type CountryRow = { country: string; sessions: number; visitors: number };
 type CityRow = { country: string; city: string; sessions: number; visitors: number };
 type ApiResponse = { countries: CountryRow[]; cities: CityRow[] };
 
-// Helper function to append global range to API URLs
-function withRange(url: string, range: {from?: string; to?: string}) {
-  const u = new URL(url, window.location.origin);
-  if (range.from) u.searchParams.set("from", range.from);
-  if (range.to) u.searchParams.set("to", range.to);
-  return u.pathname + u.search; // relative
-}
-
-async function fetchGeo(limit = 50, range: {from?: string; to?: string}): Promise<ApiResponse> {
-  const res = await fetch(withRange(`/api/analytics/geo?limit=${limit}`, range));
+async function fetchGeo(limit = 50, filters: any): Promise<ApiResponse> {
+  const res = await fetch(withFilters(`/api/analytics/geo?limit=${limit}`, filters));
   if (!res.ok) throw new Error(`Geo fetch failed: ${res.status}`);
   return res.json();
 }
 
 export default function AnalyticsGeoDistributionCard() {
-  const { range } = React.useContext(GlobalFilterContext);
+  const { filters } = React.useContext(GlobalFilterContext);
   const [loading, setLoading] = React.useState(true);
   const [error, setError] = React.useState<string | null>(null);
   const [countries, setCountries] = React.useState<CountryRow[]>([]);
@@ -38,7 +31,7 @@ export default function AnalyticsGeoDistributionCard() {
     setLoading(true);
     setError(null);
     try {
-      const data = await fetchGeo(50, range);
+      const data = await fetchGeo(50, filters);
       setCountries((data.countries || []).sort((a,b)=> (b.sessions ?? 0) - (a.sessions ?? 0)));
       setCities((data.cities || []).sort((a,b)=> (b.sessions ?? 0) - (a.sessions ?? 0)));
     } catch (e:any) {
@@ -46,7 +39,7 @@ export default function AnalyticsGeoDistributionCard() {
     } finally {
       setLoading(false);
     }
-  }, [range]);
+  }, [filters]);
 
   React.useEffect(() => { load(); }, [load]);
 

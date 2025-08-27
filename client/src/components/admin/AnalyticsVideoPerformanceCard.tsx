@@ -7,6 +7,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Play, Clock, TrendingUp, BarChart3, RefreshCcw } from "lucide-react";
 import ExportRangeControls from "./ExportRangeControls";
 import { GlobalFilterContext } from "./GlobalFilterContext";
+import { withFilters } from "@/lib/withFilters";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
 
 interface VideoPerformanceData {
@@ -38,16 +39,8 @@ interface AnalyticsVideoPerformanceCardProps {
   dateRange?: string;
 }
 
-// Helper function to append global range to API URLs
-function withRange(url: string, range: {from?: string; to?: string}) {
-  const u = new URL(url, window.location.origin);
-  if (range.from) u.searchParams.set("from", range.from);
-  if (range.to) u.searchParams.set("to", range.to);
-  return u.pathname + u.search; // relative
-}
-
 export const AnalyticsVideoPerformanceCard = ({ dateRange = "30" }: AnalyticsVideoPerformanceCardProps) => {
-  const { range } = React.useContext(GlobalFilterContext);
+  const { filters } = React.useContext(GlobalFilterContext);
   const [data, setData] = useState<VideoPerformanceData[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -59,7 +52,7 @@ export const AnalyticsVideoPerformanceCard = ({ dateRange = "30" }: AnalyticsVid
         setLoading(true);
         setError(null);
         
-        const response = await fetch(withRange("/api/analytics/video-performance", range));
+        const response = await fetch(withFilters("/api/analytics/video-performance", filters));
         if (!response.ok) {
           throw new Error('Failed to fetch video performance data');
         }
@@ -75,14 +68,14 @@ export const AnalyticsVideoPerformanceCard = ({ dateRange = "30" }: AnalyticsVid
     };
 
     fetchVideoPerformance();
-  }, [range]);
+  }, [filters]);
 
   const handleRefresh = async () => {
     try {
       setLoading(true);
       setError(null);
       
-      const response = await fetch(withRange("/api/analytics/video-performance", range));
+      const response = await fetch(withFilters("/api/analytics/video-performance", filters));
       if (!response.ok) {
         throw new Error('Failed to fetch video performance data');
       }
