@@ -6,7 +6,6 @@ import { motion, useReducedMotion } from 'framer-motion';
 export function HowItWorksCondensed() {
   const { language } = useLanguage();
   const [flippedCards, setFlippedCards] = useState<Set<number>>(new Set());
-  const [hoveredCard, setHoveredCard] = useState<number | null>(null);
   const [hasAnimated, setHasAnimated] = useState<Set<number>>(new Set());
   const [animatingCards, setAnimatingCards] = useState<Set<number>>(new Set());
   const sectionRef = useRef<HTMLElement>(null);
@@ -16,7 +15,7 @@ export function HowItWorksCondensed() {
   const backFaceGradient =
     'linear-gradient(135deg, rgba(214, 124, 74, 0.95) 0%, rgba(42, 71, 89, 0.95) 100%)';
 
-  // Reset flipped cards when section is not visible and handle first-load nudge
+  // Reset flipped cards when section is not visible (nudge will be handled by animation controls)
   useEffect(() => {
     const section = sectionRef.current;
     if (!section) return;
@@ -27,32 +26,19 @@ export function HowItWorksCondensed() {
           // If section is not visible (less than 50% visible), reset all cards
           if (!entry.isIntersecting || entry.intersectionRatio < 0.5) {
             setFlippedCards(new Set());
-            setHoveredCard(null);
-          } else if (entry.isIntersecting && entry.intersectionRatio >= 0.7) {
-            // First-load nudge animation for each card
-            steps.forEach((step, index) => {
-              if (!hasAnimated.has(step.number)) {
-                setTimeout(() => {
-                  setHoveredCard(step.number);
-                  setTimeout(() => {
-                    setHoveredCard(null);
-                    setHasAnimated((prev) => new Set(prev).add(step.number));
-                  }, 200);
-                }, index * 150);
-              }
-            });
           }
+          // Note: Nudge animation will be handled via Framer Motion controls, not state
         });
       },
       {
-        threshold: [0.5, 0.7],
+        threshold: [0.5],
         rootMargin: '0px 0px -50px 0px',
       }
     );
 
     observer.observe(section);
     return () => observer.disconnect();
-  }, [hasAnimated]);
+  }, []);
 
   // Enhanced tap detection with debouncing
   const handleCardClick = (
@@ -68,7 +54,7 @@ export function HowItWorksCondensed() {
     }
 
     // Lock during animation
-    setAnimatingCards((prev) => new Set([...prev, cardNumber]));
+    setAnimatingCards((prev) => new Set(Array.from(prev).concat([cardNumber])));
 
     setFlippedCards((prev) => {
       const next = new Set(prev);
@@ -98,34 +84,44 @@ export function HowItWorksCondensed() {
     }
   };
 
-  // ---- Folded-corner system (unchanged logic, but used inside the front face) ----
+  // ---- Folded-corner system using direct Framer hover ----
   const MotionCornerSystem = ({
     cardNumber,
-    isHovered,
     isFlipped,
     backFaceGradient,
     shouldReduceMotion,
   }: {
     cardNumber: number;
-    isHovered: boolean;
     isFlipped: boolean;
     backFaceGradient: string;
     shouldReduceMotion: boolean | null;
   }) => {
-    // Note: Variants now defined inline for each element
-
     return (
-      <div className="absolute bottom-0 right-0 pointer-events-none" style={{ overflow: 'visible' }}>
+      <motion.div 
+        style={{ 
+          position: 'absolute',
+          bottom: 0,
+          right: 0,
+          pointerEvents: 'none',
+          overflow: 'visible'
+        }}
+        initial="idle"
+        animate="idle"
+        whileHover="hovered"
+      >
         {/* BackPeek - always visible slip */}
         <motion.div
-          className="absolute bottom-0 right-0"
           style={{
+            position: 'absolute',
+            bottom: 0,
+            right: 0,
             width: 'var(--peekSize)',
             height: 'var(--peekSize)',
             background: backFaceGradient,
             clipPath: 'polygon(0 100%, 100% 0, 100% 100%)',
             zIndex: 1,
           }}
+          layout={false}
           variants={{
             idle: { scale: 1, opacity: 0.85 },
             hovered: {
@@ -134,11 +130,21 @@ export function HowItWorksCondensed() {
               transition: { type: 'spring', stiffness: 280, damping: 22 },
             },
           }}
-          animate={isHovered ? 'hovered' : 'idle'}
         >
           <div
-            className="absolute inset-0 flex items-center justify-center text-white text-[8px] font-medium opacity-60"
-            style={{ filter: 'blur(0.5px)', transform: 'rotate(-45deg)' }}
+            style={{ 
+              position: 'absolute',
+              inset: 0,
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              color: 'white',
+              fontSize: '8px',
+              fontWeight: 500,
+              opacity: 0.6,
+              filter: 'blur(0.5px)', 
+              transform: 'rotate(-45deg)' 
+            }}
           >
             ...
           </div>
@@ -146,8 +152,10 @@ export function HowItWorksCondensed() {
 
         {/* CornerPeel - the lifting corner */}
         <motion.div
-          className="absolute bottom-0 right-0"
           style={{
+            position: 'absolute',
+            bottom: 0,
+            right: 0,
             width: 0,
             height: 0,
             borderLeft: 'var(--cornerSize) solid transparent',
@@ -156,8 +164,8 @@ export function HowItWorksCondensed() {
             background:
               'linear-gradient(135deg, rgba(255,255,255,1) 0%, rgba(248,248,248,1) 100%)',
             zIndex: 3,
-            willChange: isHovered ? 'transform, filter' : 'auto',
           }}
+          layout={false}
           variants={{
             idle: {
               rotate: 0,
@@ -176,23 +184,28 @@ export function HowItWorksCondensed() {
                   transition: { type: 'spring', stiffness: 280, damping: 22 },
                 },
           }}
-          animate={isHovered ? 'hovered' : 'idle'}
         />
 
         {/* Highlight line along fold axis */}
         <motion.div
-          className="absolute bottom-0 right-0 pointer-events-none"
           style={{
+            position: 'absolute',
+            bottom: 0,
+            right: 0,
+            pointerEvents: 'none',
             width: 'var(--cornerSize)',
             height: 'var(--cornerSize)',
             background:
               'linear-gradient(135deg, transparent 47%, rgba(255,255,255,0.6) 49%, rgba(255,255,255,0.2) 51%, transparent 53%)',
             zIndex: 2,
           }}
-          animate={{ opacity: isHovered ? 0.8 : 0.45 }}
-          transition={{ duration: 0.18, ease: 'easeOut' }}
+          layout={false}
+          variants={{
+            idle: { opacity: 0.45 },
+            hovered: { opacity: 0.8, transition: { type: 'spring', stiffness: 280, damping: 22 } },
+          }}
         />
-      </div>
+      </motion.div>
     );
   };
 
@@ -200,23 +213,13 @@ export function HowItWorksCondensed() {
   const MotionFlipCard = ({
     step,
     isFlipped,
-    isHovered,
     onCardClick,
     onKeyDown,
-    onMouseEnter,
-    onMouseLeave,
-    onFocus,
-    onBlur,
   }: {
     step: any;
     isFlipped: boolean;
-    isHovered: boolean;
     onCardClick: (e: React.PointerEvent<HTMLDivElement>) => void;
     onKeyDown: (e: React.KeyboardEvent) => void;
-    onMouseEnter: () => void;
-    onMouseLeave: () => void;
-    onFocus: () => void;
-    onBlur: () => void;
   }) => {
     const cardState = isFlipped ? 'back' : 'front';
 
@@ -244,75 +247,91 @@ export function HowItWorksCondensed() {
     };
 
     return (
-      <div className="text-center group">
-        {/* Interactive wrapper (button semantics live here) */}
+      <div style={{ perspective: '1000px', width: '100%', height: '100%' }}>
         <div
-          className="relative rounded-2xl mb-4 cursor-pointer outline-none"
-          role="button"
-          tabIndex={0}
-          aria-expanded={isFlipped}
-          aria-label={`${
-            language === 'fr-FR' ? step.titleFr : step.titleEn
-          } - ${language === 'fr-FR' ? "Cliquer pour plus d'informations" : 'Click for more information'}`}
-          onMouseEnter={onMouseEnter}
-          onMouseLeave={onMouseLeave}
-          onFocus={onFocus}
-          onBlur={onBlur}
+          style={{ 
+            cursor: 'pointer',
+            paddingTop: '100%',
+            position: 'relative',
+            borderRadius: '16px',
+            overflow: 'visible'
+          }}
           onClick={onCardClick}
           onKeyDown={onKeyDown}
-          style={{ perspective: shouldReduceMotion ? 'none' : '1000px' }}
+          tabIndex={0}
+          role="button"
+          aria-label={
+            isFlipped
+              ? (language === 'fr-FR' ? 'Fermer les détails' : 'Close details')
+              : (language === 'fr-FR' ? 'Voir les détails' : 'View details')
+          }
         >
-          {/* Fixed-size frame to keep both faces identical (no more size jumps) */}
-          <div 
-            className="relative w-full aspect-square rounded-2xl"
-            style={{
-              // Size tokens for corner + peek
-              // ➜ min 32px, target 14% of card width, max 80px
-              ['--cornerSize' as any]: 'clamp(32px, 14%, 80px)',
-              ['--peekSize' as any]: 'calc(var(--cornerSize) * 0.92)',
-            }}
-          >
-            {/* Rotating inner wrapper (the only thing that rotates) */}
+          <div style={{ position: 'absolute', inset: 0 }}>
+            {/* MOTION WRAPPER: Single rotating inner container */}
             <motion.div
-              className="absolute inset-0 rounded-2xl"
               style={{
+                position: 'absolute',
+                inset: 0,
+                borderRadius: '16px',
                 transformStyle: shouldReduceMotion ? 'flat' : 'preserve-3d',
                 willChange: 'transform',
               }}
               variants={cardVariants}
               animate={cardState}
               onAnimationComplete={() => {
-                if (animatingCards.has(step.number)) {
-                  setAnimatingCards((prev) => {
-                    const next = new Set(prev);
-                    next.delete(step.number);
-                    return next;
-                  });
-                }
+                setAnimatingCards((prev) => {
+                  const next = new Set(prev);
+                  next.delete(step.number);
+                  return next;
+                });
               }}
             >
               {/* FRONT FACE */}
               <div
-                className="absolute inset-0 bg-white border border-gray-200 shadow-lg rounded-2xl overflow-hidden"
                 style={{
+                  position: 'absolute',
+                  inset: 0,
+                  borderRadius: '16px',
+                  overflow: 'hidden',
+                  boxShadow: '0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)',
+                  backgroundColor: 'white',
                   backfaceVisibility: shouldReduceMotion ? 'visible' : 'hidden',
-                  transform: 'rotateY(0deg) translateZ(0)',
+                  transform: 'translateZ(0)',
                   zIndex: isFlipped ? 1 : 2,
                   pointerEvents: isFlipped ? 'none' : 'auto',
                 }}
               >
-                <div className="relative h-full w-full">
-                  {/* Step Image */}
-                  <div className="relative overflow-visible rounded-xl transition-all duration-500 h-full w-full">
+                <div style={{ position: 'relative', width: '100%', height: '100%', overflow: 'hidden' }}>
+                  {/* Card Image */}
+                  <div style={{ position: 'relative', width: '100%', height: '100%' }}>
                     <img
                       src={step.image}
                       alt={language === 'fr-FR' ? step.titleFr : step.titleEn}
-                      className="w-full h-full object-contain bg-gray-50 transition-transform duration-500"
+                      style={{ 
+                        width: '100%', 
+                        height: '100%', 
+                        objectFit: 'contain', 
+                        backgroundColor: '#f9fafb',
+                        transition: 'transform 500ms'
+                      }}
                     />
 
                     {/* Orange Number Circle - Top Left */}
-                    <div className="absolute top-2 left-2 w-8 h-8 bg-memopyk-orange rounded-full flex items-center justify-center transition-transform duration-300 shadow-lg">
-                      <span className="text-sm font-bold text-white">{step.number}</span>
+                    <div style={{ 
+                      position: 'absolute',
+                      top: '8px',
+                      left: '8px',
+                      width: '32px',
+                      height: '32px',
+                      backgroundColor: '#D67C4A',
+                      borderRadius: '50%',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      transition: 'transform 300ms',
+                      boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)'
+                    }}>
+                      <span style={{ fontSize: '14px', fontWeight: 'bold', color: 'white' }}>{step.number}</span>
                     </div>
                   </div>
 
@@ -320,7 +339,6 @@ export function HowItWorksCondensed() {
                   {!isFlipped && (
                     <MotionCornerSystem
                       cardNumber={step.number}
-                      isHovered={isHovered}
                       isFlipped={isFlipped}
                       backFaceGradient={backFaceGradient}
                       shouldReduceMotion={shouldReduceMotion}
@@ -331,22 +349,36 @@ export function HowItWorksCondensed() {
 
               {/* BACK FACE */}
               <div
-                className="absolute inset-0 rounded-2xl overflow-hidden shadow-lg bg-gradient-to-br from-memopyk-orange/95 to-memopyk-dark-blue/95 text-white"
                 style={{
+                  position: 'absolute',
+                  inset: 0,
+                  borderRadius: '16px',
+                  overflow: 'hidden',
+                  boxShadow: '0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)',
+                  background: 'linear-gradient(135deg, rgba(214, 124, 74, 0.95) 0%, rgba(42, 71, 89, 0.95) 100%)',
+                  color: 'white',
                   backfaceVisibility: shouldReduceMotion ? 'visible' : 'hidden',
                   transform: 'rotateY(180deg) translateZ(0)',
                   zIndex: isFlipped ? 2 : 1,
                   pointerEvents: isFlipped ? 'auto' : 'none',
                 }}
               >
-                <div className="p-6 h-full w-full flex flex-col">
+                <div style={{ padding: '24px', height: '100%', width: '100%', display: 'flex', flexDirection: 'column' }}>
                   {/* Header with close button */}
-                  <div className="flex justify-between items-start mb-4">
-                    <div className="flex items-center space-x-3">
-                      <div className="w-8 h-8 bg-white/20 rounded-full flex items-center justify-center">
-                        <span className="text-sm font-bold">{step.number}</span>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '16px' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                      <div style={{ 
+                        width: '32px', 
+                        height: '32px',
+                        backgroundColor: 'rgba(255, 255, 255, 0.2)',
+                        borderRadius: '50%',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center'
+                      }}>
+                        <span style={{ fontSize: '14px', fontWeight: 'bold' }}>{step.number}</span>
                       </div>
-                      <h3 className="text-lg font-bold">
+                      <h3 style={{ fontSize: '18px', fontWeight: 'bold', margin: 0 }}>
                         {language === 'fr-FR' ? step.titleFr : step.titleEn}
                       </h3>
                     </div>
@@ -355,7 +387,23 @@ export function HowItWorksCondensed() {
                         e.stopPropagation();
                         onCardClick(e as unknown as React.PointerEvent<HTMLDivElement>);
                       }}
-                      className="text-white/70 hover:text-white transition-colors p-1 rounded-full hover:bg-white/10"
+                      style={{
+                        color: 'rgba(255, 255, 255, 0.7)',
+                        background: 'none',
+                        border: 'none',
+                        cursor: 'pointer',
+                        padding: '4px',
+                        borderRadius: '50%',
+                        transition: 'all 0.2s',
+                      }}
+                      onMouseEnter={(e) => {
+                        e.currentTarget.style.color = 'white';
+                        e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.1)';
+                      }}
+                      onMouseLeave={(e) => {
+                        e.currentTarget.style.color = 'rgba(255, 255, 255, 0.7)';
+                        e.currentTarget.style.backgroundColor = 'transparent';
+                      }}
                       aria-label={language === 'fr-FR' ? 'Fermer' : 'Close'}
                     >
                       <svg
@@ -373,19 +421,26 @@ export function HowItWorksCondensed() {
                   </div>
 
                   {/* Scrollable content area to avoid size jumps */}
-                  <div className="flex-1 overflow-auto">
-                    <p className="text-sm leading-relaxed whitespace-pre-line">
+                  <div style={{ flex: 1, overflowY: 'auto' }}>
+                    <p style={{ fontSize: '14px', lineHeight: '1.5', whiteSpace: 'pre-line', margin: 0 }}>
                       {language === 'fr-FR' ? step.descriptionFr : step.descriptionEn}
                     </p>
                     {(step.subDescriptionFr || step.subDescriptionEn) && (
-                      <p className="text-sm leading-relaxed mt-3 opacity-90 whitespace-pre-line">
+                      <p style={{ fontSize: '14px', lineHeight: '1.5', marginTop: '12px', opacity: 0.9, whiteSpace: 'pre-line', margin: '12px 0 0 0' }}>
                         {language === 'fr-FR' ? step.subDescriptionFr : step.subDescriptionEn}
                       </p>
                     )}
                   </div>
 
                   {/* Footer hint */}
-                  <div className="text-xs text-white/60 text-center mt-4 border-t border-white/20 pt-3">
+                  <div style={{ 
+                    fontSize: '12px',
+                    color: 'rgba(255, 255, 255, 0.6)',
+                    textAlign: 'center',
+                    marginTop: '16px',
+                    borderTop: '1px solid rgba(255, 255, 255, 0.2)',
+                    paddingTop: '12px'
+                  }}>
                     {language === 'fr-FR' ? 'Cliquer pour revenir' : 'Click to go back'}
                   </div>
                 </div>
@@ -395,11 +450,26 @@ export function HowItWorksCondensed() {
         </div>
 
         {/* Title and Icon below card */}
-        <div className="flex flex-col items-center space-y-3">
-          <div className="w-12 h-12 bg-memopyk-orange/10 rounded-full flex items-center justify-center group-hover:bg-memopyk-orange/20 transition-colors duration-300">
-            <step.icon className="w-6 h-6 text-memopyk-orange" />
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '12px' }}>
+          <div style={{ 
+            width: '48px',
+            height: '48px',
+            backgroundColor: 'rgba(214, 124, 74, 0.1)',
+            borderRadius: '50%',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            transition: 'background-color 300ms'
+          }}
+          onMouseEnter={(e) => {
+            e.currentTarget.style.backgroundColor = 'rgba(214, 124, 74, 0.2)';
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.backgroundColor = 'rgba(214, 124, 74, 0.1)';
+          }}>
+            <step.icon style={{ width: '24px', height: '24px', color: '#D67C4A' }} />
           </div>
-          <h3 className="text-xl font-bold text-memopyk-dark-blue">
+          <h3 style={{ fontSize: '20px', fontWeight: 'bold', color: '#2A4759', margin: 0 }}>
             {language === 'fr-FR' ? step.titleFr : step.titleEn}
           </h3>
         </div>
@@ -416,7 +486,7 @@ export function HowItWorksCondensed() {
       descriptionFr:
         "Envoyez-nous simplement vos photos et vidéos, sans avoir à les trier ou les retoucher. Faites-nous part de votre vision et de ce qui compte le plus pour vous, soit en remplissant notre formulaire en ligne, soit en échangeant vos idées avec nous lors d'un appel téléphonique gratuit et convivial.",
       descriptionEn:
-        "Simply send us your photos and videos—no need to organize or edit anything beforehand. Share your vision and what matters most to you, either by filling out our easy online form or by discussing your ideas with us during a free, friendly phone call.",
+        'Simply send us your photos and videos without worrying about editing or organizing them first. Share your vision and what matters most to you, either by completing our online form or through a friendly, free phone conversation where we discuss your ideas.',
       subDescriptionFr:
         "Commencer est un jeu d'enfant : apportez-nous simplement vos souvenirs et vos envies, nous nous occupons du reste avec soin et créativité.",
       subDescriptionEn:
@@ -458,16 +528,30 @@ export function HowItWorksCondensed() {
   return (
     <section
       id="how-it-works"
-      className="py-12 bg-gradient-to-b from-memopyk-cream to-white"
+      style={{
+        padding: '48px 0',
+        background: 'linear-gradient(180deg, #F2EBDC 0%, white 100%)'
+      }}
       ref={sectionRef}
     >
-      <div className="max-w-6xl mx-auto px-6">
+      <div style={{ maxWidth: '1152px', margin: '0 auto', padding: '0 24px' }}>
         {/* Section Header */}
-        <div className="text-center mb-16">
-          <h2 className="text-4xl md:text-5xl font-bold text-memopyk-dark-blue mb-4">
+        <div style={{ textAlign: 'center', marginBottom: '64px' }}>
+          <h2 style={{ 
+            fontSize: 'clamp(2.25rem, 5vw, 3rem)',
+            fontWeight: 'bold',
+            color: '#2A4759',
+            marginBottom: '16px',
+            margin: '0 0 16px 0'
+          }}>
             {language === 'fr-FR' ? 'Comment ça marche' : 'How It Works'}
           </h2>
-          <p className="text-xl text-memopyk-dark-blue/70 max-w-3xl mx-auto">
+          <p style={{ 
+            fontSize: '20px',
+            color: 'rgba(42, 71, 89, 0.7)',
+            maxWidth: '768px',
+            margin: '0 auto'
+          }}>
             {language === 'fr-FR'
               ? '3 étapes pour transformer vos photos et vidéos en films passionnants'
               : '3 steps to turn your photos and videos into captivating movies'}
@@ -475,25 +559,24 @@ export function HowItWorksCondensed() {
         </div>
 
         {/* Steps Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
+        <div style={{ 
+          display: 'grid',
+          gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
+          gap: '32px',
+          marginBottom: '48px'
+        }}>
           {steps.map((step) => {
             const isFlipped = flippedCards.has(step.number);
-            const isHovered = hoveredCard === step.number;
 
             return (
               <MotionFlipCard
                 key={step.number}
                 step={step}
                 isFlipped={isFlipped}
-                isHovered={isHovered}
                 onCardClick={(e: React.PointerEvent<HTMLDivElement>) =>
                   handleCardClick(step.number, e)
                 }
                 onKeyDown={(e: React.KeyboardEvent) => handleKeyDown(step.number, e)}
-                onMouseEnter={() => setHoveredCard(step.number)}
-                onMouseLeave={() => setHoveredCard(null)}
-                onFocus={() => setHoveredCard(step.number)}
-                onBlur={() => setHoveredCard(null)}
               />
             );
           })}
