@@ -36,12 +36,23 @@ type UploadResult = {
   error?: string;
 };
 
+type SyncResult = {
+  ok?: boolean;
+  processed?: number;
+  inserted?: number;
+  updated_en?: number;
+  updated_fr?: number;
+  error?: string;
+};
+
 export default function AdminCountryNamesCard() {
   const [dragOver, setDragOver] = useState(false);
   const [parsedRows, setParsedRows] = useState<Array<{ iso3: string; display_name: string }>>([]);
   const [fileName, setFileName] = useState<string>("");
   const [uploading, setUploading] = useState<false | "en" | "fr">(false);
   const [result, setResult] = useState<UploadResult | null>(null);
+  const [syncing, setSyncing] = useState(false);
+  const [syncResult, setSyncResult] = useState<SyncResult | null>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
   async function readFile(file: File) {
@@ -98,6 +109,24 @@ export default function AdminCountryNamesCard() {
     const url = `/api/admin/country-names/download?lang=${lang}`;
     // open in a new tab to trigger the file download
     window.open(url, "_blank");
+  }
+
+  async function syncFromLibrary() {
+    try {
+      setSyncing(true);
+      setSyncResult(null);
+      const res = await fetch("/api/admin/country-names/sync-from-library", { method: "POST" });
+      const json = await res.json();
+      if (!res.ok) {
+        setSyncResult({ error: json?.error || "Sync failed." });
+        return;
+      }
+      setSyncResult(json);
+    } catch (e: any) {
+      setSyncResult({ error: e?.message || "Sync failed." });
+    } finally {
+      setSyncing(false);
+    }
   }
 
   return (
@@ -189,6 +218,25 @@ export default function AdminCountryNamesCard() {
             )}
           </div>
         )}
+
+        {syncResult && (
+          <div
+            className={`rounded-md border p-3 text-sm ${
+              syncResult.error ? "border-red-300 text-red-700" : "border-green-300 text-green-700"
+            } mt-2`}
+          >
+            {syncResult.error ? (
+              <div>{syncResult.error}</div>
+            ) : (
+              <div className="space-y-1">
+                <div><span className="font-medium">Processed:</span> {syncResult.processed}</div>
+                <div><span className="font-medium">Inserted:</span> {syncResult.inserted}</div>
+                <div><span className="font-medium">Updated EN:</span> {syncResult.updated_en}</div>
+                <div><span className="font-medium">Updated FR:</span> {syncResult.updated_fr}</div>
+              </div>
+            )}
+          </div>
+        )}
       </CardContent>
 
       <CardFooter className="flex flex-wrap items-center gap-2">
@@ -227,6 +275,16 @@ export default function AdminCountryNamesCard() {
           disabled={uploading !== false}
         >
           Télécharger FR
+        </Button>
+
+        <Button
+          variant="outline"
+          onClick={syncFromLibrary}
+          disabled={syncing || uploading !== false}
+          className="gap-2"
+        >
+          {syncing ? <Loader2 className="h-4 w-4 animate-spin" /> : <Upload className="h-4 w-4" />}
+          Sync from library
         </Button>
 
         <div className="ml-auto text-xs text-muted-foreground">
