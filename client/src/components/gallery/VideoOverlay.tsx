@@ -2,7 +2,7 @@ import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { Play, Pause, Volume2, VolumeX, X, ImageIcon, Clock } from 'lucide-react';
 import { useVideoAnalytics } from '@/hooks/useVideoAnalytics';
 import { useGA4VideoAnalytics } from '@/hooks/useGA4VideoAnalytics';
-import { trackVideoWatchTime, trackVideoStart } from '@/lib/analytics';
+import { trackVideoComplete, trackVideoStart } from '@/lib/analytics';
 
 interface VideoOverlayProps {
   videoUrl: string;
