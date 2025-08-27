@@ -857,54 +857,46 @@ html, body {
   }
 }
 
-/* === SOPHISTICATED FOLDED CORNER FLIP CARDS === */
+/* === PROFESSIONAL FOLDED CORNER FOLLOWING GUIDELINES === */
 
-/* Folded Corner Animation - Sophisticated Motion */
-.folded-corner-triangle {
-  transition: all 200ms cubic-bezier(0.25, 0.46, 0.45, 0.94);
+/* STEP 2 & 4: Professional folded corner animations following guidelines */
+.how-it-works-card {
+  /* STEP 4: Ensure no clipping of fold effect */
+  overflow: visible;
 }
 
-.folded-corner-preview {
-  transition: all 200ms cubic-bezier(0.25, 0.46, 0.45, 0.94);
+/* STEP 2: Smooth peel animation timing */
+.folded-corner-peel {
+  transition: all 180ms ease-out;
 }
 
-.folded-corner-shadow {
-  transition: opacity 200ms cubic-bezier(0.25, 0.46, 0.45, 0.94);
+.folded-corner-peel:hover {
+  transition: all 150ms ease-out;
 }
 
-.folded-corner-highlight {
-  transition: opacity 200ms cubic-bezier(0.25, 0.46, 0.45, 0.94);
-}
-
-/* Reduced Motion Support - Accessibility First */
+/* STEP 2 & 4: Reduced motion - static hint with faint shadow/opacity only */
 @media (prefers-reduced-motion: reduce) {
+  .folded-corner-peel {
+    transform: none !important;
+  }
+  
+  .folded-corner-peel {
+    transition: opacity 150ms ease, filter 150ms ease;
+  }
+  
+  /* Keep subtle shadow hint for affordance */
+  .how-it-works-card:hover .folded-corner-peel {
+    filter: drop-shadow(-1px -1px 3px rgba(0,0,0,0.2)) !important;
+    opacity: 0.9 !important;
+  }
+
   .flip-card {
     transition: transform 0.15s ease-in-out !important;
   }
-  
-  /* Disable subtle hover animations for reduced motion users */
-  .folded-corner-triangle,
-  .folded-corner-preview,
-  .folded-corner-shadow,
-  .folded-corner-highlight {
-    transition: none !important;
-  }
-  
-  /* Ensure static states for reduced motion */
-  .card-front:hover .folded-corner-triangle,
-  .card-front:focus .folded-corner-triangle {
-    transform: rotate(0deg) translateY(0px) translateX(0px) !important;
-    filter: drop-shadow(0 3px 6px rgba(0,0,0,0.15)) !important;
-  }
-  
-  .card-front:hover .folded-corner-preview,
-  .card-front:focus .folded-corner-preview {
-    transform: scale(1) !important;
-    opacity: 0.7 !important;
-  }
 }
 
-/* Enhanced Focus States for Better Accessibility */
+/* STEP 3: Focus styles - visible on whole card */
+.how-it-works-card:focus-visible,
 .card-front:focus-visible,
 .card-back:focus-visible {
   outline: 3px solid #D67C4A !important;
@@ -913,10 +905,20 @@ html, body {
   box-shadow: 0 0 0 6px rgba(214, 124, 74, 0.2) !important;
 }
 
-/* Touch/Mobile Optimization */
+/* STEP 3: Mobile touch optimizations */
 @media (hover: none) and (pointer: coarse) {
-  .card-front {
+  .how-it-works-card {
+    -webkit-tap-highlight-color: transparent;
+    /* STEP 3: Prevent selection artifacts during flip */
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    user-select: none;
     cursor: default;
+  }
+  
+  /* STEP 3: No hover on mobile - only nudge on first view and tap to flip */
+  .how-it-works-card:hover .folded-corner-peel {
+    transform: none;
   }
   
   /* Slightly larger corner for better touch targets */
@@ -926,16 +928,31 @@ html, body {
   }
 }
 
-/* High-contrast mode support */
+/* STEP 4: Anti-aliasing for sharp fold edges */
+.folded-corner-peel {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* STEP 2: Performance - GPU hints only while animating */
+.how-it-works-card:hover .folded-corner-peel {
+  will-change: transform, filter, opacity;
+}
+
+.how-it-works-card:not(:hover) .folded-corner-peel {
+  will-change: auto;
+}
+
+/* STEP 4: High contrast mode support */
 @media (prefers-contrast: high) {
+  .folded-corner-peel {
+    filter: contrast(1.1) brightness(0.95) !important;
+  }
+  
   .card-front:focus-visible,
   .card-back:focus-visible {
     outline: 4px solid #D67C4A !important;
     outline-offset: 2px !important;
-  }
-  
-  .folded-corner-preview {
-    filter: contrast(1.2) !important;
   }
 }
 

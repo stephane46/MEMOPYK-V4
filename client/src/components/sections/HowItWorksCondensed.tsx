@@ -165,78 +165,72 @@ export function HowItWorksCondensed() {
                           </div>
                         </div>
                         
-                        {/* Realistic Folded Paper Corner */}
-                        <div className="absolute bottom-0 right-0 w-20 h-20 overflow-hidden pointer-events-none">
-                          {/* The "back" content that shows when corner is peeled */}
+                        {/* STEP 1: Back-preview layer (always visible) */}
+                        <div 
+                          className="absolute bottom-0 right-0 pointer-events-none"
+                          style={{ overflow: 'visible' }}
+                        >
+                          {/* Back-peek strip - matches the back face design */}
                           <div 
-                            className="absolute -bottom-1 -right-1 w-24 h-24 rounded-tl-3xl"
+                            className="absolute bottom-0 right-0"
                             style={{
+                              width: '14px',
+                              height: '14px',
                               background: `linear-gradient(135deg, 
                                 rgba(214, 124, 74, 0.95) 0%, 
-                                rgba(214, 124, 74, 0.9) 30%, 
-                                rgba(42, 71, 89, 0.9) 70%, 
                                 rgba(42, 71, 89, 0.95) 100%)`,
+                              clipPath: 'polygon(0 100%, 100% 0, 100% 100%)',
                               transform: hoveredCard === step.number 
-                                ? 'scale(1.1) rotate(-1deg)' 
-                                : 'scale(1) rotate(0deg)',
-                              opacity: hoveredCard === step.number ? 0.95 : 0.8,
-                              transition: 'all 300ms cubic-bezier(0.4, 0, 0.2, 1)',
+                                ? 'scale(1.15)' 
+                                : 'scale(1)',
+                              opacity: hoveredCard === step.number ? 0.9 : 0.8,
+                              transition: 'all 180ms ease-out',
                               zIndex: 1
                             }}
                           >
-                            {/* Back content preview text */}
-                            <div className="absolute inset-0 flex items-center justify-center">
-                              <span 
-                                className="text-white font-medium opacity-70"
-                                style={{
-                                  fontSize: '11px',
-                                  textShadow: '0 1px 2px rgba(0,0,0,0.3)',
-                                  transform: 'rotate(-45deg)'
-                                }}
-                              >
-                                {language === 'fr-FR' ? 'Détails' : 'Details'}
-                              </span>
+                            {/* Blurred back content hint */}
+                            <div 
+                              className="absolute inset-0 flex items-center justify-center text-white text-[8px] font-medium opacity-60"
+                              style={{ 
+                                filter: 'blur(0.5px)',
+                                transform: 'rotate(-45deg)'
+                              }}
+                            >
+                              {language === 'fr-FR' ? '...' : '...'}
                             </div>
                           </div>
                           
-                          {/* The paper fold/peel effect */}
+                          {/* STEP 2: Fold overlay with smooth animation */}
                           <div 
                             className="absolute bottom-0 right-0"
                             style={{
                               width: 0,
                               height: 0,
-                              borderLeft: '80px solid white',
-                              borderTop: '80px solid transparent',
-                              filter: hoveredCard === step.number 
-                                ? 'drop-shadow(-4px -4px 8px rgba(0,0,0,0.15)) drop-shadow(-1px -1px 3px rgba(0,0,0,0.1))' 
-                                : 'drop-shadow(-2px -2px 4px rgba(0,0,0,0.1))',
-                              transform: hoveredCard === step.number 
-                                ? 'rotate(5deg) translate(2px, 2px)' 
-                                : 'rotate(0deg) translate(0px, 0px)',
-                              transition: 'all 300ms cubic-bezier(0.4, 0, 0.2, 1)',
+                              borderLeft: '16px solid transparent',
+                              borderBottom: '16px solid white',
                               transformOrigin: 'bottom right',
-                              zIndex: 3
+                              transform: hoveredCard === step.number 
+                                ? 'rotate(4deg) translate(-3px, -2px)' 
+                                : 'rotate(0deg) translate(0px, 0px)',
+                              // STEP 2: Two-shadow system for depth
+                              filter: hoveredCard === step.number
+                                ? 'drop-shadow(-2px -2px 4px rgba(0,0,0,0.3)) drop-shadow(-1px -1px 2px rgba(0,0,0,0.15))'
+                                : 'drop-shadow(-1px -1px 2px rgba(0,0,0,0.15))',
+                              transition: 'all 180ms ease-out',
+                              zIndex: 3,
+                              // STEP 4: Diagonal gradient for realism
+                              background: 'linear-gradient(135deg, rgba(255,255,255,1) 0%, rgba(250,250,250,1) 100%)',
+                              willChange: hoveredCard === step.number ? 'transform, filter' : 'auto'
                             }}
                           />
                           
-                          {/* Inner shadow for depth */}
+                          {/* STEP 4: Highlight line along fold axis */}
                           <div 
-                            className="absolute bottom-0 right-0 w-20 h-20 pointer-events-none"
+                            className="absolute bottom-0 right-0 w-4 h-4 pointer-events-none"
                             style={{
-                              background: 'linear-gradient(135deg, transparent 60%, rgba(0,0,0,0.1) 75%, rgba(0,0,0,0.05) 85%, transparent 100%)',
-                              opacity: hoveredCard === step.number ? 0.7 : 0.4,
-                              transition: 'opacity 300ms ease-out',
-                              zIndex: 2
-                            }}
-                          />
-                          
-                          {/* Highlight along the fold */}
-                          <div 
-                            className="absolute bottom-0 right-0 w-20 h-20 pointer-events-none"
-                            style={{
-                              background: 'linear-gradient(135deg, transparent 58%, rgba(255,255,255,0.4) 62%, rgba(255,255,255,0.1) 66%, transparent 70%)',
-                              opacity: hoveredCard === step.number ? 0.9 : 0.5,
-                              transition: 'opacity 300ms ease-out',
+                              background: 'linear-gradient(135deg, transparent 47%, rgba(255,255,255,0.6) 49%, rgba(255,255,255,0.2) 51%, transparent 53%)',
+                              opacity: hoveredCard === step.number ? 0.8 : 0.4,
+                              transition: 'opacity 180ms ease-out',
                               zIndex: 2
                             }}
                           />
