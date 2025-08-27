@@ -86,14 +86,9 @@ function App() {
     
     // Global unhandled promise rejection handler to prevent runtime error modal
     const handleUnhandledRejection = (event: PromiseRejectionEvent) => {
-      // Check if it's an OpenReplay related error
-      if (event.reason && typeof event.reason === 'object' && 
-          (event.reason.toString().includes('Failed to fetch') || 
-           event.reason.toString().includes('OpenReplay') ||
-           event.reason.toString().includes('tracker'))) {
-        console.warn('🚫 OpenReplay connection issue handled gracefully:', event.reason);
-        event.preventDefault(); // Prevent the unhandled rejection from causing runtime error modal
-      }
+      // Handle all unhandled rejections to prevent runtime error modal on mobile
+      console.warn('🚫 Unhandled rejection handled gracefully:', event.reason);
+      event.preventDefault(); // Prevent any unhandled rejection from causing runtime error modal
     };
     
     window.addEventListener('unhandledrejection', handleUnhandledRejection);

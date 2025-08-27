@@ -16,7 +16,16 @@ export function initOpenReplay(opts: InitOptions = {}) {
   const enabledFlag = import.meta.env.VITE_VIDEO_ANALYTICS_ENABLED;
   if (enabledFlag !== "true") return null;
   
-  // OpenReplay works on all devices - no need to disable on mobile
+  // Disable OpenReplay in development to prevent "Failed to fetch" runtime errors
+  // It works properly only in production deployment
+  const isDevelopment = window.location.hostname.includes('replit.dev') || 
+                       window.location.hostname === 'localhost' ||
+                       window.location.hostname === '127.0.0.1';
+  
+  if (isDevelopment) {
+    console.log("🎬 OpenReplay disabled in development - will work in production deployment");
+    return null;
+  }
   
   if (tracker) return tracker; // already started
 
