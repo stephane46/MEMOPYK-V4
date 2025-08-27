@@ -11,6 +11,7 @@ import { useToast } from '@/hooks/use-toast';
 import { BarChart3, TrendingUp, Play, Users, Clock, RefreshCw, Globe, Eye, UserCheck, MapPin, Languages, MousePointer, X, Ban, UserX, Settings, Shield, Calendar, Trash2, Edit2, Check, Plus } from 'lucide-react';
 import { TrendingGraphs } from './TrendingGraphs';
 import { CountryFlag } from './CountryFlag';
+import AdminCountryNamesCard from './AdminCountryNamesCard';
 import { formatFrenchDateTime } from '@/utils/date-format';
 import { formatInt, formatSeconds, formatPercent } from '@/utils/format';
 import { apiRequest } from '@/lib/queryClient';
@@ -942,6 +943,9 @@ export default function CleanGA4Analytics() {
               </div>
             </CardContent>
           </Card>
+
+          {/* Admin Country Names Management */}
+          <AdminCountryNamesCard />
 
           {/* Language & Traffic Sources */}
           <div className="grid gap-4 md:grid-cols-2">

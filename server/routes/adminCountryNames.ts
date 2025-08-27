@@ -1,6 +1,7 @@
 import { Router, Request, Response } from "express";
 import multer from "multer";
 import { parse } from "csv-parse";
+import { stringify } from "csv-stringify/sync";
 import { Pool } from "pg";
 
 const router = Router();
@@ -116,5 +117,34 @@ router.post(
     }
   }
 );
+
+router.get("/api/admin/country-names/download", async (req, res) => {
+  try {
+    assertAdmin(req); // keep your auth check
+
+    const lang = String(req.query.lang || "en").toLowerCase();
+    if (lang !== "en" && lang !== "fr") {
+      return res.status(400).json({ error: "Query param ?lang=en|fr is required" });
+    }
+
+    const col = lang === "fr" ? "display_name_fr" : "display_name_en";
+    const { rows } = await pool.query(
+      `select iso3, ${col} as display_name
+         from country_names
+        where ${col} is not null
+        order by iso3 asc`
+    );
+
+    const csv = stringify(rows, { header: true, columns: ["iso3", "display_name"] });
+    const filename = `country_names_${lang}.csv`;
+
+    res.setHeader("Content-Type", "text/csv; charset=utf-8");
+    res.setHeader("Content-Disposition", `attachment; filename="${filename}"`);
+    return res.send(csv);
+  } catch (err: any) {
+    console.error("[admin country-names download] error:", err);
+    return res.status(500).json({ error: err.message || "Download failed" });
+  }
+});
 
 export default router;
