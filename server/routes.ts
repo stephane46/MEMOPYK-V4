@@ -2982,40 +2982,68 @@ export async function registerRoutes(app: Express): Promise<void> {
   // Geo Distribution Analytics - GET countries and cities
   app.get("/api/analytics/geo", async (req, res) => {
     try {
-      const { limit = 50, from, to, lang, source, device } = req.query;
-      console.log(`📊 Geo distribution analytics request (limit: ${limit}) with filters:`, { from, to, lang, source, device });
+      const { limit = 50, from, to, lang, source, device, country } = req.query;
+      console.log(`📊 Geo distribution analytics request (limit: ${limit}) with filters:`, { from, to, lang, source, device, country });
       
       // Mock data structure for geographic distribution
-      const mockData = {
-        countries: [
-          { country: "France", sessions: 42, visitors: 37 },
-          { country: "United States", sessions: 15, visitors: 13 },
-          { country: "Canada", sessions: 12, visitors: 11 },
-          { country: "Belgium", sessions: 8, visitors: 7 },
-          { country: "Switzerland", sessions: 6, visitors: 5 },
-          { country: "Germany", sessions: 5, visitors: 4 },
-          { country: "United Kingdom", sessions: 4, visitors: 4 },
-          { country: "Spain", sessions: 3, visitors: 3 }
-        ],
-        cities: [
-          { country: "France", city: "Paris", sessions: 22, visitors: 20 },
-          { country: "France", city: "Lyon", sessions: 8, visitors: 7 },
-          { country: "France", city: "Marseille", sessions: 6, visitors: 5 },
-          { country: "France", city: "Toulouse", sessions: 4, visitors: 3 },
-          { country: "United States", city: "New York", sessions: 6, visitors: 5 },
-          { country: "United States", city: "Los Angeles", sessions: 4, visitors: 4 },
-          { country: "United States", city: "Chicago", sessions: 3, visitors: 2 },
-          { country: "Canada", city: "Toronto", sessions: 5, visitors: 5 },
-          { country: "Canada", city: "Montreal", sessions: 4, visitors: 3 },
-          { country: "Canada", city: "Vancouver", sessions: 3, visitors: 3 },
-          { country: "Belgium", city: "Brussels", sessions: 5, visitors: 4 },
-          { country: "Belgium", city: "Antwerp", sessions: 3, visitors: 3 },
-          { country: "Switzerland", city: "Zurich", sessions: 3, visitors: 2 },
-          { country: "Switzerland", city: "Geneva", sessions: 3, visitors: 3 }
-        ]
-      };
-      
-      res.json(mockData);
+      const allCountries = [
+        { country: "France", sessions: 42, visitors: 37 },
+        { country: "United States", sessions: 15, visitors: 13 },
+        { country: "Canada", sessions: 12, visitors: 11 },
+        { country: "Belgium", sessions: 8, visitors: 7 },
+        { country: "Switzerland", sessions: 6, visitors: 5 },
+        { country: "Germany", sessions: 5, visitors: 4 },
+        { country: "United Kingdom", sessions: 4, visitors: 4 },
+        { country: "Spain", sessions: 3, visitors: 3 }
+      ];
+
+      const allCities = [
+        { country: "France", city: "Paris", sessions: 22, visitors: 20 },
+        { country: "France", city: "Lyon", sessions: 8, visitors: 7 },
+        { country: "France", city: "Marseille", sessions: 6, visitors: 5 },
+        { country: "France", city: "Toulouse", sessions: 4, visitors: 3 },
+        { country: "France", city: "Nice", sessions: 3, visitors: 2 },
+        { country: "United States", city: "New York", sessions: 6, visitors: 5 },
+        { country: "United States", city: "Los Angeles", sessions: 4, visitors: 4 },
+        { country: "United States", city: "Chicago", sessions: 3, visitors: 2 },
+        { country: "United States", city: "Miami", sessions: 2, visitors: 2 },
+        { country: "Canada", city: "Toronto", sessions: 5, visitors: 5 },
+        { country: "Canada", city: "Montreal", sessions: 4, visitors: 3 },
+        { country: "Canada", city: "Vancouver", sessions: 3, visitors: 3 },
+        { country: "Belgium", city: "Brussels", sessions: 5, visitors: 4 },
+        { country: "Belgium", city: "Antwerp", sessions: 3, visitors: 3 },
+        { country: "Switzerland", city: "Zurich", sessions: 3, visitors: 2 },
+        { country: "Switzerland", city: "Geneva", sessions: 3, visitors: 3 },
+        { country: "Germany", city: "Berlin", sessions: 2, visitors: 2 },
+        { country: "Germany", city: "Munich", sessions: 2, visitors: 1 },
+        { country: "Germany", city: "Hamburg", sessions: 1, visitors: 1 },
+        { country: "United Kingdom", city: "London", sessions: 3, visitors: 3 },
+        { country: "United Kingdom", city: "Manchester", sessions: 1, visitors: 1 },
+        { country: "Spain", city: "Madrid", sessions: 2, visitors: 2 },
+        { country: "Spain", city: "Barcelona", sessions: 1, visitors: 1 }
+      ];
+
+      // If country parameter is provided, filter cities for that country
+      if (country) {
+        const filteredCities = allCities.filter(city => 
+          city.country.toLowerCase() === (country as string).toLowerCase()
+        );
+        
+        const mockData = {
+          countries: allCountries,
+          cities: filteredCities
+        };
+        
+        res.json(mockData);
+      } else {
+        // Return all data
+        const mockData = {
+          countries: allCountries,
+          cities: allCities
+        };
+        
+        res.json(mockData);
+      }
     } catch (error) {
       console.error('❌ Geo distribution analytics error:', error);
       res.status(500).json({ error: "Failed to get geo distribution data" });
