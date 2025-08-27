@@ -238,7 +238,7 @@ export default function AdminPage() {
     { id: 'cta', label: 'Boutons CTA', icon: Zap },
     { id: 'why-memopyk', label: 'Pourquoi MEMOPYK', icon: Users },
     { id: 'legal-docs', label: 'Documents Légaux', icon: FileText },
-    { id: 'analytics', label: '(Analytics)', icon: BarChart3 },
+    { id: 'analytics', label: 'Analytics (old)', icon: BarChart3 },
     { id: 'analytics-ga', label: '(Analytics GA)', icon: TrendingUp },
     { id: 'analytics-ga-clean', label: 'Analytics', icon: Sparkles },
     { id: 'cache-management', label: 'Cache GA4', icon: Database },

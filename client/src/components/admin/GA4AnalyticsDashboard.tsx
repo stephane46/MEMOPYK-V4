@@ -14,6 +14,8 @@ import { ClearCacheButton } from './ClearCacheButton';
 import AnalyticsDailyOverviewCard from './AnalyticsDailyOverviewCard';
 import { AnalyticsCleanupCard } from './AnalyticsCleanupCard';
 import { AnalyticsVideoPerformanceCard } from './AnalyticsVideoPerformanceCard';
+import AnalyticsCtaPerformanceCard from './AnalyticsCtaPerformanceCard';
+import AnalyticsGeoDistributionCard from './AnalyticsGeoDistributionCard';
 
 const GA4AnalyticsDashboard: React.FC = () => {
   const { startDate, endDate, locale } = useDashboardFilters();
@@ -120,23 +122,26 @@ const GA4AnalyticsDashboard: React.FC = () => {
         <RealtimePanel />
       </div>
 
-      {/* Video Performance Analytics Section */}
-      <div className="grid gap-4 lg:grid-cols-1">
-        {/* Comprehensive Video Performance with Milestones */}
-        <AnalyticsVideoPerformanceCard dateRange="30" />
-      </div>
-
-      {/* Daily Overview & Session Analytics Section */}
-      <div className="grid gap-4 lg:grid-cols-2">
-        {/* Daily Overview - Sessions & Visitors */}
+      {/* Compact Analytics Dashboard - 4 Main Cards */}
+      <div className="grid gap-6 lg:grid-cols-2">
+        {/* Overview Card */}
         <AnalyticsDailyOverviewCard />
         
-        {/* Recent Activity from Database */}
-        <RecentActivityPanel />
+        {/* Video Performance Card */}
+        <AnalyticsVideoPerformanceCard dateRange="30" />
+        
+        {/* CTA Performance Card */}
+        <AnalyticsCtaPerformanceCard />
+        
+        {/* Geographic Distribution Card */}
+        <AnalyticsGeoDistributionCard />
       </div>
 
-      {/* System Maintenance Section */}
-      <div className="grid gap-4 lg:grid-cols-1">
+      {/* Additional Analytics Panels */}
+      <div className="grid gap-4 lg:grid-cols-2">        
+        {/* Recent Activity from Database */}
+        <RecentActivityPanel />
+        
         {/* Analytics Data Cleanup */}
         <AnalyticsCleanupCard />
       </div>

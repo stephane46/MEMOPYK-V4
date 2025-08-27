@@ -2871,6 +2871,81 @@ export async function registerRoutes(app: Express): Promise<void> {
     }
   });
 
+  // CTA Performance Analytics - GET clicks by CTA ID and CTR per page
+  app.get("/api/analytics/cta-performance", async (req, res) => {
+    try {
+      console.log('📊 CTA performance analytics request');
+      
+      // Mock data structure for CTA performance
+      const mockData = {
+        summary: [
+          { cta_id: "contact", total_clicks: 24, unique_users: 20 },
+          { cta_id: "book_call", total_clicks: 18, unique_users: 15 },
+          { cta_id: "learn_more", total_clicks: 12, unique_users: 11 },
+          { cta_id: "get_started", total_clicks: 8, unique_users: 7 }
+        ],
+        by_page: [
+          { cta_id: "contact", page_path: "/fr-FR", clicks: 12, impressions: 120, ctr: 0.10 },
+          { cta_id: "contact", page_path: "/en-US", clicks: 8, impressions: 95, ctr: 0.084 },
+          { cta_id: "book_call", page_path: "/fr-FR", clicks: 10, impressions: 120, ctr: 0.083 },
+          { cta_id: "book_call", page_path: "/en-US", clicks: 6, impressions: 95, ctr: 0.063 },
+          { cta_id: "learn_more", page_path: "/fr-FR", clicks: 7, impressions: 120, ctr: 0.058 },
+          { cta_id: "learn_more", page_path: "/en-US", clicks: 4, impressions: 95, ctr: 0.042 },
+          { cta_id: "get_started", page_path: "/fr-FR", clicks: 5, impressions: 120, ctr: 0.042 },
+          { cta_id: "get_started", page_path: "/en-US", clicks: 2, impressions: 95, ctr: 0.021 }
+        ]
+      };
+      
+      res.json(mockData);
+    } catch (error) {
+      console.error('❌ CTA performance analytics error:', error);
+      res.status(500).json({ error: "Failed to get CTA performance data" });
+    }
+  });
+
+  // Geo Distribution Analytics - GET countries and cities
+  app.get("/api/analytics/geo", async (req, res) => {
+    try {
+      const { limit = 50 } = req.query;
+      console.log(`📊 Geo distribution analytics request (limit: ${limit})`);
+      
+      // Mock data structure for geographic distribution
+      const mockData = {
+        countries: [
+          { country: "France", sessions: 42, visitors: 37 },
+          { country: "United States", sessions: 15, visitors: 13 },
+          { country: "Canada", sessions: 12, visitors: 11 },
+          { country: "Belgium", sessions: 8, visitors: 7 },
+          { country: "Switzerland", sessions: 6, visitors: 5 },
+          { country: "Germany", sessions: 5, visitors: 4 },
+          { country: "United Kingdom", sessions: 4, visitors: 4 },
+          { country: "Spain", sessions: 3, visitors: 3 }
+        ],
+        cities: [
+          { country: "France", city: "Paris", sessions: 22, visitors: 20 },
+          { country: "France", city: "Lyon", sessions: 8, visitors: 7 },
+          { country: "France", city: "Marseille", sessions: 6, visitors: 5 },
+          { country: "France", city: "Toulouse", sessions: 4, visitors: 3 },
+          { country: "United States", city: "New York", sessions: 6, visitors: 5 },
+          { country: "United States", city: "Los Angeles", sessions: 4, visitors: 4 },
+          { country: "United States", city: "Chicago", sessions: 3, visitors: 2 },
+          { country: "Canada", city: "Toronto", sessions: 5, visitors: 5 },
+          { country: "Canada", city: "Montreal", sessions: 4, visitors: 3 },
+          { country: "Canada", city: "Vancouver", sessions: 3, visitors: 3 },
+          { country: "Belgium", city: "Brussels", sessions: 5, visitors: 4 },
+          { country: "Belgium", city: "Antwerp", sessions: 3, visitors: 3 },
+          { country: "Switzerland", city: "Zurich", sessions: 3, visitors: 2 },
+          { country: "Switzerland", city: "Geneva", sessions: 3, visitors: 3 }
+        ]
+      };
+      
+      res.json(mockData);
+    } catch (error) {
+      console.error('❌ Geo distribution analytics error:', error);
+      res.status(500).json({ error: "Failed to get geo distribution data" });
+    }
+  });
+
   // NUCLEAR CACHE-BUSTING VIDEO ANALYTICS - v1.0.187
   app.get("/api/analytics/fresh-video-data", async (req, res) => {
     try {
