@@ -449,11 +449,11 @@ export function HowItWorksCondensed() {
       number: 1,
       icon: Upload,
       titleFr: "Nous écoutons et rassemblons",
-      titleEn: "We listen and gather",
-      descriptionFr: "Envoyez-nous vos photos et vidéos telles quelles.\nDites-nous tout ce que vous avez en tête :\n•\tvia notre questionnaire\n•\tou via la séance de consultation gratuite",
-      descriptionEn: "Give us your photos and videos as they are\nTell us all about what you have in mind:\n•\tvia our questionnaire\n•\tor via the free consultation session",
-      subDescriptionFr: "",
-      subDescriptionEn: "",
+      titleEn: "We Listen & Gather",
+      descriptionFr: "Envoyez-nous simplement vos photos et vidéos, sans avoir à les trier ou les retoucher. Faites-nous part de votre vision et de ce qui compte le plus pour vous, soit en remplissant notre formulaire en ligne, soit en échangeant vos idées avec nous lors d'un appel téléphonique gratuit et convivial.",
+      descriptionEn: "Simply send us your photos and videos—no need to organize or edit anything beforehand. Share your vision and what matters most to you, either by filling out our easy online form or by discussing your ideas with us during a free, friendly phone call.",
+      subDescriptionFr: "Commencer est un jeu d'enfant : apportez-nous simplement vos souvenirs et vos envies, nous nous occupons du reste avec soin et créativité.",
+      subDescriptionEn: "Getting started is effortless: just bring us your memories and ideas, and we'll handle everything else with care and creativity.",
       image: "/images/How_we_work_Step1.png"
     },
     {
@@ -461,10 +461,10 @@ export function HowItWorksCondensed() {
       icon: Edit,
       titleFr: "Nous analysons", 
       titleEn: "We Analyze",
-      descriptionFr: "Nous étudions tous les éléments pour :\n•\trécupérer \"crème de la crème\"\n•\tdéfinir l'arc naratif le plus adapté, ainsi que toutes les spécificités (musique, durée, format,…)\n\nUn devis complet est soumis à votre validation",
-      descriptionEn: "Every detail and information are carefully studied to\n•\tselect the \"best of the best\"\n•\tdefine the most suitable storyline, as well as all the specific details (music, duration, format, etc.)\n\nA comprehensive quote is submitted for your approval.",
-      subDescriptionFr: "",
-      subDescriptionEn: "",
+      descriptionFr: "Nous examinons chaque détail avec attention et sélectionnons les plus beaux moments pour créer une histoire unique, selon vos préférences, avec la musique idéale, le bon rythme et le format qui vous convient. Vous recevez un devis précis et personnalisé avant toute étape, sans aucune mauvaise surprise.",
+      descriptionEn: "We carefully review every detail and handpick the most beautiful scenes to craft a unique, engaging story that fits your preferences, including perfect music, optimal timing, and the best format for your needs. You'll receive a clear, custom quote before we begin, so there are no surprises.",
+      subDescriptionFr: "Vos souvenirs deviennent un film sur-mesure, réalisé avec un souci du détail exceptionnel et une totale transparence à chaque étape.",
+      subDescriptionEn: "Your memories become a one-of-a-kind film, created with meticulous attention to detail and total transparency at every step.",
       image: "/images/How_we_work_Step2.png"
     },
     {
@@ -472,10 +472,10 @@ export function HowItWorksCondensed() {
       icon: Heart,
       titleFr: "Nous créons",
       titleEn: "We create", 
-      descriptionFr: "Prévoyez un délai de 1 à 3 semaines avant de recevoir la première version de votre film souvenir.\n2 séries de retours sont incluses",
-      descriptionEn: "Allow 1-3 weeks before receiving the first version of your souvenir film.\n2 rounds of feedback are included.",
-      subDescriptionFr: "",
-      subDescriptionEn: "",
+      descriptionFr: "Vous recevez la première version de votre film-souvenir personnalisé sous une à trois semaines, soigneusement monté et prêt à vous émouvoir. Deux séries de retours sont incluses pour affiner le montage jusqu'à ce qu'il corresponde parfaitement à vos attentes.",
+      descriptionEn: "You'll receive the first version of your personalized souvenir film within one to three weeks, carefully edited and ready to impress. Our process includes two full rounds of feedback, making it easy to fine-tune your movie until it's exactly right.",
+      subDescriptionFr: "Le résultat : un souvenir rien qu'à vous, livré rapidement et peaufiné selon vos envies jusqu'à la perfection.",
+      subDescriptionEn: "The result is a keepsake entirely your own, delivered quickly and refined with your input until it's just perfect.",
       image: "/images/How_we_work_Step3.png"
     }
   ];
