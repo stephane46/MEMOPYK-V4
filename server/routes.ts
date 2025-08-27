@@ -2128,6 +2128,45 @@ export async function registerRoutes(app: Express): Promise<void> {
     }
   });
 
+  // Analytics Daily Overview - GET daily overview data for charts
+  app.get("/api/analytics/overview", async (req, res) => {
+    try {
+      const { days } = req.query;
+      const daysNum = parseInt(days as string || '30');
+      console.log(`📊 Analytics daily overview request for ${daysNum} days`);
+      
+      // For now, return mock data structure that matches the expected format
+      // This will be replaced with actual Supabase analytics_daily_overview view query
+      const mockData = [];
+      const today = new Date();
+      
+      for (let i = daysNum - 1; i >= 0; i--) {
+        const date = new Date(today);
+        date.setDate(date.getDate() - i);
+        const dayStr = date.toISOString().split('T')[0]; // YYYY-MM-DD format
+        
+        // Generate realistic mock data
+        const sessions = Math.floor(Math.random() * 50) + 50; // 50-100 sessions
+        const uniqueVisitors = Math.floor(sessions * 0.8); // 80% of sessions are unique
+        const returningVisitors = Math.floor(uniqueVisitors * 0.2); // 20% returning
+        const avgSessionDuration = Math.floor(Math.random() * 300) + 300; // 5-10 minutes
+        
+        mockData.push({
+          day: dayStr,
+          sessions,
+          unique_visitors: uniqueVisitors,
+          returning_visitors: returningVisitors,
+          avg_session_duration: avgSessionDuration
+        });
+      }
+      
+      res.json(mockData);
+    } catch (error) {
+      console.error('❌ Analytics overview error:', error);
+      res.status(500).json({ error: "Failed to get analytics overview" });
+    }
+  });
+
   // Analytics Time Series - GET time series data
   app.get("/api/analytics/time-series", async (req, res) => {
     try {

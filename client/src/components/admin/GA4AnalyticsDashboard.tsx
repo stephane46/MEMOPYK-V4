@@ -11,6 +11,8 @@ import { TrendChart } from './TrendChart';
 import { RealtimePanel } from './RealtimePanel';
 import { RecentActivityPanel } from './RecentActivityPanel';
 import { ClearCacheButton } from './ClearCacheButton';
+import AnalyticsDailyOverviewCard from './AnalyticsDailyOverviewCard';
+import { AnalyticsCleanupCard } from './AnalyticsCleanupCard';
 
 const GA4AnalyticsDashboard: React.FC = () => {
   const { startDate, endDate, locale } = useDashboardFilters();
@@ -117,10 +119,19 @@ const GA4AnalyticsDashboard: React.FC = () => {
         <RealtimePanel />
       </div>
 
-      {/* Additional Activity Panel */}
+      {/* Daily Overview & Video Analytics Section */}
       <div className="grid gap-4 lg:grid-cols-2">
+        {/* Daily Overview - Sessions & Visitors */}
+        <AnalyticsDailyOverviewCard />
+        
         {/* Recent Activity from Database */}
         <RecentActivityPanel />
+      </div>
+
+      {/* System Maintenance Section */}
+      <div className="grid gap-4 lg:grid-cols-1">
+        {/* Analytics Data Cleanup */}
+        <AnalyticsCleanupCard />
       </div>
     </div>
   );
