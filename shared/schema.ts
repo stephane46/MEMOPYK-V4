@@ -299,6 +299,8 @@ export const analyticsSessions = pgTable("analytics_sessions", {
   referrer: text("referrer"),
   language: text("language"),
   country: text("country"),
+  countryIso2: text("country_iso2"), // ISO2 country code (e.g., FR, US, CA)
+  countryIso3: text("country_iso3"), // ISO3 country code (e.g., FRA, USA, CAN)
   city: text("city"),
   createdAt: timestamp("created_at").defaultNow(),
   endedAt: timestamp("ended_at"),

@@ -3,6 +3,9 @@
 
 const { BigQuery } = require('@google-cloud/bigquery');
 const { createClient } = require('@supabase/supabase-js');
+const countries = require('i18n-iso-countries');
+const en = require('i18n-iso-countries/langs/en.json');
+countries.registerLocale(en);
 
 class GA4SyncService {
   constructor() {
@@ -23,6 +26,34 @@ class GA4SyncService {
       credentials: JSON.parse(process.env.GA4_SERVICE_ACCOUNT_KEY)
     });
     
+    // Country aliases for geo mapping
+    this.COUNTRY_ALIASES = new Map([
+      ["usa", "United States"],
+      ["u.s.a.", "United States"],
+      ["us", "United States"],
+      ["uk", "United Kingdom"],
+      ["u.k.", "United Kingdom"],
+      ["south korea", "Korea, Republic of"],
+      ["north korea", "Korea, Democratic People's Republic of"],
+      ["russia", "Russian Federation"],
+      ["vietnam", "Viet Nam"],
+      ["laos", "Lao People's Democratic Republic"],
+      ["moldova", "Moldova, Republic of"],
+      ["iran", "Iran, Islamic Republic of"],
+      ["syria", "Syrian Arab Republic"],
+      ["tanzania", "Tanzania, United Republic of"],
+      ["bolivia", "Bolivia, Plurinational State of"],
+      ["venezuela", "Venezuela, Bolivarian Republic of"],
+      ["czech republic", "Czechia"],
+      ["cape verde", "Cabo Verde"],
+      ["ivory coast", "Côte d'Ivoire"],
+      ["congo-brazzaville", "Congo"],
+      ["congo-kinshasa", "Congo, The Democratic Republic of the"],
+      ["palestine", "Palestine, State of"],
+      ["swaziland", "Eswatini"],
+      ["macedonia", "North Macedonia"],
+    ]);
+    
     console.log(`🔄 GA4 Sync Service initialized`);
     console.log(`📊 Property: ${this.GA4_PROPERTY_ID}`);
     console.log(`🗄️ Dataset: ${this.BIGQUERY_DATASET}`);
@@ -33,6 +64,42 @@ class GA4SyncService {
     const yesterday = new Date();
     yesterday.setDate(yesterday.getDate() - 1);
     return yesterday.toISOString().slice(0, 10).replace(/-/g, '');
+  }
+
+  // Normalize country name using aliases
+  normalizeCountryName(name) {
+    if (!name) return "";
+    const n = String(name).trim().toLowerCase();
+    return this.COUNTRY_ALIASES.get(n) || name;
+  }
+
+  // Resolve country ISO codes from country name
+  resolveCountryCodes(countryName) {
+    if (!countryName) return { iso2: null, iso3: null };
+    const canonical = this.normalizeCountryName(countryName);
+    
+    // Try exact match
+    let iso2 = countries.getAlpha2Code(canonical, "en");
+    if (!iso2) {
+      // Try loose match over all names
+      const candidates = countries.getNames("en");
+      const target = canonical.toLowerCase();
+      for (const [code2, label] of Object.entries(candidates)) {
+        if (label.toLowerCase() === target) { 
+          iso2 = code2; 
+          break; 
+        }
+      }
+    }
+    if (!iso2) {
+      // Log unresolved countries for debugging
+      if (countryName && countryName !== "Unknown") {
+        console.warn("[geo] Unresolved country:", countryName);
+      }
+      return { iso2: null, iso3: null };
+    }
+    const iso3 = countries.alpha2ToAlpha3(iso2) || null;
+    return { iso2, iso3 };
   }
 
   // Start sync run tracking
@@ -179,19 +246,31 @@ class GA4SyncService {
     return rows;
   }
 
-  // Upsert sessions to Supabase
+  // Upsert sessions to Supabase with ISO code resolution
   async upsertSessions(sessions) {
     if (sessions.length === 0) return 0;
     
+    // Enhance sessions with ISO codes
+    const enhancedSessions = sessions.map(session => {
+      const countryName = session.country || null;
+      const { iso2, iso3 } = this.resolveCountryCodes(countryName);
+      
+      return {
+        ...session,
+        country_iso2: iso2,
+        country_iso3: iso3
+      };
+    });
+    
     const { data, error } = await this.supabase
       .from('analytics_sessions')
-      .upsert(sessions, { 
+      .upsert(enhancedSessions, { 
         onConflict: 'session_id',
         ignoreDuplicates: false 
       });
       
     if (error) throw error;
-    return sessions.length;
+    return enhancedSessions.length;
   }
 
   // Upsert pageviews to Supabase

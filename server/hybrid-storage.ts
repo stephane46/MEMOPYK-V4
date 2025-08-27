@@ -4,6 +4,9 @@ import { createClient } from '@supabase/supabase-js';
 import { db } from './db';
 import { eq, and, desc, asc, sql, gte } from 'drizzle-orm';
 import { ctaSettings, heroTextSettings, analyticsViews, analyticsSessions, whyMemopykCards } from '../shared/schema';
+const countries = require('i18n-iso-countries');
+const en = require('i18n-iso-countries/langs/en.json');
+countries.registerLocale(en);
 
 export interface HybridStorageInterface {
   // Hero videos
@@ -4003,11 +4006,52 @@ Allow: /contact`;
       );
     };
 
+    // Country aliases for better matching
+    const COUNTRY_ALIASES = new Map([
+      ["usa", "United States"], ["u.s.a.", "United States"], ["us", "United States"],
+      ["uk", "United Kingdom"], ["u.k.", "United Kingdom"],
+      ["south korea", "Korea, Republic of"], ["north korea", "Korea, Democratic People's Republic of"],
+      ["russia", "Russian Federation"], ["vietnam", "Viet Nam"], ["iran", "Iran, Islamic Republic of"],
+      ["czech republic", "Czechia"], ["macedonia", "North Macedonia"]
+    ]);
+    
+    const resolveCountryCodes = (countryName: string) => {
+      if (!countryName) return { iso2: null, iso3: null };
+      const normalized = COUNTRY_ALIASES.get(countryName.toLowerCase()) || countryName;
+      
+      let iso2 = countries.getAlpha2Code(normalized, "en");
+      if (!iso2) {
+        // Try loose match
+        const candidates = countries.getNames("en");
+        const target = normalized.toLowerCase();
+        for (const [code2, label] of Object.entries(candidates)) {
+          if ((label as string).toLowerCase() === target) { 
+            iso2 = code2; 
+            break; 
+          }
+        }
+      }
+      if (!iso2) {
+        if (countryName && countryName !== "Unknown") {
+          console.warn("[geo] Unresolved country:", countryName);
+        }
+        return { iso2: null, iso3: null };
+      }
+      const iso3 = countries.alpha2ToAlpha3(iso2) || null;
+      return { iso2, iso3 };
+    };
+
+    // Resolve ISO codes for the country
+    const countryName = sessionData.country || 'Unknown';
+    const { iso2, iso3 } = resolveCountryCodes(countryName);
+
     // Generate session data (move outside try block so it's accessible in JSON fallback)
     const sessionWithId = {
       id: `session_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
       session_id: sessionData.session_id || `session_${Date.now()}`,
-      country: sessionData.country || 'Unknown',
+      country: countryName,
+      country_iso2: iso2,  // NEW: ISO2 code
+      country_iso3: iso3,  // NEW: ISO3 code
       region: sessionData.region || 'Unknown', 
       city: sessionData.city || 'Unknown',
       language: sessionData.language || 'en-US',
@@ -4032,7 +4076,9 @@ Allow: /contact`;
         userAgent: sessionData.user_agent || '',
         referrer: sessionData.referrer || '',
         language: sessionData.language || 'en-US',
-        country: sessionData.country || 'Unknown',
+        country: countryName,
+        countryIso2: iso2,    // NEW: ISO2 code
+        countryIso3: iso3,    // NEW: ISO3 code
         city: sessionData.city || 'Unknown',
         pageViews: sessionData.page_views || 0,
         isBot: sessionData.is_bot || false,
