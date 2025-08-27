@@ -3,9 +3,15 @@ import multer from "multer";
 import { parse } from "csv-parse";
 import { stringify } from "csv-stringify/sync";
 import { Pool } from "pg";
+import countries from "i18n-iso-countries";
+import en from "i18n-iso-countries/langs/en.json" assert { type: "json" };
+import fr from "i18n-iso-countries/langs/fr.json" assert { type: "json" };
 
 const router = Router();
 const pool = new Pool({ connectionString: process.env.DATABASE_URL });
+
+countries.registerLocale(en);
+countries.registerLocale(fr);
 
 // TODO: replace with your real auth/ACL check
 function assertAdmin(req: Request) {
@@ -144,6 +150,71 @@ router.get("/api/admin/country-names/download", async (req, res) => {
   } catch (err: any) {
     console.error("[admin country-names download] error:", err);
     return res.status(500).json({ error: err.message || "Download failed" });
+  }
+});
+
+router.post("/api/admin/country-names/sync-from-library", async (req, res) => {
+  try {
+    assertAdmin(req); // keep your auth check
+
+    const enMap = countries.getNames("en");
+    const frMap = countries.getNames("fr");
+
+    console.log(`[admin country-names sync] Processing ${Object.keys(enMap).length} countries from library`);
+
+    let inserted = 0, updatedEn = 0, updatedFr = 0;
+    let processed = 0;
+
+    for (const [iso2, nameEn] of Object.entries(enMap)) {
+      const iso3 = countries.alpha2ToAlpha3(iso2);
+      if (!iso3) continue;
+
+      try {
+        // First upsert with EN name
+        const qEn = `
+          INSERT INTO country_names (iso3, display_name, display_name_en, created_at, updated_at)
+          VALUES ($1, $2, $3, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+          ON CONFLICT (iso3) DO UPDATE SET 
+            display_name_en = EXCLUDED.display_name_en,
+            updated_at = CURRENT_TIMESTAMP
+          RETURNING (xmax = 0) as inserted
+        `;
+        const { rows: rEn } = await pool.query(qEn, [iso3, nameEn, nameEn]);
+        if (rEn[0]?.inserted) inserted++; else updatedEn++;
+
+        // Then update with FR name
+        const nameFr = frMap[iso2] || nameEn;
+        const qFr = `
+          UPDATE country_names
+          SET display_name_fr = $2, updated_at = CURRENT_TIMESTAMP
+          WHERE iso3 = $1
+        `;
+        await pool.query(qFr, [iso3, nameFr]);
+        updatedFr++;
+        processed++;
+
+        // Log progress every 50 countries
+        if (processed % 50 === 0) {
+          console.log(`[admin country-names sync] Processed ${processed} countries so far...`);
+        }
+
+      } catch (error) {
+        console.error(`[admin country-names sync] Error processing ${iso3}:`, error);
+      }
+    }
+
+    console.log(`[admin country-names sync] Successfully synced: ${inserted} inserted, ${updatedEn} updated (EN), ${updatedFr} updated (FR)`);
+
+    return res.json({
+      ok: true,
+      processed,
+      inserted,
+      updated_en: updatedEn,
+      updated_fr: updatedFr,
+    });
+  } catch (err: any) {
+    console.error("[admin country-names sync] error:", err);
+    return res.status(500).json({ error: err.message || "Sync failed" });
   }
 });
 
