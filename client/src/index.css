@@ -489,10 +489,14 @@ div[style*="position: fixed"][style*="top: 0"][style*="left: 0"] > div[style*="b
   background: #ffffff !important;
 }
 
-/* FORCE OPAQUE WHITE BACKGROUND FOR ANALYTICS MODAL */
+/* FORCE OPAQUE WHITE BACKGROUND FOR ANALYTICS MODAL AND TOOLTIPS */
 .analytics-modal-content,
 div.analytics-modal-content,
-[data-testid="analytics-visitor-modal"] {
+[data-testid="analytics-visitor-modal"],
+.recharts-tooltip-wrapper,
+.recharts-default-tooltip,
+[data-radix-tooltip-content],
+[data-radix-dialog-content] {
   background-color: #ffffff !important;
   background: #ffffff !important;
   background-image: none !important;
@@ -506,6 +510,9 @@ div.analytics-modal-content,
   backface-visibility: hidden !important;
   /* Prevent any inheritance of transparency */
   mix-blend-mode: normal !important;
+  /* Add border and shadow for better visibility */
+  border: 1px solid #e5e7eb !important;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1) !important;
 }
 
 [data-radix-popper-content-wrapper] > div {
