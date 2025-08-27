@@ -81,7 +81,7 @@ export default function VideoOverlay({
       : videoUrl.split('/').pop()?.split('?')[0] || 'unknown';
       
     // GA4 Analytics: Track video open (modal/overlay opened) using proper analytics function
-    trackVideoStart(videoId, 0, 0, title);
+    trackVideoStart(videoId, title);
     
     // Start video buffering immediately for faster transition
     const video = videoRef.current;
@@ -94,7 +94,7 @@ export default function VideoOverlay({
       const video = videoRef.current;
       if (video && video.currentTime > 0) {
         const finalWatchTime = Math.round(video.currentTime);
-        trackVideoWatchTime(videoId, finalWatchTime, title);
+        trackVideoComplete(videoId, finalWatchTime, title);
       }
     };
   }, [title]); // Include title for cleanup tracking
@@ -285,7 +285,7 @@ export default function VideoOverlay({
       
     if (duration > 0 && currentTime > 0) {
       // Track watch time when video is paused using proper analytics function
-      trackVideoWatchTime(videoId, Math.round(currentTime), title);
+      trackVideoComplete(videoId, Math.round(currentTime), title);
     }
   }, [duration, currentTime, title, videoUrl, language]);
 
@@ -301,7 +301,7 @@ export default function VideoOverlay({
       
     if (duration > 0) {
       // Track final watch time when video ends using proper analytics function
-      trackVideoWatchTime(videoId, Math.round(duration), title);
+      trackVideoComplete(videoId, Math.round(duration), title);
     }
     
     // Old VIDEO ANALYTICS DISABLED - Switch to GA4-only for video analytics
@@ -425,7 +425,7 @@ export default function VideoOverlay({
     if (!isNaN(actualDuration) && actualDuration > 0 && actualCurrentTime > 0) {
       const finalWatchTime = Math.round(actualCurrentTime);
       console.log(`📊 GA4 VIDEO CLOSE: ${videoId} watched ${finalWatchTime}s (from video.currentTime)`);
-      trackVideoWatchTime(videoId, finalWatchTime, title);
+      trackVideoComplete(videoId, finalWatchTime, title);
     } else {
       console.log(`📊 GA4 VIDEO CLOSE: No tracking - duration:${actualDuration}, currentTime:${actualCurrentTime}`);
     }
@@ -520,7 +520,7 @@ export default function VideoOverlay({
         
         const finalWatchTime = Math.round(video.currentTime);
         console.log(`📊 GA4 VIDEO UNMOUNT: ${videoId} watched ${finalWatchTime}s (component cleanup)`);
-        trackVideoWatchTime(videoId, finalWatchTime, title);
+        trackVideoComplete(videoId, finalWatchTime, title);
       }
     };
   }, [videoUrl, title]);
