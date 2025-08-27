@@ -267,7 +267,7 @@ export function HowItWorksCondensed() {
       },
       back: {
         rotateY: shouldReduceMotion ? 0 : 180,
-        opacity: shouldReduceMotion ? 0.8 : 1,
+        opacity: shouldReduceMotion ? 0 : 1,
         scale: 1,
         transition: { 
           type: shouldReduceMotion ? "tween" : "spring",
@@ -281,7 +281,7 @@ export function HowItWorksCondensed() {
 
     const backVariants = {
       front: {
-        rotateY: shouldReduceMotion ? 0 : -180,
+        rotateY: shouldReduceMotion ? 0 : 180,
         opacity: shouldReduceMotion ? 0 : 1,
         scale: 1,
         transition: { 
@@ -333,7 +333,7 @@ export function HowItWorksCondensed() {
             animate={isFlipped ? 'back' : 'front'}
             style={{
               backfaceVisibility: shouldReduceMotion ? 'visible' : 'hidden',
-              position: isFlipped && !shouldReduceMotion ? 'absolute' : 'relative',
+              position: 'relative',
               width: '100%',
               zIndex: isFlipped ? 1 : 2
             }}
@@ -364,14 +364,16 @@ export function HowItWorksCondensed() {
                 </div>
               </div>
               
-              {/* Framer Motion Corner System */}
-              <MotionCornerSystem 
-                cardNumber={step.number}
-                isHovered={isHovered}
-                isFlipped={isFlipped}
-                backFaceGradient={backFaceGradient}
-                shouldReduceMotion={shouldReduceMotion}
-              />
+              {/* Framer Motion Corner System - Only show when not flipped */}
+              {!isFlipped && (
+                <MotionCornerSystem 
+                  cardNumber={step.number}
+                  isHovered={isHovered}
+                  isFlipped={isFlipped}
+                  backFaceGradient={backFaceGradient}
+                  shouldReduceMotion={shouldReduceMotion}
+                />
+              )}
             </div>
           </motion.div>
             
@@ -382,7 +384,9 @@ export function HowItWorksCondensed() {
             animate={isFlipped ? 'back' : 'front'}
             style={{
               backfaceVisibility: shouldReduceMotion ? 'visible' : 'hidden',
-              position: !isFlipped && !shouldReduceMotion ? 'absolute' : 'relative',
+              position: 'absolute',
+              top: 0,
+              left: 0,
               width: '100%',
               minHeight: '400px',
               zIndex: isFlipped ? 2 : 1
