@@ -35,6 +35,7 @@ export default function AnalyticsWorldMapCard() {
   const { filters, setFilters, comparison } = React.useContext(GlobalFilterContext);
 
   const [loading, setLoading] = React.useState(true);
+  const [geoLoading, setGeoLoading] = React.useState(true);
   const [error, setError] = React.useState<string | null>(null);
 
   const [baselineCountries, setBaselineCountries] = React.useState<CountryRow[]>([]);
@@ -135,16 +136,28 @@ export default function AnalyticsWorldMapCard() {
                   >
                     <Geographies geography={geoUrl}>
                       {({ geographies }) => {
-                        // Debug: Check the first few geographies to understand the data structure
-                        if (geographies.length > 0 && !(window as any).mapDebugLogged) {
-                          console.log("🗺️ WORLD MAP DEBUG: Geography properties:", geographies[0]?.properties);
-                          console.log("🗺️ WORLD MAP DEBUG: Available property keys:", Object.keys(geographies[0]?.properties || {}));
+                        // Debug: Always log to understand the mapping issue
+                        console.log("🗺️ WORLD MAP DEBUG: Geographies loaded:", geographies.length);
+                        if (geographies.length > 0) {
+                          const firstGeo = geographies[0]?.properties;
+                          console.log("🗺️ WORLD MAP DEBUG: First geography properties:", firstGeo);
+                          console.log("🗺️ WORLD MAP DEBUG: Available property keys:", Object.keys(firstGeo || {}));
                           console.log("🗺️ WORLD MAP DEBUG: Our analytics ISO3 codes sample:", Array.from(baselineMap.keys()).slice(0, 10));
-                          (window as any).mapDebugLogged = true;
+                          console.log("🗺️ WORLD MAP DEBUG: Analytics data size:", baselineCountries.length, "countries");
                         }
                         return geographies.map((geo) => {
                           // Try multiple possible ISO3 property names from the geography data
-                          const iso3 = geo.properties.ISO_A3 || geo.properties.ISO3 || geo.properties.iso3 || geo.properties.ADM0_A3;
+                          const iso3 = geo.properties.ISO_A3 || geo.properties.ADM0_A3 || geo.properties.ISO3 || geo.properties.iso3;
+                          // Additional debug for mapping issues
+                          if (geo.properties.NAME === "France" || geo.properties.NAME_EN === "France") {
+                            console.log("🇫🇷 FRANCE DEBUG:", {
+                              ISO_A3: geo.properties.ISO_A3,
+                              ADM0_A3: geo.properties.ADM0_A3,
+                              NAME: geo.properties.NAME,
+                              final_iso3: iso3,
+                              has_analytics_data: baselineMap.has(iso3)
+                            });
+                          }
                           const base = baselineMap.get(iso3);
                           const cmp = comparisonMap.get(iso3);
                           const sessions = base?.sessions ?? 0;
