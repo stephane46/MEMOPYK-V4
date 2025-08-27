@@ -126,7 +126,7 @@ export default function AnalyticsWorldMapCard() {
           <div className="relative flex flex-col lg:flex-row gap-4">
             {/* Map */}
             <div className={`w-full ${selectedIso3 ? "lg:w-2/3" : ""}`}>
-              <div className="h-[420px] w-full">
+              <div className="h-[420px] w-full overflow-hidden border border-gray-200 rounded-lg">
                 <ComposableMap projectionConfig={{ scale: 140 }}>
                   <ZoomableGroup
                     zoom={position.zoom}
@@ -134,9 +134,17 @@ export default function AnalyticsWorldMapCard() {
                     onMoveEnd={(pos) => setPosition({ coordinates: pos.coordinates as [number, number], zoom: pos.zoom })}
                   >
                     <Geographies geography={geoUrl}>
-                      {({ geographies }) =>
-                        geographies.map((geo) => {
-                          const iso3 = geo.properties.ISO_A3;
+                      {({ geographies }) => {
+                        // Debug: Check the first few geographies to understand the data structure
+                        if (geographies.length > 0 && !(window as any).mapDebugLogged) {
+                          console.log("🗺️ WORLD MAP DEBUG: Geography properties:", geographies[0]?.properties);
+                          console.log("🗺️ WORLD MAP DEBUG: Available property keys:", Object.keys(geographies[0]?.properties || {}));
+                          console.log("🗺️ WORLD MAP DEBUG: Our analytics ISO3 codes sample:", Array.from(baselineMap.keys()).slice(0, 10));
+                          (window as any).mapDebugLogged = true;
+                        }
+                        return geographies.map((geo) => {
+                          // Try multiple possible ISO3 property names from the geography data
+                          const iso3 = geo.properties.ISO_A3 || geo.properties.ISO3 || geo.properties.iso3 || geo.properties.ADM0_A3;
                           const base = baselineMap.get(iso3);
                           const cmp = comparisonMap.get(iso3);
                           const sessions = base?.sessions ?? 0;
@@ -174,8 +182,8 @@ export default function AnalyticsWorldMapCard() {
                               }}
                             />
                           );
-                        })
-                      }
+                        });
+                      }}
                     </Geographies>
                   </ZoomableGroup>
                 </ComposableMap>
