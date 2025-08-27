@@ -49,7 +49,7 @@ function rangeFromDays(days: number): { from?: string; to?: string } {
 }
 
 export default function AnalyticsDailyOverviewCard() {
-  const { filters, comparison } = React.useContext(GlobalFilterContext);
+  const { filters, comparison, periodComparison } = React.useContext(GlobalFilterContext);
   const [days, setDays] = React.useState<number>(30);
   const [loading, setLoading] = React.useState<boolean>(true);
   const [data, setData] = React.useState<any[]>([]);
@@ -61,11 +61,8 @@ export default function AnalyticsDailyOverviewCard() {
     setLoading(true);
     setError(null);
     try {
-      // Add comparison parameters if enabled
-      let url = withFilters(`/api/analytics/overview?days=${days}`, filters);
-      if (comparison.enabled) {
-        url += `&compare=true&compareMode=${comparison.mode}`;
-      }
+      // Use the enhanced withFilters function for comparison parameters
+      const url = withFilters(`/api/analytics/overview?days=${days}`, filters, comparison, periodComparison);
       
       const res = await fetch(url);
       if (!res.ok) throw new Error(`Overview fetch failed: ${res.status}`);
@@ -102,7 +99,7 @@ export default function AnalyticsDailyOverviewCard() {
     } finally {
       setLoading(false);
     }
-  }, [days, filters, comparison]);
+  }, [days, filters, comparison, periodComparison]);
 
   React.useEffect(() => {
     load();

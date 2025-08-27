@@ -14,16 +14,27 @@ export type ComparisonConfig = {
   mode: "period" | "language" | "device" | "source";
 };
 
+export type PeriodMode = "week" | "month" | "auto";
+
+export type PeriodComparisonConfig = {
+  enabled: boolean;
+  mode: PeriodMode;
+};
+
 export const GlobalFilterContext = React.createContext<{
   filters: GlobalFilter;
   setFilters: (f: GlobalFilter) => void;
   comparison: ComparisonConfig;
   setComparison: (c: ComparisonConfig) => void;
+  periodComparison: PeriodComparisonConfig;
+  setPeriodComparison: (p: PeriodComparisonConfig) => void;
 }>({
   filters: { range: {} },
   setFilters: () => {},
   comparison: { enabled: false, mode: "period" },
   setComparison: () => {},
+  periodComparison: { enabled: false, mode: "week" },
+  setPeriodComparison: () => {},
 });
 
 export function GlobalFilterProvider({ children }: { children: React.ReactNode }) {
@@ -43,6 +54,14 @@ export function GlobalFilterProvider({ children }: { children: React.ReactNode }
     }
   });
 
+  const [periodComparison, setPeriodComparison] = React.useState<PeriodComparisonConfig>(() => {
+    try {
+      return JSON.parse(localStorage.getItem("global-period-comparison") || '{"enabled": false, "mode": "week"}');
+    } catch {
+      return { enabled: false, mode: "week" };
+    }
+  });
+
   React.useEffect(() => {
     localStorage.setItem("global-filters", JSON.stringify(filters));
   }, [filters]);
@@ -51,8 +70,12 @@ export function GlobalFilterProvider({ children }: { children: React.ReactNode }
     localStorage.setItem("global-comparison", JSON.stringify(comparison));
   }, [comparison]);
 
+  React.useEffect(() => {
+    localStorage.setItem("global-period-comparison", JSON.stringify(periodComparison));
+  }, [periodComparison]);
+
   return (
-    <GlobalFilterContext.Provider value={{ filters, setFilters, comparison, setComparison }}>
+    <GlobalFilterContext.Provider value={{ filters, setFilters, comparison, setComparison, periodComparison, setPeriodComparison }}>
       {children}
     </GlobalFilterContext.Provider>
   );

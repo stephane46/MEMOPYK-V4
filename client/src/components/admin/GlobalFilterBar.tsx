@@ -1,6 +1,7 @@
 // client/src/components/admin/GlobalFilterBar.tsx
 import * as React from "react";
 import { GlobalFilterContext } from "./GlobalFilterContext";
+import GlobalComparisonBar from "./GlobalComparisonBar";
 import { Button } from "@/components/ui/button";
 import {
   Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
@@ -16,7 +17,7 @@ function applyPresetDays(days: number) {
 }
 
 export default function GlobalFilterBar() {
-  const { filters, setFilters, comparison, setComparison } = React.useContext(GlobalFilterContext);
+  const { filters, setFilters, comparison, setComparison, periodComparison, setPeriodComparison } = React.useContext(GlobalFilterContext);
   const [from, setFrom] = React.useState(filters.range.from);
   const [to, setTo] = React.useState(filters.range.to);
   const [language, setLanguage] = React.useState(filters.language ?? "");
@@ -101,20 +102,38 @@ export default function GlobalFilterBar() {
         </div>
 
         {comparison.enabled && (
-          <Select 
-            value={comparison.mode} 
-            onValueChange={(m) => setComparison({ ...comparison, mode: m as any })}
-          >
-            <SelectTrigger className="h-9 w-[180px]">
-              <SelectValue placeholder="Compare by…" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="period">Previous Period</SelectItem>
-              <SelectItem value="language">Language (FR vs EN)</SelectItem>
-              <SelectItem value="device">Device (Mobile vs Desktop)</SelectItem>
-              <SelectItem value="source">Source (Google vs Direct)</SelectItem>
-            </SelectContent>
-          </Select>
+          <>
+            <Select 
+              value={comparison.mode} 
+              onValueChange={(m) => setComparison({ ...comparison, mode: m as any })}
+            >
+              <SelectTrigger className="h-9 w-[180px]">
+                <SelectValue placeholder="Compare by…" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="period">Previous Period</SelectItem>
+                <SelectItem value="language">Language (FR vs EN)</SelectItem>
+                <SelectItem value="device">Device (Mobile vs Desktop)</SelectItem>
+                <SelectItem value="source">Source (Google vs Direct)</SelectItem>
+              </SelectContent>
+            </Select>
+
+            {comparison.mode === "period" && (
+              <Select 
+                value={periodComparison.mode} 
+                onValueChange={(m) => setPeriodComparison({ ...periodComparison, mode: m as any })}
+              >
+                <SelectTrigger className="h-9 w-[200px]">
+                  <SelectValue placeholder="Period mode" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="week">This week vs last week</SelectItem>
+                  <SelectItem value="month">This month vs last month</SelectItem>
+                  <SelectItem value="auto">Auto (derive from picked range)</SelectItem>
+                </SelectContent>
+              </Select>
+            )}
+          </>
         )}
       </div>
     </div>

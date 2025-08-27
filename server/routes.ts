@@ -33,6 +33,7 @@ import {
   PROPERTY as GA4_PROPERTY
 } from './ga4-service';
 import { getCache, setCache, k, getDbCache, setDbCache } from './cache';
+import { computePeriods } from './helpers/periodRanges.js';
 
 // Contact form validation schema
 const contactFormSchema = z.object({
@@ -2132,9 +2133,9 @@ export async function registerRoutes(app: Express): Promise<void> {
   // Analytics Daily Overview - GET daily overview data for charts
   app.get("/api/analytics/overview", async (req, res) => {
     try {
-      const { days, from, to, lang, source, device, compare, compareMode } = req.query;
+      const { days, from, to, lang, source, device, compare, compareMode, periodMode } = req.query;
       const daysNum = parseInt(days as string || '30');
-      console.log(`📊 Analytics daily overview request for ${daysNum} days with filters:`, { from, to, lang, source, device, compare, compareMode });
+      console.log(`📊 Analytics daily overview request for ${daysNum} days with filters:`, { from, to, lang, source, device, compare, compareMode, periodMode });
       
       // Helper function to generate mock data for a date range
       function generateMockData(fromDate: Date, toDate: Date, label: string = "baseline") {
@@ -2165,25 +2166,32 @@ export async function registerRoutes(app: Express): Promise<void> {
       }
 
       // Check if comparison mode is enabled
-      if (compare === "true" && compareMode) {
+      if (compare === "period") {
+        // Use the period ranges helper for accurate period calculation
+        const periods = computePeriods({
+          mode: (periodMode as "week" | "month" | "auto") || "week",
+          from: from as string,
+          to: to as string
+        });
+        
+        const baselineStart = new Date(periods.baseline.from);
+        const baselineEnd = new Date(periods.baseline.to);
+        const comparisonStart = new Date(periods.comparison.from);
+        const comparisonEnd = new Date(periods.comparison.to);
+        
+        const baselineData = generateMockData(baselineStart, baselineEnd, "baseline");
+        const comparisonData = generateMockData(comparisonStart, comparisonEnd, "comparison");
+
+        res.json({
+          baseline: baselineData,
+          comparison: comparisonData,
+          baseline_range: periods.baseline,
+          comparison_range: periods.comparison
+        });
+      } else if (compare === "true" && compareMode) {
         let baselineData, comparisonData;
         
         switch (compareMode) {
-          case "period": {
-            // Compare current period vs previous period
-            const currentStart = from ? new Date(from as string) : new Date(Date.now() - daysNum * 24 * 60 * 60 * 1000);
-            const currentEnd = to ? new Date(to as string) : new Date();
-            const periodLength = Math.ceil((currentEnd.getTime() - currentStart.getTime()) / (1000 * 60 * 60 * 24));
-            
-            const previousStart = new Date(currentStart);
-            previousStart.setDate(previousStart.getDate() - periodLength);
-            const previousEnd = new Date(currentEnd);
-            previousEnd.setDate(previousEnd.getDate() - periodLength);
-            
-            baselineData = generateMockData(currentStart, currentEnd, "baseline");
-            comparisonData = generateMockData(previousStart, previousEnd, "comparison");
-            break;
-          }
           case "language": {
             // Compare FR vs EN
             const startDate = from ? new Date(from as string) : new Date(Date.now() - daysNum * 24 * 60 * 60 * 1000);
