@@ -16,6 +16,8 @@ export function initOpenReplay(opts: InitOptions = {}) {
   const enabledFlag = import.meta.env.VITE_VIDEO_ANALYTICS_ENABLED;
   if (enabledFlag !== "true") return null;
   
+  // OpenReplay works on all devices - no need to disable on mobile
+  
   if (tracker) return tracker; // already started
 
   const projectKey = import.meta.env.VITE_OPENREPLAY_PROJECT_KEY as string;
@@ -36,8 +38,15 @@ export function initOpenReplay(opts: InitOptions = {}) {
     // Add plugins
     tracker.use(trackerAssist());
 
-    // Start tracking with error handling
-    tracker.start();
+    // Start tracking with comprehensive error handling - prevent unhandled rejections
+    const startPromise = tracker.start();
+    if (startPromise && typeof startPromise.catch === 'function') {
+      startPromise.catch((error) => {
+        console.warn("🚫 OpenReplay start failed (network/connectivity issue):", error);
+        // Explicitly handle the rejection to prevent unhandled promise rejection
+        return null;
+      });
+    }
     
     console.log("🎬 OpenReplay tracker created and started");
   } catch (error) {
