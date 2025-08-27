@@ -2979,157 +2979,178 @@ export async function registerRoutes(app: Express): Promise<void> {
     }
   });
 
-  // Geo Distribution Analytics - GET countries and cities
+  // Geo Distribution Analytics - PostgreSQL-based with country filtering and comparison support
   app.get("/api/analytics/geo", async (req, res) => {
     try {
-      const { limit = 50, from, to, lang, source, device, country, compare, periodMode } = req.query;
-      console.log(`📊 Geo distribution analytics request (limit: ${limit}) with filters:`, { from, to, lang, source, device, country, compare, periodMode });
+      const { compare, periodMode = "week" } = req.query as Record<string, string | undefined>;
+      const limit = Math.max(1, Math.min(parseInt(String(req.query.limit || "50"), 10) || 50, 500));
+      const countryFilter = (req.query.country as string | undefined)?.trim();
       
-      // Mock data structure for geographic distribution
-      const allCountries = [
-        { country: "France", sessions: 42, visitors: 37 },
-        { country: "United States", sessions: 15, visitors: 13 },
-        { country: "Canada", sessions: 12, visitors: 11 },
-        { country: "Belgium", sessions: 8, visitors: 7 },
-        { country: "Switzerland", sessions: 6, visitors: 5 },
-        { country: "Germany", sessions: 5, visitors: 4 },
-        { country: "United Kingdom", sessions: 4, visitors: 4 },
-        { country: "Spain", sessions: 3, visitors: 3 }
-      ];
+      console.log(`📊 PostgreSQL Geo analytics request (limit: ${limit})`, { 
+        compare, periodMode, countryFilter, 
+        filters: { from: req.query.from, to: req.query.to, lang: req.query.lang, source: req.query.source, device: req.query.device }
+      });
 
-      const allCities = [
-        { country: "France", city: "Paris", sessions: 22, visitors: 20 },
-        { country: "France", city: "Lyon", sessions: 8, visitors: 7 },
-        { country: "France", city: "Marseille", sessions: 6, visitors: 5 },
-        { country: "France", city: "Toulouse", sessions: 4, visitors: 3 },
-        { country: "France", city: "Nice", sessions: 3, visitors: 2 },
-        { country: "United States", city: "New York", sessions: 6, visitors: 5 },
-        { country: "United States", city: "Los Angeles", sessions: 4, visitors: 4 },
-        { country: "United States", city: "Chicago", sessions: 3, visitors: 2 },
-        { country: "United States", city: "Miami", sessions: 2, visitors: 2 },
-        { country: "Canada", city: "Toronto", sessions: 5, visitors: 5 },
-        { country: "Canada", city: "Montreal", sessions: 4, visitors: 3 },
-        { country: "Canada", city: "Vancouver", sessions: 3, visitors: 3 },
-        { country: "Belgium", city: "Brussels", sessions: 5, visitors: 4 },
-        { country: "Belgium", city: "Antwerp", sessions: 3, visitors: 3 },
-        { country: "Switzerland", city: "Zurich", sessions: 3, visitors: 2 },
-        { country: "Switzerland", city: "Geneva", sessions: 3, visitors: 3 },
-        { country: "Germany", city: "Berlin", sessions: 2, visitors: 2 },
-        { country: "Germany", city: "Munich", sessions: 2, visitors: 1 },
-        { country: "Germany", city: "Hamburg", sessions: 1, visitors: 1 },
-        { country: "United Kingdom", city: "London", sessions: 3, visitors: 3 },
-        { country: "United Kingdom", city: "Manchester", sessions: 1, visitors: 1 },
-        { country: "Spain", city: "Madrid", sessions: 2, visitors: 2 },
-        { country: "Spain", city: "Barcelona", sessions: 1, visitors: 1 }
-      ];
+      // Helper to build WHERE clause for analytics_sessions
+      const buildWhere = (reqObj: any, includeCountry = false) => {
+        const conditions: string[] = [];
+        const params: any[] = [];
+        let paramIndex = 0;
 
-      // Mock comparison data (previous period with ~15% variance)
-      const comparisonCountries = [
-        { country: "France", sessions: 38, visitors: 32 },
-        { country: "United States", sessions: 17, visitors: 15 },
-        { country: "Canada", sessions: 10, visitors: 9 },
-        { country: "Belgium", sessions: 9, visitors: 8 },
-        { country: "Switzerland", sessions: 7, visitors: 6 },
-        { country: "Germany", sessions: 4, visitors: 3 },
-        { country: "United Kingdom", sessions: 5, visitors: 5 },
-        { country: "Spain", sessions: 2, visitors: 2 }
-      ];
+        if (reqObj.query.from) {
+          conditions.push(`s.first_seen_at >= $${++paramIndex}::timestamp`);
+          params.push(reqObj.query.from);
+        }
+        if (reqObj.query.to) {
+          conditions.push(`s.first_seen_at <= $${++paramIndex}::timestamp`);
+          params.push(reqObj.query.to);
+        }
+        if (reqObj.query.lang) {
+          conditions.push(`s.language = $${++paramIndex}`);
+          params.push(reqObj.query.lang);
+        }
+        if (reqObj.query.source) {
+          conditions.push(`s.referrer ILIKE $${++paramIndex}`);
+          params.push(`%${reqObj.query.source}%`);
+        }
+        if (reqObj.query.device) {
+          conditions.push(`s.user_agent ILIKE $${++paramIndex}`);
+          params.push(`%${reqObj.query.device}%`);
+        }
+        if (includeCountry && countryFilter) {
+          conditions.push(`s.country = $${++paramIndex}`);
+          params.push(countryFilter);
+        }
 
-      const comparisonCities = [
-        { country: "France", city: "Paris", sessions: 19, visitors: 17 },
-        { country: "France", city: "Lyon", sessions: 9, visitors: 8 },
-        { country: "France", city: "Marseille", sessions: 5, visitors: 4 },
-        { country: "France", city: "Toulouse", sessions: 3, visitors: 2 },
-        { country: "France", city: "Nice", sessions: 2, visitors: 1 },
-        { country: "United States", city: "New York", sessions: 7, visitors: 6 },
-        { country: "United States", city: "Los Angeles", sessions: 5, visitors: 5 },
-        { country: "United States", city: "Chicago", sessions: 3, visitors: 2 },
-        { country: "United States", city: "Miami", sessions: 2, visitors: 2 },
-        { country: "Canada", city: "Toronto", sessions: 4, visitors: 4 },
-        { country: "Canada", city: "Montreal", sessions: 3, visitors: 2 },
-        { country: "Canada", city: "Vancouver", sessions: 3, visitors: 3 },
-        { country: "Belgium", city: "Brussels", sessions: 6, visitors: 5 },
-        { country: "Belgium", city: "Antwerp", sessions: 3, visitors: 3 },
-        { country: "Switzerland", city: "Zurich", sessions: 4, visitors: 3 },
-        { country: "Switzerland", city: "Geneva", sessions: 3, visitors: 3 },
-        { country: "Germany", city: "Berlin", sessions: 2, visitors: 2 },
-        { country: "Germany", city: "Munich", sessions: 1, visitors: 1 },
-        { country: "Germany", city: "Hamburg", sessions: 1, visitors: 0 },
-        { country: "United Kingdom", city: "London", sessions: 4, visitors: 4 },
-        { country: "United Kingdom", city: "Manchester", sessions: 1, visitors: 1 },
-        { country: "Spain", city: "Madrid", sessions: 1, visitors: 1 },
-        { country: "Spain", city: "Barcelona", sessions: 1, visitors: 1 }
-      ];
+        const sql = conditions.length > 0 ? ` WHERE ${conditions.join(' AND ')}` : '';
+        return { sql, params };
+      };
 
-      // Filter by country if specified
-      let countries = allCountries;
-      let cities = allCities;
-      let compCountries = comparisonCountries;
-      let compCities = comparisonCities;
+      // Helper to compute period ranges for comparison
+      const computePeriods = (options: { mode: string; from?: string; to?: string }) => {
+        const now = new Date();
+        const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+        
+        let baselineEnd = req.query.to ? new Date(req.query.to as string) : today;
+        let baselineStart: Date;
+        let comparisonStart: Date;
+        let comparisonEnd: Date;
 
-      if (country) {
-        cities = allCities.filter(city => 
-          city.country.toLowerCase() === (country as string).toLowerCase()
-        );
-        compCities = comparisonCities.filter(city => 
-          city.country.toLowerCase() === (country as string).toLowerCase()
-        );
-      }
+        if (req.query.from && req.query.to) {
+          // Custom range
+          baselineStart = new Date(req.query.from as string);
+          const diffMs = baselineEnd.getTime() - baselineStart.getTime();
+          comparisonEnd = new Date(baselineStart.getTime() - 24 * 60 * 60 * 1000); // day before baseline
+          comparisonStart = new Date(comparisonEnd.getTime() - diffMs);
+        } else {
+          // Predefined periods
+          const days = options.mode === 'month' ? 30 : 7; // week = 7 days
+          baselineStart = new Date(baselineEnd.getTime() - days * 24 * 60 * 60 * 1000);
+          comparisonEnd = new Date(baselineStart.getTime() - 24 * 60 * 60 * 1000);
+          comparisonStart = new Date(comparisonEnd.getTime() - days * 24 * 60 * 60 * 1000);
+        }
 
-      // Return comparison mode if requested
-      if (compare === 'period') {
-        const mockData = {
-          baseline: { countries, cities },
-          comparison: { countries: compCountries, cities: compCities },
-          baseline_range: "Current Period",
-          comparison_range: "Previous Period"
+        return {
+          baseline: { 
+            from: baselineStart.toISOString().split('T')[0], 
+            to: baselineEnd.toISOString().split('T')[0] 
+          },
+          comparison: { 
+            from: comparisonStart.toISOString().split('T')[0], 
+            to: comparisonEnd.toISOString().split('T')[0] 
+          }
         };
-        res.json(mockData);
-      } else {
-        // Return normal single dataset
-        const mockData = { countries, cities };
-        res.json(mockData);
+      };
+
+      const sqlCountries = (whereSql: string, params: any[]) => ({
+        text: `
+          SELECT s.country,
+                 COUNT(DISTINCT s.session_id) AS sessions,
+                 COUNT(DISTINCT s.user_pseudo_id) AS visitors
+          FROM analytics_sessions s
+          ${whereSql}
+          GROUP BY s.country
+          ORDER BY sessions DESC
+          LIMIT ${limit}
+        `,
+        values: params,
+      });
+
+      const sqlCities = (whereSql: string, params: any[]) => ({
+        text: `
+          SELECT s.country,
+                 s.city,
+                 COUNT(DISTINCT s.session_id) AS sessions,
+                 COUNT(DISTINCT s.user_pseudo_id) AS visitors
+          FROM analytics_sessions s
+          ${whereSql}
+          GROUP BY s.country, s.city
+          ORDER BY sessions DESC
+          LIMIT ${Math.max(50, limit)}
+        `,
+        values: params,
+      });
+
+      // Normal (single) mode
+      if (compare !== "period") {
+        // Countries query
+        const w1 = buildWhere(req);
+        const q1 = sqlCountries(w1.sql, w1.params);
+        const { rows: countries } = await pool.query(q1);
+
+        // Cities query (optionally restricted to country)
+        const w2 = buildWhere(req, true);
+        const q2 = sqlCities(w2.sql, w2.params);
+        const { rows: cities } = await pool.query(q2);
+
+        return res.json({ countries, cities });
       }
-    } catch (error) {
-      console.error('❌ Geo distribution analytics error:', error);
-      res.status(500).json({ error: "Failed to get geo distribution data" });
+
+      // Comparison mode: compute two ranges, then query twice
+      const { baseline, comparison } = computePeriods({
+        mode: periodMode || "week",
+        from: req.query.from as string | undefined,
+        to: req.query.to as string | undefined,
+      });
+
+      const runSet = async (range: { from: string; to: string }) => {
+        // Create fake req with range for buildWhere
+        const fakeReq: any = { 
+          ...req, 
+          query: { ...req.query, from: range.from, to: range.to } 
+        };
+
+        // Countries
+        const w1 = buildWhere(fakeReq);
+        const q1 = sqlCountries(w1.sql, w1.params);
+        const { rows: countries } = await pool.query(q1);
+
+        // Cities (maybe restricted to ?country=)
+        const w2 = buildWhere(fakeReq, true);
+        const q2 = sqlCities(w2.sql, w2.params);
+        const { rows: cities } = await pool.query(q2);
+
+        return { countries, cities };
+      };
+
+      const [baseSet, cmpSet] = await Promise.all([
+        runSet(baseline), 
+        runSet(comparison)
+      ]);
+      
+      return res.json({ 
+        baseline: baseSet, 
+        comparison: cmpSet, 
+        baseline_range: `${baseline.from} to ${baseline.to}`,
+        comparison_range: `${comparison.from} to ${comparison.to}`
+      });
+
+    } catch (error: any) {
+      console.error('❌ PostgreSQL Geo analytics error:', error);
+      res.status(500).json({ error: "Failed to get geo distribution data", details: error.message });
     }
   });
 
-  // CSV Export for Analytics
-  app.get("/api/analytics/export/csv", async (req, res) => {
-    try {
-      const { report, country, from, to, lang, source, device } = req.query;
-      console.log(`📊 CSV Export request for report: ${report}`, { country, from, to, lang, source, device });
-      
-      if (report === 'geo' && country) {
-        // Export geo data for specific country
-        const mockCityData = [
-          { city: "Paris", sessions: 22, visitors: 20 },
-          { city: "Lyon", sessions: 8, visitors: 7 },
-          { city: "Marseille", sessions: 6, visitors: 5 },
-          { city: "Toulouse", sessions: 4, visitors: 3 },
-          { city: "Nice", sessions: 3, visitors: 2 }
-        ];
-        
-        // Create CSV content
-        const headers = ['City', 'Sessions', 'Visitors'];
-        const csvContent = [
-          headers.join(','),
-          ...mockCityData.map(row => `"${row.city}",${row.sessions},${row.visitors}`)
-        ].join('\n');
-        
-        res.setHeader('Content-Type', 'text/csv');
-        res.setHeader('Content-Disposition', `attachment; filename="${country}_analytics.csv"`);
-        res.send(csvContent);
-      } else {
-        res.status(400).json({ error: "Invalid export parameters" });
-      }
-    } catch (error) {
-      console.error('❌ CSV Export error:', error);
-      res.status(500).json({ error: "Failed to export CSV data" });
-    }
-  });
 
   // NUCLEAR CACHE-BUSTING VIDEO ANALYTICS - v1.0.187
   app.get("/api/analytics/fresh-video-data", async (req, res) => {
