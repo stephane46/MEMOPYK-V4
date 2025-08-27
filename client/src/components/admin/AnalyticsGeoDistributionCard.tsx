@@ -2,8 +2,8 @@ import * as React from "react";
 import { Card, CardHeader, CardTitle, CardContent, CardFooter } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
-import { RefreshCcw, Download } from "lucide-react";
-import { downloadCSV, formatDateForFilename } from "@/lib/export-utils";
+import { RefreshCcw, FileDown } from "lucide-react";
+import { downloadFile } from "@/utils/downloadFile";
 import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer,
 } from "recharts";
@@ -23,7 +23,6 @@ export default function AnalyticsGeoDistributionCard() {
   const [error, setError] = React.useState<string | null>(null);
   const [countries, setCountries] = React.useState<CountryRow[]>([]);
   const [cities, setCities] = React.useState<CityRow[]>([]);
-  const [exporting, setExporting] = React.useState(false);
 
   const load = React.useCallback(async () => {
     setLoading(true);
@@ -41,17 +40,6 @@ export default function AnalyticsGeoDistributionCard() {
 
   React.useEffect(() => { load(); }, [load]);
 
-  const handleExportCSV = React.useCallback(async () => {
-    setExporting(true);
-    try {
-      const filename = `geo_distribution_${formatDateForFilename()}.csv`;
-      await downloadCSV('/api/analytics/export/csv?report=geo', filename);
-    } catch (error) {
-      console.error('Export failed:', error);
-    } finally {
-      setExporting(false);
-    }
-  }, []);
 
   const countryChart = countries.slice(0, 10).map(c => ({
     name: c.country || "—",
@@ -68,14 +56,13 @@ export default function AnalyticsGeoDistributionCard() {
             <RefreshCcw className={`h-4 w-4 ${loading ? "animate-spin" : ""}`} />
             Refresh
           </Button>
-          <Button 
-            size="sm" 
-            variant="outline" 
-            onClick={handleExportCSV} 
-            disabled={exporting || loading}
+          <Button
+            size="sm"
+            variant="outline"
+            onClick={() => downloadFile(`/api/analytics/export/csv?report=geo`, "analytics_geo.csv")}
             className="gap-2"
           >
-            <Download className={`h-4 w-4 ${exporting ? "animate-pulse" : ""}`} />
+            <FileDown className="h-4 w-4" />
             Export CSV
           </Button>
         </div>

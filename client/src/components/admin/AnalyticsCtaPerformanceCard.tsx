@@ -2,8 +2,8 @@ import * as React from "react";
 import { Card, CardHeader, CardTitle, CardContent, CardFooter } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
-import { RefreshCcw, Download } from "lucide-react";
-import { downloadCSV, formatDateForFilename } from "@/lib/export-utils";
+import { RefreshCcw, FileDown } from "lucide-react";
+import { downloadFile } from "@/utils/downloadFile";
 import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer,
 } from "recharts";
@@ -28,7 +28,6 @@ export default function AnalyticsCtaPerformanceCard() {
   const [error, setError] = React.useState<string | null>(null);
   const [summary, setSummary] = React.useState<CtaSummary[]>([]);
   const [byPage, setByPage] = React.useState<CtaByPage[]>([]);
-  const [exporting, setExporting] = React.useState(false);
 
   const load = React.useCallback(async () => {
     setLoading(true);
@@ -48,17 +47,6 @@ export default function AnalyticsCtaPerformanceCard() {
     load();
   }, [load]);
 
-  const handleExportCSV = React.useCallback(async () => {
-    setExporting(true);
-    try {
-      const filename = `cta_performance_${formatDateForFilename()}.csv`;
-      await downloadCSV('/api/analytics/export/csv?report=cta', filename);
-    } catch (error) {
-      console.error('Export failed:', error);
-    } finally {
-      setExporting(false);
-    }
-  }, []);
 
   const chartData = summary.map((s) => ({
     cta_id: s.cta_id,
@@ -77,14 +65,13 @@ export default function AnalyticsCtaPerformanceCard() {
             <RefreshCcw className={`h-4 w-4 ${loading ? "animate-spin" : ""}`} />
             Refresh
           </Button>
-          <Button 
-            size="sm" 
-            variant="outline" 
-            onClick={handleExportCSV} 
-            disabled={exporting || loading}
+          <Button
+            size="sm"
+            variant="outline"
+            onClick={() => downloadFile(`/api/analytics/export/csv?report=cta`, "analytics_cta.csv")}
             className="gap-2"
           >
-            <Download className={`h-4 w-4 ${exporting ? "animate-pulse" : ""}`} />
+            <FileDown className="h-4 w-4" />
             Export CSV
           </Button>
         </div>

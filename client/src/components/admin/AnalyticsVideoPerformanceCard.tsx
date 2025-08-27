@@ -3,8 +3,8 @@ import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Play, Clock, TrendingUp, BarChart3, Download, RefreshCcw } from "lucide-react";
-import { downloadCSV, formatDateForFilename } from "@/lib/export-utils";
+import { Play, Clock, TrendingUp, BarChart3, FileDown, RefreshCcw } from "lucide-react";
+import { downloadFile } from "@/utils/downloadFile";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
 
 interface VideoPerformanceData {
@@ -200,14 +200,13 @@ export const AnalyticsVideoPerformanceCard = ({ dateRange = "30" }: AnalyticsVid
               <RefreshCcw className={`h-4 w-4 ${loading ? "animate-spin" : ""}`} />
               Refresh
             </Button>
-            <Button 
-              size="sm" 
-              variant="outline" 
-              onClick={handleExportCSV} 
-              disabled={exporting || loading}
+            <Button
+              size="sm"
+              variant="outline"
+              onClick={() => downloadFile(`/api/analytics/export/csv?report=video`, "analytics_video.csv")}
               className="gap-2"
             >
-              <Download className={`h-4 w-4 ${exporting ? "animate-pulse" : ""}`} />
+              <FileDown className="h-4 w-4" />
               Export CSV
             </Button>
           </div>
