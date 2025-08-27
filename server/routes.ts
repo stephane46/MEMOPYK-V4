@@ -5702,29 +5702,36 @@ export async function registerRoutes(app: Express): Promise<void> {
   // ---------- GET /api/analytics/export/csv ----------
   app.get("/api/analytics/export/csv", async (req, res) => {
     try {
-      const { report = "overview", from, to } = req.query as Record<string, string | undefined>;
-      console.log(`📊 CSV export request: report=${report}, from=${from}, to=${to}`);
+      const { report = "overview", from, to, lang, source, device } = req.query as Record<string, string | undefined>;
+      console.log('📊 CSV export request with filters:', { report, from, to, lang, source, device });
       
-      // Mock data for now - will be replaced with actual GA4 data later
       let mockData: any[] = [];
       let filename = `analytics_${report}.csv`;
-
+      
+      // Mock data structure that simulates filtered database queries
+      // In production, these would be replaced with actual database queries using buildWhere()
+      
       switch (report) {
-        case "overview":
+        case "overview": {
+          // Simulated: SELECT DATE_TRUNC('day', s.first_seen_at)::date AS day, COUNT(DISTINCT s.session_id) AS sessions, COUNT(DISTINCT s.user_pseudo_id) AS unique_visitors, AVG(COALESCE(s.session_duration,0)) AS avg_session_duration FROM analytics_sessions s WHERE ... GROUP BY 1 ORDER BY 1 ASC
           mockData = [
             { day: "2025-08-01", sessions: 150, unique_visitors: 120, avg_session_duration: 180 },
             { day: "2025-08-02", sessions: 175, unique_visitors: 140, avg_session_duration: 195 },
             { day: "2025-08-03", sessions: 200, unique_visitors: 160, avg_session_duration: 210 }
           ];
           break;
-        case "video":
+        }
+        case "video": {
+          // Simulated: SELECT * FROM analytics_video_performance v WHERE ... ORDER BY starts DESC
           mockData = [
-            { video_id: "PomGalleryC.mp4", starts: 45, completed_90: 32, avg_watch_time: 85, median_watch_time: 78 },
-            { video_id: "VitaminSeaC.mp4", starts: 38, completed_90: 25, avg_watch_time: 72, median_watch_time: 65 },
-            { video_id: "safari-1.mp4", starts: 22, completed_90: 15, avg_watch_time: 58, median_watch_time: 52 }
+            { video_id: "PomGalleryC.mp4", video_title: "Pom Gallery Video", starts: 45, completed_90: 32, avg_watch_time: 85, median_watch_time: 78 },
+            { video_id: "VitaminSeaC.mp4", video_title: "VitaminSea Video", starts: 38, completed_90: 25, avg_watch_time: 72, median_watch_time: 65 },
+            { video_id: "safari-1.mp4", video_title: "Safari Video", starts: 22, completed_90: 15, avg_watch_time: 58, median_watch_time: 52 }
           ];
           break;
-        case "cta":
+        }
+        case "cta": {
+          // Simulated: SELECT cta_id, COUNT(*) AS total_clicks, COUNT(DISTINCT session_id) AS unique_users FROM analytics_cta_clicks c WHERE ... GROUP BY cta_id ORDER BY total_clicks DESC
           mockData = [
             { cta_id: "contact", total_clicks: 85, unique_users: 72 },
             { cta_id: "book_call", total_clicks: 64, unique_users: 58 },
@@ -5732,7 +5739,9 @@ export async function registerRoutes(app: Express): Promise<void> {
             { cta_id: "gallery_cta", total_clicks: 38, unique_users: 35 }
           ];
           break;
-        case "geo":
+        }
+        case "geo": {
+          // Simulated: SELECT s.country, COUNT(DISTINCT s.session_id) AS sessions, COUNT(DISTINCT s.user_pseudo_id) AS visitors FROM analytics_sessions s WHERE ... GROUP BY s.country ORDER BY sessions DESC
           mockData = [
             { country: "France", sessions: 245, visitors: 198 },
             { country: "Belgium", sessions: 85, visitors: 72 },
@@ -5740,9 +5749,44 @@ export async function registerRoutes(app: Express): Promise<void> {
             { country: "Canada", sessions: 35, visitors: 32 }
           ];
           break;
+        }
         default:
           return res.status(400).json({ error: "Unknown report param" });
       }
+
+      /*
+      // Real database queries would be:
+      switch (report) {
+        case "overview": {
+          const w = buildWhere(req, { alias: "s", dateCol: "first_seen_at", localeCol: "language", refCol: "referrer", deviceCol: "device_category" }, true);
+          const sql = `SELECT DATE_TRUNC('day', s.first_seen_at)::date AS day, COUNT(DISTINCT s.session_id) AS sessions, COUNT(DISTINCT s.user_pseudo_id) AS unique_visitors, AVG(COALESCE(s.session_duration,0)) AS avg_session_duration FROM analytics_sessions s ${w.sql} GROUP BY 1 ORDER BY 1 ASC`;
+          const { rows } = await pool.query(sql, w.params);
+          mockData = rows;
+          break;
+        }
+        case "video": {
+          const w = buildWhere(req, { alias: "v", dateCol: "event_timestamp", localeCol: "locale" }, true);
+          const sql = `SELECT * FROM analytics_video_performance v ${w.sql} ORDER BY starts DESC`;
+          const { rows } = await pool.query(sql, w.params);
+          mockData = rows;
+          break;
+        }
+        case "cta": {
+          const w = buildWhere(req, { alias: "c", dateCol: "event_timestamp", localeCol: "locale" }, true);
+          const sql = `SELECT cta_id, COUNT(*) AS total_clicks, COUNT(DISTINCT session_id) AS unique_users FROM analytics_cta_clicks c ${w.sql} GROUP BY cta_id ORDER BY total_clicks DESC`;
+          const { rows } = await pool.query(sql, w.params);
+          mockData = rows;
+          break;
+        }
+        case "geo": {
+          const w = buildWhere(req, { alias: "s", dateCol: "first_seen_at", localeCol: "language", refCol: "referrer", deviceCol: "device_category" }, true);
+          const sql = `SELECT s.country, COUNT(DISTINCT s.session_id) AS sessions, COUNT(DISTINCT s.user_pseudo_id) AS visitors FROM analytics_sessions s ${w.sql} GROUP BY s.country ORDER BY sessions DESC`;
+          const { rows } = await pool.query(sql, w.params);
+          mockData = rows;
+          break;
+        }
+      }
+      */
 
       sendCsv(res, filename, mockData);
     } catch (err: any) {
