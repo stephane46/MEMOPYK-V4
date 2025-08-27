@@ -13,6 +13,7 @@ import { RecentActivityPanel } from './RecentActivityPanel';
 import { ClearCacheButton } from './ClearCacheButton';
 import AnalyticsDailyOverviewCard from './AnalyticsDailyOverviewCard';
 import { AnalyticsCleanupCard } from './AnalyticsCleanupCard';
+import { AnalyticsVideoPerformanceCard } from './AnalyticsVideoPerformanceCard';
 
 const GA4AnalyticsDashboard: React.FC = () => {
   const { startDate, endDate, locale } = useDashboardFilters();
@@ -119,7 +120,13 @@ const GA4AnalyticsDashboard: React.FC = () => {
         <RealtimePanel />
       </div>
 
-      {/* Daily Overview & Video Analytics Section */}
+      {/* Video Performance Analytics Section */}
+      <div className="grid gap-4 lg:grid-cols-1">
+        {/* Comprehensive Video Performance with Milestones */}
+        <AnalyticsVideoPerformanceCard dateRange="30" />
+      </div>
+
+      {/* Daily Overview & Session Analytics Section */}
       <div className="grid gap-4 lg:grid-cols-2">
         {/* Daily Overview - Sessions & Visitors */}
         <AnalyticsDailyOverviewCard />
