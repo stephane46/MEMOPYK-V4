@@ -365,9 +365,9 @@ export function PeelExperiment() {
                       </PeelBack>
                     </PeelWrapper>
                     
-                    {/* Orange Arrow Indicator - Points to top-left corner */}
+                    {/* Orange Arrow Indicator - Points to bottom-right corner */}
                     {showArrows[step.number - 1] && (
-                      <div className="absolute top-3 left-3 pointer-events-none z-50">
+                      <div className="absolute bottom-3 right-3 pointer-events-none z-50">
                         <div className="bg-memopyk-orange text-white p-2 rounded-full shadow-lg animate-pulse">
                           <svg 
                             width="20" 
