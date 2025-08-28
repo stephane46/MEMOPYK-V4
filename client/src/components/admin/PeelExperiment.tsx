@@ -440,20 +440,29 @@ export function PeelExperiment() {
                             transformStyle: step.number === 3 ? 'flat' : 'preserve-3d'
                           }}
                         >
-                          {/* Card 2: Clean Corner Pulse Indicator - Always Visible */}
+                          {/* Card 2: Clean Arrow + Dotted Line Corner Indicator */}
                           {step.number === 2 && (
-                            <div 
-                              className="absolute bottom-0 right-0 w-6 h-6 z-50"
-                              style={{
-                                clipPath: 'polygon(100% 0%, 100% 100%, 0% 100%)',
-                                background: !flippedCards[step.number - 1] 
-                                  ? 'linear-gradient(135deg, #FFD700 0%, #FF8C00 100%)' // Front: Gold/Orange gradient
-                                  : 'linear-gradient(135deg, #00E6FF 0%, #0088FF 100%)', // Back: Cyan/Blue gradient
-                                animation: 'pulse 2s ease-in-out infinite',
-                                pointerEvents: 'none',
-                                boxShadow: '0 0 8px rgba(255, 215, 0, 0.6)'
-                              }}
-                            />
+                            <div className="absolute bottom-0 right-0 w-8 h-8 z-50 pointer-events-none">
+                              {/* Diagonal Arrow pointing up-left */}
+                              <div 
+                                className="absolute bottom-1 right-1 w-4 h-4"
+                                style={{
+                                  background: !flippedCards[step.number - 1] 
+                                    ? '#D67C4A' // Front: MEMOPYK orange
+                                    : '#89BAD9', // Back: MEMOPYK sky blue
+                                  clipPath: 'polygon(0% 100%, 0% 60%, 60% 0%, 100% 0%, 100% 40%, 40% 100%)', // Arrow shape
+                                }}
+                              />
+                              {/* Dotted line boundary */}
+                              <div 
+                                className="absolute bottom-0 right-0 w-6 h-6"
+                                style={{
+                                  borderTop: `2px dotted ${!flippedCards[step.number - 1] ? '#D67C4A' : '#89BAD9'}`,
+                                  borderLeft: `2px dotted ${!flippedCards[step.number - 1] ? '#D67C4A' : '#89BAD9'}`,
+                                  borderTopLeftRadius: '4px'
+                                }}
+                              />
+                            </div>
                           )}
                           {/* Conditional Content Based on Flip State */}
                           {!flippedCards[step.number - 1] || step.number !== 3 ? (
