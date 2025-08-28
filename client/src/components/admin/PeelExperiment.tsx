@@ -418,17 +418,15 @@ export function PeelExperiment() {
                                   <span className="text-sm font-bold text-white">{step.number}</span>
                                 </div>
                                 
-                                {/* Card 2: Animated Bottom-Right Corner "Bill" - Always Visible */}
+                                {/* Card 2: Always-Pulsing Corner - Shows Opposite Side Colors */}
                                 {step.number === 2 && (
                                   <div 
                                     className="absolute bottom-0 right-0 w-6 h-6 z-10"
                                     style={{
                                       clipPath: 'polygon(100% 0%, 100% 100%, 0% 100%)',
                                       animation: 'peelFloat 3s ease-in-out infinite alternate, peelGlow 2s ease-in-out infinite',
-                                      // Show gradient preview of back side when on front
-                                      background: flippedCards[step.number - 1] 
-                                        ? `url(${step.image})` // When flipped (back), show front image
-                                        : 'linear-gradient(135deg, #D67C4A 0%, #2A4759 100%)', // When front, show back gradient
+                                      // Front side: Show orangey colors (back side preview)
+                                      background: 'linear-gradient(135deg, #D67C4A 0%, #2A4759 100%)',
                                       backgroundSize: 'cover',
                                       backgroundPosition: 'center'
                                     }}
@@ -467,6 +465,21 @@ export function PeelExperiment() {
                                   </div>
                                 </div>
                                 
+                                {/* Card 2: Always-Pulsing Corner - Shows Opposite Side Colors */}
+                                {step.number === 2 && (
+                                  <div 
+                                    className="absolute bottom-0 right-0 w-6 h-6 z-10"
+                                    style={{
+                                      clipPath: 'polygon(100% 0%, 100% 100%, 0% 100%)',
+                                      animation: 'peelFloat 3s ease-in-out infinite alternate, peelGlow 2s ease-in-out infinite',
+                                      // Back side: Show white/blue colors (front side preview)
+                                      background: 'linear-gradient(135deg, #FFFFFF 0%, #89BAD9 100%)',
+                                      backgroundSize: 'cover',
+                                      backgroundPosition: 'center',
+                                      transform: 'rotateY(180deg)' // Counter the parent flip
+                                    }}
+                                  />
+                                )}
                               </div>
                             )
                           ) : (
