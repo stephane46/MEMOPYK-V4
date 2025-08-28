@@ -185,9 +185,13 @@ export default function PeelExperiment() {
                               </div>
                             ) : (
                               <div 
-                                className="h-full flex flex-col cursor-pointer relative bg-gradient-to-br from-memopyk-dark-blue via-memopyk-navy to-memopyk-dark-blue"
+                                className="h-full flex flex-col cursor-pointer relative"
                                 style={{
-                                  transformOrigin: 'center'
+                                  transformOrigin: 'center',
+                                  backgroundImage: `linear-gradient(135deg, rgba(42, 71, 89, 0.92) 0%, rgba(1, 21, 38, 0.92) 50%, rgba(42, 71, 89, 0.92) 100%), url(${step.image})`,
+                                  backgroundSize: 'cover, contain',
+                                  backgroundPosition: 'center, center',
+                                  backgroundRepeat: 'no-repeat, no-repeat'
                                 }}
                               >
                                 <div className="text-center flex flex-col p-4" style={{ height: '100%', position: 'relative' }}>
@@ -278,7 +282,13 @@ export default function PeelExperiment() {
                       <PeelBack>
                         {/* All Cards 1, 2 & 3: Full back side content */}
                           <div 
-                            className="shadow-lg rounded-2xl overflow-hidden border border-gray-200 h-full bg-gradient-to-br from-memopyk-dark-blue via-memopyk-navy to-memopyk-dark-blue"
+                            className="shadow-lg rounded-2xl overflow-hidden border border-gray-200 h-full"
+                            style={{
+                              backgroundImage: `linear-gradient(135deg, rgba(42, 71, 89, 0.92) 0%, rgba(1, 21, 38, 0.92) 50%, rgba(42, 71, 89, 0.92) 100%), url(${step.image})`,
+                              backgroundSize: 'cover, contain',
+                              backgroundPosition: 'center, center',
+                              backgroundRepeat: 'no-repeat, no-repeat'
+                            }}
                           >
                             <div 
                               className="h-full flex flex-col justify-between p-4"
