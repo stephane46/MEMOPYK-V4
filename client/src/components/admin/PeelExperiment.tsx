@@ -329,26 +329,9 @@ export function PeelExperiment() {
                         </div>
                       </PeelTop>
                       
-                      <PeelBack>
-                        {step.number === 3 ? (
-                          /* Card 3: Small white triangle with orange arrow */
-                          <div className="w-full h-full bg-white rounded-2xl relative">
-                            <div className="absolute bottom-0 right-0">
-                              <div className="w-0 h-0 border-r-[50px] border-t-[50px] border-r-transparent border-t-white" />
-                              <div className="absolute bottom-2 right-2">
-                                <svg 
-                                  width="20" 
-                                  height="20" 
-                                  viewBox="0 0 16 16" 
-                                  fill="#D67C4A"
-                                >
-                                  <path d="M4 4 L4 9 L6 7 L10 11 L12 9 L8 5 L10 4 Z" />
-                                </svg>
-                              </div>
-                            </div>
-                          </div>
-                        ) : (
-                          /* Cards 1 & 2: Full back side content */
+                      {step.number !== 3 && (
+                        <PeelBack>
+                          {/* Cards 1 & 2 only: Full back side content */}
                           <div 
                             className="shadow-lg rounded-2xl overflow-hidden border border-gray-200 h-full"
                             style={{
@@ -379,8 +362,8 @@ export function PeelExperiment() {
                               </div>
                             </div>
                           </div>
-                        )}
-                      </PeelBack>
+                        </PeelBack>
+                      )}
                       </PeelWrapper>
                     
                     {/* Orange Arrow Indicator - Different style for card 3 */}
