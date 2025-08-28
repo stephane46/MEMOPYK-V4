@@ -29,7 +29,7 @@ import VideoCacheStatus from '@/components/admin/VideoCacheStatus';
 import SystemTestDashboard from '@/components/admin/SystemTestDashboard';
 import PerformanceTestDashboard from '@/components/admin/PerformanceTestDashboard';
 import DeploymentManagement from '@/components/admin/DeploymentManagement';
-import { PeelExperiment } from '@/components/admin/PeelExperiment';
+import PeelExperiment from '@/components/admin/PeelExperiment';
 import CryptoJS from 'crypto-js';
 
 
