@@ -282,7 +282,7 @@ export function PeelExperiment() {
                                   backgroundSize: 'cover',
                                   backgroundPosition: 'center',
                                   backgroundRepeat: 'no-repeat',
-                                  transform: 'rotateY(180deg)', // Counter the card flip to make content readable
+                                  // No transform needed - let the card flip naturally
                                   transformOrigin: 'center'
                                 }}
                               >
@@ -328,9 +328,7 @@ export function PeelExperiment() {
                           <div 
                             className="h-full flex flex-col justify-between p-4"
                             style={{
-                              // ALL CARDS: Same text counter-rotation
-                              transform: 'rotateY(180deg)',
-                              transformOrigin: 'center'
+                              // No counter-rotation - let content flip naturally
                             }}
                           >
                             {/* Main Content */}
