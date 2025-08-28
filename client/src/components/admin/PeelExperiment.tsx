@@ -280,7 +280,7 @@ export function PeelExperiment() {
                       e.preventDefault();
                       e.stopPropagation();
                       
-                      // Card 3: Continue the peel motion into flip (natural transition)
+                      // Card 3: Use only peel transitions (no 3D flip)
                       if (step.number === 3) {
                         // Get current peel position
                         const currentPos = peelPositions[step.number - 1] || { x: 320, y: 320 };
@@ -294,31 +294,31 @@ export function PeelExperiment() {
                         }
                         
                         if (!flippedCards[step.number - 1]) {
-                          // FRONT → BACK: Smooth peel reveal transition
+                          // FRONT → BACK: Continue peel motion to reveal back content
                           console.log(`🎬 PEEL-CLICK: Card 3 - Continuing peel motion from {x: ${currentPos.x}, y: ${currentPos.y}}`);
                           
                           // Continue the peel from current position to full reveal
                           setPeelPositions(prev => ({
                             ...prev,
-                            [step.number - 1]: { x: 10, y: 10 } // Almost complete reveal
+                            [step.number - 1]: { x: 10, y: 10 } // Full reveal - shows PeelBack content
                           }));
                           
-                          // After brief reveal, flip the card
-                          setTimeout(() => {
-                            setFlippedCards(prev => ({
-                              ...prev,
-                              [step.number - 1]: true
-                            }));
-                            // Reset peel position after flip
-                            setTimeout(() => {
-                              setPeelPositions(prev => ({
-                                ...prev,
-                                [step.number - 1]: { x: 320, y: 320 }
-                              }));
-                            }, 100);
-                          }, 300);
+                          // Mark as flipped but don't use rotateY - content comes from PeelBack
+                          setFlippedCards(prev => ({
+                            ...prev,
+                            [step.number - 1]: true
+                          }));
                         } else {
-                          // BACK → FRONT: Instant flip back (simpler)
+                          // BACK → FRONT: Reverse peel to hide back content
+                          console.log(`🎬 PEEL-CLICK: Card 3 - Reversing peel to show front`);
+                          
+                          // Reset peel position to hide the back content
+                          setPeelPositions(prev => ({
+                            ...prev,
+                            [step.number - 1]: { x: 320, y: 320 } // Hide PeelBack content
+                          }));
+                          
+                          // Mark as not flipped
                           setFlippedCards(prev => ({
                             ...prev,
                             [step.number - 1]: false
@@ -359,12 +359,19 @@ export function PeelExperiment() {
                             flippedCards[step.number - 1] ? 'bg-gradient-to-br from-green-500 to-emerald-600' : 'bg-white'
                           }`}
                           style={{
-                            transform: `${flippedCards[step.number - 1] ? 'rotateY(180deg)' : 'rotateY(0deg)'} translate(${
-                              (peelPositions[step.number - 1]?.x || 0) === 320 && (peelPositions[step.number - 1]?.y || 0) >= 318 && (peelPositions[step.number - 1]?.y || 0) <= 322
-                                ? `${(peelPositions[step.number - 1]?.x || 320) - 320}px, ${(peelPositions[step.number - 1]?.y || 320) - 320}px`
-                                : '0px, 0px'
-                            })`,
-                            transformStyle: 'preserve-3d'
+                            // Card 3: Remove rotateY - use only peel effect
+                            transform: step.number === 3 
+                              ? `translate(${
+                                  (peelPositions[step.number - 1]?.x || 0) === 320 && (peelPositions[step.number - 1]?.y || 0) >= 318 && (peelPositions[step.number - 1]?.y || 0) <= 322
+                                    ? `${(peelPositions[step.number - 1]?.x || 320) - 320}px, ${(peelPositions[step.number - 1]?.y || 320) - 320}px`
+                                    : '0px, 0px'
+                                })` // Only translate, no rotateY
+                              : `${flippedCards[step.number - 1] ? 'rotateY(180deg)' : 'rotateY(0deg)'} translate(${
+                                  (peelPositions[step.number - 1]?.x || 0) === 320 && (peelPositions[step.number - 1]?.y || 0) >= 318 && (peelPositions[step.number - 1]?.y || 0) <= 322
+                                    ? `${(peelPositions[step.number - 1]?.x || 320) - 320}px, ${(peelPositions[step.number - 1]?.y || 320) - 320}px`
+                                    : '0px, 0px'
+                                })`, // Cards 1&2 keep rotateY
+                            transformStyle: step.number === 3 ? 'flat' : 'preserve-3d'
                           }}
                         >
                           {/* Conditional Content Based on Flip State */}
