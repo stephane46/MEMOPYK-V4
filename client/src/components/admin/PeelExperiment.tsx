@@ -39,7 +39,7 @@ export function PeelExperiment() {
                   console.log('🎬 PEEL: Adding small corner for card', cardIndex);
                   setPeelPositions(prev => ({
                     ...prev,
-                    [cardIndex]: { x: 0.9, y: 0.9 } // Small corner
+                    [cardIndex]: { x: 0.97, y: 0.97 } // Very small corner - just a hint
                   }));
                 }, 200);
               }, 2000);

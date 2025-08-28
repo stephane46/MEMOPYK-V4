@@ -24282,8 +24282,8 @@
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-28T05:53:53.552Z",
-    "updated_at": "2025-08-28T06:14:23.812Z",
-    "duration": 1357427
+    "updated_at": "2025-08-28T06:16:53.773Z",
+    "duration": 1357577
   },
   {
     "id": "64bdfe87-2bd0-4869-9021-b95b833cb338",
@@ -24316,7 +24316,7 @@
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-28T05:58:25.784Z",
-    "updated_at": "2025-08-28T06:14:06.141Z",
-    "duration": 940815
+    "updated_at": "2025-08-28T06:17:06.121Z",
+    "duration": 940995
   }
 ]
