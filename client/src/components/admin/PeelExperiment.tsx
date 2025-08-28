@@ -335,10 +335,13 @@ export function PeelExperiment() {
                           /* Cards 2 & 3: Orange triangle corner with unfold reveal */
                           <div className="relative">
                             <div 
-                              className="w-0 h-0 border-l-[32px] border-b-[32px] border-l-transparent border-b-memopyk-orange shadow-lg"
+                              className="w-0 h-0 border-l-[38px] border-b-[38px] border-l-transparent border-b-memopyk-orange shadow-lg"
                               style={{
                                 filter: 'drop-shadow(0 4px 6px rgb(0 0 0 / 0.1))',
-                                animation: 'cornerPeel 2s ease-in-out infinite'
+                                animation: 'cornerPeel 2s ease-in-out infinite',
+                                position: 'relative',
+                                right: '6px',
+                                bottom: '6px'
                               }}
                             />
                             {/* Dotted diagonal line along the hypotenuse */}
