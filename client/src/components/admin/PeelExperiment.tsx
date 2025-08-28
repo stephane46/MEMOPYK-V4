@@ -339,7 +339,7 @@ export function PeelExperiment() {
                               style={{
                                 animation: 'cornerPeel 2s ease-in-out infinite',
                                 position: 'relative',
-                                bottom: '3px'
+                                bottom: '1px'
                               }}
                             />
                             {/* Dotted diagonal line along the hypotenuse */}
