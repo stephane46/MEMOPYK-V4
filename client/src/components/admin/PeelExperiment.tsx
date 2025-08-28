@@ -24,7 +24,7 @@ export default function PeelExperiment() {
               if (cardIndex === 2) {
                 // Card 3: Smaller reveal (1/3 size) that persists
                 console.log(`🎬 PEEL: Card 3 - Starting smaller persistent reveal`);
-                setPeelPositions(prev => ({ ...prev, [cardIndex]: { x: 15, y: 15 } }));
+                setPeelPositions(prev => ({ ...prev, [cardIndex]: { x: 5, y: 5 } }));
                 setCard3Revealed(true);
                 console.log(`🎬 PEEL: Card 3 - Persistent reveal complete`);
               } else {
@@ -248,7 +248,7 @@ export default function PeelExperiment() {
                           constrainToContainer: true,
                           fadeThreshold: 0.3,
                         }}
-                        peelPosition={step.number === 3 && card3Revealed ? { x: 15, y: 15 } : peelPositions[step.number - 1]}
+                        peelPosition={step.number === 3 && card3Revealed ? { x: 5, y: 5 } : peelPositions[step.number - 1]}
                       >
                       <PeelTop>
                         <div 
