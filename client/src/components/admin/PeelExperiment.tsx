@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
-import { PeelWrapper, PeelTop, PeelBack, PeelCorner, PeelMode } from 'react-peel';
+import { PeelWrapper, PeelTop, PeelBack } from 'react-peel';
 import { Upload, Edit, Heart } from 'lucide-react';
 
 export default function PeelExperiment() {
@@ -157,10 +157,9 @@ export default function PeelExperiment() {
                     <PeelWrapper
                       className="rounded-2xl overflow-hidden aspect-square"
                       options={{
-                        corner: PeelCorner.TopRight,
+                        corner: 'top-right',
                         constrainToContainer: true,
                         fadeThreshold: 0.3,
-                        mode: PeelMode.Peel
                       }}
                       peelPosition={peelPositions[step.number - 1]}
                     >
