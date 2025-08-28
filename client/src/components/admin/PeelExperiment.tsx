@@ -335,7 +335,7 @@ export function PeelExperiment() {
                           /* Cards 2 & 3: Orange triangle corner with unfold reveal */
                           <div className="relative">
                             <div 
-                              className="w-0 h-0 border-l-[38px] border-b-[38px] border-l-transparent border-b-memopyk-orange shadow-lg"
+                              className="w-0 h-0 border-l-[30px] border-b-[30px] border-l-transparent border-b-memopyk-orange shadow-lg"
                               style={{
                                 filter: 'drop-shadow(0 4px 6px rgb(0 0 0 / 0.1))',
                                 animation: 'cornerPeel 2s ease-in-out infinite'
@@ -345,9 +345,9 @@ export function PeelExperiment() {
                             <div 
                               className="absolute"
                               style={{
-                                top: '0px',
-                                right: '0px',
-                                width: '54px',
+                                top: '-1px',
+                                right: '-1px',
+                                width: '42px',
                                 height: '2px',
                                 background: 'linear-gradient(45deg, white 50%, #D67C4A 50%)',
                                 backgroundSize: '4px 4px',
@@ -359,7 +359,8 @@ export function PeelExperiment() {
                             <div 
                               className="absolute bottom-0 right-0"
                               style={{
-                                animation: 'arrowRiseAndGrow 2s ease-in-out infinite'
+                                animation: 'arrowRiseAndGrow 2s ease-in-out infinite',
+                                transform: 'translate(2px, 2px)'
                               }}
                             >
                               <svg 
