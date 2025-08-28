@@ -192,7 +192,7 @@ export default function PeelExperiment() {
                                 }}
                               >
                                 <div className="text-center flex flex-col p-4" style={{ height: '100%', position: 'relative' }}>
-                                  <div className="text-sm leading-normal text-white w-full" style={{ height: '140px' }}>
+                                  <div className="text-sm leading-normal text-white w-full" style={{ height: '66%', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
                                     {step.number === 1 && language === 'fr-FR' && (
                                       <>
                                         <p className="mb-3">Envoyez-nous toutes vos photos et vidéos, même par milliers.</p>
@@ -231,12 +231,12 @@ export default function PeelExperiment() {
                                     )}
                                   </div>
                                   
-                                  {/* Separator Line - Fixed Position */}
-                                  <div className="border-t border-white/40 mx-6" style={{ marginTop: '10px', marginBottom: '10px' }}></div>
+                                  {/* Separator Line - Fixed at 2/3 Position */}
+                                  <div className="border-t border-white/40 mx-6" style={{ position: 'absolute', top: '66%', left: '0', right: '0' }}></div>
                                   
-                                  {/* Bottom Section - Sub Description */}
-                                  <div className="text-center">
-                                    <div className="text-xs text-white leading-relaxed">
+                                  {/* Bottom Section - Bold Text Same Size */}
+                                  <div className="text-center" style={{ position: 'absolute', bottom: '16px', left: '16px', right: '16px' }}>
+                                    <div className="text-sm text-white leading-relaxed font-bold">
                                       {step.number === 1 && language === 'fr-FR' && (
                                         <>
                                           <p className="mb-2">Libérez-vous de la sélection : nous trouvons les moments forts pour créer votre histoire.</p>
@@ -287,8 +287,8 @@ export default function PeelExperiment() {
                                 transform: 'rotate(270deg)'
                               }}
                             >
-                              <div className="text-center text-white">
-                                <div className="text-sm leading-normal" style={{ height: '140px' }}>
+                              <div className="text-center text-white" style={{ height: '100%', position: 'relative' }}>
+                                <div className="text-sm leading-normal" style={{ height: '66%', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
                                   {step.number === 1 && language === 'fr-FR' && (
                                     <>
                                       <p className="mb-3">Envoyez-nous toutes vos photos et vidéos, même par milliers.</p>
@@ -327,9 +327,9 @@ export default function PeelExperiment() {
                                   )}
                                 </div>
                                 
-                                <div className="border-t border-white/40 mx-6" style={{ marginTop: '10px', marginBottom: '10px' }}></div>
+                                <div className="border-t border-white/40 mx-6" style={{ position: 'absolute', top: '66%', left: '0', right: '0' }}></div>
                                 
-                                <div className="text-xs text-white leading-relaxed">
+                                <div className="text-sm text-white leading-relaxed font-bold" style={{ position: 'absolute', bottom: '16px', left: '16px', right: '16px' }}>
                                   {step.number === 1 && language === 'fr-FR' && (
                                     <>
                                       <p className="mb-2">Libérez-vous de la sélection : nous trouvons les moments forts pour créer votre histoire.</p>
