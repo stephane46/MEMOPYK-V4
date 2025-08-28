@@ -195,8 +195,7 @@ export default function PeelExperiment() {
                                   <div className="text-sm leading-normal text-white w-full mb-4">
                                     {step.number === 1 && language === 'fr-FR' && (
                                       <>
-                                        <p className="mb-3">Envoyez-nous simplement vos photos et vidéos, sans avoir à les trier ou les retoucher.</p>
-                                        <p className="mb-3">Faites-nous part de votre vision et de ce qui compte le plus pour vous, soit en remplissant notre formulaire en ligne, soit en échangeant vos idées avec nous lors d'un appel téléphonique gratuit et convivial.</p>
+                                        <p className="mb-3">Envoyez-nous toutes vos photos et vidéos, même par milliers. Nous trions, sélectionnons et gardons uniquement les plus belles, selon ce que vous souhaitez partager via notre formulaire ou un appel téléphonique gratuit.</p>
                                       </>
                                     )}
                                     {step.number === 1 && language === 'en-US' && (
@@ -207,8 +206,7 @@ export default function PeelExperiment() {
                                     )}
                                     {step.number === 2 && language === 'fr-FR' && (
                                       <>
-                                        <p className="mb-3">Nous examinons chaque détail avec attention et sélectionnons les plus beaux moments pour créer une histoire unique, selon vos préférences, avec la musique idéale, le bon rythme et le format qui vous convient.</p>
-                                        <p className="mb-3">Vous recevez un devis précis et personnalisé avant toute étape, sans aucune mauvaise surprise.</p>
+                                        <p className="mb-3">Nous construisons le scénario à partir des meilleures images, avec la musique, le rythme et le format qui vous correspondent. Vous recevez un devis clair et adapté avant tout travail.</p>
                                       </>
                                     )}
                                     {step.number === 2 && language === 'en-US' && (
@@ -219,8 +217,7 @@ export default function PeelExperiment() {
                                     )}
                                     {step.number === 3 && language === 'fr-FR' && (
                                       <>
-                                        <p className="mb-3">Vous recevez la première version de votre film-souvenir personnalisé sous une à trois semaines, soigneusement monté et prêt à vous émouvoir.</p>
-                                        <p className="mb-3">Deux séries de retours sont incluses pour affiner le montage jusqu'à ce qu'il corresponde parfaitement à vos attentes.</p>
+                                        <p className="mb-3">Vous recevez la première version de votre film-souvenir en une à trois semaines, prête à être revue. Deux séries de retours sont incluses pour affiner le montage jusqu'à votre entière satisfaction.</p>
                                       </>
                                     )}
                                     {step.number === 3 && language === 'en-US' && (
@@ -239,7 +236,7 @@ export default function PeelExperiment() {
                                     <div className="text-xs text-white leading-relaxed">
                                       {step.number === 1 && language === 'fr-FR' && (
                                         <>
-                                          <p className="mb-2">Commencer est un jeu d'enfant : apportez-nous simplement vos souvenirs et vos envies, nous nous occupons du reste avec soin et créativité.</p>
+                                          <p className="mb-2">Libérez-vous de la sélection : nous trouvons les moments forts pour créer votre histoire.</p>
                                         </>
                                       )}
                                       {step.number === 1 && language === 'en-US' && (
@@ -249,7 +246,7 @@ export default function PeelExperiment() {
                                       )}
                                       {step.number === 2 && language === 'fr-FR' && (
                                         <>
-                                          <p className="mb-2">Vos souvenirs deviennent un film sur-mesure, réalisé avec un souci du détail exceptionnel et une totale transparence à chaque étape.</p>
+                                          <p className="mb-2">Vos souvenirs prennent vie dans un film unique, réalisé avec soin et transparence.</p>
                                         </>
                                       )}
                                       {step.number === 2 && language === 'en-US' && (
@@ -259,7 +256,7 @@ export default function PeelExperiment() {
                                       )}
                                       {step.number === 3 && language === 'fr-FR' && (
                                         <>
-                                          <p className="mb-2">Le résultat : un souvenir rien qu'à vous, livré rapidement et peaufiné selon vos envies jusqu'à la perfection.</p>
+                                          <p className="mb-2">Un souvenir unique, livré vite et parfaitement ajusté à vos envies.</p>
                                         </>
                                       )}
                                       {step.number === 3 && language === 'en-US' && (
@@ -291,8 +288,7 @@ export default function PeelExperiment() {
                                 <div className="text-sm leading-normal mb-4">
                                   {step.number === 1 && language === 'fr-FR' && (
                                     <>
-                                      <p className="mb-3">Envoyez-nous simplement vos photos et vidéos, sans avoir à les trier ou les retoucher.</p>
-                                      <p className="mb-3">Faites-nous part de votre vision et de ce qui compte le plus pour vous, soit en remplissant notre formulaire en ligne, soit en échangeant vos idées avec nous lors d'un appel téléphonique gratuit et convivial.</p>
+                                      <p className="mb-3">Envoyez-nous toutes vos photos et vidéos, même par milliers. Nous trions, sélectionnons et gardons uniquement les plus belles, selon ce que vous souhaitez partager via notre formulaire ou un appel téléphonique gratuit.</p>
                                     </>
                                   )}
                                   {step.number === 1 && language === 'en-US' && (
@@ -303,8 +299,7 @@ export default function PeelExperiment() {
                                   )}
                                   {step.number === 2 && language === 'fr-FR' && (
                                     <>
-                                      <p className="mb-3">Nous examinons chaque détail avec attention et sélectionnons les plus beaux moments pour créer une histoire unique, selon vos préférences, avec la musique idéale, le bon rythme et le format qui vous convient.</p>
-                                      <p className="mb-3">Vous recevez un devis précis et personnalisé avant toute étape, sans aucune mauvaise surprise.</p>
+                                      <p className="mb-3">Nous construisons le scénario à partir des meilleures images, avec la musique, le rythme et le format qui vous correspondent. Vous recevez un devis clair et adapté avant tout travail.</p>
                                     </>
                                   )}
                                   {step.number === 2 && language === 'en-US' && (
@@ -315,8 +310,7 @@ export default function PeelExperiment() {
                                   )}
                                   {step.number === 3 && language === 'fr-FR' && (
                                     <>
-                                      <p className="mb-3">Vous recevez la première version de votre film-souvenir personnalisé sous une à trois semaines, soigneusement monté et prêt à vous émouvoir.</p>
-                                      <p className="mb-3">Deux séries de retours sont incluses pour affiner le montage jusqu'à ce qu'il corresponde parfaitement à vos attentes.</p>
+                                      <p className="mb-3">Vous recevez la première version de votre film-souvenir en une à trois semaines, prête à être revue. Deux séries de retours sont incluses pour affiner le montage jusqu'à votre entière satisfaction.</p>
                                     </>
                                   )}
                                   {step.number === 3 && language === 'en-US' && (
@@ -332,7 +326,7 @@ export default function PeelExperiment() {
                                 <div className="text-xs text-white leading-relaxed">
                                   {step.number === 1 && language === 'fr-FR' && (
                                     <>
-                                      <p className="mb-2">Commencer est un jeu d'enfant : apportez-nous simplement vos souvenirs et vos envies, nous nous occupons du reste avec soin et créativité.</p>
+                                      <p className="mb-2">Libérez-vous de la sélection : nous trouvons les moments forts pour créer votre histoire.</p>
                                     </>
                                   )}
                                   {step.number === 1 && language === 'en-US' && (
@@ -342,7 +336,7 @@ export default function PeelExperiment() {
                                   )}
                                   {step.number === 2 && language === 'fr-FR' && (
                                     <>
-                                      <p className="mb-2">Vos souvenirs deviennent un film sur-mesure, réalisé avec un souci du détail exceptionnel et une totale transparence à chaque étape.</p>
+                                      <p className="mb-2">Vos souvenirs prennent vie dans un film unique, réalisé avec soin et transparence.</p>
                                     </>
                                   )}
                                   {step.number === 2 && language === 'en-US' && (
@@ -352,7 +346,7 @@ export default function PeelExperiment() {
                                   )}
                                   {step.number === 3 && language === 'fr-FR' && (
                                     <>
-                                      <p className="mb-2">Le résultat : un souvenir rien qu'à vous, livré rapidement et peaufiné selon vos envies jusqu'à la perfection.</p>
+                                      <p className="mb-2">Un souvenir unique, livré vite et parfaitement ajusté à vos envies.</p>
                                     </>
                                   )}
                                   {step.number === 3 && language === 'en-US' && (
