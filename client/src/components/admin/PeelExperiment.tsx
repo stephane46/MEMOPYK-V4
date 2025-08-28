@@ -420,7 +420,7 @@ export function PeelExperiment() {
                       </PeelTop>
                       
                       <PeelBack>
-                        {/* BACK SIDE - Detailed Information (revealed with auto-peel) - Card 3 with proper text orientation */}
+                        {/* BACK SIDE - Detailed Information (revealed with auto-peel) - Card 3 with counter-rotation for readable text */}
                         <div 
                           className="shadow-lg rounded-2xl overflow-hidden border border-gray-200 h-full"
                           style={{
@@ -428,8 +428,11 @@ export function PeelExperiment() {
                             backgroundSize: 'cover',
                             backgroundPosition: 'center',
                             backgroundRepeat: 'no-repeat',
-                            // Remove problematic transforms for Card 3 to fix text orientation
-                            ...(step.number === 3 ? {} : {
+                            // Card 3: Apply counter-rotation to make text readable
+                            ...(step.number === 3 ? {
+                              transform: 'rotate(90deg)',
+                              transformOrigin: 'center'
+                            } : {
                               transform: 'scaleX(-1)',
                               transformOrigin: 'center'
                             })
@@ -438,8 +441,11 @@ export function PeelExperiment() {
                           <div 
                             className="h-full flex flex-col justify-between p-4"
                             style={{
-                              // Remove double flip for Card 3 to ensure text is readable
-                              ...(step.number === 3 ? {} : {
+                              // Card 3: Additional text counter-rotation if needed
+                              ...(step.number === 3 ? {
+                                transform: 'rotate(-90deg)',
+                                transformOrigin: 'center'
+                              } : {
                                 transform: 'scaleX(-1)',
                                 transformOrigin: 'center'
                               })
