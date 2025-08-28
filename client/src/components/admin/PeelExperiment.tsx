@@ -458,9 +458,10 @@ export default function PeelExperiment() {
                         <div className="relative">
                           {/* Large 60x60 triangle with gradient background and realistic paper curl */}
                           <div 
-                            className="w-[60px] h-[60px] absolute bottom-0 right-0 overflow-hidden"
+                            className="w-[60px] h-[60px] absolute bottom-0 right-0"
                             style={{
-                              backgroundColor: 'transparent', // No background - just empty space
+                              backgroundColor: 'transparent',
+                              overflow: 'visible',
                             }}
                           >
                             <div
@@ -468,15 +469,23 @@ export default function PeelExperiment() {
                               style={{
                                 background: flippedCards[step.number - 1] 
                                   ? 'white' 
-                                  : 'linear-gradient(135deg, rgba(214, 124, 74, 0.92) 0%, rgba(42, 71, 89, 0.92) 100%)', // Same gradient as back card
+                                  : 'linear-gradient(135deg, rgba(214, 124, 74, 0.92) 0%, rgba(42, 71, 89, 0.92) 100%)',
                                 clipPath: 'polygon(0% 0%, 100% 0%, 0% 100%)',
-                                borderRadius: '0 0 0 16px', // Round only the inner corner where fold lines meet
                                 filter: 'drop-shadow(-2px -2px 6px rgba(0,0,0,0.2)) drop-shadow(2px 2px 8px rgba(0,0,0,0.1))',
                                 transform: 'translateZ(4px) rotateX(-5deg) rotateY(5deg) translateY(-2px)',
                                 transformStyle: 'preserve-3d',
                                 transformOrigin: 'bottom right',
                               }}
-                            />
+                            >
+                              <div 
+                                style={{
+                                  width: '100%',
+                                  height: '100%',
+                                  borderRadius: '0 0 0 16px',
+                                  background: 'inherit',
+                                }}
+                              />
+                            </div>
                             {/* Diagonal shadow edge for realistic paper curl effect */}
                             <div 
                               className="absolute z-10"
@@ -523,9 +532,10 @@ export default function PeelExperiment() {
                         <div className="relative">
                           {/* Large 60x60 triangle with gradient background and realistic paper curl */}
                           <div 
-                            className="w-[60px] h-[60px] absolute bottom-0 right-0 overflow-hidden"
+                            className="w-[60px] h-[60px] absolute bottom-0 right-0"
                             style={{
-                              backgroundColor: 'transparent', // No background - just empty space
+                              backgroundColor: 'transparent',
+                              overflow: 'visible',
                             }}
                           >
                             <div
@@ -533,15 +543,23 @@ export default function PeelExperiment() {
                               style={{
                                 background: flippedCards[step.number - 1] 
                                   ? 'white' 
-                                  : 'linear-gradient(135deg, rgba(214, 124, 74, 0.92) 0%, rgba(42, 71, 89, 0.92) 100%)', // Same gradient as back card
+                                  : 'linear-gradient(135deg, rgba(214, 124, 74, 0.92) 0%, rgba(42, 71, 89, 0.92) 100%)',
                                 clipPath: 'polygon(0% 0%, 100% 0%, 0% 100%)',
-                                borderRadius: '0 0 0 16px', // Round only the inner corner where fold lines meet
                                 filter: 'drop-shadow(-2px -2px 6px rgba(0,0,0,0.2)) drop-shadow(2px 2px 8px rgba(0,0,0,0.1))',
                                 transform: 'translateZ(4px) rotateX(-5deg) rotateY(5deg) translateY(-2px)',
                                 transformStyle: 'preserve-3d',
                                 transformOrigin: 'bottom right',
                               }}
-                            />
+                            >
+                              <div 
+                                style={{
+                                  width: '100%',
+                                  height: '100%',
+                                  borderRadius: '0 0 0 16px',
+                                  background: 'inherit',
+                                }}
+                              />
+                            </div>
                             {/* Diagonal shadow edge for realistic paper curl effect */}
                             <div 
                               className="absolute z-10"
