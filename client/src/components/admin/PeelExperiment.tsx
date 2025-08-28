@@ -15,48 +15,14 @@ export function PeelExperiment() {
           const cardIndex = parseInt(entry.target.getAttribute('data-card-index') || '0');
           
           if (entry.isIntersecting) {
-            // Trigger one-third reveal animation after a short delay
+            // Simple test - just set peel to 0.25 and leave it there
             setTimeout(() => {
-              console.log('🎬 PEEL: Large reveal triggered for card', cardIndex);
-              // Set peel position to reveal approximately one-third from bottom-right
+              console.log('🎬 PEEL: Setting simple static peel at 0.25 for card', cardIndex);
               setPeelPositions(prev => ({
                 ...prev,
-                [cardIndex]: { x: 0.65, y: 0.65 } // This reveals about one-third
+                [cardIndex]: { x: 0.25, y: 0.25 } // Static test - what does 0.25 actually look like?
               }));
-              
-              // Auto-hide after showing for 2 seconds, but leave a small corner
-              setTimeout(() => {
-                console.log('🎬 PEEL: Peeling back down (removing peel)');
-                // First remove the peel completely
-                setPeelPositions(prev => {
-                  const newPos = { ...prev };
-                  delete newPos[cardIndex];
-                  return newPos;
-                });
-                
-                // Then after a brief pause, add the small corner
-                setTimeout(() => {
-                  // TESTING INVERTED VALUES - maybe coordinate system is backwards!
-                  // If {x: 0.65, y: 0.65} = 50% reveal, then smaller values might = smaller reveals
-                  const experimentalPositions = [
-                    { x: 0.35, y: 0.35 },  // Card 0: Inverted - should be small reveal?
-                    { x: 0.25, y: 0.25 },  // Card 1: Even smaller reveal?
-                    { x: 0.15, y: 0.15 }   // Card 2: Tiny reveal?
-                  ];
-                  
-                  const position = experimentalPositions[cardIndex] || { x: 0.1, y: 0.1 };
-                  console.log(`🎬 PEEL: TESTING INVERTED VALUES for card ${cardIndex}:`, position, '(maybe coordinates are backwards?)');
-                  
-                  setPeelPositions(prev => {
-                    const newState = {
-                      ...prev,
-                      [cardIndex]: position
-                    };
-                    console.log(`🎬 PEEL: Inverted test - card ${cardIndex} state:`, newState);
-                    return newState;
-                  });
-                }, 200);
-              }, 2000);
+              console.log('🎬 PEEL: No animation - peel stays at {x: 0.25, y: 0.25}');
             }, 300);
           } else {
             // When card leaves viewport, reset it to default state
