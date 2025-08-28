@@ -428,9 +428,10 @@ export function PeelExperiment() {
                             backgroundSize: 'cover',
                             backgroundPosition: 'center',
                             backgroundRepeat: 'no-repeat',
-                            // Card 3: Remove all transforms to see natural state
+                            // Card 3: Apply 270deg rotation to counter the peel effect
                             ...(step.number === 3 ? {
-                              // No transforms - natural state
+                              transform: 'rotate(270deg)',
+                              transformOrigin: 'center'
                             } : {
                               transform: 'scaleX(-1)',
                               transformOrigin: 'center'
