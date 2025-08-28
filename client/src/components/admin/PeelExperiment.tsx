@@ -116,16 +116,13 @@ export function PeelExperiment() {
                       console.log(`🎬 PEEL: Card ${cardIndex + 1} - Big reveal shown`);
                       // Wait 1 second, then return to normal
                       setTimeout(() => {
-                        springTo(
-                          { x: 200, y: 200 },  // Return to normal position
-                          {
-                            stiffness: 0.045,
-                            damping: 0.85,
-                            onComplete: () => {
-                              console.log(`🎬 PEEL: Card ${cardIndex + 1} - Returned to normal`);
-                            },
-                          }
-                        );
+                        // Remove the peel position completely - no corner visible
+                        setPeelPositions(prev => {
+                          const newPos = { ...prev };
+                          delete newPos[cardIndex];
+                          return newPos;
+                        });
+                        console.log(`🎬 PEEL: Card ${cardIndex + 1} - Returned to completely normal (no corner)`);
                       }, 1000);
                     },
                   }
