@@ -35,31 +35,21 @@ export function PeelExperiment() {
                 console.log('🎬 PEEL: Card 2 - Very large reveal at {x: 100, y: 100}');
               
               } else {
-                // Card 3: Full animation sequence - large reveal, then hide, then small corner
-                console.log('🎬 PEEL: Card 3 - Starting animation sequence: large reveal');
+                // Card 3: Combination sequence - Card 1's animation, then Card 2's animation
+                console.log('🎬 PEEL: Card 3 - Starting sequence: Card 1 animation (moderate reveal)');
                 setPeelPositions(prev => ({
                   ...prev,
-                  [cardIndex]: { x: 200, y: 200 } // Large reveal first
+                  [cardIndex]: { x: 200, y: 200 } // Card 1's moderate reveal
                 }));
                 
-                // After 2 seconds, hide completely
+                // After 2 seconds, switch to Card 2's animation
                 setTimeout(() => {
-                  console.log('🎬 PEEL: Card 3 - Hiding peel completely');
-                  setPeelPositions(prev => {
-                    const newPos = { ...prev };
-                    delete newPos[cardIndex];
-                    return newPos;
-                  });
-                  
-                  // After brief pause, show small persistent corner
-                  setTimeout(() => {
-                    console.log('🎬 PEEL: Card 3 - Setting persistent small corner');
-                    setPeelPositions(prev => ({
-                      ...prev,
-                      [cardIndex]: { x: 360, y: 340 } // Small persistent corner
-                    }));
-                    console.log('🎬 PEEL: Card 3 - Final state: small corner at {x: 360, y: 340}');
-                  }, 200);
+                  console.log('🎬 PEEL: Card 3 - Switching to Card 2 animation (very large reveal)');
+                  setPeelPositions(prev => ({
+                    ...prev,
+                    [cardIndex]: { x: 100, y: 100 } // Card 2's very large reveal
+                  }));
+                  console.log('🎬 PEEL: Card 3 - Final state: very large reveal at {x: 100, y: 100}');
                 }, 2000);
               }
             }, 300);
