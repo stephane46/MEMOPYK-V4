@@ -36,22 +36,22 @@ export function PeelExperiment() {
                 
                 // Then after a brief pause, add the small corner
                 setTimeout(() => {
-                  // Experiment with different values for each card
+                  // Experiment with radically different values to understand the coordinate system
                   const experimentalPositions = [
-                    { x: 0.8, y: 0.8 },   // Card 0: Medium corner
-                    { x: 0.9, y: 0.9 },   // Card 1: Smaller corner
-                    { x: 0.95, y: 0.95 }  // Card 2: Tiny corner
+                    { x: 0.2, y: 0.2 },   // Card 0: Small reveal (20%)
+                    { x: 0.1, y: 0.1 },   // Card 1: Tiny reveal (10%) 
+                    { x: 0.05, y: 0.05 }  // Card 2: Minimal reveal (5%)
                   ];
                   
-                  const position = experimentalPositions[cardIndex] || { x: 0.99, y: 0.99 };
-                  console.log(`🎬 PEEL: Adding experimental corner for card ${cardIndex} with position`, position);
+                  const position = experimentalPositions[cardIndex] || { x: 0.01, y: 0.01 };
+                  console.log(`🎬 PEEL: Testing SMALL VALUES for card ${cardIndex} with position`, position);
                   
                   setPeelPositions(prev => {
                     const newState = {
                       ...prev,
                       [cardIndex]: position
                     };
-                    console.log(`🎬 PEEL: Final experimental state for card ${cardIndex}:`, newState);
+                    console.log(`🎬 PEEL: Small values test - card ${cardIndex} state:`, newState);
                     return newState;
                   });
                 }, 200);
