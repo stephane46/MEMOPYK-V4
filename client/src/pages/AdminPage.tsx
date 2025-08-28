@@ -9,7 +9,7 @@ import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
 import { Badge } from '@/components/ui/badge';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
-import { ArrowUp, ArrowDown, Play, RefreshCw, BarChart3, Video, HardDrive, Users, MessageSquare, FileText, LogOut, TestTube, Rocket, X, Type, Save, ChevronUp, ChevronDown, Trash2, Eye, EyeOff, Upload, FileVideo, Database, Check, Zap, Search, Clock, TrendingUp, Globe, Sparkles } from 'lucide-react';
+import { ArrowUp, ArrowDown, Play, RefreshCw, BarChart3, Video, HardDrive, Users, MessageSquare, FileText, LogOut, TestTube, Rocket, X, Type, Save, ChevronUp, ChevronDown, Trash2, Eye, EyeOff, Upload, FileVideo, Database, Check, Zap, Search, Clock, TrendingUp, Globe, Sparkles, Layers } from 'lucide-react';
 import { formatFrenchDateTime } from '@/utils/date-format';
 import { useToast } from '@/hooks/use-toast';
 import GalleryManagementNew from '@/components/admin/GalleryManagementNew';
@@ -29,6 +29,7 @@ import VideoCacheStatus from '@/components/admin/VideoCacheStatus';
 import SystemTestDashboard from '@/components/admin/SystemTestDashboard';
 import PerformanceTestDashboard from '@/components/admin/PerformanceTestDashboard';
 import DeploymentManagement from '@/components/admin/DeploymentManagement';
+import { PeelExperiment } from '@/components/admin/PeelExperiment';
 import CryptoJS from 'crypto-js';
 
 
@@ -238,6 +239,7 @@ export default function AdminPage() {
     { id: 'cta', label: 'Boutons CTA', icon: Zap },
     { id: 'why-memopyk', label: 'Pourquoi MEMOPYK', icon: Users },
     { id: 'legal-docs', label: 'Documents Légaux', icon: FileText },
+    { id: 'peel-experiment', label: '🧪 Peel Effect', icon: Layers },
     { id: 'analytics', label: 'Analytics (old)', icon: BarChart3 },
     { id: 'analytics-ga', label: '(Analytics GA)', icon: TrendingUp },
     { id: 'analytics-ga-clean', label: 'Analytics', icon: Sparkles },
@@ -1489,6 +1491,13 @@ export default function AdminPage() {
           {activeSection === 'legal-docs' && (
             <div className="space-y-6">
               <LegalDocumentManagement />
+            </div>
+          )}
+
+          {/* Peel Experiment */}
+          {activeSection === 'peel-experiment' && (
+            <div className="space-y-6">
+              <PeelExperiment />
             </div>
           )}
 
