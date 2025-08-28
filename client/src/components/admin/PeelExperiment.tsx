@@ -366,20 +366,36 @@ export function PeelExperiment() {
                       </PeelBack>
                     </PeelWrapper>
                     
-                    {/* Orange Arrow Indicator - Always visible after first reveal */}
+                    {/* Orange Arrow Indicator - Different style for card 3 */}
                     {showArrows[step.number - 1] && (
-                      <div className="absolute bottom-3 right-3 pointer-events-none z-50">
-                        <div className="bg-memopyk-orange text-white p-2 rounded-full shadow-lg animate-pulse flex items-center justify-center">
-                          <svg 
-                            width="16" 
-                            height="16" 
-                            viewBox="0 0 16 16" 
-                            fill="currentColor"
-                          >
-                            {/* Perfectly centered arrow pointing to top-left */}
-                            <path d="M4 4 L4 9 L6 7 L10 11 L12 9 L8 5 L10 4 Z" />
-                          </svg>
-                        </div>
+                      <div className="absolute bottom-0 right-0 pointer-events-none z-50">
+                        {step.number === 3 ? (
+                          /* Card 3: Orange rectangle corner tip with arrow */
+                          <div className="bg-memopyk-orange text-white px-3 py-2 shadow-lg animate-pulse flex items-center justify-center">
+                            <svg 
+                              width="16" 
+                              height="16" 
+                              viewBox="0 0 16 16" 
+                              fill="currentColor"
+                            >
+                              {/* Arrow pointing to top-left */}
+                              <path d="M4 4 L4 9 L6 7 L10 11 L12 9 L8 5 L10 4 Z" />
+                            </svg>
+                          </div>
+                        ) : (
+                          /* Cards 1 & 2: Orange circle with arrow */
+                          <div className="bg-memopyk-orange text-white p-2 rounded-full shadow-lg animate-pulse flex items-center justify-center">
+                            <svg 
+                              width="16" 
+                              height="16" 
+                              viewBox="0 0 16 16" 
+                              fill="currentColor"
+                            >
+                              {/* Arrow pointing to top-left */}
+                              <path d="M4 4 L4 9 L6 7 L10 11 L12 9 L8 5 L10 4 Z" />
+                            </svg>
+                          </div>
+                        )}
                       </div>
                     )}
                     
