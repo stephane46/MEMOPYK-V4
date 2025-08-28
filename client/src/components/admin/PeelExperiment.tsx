@@ -458,9 +458,10 @@ export default function PeelExperiment() {
                         <div className="relative">
                           {/* Large 60x60 triangle with gradient background and realistic paper curl */}
                           <div 
-                            className="w-[60px] h-[60px] absolute bottom-0 right-0 overflow-visible"
+                            className="w-[60px] h-[60px] absolute bottom-0 right-0 overflow-hidden"
                             style={{
                               borderRadius: '0 0 16px 0', // Match card's border radius
+                              backgroundColor: '#F2EBDC', // Beige section background showing through
                             }}
                           >
                             <div
@@ -470,6 +471,7 @@ export default function PeelExperiment() {
                                   ? 'white' 
                                   : 'linear-gradient(135deg, rgba(214, 124, 74, 0.92) 0%, rgba(42, 71, 89, 0.92) 100%)', // Same gradient as back card
                                 clipPath: 'polygon(0% 0%, 100% 0%, 0% 100%)',
+                                borderRadius: '0 0 0 16px', // Rounded corner for the folded triangle
                                 filter: 'drop-shadow(-2px -2px 6px rgba(0,0,0,0.2)) drop-shadow(2px 2px 8px rgba(0,0,0,0.1))',
                                 transform: 'translateZ(4px) rotateX(-5deg) rotateY(5deg) translateY(-2px)',
                                 transformStyle: 'preserve-3d',
@@ -478,17 +480,16 @@ export default function PeelExperiment() {
                             />
                             {/* Diagonal shadow edge for realistic paper curl effect */}
                             <div 
-                              className="absolute z-20"
+                              className="absolute z-10"
                               style={{
-                                top: '-2px',
-                                right: '-2px',
-                                width: '86px', // √(60² + 60²) + extra for visibility
-                                height: '5px',
-                                background: 'linear-gradient(90deg, transparent 0%, rgba(0,0,0,0.6) 30%, rgba(0,0,0,0.4) 70%, rgba(0,0,0,0.2) 100%)',
+                                bottom: '0px',
+                                left: '0px',
+                                width: '86px', // √(60² + 60²) diagonal length
+                                height: '4px',
+                                background: 'linear-gradient(90deg, rgba(0,0,0,0.4) 0%, rgba(0,0,0,0.2) 50%, transparent 100%)',
                                 transform: 'rotate(135deg)',
-                                transformOrigin: 'top right',
-                                opacity: flippedCards[step.number - 1] ? 0.9 : 0.7,
-                                boxShadow: '0 1px 3px rgba(0,0,0,0.3)',
+                                transformOrigin: 'bottom left',
+                                opacity: flippedCards[step.number - 1] ? 0.8 : 0.6,
                               }}
                             />
                           </div>
@@ -523,9 +524,10 @@ export default function PeelExperiment() {
                         <div className="relative">
                           {/* Large 60x60 triangle with gradient background and realistic paper curl */}
                           <div 
-                            className="w-[60px] h-[60px] absolute bottom-0 right-0 overflow-visible"
+                            className="w-[60px] h-[60px] absolute bottom-0 right-0 overflow-hidden"
                             style={{
                               borderRadius: '0 0 16px 0', // Match card's border radius
+                              backgroundColor: '#F2EBDC', // Beige section background showing through
                             }}
                           >
                             <div
@@ -535,6 +537,7 @@ export default function PeelExperiment() {
                                   ? 'white' 
                                   : 'linear-gradient(135deg, rgba(214, 124, 74, 0.92) 0%, rgba(42, 71, 89, 0.92) 100%)', // Same gradient as back card
                                 clipPath: 'polygon(0% 0%, 100% 0%, 0% 100%)',
+                                borderRadius: '0 0 0 16px', // Rounded corner for the folded triangle
                                 filter: 'drop-shadow(-2px -2px 6px rgba(0,0,0,0.2)) drop-shadow(2px 2px 8px rgba(0,0,0,0.1))',
                                 transform: 'translateZ(4px) rotateX(-5deg) rotateY(5deg) translateY(-2px)',
                                 transformStyle: 'preserve-3d',
@@ -543,17 +546,16 @@ export default function PeelExperiment() {
                             />
                             {/* Diagonal shadow edge for realistic paper curl effect */}
                             <div 
-                              className="absolute z-20"
+                              className="absolute z-10"
                               style={{
-                                top: '-2px',
-                                right: '-2px',
-                                width: '86px', // √(60² + 60²) + extra for visibility
-                                height: '5px',
-                                background: 'linear-gradient(90deg, transparent 0%, rgba(0,0,0,0.6) 30%, rgba(0,0,0,0.4) 70%, rgba(0,0,0,0.2) 100%)',
+                                bottom: '0px',
+                                left: '0px',
+                                width: '86px', // √(60² + 60²) diagonal length
+                                height: '4px',
+                                background: 'linear-gradient(90deg, rgba(0,0,0,0.4) 0%, rgba(0,0,0,0.2) 50%, transparent 100%)',
                                 transform: 'rotate(135deg)',
-                                transformOrigin: 'top right',
-                                opacity: flippedCards[step.number - 1] ? 0.9 : 0.7,
-                                boxShadow: '0 1px 3px rgba(0,0,0,0.3)',
+                                transformOrigin: 'bottom left',
+                                opacity: flippedCards[step.number - 1] ? 0.8 : 0.6,
                               }}
                             />
                           </div>
