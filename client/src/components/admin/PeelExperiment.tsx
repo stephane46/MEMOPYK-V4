@@ -168,7 +168,8 @@ export function PeelExperiment() {
                         <div 
                           className="border border-gray-200 shadow-lg hover:shadow-2xl rounded-2xl overflow-hidden h-full transition-all duration-700 relative"
                           style={{
-                            transformStyle: 'preserve-3d'
+                            transformStyle: 'preserve-3d',
+                            backgroundColor: flippedCards[step.number - 1] ? '#D67C4A' : 'white'
                           }}
                         >
                           {!flippedCards[step.number - 1] ? (
@@ -229,7 +230,8 @@ export function PeelExperiment() {
                           className="border border-gray-200 shadow-lg hover:shadow-2xl rounded-2xl overflow-hidden h-full transition-all duration-700 relative"
                           style={{
                             // Remove flip transform - let react-peel handle the visual effect
-                            transformStyle: 'preserve-3d'
+                            transformStyle: 'preserve-3d',
+                            backgroundColor: flippedCards[step.number - 1] ? '#D67C4A' : 'white'
                           }}
                         >
                           {/* Conditional Content Based on Flip State */}
