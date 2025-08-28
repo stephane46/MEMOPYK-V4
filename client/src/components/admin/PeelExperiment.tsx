@@ -192,10 +192,11 @@ export default function PeelExperiment() {
                                 }}
                               >
                                 <div className="text-center flex flex-col p-4" style={{ height: '100%', position: 'relative' }}>
-                                  <div className="text-sm leading-normal text-white w-full mb-4">
+                                  <div className="text-sm leading-normal text-white w-full" style={{ height: '140px' }}>
                                     {step.number === 1 && language === 'fr-FR' && (
                                       <>
-                                        <p className="mb-3">Envoyez-nous toutes vos photos et vidéos, même par milliers. Nous trions, sélectionnons et gardons uniquement les plus belles, selon ce que vous souhaitez partager via notre formulaire ou un appel téléphonique gratuit.</p>
+                                        <p className="mb-3">Envoyez-nous toutes vos photos et vidéos, même par milliers.</p>
+                                        <p className="mb-3">Nous trions, sélectionnons et gardons uniquement les plus belles, selon ce que vous souhaitez partager via notre formulaire ou un appel téléphonique gratuit.</p>
                                       </>
                                     )}
                                     {step.number === 1 && language === 'en-US' && (
@@ -206,7 +207,8 @@ export default function PeelExperiment() {
                                     )}
                                     {step.number === 2 && language === 'fr-FR' && (
                                       <>
-                                        <p className="mb-3">Nous construisons le scénario à partir des meilleures images, avec la musique, le rythme et le format qui vous correspondent. Vous recevez un devis clair et adapté avant tout travail.</p>
+                                        <p className="mb-3">Nous construisons le scénario à partir des meilleures images, avec la musique, le rythme et le format qui vous correspondent.</p>
+                                        <p className="mb-3">Vous recevez un devis clair et adapté avant tout travail.</p>
                                       </>
                                     )}
                                     {step.number === 2 && language === 'en-US' && (
@@ -217,7 +219,8 @@ export default function PeelExperiment() {
                                     )}
                                     {step.number === 3 && language === 'fr-FR' && (
                                       <>
-                                        <p className="mb-3">Vous recevez la première version de votre film-souvenir en une à trois semaines, prête à être revue. Deux séries de retours sont incluses pour affiner le montage jusqu'à votre entière satisfaction.</p>
+                                        <p className="mb-3">Vous recevez la première version de votre film-souvenir en une à trois semaines, prête à être revue.</p>
+                                        <p className="mb-3">Deux séries de retours sont incluses pour affiner le montage jusqu'à votre entière satisfaction.</p>
                                       </>
                                     )}
                                     {step.number === 3 && language === 'en-US' && (
@@ -228,8 +231,8 @@ export default function PeelExperiment() {
                                     )}
                                   </div>
                                   
-                                  {/* Separator Line */}
-                                  <div className="border-t border-white/40 mx-6" style={{ marginTop: '16px', marginBottom: '16px' }}></div>
+                                  {/* Separator Line - Fixed Position */}
+                                  <div className="border-t border-white/40 mx-6" style={{ marginTop: '10px', marginBottom: '10px' }}></div>
                                   
                                   {/* Bottom Section - Sub Description */}
                                   <div className="text-center">
@@ -285,10 +288,11 @@ export default function PeelExperiment() {
                               }}
                             >
                               <div className="text-center text-white">
-                                <div className="text-sm leading-normal mb-4">
+                                <div className="text-sm leading-normal" style={{ height: '140px' }}>
                                   {step.number === 1 && language === 'fr-FR' && (
                                     <>
-                                      <p className="mb-3">Envoyez-nous toutes vos photos et vidéos, même par milliers. Nous trions, sélectionnons et gardons uniquement les plus belles, selon ce que vous souhaitez partager via notre formulaire ou un appel téléphonique gratuit.</p>
+                                      <p className="mb-3">Envoyez-nous toutes vos photos et vidéos, même par milliers.</p>
+                                      <p className="mb-3">Nous trions, sélectionnons et gardons uniquement les plus belles, selon ce que vous souhaitez partager via notre formulaire ou un appel téléphonique gratuit.</p>
                                     </>
                                   )}
                                   {step.number === 1 && language === 'en-US' && (
@@ -299,7 +303,8 @@ export default function PeelExperiment() {
                                   )}
                                   {step.number === 2 && language === 'fr-FR' && (
                                     <>
-                                      <p className="mb-3">Nous construisons le scénario à partir des meilleures images, avec la musique, le rythme et le format qui vous correspondent. Vous recevez un devis clair et adapté avant tout travail.</p>
+                                      <p className="mb-3">Nous construisons le scénario à partir des meilleures images, avec la musique, le rythme et le format qui vous correspondent.</p>
+                                      <p className="mb-3">Vous recevez un devis clair et adapté avant tout travail.</p>
                                     </>
                                   )}
                                   {step.number === 2 && language === 'en-US' && (
@@ -310,7 +315,8 @@ export default function PeelExperiment() {
                                   )}
                                   {step.number === 3 && language === 'fr-FR' && (
                                     <>
-                                      <p className="mb-3">Vous recevez la première version de votre film-souvenir en une à trois semaines, prête à être revue. Deux séries de retours sont incluses pour affiner le montage jusqu'à votre entière satisfaction.</p>
+                                      <p className="mb-3">Vous recevez la première version de votre film-souvenir en une à trois semaines, prête à être revue.</p>
+                                      <p className="mb-3">Deux séries de retours sont incluses pour affiner le montage jusqu'à votre entière satisfaction.</p>
                                     </>
                                   )}
                                   {step.number === 3 && language === 'en-US' && (
@@ -321,7 +327,7 @@ export default function PeelExperiment() {
                                   )}
                                 </div>
                                 
-                                <div className="border-t border-white/40 mx-6" style={{ marginTop: '16px', marginBottom: '16px' }}></div>
+                                <div className="border-t border-white/40 mx-6" style={{ marginTop: '10px', marginBottom: '10px' }}></div>
                                 
                                 <div className="text-xs text-white leading-relaxed">
                                   {step.number === 1 && language === 'fr-FR' && (
