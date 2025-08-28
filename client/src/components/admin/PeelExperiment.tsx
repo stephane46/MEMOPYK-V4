@@ -189,10 +189,7 @@ export function PeelExperiment() {
                             <div 
                               className="h-full flex flex-col cursor-pointer relative"
                               style={{
-                                backgroundImage: `linear-gradient(135deg, rgba(214, 124, 74, 0.92) 0%, rgba(42, 71, 89, 0.92) 100%), url(${step.image})`,
-                                backgroundSize: 'cover',
-                                backgroundPosition: 'center',
-                                backgroundRepeat: 'no-repeat',
+                                backgroundColor: '#D67C4A',
                                 transformOrigin: 'center'
                               }}
                             >
@@ -259,10 +256,7 @@ export function PeelExperiment() {
                               <div 
                                 className="h-full flex flex-col cursor-pointer relative"
                                 style={{
-                                  backgroundImage: `linear-gradient(135deg, rgba(214, 124, 74, 0.92) 0%, rgba(42, 71, 89, 0.92) 100%), url(${step.image})`,
-                                  backgroundSize: 'cover',
-                                  backgroundPosition: 'center',
-                                  backgroundRepeat: 'no-repeat',
+                                  backgroundColor: '#D67C4A',
                                   // No transform - let content appear naturally
                                   transformOrigin: 'center'
                                 }}
@@ -297,10 +291,7 @@ export function PeelExperiment() {
                           <div 
                             className="shadow-lg rounded-2xl overflow-hidden border border-gray-200 h-full"
                             style={{
-                              backgroundImage: `linear-gradient(135deg, rgba(214, 124, 74, 0.92) 0%, rgba(42, 71, 89, 0.92) 100%), url(${step.image})`,
-                              backgroundSize: 'cover',
-                              backgroundPosition: 'center',
-                              backgroundRepeat: 'no-repeat',
+                              backgroundColor: '#D67C4A'
                             }}
                           >
                             <div 
