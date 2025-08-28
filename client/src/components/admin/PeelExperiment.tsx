@@ -195,7 +195,7 @@ export default function PeelExperiment() {
                                 }}
                               >
                                 <div className="text-center flex flex-col p-4" style={{ height: '100%', position: 'relative' }}>
-                                  <div className="text-sm leading-normal text-memopyk-navy w-full" style={{ height: '66%', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+                                  <div className="text-sm leading-normal text-memopyk-cream w-full" style={{ height: '66%', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
                                     {step.number === 1 && language === 'fr-FR' && (
                                       <>
                                         <p className="mb-3">Envoyez-nous toutes vos photos et vidéos, même par milliers.</p>
