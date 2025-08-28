@@ -345,9 +345,9 @@ export function PeelExperiment() {
                             <div 
                               className="absolute"
                               style={{
-                                top: '0px',
-                                right: '0px',
-                                width: '57px',
+                                top: '2px',
+                                right: '2px',
+                                width: '48px',
                                 height: '2px',
                                 background: 'linear-gradient(45deg, white 50%, #D67C4A 50%)',
                                 backgroundSize: '4px 4px',
