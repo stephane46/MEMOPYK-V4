@@ -456,37 +456,19 @@ export default function PeelExperiment() {
                     {step.number === 1 && (
                       <div className="absolute bottom-0 right-0 pointer-events-none z-50">
                         <div className="relative">
-                          {/* Large 60x60 triangle with shadow and raised effect */}
+                          {/* Large 60x60 triangle with gradient background and realistic paper curl */}
                           <div 
-                            className={`w-0 h-0 border-l-[60px] border-b-[60px] border-l-transparent ${
-                              flippedCards[step.number - 1] ? 'border-b-white' : ''
-                            }`}
+                            className="w-[60px] h-[60px] absolute bottom-0 right-0"
                             style={{
-                              position: 'relative',
-                              bottom: '2px',
-                              borderBottomRightRadius: '16px',
-                              filter: 'drop-shadow(0px -2px 4px rgba(0,0,0,0.15)) drop-shadow(-2px 0px 4px rgba(0,0,0,0.15))',
-                              transform: 'translateZ(2px) rotateX(-2deg) rotateY(2deg)',
-                              transformStyle: 'preserve-3d',
-                              borderBottomColor: flippedCards[step.number - 1] 
-                                ? 'white' 
-                                : 'rgba(42, 71, 89, 0.92)', // Match back side gradient end color (dark blue)
-                            }}
-                          />
-                          {/* Dotted diagonal line for the peel effect */}
-                          <div 
-                            className="absolute"
-                            style={{
-                              top: '4px',
-                              right: '4px',
-                              width: '72px',
-                              height: '2px',
                               background: flippedCards[step.number - 1] 
-                                ? 'repeating-linear-gradient(45deg, #D67C4A 0px, #D67C4A 3px, white 3px, white 6px)'
-                                : 'repeating-linear-gradient(45deg, white 0px, white 3px, #D67C4A 3px, #D67C4A 6px)',
-                              transform: 'rotate(-45deg)',
-                              transformOrigin: 'top right',
-                              opacity: 0.8
+                                ? 'white' 
+                                : 'linear-gradient(135deg, rgba(214, 124, 74, 0.92) 0%, rgba(42, 71, 89, 0.92) 100%)', // Same gradient as back card
+                              clipPath: 'polygon(100% 0%, 100% 100%, 0% 100%)',
+                              borderBottomRightRadius: '16px',
+                              filter: 'drop-shadow(-2px -2px 6px rgba(0,0,0,0.2)) drop-shadow(2px 2px 8px rgba(0,0,0,0.1))',
+                              transform: 'translateZ(4px) rotateX(-5deg) rotateY(5deg) translateY(-2px)',
+                              transformStyle: 'preserve-3d',
+                              transformOrigin: 'bottom right',
                             }}
                           />
                           {/* Arrow for Card 1 - Same as Cards 2 & 3 */}
