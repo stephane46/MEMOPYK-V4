@@ -899,3 +899,28 @@ html, body {
     filter: brightness(1);
   }
 }
+
+/* Peel effect animations for card 3 */
+@keyframes peelFlutter {
+  0%, 100% { 
+    transform: rotate(0deg) scale(1);
+    filter: drop-shadow(0 4px 6px rgb(0 0 0 / 0.1));
+  }
+  25% { 
+    transform: rotate(-1deg) scale(1.02);
+    filter: drop-shadow(2px 6px 8px rgb(0 0 0 / 0.15));
+  }
+  75% { 
+    transform: rotate(1deg) scale(1.01);
+    filter: drop-shadow(-1px 5px 7px rgb(0 0 0 / 0.12));
+  }
+}
+
+@keyframes peelArrow {
+  0%, 100% { 
+    transform: translate(0, 0) scale(1);
+  }
+  50% { 
+    transform: translate(-1px, -1px) scale(1.1);
+  }
+}

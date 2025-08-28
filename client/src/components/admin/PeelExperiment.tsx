@@ -370,15 +370,21 @@ export function PeelExperiment() {
                     {showArrows[step.number - 1] && (
                       <div className="absolute bottom-0 right-0 pointer-events-none z-50">
                         {step.number === 3 ? (
-                          /* Card 3: Orange triangle corner tip with arrow */
+                          /* Card 3: Orange triangle corner with peel effect */
                           <div className="relative">
                             <div 
-                              className="w-0 h-0 border-l-[40px] border-b-[40px] border-l-transparent border-b-memopyk-orange shadow-lg"
+                              className="w-0 h-0 border-l-[40px] border-b-[40px] border-l-transparent border-b-memopyk-orange shadow-lg transform hover:scale-110 transition-all duration-300"
                               style={{
-                                filter: 'drop-shadow(0 4px 6px rgb(0 0 0 / 0.1))'
+                                filter: 'drop-shadow(0 4px 6px rgb(0 0 0 / 0.1))',
+                                animation: 'peelFlutter 2s ease-in-out infinite'
                               }}
                             />
-                            <div className="absolute bottom-1 right-1 animate-pulse">
+                            <div 
+                              className="absolute bottom-1 right-1 animate-pulse transform hover:scale-125 transition-all duration-300"
+                              style={{
+                                animation: 'peelArrow 2s ease-in-out infinite'
+                              }}
+                            >
                               <svg 
                                 width="18" 
                                 height="18" 
@@ -391,11 +397,11 @@ export function PeelExperiment() {
                             </div>
                           </div>
                         ) : (
-                          /* Cards 1 & 2: Orange circle with arrow */
+                          /* Cards 1 & 2: Orange circle with larger arrow */
                           <div className="bg-memopyk-orange text-white p-2 rounded-full shadow-lg animate-pulse flex items-center justify-center">
                             <svg 
-                              width="16" 
-                              height="16" 
+                              width="18" 
+                              height="18" 
                               viewBox="0 0 16 16" 
                               fill="currentColor"
                             >
