@@ -248,7 +248,7 @@ export default function PeelExperiment() {
                           constrainToContainer: true,
                           fadeThreshold: 0.3,
                         }}
-                        peelPosition={step.number === 3 && card3Revealed ? { x: 5, y: 5 } : peelPositions[step.number - 1]}
+                        peelPosition={peelPositions[step.number - 1]}
                       >
                       <PeelTop>
                         <div 
