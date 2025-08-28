@@ -184,10 +184,18 @@ export function PeelExperiment() {
                             backgroundImage: `linear-gradient(135deg, rgba(214, 124, 74, 0.92) 0%, rgba(42, 71, 89, 0.92) 100%), url(${step.image})`,
                             backgroundSize: 'cover',
                             backgroundPosition: 'center',
-                            backgroundRepeat: 'no-repeat'
+                            backgroundRepeat: 'no-repeat',
+                            transform: 'scaleX(-1)', // Flip horizontally to counter the peel effect rotation
+                            transformOrigin: 'center'
                           }}
                         >
-                          <div className="h-full flex flex-col justify-between p-4">
+                          <div 
+                            className="h-full flex flex-col justify-between p-4"
+                            style={{
+                              transform: 'scaleX(-1)', // Double flip to make text readable again
+                              transformOrigin: 'center'
+                            }}
+                          >
                             {/* Main Content */}
                             <div className="text-center text-white">
                               <div className="text-sm leading-normal mb-4">
