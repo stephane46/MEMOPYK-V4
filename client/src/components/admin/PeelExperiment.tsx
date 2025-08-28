@@ -270,7 +270,7 @@ export function PeelExperiment() {
                                   </div>
                                   
                                   {/* Separator Line */}
-                                  <div className="border-t border-white/40 mx-4 mb-4 mt-4"></div>
+                                  <div className="border-t border-white/40 mx-6" style={{ marginTop: '16px', marginBottom: '16px' }}></div>
                                   
                                   {/* Bottom Section - Sub Description */}
                                   <div className="text-center">
@@ -299,23 +299,77 @@ export function PeelExperiment() {
                             >
                               <div className="text-center text-white">
                                 <div className="text-sm leading-normal mb-4">
-                                  {(language === 'fr-FR' ? step.descriptionFr : step.descriptionEn)
-                                    .split('.')
-                                    .filter(sentence => sentence.trim().length > 0)
-                                    .map((sentence, i) => (
-                                      <p key={i} className="mb-3">{sentence.trim()}.</p>
-                                    ))}
+                                  {step.number === 1 && language === 'fr-FR' && (
+                                    <>
+                                      <p className="mb-3">Envoyez-nous simplement vos photos et vidéos, sans avoir à les trier ou les retoucher.</p>
+                                      <p className="mb-3">Faites-nous part de votre vision et de ce qui compte le plus pour vous, soit en remplissant notre formulaire en ligne, soit en échangeant vos idées avec nous lors d'un appel téléphonique gratuit et convivial.</p>
+                                    </>
+                                  )}
+                                  {step.number === 1 && language === 'en-US' && (
+                                    <>
+                                      <p className="mb-3">Simply send us your photos and videos—no need to organize or edit anything beforehand.</p>
+                                      <p className="mb-3">Share your vision and what matters most to you, either by filling out our easy online form or by discussing your ideas with us during a free, friendly phone call.</p>
+                                    </>
+                                  )}
+                                  {step.number === 2 && language === 'fr-FR' && (
+                                    <>
+                                      <p className="mb-3">Nous examinons chaque détail avec attention et sélectionnons les plus beaux moments pour créer une histoire unique, selon vos préférences, avec la musique idéale, le bon rythme et le format qui vous convient.</p>
+                                      <p className="mb-3">Vous recevez un devis précis et personnalisé avant toute étape, sans aucune mauvaise surprise.</p>
+                                    </>
+                                  )}
+                                  {step.number === 2 && language === 'en-US' && (
+                                    <>
+                                      <p className="mb-3">We carefully review every detail and handpick the most beautiful scenes to craft a unique, engaging story that fits your preferences, including perfect music, optimal timing, and the best format for your needs.</p>
+                                      <p className="mb-3">You'll receive a clear, custom quote before we begin, so there are no surprises.</p>
+                                    </>
+                                  )}
+                                  {step.number === 3 && language === 'fr-FR' && (
+                                    <>
+                                      <p className="mb-3">Vous recevez la première version de votre film-souvenir personnalisé sous une à trois semaines, soigneusement monté et prêt à vous émouvoir.</p>
+                                      <p className="mb-3">Deux séries de retours sont incluses pour affiner le montage jusqu'à ce qu'il corresponde parfaitement à vos attentes.</p>
+                                    </>
+                                  )}
+                                  {step.number === 3 && language === 'en-US' && (
+                                    <>
+                                      <p className="mb-3">You'll receive the first version of your personalized souvenir film within one to three weeks, carefully edited and ready to impress.</p>
+                                      <p className="mb-3">Our process includes two full rounds of feedback, making it easy to fine-tune your movie until it's exactly right.</p>
+                                    </>
+                                  )}
                                 </div>
                                 
-                                <div className="border-t border-white/40 my-4 mx-2"></div>
+                                <div className="border-t border-white/40 mx-6" style={{ marginTop: '16px', marginBottom: '16px' }}></div>
                                 
                                 <div className="text-xs text-white leading-relaxed">
-                                  {(language === 'fr-FR' ? step.subDescriptionFr : step.subDescriptionEn)
-                                    .split('.')
-                                    .filter(sentence => sentence.trim().length > 0)
-                                    .map((sentence, i) => (
-                                      <p key={i} className="mb-2">{sentence.trim()}.</p>
-                                    ))}
+                                  {step.number === 1 && language === 'fr-FR' && (
+                                    <>
+                                      <p className="mb-2">Commencer est un jeu d'enfant : apportez-nous simplement vos souvenirs et vos envies, nous nous occupons du reste avec soin et créativité.</p>
+                                    </>
+                                  )}
+                                  {step.number === 1 && language === 'en-US' && (
+                                    <>
+                                      <p className="mb-2">Getting started is effortless: just bring us your memories and ideas, and we'll handle everything else with care and creativity.</p>
+                                    </>
+                                  )}
+                                  {step.number === 2 && language === 'fr-FR' && (
+                                    <>
+                                      <p className="mb-2">Vos souvenirs deviennent un film sur-mesure, réalisé avec un souci du détail exceptionnel et une totale transparence à chaque étape.</p>
+                                    </>
+                                  )}
+                                  {step.number === 2 && language === 'en-US' && (
+                                    <>
+                                      <p className="mb-2">Your memories become a one-of-a-kind film, created with meticulous attention to detail and total transparency at every step.</p>
+                                    </>
+                                  )}
+                                  {step.number === 3 && language === 'fr-FR' && (
+                                    <>
+                                      <p className="mb-2">Le résultat : un souvenir rien qu'à vous, livré rapidement et peaufiné selon vos envies jusqu'à la perfection.</p>
+                                    </>
+                                  )}
+                                  {step.number === 3 && language === 'en-US' && (
+                                    <>
+                                      <p className="mb-2">The result is a keepsake entirely your own, delivered quickly and refined with your input until it's just perfect.</p>
+                                    </>
+                                  )}
                                 </div>
                               </div>
                             </div>
