@@ -389,18 +389,16 @@ export function PeelExperiment() {
                           rafMap.delete(step.number - 1);
                         }
                         
-                        // Card 2: RESTART continuous pulsing after flip
+                        // Card 2: RESTART continuous pulsing after flip with CORRECT timing
                         if (step.number === 2) {
                           setTimeout(() => {
-                            // Restart Card 2's continuous pulsing at small corner position
+                            // Simplified continuous pulsing at correct spring timing (~600ms cycles)
                             const continuousPulse = () => {
-                              // Pulse out
                               setPeelPositions(prev => ({ ...prev, [step.number - 1]: { x: 275, y: 275 } }));
                               setTimeout(() => {
-                                // Pulse in
                                 setPeelPositions(prev => ({ ...prev, [step.number - 1]: { x: 285, y: 285 } }));
-                                setTimeout(continuousPulse, 800); // Loop every 800ms
-                              }, 400);
+                                setTimeout(continuousPulse, 300); // Match spring timing
+                              }, 300);
                             };
                             continuousPulse();
                             console.log(`🎬 PEEL-CLICK: Card 2 - Continuous pulsing RESTARTED after flip`);
@@ -442,6 +440,21 @@ export function PeelExperiment() {
                             transformStyle: step.number === 3 ? 'flat' : 'preserve-3d'
                           }}
                         >
+                          {/* Card 2: Clean Corner Pulse Indicator - Always Visible */}
+                          {step.number === 2 && (
+                            <div 
+                              className="absolute bottom-0 right-0 w-6 h-6 z-50"
+                              style={{
+                                clipPath: 'polygon(100% 0%, 100% 100%, 0% 100%)',
+                                background: !flippedCards[step.number - 1] 
+                                  ? 'linear-gradient(135deg, #FFD700 0%, #FF8C00 100%)' // Front: Gold/Orange gradient
+                                  : 'linear-gradient(135deg, #00E6FF 0%, #0088FF 100%)', // Back: Cyan/Blue gradient
+                                animation: 'pulse 2s ease-in-out infinite',
+                                pointerEvents: 'none',
+                                boxShadow: '0 0 8px rgba(255, 215, 0, 0.6)'
+                              }}
+                            />
+                          )}
                           {/* Conditional Content Based on Flip State */}
                           {!flippedCards[step.number - 1] || step.number !== 3 ? (
                             /* FRONT SIDE - Original Image (or back side for Cards 1&2) */
@@ -537,10 +550,15 @@ export function PeelExperiment() {
                             backgroundSize: 'cover',
                             backgroundPosition: 'center',
                             backgroundRepeat: 'no-repeat',
-                            // Card 3: Remove rotation to fix text orientation issues
+                            // Card-specific transforms to fix text orientation
                             ...(step.number === 3 ? {
-                              // No transform for Card 3 - keep text readable
+                              // Card 3: No transform - keep text readable
+                            } : step.number === 2 ? {
+                              // Card 2: Fix big reveal text orientation 
+                              transform: 'rotateY(180deg)',
+                              transformOrigin: 'center'
                             } : {
+                              // Card 1: Original scaleX flip
                               transform: 'scaleX(-1)',
                               transformOrigin: 'center'
                             })
@@ -549,10 +567,15 @@ export function PeelExperiment() {
                           <div 
                             className="h-full flex flex-col justify-between p-4"
                             style={{
-                              // Card 3: No text rotation - let container rotation handle it
+                              // Card-specific text counter-rotations  
                               ...(step.number === 3 ? {
-                                // No transform for text, let container handle rotation
+                                // Card 3: No text transform needed
+                              } : step.number === 2 ? {
+                                // Card 2: Counter the container's rotateY(180deg)
+                                transform: 'rotateY(180deg)',
+                                transformOrigin: 'center'
                               } : {
+                                // Card 1: Counter the container's scaleX(-1)
                                 transform: 'scaleX(-1)',
                                 transformOrigin: 'center'
                               })
