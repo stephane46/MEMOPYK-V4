@@ -17,39 +17,39 @@ export function PeelExperiment() {
           if (entry.isIntersecting) {
             setTimeout(() => {
               if (cardIndex === 0) {
-                // Card 1: KEEP EXACTLY AS-IS (working correctly) - was Card 2
-                console.log('🎬 PEEL: Card 1 - 50% reveal effect triggered (unchanged)');
+                // Card 1: Very very large reveal - half of the card
+                console.log('🎬 PEEL: Card 1 - VERY VERY LARGE reveal (half card)');
                 setPeelPositions(prev => ({
                   ...prev,
-                  [cardIndex]: { x: 200, y: 200 } // 50% reveal (unchanged)
+                  [cardIndex]: { x: 50, y: 50 } // Very very large reveal - half the card
                 }));
-                console.log('🎬 PEEL: Card 1 - 50% reveal set at {x: 200, y: 200}');
+                console.log('🎬 PEEL: Card 1 - Half card reveal at {x: 50, y: 50}');
               
               } else if (cardIndex === 1) {
-                // Card 2: Very large reveal - was Card 1
-                console.log('🎬 PEEL: Card 2 - VERY LARGE reveal from BOTTOM_RIGHT');
+                // Card 2: Small reveal - just bottom right corner
+                console.log('🎬 PEEL: Card 2 - Small corner reveal');
                 setPeelPositions(prev => ({
                   ...prev,
-                  [cardIndex]: { x: 100, y: 100 } // Very large reveal (smaller coordinates = bigger reveal)
+                  [cardIndex]: { x: 360, y: 340 } // Small corner reveal
                 }));
-                console.log('🎬 PEEL: Card 2 - Very large reveal at {x: 100, y: 100}');
+                console.log('🎬 PEEL: Card 2 - Small corner at {x: 360, y: 340}');
               
               } else {
-                // Card 3: Combination sequence - Card 2's animation FIRST, then Card 1's animation
-                console.log('🎬 PEEL: Card 3 - Starting sequence: Card 2 animation (very large reveal)');
+                // Card 3: Combination sequence - Card 1's animation FIRST, then Card 2's animation
+                console.log('🎬 PEEL: Card 3 - Starting sequence: Card 1 animation (very very large reveal)');
                 setPeelPositions(prev => ({
                   ...prev,
-                  [cardIndex]: { x: 100, y: 100 } // Card 2's very large reveal FIRST
+                  [cardIndex]: { x: 50, y: 50 } // Card 1's very very large reveal FIRST
                 }));
                 
-                // After 2 seconds, switch to Card 1's animation
+                // After 2 seconds, switch to Card 2's animation
                 setTimeout(() => {
-                  console.log('🎬 PEEL: Card 3 - Switching to Card 1 animation (moderate reveal)');
+                  console.log('🎬 PEEL: Card 3 - Switching to Card 2 animation (small corner)');
                   setPeelPositions(prev => ({
                     ...prev,
-                    [cardIndex]: { x: 200, y: 200 } // Card 1's moderate reveal
+                    [cardIndex]: { x: 360, y: 340 } // Card 2's small corner
                   }));
-                  console.log('🎬 PEEL: Card 3 - Final state: moderate reveal at {x: 200, y: 200}');
+                  console.log('🎬 PEEL: Card 3 - Final state: small corner at {x: 360, y: 340}');
                 }, 2000);
               }
             }, 300);
