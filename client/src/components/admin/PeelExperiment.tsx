@@ -498,25 +498,11 @@ export function PeelExperiment() {
                                 <span className="text-sm font-bold text-white">{step.number}</span>
                               </div>
                               
-                              {/* Info Button - Bottom Center */}
-                              <div className="absolute bottom-2 left-1/2 transform -translate-x-1/2">
-                                <div 
-                                  className="w-12 h-12 rounded-full flex items-center justify-center transition-all duration-300 hover:scale-110 cursor-pointer"
-                                  style={{
-                                    background: 'linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.85) 100%)',
-                                    boxShadow: '0 4px 12px rgba(0, 0, 0, 0.2), inset 0 1px 2px rgba(255, 255, 255, 0.8)',
-                                    border: '1px solid rgba(0, 0, 0, 0.1)',
-                                    backdropFilter: 'blur(2px)'
-                                  }}
-                                >
-                                  <Info className="w-6 h-6" style={{ color: '#2A4759' }} />
-                                </div>
-                              </div>
                             </div>
                           ) : (
-                            /* BACK SIDE - Detailed Information (same as main site) */
+                            /* BACK SIDE - Detailed Information (with proper padding and no bottom-left element) */
                             <div 
-                              className="h-full flex flex-col cursor-pointer relative px-2 pt-0 pb-2"
+                              className="h-full flex flex-col cursor-pointer relative"
                               style={{
                                 backgroundImage: `linear-gradient(135deg, rgba(214, 124, 74, 0.92) 0%, rgba(42, 71, 89, 0.92) 100%), url(${step.image})`,
                                 backgroundSize: 'cover',
@@ -526,31 +512,22 @@ export function PeelExperiment() {
                                 transformOrigin: 'center'
                               }}
                             >
-                              {/* Top Section - Text content area */}
-                              <div className="text-center flex flex-col" style={{ height: '350px', position: 'relative' }}>
-                                <div className="text-sm leading-normal text-white w-full flip-card-text-zero-spacing">
+                              {/* Top Section - Text content area with proper padding */}
+                              <div className="text-center flex flex-col p-4" style={{ height: '100%', position: 'relative' }}>
+                                <div className="text-sm leading-normal text-white w-full mb-4">
                                   {(language === 'fr-FR' ? step.descriptionFr : step.descriptionEn).split('\n').map((paragraph, i) => (
-                                    <p key={i} className="m-0 p-0">{paragraph}</p>
+                                    <p key={i} className="mb-2">{paragraph}</p>
                                   ))}
                                 </div>
                                 
-                                {/* Separator Line - EXACTLY 250px FROM TOP */}
-                                <div className="absolute border-t border-white/40 mx-2 left-2 right-2" style={{ top: '246px' }}></div>
+                                {/* Separator Line */}
+                                <div className="border-t border-white/40 mx-4 mb-4"></div>
                                 
-                                {/* Bottom Section - Sub Description - EXACTLY 260px FROM TOP */}
-                                <div className="absolute text-center left-2 right-2" style={{ top: '256px' }}>
-                                  <div className="text-xs text-white leading-relaxed w-full">
+                                {/* Bottom Section - Sub Description */}
+                                <div className="text-center">
+                                  <div className="text-xs text-white leading-relaxed">
                                     {language === 'fr-FR' ? step.subDescriptionFr : step.subDescriptionEn}
                                   </div>
-                                </div>
-                              </div>
-                              
-                              {/* Return arrow - Positioned with equal spacing */}
-                              <div className="absolute -bottom-6 -left-6">
-                                <div className="w-10 h-10 bg-white/80 rounded-full flex items-center justify-center hover:bg-white transition-colors shadow-lg">
-                                  <svg className="w-5 h-5 text-memopyk-dark-blue" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
-                                  </svg>
                                 </div>
                               </div>
                             </div>
