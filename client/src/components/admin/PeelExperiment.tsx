@@ -167,30 +167,8 @@ export function PeelExperiment() {
                             stiffness: 0.038,
                             damping: 0.88,
                             onComplete: () => {
-                              // Card 2 CONTINUOUS PULSE - Never stops!
-                              const continuousPulse = () => {
-                                // Pulse out
-                                springTo(
-                                  { x: 275, y: 275 },
-                                  {
-                                    stiffness: 0.08,
-                                    damping: 0.75,
-                                    onComplete: () => {
-                                      // Pulse in
-                                      springTo(
-                                        { x: 285, y: 285 },
-                                        {
-                                          stiffness: 0.08,
-                                          damping: 0.75,
-                                          onComplete: continuousPulse // Infinite loop!
-                                        }
-                                      );
-                                    }
-                                  }
-                                );
-                              };
-                              continuousPulse();
-                              console.log(`🎬 PEEL: Card 2 - CONTINUOUS pulsing started (never stops)`);
+                              // Card 2: Static position - no pulsing, just arrow and dotted line
+                              console.log(`🎬 PEEL: Card 2 - Static arrow position set`);
                             },
                           }
                         );
@@ -389,21 +367,7 @@ export function PeelExperiment() {
                           rafMap.delete(step.number - 1);
                         }
                         
-                        // Card 2: RESTART continuous pulsing after flip with CORRECT timing
-                        if (step.number === 2) {
-                          setTimeout(() => {
-                            // Simplified continuous pulsing at correct spring timing (~600ms cycles)
-                            const continuousPulse = () => {
-                              setPeelPositions(prev => ({ ...prev, [step.number - 1]: { x: 275, y: 275 } }));
-                              setTimeout(() => {
-                                setPeelPositions(prev => ({ ...prev, [step.number - 1]: { x: 285, y: 285 } }));
-                                setTimeout(continuousPulse, 300); // Match spring timing
-                              }, 300);
-                            };
-                            continuousPulse();
-                            console.log(`🎬 PEEL-CLICK: Card 2 - Continuous pulsing RESTARTED after flip`);
-                          }, 100);
-                        }
+                        // Card 2: No pulsing needed anymore - static arrow and dotted line only
                       }
                     }}
                   >
