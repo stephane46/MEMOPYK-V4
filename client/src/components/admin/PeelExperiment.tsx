@@ -153,9 +153,9 @@ export default function PeelExperiment() {
                       // Keep arrow visible - don't hide on click
                     }}
                   >
-                    {/* Card 1: Regular card (no peel), Cards 2 & 3: PeelWrapper */}
-                    {step.number === 1 ? (
-                      /* Card 1: Simple card with no reveal effect */
+                    {/* Card 1 & 2: Regular cards (no peel), Card 3: PeelWrapper */}
+                    {step.number === 1 || step.number === 2 ? (
+                      /* Cards 1 & 2: Simple cards with no reveal effect */
                       <div className="rounded-2xl overflow-hidden aspect-square">
                         <div 
                           className="border border-gray-200 shadow-lg hover:shadow-2xl rounded-2xl overflow-hidden h-full transition-all duration-700 relative"
@@ -228,7 +228,7 @@ export default function PeelExperiment() {
                         </div>
                       </div>
                     ) : (
-                      /* Cards 2 & 3: Keep PeelWrapper */
+                      /* Card 3: Keep PeelWrapper */
                       <PeelWrapper
                         className="rounded-2xl overflow-hidden aspect-square"
                         options={{
@@ -458,7 +458,7 @@ export default function PeelExperiment() {
                         <div className="relative">
                           {/* Large 60x60 triangle with gradient background and realistic paper curl */}
                           <div 
-                            className="w-[60px] h-[60px] absolute bottom-0 right-0 overflow-hidden"
+                            className="w-[60px] h-[60px] absolute bottom-0 right-0 overflow-visible"
                             style={{
                               borderRadius: '0 0 16px 0', // Match card's border radius
                             }}
@@ -478,16 +478,17 @@ export default function PeelExperiment() {
                             />
                             {/* Diagonal shadow edge for realistic paper curl effect */}
                             <div 
-                              className="absolute"
+                              className="absolute z-20"
                               style={{
-                                top: '0px',
-                                right: '0px',
-                                width: '84px', // √(60² + 60²) = hypotenuse length
-                                height: '3px',
-                                background: 'linear-gradient(90deg, transparent 0%, rgba(0,0,0,0.3) 50%, rgba(0,0,0,0.15) 100%)',
+                                top: '-2px',
+                                right: '-2px',
+                                width: '86px', // √(60² + 60²) + extra for visibility
+                                height: '5px',
+                                background: 'linear-gradient(90deg, transparent 0%, rgba(0,0,0,0.6) 30%, rgba(0,0,0,0.4) 70%, rgba(0,0,0,0.2) 100%)',
                                 transform: 'rotate(-45deg)',
                                 transformOrigin: 'top right',
-                                opacity: flippedCards[step.number - 1] ? 0.7 : 0.4,
+                                opacity: flippedCards[step.number - 1] ? 0.9 : 0.7,
+                                boxShadow: '0 1px 3px rgba(0,0,0,0.3)',
                               }}
                             />
                           </div>
@@ -522,7 +523,7 @@ export default function PeelExperiment() {
                         <div className="relative">
                           {/* Large 60x60 triangle with gradient background and realistic paper curl */}
                           <div 
-                            className="w-[60px] h-[60px] absolute bottom-0 right-0 overflow-hidden"
+                            className="w-[60px] h-[60px] absolute bottom-0 right-0 overflow-visible"
                             style={{
                               borderRadius: '0 0 16px 0', // Match card's border radius
                             }}
@@ -542,16 +543,17 @@ export default function PeelExperiment() {
                             />
                             {/* Diagonal shadow edge for realistic paper curl effect */}
                             <div 
-                              className="absolute"
+                              className="absolute z-20"
                               style={{
-                                top: '0px',
-                                right: '0px',
-                                width: '84px', // √(60² + 60²) = hypotenuse length
-                                height: '3px',
-                                background: 'linear-gradient(90deg, transparent 0%, rgba(0,0,0,0.3) 50%, rgba(0,0,0,0.15) 100%)',
+                                top: '-2px',
+                                right: '-2px',
+                                width: '86px', // √(60² + 60²) + extra for visibility
+                                height: '5px',
+                                background: 'linear-gradient(90deg, transparent 0%, rgba(0,0,0,0.6) 30%, rgba(0,0,0,0.4) 70%, rgba(0,0,0,0.2) 100%)',
                                 transform: 'rotate(-45deg)',
                                 transformOrigin: 'top right',
-                                opacity: flippedCards[step.number - 1] ? 0.7 : 0.4,
+                                opacity: flippedCards[step.number - 1] ? 0.9 : 0.7,
+                                boxShadow: '0 1px 3px rgba(0,0,0,0.3)',
                               }}
                             />
                           </div>
