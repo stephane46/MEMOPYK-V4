@@ -300,10 +300,10 @@ export function PeelExperiment() {
                               <div className="text-center text-white">
                                 <div className="text-sm leading-normal mb-4">
                                   {(language === 'fr-FR' ? step.descriptionFr : step.descriptionEn)
-                                    .split(/(?<=[.!?])\s+/)
+                                    .split('.')
                                     .filter(sentence => sentence.trim().length > 0)
                                     .map((sentence, i) => (
-                                      <p key={i} className="mb-3">{sentence.trim()}</p>
+                                      <p key={i} className="mb-3">{sentence.trim()}.</p>
                                     ))}
                                 </div>
                                 
@@ -311,10 +311,10 @@ export function PeelExperiment() {
                                 
                                 <div className="text-xs text-white leading-relaxed">
                                   {(language === 'fr-FR' ? step.subDescriptionFr : step.subDescriptionEn)
-                                    .split(/(?<=[.!?])\s+/)
+                                    .split('.')
                                     .filter(sentence => sentence.trim().length > 0)
                                     .map((sentence, i) => (
-                                      <p key={i} className="mb-2">{sentence.trim()}</p>
+                                      <p key={i} className="mb-2">{sentence.trim()}.</p>
                                     ))}
                                 </div>
                               </div>
