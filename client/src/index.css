@@ -857,24 +857,44 @@ html, body {
   }
 }
 
-/* Card 2 Animated Corner "Bill" Animations */
+/* Card 2 Animated Corner "Bill" Animations - Enhanced Persistent Version */
 @keyframes peelFloat {
   0% {
     transform: translateY(0px) translateX(0px) scale(1);
   }
+  25% {
+    transform: translateY(-1px) translateX(-1px) scale(1.02);
+  }
+  50% {
+    transform: translateY(-3px) translateX(-3px) scale(1.08);
+  }
+  75% {
+    transform: translateY(-1px) translateX(-1px) scale(1.02);
+  }
   100% {
-    transform: translateY(-2px) translateX(-2px) scale(1.05);
+    transform: translateY(0px) translateX(0px) scale(1);
   }
 }
 
 @keyframes peelGlow {
   0% {
-    box-shadow: 0 2px 4px rgba(214, 124, 74, 0.3);
+    box-shadow: 0 2px 4px rgba(214, 124, 74, 0.4);
+    filter: brightness(1);
+  }
+  25% {
+    box-shadow: 0 3px 6px rgba(214, 124, 74, 0.6), 0 0 8px rgba(214, 124, 74, 0.4);
+    filter: brightness(1.1);
   }
   50% {
-    box-shadow: 0 4px 8px rgba(214, 124, 74, 0.5), 0 0 12px rgba(214, 124, 74, 0.3);
+    box-shadow: 0 4px 8px rgba(214, 124, 74, 0.8), 0 0 16px rgba(214, 124, 74, 0.5);
+    filter: brightness(1.2);
+  }
+  75% {
+    box-shadow: 0 3px 6px rgba(214, 124, 74, 0.6), 0 0 8px rgba(214, 124, 74, 0.4);
+    filter: brightness(1.1);
   }
   100% {
-    box-shadow: 0 2px 4px rgba(214, 124, 74, 0.3);
+    box-shadow: 0 2px 4px rgba(214, 124, 74, 0.4);
+    filter: brightness(1);
   }
 }

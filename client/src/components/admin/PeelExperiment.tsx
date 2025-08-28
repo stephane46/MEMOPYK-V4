@@ -425,8 +425,11 @@ export function PeelExperiment() {
                                     style={{
                                       clipPath: 'polygon(100% 0%, 100% 100%, 0% 100%)',
                                       animation: 'peelFloat 3s ease-in-out infinite alternate, peelGlow 2s ease-in-out infinite',
+                                      animationPlayState: 'running', // Force animation to keep running
                                       // Front side: Show orangey colors (back side preview)
-                                      background: 'linear-gradient(135deg, #D67C4A 0%, #2A4759 100%)',
+                                      background: !flippedCards[step.number - 1] 
+                                        ? 'linear-gradient(135deg, #D67C4A 0%, #2A4759 100%)' // Front shows back colors
+                                        : 'linear-gradient(135deg, #FFFFFF 0%, #89BAD9 100%)', // Back shows front colors
                                       backgroundSize: 'cover',
                                       backgroundPosition: 'center',
                                       pointerEvents: 'none' // Don't interfere with interactions
@@ -466,22 +469,6 @@ export function PeelExperiment() {
                                   </div>
                                 </div>
                                 
-                                {/* Card 2: Always-Pulsing Corner - Shows Opposite Side Colors */}
-                                {step.number === 2 && (
-                                  <div 
-                                    className="absolute bottom-0 right-0 w-8 h-8 z-50"
-                                    style={{
-                                      clipPath: 'polygon(100% 0%, 100% 100%, 0% 100%)',
-                                      animation: 'peelFloat 3s ease-in-out infinite alternate, peelGlow 2s ease-in-out infinite',
-                                      // Back side: Show white/blue colors (front side preview)
-                                      background: 'linear-gradient(135deg, #FFFFFF 0%, #89BAD9 100%)',
-                                      backgroundSize: 'cover',
-                                      backgroundPosition: 'center',
-                                      transform: 'rotateY(180deg)', // Counter the parent flip
-                                      pointerEvents: 'none' // Don't interfere with interactions
-                                    }}
-                                  />
-                                )}
                               </div>
                             )
                           ) : (
