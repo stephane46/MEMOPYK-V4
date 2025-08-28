@@ -6,6 +6,7 @@ import { PeelWrapper, PeelTop, PeelBack } from 'react-peel';
 export function PeelExperiment() {
   const { language } = useLanguage();
   const [peelPositions, setPeelPositions] = useState<{[key: number]: {x: number, y: number}}>({});
+  const [flippedCards, setFlippedCards] = useState<{ [key: number]: boolean }>({});
   const cardRefs = useRef<(HTMLDivElement | null)[]>([]);
   
   useEffect(() => {
@@ -45,61 +46,140 @@ export function PeelExperiment() {
                 }, 100);
               
               } else if (cardIndex === 1) {
-                // Card 2: Start with Card 1's gentle unfolding, then switch to Card 2's gentle jiggling
-                console.log('🎬 PEEL: Card 2 - Starting Card 1 sequence: gentle unfolding');
-                
-                // Replicate Card 1's gentle unfolding animation
+                // === Card 2 — Smooth float + gentle permanent pulsing ===
+                console.log('🎬 PEEL: Card 2 - Smooth float → gentle permanent pulsing');
+
+                // Cancel any in-flight animation for this card
+                const rafMap: Map<number, number> =
+                  (window as any).__peelRafMap || ((window as any).__peelRafMap = new Map());
+                const cancelPrev = () => {
+                  const id = rafMap.get(cardIndex);
+                  if (id) cancelAnimationFrame(id);
+                };
+                const schedule = (fn: FrameRequestCallback) => {
+                  const id = requestAnimationFrame(fn);
+                  rafMap.set(cardIndex, id);
+                  return id;
+                };
+
+                // Ensure a known starting point
                 setPeelPositions(prev => ({
                   ...prev,
-                  [cardIndex]: { x: 200, y: 200 } // Start at modest position like Card 1
+                  [cardIndex]: prev[cardIndex] ?? { x: 200, y: 200 },
                 }));
-                
-                setTimeout(() => {
-                  setPeelPositions(prev => ({
-                    ...prev,
-                    [cardIndex]: { x: 25, y: 40 } // Even larger reveal like Card 1
-                  }));
-                  console.log('🎬 PEEL: Card 2 - Very large unfold like Card 1');
+
+                type Vec = { x: number; y: number };
+                const setPos = (v: Vec) =>
+                  setPeelPositions(p => ({ ...p, [cardIndex]: v }));
+
+                // Local spring state for this run (natural "paper" feel)
+                const state = {
+                  x: peelPositions[cardIndex]?.x ?? 200,
+                  y: peelPositions[cardIndex]?.y ?? 200,
+                  vx: 0,
+                  vy: 0,
+                };
+
+                // Lightweight spring tween (Hooke's law + damping)
+                const springTo = (
+                  to: Vec,
+                  opts?: {
+                    stiffness?: number; // higher = quicker
+                    damping?: number;   // lower = bouncier (0.75–0.9 sweet spot)
+                    snapSpeed?: number; // stop when velocity is tiny
+                    snapDist?: number;  // and when distance is tiny
+                    onComplete?: () => void;
+                  }
+                ) => {
+                  const stiffness = opts?.stiffness ?? 0.045;
+                  const damping   = opts?.damping   ?? 0.82;
+                  const snapSpeed = opts?.snapSpeed ?? 0.06;
+                  const snapDist  = opts?.snapDist  ?? 0.75;
+
+                  cancelPrev();
+
+                  const step = () => {
+                    const dx = to.x - state.x;
+                    const dy = to.y - state.y;
+
+                    state.vx = (state.vx + dx * stiffness) * damping;
+                    state.vy = (state.vy + dy * stiffness) * damping;
+
+                    state.x += state.vx;
+                    state.y += state.vy;
+
+                    setPos({ x: state.x, y: state.y });
+
+                    const speed = Math.hypot(state.vx, state.vy);
+                    const dist  = Math.hypot(dx, dy);
+
+                    if (speed < snapSpeed && dist < snapDist) {
+                      setPos({ x: to.x, y: to.y }); // snap exact, avoid sub-pixel drift
+                      opts?.onComplete && opts.onComplete();
+                      return;
+                    }
+                    schedule(step);
+                  };
+
+                  schedule(step);
+                };
+
+                // Gentle permanent pulsing for click indication
+                const gentlePulse = (base: Vec) => {
+                  let direction = 1; // 1 for out, -1 for in
                   
-                  // Roll back after 1 second (reduced from 2 seconds)
-                  setTimeout(() => {
-                    setPeelPositions(prev => ({
-                      ...prev,
-                      [cardIndex]: { x: 200, y: 200 } // Smooth roll back
-                    }));
-                    console.log('🎬 PEEL: Card 2 - Roll back from large reveal');
+                  const pulse = () => {
+                    const amplitude = 2; // Very gentle 2px movement
+                    const targetOffset = direction * amplitude;
                     
-                    // Then immediately start Card 2's jiggling sequence
-                    setTimeout(() => {
-                      console.log('🎬 PEEL: Card 2 - Starting Card 2 sequence: gentle jiggling');
-                      setPeelPositions(prev => ({
-                        ...prev,
-                        [cardIndex]: { x: 320, y: 320 } // Switch to small reveal base
-                      }));
-                      
-                      // Replicate Card 2's gentle jiggle animation
-                      let jiggleCount = 0;
-                      const jiggleInterval = setInterval(() => {
-                        if (jiggleCount >= 4) { // Reduced jiggles like Card 2
-                          clearInterval(jiggleInterval);
-                          setPeelPositions(prev => ({
-                            ...prev,
-                            [cardIndex]: { x: 320, y: 320 } // Final position
-                          }));
-                          console.log('🎬 PEEL: Card 2 - Final state: gentle jiggling (permanent)');
-                          return;
-                        }
-                        
-                        const jiggleOffset = jiggleCount % 2 === 0 ? 3 : -3; // Smaller movement like Card 2
-                        setPeelPositions(prev => ({
-                          ...prev,
-                          [cardIndex]: { x: 320 + jiggleOffset, y: 320 + jiggleOffset }
-                        }));
-                        jiggleCount++;
-                      }, 300); // Lower frequency like Card 2
-                    }, 200); // Small delay for smooth transition
-                  }, 1000); // Reduced from 2000ms to 1000ms
-                }, 100);
+                    springTo(
+                      { x: base.x + targetOffset, y: base.y + targetOffset },
+                      {
+                        stiffness: 0.025, // Very gentle
+                        damping: 0.92,    // Smooth
+                        onComplete: () => {
+                          direction *= -1; // Reverse direction
+                          setTimeout(pulse, 800); // Gentle 800ms rhythm
+                        },
+                      }
+                    );
+                  };
+                  
+                  pulse();
+                };
+
+                // Respect reduced motion
+                const prefersReduced =
+                  typeof window !== 'undefined' &&
+                  window.matchMedia &&
+                  window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+                if (prefersReduced) {
+                  setPos({ x: 320, y: 320 });
+                  console.log('🎬 PEEL: Card 2 - Reduced motion fallback');
+                } else {
+                  // Phase A: float down to large reveal → Phase B: glide back → gentle pulsing
+                  springTo(
+                    { x: 25, y: 40 },
+                    {
+                      stiffness: 0.040, // softer entry
+                      damping: 0.86,
+                      onComplete: () => {
+                        springTo(
+                          { x: 320, y: 320 },
+                          {
+                            stiffness: 0.038,
+                            damping: 0.88,
+                            onComplete: () => {
+                              gentlePulse({ x: 320, y: 320 });
+                              console.log('🎬 PEEL: Card 2 - Gentle pulsing started');
+                            },
+                          }
+                        );
+                      },
+                    }
+                  );
+                }
               
               } else {
                 // === Card 3 — Smooth float + decaying tickle (drop-in replacement) ===
@@ -359,8 +439,16 @@ export function PeelExperiment() {
                   className="text-center group"
                   ref={(el) => { cardRefs.current[step.number - 1] = el; }}
                 >
-                  {/* Auto-Reveal Peel Card Container */}
-                  <div className="mb-4">
+                  {/* Auto-Reveal Peel Card Container with Click-to-Flip */}
+                  <div 
+                    className="mb-4 cursor-pointer"
+                    onClick={() => {
+                      setFlippedCards(prev => ({
+                        ...prev,
+                        [step.number - 1]: !prev[step.number - 1]
+                      }));
+                    }}
+                  >
                     <PeelWrapper
                       corner="BOTTOM_RIGHT"
                       peelPosition={peelPositions[step.number - 1] || undefined}
@@ -373,36 +461,66 @@ export function PeelExperiment() {
                       width="100%"
                     >
                       <PeelTop>
-                        {/* FRONT SIDE - Step Card */}
-                        <div className="bg-white border border-gray-200 shadow-lg hover:shadow-2xl rounded-2xl overflow-hidden h-full">
-                          {/* Step Image */}
-                          <div className="relative overflow-hidden rounded-xl transition-all duration-500 h-full">
-                            <img 
-                              src={step.image} 
-                              alt={language === 'fr-FR' ? step.titleFr : step.titleEn}
-                              className="w-full h-full object-contain bg-gray-50 transition-transform duration-500"
-                            />
-                            
-                            {/* Orange Number Circle - Top Left */}
-                            <div className="absolute top-2 left-2 w-8 h-8 bg-memopyk-orange rounded-full flex items-center justify-center transition-transform duration-300 shadow-lg">
-                              <span className="text-sm font-bold text-white">{step.number}</span>
-                            </div>
-                            
-                            {/* Info Button - Bottom Center */}
-                            <div className="absolute bottom-2 left-1/2 transform -translate-x-1/2">
-                              <div 
-                                className="w-12 h-12 rounded-full flex items-center justify-center transition-all duration-300 hover:scale-110 cursor-pointer"
-                                style={{
-                                  background: 'linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.85) 100%)',
-                                  boxShadow: '0 4px 12px rgba(0, 0, 0, 0.2), inset 0 1px 2px rgba(255, 255, 255, 0.8)',
-                                  border: '1px solid rgba(0, 0, 0, 0.1)',
-                                  backdropFilter: 'blur(2px)'
-                                }}
-                              >
-                                <Info className="w-6 h-6" style={{ color: '#2A4759' }} />
+                        {/* FRONT/BACK SIDE - Step Card with Flip Animation */}
+                        <div 
+                          className={`border border-gray-200 shadow-lg hover:shadow-2xl rounded-2xl overflow-hidden h-full transition-all duration-700 ${
+                            flippedCards[step.number - 1] ? 'bg-gradient-to-br from-green-500 to-emerald-600' : 'bg-white'
+                          }`}
+                          style={{
+                            transform: flippedCards[step.number - 1] ? 'rotateY(180deg)' : 'rotateY(0deg)',
+                            transformStyle: 'preserve-3d'
+                          }}
+                        >
+                          {/* Conditional Content Based on Flip State */}
+                          {!flippedCards[step.number - 1] ? (
+                            /* FRONT SIDE - Original Image */
+                            <div className="relative overflow-hidden rounded-xl transition-all duration-500 h-full">
+                              <img 
+                                src={step.image} 
+                                alt={language === 'fr-FR' ? step.titleFr : step.titleEn}
+                                className="w-full h-full object-contain bg-gray-50 transition-transform duration-500"
+                              />
+                              
+                              {/* Orange Number Circle - Top Left */}
+                              <div className="absolute top-2 left-2 w-8 h-8 bg-memopyk-orange rounded-full flex items-center justify-center transition-transform duration-300 shadow-lg">
+                                <span className="text-sm font-bold text-white">{step.number}</span>
+                              </div>
+                              
+                              {/* Info Button - Bottom Center */}
+                              <div className="absolute bottom-2 left-1/2 transform -translate-x-1/2">
+                                <div 
+                                  className="w-12 h-12 rounded-full flex items-center justify-center transition-all duration-300 hover:scale-110 cursor-pointer"
+                                  style={{
+                                    background: 'linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.85) 100%)',
+                                    boxShadow: '0 4px 12px rgba(0, 0, 0, 0.2), inset 0 1px 2px rgba(255, 255, 255, 0.8)',
+                                    border: '1px solid rgba(0, 0, 0, 0.1)',
+                                    backdropFilter: 'blur(2px)'
+                                  }}
+                                >
+                                  <Info className="w-6 h-6" style={{ color: '#2A4759' }} />
+                                </div>
                               </div>
                             </div>
-                          </div>
+                          ) : (
+                            /* BACK SIDE - Flipped Content */
+                            <div 
+                              className="h-full flex flex-col justify-center items-center text-white text-center p-6"
+                              style={{
+                                transform: 'rotateY(180deg)', // Counter the card flip to make text readable
+                                transformOrigin: 'center'
+                              }}
+                            >
+                              <div className="w-16 h-16 bg-white/20 rounded-full flex items-center justify-center mb-4">
+                                <span className="text-2xl font-bold">{step.number}</span>
+                              </div>
+                              <h3 className="text-xl font-bold mb-2">
+                                {language === 'fr-FR' ? step.titleFr : step.titleEn}
+                              </h3>
+                              <p className="text-sm opacity-90">
+                                {language === 'fr-FR' ? 'Cliquez pour retourner' : 'Click to flip back'}
+                              </p>
+                            </div>
+                          )}
                         </div>
                       </PeelTop>
                       
