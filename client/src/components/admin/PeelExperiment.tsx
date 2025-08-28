@@ -205,41 +205,23 @@ export function PeelExperiment() {
                       </PeelTop>
                       
                       <PeelBack>
-                        {/* BACK SIDE - Detailed Information (revealed with auto-peel) */}
-                        <div 
-                          className="shadow-lg rounded-2xl overflow-hidden border border-gray-200 h-full"
-                          style={{
-                            backgroundImage: `linear-gradient(135deg, rgba(214, 124, 74, 0.92) 0%, rgba(42, 71, 89, 0.92) 100%), url(${step.image})`,
-                            backgroundSize: 'cover',
-                            backgroundPosition: 'center',
-                            backgroundRepeat: 'no-repeat',
-                            transform: 'scaleX(-1)', // Flip horizontally to counter the peel effect rotation
-                            transformOrigin: 'center'
-                          }}
-                        >
-                          <div 
-                            className="h-full flex flex-col justify-between p-4"
-                            style={{
-                              transform: 'scaleX(-1)', // Double flip to make text readable again
-                              transformOrigin: 'center'
-                            }}
-                          >
-                            {/* Main Content */}
-                            <div className="text-center text-white">
-                              <div className="text-sm leading-normal mb-4">
-                                {(language === 'fr-FR' ? step.descriptionFr : step.descriptionEn).split('\n').map((paragraph, i) => (
-                                  <p key={i} className="mb-2">{paragraph}</p>
-                                ))}
-                              </div>
-                              
-                              {/* Separator Line */}
-                              <div className="border-t border-white/40 my-4"></div>
-                              
-                              {/* Sub Description */}
-                              <div className="text-xs text-white leading-relaxed">
-                                {language === 'fr-FR' ? step.subDescriptionFr : step.subDescriptionEn}
-                              </div>
+                        {/* BACK SIDE - Clean, readable content */}
+                        <div className="bg-gradient-to-br from-memopyk-orange to-memopyk-navy shadow-lg rounded-2xl border border-gray-200 h-full flex flex-col justify-center p-6">
+                          <div className="text-center text-white">
+                            {/* Icon */}
+                            <div className="w-16 h-16 bg-white/20 rounded-full flex items-center justify-center mx-auto mb-4">
+                              <Icon className="w-8 h-8 text-white" />
                             </div>
+                            
+                            {/* Title */}
+                            <h3 className="text-xl font-bold mb-3">
+                              {language === 'fr-FR' ? step.titleFr : step.titleEn}
+                            </h3>
+                            
+                            {/* Simple description */}
+                            <p className="text-sm text-white/90 leading-relaxed">
+                              {language === 'fr-FR' ? step.subDescriptionFr : step.subDescriptionEn}
+                            </p>
                           </div>
                         </div>
                       </PeelBack>
