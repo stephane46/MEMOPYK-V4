@@ -507,16 +507,25 @@ export default function PeelExperiment() {
                       <div className="absolute bottom-0 right-0 pointer-events-none z-50">
                         {/* All Cards 1, 2 & 3: Triangle corner with unfold reveal */}
                         <div className="relative">
+                          {/* Triangle container with rounded corner */}
                           <div 
-                            className={`w-0 h-0 border-l-[40px] border-b-[40px] border-l-transparent ${
-                              flippedCards[step.number - 1] ? 'border-b-white' : 'border-b-memopyk-orange'
-                            }`}
+                            className="w-[40px] h-[40px] absolute bottom-0 right-0 overflow-hidden"
                             style={{
-                              position: 'relative',
-                              bottom: '1px',
-                              borderBottomRightRadius: '16px'
+                              borderRadius: '0 0 16px 0', // Match card's border radius
                             }}
-                          />
+                          >
+                            <div
+                              className="w-full h-full"
+                              style={{
+                                background: flippedCards[step.number - 1] ? 'white' : '#D67C4A', // MEMOPYK orange
+                                clipPath: 'polygon(100% 0%, 100% 100%, 0% 100%)',
+                                filter: 'drop-shadow(-1px -1px 3px rgba(0,0,0,0.15)) drop-shadow(1px 1px 4px rgba(0,0,0,0.1))',
+                                transform: 'translateZ(2px) rotateX(-3deg) rotateY(3deg) translateY(-1px)',
+                                transformStyle: 'preserve-3d',
+                                transformOrigin: 'bottom right',
+                              }}
+                            />
+                          </div>
                           {/* Dotted diagonal line along the hypotenuse */}
                           <div 
                             className="absolute"
