@@ -24,33 +24,27 @@ export function PeelExperiment() {
             setTimeout(() => {
               console.log(`🎬 PEEL: Card ${cardIndex + 1} - Simple reveal animation`);
               
-              if (cardIndex === 2) {
-                // CARD 3: No big reveal, just show the arrow immediately
-                console.log(`🎬 PEEL: Card ${cardIndex + 1} - Showing arrow for card 3`);
-                setShowArrows(prev => ({ ...prev, [cardIndex]: true }));
-              } else {
-                // CARDS 1 & 2: Simple reveal sequence
-                console.log(`🎬 PEEL: Card ${cardIndex + 1} - Starting reveal for cards 1&2`);
+              // ALL CARDS 1, 2 & 3: Simple reveal sequence
+              console.log(`🎬 PEEL: Card ${cardIndex + 1} - Starting reveal for all cards`);
+              
+              // Step 1: Reveal
+              setPeelPositions(prev => ({ ...prev, [cardIndex]: { x: 120, y: 120 } }));
+              
+              // Step 2: Return after a short time
+              setTimeout(() => {
+                setPeelPositions(prev => {
+                  const newPos = { ...prev };
+                  delete newPos[cardIndex]; // Remove position = return to normal
+                  return newPos;
+                });
                 
-                // Step 1: Reveal
-                setPeelPositions(prev => ({ ...prev, [cardIndex]: { x: 120, y: 120 } }));
+                // Step 3: Show arrows (card 1 and card 3 only)
+                if (cardIndex === 0 || cardIndex === 2) {
+                  setShowArrows(prev => ({ ...prev, [cardIndex]: true }));
+                }
                 
-                // Step 2: Return after a short time
-                setTimeout(() => {
-                  setPeelPositions(prev => {
-                    const newPos = { ...prev };
-                    delete newPos[cardIndex]; // Remove position = return to normal
-                    return newPos;
-                  });
-                  
-                  // Step 3: Show arrow (only for card 1)
-                  if (cardIndex === 0) {
-                    setShowArrows(prev => ({ ...prev, [cardIndex]: true }));
-                  }
-                  
-                  console.log(`🎬 PEEL: Card ${cardIndex + 1} - Animation complete`);
-                }, 1000); // 1 second reveal duration
-              }
+                console.log(`🎬 PEEL: Card ${cardIndex + 1} - Animation complete`);
+              }, 1000); // 1 second reveal duration
             }, 300);
           } else {
             // When card leaves viewport, reset it to default state
@@ -300,9 +294,8 @@ export function PeelExperiment() {
                         </div>
                       </PeelTop>
                       
-                      {step.number !== 3 && (
-                        <PeelBack>
-                          {/* Cards 1 & 2 only: Full back side content */}
+                      <PeelBack>
+                        {/* All Cards 1, 2 & 3: Full back side content */}
                           <div 
                             className="shadow-lg rounded-2xl overflow-hidden border border-gray-200 h-full"
                             style={{
@@ -334,7 +327,6 @@ export function PeelExperiment() {
                             </div>
                           </div>
                         </PeelBack>
-                      )}
                       </PeelWrapper>
                     )}
                     
