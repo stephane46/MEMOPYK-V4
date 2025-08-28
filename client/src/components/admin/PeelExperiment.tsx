@@ -167,8 +167,7 @@ export default function PeelExperiment() {
                         <div 
                           className="border border-gray-200 shadow-lg hover:shadow-2xl rounded-2xl overflow-hidden h-full transition-all duration-700 relative"
                           style={{
-                            transformStyle: 'preserve-3d',
-                            backgroundColor: flippedCards[step.number - 1] ? '#D67C4A' : 'white'
+                            transformStyle: 'preserve-3d'
                           }}
                         >
                           {
