@@ -456,9 +456,9 @@ export default function PeelExperiment() {
                     {step.number === 1 && showArrows[step.number - 1] && (
                       <div className="absolute bottom-0 right-0 pointer-events-none z-50">
                         <div className="relative">
-                          {/* Large 80x80 triangle with shadow and raised effect */}
+                          {/* Large 60x60 triangle with shadow and raised effect */}
                           <div 
-                            className={`w-0 h-0 border-l-[80px] border-b-[80px] border-l-transparent ${
+                            className={`w-0 h-0 border-l-[60px] border-b-[60px] border-l-transparent ${
                               flippedCards[step.number - 1] ? 'border-b-white' : 'border-b-memopyk-orange'
                             }`}
                             style={{
@@ -476,7 +476,7 @@ export default function PeelExperiment() {
                             style={{
                               top: '4px',
                               right: '4px',
-                              width: '96px',
+                              width: '72px',
                               height: '2px',
                               background: flippedCards[step.number - 1] 
                                 ? 'repeating-linear-gradient(45deg, #D67C4A 0px, #D67C4A 3px, white 3px, white 6px)'
