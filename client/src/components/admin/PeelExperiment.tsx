@@ -428,9 +428,9 @@ export function PeelExperiment() {
                             backgroundSize: 'cover',
                             backgroundPosition: 'center',
                             backgroundRepeat: 'no-repeat',
-                            // Card 3: Try different rotation to make text readable
+                            // Card 3: Try 180 degree rotation to make text readable
                             ...(step.number === 3 ? {
-                              transform: 'rotate(-90deg)',
+                              transform: 'rotate(180deg)',
                               transformOrigin: 'center'
                             } : {
                               transform: 'scaleX(-1)',
@@ -441,10 +441,9 @@ export function PeelExperiment() {
                           <div 
                             className="h-full flex flex-col justify-between p-4"
                             style={{
-                              // Card 3: Try different text rotation to make it readable
+                              // Card 3: No text rotation - let container rotation handle it
                               ...(step.number === 3 ? {
-                                transform: 'rotate(90deg)',
-                                transformOrigin: 'center'
+                                // No transform for text, let container handle rotation
                               } : {
                                 transform: 'scaleX(-1)',
                                 transformOrigin: 'center'
