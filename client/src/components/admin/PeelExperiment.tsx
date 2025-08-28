@@ -153,16 +153,91 @@ export default function PeelExperiment() {
                       // Keep arrow visible - don't hide on click
                     }}
                   >
-                    {/* ALL CARDS 1, 2 & 3: Same PeelWrapper structure */}
-                    <PeelWrapper
-                      className="rounded-2xl overflow-hidden aspect-square"
-                      options={{
-                        corner: 'top-right',
-                        constrainToContainer: true,
-                        fadeThreshold: 0.3,
-                      }}
-                      peelPosition={peelPositions[step.number - 1]}
-                    >
+                    {/* Card 1: Regular card (no peel), Cards 2 & 3: PeelWrapper */}
+                    {step.number === 1 ? (
+                      /* Card 1: Simple card with no reveal effect */
+                      <div className="rounded-2xl overflow-hidden aspect-square">
+                        <div 
+                          className="border border-gray-200 shadow-lg hover:shadow-2xl rounded-2xl overflow-hidden h-full transition-all duration-700 relative"
+                          style={{
+                            transformStyle: 'preserve-3d'
+                          }}
+                        >
+                          {
+                            !flippedCards[step.number - 1] ? (
+                              <div className="relative overflow-hidden rounded-xl transition-all duration-500 h-full">
+                                <img 
+                                  src={step.image} 
+                                  alt={language === 'fr-FR' ? step.titleFr : step.titleEn}
+                                  className="w-full h-full object-contain bg-gray-50 transition-transform duration-500"
+                                />
+                                
+                                <div className="absolute top-2 left-2 w-8 h-8 bg-memopyk-orange rounded-full flex items-center justify-center transition-transform duration-300 shadow-lg">
+                                  <span className="text-sm font-bold text-white">{step.number}</span>
+                                </div>
+                              </div>
+                            ) : (
+                              <div 
+                                className="h-full flex flex-col cursor-pointer relative"
+                                style={{
+                                  transformOrigin: 'center',
+                                  backgroundImage: `linear-gradient(135deg, rgba(214, 124, 74, 0.92) 0%, rgba(42, 71, 89, 0.92) 100%), url(${step.image})`,
+                                  backgroundSize: 'cover',
+                                  backgroundPosition: 'center',
+                                  backgroundRepeat: 'no-repeat'
+                                }}
+                              >
+                                <div className="text-center flex flex-col p-4" style={{ height: '100%', position: 'relative' }}>
+                                  <div className="text-sm leading-normal text-white w-full" style={{ height: '66%', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+                                    {step.number === 1 && language === 'fr-FR' && (
+                                      <>
+                                        <p className="mb-3">Envoyez-nous toutes vos photos et vidéos, même par milliers.</p>
+                                        <p className="mb-3">Nous trions, sélectionnons et gardons uniquement les plus belles, selon ce que vous souhaitez partager via notre formulaire ou un appel téléphonique gratuit.</p>
+                                      </>
+                                    )}
+                                    {step.number === 1 && language === 'en-US' && (
+                                      <>
+                                        <p className="mb-3">Send us all your photos and videos, even thousands of them.</p>
+                                        <p className="mb-3">We sort, select, and keep only the most beautiful ones, according to what you want to share through our form or a free phone call.</p>
+                                      </>
+                                    )}
+                                  </div>
+                                  
+                                  {/* Separator Line - Fixed at 2/3 Position */}
+                                  <div className="border-t border-memopyk-navy/40 mx-6" style={{ position: 'absolute', top: '66%', left: '0', right: '0' }}></div>
+                                  
+                                  {/* Bottom Section - Bold Text Same Size */}
+                                  <div className="text-center" style={{ position: 'absolute', bottom: '16px', left: '16px', right: '16px' }}>
+                                    <div className="text-sm text-white leading-relaxed font-bold">
+                                      {step.number === 1 && language === 'fr-FR' && (
+                                        <>
+                                          <p className="mb-2">Libérez-vous de la sélection : nous trouvons les moments forts pour créer votre histoire.</p>
+                                        </>
+                                      )}
+                                      {step.number === 1 && language === 'en-US' && (
+                                        <>
+                                          <p className="mb-2">Getting started is effortless: just bring us your memories and ideas, and we'll handle everything else with care and creativity.</p>
+                                        </>
+                                      )}
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+                            )
+                          }
+                        </div>
+                      </div>
+                    ) : (
+                      /* Cards 2 & 3: Keep PeelWrapper */
+                      <PeelWrapper
+                        className="rounded-2xl overflow-hidden aspect-square"
+                        options={{
+                          corner: 'top-right',
+                          constrainToContainer: true,
+                          fadeThreshold: 0.3,
+                        }}
+                        peelPosition={peelPositions[step.number - 1]}
+                      >
                       <PeelTop>
                         <div 
                           className="border border-gray-200 shadow-lg hover:shadow-2xl rounded-2xl overflow-hidden h-full transition-all duration-700 relative"
@@ -375,6 +450,7 @@ export default function PeelExperiment() {
                           </div>
                         </PeelBack>
                       </PeelWrapper>
+                    )}
                     
                     {/* Card 1: Custom large triangle corner peel (no arrow) */}
                     {step.number === 1 && showArrows[step.number - 1] && (
