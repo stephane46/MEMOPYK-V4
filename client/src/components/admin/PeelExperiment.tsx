@@ -458,19 +458,25 @@ export default function PeelExperiment() {
                         <div className="relative">
                           {/* Large 60x60 triangle with gradient background and realistic paper curl */}
                           <div 
-                            className="w-[60px] h-[60px] absolute bottom-0 right-0"
+                            className="w-[60px] h-[60px] absolute bottom-0 right-0 overflow-hidden"
                             style={{
-                              background: flippedCards[step.number - 1] 
-                                ? 'white' 
-                                : 'linear-gradient(135deg, rgba(214, 124, 74, 0.92) 0%, rgba(42, 71, 89, 0.92) 100%)', // Same gradient as back card
-                              clipPath: 'polygon(100% 0%, 100% 100%, 0% 100%)',
                               borderRadius: '0 0 16px 0', // Match card's border radius
-                              filter: 'drop-shadow(-2px -2px 6px rgba(0,0,0,0.2)) drop-shadow(2px 2px 8px rgba(0,0,0,0.1))',
-                              transform: 'translateZ(4px) rotateX(-5deg) rotateY(5deg) translateY(-2px)',
-                              transformStyle: 'preserve-3d',
-                              transformOrigin: 'bottom right',
                             }}
-                          />
+                          >
+                            <div
+                              className="w-full h-full"
+                              style={{
+                                background: flippedCards[step.number - 1] 
+                                  ? 'white' 
+                                  : 'linear-gradient(135deg, rgba(214, 124, 74, 0.92) 0%, rgba(42, 71, 89, 0.92) 100%)', // Same gradient as back card
+                                clipPath: 'polygon(100% 0%, 100% 100%, 0% 100%)',
+                                filter: 'drop-shadow(-2px -2px 6px rgba(0,0,0,0.2)) drop-shadow(2px 2px 8px rgba(0,0,0,0.1))',
+                                transform: 'translateZ(4px) rotateX(-5deg) rotateY(5deg) translateY(-2px)',
+                                transformStyle: 'preserve-3d',
+                                transformOrigin: 'bottom right',
+                              }}
+                            />
+                          </div>
                           {/* Arrow for Card 1 - Same as Cards 2 & 3 */}
                           <div 
                             className="absolute bottom-0 right-0"
