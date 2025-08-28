@@ -375,50 +375,80 @@ export function PeelExperiment() {
                           }}
                         >
                           {/* Conditional Content Based on Flip State */}
-                          {!flippedCards[step.number - 1] ? (
-                            /* FRONT SIDE - Original Image */
-                            <div className="relative overflow-hidden rounded-xl transition-all duration-500 h-full">
-                              <img 
-                                src={step.image} 
-                                alt={language === 'fr-FR' ? step.titleFr : step.titleEn}
-                                className="w-full h-full object-contain bg-gray-50 transition-transform duration-500"
-                              />
-                              
-                              {/* Orange Number Circle - Top Left */}
-                              <div className="absolute top-2 left-2 w-8 h-8 bg-memopyk-orange rounded-full flex items-center justify-center transition-transform duration-300 shadow-lg">
-                                <span className="text-sm font-bold text-white">{step.number}</span>
+                          {!flippedCards[step.number - 1] || step.number !== 3 ? (
+                            /* FRONT SIDE - Original Image (or back side for Cards 1&2) */
+                            !flippedCards[step.number - 1] ? (
+                              <div className="relative overflow-hidden rounded-xl transition-all duration-500 h-full">
+                                <img 
+                                  src={step.image} 
+                                  alt={language === 'fr-FR' ? step.titleFr : step.titleEn}
+                                  className="w-full h-full object-contain bg-gray-50 transition-transform duration-500"
+                                />
+                                
+                                {/* Orange Number Circle - Top Left */}
+                                <div className="absolute top-2 left-2 w-8 h-8 bg-memopyk-orange rounded-full flex items-center justify-center transition-transform duration-300 shadow-lg">
+                                  <span className="text-sm font-bold text-white">{step.number}</span>
+                                </div>
                               </div>
-                              
-                            </div>
+                            ) : (
+                              /* Cards 1&2 BACK SIDE - Detailed Information */
+                              <div 
+                                className="h-full flex flex-col cursor-pointer relative"
+                                style={{
+                                  backgroundImage: `linear-gradient(135deg, rgba(214, 124, 74, 0.92) 0%, rgba(42, 71, 89, 0.92) 100%), url(${step.image})`,
+                                  backgroundSize: 'cover',
+                                  backgroundPosition: 'center',
+                                  backgroundRepeat: 'no-repeat',
+                                  transform: 'rotateY(180deg)', // Counter the card flip to make content readable
+                                  transformOrigin: 'center'
+                                }}
+                              >
+                                {/* Top Section - Text content area with proper padding */}
+                                <div className="text-center flex flex-col p-4" style={{ height: '100%', position: 'relative' }}>
+                                  <div className="text-sm leading-normal text-white w-full mb-4">
+                                    {(language === 'fr-FR' ? step.descriptionFr : step.descriptionEn).split('\n').map((paragraph, i) => (
+                                      <p key={i} className="mb-2">{paragraph}</p>
+                                    ))}
+                                  </div>
+                                  
+                                  {/* Separator Line */}
+                                  <div className="border-t border-white/40 mx-4 mb-4"></div>
+                                  
+                                  {/* Bottom Section - Sub Description */}
+                                  <div className="text-center">
+                                    <div className="text-xs text-white leading-relaxed">
+                                      {language === 'fr-FR' ? step.subDescriptionFr : step.subDescriptionEn}
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+                            )
                           ) : (
-                            /* BACK SIDE - Detailed Information (with proper padding and no bottom-left element) */
+                            /* Card 3 BACK SIDE - Show the same content as PeelBack but in PeelTop when flipped */
                             <div 
-                              className="h-full flex flex-col cursor-pointer relative"
+                              className="shadow-lg rounded-2xl overflow-hidden border border-gray-200 h-full"
                               style={{
                                 backgroundImage: `linear-gradient(135deg, rgba(214, 124, 74, 0.92) 0%, rgba(42, 71, 89, 0.92) 100%), url(${step.image})`,
                                 backgroundSize: 'cover',
                                 backgroundPosition: 'center',
                                 backgroundRepeat: 'no-repeat',
-                                // Card 3: Apply combined rotation to fix both card flip and text orientation
-                                transform: step.number === 3 
-                                  ? 'rotateY(180deg) rotate(270deg)' // Counter card flip + fix text orientation for Card 3
-                                  : 'rotateY(180deg)', // Counter the card flip to make content readable
+                                transform: 'rotate(270deg)', // Same fix as PeelBack for Card 3
                                 transformOrigin: 'center'
                               }}
                             >
-                              {/* Top Section - Text content area with proper padding */}
-                              <div className="text-center flex flex-col p-4" style={{ height: '100%', position: 'relative' }}>
-                                <div className="text-sm leading-normal text-white w-full mb-4">
-                                  {(language === 'fr-FR' ? step.descriptionFr : step.descriptionEn).split('\n').map((paragraph, i) => (
-                                    <p key={i} className="mb-2">{paragraph}</p>
-                                  ))}
-                                </div>
-                                
-                                {/* Separator Line */}
-                                <div className="border-t border-white/40 mx-4 mb-4"></div>
-                                
-                                {/* Bottom Section - Sub Description */}
-                                <div className="text-center">
+                              <div className="h-full flex flex-col justify-between p-4">
+                                {/* Main Content */}
+                                <div className="text-center text-white">
+                                  <div className="text-sm leading-normal mb-4">
+                                    {(language === 'fr-FR' ? step.descriptionFr : step.descriptionEn).split('\n').map((paragraph, i) => (
+                                      <p key={i} className="mb-2">{paragraph}</p>
+                                    ))}
+                                  </div>
+                                  
+                                  {/* Separator Line */}
+                                  <div className="border-t border-white/40 my-4"></div>
+                                  
+                                  {/* Sub Description */}
                                   <div className="text-xs text-white leading-relaxed">
                                     {language === 'fr-FR' ? step.subDescriptionFr : step.subDescriptionEn}
                                   </div>
