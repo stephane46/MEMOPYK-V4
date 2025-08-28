@@ -45,34 +45,61 @@ export function PeelExperiment() {
                 }, 100);
               
               } else if (cardIndex === 1) {
-                // Card 2: Small reveal with gentle jiggle (lower frequency, smaller changes)
-                console.log('🎬 PEEL: Card 2 - Small gentle jiggling reveal');
+                // Card 2: Start with Card 1's gentle unfolding, then switch to Card 2's gentle jiggling
+                console.log('🎬 PEEL: Card 2 - Starting Card 1 sequence: gentle unfolding');
+                
+                // Replicate Card 1's gentle unfolding animation
                 setPeelPositions(prev => ({
                   ...prev,
-                  [cardIndex]: { x: 320, y: 320 } // Small reveal base position
+                  [cardIndex]: { x: 200, y: 200 } // Start at modest position like Card 1
                 }));
                 
-                // Gentle jiggle animation with lower frequency and smaller movements
-                let jiggleCount = 0;
-                const jiggleInterval = setInterval(() => {
-                  if (jiggleCount >= 4) { // Reduced from 6 to 4 jiggles
-                    clearInterval(jiggleInterval);
-                    setPeelPositions(prev => ({
-                      ...prev,
-                      [cardIndex]: { x: 320, y: 320 } // Return to base
-                    }));
-                    return;
-                  }
-                  
-                  const jiggleOffset = jiggleCount % 2 === 0 ? 3 : -3; // Reduced from 10 to 3
+                setTimeout(() => {
                   setPeelPositions(prev => ({
                     ...prev,
-                    [cardIndex]: { x: 320 + jiggleOffset, y: 320 + jiggleOffset }
+                    [cardIndex]: { x: 25, y: 40 } // Even larger reveal like Card 1
                   }));
-                  jiggleCount++;
-                }, 300); // Increased from 150ms to 300ms (lower frequency)
-                
-                console.log('🎬 PEEL: Card 2 - Started gentle jiggle animation');
+                  console.log('🎬 PEEL: Card 2 - Very large unfold like Card 1');
+                  
+                  // Roll back after 1 second (reduced from 2 seconds)
+                  setTimeout(() => {
+                    setPeelPositions(prev => ({
+                      ...prev,
+                      [cardIndex]: { x: 200, y: 200 } // Smooth roll back
+                    }));
+                    console.log('🎬 PEEL: Card 2 - Roll back from large reveal');
+                    
+                    // Then immediately start Card 2's jiggling sequence
+                    setTimeout(() => {
+                      console.log('🎬 PEEL: Card 2 - Starting Card 2 sequence: gentle jiggling');
+                      setPeelPositions(prev => ({
+                        ...prev,
+                        [cardIndex]: { x: 320, y: 320 } // Switch to small reveal base
+                      }));
+                      
+                      // Replicate Card 2's gentle jiggle animation
+                      let jiggleCount = 0;
+                      const jiggleInterval = setInterval(() => {
+                        if (jiggleCount >= 4) { // Reduced jiggles like Card 2
+                          clearInterval(jiggleInterval);
+                          setPeelPositions(prev => ({
+                            ...prev,
+                            [cardIndex]: { x: 320, y: 320 } // Final position
+                          }));
+                          console.log('🎬 PEEL: Card 2 - Final state: gentle jiggling (permanent)');
+                          return;
+                        }
+                        
+                        const jiggleOffset = jiggleCount % 2 === 0 ? 3 : -3; // Smaller movement like Card 2
+                        setPeelPositions(prev => ({
+                          ...prev,
+                          [cardIndex]: { x: 320 + jiggleOffset, y: 320 + jiggleOffset }
+                        }));
+                        jiggleCount++;
+                      }, 300); // Lower frequency like Card 2
+                    }, 200); // Small delay for smooth transition
+                  }, 1000); // Reduced from 2000ms to 1000ms
+                }, 100);
               
               } else {
                 // Card 3: Start with Card 1's gentle unfolding, then switch to Card 2's gentle jiggling
