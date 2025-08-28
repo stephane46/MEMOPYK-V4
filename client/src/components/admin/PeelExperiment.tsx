@@ -421,14 +421,15 @@ export function PeelExperiment() {
                                 {/* Card 2: Always-Pulsing Corner - Shows Opposite Side Colors */}
                                 {step.number === 2 && (
                                   <div 
-                                    className="absolute bottom-0 right-0 w-6 h-6 z-10"
+                                    className="absolute bottom-0 right-0 w-8 h-8 z-50"
                                     style={{
                                       clipPath: 'polygon(100% 0%, 100% 100%, 0% 100%)',
                                       animation: 'peelFloat 3s ease-in-out infinite alternate, peelGlow 2s ease-in-out infinite',
                                       // Front side: Show orangey colors (back side preview)
                                       background: 'linear-gradient(135deg, #D67C4A 0%, #2A4759 100%)',
                                       backgroundSize: 'cover',
-                                      backgroundPosition: 'center'
+                                      backgroundPosition: 'center',
+                                      pointerEvents: 'none' // Don't interfere with interactions
                                     }}
                                   />
                                 )}
@@ -468,7 +469,7 @@ export function PeelExperiment() {
                                 {/* Card 2: Always-Pulsing Corner - Shows Opposite Side Colors */}
                                 {step.number === 2 && (
                                   <div 
-                                    className="absolute bottom-0 right-0 w-6 h-6 z-10"
+                                    className="absolute bottom-0 right-0 w-8 h-8 z-50"
                                     style={{
                                       clipPath: 'polygon(100% 0%, 100% 100%, 0% 100%)',
                                       animation: 'peelFloat 3s ease-in-out infinite alternate, peelGlow 2s ease-in-out infinite',
@@ -476,7 +477,8 @@ export function PeelExperiment() {
                                       background: 'linear-gradient(135deg, #FFFFFF 0%, #89BAD9 100%)',
                                       backgroundSize: 'cover',
                                       backgroundPosition: 'center',
-                                      transform: 'rotateY(180deg)' // Counter the parent flip
+                                      transform: 'rotateY(180deg)', // Counter the parent flip
+                                      pointerEvents: 'none' // Don't interfere with interactions
                                     }}
                                   />
                                 )}
