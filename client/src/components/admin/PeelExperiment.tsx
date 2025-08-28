@@ -469,7 +469,7 @@ export default function PeelExperiment() {
                                 background: flippedCards[step.number - 1] 
                                   ? 'white' 
                                   : 'linear-gradient(135deg, rgba(214, 124, 74, 0.92) 0%, rgba(42, 71, 89, 0.92) 100%)', // Same gradient as back card
-                                clipPath: 'polygon(100% 0%, 100% 100%, 0% 100%)',
+                                clipPath: 'polygon(0% 0%, 100% 0%, 0% 100%)',
                                 filter: 'drop-shadow(-2px -2px 6px rgba(0,0,0,0.2)) drop-shadow(2px 2px 8px rgba(0,0,0,0.1))',
                                 transform: 'translateZ(4px) rotateX(-5deg) rotateY(5deg) translateY(-2px)',
                                 transformStyle: 'preserve-3d',
@@ -485,7 +485,7 @@ export default function PeelExperiment() {
                                 width: '86px', // √(60² + 60²) + extra for visibility
                                 height: '5px',
                                 background: 'linear-gradient(90deg, transparent 0%, rgba(0,0,0,0.6) 30%, rgba(0,0,0,0.4) 70%, rgba(0,0,0,0.2) 100%)',
-                                transform: 'rotate(-45deg)',
+                                transform: 'rotate(135deg)',
                                 transformOrigin: 'top right',
                                 opacity: flippedCards[step.number - 1] ? 0.9 : 0.7,
                                 boxShadow: '0 1px 3px rgba(0,0,0,0.3)',
@@ -534,7 +534,7 @@ export default function PeelExperiment() {
                                 background: flippedCards[step.number - 1] 
                                   ? 'white' 
                                   : 'linear-gradient(135deg, rgba(214, 124, 74, 0.92) 0%, rgba(42, 71, 89, 0.92) 100%)', // Same gradient as back card
-                                clipPath: 'polygon(100% 0%, 100% 100%, 0% 100%)',
+                                clipPath: 'polygon(0% 0%, 100% 0%, 0% 100%)',
                                 filter: 'drop-shadow(-2px -2px 6px rgba(0,0,0,0.2)) drop-shadow(2px 2px 8px rgba(0,0,0,0.1))',
                                 transform: 'translateZ(4px) rotateX(-5deg) rotateY(5deg) translateY(-2px)',
                                 transformStyle: 'preserve-3d',
@@ -550,7 +550,7 @@ export default function PeelExperiment() {
                                 width: '86px', // √(60² + 60²) + extra for visibility
                                 height: '5px',
                                 background: 'linear-gradient(90deg, transparent 0%, rgba(0,0,0,0.6) 30%, rgba(0,0,0,0.4) 70%, rgba(0,0,0,0.2) 100%)',
-                                transform: 'rotate(-45deg)',
+                                transform: 'rotate(135deg)',
                                 transformOrigin: 'top right',
                                 opacity: flippedCards[step.number - 1] ? 0.9 : 0.7,
                                 boxShadow: '0 1px 3px rgba(0,0,0,0.3)',
@@ -598,7 +598,7 @@ export default function PeelExperiment() {
                               className="w-full h-full"
                               style={{
                                 background: flippedCards[step.number - 1] ? 'white' : '#D67C4A', // MEMOPYK orange
-                                clipPath: 'polygon(100% 0%, 100% 100%, 0% 100%)',
+                                clipPath: 'polygon(0% 0%, 100% 0%, 0% 100%)',
                                 filter: 'drop-shadow(-1px -1px 3px rgba(0,0,0,0.15)) drop-shadow(1px 1px 4px rgba(0,0,0,0.1))',
                                 transform: 'translateZ(2px) rotateX(-3deg) rotateY(3deg) translateY(-1px)',
                                 transformStyle: 'preserve-3d',
