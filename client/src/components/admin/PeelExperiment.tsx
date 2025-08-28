@@ -17,325 +17,159 @@ export function PeelExperiment() {
           
           if (entry.isIntersecting) {
             setTimeout(() => {
-              if (cardIndex === 0) {
-                // Card 1: Smooth, gentle unfolding reveal (less dramatic)
-                console.log('🎬 PEEL: Card 1 - Smooth gentle unfolding reveal');
-                
-                // Start with modest position and smoothly unveil
-                setPeelPositions(prev => ({
-                  ...prev,
-                  [cardIndex]: { x: 200, y: 200 } // Start at modest position
-                }));
-                
-                // Smooth gentle unveiling animation - EVEN LARGER REVEAL
-                setTimeout(() => {
-                  setPeelPositions(prev => ({
-                    ...prev,
-                    [cardIndex]: { x: 25, y: 40 } // Even larger reveal (smaller coordinates = bigger reveal)
-                  }));
-                  console.log('🎬 PEEL: Card 1 - Very large smooth reveal at {x: 25, y: 40}');
-                  
-                  // Roll back up after 1 second (reduced from 2 seconds)
-                  setTimeout(() => {
-                    setPeelPositions(prev => ({
-                      ...prev,
-                      [cardIndex]: { x: 200, y: 200 } // Smooth roll back to closed position
-                    }));
-                    console.log('🎬 PEEL: Card 1 - Smooth roll back to closed');
-                  }, 1000);
-                }, 100);
-              
-              } else if (cardIndex === 1) {
-                // === Card 2 — Smooth float + gentle permanent pulsing ===
-                console.log('🎬 PEEL: Card 2 - Smooth float → gentle permanent pulsing');
+              // === Universal Card Animation: Smooth float + gentle permanent pulsing ===
+              console.log(`🎬 PEEL: Card ${cardIndex + 1} - Smooth float → gentle permanent pulsing`);
 
-                // Cancel any in-flight animation for this card
-                const rafMap: Map<number, number> =
-                  (window as any).__peelRafMap || ((window as any).__peelRafMap = new Map());
-                const cancelPrev = () => {
-                  const id = rafMap.get(cardIndex);
-                  if (id) cancelAnimationFrame(id);
-                };
-                const schedule = (fn: FrameRequestCallback) => {
-                  const id = requestAnimationFrame(fn);
-                  rafMap.set(cardIndex, id);
-                  return id;
-                };
+              // Cancel any in-flight animation for this card
+              const rafMap: Map<number, number> =
+                (window as any).__peelRafMap || ((window as any).__peelRafMap = new Map());
+              const cancelPrev = () => {
+                const id = rafMap.get(cardIndex);
+                if (id) cancelAnimationFrame(id);
+              };
+              const schedule = (fn: FrameRequestCallback) => {
+                const id = requestAnimationFrame(fn);
+                rafMap.set(cardIndex, id);
+                return id;
+              };
 
-                // Ensure a known starting point
-                setPeelPositions(prev => ({
-                  ...prev,
-                  [cardIndex]: prev[cardIndex] ?? { x: 200, y: 200 },
-                }));
+              // Ensure a known starting point
+              setPeelPositions(prev => ({
+                ...prev,
+                [cardIndex]: prev[cardIndex] ?? { x: 200, y: 200 },
+              }));
 
-                type Vec = { x: number; y: number };
-                const setPos = (v: Vec) =>
-                  setPeelPositions(p => ({ ...p, [cardIndex]: v }));
+              type Vec = { x: number; y: number };
+              const setPos = (v: Vec) =>
+                setPeelPositions(p => ({ ...p, [cardIndex]: v }));
 
-                // Local spring state for this run (natural "paper" feel)
-                const state = {
-                  x: peelPositions[cardIndex]?.x ?? 200,
-                  y: peelPositions[cardIndex]?.y ?? 200,
-                  vx: 0,
-                  vy: 0,
-                };
+              // Local spring state for this run (natural "paper" feel)
+              const state = {
+                x: peelPositions[cardIndex]?.x ?? 200,
+                y: peelPositions[cardIndex]?.y ?? 200,
+                vx: 0,
+                vy: 0,
+              };
 
-                // Lightweight spring tween (Hooke's law + damping)
-                const springTo = (
-                  to: Vec,
-                  opts?: {
-                    stiffness?: number; // higher = quicker
-                    damping?: number;   // lower = bouncier (0.75–0.9 sweet spot)
-                    snapSpeed?: number; // stop when velocity is tiny
-                    snapDist?: number;  // and when distance is tiny
-                    onComplete?: () => void;
+              // Lightweight spring tween (Hooke's law + damping)
+              const springTo = (
+                to: Vec,
+                opts?: {
+                  stiffness?: number; // higher = quicker
+                  damping?: number;   // lower = bouncier (0.75–0.9 sweet spot)
+                  snapSpeed?: number; // stop when velocity is tiny
+                  snapDist?: number;  // and when distance is tiny
+                  onComplete?: () => void;
+                }
+              ) => {
+                const stiffness = opts?.stiffness ?? 0.045;
+                const damping   = opts?.damping   ?? 0.82;
+                const snapSpeed = opts?.snapSpeed ?? 0.06;
+                const snapDist  = opts?.snapDist  ?? 0.75;
+
+                cancelPrev();
+
+                const step = () => {
+                  const dx = to.x - state.x;
+                  const dy = to.y - state.y;
+
+                  state.vx = (state.vx + dx * stiffness) * damping;
+                  state.vy = (state.vy + dy * stiffness) * damping;
+
+                  state.x += state.vx;
+                  state.y += state.vy;
+
+                  setPos({ x: state.x, y: state.y });
+
+                  const speed = Math.hypot(state.vx, state.vy);
+                  const dist  = Math.hypot(dx, dy);
+
+                  if (speed < snapSpeed && dist < snapDist) {
+                    setPos({ x: to.x, y: to.y }); // snap exact, avoid sub-pixel drift
+                    opts?.onComplete && opts.onComplete();
+                    return;
                   }
-                ) => {
-                  const stiffness = opts?.stiffness ?? 0.045;
-                  const damping   = opts?.damping   ?? 0.82;
-                  const snapSpeed = opts?.snapSpeed ?? 0.06;
-                  const snapDist  = opts?.snapDist  ?? 0.75;
-
-                  cancelPrev();
-
-                  const step = () => {
-                    const dx = to.x - state.x;
-                    const dy = to.y - state.y;
-
-                    state.vx = (state.vx + dx * stiffness) * damping;
-                    state.vy = (state.vy + dy * stiffness) * damping;
-
-                    state.x += state.vx;
-                    state.y += state.vy;
-
-                    setPos({ x: state.x, y: state.y });
-
-                    const speed = Math.hypot(state.vx, state.vy);
-                    const dist  = Math.hypot(dx, dy);
-
-                    if (speed < snapSpeed && dist < snapDist) {
-                      setPos({ x: to.x, y: to.y }); // snap exact, avoid sub-pixel drift
-                      opts?.onComplete && opts.onComplete();
-                      return;
-                    }
-                    schedule(step);
-                  };
-
                   schedule(step);
                 };
 
-                // Gentle permanent pulsing for click indication
-                const gentlePulse = (base: Vec) => {
-                  let direction = 1; // 1 for out, -1 for in
-                  
-                  const pulse = () => {
-                    const amplitude = 2; // Very gentle 2px movement
-                    const targetOffset = direction * amplitude;
-                    
-                    springTo(
-                      { x: base.x + targetOffset, y: base.y + targetOffset },
-                      {
-                        stiffness: 0.025, // Very gentle
-                        damping: 0.92,    // Smooth
-                        onComplete: () => {
-                          direction *= -1; // Reverse direction
-                          setTimeout(pulse, 800); // Gentle 800ms rhythm
-                        },
-                      }
-                    );
-                  };
-                  
-                  pulse();
-                };
+                schedule(step);
+              };
 
-                // Respect reduced motion
-                const prefersReduced =
-                  typeof window !== 'undefined' &&
-                  window.matchMedia &&
-                  window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+              // Subtle decaying "tickle" at the small corner (professional flourish) - Card 3 behavior
+              const microTickle = (base: Vec) => {
+                const amps = [5, 3, 1.5]; // decay sequence
+                let i = 0;
+                const next = () => {
+                  if (i >= amps.length) {
+                    // Final settle - ensure completely static position
+                    cancelPrev();
+                    setPos({ x: base.x, y: base.y });
+                    console.log(`🎬 PEEL: Card ${cardIndex + 1} - Final static position locked`);
+                    return;
+                  }
+                  const a = amps[i++];
 
-                if (prefersReduced) {
-                  setPos({ x: 320, y: 320 });
-                  console.log('🎬 PEEL: Card 2 - Reduced motion fallback');
-                } else {
-                  // Phase A: float down to large reveal → Phase B: glide back → gentle pulsing
+                  // left-down nudge
                   springTo(
-                    { x: 25, y: 40 },
+                    { x: base.x - a, y: base.y - a },
                     {
-                      stiffness: 0.040, // softer entry
-                      damping: 0.86,
+                      stiffness: 0.065,
+                      damping: 0.80,
                       onComplete: () => {
+                        // right-up rebound
                         springTo(
-                          { x: 320, y: 320 },
+                          { x: base.x + a, y: base.y + a },
                           {
-                            stiffness: 0.038,
-                            damping: 0.88,
+                            stiffness: 0.065,
+                            damping: 0.82,
                             onComplete: () => {
-                              gentlePulse({ x: 320, y: 320 });
-                              console.log('🎬 PEEL: Card 2 - Gentle pulsing started');
+                              // settle back to base, then continue decay
+                              springTo(base, {
+                                stiffness: 0.05,
+                                damping: 0.86,
+                                onComplete: next,
+                              });
                             },
                           }
                         );
                       },
                     }
                   );
-                }
-              
+                };
+                next();
+              };
+
+              // Respect reduced motion
+              const prefersReduced =
+                typeof window !== 'undefined' &&
+                window.matchMedia &&
+                window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+              if (prefersReduced) {
+                setPos({ x: 320, y: 320 });
+                console.log(`🎬 PEEL: Card ${cardIndex + 1} - Reduced motion fallback`);
               } else {
-                // === Card 3 — Smooth float + decaying tickle (drop-in replacement) ===
-                console.log('🎬 PEEL: Card 3 - Smooth float → settle → micro-tickle');
-
-                // Cancel any in-flight animation for this card
-                const rafMap: Map<number, number> =
-                  (window as any).__peelRafMap || ((window as any).__peelRafMap = new Map());
-                const cancelPrev = () => {
-                  const id = rafMap.get(cardIndex);
-                  if (id) cancelAnimationFrame(id);
-                };
-                const schedule = (fn: FrameRequestCallback) => {
-                  const id = requestAnimationFrame(fn);
-                  rafMap.set(cardIndex, id);
-                  return id;
-                };
-
-                // Ensure a known starting point
-                setPeelPositions(prev => ({
-                  ...prev,
-                  [cardIndex]: prev[cardIndex] ?? { x: 200, y: 200 },
-                }));
-
-                type Vec = { x: number; y: number };
-                const setPos = (v: Vec) =>
-                  setPeelPositions(p => ({ ...p, [cardIndex]: v }));
-
-                // Local spring state for this run (natural "paper" feel)
-                const state = {
-                  x: peelPositions[cardIndex]?.x ?? 200,
-                  y: peelPositions[cardIndex]?.y ?? 200,
-                  vx: 0,
-                  vy: 0,
-                };
-
-                // Lightweight spring tween (Hooke's law + damping)
-                const springTo = (
-                  to: Vec,
-                  opts?: {
-                    stiffness?: number; // higher = quicker
-                    damping?: number;   // lower = bouncier (0.75–0.9 sweet spot)
-                    snapSpeed?: number; // stop when velocity is tiny
-                    snapDist?: number;  // and when distance is tiny
-                    onComplete?: () => void;
+                // Phase A: float down to large reveal → Phase B: glide back → gentle pulsing
+                springTo(
+                  { x: 25, y: 40 },
+                  {
+                    stiffness: 0.040, // softer entry
+                    damping: 0.86,
+                    onComplete: () => {
+                      springTo(
+                        { x: 320, y: 320 },
+                        {
+                          stiffness: 0.038,
+                          damping: 0.88,
+                          onComplete: () => {
+                            microTickle({ x: 320, y: 320 });
+                            console.log(`🎬 PEEL: Card ${cardIndex + 1} - Micro-tickle started (Card 3 behavior)`);
+                          },
+                        }
+                      );
+                    },
                   }
-                ) => {
-                  const stiffness = opts?.stiffness ?? 0.045;
-                  const damping   = opts?.damping   ?? 0.82;
-                  const snapSpeed = opts?.snapSpeed ?? 0.06;
-                  const snapDist  = opts?.snapDist  ?? 0.75;
-
-                  cancelPrev();
-
-                  const step = () => {
-                    const dx = to.x - state.x;
-                    const dy = to.y - state.y;
-
-                    state.vx = (state.vx + dx * stiffness) * damping;
-                    state.vy = (state.vy + dy * stiffness) * damping;
-
-                    state.x += state.vx;
-                    state.y += state.vy;
-
-                    setPos({ x: state.x, y: state.y });
-
-                    const speed = Math.hypot(state.vx, state.vy);
-                    const dist  = Math.hypot(dx, dy);
-
-                    if (speed < snapSpeed && dist < snapDist) {
-                      setPos({ x: to.x, y: to.y }); // snap exact, avoid sub-pixel drift
-                      opts?.onComplete && opts.onComplete();
-                      return;
-                    }
-                    schedule(step);
-                  };
-
-                  schedule(step);
-                };
-
-                // Subtle decaying "tickle" at the small corner (professional flourish)
-                const microTickle = (base: Vec) => {
-                  const amps = [5, 3, 1.5]; // decay sequence
-                  let i = 0;
-                  const next = () => {
-                    if (i >= amps.length) {
-                      // Final settle - ensure completely static position
-                      cancelPrev();
-                      setPos({ x: base.x, y: base.y });
-                      console.log('🎬 PEEL: Card 3 - Final static position locked');
-                      return;
-                    }
-                    const a = amps[i++];
-
-                    // left-down nudge
-                    springTo(
-                      { x: base.x - a, y: base.y - a },
-                      {
-                        stiffness: 0.065,
-                        damping: 0.80,
-                        onComplete: () => {
-                          // right-up rebound
-                          springTo(
-                            { x: base.x + a, y: base.y + a },
-                            {
-                              stiffness: 0.065,
-                              damping: 0.82,
-                              onComplete: () => {
-                                // settle back to base, then continue decay
-                                springTo(base, {
-                                  stiffness: 0.05,
-                                  damping: 0.86,
-                                  onComplete: next,
-                                });
-                              },
-                            }
-                          );
-                        },
-                      }
-                    );
-                  };
-                  next();
-                };
-
-                // Respect reduced motion
-                const prefersReduced =
-                  typeof window !== 'undefined' &&
-                  window.matchMedia &&
-                  window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-
-                if (prefersReduced) {
-                  setPos({ x: 320, y: 320 });
-                  console.log('🎬 PEEL: Card 3 - Reduced motion fallback');
-                } else {
-                  // Phase A: float down to large reveal → Phase B: glide back → micro-tickle
-                  springTo(
-                    { x: 25, y: 40 },
-                    {
-                      stiffness: 0.040, // softer entry
-                      damping: 0.86,
-                      onComplete: () => {
-                        springTo(
-                          { x: 314, y: 314 },
-                          {
-                            stiffness: 0.038,
-                            damping: 0.88,
-                            onComplete: () => {
-                              microTickle({ x: 320, y: 320 });
-                              console.log('🎬 PEEL: Card 3 - Micro-tickle completed');
-                            },
-                          }
-                        );
-                      },
-                    }
-                  );
-                }
+                );
               }
             }, 300);
           } else {
@@ -479,7 +313,11 @@ export function PeelExperiment() {
                             flippedCards[step.number - 1] ? 'bg-gradient-to-br from-green-500 to-emerald-600' : 'bg-white'
                           }`}
                           style={{
-                            transform: flippedCards[step.number - 1] ? 'rotateY(180deg)' : 'rotateY(0deg)',
+                            transform: `${flippedCards[step.number - 1] ? 'rotateY(180deg)' : 'rotateY(0deg)'} translate(${
+                              (peelPositions[step.number - 1]?.x || 0) === 320 && (peelPositions[step.number - 1]?.y || 0) >= 318 && (peelPositions[step.number - 1]?.y || 0) <= 322
+                                ? `${(peelPositions[step.number - 1]?.x || 320) - 320}px, ${(peelPositions[step.number - 1]?.y || 320) - 320}px`
+                                : '0px, 0px'
+                            })`,
                             transformStyle: 'preserve-3d'
                           }}
                         >
