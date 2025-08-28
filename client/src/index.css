@@ -63,35 +63,6 @@ html, body {
   overflow-x: hidden;
 }
 
-/* ========== PEEL EXPERIMENT STYLES ========== */
-.peel-wrapper {
-  position: relative;
-  overflow: hidden;
-}
-
-/* COMPLETELY HIDE ALL REACT-PEEL CORNER ELEMENTS */
-.peel-wrapper [class*="corner"],
-.peel-wrapper [class*="peel"],
-.peel-wrapper > div > div:last-child,
-.peel-wrapper svg,
-.peel-wrapper canvas {
-  display: none !important;
-  opacity: 0 !important;
-  visibility: hidden !important;
-  pointer-events: none !important;
-}
-
-/* Nuclear approach - hide any positioned elements that could be corners */
-.peel-wrapper > div > div[style*="position: absolute"],
-.peel-wrapper > div > div[style*="bottom"],
-.peel-wrapper > div > div[style*="right"] {
-  display: none !important;
-}
-
-/* Hide everything except the first content div */
-.peel-wrapper > div:not(:first-child) {
-  display: none !important;
-}
 
 /* Fix for any elements that might cause horizontal overflow */
 img, video, iframe, canvas, svg {

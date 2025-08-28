@@ -167,8 +167,8 @@ export function PeelExperiment() {
                             stiffness: 0.038,
                             damping: 0.88,
                             onComplete: () => {
-                              // Card 2: Static position - no pulsing, just arrow and dotted line
-                              console.log(`🎬 PEEL: Card 2 - Static arrow position set`);
+                              // Card 2: Static position - no animations
+                              console.log(`🎬 PEEL: Card 2 - Static position set`);
                             },
                           }
                         );
