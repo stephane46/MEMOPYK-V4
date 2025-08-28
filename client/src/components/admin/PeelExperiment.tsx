@@ -17,13 +17,13 @@ export function PeelExperiment() {
           if (entry.isIntersecting) {
             setTimeout(() => {
               if (cardIndex === 0) {
-                // Card 1: Very large reveal (moved from Card 2)
-                console.log('🎬 PEEL: Card 1 - VERY LARGE reveal from BOTTOM_RIGHT');
+                // Card 1: Half card reveal (increased from very large)
+                console.log('🎬 PEEL: Card 1 - HALF CARD reveal from BOTTOM_RIGHT');
                 setPeelPositions(prev => ({
                   ...prev,
-                  [cardIndex]: { x: 100, y: 100 } // Very large reveal (smaller coordinates = bigger reveal)
+                  [cardIndex]: { x: 50, y: 50 } // Half card reveal (even smaller coordinates = bigger reveal)
                 }));
-                console.log('🎬 PEEL: Card 1 - Very large reveal at {x: 100, y: 100}');
+                console.log('🎬 PEEL: Card 1 - Half card reveal at {x: 50, y: 50}');
               
               } else if (cardIndex === 1) {
                 // Card 2: Moderate reveal (moved from Card 1)
@@ -35,11 +35,11 @@ export function PeelExperiment() {
                 console.log('🎬 PEEL: Card 2 - 50% reveal set at {x: 200, y: 200}');
               
               } else {
-                // Card 3: Start with very large reveal (same as Card 1), then switch to moderate reveal (same as Card 2) and stay
-                console.log('🎬 PEEL: Card 3 - Starting with very large reveal (same as Card 1)');
+                // Card 3: Start with half card reveal (same as Card 1), then switch to moderate reveal (same as Card 2) and stay
+                console.log('🎬 PEEL: Card 3 - Starting with half card reveal (same as Card 1)');
                 setPeelPositions(prev => ({
                   ...prev,
-                  [cardIndex]: { x: 100, y: 100 } // Very large reveal same as Card 1
+                  [cardIndex]: { x: 50, y: 50 } // Half card reveal same as Card 1
                 }));
                 
                 // After 2 seconds, switch to moderate reveal and stay there
