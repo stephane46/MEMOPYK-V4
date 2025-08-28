@@ -420,7 +420,7 @@ export function PeelExperiment() {
                       </PeelTop>
                       
                       <PeelBack>
-                        {/* BACK SIDE - Detailed Information (revealed with auto-peel) */}
+                        {/* BACK SIDE - Detailed Information (revealed with auto-peel) - Card 3 with proper text orientation */}
                         <div 
                           className="shadow-lg rounded-2xl overflow-hidden border border-gray-200 h-full"
                           style={{
@@ -428,15 +428,21 @@ export function PeelExperiment() {
                             backgroundSize: 'cover',
                             backgroundPosition: 'center',
                             backgroundRepeat: 'no-repeat',
-                            transform: 'scaleX(-1)', // Flip horizontally to counter the peel effect rotation
-                            transformOrigin: 'center'
+                            // Remove problematic transforms for Card 3 to fix text orientation
+                            ...(step.number === 3 ? {} : {
+                              transform: 'scaleX(-1)',
+                              transformOrigin: 'center'
+                            })
                           }}
                         >
                           <div 
                             className="h-full flex flex-col justify-between p-4"
                             style={{
-                              transform: 'scaleX(-1)', // Double flip to make text readable again
-                              transformOrigin: 'center'
+                              // Remove double flip for Card 3 to ensure text is readable
+                              ...(step.number === 3 ? {} : {
+                                transform: 'scaleX(-1)',
+                                transformOrigin: 'center'
+                              })
                             }}
                           >
                             {/* Main Content */}
