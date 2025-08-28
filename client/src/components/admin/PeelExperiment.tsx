@@ -7,6 +7,7 @@ export function PeelExperiment() {
   const { language } = useLanguage();
   const [peelPositions, setPeelPositions] = useState<{[key: number]: {x: number, y: number}}>({});
   const [flippedCards, setFlippedCards] = useState<{ [key: number]: boolean }>({});
+  const [showArrows, setShowArrows] = useState<{ [key: number]: boolean }>({});
   const cardRefs = useRef<(HTMLDivElement | null)[]>([]);
   
   useEffect(() => {
@@ -122,7 +123,9 @@ export function PeelExperiment() {
                           delete newPos[cardIndex];
                           return newPos;
                         });
-                        console.log(`🎬 PEEL: Card ${cardIndex + 1} - Returned to completely normal (no corner)`);
+                        // Show orange arrow indicator after returning to normal
+                        setShowArrows(prev => ({ ...prev, [cardIndex]: true }));
+                        console.log(`🎬 PEEL: Card ${cardIndex + 1} - Returned to completely normal (no corner) + arrow shown`);
                       }, 1000);
                     },
                   }
@@ -242,6 +245,8 @@ export function PeelExperiment() {
                         ...prev,
                         [step.number - 1]: !prev[step.number - 1]
                       }));
+                      // Hide arrow when card is clicked
+                      setShowArrows(prev => ({ ...prev, [step.number - 1]: false }));
                     }}
                   >
                     <PeelWrapper
@@ -357,6 +362,34 @@ export function PeelExperiment() {
                         </div>
                       </PeelBack>
                     </PeelWrapper>
+                    
+                    {/* Orange Arrow Indicator - Points to top-left corner */}
+                    {showArrows[step.number - 1] && (
+                      <div className="absolute top-2 left-2 pointer-events-none">
+                        <svg 
+                          width="24" 
+                          height="24" 
+                          viewBox="0 0 24 24" 
+                          className="text-memopyk-orange animate-pulse"
+                        >
+                          {/* Dotted triangle pointing to top-left */}
+                          <path 
+                            d="M8 8 L4 4 L8 4 Z" 
+                            fill="none" 
+                            stroke="currentColor" 
+                            strokeWidth="2"
+                            strokeDasharray="2,2"
+                          />
+                          {/* Arrow line */}
+                          <path 
+                            d="M12 12 L8 8" 
+                            stroke="currentColor" 
+                            strokeWidth="2"
+                            strokeDasharray="2,2"
+                          />
+                        </svg>
+                      </div>
+                    )}
                   </div>
 
                   {/* Static Title with Blue Icon - Always Visible */}
