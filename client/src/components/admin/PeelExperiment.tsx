@@ -458,10 +458,9 @@ export default function PeelExperiment() {
                         <div className="relative">
                           {/* Large 60x60 triangle with gradient background and realistic paper curl */}
                           <div 
-                            className="w-[60px] h-[60px] absolute bottom-0 right-0"
+                            className="w-[60px] h-[60px] absolute bottom-0 right-0 overflow-hidden"
                             style={{
-                              backgroundColor: 'transparent',
-                              overflow: 'visible',
+                              backgroundColor: '#F2EBDC', // Beige background where paper was removed
                             }}
                           >
                             <div
@@ -471,21 +470,13 @@ export default function PeelExperiment() {
                                   ? 'white' 
                                   : 'linear-gradient(135deg, rgba(214, 124, 74, 0.92) 0%, rgba(42, 71, 89, 0.92) 100%)',
                                 clipPath: 'polygon(0% 0%, 100% 0%, 0% 100%)',
+                                borderRadius: '0 0 0 16px', // Round the tip corner
                                 filter: 'drop-shadow(-2px -2px 6px rgba(0,0,0,0.2)) drop-shadow(2px 2px 8px rgba(0,0,0,0.1))',
                                 transform: 'translateZ(4px) rotateX(-5deg) rotateY(5deg) translateY(-2px)',
                                 transformStyle: 'preserve-3d',
                                 transformOrigin: 'bottom right',
                               }}
-                            >
-                              <div 
-                                style={{
-                                  width: '100%',
-                                  height: '100%',
-                                  borderRadius: '0 0 0 16px',
-                                  background: 'inherit',
-                                }}
-                              />
-                            </div>
+                            />
                             {/* Diagonal shadow edge for realistic paper curl effect */}
                             <div 
                               className="absolute z-10"
@@ -532,10 +523,9 @@ export default function PeelExperiment() {
                         <div className="relative">
                           {/* Large 60x60 triangle with gradient background and realistic paper curl */}
                           <div 
-                            className="w-[60px] h-[60px] absolute bottom-0 right-0"
+                            className="w-[60px] h-[60px] absolute bottom-0 right-0 overflow-hidden"
                             style={{
-                              backgroundColor: 'transparent',
-                              overflow: 'visible',
+                              backgroundColor: '#F2EBDC', // Beige background where paper was removed
                             }}
                           >
                             <div
@@ -545,21 +535,13 @@ export default function PeelExperiment() {
                                   ? 'white' 
                                   : 'linear-gradient(135deg, rgba(214, 124, 74, 0.92) 0%, rgba(42, 71, 89, 0.92) 100%)',
                                 clipPath: 'polygon(0% 0%, 100% 0%, 0% 100%)',
+                                borderRadius: '0 0 0 16px', // Round the tip corner
                                 filter: 'drop-shadow(-2px -2px 6px rgba(0,0,0,0.2)) drop-shadow(2px 2px 8px rgba(0,0,0,0.1))',
                                 transform: 'translateZ(4px) rotateX(-5deg) rotateY(5deg) translateY(-2px)',
                                 transformStyle: 'preserve-3d',
                                 transformOrigin: 'bottom right',
                               }}
-                            >
-                              <div 
-                                style={{
-                                  width: '100%',
-                                  height: '100%',
-                                  borderRadius: '0 0 0 16px',
-                                  background: 'inherit',
-                                }}
-                              />
-                            </div>
+                            />
                             {/* Diagonal shadow edge for realistic paper curl effect */}
                             <div 
                               className="absolute z-10"
@@ -600,67 +582,10 @@ export default function PeelExperiment() {
                       </div>
                     )}
 
-                    {/* Card 3: Original orange triangle with reveal effect */}
-                    {showArrows[step.number - 1] && step.number === 3 && (
-                      <div className="absolute bottom-0 right-0 pointer-events-none z-50">
-                        {/* Card 3: Triangle corner with unfold reveal */}
-                        <div className="relative">
-                          {/* Triangle container with rounded corner */}
-                          <div 
-                            className="w-[40px] h-[40px] absolute bottom-0 right-0 overflow-hidden"
-                            style={{
-                              borderRadius: '0 0 16px 0', // Match card's border radius
-                            }}
-                          >
-                            <div
-                              className="w-full h-full"
-                              style={{
-                                background: flippedCards[step.number - 1] ? 'white' : '#D67C4A', // MEMOPYK orange
-                                clipPath: 'polygon(0% 0%, 100% 0%, 0% 100%)',
-                                filter: 'drop-shadow(-1px -1px 3px rgba(0,0,0,0.15)) drop-shadow(1px 1px 4px rgba(0,0,0,0.1))',
-                                transform: 'translateZ(2px) rotateX(-3deg) rotateY(3deg) translateY(-1px)',
-                                transformStyle: 'preserve-3d',
-                                transformOrigin: 'bottom right',
-                              }}
-                            />
-                          </div>
-                          {/* Dotted diagonal line along the hypotenuse */}
-                          <div 
-                            className="absolute"
-                            style={{
-                              top: '2px',
-                              right: '2px',
-                              width: '48px',
-                              height: '2px',
-                              background: flippedCards[step.number - 1] 
-                                ? 'repeating-linear-gradient(45deg, #D67C4A 0px, #D67C4A 2px, white 2px, white 4px)'
-                                : 'repeating-linear-gradient(45deg, white 0px, white 2px, #D67C4A 2px, #D67C4A 4px)',
-                              transform: 'rotate(-45deg)',
-                              transformOrigin: 'top right',
-                              opacity: 0.9
-                            }}
-                          />
-                          <div 
-                            className="absolute bottom-0 right-0"
-                            style={{
-                              animation: 'arrowRiseAndGrow 2s ease-in-out infinite',
-                              transform: 'translate(2px, 2px)'
-                            }}
-                          >
-                            <svg 
-                              width="18" 
-                              height="18" 
-                              viewBox="0 0 16 16" 
-                              fill={flippedCards[step.number - 1] ? '#D67C4A' : 'white'}
-                              style={{
-                                filter: 'drop-shadow(1px 1px 2px rgba(0,0,0,0.3))'
-                              }}
-                            >
-                              {/* Arrow pointing to top-left */}
-                              <path d="M4 4 L4 9 L6 7 L10 11 L12 9 L8 5 L10 4 Z" />
-                            </svg>
-                          </div>
-                        </div>
+                    {/* Card 3: Orange triangle with arrow */}
+                    {step.number === 3 && (
+                      <div className="absolute bottom-4 right-4 w-10 h-10 bg-orange-500 rounded-tl-2xl flex items-center justify-center cursor-pointer hover:bg-orange-600 transition-colors shadow-lg">
+                        <div className="w-0 h-0 border-l-[6px] border-l-transparent border-r-[6px] border-r-transparent border-b-[8px] border-b-white transform -rotate-45 translate-x-[1px] translate-y-[-1px]" />
                       </div>
                     )}
                     
