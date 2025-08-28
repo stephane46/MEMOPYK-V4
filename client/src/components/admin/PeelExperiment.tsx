@@ -383,7 +383,7 @@ export function PeelExperiment() {
                       <PeelTop>
                         {/* FRONT/BACK SIDE - Step Card with Flip Animation */}
                         <div 
-                          className={`border border-gray-200 shadow-lg hover:shadow-2xl rounded-2xl overflow-hidden h-full transition-all duration-700 ${
+                          className={`border border-gray-200 shadow-lg hover:shadow-2xl rounded-2xl overflow-hidden h-full transition-all duration-700 relative ${
                             flippedCards[step.number - 1] ? 'bg-gradient-to-br from-green-500 to-emerald-600' : 'bg-white'
                           }`}
                           style={{
@@ -402,6 +402,22 @@ export function PeelExperiment() {
                             transformStyle: step.number === 3 ? 'flat' : 'preserve-3d'
                           }}
                         >
+                          {/* Card 2: Always-Pulsing Corner - Shows Opposite Side Colors - ALWAYS VISIBLE */}
+                          {step.number === 2 && (
+                            <div 
+                              className="absolute bottom-0 right-0 w-8 h-8 z-50"
+                              style={{
+                                clipPath: 'polygon(100% 0%, 100% 100%, 0% 100%)',
+                                animation: 'peelFloat 3s ease-in-out infinite, peelGlow 2s ease-in-out infinite',
+                                animationPlayState: 'running',
+                                // Dynamic colors: Front shows back colors, Back shows front colors
+                                background: !flippedCards[step.number - 1] 
+                                  ? 'linear-gradient(135deg, #D67C4A 0%, #2A4759 100%)' // Front shows back colors (orange/dark-blue)
+                                  : 'linear-gradient(135deg, #FFFFFF 0%, #89BAD9 100%)', // Back shows front colors (white/sky-blue)
+                                pointerEvents: 'none'
+                              }}
+                            />
+                          )}
                           {/* Conditional Content Based on Flip State */}
                           {!flippedCards[step.number - 1] || step.number !== 3 ? (
                             /* FRONT SIDE - Original Image (or back side for Cards 1&2) */
@@ -417,25 +433,6 @@ export function PeelExperiment() {
                                 <div className="absolute top-2 left-2 w-8 h-8 bg-memopyk-orange rounded-full flex items-center justify-center transition-transform duration-300 shadow-lg">
                                   <span className="text-sm font-bold text-white">{step.number}</span>
                                 </div>
-                                
-                                {/* Card 2: Always-Pulsing Corner - Shows Opposite Side Colors */}
-                                {step.number === 2 && (
-                                  <div 
-                                    className="absolute bottom-0 right-0 w-8 h-8 z-50"
-                                    style={{
-                                      clipPath: 'polygon(100% 0%, 100% 100%, 0% 100%)',
-                                      animation: 'peelFloat 3s ease-in-out infinite alternate, peelGlow 2s ease-in-out infinite',
-                                      animationPlayState: 'running', // Force animation to keep running
-                                      // Front side: Show orangey colors (back side preview)
-                                      background: !flippedCards[step.number - 1] 
-                                        ? 'linear-gradient(135deg, #D67C4A 0%, #2A4759 100%)' // Front shows back colors
-                                        : 'linear-gradient(135deg, #FFFFFF 0%, #89BAD9 100%)', // Back shows front colors
-                                      backgroundSize: 'cover',
-                                      backgroundPosition: 'center',
-                                      pointerEvents: 'none' // Don't interfere with interactions
-                                    }}
-                                  />
-                                )}
                               </div>
                             ) : (
                               /* Cards 1&2 BACK SIDE - Detailed Information */
