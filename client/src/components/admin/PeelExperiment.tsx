@@ -266,7 +266,7 @@ export function PeelExperiment() {
                                   </div>
                                   
                                   {/* Separator Line */}
-                                  <div className="border-t border-white/40 mx-4 mb-4"></div>
+                                  <div className="border-t border-white/40 mx-4 mb-4 mt-4"></div>
                                   
                                   {/* Bottom Section - Sub Description */}
                                   <div className="text-center">
@@ -296,21 +296,21 @@ export function PeelExperiment() {
                               <div className="text-center text-white">
                                 <div className="text-sm leading-normal mb-4">
                                   {(language === 'fr-FR' ? step.descriptionFr : step.descriptionEn)
-                                    .split(/[.!?]+/)
+                                    .split(/(?<=[.!?])\s+/)
                                     .filter(sentence => sentence.trim().length > 0)
                                     .map((sentence, i) => (
-                                      <p key={i} className="mb-2">{sentence.trim()}.</p>
+                                      <p key={i} className="mb-3">{sentence.trim()}</p>
                                     ))}
                                 </div>
                                 
-                                <div className="border-t border-white/40 my-4"></div>
+                                <div className="border-t border-white/40 my-4 mx-2"></div>
                                 
                                 <div className="text-xs text-white leading-relaxed">
                                   {(language === 'fr-FR' ? step.subDescriptionFr : step.subDescriptionEn)
-                                    .split(/[.!?]+/)
+                                    .split(/(?<=[.!?])\s+/)
                                     .filter(sentence => sentence.trim().length > 0)
                                     .map((sentence, i) => (
-                                      <p key={i} className="mb-2">{sentence.trim()}.</p>
+                                      <p key={i} className="mb-2">{sentence.trim()}</p>
                                     ))}
                                 </div>
                               </div>
@@ -323,69 +323,55 @@ export function PeelExperiment() {
                     {/* Orange Arrow Indicator - Cards 1, 2 & 3 */}
                     {showArrows[step.number - 1] && (
                       <div className="absolute bottom-0 right-0 pointer-events-none z-50">
-                        {(step.number === 2 || step.number === 3) ? (
-                          /* Cards 2 & 3: Orange triangle corner with unfold reveal */
-                          <div className="relative">
-                            <div 
-                              className={`w-0 h-0 border-l-[40px] border-b-[40px] border-l-transparent ${
-                                flippedCards[step.number - 1] ? 'border-b-white' : 'border-b-memopyk-orange'
-                              }`}
-                              style={{
-                                position: 'relative',
-                                bottom: '1px'
-                              }}
-                            />
-                            {/* Dotted diagonal line along the hypotenuse */}
-                            <div 
-                              className="absolute"
-                              style={{
-                                top: '2px',
-                                right: '2px',
-                                width: '48px',
-                                height: '2px',
-                                background: flippedCards[step.number - 1] 
-                                  ? 'repeating-linear-gradient(45deg, #D67C4A 0px, #D67C4A 2px, white 2px, white 4px)'
-                                  : 'repeating-linear-gradient(45deg, white 0px, white 2px, #D67C4A 2px, #D67C4A 4px)',
-                                transform: 'rotate(-45deg)',
-                                transformOrigin: 'top right',
-                                opacity: 0.9
-                              }}
-                            />
-                            <div 
-                              className="absolute bottom-0 right-0"
-                              style={{
-                                animation: 'arrowRiseAndGrow 2s ease-in-out infinite',
-                                transform: 'translate(2px, 2px)'
-                              }}
-                            >
-                              <svg 
-                                width="18" 
-                                height="18" 
-                                viewBox="0 0 16 16" 
-                                fill={flippedCards[step.number - 1] ? '#D67C4A' : 'white'}
-                                style={{
-                                  filter: 'drop-shadow(1px 1px 2px rgba(0,0,0,0.3))'
-                                }}
-                              >
-                                {/* Arrow pointing to top-left */}
-                                <path d="M4 4 L4 9 L6 7 L10 11 L12 9 L8 5 L10 4 Z" />
-                              </svg>
-                            </div>
-                          </div>
-                        ) : (
-                          /* Card 1 only: Orange circle with larger arrow */
-                          <div className="bg-memopyk-orange text-white p-2 rounded-full shadow-lg animate-pulse flex items-center justify-center">
+                        {/* All Cards 1, 2 & 3: Triangle corner with unfold reveal */}
+                        <div className="relative">
+                          <div 
+                            className={`w-0 h-0 border-l-[40px] border-b-[40px] border-l-transparent ${
+                              flippedCards[step.number - 1] ? 'border-b-white' : 'border-b-memopyk-orange'
+                            }`}
+                            style={{
+                              position: 'relative',
+                              bottom: '1px',
+                              borderBottomRightRadius: '16px'
+                            }}
+                          />
+                          {/* Dotted diagonal line along the hypotenuse */}
+                          <div 
+                            className="absolute"
+                            style={{
+                              top: '2px',
+                              right: '2px',
+                              width: '48px',
+                              height: '2px',
+                              background: flippedCards[step.number - 1] 
+                                ? 'repeating-linear-gradient(45deg, #D67C4A 0px, #D67C4A 2px, white 2px, white 4px)'
+                                : 'repeating-linear-gradient(45deg, white 0px, white 2px, #D67C4A 2px, #D67C4A 4px)',
+                              transform: 'rotate(-45deg)',
+                              transformOrigin: 'top right',
+                              opacity: 0.9
+                            }}
+                          />
+                          <div 
+                            className="absolute bottom-0 right-0"
+                            style={{
+                              animation: 'arrowRiseAndGrow 2s ease-in-out infinite',
+                              transform: 'translate(2px, 2px)'
+                            }}
+                          >
                             <svg 
                               width="18" 
                               height="18" 
                               viewBox="0 0 16 16" 
-                              fill="currentColor"
+                              fill={flippedCards[step.number - 1] ? '#D67C4A' : 'white'}
+                              style={{
+                                filter: 'drop-shadow(1px 1px 2px rgba(0,0,0,0.3))'
+                              }}
                             >
                               {/* Arrow pointing to top-left */}
                               <path d="M4 4 L4 9 L6 7 L10 11 L12 9 L8 5 L10 4 Z" />
                             </svg>
                           </div>
-                        )}
+                        </div>
                       </div>
                     )}
                     
