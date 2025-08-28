@@ -38,10 +38,8 @@ export function PeelExperiment() {
                   return newPos;
                 });
                 
-                // Step 3: Show arrows (card 1 and card 3 only)
-                if (cardIndex === 0 || cardIndex === 2) {
-                  setShowArrows(prev => ({ ...prev, [cardIndex]: true }));
-                }
+                // Step 3: Show arrows (all cards after reveal)
+                setShowArrows(prev => ({ ...prev, [cardIndex]: true }));
                 
                 console.log(`🎬 PEEL: Card ${cardIndex + 1} - Animation complete`);
               }, 1000); // 1 second reveal duration
@@ -330,11 +328,11 @@ export function PeelExperiment() {
                       </PeelWrapper>
                     )}
                     
-                    {/* Orange Arrow Indicator - Only cards 1 & 3 */}
-                    {showArrows[step.number - 1] && step.number !== 2 && (
+                    {/* Orange Arrow Indicator - Cards 1, 2 & 3 */}
+                    {showArrows[step.number - 1] && (
                       <div className="absolute bottom-0 right-0 pointer-events-none z-50">
-                        {step.number === 3 ? (
-                          /* Card 3: Orange triangle corner with unfold reveal */
+                        {(step.number === 2 || step.number === 3) ? (
+                          /* Cards 2 & 3: Orange triangle corner with unfold reveal */
                           <div className="relative">
                             <div 
                               className="w-0 h-0 border-l-[40px] border-b-[40px] border-l-transparent border-b-memopyk-orange shadow-lg"
