@@ -186,9 +186,8 @@ export function PeelExperiment() {
                             </div>
                           ) : (
                             <div 
-                              className="h-full flex flex-col cursor-pointer relative"
+                              className="h-full flex flex-col cursor-pointer relative card-back-orange"
                               style={{
-                                backgroundColor: '#D67C4A',
                                 transformOrigin: 'center'
                               }}
                             >
@@ -252,9 +251,8 @@ export function PeelExperiment() {
                             ) : (
                               /* Cards 1&2 BACK SIDE - Detailed Information */
                               <div 
-                                className="h-full flex flex-col cursor-pointer relative"
+                                className="h-full flex flex-col cursor-pointer relative card-back-orange"
                                 style={{
-                                  backgroundColor: '#D67C4A',
                                   // No transform - let content appear naturally
                                   transformOrigin: 'center'
                                 }}
@@ -287,10 +285,7 @@ export function PeelExperiment() {
                       <PeelBack>
                         {/* All Cards 1, 2 & 3: Full back side content */}
                           <div 
-                            className="shadow-lg rounded-2xl overflow-hidden border border-gray-200 h-full"
-                            style={{
-                              backgroundColor: '#D67C4A'
-                            }}
+                            className="shadow-lg rounded-2xl overflow-hidden border border-gray-200 h-full card-back-orange"
                           >
                             <div 
                               className="h-full flex flex-col justify-between p-4"

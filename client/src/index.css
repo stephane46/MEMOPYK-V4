@@ -57,6 +57,20 @@ html, body {
   will-change: transform;
 }
 
+/* Card Back Orange Background Fix - Following Modal Transparency Solution Pattern */
+.card-back-orange {
+  background-color: #D67C4A !important;
+  background: #D67C4A !important;
+  background-image: none !important;
+  opacity: 1 !important;
+  backdrop-filter: none !important;
+  filter: none !important;
+  isolation: isolate !important;
+  will-change: auto !important;
+  backface-visibility: hidden !important;
+  mix-blend-mode: normal !important;
+}
+
 /* Ensure all containers respect viewport width */
 .container {
   max-width: 100%;
