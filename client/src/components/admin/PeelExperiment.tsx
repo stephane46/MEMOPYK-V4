@@ -370,19 +370,19 @@ export function PeelExperiment() {
                     {showArrows[step.number - 1] && (
                       <div className="absolute bottom-0 right-0 pointer-events-none z-50">
                         {step.number === 3 ? (
-                          /* Card 3: Orange triangle corner with peel effect */
+                          /* Card 3: Orange triangle corner with unfold reveal */
                           <div className="relative">
                             <div 
-                              className="w-0 h-0 border-l-[40px] border-b-[40px] border-l-transparent border-b-memopyk-orange shadow-lg transform hover:scale-110 transition-all duration-300"
+                              className="w-0 h-0 border-l-[40px] border-b-[40px] border-l-transparent border-b-memopyk-orange shadow-lg"
                               style={{
                                 filter: 'drop-shadow(0 4px 6px rgb(0 0 0 / 0.1))',
-                                animation: 'peelFlutter 2s ease-in-out infinite'
+                                animation: 'triangleUnfold 3s ease-out 0.5s both'
                               }}
                             />
                             <div 
-                              className="absolute bottom-1 right-1 animate-pulse transform hover:scale-125 transition-all duration-300"
+                              className="absolute bottom-1 right-1"
                               style={{
-                                animation: 'peelArrow 2s ease-in-out infinite'
+                                animation: 'arrowReveal 3s ease-out 2s both'
                               }}
                             >
                               <svg 
@@ -390,6 +390,9 @@ export function PeelExperiment() {
                                 height="18" 
                                 viewBox="0 0 16 16" 
                                 fill="white"
+                                style={{
+                                  filter: 'drop-shadow(1px 1px 2px rgba(0,0,0,0.3))'
+                                }}
                               >
                                 {/* Arrow pointing to top-left */}
                                 <path d="M4 4 L4 9 L6 7 L10 11 L12 9 L8 5 L10 4 Z" />
