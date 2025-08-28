@@ -297,19 +297,11 @@ export function PeelExperiment() {
                           // FRONT → BACK: Continue peel motion to reveal back content
                           console.log(`🎬 PEEL-CLICK: Card 3 - Continuing peel motion from {x: ${currentPos.x}, y: ${currentPos.y}}`);
                           
-                          // STAGE 1: First reveal the triangle with correct text orientation
+                          // Single smooth transition to complete reveal
                           setPeelPositions(prev => ({
                             ...prev,
-                            [step.number - 1]: { x: 150, y: 150 } // Moderate reveal - shows triangle with readable text
+                            [step.number - 1]: { x: 0, y: 0 } // Complete reveal showing full back content
                           }));
-                          
-                          // STAGE 2: After short delay, complete the bottom-right reveal
-                          setTimeout(() => {
-                            setPeelPositions(prev => ({
-                              ...prev,
-                              [step.number - 1]: { x: 50, y: 50 } // Complete bottom-right reveal
-                            }));
-                          }, 400);
                           
                           // Mark as flipped but don't use rotateY - content comes from PeelBack
                           setFlippedCards(prev => ({
@@ -398,13 +390,19 @@ export function PeelExperiment() {
                                   <span className="text-sm font-bold text-white">{step.number}</span>
                                 </div>
                                 
-                                {/* Card 2: Animated Bottom-Right Corner "Bill" */}
+                                {/* Card 2: Animated Bottom-Right Corner "Bill" - Always Visible */}
                                 {step.number === 2 && (
                                   <div 
-                                    className="absolute bottom-0 right-0 w-8 h-8 bg-gradient-to-br from-memopyk-orange to-orange-600 transform origin-bottom-right"
+                                    className="absolute bottom-0 right-0 w-8 h-8 transform origin-bottom-right"
                                     style={{
                                       clipPath: 'polygon(100% 0%, 100% 100%, 0% 100%)',
-                                      animation: 'peelFloat 3s ease-in-out infinite alternate, peelGlow 2s ease-in-out infinite'
+                                      animation: 'peelFloat 3s ease-in-out infinite alternate, peelGlow 2s ease-in-out infinite',
+                                      // Show opposite side content in the notch
+                                      backgroundImage: flippedCards[step.number - 1] 
+                                        ? `url(${step.image})` // Back side shows front image
+                                        : `linear-gradient(135deg, rgba(214, 124, 74, 0.92) 0%, rgba(42, 71, 89, 0.92) 100%), url(${step.image})`, // Front side shows back gradient
+                                      backgroundSize: 'cover',
+                                      backgroundPosition: 'center'
                                     }}
                                   >
                                     {/* Small shadow effect */}
@@ -448,6 +446,29 @@ export function PeelExperiment() {
                                     </div>
                                   </div>
                                 </div>
+                                
+                                {/* Card 2: Animated Bottom-Right Corner "Bill" - Back Side */}
+                                {step.number === 2 && (
+                                  <div 
+                                    className="absolute bottom-0 right-0 w-8 h-8 transform origin-bottom-right"
+                                    style={{
+                                      clipPath: 'polygon(100% 0%, 100% 100%, 0% 100%)',
+                                      animation: 'peelFloat 3s ease-in-out infinite alternate, peelGlow 2s ease-in-out infinite',
+                                      // Back side shows front image (opposite content)
+                                      backgroundImage: `url(${step.image})`,
+                                      backgroundSize: 'cover',
+                                      backgroundPosition: 'center'
+                                    }}
+                                  >
+                                    {/* Small shadow effect */}
+                                    <div 
+                                      className="absolute inset-0 bg-black opacity-20 transform translate-x-1 translate-y-1"
+                                      style={{
+                                        clipPath: 'polygon(100% 0%, 100% 100%, 0% 100%)'
+                                      }}
+                                    />
+                                  </div>
+                                )}
                               </div>
                             )
                           ) : (
@@ -495,10 +516,9 @@ export function PeelExperiment() {
                             backgroundSize: 'cover',
                             backgroundPosition: 'center',
                             backgroundRepeat: 'no-repeat',
-                            // Card 3: Add back text rotation for correct orientation
+                            // Card 3: Remove rotation to fix text orientation issues
                             ...(step.number === 3 ? {
-                              transform: 'rotate(270deg)',
-                              transformOrigin: 'center'
+                              // No transform for Card 3 - keep text readable
                             } : {
                               transform: 'scaleX(-1)',
                               transformOrigin: 'center'
