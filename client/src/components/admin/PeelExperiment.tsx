@@ -15,9 +15,6 @@ export function PeelExperiment() {
           const cardIndex = parseInt(entry.target.getAttribute('data-card-index') || '0');
           
           if (entry.isIntersecting) {
-            // Skip if this card is already animating
-            if (peelPositions[cardIndex]) return;
-            
             // Trigger one-third reveal animation after a short delay
             setTimeout(() => {
               // Set peel position to reveal approximately one-third from bottom-right
