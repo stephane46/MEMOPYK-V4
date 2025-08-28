@@ -102,61 +102,154 @@ export function PeelExperiment() {
                 }, 100);
               
               } else {
-                // Card 3: Start with Card 1's gentle unfolding, then switch to Card 2's gentle jiggling
-                console.log('🎬 PEEL: Card 3 - Starting Card 1 sequence: gentle unfolding');
-                
-                // Replicate Card 1's gentle unfolding animation
+                // === Card 3 — Smooth float + decaying tickle (drop-in replacement) ===
+                console.log('🎬 PEEL: Card 3 - Smooth float → settle → micro-tickle');
+
+                // Cancel any in-flight animation for this card
+                const rafMap: Map<number, number> =
+                  (window as any).__peelRafMap || ((window as any).__peelRafMap = new Map());
+                const cancelPrev = () => {
+                  const id = rafMap.get(cardIndex);
+                  if (id) cancelAnimationFrame(id);
+                };
+                const schedule = (fn: FrameRequestCallback) => {
+                  const id = requestAnimationFrame(fn);
+                  rafMap.set(cardIndex, id);
+                  return id;
+                };
+
+                // Ensure a known starting point
                 setPeelPositions(prev => ({
                   ...prev,
-                  [cardIndex]: { x: 200, y: 200 } // Start at modest position like Card 1
+                  [cardIndex]: prev[cardIndex] ?? { x: 200, y: 200 },
                 }));
-                
-                setTimeout(() => {
-                  setPeelPositions(prev => ({
-                    ...prev,
-                    [cardIndex]: { x: 25, y: 40 } // Even larger reveal like Card 1
-                  }));
-                  console.log('🎬 PEEL: Card 3 - Very large unfold like Card 1');
-                  
-                  // Roll back after 1 second (reduced from 2 seconds)
-                  setTimeout(() => {
-                    setPeelPositions(prev => ({
-                      ...prev,
-                      [cardIndex]: { x: 200, y: 200 } // Smooth roll back
-                    }));
-                    console.log('🎬 PEEL: Card 3 - Roll back from large reveal');
-                    
-                    // Then immediately start Card 2's jiggling sequence
-                    setTimeout(() => {
-                      console.log('🎬 PEEL: Card 3 - Starting Card 2 sequence: gentle jiggling');
-                      setPeelPositions(prev => ({
-                        ...prev,
-                        [cardIndex]: { x: 320, y: 320 } // Switch to small reveal base
-                      }));
-                      
-                      // Replicate Card 2's gentle jiggle animation
-                      let jiggleCount = 0;
-                      const jiggleInterval = setInterval(() => {
-                        if (jiggleCount >= 4) { // Reduced jiggles like Card 2
-                          clearInterval(jiggleInterval);
-                          setPeelPositions(prev => ({
-                            ...prev,
-                            [cardIndex]: { x: 320, y: 320 } // Final position
-                          }));
-                          console.log('🎬 PEEL: Card 3 - Final state: gentle jiggling (permanent)');
-                          return;
-                        }
-                        
-                        const jiggleOffset = jiggleCount % 2 === 0 ? 3 : -3; // Smaller movement like Card 2
-                        setPeelPositions(prev => ({
-                          ...prev,
-                          [cardIndex]: { x: 320 + jiggleOffset, y: 320 + jiggleOffset }
-                        }));
-                        jiggleCount++;
-                      }, 300); // Lower frequency like Card 2
-                    }, 200); // Small delay for smooth transition
-                  }, 1000); // Reduced from 2000ms to 1000ms
-                }, 100);
+
+                type Vec = { x: number; y: number };
+                const setPos = (v: Vec) =>
+                  setPeelPositions(p => ({ ...p, [cardIndex]: v }));
+
+                // Local spring state for this run (natural "paper" feel)
+                const state = {
+                  x: peelPositions[cardIndex]?.x ?? 200,
+                  y: peelPositions[cardIndex]?.y ?? 200,
+                  vx: 0,
+                  vy: 0,
+                };
+
+                // Lightweight spring tween (Hooke's law + damping)
+                const springTo = (
+                  to: Vec,
+                  opts?: {
+                    stiffness?: number; // higher = quicker
+                    damping?: number;   // lower = bouncier (0.75–0.9 sweet spot)
+                    snapSpeed?: number; // stop when velocity is tiny
+                    snapDist?: number;  // and when distance is tiny
+                    onComplete?: () => void;
+                  }
+                ) => {
+                  const stiffness = opts?.stiffness ?? 0.045;
+                  const damping   = opts?.damping   ?? 0.82;
+                  const snapSpeed = opts?.snapSpeed ?? 0.06;
+                  const snapDist  = opts?.snapDist  ?? 0.75;
+
+                  cancelPrev();
+
+                  const step = () => {
+                    const dx = to.x - state.x;
+                    const dy = to.y - state.y;
+
+                    state.vx = (state.vx + dx * stiffness) * damping;
+                    state.vy = (state.vy + dy * stiffness) * damping;
+
+                    state.x += state.vx;
+                    state.y += state.vy;
+
+                    setPos({ x: state.x, y: state.y });
+
+                    const speed = Math.hypot(state.vx, state.vy);
+                    const dist  = Math.hypot(dx, dy);
+
+                    if (speed < snapSpeed && dist < snapDist) {
+                      setPos({ x: to.x, y: to.y }); // snap exact, avoid sub-pixel drift
+                      opts?.onComplete && opts.onComplete();
+                      return;
+                    }
+                    schedule(step);
+                  };
+
+                  schedule(step);
+                };
+
+                // Subtle decaying "tickle" at the small corner (professional flourish)
+                const microTickle = (base: Vec) => {
+                  const amps = [5, 3, 1.5]; // decay sequence
+                  let i = 0;
+                  const next = () => {
+                    if (i >= amps.length) return;
+                    const a = amps[i++];
+
+                    // left-down nudge
+                    springTo(
+                      { x: base.x - a, y: base.y - a },
+                      {
+                        stiffness: 0.065,
+                        damping: 0.80,
+                        onComplete: () => {
+                          // right-up rebound
+                          springTo(
+                            { x: base.x + a, y: base.y + a },
+                            {
+                              stiffness: 0.065,
+                              damping: 0.82,
+                              onComplete: () => {
+                                // settle back to base, then continue decay
+                                springTo(base, {
+                                  stiffness: 0.05,
+                                  damping: 0.86,
+                                  onComplete: next,
+                                });
+                              },
+                            }
+                          );
+                        },
+                      }
+                    );
+                  };
+                  next();
+                };
+
+                // Respect reduced motion
+                const prefersReduced =
+                  typeof window !== 'undefined' &&
+                  window.matchMedia &&
+                  window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+                if (prefersReduced) {
+                  setPos({ x: 320, y: 320 });
+                  console.log('🎬 PEEL: Card 3 - Reduced motion fallback');
+                } else {
+                  // Phase A: float down to large reveal → Phase B: glide back → micro-tickle
+                  springTo(
+                    { x: 25, y: 40 },
+                    {
+                      stiffness: 0.040, // softer entry
+                      damping: 0.86,
+                      onComplete: () => {
+                        springTo(
+                          { x: 314, y: 314 },
+                          {
+                            stiffness: 0.038,
+                            damping: 0.88,
+                            onComplete: () => {
+                              microTickle({ x: 320, y: 320 });
+                              console.log('🎬 PEEL: Card 3 - Micro-tickle completed');
+                            },
+                          }
+                        );
+                      },
+                    }
+                  );
+                }
               }
             }, 300);
           } else {
