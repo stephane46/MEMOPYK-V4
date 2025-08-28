@@ -239,7 +239,7 @@ export default function PeelExperiment() {
                                   
                                   {/* Bottom Section - Bold Text Same Size */}
                                   <div className="text-center" style={{ position: 'absolute', bottom: '16px', left: '16px', right: '16px' }}>
-                                    <div className="text-sm text-memopyk-navy leading-relaxed font-bold">
+                                    <div className="text-sm text-white leading-relaxed font-bold">
                                       {step.number === 1 && language === 'fr-FR' && (
                                         <>
                                           <p className="mb-2">Libérez-vous de la sélection : nous trouvons les moments forts pour créer votre histoire.</p>
