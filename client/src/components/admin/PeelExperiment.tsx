@@ -459,7 +459,7 @@ export default function PeelExperiment() {
                           {/* Large 60x60 triangle with shadow and raised effect */}
                           <div 
                             className={`w-0 h-0 border-l-[60px] border-b-[60px] border-l-transparent ${
-                              flippedCards[step.number - 1] ? 'border-b-white' : 'border-b-memopyk-orange'
+                              flippedCards[step.number - 1] ? 'border-b-white' : ''
                             }`}
                             style={{
                               position: 'relative',
@@ -467,7 +467,10 @@ export default function PeelExperiment() {
                               borderBottomRightRadius: '16px',
                               filter: 'drop-shadow(0px -2px 4px rgba(0,0,0,0.15)) drop-shadow(-2px 0px 4px rgba(0,0,0,0.15))',
                               transform: 'translateZ(2px) rotateX(-2deg) rotateY(2deg)',
-                              transformStyle: 'preserve-3d'
+                              transformStyle: 'preserve-3d',
+                              borderBottomColor: flippedCards[step.number - 1] 
+                                ? 'white' 
+                                : 'rgba(214, 124, 74, 0.92)', // Match back side gradient start color
                             }}
                           />
                           {/* Dotted diagonal line for the peel effect */}
@@ -486,6 +489,27 @@ export default function PeelExperiment() {
                               opacity: 0.8
                             }}
                           />
+                          {/* Arrow for Card 1 - Same as Cards 2 & 3 */}
+                          <div 
+                            className="absolute bottom-0 right-0"
+                            style={{
+                              animation: 'arrowRiseAndGrow 2s ease-in-out infinite',
+                              transform: 'translate(2px, 2px)'
+                            }}
+                          >
+                            <svg 
+                              width="18" 
+                              height="18" 
+                              viewBox="0 0 16 16" 
+                              fill={flippedCards[step.number - 1] ? '#D67C4A' : 'white'}
+                              style={{
+                                filter: 'drop-shadow(1px 1px 2px rgba(0,0,0,0.3))'
+                              }}
+                            >
+                              {/* Arrow pointing to top-left */}
+                              <path d="M4 4 L4 9 L6 7 L10 11 L12 9 L8 5 L10 4 Z" />
+                            </svg>
+                          </div>
                         </div>
                       </div>
                     )}
