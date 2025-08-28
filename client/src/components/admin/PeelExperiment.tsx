@@ -341,7 +341,8 @@ export function PeelExperiment() {
                           <div 
                             className="h-full flex flex-col justify-between p-4"
                             style={{
-                              // No counter-rotation - let content flip naturally
+                              // Counter-rotate text to make it readable during reveal
+                              transform: 'rotateY(180deg)'
                             }}
                           >
                             {/* Main Content */}
@@ -361,6 +362,22 @@ export function PeelExperiment() {
                               </div>
                             </div>
                           </div>
+                          
+                          {/* Orange Arrow on Back Side - Same as front */}
+                          {showArrows[step.number - 1] && (
+                            <div className="absolute bottom-3 right-3 pointer-events-none z-50">
+                              <div className="bg-memopyk-orange text-white p-2 rounded-full shadow-lg animate-pulse">
+                                <svg 
+                                  width="20" 
+                                  height="20" 
+                                  viewBox="0 0 20 20" 
+                                  fill="currentColor"
+                                >
+                                  <path d="M4 4 L4 10 L6 8 L10 12 L12 10 L8 6 L10 4 Z" />
+                                </svg>
+                              </div>
+                            </div>
+                          )}
                         </div>
                       </PeelBack>
                     </PeelWrapper>
