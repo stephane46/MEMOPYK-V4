@@ -1,10 +1,11 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useLanguage } from '../../contexts/LanguageContext';
 import { Upload, Edit, Heart, Info } from 'lucide-react';
+import { PeelWrapper, PeelTop, PeelBack } from 'react-peel';
 
 export function PeelExperiment() {
   const { language } = useLanguage();
-  const [revealedCards, setRevealedCards] = useState<Set<number>>(new Set());
+  const [peelPositions, setPeelPositions] = useState<{[key: number]: {x: number, y: number}}>({});
   const cardRefs = useRef<(HTMLDivElement | null)[]>([]);
   
   useEffect(() => {
@@ -14,16 +15,20 @@ export function PeelExperiment() {
           if (entry.isIntersecting) {
             const cardIndex = parseInt(entry.target.getAttribute('data-card-index') || '0');
             
-            // Trigger reveal animation after a short delay
+            // Trigger one-third reveal animation after a short delay
             setTimeout(() => {
-              setRevealedCards(prev => new Set([...prev, cardIndex]));
+              // Set peel position to reveal approximately one-third from bottom-right
+              setPeelPositions(prev => ({
+                ...prev,
+                [cardIndex]: { x: 0.65, y: 0.65 } // This reveals about one-third
+              }));
               
-              // Auto-hide after showing one-third for 2 seconds
+              // Auto-hide after showing for 2 seconds
               setTimeout(() => {
-                setRevealedCards(prev => {
-                  const newSet = new Set(prev);
-                  newSet.delete(cardIndex);
-                  return newSet;
+                setPeelPositions(prev => {
+                  const newPos = { ...prev };
+                  delete newPos[cardIndex];
+                  return newPos;
                 });
               }, 2000);
             }, 300);
