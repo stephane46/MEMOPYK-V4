@@ -23,14 +23,14 @@ export function PeelExperiment() {
                 [cardIndex]: { x: 0.65, y: 0.65 } // This reveals about one-third
               }));
               
-              // Auto-hide after showing for 2 seconds
+              // Auto-hide after showing for 5 seconds
               setTimeout(() => {
                 setPeelPositions(prev => {
                   const newPos = { ...prev };
                   delete newPos[cardIndex];
                   return newPos;
                 });
-              }, 2000);
+              }, 5000);
             }, 300);
           }
         });
