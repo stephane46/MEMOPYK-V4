@@ -900,27 +900,25 @@ html, body {
   }
 }
 
-/* Peel effect animations for card 3 */
-@keyframes peelFlutter {
+/* Corner peel effect - subtle lifting like a page corner */
+@keyframes cornerPeel {
   0%, 100% { 
-    transform: rotate(0deg) scale(1);
+    transform: perspective(100px) rotateX(0deg) rotateY(0deg);
     filter: drop-shadow(0 4px 6px rgb(0 0 0 / 0.1));
   }
-  25% { 
-    transform: rotate(-1deg) scale(1.02);
-    filter: drop-shadow(2px 6px 8px rgb(0 0 0 / 0.15));
-  }
-  75% { 
-    transform: rotate(1deg) scale(1.01);
-    filter: drop-shadow(-1px 5px 7px rgb(0 0 0 / 0.12));
+  50% { 
+    transform: perspective(100px) rotateX(-8deg) rotateY(8deg);
+    filter: drop-shadow(3px 6px 12px rgb(0 0 0 / 0.25));
   }
 }
 
-@keyframes peelArrow {
+@keyframes arrowFloat {
   0%, 100% { 
-    transform: translate(0, 0) scale(1);
+    transform: translate(0, 0);
+    opacity: 0.9;
   }
   50% { 
-    transform: translate(-1px, -1px) scale(1.1);
+    transform: translate(-2px, -2px);
+    opacity: 1;
   }
 }

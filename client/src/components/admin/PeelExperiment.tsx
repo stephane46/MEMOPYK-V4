@@ -376,13 +376,13 @@ export function PeelExperiment() {
                               className="w-0 h-0 border-l-[40px] border-b-[40px] border-l-transparent border-b-memopyk-orange shadow-lg"
                               style={{
                                 filter: 'drop-shadow(0 4px 6px rgb(0 0 0 / 0.1))',
-                                animation: 'triangleUnfold 3s ease-out 0.5s both'
+                                animation: 'cornerPeel 2s ease-in-out infinite'
                               }}
                             />
                             <div 
                               className="absolute bottom-1 right-1"
                               style={{
-                                animation: 'arrowReveal 3s ease-out 2s both'
+                                animation: 'arrowFloat 2s ease-in-out infinite'
                               }}
                             >
                               <svg 
