@@ -311,15 +311,12 @@ export function PeelExperiment() {
                           }}
                         >
                           <div 
-                            className="w-0 h-0 border-r-[30px] border-t-[30px] border-r-transparent border-t-white shadow-lg"
-                            style={{
-                              filter: 'drop-shadow(0 2px 4px rgb(0 0 0 / 0.2))'
-                            }}
+                            className="w-0 h-0 border-r-[30px] border-t-[30px] border-r-transparent border-t-white"
                           />
                           <div 
                             className="absolute bottom-1 right-1"
                             style={{
-                              animation: 'arrowRevealSmall 2s ease-out 1.5s both'
+                              animation: 'arrowFadeIn 2s ease-out 1.5s both'
                             }}
                           >
                             <svg 
