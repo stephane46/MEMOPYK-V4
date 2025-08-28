@@ -378,10 +378,10 @@ export function PeelExperiment() {
                                 filter: 'drop-shadow(0 4px 6px rgb(0 0 0 / 0.1))'
                               }}
                             />
-                            <div className="absolute bottom-2 right-2 animate-pulse">
+                            <div className="absolute bottom-1 right-1 animate-pulse">
                               <svg 
-                                width="12" 
-                                height="12" 
+                                width="18" 
+                                height="18" 
                                 viewBox="0 0 16 16" 
                                 fill="white"
                               >
