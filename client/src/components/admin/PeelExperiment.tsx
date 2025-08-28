@@ -17,8 +17,8 @@ export function PeelExperiment() {
           
           if (entry.isIntersecting) {
             setTimeout(() => {
-              // === Universal Card Animation: Smooth float + gentle permanent pulsing ===
-              console.log(`🎬 PEEL: Card ${cardIndex + 1} - Smooth float → gentle permanent pulsing`);
+              // === Universal Card Animation: Smooth float to corner position ===
+              console.log(`🎬 PEEL: Card ${cardIndex + 1} - Smooth float to corner position`);
 
               // Cancel any in-flight animation for this card
               const rafMap: Map<number, number> =
@@ -160,7 +160,7 @@ export function PeelExperiment() {
                       damping: 0.86,
                       onComplete: () => {
                         console.log(`🎬 PEEL: Card 2 - Big reveal complete, returning to small corner`);
-                        // Phase B: Return to small corner with CONTINUOUS pulsing
+                        // Phase B: Return to small corner and stay static
                         springTo(
                           { x: 280, y: 280 },
                           {
@@ -367,7 +367,7 @@ export function PeelExperiment() {
                           rafMap.delete(step.number - 1);
                         }
                         
-                        // Card 2: No pulsing needed anymore - static arrow and dotted line only
+                        // Card 2: Static corner position only
                       }
                     }}
                   >
