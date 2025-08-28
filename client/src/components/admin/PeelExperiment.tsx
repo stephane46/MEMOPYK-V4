@@ -388,6 +388,24 @@ export function PeelExperiment() {
                           cancelAnimationFrame(animationId);
                           rafMap.delete(step.number - 1);
                         }
+                        
+                        // Card 2: RESTART continuous pulsing after flip
+                        if (step.number === 2) {
+                          setTimeout(() => {
+                            // Restart Card 2's continuous pulsing at small corner position
+                            const continuousPulse = () => {
+                              // Pulse out
+                              setPeelPositions(prev => ({ ...prev, [step.number - 1]: { x: 275, y: 275 } }));
+                              setTimeout(() => {
+                                // Pulse in
+                                setPeelPositions(prev => ({ ...prev, [step.number - 1]: { x: 285, y: 285 } }));
+                                setTimeout(continuousPulse, 800); // Loop every 800ms
+                              }, 400);
+                            };
+                            continuousPulse();
+                            console.log(`🎬 PEEL-CLICK: Card 2 - Continuous pulsing RESTARTED after flip`);
+                          }, 100);
+                        }
                       }
                     }}
                   >
