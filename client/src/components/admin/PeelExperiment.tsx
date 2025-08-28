@@ -1,26 +1,21 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { useLanguage } from '../../contexts/LanguageContext';
-import { Upload, Edit, Heart, Info } from 'lucide-react';
-import { PeelWrapper, PeelTop, PeelBack } from 'react-peel';
+import { useState, useEffect, useRef } from 'react';
+import { PeelWrapper, PeelTop, PeelBack, PeelCorner, PeelMode } from 'react-peel';
+import { Upload, Edit, Heart } from 'lucide-react';
 
-export function PeelExperiment() {
-  const { language } = useLanguage();
-  const [peelPositions, setPeelPositions] = useState<{[key: number]: {x: number, y: number}}>({});
-  const [flippedCards, setFlippedCards] = useState<{ [key: number]: boolean }>({});
-  const [showArrows, setShowArrows] = useState<{ [key: number]: boolean }>({});
-  const [hasTriggeredReveal, setHasTriggeredReveal] = useState<{ [key: number]: boolean }>({});
-  const cardRefs = useRef<(HTMLDivElement | null)[]>([]);
-  
+export default function PeelExperiment() {
+  const [peelPositions, setPeelPositions] = useState<Record<number, { x: number; y: number }>>({});
+  const [showArrows, setShowArrows] = useState<Record<number, boolean>>({});
+  const [flippedCards, setFlippedCards] = useState<Record<number, boolean>>({});
+  const cardRefs = useRef<Array<HTMLDivElement | null>>([]);
+  const language = 'fr-FR'; // You can change this for testing
+
   useEffect(() => {
     const observer = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
           const cardIndex = parseInt(entry.target.getAttribute('data-card-index') || '0');
           
-          if (entry.isIntersecting && !hasTriggeredReveal[cardIndex]) {
-            // Mark this card as having triggered its reveal
-            setHasTriggeredReveal(prev => ({ ...prev, [cardIndex]: true }));
-            
+          if (entry.isIntersecting) {
             setTimeout(() => {
               console.log(`🎬 PEEL: Card ${cardIndex + 1} - Simple reveal animation`);
               
@@ -82,10 +77,6 @@ export function PeelExperiment() {
       icon: Upload,
       titleFr: "Téléversement",
       titleEn: "You Upload",
-      descriptionFr: "Envoyez-nous simplement vos photos et vidéos, sans avoir à les trier ou les retoucher. Faites-nous part de votre vision et de ce qui compte le plus pour vous, soit en remplissant notre formulaire en ligne, soit en échangeant vos idées avec nous lors d'un appel téléphonique gratuit et convivial.",
-      descriptionEn: "Simply send us your photos and videos—no need to organize or edit anything beforehand. Share your vision and what matters most to you, either by filling out our easy online form or by discussing your ideas with us during a free, friendly phone call.",
-      subDescriptionFr: "Commencer est un jeu d'enfant : apportez-nous simplement vos souvenirs et vos envies, nous nous occupons du reste avec soin et créativité.",
-      subDescriptionEn: "Getting started is effortless: just bring us your memories and ideas, and we'll handle everything else with care and creativity.",
       image: "/images/How_we_work_Step1.png"
     },
     {
@@ -93,10 +84,6 @@ export function PeelExperiment() {
       icon: Edit,
       titleFr: "Sélection & Montage", 
       titleEn: "We Create",
-      descriptionFr: "Nous examinons chaque détail avec attention et sélectionnons les plus beaux moments pour créer une histoire unique, selon vos préférences, avec la musique idéale, le bon rythme et le format qui vous convient. Vous recevez un devis précis et personnalisé avant toute étape, sans aucune mauvaise surprise.",
-      descriptionEn: "We carefully review every detail and handpick the most beautiful scenes to craft a unique, engaging story that fits your preferences, including perfect music, optimal timing, and the best format for your needs. You'll receive a clear, custom quote before we begin, so there are no surprises.",
-      subDescriptionFr: "Vos souvenirs deviennent un film sur-mesure, réalisé avec un souci du détail exceptionnel et une totale transparence à chaque étape.",
-      subDescriptionEn: "Your memories become a one-of-a-kind film, created with meticulous attention to detail and total transparency at every step.",
       image: "/images/How_we_work_Step2.png"
     },
     {
@@ -104,10 +91,6 @@ export function PeelExperiment() {
       icon: Heart,
       titleFr: "C'est prêt !",
       titleEn: "You Enjoy & Share", 
-      descriptionFr: "Vous recevez la première version de votre film-souvenir personnalisé sous une à trois semaines, soigneusement monté et prêt à vous émouvoir. Deux séries de retours sont incluses pour affiner le montage jusqu'à ce qu'il corresponde parfaitement à vos attentes.",
-      descriptionEn: "You'll receive the first version of your personalized souvenir film within one to three weeks, carefully edited and ready to impress. Our process includes two full rounds of feedback, making it easy to fine-tune your movie until it's exactly right.",
-      subDescriptionFr: "Le résultat : un souvenir rien qu'à vous, livré rapidement et peaufiné selon vos envies jusqu'à la perfection.",
-      subDescriptionEn: "The result is a keepsake entirely your own, delivered quickly and refined with your input until it's just perfect.",
       image: "/images/How_we_work_Step3.png"
     }
   ];
@@ -170,79 +153,25 @@ export function PeelExperiment() {
                       // Keep arrow visible - don't hide on click
                     }}
                   >
-                    {step.number === 3 ? (
-                      /* Card 3: Regular div without PeelWrapper - no fold */
-                      <div className="rounded-2xl overflow-hidden aspect-square">
-                        <div 
-                          className="border border-gray-200 shadow-lg hover:shadow-2xl rounded-2xl overflow-hidden h-full transition-all duration-700 relative"
-                          style={{
-                            transformStyle: 'preserve-3d',
-                            backgroundColor: flippedCards[step.number - 1] ? '#D67C4A' : 'white'
-                          }}
-                        >
-                          {!flippedCards[step.number - 1] ? (
-                            <div className="relative overflow-hidden rounded-xl transition-all duration-500 h-full">
-                              <img 
-                                src={step.image} 
-                                alt={language === 'fr-FR' ? step.titleFr : step.titleEn}
-                                className="w-full h-full object-contain bg-gray-50 transition-transform duration-500"
-                              />
-                              
-                              {/* Fixed: Added number badge to Card 3 */}
-                              <div className="absolute top-2 left-2 w-8 h-8 bg-memopyk-orange rounded-full flex items-center justify-center transition-transform duration-300 shadow-lg">
-                                <span className="text-sm font-bold text-white">{step.number}</span>
-                              </div>
-                            </div>
-                          ) : (
-                            <div 
-                              className="h-full flex flex-col cursor-pointer relative card-back-orange"
-                              style={{
-                                transformOrigin: 'center'
-                              }}
-                            >
-                              <div className="text-center flex flex-col p-4" style={{ height: '100%', position: 'relative' }}>
-                                <div className="text-sm leading-normal text-white w-full mb-4">
-                                  {(language === 'fr-FR' ? step.descriptionFr : step.descriptionEn).split('\n').map((paragraph, i) => (
-                                    <p key={i} className="mb-2">{paragraph}</p>
-                                  ))}
-                                </div>
-                                
-                                <div className="border-t border-white/40 mx-4 mb-4"></div>
-                                
-                                <div className="text-center">
-                                  <div className="text-xs text-white leading-relaxed">
-                                    {language === 'fr-FR' ? step.subDescriptionFr : step.subDescriptionEn}
-                                  </div>
-                                </div>
-                              </div>
-                            </div>
-                          )}
-                        </div>
-                      </div>
-                    ) : (
-                      /* Cards 1 & 2: PeelWrapper with peel effect */
-                      <PeelWrapper
-                        corner="BOTTOM_RIGHT"
-                        peelPosition={peelPositions[step.number - 1] || undefined}
-                        drag={false}
-                        options={{
-                          corner: "BOTTOM_RIGHT"
-                        }}
-                        className="rounded-2xl overflow-hidden aspect-square"
-                        height="100%"
-                        width="100%"
-                      >
+                    {/* ALL CARDS 1, 2 & 3: Same PeelWrapper structure */}
+                    <PeelWrapper
+                      className="rounded-2xl overflow-hidden aspect-square"
+                      options={{
+                        corner: PeelCorner.TopRight,
+                        constrainToContainer: true,
+                        fadeThreshold: 0.3,
+                        mode: PeelMode.Peel
+                      }}
+                      peelPosition={peelPositions[step.number - 1]}
+                    >
                       <PeelTop>
-                        {/* FRONT/BACK SIDE - Step Card with Flip Animation */}
                         <div 
                           className="border border-gray-200 shadow-lg hover:shadow-2xl rounded-2xl overflow-hidden h-full transition-all duration-700 relative"
                           style={{
-                            // Remove flip transform - let react-peel handle the visual effect
                             transformStyle: 'preserve-3d',
                             backgroundColor: flippedCards[step.number - 1] ? '#D67C4A' : 'white'
                           }}
                         >
-                          {/* Conditional Content Based on Flip State */}
                           {
                             !flippedCards[step.number - 1] ? (
                               <div className="relative overflow-hidden rounded-xl transition-all duration-500 h-full">
@@ -252,26 +181,55 @@ export function PeelExperiment() {
                                   className="w-full h-full object-contain bg-gray-50 transition-transform duration-500"
                                 />
                                 
-                                {/* Orange Number Circle - Top Left */}
                                 <div className="absolute top-2 left-2 w-8 h-8 bg-memopyk-orange rounded-full flex items-center justify-center transition-transform duration-300 shadow-lg">
                                   <span className="text-sm font-bold text-white">{step.number}</span>
                                 </div>
                               </div>
                             ) : (
-                              /* Cards 1&2 BACK SIDE - Detailed Information */
                               <div 
                                 className="h-full flex flex-col cursor-pointer relative card-back-orange"
                                 style={{
-                                  // No transform - let content appear naturally
                                   transformOrigin: 'center'
                                 }}
                               >
-                                {/* Top Section - Text content area with proper padding */}
                                 <div className="text-center flex flex-col p-4" style={{ height: '100%', position: 'relative' }}>
                                   <div className="text-sm leading-normal text-white w-full mb-4">
-                                    {(language === 'fr-FR' ? step.descriptionFr : step.descriptionEn).split('\n').map((paragraph, i) => (
-                                      <p key={i} className="mb-2">{paragraph}</p>
-                                    ))}
+                                    {step.number === 1 && language === 'fr-FR' && (
+                                      <>
+                                        <p className="mb-3">Envoyez-nous simplement vos photos et vidéos, sans avoir à les trier ou les retoucher.</p>
+                                        <p className="mb-3">Faites-nous part de votre vision et de ce qui compte le plus pour vous, soit en remplissant notre formulaire en ligne, soit en échangeant vos idées avec nous lors d'un appel téléphonique gratuit et convivial.</p>
+                                      </>
+                                    )}
+                                    {step.number === 1 && language === 'en-US' && (
+                                      <>
+                                        <p className="mb-3">Simply send us your photos and videos—no need to organize or edit anything beforehand.</p>
+                                        <p className="mb-3">Share your vision and what matters most to you, either by filling out our easy online form or by discussing your ideas with us during a free, friendly phone call.</p>
+                                      </>
+                                    )}
+                                    {step.number === 2 && language === 'fr-FR' && (
+                                      <>
+                                        <p className="mb-3">Nous examinons chaque détail avec attention et sélectionnons les plus beaux moments pour créer une histoire unique, selon vos préférences, avec la musique idéale, le bon rythme et le format qui vous convient.</p>
+                                        <p className="mb-3">Vous recevez un devis précis et personnalisé avant toute étape, sans aucune mauvaise surprise.</p>
+                                      </>
+                                    )}
+                                    {step.number === 2 && language === 'en-US' && (
+                                      <>
+                                        <p className="mb-3">We carefully review every detail and handpick the most beautiful scenes to craft a unique, engaging story that fits your preferences, including perfect music, optimal timing, and the best format for your needs.</p>
+                                        <p className="mb-3">You'll receive a clear, custom quote before we begin, so there are no surprises.</p>
+                                      </>
+                                    )}
+                                    {step.number === 3 && language === 'fr-FR' && (
+                                      <>
+                                        <p className="mb-3">Vous recevez la première version de votre film-souvenir personnalisé sous une à trois semaines, soigneusement monté et prêt à vous émouvoir.</p>
+                                        <p className="mb-3">Deux séries de retours sont incluses pour affiner le montage jusqu'à ce qu'il corresponde parfaitement à vos attentes.</p>
+                                      </>
+                                    )}
+                                    {step.number === 3 && language === 'en-US' && (
+                                      <>
+                                        <p className="mb-3">You'll receive the first version of your personalized souvenir film within one to three weeks, carefully edited and ready to impress.</p>
+                                        <p className="mb-3">Our process includes two full rounds of feedback, making it easy to fine-tune your movie until it's exactly right.</p>
+                                      </>
+                                    )}
                                   </div>
                                   
                                   {/* Separator Line */}
@@ -280,11 +238,39 @@ export function PeelExperiment() {
                                   {/* Bottom Section - Sub Description */}
                                   <div className="text-center">
                                     <div className="text-xs text-white leading-relaxed">
-                                      {language === 'fr-FR' ? step.subDescriptionFr : step.subDescriptionEn}
+                                      {step.number === 1 && language === 'fr-FR' && (
+                                        <>
+                                          <p className="mb-2">Commencer est un jeu d'enfant : apportez-nous simplement vos souvenirs et vos envies, nous nous occupons du reste avec soin et créativité.</p>
+                                        </>
+                                      )}
+                                      {step.number === 1 && language === 'en-US' && (
+                                        <>
+                                          <p className="mb-2">Getting started is effortless: just bring us your memories and ideas, and we'll handle everything else with care and creativity.</p>
+                                        </>
+                                      )}
+                                      {step.number === 2 && language === 'fr-FR' && (
+                                        <>
+                                          <p className="mb-2">Vos souvenirs deviennent un film sur-mesure, réalisé avec un souci du détail exceptionnel et une totale transparence à chaque étape.</p>
+                                        </>
+                                      )}
+                                      {step.number === 2 && language === 'en-US' && (
+                                        <>
+                                          <p className="mb-2">Your memories become a one-of-a-kind film, created with meticulous attention to detail and total transparency at every step.</p>
+                                        </>
+                                      )}
+                                      {step.number === 3 && language === 'fr-FR' && (
+                                        <>
+                                          <p className="mb-2">Le résultat : un souvenir rien qu'à vous, livré rapidement et peaufiné selon vos envies jusqu'à la perfection.</p>
+                                        </>
+                                      )}
+                                      {step.number === 3 && language === 'en-US' && (
+                                        <>
+                                          <p className="mb-2">The result is a keepsake entirely your own, delivered quickly and refined with your input until it's just perfect.</p>
+                                        </>
+                                      )}
                                     </div>
                                   </div>
                                 </div>
-                                
                               </div>
                             )
                           }
@@ -381,7 +367,6 @@ export function PeelExperiment() {
                           </div>
                         </PeelBack>
                       </PeelWrapper>
-                    )}
                     
                     {/* Orange Arrow Indicator - Cards 1, 2 & 3 */}
                     {showArrows[step.number - 1] && (
