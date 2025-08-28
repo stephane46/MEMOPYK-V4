@@ -433,10 +433,6 @@ export function PeelExperiment() {
                       </div>
                     )}
                     
-                    {/* Debug: Show arrow state */}
-                    <div className="absolute bottom-2 left-2 text-xs bg-black/50 text-white p-1 rounded">
-                      Arrow: {showArrows[step.number - 1] ? 'ON' : 'OFF'}
-                    </div>
                   </div>
 
                   {/* Static Title with Blue Icon - Always Visible */}
