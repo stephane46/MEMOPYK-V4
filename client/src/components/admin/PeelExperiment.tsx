@@ -303,21 +303,21 @@ export function PeelExperiment() {
                           )}
                         </div>
                         
-                        {/* Small white triangle reveal in top-left corner */}
+                        {/* Small white triangle reveal in bottom-right corner */}
                         <div 
-                          className="absolute top-0 left-0 pointer-events-none z-10"
+                          className="absolute bottom-0 right-0 pointer-events-none z-10"
                           style={{
                             animation: 'smallReveal 2s ease-out 1s both'
                           }}
                         >
                           <div 
-                            className="w-0 h-0 border-l-[30px] border-b-[30px] border-l-transparent border-b-white shadow-lg"
+                            className="w-0 h-0 border-r-[30px] border-t-[30px] border-r-transparent border-t-white shadow-lg"
                             style={{
                               filter: 'drop-shadow(0 2px 4px rgb(0 0 0 / 0.2))'
                             }}
                           />
                           <div 
-                            className="absolute top-1 left-1"
+                            className="absolute bottom-1 right-1"
                             style={{
                               animation: 'arrowRevealSmall 2s ease-out 1.5s both'
                             }}
