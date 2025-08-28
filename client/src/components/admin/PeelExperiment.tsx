@@ -29,7 +29,7 @@ export function PeelExperiment() {
                 console.log('🎬 PEEL: Transitioning to small corner for card', cardIndex);
                 setPeelPositions(prev => ({
                   ...prev,
-                  [cardIndex]: { x: 0.95, y: 0.95 } // Small corner remains turned over
+                  [cardIndex]: { x: 0.85, y: 0.85 } // More visible small corner
                 }));
               }, 2000);
             }, 300);
