@@ -42,7 +42,7 @@ export function PeelExperiment() {
                 setShowArrows(prev => ({ ...prev, [cardIndex]: true }));
                 
                 console.log(`🎬 PEEL: Card ${cardIndex + 1} - Animation complete`);
-              }, 1000); // 1 second reveal duration
+              }, 1500); // 1.5 second reveal duration
             }, 300);
           } else {
             // When card leaves viewport, reset it to default state
@@ -188,6 +188,7 @@ export function PeelExperiment() {
                                 className="w-full h-full object-contain bg-gray-50 transition-transform duration-500"
                               />
                               
+                              {/* Fixed: Added number badge to Card 3 */}
                               <div className="absolute top-2 left-2 w-8 h-8 bg-memopyk-orange rounded-full flex items-center justify-center transition-transform duration-300 shadow-lg">
                                 <span className="text-sm font-bold text-white">{step.number}</span>
                               </div>
