@@ -376,8 +376,8 @@ export function PeelExperiment() {
                             viewBox="0 0 16 16" 
                             fill="currentColor"
                           >
-                            {/* Centered arrow pointing to top-left */}
-                            <path d="M2 2 L2 8 L4 6 L8 10 L10 8 L6 4 L8 2 Z" />
+                            {/* Perfectly centered arrow pointing to top-left */}
+                            <path d="M4 4 L4 9 L6 7 L10 11 L12 9 L8 5 L10 4 Z" />
                           </svg>
                         </div>
                       </div>
