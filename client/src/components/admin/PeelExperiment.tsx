@@ -185,7 +185,13 @@ export function PeelExperiment() {
                   const amps = [5, 3, 1.5]; // decay sequence
                   let i = 0;
                   const next = () => {
-                    if (i >= amps.length) return;
+                    if (i >= amps.length) {
+                      // Final settle - ensure completely static position
+                      cancelPrev();
+                      setPos({ x: base.x, y: base.y });
+                      console.log('🎬 PEEL: Card 3 - Final static position locked');
+                      return;
+                    }
                     const a = amps[i++];
 
                     // left-down nudge
