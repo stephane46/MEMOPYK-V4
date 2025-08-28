@@ -422,8 +422,8 @@ export function PeelExperiment() {
                       </PeelWrapper>
                     )}
                     
-                    {/* Orange Arrow Indicator - Different style for card 3 */}
-                    {showArrows[step.number - 1] && (
+                    {/* Orange Arrow Indicator - Only cards 1 & 3 */}
+                    {showArrows[step.number - 1] && step.number !== 2 && (
                       <div className="absolute bottom-0 right-0 pointer-events-none z-50">
                         {step.number === 3 ? (
                           /* Card 3: Orange triangle corner with unfold reveal */
@@ -456,7 +456,7 @@ export function PeelExperiment() {
                             </div>
                           </div>
                         ) : (
-                          /* Cards 1 & 2: Orange circle with larger arrow */
+                          /* Card 1 only: Orange circle with larger arrow */
                           <div className="bg-memopyk-orange text-white p-2 rounded-full shadow-lg animate-pulse flex items-center justify-center">
                             <svg 
                               width="18" 
