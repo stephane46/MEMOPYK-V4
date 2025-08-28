@@ -15,14 +15,34 @@ export function PeelExperiment() {
           const cardIndex = parseInt(entry.target.getAttribute('data-card-index') || '0');
           
           if (entry.isIntersecting) {
-            // Simple test - just set peel to 0.25 and leave it there
+            // NOW USING CORRECT PIXEL COORDINATES!
             setTimeout(() => {
-              console.log('🎬 PEEL: Setting simple static peel at 0.25 for card', cardIndex);
+              console.log('🎬 PEEL: Large reveal triggered for card', cardIndex, '(using pixel coordinates)');
               setPeelPositions(prev => ({
                 ...prev,
-                [cardIndex]: { x: 0.25, y: 0.25 } // Static test - what does 0.25 actually look like?
+                [cardIndex]: { x: 200, y: 200 } // Large reveal - center area of ~400px card
               }));
-              console.log('🎬 PEEL: No animation - peel stays at {x: 0.25, y: 0.25}');
+              
+              // Auto-hide after showing for 2 seconds, then show small corner
+              setTimeout(() => {
+                console.log('🎬 PEEL: Peeling back down (removing peel)');
+                // First remove the peel completely
+                setPeelPositions(prev => {
+                  const newPos = { ...prev };
+                  delete newPos[cardIndex];
+                  return newPos;
+                });
+                
+                // Then after a brief pause, add the small corner
+                setTimeout(() => {
+                  console.log('🎬 PEEL: Adding small dog-eared corner for card', cardIndex, '(using pixel coordinates near bottom-right)');
+                  setPeelPositions(prev => ({
+                    ...prev,
+                    [cardIndex]: { x: 360, y: 340 } // Small corner - close to bottom-right of ~400px card
+                  }));
+                  console.log('🎬 PEEL: Persistent dog-ear set at {x: 360, y: 340}');
+                }, 200);
+              }, 2000);
             }, 300);
           } else {
             // When card leaves viewport, reset it to default state
