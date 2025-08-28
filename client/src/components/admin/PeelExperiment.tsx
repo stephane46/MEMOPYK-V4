@@ -36,22 +36,24 @@ export function PeelExperiment() {
                 
                 // Then after a brief pause, add the small corner
                 setTimeout(() => {
-                  // Experiment with radically different values to understand the coordinate system
+                  // NOW I understand! peelPosition is the CORNER POSITION, not reveal size
+                  // Values close to 1,1 = bottom-right corner (small dog-ear)
+                  // Values like 0.5,0.5 = center (large reveal)
                   const experimentalPositions = [
-                    { x: 0.2, y: 0.2 },   // Card 0: Small reveal (20%)
-                    { x: 0.1, y: 0.1 },   // Card 1: Tiny reveal (10%) 
-                    { x: 0.05, y: 0.05 }  // Card 2: Minimal reveal (5%)
+                    { x: 0.85, y: 0.85 },  // Card 0: Close to bottom-right corner = small dog-ear
+                    { x: 0.92, y: 0.92 },  // Card 1: Very close to corner = tiny dog-ear
+                    { x: 0.96, y: 0.96 }   // Card 2: Almost at corner = minimal dog-ear
                   ];
                   
-                  const position = experimentalPositions[cardIndex] || { x: 0.01, y: 0.01 };
-                  console.log(`🎬 PEEL: Testing SMALL VALUES for card ${cardIndex} with position`, position);
+                  const position = experimentalPositions[cardIndex] || { x: 0.98, y: 0.98 };
+                  console.log(`🎬 PEEL: Setting CORNER POSITION for card ${cardIndex}:`, position, '(close to bottom-right = small dog-ear)');
                   
                   setPeelPositions(prev => {
                     const newState = {
                       ...prev,
                       [cardIndex]: position
                     };
-                    console.log(`🎬 PEEL: Small values test - card ${cardIndex} state:`, newState);
+                    console.log(`🎬 PEEL: Corner position set for card ${cardIndex}:`, newState);
                     return newState;
                   });
                 }, 200);

@@ -24333,8 +24333,8 @@
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-28T06:21:40.051Z",
-    "updated_at": "2025-08-28T06:25:45.693Z",
-    "duration": 1358109
+    "updated_at": "2025-08-28T06:27:39.873Z",
+    "duration": 1358223
   },
   {
     "id": "8864347a-f78c-43a7-84ad-4d88b47bae3b",
@@ -24350,7 +24350,7 @@
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-28T06:22:31.446Z",
-    "updated_at": "2025-08-28T06:25:32.130Z",
-    "duration": 941501
+    "updated_at": "2025-08-28T06:28:06.121Z",
+    "duration": 941655
   }
 ]
