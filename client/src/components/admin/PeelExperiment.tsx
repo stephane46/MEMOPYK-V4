@@ -297,11 +297,19 @@ export function PeelExperiment() {
                           // FRONT → BACK: Continue peel motion to reveal back content
                           console.log(`🎬 PEEL-CLICK: Card 3 - Continuing peel motion from {x: ${currentPos.x}, y: ${currentPos.y}}`);
                           
-                          // Continue the peel from current position to full reveal (bottom-right completion)
+                          // STAGE 1: First reveal the triangle with correct text orientation
                           setPeelPositions(prev => ({
                             ...prev,
-                            [step.number - 1]: { x: -100, y: -100 } // Extreme reveal to show complete PeelBack content
+                            [step.number - 1]: { x: 150, y: 150 } // Moderate reveal - shows triangle with readable text
                           }));
+                          
+                          // STAGE 2: After short delay, complete the bottom-right reveal
+                          setTimeout(() => {
+                            setPeelPositions(prev => ({
+                              ...prev,
+                              [step.number - 1]: { x: 50, y: 50 } // Complete bottom-right reveal
+                            }));
+                          }, 400);
                           
                           // Mark as flipped but don't use rotateY - content comes from PeelBack
                           setFlippedCards(prev => ({
@@ -468,9 +476,10 @@ export function PeelExperiment() {
                             backgroundSize: 'cover',
                             backgroundPosition: 'center',
                             backgroundRepeat: 'no-repeat',
-                            // Card 3: Remove rotation to prevent fan-like spinning
+                            // Card 3: Add back text rotation for correct orientation
                             ...(step.number === 3 ? {
-                              // No transform to prevent rotation issues
+                              transform: 'rotate(270deg)',
+                              transformOrigin: 'center'
                             } : {
                               transform: 'scaleX(-1)',
                               transformOrigin: 'center'
