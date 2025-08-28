@@ -106,55 +106,18 @@ export function PeelExperiment() {
                 setPos({ x: 320, y: 320 });
                 console.log(`🎬 PEEL: Card ${cardIndex + 1} - Reduced motion fallback`);
               } else {
-                // Card 2: Special sequence - Big reveal first, then small corner
-                if (cardIndex === 1) { // Card 2 (0-indexed)
-                  console.log(`🎬 PEEL: Card 2 - Starting big reveal sequence`);
-                  // Phase A: Big reveal first
-                  springTo(
-                    { x: 50, y: 50 },
-                    {
-                      stiffness: 0.040,
-                      damping: 0.86,
-                      onComplete: () => {
-                        console.log(`🎬 PEEL: Card 2 - Big reveal complete, returning to small corner`);
-                        // Phase B: Return to small corner and stay static
-                        springTo(
-                          { x: 280, y: 280 },
-                          {
-                            stiffness: 0.038,
-                            damping: 0.88,
-                            onComplete: () => {
-                              // Card 2: Static position - no animations
-                              console.log(`🎬 PEEL: Card 2 - Static position set`);
-                            },
-                          }
-                        );
-                      },
-                    }
-                  );
-                } else {
-                  // All other cards: Simple animation to corner, then static
-                  springTo(
-                    { x: 25, y: 40 },
-                    {
-                      stiffness: 0.040, // softer entry
-                      damping: 0.86,
-                      onComplete: () => {
-                        springTo(
-                          { x: 320, y: 320 },
-                          {
-                            stiffness: 0.038,
-                            damping: 0.88,
-                            onComplete: () => {
-                              // All cards: Just stay static at corner position
-                              console.log(`🎬 PEEL: Card ${cardIndex + 1} - Static corner position set`);
-                            },
-                          }
-                        );
-                      },
-                    }
-                  );
-                }
+                // ALL CARDS: Same simple behavior - animate to corner and stay static
+                springTo(
+                  { x: 320, y: 320 },
+                  {
+                    stiffness: 0.038,
+                    damping: 0.88,
+                    onComplete: () => {
+                      // All cards: Just stay static at corner position
+                      console.log(`🎬 PEEL: Card ${cardIndex + 1} - Static corner position set`);
+                    },
+                  }
+                );
               }
             }, 300);
           } else {
