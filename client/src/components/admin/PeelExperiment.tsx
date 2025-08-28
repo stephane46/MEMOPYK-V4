@@ -397,6 +397,25 @@ export function PeelExperiment() {
                                 <div className="absolute top-2 left-2 w-8 h-8 bg-memopyk-orange rounded-full flex items-center justify-center transition-transform duration-300 shadow-lg">
                                   <span className="text-sm font-bold text-white">{step.number}</span>
                                 </div>
+                                
+                                {/* Card 2: Animated Bottom-Right Corner "Bill" */}
+                                {step.number === 2 && (
+                                  <div 
+                                    className="absolute bottom-0 right-0 w-8 h-8 bg-gradient-to-br from-memopyk-orange to-orange-600 transform origin-bottom-right"
+                                    style={{
+                                      clipPath: 'polygon(100% 0%, 100% 100%, 0% 100%)',
+                                      animation: 'peelFloat 3s ease-in-out infinite alternate, peelGlow 2s ease-in-out infinite'
+                                    }}
+                                  >
+                                    {/* Small shadow effect */}
+                                    <div 
+                                      className="absolute inset-0 bg-black opacity-20 transform translate-x-1 translate-y-1"
+                                      style={{
+                                        clipPath: 'polygon(100% 0%, 100% 100%, 0% 100%)'
+                                      }}
+                                    />
+                                  </div>
+                                )}
                               </div>
                             ) : (
                               /* Cards 1&2 BACK SIDE - Detailed Information */

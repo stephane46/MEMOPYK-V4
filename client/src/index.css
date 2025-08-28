@@ -857,5 +857,24 @@ html, body {
   }
 }
 
+/* Card 2 Animated Corner "Bill" Animations */
+@keyframes peelFloat {
+  0% {
+    transform: translateY(0px) translateX(0px) scale(1);
+  }
+  100% {
+    transform: translateY(-2px) translateX(-2px) scale(1.05);
+  }
+}
 
-
+@keyframes peelGlow {
+  0% {
+    box-shadow: 0 2px 4px rgba(214, 124, 74, 0.3);
+  }
+  50% {
+    box-shadow: 0 4px 8px rgba(214, 124, 74, 0.5), 0 0 12px rgba(214, 124, 74, 0.3);
+  }
+  100% {
+    box-shadow: 0 2px 4px rgba(214, 124, 74, 0.3);
+  }
+}
