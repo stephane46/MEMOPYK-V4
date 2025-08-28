@@ -295,15 +295,23 @@ export function PeelExperiment() {
                             >
                               <div className="text-center text-white">
                                 <div className="text-sm leading-normal mb-4">
-                                  {(language === 'fr-FR' ? step.descriptionFr : step.descriptionEn).split('\n').map((paragraph, i) => (
-                                    <p key={i} className="mb-2">{paragraph}</p>
-                                  ))}
+                                  {(language === 'fr-FR' ? step.descriptionFr : step.descriptionEn)
+                                    .split(/[.!?]+/)
+                                    .filter(sentence => sentence.trim().length > 0)
+                                    .map((sentence, i) => (
+                                      <p key={i} className="mb-2">{sentence.trim()}.</p>
+                                    ))}
                                 </div>
                                 
                                 <div className="border-t border-white/40 my-4"></div>
                                 
                                 <div className="text-xs text-white leading-relaxed">
-                                  {language === 'fr-FR' ? step.subDescriptionFr : step.subDescriptionEn}
+                                  {(language === 'fr-FR' ? step.subDescriptionFr : step.subDescriptionEn)
+                                    .split(/[.!?]+/)
+                                    .filter(sentence => sentence.trim().length > 0)
+                                    .map((sentence, i) => (
+                                      <p key={i} className="mb-2">{sentence.trim()}.</p>
+                                    ))}
                                 </div>
                               </div>
                             </div>
@@ -336,9 +344,8 @@ export function PeelExperiment() {
                                 width: '48px',
                                 height: '2px',
                                 background: flippedCards[step.number - 1] 
-                                  ? 'linear-gradient(45deg, #D67C4A 50%, white 50%)'
-                                  : 'linear-gradient(45deg, white 50%, #D67C4A 50%)',
-                                backgroundSize: '4px 4px',
+                                  ? 'repeating-linear-gradient(45deg, #D67C4A 0px, #D67C4A 2px, white 2px, white 4px)'
+                                  : 'repeating-linear-gradient(45deg, white 0px, white 2px, #D67C4A 2px, #D67C4A 4px)',
                                 transform: 'rotate(-45deg)',
                                 transformOrigin: 'top right',
                                 opacity: 0.9
@@ -355,7 +362,7 @@ export function PeelExperiment() {
                                 width="18" 
                                 height="18" 
                                 viewBox="0 0 16 16" 
-                                fill="white"
+                                fill={flippedCards[step.number - 1] ? '#D67C4A' : 'white'}
                                 style={{
                                   filter: 'drop-shadow(1px 1px 2px rgba(0,0,0,0.3))'
                                 }}
