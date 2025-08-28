@@ -26,13 +26,13 @@ export function PeelExperiment() {
                 console.log('🎬 PEEL: Card 1 - Half card reveal at {x: 50, y: 50}');
               
               } else if (cardIndex === 1) {
-                // Card 2: Moderate reveal (moved from Card 1)
-                console.log('🎬 PEEL: Card 2 - 50% reveal effect triggered');
+                // Card 2: Small reveal (changed from moderate)
+                console.log('🎬 PEEL: Card 2 - Small reveal effect triggered');
                 setPeelPositions(prev => ({
                   ...prev,
-                  [cardIndex]: { x: 200, y: 200 } // 50% reveal
+                  [cardIndex]: { x: 300, y: 300 } // Small reveal (larger coordinates = smaller reveal)
                 }));
-                console.log('🎬 PEEL: Card 2 - 50% reveal set at {x: 200, y: 200}');
+                console.log('🎬 PEEL: Card 2 - Small reveal set at {x: 300, y: 300}');
               
               } else {
                 // Card 3: Start with half card reveal (same as Card 1), then switch to moderate reveal (same as Card 2) and stay
@@ -42,14 +42,14 @@ export function PeelExperiment() {
                   [cardIndex]: { x: 50, y: 50 } // Half card reveal same as Card 1
                 }));
                 
-                // After 2 seconds, switch to moderate reveal and stay there
+                // After 2 seconds, switch to small reveal and stay there
                 setTimeout(() => {
-                  console.log('🎬 PEEL: Card 3 - Switching to moderate reveal (same as Card 2) and staying');
+                  console.log('🎬 PEEL: Card 3 - Switching to small reveal (same as Card 2) and staying');
                   setPeelPositions(prev => ({
                     ...prev,
-                    [cardIndex]: { x: 200, y: 200 } // Moderate reveal same as Card 2
+                    [cardIndex]: { x: 300, y: 300 } // Small reveal same as Card 2
                   }));
-                  console.log('🎬 PEEL: Card 3 - Final state: moderate reveal at {x: 200, y: 200} (permanent)');
+                  console.log('🎬 PEEL: Card 3 - Final state: small reveal at {x: 300, y: 300} (permanent)');
                 }, 2000);
               }
             }, 300);
