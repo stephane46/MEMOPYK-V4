@@ -12,8 +12,11 @@ export function PeelExperiment() {
     const observer = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
+          const cardIndex = parseInt(entry.target.getAttribute('data-card-index') || '0');
+          
           if (entry.isIntersecting) {
-            const cardIndex = parseInt(entry.target.getAttribute('data-card-index') || '0');
+            // Skip if this card is already animating
+            if (peelPositions[cardIndex]) return;
             
             // Trigger one-third reveal animation after a short delay
             setTimeout(() => {
@@ -31,6 +34,13 @@ export function PeelExperiment() {
                 }));
               }, 2000);
             }, 300);
+          } else {
+            // When card leaves viewport, reset it to default state
+            setPeelPositions(prev => {
+              const newPos = { ...prev };
+              delete newPos[cardIndex];
+              return newPos;
+            });
           }
         });
       },
