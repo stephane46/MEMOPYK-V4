@@ -51,8 +51,12 @@ export function PeelExperiment() {
               delete newPos[cardIndex];
               return newPos;
             });
-            // Also reset arrow state when leaving viewport
+            // Reset arrow state when leaving viewport
             setShowArrows(prev => ({ ...prev, [cardIndex]: false }));
+            // Reset flip state to return to front side
+            setFlippedCards(prev => ({ ...prev, [cardIndex]: false }));
+            
+            console.log(`🎬 PEEL: Card ${cardIndex + 1} - Reset to front side when out of view`);
           }
         });
       },
