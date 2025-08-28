@@ -188,14 +188,14 @@ export default function PeelExperiment() {
                                 className="h-full flex flex-col cursor-pointer relative"
                                 style={{
                                   transformOrigin: 'center',
-                                  backgroundImage: `linear-gradient(135deg, rgba(42, 71, 89, 0.92) 0%, rgba(1, 21, 38, 0.92) 50%, rgba(42, 71, 89, 0.92) 100%), url(${step.image})`,
-                                  backgroundSize: 'cover, contain',
-                                  backgroundPosition: 'center, center',
-                                  backgroundRepeat: 'no-repeat, no-repeat'
+                                  backgroundImage: `linear-gradient(135deg, rgba(214, 124, 74, 0.92) 0%, rgba(42, 71, 89, 0.92) 100%), url(${step.image})`,
+                                  backgroundSize: 'cover',
+                                  backgroundPosition: 'center',
+                                  backgroundRepeat: 'no-repeat'
                                 }}
                               >
                                 <div className="text-center flex flex-col p-4" style={{ height: '100%', position: 'relative' }}>
-                                  <div className="text-sm leading-normal text-memopyk-cream w-full" style={{ height: '66%', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+                                  <div className="text-sm leading-normal text-white w-full" style={{ height: '66%', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
                                     {step.number === 1 && language === 'fr-FR' && (
                                       <>
                                         <p className="mb-3">Envoyez-nous toutes vos photos et vidéos, même par milliers.</p>
@@ -284,10 +284,10 @@ export default function PeelExperiment() {
                           <div 
                             className="shadow-lg rounded-2xl overflow-hidden border border-gray-200 h-full"
                             style={{
-                              backgroundImage: `linear-gradient(135deg, rgba(42, 71, 89, 0.92) 0%, rgba(1, 21, 38, 0.92) 50%, rgba(42, 71, 89, 0.92) 100%), url(${step.image})`,
-                              backgroundSize: 'cover, contain',
-                              backgroundPosition: 'center, center',
-                              backgroundRepeat: 'no-repeat, no-repeat'
+                              backgroundImage: `linear-gradient(135deg, rgba(214, 124, 74, 0.92) 0%, rgba(42, 71, 89, 0.92) 100%), url(${step.image})`,
+                              backgroundSize: 'cover',
+                              backgroundPosition: 'center',
+                              backgroundRepeat: 'no-repeat'
                             }}
                           >
                             <div 
