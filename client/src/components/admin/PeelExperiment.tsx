@@ -89,7 +89,7 @@ export default function PeelExperiment() {
     {
       number: 3,
       icon: Heart,
-      titleFr: "Montage & Perfectionnement",
+      titleFr: "Montage & Validation",
       titleEn: "You Enjoy & Share", 
       image: "/images/How_we_work_Step3.png"
     }
@@ -259,7 +259,7 @@ export default function PeelExperiment() {
                                       )}
                                       {step.number === 3 && language === 'fr-FR' && (
                                         <>
-                                          <p className="mb-2">Un souvenir unique, livré vite et parfaitement ajusté à vos envies.</p>
+                                          <p className="mb-2">Un souvenir unique, livré rapidement et parfaitement ajusté à vos envies.</p>
                                         </>
                                       )}
                                       {step.number === 3 && language === 'en-US' && (
@@ -352,7 +352,7 @@ export default function PeelExperiment() {
                                   )}
                                   {step.number === 3 && language === 'fr-FR' && (
                                     <>
-                                      <p className="mb-2">Un souvenir unique, livré vite et parfaitement ajusté à vos envies.</p>
+                                      <p className="mb-2">Un souvenir unique, livré rapidement et parfaitement ajusté à vos envies.</p>
                                     </>
                                   )}
                                   {step.number === 3 && language === 'en-US' && (
