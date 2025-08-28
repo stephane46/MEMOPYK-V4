@@ -149,27 +149,55 @@ export function PeelExperiment() {
                 setPos({ x: 320, y: 320 });
                 console.log(`🎬 PEEL: Card ${cardIndex + 1} - Reduced motion fallback`);
               } else {
-                // Phase A: float down to large reveal → Phase B: glide back → gentle pulsing
-                springTo(
-                  { x: 25, y: 40 },
-                  {
-                    stiffness: 0.040, // softer entry
-                    damping: 0.86,
-                    onComplete: () => {
-                      springTo(
-                        { x: 320, y: 320 },
-                        {
-                          stiffness: 0.038,
-                          damping: 0.88,
-                          onComplete: () => {
-                            microTickle({ x: 320, y: 320 });
-                            console.log(`🎬 PEEL: Card ${cardIndex + 1} - Micro-tickle started (Card 3 behavior)`);
-                          },
-                        }
-                      );
-                    },
-                  }
-                );
+                // Card 2: Special sequence - Big reveal first, then small corner
+                if (cardIndex === 1) { // Card 2 (0-indexed)
+                  console.log(`🎬 PEEL: Card 2 - Starting big reveal sequence`);
+                  // Phase A: Big reveal first
+                  springTo(
+                    { x: 50, y: 50 },
+                    {
+                      stiffness: 0.040,
+                      damping: 0.86,
+                      onComplete: () => {
+                        console.log(`🎬 PEEL: Card 2 - Big reveal complete, returning to small corner`);
+                        // Phase B: Return to small corner with pulsing
+                        springTo(
+                          { x: 280, y: 280 },
+                          {
+                            stiffness: 0.038,
+                            damping: 0.88,
+                            onComplete: () => {
+                              microTickle({ x: 280, y: 280 });
+                              console.log(`🎬 PEEL: Card 2 - Small corner pulsing started`);
+                            },
+                          }
+                        );
+                      },
+                    }
+                  );
+                } else {
+                  // All other cards: Original behavior
+                  springTo(
+                    { x: 25, y: 40 },
+                    {
+                      stiffness: 0.040, // softer entry
+                      damping: 0.86,
+                      onComplete: () => {
+                        springTo(
+                          { x: 320, y: 320 },
+                          {
+                            stiffness: 0.038,
+                            damping: 0.88,
+                            onComplete: () => {
+                              microTickle({ x: 320, y: 320 });
+                              console.log(`🎬 PEEL: Card ${cardIndex + 1} - Micro-tickle started`);
+                            },
+                          }
+                        );
+                      },
+                    }
+                  );
+                }
               }
             }, 300);
           } else {
