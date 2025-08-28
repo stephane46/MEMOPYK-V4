@@ -335,7 +335,7 @@ export function PeelExperiment() {
                           /* Cards 2 & 3: Orange triangle corner with unfold reveal */
                           <div className="relative">
                             <div 
-                              className="w-0 h-0 border-l-[50px] border-b-[50px] border-l-transparent border-b-memopyk-orange shadow-lg"
+                              className="w-0 h-0 border-l-[45px] border-b-[45px] border-l-transparent border-b-memopyk-orange shadow-lg"
                               style={{
                                 filter: 'drop-shadow(0 4px 6px rgb(0 0 0 / 0.1))',
                                 animation: 'cornerPeel 2s ease-in-out infinite'
@@ -345,10 +345,10 @@ export function PeelExperiment() {
                             <div 
                               className="absolute"
                               style={{
-                                top: '-1px',
-                                right: '-1px',
-                                width: '71px',
-                                height: '2px',
+                                top: '0px',
+                                right: '0px',
+                                width: '64px',
+                                height: '1px',
                                 background: 'linear-gradient(45deg, white 50%, #D67C4A 50%)',
                                 backgroundSize: '4px 4px',
                                 transform: 'rotate(-45deg)',
