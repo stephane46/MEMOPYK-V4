@@ -75,21 +75,21 @@ export default function PeelExperiment() {
     {
       number: 1,
       icon: Upload,
-      titleFr: "Téléversement",
+      titleFr: "Transmission & Tri",
       titleEn: "You Upload",
       image: "/images/How_we_work_Step1.png"
     },
     {
       number: 2,
       icon: Edit,
-      titleFr: "Sélection & Montage", 
+      titleFr: "Sélection & Création", 
       titleEn: "We Create",
       image: "/images/How_we_work_Step2.png"
     },
     {
       number: 3,
       icon: Heart,
-      titleFr: "C'est prêt !",
+      titleFr: "Montage & Perfectionnement",
       titleEn: "You Enjoy & Share", 
       image: "/images/How_we_work_Step3.png"
     }
