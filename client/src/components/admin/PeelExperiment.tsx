@@ -166,9 +166,7 @@ export function PeelExperiment() {
                       /* Card 3: Regular div without PeelWrapper - no fold */
                       <div className="rounded-2xl overflow-hidden aspect-square">
                         <div 
-                          className={`border border-gray-200 shadow-lg hover:shadow-2xl rounded-2xl overflow-hidden h-full transition-all duration-700 relative ${
-                            flippedCards[step.number - 1] ? 'bg-gradient-to-br from-green-500 to-emerald-600' : 'bg-white'
-                          }`}
+                          className="border border-gray-200 shadow-lg hover:shadow-2xl rounded-2xl overflow-hidden h-full transition-all duration-700 relative"
                           style={{
                             transformStyle: 'preserve-3d'
                           }}
@@ -228,9 +226,7 @@ export function PeelExperiment() {
                       <PeelTop>
                         {/* FRONT/BACK SIDE - Step Card with Flip Animation */}
                         <div 
-                          className={`border border-gray-200 shadow-lg hover:shadow-2xl rounded-2xl overflow-hidden h-full transition-all duration-700 relative ${
-                            flippedCards[step.number - 1] ? 'bg-gradient-to-br from-green-500 to-emerald-600' : 'bg-white'
-                          }`}
+                          className="border border-gray-200 shadow-lg hover:shadow-2xl rounded-2xl overflow-hidden h-full transition-all duration-700 relative"
                           style={{
                             // Remove flip transform - let react-peel handle the visual effect
                             transformStyle: 'preserve-3d'
