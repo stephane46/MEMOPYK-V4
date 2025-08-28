@@ -342,9 +342,9 @@ export function PeelExperiment() {
                               }}
                             />
                             <div 
-                              className="absolute bottom-1 right-1"
+                              className="absolute bottom-0 right-0"
                               style={{
-                                animation: 'arrowFloat 2s ease-in-out infinite'
+                                animation: 'arrowRiseAndGrow 2s ease-in-out infinite'
                               }}
                             >
                               <svg 
