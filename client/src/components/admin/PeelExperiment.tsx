@@ -110,6 +110,10 @@ export function PeelExperiment() {
 
   return (
     <div className="space-y-8">
+      {/* Large spacing before */}
+      <div className="h-screen"></div>
+      <div className="h-screen"></div>
+      
       <div className="bg-white dark:bg-gray-800 p-6 rounded-lg border border-gray-200 dark:border-gray-700">
         <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">
           🧪 Peel Effect Experiment - "How It Works" Cards
@@ -396,6 +400,11 @@ export function PeelExperiment() {
           </div>
         </div>
       </section>
+      
+      {/* Large spacing after */}
+      <div className="h-screen"></div>
+      <div className="h-screen"></div>
+      <div className="h-screen"></div>
     </div>
   );
 }
