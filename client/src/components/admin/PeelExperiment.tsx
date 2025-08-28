@@ -17,31 +17,50 @@ export function PeelExperiment() {
           if (entry.isIntersecting) {
             setTimeout(() => {
               if (cardIndex === 0) {
-                // Card 1: Just persistent dog-eared corner
-                console.log('🎬 PEEL: Card 1 - Setting persistent dog-eared corner');
+                // Card 1: Large reveal from bottom-right corner
+                console.log('🎬 PEEL: Card 1 - Large reveal from BOTTOM_RIGHT');
                 setPeelPositions(prev => ({
                   ...prev,
-                  [cardIndex]: { x: 360, y: 340 } // Small persistent corner
+                  [cardIndex]: { x: 200, y: 200 } // Large reveal from correct corner
                 }));
-                console.log('🎬 PEEL: Card 1 - Static dog-ear at {x: 360, y: 340}');
+                console.log('🎬 PEEL: Card 1 - Large reveal at {x: 200, y: 200}');
               
               } else if (cardIndex === 1) {
-                // Card 2: 50% reveal effect like the beginning
+                // Card 2: KEEP EXACTLY AS-IS (working correctly)
                 console.log('🎬 PEEL: Card 2 - 50% reveal effect triggered');
                 setPeelPositions(prev => ({
                   ...prev,
-                  [cardIndex]: { x: 200, y: 200 } // 50% reveal
+                  [cardIndex]: { x: 200, y: 200 } // 50% reveal (unchanged)
                 }));
                 console.log('🎬 PEEL: Card 2 - 50% reveal set at {x: 200, y: 200}');
               
               } else {
-                // Card 3: Simple small corner for testing
-                console.log('🎬 PEEL: Card 3 - Simple small corner');
+                // Card 3: Full animation sequence - large reveal, then hide, then small corner
+                console.log('🎬 PEEL: Card 3 - Starting animation sequence: large reveal');
                 setPeelPositions(prev => ({
                   ...prev,
-                  [cardIndex]: { x: 350, y: 330 } // Slightly different small corner
+                  [cardIndex]: { x: 200, y: 200 } // Large reveal first
                 }));
-                console.log('🎬 PEEL: Card 3 - Small corner at {x: 350, y: 330}');
+                
+                // After 2 seconds, hide completely
+                setTimeout(() => {
+                  console.log('🎬 PEEL: Card 3 - Hiding peel completely');
+                  setPeelPositions(prev => {
+                    const newPos = { ...prev };
+                    delete newPos[cardIndex];
+                    return newPos;
+                  });
+                  
+                  // After brief pause, show small persistent corner
+                  setTimeout(() => {
+                    console.log('🎬 PEEL: Card 3 - Setting persistent small corner');
+                    setPeelPositions(prev => ({
+                      ...prev,
+                      [cardIndex]: { x: 360, y: 340 } // Small persistent corner
+                    }));
+                    console.log('🎬 PEEL: Card 3 - Final state: small corner at {x: 360, y: 340}');
+                  }, 200);
+                }, 2000);
               }
             }, 300);
           } else {
