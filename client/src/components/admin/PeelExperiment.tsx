@@ -1,10 +1,50 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useLanguage } from '../../contexts/LanguageContext';
 import { Upload, Edit, Heart, Info } from 'lucide-react';
-import { PeelWrapper, PeelTop, PeelBack } from 'react-peel';
 
 export function PeelExperiment() {
   const { language } = useLanguage();
+  const [revealedCards, setRevealedCards] = useState<Set<number>>(new Set());
+  const cardRefs = useRef<(HTMLDivElement | null)[]>([]);
+  
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            const cardIndex = parseInt(entry.target.getAttribute('data-card-index') || '0');
+            
+            // Trigger reveal animation after a short delay
+            setTimeout(() => {
+              setRevealedCards(prev => new Set([...prev, cardIndex]));
+              
+              // Auto-hide after showing one-third for 2 seconds
+              setTimeout(() => {
+                setRevealedCards(prev => {
+                  const newSet = new Set(prev);
+                  newSet.delete(cardIndex);
+                  return newSet;
+                });
+              }, 2000);
+            }, 300);
+          }
+        });
+      },
+      {
+        threshold: 0.5,
+        rootMargin: '0px 0px -100px 0px'
+      }
+    );
+
+    cardRefs.current.forEach((ref, index) => {
+      if (ref) {
+        ref.setAttribute('data-card-index', index.toString());
+        observer.observe(ref);
+      }
+    });
+
+    return () => observer.disconnect();
+  }, []);
   
   const steps = [
     {
@@ -76,72 +116,65 @@ export function PeelExperiment() {
               const Icon = step.icon;
               
               return (
-                <div key={step.number} className="text-center group">
-                  {/* Peel Card Container */}
-                  <div className="mb-4">
-                    <PeelWrapper
-                      corner="BOTTOM_RIGHT"
-                      options={{
-                        corner: "BOTTOM_RIGHT",
-                        backShadow: true,
-                        bottomShadow: true,
-                        topShadow: true
-                      }}
-                      className="rounded-2xl overflow-hidden aspect-square"
-                      height="100%"
-                      width="100%"
-                      drag={true}
-                    >
-                      <PeelTop>
-                        {/* FRONT SIDE - Step Card */}
-                        <div className="bg-white border border-gray-200 shadow-lg hover:shadow-2xl rounded-2xl overflow-hidden h-full">
-                          {/* Step Image */}
-                          <div className="relative overflow-hidden rounded-xl transition-all duration-500 h-full">
-                            <img 
-                              src={step.image} 
-                              alt={language === 'fr-FR' ? step.titleFr : step.titleEn}
-                              className="w-full h-full object-contain bg-gray-50 transition-transform duration-500"
-                            />
-                            
-                            {/* Orange Number Circle - Top Left */}
-                            <div className="absolute top-2 left-2 w-8 h-8 bg-memopyk-orange rounded-full flex items-center justify-center transition-transform duration-300 shadow-lg">
-                              <span className="text-sm font-bold text-white">{step.number}</span>
-                            </div>
-                            
-                            {/* Info Button - Bottom Center */}
-                            <div className="absolute bottom-2 left-1/2 transform -translate-x-1/2">
-                              <div 
-                                className="w-12 h-12 rounded-full flex items-center justify-center transition-all duration-300 hover:scale-110 cursor-pointer"
-                                style={{
-                                  background: 'linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.85) 100%)',
-                                  boxShadow: '0 4px 12px rgba(0, 0, 0, 0.2), inset 0 1px 2px rgba(255, 255, 255, 0.8)',
-                                  border: '1px solid rgba(0, 0, 0, 0.1)',
-                                  backdropFilter: 'blur(2px)'
-                                }}
-                              >
-                                <Info className="w-6 h-6" style={{ color: '#2A4759' }} />
-                              </div>
+                <div 
+                  key={step.number} 
+                  className="text-center group"
+                  ref={(el) => { cardRefs.current[step.number - 1] = el; }}
+                >
+                  {/* Auto-Reveal Card Container */}
+                  <div className="mb-4 relative">
+                    <div className="relative aspect-square rounded-2xl overflow-hidden">
+                      {/* FRONT SIDE - Step Card (Always Visible) */}
+                      <div className="bg-white border border-gray-200 shadow-lg hover:shadow-2xl rounded-2xl overflow-hidden h-full relative z-10">
+                        {/* Step Image */}
+                        <div className="relative overflow-hidden rounded-xl transition-all duration-500 h-full">
+                          <img 
+                            src={step.image} 
+                            alt={language === 'fr-FR' ? step.titleFr : step.titleEn}
+                            className="w-full h-full object-contain bg-gray-50 transition-transform duration-500"
+                          />
+                          
+                          {/* Orange Number Circle - Top Left */}
+                          <div className="absolute top-2 left-2 w-8 h-8 bg-memopyk-orange rounded-full flex items-center justify-center transition-transform duration-300 shadow-lg">
+                            <span className="text-sm font-bold text-white">{step.number}</span>
+                          </div>
+                          
+                          {/* Info Button - Bottom Center */}
+                          <div className="absolute bottom-2 left-1/2 transform -translate-x-1/2">
+                            <div 
+                              className="w-12 h-12 rounded-full flex items-center justify-center transition-all duration-300 hover:scale-110 cursor-pointer"
+                              style={{
+                                background: 'linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.85) 100%)',
+                                boxShadow: '0 4px 12px rgba(0, 0, 0, 0.2), inset 0 1px 2px rgba(255, 255, 255, 0.8)',
+                                border: '1px solid rgba(0, 0, 0, 0.1)',
+                                backdropFilter: 'blur(2px)'
+                              }}
+                            >
+                              <Info className="w-6 h-6" style={{ color: '#2A4759' }} />
                             </div>
                           </div>
                         </div>
-                      </PeelTop>
-                      
-                      <PeelBack>
-                        {/* BACK SIDE - Detailed Information (revealed with peel) */}
+
+                        {/* BACK SIDE - Auto-Reveal Overlay (Shows on scroll) */}
                         <div 
-                          className="shadow-lg rounded-2xl overflow-hidden border border-gray-200 h-full"
+                          className={`absolute inset-0 rounded-2xl overflow-hidden transition-all duration-1000 ease-out ${
+                            revealedCards.has(step.number - 1) 
+                              ? 'clip-path-reveal-one-third' 
+                              : 'clip-path-hidden'
+                          }`}
                           style={{
                             backgroundImage: `linear-gradient(135deg, rgba(214, 124, 74, 0.92) 0%, rgba(42, 71, 89, 0.92) 100%), url(${step.image})`,
                             backgroundSize: 'cover',
                             backgroundPosition: 'center',
-                            backgroundRepeat: 'no-repeat'
+                            backgroundRepeat: 'no-repeat',
+                            zIndex: 20
                           }}
                         >
-                          <div className="h-full flex flex-col justify-between p-4">
+                          <div className="h-full flex flex-col justify-center p-4">
                             {/* Main Content */}
                             <div className="text-center text-white">
                               <div className="text-sm leading-normal mb-4">
-                                {(language === 'fr-FR' ? step.descriptionFr : step.descriptionEn).split('\n').map((paragraph, i) => (
+                                {(language === 'fr-FR' ? step.descriptionFr : step.descriptionEn).split('\n').slice(0, 2).map((paragraph, i) => (
                                   <p key={i} className="mb-2">{paragraph}</p>
                                 ))}
                               </div>
@@ -156,8 +189,8 @@ export function PeelExperiment() {
                             </div>
                           </div>
                         </div>
-                      </PeelBack>
-                    </PeelWrapper>
+                      </div>
+                    </div>
                   </div>
 
                   {/* Static Title with Blue Icon - Always Visible */}
