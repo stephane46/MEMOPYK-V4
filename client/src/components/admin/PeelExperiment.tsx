@@ -35,21 +35,21 @@ export function PeelExperiment() {
                 console.log('🎬 PEEL: Card 2 - 50% reveal set at {x: 200, y: 200}');
               
               } else {
-                // Card 3: Combination sequence - Card 1's animation FIRST, then Card 2's animation
-                console.log('🎬 PEEL: Card 3 - Starting sequence: Card 1 animation (very large reveal)');
+                // Card 3: Start with very large reveal (same as Card 1), then switch to moderate reveal (same as Card 2) and stay
+                console.log('🎬 PEEL: Card 3 - Starting with very large reveal (same as Card 1)');
                 setPeelPositions(prev => ({
                   ...prev,
-                  [cardIndex]: { x: 100, y: 100 } // Card 1's very large reveal FIRST
+                  [cardIndex]: { x: 100, y: 100 } // Very large reveal same as Card 1
                 }));
                 
-                // After 2 seconds, switch to Card 2's animation
+                // After 2 seconds, switch to moderate reveal and stay there
                 setTimeout(() => {
-                  console.log('🎬 PEEL: Card 3 - Switching to Card 2 animation (moderate reveal)');
+                  console.log('🎬 PEEL: Card 3 - Switching to moderate reveal (same as Card 2) and staying');
                   setPeelPositions(prev => ({
                     ...prev,
-                    [cardIndex]: { x: 200, y: 200 } // Card 2's moderate reveal
+                    [cardIndex]: { x: 200, y: 200 } // Moderate reveal same as Card 2
                   }));
-                  console.log('🎬 PEEL: Card 3 - Final state: moderate reveal at {x: 200, y: 200}');
+                  console.log('🎬 PEEL: Card 3 - Final state: moderate reveal at {x: 200, y: 200} (permanent)');
                 }, 2000);
               }
             }, 300);
