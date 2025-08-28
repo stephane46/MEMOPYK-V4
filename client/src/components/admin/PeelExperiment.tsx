@@ -26,15 +26,22 @@ export function PeelExperiment() {
               
               // Auto-hide after showing for 2 seconds, but leave a small corner
               setTimeout(() => {
-                console.log('🎬 PEEL: Transitioning to small corner for card', cardIndex);
+                console.log('🎬 PEEL: Peeling back down (removing peel)');
+                // First remove the peel completely
                 setPeelPositions(prev => {
-                  const newState = {
-                    ...prev,
-                    [cardIndex]: { x: 0.85, y: 0.85 } // More visible small corner
-                  };
-                  console.log('🎬 PEEL: New state after transition:', newState);
-                  return newState;
+                  const newPos = { ...prev };
+                  delete newPos[cardIndex];
+                  return newPos;
                 });
+                
+                // Then after a brief pause, add the small corner
+                setTimeout(() => {
+                  console.log('🎬 PEEL: Adding small corner for card', cardIndex);
+                  setPeelPositions(prev => ({
+                    ...prev,
+                    [cardIndex]: { x: 0.9, y: 0.9 } // Small corner
+                  }));
+                }, 200);
               }, 2000);
             }, 300);
           } else {
