@@ -404,30 +404,6 @@ export function PeelExperiment() {
                             transformStyle: step.number === 3 ? 'flat' : 'preserve-3d'
                           }}
                         >
-                          {/* Card 2: Clean Arrow + Dotted Line Corner Indicator */}
-                          {step.number === 2 && (
-                            <div className="absolute bottom-0 right-0 w-8 h-8 z-50 pointer-events-none">
-                              {/* Diagonal Arrow pointing up-left */}
-                              <div 
-                                className="absolute bottom-1 right-1 w-4 h-4"
-                                style={{
-                                  background: !flippedCards[step.number - 1] 
-                                    ? '#D67C4A' // Front: MEMOPYK orange
-                                    : '#89BAD9', // Back: MEMOPYK sky blue
-                                  clipPath: 'polygon(0% 100%, 0% 60%, 60% 0%, 100% 0%, 100% 40%, 40% 100%)', // Arrow shape
-                                }}
-                              />
-                              {/* Dotted line boundary */}
-                              <div 
-                                className="absolute bottom-0 right-0 w-6 h-6"
-                                style={{
-                                  borderTop: `2px dotted ${!flippedCards[step.number - 1] ? '#D67C4A' : '#89BAD9'}`,
-                                  borderLeft: `2px dotted ${!flippedCards[step.number - 1] ? '#D67C4A' : '#89BAD9'}`,
-                                  borderTopLeftRadius: '4px'
-                                }}
-                              />
-                            </div>
-                          )}
                           {/* Conditional Content Based on Flip State */}
                           {!flippedCards[step.number - 1] || step.number !== 3 ? (
                             /* FRONT SIDE - Original Image (or back side for Cards 1&2) */
