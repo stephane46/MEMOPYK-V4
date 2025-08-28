@@ -223,9 +223,9 @@ export function PeelExperiment() {
                       drag={false}
                       options={{
                         corner: "BOTTOM_RIGHT",
-                        backShadow: true,
-                        bottomShadow: true,
-                        topShadow: true,
+                        backShadow: false,
+                        bottomShadow: false,
+                        topShadow: false,
                         shape: {
                           rect: {
                             x: 0,
