@@ -315,7 +315,7 @@ export function PeelExperiment() {
                             <div 
                               className="h-full flex flex-col justify-between p-4"
                               style={{
-                                transform: 'rotate(90deg)'
+                                transform: 'rotate(270deg)'
                               }}
                             >
                               <div className="text-center text-white">
