@@ -476,6 +476,20 @@ export default function PeelExperiment() {
                                 transformOrigin: 'bottom right',
                               }}
                             />
+                            {/* Diagonal shadow edge for realistic paper curl effect */}
+                            <div 
+                              className="absolute"
+                              style={{
+                                top: '0px',
+                                right: '0px',
+                                width: '84px', // √(60² + 60²) = hypotenuse length
+                                height: '3px',
+                                background: 'linear-gradient(90deg, transparent 0%, rgba(0,0,0,0.3) 50%, rgba(0,0,0,0.15) 100%)',
+                                transform: 'rotate(-45deg)',
+                                transformOrigin: 'top right',
+                                opacity: flippedCards[step.number - 1] ? 0.7 : 0.4,
+                              }}
+                            />
                           </div>
                           {/* Arrow for Card 1 - Same as Cards 2 & 3 */}
                           <div 
@@ -524,6 +538,20 @@ export default function PeelExperiment() {
                                 transform: 'translateZ(4px) rotateX(-5deg) rotateY(5deg) translateY(-2px)',
                                 transformStyle: 'preserve-3d',
                                 transformOrigin: 'bottom right',
+                              }}
+                            />
+                            {/* Diagonal shadow edge for realistic paper curl effect */}
+                            <div 
+                              className="absolute"
+                              style={{
+                                top: '0px',
+                                right: '0px',
+                                width: '84px', // √(60² + 60²) = hypotenuse length
+                                height: '3px',
+                                background: 'linear-gradient(90deg, transparent 0%, rgba(0,0,0,0.3) 50%, rgba(0,0,0,0.15) 100%)',
+                                transform: 'rotate(-45deg)',
+                                transformOrigin: 'top right',
+                                opacity: flippedCards[step.number - 1] ? 0.7 : 0.4,
                               }}
                             />
                           </div>
