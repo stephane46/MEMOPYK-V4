@@ -24,7 +24,9 @@ export default function PeelExperiment() {
               if (cardIndex === 2) {
                 // Card 3: Smaller reveal (1/3 size) that persists
                 console.log(`🎬 PEEL: Card 3 - Starting smaller persistent reveal`);
-                setPeelPositions(prev => ({ ...prev, [cardIndex]: { x: 5, y: 5 } }));
+                const smallPosition = { x: 30, y: 30 };
+                console.log(`🎬 PEEL DEBUG: Setting Card 3 position to:`, smallPosition);
+                setPeelPositions(prev => ({ ...prev, [cardIndex]: smallPosition }));
                 setCard3Revealed(true);
                 console.log(`🎬 PEEL: Card 3 - Persistent reveal complete`);
               } else {
@@ -244,11 +246,16 @@ export default function PeelExperiment() {
                       <PeelWrapper
                         className="rounded-2xl overflow-hidden aspect-square"
                         options={{
-                          corner: 'top-right',
+                          corner: 'bottom-right',
                           constrainToContainer: true,
-                          fadeThreshold: 0.3,
+                          fadeThreshold: 0.1,
                         }}
                         peelPosition={peelPositions[step.number - 1]}
+                        onPeelMove={(position) => {
+                          if (step.number === 3) {
+                            console.log(`🎬 PEEL DEBUG: Card 3 actual position:`, position);
+                          }
+                        }}
                       >
                       <PeelTop>
                         <div 
