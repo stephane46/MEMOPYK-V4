@@ -36,24 +36,23 @@ export function PeelExperiment() {
                 
                 // Then after a brief pause, add the small corner
                 setTimeout(() => {
-                  // NOW I understand! peelPosition is the CORNER POSITION, not reveal size
-                  // Values close to 1,1 = bottom-right corner (small dog-ear)
-                  // Values like 0.5,0.5 = center (large reveal)
+                  // TESTING INVERTED VALUES - maybe coordinate system is backwards!
+                  // If {x: 0.65, y: 0.65} = 50% reveal, then smaller values might = smaller reveals
                   const experimentalPositions = [
-                    { x: 0.85, y: 0.85 },  // Card 0: Close to bottom-right corner = small dog-ear
-                    { x: 0.92, y: 0.92 },  // Card 1: Very close to corner = tiny dog-ear
-                    { x: 0.96, y: 0.96 }   // Card 2: Almost at corner = minimal dog-ear
+                    { x: 0.35, y: 0.35 },  // Card 0: Inverted - should be small reveal?
+                    { x: 0.25, y: 0.25 },  // Card 1: Even smaller reveal?
+                    { x: 0.15, y: 0.15 }   // Card 2: Tiny reveal?
                   ];
                   
-                  const position = experimentalPositions[cardIndex] || { x: 0.98, y: 0.98 };
-                  console.log(`🎬 PEEL: Setting CORNER POSITION for card ${cardIndex}:`, position, '(close to bottom-right = small dog-ear)');
+                  const position = experimentalPositions[cardIndex] || { x: 0.1, y: 0.1 };
+                  console.log(`🎬 PEEL: TESTING INVERTED VALUES for card ${cardIndex}:`, position, '(maybe coordinates are backwards?)');
                   
                   setPeelPositions(prev => {
                     const newState = {
                       ...prev,
                       [cardIndex]: position
                     };
-                    console.log(`🎬 PEEL: Corner position set for card ${cardIndex}:`, newState);
+                    console.log(`🎬 PEEL: Inverted test - card ${cardIndex} state:`, newState);
                     return newState;
                   });
                 }, 200);
