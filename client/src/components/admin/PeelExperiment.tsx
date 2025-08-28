@@ -115,16 +115,16 @@ export function PeelExperiment() {
                 springTo(
                   { x: 120, y: 120 },  // Much larger reveal - shows 2/3 of back content
                   {
-                    stiffness: 0.038,
-                    damping: 0.88,
+                    stiffness: 0.1,     // Much stiffer - no oscillation
+                    damping: 1.0,       // Maximum damping - no overshoot
                     onComplete: () => {
                       console.log(`🎬 PEEL: Card ${cardIndex + 1} - Big reveal shown, immediately returning`);
                       // Immediately smooth return to normal - no delay
                       springTo(
                         { x: 200, y: 200 }, // Return to normal position
                         {
-                          stiffness: 0.045,
-                          damping: 0.85,
+                          stiffness: 0.12,   // Even stiffer for smooth return
+                          damping: 1.0,      // Maximum damping - no bounce
                           onComplete: () => {
                             // Remove the peel position completely - no corner visible
                             setPeelPositions(prev => {
