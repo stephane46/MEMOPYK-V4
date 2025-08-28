@@ -36,13 +36,22 @@ export function PeelExperiment() {
                 
                 // Then after a brief pause, add the small corner
                 setTimeout(() => {
-                  console.log('🎬 PEEL: Adding small corner for card', cardIndex, 'with position {x: 0.995, y: 0.995}');
+                  // Experiment with different values for each card
+                  const experimentalPositions = [
+                    { x: 0.8, y: 0.8 },   // Card 0: Medium corner
+                    { x: 0.9, y: 0.9 },   // Card 1: Smaller corner
+                    { x: 0.95, y: 0.95 }  // Card 2: Tiny corner
+                  ];
+                  
+                  const position = experimentalPositions[cardIndex] || { x: 0.99, y: 0.99 };
+                  console.log(`🎬 PEEL: Adding experimental corner for card ${cardIndex} with position`, position);
+                  
                   setPeelPositions(prev => {
                     const newState = {
                       ...prev,
-                      [cardIndex]: { x: 0.995, y: 0.995 } // Even tinier corner
+                      [cardIndex]: position
                     };
-                    console.log('🎬 PEEL: Final small corner state:', newState);
+                    console.log(`🎬 PEEL: Final experimental state for card ${cardIndex}:`, newState);
                     return newState;
                   });
                 }, 200);
