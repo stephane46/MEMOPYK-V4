@@ -95,49 +95,6 @@ export function PeelExperiment() {
                 schedule(step);
               };
 
-              // Subtle decaying "tickle" at the small corner (professional flourish) - Card 3 behavior
-              const microTickle = (base: Vec) => {
-                const amps = [5, 3, 1.5]; // decay sequence
-                let i = 0;
-                const next = () => {
-                  if (i >= amps.length) {
-                    // Final settle - ensure completely static position
-                    cancelPrev();
-                    setPos({ x: base.x, y: base.y });
-                    console.log(`🎬 PEEL: Card ${cardIndex + 1} - Final static position locked`);
-                    return;
-                  }
-                  const a = amps[i++];
-
-                  // left-down nudge
-                  springTo(
-                    { x: base.x - a, y: base.y - a },
-                    {
-                      stiffness: 0.065,
-                      damping: 0.80,
-                      onComplete: () => {
-                        // right-up rebound
-                        springTo(
-                          { x: base.x + a, y: base.y + a },
-                          {
-                            stiffness: 0.065,
-                            damping: 0.82,
-                            onComplete: () => {
-                              // settle back to base, then continue decay
-                              springTo(base, {
-                                stiffness: 0.05,
-                                damping: 0.86,
-                                onComplete: next,
-                              });
-                            },
-                          }
-                        );
-                      },
-                    }
-                  );
-                };
-                next();
-              };
 
               // Respect reduced motion
               const prefersReduced =
@@ -176,7 +133,7 @@ export function PeelExperiment() {
                     }
                   );
                 } else {
-                  // All other cards: Original behavior
+                  // All other cards: Simple animation to corner, then static
                   springTo(
                     { x: 25, y: 40 },
                     {
@@ -189,8 +146,8 @@ export function PeelExperiment() {
                             stiffness: 0.038,
                             damping: 0.88,
                             onComplete: () => {
-                              microTickle({ x: 320, y: 320 });
-                              console.log(`🎬 PEEL: Card ${cardIndex + 1} - Micro-tickle started`);
+                              // All cards: Just stay static at corner position
+                              console.log(`🎬 PEEL: Card ${cardIndex + 1} - Static corner position set`);
                             },
                           }
                         );
