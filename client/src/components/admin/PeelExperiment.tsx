@@ -36,11 +36,15 @@ export function PeelExperiment() {
                 
                 // Then after a brief pause, add the small corner
                 setTimeout(() => {
-                  console.log('🎬 PEEL: Adding small corner for card', cardIndex);
-                  setPeelPositions(prev => ({
-                    ...prev,
-                    [cardIndex]: { x: 0.99, y: 0.99 } // Tiny corner - barely visible
-                  }));
+                  console.log('🎬 PEEL: Adding small corner for card', cardIndex, 'with position {x: 0.995, y: 0.995}');
+                  setPeelPositions(prev => {
+                    const newState = {
+                      ...prev,
+                      [cardIndex]: { x: 0.995, y: 0.995 } // Even tinier corner
+                    };
+                    console.log('🎬 PEEL: Final small corner state:', newState);
+                    return newState;
+                  });
                 }, 200);
               }, 2000);
             }, 300);
