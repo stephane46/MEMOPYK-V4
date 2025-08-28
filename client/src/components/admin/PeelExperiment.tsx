@@ -337,7 +337,9 @@ export function PeelExperiment() {
                             <div 
                               className="w-0 h-0 border-l-[40px] border-b-[40px] border-l-transparent border-b-memopyk-orange"
                               style={{
-                                animation: 'cornerPeel 2s ease-in-out infinite'
+                                animation: 'cornerPeel 2s ease-in-out infinite',
+                                position: 'relative',
+                                bottom: '3px'
                               }}
                             />
                             {/* Dotted diagonal line along the hypotenuse */}
