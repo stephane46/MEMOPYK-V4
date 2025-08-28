@@ -452,8 +452,8 @@ export default function PeelExperiment() {
                       </PeelWrapper>
                     )}
                     
-                    {/* Card 1: Custom large triangle corner peel (no arrow) */}
-                    {step.number === 1 && showArrows[step.number - 1] && (
+                    {/* Card 1: Custom large triangle corner peel (no arrow) - Always visible */}
+                    {step.number === 1 && (
                       <div className="absolute bottom-0 right-0 pointer-events-none z-50">
                         <div className="relative">
                           {/* Large 60x60 triangle with shadow and raised effect */}
