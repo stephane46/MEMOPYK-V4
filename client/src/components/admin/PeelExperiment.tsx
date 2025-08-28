@@ -26,13 +26,13 @@ export function PeelExperiment() {
                   [cardIndex]: { x: 200, y: 200 } // Start at modest position
                 }));
                 
-                // Smooth gentle unveiling animation - LARGER REVEAL
+                // Smooth gentle unveiling animation - EVEN LARGER REVEAL
                 setTimeout(() => {
                   setPeelPositions(prev => ({
                     ...prev,
-                    [cardIndex]: { x: 40, y: 60 } // Much larger reveal (smaller coordinates = bigger reveal)
+                    [cardIndex]: { x: 25, y: 40 } // Even larger reveal (smaller coordinates = bigger reveal)
                   }));
-                  console.log('🎬 PEEL: Card 1 - Large smooth reveal at {x: 40, y: 60}');
+                  console.log('🎬 PEEL: Card 1 - Very large smooth reveal at {x: 25, y: 40}');
                 }, 100);
               
               } else if (cardIndex === 1) {
@@ -78,9 +78,9 @@ export function PeelExperiment() {
                 setTimeout(() => {
                   setPeelPositions(prev => ({
                     ...prev,
-                    [cardIndex]: { x: 40, y: 60 } // Large reveal like Card 1
+                    [cardIndex]: { x: 25, y: 40 } // Even larger reveal like Card 1
                   }));
-                  console.log('🎬 PEEL: Card 3 - Large unfold like Card 1');
+                  console.log('🎬 PEEL: Card 3 - Very large unfold like Card 1');
                 }, 100);
                 
                 // After 2 seconds, switch to Card 2's gentle jiggling animation
@@ -225,7 +225,17 @@ export function PeelExperiment() {
                         corner: "BOTTOM_RIGHT",
                         backShadow: true,
                         bottomShadow: true,
-                        topShadow: true
+                        topShadow: true,
+                        shape: {
+                          rect: {
+                            x: 0,
+                            y: 0,
+                            width: 400,
+                            height: 400,
+                            rx: 16, // Rounded corners - matches rounded-2xl (16px)
+                            ry: 16
+                          }
+                        }
                       }}
                       className="rounded-2xl overflow-hidden aspect-square"
                       height="100%"
