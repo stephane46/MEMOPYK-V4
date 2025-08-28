@@ -106,8 +106,12 @@ export function PeelExperiment() {
               if (prefersReduced) {
                 setPos({ x: 320, y: 320 });
                 console.log(`🎬 PEEL: Card ${cardIndex + 1} - Reduced motion fallback`);
+              } else if (cardIndex === 2) {
+                // CARD 3: No big reveal, just show the arrow immediately
+                console.log(`🎬 PEEL: Card ${cardIndex + 1} - Skipping big reveal for card 3`);
+                setShowArrows(prev => ({ ...prev, [cardIndex]: true }));
               } else {
-                // ALL CARDS: Big reveal for 1 second, then return to normal
+                // CARDS 1 & 2: Big reveal for 1 second, then return to normal
                 springTo(
                   { x: 120, y: 120 },  // Much larger reveal - shows 2/3 of back content
                   {
