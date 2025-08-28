@@ -428,10 +428,9 @@ export function PeelExperiment() {
                             backgroundSize: 'cover',
                             backgroundPosition: 'center',
                             backgroundRepeat: 'no-repeat',
-                            // Card 3: Try 180 degree rotation to make text readable
+                            // Card 3: Remove all transforms to see natural state
                             ...(step.number === 3 ? {
-                              transform: 'rotate(180deg)',
-                              transformOrigin: 'center'
+                              // No transforms - natural state
                             } : {
                               transform: 'scaleX(-1)',
                               transformOrigin: 'center'
