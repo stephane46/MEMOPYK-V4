@@ -442,11 +442,23 @@ export function PeelExperiment() {
                   {/* Auto-Reveal Peel Card Container with Click-to-Flip */}
                   <div 
                     className="mb-4 cursor-pointer"
-                    onClick={() => {
+                    onClick={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      
+                      // Immediately flip the card regardless of animation state
                       setFlippedCards(prev => ({
                         ...prev,
                         [step.number - 1]: !prev[step.number - 1]
                       }));
+                      
+                      // Cancel any running peel animations for this card
+                      const rafMap: Map<number, number> = (window as any).__peelRafMap || new Map();
+                      const animationId = rafMap.get(step.number - 1);
+                      if (animationId) {
+                        cancelAnimationFrame(animationId);
+                        rafMap.delete(step.number - 1);
+                      }
                     }}
                   >
                     <PeelWrapper
@@ -502,23 +514,45 @@ export function PeelExperiment() {
                               </div>
                             </div>
                           ) : (
-                            /* BACK SIDE - Flipped Content */
+                            /* BACK SIDE - Detailed Information (same as main site) */
                             <div 
-                              className="h-full flex flex-col justify-center items-center text-white text-center p-6"
+                              className="h-full flex flex-col cursor-pointer relative px-2 pt-0 pb-2"
                               style={{
-                                transform: 'rotateY(180deg)', // Counter the card flip to make text readable
+                                backgroundImage: `linear-gradient(135deg, rgba(214, 124, 74, 0.92) 0%, rgba(42, 71, 89, 0.92) 100%), url(${step.image})`,
+                                backgroundSize: 'cover',
+                                backgroundPosition: 'center',
+                                backgroundRepeat: 'no-repeat',
+                                transform: 'rotateY(180deg)', // Counter the card flip to make content readable
                                 transformOrigin: 'center'
                               }}
                             >
-                              <div className="w-16 h-16 bg-white/20 rounded-full flex items-center justify-center mb-4">
-                                <span className="text-2xl font-bold">{step.number}</span>
+                              {/* Top Section - Text content area */}
+                              <div className="text-center flex flex-col" style={{ height: '350px', position: 'relative' }}>
+                                <div className="text-sm leading-normal text-white w-full flip-card-text-zero-spacing">
+                                  {(language === 'fr-FR' ? step.descriptionFr : step.descriptionEn).split('\n').map((paragraph, i) => (
+                                    <p key={i} className="m-0 p-0">{paragraph}</p>
+                                  ))}
+                                </div>
+                                
+                                {/* Separator Line - EXACTLY 250px FROM TOP */}
+                                <div className="absolute border-t border-white/40 mx-2 left-2 right-2" style={{ top: '246px' }}></div>
+                                
+                                {/* Bottom Section - Sub Description - EXACTLY 260px FROM TOP */}
+                                <div className="absolute text-center left-2 right-2" style={{ top: '256px' }}>
+                                  <div className="text-xs text-white leading-relaxed w-full">
+                                    {language === 'fr-FR' ? step.subDescriptionFr : step.subDescriptionEn}
+                                  </div>
+                                </div>
                               </div>
-                              <h3 className="text-xl font-bold mb-2">
-                                {language === 'fr-FR' ? step.titleFr : step.titleEn}
-                              </h3>
-                              <p className="text-sm opacity-90">
-                                {language === 'fr-FR' ? 'Cliquez pour retourner' : 'Click to flip back'}
-                              </p>
+                              
+                              {/* Return arrow - Positioned with equal spacing */}
+                              <div className="absolute -bottom-6 -left-6">
+                                <div className="w-10 h-10 bg-white/80 rounded-full flex items-center justify-center hover:bg-white transition-colors shadow-lg">
+                                  <svg className="w-5 h-5 text-memopyk-dark-blue" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                                  </svg>
+                                </div>
+                              </div>
                             </div>
                           )}
                         </div>
