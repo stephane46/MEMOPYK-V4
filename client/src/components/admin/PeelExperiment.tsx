@@ -106,15 +106,15 @@ export function PeelExperiment() {
                 setPos({ x: 320, y: 320 });
                 console.log(`🎬 PEEL: Card ${cardIndex + 1} - Reduced motion fallback`);
               } else {
-                // ALL CARDS: Same simple behavior - animate to corner and stay static
+                // ALL CARDS: Big reveal showing two-thirds of back content
                 springTo(
-                  { x: 320, y: 320 },
+                  { x: 120, y: 120 },  // Much larger reveal - shows 2/3 of back content
                   {
                     stiffness: 0.038,
                     damping: 0.88,
                     onComplete: () => {
-                      // All cards: Just stay static at corner position
-                      console.log(`🎬 PEEL: Card ${cardIndex + 1} - Static corner position set`);
+                      // All cards: Stay at big reveal position
+                      console.log(`🎬 PEEL: Card ${cardIndex + 1} - Big reveal position set`);
                     },
                   }
                 );
