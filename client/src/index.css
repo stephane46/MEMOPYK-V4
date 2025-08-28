@@ -71,6 +71,20 @@ html, body {
   mix-blend-mode: normal !important;
 }
 
+/* Card Back Gradient Background Fix - Following Modal Transparency Solution Pattern */
+.card-back-gradient {
+  background: linear-gradient(to bottom right, white, hsl(201 56% 60% / 0.1)) !important;
+  background-color: white !important;
+  background-image: linear-gradient(to bottom right, white, hsl(201 56% 60% / 0.1)) !important;
+  opacity: 1 !important;
+  backdrop-filter: none !important;
+  filter: none !important;
+  isolation: isolate !important;
+  will-change: auto !important;
+  backface-visibility: hidden !important;
+  mix-blend-mode: normal !important;
+}
+
 /* Ensure all containers respect viewport width */
 .container {
   max-width: 100%;
