@@ -300,7 +300,7 @@ export function PeelExperiment() {
                           // Continue the peel from current position to full reveal (bottom-right completion)
                           setPeelPositions(prev => ({
                             ...prev,
-                            [step.number - 1]: { x: 0, y: 0 } // Complete bottom-right reveal - shows full PeelBack content
+                            [step.number - 1]: { x: -100, y: -100 } // Extreme reveal to show complete PeelBack content
                           }));
                           
                           // Mark as flipped but don't use rotateY - content comes from PeelBack
@@ -468,10 +468,9 @@ export function PeelExperiment() {
                             backgroundSize: 'cover',
                             backgroundPosition: 'center',
                             backgroundRepeat: 'no-repeat',
-                            // Card 3: Apply 270deg rotation to counter the peel effect
+                            // Card 3: Remove rotation to prevent fan-like spinning
                             ...(step.number === 3 ? {
-                              transform: 'rotate(270deg)',
-                              transformOrigin: 'center'
+                              // No transform to prevent rotation issues
                             } : {
                               transform: 'scaleX(-1)',
                               transformOrigin: 'center'
