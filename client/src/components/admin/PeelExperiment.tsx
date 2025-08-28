@@ -320,9 +320,7 @@ export function PeelExperiment() {
                             backgroundSize: 'cover',
                             backgroundPosition: 'center',
                             backgroundRepeat: 'no-repeat',
-                            // ALL CARDS: Same transform
-                            transform: 'rotateY(180deg)',
-                            transformOrigin: 'center'
+                            // No transform on container - let peel effect show naturally
                           }}
                         >
                           <div 
