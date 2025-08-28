@@ -186,13 +186,13 @@ export default function PeelExperiment() {
                               </div>
                             ) : (
                               <div 
-                                className="h-full flex flex-col cursor-pointer relative card-back-orange"
+                                className="h-full flex flex-col cursor-pointer relative bg-gradient-to-br from-white to-memopyk-sky-blue/10"
                                 style={{
                                   transformOrigin: 'center'
                                 }}
                               >
                                 <div className="text-center flex flex-col p-4" style={{ height: '100%', position: 'relative' }}>
-                                  <div className="text-sm leading-normal text-white w-full" style={{ height: '66%', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+                                  <div className="text-sm leading-normal text-memopyk-navy w-full" style={{ height: '66%', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
                                     {step.number === 1 && language === 'fr-FR' && (
                                       <>
                                         <p className="mb-3">Envoyez-nous toutes vos photos et vidéos, même par milliers.</p>
@@ -232,11 +232,11 @@ export default function PeelExperiment() {
                                   </div>
                                   
                                   {/* Separator Line - Fixed at 2/3 Position */}
-                                  <div className="border-t border-white/40 mx-6" style={{ position: 'absolute', top: '66%', left: '0', right: '0' }}></div>
+                                  <div className="border-t border-memopyk-navy/40 mx-6" style={{ position: 'absolute', top: '66%', left: '0', right: '0' }}></div>
                                   
                                   {/* Bottom Section - Bold Text Same Size */}
                                   <div className="text-center" style={{ position: 'absolute', bottom: '16px', left: '16px', right: '16px' }}>
-                                    <div className="text-sm text-white leading-relaxed font-bold">
+                                    <div className="text-sm text-memopyk-navy leading-relaxed font-bold">
                                       {step.number === 1 && language === 'fr-FR' && (
                                         <>
                                           <p className="mb-2">Libérez-vous de la sélection : nous trouvons les moments forts pour créer votre histoire.</p>
@@ -279,7 +279,7 @@ export default function PeelExperiment() {
                       <PeelBack>
                         {/* All Cards 1, 2 & 3: Full back side content */}
                           <div 
-                            className="shadow-lg rounded-2xl overflow-hidden border border-gray-200 h-full card-back-orange"
+                            className="shadow-lg rounded-2xl overflow-hidden border border-gray-200 h-full bg-gradient-to-br from-white to-memopyk-sky-blue/10"
                           >
                             <div 
                               className="h-full flex flex-col justify-between p-4"
@@ -287,7 +287,7 @@ export default function PeelExperiment() {
                                 transform: 'rotate(270deg)'
                               }}
                             >
-                              <div className="text-center text-white" style={{ height: '100%', position: 'relative' }}>
+                              <div className="text-center text-memopyk-navy" style={{ height: '100%', position: 'relative' }}>
                                 <div className="text-sm leading-normal" style={{ height: '66%', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
                                   {step.number === 1 && language === 'fr-FR' && (
                                     <>
@@ -327,9 +327,9 @@ export default function PeelExperiment() {
                                   )}
                                 </div>
                                 
-                                <div className="border-t border-white/40 mx-6" style={{ position: 'absolute', top: '66%', left: '0', right: '0' }}></div>
+                                <div className="border-t border-memopyk-navy/40 mx-6" style={{ position: 'absolute', top: '66%', left: '0', right: '0' }}></div>
                                 
-                                <div className="text-sm text-white leading-relaxed font-bold" style={{ position: 'absolute', bottom: '16px', left: '16px', right: '16px' }}>
+                                <div className="text-sm text-memopyk-navy leading-relaxed font-bold" style={{ position: 'absolute', bottom: '16px', left: '16px', right: '16px' }}>
                                   {step.number === 1 && language === 'fr-FR' && (
                                     <>
                                       <p className="mb-2">Libérez-vous de la sélection : nous trouvons les moments forts pour créer votre histoire.</p>
