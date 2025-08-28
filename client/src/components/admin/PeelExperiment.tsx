@@ -280,18 +280,64 @@ export function PeelExperiment() {
                       e.preventDefault();
                       e.stopPropagation();
                       
-                      // Immediately flip the card regardless of animation state
-                      setFlippedCards(prev => ({
-                        ...prev,
-                        [step.number - 1]: !prev[step.number - 1]
-                      }));
-                      
-                      // Cancel any running peel animations for this card
-                      const rafMap: Map<number, number> = (window as any).__peelRafMap || new Map();
-                      const animationId = rafMap.get(step.number - 1);
-                      if (animationId) {
-                        cancelAnimationFrame(animationId);
-                        rafMap.delete(step.number - 1);
+                      // Card 3: Continue the peel motion into flip (natural transition)
+                      if (step.number === 3) {
+                        // Get current peel position
+                        const currentPos = peelPositions[step.number - 1] || { x: 320, y: 320 };
+                        
+                        // Cancel any current animations
+                        const rafMap: Map<number, number> = (window as any).__peelRafMap || new Map();
+                        const cancelId = rafMap.get(step.number - 1);
+                        if (cancelId) {
+                          cancelAnimationFrame(cancelId);
+                          rafMap.delete(step.number - 1);
+                        }
+                        
+                        if (!flippedCards[step.number - 1]) {
+                          // FRONT → BACK: Smooth peel reveal transition
+                          console.log(`🎬 PEEL-CLICK: Card 3 - Continuing peel motion from {x: ${currentPos.x}, y: ${currentPos.y}}`);
+                          
+                          // Continue the peel from current position to full reveal
+                          setPeelPositions(prev => ({
+                            ...prev,
+                            [step.number - 1]: { x: 10, y: 10 } // Almost complete reveal
+                          }));
+                          
+                          // After brief reveal, flip the card
+                          setTimeout(() => {
+                            setFlippedCards(prev => ({
+                              ...prev,
+                              [step.number - 1]: true
+                            }));
+                            // Reset peel position after flip
+                            setTimeout(() => {
+                              setPeelPositions(prev => ({
+                                ...prev,
+                                [step.number - 1]: { x: 320, y: 320 }
+                              }));
+                            }, 100);
+                          }, 300);
+                        } else {
+                          // BACK → FRONT: Instant flip back (simpler)
+                          setFlippedCards(prev => ({
+                            ...prev,
+                            [step.number - 1]: false
+                          }));
+                        }
+                      } else {
+                        // Cards 1 & 2: Keep original instant flip behavior
+                        setFlippedCards(prev => ({
+                          ...prev,
+                          [step.number - 1]: !prev[step.number - 1]
+                        }));
+                        
+                        // Cancel any running peel animations for this card
+                        const rafMap: Map<number, number> = (window as any).__peelRafMap || new Map();
+                        const animationId = rafMap.get(step.number - 1);
+                        if (animationId) {
+                          cancelAnimationFrame(animationId);
+                          rafMap.delete(step.number - 1);
+                        }
                       }
                     }}
                   >
