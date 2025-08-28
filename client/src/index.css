@@ -73,8 +73,8 @@ html, body {
 
 /* Card Back Gradient Background Fix - Following Modal Transparency Solution Pattern */
 .card-back-gradient {
-  background: linear-gradient(to bottom right, white, rgb(137 186 217 / 0.1)) !important;
-  background-color: white !important;
+  background: linear-gradient(to bottom right, #2A4759, #011526, #2A4759) !important;
+  background-color: #2A4759 !important;
   opacity: 1 !important;
   backdrop-filter: none !important;
   filter: none !important;
