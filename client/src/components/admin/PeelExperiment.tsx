@@ -75,21 +75,21 @@ export default function PeelExperiment() {
     {
       number: 1,
       icon: Upload,
-      titleFr: "Transmission & Tri",
+      titleFr: "Transmission & Collecte",
       titleEn: "You Upload",
       image: "/images/How_we_work_Step1.png"
     },
     {
       number: 2,
       icon: Edit,
-      titleFr: "Sélection & Création", 
+      titleFr: "Sélection & Analyse", 
       titleEn: "We Create",
       image: "/images/How_we_work_Step2.png"
     },
     {
       number: 3,
       icon: Heart,
-      titleFr: "Montage & Validation",
+      titleFr: "Montage & Création",
       titleEn: "You Enjoy & Share", 
       image: "/images/How_we_work_Step3.png"
     }
@@ -191,8 +191,8 @@ export default function PeelExperiment() {
                                   <div className="text-sm leading-normal text-white w-full" style={{ height: '66%', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
                                     {step.number === 1 && language === 'fr-FR' && (
                                       <>
-                                        <p className="mb-3">Envoyez-nous toutes vos photos et vidéos, même par milliers.</p>
-                                        <p className="mb-3">Nous trions, sélectionnons et gardons uniquement les plus belles, selon ce que vous souhaitez partager via notre formulaire ou un appel téléphonique gratuit.</p>
+                                        <p className="mb-3">Envoyez-nous vos photos et vidéos telles quelles</p>
+                                        <p className="mb-3">Dites-nous tout ce que vous avez en tête, via notre questionnaire, ou la séance de consultation gratuite</p>
                                       </>
                                     )}
                                     {step.number === 1 && language === 'en-US' && (
@@ -211,7 +211,7 @@ export default function PeelExperiment() {
                                     <div className="text-sm text-white leading-relaxed font-bold">
                                       {step.number === 1 && language === 'fr-FR' && (
                                         <>
-                                          <p className="mb-2">Libérez-vous de la sélection : nous trouvons les moments forts pour créer votre histoire.</p>
+                                          <p className="mb-2">Le transfert des éléments se fait en quelques clics. Nous sommes à votre écoute pour bien comprendre votre vision.</p>
                                         </>
                                       )}
                                       {step.number === 1 && language === 'en-US' && (
@@ -273,8 +273,8 @@ export default function PeelExperiment() {
                                   <div className="text-sm leading-normal text-white w-full" style={{ height: '66%', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
                                     {step.number === 1 && language === 'fr-FR' && (
                                       <>
-                                        <p className="mb-3">Envoyez-nous toutes vos photos et vidéos, même par milliers.</p>
-                                        <p className="mb-3">Nous trions, sélectionnons et gardons uniquement les plus belles, selon ce que vous souhaitez partager via notre formulaire ou un appel téléphonique gratuit.</p>
+                                        <p className="mb-3">Envoyez-nous vos photos et vidéos telles quelles</p>
+                                        <p className="mb-3">Dites-nous tout ce que vous avez en tête, via notre questionnaire, ou la séance de consultation gratuite</p>
                                       </>
                                     )}
                                     {step.number === 1 && language === 'en-US' && (
@@ -285,7 +285,7 @@ export default function PeelExperiment() {
                                     )}
                                     {step.number === 2 && language === 'fr-FR' && (
                                       <>
-                                        <p className="mb-3">Nous construisons le scénario à partir des meilleures images, avec la musique, le rythme et le format qui vous correspondent.</p>
+                                        <p className="mb-3">Nous trions, sélectionnons et gardons uniquement le meilleur. Nous construisons le scénario avec la musique, le rythme et le format qui vous correspondent.</p>
                                         <p className="mb-3">Vous recevez un devis clair et adapté avant tout travail.</p>
                                       </>
                                     )}
@@ -317,7 +317,7 @@ export default function PeelExperiment() {
                                     <div className="text-sm text-white leading-relaxed font-bold">
                                       {step.number === 1 && language === 'fr-FR' && (
                                         <>
-                                          <p className="mb-2">Libérez-vous de la sélection : nous trouvons les moments forts pour créer votre histoire.</p>
+                                          <p className="mb-2">Le transfert des éléments se fait en quelques clics. Nous sommes à votre écoute pour bien comprendre votre vision.</p>
                                         </>
                                       )}
                                       {step.number === 1 && language === 'en-US' && (
@@ -337,7 +337,7 @@ export default function PeelExperiment() {
                                       )}
                                       {step.number === 3 && language === 'fr-FR' && (
                                         <>
-                                          <p className="mb-2">Un souvenir unique, livré rapidement et parfaitement ajusté à vos envies.</p>
+                                          <p className="mb-2">Un film souvenir unique, livré à temps et parfaitement ajusté à vos envies.</p>
                                         </>
                                       )}
                                       {step.number === 3 && language === 'en-US' && (
@@ -470,7 +470,7 @@ export default function PeelExperiment() {
                               transformStyle: 'preserve-3d',
                               borderBottomColor: flippedCards[step.number - 1] 
                                 ? 'white' 
-                                : 'rgba(214, 124, 74, 0.92)', // Match back side gradient start color
+                                : 'rgba(42, 71, 89, 0.92)', // Match back side gradient end color (dark blue)
                             }}
                           />
                           {/* Dotted diagonal line for the peel effect */}
