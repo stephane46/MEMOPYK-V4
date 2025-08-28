@@ -22,131 +22,34 @@ export function PeelExperiment() {
             setHasTriggeredReveal(prev => ({ ...prev, [cardIndex]: true }));
             
             setTimeout(() => {
-              // === Universal Card Animation: Smooth float to corner position ===
-              console.log(`🎬 PEEL: Card ${cardIndex + 1} - Smooth float to corner position`);
-
-              // Cancel any in-flight animation for this card
-              const rafMap: Map<number, number> =
-                (window as any).__peelRafMap || ((window as any).__peelRafMap = new Map());
-              const cancelPrev = () => {
-                const id = rafMap.get(cardIndex);
-                if (id) cancelAnimationFrame(id);
-              };
-              const schedule = (fn: FrameRequestCallback) => {
-                const id = requestAnimationFrame(fn);
-                rafMap.set(cardIndex, id);
-                return id;
-              };
-
-              // Ensure a known starting point
-              setPeelPositions(prev => ({
-                ...prev,
-                [cardIndex]: prev[cardIndex] ?? { x: 200, y: 200 },
-              }));
-
-              type Vec = { x: number; y: number };
-              const setPos = (v: Vec) =>
-                setPeelPositions(p => ({ ...p, [cardIndex]: v }));
-
-              // Local spring state for this run (natural "paper" feel)
-              const state = {
-                x: peelPositions[cardIndex]?.x ?? 200,
-                y: peelPositions[cardIndex]?.y ?? 200,
-                vx: 0,
-                vy: 0,
-              };
-
-              // Lightweight spring tween (Hooke's law + damping)
-              const springTo = (
-                to: Vec,
-                opts?: {
-                  stiffness?: number; // higher = quicker
-                  damping?: number;   // lower = bouncier (0.75–0.9 sweet spot)
-                  snapSpeed?: number; // stop when velocity is tiny
-                  snapDist?: number;  // and when distance is tiny
-                  onComplete?: () => void;
-                }
-              ) => {
-                const stiffness = opts?.stiffness ?? 0.045;
-                const damping   = opts?.damping   ?? 0.82;
-                const snapSpeed = opts?.snapSpeed ?? 0.06;
-                const snapDist  = opts?.snapDist  ?? 0.75;
-
-                cancelPrev();
-
-                const step = () => {
-                  const dx = to.x - state.x;
-                  const dy = to.y - state.y;
-
-                  state.vx = (state.vx + dx * stiffness) * damping;
-                  state.vy = (state.vy + dy * stiffness) * damping;
-
-                  state.x += state.vx;
-                  state.y += state.vy;
-
-                  setPos({ x: state.x, y: state.y });
-
-                  const speed = Math.hypot(state.vx, state.vy);
-                  const dist  = Math.hypot(dx, dy);
-
-                  if (speed < snapSpeed && dist < snapDist) {
-                    setPos({ x: to.x, y: to.y }); // snap exact, avoid sub-pixel drift
-                    opts?.onComplete && opts.onComplete();
-                    return;
-                  }
-                  schedule(step);
-                };
-
-                schedule(step);
-              };
-
-
-              // Respect reduced motion
-              const prefersReduced =
-                typeof window !== 'undefined' &&
-                window.matchMedia &&
-                window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-
-              if (prefersReduced) {
-                setPos({ x: 320, y: 320 });
-                console.log(`🎬 PEEL: Card ${cardIndex + 1} - Reduced motion fallback`);
-              } else if (cardIndex === 2) {
+              console.log(`🎬 PEEL: Card ${cardIndex + 1} - Simple reveal animation`);
+              
+              if (cardIndex === 2) {
                 // CARD 3: No big reveal, just show the arrow immediately
-                console.log(`🎬 PEEL: Card ${cardIndex + 1} - Skipping big reveal for card 3`);
+                console.log(`🎬 PEEL: Card ${cardIndex + 1} - Showing arrow for card 3`);
                 setShowArrows(prev => ({ ...prev, [cardIndex]: true }));
               } else {
-                // CARDS 1 & 2: Big reveal then immediate smooth return
-                springTo(
-                  { x: 120, y: 120 },  // Much larger reveal - shows 2/3 of back content
-                  {
-                    stiffness: 0.1,     // Much stiffer - no oscillation
-                    damping: 1.0,       // Maximum damping - no overshoot
-                    onComplete: () => {
-                      console.log(`🎬 PEEL: Card ${cardIndex + 1} - Big reveal shown, immediately returning`);
-                      // Immediately smooth return to normal - no delay
-                      springTo(
-                        { x: 200, y: 200 }, // Return to normal position
-                        {
-                          stiffness: 0.12,   // Even stiffer for smooth return
-                          damping: 1.0,      // Maximum damping - no bounce
-                          onComplete: () => {
-                            // Remove the peel position completely - no corner visible
-                            setPeelPositions(prev => {
-                              const newPos = { ...prev };
-                              delete newPos[cardIndex];
-                              return newPos;
-                            });
-                            // Show orange arrow indicator after returning to normal (only for card 1)
-                            if (cardIndex === 0) {
-                              setShowArrows(prev => ({ ...prev, [cardIndex]: true }));
-                            }
-                            console.log(`🎬 PEEL: Card ${cardIndex + 1} - Smoothly returned to normal`);
-                          }
-                        }
-                      );
-                    },
+                // CARDS 1 & 2: Simple reveal sequence
+                console.log(`🎬 PEEL: Card ${cardIndex + 1} - Starting reveal for cards 1&2`);
+                
+                // Step 1: Reveal
+                setPeelPositions(prev => ({ ...prev, [cardIndex]: { x: 120, y: 120 } }));
+                
+                // Step 2: Return after a short time
+                setTimeout(() => {
+                  setPeelPositions(prev => {
+                    const newPos = { ...prev };
+                    delete newPos[cardIndex]; // Remove position = return to normal
+                    return newPos;
+                  });
+                  
+                  // Step 3: Show arrow (only for card 1)
+                  if (cardIndex === 0) {
+                    setShowArrows(prev => ({ ...prev, [cardIndex]: true }));
                   }
-                );
+                  
+                  console.log(`🎬 PEEL: Card ${cardIndex + 1} - Animation complete`);
+                }, 1000); // 1 second reveal duration
               }
             }, 300);
           } else {
