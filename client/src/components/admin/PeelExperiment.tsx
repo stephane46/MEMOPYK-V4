@@ -341,6 +341,21 @@ export function PeelExperiment() {
                                 animation: 'cornerPeel 2s ease-in-out infinite'
                               }}
                             />
+                            {/* Dotted diagonal line along the hypotenuse */}
+                            <div 
+                              className="absolute"
+                              style={{
+                                top: '0px',
+                                right: '0px',
+                                width: '40px',
+                                height: '2px',
+                                background: 'linear-gradient(45deg, white 50%, #D67C4A 50%)',
+                                backgroundSize: '4px 4px',
+                                transform: 'rotate(-45deg)',
+                                transformOrigin: 'top right',
+                                opacity: 0.8
+                              }}
+                            />
                             <div 
                               className="absolute bottom-0 right-0"
                               style={{
