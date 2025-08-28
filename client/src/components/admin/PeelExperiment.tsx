@@ -369,15 +369,15 @@ export function PeelExperiment() {
                     {/* Orange Arrow Indicator - Always visible after first reveal */}
                     {showArrows[step.number - 1] && (
                       <div className="absolute bottom-3 right-3 pointer-events-none z-50">
-                        <div className="bg-memopyk-orange text-white p-2 rounded-full shadow-lg animate-pulse">
+                        <div className="bg-memopyk-orange text-white p-2 rounded-full shadow-lg animate-pulse flex items-center justify-center">
                           <svg 
-                            width="20" 
-                            height="20" 
-                            viewBox="0 0 20 20" 
+                            width="16" 
+                            height="16" 
+                            viewBox="0 0 16 16" 
                             fill="currentColor"
                           >
-                            {/* Simple arrow pointing to top-left */}
-                            <path d="M4 4 L4 10 L6 8 L10 12 L12 10 L8 6 L10 4 Z" />
+                            {/* Centered arrow pointing to top-left */}
+                            <path d="M2 2 L2 8 L4 6 L8 10 L10 8 L6 4 L8 2 Z" />
                           </svg>
                         </div>
                       </div>
