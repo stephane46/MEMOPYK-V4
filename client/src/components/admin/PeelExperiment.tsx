@@ -185,13 +185,9 @@ export default function PeelExperiment() {
                               </div>
                             ) : (
                               <div 
-                                className="h-full flex flex-col cursor-pointer relative card-back-gradient"
+                                className="h-full flex flex-col cursor-pointer relative bg-gradient-to-br from-memopyk-dark-blue via-memopyk-navy to-memopyk-dark-blue"
                                 style={{
-                                  transformOrigin: 'center',
-                                  backgroundImage: `url(${step.image})`,
-                                  backgroundSize: 'contain',
-                                  backgroundPosition: 'center',
-                                  backgroundRepeat: 'no-repeat'
+                                  transformOrigin: 'center'
                                 }}
                               >
                                 <div className="text-center flex flex-col p-4" style={{ height: '100%', position: 'relative' }}>
@@ -282,13 +278,7 @@ export default function PeelExperiment() {
                       <PeelBack>
                         {/* All Cards 1, 2 & 3: Full back side content */}
                           <div 
-                            className="shadow-lg rounded-2xl overflow-hidden border border-gray-200 h-full card-back-gradient"
-                            style={{
-                              backgroundImage: `url(${step.image})`,
-                              backgroundSize: 'contain',
-                              backgroundPosition: 'center',
-                              backgroundRepeat: 'no-repeat'
-                            }}
+                            className="shadow-lg rounded-2xl overflow-hidden border border-gray-200 h-full bg-gradient-to-br from-memopyk-dark-blue via-memopyk-navy to-memopyk-dark-blue"
                           >
                             <div 
                               className="h-full flex flex-col justify-between p-4"
