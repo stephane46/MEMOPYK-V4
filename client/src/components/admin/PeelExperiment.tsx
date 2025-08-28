@@ -370,17 +370,25 @@ export function PeelExperiment() {
                     {showArrows[step.number - 1] && (
                       <div className="absolute bottom-0 right-0 pointer-events-none z-50">
                         {step.number === 3 ? (
-                          /* Card 3: Orange rectangle corner tip with arrow */
-                          <div className="bg-memopyk-orange text-white px-3 py-2 shadow-lg animate-pulse flex items-center justify-center">
-                            <svg 
-                              width="16" 
-                              height="16" 
-                              viewBox="0 0 16 16" 
-                              fill="currentColor"
-                            >
-                              {/* Arrow pointing to top-left */}
-                              <path d="M4 4 L4 9 L6 7 L10 11 L12 9 L8 5 L10 4 Z" />
-                            </svg>
+                          /* Card 3: Orange triangle corner tip with arrow */
+                          <div className="relative">
+                            <div 
+                              className="w-0 h-0 border-l-[40px] border-b-[40px] border-l-transparent border-b-memopyk-orange shadow-lg"
+                              style={{
+                                filter: 'drop-shadow(0 4px 6px rgb(0 0 0 / 0.1))'
+                              }}
+                            />
+                            <div className="absolute bottom-2 right-2 animate-pulse">
+                              <svg 
+                                width="12" 
+                                height="12" 
+                                viewBox="0 0 16 16" 
+                                fill="white"
+                              >
+                                {/* Arrow pointing to top-left */}
+                                <path d="M4 4 L4 9 L6 7 L10 11 L12 9 L8 5 L10 4 Z" />
+                              </svg>
+                            </div>
                           </div>
                         ) : (
                           /* Cards 1 & 2: Orange circle with arrow */
