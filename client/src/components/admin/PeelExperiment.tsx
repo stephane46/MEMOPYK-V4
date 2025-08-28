@@ -17,39 +17,39 @@ export function PeelExperiment() {
           if (entry.isIntersecting) {
             setTimeout(() => {
               if (cardIndex === 0) {
-                // Card 1: Very very large reveal - half of the card
-                console.log('🎬 PEEL: Card 1 - VERY VERY LARGE reveal (half card)');
+                // Card 1: KEEP EXACTLY AS-IS (working correctly) - was Card 2
+                console.log('🎬 PEEL: Card 1 - 50% reveal effect triggered (unchanged)');
                 setPeelPositions(prev => ({
                   ...prev,
-                  [cardIndex]: { x: 50, y: 50 } // Very very large reveal - half the card
+                  [cardIndex]: { x: 200, y: 200 } // 50% reveal (unchanged)
                 }));
-                console.log('🎬 PEEL: Card 1 - Half card reveal at {x: 50, y: 50}');
+                console.log('🎬 PEEL: Card 1 - 50% reveal set at {x: 200, y: 200}');
               
               } else if (cardIndex === 1) {
-                // Card 2: Small reveal - just bottom right corner
-                console.log('🎬 PEEL: Card 2 - Small corner reveal');
+                // Card 2: Very large reveal - was Card 1
+                console.log('🎬 PEEL: Card 2 - VERY LARGE reveal from BOTTOM_RIGHT');
                 setPeelPositions(prev => ({
                   ...prev,
-                  [cardIndex]: { x: 360, y: 340 } // Small corner reveal
+                  [cardIndex]: { x: 100, y: 100 } // Very large reveal (smaller coordinates = bigger reveal)
                 }));
-                console.log('🎬 PEEL: Card 2 - Small corner at {x: 360, y: 340}');
+                console.log('🎬 PEEL: Card 2 - Very large reveal at {x: 100, y: 100}');
               
               } else {
-                // Card 3: Combination sequence - Card 1's animation FIRST, then Card 2's animation
-                console.log('🎬 PEEL: Card 3 - Starting sequence: Card 1 animation (very very large reveal)');
+                // Card 3: Combination sequence - Card 2's animation FIRST, then Card 1's animation
+                console.log('🎬 PEEL: Card 3 - Starting sequence: Card 2 animation (very large reveal)');
                 setPeelPositions(prev => ({
                   ...prev,
-                  [cardIndex]: { x: 50, y: 50 } // Card 1's very very large reveal FIRST
+                  [cardIndex]: { x: 100, y: 100 } // Card 2's very large reveal FIRST
                 }));
                 
-                // After 2 seconds, switch to Card 2's animation
+                // After 2 seconds, switch to Card 1's animation
                 setTimeout(() => {
-                  console.log('🎬 PEEL: Card 3 - Switching to Card 2 animation (small corner)');
+                  console.log('🎬 PEEL: Card 3 - Switching to Card 1 animation (moderate reveal)');
                   setPeelPositions(prev => ({
                     ...prev,
-                    [cardIndex]: { x: 360, y: 340 } // Card 2's small corner
+                    [cardIndex]: { x: 200, y: 200 } // Card 1's moderate reveal
                   }));
-                  console.log('🎬 PEEL: Card 3 - Final state: small corner at {x: 360, y: 340}');
+                  console.log('🎬 PEEL: Card 3 - Final state: moderate reveal at {x: 200, y: 200}');
                 }, 2000);
               }
             }, 300);
@@ -205,23 +205,41 @@ export function PeelExperiment() {
                       </PeelTop>
                       
                       <PeelBack>
-                        {/* BACK SIDE - Clean, readable content */}
-                        <div className="bg-gradient-to-br from-memopyk-orange to-memopyk-navy shadow-lg rounded-2xl border border-gray-200 h-full flex flex-col justify-center p-6">
-                          <div className="text-center text-white">
-                            {/* Icon */}
-                            <div className="w-16 h-16 bg-white/20 rounded-full flex items-center justify-center mx-auto mb-4">
-                              <Icon className="w-8 h-8 text-white" />
+                        {/* BACK SIDE - Detailed Information (revealed with auto-peel) */}
+                        <div 
+                          className="shadow-lg rounded-2xl overflow-hidden border border-gray-200 h-full"
+                          style={{
+                            backgroundImage: `linear-gradient(135deg, rgba(214, 124, 74, 0.92) 0%, rgba(42, 71, 89, 0.92) 100%), url(${step.image})`,
+                            backgroundSize: 'cover',
+                            backgroundPosition: 'center',
+                            backgroundRepeat: 'no-repeat',
+                            transform: 'scaleX(-1)', // Flip horizontally to counter the peel effect rotation
+                            transformOrigin: 'center'
+                          }}
+                        >
+                          <div 
+                            className="h-full flex flex-col justify-between p-4"
+                            style={{
+                              transform: 'scaleX(-1)', // Double flip to make text readable again
+                              transformOrigin: 'center'
+                            }}
+                          >
+                            {/* Main Content */}
+                            <div className="text-center text-white">
+                              <div className="text-sm leading-normal mb-4">
+                                {(language === 'fr-FR' ? step.descriptionFr : step.descriptionEn).split('\n').map((paragraph, i) => (
+                                  <p key={i} className="mb-2">{paragraph}</p>
+                                ))}
+                              </div>
+                              
+                              {/* Separator Line */}
+                              <div className="border-t border-white/40 my-4"></div>
+                              
+                              {/* Sub Description */}
+                              <div className="text-xs text-white leading-relaxed">
+                                {language === 'fr-FR' ? step.subDescriptionFr : step.subDescriptionEn}
+                              </div>
                             </div>
-                            
-                            {/* Title */}
-                            <h3 className="text-xl font-bold mb-3">
-                              {language === 'fr-FR' ? step.titleFr : step.titleEn}
-                            </h3>
-                            
-                            {/* Simple description */}
-                            <p className="text-sm text-white/90 leading-relaxed">
-                              {language === 'fr-FR' ? step.subDescriptionFr : step.subDescriptionEn}
-                            </p>
                           </div>
                         </div>
                       </PeelBack>
