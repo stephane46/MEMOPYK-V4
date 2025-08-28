@@ -24537,8 +24537,8 @@
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-28T09:15:10.071Z",
-    "updated_at": "2025-08-28T09:25:39.949Z",
-    "duration": 1368903
+    "updated_at": "2025-08-28T09:33:10.158Z",
+    "duration": 1369353
   },
   {
     "id": "f5b9985e-fe8a-49e4-a296-88af6b9c623f",
@@ -24554,7 +24554,23 @@
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-28T09:25:20.131Z",
-    "updated_at": "2025-08-28T09:25:51.858Z",
-    "duration": 952320
+    "updated_at": "2025-08-28T09:33:06.143Z",
+    "duration": 952755
+  },
+  {
+    "id": "886335d8-7c30-4df3-b095-cd4850ac2271",
+    "session_id": "session_1756373613723_jk0zlmsfr",
+    "user_id": null,
+    "ip_address": "109.17.150.48",
+    "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36 Edg/139.0.0.0",
+    "referrer": "https://365df2cf-1884-444c-a9e8-235602456363-00-37q39xpqlgvdy.janeway.replit.dev/__replco/workspace_iframe.html?initialPath=%2F&id=%3Arosl%3A",
+    "language": "fr-FR",
+    "country": "Unknown",
+    "city": "Unknown",
+    "page_views": 0,
+    "is_bot": false,
+    "is_test_data": false,
+    "created_at": "2025-08-28T09:33:33.758Z",
+    "updated_at": "2025-08-28T09:33:33.924Z"
   }
 ]

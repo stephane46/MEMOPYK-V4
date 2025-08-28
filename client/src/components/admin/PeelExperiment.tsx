@@ -297,10 +297,10 @@ export function PeelExperiment() {
                           // FRONT → BACK: Continue peel motion to reveal back content
                           console.log(`🎬 PEEL-CLICK: Card 3 - Continuing peel motion from {x: ${currentPos.x}, y: ${currentPos.y}}`);
                           
-                          // Continue the peel from current position to full reveal
+                          // Continue the peel from current position to full reveal (bottom-right completion)
                           setPeelPositions(prev => ({
                             ...prev,
-                            [step.number - 1]: { x: 10, y: 10 } // Full reveal - shows PeelBack content
+                            [step.number - 1]: { x: 0, y: 0 } // Complete bottom-right reveal - shows full PeelBack content
                           }));
                           
                           // Mark as flipped but don't use rotateY - content comes from PeelBack
