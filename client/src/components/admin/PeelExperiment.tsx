@@ -106,15 +106,27 @@ export function PeelExperiment() {
                 setPos({ x: 320, y: 320 });
                 console.log(`🎬 PEEL: Card ${cardIndex + 1} - Reduced motion fallback`);
               } else {
-                // ALL CARDS: Big reveal showing two-thirds of back content
+                // ALL CARDS: Big reveal for 1 second, then return to normal
                 springTo(
                   { x: 120, y: 120 },  // Much larger reveal - shows 2/3 of back content
                   {
                     stiffness: 0.038,
                     damping: 0.88,
                     onComplete: () => {
-                      // All cards: Stay at big reveal position
-                      console.log(`🎬 PEEL: Card ${cardIndex + 1} - Big reveal position set`);
+                      console.log(`🎬 PEEL: Card ${cardIndex + 1} - Big reveal shown`);
+                      // Wait 1 second, then return to normal
+                      setTimeout(() => {
+                        springTo(
+                          { x: 200, y: 200 },  // Return to normal position
+                          {
+                            stiffness: 0.045,
+                            damping: 0.85,
+                            onComplete: () => {
+                              console.log(`🎬 PEEL: Card ${cardIndex + 1} - Returned to normal`);
+                            },
+                          }
+                        );
+                      }, 1000);
                     },
                   }
                 );
@@ -281,8 +293,7 @@ export function PeelExperiment() {
                                   backgroundSize: 'cover',
                                   backgroundPosition: 'center',
                                   backgroundRepeat: 'no-repeat',
-                                  // Back content when clicked - needs counter-rotation to be readable
-                                  transform: 'rotateY(180deg)',
+                                  // No transform - let content appear naturally
                                   transformOrigin: 'center'
                                 }}
                               >
