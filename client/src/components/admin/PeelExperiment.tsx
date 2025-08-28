@@ -8,6 +8,7 @@ export function PeelExperiment() {
   const [peelPositions, setPeelPositions] = useState<{[key: number]: {x: number, y: number}}>({});
   const [flippedCards, setFlippedCards] = useState<{ [key: number]: boolean }>({});
   const [showArrows, setShowArrows] = useState<{ [key: number]: boolean }>({});
+  const [hasTriggeredReveal, setHasTriggeredReveal] = useState<{ [key: number]: boolean }>({});
   const cardRefs = useRef<(HTMLDivElement | null)[]>([]);
   
   useEffect(() => {
@@ -16,7 +17,10 @@ export function PeelExperiment() {
         entries.forEach((entry) => {
           const cardIndex = parseInt(entry.target.getAttribute('data-card-index') || '0');
           
-          if (entry.isIntersecting) {
+          if (entry.isIntersecting && !hasTriggeredReveal[cardIndex]) {
+            // Mark this card as having triggered its reveal
+            setHasTriggeredReveal(prev => ({ ...prev, [cardIndex]: true }));
+            
             setTimeout(() => {
               // === Universal Card Animation: Smooth float to corner position ===
               console.log(`🎬 PEEL: Card ${cardIndex + 1} - Smooth float to corner position`);
