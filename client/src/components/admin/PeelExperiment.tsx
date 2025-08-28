@@ -253,8 +253,7 @@ export function PeelExperiment() {
                             flippedCards[step.number - 1] ? 'bg-gradient-to-br from-green-500 to-emerald-600' : 'bg-white'
                           }`}
                           style={{
-                            // ALL CARDS: Same simple flip transform
-                            transform: flippedCards[step.number - 1] ? 'rotateY(180deg)' : 'rotateY(0deg)',
+                            // Remove flip transform - let react-peel handle the visual effect
                             transformStyle: 'preserve-3d'
                           }}
                         >
@@ -282,7 +281,8 @@ export function PeelExperiment() {
                                   backgroundSize: 'cover',
                                   backgroundPosition: 'center',
                                   backgroundRepeat: 'no-repeat',
-                                  // No transform needed - let the card flip naturally
+                                  // Back content when clicked - needs counter-rotation to be readable
+                                  transform: 'rotateY(180deg)',
                                   transformOrigin: 'center'
                                 }}
                               >
