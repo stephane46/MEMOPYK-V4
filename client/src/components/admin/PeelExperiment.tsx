@@ -393,26 +393,18 @@ export function PeelExperiment() {
                                 {/* Card 2: Animated Bottom-Right Corner "Bill" - Always Visible */}
                                 {step.number === 2 && (
                                   <div 
-                                    className="absolute bottom-0 right-0 w-8 h-8 transform origin-bottom-right"
+                                    className="absolute bottom-0 right-0 w-6 h-6 z-10"
                                     style={{
                                       clipPath: 'polygon(100% 0%, 100% 100%, 0% 100%)',
                                       animation: 'peelFloat 3s ease-in-out infinite alternate, peelGlow 2s ease-in-out infinite',
-                                      // Show opposite side content in the notch
-                                      backgroundImage: flippedCards[step.number - 1] 
-                                        ? `url(${step.image})` // Back side shows front image
-                                        : `linear-gradient(135deg, rgba(214, 124, 74, 0.92) 0%, rgba(42, 71, 89, 0.92) 100%), url(${step.image})`, // Front side shows back gradient
+                                      // Show gradient preview of back side when on front
+                                      background: flippedCards[step.number - 1] 
+                                        ? `url(${step.image})` // When flipped (back), show front image
+                                        : 'linear-gradient(135deg, #D67C4A 0%, #2A4759 100%)', // When front, show back gradient
                                       backgroundSize: 'cover',
                                       backgroundPosition: 'center'
                                     }}
-                                  >
-                                    {/* Small shadow effect */}
-                                    <div 
-                                      className="absolute inset-0 bg-black opacity-20 transform translate-x-1 translate-y-1"
-                                      style={{
-                                        clipPath: 'polygon(100% 0%, 100% 100%, 0% 100%)'
-                                      }}
-                                    />
-                                  </div>
+                                  />
                                 )}
                               </div>
                             ) : (
@@ -447,28 +439,6 @@ export function PeelExperiment() {
                                   </div>
                                 </div>
                                 
-                                {/* Card 2: Animated Bottom-Right Corner "Bill" - Back Side */}
-                                {step.number === 2 && (
-                                  <div 
-                                    className="absolute bottom-0 right-0 w-8 h-8 transform origin-bottom-right"
-                                    style={{
-                                      clipPath: 'polygon(100% 0%, 100% 100%, 0% 100%)',
-                                      animation: 'peelFloat 3s ease-in-out infinite alternate, peelGlow 2s ease-in-out infinite',
-                                      // Back side shows front image (opposite content)
-                                      backgroundImage: `url(${step.image})`,
-                                      backgroundSize: 'cover',
-                                      backgroundPosition: 'center'
-                                    }}
-                                  >
-                                    {/* Small shadow effect */}
-                                    <div 
-                                      className="absolute inset-0 bg-black opacity-20 transform translate-x-1 translate-y-1"
-                                      style={{
-                                        clipPath: 'polygon(100% 0%, 100% 100%, 0% 100%)'
-                                      }}
-                                    />
-                                  </div>
-                                )}
                               </div>
                             )
                           ) : (
