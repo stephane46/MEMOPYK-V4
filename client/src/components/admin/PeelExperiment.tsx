@@ -111,26 +111,35 @@ export function PeelExperiment() {
                 console.log(`🎬 PEEL: Card ${cardIndex + 1} - Skipping big reveal for card 3`);
                 setShowArrows(prev => ({ ...prev, [cardIndex]: true }));
               } else {
-                // CARDS 1 & 2: Big reveal for 1 second, then return to normal
+                // CARDS 1 & 2: Big reveal then immediate smooth return
                 springTo(
                   { x: 120, y: 120 },  // Much larger reveal - shows 2/3 of back content
                   {
                     stiffness: 0.038,
                     damping: 0.88,
                     onComplete: () => {
-                      console.log(`🎬 PEEL: Card ${cardIndex + 1} - Big reveal shown`);
-                      // Wait 1 second, then return to normal
-                      setTimeout(() => {
-                        // Remove the peel position completely - no corner visible
-                        setPeelPositions(prev => {
-                          const newPos = { ...prev };
-                          delete newPos[cardIndex];
-                          return newPos;
-                        });
-                        // Show orange arrow indicator after returning to normal
-                        setShowArrows(prev => ({ ...prev, [cardIndex]: true }));
-                        console.log(`🎬 PEEL: Card ${cardIndex + 1} - Returned to completely normal (no corner) + arrow shown`);
-                      }, 1000);
+                      console.log(`🎬 PEEL: Card ${cardIndex + 1} - Big reveal shown, immediately returning`);
+                      // Immediately smooth return to normal - no delay
+                      springTo(
+                        { x: 200, y: 200 }, // Return to normal position
+                        {
+                          stiffness: 0.045,
+                          damping: 0.85,
+                          onComplete: () => {
+                            // Remove the peel position completely - no corner visible
+                            setPeelPositions(prev => {
+                              const newPos = { ...prev };
+                              delete newPos[cardIndex];
+                              return newPos;
+                            });
+                            // Show orange arrow indicator after returning to normal (only for card 1)
+                            if (cardIndex === 0) {
+                              setShowArrows(prev => ({ ...prev, [cardIndex]: true }));
+                            }
+                            console.log(`🎬 PEEL: Card ${cardIndex + 1} - Smoothly returned to normal`);
+                          }
+                        }
+                      );
                     },
                   }
                 );
