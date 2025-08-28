@@ -338,10 +338,7 @@ export function PeelExperiment() {
                               className="w-0 h-0 border-l-[38px] border-b-[38px] border-l-transparent border-b-memopyk-orange shadow-lg"
                               style={{
                                 filter: 'drop-shadow(0 4px 6px rgb(0 0 0 / 0.1))',
-                                animation: 'cornerPeel 2s ease-in-out infinite',
-                                position: 'relative',
-                                right: '6px',
-                                bottom: '6px'
+                                animation: 'cornerPeel 2s ease-in-out infinite'
                               }}
                             />
                             {/* Dotted diagonal line along the hypotenuse */}
@@ -350,7 +347,7 @@ export function PeelExperiment() {
                               style={{
                                 top: '0px',
                                 right: '0px',
-                                width: '45px',
+                                width: '54px',
                                 height: '2px',
                                 background: 'linear-gradient(45deg, white 50%, #D67C4A 50%)',
                                 backgroundSize: '4px 4px',
