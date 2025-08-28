@@ -250,99 +250,17 @@ export function PeelExperiment() {
                       // Keep arrow visible - don't hide on click
                     }}
                   >
-                    {step.number === 3 ? (
-                      /* Card 3: Simple card without react-peel */
-                      <div className="rounded-2xl overflow-hidden aspect-square relative">
-                        <div 
-                          className={`border border-gray-200 shadow-lg hover:shadow-2xl rounded-2xl overflow-hidden h-full transition-all duration-700 relative ${
-                            flippedCards[step.number - 1] ? 'bg-gradient-to-br from-green-500 to-emerald-600' : 'bg-white'
-                          }`}
-                          style={{
-                            transformStyle: 'preserve-3d'
-                          }}
-                        >
-                          {!flippedCards[step.number - 1] ? (
-                            <div className="relative overflow-hidden rounded-xl transition-all duration-500 h-full">
-                              <img 
-                                src={step.image} 
-                                alt={language === 'fr-FR' ? step.titleFr : step.titleEn}
-                                className="w-full h-full object-contain bg-gray-50 transition-transform duration-500"
-                              />
-                              
-                              <div className="absolute top-2 left-2 w-8 h-8 bg-memopyk-orange rounded-full flex items-center justify-center transition-transform duration-300 shadow-lg">
-                                <span className="text-sm font-bold text-white">{step.number}</span>
-                              </div>
-                            </div>
-                          ) : (
-                            <div 
-                              className="h-full flex flex-col cursor-pointer relative"
-                              style={{
-                                backgroundImage: `linear-gradient(135deg, rgba(214, 124, 74, 0.92) 0%, rgba(42, 71, 89, 0.92) 100%), url(${step.image})`,
-                                backgroundSize: 'cover',
-                                backgroundPosition: 'center',
-                                backgroundRepeat: 'no-repeat',
-                                transformOrigin: 'center'
-                              }}
-                            >
-                              <div className="text-center flex flex-col p-4" style={{ height: '100%', position: 'relative' }}>
-                                <div className="text-sm leading-normal text-white w-full mb-4">
-                                  {(language === 'fr-FR' ? step.descriptionFr : step.descriptionEn).split('\n').map((paragraph, i) => (
-                                    <p key={i} className="mb-2">{paragraph}</p>
-                                  ))}
-                                </div>
-                                
-                                <div className="border-t border-white/40 mx-4 mb-4"></div>
-                                
-                                <div className="text-center">
-                                  <div className="text-xs text-white leading-relaxed">
-                                    {language === 'fr-FR' ? step.subDescriptionFr : step.subDescriptionEn}
-                                  </div>
-                                </div>
-                              </div>
-                            </div>
-                          )}
-                        </div>
-                        
-                        {/* Small white triangle reveal in bottom-right corner */}
-                        <div 
-                          className="absolute bottom-0 right-0 pointer-events-none z-10"
-                          style={{
-                            animation: 'smallReveal 2s ease-out 1s both'
-                          }}
-                        >
-                          <div 
-                            className="w-0 h-0 border-r-[30px] border-t-[30px] border-r-transparent border-t-white"
-                          />
-                          <div 
-                            className="absolute bottom-1 right-1"
-                            style={{
-                              animation: 'arrowFadeIn 2s ease-out 1.5s both'
-                            }}
-                          >
-                            <svg 
-                              width="14" 
-                              height="14" 
-                              viewBox="0 0 16 16" 
-                              fill="#D67C4A"
-                            >
-                              <path d="M4 4 L4 9 L6 7 L10 11 L12 9 L8 5 L10 4 Z" />
-                            </svg>
-                          </div>
-                        </div>
-                      </div>
-                    ) : (
-                      /* Cards 1 & 2: React-peel system */
-                      <PeelWrapper
-                        corner="BOTTOM_RIGHT"
-                        peelPosition={peelPositions[step.number - 1] || undefined}
-                        drag={false}
-                        options={{
-                          corner: "BOTTOM_RIGHT"
-                        }}
-                        className="rounded-2xl overflow-hidden aspect-square"
-                        height="100%"
-                        width="100%"
-                      >
+                    <PeelWrapper
+                      corner="BOTTOM_RIGHT"
+                      peelPosition={peelPositions[step.number - 1] || undefined}
+                      drag={false}
+                      options={{
+                        corner: "BOTTOM_RIGHT"
+                      }}
+                      className="rounded-2xl overflow-hidden aspect-square"
+                      height="100%"
+                      width="100%"
+                    >
                       <PeelTop>
                         {/* FRONT/BACK SIDE - Step Card with Flip Animation */}
                         <div 
@@ -408,46 +326,58 @@ export function PeelExperiment() {
                       </PeelTop>
                       
                       <PeelBack>
-                        {/* BACK SIDE - Detailed Information (revealed with auto-peel) - Card 3 with counter-rotation for readable text */}
-                        <div 
-                          className="shadow-lg rounded-2xl overflow-hidden border border-gray-200 h-full"
-                          style={{
-                            backgroundImage: `linear-gradient(135deg, rgba(214, 124, 74, 0.92) 0%, rgba(42, 71, 89, 0.92) 100%), url(${step.image})`,
-                            backgroundSize: 'cover',
-                            backgroundPosition: 'center',
-                            backgroundRepeat: 'no-repeat',
-                            // No transform on container - let peel effect show naturally
-                          }}
-                        >
-                          <div 
-                            className="h-full flex flex-col justify-between p-4"
-                            style={{
-                              // Counter-rotate text to make it readable during reveal
-                              transform: 'rotateY(-180deg)'
-                            }}
-                          >
-                            {/* Main Content */}
-                            <div className="text-center text-white">
-                              <div className="text-sm leading-normal mb-4">
-                                {(language === 'fr-FR' ? step.descriptionFr : step.descriptionEn).split('\n').map((paragraph, i) => (
-                                  <p key={i} className="mb-2">{paragraph}</p>
-                                ))}
-                              </div>
-                              
-                              {/* Separator Line */}
-                              <div className="border-t border-white/40 my-4"></div>
-                              
-                              {/* Sub Description */}
-                              <div className="text-xs text-white leading-relaxed">
-                                {language === 'fr-FR' ? step.subDescriptionFr : step.subDescriptionEn}
+                        {step.number === 3 ? (
+                          /* Card 3: Small white triangle with orange arrow */
+                          <div className="w-full h-full bg-white rounded-2xl relative">
+                            <div className="absolute bottom-0 right-0">
+                              <div className="w-0 h-0 border-r-[50px] border-t-[50px] border-r-transparent border-t-white" />
+                              <div className="absolute bottom-2 right-2">
+                                <svg 
+                                  width="20" 
+                                  height="20" 
+                                  viewBox="0 0 16 16" 
+                                  fill="#D67C4A"
+                                >
+                                  <path d="M4 4 L4 9 L6 7 L10 11 L12 9 L8 5 L10 4 Z" />
+                                </svg>
                               </div>
                             </div>
                           </div>
-                          
-                        </div>
+                        ) : (
+                          /* Cards 1 & 2: Full back side content */
+                          <div 
+                            className="shadow-lg rounded-2xl overflow-hidden border border-gray-200 h-full"
+                            style={{
+                              backgroundImage: `linear-gradient(135deg, rgba(214, 124, 74, 0.92) 0%, rgba(42, 71, 89, 0.92) 100%), url(${step.image})`,
+                              backgroundSize: 'cover',
+                              backgroundPosition: 'center',
+                              backgroundRepeat: 'no-repeat',
+                            }}
+                          >
+                            <div 
+                              className="h-full flex flex-col justify-between p-4"
+                              style={{
+                                transform: 'rotateY(-180deg)'
+                              }}
+                            >
+                              <div className="text-center text-white">
+                                <div className="text-sm leading-normal mb-4">
+                                  {(language === 'fr-FR' ? step.descriptionFr : step.descriptionEn).split('\n').map((paragraph, i) => (
+                                    <p key={i} className="mb-2">{paragraph}</p>
+                                  ))}
+                                </div>
+                                
+                                <div className="border-t border-white/40 my-4"></div>
+                                
+                                <div className="text-xs text-white leading-relaxed">
+                                  {language === 'fr-FR' ? step.subDescriptionFr : step.subDescriptionEn}
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        )}
                       </PeelBack>
                       </PeelWrapper>
-                    )}
                     
                     {/* Orange Arrow Indicator - Different style for card 3 */}
                     {showArrows[step.number - 1] && (
