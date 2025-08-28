@@ -15,34 +15,34 @@ export function PeelExperiment() {
           const cardIndex = parseInt(entry.target.getAttribute('data-card-index') || '0');
           
           if (entry.isIntersecting) {
-            // NOW USING CORRECT PIXEL COORDINATES!
             setTimeout(() => {
-              console.log('🎬 PEEL: Large reveal triggered for card', cardIndex, '(using pixel coordinates)');
-              setPeelPositions(prev => ({
-                ...prev,
-                [cardIndex]: { x: 200, y: 200 } // Large reveal - center area of ~400px card
-              }));
+              if (cardIndex === 0) {
+                // Card 1: Just persistent dog-eared corner
+                console.log('🎬 PEEL: Card 1 - Setting persistent dog-eared corner');
+                setPeelPositions(prev => ({
+                  ...prev,
+                  [cardIndex]: { x: 360, y: 340 } // Small persistent corner
+                }));
+                console.log('🎬 PEEL: Card 1 - Static dog-ear at {x: 360, y: 340}');
               
-              // Auto-hide after showing for 2 seconds, then show small corner
-              setTimeout(() => {
-                console.log('🎬 PEEL: Peeling back down (removing peel)');
-                // First remove the peel completely
-                setPeelPositions(prev => {
-                  const newPos = { ...prev };
-                  delete newPos[cardIndex];
-                  return newPos;
-                });
-                
-                // Then after a brief pause, add the small corner
-                setTimeout(() => {
-                  console.log('🎬 PEEL: Adding small dog-eared corner for card', cardIndex, '(using pixel coordinates near bottom-right)');
-                  setPeelPositions(prev => ({
-                    ...prev,
-                    [cardIndex]: { x: 360, y: 340 } // Small corner - close to bottom-right of ~400px card
-                  }));
-                  console.log('🎬 PEEL: Persistent dog-ear set at {x: 360, y: 340}');
-                }, 200);
-              }, 2000);
+              } else if (cardIndex === 1) {
+                // Card 2: 50% reveal effect like the beginning
+                console.log('🎬 PEEL: Card 2 - 50% reveal effect triggered');
+                setPeelPositions(prev => ({
+                  ...prev,
+                  [cardIndex]: { x: 200, y: 200 } // 50% reveal
+                }));
+                console.log('🎬 PEEL: Card 2 - 50% reveal set at {x: 200, y: 200}');
+              
+              } else {
+                // Card 3: Simple small corner for testing
+                console.log('🎬 PEEL: Card 3 - Simple small corner');
+                setPeelPositions(prev => ({
+                  ...prev,
+                  [cardIndex]: { x: 350, y: 330 } // Slightly different small corner
+                }));
+                console.log('🎬 PEEL: Card 3 - Small corner at {x: 350, y: 330}');
+              }
             }, 300);
           } else {
             // When card leaves viewport, reset it to default state
