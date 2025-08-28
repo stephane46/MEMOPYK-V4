@@ -237,7 +237,7 @@ export function PeelExperiment() {
                 >
                   {/* Auto-Reveal Peel Card Container with Click-to-Flip */}
                   <div 
-                    className="mb-4 cursor-pointer"
+                    className="mb-4 cursor-pointer relative"
                     onClick={(e) => {
                       e.preventDefault();
                       e.stopPropagation();
