@@ -160,15 +160,37 @@ export function PeelExperiment() {
                       damping: 0.86,
                       onComplete: () => {
                         console.log(`🎬 PEEL: Card 2 - Big reveal complete, returning to small corner`);
-                        // Phase B: Return to small corner with pulsing
+                        // Phase B: Return to small corner with CONTINUOUS pulsing
                         springTo(
                           { x: 280, y: 280 },
                           {
                             stiffness: 0.038,
                             damping: 0.88,
                             onComplete: () => {
-                              microTickle({ x: 280, y: 280 });
-                              console.log(`🎬 PEEL: Card 2 - Small corner pulsing started`);
+                              // Card 2 CONTINUOUS PULSE - Never stops!
+                              const continuousPulse = () => {
+                                // Pulse out
+                                springTo(
+                                  { x: 275, y: 275 },
+                                  {
+                                    stiffness: 0.08,
+                                    damping: 0.75,
+                                    onComplete: () => {
+                                      // Pulse in
+                                      springTo(
+                                        { x: 285, y: 285 },
+                                        {
+                                          stiffness: 0.08,
+                                          damping: 0.75,
+                                          onComplete: continuousPulse // Infinite loop!
+                                        }
+                                      );
+                                    }
+                                  }
+                                );
+                              };
+                              continuousPulse();
+                              console.log(`🎬 PEEL: Card 2 - CONTINUOUS pulsing started (never stops)`);
                             },
                           }
                         );
@@ -402,22 +424,6 @@ export function PeelExperiment() {
                             transformStyle: step.number === 3 ? 'flat' : 'preserve-3d'
                           }}
                         >
-                          {/* Card 2: Always-Pulsing Corner - Shows Opposite Side Colors - ALWAYS VISIBLE */}
-                          {step.number === 2 && (
-                            <div 
-                              className="absolute bottom-0 right-0 w-8 h-8 z-50"
-                              style={{
-                                clipPath: 'polygon(100% 0%, 100% 100%, 0% 100%)',
-                                animation: 'peelFloat 3s ease-in-out infinite, peelGlow 2s ease-in-out infinite',
-                                animationPlayState: 'running',
-                                // Dynamic colors: Front shows back colors, Back shows front colors
-                                background: !flippedCards[step.number - 1] 
-                                  ? 'linear-gradient(135deg, #D67C4A 0%, #2A4759 100%)' // Front shows back colors (orange/dark-blue)
-                                  : 'linear-gradient(135deg, #FFFFFF 0%, #89BAD9 100%)', // Back shows front colors (white/sky-blue)
-                                pointerEvents: 'none'
-                              }}
-                            />
-                          )}
                           {/* Conditional Content Based on Flip State */}
                           {!flippedCards[step.number - 1] || step.number !== 3 ? (
                             /* FRONT SIDE - Original Image (or back side for Cards 1&2) */
