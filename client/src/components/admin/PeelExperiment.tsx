@@ -392,7 +392,10 @@ export function PeelExperiment() {
                                 backgroundSize: 'cover',
                                 backgroundPosition: 'center',
                                 backgroundRepeat: 'no-repeat',
-                                transform: 'rotateY(180deg)', // Counter the card flip to make content readable
+                                // Card 3: Apply combined rotation to fix both card flip and text orientation
+                                transform: step.number === 3 
+                                  ? 'rotateY(180deg) rotate(270deg)' // Counter card flip + fix text orientation for Card 3
+                                  : 'rotateY(180deg)', // Counter the card flip to make content readable
                                 transformOrigin: 'center'
                               }}
                             >
