@@ -376,8 +376,8 @@ export default function PeelExperiment() {
                         </PeelBack>
                       </PeelWrapper>
                     
-                    {/* Orange Arrow Indicator - Cards 1, 2 & 3 */}
-                    {showArrows[step.number - 1] && (
+                    {/* Orange Arrow Indicator - Cards 2 & 3 only (Card 1 removed for experiment) */}
+                    {showArrows[step.number - 1] && step.number !== 1 && (
                       <div className="absolute bottom-0 right-0 pointer-events-none z-50">
                         {/* All Cards 1, 2 & 3: Triangle corner with unfold reveal */}
                         <div className="relative">
