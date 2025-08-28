@@ -139,6 +139,8 @@ export function PeelExperiment() {
               delete newPos[cardIndex];
               return newPos;
             });
+            // Also reset arrow state when leaving viewport
+            setShowArrows(prev => ({ ...prev, [cardIndex]: false }));
           }
         });
       },
@@ -365,31 +367,25 @@ export function PeelExperiment() {
                     
                     {/* Orange Arrow Indicator - Points to top-left corner */}
                     {showArrows[step.number - 1] && (
-                      <div className="absolute top-2 left-2 pointer-events-none">
-                        <svg 
-                          width="24" 
-                          height="24" 
-                          viewBox="0 0 24 24" 
-                          className="text-memopyk-orange animate-pulse"
-                        >
-                          {/* Dotted triangle pointing to top-left */}
-                          <path 
-                            d="M8 8 L4 4 L8 4 Z" 
-                            fill="none" 
-                            stroke="currentColor" 
-                            strokeWidth="2"
-                            strokeDasharray="2,2"
-                          />
-                          {/* Arrow line */}
-                          <path 
-                            d="M12 12 L8 8" 
-                            stroke="currentColor" 
-                            strokeWidth="2"
-                            strokeDasharray="2,2"
-                          />
-                        </svg>
+                      <div className="absolute top-3 left-3 pointer-events-none z-50">
+                        <div className="bg-memopyk-orange text-white p-2 rounded-full shadow-lg animate-pulse">
+                          <svg 
+                            width="20" 
+                            height="20" 
+                            viewBox="0 0 20 20" 
+                            fill="currentColor"
+                          >
+                            {/* Simple arrow pointing to top-left */}
+                            <path d="M4 4 L4 10 L6 8 L10 12 L12 10 L8 6 L10 4 Z" />
+                          </svg>
+                        </div>
                       </div>
                     )}
+                    
+                    {/* Debug: Show arrow state */}
+                    <div className="absolute bottom-2 left-2 text-xs bg-black/50 text-white p-1 rounded">
+                      Arrow: {showArrows[step.number - 1] ? 'ON' : 'OFF'}
+                    </div>
                   </div>
 
                   {/* Static Title with Blue Icon - Always Visible */}
