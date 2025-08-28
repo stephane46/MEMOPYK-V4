@@ -6,6 +6,7 @@ export default function PeelExperiment() {
   const [peelPositions, setPeelPositions] = useState<Record<number, { x: number; y: number }>>({});
   const [showArrows, setShowArrows] = useState<Record<number, boolean>>({});
   const [flippedCards, setFlippedCards] = useState<Record<number, boolean>>({});
+  const [card3Revealed, setCard3Revealed] = useState(false);
   const cardRefs = useRef<Array<HTMLDivElement | null>>([]);
   const language = 'fr-FR'; // You can change this for testing
 
@@ -19,35 +20,46 @@ export default function PeelExperiment() {
             setTimeout(() => {
               console.log(`🎬 PEEL: Card ${cardIndex + 1} - Simple reveal animation`);
               
-              // ALL CARDS 1, 2 & 3: Simple reveal sequence
-              console.log(`🎬 PEEL: Card ${cardIndex + 1} - Starting reveal for all cards`);
-              
-              // Step 1: Reveal
-              setPeelPositions(prev => ({ ...prev, [cardIndex]: { x: 120, y: 120 } }));
-              
-              // Step 2: Return after a short time
-              setTimeout(() => {
-                setPeelPositions(prev => {
-                  const newPos = { ...prev };
-                  delete newPos[cardIndex]; // Remove position = return to normal
-                  return newPos;
-                });
+              // Card 3: Smaller persistent reveal, Cards 1 & 2: Normal reveal sequence
+              if (cardIndex === 2) {
+                // Card 3: Smaller reveal (1/3 size) that persists
+                console.log(`🎬 PEEL: Card 3 - Starting smaller persistent reveal`);
+                setPeelPositions(prev => ({ ...prev, [cardIndex]: { x: 40, y: 40 } }));
+                setCard3Revealed(true);
+                console.log(`🎬 PEEL: Card 3 - Persistent reveal complete`);
+              } else {
+                // Cards 1 & 2: Normal reveal sequence
+                console.log(`🎬 PEEL: Card ${cardIndex + 1} - Starting reveal`);
                 
-                // Step 3: Show arrows (all cards after reveal)
-                setShowArrows(prev => ({ ...prev, [cardIndex]: true }));
+                // Step 1: Reveal
+                setPeelPositions(prev => ({ ...prev, [cardIndex]: { x: 120, y: 120 } }));
                 
-                console.log(`🎬 PEEL: Card ${cardIndex + 1} - Animation complete`);
-              }, 1500); // 1.5 second reveal duration
+                // Step 2: Return after a short time
+                setTimeout(() => {
+                  setPeelPositions(prev => {
+                    const newPos = { ...prev };
+                    delete newPos[cardIndex]; // Remove position = return to normal
+                    return newPos;
+                  });
+                  
+                  // Step 3: Show arrows (Cards 1 & 2 after reveal)
+                  setShowArrows(prev => ({ ...prev, [cardIndex]: true }));
+                  
+                  console.log(`🎬 PEEL: Card ${cardIndex + 1} - Animation complete`);
+                }, 1500); // 1.5 second reveal duration
+              }
             }, 300);
           } else {
-            // When card leaves viewport, reset it to default state
-            setPeelPositions(prev => {
-              const newPos = { ...prev };
-              delete newPos[cardIndex];
-              return newPos;
-            });
-            // Reset arrow state when leaving viewport
-            setShowArrows(prev => ({ ...prev, [cardIndex]: false }));
+            // When card leaves viewport, reset it to default state (except Card 3 persistence)
+            if (cardIndex !== 2) {
+              setPeelPositions(prev => {
+                const newPos = { ...prev };
+                delete newPos[cardIndex];
+                return newPos;
+              });
+              // Reset arrow state when leaving viewport
+              setShowArrows(prev => ({ ...prev, [cardIndex]: false }));
+            }
             // Reset flip state to return to front side
             setFlippedCards(prev => ({ ...prev, [cardIndex]: false }));
             
@@ -236,7 +248,7 @@ export default function PeelExperiment() {
                           constrainToContainer: true,
                           fadeThreshold: 0.3,
                         }}
-                        peelPosition={peelPositions[step.number - 1]}
+                        peelPosition={step.number === 3 && card3Revealed ? { x: 40, y: 40 } : peelPositions[step.number - 1]}
                       >
                       <PeelTop>
                         <div 
@@ -582,12 +594,6 @@ export default function PeelExperiment() {
                       </div>
                     )}
 
-                    {/* Card 3: Orange triangle with arrow */}
-                    {step.number === 3 && (
-                      <div className="absolute bottom-4 right-4 w-10 h-10 bg-orange-500 rounded-tl-2xl flex items-center justify-center cursor-pointer hover:bg-orange-600 transition-colors shadow-lg">
-                        <div className="w-0 h-0 border-l-[6px] border-l-transparent border-r-[6px] border-r-transparent border-b-[8px] border-b-white transform -rotate-45 translate-x-[1px] translate-y-[-1px]" />
-                      </div>
-                    )}
                     
                   </div>
 
