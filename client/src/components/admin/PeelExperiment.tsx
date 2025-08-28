@@ -17,22 +17,22 @@ export function PeelExperiment() {
           if (entry.isIntersecting) {
             setTimeout(() => {
               if (cardIndex === 0) {
-                // Card 1: Large reveal from bottom-right corner
-                console.log('🎬 PEEL: Card 1 - Large reveal from BOTTOM_RIGHT');
-                setPeelPositions(prev => ({
-                  ...prev,
-                  [cardIndex]: { x: 200, y: 200 } // Large reveal from correct corner
-                }));
-                console.log('🎬 PEEL: Card 1 - Large reveal at {x: 200, y: 200}');
-              
-              } else if (cardIndex === 1) {
-                // Card 2: KEEP EXACTLY AS-IS (working correctly)
-                console.log('🎬 PEEL: Card 2 - 50% reveal effect triggered');
+                // Card 1: KEEP EXACTLY AS-IS (working correctly) - was Card 2
+                console.log('🎬 PEEL: Card 1 - 50% reveal effect triggered (unchanged)');
                 setPeelPositions(prev => ({
                   ...prev,
                   [cardIndex]: { x: 200, y: 200 } // 50% reveal (unchanged)
                 }));
-                console.log('🎬 PEEL: Card 2 - 50% reveal set at {x: 200, y: 200}');
+                console.log('🎬 PEEL: Card 1 - 50% reveal set at {x: 200, y: 200}');
+              
+              } else if (cardIndex === 1) {
+                // Card 2: Very large reveal - was Card 1
+                console.log('🎬 PEEL: Card 2 - VERY LARGE reveal from BOTTOM_RIGHT');
+                setPeelPositions(prev => ({
+                  ...prev,
+                  [cardIndex]: { x: 100, y: 100 } // Very large reveal (smaller coordinates = bigger reveal)
+                }));
+                console.log('🎬 PEEL: Card 2 - Very large reveal at {x: 100, y: 100}');
               
               } else {
                 // Card 3: Full animation sequence - large reveal, then hide, then small corner
