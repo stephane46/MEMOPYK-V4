@@ -17,6 +17,7 @@ export function PeelExperiment() {
           if (entry.isIntersecting) {
             // Trigger one-third reveal animation after a short delay
             setTimeout(() => {
+              console.log('🎬 PEEL: Large reveal triggered for card', cardIndex);
               // Set peel position to reveal approximately one-third from bottom-right
               setPeelPositions(prev => ({
                 ...prev,
@@ -25,6 +26,7 @@ export function PeelExperiment() {
               
               // Auto-hide after showing for 2 seconds, but leave a small corner
               setTimeout(() => {
+                console.log('🎬 PEEL: Transitioning to small corner for card', cardIndex);
                 setPeelPositions(prev => ({
                   ...prev,
                   [cardIndex]: { x: 0.95, y: 0.95 } // Small corner remains turned over
