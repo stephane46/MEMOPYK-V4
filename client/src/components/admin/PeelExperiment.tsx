@@ -228,67 +228,11 @@ export function PeelExperiment() {
                       e.preventDefault();
                       e.stopPropagation();
                       
-                      // Card 3: Use only peel transitions (no 3D flip)
-                      if (step.number === 3) {
-                        // Get current peel position
-                        const currentPos = peelPositions[step.number - 1] || { x: 320, y: 320 };
-                        
-                        // Cancel any current animations
-                        const rafMap: Map<number, number> = (window as any).__peelRafMap || new Map();
-                        const cancelId = rafMap.get(step.number - 1);
-                        if (cancelId) {
-                          cancelAnimationFrame(cancelId);
-                          rafMap.delete(step.number - 1);
-                        }
-                        
-                        if (!flippedCards[step.number - 1]) {
-                          // FRONT → BACK: Continue peel motion to reveal back content
-                          console.log(`🎬 PEEL-CLICK: Card 3 - Continuing peel motion from {x: ${currentPos.x}, y: ${currentPos.y}}`);
-                          
-                          // Single smooth transition to complete reveal
-                          setPeelPositions(prev => ({
-                            ...prev,
-                            [step.number - 1]: { x: 0, y: 0 } // Complete reveal showing full back content
-                          }));
-                          
-                          // Mark as flipped but don't use rotateY - content comes from PeelBack
-                          setFlippedCards(prev => ({
-                            ...prev,
-                            [step.number - 1]: true
-                          }));
-                        } else {
-                          // BACK → FRONT: Reverse peel to hide back content
-                          console.log(`🎬 PEEL-CLICK: Card 3 - Reversing peel to show front`);
-                          
-                          // Reset peel position to hide the back content
-                          setPeelPositions(prev => ({
-                            ...prev,
-                            [step.number - 1]: { x: 320, y: 320 } // Hide PeelBack content
-                          }));
-                          
-                          // Mark as not flipped
-                          setFlippedCards(prev => ({
-                            ...prev,
-                            [step.number - 1]: false
-                          }));
-                        }
-                      } else {
-                        // Cards 1 & 2: Keep original instant flip behavior
-                        setFlippedCards(prev => ({
-                          ...prev,
-                          [step.number - 1]: !prev[step.number - 1]
-                        }));
-                        
-                        // Cancel any running peel animations for this card
-                        const rafMap: Map<number, number> = (window as any).__peelRafMap || new Map();
-                        const animationId = rafMap.get(step.number - 1);
-                        if (animationId) {
-                          cancelAnimationFrame(animationId);
-                          rafMap.delete(step.number - 1);
-                        }
-                        
-                        // Card 2: Static corner position only
-                      }
+                      // ALL CARDS: Same simple flip behavior
+                      setFlippedCards(prev => ({
+                        ...prev,
+                        [step.number - 1]: !prev[step.number - 1]
+                      }));
                     }}
                   >
                     <PeelWrapper
@@ -309,24 +253,13 @@ export function PeelExperiment() {
                             flippedCards[step.number - 1] ? 'bg-gradient-to-br from-green-500 to-emerald-600' : 'bg-white'
                           }`}
                           style={{
-                            // Card 3: Remove rotateY - use only peel effect
-                            transform: step.number === 3 
-                              ? `translate(${
-                                  (peelPositions[step.number - 1]?.x || 0) === 320 && (peelPositions[step.number - 1]?.y || 0) >= 318 && (peelPositions[step.number - 1]?.y || 0) <= 322
-                                    ? `${(peelPositions[step.number - 1]?.x || 320) - 320}px, ${(peelPositions[step.number - 1]?.y || 320) - 320}px`
-                                    : '0px, 0px'
-                                })` // Only translate, no rotateY
-                              : `${flippedCards[step.number - 1] ? 'rotateY(180deg)' : 'rotateY(0deg)'} translate(${
-                                  (peelPositions[step.number - 1]?.x || 0) === 320 && (peelPositions[step.number - 1]?.y || 0) >= 318 && (peelPositions[step.number - 1]?.y || 0) <= 322
-                                    ? `${(peelPositions[step.number - 1]?.x || 320) - 320}px, ${(peelPositions[step.number - 1]?.y || 320) - 320}px`
-                                    : '0px, 0px'
-                                })`, // Cards 1&2 keep rotateY
-                            transformStyle: step.number === 3 ? 'flat' : 'preserve-3d'
+                            // ALL CARDS: Same simple flip transform
+                            transform: flippedCards[step.number - 1] ? 'rotateY(180deg)' : 'rotateY(0deg)',
+                            transformStyle: 'preserve-3d'
                           }}
                         >
                           {/* Conditional Content Based on Flip State */}
-                          {!flippedCards[step.number - 1] || step.number !== 3 ? (
-                            /* FRONT SIDE - Original Image (or back side for Cards 1&2) */
+                          {
                             !flippedCards[step.number - 1] ? (
                               <div className="relative overflow-hidden rounded-xl transition-all duration-500 h-full">
                                 <img 
@@ -374,39 +307,7 @@ export function PeelExperiment() {
                                 
                               </div>
                             )
-                          ) : (
-                            /* Card 3 BACK SIDE - Show the same content as PeelBack but in PeelTop when flipped */
-                            <div 
-                              className="shadow-lg rounded-2xl overflow-hidden border border-gray-200 h-full"
-                              style={{
-                                backgroundImage: `linear-gradient(135deg, rgba(214, 124, 74, 0.92) 0%, rgba(42, 71, 89, 0.92) 100%), url(${step.image})`,
-                                backgroundSize: 'cover',
-                                backgroundPosition: 'center',
-                                backgroundRepeat: 'no-repeat',
-                                transform: 'rotate(270deg)', // Same fix as PeelBack for Card 3
-                                transformOrigin: 'center'
-                              }}
-                            >
-                              <div className="h-full flex flex-col justify-between p-4">
-                                {/* Main Content */}
-                                <div className="text-center text-white">
-                                  <div className="text-sm leading-normal mb-4">
-                                    {(language === 'fr-FR' ? step.descriptionFr : step.descriptionEn).split('\n').map((paragraph, i) => (
-                                      <p key={i} className="mb-2">{paragraph}</p>
-                                    ))}
-                                  </div>
-                                  
-                                  {/* Separator Line */}
-                                  <div className="border-t border-white/40 my-4"></div>
-                                  
-                                  {/* Sub Description */}
-                                  <div className="text-xs text-white leading-relaxed">
-                                    {language === 'fr-FR' ? step.subDescriptionFr : step.subDescriptionEn}
-                                  </div>
-                                </div>
-                              </div>
-                            </div>
-                          )}
+                          }
                         </div>
                       </PeelTop>
                       
@@ -419,35 +320,17 @@ export function PeelExperiment() {
                             backgroundSize: 'cover',
                             backgroundPosition: 'center',
                             backgroundRepeat: 'no-repeat',
-                            // Card-specific transforms to fix text orientation
-                            ...(step.number === 3 ? {
-                              // Card 3: No transform - keep text readable
-                            } : step.number === 2 ? {
-                              // Card 2: Fix big reveal text orientation 
-                              transform: 'rotateY(180deg)',
-                              transformOrigin: 'center'
-                            } : {
-                              // Card 1: Original scaleX flip
-                              transform: 'scaleX(-1)',
-                              transformOrigin: 'center'
-                            })
+                            // ALL CARDS: Same transform
+                            transform: 'rotateY(180deg)',
+                            transformOrigin: 'center'
                           }}
                         >
                           <div 
                             className="h-full flex flex-col justify-between p-4"
                             style={{
-                              // Card-specific text counter-rotations  
-                              ...(step.number === 3 ? {
-                                // Card 3: No text transform needed
-                              } : step.number === 2 ? {
-                                // Card 2: Counter the container's rotateY(180deg)
-                                transform: 'rotateY(180deg)',
-                                transformOrigin: 'center'
-                              } : {
-                                // Card 1: Counter the container's scaleX(-1)
-                                transform: 'scaleX(-1)',
-                                transformOrigin: 'center'
-                              })
+                              // ALL CARDS: Same text counter-rotation
+                              transform: 'rotateY(180deg)',
+                              transformOrigin: 'center'
                             }}
                           >
                             {/* Main Content */}
