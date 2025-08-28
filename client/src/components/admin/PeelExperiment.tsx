@@ -26,13 +26,13 @@ export function PeelExperiment() {
                   [cardIndex]: { x: 200, y: 200 } // Start at modest position
                 }));
                 
-                // Smooth gentle unveiling animation
+                // Smooth gentle unveiling animation - LARGER REVEAL
                 setTimeout(() => {
                   setPeelPositions(prev => ({
                     ...prev,
-                    [cardIndex]: { x: 80, y: 120 } // Smooth gentle reveal (like example)
+                    [cardIndex]: { x: 40, y: 60 } // Much larger reveal (smaller coordinates = bigger reveal)
                   }));
-                  console.log('🎬 PEEL: Card 1 - Smooth gentle reveal at {x: 80, y: 120}');
+                  console.log('🎬 PEEL: Card 1 - Large smooth reveal at {x: 40, y: 60}');
                 }, 100);
               
               } else if (cardIndex === 1) {
@@ -78,9 +78,9 @@ export function PeelExperiment() {
                 setTimeout(() => {
                   setPeelPositions(prev => ({
                     ...prev,
-                    [cardIndex]: { x: 80, y: 120 } // Gentle reveal like Card 1
+                    [cardIndex]: { x: 40, y: 60 } // Large reveal like Card 1
                   }));
-                  console.log('🎬 PEEL: Card 3 - Gentle unfold like Card 1');
+                  console.log('🎬 PEEL: Card 3 - Large unfold like Card 1');
                 }, 100);
                 
                 // After 2 seconds, switch to Card 2's gentle jiggling animation
