@@ -376,7 +376,45 @@ export default function PeelExperiment() {
                         </PeelBack>
                       </PeelWrapper>
                     
-                    {/* Orange Arrow Indicator - Cards 2 & 3 only (Card 1 removed for experiment) */}
+                    {/* Card 1: Custom large triangle corner peel (no arrow) */}
+                    {step.number === 1 && showArrows[step.number - 1] && (
+                      <div className="absolute bottom-0 right-0 pointer-events-none z-50">
+                        <div className="relative">
+                          {/* Large 80x80 triangle with shadow and raised effect */}
+                          <div 
+                            className={`w-0 h-0 border-l-[80px] border-b-[80px] border-l-transparent ${
+                              flippedCards[step.number - 1] ? 'border-b-white' : 'border-b-memopyk-orange'
+                            }`}
+                            style={{
+                              position: 'relative',
+                              bottom: '2px',
+                              borderBottomRightRadius: '16px',
+                              filter: 'drop-shadow(0px -2px 4px rgba(0,0,0,0.15)) drop-shadow(-2px 0px 4px rgba(0,0,0,0.15))',
+                              transform: 'translateZ(2px) rotateX(-2deg) rotateY(2deg)',
+                              transformStyle: 'preserve-3d'
+                            }}
+                          />
+                          {/* Dotted diagonal line for the peel effect */}
+                          <div 
+                            className="absolute"
+                            style={{
+                              top: '4px',
+                              right: '4px',
+                              width: '96px',
+                              height: '2px',
+                              background: flippedCards[step.number - 1] 
+                                ? 'repeating-linear-gradient(45deg, #D67C4A 0px, #D67C4A 3px, white 3px, white 6px)'
+                                : 'repeating-linear-gradient(45deg, white 0px, white 3px, #D67C4A 3px, #D67C4A 6px)',
+                              transform: 'rotate(-45deg)',
+                              transformOrigin: 'top right',
+                              opacity: 0.8
+                            }}
+                          />
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Orange Arrow Indicator - Cards 2 & 3 only */}
                     {showArrows[step.number - 1] && step.number !== 1 && (
                       <div className="absolute bottom-0 right-0 pointer-events-none z-50">
                         {/* All Cards 1, 2 & 3: Triangle corner with unfold reveal */}
