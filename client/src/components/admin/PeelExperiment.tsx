@@ -319,7 +319,9 @@ export function PeelExperiment() {
                           /* Cards 2 & 3: Orange triangle corner with unfold reveal */
                           <div className="relative">
                             <div 
-                              className="w-0 h-0 border-l-[40px] border-b-[40px] border-l-transparent border-b-memopyk-orange"
+                              className={`w-0 h-0 border-l-[40px] border-b-[40px] border-l-transparent ${
+                                flippedCards[step.number - 1] ? 'border-b-white' : 'border-b-memopyk-orange'
+                              }`}
                               style={{
                                 position: 'relative',
                                 bottom: '1px'
@@ -333,7 +335,9 @@ export function PeelExperiment() {
                                 right: '2px',
                                 width: '48px',
                                 height: '2px',
-                                background: 'linear-gradient(45deg, white 50%, #D67C4A 50%)',
+                                background: flippedCards[step.number - 1] 
+                                  ? 'linear-gradient(45deg, #D67C4A 50%, white 50%)'
+                                  : 'linear-gradient(45deg, white 50%, #D67C4A 50%)',
                                 backgroundSize: '4px 4px',
                                 transform: 'rotate(-45deg)',
                                 transformOrigin: 'top right',
