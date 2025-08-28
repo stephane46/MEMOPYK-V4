@@ -222,20 +222,7 @@ export function PeelExperiment() {
                       peelPosition={peelPositions[step.number - 1] || undefined}
                       drag={false}
                       options={{
-                        corner: "BOTTOM_RIGHT",
-                        backShadow: false,
-                        bottomShadow: false,
-                        topShadow: false,
-                        shape: {
-                          rect: {
-                            x: 0,
-                            y: 0,
-                            width: 400,
-                            height: 400,
-                            rx: 16, // Rounded corners - matches rounded-2xl (16px)
-                            ry: 16
-                          }
-                        }
+                        corner: "BOTTOM_RIGHT"
                       }}
                       className="rounded-2xl overflow-hidden aspect-square"
                       height="100%"
