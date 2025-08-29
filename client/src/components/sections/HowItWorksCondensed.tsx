@@ -125,17 +125,19 @@ export function HowItWorksCondensed() {
                           zIndex: 10
                         }}
                       >
-                        {/* Flip icon with pulse animation */}
+                        {/* Flip icon with pulse animation - made more visible */}
                         <div 
-                          className="absolute top-1 left-1 w-4 h-4 flex items-center justify-center animate-pulse"
+                          className="absolute top-2 left-2 w-5 h-5 flex items-center justify-center animate-pulse"
                           style={{
-                            animation: 'pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite'
+                            animation: 'pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                            backgroundColor: 'rgba(255, 255, 255, 0.2)',
+                            borderRadius: '50%'
                           }}
                         >
                           <Info 
-                            size={12} 
-                            className="text-white drop-shadow-sm" 
-                            strokeWidth={2.5}
+                            size={16} 
+                            className="text-white drop-shadow-lg" 
+                            strokeWidth={3}
                           />
                         </div>
                       </div>
