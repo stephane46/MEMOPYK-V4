@@ -233,12 +233,12 @@ export function HowItWorksCondensed() {
                                   {language === 'fr-FR' ? step.subDescriptionFr : step.subDescriptionEn}
                                 </div>
                               </div>
-                              
-                              {/* White line 10px from bottom */}
-                              <div className="absolute w-full h-px bg-white left-0" style={{ bottom: '10px' }}></div>
                             </div>
                           </div>
                         </div>
+                        
+                        {/* White line 10px from bottom - positioned relative to whole card */}
+                        <div className="absolute w-full h-px bg-white left-0" style={{ bottom: '10px' }}></div>
                         
                         {/* Title - SAME AS FRONT CARD */}
                         <div className="p-4 text-center" style={{ paddingTop: '76px' }}>
