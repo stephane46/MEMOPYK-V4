@@ -26233,8 +26233,8 @@
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-29T15:03:03.365Z",
-    "updated_at": "2025-08-29T15:04:33.533Z",
-    "duration": 1475638
+    "updated_at": "2025-08-29T15:05:14.954Z",
+    "duration": 1475679
   },
   {
     "id": "4839612a-ff98-4b44-84eb-193d21b28936",
@@ -26250,7 +26250,7 @@
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-29T15:03:03.828Z",
-    "updated_at": "2025-08-29T15:04:36.327Z",
-    "duration": 1059046
+    "updated_at": "2025-08-29T15:05:04.318Z",
+    "duration": 1059074
   }
 ]
