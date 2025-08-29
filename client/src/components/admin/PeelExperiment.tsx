@@ -215,8 +215,11 @@ function PeelCard({
         <PeelTop>
           {/* Card Container - Rectangle: Square image + white padding below */}
           <div 
-            className="bg-white border border-gray-200 shadow-lg hover:shadow-2xl rounded-2xl overflow-hidden cursor-pointer" 
-            style={{ borderRadius: '1rem' }}
+            className="bg-white border border-gray-200 shadow-lg hover:shadow-2xl rounded-2xl overflow-hidden cursor-pointer transition-opacity duration-700 ease-out" 
+            style={{ 
+              borderRadius: '1rem',
+              opacity: isFlipped ? 0 : 1
+            }}
             onClick={onToggleFlip}
           >
             <div className="relative">
@@ -253,13 +256,14 @@ function PeelCard({
         {/* Back of the "page" */}
         <PeelBack>
           <div 
-            className="shadow-lg hover:shadow-2xl rounded-2xl overflow-hidden border border-gray-200 h-full cursor-pointer"
+            className="shadow-lg hover:shadow-2xl rounded-2xl overflow-hidden border border-gray-200 h-full cursor-pointer transition-opacity duration-500 ease-out"
             style={{
               backgroundImage: `linear-gradient(135deg, rgba(214, 124, 74, 0.92) 0%, rgba(42, 71, 89, 0.92) 100%), url(${stepImage})`,
               backgroundSize: 'cover',
               backgroundPosition: 'center',
               backgroundRepeat: 'no-repeat',
-              borderRadius: '1rem'
+              borderRadius: '1rem',
+              opacity: isFlipped ? 0 : 1
             }}
             onClick={onToggleFlip}
           >
