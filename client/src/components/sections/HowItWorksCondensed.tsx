@@ -214,22 +214,29 @@ export function HowItWorksCondensed() {
                             ))}
                           </div>
                           
-                          {/* Separator Line - ADJUSTED FOR PARAGRAPH SPACING */}
+                          {/* Separator Line - MOVED UP TO MAKE SPACE FOR TITLE */}
                           <div
                             className="absolute border-t border-white/40 left-2"
                             style={{
-                              top: '260px',
+                              top: '230px',
                               right: "calc(0.5rem + var(--peel-c, 0px))",
                               zIndex: 1,
                             }}
                           ></div>
                           
-                          {/* Bottom Section - Sub Description - ADJUSTED FOR PARAGRAPH SPACING */}
-                          <div className="absolute text-center left-2 right-2" style={{ top: '270px' }}>
+                          {/* Bottom Section - Sub Description - MOVED UP TO MAKE SPACE FOR TITLE */}
+                          <div className="absolute text-center left-2 right-2" style={{ top: '240px' }}>
                             <div className="text-xs text-white leading-relaxed w-full">
                               {language === 'fr-FR' ? step.subDescriptionFr : step.subDescriptionEn}
                             </div>
                           </div>
+                        </div>
+                        
+                        {/* Title at bottom - Same as front card */}
+                        <div className="absolute bottom-0 left-0 right-0 p-4 text-center bg-white/10 backdrop-blur-sm">
+                          <h3 className="text-xl font-semibold text-white">
+                            {language === 'fr-FR' ? step.titleFr : step.titleEn}
+                          </h3>
                         </div>
                         
                         {/* Return arrow - Positioned with equal spacing */}
