@@ -181,55 +181,68 @@ export function HowItWorksCondensed() {
                     </div>
                       
                     {/* BACK SIDE - Detailed Information */}
-                    <div className="card-back shadow-lg hover:shadow-2xl rounded-2xl overflow-hidden border border-gray-200">
-                      
-                      {/* Step Image with gradient overlay - EXACT SAME SIZE AS FRONT */}
-                      <div className="relative overflow-hidden rounded-xl transition-all duration-500 aspect-square">
-                        <img 
-                          src={step.image} 
-                          alt={language === 'fr-FR' ? step.titleFr : step.titleEn}
-                          className="w-full h-full object-contain bg-gray-50 transition-transform duration-500"
-                        />
-                        
-                        {/* Gradient overlay ONLY on the image */}
-                        <div 
-                          className="absolute inset-0"
-                          style={{
-                            background: 'linear-gradient(135deg, rgba(214, 124, 74, 0.92) 0%, rgba(42, 71, 89, 0.92) 100%)'
-                          }}
-                        />
-                        
-                        {/* White Number Circle with Orange Text - Top Left on Back Card - Same position as front */}
-                        <div className="absolute top-2 left-2 w-8 h-8 bg-white rounded-full flex items-center justify-center transition-transform duration-300 shadow-lg">
-                          <span className="text-sm font-bold text-memopyk-orange">{step.number}</span>
-                        </div>
-                        
-                        {/* Content over the image with gradient */}
-                        <div 
-                          className="absolute inset-0 flex flex-col justify-center items-center p-6 text-center text-white cursor-pointer"
-                          onClick={() => {
-                            setFlippedCards(prev => {
-                              const newSet = new Set(prev);
-                              newSet.delete(step.number);
-                              return newSet;
-                            });
-                          }}
-                        >
-                          <div className="space-y-3">
-                            {(step.subDescriptionEn || step.subDescriptionFr) && (
-                              <p className="text-sm leading-relaxed">
-                                {language === 'fr-FR' ? step.subDescriptionFr : step.subDescriptionEn}
-                              </p>
-                            )}
-                          </div>
-                        </div>
+                    <div 
+                      className="card-back shadow-lg hover:shadow-2xl rounded-2xl overflow-hidden border border-gray-200 relative"
+                      style={{
+                        backgroundImage: `linear-gradient(135deg, rgba(214, 124, 74, 0.92) 0%, rgba(42, 71, 89, 0.92) 100%), url(${step.image})`,
+                        backgroundSize: 'cover',
+                        backgroundPosition: 'center',
+                        backgroundRepeat: 'no-repeat'
+                      }}
+                    >
+                      {/* White Number Circle with Orange Text - Top Left on Back Card - Same position as front */}
+                      <div className="absolute top-2 left-2 w-8 h-8 bg-white rounded-full flex items-center justify-center transition-transform duration-300 shadow-lg" style={{ zIndex: 10 }}>
+                        <span className="text-sm font-bold text-memopyk-orange">{step.number}</span>
                       </div>
                       
-                      {/* Title inside card - white area below image - EXACT SAME AS FRONT */}
-                      <div className="p-4 text-center">
-                        <h3 className="text-lg font-semibold text-memopyk-dark-blue">
-                          {language === 'fr-FR' ? step.titleFr : step.titleEn}
-                        </h3>
+                      <div 
+                        className="relative cursor-pointer"
+                        onClick={() => {
+                          setFlippedCards(prev => {
+                            const newSet = new Set(prev);
+                            newSet.delete(step.number);
+                            return newSet;
+                          });
+                        }}
+                      >
+                        
+                        {/* Content area - EXACT SAME STRUCTURE AS FRONT */}
+                        <div className="relative rounded-xl transition-all duration-500 aspect-square">
+                          <div className="h-full flex flex-col px-2 pt-0 pb-2">
+                            {/* Top Section - Text content area */}
+                            <div className="text-center flex flex-col" style={{ position: 'relative' }}>
+                              <div className="text-sm leading-normal text-white w-full flip-card-text-zero-spacing" style={{ paddingTop: '30px' }}>
+                                {(language === 'fr-FR' ? step.descriptionFr : step.descriptionEn).split('\n').map((paragraph, i) => (
+                                  <p key={i} className="m-0 p-0" style={{ marginBottom: '16px' }}>{paragraph}</p>
+                                ))}
+                              </div>
+                              
+                              {/* Separator Line - MOVED MUCH HIGHER UP */}
+                              <div
+                                className="absolute border-t border-white/40 left-2"
+                                style={{
+                                  top: '220px',
+                                  right: "calc(0.5rem + var(--peel-c, 0px))",
+                                  zIndex: 1,
+                                }}
+                              ></div>
+                              
+                              {/* Bottom Section - Sub Description - MOVED MUCH HIGHER UP */}
+                              <div className="absolute text-center left-2 right-2" style={{ top: '230px' }}>
+                                <div className="text-sm font-bold text-white leading-relaxed w-full">
+                                  {language === 'fr-FR' ? step.subDescriptionFr : step.subDescriptionEn}
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                        
+                        {/* Title - SAME AS FRONT CARD */}
+                        <div className="p-4 text-center" style={{ paddingTop: '76px' }}>
+                          <h3 className="text-lg font-semibold text-white">
+                            {language === 'fr-FR' ? step.titleFr : step.titleEn}
+                          </h3>
+                        </div>
                       </div>
                     </div>
                   </div>
