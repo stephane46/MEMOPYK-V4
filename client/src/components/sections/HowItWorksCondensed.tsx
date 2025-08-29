@@ -50,8 +50,8 @@ export function HowItWorksCondensed() {
     {
       number: 1,
       icon: Upload,
-      titleFr: "Transmission & Collecte",
-      titleEn: "Transmission & Collection",
+      titleFr: "Consultation & Collecte",
+      titleEn: "Consultation & Collection",
       descriptionFr: "Envoyez-nous vos photos et vidéos telles quelles.\nDites-nous tout ce que vous avez en tête, via notre questionnaire, ou la séance de consultation gratuite.",
       descriptionEn: "Send us your photos and videos as they are.\nTell us everything you have in mind, via our questionnaire, or the free consultation session.",
       subDescriptionFr: "Le transfert des éléments se fait en quelques clics. Nous sommes à votre écoute pour bien comprendre votre vision.",
@@ -61,8 +61,8 @@ export function HowItWorksCondensed() {
     {
       number: 2,
       icon: Edit,
-      titleFr: "Sélection & Analyse", 
-      titleEn: "Selection & Analysis",
+      titleFr: "Sélection & Création", 
+      titleEn: "Selection & Creation",
       descriptionFr: "Nous trions, sélectionnons et gardons uniquement le meilleur.\nNous construisons le scénario avec la musique, le rythme et le format qui vous correspondent.\nVous recevez un devis clair et adapté avant tout travail.",
       descriptionEn: "We sort, select and keep only the best.\nWe build the scenario with the music, rhythm and format that suits you.\nYou receive a clear and tailored quote before any work.",
       subDescriptionFr: "Vos souvenirs prennent vie dans un film unique, réalisé avec soin et transparence.",
@@ -72,8 +72,8 @@ export function HowItWorksCondensed() {
     {
       number: 3,
       icon: Heart,
-      titleFr: "Montage & Création",
-      titleEn: "Editing & Creation", 
+      titleFr: "Retours & Finalisation",
+      titleEn: "Feedback & Finalization", 
       descriptionFr: "Vous recevez la première version de votre film-souvenir en une à trois semaines, prête à être revue.\nDeux séries de retours sont incluses pour affiner le montage jusqu'à votre entière satisfaction.",
       descriptionEn: "You receive the first version of your souvenir film in one to three weeks, ready to be reviewed.\nTwo rounds of feedback are included to refine the editing to your complete satisfaction.",
       subDescriptionFr: "Un film souvenir unique, livré à temps et parfaitement ajusté à vos envies.",
