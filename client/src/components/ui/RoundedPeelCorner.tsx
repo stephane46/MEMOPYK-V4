@@ -98,6 +98,7 @@ export default function RoundedPeelCorner({
         willChange: "transform",
         contain: "layout paint size",
         zIndex: 1200,
+        backgroundColor: "rgba(255, 255, 255, 0.01)", // Minimal background to ensure it's detectable
       }}
     >
       <svg
