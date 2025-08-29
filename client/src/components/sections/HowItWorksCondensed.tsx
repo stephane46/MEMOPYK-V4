@@ -238,7 +238,7 @@ export function HowItWorksCondensed() {
                         </div>
                         
                         {/* White line above title - edge to edge */}
-                        <div className="w-full h-px bg-white"></div>
+                        <div className="w-full h-px bg-white" style={{ marginTop: '50px' }}></div>
                         
                         {/* Title - SAME AS FRONT CARD */}
                         <div className="p-4 text-center" style={{ paddingTop: '76px' }}>
