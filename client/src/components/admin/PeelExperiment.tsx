@@ -231,7 +231,8 @@ function PeelCard({
               backgroundImage: `linear-gradient(135deg, rgba(214, 124, 74, 0.92) 0%, rgba(42, 71, 89, 0.92) 100%), url(${stepImage})`,
               backgroundSize: 'cover',
               backgroundPosition: 'center',
-              backgroundRepeat: 'no-repeat'
+              backgroundRepeat: 'no-repeat',
+              borderRadius: '1rem'
             }}
           >
             <div className="h-full flex flex-col cursor-pointer relative px-4 pt-6 pb-2">
@@ -271,7 +272,8 @@ function PeelCard({
               backgroundImage: `linear-gradient(135deg, rgba(214, 124, 74, 0.92) 0%, rgba(42, 71, 89, 0.92) 100%), url(${stepImage})`,
               backgroundSize: 'cover',
               backgroundPosition: 'center',
-              backgroundRepeat: 'no-repeat'
+              backgroundRepeat: 'no-repeat',
+              borderRadius: '1rem'
             }}
           >
             <div className="h-full flex flex-col relative px-4 pt-6 pb-2">
