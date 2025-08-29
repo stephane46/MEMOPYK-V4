@@ -52,8 +52,8 @@ export function HowItWorksCondensed() {
       icon: Upload,
       titleFr: "Transmission & Collecte",
       titleEn: "Transmission & Collection",
-      descriptionFr: "Envoyez-nous vos photos et vidéos telles quelles\n\nDites-nous tout ce que vous avez en tête, via notre questionnaire, ou la séance de consultation gratuite",
-      descriptionEn: "Send us your photos and videos as they are\n\nTell us everything you have in mind, via our questionnaire, or the free consultation session",
+      descriptionFr: "Envoyez-nous vos photos et vidéos telles quelles.\n\nDites-nous tout ce que vous avez en tête, via notre questionnaire, ou la séance de consultation gratuite.",
+      descriptionEn: "Send us your photos and videos as they are.\n\nTell us everything you have in mind, via our questionnaire, or the free consultation session.",
       subDescriptionFr: "Le transfert des éléments se fait en quelques clics. Nous sommes à votre écoute pour bien comprendre votre vision.",
       subDescriptionEn: "Transferring elements is done in just a few clicks. We listen carefully to understand your vision.",
       image: "/images/How_we_work_Step1.png"
@@ -208,7 +208,7 @@ export function HowItWorksCondensed() {
                         
                         {/* Top Section - Text content area */}
                         <div className="text-center flex flex-col" style={{ height: '350px', position: 'relative' }}>
-                          <div className="text-sm leading-normal text-white w-full flip-card-text-zero-spacing" style={{ paddingTop: '40px' }}>
+                          <div className="text-sm leading-normal text-white w-full flip-card-text-zero-spacing" style={{ paddingTop: '30px' }}>
                             {(language === 'fr-FR' ? step.descriptionFr : step.descriptionEn).split('\n').map((paragraph, i) => (
                               <p key={i} className="m-0 p-0">{paragraph}</p>
                             ))}
