@@ -201,11 +201,22 @@ function PeelCard({
           <div className="bg-white border border-gray-200 shadow-lg hover:shadow-2xl rounded-2xl overflow-hidden" style={{ borderRadius: '1rem' }}>
             <div className="relative cursor-pointer">
               {/* Step Image - Square */}
-              <div className="relative overflow-hidden rounded-t-2xl transition-all duration-500 aspect-square" style={{ borderTopLeftRadius: '1rem', borderTopRightRadius: '1rem' }}>
+              <div 
+                className="relative overflow-hidden rounded-t-2xl transition-all duration-500 aspect-square" 
+                style={{ 
+                  borderTopLeftRadius: '1rem', 
+                  borderTopRightRadius: '1rem',
+                  backgroundImage: `url(${stepImage})`,
+                  backgroundSize: 'contain',
+                  backgroundPosition: 'center',
+                  backgroundRepeat: 'no-repeat',
+                  backgroundColor: '#f9fafb'
+                }}
+              >
                 <img 
                   src={stepImage} 
                   alt={title}
-                  className="w-full h-full object-contain bg-gray-50 transition-transform duration-500"
+                  className="w-full h-full object-contain transition-transform duration-500 opacity-0"
                   style={{ borderTopLeftRadius: '1rem', borderTopRightRadius: '1rem' }}
                 />
                 
