@@ -210,8 +210,14 @@ function PeelCard({
                 
               </div>
               
-              {/* Empty white space */}
-              <div className="py-3">
+              {/* Title with orange number circle in white space */}
+              <div className="flex items-center gap-3 px-4 py-3 bg-white">
+                <div className="w-8 h-8 bg-memopyk-orange rounded-full flex items-center justify-center shadow-lg">
+                  <span className="text-sm font-bold text-white">{stepNumber}</span>
+                </div>
+                <h3 className="text-2xl font-semibold text-memopyk-navy">
+                  {title}
+                </h3>
               </div>
             </div>
           </div>
