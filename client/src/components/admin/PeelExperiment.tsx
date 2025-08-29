@@ -25,14 +25,16 @@ const injectOnce = (() => {
       .peel-zone { contain: layout paint size; overflow: visible; }
       .grid { display:grid; grid-template-columns:repeat(3, 384px); gap:32px; width:100%; max-width:1280px; overflow: visible; margin-top: 50px; }
       .peel-wrapper { will-change: transform, clip-path; transform: translateZ(0); -webkit-transform: translateZ(0); contain: layout paint size; }
-      .shell { width:384px; height:320px; border-radius:16px; overflow:visible; background:transparent;
+      .shell { width:384px; height:400px; border-radius:16px; overflow:visible; background:transparent;
                box-shadow:0 6px 18px rgba(0,0,0,.06), 0 2px 6px rgba(0,0,0,.06); }
-      .face { width:100%; height:100%; border-radius:16px; 
-              background: linear-gradient(135deg, rgba(255,255,255,0.95) 0%, rgba(242,235,220,0.8) 100%);
-              backdrop-filter:blur(4px); padding:32px; border: 1px solid rgba(255,255,255,0.3);
-              display:flex; flex-direction:column; justify-content:center; align-items:center; }
-      .face h3 { margin:0; font-size:20px; font-weight:700; color:#011526; letter-spacing:.2px; text-align:center; font-family: 'Poppins', system-ui; }
-      .face p { margin:12px 0 0; color:#2A4759; line-height:1.5; font-size:14px; text-align:center; font-family: 'Poppins', system-ui; }
+      .face { width:100%; height:100%; border-radius:16px; background:white;
+              border: 1px solid #e5e7eb; box-shadow:0 8px 32px rgba(0,0,0,.12);
+              display:flex; flex-direction:column; overflow:hidden; }
+      .face .step-image { width:100%; aspect-ratio:1; background:#f9fafb; position:relative; overflow:hidden; border-radius:12px; margin:16px; margin-bottom:8px; }
+      .face .step-number { position:absolute; top:8px; left:8px; width:32px; height:32px; background:#D67C4A; border-radius:50%; display:flex; align-items:center; justify-content:center; color:white; font-weight:bold; font-size:14px; }
+      .face .info-button { width:48px; height:48px; border-radius:50%; background:linear-gradient(135deg, rgba(255,255,255,0.95) 0%, rgba(255,255,255,0.85) 100%); box-shadow:0 4px 12px rgba(0,0,0,0.2); border:1px solid rgba(0,0,0,0.1); display:flex; align-items:center; justify-content:center; margin:12px auto 16px; }
+      .face h3 { margin:0 16px 8px; font-size:18px; font-weight:700; color:#011526; text-align:center; font-family: 'Poppins', system-ui; }
+      .face p { margin:0 16px 16px; color:#2A4759; line-height:1.4; font-size:14px; text-align:center; font-family: 'Poppins', system-ui; }
       .back { width:100%; height:100%; background:linear-gradient(135deg,#f6f6f7 0%, #e9ecf1 100%); border-radius:16px; }
       .reveal { width:100%; height:100%; color:#F2EBDC;
                 background:linear-gradient(135deg,#011526 0%, #2A4759 100%);
@@ -190,10 +192,16 @@ function PeelCard({
       >
         <PeelTop>
           <div className="face">
-            <div className="flex justify-center mb-4 flex-shrink-0">
-              <div className="w-16 h-16 bg-memopyk-orange/20 rounded-full flex items-center justify-center">
-                <span className="text-2xl">📤</span>
-              </div>
+            <div className="step-image">
+              <img 
+                src="/images/How_we_work_Step1.png" 
+                alt={title}
+                className="w-full h-full object-contain"
+              />
+              <div className="step-number">1</div>
+            </div>
+            <div className="info-button">
+              <span style={{color: '#2A4759'}}>ℹ️</span>
             </div>
             <h3>{title}</h3>
             <p>{description}</p>
