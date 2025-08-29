@@ -234,19 +234,19 @@ function PeelCard({
               backgroundRepeat: 'no-repeat'
             }}
           >
-            <div className="h-full flex flex-col cursor-pointer relative px-2 pt-0 pb-2">
-              {/* Top Section - Text content area */}
-              <div className="text-center flex flex-col" style={{ height: '350px', position: 'relative' }}>
-                <div className="text-sm leading-normal text-white w-full flip-card-text-zero-spacing">
+            <div className="h-full flex flex-col cursor-pointer relative px-4 pt-6 pb-2">
+              {/* Top Section - Text content area with better spacing */}
+              <div className="text-center flex flex-col justify-start" style={{ height: '320px', position: 'relative' }}>
+                <div className="text-sm leading-relaxed text-white w-full">
                   {description.split('\n').filter(line => line.trim() !== '').map((paragraph, i) => {
                     if (paragraph === '—') {
-                      return <div key={i} className="text-center my-2 text-white/80 text-lg">—</div>;
+                      return <div key={i} className="text-center my-4 text-white text-xl font-light border-t border-white/30 pt-4 mt-6">—</div>;
                     }
                     if (paragraph.startsWith('**') && paragraph.endsWith('**')) {
                       const text = paragraph.slice(2, -2);
-                      return <p key={i} className="mb-2 font-bold">{text}</p>;
+                      return <p key={i} className="mb-3 font-bold text-base">{text}</p>;
                     }
-                    return <p key={i} className="mb-2">{paragraph}</p>;
+                    return <p key={i} className="mb-3 text-sm">{paragraph}</p>;
                   })}
                 </div>
               </div>
@@ -274,19 +274,19 @@ function PeelCard({
               backgroundRepeat: 'no-repeat'
             }}
           >
-            <div className="h-full flex flex-col relative px-2 pt-0 pb-2">
-              {/* Text content area - Same as card back */}
-              <div className="text-center flex flex-col" style={{ height: '350px', position: 'relative' }}>
-                <div className="text-sm leading-normal text-white w-full flip-card-text-zero-spacing">
+            <div className="h-full flex flex-col relative px-4 pt-6 pb-2">
+              {/* Text content area - Same as card back with better spacing */}
+              <div className="text-center flex flex-col justify-start" style={{ height: '320px', position: 'relative' }}>
+                <div className="text-sm leading-relaxed text-white w-full">
                   {description.split('\n').filter(line => line.trim() !== '').map((paragraph, i) => {
                     if (paragraph === '—') {
-                      return <div key={i} className="text-center my-2 text-white/80 text-lg">—</div>;
+                      return <div key={i} className="text-center my-4 text-white text-xl font-light border-t border-white/30 pt-4 mt-6">—</div>;
                     }
                     if (paragraph.startsWith('**') && paragraph.endsWith('**')) {
                       const text = paragraph.slice(2, -2);
-                      return <p key={i} className="mb-2 font-bold">{text}</p>;
+                      return <p key={i} className="mb-3 font-bold text-base">{text}</p>;
                     }
-                    return <p key={i} className="mb-2">{paragraph}</p>;
+                    return <p key={i} className="mb-3 text-sm">{paragraph}</p>;
                   })}
                 </div>
               </div>
