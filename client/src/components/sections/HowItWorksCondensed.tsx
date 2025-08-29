@@ -213,7 +213,7 @@ export function HowItWorksCondensed() {
                             <div className="text-center flex flex-col" style={{ height: 'calc(100% - 120px)', position: 'relative' }}>
                               <div className="text-sm leading-normal text-white w-full flip-card-text-zero-spacing" style={{ paddingTop: '30px' }}>
                                 {(language === 'fr-FR' ? step.descriptionFr : step.descriptionEn).split('\n').map((paragraph, i) => (
-                                  <p key={i} className="m-0 p-0">{paragraph}</p>
+                                  <p key={i} className="m-0 p-0" style={{ marginBottom: '8px' }}>{paragraph}</p>
                                 ))}
                               </div>
                               
