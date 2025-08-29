@@ -250,81 +250,56 @@ export default function PeelExperiment() {
                         </div>
                       </div>
                     ) : step.number === 2 ? (
-                      /* Card 2: React Card Flip effect */
+                      /* Card 2: Clean ReactCardFlip implementation */
                       <div className="rounded-2xl overflow-hidden aspect-square">
                         <ReactCardFlip isFlipped={flippedCards[step.number - 1]} flipDirection="vertical">
-                          {/* Front Side */}
-                          <div className="border border-gray-200 shadow-lg hover:shadow-2xl rounded-2xl overflow-hidden h-full transition-all duration-700 relative bg-white">
-                            <div className="relative overflow-hidden rounded-xl transition-all duration-500 h-full">
+                          <div className="border border-gray-200 shadow-lg hover:shadow-2xl rounded-2xl overflow-hidden h-full p-4 bg-white flex flex-col">
+                            <div className="text-center flex-1 flex flex-col justify-center">
                               <img 
                                 src={step.image} 
                                 alt={language === 'fr-FR' ? step.titleFr : step.titleEn}
-                                className="w-full h-full object-contain bg-gray-50 transition-transform duration-500"
+                                className="w-full h-32 object-contain mb-4"
                               />
-                              
-                              <div className="absolute top-2 left-2 w-8 h-8 bg-memopyk-orange rounded-full flex items-center justify-center transition-transform duration-300 shadow-lg">
+                              <div className="w-8 h-8 bg-memopyk-orange rounded-full flex items-center justify-center mx-auto mb-4">
                                 <span className="text-sm font-bold text-white">{step.number}</span>
                               </div>
-                              
-                              {/* Peel corner hint */}
-                              <div className="absolute top-0 right-0 w-6 h-6 bg-gradient-to-bl from-memopyk-orange to-memopyk-dark-blue opacity-80 transform rotate-45 translate-x-2 -translate-y-2 shadow-lg">
-                              </div>
-                              
-                              <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2">
-                                <button 
-                                  onClick={() => toggleCardFlip(step.number)}
-                                  className="px-4 py-2 bg-memopyk-orange text-white rounded-lg text-sm font-medium hover:bg-memopyk-orange/90 transition-colors"
-                                >
-                                  {language === 'fr-FR' ? 'Retourner & Découvrir' : 'Peel & Flip'}
-                                </button>
-                              </div>
+                              <p className="text-lg font-medium mb-4">
+                                {language === 'fr-FR' ? step.titleFr : step.titleEn}
+                              </p>
+                              <button 
+                                onClick={() => toggleCardFlip(step.number)}
+                                className="px-4 py-2 bg-memopyk-orange text-white rounded-lg text-sm font-medium hover:bg-memopyk-orange/90 transition-colors"
+                              >
+                                {language === 'fr-FR' ? 'Retourner & Découvrir' : 'Peel & Flip'}
+                              </button>
                             </div>
                           </div>
                           
-                          {/* Back Side */}
-                          <div className="border border-gray-200 shadow-lg hover:shadow-2xl rounded-2xl overflow-hidden h-full transition-all duration-700 relative">
-                            <div 
-                              className="h-full flex flex-col cursor-pointer relative"
-                              style={{
-                                backgroundImage: `linear-gradient(135deg, rgba(214, 124, 74, 0.92) 0%, rgba(42, 71, 89, 0.92) 100%), url(${step.image})`,
-                                backgroundSize: 'cover',
-                                backgroundPosition: 'center',
-                                backgroundRepeat: 'no-repeat'
-                              }}
-                            >
-                              <div className="text-center flex flex-col p-4" style={{ height: '100%', position: 'relative' }}>
-                                <div className="text-sm leading-normal text-white w-full" style={{ height: '66%', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
-                                  {language === 'fr-FR' && (
-                                    <>
-                                      <p className="mb-3">Nous analysons et sélectionnons les meilleures séquences</p>
-                                      <p className="mb-3">Création d'un storyboard personnalisé selon vos préférences</p>
-                                    </>
-                                  )}
-                                  {language === 'en-US' && (
-                                    <>
-                                      <p className="mb-3">We analyze and select the best sequences</p>
-                                      <p className="mb-3">Create a personalized storyboard according to your preferences</p>
-                                    </>
-                                  )}
-                                </div>
-                                
-                                <div className="border-t border-memopyk-navy/40 mx-6" style={{ position: 'absolute', top: '66%', left: '0', right: '0' }}></div>
-                                
-                                <div className="text-center" style={{ position: 'absolute', bottom: '16px', left: '16px', right: '16px' }}>
-                                  <div className="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center mx-auto mb-2">
-                                    <Icon className="w-6 h-6 text-white" />
-                                  </div>
-                                  <p className="text-sm font-medium text-white">
-                                    {language === 'fr-FR' ? step.titleFr : step.titleEn}
-                                  </p>
-                                  <button 
-                                    onClick={() => toggleCardFlip(step.number)}
-                                    className="mt-2 px-3 py-1 bg-white/20 text-white rounded text-xs hover:bg-white/30 transition-colors"
-                                  >
-                                    {language === 'fr-FR' ? 'Retourner' : 'Turn Back'}
-                                  </button>
-                                </div>
+                          <div className="border border-gray-200 shadow-lg hover:shadow-2xl rounded-2xl overflow-hidden h-full p-4 bg-gray-100 flex flex-col">
+                            <div className="text-center flex-1 flex flex-col justify-center">
+                              <div className="w-12 h-12 bg-memopyk-orange rounded-full flex items-center justify-center mx-auto mb-4">
+                                <Icon className="w-6 h-6 text-white" />
                               </div>
+                              <div className="mb-4">
+                                {language === 'fr-FR' && (
+                                  <>
+                                    <p className="mb-2">Nous analysons et sélectionnons les meilleures séquences</p>
+                                    <p>Création d'un storyboard personnalisé selon vos préférences</p>
+                                  </>
+                                )}
+                                {language === 'en-US' && (
+                                  <>
+                                    <p className="mb-2">We analyze and select the best sequences</p>
+                                    <p>Create a personalized storyboard according to your preferences</p>
+                                  </>
+                                )}
+                              </div>
+                              <button 
+                                onClick={() => toggleCardFlip(step.number)}
+                                className="px-4 py-2 bg-memopyk-orange text-white rounded-lg text-sm font-medium hover:bg-memopyk-orange/90 transition-colors"
+                              >
+                                {language === 'fr-FR' ? 'Retourner' : 'Turn Back'}
+                              </button>
                             </div>
                           </div>
                         </ReactCardFlip>
