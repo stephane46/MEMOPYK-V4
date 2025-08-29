@@ -30,6 +30,7 @@ import SystemTestDashboard from '@/components/admin/SystemTestDashboard';
 import PerformanceTestDashboard from '@/components/admin/PerformanceTestDashboard';
 import DeploymentManagement from '@/components/admin/DeploymentManagement';
 import PeelExperiment from '@/components/admin/PeelExperiment';
+import PeelNew from '@/components/admin/PeelNew';
 import CryptoJS from 'crypto-js';
 
 
@@ -240,6 +241,7 @@ export default function AdminPage() {
     { id: 'why-memopyk', label: 'Pourquoi MEMOPYK', icon: Users },
     { id: 'legal-docs', label: 'Documents Légaux', icon: FileText },
     { id: 'peel-experiment', label: '🧪 Peel Effect', icon: Layers },
+    { id: 'peel-new', label: '🎭 Peel New', icon: Sparkles },
     { id: 'analytics', label: 'Analytics (old)', icon: BarChart3 },
     { id: 'analytics-ga', label: '(Analytics GA)', icon: TrendingUp },
     { id: 'analytics-ga-clean', label: 'Analytics', icon: Sparkles },
@@ -1498,6 +1500,13 @@ export default function AdminPage() {
           {activeSection === 'peel-experiment' && (
             <div className="space-y-6">
               <PeelExperiment />
+            </div>
+          )}
+
+          {/* Peel New */}
+          {activeSection === 'peel-new' && (
+            <div className="space-y-6">
+              <PeelNew />
             </div>
           )}
 
