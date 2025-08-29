@@ -200,6 +200,10 @@ export function HowItWorksCondensed() {
                           });
                         }}
                       >
+                        {/* Orange Number Circle - Top Left on Back Card */}
+                        <div className="absolute top-2 left-2 w-8 h-8 bg-memopyk-orange rounded-full flex items-center justify-center transition-transform duration-300 shadow-lg" style={{ zIndex: 10 }}>
+                          <span className="text-sm font-bold text-white">{step.number}</span>
+                        </div>
                         
                         {/* Top Section - Text content area */}
                         <div className="text-center flex flex-col" style={{ height: '350px', position: 'relative' }}>
