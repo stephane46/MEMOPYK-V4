@@ -275,13 +275,43 @@ function PeelCard({
 
         {/* Revealed layer */}
         <PeelBottom>
-          <div className="reveal">
-            <div className="text-center">
-              <div className="mb-4">
-                <span className="text-3xl mb-2 block">❤️</span>
+          <div 
+            className="reveal shadow-lg rounded-2xl overflow-hidden border border-gray-200 h-full"
+            style={{
+              backgroundImage: `linear-gradient(135deg, rgba(214, 124, 74, 0.92) 0%, rgba(42, 71, 89, 0.92) 100%), url(${stepImage})`,
+              backgroundSize: 'cover',
+              backgroundPosition: 'center',
+              backgroundRepeat: 'no-repeat'
+            }}
+          >
+            <div className="h-full flex flex-col relative px-2 pt-0 pb-2">
+              {/* Text content area - Same as card back */}
+              <div className="text-center flex flex-col" style={{ height: '350px', position: 'relative' }}>
+                <div className="text-sm leading-normal text-white w-full flip-card-text-zero-spacing">
+                  {description.split('\n\n').map((paragraph, i) => {
+                    if (paragraph === '—') {
+                      return <div key={i} className="text-center my-2 text-white/80 text-lg">—</div>;
+                    }
+                    if (paragraph.startsWith('**') && paragraph.endsWith('**')) {
+                      const text = paragraph.slice(2, -2);
+                      return <p key={i} className="mb-2 font-bold">{text}</p>;
+                    }
+                    return <p key={i} className="mb-2">{paragraph}</p>;
+                  })}
+                </div>
               </div>
-              <h4 className="text-lg font-bold mb-2">Ready to Share</h4>
-              <p className="text-sm opacity-90">Your personalized memory film delivered with love and care</p>
+              
+              {/* Bottom Section - Title and icon */}
+              <div className="mt-auto flex items-center justify-between px-1" style={{ height: '60px' }}>
+                <div className="text-left">
+                  <h3 className="text-lg font-bold text-white mb-0 leading-tight">{title}</h3>
+                </div>
+                
+                {/* Step number in bottom right */}
+                <div className="w-10 h-10 bg-white rounded-full flex items-center justify-center shadow-lg">
+                  <span className="text-lg font-bold" style={{ color: '#D67C4A' }}>{stepNumber}</span>
+                </div>
+              </div>
             </div>
           </div>
         </PeelBottom>
