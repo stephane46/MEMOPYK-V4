@@ -195,9 +195,10 @@ function PeelCard({
         }}
       >
         <PeelTop>
-          <div className="bg-white border border-gray-200 shadow-lg hover:shadow-2xl rounded-2xl overflow-hidden h-full">
+          {/* Card Container - Rectangle: Square image + white padding below */}
+          <div className="bg-white border border-gray-200 shadow-lg hover:shadow-2xl rounded-2xl overflow-hidden">
             <div className="relative cursor-pointer">
-              {/* Step Image */}
+              {/* Step Image - Square */}
               <div className="relative overflow-hidden rounded-xl transition-all duration-500 aspect-square">
                 <img 
                   src={stepImage} 
@@ -211,7 +212,7 @@ function PeelCard({
                 </div>
               </div>
               
-              {/* Info Button - Below image in white space */}
+              {/* Info Button - Below image in white padding space */}
               <div className="flex justify-center mt-3 mb-2">
                 <div 
                   className="w-12 h-12 rounded-full flex items-center justify-center transition-all duration-300 hover:scale-110 cursor-pointer"
