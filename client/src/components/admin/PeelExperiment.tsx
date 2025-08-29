@@ -166,7 +166,7 @@ function PeelCard({
     spring.to(targetPos, { stiffness: 0.1, damping: 0.8 });
     
     return () => spring.stop();
-  }, [isFlipped, reveal.x, reveal.y, closed.x, closed.y, pos]);
+  }, [isFlipped]);
 
   // Explicit geometry
   const base   = { x: width - 32, y: height - 32 }; // larger-corner base (4x bigger)
@@ -206,12 +206,10 @@ function PeelCard({
         height={height}
         corner="BOTTOM_RIGHT"
         peelPosition={pos}
-        drag={interactive}
+        drag={false}
         className="peel-wrapper"
-        handleDrag={(evt, x, y, peel) => {
-          if (!interactive) return;
-          peel.setPeelPosition(x, y);
-          setPos({ x, y });
+        handleDrag={() => {
+          // Drag disabled - using click-to-flip instead
         }}
       >
         <PeelTop>
@@ -224,21 +222,16 @@ function PeelCard({
             <div className="relative">
               {/* Step Image - Square */}
               <div 
-                className="relative overflow-hidden rounded-t-2xl transition-all duration-500 aspect-square" 
+                className="relative overflow-hidden rounded-t-2xl transition-all duration-500 aspect-square bg-gray-50" 
                 style={{ 
                   borderTopLeftRadius: '1rem', 
-                  borderTopRightRadius: '1rem',
-                  backgroundImage: `url(${stepImage})`,
-                  backgroundSize: 'contain',
-                  backgroundPosition: 'center',
-                  backgroundRepeat: 'no-repeat',
-                  backgroundColor: '#f9fafb'
+                  borderTopRightRadius: '1rem'
                 }}
               >
                 <img 
                   src={stepImage} 
                   alt={title}
-                  className="w-full h-full object-contain transition-transform duration-500 opacity-0"
+                  className="w-full h-full object-contain transition-transform duration-500"
                   style={{ borderTopLeftRadius: '1rem', borderTopRightRadius: '1rem' }}
                 />
                 
