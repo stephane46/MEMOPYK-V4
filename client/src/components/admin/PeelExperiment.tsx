@@ -148,13 +148,19 @@ function PeelCard({
 
     const spring = makeSpring(() => pos, (xy) => setPos(xy));
 
-    animateSequence({
-      to: spring.to, stop: spring.stop,
-      targets: { closed, base, reveal },
-      prefersReduced,
-    });
+    // Small delay to ensure component is fully rendered
+    const timer = setTimeout(() => {
+      animateSequence({
+        to: spring.to, stop: spring.stop,
+        targets: { closed, base, reveal },
+        prefersReduced,
+      });
+    }, 500);
 
-    return () => spring.stop();
+    return () => {
+      clearTimeout(timer);
+      spring.stop();
+    };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -200,7 +206,7 @@ export default function PeelExperiment() {
         <PeelCard
           title="Visual Feedback"
           description="This corner hints that the card is interactive."
-          initial={{ x: 352, y: 232 }}
+          initial={{ x: 340, y: 220 }}
         />
         <PeelCard
           title="Step 2: Flip Animation"
