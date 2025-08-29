@@ -182,7 +182,7 @@ export function HowItWorksCondensed() {
                       
                     {/* BACK SIDE - Detailed Information */}
                     <div 
-                      className="card-back shadow-lg hover:shadow-2xl rounded-2xl overflow-hidden border border-gray-200 relative"
+                      className="card-back shadow-lg hover:shadow-2xl rounded-2xl border border-gray-200 relative"
                       style={{
                         backgroundImage: `linear-gradient(135deg, rgba(214, 124, 74, 0.92) 0%, rgba(42, 71, 89, 0.92) 100%), url(${step.image})`,
                         backgroundSize: 'cover',
@@ -195,8 +195,11 @@ export function HowItWorksCondensed() {
                         <span className="text-sm font-bold text-memopyk-orange">{step.number}</span>
                       </div>
                       
+                      {/* White line 50px from bottom - MOVED TO TOP LEVEL, OUTSIDE OVERFLOW CONTAINER */}
+                      <div className="absolute h-px bg-white" style={{ bottom: '50px', left: '0', right: '0', zIndex: 20 }}></div>
+                      
                       <div 
-                        className="relative cursor-pointer"
+                        className="relative cursor-pointer overflow-hidden rounded-2xl h-full"
                         onClick={() => {
                           setFlippedCards(prev => {
                             const newSet = new Set(prev);
@@ -207,7 +210,7 @@ export function HowItWorksCondensed() {
                       >
                         
                         {/* Content area - EXACT SAME STRUCTURE AS FRONT */}
-                        <div className="relative rounded-xl transition-all duration-500 aspect-square">
+                        <div className="relative transition-all duration-500 aspect-square">
                           <div className="h-full flex flex-col px-2 pt-0 pb-2">
                             {/* Top Section - Text content area */}
                             <div className="text-center flex flex-col" style={{ position: 'relative' }}>
@@ -236,9 +239,6 @@ export function HowItWorksCondensed() {
                             </div>
                           </div>
                         </div>
-                        
-                        {/* White line 50px from bottom - positioned relative to whole card, outside all containers */}
-                        <div className="absolute h-px bg-white" style={{ bottom: '50px', left: '0', right: '0' }}></div>
                         
                         {/* Title - SAME AS FRONT CARD */}
                         <div className="p-4 text-center" style={{ paddingTop: '76px' }}>
