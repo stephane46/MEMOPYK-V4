@@ -124,22 +124,23 @@ export function HowItWorksCondensed() {
                           boxShadow: 'inset -2px -2px 4px rgba(0,0,0,0.1)',
                           zIndex: 10
                         }}
+                      ></div>
+                      
+                      {/* Flip icon with pulse animation - positioned ABOVE the triangle */}
+                      <div 
+                        className="absolute bottom-2 right-2 w-6 h-6 flex items-center justify-center animate-pulse pointer-events-none"
+                        style={{
+                          animation: 'pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                          backgroundColor: 'rgba(255, 255, 255, 0.3)',
+                          borderRadius: '50%',
+                          zIndex: 20
+                        }}
                       >
-                        {/* Flip icon with pulse animation - made more visible */}
-                        <div 
-                          className="absolute top-2 left-2 w-5 h-5 flex items-center justify-center animate-pulse"
-                          style={{
-                            animation: 'pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite',
-                            backgroundColor: 'rgba(255, 255, 255, 0.2)',
-                            borderRadius: '50%'
-                          }}
-                        >
-                          <Info 
-                            size={16} 
-                            className="text-white drop-shadow-lg" 
-                            strokeWidth={3}
-                          />
-                        </div>
+                        <Info 
+                          size={18} 
+                          className="text-white drop-shadow-lg" 
+                          strokeWidth={3}
+                        />
                       </div>
                       {/* Clickable Area */}
                       <div 
