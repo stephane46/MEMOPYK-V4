@@ -208,24 +208,24 @@ export function HowItWorksCondensed() {
                         
                         {/* Top Section - Text content area */}
                         <div className="text-center flex flex-col" style={{ height: '350px', position: 'relative' }}>
-                          <div className="text-sm leading-normal text-white w-full flip-card-text-zero-spacing">
+                          <div className="text-sm leading-normal text-white w-full flip-card-text-zero-spacing" style={{ paddingTop: '20px' }}>
                             {(language === 'fr-FR' ? step.descriptionFr : step.descriptionEn).split('\n').map((paragraph, i) => (
                               <p key={i} className="m-0 p-0">{paragraph}</p>
                             ))}
                           </div>
                           
-                          {/* Separator Line - MOVED FURTHER UP TO AVOID TITLE OVERLAP */}
+                          {/* Separator Line - MOVED MUCH HIGHER UP */}
                           <div
                             className="absolute border-t border-white/40 left-2"
                             style={{
-                              top: '200px',
+                              top: '160px',
                               right: "calc(0.5rem + var(--peel-c, 0px))",
                               zIndex: 1,
                             }}
                           ></div>
                           
-                          {/* Bottom Section - Sub Description - MOVED FURTHER UP TO AVOID TITLE OVERLAP */}
-                          <div className="absolute text-center left-2 right-2" style={{ top: '210px' }}>
+                          {/* Bottom Section - Sub Description - MOVED MUCH HIGHER UP */}
+                          <div className="absolute text-center left-2 right-2" style={{ top: '170px' }}>
                             <div className="text-xs text-white leading-relaxed w-full">
                               {language === 'fr-FR' ? step.subDescriptionFr : step.subDescriptionEn}
                             </div>
