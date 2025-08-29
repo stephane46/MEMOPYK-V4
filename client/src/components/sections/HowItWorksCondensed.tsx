@@ -148,18 +148,19 @@ export function HowItWorksCondensed() {
                              borderWidth: '0 0 40px 40px',
                              borderColor: 'transparent transparent #D67C4A transparent'
                            }}>
-                        {/* Animated Arrow Icon - positioned at card edge */}
-                        <div className="absolute flip-arrow-animation z-50" 
-                             style={{
-                               bottom: '0px',
-                               right: '0px',
-                               color: 'white',
-                               fontSize: '16px',
-                               fontWeight: 'bold',
-                               textShadow: '1px 1px 2px rgba(0,0,0,0.5)'
-                             }}>
-                          ↖
-                        </div>
+                      </div>
+                      
+                      {/* Animated Arrow Icon - positioned at card edge */}
+                      <div className="absolute flip-arrow-animation z-50" 
+                           style={{
+                             bottom: '0px',
+                             right: '0px',
+                             color: 'white',
+                             fontSize: '16px',
+                             fontWeight: 'bold',
+                             textShadow: '1px 1px 2px rgba(0,0,0,0.5)'
+                           }}>
+                        ↖
                       </div>
                     </div>
                       
