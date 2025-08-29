@@ -11,6 +11,13 @@ export default function PeelExperiment() {
   const cardRefs = useRef<Array<HTMLDivElement | null>>([]);
   const language = 'fr-FR'; // You can change this for testing
 
+  const toggleCardFlip = (cardNumber: number) => {
+    setFlippedCards(prev => ({ 
+      ...prev, 
+      [cardNumber - 1]: !prev[cardNumber - 1] 
+    }));
+  };
+
   useEffect(() => {
     const observer = new IntersectionObserver(
       (entries) => {
@@ -265,7 +272,7 @@ export default function PeelExperiment() {
                               
                               <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2">
                                 <button 
-                                  onClick={() => handleCardClick(step.number)}
+                                  onClick={() => toggleCardFlip(step.number)}
                                   className="px-4 py-2 bg-memopyk-orange text-white rounded-lg text-sm font-medium hover:bg-memopyk-orange/90 transition-colors"
                                 >
                                   {language === 'fr-FR' ? 'Retourner & Découvrir' : 'Peel & Flip'}
@@ -311,7 +318,7 @@ export default function PeelExperiment() {
                                     {language === 'fr-FR' ? step.titleFr : step.titleEn}
                                   </p>
                                   <button 
-                                    onClick={() => handleCardClick(step.number)}
+                                    onClick={() => toggleCardFlip(step.number)}
                                     className="mt-2 px-3 py-1 bg-white/20 text-white rounded text-xs hover:bg-white/30 transition-colors"
                                   >
                                     {language === 'fr-FR' ? 'Retourner' : 'Turn Back'}
