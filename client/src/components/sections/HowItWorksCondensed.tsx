@@ -140,16 +140,16 @@ export function HowItWorksCondensed() {
                           </div>
                           
                           {/* Orange Triangle Overlay - Bottom Right */}
-                          <div className="absolute bottom-0 right-0 w-0 h-0" 
+                          <div className="absolute -bottom-0 -right-0 w-0 h-0" 
                                style={{
                                  borderStyle: 'solid',
-                                 borderWidth: '0 0 40px 40px',
+                                 borderWidth: '0 0 50px 50px',
                                  borderColor: 'transparent transparent #D67C4A transparent'
                                }}>
-                            {/* Animated Arrow Icon */}
-                            <div className="absolute bottom-2 right-2 w-4 h-4 flip-arrow-animation">
-                              <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M7 16l-4-4m0 0l4-4m-4 4h18" />
+                            {/* Animated Arrow Icon - positioned inside triangle */}
+                            <div className="absolute -bottom-8 -right-8 w-3 h-3 flip-arrow-animation z-10">
+                              <svg className="w-3 h-3 text-white" fill="currentColor" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M13 7l5 5-5 5M6 12h12" />
                               </svg>
                             </div>
                           </div>
