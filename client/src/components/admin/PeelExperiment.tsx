@@ -130,6 +130,8 @@ function PeelCard({
   stepImage = "/images/How_we_work_Step1.png",
   stepIcon = "upload",
   animateSequence,
+  isFlipped = false,
+  onToggleFlip,
 }: {
   title: string;
   description: string;
@@ -145,13 +147,29 @@ function PeelCard({
     targets: { closed: { x: number; y: number }; base: { x: number; y: number }; reveal: { x: number; y: number } };
     prefersReduced: boolean;
   }) => void;
+  isFlipped?: boolean;
+  onToggleFlip?: () => void;
 }) {
-  const [pos, setPos] = useState<{ x: number; y: number }>(() => initial ?? { x: width - 2, y: height - 2 });
+  // Determine position based on flip state
+  const closed = { x: width - 2, y: height - 2 };
+  const reveal = { x: Math.round(width * 0.08), y: Math.round(height * 0.12) };
+  const [pos, setPos] = useState<{ x: number; y: number }>(() => 
+    initial ?? (isFlipped ? reveal : closed)
+  );
+
+  // Update position when flip state changes with smooth animation
+  useEffect(() => {
+    const targetPos = isFlipped ? reveal : closed;
+    const spring = makeSpring(() => pos, (xy) => setPos(xy));
+    
+    // Animate to target position smoothly
+    spring.to(targetPos, { stiffness: 0.1, damping: 0.8 });
+    
+    return () => spring.stop();
+  }, [isFlipped, reveal.x, reveal.y, closed.x, closed.y, pos]);
 
   // Explicit geometry
-  const closed = { x: width - 2, y: height - 2 };
   const base   = { x: width - 32, y: height - 32 }; // larger-corner base (4x bigger)
-  const reveal = { x: Math.round(width * 0.08), y: Math.round(height * 0.12) };
 
   const ran = useRef(false);
   useEffect(() => {
@@ -198,8 +216,12 @@ function PeelCard({
       >
         <PeelTop>
           {/* Card Container - Rectangle: Square image + white padding below */}
-          <div className="bg-white border border-gray-200 shadow-lg hover:shadow-2xl rounded-2xl overflow-hidden" style={{ borderRadius: '1rem' }}>
-            <div className="relative cursor-pointer">
+          <div 
+            className="bg-white border border-gray-200 shadow-lg hover:shadow-2xl rounded-2xl overflow-hidden cursor-pointer" 
+            style={{ borderRadius: '1rem' }}
+            onClick={onToggleFlip}
+          >
+            <div className="relative">
               {/* Step Image - Square */}
               <div 
                 className="relative overflow-hidden rounded-t-2xl transition-all duration-500 aspect-square" 
@@ -238,7 +260,7 @@ function PeelCard({
         {/* Back of the "page" */}
         <PeelBack>
           <div 
-            className="shadow-lg hover:shadow-2xl rounded-2xl overflow-hidden border border-gray-200 h-full"
+            className="shadow-lg hover:shadow-2xl rounded-2xl overflow-hidden border border-gray-200 h-full cursor-pointer"
             style={{
               backgroundImage: `linear-gradient(135deg, rgba(214, 124, 74, 0.92) 0%, rgba(42, 71, 89, 0.92) 100%), url(${stepImage})`,
               backgroundSize: 'cover',
@@ -246,6 +268,7 @@ function PeelCard({
               backgroundRepeat: 'no-repeat',
               borderRadius: '1rem'
             }}
+            onClick={onToggleFlip}
           >
             <div className="h-full flex flex-col cursor-pointer relative px-4 pt-6 pb-2">
               {/* Top Section - Text content area with better spacing */}
@@ -324,7 +347,21 @@ function PeelCard({
 
 /* ---------- Exported component ---------- */
 export default function PeelExperiment() {
+  const [flippedCards, setFlippedCards] = useState<Set<number>>(new Set());
+  
   useEffect(() => { injectOnce(); }, []);
+
+  const toggleCardFlip = (cardIndex: number) => {
+    setFlippedCards(prev => {
+      const newSet = new Set(prev);
+      if (newSet.has(cardIndex)) {
+        newSet.delete(cardIndex);
+      } else {
+        newSet.add(cardIndex);
+      }
+      return newSet;
+    });
+  };
 
   return (
     <section className="py-12 bg-gradient-to-b from-memopyk-cream to-white">
@@ -353,8 +390,9 @@ Faites-nous part de votre vision et de ce qui compte le plus pour vous, soit en 
           stepNumber={1}
           stepImage="/images/How_we_work_Step1.png"
           stepIcon="upload"
-          interactive
-          initial={{ x: 356, y: 408 }}
+          interactive={false}
+          isFlipped={flippedCards.has(0)}
+          onToggleFlip={() => toggleCardFlip(0)}
         />
         <PeelCard
           title="We Create"
@@ -368,8 +406,9 @@ Vous recevez un devis précis et personnalisé avant toute étape, sans aucune m
           stepNumber={2}
           stepImage="/images/How_we_work_Step2.png"
           stepIcon="create"
-          interactive
-          initial={{ x: 356, y: 408 }}
+          interactive={false}
+          isFlipped={flippedCards.has(1)}
+          onToggleFlip={() => toggleCardFlip(1)}
         />
         <PeelCard
           title="You Enjoy & Share"
@@ -383,8 +422,9 @@ Deux séries de retours sont incluses pour affiner le montage jusqu'à ce qu'il 
           stepNumber={3}
           stepImage="/images/How_we_work_Step3.png"
           stepIcon="share"
-          interactive
-          initial={{ x: 356, y: 408 }}
+          interactive={false}
+          isFlipped={flippedCards.has(2)}
+          onToggleFlip={() => toggleCardFlip(2)}
         />
         </div>
       </div>
