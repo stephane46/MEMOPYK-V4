@@ -167,6 +167,13 @@ export function HowItWorksCondensed() {
                             <span className="text-sm font-bold text-white">{step.number}</span>
                           </div>
                         </div>
+                        
+                        {/* Title inside card - white area below image */}
+                        <div className="p-4 text-center">
+                          <h3 className="text-xl font-semibold text-memopyk-dark-blue">
+                            {language === 'fr-FR' ? step.titleFr : step.titleEn}
+                          </h3>
+                        </div>
                       </div>
                     </div>
                       
@@ -230,15 +237,6 @@ export function HowItWorksCondensed() {
                   </div>
                 </div>
 
-                {/* Static Title with Blue Icon - Always Visible */}
-                <div className="flex items-center justify-center gap-3">
-                  <div className="w-12 h-12 bg-memopyk-navy rounded-full flex items-center justify-center transition-transform duration-300">
-                    <Icon className="w-6 h-6 text-white" />
-                  </div>
-                  <h3 className="text-2xl font-semibold text-memopyk-navy transition-colors duration-300">
-                    {language === 'fr-FR' ? step.titleFr : step.titleEn}
-                  </h3>
-                </div>
               </div>
             );
           })}
