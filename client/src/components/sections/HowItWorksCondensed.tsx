@@ -112,6 +112,12 @@ export function HowItWorksCondensed() {
                     
                     {/* FRONT SIDE - Step Card */}
                     <div className="card-front bg-white border border-gray-200 shadow-lg hover:shadow-2xl rounded-2xl overflow-hidden relative" style={{ position: 'relative', zIndex: 0, isolation: 'isolate' }}>
+                      {/* Orange peel corner - positioned inside card to avoid stacking context issues */}
+                      <RoundedPeelCorner 
+                        className="absolute top-0 left-0"
+                        colorTop="#D67C4A"
+                        colorFold="#c2693c"
+                      />
                       {/* Clickable Area */}
                       <div 
                         className="relative cursor-pointer"
@@ -141,9 +147,6 @@ export function HowItWorksCondensed() {
                           </div>
                         </div>
                       </div>
-                      
-                      {/* Rounded Peel Corner — now self-sizing */}
-                      <RoundedPeelCorner colorTop="#F2A300" colorFold="#D67C4A" />
                     </div>
                       
                     {/* BACK SIDE - Detailed Information */}
