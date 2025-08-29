@@ -26963,8 +26963,8 @@
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-29T16:48:02.320Z",
-    "updated_at": "2025-08-29T16:50:32.035Z",
-    "duration": 1481996
+    "updated_at": "2025-08-29T16:52:06.436Z",
+    "duration": 1482090
   },
   {
     "id": "30783285-4d49-4fe9-93f9-301e466207a3",
@@ -26997,7 +26997,7 @@
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-29T16:50:06.277Z",
-    "updated_at": "2025-08-29T16:50:37.652Z",
-    "duration": 1065407
+    "updated_at": "2025-08-29T16:52:06.755Z",
+    "duration": 1065497
   }
 ]
