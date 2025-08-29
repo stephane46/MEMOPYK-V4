@@ -32,13 +32,13 @@ export default function RoundedPeelCorner({
   const { C, R, pathFlap, pathInner, t } = useMemo(() => {
     const Rraw = Rdet ?? 16;
     // choose a box size from the detected radius (2.1× for strong, curled look)
-    const Cauto = Math.ceil(Rraw * 2.1);
+    const Cauto = Math.ceil(Rraw * 4.0);
     const C = Math.max(10, Cauto);           // peel box (px)
     const R = Math.max(1, Math.min(Rraw, C - 2)); // clamp so quarter circle fits
 
     // curl thickness and rounded tip
-    const t = Math.max(10, Math.min(R * 0.78, C * 0.60));
-    const tip = Math.min(t * 0.50, R * 0.60);
+    const t = Math.max(12, Math.min(R * 0.85, C * 0.55));
+    const tip = Math.min(t * 0.55, R * 0.75);
 
     const p1x = C - R, p1y = C;
     const p2x = C,     p2y = C - R;
