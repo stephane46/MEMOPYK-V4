@@ -906,7 +906,16 @@ html, body {
 .card-front > *[style*="background-color: black"],
 .card-front > *[style*="background:#000"],
 .card-front > *[style*="border-color:#000"],
-.absolute[style*="bottom"][style*="right"][style*="black"] {
+.absolute[style*="bottom"][style*="right"][style*="black"],
+.card-front *[style*="background: #000"],
+.card-front *[style*="background-color: #000"],
+.card-front *[style*="background:#000000"],
+.card-front .absolute[style*="bottom"][style*="right"],
+.card-front div[style*="transform: rotate(45deg)"],
+.card-front div[style*="skew"],
+.card-front div[class*="triangle"],
+.card-front div[class*="corner"],
+.card-front div[class*="peel"]:not([data-peel]) {
   display: none !important;
 }
 
