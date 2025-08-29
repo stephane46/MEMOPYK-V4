@@ -313,8 +313,20 @@ export default function PeelExperiment() {
   useEffect(() => { injectOnce(); }, []);
 
   return (
-    <div className="page peel-zone">
-      <div className="grid">
+    <section className="py-12 bg-gradient-to-b from-memopyk-cream to-white">
+      <div className="max-w-6xl mx-auto px-6">
+        {/* Section Header */}
+        <div className="text-center mb-16">
+          <h2 className="text-4xl md:text-5xl font-bold text-memopyk-dark-blue mb-4">
+            Peel Experiment
+          </h2>
+          <p className="text-xl text-memopyk-dark-blue/70 max-w-3xl mx-auto">
+            Interactive card demonstration with peel effects
+          </p>
+        </div>
+
+        {/* Cards Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
         <PeelCard
           title="You Upload"
           description="Simply send us your photos and videos—no need to organize or edit anything beforehand."
@@ -370,7 +382,8 @@ export default function PeelExperiment() {
             });
           }}
         />
+        </div>
       </div>
-    </div>
+    </section>
   );
 }
