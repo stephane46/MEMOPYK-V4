@@ -145,7 +145,7 @@ export function HowItWorksCondensed() {
                       <div className="peel-corner">
                         <span className="peel-arrow peel-arrow--float" aria-hidden>
                           <svg viewBox="0 0 24 24" role="img">
-                            <path d="M17 17L7 7M7 13l0-6 6 0" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                            <path d="M7 17L17 7M7 7h10M7 7v10" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
                           </svg>
                         </span>
                       </div>

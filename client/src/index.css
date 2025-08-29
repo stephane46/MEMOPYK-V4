@@ -852,13 +852,12 @@ html, body {
 /* Keep rotation on the SVG only (so animations won't override positioning) */
 .peel-arrow svg{
   width:100%; height:100%;
-  transform: rotate(-45deg);
 }
 
 /* Optional subtle float (doesn't disturb centering) */
 @keyframes arrowFloat {
-  0%,100% { transform: translateY(0) rotate(-45deg); }
-  50%     { transform: translateY(-2px) rotate(-45deg); }
+  0%,100% { transform: translateY(0); }
+  50%     { transform: translateY(-2px); }
 }
 .peel-arrow--float svg{ animation: arrowFloat 2s ease-in-out infinite; }
 
