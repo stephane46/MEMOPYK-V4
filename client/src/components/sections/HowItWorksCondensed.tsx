@@ -208,7 +208,7 @@ export function HowItWorksCondensed() {
                         
                         {/* Top Section - Text content area */}
                         <div className="text-center flex flex-col" style={{ height: '350px', position: 'relative' }}>
-                          <div className="text-sm leading-normal text-white w-full flip-card-text-zero-spacing" style={{ paddingTop: '50px' }}>
+                          <div className="text-sm leading-normal text-white w-full flip-card-text-zero-spacing" style={{ paddingTop: '40px' }}>
                             {(language === 'fr-FR' ? step.descriptionFr : step.descriptionEn).split('\n').map((paragraph, i) => (
                               <p key={i} className="m-0 p-0">{paragraph}</p>
                             ))}
