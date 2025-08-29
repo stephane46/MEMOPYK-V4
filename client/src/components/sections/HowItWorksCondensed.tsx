@@ -138,6 +138,21 @@ export function HowItWorksCondensed() {
                           <div className="absolute top-2 left-2 w-8 h-8 bg-memopyk-orange rounded-full flex items-center justify-center transition-transform duration-300 shadow-lg">
                             <span className="text-sm font-bold text-white">{step.number}</span>
                           </div>
+                          
+                          {/* Orange Triangle Overlay - Bottom Right */}
+                          <div className="absolute bottom-0 right-0 w-0 h-0" 
+                               style={{
+                                 borderStyle: 'solid',
+                                 borderWidth: '0 0 50px 50px',
+                                 borderColor: 'transparent transparent #D67C4A transparent'
+                               }}>
+                            {/* Animated Arrow Icon */}
+                            <div className="absolute bottom-1 right-1 w-4 h-4 flip-arrow-animation">
+                              <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M7 16l-4-4m0 0l4-4m-4 4h18" />
+                              </svg>
+                            </div>
+                          </div>
                         </div>
                         
                         {/* Info Button - Below image in white space */}
