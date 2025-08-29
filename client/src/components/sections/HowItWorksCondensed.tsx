@@ -110,7 +110,7 @@ export function HowItWorksCondensed() {
                   <div className="card-flip-inner">
                     
                     {/* FRONT SIDE - Step Card */}
-                    <div className="card-front bg-white border border-gray-200 shadow-lg hover:shadow-2xl rounded-2xl overflow-hidden">
+                    <div className="card-front bg-white border border-gray-200 shadow-lg hover:shadow-2xl rounded-2xl overflow-hidden relative">
                       {/* Clickable Area */}
                       <div 
                         className="relative cursor-pointer"
@@ -138,19 +138,19 @@ export function HowItWorksCondensed() {
                           <div className="absolute top-2 left-2 w-8 h-8 bg-memopyk-orange rounded-full flex items-center justify-center transition-transform duration-300 shadow-lg">
                             <span className="text-sm font-bold text-white">{step.number}</span>
                           </div>
-                          
-                          {/* Orange Triangle Overlay - Bottom Right */}
-                          <div className="absolute bottom-0 right-0 w-0 h-0" 
-                               style={{
-                                 borderStyle: 'solid',
-                                 borderWidth: '0 0 50px 50px',
-                                 borderColor: 'transparent transparent #D67C4A transparent'
-                               }}>
-                            {/* Animated Arrow Icon - positioned inside triangle */}
-                            <div className="absolute bottom-3 right-3 w-4 h-4 flip-arrow-animation z-10 text-white">
-                              ↗
-                            </div>
-                          </div>
+                        </div>
+                      </div>
+                      
+                      {/* Orange Triangle Overlay - Bottom Right of ENTIRE CARD */}
+                      <div className="absolute bottom-0 right-0 w-0 h-0" 
+                           style={{
+                             borderStyle: 'solid',
+                             borderWidth: '0 0 40px 40px',
+                             borderColor: 'transparent transparent #D67C4A transparent'
+                           }}>
+                        {/* Animated Arrow Icon - positioned inside triangle */}
+                        <div className="absolute bottom-2 right-2 w-4 h-4 flip-arrow-animation z-10 text-white text-lg font-bold">
+                          ↗
                         </div>
                       </div>
                     </div>
