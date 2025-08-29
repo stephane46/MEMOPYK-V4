@@ -16,14 +16,16 @@ const injectOnce = (() => {
       .page { min-height:100vh; padding:24px; display:flex; align-items:flex-start; justify-content:center;
               background:linear-gradient(180deg,var(--bg1),var(--bg2)); overflow:visible; }
       .peel-zone { contain: layout paint size; overflow: visible; }
-      .grid { display:grid; grid-template-columns:repeat(3, 360px); gap:24px; width:100%; max-width:1200px; overflow: visible; margin-top: 50px; }
+      .grid { display:grid; grid-template-columns:repeat(3, 384px); gap:32px; width:100%; max-width:1280px; overflow: visible; margin-top: 50px; }
       .peel-wrapper { will-change: transform, clip-path; transform: translateZ(0); -webkit-transform: translateZ(0); contain: layout paint size; }
-      .shell { width:360px; height:240px; border-radius:16px; overflow:visible; background:transparent;
+      .shell { width:384px; height:320px; border-radius:16px; overflow:visible; background:transparent;
                box-shadow:0 6px 18px rgba(0,0,0,.06), 0 2px 6px rgba(0,0,0,.06); }
-      .face { width:100%; height:100%; border-radius:16px; background:rgba(255,255,255,.92);
-              backdrop-filter:blur(4px); padding:24px; }
-      .face h3 { margin:0; font-size:22px; font-weight:700; color:var(--ink); letter-spacing:.2px; }
-      .face p { margin:8px 0 0; color:var(--muted); line-height:1.5; font-size:15px; }
+      .face { width:100%; height:100%; border-radius:16px; 
+              background: linear-gradient(135deg, rgba(255,255,255,0.95) 0%, rgba(242,235,220,0.8) 100%);
+              backdrop-filter:blur(4px); padding:32px; border: 1px solid rgba(255,255,255,0.3);
+              display:flex; flex-direction:column; justify-content:center; align-items:center; }
+      .face h3 { margin:0; font-size:20px; font-weight:700; color:#011526; letter-spacing:.2px; text-align:center; font-family: 'Poppins', system-ui; }
+      .face p { margin:12px 0 0; color:#2A4759; line-height:1.5; font-size:14px; text-align:center; font-family: 'Poppins', system-ui; }
       .back { width:100%; height:100%; background:linear-gradient(135deg,#f6f6f7 0%, #e9ecf1 100%); }
       .reveal { width:100%; height:100%; color:#F2EBDC;
                 background:linear-gradient(135deg,#011526 0%, #2A4759 100%);
@@ -112,7 +114,7 @@ function makeSpring(
 /* ---------- A single controlled peel card ---------- */
 function PeelCard({
   title, description,
-  width = 360, height = 240,
+  width = 384, height = 320,
   initial,
   interactive = false,
   animateSequence,
@@ -206,7 +208,7 @@ export default function PeelExperiment() {
         <PeelCard
           title="Visual Feedback"
           description="This corner hints that the card is interactive."
-          initial={{ x: 328, y: 208 }}
+          initial={{ x: 352, y: 288 }}
         />
         <PeelCard
           title="Step 2: Flip Animation"
