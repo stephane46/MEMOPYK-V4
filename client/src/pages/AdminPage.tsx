@@ -1498,7 +1498,7 @@ export default function AdminPage() {
 
           {/* Peel Experiment */}
           {activeSection === 'peel-experiment' && (
-            <div className="space-y-6 overflow-visible min-h-screen">
+            <div className="fixed inset-0 z-50 bg-white overflow-visible" style={{ paddingLeft: '256px' }}>
               <PeelExperiment />
             </div>
           )}
