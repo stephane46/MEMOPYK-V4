@@ -258,15 +258,12 @@ function PeelCard({
                 </div>
               </div>
               
-              {/* Bottom Section - Title and icon */}
-              <div className="mt-auto flex items-center justify-between px-1" style={{ height: '60px' }}>
-                <div className="text-left">
-                  <h3 className="text-lg font-bold text-white mb-0 leading-tight">{title}</h3>
-                </div>
-                
-                {/* Step number in bottom right */}
-                <div className="w-10 h-10 bg-white rounded-full flex items-center justify-center shadow-lg">
-                  <span className="text-lg font-bold" style={{ color: '#D67C4A' }}>{stepNumber}</span>
+              {/* Return arrow - Bottom left corner */}
+              <div className="absolute -bottom-6 -left-6">
+                <div className="w-10 h-10 bg-white/80 rounded-full flex items-center justify-center hover:bg-white transition-colors shadow-lg">
+                  <svg className="w-5 h-5 text-memopyk-dark-blue" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                  </svg>
                 </div>
               </div>
             </div>
@@ -301,15 +298,12 @@ function PeelCard({
                 </div>
               </div>
               
-              {/* Bottom Section - Title and icon */}
-              <div className="mt-auto flex items-center justify-between px-1" style={{ height: '60px' }}>
-                <div className="text-left">
-                  <h3 className="text-lg font-bold text-white mb-0 leading-tight">{title}</h3>
-                </div>
-                
-                {/* Step number in bottom right */}
-                <div className="w-10 h-10 bg-white rounded-full flex items-center justify-center shadow-lg">
-                  <span className="text-lg font-bold" style={{ color: '#D67C4A' }}>{stepNumber}</span>
+              {/* Return arrow - Bottom left corner */}
+              <div className="absolute -bottom-6 -left-6">
+                <div className="w-10 h-10 bg-white/80 rounded-full flex items-center justify-center hover:bg-white transition-colors shadow-lg">
+                  <svg className="w-5 h-5 text-memopyk-dark-blue" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                  </svg>
                 </div>
               </div>
             </div>
