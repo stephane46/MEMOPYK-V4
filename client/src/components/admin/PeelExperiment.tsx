@@ -192,7 +192,7 @@ function PeelCard({
           <div className="face">
             <div className="flex justify-center mb-4 flex-shrink-0">
               <div className="w-16 h-16 bg-memopyk-orange/20 rounded-full flex items-center justify-center">
-                <span className="text-2xl">🎯</span>
+                <span className="text-2xl">📤</span>
               </div>
             </div>
             <h3>{title}</h3>
@@ -206,11 +206,11 @@ function PeelCard({
             <div className="w-full h-full flex flex-col items-center justify-center p-6 text-center">
               <div className="mb-4">
                 <div className="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center mb-3">
-                  <span className="text-xl">⚡</span>
+                  <span className="text-xl">✨</span>
                 </div>
               </div>
-              <h4 className="text-lg font-bold text-memopyk-navy mb-2">Interactive Demo</h4>
-              <p className="text-sm text-memopyk-dark-blue">Experience smooth peel animations with spring physics</p>
+              <h4 className="text-lg font-bold text-memopyk-navy mb-2">We Edit</h4>
+              <p className="text-sm text-memopyk-dark-blue">Professional editing with perfect music, timing, and your preferences</p>
             </div>
           </div>
         </PeelBack>
@@ -220,10 +220,10 @@ function PeelCard({
           <div className="reveal">
             <div className="text-center">
               <div className="mb-4">
-                <span className="text-3xl mb-2 block">🚀</span>
+                <span className="text-3xl mb-2 block">❤️</span>
               </div>
-              <h4 className="text-lg font-bold mb-2">MEMOPYK Tech</h4>
-              <p className="text-sm opacity-90">Advanced UI interactions for premium user experience</p>
+              <h4 className="text-lg font-bold mb-2">Ready to Share</h4>
+              <p className="text-sm opacity-90">Your personalized memory film delivered with love and care</p>
             </div>
           </div>
         </PeelBottom>
@@ -240,19 +240,19 @@ export default function PeelExperiment() {
     <div className="page peel-zone">
       <div className="grid">
         <PeelCard
-          title="Visual Feedback"
-          description="This corner hints that the card is interactive."
+          title="You Upload"
+          description="Simply send us your photos and videos—no need to organize or edit anything beforehand."
           initial={{ x: 352, y: 288 }}
         />
         <PeelCard
-          title="Step 2: Flip Animation"
-          description="Click/tap and drag the corner to reveal the back content."
+          title="We Create"
+          description="We carefully review every detail and handpick the most beautiful scenes to craft a unique story."
           interactive
           initial={{ x: 356, y: 236 }}
         />
         <PeelCard
-          title="Step 3: Polish"
-          description="Smooth transitions and a subtle, professional corner tickle."
+          title="You Enjoy & Share"
+          description="You'll receive your personalized souvenir film within one to three weeks, carefully edited."
           animateSequence={({ to, targets, prefersReduced }) => {
             if (prefersReduced) { to(targets.base, { stiffness: 0.035, damping: 0.92 }); return; }
             // Phase A: float down to reveal
