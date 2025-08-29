@@ -112,10 +112,18 @@ export function HowItWorksCondensed() {
                     
                     {/* FRONT SIDE - Step Card */}
                     <div className="card-front bg-white border border-gray-200 shadow-lg hover:shadow-2xl rounded-2xl overflow-hidden relative" style={{ position: 'relative', zIndex: 0, isolation: 'isolate' }}>
-                      {/* Orange peel corner - back to bottom-right positioning */}
-                      <RoundedPeelCorner 
-                        colorTop="#D67C4A"
-                        colorFold="#c2693c"
+                      {/* Orange peel corner using pure CSS - no overlay conflicts */}
+                      <div 
+                        className="absolute bottom-0 right-0 pointer-events-none"
+                        style={{
+                          width: '60px',
+                          height: '60px',
+                          background: 'linear-gradient(135deg, #D67C4A 0%, #c2693c 100%)',
+                          clipPath: 'polygon(100% 0%, 0% 100%, 100% 100%)',
+                          borderRadius: '0 0 1rem 0',
+                          boxShadow: 'inset -2px -2px 4px rgba(0,0,0,0.1)',
+                          zIndex: 10
+                        }}
                       />
                       {/* Clickable Area */}
                       <div 
