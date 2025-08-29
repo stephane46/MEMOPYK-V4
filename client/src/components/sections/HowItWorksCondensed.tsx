@@ -233,7 +233,7 @@ export function HowItWorksCondensed() {
                         </div>
                         
                         {/* Title at bottom - Same position as front card */}
-                        <div className="absolute bottom-0 left-0 right-0 p-4 text-center bg-white/10 backdrop-blur-sm">
+                        <div className="absolute bottom-0 left-0 right-0 text-center bg-white/10 backdrop-blur-sm" style={{ padding: '1rem' }}>
                           <h3 className="text-xl font-semibold text-white">
                             {language === 'fr-FR' ? step.titleFr : step.titleEn}
                           </h3>
