@@ -1,47 +1,36 @@
-import React, { useEffect, useLayoutEffect, useRef, useState } from "react";
+"use client";
+
+import React, { useEffect, useRef, useState } from "react";
 import { PeelWrapper, PeelTop, PeelBack, PeelBottom } from "react-peel";
 
-/* ---------- Minimal global styles (injected) ---------- */
-const inject = (css: string) => {
-  const el = document.createElement("style");
-  el.textContent = css;
-  document.head.appendChild(el);
-};
-inject(`
-  :root { --bg1:#f3f6fb; --bg2:#edf1f7; --ink:#1b2a3a; --muted:#4a5b6c; }
-  * { box-sizing: border-box; }
-  body { margin:0; font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,'Apple Color Emoji','Segoe UI Emoji'; background:linear-gradient(180deg,var(--bg1),var(--bg2)); }
-  .page { min-height:100vh; display:flex; align-items:center; justify-content:center; padding:48px 24px; }
-  .grid { display:grid; grid-template-columns:repeat(3, 360px); gap:24px; width:100%; max-width:1200px; }
-  .shell { border-radius:16px; overflow:hidden; background:transparent;
-           box-shadow:0 6px 18px rgba(0,0,0,.06), 0 2px 6px rgba(0,0,0,.06);}
-  .face { width:100%; height:100%; border-radius:16px; background:rgba(255,255,255,.92);
-          backdrop-filter:blur(4px); padding:24px; }
-  .face h3 { margin:0; font-size:22px; font-weight:700; color:var(--ink); letter-spacing:.2px; }
-  .face p { margin:8px 0 0; color:var(--muted); line-height:1.5; font-size:15px; }
-  .back { width:100%; height:100%; background:linear-gradient(135deg,#f6f6f7 0%, #e9ecf1 100%); }
-  .reveal { width:100%; height:100%; color:#F2EBDC; background:linear-gradient(135deg,#011526 0%, #2A4759 100%);
-            display:flex; align-items:center; justify-content:center; font-weight:600; font-size:16px; border-radius:16px; }
-  @media (max-width: 1140px) { .grid { grid-template-columns: 1fr; place-items:center; } }
-`);
-
-/* ---------- Small hook to measure element size ---------- */
-function useSize<T extends HTMLElement>() {
-  const ref = useRef<T | null>(null);
-  const [size, set] = useState<{ w: number; h: number }>({ w: 0, h: 0 });
-
-  useLayoutEffect(() => {
-    if (!ref.current) return;
-    const el = ref.current;
-    const ro = new ResizeObserver(() => {
-      const r = el.getBoundingClientRect();
-      set({ w: Math.round(r.width), h: Math.round(r.height) });
-    });
-    ro.observe(el);
-    return () => ro.disconnect();
-  }, []);
-  return [ref, size] as const;
-}
+/* ---------- Minimal CSS (injected once) ---------- */
+const injectOnce = (() => {
+  let done = false;
+  return () => {
+    if (done) return;
+    done = true;
+    const el = document.createElement("style");
+    el.textContent = `
+      :root { --bg1:#f3f6fb; --bg2:#edf1f7; --ink:#1b2a3a; --muted:#4a5b6c; }
+      * { box-sizing: border-box; }
+      .page { min-height:100%; padding:48px 24px; display:flex; align-items:center; justify-content:center;
+              background:linear-gradient(180deg,var(--bg1),var(--bg2)); }
+      .grid { display:grid; grid-template-columns:repeat(3, 360px); gap:24px; width:100%; max-width:1200px; }
+      .shell { width:360px; height:240px; border-radius:16px; overflow:hidden; background:transparent;
+               box-shadow:0 6px 18px rgba(0,0,0,.06), 0 2px 6px rgba(0,0,0,.06); }
+      .face { width:100%; height:100%; border-radius:16px; background:rgba(255,255,255,.92);
+              backdrop-filter:blur(4px); padding:24px; }
+      .face h3 { margin:0; font-size:22px; font-weight:700; color:var(--ink); letter-spacing:.2px; }
+      .face p { margin:8px 0 0; color:var(--muted); line-height:1.5; font-size:15px; }
+      .back { width:100%; height:100%; background:linear-gradient(135deg,#f6f6f7 0%, #e9ecf1 100%); }
+      .reveal { width:100%; height:100%; color:#F2EBDC;
+                background:linear-gradient(135deg,#011526 0%, #2A4759 100%);
+                display:flex; align-items:center; justify-content:center; font-weight:600; font-size:16px; border-radius:16px; }
+      @media (max-width:1140px){ .grid { grid-template-columns:1fr; place-items:center; } }
+    `;
+    document.head.appendChild(el);
+  };
+})();
 
 /* ---------- Tiny spring animator (RAF, no libs) ---------- */
 function makeSpring(
@@ -49,12 +38,9 @@ function makeSpring(
   setPos: (xy: { x: number; y: number }) => void
 ) {
   let raf = 0;
-  let x = getPos().x;
-  let y = getPos().y;
-  let vx = 0;
-  let vy = 0;
+  let x = getPos().x, y = getPos().y, vx = 0, vy = 0;
 
-  const stop = () => raf && cancelAnimationFrame(raf);
+  const stop = () => { if (raf) cancelAnimationFrame(raf); };
 
   function to(
     target: { x: number; y: number },
@@ -67,23 +53,17 @@ function makeSpring(
     } = {}
   ) {
     const k = opts.stiffness ?? 0.045;
-    const d = opts.damping ?? 0.84;
+    const d = opts.damping   ?? 0.84;
     const snapV = opts.snapSpeed ?? 0.06;
-    const snapD = opts.snapDist ?? 0.75;
+    const snapD = opts.snapDist  ?? 0.75;
 
     stop();
-
     const step = () => {
-      const dx = target.x - x;
-      const dy = target.y - y;
-      vx = (vx + dx * k) * d;
-      vy = (vy + dy * k) * d;
-      x += vx;
-      y += vy;
+      const dx = target.x - x, dy = target.y - y;
+      vx = (vx + dx * k) * d;  vy = (vy + dy * k) * d;
+      x += vx;  y += vy;
       setPos({ x, y });
-
-      const speed = Math.hypot(vx, vy);
-      const dist = Math.hypot(dx, dy);
+      const speed = Math.hypot(vx, vy), dist = Math.hypot(dx, dy);
       if (speed < snapV && dist < snapD) {
         setPos({ x: target.x, y: target.y });
         opts.onComplete?.();
@@ -93,87 +73,66 @@ function makeSpring(
     };
     raf = requestAnimationFrame(step);
   }
-
   return { to, stop };
 }
 
 /* ---------- A single controlled peel card ---------- */
 function PeelCard({
-  title,
-  description,
-  width = 360,
-  height = 240,
+  title, description,
+  width = 360, height = 240,
   initial,
   interactive = false,
   animateSequence,
 }: {
   title: string;
   description: string;
-  width?: number;
-  height?: number;
+  width?: number; height?: number;
   initial?: { x: number; y: number };
   interactive?: boolean;
   animateSequence?: (api: {
     to: (xy: { x: number; y: number }, o?: any) => void;
     stop: () => void;
-    targets: {
-      closed: { x: number; y: number };
-      base: { x: number; y: number };
-      reveal: { x: number; y: number };
-    };
+    targets: { closed: { x: number; y: number }; base: { x: number; y: number }; reveal: { x: number; y: number } };
     prefersReduced: boolean;
   }) => void;
 }) {
-  const [wrapRef, size] = useSize<HTMLDivElement>();
-  const [pos, setPos] = useState<{ x: number; y: number } | null>(null);
+  const [pos, setPos] = useState<{ x: number; y: number }>(() => initial ?? { x: width - 2, y: height - 2 });
 
-  // establish a starting position when sized
-  useEffect(() => {
-    const w = size.w || width;
-    const h = size.h || height;
-    if (!w || !h) return;
-    const closed = { x: w - 2, y: h - 2 };
-    setPos(initial ?? closed);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [size.w, size.h]);
+  // Keep geometry fixed/explicit so parent wrappers can't break it
+  const closed = { x: width - 2, y: height - 2 };
+  const base   = { x: width - 8, y: height - 8 };             // small-corner base
+  const reveal = { x: Math.round(width * 0.08), y: Math.round(height * 0.12) };
 
-  // scripted animation (used by Card 3)
+  // One-time scripted animation (Card 3)
+  const ran = useRef(false);
   useEffect(() => {
-    if (!pos || !animateSequence) return;
-    const w = size.w || width;
-    const h = size.h || height;
-    const closed = { x: w - 2, y: h - 2 };
-    const base = { x: w - 8, y: h - 8 }; // small corner base
-    const reveal = { x: Math.round(w * 0.08), y: Math.round(h * 0.12) };
+    if (!animateSequence || ran.current) return;
+    ran.current = true;
 
     const prefersReduced =
       typeof window !== "undefined" &&
       window.matchMedia &&
       window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
-    const spring = makeSpring(
-      () => pos,
-      (xy) => setPos(xy)
-    );
+    const spring = makeSpring(() => pos, (xy) => setPos(xy));
 
     animateSequence({
-      to: spring.to,
-      stop: spring.stop,
+      to: spring.to, stop: spring.stop,
       targets: { closed, base, reveal },
       prefersReduced,
     });
 
     return () => spring.stop();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [pos?.x, pos?.y, size.w, size.h]);
+  }, []);
 
   return (
-    <div ref={wrapRef} className="shell" style={{ width, height }}>
+    <div className="shell">
       <PeelWrapper
         width={width}
         height={height}
         corner="BOTTOM_RIGHT"
-        peelPosition={pos ?? undefined}
+        peelPosition={pos}
         drag={interactive}
         handleDrag={(evt, x, y, peel) => {
           if (!interactive) return;
@@ -188,29 +147,31 @@ function PeelCard({
           </div>
         </PeelTop>
 
-        <PeelBack>
-          <div className="back" />
-        </PeelBack>
+        {/* Back of the "page" */}
+        <PeelBack><div className="back" /></PeelBack>
 
-        <PeelBottom>
-          <div className="reveal">Revealed content / CTA</div>
-        </PeelBottom>
+        {/* Revealed layer (what the peel shows) */}
+        <PeelBottom><div className="reveal">Revealed content / CTA</div></PeelBottom>
       </PeelWrapper>
     </div>
   );
 }
 
-/* ---------- The app: three cards (Card 3 = polished animation) ---------- */
-function App() {
+/* ---------- Exported component (drop-in) ---------- */
+export default function PeelExperiment() {
+  useEffect(() => { injectOnce(); }, []);
+
   return (
-    <main className="page">
+    <div className="page">
       <div className="grid">
+        {/* Card 1 — static visual hint */}
         <PeelCard
           title="Visual Feedback"
           description="This corner hints that the card is interactive."
-          initial={{ x: 352, y: 232 }} // gentle peek
+          initial={{ x: 352, y: 232 }}
         />
 
+        {/* Card 2 — user-draggable peel */}
         <PeelCard
           title="Step 2: Flip Animation"
           description="Click/tap and drag the corner to reveal the back content."
@@ -218,70 +179,46 @@ function App() {
           initial={{ x: 356, y: 236 }}
         />
 
+        {/* Card 3 — smooth float → settle → micro-tickle */}
         <PeelCard
           title="Step 3: Polish"
           description="Smooth transitions and a subtle, professional corner tickle."
           animateSequence={({ to, targets, prefersReduced }) => {
-            if (prefersReduced) {
-              to(targets.base, { stiffness: 0.05, damping: 0.9 });
-              return;
-            }
-            // Phase A: float down to a large reveal
+            if (prefersReduced) { to(targets.base, { stiffness: 0.05, damping: 0.9 }); return; }
+
+            // Phase A: float down to a larger reveal
             to(targets.reveal, {
-              stiffness: 0.040,
-              damping: 0.86,
+              stiffness: 0.040, damping: 0.86,
               onComplete: () => {
                 // Phase B: glide back to small-corner base
                 to(targets.base, {
-                  stiffness: 0.038,
-                  damping: 0.88,
+                  stiffness: 0.038, damping: 0.88,
                   onComplete: () => {
-                    // Micro-tickle (decaying around base)
-                    const amps = [6, 3, 1.5];
-                    let i = 0;
-                    const tickleNext = () => {
+                    // Decaying micro-tickle around the base
+                    const amps = [6, 3, 1.5]; let i = 0;
+                    const next = () => {
                       if (i >= amps.length) return;
                       const a = amps[i++];
-
-                      // left-down
-                      to(
-                        { x: targets.base.x - a, y: targets.base.y - a },
-                        {
-                          stiffness: 0.065,
-                          damping: 0.80,
-                          onComplete: () => {
-                            // right-up
-                            to(
-                              { x: targets.base.x + a, y: targets.base.y + a },
-                              {
-                                stiffness: 0.065,
-                                damping: 0.82,
-                                onComplete: () => {
-                                  // settle
-                                  to(targets.base, {
-                                    stiffness: 0.05,
-                                    damping: 0.86,
-                                    onComplete: tickleNext,
-                                  });
-                                },
-                              }
-                            );
-                          },
+                      to({ x: targets.base.x - a, y: targets.base.y - a }, {
+                        stiffness: 0.065, damping: 0.80,
+                        onComplete: () => {
+                          to({ x: targets.base.x + a, y: targets.base.y + a }, {
+                            stiffness: 0.065, damping: 0.82,
+                            onComplete: () => {
+                              to(targets.base, { stiffness: 0.05, damping: 0.86, onComplete: next });
+                            }
+                          });
                         }
-                      );
+                      });
                     };
-                    tickleNext();
-                  },
+                    next();
+                  }
                 });
-              },
+              }
             });
           }}
         />
       </div>
-    </main>
+    </div>
   );
-}
-
-export default function PeelExperiment() {
-  return <App />;
 }
