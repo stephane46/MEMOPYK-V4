@@ -58,6 +58,14 @@ export default function RoundedPeelCorner({
     return { C, R, pathFlap, pathInner, t };
   }, [Rdet]);
 
+  // expose peel size to the parent and ensure layering
+  useEffect(() => {
+    const parent = boxRef.current?.parentElement;
+    if (!parent) return;
+    parent.style.setProperty("--peel-c", `${C}px`);
+    parent.style.setProperty("--peel-r", `${R}px`);
+  }, [C, R]);
+
   // dev hint: expose what we used (look in Elements → Attributes)
   const dbg = `R=${Rdet ?? "?"}; C=${C ?? "?"}`;
 
@@ -75,6 +83,7 @@ export default function RoundedPeelCorner({
         pointerEvents: "none",
         willChange: "transform",
         contain: "layout paint size",
+        zIndex: 2,
       }}
     >
       <svg

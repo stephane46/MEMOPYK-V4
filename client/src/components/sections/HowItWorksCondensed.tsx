@@ -176,7 +176,14 @@ export function HowItWorksCondensed() {
                           </div>
                           
                           {/* Separator Line - EXACTLY 250px FROM TOP */}
-                          <div className="absolute border-t border-white/40 mx-2 left-2 right-2" style={{ top: '246px' }}></div>
+                          <div
+                            className="absolute border-t border-white/40 left-2"
+                            style={{
+                              top: '246px',
+                              right: "calc(0.5rem + var(--peel-c, 0px))",
+                              zIndex: 1,
+                            }}
+                          ></div>
                           
                           {/* Bottom Section - Sub Description - EXACTLY 260px FROM TOP */}
                           <div className="absolute text-center left-2 right-2" style={{ top: '256px' }}>
