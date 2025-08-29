@@ -1,6 +1,7 @@
 import { useLanguage } from '../../contexts/LanguageContext';
 import { Upload, Edit, Heart, Info } from 'lucide-react';
 import { useState, useEffect, useRef } from 'react';
+import RoundedPeelCorner from '@/components/ui/RoundedPeelCorner';
 
 export function HowItWorksCondensed() {
   const { language } = useLanguage();
@@ -141,12 +142,12 @@ export function HowItWorksCondensed() {
                         </div>
                       </div>
                       
-                      {/* Corner container + centered arrow (mathematical positioning) */}
-                      <div className="peel-corner">
-                        <span className="peel-arrow peel-arrow--float" aria-hidden>
-                          ↖
-                        </span>
-                      </div>
+                      {/* Rounded Peel Corner with proper shadows and gradients */}
+                      <RoundedPeelCorner 
+                        size={88} 
+                        colorTop="#F2A300" 
+                        colorFold="#D67C4A" 
+                      />
                     </div>
                       
                     {/* BACK SIDE - Detailed Information */}

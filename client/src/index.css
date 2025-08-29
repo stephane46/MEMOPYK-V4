@@ -823,46 +823,6 @@ html, body {
   animation: double-bounce 1s ease-out;
 }
 
-/* Corner size + icon size are tunable */
-.peel-corner { --c: 40px; }           /* triangle legs (was 40px in your code) */
-.peel-arrow  { --s: 16px; --k: .333; }/* icon box; --k is centroid factor (⅓). Use .36 for "visual center" if needed */
-
-/* Actual corner triangle (real box, not border hack) */
-.peel-corner{
-  position:absolute; right:0; bottom:0;
-  width:var(--c); height:var(--c);
-  background:#D67C4A;
-  /* triangle cut: bottom-right right triangle */
-  clip-path: polygon(100% 0, 0 100%, 100% 100%);
-  border-bottom-right-radius: inherit;
-  pointer-events:none; /* just decoration */
-}
-
-/* Arrow centered at triangle centroid (≈ c/3, c/3 from the corner) */
-.peel-arrow{
-  position:absolute;
-  right:  calc(var(--c) * var(--k) - var(--s)/2);
-  bottom: calc(var(--c) * var(--k) - var(--s)/2);
-  width:var(--s); height:var(--s);
-  display:grid; place-items:center;
-  pointer-events:none;
-  filter: drop-shadow(0 1px 1px rgba(0,0,0,.45));
-}
-
-/* Style the text arrow */
-.peel-arrow{
-  color: white;
-  font-size: var(--s);
-  font-weight: bold;
-  text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
-}
-
-/* Optional subtle float (doesn't disturb centering) */
-@keyframes arrowFloat {
-  0%,100% { transform: translateY(0); }
-  50%     { transform: translateY(-2px); }
-}
-.peel-arrow--float{ animation: arrowFloat 2s ease-in-out infinite; }
 
 /* === MEMOPYK HERO: Clean mobile text solution === */
 
