@@ -206,36 +206,38 @@ export function HowItWorksCondensed() {
                         }}
                       >
                         
-                        {/* Content area - equivalent to the image area on front */}
-                        <div className="relative overflow-hidden rounded-xl transition-all duration-500 aspect-square px-2 pt-0 pb-2">
-                          {/* Top Section - Text content area */}
-                          <div className="text-center flex flex-col" style={{ height: '280px', position: 'relative' }}>
-                            <div className="text-sm leading-normal text-white w-full flip-card-text-zero-spacing" style={{ paddingTop: '30px' }}>
-                              {(language === 'fr-FR' ? step.descriptionFr : step.descriptionEn).split('\n').map((paragraph, i) => (
-                                <p key={i} className="m-0 p-0">{paragraph}</p>
-                              ))}
-                            </div>
-                            
-                            {/* Separator Line - MOVED MUCH HIGHER UP */}
-                            <div
-                              className="absolute border-t border-white/40 left-2"
-                              style={{
-                                top: '170px',
-                                right: "calc(0.5rem + var(--peel-c, 0px))",
-                                zIndex: 1,
-                              }}
-                            ></div>
-                            
-                            {/* Bottom Section - Sub Description - MOVED MUCH HIGHER UP */}
-                            <div className="absolute text-center left-2 right-2" style={{ top: '180px' }}>
-                              <div className="text-sm font-bold text-white leading-relaxed w-full">
-                                {language === 'fr-FR' ? step.subDescriptionFr : step.subDescriptionEn}
+                        {/* Content area - EXACT SAME STRUCTURE AS FRONT */}
+                        <div className="relative overflow-hidden rounded-xl transition-all duration-500 aspect-square">
+                          <div className="h-full flex flex-col px-2 pt-0 pb-2">
+                            {/* Top Section - Text content area */}
+                            <div className="text-center flex flex-col" style={{ height: '280px', position: 'relative' }}>
+                              <div className="text-sm leading-normal text-white w-full flip-card-text-zero-spacing" style={{ paddingTop: '30px' }}>
+                                {(language === 'fr-FR' ? step.descriptionFr : step.descriptionEn).split('\n').map((paragraph, i) => (
+                                  <p key={i} className="m-0 p-0">{paragraph}</p>
+                                ))}
+                              </div>
+                              
+                              {/* Separator Line - MOVED MUCH HIGHER UP */}
+                              <div
+                                className="absolute border-t border-white/40 left-2"
+                                style={{
+                                  top: '170px',
+                                  right: "calc(0.5rem + var(--peel-c, 0px))",
+                                  zIndex: 1,
+                                }}
+                              ></div>
+                              
+                              {/* Bottom Section - Sub Description - MOVED MUCH HIGHER UP */}
+                              <div className="absolute text-center left-2 right-2" style={{ top: '180px' }}>
+                                <div className="text-sm font-bold text-white leading-relaxed w-full">
+                                  {language === 'fr-FR' ? step.subDescriptionFr : step.subDescriptionEn}
+                                </div>
                               </div>
                             </div>
                           </div>
                         </div>
                         
-                        {/* Title - EXACTLY like front card structure */}
+                        {/* Title - EXACT SAME STRUCTURE AS FRONT */}
                         <div className="p-4 text-center">
                           <h3 className="text-xl font-semibold text-white">
                             {language === 'fr-FR' ? step.titleFr : step.titleEn}
