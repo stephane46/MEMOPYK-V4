@@ -68,10 +68,10 @@ function makeSpring(
       onComplete?: () => void;
     } = {}
   ) {
-    const k = opts.stiffness ?? 0.040;
-    const d = opts.damping   ?? 0.88;
-    const snapV = opts.snapSpeed ?? 0.045;
-    const snapD = opts.snapDist  ?? 0.65;
+    const k = opts.stiffness ?? 0.008;
+    const d = opts.damping   ?? 0.95;
+    const snapV = opts.snapSpeed ?? 0.015;
+    const snapD = opts.snapDist  ?? 0.25;
 
     stop();
     last = performance.now();
@@ -162,8 +162,8 @@ function PeelCard({
     const targetPos = isFlipped ? reveal : closed;
     const spring = makeSpring(() => pos, (xy) => setPos(xy));
     
-    // Animate to target position smoothly
-    spring.to(targetPos, { stiffness: 0.1, damping: 0.8 });
+    // Animate to target position very slowly
+    spring.to(targetPos, { stiffness: 0.005, damping: 0.96 });
     
     return () => spring.stop();
   }, [isFlipped]);
@@ -205,7 +205,7 @@ function PeelCard({
         style={{
           opacity: isFlipped ? 0 : 1,
           pointerEvents: isFlipped ? 'none' : 'auto',
-          transition: 'opacity 0.5s ease-out',
+          transition: 'opacity 2s ease-out',
           position: 'absolute',
           top: 0,
           left: 0,
@@ -228,7 +228,7 @@ function PeelCard({
         <PeelTop>
           {/* Card Container - Rectangle: Square image + white padding below */}
           <div 
-            className="bg-white border border-gray-200 shadow-lg hover:shadow-2xl rounded-2xl overflow-hidden cursor-pointer transition-opacity duration-1000 ease-out" 
+            className="bg-white border border-gray-200 shadow-lg hover:shadow-2xl rounded-2xl overflow-hidden cursor-pointer transition-opacity duration-[3000ms] ease-out" 
             style={{ 
               borderRadius: '1rem',
               opacity: isFlipped ? 0 : 1,
@@ -270,7 +270,7 @@ function PeelCard({
         {/* Back of the "page" */}
         <PeelBack>
           <div 
-            className="shadow-lg hover:shadow-2xl rounded-2xl overflow-hidden border border-gray-200 h-full cursor-pointer transition-opacity duration-1000 ease-out"
+            className="shadow-lg hover:shadow-2xl rounded-2xl overflow-hidden border border-gray-200 h-full cursor-pointer transition-opacity duration-[3000ms] ease-out"
             style={{
               backgroundImage: `linear-gradient(135deg, rgba(214, 124, 74, 0.92) 0%, rgba(42, 71, 89, 0.92) 100%), url(${stepImage})`,
               backgroundSize: 'cover',
@@ -366,7 +366,8 @@ function PeelCard({
           height: '100%',
           opacity: isFlipped ? 1 : 0,
           pointerEvents: isFlipped ? 'auto' : 'none',
-          transition: 'opacity 0.5s ease-out',
+          transition: 'opacity 2s ease-out',
+          transitionDelay: isFlipped ? '1s' : '0s',
           zIndex: isFlipped ? 10 : 1
         }}
       >
