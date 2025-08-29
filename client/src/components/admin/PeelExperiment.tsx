@@ -210,11 +210,11 @@ function PeelCard({
                 
               </div>
               
-              {/* Just the cloud icon in white section */}
+              {/* Just the circular refresh/arrow icon in white section */}
               <div className="flex justify-center py-3">
                 <div className="w-12 h-12 bg-memopyk-navy rounded-full flex items-center justify-center transition-transform duration-300">
                   <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 18a4.6 4.4 0 0 1 0-9A5 5 0 0 1 15.9 6.6a5 5 0 0 1 1.1 9.4" />
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
                   </svg>
                 </div>
               </div>
