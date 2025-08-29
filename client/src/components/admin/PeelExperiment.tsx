@@ -15,6 +15,7 @@ const injectOnce = (() => {
       * { box-sizing: border-box; }
       .page { min-height:100%; padding:48px 24px; display:flex; align-items:center; justify-content:center;
               background:linear-gradient(180deg,var(--bg1),var(--bg2)); }
+      .peel-zone { contain: layout paint size; }
       .grid { display:grid; grid-template-columns:repeat(3, 360px); gap:24px; width:100%; max-width:1200px; }
       .shell { width:360px; height:240px; border-radius:16px; overflow:hidden; background:transparent;
                box-shadow:0 6px 18px rgba(0,0,0,.06), 0 2px 6px rgba(0,0,0,.06); }
@@ -32,40 +33,72 @@ const injectOnce = (() => {
   };
 })();
 
-/* ---------- Tiny spring animator (RAF, no libs) ---------- */
+/* ---------- Time-corrected spring with sub-stepping (very smooth) ---------- */
 function makeSpring(
   getPos: () => { x: number; y: number },
   setPos: (xy: { x: number; y: number }) => void
 ) {
   let raf = 0;
-  let x = getPos().x, y = getPos().y, vx = 0, vy = 0;
+  let x = getPos().x, y = getPos().y;
+  let vx = 0, vy = 0;
+  let last = performance.now();
+  let acc = 0;
 
   const stop = () => { if (raf) cancelAnimationFrame(raf); };
 
   function to(
     target: { x: number; y: number },
     opts: {
-      stiffness?: number; // ~0.03–0.08
-      damping?: number;   // 0.75–0.92
-      snapSpeed?: number; // small velocity threshold
-      snapDist?: number;  // small distance threshold
+      stiffness?: number; // per-substep "pull" (keep ~0.03–0.07)
+      damping?: number;   // per-substep velocity keep (0.78–0.92)
+      snapSpeed?: number; // velocity snap threshold
+      snapDist?: number;  // distance snap threshold
       onComplete?: () => void;
     } = {}
   ) {
-    const k = opts.stiffness ?? 0.045;
-    const d = opts.damping   ?? 0.84;
-    const snapV = opts.snapSpeed ?? 0.06;
-    const snapD = opts.snapDist  ?? 0.75;
+    const k = opts.stiffness ?? 0.040;
+    const d = opts.damping   ?? 0.88;
+    const snapV = opts.snapSpeed ?? 0.045;
+    const snapD = opts.snapDist  ?? 0.65;
 
     stop();
+    last = performance.now();
+    const h = 1000 / 60;     // 16.666… ms fixed step
+    const maxCatch = 50;     // cap catch-up window to avoid long stalls
+
     const step = () => {
-      const dx = target.x - x, dy = target.y - y;
-      vx = (vx + dx * k) * d;  vy = (vy + dy * k) * d;
-      x += vx;  y += vy;
-      setPos({ x, y });
-      const speed = Math.hypot(vx, vy), dist = Math.hypot(dx, dy);
-      if (speed < snapV && dist < snapD) {
-        setPos({ x: target.x, y: target.y });
+      const now = performance.now();
+      let dt = now - last;
+      last = now;
+
+      // Clamp and accumulate dt; sub-step at fixed 60Hz
+      if (dt > maxCatch) dt = maxCatch;
+      acc += dt;
+
+      let progressed = false;
+      while (acc >= h) {
+        // Hooke + damping (per sub-step)
+        const dx = target.x - x;
+        const dy = target.y - y;
+        vx = (vx + dx * k) * d;
+        vy = (vy + dy * k) * d;
+        x += vx;
+        y += vy;
+        acc -= h;
+        progressed = true;
+      }
+
+      if (progressed) {
+        setPos({ x, y });
+      }
+
+      const v = Math.hypot(vx, vy);
+      const dist = Math.hypot(target.x - x, target.y - y);
+
+      if (v < snapV && dist < snapD) {
+        // snap exact to avoid micro-jitter
+        x = target.x; y = target.y; vx = 0; vy = 0;
+        setPos({ x, y });
         opts.onComplete?.();
         return;
       }
@@ -73,6 +106,7 @@ function makeSpring(
     };
     raf = requestAnimationFrame(step);
   }
+
   return { to, stop };
 }
 
@@ -98,12 +132,11 @@ function PeelCard({
 }) {
   const [pos, setPos] = useState<{ x: number; y: number }>(() => initial ?? { x: width - 2, y: height - 2 });
 
-  // Keep geometry fixed/explicit so parent wrappers can't break it
+  // Fixed geometry (explicit) so parent wrappers can't distort it
   const closed = { x: width - 2, y: height - 2 };
-  const base   = { x: width - 8, y: height - 8 };             // small-corner base
+  const base   = { x: width - 8, y: height - 8 }; // small-corner base
   const reveal = { x: Math.round(width * 0.08), y: Math.round(height * 0.12) };
 
-  // One-time scripted animation (Card 3)
   const ran = useRef(false);
   useEffect(() => {
     if (!animateSequence || ran.current) return;
@@ -114,7 +147,11 @@ function PeelCard({
       window.matchMedia &&
       window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
-    const spring = makeSpring(() => pos, (xy) => setPos(xy));
+    const spring = makeSpring(() => pos, (xy) => {
+      // Sub-pixel snap to the 1/3px grid → avoids shimmer on HiDPI
+      const snap = (n: number) => Math.round(n * 3) / 3;
+      setPos({ x: snap(xy.x), y: snap(xy.y) });
+    });
 
     animateSequence({
       to: spring.to, stop: spring.stop,
@@ -150,7 +187,7 @@ function PeelCard({
         {/* Back of the "page" */}
         <PeelBack><div className="back" /></PeelBack>
 
-        {/* Revealed layer (what the peel shows) */}
+        {/* Revealed layer */}
         <PeelBottom><div className="reveal">Revealed content / CTA</div></PeelBottom>
       </PeelWrapper>
     </div>
@@ -162,16 +199,16 @@ export default function PeelExperiment() {
   useEffect(() => { injectOnce(); }, []);
 
   return (
-    <div className="page">
+    <div className="page peel-zone">
       <div className="grid">
-        {/* Card 1 — static visual hint */}
+        {/* Card 1 — static hint */}
         <PeelCard
           title="Visual Feedback"
           description="This corner hints that the card is interactive."
           initial={{ x: 352, y: 232 }}
         />
 
-        {/* Card 2 — user-draggable peel */}
+        {/* Card 2 — draggable */}
         <PeelCard
           title="Step 2: Flip Animation"
           description="Click/tap and drag the corner to reveal the back content."

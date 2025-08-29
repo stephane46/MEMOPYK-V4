@@ -991,3 +991,13 @@ html, body {
     transform: scale(1);
   }
 }
+
+/* Exempt the peel demo from mobile animation throttling */
+@media (max-width: 768px) {
+  .peel-zone *,
+  .peel-wrapper,
+  .peel-wrapper * {
+    animation-duration: initial !important;
+    transition-duration: initial !important;
+  }
+}
