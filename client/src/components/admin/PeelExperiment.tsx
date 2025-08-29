@@ -374,7 +374,8 @@ Faites-nous part de votre vision et de ce qui compte le plus pour vous, soit en 
 **Commencer est un jeu d'enfant : apportez-nous simplement vos souvenirs et vos envies, nous nous occupons du reste avec soin et créativité.**"
           stepNumber={1}
           stepImage="/images/How_we_work_Step1.png"
-          initial={{ x: 352, y: 408 }}
+          interactive
+          initial={{ x: 356, y: 408 }}
         />
         <PeelCard
           title="We Create"
@@ -401,40 +402,8 @@ Deux séries de retours sont incluses pour affiner le montage jusqu'à ce qu'il 
 **Le résultat : un souvenir rien qu'à vous, livré rapidement et peaufiné selon vos envies jusqu'à la perfection.**"
           stepNumber={3}
           stepImage="/images/How_we_work_Step3.png"
-          animateSequence={({ to, targets, prefersReduced }) => {
-            if (prefersReduced) { to(targets.base, { stiffness: 0.035, damping: 0.92 }); return; }
-            // Phase A: float down to reveal
-            to(targets.reveal, {
-              stiffness: 0.032, damping: 0.90,
-              onComplete: () => {
-                // Phase B: glide back to base
-                to(targets.base, {
-                  stiffness: 0.034, damping: 0.91,
-                  onComplete: () => {
-                    // Decaying micro-tickle
-                    const amps = [5, 2.5, 1.2];
-                    let i = 0;
-                    const next = () => {
-                      if (i >= amps.length) return;
-                      const a = amps[i++];
-                      to({ x: targets.base.x - a, y: targets.base.y - a }, {
-                        stiffness: 0.055, damping: 0.86,
-                        onComplete: () => {
-                          to({ x: targets.base.x + a, y: targets.base.y + a }, {
-                            stiffness: 0.055, damping: 0.87,
-                            onComplete: () => {
-                              to(targets.base, { stiffness: 0.040, damping: 0.90, onComplete: next });
-                            }
-                          });
-                        }
-                      });
-                    };
-                    next();
-                  }
-                });
-              }
-            });
-          }}
+          interactive
+          initial={{ x: 356, y: 408 }}
         />
         </div>
       </div>
