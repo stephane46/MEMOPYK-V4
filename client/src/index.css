@@ -931,11 +931,11 @@ html, body {
 @keyframes cornerPeel {
   0%, 100% { 
     transform: perspective(100px) rotateX(0deg) rotateY(0deg);
-    filter: drop-shadow(0 4px 6px rgb(0 0 0 / 0.1));
+    filter: none;
   }
   50% { 
     transform: perspective(100px) rotateX(-8deg) rotateY(8deg);
-    filter: drop-shadow(3px 6px 12px rgb(0 0 0 / 0.25));
+    filter: none;
   }
 }
 

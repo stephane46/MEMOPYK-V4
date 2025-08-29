@@ -25,14 +25,13 @@ const injectOnce = (() => {
       .peel-zone { contain: layout paint size; overflow: visible; }
       .grid { display:grid; grid-template-columns:repeat(3, 384px); gap:32px; width:100%; max-width:1280px; overflow: visible; margin-top: 50px; }
       .peel-wrapper { will-change: transform, clip-path; transform: translateZ(0); -webkit-transform: translateZ(0); contain: layout paint size; }
-      .shell { width:384px; height:400px; border-radius:16px; overflow:visible; background:transparent;
-               box-shadow:0 6px 18px rgba(0,0,0,.06), 0 2px 6px rgba(0,0,0,.06); }
+      .shell { width:384px; height:400px; border-radius:16px; overflow:visible; background:transparent; }
       .face { width:100%; height:100%; border-radius:16px; background:white;
-              border: 1px solid #e5e7eb; box-shadow:0 8px 32px rgba(0,0,0,.12);
+              border: 1px solid #e5e7eb;
               display:flex; flex-direction:column; overflow:hidden; }
       .face .step-image { width:100%; aspect-ratio:1; background:#f9fafb; position:relative; overflow:hidden; border-radius:12px; margin:16px; margin-bottom:8px; }
       .face .step-number { position:absolute; top:8px; left:8px; width:32px; height:32px; background:#D67C4A; border-radius:50%; display:flex; align-items:center; justify-content:center; color:white; font-weight:bold; font-size:14px; }
-      .face .info-button { width:48px; height:48px; border-radius:50%; background:linear-gradient(135deg, rgba(255,255,255,0.95) 0%, rgba(255,255,255,0.85) 100%); box-shadow:0 4px 12px rgba(0,0,0,0.2); border:1px solid rgba(0,0,0,0.1); display:flex; align-items:center; justify-content:center; margin:12px auto 16px; }
+      .face .info-button { width:48px; height:48px; border-radius:50%; background:linear-gradient(135deg, rgba(255,255,255,0.95) 0%, rgba(255,255,255,0.85) 100%); border:1px solid #e5e7eb; display:flex; align-items:center; justify-content:center; margin:12px auto 16px; }
       .face h3 { margin:0 16px 8px; font-size:18px; font-weight:700; color:#011526; text-align:center; font-family: 'Poppins', system-ui; }
       .face p { margin:0 16px 16px; color:#2A4759; line-height:1.4; font-size:14px; text-align:center; font-family: 'Poppins', system-ui; }
       .back { width:100%; height:100%; background:linear-gradient(135deg,#f6f6f7 0%, #e9ecf1 100%); border-radius:16px; }
