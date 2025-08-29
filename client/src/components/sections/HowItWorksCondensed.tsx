@@ -207,7 +207,7 @@ export function HowItWorksCondensed() {
                       >
                         
                         {/* Content area - EXACT SAME STRUCTURE AS FRONT */}
-                        <div className="relative overflow-hidden rounded-xl transition-all duration-500 aspect-square">
+                        <div className="relative rounded-xl transition-all duration-500 aspect-square">
                           <div className="h-full flex flex-col px-2 pt-0 pb-2">
                             {/* Top Section - Text content area */}
                             <div className="text-center flex flex-col" style={{ position: 'relative' }}>
