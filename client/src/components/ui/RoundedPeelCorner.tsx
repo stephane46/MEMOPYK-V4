@@ -97,7 +97,7 @@ export default function RoundedPeelCorner({
         pointerEvents: "none",
         willChange: "transform",
         contain: "layout paint size",
-        zIndex: 1200,
+        zIndex: 10,
         backgroundColor: "transparent",
       }}
     >
