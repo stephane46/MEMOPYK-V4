@@ -98,7 +98,7 @@ export default function RoundedPeelCorner({
         willChange: "transform",
         contain: "layout paint size",
         zIndex: 1200,
-        backgroundColor: "rgba(255, 255, 255, 0.01)", // Minimal background to ensure it's detectable
+        backgroundColor: "white", // White background to block any black underneath
       }}
     >
       <svg
@@ -125,6 +125,9 @@ export default function RoundedPeelCorner({
           <clipPath id="peelClip"><path d={pathFlap} /></clipPath>
         </defs>
 
+        {/* White background to completely block any elements underneath */}
+        <rect x="0" y="0" width={C} height={C} fill="white" />
+        
         <g filter="url(#peelShadow)">
           <path d={pathFlap} fill="url(#peelTop)" />
           <path d={pathFlap} fill="url(#peelFold)" opacity="0.25" clipPath="url(#peelClip)" />
