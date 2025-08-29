@@ -33,7 +33,7 @@ const injectOnce = (() => {
               display:flex; flex-direction:column; justify-content:center; align-items:center; }
       .face h3 { margin:0; font-size:20px; font-weight:700; color:#011526; letter-spacing:.2px; text-align:center; font-family: 'Poppins', system-ui; }
       .face p { margin:12px 0 0; color:#2A4759; line-height:1.5; font-size:14px; text-align:center; font-family: 'Poppins', system-ui; }
-      .back { width:100%; height:100%; background:linear-gradient(135deg,#f6f6f7 0%, #e9ecf1 100%); }
+      .back { width:100%; height:100%; background:linear-gradient(135deg,#f6f6f7 0%, #e9ecf1 100%); border-radius:16px; }
       .reveal { width:100%; height:100%; color:#F2EBDC;
                 background:linear-gradient(135deg,#011526 0%, #2A4759 100%);
                 display:flex; align-items:center; justify-content:center; font-weight:600; font-size:16px; border-radius:16px; }
@@ -190,16 +190,43 @@ function PeelCard({
       >
         <PeelTop>
           <div className="face">
+            <div className="flex justify-center mb-4 flex-shrink-0">
+              <div className="w-16 h-16 bg-memopyk-orange/20 rounded-full flex items-center justify-center">
+                <span className="text-2xl">🎯</span>
+              </div>
+            </div>
             <h3>{title}</h3>
             <p>{description}</p>
           </div>
         </PeelTop>
 
         {/* Back of the "page" */}
-        <PeelBack><div className="back" /></PeelBack>
+        <PeelBack>
+          <div className="back">
+            <div className="w-full h-full flex flex-col items-center justify-center p-6 text-center">
+              <div className="mb-4">
+                <div className="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center mb-3">
+                  <span className="text-xl">⚡</span>
+                </div>
+              </div>
+              <h4 className="text-lg font-bold text-memopyk-navy mb-2">Interactive Demo</h4>
+              <p className="text-sm text-memopyk-dark-blue">Experience smooth peel animations with spring physics</p>
+            </div>
+          </div>
+        </PeelBack>
 
         {/* Revealed layer */}
-        <PeelBottom><div className="reveal">Revealed content / CTA</div></PeelBottom>
+        <PeelBottom>
+          <div className="reveal">
+            <div className="text-center">
+              <div className="mb-4">
+                <span className="text-3xl mb-2 block">🚀</span>
+              </div>
+              <h4 className="text-lg font-bold mb-2">MEMOPYK Tech</h4>
+              <p className="text-sm opacity-90">Advanced UI interactions for premium user experience</p>
+            </div>
+          </div>
+        </PeelBottom>
       </PeelWrapper>
     </div>
   );
