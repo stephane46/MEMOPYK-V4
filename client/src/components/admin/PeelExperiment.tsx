@@ -156,9 +156,12 @@ function PeelCard({
   const [pos, setPos] = useState<{ x: number; y: number }>(() => 
     initial ?? (isFlipped ? reveal : closed)
   );
+  const [isDragging, setIsDragging] = useState(false);
 
   // Update position when flip state changes with smooth animation
   useEffect(() => {
+    if (isDragging) return; // Don't animate if user is dragging manually
+    
     const targetPos = isFlipped ? reveal : closed;
     const spring = makeSpring(() => pos, (xy) => setPos(xy));
     
@@ -166,7 +169,7 @@ function PeelCard({
     spring.to(targetPos, { stiffness: 0.15, damping: 0.75 });
     
     return () => spring.stop();
-  }, [isFlipped]);
+  }, [isFlipped, isDragging]);
 
   // Explicit geometry
   const base   = { x: width - 32, y: height - 32 }; // larger-corner base (4x bigger)
@@ -206,10 +209,15 @@ function PeelCard({
         height={height}
         corner="BOTTOM_RIGHT"
         peelPosition={pos}
-        drag={false}
+        drag={true}
         className="peel-wrapper"
-        handleDrag={() => {
-          // Drag disabled - using click-to-flip instead
+        handleDrag={(x, y) => {
+          // Manual drag peeling - update position in real-time
+          setIsDragging(true);
+          setPos({ x, y });
+          
+          // Reset dragging state after a brief delay if no further drag events
+          setTimeout(() => setIsDragging(false), 150);
         }}
       >
         <PeelTop>
