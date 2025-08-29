@@ -190,9 +190,9 @@ export function HowItWorksCondensed() {
                         backgroundRepeat: 'no-repeat'
                       }}
                     >
-                      {/* Orange Number Circle - Top Left on Back Card - Same position as front */}
-                      <div className="absolute top-2 left-2 w-8 h-8 bg-memopyk-orange rounded-full flex items-center justify-center transition-transform duration-300 shadow-lg" style={{ zIndex: 10 }}>
-                        <span className="text-sm font-bold text-white">{step.number}</span>
+                      {/* White Number Circle with Orange Text - Top Left on Back Card - Same position as front */}
+                      <div className="absolute top-2 left-2 w-8 h-8 bg-white rounded-full flex items-center justify-center transition-transform duration-300 shadow-lg" style={{ zIndex: 10 }}>
+                        <span className="text-sm font-bold text-memopyk-orange">{step.number}</span>
                       </div>
                       
                       <div 
