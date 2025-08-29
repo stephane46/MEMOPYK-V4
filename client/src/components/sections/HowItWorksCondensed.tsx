@@ -112,7 +112,7 @@ export function HowItWorksCondensed() {
                     
                     {/* FRONT SIDE - Step Card */}
                     <div className="card-front bg-white border border-gray-200 shadow-lg hover:shadow-2xl rounded-2xl overflow-hidden relative" style={{ position: 'relative', zIndex: 0, isolation: 'isolate' }}>
-                      {/* Orange peel corner using pure CSS - no overlay conflicts */}
+                      {/* Orange peel corner with interactive icon */}
                       <div 
                         className="absolute bottom-0 right-0 pointer-events-none"
                         style={{
@@ -124,7 +124,21 @@ export function HowItWorksCondensed() {
                           boxShadow: 'inset -2px -2px 4px rgba(0,0,0,0.1)',
                           zIndex: 10
                         }}
-                      />
+                      >
+                        {/* Flip icon with pulse animation */}
+                        <div 
+                          className="absolute top-1 left-1 w-4 h-4 flex items-center justify-center animate-pulse"
+                          style={{
+                            animation: 'pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite'
+                          }}
+                        >
+                          <Info 
+                            size={12} 
+                            className="text-white drop-shadow-sm" 
+                            strokeWidth={2.5}
+                          />
+                        </div>
+                      </div>
                       {/* Clickable Area */}
                       <div 
                         className="relative cursor-pointer"
