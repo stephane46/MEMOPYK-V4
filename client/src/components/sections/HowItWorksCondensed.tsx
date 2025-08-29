@@ -52,8 +52,8 @@ export function HowItWorksCondensed() {
       icon: Upload,
       titleFr: "Consultation & Collecte",
       titleEn: "Consultation & Collection",
-      descriptionFr: "Envoyez-nous vos photos et vidéos telles quelles.\nDites-nous tout ce que vous avez en tête, via notre questionnaire, ou la séance de consultation gratuite.",
-      descriptionEn: "Send us your photos and videos as they are.\nTell us everything you have in mind, via our questionnaire, or the free consultation session.",
+      descriptionFr: "Envoyez-nous vos photos et vidéos telles quelles.\nDites-nous tout ce que vous avez en tête, via notre questionnaire, ou la séance de consultation gratuite.\nVous recevez un devis clair et adapté avant tout travail.",
+      descriptionEn: "Send us your photos and videos as they are.\nTell us everything you have in mind, via our questionnaire, or the free consultation session.\nYou receive a clear and tailored quote before any work.",
       subDescriptionFr: "Le transfert des éléments se fait en quelques clics. Nous sommes à votre écoute pour bien comprendre votre vision.",
       subDescriptionEn: "Transferring elements is done in just a few clicks. We listen carefully to understand your vision.",
       image: "/images/How_we_work_Step1.png"
@@ -63,8 +63,8 @@ export function HowItWorksCondensed() {
       icon: Edit,
       titleFr: "Sélection & Création", 
       titleEn: "Selection & Creation",
-      descriptionFr: "Nous trions, sélectionnons et gardons uniquement le meilleur.\nNous construisons le scénario avec la musique, le rythme et le format qui vous correspondent.\nVous recevez un devis clair et adapté avant tout travail.",
-      descriptionEn: "We sort, select and keep only the best.\nWe build the scenario with the music, rhythm and format that suits you.\nYou receive a clear and tailored quote before any work.",
+      descriptionFr: "Nous trions, sélectionnons et gardons uniquement le meilleur.\nNous construisons le scénario avec la musique, le rythme et le format qui vous correspondent.",
+      descriptionEn: "We sort, select and keep only the best.\nWe build the scenario with the music, rhythm and format that suits you.",
       subDescriptionFr: "Vos souvenirs prennent vie dans un film unique, réalisé avec soin et transparence.",
       subDescriptionEn: "Your memories come to life in a unique film, created with care and transparency.",
       image: "/images/How_we_work_Step2.png"
@@ -239,7 +239,7 @@ export function HowItWorksCondensed() {
                         
                         {/* Title - SAME AS FRONT CARD */}
                         <div className="text-center" style={{ paddingTop: '76px', paddingBottom: '16px', paddingLeft: '16px', paddingRight: '16px' }}>
-                          <h3 className="text-xl font-semibold text-white">
+                          <h3 className="text-xl font-semibold text-white whitespace-nowrap">
                             {language === 'fr-FR' ? step.titleFr : step.titleEn}
                           </h3>
                         </div>
