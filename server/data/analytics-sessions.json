@@ -26131,8 +26131,8 @@
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-29T14:36:38.827Z",
-    "updated_at": "2025-08-29T14:41:27.992Z",
-    "duration": 1474252
+    "updated_at": "2025-08-29T14:42:09.497Z",
+    "duration": 1474294
   },
   {
     "id": "4de52dd3-5fad-4b14-b1a5-d8fe729c6131",
@@ -26165,7 +26165,7 @@
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-29T14:41:33.517Z",
-    "updated_at": "2025-08-29T14:41:36.771Z",
-    "duration": 1057667
+    "updated_at": "2025-08-29T14:41:47.081Z",
+    "duration": 1057677
   }
 ]
