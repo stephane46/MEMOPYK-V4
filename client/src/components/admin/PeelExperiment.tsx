@@ -264,7 +264,10 @@ export default function PeelExperiment() {
                               </div>
                               
                               <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2">
-                                <button className="px-4 py-2 bg-memopyk-orange text-white rounded-lg text-sm font-medium hover:bg-memopyk-orange/90 transition-colors">
+                                <button 
+                                  onClick={() => toggleFlip(step.number)}
+                                  className="px-4 py-2 bg-memopyk-orange text-white rounded-lg text-sm font-medium hover:bg-memopyk-orange/90 transition-colors"
+                                >
                                   {language === 'fr-FR' ? 'Retourner & Découvrir' : 'Peel & Flip'}
                                 </button>
                               </div>
@@ -307,7 +310,10 @@ export default function PeelExperiment() {
                                   <p className="text-sm font-medium text-white">
                                     {language === 'fr-FR' ? step.titleFr : step.titleEn}
                                   </p>
-                                  <button className="mt-2 px-3 py-1 bg-white/20 text-white rounded text-xs hover:bg-white/30 transition-colors">
+                                  <button 
+                                    onClick={() => toggleFlip(step.number)}
+                                    className="mt-2 px-3 py-1 bg-white/20 text-white rounded text-xs hover:bg-white/30 transition-colors"
+                                  >
                                     {language === 'fr-FR' ? 'Retourner' : 'Turn Back'}
                                   </button>
                                 </div>
