@@ -200,18 +200,31 @@ function PeelCard({
   }, []);
 
   return (
-    <div className="shell">
-      <PeelWrapper
-        width={width}
-        height={height}
-        corner="BOTTOM_RIGHT"
-        peelPosition={pos}
-        drag={false}
-        className="peel-wrapper"
-        handleDrag={() => {
-          // Drag disabled - using click-to-flip instead
+    <div className="shell" style={{ position: 'relative' }}>
+      <div 
+        style={{
+          opacity: isFlipped ? 0 : 1,
+          pointerEvents: isFlipped ? 'none' : 'auto',
+          transition: 'opacity 0.5s ease-out',
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          width: '100%',
+          height: '100%',
+          zIndex: isFlipped ? 1 : 10
         }}
       >
+        <PeelWrapper
+          width={width}
+          height={height}
+          corner="BOTTOM_RIGHT"
+          peelPosition={pos}
+          drag={false}
+          className="peel-wrapper"
+          handleDrag={() => {
+            // Drag disabled - using click-to-flip instead
+          }}
+        >
         <PeelTop>
           {/* Card Container - Rectangle: Square image + white padding below */}
           <div 
@@ -340,7 +353,62 @@ function PeelCard({
             </div>
           </div>
         </PeelBottom>
-      </PeelWrapper>
+        </PeelWrapper>
+      </div>
+      
+      {/* Clean back card - revealed when flipped */}
+      <div 
+        style={{
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          width: '100%',
+          height: '100%',
+          opacity: isFlipped ? 1 : 0,
+          pointerEvents: isFlipped ? 'auto' : 'none',
+          transition: 'opacity 0.5s ease-out',
+          zIndex: isFlipped ? 10 : 1
+        }}
+      >
+        <div 
+          className="shadow-lg hover:shadow-2xl rounded-2xl overflow-hidden border border-gray-200 h-full cursor-pointer"
+          style={{
+            backgroundImage: `linear-gradient(135deg, rgba(214, 124, 74, 0.92) 0%, rgba(42, 71, 89, 0.92) 100%), url(${stepImage})`,
+            backgroundSize: 'cover',
+            backgroundPosition: 'center',
+            backgroundRepeat: 'no-repeat',
+            borderRadius: '1rem'
+          }}
+          onClick={onToggleFlip}
+        >
+          <div className="h-full flex flex-col relative px-4 pt-6 pb-2">
+            {/* Text content area - Same as card back with better spacing */}
+            <div className="text-center flex flex-col justify-start" style={{ height: '320px', position: 'relative' }}>
+              <div className="text-sm leading-relaxed text-white w-full">
+                {description.split('\n').filter(line => line.trim() !== '').map((paragraph, i) => {
+                  if (paragraph.trim() === '—') {
+                    return <div key={i} className="text-center my-4 text-white text-xl font-light border-t border-white/30 pt-4 mt-6">—</div>;
+                  }
+                  if (paragraph.startsWith('**') && paragraph.endsWith('**')) {
+                    const text = paragraph.slice(2, -2);
+                    return <p key={i} className="mb-3 font-bold text-base">{text}</p>;
+                  }
+                  return <p key={i} className="mb-3 text-sm">{paragraph}</p>;
+                })}
+              </div>
+            </div>
+            
+            {/* Return arrow - Bottom left corner */}
+            <div className="absolute -bottom-6 -left-6">
+              <div className="w-10 h-10 bg-white/80 rounded-full flex items-center justify-center hover:bg-white transition-colors shadow-lg">
+                <svg className="w-5 h-5 text-memopyk-dark-blue" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                </svg>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
       
     </div>
   );
