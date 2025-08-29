@@ -143,30 +143,15 @@ export function HowItWorksCondensed() {
                           <div className="absolute bottom-0 right-0 w-0 h-0" 
                                style={{
                                  borderStyle: 'solid',
-                                 borderWidth: '0 0 50px 50px',
+                                 borderWidth: '0 0 40px 40px',
                                  borderColor: 'transparent transparent #D67C4A transparent'
                                }}>
                             {/* Animated Arrow Icon */}
-                            <div className="absolute bottom-1 right-1 w-4 h-4 flip-arrow-animation">
+                            <div className="absolute -bottom-7 -right-7 w-4 h-4 flip-arrow-animation">
                               <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M7 16l-4-4m0 0l4-4m-4 4h18" />
                               </svg>
                             </div>
-                          </div>
-                        </div>
-                        
-                        {/* Info Button - Below image in white space */}
-                        <div className="flex justify-center mt-3 mb-2">
-                          <div 
-                            className="w-12 h-12 rounded-full flex items-center justify-center transition-all duration-300 hover:scale-110 cursor-pointer"
-                            style={{
-                              background: 'linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.85) 100%)',
-                              boxShadow: '0 4px 12px rgba(0, 0, 0, 0.2), inset 0 1px 2px rgba(255, 255, 255, 0.8)',
-                              border: '1px solid rgba(0, 0, 0, 0.1)',
-                              backdropFilter: 'blur(2px)'
-                            }}
-                          >
-                            <Info className="w-6 h-6" style={{ color: '#2A4759' }} />
                           </div>
                         </div>
                       </div>
