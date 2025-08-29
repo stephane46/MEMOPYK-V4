@@ -240,7 +240,7 @@ function PeelCard({
               <div className="text-center flex flex-col justify-start" style={{ height: '320px', position: 'relative' }}>
                 <div className="text-sm leading-relaxed text-white w-full">
                   {description.split('\n').filter(line => line.trim() !== '').map((paragraph, i) => {
-                    if (paragraph === '—') {
+                    if (paragraph.trim() === '—') {
                       return <div key={i} className="text-center my-4 text-white text-xl font-light border-t border-white/30 pt-4 mt-6">—</div>;
                     }
                     if (paragraph.startsWith('**') && paragraph.endsWith('**')) {
@@ -281,7 +281,7 @@ function PeelCard({
               <div className="text-center flex flex-col justify-start" style={{ height: '320px', position: 'relative' }}>
                 <div className="text-sm leading-relaxed text-white w-full">
                   {description.split('\n').filter(line => line.trim() !== '').map((paragraph, i) => {
-                    if (paragraph === '—') {
+                    if (paragraph.trim() === '—') {
                       return <div key={i} className="text-center my-4 text-white text-xl font-light border-t border-white/30 pt-4 mt-6">—</div>;
                     }
                     if (paragraph.startsWith('**') && paragraph.endsWith('**')) {
