@@ -142,13 +142,8 @@ export function HowItWorksCondensed() {
                         </div>
                       </div>
                       
-                      {/* Rounded Peel Corner with proper shadows and gradients */}
-                      <RoundedPeelCorner 
-                        radius={24} 
-                        size={40} 
-                        colorTop="#F2A300" 
-                        colorFold="#D67C4A" 
-                      />
+                      {/* Rounded Peel Corner — now self-sizing */}
+                      <RoundedPeelCorner colorTop="#F2A300" colorFold="#D67C4A" />
                     </div>
                       
                     {/* BACK SIDE - Detailed Information */}
