@@ -215,24 +215,21 @@ function PeelCard({
         <PeelTop>
           {/* Card Container - Rectangle: Square image + white padding below */}
           <div 
-            className="bg-white border border-gray-200 shadow-lg hover:shadow-2xl rounded-2xl overflow-hidden cursor-pointer" 
+            className="bg-white border border-gray-200 shadow-lg hover:shadow-2xl overflow-hidden cursor-pointer" 
             style={{ borderRadius: '1rem' }}
             onClick={onToggleFlip}
           >
             <div className="relative">
               {/* Step Image - Square */}
               <div 
-                className="relative overflow-hidden rounded-t-2xl transition-all duration-500 aspect-square bg-gray-50" 
-                style={{ 
-                  borderTopLeftRadius: '1rem', 
-                  borderTopRightRadius: '1rem'
-                }}
+                className="relative overflow-hidden transition-all duration-500 aspect-square bg-gray-50" 
+                style={{ borderRadius: '1rem 1rem 0 0' }}
               >
                 <img 
                   src={stepImage} 
                   alt={title}
                   className="w-full h-full object-contain transition-transform duration-500"
-                  style={{ borderTopLeftRadius: '1rem', borderTopRightRadius: '1rem' }}
+                  style={{ borderRadius: '1rem 1rem 0 0' }}
                 />
                 
               </div>
@@ -253,7 +250,7 @@ function PeelCard({
         {/* Back of the "page" */}
         <PeelBack>
           <div 
-            className="shadow-lg hover:shadow-2xl rounded-2xl overflow-hidden border border-gray-200 h-full cursor-pointer"
+            className="shadow-lg hover:shadow-2xl overflow-hidden border border-gray-200 h-full cursor-pointer"
             style={{
               backgroundImage: `linear-gradient(135deg, rgba(214, 124, 74, 0.92) 0%, rgba(42, 71, 89, 0.92) 100%), url(${stepImage})`,
               backgroundSize: 'cover',
@@ -295,7 +292,7 @@ function PeelCard({
         {/* Revealed layer */}
         <PeelBottom>
           <div 
-            className="reveal shadow-lg rounded-2xl overflow-hidden border border-gray-200 h-full cursor-pointer"
+            className="reveal shadow-lg overflow-hidden border border-gray-200 h-full cursor-pointer"
             style={{
               backgroundImage: `linear-gradient(135deg, rgba(214, 124, 74, 0.92) 0%, rgba(42, 71, 89, 0.92) 100%), url(${stepImage})`,
               backgroundSize: 'cover',
