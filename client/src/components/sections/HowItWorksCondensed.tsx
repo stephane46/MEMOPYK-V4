@@ -149,7 +149,15 @@ export function HowItWorksCondensed() {
                              borderColor: 'transparent transparent #D67C4A transparent'
                            }}>
                         {/* Animated Arrow Icon - positioned inside triangle */}
-                        <div className="absolute bottom-2 right-2 w-4 h-4 flip-arrow-animation z-10 text-white text-lg font-bold">
+                        <div className="absolute flip-arrow-animation z-50" 
+                             style={{
+                               bottom: '8px',
+                               right: '8px',
+                               color: 'white',
+                               fontSize: '18px',
+                               fontWeight: 'bold',
+                               textShadow: '1px 1px 2px rgba(0,0,0,0.5)'
+                             }}>
                           ↗
                         </div>
                       </div>
