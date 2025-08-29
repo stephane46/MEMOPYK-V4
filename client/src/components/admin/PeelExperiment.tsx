@@ -195,34 +195,74 @@ function PeelCard({
         }}
       >
         <PeelTop>
-          <div className="face">
-            <div className="step-image">
-              <img 
-                src={stepImage} 
-                alt={title}
-                className="w-full h-full object-contain"
-              />
-              <div className="step-number">{stepNumber}</div>
+          <div className="bg-white border border-gray-200 shadow-lg hover:shadow-2xl rounded-2xl overflow-hidden h-full">
+            <div className="relative cursor-pointer">
+              {/* Step Image */}
+              <div className="relative overflow-hidden rounded-xl transition-all duration-500 aspect-square">
+                <img 
+                  src={stepImage} 
+                  alt={title}
+                  className="w-full h-full object-contain bg-gray-50 transition-transform duration-500"
+                />
+                
+                {/* Orange Number Circle - Top Left */}
+                <div className="absolute top-2 left-2 w-8 h-8 bg-memopyk-orange rounded-full flex items-center justify-center transition-transform duration-300 shadow-lg">
+                  <span className="text-sm font-bold text-white">{stepNumber}</span>
+                </div>
+              </div>
+              
+              {/* Info Button - Below image in white space */}
+              <div className="flex justify-center mt-3 mb-2">
+                <div 
+                  className="w-12 h-12 rounded-full flex items-center justify-center transition-all duration-300 hover:scale-110 cursor-pointer"
+                  style={{
+                    background: 'linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.85) 100%)',
+                    boxShadow: '0 4px 12px rgba(0, 0, 0, 0.2), inset 0 1px 2px rgba(255, 255, 255, 0.8)',
+                    border: '1px solid rgba(0, 0, 0, 0.1)',
+                    backdropFilter: 'blur(2px)'
+                  }}
+                >
+                  <span style={{color: '#2A4759', fontSize: '24px'}}>ℹ</span>
+                </div>
+              </div>
             </div>
-            <div className="info-button">
-              <span style={{color: '#2A4759'}}>ℹ️</span>
-            </div>
-            <h3>{title}</h3>
-            <p>{description}</p>
           </div>
         </PeelTop>
 
         {/* Back of the "page" */}
         <PeelBack>
-          <div className="back">
-            <div className="w-full h-full flex flex-col items-center justify-center p-6 text-center">
-              <div className="mb-4">
-                <div className="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center mb-3">
-                  <span className="text-xl">✨</span>
+          <div 
+            className="shadow-lg hover:shadow-2xl rounded-2xl overflow-hidden border border-gray-200 h-full"
+            style={{
+              backgroundImage: `linear-gradient(135deg, rgba(214, 124, 74, 0.92) 0%, rgba(42, 71, 89, 0.92) 100%), url(${stepImage})`,
+              backgroundSize: 'cover',
+              backgroundPosition: 'center',
+              backgroundRepeat: 'no-repeat'
+            }}
+          >
+            <div className="h-full flex flex-col cursor-pointer relative px-2 pt-0 pb-2">
+              {/* Top Section - Text content area */}
+              <div className="text-center flex flex-col" style={{ height: '350px', position: 'relative' }}>
+                <div className="text-sm leading-normal text-white w-full flip-card-text-zero-spacing">
+                  {description.split('\n').map((paragraph, i) => (
+                    <p key={i} className="mb-1">
+                      {paragraph}
+                    </p>
+                  ))}
                 </div>
               </div>
-              <h4 className="text-lg font-bold text-memopyk-navy mb-2">We Edit</h4>
-              <p className="text-sm text-memopyk-dark-blue">Professional editing with perfect music, timing, and your preferences</p>
+              
+              {/* Bottom Section - Title and icon */}
+              <div className="mt-auto flex items-center justify-between px-1" style={{ height: '60px' }}>
+                <div className="text-left">
+                  <h3 className="text-lg font-bold text-white mb-0 leading-tight">{title}</h3>
+                </div>
+                
+                {/* Step number in bottom right */}
+                <div className="w-10 h-10 bg-white rounded-full flex items-center justify-center shadow-lg">
+                  <span className="text-lg font-bold" style={{ color: '#D67C4A' }}>{stepNumber}</span>
+                </div>
+              </div>
             </div>
           </div>
         </PeelBack>
