@@ -886,12 +886,27 @@ html, body {
   }
 }
 
-/* Kill any leftover border-triangle corner fallbacks */
+/* Kill any leftover border-triangle corner fallbacks and black elements */
 .w-0.h-0[style*="border-width"],
 .peel-test-corner,
 .flip-arrow-animation,
 .peel-corner-triangle,
-[style*="border-width: 0 0"][style*="solid"] {
+[style*="border-width: 0 0"][style*="solid"],
+.card-front::before,
+.card-front::after,
+.card-flip-container::before,
+.card-flip-container::after,
+.card-flip-inner::before,
+.card-flip-inner::after {
+  display: none !important;
+}
+
+/* Kill any absolutely positioned black elements in bottom-right */
+.card-front > *[style*="background: black"],
+.card-front > *[style*="background-color: black"],
+.card-front > *[style*="background:#000"],
+.card-front > *[style*="border-color:#000"],
+.absolute[style*="bottom"][style*="right"][style*="black"] {
   display: none !important;
 }
 
