@@ -214,18 +214,18 @@ export function HowItWorksCondensed() {
                             ))}
                           </div>
                           
-                          {/* Separator Line - MOVED UP TO MAKE SPACE FOR TITLE */}
+                          {/* Separator Line - MOVED FURTHER UP TO AVOID TITLE OVERLAP */}
                           <div
                             className="absolute border-t border-white/40 left-2"
                             style={{
-                              top: '230px',
+                              top: '200px',
                               right: "calc(0.5rem + var(--peel-c, 0px))",
                               zIndex: 1,
                             }}
                           ></div>
                           
-                          {/* Bottom Section - Sub Description - MOVED UP TO MAKE SPACE FOR TITLE */}
-                          <div className="absolute text-center left-2 right-2" style={{ top: '240px' }}>
+                          {/* Bottom Section - Sub Description - MOVED FURTHER UP TO AVOID TITLE OVERLAP */}
+                          <div className="absolute text-center left-2 right-2" style={{ top: '210px' }}>
                             <div className="text-xs text-white leading-relaxed w-full">
                               {language === 'fr-FR' ? step.subDescriptionFr : step.subDescriptionEn}
                             </div>
