@@ -63,10 +63,10 @@ export function HowItWorksCondensed() {
       icon: Edit,
       titleFr: "Sélection & Création", 
       titleEn: "Selection & Creation",
-      descriptionFr: "Nous trions, sélectionnons et gardons uniquement le meilleur.\nNous construisons le scénario avec la musique, le rythme et le format qui vous correspondent.",
-      descriptionEn: "We sort, select and keep only the best.\nWe build the scenario with the music, rhythm and format that suits you.",
-      subDescriptionFr: "Vos souvenirs prennent vie dans un film unique, réalisé avec soin et transparence.",
-      subDescriptionEn: "Your memories come to life in a unique film, created with care and transparency.",
+      descriptionFr: "Nous trions, sélectionnons et gardons uniquement le meilleur.\nNous construisons le scénario avec la musique, le rythme et le format qui vous correspondent.\nNous relions habilement chaque détail dans votre propre film souvenir unique.",
+      descriptionEn: "We sort, select and keep only the best.\nWe build the scenario with the music, rhythm and format that suits you.\nWe skillfully connect every detail into your own unique souvenir film.",
+      subDescriptionFr: "Vos souvenirs prennent vie avec attention et soin.",
+      subDescriptionEn: "Your memories come to life with attention and care.",
       image: "/images/How_we_work_Step2.png"
     },
     {
@@ -237,8 +237,8 @@ export function HowItWorksCondensed() {
                           </div>
                         </div>
                         
-                        {/* White line 35px from bottom - positioned relative to whole card */}
-                        <div className="absolute w-full h-px bg-white left-0" style={{ bottom: '35px' }}></div>
+                        {/* White line 50px from bottom - positioned relative to whole card */}
+                        <div className="absolute w-full h-px bg-white" style={{ bottom: '50px', left: '0', right: '0' }}></div>
                         
                         {/* Title - SAME AS FRONT CARD */}
                         <div className="p-4 text-center" style={{ paddingTop: '76px' }}>
