@@ -151,14 +151,14 @@ export function HowItWorksCondensed() {
                         {/* Animated Arrow Icon - positioned inside triangle */}
                         <div className="absolute flip-arrow-animation z-50" 
                              style={{
-                               bottom: '8px',
-                               right: '8px',
+                               bottom: '10px',
+                               right: '10px',
                                color: 'white',
                                fontSize: '18px',
                                fontWeight: 'bold',
                                textShadow: '1px 1px 2px rgba(0,0,0,0.5)'
                              }}>
-                          ↗
+                          ↖
                         </div>
                       </div>
                     </div>
