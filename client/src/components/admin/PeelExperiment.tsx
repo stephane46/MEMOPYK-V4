@@ -128,6 +128,7 @@ function PeelCard({
   interactive = false,
   stepNumber = 1,
   stepImage = "/images/How_we_work_Step1.png",
+  stepIcon = "upload",
   animateSequence,
 }: {
   title: string;
@@ -137,6 +138,7 @@ function PeelCard({
   interactive?: boolean;
   stepNumber?: number;
   stepImage?: string;
+  stepIcon?: "upload" | "create" | "share";
   animateSequence?: (api: {
     to: (xy: { x: number; y: number }, o?: any) => void;
     stop: () => void;
@@ -206,16 +208,34 @@ function PeelCard({
                   className="w-full h-full object-contain bg-gray-50 transition-transform duration-500"
                 />
                 
-                {/* Orange Number Circle - Top Left */}
-                <div className="absolute top-2 left-2 w-8 h-8 bg-memopyk-orange rounded-full flex items-center justify-center transition-transform duration-300 shadow-lg">
-                  <span className="text-sm font-bold text-white">{stepNumber}</span>
-                </div>
               </div>
               
-              {/* Info Button - Below image in white padding space */}
-              <div className="flex justify-center mt-3 mb-2">
+              {/* Title and Info Button in white section */}
+              <div className="flex items-center justify-between px-4 py-3">
+                <div className="flex items-center gap-3">
+                  <div className="w-12 h-12 bg-memopyk-navy rounded-full flex items-center justify-center transition-transform duration-300">
+                    {stepIcon === "upload" && (
+                      <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
+                      </svg>
+                    )}
+                    {stepIcon === "create" && (
+                      <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+                      </svg>
+                    )}
+                    {stepIcon === "share" && (
+                      <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z" />
+                      </svg>
+                    )}
+                  </div>
+                  <h3 className="text-2xl font-semibold text-memopyk-navy">
+                    {title}
+                  </h3>
+                </div>
                 <div 
-                  className="w-12 h-12 rounded-full flex items-center justify-center transition-all duration-300 hover:scale-110 cursor-pointer"
+                  className="w-10 h-10 rounded-full flex items-center justify-center transition-all duration-300 hover:scale-110 cursor-pointer"
                   style={{
                     background: 'linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.85) 100%)',
                     boxShadow: '0 4px 12px rgba(0, 0, 0, 0.2), inset 0 1px 2px rgba(255, 255, 255, 0.8)',
@@ -223,7 +243,9 @@ function PeelCard({
                     backdropFilter: 'blur(2px)'
                   }}
                 >
-                  <span style={{color: '#2A4759', fontSize: '24px'}}>ℹ</span>
+                  <svg className="w-5 h-5" style={{color: '#2A4759'}} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                  </svg>
                 </div>
               </div>
             </div>
@@ -368,6 +390,7 @@ Faites-nous part de votre vision et de ce qui compte le plus pour vous, soit en 
 **Commencer est un jeu d'enfant : apportez-nous simplement vos souvenirs et vos envies, nous nous occupons du reste avec soin et créativité.**"
           stepNumber={1}
           stepImage="/images/How_we_work_Step1.png"
+          stepIcon="upload"
           interactive
           initial={{ x: 356, y: 408 }}
         />
@@ -382,6 +405,7 @@ Vous recevez un devis précis et personnalisé avant toute étape, sans aucune m
 **Vos souvenirs deviennent un film sur-mesure, réalisé avec un souci du détail exceptionnel et une totale transparence à chaque étape.**"
           stepNumber={2}
           stepImage="/images/How_we_work_Step2.png"
+          stepIcon="create"
           interactive
           initial={{ x: 356, y: 408 }}
         />
@@ -396,6 +420,7 @@ Deux séries de retours sont incluses pour affiner le montage jusqu'à ce qu'il 
 **Le résultat : un souvenir rien qu'à vous, livré rapidement et peaufiné selon vos envies jusqu'à la perfection.**"
           stepNumber={3}
           stepImage="/images/How_we_work_Step3.png"
+          stepIcon="share"
           interactive
           initial={{ x: 356, y: 408 }}
         />
