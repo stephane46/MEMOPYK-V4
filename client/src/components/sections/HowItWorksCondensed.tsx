@@ -233,6 +233,9 @@ export function HowItWorksCondensed() {
                                   {language === 'fr-FR' ? step.subDescriptionFr : step.subDescriptionEn}
                                 </div>
                               </div>
+                              
+                              {/* White line 30px from bottom */}
+                              <div className="absolute w-full h-px bg-white left-0" style={{ bottom: '30px' }}></div>
                             </div>
                           </div>
                         </div>
