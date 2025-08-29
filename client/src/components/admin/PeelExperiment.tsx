@@ -245,7 +245,7 @@ function PeelCard({
               {/* Top Section - Text content area */}
               <div className="text-center flex flex-col" style={{ height: '350px', position: 'relative' }}>
                 <div className="text-sm leading-normal text-white w-full flip-card-text-zero-spacing">
-                  {description.split('\n\n').map((paragraph, i) => {
+                  {description.split('\n').filter(line => line.trim() !== '').map((paragraph, i) => {
                     if (paragraph === '—') {
                       return <div key={i} className="text-center my-2 text-white/80 text-lg">—</div>;
                     }
@@ -288,7 +288,7 @@ function PeelCard({
               {/* Text content area - Same as card back */}
               <div className="text-center flex flex-col" style={{ height: '350px', position: 'relative' }}>
                 <div className="text-sm leading-normal text-white w-full flip-card-text-zero-spacing">
-                  {description.split('\n\n').map((paragraph, i) => {
+                  {description.split('\n').filter(line => line.trim() !== '').map((paragraph, i) => {
                     if (paragraph === '—') {
                       return <div key={i} className="text-center my-2 text-white/80 text-lg">—</div>;
                     }
@@ -365,14 +365,26 @@ export default function PeelExperiment() {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
         <PeelCard
           title="You Upload"
-          description="Envoyez-nous simplement vos photos et vidéos, sans avoir à les trier ou les retoucher.\n\nFaites-nous part de votre vision et de ce qui compte le plus pour vous, soit en remplissant notre formulaire en ligne, soit en échangeant vos idées avec nous lors d'un appel téléphonique gratuit et convivial.\n\n—\n\nCommencer est un jeu d'enfant : apportez-nous simplement vos souvenirs et vos envies, nous nous occupons du reste avec soin et créativité."
+          description="Envoyez-nous simplement vos photos et vidéos, sans avoir à les trier ou les retoucher.
+
+Faites-nous part de votre vision et de ce qui compte le plus pour vous, soit en remplissant notre formulaire en ligne, soit en échangeant vos idées avec nous lors d'un appel téléphonique gratuit et convivial.
+
+—
+
+**Commencer est un jeu d'enfant : apportez-nous simplement vos souvenirs et vos envies, nous nous occupons du reste avec soin et créativité.**"
           stepNumber={1}
           stepImage="/images/How_we_work_Step1.png"
           initial={{ x: 352, y: 408 }}
         />
         <PeelCard
           title="We Create"
-          description="Nous examinons chaque détail avec attention et sélectionnons les plus beaux moments pour créer une histoire unique, selon vos préférences, avec la musique idéale, le bon rythme et le format qui vous convient.\n\nVous recevez un devis précis et personnalisé avant toute étape, sans aucune mauvaise surprise.\n\n—\n\nVos souvenirs deviennent un film sur-mesure, réalisé avec un souci du détail exceptionnel et une totale transparence à chaque étape."
+          description="Nous examinons chaque détail avec attention et sélectionnons les plus beaux moments pour créer une histoire unique, selon vos préférences, avec la musique idéale, le bon rythme et le format qui vous convient.
+
+Vous recevez un devis précis et personnalisé avant toute étape, sans aucune mauvaise surprise.
+
+—
+
+**Vos souvenirs deviennent un film sur-mesure, réalisé avec un souci du détail exceptionnel et une totale transparence à chaque étape.**"
           stepNumber={2}
           stepImage="/images/How_we_work_Step2.png"
           interactive
@@ -380,7 +392,13 @@ export default function PeelExperiment() {
         />
         <PeelCard
           title="You Enjoy & Share"
-          description="Vous recevez la première version de votre film-souvenir personnalisé sous une à trois semaines, soigneusement monté et prêt à vous émouvoir.\n\nDeux séries de retours sont incluses pour affiner le montage jusqu'à ce qu'il corresponde parfaitement à vos attentes.\n\n—\n\nLe résultat : un souvenir rien qu'à vous, livré rapidement et peaufiné selon vos envies jusqu'à la perfection."
+          description="Vous recevez la première version de votre film-souvenir personnalisé sous une à trois semaines, soigneusement monté et prêt à vous émouvoir.
+
+Deux séries de retours sont incluses pour affiner le montage jusqu'à ce qu'il corresponde parfaitement à vos attentes.
+
+—
+
+**Le résultat : un souvenir rien qu'à vous, livré rapidement et peaufiné selon vos envies jusqu'à la perfection.**"
           stepNumber={3}
           stepImage="/images/How_we_work_Step3.png"
           animateSequence={({ to, targets, prefersReduced }) => {
