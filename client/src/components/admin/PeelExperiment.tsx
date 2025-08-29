@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { PeelWrapper, PeelTop, PeelBack } from 'react-peel';
+import ReactCardFlip from 'react-card-flip';
 import { Upload, Edit, Heart } from 'lucide-react';
 
 export default function PeelExperiment() {
@@ -242,23 +243,11 @@ export default function PeelExperiment() {
                         </div>
                       </div>
                     ) : step.number === 2 ? (
-                      /* Card 2: Flip card effect with peel corner hint */
+                      /* Card 2: React Card Flip effect */
                       <div className="rounded-2xl overflow-hidden aspect-square">
-                        <div 
-                          className="border border-gray-200 shadow-lg hover:shadow-2xl rounded-2xl overflow-hidden h-full transition-all duration-700 relative"
-                          style={{
-                            transformStyle: 'preserve-3d',
-                            transform: flippedCards[step.number - 1] ? 'rotateY(180deg)' : 'rotateY(0deg)',
-                            transition: 'transform 0.6s'
-                          }}
-                        >
+                        <ReactCardFlip isFlipped={flippedCards[step.number - 1]} flipDirection="vertical">
                           {/* Front Side */}
-                          <div 
-                            className="absolute inset-0"
-                            style={{
-                              backfaceVisibility: 'hidden'
-                            }}
-                          >
+                          <div className="border border-gray-200 shadow-lg hover:shadow-2xl rounded-2xl overflow-hidden h-full transition-all duration-700 relative bg-white">
                             <div className="relative overflow-hidden rounded-xl transition-all duration-500 h-full">
                               <img 
                                 src={step.image} 
@@ -273,21 +262,20 @@ export default function PeelExperiment() {
                               {/* Peel corner hint */}
                               <div className="absolute top-0 right-0 w-6 h-6 bg-gradient-to-bl from-memopyk-orange to-memopyk-dark-blue opacity-80 transform rotate-45 translate-x-2 -translate-y-2 shadow-lg">
                               </div>
+                              
+                              <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2">
+                                <button className="px-4 py-2 bg-memopyk-orange text-white rounded-lg text-sm font-medium hover:bg-memopyk-orange/90 transition-colors">
+                                  {language === 'fr-FR' ? 'Retourner & Découvrir' : 'Peel & Flip'}
+                                </button>
+                              </div>
                             </div>
                           </div>
                           
                           {/* Back Side */}
-                          <div 
-                            className="absolute inset-0"
-                            style={{
-                              backfaceVisibility: 'hidden',
-                              transform: 'rotateY(180deg)'
-                            }}
-                          >
+                          <div className="border border-gray-200 shadow-lg hover:shadow-2xl rounded-2xl overflow-hidden h-full transition-all duration-700 relative">
                             <div 
                               className="h-full flex flex-col cursor-pointer relative"
                               style={{
-                                transformOrigin: 'center',
                                 backgroundImage: `linear-gradient(135deg, rgba(214, 124, 74, 0.92) 0%, rgba(42, 71, 89, 0.92) 100%), url(${step.image})`,
                                 backgroundSize: 'cover',
                                 backgroundPosition: 'center',
@@ -319,23 +307,26 @@ export default function PeelExperiment() {
                                   <p className="text-sm font-medium text-white">
                                     {language === 'fr-FR' ? step.titleFr : step.titleEn}
                                   </p>
+                                  <button className="mt-2 px-3 py-1 bg-white/20 text-white rounded text-xs hover:bg-white/30 transition-colors">
+                                    {language === 'fr-FR' ? 'Retourner' : 'Turn Back'}
+                                  </button>
                                 </div>
                               </div>
                             </div>
                           </div>
-                        </div>
+                        </ReactCardFlip>
                       </div>
                     ) : (
                       /* Card 3: Keep PeelWrapper */
                       <PeelWrapper
                         className="rounded-2xl overflow-hidden aspect-square"
                         options={{
-                          corner: 'bottom-right',
+                          corner: 'BOTTOM_RIGHT',
                           constrainToContainer: true,
                           fadeThreshold: 0.1,
                         }}
                         peelPosition={peelPositions[step.number - 1]}
-                        onPeelMove={(position) => {
+                        onPeelMove={(position: any) => {
                           if (step.number === 3) {
                             console.log(`🎬 PEEL DEBUG: Card 3 actual position:`, position);
                           }
