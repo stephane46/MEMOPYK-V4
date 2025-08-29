@@ -238,8 +238,8 @@ export function HowItWorksCondensed() {
                         </div>
                         
                         {/* Title - SAME AS FRONT CARD */}
-                        <div className="text-center" style={{ paddingTop: '76px', paddingBottom: '16px', paddingLeft: '16px', paddingRight: '16px' }}>
-                          <h3 className="text-xl font-semibold text-white whitespace-nowrap">
+                        <div className="p-4 text-center" style={{ paddingTop: '76px' }}>
+                          <h3 className="text-xl font-semibold text-white">
                             {language === 'fr-FR' ? step.titleFr : step.titleEn}
                           </h3>
                         </div>
