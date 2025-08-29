@@ -150,15 +150,20 @@ export function HowItWorksCondensed() {
                            }}>
                       </div>
                       
-                      {/* Animated Arrow Icon - positioned at card edge */}
+                      {/* Animated Arrow Icon - centered in triangle using centroid method */}
                       <div className="absolute flip-arrow-animation z-50" 
                            style={{
-                             bottom: '0px',
-                             right: '0px',
+                             bottom: 'calc(40px/3 - 8px)',
+                             right: 'calc(40px/3 - 8px)',
+                             width: '16px',
+                             height: '16px',
+                             display: 'grid',
+                             placeItems: 'center',
                              color: 'white',
                              fontSize: '16px',
                              fontWeight: 'bold',
-                             textShadow: '1px 1px 2px rgba(0,0,0,0.5)'
+                             textShadow: '1px 1px 2px rgba(0,0,0,0.5)',
+                             transform: 'rotate(-45deg)'
                            }}>
                         ↖
                       </div>
