@@ -141,31 +141,13 @@ export function HowItWorksCondensed() {
                         </div>
                       </div>
                       
-                      {/* Orange Triangle Overlay - Bottom Right of ENTIRE CARD */}
-                      <div className="absolute bottom-0 right-0 w-0 h-0" 
-                           style={{
-                             borderStyle: 'solid',
-                             borderWidth: '0 0 40px 40px',
-                             borderColor: 'transparent transparent #D67C4A transparent'
-                           }}>
-                      </div>
-                      
-                      {/* Animated Arrow Icon - centered in triangle using centroid method */}
-                      <div className="absolute flip-arrow-animation z-50" 
-                           style={{
-                             bottom: 'calc(40px/3 - 8px)',
-                             right: 'calc(40px/3 - 8px)',
-                             width: '16px',
-                             height: '16px',
-                             display: 'grid',
-                             placeItems: 'center',
-                             color: 'white',
-                             fontSize: '16px',
-                             fontWeight: 'bold',
-                             textShadow: '1px 1px 2px rgba(0,0,0,0.5)',
-                             transform: 'rotate(-45deg)'
-                           }}>
-                        ↖
+                      {/* Corner container + centered SVG arrow (no font glyphs) */}
+                      <div className="peel-corner">
+                        <span className="peel-arrow peel-arrow--float" aria-hidden>
+                          <svg viewBox="0 0 24 24" role="img">
+                            <path d="M7 15L15 7M10 7h5v5" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                          </svg>
+                        </span>
                       </div>
                     </div>
                       
