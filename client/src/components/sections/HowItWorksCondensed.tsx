@@ -52,8 +52,8 @@ export function HowItWorksCondensed() {
       icon: Upload,
       titleFr: "Transmission & Collecte",
       titleEn: "Transmission & Collection",
-      descriptionFr: "Envoyez-nous vos photos et vidéos telles quelles.\n\nDites-nous tout ce que vous avez en tête, via notre questionnaire, ou la séance de consultation gratuite.",
-      descriptionEn: "Send us your photos and videos as they are.\n\nTell us everything you have in mind, via our questionnaire, or the free consultation session.",
+      descriptionFr: "Envoyez-nous vos photos et vidéos telles quelles.\nDites-nous tout ce que vous avez en tête, via notre questionnaire, ou la séance de consultation gratuite.",
+      descriptionEn: "Send us your photos and videos as they are.\nTell us everything you have in mind, via our questionnaire, or the free consultation session.",
       subDescriptionFr: "Le transfert des éléments se fait en quelques clics. Nous sommes à votre écoute pour bien comprendre votre vision.",
       subDescriptionEn: "Transferring elements is done in just a few clicks. We listen carefully to understand your vision.",
       image: "/images/How_we_work_Step1.png"
@@ -63,8 +63,8 @@ export function HowItWorksCondensed() {
       icon: Edit,
       titleFr: "Sélection & Analyse", 
       titleEn: "Selection & Analysis",
-      descriptionFr: "Nous trions, sélectionnons et gardons uniquement le meilleur. Nous construisons le scénario avec la musique, le rythme et le format qui vous correspondent.\n\nVous recevez un devis clair et adapté avant tout travail.",
-      descriptionEn: "We sort, select and keep only the best. We build the scenario with the music, rhythm and format that suits you.\n\nYou receive a clear and tailored quote before any work.",
+      descriptionFr: "Nous trions, sélectionnons et gardons uniquement le meilleur.\nNous construisons le scénario avec la musique, le rythme et le format qui vous correspondent.\nVous recevez un devis clair et adapté avant tout travail.",
+      descriptionEn: "We sort, select and keep only the best.\nWe build the scenario with the music, rhythm and format that suits you.\nYou receive a clear and tailored quote before any work.",
       subDescriptionFr: "Vos souvenirs prennent vie dans un film unique, réalisé avec soin et transparence.",
       subDescriptionEn: "Your memories come to life in a unique film, created with care and transparency.",
       image: "/images/How_we_work_Step2.png"
@@ -74,8 +74,8 @@ export function HowItWorksCondensed() {
       icon: Heart,
       titleFr: "Montage & Création",
       titleEn: "Editing & Creation", 
-      descriptionFr: "Vous recevez la première version de votre film-souvenir en une à trois semaines, prête à être revue.\n\nDeux séries de retours sont incluses pour affiner le montage jusqu'à votre entière satisfaction.",
-      descriptionEn: "You receive the first version of your souvenir film in one to three weeks, ready to be reviewed.\n\nTwo rounds of feedback are included to refine the editing to your complete satisfaction.",
+      descriptionFr: "Vous recevez la première version de votre film-souvenir en une à trois semaines, prête à être revue.\nDeux séries de retours sont incluses pour affiner le montage jusqu'à votre entière satisfaction.",
+      descriptionEn: "You receive the first version of your souvenir film in one to three weeks, ready to be reviewed.\nTwo rounds of feedback are included to refine the editing to your complete satisfaction.",
       subDescriptionFr: "Un film souvenir unique, livré à temps et parfaitement ajusté à vos envies.",
       subDescriptionEn: "A unique souvenir film, delivered on time and perfectly adjusted to your desires.",
       image: "/images/How_we_work_Step3.png"
@@ -221,14 +221,14 @@ export function HowItWorksCondensed() {
                               <div
                                 className="absolute border-t border-white/40 left-2"
                                 style={{
-                                  top: '170px',
+                                  top: '200px',
                                   right: "calc(0.5rem + var(--peel-c, 0px))",
                                   zIndex: 1,
                                 }}
                               ></div>
                               
                               {/* Bottom Section - Sub Description - MOVED MUCH HIGHER UP */}
-                              <div className="absolute text-center left-2 right-2" style={{ top: '180px' }}>
+                              <div className="absolute text-center left-2 right-2" style={{ top: '210px' }}>
                                 <div className="text-sm font-bold text-white leading-relaxed w-full">
                                   {language === 'fr-FR' ? step.subDescriptionFr : step.subDescriptionEn}
                                 </div>
