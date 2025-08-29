@@ -147,7 +147,7 @@ export function HowItWorksCondensed() {
                                  borderColor: 'transparent transparent #D67C4A transparent'
                                }}>
                             {/* Animated Arrow Icon */}
-                            <div className="absolute -bottom-7 -right-7 w-4 h-4 flip-arrow-animation">
+                            <div className="absolute bottom-2 right-2 w-4 h-4 flip-arrow-animation">
                               <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M7 16l-4-4m0 0l4-4m-4 4h18" />
                               </svg>
