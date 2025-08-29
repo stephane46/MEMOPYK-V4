@@ -141,12 +141,10 @@ export function HowItWorksCondensed() {
                         </div>
                       </div>
                       
-                      {/* Corner container + centered SVG arrow (no font glyphs) */}
+                      {/* Corner container + centered arrow (mathematical positioning) */}
                       <div className="peel-corner">
                         <span className="peel-arrow peel-arrow--float" aria-hidden>
-                          <svg viewBox="0 0 24 24" role="img">
-                            <path d="M7 17L17 7M7 7h10M7 7v10" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                          </svg>
+                          ↖
                         </span>
                       </div>
                     </div>
