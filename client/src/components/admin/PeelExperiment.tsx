@@ -133,7 +133,7 @@ function PeelCard({
 
   // Explicit geometry
   const closed = { x: width - 2, y: height - 2 };
-  const base   = { x: width - 8, y: height - 8 }; // small-corner base
+  const base   = { x: width - 32, y: height - 32 }; // larger-corner base (4x bigger)
   const reveal = { x: Math.round(width * 0.08), y: Math.round(height * 0.12) };
 
   const ran = useRef(false);
@@ -206,7 +206,7 @@ export default function PeelExperiment() {
         <PeelCard
           title="Visual Feedback"
           description="This corner hints that the card is interactive."
-          initial={{ x: 340, y: 220 }}
+          initial={{ x: 328, y: 208 }}
         />
         <PeelCard
           title="Step 2: Flip Animation"
