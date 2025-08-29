@@ -111,7 +111,7 @@ export function HowItWorksCondensed() {
                   <div className="card-flip-inner">
                     
                     {/* FRONT SIDE - Step Card */}
-                    <div className="card-front bg-white border border-gray-200 shadow-lg hover:shadow-2xl rounded-2xl overflow-hidden relative">
+                    <div className="card-front bg-white border border-gray-200 shadow-lg hover:shadow-2xl rounded-2xl overflow-hidden relative" style={{ position: 'relative', zIndex: 0, isolation: 'isolate' }}>
                       {/* Clickable Area */}
                       <div 
                         className="relative cursor-pointer"

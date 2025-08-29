@@ -935,3 +935,14 @@ html, body {
   }
 }
 
+/* Temporary guard: wipe any corner pseudo-elements on HowItWorks cards */
+.card::before,
+.card::after,
+.card-front::before,
+.card-front::after,
+.card-flip-container::before,
+.card-flip-container::after {
+  content: none !important;
+  display: none !important;
+}
+
