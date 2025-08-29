@@ -29,33 +29,47 @@ export default function RoundedPeelCorner({
   }, []);
 
   // ---- Resolve geometry safely ----
-  const { C, R, pathFlap, pathInner, t } = useMemo(() => {
+  const { C, R, Rout, Rin, t, tip, pathFlap, pathInner } = useMemo(() => {
     const Rraw = Rdet ?? 16;
-    // choose a box size from the detected radius (2.1× for strong, curled look)
-    const Cauto = Math.ceil(Rraw * 4.0);
-    const C = Math.max(10, Cauto);           // peel box (px)
-    const R = Math.max(1, Math.min(Rraw, C - 2)); // clamp so quarter circle fits
 
-    // curl thickness and rounded tip
-    const t = Math.max(12, Math.min(R * 0.85, C * 0.55));
-    const tip = Math.min(t * 0.55, R * 0.75);
+    // Pick a peel box size from card radius (keeps auto-sizing)
+    const Cauto = Math.ceil(Rraw * 4.0);       // big hero curl; tweak 3.6–4.4 if desired
+    const C = Math.max(10, Cauto);
 
-    const p1x = C - R, p1y = C;
-    const p2x = C,     p2y = C - R;
+    // Card corner radius, clamped so math never goes outside the box
+    const R = Math.max(1, Math.min(Rraw, C - 2));
 
-    const Rin = Math.max(R - t, 1);
-    const i1x = C - Rin, i1y = C;
-    const i2x = C,       i2y = C - Rin;
+    // ✅ KEY FIX: use a MUCH LARGER outer radius for the flap (not the card radius)
+    // Rout controls how far the peel runs along the bottom/right edges.
+    // For a bold curl, aim ~ 2.5–3.2 × the card radius, but never exceed box.
+    const Rout = Math.min(C - 2, R * 2.8);
 
+    // Curl band thickness and rounded tip
+    const t   = Math.max(12, Math.min(Rout * 0.45, C * 0.55));
+    const tip = Math.min(t * 0.55, Rout * 0.75);
+
+    // Inner radius (kept positive and not equal to Rout)
+    const Rin = Math.max(1, Rout - t);
+
+    // Geometry (quarter-circles centered at C,C)
+    const p1x = C - Rout, p1y = C;       // outer arc start (bottom edge)
+    const p2x = C,        p2y = C - Rout; // outer arc end   (right edge)
+
+    const i1x = C - Rin,  i1y = C;       // inner arc start
+    const i2x = C,        i2y = C - Rin; // inner arc end
+
+    // Flap band between outer and inner quarter-circles, rounded toward the tip
     const pathFlap =
-      `M ${p1x},${p1y} A ${R},${R} 0 0 0 ${p2x},${p2y} ` +
+      `M ${p1x},${p1y} ` +
+      `A ${Rout},${Rout} 0 0 0 ${p2x},${p2y} ` +
       `C ${C},${C - t * 0.68} ${C - t * 0.30},${C} ${C - tip},${C - tip} ` +
       `C ${C - t},${C - t * 0.30} ${C - t * 0.68},${C - t} ${i2x},${i2y} ` +
       `A ${Rin},${Rin} 0 0 1 ${i1x},${i1y} Z`;
 
+    // Subtle "crease" highlight along the inner arc
     const pathInner = `M ${i1x},${i1y} A ${Rin},${Rin} 0 0 0 ${i2x},${i2y}`;
 
-    return { C, R, pathFlap, pathInner, t };
+    return { C, R, Rout, Rin, t, tip, pathFlap, pathInner };
   }, [Rdet]);
 
   // expose peel size to the parent and ensure layering
