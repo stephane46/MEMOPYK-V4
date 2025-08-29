@@ -144,7 +144,8 @@ export function HowItWorksCondensed() {
                       
                       {/* Rounded Peel Corner with proper shadows and gradients */}
                       <RoundedPeelCorner 
-                        size={88} 
+                        radius={24} 
+                        size={40} 
                         colorTop="#F2A300" 
                         colorFold="#D67C4A" 
                       />
