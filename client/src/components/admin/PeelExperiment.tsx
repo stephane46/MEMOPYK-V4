@@ -7,9 +7,16 @@ import { PeelWrapper, PeelTop, PeelBack, PeelBottom } from "react-peel";
 const injectOnce = (() => {
   let done = false;
   return () => {
+    // Force re-injection in development
+    if (done && import.meta.env.DEV) {
+      const existing = document.querySelector('style[data-peel-experiment]');
+      if (existing) existing.remove();
+      done = false;
+    }
     if (done) return;
     done = true;
     const el = document.createElement("style");
+    el.setAttribute('data-peel-experiment', 'true');
     el.textContent = `
       :root { --bg1:#f3f6fb; --bg2:#edf1f7; --ink:#1b2a3a; --muted:#4a5b6c; }
       * { box-sizing: border-box; }
