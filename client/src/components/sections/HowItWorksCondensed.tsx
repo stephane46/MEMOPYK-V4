@@ -195,9 +195,6 @@ export function HowItWorksCondensed() {
                         <span className="text-sm font-bold text-memopyk-orange">{step.number}</span>
                       </div>
                       
-                      {/* White line 50px from bottom - MOVED TO TOP LEVEL, OUTSIDE OVERFLOW CONTAINER */}
-                      <div className="absolute h-px bg-white" style={{ bottom: '50px', left: '0', right: '0', zIndex: 20 }}></div>
-                      
                       <div 
                         className="relative cursor-pointer overflow-hidden rounded-2xl h-full"
                         onClick={() => {
@@ -240,8 +237,8 @@ export function HowItWorksCondensed() {
                           </div>
                         </div>
                         
-                        {/* Title - SAME AS FRONT CARD - positioned above the white line */}
-                        <div className="absolute bottom-0 left-0 right-0 p-4 text-center" style={{ paddingBottom: '60px', zIndex: 30 }}>
+                        {/* Title - SAME AS FRONT CARD */}
+                        <div className="p-4 text-center" style={{ paddingTop: '76px' }}>
                           <h3 className="text-lg font-semibold text-white">
                             {language === 'fr-FR' ? step.titleFr : step.titleEn}
                           </h3>
