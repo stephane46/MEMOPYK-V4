@@ -196,7 +196,7 @@ export function HowItWorksCondensed() {
                       </div>
                       
                       <div 
-                        className="relative cursor-pointer overflow-hidden rounded-2xl h-full"
+                        className="relative cursor-pointer"
                         onClick={() => {
                           setFlippedCards(prev => {
                             const newSet = new Set(prev);
@@ -206,8 +206,8 @@ export function HowItWorksCondensed() {
                         }}
                       >
                         
-                        {/* Content area - EXACT SAME STRUCTURE AS FRONT */}
-                        <div className="relative transition-all duration-500 aspect-square">
+                        {/* Content area - EXACT SAME STRUCTURE AS FRONT - Square image area only */}
+                        <div className="relative overflow-hidden rounded-xl transition-all duration-500 aspect-square">
                           <div className="h-full flex flex-col px-2 pt-0 pb-2">
                             {/* Top Section - Text content area */}
                             <div className="text-center flex flex-col" style={{ position: 'relative' }}>
