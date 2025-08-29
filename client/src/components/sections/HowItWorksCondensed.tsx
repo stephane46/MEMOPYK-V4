@@ -173,7 +173,7 @@ export function HowItWorksCondensed() {
                         
                         {/* Title inside card - white area below image */}
                         <div className="p-4 text-center">
-                          <h3 className="text-xl font-semibold text-memopyk-dark-blue">
+                          <h3 className="text-lg font-semibold text-memopyk-dark-blue">
                             {language === 'fr-FR' ? step.titleFr : step.titleEn}
                           </h3>
                         </div>
@@ -239,7 +239,7 @@ export function HowItWorksCondensed() {
                         
                         {/* Title - SAME AS FRONT CARD */}
                         <div className="p-4 text-center" style={{ paddingTop: '76px' }}>
-                          <h3 className="text-xl font-semibold text-white">
+                          <h3 className="text-lg font-semibold text-white">
                             {language === 'fr-FR' ? step.titleFr : step.titleEn}
                           </h3>
                         </div>
