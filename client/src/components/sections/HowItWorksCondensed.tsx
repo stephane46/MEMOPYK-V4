@@ -63,8 +63,8 @@ export function HowItWorksCondensed() {
       icon: Edit,
       titleFr: "Sélection & Création", 
       titleEn: "Selection & Creation",
-      descriptionFr: "Nous trions, sélectionnons et gardons uniquement le meilleur.\nNous construisons le scénario avec la musique, le rythme et le format qui vous correspondent.\nNous relions habilement chaque détail dans votre film souvenir unique.",
-      descriptionEn: "We sort, select and keep only the best.\nWe build the scenario with the music, rhythm and format that suits you.\nWe skillfully connect every detail into your unique souvenir film.",
+      descriptionFr: "Nous trions, sélectionnons et gardons uniquement le meilleur.\nNous construisons le scénario avec la musique, le rythme et le format qui vous correspondent.\nNous relions chaque détail dans votre film souvenir unique.",
+      descriptionEn: "We sort, select and keep only the best.\nWe build the scenario with the music, rhythm and format that suits you.\nWe connect every detail into your unique souvenir film.",
       subDescriptionFr: "Vos souvenirs prennent vie avec attention et soin.",
       subDescriptionEn: "Your memories come to life with attention and care.",
       image: "/images/How_we_work_Step2.png"
