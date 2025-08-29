@@ -182,7 +182,7 @@ export function HowItWorksCondensed() {
                       
                     {/* BACK SIDE - Detailed Information */}
                     <div 
-                      className="card-back shadow-lg hover:shadow-2xl rounded-2xl overflow-hidden border border-gray-200"
+                      className="card-back shadow-lg hover:shadow-2xl rounded-2xl overflow-hidden border border-gray-200 relative"
                       style={{
                         backgroundImage: `linear-gradient(135deg, rgba(214, 124, 74, 0.92) 0%, rgba(42, 71, 89, 0.92) 100%), url(${step.image})`,
                         backgroundSize: 'cover',
@@ -190,6 +190,11 @@ export function HowItWorksCondensed() {
                         backgroundRepeat: 'no-repeat'
                       }}
                     >
+                      {/* Orange Number Circle - Top Left on Back Card - Same position as front */}
+                      <div className="absolute top-2 left-2 w-8 h-8 bg-memopyk-orange rounded-full flex items-center justify-center transition-transform duration-300 shadow-lg" style={{ zIndex: 10 }}>
+                        <span className="text-sm font-bold text-white">{step.number}</span>
+                      </div>
+                      
                       <div 
                         className="h-full flex flex-col cursor-pointer relative px-2 pt-0 pb-2"
                         onClick={() => {
@@ -200,10 +205,6 @@ export function HowItWorksCondensed() {
                           });
                         }}
                       >
-                        {/* Orange Number Circle - Top Left on Back Card */}
-                        <div className="absolute top-2 left-2 w-8 h-8 bg-memopyk-orange rounded-full flex items-center justify-center transition-transform duration-300 shadow-lg" style={{ zIndex: 10 }}>
-                          <span className="text-sm font-bold text-white">{step.number}</span>
-                        </div>
                         
                         {/* Top Section - Text content area */}
                         <div className="text-center flex flex-col" style={{ height: '350px', position: 'relative' }}>
