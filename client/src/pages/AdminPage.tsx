@@ -562,8 +562,8 @@ export default function AdminPage() {
       </div>
 
       {/* Main Content with left margin to account for fixed sidebar */}
-      <div className="ml-64">
-        <div className="p-8">
+      <div className="ml-64 overflow-visible">
+        <div className="p-8 overflow-visible">
 
           {/* Hero Management */}
           {activeSection === 'hero-management' && (
@@ -1498,7 +1498,7 @@ export default function AdminPage() {
 
           {/* Peel Experiment */}
           {activeSection === 'peel-experiment' && (
-            <div className="space-y-6">
+            <div className="space-y-6 overflow-visible min-h-screen">
               <PeelExperiment />
             </div>
           )}
