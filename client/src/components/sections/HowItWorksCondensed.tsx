@@ -218,14 +218,14 @@ export function HowItWorksCondensed() {
                           <div
                             className="absolute border-t border-white/40 left-2"
                             style={{
-                              top: '160px',
+                              top: '170px',
                               right: "calc(0.5rem + var(--peel-c, 0px))",
                               zIndex: 1,
                             }}
                           ></div>
                           
                           {/* Bottom Section - Sub Description - MOVED MUCH HIGHER UP */}
-                          <div className="absolute text-center left-2 right-2" style={{ top: '170px' }}>
+                          <div className="absolute text-center left-2 right-2" style={{ top: '180px' }}>
                             <div className="text-xs text-white leading-relaxed w-full">
                               {language === 'fr-FR' ? step.subDescriptionFr : step.subDescriptionEn}
                             </div>
