@@ -198,10 +198,10 @@ function PeelCard({
       >
         <PeelTop>
           {/* Card Container - Rectangle: Square image + white padding below */}
-          <div className="bg-white border border-gray-200 shadow-lg hover:shadow-2xl rounded-2xl overflow-hidden">
+          <div className="bg-white border border-gray-200 shadow-lg hover:shadow-2xl rounded-2xl overflow-hidden" style={{ borderRadius: '1rem' }}>
             <div className="relative cursor-pointer">
               {/* Step Image - Square */}
-              <div className="relative overflow-hidden rounded-xl transition-all duration-500 aspect-square">
+              <div className="relative overflow-hidden rounded-t-2xl transition-all duration-500 aspect-square" style={{ borderTopLeftRadius: '1rem', borderTopRightRadius: '1rem' }}>
                 <img 
                   src={stepImage} 
                   alt={title}
