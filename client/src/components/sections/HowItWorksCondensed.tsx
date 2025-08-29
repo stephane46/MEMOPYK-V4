@@ -226,7 +226,7 @@ export function HowItWorksCondensed() {
                           
                           {/* Bottom Section - Sub Description - MOVED MUCH HIGHER UP */}
                           <div className="absolute text-center left-2 right-2" style={{ top: '180px' }}>
-                            <div className="text-xs text-white leading-relaxed w-full">
+                            <div className="text-sm font-bold text-white leading-relaxed w-full">
                               {language === 'fr-FR' ? step.subDescriptionFr : step.subDescriptionEn}
                             </div>
                           </div>
@@ -239,14 +239,6 @@ export function HowItWorksCondensed() {
                           </h3>
                         </div>
                         
-                        {/* Return arrow - Positioned with equal spacing */}
-                        <div className="absolute -bottom-6 -left-6">
-                          <div className="w-10 h-10 bg-white/80 rounded-full flex items-center justify-center hover:bg-white transition-colors shadow-lg">
-                            <svg className="w-5 h-5 text-memopyk-dark-blue" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
-                            </svg>
-                          </div>
-                        </div>
                       </div>
                     </div>
                   </div>
