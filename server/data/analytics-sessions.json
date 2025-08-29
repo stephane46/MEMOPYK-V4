@@ -25572,8 +25572,8 @@
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-29T12:38:35.201Z",
-    "updated_at": "2025-08-29T12:40:40.031Z",
-    "duration": 1467004
+    "updated_at": "2025-08-29T12:41:13.190Z",
+    "duration": 1467038
   },
   {
     "id": "c1e4f2ac-d7d5-48e8-b1a3-a12e52d53137",
@@ -25589,7 +25589,40 @@
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-29T12:39:48.721Z",
-    "updated_at": "2025-08-29T12:40:26.761Z",
-    "duration": 1050397
+    "updated_at": "2025-08-29T12:40:42.599Z",
+    "duration": 1050413
+  },
+  {
+    "id": "f3538813-9cb1-4a2a-b141-86055866193e",
+    "session_id": "session_1756471245039_kxjik085o",
+    "user_id": null,
+    "ip_address": "109.17.150.48",
+    "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36 Edg/139.0.0.0",
+    "referrer": "https://replit.com/",
+    "language": "fr-FR",
+    "country": "Unknown",
+    "city": "Unknown",
+    "page_views": 0,
+    "is_bot": false,
+    "is_test_data": false,
+    "created_at": "2025-08-29T12:40:45.073Z",
+    "updated_at": "2025-08-29T12:41:16.138Z",
+    "duration": 1050446
+  },
+  {
+    "id": "ef74f403-2794-4c1e-a7a7-1824ecdcb205",
+    "session_id": "session_1756471299639_nsu7qauae",
+    "user_id": null,
+    "ip_address": "109.17.150.48",
+    "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36 Edg/139.0.0.0",
+    "referrer": "https://365df2cf-1884-444c-a9e8-235602456363-00-37q39xpqlgvdy.janeway.replit.dev/__replco/workspace_iframe.html?initialPath=%2F&id=%3Ar36kg%3A",
+    "language": "fr-FR",
+    "country": "Unknown",
+    "city": "Unknown",
+    "page_views": 0,
+    "is_bot": false,
+    "is_test_data": false,
+    "created_at": "2025-08-29T12:41:40.324Z",
+    "updated_at": "2025-08-29T12:41:40.435Z"
   }
 ]
