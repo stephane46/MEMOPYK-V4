@@ -237,8 +237,8 @@ export function HowItWorksCondensed() {
                           </div>
                         </div>
                         
-                        {/* Title - EXACT SAME STRUCTURE AS FRONT */}
-                        <div className="p-4 text-center">
+                        {/* Title - ABSOLUTELY POSITIONED AT BOTTOM */}
+                        <div className="absolute bottom-0 left-0 right-0 p-4 text-center">
                           <h3 className="text-xl font-semibold text-white">
                             {language === 'fr-FR' ? step.titleFr : step.titleEn}
                           </h3>
