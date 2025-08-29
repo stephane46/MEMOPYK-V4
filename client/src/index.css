@@ -723,11 +723,16 @@ button, .play-button, .play-icon {
   color: white !important;
 }
 
-/* Force zero spacing for flip card text */
+/* Force zero spacing for flip card text but allow custom margins */
 .flip-card-text-zero-spacing p {
   margin: 0 !important;
   padding: 0 !important;
   line-height: 1.4 !important;
+}
+
+/* Allow specific margin-bottom for sentence spacing */
+.flip-card-text-zero-spacing p[style*="margin-bottom"] {
+  margin-bottom: revert !important;
 }
 
 .flip-card-text-zero-spacing {
