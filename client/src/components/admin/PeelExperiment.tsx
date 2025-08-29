@@ -15,9 +15,10 @@ const injectOnce = (() => {
       * { box-sizing: border-box; }
       .page { min-height:100%; padding:48px 24px; display:flex; align-items:center; justify-content:center;
               background:linear-gradient(180deg,var(--bg1),var(--bg2)); }
-      .peel-zone { contain: layout paint size; }
-      .grid { display:grid; grid-template-columns:repeat(3, 360px); gap:24px; width:100%; max-width:1200px; }
-      .shell { width:360px; height:240px; border-radius:16px; overflow:hidden; background:transparent;
+      .peel-zone { contain: layout paint size; overflow: visible; }
+      .grid { display:grid; grid-template-columns:repeat(3, 360px); gap:24px; width:100%; max-width:1200px; overflow: visible; }
+      .peel-wrapper { will-change: transform, clip-path; transform: translateZ(0); -webkit-transform: translateZ(0); contain: layout paint size; }
+      .shell { width:360px; height:240px; border-radius:16px; overflow:visible; background:transparent;
                box-shadow:0 6px 18px rgba(0,0,0,.06), 0 2px 6px rgba(0,0,0,.06); }
       .face { width:100%; height:100%; border-radius:16px; background:rgba(255,255,255,.92);
               backdrop-filter:blur(4px); padding:24px; }
@@ -166,12 +167,6 @@ function PeelCard({
         peelPosition={pos}
         drag={interactive}
         className="peel-wrapper"
-        style={{
-          willChange: "transform, clip-path",
-          transform: "translateZ(0)",
-          WebkitTransform: "translateZ(0)",
-          contain: "layout paint size",
-        }}
         handleDrag={(evt, x, y, peel) => {
           if (!interactive) return;
           peel.setPeelPosition(x, y);
