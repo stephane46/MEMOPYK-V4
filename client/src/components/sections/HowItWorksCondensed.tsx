@@ -128,14 +128,12 @@ export function HowItWorksCondensed() {
                       
                       {/* Flip icon with pulse animation - positioned ABOVE the triangle */}
                       <div 
-                        className="absolute w-5 h-5 flex items-center justify-center animate-pulse pointer-events-none"
+                        className="absolute bottom-2 right-2 w-6 h-6 flex items-center justify-center animate-pulse pointer-events-none"
                         style={{
-                          bottom: '10px',
-                          right: '10px',
                           animation: 'pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite',
-                          backgroundColor: 'rgba(255, 255, 255, 0.4)',
+                          backgroundColor: 'rgba(255, 255, 255, 0.3)',
                           borderRadius: '50%',
-                          zIndex: 30
+                          zIndex: 20
                         }}
                       >
                         <Info 
