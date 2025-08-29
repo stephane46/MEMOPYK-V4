@@ -10,18 +10,19 @@ const inject = (css: string) => {
 inject(`
   :root { --bg1:#f3f6fb; --bg2:#edf1f7; --ink:#1b2a3a; --muted:#4a5b6c; }
   * { box-sizing: border-box; }
-  .peel-page { min-height:100vh; display:flex; align-items:center; justify-content:center; padding:48px 24px; }
-  .peel-grid { display:grid; grid-template-columns:repeat(3, 360px); gap:24px; width:100%; max-width:1200px; }
-  .peel-shell { border-radius:16px; overflow:hidden; background:transparent;
+  body { margin:0; font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,'Apple Color Emoji','Segoe UI Emoji'; background:linear-gradient(180deg,var(--bg1),var(--bg2)); }
+  .page { min-height:100vh; display:flex; align-items:center; justify-content:center; padding:48px 24px; }
+  .grid { display:grid; grid-template-columns:repeat(3, 360px); gap:24px; width:100%; max-width:1200px; }
+  .shell { border-radius:16px; overflow:hidden; background:transparent;
            box-shadow:0 6px 18px rgba(0,0,0,.06), 0 2px 6px rgba(0,0,0,.06);}
-  .peel-face { width:100%; height:100%; border-radius:16px; background:rgba(255,255,255,.92);
+  .face { width:100%; height:100%; border-radius:16px; background:rgba(255,255,255,.92);
           backdrop-filter:blur(4px); padding:24px; }
-  .peel-face h3 { margin:0; font-size:22px; font-weight:700; color:var(--ink); letter-spacing:.2px; }
-  .peel-face p { margin:8px 0 0; color:var(--muted); line-height:1.5; font-size:15px; }
-  .peel-back { width:100%; height:100%; background:linear-gradient(135deg,#f6f6f7 0%, #e9ecf1 100%); }
-  .peel-reveal { width:100%; height:100%; color:#F2EBDC; background:linear-gradient(135deg,#011526 0%, #2A4759 100%);
+  .face h3 { margin:0; font-size:22px; font-weight:700; color:var(--ink); letter-spacing:.2px; }
+  .face p { margin:8px 0 0; color:var(--muted); line-height:1.5; font-size:15px; }
+  .back { width:100%; height:100%; background:linear-gradient(135deg,#f6f6f7 0%, #e9ecf1 100%); }
+  .reveal { width:100%; height:100%; color:#F2EBDC; background:linear-gradient(135deg,#011526 0%, #2A4759 100%);
             display:flex; align-items:center; justify-content:center; font-weight:600; font-size:16px; border-radius:16px; }
-  @media (max-width: 1140px) { .peel-grid { grid-template-columns: 1fr; place-items:center; } }
+  @media (max-width: 1140px) { .grid { grid-template-columns: 1fr; place-items:center; } }
 `);
 
 /* ---------- Small hook to measure element size ---------- */
@@ -167,7 +168,7 @@ function PeelCard({
   }, [pos?.x, pos?.y, size.w, size.h]);
 
   return (
-    <div ref={wrapRef} className="peel-shell" style={{ width, height }}>
+    <div ref={wrapRef} className="shell" style={{ width, height }}>
       <PeelWrapper
         width={width}
         height={height}
@@ -181,18 +182,18 @@ function PeelCard({
         }}
       >
         <PeelTop>
-          <div className="peel-face">
+          <div className="face">
             <h3>{title}</h3>
             <p>{description}</p>
           </div>
         </PeelTop>
 
         <PeelBack>
-          <div className="peel-back" />
+          <div className="back" />
         </PeelBack>
 
         <PeelBottom>
-          <div className="peel-reveal">Revealed content / CTA</div>
+          <div className="reveal">Revealed content / CTA</div>
         </PeelBottom>
       </PeelWrapper>
     </div>
@@ -200,92 +201,87 @@ function PeelCard({
 }
 
 /* ---------- The app: three cards (Card 3 = polished animation) ---------- */
-export default function PeelExperiment() {
+function App() {
   return (
-    <div className="space-y-6">
-      <div className="mb-6">
-        <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Peel Experiment</h2>
-        <p className="text-gray-600 dark:text-gray-300">
-          Advanced peel effects with smooth spring animations and proper reveal layers.
-        </p>
+    <main className="page">
+      <div className="grid">
+        <PeelCard
+          title="Visual Feedback"
+          description="This corner hints that the card is interactive."
+          initial={{ x: 352, y: 232 }} // gentle peek
+        />
+
+        <PeelCard
+          title="Step 2: Flip Animation"
+          description="Click/tap and drag the corner to reveal the back content."
+          interactive
+          initial={{ x: 356, y: 236 }}
+        />
+
+        <PeelCard
+          title="Step 3: Polish"
+          description="Smooth transitions and a subtle, professional corner tickle."
+          animateSequence={({ to, targets, prefersReduced }) => {
+            if (prefersReduced) {
+              to(targets.base, { stiffness: 0.05, damping: 0.9 });
+              return;
+            }
+            // Phase A: float down to a large reveal
+            to(targets.reveal, {
+              stiffness: 0.040,
+              damping: 0.86,
+              onComplete: () => {
+                // Phase B: glide back to small-corner base
+                to(targets.base, {
+                  stiffness: 0.038,
+                  damping: 0.88,
+                  onComplete: () => {
+                    // Micro-tickle (decaying around base)
+                    const amps = [6, 3, 1.5];
+                    let i = 0;
+                    const tickleNext = () => {
+                      if (i >= amps.length) return;
+                      const a = amps[i++];
+
+                      // left-down
+                      to(
+                        { x: targets.base.x - a, y: targets.base.y - a },
+                        {
+                          stiffness: 0.065,
+                          damping: 0.80,
+                          onComplete: () => {
+                            // right-up
+                            to(
+                              { x: targets.base.x + a, y: targets.base.y + a },
+                              {
+                                stiffness: 0.065,
+                                damping: 0.82,
+                                onComplete: () => {
+                                  // settle
+                                  to(targets.base, {
+                                    stiffness: 0.05,
+                                    damping: 0.86,
+                                    onComplete: tickleNext,
+                                  });
+                                },
+                              }
+                            );
+                          },
+                        }
+                      );
+                    };
+                    tickleNext();
+                  },
+                });
+              },
+            });
+          }}
+        />
       </div>
-      
-      <main className="peel-page">
-        <div className="peel-grid">
-          <PeelCard
-            title="Visual Feedback"
-            description="This corner hints that the card is interactive."
-            initial={{ x: 352, y: 232 }} // gentle peek
-          />
-
-          <PeelCard
-            title="Step 2: Flip Animation"
-            description="Click/tap and drag the corner to reveal the back content."
-            interactive
-            initial={{ x: 356, y: 236 }}
-          />
-
-          <PeelCard
-            title="Step 3: Polish"
-            description="Smooth transitions and a subtle, professional corner tickle."
-            animateSequence={({ to, targets, prefersReduced }) => {
-              if (prefersReduced) {
-                to(targets.base, { stiffness: 0.05, damping: 0.9 });
-                return;
-              }
-              // Phase A: float down to a large reveal
-              to(targets.reveal, {
-                stiffness: 0.040,
-                damping: 0.86,
-                onComplete: () => {
-                  // Phase B: glide back to small-corner base
-                  to(targets.base, {
-                    stiffness: 0.038,
-                    damping: 0.88,
-                    onComplete: () => {
-                      // Micro-tickle (decaying around base)
-                      const amps = [6, 3, 1.5];
-                      let i = 0;
-                      const tickleNext = () => {
-                        if (i >= amps.length) return;
-                        const a = amps[i++];
-
-                        // left-down
-                        to(
-                          { x: targets.base.x - a, y: targets.base.y - a },
-                          {
-                            stiffness: 0.065,
-                            damping: 0.80,
-                            onComplete: () => {
-                              // right-up
-                              to(
-                                { x: targets.base.x + a, y: targets.base.y + a },
-                                {
-                                  stiffness: 0.065,
-                                  damping: 0.82,
-                                  onComplete: () => {
-                                    // settle
-                                    to(targets.base, {
-                                      stiffness: 0.05,
-                                      damping: 0.86,
-                                      onComplete: tickleNext,
-                                    });
-                                  },
-                                }
-                              );
-                            },
-                          }
-                        );
-                      };
-                      tickleNext();
-                    },
-                  });
-                },
-              });
-            }}
-          />
-        </div>
-      </main>
-    </div>
+    </main>
   );
+}
+
+export default function PeelExperiment() {
+  return <App />;
 }
