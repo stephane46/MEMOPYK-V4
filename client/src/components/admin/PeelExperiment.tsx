@@ -123,7 +123,7 @@ function makeSpring(
 /* ---------- A single controlled peel card ---------- */
 function PeelCard({
   title, description,
-  width = 384, height = 320,
+  width = 384, height = 400,
   initial,
   interactive = false,
   stepNumber = 1,
