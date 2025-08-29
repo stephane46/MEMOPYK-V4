@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
-import { PeelWrapper, PeelTop, PeelBack } from 'react-peel';
+import { PeelWrapper, PeelTop, PeelBack, PeelBottom } from 'react-peel';
 import ReactCardFlip from 'react-card-flip';
 import { Upload, Edit, Heart } from 'lucide-react';
 
@@ -32,7 +32,7 @@ export default function PeelExperiment() {
               if (cardIndex === 2) {
                 // Card 3: Smaller reveal (1/3 size) that persists
                 console.log(`🎬 PEEL: Card 3 - Starting smaller persistent reveal`);
-                const smallPosition = { x: 30, y: 30 };
+                const smallPosition = { x: 25, y: 40 };
                 console.log(`🎬 PEEL DEBUG: Setting Card 3 position to:`, smallPosition);
                 setPeelPositions(prev => ({ ...prev, [cardIndex]: smallPosition }));
                 setCard3Revealed(true);
@@ -307,7 +307,9 @@ export default function PeelExperiment() {
                     ) : (
                       /* Card 3: Keep PeelWrapper */
                       <PeelWrapper
-                        className="rounded-2xl overflow-hidden aspect-square"
+                        width={360}
+                        height={240}
+                        className="rounded-2xl overflow-hidden"
                         options={{
                           corner: 'BOTTOM_RIGHT',
                           constrainToContainer: true,
@@ -531,6 +533,13 @@ export default function PeelExperiment() {
                             </div>
                           </div>
                         </PeelBack>
+                        
+                        <PeelBottom>
+                          <div className="w-full h-full flex items-center justify-center"
+                               style={{ background: "#011526", color: "#F2EBDC" }}>
+                            Revealed content / CTA
+                          </div>
+                        </PeelBottom>
                       </PeelWrapper>
                     )}
                     
