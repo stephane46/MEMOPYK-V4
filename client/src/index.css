@@ -732,7 +732,10 @@ button, .play-button, .play-icon {
 
 .flip-card-text-zero-spacing {
   margin: 0 !important;
-  padding: 0 !important;
+  padding-left: 0 !important;
+  padding-right: 0 !important;
+  padding-bottom: 0 !important;
+  /* Allow paddingTop to be set via inline styles */
 }
 
 /* Orange pulsing animation for video play buttons - DESKTOP ONLY */
