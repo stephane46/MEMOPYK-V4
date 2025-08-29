@@ -237,6 +237,9 @@ export function HowItWorksCondensed() {
                           </div>
                         </div>
                         
+                        {/* White line above title - edge to edge */}
+                        <div className="w-full h-px bg-white"></div>
+                        
                         {/* Title - SAME AS FRONT CARD */}
                         <div className="p-4 text-center" style={{ paddingTop: '76px' }}>
                           <h3 className="text-lg font-semibold text-white">
