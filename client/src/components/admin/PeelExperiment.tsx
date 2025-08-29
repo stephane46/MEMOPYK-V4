@@ -206,6 +206,7 @@ function PeelCard({
                   src={stepImage} 
                   alt={title}
                   className="w-full h-full object-contain bg-gray-50 transition-transform duration-500"
+                  style={{ borderTopLeftRadius: '1rem', borderTopRightRadius: '1rem' }}
                 />
                 
               </div>
