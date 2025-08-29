@@ -126,6 +126,8 @@ function PeelCard({
   width = 384, height = 320,
   initial,
   interactive = false,
+  stepNumber = 1,
+  stepImage = "/images/How_we_work_Step1.png",
   animateSequence,
 }: {
   title: string;
@@ -133,6 +135,8 @@ function PeelCard({
   width?: number; height?: number;
   initial?: { x: number; y: number };
   interactive?: boolean;
+  stepNumber?: number;
+  stepImage?: string;
   animateSequence?: (api: {
     to: (xy: { x: number; y: number }, o?: any) => void;
     stop: () => void;
@@ -194,11 +198,11 @@ function PeelCard({
           <div className="face">
             <div className="step-image">
               <img 
-                src="/images/How_we_work_Step1.png" 
+                src={stepImage} 
                 alt={title}
                 className="w-full h-full object-contain"
               />
-              <div className="step-number">1</div>
+              <div className="step-number">{stepNumber}</div>
             </div>
             <div className="info-button">
               <span style={{color: '#2A4759'}}>ℹ️</span>
@@ -250,17 +254,23 @@ export default function PeelExperiment() {
         <PeelCard
           title="You Upload"
           description="Simply send us your photos and videos—no need to organize or edit anything beforehand."
+          stepNumber={1}
+          stepImage="/images/How_we_work_Step1.png"
           initial={{ x: 352, y: 288 }}
         />
         <PeelCard
           title="We Create"
           description="We carefully review every detail and handpick the most beautiful scenes to craft a unique story."
+          stepNumber={2}
+          stepImage="/images/How_we_work_Step2.png"
           interactive
           initial={{ x: 356, y: 236 }}
         />
         <PeelCard
           title="You Enjoy & Share"
           description="You'll receive your personalized souvenir film within one to three weeks, carefully edited."
+          stepNumber={3}
+          stepImage="/images/How_we_work_Step3.png"
           animateSequence={({ to, targets, prefersReduced }) => {
             if (prefersReduced) { to(targets.base, { stiffness: 0.035, damping: 0.92 }); return; }
             // Phase A: float down to reveal
