@@ -237,8 +237,8 @@ export function HowItWorksCondensed() {
                           </div>
                         </div>
                         
-                        {/* White line 50px from bottom - positioned relative to whole card */}
-                        <div className="absolute w-full h-px bg-white" style={{ bottom: '50px', left: '0', right: '0' }}></div>
+                        {/* White line 50px from bottom - positioned relative to whole card, outside all containers */}
+                        <div className="absolute h-px bg-white" style={{ bottom: '50px', left: '0', right: '0' }}></div>
                         
                         {/* Title - SAME AS FRONT CARD */}
                         <div className="p-4 text-center" style={{ paddingTop: '76px' }}>
