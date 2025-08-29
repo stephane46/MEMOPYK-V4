@@ -26131,8 +26131,8 @@
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-29T14:36:38.827Z",
-    "updated_at": "2025-08-29T14:44:39.462Z",
-    "duration": 1474444
+    "updated_at": "2025-08-29T14:47:25.053Z",
+    "duration": 1474609
   },
   {
     "id": "4de52dd3-5fad-4b14-b1a5-d8fe729c6131",
@@ -26182,7 +26182,7 @@
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-29T14:42:29.817Z",
-    "updated_at": "2025-08-29T14:44:30.492Z",
-    "duration": 1057840
+    "updated_at": "2025-08-29T14:47:30.424Z",
+    "duration": 1058020
   }
 ]

@@ -50,8 +50,8 @@ export function HowItWorksCondensed() {
     {
       number: 1,
       icon: Upload,
-      titleFr: "Téléversement",
-      titleEn: "You Upload",
+      titleFr: "Transmission & Collecte",
+      titleEn: "Transmission & Collection",
       descriptionFr: "Envoyez-nous simplement vos photos et vidéos, sans avoir à les trier ou les retoucher. Faites-nous part de votre vision et de ce qui compte le plus pour vous, soit en remplissant notre formulaire en ligne, soit en échangeant vos idées avec nous lors d'un appel téléphonique gratuit et convivial.",
       descriptionEn: "Simply send us your photos and videos—no need to organize or edit anything beforehand. Share your vision and what matters most to you, either by filling out our easy online form or by discussing your ideas with us during a free, friendly phone call.",
       subDescriptionFr: "Commencer est un jeu d'enfant : apportez-nous simplement vos souvenirs et vos envies, nous nous occupons du reste avec soin et créativité.",
@@ -61,8 +61,8 @@ export function HowItWorksCondensed() {
     {
       number: 2,
       icon: Edit,
-      titleFr: "Sélection & Montage", 
-      titleEn: "We Create",
+      titleFr: "Sélection & Analyse", 
+      titleEn: "Selection & Analysis",
       descriptionFr: "Nous examinons chaque détail avec attention et sélectionnons les plus beaux moments pour créer une histoire unique, selon vos préférences, avec la musique idéale, le bon rythme et le format qui vous convient. Vous recevez un devis précis et personnalisé avant toute étape, sans aucune mauvaise surprise.",
       descriptionEn: "We carefully review every detail and handpick the most beautiful scenes to craft a unique, engaging story that fits your preferences, including perfect music, optimal timing, and the best format for your needs. You'll receive a clear, custom quote before we begin, so there are no surprises.",
       subDescriptionFr: "Vos souvenirs deviennent un film sur-mesure, réalisé avec un souci du détail exceptionnel et une totale transparence à chaque étape.",
@@ -72,8 +72,8 @@ export function HowItWorksCondensed() {
     {
       number: 3,
       icon: Heart,
-      titleFr: "C'est prêt !",
-      titleEn: "You Enjoy & Share", 
+      titleFr: "Montage & Création",
+      titleEn: "Editing & Creation", 
       descriptionFr: "Vous recevez la première version de votre film-souvenir personnalisé sous une à trois semaines, soigneusement monté et prêt à vous émouvoir. Deux séries de retours sont incluses pour affiner le montage jusqu'à ce qu'il corresponde parfaitement à vos attentes.",
       descriptionEn: "You'll receive the first version of your personalized souvenir film within one to three weeks, carefully edited and ready to impress. Our process includes two full rounds of feedback, making it easy to fine-tune your movie until it's exactly right.",
       subDescriptionFr: "Le résultat : un souvenir rien qu'à vous, livré rapidement et peaufiné selon vos envies jusqu'à la perfection.",
