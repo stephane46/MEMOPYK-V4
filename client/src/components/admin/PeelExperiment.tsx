@@ -167,9 +167,9 @@ export default function PeelExperiment() {
                       // Keep arrow visible - don't hide on click
                     }}
                   >
-                    {/* Card 1 & 2: Regular cards (no peel), Card 3: PeelWrapper */}
-                    {step.number === 1 || step.number === 2 ? (
-                      /* Cards 1 & 2: Simple cards with no reveal effect */
+                    {/* Card 1: Regular card, Card 2: Flip card, Card 3: PeelWrapper */}
+                    {step.number === 1 ? (
+                      /* Card 1: Simple card with no reveal effect */
                       <div className="rounded-2xl overflow-hidden aspect-square">
                         <div 
                           className="border border-gray-200 shadow-lg hover:shadow-2xl rounded-2xl overflow-hidden h-full transition-all duration-700 relative"
@@ -239,6 +239,90 @@ export default function PeelExperiment() {
                               </div>
                             )
                           }
+                        </div>
+                      </div>
+                    ) : step.number === 2 ? (
+                      /* Card 2: Flip card effect with peel corner hint */
+                      <div className="rounded-2xl overflow-hidden aspect-square">
+                        <div 
+                          className="border border-gray-200 shadow-lg hover:shadow-2xl rounded-2xl overflow-hidden h-full transition-all duration-700 relative"
+                          style={{
+                            transformStyle: 'preserve-3d',
+                            transform: flippedCards[step.number - 1] ? 'rotateY(180deg)' : 'rotateY(0deg)',
+                            transition: 'transform 0.6s'
+                          }}
+                        >
+                          {/* Front Side */}
+                          <div 
+                            className="absolute inset-0"
+                            style={{
+                              backfaceVisibility: 'hidden'
+                            }}
+                          >
+                            <div className="relative overflow-hidden rounded-xl transition-all duration-500 h-full">
+                              <img 
+                                src={step.image} 
+                                alt={language === 'fr-FR' ? step.titleFr : step.titleEn}
+                                className="w-full h-full object-contain bg-gray-50 transition-transform duration-500"
+                              />
+                              
+                              <div className="absolute top-2 left-2 w-8 h-8 bg-memopyk-orange rounded-full flex items-center justify-center transition-transform duration-300 shadow-lg">
+                                <span className="text-sm font-bold text-white">{step.number}</span>
+                              </div>
+                              
+                              {/* Peel corner hint */}
+                              <div className="absolute top-0 right-0 w-6 h-6 bg-gradient-to-bl from-memopyk-orange to-memopyk-dark-blue opacity-80 transform rotate-45 translate-x-2 -translate-y-2 shadow-lg">
+                              </div>
+                            </div>
+                          </div>
+                          
+                          {/* Back Side */}
+                          <div 
+                            className="absolute inset-0"
+                            style={{
+                              backfaceVisibility: 'hidden',
+                              transform: 'rotateY(180deg)'
+                            }}
+                          >
+                            <div 
+                              className="h-full flex flex-col cursor-pointer relative"
+                              style={{
+                                transformOrigin: 'center',
+                                backgroundImage: `linear-gradient(135deg, rgba(214, 124, 74, 0.92) 0%, rgba(42, 71, 89, 0.92) 100%), url(${step.image})`,
+                                backgroundSize: 'cover',
+                                backgroundPosition: 'center',
+                                backgroundRepeat: 'no-repeat'
+                              }}
+                            >
+                              <div className="text-center flex flex-col p-4" style={{ height: '100%', position: 'relative' }}>
+                                <div className="text-sm leading-normal text-white w-full" style={{ height: '66%', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+                                  {language === 'fr-FR' && (
+                                    <>
+                                      <p className="mb-3">Nous analysons et sélectionnons les meilleures séquences</p>
+                                      <p className="mb-3">Création d'un storyboard personnalisé selon vos préférences</p>
+                                    </>
+                                  )}
+                                  {language === 'en-US' && (
+                                    <>
+                                      <p className="mb-3">We analyze and select the best sequences</p>
+                                      <p className="mb-3">Create a personalized storyboard according to your preferences</p>
+                                    </>
+                                  )}
+                                </div>
+                                
+                                <div className="border-t border-memopyk-navy/40 mx-6" style={{ position: 'absolute', top: '66%', left: '0', right: '0' }}></div>
+                                
+                                <div className="text-center" style={{ position: 'absolute', bottom: '16px', left: '16px', right: '16px' }}>
+                                  <div className="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center mx-auto mb-2">
+                                    <Icon className="w-6 h-6 text-white" />
+                                  </div>
+                                  <p className="text-sm font-medium text-white">
+                                    {language === 'fr-FR' ? step.titleFr : step.titleEn}
+                                  </p>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
                         </div>
                       </div>
                     ) : (
