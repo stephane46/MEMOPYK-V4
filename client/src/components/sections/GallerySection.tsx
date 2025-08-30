@@ -1197,14 +1197,8 @@ export default function GallerySection() {
                 </h3>
                 <p className="text-lg md:text-xl text-memopyk-cream/90 max-w-3xl mx-auto leading-relaxed">
                   {language === 'fr-FR' 
-                    ? "Parce que chaque histoire est différente, nous réalisons un devis adapté à votre film. Le devis est né de la prise en compte de toutes les particularités de votre demande, qui varient du nombre et de la qualité des éléments déposés ainsi que de la durée totale des vidéos, à l'analyse et le montage de l'histoire, sans exclure toutes demandes spéciales / supplémentaires."
-                    : "Because each story is different, we craft a customized quotation tailored to your film. The quote takes into account all the specific details of your request, which vary from the number and quality of uploaded elements and total video duration, to story analysis and editing, without excluding any special/additional requests."
-                  }
-                </p>
-                <p className="text-lg font-semibold text-memopyk-orange mt-4">
-                  {language === 'fr-FR' 
-                    ? "Contactez-nous pour obtenir le devis de votre film !"
-                    : "Contact us to get your film quote!"
+                    ? "Chaque histoire est unique, votre film reçoit donc un devis personnalisé, basé sur vos contenus, la durée souhaitée et vos demandes spéciales. Contactez-nous pour votre tarif sur mesure !"
+                    : "Every story is unique, so your film gets a custom quote based on your content, requested film length, and any special requests. Get in touch for your personalized price!"
                   }
                 </p>
               </div>
