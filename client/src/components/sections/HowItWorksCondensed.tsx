@@ -54,7 +54,7 @@ export function HowItWorksCondensed() {
       titleEn: "Consultation & Collection",
       descriptionFr: "Envoyez-nous vos photos et vidéos telles quelles.\nDites-nous tout ce que vous avez en tête, via notre questionnaire, ou la séance de consultation gratuite.\nVous recevez un devis clair et adapté avant tout travail.",
       descriptionEn: "Send us your photos and videos as they are.\nTell us everything you have in mind, via our questionnaire, or the free consultation session.\nYou receive a clear and tailored quote before any work.",
-      subDescriptionFr: "Le transfert des éléments se fait en quelques clics. Nous sommes à votre écoute pour comprendre votre vision.",
+      subDescriptionFr: "Nous sommes à l'écoute de vos souhaits, puis vous fournissons un lien unique et crypté pour un partage de fichiers sécurisé et privé.",
       subDescriptionEn: "We listen carefully to your wishes, then provide you with a unique, encrypted link for secure and private file sharing.",
       image: "/images/How_we_work_Step1.png"
     },
