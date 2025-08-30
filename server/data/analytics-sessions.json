@@ -27541,8 +27541,8 @@
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-30T09:45:15.061Z",
-    "updated_at": "2025-08-30T10:38:14.859Z",
-    "duration": 1546060
+    "updated_at": "2025-08-30T10:43:14.842Z",
+    "duration": 1546360
   },
   {
     "id": "60a392f1-6a08-4f58-8d87-d58ab9fbd7b6",
@@ -27694,7 +27694,7 @@
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-30T10:30:43.034Z",
-    "updated_at": "2025-08-30T10:38:32.443Z",
-    "duration": 1129484
+    "updated_at": "2025-08-30T10:42:32.407Z",
+    "duration": 1129724
   }
 ]
