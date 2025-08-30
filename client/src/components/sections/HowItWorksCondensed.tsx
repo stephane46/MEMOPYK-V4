@@ -65,8 +65,8 @@ export function HowItWorksCondensed() {
       titleEn: "Selection & Creation",
       descriptionFr: "Nous trions, sélectionnons et gardons uniquement le meilleur.\nNous construisons le scénario avec la musique, le rythme et le format qui vous correspondent.\nNous relions chaque détail dans votre film souvenir unique.",
       descriptionEn: "We sort, select and keep only the best.\nWe build the scenario with the music, rhythm and format that suits you.\nWe connect every detail into your unique souvenir film.",
-      subDescriptionFr: "Vos souvenirs prennent vie avec attention et soin.",
-      subDescriptionEn: "Your memories come to life with attention and care.",
+      subDescriptionFr: "Nous faisons revivre vos souvenirs avec soin et créativité, pour en faire un film que vous aurez plaisir à redécouvrir.",
+      subDescriptionEn: "We bring your memories to life with dedicated care and creativity, transforming them into a film you'll treasure.",
       image: "/images/How_we_work_Step2.png"
     },
     {
@@ -76,8 +76,8 @@ export function HowItWorksCondensed() {
       titleEn: "Feedback & Finalization", 
       descriptionFr: "Vous recevez la première version de votre film-souvenir en une à trois semaines, prête à être revue.\nDeux séries de retours sont incluses pour affiner le montage jusqu'à votre entière satisfaction.",
       descriptionEn: "You receive the first version of your souvenir film in one to three weeks, ready to be reviewed.\nTwo rounds of feedback are included to refine the editing to your complete satisfaction.",
-      subDescriptionFr: "Un film souvenir unique, livré à temps et parfaitement ajusté à vos envies.",
-      subDescriptionEn: "A unique souvenir film, delivered on time and perfectly adjusted to your desires.",
+      subDescriptionFr: "Après votre relecture et vos retours sur la première version, nous peaufinons chaque détail afin que votre film final soit personnel, abouti et livré dans les délais.",
+      subDescriptionEn: "Once you review the first version and share your feedback, we fine-tune every detail so your final film is fully personal, polished, and delivered on time.",
       image: "/images/How_we_work_Step3.png"
     }
   ];
