@@ -1193,7 +1193,7 @@ export default function GallerySection() {
               {/* Compelling Subtitle */}
               <div className="text-center mb-6">
                 <h3 className="text-xl md:text-2xl font-bold text-memopyk-cream mb-4">
-                  {language === 'fr-FR' ? "NOUS SOMMES 100% SUR DEVIS" : "WE ARE 100% QUOTE-BASED"}
+                  {language === 'fr-FR' ? "TARIFS SUR MESURE POUR CHAQUE HISTOIRE" : "PERSONALIZED PRICING FOR EVERY STORY"}
                 </h3>
                 <p className="text-lg md:text-xl text-memopyk-cream/90 max-w-3xl mx-auto leading-relaxed">
                   {language === 'fr-FR' 
