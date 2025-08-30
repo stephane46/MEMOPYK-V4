@@ -74,10 +74,10 @@ export function HowItWorksCondensed() {
       icon: Heart,
       titleFr: "Retours & Finalisation",
       titleEn: "Feedback & Finalization", 
-      descriptionFr: "Nous peaufinons chaque détail selon vos retours, pour un film vraiment personnel, parfaitement abouti et livré dans les délais.",
-      descriptionEn: "We refine every detail from your feedback, making your film truly personal, perfectly finished, and delivered on time.",
-      subDescriptionFr: "Après votre relecture et vos retours sur la première version, nous peaufinons chaque détail afin que votre film final soit personnel, abouti et livré dans les délais.",
-      subDescriptionEn: "Once you review the first version and share your feedback, we fine-tune every detail so your final film is fully personal, polished, and delivered on time.",
+      descriptionFr: "Vous recevez la première version de votre film-souvenir en une à trois semaines, prête à être revue.\nDeux séries de retours sont incluses pour affiner le montage jusqu'à votre entière satisfaction.",
+      descriptionEn: "You receive the first version of your souvenir film in one to three weeks, ready to be reviewed.\nTwo rounds of feedback are included to refine the editing to your complete satisfaction.",
+      subDescriptionFr: "Nous peaufinons chaque détail selon vos retours, pour un film vraiment personnel, parfaitement abouti et livré dans les délais.",
+      subDescriptionEn: "We refine every detail from your feedback, making your film truly personal, perfectly finished, and delivered on time.",
       image: "/images/How_we_work_Step3.png"
     }
   ];
