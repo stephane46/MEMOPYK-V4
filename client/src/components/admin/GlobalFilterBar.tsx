@@ -61,11 +61,9 @@ export default function GlobalFilterBar() {
             { value: '365', label: '1Y', description: '1 Year' },
             { value: 'custom', label: '••', description: 'Custom' }
           ].map((range) => (
-            <Button
+            <button
               key={range.value}
-              variant="outline"
-              size="sm"
-              className={`min-w-[50px] h-8 text-xs font-medium ${
+              className={`min-w-[50px] h-8 text-xs font-medium rounded border transition-colors ${
                 range.value !== 'custom' && filters.range && filters.range.from === applyPresetDays(Number(range.value)).from
                   ? 'bg-blue-500 text-white border-blue-500 hover:bg-blue-600'
                   : 'bg-white text-black border-gray-300 hover:bg-gray-50'
@@ -81,7 +79,7 @@ export default function GlobalFilterBar() {
               title={range.description}
             >
               {range.label}
-            </Button>
+            </button>
           ))}
         </div>
       </div>
