@@ -47,8 +47,12 @@
             var checkClarity = setInterval(function() {
                 if (window.clarity && typeof window.clarity === 'function') {
                     clearInterval(checkClarity);
-                    console.log('🔍 Granting Clarity consent...');
-                    window.clarity('consent', true);
+                    console.log('🔍 Granting Clarity consent using proper API...');
+                    // Use the correct Clarity Consent API v2 format
+                    window.clarity('consent', {
+                        analytics_storage: 'granted',
+                        ad_storage: 'denied'  // Change to 'granted' if you want Microsoft Ads integration
+                    });
                     // Verify consent was accepted
                     setTimeout(function() {
                         console.log('🍪 Clarity cookies after consent:', document.cookie.match(/_clck|_clsk/));
