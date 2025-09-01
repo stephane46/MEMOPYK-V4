@@ -16,6 +16,7 @@ import NotFoundPage from './pages/not-found';
 import { queryClient } from './lib/queryClient';
 import { Toaster } from '@/components/ui/toaster';
 import GallerySectionWrapper from './components/sections/GallerySectionWrapper';
+import ClarityRouteListener from './components/ClarityRouteListener';
 import { useEffect } from 'react';
 import { useAnalytics } from '@/hooks/use-analytics';
 import { initTestMode, initGA } from '@/lib/analytics';
@@ -121,6 +122,7 @@ function App() {
       <AuthProvider>
         <LanguageProvider>
           <Router>
+            <ClarityRouteListener />
             <AnalyticsRouter />
           </Router>
         </LanguageProvider>
