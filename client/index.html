@@ -41,11 +41,20 @@
             y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
         })(window, document, "clarity", "script", "t3uv5yndxl");
 
-        // Simple consent call that triggers immediately (for testing)
+        // Simple consent call that triggers after Clarity is loaded (for testing)
         window.addEventListener('load', function() {
-            if (window.clarity) {
-                window.clarity('consent', true);
-            }
+            // Wait for Clarity to be fully loaded before granting consent
+            var checkClarity = setInterval(function() {
+                if (window.clarity && typeof window.clarity === 'function') {
+                    clearInterval(checkClarity);
+                    console.log('🔍 Granting Clarity consent...');
+                    window.clarity('consent', true);
+                    // Verify consent was accepted
+                    setTimeout(function() {
+                        console.log('🍪 Clarity cookies after consent:', document.cookie.match(/_clck|_clsk/));
+                    }, 2000);
+                }
+            }, 100);
         });
     </script>
 

@@ -28557,7 +28557,23 @@
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-09-01T15:53:41.768Z",
-    "updated_at": "2025-09-01T15:55:36.096Z",
-    "duration": 1321306
+    "updated_at": "2025-09-01T15:56:35.018Z",
+    "duration": 1321365
+  },
+  {
+    "id": "f1d4d595-cd88-489e-8758-91c9421666fb",
+    "session_id": "session_1756742197800_4ku9tn1b2",
+    "user_id": null,
+    "ip_address": "185.245.255.48",
+    "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36 Edg/139.0.0.0",
+    "referrer": "https://365df2cf-1884-444c-a9e8-235602456363-00-37q39xpqlgvdy.janeway.replit.dev/fr-FR",
+    "language": "fr-FR",
+    "country": "Unknown",
+    "city": "Unknown",
+    "page_views": 0,
+    "is_bot": false,
+    "is_test_data": false,
+    "created_at": "2025-09-01T15:56:37.835Z",
+    "updated_at": "2025-09-01T15:56:37.951Z"
   }
 ]
