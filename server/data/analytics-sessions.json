@@ -28847,5 +28847,22 @@
     "updated_at": "2025-09-01T18:02:09.587Z",
     "duration": 1745494,
     "region": "Sao Paulo"
+  },
+  {
+    "id": "c2de069f-8b7f-4e0f-bff8-99c7fedfb04a",
+    "session_id": "session_1756749746379_bfw2s47cy",
+    "user_id": null,
+    "ip_address": "109.17.150.48",
+    "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36 Edg/139.0.0.0",
+    "referrer": "https://365df2cf-1884-444c-a9e8-235602456363-00-37q39xpqlgvdy.janeway.replit.dev/__replco/workspace_iframe.html?initialPath=%2F&id=%3Arab6%3A",
+    "language": "fr-FR",
+    "country": "Unknown",
+    "city": "Unknown",
+    "page_views": 0,
+    "is_bot": false,
+    "is_test_data": false,
+    "created_at": "2025-09-01T18:02:26.413Z",
+    "updated_at": "2025-09-01T18:05:26.909Z",
+    "duration": 1745691
   }
 ]
