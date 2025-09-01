@@ -31,7 +31,16 @@ export default function GlobalFilterBar() {
   }, [from, to]);
 
   return (
-    <div className="space-y-4">
+    <div className="bg-white rounded-lg border shadow-sm p-6 space-y-4">
+      {/* Header */}
+      <div className="border-b pb-3 mb-4">
+        <h3 className="text-lg font-semibold text-gray-800 flex items-center gap-2">
+          <span className="text-orange-500">🔍</span>
+          Overall Filters
+        </h3>
+        <p className="text-sm text-gray-600 mt-1">Configure filters to analyze your analytics data</p>
+      </div>
+
       {/* Row 1: Quick Time Ranges */}
       <div className="flex items-center gap-4">
         <span className="text-sm font-medium text-gray-700">Quick Time Ranges</span>
