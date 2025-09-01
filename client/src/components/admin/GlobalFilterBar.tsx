@@ -52,9 +52,11 @@ export default function GlobalFilterBar() {
             <button
               key={range.value}
               className={`h-8 text-xs font-medium rounded transition-colors ${
-                range.value !== 'custom' && filters.range && filters.range.from === applyPresetDays(Number(range.value)).from
-                  ? 'time-range-btn-active'
-                  : 'time-range-btn-inactive'
+                range.value === 'custom'
+                  ? (from || to) ? 'time-range-btn-active' : 'time-range-btn-inactive'
+                  : (filters.range && filters.range.from === applyPresetDays(Number(range.value)).from)
+                    ? 'time-range-btn-active'
+                    : 'time-range-btn-inactive'
               }`}
               onClick={() => {
                 if (range.value !== 'custom') {
@@ -73,9 +75,33 @@ export default function GlobalFilterBar() {
       </div>
 
       {/* Date inputs */}
-      <input type="date" value={from ?? ""} onChange={(e) => setFrom(e.target.value || undefined)} className="h-9 rounded-md border px-2 text-sm" />
+      <input 
+        type="date" 
+        value={from ?? ""} 
+        onChange={(e) => {
+          const newFrom = e.target.value || undefined;
+          setFrom(newFrom);
+          // Auto-apply when from date is selected
+          if (newFrom) {
+            setFilters({ ...filters, range: { from: newFrom, to }, language, source, device });
+          }
+        }} 
+        className="h-9 rounded-md border px-2 text-sm" 
+      />
       <span>→</span>
-      <input type="date" value={to ?? ""} onChange={(e) => setTo(e.target.value || undefined)} className="h-9 rounded-md border px-2 text-sm" />
+      <input 
+        type="date" 
+        value={to ?? ""} 
+        onChange={(e) => {
+          const newTo = e.target.value || undefined;
+          setTo(newTo);
+          // Auto-apply when to date is selected
+          if (newTo) {
+            setFilters({ ...filters, range: { from, to: newTo }, language, source, device });
+          }
+        }} 
+        className="h-9 rounded-md border px-2 text-sm" 
+      />
 
       {/* Language Filter Buttons */}
       <div className="flex items-center gap-2">
@@ -153,14 +179,6 @@ export default function GlobalFilterBar() {
         </div>
       </div>
 
-        {/* Apply */}
-        <Button
-          size="sm"
-          variant="secondary"
-          onClick={() => setFilters({ range: { from, to }, language, source, device })}
-        >
-          Apply
-        </Button>
       </div>
 
       {/* Comparison controls row */}
