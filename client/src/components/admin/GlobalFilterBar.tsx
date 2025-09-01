@@ -48,14 +48,15 @@ export default function GlobalFilterBar() {
         <span className="text-sm font-medium text-gray-700">Quick Time Ranges</span>
         <div style={{ 
           display: 'grid', 
-          width: '250px', 
-          gridTemplateColumns: 'repeat(5, 1fr)', 
+          width: '300px', 
+          gridTemplateColumns: 'repeat(6, 1fr)', 
           backgroundColor: '#f3f4f6', 
           padding: '4px', 
           borderRadius: '8px',
           gap: '2px'
         }}>
           {[
+            { value: 'yesterday', label: 'YD', description: 'Yesterday' },
             { value: '1', label: '1D', description: 'Today' },
             { value: '7', label: '7D', description: '7 Days' },
             { value: '30', label: '30D', description: '30 Days' },
@@ -65,12 +66,21 @@ export default function GlobalFilterBar() {
             <button
               key={range.value}
               className={`h-8 text-xs font-medium rounded transition-colors ${
-                (filters.range && filters.range.from === applyPresetDays(Number(range.value)).from)
-                  ? 'time-range-btn-active'
-                  : 'time-range-btn-inactive'
+                range.value === 'yesterday' 
+                  ? (filters.range && filters.range.from === toIsoDate(new Date(Date.now() - 86400000))) 
+                    ? 'time-range-btn-active' : 'time-range-btn-inactive'
+                  : (filters.range && filters.range.from === applyPresetDays(Number(range.value)).from)
+                    ? 'time-range-btn-active' : 'time-range-btn-inactive'
               }`}
               onClick={() => {
-                const preset = applyPresetDays(Number(range.value));
+                let preset;
+                if (range.value === 'yesterday') {
+                  const yesterday = new Date(Date.now() - 86400000);
+                  yesterday.setUTCHours(0, 0, 0, 0);
+                  preset = { from: toIsoDate(yesterday), to: toIsoDate(yesterday) };
+                } else {
+                  preset = applyPresetDays(Number(range.value));
+                }
                 setFrom(preset.from);
                 setTo(preset.to);
                 // Reset manual flags since this is a preset
