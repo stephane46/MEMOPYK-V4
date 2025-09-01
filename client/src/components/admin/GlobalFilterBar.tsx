@@ -49,10 +49,18 @@ export default function GlobalFilterBar() {
         </SelectContent>
       </Select>
 
-      {/* Quick Time Ranges - matching the style from Analytics (old) */}
-      <div className="flex items-center gap-2">
+      {/* Quick Time Ranges - matching SEO Management design */}
+      <div className="flex items-center gap-4">
         <span className="text-sm font-medium text-gray-700">Quick Time Ranges</span>
-        <div className="flex gap-1">
+        <div style={{ 
+          display: 'grid', 
+          width: '300px', 
+          gridTemplateColumns: 'repeat(6, 1fr)', 
+          backgroundColor: '#f3f4f6', 
+          padding: '4px', 
+          borderRadius: '8px',
+          gap: '2px'
+        }}>
           {[
             { value: '1', label: '1D', description: 'Today' },
             { value: '7', label: '7D', description: '7 Days' },
@@ -63,11 +71,19 @@ export default function GlobalFilterBar() {
           ].map((range) => (
             <button
               key={range.value}
-              className={`min-w-[50px] h-8 text-xs font-medium rounded border transition-colors ${
+              className={`h-8 text-xs font-medium rounded transition-colors ${
                 range.value !== 'custom' && filters.range && filters.range.from === applyPresetDays(Number(range.value)).from
-                  ? 'bg-blue-500 text-white border-blue-500 hover:bg-blue-600'
-                  : 'bg-white text-black border-gray-300 hover:bg-gray-50'
+                  ? 'bg-orange-500 text-white shadow-sm'
+                  : 'bg-transparent text-gray-700 hover:bg-gray-200'
               }`}
+              style={{
+                backgroundColor: range.value !== 'custom' && filters.range && filters.range.from === applyPresetDays(Number(range.value)).from 
+                  ? '#D67C4A !important' 
+                  : 'transparent',
+                color: range.value !== 'custom' && filters.range && filters.range.from === applyPresetDays(Number(range.value)).from 
+                  ? 'white !important' 
+                  : '#374151 !important'
+              }}
               onClick={() => {
                 if (range.value !== 'custom') {
                   const preset = applyPresetDays(Number(range.value));
