@@ -72,7 +72,7 @@ app.use(express.urlencoded({
 app.use((req, res, next) => {
   res.setHeader('Content-Security-Policy', 
     "default-src 'self'; " +
-    "script-src 'self' 'unsafe-inline' https://www.googletagmanager.com https://replit.com; " +
+    "script-src 'self' 'unsafe-inline' https://www.googletagmanager.com https://replit.com https://www.clarity.ms; " +
     "connect-src 'self' https://*.google-analytics.com https://analytics.google.com https://stats.g.doubleclick.net https://cdn.jsdelivr.net wss: ws:; " +
     "img-src 'self' data: https://*.google-analytics.com https://www.googletagmanager.com https://supabase.memopyk.org http://supabase.memopyk.org:8001 https://cdn.jsdelivr.net https://flagcdn.com; " +
     "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; " +
