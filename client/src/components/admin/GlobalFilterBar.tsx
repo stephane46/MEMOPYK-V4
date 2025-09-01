@@ -49,6 +49,43 @@ export default function GlobalFilterBar() {
         </SelectContent>
       </Select>
 
+      {/* Quick Time Ranges - matching the style from Analytics (old) */}
+      <div className="flex items-center gap-2">
+        <span className="text-sm font-medium text-gray-700">Quick Time Ranges</span>
+        <div className="flex gap-1">
+          {[
+            { value: '1', label: '1D', description: 'Today' },
+            { value: '7', label: '7D', description: '7 Days' },
+            { value: '30', label: '30D', description: '30 Days' },
+            { value: '90', label: '90D', description: '90 Days' },
+            { value: '365', label: '1Y', description: '1 Year' },
+            { value: 'custom', label: '••', description: 'Custom' }
+          ].map((range) => (
+            <Button
+              key={range.value}
+              variant="outline"
+              size="sm"
+              className={`min-w-[50px] h-8 text-xs font-medium ${
+                filters.range && filters.range.from === applyPresetDays(Number(range.value)).from
+                  ? 'bg-blue-500 text-white border-blue-500 hover:bg-blue-600'
+                  : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-50'
+              }`}
+              onClick={() => {
+                if (range.value !== 'custom') {
+                  const preset = applyPresetDays(Number(range.value));
+                  setFrom(preset.from);
+                  setTo(preset.to);
+                  setFilters({ ...filters, range: preset, language, source, device });
+                }
+              }}
+              title={range.description}
+            >
+              {range.label}
+            </Button>
+          ))}
+        </div>
+      </div>
+
       {/* Date inputs */}
       <input type="date" value={from ?? ""} onChange={(e) => setFrom(e.target.value || undefined)} className="h-9 rounded-md border px-2 text-sm" />
       <span>→</span>
