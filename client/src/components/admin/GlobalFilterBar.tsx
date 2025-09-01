@@ -73,17 +73,9 @@ export default function GlobalFilterBar() {
               key={range.value}
               className={`h-8 text-xs font-medium rounded transition-colors ${
                 range.value !== 'custom' && filters.range && filters.range.from === applyPresetDays(Number(range.value)).from
-                  ? 'bg-orange-500 text-white shadow-sm'
-                  : 'bg-transparent text-gray-700 hover:bg-gray-200'
+                  ? 'time-range-btn-active'
+                  : 'time-range-btn-inactive'
               }`}
-              style={{
-                backgroundColor: range.value !== 'custom' && filters.range && filters.range.from === applyPresetDays(Number(range.value)).from 
-                  ? '#D67C4A !important' 
-                  : 'transparent',
-                color: range.value !== 'custom' && filters.range && filters.range.from === applyPresetDays(Number(range.value)).from 
-                  ? 'white !important' 
-                  : '#374151 !important'
-              }}
               onClick={() => {
                 if (range.value !== 'custom') {
                   const preset = applyPresetDays(Number(range.value));

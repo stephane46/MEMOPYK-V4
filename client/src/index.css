@@ -192,6 +192,22 @@ img, video, iframe, canvas, svg {
   color: #374151 !important;
 }
 
+/* Quick Time Range Buttons - Force proper contrast */
+.time-range-btn-active {
+  background-color: #D67C4A !important;
+  color: white !important;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06) !important;
+}
+
+.time-range-btn-inactive {
+  background-color: transparent !important;
+  color: #374151 !important;
+}
+
+.time-range-btn-inactive:hover {
+  background-color: #e5e7eb !important;
+}
+
 /* Action button styles */
 .seo-btn-preview {
   border: 2px solid #93c5fd !important;
