@@ -2,7 +2,6 @@
 import * as React from "react";
 import { GlobalFilterContext } from "./GlobalFilterContext";
 import GlobalComparisonBar from "./GlobalComparisonBar";
-import { Button } from "@/components/ui/button";
 import {
   Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
 } from "@/components/ui/select";
@@ -24,18 +23,22 @@ export default function GlobalFilterBar() {
   const [source, setSource] = React.useState(filters.source ?? "");
   const [device, setDevice] = React.useState(filters.device ?? "");
 
-  return (
-    <div className="space-y-3">
-      {/* Main filters row */}
-      <div className="flex flex-wrap items-center gap-3">
+  // Auto-apply filters when both dates are selected
+  React.useEffect(() => {
+    if (from && to) {
+      setFilters({ ...filters, range: { from, to }, language, source, device });
+    }
+  }, [from, to]);
 
-      {/* Quick Time Ranges - matching SEO Management design */}
+  return (
+    <div className="space-y-4">
+      {/* Row 1: Quick Time Ranges */}
       <div className="flex items-center gap-4">
         <span className="text-sm font-medium text-gray-700">Quick Time Ranges</span>
         <div style={{ 
           display: 'grid', 
-          width: '300px', 
-          gridTemplateColumns: 'repeat(6, 1fr)', 
+          width: '250px', 
+          gridTemplateColumns: 'repeat(5, 1fr)', 
           backgroundColor: '#f3f4f6', 
           padding: '4px', 
           borderRadius: '8px',
@@ -46,25 +49,20 @@ export default function GlobalFilterBar() {
             { value: '7', label: '7D', description: '7 Days' },
             { value: '30', label: '30D', description: '30 Days' },
             { value: '90', label: '90D', description: '90 Days' },
-            { value: '365', label: '1Y', description: '1 Year' },
-            { value: 'custom', label: '••', description: 'Custom' }
+            { value: '365', label: '1Y', description: '1 Year' }
           ].map((range) => (
             <button
               key={range.value}
               className={`h-8 text-xs font-medium rounded transition-colors ${
-                range.value === 'custom'
-                  ? (from || to) ? 'time-range-btn-active' : 'time-range-btn-inactive'
-                  : (filters.range && filters.range.from === applyPresetDays(Number(range.value)).from)
-                    ? 'time-range-btn-active'
-                    : 'time-range-btn-inactive'
+                (filters.range && filters.range.from === applyPresetDays(Number(range.value)).from)
+                  ? 'time-range-btn-active'
+                  : 'time-range-btn-inactive'
               }`}
               onClick={() => {
-                if (range.value !== 'custom') {
-                  const preset = applyPresetDays(Number(range.value));
-                  setFrom(preset.from);
-                  setTo(preset.to);
-                  setFilters({ ...filters, range: preset, language, source, device });
-                }
+                const preset = applyPresetDays(Number(range.value));
+                setFrom(preset.from);
+                setTo(preset.to);
+                setFilters({ ...filters, range: preset, language, source, device });
               }}
               title={range.description}
             >
@@ -74,37 +72,32 @@ export default function GlobalFilterBar() {
         </div>
       </div>
 
-      {/* Date inputs */}
-      <input 
-        type="date" 
-        value={from ?? ""} 
-        onChange={(e) => {
-          const newFrom = e.target.value || undefined;
-          setFrom(newFrom);
-          // Auto-apply when from date is selected
-          if (newFrom) {
-            setFilters({ ...filters, range: { from: newFrom, to }, language, source, device });
-          }
-        }} 
-        className="h-9 rounded-md border px-2 text-sm" 
-      />
-      <span>→</span>
-      <input 
-        type="date" 
-        value={to ?? ""} 
-        onChange={(e) => {
-          const newTo = e.target.value || undefined;
-          setTo(newTo);
-          // Auto-apply when to date is selected
-          if (newTo) {
-            setFilters({ ...filters, range: { from, to: newTo }, language, source, device });
-          }
-        }} 
-        className="h-9 rounded-md border px-2 text-sm" 
-      />
+      {/* Row 2: Custom Date Inputs */}
+      <div className="flex items-center gap-3">
+        <span className="text-sm font-medium text-gray-700">Custom Dates</span>
+        <input 
+          type="date" 
+          value={from ?? ""} 
+          onChange={(e) => setFrom(e.target.value || undefined)} 
+          className={`h-9 rounded-md px-2 text-sm ${
+            from ? 'date-input-selected' : 'date-input-default'
+          }`}
+          placeholder="From"
+        />
+        <span className="text-gray-500">→</span>
+        <input 
+          type="date" 
+          value={to ?? ""} 
+          onChange={(e) => setTo(e.target.value || undefined)} 
+          className={`h-9 rounded-md px-2 text-sm ${
+            to ? 'date-input-selected' : 'date-input-default'
+          }`}
+          placeholder="To"
+        />
+      </div>
 
-      {/* Language Filter Buttons */}
-      <div className="flex items-center gap-2">
+      {/* Row 3: Language Filter */}
+      <div className="flex items-center gap-4">
         <span className="text-sm font-medium text-gray-700">Language</span>
         <div style={{ 
           display: 'grid', 
@@ -139,11 +132,55 @@ export default function GlobalFilterBar() {
         </div>
       </div>
 
-      {/* Source filter */}
-      <input type="text" placeholder="Source/referrer" value={source} onChange={(e) => setSource(e.target.value)} className="h-9 rounded-md border px-2 text-sm" />
+      {/* Row 4: Source/Referrer Filter */}
+      <div className="flex items-center gap-4">
+        <span className="text-sm font-medium text-gray-700">Source</span>
+        <div style={{ 
+          display: 'grid', 
+          width: '320px', 
+          gridTemplateColumns: 'repeat(4, 1fr)', 
+          backgroundColor: '#f3f4f6', 
+          padding: '4px', 
+          borderRadius: '8px',
+          gap: '2px'
+        }}>
+          {[
+            { value: '', label: 'All', description: 'All Sources' },
+            { value: 'google', label: 'Google', description: 'Google Search' },
+            { value: 'direct', label: 'Direct', description: 'Direct Access' },
+            { value: 'social', label: 'Social', description: 'Social Media' }
+          ].map((src) => (
+            <button
+              key={src.value}
+              className={`h-8 text-xs font-medium rounded transition-colors ${
+                source === src.value
+                  ? 'source-btn-active'
+                  : 'source-btn-inactive'
+              }`}
+              onClick={() => {
+                setSource(src.value);
+                setFilters({ ...filters, range: { from, to }, language, source: src.value, device });
+              }}
+              title={src.description}
+            >
+              {src.label}
+            </button>
+          ))}
+        </div>
+        <input 
+          type="text" 
+          placeholder="Custom source/referrer" 
+          value={source.startsWith('google') || source.startsWith('direct') || source.startsWith('social') || source === '' ? '' : source}
+          onChange={(e) => {
+            setSource(e.target.value);
+            setFilters({ ...filters, range: { from, to }, language, source: e.target.value, device });
+          }} 
+          className="h-9 rounded-md border px-2 text-sm w-48" 
+        />
+      </div>
 
-      {/* Device Filter Buttons */}
-      <div className="flex items-center gap-2">
+      {/* Row 5: Device Filter */}
+      <div className="flex items-center gap-4">
         <span className="text-sm font-medium text-gray-700">Device</span>
         <div style={{ 
           display: 'grid', 
@@ -177,8 +214,6 @@ export default function GlobalFilterBar() {
             </button>
           ))}
         </div>
-      </div>
-
       </div>
 
       {/* Comparison controls row */}
@@ -222,13 +257,16 @@ export default function GlobalFilterBar() {
                 <SelectContent>
                   <SelectItem value="week">This week vs last week</SelectItem>
                   <SelectItem value="month">This month vs last month</SelectItem>
-                  <SelectItem value="auto">Auto (derive from picked range)</SelectItem>
+                  <SelectItem value="year">This year vs last year</SelectItem>
                 </SelectContent>
               </Select>
             )}
           </>
         )}
       </div>
+
+      {/* Comparison bar */}
+      {comparison.enabled && <GlobalComparisonBar />}
     </div>
   );
 }

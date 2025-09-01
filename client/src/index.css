@@ -240,6 +240,32 @@ img, video, iframe, canvas, svg {
   background-color: #e5e7eb !important;
 }
 
+/* Custom Date Input Styling */
+.date-input-selected {
+  border: 2px solid #D67C4A !important;
+  box-shadow: 0 0 0 2px rgba(214, 124, 74, 0.2) !important;
+}
+
+.date-input-default {
+  border: 1px solid #d1d5db !important;
+}
+
+/* Source Filter Buttons */
+.source-btn-active {
+  background-color: #D67C4A !important;
+  color: white !important;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06) !important;
+}
+
+.source-btn-inactive {
+  background-color: transparent !important;
+  color: #374151 !important;
+}
+
+.source-btn-inactive:hover {
+  background-color: #e5e7eb !important;
+}
+
 /* Action button styles */
 .seo-btn-preview {
   border: 2px solid #93c5fd !important;
