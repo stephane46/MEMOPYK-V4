@@ -28,26 +28,6 @@ export default function GlobalFilterBar() {
     <div className="space-y-3">
       {/* Main filters row */}
       <div className="flex flex-wrap items-center gap-3">
-      {/* Preset */}
-      <Select onValueChange={(v) => {
-        if (v === "yesterday") {
-          const end = new Date(); end.setUTCHours(0, 0, 0, 0);
-          const start = new Date(end); start.setUTCDate(start.getUTCDate() - 1);
-          setFilters({ ...filters, range: { from: toIsoDate(start), to: toIsoDate(start) }, language, source, device });
-        } else {
-          setFilters({ ...filters, range: applyPresetDays(Number(v)), language, source, device });
-        }
-      }}>
-        <SelectTrigger className="h-9 w-[120px]">
-          <SelectValue placeholder="Presets" />
-        </SelectTrigger>
-        <SelectContent>
-          <SelectItem value="yesterday">Yesterday</SelectItem>
-          <SelectItem value="7">Last 7 days</SelectItem>
-          <SelectItem value="30">Last 30 days</SelectItem>
-          <SelectItem value="90">Last 90 days</SelectItem>
-        </SelectContent>
-      </Select>
 
       {/* Quick Time Ranges - matching SEO Management design */}
       <div className="flex items-center gap-4">
@@ -97,29 +77,81 @@ export default function GlobalFilterBar() {
       <span>→</span>
       <input type="date" value={to ?? ""} onChange={(e) => setTo(e.target.value || undefined)} className="h-9 rounded-md border px-2 text-sm" />
 
-      {/* Language filter */}
-      <Select value={language || "all"} onValueChange={(v) => setLanguage(v === "all" ? "" : v)}>
-        <SelectTrigger className="h-9 w-[100px]"><SelectValue placeholder="Lang" /></SelectTrigger>
-        <SelectContent>
-          <SelectItem value="all">All</SelectItem>
-          <SelectItem value="fr-FR">fr-FR</SelectItem>
-          <SelectItem value="en-US">en-US</SelectItem>
-        </SelectContent>
-      </Select>
+      {/* Language Filter Buttons */}
+      <div className="flex items-center gap-2">
+        <span className="text-sm font-medium text-gray-700">Language</span>
+        <div style={{ 
+          display: 'grid', 
+          width: '180px', 
+          gridTemplateColumns: 'repeat(3, 1fr)', 
+          backgroundColor: '#f3f4f6', 
+          padding: '4px', 
+          borderRadius: '8px',
+          gap: '2px'
+        }}>
+          {[
+            { value: '', label: 'All', description: 'All Languages' },
+            { value: 'fr-FR', label: 'FR', description: 'French' },
+            { value: 'en-US', label: 'EN', description: 'English' }
+          ].map((lang) => (
+            <button
+              key={lang.value}
+              className={`h-8 text-xs font-medium rounded transition-colors ${
+                language === lang.value
+                  ? 'language-btn-active'
+                  : 'language-btn-inactive'
+              }`}
+              onClick={() => {
+                setLanguage(lang.value);
+                setFilters({ ...filters, range: { from, to }, language: lang.value, source, device });
+              }}
+              title={lang.description}
+            >
+              {lang.label}
+            </button>
+          ))}
+        </div>
+      </div>
 
       {/* Source filter */}
       <input type="text" placeholder="Source/referrer" value={source} onChange={(e) => setSource(e.target.value)} className="h-9 rounded-md border px-2 text-sm" />
 
-      {/* Device filter */}
-      <Select value={device || "all"} onValueChange={(v) => setDevice(v === "all" ? "" : v)}>
-        <SelectTrigger className="h-9 w-[110px]"><SelectValue placeholder="Device" /></SelectTrigger>
-        <SelectContent>
-          <SelectItem value="all">All</SelectItem>
-          <SelectItem value="mobile">Mobile</SelectItem>
-          <SelectItem value="desktop">Desktop</SelectItem>
-          <SelectItem value="tablet">Tablet</SelectItem>
-        </SelectContent>
-      </Select>
+      {/* Device Filter Buttons */}
+      <div className="flex items-center gap-2">
+        <span className="text-sm font-medium text-gray-700">Device</span>
+        <div style={{ 
+          display: 'grid', 
+          width: '240px', 
+          gridTemplateColumns: 'repeat(4, 1fr)', 
+          backgroundColor: '#f3f4f6', 
+          padding: '4px', 
+          borderRadius: '8px',
+          gap: '2px'
+        }}>
+          {[
+            { value: '', label: 'All', description: 'All Devices' },
+            { value: 'mobile', label: '📱', description: 'Mobile' },
+            { value: 'desktop', label: '💻', description: 'Desktop' },
+            { value: 'tablet', label: '📱', description: 'Tablet' }
+          ].map((dev) => (
+            <button
+              key={dev.value}
+              className={`h-8 text-xs font-medium rounded transition-colors ${
+                device === dev.value
+                  ? 'device-btn-active'
+                  : 'device-btn-inactive'
+              }`}
+              onClick={() => {
+                setDevice(dev.value);
+                setFilters({ ...filters, range: { from, to }, language, source, device: dev.value });
+              }}
+              title={dev.description}
+            >
+              {dev.label}
+            </button>
+          ))}
+        </div>
+      </div>
 
         {/* Apply */}
         <Button
