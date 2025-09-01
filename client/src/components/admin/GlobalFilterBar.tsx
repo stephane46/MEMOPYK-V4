@@ -66,7 +66,7 @@ export default function GlobalFilterBar() {
               variant="outline"
               size="sm"
               className={`min-w-[50px] h-8 text-xs font-medium ${
-                filters.range && filters.range.from === applyPresetDays(Number(range.value)).from
+                range.value !== 'custom' && filters.range && filters.range.from === applyPresetDays(Number(range.value)).from
                   ? 'bg-blue-500 text-white border-blue-500 hover:bg-blue-600'
                   : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-50'
               }`}
