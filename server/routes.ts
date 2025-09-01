@@ -2139,32 +2139,66 @@ export async function registerRoutes(app: Express): Promise<void> {
       const daysNum = parseInt(days as string || '30');
       console.log(`📊 Analytics daily overview request for ${daysNum} days with filters:`, { from, to, lang, source, device, compare, compareMode, periodMode });
       
-      // Helper function to generate mock data for a date range
-      function generateMockData(fromDate: Date, toDate: Date, label: string = "baseline") {
-        const mockData = [];
-        const days = Math.ceil((toDate.getTime() - fromDate.getTime()) / (1000 * 60 * 60 * 24));
-        
-        for (let i = 0; i <= days; i++) {
-          const date = new Date(fromDate);
-          date.setDate(date.getDate() + i);
-          const dayStr = date.toISOString().split('T')[0];
+      // Helper function to query real data from PostgreSQL
+      async function getRealAnalyticsData(fromDate: Date, toDate: Date, filterLang?: string, filterSource?: string, filterDevice?: string) {
+        try {
+          // Build dynamic WHERE clauses for filtering
+          let whereClause = ' WHERE s.is_test_data = false';
+          const queryParams: any[] = [];
+
+          // Date filtering
+          queryParams.push(fromDate.toISOString());
+          whereClause += ` AND s.created_at >= $${queryParams.length}::timestamp`;
           
-          // Vary data slightly based on label for comparison
-          const baseMultiplier = label === "comparison" ? 0.85 : 1.0;
-          const sessions = Math.floor((Math.random() * 50 + 50) * baseMultiplier);
-          const uniqueVisitors = Math.floor(sessions * 0.8);
-          const returningVisitors = Math.floor(uniqueVisitors * 0.2);
-          const avgSessionDuration = Math.floor((Math.random() * 300 + 300) * baseMultiplier);
-          
-          mockData.push({
-            day: dayStr,
-            sessions,
-            unique_visitors: uniqueVisitors,
-            returning_visitors: returningVisitors,
-            avg_session_duration: avgSessionDuration
-          });
+          queryParams.push(toDate.toISOString());
+          whereClause += ` AND s.created_at <= $${queryParams.length}::timestamp`;
+
+          // Language filtering
+          if (filterLang && filterLang !== 'undefined') {
+            queryParams.push(filterLang);
+            whereClause += ` AND s.language = $${queryParams.length}`;
+          }
+
+          // Source filtering (referrer contains)
+          if (filterSource && filterSource !== 'undefined') {
+            queryParams.push(`%${filterSource}%`);
+            whereClause += ` AND s.referrer ILIKE $${queryParams.length}`;
+          }
+
+          // Device filtering (user agent contains)
+          if (filterDevice && filterDevice !== 'undefined') {
+            queryParams.push(`%${filterDevice}%`);
+            whereClause += ` AND s.user_agent ILIKE $${queryParams.length}`;
+          }
+
+          const queryText = `
+            SELECT
+              DATE(s.created_at) as day,
+              COUNT(s.session_id) as sessions,
+              COUNT(DISTINCT s.ip_address) as unique_visitors,
+              COUNT(CASE WHEN s.is_returning = true THEN 1 END) as returning_visitors,
+              COALESCE(AVG(s.session_duration), 0)::int as avg_session_duration
+            FROM analytics_sessions s
+            ${whereClause}
+            GROUP BY DATE(s.created_at)
+            ORDER BY day
+          `;
+
+          console.log('📊 REAL DATA QUERY:', queryText.replace(/\s+/g, ' ').trim());
+          console.log('📊 QUERY PARAMS:', queryParams);
+
+          const result = await pool.unsafe(queryText, [...queryParams]);
+          return result.map(row => ({
+            day: row.day.toISOString().split('T')[0],
+            sessions: parseInt(row.sessions),
+            unique_visitors: parseInt(row.unique_visitors),
+            returning_visitors: parseInt(row.returning_visitors),
+            avg_session_duration: parseInt(row.avg_session_duration)
+          }));
+        } catch (error) {
+          console.error('❌ Real analytics query failed:', error);
+          return [];
         }
-        return mockData;
       }
 
       // Check if comparison mode is enabled
@@ -2181,8 +2215,8 @@ export async function registerRoutes(app: Express): Promise<void> {
         const comparisonStart = new Date(periods.comparison.from);
         const comparisonEnd = new Date(periods.comparison.to);
         
-        const baselineData = generateMockData(baselineStart, baselineEnd, "baseline");
-        const comparisonData = generateMockData(comparisonStart, comparisonEnd, "comparison");
+        const baselineData = await getRealAnalyticsData(baselineStart, baselineEnd, lang as string, source as string, device as string);
+        const comparisonData = await getRealAnalyticsData(comparisonStart, comparisonEnd, lang as string, source as string, device as string);
 
         res.json({
           baseline: baselineData,
@@ -2199,8 +2233,8 @@ export async function registerRoutes(app: Express): Promise<void> {
             const startDate = from ? new Date(from as string) : new Date(Date.now() - daysNum * 24 * 60 * 60 * 1000);
             const endDate = to ? new Date(to as string) : new Date();
             
-            baselineData = generateMockData(startDate, endDate, "fr-FR");
-            comparisonData = generateMockData(startDate, endDate, "en-US");
+            baselineData = await getRealAnalyticsData(startDate, endDate, "fr-FR", source as string, device as string);
+            comparisonData = await getRealAnalyticsData(startDate, endDate, "en-US", source as string, device as string);
             break;
           }
           case "device": {
@@ -2208,8 +2242,8 @@ export async function registerRoutes(app: Express): Promise<void> {
             const startDate = from ? new Date(from as string) : new Date(Date.now() - daysNum * 24 * 60 * 60 * 1000);
             const endDate = to ? new Date(to as string) : new Date();
             
-            baselineData = generateMockData(startDate, endDate, "mobile");
-            comparisonData = generateMockData(startDate, endDate, "desktop");
+            baselineData = await getRealAnalyticsData(startDate, endDate, lang as string, source as string, "mobile");
+            comparisonData = await getRealAnalyticsData(startDate, endDate, lang as string, source as string, "desktop");
             break;
           }
           case "source": {
@@ -2217,8 +2251,8 @@ export async function registerRoutes(app: Express): Promise<void> {
             const startDate = from ? new Date(from as string) : new Date(Date.now() - daysNum * 24 * 60 * 60 * 1000);
             const endDate = to ? new Date(to as string) : new Date();
             
-            baselineData = generateMockData(startDate, endDate, "google");
-            comparisonData = generateMockData(startDate, endDate, "direct");
+            baselineData = await getRealAnalyticsData(startDate, endDate, lang as string, "google", device as string);
+            comparisonData = await getRealAnalyticsData(startDate, endDate, lang as string, "direct", device as string);
             break;
           }
           default:
@@ -2234,9 +2268,11 @@ export async function registerRoutes(app: Express): Promise<void> {
         // Normal single dataset mode
         const startDate = from ? new Date(from as string) : new Date(Date.now() - daysNum * 24 * 60 * 60 * 1000);
         const endDate = to ? new Date(to as string) : new Date();
-        const mockData = generateMockData(startDate, endDate);
+        console.log('📊 FETCHING REAL DATA for date range:', { startDate, endDate, lang, source, device });
+        const realData = await getRealAnalyticsData(startDate, endDate, lang as string, source as string, device as string);
         
-        res.json(mockData);
+        console.log('📊 REAL DATA RESULT:', realData.length, 'days of data');
+        res.json(realData);
       }
     } catch (error) {
       console.error('❌ Analytics overview error:', error);
