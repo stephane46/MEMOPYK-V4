@@ -22,13 +22,15 @@ export default function GlobalFilterBar() {
   const [language, setLanguage] = React.useState(filters.language ?? "");
   const [source, setSource] = React.useState(filters.source ?? "");
   const [device, setDevice] = React.useState(filters.device ?? "");
+  const [isFromManual, setIsFromManual] = React.useState(false);
+  const [isToManual, setIsToManual] = React.useState(false);
 
-  // Auto-apply filters when both dates are selected
+  // Auto-apply filters only when both dates are manually selected (both orange)
   React.useEffect(() => {
-    if (from && to) {
+    if (from && to && isFromManual && isToManual) {
       setFilters({ ...filters, range: { from, to }, language, source, device });
     }
-  }, [from, to]);
+  }, [from, to, isFromManual, isToManual]);
 
   return (
     <div className="bg-white rounded-lg border shadow-sm p-6 space-y-4">
@@ -71,6 +73,10 @@ export default function GlobalFilterBar() {
                 const preset = applyPresetDays(Number(range.value));
                 setFrom(preset.from);
                 setTo(preset.to);
+                // Reset manual flags since this is a preset
+                setIsFromManual(false);
+                setIsToManual(false);
+                // Apply immediately for presets
                 setFilters({ ...filters, range: preset, language, source, device });
               }}
               title={range.description}
@@ -87,9 +93,12 @@ export default function GlobalFilterBar() {
         <input 
           type="date" 
           value={from ?? ""} 
-          onChange={(e) => setFrom(e.target.value || undefined)} 
+          onChange={(e) => {
+            setFrom(e.target.value || undefined);
+            setIsFromManual(true); // Mark as manually changed
+          }} 
           className={`h-9 rounded-md px-2 text-sm ${
-            from ? 'date-input-selected' : 'date-input-default'
+            isFromManual ? 'date-input-selected' : 'date-input-default'
           }`}
           placeholder="From"
         />
@@ -97,9 +106,12 @@ export default function GlobalFilterBar() {
         <input 
           type="date" 
           value={to ?? ""} 
-          onChange={(e) => setTo(e.target.value || undefined)} 
+          onChange={(e) => {
+            setTo(e.target.value || undefined);
+            setIsToManual(true); // Mark as manually changed
+          }} 
           className={`h-9 rounded-md px-2 text-sm ${
-            to ? 'date-input-selected' : 'date-input-default'
+            isToManual ? 'date-input-selected' : 'date-input-default'
           }`}
           placeholder="To"
         />
