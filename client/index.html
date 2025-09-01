@@ -53,9 +53,46 @@
                         analytics_storage: 'granted',
                         ad_storage: 'denied'  // Change to 'granted' if you want Microsoft Ads integration
                     });
+                    
+                    // Also try the older legacy format for backward compatibility
+                    console.log('🔍 Also trying legacy consent format...');
+                    window.clarity('consent', true);
+                    // Send a test event to trigger data collection
+                    console.log('🔍 Sending test event to trigger dashboard access...');
+                    try {
+                        window.clarity('event', 'page_load');
+                        window.clarity('set', 'user_id', 'test_user_' + Date.now());
+                        console.log('✅ Test events sent successfully');
+                    } catch (e) {
+                        console.log('❌ Error sending events:', e);
+                    }
+                    
                     // Verify consent was accepted
                     setTimeout(function() {
                         console.log('🍪 Clarity cookies after consent:', document.cookie.match(/_clck|_clsk/));
+                        console.log('🔍 Full cookie string:', document.cookie);
+                        
+                        // Test if we can set any cookies at all
+                        document.cookie = 'test_cookie=working; path=/';
+                        console.log('🧪 Test cookie set, checking:', document.cookie);
+                        
+                        // Check Clarity internals
+                        console.log('🔍 Clarity internals:', {
+                            clarityExists: !!window.clarity,
+                            clarityType: typeof window.clarity,
+                            userAgent: navigator.userAgent.substring(0, 50),
+                            protocol: window.location.protocol,
+                            hostname: window.location.hostname
+                        });
+                        
+                        // Try to force a page view event
+                        if (window.clarity) {
+                            window.clarity('identify', 'memopyk_test_session');
+                            console.log('🎯 Sent identify event to Clarity');
+                            
+                            // Try to manually trigger data collection
+                            window.clarity('upgrade', 'auto');
+                        }
                     }, 2000);
                 }
             }, 100);
