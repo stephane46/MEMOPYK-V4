@@ -323,8 +323,7 @@ export default function CleanGA4Analytics() {
         
         if (daysNum === 1) {
           // For 1-day filter: show only today (from midnight France time until now)
-          const franceTime = new Date().toLocaleString("en-CA", { timeZone: "Europe/Paris" });
-          const todayInFrance = new Date(franceTime).toISOString().split('T')[0];
+          const todayInFrance = new Date().toLocaleDateString("en-CA", { timeZone: "Europe/Paris" });
           dateFrom = todayInFrance;
           dateTo = todayInFrance;
         } else {
@@ -373,8 +372,7 @@ export default function CleanGA4Analytics() {
         
         if (daysNum === 1) {
           // For 1-day filter: show only today (from midnight France time until now)
-          const franceTime = new Date().toLocaleString("en-CA", { timeZone: "Europe/Paris" });
-          const todayInFrance = new Date(franceTime).toISOString().split('T')[0];
+          const todayInFrance = new Date().toLocaleDateString("en-CA", { timeZone: "Europe/Paris" });
           dateFrom = todayInFrance;
           dateTo = todayInFrance;
         } else {
