@@ -2270,9 +2270,10 @@ export async function registerRoutes(app: Express): Promise<void> {
       const shouldIncludeProduction = process.env.NODE_ENV === 'production' || req.headers.host?.includes('replit');
       
       console.log('👥 Recent Visitors: Applying date filters properly:', { dateFrom, dateTo });
+      // TEMPORARY DEBUG: Use broader date range like main analytics
       const sessions = await hybridStorage.getAnalyticsSessions(
-        dateFrom as string, 
-        dateTo as string,
+        undefined, // No dateFrom restriction 
+        undefined, // No dateTo restriction
         undefined,
         shouldIncludeProduction
       );
