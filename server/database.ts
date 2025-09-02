@@ -23,8 +23,13 @@ export async function testDatabaseConnection(): Promise<boolean> {
     // Use DATABASE_URL for direct localhost connection
     const connectionString = process.env.DATABASE_URL;
     
-    // Create connection
-    const client = postgres(connectionString);
+    // Create connection with increased timeout for VPS
+    const client = postgres(connectionString, {
+      connect_timeout: 30,      // 30 seconds connection timeout
+      idle_timeout: 300,        // 5 minutes idle timeout
+      max: 10,                  // Maximum connections
+      prepare: false            // Disable prepared statements for compatibility
+    });
     db = drizzle(client);
     
     // Simple connection test
