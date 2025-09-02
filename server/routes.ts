@@ -2299,13 +2299,14 @@ export async function registerRoutes(app: Express): Promise<void> {
         visitorSessions.get(ip).push(session);
       });
       
-      // Second pass: build visitor info with previous visit data
+      // Second pass: build visitor info with previous visit data (only from sessions within date range)
       visitorSessions.forEach((sessions, ip) => {
-        // Sort sessions by date (newest first)
+        // Sort sessions by date (newest first) - these are already filtered by date range
         sessions.sort((a: any, b: any) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
         
+        // Use the most recent session WITHIN the date range (not globally latest)
         const latestSession = sessions[0];
-        const previousSession = sessions[1]; // Second most recent session
+        const previousSession = sessions[1]; // Second most recent session WITHIN the date range
         
         visitorMap.set(ip, {
           ip_address: ip,
