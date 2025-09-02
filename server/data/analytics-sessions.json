@@ -28862,8 +28862,8 @@
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-09-01T18:02:26.413Z",
-    "updated_at": "2025-09-02T09:18:42.320Z",
-    "duration": 1800488
+    "updated_at": "2025-09-02T09:27:37.903Z",
+    "duration": 1801023
   },
   {
     "id": "session_1756750716024_3z0pvbs5o",
@@ -32356,5 +32356,13 @@
     "country": "Unknown",
     "city": "Unknown",
     "updated_at": "2025-09-02T09:08:41.889Z"
+  },
+  {
+    "id": "193c4ba2-460e-41dc-9cb4-d577e464924d",
+    "referrer": "https://365df2cf-1884-444c-a9e8-235602456363-00-37q39xpqlgvdy.janeway.replit.dev/__replco/workspace_iframe.html?initialPath=%2F&id=%3Armck%3A",
+    "language": "fr-FR",
+    "country": "Unknown",
+    "city": "Unknown",
+    "updated_at": "2025-09-02T09:28:31.151Z"
   }
 ]

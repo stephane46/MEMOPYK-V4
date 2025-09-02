@@ -35,7 +35,6 @@ import {
   PROPERTY as GA4_PROPERTY
 } from './ga4-service';
 import { getCache, setCache, k, getDbCache, setDbCache } from './cache';
-import { computePeriods } from './helpers/periodRanges.js';
 
 // Contact form validation schema
 const contactFormSchema = z.object({
@@ -2132,153 +2131,6 @@ export async function registerRoutes(app: Express): Promise<void> {
     }
   });
 
-  // Analytics Daily Overview - GET daily overview data for charts
-  app.get("/api/analytics/overview", async (req, res) => {
-    try {
-      const { days, from, to, lang, source, device, compare, compareMode, periodMode } = req.query;
-      const daysNum = parseInt(days as string || '30');
-      console.log(`📊 Analytics daily overview request for ${daysNum} days with filters:`, { from, to, lang, source, device, compare, compareMode, periodMode });
-      
-      // Helper function to query real data from PostgreSQL
-      async function getRealAnalyticsData(fromDate: Date, toDate: Date, filterLang?: string, filterSource?: string, filterDevice?: string) {
-        try {
-          // Build dynamic WHERE clauses for filtering
-          let whereClause = ' WHERE s.is_test_data = false';
-          const queryParams: any[] = [];
-
-          // Date filtering
-          queryParams.push(fromDate.toISOString());
-          whereClause += ` AND s.created_at >= $${queryParams.length}::timestamp`;
-          
-          queryParams.push(toDate.toISOString());
-          whereClause += ` AND s.created_at <= $${queryParams.length}::timestamp`;
-
-          // Language filtering
-          if (filterLang && filterLang !== 'undefined') {
-            queryParams.push(filterLang);
-            whereClause += ` AND s.language = $${queryParams.length}`;
-          }
-
-          // Source filtering (referrer contains)
-          if (filterSource && filterSource !== 'undefined') {
-            queryParams.push(`%${filterSource}%`);
-            whereClause += ` AND s.referrer ILIKE $${queryParams.length}`;
-          }
-
-          // Device filtering (user agent contains)
-          if (filterDevice && filterDevice !== 'undefined') {
-            queryParams.push(`%${filterDevice}%`);
-            whereClause += ` AND s.user_agent ILIKE $${queryParams.length}`;
-          }
-
-          const queryText = `
-            SELECT
-              DATE(s.created_at) as day,
-              COUNT(s.session_id) as sessions,
-              COUNT(DISTINCT s.ip_address) as unique_visitors,
-              COUNT(CASE WHEN s.is_returning = true THEN 1 END) as returning_visitors,
-              COALESCE(AVG(s.session_duration), 0)::int as avg_session_duration
-            FROM analytics_sessions s
-            ${whereClause}
-            GROUP BY DATE(s.created_at)
-            ORDER BY day
-          `;
-
-          console.log('📊 REAL DATA QUERY:', queryText.replace(/\s+/g, ' ').trim());
-          console.log('📊 QUERY PARAMS:', queryParams);
-
-          const result = await pool.unsafe(queryText, [...queryParams]);
-          return result.map(row => ({
-            day: row.day.toISOString().split('T')[0],
-            sessions: parseInt(row.sessions),
-            unique_visitors: parseInt(row.unique_visitors),
-            returning_visitors: parseInt(row.returning_visitors),
-            avg_session_duration: parseInt(row.avg_session_duration)
-          }));
-        } catch (error) {
-          console.error('❌ Real analytics query failed:', error);
-          return [];
-        }
-      }
-
-      // Check if comparison mode is enabled
-      if (compare === "period") {
-        // Use the period ranges helper for accurate period calculation
-        const periods = computePeriods({
-          mode: (periodMode as "week" | "month" | "auto") || "week",
-          from: from as string,
-          to: to as string
-        });
-        
-        const baselineStart = new Date(periods.baseline.from);
-        const baselineEnd = new Date(periods.baseline.to);
-        const comparisonStart = new Date(periods.comparison.from);
-        const comparisonEnd = new Date(periods.comparison.to);
-        
-        const baselineData = await getRealAnalyticsData(baselineStart, baselineEnd, lang as string, source as string, device as string);
-        const comparisonData = await getRealAnalyticsData(comparisonStart, comparisonEnd, lang as string, source as string, device as string);
-
-        res.json({
-          baseline: baselineData,
-          comparison: comparisonData,
-          baseline_range: periods.baseline,
-          comparison_range: periods.comparison
-        });
-      } else if (compare === "true" && compareMode) {
-        let baselineData, comparisonData;
-        
-        switch (compareMode) {
-          case "language": {
-            // Compare FR vs EN
-            const startDate = from ? new Date(from as string) : new Date(Date.now() - daysNum * 24 * 60 * 60 * 1000);
-            const endDate = to ? new Date(to as string) : new Date();
-            
-            baselineData = await getRealAnalyticsData(startDate, endDate, "fr-FR", source as string, device as string);
-            comparisonData = await getRealAnalyticsData(startDate, endDate, "en-US", source as string, device as string);
-            break;
-          }
-          case "device": {
-            // Compare mobile vs desktop
-            const startDate = from ? new Date(from as string) : new Date(Date.now() - daysNum * 24 * 60 * 60 * 1000);
-            const endDate = to ? new Date(to as string) : new Date();
-            
-            baselineData = await getRealAnalyticsData(startDate, endDate, lang as string, source as string, "mobile");
-            comparisonData = await getRealAnalyticsData(startDate, endDate, lang as string, source as string, "desktop");
-            break;
-          }
-          case "source": {
-            // Compare google vs direct
-            const startDate = from ? new Date(from as string) : new Date(Date.now() - daysNum * 24 * 60 * 60 * 1000);
-            const endDate = to ? new Date(to as string) : new Date();
-            
-            baselineData = await getRealAnalyticsData(startDate, endDate, lang as string, "google", device as string);
-            comparisonData = await getRealAnalyticsData(startDate, endDate, lang as string, "direct", device as string);
-            break;
-          }
-          default:
-            throw new Error(`Unknown comparison mode: ${compareMode}`);
-        }
-
-        res.json({
-          baseline: baselineData,
-          comparison: comparisonData,
-          compareMode
-        });
-      } else {
-        // Normal single dataset mode
-        const startDate = from ? new Date(from as string) : new Date(Date.now() - daysNum * 24 * 60 * 60 * 1000);
-        const endDate = to ? new Date(to as string) : new Date();
-        console.log('📊 FETCHING REAL DATA for date range:', { startDate, endDate, lang, source, device });
-        const realData = await getRealAnalyticsData(startDate, endDate, lang as string, source as string, device as string);
-        
-        console.log('📊 REAL DATA RESULT:', realData.length, 'days of data');
-        res.json(realData);
-      }
-    } catch (error) {
-      console.error('❌ Analytics overview error:', error);
-      res.status(500).json({ error: "Failed to get analytics overview" });
-    }
-  });
 
   // Analytics Time Series - GET time series data
   app.get("/api/analytics/time-series", async (req, res) => {
@@ -3090,170 +2942,84 @@ export async function registerRoutes(app: Express): Promise<void> {
 
       console.log(`✅ Geo analytics: ${countries.length} countries, ${cities.length} cities from ${sessions.length} sessions`);
       res.json({ countries, cities });
+    } catch (error) {
+      console.error('❌ Geo analytics error:', error);
+      res.status(500).json({ error: "Failed to get geo analytics data" });
+    }
+  });
 
-        // Cities query with potential ISO-3 filter
-        let citiesWhere = whereClause;
-        let citiesParams = [...queryParams];
-        if (iso3) {
-          citiesParams.push(iso3);
-          citiesWhere += ` AND s.country_iso3 = $${citiesParams.length}`;
-        }
-
-        const citiesQuery = `
-          SELECT
-            s.country_iso3 AS iso3,
-            COALESCE(${countryNameCol}, MAX(s.country)) AS country_name,
-            s.city,
-            COUNT(DISTINCT s.session_id) AS sessions,
-            COUNT(DISTINCT s.ip_address) AS visitors
-          FROM analytics_sessions s
-          LEFT JOIN v_country_names cn ON s.country_iso3 = cn.iso3
-          ${citiesWhere}
-          GROUP BY s.country_iso3, s.city, ${countryNameCol}
-          HAVING s.country_iso3 IS NOT NULL
-          ORDER BY sessions DESC
-          LIMIT $${citiesParams.length + 1}
-        `;
-
-        const cities = await pool.unsafe(citiesQuery, [...citiesParams, Math.max(50, limit)]);
-
-        return res.json({
-          countries: countries.map((r: any) => ({
-            iso3: r.iso3, country: r.country_name, sessions: Number(r.sessions), visitors: Number(r.visitors),
-          })),
-          cities: cities.map((r: any) => ({
-            iso3: r.iso3, country: r.country_name, city: r.city, sessions: Number(r.sessions), visitors: Number(r.visitors),
-          })),
-        });
+  // Analytics Daily Overview - GET daily overview data for charts - FIXED to use hybrid storage  
+  app.get("/api/analytics/overview", async (req, res) => {
+    try {
+      console.log('📊 Analytics daily overview request for 30 days with filters:', req.query);
+      
+      const { from, to, lang, source, device } = req.query;
+      const dateFrom = from as string;
+      const dateTo = to as string;
+      
+      // Use hybrid storage pattern like other working endpoints
+      const sessions = await hybridStorage.getAnalyticsSessions(dateFrom, dateTo, lang as string);
+      
+      // Filter sessions based on parameters
+      let filteredSessions = sessions.filter(session => !session.is_test_data);
+      
+      if (source) {
+        filteredSessions = filteredSessions.filter(s => 
+          s.referrer && s.referrer.toLowerCase().includes((source as string).toLowerCase())
+        );
       }
-
-      // Comparison mode
-      const computePeriods = (params: { mode: string; from?: string; to?: string }) => {
-        const now = new Date();
-        const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+      
+      if (device) {
+        filteredSessions = filteredSessions.filter(s => 
+          s.user_agent && s.user_agent.toLowerCase().includes((device as string).toLowerCase())
+        );
+      }
+      
+      // Group by day and aggregate metrics
+      const dailyData = new Map();
+      
+      filteredSessions.forEach(session => {
+        const day = session.created_at.split('T')[0]; // Extract date part
         
-        let baselineEnd = req.query.to ? new Date(req.query.to as string) : today;
-        let baselineStart: Date;
-        let comparisonStart: Date;
-        let comparisonEnd: Date;
-
-        if (req.query.from && req.query.to) {
-          baselineStart = new Date(req.query.from as string);
-          const diffMs = baselineEnd.getTime() - baselineStart.getTime();
-          comparisonEnd = new Date(baselineStart.getTime() - 24 * 60 * 60 * 1000);
-          comparisonStart = new Date(comparisonEnd.getTime() - diffMs);
-        } else {
-          const days = params.mode === 'month' ? 30 : 7;
-          baselineStart = new Date(baselineEnd.getTime() - days * 24 * 60 * 60 * 1000);
-          comparisonEnd = new Date(baselineStart.getTime() - 24 * 60 * 60 * 1000);
-          comparisonStart = new Date(comparisonEnd.getTime() - days * 24 * 60 * 60 * 1000);
+        if (!dailyData.has(day)) {
+          dailyData.set(day, {
+            day,
+            sessions: new Set(),
+            unique_visitors: new Set(),
+            returning_visitors: new Set(),
+            session_durations: []
+          });
         }
-
-        return {
-          baseline: { 
-            from: baselineStart.toISOString().split('T')[0], 
-            to: baselineEnd.toISOString().split('T')[0] 
-          },
-          comparison: { 
-            from: comparisonStart.toISOString().split('T')[0], 
-            to: comparisonEnd.toISOString().split('T')[0] 
-          }
-        };
-      };
-
-      const { baseline, comparison } = computePeriods({
-        mode: (periodMode as any) || "week",
-        from: req.query.from as string | undefined,
-        to: req.query.to as string | undefined,
+        
+        const dayData = dailyData.get(day);
+        dayData.sessions.add(session.session_id);
+        dayData.unique_visitors.add(session.ip_address);
+        
+        if (session.is_returning) {
+          dayData.returning_visitors.add(session.ip_address);
+        }
+        
+        if (session.session_duration) {
+          dayData.session_durations.push(session.session_duration);
+        }
       });
-
-      async function runSet(range: { from: string; to: string }) {
-        // Build WHERE clause for comparison period
-        let whereClause = ' WHERE s.is_test_data = false';
-        const queryParams: any[] = [];
-
-        // Always include the range dates for comparison
-        queryParams.push(range.from);
-        whereClause += ` AND s.first_seen_at >= $${queryParams.length}::timestamp`;
-        queryParams.push(range.to);
-        whereClause += ` AND s.first_seen_at <= $${queryParams.length}::timestamp`;
-
-        // Add other filters from original request
-        if (req.query.lang) {
-          queryParams.push(req.query.lang);
-          whereClause += ` AND s.language = $${queryParams.length}`;
-        }
-        if (req.query.source) {
-          queryParams.push(`%${req.query.source}%`);
-          whereClause += ` AND s.referrer ILIKE $${queryParams.length}`;
-        }
-        if (req.query.device) {
-          queryParams.push(`%${req.query.device}%`);
-          whereClause += ` AND s.user_agent ILIKE $${queryParams.length}`;
-        }
-
-        // Countries query with localized names
-        const language = req.query.lang as string;
-        const countryNameCol = language?.startsWith('fr') ? 'cn.name_fr' : 'cn.name_en';
-        
-        const countriesQuery = `
-          SELECT
-            s.country_iso3 AS iso3,
-            COALESCE(${countryNameCol}, MAX(s.country)) AS country_name,
-            COUNT(DISTINCT s.session_id) AS sessions,
-            COUNT(DISTINCT s.ip_address) AS visitors
-          FROM analytics_sessions s
-          LEFT JOIN v_country_names cn ON s.country_iso3 = cn.iso3
-          ${whereClause}
-          GROUP BY s.country_iso3, ${countryNameCol}
-          HAVING s.country_iso3 IS NOT NULL
-          ORDER BY sessions DESC
-          LIMIT $${queryParams.length + 1}
-        `;
-        
-        const countries = await pool.unsafe(countriesQuery, [...queryParams, limit]);
-
-        // Cities query with potential ISO-3 filter
-        let citiesWhere = whereClause;
-        let citiesParams = [...queryParams];
-        if (iso3) {
-          citiesParams.push(iso3);
-          citiesWhere += ` AND s.country_iso3 = $${citiesParams.length}`;
-        }
-
-        const citiesQuery = `
-          SELECT
-            s.country_iso3 AS iso3,
-            COALESCE(${countryNameCol}, MAX(s.country)) AS country_name,
-            s.city,
-            COUNT(DISTINCT s.session_id) AS sessions,
-            COUNT(DISTINCT s.ip_address) AS visitors
-          FROM analytics_sessions s
-          LEFT JOIN v_country_names cn ON s.country_iso3 = cn.iso3
-          ${citiesWhere}
-          GROUP BY s.country_iso3, s.city, ${countryNameCol}
-          HAVING s.country_iso3 IS NOT NULL
-          ORDER BY sessions DESC
-          LIMIT $${citiesParams.length + 1}
-        `;
-
-        const cities = await pool.unsafe(citiesQuery, [...citiesParams, Math.max(50, limit)]);
-
-        return {
-          countries: countries.map((r: any) => ({
-            iso3: r.iso3, country: r.country_name, sessions: Number(r.sessions), visitors: Number(r.visitors),
-          })),
-          cities: cities.map((r: any) => ({
-            iso3: r.iso3, country: r.country_name, city: r.city, sessions: Number(r.sessions), visitors: Number(r.visitors),
-          })),
-        };
-      }
-
-      const [baseSet, cmpSet] = await Promise.all([runSet(baseline), runSet(comparison)]);
-      return res.json({ baseline: baseSet, comparison: cmpSet, baseline_range: baseline, comparison_range: comparison });
-    } catch (err: any) {
-      console.error("[GET /api/analytics/geo] error:", err);
-      res.status(500).json({ error: "geo endpoint failed", details: err.message });
+      
+      // Convert to final format
+      const result = Array.from(dailyData.values()).map(day => ({
+        day: day.day,
+        sessions: day.sessions.size,
+        unique_visitors: day.unique_visitors.size,
+        returning_visitors: day.returning_visitors.size,
+        avg_session_duration: day.session_durations.length > 0 
+          ? Math.round(day.session_durations.reduce((a, b) => a + b, 0) / day.session_durations.length)
+          : 0
+      })).sort((a, b) => a.day.localeCompare(b.day));
+      
+      console.log(`✅ Daily overview: ${result.length} days with ${filteredSessions.length} sessions`);
+      res.json(result);
+    } catch (error) {
+      console.error('❌ Daily overview error:', error);
+      res.status(500).json({ error: "Failed to get daily overview data" });
     }
   });
 

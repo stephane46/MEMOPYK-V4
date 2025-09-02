@@ -635,6 +635,130 @@ CREATE INDEX idx_seo_settings_active ON seo_settings(is_active);
 - Test data flagging for development
 - Performance metrics collection for optimization
 
+## Hybrid Storage Architecture
+
+### Overview
+
+MEMOPYK employs a sophisticated hybrid storage pattern that ensures reliability and performance by combining Supabase PostgreSQL as the primary database with local JSON files as an automatic fallback system.
+
+### Core Pattern
+
+**Primary Source**: `this.supabase.from()` queries using Supabase JS client
+**Fallback Source**: Local JSON files (`*.json`) for 7-day data resilience
+**Real-time Sync**: JSON cache updated automatically on every write operation
+
+### Implementation Details
+
+#### 1. Data Flow Pattern
+```typescript
+// CORRECT PATTERN (used throughout codebase)
+try {
+  // 1. Always try Supabase first
+  const { data, error } = await this.supabase
+    .from('analytics_sessions')
+    .select('*')
+    .gte('created_at', dateFrom);
+    
+  if (data && !error) {
+    return data; // Use fresh data from Supabase
+  }
+} catch (error) {
+  console.warn('Supabase query failed, using JSON fallback:', error);
+}
+
+// 2. Automatic fallback to JSON cache
+const sessions = this.loadJsonFile('analytics-sessions.json');
+return sessions.filter(/* apply same filters */);
+```
+
+#### 2. Write Operations - Dual Update
+```typescript
+// Every write operation updates BOTH systems
+try {
+  // 1. Write to Supabase first
+  const insertedSession = await this.supabase
+    .from('analytics_sessions')
+    .insert(sessionData);
+    
+  // 2. ALWAYS update JSON backup (regardless of Supabase success)
+  const sessions = this.loadJsonFile('analytics-sessions.json');
+  sessions.push(sessionForJson);
+  this.saveJsonFile('analytics-sessions.json', sessions);
+  
+} catch (error) {
+  // 3. Fallback: JSON-only operation
+  const sessions = this.loadJsonFile('analytics-sessions.json');
+  sessions.push(sessionData);
+  this.saveJsonFile('analytics-sessions.json', sessions);
+}
+```
+
+#### 3. JSON Fallback Files
+- `analytics-sessions.json` - Session tracking data
+- `hero-text.json` - Homepage text overlays  
+- `why-memopyk-cards.json` - Feature cards
+- `faq-sections.json` - FAQ content
+- `seo-global-settings.json` - SEO configuration
+- `conversion-funnel.json` - User journey tracking
+- `performance-metrics.json` - Site performance data
+- `realtime-visitors.json` - Live visitor data
+
+### Anti-Patterns (AVOID)
+
+#### ❌ Direct PostgreSQL Queries
+```typescript
+// BROKEN PATTERN - causes CONNECT_TIMEOUT errors
+const result = await pool.unsafe(queryText, [...queryParams]);
+```
+
+**Why it fails**: Direct PostgreSQL connections bypass the hybrid system and timeout when connecting to remote Supabase VPS.
+
+**Solution**: Always use `this.supabase.from()` queries instead.
+
+### Analytics Endpoints Fix (v1.0.188)
+
+#### Problem Identified
+Several analytics endpoints were making direct PostgreSQL queries using `pool.unsafe()`, causing `CONNECT_TIMEOUT` errors when accessing the Supabase VPS database.
+
+#### Endpoints Fixed
+1. **`/api/analytics/geo`** - Geographic distribution data
+2. **`/api/analytics/overview`** - Daily overview charts 
+3. **Removed duplicate endpoints** - Eliminated conflicting implementations
+
+#### Solution Applied
+Replaced all direct PostgreSQL queries with the proven hybrid storage pattern:
+
+```typescript
+// BEFORE (broken)
+const result = await pool.unsafe(`
+  SELECT country, COUNT(*) as sessions 
+  FROM analytics_sessions 
+  WHERE created_at >= $1
+`, [dateFrom]);
+
+// AFTER (fixed)
+const sessions = await hybridStorage.getAnalyticsSessions(dateFrom, dateTo);
+const countryData = sessions.reduce((acc, session) => {
+  // Process data in JavaScript instead of SQL
+}, {});
+```
+
+### Benefits of Hybrid Storage
+
+1. **Reliability**: Automatic fallback prevents service disruption
+2. **Performance**: Local JSON reads are faster than database queries for small datasets
+3. **Development**: Works offline and with unstable connections
+4. **Consistency**: Same data format regardless of source
+5. **Real-time Sync**: JSON cache stays current with database writes
+
+### Best Practices
+
+1. **Always use hybrid storage methods** from `server/hybrid-storage.ts`
+2. **Never import direct database clients** in routes or components
+3. **Test both data sources** to ensure consistency
+4. **Monitor fallback usage** in production logs
+5. **Keep JSON files under version control** for essential configuration data
+
 ---
 
 *This reference document covers the complete Supabase setup for MEMOPYK. Keep this updated as the schema evolves.*

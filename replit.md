@@ -71,6 +71,7 @@ Modal styling: Requires solid white modal backgrounds with dark overlays for pro
 - **Visitor Classification & Analytics Accuracy**: Implemented 30-second session deduplication and proper classification logic for new/returning visitors. Video analytics precisely track watch duration and completion metrics, excluding admin page visits.
 - **Professional Flag System**: Comprehensive 255-country solution using SVG flags with dynamic country mapping and a three-tier fallback system.
 - **OpenReplay Integration**: Comprehensive session recording and user behavior analytics using OpenReplay SDK (disabled in dev for mobile compatibility).
+- **Hybrid Storage Analytics Fix (v1.0.188)**: Fixed "Analytics (old)" dashboard failures by replacing direct PostgreSQL `pool.unsafe()` queries with proven hybrid storage pattern. Endpoints `/api/analytics/geo` and `/api/analytics/overview` now use `this.supabase.from()` with automatic JSON fallback, eliminating CONNECT_TIMEOUT errors when accessing Supabase VPS database.
 
 ## External Dependencies
 
