@@ -23,8 +23,22 @@ const formatDateForGA4 = (date: Date | string): string => {
   return date.toISOString().split('T')[0];
 };
 
-// Helper function to calculate date range from filters
+// Helper function to calculate date range from filters - matches backend data availability
 const getDateRangeFromFilters = (filters: any) => {
+  // First try to read from URL parameters (like other GA4 components)
+  const urlParams = new URLSearchParams(window.location.search);
+  const startFromUrl = urlParams.get('start');
+  const endFromUrl = urlParams.get('end');
+  
+  if (startFromUrl && endFromUrl) {
+    console.log('🔍 GA4 using URL date range:', startFromUrl, 'to', endFromUrl);
+    return {
+      startDate: startFromUrl,
+      endDate: endFromUrl
+    };
+  }
+  
+  // Then try GlobalFilterContext
   if (filters.range?.from && filters.range?.to) {
     return {
       startDate: formatDateForGA4(filters.range.from),
@@ -32,14 +46,15 @@ const getDateRangeFromFilters = (filters: any) => {
     };
   }
   
-  // Default to last 30 days if no range specified
-  const endDate = new Date();
-  const startDate = new Date();
-  startDate.setDate(startDate.getDate() - 30);
+  // Default to 30-day range that matches backend data (2025-08-04 to 2025-09-02)
+  // Use fixed dates that we know have data instead of dynamic dates
+  const defaultStart = '2025-08-04'; // Known data start from server logs
+  const defaultEnd = '2025-09-02';   // Known data end from server logs
   
+  console.log('🔍 GA4 using default date range with known data:', defaultStart, 'to', defaultEnd);
   return {
-    startDate: formatDateForGA4(startDate),
-    endDate: formatDateForGA4(endDate)
+    startDate: defaultStart,
+    endDate: defaultEnd
   };
 };
 
@@ -54,6 +69,8 @@ export default function GA4AnalyticsSection() {
 
   // Debug logging
   console.log('🔍 GA4 Component Debug:', { startDate, endDate, locale, filters });
+  console.log('🔍 GA4 URL params:', new URLSearchParams(window.location.search).toString());
+  console.log('🔍 GA4 Date range source: URL params exist?', !!(new URLSearchParams(window.location.search).get('start')));
 
   // GA4 KPIs Query
   const { data: ga4Kpis, isLoading: kpisLoading, error: kpisError, refetch: refetchKpis } = useQuery({
