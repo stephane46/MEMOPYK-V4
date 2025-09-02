@@ -2270,22 +2270,44 @@ export async function registerRoutes(app: Express): Promise<void> {
       const shouldIncludeProduction = process.env.NODE_ENV === 'production' || req.headers.host?.includes('replit');
       
       console.log('👥 Recent Visitors: Applying date filters properly:', { dateFrom, dateTo });
-      // TEMPORARY DEBUG: Use broader date range like main analytics
+      // Get all recent sessions (last 7 days) and filter dates in JavaScript  
       const sessions = await hybridStorage.getAnalyticsSessions(
-        undefined, // No dateFrom restriction 
-        undefined, // No dateTo restriction
+        undefined, // Get broader range  
+        undefined, // Get broader range
         undefined,
         shouldIncludeProduction
       );
       
-      // Filter out invalid sessions BEFORE processing (but include test data in production like main analytics)
+      // Filter out invalid sessions and apply date filtering in JavaScript
+      console.log(`🔍 DEBUG: Before filtering - found ${sessions.length} total sessions`);
       const realSessions = sessions.filter(session => {
-        return (shouldIncludeProduction ? true : !session.is_test_data) &&
+        // Basic session validity checks
+        const isValidSession = (shouldIncludeProduction ? true : !session.is_test_data) &&
                session.ip_address && 
                session.ip_address !== '0.0.0.0' &&
                session.ip_address !== null &&
                !session.session_id?.includes('anonymous');
+        
+        if (!isValidSession) return false;
+        
+        // Apply date filtering in JavaScript if date parameters provided
+        if (dateFrom || dateTo) {
+          const sessionDate = new Date(session.created_at);
+          
+          if (dateFrom) {
+            const fromDate = new Date(dateFrom);
+            if (sessionDate < fromDate) return false;
+          }
+          
+          if (dateTo) {
+            const toDate = new Date(dateTo);
+            if (sessionDate > toDate) return false;
+          }
+        }
+        
+        return true;
       });
+      console.log(`🔍 DEBUG: After filtering - found ${realSessions.length} valid sessions with date filter applied`);
       
       // Get unique visitors with their latest session info, visit count, session duration, and previous visit
       const visitorMap = new Map();
