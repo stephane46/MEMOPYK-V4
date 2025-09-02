@@ -5234,8 +5234,12 @@ export async function registerRoutes(app: Express): Promise<void> {
       const data = await qRealtime();
       
       // Store in both persistent and memory cache (30s for realtime)
-      await setDbCache(key, data, 30);
-      setCache(key, data, 30);
+      try {
+        await setDbCache(key, data, 30);
+        setCache(key, data, 30);
+      } catch (error) {
+        console.log(`⚠️ Failed to cache realtime data:`, error.message);
+      }
       res.json(data);
     } catch (error: any) {
       console.error("GA4 realtime error:", error);
