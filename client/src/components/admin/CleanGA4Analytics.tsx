@@ -296,9 +296,18 @@ export default function CleanGA4Analytics() {
   });
 
   // Fetch recent visitors for modal
-  const { data: recentVisitors } = useQuery<RecentVisitor[]>({
+  const { data: recentVisitors, isLoading: isLoadingVisitors, error: visitorsError } = useQuery<RecentVisitor[]>({
     queryKey: ['/api/analytics/recent-visitors', 'skipEnrichment'],
-    queryFn: () => fetch('/api/analytics/recent-visitors?skipEnrichment=true').then(res => res.json()),
+    queryFn: async () => {
+      console.log('🚀 MODAL: Fetching recent visitors with skipEnrichment=true');
+      const response = await fetch('/api/analytics/recent-visitors?skipEnrichment=true');
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+      }
+      const data = await response.json();
+      console.log('✅ MODAL: Received visitors data:', data?.length || 0, 'visitors');
+      return data;
+    },
     staleTime: 30000, // 30 seconds
     refetchInterval: 60000, // 1 minute
     enabled: isModalOpen, // Only fetch when modal is open
@@ -1124,7 +1133,30 @@ export default function CleanGA4Analytics() {
             </div>
 
             <div className="p-6 overflow-y-auto max-h-[70vh]">
-              {recentVisitors && recentVisitors.length > 0 ? (
+              {isLoadingVisitors ? (
+                <div className="text-center py-8">
+                  <div className="flex flex-col items-center gap-3">
+                    <Users style={{ 
+                      width: '48px', 
+                      height: '48px',
+                      color: '#d1d5db'
+                    }} />
+                    <p style={{ margin: 0 }}>Loading visitors...</p>
+                  </div>
+                </div>
+              ) : visitorsError ? (
+                <div className="text-center py-8">
+                  <div className="flex flex-col items-center gap-3">
+                    <Users style={{ 
+                      width: '48px', 
+                      height: '48px',
+                      color: '#ef4444'
+                    }} />
+                    <p style={{ margin: 0, color: '#ef4444' }}>Error loading visitors:</p>
+                    <p style={{ margin: 0, fontSize: '0.875rem', color: '#6b7280' }}>{visitorsError.message}</p>
+                  </div>
+                </div>
+              ) : recentVisitors && recentVisitors.length > 0 ? (
                 <div className="space-y-4">
                   {recentVisitors.map((visitor, index) => (
                     <div 
