@@ -14,6 +14,7 @@ import { CountryFlag } from './CountryFlag';
 import AdminCountryNamesCard from './AdminCountryNamesCard';
 import SessionReplaysCard from './SessionReplaysCard';
 import { formatFrenchDateTime } from '@/utils/date-format';
+import { formatDate, getRelativeTime } from '@/lib/date-utils';
 import { formatInt, formatSeconds, formatPercent } from '@/utils/format';
 import { apiRequest } from '@/lib/queryClient';
 
@@ -306,8 +307,8 @@ export default function CleanGA4Analytics() {
     setIsLoadingVisitors(true);
     setVisitorsError(null);
     try {
-      // Pass current date filters to modal for consistent data  
-      const params = new URLSearchParams();
+      // Pass current date filters to modal for consistent data (skip enrichment for fast loading)
+      const params = new URLSearchParams({ skipEnrichment: 'true' });
       
       let dateFrom: string | undefined;
       let dateTo: string | undefined;
@@ -1266,7 +1267,7 @@ export default function CleanGA4Analytics() {
                             <span className="font-medium text-gray-900 dark:text-white">Last Visit</span>
                           </div>
                           <div className="text-sm text-gray-600 dark:text-gray-400">
-                            {formatDate(visitor.last_visit)}
+                            {getRelativeTime(visitor.last_visit)}
                           </div>
                         </div>
 
@@ -1399,7 +1400,7 @@ export default function CleanGA4Analytics() {
                             <span className="font-medium text-gray-900 dark:text-white">Last Visit</span>
                           </div>
                           <div className="text-sm text-gray-600 dark:text-gray-400">
-                            {formatDate(visitor.last_visit)}
+                            {getRelativeTime(visitor.last_visit)}
                           </div>
                         </div>
 
@@ -1432,7 +1433,7 @@ export default function CleanGA4Analytics() {
                               <span className="font-medium text-gray-900 dark:text-white">Previous Visit</span>
                             </div>
                             <div className="text-sm text-gray-600 dark:text-gray-400">
-                              {formatDate(visitor.previous_visit)}
+                              {getRelativeTime(visitor.previous_visit)}
                             </div>
                           </div>
                         )}
