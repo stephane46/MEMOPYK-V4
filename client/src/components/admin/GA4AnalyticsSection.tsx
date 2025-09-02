@@ -76,21 +76,32 @@ export default function GA4AnalyticsSection() {
   // GA4 KPIs Query - use standard queryClient pattern that works for other API calls
   const { data: ga4Kpis, isLoading: kpisLoading, error: kpisError, refetch: refetchKpis } = useQuery({
     queryKey: [`/api/ga4/kpis?startDate=${startDate}&endDate=${endDate}&locale=${locale}`],
-    staleTime: 5 * 60 * 1000, // 5 minutes
+    staleTime: 0, // Force fresh data on every request
+    gcTime: 0, // Clear cache immediately
     enabled: true // Force enable to bypass date validation
+  });
+  
+  // Debug React Query state
+  console.log('🔍 GA4 KPIs Query State:', { 
+    isLoading: kpisLoading, 
+    hasData: !!ga4Kpis, 
+    error: kpisError,
+    queryKey: `/api/ga4/kpis?startDate=${startDate}&endDate=${endDate}&locale=${locale}`
   });
 
   // GA4 Top Videos Query - use standard queryClient pattern that works for other API calls
   const { data: ga4TopVideos, isLoading: videosLoading, refetch: refetchVideos } = useQuery({
     queryKey: [`/api/ga4/top-videos?startDate=${startDate}&endDate=${endDate}&locale=${locale}&limit=10`],
-    staleTime: 5 * 60 * 1000, // 5 minutes
+    staleTime: 0, // Force fresh data on every request
+    gcTime: 0, // Clear cache immediately
     enabled: true // Force enable to bypass date validation
   });
 
   // GA4 Realtime Query - use standard queryClient pattern that works for other API calls
   const { data: ga4Realtime, isLoading: realtimeLoading, refetch: refetchRealtime } = useQuery({
     queryKey: ['/api/ga4/realtime'],
-    staleTime: 1 * 60 * 1000, // 1 minute for realtime data
+    staleTime: 0, // Force fresh data on every request
+    gcTime: 0, // Clear cache immediately
     refetchInterval: 60000 // Auto-refresh every minute
   });
 
