@@ -108,7 +108,9 @@ function App() {
         console.log('🔍 Test mode active - all GA4 events will include debug_mode=true');
       }
     } else {
-      console.log('🚫 Admin page detected - GA4 and OpenReplay tracking disabled');
+      // Initialize GA4 on admin pages for video tracking testing (minimal tracking)
+      console.log('🚫 Admin page detected - GA4 enabled for video tracking only');
+      initGA();
     }
     
     // Cleanup function

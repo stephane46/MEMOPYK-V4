@@ -76,10 +76,10 @@ export default function GA4AnalyticsSection() {
   // GA4 KPIs Query - use standard queryClient pattern that works for other API calls
   const { data: ga4Kpis, isLoading: kpisLoading, error: kpisError, refetch: refetchKpis } = useQuery({
     queryKey: [`/api/ga4/kpis?startDate=${startDate}&endDate=${endDate}&locale=${locale}`],
-    staleTime: 30 * 1000, // 30 seconds - balance between fresh data and stability
+    staleTime: 5 * 60 * 1000, // 5 minutes - aggressive caching for speed
     enabled: true, // Force enable to bypass date validation
     retry: 1, // Only retry once to prevent hanging
-    retryDelay: 1000 // Wait 1 second before retry
+    retryDelay: 500 // Wait 0.5 seconds before retry
   });
   
   // Debug React Query state
@@ -93,19 +93,19 @@ export default function GA4AnalyticsSection() {
   // GA4 Top Videos Query - use standard queryClient pattern that works for other API calls
   const { data: ga4TopVideos, isLoading: videosLoading, refetch: refetchVideos } = useQuery({
     queryKey: [`/api/ga4/top-videos?startDate=${startDate}&endDate=${endDate}&locale=${locale}&limit=10`],
-    staleTime: 30 * 1000, // 30 seconds - balance between fresh data and stability
+    staleTime: 5 * 60 * 1000, // 5 minutes - aggressive caching for speed
     enabled: true, // Force enable to bypass date validation
     retry: 1, // Only retry once to prevent hanging
-    retryDelay: 1000 // Wait 1 second before retry
+    retryDelay: 500 // Wait 0.5 seconds before retry
   });
 
   // GA4 Realtime Query - use standard queryClient pattern that works for other API calls
   const { data: ga4Realtime, isLoading: realtimeLoading, refetch: refetchRealtime } = useQuery({
     queryKey: ['/api/ga4/realtime'],
-    staleTime: 30 * 1000, // 30 seconds for realtime data
+    staleTime: 1 * 60 * 1000, // 1 minute for realtime data
     refetchInterval: 60000, // Auto-refresh every minute
     retry: 1, // Only retry once to prevent hanging
-    retryDelay: 1000 // Wait 1 second before retry
+    retryDelay: 500 // Wait 0.5 seconds before retry
   });
 
   const handleRefreshAll = () => {
