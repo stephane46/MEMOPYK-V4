@@ -325,7 +325,8 @@ export default function CleanGA4Analytics() {
           // For 1-day filter: show only today (from midnight France time until now)
           const todayInFrance = new Date().toLocaleDateString("en-CA", { timeZone: "Europe/Paris" });
           dateFrom = todayInFrance;
-          dateTo = todayInFrance;
+          // For dateTo, add 23:59:59 to include all of today
+          dateTo = todayInFrance + "T23:59:59";
         } else {
           // For other filters: show last N days including today
           const startDate = new Date();
@@ -374,7 +375,8 @@ export default function CleanGA4Analytics() {
           // For 1-day filter: show only today (from midnight France time until now)
           const todayInFrance = new Date().toLocaleDateString("en-CA", { timeZone: "Europe/Paris" });
           dateFrom = todayInFrance;
-          dateTo = todayInFrance;
+          // For dateTo, add 23:59:59 to include all of today
+          dateTo = todayInFrance + "T23:59:59";
         } else {
           // For other filters: show last N days including today
           const startDate = new Date();
