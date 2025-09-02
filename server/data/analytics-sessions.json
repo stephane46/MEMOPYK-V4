@@ -23557,9 +23557,10 @@
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-27T09:39:37.135Z",
-    "updated_at": "2025-09-02T17:32:07.444Z",
+    "updated_at": "2025-09-02T17:35:14.614Z",
     "duration": 1263673,
-    "region": "Occitanie"
+    "region": "Occitanie",
+    "country": "France"
   },
   {
     "id": "6a6b3fc1-93ef-40ee-aff3-5168de9aec33",
@@ -23574,9 +23575,10 @@
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-27T09:40:23.692Z",
-    "updated_at": "2025-09-02T17:32:07.444Z",
+    "updated_at": "2025-09-02T17:35:14.614Z",
     "duration": 1263728,
-    "region": "Occitanie"
+    "region": "Occitanie",
+    "country": "France"
   },
   {
     "id": "60bb57ca-047b-4fbe-a94f-9fb63bd65d43",
@@ -23591,9 +23593,10 @@
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-27T09:41:17.789Z",
-    "updated_at": "2025-09-02T17:32:07.444Z",
+    "updated_at": "2025-09-02T17:35:14.614Z",
     "duration": 1263741,
-    "region": "Occitanie"
+    "region": "Occitanie",
+    "country": "France"
   },
   {
     "id": "e642c074-7394-4aa8-b432-f8a1a5c5fd9d",
@@ -23608,9 +23611,10 @@
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-27T09:42:11.636Z",
-    "updated_at": "2025-09-02T17:32:07.444Z",
+    "updated_at": "2025-09-02T17:35:14.614Z",
     "duration": 1263880,
-    "region": "Occitanie"
+    "region": "Occitanie",
+    "country": "France"
   },
   {
     "id": "05df1c08-ca4b-456d-9d05-ef5affcde9f6",
@@ -23625,8 +23629,9 @@
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-27T09:44:00.303Z",
-    "updated_at": "2025-09-02T17:32:07.444Z",
-    "region": "Occitanie"
+    "updated_at": "2025-09-02T17:35:14.614Z",
+    "region": "Occitanie",
+    "country": "France"
   },
   {
     "id": "c6d87447-7ef5-4ddc-88b0-8ef4cc87b240",
@@ -23641,9 +23646,10 @@
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-27T09:44:30.731Z",
-    "updated_at": "2025-09-02T17:32:07.444Z",
+    "updated_at": "2025-09-02T17:35:14.614Z",
     "duration": 1263976,
-    "region": "Occitanie"
+    "region": "Occitanie",
+    "country": "France"
   },
   {
     "id": "2a0ab3cb-9677-4654-b889-dd46288d7830",
@@ -23658,9 +23664,10 @@
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-27T09:45:27.844Z",
-    "updated_at": "2025-09-02T17:32:07.444Z",
+    "updated_at": "2025-09-02T17:35:14.614Z",
     "duration": 1263997,
-    "region": "Occitanie"
+    "region": "Occitanie",
+    "country": "France"
   },
   {
     "id": "6c23c2d0-c604-462c-9565-b0cb9ee8f14c",
@@ -23675,8 +23682,9 @@
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-27T09:46:35.262Z",
-    "updated_at": "2025-09-02T17:32:07.444Z",
-    "region": "Occitanie"
+    "updated_at": "2025-09-02T17:35:14.614Z",
+    "region": "Occitanie",
+    "country": "France"
   },
   {
     "id": "c35c1cd9-ddad-434f-b38f-9c885917f903",
@@ -23691,8 +23699,9 @@
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-27T09:47:12.844Z",
-    "updated_at": "2025-09-02T17:32:07.444Z",
-    "region": "Occitanie"
+    "updated_at": "2025-09-02T17:35:14.614Z",
+    "region": "Occitanie",
+    "country": "France"
   },
   {
     "id": "5548e452-d44a-4c8b-bdf7-b60359922030",
@@ -23707,9 +23716,10 @@
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-27T09:47:43.692Z",
-    "updated_at": "2025-09-02T17:32:07.444Z",
+    "updated_at": "2025-09-02T17:35:14.614Z",
     "duration": 1264135,
-    "region": "Occitanie"
+    "region": "Occitanie",
+    "country": "France"
   },
   {
     "id": "4dec4890-bb64-49a4-910e-56bc3c1b2e8c",
@@ -23724,9 +23734,10 @@
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-27T09:48:38.805Z",
-    "updated_at": "2025-09-02T17:32:07.444Z",
+    "updated_at": "2025-09-02T17:35:14.614Z",
     "duration": 1264187,
-    "region": "Occitanie"
+    "region": "Occitanie",
+    "country": "France"
   },
   {
     "id": "71b632d7-4da7-4847-905f-1b517d0d472c",
@@ -23741,8 +23752,9 @@
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-27T09:49:15.197Z",
-    "updated_at": "2025-09-02T17:32:07.444Z",
-    "region": "Occitanie"
+    "updated_at": "2025-09-02T17:35:14.614Z",
+    "region": "Occitanie",
+    "country": "France"
   },
   {
     "id": "9287bab5-85bf-4f8f-93fc-1c42968aebd6",
@@ -23757,9 +23769,10 @@
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-27T09:49:55.451Z",
-    "updated_at": "2025-09-02T17:32:07.444Z",
+    "updated_at": "2025-09-02T17:35:14.614Z",
     "duration": 1264255,
-    "region": "Occitanie"
+    "region": "Occitanie",
+    "country": "France"
   },
   {
     "id": "4e4e5c42-c370-46f2-9df1-b3d26ee7ba28",
@@ -23774,9 +23787,10 @@
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-27T09:50:39.608Z",
-    "updated_at": "2025-09-02T17:32:07.444Z",
+    "updated_at": "2025-09-02T17:35:14.614Z",
     "duration": 1264389,
-    "region": "Occitanie"
+    "region": "Occitanie",
+    "country": "France"
   },
   {
     "id": "a7ff6327-9ba0-4f8b-8167-d6e8e52dec03",
@@ -23791,9 +23805,10 @@
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-27T09:52:19.850Z",
-    "updated_at": "2025-09-02T17:32:07.444Z",
+    "updated_at": "2025-09-02T17:35:14.614Z",
     "duration": 1264410,
-    "region": "Occitanie"
+    "region": "Occitanie",
+    "country": "France"
   },
   {
     "id": "5c05bd24-10f4-4c73-b33d-0ba073608ff5",
@@ -23808,9 +23823,10 @@
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-27T09:53:11.213Z",
-    "updated_at": "2025-09-02T17:32:07.444Z",
+    "updated_at": "2025-09-02T17:35:14.614Z",
     "duration": 1264470,
-    "region": "Occitanie"
+    "region": "Occitanie",
+    "country": "France"
   },
   {
     "id": "9be8706a-b2a3-4670-9d5a-cf40470517b6",
@@ -23825,9 +23841,10 @@
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-27T09:53:44.009Z",
-    "updated_at": "2025-09-02T17:32:07.444Z",
+    "updated_at": "2025-09-02T17:35:14.614Z",
     "duration": 1264518,
-    "region": "Occitanie"
+    "region": "Occitanie",
+    "country": "France"
   },
   {
     "id": "12b480c6-ea4b-4409-b681-c734c44de9e8",
@@ -23842,8 +23859,9 @@
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-27T09:54:26.473Z",
-    "updated_at": "2025-09-02T17:32:07.444Z",
-    "region": "Occitanie"
+    "updated_at": "2025-09-02T17:35:14.614Z",
+    "region": "Occitanie",
+    "country": "France"
   },
   {
     "id": "503333f2-1ce8-40b4-ae67-347d825ccc96",
@@ -23890,9 +23908,10 @@
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-27T09:55:11.398Z",
-    "updated_at": "2025-09-02T17:32:07.444Z",
+    "updated_at": "2025-09-02T17:35:14.614Z",
     "duration": 1264667,
-    "region": "Occitanie"
+    "region": "Occitanie",
+    "country": "France"
   },
   {
     "id": "3704f269-de97-4226-a34f-89c1fd0024f7",
@@ -28952,8 +28971,9 @@
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-08-30T17:37:26.161Z",
-    "updated_at": "2025-09-02T17:32:07.429Z",
-    "region": "Occitanie"
+    "updated_at": "2025-09-02T17:35:14.521Z",
+    "region": "Occitanie",
+    "country": "France"
   },
   {
     "id": "67cb33ba-6602-43ac-99a4-03caef5d6af2",
@@ -29057,9 +29077,10 @@
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-09-01T09:28:35.290Z",
-    "updated_at": "2025-09-02T17:32:07.396Z",
+    "updated_at": "2025-09-02T17:35:14.674Z",
     "duration": 1714822,
-    "region": "Sao Paulo"
+    "region": "Sao Paulo",
+    "country": "Brazil"
   },
   {
     "id": "0352a831-c281-42de-b42d-28b6007aa73e",
@@ -29074,9 +29095,10 @@
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-09-01T09:39:41.848Z",
-    "updated_at": "2025-09-02T17:32:07.396Z",
+    "updated_at": "2025-09-02T17:35:14.674Z",
     "duration": 1715467,
-    "region": "Sao Paulo"
+    "region": "Sao Paulo",
+    "country": "Brazil"
   },
   {
     "id": "7e004557-a290-491d-acec-33c78347b0d4",
@@ -29091,9 +29113,10 @@
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-09-01T09:42:00.000Z",
-    "updated_at": "2025-09-02T17:32:07.396Z",
+    "updated_at": "2025-09-02T17:35:14.674Z",
     "duration": 1715516,
-    "region": "Sao Paulo"
+    "region": "Sao Paulo",
+    "country": "Brazil"
   },
   {
     "id": "cfed6a82-596f-40ab-9afe-d963a5471bbb",
@@ -29108,9 +29131,10 @@
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-09-01T09:53:54.821Z",
-    "updated_at": "2025-09-02T17:32:07.381Z",
+    "updated_at": "2025-09-02T17:35:14.649Z",
     "duration": 1716206,
-    "region": "Brussels Capital"
+    "region": "Brussels Capital",
+    "country": "Belgium"
   },
   {
     "id": "12a1e40b-91f9-4497-9a6a-441aaa04eabe",
@@ -29125,9 +29149,10 @@
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-09-01T10:02:33.143Z",
-    "updated_at": "2025-09-02T17:32:07.381Z",
+    "updated_at": "2025-09-02T17:35:14.649Z",
     "duration": 1717012,
-    "region": "Brussels Capital"
+    "region": "Brussels Capital",
+    "country": "Belgium"
   },
   {
     "id": "50c8d7ab-180f-4ec6-b610-080c7ba400f0",
@@ -29142,9 +29167,10 @@
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-09-01T10:07:35.899Z",
-    "updated_at": "2025-09-02T17:32:07.381Z",
+    "updated_at": "2025-09-02T17:35:14.649Z",
     "duration": 1717034,
-    "region": "Brussels Capital"
+    "region": "Brussels Capital",
+    "country": "Belgium"
   },
   {
     "id": "f8e590e8-af0d-4af6-bf26-7f815ad86ead",
@@ -29159,9 +29185,10 @@
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-09-01T10:11:27.693Z",
-    "updated_at": "2025-09-02T17:32:07.381Z",
+    "updated_at": "2025-09-02T17:35:14.649Z",
     "duration": 1717304,
-    "region": "Brussels Capital"
+    "region": "Brussels Capital",
+    "country": "Belgium"
   },
   {
     "id": "d52834dd-e94d-4099-8275-38bfe2428491",
@@ -29176,9 +29203,10 @@
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-09-01T10:21:44.876Z",
-    "updated_at": "2025-09-02T17:32:07.381Z",
+    "updated_at": "2025-09-02T17:35:14.649Z",
     "duration": 1718221,
-    "region": "Brussels Capital"
+    "region": "Brussels Capital",
+    "country": "Belgium"
   },
   {
     "id": "72896e08-47bf-4521-8dad-bfab614a81c7",
@@ -29193,9 +29221,10 @@
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-09-01T10:27:45.275Z",
-    "updated_at": "2025-09-02T17:32:07.381Z",
+    "updated_at": "2025-09-02T17:35:14.649Z",
     "duration": 1718614,
-    "region": "Brussels Capital"
+    "region": "Brussels Capital",
+    "country": "Belgium"
   },
   {
     "id": "59149410-9699-4d22-be7d-8a0ef6e3aa7d",
@@ -29210,9 +29239,10 @@
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-09-01T10:34:17.872Z",
-    "updated_at": "2025-09-02T17:32:07.381Z",
+    "updated_at": "2025-09-02T17:35:14.649Z",
     "duration": 1718857,
-    "region": "Brussels Capital"
+    "region": "Brussels Capital",
+    "country": "Belgium"
   },
   {
     "id": "cd26da54-7b62-4bf3-8190-4beafc957641",
@@ -29227,9 +29257,10 @@
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-09-01T10:38:20.879Z",
-    "updated_at": "2025-09-02T17:32:07.381Z",
+    "updated_at": "2025-09-02T17:35:14.649Z",
     "duration": 1719100,
-    "region": "Brussels Capital"
+    "region": "Brussels Capital",
+    "country": "Belgium"
   },
   {
     "id": "2813af38-88fd-40b1-be53-e1f1b6f6306f",
@@ -29244,9 +29275,10 @@
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-09-01T10:42:23.933Z",
-    "updated_at": "2025-09-02T17:32:07.381Z",
+    "updated_at": "2025-09-02T17:35:14.649Z",
     "duration": 1719343,
-    "region": "Brussels Capital"
+    "region": "Brussels Capital",
+    "country": "Belgium"
   },
   {
     "id": "e80e4406-e0cf-4633-bce0-f1f1c95758f9",
@@ -29261,9 +29293,10 @@
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-09-01T10:46:25.110Z",
-    "updated_at": "2025-09-02T17:32:07.381Z",
+    "updated_at": "2025-09-02T17:35:14.649Z",
     "duration": 1719781,
-    "region": "Brussels Capital"
+    "region": "Brussels Capital",
+    "country": "Belgium"
   },
   {
     "id": "65701d84-4631-4e7b-a999-655377237c6b",
@@ -29278,9 +29311,10 @@
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-09-01T10:53:45.325Z",
-    "updated_at": "2025-09-02T17:32:07.381Z",
+    "updated_at": "2025-09-02T17:35:14.649Z",
     "duration": 1720141,
-    "region": "Brussels Capital"
+    "region": "Brussels Capital",
+    "country": "Belgium"
   },
   {
     "id": "3ab184e3-58b0-44f3-bb59-f89d028a60f9",
@@ -29295,9 +29329,10 @@
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-09-01T10:59:45.248Z",
-    "updated_at": "2025-09-02T17:32:07.381Z",
+    "updated_at": "2025-09-02T17:35:14.649Z",
     "duration": 1720441,
-    "region": "Brussels Capital"
+    "region": "Brussels Capital",
+    "country": "Belgium"
   },
   {
     "id": "b30c22c9-7a5f-4e3e-8008-62a309afdead",
@@ -29312,9 +29347,10 @@
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-09-01T11:04:45.247Z",
-    "updated_at": "2025-09-02T17:32:07.381Z",
+    "updated_at": "2025-09-02T17:35:14.649Z",
     "duration": 1720741,
-    "region": "Brussels Capital"
+    "region": "Brussels Capital",
+    "country": "Belgium"
   },
   {
     "id": "b13757d8-2c64-4b6e-a0a4-d6e99be6e8cb",
@@ -29329,9 +29365,10 @@
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-09-01T11:09:45.254Z",
-    "updated_at": "2025-09-02T17:32:07.381Z",
+    "updated_at": "2025-09-02T17:35:14.649Z",
     "duration": 1721161,
-    "region": "Brussels Capital"
+    "region": "Brussels Capital",
+    "country": "Belgium"
   },
   {
     "id": "ac5313bc-de7d-4cd4-b4f8-a0ce17808194",
@@ -29346,9 +29383,10 @@
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-09-01T11:16:45.312Z",
-    "updated_at": "2025-09-02T17:32:07.381Z",
+    "updated_at": "2025-09-02T17:35:14.649Z",
     "duration": 1721521,
-    "region": "Brussels Capital"
+    "region": "Brussels Capital",
+    "country": "Belgium"
   },
   {
     "id": "05c4dc6d-3c54-4bcb-bc8b-4557fbaa7e87",
@@ -29363,9 +29401,10 @@
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-09-01T11:22:45.235Z",
-    "updated_at": "2025-09-02T17:32:07.381Z",
+    "updated_at": "2025-09-02T17:35:14.649Z",
     "duration": 1721881,
-    "region": "Brussels Capital"
+    "region": "Brussels Capital",
+    "country": "Belgium"
   },
   {
     "id": "c29da557-8b5f-41fd-8bf8-4bf62d9f9d67",
@@ -29380,9 +29419,10 @@
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-09-01T11:28:45.241Z",
-    "updated_at": "2025-09-02T17:32:07.381Z",
+    "updated_at": "2025-09-02T17:35:14.649Z",
     "duration": 1722181,
-    "region": "Brussels Capital"
+    "region": "Brussels Capital",
+    "country": "Belgium"
   },
   {
     "id": "92e77cb5-a8e3-4296-9f3d-622f63ffc578",
@@ -29397,9 +29437,10 @@
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-09-01T11:33:45.327Z",
-    "updated_at": "2025-09-02T17:32:07.381Z",
+    "updated_at": "2025-09-02T17:35:14.649Z",
     "duration": 1722541,
-    "region": "Brussels Capital"
+    "region": "Brussels Capital",
+    "country": "Belgium"
   },
   {
     "id": "b3326e55-4da6-4c7f-b075-78199b9c5ff2",
@@ -29414,9 +29455,10 @@
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-09-01T11:39:45.297Z",
-    "updated_at": "2025-09-02T17:32:07.381Z",
+    "updated_at": "2025-09-02T17:35:14.649Z",
     "duration": 1727434,
-    "region": "Brussels Capital"
+    "region": "Brussels Capital",
+    "country": "Belgium"
   },
   {
     "id": "c9a52aa5-df87-4eb9-8e3e-135ae98ba92b",
@@ -29431,9 +29473,10 @@
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-09-01T13:01:18.084Z",
-    "updated_at": "2025-09-02T17:32:07.381Z",
+    "updated_at": "2025-09-02T17:35:14.649Z",
     "duration": 1727677,
-    "region": "Brussels Capital"
+    "region": "Brussels Capital",
+    "country": "Belgium"
   },
   {
     "id": "fed97b72-5957-4861-bf47-945212b81b30",
@@ -29448,9 +29491,10 @@
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-09-01T13:05:21.117Z",
-    "updated_at": "2025-09-02T17:32:07.381Z",
+    "updated_at": "2025-09-02T17:35:14.649Z",
     "duration": 1727920,
-    "region": "Brussels Capital"
+    "region": "Brussels Capital",
+    "country": "Belgium"
   },
   {
     "id": "63c45abd-d26d-413b-83bb-1f956a67adc1",
@@ -29465,9 +29509,10 @@
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-09-01T13:09:24.078Z",
-    "updated_at": "2025-09-02T17:32:07.381Z",
+    "updated_at": "2025-09-02T17:35:14.649Z",
     "duration": 1728163,
-    "region": "Brussels Capital"
+    "region": "Brussels Capital",
+    "country": "Belgium"
   },
   {
     "id": "3ad6ce6a-16e5-4049-987b-b0fb294aacc1",
@@ -29482,9 +29527,10 @@
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-09-01T13:13:27.015Z",
-    "updated_at": "2025-09-02T17:32:07.381Z",
+    "updated_at": "2025-09-02T17:35:14.649Z",
     "duration": 1728406,
-    "region": "Brussels Capital"
+    "region": "Brussels Capital",
+    "country": "Belgium"
   },
   {
     "id": "fa99dc34-6fb3-4fb4-b23a-87f64ad3c147",
@@ -29499,9 +29545,10 @@
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-09-01T13:17:30.520Z",
-    "updated_at": "2025-09-02T17:32:07.381Z",
+    "updated_at": "2025-09-02T17:35:14.649Z",
     "duration": 1728649,
-    "region": "Brussels Capital"
+    "region": "Brussels Capital",
+    "country": "Belgium"
   },
   {
     "id": "38af56b9-efc4-4e4f-813e-e0d468b5e89f",
@@ -29516,9 +29563,10 @@
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-09-01T13:21:33.170Z",
-    "updated_at": "2025-09-02T17:32:07.381Z",
+    "updated_at": "2025-09-02T17:35:14.649Z",
     "duration": 1728839,
-    "region": "Brussels Capital"
+    "region": "Brussels Capital",
+    "country": "Belgium"
   },
   {
     "id": "8d96a810-57d3-41c8-aa49-db7c083cab20",
@@ -29551,9 +29599,10 @@
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-09-01T15:24:21.770Z",
-    "updated_at": "2025-09-02T17:32:07.331Z",
+    "updated_at": "2025-09-02T17:35:14.695Z",
     "duration": 1736461,
-    "region": "Brussels Capital"
+    "region": "Brussels Capital",
+    "country": "Belgium"
   },
   {
     "id": "afc081fa-f7a8-41e6-b9fc-a907a04af647",
@@ -29568,9 +29617,10 @@
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-09-01T15:31:45.892Z",
-    "updated_at": "2025-09-02T17:32:07.331Z",
+    "updated_at": "2025-09-02T17:35:14.695Z",
     "duration": 1736821,
-    "region": "Brussels Capital"
+    "region": "Brussels Capital",
+    "country": "Belgium"
   },
   {
     "id": "1b17fabc-09e2-4d8f-8456-d95042dc1900",
@@ -29585,9 +29635,10 @@
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-09-01T15:37:45.984Z",
-    "updated_at": "2025-09-02T17:32:07.331Z",
+    "updated_at": "2025-09-02T17:35:14.695Z",
     "duration": 1737208,
-    "region": "Brussels Capital"
+    "region": "Brussels Capital",
+    "country": "Belgium"
   },
   {
     "id": "d2c1010b-43b0-4f7c-b0c2-314c23e5220b",
@@ -29602,9 +29653,10 @@
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-09-01T15:44:07.179Z",
-    "updated_at": "2025-09-02T17:32:07.331Z",
+    "updated_at": "2025-09-02T17:35:14.695Z",
     "duration": 1737212,
-    "region": "Brussels Capital"
+    "region": "Brussels Capital",
+    "country": "Belgium"
   },
   {
     "id": "ee8029a4-c1a6-4d98-bad2-131ce8115a24",
@@ -29619,9 +29671,10 @@
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-09-01T15:45:01.106Z",
-    "updated_at": "2025-09-02T17:32:07.331Z",
+    "updated_at": "2025-09-02T17:35:14.695Z",
     "duration": 1320713,
-    "region": "Brussels Capital"
+    "region": "Brussels Capital",
+    "country": "Belgium"
   },
   {
     "id": "3c1e081b-c202-4532-a3dc-07bfef7bd1de",
@@ -29636,9 +29689,10 @@
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-09-01T15:45:47.765Z",
-    "updated_at": "2025-09-02T17:32:07.331Z",
+    "updated_at": "2025-09-02T17:35:14.695Z",
     "duration": 1320849,
-    "region": "Brussels Capital"
+    "region": "Brussels Capital",
+    "country": "Belgium"
   },
   {
     "id": "3acbe8b2-dc4d-4ab7-9866-15254116bf29",
@@ -29653,9 +29707,10 @@
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-09-01T15:48:04.552Z",
-    "updated_at": "2025-09-02T17:32:07.331Z",
+    "updated_at": "2025-09-02T17:35:14.695Z",
     "duration": 1320865,
-    "region": "Brussels Capital"
+    "region": "Brussels Capital",
+    "country": "Belgium"
   },
   {
     "id": "761c5bf6-b035-457f-97a3-d32352352808",
@@ -29670,9 +29725,10 @@
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-09-01T15:50:06.639Z",
-    "updated_at": "2025-09-02T17:32:07.331Z",
+    "updated_at": "2025-09-02T17:35:14.695Z",
     "duration": 30,
-    "region": "Brussels Capital"
+    "region": "Brussels Capital",
+    "country": "Belgium"
   },
   {
     "id": "042b6b83-2e20-4c89-b171-0e6152a86dab",
@@ -29687,9 +29743,10 @@
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-09-01T15:51:03.533Z",
-    "updated_at": "2025-09-02T17:32:07.331Z",
+    "updated_at": "2025-09-02T17:35:14.695Z",
     "duration": 1737657,
-    "region": "Brussels Capital"
+    "region": "Brussels Capital",
+    "country": "Belgium"
   },
   {
     "id": "97682a7e-a9f2-4e56-8a59-c0dab37bbdb0",
@@ -29704,9 +29761,10 @@
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-09-01T15:51:58.021Z",
-    "updated_at": "2025-09-02T17:32:07.331Z",
+    "updated_at": "2025-09-02T17:35:14.695Z",
     "duration": 1737778,
-    "region": "Brussels Capital"
+    "region": "Brussels Capital",
+    "country": "Belgium"
   },
   {
     "id": "e306e742-b730-4e27-8129-e5fc4f2db415",
@@ -29721,9 +29779,10 @@
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-09-01T15:53:41.768Z",
-    "updated_at": "2025-09-02T17:32:07.331Z",
+    "updated_at": "2025-09-02T17:35:14.695Z",
     "duration": 1321365,
-    "region": "Brussels Capital"
+    "region": "Brussels Capital",
+    "country": "Belgium"
   },
   {
     "id": "f1d4d595-cd88-489e-8758-91c9421666fb",
@@ -29738,9 +29797,10 @@
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-09-01T15:56:37.835Z",
-    "updated_at": "2025-09-02T17:32:07.331Z",
+    "updated_at": "2025-09-02T17:35:14.695Z",
     "duration": 1321566,
-    "region": "Brussels Capital"
+    "region": "Brussels Capital",
+    "country": "Belgium"
   },
   {
     "id": "9f0ca39d-ced4-45cf-945b-2beeab634b92",
@@ -29755,9 +29815,10 @@
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-09-01T15:59:59.922Z",
-    "updated_at": "2025-09-02T17:32:07.331Z",
+    "updated_at": "2025-09-02T17:35:14.695Z",
     "duration": 659,
-    "region": "Brussels Capital"
+    "region": "Brussels Capital",
+    "country": "Belgium"
   },
   {
     "id": "c7c15206-f89c-4fee-9b7c-1b8ba00bcc59",
@@ -29772,9 +29833,10 @@
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-09-01T16:01:09.103Z",
-    "updated_at": "2025-09-02T17:32:07.331Z",
+    "updated_at": "2025-09-02T17:35:14.695Z",
     "duration": 1321645,
-    "region": "Brussels Capital"
+    "region": "Brussels Capital",
+    "country": "Belgium"
   },
   {
     "id": "ddf2757a-819d-4d7a-962f-a1c1e9070fed",
@@ -29789,8 +29851,9 @@
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-09-01T16:01:46.474Z",
-    "updated_at": "2025-09-02T17:32:07.331Z",
-    "region": "Brussels Capital"
+    "updated_at": "2025-09-02T17:35:14.695Z",
+    "region": "Brussels Capital",
+    "country": "Belgium"
   },
   {
     "id": "7e16cae5-b994-4c59-870f-44aca5482fd8",
@@ -29805,9 +29868,10 @@
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-09-01T16:02:51.085Z",
-    "updated_at": "2025-09-02T17:32:07.309Z",
+    "updated_at": "2025-09-02T17:35:14.547Z",
     "duration": 1738425,
-    "region": "Sao Paulo"
+    "region": "Sao Paulo",
+    "country": "Brazil"
   },
   {
     "id": "61c2c308-76fa-4e81-8050-a3e8c991a516",
@@ -29822,9 +29886,10 @@
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-09-01T16:04:28.279Z",
-    "updated_at": "2025-09-02T17:32:07.309Z",
+    "updated_at": "2025-09-02T17:35:14.547Z",
     "duration": 1738830,
-    "region": "Sao Paulo"
+    "region": "Sao Paulo",
+    "country": "Brazil"
   },
   {
     "id": "fe5eeb2d-b329-4522-b04f-78e043b17a8f",
@@ -29839,9 +29904,10 @@
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-09-01T17:07:31.704Z",
-    "updated_at": "2025-09-02T17:32:07.309Z",
+    "updated_at": "2025-09-02T17:35:14.547Z",
     "duration": 1742441,
-    "region": "Sao Paulo"
+    "region": "Sao Paulo",
+    "country": "Brazil"
   },
   {
     "id": "a18570b6-225a-4cec-9f08-ad988ae3a9f9",
@@ -29856,9 +29922,10 @@
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-09-01T17:11:40.677Z",
-    "updated_at": "2025-09-02T17:32:07.309Z",
+    "updated_at": "2025-09-02T17:35:14.547Z",
     "duration": 1742687,
-    "region": "Sao Paulo"
+    "region": "Sao Paulo",
+    "country": "Brazil"
   },
   {
     "id": "470f379b-c537-4c0c-a118-41f1dd1a50b6",
@@ -29873,9 +29940,10 @@
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-09-01T17:15:47.396Z",
-    "updated_at": "2025-09-02T17:32:07.309Z",
+    "updated_at": "2025-09-02T17:35:14.547Z",
     "duration": 1743045,
-    "region": "Sao Paulo"
+    "region": "Sao Paulo",
+    "country": "Brazil"
   },
   {
     "id": "cbfd7159-0e67-480b-84bd-fa0b303d7ac8",
@@ -29890,9 +29958,10 @@
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-09-01T17:21:49.604Z",
-    "updated_at": "2025-09-02T17:32:07.309Z",
+    "updated_at": "2025-09-02T17:35:14.547Z",
     "duration": 1744004,
-    "region": "Sao Paulo"
+    "region": "Sao Paulo",
+    "country": "Brazil"
   },
   {
     "id": "36802cad-0d75-409e-983c-1345ed476f1d",
@@ -29907,9 +29976,10 @@
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-09-01T17:38:04.765Z",
-    "updated_at": "2025-09-02T17:32:07.309Z",
+    "updated_at": "2025-09-02T17:35:14.547Z",
     "duration": 1744565,
-    "region": "Sao Paulo"
+    "region": "Sao Paulo",
+    "country": "Brazil"
   },
   {
     "id": "a2f05c0f-5d7e-470a-82bb-d0dced415542",
@@ -29924,9 +29994,10 @@
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-09-01T17:47:19.472Z",
-    "updated_at": "2025-09-02T17:32:07.309Z",
+    "updated_at": "2025-09-02T17:35:14.547Z",
     "duration": 1744664,
-    "region": "Sao Paulo"
+    "region": "Sao Paulo",
+    "country": "Brazil"
   },
   {
     "id": "bd9e47de-5685-4a74-bd76-219bf9167f7c",
@@ -29941,9 +30012,10 @@
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-09-01T17:48:58.632Z",
-    "updated_at": "2025-09-02T17:32:07.309Z",
+    "updated_at": "2025-09-02T17:35:14.547Z",
     "duration": 1744812,
-    "region": "Sao Paulo"
+    "region": "Sao Paulo",
+    "country": "Brazil"
   },
   {
     "id": "6fcb9bcd-112e-435b-b416-76775178741f",
@@ -29958,9 +30030,10 @@
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-09-01T17:51:29.762Z",
-    "updated_at": "2025-09-02T17:32:07.309Z",
+    "updated_at": "2025-09-02T17:35:14.547Z",
     "duration": 1744912,
-    "region": "Sao Paulo"
+    "region": "Sao Paulo",
+    "country": "Brazil"
   },
   {
     "id": "d187d91d-eac2-4354-9c60-a38284539d54",
@@ -29975,9 +30048,10 @@
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-09-01T17:52:55.024Z",
-    "updated_at": "2025-09-02T17:32:07.309Z",
+    "updated_at": "2025-09-02T17:35:14.547Z",
     "duration": 1744970,
-    "region": "Sao Paulo"
+    "region": "Sao Paulo",
+    "country": "Brazil"
   },
   {
     "id": "c4a12026-0d1b-4ebf-8dab-13e60acd2913",
@@ -29992,9 +30066,10 @@
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-09-01T17:53:50.409Z",
-    "updated_at": "2025-09-02T17:32:07.309Z",
+    "updated_at": "2025-09-02T17:35:14.547Z",
     "duration": 1745085,
-    "region": "Sao Paulo"
+    "region": "Sao Paulo",
+    "country": "Brazil"
   },
   {
     "id": "feef2e67-fc6d-4d26-a3ff-3afa044765c2",
@@ -30009,9 +30084,10 @@
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-09-01T17:55:47.842Z",
-    "updated_at": "2025-09-02T17:32:07.309Z",
+    "updated_at": "2025-09-02T17:35:14.547Z",
     "duration": 1745494,
-    "region": "Sao Paulo"
+    "region": "Sao Paulo",
+    "country": "Brazil"
   },
   {
     "id": "c2de069f-8b7f-4e0f-bff8-99c7fedfb04a",
