@@ -2277,9 +2277,9 @@ export async function registerRoutes(app: Express): Promise<void> {
         shouldIncludeProduction
       );
       
-      // Filter out test data and invalid sessions BEFORE processing
+      // Filter out invalid sessions BEFORE processing (but include test data in production like main analytics)
       const realSessions = sessions.filter(session => {
-        return !session.is_test_data && 
+        return (shouldIncludeProduction ? true : !session.is_test_data) &&
                session.ip_address && 
                session.ip_address !== '0.0.0.0' &&
                session.ip_address !== null &&
