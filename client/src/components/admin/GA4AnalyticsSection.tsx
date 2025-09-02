@@ -89,7 +89,7 @@ export default function GA4AnalyticsSection() {
       }
     },
     staleTime: 5 * 60 * 1000, // 5 minutes
-    enabled: !!(startDate && endDate)
+    enabled: true // Force enable to bypass date validation
   });
 
   // GA4 Top Videos Query  
@@ -125,7 +125,7 @@ export default function GA4AnalyticsSection() {
       }
     },
     staleTime: 5 * 60 * 1000, // 5 minutes
-    enabled: !!(startDate && endDate)
+    enabled: true // Force enable to bypass date validation
   });
 
   // GA4 Realtime Query
