@@ -24,8 +24,8 @@ const formatDateForGA4 = (date: Date): string => {
 const getDateRangeFromFilters = (filters: any) => {
   if (filters.range?.from && filters.range?.to) {
     return {
-      startDate: filters.range.from,
-      endDate: filters.range.to
+      startDate: formatDateForGA4(filters.range.from),
+      endDate: formatDateForGA4(filters.range.to)
     };
   }
   
@@ -140,13 +140,13 @@ export default function GA4AnalyticsSection() {
         />
         <KpiCard 
           label="Unique Users" 
-          value={formatInt(ga4Kpis.uniqueUsers || 0)} 
+          value={formatInt(ga4Kpis.topLocale?.reduce((sum: number, lang: any) => sum + (lang.visitors || 0), 0) || 0)} 
           icon={Users} 
           color="blue" 
         />
         <KpiCard 
           label="Page Views" 
-          value={formatInt(ga4Kpis.pageViews || 0)} 
+          value={formatInt(ga4Kpis.plays || 0)} 
           icon={Eye} 
           color="purple" 
         />
@@ -246,7 +246,7 @@ export default function GA4AnalyticsSection() {
     const { data: ipData, refetch: refetchIPs } = useQuery({
       queryKey: ['excluded-ips'],
       queryFn: async () => {
-        const response = await fetch('/api/analytics/excluded-ips');
+        const response = await fetch('/api/analytics/exclude-ip');
         if (!response.ok) {
           throw new Error('Failed to fetch excluded IPs');
         }
@@ -265,7 +265,7 @@ export default function GA4AnalyticsSection() {
     // Add IP mutation
     const addIPMutation = useMutation({
       mutationFn: async (ip: string) => {
-        const response = await apiRequest('/api/analytics/exclude-ip', 'POST', { ip });
+        const response = await apiRequest('/api/analytics/exclude-ip', 'POST', { ipAddress: ip });
         return response;
       },
       onSuccess: () => {
@@ -288,8 +288,13 @@ export default function GA4AnalyticsSection() {
     // Remove IP mutation
     const removeIPMutation = useMutation({
       mutationFn: async (ip: string) => {
-        const response = await apiRequest('/api/analytics/exclude-ip', 'DELETE', { ip });
-        return response;
+        const response = await fetch(`/api/analytics/exclude-ip/${encodeURIComponent(ip)}`, {
+          method: 'DELETE'
+        });
+        if (!response.ok) {
+          throw new Error('Failed to remove IP address');
+        }
+        return response.json();
       },
       onSuccess: () => {
         refetchIPs();
