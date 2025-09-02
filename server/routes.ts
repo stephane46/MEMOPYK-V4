@@ -2951,11 +2951,25 @@ export async function registerRoutes(app: Express): Promise<void> {
   // Analytics Daily Overview - GET daily overview data for charts - FIXED to use hybrid storage  
   app.get("/api/analytics/overview", async (req, res) => {
     try {
-      console.log('📊 Analytics daily overview request for 30 days with filters:', req.query);
+      console.log('📊 Analytics daily overview request with filters:', req.query);
       
-      const { from, to, lang, source, device } = req.query;
-      const dateFrom = from as string;
-      const dateTo = to as string;
+      const { days, from, to, lang, source, device } = req.query;
+      
+      // Calculate date range based on days parameter if from/to not provided
+      let dateFrom = from as string;
+      let dateTo = to as string;
+      
+      if (!dateFrom && !dateTo && days) {
+        const daysNum = parseInt(days as string) || 30;
+        const now = new Date();
+        const startDate = new Date();
+        startDate.setDate(now.getDate() - daysNum);
+        
+        dateFrom = startDate.toISOString().split('T')[0];
+        dateTo = now.toISOString().split('T')[0];
+        
+        console.log(`📊 Calculated date range from days=${daysNum}: ${dateFrom} to ${dateTo}`);
+      }
       
       // Use hybrid storage pattern like other working endpoints
       const sessions = await hybridStorage.getAnalyticsSessions(dateFrom, dateTo, lang as string);
