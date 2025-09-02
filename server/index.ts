@@ -179,6 +179,15 @@ app.use((req, res, next) => {
       timeout: 10000,
     });
 
+    // CRITICAL: Ensure GA4 API requests NEVER go to Vite proxy
+    app.use((req, res, next) => {
+      if (req.path.startsWith("/api/ga4")) {
+        console.log(`🎯 GA4 API REQUEST INTERCEPTED: ${req.method} ${req.path}`);
+        return next(); // Force GA4 requests to Express
+      }
+      next();
+    });
+
     // Proxy non-API requests to Vite dev server with error handling  
     app.use((req, res, next) => {
       if (req.path.startsWith("/api") || req.path.startsWith("/images") || req.path === "/logo.svg" || req.path.startsWith("/flags")) {

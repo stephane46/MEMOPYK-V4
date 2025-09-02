@@ -60,8 +60,7 @@ export default function GA4AnalyticsSection() {
     queryKey: ['ga4-kpis', startDate, endDate, locale],
     queryFn: async () => {
       console.log('🔍 Fetching GA4 KPIs:', { startDate, endDate, locale });
-      const baseUrl = import.meta.env.DEV ? 'http://localhost:5000' : '';
-      const url = `${baseUrl}/api/ga4/kpis?startDate=${startDate}&endDate=${endDate}&locale=${locale}`;
+      const url = `/api/ga4/kpis?startDate=${startDate}&endDate=${endDate}&locale=${locale}`;
       console.log('🔍 KPIs URL:', url);
       
       // Add timeout to prevent hanging
@@ -98,8 +97,7 @@ export default function GA4AnalyticsSection() {
     queryKey: ['ga4-top-videos', startDate, endDate, locale],
     queryFn: async () => {
       console.log('🔍 Fetching GA4 Top Videos:', { startDate, endDate, locale });
-      const baseUrl = import.meta.env.DEV ? 'http://localhost:5000' : '';
-      const url = `${baseUrl}/api/ga4/top-videos?startDate=${startDate}&endDate=${endDate}&locale=${locale}&limit=10`;
+      const url = `/api/ga4/top-videos?startDate=${startDate}&endDate=${endDate}&locale=${locale}&limit=10`;
       console.log('🔍 Top Videos URL:', url);
       
       const controller = new AbortController();
@@ -140,8 +138,7 @@ export default function GA4AnalyticsSection() {
       const timeoutId = setTimeout(() => controller.abort(), 10000);
       
       try {
-        const baseUrl = import.meta.env.DEV ? 'http://localhost:5000' : '';
-        const response = await fetch(`${baseUrl}/api/ga4/realtime`, { signal: controller.signal });
+        const response = await fetch('/api/ga4/realtime', { signal: controller.signal });
         clearTimeout(timeoutId);
         console.log('🔍 Realtime Response:', response.status, response.statusText);
         if (!response.ok) {
