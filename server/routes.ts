@@ -6275,6 +6275,131 @@ export async function registerRoutes(app: Express): Promise<void> {
     }
   });
 
+  // ---------- GET /api/analytics/export/sql ----------
+  app.get("/api/analytics/export/sql", async (req, res) => {
+    try {
+      console.log('📊 SQL export requested for analytics migration');
+      
+      // Load analytics sessions from JSON cache
+      const jsonCacheFile = '/home/runner/workspace/server/data/analytics-sessions.json';
+      
+      console.log('📊 Looking for analytics file at:', jsonCacheFile);
+      console.log('📊 File exists check:', fs.existsSync(jsonCacheFile));
+      
+      if (!fs.existsSync(jsonCacheFile)) {
+        console.log('📊 File not found, listing directory contents:');
+        try {
+          const dirContents = fs.readdirSync(path.join(process.cwd(), 'server', 'data'));
+          console.log('📊 Directory contents:', dirContents);
+        } catch (e) {
+          console.log('📊 Directory read error:', e);
+        }
+        return res.status(404).json({ error: 'No analytics data found for export' });
+      }
+      
+      const sessionsData = JSON.parse(fs.readFileSync(jsonCacheFile, 'utf8'));
+      console.log(`📊 Found ${sessionsData.length} sessions to export`);
+      
+      // Generate SQL INSERT statements
+      let sqlStatements = [];
+      
+      // Add header comment
+      sqlStatements.push('-- MEMOPYK Analytics Data Migration SQL Export');
+      sqlStatements.push(`-- Generated: ${new Date().toISOString()}`);
+      sqlStatements.push(`-- Total sessions: ${sessionsData.length}`);
+      sqlStatements.push('-- Tables: analytics_sessions, analytics_views');
+      sqlStatements.push('');
+      
+      // Analytics Sessions INSERT statements
+      sqlStatements.push('-- Analytics Sessions Data');
+      sqlStatements.push('INSERT INTO analytics_sessions (session_id, ip_address, user_agent, language, referrer, country_code, country_name, device_category, screen_resolution, timezone, first_seen_at, last_seen_at, session_duration, page_count, is_bounce, is_returning, is_test_data, created_at, updated_at) VALUES');
+      
+      const sessionInserts = [];
+      for (const session of sessionsData) {
+        const sessionId = session.session_id || session.sessionId;
+        const ipAddress = session.ip_address || session.clientIp || session.server_detected_ip;
+        const userAgent = session.user_agent || session.userAgent;
+        const language = session.language || session.server_detected_language;
+        const referrer = session.referrer || '';
+        const countryCode = session.country_code || session.countryCode || null;
+        const countryName = session.country_name || session.countryName || null;
+        const deviceCategory = session.device_category || session.deviceCategory || 'desktop';
+        const screenResolution = session.screen_resolution || session.screenResolution || '';
+        const timezone = session.timezone || 'UTC';
+        const firstSeenAt = session.first_seen_at || session.firstSeenAt || session.created_at || new Date().toISOString();
+        const lastSeenAt = session.last_seen_at || session.lastSeenAt || session.updated_at || firstSeenAt;
+        const sessionDuration = session.session_duration || session.sessionDuration || 0;
+        const pageCount = session.page_count || session.pageCount || 1;
+        const isBounce = session.is_bounce || session.isBounce || false;
+        const isReturning = session.is_returning || session.isReturning || false;
+        const isTestData = session.is_test_data || false;
+        const createdAt = session.created_at || firstSeenAt;
+        const updatedAt = session.updated_at || lastSeenAt;
+        
+        // Escape single quotes in strings
+        const escapeString = (str: any) => {
+          if (str === null || str === undefined) return 'NULL';
+          return "'" + String(str).replace(/'/g, "''") + "'";
+        };
+        
+        sessionInserts.push(
+          `(${escapeString(sessionId)}, ${escapeString(ipAddress)}, ${escapeString(userAgent)}, ${escapeString(language)}, ${escapeString(referrer)}, ${escapeString(countryCode)}, ${escapeString(countryName)}, ${escapeString(deviceCategory)}, ${escapeString(screenResolution)}, ${escapeString(timezone)}, ${escapeString(firstSeenAt)}, ${escapeString(lastSeenAt)}, ${sessionDuration}, ${pageCount}, ${isBounce}, ${isReturning}, ${isTestData}, ${escapeString(createdAt)}, ${escapeString(updatedAt)})`
+        );
+      }
+      
+      // Join all session inserts
+      sqlStatements.push(sessionInserts.join(',\n'));
+      sqlStatements.push('ON CONFLICT (session_id) DO NOTHING;');
+      sqlStatements.push('');
+      
+      // Analytics Views (derived from sessions)
+      sqlStatements.push('-- Analytics Views Data');
+      sqlStatements.push('INSERT INTO analytics_views (view_id, session_id, page_url, page_title, view_timestamp, time_on_page, is_bounce_view, referrer, language, created_at) VALUES');
+      
+      const viewInserts = [];
+      for (const session of sessionsData) {
+        const sessionId = session.session_id || session.sessionId;
+        const pageUrl = session.page_url || 'https://memopyk.com';
+        const viewTimestamp = session.first_seen_at || session.firstSeenAt || session.created_at || new Date().toISOString();
+        const timeOnPage = session.session_duration || session.sessionDuration || 0;
+        const isBounceView = session.is_bounce || session.isBounce || false;
+        const referrer = session.referrer || '';
+        const language = session.language || session.server_detected_language;
+        const createdAt = session.created_at || viewTimestamp;
+        
+        // Generate view_id from session_id
+        const viewId = sessionId + '_view_1';
+        
+        const escapeString = (str: any) => {
+          if (str === null || str === undefined) return 'NULL';
+          return "'" + String(str).replace(/'/g, "''") + "'";
+        };
+        
+        viewInserts.push(
+          `(${escapeString(viewId)}, ${escapeString(sessionId)}, ${escapeString(pageUrl)}, 'MEMOPYK - Memory Films', ${escapeString(viewTimestamp)}, ${timeOnPage}, ${isBounceView}, ${escapeString(referrer)}, ${escapeString(language)}, ${escapeString(createdAt)})`
+        );
+      }
+      
+      sqlStatements.push(viewInserts.join(',\n'));
+      sqlStatements.push('ON CONFLICT (view_id) DO NOTHING;');
+      sqlStatements.push('');
+      sqlStatements.push('-- Migration completed');
+      
+      // Send as downloadable SQL file
+      const sqlContent = sqlStatements.join('\n');
+      
+      res.setHeader('Content-Type', 'application/sql');
+      res.setHeader('Content-Disposition', `attachment; filename="memopyk_analytics_migration_${new Date().toISOString().split('T')[0]}.sql"`);
+      res.send(sqlContent);
+      
+      console.log(`✅ SQL export completed: ${sessionsData.length} sessions exported as SQL INSERT statements`);
+      
+    } catch (error: any) {
+      console.error('❌ SQL export failed:', error);
+      res.status(500).json({ error: 'SQL export failed', details: error.message });
+    }
+  });
+
   // Admin Routes
   app.use(adminCountryNames);
   
