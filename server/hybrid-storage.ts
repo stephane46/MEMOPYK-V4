@@ -3952,6 +3952,39 @@ Allow: /contact`;
     }
   }
 
+  // Helper function to check if visitor is returning using Supabase
+  async checkReturningVisitorSupabase(ipAddress: string): Promise<boolean> {
+    if (!ipAddress || ipAddress === '0.0.0.0') return false;
+    
+    try {
+      // Check Supabase for recent sessions (last 30 days)
+      const thirtyDaysAgo = new Date();
+      thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+      
+      const { data: existingSessions, error } = await this.supabase
+        .from('analytics_sessions')
+        .select('id')
+        .eq('ip_address', ipAddress)
+        .gte('created_at', thirtyDaysAgo.toISOString())
+        .limit(1);
+      
+      if (error) {
+        console.warn('⚠️ Supabase check for returning visitor failed:', error);
+        return false;
+      }
+      
+      if (existingSessions && existingSessions.length > 0) {
+        console.log(`🔄 Returning visitor detected (Supabase): IP ${ipAddress} has previous sessions`);
+        return true;
+      }
+    } catch (error) {
+      console.warn('⚠️ Supabase check for returning visitor failed:', error);
+    }
+    
+    console.log(`👤 New visitor (Supabase): IP ${ipAddress} has no previous sessions`);
+    return false;
+  }
+
   // Helper function to check if visitor is returning based on IP history
   async checkReturningVisitor(ipAddress: string): Promise<boolean> {
     if (!ipAddress || ipAddress === '0.0.0.0') return false;
@@ -4114,8 +4147,8 @@ Allow: /contact`;
     };
 
     try {
-      // Use PostgreSQL via Drizzle ORM first 
-      console.log('🔍 Analytics Session: Creating in PostgreSQL database...');
+      // Use Supabase client (same pattern as working gallery endpoints)
+      console.log('🔍 Analytics Session: Creating in Supabase database...');
       
       // Helper function to detect device category from user agent
       const detectDeviceCategory = (userAgent: string): string => {
@@ -4129,45 +4162,51 @@ Allow: /contact`;
         return 'desktop';
       };
 
-      // Check if this is a returning visitor (same IP in last 30 days)
-      const isReturningVisitor = await this.checkReturningVisitor(sessionData.ip_address || '0.0.0.0');
+      // Check if this is a returning visitor using Supabase
+      const isReturningVisitor = await this.checkReturningVisitorSupabase(sessionData.ip_address || '0.0.0.0');
 
       const sessionToInsert = {
-        sessionId: sessionData.session_id || `session_${Date.now()}`,
-        userId: sessionData.user_id || null,
-        ipAddress: sessionData.ip_address || '0.0.0.0',
-        userAgent: sessionData.user_agent || '',
+        session_id: sessionData.session_id || `session_${Date.now()}`,
+        user_id: sessionData.user_id || null,
+        ip_address: sessionData.ip_address || '0.0.0.0',
+        user_agent: sessionData.user_agent || '',
         referrer: sessionData.referrer || '',
         language: sessionData.language || 'en-US',
         // New schema fields populated from GA4 data sources
-        countryCode: iso2,    // NEW: ISO2 code from geolocation
-        countryName: countryName,  // NEW: Country name from geolocation
-        deviceCategory: detectDeviceCategory(sessionData.user_agent || ''), // NEW: Detected from user agent
-        screenResolution: sessionData.screen_resolution || '', // NEW: From frontend data
+        country_iso2: iso2,    // NEW: ISO2 code from geolocation
+        country_name: countryName,  // NEW: Country name from geolocation
+        device_category: detectDeviceCategory(sessionData.user_agent || ''), // NEW: Detected from user agent
+        screen_resolution: sessionData.screen_resolution || '', // NEW: From frontend data
         timezone: sessionData.timezone || 'UTC', // NEW: From frontend data
-        firstSeenAt: new Date(),
-        lastSeenAt: new Date(),
-        sessionDuration: 0, // NEW: Will be updated as session progresses
-        pageCount: 1, // NEW: Starts at 1, incremented on page views
-        isBounce: false, // NEW: Will be determined based on page count and duration
-        isReturning: isReturningVisitor, // NEW: Calculated from historical data
+        first_seen_at: new Date().toISOString(),
+        last_seen_at: new Date().toISOString(),
+        session_duration: 0, // NEW: Will be updated as session progresses
+        page_count: 1, // NEW: Starts at 1, incremented on page views
+        is_bounce: false, // NEW: Will be determined based on page count and duration
+        is_returning: isReturningVisitor, // NEW: Calculated from historical data
         // Legacy fields for backward compatibility
         country: countryName,
-        countryIso2: iso2,    // OLD: ISO2 code
-        countryIso3: iso3,    // OLD: ISO3 code
+        country_iso3: iso3,    // OLD: ISO3 code
         city: sessionData.city || 'Unknown',
-        pageViews: sessionData.page_views || 0,
-        isBot: sessionData.is_bot || false,
-        isTestData: sessionWithId.is_test_data
+        page_views: sessionData.page_views || 0,
+        is_bot: sessionData.is_bot || false,
+        is_test_data: sessionWithId.is_test_data,
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString()
       };
       
-      const [insertedSession] = await this.db
-        .insert(analyticsSessions)
-        .values(sessionToInsert)
-        .returning();
+      const { data: insertedSession, error } = await this.supabase
+        .from('analytics_sessions')
+        .insert(sessionToInsert)
+        .select()
+        .single();
+
+      if (error) {
+        throw new Error(`Supabase insert error: ${error.message}`);
+      }
 
       if (insertedSession) {
-        console.log('✅ Analytics Session: Created in PostgreSQL successfully');
+        console.log('✅ Analytics Session: Created in Supabase successfully');
         
         // Create compatible session object for JSON backup
         const sessionForJson = {
@@ -4195,7 +4234,7 @@ Allow: /contact`;
         return sessionForJson;
       }
     } catch (error) {
-      console.warn('⚠️ Analytics Session: PostgreSQL connection failed, using JSON fallback:', error);
+      console.warn('⚠️ Analytics Session: Supabase connection failed, using JSON fallback:', error);
     }
 
     // Fallback to JSON
