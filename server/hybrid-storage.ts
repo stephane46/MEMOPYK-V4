@@ -3621,6 +3621,12 @@ Allow: /contact`;
           .select('*')
           .gte('created_at', fromDate)
           .order('created_at', { ascending: false });
+        
+        // Add dateTo filter to the database query if provided
+        if (dateTo) {
+          const dateToEndOfDay = dateTo.includes('T') ? dateTo : dateTo + 'T23:59:59.999Z';
+          query = query.lte('created_at', dateToEndOfDay);
+        }
 
         const { data: dbSessions, error } = await query;
         
