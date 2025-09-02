@@ -317,21 +317,23 @@ export default function CleanGA4Analytics() {
         dateFrom = customDateFrom;
         dateTo = customDateTo;
       } else if (dateRange !== 'custom') {
-        // Calculate dates for preset ranges (1d = last 24 hours, 7d, 30d, 90d, etc.)
+        // Calculate dates for preset ranges (1d = today only in France timezone, 7d, 30d, 90d, etc.)
         const daysNum = parseInt(dateRange.replace('d', '')) || 90;
         const now = new Date();
-        const startDate = new Date();
         
         if (daysNum === 1) {
-          // For 1-day filter: show only last 24 hours (today only)
-          startDate.setDate(now.getDate()); // Same day
+          // For 1-day filter: show only today (from midnight France time until now)
+          const franceTime = new Date().toLocaleString("en-CA", { timeZone: "Europe/Paris" });
+          const todayInFrance = new Date(franceTime).toISOString().split('T')[0];
+          dateFrom = todayInFrance;
+          dateTo = todayInFrance;
         } else {
           // For other filters: show last N days including today
+          const startDate = new Date();
           startDate.setDate(now.getDate() - daysNum + 1); // Adjust to show exactly N days
+          dateFrom = startDate.toISOString().split('T')[0];
+          dateTo = now.toISOString().split('T')[0];
         }
-        
-        dateFrom = startDate.toISOString().split('T')[0];
-        dateTo = now.toISOString().split('T')[0];
       }
       
       if (dateFrom) params.append('dateFrom', dateFrom);
@@ -365,21 +367,23 @@ export default function CleanGA4Analytics() {
         dateFrom = customDateFrom;
         dateTo = customDateTo;
       } else if (dateRange !== 'custom') {
-        // Calculate dates for preset ranges (1d = last 24 hours, 7d, 30d, 90d, etc.)
+        // Calculate dates for preset ranges (1d = today only in France timezone, 7d, 30d, 90d, etc.)
         const daysNum = parseInt(dateRange.replace('d', '')) || 90;
         const now = new Date();
-        const startDate = new Date();
         
         if (daysNum === 1) {
-          // For 1-day filter: show only last 24 hours (today only)
-          startDate.setDate(now.getDate()); // Same day
+          // For 1-day filter: show only today (from midnight France time until now)
+          const franceTime = new Date().toLocaleString("en-CA", { timeZone: "Europe/Paris" });
+          const todayInFrance = new Date(franceTime).toISOString().split('T')[0];
+          dateFrom = todayInFrance;
+          dateTo = todayInFrance;
         } else {
           // For other filters: show last N days including today
+          const startDate = new Date();
           startDate.setDate(now.getDate() - daysNum + 1); // Adjust to show exactly N days
+          dateFrom = startDate.toISOString().split('T')[0];
+          dateTo = now.toISOString().split('T')[0];
         }
-        
-        dateFrom = startDate.toISOString().split('T')[0];
-        dateTo = now.toISOString().split('T')[0];
       }
       
       if (dateFrom) params.append('dateFrom', dateFrom);
