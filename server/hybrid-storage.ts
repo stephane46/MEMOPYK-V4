@@ -3664,11 +3664,6 @@ Allow: /contact`;
             console.log(`🚫 IP FILTER: Excluded ${beforeFiltering - filtered.length} sessions from ${excludedIpsList.length} IPs`);
           }
 
-          if (dateTo) {
-            // Add end-of-day time to dateTo to include all records from that day
-            const dateToEndOfDay = dateTo.includes('T') ? dateTo : dateTo + 'T23:59:59.999Z';
-            filtered = filtered.filter((session: any) => session.created_at <= dateToEndOfDay);
-          }
           if (language) {
             filtered = filtered.filter((session: any) => session.language === language);
           }
