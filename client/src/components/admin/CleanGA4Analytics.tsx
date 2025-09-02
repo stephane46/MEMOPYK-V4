@@ -306,8 +306,31 @@ export default function CleanGA4Analytics() {
     setIsLoadingVisitors(true);
     setVisitorsError(null);
     try {
-      console.log('🚀 MODAL: Fetching recent visitors with skipEnrichment=true');
-      const response = await fetch('/api/analytics/recent-visitors?skipEnrichment=true');
+      // Pass current date filters to modal for consistent data
+      const params = new URLSearchParams({ skipEnrichment: 'true' });
+      
+      let dateFrom: string | undefined;
+      let dateTo: string | undefined;
+      
+      if (dateRange === 'custom' && customDateFrom && customDateTo) {
+        dateFrom = customDateFrom;
+        dateTo = customDateTo;
+      } else if (dateRange !== 'custom') {
+        // Calculate dates for preset ranges (7d, 30d, 90d, etc.)
+        const daysNum = parseInt(dateRange.replace('d', '')) || 90;
+        const now = new Date();
+        const startDate = new Date();
+        startDate.setDate(now.getDate() - daysNum + 1); // +1 to include today
+        
+        dateFrom = startDate.toISOString().split('T')[0];
+        dateTo = now.toISOString().split('T')[0];
+      }
+      
+      if (dateFrom) params.append('dateFrom', dateFrom);
+      if (dateTo) params.append('dateTo', dateTo);
+      
+      console.log('🚀 MODAL: Fetching recent visitors with date filters:', { dateRange, dateFrom, dateTo });
+      const response = await fetch(`/api/analytics/recent-visitors?${params.toString()}`);
       if (!response.ok) {
         throw new Error(`HTTP ${response.status}: ${response.statusText}`);
       }
@@ -324,8 +347,31 @@ export default function CleanGA4Analytics() {
 
   const fetchReturningVisitors = async () => {
     try {
-      console.log('🚀 RETURNING MODAL: Fetching returning visitors');
-      const response = await fetch('/api/analytics/returning-visitors');
+      // Pass current date filters to returning visitors modal for consistent data
+      const params = new URLSearchParams();
+      
+      let dateFrom: string | undefined;
+      let dateTo: string | undefined;
+      
+      if (dateRange === 'custom' && customDateFrom && customDateTo) {
+        dateFrom = customDateFrom;
+        dateTo = customDateTo;
+      } else if (dateRange !== 'custom') {
+        // Calculate dates for preset ranges (7d, 30d, 90d, etc.)
+        const daysNum = parseInt(dateRange.replace('d', '')) || 90;
+        const now = new Date();
+        const startDate = new Date();
+        startDate.setDate(now.getDate() - daysNum + 1); // +1 to include today
+        
+        dateFrom = startDate.toISOString().split('T')[0];
+        dateTo = now.toISOString().split('T')[0];
+      }
+      
+      if (dateFrom) params.append('dateFrom', dateFrom);
+      if (dateTo) params.append('dateTo', dateTo);
+      
+      console.log('🚀 RETURNING MODAL: Fetching returning visitors with date filters:', { dateRange, dateFrom, dateTo });
+      const response = await fetch(`/api/analytics/returning-visitors?${params.toString()}`);
       if (!response.ok) {
         throw new Error(`HTTP ${response.status}: ${response.statusText}`);
       }
