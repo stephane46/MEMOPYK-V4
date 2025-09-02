@@ -4318,7 +4318,12 @@ export async function registerRoutes(app: Express): Promise<void> {
         console.log(`🚫 CACHE BYPASSED for ${key}`);
       }
 
-      console.log(`📊 GA4 KPIs request: ${startDate} to ${endDate}, locale: ${locale}${nocache ? ' (cache bypassed)' : ''}`);
+      console.log(`📊 GA4 KPIs request: ${startDate} to ${endDate}, locale: ${locale}${nocache ? ' (cache bypassed)' : ''}`);      
+      
+      // Add 2-second timeout wrapper for GA4 API calls
+      const timeoutPromise = (name: string) => new Promise<never>((_, reject) => 
+        setTimeout(() => reject(new Error(`GA4 API timeout: ${name} took longer than 2 seconds`)), 2000)
+      );
 
       // Test each query individually to identify which is failing
       let plays = 0, completes = 0, totalWatch = 0, topLocale = { locale: "n/a", plays: 0 };
@@ -4349,7 +4354,7 @@ export async function registerRoutes(app: Express): Promise<void> {
       try {
         console.log('Testing qWatchTimeTotal...');
         // Pass the already-retrieved plays and completes data to avoid re-fetching
-        totalWatch = await qWatchTimeTotal(startDate, endDate, locale, plays, completes);
+        totalWatch = await Promise.race([qWatchTimeTotal(startDate, endDate, locale, plays, completes), timeoutPromise('qWatchTimeTotal')]);
         console.log(`✅ qWatchTimeTotal: ${totalWatch}`);
       } catch (e) {
         console.error('❌ qWatchTimeTotal failed:', (e as Error).message);
@@ -4361,7 +4366,7 @@ export async function registerRoutes(app: Express): Promise<void> {
 
       try {
         console.log('Testing qTopLanguages...');
-        topLocale = await qTopLanguages(startDate, endDate);
+        topLocale = await Promise.race([qTopLanguages(startDate, endDate), timeoutPromise('qTopLanguages')]);
         console.log(`✅ qTopLanguages:`, topLocale);
       } catch (e) {
         console.error('❌ qTopLanguages failed:', (e as Error).message);
@@ -5114,9 +5119,14 @@ export async function registerRoutes(app: Express): Promise<void> {
         }
       }
 
-      console.log(`📊 GA4 Top Videos request: ${startDate} to ${endDate}, locale: ${locale}${nocache ? ' (cache bypassed)' : ''}`);
+      console.log(`📊 GA4 Top Videos request: ${startDate} to ${endDate}, locale: ${locale}${nocache ? ' (cache bypassed)' : ''}`);      
+      
+      // Add 2-second timeout for GA4 API calls
+      const timeoutPromise = new Promise<never>((_, reject) => 
+        setTimeout(() => reject(new Error('GA4 API timeout: getTopVideosTable took longer than 2 seconds')), 2000)
+      );
 
-      const data = await getTopVideosTable(startDate, endDate, locale);
+      const data = await Promise.race([getTopVideosTable(startDate, endDate, locale), timeoutPromise]);
       
       // Store in both persistent and memory cache
       await setDbCache(key, data, 300);
@@ -5215,8 +5225,13 @@ export async function registerRoutes(app: Express): Promise<void> {
       }
 
       console.log(`📊 GA4 Realtime request${nocache ? ' (cache bypassed)' : ''}`);
+      
+      // Add 2-second timeout for GA4 API calls
+      const timeoutPromise = new Promise<never>((_, reject) => 
+        setTimeout(() => reject(new Error('GA4 API timeout: qRealtime took longer than 2 seconds')), 2000)
+      );
 
-      const data = await qRealtime();
+      const data = await Promise.race([qRealtime(), timeoutPromise]);
       
       // Store in both persistent and memory cache (30s for realtime)
       try {
