@@ -60,6 +60,14 @@ app.use((req, res, next) => {
   next();
 });
 
+// CRITICAL: GA4 API interception MUST be first, before any other middleware
+app.use((req, res, next) => {
+  if (req.path.startsWith("/api/ga4")) {
+    console.log(`🎯 GA4 API REQUEST INTERCEPTED: ${req.method} ${req.path}`);
+  }
+  next();
+});
+
 // Configure Express with large body limits for file uploads
 app.use(express.json({ limit: '5000mb' }));
 app.use(express.urlencoded({ 
@@ -179,14 +187,6 @@ app.use((req, res, next) => {
       timeout: 10000,
     });
 
-    // CRITICAL: Ensure GA4 API requests NEVER go to Vite proxy
-    app.use((req, res, next) => {
-      if (req.path.startsWith("/api/ga4")) {
-        console.log(`🎯 GA4 API REQUEST INTERCEPTED: ${req.method} ${req.path}`);
-        return next(); // Force GA4 requests to Express
-      }
-      next();
-    });
 
     // Proxy non-API requests to Vite dev server with error handling  
     app.use((req, res, next) => {
