@@ -267,6 +267,12 @@ export default function CleanGA4Analytics() {
   const [editingComment, setEditingComment] = useState<string | null>(null);
   const [tempComment, setTempComment] = useState('');
   
+  // Direct fetch state for modal data (avoiding React Query enabled pattern issues)
+  const [recentVisitors, setRecentVisitors] = useState<RecentVisitor[]>([]);
+  const [returningVisitors, setReturningVisitors] = useState<RecentVisitor[]>([]);
+  const [isLoadingVisitors, setIsLoadingVisitors] = useState(false);
+  const [visitorsError, setVisitorsError] = useState<Error | null>(null);
+  
   const queryClient = useQueryClient();
   const { toast } = useToast();
 
@@ -295,10 +301,11 @@ export default function CleanGA4Analytics() {
     refetchInterval: 5 * 60 * 1000, // 5 minutes auto-refresh
   });
 
-  // Fetch recent visitors for modal
-  const { data: recentVisitors, isLoading: isLoadingVisitors, error: visitorsError } = useQuery<RecentVisitor[]>({
-    queryKey: ['/api/analytics/recent-visitors', 'skipEnrichment'],
-    queryFn: async () => {
+  // Direct fetch functions for modal data (replacing problematic React Query enabled pattern)
+  const fetchRecentVisitors = async () => {
+    setIsLoadingVisitors(true);
+    setVisitorsError(null);
+    try {
       console.log('🚀 MODAL: Fetching recent visitors with skipEnrichment=true');
       const response = await fetch('/api/analytics/recent-visitors?skipEnrichment=true');
       if (!response.ok) {
@@ -306,20 +313,29 @@ export default function CleanGA4Analytics() {
       }
       const data = await response.json();
       console.log('✅ MODAL: Received visitors data:', data?.length || 0, 'visitors');
-      return data;
-    },
-    staleTime: 30000, // 30 seconds
-    refetchInterval: 60000, // 1 minute
-    enabled: isModalOpen, // Only fetch when modal is open
-  });
+      setRecentVisitors(data);
+    } catch (error) {
+      console.error('❌ MODAL: Error fetching recent visitors:', error);
+      setVisitorsError(error as Error);
+    } finally {
+      setIsLoadingVisitors(false);
+    }
+  };
 
-  // Fetch returning visitors for modal
-  const { data: returningVisitors } = useQuery<RecentVisitor[]>({
-    queryKey: ['/api/analytics/returning-visitors'],
-    staleTime: 30000, // 30 seconds
-    refetchInterval: 60000, // 1 minute
-    enabled: isReturningModalOpen, // Only fetch when modal is open
-  });
+  const fetchReturningVisitors = async () => {
+    try {
+      console.log('🚀 RETURNING MODAL: Fetching returning visitors');
+      const response = await fetch('/api/analytics/returning-visitors');
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+      }
+      const data = await response.json();
+      console.log('✅ RETURNING MODAL: Received visitors data:', data?.length || 0, 'visitors');
+      setReturningVisitors(data);
+    } catch (error) {
+      console.error('❌ RETURNING MODAL: Error fetching returning visitors:', error);
+    }
+  };
 
   // IP Management queries
   const { data: activeIps, isLoading: activeIpsLoading, refetch: refetchActiveIps } = useQuery<ActiveViewerIp[]>({
@@ -480,10 +496,16 @@ export default function CleanGA4Analytics() {
 
   const formatPercentage = (rate: number) => `${Math.round(rate * 100)}%`;
 
-  // Modal handling
-  const handleModalOpen = () => setIsModalOpen(true);
+  // Modal handling with data fetching
+  const handleModalOpen = () => {
+    setIsModalOpen(true);
+    fetchRecentVisitors(); // Fetch data when modal opens
+  };
   const handleModalClose = () => setIsModalOpen(false);
-  const handleReturningModalOpen = () => setIsReturningModalOpen(true);
+  const handleReturningModalOpen = () => {
+    setIsReturningModalOpen(true);
+    fetchReturningVisitors(); // Fetch data when modal opens
+  };
   const handleReturningModalClose = () => setIsReturningModalOpen(false);
 
   // ESC key handler for modals
