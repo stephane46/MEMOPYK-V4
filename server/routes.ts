@@ -2389,8 +2389,8 @@ export async function registerRoutes(app: Express): Promise<void> {
   // Recent Visitors - GET last 10 visitor details for flip card  
   app.get("/api/analytics/recent-visitors", async (req, res) => {
     try {
-      const { dateFrom, dateTo } = req.query;
-      console.log('👥 Recent Visitors: Fetching visitor details with date filters:', { dateFrom, dateTo });
+      const { dateFrom, dateTo, skipEnrichment } = req.query;
+      console.log('👥 Recent Visitors: Fetching visitor details with date filters:', { dateFrom, dateTo, skipEnrichment });
       
       // **REPLIT PREVIEW PRODUCTION ANALYTICS**
       const shouldIncludeProduction = process.env.NODE_ENV === 'production' || req.headers.host?.includes('replit');
@@ -2451,40 +2451,48 @@ export async function registerRoutes(app: Express): Promise<void> {
         .sort((a, b) => new Date(b.last_visit).getTime() - new Date(a.last_visit).getTime())
         .slice(0, 100); // Take last 100 visitors for extended history
 
-      // Enrich visitor data with location information from ipapi.co
-      const enrichedVisitors = await Promise.all(
-        recentVisitors.map(async (visitor) => {
-          const locationData = await locationService.getLocationData(visitor.ip_address);
-          if (locationData) {
-            // Update the session record with enriched location data if it was previously 'Unknown'
-            if (visitor.country === 'Unknown' || visitor.city === 'Unknown' || visitor.region === 'Unknown') {
-              try {
-                await hybridStorage.updateSessionLocation(visitor.ip_address, {
-                  country: locationData.country_name,
-                  region: locationData.region,
-                  city: locationData.city
-                });
-                console.log(`🌍 Location Update: Updated session location for IP ${visitor.ip_address}: ${locationData.city}, ${locationData.country_name}`);
-              } catch (error) {
-                console.error(`❌ Location Update: Failed to update session location for IP ${visitor.ip_address}:`, error);
+      // Conditionally enrich visitor data with location information from ipapi.co
+      let enrichedVisitors;
+      if (skipEnrichment === 'true') {
+        // Skip expensive location enrichment for modal requests
+        console.log(`⚡ Recent Visitors: Skipping location enrichment for fast modal response`);
+        enrichedVisitors = recentVisitors;
+      } else {
+        // Full enrichment for non-modal requests
+        enrichedVisitors = await Promise.all(
+          recentVisitors.map(async (visitor) => {
+            const locationData = await locationService.getLocationData(visitor.ip_address);
+            if (locationData) {
+              // Update the session record with enriched location data if it was previously 'Unknown'
+              if (visitor.country === 'Unknown' || visitor.city === 'Unknown' || visitor.region === 'Unknown') {
+                try {
+                  await hybridStorage.updateSessionLocation(visitor.ip_address, {
+                    country: locationData.country_name,
+                    region: locationData.region,
+                    city: locationData.city
+                  });
+                  console.log(`🌍 Location Update: Updated session location for IP ${visitor.ip_address}: ${locationData.city}, ${locationData.country_name}`);
+                } catch (error) {
+                  console.error(`❌ Location Update: Failed to update session location for IP ${visitor.ip_address}:`, error);
+                }
               }
+              
+              return {
+                ...visitor,
+                city: locationData.city,
+                region: locationData.region,
+                country: locationData.country_name,
+                country_code: locationData.country_code,
+                timezone: locationData.timezone,
+                organization: locationData.organization
+              };
             }
-            
-            return {
-              ...visitor,
-              city: locationData.city,
-              region: locationData.region,
-              country: locationData.country_name,
-              country_code: locationData.country_code,
-              timezone: locationData.timezone,
-              organization: locationData.organization
-            };
-          }
-          return visitor;
-        })
-      );
+            return visitor;
+          })
+        );
+      }
       
-      console.log(`✅ Recent Visitors: Found ${enrichedVisitors.length} unique visitors (enriched with location data)`);
+      console.log(`✅ Recent Visitors: Found ${enrichedVisitors.length} unique visitors ${skipEnrichment === 'true' ? '(fast mode - no enrichment)' : '(enriched with location data)'}`);
       res.json(enrichedVisitors);
     } catch (error) {
       console.error('❌ Recent Visitors: Error fetching visitor details:', error);
