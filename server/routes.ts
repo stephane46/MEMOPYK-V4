@@ -2107,6 +2107,28 @@ export async function registerRoutes(app: Express): Promise<void> {
 
       const session = await hybridStorage.createAnalyticsSession(sessionData);
       console.log(`✅ NEW SESSION CREATED: ${session.session_id} for IP ${finalIp}`);
+      
+      // GEOLOCATION ENRICHMENT: Add location data after session creation
+      if (finalIp && finalIp !== '127.0.0.1' && finalIp !== '::1') {
+        console.log(`🌍 LOCATION ENRICHMENT: Starting for IP ${finalIp}...`);
+        try {
+          const locationService = new LocationService(hybridStorage);
+          const locationData = await locationService.getLocationData(finalIp);
+          if (locationData) {
+            await hybridStorage.updateSessionLocation(finalIp, {
+              country: locationData.country,
+              region: locationData.region,
+              city: locationData.city
+            });
+            console.log(`✅ LOCATION ENRICHED: ${locationData.city}, ${locationData.country} for IP ${finalIp}`);
+          } else {
+            console.log(`⚠️ LOCATION ENRICHMENT: No data found for IP ${finalIp}`);
+          }
+        } catch (error) {
+          console.error(`❌ LOCATION ENRICHMENT: Failed for IP ${finalIp}:`, error);
+        }
+      }
+      
       res.json({ success: true, session });
     } catch (error) {
       console.error('❌ Analytics session error:', error);
