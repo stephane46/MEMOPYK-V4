@@ -2329,9 +2329,34 @@ export async function registerRoutes(app: Express): Promise<void> {
       // Conditionally enrich visitor data with location information from ipapi.co
       let enrichedVisitors;
       if (skipEnrichment === 'true') {
-        // Skip expensive location enrichment for modal requests
+        // Skip expensive location enrichment for modal requests, but check JSON fallback for existing location data
         console.log(`⚡ Recent Visitors: Skipping location enrichment for fast modal response`);
-        enrichedVisitors = recentVisitors;
+        
+        // Check JSON fallback for location data when database shows "Unknown"
+        enrichedVisitors = recentVisitors.map(visitor => {
+          if (visitor.country === 'Unknown' || visitor.city === 'Unknown') {
+            try {
+              // Try to get location data from JSON fallback (use direct file access since loadJsonFile is private)
+              const fs = require('fs');
+              const path = require('path');
+              const jsonPath = path.join(process.cwd(), 'server/data/analytics-sessions.json');
+              const jsonData = JSON.parse(fs.readFileSync(jsonPath, 'utf8'));
+              const matchingSession = jsonData.find((s: any) => s.ip_address === visitor.ip_address);
+              if (matchingSession && matchingSession.country && matchingSession.country !== 'Unknown') {
+                console.log(`📄 Using JSON fallback location for IP ${visitor.ip_address}: ${matchingSession.city}, ${matchingSession.country}`);
+                return {
+                  ...visitor,
+                  country: matchingSession.country,
+                  region: matchingSession.region || visitor.region,
+                  city: matchingSession.city
+                };
+              }
+            } catch (error) {
+              console.log(`⚠️ Could not read JSON fallback for IP ${visitor.ip_address}:`, error);
+            }
+          }
+          return visitor;
+        });
       } else {
         // Full enrichment for non-modal requests
         enrichedVisitors = await Promise.all(
