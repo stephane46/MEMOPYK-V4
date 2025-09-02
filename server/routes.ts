@@ -3016,112 +3016,80 @@ export async function registerRoutes(app: Express): Promise<void> {
     }
   });
 
-  // Geo Distribution Analytics - ISO-3 based with PostgreSQL filtering and comparison support
+  // Geo Distribution Analytics - Using hybrid storage instead of direct DB queries
   app.get("/api/analytics/geo", async (req, res) => {
     try {
-      const { compare, periodMode = "week" } = req.query as Record<string, string | undefined>;
-      const limit = Math.max(1, Math.min(parseInt(String(req.query.limit || "50"), 10) || 50, 500));
-      const iso3 = (req.query.countryIso3 as string | undefined)?.trim()?.toUpperCase();
+      console.log('🌍 Geo analytics request:', req.query);
+      
+      // Get sessions from hybrid storage (works with Supabase VPS + JSON fallback)
+      const sessions = await hybridStorage.getAnalyticsSessions(
+        req.query.from as string,
+        req.query.to as string,
+        req.query.lang as string
+      );
+      
+      if (!sessions || sessions.length === 0) {
+        console.log('🌍 No sessions found for geo analysis');
+        return res.json({ countries: [], cities: [] });
+      }
 
-      // Build WHERE against sessions table (alias s)
-      const baseSpec = {
-        alias: "s",
-        dateCol: "first_seen_at",
-        localeCol: "language",
-        refCol: "referrer",
-        deviceCol: "device_category",
-      } as const;
-
-      const sqlCountries = (whereSql: string, params: any[]) => ({
-        text: `
-          SELECT
-            s.country_iso3 AS iso3,
-            MAX(s.country) AS country_name,
-            COUNT(DISTINCT s.session_id) AS sessions,
-            COUNT(DISTINCT s.ip_address) AS visitors
-          FROM analytics_sessions s
-          ${whereSql}
-          GROUP BY s.country_iso3
-          HAVING s.country_iso3 IS NOT NULL
-          ORDER BY sessions DESC
-          LIMIT ${limit}
-        `,
-        values: params,
+      // Process sessions data for geo distribution
+      const countryMap = new Map();
+      const cityMap = new Map();
+      
+      sessions.forEach(session => {
+        const country = session.country || 'Unknown';
+        const city = session.city || 'Unknown';
+        const sessionId = session.session_id;
+        const ipAddress = session.ip_address;
+        
+        // Count countries
+        if (!countryMap.has(country)) {
+          countryMap.set(country, { 
+            country: country,
+            sessions: new Set(),
+            visitors: new Set()
+          });
+        }
+        countryMap.get(country).sessions.add(sessionId);
+        countryMap.get(country).visitors.add(ipAddress);
+        
+        // Count cities  
+        const cityKey = `${country}||${city}`;
+        if (!cityMap.has(cityKey)) {
+          cityMap.set(cityKey, {
+            country: country,
+            city: city, 
+            sessions: new Set(),
+            visitors: new Set()
+          });
+        }
+        cityMap.get(cityKey).sessions.add(sessionId);
+        cityMap.get(cityKey).visitors.add(ipAddress);
       });
 
-      const sqlCities = (whereSql: string, params: any[]) => ({
-        text: `
-          SELECT
-            s.country_iso3 AS iso3,
-            MAX(s.country) AS country_name,
-            s.city,
-            COUNT(DISTINCT s.session_id) AS sessions,
-            COUNT(DISTINCT s.ip_address) AS visitors
-          FROM analytics_sessions s
-          ${whereSql}
-          GROUP BY s.country_iso3, s.city
-          HAVING s.country_iso3 IS NOT NULL
-          ORDER BY sessions DESC
-          LIMIT ${Math.max(50, limit)}
-        `,
-        values: params,
-      });
+      // Convert to arrays and sort by session count
+      const countries = Array.from(countryMap.values())
+        .map(item => ({
+          country: item.country,
+          sessions: item.sessions.size,
+          visitors: item.visitors.size
+        }))
+        .sort((a, b) => b.sessions - a.sessions)
+        .slice(0, 50);
 
-      // Append iso3 filter to WHERE if provided
-      const addIso3 = (whereSql: string, params: any[]) => {
-        if (!iso3) return { whereSql, params };
-        const glue = whereSql ? " AND " : " WHERE ";
-        params.push(iso3);
-        return { whereSql: `${whereSql}${glue}s.country_iso3 = $${params.length}`, params };
-      };
+      const cities = Array.from(cityMap.values())
+        .map(item => ({
+          country: item.country,
+          city: item.city,
+          sessions: item.sessions.size,
+          visitors: item.visitors.size
+        }))
+        .sort((a, b) => b.sessions - a.sessions)
+        .slice(0, 50);
 
-      // Single-period mode
-      if (compare !== "period") {
-        // Build dynamic WHERE clauses for postgres.js  
-        let whereClause = ' WHERE s.is_test_data = false';
-        const queryParams: any[] = [];
-
-        if (req.query.from) {
-          queryParams.push(req.query.from);
-          whereClause += ` AND s.first_seen_at >= $${queryParams.length}::timestamp`;
-        }
-        if (req.query.to) {
-          queryParams.push(req.query.to);
-          whereClause += ` AND s.first_seen_at <= $${queryParams.length}::timestamp`;
-        }
-        if (req.query.lang) {
-          queryParams.push(req.query.lang);
-          whereClause += ` AND s.language = $${queryParams.length}`;
-        }
-        if (req.query.source) {
-          queryParams.push(`%${req.query.source}%`);
-          whereClause += ` AND s.referrer ILIKE $${queryParams.length}`;
-        }
-        if (req.query.device) {
-          queryParams.push(`%${req.query.device}%`);
-          whereClause += ` AND s.user_agent ILIKE $${queryParams.length}`;
-        }
-
-        // Countries query with localized names
-        const language = req.query.lang as string;
-        const countryNameCol = language?.startsWith('fr') ? 'cn.name_fr' : 'cn.name_en';
-        
-        const countriesQuery = `
-          SELECT
-            s.country_iso3 AS iso3,
-            COALESCE(${countryNameCol}, MAX(s.country)) AS country_name,
-            COUNT(DISTINCT s.session_id) AS sessions,
-            COUNT(DISTINCT s.ip_address) AS visitors
-          FROM analytics_sessions s
-          LEFT JOIN v_country_names cn ON s.country_iso3 = cn.iso3
-          ${whereClause}
-          GROUP BY s.country_iso3, ${countryNameCol}
-          HAVING s.country_iso3 IS NOT NULL
-          ORDER BY sessions DESC
-          LIMIT $${queryParams.length + 1}
-        `;
-        
-        const countries = await pool.unsafe(countriesQuery, [...queryParams, limit]);
+      console.log(`✅ Geo analytics: ${countries.length} countries, ${cities.length} cities from ${sessions.length} sessions`);
+      res.json({ countries, cities });
 
         // Cities query with potential ISO-3 filter
         let citiesWhere = whereClause;
