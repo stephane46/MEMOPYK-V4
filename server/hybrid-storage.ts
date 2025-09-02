@@ -3612,40 +3612,43 @@ Allow: /contact`;
 
     // For recent data (last 7 days), use JSON cache for speed
     if (isRecentQuery && !dateFrom?.startsWith('2024-')) { // Exclude obvious historical queries
-      console.log('📊 ANALYTICS SESSIONS: Using PostgreSQL for recent data (includes new sessions)');
+      console.log('📊 ANALYTICS SESSIONS: Using Supabase for recent data (includes new sessions)');
       try {
-        // Get sessions from PostgreSQL database
-        const dbSessions = await this.db
-          .select()
-          .from(analyticsSessions)
-          .where(
-            dateFrom 
-              ? gte(analyticsSessions.createdAt, new Date(dateFrom))
-              : gte(analyticsSessions.createdAt, sevenDaysAgo)
-          )
-          .orderBy(desc(analyticsSessions.createdAt));
+        // Get sessions from Supabase database
+        const fromDate = dateFrom ? new Date(dateFrom).toISOString() : sevenDaysAgo.toISOString();
+        let query = this.supabase
+          .from('analytics_sessions')
+          .select('*')
+          .gte('created_at', fromDate)
+          .order('created_at', { ascending: false });
 
-        if (dbSessions.length > 0) {
+        const { data: dbSessions, error } = await query;
+        
+        if (error) {
+          throw new Error(`Supabase query error: ${error.message}`);
+        }
+
+        if (dbSessions && dbSessions.length > 0) {
           // **REPLIT PREVIEW PRODUCTION ANALYTICS**
           // Include both development and production data when includeProduction is true
           let filtered = dbSessions
-            .filter((session: any) => includeProduction ? true : !session.isTestData)
+            .filter((session: any) => includeProduction ? true : !session.is_test_data)
             .map((session: any) => ({
               id: session.id,
-              session_id: session.sessionId,
-              user_id: session.userId,
-              ip_address: session.ipAddress,
-              user_agent: session.userAgent,
+              session_id: session.session_id,
+              user_id: session.user_id,
+              ip_address: session.ip_address,
+              user_agent: session.user_agent,
               referrer: session.referrer,
               language: session.language,
               country: session.country,
               city: session.city,
-              created_at: session.createdAt?.toISOString(),
-              ended_at: session.endedAt?.toISOString(),
+              created_at: session.created_at,
+              ended_at: session.ended_at,
               duration: session.duration,
-              page_views: session.pageViews,
-              is_bot: session.isBot,
-              is_test_data: session.isTestData
+              page_views: session.page_views,
+              is_bot: session.is_bot,
+              is_test_data: session.is_test_data
             }));
 
           // **IP EXCLUSION FILTER - RETROACTIVE HISTORICAL DATA FILTERING**
@@ -3664,11 +3667,11 @@ Allow: /contact`;
             filtered = filtered.filter((session: any) => session.language === language);
           }
 
-          console.log(`✅ POSTGRESQL: Found ${filtered.length} recent sessions`);
+          console.log(`✅ SUPABASE: Found ${filtered.length} recent sessions`);
           return filtered;
         }
       } catch (error) {
-        console.warn('⚠️ Analytics Sessions: PostgreSQL failed, falling back to JSON cache:', error);
+        console.warn('⚠️ Analytics Sessions: Supabase failed, falling back to JSON cache:', error);
       }
       
       // Fallback to JSON cache if PostgreSQL fails
@@ -4255,19 +4258,25 @@ Allow: /contact`;
     console.log(`📊 SESSION DURATION UPDATE: ${sessionId} → ${duration}s`);
     
     try {
-      // Update in PostgreSQL first
-      const [updatedSession] = await this.db
-        .update(analyticsSessions)
-        .set({ 
-          sessionDuration: duration, // NEW: Use sessionDuration field
-          lastSeenAt: new Date(), // NEW: Update last seen timestamp
-          duration: duration // Legacy field for backward compatibility
+      // Update in Supabase first
+      const { data: updatedSession, error } = await this.supabase
+        .from('analytics_sessions')
+        .update({
+          session_duration: duration, // NEW: Use session_duration field
+          last_seen_at: new Date().toISOString(), // NEW: Update last seen timestamp
+          duration: duration, // Legacy field for backward compatibility
+          updated_at: new Date().toISOString()
         })
-        .where(eq(analyticsSessions.sessionId, sessionId))
-        .returning();
+        .eq('session_id', sessionId)
+        .select()
+        .single();
+
+      if (error) {
+        throw new Error(`Supabase update error: ${error.message}`);
+      }
 
       if (updatedSession) {
-        console.log('✅ Session duration updated in PostgreSQL');
+        console.log('✅ Session duration updated in Supabase');
         
         // Update JSON backup
         const sessions = this.loadJsonFile('analytics-sessions.json');
@@ -4288,7 +4297,7 @@ Allow: /contact`;
         };
       }
     } catch (error) {
-      console.warn('⚠️ Session duration: PostgreSQL update failed, using JSON fallback:', error);
+      console.warn('⚠️ Session duration: Supabase update failed, using JSON fallback:', error);
     }
 
     // Fallback to JSON only
