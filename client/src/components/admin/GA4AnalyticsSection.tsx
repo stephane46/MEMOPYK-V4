@@ -59,13 +59,19 @@ export default function GA4AnalyticsSection() {
   const { data: ga4Kpis, isLoading: kpisLoading, error: kpisError, refetch: refetchKpis } = useQuery({
     queryKey: ['ga4-kpis', startDate, endDate, locale],
     queryFn: async () => {
-      const response = await fetch(
-        `/api/ga4/kpis?startDate=${startDate}&endDate=${endDate}&locale=${locale}`
-      );
+      console.log('🔍 Fetching GA4 KPIs:', { startDate, endDate, locale });
+      const url = `/api/ga4/kpis?startDate=${startDate}&endDate=${endDate}&locale=${locale}`;
+      console.log('🔍 KPIs URL:', url);
+      const response = await fetch(url);
+      console.log('🔍 KPIs Response:', response.status, response.statusText);
       if (!response.ok) {
-        throw new Error('Failed to fetch GA4 KPIs');
+        const errorText = await response.text();
+        console.error('🔍 KPIs Error Response:', errorText);
+        throw new Error(`Failed to fetch GA4 KPIs: ${response.status} ${errorText}`);
       }
-      return response.json();
+      const data = await response.json();
+      console.log('🔍 KPIs Data:', data);
+      return data;
     },
     staleTime: 5 * 60 * 1000, // 5 minutes
     enabled: !!(startDate && endDate)
@@ -75,13 +81,19 @@ export default function GA4AnalyticsSection() {
   const { data: ga4TopVideos, isLoading: videosLoading, refetch: refetchVideos } = useQuery({
     queryKey: ['ga4-top-videos', startDate, endDate, locale],
     queryFn: async () => {
-      const response = await fetch(
-        `/api/ga4/top-videos?startDate=${startDate}&endDate=${endDate}&locale=${locale}&limit=10`
-      );
+      console.log('🔍 Fetching GA4 Top Videos:', { startDate, endDate, locale });
+      const url = `/api/ga4/top-videos?startDate=${startDate}&endDate=${endDate}&locale=${locale}&limit=10`;
+      console.log('🔍 Top Videos URL:', url);
+      const response = await fetch(url);
+      console.log('🔍 Top Videos Response:', response.status, response.statusText);
       if (!response.ok) {
-        throw new Error('Failed to fetch GA4 top videos');
+        const errorText = await response.text();
+        console.error('🔍 Top Videos Error Response:', errorText);
+        throw new Error(`Failed to fetch GA4 top videos: ${response.status} ${errorText}`);
       }
-      return response.json();
+      const data = await response.json();
+      console.log('🔍 Top Videos Data:', data);
+      return data;
     },
     staleTime: 5 * 60 * 1000, // 5 minutes
     enabled: !!(startDate && endDate)
@@ -91,11 +103,17 @@ export default function GA4AnalyticsSection() {
   const { data: ga4Realtime, isLoading: realtimeLoading, refetch: refetchRealtime } = useQuery({
     queryKey: ['ga4-realtime'],
     queryFn: async () => {
+      console.log('🔍 Fetching GA4 Realtime data');
       const response = await fetch('/api/ga4/realtime');
+      console.log('🔍 Realtime Response:', response.status, response.statusText);
       if (!response.ok) {
-        throw new Error('Failed to fetch GA4 realtime data');
+        const errorText = await response.text();
+        console.error('🔍 Realtime Error Response:', errorText);
+        throw new Error(`Failed to fetch GA4 realtime data: ${response.status} ${errorText}`);
       }
-      return response.json();
+      const data = await response.json();
+      console.log('🔍 Realtime Data:', data);
+      return data;
     },
     staleTime: 1 * 60 * 1000, // 1 minute for realtime data
     refetchInterval: 60000 // Auto-refresh every minute
@@ -120,6 +138,7 @@ export default function GA4AnalyticsSection() {
     }
 
     if (kpisError) {
+      console.error('🔍 KPI Error:', kpisError);
       return <div className="p-4 text-red-500 text-sm">Error loading GA4 KPIs: {kpisError.message}</div>;
     }
 
