@@ -242,8 +242,8 @@ app.use((req, res, next) => {
   const port = parseInt(process.env.PORT || "5000", 10);
   
   // Set server timeout for production deployments
-  server.timeout = 30000; // 30 seconds timeout for requests
-  server.headersTimeout = 31000; // Slightly higher than server timeout
+  server.timeout = 120000; // 2 minutes timeout for requests (was 30s)
+  server.headersTimeout = 121000; // Slightly higher than server timeout
   server.keepAliveTimeout = 5000; // Keep alive timeout
   
   server.listen(port, "0.0.0.0", () => {

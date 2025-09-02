@@ -4309,7 +4309,7 @@ export async function registerRoutes(app: Express): Promise<void> {
         try {
           // Add timeout to prevent hanging cache operations
           const cacheTimeout = new Promise((_, reject) => 
-            setTimeout(() => reject(new Error('Cache timeout')), 2000)
+            setTimeout(() => reject(new Error('Cache timeout')), 500)
           );
           
           // Try memory cache first (faster)
@@ -5112,7 +5112,7 @@ export async function registerRoutes(app: Express): Promise<void> {
       if (!nocache) {
         try {
           const cacheTimeout = new Promise((_, reject) => 
-            setTimeout(() => reject(new Error('Cache timeout')), 2000)
+            setTimeout(() => reject(new Error('Cache timeout')), 500)
           );
           
           const memoryCached = getCache<any>(key);
@@ -5212,7 +5212,7 @@ export async function registerRoutes(app: Express): Promise<void> {
       if (!nocache) {
         try {
           const cacheTimeout = new Promise((_, reject) => 
-            setTimeout(() => reject(new Error('Cache timeout')), 2000)
+            setTimeout(() => reject(new Error('Cache timeout')), 500)
           );
           
           const memoryCached = getCache<any>(key);
