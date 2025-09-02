@@ -4862,8 +4862,48 @@ export async function registerRoutes(app: Express): Promise<void> {
 
 
 
-  // Comprehensive GA4 + Visitor Analytics endpoint
+  // Comprehensive Supabase VPS Analytics endpoint (consistent with recent visitors)
   app.get("/api/ga4/clean-comprehensive", async (req, res) => {
+    try {
+      const range = req.query.range as string || '7d';
+      
+      // Get visitor data from Supabase VPS to match recent visitors modal
+      const sessions = await hybridStorage.getAnalyticsSessions(
+        undefined, // dateFrom
+        undefined, // dateTo  
+        undefined, // filterLang
+        false      // includeProduction
+      );
+
+      // Count unique visitors from Supabase VPS (same source as recent visitors modal)
+      const uniqueVisitors = new Set(sessions.map((s: any) => s.ip_address || s.server_detected_ip)).size;
+      const totalViews = sessions.length;
+      
+      console.log(`✅ Clean GA4 Analytics: Using Supabase VPS data - ${uniqueVisitors} unique visitors from ${totalViews} sessions`);
+
+      // Return consistent data structure
+      res.json({
+        totalViews,
+        uniqueVisitors,
+        returnVisitors: sessions.filter((s: any) => s.is_returning).length,
+        averageSessionDuration: sessions.reduce((acc: number, s: any) => acc + (s.session_duration || 0), 0) / sessions.length || 0,
+        activeVisitors: sessions.filter((s: any) => {
+          const lastSeen = new Date(s.last_seen_at || s.updated_at);
+          const fiveMinutesAgo = new Date(Date.now() - 5 * 60 * 1000);
+          return lastSeen > fiveMinutesAgo;
+        }).length,
+        totalVideoStarts: 0, // Could be enhanced from video analytics
+        totalCompletions: 0,
+        uniqueVisitorsChange: 0, // Placeholder for now
+        totalViewsChange: 0
+      });
+      return;
+    } catch (error) {
+      console.error('❌ Clean GA4 Analytics error:', error);
+      // Fallback
+    }
+
+    // Original GA4 code (fallback)
     // Initialize variables at function scope
     let currentGA4Users = 0;
     let currentGA4PageViews = 0;
