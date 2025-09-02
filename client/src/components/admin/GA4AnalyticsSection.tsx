@@ -16,7 +16,10 @@ import { formatInt, formatSeconds, formatPercent } from '@/utils/format';
 import { apiRequest } from '@/lib/queryClient';
 
 // Helper function to format dates for GA4 API
-const formatDateForGA4 = (date: Date): string => {
+const formatDateForGA4 = (date: Date | string): string => {
+  if (typeof date === 'string') {
+    return date; // Assume it's already in YYYY-MM-DD format
+  }
   return date.toISOString().split('T')[0];
 };
 

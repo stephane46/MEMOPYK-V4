@@ -28862,8 +28862,8 @@
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-09-01T18:02:26.413Z",
-    "updated_at": "2025-09-02T11:44:23.057Z",
-    "duration": 1809228
+    "updated_at": "2025-09-02T12:57:23.095Z",
+    "duration": 1813608
   },
   {
     "id": "session_1756750716024_3z0pvbs5o",
@@ -32404,5 +32404,21 @@
     "country": "Unknown",
     "city": "Unknown",
     "updated_at": "2025-09-02T11:03:22.649Z"
+  },
+  {
+    "id": "1174e65b-ab8f-43c5-a6a2-3243be478099",
+    "referrer": "",
+    "language": "en-US",
+    "country": "Unknown",
+    "city": "Unknown",
+    "updated_at": "2025-09-02T12:08:06.520Z"
+  },
+  {
+    "id": "session_1756814906549_m56c3zfev",
+    "session_id": "ip_session_109_17_150_48",
+    "duration": 20,
+    "created_at": "2025-09-02T12:08:26.549Z",
+    "updated_at": "2025-09-02T12:08:26.549Z",
+    "is_test_data": false
   }
 ]
