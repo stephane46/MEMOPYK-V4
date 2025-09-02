@@ -3614,7 +3614,7 @@ Allow: /contact`;
     if (isRecentQuery && !dateFrom?.startsWith('2024-')) { // Exclude obvious historical queries
       console.log('📊 ANALYTICS SESSIONS: Using Supabase for recent data (includes new sessions)');
       try {
-        // Get sessions from Supabase database
+        // Get sessions from Supabase database - RESPECT USER'S DATE FILTER
         const fromDate = dateFrom ? new Date(dateFrom).toISOString() : sevenDaysAgo.toISOString();
         let query = this.supabase
           .from('analytics_sessions')
