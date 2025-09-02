@@ -4345,7 +4345,12 @@ export async function registerRoutes(app: Express): Promise<void> {
 
       try {
         console.log('Testing qPlays...');
-        plays = await qPlays(startDate, endDate, locale);
+        // Add timeout to prevent hanging - this is the root cause of frontend timeouts
+        const playsPromise = qPlays(startDate, endDate, locale);
+        const playsTimeout = new Promise<never>((_, reject) => 
+          setTimeout(() => reject(new Error('qPlays timeout after 5 seconds')), 5000)
+        );
+        plays = await Promise.race([playsPromise, playsTimeout]);
         console.log(`✅ qPlays: ${plays}`);
       } catch (e) {
         console.error('❌ qPlays failed:', (e as Error).message);
