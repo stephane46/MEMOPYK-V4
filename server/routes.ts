@@ -4623,10 +4623,28 @@ export async function registerRoutes(app: Express): Promise<void> {
     try {
       const range = req.query.range as string || '7d';
       
-      // Get visitor data from Supabase VPS to match recent visitors modal
+      console.log('📊 GA4 Clean Comprehensive request with range:', range);
+      
+      // Calculate date range from range parameter
+      let dateFrom: string | undefined;
+      let dateTo: string | undefined;
+      
+      if (range.endsWith('d')) {
+        const days = parseInt(range.replace('d', '')) || 7;
+        const now = new Date();
+        const startDate = new Date();
+        startDate.setDate(now.getDate() - days);
+        
+        dateFrom = startDate.toISOString().split('T')[0];
+        dateTo = now.toISOString().split('T')[0];
+        
+        console.log(`📊 GA4 Calculated date range from ${range}: ${dateFrom} to ${dateTo}`);
+      }
+      
+      // Get visitor data from Supabase VPS with proper date filtering
       const sessions = await hybridStorage.getAnalyticsSessions(
-        undefined, // dateFrom
-        undefined, // dateTo  
+        dateFrom, // Now properly calculated from range
+        dateTo,   // Now properly calculated from range  
         undefined, // filterLang
         false      // includeProduction
       );

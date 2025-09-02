@@ -28862,8 +28862,8 @@
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-09-01T18:02:26.413Z",
-    "updated_at": "2025-09-02T10:25:44.582Z",
-    "duration": 1804510
+    "updated_at": "2025-09-02T10:30:43.164Z",
+    "duration": 1804808
   },
   {
     "id": "session_1756750716024_3z0pvbs5o",
@@ -32372,5 +32372,13 @@
     "country": "Unknown",
     "city": "Unknown",
     "updated_at": "2025-09-02T10:25:09.541Z"
+  },
+  {
+    "id": "bb0361b6-20fa-4837-8c3d-376e397951e3",
+    "referrer": "https://365df2cf-1884-444c-a9e8-235602456363-00-37q39xpqlgvdy.janeway.replit.dev/__replco/workspace_iframe.html?initialPath=%2F&id=%3Arn6o%3A",
+    "language": "fr-FR",
+    "country": "Unknown",
+    "city": "Unknown",
+    "updated_at": "2025-09-02T10:30:12.796Z"
   }
 ]
