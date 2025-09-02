@@ -4302,21 +4302,35 @@ export async function registerRoutes(app: Express): Promise<void> {
 
       console.log(`🔍 GA4 KPIs REQUEST: ${startDate} to ${endDate}, locale: ${locale}, cache key: ${key}`);
 
-      // Check cache unless bypassed
+      // EMERGENCY FIX: Try cache with timeout to prevent hanging
       if (!nocache) {
         console.log(`🔍 Checking cache for key: ${key}`);
         
-        // Try persistent cache first, then memory cache
-        const dbCached = await getDbCache<any>(key);
-        if (dbCached) {
-          console.log(`✅ CACHE HIT (DB): Returning cached data for ${key}:`, JSON.stringify(dbCached, null, 2));
-          return res.json(dbCached);
-        }
-
-        const memoryCached = getCache<any>(key);
-        if (memoryCached) {
-          console.log(`✅ CACHE HIT (MEMORY): Returning cached data for ${key}:`, JSON.stringify(memoryCached, null, 2));
-          return res.json(memoryCached);
+        try {
+          // Add timeout to prevent hanging cache operations
+          const cacheTimeout = new Promise((_, reject) => 
+            setTimeout(() => reject(new Error('Cache timeout')), 2000)
+          );
+          
+          // Try memory cache first (faster)
+          const memoryCached = getCache<any>(key);
+          if (memoryCached) {
+            console.log(`✅ CACHE HIT (MEMORY): Returning cached data for ${key}`);
+            return res.json(memoryCached);
+          }
+          
+          // Try persistent cache with timeout
+          const dbCached = await Promise.race([
+            getDbCache<any>(key),
+            cacheTimeout
+          ]);
+          
+          if (dbCached) {
+            console.log(`✅ CACHE HIT (DB): Returning cached data for ${key}`);
+            return res.json(dbCached);
+          }
+        } catch (error) {
+          console.log(`⚠️ Cache operation failed, proceeding without cache:`, error.message);
         }
         
         console.log(`❌ CACHE MISS: No cached data found for ${key}`);
@@ -5094,14 +5108,25 @@ export async function registerRoutes(app: Express): Promise<void> {
       const { startDate, endDate, locale, nocache } = getParams(req);
       const key = k(`top:${startDate}:${endDate}:${locale}`);
 
-      // Check cache unless bypassed
+      // Check cache with timeout to prevent hanging
       if (!nocache) {
-        // Try persistent cache first, then memory cache
-        const dbCached = await getDbCache<any>(key);
-        if (dbCached) return res.json(dbCached);
-
-        const memoryCached = getCache<any>(key);
-        if (memoryCached) return res.json(memoryCached);
+        try {
+          const cacheTimeout = new Promise((_, reject) => 
+            setTimeout(() => reject(new Error('Cache timeout')), 2000)
+          );
+          
+          const memoryCached = getCache<any>(key);
+          if (memoryCached) return res.json(memoryCached);
+          
+          const dbCached = await Promise.race([
+            getDbCache<any>(key),
+            cacheTimeout
+          ]);
+          
+          if (dbCached) return res.json(dbCached);
+        } catch (error) {
+          console.log(`⚠️ Top videos cache failed, proceeding:`, error.message);
+        }
       }
 
       console.log(`📊 GA4 Top Videos request: ${startDate} to ${endDate}, locale: ${locale}${nocache ? ' (cache bypassed)' : ''}`);
@@ -5183,14 +5208,25 @@ export async function registerRoutes(app: Express): Promise<void> {
       const nocache = req.query.nocache === "1" || req.query.nocache === "true";
       const key = k('realtime');
 
-      // Check cache unless bypassed
+      // Check cache with timeout to prevent hanging
       if (!nocache) {
-        // Try persistent cache first, then memory cache
-        const dbCached = await getDbCache<any>(key);
-        if (dbCached) return res.json(dbCached);
-
-        const memoryCached = getCache<any>(key);
-        if (memoryCached) return res.json(memoryCached);
+        try {
+          const cacheTimeout = new Promise((_, reject) => 
+            setTimeout(() => reject(new Error('Cache timeout')), 2000)
+          );
+          
+          const memoryCached = getCache<any>(key);
+          if (memoryCached) return res.json(memoryCached);
+          
+          const dbCached = await Promise.race([
+            getDbCache<any>(key),
+            cacheTimeout
+          ]);
+          
+          if (dbCached) return res.json(dbCached);
+        } catch (error) {
+          console.log(`⚠️ Realtime cache failed, proceeding:`, error.message);
+        }
       }
 
       console.log(`📊 GA4 Realtime request${nocache ? ' (cache bypassed)' : ''}`);
