@@ -28,9 +28,9 @@ const localeFilter = (
 /* =============  KPI QUERIES  ============= */
 
 export async function qPlays(start: string, end: string, locale?: string) {
-  // Add timeout to prevent 52-second hangs from GA4 API
+  // Quick timeout to prevent hangs
   const timeoutPromise = new Promise<never>((_, reject) => 
-    setTimeout(() => reject(new Error('GA4 API timeout - qPlays took too long')), 8000)
+    setTimeout(() => reject(new Error('GA4 API timeout - qPlays took too long')), 2000)
   );
   
   const queryPromise = client.runReport({
