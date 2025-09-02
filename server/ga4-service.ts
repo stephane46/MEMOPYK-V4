@@ -28,7 +28,12 @@ const localeFilter = (
 /* =============  KPI QUERIES  ============= */
 
 export async function qPlays(start: string, end: string, locale?: string) {
-  const [res] = await client.runReport({
+  // Add timeout to prevent 52-second hangs from GA4 API
+  const timeoutPromise = new Promise<never>((_, reject) => 
+    setTimeout(() => reject(new Error('GA4 API timeout - qPlays took too long')), 8000)
+  );
+  
+  const queryPromise = client.runReport({
     property: PROPERTY,
     dateRanges: [range(start, end)],
     metrics: [{ name: "eventCount" }],
@@ -42,6 +47,7 @@ export async function qPlays(start: string, end: string, locale?: string) {
     }
   });
   
+  const [res] = await Promise.race([queryPromise, timeoutPromise]);
   const plays = Number(res.rows?.[0]?.metricValues?.[0]?.value ?? 0);
   return plays;
 }
