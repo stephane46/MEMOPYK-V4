@@ -563,6 +563,7 @@ export default function CleanGA4Analytics() {
 
   // Modal handling with data fetching
   const handleModalOpen = () => {
+    console.log('🔥 MODAL CLICKED: Opening recent visitors modal');
     setIsModalOpen(true);
     fetchRecentVisitors(); // Fetch data when modal opens
   };
