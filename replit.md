@@ -62,8 +62,9 @@ Modal styling: Requires solid white modal backgrounds with dark overlays for pro
 - **Bilingual Support**: Comprehensive French/English content management for UI, data, and SEO. Primary-language-first detection system.
 - **Modular API Design**: RESTful API for various content types (hero videos, gallery, FAQs, legal docs, analytics).
 - **Static Image Generation**: Automated Sharp-based cropping and generation of static images for gallery thumbnails upon upload.
-- **Real-time Analytics**: Backend system for tracking visitors, performance, and engagement with IP management, accurate session/view tracking, IP exclusion, and geolocation enrichment. Includes dual analytics (GA4 and local) operating independently.
-- **Google Analytics Integration**: Pattern A dual implementation with static HTML tag and React SPA tracking. GA4 tracking with manual page_view control, custom event tracking, and comprehensive user behavior analytics.
+- **Unified Analytics Architecture**: Comprehensive dual-stream analytics system combining direct Supabase tracking with automated GA4 BigQuery sync. Primary analytics dashboard loads instantly from Supabase tables (analytics_sessions, analytics_views, analytics_videos) with real-time accuracy. Secondary GA4 → BigQuery → Supabase pipeline enriches data daily with Google's advanced processing, demographics, and acquisition insights.
+- **Real-time Analytics**: Direct website tracking with IP management, accurate session/view tracking, IP exclusion, and geolocation enrichment. Instant dashboard loading with zero tolerance for slow queries.
+- **Google Analytics Integration**: Dual implementation with GA4 JavaScript tracking and automated BigQuery export sync. Daily scheduler (00:15 Paris time) processes GA4 BigQuery exports into Supabase for enriched analytics without performance impact.
 - **Bundle Optimization System**: Significant reduction in bundle size through dependency cleanup and removal of unused components.
 - **Direct Supabase Upload System**: Facilitates large file uploads bypassing deployment limits.
 - **SEO Management System**: Comprehensive interface for page-level meta tags, keywords, redirects, image SEO, and global settings. Fully integrated with hybrid storage (JSON ↔ Supabase sync) with audit logging.
