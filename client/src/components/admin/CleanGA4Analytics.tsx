@@ -306,8 +306,8 @@ export default function CleanGA4Analytics() {
     setIsLoadingVisitors(true);
     setVisitorsError(null);
     try {
-      // Pass current date filters to modal for consistent data
-      const params = new URLSearchParams({ skipEnrichment: 'true' });
+      // Pass current date filters to modal for consistent data  
+      const params = new URLSearchParams();
       
       let dateFrom: string | undefined;
       let dateTo: string | undefined;
