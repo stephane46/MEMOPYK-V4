@@ -3,7 +3,7 @@ import * as React from "react";
 import { GlobalFilterProvider } from "./GlobalFilterContext";
 import GlobalFilterBar from "./GlobalFilterBar";
 import ExportPdfControls from "./ExportPdfControls";
-import GA4AnalyticsSection from "./GA4AnalyticsSection";
+// GA4AnalyticsSection removed - all data now comes from Supabase only
 import AnalyticsDailyOverviewCard from "./AnalyticsDailyOverviewCard";
 import { AnalyticsVideoPerformanceCard } from "./AnalyticsVideoPerformanceCard";
 import AnalyticsCtaPerformanceCard from "./AnalyticsCtaPerformanceCard";
@@ -22,8 +22,7 @@ export function AnalyticsDashboard() {
         {/* NEW: Global filter bar */}
         <GlobalFilterBar />
 
-        {/* NEW: GA4 Analytics Section */}
-        <GA4AnalyticsSection />
+        {/* GA4 Analytics Section removed - all data now comes from Supabase only */}
 
         <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
           <div className="md:col-span-2 xl:col-span-2"><AnalyticsDailyOverviewCard /></div>
