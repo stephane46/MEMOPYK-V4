@@ -2342,11 +2342,11 @@ export async function registerRoutes(app: Express): Promise<void> {
               if (visitor.country === 'Unknown' || visitor.city === 'Unknown' || visitor.region === 'Unknown') {
                 try {
                   await hybridStorage.updateSessionLocation(visitor.ip_address, {
-                    country: locationData.country_name,
+                    country: locationData.country,
                     region: locationData.region,
                     city: locationData.city
                   });
-                  console.log(`🌍 Location Update: Updated session location for IP ${visitor.ip_address}: ${locationData.city}, ${locationData.country_name}`);
+                  console.log(`🌍 Location Update: Updated session location for IP ${visitor.ip_address}: ${locationData.city}, ${locationData.country}`);
                 } catch (error) {
                   console.error(`❌ Location Update: Failed to update session location for IP ${visitor.ip_address}:`, error);
                 }
@@ -2356,10 +2356,10 @@ export async function registerRoutes(app: Express): Promise<void> {
                 ...visitor,
                 city: locationData.city,
                 region: locationData.region,
-                country: locationData.country_name,
+                country: locationData.country,
                 country_code: locationData.country_code,
                 timezone: locationData.timezone,
-                organization: locationData.organization
+                organization: locationData.org
               };
             }
             return visitor;
