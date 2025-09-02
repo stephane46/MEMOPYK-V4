@@ -4302,35 +4302,15 @@ export async function registerRoutes(app: Express): Promise<void> {
 
       console.log(`🔍 GA4 KPIs REQUEST: ${startDate} to ${endDate}, locale: ${locale}, cache key: ${key}`);
 
-      // EMERGENCY FIX: Try cache with timeout to prevent hanging
+      // Simple cache check without timeout (faster and more stable)
       if (!nocache) {
         console.log(`🔍 Checking cache for key: ${key}`);
         
-        try {
-          // Add timeout to prevent hanging cache operations
-          const cacheTimeout = new Promise((_, reject) => 
-            setTimeout(() => reject(new Error('Cache timeout')), 500)
-          );
-          
-          // Try memory cache first (faster)
-          const memoryCached = getCache<any>(key);
-          if (memoryCached) {
-            console.log(`✅ CACHE HIT (MEMORY): Returning cached data for ${key}`);
-            return res.json(memoryCached);
-          }
-          
-          // Try persistent cache with timeout
-          const dbCached = await Promise.race([
-            getDbCache<any>(key),
-            cacheTimeout
-          ]);
-          
-          if (dbCached) {
-            console.log(`✅ CACHE HIT (DB): Returning cached data for ${key}`);
-            return res.json(dbCached);
-          }
-        } catch (error) {
-          console.log(`⚠️ Cache operation failed, proceeding without cache:`, error.message);
+        // Try memory cache first (faster)
+        const memoryCached = getCache<any>(key);
+        if (memoryCached) {
+          console.log(`✅ CACHE HIT (MEMORY): Returning cached data for ${key}`);
+          return res.json(memoryCached);
         }
         
         console.log(`❌ CACHE MISS: No cached data found for ${key}`);
