@@ -297,7 +297,8 @@ export default function CleanGA4Analytics() {
 
   // Fetch recent visitors for modal
   const { data: recentVisitors } = useQuery<RecentVisitor[]>({
-    queryKey: ['/api/analytics/recent-visitors?skipEnrichment=true'],
+    queryKey: ['/api/analytics/recent-visitors', 'skipEnrichment'],
+    queryFn: () => fetch('/api/analytics/recent-visitors?skipEnrichment=true').then(res => res.json()),
     staleTime: 30000, // 30 seconds
     refetchInterval: 60000, // 1 minute
     enabled: isModalOpen, // Only fetch when modal is open
