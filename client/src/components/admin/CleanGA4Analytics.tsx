@@ -1048,7 +1048,7 @@ export default function CleanGA4Analytics() {
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
-                {ga4Data.topVideos.map((video, index) => (
+                {ga4Data.topVideos?.map((video, index) => (
                   <div key={video.videoId} className="flex items-center space-x-4">
                     <div className="flex items-center justify-center w-8 h-8 bg-blue-100 dark:bg-blue-900 rounded-full">
                       <span className="text-sm font-bold text-blue-600 dark:text-blue-400">
@@ -1068,7 +1068,7 @@ export default function CleanGA4Analytics() {
                       </p>
                     </div>
                   </div>
-                ))}
+                )) || <p className="text-gray-500">No video data available</p>}
               </div>
             </CardContent>
           </Card>
