@@ -2765,8 +2765,7 @@ export async function registerRoutes(app: Express): Promise<void> {
         const { data: videoViews, error } = await hybridStorage.supabase
           .from('analytics_views')
           .select('*')
-          .not('video_id', 'is', null)
-          .eq('video_type', 'gallery');
+          .not('video_id', 'is', null);
 
         if (error) {
           console.warn('⚠️ Video performance: Supabase query failed, using empty data:', error);
@@ -2826,7 +2825,7 @@ export async function registerRoutes(app: Express): Promise<void> {
         const { data: ctaClicks, error } = await hybridStorage.supabase
           .from('analytics_views')
           .select('*')
-          .not('cta_id', 'is', null);
+          .eq('page_url', 'contact');
 
         if (error) {
           console.warn('⚠️ CTA performance: Supabase query failed, using empty data:', error);
@@ -2836,7 +2835,7 @@ export async function registerRoutes(app: Express): Promise<void> {
 
         // Process CTA performance data (real data from your Supabase VPS)
         const ctaSummary = ctaClicks?.reduce((acc: any, click: any) => {
-          const ctaId = click.cta_id;
+          const ctaId = click.page_url || 'contact-form';
           if (!acc[ctaId]) {
             acc[ctaId] = { cta_id: ctaId, total_clicks: 0, unique_users: new Set() };
           }

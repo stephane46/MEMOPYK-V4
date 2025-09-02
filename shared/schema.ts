@@ -331,6 +331,8 @@ export const analyticsViews = pgTable("analytics_views", {
   sessionId: text("session_id").notNull(),
   videoId: text("video_id"), // Made nullable to match migration
   videoTitle: text("video_title"),
+  videoType: text("video_type"), // Added for video performance analytics (e.g., "hero", "gallery")
+  ctaId: text("cta_id"), // Added for CTA performance analytics
   pageUrl: text("page_url"), // New field from migration
   pageTitle: text("page_title"), // New field from migration
   viewTimestamp: timestamp("view_timestamp"), // New field from migration
