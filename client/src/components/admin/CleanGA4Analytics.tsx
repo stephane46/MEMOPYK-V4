@@ -320,7 +320,7 @@ export default function CleanGA4Analytics() {
         const daysNum = parseInt(dateRange.replace('d', '')) || 90;
         const now = new Date();
         const startDate = new Date();
-        startDate.setDate(now.getDate() - daysNum + 1); // +1 to include today
+        startDate.setDate(now.getDate() - daysNum); // Show last N days including today
         
         dateFrom = startDate.toISOString().split('T')[0];
         dateTo = now.toISOString().split('T')[0];
@@ -361,7 +361,7 @@ export default function CleanGA4Analytics() {
         const daysNum = parseInt(dateRange.replace('d', '')) || 90;
         const now = new Date();
         const startDate = new Date();
-        startDate.setDate(now.getDate() - daysNum + 1); // +1 to include today
+        startDate.setDate(now.getDate() - daysNum); // Show last N days including today
         
         dateFrom = startDate.toISOString().split('T')[0];
         dateTo = now.toISOString().split('T')[0];
