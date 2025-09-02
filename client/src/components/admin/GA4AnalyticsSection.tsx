@@ -71,6 +71,7 @@ export default function GA4AnalyticsSection() {
   console.log('🔍 GA4 Component Debug:', { startDate, endDate, locale, filters });
   console.log('🔍 GA4 URL params:', new URLSearchParams(window.location.search).toString());
   console.log('🔍 GA4 Date range source: URL params exist?', !!(new URLSearchParams(window.location.search).get('start')));
+  console.log('🔍 GA4 Query Enabled Check:', !!(startDate && endDate), { startDate, endDate });
 
   // GA4 KPIs Query
   const { data: ga4Kpis, isLoading: kpisLoading, error: kpisError, refetch: refetchKpis } = useQuery({

@@ -65,14 +65,19 @@ export const useGA4VideoAnalytics = (params: UseGA4VideoAnalyticsParams) => {
   const kpisQuery = useQuery<GA4KPIsData>({
     queryKey: ['ga4-kpis', startDate, endDate, locale],
     queryFn: async () => {
+      console.log('🔍 GA4 KPIs Request URL:', `/api/ga4/kpis?startDate=${startDate}&endDate=${endDate}&locale=${locale}`);
       const response = await fetch(
         `/api/ga4/kpis?startDate=${startDate}&endDate=${endDate}&locale=${locale}`
       );
+      console.log('🔍 GA4 KPIs Response Status:', response.status, response.ok);
       if (!response.ok) {
         const error = await response.json();
+        console.log('🔍 GA4 KPIs Error Response:', error);
         throw new Error(error.error || 'Failed to fetch GA4 KPIs');
       }
-      return response.json();
+      const result = await response.json();
+      console.log('🔍 GA4 KPIs Success Response:', result);
+      return result;
     },
     staleTime: 5 * 60 * 1000, // 5 minutes
     enabled: !!(startDate && endDate)
@@ -82,14 +87,19 @@ export const useGA4VideoAnalytics = (params: UseGA4VideoAnalyticsParams) => {
   const topVideosQuery = useQuery<GA4TopVideosData>({
     queryKey: ['ga4-top-videos', startDate, endDate, locale],
     queryFn: async () => {
+      console.log('🔍 GA4 Top Videos Request URL:', `/api/ga4/top-videos?startDate=${startDate}&endDate=${endDate}&locale=${locale}&limit=10`);
       const response = await fetch(
         `/api/ga4/top-videos?startDate=${startDate}&endDate=${endDate}&locale=${locale}&limit=10`
       );
+      console.log('🔍 GA4 Top Videos Response Status:', response.status, response.ok);
       if (!response.ok) {
         const error = await response.json();
+        console.log('🔍 GA4 Top Videos Error Response:', error);
         throw new Error(error.error || 'Failed to fetch GA4 top videos');
       }
-      return response.json();
+      const result = await response.json();
+      console.log('🔍 GA4 Top Videos Success Response:', result);
+      return result;
     },
     staleTime: 5 * 60 * 1000, // 5 minutes
     enabled: !!(startDate && endDate)
@@ -163,6 +173,13 @@ export const useGA4VideoAnalytics = (params: UseGA4VideoAnalyticsParams) => {
   // Check if any query is loading
   const isLoading = kpisQuery.isLoading || topVideosQuery.isLoading || 
                    funnelQuery.isLoading || trendQuery.isLoading || realtimeQuery.isLoading;
+  
+  // Debug query states
+  console.log('🔍 GA4 Query States:', {
+    kpis: { isLoading: kpisQuery.isLoading, error: kpisQuery.error, data: !!kpisQuery.data, enabled: !!(startDate && endDate) },
+    topVideos: { isLoading: topVideosQuery.isLoading, error: topVideosQuery.error, data: !!topVideosQuery.data, enabled: !!(startDate && endDate) },
+    startDate, endDate, locale
+  });
 
   // Check if any query has an error
   const error = kpisQuery.error || topVideosQuery.error || 
