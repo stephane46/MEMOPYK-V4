@@ -52,6 +52,9 @@ export default function GA4AnalyticsSection() {
   const { startDate, endDate } = getDateRangeFromFilters(filters);
   const locale = filters.language || 'all';
 
+  // Debug logging
+  console.log('🔍 GA4 Component Debug:', { startDate, endDate, locale, filters });
+
   // GA4 KPIs Query
   const { data: ga4Kpis, isLoading: kpisLoading, error: kpisError, refetch: refetchKpis } = useQuery({
     queryKey: ['ga4-kpis', startDate, endDate, locale],
@@ -110,6 +113,8 @@ export default function GA4AnalyticsSection() {
 
   // KPI Cards Component
   const KpiCards = () => {
+    console.log('🔍 KPI Cards Debug:', { kpisLoading, ga4Kpis, kpisError });
+    
     if (kpisLoading || !ga4Kpis) {
       return <div className="p-4 text-gray-500 text-sm">Loading GA4 KPIs…</div>;
     }
