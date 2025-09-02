@@ -2264,26 +2264,20 @@ export async function registerRoutes(app: Express): Promise<void> {
   app.get("/api/analytics/recent-visitors", async (req, res) => {
     try {
       const { dateFrom, dateTo, skipEnrichment } = req.query;
-      console.log('👥 Recent Visitors: Fetching visitor details with date filters:', { dateFrom, dateTo, skipEnrichment });
       
-      // **REPLIT PREVIEW PRODUCTION ANALYTICS**
-      const shouldIncludeProduction = process.env.NODE_ENV === 'production' || req.headers.host?.includes('replit');
-      
-      console.log('👥 Recent Visitors: Fetching recent visitor data');
-      
-      // Get recent sessions from last 7 days (no restrictive date filtering)
+      // Get recent sessions from last 7 days
       const sessions = await hybridStorage.getAnalyticsSessions(
         undefined, // Get broader range for recent data
         undefined, // Get broader range for recent data 
-        undefined,
-        shouldIncludeProduction
+        undefined
       );
       
-      // Filter out invalid sessions only (no date filtering here)
+      // Apply same filtering logic as main analytics dashboard
       const realSessions = sessions.filter(session => {
-        return (shouldIncludeProduction ? true : !session.is_test_data) &&
+        return !session.is_test_data &&  // Same as main dashboard 
                session.ip_address && 
                session.ip_address !== '0.0.0.0' &&
+               session.ip_address !== '127.0.0.1' &&  // Exclude localhost like main dashboard
                session.ip_address !== null &&
                !session.session_id?.includes('anonymous');
       });
@@ -2333,13 +2327,13 @@ export async function registerRoutes(app: Express): Promise<void> {
           const visitDate = new Date(visitor.last_visit);
           
           if (dateFrom) {
-            const fromDate = new Date(dateFrom);
+            const fromDate = new Date(dateFrom as string);
             fromDate.setHours(0, 0, 0, 0); // Start of day
             if (visitDate < fromDate) return false;
           }
           
           if (dateTo) {
-            const toDate = new Date(dateTo);
+            const toDate = new Date(dateTo as string);
             if (visitDate > toDate) return false;
           }
           
