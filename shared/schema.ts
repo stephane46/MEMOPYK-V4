@@ -289,40 +289,63 @@ export const seoGlobalSettings = pgTable("seo_global_settings", {
   updatedAt: timestamp("updated_at").defaultNow()
 });
 
-// Analytics session tracking table
+// Analytics session tracking table - updated to match Supabase VPS schema
 export const analyticsSessions = pgTable("analytics_sessions", {
   id: uuid("id").primaryKey().defaultRandom(),
-  sessionId: text("session_id").notNull(),
+  sessionId: text("session_id").notNull().unique(),
   userId: text("user_id"),
   ipAddress: text("ip_address"),
   userAgent: text("user_agent"),
   referrer: text("referrer"),
   language: text("language"),
+  // Updated schema fields to match migration
+  countryCode: text("country_code"),
+  countryName: text("country_name"),
+  deviceCategory: text("device_category"),
+  screenResolution: text("screen_resolution"),
+  timezone: text("timezone"),
+  firstSeenAt: timestamp("first_seen_at"),
+  lastSeenAt: timestamp("last_seen_at"),
+  sessionDuration: integer("session_duration"), // in seconds
+  pageCount: integer("page_count").default(1),
+  isBounce: boolean("is_bounce").default(false),
+  isReturning: boolean("is_returning").default(false),
+  // Legacy fields for backward compatibility
   country: text("country"),
   countryIso2: text("country_iso2"), // ISO2 country code (e.g., FR, US, CA)
   countryIso3: text("country_iso3"), // ISO3 country code (e.g., FRA, USA, CAN)
   city: text("city"),
-  createdAt: timestamp("created_at").defaultNow(),
   endedAt: timestamp("ended_at"),
   duration: integer("duration"), // in seconds
   pageViews: integer("page_views").default(0),
   isBot: boolean("is_bot").default(false),
-  isTestData: boolean("is_test_data").default(false) // Flag to distinguish test data from real data
+  isTestData: boolean("is_test_data").default(false), // Flag to distinguish test data from real data
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow()
 });
 
-// Analytics video views table
+// Analytics video views table - updated to match Supabase VPS schema
 export const analyticsViews = pgTable("analytics_views", {
   id: uuid("id").primaryKey().defaultRandom(),
+  viewId: text("view_id").notNull().unique(), // New unique view identifier
   sessionId: text("session_id").notNull(),
-  videoId: text("video_id").notNull(),
+  videoId: text("video_id"), // Made nullable to match migration
   videoTitle: text("video_title"),
+  pageUrl: text("page_url"), // New field from migration
+  pageTitle: text("page_title"), // New field from migration
+  viewTimestamp: timestamp("view_timestamp"), // New field from migration
+  timeOnPage: integer("time_on_page"), // New field from migration
+  isBounceView: boolean("is_bounce_view").default(false), // New field from migration
+  referrer: text("referrer"), // New field from migration
+  language: text("language"), // New field from migration
+  // Legacy fields for backward compatibility
   viewDuration: integer("view_duration"), // in seconds
   completionPercentage: numeric("completion_percentage"),
   watchedToEnd: boolean("watched_to_end").default(false),
-  createdAt: timestamp("created_at").defaultNow(),
   ipAddress: text("ip_address"),
   userAgent: text("user_agent"),
-  isTestData: boolean("is_test_data").default(false) // Flag to distinguish test data from real data
+  isTestData: boolean("is_test_data").default(false), // Flag to distinguish test data from real data
+  createdAt: timestamp("created_at").defaultNow()
 });
 
 // Real-time visitor tracking table

@@ -3952,6 +3952,54 @@ Allow: /contact`;
     }
   }
 
+  // Helper function to check if visitor is returning based on IP history
+  async checkReturningVisitor(ipAddress: string): Promise<boolean> {
+    if (!ipAddress || ipAddress === '0.0.0.0') return false;
+    
+    try {
+      // Check PostgreSQL first for recent sessions (last 30 days)
+      const thirtyDaysAgo = new Date();
+      thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+      
+      const existingSessions = await this.db
+        .select()
+        .from(analyticsSessions)
+        .where(eq(analyticsSessions.ipAddress, ipAddress))
+        .where(gte(analyticsSessions.createdAt, thirtyDaysAgo))
+        .limit(1);
+      
+      if (existingSessions.length > 0) {
+        console.log(`🔄 Returning visitor detected: IP ${ipAddress} has previous sessions`);
+        return true;
+      }
+    } catch (error) {
+      console.warn('⚠️ PostgreSQL check for returning visitor failed, checking JSON fallback:', error);
+    }
+    
+    // Fallback to JSON data
+    try {
+      const sessions = this.loadJsonFile('analytics-sessions.json');
+      const thirtyDaysAgo = new Date();
+      thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+      
+      const hasRecentSession = sessions.some((session: any) => {
+        if (session.ip_address !== ipAddress) return false;
+        const sessionDate = new Date(session.created_at);
+        return sessionDate >= thirtyDaysAgo;
+      });
+      
+      if (hasRecentSession) {
+        console.log(`🔄 Returning visitor detected (JSON fallback): IP ${ipAddress} has previous sessions`);
+        return true;
+      }
+    } catch (error) {
+      console.warn('⚠️ JSON fallback check for returning visitor failed:', error);
+    }
+    
+    console.log(`👤 New visitor: IP ${ipAddress} has no previous sessions`);
+    return false;
+  }
+
   async createAnalyticsSession(sessionData: any): Promise<any> {
     // Helper function to determine if this is test data
     const isTestData = (data: any): boolean => {
@@ -4069,6 +4117,21 @@ Allow: /contact`;
       // Use PostgreSQL via Drizzle ORM first 
       console.log('🔍 Analytics Session: Creating in PostgreSQL database...');
       
+      // Helper function to detect device category from user agent
+      const detectDeviceCategory = (userAgent: string): string => {
+        const ua = userAgent.toLowerCase();
+        if (ua.includes('mobile') || ua.includes('android') || ua.includes('iphone')) {
+          return 'mobile';
+        }
+        if (ua.includes('tablet') || ua.includes('ipad')) {
+          return 'tablet';
+        }
+        return 'desktop';
+      };
+
+      // Check if this is a returning visitor (same IP in last 30 days)
+      const isReturningVisitor = await this.checkReturningVisitor(sessionData.ip_address || '0.0.0.0');
+
       const sessionToInsert = {
         sessionId: sessionData.session_id || `session_${Date.now()}`,
         userId: sessionData.user_id || null,
@@ -4076,9 +4139,22 @@ Allow: /contact`;
         userAgent: sessionData.user_agent || '',
         referrer: sessionData.referrer || '',
         language: sessionData.language || 'en-US',
+        // New schema fields populated from GA4 data sources
+        countryCode: iso2,    // NEW: ISO2 code from geolocation
+        countryName: countryName,  // NEW: Country name from geolocation
+        deviceCategory: detectDeviceCategory(sessionData.user_agent || ''), // NEW: Detected from user agent
+        screenResolution: sessionData.screen_resolution || '', // NEW: From frontend data
+        timezone: sessionData.timezone || 'UTC', // NEW: From frontend data
+        firstSeenAt: new Date(),
+        lastSeenAt: new Date(),
+        sessionDuration: 0, // NEW: Will be updated as session progresses
+        pageCount: 1, // NEW: Starts at 1, incremented on page views
+        isBounce: false, // NEW: Will be determined based on page count and duration
+        isReturning: isReturningVisitor, // NEW: Calculated from historical data
+        // Legacy fields for backward compatibility
         country: countryName,
-        countryIso2: iso2,    // NEW: ISO2 code
-        countryIso3: iso3,    // NEW: ISO3 code
+        countryIso2: iso2,    // OLD: ISO2 code
+        countryIso3: iso3,    // OLD: ISO3 code
         city: sessionData.city || 'Unknown',
         pageViews: sessionData.page_views || 0,
         isBot: sessionData.is_bot || false,
@@ -4144,7 +4220,9 @@ Allow: /contact`;
       const [updatedSession] = await this.db
         .update(analyticsSessions)
         .set({ 
-          duration: duration
+          sessionDuration: duration, // NEW: Use sessionDuration field
+          lastSeenAt: new Date(), // NEW: Update last seen timestamp
+          duration: duration // Legacy field for backward compatibility
         })
         .where(eq(analyticsSessions.sessionId, sessionId))
         .returning();
@@ -4312,31 +4390,64 @@ Allow: /contact`;
     };
 
     try {
-      // Try Supabase first
-      console.log('🔍 Analytics View: Creating in Supabase database...');
-      const { data, error } = await this.supabase
-        .from('analytics_views')
-        .insert(viewWithId)
-        .select()
-        .single();
+      // Use PostgreSQL via Drizzle ORM first
+      console.log('🔍 Analytics View: Creating in PostgreSQL database...');
+      
+      const viewToInsert = {
+        viewId: `view_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`, // NEW: Unique view ID
+        sessionId: viewData.session_id,
+        videoId: viewData.video_id || null, // NEW: Made nullable to match migration
+        videoTitle: viewData.video_title || '',
+        pageUrl: viewData.page_url || '', // NEW: Page URL field
+        pageTitle: viewData.page_title || '', // NEW: Page title field
+        viewTimestamp: new Date(), // NEW: View timestamp
+        timeOnPage: viewData.time_on_page || 0, // NEW: Time on page
+        isBounceView: false, // NEW: Bounce view flag
+        referrer: viewData.referrer || '', // NEW: Referrer field
+        language: viewData.language || 'en-US', // NEW: Language field
+        // Legacy fields for backward compatibility
+        viewDuration: viewData.watch_time || 0,
+        completionPercentage: viewData.completion_rate ? viewData.completion_rate.toString() : '0',
+        watchedToEnd: (viewData.completion_rate || 0) >= 80,
+        ipAddress: viewData.ip_address || '0.0.0.0',
+        userAgent: viewData.user_agent || '',
+        isTestData: isTestData(viewData)
+      };
+      
+      const [insertedView] = await this.db
+        .insert(analyticsViews)
+        .values(viewToInsert)
+        .returning();
 
-      if (error) {
-        console.error('⚠️ Analytics View: Supabase insert error:', error);
-        throw error;
-      }
-
-      if (data) {
-        console.log('✅ Analytics View: Created in Supabase successfully');
+      if (insertedView) {
+        console.log('✅ Analytics View: Created in PostgreSQL successfully');
+        
+        // Create compatible view object for JSON backup
+        const viewForJson = {
+          id: insertedView.id,
+          view_id: insertedView.viewId,
+          session_id: insertedView.sessionId,
+          video_id: insertedView.videoId,
+          video_title: insertedView.videoTitle,
+          watch_time: insertedView.viewDuration,
+          completion_rate: parseFloat(insertedView.completionPercentage || '0'),
+          ip_address: insertedView.ipAddress,
+          user_agent: insertedView.userAgent,
+          language: insertedView.language,
+          is_test_data: insertedView.isTestData,
+          created_at: insertedView.createdAt?.toISOString(),
+          updated_at: new Date().toISOString()
+        };
         
         // Update JSON backup
         const views = this.loadJsonFile('analytics-views.json');
-        views.push(data);
+        views.push(viewForJson);
         this.saveJsonFile('analytics-views.json', views);
         
-        return data;
+        return viewForJson;
       }
     } catch (error) {
-      console.warn('⚠️ Analytics View: Supabase connection failed, using JSON fallback:', error);
+      console.warn('⚠️ Analytics View: PostgreSQL connection failed, using JSON fallback:', error);
     }
 
     // Fallback to JSON
