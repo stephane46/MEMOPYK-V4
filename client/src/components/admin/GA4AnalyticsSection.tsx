@@ -73,109 +73,23 @@ export default function GA4AnalyticsSection() {
   console.log('🔍 GA4 Date range source: URL params exist?', !!(new URLSearchParams(window.location.search).get('start')));
   console.log('🔍 GA4 Query Enabled Check:', !!(startDate && endDate), { startDate, endDate });
 
-  // GA4 KPIs Query
+  // GA4 KPIs Query - use standard queryClient pattern that works for other API calls
   const { data: ga4Kpis, isLoading: kpisLoading, error: kpisError, refetch: refetchKpis } = useQuery({
-    queryKey: ['ga4-kpis', startDate, endDate, locale],
-    queryFn: async () => {
-      console.log('🔍 Fetching GA4 KPIs:', { startDate, endDate, locale });
-      const url = `/api/ga4/kpis?startDate=${startDate}&endDate=${endDate}&locale=${locale}`;
-      console.log('🔍 KPIs URL:', url);
-      
-      // Add timeout to prevent hanging
-      const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 10000); // 10 second timeout
-      
-      try {
-        const response = await fetch(url, { signal: controller.signal });
-        clearTimeout(timeoutId);
-        console.log('🔍 KPIs Response:', response.status, response.statusText);
-        if (!response.ok) {
-          const errorText = await response.text();
-          console.error('🔍 KPIs Error Response:', errorText);
-          throw new Error(`Failed to fetch GA4 KPIs: ${response.status} ${errorText}`);
-        }
-        const data = await response.json();
-        console.log('🔍 KPIs Data:', data);
-        return data;
-      } catch (error) {
-        clearTimeout(timeoutId);
-        if (error instanceof Error && error.name === 'AbortError') {
-          console.error('🔍 KPIs request timed out after 10 seconds');
-          throw new Error('Request timed out - check server connection');
-        }
-        throw error;
-      }
-    },
+    queryKey: [`/api/ga4/kpis?startDate=${startDate}&endDate=${endDate}&locale=${locale}`],
     staleTime: 5 * 60 * 1000, // 5 minutes
     enabled: true // Force enable to bypass date validation
   });
 
-  // GA4 Top Videos Query  
+  // GA4 Top Videos Query - use standard queryClient pattern that works for other API calls
   const { data: ga4TopVideos, isLoading: videosLoading, refetch: refetchVideos } = useQuery({
-    queryKey: ['ga4-top-videos', startDate, endDate, locale],
-    queryFn: async () => {
-      console.log('🔍 Fetching GA4 Top Videos:', { startDate, endDate, locale });
-      const url = `/api/ga4/top-videos?startDate=${startDate}&endDate=${endDate}&locale=${locale}&limit=10`;
-      console.log('🔍 Top Videos URL:', url);
-      
-      const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 10000);
-      
-      try {
-        const response = await fetch(url, { signal: controller.signal });
-        clearTimeout(timeoutId);
-        console.log('🔍 Top Videos Response:', response.status, response.statusText);
-        if (!response.ok) {
-          const errorText = await response.text();
-          console.error('🔍 Top Videos Error Response:', errorText);
-          throw new Error(`Failed to fetch GA4 top videos: ${response.status} ${errorText}`);
-        }
-        const data = await response.json();
-        console.log('🔍 Top Videos Data:', data);
-        return data;
-      } catch (error) {
-        clearTimeout(timeoutId);
-        if (error instanceof Error && error.name === 'AbortError') {
-          console.error('🔍 Top Videos request timed out after 10 seconds');
-          throw new Error('Request timed out - check server connection');
-        }
-        throw error;
-      }
-    },
+    queryKey: [`/api/ga4/top-videos?startDate=${startDate}&endDate=${endDate}&locale=${locale}&limit=10`],
     staleTime: 5 * 60 * 1000, // 5 minutes
     enabled: true // Force enable to bypass date validation
   });
 
-  // GA4 Realtime Query
+  // GA4 Realtime Query - use standard queryClient pattern that works for other API calls
   const { data: ga4Realtime, isLoading: realtimeLoading, refetch: refetchRealtime } = useQuery({
-    queryKey: ['ga4-realtime'],
-    queryFn: async () => {
-      console.log('🔍 Fetching GA4 Realtime data');
-      
-      const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 10000);
-      
-      try {
-        const response = await fetch('/api/ga4/realtime', { signal: controller.signal });
-        clearTimeout(timeoutId);
-        console.log('🔍 Realtime Response:', response.status, response.statusText);
-        if (!response.ok) {
-          const errorText = await response.text();
-          console.error('🔍 Realtime Error Response:', errorText);
-          throw new Error(`Failed to fetch GA4 realtime data: ${response.status} ${errorText}`);
-        }
-        const data = await response.json();
-        console.log('🔍 Realtime Data:', data);
-        return data;
-      } catch (error) {
-        clearTimeout(timeoutId);
-        if (error instanceof Error && error.name === 'AbortError') {
-          console.error('🔍 Realtime request timed out after 10 seconds');
-          throw new Error('Request timed out - check server connection');
-        }
-        throw error;
-      }
-    },
+    queryKey: ['/api/ga4/realtime'],
     staleTime: 1 * 60 * 1000, // 1 minute for realtime data
     refetchInterval: 60000 // Auto-refresh every minute
   });
