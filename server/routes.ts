@@ -2900,84 +2900,55 @@ export async function registerRoutes(app: Express): Promise<void> {
       const daysNum = parseInt(days as string || '30');
       console.log(`📊 Video performance analytics request for ${daysNum} days with filters:`, { from, to, lang, source, device });
       
-      // For now, return mock data structure that matches the expected format
-      // This will be replaced with actual analytics_video_performance view query
-      const mockData = [
-        {
-          video_id: "PomGalleryC.mp4",
-          video_title: "Pom Gallery",
-          starts: 52,
-          completed_90: 21,
-          avg_watch_time: 61.2,
-          median_watch_time: 55,
-          pct_0: 52,
-          pct_10: 47,
-          pct_20: 44,
-          pct_30: 40,
-          pct_40: 37,
-          pct_50: 33,
-          pct_60: 29,
-          pct_70: 26,
-          pct_80: 23,
-          pct_90: 21,
-          pct_100: 19,
-          sec_60: 40,
-          sec_120: 28,
-          sec_180: 20,
-          sec_240: 12,
-          sec_300: 8
-        },
-        {
-          video_id: "VitaminSeaC.mp4",
-          video_title: "Vitamin Sea",
-          starts: 38,
-          completed_90: 15,
-          avg_watch_time: 45.8,
-          median_watch_time: 42,
-          pct_0: 38,
-          pct_10: 35,
-          pct_20: 32,
-          pct_30: 28,
-          pct_40: 25,
-          pct_50: 22,
-          pct_60: 19,
-          pct_70: 17,
-          pct_80: 16,
-          pct_90: 15,
-          pct_100: 13,
-          sec_60: 28,
-          sec_120: 18,
-          sec_180: 12,
-          sec_240: 8,
-          sec_300: 5
-        },
-        {
-          video_id: "safari-1.mp4",
-          video_title: "Safari Adventure",
-          starts: 29,
-          completed_90: 11,
-          avg_watch_time: 38.4,
-          median_watch_time: 35,
-          pct_0: 29,
-          pct_10: 26,
-          pct_20: 23,
-          pct_30: 20,
-          pct_40: 18,
-          pct_50: 16,
-          pct_60: 14,
-          pct_70: 13,
-          pct_80: 12,
-          pct_90: 11,
-          pct_100: 9,
-          sec_60: 20,
-          sec_120: 14,
-          sec_180: 9,
-          sec_240: 6,
-          sec_300: 3
+      // Query real video performance data from Supabase VPS
+      try {
+        const { data: videoViews, error } = await hybridStorage.supabase
+          .from('analytics_views')
+          .select('*')
+          .not('video_id', 'is', null)
+          .eq('video_type', 'gallery');
+
+        if (error) {
+          console.warn('⚠️ Video performance: Supabase query failed, using empty data:', error);
+          res.json([]);
+          return;
         }
-      ];
-      
-      res.json(mockData);
+
+        // Process video performance data (real data from your Supabase VPS)
+        const videoPerformance = videoViews?.reduce((acc: any, view: any) => {
+          const videoId = view.video_id;
+          if (!acc[videoId]) {
+            acc[videoId] = {
+              video_id: videoId,
+              video_title: videoId.replace('.mp4', '').replace('Gallery', ' Gallery'),
+              starts: 0,
+              completed_90: 0,
+              total_watch_time: 0,
+              view_count: 0
+            };
+          }
+          acc[videoId].starts++;
+          acc[videoId].view_count++;
+          const watchTime = parseInt(view.watch_time || view.duration_watched || '0');
+          acc[videoId].total_watch_time += watchTime;
+          if (watchTime >= (view.video_duration || 60) * 0.9) {
+            acc[videoId].completed_90++;
+          }
+          return acc;
+        }, {});
+
+        const realData = Object.values(videoPerformance || {}).map((video: any) => ({
+          ...video,
+          avg_watch_time: video.view_count > 0 ? video.total_watch_time / video.view_count : 0,
+          completion_rate: video.starts > 0 ? (video.completed_90 / video.starts * 100) : 0
+        }));
+
+        console.log(`✅ Video performance: Retrieved ${realData.length} videos from Supabase VPS`);
+        res.json(realData);
+      } catch (error) {
+        console.warn('⚠️ Video performance: Database query failed, returning empty data:', error);
+        res.json([]);
+      }
     } catch (error) {
       console.error('❌ Video performance analytics error:', error);
       res.status(500).json({ error: "Failed to get video performance data" });
@@ -2990,27 +2961,47 @@ export async function registerRoutes(app: Express): Promise<void> {
       const { from, to, lang, source, device } = req.query;
       console.log('📊 CTA performance analytics request with filters:', { from, to, lang, source, device });
       
-      // Mock data structure for CTA performance
-      const mockData = {
-        summary: [
-          { cta_id: "contact", total_clicks: 24, unique_users: 20 },
-          { cta_id: "book_call", total_clicks: 18, unique_users: 15 },
-          { cta_id: "learn_more", total_clicks: 12, unique_users: 11 },
-          { cta_id: "get_started", total_clicks: 8, unique_users: 7 }
-        ],
-        by_page: [
-          { cta_id: "contact", page_path: "/fr-FR", clicks: 12, impressions: 120, ctr: 0.10 },
-          { cta_id: "contact", page_path: "/en-US", clicks: 8, impressions: 95, ctr: 0.084 },
-          { cta_id: "book_call", page_path: "/fr-FR", clicks: 10, impressions: 120, ctr: 0.083 },
-          { cta_id: "book_call", page_path: "/en-US", clicks: 6, impressions: 95, ctr: 0.063 },
-          { cta_id: "learn_more", page_path: "/fr-FR", clicks: 7, impressions: 120, ctr: 0.058 },
-          { cta_id: "learn_more", page_path: "/en-US", clicks: 4, impressions: 95, ctr: 0.042 },
-          { cta_id: "get_started", page_path: "/fr-FR", clicks: 5, impressions: 120, ctr: 0.042 },
-          { cta_id: "get_started", page_path: "/en-US", clicks: 2, impressions: 95, ctr: 0.021 }
-        ]
-      };
-      
-      res.json(mockData);
+      // Query real CTA performance data from Supabase VPS
+      try {
+        const { data: ctaClicks, error } = await hybridStorage.supabase
+          .from('analytics_views')
+          .select('*')
+          .not('cta_id', 'is', null);
+
+        if (error) {
+          console.warn('⚠️ CTA performance: Supabase query failed, using empty data:', error);
+          res.json({ summary: [], by_page: [] });
+          return;
+        }
+
+        // Process CTA performance data (real data from your Supabase VPS)
+        const ctaSummary = ctaClicks?.reduce((acc: any, click: any) => {
+          const ctaId = click.cta_id;
+          if (!acc[ctaId]) {
+            acc[ctaId] = { cta_id: ctaId, total_clicks: 0, unique_users: new Set() };
+          }
+          acc[ctaId].total_clicks++;
+          if (click.session_id) {
+            acc[ctaId].unique_users.add(click.session_id);
+          }
+          return acc;
+        }, {});
+
+        const summaryData = Object.values(ctaSummary || {}).map((cta: any) => ({
+          cta_id: cta.cta_id,
+          total_clicks: cta.total_clicks,
+          unique_users: cta.unique_users.size
+        }));
+
+        console.log(`✅ CTA performance: Retrieved ${summaryData.length} CTAs from Supabase VPS`);
+        res.json({ 
+          summary: summaryData,
+          by_page: [] // Could be enhanced later if needed
+        });
+      } catch (error) {
+        console.warn('⚠️ CTA performance: Database query failed, returning empty data:', error);
+        res.json({ summary: [], by_page: [] });
+      }
     } catch (error) {
       console.error('❌ CTA performance analytics error:', error);
       res.status(500).json({ error: "Failed to get CTA performance data" });
