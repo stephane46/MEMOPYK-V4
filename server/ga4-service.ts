@@ -122,6 +122,22 @@ export async function qWatchTimeTotal(start: string, end: string, locale?: strin
   return Math.round(totalWatchTime);
 }
 
+export async function qAverageSessionDuration(start: string, end: string, locale?: string) {
+  console.log(`🎯 qAverageSessionDuration CALLED: ${start} to ${end}, locale: ${locale || 'all'} - GA4 fallback metric`);
+  
+  const [res] = await client.runReport({
+    property: PROPERTY,
+    dateRanges: [{ startDate: start, endDate: end }],
+    metrics: [{ name: "averageSessionDuration" }],
+    ...(localeFilter(locale) ? { dimensionFilter: localeFilter(locale) } : {})
+  });
+
+  const avgDuration = Number(res.rows?.[0]?.metricValues?.[0]?.value || 0);
+  console.log(`🎯 qAverageSessionDuration RESULT: ${Math.round(avgDuration)} seconds (GA4 averageSessionDuration)`);
+  
+  return Math.round(avgDuration);
+}
+
 export async function qTopLanguages(start: string, end: string) {
   console.log(`🎯 qTopLanguages CALLED: ${start} to ${end} - Using browser language preferences`);
   

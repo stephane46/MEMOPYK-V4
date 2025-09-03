@@ -19,6 +19,7 @@ import {
   qPlays,
   qCompletes,
   qWatchTimeTotal,
+  qAverageSessionDuration,
   qTopLanguages,
   qTopReferrers,
   qSiteLanguageChoice,
@@ -4791,31 +4792,55 @@ export async function registerRoutes(app: Express): Promise<void> {
       
       // Fetch current period KPIs
       console.log('📊 Fetching current period KPIs...');
-      const [currentSessions, currentPlays, currentCompletes, currentWatchTime] = await Promise.all([
+      const [currentSessions, currentPlays, currentCompletes, currentWatchTime, currentSessionDuration] = await Promise.all([
         qPlays(startDate, endDate), // Using plays as sessions for now
         qPlays(startDate, endDate),
         qCompletes(startDate, endDate),
-        qWatchTimeTotal(startDate, endDate)
+        qWatchTimeTotal(startDate, endDate),
+        qAverageSessionDuration(startDate, endDate)
       ]);
       
-      console.log(`✅ Current period: sessions=${currentSessions}, plays=${currentPlays}, completes=${currentCompletes}, watchTime=${currentWatchTime}s`);
+      console.log(`✅ Current period: sessions=${currentSessions}, plays=${currentPlays}, completes=${currentCompletes}, watchTime=${currentWatchTime}s, sessionDuration=${currentSessionDuration}s`);
       
       // Fetch comparison period KPIs
       console.log('📊 Fetching comparison period KPIs...');
-      const [compareSessions, comparePlays, compareCompletes, compareWatchTime] = await Promise.all([
+      const [compareSessions, comparePlays, compareCompletes, compareWatchTime, compareSessionDuration] = await Promise.all([
         qPlays(compareStartDate, compareEndDate),
         qPlays(compareStartDate, compareEndDate),
         qCompletes(compareStartDate, compareEndDate),
-        qWatchTimeTotal(compareStartDate, compareEndDate)
+        qWatchTimeTotal(compareStartDate, compareEndDate),
+        qAverageSessionDuration(compareStartDate, compareEndDate)
       ]);
       
-      console.log(`✅ Compare period: sessions=${compareSessions}, plays=${comparePlays}, completes=${compareCompletes}, watchTime=${compareWatchTime}s`);
+      console.log(`✅ Compare period: sessions=${compareSessions}, plays=${comparePlays}, completes=${compareCompletes}, watchTime=${compareWatchTime}s, sessionDuration=${compareSessionDuration}s`);
       
-      // Calculate metrics
-      const avgWatchTimeSec = currentPlays > 0 ? Math.round(currentWatchTime / currentPlays) : 0;
+      // Calculate robust avgWatchTimeSec with fallback
+      let avgWatchTimeSec: number;
+      let avgWatchTimeSource: 'custom' | 'sessionDuration';
+      
+      if (currentWatchTime > 0 && currentPlays > 0) {
+        avgWatchTimeSec = Math.round(currentWatchTime / currentPlays);
+        avgWatchTimeSource = 'custom';
+        console.log(`📊 Using custom watch_time_seconds: ${avgWatchTimeSec}s (${currentWatchTime}s total / ${currentPlays} plays)`);
+      } else {
+        avgWatchTimeSec = currentSessionDuration;
+        avgWatchTimeSource = 'sessionDuration';
+        console.log(`📊 Fallback to averageSessionDuration: ${avgWatchTimeSec}s (custom metric returned 0)`);
+      }
+      
+      // Same logic for comparison period
+      let compareAvgWatchTimeSec: number;
+      let compareAvgWatchTimeSource: 'custom' | 'sessionDuration';
+      
+      if (compareWatchTime > 0 && comparePlays > 0) {
+        compareAvgWatchTimeSec = Math.round(compareWatchTime / comparePlays);
+        compareAvgWatchTimeSource = 'custom';
+      } else {
+        compareAvgWatchTimeSec = compareSessionDuration;
+        compareAvgWatchTimeSource = 'sessionDuration';
+      }
+      
       const completionRatePct = currentPlays > 0 ? Math.round((currentCompletes / currentPlays) * 100) : 0;
-      
-      const compareAvgWatchTimeSec = comparePlays > 0 ? Math.round(compareWatchTime / comparePlays) : 0;
       const compareCompletionRatePct = comparePlays > 0 ? Math.round((compareCompletes / comparePlays) * 100) : 0;
       
       // Generate sparkline data
@@ -4844,12 +4869,15 @@ export async function registerRoutes(app: Express): Promise<void> {
           current: { from: startDate, to: endDate },
           previous: { from: compareStartDate, to: compareEndDate }
         },
+        avgWatchTimeSource,
+        compareAvgWatchTimeSource,
         cached: false,
         timestamp: new Date().toISOString()
       };
       
       console.log(`✅ GA4 Report generated successfully for ${cacheKey}`);
       console.log(`📊 Final KPIs: sessions=${currentSessions}, plays=${currentPlays}, avgWatch=${avgWatchTimeSec}s, completion=${completionRatePct}%`);
+      console.log(`📊 avgWatchTimeSource: ${avgWatchTimeSource}, compareAvgWatchTimeSource: ${compareAvgWatchTimeSource}`);
       
       // Cache for 60 seconds
       setCache(cacheKey, { ...response, cached: true }, 60);
