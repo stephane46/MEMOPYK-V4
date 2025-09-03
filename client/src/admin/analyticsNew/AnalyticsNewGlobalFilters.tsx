@@ -60,11 +60,7 @@ export const AnalyticsNewGlobalFilters: React.FC<AnalyticsNewGlobalFiltersProps>
                 variant={datePreset === preset.key ? "default" : "outline"}
                 size="sm"
                 onClick={() => setDatePreset(preset.key)}
-                className={`${
-                  datePreset === preset.key 
-                    ? 'analytics-new-filter-active' 
-                    : 'analytics-new-button-secondary'
-                }`}
+                className={datePreset === preset.key ? 'seo-language-btn-active' : 'seo-language-btn-inactive'}
                 data-testid={`filter-preset-${preset.key}`}
               >
                 {preset.label}
@@ -100,7 +96,7 @@ export const AnalyticsNewGlobalFilters: React.FC<AnalyticsNewGlobalFiltersProps>
                 <Button 
                   variant="outline" 
                   size="sm"
-                  className="analytics-new-button-secondary"
+                  className="seo-language-btn-inactive"
                   data-testid="filter-more-trigger"
                 >
                   <Filter className="h-4 w-4 mr-1" />
