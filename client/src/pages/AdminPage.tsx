@@ -10,6 +10,7 @@ import { Switch } from '@/components/ui/switch';
 import { Badge } from '@/components/ui/badge';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { ArrowUp, ArrowDown, Play, RefreshCw, BarChart3, Video, HardDrive, Users, MessageSquare, FileText, LogOut, TestTube, Rocket, X, Type, Save, ChevronUp, ChevronDown, Trash2, Eye, EyeOff, Upload, FileVideo, Database, Check, Zap, Search, Clock, TrendingUp, Globe, Sparkles, Layers } from 'lucide-react';
+import { AnalyticsNewDashboard } from '@/admin/analyticsNew/AnalyticsNewDashboard';
 import { formatFrenchDateTime } from '@/utils/date-format';
 import { useToast } from '@/hooks/use-toast';
 import GalleryManagementNew from '@/components/admin/GalleryManagementNew';
@@ -241,6 +242,7 @@ export default function AdminPage() {
     { id: 'analytics', label: 'Analytics (old)', icon: BarChart3 },
     { id: 'analytics-ga', label: '(Analytics GA)', icon: TrendingUp },
     { id: 'analytics-ga-clean', label: 'Analytics', icon: Sparkles },
+    { id: 'analytics-new', label: 'Analytics New', icon: Layers },
     { id: 'cache-management', label: 'Cache GA4', icon: Database },
     { id: 'tests', label: 'Tests', icon: TestTube },
     { id: 'deployment', label: 'Déploiement', icon: Rocket },
@@ -1232,6 +1234,11 @@ export default function AdminPage() {
           {/* New Analytics Dashboard */}
           {activeSection === 'analytics-ga-clean' && (
             <AnalyticsDashboard />
+          )}
+
+          {/* Analytics New Dashboard */}
+          {activeSection === 'analytics-new' && (
+            <AnalyticsNewDashboard />
           )}
 
           {/* Gallery */}

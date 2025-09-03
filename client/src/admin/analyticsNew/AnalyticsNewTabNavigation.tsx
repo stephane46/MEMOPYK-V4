@@ -1,0 +1,177 @@
+import React from 'react';
+import { Link, useLocation } from 'wouter';
+import {
+  BarChart3,
+  Eye,
+  Video,
+  Globe,
+  MousePointer,
+  TrendingUp,
+  Activity,
+  AlertTriangle,
+} from 'lucide-react';
+import { cn } from '@/lib/utils';
+import './analyticsNew.tokens.css';
+
+export interface AnalyticsNewTab {
+  id: string;
+  label: string;
+  path: string;
+  icon: React.ComponentType<{ className?: string }>;
+  description: string;
+}
+
+export const ANALYTICS_NEW_TABS: AnalyticsNewTab[] = [
+  {
+    id: 'overview',
+    label: 'Overview',
+    path: '/admin/analytics-new',
+    icon: BarChart3,
+    description: 'Key metrics and performance summary',
+  },
+  {
+    id: 'live-view',
+    label: 'Live View',
+    path: '/admin/analytics-new/live-view',
+    icon: Eye,
+    description: 'Real-time visitor activity',
+  },
+  {
+    id: 'video',
+    label: 'Video',
+    path: '/admin/analytics-new/video',
+    icon: Video,
+    description: 'Video performance and engagement',
+  },
+  {
+    id: 'geo',
+    label: 'Geo',
+    path: '/admin/analytics-new/geo',
+    icon: Globe,
+    description: 'Geographic visitor distribution',
+  },
+  {
+    id: 'cta',
+    label: 'CTA',
+    path: '/admin/analytics-new/cta',
+    icon: MousePointer,
+    description: 'Call-to-action performance',
+  },
+  {
+    id: 'trends',
+    label: 'Trends',
+    path: '/admin/analytics-new/trends',
+    icon: TrendingUp,
+    description: 'Time-series analytics',
+  },
+  {
+    id: 'clarity',
+    label: 'Clarity',
+    path: '/admin/analytics-new/clarity',
+    icon: Activity,
+    description: 'Microsoft Clarity insights',
+  },
+  {
+    id: 'fallback',
+    label: 'Fallback',
+    path: '/admin/analytics-new/fallback',
+    icon: AlertTriangle,
+    description: 'Error handling and diagnostics',
+  },
+];
+
+interface AnalyticsNewTabNavigationProps {
+  className?: string;
+}
+
+export const AnalyticsNewTabNavigation: React.FC<AnalyticsNewTabNavigationProps> = ({ 
+  className = '' 
+}) => {
+  const [location] = useLocation();
+
+  const isActiveTab = (tabPath: string) => {
+    if (tabPath === '/admin/analytics-new') {
+      return location === '/admin/analytics-new' || location === '/admin/analytics-new/';
+    }
+    return location.startsWith(tabPath);
+  };
+
+  return (
+    <div className={`analytics-new-container ${className}`}>
+      {/* Desktop Navigation */}
+      <div className="hidden md:block">
+        <nav className="bg-white border border-gray-200 rounded-lg shadow-sm">
+          <div className="flex overflow-x-auto">
+            {ANALYTICS_NEW_TABS.map((tab) => {
+              const Icon = tab.icon;
+              const isActive = isActiveTab(tab.path);
+              
+              return (
+                <Link
+                  key={tab.id}
+                  href={tab.path}
+                  className={cn(
+                    'flex items-center px-4 py-3 text-sm font-medium whitespace-nowrap border-b-2 transition-colors',
+                    isActive
+                      ? 'border-[var(--analytics-new-accent)] text-[var(--analytics-new-accent)] bg-[var(--analytics-new-surface)]'
+                      : 'border-transparent text-gray-600 hover:text-gray-900 hover:border-gray-300'
+                  )}
+                  data-testid={`tab-${tab.id}`}
+                >
+                  <Icon className="h-4 w-4 mr-2" />
+                  {tab.label}
+                </Link>
+              );
+            })}
+          </div>
+        </nav>
+      </div>
+
+      {/* Mobile Navigation */}
+      <div className="md:hidden">
+        <nav className="bg-white border border-gray-200 rounded-lg shadow-sm">
+          <div className="grid grid-cols-2 gap-1 p-2">
+            {ANALYTICS_NEW_TABS.map((tab) => {
+              const Icon = tab.icon;
+              const isActive = isActiveTab(tab.path);
+              
+              return (
+                <Link
+                  key={tab.id}
+                  href={tab.path}
+                  className={cn(
+                    'flex flex-col items-center p-3 rounded-md text-xs font-medium transition-colors',
+                    isActive
+                      ? 'bg-[var(--analytics-new-accent)] text-white'
+                      : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
+                  )}
+                  data-testid={`tab-mobile-${tab.id}`}
+                >
+                  <Icon className="h-5 w-5 mb-1" />
+                  <span className="text-center leading-tight">{tab.label}</span>
+                </Link>
+              );
+            })}
+          </div>
+        </nav>
+      </div>
+
+      {/* Tab Description */}
+      <div className="mt-2">
+        {ANALYTICS_NEW_TABS.map((tab) => {
+          if (!isActiveTab(tab.path)) return null;
+          
+          return (
+            <p 
+              key={tab.id} 
+              className="text-sm text-gray-600"
+              data-testid={`tab-description-${tab.id}`}
+            >
+              {tab.description}
+            </p>
+          );
+        })}
+      </div>
+    </div>
+  );
+};

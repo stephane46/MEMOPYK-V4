@@ -1,0 +1,116 @@
+import { create } from 'zustand';
+
+export interface DatePreset {
+  key: '7d' | '30d' | '90d' | 'custom';
+  label: string;
+  days?: number;
+}
+
+export interface AnalyticsNewFilters {
+  // Date filters
+  datePreset: DatePreset['key'];
+  customDateStart: string;
+  customDateEnd: string;
+  
+  // Segmentation filters
+  language: string;
+  country: string;
+  videoId: string;
+  
+  // UI state
+  isLoading: boolean;
+  error: string | null;
+}
+
+interface AnalyticsNewFiltersStore extends AnalyticsNewFilters {
+  // Actions
+  setDatePreset: (preset: DatePreset['key']) => void;
+  setCustomDateRange: (start: string, end: string) => void;
+  setLanguage: (language: string) => void;
+  setCountry: (country: string) => void;
+  setVideoId: (videoId: string) => void;
+  setLoading: (loading: boolean) => void;
+  setError: (error: string | null) => void;
+  reset: () => void;
+  
+  // Computed
+  getDateRange: () => { start: string; end: string };
+  getActiveFilters: () => Partial<AnalyticsNewFilters>;
+}
+
+const defaultState: AnalyticsNewFilters = {
+  datePreset: '7d',
+  customDateStart: '',
+  customDateEnd: '',
+  language: 'all',
+  country: 'all', 
+  videoId: 'all',
+  isLoading: false,
+  error: null,
+};
+
+export const useAnalyticsNewFilters = create<AnalyticsNewFiltersStore>()((set, get) => ({
+  ...defaultState,
+
+  setDatePreset: (preset) => {
+    set({ datePreset: preset });
+    if (preset !== 'custom') {
+      set({ customDateStart: '', customDateEnd: '' });
+    }
+  },
+
+  setCustomDateRange: (start, end) => {
+    set({ 
+      customDateStart: start, 
+      customDateEnd: end,
+      datePreset: 'custom'
+    });
+  },
+
+  setLanguage: (language) => set({ language }),
+  setCountry: (country) => set({ country }),
+  setVideoId: (videoId) => set({ videoId }),
+  setLoading: (loading) => set({ isLoading: loading }),
+  setError: (error) => set({ error }),
+
+  reset: () => set(defaultState),
+
+  getDateRange: () => {
+    const state = get();
+    const now = new Date();
+    
+    if (state.datePreset === 'custom') {
+      return {
+        start: state.customDateStart,
+        end: state.customDateEnd
+      };
+    }
+    
+    const days = state.datePreset === '7d' ? 7 : state.datePreset === '30d' ? 30 : 90;
+    const startDate = new Date(now);
+    startDate.setDate(startDate.getDate() - days);
+    
+    return {
+      start: startDate.toISOString().split('T')[0],
+      end: now.toISOString().split('T')[0]
+    };
+  },
+
+  getActiveFilters: () => {
+    const state = get();
+    const filters: Partial<AnalyticsNewFilters> = {};
+    
+    if (state.language !== 'all') filters.language = state.language;
+    if (state.country !== 'all') filters.country = state.country;
+    if (state.videoId !== 'all') filters.videoId = state.videoId;
+    
+    return filters;
+  },
+}));
+
+export const DATE_PRESETS: DatePreset[] = [
+  { key: '7d', label: 'Last 7 days', days: 7 },
+  { key: '30d', label: 'Last 30 days', days: 30 },
+  { key: '90d', label: 'Last 90 days', days: 90 },
+  { key: 'custom', label: 'Custom range' },
+];
