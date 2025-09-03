@@ -4814,32 +4814,52 @@ export async function registerRoutes(app: Express): Promise<void> {
       
       console.log(`✅ Compare period: sessions=${compareSessions}, plays=${comparePlays}, completes=${compareCompletes}, watchTime=${compareWatchTime}s, sessionDuration=${compareSessionDuration}s`);
       
-      // Calculate robust avgWatchTimeSec with fallback
+      // Calculate robust avgWatchTimeSec with proper zero-handling
       let avgWatchTimeSec: number;
-      let avgWatchTimeSource: 'custom' | 'sessionDuration';
+      let avgWatchTimeSource: 'custom' | 'sessionDuration' | 'zero';
       
-      if (currentWatchTime > 0 && currentPlays > 0) {
+      // CRITICAL FIX: Only show avgWatchTime when there are actual sessions/plays
+      if (currentSessions === 0 && currentPlays === 0) {
+        avgWatchTimeSec = 0;
+        avgWatchTimeSource = 'zero';
+        console.log(`📊 ZERO SESSIONS/PLAYS: avgWatchTimeSec = 0s (no activity in period)`);
+      } else if (currentWatchTime > 0 && currentPlays > 0) {
         avgWatchTimeSec = Math.round(currentWatchTime / currentPlays);
         avgWatchTimeSource = 'custom';
         console.log(`📊 Using custom watch_time_seconds: ${avgWatchTimeSec}s (${currentWatchTime}s total / ${currentPlays} plays)`);
-      } else {
+      } else if (currentSessions > 0 || currentPlays > 0) {
+        // Only use sessionDuration fallback if there's actual activity
         avgWatchTimeSec = currentSessionDuration;
         avgWatchTimeSource = 'sessionDuration';
-        console.log(`📊 Fallback to averageSessionDuration: ${avgWatchTimeSec}s (custom metric returned 0)`);
+        console.log(`📊 Fallback to averageSessionDuration: ${avgWatchTimeSec}s (custom metric returned 0 but activity exists)`);
+      } else {
+        // Fallback for edge cases
+        avgWatchTimeSec = 0;
+        avgWatchTimeSource = 'zero';
+        console.log(`📊 FALLBACK TO ZERO: No sessions, no plays, avgWatchTimeSec = 0s`);
       }
       
       console.log(`📊 Final avgWatchTimeSec = ${avgWatchTimeSec}s [source=${avgWatchTimeSource}]`);
       
-      // Same logic for comparison period
+      // Same logic for comparison period with proper zero-handling
       let compareAvgWatchTimeSec: number;
-      let compareAvgWatchTimeSource: 'custom' | 'sessionDuration';
+      let compareAvgWatchTimeSource: 'custom' | 'sessionDuration' | 'zero';
       
-      if (compareWatchTime > 0 && comparePlays > 0) {
+      // CRITICAL FIX: Only show avgWatchTime when there are actual sessions/plays
+      if (compareSessions === 0 && comparePlays === 0) {
+        compareAvgWatchTimeSec = 0;
+        compareAvgWatchTimeSource = 'zero';
+      } else if (compareWatchTime > 0 && comparePlays > 0) {
         compareAvgWatchTimeSec = Math.round(compareWatchTime / comparePlays);
         compareAvgWatchTimeSource = 'custom';
-      } else {
+      } else if (compareSessions > 0 || comparePlays > 0) {
+        // Only use sessionDuration fallback if there's actual activity
         compareAvgWatchTimeSec = compareSessionDuration;
         compareAvgWatchTimeSource = 'sessionDuration';
+      } else {
+        // Fallback for edge cases
+        compareAvgWatchTimeSec = 0;
+        compareAvgWatchTimeSource = 'zero';
       }
       
       console.log(`📊 Final compareAvgWatchTimeSec = ${compareAvgWatchTimeSec}s [source=${compareAvgWatchTimeSource}]`);
