@@ -4828,6 +4828,8 @@ export async function registerRoutes(app: Express): Promise<void> {
         console.log(`📊 Fallback to averageSessionDuration: ${avgWatchTimeSec}s (custom metric returned 0)`);
       }
       
+      console.log(`📊 Final avgWatchTimeSec = ${avgWatchTimeSec}s [source=${avgWatchTimeSource}]`);
+      
       // Same logic for comparison period
       let compareAvgWatchTimeSec: number;
       let compareAvgWatchTimeSource: 'custom' | 'sessionDuration';
@@ -4839,6 +4841,8 @@ export async function registerRoutes(app: Express): Promise<void> {
         compareAvgWatchTimeSec = compareSessionDuration;
         compareAvgWatchTimeSource = 'sessionDuration';
       }
+      
+      console.log(`📊 Final compareAvgWatchTimeSec = ${compareAvgWatchTimeSec}s [source=${compareAvgWatchTimeSource}]`);
       
       const completionRatePct = currentPlays > 0 ? Math.round((currentCompletes / currentPlays) * 100) : 0;
       const compareCompletionRatePct = comparePlays > 0 ? Math.round((compareCompletes / comparePlays) * 100) : 0;
