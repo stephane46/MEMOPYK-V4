@@ -1,14 +1,15 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Users, Video, Clock, MousePointer, Eye } from 'lucide-react';
 import { AnalyticsNewKpiCard, KpiData } from './AnalyticsNewKpiCard';
 import { Badge } from '@/components/ui/badge';
+import { Switch } from '@/components/ui/switch';
+import { Label } from '@/components/ui/label';
 import './analyticsNew.tokens.css';
 
 // Mock data for Phase 1
 const USE_MOCK = true;
-const SIMULATE_ERROR = false;
-const SIMULATE_EMPTY = false;
-const SIMULATE_LOADING = false;
+
+type MockState = 'normal' | 'loading' | 'empty' | 'error';
 
 interface AnalyticsNewOverviewProps {
   className?: string;
@@ -17,74 +18,106 @@ interface AnalyticsNewOverviewProps {
 export const AnalyticsNewOverview: React.FC<AnalyticsNewOverviewProps> = ({ 
   className = '' 
 }) => {
+  const [mockState, setMockState] = useState<MockState>('normal');
+  const [loadingTimeout, setLoadingTimeout] = useState<NodeJS.Timeout | null>(null);
+
   const generateMockSparkline = () => {
     return Array.from({ length: 7 }, () => Math.floor(Math.random() * 100) + 20);
   };
+
+  // Handle state changes with mutual exclusion
+  const handleStateChange = (newState: MockState) => {
+    // Clear any existing loading timeout
+    if (loadingTimeout) {
+      clearTimeout(loadingTimeout);
+      setLoadingTimeout(null);
+    }
+
+    setMockState(newState);
+
+    // Auto-return to normal after 3 seconds for loading state
+    if (newState === 'loading') {
+      const timeout = setTimeout(() => {
+        setMockState('normal');
+        setLoadingTimeout(null);
+      }, 3000);
+      setLoadingTimeout(timeout);
+    }
+  };
+
+  // Cleanup timeout on unmount
+  useEffect(() => {
+    return () => {
+      if (loadingTimeout) {
+        clearTimeout(loadingTimeout);
+      }
+    };
+  }, [loadingTimeout]);
 
   const mockKpiData: KpiData[] = [
     {
       id: 'sessions',
       title: 'Total Sessions',
-      value: SIMULATE_EMPTY ? 0 : 2847,
+      value: mockState === 'empty' ? 0 : 2847,
       change: 12.3,
       trend: 'up',
-      sparklineData: SIMULATE_EMPTY ? [] : generateMockSparkline(),
+      sparklineData: mockState === 'empty' ? [] : generateMockSparkline(),
       icon: Users,
       color: 'blue',
-      isLoading: SIMULATE_LOADING,
-      error: SIMULATE_ERROR ? 'Failed to load sessions data' : undefined,
+      isLoading: mockState === 'loading',
+      error: mockState === 'error' ? 'Failed to load sessions data' : undefined,
     },
     {
       id: 'video-plays',
       title: 'Video Plays',
-      value: SIMULATE_EMPTY ? 0 : 1523,
+      value: mockState === 'empty' ? 0 : 1523,
       change: -2.1,
       trend: 'down',
-      sparklineData: SIMULATE_EMPTY ? [] : generateMockSparkline(),
+      sparklineData: mockState === 'empty' ? [] : generateMockSparkline(),
       icon: Video,
       color: 'green',
-      isLoading: SIMULATE_LOADING,
-      error: SIMULATE_ERROR ? 'Failed to load video data' : undefined,
+      isLoading: mockState === 'loading',
+      error: mockState === 'error' ? 'Failed to load video data' : undefined,
     },
     {
       id: 'avg-watch-time',
       title: 'Avg Watch Time',
-      value: SIMULATE_EMPTY ? '0:00' : '2:34',
+      value: mockState === 'empty' ? '0:00' : '2:34',
       change: 8.7,
       trend: 'up',
-      sparklineData: SIMULATE_EMPTY ? [] : generateMockSparkline(),
+      sparklineData: mockState === 'empty' ? [] : generateMockSparkline(),
       icon: Clock,
       color: 'orange',
-      isLoading: SIMULATE_LOADING,
-      error: SIMULATE_ERROR ? 'Failed to load watch time data' : undefined,
+      isLoading: mockState === 'loading',
+      error: mockState === 'error' ? 'Failed to load watch time data' : undefined,
     },
     {
       id: 'cta-clicks',
       title: 'CTA Clicks',
-      value: SIMULATE_EMPTY ? 0 : 342,
+      value: mockState === 'empty' ? 0 : 342,
       change: 15.8,
       trend: 'up',
-      sparklineData: SIMULATE_EMPTY ? [] : generateMockSparkline(),
+      sparklineData: mockState === 'empty' ? [] : generateMockSparkline(),
       icon: MousePointer,
       color: 'purple',
-      isLoading: SIMULATE_LOADING,
-      error: SIMULATE_ERROR ? 'Failed to load CTA data' : undefined,
+      isLoading: mockState === 'loading',
+      error: mockState === 'error' ? 'Failed to load CTA data' : undefined,
     },
     {
       id: 'completion-rate',
       title: 'Completion Rate',
-      value: SIMULATE_EMPTY ? '0%' : '68.4%',
+      value: mockState === 'empty' ? '0%' : '68.4%',
       change: 0,
       trend: 'flat',
-      sparklineData: SIMULATE_EMPTY ? [] : generateMockSparkline(),
+      sparklineData: mockState === 'empty' ? [] : generateMockSparkline(),
       icon: Eye,
       color: 'red',
-      isLoading: SIMULATE_LOADING,
-      error: SIMULATE_ERROR ? 'Failed to load completion data' : undefined,
+      isLoading: mockState === 'loading',
+      error: mockState === 'error' ? 'Failed to load completion data' : undefined,
     },
   ];
 
-  const mockActiveUsers = SIMULATE_EMPTY ? 0 : Math.floor(Math.random() * 20) + 5;
+  const mockActiveUsers = mockState === 'empty' ? 0 : Math.floor(Math.random() * 20) + 5;
 
   return (
     <div className={`analytics-new-container space-y-6 ${className}`}>
@@ -121,18 +154,74 @@ export const AnalyticsNewOverview: React.FC<AnalyticsNewOverviewProps> = ({
       {/* Mock State Toggles for Development */}
       {USE_MOCK && (
         <div className="mt-8 p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
-          <h3 className="text-sm font-medium text-yellow-800 mb-2">
+          <h3 className="text-sm font-medium text-yellow-800 mb-3">
             🔧 Phase 1 - Mock Data Mode
           </h3>
-          <p className="text-xs text-yellow-700 mb-3">
-            This overview is showing mock data with simulated states. 
-            Toggle flags in <code>AnalyticsNewOverview.tsx</code> to test different states:
+          <p className="text-xs text-yellow-700 mb-4">
+            This overview is showing mock data with simulated states. Use the toggle controls below:
           </p>
+          
+          {/* Toggle Controls */}
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-4">
+            <div className="flex items-center space-x-2">
+              <Switch
+                id="normal-state"
+                checked={mockState === 'normal'}
+                onCheckedChange={() => handleStateChange('normal')}
+                data-testid="toggle-normal"
+              />
+              <Label htmlFor="normal-state" className="text-sm font-medium text-yellow-800">
+                Normal
+              </Label>
+            </div>
+            
+            <div className="flex items-center space-x-2">
+              <Switch
+                id="loading-state"
+                checked={mockState === 'loading'}
+                onCheckedChange={() => handleStateChange('loading')}
+                data-testid="toggle-loading"
+              />
+              <Label htmlFor="loading-state" className="text-sm font-medium text-yellow-800">
+                SIMULATE_LOADING
+              </Label>
+            </div>
+            
+            <div className="flex items-center space-x-2">
+              <Switch
+                id="empty-state"
+                checked={mockState === 'empty'}
+                onCheckedChange={() => handleStateChange('empty')}
+                data-testid="toggle-empty"
+              />
+              <Label htmlFor="empty-state" className="text-sm font-medium text-yellow-800">
+                SIMULATE_EMPTY
+              </Label>
+            </div>
+            
+            <div className="flex items-center space-x-2">
+              <Switch
+                id="error-state"
+                checked={mockState === 'error'}
+                onCheckedChange={() => handleStateChange('error')}
+                data-testid="toggle-error"
+              />
+              <Label htmlFor="error-state" className="text-sm font-medium text-yellow-800">
+                SIMULATE_ERROR
+              </Label>
+            </div>
+          </div>
+
+          {/* Current State Display */}
           <div className="flex flex-wrap gap-2 text-xs">
-            <Badge variant="outline">USE_MOCK: {USE_MOCK.toString()}</Badge>
-            <Badge variant="outline">SIMULATE_ERROR: {SIMULATE_ERROR.toString()}</Badge>
-            <Badge variant="outline">SIMULATE_EMPTY: {SIMULATE_EMPTY.toString()}</Badge>
-            <Badge variant="outline">SIMULATE_LOADING: {SIMULATE_LOADING.toString()}</Badge>
+            <Badge variant="outline" className="bg-white">
+              Current State: <span className="font-bold text-yellow-800">{mockState.toUpperCase()}</span>
+            </Badge>
+            {mockState === 'loading' && (
+              <Badge variant="outline" className="bg-blue-50 text-blue-700">
+                Auto-returns to normal in 3s
+              </Badge>
+            )}
           </div>
         </div>
       )}
