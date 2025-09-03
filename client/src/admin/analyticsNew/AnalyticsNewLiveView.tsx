@@ -130,7 +130,7 @@ export const AnalyticsNewLiveView: React.FC = () => {
     refetchInterval: shouldPoll ? 15000 : false, // 15 seconds when active
     refetchOnWindowFocus: true, // Refresh when user returns to tab
     staleTime: 0, // Always fetch fresh data
-    cacheTime: 5000, // Only cache for 5 seconds to prevent stale data
+    gcTime: 5000, // Only cache for 5 seconds to prevent stale data (TanStack Query v5)
     enabled: shouldPoll, // Only query when tab is active and visible
   });
 
