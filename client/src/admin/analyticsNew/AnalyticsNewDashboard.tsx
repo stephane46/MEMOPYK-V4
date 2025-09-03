@@ -1,5 +1,4 @@
-import React from 'react';
-import { Route, Switch } from 'wouter';
+import React, { useState, useEffect } from 'react';
 import { AnalyticsNewTabNavigation } from './AnalyticsNewTabNavigation';
 import { AnalyticsNewGlobalFilters } from './AnalyticsNewGlobalFilters';
 import { AnalyticsNewOverview } from './AnalyticsNewOverview';
@@ -92,6 +91,51 @@ interface AnalyticsNewDashboardProps {
 export const AnalyticsNewDashboard: React.FC<AnalyticsNewDashboardProps> = ({ 
   className = '' 
 }) => {
+  const [activeTab, setActiveTab] = useState<string>('overview');
+
+  // Read query parameter on component mount and URL changes
+  useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const urlTab = urlParams.get('an_tab');
+    if (urlTab) {
+      setActiveTab(urlTab);
+    }
+  }, []);
+
+  // Handle tab changes and update URL
+  const handleTabChange = (tabId: string) => {
+    setActiveTab(tabId);
+    
+    // Update URL with query parameter
+    const url = new URL(window.location.href);
+    url.searchParams.set('an_tab', tabId);
+    window.history.pushState({}, '', url.toString());
+  };
+
+  // Render tab content based on active tab
+  const renderTabContent = () => {
+    switch (activeTab) {
+      case 'overview':
+        return <AnalyticsNewOverview />;
+      case 'live':
+        return <AnalyticsNewLiveView />;
+      case 'video':
+        return <AnalyticsNewVideo />;
+      case 'geo':
+        return <AnalyticsNewGeo />;
+      case 'cta':
+        return <AnalyticsNewCta />;
+      case 'trends':
+        return <AnalyticsNewTrends />;
+      case 'clarity':
+        return <AnalyticsNewClarity />;
+      case 'fallback':
+        return <AnalyticsNewFallback />;
+      default:
+        return <AnalyticsNewOverview />;
+    }
+  };
+
   return (
     <div 
       className={`analytics-new-container min-h-screen bg-[var(--analytics-new-background)] ${className}`}
@@ -119,22 +163,14 @@ export const AnalyticsNewDashboard: React.FC<AnalyticsNewDashboardProps> = ({
         </div>
 
         {/* Tab Navigation */}
-        <AnalyticsNewTabNavigation />
+        <AnalyticsNewTabNavigation 
+          activeTab={activeTab}
+          onTabChange={handleTabChange}
+        />
 
         {/* Tab Content */}
         <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 min-h-[400px]">
-          <Switch>
-            <Route path="/admin/analytics-new" component={() => <AnalyticsNewOverview />} />
-            <Route path="/admin/analytics-new/live-view" component={() => <AnalyticsNewLiveView />} />
-            <Route path="/admin/analytics-new/video" component={() => <AnalyticsNewVideo />} />
-            <Route path="/admin/analytics-new/geo" component={() => <AnalyticsNewGeo />} />
-            <Route path="/admin/analytics-new/cta" component={() => <AnalyticsNewCta />} />
-            <Route path="/admin/analytics-new/trends" component={() => <AnalyticsNewTrends />} />
-            <Route path="/admin/analytics-new/clarity" component={() => <AnalyticsNewClarity />} />
-            <Route path="/admin/analytics-new/fallback" component={() => <AnalyticsNewFallback />} />
-            {/* Fallback route */}
-            <Route component={() => <AnalyticsNewOverview />} />
-          </Switch>
+          {renderTabContent()}
         </div>
       </div>
     </div>

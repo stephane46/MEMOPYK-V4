@@ -1,5 +1,4 @@
 import React from 'react';
-import { Link, useLocation } from 'wouter';
 import {
   BarChart3,
   Eye,
@@ -16,7 +15,6 @@ import './analyticsNew.tokens.css';
 export interface AnalyticsNewTab {
   id: string;
   label: string;
-  path: string;
   icon: React.ComponentType<{ className?: string }>;
   description: string;
 }
@@ -25,56 +23,48 @@ export const ANALYTICS_NEW_TABS: AnalyticsNewTab[] = [
   {
     id: 'overview',
     label: 'Overview',
-    path: '/admin/analytics-new',
     icon: BarChart3,
     description: 'Key metrics and performance summary',
   },
   {
-    id: 'live-view',
+    id: 'live',
     label: 'Live View',
-    path: '/admin/analytics-new/live-view',
     icon: Eye,
     description: 'Real-time visitor activity',
   },
   {
     id: 'video',
     label: 'Video',
-    path: '/admin/analytics-new/video',
     icon: Video,
     description: 'Video performance and engagement',
   },
   {
     id: 'geo',
     label: 'Geo',
-    path: '/admin/analytics-new/geo',
     icon: Globe,
     description: 'Geographic visitor distribution',
   },
   {
     id: 'cta',
     label: 'CTA',
-    path: '/admin/analytics-new/cta',
     icon: MousePointer,
     description: 'Call-to-action performance',
   },
   {
     id: 'trends',
     label: 'Trends',
-    path: '/admin/analytics-new/trends',
     icon: TrendingUp,
     description: 'Time-series analytics',
   },
   {
     id: 'clarity',
     label: 'Clarity',
-    path: '/admin/analytics-new/clarity',
     icon: Activity,
     description: 'Microsoft Clarity insights',
   },
   {
     id: 'fallback',
     label: 'Fallback',
-    path: '/admin/analytics-new/fallback',
     icon: AlertTriangle,
     description: 'Error handling and diagnostics',
   },
@@ -82,18 +72,19 @@ export const ANALYTICS_NEW_TABS: AnalyticsNewTab[] = [
 
 interface AnalyticsNewTabNavigationProps {
   className?: string;
+  activeTab?: string;
+  onTabChange?: (tabId: string) => void;
 }
 
 export const AnalyticsNewTabNavigation: React.FC<AnalyticsNewTabNavigationProps> = ({ 
-  className = '' 
+  className = '',
+  activeTab = 'overview',
+  onTabChange
 }) => {
-  const [location] = useLocation();
-
-  const isActiveTab = (tabPath: string) => {
-    if (tabPath === '/admin/analytics-new') {
-      return location === '/admin/analytics-new' || location === '/admin/analytics-new/';
+  const handleTabClick = (tabId: string) => {
+    if (onTabChange) {
+      onTabChange(tabId);
     }
-    return location.startsWith(tabPath);
   };
 
   return (
@@ -104,12 +95,12 @@ export const AnalyticsNewTabNavigation: React.FC<AnalyticsNewTabNavigationProps>
           <div className="flex overflow-x-auto">
             {ANALYTICS_NEW_TABS.map((tab) => {
               const Icon = tab.icon;
-              const isActive = isActiveTab(tab.path);
+              const isActive = activeTab === tab.id;
               
               return (
-                <Link
+                <button
                   key={tab.id}
-                  href={tab.path}
+                  onClick={() => handleTabClick(tab.id)}
                   className={cn(
                     'flex items-center px-4 py-3 text-sm font-medium whitespace-nowrap border-b-2 transition-colors',
                     isActive
@@ -120,7 +111,7 @@ export const AnalyticsNewTabNavigation: React.FC<AnalyticsNewTabNavigationProps>
                 >
                   <Icon className="h-4 w-4 mr-2" />
                   {tab.label}
-                </Link>
+                </button>
               );
             })}
           </div>
@@ -133,12 +124,12 @@ export const AnalyticsNewTabNavigation: React.FC<AnalyticsNewTabNavigationProps>
           <div className="grid grid-cols-2 gap-1 p-2">
             {ANALYTICS_NEW_TABS.map((tab) => {
               const Icon = tab.icon;
-              const isActive = isActiveTab(tab.path);
+              const isActive = activeTab === tab.id;
               
               return (
-                <Link
+                <button
                   key={tab.id}
-                  href={tab.path}
+                  onClick={() => handleTabClick(tab.id)}
                   className={cn(
                     'flex flex-col items-center p-3 rounded-md text-xs font-medium transition-colors',
                     isActive
@@ -149,7 +140,7 @@ export const AnalyticsNewTabNavigation: React.FC<AnalyticsNewTabNavigationProps>
                 >
                   <Icon className="h-5 w-5 mb-1" />
                   <span className="text-center leading-tight">{tab.label}</span>
-                </Link>
+                </button>
               );
             })}
           </div>
@@ -159,7 +150,7 @@ export const AnalyticsNewTabNavigation: React.FC<AnalyticsNewTabNavigationProps>
       {/* Tab Description */}
       <div className="mt-2">
         {ANALYTICS_NEW_TABS.map((tab) => {
-          if (!isActiveTab(tab.path)) return null;
+          if (activeTab !== tab.id) return null;
           
           return (
             <p 
